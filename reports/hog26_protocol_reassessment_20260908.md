@@ -2042,3 +2042,33 @@ Scalar special effects and death appearance review, 2026-09-09:
 - Full-game integration across the unchanged training families remains open.
   Collection authority is not frozen, and fitting/calibration/ranking remain
   closed. No holdout outcome data was read or new training corpus collected.
+
+Integrated scalar training-family diagnostic, 2026-09-09:
+- Unified lifetime recorder keeps source, Firecracker child and delayed death
+  container hooks alive through episode exit. Five focused session tests and
+  four episode tests pass; the diagnostic outcome extension assigns tower shots
+  to 494/495, current chain category to 496 and SkeletonContainerNew to 497.
+- First integrated training deck completed both seats at ticks 3790/4026 with
+  exact repeats and zero rejected actions. The subsequent unchanged full run
+  covered all 32 training decks, 64 distinct seat scenarios and 128 executions.
+  Every scenario reached a natural terminal and repeated exactly. These are
+  32 paired deck clusters, not 128 independent games.
+- Independent audit verified all recorded Python bytes, the complete matching
+  source file set, manifest, checkpoint, card data and vocabulary after the run.
+  Raw report is 45,437,411 bytes with SHA-256
+  6d70feff5c9adaafb700e2a3e346369b3a1cd0e27ad6bc71b830abbad8805df7.
+  The raw report remains a local diagnostic artifact; its compact audit is
+  hog26_scalar_training_family_all_decks_audit_20260909.json.
+- 27 distinct effect tokens appeared at sampled decision boundaries. This
+  does not prove coverage of every transient effect or complete rendering.
+  No visible unbound effect caused a recorder/projection failure in this run.
+- Six action rejections remain: deck index13, learner seat1, absolute seat0
+  Musketeer action1368 at ticks1008 through1048 in increments of8. Exact-repeat
+  status does not imply public-mask acceptance. Separate mechanism review found
+  timed bombs block scalar placement but the public mask ignores effect rows;
+  the six replay failures are being independently diagnosed before repair.
+- Fixed manifest openings and a balanced opponent are diagnostic scope only.
+  The new collection authority must independently freeze seeded canonical-name
+  openings, role-local RNG streams, all existing family roles/budgets and gates.
+  Do not silently relabel the native int64-ID seeded-opening protocol or count
+  repeat executions as independent training games. No new corpus or fitting.

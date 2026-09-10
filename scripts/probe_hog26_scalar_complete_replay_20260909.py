@@ -5,7 +5,7 @@ import hashlib
 import json
 import subprocess
 import time
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from dataclasses import fields
 from pathlib import Path
 from types import SimpleNamespace
@@ -20,6 +20,7 @@ from clasher.rl.simple_pytorch_backend import (
     _typed_lookups,
     load_current_client_typed_vocabulary,
 )
+from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.resident_outputs import TensorPublicStructuredObservation
 from clasher.torch_sim.simple_public_mask import SimplePublicMaskV2Provider
@@ -47,13 +48,14 @@ def hash_tensors(values):
     return result.hexdigest()
 
 
-def run(model, builder, vocabulary, provider, opponent, *, seat, seed):
-    decks = [DECK, tuple(reversed(DECK))]
+def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
+        opponent_deck=None, expanded_receipts=False):
+    decks = [DECK, tuple(reversed(DECK)) if opponent_deck is None else tuple(opponent_deck)]
     if seat == 1:
         decks.reverse()
     episode = ScalarReferenceEpisode.create(decks, seed=seed, learner_seat=seat)
     battle = episode.battle
-    tower_setup = ScalarTowerReceiptSetup.compile(
+    tower_setup = None if expanded_receipts else ScalarTowerReceiptSetup.compile(
         battle, tuple(battle.entities.values()), builder.loader, vocabulary,
         source_visible_to=lambda source, player: source.is_visible_to(player),
     )
@@ -75,21 +77,59 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed):
     previous = np.full(2, NO_OP_ACTION, dtype=np.int64)
     starts = [True, True]
     trace = []
+    observed_effect_tokens = set()
     began = time.perf_counter()
-    with tower_setup.recorder() as towers, ScalarSpellReceiptRecorder(
-        battle, ("Fireball", "Log"), builder.loader, vocabulary
-    ) as spells:
+    with ExitStack() as stack:
+        if expanded_receipts:
+            from scripts.hog26_scalar_death_actor_adapter import ScalarDeathActorAdapter
+            from scripts.hog26_scalar_receipt_session import ScalarReceiptSession
+
+            visible = lambda entity, player: entity.is_visible_to(player)
+            session = stack.enter_context(ScalarReceiptSession(
+                battle, sorted(set(decks[0]) | set(decks[1])), builder.loader, vocabulary,
+                visible_to=visible,
+            ))
+            outcome_builder = StructuredObservationBuilder(
+                token_names=session.token_names, max_entities=builder.max_entities,
+                card_semantics_version=builder.card_semantics_version,
+                canonical_lane_globals=True,
+            )
+            actor_adapter = ScalarDeathActorAdapter(
+                battle, outcome_builder, session, visible_to=visible,
+            )
+            extra_tokens = session.extra_public_effect_tokens
+
+            @contextmanager
+            def expanded_frame(current):
+                session.synchronize_sources()
+                yield
+
+            frame = expanded_frame
+        else:
+            towers = stack.enter_context(tower_setup.recorder())
+            spells = stack.enter_context(ScalarSpellReceiptRecorder(
+                battle, ("Fireball", "Log"), builder.loader, vocabulary,
+            ))
+            extra_tokens = tower_setup.extra_public_effect_tokens
         while not battle.game_over:
             if battle.tick > 6000:
                 raise RuntimeError("scalar match failed to terminate at its declared horizon")
-            appearances = (*towers.appearances, *spells.appearances, *ordinary_appearances)
-            actors = build_scalar_reference_actors(
-                battle, builder, appearances=appearances,
-                visible_to=lambda entity, player: entity.is_visible_to(player),
-            )
+            if expanded_receipts:
+                actors = actor_adapter.build(appearances=session.appearances)
+            else:
+                appearances = (*towers.appearances, *spells.appearances, *ordinary_appearances)
+                actors = build_scalar_reference_actors(
+                    battle, builder, appearances=appearances,
+                    visible_to=lambda entity, player: entity.is_visible_to(player),
+                )
+            for actor in actors:
+                effect_rows = actor.entity_mask & (
+                    (actor.entity_features[:, 6] == 1) | (actor.entity_features[:, 7] == 1)
+                )
+                observed_effect_tokens.update(int(token) for token in actor.entity_ids[effect_rows])
             inputs, masks = scalar_policy_inputs(
                 actors, provider, previous_actions=previous, episode_starts=starts,
-                extra_public_effect_tokens=tower_setup.extra_public_effect_tokens,
+                extra_public_effect_tokens=extra_tokens,
             )
             policy_public = TensorPublicStructuredObservation(**{
                 f.name: getattr(inputs, f.name).reshape(1, 2, *getattr(inputs, f.name).shape[2:])
@@ -120,6 +160,9 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed):
                         ("left_tower_hp", "right_tower_hp", "king_tower_hp"))
                     for player in battle.players]
         return {"seat": seat, "seed": seed, "complete": True, "ticks": battle.tick,
+                "expanded_receipts": expanded_receipts,
+                "extra_public_effect_tokens": list(extra_tokens),
+                "decision_visible_effect_token_ids": sorted(observed_effect_tokens),
                 "winner": battle.winner, "remaining_tower_hp": terminal,
                 "outcome": ("draw" if battle.winner in (None, -1) else
                             "win" if battle.winner == seat else "loss"),
