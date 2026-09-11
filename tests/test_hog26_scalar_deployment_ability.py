@@ -14,7 +14,10 @@ from clasher.rl.simple_pytorch_backend import (
 from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.torch_sim.simple_public_mask import SimplePublicMaskV2Provider
 from clasher.torch_sim.simple_standard import compile_standard_simple_setup
-from scripts.hog26_scalar_actor_projection import build_scalar_reference_actors
+from scripts.hog26_scalar_actor_projection import (
+    build_scalar_reference_actors,
+    compile_scalar_hand_lookup,
+)
 from scripts.hog26_scalar_policy_inputs import scalar_policy_inputs
 from scripts.hog26_scalar_reference_episode import ScalarReferenceEpisode
 
@@ -33,19 +36,19 @@ def public_setup():
     )
     lookup, _ = _typed_lookups(compiled, builder.loader, vocabulary)
     provider = SimplePublicMaskV2Provider(_compile_public_mask_v2_tables(builder, compiled, lookup))
-    return builder, provider
+    return builder, provider, compile_scalar_hand_lookup(builder, vocabulary)
 
 
-def actors(battle, builder):
+def actors(battle, builder, hand_lookup):
     return build_scalar_reference_actors(
-        battle, builder, appearances=(),
+        battle, builder, appearances=(), hand_lookup=hand_lookup,
         visible_to=lambda entity, seat: entity.is_visible_to(seat),
     )
 
 
 @pytest.mark.parametrize("seat", (0, 1))
 def test_real_queen_pending_ready_and_cast_pending_match_scalar_oracle(public_setup, seat):
-    builder, provider = public_setup
+    builder, provider, hand_lookup = public_setup
     episode = ScalarReferenceEpisode.create((DECK, DECK), seed=83101, learner_seat=seat)
     battle = episode.battle
     battle.players[seat].elixir = 10
@@ -55,7 +58,7 @@ def test_real_queen_pending_ready_and_cast_pending_match_scalar_oracle(public_se
     assert provider.tables.ability_supported[token]
 
     def check(expected, deploying):
-        views = actors(battle, builder)
+        views = actors(battle, builder, hand_lookup)
         inputs, masks = scalar_policy_inputs(
             views, provider, previous_actions=[episode.action_space.no_op_action] * 2,
             episode_starts=[False, False],
@@ -85,13 +88,13 @@ def test_real_queen_pending_ready_and_cast_pending_match_scalar_oracle(public_se
 
 
 def test_deployment_timer_and_enemy_private_state_are_not_exposed(public_setup):
-    builder, _ = public_setup
+    builder, _, hand_lookup = public_setup
     episode = ScalarReferenceEpisode.create((DECK, DECK), seed=83102, learner_seat=0)
     battle = episode.battle
     battle.players[1].elixir = 10
     assert battle.deploy_card(1, "ArcherQueen", Position(9, 27))
     queen = battle._champion_ability_mechanic(1)[0]
-    before = actors(battle, builder)[0]
+    before = actors(battle, builder, hand_lookup)[0]
     assert queen.placement_pending
     queen.deploy_delay_remaining *= 0.37
     queen.placement_delay_total *= 4
@@ -99,6 +102,6 @@ def test_deployment_timer_and_enemy_private_state_are_not_exposed(public_setup):
     battle.players[1].elixir = 0.01
     battle.players[1].hand[:] = ["Rocket"] * 4
     battle.rng.seed(993)
-    after = actors(battle, builder)[0]
+    after = actors(battle, builder, hand_lookup)[0]
     for field in fields(before):
         np.testing.assert_array_equal(getattr(before, field.name), getattr(after, field.name))

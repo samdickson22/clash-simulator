@@ -6,12 +6,57 @@ Private target, clock, damage, lifetime, and RNG fields are not actor features.
 """
 
 import math
+from collections.abc import Mapping
+from dataclasses import dataclass
+from types import MappingProxyType
 
 import numpy as np
 
 from clasher.entities import Building, Troop
 from clasher.rl.structured_obs import ActorObservation, EntityCapacityError
 from scripts.hog26_scalar_public_effect_adapter import project_scalar_public_effects
+
+
+@dataclass(frozen=True)
+class ScalarHandLookup:
+    """Setup-bound immutable canonical card-action IDs, never inferred at runtime."""
+
+    builder: object
+    token_by_card: Mapping[str, int]
+
+    def resolve(self, name):
+        if name is None:
+            return 0
+        if not isinstance(name, str) or not name or name not in self.token_by_card:
+            raise ValueError(f"unresolved scalar hand card: {name!r}")
+        return self.token_by_card[name]
+
+    def hand_ids(self, player):
+        names = list(player.hand[:4])
+        names.extend([None] * (4 - len(names)))
+        names.append(player.cycle_queue[0] if player.cycle_queue else None)
+        return np.asarray([self.resolve(name) for name in names], dtype=np.int64)
+
+
+def compile_scalar_hand_lookup(builder, vocabulary):
+    """Compile canonical loader names with the typed vocabulary's alias resolver.
+
+    The builder may append public effect tokens, but its base token order must
+    exactly match the supplied vocabulary. Unsupported cards remain unresolved
+    and fail closed if observed; callers should validate every configured deck
+    with ``lookup.resolve`` before starting an episode.
+    """
+    base = tuple(vocabulary.token_names)
+    if tuple(builder.token_names[:len(base)]) != base:
+        raise ValueError("scalar hand vocabulary does not match builder token order")
+    tokens = {}
+    for name in builder.loader.load_card_definitions():
+        token = vocabulary.resolve(name, "card_action")
+        if token > 1:
+            if token >= len(base) or not base[token].startswith("card_action:"):
+                raise ValueError("scalar hand resolver returned a non-card token")
+            tokens[name] = token
+    return ScalarHandLookup(builder, MappingProxyType(tokens))
 
 
 def scalar_body_token(entity, builder):
@@ -30,7 +75,7 @@ def scalar_body_token(entity, builder):
     return token
 
 
-def build_scalar_reference_actors(battle, builder, *, appearances, visible_to):
+def build_scalar_reference_actors(battle, builder, *, appearances, visible_to, hand_lookup):
     """Return two fixed-capacity actor views; reject unresolved visible effects.
 
     Caller must supply an audited current-visibility predicate. This is a new
@@ -38,6 +83,8 @@ def build_scalar_reference_actors(battle, builder, *, appearances, visible_to):
     Own hand/HUD access reuses the reviewed actor-only builder helpers; neither
     critic construction nor simulator legality is called.
     """
+    if not isinstance(hand_lookup, ScalarHandLookup) or hand_lookup.builder is not builder:
+        raise ValueError("scalar hand lookup must be compiled for this builder")
     bodies = [e for e in battle.entities.values() if isinstance(e, (Troop, Building))]
     effects = [e for e in battle.entities.values() if not isinstance(e, (Troop, Building))]
     effect_ids, effect_features, effect_mask = project_scalar_public_effects(
@@ -86,7 +133,7 @@ def build_scalar_reference_actors(battle, builder, *, appearances, visible_to):
         history_ids, history_ages = builder._opponent_history(battle, seat)
         actors.append(ActorObservation(
             entity_ids=ids, entity_features=features, entity_mask=mask,
-            hand_ids=builder._card_ids_for_player(battle, seat),
+            hand_ids=hand_lookup.hand_ids(battle.players[seat]),
             global_features=builder._actor_globals(battle, seat),
             opponent_history_ids=history_ids, opponent_history_ages=history_ages,
             opponent_seen_card_ids=builder._opponent_seen_cards(battle, seat),

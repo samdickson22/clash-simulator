@@ -152,6 +152,12 @@ def validate_scalar_corpus(path, *, expected_metadata=None):
     ):
         if data[key].dtype.kind not in "iu" or (data[key] < 0).any():
             raise ValueError(f"invalid public integer field: {key}")
+    if "policy_token_names" in metadata:
+        policy_tokens = metadata["policy_token_names"]
+        for token in np.unique(data["hand_ids"]):
+            if token != 0 and (token <= 1 or token >= len(policy_tokens)
+                              or not policy_tokens[int(token)].startswith("card_action:")):
+                raise ValueError("hand contains unresolved or non-card public identity")
     if data["opponent_history_ids"].shape != data["opponent_history_ages"].shape:
         raise ValueError("history shapes differ")
     for key, field in zip(

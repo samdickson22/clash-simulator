@@ -221,18 +221,19 @@ def test_outcome_keeps_extra_identities_with_separate_policy_confidence(tmp_path
 def vocabulary_game(path):
     actor, inputs = fixture()
     actor.entity_ids[:] = [4, 6]
+    actor.hand_ids[:] = [2, 3, 5, 0, 2]
     actor.entity_mask[:] = True
     actor.entity_features[1, 7] = 1
     metadata = {
         "schema": "clasher.scalar-pilot-game-metadata.v1",
-        "policy_token_names": ["pad", "unknown", "two", "three", "four", "five"],
+        "policy_token_names": ["pad", "unknown", "card_action:Knight", "card_action:Fireball", "troop_body:Knight", "card_action:Archer"],
         "outcome_token_names": [
             "pad",
             "unknown",
-            "two",
-            "three",
-            "four",
-            "five",
+            "card_action:Knight",
+            "card_action:Fireball",
+            "troop_body:Knight",
+            "card_action:Archer",
             "public_effect:chain_bolt",
         ],
     }
@@ -280,7 +281,7 @@ def test_vocabulary_contradictions_rejected(tmp_path, mutation):
     if mutation == "missing":
         del metadata["policy_token_names"]
     elif mutation == "duplicate":
-        metadata["outcome_token_names"][-1] = "four"
+        metadata["outcome_token_names"][-1] = "troop_body:Knight"
     elif mutation == "prefix":
         metadata["policy_token_names"][2] = "changed"
     elif mutation == "out_of_range":
@@ -300,4 +301,17 @@ def test_vocabulary_contradictions_rejected(tmp_path, mutation):
     data["metadata_json"] = np.array(json.dumps(metadata))
     np.savez_compressed(path, **data)
     with pytest.raises(ValueError):
+        validate_scalar_corpus(path)
+
+
+@pytest.mark.parametrize("bad_token", [1, 4, 6, 999])
+def test_unresolved_or_noncard_hand_identity_rejected(tmp_path, bad_token):
+    path = tmp_path / "hand.npz"
+    vocabulary_game(path)
+    with np.load(path, allow_pickle=False) as archive:
+        data = {key: archive[key] for key in archive.files}
+    data["hand_ids"][0, 4] = bad_token
+    with path.open("wb") as stream:
+        np.savez_compressed(stream, **data)
+    with pytest.raises(ValueError, match="hand contains"):
         validate_scalar_corpus(path)

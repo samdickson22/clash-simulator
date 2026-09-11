@@ -16,9 +16,9 @@ from scripts.hog26_scalar_openings import CanonicalOpeningSchedule, digest
 MANIFEST = "training_decks/hog26_procedural_supported_seed1278401.json"
 PROTOCOL = "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json"
 LEARNER = ("HogRider", "Musketeer", "IceGolem", "Skeletons", "IceSpirits", "Cannon", "Fireball", "Log")
-CAMPAIGNS = ((1279221, ("balanced", "random")),
-             (1279222, ("bridge-pressure", "reactive-defense")),
-             (1279223, ("slow-push", "spell-control")))
+CAMPAIGNS = ((1279261, ("balanced", "random")),
+             (1279262, ("bridge-pressure", "reactive-defense")),
+             (1279263, ("slow-push", "spell-control")))
 INHERITED = ("gates", "generalization_evaluation", "opponent_generalization")
 
 

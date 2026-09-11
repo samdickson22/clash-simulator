@@ -20,7 +20,10 @@ from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.simple_public_mask import SimplePublicMaskV2Provider
 from clasher.torch_sim.simple_standard import compile_standard_simple_setup
 from scripts.evaluate_hog26_simple_policy import load_model
-from scripts.hog26_scalar_actor_projection import build_scalar_reference_actors
+from scripts.hog26_scalar_actor_projection import (
+    build_scalar_reference_actors,
+    compile_scalar_hand_lookup,
+)
 from scripts.hog26_scalar_policy_inputs import scalar_policy_inputs
 from scripts.hog26_scalar_public_effect_adapter import ScalarArrowsAppearance
 
@@ -42,6 +45,7 @@ def main():
     battle = BattleState()
     battle.rng.seed(1279011)
     vocabulary = load_current_client_typed_vocabulary()
+    hand_lookup = compile_scalar_hand_lookup(builder, vocabulary)
     before = set(battle.entities)
     spell = create_spell_from_json(battle.card_loader.get_card("Arrows")._raw_entry,
                                    battle.card_loader.load_card_definitions())
@@ -49,7 +53,7 @@ def main():
     bindings = ScalarArrowsAppearance.compile(battle.card_loader, vocabulary).bind_cast(
         [e for key, e in battle.entities.items() if key not in before])
     actors = build_scalar_reference_actors(
-        battle, builder, appearances=bindings,
+        battle, builder, appearances=bindings, hand_lookup=hand_lookup,
         visible_to=lambda entity, seat: entity.is_visible_to(seat),
     )
     setup = compile_standard_simple_setup(builder.loader, ["Arrows", "Knight"],

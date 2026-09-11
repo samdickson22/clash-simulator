@@ -102,6 +102,10 @@ def main():
     lookup, _ = _typed_lookups(setup, builder.loader, vocabulary)
     provider = SimplePublicMaskV2Provider(_compile_public_mask_v2_tables(builder, setup, lookup))
     outcome_tokens = (*vocabulary.token_names, *EXTRA_TOKENS)
+    for card in authority["contract"]["canonical_names"]:
+        token = vocabulary.resolve(card, "card_action")
+        if token <= 1 or not bool(provider.tables.hand_playable[token]):
+            raise ValueError(f"configured card has no playable public action identity: {card}")
     mask_provider = ScalarPublicPayloadMaskProvider(provider, ScalarPublicPayloadMaskRules.compile(
         builder.loader, policy_token_names=vocabulary.token_names, outcome_token_names=outcome_tokens))
     args.output_dir.mkdir(parents=True, exist_ok=args.resume)
@@ -140,7 +144,7 @@ def main():
                     if global_rng_digest() != rng_before:
                         raise AssertionError("game consumed process-global RNG")
                     expected_decks = [list(deck) for deck in scenario.world_decks(seat)]
-                    expected_hand = [[builder.token_id(card, namespace="card_action") for card in deck[:5]] for deck in expected_decks]
+                    expected_hand = [[vocabulary.resolve(card, "card_action") for card in deck[:5]] for deck in expected_decks]
                     if (result["initial_ordered_decks"] != expected_decks or result["initial_public_hand_ids"] != expected_hand
                             or result["extra_public_effect_tokens"] != list(EXTRA_TOKENS)
                             or result["mask_semantics_digest"] != mask_provider.semantics_digest):

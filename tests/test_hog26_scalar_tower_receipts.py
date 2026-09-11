@@ -114,7 +114,10 @@ def test_actual_tower_appearances_map_only_policy_identity_to_unknown():
     from clasher.rl.structured_obs import StructuredObservationBuilder
     from clasher.torch_sim.simple_public_mask import SimplePublicMaskV2Provider
     from clasher.torch_sim.simple_standard import compile_standard_simple_setup
-    from scripts.hog26_scalar_actor_projection import build_scalar_reference_actors
+    from scripts.hog26_scalar_actor_projection import (
+        build_scalar_reference_actors,
+        compile_scalar_hand_lookup,
+    )
     from scripts.hog26_scalar_policy_inputs import scalar_policy_inputs
 
     battle, towers, setup, loader, vocabulary = _setup()
@@ -126,11 +129,12 @@ def test_actual_tower_appearances_map_only_policy_identity_to_unknown():
                                            canonical_lane_globals=True)
     lookup, _ = _typed_lookups(static, loader, vocabulary)
     provider = SimplePublicMaskV2Provider(_compile_public_mask_v2_tables(builder, static, lookup))
+    hand_lookup = compile_scalar_hand_lookup(builder, vocabulary)
     with setup.recorder() as recorder:
         for tower, target in zip(towers, targets, strict=True):
             tower._create_projectile(target, battle)
         actors = build_scalar_reference_actors(
-            battle, builder, appearances=recorder.appearances,
+            battle, builder, appearances=recorder.appearances, hand_lookup=hand_lookup,
             visible_to=lambda entity, seat: entity.is_visible_to(seat),
         )
         inputs, _ = scalar_policy_inputs(

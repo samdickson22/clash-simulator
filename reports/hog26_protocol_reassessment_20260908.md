@@ -2217,3 +2217,47 @@ Fresh scalar pilot authorized and started, 2026-09-11:
   thread1 took1.183seconds and peaked at1,337,999,360bytesRSS. Globals2339params;
   entity/history116900params with498tokens. No real corpus read or fitting.
   Retain synthetic_fullgame_benchmark.json as the predeclared memory prerequisite.
+
+Whole-pilot alias rejection and corrective collection, 2026-09-11:
+- First pilot completed384games/154259rows. Independent pre-fitting audit then
+  rejected its first game: IceGolem became unknown hand token1. The collector's
+  initial-hand check had reused the same defective generic builder resolver,
+  so self-consistency and zero rejected actions did not establish valid hands.
+- Exhaustive metadata audit found13affected canonical aliases: Archers,Bandit,
+  BarbarianBarrel,DartGoblin,GiantSnowball,Guards,IceGolem,IceSpirit,Lumberjack,
+  MagicArcher,NightWitch,RoyalGhost,SkeletonBarrel. Correct typed action IDs were
+  present; the scalar hand path failed to use the typed alias registry. Unknown
+  tokens made these cards unselectable, affecting trajectories and outcomes.
+  Do not relabel/filter old rows as a repair. No model fitting had started.
+- Old pilot remains quarantined at seed1279221 directory; machine-readable
+  rejection: hog26_scalar_pilot_hand_alias_rejection_20260911.json. The failed
+  globals startup log is preserved; no fitting manifest/checkpoint was produced.
+- Added immutable setup-compiled ScalarHandLookup, required explicitly by actor
+  projection/adapters. None remains0; unknown nonempty cards fail closed. Tests
+  cover all8deck positions and24play/refill cycles for every configured deck,
+  including aliases returning from the back of the cycle. All64configured names
+  plus reserved3 resolve correctly; independent table audit confirms67cost/kind/
+  playability/deployment entries. Scalar action execution uses actual hand names.
+- Collector now validates every configured card before games; initial expected
+  hands use typed vocabulary resolution. The independent corpus validator also
+  rejects unknown/out-of-range/non-card hand tokens.373scalar tests passed.
+- Corrective excluded preflight:12games/4941rows, all six styles/both seats,
+  no unresolved hands or rejected card actions. Resume revalidated unchanged
+  game hashes. Fresh no-op control reaches actual draw tick6000/750rows/margin0.
+- New fixed384-game campaign seeds1279261/1279262/1279263 preserve every family,
+  style, seat quota and future acceptance gate. Source authority:
+  4da97f384ac4f3615e310f987f8c9bdeacbb499c340f5b9ee2c31fe61f037ffa.
+  Plan digest9f5cb170209be952dae38e9238709455d169178cf8f73039ff5099ea7bc282fe.
+  Frozen files hog26_scalar_handfixed_{frozen_plan,preflight_pin}_20260911.json.
+- Corrective collector started root session71951; output
+  datasets/derived/hog26_scalar_pilot_seed1279261_20260911/ and log
+  reports/hog26_scalar_pilot_seed1279261_20260911.log. Source is frozen again.
+  Resume only after verifying original process terminal/missing, with same plan,
+  pin, output and --resume. No fitting until complete independent audit passes.
+- Comparison implementation is prepared in experiments/hog26_scalar_pilot/,
+  outside the collection source inventory. Original model specs/epochs/folds
+  remain unchanged. Full audit checks exact metadata, pinned sources/resources,
+  vocab/mask, actual initial hand, learner seat and all record labels/counters.
+  Tree weight scale explicitly preserves the reference mean-one fitting-row
+  convention; no performance result was used to choose it. Additive fitting code
+  has separate source authority. No reserved outcome data was read.

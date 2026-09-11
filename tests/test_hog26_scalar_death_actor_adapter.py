@@ -9,6 +9,7 @@ from clasher.entities import Building, DeathAreaEffectContainer, Troop
 from clasher.rl.simple_pytorch_backend import load_current_client_typed_vocabulary
 from clasher.rl.structured_obs import EntityCapacityError, StructuredObservationBuilder
 from clasher.torch_sim.diagnostics import battle_snapshot
+from scripts.hog26_scalar_actor_projection import compile_scalar_hand_lookup
 from scripts.hog26_scalar_death_actor_adapter import ScalarDeathActorAdapter
 from scripts.hog26_scalar_death_effect_receipts import (
     DeathAppearanceRule,
@@ -26,17 +27,17 @@ def _fixture(card, owner=0, *, extension=False, capacity=128):
                                   Position(9, 12), owner, battle.card_loader.get_card(card))
     extra = {"building_body:SkeletonContainerNew": len(vocab.token_names)} if extension else None
     rule = DeathAppearanceRule.compile(card, source, battle.card_loader, vocab, extra_tokens=extra)
-    return battle, builder, source, rule
+    return battle, builder, source, rule, compile_scalar_hand_lookup(builder, vocab)
 
 
 @pytest.mark.parametrize("card", ["Balloon", "BombTower", "SkeletonBarrel", "IceGolem", "Lumberjack"])
 @pytest.mark.parametrize("owner", [0, 1])
 def test_registered_deaths_join_actor_without_combat_or_future_fields(card, owner):
-    battle, builder, source, rule = _fixture(card, owner, extension=card == "SkeletonBarrel")
+    battle, builder, source, rule, hand_lookup = _fixture(card, owner, extension=card == "SkeletonBarrel")
     with ScalarDeathEffectRecorder(battle, [(source, rule)],
                                    witnessed_visible_to=lambda *_: True) as recorder:
         source.take_damage(source.hitpoints + 1)
-        adapter = ScalarDeathActorAdapter(battle, builder, recorder, visible_to=lambda *_: True)
+        adapter = ScalarDeathActorAdapter(battle, builder, recorder, hand_lookup=hand_lookup, visible_to=lambda *_: True)
         if card == "Lumberjack":
             assert len(recorder.registered_internal_containers) == 1
             assert all(a.entity_mask.sum() == 6 for a in adapter.build())
@@ -65,7 +66,7 @@ def test_registered_deaths_join_actor_without_combat_or_future_fields(card, owne
 
 
 def test_unregistered_container_is_not_silently_excluded():
-    battle, builder, source, rule = _fixture("Lumberjack")
+    battle, builder, source, rule, hand_lookup = _fixture("Lumberjack")
     with ScalarDeathEffectRecorder(battle, [(source, rule)],
                                    witnessed_visible_to=lambda *_: True) as recorder:
         source.take_damage(source.hitpoints + 1)
@@ -75,34 +76,56 @@ def test_unregistered_container_is_not_silently_excluded():
         battle.entities[unknown.id] = unknown
         assert unknown is not original
         with pytest.raises(ValueError, match="no audited appearance"):
-            ScalarDeathActorAdapter(battle, builder, recorder, visible_to=lambda *_: True).build()
+            ScalarDeathActorAdapter(battle, builder, recorder, hand_lookup=hand_lookup, visible_to=lambda *_: True).build()
 
 
 def test_missing_token_visibility_gates_and_capacity_reject():
-    battle, builder, source, rule = _fixture("SkeletonBarrel")
+    battle, builder, source, rule, hand_lookup = _fixture("SkeletonBarrel")
     with ScalarDeathEffectRecorder(battle, [(source, rule)],
                                    witnessed_visible_to=lambda *_: True) as recorder:
         source.take_damage(source.hitpoints + 1)
         with pytest.raises(ValueError, match="vocabulary identity"):
-            ScalarDeathActorAdapter(battle, builder, recorder, visible_to=lambda *_: True).build()
-        actors = ScalarDeathActorAdapter(battle, builder, recorder,
+            ScalarDeathActorAdapter(battle, builder, recorder, hand_lookup=hand_lookup, visible_to=lambda *_: True).build()
+        actors = ScalarDeathActorAdapter(battle, builder, recorder, hand_lookup=hand_lookup,
                                          visible_to=lambda e, _: e is not recorder.receipts[0].entity).build()
         assert all(a.entity_mask.sum() == 6 for a in actors)
-    battle, builder, source, rule = _fixture("Balloon", capacity=6)
+    battle, builder, source, rule, hand_lookup = _fixture("Balloon", capacity=6)
     with ScalarDeathEffectRecorder(battle, [(source, rule)],
                                    witnessed_visible_to=lambda *_: True) as recorder:
         source.take_damage(source.hitpoints + 1)
         with pytest.raises(EntityCapacityError):
-            ScalarDeathActorAdapter(battle, builder, recorder, visible_to=lambda *_: True).build()
+            ScalarDeathActorAdapter(battle, builder, recorder, hand_lookup=hand_lookup, visible_to=lambda *_: True).build()
 
 
 def test_witness_gate_removes_unwitnessed_seat_and_foreign_recorder_rejected():
-    battle, builder, source, rule = _fixture("Balloon")
+    battle, builder, source, rule, hand_lookup = _fixture("Balloon")
     with ScalarDeathEffectRecorder(battle, [(source, rule)],
                                    witnessed_visible_to=lambda _, seat: seat == 0) as recorder:
         source.take_damage(source.hitpoints + 1)
-        actors = ScalarDeathActorAdapter(battle, builder, recorder, visible_to=lambda *_: True).build()
+        actors = ScalarDeathActorAdapter(battle, builder, recorder, hand_lookup=hand_lookup, visible_to=lambda *_: True).build()
         assert (actors[0].entity_ids == rule.token).sum() == 1
         assert not (actors[1].entity_ids == rule.token).any()
         with pytest.raises(ValueError, match="another battle"):
-            ScalarDeathActorAdapter(BattleState(), builder, recorder, visible_to=lambda *_: True)
+            ScalarDeathActorAdapter(BattleState(), builder, recorder, hand_lookup=hand_lookup, visible_to=lambda *_: True)
+
+
+def test_adapter_uses_setup_hand_aliases_and_rejects_foreign_lookup():
+    battle, builder, source, rule, hand_lookup = _fixture("Balloon")
+    vocab = load_current_client_typed_vocabulary()
+    battle.players[0].hand[:] = ["Skeletons", "Log", "Fireball", "Knight"]
+    battle.players[0].cycle_queue.clear()
+    battle.players[0].cycle_queue.append("IceSpirits")
+    with ScalarDeathEffectRecorder(battle, [(source, rule)],
+                                   witnessed_visible_to=lambda *_: True) as recorder:
+        adapter = ScalarDeathActorAdapter(battle, builder, recorder,
+                                         hand_lookup=hand_lookup, visible_to=lambda *_: True)
+        assert adapter.build()[0].hand_ids.tolist() == [
+            vocab.resolve(name, "card_action")
+            for name in ("Skeletons", "Log", "Fireball", "Knight", "IceSpirits")
+        ]
+        other_builder = StructuredObservationBuilder(token_names=vocab.token_names,
+            max_entities=128, card_semantics_version=3, canonical_lane_globals=True)
+        other_lookup = compile_scalar_hand_lookup(other_builder, vocab)
+        with pytest.raises(ValueError, match="another builder"):
+            ScalarDeathActorAdapter(battle, builder, recorder,
+                                    hand_lookup=other_lookup, visible_to=lambda *_: True)

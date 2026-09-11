@@ -148,26 +148,31 @@ def test_verified_rows_are_detached_from_caller_mutations():
 def test_real_scalar_episode_keeps_full_deal_and_public_hand_tokens(learner_seat):
     from clasher.rl.simple_pytorch_backend import load_current_client_typed_vocabulary
     from clasher.rl.structured_obs import StructuredObservationBuilder
-    from scripts.hog26_scalar_actor_projection import build_scalar_reference_actors
+    from scripts.hog26_scalar_actor_projection import (
+        build_scalar_reference_actors,
+        compile_scalar_hand_lookup,
+    )
     from scripts.hog26_scalar_reference_episode import ScalarReferenceEpisode
 
     rows = audit_scalar_opening_metadata(metadata(), expected_authority=expected_authority())
     vocab = load_current_client_typed_vocabulary()
     builder = StructuredObservationBuilder(token_names=vocab.token_names, max_entities=64,
         card_semantics_version=3, canonical_lane_globals=True)
+    hand_lookup = compile_scalar_hand_lookup(builder, vocab)
     for row in rows:
         seeds = dict(row.stream_seeds)
         decks = row.world_decks(learner_seat)
         episode = ScalarReferenceEpisode.create(decks, seed=seeds["battle"],
             learner_seat=learner_seat, action_order_seed=seeds["action-order"])
         actors = build_scalar_reference_actors(episode.battle, builder, appearances=(),
+            hand_lookup=hand_lookup,
             visible_to=lambda entity, viewer: entity.is_visible_to(viewer))
         for seat in (0, 1):
             player = episode.battle.players[seat]
             assert tuple(player.deck) == decks[seat]
             assert tuple(player.hand) == decks[seat][:4]
             assert tuple(player.cycle_queue) == decks[seat][4:]
-            expected_ids = [builder.token_id(name, namespace="card_action") for name in decks[seat][:4]]
+            expected_ids = [vocab.resolve(name, "card_action") for name in decks[seat][:4]]
             assert actors[seat].hand_ids[:4].tolist() == expected_ids
         assert episode.battle.rng.getstate() == random.Random(seeds["battle"]).getstate()
         assert episode.action_order_rng.getstate() == random.Random(seeds["action-order"]).getstate()

@@ -26,7 +26,10 @@ from clasher.torch_sim.resident_outputs import TensorPublicStructuredObservation
 from clasher.torch_sim.simple_public_mask import SimplePublicMaskV2Provider
 from clasher.torch_sim.simple_standard import compile_standard_simple_setup
 from scripts.evaluate_hog26_simple_policy import load_model
-from scripts.hog26_scalar_actor_projection import build_scalar_reference_actors
+from scripts.hog26_scalar_actor_projection import (
+    build_scalar_reference_actors,
+    compile_scalar_hand_lookup,
+)
 from scripts.hog26_scalar_policy_inputs import scalar_policy_inputs
 from scripts.hog26_scalar_projectile_receipts import (
     ScalarOrdinaryProjectileDescriptor,
@@ -81,6 +84,10 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
     elif opponent is None and not policy_selfplay:
         raise ValueError("diagnostic requires an explicit opponent strategy or seed")
     initial_decks = [list(player.deck) for player in battle.players]
+    hand_lookup = compile_scalar_hand_lookup(builder, vocabulary)
+    for deck in initial_decks:
+        for card in deck:
+            hand_lookup.resolve(card)
     tower_slots = ("left_tower_hp", "right_tower_hp", "king_tower_hp")
     initial_hp_by_slot = [[float(getattr(player, name)) for name in tower_slots]
                           for player in battle.players]
@@ -131,6 +138,7 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
             )
             actor_adapter = ScalarDeathActorAdapter(
                 battle, outcome_builder, session, visible_to=visible,
+                hand_lookup=compile_scalar_hand_lookup(outcome_builder, vocabulary),
             )
             extra_tokens = session.extra_public_effect_tokens
             reference_provider = ScalarPublicPayloadMaskProvider(
@@ -161,6 +169,7 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
                 appearances = (*towers.appearances, *spells.appearances, *ordinary_appearances)
                 actors = build_scalar_reference_actors(
                     battle, builder, appearances=appearances,
+                    hand_lookup=hand_lookup,
                     visible_to=lambda entity, player: entity.is_visible_to(player),
                 )
             for actor in actors:

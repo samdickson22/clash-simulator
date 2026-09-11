@@ -8,7 +8,10 @@ from clasher.battle import BattleState
 from clasher.dynamic_spells import create_spell_from_json
 from clasher.rl.simple_pytorch_backend import load_current_client_typed_vocabulary
 from clasher.rl.structured_obs import EntityCapacityError, StructuredObservationBuilder
-from scripts.hog26_scalar_actor_projection import build_scalar_reference_actors
+from scripts.hog26_scalar_actor_projection import (
+    build_scalar_reference_actors,
+    compile_scalar_hand_lookup,
+)
 from scripts.hog26_scalar_public_effect_adapter import ScalarArrowsAppearance
 
 
@@ -30,6 +33,7 @@ def fixture(capacity=128):
 def project(battle, builder, bindings):
     return build_scalar_reference_actors(
         battle, builder, appearances=bindings,
+        hand_lookup=compile_scalar_hand_lookup(builder, load_current_client_typed_vocabulary()),
         visible_to=lambda entity, seat: entity.is_visible_to(seat),
     )
 
@@ -92,6 +96,7 @@ def test_other_seat_visible_effect_count_cannot_change_hidden_seat_padding():
     def views():
         return build_scalar_reference_actors(
             battle, builder, appearances=bindings,
+        hand_lookup=compile_scalar_hand_lookup(builder, load_current_client_typed_vocabulary()),
             visible_to=lambda entity, seat: id(entity) not in identities or seat == 1,
         )
 
@@ -112,3 +117,100 @@ def test_summoning_card_uses_serialized_body_identity():
     skeleton = builder.token_id("Skeleton", namespace="troop_body")
     assert skeleton != builder.token_id(None)
     assert int((actor.entity_ids == skeleton).sum()) == 3
+
+
+def test_all_configured_cards_resolve_across_full_decks_and_return_cycles():
+    import json
+    from collections import deque
+    from pathlib import Path
+
+    from clasher.card_aliases import resolve_card_name
+    from clasher.player import PlayerState
+    from scripts.hog26_scalar_pilot_protocol import LEARNER
+
+    vocabulary = load_current_client_typed_vocabulary()
+    builder = StructuredObservationBuilder(token_names=vocabulary.token_names)
+    lookup = compile_scalar_hand_lookup(builder, vocabulary)
+    manifest = json.loads(Path(
+        'training_decks/hog26_procedural_supported_seed1278401.json'
+    ).read_text())
+    definitions = builder.loader.load_card_definitions()
+    decks = [tuple(resolve_card_name(c, definitions) for c in entry['cards'])
+             for entry in manifest['decks']]
+    decks.append(tuple(resolve_card_name(c, definitions) for c in LEARNER))
+    all_cards = {card for deck in decks for card in deck}
+    assert len(all_cards) == 64
+    all_cards.update(resolve_card_name(c, definitions)
+                     for c in ('RoyalHogs', 'ArcherQueen', 'RoyalDelivery'))
+    for name in sorted(all_cards):
+        fillers = [card for card in sorted(all_cards) if card != name][:7]
+        decks.append((name, *fillers))
+    covered = set()
+    for deck in decks:
+        for name in deck:  # Check all eight positions before any public projection.
+            assert lookup.resolve(name) == vocabulary.resolve(name, 'card_action') > 1
+        player = PlayerState(player_id=0, deck=list(deck), hand=list(deck[:4]),
+                             cycle_queue=deque(deck[4:]))
+        # Alternating slots traverses the entire eight-card deck and returns
+        # played cards through the public next slot into the hand again.
+        played = []
+        for step in range(24):
+            expected_names = [*player.hand, player.cycle_queue[0]]
+            np.testing.assert_array_equal(lookup.hand_ids(player), [
+                vocabulary.resolve(name, 'card_action') for name in expected_names
+            ])
+            name = player.hand[step % 4]
+            covered.add(name)
+            played.append(name)
+            player.elixir = 10
+            assert player.play_card(name, builder.loader.get_card(name))
+            assert lookup.hand_ids(player)[step % 4] == 0
+            player.tick_card_refill(cooldown_ms=0)
+        assert set(played) == set(deck)
+        assert len(played) > len(set(played))
+    assert all_cards <= covered
+
+
+def test_hand_lookup_fails_closed_and_is_setup_bound_without_runtime_loads(monkeypatch):
+    from collections import deque
+
+    from clasher.player import PlayerState
+
+    vocabulary = load_current_client_typed_vocabulary()
+    builder = StructuredObservationBuilder(token_names=vocabulary.token_names)
+    lookup = compile_scalar_hand_lookup(builder, vocabulary)
+    with pytest.raises(TypeError):
+        lookup.token_by_card['IceGolem'] = 1
+    for bad in ('', 'UnknownNonemptyCard', 4, False):
+        with pytest.raises(ValueError, match='unresolved scalar hand card'):
+            lookup.resolve(bad)
+    assert lookup.resolve(None) == 0
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError('runtime loader or legacy resolver used')
+
+    monkeypatch.setattr(builder.loader, 'load_card_definitions', forbidden)
+    monkeypatch.setattr(builder, '_card_ids_for_player', forbidden)
+    player = PlayerState(player_id=0, hand=['IceGolem', None, 'Firecracker', 'Log'],
+                         cycle_queue=deque(['RoyalDelivery', 'UnknownPrivateFuture']))
+    assert lookup.hand_ids(player).tolist() == [
+        vocabulary.resolve('IceGolem', 'card_action'), 0,
+        vocabulary.resolve('Firecracker', 'card_action'),
+        vocabulary.resolve('Log', 'card_action'),
+        vocabulary.resolve('RoyalDelivery', 'card_action'),
+    ]
+    player.cycle_queue[1] = 'DifferentPrivateFuture'
+    assert lookup.hand_ids(player)[4] == vocabulary.resolve('RoyalDelivery', 'card_action')
+    player.cycle_queue[0] = 'UnknownVisibleNext'
+    with pytest.raises(ValueError, match='UnknownVisibleNext'):
+        lookup.hand_ids(player)
+
+    other = StructuredObservationBuilder(token_names=vocabulary.token_names)
+    with pytest.raises(ValueError, match='compiled for this builder'):
+        build_scalar_reference_actors(BattleState(), other, appearances=(),
+                                      visible_to=lambda e, s: True, hand_lookup=lookup)
+    reordered = list(vocabulary.token_names)
+    reordered[2], reordered[3] = reordered[3], reordered[2]
+    other = StructuredObservationBuilder(token_names=reordered)
+    with pytest.raises(ValueError, match='token order'):
+        compile_scalar_hand_lookup(other, vocabulary)

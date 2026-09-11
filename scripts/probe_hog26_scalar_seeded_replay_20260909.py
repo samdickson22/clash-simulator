@@ -99,7 +99,7 @@ def main():
                 if global_rng_digest() != before:
                     raise AssertionError("scalar diagnostic consumed process-global RNG")
                 expected_decks = [list(deck) for deck in audited.world_decks(seat)]
-                expected_hands = [[builder.token_id(card, namespace="card_action") for card in deck[:5]]
+                expected_hands = [[vocabulary.resolve(card, "card_action") for card in deck[:5]]
                                   for deck in expected_decks]
                 if result["initial_ordered_decks"] != expected_decks or result["initial_public_hand_ids"] != expected_hands:
                     raise AssertionError("actual initial scalar deal/public hand differs from independent reconstruction")

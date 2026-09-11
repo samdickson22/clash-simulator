@@ -26,7 +26,7 @@ def test_full_pilot_pairs_same_scenario(authority):
     assert len(plan["schedules"]) == 192
     assert len({s["metadata"]["scenarios"][0]["scenario_id"] for s in plan["schedules"]}) == 192
     assert all(s["learner_seats"] == [0, 1] for s in plan["schedules"])
-    assert {s["external_authority"]["campaign_seed"] for s in plan["schedules"]} == {"1279221", "1279222", "1279223"}
+    assert {s["external_authority"]["campaign_seed"] for s in plan["schedules"]} == {"1279261", "1279262", "1279263"}
 
 
 @pytest.mark.parametrize("mutation", ["gate", "missing_game", "permission", "source", "opening"])

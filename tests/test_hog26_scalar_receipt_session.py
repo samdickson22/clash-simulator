@@ -208,6 +208,7 @@ def test_bad_payload_fails_and_partial_session_cleanup_restores_hooks():
 @pytest.mark.parametrize("owner", [0, 1])
 def test_royal_delivery_session_projects_only_actual_recruit_and_restores(owner):
     from clasher.rl.structured_obs import StructuredObservationBuilder
+    from scripts.hog26_scalar_actor_projection import compile_scalar_hand_lookup
     from scripts.hog26_scalar_death_actor_adapter import ScalarDeathActorAdapter
 
     battle, session, _, vocab = _initial(("RoyalDelivery",))
@@ -216,7 +217,9 @@ def test_royal_delivery_session_projects_only_actual_recruit_and_restores(owner)
         token_names=session.token_names, max_entities=128,
         card_semantics_version=3, canonical_lane_globals=True,
     )
-    adapter = ScalarDeathActorAdapter(battle, builder, session, visible_to=lambda *_: True)
+    hand_lookup = compile_scalar_hand_lookup(builder, vocab)
+    adapter = ScalarDeathActorAdapter(battle, builder, session,
+                                      hand_lookup=hand_lookup, visible_to=lambda *_: True)
     token = vocab.resolve("DeliveryRecruit", "troop_body")
     position = Position(9, 12 if owner == 0 else 20)
     assert session.unavailable_public_observations == (
@@ -247,12 +250,15 @@ def test_royal_delivery_exact_scheduler_exclusion_does_not_hide_unregistered_cop
     from copy import copy
 
     from clasher.rl.structured_obs import StructuredObservationBuilder
+    from scripts.hog26_scalar_actor_projection import compile_scalar_hand_lookup
     from scripts.hog26_scalar_death_actor_adapter import ScalarDeathActorAdapter
 
-    battle, session, _, _ = _initial(("RoyalDelivery",))
+    battle, session, _, vocab = _initial(("RoyalDelivery",))
     builder = StructuredObservationBuilder(token_names=session.token_names, max_entities=128,
                                            card_semantics_version=3, canonical_lane_globals=True)
-    adapter = ScalarDeathActorAdapter(battle, builder, session, visible_to=lambda *_: True)
+    hand_lookup = compile_scalar_hand_lookup(builder, vocab)
+    adapter = ScalarDeathActorAdapter(battle, builder, session,
+                                      hand_lookup=hand_lookup, visible_to=lambda *_: True)
     with session:
         SPELL_REGISTRY["RoyalDelivery"].cast(battle, 0, Position(9, 12))
         scheduler = session.registered_royal_delivery_schedulers[0]

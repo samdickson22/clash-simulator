@@ -9,6 +9,7 @@ from clasher.entities import (
     Troop,
 )
 from scripts.hog26_scalar_actor_projection import (
+    ScalarHandLookup,
     build_scalar_reference_actors,
     scalar_body_token,
 )
@@ -24,9 +25,12 @@ class ScalarDeathActorAdapter:
     does not certify coverage of Lumberjack's possible bottle animation.
     """
 
-    def __init__(self, battle, builder, recorder, *, visible_to):
+    def __init__(self, battle, builder, recorder, *, visible_to, hand_lookup):
         if recorder.battle is not battle:
             raise ValueError("death recorder belongs to another battle")
+        if not isinstance(hand_lookup, ScalarHandLookup) or hand_lookup.builder is not builder:
+            raise ValueError("death actor hand lookup belongs to another builder")
+        self.hand_lookup = hand_lookup
         self.battle = battle
         self.builder = builder
         self.recorder = recorder
@@ -112,4 +116,5 @@ class ScalarDeathActorAdapter:
 
         return build_scalar_reference_actors(
             self.battle, self.builder, appearances=tuple(bindings), visible_to=visible,
+            hand_lookup=self.hand_lookup,
         )
