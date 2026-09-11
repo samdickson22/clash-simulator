@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "source_authority_sha256": "dd5ae1e3049a11fc819236ebed67e55970176faefeec6b9035501cda48b030c7",
+  "evidence": {
+    "datasets/derived/hog26_scalar_birthfixed_preflight_20260911/complete.json": "d96ec7340e2fd5081d76b17a12b3f3c1a156f74b0cf1c623a17880ee432ea14f",
+    "reports/hog26_scalar_birthfixed_noop_draw_20260911.json": "63e658a4a96829559785389a44b8d196378b9ad4c9338d59ebe0606d7f09d33c",
+    "reports/hog26_scalar_pilot_comparison_plan_20260911.json": "72697f6e56cf9bae9145a0fc4b73764c1e9a01f0d2c43b0a238e550fa5c5d9cb",
+    "reports/hog26_scalar_birthfixed_preflight_resume_20260911.log": "edfef0ce16588a125b86fe8839b41482934aac01011617959efc5383ab12ecf2",
+    "reports/hog26_scalar_zap_birth_comparison_20260911.json": "16dc7ddbfb9bdbf9a1b7c4f8a9d209ca70929d91d885eeb88a8b9ce3a1b19ff9",
+    "reports/hog26_scalar_birthfixed_first_game_comparison_20260911.json": "1cd1a584522c35548676d81ca00492deca947aee522f4c4f5a65349140cfe359",
+    "reports/hog26_scalar_birthfixed_tests_20260911.log": "c607301fb0428e1919212f000b10736a665ffd889102bc072017100bd0978fbd"
+  },
+  "checks": {
+    "complete_game_roundtrip_12": true,
+    "six_styles_both_seats": true,
+    "all_configured_hand_tokens_known": true,
+    "resume_hashes_unchanged": true,
+    "true_terminal_noop_draw": true,
+    "scalar_tests": 384,
+    "exact_failure_scenario_physics_rng_equivalent": true
+  },
+  "limitations": [
+    "Natural draw coverage may be absent; no-op control excluded from fitting.",
+    "Earlier 384-game alias-defective pilot rejected; interrupted 60-game prefix preserved and excluded.",
+    "No model calibration or ranking acceptance from preflight."
+  ]
+}

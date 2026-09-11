@@ -2261,3 +2261,36 @@ Whole-pilot alias rejection and corrective collection, 2026-09-11:
   Tree weight scale explicitly preserves the reference mean-one fitting-row
   convention; no performance result was used to choose it. Additive fitting code
   has separate source authority. No reserved outcome data was read.
+
+Spell primary-birth correction, 2026-09-11:
+- Corrective hand-fixed pilot stopped with exit 1 after 60 complete games and
+  24,183 rows. Schedule 30, learner seat 0, tick 3348 failed when Zap killed
+  IceGolem entity 345 and its death created FreezeIceGolemite AreaEffect 375.
+  The spell recorder incorrectly adopted every entity born during a cast.
+- Commit d9f2e695 observes only each audited spell's direct constructor through
+  local function globals. Damage callbacks keep their original globals and
+  independently owned children. Physics, spell scheduling and RNG are unchanged;
+  unknown effects still fail projection. All 384 scalar tests passed.
+- Exact failing game completed with 624 decisions at tick 4985. Independent
+  original-recorder control bypassed only zero-entity receipt binding, with no
+  physics or RNG overrides. Every result field except elapsed time matched,
+  including decision traces, observations, actions, terminal and RNG digests.
+  Evidence: hog26_scalar_zap_birth_comparison_20260911.json.
+- Preserve the interrupted 60 games at the seed1279261 directory. They are not
+  fitting data and will not be silently re-pinned to corrected source. Recollect
+  the identical 384-game schedule in a separate directory after new preflight.
+  No model fitting, reserved outcome access or acceptance-gate changes occurred.
+- Birth-corrected preflight completed 12 games / 4,941 rows; explicit resume
+  revalidated unchanged games. No-op control reached tick 6000 / 750 rows and
+  genuine draw, excluded from fitting. First prior saved game also matches all
+  19 decision arrays across 450 rows; this check does not cover the other 59.
+- New source authority dd5ae1e3049a11fc819236ebed67e55970176faefeec6b9035501cda48b030c7.
+  Plan digest 4adc5b90e4a945aacaf7e403326c2a214ce1c4a11f2d1236c7648287254806ff.
+  Frozen plan/pin: hog26_scalar_birthfixed_{frozen_plan,preflight_pin}_20260911.json.
+  Schedules and inherited requirements are exactly unchanged from handfixed plan.
+- Collector launched root session 13368. Output directory:
+  datasets/derived/hog26_scalar_birthfixed_pilot_seed1279261_20260911/.
+  Log: reports/hog26_scalar_birthfixed_pilot_seed1279261_20260911.log.
+  Do not edit src/clasher or scripts Python while this collector runs. Poll the
+  same handle; observation timeout is not process exit. Resume only after actual
+  exit or verified missing process, under the same source/plan/pin.

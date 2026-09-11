@@ -2,7 +2,7 @@
 
 This directory implements the predeclared training-family comparison. It does not authorize policy updates or final model acceptance.
 
-Use the corrected pilot at `datasets/derived/hog26_scalar_pilot_seed1279261_20260911`, its `hog26_scalar_handfixed_frozen_plan_20260911.json` plan, and its matching preflight pin. The earlier seed1279221 pilot is rejected because hand aliases were unresolved. Do not fit it or repair its observations retrospectively.
+Use the complete birth-corrected pilot at `datasets/derived/hog26_scalar_birthfixed_pilot_seed1279261_20260911`, its `hog26_scalar_birthfixed_frozen_plan_20260911.json` plan, and its matching preflight pin. The earlier hand-corrected seed1279261 directory stopped after 60 games on a spell receipt ownership defect and remains excluded. The earlier seed1279221 pilot is rejected because hand aliases were unresolved. Do not fit it or repair its observations retrospectively.
 
 `run_comparison.py` refuses partial collections. Before fitting it checks every game against the complete manifest, source and resource pins, independently reconstructed opening, exact metadata, public vocabulary, learner seat, label definition, and per-game audit. The model receives only the nine public fields listed in `PublicSequence`; metadata, labels, actions and success remain outside model inputs.
 

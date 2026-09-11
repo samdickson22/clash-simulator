@@ -1,0 +1,29 @@
+{
+  "all_equal": true,
+  "checks": {
+    "entity_ids": true,
+    "entity_features": true,
+    "entity_mask": true,
+    "hand_ids": true,
+    "global_features": true,
+    "opponent_history_ids": true,
+    "opponent_history_ages": true,
+    "opponent_seen_card_ids": true,
+    "entity_id_confidence": true,
+    "entity_feature_confidence": true,
+    "hand_id_confidence": true,
+    "global_feature_confidence": true,
+    "policy_entity_id_confidence": true,
+    "action_mask": true,
+    "tick": true,
+    "action": true,
+    "success": true,
+    "previous_action": true,
+    "episode_start": true,
+    "terminal_tick": true,
+    "winner": true,
+    "terminal_tower_hp": true
+  },
+  "rows": 450,
+  "role": "diagnostic-only in-memory comparison; no NPZ written"
+}
