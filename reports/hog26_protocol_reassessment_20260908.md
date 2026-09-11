@@ -2211,3 +2211,9 @@ Fresh scalar pilot authorized and started, 2026-09-11:
 - Completion requires all384games and independent full-corpus audit before
   fitting. Model code/synthetic memory checks may be prepared outside the
   source-frozen tree; /tmp/hog26_scalar_pilot_models/ is owned by comparison agent.
+- Model preparation subsequently finished outside the source tree:
+  scalar_models.py, test_scalar_models.py and benchmark.py in that /tmp directory.
+  Eight tests passed; synthetic fullgame2x750x128 forward/backward/AdamW onCPU
+  thread1 took1.183seconds and peaked at1,337,999,360bytesRSS. Globals2339params;
+  entity/history116900params with498tokens. No real corpus read or fitting.
+  Retain synthetic_fullgame_benchmark.json as the predeclared memory prerequisite.
