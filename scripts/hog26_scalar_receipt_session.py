@@ -30,6 +30,7 @@ from scripts.hog26_scalar_projectile_receipts import (
     ScalarOrdinaryProjectileDescriptor,
     ScalarProjectileReceiptRecorder,
 )
+from scripts.hog26_scalar_royal_delivery_receipts import ScalarRoyalDeliveryRecorder
 from scripts.hog26_scalar_special_projectile_receipts import (
     ScalarSpecialProjectileDescriptor,
     ScalarSpecialProjectileReceiptRecorder,
@@ -69,7 +70,7 @@ class ScalarReceiptSession:
             stats = loader.get_card(name)
             if stats is None:
                 raise ValueError(f"unknown supplied card: {name}")
-            if stats.card_type == "Spell":
+            if stats.card_type == "Spell" and name != "RoyalDelivery":
                 spells.append(name)
             if name in _COMMON_ROOTS:
                 self._add(
@@ -117,6 +118,10 @@ class ScalarReceiptSession:
                     ),
                 )
         self.spells = ScalarSpellReceiptRecorder(battle, spells, loader, vocabulary)
+        self.royal_delivery = (
+            ScalarRoyalDeliveryRecorder(battle, loader, vocabulary)
+            if "RoyalDelivery" in names else None
+        )
         self.special = ScalarSpecialProjectileReceiptRecorder(battle)
         self._stack = ExitStack()
         self._active = False
@@ -141,6 +146,8 @@ class ScalarReceiptSession:
             self.tower_recorder = self._stack.enter_context(self.towers.recorder())
             self._stack.enter_context(self.spells)
             self._stack.enter_context(self.special)
+            if self.royal_delivery is not None:
+                self._stack.enter_context(self.royal_delivery)
             self._active = True
             self.synchronize_sources()
         except BaseException:
@@ -271,6 +278,22 @@ class ScalarReceiptSession:
             for r in self._death_recorders
             for entity in r.registered_internal_containers
         )
+
+    @property
+    def registered_royal_delivery_schedulers(self):
+        """Exact stationary scheduler refs, separately typed from death containers."""
+        return (() if self.royal_delivery is None
+                else self.royal_delivery.registered_internal_containers)
+
+    @property
+    def royal_delivery_recruits(self):
+        return () if self.royal_delivery is None else tuple(self.royal_delivery.recruits)
+
+    @property
+    def unavailable_public_observations(self):
+        """Known visual gaps; scheduler exclusion does not supply a falling sprite."""
+        return (() if self.royal_delivery is None
+                else ("RoyalDelivery falling flight is not modeled by scalar",))
 
     def __exit__(self, exc_type, exc_value, traceback):
         self._active = False

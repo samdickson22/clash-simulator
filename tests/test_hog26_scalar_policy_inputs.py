@@ -47,7 +47,9 @@ def test_unknown_features_are_not_marked_exact_and_mask_receives_only_public_fie
     confidence = inputs.entity_feature_confidence
     assert confidence[:, :, 0, 9].all()
     assert confidence[:, :, 0, 30].all()
-    assert not confidence[:, :, 0, 11:23].any()
+    assert not confidence[:, :, 0, 11].any()
+    assert confidence[:, :, 0, 12].all()
+    assert not confidence[:, :, 0, 13:23].any()
     assert not confidence[:, :, 1, 9:].any()
     assert not confidence[:, :, 2:].any()
     assert not inputs.previous_rewards.any()

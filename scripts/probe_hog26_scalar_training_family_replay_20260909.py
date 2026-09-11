@@ -39,9 +39,7 @@ def main():
         raise ValueError("diagnostic indices must select declared training decks")
     paths = [p for p in subprocess.check_output(
         ["rg", "--files", "src/clasher", "scripts"], cwd=root, text=True,
-    ).splitlines() if p.endswith(".py") and (
-        p.startswith("src/clasher/") or "scalar_" in p
-        or p == "scripts/evaluate_hog26_simple_policy.py")]
+    ).splitlines() if p.endswith(".py")]
     hashes = {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in sorted(paths)}
     torch.set_num_threads(1)
     checkpoint = root / "checkpoints/hog26_direct_constant_event_seed1263001/candidate.pt"
@@ -92,9 +90,7 @@ def main():
             print(json.dumps({k: v for k, v in row.items() if k not in {"runs", "traceback"}}), flush=True)
     final_paths = {p for p in subprocess.check_output(
         ["rg", "--files", "src/clasher", "scripts"], cwd=root, text=True,
-    ).splitlines() if p.endswith(".py") and (
-        p.startswith("src/clasher/") or "scalar_" in p
-        or p == "scripts/evaluate_hog26_simple_policy.py")}
+    ).splitlines() if p.endswith(".py")}
     report["source_unchanged"] = final_paths == set(hashes) and all(
         hashlib.sha256((root / p).read_bytes()).hexdigest() == digest for p, digest in hashes.items()
     )

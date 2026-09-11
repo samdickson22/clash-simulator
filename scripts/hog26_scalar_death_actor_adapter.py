@@ -4,9 +4,14 @@ from clasher.entities import (
     AreaEffect,
     BuffAreaEffect,
     DeathAreaEffectContainer,
+    SpawnProjectile,
     TimedExplosive,
+    Troop,
 )
-from scripts.hog26_scalar_actor_projection import build_scalar_reference_actors
+from scripts.hog26_scalar_actor_projection import (
+    build_scalar_reference_actors,
+    scalar_body_token,
+)
 from scripts.hog26_scalar_public_effect_adapter import ScalarEffectAppearance
 
 
@@ -35,6 +40,25 @@ class ScalarDeathActorAdapter:
             if entity.is_alive and self.battle.entities.get(entity.id) is not entity:
                 raise ValueError("live internal container is outside registered battle")
             internal[id(entity)] = entity
+        # Royal Delivery is a stationary scheduler, not a visible projectile.
+        # Its separately named exact receipts cannot hide arbitrary SpawnProjectiles.
+        for entity in getattr(self.recorder, "registered_royal_delivery_schedulers", ()):
+            if type(entity) is not SpawnProjectile or id(entity) in internal:
+                raise ValueError("invalid exact RoyalDelivery scheduler registration")
+            if entity.is_alive and self.battle.entities.get(entity.id) is not entity:
+                raise ValueError("live RoyalDelivery scheduler is outside registered battle")
+            internal[id(entity)] = entity
+        for receipt in getattr(self.recorder, "royal_delivery_recruits", ()):
+            entity = receipt.entity
+            if type(entity) is not Troop:
+                raise ValueError("RoyalDelivery recruit class changed")
+            if not entity.is_alive:
+                continue
+            if self.battle.entities.get(entity.id) is not entity:
+                raise ValueError("live RoyalDelivery recruit is outside registered battle")
+            if (scalar_body_token(entity, self.builder) != receipt.token
+                    or self.builder.token_names[receipt.token] != "troop_body:DeliveryRecruit"):
+                raise ValueError("RoyalDelivery recruit lacks current body identity")
         deaths = {}
         for receipt in self.recorder.receipts:
             entity = receipt.entity

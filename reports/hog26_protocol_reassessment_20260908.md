@@ -2127,3 +2127,44 @@ Completed timed-body mask recertification, 2026-09-09:
   openings and RNG consumption, and build/audit complete-game retention before
   collecting the unchanged training quotas. Existing selection/calibration/final
   family roles and every acceptance gate remain unchanged. No new model fitted.
+
+Seeded scalar openings and reserved-card preparation, 2026-09-11:
+- Integrated canonical-name opening algorithm v1, distinct from native
+  seeded-ordered-decks-v1. Campaign and derived seeds serialize as decimal text;
+  canonical inventory is part of authority. Returned metadata cannot mutate
+  the stored authority. Opening, battle, action-order and opponent streams are
+  independently domain-separated. Paired seats/repeats retain shared identity.
+- Independent production auditor imports no producer helpers, reconstructs
+  Fisher-Yates deals and all stream/identity hashes, requires caller-pinned
+  authority, and rejects unknown schema/version or self-consistent role changes.
+  The episode controller accepts an explicit independent action-order seed while
+  preserving its earlier default. Random opponents draw only for the actual
+  opponent from public masks and own RNG state.
+- Reserved RHogs AQ2.9 metadata adds ArcherQueen, RoyalDelivery and RoyalHogs
+  beyond the procedural card union. Synthetic fixtures add AQ projectile token265
+  and verify RoyalHog body459. A genuine ability-mask gap required current public
+  deployment Boolean12 plus availability; remaining timer13 stays unavailable.
+  Both-seat AQ pending/ready/cast-pending mask checks match the scalar test oracle.
+- RoyalDelivery emits a stationary scheduler then a recruit, with no modeled
+  falling trajectory. The session separately registers exact scheduler refs,
+  validates recruit body identity, and records flight as explicitly unavailable.
+  It never substitutes a target-position sprite. This is not rendering parity.
+  No reserved evaluation games or outcomes were opened.
+- Replay source fingerprints now cover every Python file under src/clasher and
+  scripts; the former scalar-name filter omitted shared public_effect_probe.py.
+  Earlier diagnostics remain scoped evidence under their recorded source lists,
+  not complete dependency authority for future collection.
+- 324 scalar tests passed; scalar scripts/tests pass Ruff and diff checks.
+  Fresh diagnostic seed1279211: training deck13, balanced/random, paired seats,
+  two exact executions each. Four distinct seat scenarios/eight executions
+  completed at ticks3600/4592/3600/3600 with zero rejected card actions. All full
+  initial decks and five public hand/next-card tokens match reconstruction;
+  process-global Python/NumPy/Torch RNG state is unchanged by each game.
+- All380 recorded Python sources and resource authority stayed unchanged.
+  Compact artifact: hog26_scalar_seeded_replay_audit_20260911.json. Raw local
+  report SHA-25630d346828e51905afd0e960340dcedadb21065a280ab18c1573bf0daca3dc0e8.
+- Collection remains closed. Still required: full role-specific scalar protocol
+  and scenario manifests, controlled true-terminal draw checks, complete-game
+  corpus retention/auditing, and broader seeded/style diagnostics under the new
+  deployment feature. Preserve all existing training/selection/calibration/final
+  roles, budgets and gates. No new outcome model or policy has been fitted.

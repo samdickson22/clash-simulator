@@ -361,3 +361,75 @@ def test_extended_common_full_steps_preserve_physics_and_rng(card):
             assert _physics_hash(instrumented) == _physics_hash(control)
             assert instrumented.rng.getstate() == control.rng.getstate()
         assert recorder.receipts
+
+
+@pytest.mark.parametrize("owner", [0, 1])
+def test_archer_queen_actual_cloaked_attacks_preserve_synthetic_control(owner):
+    def fixture():
+        loader = CardDataLoader()
+        descriptor = ScalarOrdinaryProjectileDescriptor.compile(
+            "ArcherQueen", loader, load_current_client_typed_vocabulary()
+        )
+        battle = BattleState(rng=random.Random(1279058))
+        source = battle._spawn_entity(
+            Troop,
+            Position(5, 14 if owner == 0 else 18),
+            owner,
+            loader.get_card("ArcherQueen"),
+        )
+        target = battle._spawn_entity(
+            Building,
+            Position(5, 17 if owner == 0 else 15),
+            1 - owner,
+            loader.get_card("Cannon"),
+        )
+        source.deploy_delay_remaining = target.deploy_delay_remaining = 0
+        source.placement_pending = target.placement_pending = False
+        target.damage = 0
+        battle.players[owner].elixir = 10
+        return battle, source, descriptor
+
+    battle, source, descriptor = fixture()
+    control, control_source, _ = fixture()
+    assert descriptor.token == 265
+    assert battle.activate_champion_ability(owner)
+    assert control.activate_champion_ability(owner)
+    with ScalarProjectileReceiptRecorder(battle, [(source, descriptor)]) as recorder:
+        for _ in range(60):
+            battle.step()
+            control.step()
+            assert _physics_hash(battle) == _physics_hash(control)
+            assert battle.rng.getstate() == control.rng.getstate()
+            assert source._stealth_until == control_source._stealth_until
+            assert (
+                source.attack_mode_multiplier == control_source.attack_mode_multiplier
+            )
+        assert recorder.receipts
+        assert all(receipt.appearance.token == 265 for receipt in recorder.receipts)
+        assert source.is_visible_to(0) and source.is_visible_to(1)
+    assert "_create_projectile" not in source.__dict__
+
+
+@pytest.mark.parametrize("owner", [0, 1])
+def test_archer_queen_serialized_body_descriptor_accepts_actual_ordinary_birth(owner):
+    from clasher.factory.dynamic_factory import troop_from_character_data
+
+    loader = CardDataLoader()
+    descriptor = ScalarOrdinaryProjectileDescriptor.compile_spawn_body(
+        "ArcherQueen",
+        ("summonCharacterData",),
+        loader,
+        load_current_client_typed_vocabulary(),
+    )
+    body = loader.get_card("ArcherQueen")._raw_entry["summonCharacterData"]
+    battle = BattleState(rng=random.Random(1279058))
+    source = battle._spawn_entity(
+        Troop, Position(5, 14), owner, troop_from_character_data(body["name"], body)
+    )
+    target = battle._spawn_entity(
+        Troop, Position(5, 17), 1 - owner, loader.get_card("Knight")
+    )
+    with ScalarProjectileReceiptRecorder(battle, [(source, descriptor)]) as recorder:
+        source._create_projectile(target, battle)
+        assert len(recorder.receipts) == 1
+        assert recorder.appearances[0].token == 265

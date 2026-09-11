@@ -203,3 +203,63 @@ def test_bad_payload_fails_and_partial_session_cleanup_restores_hooks():
         assert "_create_projectile" not in tower.__dict__
     with pytest.raises(RuntimeError, match="active session"):
         session.synchronize_sources()
+
+
+@pytest.mark.parametrize("owner", [0, 1])
+def test_royal_delivery_session_projects_only_actual_recruit_and_restores(owner):
+    from clasher.rl.structured_obs import StructuredObservationBuilder
+    from scripts.hog26_scalar_death_actor_adapter import ScalarDeathActorAdapter
+
+    battle, session, _, vocab = _initial(("RoyalDelivery",))
+    control = BattleState(rng=random.Random(1279040))
+    builder = StructuredObservationBuilder(
+        token_names=session.token_names, max_entities=128,
+        card_semantics_version=3, canonical_lane_globals=True,
+    )
+    adapter = ScalarDeathActorAdapter(battle, builder, session, visible_to=lambda *_: True)
+    token = vocab.resolve("DeliveryRecruit", "troop_body")
+    position = Position(9, 12 if owner == 0 else 20)
+    assert session.unavailable_public_observations == (
+        "RoyalDelivery falling flight is not modeled by scalar",
+    )
+    with session:
+        SPELL_REGISTRY["RoyalDelivery"].cast(battle, owner, position)
+        SPELL_REGISTRY["RoyalDelivery"].cast(control, owner, position)
+        scheduler = session.registered_royal_delivery_schedulers[0]
+        assert session.registered_internal_containers == ()
+        for _ in range(70):
+            session.synchronize_sources()
+            battle.step()
+            control.step()
+            assert _hash(battle) == _hash(control)
+            assert battle.rng.getstate() == control.rng.getstate()
+            actors = adapter.build(appearances=session.appearances)
+            for actor in actors:
+                assert (actor.entity_ids == token).sum() == len(session.royal_delivery_recruits)
+            assert not any(a.entity is scheduler for a in session.appearances)
+        assert len(session.royal_delivery_recruits) == 1
+    assert "cast" not in vars(SPELL_REGISTRY["RoyalDelivery"])
+    assert "update" not in vars(scheduler)
+    assert "_spawn_units" not in vars(scheduler)
+
+
+def test_royal_delivery_exact_scheduler_exclusion_does_not_hide_unregistered_copy():
+    from copy import copy
+
+    from clasher.rl.structured_obs import StructuredObservationBuilder
+    from scripts.hog26_scalar_death_actor_adapter import ScalarDeathActorAdapter
+
+    battle, session, _, _ = _initial(("RoyalDelivery",))
+    builder = StructuredObservationBuilder(token_names=session.token_names, max_entities=128,
+                                           card_semantics_version=3, canonical_lane_globals=True)
+    adapter = ScalarDeathActorAdapter(battle, builder, session, visible_to=lambda *_: True)
+    with session:
+        SPELL_REGISTRY["RoyalDelivery"].cast(battle, 0, Position(9, 12))
+        scheduler = session.registered_royal_delivery_schedulers[0]
+        scheduler.activation_delay = 0  # Projection still excludes this exact receipt.
+        assert all(a.entity_mask.sum() == 6 for a in adapter.build())
+        unknown = copy(scheduler)
+        unknown.id = battle.next_entity_id
+        battle.entities[unknown.id] = unknown
+        with pytest.raises(ValueError, match="no audited appearance"):
+            adapter.build()

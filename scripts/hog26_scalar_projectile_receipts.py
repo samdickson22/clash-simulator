@@ -25,6 +25,7 @@ def _payload_digest(payload) -> str:
 _COMMON_ROOTS = frozenset(
     {
         "Musketeer",
+        "ArcherQueen",
         "Cannon",
         "Archers",
         "BabyDragon",

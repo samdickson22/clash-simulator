@@ -58,6 +58,8 @@ def build_scalar_reference_actors(battle, builder, *, appearances, visible_to):
             row[5 if isinstance(entity, Building) else 4] = 1
             row[9] = np.clip(entity.hitpoints / max(1, entity.max_hitpoints), 0, 1)
             row[10] = builder._shield_fraction(entity)
+            # Current placement animation is public; its remaining timer is not exposed.
+            row[12] = float(bool(getattr(entity, "placement_pending", False)))
             # Static visible-body metadata only; never entity.damage or its
             # temporary speed/range modifiers and internal facing target.
             speed = float(getattr(stats, "speed", 0) or 0)

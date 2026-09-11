@@ -49,12 +49,36 @@ def hash_tensors(values):
 
 
 def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
-        opponent_deck=None, expanded_receipts=False):
-    decks = [DECK, tuple(reversed(DECK)) if opponent_deck is None else tuple(opponent_deck)]
+        opponent_deck=None, expanded_receipts=False, opening_scenario=None,
+        random_opponent_seed=None):
+    action_order_seed = None
+    if opening_scenario is None:
+        decks = [DECK, tuple(reversed(DECK)) if opponent_deck is None else tuple(opponent_deck)]
+    else:
+        streams = dict(opening_scenario.stream_seeds)
+        seed = streams["battle"]
+        action_order_seed = streams["action-order"]
+        decks = list(opening_scenario.relative_decks)
+        if random_opponent_seed is not None and random_opponent_seed != streams["opponent"]:
+            raise ValueError("opponent seed differs from the opening scenario authority")
     if seat == 1:
         decks.reverse()
-    episode = ScalarReferenceEpisode.create(decks, seed=seed, learner_seat=seat)
+    episode = ScalarReferenceEpisode.create(
+        decks, seed=seed, learner_seat=seat, action_order_seed=action_order_seed,
+    )
     battle = episode.battle
+    random_opponent = None
+    if random_opponent_seed is not None:
+        from scripts.hog26_scalar_public_random_opponent import (
+            ScalarPublicRandomOpponent,
+        )
+
+        random_opponent = ScalarPublicRandomOpponent(
+            seed=random_opponent_seed, opponent_seat=1 - seat,
+        )
+    elif opponent is None:
+        raise ValueError("diagnostic requires an explicit opponent strategy or seed")
+    initial_decks = [list(player.deck) for player in battle.players]
     tower_setup = None if expanded_receipts else ScalarTowerReceiptSetup.compile(
         battle, tuple(battle.entities.values()), builder.loader, vocabulary,
         source_visible_to=lambda source, player: source.is_visible_to(player),
@@ -77,6 +101,7 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
     previous = np.full(2, NO_OP_ACTION, dtype=np.int64)
     starts = [True, True]
     trace = []
+    initial_public_hands = None
     observed_effect_tokens = set()
     began = time.perf_counter()
     with ExitStack() as stack:
@@ -138,6 +163,8 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
                     (actor.entity_features[:, 6] == 1) | (actor.entity_features[:, 7] == 1)
                 )
                 observed_effect_tokens.update(int(token) for token in actor.entity_ids[effect_rows])
+            if not trace:
+                initial_public_hands = [actor.hand_ids.tolist() for actor in actors]
             if expanded_receipts:
                 inputs, masks = scalar_policy_inputs_with_payload_mask(
                     actors, reference_provider, previous_actions=previous, episode_starts=starts,
@@ -153,8 +180,13 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
             })
             with torch.inference_mode():
                 selected, _, _, next_state, _ = model.act(inputs, state, deterministic=True)
-                scripted = opponent(SimpleNamespace(actor=policy_public, public_action_masks=masks.masks))
-            actions = scripted[0].numpy().copy()
+                if random_opponent is None:
+                    scripted = opponent(SimpleNamespace(actor=policy_public, public_action_masks=masks.masks))
+            if random_opponent is None:
+                actions = scripted[0].numpy().copy()
+            else:
+                actions = np.full(2, NO_OP_ACTION, dtype=np.int64)
+                actions[1 - seat] = random_opponent.sample(masks.masks[0])
             actions[seat] = int(selected[seat, 0])
             record = {
                 "tick": battle.tick,
@@ -175,8 +207,18 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
         terminal = [sum(float(getattr(player, name)) for name in
                         ("left_tower_hp", "right_tower_hp", "king_tower_hp"))
                     for player in battle.players]
-        return {"seat": seat, "seed": seed, "complete": True, "ticks": battle.tick,
+        return {"seat": seat, "seed": seed if opening_scenario is None else str(seed),
+                "complete": True, "ticks": battle.tick,
+                "initial_ordered_decks": initial_decks,
+                "initial_public_hand_ids": initial_public_hands,
+                "opening_scenario_id": None if opening_scenario is None else opening_scenario.scenario_id,
+                "opening_cluster_id": None if opening_scenario is None else opening_scenario.cluster_id,
+                "random_opponent_seed": None if random_opponent_seed is None else str(random_opponent_seed),
+                "opponent_rng_sha256": None if random_opponent is None else hashlib.sha256(
+                    repr(random_opponent.getstate()).encode()).hexdigest(),
                 "expanded_receipts": expanded_receipts,
+                "unavailable_public_observations": list(session.unavailable_public_observations)
+                if expanded_receipts else [],
                 "mask_semantics_digest": masks.semantics_digest,
                 "mask_semantics": masks.semantics,
                 "extra_public_effect_tokens": list(extra_tokens),
@@ -202,8 +244,7 @@ def main():
     root = Path(__file__).resolve().parents[1]
     source_paths = [p for p in subprocess.check_output(
         ["rg", "--files", "src/clasher", "scripts"], cwd=root, text=True).splitlines()
-        if p.endswith(".py") and (p.startswith("src/clasher/") or "scalar_" in p
-                                  or p == "scripts/evaluate_hog26_simple_policy.py")]
+        if p.endswith(".py")]
     source_hashes = {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in sorted(source_paths)}
     checkpoint = root / "checkpoints/hog26_direct_constant_event_seed1263001/candidate.pt"
     model, builder = load_model(checkpoint, torch.device("cpu"))

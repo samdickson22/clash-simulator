@@ -82,7 +82,7 @@ def scalar_policy_inputs(
     bodies = present & ((features[..., 4] == 1) | (features[..., 5] == 1))
     availability = torch.zeros_like(features)
     availability[..., :9] = present[..., None]
-    for index in (9, 10, 23, 24, 25, 26, 30):
+    for index in (9, 10, 12, 23, 24, 25, 26, 30):
         availability[..., index] = bodies
     previous = torch.as_tensor(previous_actions, dtype=torch.int64)
     starts = torch.as_tensor(episode_starts, dtype=torch.bool)
