@@ -50,8 +50,10 @@ def hash_tensors(values):
 
 def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
         opponent_deck=None, expanded_receipts=False, opening_scenario=None,
-        random_opponent_seed=None):
+        random_opponent_seed=None, episode_writer=None, policy_selfplay=False, control_noop=False):
     action_order_seed = None
+    if policy_selfplay and random_opponent_seed is not None:
+        raise ValueError("choose frozen-policy mirror or random opponent, not both")
     if opening_scenario is None:
         decks = [DECK, tuple(reversed(DECK)) if opponent_deck is None else tuple(opponent_deck)]
     else:
@@ -76,9 +78,12 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
         random_opponent = ScalarPublicRandomOpponent(
             seed=random_opponent_seed, opponent_seat=1 - seat,
         )
-    elif opponent is None:
+    elif opponent is None and not policy_selfplay:
         raise ValueError("diagnostic requires an explicit opponent strategy or seed")
     initial_decks = [list(player.deck) for player in battle.players]
+    tower_slots = ("left_tower_hp", "right_tower_hp", "king_tower_hp")
+    initial_hp_by_slot = [[float(getattr(player, name)) for name in tower_slots]
+                          for player in battle.players]
     tower_setup = None if expanded_receipts else ScalarTowerReceiptSetup.compile(
         battle, tuple(battle.entities.values()), builder.loader, vocabulary,
         source_visible_to=lambda source, player: source.is_visible_to(player),
@@ -180,14 +185,18 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
             })
             with torch.inference_mode():
                 selected, _, _, next_state, _ = model.act(inputs, state, deterministic=True)
-                if random_opponent is None:
+                if random_opponent is None and not policy_selfplay:
                     scripted = opponent(SimpleNamespace(actor=policy_public, public_action_masks=masks.masks))
-            if random_opponent is None:
+            if policy_selfplay:
+                actions = selected[:, 0].cpu().numpy().copy()
+            elif random_opponent is None:
                 actions = scripted[0].numpy().copy()
             else:
                 actions = np.full(2, NO_OP_ACTION, dtype=np.int64)
                 actions[1 - seat] = random_opponent.sample(masks.masks[0])
             actions[seat] = int(selected[seat, 0])
+            if control_noop:
+                actions[:] = NO_OP_ACTION
             record = {
                 "tick": battle.tick,
                 "actor_sha256": hash_tensors([getattr(a, f.name) for a in actors for f in fields(a)]),
@@ -199,6 +208,11 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
                                     if actions[s] < NO_OP_ACTION else None for s in (0, 1)],
             }
             record.update(episode.step(actions, masks.masks[0].numpy(), tick_context=frame))
+            if episode_writer is not None:
+                episode_writer.append(
+                    actors[seat], inputs, learner_seat=seat, tick=record["tick"],
+                    action=int(actions[seat]), success=record["action_success"][seat],
+                )
             trace.append(record)
             state, previous, starts = next_state, actions, [False, False]
             if len(trace) % 50 == 0:
@@ -207,6 +221,9 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
         terminal = [sum(float(getattr(player, name)) for name in
                         ("left_tower_hp", "right_tower_hp", "king_tower_hp"))
                     for player in battle.players]
+        terminal_hp_by_slot = [[float(getattr(player, name)) for name in tower_slots]
+                              for player in battle.players]
+        fractions = np.asarray(terminal_hp_by_slot) / np.asarray(initial_hp_by_slot)
         return {"seat": seat, "seed": seed if opening_scenario is None else str(seed),
                 "complete": True, "ticks": battle.tick,
                 "initial_ordered_decks": initial_decks,
@@ -214,6 +231,8 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
                 "opening_scenario_id": None if opening_scenario is None else opening_scenario.scenario_id,
                 "opening_cluster_id": None if opening_scenario is None else opening_scenario.cluster_id,
                 "random_opponent_seed": None if random_opponent_seed is None else str(random_opponent_seed),
+                "policy_selfplay": policy_selfplay,
+                "control_noop": control_noop,
                 "opponent_rng_sha256": None if random_opponent is None else hashlib.sha256(
                     repr(random_opponent.getstate()).encode()).hexdigest(),
                 "expanded_receipts": expanded_receipts,
@@ -224,9 +243,13 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
                 "extra_public_effect_tokens": list(extra_tokens),
                 "decision_visible_effect_token_ids": sorted(observed_effect_tokens),
                 "winner": battle.winner, "remaining_tower_hp": terminal,
+                "initial_tower_hp_by_slot": initial_hp_by_slot,
+                "terminal_tower_hp_by_slot": terminal_hp_by_slot,
                 "outcome": ("draw" if battle.winner in (None, -1) else
                             "win" if battle.winner == seat else "loss"),
-                "terminal_tower_margin": (terminal[seat] / battle._starting_total_tower_hp[seat]
+                "terminal_tower_margin": float(fractions[seat].mean() - fractions[1 - seat].mean()),
+                "margin_definition": "mean-own-tower-fraction-minus-mean-enemy-tower-fraction",
+                "terminal_tower_hp_weighted_margin": (terminal[seat] / battle._starting_total_tower_hp[seat]
                                           - terminal[1 - seat] / battle._starting_total_tower_hp[1 - seat]),
                 "initial_tower_hp": [battle._starting_total_tower_hp[i] for i in (0, 1)],
                 "trace": trace, "battle_rng_sha256": hashlib.sha256(repr(battle.rng.getstate()).encode()).hexdigest(),

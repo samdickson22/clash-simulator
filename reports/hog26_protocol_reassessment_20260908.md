@@ -2168,3 +2168,46 @@ Seeded scalar openings and reserved-card preparation, 2026-09-11:
   corpus retention/auditing, and broader seeded/style diagnostics under the new
   deployment feature. Preserve all existing training/selection/calibration/final
   roles, budgets and gates. No new outcome model or policy has been fitted.
+
+Fresh scalar pilot authorized and started, 2026-09-11:
+- User approved a small fresh-data comparison, beginning with the planned384
+  natural training games. The frozen plan preserves families000--007,32decks,
+  six styles and paired seats;192relative scenarios. Fresh campaign seeds are
+  1279221/1279222/1279223. No reserved selection/calibration/final role is opened.
+- New per-game corpus writer retains every learner decision, including no-op
+  and failed requests, with outcome/public identities and separate policy
+  identity confidence. Metadata/provenance and future labels are separate from
+  public feature arrays. Atomic exclusive NPZ publication occurs only after
+  actual terminal, source/RNG/opening checks; independent validation checks
+  shapes, complete boundaries, vocabularies, confidences, masks and labels.
+- Corrected a diagnostic label mismatch BEFORE new fitting data publication:
+  training margin remains the established mean of three own towerHP fractions
+  minus mean of three enemy fractions. Prior scalar diagnostic total-HP-weighted
+  margins remain historical; no thresholds or old reports were rewritten.
+- Mirrored frozen-policy informal probes at seeds1279231/1279232 yielded seat0
+  wins at tick3068, not draws. No symmetry fix or forced draw label was applied.
+  A separate no-op control reached a genuine draw at tick6000,750rows,zero margin;
+  this verifies the terminal label path and is explicitly excluded from fitting.
+  Natural pilot draw coverage may be absent; final WDL acceptance remains gated.
+- Two excluded12-game preflights covered all six styles and both seats. Final
+  version retained5634decisions with zero rejected card requests. Completed
+  directory resume revalidated all hashes and recollected/rewrote no games.
+  Per-output OS lock prevents concurrent collectors; --resume preserves each
+  existing atomic game only after exact metadata/hash/audit revalidation.
+-366scalar tests and scoped Ruff passed. Frozen source authority:
+  786d1095fdb266a28bd62386c96560c03c9795616efb4ec9a11c8816c349decb.
+  Plan digest367979e32c9c6b055f34f2fddf148ef7ae1ca3a309c1b8d9008391da99981a4a.
+  Authority covers383Python sources plus checkpoint/carddata/manifest/protocol
+  and runtime. Do not edit any src/clasher or scripts Python while collecting.
+- Frozen artifacts: hog26_scalar_pilot_frozen_plan_20260911.json and
+  hog26_scalar_pilot_preflight_pin_20260911.json. Comparison specifications are
+  fixed separately in hog26_scalar_pilot_comparison_plan_20260911.json, pinned
+  as preflight evidence. Models remain untrained; no partial-pilot fitting.
+- Collection started via root session55408, with verified committed games.
+  Output datasets/derived/hog26_scalar_pilot_seed1279221_20260911/;
+  log reports/hog26_scalar_pilot_seed1279221_20260911.log. Resume only after
+  verifying that original handle/process is terminal or missing, using the same
+  command and output with --resume. A polling timeout is not a stopped collector.
+- Completion requires all384games and independent full-corpus audit before
+  fitting. Model code/synthetic memory checks may be prepared outside the
+  source-frozen tree; /tmp/hog26_scalar_pilot_models/ is owned by comparison agent.
