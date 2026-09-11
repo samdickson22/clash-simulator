@@ -2294,3 +2294,76 @@ Spell primary-birth correction, 2026-09-11:
   Do not edit src/clasher or scripts Python while this collector runs. Poll the
   same handle; observation timeout is not process exit. Resume only after actual
   exit or verified missing process, under the same source/plan/pin.
+- Automatic comparison sequence started after user continuation, root session
+  82945. Supervisor is outside frozen collection source at
+  /Users/sam/Library/Application Support/ClasherMonitor/run_comparison_sequence.py.
+  It holds an exclusive lock, waits for collector PID61703 and complete.json,
+  then invokes the existing independently auditing runner for globals, tree,
+  entity sequentially. Any nonzero exit or absent completion stops the sequence.
+  No partial fitting or fitting-output reuse. Model output stems:
+  reports/hog26_scalar_birthfixed_{globals,tree,entity}_comparison_20260911.
+  Supervisor log: hog26_scalar_birthfixed_comparison_sequence_20260911.log.
+  Live state: /Users/sam/Library/Application Support/ClasherMonitor/comparison-status.json.
+  Scheduled 10-minute checks now inspect this supervisor before any fitting launch.
+- Birth-corrected collection completed all 384 games / 154,811 rows across
+  192 paired scenarios, with 80 wins / 0 draws / 304 losses and zero rejected
+  card actions. Natural draw learning remains inconclusive; no controls added.
+  Complete manifest SHA 74c745c8b42203f8cd83aa7aed19cb1ae8fb9ac9e57cf3b86c5790e745183911.
+- Independent fitting-loader audit passed all 384 games and published its
+  data audit in the globals fitting_manifest.json. Supervisor started globals
+  PID95031; first fixed 30-epoch fold reached epoch30. This is fitting progress,
+  not calibrated model acceptance. Sequential tree/entity and scheduled checks
+  remain active; inspect supervisor state before launching anything else.
+- Globals finished all 8 fits. Excluded-family all-state decisive AUC is
+  0.76338 / 0.71023 across seeds; NLL gain +0.03382 / -0.01213. Probability
+  improvement is not consistent across seeds; neither result is acceptance.
+- Tree finished all 4 folds. Excluded-family all-state margin MAE 0.13867
+  versus current-margin baseline 0.17733, gain +0.03865 (scenario-cluster
+  95% interval +0.02096 to +0.05646). Early/middle improve, but late gain
+  -0.00213 (interval -0.03256 to +0.02771); representative late gain -0.02023.
+  Late coverage is only 18 games / 15 paired scenarios. Do not infer a passed
+  phase gate or broad generalization from the overall improvement.
+- Entity/history is active under PID7048; one fold complete and second fold
+  epoch11 at scheduled check. Supervisor PID89457 remains sole sequence owner.
+  No source or frozen comparison changes; no additional fits launched.
+- The supervised comparison completed successfully: globals8/tree4/entity8
+  fits. No collector or fitting process remained at completion review.
+  Entity seed2 also failed excluded-family margin: MAE0.20761 versus baseline
+  0.17733, NLL gain -0.21289. Seed1 MAE0.22122, NLL gain -0.22912. Strong
+  early/middle training fits with worse excluded predictions support a
+  generalization problem. No architecture or candidate is accepted.
+- Consolidated completed metrics and source hashes are recorded in
+  hog26_scalar_pilot_completed_comparison_review_20260911.json.
+- Next experiment is a separately declared frozen-model fresh-seed diagnostic,
+  not automatic expansion or refitting of the completed pilot. Exactly384games
+  on the same32training decks/six styles/paired seats with seeds1279601/2/3.
+  Compare every frozen fit on fresh seen families and fresh excluded families;
+  this separates new-scenario failure from family transfer without changing
+  training. Diagnostic labels can never become untouched acceptance evidence.
+  Spec: hog26_seed_transfer_spec_20260911.json. Reserved roles/gates unchanged.
+- Driver and auditor live outside the old source inventory in
+  experiments/hog26_seed_transfer. Tests verify collector/auditor are unchanged
+  copies except protocol import/root path, fresh role/seeds, exact quota,
+  source mutation rejection and preserved decks/requirements. Three tests pass.
+  Driver, evaluator, original implementation and all frozen model files become
+  hashed resources in the new source authority. Original source bytes preserved.
+- Fresh-seed diagnostic preflight passed 12games/4,941rows, zero rejected cards;
+  explicit resume revalidated unchanged outputs. All original simulator/public
+  projection source hashes match the completed birth-corrected pilot exactly.
+  New source authority 2a41e9c2bc7eeb272e1c4cb941f65c8d88f9f6781c56c3897a60ee0942f6541a.
+  New plan digest 84d163a01e9dbcb97b58e5fc4d9e46b29ed59037cc2867a788890457a78f60cb.
+  Plan/pin: hog26_seed_transfer_{frozen_plan,preflight_pin}_20260911.json.
+- Diagnostic collection plus inference-only evaluation supervisor launched root
+  session47415, holding the same exclusive supervision lock as the prior sequence.
+  Live state remains /Users/sam/Library/Application Support/ClasherMonitor/comparison-status.json.
+  Output data: datasets/derived/hog26_seed_transfer_seed1279601_20260911/.
+  Output evaluation: reports/hog26_seed_transfer_evaluation_20260911/.
+  Sequence log: reports/hog26_seed_transfer_sequence_20260911.log.
+  Collection log: reports/hog26_seed_transfer_collection_20260911.log.
+  Evaluation independently audits the full corpus, then evaluates all20frozen fits.
+  Do not change src/scripts, either experiment directory's Python, frozen models
+  or pinned specs while the new sequence runs. Any failure stops the next stage.
+- Existing persistent app goal remains usageLimited. Explicit create_goal attempt
+  was rejected because the existing objective is unfinished; do not falsely mark
+  it complete. Objective and continuation steps are in hog26_active_objective_20260911.md.
+  Ten-minute scheduled checks were updated for the new diagnostic stage.

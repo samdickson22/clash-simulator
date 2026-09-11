@@ -1,0 +1,22 @@
+{
+  "schema": "clasher.frozen-model-seed-transfer.v1",
+  "purpose": "Separate memorization of training scenarios from transfer to new deck families before further training or data scaling.",
+  "natural_games": 384,
+  "paired_scenarios": 192,
+  "campaign_seeds": [1279601,1279602,1279603],
+  "role": "diagnostic-frozen-model-seed-transfer",
+  "families": "original training families 000 through 007, all 32 decks",
+  "styles": "same six pilot styles, unchanged frozen behavior policy",
+  "source": "unchanged scalar simulator and public projection; separately pinned diagnostic driver and all frozen model artifacts",
+  "repeated_deals": "reject any cluster shared with the original pilot or another diagnostic scenario",
+  "models": "All 8 globals fits, 4 tree fits, and 8 entity/history fits from the completed birth-corrected comparison. No selection of a favorable seed or fold.",
+  "evaluation": "For every frozen fold, report fresh games whose families were present during fitting separately from fresh games whose families were excluded. Use original fixed phase/representative rules, original fitting priors, and 2000 scenario-cluster bootstrap replicates with seed1279511. Report each fold and each model seed, without selecting winners from diagnostic labels.",
+  "comparison": "Compare fresh seen-family performance to original fitting-family performance and fresh excluded-family performance to original excluded-family performance. No claim of a controlled single-variable family effect across different matchups.",
+  "fitting_allowed": false,
+  "calibration_fitting_allowed": false,
+  "promotion_allowed": false,
+  "reserved_outcome_access": false,
+  "draw_scope": "Natural only. Zero draws remain inconclusive; no-op fixtures excluded.",
+  "future_use": "Diagnostic only. Never reinterpret these labels as untouched acceptance data.",
+  "stopping": "Exact quota, no outcome-based early stopping or retained-game filtering. Any source, collection or independent audit failure stops evaluation."
+}
