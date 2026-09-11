@@ -1,0 +1,6 @@
+{
+  "tree_sample_weights": "Mean one over fitting rows, preserving the predeclared relative phase/representative weights. Matches scripts/screen_hog26_training_family_margin.py::fitting_phase_weights; l2 remains1. No pilot model results inspected to choose this convention.",
+  "entity_storage": "Universally masked trailing entity slots may be cropped per batch; permutation/padding tests verify unchanged predictions. No live entities dropped.",
+  "class_order": "Saved corpus W/D/L explicitly reversed to comparison L/D/W.",
+  "collection": "Only complete384pilot admitted; source/resource/game/opening/identity/label checks precede model fitting."
+}

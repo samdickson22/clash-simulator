@@ -1,0 +1,29 @@
+{
+  "scope": "synthetic feasibility only; no corpus or outcome training",
+  "source_sha256": {
+    "scalar_models.py": "4a5d421acb2a16ab1a6a083844570b676d473c3db8710991821f7a28bf074428",
+    "test_scalar_models.py": "adf7ed207e1802e16b36da8d7aab78ceffe5eb399f142159fd4c33abac182ddf",
+    "benchmark.py": "2efc9e244ae62a8cf5a605928406f475268cd09e881a9151cfc5bc531be47431",
+    "scalar_training.py": "ab3d9ca77564216665902aacb6a8902a837a8afee67f82c527eeb5cecbebc8ed"
+  },
+  "shape": {
+    "batch_games": 2,
+    "decisions": 750,
+    "entities": 128
+  },
+  "device": "cpu",
+  "threads": 1,
+  "torch": "2.10.0",
+  "dtype": "float32",
+  "bptt": "full-game; no detach or truncation",
+  "global_parameters": 2339,
+  "entity_parameters": 116900,
+  "synthetic_generation_seconds": 0.01533974998164922,
+  "forward_including_optimizer_setup_seconds": 0.6316317920573056,
+  "backward_optimizer_seconds": 0.4014971249271184,
+  "total_seconds": 1.0484686669660732,
+  "peak_process_rss_bytes": 1336754176,
+  "gradient_norm": 32.167686462402344,
+  "loss": 1.9059364795684814,
+  "finite_gradients": true
+}
