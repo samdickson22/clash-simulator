@@ -88,16 +88,16 @@ def test_nested_and_exceptional_contexts_restore_instance_methods():
     assert spell.cast == original
 
 
-def test_exception_during_actual_cast_restores_wrapper():
+def test_unaudited_cast_override_rejected_and_restored():
     battle = _battle("Fireball", 0)
     spell = SPELL_REGISTRY["Fireball"]
     original = spell.cast
     def failing_cast(*args):
         raise RuntimeError("cast failure")
     spell.cast = failing_cast
+    recorder = _recorder(battle, ["Fireball"])
     try:
-        with (pytest.raises(RuntimeError, match="cast failure"),
-              _recorder(battle, ["Fireball"]) as recorder):
+        with (pytest.raises(ValueError, match="unaudited cast override"), recorder):
             assert battle.deploy_card(0, "Fireball", Position(9, 14))
             for _ in range(25):
                 battle.step()
@@ -126,3 +126,99 @@ def test_zap_hits_visible_tower_but_emits_no_persistent_entity(owner):
         assert len(recorder.receipts) == 1
         assert recorder.receipts[0].appearances == ()
         assert recorder.appearances == ()
+
+
+@pytest.mark.parametrize("card", ["IceGolem", "BombTower", "Lumberjack", "Golem"])
+@pytest.mark.parametrize("owner", [0, 1])
+def test_zap_lethal_callbacks_have_independent_birth_ownership(card, owner):
+    from clasher.entities import Building, Troop
+    from scripts.hog26_scalar_public_effect_adapter import project_scalar_public_effects
+
+    battle = _battle("Zap", owner)
+    control = _battle("Zap", owner)
+    targets = []
+    for current in (battle, control):
+        target = current._spawn_entity(Building if card == "BombTower" else Troop,
+                                       Position(9, 14), 1 - owner, CardDataLoader().get_card(card))
+        target.deploy_delay_remaining = 0
+        target.placement_pending = False
+        target.hitpoints = 1
+        targets.append(target)
+    initial_ids = set(battle.entities)
+    with _recorder(battle, ["Zap"]) as recorder:
+        for current in (battle, control):
+            assert current.deploy_card(owner, "Zap", Position(9, 14))
+        unknown_effect_seen = False
+        children_seen = False
+        for _ in range(150):
+            battle.step()
+            control.step()
+            assert _physics(battle) == _physics(control)
+            children = [e for key, e in battle.entities.items() if key not in initial_ids]
+            children_seen |= bool(children)
+            for child in children:
+                if child.is_alive and not isinstance(child, (Troop, Building)):
+                    with pytest.raises(ValueError, match="no audited appearance"):
+                        project_scalar_public_effects([child], recorder.appearances,
+                                                      visible_to=lambda *_: True)
+                    unknown_effect_seen = True
+        assert not targets[0].is_alive
+        assert children_seen
+        assert len(recorder.receipts) == 1
+        assert recorder.appearances == ()
+        if card != "Golem":
+            assert unknown_effect_seen
+
+
+@pytest.mark.parametrize("spell_name,root_count", [("Fireball", 1), ("Arrows", 30)])
+def test_real_projectile_impact_death_children_do_not_inherit_spell_appearance(spell_name, root_count):
+    from clasher.entities import Troop
+    from scripts.hog26_scalar_public_effect_adapter import project_scalar_public_effects
+
+    battle = _battle(spell_name, 0)
+    control = _battle(spell_name, 0)
+    initial = []
+    for current in (battle, control):
+        target = current._spawn_entity(Troop, Position(9, 14), 1,
+                                       CardDataLoader().get_card("IceGolem"))
+        target.hitpoints = 1
+        target.deploy_delay_remaining = 0
+        target.placement_pending = False
+        initial.append(target)
+    with _recorder(battle, [spell_name]) as recorder:
+        for current in (battle, control):
+            assert current.deploy_card(0, spell_name, Position(9, 14))
+        saw_unowned_death_effect = False
+        for _ in range(120):
+            battle.step()
+            control.step()
+            assert _physics(battle) == _physics(control)
+            for entity in battle.entities.values():
+                if (entity.is_alive and getattr(entity, "spell_name", None) == "FreezeIceGolemite"):
+                    assert all(a.entity is not entity for a in recorder.appearances)
+                    with pytest.raises(ValueError, match="no audited appearance"):
+                        project_scalar_public_effects([entity], recorder.appearances,
+                                                      visible_to=lambda *_: True)
+                    saw_unowned_death_effect = True
+        assert not initial[0].is_alive
+        assert len(recorder.appearances) == root_count
+        assert saw_unowned_death_effect
+
+
+def test_exception_after_actual_creator_restores_spell_instance(monkeypatch):
+    from scripts.hog26_scalar_public_effect_adapter import ScalarSpellAppearance
+
+    battle = _battle("Fireball", 0)
+    spell = SPELL_REGISTRY["Fireball"]
+    original = spell.cast
+    def reject(self, created):
+        assert len(created) == 1
+        raise RuntimeError("receipt failure")
+    monkeypatch.setattr(ScalarSpellAppearance, "bind_cast", reject)
+    with (pytest.raises(RuntimeError, match="receipt failure"),
+          _recorder(battle, ["Fireball"]) as recorder):
+        assert battle.deploy_card(0, "Fireball", Position(9, 14))
+        for _ in range(25):
+            battle.step()
+    assert spell.cast == original
+    assert not recorder.receipts

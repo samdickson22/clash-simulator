@@ -1,10 +1,28 @@
 """Diagnostic receipts from actual queued scalar spell execution."""
 
+import dis
 from dataclasses import dataclass, fields
+from types import FunctionType
 
 from clasher.card_aliases import resolve_card_name
 from clasher.dynamic_spells import load_dynamic_spells
-from clasher.spells import SPELL_REGISTRY
+from clasher.entities import (
+    AreaEffect,
+    Graveyard,
+    Projectile,
+    RollingProjectile,
+    SpawnProjectile,
+)
+from clasher.spells import (
+    SPELL_REGISTRY,
+    AreaEffectSpell,
+    DirectDamageSpell,
+    GraveyardSpell,
+    ProjectileSpell,
+    RollingProjectileSpell,
+    SpawnProjectileSpell,
+    TornadoSpell,
+)
 from scripts.hog26_scalar_public_effect_adapter import (
     ScalarArrowsAppearance,
     ScalarSpellAppearance,
@@ -68,13 +86,59 @@ class ScalarSpellReceiptRecorder:
         return self
 
     def _wrapper(self, original, rule):
+        spell = getattr(original, "__self__", None)
+        routes = {
+            DirectDamageSpell: None,
+            ProjectileSpell: Projectile,
+            AreaEffectSpell: AreaEffect,
+            SpawnProjectileSpell: SpawnProjectile,
+            RollingProjectileSpell: RollingProjectile,
+            TornadoSpell: AreaEffect,
+            GraveyardSpell: Graveyard,
+        }
+        if (type(spell) not in routes
+                or getattr(original, "__func__", None) is not type(spell).cast):
+            raise ValueError("spell has an unaudited cast override")
+        authority = original.__func__
+        constructor = routes[type(spell)]
+        if constructor is not None:
+            name = constructor.__name__
+            uses = [i for i in dis.get_instructions(authority) if i.argval == name]
+            if (authority.__globals__.get(name) is not constructor
+                    or len(uses) != 1 or uses[0].opname != "LOAD_GLOBAL"
+                    or not uses[0].arg & 1):
+                raise ValueError("spell primary constructor route changed")
+
         def cast(battle_state, player_id, target_pos):
             if battle_state is not self.battle:
                 return original(battle_state, player_id, target_pos)
-            before = set(battle_state.entities)
-            result = original(battle_state, player_id, target_pos)
-            created = tuple(entity for key, entity in battle_state.entities.items()
-                            if key not in before)
+            if type(spell).cast is not authority:
+                raise ValueError("spell cast authority changed")
+            created = []
+
+            def construct(**kwargs):
+                expected_id = battle_state.next_entity_id
+                if (kwargs.get("id") != expected_id or expected_id in battle_state.entities
+                        or kwargs.get("player_id") != player_id):
+                    raise ValueError("spell primary birth lost allocator or owner provenance")
+                entity = constructor(**kwargs)
+                created.append(entity)
+                return entity
+
+            # Only the audited cast's direct constructor load is intercepted.
+            # Damage callbacks execute their original globals, so their children
+            # retain independent ownership even when born during this cast.
+            local_globals = dict(authority.__globals__)
+            if constructor is not None:
+                if local_globals.get(name) is not constructor:
+                    raise ValueError("spell primary constructor authority changed")
+                local_globals[name] = construct
+            local = FunctionType(authority.__code__, local_globals, authority.__name__,
+                                 authority.__defaults__, authority.__closure__)
+            local.__kwdefaults__ = authority.__kwdefaults__
+            result = local(spell, battle_state, player_id, target_pos)
+            if any(battle_state.entities.get(e.id) is not e for e in created):
+                raise ValueError("spell primary birth was not inserted by its creator")
             if not result and getattr(rule, "entity_type", object) is not None:
                 raise ValueError("registered queued spell cast failed")
             appearances = rule.bind_cast(created)
