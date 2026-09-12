@@ -2446,3 +2446,14 @@ Data-scaling memory prerequisite, 2026-09-12:
 - No new fitting launched. Remaining: executable comparison supervisor/runner,
   complete1536-game audit, actual memory checks and frozen fitting authority.
   Latest collection check:38/1152games,16710rows,zero rejected card actions.
+- Prepared run_scaling_comparison.py in the separate fitting directory. It uses
+  the complete1536-game loader, exact1152fit/384excluded fold counts, unchanged
+  neural training functions and fitting-only float64 tree features. Metrics,
+  original seeds and fixed epoch/iteration budgets remain unchanged.
+- The runner requires a passed readiness record matching its Python inventory,
+  frozen collection plan,1536-game audit and memory verification. Missing/false
+  memory readiness refuses before corpus access or output creation. Seven
+  preparation tests pass; Ruff clean. No real-data fitting launched.
+- Remaining before execution: actual full-size memory audit, final combined
+  corpus audit, matching readiness publication and supervisor. Collection is
+  still active; do not change its pinned sources/resources.

@@ -17,7 +17,9 @@ one game at a time. Tests match the original feature values/order exactly and
 prove excluded games are not read to build fitting features. A10GiB matrix
 limit fails before allocation; it does not remove rows or change the model.
 
-This is preparation, not a complete runnable experiment or fitting permission.
-Remaining work: supervised comparison runner, actual combined-data audit,
-full-size memory checks and separate fitting source/input manifest. Collection
-completion alone does not authorize starting this code.
+run_scaling_comparison.py now provides the1536-game comparison entry point.
+It requires a passed readiness record matching its implementation, collection
+plan, full combined data audit and memory verification. It preserves original
+metrics/folds/seeds and refuses missing memory readiness before corpus access.
+Remaining work: actual full-size memory checks, complete combined-data audit,
+readiness publication and supervised execution. No fitting is authorized yet.
