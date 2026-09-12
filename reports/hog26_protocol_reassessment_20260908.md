@@ -2464,3 +2464,17 @@ Data-scaling memory prerequisite, 2026-09-12:
   No corpus rows were read or fitted. This verifies the maximal batch, not the
   full combined1536-game loader plus tree/neural training memory prerequisite.
 - Collector remains healthy at112/1152games,46765decisions,zero rejected actions.
+- Added check_full_memory.py outside collection source. It refuses partial data,
+  audits complete1536games, retains their public arrays, and measures either
+  the maximal synthetic neural batch or largest fitting-family tree matrix plus
+  binning/one histogram iteration with deterministic artificial targets. No
+  terminal outcomes enter probe targets and no candidate model is saved. Tree
+  result is a preprocessing/one-iteration memory check, not a100-iteration fit.
+- One memory-audit supervisor waits for collector PID46259 and complete.json:
+  root session92460; log hog26_scaling_memory_sequence_20260912.log. Separate
+  waiting lock prevents duplicates; after collection it acquires the shared
+  experiment lock and runs neural/tree audits sequentially. External RSS guard
+  terminates its own probe above18GiB. It never starts outcome fitting.
+- Eight preparation tests pass; Ruff clean. Scheduled prompt now includes the
+  waiting audit supervisor. After success, review matching data/source/runtime
+  reports before publishing fitting readiness. No partial corpus fitting.
