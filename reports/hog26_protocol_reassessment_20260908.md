@@ -2491,3 +2491,14 @@ Data-scaling memory prerequisite, 2026-09-12:
   collection and waiting audit supervisor remain the sole active experiment jobs.
   Do not edit scaling-fit Python once the post-collection memory probes start,
   since each probe pins the entire fitting implementation.
+- Prepared post-scaling inference in experiments/hog26_scaling_eval, outside all
+  active collection/memory source inventories. It retains the previous fresh-seed
+  diagnostic distribution and all20scaled fits, reporting288fresh seen-family
+  versus96fresh excluded-family games per fold. This remains opened diagnostic
+  evidence; it cannot replace untouched acceptance data.
+- The evaluator refuses before diagnostic access until globals/tree/entity are
+  all complete, verifies shared1536-game fitting authority/source/vocabulary,
+  pins checkpoints and its own code, and derives priors only from exact original
+ 384+new1152training manifests. One focused incomplete-fit refusal test passes;
+  imports/CLI and Ruff pass. No scaled models exist yet, so prediction execution
+  remains unverified until fitting completes. No collection source was edited.
