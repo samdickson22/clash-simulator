@@ -2434,3 +2434,15 @@ Data-scaling memory prerequisite, 2026-09-12:
   Preserve all pinned Python/resources. Prepare fitting code in a separate new
   experiment directory while collecting, then verify combined audit/memory and
   freeze fitting inputs before execution. Scheduled prompt updated accordingly.
+- While1152-game collection runs, fitting preparation now lives separately at
+  experiments/hog26_scaling_fit. Original training/prediction function ASTs are
+  unchanged; only compact batching is imported. Controlled synthetic globals
+  and entity training produce bit-identical parameters after multiple updates.
+- Installed sklearn1.7.2 uses float64 tree input. Added fitting-only direct
+  float64 feature assembly and per-game prediction to avoid all-game float32
+  storage plus indexing and conversion copies. Tests verify original feature
+  values/order and no excluded-game feature access.10GiB matrix guard fails
+  before allocation; no row reduction. Five preparation tests pass; Ruff clean.
+- No new fitting launched. Remaining: executable comparison supervisor/runner,
+  complete1536-game audit, actual memory checks and frozen fitting authority.
+  Latest collection check:38/1152games,16710rows,zero rejected card actions.
