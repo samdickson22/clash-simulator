@@ -29,8 +29,10 @@ for live supervision. This file records the continuing objective, not a passed
 gate or permission to change frozen acceptance requirements.
 
 Current execution update: both384-game corpora and all20frozen-model transfer
-evaluations are complete and reviewed. The next stage is implementing and
-validating reports/hog26_data_scaling_draft_20260912.json: add1152fresh training
-games to the original384, preserving all diagnostic and reserved roles. The
-draft does not yet authorize collection or fitting. Finish its prerequisites
-and freeze the concrete experiment before launch. Do not relaunch prior jobs.
+evaluations are complete and reviewed. Collection of1152fresh training games
+is now running under reports/hog26_scaling_frozen_plan_20260912.json, with no
+automatic fitting. Original384+new1152 form the proposed1536-game comparison.
+Preserve pinned source while collecting; prepare new fitting code separately,
+then verify complete combined audit, actual training memory and fitting-source
+pins before execution. Diagnostic384 remains excluded from training. Read the
+latest chronology and live supervisor state; do not relaunch prior jobs.

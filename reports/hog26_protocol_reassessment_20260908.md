@@ -2405,3 +2405,32 @@ Data-scaling memory prerequisite, 2026-09-12:
   Evidence: hog26_data_scaling_memory_20260912.json. This estimate is not a
   measured full1536-game training peak. Still integrate sequential audited
   compaction, combined-corpus isolation and source pinning before freeze/fitting.
+- Implemented scaling_protocol.py, collect_scaling.py and scaling_dataset.py
+  outside prior frozen directories. Exact new quota1152, combined1536, all
+  original family/deck/style/seat allocations, three fresh scenarios per pairing.
+  New clusters are disjoint from original training and opened diagnostic data.
+  The preflight explicitly resets its diagnostic episode count to one.
+- Combined auditing retains the original independent checks, adds384+1152game,
+  192+576cluster, per-family and1152fit/384excluded counts, and rejects diagnostic
+  overlap. It refuses a partial extension before reading original arrays.
+  Eleven tests passed; Ruff clean. Existing simulator and model source unchanged.
+- Full original384-game audit through the compact loader passed:154811rows,
+ 925133790retained public bytes, peakRSS1406369792bytes,5.57seconds. Evidence:
+  hog26_scaling_compact_loader_20260912.json. This supports collection readiness;
+  full1536-game training/tree peak remains a separate pre-fitting prerequisite.
+- Scaling excluded preflight launched root session85897. Source is frozen for
+  this run; no training has started. Next: confirm12-game completion and resume,
+  then freeze the exact new collection plan/pin before launching1152games.
+- Scaling preflight and resume passed12games/4941rows, zero rejected cards.
+  Frozen source9de069399d79f7741e8087fc52ddd565b65eddfd20c2e8547de28652674008a4;
+  plan4bca106e3eda28ebaa671041f6bae99eecee3c12ce61fd07eee68678c0fbbd43.
+  Files: hog26_scaling_{frozen_plan,preflight_pin}_20260912.json. Collection-only
+  readiness is separate from the remaining1536-game fitting memory/authority gate.
+- Supervised1152-game collection launched root session66819. Data directory:
+  datasets/derived/hog26_scaling_train_seed1279701_20260912/; collection log:
+  reports/hog26_scaling_collection_20260912.log; supervisor log:
+  reports/hog26_scaling_sequence_20260912.log. Live state in the common monitor
+  comparison-status.json. No fitting is automatically launched on completion.
+  Preserve all pinned Python/resources. Prepare fitting code in a separate new
+  experiment directory while collecting, then verify combined audit/memory and
+  freeze fitting inputs before execution. Scheduled prompt updated accordingly.

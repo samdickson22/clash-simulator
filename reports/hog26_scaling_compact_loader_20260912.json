@@ -1,0 +1,14 @@
+{
+  "audit": {
+    "games": 384,
+    "rows": 154811,
+    "clusters": 192,
+    "plan_sha256": "4adc5b90e4a945aacaf7e403326c2a214ce1c4a11f2d1236c7648287254806ff",
+    "complete_manifest_sha256": "74c745c8b42203f8cd83aa7aed19cb1ae8fb9ac9e57cf3b86c5790e745183911"
+  },
+  "public_bytes": 925133790,
+  "peak_rss_bytes": 1406369792,
+  "elapsed_seconds": 5.566792375058867,
+  "all_games_audited_before_compaction": true,
+  "scope": "Original384-game compact loader; not full1536-game training peak."
+}
