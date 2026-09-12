@@ -1,0 +1,68 @@
+{
+  "schema": "clasher.scalar-data-scaling-draft.v1",
+  "status": "draft-not-frozen",
+  "date": "2026-09-12",
+  "purpose": "Test whether more independent training scenarios reduce the entity/history new-seed generalization gap before changing architecture capacity.",
+  "collection_allowed": false,
+  "fitting_allowed": false,
+  "training": {
+    "existing_games": 384,
+    "existing_directory": "datasets/derived/hog26_scalar_birthfixed_pilot_seed1279261_20260911",
+    "new_games": 1152,
+    "combined_games": 1536,
+    "new_paired_scenarios": 576,
+    "new_episodes_per_deck_style_seat": 3,
+    "families": "family-000 through family-007 only",
+    "decks": 32,
+    "styles": [
+      "balanced",
+      "random",
+      "bridge-pressure",
+      "reactive-defense",
+      "slow-push",
+      "spell-control"
+    ],
+    "seats": [
+      0,
+      1
+    ],
+    "campaign_seeds": [
+      1279701,
+      1279702,
+      1279703
+    ],
+    "role": "train-scalar-data-scaling",
+    "disjointness": "Reject clusters shared with either prior384-game corpus or new scenarios. Do not retry whole games based on labels. Retain all complete scheduled games."
+  },
+  "models": {
+    "architecture_and_optimizer": "Unchanged original globals, tree and entity/history definitions and fitting objectives.",
+    "neural_seeds": [
+      1279501,
+      1279502
+    ],
+    "neural_epochs": 30,
+    "tree_seed": 1279501,
+    "tree_iterations": 100,
+    "folds": "Same four excluded-family pairs;1152fit/384excluded games per fold at1536 total.",
+    "reference": "Original384-game fits preserved as the lower-size reference; no rerun or checkpoint selection."
+  },
+  "evaluation": {
+    "training_family_cross_validation": "Same phase, representative, family, seat, style and scenario-cluster reporting.",
+    "fresh_seed_diagnostic": "Reuse the384-game seed-transfer corpus only as explicitly opened diagnostic data, never as clean acceptance. Compare new-seed behavior with same seen/excluded-family partition.",
+    "priors": "Recompute only from each enlarged fitting fold.",
+    "interpretation": "A data-scaling effect under fixed epochs also includes more optimizer updates. Do not claim a compute-matched causal result.",
+    "draws": "No natural draws in existing768 games. New natural draws must be reported; absence remains inconclusive. No manufactured draw mass or old controls in natural fitting."
+  },
+  "before_freeze": [
+    "Implement exact1152-game collection contract outside preserved source trees, with full schedule and overlap audit.",
+    "Pin source/resources and original384game manifest before collection.",
+    "Verify disk capacity and memory for1536-game audit/fitting without reducing entity or temporal coverage.",
+    "Validate combined-corpus isolation and per-fold count checks; no diagnostic labels in fitting.",
+    "Run excluded preflight and freeze plan before any new collection.",
+    "Before fitting, audit complete new1152 games and original384 games; freeze combined manifest and implementation."
+  ],
+  "reserved_roles": "Unchanged, unopened. No selection/calibration/final collection from this draft.",
+  "policy_updates": false,
+  "search": false,
+  "acceptance": false
+}

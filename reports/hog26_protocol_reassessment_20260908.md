@@ -2367,3 +2367,41 @@ Spell primary-birth correction, 2026-09-11:
   was rejected because the existing objective is unfinished; do not falsely mark
   it complete. Objective and continuation steps are in hog26_active_objective_20260911.md.
   Ten-minute scheduled checks were updated for the new diagnostic stage.
+
+Completed fresh-seed review and next draft, 2026-09-12:
+- Fresh diagnostic:384games/155496rows,86wins/0draws/298losses; all20frozen
+  evaluations completed. Reverified every pinned resource and20report inventories
+  with288fresh seen-family and96fresh excluded-family games per fit. No jobs live.
+- Entity NLL gain is negative in all8fresh seen-family fits (-0.7054 to -0.0943)
+  and all8excluded-family fits (-0.6734 to -0.0193): failure extends to new
+  scenarios from trained families. Tree margin gain remains positive overall
+  in all4fresh excluded folds (+0.0202 to +0.0931), but late coverage by fold is
+  3/9/0/9games. No phase or model acceptance follows. Review with exact sources:
+  hog26_seed_transfer_review_20260912.json.
+- User-authorized backend goal clear/reset succeeded; get_goal independently
+  verified active status. Earlier usageLimited notes are historical.
+- Next concrete draft: hog26_data_scaling_draft_20260912.json. Add1152fresh
+  training games to original384 for a1536-game comparison with unchanged models,
+  epochs and folds. Diagnostic384 remains excluded from fitting and is already
+  opened evidence. Implement collection, combined audit and resource checks,
+  then freeze before launch. Draft collection_allowed/fitting_allowed are false.
+  The scheduled prompt now advances this work instead of polling completed jobs.
+
+Data-scaling memory prerequisite, 2026-09-12:
+- No collection/evaluation processes were live; both prior experiments remain
+  complete. The queued old monitoring prompt was stale; next stage is the
+  separately declared1536-game scaling draft, with no new fitting started.
+- Measured original384-game public arrays occupy5,362,033,796bytes; direct4x
+  scaling would need21.45GB before model/reporting overhead on24GiB hardware.
+  Compressed disk cost is small (31.7MB for original384); memory is the issue.
+- Added storage-only compaction and variable-width batch reconstruction under
+  experiments/hog26_data_scaling. Remove only trailing entity slots masked at
+  every timestep AND zero in every entity field. Reject nonzero discarded
+  storage. No timestep or visible entity is removed; original code is unchanged.
+- Six focused tests pass. All384original games were hash-verified and checked
+  in192paired batches: every reconstructed model tensor is bit-identical to
+  the original batch builder. Public storage drops to926,991,522bytes, giving
+  an estimated3.71GB for1536games; maximum observed width47, median20.
+  Evidence: hog26_data_scaling_memory_20260912.json. This estimate is not a
+  measured full1536-game training peak. Still integrate sequential audited
+  compaction, combined-corpus isolation and source pinning before freeze/fitting.

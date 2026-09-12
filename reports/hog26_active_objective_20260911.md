@@ -6,10 +6,11 @@ across held-out seeds, opponents, seats and phases. Privileged information is
 permitted only in a training-only teacher. Search, policy updates, PPO and
 self-play learning remain gated on public calibration and counterfactual ranking.
 
-Sam explicitly requested persistent continuation on September 11. The app's
-existing goal is unfinished and marked usageLimited; creating a replacement
-was rejected. Do not mark the objective complete to bypass that state. The
-local ten-minute scheduled checks remain enabled to continue this work.
+Sam explicitly authorized clearing and resetting the stale goal on September12.
+The local backend thread/goal/clear operation succeeded, and thread/goal/set
+recreated this exact objective as active with no token budget. The backend
+read-back verified active status. No work was falsely marked complete.
+The ten-minute scheduled continuation checks remain configured.
 
 Immediate work:
 1. Finish the existing frozen comparison, without duplicate fitting jobs.
@@ -27,8 +28,9 @@ Read reports/hog26_protocol_reassessment_20260908.md for current evidence and
 for live supervision. This file records the continuing objective, not a passed
 gate or permission to change frozen acceptance requirements.
 
-Current execution update: the original comparison is complete and reviewed.
-The separately frozen 384-game seed-transfer diagnostic is collecting, followed
-by evaluation of all 20 frozen fits. It measures fresh seen-family versus fresh
-excluded-family performance without new training. Read the latest chronology
-and supervisor state before resuming; do not relaunch the completed comparison.
+Current execution update: both384-game corpora and all20frozen-model transfer
+evaluations are complete and reviewed. The next stage is implementing and
+validating reports/hog26_data_scaling_draft_20260912.json: add1152fresh training
+games to the original384, preserving all diagnostic and reserved roles. The
+draft does not yet authorize collection or fitting. Finish its prerequisites
+and freeze the concrete experiment before launch. Do not relaunch prior jobs.
