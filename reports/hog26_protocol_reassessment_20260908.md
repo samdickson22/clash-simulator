@@ -2457,3 +2457,10 @@ Data-scaling memory prerequisite, 2026-09-12:
 - Remaining before execution: actual full-size memory audit, final combined
   corpus audit, matching readiness publication and supervisor. Collection is
   still active; do not change its pinned sources/resources.
+- Synthetic memory check now exercises the exact scaling fit_entity route with
+  two750-step games and128entities, full backpropagation and one optimizer step.
+  All116900parameter gradients are finite; peakRSS1451671552bytes,1.193seconds.
+  Source hashes/runtime recorded in hog26_scaling_neural_memory_20260912.json.
+  No corpus rows were read or fitted. This verifies the maximal batch, not the
+  full combined1536-game loader plus tree/neural training memory prerequisite.
+- Collector remains healthy at112/1152games,46765decisions,zero rejected actions.
