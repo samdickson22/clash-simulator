@@ -2478,3 +2478,16 @@ Data-scaling memory prerequisite, 2026-09-12:
 - Eight preparation tests pass; Ruff clean. Scheduled prompt now includes the
   waiting audit supervisor. After success, review matching data/source/runtime
   reports before publishing fitting readiness. No partial corpus fitting.
+- Tightened scaling fitting readiness: the runner now verifies both underlying
+  neural/tree memory report files and their SHA256s, exact source inventory,
+  collection plan, runtime,1536-game/768cluster audit and measured RSS limits.
+  A boolean readiness declaration alone no longer permits fitting. Neural
+  evidence includes finite gradients/full750-step128entity batch; tree evidence
+  includes the declared largest-fold preprocessing/one-iteration probe.
+- Added publish_readiness.py to construct the readiness artifact only from
+  matching completed reports. Seventeen fitting-preparation tests pass, including
+  missing/mutated reports, wrong sources/runtime/data and exceeded memory limits.
+  No readiness artifact was published and no outcome fit launched. Current
+  collection and waiting audit supervisor remain the sole active experiment jobs.
+  Do not edit scaling-fit Python once the post-collection memory probes start,
+  since each probe pins the entire fitting implementation.

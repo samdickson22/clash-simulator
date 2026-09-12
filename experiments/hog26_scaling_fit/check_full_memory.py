@@ -52,7 +52,7 @@ def main():
                            seed=1279501,epochs=1,batch_games=2)
         if not all(p.grad is not None and bool(torch.isfinite(p.grad).all()) for p in model.parameters()):
             raise ValueError('synthetic gradients invalid')
-        details = {'batch':[2,750,128],'full_backpropagation':True,'optimizer_steps':1,
+        details = {'batch':[2,750,128],'full_backpropagation':True,'finite_gradients':True,'optimizer_steps':1,
                    'target_source':'synthetic fixture only','outcome_model_saved':False}
     else:
         sys.path.insert(0,str(Path.home()/'.cache/clasher-margin-tree-diagnostic'))

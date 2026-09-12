@@ -11,6 +11,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+from readiness import validate_readiness
 from scalar_evaluation import (
     EvaluationIndex,
     cluster_bootstrap,
@@ -84,11 +85,8 @@ def main():
     original_directory=Path(__file__).resolve().parents[1]/'hog26_scalar_pilot'
     benchmark=json.loads((original_directory/'synthetic_fullgame_benchmark_verified.json').read_text())
     readiness=json.loads(args.readiness.read_text())
-    if (readiness.get('status')!='passed' or readiness.get('implementation')!=source_pin()
-            or readiness.get('collection_plan_sha256')!=sha(args.plan)
-            or readiness.get('combined_games')!=1536
-            or readiness.get('memory_verified') is not True):
-        raise ValueError('scaling readiness does not match complete data, implementation and memory checks')
+    validate_readiness(readiness,implementation=source_pin(),plan_sha256=sha(args.plan),
+                       runtime={'torch':torch.__version__,'threads':1,'device':'cpu'})
     if (not benchmark['finite_gradients'] or benchmark['torch']!=torch.__version__
             or any(sha(original_directory/name)!=h for name,h in benchmark['source_sha256'].items())):
         raise ValueError('memory prerequisite does not match current model implementation')
