@@ -1,0 +1,87 @@
+{
+  "action_samples": 8,
+  "batch_size": 16,
+  "candidate_actions_per_second": 0.2840045113582879,
+  "checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_hazard_competence_seed1193001/policy_v2_update_000000.pt",
+  "checkpoint_sha256": "c113be5bf2229de79a4548643a5e404f1e924516e1c6faaac756b5cc49971165",
+  "elapsed_seconds": 28.168566625012318,
+  "horizon_steps": 24,
+  "opponent_strategy": "balanced",
+  "rows": [
+    {
+      "action": 1767,
+      "discounted_return_by_seat": [
+        0.07104815171402909,
+        0.07104815171402909
+      ],
+      "discounted_return_mean": 0.07104815171402909,
+      "terminal_seats": 0
+    },
+    {
+      "action": 612,
+      "discounted_return_by_seat": [
+        0.011219163094164878,
+        0.011219163094164878
+      ],
+      "discounted_return_mean": 0.011219163094164878,
+      "terminal_seats": 0
+    },
+    {
+      "action": 607,
+      "discounted_return_by_seat": [
+        -0.05454923225581251,
+        -0.05454923225581251
+      ],
+      "discounted_return_mean": -0.05454923225581251,
+      "terminal_seats": 0
+    },
+    {
+      "action": 964,
+      "discounted_return_by_seat": [
+        -0.05506781362922524,
+        -0.07222255498319996
+      ],
+      "discounted_return_mean": -0.0636451843062126,
+      "terminal_seats": 0
+    },
+    {
+      "action": 2304,
+      "discounted_return_by_seat": [
+        -0.06731942225298065,
+        -0.07118331819102391
+      ],
+      "discounted_return_mean": -0.06925137022200228,
+      "terminal_seats": 0
+    },
+    {
+      "action": 1414,
+      "discounted_return_by_seat": [
+        -0.13281016084844866,
+        -0.13281016084844866
+      ],
+      "discounted_return_mean": -0.13281016084844866,
+      "terminal_seats": 0
+    },
+    {
+      "action": 1203,
+      "discounted_return_by_seat": [
+        -0.12606407092493194,
+        -0.14827001237102036
+      ],
+      "discounted_return_mean": -0.13716704164797616,
+      "terminal_seats": 0
+    },
+    {
+      "action": 186,
+      "discounted_return_by_seat": [
+        -0.25981379334335786,
+        -0.12218071379616216
+      ],
+      "discounted_return_mean": -0.19099725356976,
+      "terminal_seats": 0
+    }
+  ],
+  "schema": "clasher.simple-counterfactual-teacher-probe.v1",
+  "seed": 1193401,
+  "warmup_steps": 20
+}

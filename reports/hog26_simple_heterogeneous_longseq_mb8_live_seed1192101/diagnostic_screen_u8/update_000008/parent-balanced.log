@@ -1,0 +1,10 @@
+device=cpu
+checkpoint=/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt
+checkpoint_update=14
+checkpoint_transitions=57344
+games=4 wins=4 losses=0 draws=0
+win_rate=1.000 score=1.000 score_ci95=[1.000,1.000] non_loss_rate=1.000 crown_diff=+1.250 noop_rate=0.929 noop_when_playable=0.926
+placement_rate=0.071 ability_rate=0.0000 wins_by_seat=2/2 average_ticks=3668.8 elapsed_seconds=19.87 games_per_minute=12.08
+incoming_danger_mean=0.0466 incoming_danger_peak=0.8675 defensive_action_rate=0.074 board_value_edge_mean=+0.0097
+json_out=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/reports/hog26_simple_heterogeneous_longseq_mb8_live_seed1192101/diagnostic_screen_u8/update_000008/parent-balanced.metrics.json
+games_json_out=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/reports/hog26_simple_heterogeneous_longseq_mb8_live_seed1192101/diagnostic_screen_u8/update_000008/parent-balanced.games.json

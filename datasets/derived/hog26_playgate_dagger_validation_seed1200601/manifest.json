@@ -1,0 +1,74 @@
+{
+  "batch_size": 4,
+  "corpus": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_playgate_dagger_validation_seed1200601/corpus.npz",
+  "corpus_sha256": "087aa9f7fd8e885924e80978fc78201e1e38908ac9b1bf6e1d8891e17176de0a",
+  "diagnostics": [
+    {
+      "opponent": "balanced",
+      "rows": 384,
+      "student_play_rate": 0.08333333333333333,
+      "teacher_play_rate": 0.0625,
+      "teacher_student_disagreement": 0.09375
+    },
+    {
+      "opponent": "bridge-pressure",
+      "rows": 384,
+      "student_play_rate": 0.078125,
+      "teacher_play_rate": 0.0625,
+      "teacher_student_disagreement": 0.08854166666666667
+    },
+    {
+      "opponent": "reactive-defense",
+      "rows": 384,
+      "student_play_rate": 0.08333333333333333,
+      "teacher_play_rate": 0.057291666666666664,
+      "teacher_student_disagreement": 0.078125
+    },
+    {
+      "opponent": "spell-control",
+      "rows": 384,
+      "student_play_rate": 0.08333333333333333,
+      "teacher_play_rate": 0.0625,
+      "teacher_student_disagreement": 0.09375
+    },
+    {
+      "opponent": "slow-push",
+      "rows": 384,
+      "student_play_rate": 0.0703125,
+      "teacher_play_rate": 0.0625,
+      "teacher_student_disagreement": 0.1015625
+    },
+    {
+      "opponent": "split-lane",
+      "rows": 384,
+      "student_play_rate": 0.08072916666666667,
+      "teacher_play_rate": 0.0625,
+      "teacher_student_disagreement": 0.08072916666666667
+    },
+    {
+      "opponent": "random",
+      "rows": 384,
+      "student_play_rate": 0.08072916666666667,
+      "teacher_play_rate": 0.059895833333333336,
+      "teacher_student_disagreement": 0.09635416666666667
+    }
+  ],
+  "episodes": 28,
+  "opponents": [
+    "balanced",
+    "bridge-pressure",
+    "reactive-defense",
+    "spell-control",
+    "slow-push",
+    "split-lane",
+    "random"
+  ],
+  "rows": 2688,
+  "schema": "clasher.hog26.playgate-dagger-corpus.v1",
+  "seed": 1200601,
+  "steps": 96,
+  "student_checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_playgate_modes_distill_seed1200101/candidate.pt",
+  "student_checkpoint_sha256": "960f4c70de21fcd7f3b95011f5ca83ed7c7ba9e8761301185180dc0c45866ef0",
+  "teacher_checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt",
+  "teacher_checkpoint_sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372"
+}

@@ -1,0 +1,10 @@
+device=cpu
+checkpoint=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_heterogeneous_long_seed1192001/policy_v2_update_000065.pt
+checkpoint_update=65
+checkpoint_transitions=33280
+games=4 wins=0 losses=4 draws=0
+win_rate=0.000 score=0.000 score_ci95=[0.000,0.000] non_loss_rate=0.000 crown_diff=-1.500 noop_rate=0.930 noop_when_playable=0.929
+placement_rate=0.070 ability_rate=0.0000 wins_by_seat=0/0 average_ticks=3682.0 elapsed_seconds=19.86 games_per_minute=12.09
+incoming_danger_mean=0.1124 incoming_danger_peak=0.9226 defensive_action_rate=0.072 board_value_edge_mean=-0.1417
+json_out=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/reports/hog26_simple_heterogeneous_long_seed1192001/development_screens/update_000065/candidate-balanced.metrics.json
+games_json_out=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/reports/hog26_simple_heterogeneous_long_seed1192001/development_screens/update_000065/candidate-balanced.games.json

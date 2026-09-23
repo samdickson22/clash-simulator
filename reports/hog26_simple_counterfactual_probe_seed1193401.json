@@ -1,0 +1,111 @@
+{
+  "action_samples": 8,
+  "batch_size": 2,
+  "candidate_actions_per_second": 0.16732348644434555,
+  "checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_hazard_competence_seed1193001/policy_v2_update_000000.pt",
+  "checkpoint_sha256": "c113be5bf2229de79a4548643a5e404f1e924516e1c6faaac756b5cc49971165",
+  "elapsed_seconds": 47.81157845800044,
+  "horizon_steps": 24,
+  "opponent_strategy": "balanced",
+  "rows": [
+    {
+      "action": 1414,
+      "discounted_return_by_row": [
+        -0.09724002637823304,
+        -0.09762287830787547
+      ],
+      "discounted_return_mean": -0.09743145234305425,
+      "draws": 0,
+      "episodes_finished": 0,
+      "losses": 0,
+      "wins": 0
+    },
+    {
+      "action": 1203,
+      "discounted_return_by_row": [
+        -0.12606407092493194,
+        -0.14827001237102036
+      ],
+      "discounted_return_mean": -0.13716704164797616,
+      "draws": 0,
+      "episodes_finished": 0,
+      "losses": 0,
+      "wins": 0
+    },
+    {
+      "action": 1767,
+      "discounted_return_by_row": [
+        -0.25981379098868673,
+        -0.11332018095649951
+      ],
+      "discounted_return_mean": -0.18656698597259314,
+      "draws": 0,
+      "episodes_finished": 0,
+      "losses": 0,
+      "wins": 0
+    },
+    {
+      "action": 186,
+      "discounted_return_by_row": [
+        -0.25981379334335786,
+        -0.12218071379616216
+      ],
+      "discounted_return_mean": -0.19099725356976,
+      "draws": 0,
+      "episodes_finished": 0,
+      "losses": 0,
+      "wins": 0
+    },
+    {
+      "action": 607,
+      "discounted_return_by_row": [
+        -0.25981379334335786,
+        -0.12218071379616216
+      ],
+      "discounted_return_mean": -0.19099725356976,
+      "draws": 0,
+      "episodes_finished": 0,
+      "losses": 0,
+      "wins": 0
+    },
+    {
+      "action": 612,
+      "discounted_return_by_row": [
+        -0.25981379334335786,
+        -0.12218071379616216
+      ],
+      "discounted_return_mean": -0.19099725356976,
+      "draws": 0,
+      "episodes_finished": 0,
+      "losses": 0,
+      "wins": 0
+    },
+    {
+      "action": 964,
+      "discounted_return_by_row": [
+        -0.25981379334335786,
+        -0.12218071379616216
+      ],
+      "discounted_return_mean": -0.19099725356976,
+      "draws": 0,
+      "episodes_finished": 0,
+      "losses": 0,
+      "wins": 0
+    },
+    {
+      "action": 2304,
+      "discounted_return_by_row": [
+        -0.25981379334335786,
+        -0.12218071379616216
+      ],
+      "discounted_return_mean": -0.19099725356976,
+      "draws": 0,
+      "episodes_finished": 0,
+      "losses": 0,
+      "wins": 0
+    }
+  ],
+  "schema": "clasher.simple-counterfactual-teacher-probe.v1",
+  "seed": 1193401,
+  "warmup_steps": 20
+}

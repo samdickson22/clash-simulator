@@ -1,0 +1,10 @@
+device=cpu
+checkpoint=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_cf_hazard_seed1193705/candidate.pt
+checkpoint_update=0
+checkpoint_transitions=0
+games=4 wins=0 losses=4 draws=0
+win_rate=0.000 score=0.000 score_ci95=[0.000,0.000] non_loss_rate=0.000 crown_diff=-1.250 noop_rate=0.924 noop_when_playable=0.916
+placement_rate=0.076 ability_rate=0.0000 wins_by_seat=0/0 average_ticks=3749.5 elapsed_seconds=16.33 games_per_minute=14.69
+incoming_danger_mean=0.1103 incoming_danger_peak=0.7289 defensive_action_rate=0.078 board_value_edge_mean=-0.0126
+json_out=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/reports/hog26_cf_hazard_seed1193705_development/candidate-bridge-pressure.metrics.json
+games_json_out=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/reports/hog26_cf_hazard_seed1193705_development/candidate-bridge-pressure.games.json

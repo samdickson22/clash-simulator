@@ -1,0 +1,757 @@
+{
+  "behavior_coef": 1.0,
+  "best_epoch": 6,
+  "best_validation": {
+    "behavior": {
+      "ability_accuracy": 0.0,
+      "accuracy": 1.0,
+      "confusion": [
+        [
+          21,
+          0,
+          0
+        ],
+        [
+          0,
+          273,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "exact_action_accuracy": 0.9863945578231292,
+      "nll": 3.5196745995761587,
+      "non_root_exact_action_accuracy": 0.9965397923875432,
+      "non_root_rows": 289,
+      "play_f1": 1.0,
+      "play_precision": 1.0,
+      "play_recall": 1.0,
+      "rows": 294,
+      "support": {
+        "ability": 0,
+        "play": 21,
+        "wait": 273
+      },
+      "wait_accuracy": 1.0
+    },
+    "preferences": {
+      "corrective": {
+        "accuracy": 0.3076923076923077,
+        "mean_margin": -1.5422009229660034,
+        "pairs": 13
+      },
+      "overall": {
+        "accuracy": 0.6774193548387096,
+        "mean_margin": 1.1573458909988403,
+        "pairs": 31
+      },
+      "safety": {
+        "accuracy": 0.9444444444444444,
+        "mean_margin": 3.1070187091827393,
+        "pairs": 18
+      }
+    }
+  },
+  "counterfactual_coef": 0.5,
+  "epochs": 8,
+  "history": [
+    {
+      "epoch": 0,
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              21,
+              0,
+              0
+            ],
+            [
+              0,
+              273,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 1.0,
+          "nll": 3.5413257313423414,
+          "non_root_exact_action_accuracy": 1.0,
+          "non_root_rows": 289,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 294,
+          "support": {
+            "ability": 0,
+            "play": 21,
+            "wait": 273
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -2.6695516109466553,
+            "pairs": 13
+          },
+          "overall": {
+            "accuracy": 0.5483870967741935,
+            "mean_margin": 0.7586855888366699,
+            "pairs": 31
+          },
+          "safety": {
+            "accuracy": 0.9444444444444444,
+            "mean_margin": 3.2346343994140625,
+            "pairs": 18
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 1,
+      "training": {
+        "behavior": 3.503759571484157,
+        "chunks": 14,
+        "gradient_norm_max": 6480740352.0,
+        "loss": 4.189958964075361,
+        "preference": 1.3723988107272558,
+        "seconds": 2.646131332992809
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              21,
+              0,
+              0
+            ],
+            [
+              0,
+              273,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9931972789115646,
+          "nll": 3.513124063712399,
+          "non_root_exact_action_accuracy": 0.9965397923875432,
+          "non_root_rows": 289,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 294,
+          "support": {
+            "ability": 0,
+            "play": 21,
+            "wait": 273
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.15384615384615385,
+            "mean_margin": -2.3518242835998535,
+            "pairs": 13
+          },
+          "overall": {
+            "accuracy": 0.6451612903225806,
+            "mean_margin": 0.861690104007721,
+            "pairs": 31
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 3.1825613975524902,
+            "pairs": 18
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 2,
+      "training": {
+        "behavior": 3.4836590119770596,
+        "chunks": 14,
+        "gradient_norm_max": 7.319692134857178,
+        "loss": 4.149811012404306,
+        "preference": 1.3323039157049996,
+        "seconds": 0.6888688750041183
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              21,
+              0,
+              0
+            ],
+            [
+              0,
+              273,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9897959183673469,
+          "nll": 3.514222592723613,
+          "non_root_exact_action_accuracy": 0.9965397923875432,
+          "non_root_rows": 289,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 294,
+          "support": {
+            "ability": 0,
+            "play": 21,
+            "wait": 273
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.23076923076923078,
+            "mean_margin": -2.0866341590881348,
+            "pairs": 13
+          },
+          "overall": {
+            "accuracy": 0.6774193548387096,
+            "mean_margin": 0.9571167230606079,
+            "pairs": 31
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 3.155381202697754,
+            "pairs": 18
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 3,
+      "training": {
+        "behavior": 3.475125091416495,
+        "chunks": 14,
+        "gradient_norm_max": 7.714077472686768,
+        "loss": 4.082253745623997,
+        "preference": 1.2142572828701563,
+        "seconds": 0.6902660000196192
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              21,
+              0,
+              0
+            ],
+            [
+              0,
+              273,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9863945578231292,
+          "nll": 3.5124187858737246,
+          "non_root_exact_action_accuracy": 0.9965397923875432,
+          "non_root_rows": 289,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 294,
+          "support": {
+            "ability": 0,
+            "play": 21,
+            "wait": 273
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.23076923076923078,
+            "mean_margin": -1.9072530269622803,
+            "pairs": 13
+          },
+          "overall": {
+            "accuracy": 0.6774193548387096,
+            "mean_margin": 1.0417953729629517,
+            "pairs": 31
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 3.171663761138916,
+            "pairs": 18
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 4,
+      "training": {
+        "behavior": 3.4589972836630687,
+        "chunks": 14,
+        "gradient_norm_max": 10.152841567993164,
+        "loss": 4.093991483960833,
+        "preference": 1.2699884687151228,
+        "seconds": 0.6616242079762742
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              21,
+              0,
+              0
+            ],
+            [
+              0,
+              273,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9795918367346939,
+          "nll": 3.4896420329606452,
+          "non_root_exact_action_accuracy": 0.9930795847750865,
+          "non_root_rows": 289,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 294,
+          "support": {
+            "ability": 0,
+            "play": 21,
+            "wait": 273
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.23076923076923078,
+            "mean_margin": -1.8388615846633911,
+            "pairs": 13
+          },
+          "overall": {
+            "accuracy": 0.6774193548387096,
+            "mean_margin": 1.1837725639343262,
+            "pairs": 31
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 3.366786003112793,
+            "pairs": 18
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 5,
+      "training": {
+        "behavior": 3.4481357676642284,
+        "chunks": 14,
+        "gradient_norm_max": 12.102815628051758,
+        "loss": 4.06269815989903,
+        "preference": 1.229124767439706,
+        "seconds": 0.5823428749863524
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              21,
+              0,
+              0
+            ],
+            [
+              0,
+              273,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9863945578231292,
+          "nll": 3.5124015548602254,
+          "non_root_exact_action_accuracy": 0.9965397923875432,
+          "non_root_rows": 289,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 294,
+          "support": {
+            "ability": 0,
+            "play": 21,
+            "wait": 273
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.15384615384615385,
+            "mean_margin": -1.5692672729492188,
+            "pairs": 13
+          },
+          "overall": {
+            "accuracy": 0.6451612903225806,
+            "mean_margin": 1.1720378398895264,
+            "pairs": 31
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 3.151869297027588,
+            "pairs": 18
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 6,
+      "training": {
+        "behavior": 3.452533176967076,
+        "chunks": 14,
+        "gradient_norm_max": 12.654430389404297,
+        "loss": 3.9777061258043562,
+        "preference": 1.0503459061895097,
+        "seconds": 0.647979542001849
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              21,
+              0,
+              0
+            ],
+            [
+              0,
+              273,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9863945578231292,
+          "nll": 3.5196745995761587,
+          "non_root_exact_action_accuracy": 0.9965397923875432,
+          "non_root_rows": 289,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 294,
+          "support": {
+            "ability": 0,
+            "play": 21,
+            "wait": 273
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.3076923076923077,
+            "mean_margin": -1.5422009229660034,
+            "pairs": 13
+          },
+          "overall": {
+            "accuracy": 0.6774193548387096,
+            "mean_margin": 1.1573458909988403,
+            "pairs": 31
+          },
+          "safety": {
+            "accuracy": 0.9444444444444444,
+            "mean_margin": 3.1070187091827393,
+            "pairs": 18
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 7,
+      "training": {
+        "behavior": 3.454920308930533,
+        "chunks": 14,
+        "gradient_norm_max": 13.454361915588379,
+        "loss": 3.922495552471706,
+        "preference": 0.9351505977766854,
+        "seconds": 0.6436373750038911
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              21,
+              0,
+              0
+            ],
+            [
+              0,
+              273,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9693877551020408,
+          "nll": 3.539338663321774,
+          "non_root_exact_action_accuracy": 0.986159169550173,
+          "non_root_rows": 289,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 294,
+          "support": {
+            "ability": 0,
+            "play": 21,
+            "wait": 273
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.3076923076923077,
+            "mean_margin": -1.46747887134552,
+            "pairs": 13
+          },
+          "overall": {
+            "accuracy": 0.6774193548387096,
+            "mean_margin": 1.1654022932052612,
+            "pairs": 31
+          },
+          "safety": {
+            "accuracy": 0.9444444444444444,
+            "mean_margin": 3.066927671432495,
+            "pairs": 18
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 8,
+      "training": {
+        "behavior": 3.471107602119446,
+        "chunks": 14,
+        "gradient_norm_max": 10.826326370239258,
+        "loss": 3.7970643554415022,
+        "preference": 0.6519134257520948,
+        "seconds": 0.6530902079830412
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              21,
+              0,
+              0
+            ],
+            [
+              0,
+              273,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9523809523809523,
+          "nll": 3.5754979451497397,
+          "non_root_exact_action_accuracy": 0.9688581314878892,
+          "non_root_rows": 289,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 294,
+          "support": {
+            "ability": 0,
+            "play": 21,
+            "wait": 273
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.3076923076923077,
+            "mean_margin": -1.3584911823272705,
+            "pairs": 13
+          },
+          "overall": {
+            "accuracy": 0.6774193548387096,
+            "mean_margin": 1.125974178314209,
+            "pairs": 31
+          },
+          "safety": {
+            "accuracy": 0.9444444444444444,
+            "mean_margin": 2.9203102588653564,
+            "pairs": 18
+          }
+        }
+      }
+    }
+  ],
+  "initial_checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt",
+  "initial_checkpoint_sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372",
+  "initial_validation": {
+    "behavior": {
+      "ability_accuracy": 0.0,
+      "accuracy": 1.0,
+      "confusion": [
+        [
+          21,
+          0,
+          0
+        ],
+        [
+          0,
+          273,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "exact_action_accuracy": 1.0,
+      "nll": 3.5413257313423414,
+      "non_root_exact_action_accuracy": 1.0,
+      "non_root_rows": 289,
+      "play_f1": 1.0,
+      "play_precision": 1.0,
+      "play_recall": 1.0,
+      "rows": 294,
+      "support": {
+        "ability": 0,
+        "play": 21,
+        "wait": 273
+      },
+      "wait_accuracy": 1.0
+    },
+    "preferences": {
+      "corrective": {
+        "accuracy": 0.0,
+        "mean_margin": -2.6695516109466553,
+        "pairs": 13
+      },
+      "overall": {
+        "accuracy": 0.5483870967741935,
+        "mean_margin": 0.7586855888366699,
+        "pairs": 31
+      },
+      "safety": {
+        "accuracy": 0.9444444444444444,
+        "mean_margin": 3.2346343994140625,
+        "pairs": 18
+      }
+    }
+  },
+  "learning_rate": 0.0001,
+  "output_checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_strategy_proposal_conditional_seed1201301/candidate.pt",
+  "output_checkpoint_sha256": "442a98050d63d668132e9dd50663ace2a29175265c214fe707f08a297555a9a5",
+  "preserve_behavior_gate": true,
+  "root_behavior_weight": 0.25,
+  "schema": "clasher.hog26.factorized-counterfactual.v1",
+  "seed": 1201301,
+  "selected_nonzero_epoch": true,
+  "selection_gate": {
+    "exact_behavior_scope": "non_counterfactual_root_rows",
+    "maximum_exact_regression": 0.01,
+    "maximum_safety_regression": 0.01,
+    "minimum_corrective_improvement": 0.05
+  },
+  "train_corpus": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_strategy_proposal_reward_train_seed1201101/corpus.npz",
+  "train_corpus_sha256": "681c3b610a1d39e883613773cf1c85d2331d94e0623fe669a7db6a1ec7dc96f3",
+  "train_preferences": 37,
+  "trainable_parameter_count": 203079,
+  "trainable_parameter_names": [
+    "tile_decoder.query_norm.weight",
+    "tile_decoder.query_norm.bias",
+    "tile_decoder.context_norm.weight",
+    "tile_decoder.context_norm.bias",
+    "tile_decoder.attention.in_proj_weight",
+    "tile_decoder.attention.in_proj_bias",
+    "tile_decoder.attention.out_proj.weight",
+    "tile_decoder.attention.out_proj.bias",
+    "tile_decoder.mlp_norm.weight",
+    "tile_decoder.mlp_norm.bias",
+    "tile_decoder.mlp.0.weight",
+    "tile_decoder.mlp.0.bias",
+    "tile_decoder.mlp.2.weight",
+    "tile_decoder.mlp.2.bias",
+    "tile_key.weight",
+    "card_query.0.weight",
+    "card_query.0.bias",
+    "card_query.2.weight",
+    "location_bias.weight",
+    "location_bias.bias",
+    "action_type_head.0.weight",
+    "action_type_head.0.bias",
+    "action_type_head.2.weight",
+    "action_type_head.2.bias"
+  ],
+  "trainable_prefixes": [
+    "action_type_head.",
+    "card_query.",
+    "tile_decoder.",
+    "tile_key.",
+    "location_bias."
+  ],
+  "validation_corpus": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_strategy_proposal_reward_validation_seed1201201/corpus.npz",
+  "validation_corpus_sha256": "8555c0b4aaa2cf322fc6fd7ac8a14a89199be4e1e44774a4227cdb78479d7db9",
+  "validation_preferences": 31
+}

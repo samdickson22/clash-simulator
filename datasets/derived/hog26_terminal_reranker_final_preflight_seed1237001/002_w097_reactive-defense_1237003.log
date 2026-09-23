@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/scripts/probe_simple_counterfactual_teacher.py", line 801, in <module>
+    main()
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/scripts/probe_simple_counterfactual_teacher.py", line 458, in main
+    warmup_arrays, warmup_state, *_history = warmup_collector.collect(
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/simple_pytorch_backend.py", line 2110, in collect
+    decision = self.collector.collect(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/simple_tensor_collector.py", line 479, in collect
+    step = self.bridge.step(
+           ^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/torch_sim/simple_rollout.py", line 354, in step
+    native = self.runtime.step_tick(self._no_op_actions)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/torch_sim/simple_runtime.py", line 3114, in step_tick
+    triggered = self._resolve_triggered_impacts_(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/torch_sim/simple_runtime.py", line 2279, in _resolve_triggered_impacts_
+    effects = step_fast_effects(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/torch_sim/simple_effects.py", line 756, in step_fast_effects
+    effects.damage_hits_remaining.sub_(area_damage_due.to(torch.int32)).clamp_(min=0)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

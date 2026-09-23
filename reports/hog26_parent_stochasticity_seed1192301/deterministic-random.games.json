@@ -1,0 +1,242 @@
+[
+  {
+    "candidate_crowns": 3,
+    "candidate_deck": [
+      "IceSpirit",
+      "Cannon",
+      "HogRider",
+      "Skeletons",
+      "Fireball",
+      "IceGolem",
+      "Musketeer",
+      "Log"
+    ],
+    "candidate_player": 0,
+    "candidate_tower_hp": [
+      652.0,
+      2696.0,
+      4779.0
+    ],
+    "game": 0,
+    "matchup": 0,
+    "matchup_seed": 1192302,
+    "opponent_crowns": 0,
+    "opponent_deck": [
+      "IceWizard",
+      "Giant",
+      "Graveyard",
+      "Arrows",
+      "Guards",
+      "Witch",
+      "Minions",
+      "GiantSnowball"
+    ],
+    "opponent_tower_hp": [
+      1533.0,
+      0.0,
+      0.0
+    ],
+    "outcome": "win",
+    "ticks": 2315
+  },
+  {
+    "candidate_crowns": 1,
+    "candidate_deck": [
+      "IceSpirit",
+      "Cannon",
+      "HogRider",
+      "Skeletons",
+      "Fireball",
+      "IceGolem",
+      "Musketeer",
+      "Log"
+    ],
+    "candidate_player": 1,
+    "candidate_tower_hp": [
+      2696.0,
+      1202.0,
+      4734.0
+    ],
+    "game": 1,
+    "matchup": 0,
+    "matchup_seed": 1192302,
+    "opponent_crowns": 0,
+    "opponent_deck": [
+      "IceWizard",
+      "Giant",
+      "Graveyard",
+      "Arrows",
+      "Guards",
+      "Witch",
+      "Minions",
+      "GiantSnowball"
+    ],
+    "opponent_tower_hp": [
+      0.0,
+      999.0,
+      1985.0
+    ],
+    "outcome": "win",
+    "ticks": 3600
+  },
+  {
+    "candidate_crowns": 3,
+    "candidate_deck": [
+      "IceGolem",
+      "Skeletons",
+      "Musketeer",
+      "Log",
+      "IceSpirit",
+      "Fireball",
+      "Cannon",
+      "HogRider"
+    ],
+    "candidate_player": 0,
+    "candidate_tower_hp": [
+      0.0,
+      2784.0,
+      4420.0
+    ],
+    "game": 2,
+    "matchup": 1,
+    "matchup_seed": 1193311,
+    "opponent_crowns": 1,
+    "opponent_deck": [
+      "Skeletons",
+      "Fireball",
+      "ElectroDragon",
+      "IceSpirit",
+      "Zap",
+      "Knight",
+      "InfernoTower",
+      "Xbow"
+    ],
+    "opponent_tower_hp": [
+      589.0,
+      0.0,
+      0.0
+    ],
+    "outcome": "win",
+    "ticks": 2407
+  },
+  {
+    "candidate_crowns": 3,
+    "candidate_deck": [
+      "IceGolem",
+      "Skeletons",
+      "Musketeer",
+      "Log",
+      "IceSpirit",
+      "Fireball",
+      "Cannon",
+      "HogRider"
+    ],
+    "candidate_player": 1,
+    "candidate_tower_hp": [
+      2894.0,
+      658.0,
+      4824.0
+    ],
+    "game": 3,
+    "matchup": 1,
+    "matchup_seed": 1193311,
+    "opponent_crowns": 0,
+    "opponent_deck": [
+      "Skeletons",
+      "Fireball",
+      "ElectroDragon",
+      "IceSpirit",
+      "Zap",
+      "Knight",
+      "InfernoTower",
+      "Xbow"
+    ],
+    "opponent_tower_hp": [
+      0.0,
+      1750.0,
+      0.0
+    ],
+    "outcome": "win",
+    "ticks": 2115
+  },
+  {
+    "candidate_crowns": 3,
+    "candidate_deck": [
+      "Cannon",
+      "Skeletons",
+      "Musketeer",
+      "IceGolem",
+      "Fireball",
+      "Log",
+      "HogRider",
+      "IceSpirit"
+    ],
+    "candidate_player": 0,
+    "candidate_tower_hp": [
+      0.0,
+      3004.0,
+      4652.0
+    ],
+    "game": 4,
+    "matchup": 2,
+    "matchup_seed": 1194320,
+    "opponent_crowns": 1,
+    "opponent_deck": [
+      "Knight",
+      "Tesla",
+      "Skeletons",
+      "Zap",
+      "Xbow",
+      "ElectroSpirit",
+      "Fireball",
+      "ElectroDragon"
+    ],
+    "opponent_tower_hp": [
+      3052.0,
+      0.0,
+      0.0
+    ],
+    "outcome": "win",
+    "ticks": 2307
+  },
+  {
+    "candidate_crowns": 3,
+    "candidate_deck": [
+      "Cannon",
+      "Skeletons",
+      "Musketeer",
+      "IceGolem",
+      "Fireball",
+      "Log",
+      "HogRider",
+      "IceSpirit"
+    ],
+    "candidate_player": 1,
+    "candidate_tower_hp": [
+      3004.0,
+      0.0,
+      4652.0
+    ],
+    "game": 5,
+    "matchup": 2,
+    "matchup_seed": 1194320,
+    "opponent_crowns": 1,
+    "opponent_deck": [
+      "Knight",
+      "Tesla",
+      "Skeletons",
+      "Zap",
+      "Xbow",
+      "ElectroSpirit",
+      "Fireball",
+      "ElectroDragon"
+    ],
+    "opponent_tower_hp": [
+      0.0,
+      1099.0,
+      0.0
+    ],
+    "outcome": "win",
+    "ticks": 2870
+  }
+]

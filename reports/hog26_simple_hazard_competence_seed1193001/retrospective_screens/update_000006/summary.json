@@ -1,0 +1,69 @@
+{
+  "arms": {
+    "candidate": {
+      "buckets": {
+        "balanced": {
+          "crown_diff_per_game": 0.0,
+          "draws": 0.0,
+          "losses": 2.0,
+          "wins": 2.0
+        },
+        "bridge-pressure": {
+          "crown_diff_per_game": 1.75,
+          "draws": 0.0,
+          "losses": 0.0,
+          "wins": 4.0
+        },
+        "random": {
+          "crown_diff_per_game": 0.75,
+          "draws": 0.0,
+          "losses": 1.0,
+          "wins": 3.0
+        }
+      },
+      "total": {
+        "crown_diff_per_game": 0.8333333333333334,
+        "draws": 0.0,
+        "losses": 3.0,
+        "wins": 9.0
+      }
+    },
+    "parent": {
+      "buckets": {
+        "balanced": {
+          "crown_diff_per_game": -0.5,
+          "draws": 0.0,
+          "losses": 3.0,
+          "wins": 1.0
+        },
+        "bridge-pressure": {
+          "crown_diff_per_game": 1.5,
+          "draws": 0.0,
+          "losses": 1.0,
+          "wins": 3.0
+        },
+        "random": {
+          "crown_diff_per_game": 1.75,
+          "draws": 0.0,
+          "losses": 0.0,
+          "wins": 4.0
+        }
+      },
+      "total": {
+        "crown_diff_per_game": 0.9166666666666666,
+        "draws": 0.0,
+        "losses": 4.0,
+        "wins": 8.0
+      }
+    }
+  },
+  "candidate_minus_parent": {
+    "crown_diff_per_game": -0.08333333333333326,
+    "losses": -1.0,
+    "wins": 1.0
+  },
+  "games_per_arm": 12,
+  "paired_seats": true,
+  "schema": "clasher.hog26.simple-long-development-screen.v1",
+  "update": 6
+}

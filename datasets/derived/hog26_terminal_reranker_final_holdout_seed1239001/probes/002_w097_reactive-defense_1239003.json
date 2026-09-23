@@ -1,0 +1,130 @@
+{
+  "action_samples": 12,
+  "batch_size": 12,
+  "candidate_actions_per_second": 0.004290354024462863,
+  "candidate_selector": "hand-slot-spatial-stratified-v1",
+  "checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt",
+  "checkpoint_sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372",
+  "collection_chunk_steps": 32,
+  "device": "cpu",
+  "elapsed_seconds": 2796.971982166986,
+  "horizon_steps": 768,
+  "label_authority": "terminal-outcome-then-discounted-reward-v1",
+  "opponent_randomness": "deterministic-strategy",
+  "opponent_strategy": "reactive-defense",
+  "parent_action": 1350,
+  "random_candidate_fraction": 0.1,
+  "realized_horizon_steps": 416,
+  "return_estimator": "truncated-n-step-bootstrap-v1",
+  "rows": [
+    {
+      "action": 209,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.08574051042493999,
+      "discounted_reward_return": -0.08574051042493999,
+      "terminal": true,
+      "terminal_outcome": -1
+    },
+    {
+      "action": 1389,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.12101259156345781,
+      "discounted_reward_return": -0.12101259156345781,
+      "terminal": true,
+      "terminal_outcome": -1
+    },
+    {
+      "action": 1350,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.12101260840156336,
+      "discounted_reward_return": -0.12101260840156336,
+      "terminal": true,
+      "terminal_outcome": -1
+    },
+    {
+      "action": 2304,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.12101262293316231,
+      "discounted_reward_return": -0.12101262293316231,
+      "terminal": true,
+      "terminal_outcome": -1
+    },
+    {
+      "action": 1235,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.12101266426876489,
+      "discounted_reward_return": -0.12101266426876489,
+      "terminal": true,
+      "terminal_outcome": -1
+    },
+    {
+      "action": 1278,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.12101267873946425,
+      "discounted_reward_return": -0.12101267873946425,
+      "terminal": true,
+      "terminal_outcome": -1
+    },
+    {
+      "action": 237,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.12101272346583541,
+      "discounted_reward_return": -0.12101272346583541,
+      "terminal": true,
+      "terminal_outcome": -1
+    },
+    {
+      "action": 1386,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.12101290849991062,
+      "discounted_reward_return": -0.12101290849991062,
+      "terminal": true,
+      "terminal_outcome": -1
+    },
+    {
+      "action": 134,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.14290974175224005,
+      "discounted_reward_return": -0.14290974175224005,
+      "terminal": true,
+      "terminal_outcome": -1
+    },
+    {
+      "action": 1955,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.152839389493573,
+      "discounted_reward_return": -0.152839389493573,
+      "terminal": true,
+      "terminal_outcome": -1
+    },
+    {
+      "action": 1972,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.152839389493573,
+      "discounted_reward_return": -0.152839389493573,
+      "terminal": true,
+      "terminal_outcome": -1
+    },
+    {
+      "action": 1990,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.152839389493573,
+      "discounted_reward_return": -0.152839389493573,
+      "terminal": true,
+      "terminal_outcome": -1
+    }
+  ],
+  "schema": "clasher.simple-counterfactual-teacher-probe.v4",
+  "seed": 1239003,
+  "stop_when_all_terminal": true,
+  "strategy_proposals": {
+    "balanced": 1389,
+    "bridge-pressure": 1386,
+    "reactive-defense": 237,
+    "slow-push": 1235,
+    "spell-control": 1990,
+    "split-lane": 1972
+  },
+  "warmup_batch_size": 1,
+  "warmup_steps": 97
+}

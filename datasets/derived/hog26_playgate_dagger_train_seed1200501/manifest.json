@@ -1,0 +1,74 @@
+{
+  "batch_size": 8,
+  "corpus": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_playgate_dagger_train_seed1200501/corpus.npz",
+  "corpus_sha256": "3a355104761225584ad36c61f12ac3c73a520474baf8fea8209dceb0028ea5c2",
+  "diagnostics": [
+    {
+      "opponent": "balanced",
+      "rows": 768,
+      "student_play_rate": 0.08333333333333333,
+      "teacher_play_rate": 0.061197916666666664,
+      "teacher_student_disagreement": 0.08984375
+    },
+    {
+      "opponent": "bridge-pressure",
+      "rows": 768,
+      "student_play_rate": 0.078125,
+      "teacher_play_rate": 0.0625,
+      "teacher_student_disagreement": 0.09635416666666667
+    },
+    {
+      "opponent": "reactive-defense",
+      "rows": 768,
+      "student_play_rate": 0.08333333333333333,
+      "teacher_play_rate": 0.059895833333333336,
+      "teacher_student_disagreement": 0.08072916666666667
+    },
+    {
+      "opponent": "spell-control",
+      "rows": 768,
+      "student_play_rate": 0.08333333333333333,
+      "teacher_play_rate": 0.059895833333333336,
+      "teacher_student_disagreement": 0.09635416666666667
+    },
+    {
+      "opponent": "slow-push",
+      "rows": 768,
+      "student_play_rate": 0.07161458333333333,
+      "teacher_play_rate": 0.0625,
+      "teacher_student_disagreement": 0.08723958333333333
+    },
+    {
+      "opponent": "split-lane",
+      "rows": 768,
+      "student_play_rate": 0.08203125,
+      "teacher_play_rate": 0.059895833333333336,
+      "teacher_student_disagreement": 0.07682291666666667
+    },
+    {
+      "opponent": "random",
+      "rows": 768,
+      "student_play_rate": 0.078125,
+      "teacher_play_rate": 0.061197916666666664,
+      "teacher_student_disagreement": 0.09505208333333333
+    }
+  ],
+  "episodes": 56,
+  "opponents": [
+    "balanced",
+    "bridge-pressure",
+    "reactive-defense",
+    "spell-control",
+    "slow-push",
+    "split-lane",
+    "random"
+  ],
+  "rows": 5376,
+  "schema": "clasher.hog26.playgate-dagger-corpus.v1",
+  "seed": 1200501,
+  "steps": 96,
+  "student_checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_playgate_modes_distill_seed1200101/candidate.pt",
+  "student_checkpoint_sha256": "960f4c70de21fcd7f3b95011f5ca83ed7c7ba9e8761301185180dc0c45866ef0",
+  "teacher_checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt",
+  "teacher_checkpoint_sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372"
+}

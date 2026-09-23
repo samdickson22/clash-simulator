@@ -1,0 +1,43 @@
+{
+  "action_samples": 2,
+  "batch_size": 2,
+  "candidate_actions_per_second": 1.7808008526667942,
+  "candidate_selector": "hand-slot-spatial-stratified-v1",
+  "checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt",
+  "checkpoint_sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372",
+  "collection_chunk_steps": 1,
+  "device": "cpu",
+  "elapsed_seconds": 1.1230902079842053,
+  "horizon_steps": 1,
+  "label_authority": "terminal-outcome-then-discounted-reward-v1",
+  "opponent_randomness": "deterministic-strategy",
+  "opponent_strategy": "bridge-pressure",
+  "parent_action": 1368,
+  "random_candidate_fraction": 0.0,
+  "realized_horizon_steps": 1,
+  "return_estimator": "truncated-n-step-bootstrap-v1",
+  "rows": [
+    {
+      "action": 1368,
+      "discounted_bootstrap_return": -1.5275606513023376,
+      "discounted_return_mean": -1.5268289423547685,
+      "discounted_reward_return": 0.0007317089475691319,
+      "terminal": false,
+      "terminal_outcome": 0
+    },
+    {
+      "action": 2304,
+      "discounted_bootstrap_return": -1.52810888171196,
+      "discounted_return_mean": -1.5273771727643908,
+      "discounted_reward_return": 0.0007317089475691319,
+      "terminal": false,
+      "terminal_outcome": 0
+    }
+  ],
+  "schema": "clasher.simple-counterfactual-teacher-probe.v4",
+  "seed": 1238002,
+  "stop_when_all_terminal": false,
+  "strategy_proposals": {},
+  "warmup_batch_size": 1,
+  "warmup_steps": 97
+}

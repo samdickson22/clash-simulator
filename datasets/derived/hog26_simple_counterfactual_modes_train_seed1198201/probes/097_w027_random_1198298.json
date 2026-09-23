@@ -1,0 +1,78 @@
+{
+  "action_samples": 8,
+  "batch_size": 8,
+  "candidate_actions_per_second": 0.06073202768823342,
+  "candidate_selector": "hand-slot-spatial-stratified-v1",
+  "checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt",
+  "checkpoint_sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372",
+  "device": "cpu",
+  "elapsed_seconds": 131.72621275001438,
+  "horizon_steps": 24,
+  "opponent_randomness": "common-quantile-v1",
+  "opponent_strategy": "random",
+  "parent_action": 1944,
+  "random_candidate_fraction": 0.25,
+  "return_estimator": "truncated-n-step-bootstrap-v1",
+  "rows": [
+    {
+      "action": 1368,
+      "discounted_bootstrap_return": -1.3374138536297175,
+      "discounted_return_mean": -1.2263772460880533,
+      "discounted_reward_return": 0.11103660754166417,
+      "terminal": false
+    },
+    {
+      "action": 767,
+      "discounted_bootstrap_return": -1.33981582556906,
+      "discounted_return_mean": -1.2342486577084897,
+      "discounted_reward_return": 0.10556716786057022,
+      "terminal": false
+    },
+    {
+      "action": 190,
+      "discounted_bootstrap_return": -1.340251509984196,
+      "discounted_return_mean": -1.2346843421236258,
+      "discounted_reward_return": 0.10556716786057022,
+      "terminal": false
+    },
+    {
+      "action": 821,
+      "discounted_bootstrap_return": -1.3402540467202377,
+      "discounted_return_mean": -1.2412501881585773,
+      "discounted_reward_return": 0.0990038585616603,
+      "terminal": false
+    },
+    {
+      "action": 40,
+      "discounted_bootstrap_return": -1.3406421673345947,
+      "discounted_return_mean": -1.2416383087729344,
+      "discounted_reward_return": 0.0990038585616603,
+      "terminal": false
+    },
+    {
+      "action": 1854,
+      "discounted_bootstrap_return": -1.344420635668483,
+      "discounted_return_mean": -1.2454167771068225,
+      "discounted_reward_return": 0.0990038585616603,
+      "terminal": false
+    },
+    {
+      "action": 1944,
+      "discounted_bootstrap_return": -1.3444383928207737,
+      "discounted_return_mean": -1.2454345342591133,
+      "discounted_reward_return": 0.0990038585616603,
+      "terminal": false
+    },
+    {
+      "action": 2304,
+      "discounted_bootstrap_return": -1.3460369593162902,
+      "discounted_return_mean": -1.2470331007546298,
+      "discounted_reward_return": 0.0990038585616603,
+      "terminal": false
+    }
+  ],
+  "schema": "clasher.simple-counterfactual-teacher-probe.v3",
+  "seed": 1198298,
+  "warmup_batch_size": 1,
+  "warmup_steps": 27
+}

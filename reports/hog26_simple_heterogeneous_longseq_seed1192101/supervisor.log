@@ -1,0 +1,62 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/train_recurrent.py", line 4120, in <module>
+    main()
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/train_recurrent.py", line 3964, in main
+    stats = ppo_update(
+            ^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/train_recurrent.py", line 1596, in ppo_update
+    output = model(inputs, initial_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/model.py", line 2056, in forward
+    tile_context = self.tile_decoder(tile_queries, actor_tokens, actor_valid)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/model.py", line 404, in forward
+    return cast(Tensor, queries + self.mlp(self.mlp_norm(queries)))
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/.venv/lib/python3.12/site-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+            ^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/.venv/lib/python3.12/site-packages/torch/nn/modules/linear.py", line 134, in forward
+    return F.linear(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: MPS backend out of memory (MPS allocated: 27.32 GiB, other allocations: 2.43 GiB, max allowed: 30.19 GiB). Tried to allocate 1.12 GiB on private pool. Use PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0 to disable upper limit for memory allocations (may cause system failure).
+learner_device=mps actor_device=mps
+simulation_backend=simple-pytorch
+decks_path=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/decks.json
+sampling_decks_path=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/decks.json
+learner_sampling_decks_path=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/decks.json
+opponent_sampling_decks_path=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/decks.json
+matchups_path=None matchup_probability=0.0
+checkpoint_dir=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_heterogeneous_longseq_seed1192101
+model=entity_spatial_recurrent params=1,697,877 tokens=494 max_entities=56 d_model=128 memory=64
+anchor_checkpoint=/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt anchor_l2_coef=0.0 anchor_policy_kl_coef=0.1 anchor_rehearsal_coef=0.0
+envs=64 agents=64 opponent=league actor_workers=1 actor_threads=2 rollout_steps=64 transitions_per_update=4096 reward_profile=objective-v1 reward_shaping_gamma=None elixir_leak_penalty_scale=0.0
+league_opponents=['strategy:bridge-pressure', 'strategy:slow-push', 'random', 'strategy:spell-control', 'strategy:reactive-defense', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'strategy:balanced', 'strategy:split-lane', 'strategy:bridge-pressure', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'random', 'strategy:slow-push', 'strategy:balanced', 'strategy:spell-control', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'strategy:reactive-defense', 'strategy:split-lane', 'strategy:balanced', 'random', 'strategy:bridge-pressure', 'strategy:slow-push', 'strategy:balanced', 'strategy:spell-control', 'strategy:reactive-defense', 'strategy:split-lane', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'strategy:balanced', 'strategy:bridge-pressure', 'strategy:balanced', 'random', 'strategy:balanced', 'strategy:balanced']
+saved_initial_checkpoint=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_heterogeneous_longseq_seed1192101/policy_v2_update_000000.pt
+initialized_policy_from=/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt

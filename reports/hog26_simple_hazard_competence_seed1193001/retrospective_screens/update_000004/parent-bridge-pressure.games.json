@@ -1,0 +1,162 @@
+[
+  {
+    "candidate_crowns": 0,
+    "candidate_deck": [
+      "IceGolem",
+      "IceSpirit",
+      "Fireball",
+      "Log",
+      "Cannon",
+      "Skeletons",
+      "HogRider",
+      "Musketeer"
+    ],
+    "candidate_player": 0,
+    "candidate_tower_hp": [
+      2716.0,
+      0.0,
+      3953.0
+    ],
+    "game": 0,
+    "matchup": 0,
+    "matchup_seed": 1193043,
+    "opponent_crowns": 1,
+    "opponent_deck": [
+      "Fireball",
+      "Zap",
+      "Xbow",
+      "Skeletons",
+      "ElectroSpirit",
+      "Archers",
+      "Tesla",
+      "NightWitch"
+    ],
+    "opponent_tower_hp": [
+      2131.0,
+      1033.0,
+      4824.0
+    ],
+    "outcome": "loss",
+    "ticks": 3600
+  },
+  {
+    "candidate_crowns": 0,
+    "candidate_deck": [
+      "IceGolem",
+      "IceSpirit",
+      "Fireball",
+      "Log",
+      "Cannon",
+      "Skeletons",
+      "HogRider",
+      "Musketeer"
+    ],
+    "candidate_player": 1,
+    "candidate_tower_hp": [
+      0.0,
+      2828.0,
+      3791.0
+    ],
+    "game": 1,
+    "matchup": 0,
+    "matchup_seed": 1193043,
+    "opponent_crowns": 1,
+    "opponent_deck": [
+      "Fireball",
+      "Zap",
+      "Xbow",
+      "Skeletons",
+      "ElectroSpirit",
+      "Archers",
+      "Tesla",
+      "NightWitch"
+    ],
+    "opponent_tower_hp": [
+      182.0,
+      2050.0,
+      4824.0
+    ],
+    "outcome": "loss",
+    "ticks": 3600
+  },
+  {
+    "candidate_crowns": 1,
+    "candidate_deck": [
+      "IceGolem",
+      "Musketeer",
+      "HogRider",
+      "IceSpirit",
+      "Fireball",
+      "Cannon",
+      "Log",
+      "Skeletons"
+    ],
+    "candidate_player": 0,
+    "candidate_tower_hp": [
+      0.0,
+      0.0,
+      2891.0
+    ],
+    "game": 2,
+    "matchup": 1,
+    "matchup_seed": 1194052,
+    "opponent_crowns": 2,
+    "opponent_deck": [
+      "Knight",
+      "InfernoTower",
+      "Graveyard",
+      "BarbarianBarrel",
+      "Bomber",
+      "Poison",
+      "Tornado",
+      "IceWizard"
+    ],
+    "opponent_tower_hp": [
+      343.0,
+      0.0,
+      535.0
+    ],
+    "outcome": "loss",
+    "ticks": 3648
+  },
+  {
+    "candidate_crowns": 2,
+    "candidate_deck": [
+      "IceGolem",
+      "Musketeer",
+      "HogRider",
+      "IceSpirit",
+      "Fireball",
+      "Cannon",
+      "Log",
+      "Skeletons"
+    ],
+    "candidate_player": 1,
+    "candidate_tower_hp": [
+      0.0,
+      1054.0,
+      4218.0
+    ],
+    "game": 3,
+    "matchup": 1,
+    "matchup_seed": 1194052,
+    "opponent_crowns": 1,
+    "opponent_deck": [
+      "Knight",
+      "InfernoTower",
+      "Graveyard",
+      "BarbarianBarrel",
+      "Bomber",
+      "Poison",
+      "Tornado",
+      "IceWizard"
+    ],
+    "opponent_tower_hp": [
+      0.0,
+      0.0,
+      1803.0
+    ],
+    "outcome": "win",
+    "ticks": 3663
+  }
+]

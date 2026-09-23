@@ -1,0 +1,75 @@
+{
+  "checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_factorized_pretrain_e5_seed1242001/candidate.pt",
+  "checkpoint_sha256": "b9c22445e5b30e12b6fd37183b13c5aa8329ee9b87c249ec9b0445207b1040de",
+  "chunk_steps": 32,
+  "deterministic": true,
+  "device": "cpu",
+  "games_per_opponent": 2,
+  "rows": [
+    {
+      "draws": 0,
+      "games": 2,
+      "losses": 2,
+      "opponent": "balanced",
+      "placement_rate": 0.0,
+      "records": [
+        {
+          "decisions": 122,
+          "learner_player": 0,
+          "outcome": "loss",
+          "placements": 0,
+          "row": 0,
+          "terminal_decision": 121,
+          "winner": 1
+        },
+        {
+          "decisions": 131,
+          "learner_player": 1,
+          "outcome": "loss",
+          "placements": 0,
+          "row": 1,
+          "terminal_decision": 130,
+          "winner": 0
+        }
+      ],
+      "win_rate": 0.0,
+      "wins": 0
+    },
+    {
+      "draws": 0,
+      "games": 2,
+      "losses": 2,
+      "opponent": "random",
+      "placement_rate": 0.11333333333333333,
+      "records": [
+        {
+          "decisions": 450,
+          "learner_player": 0,
+          "outcome": "loss",
+          "placements": 51,
+          "row": 0,
+          "terminal_decision": 449,
+          "winner": 1
+        },
+        {
+          "decisions": 450,
+          "learner_player": 1,
+          "outcome": "loss",
+          "placements": 51,
+          "row": 1,
+          "terminal_decision": 449,
+          "winner": 0
+        }
+      ],
+      "win_rate": 0.0,
+      "wins": 0
+    }
+  ],
+  "schema": "clasher.hog26.simple-policy-evaluation.v1",
+  "total": {
+    "draws": 0,
+    "games": 4,
+    "losses": 4,
+    "wins": 0
+  }
+}

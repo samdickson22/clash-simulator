@@ -1,0 +1,288 @@
+{
+  "behavior_coef": 1.0,
+  "best_epoch": 0,
+  "best_validation": {
+    "corrective_accuracy": 0.0,
+    "corrective_roots": 2,
+    "exact_action_accuracy": 1.0,
+    "nonroot_exact_action_accuracy": 1.0,
+    "nonroot_rows": 1452,
+    "predicted_play_rate": 1.0,
+    "rows": 1470,
+    "safety_accuracy": 1.0,
+    "safety_roots": 16,
+    "target_play_rate": 0.8888888888888888,
+    "timing_accuracy": 0.8888888888888888,
+    "timing_roots": 18
+  },
+  "epochs": 8,
+  "history": [
+    {
+      "epoch": 0,
+      "validation": {
+        "corrective_accuracy": 0.0,
+        "corrective_roots": 2,
+        "exact_action_accuracy": 1.0,
+        "nonroot_exact_action_accuracy": 1.0,
+        "nonroot_rows": 1452,
+        "predicted_play_rate": 1.0,
+        "rows": 1470,
+        "safety_accuracy": 1.0,
+        "safety_roots": 16,
+        "target_play_rate": 0.8888888888888888,
+        "timing_accuracy": 0.8888888888888888,
+        "timing_roots": 18
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 1,
+      "training": {
+        "behavior": 16.711342429875263,
+        "gradient_norm_max": 4722.83349609375,
+        "loss": 19.973169609239058,
+        "seconds": 26.078983540995978,
+        "steps": 672,
+        "terminal_timing": 15.995767334401275
+      },
+      "validation": {
+        "corrective_accuracy": 1.0,
+        "corrective_roots": 2,
+        "exact_action_accuracy": 0.9285714285714286,
+        "nonroot_exact_action_accuracy": 0.9400826446280992,
+        "nonroot_rows": 1452,
+        "predicted_play_rate": 0.0,
+        "rows": 1470,
+        "safety_accuracy": 0.0,
+        "safety_roots": 16,
+        "target_play_rate": 0.8888888888888888,
+        "timing_accuracy": 0.1111111111111111,
+        "timing_roots": 18
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 2,
+      "training": {
+        "behavior": 33.051781437936285,
+        "gradient_norm_max": 5028.1728515625,
+        "loss": 40.43240565274443,
+        "seconds": 25.99021904199617,
+        "steps": 672,
+        "terminal_timing": 33.423067117909554
+      },
+      "validation": {
+        "corrective_accuracy": 1.0,
+        "corrective_roots": 2,
+        "exact_action_accuracy": 0.9285714285714286,
+        "nonroot_exact_action_accuracy": 0.9400826446280992,
+        "nonroot_rows": 1452,
+        "predicted_play_rate": 0.0,
+        "rows": 1470,
+        "safety_accuracy": 0.0,
+        "safety_roots": 16,
+        "target_play_rate": 0.8888888888888888,
+        "timing_accuracy": 0.1111111111111111,
+        "timing_roots": 18
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 3,
+      "training": {
+        "behavior": 34.214181084008445,
+        "gradient_norm_max": 5041.65771484375,
+        "loss": 41.78072269899504,
+        "seconds": 25.90132716600783,
+        "steps": 672,
+        "terminal_timing": 34.38122082811675
+      },
+      "validation": {
+        "corrective_accuracy": 1.0,
+        "corrective_roots": 2,
+        "exact_action_accuracy": 0.9285714285714286,
+        "nonroot_exact_action_accuracy": 0.9400826446280992,
+        "nonroot_rows": 1452,
+        "predicted_play_rate": 0.0,
+        "rows": 1470,
+        "safety_accuracy": 0.0,
+        "safety_roots": 16,
+        "target_play_rate": 0.8888888888888888,
+        "timing_accuracy": 0.1111111111111111,
+        "timing_roots": 18
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 4,
+      "training": {
+        "behavior": 34.2229147447007,
+        "gradient_norm_max": 5025.66162109375,
+        "loss": 41.76188577143919,
+        "seconds": 25.799950541986618,
+        "steps": 672,
+        "terminal_timing": 34.31325703376621
+      },
+      "validation": {
+        "corrective_accuracy": 1.0,
+        "corrective_roots": 2,
+        "exact_action_accuracy": 0.9285714285714286,
+        "nonroot_exact_action_accuracy": 0.9400826446280992,
+        "nonroot_rows": 1452,
+        "predicted_play_rate": 0.0,
+        "rows": 1470,
+        "safety_accuracy": 0.0,
+        "safety_roots": 16,
+        "target_play_rate": 0.8888888888888888,
+        "timing_accuracy": 0.1111111111111111,
+        "timing_roots": 18
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 5,
+      "training": {
+        "behavior": 34.17595483504591,
+        "gradient_norm_max": 5017.84375,
+        "loss": 41.68793738952705,
+        "seconds": 26.600141207978595,
+        "steps": 672,
+        "terminal_timing": 34.21057819274886
+      },
+      "validation": {
+        "corrective_accuracy": 1.0,
+        "corrective_roots": 2,
+        "exact_action_accuracy": 0.9285714285714286,
+        "nonroot_exact_action_accuracy": 0.9400826446280992,
+        "nonroot_rows": 1452,
+        "predicted_play_rate": 0.0,
+        "rows": 1470,
+        "safety_accuracy": 0.0,
+        "safety_roots": 16,
+        "target_play_rate": 0.8888888888888888,
+        "timing_accuracy": 0.1111111111111111,
+        "timing_roots": 18
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 6,
+      "training": {
+        "behavior": 34.03454327583313,
+        "gradient_norm_max": 4988.0693359375,
+        "loss": 41.49010361943926,
+        "seconds": 26.364950667019002,
+        "steps": 672,
+        "terminal_timing": 33.99227245226003
+      },
+      "validation": {
+        "corrective_accuracy": 1.0,
+        "corrective_roots": 2,
+        "exact_action_accuracy": 0.9285714285714286,
+        "nonroot_exact_action_accuracy": 0.9400826446280992,
+        "nonroot_rows": 1452,
+        "predicted_play_rate": 0.0,
+        "rows": 1470,
+        "safety_accuracy": 0.0,
+        "safety_roots": 16,
+        "target_play_rate": 0.8888888888888888,
+        "timing_accuracy": 0.1111111111111111,
+        "timing_roots": 18
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 7,
+      "training": {
+        "behavior": 34.022383323027974,
+        "gradient_norm_max": 4980.38037109375,
+        "loss": 41.44332151966436,
+        "seconds": 26.056994915998075,
+        "steps": 672,
+        "terminal_timing": 33.89870393351399
+      },
+      "validation": {
+        "corrective_accuracy": 1.0,
+        "corrective_roots": 2,
+        "exact_action_accuracy": 0.9285714285714286,
+        "nonroot_exact_action_accuracy": 0.9400826446280992,
+        "nonroot_rows": 1452,
+        "predicted_play_rate": 0.0,
+        "rows": 1470,
+        "safety_accuracy": 0.0,
+        "safety_roots": 16,
+        "target_play_rate": 0.8888888888888888,
+        "timing_accuracy": 0.1111111111111111,
+        "timing_roots": 18
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 8,
+      "training": {
+        "behavior": 33.95420946109863,
+        "gradient_norm_max": 4955.41259765625,
+        "loss": 41.33939846072878,
+        "seconds": 25.989518916991074,
+        "steps": 672,
+        "terminal_timing": 33.78349676919087
+      },
+      "validation": {
+        "corrective_accuracy": 1.0,
+        "corrective_roots": 2,
+        "exact_action_accuracy": 0.9285714285714286,
+        "nonroot_exact_action_accuracy": 0.9400826446280992,
+        "nonroot_rows": 1452,
+        "predicted_play_rate": 0.0,
+        "rows": 1470,
+        "safety_accuracy": 0.0,
+        "safety_roots": 16,
+        "target_play_rate": 0.8888888888888888,
+        "timing_accuracy": 0.1111111111111111,
+        "timing_roots": 18
+      }
+    }
+  ],
+  "initial_checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt",
+  "initial_checkpoint_sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372",
+  "initial_validation": {
+    "corrective_accuracy": 0.0,
+    "corrective_roots": 2,
+    "exact_action_accuracy": 1.0,
+    "nonroot_exact_action_accuracy": 1.0,
+    "nonroot_rows": 1452,
+    "predicted_play_rate": 1.0,
+    "rows": 1470,
+    "safety_accuracy": 1.0,
+    "safety_roots": 16,
+    "target_play_rate": 0.8888888888888888,
+    "timing_accuracy": 0.8888888888888888,
+    "timing_roots": 18
+  },
+  "learning_rate": 0.0001,
+  "output_checkpoint": null,
+  "output_checkpoint_sha256": null,
+  "root_behavior_weight": 0.25,
+  "schema": "clasher.hog26.terminal-timing-repair.v1",
+  "seed": 1235001,
+  "selected_nonzero_epoch": false,
+  "selection_gate": {
+    "maximum_nonroot_exact_regression": 0.01,
+    "maximum_safety_regression": 0.01,
+    "minimum_corrective_improvement": 0.25
+  },
+  "terminal_timing_coef": 0.5,
+  "train_corpus": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_strategy_terminal_outcome_v4_timing_train_corpus_seed1233001/corpus.npz",
+  "train_corpus_sha256": "e8c10218b48455ee0ea7b9ac5c72816ef9b19ff8dbcc5c519f48622bd38b3b5c",
+  "train_timing_roots": 18,
+  "trainable_parameter_count": 12417,
+  "trainable_parameter_names": [
+    "play_hazard_head.0.weight",
+    "play_hazard_head.0.bias",
+    "play_hazard_head.2.weight",
+    "play_hazard_head.2.bias"
+  ],
+  "validation_corpus": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_strategy_terminal_outcome_v4_timing_validation_corpus_seed1234001/corpus.npz",
+  "validation_corpus_sha256": "228e59bedb0260a33925ba3a5795e3236274aca8f9d61f065c5d1a3ac7504745",
+  "validation_timing_roots": 18
+}

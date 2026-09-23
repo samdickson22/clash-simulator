@@ -1,0 +1,57 @@
+{
+  "action_samples": 8,
+  "batch_size": 8,
+  "candidate_actions_per_second": 0.44636096654805374,
+  "checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_hazard_competence_seed1193001/policy_v2_update_000000.pt",
+  "checkpoint_sha256": "c113be5bf2229de79a4548643a5e404f1e924516e1c6faaac756b5cc49971165",
+  "device": "cpu",
+  "elapsed_seconds": 17.92271412500122,
+  "horizon_steps": 24,
+  "opponent_strategy": "bridge-pressure",
+  "parent_action": 2304,
+  "rows": [
+    {
+      "action": 1348,
+      "discounted_return_mean": -0.027028194311120645,
+      "terminal": false
+    },
+    {
+      "action": 1277,
+      "discounted_return_mean": -0.044366346299758205,
+      "terminal": false
+    },
+    {
+      "action": 1921,
+      "discounted_return_mean": -0.05689137299200378,
+      "terminal": false
+    },
+    {
+      "action": 763,
+      "discounted_return_mean": -0.0882313261341259,
+      "terminal": false
+    },
+    {
+      "action": 837,
+      "discounted_return_mean": -0.0882313261341259,
+      "terminal": false
+    },
+    {
+      "action": 970,
+      "discounted_return_mean": -0.0882313261341259,
+      "terminal": false
+    },
+    {
+      "action": 1015,
+      "discounted_return_mean": -0.0882313261341259,
+      "terminal": false
+    },
+    {
+      "action": 2304,
+      "discounted_return_mean": -0.0882313261341259,
+      "terminal": false
+    }
+  ],
+  "schema": "clasher.simple-counterfactual-teacher-probe.v2",
+  "seed": 1193507,
+  "warmup_steps": 20
+}

@@ -1,0 +1,53 @@
+learner_device=mps actor_device=mps
+simulation_backend=simple-pytorch
+decks_path=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/decks.json
+sampling_decks_path=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/decks.json
+learner_sampling_decks_path=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/decks.json
+opponent_sampling_decks_path=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/decks.json
+matchups_path=None matchup_probability=0.0
+checkpoint_dir=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_hazard_competence_seed1192801
+model=entity_spatial_recurrent params=1,697,877 tokens=494 max_entities=56 d_model=128 memory=64
+anchor_checkpoint=/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt anchor_l2_coef=0.0 anchor_policy_kl_coef=0.1 anchor_rehearsal_coef=0.0
+envs=64 agents=64 opponent=league actor_workers=1 actor_threads=2 rollout_steps=64 transitions_per_update=4096 reward_profile=objective-v1 reward_shaping_gamma=None elixir_leak_penalty_scale=0.0
+league_opponents=['random', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'random', 'strategy:balanced', 'random', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'random', 'strategy:slow-push', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'random', 'strategy:reactive-defense', 'random', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'random', 'strategy:spell-control', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'random', 'strategy:bridge-pressure', 'random', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'random', 'strategy:split-lane', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'random', 'strategy:balanced', 'random', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'random', 'strategy:slow-push', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt', 'random', '/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt']
+saved_initial_checkpoint=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_hazard_competence_seed1192801/policy_v2_update_000000.pt
+initialized_policy_from=/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt
+update=00001 transitions=4096 reward=+0.00027 abs_reward=0.00166 loss=0.0023 policy=0.0009 value=0.0030 entropy=0.087 type_ent=0.023 loc_ent=0.065 slot_ent=0.023 anchor_l2=0.001 anchor_loss=0.0000 anchor_policy_kl=0.00435 anchor_policy_kl_loss=0.0004 rehearsal=0.000 rehearsal_loss=0.0000 causal_rehearsal=0.000 causal_rehearsal_loss=0.0000 anchor_rehearsal_kl=0.00000 anchor_rehearsal_loss=0.0000 teacher=0.000 teacher_loss=0.0000 teacher_dct=0.000/0.000/0.000 teacher_acc=0.000/0.000/0.000/0.000 hand=0.805 elixir=0.2855 kl=0.00545 clip=0.018 opt_steps=16 kl_stop=0 ev=+0.116 play=0.062 noop=0.938 noop_when_playable=0.937 ability=0.0000 episodes=0 wld=0/0/0 collect_s=108.83 learn_s=10.25 sync_s=0.00 tps=34.4 lr=1.00e-05
+saved_checkpoint=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_hazard_competence_seed1192801/policy_v2_update_000001.pt
+update=00002 transitions=8192 reward=+0.00113 abs_reward=0.00329 loss=0.0040 policy=-0.0001 value=0.0090 entropy=0.105 type_ent=0.015 loc_ent=0.091 slot_ent=0.015 anchor_l2=0.004 anchor_loss=0.0000 anchor_policy_kl=0.00284 anchor_policy_kl_loss=0.0003 rehearsal=0.000 rehearsal_loss=0.0000 causal_rehearsal=0.000 causal_rehearsal_loss=0.0000 anchor_rehearsal_kl=0.00000 anchor_rehearsal_loss=0.0000 teacher=0.000 teacher_loss=0.0000 teacher_dct=0.000/0.000/0.000 teacher_acc=0.000/0.000/0.000/0.000 hand=0.805 elixir=0.3326 kl=0.00064 clip=0.007 opt_steps=16 kl_stop=0 ev=-0.000 play=0.078 noop=0.922 noop_when_playable=0.915 ability=0.0000 episodes=1 wld=1/0/0 collect_s=108.83 learn_s=9.19 sync_s=0.00 tps=34.7 lr=9.29e-06
+saved_checkpoint=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_hazard_competence_seed1192801/policy_v2_update_000002.pt
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/train_recurrent.py", line 4185, in <module>
+    main()
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/train_recurrent.py", line 3957, in main
+    ) = simple_collector.collect(args.rollout_steps, recurrent_state)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/simple_pytorch_backend.py", line 2108, in collect
+    decision = self.collector.collect(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/simple_tensor_collector.py", line 477, in collect
+    decision = self.policy(boundary)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/simple_pytorch_backend.py", line 1266, in __call__
+    actions, log_prob, values, learner_next, _ = self.model.act(
+                                                 ^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/model.py", line 2626, in act
+    distribution = output.distribution(
+                   ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/src/clasher/rl/model.py", line 360, in distribution
+    return Categorical(logits=gated_logits.masked_fill(~gated_mask, -1e9))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sam/Desktop/code/clasher/.venv/lib/python3.12/site-packages/torch/distributions/categorical.py", line 84, in __init__
+    super().__init__(batch_shape, validate_args=validate_args)
+  File "/Users/sam/Desktop/code/clasher/.venv/lib/python3.12/site-packages/torch/distributions/distribution.py", line 77, in __init__
+    if not torch._is_all_true(valid):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

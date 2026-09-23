@@ -1,0 +1,117 @@
+{
+  "action_samples": 12,
+  "batch_size": 12,
+  "candidate_actions_per_second": 0.008880581741657225,
+  "candidate_selector": "hand-slot-spatial-stratified-v1",
+  "checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt",
+  "checkpoint_sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372",
+  "collection_chunk_steps": 32,
+  "device": "mps",
+  "elapsed_seconds": 1351.262828167004,
+  "horizon_steps": 768,
+  "opponent_randomness": "deterministic-strategy",
+  "opponent_strategy": "split-lane",
+  "parent_action": 1944,
+  "random_candidate_fraction": 0.1,
+  "realized_horizon_steps": 640,
+  "return_estimator": "truncated-n-step-bootstrap-v1",
+  "rows": [
+    {
+      "action": 786,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": 0.1546021344769862,
+      "discounted_reward_return": 0.1546021344769862,
+      "terminal": true
+    },
+    {
+      "action": 1944,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": 0.14516418117290592,
+      "discounted_reward_return": 0.14516418117290592,
+      "terminal": true
+    },
+    {
+      "action": 1224,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.040609011045614096,
+      "discounted_reward_return": -0.040609011045614096,
+      "terminal": true
+    },
+    {
+      "action": 1854,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.04990213553206202,
+      "discounted_reward_return": -0.04990213553206202,
+      "terminal": true
+    },
+    {
+      "action": 1962,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.05817432352017976,
+      "discounted_reward_return": -0.05817432352017976,
+      "terminal": true
+    },
+    {
+      "action": 2304,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.07822742446327698,
+      "discounted_reward_return": -0.07822742446327698,
+      "terminal": true
+    },
+    {
+      "action": 819,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.08294499088360066,
+      "discounted_reward_return": -0.08294499088360066,
+      "terminal": true
+    },
+    {
+      "action": 1368,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.09076733454733626,
+      "discounted_reward_return": -0.09076733454733626,
+      "terminal": true
+    },
+    {
+      "action": 1971,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.1156013781422159,
+      "discounted_reward_return": -0.1156013781422159,
+      "terminal": true
+    },
+    {
+      "action": 36,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.11742862046254661,
+      "discounted_reward_return": -0.11742862046254661,
+      "terminal": true
+    },
+    {
+      "action": 211,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.12116645522127764,
+      "discounted_reward_return": -0.12116645522127764,
+      "terminal": true
+    },
+    {
+      "action": 207,
+      "discounted_bootstrap_return": 0.0,
+      "discounted_return_mean": -0.13447013034109012,
+      "discounted_reward_return": -0.13447013034109012,
+      "terminal": true
+    }
+  ],
+  "schema": "clasher.simple-counterfactual-teacher-probe.v3",
+  "seed": 1207514,
+  "stop_when_all_terminal": true,
+  "strategy_proposals": {
+    "balanced": 211,
+    "bridge-pressure": 1962,
+    "reactive-defense": 211,
+    "slow-push": 1224,
+    "spell-control": 819,
+    "split-lane": 1971
+  },
+  "warmup_batch_size": 1,
+  "warmup_steps": 27
+}

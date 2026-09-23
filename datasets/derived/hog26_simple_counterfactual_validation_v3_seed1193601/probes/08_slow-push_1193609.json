@@ -1,0 +1,57 @@
+{
+  "action_samples": 8,
+  "batch_size": 8,
+  "candidate_actions_per_second": 0.4361069596579344,
+  "checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_hazard_competence_seed1193001/policy_v2_update_000000.pt",
+  "checkpoint_sha256": "c113be5bf2229de79a4548643a5e404f1e924516e1c6faaac756b5cc49971165",
+  "device": "cpu",
+  "elapsed_seconds": 18.344123666989617,
+  "horizon_steps": 24,
+  "opponent_strategy": "slow-push",
+  "parent_action": 2304,
+  "rows": [
+    {
+      "action": 1931,
+      "discounted_return_mean": 0.08669080298536236,
+      "terminal": false
+    },
+    {
+      "action": 1249,
+      "discounted_return_mean": 0.0866907803496144,
+      "terminal": false
+    },
+    {
+      "action": 696,
+      "discounted_return_mean": 0.08669077809198096,
+      "terminal": false
+    },
+    {
+      "action": 949,
+      "discounted_return_mean": 0.08669077809198096,
+      "terminal": false
+    },
+    {
+      "action": 1116,
+      "discounted_return_mean": 0.08669077809198096,
+      "terminal": false
+    },
+    {
+      "action": 1145,
+      "discounted_return_mean": 0.08669077809198096,
+      "terminal": false
+    },
+    {
+      "action": 1141,
+      "discounted_return_mean": 0.08428044111333549,
+      "terminal": false
+    },
+    {
+      "action": 2304,
+      "discounted_return_mean": 0.07465799516395165,
+      "terminal": false
+    }
+  ],
+  "schema": "clasher.simple-counterfactual-teacher-probe.v2",
+  "seed": 1193609,
+  "warmup_steps": 20
+}

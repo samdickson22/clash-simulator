@@ -1,0 +1,10 @@
+device=cpu
+checkpoint=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_hazard_hardening_seed1193201/policy_v2_update_000008.pt
+checkpoint_update=8
+checkpoint_transitions=32768
+games=4 wins=1 losses=3 draws=0
+win_rate=0.250 score=0.250 score_ci95=[0.000,0.674] non_loss_rate=0.250 crown_diff=-0.500 noop_rate=0.929 noop_when_playable=0.928
+placement_rate=0.071 ability_rate=0.0000 wins_by_seat=1/0 average_ticks=3973.2 elapsed_seconds=17.76 games_per_minute=13.52
+incoming_danger_mean=0.0846 incoming_danger_peak=0.7449 defensive_action_rate=0.071 board_value_edge_mean=-0.0135
+json_out=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/reports/hog26_simple_hazard_hardening_seed1193201/development_screen/update_000008/candidate-random.metrics.json
+games_json_out=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/reports/hog26_simple_hazard_hardening_seed1193201/development_screen/update_000008/candidate-random.games.json

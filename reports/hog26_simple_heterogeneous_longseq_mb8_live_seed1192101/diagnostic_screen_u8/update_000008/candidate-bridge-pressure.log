@@ -1,0 +1,10 @@
+device=cpu
+checkpoint=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_heterogeneous_longseq_mb8_live_seed1192101/policy_v2_update_000008.pt
+checkpoint_update=8
+checkpoint_transitions=32768
+games=4 wins=1 losses=3 draws=0
+win_rate=0.250 score=0.250 score_ci95=[0.000,0.674] non_loss_rate=0.250 crown_diff=-0.500 noop_rate=0.929 noop_when_playable=0.928
+placement_rate=0.071 ability_rate=0.0000 wins_by_seat=1/0 average_ticks=4021.0 elapsed_seconds=21.98 games_per_minute=10.92
+incoming_danger_mean=0.0805 incoming_danger_peak=0.6212 defensive_action_rate=0.065 board_value_edge_mean=-0.0792
+json_out=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/reports/hog26_simple_heterogeneous_longseq_mb8_live_seed1192101/diagnostic_screen_u8/update_000008/candidate-bridge-pressure.metrics.json
+games_json_out=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/reports/hog26_simple_heterogeneous_longseq_mb8_live_seed1192101/diagnostic_screen_u8/update_000008/candidate-bridge-pressure.games.json

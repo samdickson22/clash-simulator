@@ -1,0 +1,757 @@
+{
+  "behavior_coef": 1.0,
+  "best_epoch": 3,
+  "best_validation": {
+    "behavior": {
+      "ability_accuracy": 0.0,
+      "accuracy": 1.0,
+      "confusion": [
+        [
+          42,
+          0,
+          0
+        ],
+        [
+          0,
+          546,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "exact_action_accuracy": 0.9965986394557823,
+      "nll": 3.4261364774639103,
+      "non_root_exact_action_accuracy": 0.9982638888888888,
+      "non_root_rows": 576,
+      "play_f1": 1.0,
+      "play_precision": 1.0,
+      "play_recall": 1.0,
+      "rows": 588,
+      "support": {
+        "ability": 0,
+        "play": 42,
+        "wait": 546
+      },
+      "wait_accuracy": 1.0
+    },
+    "preferences": {
+      "corrective": {
+        "accuracy": 0.16666666666666666,
+        "mean_margin": -3.041943073272705,
+        "pairs": 54
+      },
+      "overall": {
+        "accuracy": 0.5054945054945055,
+        "mean_margin": 0.004657721612602472,
+        "pairs": 91
+      },
+      "safety": {
+        "accuracy": 1.0,
+        "mean_margin": 4.451048374176025,
+        "pairs": 37
+      }
+    }
+  },
+  "counterfactual_coef": 0.5,
+  "epochs": 8,
+  "history": [
+    {
+      "epoch": 0,
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              42,
+              0,
+              0
+            ],
+            [
+              0,
+              546,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 1.0,
+          "nll": 3.5308162468631252,
+          "non_root_exact_action_accuracy": 1.0,
+          "non_root_rows": 576,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 588,
+          "support": {
+            "ability": 0,
+            "play": 42,
+            "wait": 546
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.018518518518518517,
+            "mean_margin": -3.3373475074768066,
+            "pairs": 54
+          },
+          "overall": {
+            "accuracy": 0.3956043956043956,
+            "mean_margin": -0.7488642930984497,
+            "pairs": 91
+          },
+          "safety": {
+            "accuracy": 0.9459459459459459,
+            "mean_margin": 3.0289223194122314,
+            "pairs": 37
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 1,
+      "training": {
+        "behavior": 3.4623934590455256,
+        "chunks": 132,
+        "gradient_norm_max": 15.332812309265137,
+        "loss": 4.104592460574525,
+        "preference": 1.2843980186364867,
+        "seconds": 7.7036302920023445
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              42,
+              0,
+              0
+            ],
+            [
+              0,
+              546,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9727891156462585,
+          "nll": 3.5178551771202864,
+          "non_root_exact_action_accuracy": 0.9861111111111112,
+          "non_root_rows": 576,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 588,
+          "support": {
+            "ability": 0,
+            "play": 42,
+            "wait": 546
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.12962962962962962,
+            "mean_margin": -2.3030595779418945,
+            "pairs": 54
+          },
+          "overall": {
+            "accuracy": 0.4725274725274725,
+            "mean_margin": -0.07162649184465408,
+            "pairs": 91
+          },
+          "safety": {
+            "accuracy": 0.972972972972973,
+            "mean_margin": 3.1850597858428955,
+            "pairs": 37
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 2,
+      "training": {
+        "behavior": 3.4384988167069177,
+        "chunks": 132,
+        "gradient_norm_max": 15.59628963470459,
+        "loss": 4.0685038349845195,
+        "preference": 1.2600100210896044,
+        "seconds": 5.644457916001556
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              42,
+              0,
+              0
+            ],
+            [
+              0,
+              546,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9897959183673469,
+          "nll": 3.423862126408791,
+          "non_root_exact_action_accuracy": 0.9930555555555556,
+          "non_root_rows": 576,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 588,
+          "support": {
+            "ability": 0,
+            "play": 42,
+            "wait": 546
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.12962962962962962,
+            "mean_margin": -3.4645090103149414,
+            "pairs": 54
+          },
+          "overall": {
+            "accuracy": 0.4835164835164835,
+            "mean_margin": -0.08192859590053558,
+            "pairs": 91
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 4.8548102378845215,
+            "pairs": 37
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 3,
+      "training": {
+        "behavior": 3.4216053991606743,
+        "chunks": 132,
+        "gradient_norm_max": 17.34979820251465,
+        "loss": 4.065713967337753,
+        "preference": 1.2882171390634594,
+        "seconds": 5.605073625018122
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              42,
+              0,
+              0
+            ],
+            [
+              0,
+              546,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9965986394557823,
+          "nll": 3.4261364774639103,
+          "non_root_exact_action_accuracy": 0.9982638888888888,
+          "non_root_rows": 576,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 588,
+          "support": {
+            "ability": 0,
+            "play": 42,
+            "wait": 546
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.16666666666666666,
+            "mean_margin": -3.041943073272705,
+            "pairs": 54
+          },
+          "overall": {
+            "accuracy": 0.5054945054945055,
+            "mean_margin": 0.004657721612602472,
+            "pairs": 91
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 4.451048374176025,
+            "pairs": 37
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 4,
+      "training": {
+        "behavior": 3.418930375214779,
+        "chunks": 132,
+        "gradient_norm_max": 16.539051055908203,
+        "loss": 4.0433599334774595,
+        "preference": 1.2488591178800121,
+        "seconds": 5.825027707993286
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              42,
+              0,
+              0
+            ],
+            [
+              0,
+              546,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9880952380952381,
+          "nll": 3.4401148127860766,
+          "non_root_exact_action_accuracy": 0.9930555555555556,
+          "non_root_rows": 576,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 588,
+          "support": {
+            "ability": 0,
+            "play": 42,
+            "wait": 546
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.09259259259259259,
+            "mean_margin": -2.5872604846954346,
+            "pairs": 54
+          },
+          "overall": {
+            "accuracy": 0.43956043956043955,
+            "mean_margin": 0.4249458312988281,
+            "pairs": 91
+          },
+          "safety": {
+            "accuracy": 0.9459459459459459,
+            "mean_margin": 4.82113790512085,
+            "pairs": 37
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 5,
+      "training": {
+        "behavior": 3.419690524086808,
+        "chunks": 132,
+        "gradient_norm_max": 18.076454162597656,
+        "loss": 4.027235247872093,
+        "preference": 1.2150894690192107,
+        "seconds": 5.514030458027264
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              42,
+              0,
+              0
+            ],
+            [
+              0,
+              546,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9931972789115646,
+          "nll": 3.432323767214405,
+          "non_root_exact_action_accuracy": 0.9965277777777778,
+          "non_root_rows": 576,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 588,
+          "support": {
+            "ability": 0,
+            "play": 42,
+            "wait": 546
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.16666666666666666,
+            "mean_margin": -2.4666061401367188,
+            "pairs": 54
+          },
+          "overall": {
+            "accuracy": 0.4835164835164835,
+            "mean_margin": 0.6123654246330261,
+            "pairs": 91
+          },
+          "safety": {
+            "accuracy": 0.9459459459459459,
+            "mean_margin": 5.10599946975708,
+            "pairs": 37
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 6,
+      "training": {
+        "behavior": 3.4169764229745576,
+        "chunks": 132,
+        "gradient_norm_max": 19.335002899169922,
+        "loss": 3.986054407827782,
+        "preference": 1.138155978285905,
+        "seconds": 5.673942875000648
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              42,
+              0,
+              0
+            ],
+            [
+              0,
+              546,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9965986394557823,
+          "nll": 3.386712204031393,
+          "non_root_exact_action_accuracy": 0.9982638888888888,
+          "non_root_rows": 576,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 588,
+          "support": {
+            "ability": 0,
+            "play": 42,
+            "wait": 546
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.12962962962962962,
+            "mean_margin": -3.9998323917388916,
+            "pairs": 54
+          },
+          "overall": {
+            "accuracy": 0.4725274725274725,
+            "mean_margin": 0.08156493306159973,
+            "pairs": 91
+          },
+          "safety": {
+            "accuracy": 0.972972972972973,
+            "mean_margin": 6.038198947906494,
+            "pairs": 37
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 7,
+      "training": {
+        "behavior": 3.417644368879723,
+        "chunks": 132,
+        "gradient_norm_max": 21.707998275756836,
+        "loss": 3.9465978542963662,
+        "preference": 1.0579069897984013,
+        "seconds": 5.679747709014919
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              42,
+              0,
+              0
+            ],
+            [
+              0,
+              546,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9965986394557823,
+          "nll": 3.3939751410970884,
+          "non_root_exact_action_accuracy": 0.9982638888888888,
+          "non_root_rows": 576,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 588,
+          "support": {
+            "ability": 0,
+            "play": 42,
+            "wait": 546
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.12962962962962962,
+            "mean_margin": -3.1697638034820557,
+            "pairs": 54
+          },
+          "overall": {
+            "accuracy": 0.4725274725274725,
+            "mean_margin": 0.47679048776626587,
+            "pairs": 91
+          },
+          "safety": {
+            "accuracy": 0.972972972972973,
+            "mean_margin": 5.798788070678711,
+            "pairs": 37
+          }
+        }
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 8,
+      "training": {
+        "behavior": 3.415664300774083,
+        "chunks": 132,
+        "gradient_norm_max": 19.714702606201172,
+        "loss": 3.905888866294514,
+        "preference": 0.9804491591498707,
+        "seconds": 5.783994292025454
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 1.0,
+          "confusion": [
+            [
+              42,
+              0,
+              0
+            ],
+            [
+              0,
+              546,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9965986394557823,
+          "nll": 3.3923432226894663,
+          "non_root_exact_action_accuracy": 0.9982638888888888,
+          "non_root_rows": 576,
+          "play_f1": 1.0,
+          "play_precision": 1.0,
+          "play_recall": 1.0,
+          "rows": 588,
+          "support": {
+            "ability": 0,
+            "play": 42,
+            "wait": 546
+          },
+          "wait_accuracy": 1.0
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.12962962962962962,
+            "mean_margin": -3.198805570602417,
+            "pairs": 54
+          },
+          "overall": {
+            "accuracy": 0.4835164835164835,
+            "mean_margin": 0.5788599848747253,
+            "pairs": 91
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 6.092210292816162,
+            "pairs": 37
+          }
+        }
+      }
+    }
+  ],
+  "initial_checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt",
+  "initial_checkpoint_sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372",
+  "initial_validation": {
+    "behavior": {
+      "ability_accuracy": 0.0,
+      "accuracy": 1.0,
+      "confusion": [
+        [
+          42,
+          0,
+          0
+        ],
+        [
+          0,
+          546,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "exact_action_accuracy": 1.0,
+      "nll": 3.5308162468631252,
+      "non_root_exact_action_accuracy": 1.0,
+      "non_root_rows": 576,
+      "play_f1": 1.0,
+      "play_precision": 1.0,
+      "play_recall": 1.0,
+      "rows": 588,
+      "support": {
+        "ability": 0,
+        "play": 42,
+        "wait": 546
+      },
+      "wait_accuracy": 1.0
+    },
+    "preferences": {
+      "corrective": {
+        "accuracy": 0.018518518518518517,
+        "mean_margin": -3.3373475074768066,
+        "pairs": 54
+      },
+      "overall": {
+        "accuracy": 0.3956043956043956,
+        "mean_margin": -0.7488642930984497,
+        "pairs": 91
+      },
+      "safety": {
+        "accuracy": 0.9459459459459459,
+        "mean_margin": 3.0289223194122314,
+        "pairs": 37
+      }
+    }
+  },
+  "learning_rate": 0.0001,
+  "output_checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_strategy_proposal_scaled_conditional_seed1204501/candidate.pt",
+  "output_checkpoint_sha256": "81f88aea052bf4abb3d2bbd91b188b11b6b07d828838df36f81a8ba710556ac4",
+  "preserve_behavior_gate": true,
+  "root_behavior_weight": 0.25,
+  "schema": "clasher.hog26.factorized-counterfactual.v1",
+  "seed": 1204501,
+  "selected_nonzero_epoch": true,
+  "selection_gate": {
+    "exact_behavior_scope": "non_counterfactual_root_rows",
+    "maximum_exact_regression": 0.01,
+    "maximum_safety_regression": 0.01,
+    "minimum_corrective_improvement": 0.05
+  },
+  "train_corpus": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_strategy_proposal_scaled_reward_train_seed1201501/corpus.npz",
+  "train_corpus_sha256": "50bb395ded3e61ec02c03575eec9bb6f19e1b0e2d83624cbf50cbfef05530ffe",
+  "train_preferences": 421,
+  "trainable_parameter_count": 203079,
+  "trainable_parameter_names": [
+    "tile_decoder.query_norm.weight",
+    "tile_decoder.query_norm.bias",
+    "tile_decoder.context_norm.weight",
+    "tile_decoder.context_norm.bias",
+    "tile_decoder.attention.in_proj_weight",
+    "tile_decoder.attention.in_proj_bias",
+    "tile_decoder.attention.out_proj.weight",
+    "tile_decoder.attention.out_proj.bias",
+    "tile_decoder.mlp_norm.weight",
+    "tile_decoder.mlp_norm.bias",
+    "tile_decoder.mlp.0.weight",
+    "tile_decoder.mlp.0.bias",
+    "tile_decoder.mlp.2.weight",
+    "tile_decoder.mlp.2.bias",
+    "tile_key.weight",
+    "card_query.0.weight",
+    "card_query.0.bias",
+    "card_query.2.weight",
+    "location_bias.weight",
+    "location_bias.bias",
+    "action_type_head.0.weight",
+    "action_type_head.0.bias",
+    "action_type_head.2.weight",
+    "action_type_head.2.bias"
+  ],
+  "trainable_prefixes": [
+    "action_type_head.",
+    "card_query.",
+    "tile_decoder.",
+    "tile_key.",
+    "location_bias."
+  ],
+  "validation_corpus": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_strategy_proposal_scaled_reward_validation_seed1202501/corpus.npz",
+  "validation_corpus_sha256": "770fff0aaaa6cd539dc57b12f169b1a3bcfea33a6851c2892ef6826512b57a07",
+  "validation_preferences": 91
+}

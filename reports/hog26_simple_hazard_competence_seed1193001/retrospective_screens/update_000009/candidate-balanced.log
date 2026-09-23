@@ -1,0 +1,10 @@
+device=cpu
+checkpoint=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_simple_hazard_competence_seed1193001/policy_v2_update_000009.pt
+checkpoint_update=9
+checkpoint_transitions=36864
+games=4 wins=2 losses=2 draws=0
+win_rate=0.500 score=0.500 score_ci95=[0.010,0.990] non_loss_rate=0.500 crown_diff=+1.000 noop_rate=0.930 noop_when_playable=0.930
+placement_rate=0.070 ability_rate=0.0000 wins_by_seat=1/1 average_ticks=3492.5 elapsed_seconds=17.80 games_per_minute=13.48
+incoming_danger_mean=0.0716 incoming_danger_peak=0.8615 defensive_action_rate=0.067 board_value_edge_mean=+0.0138
+json_out=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/reports/hog26_simple_hazard_competence_seed1193001/retrospective_screens/update_000009/candidate-balanced.metrics.json
+games_json_out=/Users/sam/.codex/worktrees/clasher-simple-mps-bench/reports/hog26_simple_hazard_competence_seed1193001/retrospective_screens/update_000009/candidate-balanced.games.json

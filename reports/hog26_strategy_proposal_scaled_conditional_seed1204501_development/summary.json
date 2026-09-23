@@ -1,0 +1,155 @@
+{
+  "arms": {
+    "candidate": {
+      "buckets": {
+        "balanced": {
+          "crown_diff_per_game": 0.25,
+          "defense_success_rate": 0.42857142857142855,
+          "draws": 0,
+          "losses": 2,
+          "placement_rate": 0.0707395498392283,
+          "wins": 2
+        },
+        "bridge-pressure": {
+          "crown_diff_per_game": 2.5,
+          "defense_success_rate": 0.4838709677419355,
+          "draws": 0,
+          "losses": 0,
+          "placement_rate": 0.07094594594594594,
+          "wins": 4
+        },
+        "random": {
+          "crown_diff_per_game": 0.0,
+          "defense_success_rate": 0.0,
+          "draws": 0,
+          "losses": 2,
+          "placement_rate": 0.07074569789674952,
+          "wins": 2
+        },
+        "reactive-defense": {
+          "crown_diff_per_game": -0.5,
+          "defense_success_rate": 0.22727272727272727,
+          "draws": 0,
+          "losses": 3,
+          "placement_rate": 0.0709545686574783,
+          "wins": 1
+        },
+        "slow-push": {
+          "crown_diff_per_game": -2.25,
+          "defense_success_rate": 0.0,
+          "draws": 0,
+          "losses": 4,
+          "placement_rate": 0.06945975744211687,
+          "wins": 0
+        },
+        "spell-control": {
+          "crown_diff_per_game": 0.0,
+          "defense_success_rate": 0.23529411764705882,
+          "draws": 0,
+          "losses": 2,
+          "placement_rate": 0.07111111111111111,
+          "wins": 2
+        },
+        "split-lane": {
+          "crown_diff_per_game": -0.5,
+          "defense_success_rate": 0.28,
+          "draws": 0,
+          "losses": 3,
+          "placement_rate": 0.07076446280991736,
+          "wins": 1
+        }
+      },
+      "total": {
+        "crown_diff_per_game": -0.07142857142857142,
+        "draws": 0,
+        "losses": 16,
+        "wins": 12
+      }
+    },
+    "parent": {
+      "buckets": {
+        "balanced": {
+          "crown_diff_per_game": 1.25,
+          "defense_success_rate": 0.4166666666666667,
+          "draws": 0,
+          "losses": 1,
+          "placement_rate": 0.07095209217707701,
+          "wins": 3
+        },
+        "bridge-pressure": {
+          "crown_diff_per_game": 2.0,
+          "defense_success_rate": 0.6129032258064516,
+          "draws": 0,
+          "losses": 0,
+          "placement_rate": 0.07042253521126761,
+          "wins": 4
+        },
+        "random": {
+          "crown_diff_per_game": 0.75,
+          "defense_success_rate": 0.14285714285714285,
+          "draws": 0,
+          "losses": 1,
+          "placement_rate": 0.07026419336706015,
+          "wins": 3
+        },
+        "reactive-defense": {
+          "crown_diff_per_game": -0.5,
+          "defense_success_rate": 0.16666666666666666,
+          "draws": 0,
+          "losses": 3,
+          "placement_rate": 0.07111834961997829,
+          "wins": 1
+        },
+        "slow-push": {
+          "crown_diff_per_game": -1.0,
+          "defense_success_rate": 0.0,
+          "draws": 0,
+          "losses": 3,
+          "placement_rate": 0.07081174438687392,
+          "wins": 1
+        },
+        "spell-control": {
+          "crown_diff_per_game": 0.0,
+          "defense_success_rate": 0.15384615384615385,
+          "draws": 0,
+          "losses": 2,
+          "placement_rate": 0.07071240105540898,
+          "wins": 2
+        },
+        "split-lane": {
+          "crown_diff_per_game": 0.5,
+          "defense_success_rate": 0.07142857142857142,
+          "draws": 0,
+          "losses": 1,
+          "placement_rate": 0.07092960773777539,
+          "wins": 3
+        }
+      },
+      "total": {
+        "crown_diff_per_game": 0.42857142857142855,
+        "draws": 0,
+        "losses": 11,
+        "wins": 17
+      }
+    }
+  },
+  "candidate_minus_parent": {
+    "crown_diff_per_game": -0.5,
+    "draws": 0,
+    "losses": 5,
+    "wins": -5
+  },
+  "games_per_arm": 28,
+  "games_per_opponent_arm": 4,
+  "opponents": [
+    "balanced",
+    "bridge-pressure",
+    "reactive-defense",
+    "spell-control",
+    "slow-push",
+    "split-lane",
+    "random"
+  ],
+  "schema": "clasher.hog26.promotion-matrix.v1",
+  "seed_base": 1204601
+}
