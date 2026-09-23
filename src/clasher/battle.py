@@ -1,11 +1,12 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 import time
 import math
 import random
 import copy
 import json
+from operator import attrgetter
 import numpy as np
 try:
     from numba import njit
@@ -16,7 +17,7 @@ from .entities import Entity, Troop, Building, Projectile
 from .player import PlayerState
 from .arena import TileGrid, Position
 from .card_aliases import resolve_card_name
-from .data import CardDataLoader
+from .data import CardDataLoader, load_princess_tower_character_data
 from .card_types import CardStatsCompat
 from .factory.dynamic_factory import (
     building_from_values,
@@ -35,6 +36,7 @@ from .unit_traits import (
 )
 from .kinematics import (
     LOGIC_TICK_SECONDS,
+    LOGIC_UNITS_PER_TILE,
     SERVER_ACTION_DELAY_SECONDS,
     logic_units_to_tiles,
     tiles_to_logic_units,
@@ -54,6 +56,89 @@ DEFAULT_TICK_SECONDS = LOGIC_TICK_SECONDS
 STANDARD_MATCH_DURATION_SECONDS = 300.0
 STANDARD_MATCH_TICKS = math.ceil(STANDARD_MATCH_DURATION_SECONDS / DEFAULT_TICK_SECONDS)
 
+# Reference/benchmark switch for allocation-free integer bucket indexing.
+_USE_DENSE_ENTITY_BUCKETS = True
+
+# Reference/benchmark switch for query-local dense bucket bindings.
+_USE_LOCAL_DENSE_BUCKET_BINDINGS = True
+
+# Reference/benchmark switch for exact spatial collision candidate pruning.
+_USE_COLLISION_BUCKET_CANDIDATES = True
+
+# Reference/benchmark switch. Collision and native avoidance pass a complete
+# center-distance bound, so their bucket scans need no extra whole-cell halo.
+_USE_TIGHT_INTERACTION_BUCKET_BOUNDS = True
+
+# Reference/benchmark switch. Ground collision pressure from troops and static
+# buildings is additive, so consume the exact nearby candidate list once.
+_USE_SINGLE_PASS_COLLISION_CANDIDATES = True
+
+# Reference/benchmark switch for restoring bucket candidates to exact entity
+# encounter order without allocating a second result list and lambda.
+_USE_INPLACE_BUCKET_ID_SORT = True
+_ENTITY_ID_KEY = attrgetter("id")
+
+# Reference/benchmark switch for scanning the dense row-major bucket grid in
+# storage order and computing its row offset once per queried row.
+_USE_ROW_MAJOR_BUCKET_SCAN = True
+
+# Reference/benchmark switch for reusing the exact geometry published by the
+# rebuild that created the current entity bucket grid.
+_USE_CACHED_BUCKET_GEOMETRY = True
+
+# Reference/benchmark switch. Idle eligibility proves tower HP and crowns stay
+# fixed, so win checks are needed only when a timer boundary becomes actionable.
+_USE_SPARSE_IDLE_WIN_CHECKS = True
+
+# Reference/benchmark switch. Between timer boundaries, win state and public
+# tower HP can change only after a Crown Tower HP mutation.
+_USE_DIRTY_WIN_CONDITION_REFRESH = True
+
+# Most combat components cannot move their owner. Preserve the exact native
+# grid publication for the serialized hooks that do, without rounding every
+# stationary troop and building after every combat phase.
+_USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION = True
+
+# Reference/benchmark switch for trusting the exact live-Building membership
+# contract immediately after the fast placement cache refresh.
+_USE_TRUSTED_ALIVE_BUILDING_MEMBERSHIP = True
+
+# Reference/benchmark switch for reusing the immutable, data-driven hover
+# trait already published by Entity.__post_init__ during movement checks.
+_USE_CACHED_MOVER_HOVER_TRAIT = True
+
+# Reference/benchmark switch for targetability predicates that cannot change
+# after an ordinary target has joined the battle. Stealth remains a separate
+# timestamp array in the vectorized selector, while hidden/death-immunity and
+# mechanic-owned gates retain the full dynamic predicate.
+_USE_STATIC_TARGETABILITY_CLASSIFICATION = True
+
+# Reference/benchmark switch for reading the exact static classification that
+# the target cache already publishes instead of recomputing mechanics on every
+# per-component entity synchronization.
+_USE_CACHED_TARGETABILITY_REQUIREMENT = True
+
+# Reference/benchmark switch for reading Entity's required, normalized kind
+# field directly while maintaining the target-cache membership predicate.
+_USE_DIRECT_TARGET_ENTITY_KIND = True
+
+# Reference/benchmark switch for sharing one exact alive-building membership
+# publication across the controlled movement phase, with explicit invalidation.
+_COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+
+# Reference/benchmark switch for the legacy eager creation of every mutable
+# card wrapper when a battle starts. Normal lookups materialize wrappers lazily.
+_EAGERLY_MATERIALIZE_BATTLE_CARDS = False
+
+# Reference/benchmark switch for the file-revision-keyed support-tower data
+# cache. The public helper returns an isolated deep copy on every call.
+_USE_CACHED_PRINCESS_TOWER_DATA = True
+
+# Reference/benchmark switch. Structural mutations explicitly invalidate the
+# target cache, while ordinary movement already publishes changed entities at
+# its exact component boundary. Between structural changes only the small,
+# data/mechanic-selected volatile target subset needs a defensive refresh.
+_USE_DIRTY_TARGET_CACHE_REFRESH = True
 
 @dataclass(frozen=True)
 class PendingSpellCast:
@@ -140,13 +225,42 @@ class BattleState:
     fast_path: bool = False
     _bucket_cell_size: float = 2.0
     _entity_buckets: Dict[Tuple[int, int], List[Entity]] = field(default_factory=dict, init=False)
+    _entity_bucket_grid: List[Optional[List[Entity]]] = field(
+        default_factory=list,
+        init=False,
+    )
+    _entity_bucket_grid_width: int = field(default=0, init=False)
+    _entity_bucket_grid_height: int = field(default=0, init=False, repr=False)
+    _entity_bucket_inverse_cell_size: float = field(
+        default=0.5,
+        init=False,
+        repr=False,
+    )
+    _entity_bucket_max_dimension: float = field(
+        default=32.0,
+        init=False,
+        repr=False,
+    )
     _entity_bucket_entity_count: int = field(default=-1, init=False)
     _alive_buildings: List[Building] = field(default_factory=list, init=False)
     _tower_tile_mask_world: np.ndarray = field(
         default_factory=lambda: np.zeros((32, 18), dtype=np.bool_), init=False
     )
     _building_placement_blocked_masks: Dict[int, np.ndarray] = field(default_factory=dict, init=False)
+    _troop_placement_blocked_masks: dict[float, np.ndarray] = field(
+        default_factory=dict, init=False
+    )
     _building_cache_signature: Tuple[int, ...] = field(default_factory=tuple, init=False)
+    _coalesce_alive_building_refreshes: bool = field(
+        default=False,
+        init=False,
+        repr=False,
+    )
+    _alive_building_cache_dirty: bool = field(
+        default=True,
+        init=False,
+        repr=False,
+    )
     _cached_tower_alive_flags: Tuple[bool, bool, bool, bool, bool, bool] = field(
         default_factory=lambda: (False, False, False, False, False, False), init=False
     )
@@ -165,6 +279,14 @@ class BattleState:
     _target_is_targetable: np.ndarray = field(
         default_factory=lambda: np.zeros((0,), dtype=np.bool_), init=False
     )
+    _target_requires_targetability_check: np.ndarray = field(
+        default_factory=lambda: np.zeros((0,), dtype=np.bool_), init=False
+    )
+    _volatile_target_indices: List[int] = field(default_factory=list, init=False)
+    _target_cache_dirty: bool = field(default=True, init=False, repr=False)
+    _crown_target_entities_by_player: Tuple[List[Entity], List[Entity]] = field(
+        default_factory=lambda: ([], []), init=False
+    )
     _target_stealth_until: np.ndarray = field(default_factory=lambda: np.zeros((0,), dtype=np.int32), init=False)
     _target_collision_radius: np.ndarray = field(
         default_factory=lambda: np.zeros((0,), dtype=np.float64), init=False
@@ -173,6 +295,7 @@ class BattleState:
         default_factory=lambda: np.zeros((0,), dtype=np.float64), init=False
     )
     _max_target_collision_radius: float = field(default=0.5, init=False)
+    _max_target_distance_discount_sq: float = field(default=0.0, init=False)
     _pending_spell_casts: List[PendingSpellCast] = field(default_factory=list, init=False)
     _next_spell_cast_sequence: int = field(default=0, init=False)
     _pending_projectile_impacts: List[PendingProjectileImpact] = field(
@@ -185,10 +308,12 @@ class BattleState:
         default_factory=dict,
         init=False,
     )
+    _win_conditions_dirty: bool = field(default=True, init=False, repr=False)
     
     def __post_init__(self) -> None:
         """Initialize battle state"""
-        self.card_loader.load_cards()
+        if _EAGERLY_MATERIALIZE_BATTLE_CARDS:
+            self.card_loader.load_cards()
         self._create_towers()
         # PlayerState is also used as the public tower-health view.  Seed it
         # from the actual tower entities so level/balance data and the public
@@ -212,6 +337,17 @@ class BattleState:
             },
         }
         self._refresh_fast_path_caches()
+
+    def clone(self) -> "BattleState":
+        """Clone mutable battle state without copying the full card catalog."""
+
+        loader = self.card_loader.clone_lazy()
+        memo: dict[int, Any] = {id(self.card_loader): loader}
+        for definition in self.card_loader.load_card_definitions().values():
+            # CardDefinition is frozen and its normalized source snapshot is
+            # process-global. Mutable CardStatsCompat wrappers are still copied.
+            memo[id(definition)] = definition
+        return copy.deepcopy(self, memo)
     
     def _create_towers(self) -> None:
         """Create tower entities for both players"""
@@ -317,6 +453,8 @@ class BattleState:
 
     def _load_princess_tower_character_data(self) -> dict:
         """Load Princess Tower baseline stats from support-card data in gamedata."""
+        if _USE_CACHED_PRINCESS_TOWER_DATA:
+            return load_princess_tower_character_data(self.card_loader.data_file)
         with open(self.card_loader.data_file, "r") as f:
             spells = json.load(f).get("items", {}).get("spells", [])
         for entry in spells:
@@ -327,12 +465,16 @@ class BattleState:
                 raise ValueError("King_PrincessTowers has no statCharacterData")
         raise ValueError("King_PrincessTowers is missing from game data")
 
-    def _refresh_fast_path_caches(self) -> None:
+    def _refresh_fast_path_caches(
+        self,
+        *,
+        trust_target_cache_dirty: bool = False,
+    ) -> None:
         """Refresh caches used by fast-path queries."""
         self._refresh_alive_buildings_cache()
         self._refresh_tower_mask_if_needed()
         self._rebuild_entity_buckets()
-        self._rebuild_target_cache()
+        self._refresh_target_cache(trust_dirty=trust_target_cache_dirty)
 
     def _refresh_alive_buildings_cache(self) -> None:
         """Publish live building membership to every accelerated query.
@@ -341,6 +483,39 @@ class BattleState:
         validations, before the next logic tick refreshes the broader fast
         caches. Placement queries must observe that mutation immediately.
         """
+        if (
+            _COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH
+            and self._coalesce_alive_building_refreshes
+            and not self._alive_building_cache_dirty
+        ):
+            return
+
+        cache_index = 0
+        cached_count = len(self._alive_buildings)
+        membership_matches = True
+        for entity in self.entities.values():
+            if not isinstance(entity, Building) or not entity.is_alive:
+                continue
+            if (
+                cache_index >= cached_count
+                or self._alive_buildings[cache_index] is not entity
+            ):
+                membership_matches = False
+                break
+            cache_index += 1
+        if membership_matches and cache_index == cached_count:
+            self._alive_building_cache_dirty = False
+            return
+
+        self._rebuild_alive_buildings_cache()
+        self._alive_building_cache_dirty = False
+
+    def invalidate_alive_buildings_cache(self) -> None:
+        """Publish a structural/live-building mutation to phase-local reuse."""
+        self._alive_building_cache_dirty = True
+
+    def _rebuild_alive_buildings_cache(self) -> None:
+        """Run the exact allocation-heavy reference membership refresh."""
         alive_buildings = [
             e for e in self.entities.values() if isinstance(e, Building) and e.is_alive
         ]
@@ -349,6 +524,7 @@ class BattleState:
             self._alive_buildings = alive_buildings
             self._building_cache_signature = building_sig
             self._building_placement_blocked_masks.clear()
+            self._troop_placement_blocked_masks.clear()
 
     def _rebuild_target_cache(self) -> None:
         self._target_cache_entity_count = len(self.entities)
@@ -371,10 +547,17 @@ class BattleState:
             self._target_is_building_target = np.zeros((0,), dtype=np.bool_)
             self._target_is_crown = np.zeros((0,), dtype=np.bool_)
             self._target_is_targetable = np.zeros((0,), dtype=np.bool_)
+            self._target_requires_targetability_check = np.zeros(
+                (0,), dtype=np.bool_
+            )
+            self._volatile_target_indices = []
+            self._crown_target_entities_by_player = ([], [])
             self._target_stealth_until = np.zeros((0,), dtype=np.int32)
             self._target_collision_radius = np.zeros((0,), dtype=np.float64)
             self._target_distance_discount_sq = np.zeros((0,), dtype=np.float64)
             self._max_target_collision_radius = 0.5
+            self._max_target_distance_discount_sq = 0.0
+            self._target_cache_dirty = False
             return
 
         pos_x = np.empty((n,), dtype=np.float64)
@@ -385,9 +568,11 @@ class BattleState:
         is_building_target = np.empty((n,), dtype=np.bool_)
         is_crown = np.empty((n,), dtype=np.bool_)
         is_targetable = np.empty((n,), dtype=np.bool_)
+        requires_targetability_check = np.empty((n,), dtype=np.bool_)
         stealth_until = np.empty((n,), dtype=np.int32)
         collision_radius = np.empty((n,), dtype=np.float64)
         target_distance_discount_sq = np.empty((n,), dtype=np.float64)
+        crown_targets_by_player: Tuple[List[Entity], List[Entity]] = ([], [])
 
         for i, entity in enumerate(targets):
             pos_x[i] = float(entity.position.x)
@@ -402,7 +587,15 @@ class BattleState:
                 is_crown[i] = name in {"Tower", "KingTower"} or bool(getattr(entity, "_is_king_tower", False))
             else:
                 is_crown[i] = False
-            is_targetable[i] = entity.is_targetable_by(1 - entity.player_id)
+            if is_crown[i] and entity.player_id in {0, 1}:
+                crown_targets_by_player[entity.player_id].append(entity)
+            requires_check = self._requires_targetability_check(entity)
+            requires_targetability_check[i] = requires_check
+            is_targetable[i] = (
+                entity.is_targetable_by(1 - entity.player_id)
+                if requires_check or not _USE_STATIC_TARGETABILITY_CLASSIFICATION
+                else True
+            )
             stealth_until[i] = int(getattr(entity, "_stealth_until", 0) or 0)
             collision_radius[i] = entity.get_collision_radius()
             target_distance_discount_sq[i] = (
@@ -428,16 +621,187 @@ class BattleState:
         self._target_is_building_target = is_building_target
         self._target_is_crown = is_crown
         self._target_is_targetable = is_targetable
+        self._target_requires_targetability_check = requires_targetability_check
+        self._volatile_target_indices = [
+            index
+            for index, entity in enumerate(targets)
+            if requires_targetability_check[index]
+            or hasattr(entity, "_stealth_until")
+        ]
+        self._crown_target_entities_by_player = crown_targets_by_player
         self._target_stealth_until = stealth_until
         self._target_collision_radius = collision_radius
         self._target_distance_discount_sq = target_distance_discount_sq
         self._max_target_collision_radius = float(np.max(collision_radius))
+        self._max_target_distance_discount_sq = float(
+            np.max(target_distance_discount_sq)
+        )
+        self._target_cache_dirty = False
+
+    def _refresh_target_cache(self, *, trust_dirty: bool = False) -> None:
+        """Refresh target values in place when cache membership is unchanged.
+
+        Entity insertion order is stable, so an identity scan detects every
+        structural change, including a remove/add pair that leaves the entity
+        dictionary at the same size. Reusing the arrays avoids rebuilding the
+        ID index and allocating eleven target-property arrays each logic tick.
+        Dynamic properties are still republished so this remains exact for
+        movement, target-plane, stealth, and targetability changes. Static
+        properties are published at structural rebuilds and their explicit
+        post-spawn mutation sites.
+        """
+        if (
+            _USE_DIRTY_TARGET_CACHE_REFRESH
+            and trust_dirty
+            and not self._target_cache_dirty
+            and self._target_cache_entity_count == len(self.entities)
+        ):
+            for index in self._volatile_target_indices:
+                entity = self._target_entities[index]
+                if not self._eligible_fast_target(entity):
+                    self._rebuild_target_cache()
+                    return
+                self._refresh_fast_target_dynamic_values(index, entity)
+            return
+
+        target_index = 0
+        cached_count = len(self._target_entities)
+        for entity in self.entities.values():
+            if not self._eligible_fast_target(entity):
+                continue
+            if (
+                target_index >= cached_count
+                or self._target_entities[target_index] is not entity
+            ):
+                self._rebuild_target_cache()
+                return
+            self._refresh_fast_target_dynamic_values(target_index, entity)
+            target_index += 1
+
+        if target_index != cached_count:
+            self._rebuild_target_cache()
+            return
+        self._target_cache_entity_count = len(self.entities)
+        self._target_cache_dirty = False
+
+    def invalidate_target_cache(self) -> None:
+        """Mark target membership for an exact structural refresh."""
+        self._target_cache_dirty = True
+
+    def _refresh_fast_target_dynamic_values(
+        self,
+        index: int,
+        entity: Entity,
+    ) -> None:
+        """Publish target properties that can change after insertion."""
+        self._target_pos_x[index] = float(entity.position.x)
+        self._target_pos_y[index] = float(entity.position.y)
+        self._target_is_air[index] = is_airborne_target(entity)
+        if (
+            not _USE_STATIC_TARGETABILITY_CLASSIFICATION
+            or self._target_requires_targetability_check[index]
+        ):
+            self._target_is_targetable[index] = entity.is_targetable_by(
+                1 - entity.player_id
+            )
+        self._target_stealth_until[index] = int(
+            getattr(entity, "_stealth_until", 0) or 0
+        )
+
+    def _refresh_fast_target_static_values(
+        self,
+        index: int,
+        entity: Entity,
+    ) -> None:
+        """Publish target properties that are immutable after spawn setup."""
+        self._target_player[index] = int(entity.player_id)
+        building = bool(getattr(entity, "entity_kind", 4) == 1)
+        self._target_is_building[index] = building
+        self._target_is_building_target[index] = is_native_building_target(entity)
+        if building:
+            name = getattr(getattr(entity, "card_stats", None), "name", "")
+            self._target_is_crown[index] = name in {"Tower", "KingTower"} or bool(
+                getattr(entity, "_is_king_tower", False)
+            )
+        else:
+            self._target_is_crown[index] = False
+        self._target_collision_radius[index] = entity.get_collision_radius()
+        self._target_distance_discount_sq[index] = (
+            max(
+                0,
+                int(
+                    getattr(
+                        entity,
+                        "_native_target_distance_discount_sq_units",
+                        0,
+                    )
+                    or 0
+                ),
+            )
+            / 1_000_000.0
+        )
+
+    def sync_fast_target_static_entity(self, entity: Entity) -> None:
+        """Publish rare post-insertion setup of an otherwise static target."""
+        if not self.fast_path:
+            return
+        index = self._target_index_by_id.get(entity.id)
+        if index is None:
+            self._rebuild_target_cache()
+            index = self._target_index_by_id.get(entity.id)
+        if index is not None:
+            was_crown = bool(self._target_is_crown[index])
+            self._refresh_fast_target_static_values(index, entity)
+            if bool(self._target_is_crown[index]) != was_crown:
+                self._rebuild_target_cache()
+                return
+            self._max_target_collision_radius = float(
+                np.max(self._target_collision_radius)
+            )
+            self._max_target_distance_discount_sq = float(
+                np.max(self._target_distance_discount_sq)
+            )
+            # A rare post-insertion setup may accompany other direct entity
+            # initialization. Preserve the public helper's exact dynamic
+            # publication without forcing an unrelated structural rebuild.
+            self._refresh_fast_target_dynamic_values(index, entity)
+            if (
+                (
+                    self._target_requires_targetability_check[index]
+                    or hasattr(entity, "_stealth_until")
+                )
+                and index not in self._volatile_target_indices
+            ):
+                self._volatile_target_indices.append(index)
+                self._volatile_target_indices.sort()
 
     @staticmethod
     def _eligible_fast_target(entity: Entity) -> bool:
+        if not entity.is_alive:
+            return False
+        entity_kind = (
+            entity.entity_kind
+            if _USE_DIRECT_TARGET_ENTITY_KIND
+            else getattr(entity, "entity_kind", 4)
+        )
+        return entity_kind not in {2, 3}
+
+    @staticmethod
+    def _requires_targetability_check(entity: Entity) -> bool:
+        """Return whether non-stealth targetability can change after insert.
+
+        The vectorized selector applies stealth timestamps independently.
+        Every other mutable gate in ``Entity.is_targetable_by`` is represented
+        by one of these data/mechanic-owned states. Mechanics are attached
+        before manager insertion and remain stable for the entity lifetime.
+        """
         return bool(
-            entity.is_alive
-            and getattr(entity, "entity_kind", 4) not in {2, 3}
+            entity._has_death_spawn_target_immunity()
+            or hasattr(entity, "_hidden_building")
+            or any(
+                callable(getattr(mechanic, "blocks_targeting", None))
+                for mechanic in entity.mechanics
+            )
         )
 
     def _sync_fast_target_entity(self, entity: Entity) -> bool:
@@ -457,9 +821,17 @@ class BattleState:
         self._target_pos_x[index] = float(entity.position.x)
         self._target_pos_y[index] = float(entity.position.y)
         self._target_is_air[index] = is_airborne_target(entity)
-        self._target_is_targetable[index] = entity.is_targetable_by(
-            1 - entity.player_id
-        )
+        if (
+            not _USE_STATIC_TARGETABILITY_CLASSIFICATION
+            or (
+                self._target_requires_targetability_check[index]
+                if _USE_CACHED_TARGETABILITY_REQUIREMENT
+                else self._requires_targetability_check(entity)
+            )
+        ):
+            self._target_is_targetable[index] = entity.is_targetable_by(
+                1 - entity.player_id
+            )
         self._target_stealth_until[index] = int(
             getattr(entity, "_stealth_until", 0) or 0
         )
@@ -491,7 +863,10 @@ class BattleState:
         # observe a different object list from the scalar engine.
         if (
             self.fast_path
-            and self._target_cache_entity_count != len(self.entities)
+            and (
+                self._target_cache_dirty
+                or self._target_cache_entity_count != len(self.entities)
+            )
         ):
             self._refresh_fast_path_caches()
         return (
@@ -509,6 +884,20 @@ class BattleState:
             self._target_distance_discount_sq,
         )
 
+    def get_fast_crown_target_entities(self, player_id: int) -> List[Entity]:
+        """Return exact live Crown fallback membership for one owner."""
+        if (
+            self.fast_path
+            and (
+                self._target_cache_dirty
+                or self._target_cache_entity_count != len(self.entities)
+            )
+        ):
+            self._refresh_fast_path_caches()
+        if player_id not in {0, 1}:
+            return []
+        return self._crown_target_entities_by_player[player_id]
+
     def _refresh_tower_mask_if_needed(self) -> None:
         alive_flags = self._tower_alive_flags()
         if alive_flags != self._cached_tower_alive_flags:
@@ -516,11 +905,42 @@ class BattleState:
 
     def _rebuild_entity_buckets(self) -> None:
         self._entity_bucket_entity_count = len(self.entities)
+        inv = 1.0 / max(0.25, self._bucket_cell_size)
+        self._entity_bucket_inverse_cell_size = inv
+        self._entity_bucket_max_dimension = float(
+            max(self.arena.width, self.arena.height)
+        )
         if not self.fast_path:
             self._entity_buckets = {}
+            self._entity_bucket_grid = []
+            self._entity_bucket_grid_width = 0
+            self._entity_bucket_grid_height = 0
             return
+        if _USE_DENSE_ENTITY_BUCKETS:
+            width = int((self.arena.width - 1e-6) * inv) + 1
+            height = int((self.arena.height - 1e-6) * inv) + 1
+            bucket_grid: List[Optional[List[Entity]]] = [None] * (width * height)
+            populated = False
+            for entity in self.entities.values():
+                if not entity.is_alive:
+                    continue
+                bx = int(entity.position.x * inv)
+                by = int(entity.position.y * inv)
+                if 0 <= bx < width and 0 <= by < height:
+                    bucket_index = by * width + bx
+                    bucket = bucket_grid[bucket_index]
+                    if bucket is None:
+                        bucket = []
+                        bucket_grid[bucket_index] = bucket
+                    bucket.append(entity)
+                    populated = True
+            self._entity_buckets = {}
+            self._entity_bucket_grid = bucket_grid if populated else []
+            self._entity_bucket_grid_width = width
+            self._entity_bucket_grid_height = height
+            return
+
         buckets: Dict[Tuple[int, int], List[Entity]] = defaultdict(list)
-        inv = 1.0 / max(0.25, self._bucket_cell_size)
         for entity in self.entities.values():
             if not entity.is_alive:
                 continue
@@ -528,34 +948,92 @@ class BattleState:
             by = int(entity.position.y * inv)
             buckets[(bx, by)].append(entity)
         self._entity_buckets = dict(buckets)
+        self._entity_bucket_grid = []
+        self._entity_bucket_grid_width = 0
+        self._entity_bucket_grid_height = 0
 
-    def iter_entities_in_radius(self, position: Position, radius: float) -> List[Entity]:
+    def iter_entities_in_radius(
+        self,
+        position: Position,
+        radius: float,
+        *,
+        tight_bounds: bool = False,
+    ) -> List[Entity]:
         """Return candidate entities near position for fast target selection."""
         if (
             self.fast_path
             and self._entity_bucket_entity_count != len(self.entities)
         ):
             self._refresh_fast_path_caches()
-        if not self.fast_path or not self._entity_buckets:
+        if not self.fast_path:
             return list(self.entities.values())
-        inv = 1.0 / max(0.25, self._bucket_cell_size)
-        max_dim = float(max(self.arena.width, self.arena.height))
+        if _USE_DENSE_ENTITY_BUCKETS:
+            if not self._entity_bucket_grid:
+                return list(self.entities.values())
+        elif not self._entity_buckets:
+            return list(self.entities.values())
+        if _USE_CACHED_BUCKET_GEOMETRY:
+            inv = self._entity_bucket_inverse_cell_size
+            max_dim = self._entity_bucket_max_dimension
+        else:
+            inv = 1.0 / max(0.25, self._bucket_cell_size)
+            max_dim = float(max(self.arena.width, self.arena.height))
         if radius >= max_dim:
             return list(self.entities.values())
-        pad = max(0.5, min(radius + 2.0, max_dim))
-        max_bx_bound = int((self.arena.width - 1e-6) * inv)
-        max_by_bound = int((self.arena.height - 1e-6) * inv)
+        bucket_halo = (
+            0.0
+            if tight_bounds and _USE_TIGHT_INTERACTION_BUCKET_BOUNDS
+            else 2.0
+        )
+        pad = max(0.5, min(radius + bucket_halo, max_dim))
+        if _USE_CACHED_BUCKET_GEOMETRY and _USE_DENSE_ENTITY_BUCKETS:
+            max_bx_bound = self._entity_bucket_grid_width - 1
+            max_by_bound = self._entity_bucket_grid_height - 1
+        else:
+            max_bx_bound = int((self.arena.width - 1e-6) * inv)
+            max_by_bound = int((self.arena.height - 1e-6) * inv)
         min_bx = max(0, int((position.x - pad) * inv))
         max_bx = min(max_bx_bound, int((position.x + pad) * inv))
         min_by = max(0, int((position.y - pad) * inv))
         max_by = min(max_by_bound, int((position.y + pad) * inv))
         out: List[Entity] = []
-        for bx in range(min_bx, max_bx + 1):
-            for by in range(min_by, max_by + 1):
-                out.extend(self._entity_buckets.get((bx, by), []))
+        if _USE_DENSE_ENTITY_BUCKETS and _USE_ROW_MAJOR_BUCKET_SCAN:
+            width = self._entity_bucket_grid_width
+            if _USE_LOCAL_DENSE_BUCKET_BINDINGS:
+                bucket_grid = self._entity_bucket_grid
+                extend = out.extend
+                for by in range(min_by, max_by + 1):
+                    row_offset = by * width
+                    for bx in range(min_bx, max_bx + 1):
+                        bucket = bucket_grid[row_offset + bx]
+                        if bucket is not None:
+                            extend(bucket)
+            else:
+                for by in range(min_by, max_by + 1):
+                    row_offset = by * width
+                    for bx in range(min_bx, max_bx + 1):
+                        bucket = self._entity_bucket_grid[
+                            row_offset + bx
+                        ]
+                        if bucket is not None:
+                            out.extend(bucket)
+        else:
+            for bx in range(min_bx, max_bx + 1):
+                for by in range(min_by, max_by + 1):
+                    if _USE_DENSE_ENTITY_BUCKETS:
+                        bucket = self._entity_bucket_grid[
+                            by * self._entity_bucket_grid_width + bx
+                        ]
+                        if bucket is not None:
+                            out.extend(bucket)
+                    else:
+                        out.extend(self._entity_buckets.get((bx, by), []))
         # Target ties retain native object encounter order. Bucket traversal
         # is spatial rather than object ordered, so restore ID order before a
         # scalar fallback scans this reduced candidate set.
+        if _USE_INPLACE_BUCKET_ID_SORT:
+            out.sort(key=_ENTITY_ID_KEY)
+            return out
         return sorted(out, key=lambda entity: entity.id)
 
     def _tower_alive_flags(self) -> Tuple[bool, bool, bool, bool, bool, bool]:
@@ -660,6 +1138,38 @@ class BattleState:
             mask = np.zeros((self.arena.height, self.arena.width), dtype=np.bool_)
         self._building_placement_blocked_masks[size_tiles] = mask
         return mask
+
+    def get_troop_placement_blocked_mask_world(
+        self, mover_radius: float
+    ) -> np.ndarray:
+        """Return world tiles where a troop radius overlaps a live building."""
+        self._refresh_alive_buildings_cache()
+        radius = float(mover_radius)
+        cached = self._troop_placement_blocked_masks.get(radius)
+        if cached is not None:
+            return cached
+
+        mask = np.zeros((self.arena.height, self.arena.width), dtype=np.bool_)
+        for entity in self._alive_buildings:
+            building_radius = (
+                getattr(entity.card_stats, "collision_radius", 1.0) or 1.0
+            )
+            collision_units = tiles_to_logic_units(float(building_radius) + radius)
+            collision_sq = collision_units * collision_units
+            for ty in range(self.arena.height):
+                dy_units = tiles_to_logic_units(ty + 0.5 - entity.position.y)
+                dy_sq = dy_units * dy_units
+                if dy_sq >= collision_sq:
+                    continue
+                for tx in range(self.arena.width):
+                    if mask[ty, tx]:
+                        continue
+                    dx_units = tiles_to_logic_units(tx + 0.5 - entity.position.x)
+                    if dx_units * dx_units + dy_sq < collision_sq:
+                        mask[ty, tx] = True
+
+        self._troop_placement_blocked_masks[radius] = mask
+        return mask
     
     def step(self, speed_factor: float = 1.0) -> None:
         """Advance by fixed native ticks, batching only the Python call."""
@@ -680,7 +1190,26 @@ class BattleState:
                 break
             self._step_logic_tick()
 
-    def _step_logic_tick(self) -> None:
+    def step_logic_ticks(self, ticks: int) -> int:
+        """Advance an integer tick window with one final cache publication.
+
+        Each tick retains its start-of-frame refresh and every explicit
+        in-component synchronization. The end refresh is externally visible
+        only after control returns to the caller, so a closed multi-tick
+        decision window can publish it once after its final frame.
+        """
+        requested = max(0, int(ticks))
+        advanced = 0
+        for _ in range(requested):
+            if self.game_over:
+                break
+            self._step_logic_tick(refresh_fast_path_end=False)
+            advanced += 1
+        if advanced and self.fast_path:
+            self._refresh_fast_path_caches(trust_target_cache_dirty=True)
+        return advanced
+
+    def _step_logic_tick(self, *, refresh_fast_path_end: bool = True) -> None:
         """Advance exactly one 50 ms native logic frame."""
         if self.game_over:
             return
@@ -717,7 +1246,7 @@ class BattleState:
         post_command_ids = set(self.entities)
 
         if self.fast_path:
-            self._refresh_fast_path_caches()
+            self._refresh_fast_path_caches(trust_target_cache_dirty=True)
         
         # Target reservations are a start-of-tick snapshot. This makes
         # simultaneous attacks commute: a projectile launched by an entity
@@ -749,12 +1278,20 @@ class BattleState:
             for entity in entities_to_update:
                 if not isinstance(entity, (Troop, Building)):
                     continue
+                if _USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION:
+                    combat_start_x = entity.position.x
+                    combat_start_y = entity.position.y
                 entity.update_combat_component(dt, self)
                 # A few serialized special states currently commit their
                 # travel inside the combat hook. Preserve the native grid at
                 # this component boundary while their phase adapters remain
                 # card-owned.
-                entity.quantize_logic_position()
+                if (
+                    not _USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION
+                    or entity.position.x != combat_start_x
+                    or entity.position.y != combat_start_y
+                ):
+                    entity.quantize_logic_position()
                 if self.fast_path:
                     if len(self.entities) != cached_entity_count:
                         cached_entity_count = len(self.entities)
@@ -767,28 +1304,40 @@ class BattleState:
             self._projectile_lethal_reservations = None
 
         # Component type 1: movement and deployment-specific transport.
-        for entity in entities_to_update:
-            if not isinstance(entity, (Troop, Building)) or not entity.is_alive:
-                continue
-            if isinstance(entity, Troop):
-                # Each native movement component scans positions at its own
-                # boundary, so earlier movers affect later body pressure.
-                # updatePushback skips checkCollisions on its final zero-work
-                # frame, although already-queued controlled vectors (such as
-                # Tornado attraction) can still be consumed.
-                if not (
-                    entity._knockback_target is not None
-                    and entity._knockback_velocity_work < 1
-                ):
-                    self._accumulate_troop_collision_for(entity)
-            entity.begin_movement_tick()
-            try:
-                entity.update_movement_component(dt, self)
-            finally:
-                entity.finish_movement_tick(self)
-                entity.quantize_logic_position()
-            if self.fast_path and not self._sync_fast_target_entity(entity):
-                self._rebuild_target_cache()
+        coalesce_buildings = bool(
+            self.fast_path and _COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH
+        )
+        if coalesce_buildings:
+            self._coalesce_alive_building_refreshes = True
+            # Combat can kill a building after the start-of-frame refresh.
+            self._alive_building_cache_dirty = True
+        try:
+            for entity in entities_to_update:
+                if not isinstance(entity, (Troop, Building)) or not entity.is_alive:
+                    continue
+                if isinstance(entity, Troop):
+                    # Each native movement component scans positions at its own
+                    # boundary, so earlier movers affect later body pressure.
+                    # updatePushback skips checkCollisions on its final zero-work
+                    # frame, although already-queued controlled vectors (such as
+                    # Tornado attraction) can still be consumed.
+                    if not (
+                        entity._knockback_target is not None
+                        and entity._knockback_velocity_work < 1
+                    ):
+                        self._accumulate_troop_collision_for(entity)
+                entity.begin_movement_tick()
+                try:
+                    entity.update_movement_component(dt, self)
+                finally:
+                    entity.finish_movement_tick(self)
+                    entity.quantize_logic_position()
+                if self.fast_path and not self._sync_fast_target_entity(entity):
+                    self._rebuild_target_cache()
+        finally:
+            if coalesce_buildings:
+                self._coalesce_alive_building_refreshes = False
+                self._alive_building_cache_dirty = True
 
         # Component type 2: building lifetime/hitpoint work.
         for entity in entities_to_update:
@@ -810,11 +1359,24 @@ class BattleState:
         # Remove dead entities
         self._cleanup_dead_entities()
 
-        if self.fast_path:
-            self._refresh_fast_path_caches()
+        if self.fast_path and refresh_fast_path_end:
+            self._refresh_fast_path_caches(trust_target_cache_dirty=True)
         
-        # Check win conditions
-        self._check_win_conditions()
+        # Check win conditions only when a Crown Tower changed or a timer
+        # boundary can alter match state.
+        if (
+            not _USE_DIRTY_WIN_CONDITION_REFRESH
+            or self._win_conditions_dirty
+            or (
+                not self.sudden_death
+                and self.time >= self.overtime_start_time
+            )
+            or (
+                self.sudden_death
+                and self.time >= self.tiebreaker_time
+            )
+        ):
+            self._check_win_conditions()
 
     def _run_object_phase(
         self,
@@ -872,6 +1434,11 @@ class BattleState:
             in {"left", "right", "king"}
         )
 
+    def mark_win_conditions_dirty_if_crown(self, entity: Entity) -> None:
+        """Publish a Crown Tower HP mutation to the end-of-tick refresh."""
+        if self._is_static_tower_entity(entity):
+            self._win_conditions_dirty = True
+
     def can_fast_forward_idle(self) -> bool:
         if self.game_over:
             return False
@@ -918,9 +1485,16 @@ class BattleState:
         if self.time >= self.triple_elixir_start_time:
             self.triple_elixir = True
 
-    def fast_forward_idle_ticks(self, ticks: int) -> int:
+    def fast_forward_idle_ticks(
+        self,
+        ticks: int,
+        *,
+        eligibility_checked: bool = False,
+    ) -> int:
         """Advance multiple idle ticks when only static towers remain."""
-        if ticks <= 0 or not self.can_fast_forward_idle():
+        if ticks <= 0 or (
+            not eligibility_checked and not self.can_fast_forward_idle()
+        ):
             return 0
         advanced = 0
         for _ in range(ticks):
@@ -952,7 +1526,18 @@ class BattleState:
                 ):
                     entity.last_attack_time += dt
             advanced += 1
-            self._check_win_conditions()
+            if (
+                not _USE_SPARSE_IDLE_WIN_CHECKS
+                or (
+                    not self.sudden_death
+                    and self.time >= self.overtime_start_time
+                )
+                or (
+                    self.sudden_death
+                    and self.time >= self.tiebreaker_time
+                )
+            ):
+                self._check_win_conditions()
             if self.game_over:
                 break
         return advanced
@@ -1702,6 +2287,7 @@ class BattleState:
         self._attach_card_mechanics(troop, card_stats)
 
         self.entities[self.next_entity_id] = troop
+        self.invalidate_target_cache()
         self.next_entity_id += 1
         if death_spawn_travel_origin is not None:
             # Native retains the ring coordinate as movement state and resets
@@ -1958,7 +2544,10 @@ class BattleState:
         self._attach_card_mechanics(entity, card_stats)
 
         self.entities[self.next_entity_id] = entity
+        self.invalidate_target_cache()
         self.next_entity_id += 1
+        if isinstance(entity, Building):
+            self.invalidate_alive_buildings_cache()
 
         if isinstance(entity, Building) and getattr(card_stats, "name", "") == "KingTower":
             from .balance import tournament_tower_stat
@@ -2022,6 +2611,7 @@ class BattleState:
         for eid in dead_ids:
             entity = self.entities[eid]
             if self._is_static_tower_entity(entity):
+                self._win_conditions_dirty = True
                 player = self.players[entity.player_id]
                 slot = entity._crown_tower_slot
                 setattr(player, f"{slot}_tower_hp", 0)
@@ -2035,6 +2625,8 @@ class BattleState:
         }
 
         # Remove dead entities
+        if dead_ids:
+            self.invalidate_target_cache()
         for eid in dead_ids:
             del self.entities[eid]
 
@@ -2143,11 +2735,13 @@ class BattleState:
                 spawned._native_target_distance_discount_sq_units = (
                     spawn_target_distance_discount_sq_units(index)
                 )
+                self.sync_fast_target_static_entity(spawned)
     
     def _check_win_conditions(self) -> None:
         """Check if game should end"""
         # Update player tower HP from entities
         self._update_tower_hp()
+        self._win_conditions_dirty = False
         
         # Check both King Towers as one simultaneous resolution. Effects from
         # the same simulation tick can destroy both; iteration order must not
@@ -2280,17 +2874,27 @@ class BattleState:
             buildings = self._alive_buildings
         else:
             buildings = self.entities.values()
+        trusted_membership = bool(
+            self.fast_path and _USE_TRUSTED_ALIVE_BUILDING_MEMBERSHIP
+        )
         for entity in buildings:
-            if not isinstance(entity, Building):
+            if not trusted_membership and (
+                not isinstance(entity, Building) or not entity.is_alive
+            ):
                 continue
-            if (not entity.is_alive) or (ignore_building_id is not None and entity.id == ignore_building_id):
+            if ignore_building_id is not None and entity.id == ignore_building_id:
                 continue
             building_radius = getattr(entity.card_stats, "collision_radius", 1.0) or 1.0
-            collision_units = tiles_to_logic_units(
-                float(building_radius) + effective_mover_radius
+            collision_units = round(
+                (float(building_radius) + effective_mover_radius)
+                * LOGIC_UNITS_PER_TILE
             )
-            dx_units = tiles_to_logic_units(position.x - entity.position.x)
-            dy_units = tiles_to_logic_units(position.y - entity.position.y)
+            dx_units = round(
+                float(position.x - entity.position.x) * LOGIC_UNITS_PER_TILE
+            )
+            dy_units = round(
+                float(position.y - entity.position.y) * LOGIC_UNITS_PER_TILE
+            )
             if dx_units * dx_units + dy_units * dy_units < collision_units * collision_units:
                 return True
         return False
@@ -2301,6 +2905,7 @@ class BattleState:
         *,
         mover_radius: float = 0.5,
         card_stats: CardStatsCompat | None = None,
+        deployment_blockers: Iterable[Entity] | None = None,
     ) -> bool:
         """Return whether a live effect payload blocks card placement here.
 
@@ -2309,7 +2914,12 @@ class BattleState:
         resolve. The entity capability keeps this general for future payload
         types without teaching deployment code individual card names.
         """
-        for entity in self.entities.values():
+        candidates = (
+            self.entities.values()
+            if deployment_blockers is None
+            else deployment_blockers
+        )
+        for entity in candidates:
             if not entity.is_alive or not getattr(entity, "blocks_deployment", False):
                 continue
             payload_radius = float(
@@ -2384,13 +2994,16 @@ class BattleState:
         ignore_building_id: Optional[int] = None,
     ) -> bool:
         """Ground movement validator including arena terrain and building footprints."""
-        from .unit_traits import is_hover_unit_card
-
         if not self.is_entity_position_in_bounds(position, mover):
             return False
-        hovering = bool(
-            mover is not None and is_hover_unit_card(getattr(mover, "card_stats", None))
-        )
+        if mover is None:
+            hovering = False
+        elif _USE_CACHED_MOVER_HOVER_TRAIT:
+            hovering = mover._is_hover_unit
+        else:
+            from .unit_traits import is_hover_unit_card
+
+            hovering = is_hover_unit_card(getattr(mover, "card_stats", None))
         if hovering:
             # Hovering characters ignore water and dynamic ground bodies, but
             # still respect the arena's permanent blocked boundary cells.
@@ -2468,7 +3081,7 @@ class BattleState:
 
     def _accumulate_troop_collision_for(self, troop: Troop) -> None:
         """Queue body pressure seen by one native movement component."""
-        from .unit_traits import is_in_transit, unit_mass, uses_air_collision_plane
+        from .unit_traits import is_in_transit, uses_air_collision_plane
 
         river_jumping = bool(getattr(troop, "_river_jump_active", False))
         death_spawn_traveling = bool(
@@ -2496,44 +3109,70 @@ class BattleState:
             0.2,
             getattr(troop.card_stats, "collision_radius", 0.5) or 0.5,
         )
-        own_mass = max(1e-9, unit_mass(troop.card_stats))
-        for other in self.entities.values():
-            other_airborne_leap = (
-                getattr(other, "_mk_leap_phase", None) == "airborne"
+        own_mass = max(1e-9, troop.get_unit_mass())
+        own_air_collision = uses_air_collision_plane(troop)
+        collision_candidates: Iterable[Entity] = self.entities.values()
+        if self.fast_path and _USE_COLLISION_BUCKET_CANDIDATES:
+            collision_candidates = self.iter_entities_in_radius(
+                troop.position,
+                own_radius + self._max_target_collision_radius,
+                tight_bounds=_USE_TIGHT_INTERACTION_BUCKET_BOUNDS,
             )
-            if (
-                other is troop
-                or not isinstance(other, Troop)
-                or not other.is_alive
-                or (
-                    is_in_transit(other)
-                    and not getattr(other, "_river_jump_active", False)
-                    and not other_airborne_leap
-                )
-                or uses_air_collision_plane(troop)
-                != uses_air_collision_plane(other)
-            ):
+        static_radius = min(own_radius, 0.5)
+        for other in collision_candidates:
+            if other is troop or not other.is_alive:
                 continue
-            other_radius = max(
-                0.2,
-                getattr(other.card_stats, "collision_radius", 0.5) or 0.5,
-            )
-            vector = self._collision_vector_units(
-                troop,
-                other.position,
-                own_radius + other_radius,
-                max(1e-9, unit_mass(other.card_stats)),
-                own_mass,
-            )
-            if vector is not None:
-                troop.accumulate_movement_vector_units(*vector)
+            if isinstance(other, Troop):
+                other_airborne_leap = (
+                    getattr(other, "_mk_leap_phase", None) == "airborne"
+                )
+                if (
+                    (
+                        is_in_transit(other)
+                        and not getattr(other, "_river_jump_active", False)
+                        and not other_airborne_leap
+                    )
+                    or own_air_collision != uses_air_collision_plane(other)
+                ):
+                    continue
+                other_radius = max(
+                    0.2,
+                    getattr(other.card_stats, "collision_radius", 0.5) or 0.5,
+                )
+                vector = self._collision_vector_units(
+                    troop,
+                    other.position,
+                    own_radius + other_radius,
+                    max(1e-9, other.get_unit_mass()),
+                    own_mass,
+                )
+                if vector is not None:
+                    troop.accumulate_movement_vector_units(*vector)
+                continue
+            if (
+                _USE_SINGLE_PASS_COLLISION_CANDIDATES
+                and not own_air_collision
+                and isinstance(other, Building)
+            ):
+                building_radius = max(
+                    0.0,
+                    getattr(other.card_stats, "collision_radius", 0.0) or 0.0,
+                )
+                vector = self._collision_vector_units(
+                    troop,
+                    other.position,
+                    static_radius + building_radius,
+                    20.0,
+                    own_mass,
+                )
+                if vector is not None:
+                    troop.accumulate_movement_vector_units(*vector)
 
-        if uses_air_collision_plane(troop):
+        if own_air_collision or _USE_SINGLE_PASS_COLLISION_CANDIDATES:
             return
         # Static objects do not receive a reciprocal vector. Native supplies
         # mass 20 and caps the moving character's radius contribution at 0.5.
-        static_radius = min(own_radius, 0.5)
-        for building in self.entities.values():
+        for building in collision_candidates:
             if (
                 not isinstance(building, Building)
                 or not building.is_alive

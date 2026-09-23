@@ -10,7 +10,7 @@ from typing import Any, Dict, List
 import numpy as np
 import torch
 
-from clasher.battle import STANDARD_MATCH_TICKS
+from clasher.battle import STANDARD_MATCH_TICKS, BattleState
 from clasher.paths import decks_path as resolve_decks_path
 from clasher.rl.inference_server import InferenceServer
 from clasher.rl.legacy_model import MaskedPolicyValueNet
@@ -26,6 +26,16 @@ class _NullWriter:
 
 
 _NULL_WRITER = _NullWriter()
+_INCREMENTAL_TARGET_CACHE_REFRESH = BattleState._refresh_target_cache
+
+
+def _configure_target_cache_refresh(mode: str) -> None:
+    implementation = (
+        BattleState._rebuild_target_cache
+        if mode == "rebuild"
+        else _INCREMENTAL_TARGET_CACHE_REFRESH
+    )
+    BattleState._refresh_target_cache = implementation  # type: ignore[method-assign]
 
 
 @contextmanager
@@ -52,7 +62,9 @@ def run_env_benchmark(
     mirror_match: bool,
     quiet_engine: bool,
     engine_fast_path: str = "off",
+    target_cache_refresh: str = "reuse",
 ) -> Dict[str, float]:
+    _configure_target_cache_refresh(target_cache_refresh)
     env = SelfPlayBattleEnv(
         decision_interval_ticks=decision_interval,
         max_ticks=max_ticks,
@@ -102,10 +114,12 @@ def _actor_rollout_worker(
     mirror_match: bool,
     quiet_engine: bool,
     engine_fast_path: str,
+    target_cache_refresh: str,
     actor_rollout_steps: int,
     out_queue: mp.Queue,
     stop_event: mp.Event,
 ) -> None:
+    _configure_target_cache_refresh(target_cache_refresh)
     env = SelfPlayBattleEnv(
         decision_interval_ticks=decision_interval,
         max_ticks=max_ticks,
@@ -151,12 +165,14 @@ def _actor_rollout_worker_centralized(
     mirror_match: bool,
     quiet_engine: bool,
     engine_fast_path: str,
+    target_cache_refresh: str,
     actor_rollout_steps: int,
     out_queue: mp.Queue,
     stop_event: mp.Event,
     request_queue: mp.Queue,
     response_queue: mp.Queue,
 ) -> None:
+    _configure_target_cache_refresh(target_cache_refresh)
     env = SelfPlayBattleEnv(
         decision_interval_ticks=decision_interval,
         max_ticks=max_ticks,
@@ -238,6 +254,7 @@ def run_async_queue_benchmark(
     mirror_match: bool,
     quiet_engine: bool,
     engine_fast_path: str = "off",
+    target_cache_refresh: str = "reuse",
     inference_mode: str = "actor_local",
     inference_max_batch: int = 2048,
     inference_max_wait_ms: float = 2.0,
@@ -309,6 +326,7 @@ def run_async_queue_benchmark(
                     mirror_match,
                     quiet_engine,
                     engine_fast_path,
+                    target_cache_refresh,
                     actor_rollout_steps,
                     out_queue,
                     stop_event,
@@ -329,6 +347,7 @@ def run_async_queue_benchmark(
                     mirror_match,
                     quiet_engine,
                     engine_fast_path,
+                    target_cache_refresh,
                     actor_rollout_steps,
                     out_queue,
                     stop_event,
@@ -400,6 +419,9 @@ def _parse_args() -> argparse.Namespace:
     env_p.add_argument("--mirror-match", action="store_true")
     env_p.add_argument("--quiet-engine", action="store_true")
     env_p.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")
+    env_p.add_argument(
+        "--target-cache-refresh", choices=["rebuild", "reuse"], default="reuse"
+    )
 
     async_p = sub.add_parser("async-queue", help="Actor queue throughput/lag benchmark")
     async_p.add_argument("--seed", type=int, default=101)
@@ -413,6 +435,9 @@ def _parse_args() -> argparse.Namespace:
     async_p.add_argument("--mirror-match", action="store_true")
     async_p.add_argument("--quiet-engine", action="store_true")
     async_p.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")
+    async_p.add_argument(
+        "--target-cache-refresh", choices=["rebuild", "reuse"], default="reuse"
+    )
     async_p.add_argument("--inference-mode", choices=["actor_local", "centralized"], default="actor_local")
     async_p.add_argument("--inference-max-batch", type=int, default=2048)
     async_p.add_argument("--inference-max-wait-ms", type=float, default=2.0)
@@ -441,6 +466,7 @@ def main() -> None:
             mirror_match=args.mirror_match,
             quiet_engine=args.quiet_engine,
             engine_fast_path=args.engine_fast_path,
+            target_cache_refresh=args.target_cache_refresh,
         )
         _print_metrics("benchmark=env", metrics)
         return
@@ -458,6 +484,7 @@ def main() -> None:
             mirror_match=args.mirror_match,
             quiet_engine=args.quiet_engine,
             engine_fast_path=args.engine_fast_path,
+            target_cache_refresh=args.target_cache_refresh,
             inference_mode=args.inference_mode,
             inference_max_batch=args.inference_max_batch,
             inference_max_wait_ms=args.inference_max_wait_ms,

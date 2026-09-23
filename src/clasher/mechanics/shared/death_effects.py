@@ -270,6 +270,7 @@ class DeathSpawn(BaseMechanic):
                 spawned._native_target_distance_discount_sq_units = (
                     spawn_target_distance_discount_sq_units(index)
                 )
+                battle_state.sync_fast_target_static_entity(spawned)
             if spawned is not None and (
                 (self.radial_pushback and radius > 0.0)
                 or self.spawn_const_priority

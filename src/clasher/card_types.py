@@ -1,9 +1,13 @@
+import copy
 from dataclasses import dataclass, field
 from typing import Optional, Sequence, Protocol, Literal, Callable, Any, List, Dict
 from abc import ABC, abstractmethod
 
 CardKind = Literal["troop", "building", "spell", "champion"]
 Rarity = Literal["Common", "Rare", "Epic", "Legendary", "Champion"]
+_DEEPCOPY_ATOMIC_TYPES = frozenset(
+    {type(None), bool, int, float, complex, bytes, str}
+)
 
 
 @dataclass(frozen=True)
@@ -362,6 +366,21 @@ class CardStatsCompat:
 
         # Store reference to original card definition
         self.card_definition = card_def
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'CardStatsCompat':
+        """Copy mutable wrapper state without generic reconstruction setup."""
+        existing = memo.get(id(self))
+        if isinstance(existing, CardStatsCompat):
+            return existing
+        cloned = object.__new__(type(self))
+        memo[id(self)] = cloned
+        for name, value in self.__dict__.items():
+            cloned.__dict__[name] = (
+                value
+                if type(value) in _DEEPCOPY_ATOMIC_TYPES
+                else copy.deepcopy(value, memo)
+            )
+        return cloned
 
     @property
     def first_hit_time(self) -> int:

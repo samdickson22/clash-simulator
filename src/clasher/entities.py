@@ -1,9 +1,10 @@
+import copy
+import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-import math
-from typing import Optional, List, Dict, Any
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Literal, Optional, overload
+
 import numpy as np
 
 if TYPE_CHECKING:
@@ -15,12 +16,14 @@ from .factory.dynamic_factory import troop_from_character_data
 from .unit_traits import (
     is_above_ground_surface,
     is_airborne_target,
+    is_hover_unit_card,
     is_native_building_target,
     uses_air_collision_plane,
 )
 from .native_tilemap import clamp_native_object_axis
 from .kinematics import (
     LOGIC_TICK_SECONDS,
+    LOGIC_UNITS_PER_TILE,
     NATIVE_MOVEMENT_SUBSTEP_UNITS,
     logic_time_milliseconds,
     logic_speed_to_tiles_per_second,
@@ -78,6 +81,176 @@ class TargetType(Enum):
     BOTH = "both"
 
 
+# Reference/benchmark switch. Entity initialization already classifies this
+# immutable data-driven movement trait once.
+_USE_CACHED_PATHFIND_HOVER_TRAIT = True
+
+
+def _target_sight_reach_reference(
+    sight_range: float,
+    collision_radius: np.ndarray,
+    is_building: np.ndarray,
+    is_crown: np.ndarray,
+) -> np.ndarray:
+    """Return the established vectorized sight reach for benchmark parity."""
+    target_radius = (
+        collision_radius
+        if ADD_CHARACTER_RANGE_TO_RADIUS
+        else np.zeros_like(collision_radius)
+    )
+    building_extension = np.where(
+        is_crown,
+        EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS,
+        np.where(is_building, EXTRA_SIGHT_RANGE_TO_BUILDING, 0),
+    ).astype(np.float64) / 1000.0
+    return sight_range + target_radius + building_extension
+
+
+def _target_sight_reach_candidate(
+    sight_range: float,
+    collision_radius: np.ndarray,
+    is_building: np.ndarray,
+    is_crown: np.ndarray,
+) -> np.ndarray:
+    """Return exact sight reach without full-size extension temporaries."""
+    if ADD_CHARACTER_RANGE_TO_RADIUS:
+        reach = sight_range + collision_radius
+    else:
+        reach = np.full_like(collision_radius, sight_range)
+    if EXTRA_SIGHT_RANGE_TO_BUILDING:
+        building_only = is_building & (~is_crown)
+        np.add(
+            reach,
+            float(EXTRA_SIGHT_RANGE_TO_BUILDING) / 1000.0,
+            out=reach,
+            where=building_only,
+        )
+    if EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS:
+        np.add(
+            reach,
+            float(EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS) / 1000.0,
+            out=reach,
+            where=is_crown,
+        )
+    return reach
+
+
+_target_sight_reach = _target_sight_reach_candidate
+
+# The vectorized selector applies every broad eligibility, plane, sight, and
+# crown-fallback filter used by the scalar scan. A missing candidate is
+# therefore exhaustive; a non-null candidate still passes through the scalar
+# mechanics validation below, which may need to find an alternative target.
+_FAST_TARGET_NONE_IS_EXHAUSTIVE = True
+
+# NumPy's fixed call/allocation overhead exceeds the scalar bucket scan for
+# small target sets. Keep the vector path for genuinely crowded states while
+# using the same exact scalar selector already exercised by fast fallbacks.
+_FAST_TARGET_VECTOR_MIN_SIZE = 21
+
+# Reference/benchmark switch for combining the ordinary target query and its
+# Crown-fallback retry in the troop pathing component.
+_COALESCE_CROWN_FALLBACK_TARGET_SCAN = True
+
+# Reference/benchmark switch for exact Crown membership already maintained by
+# the fast target cache. Scalar and caller-supplied entity collections retain
+# the complete building scan.
+_USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = True
+
+# Reference/benchmark switch for validating and partitioning the live cached
+# Crown fallback members in one pass under the active native globals.
+_USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+
+# Reference/benchmark switch. Under the active Crown-fallback globals, select
+# directly from exact semantic tower slots without constructing intermediate
+# candidate lists. Unclassified or non-native slot layouts fall back below.
+_USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = True
+
+# Reference/benchmark switch. The complete compatibility fallback is rarely
+# reached by live native battles, so do not allocate its nested closure on
+# every ordinary target query.
+_USE_LAZY_CROWN_FALLBACK_BUILDER = True
+
+
+class _UnhandledCrownFallback:
+    """Marker requiring the complete compatibility selector."""
+
+
+_CROWN_FALLBACK_UNHANDLED = _UnhandledCrownFallback()
+
+# Reference/benchmark switch for computing adjusted distance only after the
+# data-driven Crown preference filter has discarded ineligible objectives.
+_PREFER_CROWN_FALLBACK_BEFORE_DISTANCE = True
+
+# Reference/benchmark switch for avoiding battle-time conversion when the
+# target has no active (positive absolute-time) stealth timestamp.
+_DEFER_INACTIVE_STEALTH_TIME_LOOKUP = True
+
+# Reference/benchmark switch for reading Entity-owned targetability state
+# directly in this hot predicate instead of routing through defensive helpers.
+_USE_DIRECT_TARGETABILITY_FIELDS = True
+
+# Reference/benchmark switch for pruning native-avoidance scans through the
+# exact ID-restored entity buckets already used by collision and targeting.
+_USE_AVOIDANCE_BUCKET_CANDIDATES = True
+
+# Reference/benchmark switch for reusing the immutable data-driven native mass
+# published for every Entity at construction.
+_USE_CACHED_ENTITY_UNIT_MASS = True
+
+# Reference/benchmark switch for reusing the immutable normalized collision
+# radius published for every Entity at construction.
+_USE_CACHED_ENTITY_COLLISION_RADIUS = True
+
+# Reference/benchmark switch for classifying a target's dynamic air/ground
+# plane once per eligibility decision instead of repeating the pure predicate.
+_COALESCE_TARGET_PLANE_CHECKS = True
+
+# Reference/benchmark switch. A singleton target set has no distance or tie
+# decision to perform, so return its only member before shared tie machinery.
+_USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
+
+# Reference/benchmark switch. Scalar target acquisition can derive an exact
+# center-distance bucket bound from cached maximum target radius, sight
+# extension, and spawn-priority distance discount instead of a generic halo.
+_USE_EXACT_TARGET_BUCKET_BOUND = True
+
+# Immobile buildings need an infinite-sight Crown fallback only when their
+# attack reach can exceed the configured Crown visibility reach.
+_USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK = True
+
+# A river jump is considered only for a walkable origin and an unwalkable
+# endpoint. Test the endpoint first so ordinary valid movement avoids a second
+# terrain/building query.
+_USE_ENDPOINT_FIRST_RIVER_JUMP_CHECK = True
+
+# Reference/benchmark switch. Native Crown layouts can validate the preferred
+# Princess objective first and avoid dynamic validation of objectives that
+# cannot win the serialized horizontal preference.
+_USE_DEFERRED_CROWN_FALLBACK_VALIDATION = True
+
+# Reference/benchmark switch. Reuse a module-level dynamic Crown validator
+# instead of allocating the same nested closure on every fallback query.
+_USE_HOISTED_CROWN_FALLBACK_VALIDATOR = True
+
+# Reference/benchmark switch. Native fallback layouts have at most two
+# Princess objectives, so keep them in scalar slots instead of allocating a
+# list on every deferred Crown query.
+_USE_SCALAR_DEFERRED_CROWN_SLOTS = True
+
+
+def _valid_cached_crown_candidate(
+    attacker: 'Entity',
+    entity: 'Entity',
+    can_attack_air: bool,
+    can_attack_ground: bool,
+) -> bool:
+    if not attacker._is_valid_target(entity):
+        return False
+    is_air = is_airborne_target(entity)
+    return (not is_air or can_attack_air) and (is_air or can_attack_ground)
+
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -104,6 +277,33 @@ TARGET_DISTANCE_TIE_EPSILON = 1e-6
 # combat lock; acquisition and the actual hit/clock boundary still use the
 # card's exact serialized range.
 STARTED_ATTACK_KEEP_RANGE_EXTENSION = 0.5
+_ENTITY_DEEPCOPY_ATOMIC_TYPES = frozenset(
+    {type(None), bool, int, float, complex, bytes, str}
+)
+
+
+def _can_attack_air_from_card_stats(card_stats: Any) -> bool:
+    if not card_stats:
+        return True
+    target_type = getattr(card_stats, "target_type", None)
+    if target_type in {"TID_TARGETS_AIR", "TID_TARGETS_AIR_AND_GROUND"}:
+        return True
+    return bool(getattr(card_stats, "attacks_air", False))
+
+
+def _can_attack_ground_from_card_stats(card_stats: Any) -> bool:
+    if not card_stats:
+        return True
+    target_type = getattr(card_stats, "target_type", None)
+    if target_type in {
+        "TID_TARGETS_GROUND",
+        "TID_TARGETS_AIR_AND_GROUND",
+        "TID_TARGETS_BUILDINGS",
+        "TID_TARGETS_GROUND_AND_BUILDINGS",
+        "TID_TARGETS_BUILDINGS_AND_GROUND",
+    }:
+        return True
+    return bool(getattr(card_stats, "attacks_ground", True))
 
 
 @dataclass
@@ -159,6 +359,9 @@ class Entity(ABC):
     target_id: Optional[int] = None
     is_alive: bool = True
     is_air_unit: bool = False  # True for flying troops like Minions, Balloon, Dragon
+    _is_hover_unit: bool = field(default=False, init=False, repr=False)
+    _unit_mass: float = field(default=5.0, init=False, repr=False)
+    _collision_radius: float = field(default=0.5, init=False, repr=False)
     entity_kind: int = 0  # 0=troop,1=building,2=projectile,3=aura/effect,4=other
     # Native death spawns carry a source-dependent target-eligibility marker.
     # LogicCharacter::tick advances it in integer milliseconds and clears it
@@ -242,13 +445,42 @@ class Entity(ABC):
     # object is spawned. Ground default-target selection keeps using this
     # stored lane even after collision or displacement moves the character.
     _native_lane_id: int = field(default=0, repr=False)
+    _can_attack_air_cached: bool = field(default=True, init=False, repr=False)
+    _can_attack_ground_cached: bool = field(default=True, init=False, repr=False)
 
     # Mechanics system
     mechanics: List[Mechanic] = field(default_factory=list)
 
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'Entity':
+        """Copy mutable entity state without generic reconstruction setup."""
+        existing = memo.get(id(self))
+        if isinstance(existing, Entity):
+            return existing
+        cloned = object.__new__(type(self))
+        memo[id(self)] = cloned
+        for name, value in self.__dict__.items():
+            cloned.__dict__[name] = (
+                value
+                if type(value) in _ENTITY_DEEPCOPY_ATOMIC_TYPES
+                else copy.deepcopy(value, memo)
+            )
+        return cloned
+
     def __post_init__(self) -> None:
         if self.max_hitpoints == 0:
             self.max_hitpoints = self.hitpoints
+        self._is_hover_unit = is_hover_unit_card(self.card_stats)
+        from .unit_traits import unit_mass
+
+        self._unit_mass = unit_mass(self.card_stats)
+        collision_radius = getattr(self.card_stats, "collision_radius", None)
+        self._collision_radius = float(collision_radius or 0.5)
+        self._can_attack_air_cached = _can_attack_air_from_card_stats(
+            self.card_stats
+        )
+        self._can_attack_ground_cached = _can_attack_ground_from_card_stats(
+            self.card_stats
+        )
         # Classify by the gameplay base type, not the concrete class name.
         # Exact-name checks silently turn specialized/custom subclasses into
         # ``other`` entities, which makes targeting, collision, and effects
@@ -453,8 +685,14 @@ class Entity(ABC):
 
     def quantize_logic_position(self) -> None:
         """Commit position to the client's integer 1/1000-tile grid."""
-        self.position.x = logic_units_to_tiles(tiles_to_logic_units(self.position.x))
-        self.position.y = logic_units_to_tiles(tiles_to_logic_units(self.position.y))
+        self.position.x = (
+            round(float(self.position.x) * LOGIC_UNITS_PER_TILE)
+            / LOGIC_UNITS_PER_TILE
+        )
+        self.position.y = (
+            round(float(self.position.y) * LOGIC_UNITS_PER_TILE)
+            / LOGIC_UNITS_PER_TILE
+        )
 
     def _projectile_launch_geometry(self, target: 'Entity') -> tuple[Position, int, int]:
         """Return the serialized projectile muzzle position and aim vector."""
@@ -528,8 +766,24 @@ class Entity(ABC):
         if incoming > 0 and callable(activate) and getattr(self, "requires_activation", False):
             activate()
         self.hitpoints = max(0, self.hitpoints - incoming)
+        battle_state = getattr(self, "battle_state", None)
+        mark_win_dirty = getattr(
+            battle_state,
+            "mark_win_conditions_dirty_if_crown",
+            None,
+        )
+        if callable(mark_win_dirty):
+            mark_win_dirty(self)
         if self.hitpoints <= 0 and self.is_alive:
             self.is_alive = False
+            if self.entity_kind == 1:
+                invalidate = getattr(
+                    battle_state,
+                    "invalidate_alive_buildings_cache",
+                    None,
+                )
+                if callable(invalidate):
+                    invalidate()
             self.on_death()  # Trigger death mechanics
 
     def broadcast_shield_lost(self) -> None:
@@ -652,20 +906,33 @@ class Entity(ABC):
         allow_hidden_building_path: bool = False,
     ) -> bool:
         """Return shared lock eligibility for attacks and secondary chains."""
+        death_spawn_immune = (
+            LOGIC_DEATH_SPAWN_IMMUNE_FIRST_TICK
+            and self._death_spawn_target_immunity_elapsed_ms >= 0
+            if _USE_DIRECT_TARGETABILITY_FIELDS
+            else self._has_death_spawn_target_immunity()
+        )
         if (
             not self.is_alive
             or self.player_id == player_id
             or self.entity_kind in {2, 3}
-            or self._has_death_spawn_target_immunity()
+            or death_spawn_immune
         ):
             return False
         if getattr(self, "_hidden_building", False) and not allow_hidden_building_path:
             return False
-        for mechanic in getattr(self, "mechanics", []):
+        mechanics = (
+            self.mechanics
+            if _USE_DIRECT_TARGETABILITY_FIELDS
+            else getattr(self, "mechanics", [])
+        )
+        for mechanic in mechanics:
             blocks_targeting = getattr(mechanic, "blocks_targeting", None)
             if callable(blocks_targeting) and blocks_targeting(self):
                 return False
         stealth_until = int(getattr(self, "_stealth_until", 0) or 0)
+        if _DEFER_INACTIVE_STEALTH_TIME_LOOKUP and stealth_until <= 0:
+            return True
         battle_state = getattr(self, "battle_state", None)
         now_ms = logic_time_milliseconds(getattr(battle_state, "time", 0.0))
         return stealth_until <= now_ms
@@ -855,10 +1122,20 @@ class Entity(ABC):
                 or getattr(entity, "entity_kind", 4) in {2, 3}
             ):
                 continue
-            if is_airborne_target(entity) and not self._can_attack_air():
-                continue
-            if (not is_airborne_target(entity)) and not self._can_attack_ground():
-                continue
+            if _COALESCE_TARGET_PLANE_CHECKS:
+                is_air = is_airborne_target(entity)
+                if (is_air and not self._can_attack_air()) or (
+                    not is_air and not self._can_attack_ground()
+                ):
+                    continue
+            else:
+                if is_airborne_target(entity) and not self._can_attack_air():
+                    continue
+                if (
+                    not is_airborne_target(entity)
+                    and not self._can_attack_ground()
+                ):
+                    continue
             if not entity.can_receive_area_damage(
                 source_kind,
                 source_entity=self,
@@ -1491,8 +1768,18 @@ class Entity(ABC):
 
     def get_collision_radius(self) -> float:
         """Return this entity's gameplay collision radius in arena tiles."""
+        if _USE_CACHED_ENTITY_COLLISION_RADIUS:
+            return self._collision_radius
         radius = getattr(getattr(self, "card_stats", None), "collision_radius", None)
         return float(radius or 0.5)
+
+    def get_unit_mass(self) -> float:
+        """Return the immutable data-driven native collision mass."""
+        if not _USE_CACHED_ENTITY_UNIT_MASS:
+            from .unit_traits import unit_mass
+
+            return unit_mass(self.card_stats)
+        return self._unit_mass
 
     def intersects_native_area(
         self,
@@ -1893,10 +2180,17 @@ class Entity(ABC):
         ):
             return False
 
-        if is_airborne_target(target) and not self._can_attack_air():
-            return False
-        if (not is_airborne_target(target)) and not self._can_attack_ground():
-            return False
+        if _COALESCE_TARGET_PLANE_CHECKS:
+            is_air = is_airborne_target(target)
+            if (is_air and not self._can_attack_air()) or (
+                not is_air and not self._can_attack_ground()
+            ):
+                return False
+        else:
+            if is_airborne_target(target) and not self._can_attack_air():
+                return False
+            if (not is_airborne_target(target)) and not self._can_attack_ground():
+                return False
 
         return self.is_within_attack_reach(target)
 
@@ -2004,12 +2298,31 @@ class Entity(ABC):
                 return False
         return True
 
+    @overload
     def get_nearest_target(
         self,
-        entities: Dict[int, 'Entity'],
+        entities: dict[int, 'Entity'],
         *,
         include_crown_fallback: bool = True,
-    ) -> Optional['Entity']:
+        _return_fallback_used: Literal[False] = False,
+    ) -> Optional['Entity']: ...
+
+    @overload
+    def get_nearest_target(
+        self,
+        entities: dict[int, 'Entity'],
+        *,
+        include_crown_fallback: bool = True,
+        _return_fallback_used: Literal[True],
+    ) -> tuple[Optional['Entity'], bool]: ...
+
+    def get_nearest_target(
+        self,
+        entities: dict[int, 'Entity'],
+        *,
+        include_crown_fallback: bool = True,
+        _return_fallback_used: bool = False,
+    ) -> Optional['Entity'] | tuple[Optional['Entity'], bool]:
         """Find nearest valid target with priority rules"""
 
         # Eligible targets in sight compete by distance.  Crown towers are an
@@ -2032,8 +2345,10 @@ class Entity(ABC):
             and getattr(battle_state, "fast_path", False)
             and getattr(battle_state, "entities", None) is entities
             and hasattr(battle_state, "get_fast_target_cache")
+            and len(getattr(battle_state, "_target_entities", ()))
+            >= _FAST_TARGET_VECTOR_MIN_SIZE
         ):
-            fast_target = self._get_nearest_target_vectorized(
+            fast_target, fast_used_fallback = self._get_nearest_target_vectorized(
                 battle_state=battle_state,
                 targets_only_buildings=targets_only_buildings,
                 can_attack_air=can_attack_air,
@@ -2041,7 +2356,13 @@ class Entity(ABC):
                 include_crown_fallback=include_crown_fallback,
             )
             if fast_target is not None and self._is_valid_target(fast_target):
+                if _return_fallback_used:
+                    return fast_target, fast_used_fallback
                 return fast_target
+            if fast_target is None and _FAST_TARGET_NONE_IS_EXHAUSTIVE:
+                if _return_fallback_used:
+                    return None, False
+                return None
 
         candidate_entities = entities.values()
         if (
@@ -2050,12 +2371,49 @@ class Entity(ABC):
             and getattr(battle_state, "entities", None) is entities
             and hasattr(battle_state, "iter_entities_in_radius")
         ):
-            query_radius = (
-                self.sight_range
-                + getattr(battle_state, "_max_target_collision_radius", 0.5)
-                + 1.0
+            cached_max_target_radius = getattr(
+                battle_state,
+                "_max_target_collision_radius",
+                0.5,
             )
-            candidate_entities = battle_state.iter_entities_in_radius(self.position, query_radius)
+            max_target_radius = (
+                cached_max_target_radius
+                if ADD_CHARACTER_RANGE_TO_RADIUS
+                else 0.0
+            )
+            if _USE_EXACT_TARGET_BUCKET_BOUND:
+                maximum_extension = max(
+                    0.0,
+                    float(EXTRA_SIGHT_RANGE_TO_BUILDING) / 1000.0,
+                    float(EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS) / 1000.0,
+                )
+                maximum_reach = (
+                    self.sight_range
+                    + max_target_radius
+                    + maximum_extension
+                    + GEOMETRY_BOUNDARY_EPSILON
+                )
+                query_radius = math.sqrt(
+                    maximum_reach * maximum_reach
+                    + getattr(
+                        battle_state,
+                        "_max_target_distance_discount_sq",
+                        0.0,
+                    )
+                )
+                candidate_entities = battle_state.iter_entities_in_radius(
+                    self.position,
+                    query_radius,
+                    tight_bounds=True,
+                )
+            else:
+                query_radius = (
+                    self.sight_range + cached_max_target_radius + 1.0
+                )
+                candidate_entities = battle_state.iter_entities_in_radius(
+                    self.position,
+                    query_radius,
+                )
 
         for entity in candidate_entities:
             # Only check if entity is valid target (excludes spell entities)
@@ -2069,10 +2427,17 @@ class Entity(ABC):
             distance = self.native_target_distance_to(entity)
             
             # Check air targeting rules
-            if is_airborne_target(entity) and not can_attack_air:
-                continue  # Skip air units if we can't attack air
-            if (not is_airborne_target(entity)) and not can_attack_ground:
-                continue  # Skip ground units if we can't attack ground
+            if _COALESCE_TARGET_PLANE_CHECKS:
+                is_air = is_airborne_target(entity)
+                if (is_air and not can_attack_air) or (
+                    not is_air and not can_attack_ground
+                ):
+                    continue
+            else:
+                if is_airborne_target(entity) and not can_attack_air:
+                    continue  # Skip air units if we can't attack air
+                if (not is_airborne_target(entity)) and not can_attack_ground:
+                    continue  # Skip ground units if we can't attack ground
             
             # Only consider targets within sight range for troops vs troops
             if is_native_building_target(entity):
@@ -2088,68 +2453,507 @@ class Entity(ABC):
                     if not targets_only_buildings:
                         troop_targets.append((entity, distance))
         
-        def _fallback_crown_targets() -> list[tuple[Entity, float]]:
-            towers: list[tuple[Entity, float]] = []
-            # Target selection is also used by deterministic/unit-level callers
-            # before an entity has been attached to a BattleState.  The explicit
-            # entity collection is the source of truth in that case; the cached
-            # alive-building list is only an optimization for live battles.
-            candidates = (
-                getattr(battle_state, "_alive_buildings", [])
-                if battle_state is not None
-                else entities.values()
-            )
-            for entity in candidates:
-                # The accelerated building cache is owned by the live
-                # BattleState, while callers may intentionally ask this
-                # entity to select from a smaller/replaced collection (state
-                # restoration and isolated interaction probes both do this).
-                # A cached object is eligible only when that exact object is
-                # still present in the collection being queried. Comparing
-                # identity also prevents an old tower with a reused ID from
-                # leaking into the restored state.
-                if entities.get(entity.id) is not entity:
-                    continue
-                if not isinstance(entity, Building):
-                    continue
-                if not self._is_valid_target(entity):
-                    continue
-                if is_airborne_target(entity) and not can_attack_air:
-                    continue
-                if (not is_airborne_target(entity)) and not can_attack_ground:
-                    continue
-                building_name = getattr(getattr(entity, "card_stats", None), "name", "")
-                is_crown_tower = (
-                    building_name in {"Tower", "KingTower"}
-                    or bool(getattr(entity, "_is_king_tower", False))
+        fallback_crown_targets = None
+        if not _USE_LAZY_CROWN_FALLBACK_BUILDER:
+            # Keep the former per-query closure as an exact timing reference.
+            def fallback_crown_targets() -> list[tuple[Entity, float]]:
+                return self._fallback_crown_targets(
+                    entities,
+                    battle_state=battle_state,
+                    can_attack_air=can_attack_air,
+                    can_attack_ground=can_attack_ground,
                 )
-                if not is_crown_tower:
-                    continue
-                towers.append((entity, self.native_target_distance_to(entity)))
-            preferred = self._preferred_fallback_crown_targets(
-                [entity for entity, _ in towers]
-            )
-            preferred_ids = {entity.id for entity in preferred}
-            return [item for item in towers if item[0].id in preferred_ids]
 
         # Choose targets based on targeting rules
         if targets_only_buildings:
             in_sight_targets = building_targets
         else:
             in_sight_targets = troop_targets + building_targets
-        targets = (
-            in_sight_targets
-            if in_sight_targets
-            else (
-                _fallback_crown_targets()
-                if include_crown_fallback
-                else []
+        used_fallback = not in_sight_targets and include_crown_fallback
+        if (
+            used_fallback
+            and _USE_SINGLE_PASS_CACHED_CROWN_FALLBACK
+            and _USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION
+            and battle_state is not None
+            and getattr(battle_state, "fast_path", False)
+            and getattr(battle_state, "entities", None) is entities
+            and hasattr(battle_state, "get_fast_crown_target_entities")
+            and LOGIC_PRINCESS_TOWERS_ALWAYS_AS_DEFAULT_TARGET
+            and LOGIC_XPOS_BASED_TOWER_TARGETING
+            and not LOGIC_DEFAULT_TARGET_USE_LANE_ID
+        ):
+            direct_fallback = self._select_cached_crown_fallback_direct(
+                battle_state.get_fast_crown_target_entities(1 - self.player_id),
+                entities=entities,
+                can_attack_air=can_attack_air,
+                can_attack_ground=can_attack_ground,
             )
-        )
+            if not isinstance(direct_fallback, _UnhandledCrownFallback):
+                if _return_fallback_used:
+                    return direct_fallback, direct_fallback is not None
+                return direct_fallback
+        if in_sight_targets:
+            targets = in_sight_targets
+        elif used_fallback:
+            targets = (
+                self._fallback_crown_targets(
+                    entities,
+                    battle_state=battle_state,
+                    can_attack_air=can_attack_air,
+                    can_attack_ground=can_attack_ground,
+                )
+                if fallback_crown_targets is None
+                else fallback_crown_targets()
+            )
+        else:
+            targets = []
         
         if not targets:
+            if _return_fallback_used:
+                return None, False
             return None
-        return self._select_first_nearest_target(targets)
+        selected = self._select_first_nearest_target(targets)
+        if _return_fallback_used:
+            return selected, used_fallback
+        return selected
+
+    def _fallback_crown_targets(
+        self,
+        entities: dict[int, 'Entity'],
+        *,
+        battle_state: 'BattleState | None',
+        can_attack_air: bool,
+        can_attack_ground: bool,
+    ) -> list[tuple['Entity', float]]:
+        """Build the complete compatibility Crown fallback only on demand."""
+        crown_towers: list[Entity] = []
+        # Target selection is also used by deterministic/unit-level callers
+        # before an entity has been attached to a BattleState. The explicit
+        # entity collection is the source of truth in that case; the cached
+        # alive-building list is only an optimization for live battles.
+        use_cached_crowns = bool(
+            _USE_CACHED_CROWN_FALLBACK_MEMBERSHIP
+            and battle_state is not None
+            and getattr(battle_state, "fast_path", False)
+            and getattr(battle_state, "entities", None) is entities
+            and hasattr(battle_state, "get_fast_crown_target_entities")
+        )
+        candidates: Iterable[Entity]
+        if use_cached_crowns:
+            assert battle_state is not None
+            candidates = battle_state.get_fast_crown_target_entities(
+                1 - self.player_id
+            )
+        else:
+            candidates = (
+                getattr(battle_state, "_alive_buildings", [])
+                if battle_state is not None
+                else entities.values()
+            )
+        if (
+            _USE_SINGLE_PASS_CACHED_CROWN_FALLBACK
+            and use_cached_crowns
+            and LOGIC_PRINCESS_TOWERS_ALWAYS_AS_DEFAULT_TARGET
+            and LOGIC_XPOS_BASED_TOWER_TARGETING
+            and not LOGIC_DEFAULT_TARGET_USE_LANE_ID
+        ):
+            single_pass = self._single_pass_cached_crown_fallback(
+                candidates,
+                entities=entities,
+                can_attack_air=can_attack_air,
+                can_attack_ground=can_attack_ground,
+            )
+            if single_pass is not None:
+                return single_pass
+        for entity in candidates:
+            # The accelerated building cache is owned by the live BattleState,
+            # while callers may intentionally ask this entity to select from a
+            # smaller/replaced collection. Identity also prevents an old tower
+            # with a reused ID from leaking into restored state.
+            if entities.get(entity.id) is not entity:
+                continue
+            if not use_cached_crowns and not isinstance(entity, Building):
+                continue
+            if not self._is_valid_target(entity):
+                continue
+            if _COALESCE_TARGET_PLANE_CHECKS:
+                is_air = is_airborne_target(entity)
+                if (is_air and not can_attack_air) or (
+                    not is_air and not can_attack_ground
+                ):
+                    continue
+            else:
+                if is_airborne_target(entity) and not can_attack_air:
+                    continue
+                if (not is_airborne_target(entity)) and not can_attack_ground:
+                    continue
+            if not use_cached_crowns:
+                building_name = getattr(
+                    getattr(entity, "card_stats", None), "name", ""
+                )
+                is_crown_tower = (
+                    building_name in {"Tower", "KingTower"}
+                    or bool(getattr(entity, "_is_king_tower", False))
+                )
+                if not is_crown_tower:
+                    continue
+            crown_towers.append(entity)
+        preferred = self._preferred_fallback_crown_targets(crown_towers)
+        if _PREFER_CROWN_FALLBACK_BEFORE_DISTANCE:
+            return [
+                (entity, self.native_target_distance_to(entity))
+                for entity in preferred
+            ]
+
+        towers = [
+            (entity, self.native_target_distance_to(entity))
+            for entity in crown_towers
+        ]
+        preferred_ids = {entity.id for entity in preferred}
+        return [item for item in towers if item[0].id in preferred_ids]
+
+    def _select_cached_crown_fallback_direct(
+        self,
+        candidates: Iterable['Entity'],
+        *,
+        entities: dict[int, 'Entity'],
+        can_attack_air: bool,
+        can_attack_ground: bool,
+    ) -> 'Entity | None | _UnhandledCrownFallback':
+        """Select the active-globals Crown fallback without temporary lists."""
+        if _USE_DEFERRED_CROWN_FALLBACK_VALIDATION:
+            deferred = self._select_cached_crown_fallback_deferred_validation(
+                candidates,
+                entities=entities,
+                can_attack_air=can_attack_air,
+                can_attack_ground=can_attack_ground,
+            )
+            if not isinstance(deferred, _UnhandledCrownFallback):
+                return deferred
+
+        first_princess: Entity | None = None
+        first_princess_x = 0.0
+        second_princess: Entity | None = None
+        second_princess_x = 0.0
+        king: Entity | None = None
+        for entity in candidates:
+            if entities.get(entity.id) is not entity:
+                continue
+            if not self._is_valid_target(entity):
+                continue
+            is_air = is_airborne_target(entity)
+            if (is_air and not can_attack_air) or (
+                not is_air and not can_attack_ground
+            ):
+                continue
+            crown_slot = getattr(entity, "_crown_tower_slot", None)
+            if crown_slot not in {"left", "right", "king"}:
+                return _CROWN_FALLBACK_UNHANDLED
+            if crown_slot == "king":
+                if king is not None:
+                    return _CROWN_FALLBACK_UNHANDLED
+                king = entity
+                continue
+            x_distance = abs(entity.position.x - self.position.x)
+            if first_princess is None:
+                first_princess = entity
+                first_princess_x = x_distance
+            elif second_princess is None:
+                second_princess = entity
+                second_princess_x = x_distance
+            else:
+                return _CROWN_FALLBACK_UNHANDLED
+
+        if first_princess is None:
+            return king
+        if second_princess is None:
+            return first_princess
+        if first_princess_x + GEOMETRY_BOUNDARY_EPSILON < second_princess_x:
+            return first_princess
+        if second_princess_x + GEOMETRY_BOUNDARY_EPSILON < first_princess_x:
+            return second_princess
+
+        first_distance = self.native_target_distance_to(first_princess)
+        second_distance = self.native_target_distance_to(second_princess)
+        if second_distance < first_distance:
+            selected = second_princess
+            minimum = second_distance
+        else:
+            selected = first_princess
+            minimum = first_distance
+        if (
+            not LOGIC_SYMMETRIC_CLOSEST_BUILDING_ITERATION
+            or not is_native_building_target(selected)
+        ):
+            return selected
+        first_tied = (
+            is_native_building_target(first_princess)
+            and first_distance <= minimum + TARGET_DISTANCE_TIE_EPSILON
+        )
+        second_tied = (
+            is_native_building_target(second_princess)
+            and second_distance <= minimum + TARGET_DISTANCE_TIE_EPSILON
+        )
+        if first_tied and second_tied:
+            return min(
+                (first_princess, second_princess),
+                key=self._target_tie_break_key,
+            )
+        return first_princess if first_tied else second_princess
+
+    def _select_cached_crown_fallback_deferred_validation(
+        self,
+        candidates: Iterable['Entity'],
+        *,
+        entities: dict[int, 'Entity'],
+        can_attack_air: bool,
+        can_attack_ground: bool,
+    ) -> 'Entity | None | _UnhandledCrownFallback':
+        """Validate only Crown objectives that can win native preference."""
+        if _USE_SCALAR_DEFERRED_CROWN_SLOTS:
+            first: Entity | None = None
+            second: Entity | None = None
+            scalar_king: Entity | None = None
+            for entity in candidates:
+                if entities.get(entity.id) is not entity:
+                    continue
+                crown_slot = getattr(entity, "_crown_tower_slot", None)
+                if crown_slot not in {"left", "right", "king"}:
+                    return _CROWN_FALLBACK_UNHANDLED
+                if crown_slot == "king":
+                    if scalar_king is not None:
+                        return _CROWN_FALLBACK_UNHANDLED
+                    scalar_king = entity
+                elif first is None:
+                    first = entity
+                elif second is None:
+                    second = entity
+                else:
+                    return _CROWN_FALLBACK_UNHANDLED
+
+            if first is not None and second is None:
+                if _valid_cached_crown_candidate(
+                    self,
+                    first,
+                    can_attack_air,
+                    can_attack_ground,
+                ):
+                    return first
+            elif first is not None and second is not None:
+                first_x = abs(first.position.x - self.position.x)
+                second_x = abs(second.position.x - self.position.x)
+                if first_x + GEOMETRY_BOUNDARY_EPSILON < second_x:
+                    if _valid_cached_crown_candidate(
+                        self, first, can_attack_air, can_attack_ground
+                    ):
+                        return first
+                    if _valid_cached_crown_candidate(
+                        self, second, can_attack_air, can_attack_ground
+                    ):
+                        return second
+                elif second_x + GEOMETRY_BOUNDARY_EPSILON < first_x:
+                    if _valid_cached_crown_candidate(
+                        self, second, can_attack_air, can_attack_ground
+                    ):
+                        return second
+                    if _valid_cached_crown_candidate(
+                        self, first, can_attack_air, can_attack_ground
+                    ):
+                        return first
+                else:
+                    first_valid = _valid_cached_crown_candidate(
+                        self, first, can_attack_air, can_attack_ground
+                    )
+                    second_valid = _valid_cached_crown_candidate(
+                        self, second, can_attack_air, can_attack_ground
+                    )
+                    if first_valid and not second_valid:
+                        return first
+                    if second_valid and not first_valid:
+                        return second
+                    if first_valid and second_valid:
+                        return self._select_first_nearest_target(
+                            [
+                                (first, self.native_target_distance_to(first)),
+                                (
+                                    second,
+                                    self.native_target_distance_to(second),
+                                ),
+                            ]
+                        )
+            if scalar_king is not None and _valid_cached_crown_candidate(
+                self,
+                scalar_king,
+                can_attack_air,
+                can_attack_ground,
+            ):
+                return scalar_king
+            return None
+
+        princesses: list[Entity] = []
+        king: Entity | None = None
+        for entity in candidates:
+            if entities.get(entity.id) is not entity:
+                continue
+            crown_slot = getattr(entity, "_crown_tower_slot", None)
+            if crown_slot not in {"left", "right", "king"}:
+                return _CROWN_FALLBACK_UNHANDLED
+            if crown_slot == "king":
+                if king is not None:
+                    return _CROWN_FALLBACK_UNHANDLED
+                king = entity
+            else:
+                princesses.append(entity)
+                if len(princesses) > 2:
+                    return _CROWN_FALLBACK_UNHANDLED
+
+        if not _USE_HOISTED_CROWN_FALLBACK_VALIDATOR:
+
+            def valid(entity: Entity) -> bool:
+                if not self._is_valid_target(entity):
+                    return False
+                is_air = is_airborne_target(entity)
+                return (not is_air or can_attack_air) and (
+                    is_air or can_attack_ground
+                )
+
+        if len(princesses) == 1:
+            if (
+                _valid_cached_crown_candidate(
+                    self,
+                    princesses[0],
+                    can_attack_air,
+                    can_attack_ground,
+                )
+                if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                else valid(princesses[0])
+            ):
+                return princesses[0]
+        elif len(princesses) == 2:
+            first, second = princesses
+            first_x = abs(first.position.x - self.position.x)
+            second_x = abs(second.position.x - self.position.x)
+            if first_x + GEOMETRY_BOUNDARY_EPSILON < second_x:
+                if (
+                    _valid_cached_crown_candidate(
+                        self, first, can_attack_air, can_attack_ground
+                    )
+                    if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                    else valid(first)
+                ):
+                    return first
+                if (
+                    _valid_cached_crown_candidate(
+                        self, second, can_attack_air, can_attack_ground
+                    )
+                    if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                    else valid(second)
+                ):
+                    return second
+            elif second_x + GEOMETRY_BOUNDARY_EPSILON < first_x:
+                if (
+                    _valid_cached_crown_candidate(
+                        self, second, can_attack_air, can_attack_ground
+                    )
+                    if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                    else valid(second)
+                ):
+                    return second
+                if (
+                    _valid_cached_crown_candidate(
+                        self, first, can_attack_air, can_attack_ground
+                    )
+                    if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                    else valid(first)
+                ):
+                    return first
+            else:
+                valid_princesses = [
+                    entity
+                    for entity in princesses
+                    if (
+                        _valid_cached_crown_candidate(
+                            self,
+                            entity,
+                            can_attack_air,
+                            can_attack_ground,
+                        )
+                        if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                        else valid(entity)
+                    )
+                ]
+                if len(valid_princesses) == 1:
+                    return valid_princesses[0]
+                if len(valid_princesses) == 2:
+                    return self._select_first_nearest_target(
+                        [
+                            (entity, self.native_target_distance_to(entity))
+                            for entity in valid_princesses
+                        ]
+                    )
+        if king is not None:
+            king_is_valid = (
+                _valid_cached_crown_candidate(
+                    self,
+                    king,
+                    can_attack_air,
+                    can_attack_ground,
+                )
+                if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                else valid(king)
+            )
+            if king_is_valid:
+                return king
+        return None
+
+    def _single_pass_cached_crown_fallback(
+        self,
+        candidates: Iterable['Entity'],
+        *,
+        entities: dict[int, 'Entity'],
+        can_attack_air: bool,
+        can_attack_ground: bool,
+    ) -> list[tuple['Entity', float]] | None:
+        """Return the active-globals Crown fallback from semantic slot data."""
+        princesses: list[tuple[Entity, float]] = []
+        king_towers: list[Entity] = []
+        for entity in candidates:
+            if entities.get(entity.id) is not entity:
+                continue
+            if not self._is_valid_target(entity):
+                continue
+            is_air = is_airborne_target(entity)
+            if (is_air and not can_attack_air) or (
+                not is_air and not can_attack_ground
+            ):
+                continue
+            crown_slot = getattr(entity, "_crown_tower_slot", None)
+            if crown_slot not in {"left", "right", "king"}:
+                # Custom Crown objectives without native slot metadata retain
+                # the complete compatibility classifier below.
+                return None
+            if crown_slot != "king":
+                princesses.append(
+                    (entity, abs(entity.position.x - self.position.x))
+                )
+            else:
+                king_towers.append(entity)
+
+        if not princesses:
+            preferred = king_towers
+        elif not king_towers:
+            preferred = [entity for entity, _ in princesses]
+        else:
+            minimum_x = min(distance for _, distance in princesses)
+            preferred = [
+                entity
+                for entity, distance in princesses
+                if distance <= minimum_x + GEOMETRY_BOUNDARY_EPSILON
+            ]
+        return [
+            (entity, self.native_target_distance_to(entity))
+            for entity in preferred
+        ]
 
     def _preferred_fallback_crown_targets(
         self,
@@ -2260,6 +3064,8 @@ class Entity(ABC):
         """Choose the combat target with the current native tie rules."""
         if not candidates:
             return None
+        if _USE_SINGLETON_TARGET_SELECTION_SHORTCUT and len(candidates) == 1:
+            return candidates[0][0]
         # LogicCombatComponent replaces its current best only for a strictly
         # smaller adjusted distance at the same target priority. Ordinary
         # character ties therefore retain encounter order. Current globals
@@ -2289,7 +3095,7 @@ class Entity(ABC):
         can_attack_air: bool,
         can_attack_ground: bool,
         include_crown_fallback: bool = True,
-    ) -> Optional["Entity"]:
+    ) -> tuple[Optional["Entity"], bool]:
         (
             target_entities,
             pos_x,
@@ -2305,7 +3111,7 @@ class Entity(ABC):
             target_distance_discount_sq,
         ) = battle_state.get_fast_target_cache()
         if len(target_entities) == 0:
-            return None
+            return None, False
 
         valid = (player != self.player_id) & is_targetable
         if not can_attack_air:
@@ -2343,7 +3149,7 @@ class Entity(ABC):
         if stealth_until.size:
             valid &= stealth_until <= now_ms
         if not np.any(valid):
-            return None
+            return None, False
 
         dx = pos_x - float(self.position.x)
         dy = pos_y - float(self.position.y)
@@ -2354,17 +3160,12 @@ class Entity(ABC):
         # Match the scalar distance calculation and native first-candidate
         # retention. ``argmin`` returns the first minimum in cache order.
         distance = np.sqrt(dist2)
-        target_radius = (
-            collision_radius
-            if ADD_CHARACTER_RANGE_TO_RADIUS
-            else np.zeros_like(collision_radius)
-        )
-        building_extension = np.where(
+        sight_reach = _target_sight_reach(
+            self.sight_range,
+            collision_radius,
+            is_building,
             is_crown,
-            EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS,
-            np.where(is_building, EXTRA_SIGHT_RANGE_TO_BUILDING, 0),
-        ).astype(np.float64) / 1000.0
-        sight_reach = self.sight_range + target_radius + building_extension
+        )
         in_sight = distance <= sight_reach + GEOMETRY_BOUNDARY_EPSILON
         card_stats = getattr(self, "card_stats", None)
         backward_clip = float(getattr(card_stats, "sight_clip", 0.0) or 0.0)
@@ -2393,6 +3194,7 @@ class Entity(ABC):
         )
         chosen = np.zeros_like(valid)
         ordered_candidates: np.ndarray | None = None
+        used_fallback = False
         if np.any(in_sight_targets):
             chosen = in_sight_targets
             # The scalar/native candidate collection visits targetable
@@ -2408,6 +3210,7 @@ class Entity(ABC):
                     )
                 )
         elif include_crown_fallback:
+            used_fallback = True
             fallback_indices = np.flatnonzero(fallback_crown_targets)
             preferred = self._preferred_fallback_crown_targets(
                 [target_entities[int(index)] for index in fallback_indices]
@@ -2418,7 +3221,7 @@ class Entity(ABC):
                 if target_entities[int(index)].id in preferred_ids:
                     chosen[int(index)] = True
         if not np.any(chosen):
-            return None
+            return None, False
 
         candidates = (
             ordered_candidates
@@ -2449,7 +3252,7 @@ class Entity(ABC):
                     target_entities[candidate_index]
                 ),
             )
-        return target_entities[idx]
+        return target_entities[idx], used_fallback
     
     def _should_switch_target(self, current_target: 'Entity', new_target: 'Entity') -> bool:
         """Determine if we should switch from current target to new target"""
@@ -2491,29 +3294,11 @@ class Entity(ABC):
 
     def _can_attack_air(self) -> bool:
         """Return True if this entity can attack air units."""
-        card_stats = getattr(self, "card_stats", None)
-        if not card_stats:
-            return True
-        target_type = getattr(card_stats, "target_type", None)
-        if target_type in {"TID_TARGETS_AIR", "TID_TARGETS_AIR_AND_GROUND"}:
-            return True
-        return bool(getattr(card_stats, "attacks_air", False))
+        return self._can_attack_air_cached
 
     def _can_attack_ground(self) -> bool:
         """Return True if this entity can attack ground units."""
-        card_stats = getattr(self, "card_stats", None)
-        if not card_stats:
-            return True
-        target_type = getattr(card_stats, "target_type", None)
-        if target_type in {
-            "TID_TARGETS_GROUND",
-            "TID_TARGETS_AIR_AND_GROUND",
-            "TID_TARGETS_BUILDINGS",
-            "TID_TARGETS_GROUND_AND_BUILDINGS",
-            "TID_TARGETS_BUILDINGS_AND_GROUND",
-        }:
-            return True
-        return bool(getattr(card_stats, "attacks_ground", True))
+        return self._can_attack_ground_cached
 
 
 @dataclass
@@ -2705,9 +3490,18 @@ class Troop(Entity):
         static_count = 0
         moving_side = 1
         static_side = 1
-        own_mass = unit_mass(self.card_stats)
+        own_mass = self.get_unit_mass()
 
-        for other in battle_state.entities.values():
+        avoidance_candidates: Iterable[Entity] = battle_state.entities.values()
+        if battle_state.fast_path and _USE_AVOIDANCE_BUCKET_CANDIDATES:
+            avoidance_candidates = battle_state.iter_entities_in_radius(
+                self.position,
+                logic_units_to_tiles(256 + probe_radius)
+                + battle_state._max_target_collision_radius,
+                tight_bounds=True,
+            )
+
+        for other in avoidance_candidates:
             if (
                 other is self
                 or not other.is_alive
@@ -2755,7 +3549,7 @@ class Troop(Entity):
                 if self.is_charging:
                     approaching = (
                         approaching
-                        and own_mass <= unit_mass(other.card_stats)
+                        and own_mass <= other.get_unit_mass()
                     )
                 if not approaching:
                     continue
@@ -3046,23 +3840,28 @@ class Troop(Entity):
             current_target is None
             or not self.is_within_target_keep_reach(current_target)
         ):
-            using_crown_fallback = False
-            best_target = self.get_nearest_target(
-                battle_state.entities,
-                include_crown_fallback=False,
+            keep_backward_target = (
+                current_target is not None
+                and LOGIC_PATHFIND_BACKWARDS_TRY_KEEP_TARGET
+                and self._ground_path_backwards
             )
-            if (
-                best_target is None
-                and not (
-                    current_target is not None
-                    and LOGIC_PATHFIND_BACKWARDS_TRY_KEEP_TARGET
-                    and self._ground_path_backwards
+            if _COALESCE_CROWN_FALLBACK_TARGET_SCAN:
+                best_target, using_crown_fallback = self.get_nearest_target(
+                    battle_state.entities,
+                    include_crown_fallback=not keep_backward_target,
+                    _return_fallback_used=True,
                 )
-            ):
+            else:
+                using_crown_fallback = False
                 best_target = self.get_nearest_target(
                     battle_state.entities,
+                    include_crown_fallback=False,
                 )
-                using_crown_fallback = best_target is not None
+                if best_target is None and not keep_backward_target:
+                    best_target = self.get_nearest_target(
+                        battle_state.entities,
+                    )
+                    using_crown_fallback = best_target is not None
             if best_target and (
                 using_crown_fallback
                 or not current_target
@@ -3658,16 +4457,34 @@ class Troop(Entity):
                 self.position = new_position
                 self_movement = move_distance
             else:
-                if (
+                crosses_walkability_boundary = bool(
                     battle_state is not None
-                    and battle_state.is_ground_position_walkable(
-                        self.position,
-                        self,
+                    and (
+                        (
+                            not battle_state.is_ground_position_walkable(
+                                new_position,
+                                self,
+                            )
+                            and battle_state.is_ground_position_walkable(
+                                self.position,
+                                self,
+                            )
+                        )
+                        if _USE_ENDPOINT_FIRST_RIVER_JUMP_CHECK
+                        else (
+                            battle_state.is_ground_position_walkable(
+                                self.position,
+                                self,
+                            )
+                            and not battle_state.is_ground_position_walkable(
+                                new_position,
+                                self,
+                            )
+                        )
                     )
-                    and not battle_state.is_ground_position_walkable(
-                        new_position,
-                        self,
-                    )
+                )
+                if (
+                    crosses_walkability_boundary
                     and self._try_start_river_jump(
                         route_goal,
                         new_position,
@@ -3828,9 +4645,13 @@ class Troop(Entity):
         """
         final_target = target_entity.position
 
-        from .unit_traits import is_hover_unit_card
+        if _USE_CACHED_PATHFIND_HOVER_TRAIT:
+            hovering = self._is_hover_unit
+        else:
+            from .unit_traits import is_hover_unit_card
 
-        if self.is_air_unit or is_hover_unit_card(self.card_stats):
+            hovering = is_hover_unit_card(self.card_stats)
+        if self.is_air_unit or hovering:
             return final_target
 
         def arena_side(y: float, owner_id: int) -> int:
@@ -4068,7 +4889,16 @@ class Building(Entity):
             or not self.is_within_target_keep_reach(target)
         ):
             self.target_id = None
-            target = self.get_nearest_target(battle_state.entities)
+            include_crown_fallback = bool(
+                not _USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK
+                or self.range
+                > self.sight_range
+                + float(EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS) / 1000.0
+            )
+            target = self.get_nearest_target(
+                battle_state.entities,
+                include_crown_fallback=include_crown_fallback,
+            )
             if target is not None and not self.can_attack_target(target):
                 target = None
             self.target_id = target.id if target else None
@@ -4154,8 +4984,24 @@ class Building(Entity):
             )
             if whole_hp_loss > 0:
                 self.hitpoints = max(0.0, self.hitpoints - whole_hp_loss)
+                battle_state = getattr(self, "battle_state", None)
+                mark_win_dirty = getattr(
+                    battle_state,
+                    "mark_win_conditions_dirty_if_crown",
+                    None,
+                )
+                if callable(mark_win_dirty):
+                    mark_win_dirty(self)
             if self.hitpoints <= 0 and self.is_alive:
                 self.is_alive = False
+                battle_state = getattr(self, "battle_state", None)
+                invalidate = getattr(
+                    battle_state,
+                    "invalidate_alive_buildings_cache",
+                    None,
+                )
+                if callable(invalidate):
+                    invalidate()
                 self.on_death()
     
     def _uses_projectiles(self) -> bool:
@@ -5746,6 +6592,7 @@ class SpawnProjectile(Projectile):
                 spawned._native_target_distance_discount_sq_units = (
                     spawn_target_distance_discount_sq_units(index)
                 )
+                battle_state.sync_fast_target_static_entity(spawned)
 
 
 @dataclass
@@ -6142,6 +6989,7 @@ class TimedExplosive(Entity):
                 spawned._native_target_distance_discount_sq_units = (
                     spawn_target_distance_discount_sq_units(index)
                 )
+                battle_state.sync_fast_target_static_entity(spawned)
             if spawned is not None and (
                 (
                     self.death_spawn_pushback

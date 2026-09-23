@@ -46,8 +46,8 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 18
-RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 18
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 19
+RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 19
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -3756,6 +3756,38 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                     )
                     if entity.entity_kind == 1
                     else 0.0
+                ),
+                "ordinary_charge": (
+                    None
+                    if not getattr(entity.card_stats, "charge_range", None)
+                    else {
+                        "base_speed": _exact_scalar(entity.card_stats.speed),
+                        "charge_range": int(entity.card_stats.charge_range),
+                        "charge_speed_multiplier": _exact_scalar(
+                            entity.card_stats.charge_speed_multiplier
+                        ),
+                        "charge_target_position": (
+                            None
+                            if entity.charge_target_position is None
+                            else [
+                                _exact_scalar(entity.charge_target_position.x),
+                                _exact_scalar(entity.charge_target_position.y),
+                            ]
+                        ),
+                        "distance_traveled": _exact_scalar(
+                            entity.distance_traveled
+                        ),
+                        "has_charged": bool(entity.has_charged),
+                        "is_charging": bool(entity.is_charging),
+                        "native_charge_progress": int(
+                            entity._native_charge_progress
+                        ),
+                        "special_damage": _exact_scalar(
+                            entity.card_stats.scaled_damage_special
+                            or entity.card_stats.damage_special
+                            or entity.damage
+                        ),
+                    }
                 ),
                 "death_spawn_travel_target": (
                     None

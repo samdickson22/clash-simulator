@@ -15,7 +15,7 @@ const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_BEST_VERSION: u64 = 1;
-const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 18;
+const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 19;
 
 const DELTA_BATTLE: u64 = 1 << 0;
 const DELTA_PLAYERS: u64 = 1 << 1;
@@ -1894,7 +1894,7 @@ struct ResidentMovementState {
     stop_movement_after_ms: f64,
     wait_ms: f64,
     serialized_speed: f64,
-    charge_range_present: bool,
+    charge: Option<ResidentChargeState>,
     jump_height_present: bool,
     jump_speed: f64,
     kamikaze_primed: bool,
@@ -1922,6 +1922,128 @@ struct ResidentMovementState {
     special_move_active: bool,
     special_move_consumed_tick: bool,
     forced_movement_active: bool,
+}
+
+#[derive(Clone, IntoPyObject, PartialEq)]
+struct ResidentChargeState {
+    charge_range: i64,
+    charge_speed_multiplier: ExactScalar,
+    base_speed: ExactScalar,
+    special_damage: ExactScalar,
+    is_charging: bool,
+    has_charged: bool,
+    charge_target_position: Option<(ExactScalar, ExactScalar)>,
+    native_charge_progress: i64,
+    distance_traveled: f64,
+}
+
+impl ResidentChargeState {
+    fn from_fields(
+        fields: &Map<String, Value>,
+        card_fields: &Map<String, Value>,
+    ) -> PyResult<Option<Self>> {
+        let Some(range_value) = card_fields.get("charge_range") else {
+            return Ok(None);
+        };
+        if range_value.is_null() {
+            return Ok(None);
+        }
+        let range = ExactScalar::from_normalized(range_value)?;
+        if range.as_f64() == 0.0 {
+            return Ok(None);
+        }
+        let ExactScalar::Int(charge_range) = range else {
+            return Err(PyValueError::new_err(
+                "ordinary charge range must be an exact integer",
+            ));
+        };
+        let charge_speed_multiplier =
+            ExactScalar::from_normalized(card_fields.get("charge_speed_multiplier").ok_or_else(
+                || PyValueError::new_err("ordinary charge has no speed multiplier"),
+            )?)?;
+        let base_speed = ExactScalar::from_normalized(
+            card_fields
+                .get("speed")
+                .ok_or_else(|| PyValueError::new_err("ordinary charge has no base speed"))?,
+        )?;
+        let special_damage_value = card_fields
+            .get("damage_special")
+            .filter(|value| !value.is_null())
+            .ok_or_else(|| PyValueError::new_err("ordinary charge has no special damage"))?;
+        let raw_special_damage = ExactScalar::from_normalized(special_damage_value)?;
+        let level = card_fields
+            .get("level")
+            .and_then(Value::as_i64)
+            .unwrap_or(11);
+        if !(1..=100).contains(&level) {
+            return Err(PyValueError::new_err(
+                "ordinary charge level is outside the supported range",
+            ));
+        }
+        let mut level_multiplier = 1.0_f64;
+        for _ in 1..level {
+            level_multiplier = ((level_multiplier * 1.1 + 1e-9) * 100.0).trunc() / 100.0;
+        }
+        let special_damage =
+            ExactScalar::Int((raw_special_damage.as_f64() * level_multiplier).trunc() as i64);
+        if !fields.contains_key("charge_target_position") {
+            return Err(PyValueError::new_err(
+                "ordinary charge target position is absent",
+            ));
+        }
+        let state = Self {
+            charge_range,
+            charge_speed_multiplier,
+            base_speed,
+            special_damage,
+            is_charging: required_bool(fields, "is_charging")?,
+            has_charged: required_bool(fields, "has_charged")?,
+            charge_target_position: optional_exact_position(fields, "charge_target_position")?,
+            native_charge_progress: required_i64(fields, "_native_charge_progress")?,
+            distance_traveled: normalized_f64(fields, "distance_traveled")?,
+        };
+        if state.charge_range <= 0
+            || !state.charge_speed_multiplier.as_f64().is_finite()
+            || state.charge_speed_multiplier.as_f64() < 0.0
+            || !state.base_speed.as_f64().is_finite()
+            || state.base_speed.as_f64() <= 0.0
+            || !state.special_damage.as_f64().is_finite()
+            || state.special_damage.as_f64() <= 0.0
+            || state.native_charge_progress < 0
+            || !state.distance_traveled.is_finite()
+            || state.distance_traveled < 0.0
+            || state.is_charging != (state.native_charge_progress >= 10_000)
+            || state.has_charged
+            || state.charge_target_position.is_some()
+        {
+            return Err(PyValueError::new_err(
+                "ordinary charge state is outside the supported closure",
+            ));
+        }
+        Ok(Some(state))
+    }
+
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.charge_range == other.charge_range
+            && self.charge_speed_multiplier == other.charge_speed_multiplier
+            && self.base_speed == other.base_speed
+            && self.special_damage == other.special_damage
+    }
+
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.publication_static_eq(other)
+            && self.is_charging == other.is_charging
+            && self.has_charged == other.has_charged
+            && self.charge_target_position == other.charge_target_position
+            && self.native_charge_progress == other.native_charge_progress
+            && self.distance_traveled.to_bits() == other.distance_traveled.to_bits()
+    }
+}
+
+impl PublicationExactEq for ResidentChargeState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        ResidentChargeState::publication_exact_eq(self, other)
+    }
 }
 
 #[derive(Clone, IntoPyObject, PartialEq)]
@@ -2292,8 +2414,7 @@ impl ResidentMovementState {
                 .unwrap_or(0.0),
             wait_ms: optional_normalized_f64(card_fields, "wait_ms")?.unwrap_or(0.0),
             serialized_speed: optional_normalized_f64(card_fields, "speed")?.unwrap_or(0.0),
-            charge_range_present: optional_normalized_f64(card_fields, "charge_range")?
-                .is_some_and(|value| value != 0.0),
+            charge: ResidentChargeState::from_fields(fields, card_fields)?,
             jump_height_present: optional_normalized_f64(card_fields, "jump_height")?
                 .is_some_and(|value| value != 0.0),
             jump_speed: optional_normalized_f64(card_fields, "jump_speed")?.unwrap_or(0.0),
@@ -4760,6 +4881,112 @@ impl ResidentEntity {
         self.target_id = None;
     }
 
+    fn set_charge_unslowed_speed(&mut self, speed: f64) {
+        let Some(modifiers) = self.modifier_state.as_mut() else {
+            return;
+        };
+        let debuff = modifiers
+            .slow_multiplier
+            .max(0.0)
+            .min(modifiers.movement_mode_multiplier.max(0.0));
+        if modifiers.original_speed.is_some() {
+            modifiers.original_speed = Some(speed);
+        }
+        modifiers.speed.set_f64(speed * debuff);
+    }
+
+    fn reset_ordinary_charge(&mut self, interrupted: bool) {
+        let (was_charging, base_speed) = {
+            let Some(charge) = self
+                .movement
+                .as_mut()
+                .and_then(|movement| movement.charge.as_mut())
+            else {
+                return;
+            };
+            let was_charging = charge.is_charging;
+            let base_speed = charge.base_speed.as_f64();
+            charge.has_charged = false;
+            charge.is_charging = false;
+            charge.native_charge_progress = 0;
+            charge.charge_target_position = None;
+            charge.distance_traveled = 0.0;
+            (was_charging, base_speed)
+        };
+        self.set_charge_unslowed_speed(base_speed);
+        if interrupted
+            && was_charging
+            && let Some(combat) = self.locked_combat.as_mut()
+        {
+            combat.attack_cooldown = combat
+                .attack_cooldown
+                .max(combat.first_hit_ms as f64 / 1000.0);
+            combat.attack_windup_active = false;
+            combat.has_attacked_once = false;
+            combat.attack_preload_blocked = false;
+        }
+    }
+
+    fn prepare_ordinary_charge_movement(&mut self) {
+        let speed = {
+            let Some(charge) = self
+                .movement
+                .as_mut()
+                .and_then(|movement| movement.charge.as_mut())
+            else {
+                return;
+            };
+            charge.is_charging = charge.native_charge_progress >= 10_000;
+            if charge.is_charging {
+                charge.base_speed.as_f64()
+                    * (charge.charge_speed_multiplier.as_f64() / 100.0).max(0.0)
+            } else {
+                charge.base_speed.as_f64()
+            }
+        };
+        self.set_charge_unslowed_speed(speed);
+    }
+
+    fn advance_ordinary_charge(&mut self, movement_work_units: i64, ordinary: bool) {
+        if self
+            .movement
+            .as_ref()
+            .is_none_or(|movement| movement.charge.is_none())
+        {
+            return;
+        }
+        let work = movement_work_units.max(0);
+        if work < 10 || !ordinary {
+            self.reset_ordinary_charge(false);
+            return;
+        }
+        let begins_charged = self
+            .movement
+            .as_ref()
+            .and_then(|movement| movement.charge.as_ref())
+            .is_some_and(|charge| charge.native_charge_progress > 9_999);
+        {
+            let charge = self
+                .movement
+                .as_mut()
+                .and_then(|movement| movement.charge.as_mut())
+                .expect("ordinary charge state retained");
+            charge.distance_traveled += work as f64 / 1000.0;
+            if !begins_charged {
+                let increment = 10_000_i64.saturating_mul(work / 10) / charge.charge_range;
+                charge.native_charge_progress =
+                    charge.native_charge_progress.saturating_add(increment);
+                charge.is_charging = charge.native_charge_progress >= 10_000;
+            } else {
+                charge.is_charging = true;
+            }
+        }
+        if begins_charged && let Some(combat) = self.locked_combat.as_mut() {
+            combat.attack_cooldown = 0.0;
+            combat.attack_preload_blocked = false;
+        }
+    }
+
     fn reset_damage_ramp_stage_for_shield_loss(&mut self, target_id: i64) {
         if self.target_id != Some(target_id) {
             return;
@@ -4961,6 +5188,7 @@ impl ResidentEntity {
         self.sparse_attributes.insert("_last_combat_target_id");
         self.sparse_attributes.insert("_has_attacked_once");
         self.target_id = None;
+        self.reset_ordinary_charge(true);
         self.reset_damage_ramp_lock();
     }
 
@@ -5291,9 +5519,6 @@ impl ResidentEntity {
         {
             direct_combat_unsupported.push("attack_pushback".to_owned());
         }
-        if normalized_optional_number_is_nonzero(card_fields, "charge_range")? {
-            direct_combat_unsupported.push("charge_payload".to_owned());
-        }
         if !uses_projectile_weapon && !uses_direct_area {
             for (field, reason) in [
                 ("area_damage_radius", "area_damage"),
@@ -5352,7 +5577,14 @@ impl ResidentEntity {
                     && locked_combat
                         .as_ref()
                         .is_some_and(|combat| combat.hidden_building));
-            if normalized_optional_bool(fields, field) && !compiled_special_state {
+            let compiled_ordinary_charge = movement
+                .as_ref()
+                .is_some_and(|movement| movement.charge.is_some())
+                && matches!(field, "is_charging" | "has_charged");
+            if normalized_optional_bool(fields, field)
+                && !compiled_special_state
+                && !compiled_ordinary_charge
+            {
                 direct_combat_unsupported.push(reason.to_owned());
             }
         }
@@ -5649,6 +5881,19 @@ impl ResidentEntity {
         let mut value = json!({
             "airborne_for_projectile": combat.is_airborne_for_projectile,
             "building_pathing_radius": exact_f64_value(movement.building_pathing_radius),
+            "ordinary_charge": movement.charge.as_ref().map(|charge| json!({
+                "base_speed": charge.base_speed.diagnostic_value(),
+                "charge_range": charge.charge_range,
+                "charge_speed_multiplier": charge.charge_speed_multiplier.diagnostic_value(),
+                "charge_target_position": charge.charge_target_position.as_ref().map(|(x, y)| {
+                    json!([x.diagnostic_value(), y.diagnostic_value()])
+                }),
+                "distance_traveled": exact_f64_value(charge.distance_traveled),
+                "has_charged": charge.has_charged,
+                "is_charging": charge.is_charging,
+                "native_charge_progress": charge.native_charge_progress,
+                "special_damage": charge.special_damage.diagnostic_value(),
+            })),
             "death_spawn_travel_target": movement.death_spawn_travel_target.map(|(x, y)| {
                 json!([exact_f64_value(x), exact_f64_value(y)])
             }),
@@ -5850,7 +6095,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 18;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 19;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -7208,6 +7453,21 @@ impl ResidentCardCatalog {
                                         && !movement.special_move_consumed_tick
                                 })
                         });
+                    let ordinary_charge_fresh = prototype
+                        .movement
+                        .as_ref()
+                        .and_then(|movement| movement.charge.as_ref())
+                        .is_none_or(|charge| {
+                            !charge.is_charging
+                                && !charge.has_charged
+                                && charge.charge_target_position.is_none()
+                                && charge.native_charge_progress == 0
+                                && charge.distance_traveled.to_bits() == 0.0_f64.to_bits()
+                                && prototype.modifier_state.as_ref().is_some_and(|modifiers| {
+                                    modifiers.speed.as_f64().to_bits()
+                                        == charge.base_speed.as_f64().to_bits()
+                                })
+                        });
                     prototype.active
                         && prototype.is_alive
                         && prototype.card_name == expected_name
@@ -7217,6 +7477,7 @@ impl ResidentCardCatalog {
                         && hide_when_idle_fresh
                         && demolition_fresh
                         && electro_chain_fresh
+                        && ordinary_charge_fresh
                         && prototype.shields.iter().all(|shield| {
                             shield.current == shield.maximum && shield.current.as_f64() > 0.0
                         })
@@ -8059,7 +8320,7 @@ impl PublicationExactEq for ResidentMovementState {
             && self.native_avoidance == other.native_avoidance
             && self.native_natural_movement_active == other.native_natural_movement_active
             && self.movement_phase_elapsed_ms == other.movement_phase_elapsed_ms
-            && self.charge_range_present == other.charge_range_present
+            && publication_option_exact_eq(&self.charge, &other.charge)
             && self.jump_height_present == other.jump_height_present
             && self.kamikaze_primed == other.kamikaze_primed
             && self.route_cache_supported == other.route_cache_supported
@@ -8594,7 +8855,11 @@ impl ResidentMovementState {
     fn publication_static_eq(&self, other: &Self) -> bool {
         self.knockback_immune == other.knockback_immune
             && self.is_hover == other.is_hover
-            && self.charge_range_present == other.charge_range_present
+            && match (&self.charge, &other.charge) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
             && self.jump_height_present == other.jump_height_present
             && self.kamikaze_primed == other.kamikaze_primed
             && self.route_cache_supported == other.route_cache_supported
@@ -11929,6 +12194,12 @@ impl ResidentBattle {
                 .locked_combat
                 .as_ref()
                 .and_then(|state| state.last_combat_target_id);
+            let ordinary_charge_damage = self.entities[actor_index]
+                .movement
+                .as_ref()
+                .and_then(|movement| movement.charge.as_ref())
+                .filter(|charge| charge.is_charging && !charge.has_charged)
+                .map(|charge| charge.special_damage.as_f64());
             let payload = {
                 let actor = &mut self.entities[actor_index];
                 let has_status_nova_jump = actor.status_nova_jump.is_some();
@@ -12012,7 +12283,7 @@ impl ResidentBattle {
                             state.last_attack_time = 0.0;
                             Some(state.point_weapon.clone().map_or_else(
                                 || CombatPayload::DirectDamage {
-                                    damage: state.damage,
+                                    damage: ordinary_charge_damage.unwrap_or(state.damage),
                                     area: state.direct_area.clone(),
                                 },
                                 CombatPayload::PointProjectile,
@@ -12073,6 +12344,7 @@ impl ResidentBattle {
                         state.has_attacked_once = true;
                         state.attack_preload_blocked = false;
                         state.last_attack_time = 0.0;
+                        self.entities[actor_index].reset_ordinary_charge(false);
                     }
                     CombatPayload::PointProjectile(weapon) => {
                         self.launch_point_projectile(actor_index, target_index, weapon);
@@ -16203,7 +16475,6 @@ impl ResidentBattle {
                     && self.arena_height_tiles == 32
                     && entity.entity_kind == 0
                     && movement.jump_height_present
-                    && !movement.charge_range_present
                     && movement.jump_speed.is_finite()
                     && movement.jump_speed.round_ties_even() > 0.0
                     && movement
@@ -16266,7 +16537,17 @@ impl ResidentBattle {
                         || movement.forced_movement_active))
                 && !(movement.river_jump_active && movement.knockback_target.is_some())
                 && !movement.kamikaze_primed
-                && (!death_spawn_travel_active || !movement.charge_range_present);
+                && (!death_spawn_travel_active || movement.charge.is_none())
+                && movement.charge.as_ref().is_none_or(|charge| {
+                    entity.entity_kind == 0
+                        && charge.charge_range > 0
+                        && charge.native_charge_progress >= 0
+                        && charge.distance_traveled.is_finite()
+                        && charge.distance_traveled >= 0.0
+                        && charge.is_charging == (charge.native_charge_progress >= 10_000)
+                        && !charge.has_charged
+                        && charge.charge_target_position.is_none()
+                });
             if !common
                 || death_spawn_travel_active
                 || knockback_active
@@ -16291,7 +16572,6 @@ impl ResidentBattle {
             };
             route_kind_supported
                 && movement.route_cache_supported
-                && !movement.charge_range_present
                 && (!movement.jump_height_present
                     || (allow_ground
                         && self.arena_width_tiles == 18
@@ -16670,6 +16950,15 @@ impl ResidentBattle {
                 .movement
                 .as_ref()
                 .is_some_and(|movement| movement.is_hover || movement.river_jump_active);
+        let own_charging = entity
+            .movement
+            .as_ref()
+            .and_then(|movement| movement.charge.as_ref())
+            .is_some_and(|charge| charge.is_charging);
+        let own_mass = entity
+            .movement
+            .as_ref()
+            .map_or(0.0, |movement| movement.unit_mass);
         let mut moving_count = 0_i64;
         let mut static_count = 0_i64;
         let mut moving_side = 1_i64;
@@ -16734,6 +17023,15 @@ impl ResidentBattle {
                 other_facing_x * facing_x + other_facing_y * facing_y
             };
             if direction_dot > 0 {
+                continue;
+            }
+            if own_charging
+                && own_mass
+                    > other
+                        .movement
+                        .as_ref()
+                        .map_or(0.0, |movement| movement.unit_mass)
+            {
                 continue;
             }
             moving_count += 1;
@@ -16852,6 +17150,7 @@ impl ResidentBattle {
             return;
         }
         if knockback_active {
+            self.entities[entity_index].reset_ordinary_charge(false);
             self.update_resident_knockback(entity_index);
             return;
         }
@@ -16869,6 +17168,7 @@ impl ResidentBattle {
                 .as_mut()
                 .expect("resident troop requires movement state")
                 .native_natural_movement_active = false;
+            self.entities[entity_index].advance_ordinary_charge(0, false);
             self.update_resident_river_jump(entity_index);
             return;
         }
@@ -16934,6 +17234,14 @@ impl ResidentBattle {
                 .expect("resident troop requires movement state")
                 .native_natural_movement_active = false;
             return;
+        }
+        let was_active = self.entities[entity_index]
+            .movement
+            .as_ref()
+            .expect("resident troop requires movement state")
+            .native_natural_movement_active;
+        if !was_active {
+            self.entities[entity_index].reset_ordinary_charge(false);
         }
         self.entities[entity_index]
             .movement
@@ -17758,6 +18066,7 @@ impl ResidentBattle {
     }
 
     fn move_resident_towards_target(&mut self, entity_index: usize, target_index: usize) {
+        self.entities[entity_index].prepare_ordinary_charge_movement();
         let previous_x = self.entities[entity_index].position_x.as_f64();
         let previous_y = self.entities[entity_index].position_y.as_f64();
         let target_x = self.entities[target_index].position_x.as_f64();
@@ -17968,10 +18277,12 @@ impl ResidentBattle {
                 && (15.0..=17.0).contains(&new_y)
                 && self.start_resident_river_jump(entity_index)
             {
+                self.entities[entity_index].advance_ordinary_charge(intended, true);
                 return;
             }
             self.entities[entity_index].position_x.set_f64(new_x);
             self.entities[entity_index].position_y.set_f64(new_y);
+            self.entities[entity_index].advance_ordinary_charge(intended, true);
         } else if external_x.abs() > 1e-15 || external_y.abs() > 1e-15 {
             let new_x = (logic_units(previous_x) + external_x_units) as f64 / 1000.0;
             let new_y = (logic_units(previous_y) + external_y_units) as f64 / 1000.0;
@@ -17981,6 +18292,9 @@ impl ResidentBattle {
             self.entities[entity_index]
                 .position_y
                 .set_f64(new_y.clamp(0.25, self.arena_height_tiles as f64 - 0.25));
+            self.entities[entity_index].advance_ordinary_charge(0, true);
+        } else {
+            self.entities[entity_index].advance_ordinary_charge(0, true);
         }
         self.advance_resident_route(entity_index, previous_x, previous_y, waypoint_x, waypoint_y);
     }
@@ -19437,6 +19751,11 @@ impl ResidentBattle {
             (target_y + move_y) as f64 / 1000.0,
         );
         let base_attack_interval = combat.base_attack_interval();
+        let charged_attack_ready = target
+            .movement
+            .as_ref()
+            .and_then(|movement| movement.charge.as_ref())
+            .is_some_and(|charge| charge.is_charging);
         let mut velocity_work = 0;
         let mut accumulated_work = 0;
         while accumulated_work < distance_units {
@@ -19456,8 +19775,10 @@ impl ResidentBattle {
             .as_mut()
             .expect("death-damage target has combat state");
         combat.attack_windup_active = false;
-        combat.attack_cooldown = combat.attack_cooldown.max(base_attack_interval);
-        combat.attack_preload_blocked = true;
+        if !charged_attack_ready {
+            combat.attack_cooldown = combat.attack_cooldown.max(base_attack_interval);
+            combat.attack_preload_blocked = true;
+        }
         combat.has_attacked_once = false;
         self.entities[target_index]
             .sparse_attributes
@@ -19465,6 +19786,7 @@ impl ResidentBattle {
         self.entities[target_index]
             .sparse_attributes
             .insert("_has_attacked_once");
+        self.entities[target_index].reset_ordinary_charge(charged_attack_ready);
         self.entities[target_index].reset_damage_ramp_lock();
     }
 

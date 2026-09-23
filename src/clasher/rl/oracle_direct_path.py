@@ -96,7 +96,4 @@ class DirectPathFixedDepthThompsonOracle(FixedDepthThompsonOracle):
         for player_id in order:
             action = action0 if player_id == 0 else action1
             self.action_space.apply_action(battle, player_id, int(action))
-        for _ in range(self.decision_interval_ticks):
-            if battle.game_over:
-                break
-            battle.step()
+        battle.step_logic_ticks(self.decision_interval_ticks)

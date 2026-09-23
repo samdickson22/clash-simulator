@@ -13,6 +13,17 @@ from clasher.spells import SPELL_REGISTRY
 from .common import BOARD_HEIGHT, BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
 
 
+# Reference/benchmark switch for skipping per-tile deployment-payload queries
+# when one exact battle-wide scan proves no live blocker exists.
+_USE_DEPLOYMENT_BLOCKER_GUARD = True
+
+# Reference/benchmark switch. The fast mask's vector candidate sets already
+# encode blocked/tower tiles and ordinary deployment territory. Avoid checking
+# those same predicates again per tile while retaining scalar validation for
+# spell payloads with an additional walkability requirement.
+_USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
+
+
 @dataclass(frozen=True)
 class ActionSelection:
     action_id: int
@@ -260,12 +271,21 @@ class DiscreteTileActionSpace:
     ) -> np.ndarray:
         world_mask = battle.get_building_placement_blocked_mask_world(size_tiles)
         world_xy = self._world_tile_xy_by_player[player_id]
-        out = np.zeros(NUM_TILES, dtype=np.bool_)
-        for tile_idx in range(NUM_TILES):
-            wx = int(world_xy[tile_idx, 0])
-            wy = int(world_xy[tile_idx, 1])
-            out[tile_idx] = bool(world_mask[wy, wx])
-        return out
+        return np.asarray(
+            world_mask[world_xy[:, 1], world_xy[:, 0]], dtype=np.bool_
+        )
+
+    def _troop_placement_blocked_mask_canonical(
+        self,
+        battle: BattleState,
+        player_id: int,
+        mover_radius: float,
+    ) -> np.ndarray:
+        world_mask = battle.get_troop_placement_blocked_mask_world(mover_radius)
+        world_xy = self._world_tile_xy_by_player[player_id]
+        return np.asarray(
+            world_mask[world_xy[:, 1], world_xy[:, 0]], dtype=np.bool_
+        )
 
     def _legal_action_mask_legacy(self, battle: BattleState, player_id: int) -> np.ndarray:
         mask = np.zeros(self.num_actions, dtype=np.bool_)
@@ -319,6 +339,23 @@ class DiscreteTileActionSpace:
         tower_mask = self._tower_mask(battle, player_id)
         deploy_mask = zone_mask & non_blocked
         deploy_mask_no_tower = deploy_mask & (~tower_mask)
+        deployment_blockers = (
+            tuple(
+                entity
+                for entity in battle.entities.values()
+                if entity.is_alive
+                and bool(getattr(entity, "blocks_deployment", False))
+            )
+            if _USE_DEPLOYMENT_BLOCKER_GUARD
+            else None
+        )
+        has_deployment_blockers = (
+            bool(deployment_blockers)
+            if deployment_blockers is not None
+            else True
+        )
+        building_blocked_by_size: dict[int, np.ndarray] = {}
+        troop_blocked_by_radius: dict[float, np.ndarray] = {}
 
         player = battle.players[player_id]
         for slot, card_name in enumerate(player.hand[:NUM_HAND_SLOTS]):
@@ -344,6 +381,14 @@ class DiscreteTileActionSpace:
                 not is_spell
                 and getattr(card_stats, "can_deploy_on_enemy_side", False)
             )
+            requires_walkable_target = bool(
+                is_spell
+                and getattr(spell_obj, "requires_walkable_target", False)
+            )
+            requires_deploy_zone = bool(
+                is_spell
+                and battle.arena._requires_deploy_zone_spell(spell_obj)
+            )
             if can_deploy_enemy_side:
                 # Enemy-side troop cards still exclude blocked and live tower
                 # tiles. Build this candidate set
@@ -366,10 +411,23 @@ class DiscreteTileActionSpace:
             blocked_building_tiles = None
             if is_building_card:
                 size_tiles = battle._building_footprint_size_tiles(card_stats)
-                blocked_building_tiles = self._building_placement_blocked_mask_canonical(
-                    battle, player_id, size_tiles
-                )
+                blocked_building_tiles = building_blocked_by_size.get(size_tiles)
+                if blocked_building_tiles is None:
+                    blocked_building_tiles = (
+                        self._building_placement_blocked_mask_canonical(
+                            battle, player_id, size_tiles
+                        )
+                    )
+                    building_blocked_by_size[size_tiles] = blocked_building_tiles
                 candidate_mask = candidate_mask & (~blocked_building_tiles)
+            elif not is_spell:
+                blocked_troop_tiles = troop_blocked_by_radius.get(probe_radius)
+                if blocked_troop_tiles is None:
+                    blocked_troop_tiles = self._troop_placement_blocked_mask_canonical(
+                        battle, player_id, probe_radius
+                    )
+                    troop_blocked_by_radius[probe_radius] = blocked_troop_tiles
+                candidate_mask = candidate_mask & (~blocked_troop_tiles)
 
             candidate_tiles = np.flatnonzero(candidate_mask)
             positions = self._positions_by_player[player_id]
@@ -387,27 +445,40 @@ class DiscreteTileActionSpace:
                     ):
                         continue
                 if can_deploy_enemy_side:
-                    tile_pos = (int(pos.x), int(pos.y))
-                    if tile_pos in battle.arena.BLOCKED_TILES:
-                        continue
-                    if battle.arena.is_tower_tile(pos, battle):
-                        continue
-                if is_building_card and battle.is_deployment_payload_occupied(
-                    pos,
-                    card_stats=card_stats,
+                    if not _USE_PREFILTERED_ACTION_MASK_CANDIDATES:
+                        tile_pos = (int(pos.x), int(pos.y))
+                        if tile_pos in battle.arena.BLOCKED_TILES:
+                            continue
+                        if battle.arena.is_tower_tile(pos, battle):
+                            continue
+                if (
+                    is_building_card
+                    and has_deployment_blockers
+                    and battle.is_deployment_payload_occupied(
+                        pos,
+                        card_stats=card_stats,
+                        deployment_blockers=deployment_blockers,
+                    )
                 ):
                     continue
-                if not is_spell and (not is_building_card):
-                    if battle.is_position_occupied_by_building(
-                        pos, probe_radius
-                    ) or battle.is_deployment_payload_occupied(
+                if (
+                    not is_spell
+                    and not is_building_card
+                    and has_deployment_blockers
+                    and battle.is_deployment_payload_occupied(
                         pos,
                         mover_radius=probe_radius,
-                    ):
-                        continue
-                if is_spell and (
-                    battle.arena._requires_deploy_zone_spell(spell_obj)
-                    or getattr(spell_obj, "requires_walkable_target", False)
+                        deployment_blockers=deployment_blockers,
+                    )
+                ):
+                    continue
+                if (
+                    is_spell
+                    and (requires_deploy_zone or requires_walkable_target)
+                    and (
+                        not _USE_PREFILTERED_ACTION_MASK_CANDIDATES
+                        or requires_walkable_target
+                    )
                 ):
                     # Keep exact territory/terrain parity for constrained spells.
                     if not battle.arena.can_deploy_at(pos, player_id, battle, True, spell_obj):

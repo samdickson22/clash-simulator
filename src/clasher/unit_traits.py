@@ -2,9 +2,15 @@
 
 from __future__ import annotations
 
+from functools import lru_cache
 from typing import Any
 
+# Reference/benchmark switch for production collision-plane calls, whose
+# inputs are exact Entity instances with required air/hover fields.
+_USE_DIRECT_ENTITY_COLLISION_PLANE = True
 
+
+@lru_cache(maxsize=512)
 def _normalize(name: str) -> str:
     return "".join(ch for ch in name.casefold() if ch.isalnum())
 
@@ -195,10 +201,18 @@ def uses_air_collision_plane(entity: Any) -> bool:
     plane. This lets them pass through ground characters and buildings while
     still spacing flying characters.
     """
-    return bool(
-        is_above_ground_surface(entity)
-        or is_hover_unit_card(getattr(entity, "card_stats", None))
-    )
+    if _USE_DIRECT_ENTITY_COLLISION_PLANE:
+        return bool(
+            entity.is_air_unit
+            or entity._is_hover_unit
+            or getattr(entity, "_river_jump_active", False)
+            or getattr(entity, "_mk_leap_phase", None) == "airborne"
+        )
+
+    hover = getattr(entity, "_is_hover_unit", None)
+    if hover is None:
+        hover = is_hover_unit_card(getattr(entity, "card_stats", None))
+    return bool(is_above_ground_surface(entity) or hover)
 
 
 def is_in_transit(entity: Any) -> bool:

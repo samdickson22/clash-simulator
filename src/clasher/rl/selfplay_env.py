@@ -17,6 +17,10 @@ from .obs_cv import CvObservationBuilder
 from .reward_model import objective_potential_p0
 from .structured_obs import StructuredObservationBuilder
 
+# Reference/benchmark switch. The env has just performed the same exact idle
+# eligibility check before dispatching the bounded fast-forward operation.
+_USE_TRUSTED_IDLE_ELIGIBILITY = True
+
 @dataclass
 class StepInfo:
     action_success: Dict[int, bool]
@@ -265,15 +269,12 @@ class SelfPlayBattleEnv:
                 and self.battle.can_fast_forward_idle()
             ):
                 if remaining_ticks > 0:
-                    ticks = self.battle.fast_forward_idle_ticks(remaining_ticks)
+                    ticks = self.battle.fast_forward_idle_ticks(
+                        remaining_ticks,
+                        eligibility_checked=_USE_TRUSTED_IDLE_ELIGIBILITY,
+                    )
             else:
-                while (
-                    ticks < self.decision_interval_ticks
-                    and not self.battle.game_over
-                    and self.battle.tick < self.max_ticks
-                ):
-                    self.battle.step()
-                    ticks += 1
+                ticks = self.battle.step_logic_ticks(remaining_ticks)
 
         done = self.battle.game_over or self.battle.tick >= self.max_ticks
         rewards = self._compute_dense_rewards()

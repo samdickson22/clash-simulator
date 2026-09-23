@@ -13,6 +13,13 @@ from functools import lru_cache
 from types import MappingProxyType
 from typing import TYPE_CHECKING, cast
 
+import numpy as np
+
+try:
+    from numba import njit
+except Exception:  # pragma: no cover - optional accelerator
+    njit = None
+
 from .arena import Position
 from .kinematics import (
     normalized_vector_logic_units,
@@ -46,9 +53,152 @@ _NATIVE_NEIGHBORS: tuple[tuple[int, int, int], ...] = (
 )
 
 _NATIVE_EMPTY_TILE_COST = 20
+
+# Reference/benchmark switch. Entity initialization already classifies this
+# immutable data-driven movement trait once.
+_USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
+# Reference/benchmark switch. A retained route hit needs only the desired goal
+# and immutable route traits; defer origin/backwards/start-cell work to misses.
+_USE_EARLY_GROUND_PATH_CACHE_HIT = True
 _NATIVE_OTHER_LANE_COST = 5
 _NATIVE_SAME_LANE_COST = 1
 _NATIVE_WATER_COST = 800
+
+# Reference/benchmark switch for exact repeated route-goal queries.
+_USE_NATIVE_ROUTE_GOAL_CACHE = True
+
+# Reference/benchmark switch. The native goal candidates on one half-tile row
+# form a contiguous x interval, so only the interval point closest to the mover
+# can win that row's distance comparison.
+_USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL = True
+
+# Reference/benchmark switch. Numba is already an optional simulator
+# accelerator; unavailable installations retain the exact Python row kernel.
+_USE_COMPILED_NATIVE_ROUTE_GOAL = True
+
+# Reference/benchmark switch. The compiled kernel implements the same native
+# first-discovery heap and falls back to Python when Numba is unavailable.
+_USE_COMPILED_STANDARD_ROUTE = True
+
+
+if njit is not None:
+
+    @njit(cache=True)
+    def _compiled_standard_grid_route_indices(
+        start_index: int,
+        goal_index: int,
+        costs: np.ndarray,
+    ) -> np.ndarray:
+        """Return exact row-major route indices using the native heap."""
+        width = STANDARD_PATH_WIDTH
+        height = STANDARD_PATH_HEIGHT
+        cell_count = width * height
+        goal_x = goal_index % width
+        goal_y = goal_index // width
+        parents = np.full(cell_count, -1, dtype=np.int32)
+        priorities = np.zeros(cell_count, dtype=np.int64)
+        discovered = np.zeros(cell_count, dtype=np.uint8)
+        heap = np.empty(cell_count, dtype=np.int32)
+        heap[0] = start_index
+        heap_size = 1
+        discovered[start_index] = 1
+        found = False
+
+        delta_xs = (0, 0, -1, 1, -1, -1, 1, 1)
+        delta_ys = (-1, 1, 0, 0, -1, 1, 1, -1)
+        step_costs = (10, 10, 10, 10, 14, 14, 14, 14)
+
+        while heap_size:
+            current = int(heap[0])
+            heap_size -= 1
+            if heap_size:
+                last = int(heap[heap_size])
+                heap[0] = last
+                index = 0
+                while True:
+                    chosen = index
+                    right = index * 2 + 2
+                    if (
+                        right < heap_size
+                        and priorities[heap[right]]
+                        < priorities[heap[chosen]]
+                    ):
+                        chosen = right
+                    left = index * 2 + 1
+                    if (
+                        left < heap_size
+                        and priorities[heap[left]]
+                        < priorities[heap[chosen]]
+                    ):
+                        chosen = left
+                    if chosen == index:
+                        break
+                    swap = int(heap[index])
+                    heap[index] = heap[chosen]
+                    heap[chosen] = swap
+                    index = chosen
+
+            if current == goal_index:
+                found = True
+                break
+            current_x = current % width
+            current_y = current // width
+            for neighbor_offset in range(8):
+                neighbor_x = current_x + delta_xs[neighbor_offset]
+                neighbor_y = current_y + delta_ys[neighbor_offset]
+                if not (
+                    0 <= neighbor_x < width
+                    and 0 <= neighbor_y < height
+                ):
+                    continue
+                neighbor = neighbor_y * width + neighbor_x
+                if discovered[neighbor]:
+                    continue
+                discovered[neighbor] = 1
+                parents[neighbor] = current
+                dx = goal_x - neighbor_x
+                if dx < 0:
+                    dx = -dx
+                dy = goal_y - neighbor_y
+                if dy < 0:
+                    dy = -dy
+                heuristic = 10 * max(dx, dy)
+                priorities[neighbor] = (
+                    priorities[current]
+                    + step_costs[neighbor_offset] * costs[neighbor]
+                    + heuristic
+                )
+
+                index = heap_size
+                heap_size += 1
+                while index > 0:
+                    parent_index = (index - 1) // 2
+                    parent = int(heap[parent_index])
+                    if priorities[parent] <= priorities[neighbor]:
+                        break
+                    heap[index] = parent
+                    index = parent_index
+                heap[index] = neighbor
+
+        if not found:
+            return np.empty(0, dtype=np.int32)
+        route_length = 1
+        current = goal_index
+        while current != start_index:
+            current = int(parents[current])
+            if current < 0:
+                return np.empty(0, dtype=np.int32)
+            route_length += 1
+        route: np.ndarray = np.empty(route_length, dtype=np.int32)
+        current = goal_index
+        for route_index in range(route_length - 1, -1, -1):
+            route[route_index] = current
+            if current != start_index:
+                current = int(parents[current])
+        return route
+
+else:  # pragma: no cover - exercised only without the optional accelerator
+    _compiled_standard_grid_route_indices = None
 
 
 def _cell_for_position(position: Position) -> tuple[int, int]:
@@ -84,42 +234,35 @@ def _cell_center(cell: tuple[int, int]) -> Position:
     )
 
 
-def native_route_goal_cell(
-    mover: "Entity",
-    target: "Entity",
-    *,
-    required_range_tiles: float | None = None,
+def _compute_native_route_goal_cell_units(
+    mover_x: int,
+    mover_y: int,
+    target_x: int,
+    target_y: int,
+    required_range_units: int,
 ) -> tuple[int, int] | None:
-    """Return ``getClosestTilePositionToTarget`` for an ordinary attack.
+    """Compute one exact native route goal from integer logic coordinates."""
 
-    The movement component does not route to a target object's occupied tile.
-    It scans half-tile centers inside the attacker's serialized range of the
-    target *center*, then keeps the candidate closest to the mover. The scan
-    is y-major/x-minor and replaces only on a strictly smaller distance, so a
-    geometric tie keeps the lowest world-grid y and then x.
-
-    Target collision radius deliberately does not participate here. Native
-    combat uses it when deciding whether an attack can begin, while route goal
-    selection calls the point overload of ``getDistanceToObjectSquared``.
-    """
-
-    range_tiles = (
-        float(getattr(mover, "range", 0.0) or 0.0)
-        if required_range_tiles is None
-        else float(required_range_tiles)
-    )
-    required_range_units = max(0, tiles_to_logic_units(range_tiles))
     search_radius = trunc_div(required_range_units, HALF_TILE_LOGIC_UNITS) + 1
-    target_cell_x, target_cell_y = _cell_for_position(target.position)
+    target_cell_x = max(
+        0,
+        min(
+            STANDARD_PATH_WIDTH - 1,
+            trunc_div(target_x, HALF_TILE_LOGIC_UNITS),
+        ),
+    )
+    target_cell_y = max(
+        0,
+        min(
+            STANDARD_PATH_HEIGHT - 1,
+            trunc_div(target_y, HALF_TILE_LOGIC_UNITS),
+        ),
+    )
     min_x = max(0, target_cell_x - search_radius)
     max_x = min(STANDARD_PATH_WIDTH - 1, target_cell_x + search_radius)
     min_y = max(0, target_cell_y - search_radius)
     max_y = min(STANDARD_PATH_HEIGHT - 1, target_cell_y + search_radius)
 
-    mover_x = tiles_to_logic_units(mover.position.x)
-    mover_y = tiles_to_logic_units(mover.position.y)
-    target_x = tiles_to_logic_units(target.position.x)
-    target_y = tiles_to_logic_units(target.position.y)
     required_range_sq = required_range_units * required_range_units
     best_cell: tuple[int, int] | None = None
     best_mover_distance_sq = (1 << 31) - 1
@@ -149,6 +292,236 @@ def native_route_goal_cell(
                 best_cell = (cell_x, cell_y)
                 best_mover_distance_sq = mover_distance_sq
     return best_cell
+
+
+def _compute_native_route_goal_cell_units_row_interval(
+    mover_x: int,
+    mover_y: int,
+    target_x: int,
+    target_y: int,
+    required_range_units: int,
+) -> tuple[int, int] | None:
+    """Compute the identical native goal from one exact candidate per row."""
+
+    cell_size = HALF_TILE_LOGIC_UNITS
+    cell_center_offset = cell_size // 2
+    search_radius = trunc_div(required_range_units, cell_size) + 1
+    target_cell_x = max(
+        0,
+        min(STANDARD_PATH_WIDTH - 1, trunc_div(target_x, cell_size)),
+    )
+    target_cell_y = max(
+        0,
+        min(STANDARD_PATH_HEIGHT - 1, trunc_div(target_y, cell_size)),
+    )
+    min_x = max(0, target_cell_x - search_radius)
+    max_x = min(STANDARD_PATH_WIDTH - 1, target_cell_x + search_radius)
+    min_y = max(0, target_cell_y - search_radius)
+    max_y = min(STANDARD_PATH_HEIGHT - 1, target_cell_y + search_radius)
+
+    required_range_sq = required_range_units * required_range_units
+    best_cell: tuple[int, int] | None = None
+    best_mover_distance_sq = (1 << 31) - 1
+    mover_cell_x, mover_remainder = divmod(
+        mover_x - cell_center_offset,
+        cell_size,
+    )
+    if mover_remainder * 2 > cell_size:
+        mover_cell_x += 1
+
+    for cell_y in range(min_y, max_y + 1):
+        candidate_y = cell_y * cell_size + cell_center_offset
+        target_dy = candidate_y - target_y
+        remaining_range_sq = required_range_sq - target_dy * target_dy
+        if remaining_range_sq < 0:
+            continue
+        max_target_dx = math.isqrt(remaining_range_sq)
+        lower_center_x = target_x - max_target_dx
+        upper_center_x = target_x + max_target_dx
+        first_valid_x = max(
+            min_x,
+            -(-(lower_center_x - cell_center_offset) // cell_size),
+        )
+        last_valid_x = min(
+            max_x,
+            (upper_center_x - cell_center_offset) // cell_size,
+        )
+        if first_valid_x > last_valid_x:
+            continue
+
+        cell_x = max(first_valid_x, min(last_valid_x, mover_cell_x))
+        candidate_x = cell_x * cell_size + cell_center_offset
+        mover_dx = candidate_x - mover_x
+        mover_dy = candidate_y - mover_y
+        mover_distance_sq = mover_dx * mover_dx + mover_dy * mover_dy
+        if mover_distance_sq < best_mover_distance_sq:
+            best_cell = (cell_x, cell_y)
+            best_mover_distance_sq = mover_distance_sq
+    return best_cell
+
+
+if njit is not None:
+
+    @njit(cache=True)
+    def _compiled_native_route_goal_cell_units_row_interval_raw(
+        mover_x: int,
+        mover_y: int,
+        target_x: int,
+        target_y: int,
+        required_range_units: int,
+    ) -> tuple[int, int]:
+        """Return the exact row-interval goal, with (-1, -1) for no goal."""
+
+        cell_size = HALF_TILE_LOGIC_UNITS
+        cell_center_offset = cell_size // 2
+        search_radius = required_range_units // cell_size + 1
+        target_cell_x = max(
+            0,
+            min(STANDARD_PATH_WIDTH - 1, target_x // cell_size),
+        )
+        target_cell_y = max(
+            0,
+            min(STANDARD_PATH_HEIGHT - 1, target_y // cell_size),
+        )
+        min_x = max(0, target_cell_x - search_radius)
+        max_x = min(STANDARD_PATH_WIDTH - 1, target_cell_x + search_radius)
+        min_y = max(0, target_cell_y - search_radius)
+        max_y = min(STANDARD_PATH_HEIGHT - 1, target_cell_y + search_radius)
+
+        required_range_sq = required_range_units * required_range_units
+        best_x = -1
+        best_y = -1
+        best_mover_distance_sq = 0
+        mover_cell_x, mover_remainder = divmod(
+            mover_x - cell_center_offset,
+            cell_size,
+        )
+        if mover_remainder * 2 > cell_size:
+            mover_cell_x += 1
+
+        for cell_y in range(min_y, max_y + 1):
+            candidate_y = cell_y * cell_size + cell_center_offset
+            target_dy = candidate_y - target_y
+            remaining_range_sq = required_range_sq - target_dy * target_dy
+            if remaining_range_sq < 0:
+                continue
+            max_target_dx = int(math.sqrt(remaining_range_sq))
+            while (max_target_dx + 1) * (max_target_dx + 1) <= remaining_range_sq:
+                max_target_dx += 1
+            while max_target_dx * max_target_dx > remaining_range_sq:
+                max_target_dx -= 1
+            lower_center_x = target_x - max_target_dx
+            upper_center_x = target_x + max_target_dx
+            first_valid_x = max(
+                min_x,
+                -(-(lower_center_x - cell_center_offset) // cell_size),
+            )
+            last_valid_x = min(
+                max_x,
+                (upper_center_x - cell_center_offset) // cell_size,
+            )
+            if first_valid_x > last_valid_x:
+                continue
+
+            cell_x = max(first_valid_x, min(last_valid_x, mover_cell_x))
+            candidate_x = cell_x * cell_size + cell_center_offset
+            mover_dx = candidate_x - mover_x
+            mover_dy = candidate_y - mover_y
+            mover_distance_sq = mover_dx * mover_dx + mover_dy * mover_dy
+            if best_x < 0 or mover_distance_sq < best_mover_distance_sq:
+                best_x = cell_x
+                best_y = cell_y
+                best_mover_distance_sq = mover_distance_sq
+        return best_x, best_y
+
+else:  # pragma: no cover - exercised only without the optional accelerator
+    _compiled_native_route_goal_cell_units_row_interval_raw = None
+
+
+def _compute_native_route_goal_cell_units_row_interval_compiled(
+    mover_x: int,
+    mover_y: int,
+    target_x: int,
+    target_y: int,
+    required_range_units: int,
+) -> tuple[int, int] | None:
+    """Call the compiled exact kernel or its Python fallback."""
+
+    if _compiled_native_route_goal_cell_units_row_interval_raw is None:
+        return _compute_native_route_goal_cell_units_row_interval(
+            mover_x,
+            mover_y,
+            target_x,
+            target_y,
+            required_range_units,
+        )
+    cell_x, cell_y = _compiled_native_route_goal_cell_units_row_interval_raw(
+        mover_x,
+        mover_y,
+        target_x,
+        target_y,
+        required_range_units,
+    )
+    return None if cell_x < 0 else (int(cell_x), int(cell_y))
+
+
+_cached_native_route_goal_cell_units_full_scan = lru_cache(maxsize=32_768)(
+    _compute_native_route_goal_cell_units
+)
+_cached_native_route_goal_cell_units_row_interval_python = lru_cache(
+    maxsize=32_768
+)(
+    _compute_native_route_goal_cell_units_row_interval
+)
+_cached_native_route_goal_cell_units = lru_cache(maxsize=32_768)(
+    _compute_native_route_goal_cell_units_row_interval_compiled
+)
+
+
+def native_route_goal_cell(
+    mover: "Entity",
+    target: "Entity",
+    *,
+    required_range_tiles: float | None = None,
+) -> tuple[int, int] | None:
+    """Return ``getClosestTilePositionToTarget`` for an ordinary attack.
+
+    The movement component does not route to a target object's occupied tile.
+    It scans half-tile centers inside the attacker's serialized range of the
+    target *center*, then keeps the candidate closest to the mover. The scan
+    is y-major/x-minor and replaces only on a strictly smaller distance, so a
+    geometric tie keeps the lowest world-grid y and then x.
+
+    Target collision radius deliberately does not participate here. Native
+    combat uses it when deciding whether an attack can begin, while route goal
+    selection calls the point overload of ``getDistanceToObjectSquared``.
+    """
+
+    range_tiles = (
+        float(getattr(mover, "range", 0.0) or 0.0)
+        if required_range_tiles is None
+        else float(required_range_tiles)
+    )
+    args = (
+        tiles_to_logic_units(mover.position.x),
+        tiles_to_logic_units(mover.position.y),
+        tiles_to_logic_units(target.position.x),
+        tiles_to_logic_units(target.position.y),
+        max(0, tiles_to_logic_units(range_tiles)),
+    )
+    if _USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL:
+        if _USE_COMPILED_NATIVE_ROUTE_GOAL:
+            if _USE_NATIVE_ROUTE_GOAL_CACHE:
+                return _cached_native_route_goal_cell_units(*args)
+            return _compute_native_route_goal_cell_units_row_interval_compiled(
+                *args
+            )
+        if _USE_NATIVE_ROUTE_GOAL_CACHE:
+            return _cached_native_route_goal_cell_units_row_interval_python(*args)
+        return _compute_native_route_goal_cell_units_row_interval(*args)
+    if _USE_NATIVE_ROUTE_GOAL_CACHE:
+        return _cached_native_route_goal_cell_units_full_scan(*args)
+    return _compute_native_route_goal_cell_units(*args)
 
 
 def _heuristic(
@@ -208,25 +581,165 @@ def _standard_pathfinder_tile_cost(
 
 
 @lru_cache(maxsize=16)
+def _standard_path_cost_grid(
+    lane_id: int,
+    jump_height: bool,
+) -> tuple[int, ...]:
+    """Return row-major exact costs for one standard-arena movement profile."""
+    return tuple(
+        cast(
+            int,
+            _standard_pathfinder_tile_cost(
+                (cell_x, cell_y),
+                lane_id=lane_id,
+                jump_height=jump_height,
+            ),
+        )
+        for cell_y in range(STANDARD_PATH_HEIGHT)
+        for cell_x in range(STANDARD_PATH_WIDTH)
+    )
+
+
+@lru_cache(maxsize=16)
+def _standard_path_cost_array(
+    lane_id: int,
+    jump_height: bool,
+) -> np.ndarray:
+    """Return the immutable dense costs consumed by the compiled heap."""
+    costs = np.asarray(
+        _standard_path_cost_grid(lane_id, jump_height),
+        dtype=np.int64,
+    )
+    costs.flags.writeable = False
+    return cast(np.ndarray, costs)
+
+
+@lru_cache(maxsize=16)
 def _standard_path_cost_map(
     lane_id: int,
     jump_height: bool,
 ) -> Mapping[tuple[int, int], int]:
-    """Return immutable exact costs for one standard-arena movement profile."""
+    """Return immutable keyed access to the standard-arena cost grid."""
+    costs = _standard_path_cost_grid(lane_id, jump_height)
     return MappingProxyType(
         {
-            (cell_x, cell_y): cast(
-                int,
-                _standard_pathfinder_tile_cost(
-                    (cell_x, cell_y),
-                    lane_id=lane_id,
-                    jump_height=jump_height,
-                ),
-            )
+            (cell_x, cell_y): costs[cell_y * STANDARD_PATH_WIDTH + cell_x]
             for cell_y in range(STANDARD_PATH_HEIGHT)
             for cell_x in range(STANDARD_PATH_WIDTH)
         }
     )
+
+
+def _native_standard_grid_route(
+    start: tuple[int, int],
+    goal: tuple[int, int],
+    costs: tuple[int, ...],
+) -> list[tuple[int, int]] | None:
+    """Run the exact native heap on fixed row-major standard-arena storage."""
+    width = STANDARD_PATH_WIDTH
+    height = STANDARD_PATH_HEIGHT
+    start_x, start_y = start
+    goal_x, goal_y = goal
+    if not (
+        0 <= start_x < width
+        and 0 <= start_y < height
+        and 0 <= goal_x < width
+        and 0 <= goal_y < height
+    ):
+        def tile_cost(cell: tuple[int, int]) -> int | None:
+            cell_x, cell_y = cell
+            if not (0 <= cell_x < width and 0 <= cell_y < height):
+                return None
+            return costs[cell_y * width + cell_x]
+
+        return _native_grid_route(start, goal, tile_cost)
+
+    cell_count = width * height
+    start_index = start_y * width + start_x
+    goal_index = goal_y * width + goal_x
+    parents = [-1] * cell_count
+    priorities = [0] * cell_count
+    discovered = bytearray(cell_count)
+    discovered[start_index] = 1
+    heap = [start_index]
+
+    def push(cell: int) -> None:
+        heap.append(cell)
+        index = len(heap) - 1
+        while index > 0:
+            parent_index = (index - 1) // 2
+            parent = heap[parent_index]
+            if priorities[parent] <= priorities[cell]:
+                break
+            heap[index] = parent
+            index = parent_index
+        heap[index] = cell
+
+    def pop() -> int:
+        root = heap[0]
+        last = heap.pop()
+        if not heap:
+            return root
+        heap[0] = last
+        index = 0
+        while True:
+            chosen = index
+            right = index * 2 + 2
+            if (
+                right < len(heap)
+                and priorities[heap[right]] < priorities[heap[chosen]]
+            ):
+                chosen = right
+            left = index * 2 + 1
+            if (
+                left < len(heap)
+                and priorities[heap[left]] < priorities[heap[chosen]]
+            ):
+                chosen = left
+            if chosen == index:
+                break
+            heap[index], heap[chosen] = heap[chosen], heap[index]
+            index = chosen
+        return root
+
+    found = False
+    while heap:
+        current = pop()
+        if current == goal_index:
+            found = True
+            break
+        current_x = current % width
+        current_y = current // width
+        for delta_x, delta_y, step_cost in _NATIVE_NEIGHBORS:
+            neighbor_x = current_x + delta_x
+            neighbor_y = current_y + delta_y
+            if not (0 <= neighbor_x < width and 0 <= neighbor_y < height):
+                continue
+            neighbor = neighbor_y * width + neighbor_x
+            if discovered[neighbor]:
+                continue
+            discovered[neighbor] = 1
+            parents[neighbor] = current
+            priorities[neighbor] = (
+                priorities[current]
+                + step_cost * costs[neighbor]
+                + 10 * max(abs(goal_x - neighbor_x), abs(goal_y - neighbor_y))
+            )
+            push(neighbor)
+
+    if not found:
+        return None
+    route: list[tuple[int, int]] = []
+    current = goal_index
+    while True:
+        route.append((current % width, current // width))
+        if current == start_index:
+            break
+        current = parents[current]
+        if current < 0:
+            return None
+    route.reverse()
+    return route
 
 
 def _native_grid_route(
@@ -329,11 +842,34 @@ def _cached_standard_grid_route(
 ) -> tuple[tuple[int, int], ...] | None:
     """Return an immutable exact route on the static standard arena grid."""
 
-    route = _native_grid_route(
-        start,
-        goal,
-        _standard_path_cost_map(lane_id, jump_height).get,
-    )
+    if (
+        _USE_COMPILED_STANDARD_ROUTE
+        and _compiled_standard_grid_route_indices is not None
+        and 0 <= start[0] < STANDARD_PATH_WIDTH
+        and 0 <= start[1] < STANDARD_PATH_HEIGHT
+        and 0 <= goal[0] < STANDARD_PATH_WIDTH
+        and 0 <= goal[1] < STANDARD_PATH_HEIGHT
+    ):
+        route_indices = _compiled_standard_grid_route_indices(
+            start[1] * STANDARD_PATH_WIDTH + start[0],
+            goal[1] * STANDARD_PATH_WIDTH + goal[0],
+            _standard_path_cost_array(lane_id, jump_height),
+        )
+        route: list[tuple[int, int]] | None = [
+            (
+                int(index) % STANDARD_PATH_WIDTH,
+                int(index) // STANDARD_PATH_WIDTH,
+            )
+            for index in route_indices
+        ]
+        if not route_indices.size:
+            route = None
+    else:
+        route = _native_standard_grid_route(
+            start,
+            goal,
+            _standard_path_cost_grid(lane_id, jump_height),
+        )
     return None if route is None else tuple(route)
 
 
@@ -437,14 +973,48 @@ def ground_path_waypoint(
     are handled later by movement collision and avoidance, not by A*.
     """
 
-    from .unit_traits import is_hover_unit_card
+    desired_cell: tuple[int, int] | None
+    hovering: bool
+    cache_key: tuple[tuple[int, int], int, bool]
+    if _USE_EARLY_GROUND_PATH_CACHE_HIT:
+        desired_cell = (
+            native_route_goal_cell(mover, target_entity)
+            if target_entity is not None
+            else _cell_for_position(desired)
+        )
+        if desired_cell is not None:
+            if _USE_CACHED_GROUND_PATH_HOVER_TRAIT:
+                hovering = mover._is_hover_unit
+            else:
+                from .unit_traits import is_hover_unit_card
+
+                hovering = is_hover_unit_card(getattr(mover, "card_stats", None))
+            cache_key = (
+                desired_cell,
+                int(getattr(mover, "_native_lane_id", 0) or 0),
+                bool(
+                    getattr(
+                        getattr(mover, "card_stats", None),
+                        "jump_height",
+                        None,
+                    )
+                ),
+            )
+            if (
+                not hovering
+                and getattr(mover, "_ground_path_cache_key", None) == cache_key
+            ):
+                route_cells = getattr(mover, "_native_ground_route_cells", None)
+                if isinstance(route_cells, list):
+                    mover._ground_path_backwards = bool(
+                        getattr(mover, "_ground_path_cache_backwards", False)
+                    )
+                    return _cell_center(route_cells[0]) if route_cells else desired
 
     reference = backwards_reference or desired
     origin_dx = tiles_to_logic_units(mover.position.x - reference.x)
     origin_dy = tiles_to_logic_units(mover.position.y - reference.y)
-    origin_distance = math.isqrt(
-        origin_dx * origin_dx + origin_dy * origin_dy
-    )
+    origin_distance = math.isqrt(origin_dx * origin_dx + origin_dy * origin_dy)
 
     def route_moves_backwards(route_positions: tuple[Position, ...]) -> bool:
         for route_position in route_positions:
@@ -455,16 +1025,24 @@ def ground_path_waypoint(
         return False
 
     start = _cell_for_position(mover.position)
-    desired_cell = (
-        native_route_goal_cell(mover, target_entity)
-        if target_entity is not None
-        else _cell_for_position(desired)
-    )
+    if not _USE_EARLY_GROUND_PATH_CACHE_HIT:
+        desired_cell = (
+            native_route_goal_cell(mover, target_entity)
+            if target_entity is not None
+            else _cell_for_position(desired)
+        )
     if desired_cell is None:
         mover._ground_path_backwards = route_moves_backwards((desired,))
         return desired
     desired_waypoint = _cell_center(desired_cell)
-    if is_hover_unit_card(getattr(mover, "card_stats", None)):
+    if not _USE_EARLY_GROUND_PATH_CACHE_HIT:
+        if _USE_CACHED_GROUND_PATH_HOVER_TRAIT:
+            hovering = mover._is_hover_unit
+        else:
+            from .unit_traits import is_hover_unit_card
+
+            hovering = is_hover_unit_card(getattr(mover, "card_stats", None))
+    if hovering:
         waypoint = (
             native_single_node_waypoint(mover, target_entity)
             if target_entity is not None
@@ -472,11 +1050,12 @@ def ground_path_waypoint(
         )
         mover._ground_path_backwards = route_moves_backwards((waypoint,))
         return waypoint
-    cache_key = (
-        desired_cell,
-        int(getattr(mover, "_native_lane_id", 0) or 0),
-        bool(getattr(getattr(mover, "card_stats", None), "jump_height", None)),
-    )
+    if not _USE_EARLY_GROUND_PATH_CACHE_HIT:
+        cache_key = (
+            desired_cell,
+            int(getattr(mover, "_native_lane_id", 0) or 0),
+            bool(getattr(getattr(mover, "card_stats", None), "jump_height", None)),
+        )
     if getattr(mover, "_ground_path_cache_key", None) == cache_key:
         route_cells = getattr(mover, "_native_ground_route_cells", None)
         if isinstance(route_cells, list):

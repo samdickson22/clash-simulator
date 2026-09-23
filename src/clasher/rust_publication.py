@@ -487,7 +487,7 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
     "movement": frozenset(
         {
             "building_pathing_radius",
-            "charge_range_present",
+            "charge",
             "collision_radius",
             "death_spawn_travel_target",
             "death_spawn_travel_ticks",
@@ -1561,7 +1561,6 @@ def _validate_direct_movement(value: Any, entity_id: int) -> None:
         _direct_int(row[field], f"entity {entity_id} movement {field}")
     _direct_float(row["unit_mass"], f"entity {entity_id} movement unit_mass")
     for field in (
-        "charge_range_present",
         "forced_movement_active",
         "is_hover",
         "jump_height_present",
@@ -1581,6 +1580,46 @@ def _validate_direct_movement(value: Any, entity_id: int) -> None:
         "vector_bypasses_cap",
     ):
         _direct_bool(row[field], f"entity {entity_id} movement {field}")
+    charge = row["charge"]
+    if charge is not None:
+        charge = _direct_dict(charge, "ordinary_charge")
+        for field in ("base_speed", "charge_speed_multiplier", "special_damage"):
+            _direct_exact(charge[field], f"entity {entity_id} charge {field}")
+        _direct_int(
+            charge["charge_range"],
+            f"entity {entity_id} charge range",
+            minimum=1,
+        )
+        progress = _direct_int(
+            charge["native_charge_progress"],
+            f"entity {entity_id} charge progress",
+            minimum=0,
+        )
+        distance = _direct_float(
+            charge["distance_traveled"],
+            f"entity {entity_id} charge distance",
+        )
+        charging = _direct_bool(
+            charge["is_charging"], f"entity {entity_id} charge active"
+        )
+        has_charged = _direct_bool(
+            charge["has_charged"], f"entity {entity_id} charge completed"
+        )
+        _direct_position(
+            charge["charge_target_position"],
+            f"entity {entity_id} charge target position",
+            exact=True,
+        )
+        if (
+            not np.isfinite(distance)
+            or distance < 0.0
+            or charging != (progress >= 10_000)
+            or has_charged
+            or charge["charge_target_position"] is not None
+        ):
+            raise ResidentPublicationError(
+                f"entity {entity_id} ordinary charge is outside the supported closure"
+            )
     for field, exact in (
         ("death_spawn_travel_target", False),
         ("knockback_target", False),
@@ -4480,6 +4519,31 @@ def _typed_movement(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
             combat is not None and combat["is_airborne_for_projectile"]
         ),
         "building_pathing_radius": _exact_float(state["building_pathing_radius"]),
+        "ordinary_charge": (
+            None
+            if state["charge"] is None
+            else {
+                "base_speed": _exact(state["charge"]["base_speed"]),
+                "charge_range": state["charge"]["charge_range"],
+                "charge_speed_multiplier": _exact(
+                    state["charge"]["charge_speed_multiplier"]
+                ),
+                "charge_target_position": _optional_exact_position(
+                    state["charge"]["charge_target_position"], exact=True
+                ),
+                "distance_traveled": _exact_float(
+                    state["charge"]["distance_traveled"]
+                ),
+                "has_charged": state["charge"]["has_charged"],
+                "is_charging": state["charge"]["is_charging"],
+                "native_charge_progress": state["charge"][
+                    "native_charge_progress"
+                ],
+                "special_damage": _exact(
+                    state["charge"]["special_damage"]
+                ),
+            }
+        ),
         "death_spawn_travel_target": _optional_exact_position(
             state["death_spawn_travel_target"], exact=False
         ),
@@ -5913,6 +5977,19 @@ def _apply_movement(
         entity._pending_movement_consumed = bool(row["pending_consumed"])
         entity._pending_movement_x = _scalar(row["pending_x"])
         entity._pending_movement_y = _scalar(row["pending_y"])
+        charge = row["ordinary_charge"]
+        if charge is not None:
+            entity.is_charging = bool(charge["is_charging"])
+            entity.has_charged = bool(charge["has_charged"])
+            entity._native_charge_progress = int(
+                charge["native_charge_progress"]
+            )
+            entity.distance_traveled = _scalar(charge["distance_traveled"])
+            _set_position(
+                entity,
+                "charge_target_position",
+                charge["charge_target_position"],
+            )
         entity.position.x = _scalar(row["position_x"])
         entity.position.y = _scalar(row["position_y"])
 
@@ -7805,6 +7882,18 @@ def _apply_direct_entity(
     movement = row["movement_state"]
     combat = row["locked_combat_state"]
     if movement is not None:
+        charge = movement["charge"]
+        if charge is not None:
+            entity.is_charging = charge["is_charging"]
+            entity.has_charged = charge["has_charged"]
+            entity._native_charge_progress = charge["native_charge_progress"]
+            entity.distance_traveled = charge["distance_traveled"]
+            _set_direct_position(
+                entity,
+                "charge_target_position",
+                charge["charge_target_position"],
+                exact=True,
+            )
         _set_direct_position(
             entity,
             "_death_spawn_travel_target",
@@ -8507,7 +8596,20 @@ def _apply_direct_delta_entity(
                 "_knockback_target",
                 "_river_jump_origin",
                 "_river_jump_target",
+                "charge_target_position",
             )
+            charge = movement["charge"]
+            if charge is not None:
+                entity.is_charging = charge["is_charging"]
+                entity.has_charged = charge["has_charged"]
+                entity._native_charge_progress = charge["native_charge_progress"]
+                entity.distance_traveled = charge["distance_traveled"]
+                _set_direct_position(
+                    entity,
+                    "charge_target_position",
+                    charge["charge_target_position"],
+                    exact=True,
+                )
             _set_direct_position(entity, "_death_spawn_travel_target", movement["death_spawn_travel_target"], exact=False)
             entity._death_spawn_travel_ticks_remaining = movement["death_spawn_travel_ticks"]
             entity._ground_path_cache_backwards = movement["route_backwards"]

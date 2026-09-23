@@ -1,33 +1,22 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
 from dataclasses import dataclass, field
+from typing import Dict, Iterable, Optional
 
 import numpy as np
 
 from clasher.battle import BattleState
-from clasher.entities import (
-    AreaEffect,
-    Building,
-    Entity,
-    Graveyard,
-    Projectile,
-    RollingProjectile,
-    SpawnProjectile,
-    TimedExplosive,
-    Troop,
-)
+from clasher.entities import AreaEffect, Building, Graveyard, Projectile, RollingProjectile, SpawnProjectile, TimedExplosive, Troop
 
 from .action_space import DiscreteTileActionSpace
-from .oracle_sampling import sample_action_subset
-from .reward_model import OBJECTIVE_V1, REWARD_PROFILES, reward_win_prob_p0
+from .reward_model import objective_win_prob_p0
 
 
 def _quantize(value: float, scale: float) -> int:
-    return round(float(value) * scale)
+    return int(round(float(value) * scale))
 
 
-def _entity_kind(entity: Entity) -> int:
+def _entity_kind(entity) -> int:
     if isinstance(entity, Building):
         return 0
     if isinstance(entity, Troop):
@@ -41,8 +30,8 @@ def _entity_kind(entity: Entity) -> int:
 
 @dataclass
 class _PlayerBandit:
-    alpha: dict[int, float] = field(default_factory=dict)
-    beta: dict[int, float] = field(default_factory=dict)
+    alpha: Dict[int, float] = field(default_factory=dict)
+    beta: Dict[int, float] = field(default_factory=dict)
 
     def ensure_actions(self, actions: Iterable[int]) -> None:
         for action in actions:
@@ -51,11 +40,10 @@ class _PlayerBandit:
                 self.beta[action] = 1.0
 
     def sample_action(self, legal_actions: np.ndarray, rng: np.random.Generator) -> int:
-        actions = legal_actions.tolist()
-        self.ensure_actions(actions)
-        best_action = int(actions[0])
+        self.ensure_actions(legal_actions.tolist())
+        best_action = int(legal_actions[0])
         best_sample = -1.0
-        for action in actions:
+        for action in legal_actions.tolist():
             sample = float(rng.beta(self.alpha[action], self.beta[action]))
             if sample > best_sample:
                 best_sample = sample
@@ -63,31 +51,14 @@ class _PlayerBandit:
         return best_action
 
     def greedy_action(self, legal_actions: np.ndarray) -> int:
-        actions = legal_actions.tolist()
-        self.ensure_actions(actions)
-        best_action = int(actions[0])
+        self.ensure_actions(legal_actions.tolist())
+        best_action = int(legal_actions[0])
         best_mean = -1.0
-        for action in actions:
+        for action in legal_actions.tolist():
             mean = self.alpha[action] / (self.alpha[action] + self.beta[action])
             if mean > best_mean:
                 best_mean = mean
                 best_action = action
-        return best_action
-
-    def greedy_visited_action(self, legal_actions: np.ndarray) -> int | None:
-        """Return the best sampled action, excluding untouched prior-only arms."""
-
-        best_action: int | None = None
-        best_mean = -1.0
-        for action in legal_actions.tolist():
-            alpha = self.alpha.get(action)
-            beta = self.beta.get(action)
-            if alpha is None or beta is None or alpha + beta <= 2.0:
-                continue
-            mean = alpha / (alpha + beta)
-            if mean > best_mean:
-                best_mean = mean
-                best_action = int(action)
         return best_action
 
     def update(self, action: int, reward_prob: float) -> None:
@@ -99,7 +70,7 @@ class _PlayerBandit:
 
 @dataclass
 class _PlannerNode:
-    by_player: dict[int, _PlayerBandit] = field(
+    by_player: Dict[int, _PlayerBandit] = field(
         default_factory=lambda: {0: _PlayerBandit(), 1: _PlayerBandit()}
     )
 
@@ -109,142 +80,85 @@ class FixedDepthThompsonOracle:
 
     def __init__(
         self,
-        action_space: DiscreteTileActionSpace | None = None,
+        action_space: Optional[DiscreteTileActionSpace] = None,
         *,
         decision_interval_ticks: int = 8,
         plan_depth: int = 10,
         num_simulations: int = 48,
         rollout_action_samples: int = 96,
-        seed: int | None = None,
-        reward_profile: str = OBJECTIVE_V1,
-        stable_root_candidates: bool = False,
+        seed: Optional[int] = None,
     ) -> None:
-        if reward_profile not in REWARD_PROFILES:
-            raise ValueError(f"unknown reward profile {reward_profile!r}")
-        self.action_space = action_space or DiscreteTileActionSpace(
-            canonical_perspective=True
-        )
+        self.action_space = action_space or DiscreteTileActionSpace(canonical_perspective=True)
         self.decision_interval_ticks = decision_interval_ticks
         self.plan_depth = plan_depth
         self.num_simulations = num_simulations
         self.rollout_action_samples = rollout_action_samples
         self.rng = np.random.default_rng(seed)
-        self.reward_profile = reward_profile
-        self.stable_root_candidates = stable_root_candidates
 
-    def select_actions(self, battle: BattleState) -> dict[int, int]:
-        tree: dict[tuple, _PlannerNode] = {}
-        root_key = self._state_key(battle)
-        root_legal = {
-            player_id: self._legal_actions(battle, player_id)
-            for player_id in (0, 1)
-        }
-        root_candidates = (
-            {
-                player_id: self._sample_actions(root_legal[player_id])
-                for player_id in (0, 1)
-            }
-            if self.stable_root_candidates
-            else None
-        )
+    def select_actions(self, battle: BattleState) -> Dict[int, int]:
+        tree: Dict[tuple, _PlannerNode] = {}
         for _ in range(self.num_simulations):
             sim = battle.clone()
-            path: list[tuple[_PlannerNode, int, int]] = []
-            for depth in range(self.plan_depth):
-                key = root_key if depth == 0 else self._state_key(sim)
-                node = tree.get(key)
-                if node is None:
-                    node = _PlannerNode()
-                    tree[key] = node
-
-                if depth == 0 and root_candidates is not None:
-                    legal0 = root_candidates[0]
-                elif depth == 0:
-                    legal0 = self._sample_actions(root_legal[0])
-                else:
-                    legal0 = self._sample_actions(self._legal_actions(sim, 0))
-                action0 = node.by_player[0].sample_action(legal0, self.rng)
-
-                if depth == 0 and root_candidates is not None:
-                    legal1 = root_candidates[1]
-                elif depth == 0:
-                    legal1 = self._sample_actions(root_legal[1])
-                else:
-                    legal1 = self._sample_actions(self._legal_actions(sim, 1))
-                action1 = node.by_player[1].sample_action(legal1, self.rng)
-
-                path.append((node, action0, action1))
-                self._apply_joint_action(sim, action0, action1)
+            path: list[tuple[tuple, Dict[int, int]]] = []
+            for _depth in range(self.plan_depth):
+                key = self._state_key(sim)
+                node = tree.setdefault(key, _PlannerNode())
+                chosen: Dict[int, int] = {}
+                for player_id in (0, 1):
+                    legal = self._sample_legal_actions(sim, player_id)
+                    chosen[player_id] = node.by_player[player_id].sample_action(legal, self.rng)
+                path.append((key, chosen))
+                self._apply_joint_action(sim, chosen)
                 if sim.game_over:
                     break
 
-            value_prob_p0 = self._evaluate_state_prob_p0(sim)
-            for node, action0, action1 in path:
-                node.by_player[0].update(action0, value_prob_p0)
-                node.by_player[1].update(action1, 1.0 - value_prob_p0)
+            value_probs = self._evaluate_state_prob(sim)
+            for key, chosen in path:
+                node = tree[key]
+                node.by_player[0].update(chosen[0], value_probs[0])
+                node.by_player[1].update(chosen[1], value_probs[1])
 
+        root_key = self._state_key(battle)
         root = tree.get(root_key)
-        out: dict[int, int] = {}
+        out: Dict[int, int] = {}
         for player_id in (0, 1):
-            legal = (
-                root_candidates[player_id]
-                if root_candidates is not None
-                else self._sample_actions(root_legal[player_id])
-            )
+            legal = self._sample_legal_actions(battle, player_id)
             if root is None:
                 out[player_id] = int(self.rng.choice(legal))
-            elif root_candidates is not None:
-                visited = root.by_player[player_id].greedy_visited_action(legal)
-                out[player_id] = (
-                    visited if visited is not None else int(self.rng.choice(legal))
-                )
             else:
                 out[player_id] = root.by_player[player_id].greedy_action(legal)
         return out
 
     def _sample_legal_actions(self, battle: BattleState, player_id: int) -> np.ndarray:
-        return self._sample_actions(self._legal_actions(battle, player_id))
-
-    def _legal_actions(self, battle: BattleState, player_id: int) -> np.ndarray:
         mask = self.action_space.legal_action_mask(battle, player_id)
-        legal = np.flatnonzero(mask).astype(np.int64, copy=False)
+        legal = np.flatnonzero(mask).astype(np.int64)
         if legal.size == 0:
             return np.asarray([self.action_space.no_op_action], dtype=np.int64)
-        return legal
+        if legal.size <= self.rollout_action_samples:
+            return legal
 
-    def _sample_actions(self, legal: np.ndarray) -> np.ndarray:
-        return sample_action_subset(
-            legal,
-            sample_limit=self.rollout_action_samples,
-            no_op_action=self.action_space.no_op_action,
-            rng=self.rng,
-        )
+        no_op = int(self.action_space.no_op_action)
+        selected = {no_op}
+        other = legal[legal != no_op]
+        needed = max(0, self.rollout_action_samples - len(selected))
+        if needed > 0 and other.size > 0:
+            picks = self.rng.choice(other, size=min(needed, other.size), replace=False)
+            selected.update(int(x) for x in picks.tolist())
+        return np.asarray(sorted(selected), dtype=np.int64)
 
-    def _apply_joint_action(
-        self,
-        battle: BattleState,
-        action0: int,
-        action1: int,
-    ) -> None:
+    def _apply_joint_action(self, battle: BattleState, joint_actions: Dict[int, int]) -> None:
         order = [0, 1]
         self.rng.shuffle(order)
         for player_id in order:
-            action = action0 if player_id == 0 else action1
-            self.action_space.apply_action(
-                battle, player_id, int(action)
-            )
+            self.action_space.apply_action(battle, player_id, int(joint_actions[player_id]))
         for _ in range(self.decision_interval_ticks):
             if battle.game_over:
                 break
             battle.step()
 
-    def _evaluate_state_prob(self, battle: BattleState) -> dict[int, float]:
-        p0_prob = reward_win_prob_p0(battle, self.reward_profile)
+    def _evaluate_state_prob(self, battle: BattleState) -> Dict[int, float]:
+        p0_prob = objective_win_prob_p0(battle)
         return {0: p0_prob, 1: 1.0 - p0_prob}
-
-    def _evaluate_state_prob_p0(self, battle: BattleState) -> float:
-        """Return the scalar leaf value used internally during backup."""
-        return reward_win_prob_p0(battle, self.reward_profile)
 
     def _state_key(self, battle: BattleState) -> tuple:
         p0 = battle.players[0]

@@ -163,3 +163,45 @@ def test_idle_fast_forward_stops_at_tiebreaker_like_normal_step():
     assert battle.winner is None and manual.winner is None
     assert battle.tick == manual.tick
     assert abs(battle.time - manual.time) < 1e-9
+
+
+def test_sparse_idle_win_checks_enter_sudden_death_at_overtime() -> None:
+    battle = BattleState()
+    manual = copy.deepcopy(battle)
+    battle.time = manual.time = battle.overtime_start_time - 0.03
+
+    advanced = battle.fast_forward_idle_ticks(8)
+    for _ in range(8):
+        manual.step()
+
+    assert advanced == 8
+    assert battle.sudden_death and manual.sudden_death
+    assert not battle.game_over and not manual.game_over
+    assert battle.tick == manual.tick
+    assert abs(battle.time - manual.time) < 1e-9
+    _assert_players_match(battle, manual)
+    _assert_tower_clocks_match(battle, manual)
+
+
+def test_sparse_idle_win_checks_resolve_crown_lead_at_overtime() -> None:
+    battle = BattleState()
+    destroyed_tower = next(
+        entity
+        for entity in battle.entities.values()
+        if getattr(entity, "_crown_tower_slot", None) == "left"
+        and entity.player_id == 1
+    )
+    destroyed_tower.hitpoints = 0
+    battle._update_tower_hp()
+    manual = copy.deepcopy(battle)
+    battle.time = manual.time = battle.overtime_start_time - 0.03
+
+    advanced = battle.fast_forward_idle_ticks(8)
+    manual.step()
+
+    assert advanced == 1
+    assert battle.game_over and manual.game_over
+    assert battle.winner == manual.winner == 0
+    assert battle.tick == manual.tick
+    assert abs(battle.time - manual.time) < 1e-9
+    _assert_players_match(battle, manual)

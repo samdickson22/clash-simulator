@@ -671,6 +671,8 @@ class HealSpell(Spell):
                 current_hp = entity.hitpoints
                 max_hp = entity.max_hitpoints
                 entity.hitpoints = min(current_hp + self.heal_amount, max_hp)
+                if entity.hitpoints != current_hp:
+                    battle_state.mark_win_conditions_dirty_if_crown(entity)
                 targets_hit += 1
         
         return targets_hit > 0

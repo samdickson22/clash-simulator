@@ -233,3 +233,42 @@ def test_random_opponent_rollout_only_trains_balanced_learner_seats():
             axis=-1,
         )
     )
+
+
+def test_random_opponent_does_not_build_unused_structured_observations(monkeypatch):
+    env = SelfPlayBattleEnv(seed=41, max_ticks=128)
+    builder = StructuredObservationBuilder(decks_path="decks.json", max_entities=128)
+    env._structured_obs_builder = builder
+    env.reset()
+    model = _tiny_model(builder)
+    no_op = env.action_space.no_op_action
+    build_calls = 0
+    original_build = builder.build
+
+    def counted_build(battle, player_id):
+        nonlocal build_calls
+        build_calls += 1
+        return original_build(battle, player_id)
+
+    monkeypatch.setattr(builder, "build", counted_build)
+    collect_rollout_stationary_opponents(
+        envs=[env],
+        learner_players=(0,),
+        builder=builder,
+        model=model,
+        device=torch.device("cpu"),
+        rollout_steps=2,
+        recurrent_state=model.initial_state(1),
+        previous_actions=np.full((1,), no_op, dtype=np.int64),
+        previous_rewards=np.zeros((1,), dtype=np.float32),
+        episode_starts=np.ones((1,), dtype=np.bool_),
+        opponent_model=None,
+        opponent_recurrent_state=None,
+        opponent_previous_actions=np.full((1,), no_op, dtype=np.int64),
+        opponent_previous_rewards=np.zeros((1,), dtype=np.float32),
+        opponent_episode_starts=np.ones((1,), dtype=np.bool_),
+        quiet_engine=True,
+    )
+
+    # One learner observation per step plus the learner bootstrap observation.
+    assert build_calls == 3

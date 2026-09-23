@@ -123,7 +123,7 @@ def test_firecracker_is_the_structural_attack_recoil_action() -> None:
 
     assert "Firecracker" in resident.resident_supported_action_cards()
     assert resident.resident_action_card_capability_reasons("Firecracker") == ()
-    assert resident.resident_catalog_schema_version == 18
+    assert resident.resident_catalog_schema_version == 19
 
 
 @pytest.mark.parametrize("player_id", [0, 1])

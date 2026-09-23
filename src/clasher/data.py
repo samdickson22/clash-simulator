@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict, Any, Optional, List
 from functools import lru_cache
+import copy
 import json
 
 from .card_types import CardDefinition, CardStatsCompat
@@ -47,6 +48,39 @@ def _load_definition_snapshot(
     return alias_card_map(card_definitions)
 
 
+@lru_cache(maxsize=4)
+def _load_princess_tower_character_snapshot(
+    data_file: str,
+    modified_ns: int,
+    file_size: int,
+) -> dict[str, Any]:
+    """Parse one revision's support-tower character payload once."""
+    del modified_ns, file_size  # They are cache-key revision tokens.
+    with open(data_file, "r") as source:
+        spells = json.load(source).get("items", {}).get("spells", [])
+    for entry in spells:
+        if entry.get("name") != "King_PrincessTowers":
+            continue
+        data = entry.get("statCharacterData")
+        if isinstance(data, dict):
+            return data
+        raise ValueError("King_PrincessTowers has no statCharacterData")
+    raise ValueError("King_PrincessTowers is missing from game data")
+
+
+def load_princess_tower_character_data(data_file: str | Path) -> dict[str, Any]:
+    """Return an isolated copy of cached immutable-revision support data."""
+    path = Path(data_file)
+    file_stat = path.stat()
+    return copy.deepcopy(
+        _load_princess_tower_character_snapshot(
+            str(path),
+            file_stat.st_mtime_ns,
+            file_stat.st_size,
+        )
+    )
+
+
 class CardDataLoader:
     def __init__(self, data_file: str | Path | None = None):
         self.data_file = gamedata_path(data_file, must_exist=True)
@@ -80,12 +114,28 @@ class CardDataLoader:
         self._cards = cards
         return cards
 
+    def clone_lazy(self) -> "CardDataLoader":
+        """Return an independent loader sharing only frozen card definitions."""
+
+        clone = object.__new__(CardDataLoader)
+        clone.data_file = self.data_file
+        clone._card_definitions = dict(self.load_card_definitions())
+        clone._cards = {}
+        return clone
+
     def get_card(self, name: str) -> Optional[CardStatsCompat]:
         """Get card stats by name using compatibility wrappers."""
-        if not self._cards:
-            self.load_cards()
-        resolved_name = resolve_card_name(name, self._cards)
-        return self._cards.get(resolved_name)
+        definitions = self.load_card_definitions()
+        resolved_name = resolve_card_name(name, definitions)
+        cached = self._cards.get(resolved_name)
+        if cached is not None:
+            return cached
+        definition = definitions.get(resolved_name)
+        if definition is None:
+            return None
+        card = CardStatsCompat.from_card_definition(definition)
+        self._cards[resolved_name] = card
+        return card
 
     def get_card_definition(self, name: str) -> Optional[CardDefinition]:
         """Get card definition by name."""
