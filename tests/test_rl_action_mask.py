@@ -375,6 +375,36 @@ def test_fast_troop_occupancy_cache_matches_scalar_and_invalidates():
     np.testing.assert_array_equal(fast_after_death, fast_without_building)
 
 
+def test_alive_building_refresh_reuses_unchanged_membership_and_detects_replacement():
+    battle = BattleState(fast_path=True)
+    cannon_stats = battle.card_loader.get_card("Cannon")
+    assert cannon_stats is not None
+    battle._spawn_troop(Position(7.5, 10.5), 1, cannon_stats)
+    building = battle.entities[battle.next_entity_id - 1]
+    building.deploy_delay_remaining = 0.0
+    building.placement_pending = False
+    battle._refresh_alive_buildings_cache()
+    cached_buildings = battle._alive_buildings
+    battle.get_troop_placement_blocked_mask_world(0.5)
+    assert battle._troop_placement_blocked_masks
+
+    battle._refresh_alive_buildings_cache()
+    assert battle._alive_buildings is cached_buildings
+    assert battle._troop_placement_blocked_masks
+
+    del battle.entities[building.id]
+    battle._spawn_troop(Position(10.5, 10.5), 1, cannon_stats)
+    replacement = battle.entities[battle.next_entity_id - 1]
+    replacement.deploy_delay_remaining = 0.0
+    replacement.placement_pending = False
+    battle._refresh_alive_buildings_cache()
+
+    assert battle._alive_buildings is not cached_buildings
+    assert building not in battle._alive_buildings
+    assert replacement in battle._alive_buildings
+    assert not battle._troop_placement_blocked_masks
+
+
 def test_timed_death_payload_blocks_troop_and_building_actions_in_both_masks():
     battle = BattleState()
     _prepare_hand(

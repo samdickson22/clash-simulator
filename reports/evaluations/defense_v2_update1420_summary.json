@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "checkpoint": "checkpoints/defense_v2_pilot/policy_v2_update_001420.pt",
+    "reward_profile_trained": "defense-v2",
+    "sha256": "8835f725ac651972f1ae8def3057411bcd3a6461fe461954aad93e829e265cff",
+    "total_transitions": 5672960,
+    "update": 1420
+  },
+  "decision": {
+    "expanded_promotion_evaluation_warranted": true,
+    "promoted": false,
+    "reason": "All matched safety rows retained positive crown margins and learned-anchor incoming danger improved, but 24 games per opponent are not promotion evidence."
+  },
+  "protocol": {
+    "deterministic": true,
+    "games_per_opponent": 24,
+    "paired_seats": true,
+    "policy_opponent_seed": 6101,
+    "random_seed": 4101,
+    "reward_profile_cross_check": [
+      "objective-v1",
+      "defense-v2"
+    ]
+  },
+  "results_defense_v2": {
+    "random": {
+      "board_value_edge_mean": 0.0117,
+      "candidate_noop_when_playable": 0.815,
+      "crown_diff_per_game": 1.667,
+      "incoming_tower_danger_mean": 0.0488,
+      "losses": 3,
+      "wins": 21
+    },
+    "update1300": {
+      "board_value_edge_mean": 0.0324,
+      "candidate_noop_when_playable": 0.834,
+      "crown_diff_per_game": 0.667,
+      "incoming_tower_danger_mean": 0.0462,
+      "losses": 8,
+      "wins": 16
+    },
+    "update1400": {
+      "board_value_edge_mean": 0.0547,
+      "candidate_noop_when_playable": 0.828,
+      "crown_diff_per_game": 0.5,
+      "incoming_tower_danger_mean": 0.0501,
+      "losses": 9,
+      "wins": 15
+    },
+    "update300": {
+      "board_value_edge_mean": 0.0502,
+      "candidate_noop_when_playable": 0.831,
+      "crown_diff_per_game": 1.458,
+      "incoming_tower_danger_mean": 0.0438,
+      "losses": 5,
+      "wins": 19
+    },
+    "update800": {
+      "board_value_edge_mean": 0.0177,
+      "candidate_noop_when_playable": 0.832,
+      "crown_diff_per_game": 1.5,
+      "incoming_tower_danger_mean": 0.0458,
+      "losses": 5,
+      "wins": 19
+    }
+  },
+  "stability": {
+    "early_stops": 5,
+    "explained_variance_mean": 0.92855,
+    "explained_variance_min": 0.882,
+    "kl_max": 0.00795,
+    "kl_mean": 0.002173,
+    "noop_when_playable_end": 0.694,
+    "noop_when_playable_max": 0.804,
+    "noop_when_playable_mean": 0.7375,
+    "noop_when_playable_min": 0.679,
+    "transitions_per_second_mean": 267.735,
+    "updates": 20
+  }
+}

@@ -1,28 +1,29 @@
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass
 from pathlib import Path
-import random
-from typing import Dict, Optional
 
 import numpy as np
 
-from clasher.battle import BattleState, STANDARD_MATCH_TICKS
+from clasher.battle import STANDARD_MATCH_TICKS, BattleState
 
 from .action_space import DiscreteTileActionSpace
+from .common import CvObservation
 from .deck_pool import apply_deck_to_player, load_deck_pool, sample_decks
 from .obs_cv import CvObservationBuilder
-from .reward_model import objective_potential_p0
-from .structured_obs import StructuredObservationBuilder
+from .reward_model import OBJECTIVE_V1, REWARD_PROFILES, reward_potential_p0
+from .structured_obs import StructuredObservation, StructuredObservationBuilder
 
 
 # Reference/benchmark switch. The env has just performed the same exact idle
 # eligibility check before dispatching the bounded fast-forward operation.
 _USE_TRUSTED_IDLE_ELIGIBILITY = True
 
+
 @dataclass
 class StepInfo:
-    action_success: Dict[int, bool]
+    action_success: dict[int, bool]
     ticks_advanced: int
 
 
@@ -34,11 +35,12 @@ class SelfPlayBattleEnv:
         decision_interval_ticks: int = 8,
         max_ticks: int = STANDARD_MATCH_TICKS,
         decks_path: str | Path = "decks.json",
-        seed: Optional[int] = None,
+        seed: int | None = None,
         mirror_match: bool = False,
         canonical_perspective: bool = True,
         engine_fast_path: str = "off",
         idle_fast_forward: bool = True,
+        reward_profile: str = OBJECTIVE_V1,
     ) -> None:
         self.decision_interval_ticks = decision_interval_ticks
         self.max_ticks = max_ticks
@@ -47,6 +49,11 @@ class SelfPlayBattleEnv:
             raise ValueError("engine_fast_path must be one of: off, shadow, on")
         self.engine_fast_path = engine_fast_path
         self.idle_fast_forward = idle_fast_forward
+        if reward_profile not in REWARD_PROFILES:
+            raise ValueError(
+                f"reward_profile must be one of {REWARD_PROFILES}, got {reward_profile!r}"
+            )
+        self.reward_profile = reward_profile
         self.rng = random.Random(seed)
         self.np_rng = np.random.default_rng(seed)
 
@@ -57,28 +64,35 @@ class SelfPlayBattleEnv:
             decks_path=decks_path,
             canonical_perspective=canonical_perspective,
         )
-        self.action_space = DiscreteTileActionSpace(canonical_perspective=canonical_perspective)
+        self.action_space = DiscreteTileActionSpace(
+            canonical_perspective=canonical_perspective
+        )
         # Structured observations are lazy so Gym/CV-only benchmarks do not
         # pay their vocabulary construction cost.
         self._structured_obs_builder: StructuredObservationBuilder | None = None
         self._canonical_perspective = canonical_perspective
 
-        self.battle: Optional[BattleState] = None
-        self._prev_objective_p0 = 0.0
+        self.battle: BattleState | None = None
+        self._prev_reward_potential_p0 = 0.0
         self._mask_shadow_checks = 0
         self._mask_shadow_mismatches = 0
 
     def _sample_and_apply_decks(self) -> None:
         assert self.battle is not None
-        deck0, deck1 = sample_decks(self.decks, rng=self.rng, mirror_match=self.mirror_match)
+        deck0, deck1 = sample_decks(
+            self.decks, rng=self.rng, mirror_match=self.mirror_match
+        )
         apply_deck_to_player(self.battle.players[0], deck0, rng=self.rng)
         apply_deck_to_player(self.battle.players[1], deck1, rng=self.rng)
 
     def _reset_reward_trackers(self) -> None:
         assert self.battle is not None
-        self._prev_objective_p0 = objective_potential_p0(self.battle)
+        self._prev_reward_potential_p0 = reward_potential_p0(
+            self.battle,
+            self.reward_profile,
+        )
 
-    def reset(self, seed: Optional[int] = None) -> None:
+    def reset(self, seed: int | None = None) -> None:
         if seed is not None:
             self.rng.seed(seed)
             self.np_rng = np.random.default_rng(seed)
@@ -89,7 +103,7 @@ class SelfPlayBattleEnv:
         self._sample_and_apply_decks()
         self._reset_reward_trackers()
 
-    def get_observation(self, player_id: int):
+    def get_observation(self, player_id: int) -> CvObservation:
         assert self.battle is not None
         return self.obs_builder.build(self.battle, player_id)
 
@@ -102,54 +116,67 @@ class SelfPlayBattleEnv:
             )
         return self._structured_obs_builder
 
-    def get_structured_observation(self, player_id: int):
+    def get_structured_observation(self, player_id: int) -> StructuredObservation:
         assert self.battle is not None
         return self.structured_obs_builder.build(self.battle, player_id)
 
     def get_action_mask(self, player_id: int) -> np.ndarray:
         assert self.battle is not None
         if self.engine_fast_path == "off":
-            return self.action_space.legal_action_mask(self.battle, player_id, fast_path=False)
+            return self.action_space.legal_action_mask(
+                self.battle, player_id, fast_path=False
+            )
         if self.engine_fast_path == "on":
-            return self.action_space.legal_action_mask(self.battle, player_id, fast_path=True)
+            return self.action_space.legal_action_mask(
+                self.battle, player_id, fast_path=True
+            )
 
-        fast_mask = self.action_space.legal_action_mask(self.battle, player_id, fast_path=True)
+        fast_mask = self.action_space.legal_action_mask(
+            self.battle, player_id, fast_path=True
+        )
         # Shadow mode: sample parity checks against legacy mask.
         if float(self.np_rng.random()) < 0.005:
-            legacy_mask = self.action_space.legal_action_mask(self.battle, player_id, fast_path=False)
+            legacy_mask = self.action_space.legal_action_mask(
+                self.battle, player_id, fast_path=False
+            )
             self._mask_shadow_checks += 1
             if not np.array_equal(fast_mask, legacy_mask):
                 self._mask_shadow_mismatches += 1
         return fast_mask
 
-    def fast_path_metrics(self) -> Dict[str, float]:
+    def fast_path_metrics(self) -> dict[str, float]:
         checks = max(1, self._mask_shadow_checks)
         return {
             "mask_shadow_checks": float(self._mask_shadow_checks),
             "mask_shadow_mismatches": float(self._mask_shadow_mismatches),
-            "mask_shadow_divergence": float(self._mask_shadow_mismatches) / float(checks),
+            "mask_shadow_divergence": float(self._mask_shadow_mismatches)
+            / float(checks),
         }
 
-    def pop_fast_path_metrics(self) -> Dict[str, float]:
+    def pop_fast_path_metrics(self) -> dict[str, float]:
         metrics = self.fast_path_metrics()
         self._mask_shadow_checks = 0
         self._mask_shadow_mismatches = 0
         return metrics
 
-    def _compute_dense_rewards(self) -> Dict[int, float]:
+    def _compute_dense_rewards(self) -> dict[int, float]:
         assert self.battle is not None
-        current_p0 = objective_potential_p0(self.battle)
-        delta = current_p0 - self._prev_objective_p0
-        self._prev_objective_p0 = current_p0
+        current_p0 = reward_potential_p0(self.battle, self.reward_profile)
+        delta = current_p0 - self._prev_reward_potential_p0
+        self._prev_reward_potential_p0 = current_p0
         return {0: float(delta), 1: float(-delta)}
 
     def _can_spend_elixir_now(self, player_id: int) -> bool:
         assert self.battle is not None
         # We only need to know if any non-noop legal action exists.
         if self.engine_fast_path == "off":
-            mask = self.action_space.legal_action_mask(self.battle, player_id, fast_path=False)
+            mask = self.action_space.legal_action_mask(
+                self.battle, player_id, fast_path=False
+            )
         else:
-            mask = self.action_space.legal_action_mask(self.battle, player_id, fast_path=True)
+            mask = self.action_space.legal_action_mask(
+                self.battle, player_id, fast_path=True
+            )
         can_deploy = bool(np.any(mask[: self.action_space.no_op_action]))
         can_use_ability = bool(mask[self.action_space.ability_action])
         return can_deploy or can_use_ability
@@ -157,31 +184,37 @@ class SelfPlayBattleEnv:
     def _compute_elixir_leak_penalty(
         self,
         *,
-        actions: Dict[int, int],
-        pre_elixir: Dict[int, float],
-        pre_can_spend: Dict[int, bool],
+        actions: dict[int, int],
+        pre_elixir: dict[int, float],
+        pre_can_spend: dict[int, bool],
         done: bool,
-    ) -> Dict[int, float]:
+    ) -> dict[int, float]:
         assert self.battle is not None
         penalties = {0: 0.0, 1: 0.0}
         for player_id in (0, 1):
             attempted = actions.get(player_id, self.action_space.no_op_action)
-            if pre_elixir[player_id] >= 9.9 and pre_can_spend[player_id]:
-                if attempted == self.action_space.no_op_action:
-                    # Direct leak: had full elixir and chose not to spend.
-                    penalties[player_id] += 0.010
-            if (not done) and self.battle.players[player_id].elixir >= 9.9:
-                if self._can_spend_elixir_now(player_id):
-                    # Ongoing cap pressure: still floating at max after this decision window.
-                    penalties[player_id] += 0.005
+            if (
+                pre_elixir[player_id] >= 9.9
+                and pre_can_spend[player_id]
+                and attempted == self.action_space.no_op_action
+            ):
+                # Direct leak: had full elixir and chose not to spend.
+                penalties[player_id] += 0.010
+            if (
+                not done
+                and self.battle.players[player_id].elixir >= 9.9
+                and self._can_spend_elixir_now(player_id)
+            ):
+                # Ongoing cap pressure: still floating at max after this decision window.
+                penalties[player_id] += 0.005
         return penalties
 
     def step(
         self,
-        actions: Dict[int, int],
+        actions: dict[int, int],
         *,
-        pre_action_masks: Optional[Dict[int, np.ndarray]] = None,
-    ) -> tuple[Dict[int, float], bool, StepInfo]:
+        pre_action_masks: dict[int, np.ndarray] | None = None,
+    ) -> tuple[dict[int, float], bool, StepInfo]:
         assert self.battle is not None
 
         pre_elixir = {
@@ -204,7 +237,7 @@ class SelfPlayBattleEnv:
             if set(pre_can_spend) != {0, 1}:
                 raise ValueError("pre_action_masks must contain players 0 and 1")
 
-        action_success: Dict[int, bool] = {}
+        action_success: dict[int, bool] = {}
         order = [0, 1]
         self.rng.shuffle(order)
 
@@ -214,8 +247,14 @@ class SelfPlayBattleEnv:
             action_success[player_id] = success
 
         ticks = 0
-        no_op0 = actions.get(0, self.action_space.no_op_action) == self.action_space.no_op_action
-        no_op1 = actions.get(1, self.action_space.no_op_action) == self.action_space.no_op_action
+        no_op0 = (
+            actions.get(0, self.action_space.no_op_action)
+            == self.action_space.no_op_action
+        )
+        no_op1 = (
+            actions.get(1, self.action_space.no_op_action)
+            == self.action_space.no_op_action
+        )
         if (
             self.idle_fast_forward
             and no_op0
@@ -245,7 +284,9 @@ class SelfPlayBattleEnv:
         # Tiny invalid-action penalty (no-op is always valid).
         for player_id in (0, 1):
             attempted = actions.get(player_id, self.action_space.no_op_action)
-            if attempted != self.action_space.no_op_action and not action_success.get(player_id, True):
+            if attempted != self.action_space.no_op_action and not action_success.get(
+                player_id, True
+            ):
                 rewards[player_id] -= 0.01
 
         leak_penalty = self._compute_elixir_leak_penalty(
@@ -259,9 +300,12 @@ class SelfPlayBattleEnv:
         rewards[0] += leak_edge
         rewards[1] -= leak_edge
 
-        if done:
-            if self.battle.winner is not None:
-                rewards[self.battle.winner] += 1.0
-                rewards[1 - self.battle.winner] -= 1.0
+        if done and self.battle.winner is not None:
+            rewards[self.battle.winner] += 1.0
+            rewards[1 - self.battle.winner] -= 1.0
 
-        return rewards, done, StepInfo(action_success=action_success, ticks_advanced=ticks)
+        return (
+            rewards,
+            done,
+            StepInfo(action_success=action_success, ticks_advanced=ticks),
+        )

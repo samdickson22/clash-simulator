@@ -1,19 +1,26 @@
 from __future__ import annotations
 
 import argparse
+import json
+import time
 from dataclasses import dataclass
 from pathlib import Path
-import time
-from typing import Optional
 
 import numpy as np
 import torch
 
 from clasher.battle import STANDARD_MATCH_TICKS
-from clasher.paths import decks_path as resolve_decks_path, resolve_path
+from clasher.paths import decks_path as resolve_decks_path
+from clasher.paths import resolve_path
 
 from .model import ClasherPolicy, PolicyConfig
+from .reward_model import (
+    OBJECTIVE_V1,
+    REWARD_PROFILES,
+    potential_breakdown_p0,
+)
 from .selfplay_env import SelfPlayBattleEnv
+from .strategy_bots import STRATEGY_NAMES, StrategyBot
 from .structured_obs import StructuredObservationBuilder
 from .train_recurrent import (
     _stack_step_inputs,
@@ -90,10 +97,12 @@ def evaluate(
     decision_interval: int,
     max_ticks: int,
     opponent_mode: str,
-    opponent: Optional[LoadedPolicy],
+    opponent: LoadedPolicy | None,
     deterministic: bool,
     quiet_engine: bool,
     device: torch.device,
+    reward_profile: str = OBJECTIVE_V1,
+    opponent_bot: StrategyBot | None = None,
 ) -> dict[str, float]:
     if games <= 0:
         raise ValueError("games must be positive")
@@ -106,6 +115,7 @@ def evaluate(
         seed=seed,
         mirror_match=False,
         canonical_perspective=True,
+        reward_profile=reward_profile,
     )
     wins = losses = draws = 0
     candidate_crowns = opponent_crowns = 0
@@ -118,6 +128,11 @@ def evaluate(
     abilities = 0
     wins_as_player0 = 0
     wins_as_player1 = 0
+    threatened_decisions = 0
+    defensive_responses = 0
+    incoming_danger_sum = 0.0
+    incoming_danger_peak = 0.0
+    board_value_sum = 0.0
     start_time = time.perf_counter()
 
     for game in range(games):
@@ -131,7 +146,9 @@ def evaluate(
         other_player = 1 - candidate_player
         candidate_state = candidate.model.initial_state(1, device=device)
         opponent_state = (
-            opponent.model.initial_state(1, device=device) if opponent is not None else None
+            opponent.model.initial_state(1, device=device)
+            if opponent is not None
+            else None
         )
         candidate_previous_action = env.action_space.no_op_action
         opponent_previous_action = env.action_space.no_op_action
@@ -152,6 +169,27 @@ def evaluate(
                 deterministic=deterministic,
                 device=device,
             )
+            assert env.battle is not None
+            breakdown = potential_breakdown_p0(env.battle)
+            incoming_danger = max(
+                0.0,
+                -breakdown.tower_danger
+                if candidate_player == 0
+                else breakdown.tower_danger,
+            )
+            candidate_board_value = (
+                breakdown.board_value
+                if candidate_player == 0
+                else -breakdown.board_value
+            )
+            incoming_danger_sum += incoming_danger
+            incoming_danger_peak = max(incoming_danger_peak, incoming_danger)
+            board_value_sum += candidate_board_value
+            if incoming_danger >= 0.025:
+                threatened_decisions += 1
+                defensive_responses += int(
+                    candidate_action != env.action_space.no_op_action
+                )
             if opponent_mode == "noop":
                 other_action = env.action_space.no_op_action
                 other_mask = env.get_action_mask(other_player)
@@ -163,6 +201,11 @@ def evaluate(
                     if legal.size
                     else env.action_space.no_op_action
                 )
+            elif opponent_mode == "strategy":
+                if opponent_bot is None:
+                    raise ValueError("strategy opponent requires a strategy bot")
+                other_mask = env.get_action_mask(other_player)
+                other_action = opponent_bot.select_action(env, other_player)
             else:
                 if opponent is None or opponent_state is None:
                     raise ValueError("policy opponent requires a loaded checkpoint")
@@ -237,25 +280,46 @@ def evaluate(
         "candidate_ability_rate": abilities / max(1, actions),
         "wins_as_player0": float(wins_as_player0),
         "wins_as_player1": float(wins_as_player1),
+        "incoming_tower_danger_mean": incoming_danger_sum / max(1, actions),
+        "incoming_tower_danger_peak": incoming_danger_peak,
+        "board_value_edge_mean": board_value_sum / max(1, actions),
+        "threatened_decisions": float(threatened_decisions),
+        "defensive_action_rate_when_threatened": defensive_responses
+        / max(1, threatened_decisions),
         "elapsed_seconds": elapsed,
         "games_per_minute": games * 60.0 / max(1e-9, elapsed),
     }
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Evaluate a V2 recurrent Clasher policy")
+    parser = argparse.ArgumentParser(
+        description="Evaluate a V2 recurrent Clasher policy"
+    )
     parser.add_argument("--checkpoint", default=None)
     parser.add_argument("--checkpoint-dir", default="checkpoints/entity_selfplay")
-    parser.add_argument("--opponent", choices=["random", "noop", "policy"], default="random")
+    parser.add_argument(
+        "--opponent",
+        choices=["random", "noop", "strategy", "policy"],
+        default="random",
+    )
+    parser.add_argument("--opponent-strategy", choices=STRATEGY_NAMES, default=None)
     parser.add_argument("--opponent-checkpoint", default=None)
     parser.add_argument("--decks-path", default="decks.json")
     parser.add_argument("--games", type=int, default=40)
     parser.add_argument("--seed", type=int, default=41)
     parser.add_argument("--decision-interval", type=int, default=8)
     parser.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
-    parser.add_argument("--device", choices=["auto", "cpu", "mps", "cuda"], default="auto")
+    parser.add_argument(
+        "--device", choices=["auto", "cpu", "mps", "cuda"], default="auto"
+    )
+    parser.add_argument(
+        "--reward-profile", choices=REWARD_PROFILES, default=OBJECTIVE_V1
+    )
+    parser.add_argument("--json-out", default=None)
     parser.add_argument("--stochastic", dest="deterministic", action="store_false")
-    parser.add_argument("--quiet-engine", dest="quiet_engine", action="store_true", default=True)
+    parser.add_argument(
+        "--quiet-engine", dest="quiet_engine", action="store_true", default=True
+    )
     parser.add_argument("--no-quiet-engine", dest="quiet_engine", action="store_false")
     return parser.parse_args()
 
@@ -276,7 +340,7 @@ def main() -> None:
     candidate = load_policy_checkpoint(
         checkpoint_path, device=device, decks_path=decks_path
     )
-    opponent: Optional[LoadedPolicy] = None
+    opponent: LoadedPolicy | None = None
     if args.opponent == "policy":
         if not args.opponent_checkpoint:
             raise ValueError("--opponent-checkpoint is required for a policy opponent")
@@ -285,6 +349,10 @@ def main() -> None:
             opponent_path, device=device, decks_path=decks_path
         )
         print(f"opponent_checkpoint={opponent_path}")
+    if args.opponent == "strategy" and not args.opponent_strategy:
+        raise ValueError("--opponent-strategy is required for a strategy opponent")
+    if args.opponent != "strategy" and args.opponent_strategy:
+        raise ValueError("--opponent-strategy requires --opponent strategy")
     print(f"device={device}")
     print(f"checkpoint={checkpoint_path}")
     print(f"checkpoint_update={candidate.checkpoint.get('update', 0)}")
@@ -301,6 +369,12 @@ def main() -> None:
         deterministic=args.deterministic,
         quiet_engine=args.quiet_engine,
         device=device,
+        reward_profile=args.reward_profile,
+        opponent_bot=(
+            StrategyBot(args.opponent_strategy)
+            if args.opponent_strategy is not None
+            else None
+        ),
     )
     print(
         f"games={int(metrics['games'])} wins={int(metrics['wins'])} "
@@ -323,6 +397,35 @@ def main() -> None:
         f"elapsed_seconds={metrics['elapsed_seconds']:.2f} "
         f"games_per_minute={metrics['games_per_minute']:.2f}"
     )
+    print(
+        f"incoming_danger_mean={metrics['incoming_tower_danger_mean']:.4f} "
+        f"incoming_danger_peak={metrics['incoming_tower_danger_peak']:.4f} "
+        f"defensive_action_rate={metrics['defensive_action_rate_when_threatened']:.3f} "
+        f"board_value_edge_mean={metrics['board_value_edge_mean']:+.4f}"
+    )
+    if args.json_out:
+        out_path = Path(args.json_out).expanduser().resolve()
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "schema_version": 1,
+            "checkpoint": str(checkpoint_path),
+            "checkpoint_update": int(candidate.checkpoint.get("update", 0)),
+            "opponent_mode": args.opponent,
+            "opponent_checkpoint": (
+                str(resolve_path(args.opponent_checkpoint, must_exist=True))
+                if args.opponent_checkpoint
+                else None
+            ),
+            "opponent_strategy": args.opponent_strategy,
+            "reward_profile": args.reward_profile,
+            "seed": args.seed,
+            "deterministic": args.deterministic,
+            "metrics": metrics,
+        }
+        out_path.write_text(
+            json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8"
+        )
+        print(f"json_out={out_path}")
 
 
 if __name__ == "__main__":

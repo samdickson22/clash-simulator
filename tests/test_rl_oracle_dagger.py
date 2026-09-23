@@ -1,8 +1,15 @@
+import copy
+
 import numpy as np
+import pytest
 import torch
 
+from clasher.arena import Position
+from clasher.battle import BattleState
+from clasher.entities import Troop
 from clasher.rl.legacy_model import MaskedPolicyValueNet
 from clasher.rl.oracle_planner import FixedDepthThompsonOracle
+from clasher.rl.reward_model import DEFENSE_V2
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.train_dagger_oracle import (
     DaggerReplayBuffer,
@@ -27,6 +34,33 @@ def test_oracle_planner_actions_are_legal():
     for player_id in (0, 1):
         mask = env.get_action_mask(player_id)
         assert bool(mask[actions[player_id]])
+
+
+def test_oracle_planner_uses_explicit_reward_profile():
+    battle = BattleState()
+    stats = copy.deepcopy(battle.card_loader.get_card("Knight"))
+    assert stats is not None
+    before = set(battle.entities)
+    battle._spawn_unit_at_position(Position(9.0, 20.0), 0, stats)
+    troop = next(
+        entity
+        for entity_id, entity in battle.entities.items()
+        if entity_id not in before and isinstance(entity, Troop)
+    )
+    troop.deploy_delay_remaining = 0.0
+    troop.placement_pending = False
+
+    objective = FixedDepthThompsonOracle()._evaluate_state_prob(battle)[0]
+    defensive = FixedDepthThompsonOracle(
+        reward_profile=DEFENSE_V2
+    )._evaluate_state_prob(battle)[0]
+
+    assert defensive > objective
+
+
+def test_oracle_planner_rejects_unknown_reward_profile():
+    with pytest.raises(ValueError, match="unknown reward profile"):
+        FixedDepthThompsonOracle(reward_profile="tower-race-v0")
 
 
 def test_dagger_collect_and_supervised_update_smoke():

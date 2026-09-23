@@ -9,7 +9,6 @@ _DEEPCOPY_ATOMIC_TYPES = frozenset(
     {type(None), bool, int, float, complex, bytes, str}
 )
 
-
 @dataclass(frozen=True)
 class BaseStats:
     hitpoints: Optional[int] = None

@@ -3,9 +3,15 @@ from __future__ import annotations
 import argparse
 import importlib
 import sys
-from typing import Sequence
+from collections.abc import Sequence
 
-from .paths import checkpoints_dir, decks_path, gamedata_path, latest_checkpoint, project_root
+from .paths import (
+    checkpoints_dir,
+    decks_path,
+    gamedata_path,
+    latest_checkpoint,
+    project_root,
+)
 
 
 def _dispatch(module_name: str, module_args: Sequence[str]) -> None:
@@ -33,14 +39,24 @@ def _build_parser() -> argparse.ArgumentParser:
     train = sub.add_parser("train", help="Train the recurrent entity-spatial policy")
     train.add_argument("args", nargs=argparse.REMAINDER)
 
-    train_legacy = sub.add_parser("train-legacy", help="Run the deprecated raster PPO trainer")
+    train_legacy = sub.add_parser(
+        "train-legacy", help="Run the deprecated raster PPO trainer"
+    )
     train_legacy.add_argument("args", nargs=argparse.REMAINDER)
 
     train_async = sub.add_parser("train-async", help="Run async self-play trainer")
     train_async.add_argument("args", nargs=argparse.REMAINDER)
 
-    train_dagger = sub.add_parser("train-dagger", help="Train with FDTS oracle + DAgger")
+    train_dagger = sub.add_parser(
+        "train-dagger", help="Train with FDTS oracle + DAgger"
+    )
     train_dagger.add_argument("args", nargs=argparse.REMAINDER)
+
+    imitation = sub.add_parser(
+        "imitation",
+        help="Collect fixed oracle demonstrations or fit a matched V2 warm start",
+    )
+    imitation.add_argument("args", nargs=argparse.REMAINDER)
 
     watch = sub.add_parser("watch", help="Watch policy battles in pygame")
     watch.add_argument("args", nargs=argparse.REMAINDER)
@@ -58,6 +74,18 @@ def _build_parser() -> argparse.ArgumentParser:
 
     benchmark = sub.add_parser("benchmark", help="Run RL benchmark suite")
     benchmark.add_argument("args", nargs=argparse.REMAINDER)
+
+    strategy_benchmark = sub.add_parser(
+        "strategy-benchmark",
+        help="Evaluate a policy against deterministic public-information strategies",
+    )
+    strategy_benchmark.add_argument("args", nargs=argparse.REMAINDER)
+
+    replay_validate = sub.add_parser(
+        "replay-validate",
+        help="Compare normalized real-match public frames with a simulator trace",
+    )
+    replay_validate.add_argument("args", nargs=argparse.REMAINDER)
 
     latest = sub.add_parser("latest-checkpoint", help="Print latest checkpoint path")
     latest.add_argument("--checkpoint-dir", default="checkpoints/entity_selfplay")
@@ -87,6 +115,9 @@ def main() -> None:
     if args.command == "train-dagger":
         _dispatch("clasher.rl.train_dagger_oracle", args.args)
         return
+    if args.command == "imitation":
+        _dispatch("clasher.rl.imitation", args.args)
+        return
     if args.command == "watch":
         _dispatch("clasher.rl.watch_policy_battle", args.args)
         return
@@ -101,6 +132,12 @@ def main() -> None:
         return
     if args.command == "benchmark":
         _dispatch("clasher.rl.benchmark", args.args)
+        return
+    if args.command == "strategy-benchmark":
+        _dispatch("clasher.rl.strategy_benchmark", args.args)
+        return
+    if args.command == "replay-validate":
+        _dispatch("clasher.rl.replay_validation", args.args)
         return
     if args.command == "latest-checkpoint":
         checkpoint = latest_checkpoint(args.checkpoint_dir, pattern=args.pattern)

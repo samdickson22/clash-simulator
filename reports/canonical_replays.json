@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "replays": [
+    {
+      "candidate": {
+        "checkpoint": "checkpoints/random_curriculum/policy_v2_update_000800.pt",
+        "sha256": "61ce0e61b12c9d9184765cd394ad5c62a9d550201984e5b2c368a403dc04b89c",
+        "update": 800
+      },
+      "opponent": {
+        "checkpoint": "checkpoints/mixed_league_champion50_lr1e4/policy_v2_update_001400.pt",
+        "sha256": "6acbf7b4bd1f0dc3de221cb5d69caa5d79389a6171113e9c403cc10bc8f44b60",
+        "update": 1400
+      },
+      "video": {
+        "codec": "h264",
+        "duration_seconds": 26.233333,
+        "fps": 30,
+        "height": 900,
+        "path": "reports/clasher_update800_vs_update1400.mp4",
+        "sha256": "263771764bbeb650a8a39d81f6fcc01e97e7851b14cf54095c4d331d196b857d",
+        "width": 1200
+      },
+      "viewer_command": "uv run python run_clasher.py watch -- --checkpoint checkpoints/random_curriculum/policy_v2_update_000800.pt --opponent-checkpoint checkpoints/mixed_league_champion50_lr1e4/policy_v2_update_001400.pt --device cpu"
+    }
+  ]
+}

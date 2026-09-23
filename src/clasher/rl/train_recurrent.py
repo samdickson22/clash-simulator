@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import atexit
+import json
 import time
 from collections.abc import Iterator
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
@@ -25,7 +26,9 @@ from clasher.paths import (
 )
 
 from .model import ClasherPolicy, PolicyConfig, PolicyInputs
+from .reward_model import OBJECTIVE_V1, REWARD_PROFILES
 from .selfplay_env import SelfPlayBattleEnv
+from .strategy_bots import STRATEGY_NAMES, StrategyBot, allocate_pfsp_slots
 from .structured_obs import StructuredObservation, StructuredObservationBuilder
 
 
@@ -540,6 +543,7 @@ def collect_rollout_stationary_opponents(
     opponent_previous_rewards: np.ndarray,
     opponent_episode_starts: np.ndarray,
     quiet_engine: bool,
+    opponent_bot: StrategyBot | None = None,
 ) -> tuple[
     RolloutBatch,
     tuple[Tensor, Tensor],
@@ -551,7 +555,7 @@ def collect_rollout_stationary_opponents(
     np.ndarray,
     np.ndarray,
 ]:
-    """Collect one learner seat against a random or frozen recurrent policy.
+    """Collect one learner seat against a random, scripted, or frozen policy.
 
     Seats alternate across environments, and only learner-controlled decisions
     enter the rollout. This gives PPO a stationary anchor without contaminating
@@ -629,10 +633,12 @@ def collect_rollout_stationary_opponents(
         opponent_players = tuple(1 - player_id for player_id in learner_players)
         with maybe_silence_stdio(quiet_engine):
             if opponent_model is None:
-                # Random opponents consume only legal masks. Avoid building
-                # their unused public and privileged observation tables.
+                # Random and scripted opponents consume only legal masks. Avoid
+                # building their unused public and privileged observation tables.
                 opponent_observations = None
-                opponent_masks = _current_action_masks(envs, opponent_players)
+                opponent_masks = _current_action_masks(
+                    envs, opponent_players
+                )
             else:
                 opponent_observations, opponent_masks = (
                     _current_learner_observations(envs, opponent_players)
@@ -660,6 +666,22 @@ def collect_rollout_stationary_opponents(
             )
             opponent_actions = (
                 opponent_actions_t[:, 0].cpu().numpy().astype(np.int64, copy=False)
+            )
+        elif opponent_bot is not None:
+            opponent_actions = np.asarray(
+                [
+                    opponent_bot.select_action(
+                        env,
+                        player_id,
+                        action_mask=mask,
+                    )
+                    for env, player_id, mask in zip(
+                        envs,
+                        opponent_players,
+                        opponent_masks,
+                    )
+                ],
+                dtype=np.int64,
             )
         else:
             opponent_actions = np.asarray(
@@ -1071,15 +1093,28 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
     parser.add_argument("--mirror-match", action="store_true")
     parser.add_argument(
+        "--reward-profile",
+        choices=REWARD_PROFILES,
+        default=OBJECTIVE_V1,
+        help="objective-v1 preserves existing checkpoints; defense-v2 adds board and danger potentials",
+    )
+    parser.add_argument(
         "--opponent-mode",
-        choices=["selfplay", "random", "checkpoint", "league"],
+        choices=["selfplay", "random", "strategy", "checkpoint", "league"],
         default="selfplay",
         help=(
             "selfplay trains both seats with the current policy; random trains "
             "one balanced learner seat per environment against a stationary "
-            "uniform-legal opponent; checkpoint uses frozen policies; league "
-            "mixes repeated random/checkpoint specifications across workers"
+            "uniform-legal opponent; strategy uses a deterministic public-info "
+            "bot; checkpoint uses frozen policies; league mixes repeated "
+            "random/strategy/checkpoint specifications across workers"
         ),
+    )
+    parser.add_argument(
+        "--opponent-strategy",
+        choices=STRATEGY_NAMES,
+        default=None,
+        help="public-information strategy used by --opponent-mode strategy",
     )
     parser.add_argument(
         "--opponent-checkpoint",
@@ -1091,11 +1126,25 @@ def parse_args() -> argparse.Namespace:
         "--league-opponent",
         action="append",
         default=[],
-        metavar="RANDOM_OR_CHECKPOINT",
+        metavar="RANDOM_STRATEGY_OR_CHECKPOINT",
         help=(
-            "repeat in league mode; each value is 'random' or a frozen V2 "
-            "checkpoint path, distributed round-robin across workers"
+            "repeat in league mode; each value is 'random', 'strategy:NAME', "
+            "or a frozen V2 checkpoint path, distributed across workers"
         ),
+    )
+    parser.add_argument(
+        "--pfsp-report",
+        default=None,
+        help=(
+            "strategy-benchmark JSON whose PFSP weights fill strategy worker "
+            "slots in league mode"
+        ),
+    )
+    parser.add_argument(
+        "--pfsp-strategy-workers",
+        type=int,
+        default=None,
+        help="number of league worker slots allocated from --pfsp-report",
     )
     parser.add_argument(
         "--engine-fast-path", choices=["off", "shadow", "on"], default="off"
@@ -1180,23 +1229,38 @@ def main() -> None:
         raise ValueError("--opponent-mode checkpoint requires --opponent-checkpoint")
     if args.opponent_mode != "checkpoint" and args.opponent_checkpoint:
         raise ValueError("--opponent-checkpoint requires --opponent-mode checkpoint")
-    if args.opponent_mode == "league" and not args.league_opponent:
-        raise ValueError("--opponent-mode league requires --league-opponent")
-    if args.opponent_mode != "league" and args.league_opponent:
-        raise ValueError("--league-opponent requires --opponent-mode league")
+    if args.opponent_mode == "strategy" and not args.opponent_strategy:
+        raise ValueError("--opponent-mode strategy requires --opponent-strategy")
+    if args.opponent_mode != "strategy" and args.opponent_strategy:
+        raise ValueError("--opponent-strategy requires --opponent-mode strategy")
+    if args.opponent_mode == "league" and not (
+        args.league_opponent or args.pfsp_report
+    ):
+        raise ValueError(
+            "--opponent-mode league requires --league-opponent or --pfsp-report"
+        )
+    if args.opponent_mode != "league" and (
+        args.league_opponent or args.pfsp_report or args.pfsp_strategy_workers
+    ):
+        raise ValueError("league/PFSP options require --opponent-mode league")
+    if args.pfsp_strategy_workers is not None and not args.pfsp_report:
+        raise ValueError("--pfsp-strategy-workers requires --pfsp-report")
     if args.opponent_mode in {"checkpoint", "league"} and args.actor_workers == 1:
         raise ValueError(
             "checkpoint and league opponents currently require parallel actors"
         )
-    if args.opponent_mode == "league":
-        league_kinds = {
-            "random" if spec == "random" else "checkpoint"
-            for spec in args.league_opponent
-        }
-        if league_kinds != {"random", "checkpoint"}:
-            raise ValueError(
-                "league mode requires at least one random and one checkpoint opponent"
-            )
+    if args.opponent_mode == "league" and args.league_opponent:
+        league_kinds = set()
+        for spec in args.league_opponent:
+            if spec == "random":
+                league_kinds.add("random")
+            elif spec.startswith("strategy:"):
+                strategy_name = spec.removeprefix("strategy:")
+                if strategy_name not in STRATEGY_NAMES:
+                    raise ValueError(f"unknown league strategy {strategy_name!r}")
+                league_kinds.add("strategy")
+            else:
+                league_kinds.add("checkpoint")
     if args.d_model % args.num_heads != 0:
         raise ValueError("d_model must be divisible by num_heads")
 
@@ -1216,9 +1280,32 @@ def main() -> None:
     league_opponents = tuple(
         ("random", None)
         if spec == "random"
-        else ("checkpoint", str(resolve_path(spec, must_exist=True)))
+        else (
+            ("strategy", spec.removeprefix("strategy:"))
+            if spec.startswith("strategy:")
+            else ("checkpoint", str(resolve_path(spec, must_exist=True)))
+        )
         for spec in args.league_opponent
     )
+    if args.pfsp_report:
+        report_path = resolve_path(args.pfsp_report, must_exist=True)
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        report_weights = report.get("pfsp", {}).get("weights")
+        if not isinstance(report_weights, dict):
+            raise ValueError("--pfsp-report has no pfsp.weights object")
+        strategy_workers = (
+            args.pfsp_strategy_workers
+            if args.pfsp_strategy_workers is not None
+            else args.actor_workers - len(league_opponents)
+        )
+        strategy_names = allocate_pfsp_slots(report_weights, strategy_workers)
+        league_opponents += tuple(("strategy", name) for name in strategy_names)
+    if args.opponent_mode == "league":
+        if len(league_opponents) > args.actor_workers:
+            raise ValueError("league opponent slots cannot exceed actor workers")
+        kinds = {kind for kind, _ in league_opponents}
+        if len(kinds) < 2:
+            raise ValueError("league mode requires at least two opponent kinds")
     directory = checkpoints_dir(args.checkpoint_dir, create=True)
     resume, resume_path = _load_resume_state(args, directory, learner_device)
 
@@ -1275,6 +1362,7 @@ def main() -> None:
                     mirror_match=args.mirror_match,
                     canonical_perspective=True,
                     engine_fast_path=args.engine_fast_path,
+                    reward_profile=args.reward_profile,
                 )
                 env._structured_obs_builder = builder
                 env.reset(seed=args.seed + index * 1009)
@@ -1289,6 +1377,10 @@ def main() -> None:
         opponent_pool: tuple[OpponentSpec, ...]
         if args.opponent_mode == "random":
             opponent_pool = (OpponentSpec(kind="random"),)
+        elif args.opponent_mode == "strategy":
+            opponent_pool = (
+                OpponentSpec(kind="strategy", strategy=args.opponent_strategy),
+            )
         elif args.opponent_mode == "checkpoint":
             opponent_pool = tuple(
                 OpponentSpec(kind="checkpoint", checkpoint=path)
@@ -1299,7 +1391,11 @@ def main() -> None:
                 (
                     OpponentSpec(kind="random")
                     if kind == "random"
-                    else OpponentSpec(kind="checkpoint", checkpoint=path)
+                    else (
+                        OpponentSpec(kind="strategy", strategy=path)
+                        if kind == "strategy"
+                        else OpponentSpec(kind="checkpoint", checkpoint=path)
+                    )
                 )
                 for kind, path in league_opponents
             )
@@ -1322,13 +1418,14 @@ def main() -> None:
                 quiet_engine=args.quiet_engine,
                 base_seed=args.seed,
                 torch_threads=args.actor_threads,
+                reward_profile=args.reward_profile,
             ),
         )
         atexit.register(parallel_collector.close)
 
     agents = (
         args.num_envs
-        if args.opponent_mode in {"random", "checkpoint", "league"}
+        if args.opponent_mode in {"random", "strategy", "checkpoint", "league"}
         else 2 * args.num_envs
     )
     learner_players = tuple(index % 2 for index in range(args.num_envs))
@@ -1354,11 +1451,14 @@ def main() -> None:
         f"envs={args.num_envs} agents={agents} opponent={args.opponent_mode} "
         f"actor_workers={args.actor_workers} "
         f"actor_threads={args.actor_threads} rollout_steps={args.rollout_steps} "
-        f"transitions_per_update={agents * args.rollout_steps}"
+        f"transitions_per_update={agents * args.rollout_steps} "
+        f"reward_profile={args.reward_profile}"
     )
     if args.opponent_mode == "league":
         league_labels = [
-            "random" if kind == "random" else str(path)
+            "random"
+            if kind == "random"
+            else (f"strategy:{path}" if kind == "strategy" else str(path))
             for kind, path in league_opponents
         ]
         print(f"league_opponents={league_labels}")
@@ -1428,8 +1528,13 @@ def main() -> None:
                     opponent_previous_rewards=opponent_previous_rewards,
                     opponent_episode_starts=opponent_episode_starts,
                     quiet_engine=args.quiet_engine,
+                    opponent_bot=(
+                        StrategyBot(args.opponent_strategy)
+                        if args.opponent_mode == "strategy"
+                        else None
+                    ),
                 )
-                if args.opponent_mode == "random"
+                if args.opponent_mode in {"random", "strategy"}
                 else collect_rollout(
                     envs=envs,
                     builder=builder,

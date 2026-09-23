@@ -344,3 +344,99 @@ Stop the equal-weight branch and retain update 1400 as champion. The next contro
 experiment, if training resumes, should restart from update 1400 with the equal pool
 and change only entropy regularization for a 20-update pilot. Re-check RoadForge
 coordination before launching it even while RoadForgeSSD remains disconnected.
+
+## Defense-v2 controlled pilot
+
+The public bot comparison identified a tower-racing weakness in the champion's
+objective. A new opt-in `defense-v2` profile adds two card-agnostic, public-state
+potentials while preserving the full `objective-v1` tower potential:
+
+```text
+defense-v2 = objective-v1
+           + 0.08 * remaining board-value differential
+           + 0.12 * tower-danger differential
+```
+
+Board value combines deployment cost, remaining HP, max HP, DPS, and formation
+size. Tower danger combines that remaining value with target eligibility,
+time-to-contact, and surviving tower HP. Both are signed state potentials, so their
+step deltas telescope and cannot be repeatedly collected from an unchanged threat.
+Tests also prove symmetry, remaining-HP sensitivity, card-name independence, and
+independence from internal target IDs. `objective-v1` remains the default and its
+numeric behavior is unchanged.
+
+After RoadForge attempt 23 released the heavy-compute window, the controlled pilot
+resumed accepted update 1400 and changed only the reward profile. It retained the
+exact update-1400 weighted pool (six workers on update 1300, three on update 800,
+three on random), seed 23, 64 environments, 12 one-thread actors, 64-step sequences,
+MPS learner, two PPO epochs, fixed 1e-4 learning rate, and all model settings. The
+20 updates added 81,920 learner decisions and exited with status zero at 5,672,960
+total decisions.
+
+The 15,430,465-byte checkpoint is
+`checkpoints/defense_v2_pilot/policy_v2_update_001420.pt`, SHA-256
+`8835f725ac651972f1ae8def3057411bcd3a6461fe461954aad93e829e265cff`.
+Across the 20 updates, mean KL was 0.00217 (maximum 0.00795), mean explained
+variance was 0.929 (minimum 0.882), mean throughput was 268 learner decisions per
+second, and five updates stopped early on KL. Training conditional no-op averaged
+0.738, ranged from 0.679 to 0.804, and ended at 0.694. There is no sign of policy,
+critic, or optimizer instability, and the passive trend did not reappear.
+
+The safety gate reused the exact historical 24-game paired blocks: random seed
+4101 and policy-opponent seed 6101. The new evaluator also records public incoming
+tower danger, board-value edge, and action rate while threatened.
+
+| Opponent | Defense-v2 update 1420 | Crown diff | Matched champion-1400 baseline | Incoming danger: challenger / champion | Playable no-op |
+|---|---:|---:|---:|---:|---:|
+| Uniform-legal random | 21-3 | +1.667 | 21-3, +1.583 | 0.0488 / 0.0354 | 0.815 |
+| Update 300 | 19-5 | +1.458 | 18-6, +1.333 | 0.0438 / 0.0506 | 0.831 |
+| Update 800 | 19-5 | +1.500 | 19-5, +1.458 | 0.0458 / 0.0453 | 0.832 |
+| Update 1300 | 16-8 | +0.667 | 12-12, -0.042 | 0.0462 / 0.0641 | 0.834 |
+| Champion update 1400 | 15-9 | +0.500 | direct match | 0.0501 / 0.0785 | 0.828 |
+
+The direct wins split 8/7 by candidate seat. Update 1300 was less balanced at 10/6,
+so that row needs expansion, but every matchup retained a positive crown margin.
+Most importantly, incoming danger fell 28% versus update 1300 and 36% in the direct
+champion matchup. The challenger did not improve the random danger metric, showing
+that the new reward is not a generic metric hack.
+
+Because previous reward is a recurrent policy input, both checkpoints were also
+cross-evaluated under both reward profiles. Update 1420 produced identical actions,
+records, crown margins, and behavior metrics under `objective-v1` and `defense-v2`.
+Champion update 1400 under `defense-v2` exactly reproduced its historical outcome
+rows, and the reverse direct match was the expected 9-15 and -0.500. The result is
+therefore a training effect, not an evaluation-profile artifact.
+
+Update 1420 passes the safety gate and warrants expanded 72-game promotion
+evaluation. It is not promoted from 24-game blocks alone; update 1400 remains the
+champion until that expanded gate confirms the direct and update-1300 improvements.
+Do not allocate more defense-v2 training before that evaluation.
+
+## Fresh-lineage decision
+
+The project is early enough that continuing to patch the original tower-objective
+lineage would make the reward and curriculum changes unnecessarily hard to
+interpret. The next primary experiment therefore starts a new lineage, while
+preserving update 1400 as the frozen incumbent and update 1420 as a defensive
+diagnostic anchor. Neither checkpoint is deleted or overwritten.
+
+The restart is a matched A/B experiment. A fixed 5,000-decision oracle corpus is
+collected with `defense-v2` at both the environment and search-leaf evaluator. One
+copy of the exact update-1400-sized architecture is trained on that corpus, and an
+untouched copy made from the same initial weights is retained as the random-control
+initialization. Imitation optimizer moments are deliberately not restored into
+PPO, so the two arms differ only in model weights when online learning starts.
+
+Each arm receives exactly 100 PPO updates (409,600 learner decisions) against a
+beginner pool containing six random workers, three balanced-strategy workers, and
+three reactive-defense workers. Both use the same seed, 64 environments, 12
+one-thread actors, MPS learner, fixed 2.5e-4 learning rate, and `defense-v2` reward.
+The simulator fast path may be enabled only after its equivalence preflight passes.
+
+The two fresh checkpoints are then compared with paired seat-swapped games against
+random, all six strategy bots, update 1400, update 1420, and each other. Selection
+uses win/score, crown margin, seat balance, incoming danger, and playable no-op
+rate; training reward is not a promotion metric. Only the better safe arm continues
+into a PFSP league. Update 1400 remains the public champion until a later 72-game
+promotion gate is passed. The complete frozen commands and seeds are recorded in
+`reports/fresh_lineage_v1_plan.json`.

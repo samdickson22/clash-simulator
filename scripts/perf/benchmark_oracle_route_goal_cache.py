@@ -19,7 +19,10 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--comparison",
-        choices=("route-goal-cache", "early-ground-path-cache-hit"),
+        choices=(
+            "route-goal-cache",
+            "early-ground-path-cache-hit",
+        ),
         default="route-goal-cache",
     )
     parser.add_argument("--seed", type=int, default=2301)

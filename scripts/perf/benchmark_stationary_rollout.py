@@ -16,9 +16,10 @@ from clasher import battle as battle_module
 from clasher import entities as entities_module
 from clasher import unit_traits
 from clasher.battle import BattleState
+from clasher.rl import action_space as action_space_module
+from clasher.rl import reward_model as reward_model_module
 from clasher.rl import structured_obs as structured_obs_module
 from clasher.rl import train_recurrent as train_recurrent_module
-from clasher.rl import action_space as action_space_module
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.strategy_bots import StrategyBot
@@ -37,6 +38,11 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--warmup-steps", type=int, default=2)
     parser.add_argument("--torch-threads", type=int, default=2)
     parser.add_argument("--max-ticks", type=int, default=2048)
+    parser.add_argument(
+        "--reward-profile",
+        choices=reward_model_module.REWARD_PROFILES,
+        default=reward_model_module.OBJECTIVE_V1,
+    )
     parser.add_argument(
         "--engine-fast-path", choices=("off", "shadow", "on"), default="on"
     )
@@ -177,13 +183,11 @@ def _digest_rollout(rollout: object, envs: list[SelfPlayBattleEnv]) -> str:
             hasher.update(name.encode("utf-8"))
             hasher.update(np.ascontiguousarray(value).tobytes())
         else:
-            hasher.update(f"{name}={value}".encode("utf-8"))
+            hasher.update(f"{name}={value}".encode())
     for env in envs:
         assert env.battle is not None
         hasher.update(
-            f"{env.battle.tick}:{env.battle.winner}:{len(env.battle.entities)}".encode(
-                "utf-8"
-            )
+            f"{env.battle.tick}:{env.battle.winner}:{len(env.battle.entities)}".encode()
         )
     return hasher.hexdigest()
 
@@ -280,6 +284,7 @@ def main() -> None:
                 seed=args.seed + index,
                 max_ticks=args.max_ticks,
                 engine_fast_path=args.engine_fast_path,
+                reward_profile=args.reward_profile,
             )
             for index in range(args.num_envs)
         ]
@@ -477,6 +482,7 @@ def main() -> None:
                 "repetitions": args.repetitions,
                 "torch_threads": args.torch_threads,
                 "engine_fast_path": args.engine_fast_path,
+                "reward_profile": args.reward_profile,
                 "target_cache_refresh": args.target_cache_refresh,
                 "building_cache_refresh": args.building_cache_refresh,
                 "targetability_refresh": args.targetability_refresh,

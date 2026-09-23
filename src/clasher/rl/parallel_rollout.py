@@ -13,7 +13,9 @@ import torch
 from typing_extensions import Self
 
 from .model import ClasherPolicy, PolicyConfig
+from .reward_model import OBJECTIVE_V1
 from .selfplay_env import SelfPlayBattleEnv
+from .strategy_bots import STRATEGY_NAMES, StrategyBot
 from .structured_obs import StructuredObservationBuilder
 from .train_recurrent import (
     RolloutBatch,
@@ -25,14 +27,19 @@ from .train_recurrent import (
 
 @dataclass(frozen=True)
 class OpponentSpec:
-    kind: Literal["random", "checkpoint"]
+    kind: Literal["random", "strategy", "checkpoint"]
     checkpoint: str | None = None
+    strategy: str | None = None
 
     def __post_init__(self) -> None:
-        if self.kind == "random" and self.checkpoint is not None:
-            raise ValueError("random opponent cannot have a checkpoint")
+        if self.kind != "checkpoint" and self.checkpoint is not None:
+            raise ValueError(f"{self.kind} opponent cannot have a checkpoint")
         if self.kind == "checkpoint" and not self.checkpoint:
             raise ValueError("checkpoint opponent requires a path")
+        if self.kind == "strategy" and self.strategy not in STRATEGY_NAMES:
+            raise ValueError("strategy opponent requires a known strategy")
+        if self.kind != "strategy" and self.strategy is not None:
+            raise ValueError(f"{self.kind} opponent cannot have a strategy")
 
 
 @dataclass(frozen=True)
@@ -49,6 +56,7 @@ class ActorWorkerConfig:
     quiet_engine: bool
     base_seed: int
     torch_threads: int
+    reward_profile: str = OBJECTIVE_V1
 
 
 def concatenate_rollouts(rollouts: Iterable[RolloutBatch]) -> RolloutBatch:
@@ -83,7 +91,7 @@ def opponent_spec_for_worker(
 ) -> OpponentSpec | None:
     if config.opponent_mode == "selfplay":
         return None
-    if config.opponent_mode not in {"random", "checkpoint", "league"}:
+    if config.opponent_mode not in {"random", "strategy", "checkpoint", "league"}:
         raise ValueError(f"unknown opponent mode {config.opponent_mode!r}")
     if not config.opponent_pool:
         raise ValueError(f"{config.opponent_mode} opponent mode requires a pool")
@@ -111,6 +119,10 @@ def _actor_worker_main(
         model = ClasherPolicy(policy_config, builder.card_stat_features).to(device)
         opponent_model: ClasherPolicy | None = None
         opponent_spec = opponent_spec_for_worker(config, worker_id)
+        opponent_bot: StrategyBot | None = None
+        if opponent_spec is not None and opponent_spec.kind == "strategy":
+            assert opponent_spec.strategy is not None
+            opponent_bot = StrategyBot(opponent_spec.strategy)
         if opponent_spec is not None and opponent_spec.kind == "checkpoint":
             assert opponent_spec.checkpoint is not None
             opponent_path = opponent_spec.checkpoint
@@ -141,6 +153,7 @@ def _actor_worker_main(
                     mirror_match=config.mirror_match,
                     canonical_perspective=True,
                     engine_fast_path=config.engine_fast_path,
+                    reward_profile=config.reward_profile,
                 )
                 env._structured_obs_builder = builder
                 env.reset(seed=seed)
@@ -148,14 +161,11 @@ def _actor_worker_main(
 
         stationary_opponents = config.opponent_mode in {
             "random",
+            "strategy",
             "checkpoint",
             "league",
         }
-        agents = (
-            len(envs)
-            if stationary_opponents
-            else 2 * len(envs)
-        )
+        agents = len(envs) if stationary_opponents else 2 * len(envs)
         learner_players = tuple(env_index % 2 for env_index in env_indices)
         recurrent_state = model.initial_state(agents, device=device)
         no_op = envs[0].action_space.no_op_action
@@ -208,6 +218,7 @@ def _actor_worker_main(
                     opponent_previous_rewards=opponent_previous_rewards,
                     opponent_episode_starts=opponent_episode_starts,
                     quiet_engine=config.quiet_engine,
+                    opponent_bot=opponent_bot,
                 )
                 if stationary_opponents
                 else collect_rollout(

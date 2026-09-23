@@ -9,9 +9,7 @@ from clasher.rl.parallel_rollout import (
 from clasher.rl.train_recurrent import restore_optimizer_state
 
 
-def _config(
-    mode: str, pool: tuple[OpponentSpec, ...]
-) -> ActorWorkerConfig:
+def _config(mode: str, pool: tuple[OpponentSpec, ...]) -> ActorWorkerConfig:
     return ActorWorkerConfig(
         decks_path="decks.json",
         token_names=(),
@@ -31,6 +29,7 @@ def _config(
 def test_league_opponents_are_distributed_round_robin_across_workers():
     pool = (
         OpponentSpec(kind="random"),
+        OpponentSpec(kind="strategy", strategy="reactive-defense"),
         OpponentSpec(kind="checkpoint", checkpoint="update800.pt"),
         OpponentSpec(kind="checkpoint", checkpoint="update1300.pt"),
     )
@@ -38,7 +37,7 @@ def test_league_opponents_are_distributed_round_robin_across_workers():
 
     assigned = tuple(opponent_spec_for_worker(config, worker) for worker in range(12))
 
-    assert assigned == pool * 4
+    assert assigned == pool * 3
 
 
 def test_selfplay_has_no_stationary_opponent_spec():
@@ -55,6 +54,8 @@ def test_opponent_spec_rejects_inconsistent_payloads():
         OpponentSpec(kind="random", checkpoint="not-used.pt")
     with pytest.raises(ValueError, match="requires a path"):
         OpponentSpec(kind="checkpoint")
+    with pytest.raises(ValueError, match="known strategy"):
+        OpponentSpec(kind="strategy", strategy="omniscient-cheater")
 
 
 def test_resume_restores_optimizer_moments_but_honors_requested_learning_rate():

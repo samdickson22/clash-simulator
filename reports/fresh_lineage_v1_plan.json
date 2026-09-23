@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "experiment_id": "fresh-lineage-v1-defense-oracle",
+  "created_at": "2026-08-07T17:19:47-07:00",
+  "status": "blocked_on_roadforge_heavy_window",
+  "invariants": {
+    "incumbent_is_never_overwritten": true,
+    "matched_pilots_use_identical_architecture_data_budget_and_ppo_settings": true,
+    "promotion_uses_external_game_outcomes_not_training_reward": true,
+    "reward_profile": "defense-v2",
+    "simulator_engine_fast_path": "on_after_preflight_equivalence_gate"
+  },
+  "incumbent": {
+    "checkpoint": "checkpoints/mixed_league_champion50_lr1e4/policy_v2_update_001400.pt",
+    "sha256": "6acbf7b4bd1f0dc3de221cb5d69caa5d79389a6171113e9c403cc10bc8f44b60",
+    "update": 1400,
+    "total_decisions": 5591040,
+    "role": "frozen promotion anchor"
+  },
+  "diagnostic_defense_challenger": {
+    "checkpoint": "checkpoints/defense_v2_pilot/policy_v2_update_001420.pt",
+    "sha256": "8835f725ac651972f1ae8def3057411bcd3a6461fe461954aad93e829e265cff",
+    "update": 1420,
+    "total_decisions": 5672960,
+    "role": "frozen defensive-behavior anchor; not promoted"
+  },
+  "architecture": {
+    "model_type": "entity_spatial_recurrent",
+    "d_model": 96,
+    "num_heads": 4,
+    "actor_layers": 3,
+    "critic_layers": 2,
+    "memory_size": 192,
+    "max_entities": 128
+  },
+  "engine_fast_path_preflight": {
+    "status": "pending",
+    "seed": 7701,
+    "decisions": 4096,
+    "acceptance": "off, shadow, and on rollouts must produce the same SHA-256 digest; shadow mask mismatches must be zero",
+    "commands": [
+      "uv run python run_clasher.py determinism -- --seed 7701 --decisions 4096 --trials 1 --quiet-engine --reward-profile defense-v2 --engine-fast-path off --json-out reports/evaluations/fresh_v1_fast_preflight_off.json",
+      "uv run python run_clasher.py determinism -- --seed 7701 --decisions 4096 --trials 1 --quiet-engine --reward-profile defense-v2 --engine-fast-path shadow --json-out reports/evaluations/fresh_v1_fast_preflight_shadow.json",
+      "uv run python run_clasher.py determinism -- --seed 7701 --decisions 4096 --trials 1 --quiet-engine --reward-profile defense-v2 --engine-fast-path on --json-out reports/evaluations/fresh_v1_fast_preflight_on.json"
+    ]
+  },
+  "oracle_corpus": {
+    "status": "pending",
+    "output": "datasets/oracle_v2_defense_seed4401.npz",
+    "decisions": 5000,
+    "samples": 10000,
+    "seed": 4401,
+    "workers": 12,
+    "planner_depth": 6,
+    "planner_simulations": 32,
+    "planner_action_samples": 64,
+    "command": "uv run python run_clasher.py imitation -- collect --output datasets/oracle_v2_defense_seed4401.npz --decisions 5000 --seed 4401 --workers 12 --planner-depth 6 --planner-simulations 32 --planner-action-samples 64 --max-entities 128 --reward-profile defense-v2"
+  },
+  "matched_initialization": {
+    "status": "pending",
+    "seed": 5501,
+    "epochs": 10,
+    "batch_size": 32,
+    "learning_rate": 0.00025,
+    "validation_fraction": 0.2,
+    "imitation_checkpoint": "checkpoints/fresh_v1/oracle_warmstart.pt",
+    "control_checkpoint": "checkpoints/fresh_v1/matched_control.pt",
+    "manifest": "reports/fresh_v1_imitation_manifest.json",
+    "ppo_optimizer_state": "reset_for_both_arms",
+    "command": "uv run python run_clasher.py imitation -- fit --corpus datasets/oracle_v2_defense_seed4401.npz --output-checkpoint checkpoints/fresh_v1/oracle_warmstart.pt --control-checkpoint checkpoints/fresh_v1/matched_control.pt --manifest-out reports/fresh_v1_imitation_manifest.json --seed 5501 --epochs 10 --batch-size 32 --learning-rate 0.00025 --validation-fraction 0.2 --device mps --d-model 96 --num-heads 4 --actor-layers 3 --critic-layers 2 --memory-size 192"
+  },
+  "beginner_pool": {
+    "workers": 12,
+    "allocation": {
+      "uniform_legal_random": 6,
+      "strategy_balanced": 3,
+      "strategy_reactive_defense": 3
+    },
+    "league_arguments": "--league-opponent random --league-opponent random --league-opponent strategy:balanced --league-opponent strategy:reactive-defense"
+  },
+  "equal_budget_pilots": {
+    "updates_per_arm": 100,
+    "decisions_per_arm": 409600,
+    "seed": 6601,
+    "common_settings": {
+      "num_envs": 64,
+      "actor_workers": 12,
+      "actor_threads": 1,
+      "rollout_steps": 64,
+      "device": "mps",
+      "actor_device": "cpu",
+      "sequence_batch_size": 4,
+      "epochs": 2,
+      "learning_rate": 0.00025,
+      "lr_anneal": false,
+      "save_every": 10,
+      "reward_profile": "defense-v2",
+      "engine_fast_path": "on"
+    },
+    "control": {
+      "status": "pending",
+      "checkpoint_dir": "checkpoints/fresh_v1_control",
+      "command": "uv run python run_clasher.py train -- --resume-from checkpoints/fresh_v1/matched_control.pt --updates 100 --seed 6601 --num-envs 64 --actor-workers 12 --actor-threads 1 --rollout-steps 64 --reward-profile defense-v2 --opponent-mode league --league-opponent random --league-opponent random --league-opponent strategy:balanced --league-opponent strategy:reactive-defense --engine-fast-path on --device mps --actor-device cpu --sequence-batch-size 4 --epochs 2 --learning-rate 0.00025 --checkpoint-dir checkpoints/fresh_v1_control --save-every 10 --log-every 1 --no-lr-anneal"
+    },
+    "oracle_warmstart": {
+      "status": "pending",
+      "checkpoint_dir": "checkpoints/fresh_v1_oracle",
+      "command": "uv run python run_clasher.py train -- --resume-from checkpoints/fresh_v1/oracle_warmstart.pt --updates 100 --seed 6601 --num-envs 64 --actor-workers 12 --actor-threads 1 --rollout-steps 64 --reward-profile defense-v2 --opponent-mode league --league-opponent random --league-opponent random --league-opponent strategy:balanced --league-opponent strategy:reactive-defense --engine-fast-path on --device mps --actor-device cpu --sequence-batch-size 4 --epochs 2 --learning-rate 0.00025 --checkpoint-dir checkpoints/fresh_v1_oracle --save-every 10 --log-every 1 --no-lr-anneal"
+    }
+  },
+  "selection_gate": {
+    "paired_games_per_opponent": 24,
+    "fixed_seed": 9101,
+    "opponents": [
+      "uniform-legal-random",
+      "strategy:bridge-pressure",
+      "strategy:slow-push",
+      "strategy:spell-control",
+      "strategy:reactive-defense",
+      "strategy:split-lane",
+      "strategy:balanced",
+      "incumbent-update-1400",
+      "diagnostic-defense-update-1420",
+      "other-fresh-arm"
+    ],
+    "primary_metrics": [
+      "score_rate",
+      "crown_diff_per_game",
+      "wins_as_player0",
+      "wins_as_player1",
+      "incoming_tower_danger_mean",
+      "candidate_noop_when_playable"
+    ],
+    "rule": "continue only the arm with no material fixed-anchor safety regression and the stronger paired aggregate; retain update 1400 as public champion until a later expanded promotion gate"
+  },
+  "continuation": {
+    "status": "pending_pilot_selection",
+    "target_new_decisions": 3000000,
+    "curriculum": "PFSP over all six strategy bots plus frozen accepted snapshots",
+    "checkpoint_gate_interval_updates": 50,
+    "promotion_games_per_opponent": 72
+  }
+}
