@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "strategy": "slow-push",
+  "seed": 1063610,
+  "arm": "baseline",
+  "result": "p0_win",
+  "winner": 0,
+  "crowns": [
+    3,
+    1
+  ],
+  "native_ticks": 1033,
+  "battle_seconds": 51.6499999999992,
+  "frames": 349,
+  "gameplay_frames": 259,
+  "hold_frames": 90,
+  "fps": 30,
+  "ticks_per_frame": 4,
+  "resolution": [
+    1200,
+    900
+  ],
+  "crf": 28,
+  "decision_interval": 8,
+  "mirror_match": true,
+  "deterministic": true,
+  "seat": {
+    "candidate": 0,
+    "strategy_bot": 1
+  },
+  "decks": {
+    "0": [
+      "Cannon",
+      "DartGoblin",
+      "GoblinBarrel",
+      "GoblinGang",
+      "IceSpirit",
+      "Princess",
+      "Valkyrie",
+      "Wallbreakers"
+    ],
+    "1": [
+      "Cannon",
+      "DartGoblin",
+      "GoblinBarrel",
+      "GoblinGang",
+      "IceSpirit",
+      "Princess",
+      "Valkyrie",
+      "Wallbreakers"
+    ]
+  },
+  "labels": {
+    "p0": "Accepted 6.19M \u2022 baseline",
+    "p1": "StrategyBot \u2022 slow-push"
+  },
+  "checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/mechanics_slot_probe/accepted6m_zero_seed1056701/zero_adapter.pt",
+  "checkpoint_sha256": "cf783bdef5c3ce0b529606839b3887a3e3457045394642ad72466cc3087cc305",
+  "basis": "/Users/sam/Desktop/code/clasher/reports/lstm_mech_interp_accepted6m_seed1062501/hidden_top3_pca_basis.npz",
+  "basis_sha256": "24f29f6a512efbafcbd3071296deeb9e3dd7df37b95d1f8d0732f7ce12f920a4",
+  "basis_explained_variance_ratio": [
+    0.4782772449667839,
+    0.421556761502658,
+    0.052544090146818836
+  ],
+  "basis_explained_variance_ratio_sum": 0.9523780966162607,
+  "basis_component_orthonormal_max_error": 5.960464477539063e-08,
+  "hook": {
+    "enabled": false,
+    "module": "memory",
+    "calls": 0,
+    "removed_l2_mean": 0.0,
+    "removed_l2_rms": 0.0,
+    "removed_l2_max": 0.0,
+    "cell_state_unchanged": true
+  },
+  "actions": {
+    "p0": {
+      "count": 129,
+      "sha256_int32_le": "3c99647d77aa12bc86c0d646bc4306cae4cfc239a8fe777d788a90d39669312f",
+      "counts": {
+        "placement": 9,
+        "wait": 120
+      }
+    },
+    "p1": {
+      "count": 129,
+      "sha256_int32_le": "f9cc11e2b866fe642ad7e1b72b3cd157bf2b48e11ca1d31e756144f4fa55bc61",
+      "counts": {
+        "placement": 10,
+        "wait": 119
+      }
+    },
+    "decision_tick_sha256_int32_le": "4d1cd53f1e9b0217c8c8ce88fcba2032cba1fcb3b8f1faf833dbab3ae07d161e"
+  },
+  "output": "/Users/sam/.codex/worktrees/34d3/clasher/reports/accepted6m_lstm_top3_activation_patch/02_slow-push_baseline.mp4",
+  "exact_command": "reports/accepted6m_lstm_top3_activation_patch/record_activation_patch.py --checkpoint /Users/sam/Desktop/code/clasher/checkpoints/mechanics_slot_probe/accepted6m_zero_seed1056701/zero_adapter.pt --basis /Users/sam/Desktop/code/clasher/reports/lstm_mech_interp_accepted6m_seed1062501/hidden_top3_pca_basis.npz --decks-path /Users/sam/Desktop/code/clasher/decks.json --strategy slow-push --seed 1063610 --arm baseline --output reports/accepted6m_lstm_top3_activation_patch/02_slow-push_baseline.mp4 --fps 30 --ticks-per-frame 4 --decision-interval 8 --final-hold-seconds 3 --crf 28",
+  "ffmpeg_command": [
+    "/opt/homebrew/bin/ffmpeg",
+    "-y",
+    "-loglevel",
+    "error",
+    "-f",
+    "rawvideo",
+    "-pix_fmt",
+    "rgb24",
+    "-s",
+    "1200x900",
+    "-r",
+    "30",
+    "-i",
+    "-",
+    "-an",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "veryfast",
+    "-crf",
+    "28",
+    "-pix_fmt",
+    "yuv420p",
+    "-movflags",
+    "+faststart",
+    "/Users/sam/.codex/worktrees/34d3/clasher/reports/accepted6m_lstm_top3_activation_patch/02_slow-push_baseline.mp4"
+  ],
+  "wall_seconds": 2.5993021249305457
+}

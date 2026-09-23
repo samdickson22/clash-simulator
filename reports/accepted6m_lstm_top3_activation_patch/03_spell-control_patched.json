@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "strategy": "spell-control",
+  "seed": 1064619,
+  "arm": "patched",
+  "result": "p1_win",
+  "winner": 1,
+  "crowns": [
+    1,
+    2
+  ],
+  "native_ticks": 5801,
+  "battle_seconds": 290.0500000000317,
+  "frames": 1541,
+  "gameplay_frames": 1451,
+  "hold_frames": 90,
+  "fps": 30,
+  "ticks_per_frame": 4,
+  "resolution": [
+    1200,
+    900
+  ],
+  "crf": 28,
+  "decision_interval": 8,
+  "mirror_match": true,
+  "deterministic": true,
+  "seat": {
+    "candidate": 0,
+    "strategy_bot": 1
+  },
+  "decks": {
+    "0": [
+      "Archers",
+      "ElectroSpirit",
+      "Fireball",
+      "Knight",
+      "Skeletons",
+      "Tesla",
+      "Log",
+      "Xbow"
+    ],
+    "1": [
+      "Archers",
+      "ElectroSpirit",
+      "Fireball",
+      "Knight",
+      "Skeletons",
+      "Tesla",
+      "Log",
+      "Xbow"
+    ]
+  },
+  "labels": {
+    "p0": "Accepted 6.19M \u2022 LSTM top-3 PCs removed",
+    "p1": "StrategyBot \u2022 spell-control"
+  },
+  "checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/mechanics_slot_probe/accepted6m_zero_seed1056701/zero_adapter.pt",
+  "checkpoint_sha256": "cf783bdef5c3ce0b529606839b3887a3e3457045394642ad72466cc3087cc305",
+  "basis": "/Users/sam/Desktop/code/clasher/reports/lstm_mech_interp_accepted6m_seed1062501/hidden_top3_pca_basis.npz",
+  "basis_sha256": "24f29f6a512efbafcbd3071296deeb9e3dd7df37b95d1f8d0732f7ce12f920a4",
+  "basis_explained_variance_ratio": [
+    0.4782772449667839,
+    0.421556761502658,
+    0.052544090146818836
+  ],
+  "basis_explained_variance_ratio_sum": 0.9523780966162607,
+  "basis_component_orthonormal_max_error": 5.960464477539063e-08,
+  "hook": {
+    "enabled": true,
+    "module": "memory",
+    "calls": 725,
+    "removed_l2_mean": 0.7941849965473701,
+    "removed_l2_rms": 0.8183477631059737,
+    "removed_l2_max": 3.636524200439453,
+    "cell_state_unchanged": true
+  },
+  "actions": {
+    "p0": {
+      "count": 725,
+      "sha256_int32_le": "e72f8a413dd43e50eb492ca8823e8c89c1a1e61cea488a495446b3ab6f9d9925",
+      "counts": {
+        "placement": 94,
+        "wait": 631
+      }
+    },
+    "p1": {
+      "count": 725,
+      "sha256_int32_le": "7ac0edf296dd0f75aa2d17c53d977a7816e463eeacfe224d2cac538ad402e49c",
+      "counts": {
+        "placement": 92,
+        "wait": 633
+      }
+    },
+    "decision_tick_sha256_int32_le": "f82add940134c10ea90a6ef8f0212b9fe47990efa7de1bf26a35804ebf2bad5f"
+  },
+  "output": "/Users/sam/.codex/worktrees/34d3/clasher/reports/accepted6m_lstm_top3_activation_patch/03_spell-control_patched.mp4",
+  "exact_command": "reports/accepted6m_lstm_top3_activation_patch/record_activation_patch.py --checkpoint /Users/sam/Desktop/code/clasher/checkpoints/mechanics_slot_probe/accepted6m_zero_seed1056701/zero_adapter.pt --basis /Users/sam/Desktop/code/clasher/reports/lstm_mech_interp_accepted6m_seed1062501/hidden_top3_pca_basis.npz --decks-path /Users/sam/Desktop/code/clasher/decks.json --strategy spell-control --seed 1064619 --arm patched --output reports/accepted6m_lstm_top3_activation_patch/03_spell-control_patched.mp4 --fps 30 --ticks-per-frame 4 --decision-interval 8 --final-hold-seconds 3 --crf 28",
+  "ffmpeg_command": [
+    "/opt/homebrew/bin/ffmpeg",
+    "-y",
+    "-loglevel",
+    "error",
+    "-f",
+    "rawvideo",
+    "-pix_fmt",
+    "rgb24",
+    "-s",
+    "1200x900",
+    "-r",
+    "30",
+    "-i",
+    "-",
+    "-an",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "veryfast",
+    "-crf",
+    "28",
+    "-pix_fmt",
+    "yuv420p",
+    "-movflags",
+    "+faststart",
+    "/Users/sam/.codex/worktrees/34d3/clasher/reports/accepted6m_lstm_top3_activation_patch/03_spell-control_patched.mp4"
+  ],
+  "wall_seconds": 11.401602874975652
+}

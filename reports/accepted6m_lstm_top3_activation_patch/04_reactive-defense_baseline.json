@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "strategy": "reactive-defense",
+  "seed": 1065628,
+  "arm": "baseline",
+  "result": "p0_win",
+  "winner": 0,
+  "crowns": [
+    1,
+    0
+  ],
+  "native_ticks": 4649,
+  "battle_seconds": 232.4500000000186,
+  "frames": 1253,
+  "gameplay_frames": 1163,
+  "hold_frames": 90,
+  "fps": 30,
+  "ticks_per_frame": 4,
+  "resolution": [
+    1200,
+    900
+  ],
+  "crf": 28,
+  "decision_interval": 8,
+  "mirror_match": true,
+  "deterministic": true,
+  "seat": {
+    "candidate": 0,
+    "strategy_bot": 1
+  },
+  "decks": {
+    "0": [
+      "Bats",
+      "GoblinGang",
+      "InfernoDragon",
+      "MegaKnight",
+      "Miner",
+      "SkeletonBarrel",
+      "SpearGoblins",
+      "Zap"
+    ],
+    "1": [
+      "Bats",
+      "GoblinGang",
+      "InfernoDragon",
+      "MegaKnight",
+      "Miner",
+      "SkeletonBarrel",
+      "SpearGoblins",
+      "Zap"
+    ]
+  },
+  "labels": {
+    "p0": "Accepted 6.19M \u2022 baseline",
+    "p1": "StrategyBot \u2022 reactive-defense"
+  },
+  "checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/mechanics_slot_probe/accepted6m_zero_seed1056701/zero_adapter.pt",
+  "checkpoint_sha256": "cf783bdef5c3ce0b529606839b3887a3e3457045394642ad72466cc3087cc305",
+  "basis": "/Users/sam/Desktop/code/clasher/reports/lstm_mech_interp_accepted6m_seed1062501/hidden_top3_pca_basis.npz",
+  "basis_sha256": "24f29f6a512efbafcbd3071296deeb9e3dd7df37b95d1f8d0732f7ce12f920a4",
+  "basis_explained_variance_ratio": [
+    0.4782772449667839,
+    0.421556761502658,
+    0.052544090146818836
+  ],
+  "basis_explained_variance_ratio_sum": 0.9523780966162607,
+  "basis_component_orthonormal_max_error": 5.960464477539063e-08,
+  "hook": {
+    "enabled": false,
+    "module": "memory",
+    "calls": 0,
+    "removed_l2_mean": 0.0,
+    "removed_l2_rms": 0.0,
+    "removed_l2_max": 0.0,
+    "cell_state_unchanged": true
+  },
+  "actions": {
+    "p0": {
+      "count": 581,
+      "sha256_int32_le": "f96d712cfb9adbba53635c15bc2943656668f607cc7bcba756f471107c9dfd44",
+      "counts": {
+        "placement": 43,
+        "wait": 538
+      }
+    },
+    "p1": {
+      "count": 581,
+      "sha256_int32_le": "1e2d7a91761846607970fbcb113fc6a33ceee4e4990549bcf3cd9a67835da96c",
+      "counts": {
+        "placement": 54,
+        "wait": 527
+      }
+    },
+    "decision_tick_sha256_int32_le": "64ebec1b5a5f7ba2e062d04f775421cfb294d26850a6d024c0de7abfa93cd6dc"
+  },
+  "output": "/Users/sam/.codex/worktrees/34d3/clasher/reports/accepted6m_lstm_top3_activation_patch/04_reactive-defense_baseline.mp4",
+  "exact_command": "reports/accepted6m_lstm_top3_activation_patch/record_activation_patch.py --checkpoint /Users/sam/Desktop/code/clasher/checkpoints/mechanics_slot_probe/accepted6m_zero_seed1056701/zero_adapter.pt --basis /Users/sam/Desktop/code/clasher/reports/lstm_mech_interp_accepted6m_seed1062501/hidden_top3_pca_basis.npz --decks-path /Users/sam/Desktop/code/clasher/decks.json --strategy reactive-defense --seed 1065628 --arm baseline --output reports/accepted6m_lstm_top3_activation_patch/04_reactive-defense_baseline.mp4 --fps 30 --ticks-per-frame 4 --decision-interval 8 --final-hold-seconds 3 --crf 28",
+  "ffmpeg_command": [
+    "/opt/homebrew/bin/ffmpeg",
+    "-y",
+    "-loglevel",
+    "error",
+    "-f",
+    "rawvideo",
+    "-pix_fmt",
+    "rgb24",
+    "-s",
+    "1200x900",
+    "-r",
+    "30",
+    "-i",
+    "-",
+    "-an",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "veryfast",
+    "-crf",
+    "28",
+    "-pix_fmt",
+    "yuv420p",
+    "-movflags",
+    "+faststart",
+    "/Users/sam/.codex/worktrees/34d3/clasher/reports/accepted6m_lstm_top3_activation_patch/04_reactive-defense_baseline.mp4"
+  ],
+  "wall_seconds": 10.53839962487109
+}

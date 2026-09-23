@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "strategy": "bridge-pressure",
+  "seed": 1062601,
+  "arm": "patched",
+  "result": "p0_win",
+  "winner": 0,
+  "crowns": [
+    3,
+    1
+  ],
+  "native_ticks": 3013,
+  "battle_seconds": 150.65,
+  "frames": 844,
+  "gameplay_frames": 754,
+  "hold_frames": 90,
+  "fps": 30,
+  "ticks_per_frame": 4,
+  "resolution": [
+    1200,
+    900
+  ],
+  "crf": 28,
+  "decision_interval": 8,
+  "mirror_match": true,
+  "deterministic": true,
+  "seat": {
+    "candidate": 0,
+    "strategy_bot": 1
+  },
+  "decks": {
+    "0": [
+      "Cannon",
+      "Fireball",
+      "HogRider",
+      "IceSpirit",
+      "Knight",
+      "Musketeer",
+      "Skeletons",
+      "Log"
+    ],
+    "1": [
+      "Cannon",
+      "Fireball",
+      "HogRider",
+      "IceSpirit",
+      "Knight",
+      "Musketeer",
+      "Skeletons",
+      "Log"
+    ]
+  },
+  "labels": {
+    "p0": "Accepted 6.19M \u2022 LSTM top-3 PCs removed",
+    "p1": "StrategyBot \u2022 bridge-pressure"
+  },
+  "checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/mechanics_slot_probe/accepted6m_zero_seed1056701/zero_adapter.pt",
+  "checkpoint_sha256": "cf783bdef5c3ce0b529606839b3887a3e3457045394642ad72466cc3087cc305",
+  "basis": "/Users/sam/Desktop/code/clasher/reports/lstm_mech_interp_accepted6m_seed1062501/hidden_top3_pca_basis.npz",
+  "basis_sha256": "24f29f6a512efbafcbd3071296deeb9e3dd7df37b95d1f8d0732f7ce12f920a4",
+  "basis_explained_variance_ratio": [
+    0.4782772449667839,
+    0.421556761502658,
+    0.052544090146818836
+  ],
+  "basis_explained_variance_ratio_sum": 0.9523780966162607,
+  "basis_component_orthonormal_max_error": 5.960464477539063e-08,
+  "hook": {
+    "enabled": true,
+    "module": "memory",
+    "calls": 376,
+    "removed_l2_mean": 0.8439068355934417,
+    "removed_l2_rms": 0.8654854130528042,
+    "removed_l2_max": 2.16409969329834,
+    "cell_state_unchanged": true
+  },
+  "actions": {
+    "p0": {
+      "count": 376,
+      "sha256_int32_le": "877f74017b61c6d4ba79042f7a04b8885b9d9535655744116f0483adba8ca6f0",
+      "counts": {
+        "placement": 32,
+        "wait": 344
+      }
+    },
+    "p1": {
+      "count": 376,
+      "sha256_int32_le": "be82a422f42c4e2200d5f6f981246e1562538d217de0d5c47893f57a82e850d6",
+      "counts": {
+        "placement": 35,
+        "wait": 341
+      }
+    },
+    "decision_tick_sha256_int32_le": "49b88cd2c8c7a79d73819ee4d47b12e78e79d76ce996322772bc8adfa4eed31e"
+  },
+  "output": "/Users/sam/.codex/worktrees/34d3/clasher/reports/accepted6m_lstm_top3_activation_patch/01_bridge-pressure_patched.mp4",
+  "exact_command": "reports/accepted6m_lstm_top3_activation_patch/record_activation_patch.py --checkpoint /Users/sam/Desktop/code/clasher/checkpoints/mechanics_slot_probe/accepted6m_zero_seed1056701/zero_adapter.pt --basis /Users/sam/Desktop/code/clasher/reports/lstm_mech_interp_accepted6m_seed1062501/hidden_top3_pca_basis.npz --decks-path /Users/sam/Desktop/code/clasher/decks.json --strategy bridge-pressure --seed 1062601 --arm patched --output reports/accepted6m_lstm_top3_activation_patch/01_bridge-pressure_patched.mp4 --fps 30 --ticks-per-frame 4 --decision-interval 8 --final-hold-seconds 3 --crf 28",
+  "ffmpeg_command": [
+    "/opt/homebrew/bin/ffmpeg",
+    "-y",
+    "-loglevel",
+    "error",
+    "-f",
+    "rawvideo",
+    "-pix_fmt",
+    "rgb24",
+    "-s",
+    "1200x900",
+    "-r",
+    "30",
+    "-i",
+    "-",
+    "-an",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "veryfast",
+    "-crf",
+    "28",
+    "-pix_fmt",
+    "yuv420p",
+    "-movflags",
+    "+faststart",
+    "/Users/sam/.codex/worktrees/34d3/clasher/reports/accepted6m_lstm_top3_activation_patch/01_bridge-pressure_patched.mp4"
+  ],
+  "wall_seconds": 5.998869624920189
+}
