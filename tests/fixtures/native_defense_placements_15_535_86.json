@@ -1,0 +1,614 @@
+{
+  "reference": "Null's 15.535.86; fixed open-loop diagnostic, not official/reactive-game acceptance",
+  "decision_tick": 91,
+  "end_tick": 491,
+  "unresolved_families": [],
+  "cases": [
+    {
+      "attacker": "HogRider",
+      "defender": "Cannon",
+      "placement": null,
+      "native_tower_damage": 2219,
+      "capture_sha256": "ced4db89d7a6f62fb62496342c1e95a037aa08bd814285ba904b48ec241cdc57",
+      "capture": "HogRider-Cannon-0.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Cannon",
+      "placement": [
+        3.5,
+        18.5
+      ],
+      "native_tower_damage": 317,
+      "capture_sha256": "6ac924fd4efdac3e0bcc09addb741d59b9edfaea3b65f20851554c379554363d",
+      "capture": "HogRider-Cannon-1.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Cannon",
+      "placement": [
+        5.5,
+        18.5
+      ],
+      "native_tower_damage": 317,
+      "capture_sha256": "84ad84b7b750965e1e9db4b5b001bb9fafbb2acb6542206a1e104c49e0b89c76",
+      "capture": "HogRider-Cannon-2.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Cannon",
+      "placement": [
+        7.5,
+        19.5
+      ],
+      "native_tower_damage": 0,
+      "capture_sha256": "167fdc994b0dc3cae36904b9ba28fbd3ef226d917d9f0507bb93e57aec217e12",
+      "capture": "HogRider-Cannon-3.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Cannon",
+      "placement": [
+        9.5,
+        20.5
+      ],
+      "native_tower_damage": 0,
+      "capture_sha256": "40d95d1697423ec109e74d7f318bd38c589b50799077905fe2c7160ecadb6c3c",
+      "capture": "HogRider-Cannon-4.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Cannon",
+      "placement": [
+        11.5,
+        21.5
+      ],
+      "native_tower_damage": 2219,
+      "capture_sha256": "1250543dd8d4333ddfe2d6e241266ece8bfd7ac3917dbc82194dfcbbb3c85520",
+      "capture": "HogRider-Cannon-5.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Cannon",
+      "placement": [
+        13.5,
+        18.5
+      ],
+      "native_tower_damage": 2219,
+      "capture_sha256": "8c4df0d94b3afc8028bf0e0f599a51f19c8202ba81340822038165c82252512e",
+      "capture": "HogRider-Cannon-6.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Tesla",
+      "placement": null,
+      "native_tower_damage": 2219,
+      "capture_sha256": "adc0f38208e223cae56013067edf63bb577236feb66212444d745c0f5adcd3a0",
+      "capture": "HogRider-Tesla-0.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Tesla",
+      "placement": [
+        3.5,
+        18.5
+      ],
+      "native_tower_damage": 634,
+      "capture_sha256": "9e4cd7ff0c9be6f6bf8d98880c0932b0a314997ab5aa9ab1f851a450960628c8",
+      "capture": "HogRider-Tesla-1.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Tesla",
+      "placement": [
+        5.5,
+        18.5
+      ],
+      "native_tower_damage": 0,
+      "capture_sha256": "5fbbc9d9d7729c31cc31177c27c8ce756f45edd4f12d80641150bb46582d5aa1",
+      "capture": "HogRider-Tesla-2.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Tesla",
+      "placement": [
+        7.5,
+        19.5
+      ],
+      "native_tower_damage": 0,
+      "capture_sha256": "2b2b486b014eeab068723c8ab6c23f1528d629060c3d31faa4858ce46c85d618",
+      "capture": "HogRider-Tesla-3.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Tesla",
+      "placement": [
+        9.5,
+        20.5
+      ],
+      "native_tower_damage": 0,
+      "capture_sha256": "a8d63a095e06a42afd3ad2067adcddee9b1e8a68a0816b10214fc0dbedf9073c",
+      "capture": "HogRider-Tesla-4.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Tesla",
+      "placement": [
+        11.5,
+        21.5
+      ],
+      "native_tower_damage": 2219,
+      "capture_sha256": "b8bb70a50db5b7646af9da3ca81a88f1bc92e008337985059a4ae146f02a205f",
+      "capture": "HogRider-Tesla-5.json"
+    },
+    {
+      "attacker": "HogRider",
+      "defender": "Tesla",
+      "placement": [
+        13.5,
+        18.5
+      ],
+      "native_tower_damage": 2219,
+      "capture_sha256": "8499eb88bff5c0fe3b064c76e87421fde5acf762288ecbe81b55422ec48b74bc",
+      "capture": "HogRider-Tesla-6.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": null,
+      "native_tower_damage": 1771,
+      "capture_sha256": "c2dfad79efcd96cb0aa9c4139008284e395eee5c616b28e0aabaf5103cfbcf61",
+      "capture": "Giant-Cannon-0.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": [
+        3.5,
+        18.5
+      ],
+      "native_tower_damage": 1012,
+      "capture_sha256": "09952baac13884baa0dc97f00fa42d70acb27cf5f958973f04aa1b3659149160",
+      "capture": "Giant-Cannon-1.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": [
+        5.5,
+        18.5
+      ],
+      "native_tower_damage": 1012,
+      "capture_sha256": "c1cadc85931ed82c3c1988bd8d27ea6dd778b5967a053760919f808714751482",
+      "capture": "Giant-Cannon-2.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": [
+        7.5,
+        19.5
+      ],
+      "native_tower_damage": 759,
+      "capture_sha256": "6fc4f55fe39e2e427d55d87ec20d5ce1ec1e46fe84b7fb629663ef3cb4df7ddf",
+      "capture": "Giant-Cannon-3.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": [
+        9.5,
+        20.5
+      ],
+      "native_tower_damage": 506,
+      "capture_sha256": "6c7292db970c53edcb3d5936cc75c804b379d54f7671d2c53b7d0f21eaca2306",
+      "capture": "Giant-Cannon-4.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": [
+        11.5,
+        21.5
+      ],
+      "native_tower_damage": 1771,
+      "capture_sha256": "4b02e0e50d38d399b39aa031be67f0318bdce70ec8b5534441a488be523969f0",
+      "capture": "Giant-Cannon-5.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": [
+        13.5,
+        18.5
+      ],
+      "native_tower_damage": 1771,
+      "capture_sha256": "7d380ccb657b8f490260e57a9dc55c86f5552af5de5baa7c4b72616855f0d41c",
+      "capture": "Giant-Cannon-6.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": null,
+      "native_tower_damage": 1771,
+      "capture_sha256": "e1c8a056dd78fcf05242bddffbe9c8d9caa279200c35423c9ec502ee16785d21",
+      "capture": "Giant-Tesla-0.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": [
+        3.5,
+        18.5
+      ],
+      "native_tower_damage": 759,
+      "capture_sha256": "f31346eb7b946677cc77556c5e020c2b515dc3633fdf3a089b73727d007a635e",
+      "capture": "Giant-Tesla-1.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": [
+        5.5,
+        18.5
+      ],
+      "native_tower_damage": 759,
+      "capture_sha256": "aeef5abda87be294ddfbb5b984f8aa4ea2e1683e1955a95b3d1f3509aca83ecd",
+      "capture": "Giant-Tesla-2.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": [
+        7.5,
+        19.5
+      ],
+      "native_tower_damage": 759,
+      "capture_sha256": "8668e45a607c46321f0781fe805a9821f16d497a72a57a19d382096858a609b0",
+      "capture": "Giant-Tesla-3.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": [
+        9.5,
+        20.5
+      ],
+      "native_tower_damage": 759,
+      "capture_sha256": "8e7c7992592f82fe5113f2d32c85377b286ce4de652f12e539e7dd3067e01167",
+      "capture": "Giant-Tesla-4.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": [
+        11.5,
+        21.5
+      ],
+      "native_tower_damage": 1771,
+      "capture_sha256": "f180963ffa325464ab969c27acd5583c166d6dde27b7c0e19842674681c0767b",
+      "capture": "Giant-Tesla-5.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": [
+        13.5,
+        18.5
+      ],
+      "native_tower_damage": 1771,
+      "capture_sha256": "f1aab352d362787d323833e677044b244cce06b6785a833ef7e901aea2810eef",
+      "capture": "Giant-Tesla-6.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Cannon",
+      "placement": null,
+      "native_tower_damage": 4226,
+      "capture_sha256": "94c0671ad2620d1ae9208b94177b19bfb6992924cbf79076899fd7f90fc476d1",
+      "capture": "Prince-Cannon-0.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Cannon",
+      "placement": [
+        3.5,
+        18.5
+      ],
+      "native_tower_damage": 2738,
+      "capture_sha256": "e4a51d29a56b5c488344bbdd087e7079df882eb592bed5529a7b1412c6183a8c",
+      "capture": "Prince-Cannon-1.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Cannon",
+      "placement": [
+        5.5,
+        18.5
+      ],
+      "native_tower_damage": 2738,
+      "capture_sha256": "c495ab0e3253cd553c697a445599a20095fde93c92c6c586f7cfd3a445384e13",
+      "capture": "Prince-Cannon-2.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Cannon",
+      "placement": [
+        7.5,
+        19.5
+      ],
+      "native_tower_damage": 1956,
+      "capture_sha256": "a8a7d83e0cdaad7fe0831233ca14c572b92170a068e982192379636ed6b7e33f",
+      "capture": "Prince-Cannon-3.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Cannon",
+      "placement": [
+        9.5,
+        20.5
+      ],
+      "native_tower_damage": 2738,
+      "capture_sha256": "e8a8c288a16c14435b9062dd565174a78e0aeb7047ad5ff2a621c6a1116f1758",
+      "capture": "Prince-Cannon-4.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Cannon",
+      "placement": [
+        11.5,
+        21.5
+      ],
+      "native_tower_damage": 4226,
+      "capture_sha256": "d467f5f3284b0e837cb94836a7f383d9f4865857321ff0ae1c27b34703e4eb2f",
+      "capture": "Prince-Cannon-5.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Cannon",
+      "placement": [
+        13.5,
+        18.5
+      ],
+      "native_tower_damage": 4226,
+      "capture_sha256": "f47d632ebb326ae9abb66f98e079fd18c8a1cf90ee7652736dc1b15ea51037a8",
+      "capture": "Prince-Cannon-6.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Tesla",
+      "placement": null,
+      "native_tower_damage": 4226,
+      "capture_sha256": "8ac0e66770724400ba9c8234f88bfefdf21e3de22c056e9d7c059f2c1c3fbb0a",
+      "capture": "Prince-Tesla-0.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Tesla",
+      "placement": [
+        3.5,
+        18.5
+      ],
+      "native_tower_damage": 1956,
+      "capture_sha256": "55ad6757c8f4ed9df246baff938d81ba15607d335473837860e8fb7893a20853",
+      "capture": "Prince-Tesla-1.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Tesla",
+      "placement": [
+        5.5,
+        18.5
+      ],
+      "native_tower_damage": 1956,
+      "capture_sha256": "e83c12b7e90b3018919b04d90d14950c34219c9b5b4e55384dcc304ded572472",
+      "capture": "Prince-Tesla-2.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Tesla",
+      "placement": [
+        7.5,
+        19.5
+      ],
+      "native_tower_damage": 783,
+      "capture_sha256": "3f61f9203e4c56a6149079eb9244a4ff46c18dd4b3f73a9ea85ee6c800afb732",
+      "capture": "Prince-Tesla-3.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Tesla",
+      "placement": [
+        9.5,
+        20.5
+      ],
+      "native_tower_damage": 1565,
+      "capture_sha256": "812c3844f3ed434c9bcae9c4cc60b7ab08f3f821256380e1fbe63cfcca4ab78d",
+      "capture": "Prince-Tesla-4.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Tesla",
+      "placement": [
+        11.5,
+        21.5
+      ],
+      "native_tower_damage": 4226,
+      "capture_sha256": "4ab074c88757d65f34c1164f7193141f3da34eb605be59aee933f23a62dd822e",
+      "capture": "Prince-Tesla-5.json"
+    },
+    {
+      "attacker": "Prince",
+      "defender": "Tesla",
+      "placement": [
+        13.5,
+        18.5
+      ],
+      "native_tower_damage": 4226,
+      "capture_sha256": "a1fda0c119b58384b4827681d8f34748f647af8d6b89ef9762559e74e726a2fc",
+      "capture": "Prince-Tesla-6.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": null,
+      "native_tower_damage": 3305,
+      "end_tick": 891,
+      "capture_sha256": "8dc0105d626da6ba9fb09d143479e47903a42988dda3f6603d680efbe80f6490",
+      "capture": "giant-longer/Giant-Cannon-0.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": [
+        3.5,
+        18.5
+      ],
+      "native_tower_damage": 2783,
+      "end_tick": 891,
+      "capture_sha256": "4165673fb637af88837c945d551ee38cebf4ecced5f770b953b0f379203a6c6c",
+      "capture": "giant-longer/Giant-Cannon-1.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": [
+        5.5,
+        18.5
+      ],
+      "native_tower_damage": 1771,
+      "end_tick": 891,
+      "capture_sha256": "e93d8c6d60be9448baadcbafeba54ca06de0bd324b3bc43ad94cf9283f921dd5",
+      "capture": "giant-longer/Giant-Cannon-2.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": [
+        7.5,
+        19.5
+      ],
+      "native_tower_damage": 1012,
+      "end_tick": 891,
+      "capture_sha256": "f41bc5e1c73a200bc90771fe5b1e26081694a6a23ce346d6c8ecae4aad2239f1",
+      "capture": "giant-longer/Giant-Cannon-3.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": [
+        9.5,
+        20.5
+      ],
+      "native_tower_damage": 759,
+      "end_tick": 891,
+      "capture_sha256": "389af2ba6a71ab0e26962fb948b028c6d3ed976f7154059a8166c141cef5db81",
+      "capture": "giant-longer/Giant-Cannon-4.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": [
+        11.5,
+        21.5
+      ],
+      "native_tower_damage": 3305,
+      "end_tick": 891,
+      "capture_sha256": "4f4ef439a4f5d3ad6ca750e03b79c0a7a03dfe8e9548b5c8aa7624fc88b914a2",
+      "capture": "giant-longer/Giant-Cannon-5.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Cannon",
+      "placement": [
+        13.5,
+        18.5
+      ],
+      "native_tower_damage": 3305,
+      "end_tick": 891,
+      "capture_sha256": "287412aed910f831cba52a8bff726dc70a7a46b2cd6b1b84ad76229448c47d1b",
+      "capture": "giant-longer/Giant-Cannon-6.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": null,
+      "native_tower_damage": 3305,
+      "end_tick": 891,
+      "capture_sha256": "8f82919068ca4946f86b3276d27c1a924b9880bda46727e1a2ff0d9d0cdea7e7",
+      "capture": "giant-longer/Giant-Tesla-0.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": [
+        3.5,
+        18.5
+      ],
+      "native_tower_damage": 2277,
+      "end_tick": 891,
+      "capture_sha256": "93aa07d2b5dbd22c38f380dfc5388cf812cd1d8520b961335f1160a41e808946",
+      "capture": "giant-longer/Giant-Tesla-1.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": [
+        5.5,
+        18.5
+      ],
+      "native_tower_damage": 2277,
+      "end_tick": 891,
+      "capture_sha256": "da6b0d761293b01d7f71c20dba16275a07370e4e41ed91c066ff83dfd6f49e26",
+      "capture": "giant-longer/Giant-Tesla-2.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": [
+        7.5,
+        19.5
+      ],
+      "native_tower_damage": 759,
+      "end_tick": 891,
+      "capture_sha256": "660f82522f962259e69665401d81dbafa9432406f83a7122f2e97139f07ad8ea",
+      "capture": "giant-longer/Giant-Tesla-3.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": [
+        9.5,
+        20.5
+      ],
+      "native_tower_damage": 759,
+      "end_tick": 891,
+      "capture_sha256": "8670fe8ed70126687bd3787517064c6a63fdd4beb2e56da31c459f6df6499fdb",
+      "capture": "giant-longer/Giant-Tesla-4.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": [
+        11.5,
+        21.5
+      ],
+      "native_tower_damage": 3305,
+      "end_tick": 891,
+      "capture_sha256": "a8ae7e4035c30f3073fa83000f27588d88ec3a6696aaacc79506fe010c897d4d",
+      "capture": "giant-longer/Giant-Tesla-5.json"
+    },
+    {
+      "attacker": "Giant",
+      "defender": "Tesla",
+      "placement": [
+        13.5,
+        18.5
+      ],
+      "native_tower_damage": 3305,
+      "end_tick": 891,
+      "capture_sha256": "52fd86846f484a0a8ab95b1a288b88d9f25bfcee0d68a2e4da18e13b746aca34",
+      "capture": "giant-longer/Giant-Tesla-6.json"
+    }
+  ]
+}

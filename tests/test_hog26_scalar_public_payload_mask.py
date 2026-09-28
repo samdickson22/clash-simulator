@@ -95,7 +95,9 @@ def test_all_tiles_match_scalar_payload_occupancy_for_visible_own_and_enemy_bodi
                 mover_radius=stats.collision_radius or 0.5,
             )
             index = slot * 576 + tile
-            assert bool(actual[0, viewer, index]) == (bool(base[0, viewer, index]) and not occupied)
+            assert bool(actual[0, viewer, index]) == (bool(base[0, viewer, index]) and not occupied), (
+                viewer, owner, token, name, position
+            )
     assert torch.equal(actual[..., 2304:], base[..., 2304:])
 
 
@@ -178,9 +180,45 @@ def test_static_radius_change_changes_rule_authority(setup):
     assert changed.payload_sha256 != provider.rules.payload_sha256
 
 
+def test_anchor_resolution_is_frozen_and_changes_semantic_authority(setup, monkeypatch):
+    import scripts.hog26_scalar_public_payload_mask as module
+
+    builder, provider = setup
+    actor = actor_fixture(builder, provider, 60)
+    original = provider.build(actor)
+    original_anchor = module.building_anchor
+
+    def shifted_anchor(position, size):
+        resolved = original_anchor(position, size)
+        return Position(resolved.x + 0.001, resolved.y)
+
+    monkeypatch.setattr(module, "building_anchor", shifted_anchor)
+    assert torch.equal(provider.build(actor).masks, original.masks)
+    changed = ScalarPublicPayloadMaskProvider(provider.base_provider, provider.rules)
+    assert changed.semantics_digest != provider.semantics_digest
+    assert changed.semantics["scalar_public_building_anchor_sha256"] != provider.semantics[
+        "scalar_public_building_anchor_sha256"
+    ]
+
+
 def test_irrelevant_effect_payload_columns_cannot_change_placement_mask(setup):
     builder, provider = setup
     actor = actor_fixture(builder, provider, 497)
     before = provider.build(actor).masks
     actor.entity_features[..., 9:] = 99999
     assert torch.equal(provider.build(actor).masks, before)
+
+
+def test_resolved_anchor_masks_keep_batches_and_seats_independent(setup):
+    builder, provider = setup
+    actors = [
+        actor_fixture(builder, provider, 60),
+        actor_fixture(builder, provider, 497, viewer=1, owner=1,
+                      canonical_x=7.0, canonical_y=12.0),
+    ]
+    combined = TensorPublicStructuredObservation(**{
+        field.name: torch.cat([getattr(actor, field.name) for actor in actors], dim=0)
+        for field in fields(TensorPublicStructuredObservation)
+    })
+    expected = torch.cat([provider.build(actor).masks for actor in actors], dim=0)
+    assert torch.equal(provider.build(combined).masks, expected)

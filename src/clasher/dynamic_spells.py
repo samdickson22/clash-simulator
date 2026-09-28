@@ -9,7 +9,7 @@ from typing import Dict, Any, Type
 from .spells import (
     Spell, DirectDamageSpell, ProjectileSpell, SpawnProjectileSpell, 
     AreaEffectSpell, BuffSpell, CloneSpell, HealSpell, RollingProjectileSpell,
-    TornadoSpell, GraveyardSpell, RoyalDeliverySpell
+    TornadoSpell, GraveyardSpell, RoyalDeliverySpell, SummonedAreaSpell, MirrorSpell, RankedStrikeSpell
 )
 from .card_aliases import CARD_NAME_ALIASES
 from .paths import gamedata_path
@@ -24,7 +24,7 @@ from .kinematics import (
     logic_speed_to_tiles_per_second,
 )
 from .logic_math import native_percent_damage
-from .stat_scaling import scale_stat
+from .stat_scaling import level_multiplier, scale_stat
 
 
 def _percent_to_multiplier(percent: Any, default: float = 1.0) -> float:
@@ -36,24 +36,55 @@ def _percent_to_multiplier(percent: Any, default: float = 1.0) -> float:
         return default
 
 
-def _spell_damage(name: str, raw_damage: Any) -> float:
-    current = tournament_spell_stat(name, "damage")
-    if current is not None:
+def _checked_level_override(
+    name: str, field: str, raw_value: float, level: int, tournament_raw_value: float
+) -> float:
+    """Preserve measured overrides; do not extrapolate contradictory raw data."""
+    current = tournament_spell_stat(name, field)
+    if current is None:
+        return raw_value
+    if level == TOURNAMENT_LEVEL:
         return float(current)
-    return float(scale_stat(raw_damage or 0, TOURNAMENT_LEVEL) or 0)
+    if current != tournament_raw_value:
+        raise ValueError(
+            f"{name} level {level} needs a reconciled {field} override "
+            f"(Level 11 raw={tournament_raw_value}, override={current})"
+        )
+    return raw_value
+
+
+def _spell_damage(
+    name: str, raw_damage: Any, *, level: int = TOURNAMENT_LEVEL
+) -> float:
+    return _checked_level_override(
+        name,
+        "damage",
+        float(scale_stat(raw_damage or 0, level) or 0),
+        level,
+        float(scale_stat(raw_damage or 0, TOURNAMENT_LEVEL) or 0),
+    )
 
 
 def _periodic_spell_damage(
     name: str,
     raw_damage_per_second: Any,
     tick_interval: float,
+    *,
+    level: int = TOURNAMENT_LEVEL,
 ) -> float:
-    """Resolve one native periodic hit, scaling DPS before truncating time."""
-    current = tournament_spell_stat(name, "damage")
-    if current is not None:
-        return float(current)
-    scaled_dps = scale_stat(raw_damage_per_second or 0, TOURNAMENT_LEVEL) or 0
-    return float(int(scaled_dps * tick_interval + 1e-9))
+    """Scale serialized DPS before truncating each periodic hit."""
+
+    def hit(at_level: int) -> float:
+        return float(
+            int(
+                (scale_stat(raw_damage_per_second or 0, at_level) or 0) * tick_interval
+                + 1e-9
+            )
+        )
+
+    return _checked_level_override(
+        name, "damage", hit(level), level, hit(TOURNAMENT_LEVEL)
+    )
 
 
 def _completed_periodic_hits(duration: float, tick_interval: float) -> int:
@@ -63,22 +94,30 @@ def _completed_periodic_hits(duration: float, tick_interval: float) -> int:
     return max(0, int((duration + 1e-9) / tick_interval))
 
 
-def _spell_aux_damage(name: str, field: str, fallback: float | None = None) -> float | None:
+def _spell_aux_damage(
+    name: str,
+    field: str,
+    fallback: float | None = None,
+    *,
+    level: int = TOURNAMENT_LEVEL,
+) -> float | None:
     current = tournament_spell_stat(name, field)
-    return float(current) if current is not None else fallback
-
-
-def _crown_damage(name: str, damage: float, percent: Any) -> float:
-    current = tournament_spell_stat(name, "crown_tower_damage")
     if current is not None:
+        if level != TOURNAMENT_LEVEL:
+            raise ValueError(
+                f"{name} level {level} needs a reconciled {field} override"
+            )
         return float(current)
-    return float(
-        native_percent_damage(
-            damage,
-            _percent_to_multiplier(percent),
-        )
-    )
+    return fallback
 
+
+def _crown_damage(
+    name: str, damage: float, percent: Any, *, level: int = TOURNAMENT_LEVEL
+) -> float:
+    current = tournament_spell_stat(name, "crown_tower_damage")
+    if current is not None and level == TOURNAMENT_LEVEL:
+        return float(current)
+    return float(native_percent_damage(damage, _percent_to_multiplier(percent)))
 
 def _repeated_spawn_action_group(
     area_data: Dict[str, Any],
@@ -133,6 +172,8 @@ def determine_spell_type(spell_data: Dict[str, Any]) -> Type[Spell]:
     spell_name = spell_data.get('name', '')
 
     area_data = spell_data.get("areaEffectObjectData", {})
+    if area_data.get("targetSelection") == "highest_hitpoints":
+        return RankedStrikeSpell
     area_buff = area_data.get("buffData", {})
     if area_buff.get("attractPercentage") is not None:
         return TornadoSpell
@@ -144,6 +185,10 @@ def determine_spell_type(spell_data: Dict[str, Any]) -> Type[Spell]:
         return RoyalDeliverySpell
     if _repeated_spawn_action_group(area_data) is not None:
         return GraveyardSpell
+
+    carrier = spell_data.get("summonCharacterData") or {}
+    if carrier.get("deathAreaEffectData") and not carrier.get("hitpoints"):
+        return SummonedAreaSpell
 
     # Check for projectile spells
     if 'projectileData' in spell_data:
@@ -199,7 +244,7 @@ def determine_spell_type(spell_data: Dict[str, Any]) -> Type[Spell]:
     
     # Special cases by name
     if spell_name in ['Mirror']:
-        return DirectDamageSpell  # Special handling in battle logic
+        return MirrorSpell
     
     # Default fallback
     return DirectDamageSpell
@@ -208,8 +253,28 @@ def determine_spell_type(spell_data: Dict[str, Any]) -> Type[Spell]:
 def create_spell_from_json(
     spell_data: Dict[str, Any],
     object_registry: Dict[str, Dict[str, Any]] | None = None,
+    *, level: int = TOURNAMENT_LEVEL,
 ) -> Spell:
-    """Create a spell instance from JSON data."""
+    """Create an independent spell at the requested level.
+
+    Non-tournament construction rejects stale raw damage overrides and spell
+    types whose level inheritance is not implemented yet.
+    """
+    level_multiplier(level)  # Validate even spells without damage.
+    if level != TOURNAMENT_LEVEL:
+        baseline = create_spell_from_json(spell_data, object_registry)
+        crown = getattr(baseline, "crown_tower_damage", None)
+        multiplier = getattr(baseline, "crown_tower_damage_multiplier", None)
+        base_damage = getattr(baseline, "damage_per_hit", baseline.damage)
+        if (
+            crown is not None
+            and multiplier is not None
+            and crown != native_percent_damage(base_damage, multiplier)
+        ):
+            raise ValueError(f"{baseline.name} level {level} needs a reconciled crown damage override")
+        if isinstance(baseline, (CloneSpell, HealSpell)) or baseline.name == "Mirror":
+            raise ValueError(f"{baseline.name} level {level} inheritance is not implemented")
+
     spell_type = determine_spell_type(spell_data)
     name = spell_data.get('name', 'Unknown')
     mana_cost = spell_data.get('manaCost', 1)
@@ -218,6 +283,32 @@ def create_spell_from_json(
     # it is not a placement-zone flag.  Territory follows payload mechanics:
     # lane rollers and delayed friendly-side deliveries use troop territory.
     requires_territory = spell_type in {RollingProjectileSpell, RoyalDeliverySpell}
+
+    if spell_type == RankedStrikeSpell:
+        area = spell_data["areaEffectObjectData"]
+        projectile = area["projectileData"]
+        damage = _spell_damage(name, projectile.get("damage", 0), level=level)
+        hits_air, hits_ground = serialized_hit_planes(area)
+        return RankedStrikeSpell(
+            name=name, mana_cost=mana_cost, level=level, damage=damage,
+            radius=float(area.get("radius", 0)) / 1000,
+            max_targets=int(area["maxTargets"]),
+            duration=float(area.get("lifeDuration", 0)) / 1000,
+            strike_interval=max(0.05, float(area.get("hitSpeed", 0)) / 1000),
+            stun_duration=float(projectile.get("buffTime", 0)) / 1000,
+            crown_tower_damage=_crown_damage(name, damage, projectile.get("crownTowerDamagePercent"), level=level),
+            crown_tower_damage_multiplier=_percent_to_multiplier(projectile.get("crownTowerDamagePercent")),
+            hits_air=hits_air, hits_ground=hits_ground,
+        )
+
+    if spell_type == MirrorSpell:
+        return MirrorSpell(name=name, mana_cost=mana_cost, level=level)
+
+    if spell_type == SummonedAreaSpell:
+        return SummonedAreaSpell(
+            name=name, mana_cost=mana_cost, radius=radius, level=level,
+            character_data=spell_data["summonCharacterData"],
+        )
 
     area_payload = spell_data.get("areaEffectObjectData", {})
     periodic_buff = area_payload.get("buffData", {})
@@ -246,6 +337,7 @@ def create_spell_from_json(
             name,
             buff_data.get("damagePerSecond", 0),
             tick_interval,
+            level=level,
         )
         return AreaEffectSpell(
             name=name,
@@ -260,7 +352,7 @@ def create_spell_from_json(
             affects_hidden=bool(area_data.get("affectsHidden", False)),
             crown_tower_damage_multiplier=_percent_to_multiplier(buff_data.get("crownTowerDamagePercent")),
             building_damage_multiplier=building_damage_multiplier,
-            crown_tower_damage=_crown_damage(name, damage, buff_data.get("crownTowerDamagePercent")),
+            crown_tower_damage=_crown_damage(name, damage, buff_data.get("crownTowerDamagePercent"), level=level),
             building_damage=_spell_aux_damage(
                 name,
                 "building_damage",
@@ -270,6 +362,7 @@ def create_spell_from_json(
                         building_damage_multiplier,
                     )
                 ),
+                level=level,
             ),
             damage_tick_interval=tick_interval,
             max_damage_ticks=(
@@ -291,6 +384,7 @@ def create_spell_from_json(
             periodic_damage_buff_duration=(
                 float(area_data.get("buffTime", 0) or 0) / 1000.0
             ),
+            level=level,
         )
 
     if spell_type == TornadoSpell:
@@ -306,6 +400,7 @@ def create_spell_from_json(
             name,
             buff_data.get("damagePerSecond", 0),
             tick_interval,
+            level=level,
         )
         return TornadoSpell(
             name=name,
@@ -325,7 +420,7 @@ def create_spell_from_json(
             hits_ground=hits_ground,
             affects_hidden=bool(area_data.get("affectsHidden", False)),
             crown_tower_damage_multiplier=_percent_to_multiplier(buff_data.get("crownTowerDamagePercent")),
-            crown_tower_damage=_crown_damage(name, damage, buff_data.get("crownTowerDamagePercent")),
+            crown_tower_damage=_crown_damage(name, damage, buff_data.get("crownTowerDamagePercent"), level=level),
             damage_tick_interval=tick_interval,
             initial_damage_delay=tick_interval + effect_tick_interval,
             max_damage_ticks=_completed_periodic_hits(duration, tick_interval),
@@ -336,6 +431,7 @@ def create_spell_from_json(
             controlled_by_parent=bool(
                 buff_data.get("controlledByParent", False)
             ),
+            level=level,
         )
 
     if spell_type == GraveyardSpell:
@@ -401,13 +497,14 @@ def create_spell_from_json(
                 spawn_actions[0].get("spawnCharacterData")
                 or (object_registry or {}).get(spawn_character)
             ),
+            level=level,
         )
 
     if spell_type == RoyalDeliverySpell:
         area_data = spell_data.get("areaEffectObjectData", {})
         projectile_data = area_data.get("projectileData", {})
         spawn_character_data = projectile_data.get("spawnCharacterData", {})
-        damage = _spell_damage(name, projectile_data.get("damage", 0))
+        damage = _spell_damage(name, projectile_data.get("damage", 0), level=level)
         return RoyalDeliverySpell(
             name=name,
             mana_cost=mana_cost,
@@ -430,12 +527,13 @@ def create_spell_from_json(
             spawn_character=spawn_character_data.get("name", "DeliveryRecruit"),
             spawn_character_data=spawn_character_data,
             ignore_buildings=bool(area_data.get("ignoreBuildings", False)),
+            level=level,
         )
 
     if spell_type == ProjectileSpell:
         proj_data = spell_data['projectileData']
         target_buff = proj_data.get("targetBuffData", {})
-        damage = _spell_damage(name, proj_data.get('damage', 0))
+        damage = _spell_damage(name, proj_data.get('damage', 0), level=level)
         projectile_count = int(spell_data.get("multipleProjectiles", 1) or 1)
         return ProjectileSpell(
             name=name,
@@ -455,7 +553,7 @@ def create_spell_from_json(
                 / 100.0,
             ),
             crown_tower_damage_multiplier=_percent_to_multiplier(proj_data.get("crownTowerDamagePercent")),
-            crown_tower_damage=_crown_damage(name, damage, proj_data.get("crownTowerDamagePercent")),
+            crown_tower_damage=_crown_damage(name, damage, proj_data.get("crownTowerDamagePercent"), level=level),
             damage_waves=int(spell_data.get("projectileWaves", 1) or 1),
             damage_wave_interval=float(spell_data.get("projectileWaveInterval", 0) or 0) / 1000.0,
             multiple_projectiles=projectile_count,
@@ -465,11 +563,12 @@ def create_spell_from_json(
                 if projectile_count > 1
                 else "native_radial"
             ),
+            level=level,
         )
     
     elif spell_type == SpawnProjectileSpell:
         proj_data = spell_data['projectileData']
-        damage = _spell_damage(name, proj_data.get('damage', 0))
+        damage = _spell_damage(name, proj_data.get('damage', 0), level=level)
         return SpawnProjectileSpell(
             name=name,
             mana_cost=mana_cost,
@@ -490,6 +589,7 @@ def create_spell_from_json(
                 if proj_data.get("spawnCharacterDeployTime") is not None
                 else None
             ),
+            level=level,
         )
     
     elif spell_type == AreaEffectSpell:
@@ -500,7 +600,7 @@ def create_spell_from_json(
         effect_tick_interval = (
             float(area_data.get("hitSpeed", 50) or 50) / 1000.0
         )
-        damage = _spell_damage(name, area_data.get('damage', 0))
+        damage = _spell_damage(name, area_data.get('damage', 0), level=level)
         return AreaEffectSpell(
             name=name,
             mana_cost=mana_cost,
@@ -520,6 +620,7 @@ def create_spell_from_json(
                 name,
                 damage,
                 area_data.get("crownTowerDamagePercent", buff_data.get("crownTowerDamagePercent")),
+                level=level,
             ),
             max_damage_ticks=1 if damage > 0 else 0,
             damage_on_spawn=damage > 0,
@@ -527,6 +628,7 @@ def create_spell_from_json(
             cap_buff_time_to_effect=bool(
                 area_data.get("capBuffTimeToAreaEffectTime", False)
             ),
+            level=level,
         )
     
     elif spell_type == DirectDamageSpell:
@@ -535,7 +637,7 @@ def create_spell_from_json(
             area_data = spell_data['areaEffectObjectData']
             buff_data = area_data.get("buffData", {})
             hits_air, hits_ground = serialized_hit_planes(area_data)
-            damage = _spell_damage(name, area_data.get('damage', 0))
+            damage = _spell_damage(name, area_data.get('damage', 0), level=level)
             radius = area_data.get('radius', 0) / 1000.0
             buff_duration = float(area_data.get("buffTime", 0) or 0) / 1000.0
             speed_percent = float(buff_data.get("speedMultiplier", 0) or 0)
@@ -550,7 +652,7 @@ def create_spell_from_json(
             buff_duration = 0.0
             speed_percent = 0.0
             freezes_actions = False
-            damage = _spell_damage(name, spell_data.get('damage', 0))
+            damage = _spell_damage(name, spell_data.get('damage', 0), level=level)
         
         return DirectDamageSpell(
             name=name,
@@ -571,7 +673,9 @@ def create_spell_from_json(
                 name,
                 damage,
                 area_data.get("crownTowerDamagePercent"),
+                level=level,
             ),
+            level=level,
         )
     
     elif spell_type == CloneSpell:
@@ -581,13 +685,14 @@ def create_spell_from_json(
             radius=radius,
             damage=0,
             requires_territory=requires_territory,
+            level=level,
         )
     
     elif spell_type == RollingProjectileSpell:
         proj_data = spell_data['projectileData']
         spawn_proj_data = proj_data.get('spawnProjectileData', {})
         
-        damage = _spell_damage(name, spawn_proj_data.get('damage', 0))
+        damage = _spell_damage(name, spawn_proj_data.get('damage', 0), level=level)
         return RollingProjectileSpell(
             name=name,
             mana_cost=mana_cost,
@@ -619,7 +724,8 @@ def create_spell_from_json(
                 spawn_proj_data.get("pushbackAll", False)
             ),
             crown_tower_damage_multiplier=_percent_to_multiplier(spawn_proj_data.get("crownTowerDamagePercent")),
-            crown_tower_damage=_crown_damage(name, damage, spawn_proj_data.get("crownTowerDamagePercent")),
+            crown_tower_damage=_crown_damage(name, damage, spawn_proj_data.get("crownTowerDamagePercent"), level=level),
+            level=level,
         )
     
     elif spell_type == HealSpell:
@@ -635,7 +741,8 @@ def create_spell_from_json(
             mana_cost=mana_cost,
             radius=proj_data.get('radius', 0) / 1000.0,
             damage=0,
-            heal_amount=heal_amount
+            heal_amount=heal_amount,
+            level=level,
         )
     
     # Default fallback
@@ -645,6 +752,7 @@ def create_spell_from_json(
         radius=radius,
         damage=0,
         requires_territory=requires_territory,
+        level=level,
     )
 
 

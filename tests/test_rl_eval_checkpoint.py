@@ -8,17 +8,18 @@ from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.structured_obs import StructuredObservationBuilder
 
 
-def test_checkpoint_loader_preserves_semantics_and_lane_contract(tmp_path) -> None:
+@pytest.mark.parametrize("version", [3, 4])
+def test_checkpoint_loader_preserves_semantics_and_lane_contract(tmp_path, version) -> None:
     builder = StructuredObservationBuilder(
-        card_vocab=["Knight"],
+        card_vocab=["Knight", "Archers", "Cannon"],
         max_entities=8,
-        card_semantics_version=3,
+        card_semantics_version=version,
         canonical_lane_globals=True,
     )
     config = PolicyConfig(
         num_tokens=builder.spec.num_tokens,
         max_entities=8,
-        card_semantics_version=3,
+        card_semantics_version=version,
         canonical_lane_globals=True,
         d_model=16,
         num_heads=4,
@@ -42,9 +43,17 @@ def test_checkpoint_loader_preserves_semantics_and_lane_contract(tmp_path) -> No
         path, device=torch.device("cpu"), decks_path="decks.json"
     )
 
-    assert loaded.builder.card_semantics_version == 3
+    assert loaded.builder.card_semantics_version == version
     assert loaded.builder.canonical_lane_globals is True
     assert loaded.model.config == config
+    archer = loaded.builder.token_id("Archers")
+    cannon = loaded.builder.token_id("Cannon")
+    assert loaded.builder.card_stat_features[archer, 15] == (1 if version == 4 else 0)
+    assert loaded.builder.card_stat_features[cannon, -1] == pytest.approx(0.65 if version == 4 else 0)
+    torch.testing.assert_close(
+        loaded.model.actor_encoder.card_stat_features,
+        model.actor_encoder.card_stat_features,
+    )
 
 
 def test_evaluation_opponent_contract_fails_before_runtime() -> None:

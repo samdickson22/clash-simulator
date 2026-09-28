@@ -1,0 +1,81 @@
+{
+  "scope": "Conditional native Giant/Cannon collision, opened development seed1293401. Other units were out of collision reach. No latent-state reconstruction claim.",
+  "source_sha256": "a049100b3ebc54c60aae12be09b855925f757dd0f3ab9be8a910b039d0a0ab01",
+  "native_stats_sha256": "c1c6188e5baeab2df0b6a5375570e2af9d8c8a43369918542d7a087096f6f643",
+  "native_code_sha256": "378fd30d3252ce494674bad385ba0d5f617024b8d765f8d308cfbe2a96ea5a79",
+  "giant_xy": [
+    2697,
+    19419
+  ],
+  "cannon_xy": [
+    2500,
+    19500
+  ],
+  "giant_mass": 18,
+  "cannon_mass": 13,
+  "frames": [
+    {
+      "elapsed_tick": 1,
+      "xy": [
+        2835,
+        19363
+      ]
+    },
+    {
+      "elapsed_tick": 2,
+      "xy": [
+        2973,
+        19307
+      ]
+    },
+    {
+      "elapsed_tick": 3,
+      "xy": [
+        3111,
+        19251
+      ]
+    },
+    {
+      "elapsed_tick": 4,
+      "xy": [
+        3250,
+        19195
+      ]
+    },
+    {
+      "elapsed_tick": 5,
+      "xy": [
+        3389,
+        19139
+      ]
+    },
+    {
+      "elapsed_tick": 6,
+      "xy": [
+        3483,
+        19101
+      ]
+    },
+    {
+      "elapsed_tick": 7,
+      "xy": [
+        3509,
+        19091
+      ]
+    },
+    {
+      "elapsed_tick": 8,
+      "xy": [
+        3517,
+        19088
+      ]
+    },
+    {
+      "elapsed_tick": 9,
+      "xy": [
+        3519,
+        19087
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3441 @@
+{
+  "source": "reports/native_knight_body_divergence_20260915/spirit-object-phase-controls.json",
+  "cases": [
+    {
+      "spirit": "IceSpirit",
+      "frames": [
+        {
+          "tick": 61,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 768
+        },
+        {
+          "tick": 62,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 767
+        },
+        {
+          "tick": 63,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 766
+        },
+        {
+          "tick": 64,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 764
+        },
+        {
+          "tick": 65,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 763
+        },
+        {
+          "tick": 66,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 761
+        },
+        {
+          "tick": 67,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 760
+        },
+        {
+          "tick": 68,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 759
+        },
+        {
+          "tick": 69,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 757
+        },
+        {
+          "tick": 70,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 756
+        },
+        {
+          "tick": 71,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 755
+        },
+        {
+          "tick": 72,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 753
+        },
+        {
+          "tick": 73,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 752
+        },
+        {
+          "tick": 74,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 751
+        },
+        {
+          "tick": 75,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 749
+        },
+        {
+          "tick": 76,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 748
+        },
+        {
+          "tick": 77,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 746
+        },
+        {
+          "tick": 78,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 745
+        },
+        {
+          "tick": 79,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 744
+        },
+        {
+          "tick": 80,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 742
+        },
+        {
+          "tick": 81,
+          "xy": [
+            3481,
+            18443
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3415,
+              11584
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 741
+        },
+        {
+          "tick": 82,
+          "xy": [
+            3470,
+            18385
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              3331,
+              11668
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 740
+        },
+        {
+          "tick": 83,
+          "xy": [
+            3459,
+            18327
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              3247,
+              11752
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 738
+        },
+        {
+          "tick": 84,
+          "xy": [
+            3448,
+            18269
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              3163,
+              11836
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 737
+        },
+        {
+          "tick": 85,
+          "xy": [
+            3437,
+            18211
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              3079,
+              11920
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 735
+        },
+        {
+          "tick": 86,
+          "xy": [
+            3430,
+            18152
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2995,
+              12004
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 734
+        },
+        {
+          "tick": 87,
+          "xy": [
+            3423,
+            18093
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2911,
+              12088
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 733
+        },
+        {
+          "tick": 88,
+          "xy": [
+            3416,
+            18034
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2827,
+              12172
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 731
+        },
+        {
+          "tick": 89,
+          "xy": [
+            3409,
+            17975
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2743,
+              12256
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 730
+        },
+        {
+          "tick": 90,
+          "xy": [
+            3402,
+            17916
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2691,
+              12363
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 729
+        },
+        {
+          "tick": 91,
+          "xy": [
+            3395,
+            17857
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2655,
+              12477
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 727
+        },
+        {
+          "tick": 92,
+          "xy": [
+            3388,
+            17798
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2619,
+              12591
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 726
+        },
+        {
+          "tick": 93,
+          "xy": [
+            3381,
+            17739
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2583,
+              12705
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 724
+        },
+        {
+          "tick": 94,
+          "xy": [
+            3376,
+            17680
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2547,
+              12819
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 723
+        },
+        {
+          "tick": 95,
+          "xy": [
+            3371,
+            17621
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2523,
+              12936
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 722
+        },
+        {
+          "tick": 96,
+          "xy": [
+            3366,
+            17562
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2445,
+              13026
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 720
+        },
+        {
+          "tick": 97,
+          "xy": [
+            3361,
+            17503
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2415,
+              13141
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 719
+        },
+        {
+          "tick": 98,
+          "xy": [
+            3356,
+            17444
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2398,
+              13259
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 718
+        },
+        {
+          "tick": 99,
+          "xy": [
+            3351,
+            17385
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2425,
+              13375
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 716
+        },
+        {
+          "tick": 100,
+          "xy": [
+            3346,
+            17326
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2375,
+              13483
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 715
+        },
+        {
+          "tick": 101,
+          "xy": [
+            3341,
+            17267
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2356,
+              13601
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 714
+        },
+        {
+          "tick": 102,
+          "xy": [
+            3336,
+            17208
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2346,
+              13720
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 712
+        },
+        {
+          "tick": 103,
+          "xy": [
+            3325,
+            17150
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2336,
+              13839
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 711
+        },
+        {
+          "tick": 104,
+          "xy": [
+            3321,
+            17091
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2312,
+              13956
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 709
+        },
+        {
+          "tick": 105,
+          "xy": [
+            3318,
+            17032
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2312,
+              13956
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 708
+        },
+        {
+          "tick": 106,
+          "xy": [
+            3315,
+            16973
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2312,
+              13956
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 707
+        },
+        {
+          "tick": 107,
+          "xy": [
+            3312,
+            16914
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2312,
+              13956
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 705
+        },
+        {
+          "tick": 108,
+          "xy": [
+            3307,
+            16855
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2312,
+              13956
+            ],
+            "projectile": true
+          },
+          "cannon_hp": 704
+        },
+        {
+          "tick": 109,
+          "xy": [
+            3304,
+            16796
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2443,
+              14333
+            ],
+            "projectile": true
+          },
+          "cannon_hp": 703
+        },
+        {
+          "tick": 110,
+          "xy": [
+            3301,
+            16737
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2577,
+              14709
+            ],
+            "projectile": true
+          },
+          "cannon_hp": 701
+        },
+        {
+          "tick": 111,
+          "xy": [
+            3300,
+            16677
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2714,
+              15084
+            ],
+            "projectile": true
+          },
+          "cannon_hp": 700
+        },
+        {
+          "tick": 112,
+          "xy": [
+            3299,
+            16617
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2856,
+              15457
+            ],
+            "projectile": true
+          },
+          "cannon_hp": 698
+        },
+        {
+          "tick": 113,
+          "xy": [
+            3297,
+            16557
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              3004,
+              15828
+            ],
+            "projectile": true
+          },
+          "cannon_hp": 697
+        },
+        {
+          "tick": 114,
+          "xy": [
+            3295,
+            16497
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              3163,
+              16195
+            ],
+            "projectile": true
+          },
+          "cannon_hp": 696
+        },
+        {
+          "tick": 115,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1252,
+          "spirit": null,
+          "cannon_hp": 694
+        },
+        {
+          "tick": 116,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1252,
+          "spirit": null,
+          "cannon_hp": 693
+        },
+        {
+          "tick": 117,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1252,
+          "spirit": null,
+          "cannon_hp": 692
+        },
+        {
+          "tick": 118,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1252,
+          "spirit": null,
+          "cannon_hp": 690
+        },
+        {
+          "tick": 119,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1252,
+          "spirit": null,
+          "cannon_hp": 689
+        },
+        {
+          "tick": 120,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 687
+        },
+        {
+          "tick": 121,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 686
+        },
+        {
+          "tick": 122,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 685
+        },
+        {
+          "tick": 123,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 683
+        },
+        {
+          "tick": 124,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 682
+        },
+        {
+          "tick": 125,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 681
+        },
+        {
+          "tick": 126,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 679
+        },
+        {
+          "tick": 127,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 678
+        },
+        {
+          "tick": 128,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 677
+        },
+        {
+          "tick": 129,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 675
+        },
+        {
+          "tick": 130,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 674
+        },
+        {
+          "tick": 131,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 672
+        },
+        {
+          "tick": 132,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 671
+        },
+        {
+          "tick": 133,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 670
+        },
+        {
+          "tick": 134,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 668
+        },
+        {
+          "tick": 135,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 667
+        },
+        {
+          "tick": 136,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 666
+        },
+        {
+          "tick": 137,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 664
+        },
+        {
+          "tick": 138,
+          "xy": [
+            3291,
+            16377
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 663
+        },
+        {
+          "tick": 139,
+          "xy": [
+            3289,
+            16317
+          ],
+          "hp": 1050,
+          "spirit": null,
+          "cannon_hp": 661
+        },
+        {
+          "tick": 140,
+          "xy": [
+            3287,
+            16257
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 660
+        },
+        {
+          "tick": 141,
+          "xy": [
+            3285,
+            16197
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 659
+        },
+        {
+          "tick": 142,
+          "xy": [
+            3284,
+            16137
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 657
+        },
+        {
+          "tick": 143,
+          "xy": [
+            3283,
+            16077
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 656
+        },
+        {
+          "tick": 144,
+          "xy": [
+            3282,
+            16017
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 655
+        },
+        {
+          "tick": 145,
+          "xy": [
+            3281,
+            15957
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 653
+        },
+        {
+          "tick": 146,
+          "xy": [
+            3280,
+            15897
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 652
+        },
+        {
+          "tick": 147,
+          "xy": [
+            3279,
+            15837
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 651
+        },
+        {
+          "tick": 148,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 649
+        },
+        {
+          "tick": 149,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 648
+        },
+        {
+          "tick": 150,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 646
+        },
+        {
+          "tick": 151,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 645
+        },
+        {
+          "tick": 152,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 644
+        },
+        {
+          "tick": 153,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 642
+        },
+        {
+          "tick": 154,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 641
+        },
+        {
+          "tick": 155,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 640
+        },
+        {
+          "tick": 156,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 638
+        },
+        {
+          "tick": 157,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 637
+        },
+        {
+          "tick": 158,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 433
+        },
+        {
+          "tick": 159,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 848,
+          "spirit": null,
+          "cannon_hp": 432
+        },
+        {
+          "tick": 160,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 431
+        },
+        {
+          "tick": 161,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 429
+        },
+        {
+          "tick": 162,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 428
+        },
+        {
+          "tick": 163,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 427
+        },
+        {
+          "tick": 164,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 425
+        },
+        {
+          "tick": 165,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 424
+        },
+        {
+          "tick": 166,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 422
+        },
+        {
+          "tick": 167,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 421
+        },
+        {
+          "tick": 168,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 420
+        },
+        {
+          "tick": 169,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 418
+        },
+        {
+          "tick": 170,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 417
+        },
+        {
+          "tick": 171,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 416
+        },
+        {
+          "tick": 172,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 414
+        },
+        {
+          "tick": 173,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 413
+        },
+        {
+          "tick": 174,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 412
+        },
+        {
+          "tick": 175,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 410
+        },
+        {
+          "tick": 176,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 409
+        },
+        {
+          "tick": 177,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 407
+        },
+        {
+          "tick": 178,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 406
+        },
+        {
+          "tick": 179,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 646,
+          "spirit": null,
+          "cannon_hp": 405
+        },
+        {
+          "tick": 180,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 403
+        },
+        {
+          "tick": 181,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 402
+        },
+        {
+          "tick": 182,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 199
+        },
+        {
+          "tick": 183,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 197
+        },
+        {
+          "tick": 184,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 196
+        },
+        {
+          "tick": 185,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 194
+        },
+        {
+          "tick": 186,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 193
+        },
+        {
+          "tick": 187,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 192
+        },
+        {
+          "tick": 188,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 190
+        },
+        {
+          "tick": 189,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 189
+        },
+        {
+          "tick": 190,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 188
+        },
+        {
+          "tick": 191,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 186
+        },
+        {
+          "tick": 192,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 185
+        },
+        {
+          "tick": 193,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 183
+        },
+        {
+          "tick": 194,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 182
+        },
+        {
+          "tick": 195,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 181
+        },
+        {
+          "tick": 196,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 179
+        },
+        {
+          "tick": 197,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 178
+        },
+        {
+          "tick": 198,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 177
+        },
+        {
+          "tick": 199,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 444,
+          "spirit": null,
+          "cannon_hp": 175
+        },
+        {
+          "tick": 200,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 242,
+          "spirit": null,
+          "cannon_hp": 174
+        }
+      ]
+    },
+    {
+      "spirit": "ElectroSpirit",
+      "frames": [
+        {
+          "tick": 61,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 768
+        },
+        {
+          "tick": 62,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 767
+        },
+        {
+          "tick": 63,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 766
+        },
+        {
+          "tick": 64,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 764
+        },
+        {
+          "tick": 65,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 763
+        },
+        {
+          "tick": 66,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 761
+        },
+        {
+          "tick": 67,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 760
+        },
+        {
+          "tick": 68,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 759
+        },
+        {
+          "tick": 69,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 757
+        },
+        {
+          "tick": 70,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 756
+        },
+        {
+          "tick": 71,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 755
+        },
+        {
+          "tick": 72,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 753
+        },
+        {
+          "tick": 73,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 752
+        },
+        {
+          "tick": 74,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 751
+        },
+        {
+          "tick": 75,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 749
+        },
+        {
+          "tick": 76,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 748
+        },
+        {
+          "tick": 77,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 746
+        },
+        {
+          "tick": 78,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 745
+        },
+        {
+          "tick": 79,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 744
+        },
+        {
+          "tick": 80,
+          "xy": [
+            3499,
+            18499
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3499,
+              11500
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 742
+        },
+        {
+          "tick": 81,
+          "xy": [
+            3481,
+            18443
+          ],
+          "hp": 1766,
+          "spirit": {
+            "xy": [
+              3415,
+              11584
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 741
+        },
+        {
+          "tick": 82,
+          "xy": [
+            3470,
+            18385
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              3331,
+              11668
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 740
+        },
+        {
+          "tick": 83,
+          "xy": [
+            3459,
+            18327
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              3247,
+              11752
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 738
+        },
+        {
+          "tick": 84,
+          "xy": [
+            3448,
+            18269
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              3163,
+              11836
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 737
+        },
+        {
+          "tick": 85,
+          "xy": [
+            3437,
+            18211
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              3079,
+              11920
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 735
+        },
+        {
+          "tick": 86,
+          "xy": [
+            3430,
+            18152
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2995,
+              12004
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 734
+        },
+        {
+          "tick": 87,
+          "xy": [
+            3423,
+            18093
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2911,
+              12088
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 733
+        },
+        {
+          "tick": 88,
+          "xy": [
+            3416,
+            18034
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2827,
+              12172
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 731
+        },
+        {
+          "tick": 89,
+          "xy": [
+            3409,
+            17975
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2743,
+              12256
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 730
+        },
+        {
+          "tick": 90,
+          "xy": [
+            3402,
+            17916
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2691,
+              12363
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 729
+        },
+        {
+          "tick": 91,
+          "xy": [
+            3395,
+            17857
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2655,
+              12477
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 727
+        },
+        {
+          "tick": 92,
+          "xy": [
+            3388,
+            17798
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2619,
+              12591
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 726
+        },
+        {
+          "tick": 93,
+          "xy": [
+            3381,
+            17739
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2583,
+              12705
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 724
+        },
+        {
+          "tick": 94,
+          "xy": [
+            3376,
+            17680
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2547,
+              12819
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 723
+        },
+        {
+          "tick": 95,
+          "xy": [
+            3371,
+            17621
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2523,
+              12936
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 722
+        },
+        {
+          "tick": 96,
+          "xy": [
+            3366,
+            17562
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2445,
+              13026
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 720
+        },
+        {
+          "tick": 97,
+          "xy": [
+            3361,
+            17503
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2415,
+              13141
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 719
+        },
+        {
+          "tick": 98,
+          "xy": [
+            3356,
+            17444
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2398,
+              13259
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 718
+        },
+        {
+          "tick": 99,
+          "xy": [
+            3351,
+            17385
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2425,
+              13375
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 716
+        },
+        {
+          "tick": 100,
+          "xy": [
+            3346,
+            17326
+          ],
+          "hp": 1564,
+          "spirit": {
+            "xy": [
+              2375,
+              13483
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 715
+        },
+        {
+          "tick": 101,
+          "xy": [
+            3341,
+            17267
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2356,
+              13601
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 714
+        },
+        {
+          "tick": 102,
+          "xy": [
+            3336,
+            17208
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2346,
+              13720
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 712
+        },
+        {
+          "tick": 103,
+          "xy": [
+            3325,
+            17150
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2336,
+              13839
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 711
+        },
+        {
+          "tick": 104,
+          "xy": [
+            3321,
+            17091
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2312,
+              13956
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 709
+        },
+        {
+          "tick": 105,
+          "xy": [
+            3318,
+            17032
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2312,
+              13956
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 708
+        },
+        {
+          "tick": 106,
+          "xy": [
+            3315,
+            16973
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2312,
+              13956
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 707
+        },
+        {
+          "tick": 107,
+          "xy": [
+            3312,
+            16914
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2312,
+              13956
+            ],
+            "projectile": false
+          },
+          "cannon_hp": 705
+        },
+        {
+          "tick": 108,
+          "xy": [
+            3307,
+            16855
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2312,
+              13956
+            ],
+            "projectile": true
+          },
+          "cannon_hp": 704
+        },
+        {
+          "tick": 109,
+          "xy": [
+            3304,
+            16796
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2641,
+              14900
+            ],
+            "projectile": true
+          },
+          "cannon_hp": 703
+        },
+        {
+          "tick": 110,
+          "xy": [
+            3301,
+            16737
+          ],
+          "hp": 1362,
+          "spirit": {
+            "xy": [
+              2979,
+              15841
+            ],
+            "projectile": true
+          },
+          "cannon_hp": 701
+        },
+        {
+          "tick": 111,
+          "xy": [
+            3300,
+            16677
+          ],
+          "hp": 1263,
+          "spirit": null,
+          "cannon_hp": 700
+        },
+        {
+          "tick": 112,
+          "xy": [
+            3300,
+            16677
+          ],
+          "hp": 1263,
+          "spirit": null,
+          "cannon_hp": 698
+        },
+        {
+          "tick": 113,
+          "xy": [
+            3300,
+            16677
+          ],
+          "hp": 1263,
+          "spirit": null,
+          "cannon_hp": 697
+        },
+        {
+          "tick": 114,
+          "xy": [
+            3300,
+            16677
+          ],
+          "hp": 1263,
+          "spirit": null,
+          "cannon_hp": 696
+        },
+        {
+          "tick": 115,
+          "xy": [
+            3300,
+            16677
+          ],
+          "hp": 1263,
+          "spirit": null,
+          "cannon_hp": 694
+        },
+        {
+          "tick": 116,
+          "xy": [
+            3300,
+            16677
+          ],
+          "hp": 1263,
+          "spirit": null,
+          "cannon_hp": 693
+        },
+        {
+          "tick": 117,
+          "xy": [
+            3300,
+            16677
+          ],
+          "hp": 1263,
+          "spirit": null,
+          "cannon_hp": 692
+        },
+        {
+          "tick": 118,
+          "xy": [
+            3300,
+            16677
+          ],
+          "hp": 1263,
+          "spirit": null,
+          "cannon_hp": 690
+        },
+        {
+          "tick": 119,
+          "xy": [
+            3300,
+            16677
+          ],
+          "hp": 1263,
+          "spirit": null,
+          "cannon_hp": 689
+        },
+        {
+          "tick": 120,
+          "xy": [
+            3300,
+            16677
+          ],
+          "hp": 1263,
+          "spirit": null,
+          "cannon_hp": 687
+        },
+        {
+          "tick": 121,
+          "xy": [
+            3300,
+            16677
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 686
+        },
+        {
+          "tick": 122,
+          "xy": [
+            3299,
+            16617
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 685
+        },
+        {
+          "tick": 123,
+          "xy": [
+            3297,
+            16557
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 683
+        },
+        {
+          "tick": 124,
+          "xy": [
+            3295,
+            16497
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 682
+        },
+        {
+          "tick": 125,
+          "xy": [
+            3293,
+            16437
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 681
+        },
+        {
+          "tick": 126,
+          "xy": [
+            3291,
+            16377
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 679
+        },
+        {
+          "tick": 127,
+          "xy": [
+            3289,
+            16317
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 678
+        },
+        {
+          "tick": 128,
+          "xy": [
+            3287,
+            16257
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 677
+        },
+        {
+          "tick": 129,
+          "xy": [
+            3285,
+            16197
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 675
+        },
+        {
+          "tick": 130,
+          "xy": [
+            3284,
+            16137
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 674
+        },
+        {
+          "tick": 131,
+          "xy": [
+            3283,
+            16077
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 672
+        },
+        {
+          "tick": 132,
+          "xy": [
+            3282,
+            16017
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 671
+        },
+        {
+          "tick": 133,
+          "xy": [
+            3281,
+            15957
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 670
+        },
+        {
+          "tick": 134,
+          "xy": [
+            3280,
+            15897
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 668
+        },
+        {
+          "tick": 135,
+          "xy": [
+            3279,
+            15837
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 667
+        },
+        {
+          "tick": 136,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 666
+        },
+        {
+          "tick": 137,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 664
+        },
+        {
+          "tick": 138,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 663
+        },
+        {
+          "tick": 139,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 1061,
+          "spirit": null,
+          "cannon_hp": 661
+        },
+        {
+          "tick": 140,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 660
+        },
+        {
+          "tick": 141,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 659
+        },
+        {
+          "tick": 142,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 657
+        },
+        {
+          "tick": 143,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 656
+        },
+        {
+          "tick": 144,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 655
+        },
+        {
+          "tick": 145,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 653
+        },
+        {
+          "tick": 146,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 450
+        },
+        {
+          "tick": 147,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 449
+        },
+        {
+          "tick": 148,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 447
+        },
+        {
+          "tick": 149,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 446
+        },
+        {
+          "tick": 150,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 444
+        },
+        {
+          "tick": 151,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 443
+        },
+        {
+          "tick": 152,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 442
+        },
+        {
+          "tick": 153,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 440
+        },
+        {
+          "tick": 154,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 439
+        },
+        {
+          "tick": 155,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 438
+        },
+        {
+          "tick": 156,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 436
+        },
+        {
+          "tick": 157,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 435
+        },
+        {
+          "tick": 158,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 433
+        },
+        {
+          "tick": 159,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 859,
+          "spirit": null,
+          "cannon_hp": 432
+        },
+        {
+          "tick": 160,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 431
+        },
+        {
+          "tick": 161,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 429
+        },
+        {
+          "tick": 162,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 428
+        },
+        {
+          "tick": 163,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 427
+        },
+        {
+          "tick": 164,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 425
+        },
+        {
+          "tick": 165,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 424
+        },
+        {
+          "tick": 166,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 422
+        },
+        {
+          "tick": 167,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 421
+        },
+        {
+          "tick": 168,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 420
+        },
+        {
+          "tick": 169,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 418
+        },
+        {
+          "tick": 170,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 215
+        },
+        {
+          "tick": 171,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 214
+        },
+        {
+          "tick": 172,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 212
+        },
+        {
+          "tick": 173,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 211
+        },
+        {
+          "tick": 174,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 210
+        },
+        {
+          "tick": 175,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 208
+        },
+        {
+          "tick": 176,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 207
+        },
+        {
+          "tick": 177,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 205
+        },
+        {
+          "tick": 178,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 204
+        },
+        {
+          "tick": 179,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 657,
+          "spirit": null,
+          "cannon_hp": 203
+        },
+        {
+          "tick": 180,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 201
+        },
+        {
+          "tick": 181,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 200
+        },
+        {
+          "tick": 182,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 199
+        },
+        {
+          "tick": 183,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 197
+        },
+        {
+          "tick": 184,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 196
+        },
+        {
+          "tick": 185,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 194
+        },
+        {
+          "tick": 186,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 193
+        },
+        {
+          "tick": 187,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 192
+        },
+        {
+          "tick": 188,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 190
+        },
+        {
+          "tick": 189,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 189
+        },
+        {
+          "tick": 190,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 188
+        },
+        {
+          "tick": 191,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 186
+        },
+        {
+          "tick": 192,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 185
+        },
+        {
+          "tick": 193,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": 183
+        },
+        {
+          "tick": 194,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": null
+        },
+        {
+          "tick": 195,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": null
+        },
+        {
+          "tick": 196,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": null
+        },
+        {
+          "tick": 197,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": null
+        },
+        {
+          "tick": 198,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": null
+        },
+        {
+          "tick": 199,
+          "xy": [
+            3278,
+            15777
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": null
+        },
+        {
+          "tick": 200,
+          "xy": [
+            3275,
+            15717
+          ],
+          "hp": 455,
+          "spirit": null,
+          "cannon_hp": null
+        }
+      ]
+    }
+  ],
+  "source_sha256": "79e558d72f765c7a5e7d000dcf1592b0e1778d2ed5521ead49742e154b03bba9",
+  "scope": "Opened development controls against pinned offline native 15.535.86; no retail or policy acceptance claim."
+}

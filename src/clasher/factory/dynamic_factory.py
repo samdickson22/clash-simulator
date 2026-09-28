@@ -1,6 +1,8 @@
 """Helpers for creating card compatibility stats from dynamic data."""
 from __future__ import annotations
 
+from ..gamedata_normalization import normalized_walking_speed
+
 from typing import Any, Dict, Optional
 
 from ..card_types import (
@@ -46,7 +48,7 @@ def troop_from_character_data(
         hit_speed_ms=data.get("hitSpeed"),
         sight_range_tiles=_units_to_tiles(data.get("sightRange")),
         collision_radius_tiles=_units_to_tiles(data.get("collisionRadius")),
-        speed_logic_units_per_tick=float(data["speed"]) if data.get("speed") is not None else None,
+        speed_logic_units_per_tick=normalized_walking_speed(data),
         deploy_time_ms=data.get("deployTime"),
         load_time_ms=data.get("loadTime"),
         summon_count=data.get("count") or data.get("summonNumber"),

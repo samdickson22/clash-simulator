@@ -1,0 +1,64 @@
+{
+  "scope": "Conditional formation geometry with owner0 left crown destroyed. Native first left Goblin dies in same frame, so only the surviving indices are compared in that case.",
+  "cases": [
+    {
+      "name": "expanded_left",
+      "command_xy": [
+        3.5,
+        17.5
+      ],
+      "observed_spawn_indices": [
+        1,
+        2,
+        3
+      ],
+      "frame1_positions": [
+        [
+          2738,
+          16738
+        ],
+        [
+          4260,
+          16738
+        ],
+        [
+          4260,
+          18260
+        ]
+      ],
+      "source_sha256": "fbc77abc359f8d199ee127bafb9f3eada84e5d952e6c53530bb0e4ba161b57b0"
+    },
+    {
+      "name": "intact_right",
+      "command_xy": [
+        10.5,
+        17.5
+      ],
+      "observed_spawn_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "frame1_positions": [
+        [
+          11261,
+          18410
+        ],
+        [
+          11261,
+          17499
+        ],
+        [
+          9739,
+          17499
+        ],
+        [
+          9739,
+          18260
+        ]
+      ],
+      "source_sha256": "9f8eb24f5537af725016ad8fa735e108a3da427ecf461584cfae462287ef94fd"
+    }
+  ]
+}

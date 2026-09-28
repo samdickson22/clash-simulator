@@ -14,6 +14,7 @@ except Exception:  # pragma: no cover - optional accelerator
 
 from .entities import Entity, Troop, Building, Projectile
 from .player import PlayerState
+from .placement import building_anchor, ground_spawn_tile_clear, native_deployment_search
 from .arena import TileGrid, Position
 from .card_aliases import resolve_card_name
 from .data import CardDataLoader
@@ -22,7 +23,7 @@ from .factory.dynamic_factory import (
     building_from_values,
     troop_from_character_data,
 )
-from .spells import SPELL_REGISTRY
+from .spells import SPELL_REGISTRY, DirectDamageSpell, MirrorSpell, Spell
 from .mechanics.shared.death_effects import DeathSpawn
 from .native_tilemap import (
     OUTERMOST_OBJECT_CENTER_TILES,
@@ -36,6 +37,7 @@ from .unit_traits import (
 from .kinematics import (
     LOGIC_TICK_SECONDS,
     SERVER_ACTION_DELAY_SECONDS,
+    logic_time_milliseconds,
     logic_units_to_tiles,
     tiles_to_logic_units,
     trunc_div,
@@ -64,6 +66,8 @@ class PendingSpellCast:
     spell_name: str
     player_id: int
     position: Position
+    spell: Spell | None = None
+    object_phase: bool = False
 
 
 @dataclass(frozen=True)
@@ -81,14 +85,15 @@ if njit is not None:
         width: int,
         half_size: float,
         bounds: np.ndarray,
+        center_offset: float,
     ) -> np.ndarray:
         mask = np.zeros((height, width), dtype=np.bool_)
         for ty in range(height):
-            y = ty + 0.5
+            y = ty + center_offset
             y1 = y - half_size
             y2 = y + half_size
             for tx in range(width):
-                x = tx + 0.5
+                x = tx + center_offset
                 x1 = x - half_size
                 x2 = x + half_size
                 blocked = False
@@ -182,8 +187,17 @@ class BattleState:
         default_factory=list,
         init=False,
     )
+    _combat_phase_eligible_ids: frozenset[int] = field(
+        default_factory=frozenset, init=False, repr=False
+    )
     _defer_projectile_impacts: bool = field(default=False, init=False)
     _step_tick_remainder: float = field(default=0.0, init=False)
+    _native_building_cost_snapshot: tuple[tuple[int, int], ...] | None = field(
+        default=None, init=False, repr=False
+    )
+    _native_building_route_signatures: tuple[tuple[int, ...], ...] | None = field(
+        default=None, init=False, repr=False
+    )
     _champion_ability_owner_ids: Dict[Tuple[int, str], int] = field(
         default_factory=dict,
         init=False,
@@ -218,7 +232,7 @@ class BattleState:
     
     def _create_towers(self) -> None:
         """Create tower entities for both players"""
-        from .balance import tournament_tower_stat
+        from .balance import TOURNAMENT_LEVEL, tournament_tower_stat
 
         princess_data = self._load_princess_tower_character_data()
         princess_hitpoints = tournament_tower_stat("PrincessTower", "hitpoints") or 3052
@@ -256,7 +270,7 @@ class BattleState:
             projectile_damage=princess_damage,
             projectile_start_radius=princess_projectile_start_radius,
             target_type=princess_target_type,
-            raw_overrides={"level": 1},
+            raw_overrides={"level": 1, "publicLevel": TOURNAMENT_LEVEL},
         )
 
         king_hitpoints = tournament_tower_stat("KingTower", "hitpoints") or 4824
@@ -286,7 +300,7 @@ class BattleState:
             projectile_start_radius=750,
             projectile_y_offset=400,
             target_type="TID_TARGETS_AIR_AND_GROUND",
-            raw_overrides={"level": 1},
+            raw_overrides={"level": 1, "publicLevel": TOURNAMENT_LEVEL},
         )
         
         # Player 0 towers (blue) - create new Position objects to avoid sharing references
@@ -629,6 +643,7 @@ class BattleState:
         if cached is not None:
             return cached
         half = float(size_tiles) / 2.0
+        center_offset = 0.5 if size_tiles % 2 else 0.0
         if self._alive_buildings:
             bounds = np.empty((len(self._alive_buildings), 4), dtype=np.float32)
             for i, entity in enumerate(self._alive_buildings):
@@ -643,14 +658,15 @@ class BattleState:
                     self.arena.width,
                     half,
                     bounds,
+                    center_offset,
                 )
             else:
                 mask = np.zeros((self.arena.height, self.arena.width), dtype=np.bool_)
                 for ty in range(self.arena.height):
-                    y = ty + 0.5
+                    y = ty + center_offset
                     y1, y2 = y - half, y + half
                     for tx in range(self.arena.width):
-                        x = tx + 0.5
+                        x = tx + center_offset
                         x1, x2 = x - half, x + half
                         for i in range(bounds.shape[0]):
                             ex1 = bounds[i, 0]
@@ -714,7 +730,15 @@ class BattleState:
         for _ in range(ticks_to_advance):
             if self.game_over:
                 break
-            self._step_logic_tick()
+            previous_tick_active = getattr(self, "_logic_tick_active", False)
+            self._logic_tick_active = True
+            try:
+                self._step_logic_tick()
+            finally:
+                self._native_avoidance_grid = None
+                self._native_building_cost_snapshot = None
+                self._native_building_route_signatures = None
+                self._logic_tick_active = previous_tick_active
 
     def _step_logic_tick(self) -> None:
         """Advance exactly one 50 ms native logic frame."""
@@ -725,7 +749,7 @@ class BattleState:
         self.time += dt
         self.tick += 1
         
-        self._update_battle_phases()
+        self._update_battle_phases(elapsed_time=(self.tick - 1) * dt)
         
         # Regenerate elixir
         base_regen = 2.8
@@ -752,38 +776,47 @@ class BattleState:
         self._resolve_pending_spell_casts()
         post_command_ids = set(self.entities)
 
+        from .native_spatial import NativeAvoidanceGrid
+        from .pathfinding import native_building_cost_cells
+
+        self._native_avoidance_grid = NativeAvoidanceGrid(self.entities.values())
+        # Native f2fe24 builds both grids before component updates. A building
+        # killed by combat remains a routing obstacle for this movement phase.
+        self._native_building_cost_snapshot = native_building_cost_cells(self)
+        self._native_building_route_signatures = tuple(
+            tuple(sorted(
+                e.id for e in entities_to_update
+                if isinstance(e, Building) and e.is_alive and e.player_id == owner
+            ))
+            for owner in (0, 1)
+        )
+
         if self.fast_path:
             self._refresh_fast_path_caches()
         
-        # Target reservations are a start-of-tick snapshot. This makes
-        # simultaneous attacks commute: a projectile launched by an entity
-        # earlier in Python's iteration order cannot change another entity's
-        # targeting decision until the next server tick.
+        # Native combat observes current HP and committed projectile damage
+        # in object order. A preceding melee hit can make an in-flight shot
+        # lethal before a later ranged component validates its target.
         self._projectile_lethal_reservations = None
-        reservation_targets = {
-            primary_target.id: primary_target
-            for projectile in self.entities.values()
-            if callable(getattr(projectile, "expected_damage_against", None))
-            and bool(getattr(projectile, "reserves_pending_damage", False))
-            and projectile.is_alive
-            and (primary_target := getattr(projectile, "primary_target", None)) is not None
-            and primary_target.is_alive
-        }
-        self._projectile_lethal_reservations = frozenset(
-            target.id
-            for target in reservation_targets.values()
-            if target.is_expected_to_die_from_projectiles()
-        )
         self._pending_projectile_impacts = []
         self._defer_projectile_impacts = False
+        # Native combat visits the components that were eligible at the phase
+        # boundary. A prior component reducing HP to zero does not cancel a
+        # later component's due attack in this same interval.
+        self._combat_phase_eligible_ids = frozenset(
+            e.id for e in entities_to_update
+            if isinstance(e, (Troop, Building)) and e.is_alive
+        )
         try:
             # Component type 0: combat components run in object-ID order
-            # against the same start-of-frame positions. Direct damage,
-            # death state, and on-hit buffs are visible to every later
-            # component, exactly as in LogicCombatComponent::tick.
+            # against the same start-of-frame positions. Direct damage and
+            # on-hit effects are visible to later components, but HP depletion
+            # does not revoke their start-of-phase combat eligibility.
             cached_entity_count = len(self.entities)
             for entity in entities_to_update:
                 if not isinstance(entity, (Troop, Building)):
+                    continue
+                if getattr(entity, "_self_projectile_launched", False):
                     continue
                 entity.update_combat_component(dt, self)
                 # A few serialized special states currently commit their
@@ -801,10 +834,13 @@ class BattleState:
         finally:
             self._defer_projectile_impacts = False
             self._projectile_lethal_reservations = None
+            self._combat_phase_eligible_ids = frozenset()
 
         # Component type 1: movement and deployment-specific transport.
         for entity in entities_to_update:
             if not isinstance(entity, (Troop, Building)) or not entity.is_alive:
+                continue
+            if getattr(entity, "_self_projectile_launched", False):
                 continue
             if isinstance(entity, Troop):
                 # Each native movement component scans positions at its own
@@ -835,6 +871,8 @@ class BattleState:
         # combat and movement frame has consumed the modifier.
         for entity in entities_to_update:
             if isinstance(entity, (Troop, Building)):
+                if getattr(entity, "_self_projectile_launched", False):
+                    continue
                 entity.update_buff_component(dt)
 
         self._run_object_phase(
@@ -860,10 +898,10 @@ class BattleState:
     ) -> None:
         """Run the ID-ordered, dynamically growing native object phase.
 
-        The native manager refreshes its object-list length while iterating.
-        A projectile created by a combat component therefore receives its
-        ``LogicProjectile::tick`` later in that same frame, as do chained
-        projectile/area/explosive payloads appended by an earlier object tick.
+        Newly created projectiles remain at their launch offset for this
+        frame and begin flight next tick, as observed for native tower arrows,
+        Cannon shots, and Baby Dragon projectiles. Other appended object
+        payloads retain their existing dynamically growing phase handling.
 
         Characters use a dedicated object-phase entry point so a Witch spawn,
         death spawn, or Graveyard Skeleton consumes deployment time without
@@ -871,11 +909,13 @@ class BattleState:
         phases have already passed.
 
         Objects materialized by a command at this tick boundary are excluded:
-        they did not exist during the elapsed interval. Objects appended later
-        by component/object work are included, matching the manager's growing
-        list.
+        they did not exist during the elapsed interval. Non-projectile objects
+        appended later by component/object work remain included in the growing
+        list; projectile flight waits until the next interval.
         """
+        self._resolve_pending_spell_casts(object_phase=True)
         processed_ids = set(post_command_ids - initial_ids)
+        new_projectile_reservations = []
         while True:
             new_objects = sorted(
                 (
@@ -883,13 +923,52 @@ class BattleState:
                     for entity_id, entity in self.entities.items()
                     if entity_id not in processed_ids
                 ),
-                key=lambda entity: entity.id,
+                # Native object IDs order area effects, projectiles, then
+                # characters. Python IDs track creation across all types.
+                key=lambda entity: (
+                    0 if entity.entity_kind == 3 else
+                    1 if isinstance(entity, Projectile) or getattr(
+                        entity, "_self_projectile_launched", False
+                    ) else 2,
+                    entity.id,
+                ),
             )
             if not new_objects:
+                # Newly attached shots publish their reservations after the
+                # existing characters tick. Counting down a new reservation
+                # here would make its target eligible for rejection 50ms early.
+                for projectile in new_projectile_reservations:
+                    if isinstance(projectile, Projectile):
+                        projectile.activate_pending_damage()
+                    else:
+                        for mechanic in projectile.mechanics:
+                            activate = getattr(mechanic, "activate_pending_damage", None)
+                            if callable(activate):
+                                activate(projectile)
                 return
             for entity in new_objects:
                 processed_ids.add(entity.id)
                 if not entity.is_alive:
+                    continue
+                if (
+                    getattr(entity, "_self_projectile_launched", False)
+                    and getattr(entity, "_self_projectile_launch_tick", -1) == self.tick
+                ):
+                    new_projectile_reservations.append(entity)
+                birth_tick = getattr(entity, "_native_object_birth_tick", None)
+                if birth_tick is not None and self.tick <= birth_tick:
+                    continue
+                if isinstance(entity, Projectile) and entity.id not in initial_ids:
+                    new_projectile_reservations.append(entity)
+                    continue
+                if getattr(entity, "_self_projectile_launched", False):
+                    # The Spirit carrier now represents a native projectile:
+                    # flight starts after its birth frame and after movement
+                    # and buff components, including the target's movement.
+                    if entity._self_projectile_launch_tick < self.tick:
+                        for mechanic in entity.mechanics:
+                            mechanic.on_movement_tick(entity, dt * 1000)
+                    entity.quantize_logic_position()
                     continue
                 if isinstance(entity, (Troop, Building)):
                     entity.tick_character_object_phase(dt)
@@ -924,6 +1003,7 @@ class BattleState:
             # the tower's next interaction.
             if (
                 entity.mechanics
+                or entity._pending_projectile_max_duration_ms > 0
                 or entity.deploy_delay_remaining > 1e-9
                 or entity.target_id is not None
                 or entity._attack_windup_active
@@ -945,13 +1025,14 @@ class BattleState:
                 return False
         return True
 
-    def _update_battle_phases(self) -> None:
-        """Update standard 1v1 timer and elixir phases for the current time."""
-        if self.time >= self.double_elixir_start_time:
+    def _update_battle_phases(self, *, elapsed_time: float | None = None) -> None:
+        """Update phases using the start of the current native interval."""
+        elapsed = self.time if elapsed_time is None else elapsed_time
+        if elapsed >= self.double_elixir_start_time:
             self.double_elixir = True
-        if self.time >= self.overtime_start_time:
+        if elapsed >= self.overtime_start_time:
             self.overtime = True
-        if self.time >= self.triple_elixir_start_time:
+        if elapsed >= self.triple_elixir_start_time:
             self.triple_elixir = True
 
     def fast_forward_idle_ticks(self, ticks: int) -> int:
@@ -965,7 +1046,7 @@ class BattleState:
             dt = self.dt
             self.time += dt
             self.tick += 1
-            self._update_battle_phases()
+            self._update_battle_phases(elapsed_time=(self.tick - 1) * dt)
 
             base_regen = 2.8
             if self.triple_elixir:
@@ -981,6 +1062,8 @@ class BattleState:
             # In an otherwise inert frame, active Crown Towers still advance
             # this visualization-only clock in their combat component.
             for entity in self.entities.values():
+                if entity.is_alive and self._is_static_tower_entity(entity):
+                    entity._native_deployed_elapsed_ms += max(0, logic_time_milliseconds(dt))
                 if (
                     entity.is_alive
                     and self._is_static_tower_entity(entity)
@@ -993,8 +1076,9 @@ class BattleState:
                 break
         return advanced
 
-    def _queue_spell_cast(self, spell_name: str, player_id: int, position: Position) -> None:
-        """Queue a played spell until the server accepts the action one second later."""
+    def _queue_spell_cast(self, spell_name: str, player_id: int, position: Position, *, spell: Spell | None = None) -> None:
+        """Capture an accepted spell and its native execution phase."""
+        effective_spell = spell if spell is not None else SPELL_REGISTRY.get(spell_name)
         self._pending_spell_casts.append(
             PendingSpellCast(
                 execute_at=self.time + SERVER_ACTION_DELAY_SECONDS,
@@ -1002,18 +1086,21 @@ class BattleState:
                 spell_name=spell_name,
                 player_id=player_id,
                 position=Position(position.x, position.y),
+                spell=spell,
+                object_phase=isinstance(effective_spell, DirectDamageSpell),
             )
         )
         self._next_spell_cast_sequence += 1
+        self._resolve_pending_spell_casts()
 
-    def _resolve_pending_spell_casts(self) -> None:
+    def _resolve_pending_spell_casts(self, *, object_phase: bool = False) -> None:
         if not self._pending_spell_casts:
             return
 
         due = [
             cast
             for cast in self._pending_spell_casts
-            if cast.execute_at <= self.time + 1e-9
+            if cast.execute_at <= self.time + 1e-9 and cast.object_phase == object_phase
         ]
         if not due:
             return
@@ -1021,10 +1108,10 @@ class BattleState:
         self._pending_spell_casts = [
             cast
             for cast in self._pending_spell_casts
-            if cast.execute_at > self.time + 1e-9
+            if cast.execute_at > self.time + 1e-9 or cast.object_phase != object_phase
         ]
         for cast in sorted(due, key=lambda item: (item.execute_at, item.sequence)):
-            spell = SPELL_REGISTRY.get(cast.spell_name)
+            spell = cast.spell if cast.spell is not None else SPELL_REGISTRY.get(cast.spell_name)
             if spell is not None:
                 spell.cast(self, cast.player_id, cast.position)
 
@@ -1051,18 +1138,76 @@ class BattleState:
                 return cooldown_ms
         return DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS[-1][1]
     
+    def resolve_card_play(
+        self, player_id: int, card_name: str,
+    ) -> tuple[str, CardStatsCompat, Spell | None] | None:
+        """Resolve hand identity to effect stats and spell without mutating state.
+
+        Returned stats carry the actual elixir cost. Mirror history remains the
+        last ordinary card, so a failed command never replaces its payload.
+        """
+        resolved = resolve_card_name(card_name, self.card_loader.load_card_definitions())
+        stats = self.card_loader.get_card(resolved)
+        if stats is None:
+            return None
+        spell = SPELL_REGISTRY.get(resolved)
+        if not isinstance(spell, MirrorSpell):
+            return resolved, stats, spell
+        player = self.players[player_id]
+        if player.last_played_card is None or player.last_played_card_cost is None:
+            return None
+        source = self.card_loader.get_card(player.last_played_card)
+        if source is None:
+            return None
+        copied = copy.copy(source)
+        copied.level = stats.level + 1
+        copied.mana_cost = player.last_played_card_cost + 1
+        copied_spell = SPELL_REGISTRY.get(source.name)
+        if copied_spell is not None:
+            from .dynamic_spells import create_spell_from_json
+            try:
+                copied_spell = create_spell_from_json(source._raw_entry, level=copied.level)
+            except ValueError:
+                # Inconsistent level data is explicitly unsupported, not a paid no-op.
+                return None
+        return source.name, copied, copied_spell
+
+    def resolve_ground_troop_anchor(
+        self, position: Position, player_id: int, card_stats: CardStatsCompat
+    ) -> Position | None:
+        blocked = self.get_building_placement_blocked_mask_world(1)
+        enemy_side = bool(getattr(card_stats, "can_deploy_on_enemy_side", False))
+        radius = float(getattr(card_stats, "collision_radius", 0.5) or 0.5)
+
+        def valid(candidate: Position) -> bool:
+            if not self.arena.is_valid_position(candidate):
+                return False
+            tile = (int(candidate.x), int(candidate.y))
+            if tile in self.arena.BLOCKED_TILES or not self.arena.is_walkable(candidate):
+                return False
+            if not ground_spawn_tile_clear(candidate):
+                return False
+            if not enemy_side and not self.arena.can_deploy_at(candidate, player_id, self):
+                return False
+            return not blocked[tile[1], tile[0]] and not self.is_deployment_payload_occupied(
+                candidate, mover_radius=radius
+            )
+
+        initial = Position(math.floor(position.x) + 0.5, math.floor(position.y) + 0.5)
+        return native_deployment_search(position, initial, valid)
+
     def deploy_card(self, player_id: int, card_name: str, position: Position) -> bool:
         """Deploy a card at the given position"""
-        player = self.players[player_id]
-        resolved_name = resolve_card_name(card_name, self.card_loader.load_card_definitions())
-        # Fetch card stats from the factory-backed loader
-        card_stats = self.card_loader.get_card(resolved_name)
-
-        if not card_stats or not player.can_play_card(card_name, card_stats):
+        if self.game_over:
             return False
-
-        is_spell = resolved_name in SPELL_REGISTRY
-        spell_obj = SPELL_REGISTRY.get(resolved_name) if is_spell else None
+        player = self.players[player_id]
+        play = self.resolve_card_play(player_id, card_name)
+        if play is None:
+            return False
+        resolved_name, card_stats, spell_obj = play
+        if not player.can_play_card(card_name, card_stats):
+            return False
+        is_spell = spell_obj is not None
         # Troops whose card data permits enemy-side placement still obey the
         # arena's terrain and live tower footprints. Miner is currently the
         # enabled card using this capability, but the rule is data-driven.
@@ -1102,6 +1247,7 @@ class BattleState:
             card_type = str(getattr(card_stats, "card_type", "") or "").lower()
             is_building_card = card_type == "building"
             if is_building_card:
+                position = building_anchor(position, self._building_footprint_size_tiles(card_stats))
                 if self.is_building_placement_occupied(
                     position, card_stats
                 ) or self.is_deployment_payload_occupied(
@@ -1111,21 +1257,31 @@ class BattleState:
                     return False
             else:
                 probe_radius = getattr(card_stats, "collision_radius", 0.5) or 0.5
-                if self.is_position_occupied_by_building(
-                    position, probe_radius
-                ) or self.is_deployment_payload_occupied(
+                if self.is_deployment_payload_occupied(
                     position,
                     mover_radius=probe_radius,
                 ):
+                    return False
+                if not is_air_unit_card(card_stats):
+                    resolved = self.resolve_ground_troop_anchor(position, player_id, card_stats)
+                    if resolved is None:
+                        return False
+                    position = resolved
+                elif self.is_position_occupied_by_building(position, probe_radius):
                     return False
 
         # Play the card
         if not player.play_card(card_name, card_stats):
             return False
 
-        # Check if it's a spell
-        if resolved_name in SPELL_REGISTRY:
-            self._queue_spell_cast(resolved_name, player_id, position)
+        hand_spell = SPELL_REGISTRY.get(resolve_card_name(card_name, self.card_loader.load_card_definitions()))
+        if not isinstance(hand_spell, MirrorSpell):
+            player.last_played_card = resolved_name
+            player.last_played_card_cost = card_stats.mana_cost
+
+        # Capture the effective spell now; later commands cannot change its payload.
+        if is_spell:
+            self._queue_spell_cast(resolved_name, player_id, position, spell=spell_obj)
         else:
             entity_ids_before = set(self.entities)
             # Spawn troop or building based on card type (robust to missing/None fields)
@@ -1139,13 +1295,66 @@ class BattleState:
                     player_id,
                     card_stats,
                 )
-                self._spawn_troop(deploy_position, player_id, card_stats)
+                edge = self._card_formation_forward_edge(position, player_id, card_stats)
+                self._spawn_troop(
+                    deploy_position, player_id, card_stats,
+                    deployment_edge_y=edge,
+                    lane_coordinate_offset=(
+                        position.x - deploy_position.x,
+                        position.y - deploy_position.y,
+                    ),
+                )
             for entity_id in self.entities.keys() - entity_ids_before:
                 entity = self.entities[entity_id]
                 if isinstance(entity, (Troop, Building)) and entity.deploy_delay_remaining > 1e-9:
                     entity.placement_pending = True
         
         return True
+
+    def _card_formation_forward_edge(
+        self, position: Position, player_id: int, card_stats: CardStatsCompat,
+    ) -> float | None:
+        """Return a ground card's forward spawn boundary before body creation."""
+        if is_air_unit_card(card_stats) or getattr(card_stats, "can_deploy_on_enemy_side", False):
+            return None
+        # Tower destruction expands the column's forward boundary even when
+        # the card anchor remains on its original side of the river.
+        matching = [
+            zone for zone in self.arena.get_deploy_zones(player_id, self)
+            if zone[0] <= position.x < zone[2]
+        ]
+        if not matching:
+            return None
+        edge = (
+            max(zone[3] for zone in matching) - 0.5
+            if player_id == 0 else min(zone[1] for zone in matching) + 0.5
+        )
+        # LogicSummoner f3a0fc scans legal tiles in the anchor's column and
+        # bounds the entire formation by its farthest legal tile. Holes behind
+        # that edge do not relocate individual children. A Cannon occupying
+        # the final three rows pulls the edge back; a shorter Tesla can leave
+        # a legal row ahead and therefore does not impose the same clamp.
+        column = math.floor(position.x)
+        blocked = self.get_building_placement_blocked_mask_world(1)
+        if not 0 <= column < blocked.shape[1]:
+            return None
+        row = math.floor(edge)
+        direction = -1 if player_id == 0 else 1
+        while 0 <= row < blocked.shape[0]:
+            candidate = Position(column + 0.5, row + 0.5)
+            if (
+                not blocked[row, column]
+                and self.arena.is_walkable(candidate)
+                and self.arena.can_deploy_at(candidate, player_id, self)
+            ):
+                edge = candidate.y
+                break
+            row += direction
+        else:
+            return None
+        return self._apply_symmetric_deploy_snap(
+            Position(position.x, edge), player_id, card_stats,
+        ).y
 
     def _apply_symmetric_deploy_snap(
         self,
@@ -1158,14 +1367,10 @@ class BattleState:
             return position
 
         card_type = str(getattr(card_stats, "card_type", "") or "").lower()
-        character_data = (
-            getattr(card_stats, "summon_character_data", None) or {}
-        )
         if (
             card_type == "building"
             or is_air_unit_card(card_stats)
             or float(getattr(card_stats, "speed", 0) or 0) <= 0.0
-            or int(character_data.get("dashCooldown", 0) or 0) > 0
         ):
             return position
 
@@ -1186,7 +1391,7 @@ class BattleState:
     def _champion_ability_pair(
         entity: Entity,
     ) -> Optional[Tuple[Troop, Any]]:
-        if not isinstance(entity, Troop):
+        if not isinstance(entity, Troop) or entity.is_clone:
             return None
         for mechanic in entity.mechanics:
             can_activate = getattr(mechanic, "can_activate_ability", None)
@@ -1271,6 +1476,8 @@ class BattleState:
         return max(candidates, key=lambda pair: pair[0].id)
 
     def can_activate_champion_ability(self, player_id: int) -> bool:
+        if self.game_over:
+            return False
         found = self._champion_ability_mechanic(player_id)
         if found is None:
             return False
@@ -1278,13 +1485,15 @@ class BattleState:
         return bool(mechanic.can_activate_ability(entity))
 
     def activate_champion_ability(self, player_id: int) -> bool:
+        if self.game_over:
+            return False
         found = self._champion_ability_mechanic(player_id)
         if found is None:
             return False
         entity, mechanic = found
         return bool(mechanic.activate_ability(entity))
     
-    def _spawn_troop(self, position: Position, player_id: int, card_stats: CardStatsCompat) -> None:
+    def _spawn_troop(self, position: Position, player_id: int, card_stats: CardStatsCompat, *, deployment_edge_y: float | None = None, lane_coordinate_offset: tuple[float, float] | None = None) -> None:
         """Spawn a troop entity (handles both single troops and swarms)"""
         # Guard: if this card is actually a building, route to building spawner
         ctype = getattr(card_stats, "card_type", None)
@@ -1312,25 +1521,27 @@ class BattleState:
         if summon_count > 1 or second_count > 0:
             # Spawn swarm units in a circle around the target position
             # summon_radius is already converted to tiles in data loading
-            self._spawn_swarm_troops(position, player_id, card_stats, summon_count, summon_radius, second_count, second_data)
+            self._spawn_swarm_troops(position, player_id, card_stats, summon_count, summon_radius, second_count, second_data, deployment_edge_y=deployment_edge_y, lane_coordinate_offset=lane_coordinate_offset)
         else:
             # Spawn single unit at exact position
-            self._spawn_single_troop(position, player_id, card_stats)
+            self._spawn_single_troop(position, player_id, card_stats, deployment_edge_y=deployment_edge_y, lane_coordinate_offset=lane_coordinate_offset)
     
-    def _spawn_single_troop(self, position: Position, player_id: int, card_stats: CardStatsCompat) -> None:
+    def _spawn_single_troop(self, position: Position, player_id: int, card_stats: CardStatsCompat, *, deployment_edge_y: float | None = None, lane_coordinate_offset: tuple[float, float] | None = None) -> None:
         """Spawn a single troop entity through the common spawn primitive."""
         # The deployment anchor has already been validated by ``deploy_card``.
-        # Native deployment resolves that one anchor and then creates every
-        # character at its exact formation offset; it does not independently
-        # search for a walkable point for each character.
+        # Native resolves the card anchor, then clips formation offsets at
+        # the deployment column's boundary. Children do not run independent
+        # placement searches.
         self._spawn_unit_at_position(
             position,
             player_id,
             card_stats,
             snap_to_valid=False,
+            deployment_edge_y=deployment_edge_y,
+            lane_coordinate_offset=lane_coordinate_offset,
         )
     
-    def _spawn_swarm_troops(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, count: int, radius: float, second_count: int = 0, second_data: dict = None) -> None:
+    def _spawn_swarm_troops(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, count: int, radius: float, second_count: int = 0, second_data: dict = None, *, deployment_edge_y: float | None = None, lane_coordinate_offset: tuple[float, float] | None = None) -> None:
         """Spawn multiple troop entities in a circle around center position"""
         # Check for data-selected deployment patterns.
         is_royal_recruits = card_stats.name in ['RoyalRecruits', 'RoyalRecruits_Chess']
@@ -1343,7 +1554,7 @@ class BattleState:
         
         if is_royal_recruits:
             # Royal Recruits spawn in a horizontal line across battlefield
-            self._spawn_royal_recruits_line(center_pos, player_id, card_stats, count)
+            self._spawn_royal_recruits_line(center_pos, player_id, card_stats, count, deployment_edge_y=deployment_edge_y, lane_coordinate_offset=lane_coordinate_offset)
         elif summon_width > 0.0:
             self._spawn_horizontal_formation(
                 center_pos,
@@ -1351,10 +1562,12 @@ class BattleState:
                 card_stats,
                 count,
                 radius,
+                deployment_edge_y=deployment_edge_y,
+                lane_coordinate_offset=lane_coordinate_offset,
             )
         elif has_front_back:
             # Spawn in front/back formation for mixed swarms
-            self._spawn_front_back_formation(center_pos, player_id, card_stats, count, second_count, second_data, radius)
+            self._spawn_front_back_formation(center_pos, player_id, card_stats, count, second_count, second_data, radius, deployment_edge_y=deployment_edge_y, lane_coordinate_offset=lane_coordinate_offset)
         else:
             # Regular circular formation
             # Spawn primary units 
@@ -1367,12 +1580,14 @@ class BattleState:
                     count,
                     radius,
                     secondary_count=second_count,
+                    deployment_edge_y=deployment_edge_y,
+                    lane_coordinate_offset=lane_coordinate_offset,
                 )
             
             # Spawn secondary units if available
             if second_count > 0 and second_data:
                 unit_name = second_data.get("name", card_stats.name + "_Secondary")
-                second_card_stats = self._create_card_stats_from_data(second_data, unit_name)
+                second_card_stats = self._create_card_stats_from_data(second_data, unit_name, level=card_stats.level)
 
                 for i in range(second_count):
                     self._spawn_unit_at_angle(
@@ -1386,6 +1601,8 @@ class BattleState:
                         angle_shift_degrees=float(
                             getattr(card_stats, "spawn_angle_shift", 0) or 0
                         ),
+                        deployment_edge_y=deployment_edge_y,
+                        lane_coordinate_offset=lane_coordinate_offset,
                     )
     
     def _spawn_unit_at_angle(
@@ -1399,6 +1616,8 @@ class BattleState:
         *,
         secondary_count: int = 0,
         angle_shift_degrees: float | None = None,
+        deployment_edge_y: float | None = None,
+        lane_coordinate_offset: tuple[float, float] | None = None,
     ) -> None:
         """Spawn a single unit at a specific angle in the swarm formation"""
         from .formations import formation_offset
@@ -1427,9 +1646,11 @@ class BattleState:
             card_stats,
             deploy_delay_offset=deploy_delay_offset,
             snap_to_valid=False,
+            deployment_edge_y=deployment_edge_y,
+            lane_coordinate_offset=lane_coordinate_offset,
         )
     
-    def _spawn_front_back_formation(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, front_count: int, back_count: int, back_data: dict, radius: float) -> None:
+    def _spawn_front_back_formation(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, front_count: int, back_count: int, back_data: dict, radius: float, *, deployment_edge_y: float | None = None, lane_coordinate_offset: tuple[float, float] | None = None) -> None:
         """Spawn a mixed swarm ring with its primary block facing forward."""
         from .formations import mixed_ring_offset
         
@@ -1437,11 +1658,11 @@ class BattleState:
         # Primary units (front) - use actual name from summonCharacterData
         primary_data = getattr(card_stats, 'summon_character_data', {})
         primary_name = primary_data.get("name", card_stats.name)
-        front_card_stats = self._create_card_stats_from_data(primary_data, primary_name)
+        front_card_stats = self._create_card_stats_from_data(primary_data, primary_name, level=card_stats.level)
         
         # Secondary units (back) - use actual name from summonCharacterSecondData  
         back_name = back_data.get("name", card_stats.name + "_Secondary")
-        back_card_stats = self._create_card_stats_from_data(back_data, back_name)
+        back_card_stats = self._create_card_stats_from_data(back_data, back_name, level=card_stats.level)
         lane_id = self.arena.native_path_id_at(center_pos)
         
         # Spawn primary units on the forward arc.
@@ -1464,6 +1685,8 @@ class BattleState:
                 front_card_stats,
                 deploy_delay_offset=stagger,
                 snap_to_valid=False,
+                deployment_edge_y=deployment_edge_y,
+                lane_coordinate_offset=lane_coordinate_offset,
             )
         
         # Spawn secondary units on the remaining rear arc.
@@ -1489,6 +1712,8 @@ class BattleState:
                 back_card_stats,
                 deploy_delay_offset=stagger,
                 snap_to_valid=False,
+                deployment_edge_y=deployment_edge_y,
+                lane_coordinate_offset=lane_coordinate_offset,
             )
 
     def _spawn_horizontal_formation(
@@ -1498,6 +1723,9 @@ class BattleState:
         card_stats: CardStatsCompat,
         count: int,
         radius: float,
+        *,
+        deployment_edge_y: float | None = None,
+        lane_coordinate_offset: tuple[float, float] | None = None,
     ) -> None:
         """Spawn a data-selected native wide formation."""
         from .formations import horizontal_line_offset
@@ -1522,9 +1750,11 @@ class BattleState:
                 card_stats,
                 deploy_delay_offset=stagger,
                 snap_to_valid=False,
+                deployment_edge_y=deployment_edge_y,
+                lane_coordinate_offset=lane_coordinate_offset,
             )
     
-    def _spawn_royal_recruits_line(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, count: int) -> None:
+    def _spawn_royal_recruits_line(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, count: int, *, deployment_edge_y: float | None = None, lane_coordinate_offset: tuple[float, float] | None = None) -> None:
         """Spawn Royal Recruits in a horizontal line across the battlefield, avoiding towers"""
         # Royal Recruits: 6 units spaced 2.5 tiles apart, center at deploy position
         spacing = 2.5  # tiles between each recruit
@@ -1563,7 +1793,7 @@ class BattleState:
         for recruit_x in recruit_positions:
             recruit_pos = Position(recruit_x, center_pos.y)
             recruit_pos = self._snap_to_valid_position(recruit_pos, player_id)
-            self._spawn_unit_at_position(recruit_pos, player_id, card_stats)
+            self._spawn_unit_at_position(recruit_pos, player_id, card_stats, deployment_edge_y=deployment_edge_y, lane_coordinate_offset=lane_coordinate_offset)
     
     def _find_safe_recruit_positions(self, center_pos: Position, count: int, spacing: float, blocked_ranges: List[Tuple[float, float]]) -> List[float]:
         """Find safe X positions for Royal Recruits that avoid tower collisions"""
@@ -1655,12 +1885,31 @@ class BattleState:
         snap_to_valid: bool = True,
         death_spawn: bool = False,
         death_spawn_travel_origin: Position | None = None,
+        is_clone: bool = False,
+        clone_source: Troop | None = None,
+        deployment_edge_y: float | None = None,
+        lane_coordinate_offset: tuple[float, float] | None = None,
     ) -> None:
         """Spawn a single unit at a specific position"""
+        if clone_source is not None:
+            is_clone = True
+        # Card deployment selects each child's lane before the symmetric
+        # anchor adjustment. Keep that coordinate separate from its body.
+        lane_position = (
+            Position(
+                position.x + lane_coordinate_offset[0],
+                position.y + lane_coordinate_offset[1],
+            )
+            if lane_coordinate_offset is not None else None
+        )
         # Get unit properties
         speed = card_stats.speed or 60.0
         
         is_air_unit = is_air_unit_card(card_stats)
+        if deployment_edge_y is not None and not is_air_unit:
+            # Native clips ground card formations at their forward deployment
+            # edge before body creation. In-battle summons omit this bound.
+            position = Position(position.x, min(position.y, deployment_edge_y) if player_id == 0 else max(position.y, deployment_edge_y))
         mover_radius = getattr(card_stats, "collision_radius", 0.5) or 0.5
         # LogicBattle::spawnObject clamps every character center to the
         # innermost half-pathing-cell boundary (250 logic units), independently
@@ -1705,15 +1954,18 @@ class BattleState:
             position=spawn_position,
             player_id=player_id,
             card_stats=card_stats,
-            hitpoints=scaled_hp,
-            max_hitpoints=scaled_hp,
+            hitpoints=1 if is_clone else scaled_hp,
+            max_hitpoints=1 if is_clone else scaled_hp,
+            is_clone=is_clone,
             damage=scaled_damage,
             range=card_stats.range if card_stats.range is not None else 0.5,
             sight_range=card_stats.sight_range if card_stats.sight_range is not None else 5.5,
             speed=speed,
             is_air_unit=is_air_unit
         )
-        troop._native_lane_id = self.arena.native_path_id_at(spawn_position)
+        troop._native_lane_id = self.arena.native_path_id_at(
+            lane_position if lane_position is not None else spawn_position
+        )
 
         native_deploy_delay = max(
             0.0,
@@ -1724,7 +1976,8 @@ class BattleState:
             if deploy_delay_override is None
             else max(0.0, deploy_delay_override)
         )
-        troop.deploy_delay_remaining += max(0.0, deploy_delay_offset)
+        troop.spawn_stagger_remaining = max(0.0, deploy_delay_offset)
+        troop.deploy_delay_remaining += troop.spawn_stagger_remaining
         troop.placement_delay_total = troop.deploy_delay_remaining
         troop.placement_pending = troop.deploy_delay_remaining > 1e-9
         troop.attack_cooldown = max(
@@ -1737,6 +1990,16 @@ class BattleState:
 
         self._attach_card_mechanics(troop, card_stats)
 
+        if clone_source is not None:
+            # A copied troop retains its capabilities without replaying a
+            # card's deployment effects such as spawn damage.
+            troop._spawn_hook_fired = True
+            troop._spawn_hook_pending = False
+            for mechanic in troop.mechanics:
+                on_clone = getattr(mechanic, "on_clone_from", None)
+                if callable(on_clone):
+                    on_clone(troop, clone_source)
+
         self.entities[self.next_entity_id] = troop
         self.next_entity_id += 1
         if death_spawn_travel_origin is not None:
@@ -1744,6 +2007,9 @@ class BattleState:
             # the live object to its parent's death origin before spawn hooks
             # or manager insertion can expose the child to gameplay.
             troop.begin_death_spawn_travel(death_spawn_travel_origin)
+        grid = getattr(self, "_native_avoidance_grid", None)
+        if grid is not None:
+            grid.add(troop)
         troop.on_spawn()
 
     def _native_child_position_without_radius(
@@ -1932,12 +2198,12 @@ class BattleState:
         
         return best_position
     
-    def _create_card_stats_from_data(self, unit_data: dict, name: str) -> CardStatsCompat:
+    def _create_card_stats_from_data(self, unit_data: dict, name: str, *, level: int = 11) -> CardStatsCompat:
         """Create CardStatsCompat from raw unit data (for secondary units in mixed swarms)."""
         if not unit_data:
             raise ValueError(f"Missing serialized character data for {name}")
         rarity = unit_data.get("rarity", "Common")
-        return troop_from_character_data(name, unit_data, elixir=0, rarity=rarity)
+        return troop_from_character_data(name, unit_data, elixir=0, rarity=rarity, raw_overrides={"level": level})
 
     def _attach_card_mechanics(self, entity: Entity, card_stats: CardStatsCompat) -> None:
         """Attach canonical or nested data mechanics exactly once."""
@@ -1995,6 +2261,9 @@ class BattleState:
 
         self.entities[self.next_entity_id] = entity
         self.next_entity_id += 1
+        grid = getattr(self, "_native_avoidance_grid", None)
+        if grid is not None:
+            grid.add(entity)
 
         if isinstance(entity, Building) and getattr(card_stats, "name", "") == "KingTower":
             from .balance import tournament_tower_stat
@@ -2070,6 +2339,20 @@ class BattleState:
             if eid in dead_ids and self._champion_ability_pair(entity) is not None
         }
 
+        # Native target-removal callbacks preserve a started attack's finish
+        # interval before the observer may acquire another target.
+        dead_set = set(dead_ids)
+        # A Spirit launch removes its native character even though the scalar
+        # flight carrier reuses that Python object until projectile impact.
+        # Notify character observers now without deleting the live carrier.
+        removed_target_ids = dead_set | {
+            entity.id for entity in self.entities.values()
+            if getattr(entity, "_self_projectile_launched", False)
+        }
+        for observer in self.entities.values():
+            if isinstance(observer, (Troop, Building)) and observer.is_alive:
+                if observer.target_id in removed_target_ids:
+                    observer.on_combat_target_removed(observer.target_id)
         # Remove dead entities
         for eid in dead_ids:
             del self.entities[eid]
@@ -2090,11 +2373,15 @@ class BattleState:
                 death_spawn_name,
                 troop.card_stats.death_spawn_character_data,
                 elixir=0,
+                raw_overrides={"level": troop.card_stats.level},
                 rarity="Common",
             )
         if not death_spawn_stats:
             # Fall back to canonical card loader entry when raw spawn data is unavailable.
             death_spawn_stats = self.card_loader.get_card(death_spawn_name)
+            if death_spawn_stats is not None:
+                death_spawn_stats = copy.copy(death_spawn_stats)
+                death_spawn_stats.level = troop.card_stats.level
 
         if not death_spawn_stats:
             raise ValueError(
@@ -2164,6 +2451,7 @@ class BattleState:
                 deploy_delay_override=deploy_time,
                 snap_to_valid=False,
                 death_spawn=True,
+                is_clone=troop.is_clone,
             )
             spawned = self.entities.get(spawned_id)
             if (
@@ -2201,9 +2489,11 @@ class BattleState:
         player0_crowns = self.get_crown_count(0)
         player1_crowns = self.get_crown_count(1)
 
-        # Regulation ends at 3:00. A crown advantage wins; a crown tie enters
-        # two minutes of sudden-death overtime.
-        if self.time >= self.overtime_start_time and not self.sudden_death:
+        # Native accepts a command at the nominal deadline and resolves its
+        # following interval before deciding the result. Integer milliseconds
+        # avoid float accumulation accidentally closing that last legal frame.
+        elapsed_ms = logic_time_milliseconds(self.time)
+        if elapsed_ms > logic_time_milliseconds(self.overtime_start_time) and not self.sudden_death:
             if player0_crowns != player1_crowns:
                 self.game_over = True
                 self.winner = 0 if player0_crowns > player1_crowns else 1
@@ -2218,9 +2508,10 @@ class BattleState:
                 self.winner = 0 if player0_crowns > player1_crowns else 1
                 return
 
-            # At 5:00, the lowest-health remaining Crown Tower is the
-            # tiebreaker. Exact equality is a real draw.
-            if self.time >= self.tiebreaker_time:
+            # After the last playable interval, collapse the native tiebreaker
+            # presentation into its lowest-standing-tower result. Exact equal
+            # minima are a draw; no policy actions occur during presentation.
+            if elapsed_ms > logic_time_milliseconds(self.tiebreaker_time):
                 p0_lowest = self._lowest_remaining_tower_hp(0)
                 p1_lowest = self._lowest_remaining_tower_hp(1)
                 if p0_lowest > p1_lowest:
@@ -2346,6 +2637,8 @@ class BattleState:
         resolve. The entity capability keeps this general for future payload
         types without teaching deployment code individual card names.
         """
+        if card_stats is not None:
+            position = building_anchor(position, self._building_footprint_size_tiles(card_stats))
         candidates = (
             self.entities.values()
             if deployment_blockers is None
@@ -2400,6 +2693,7 @@ class BattleState:
         card_stats: CardStatsCompat,
     ) -> bool:
         """Return True when a new building footprint overlaps any live building footprint."""
+        position = building_anchor(position, self._building_footprint_size_tiles(card_stats))
         if self.fast_path:
             size = self._building_footprint_size_tiles(card_stats)
             tx = int(position.x)
@@ -2493,7 +2787,8 @@ class BattleState:
         if distance_squared > collision_units * collision_units:
             return None
         if distance_squared == 0:
-            dy_units = 1 if entity.player_id == 0 else -1
+            # Native breaks coincident-body ties toward the mover's own rear.
+            dy_units = -1 if entity.player_id == 0 else 1
             distance_units = 1
         else:
             distance_units = max(1, math.isqrt(distance_squared))
@@ -2509,7 +2804,9 @@ class BattleState:
         )
 
     def _accumulate_troop_collision_for(self, troop: Troop) -> None:
-        """Queue body pressure seen by one native movement component."""
+        """Queue body pressure, including on troops whose travel is frozen."""
+        if troop.spawn_stagger_remaining > 1e-9:
+            return
         from .unit_traits import is_in_transit, unit_mass, uses_air_collision_plane
 
         river_jumping = bool(getattr(troop, "_river_jump_active", False))
@@ -2521,11 +2818,6 @@ class BattleState:
         )
         if (
             not troop.is_alive
-            or (
-                troop.is_stunned()
-                and not river_jumping
-                and not death_spawn_traveling
-            )
             or (
                 is_in_transit(troop)
                 and not river_jumping
@@ -2572,8 +2864,8 @@ class BattleState:
 
         if uses_air_collision_plane(troop):
             return
-        # Static objects do not receive a reciprocal vector. Native supplies
-        # mass 20 and caps the moving character's radius contribution at 0.5.
+        # Static objects do not receive a reciprocal vector. Use their character
+        # mass and cap the moving character's radius contribution at 0.5.
         static_radius = min(own_radius, 0.5)
         for building in self.entities.values():
             if (
@@ -2589,7 +2881,7 @@ class BattleState:
                 troop,
                 building.position,
                 static_radius + building_radius,
-                20.0,
+                unit_mass(building.card_stats),
                 own_mass,
             )
             if vector is not None:

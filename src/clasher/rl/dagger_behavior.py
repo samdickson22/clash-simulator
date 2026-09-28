@@ -94,16 +94,31 @@ def actor_policy_action(
     episode_start: bool,
     deterministic: bool,
     device: torch.device,
+    observation_builder: StructuredObservationBuilder | None = None,
 ) -> tuple[int, tuple[torch.Tensor, torch.Tensor]]:
     """Act from prebuilt public inputs without evaluating the critic encoder."""
-    inputs = _actor_step_inputs(
-        observation,
-        action_mask,
-        previous_action=previous_action,
-        previous_reward=previous_reward,
-        episode_start=episode_start,
-        device=device,
-    )
+    if model.config.public_contract_version == 2:
+        from .public_policy_contract import PublicPolicySequence
+
+        if observation_builder is None:
+            raise ValueError("public contract v2 inference requires its observation builder")
+        if observation_builder.token_names != model.config.public_token_names:
+            raise ValueError("public observation vocabulary does not match policy")
+        sequence = PublicPolicySequence.from_observations(observation_builder, [observation])
+        inputs = sequence.policy_inputs(
+            action_mask=np.asarray(action_mask)[None, :],
+            previous_actions=[previous_action], previous_rewards=[previous_reward],
+            episode_starts=[episode_start], device=device,
+        )
+    else:
+        inputs = _actor_step_inputs(
+            observation,
+            action_mask,
+            previous_action=previous_action,
+            previous_reward=previous_reward,
+            episode_start=episode_start,
+            device=device,
+        )
     action, _, _, next_state, _ = model.act(
         inputs,
         state,

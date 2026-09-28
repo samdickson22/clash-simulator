@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import numpy as np
 
+from .own_card_history import AcceptedOwnPlay
 from .structured_obs import VISIBLE_CARD_SLOTS, ActorObservation
 
-PUBLIC_OBSERVATION_SCHEMA_VERSION = 2
+PUBLIC_OBSERVATION_SCHEMA_VERSION = 4
 
 # The legacy 32/18 feature widths are shared with exact simulator corpora.  A
 # width match is therefore not evidence that an observation can be produced by
@@ -197,7 +198,7 @@ class ConfidenceAwareActorObservation:
 
     The confidence arrays deliberately remain separate from the legacy
     32-feature policy input. This prevents old corpora/checkpoints from silently
-    changing semantics; a confidence-aware model must opt into schema v2.
+    changing semantics; schema v3 also carries explicit match lifecycle outside those tensors.
     """
 
     observation: ActorObservation
@@ -215,6 +216,21 @@ class ConfidenceAwareActorObservation:
                 f"unsupported public observation schema {self.schema_version}"
             )
         observation = self.observation
+        if observation.board_rotated is not None and type(observation.board_rotated) is not bool:
+            raise ValueError("board rotation must be bool or unknown")
+        if observation.terminal is not None and type(observation.terminal) is not bool:
+            raise ValueError("terminal status must be bool or unknown")
+        levels, level_confidence = observation.entity_levels, observation.entity_level_confidence
+        if (levels is None) != (level_confidence is None):
+            raise ValueError('incomplete public entity level fields')
+        if levels is not None:
+            if levels.dtype != np.int64 or level_confidence.dtype != np.float32 or levels.shape != observation.entity_ids.shape or level_confidence.shape != levels.shape:
+                raise ValueError('invalid public entity level shape or dtype')
+            _finite_unit_interval('entity level confidence', level_confidence)
+            if (((levels < 0) | (levels > 127)).any()
+                or ((levels == 0) != (level_confidence == 0)).any()
+                or ((~observation.entity_mask) & ((levels != 0) | (level_confidence != 0))).any()):
+                raise ValueError('invalid public entity levels or confidence')
         expected_shapes = {
             "entity_id_confidence": observation.entity_ids.shape,
             "entity_feature_confidence": observation.entity_features.shape,
@@ -326,7 +342,7 @@ def validate_real_play_feature_contract(
 def exact_public_observation(
     observation: ActorObservation,
 ) -> ConfidenceAwareActorObservation:
-    """Wrap an exact simulator actor observation in schema-v2 confidence."""
+    """Wrap exact simulator public state with confidence and match lifecycle."""
 
     entity_known = observation.entity_mask.astype(np.float32, copy=True)
     result = ConfidenceAwareActorObservation(
@@ -350,13 +366,57 @@ def exact_public_observation(
     return result
 
 
+def reference_public_observation(
+    observation: ActorObservation,
+) -> ConfidenceAwareActorObservation:
+    """Project simulator state to the pinned reference observer's coverage.
+
+    Retain exact visible geometry, body HP/levels, own hand/elixir and Crown
+    HP. Effect timers and shield state stay unknown, as in the native public
+    adapter. This is a reference comparison projection, not a camera model.
+    """
+    source = exact_public_observation(observation)
+    features = observation.entity_features.copy()
+    confidence = source.entity_feature_confidence.copy()
+    features[:, 10:] = 0
+    confidence[:, 10:] = 0
+    bodies = observation.entity_mask & ((features[:, 4] + features[:, 5]) > 0.5)
+    features[~bodies, 9] = 0
+    confidence[~bodies, 9] = 0
+    globals_ = np.zeros_like(observation.global_features)
+    global_confidence = np.zeros_like(source.global_feature_confidence)
+    for column in (5, 8, 9, 10, 11, 12, 13):
+        globals_[column] = observation.global_features[column]
+        global_confidence[column] = source.global_feature_confidence[column]
+    projected = replace(
+        source,
+        observation=replace(
+            observation, entity_features=features, global_features=globals_,
+            opponent_history_ids=np.zeros_like(observation.opponent_history_ids),
+            opponent_history_ages=np.zeros_like(observation.opponent_history_ages),
+            opponent_seen_card_ids=np.zeros_like(observation.opponent_seen_card_ids),
+        ),
+        entity_feature_confidence=confidence,
+        global_feature_confidence=global_confidence,
+        opponent_history_confidence=np.zeros_like(source.opponent_history_confidence),
+        opponent_seen_card_confidence=np.zeros_like(source.opponent_seen_card_confidence),
+    )
+    projected.validate()
+    return projected
+
+
 def degrade_simulator_public_observation(
     observation: ActorObservation,
     *,
     profile: PublicObservationDegradationProfile,
     rng: np.random.Generator,
+    accepted_own_play: AcceptedOwnPlay | None = None,
 ) -> ConfidenceAwareActorObservation:
-    """Project exact simulator state into the current replay-public domain."""
+    """Project visual state; own command history needs a separate public receipt.
+
+    The default drops simulator control metadata because replay images cannot
+    establish acceptance. A controller may supply its confirmed own-play record.
+    """
 
     profile.validate()
     exact_public_observation(observation)
@@ -439,6 +499,12 @@ def degrade_simulator_public_observation(
         global_feature_confidence[feature] = profile.tower_hp_confidence
 
     projected = ActorObservation(
+        # The current visual extractor has no calibrated level-label reader.
+        entity_levels=None if observation.entity_levels is None else np.zeros_like(observation.entity_levels),
+        entity_level_confidence=None if observation.entity_level_confidence is None else np.zeros_like(observation.entity_level_confidence),
+        terminal=observation.terminal,
+        board_rotated=observation.board_rotated,
+        own_last_play=accepted_own_play,
         entity_ids=entity_ids,
         entity_features=entity_features,
         entity_mask=entity_mask,

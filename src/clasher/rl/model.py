@@ -28,6 +28,8 @@ class PolicyConfig:
     num_tokens: int
     max_entities: int
     card_semantics_version: int = 1
+    public_contract_version: int = 1
+    public_token_names: tuple[str, ...] = ()
     canonical_lane_globals: bool = False
     public_history_slots: int = 0
     public_seen_card_slots: int = 0
@@ -93,6 +95,14 @@ class PolicyConfig:
     action_value_head_enabled: bool = False
 
     def __post_init__(self) -> None:
+        if self.public_contract_version not in (1, 2, 3):
+            raise ValueError("unsupported public observation contract")
+        if self.public_contract_version >= 2 and (
+            len(self.public_token_names) != self.num_tokens
+            or self.public_token_names[:2] != ("<pad>", "<unknown>")
+            or len(set(self.public_token_names)) != self.num_tokens
+        ):
+            raise ValueError("public contract v2 requires its exact token vocabulary")
         if self.actor_observation_domain not in {
             "simulator-exact",
             "causal-vision-v1",
@@ -198,7 +208,7 @@ class PolicyConfig:
         self,
     ) -> dict[
         str,
-        str | int | float | tuple[int, ...] | tuple[float, ...] | tuple[bool, ...],
+        str | int | float | tuple[int, ...] | tuple[float, ...] | tuple[bool, ...] | tuple[str, ...],
     ]:
         return asdict(self)
 
@@ -206,6 +216,7 @@ class PolicyConfig:
     def from_dict(cls, payload: dict) -> PolicyConfig:
         normalized = dict(payload)
         for key in (
+            "public_token_names",
             "repair_stage_sizes",
             "repair_stage_prototype_counts",
             "repair_stage_prototype_thresholds",
@@ -244,6 +255,10 @@ class PolicyInputs:
     opponent_seen_card_ids: Tensor | None = None
     opponent_play_event_ids: Tensor | None = None
     opponent_play_event_confidence: Tensor | None = None
+    own_last_play_ids: Tensor | None = None
+    own_last_play_features: Tensor | None = None
+    entity_levels: Tensor | None = None
+    entity_level_confidence: Tensor | None = None
 
     @property
     def batch_size(self) -> int:
@@ -593,6 +608,7 @@ class EntityEncoder(nn.Module):
         card_input_mode: str,
         confidence_aware: bool = False,
         current_hand_slot_invariant: bool = False,
+        level_aware: bool = False,
     ) -> None:
         super().__init__()
         if encoder_kind not in {"attention", "deepsets"}:
@@ -604,6 +620,7 @@ class EntityEncoder(nn.Module):
             "mechanics-only",
         }:
             raise ValueError(f"unknown card input mode {card_input_mode!r}")
+        self.level_projection = nn.Linear(2, d_model, bias=False) if level_aware else None
         self.encoder_kind = encoder_kind
         self.card_input_mode = card_input_mode
         self.confidence_aware = confidence_aware
@@ -618,9 +635,9 @@ class EntityEncoder(nn.Module):
         if card_input_mode == "id-only":
             self.card_stat_features = None
             self.semantic_card_features = None
-        elif card_semantics_version == 3:
+        elif card_semantics_version in {3, 4}:
             if card_stat_features.shape[-1] <= 16:
-                raise ValueError("semantic-v3 requires legacy and semantic features")
+                raise ValueError("semantic-v3/v4 requires base and semantic features")
             self.register_buffer(
                 "card_stat_features",
                 card_stat_features[:, :16].clone().float(),
@@ -785,6 +802,7 @@ class EntityEncoder(nn.Module):
         entity_feature_confidence: Tensor | None = None,
         card_id_confidence: Tensor | None = None,
         global_feature_confidence: Tensor | None = None,
+        entity_level_features: Tensor | None = None,
     ) -> tuple[Tensor, Tensor, Tensor, Tensor]:
         if card_ids.shape[-1] > self.max_card_slots:
             raise ValueError(
@@ -802,6 +820,12 @@ class EntityEncoder(nn.Module):
             + self.entity_projection(entity_features)
             + self.kind_embedding.weight[2].view(1, 1, -1)
         )
+        if self.level_projection is not None:
+            if entity_level_features is None:
+                raise ValueError('level-aware encoder requires public level features')
+            entity_tokens = entity_tokens + self.level_projection(entity_level_features)
+        elif entity_level_features is not None:
+            raise ValueError('legacy encoder cannot consume entity levels')
         if self.confidence_aware:
             entity_id_confidence = self._require_confidence(
                 entity_id_confidence,
@@ -1101,6 +1125,11 @@ class ClasherPolicy(nn.Module):
             card_input_mode=config.card_input_mode,
             confidence_aware=config.public_observation_confidence,
             current_hand_slot_invariant=config.actor_current_hand_slot_invariant,
+            level_aware=config.public_contract_version == 3,
+        )
+        self.own_history_projection = (
+            nn.Linear(d_model + 2, d_model)
+            if config.public_contract_version >= 2 else None
         )
         self.critic_encoder = EntityEncoder(
             num_tokens=config.num_tokens,
@@ -1363,7 +1392,7 @@ class ClasherPolicy(nn.Module):
                 raise ValueError(
                     "mechanics slot replacement cannot also set a base scale"
                 )
-            if config.card_semantics_version not in {1, 3}:
+            if config.card_semantics_version not in {1, 3, 4}:
                 raise ValueError(
                     "mechanics slot adapter requires the 16 base card features"
                 )
@@ -1394,7 +1423,7 @@ class ClasherPolicy(nn.Module):
         self.robust_action_card_stats: Tensor | None
         self.robust_action_type_adapter: nn.Sequential | None = None
         if config.robust_action_type_adapter_size > 0:
-            if config.card_semantics_version not in {1, 3}:
+            if config.card_semantics_version not in {1, 3, 4}:
                 raise ValueError(
                     "robust action adapter requires base public card features"
                 )
@@ -2167,6 +2196,14 @@ class ClasherPolicy(nn.Module):
         def flatten(value: Tensor) -> Tensor:
             return value.reshape(flat_size, *value.shape[2:])
 
+        if self.config.public_contract_version >= 2:
+            confidence_inputs = (
+                inputs.entity_id_confidence, inputs.entity_feature_confidence,
+                inputs.hand_id_confidence, inputs.global_feature_confidence,
+            )
+            present = [value is not None for value in confidence_inputs]
+            if any(present) != all(present) or all(present) != self.config.public_observation_confidence:
+                raise ValueError("public confidence inputs do not match the model contract")
         actor_global_features = inputs.global_features
         actor_global_confidence = inputs.global_feature_confidence
         if self.config.memory_kind == "structured":
@@ -2188,6 +2225,22 @@ class ClasherPolicy(nn.Module):
                     dim=-1,
                 )
 
+        level_features = None
+        if self.config.public_contract_version == 3:
+            levels, confidence = inputs.entity_levels, inputs.entity_level_confidence
+            if levels is None or confidence is None:
+                raise ValueError('public contract v3 requires entity levels and confidence')
+            if levels.dtype != torch.long or not confidence.is_floating_point() or levels.shape != inputs.entity_ids.shape or confidence.shape != levels.shape:
+                raise ValueError('invalid public entity level shape or dtype')
+            if (not torch.isfinite(confidence).all() or torch.any((confidence < 0) | (confidence > 1))
+                or torch.any((levels < 0) | (levels > 127))
+                or torch.any((levels == 0) != (confidence == 0))
+                or torch.any((~inputs.entity_mask) & ((levels != 0) | (confidence != 0)))):
+                raise ValueError('invalid public entity levels or confidence')
+            level_features = torch.stack([levels.to(inputs.entity_features.dtype) / 16, confidence], dim=-1)
+        elif inputs.entity_levels is not None or inputs.entity_level_confidence is not None:
+            raise ValueError('entity levels require public contract v3')
+
         actor_global, actor_cards, actor_entities, actor_valid = self.actor_encoder(
             flatten(inputs.entity_ids),
             flatten(inputs.entity_features),
@@ -2206,7 +2259,35 @@ class ClasherPolicy(nn.Module):
             None
             if actor_global_confidence is None
             else flatten(actor_global_confidence),
+            None if level_features is None else flatten(level_features),
         )
+        if self.config.public_contract_version >= 2:
+            if inputs.own_last_play_ids is None or inputs.own_last_play_features is None:
+                raise ValueError("public contract v2 requires own accepted-play history")
+            ids = flatten(inputs.own_last_play_ids)
+            features = flatten(inputs.own_last_play_features)
+            if ids.dtype != torch.long or ids.shape != (flat_size,) or features.shape != (flat_size, 2):
+                raise ValueError("invalid own accepted-play history shape")
+            known = features[:, 0]
+            if (
+                not torch.isfinite(features).all()
+                or torch.any((features < 0) | (features > 1))
+                or torch.any((known != 0) & (known != 1))
+                or torch.any((ids >= 2) != (known == 1))
+                or torch.any(ids == 1)
+                or torch.any((known == 0) & (features[:, 1] != 0))
+                or torch.any((ids < 0) | (ids >= self.config.num_tokens))
+            ):
+                raise ValueError("invalid own accepted-play history values")
+            identity = self.actor_encoder._card_identity_embedding(ids)
+            semantics = self.actor_encoder._card_stat_embedding(ids)
+            history = (identity + semantics) * known.unsqueeze(-1)
+            assert self.own_history_projection is not None
+            actor_global = actor_global + self.own_history_projection(
+                torch.cat([history, features], dim=-1)
+            )
+        elif inputs.own_last_play_ids is not None or inputs.own_last_play_features is not None:
+            raise ValueError("own accepted-play history requires public contract v2")
         public_belief: Tensor | None = None
         if self.config.public_history_slots > 0:
             if (

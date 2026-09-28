@@ -23,12 +23,12 @@ class TileGrid:
     
     # Tower positions for 18x32 arena (authentic CR layout)
     # Player 0 (bottom)
-    BLUE_KING_TOWER = Position(9.0, 2.5)     # King tower centered at x=9 (middle of 18-wide arena)
+    BLUE_KING_TOWER = Position(9.0, 3.0)     # King tower centered at x=9 (middle of 18-wide arena)
     BLUE_LEFT_TOWER = Position(3.5, 6.5)     # Left princess tower
     BLUE_RIGHT_TOWER = Position(14.5, 6.5)   # Right princess tower (corrected for better symmetry)
     
     # Player 1 (top) 
-    RED_KING_TOWER = Position(9.0, 29.5)     # King tower centered at x=9
+    RED_KING_TOWER = Position(9.0, 29.0)     # King tower centered at x=9
     RED_LEFT_TOWER = Position(3.5, 25.5)     # Left princess tower  
     RED_RIGHT_TOWER = Position(14.5, 25.5)   # Right princess tower (corrected for better symmetry)
     
@@ -145,10 +145,12 @@ class TileGrid:
                 # If red left tower is destroyed, blue player can spawn on left half of arena and 4 tiles back
                 if battle_state.players[1].left_tower_hp <= 0:
                     zones.append((0, self.RIVER_Y2 + 1, 9, self.RIVER_Y2 + 5))  # Left half: x=0-8, y=17-20
+                    zones.append((2.5, self.RIVER_Y1, 4.5, self.RIVER_Y2 + 1))
                 
                 # If red right tower is destroyed, blue player can spawn on right half of arena and 4 tiles back  
                 if battle_state.players[1].right_tower_hp <= 0:
                     zones.append((9, self.RIVER_Y2 + 1, self.width, self.RIVER_Y2 + 5))  # Right half: x=9-17, y=17-20
+                    zones.append((13.5, self.RIVER_Y1, 15.5, self.RIVER_Y2 + 1))
                     
         else:  # Player 1 (top half)  
             # Basic deployment zone (top half, excluding river)
@@ -162,10 +164,12 @@ class TileGrid:
                 # If blue left tower is destroyed, red player can spawn on left half of arena and 4 tiles back
                 if battle_state.players[0].left_tower_hp <= 0:
                     zones.append((0, self.RIVER_Y1 - 4, 9, self.RIVER_Y1))  # Left half: x=0-8, y=11-14
+                    zones.append((2.5, self.RIVER_Y1, 4.5, self.RIVER_Y2 + 1))
                 
                 # If blue right tower is destroyed, red player can spawn on right half of arena and 4 tiles back
                 if battle_state.players[0].right_tower_hp <= 0:
                     zones.append((9, self.RIVER_Y1 - 4, self.width, self.RIVER_Y1))  # Right half: x=9-17, y=11-14
+                    zones.append((13.5, self.RIVER_Y1, 15.5, self.RIVER_Y2 + 1))
         
         return zones
     

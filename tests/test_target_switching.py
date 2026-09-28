@@ -1,3 +1,5 @@
+import pytest
+
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.entities import Building, TargetType, Troop
@@ -194,12 +196,16 @@ def test_normal_troop_switching_uses_distance_not_target_category():
     assert not troop._should_switch_target(closer_building, farther_troop)
 
 
-def test_does_not_switch_from_king_to_out_of_sight_princess():
+@pytest.mark.parametrize("princess_y, visible", [(25.5, True), (29.5, False)])
+def test_walking_king_target_can_switch_to_nearer_visible_princess(princess_y, visible):
     troop = _make_building_targeting_troop(x=9.0, y=20.0, sight_range=6.0)
-    current_target = _make_building(entity_id=20, x=9.0, y=29.5, name="KingTower", player_id=1)
-    new_target = _make_building(entity_id=21, x=14.5, y=25.5, name="Tower", player_id=1)
+    current_target = _make_building(entity_id=20, x=9.0, y=35.0, name="KingTower", player_id=1)
+    new_target = _make_building(entity_id=21, x=14.5, y=princess_y, name="Tower", player_id=1)
 
-    assert troop._should_switch_target(current_target, new_target) is False
+    assert not troop.is_within_attack_reach(new_target)
+    assert troop.native_target_distance_to(new_target) < troop.native_target_distance_to(current_target)
+    assert troop.is_within_sight(new_target) is visible
+    assert troop._should_switch_target(current_target, new_target) is visible
 
 
 def test_can_switch_from_king_to_in_sight_defensive_building():
@@ -269,7 +275,7 @@ def test_building_retargets_when_locked_enemy_leaves_attack_range():
     assert building.target_id == replacement.id
 
 
-def test_building_keeps_lock_inside_native_range_extension():
+def test_building_releases_lock_outside_native_range():
     battle = BattleState()
     building = _make_building(entity_id=100, x=9.0, y=10.0, player_id=0)
     current = _make_normal_troop(x=9.0, y=10.0, sight_range=6.0)
@@ -280,7 +286,7 @@ def test_building_keeps_lock_inside_native_range_extension():
     replacement.player_id = 1
     current.position.y = (
         building.position.y
-        + building.reach_distance_to(current, building.range)
+        + building.reach_distance_to(current, building.range + building.get_collision_radius())
         + 0.024
     )
     for entity in (building, current, replacement):
@@ -293,7 +299,8 @@ def test_building_keeps_lock_inside_native_range_extension():
     building.update(battle.dt, battle)
 
     assert not building.is_within_attack_reach(current)
-    assert building.target_id == current.id
+    assert not building.is_within_target_keep_reach(current)
+    assert building.target_id == replacement.id
 
 
 def test_troop_keeps_connected_tower_lock_when_distraction_arrives():

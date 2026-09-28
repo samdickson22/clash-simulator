@@ -52,8 +52,10 @@ def formation_offset(
     base_angle = 0
     lane_flip_x = (
         LOGIC_LANE_ID_BASED_DEPLOY_SEQUENCE
-        and int(lane_id) == 1
-        and slot_count in {2, 3, 4}
+        and (
+            (int(lane_id) == 1 and slot_count in {2, 3})
+            or (int(lane_id) == 2 and slot_count == 4)
+        )
     )
 
     if slot_count == 2:

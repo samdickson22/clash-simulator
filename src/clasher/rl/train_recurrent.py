@@ -2072,12 +2072,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--card-semantics-version",
         type=int,
-        choices=(1, 2, 3),
+        choices=(1, 2, 3, 4),
         default=1,
         help=(
             "public card descriptor schema for a fresh model; v2 replaces the "
             "legacy table, while v3 preserves it and adds a zero-initialized "
-            "shared mechanics adapter"
+            "shared mechanics adapter; v4 corrects compact target flags and "
+            "derives missing character mass without changing the v3 layout"
         ),
     )
     parser.add_argument(
@@ -3205,9 +3206,9 @@ def main() -> None:
             raise ValueError(
                 "--fresh-factorized-action-head cannot modify an existing policy"
             )
-        if args.card_semantics_version != 3:
+        if args.card_semantics_version not in {3, 4}:
             raise ValueError(
-                "--fresh-factorized-action-head requires card semantics v3"
+                "--fresh-factorized-action-head requires card semantics v3 or v4"
             )
         if args.memory_kind != "structured":
             raise ValueError(

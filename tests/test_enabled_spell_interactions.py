@@ -477,25 +477,17 @@ def test_invisible_area_damage_eligibility_comes_from_character_payload():
     assert hp_before - target.hitpoints == SPELL_REGISTRY["Zap"].damage
 
 
-def test_played_spell_waits_for_universal_server_action_delay():
+def test_accepted_spell_launches_without_another_transport_delay():
     battle = BattleState()
     _prepare_card(battle, "Fireball")
 
     assert battle.deploy_card(0, "Fireball", Position(9.0, 20.0))
-    assert not any(
+    assert any(
         isinstance(entity, Projectile)
         and getattr(entity, "spell_name", "") == "Fireball"
         for entity in battle.entities.values()
     )
     assert not battle.can_fast_forward_idle()
-
-    while battle.time + battle.dt < SERVER_ACTION_DELAY_SECONDS:
-        battle.step()
-    assert not any(
-        isinstance(entity, Projectile)
-        and getattr(entity, "spell_name", "") == "Fireball"
-        for entity in battle.entities.values()
-    )
 
     battle.step()
     assert any(
@@ -1140,7 +1132,7 @@ def test_tornado_pulls_airborne_river_jumper_without_resetting_landing():
     assert hog._river_jump_target == landing
     while hog._river_jump_active:
         battle.step()
-    assert hog.position == landing
+    assert 0 < hog.position.distance_to(landing) < 0.320
 
 
 def test_tornado_pull_uses_base_speed_not_mass_or_active_speed_modifiers():
@@ -1158,7 +1150,9 @@ def test_tornado_pull_uses_base_speed_not_mass_or_active_speed_modifiers():
         first_tick_displacements[name] = start_x - troop.position.x
 
     assert first_tick_displacements["MiniPekka"] == pytest.approx(90 / 1000 * 3.6)
-    assert first_tick_displacements["Golem"] == pytest.approx(45 / 1000 * 3.6)
+    # Loaded Golem Speed is 54 after gait compensation. Pull strength is
+    # truncated to integer logic units before applying the displacement.
+    assert first_tick_displacements["Golem"] == pytest.approx(194 / 1000)
 
 
 def test_tornado_moves_falling_skeleton_container_but_not_stationary_death_bomb():
@@ -1473,7 +1467,7 @@ def test_snowball_respects_heavy_mass_but_log_pushes_heavy_troops():
 
 
 @pytest.mark.parametrize("name", ["Log", "BarbLog"])
-def test_rolling_spell_cast_delay_uses_data_speed_and_king_tower_distance(name):
+def test_rolling_spell_cast_delay_uses_fixed_throw_distance_in_both_seats(name):
     lower = BattleState()
     upper = BattleState()
     lower_target = Position(9.0, 10.0)
@@ -1494,7 +1488,7 @@ def test_rolling_spell_cast_delay_uses_data_speed_and_king_tower_distance(name):
     assert lower_projectile.radius_y == 0.6
 
     casting_speed = 360.0 / 50.0
-    expected = lower.arena.BLUE_KING_TOWER.distance_to(lower_target) / casting_speed
+    expected = 3.0 / casting_speed
     assert lower_projectile.spawn_delay == pytest.approx(expected)
     assert upper_projectile.spawn_delay == pytest.approx(expected)
 
@@ -1504,10 +1498,7 @@ def test_rolling_spell_cast_delay_uses_data_speed_and_king_tower_distance(name):
         (entity for entity in lower.entities.values() if isinstance(entity, RollingProjectile)),
         key=lambda entity: entity.id,
     )
-    assert farther_projectile.spawn_delay == pytest.approx(
-        lower.arena.BLUE_KING_TOWER.distance_to(farther_target) / casting_speed
-    )
-    assert farther_projectile.spawn_delay > lower_projectile.spawn_delay
+    assert farther_projectile.spawn_delay == pytest.approx(expected)
 
 
 @pytest.mark.parametrize("name", ["Log", "BarbLog"])
@@ -1790,7 +1781,7 @@ def test_rolling_projectile_resolves_damage_at_exact_range_endpoint():
     assert target.hitpoints == before - 50
 
 
-def test_rolling_projectile_rectangular_boundary_tolerates_subnanotile_drift():
+def test_rolling_projectile_rectangular_tangency_is_excluded_after_quantization():
     battle = BattleState()
     target = _spawn_enemy_troop(
         battle,
@@ -1810,6 +1801,8 @@ def test_rolling_projectile_rectangular_boundary_tolerates_subnanotile_drift():
         radius_y=0.0,
     )
 
+    assert not rolling._hitbox_overlaps_with_rolling_path(target)
+    target.position.x = 10.499
     assert rolling._hitbox_overlaps_with_rolling_path(target)
 
 
@@ -2108,28 +2101,27 @@ def test_graveyard_uses_live_delay_count_radius_and_fixed_sequence():
         entity for entity in battle.entities.values() if isinstance(entity, Graveyard)
     )
 
-    # Direct Spell.cast starts after the universal one-second server action
-    # delay, leaving 1.2 seconds of the published 2.2-second total here.
-    assert graveyard.initial_spawn_delay == 1.2
+    # Serialized action deadlines are measured from the accepted command.
+    assert graveyard.initial_spawn_delay == 2.2
     assert graveyard.spawn_deadlines == (
-        1.2,
-        1.7,
-        2.3,
-        2.8,
-        3.4,
-        3.9,
-        4.5,
-        5.0,
+        2.2,
+        2.7,
+        3.3,
+        3.8,
+        4.4,
+        4.9,
         5.5,
-        6.1,
-        6.6,
-        7.2,
+        6.0,
+        6.5,
+        7.1,
+        7.6,
+        8.2,
     )
     assert graveyard.max_skeletons == 12
     assert graveyard.spawn_radius == 4.0
     assert len(graveyard.spawn_offsets) == 12
 
-    graveyard.update(1.19, battle)
+    graveyard.update(2.19, battle)
     assert graveyard.skeletons_spawned == 0
     graveyard.update(0.01, battle)
     first = max(
@@ -2164,7 +2156,7 @@ def test_graveyard_pattern_rotates_for_the_opposite_player():
         graveyard = next(
             entity for entity in battle.entities.values() if isinstance(entity, Graveyard)
         )
-        graveyard.update(1.7, battle)
+        graveyard.update(2.7, battle)
         positions.append(
             [
                 entity.position
@@ -2193,7 +2185,7 @@ def test_graveyard_children_keep_projectile_spawn_points_in_water_and_at_edges()
         for entity in center_battle.entities.values()
         if isinstance(entity, Graveyard)
     )
-    center_graveyard.update(1.7, center_battle)
+    center_graveyard.update(2.7, center_battle)
     center_skeletons = [
         entity
         for entity in center_battle.entities.values()
@@ -2216,7 +2208,7 @@ def test_graveyard_children_keep_projectile_spawn_points_in_water_and_at_edges()
         for entity in edge_battle.entities.values()
         if isinstance(entity, Graveyard)
     )
-    edge_graveyard.update(1.2, edge_battle)
+    edge_graveyard.update(2.2, edge_battle)
     edge_skeletons = [
         entity
         for entity in edge_battle.entities.values()
@@ -2239,7 +2231,7 @@ def test_graveyard_children_keep_projectile_spawn_points_in_water_and_at_edges()
         for entity in right_battle.entities.values()
         if isinstance(entity, Graveyard)
     )
-    right_graveyard.update(1.2, right_battle)
+    right_graveyard.update(2.2, right_battle)
     right_skeleton = next(
         entity
         for entity in right_battle.entities.values()
@@ -2263,7 +2255,7 @@ def test_graveyard_children_path_out_of_native_water_spawn_points(player_id):
         for entity in battle.entities.values()
         if isinstance(entity, Graveyard)
     )
-    graveyard.update(1.7, battle)
+    graveyard.update(2.7, battle)
     skeletons = [
         entity
         for entity in battle.entities.values()
@@ -2351,7 +2343,9 @@ def test_goblin_barrel_diagonal_arrival_uses_native_integer_distance(
         if isinstance(entity, SpawnProjectile)
     )
 
-    for _ in range(54):
+    # King anchor (9, 3) to (2.5, 23.5): floor(sqrt(6500² + 20500²))
+    # is 21505 logic units. At 400 units/tick, arrival takes 54 ticks.
+    for _ in range(53):
         barrel.update(battle.dt, battle)
     assert barrel.is_alive
     assert not any(

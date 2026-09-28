@@ -386,6 +386,8 @@ class _EntityTrack:
     last_observed_frame: int
     velocity: np.ndarray
     observations: int
+    level: int = 0
+    level_confidence: float = 0.0
 
     @property
     def team(self) -> int:
@@ -531,6 +533,8 @@ class CausalVisionTracker:
                 row[9] = track.row[9]
                 confidence[9] = track.confidence[9] * self.confidence_decay**gap
 
+            track.level = 0 if observation.entity_levels is None else int(observation.entity_levels[index])
+            track.level_confidence = 0.0 if observation.entity_level_confidence is None else float(observation.entity_level_confidence[index])
             track.row = row
             track.confidence = confidence
             track.identity_confidence = float(source.entity_id_confidence[index])
@@ -555,6 +559,8 @@ class CausalVisionTracker:
                 last_observed_frame=frame,
                 velocity=np.zeros((2,), dtype=np.float32),
                 observations=1,
+                level=0 if observation.entity_levels is None else int(observation.entity_levels[index]),
+                level_confidence=0.0 if observation.entity_level_confidence is None else float(observation.entity_level_confidence[index]),
             )
             self._tracks[track.track_id] = track
             self._next_track_id += 1
@@ -576,6 +582,7 @@ class CausalVisionTracker:
                 decay = self.confidence_decay**step
                 track.confidence *= decay
                 track.identity_confidence *= decay
+                track.level_confidence *= decay
                 track.last_frame = frame
             output.append((False, track))
         for track_id in stale:
@@ -586,7 +593,7 @@ class CausalVisionTracker:
         self,
         source: ConfidenceAwareActorObservation,
         tracks: list[tuple[bool, _EntityTrack]],
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray | None, np.ndarray | None]:
         observation = source.observation
         max_entities = observation.entity_ids.shape[0]
         confirmed = [
@@ -614,7 +621,12 @@ class CausalVisionTracker:
         feature_confidence = np.zeros_like(
             source.entity_feature_confidence, dtype=np.float32
         )
+        levels = None if observation.entity_levels is None else np.zeros_like(observation.entity_levels)
+        level_confidence = None if observation.entity_level_confidence is None else np.zeros_like(observation.entity_level_confidence)
         for index, (_, track) in enumerate(ranked):
+            if levels is not None:
+                levels[index] = track.level
+                level_confidence[index] = track.level_confidence
             ids[index] = track.token_id
             visible_row = track.row.copy()
             visible_row[track.confidence <= 0.0] = 0.0
@@ -622,7 +634,7 @@ class CausalVisionTracker:
             mask[index] = True
             id_confidence[index] = track.identity_confidence
             feature_confidence[index] = track.confidence
-        return ids, features, mask, id_confidence, feature_confidence
+        return ids, features, mask, id_confidence, feature_confidence, levels, level_confidence
 
     def _carry_hud(
         self,
@@ -683,6 +695,8 @@ class CausalVisionTracker:
             entity_mask,
             entity_id_confidence,
             entity_feature_confidence,
+            entity_levels,
+            entity_level_confidence,
         ) = self._pack_entities(source, tracks)
         hand_ids, hand_confidence, globals_, global_confidence = self._carry_hud(
             source, frame_delta
@@ -690,6 +704,11 @@ class CausalVisionTracker:
         observation = source.observation
         tracked = ConfidenceAwareActorObservation(
             observation=ActorObservation(
+                entity_levels=entity_levels,
+                entity_level_confidence=entity_level_confidence,
+                terminal=observation.terminal,
+                board_rotated=observation.board_rotated,
+                own_last_play=observation.own_last_play,
                 entity_ids=entity_ids,
                 entity_features=entity_features,
                 entity_mask=entity_mask,

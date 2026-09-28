@@ -1,0 +1,133 @@
+{
+  "scope": "Native acceptance proven by both elixir spend and direct tower damage. Conditional scalar setup of the same deadline; native tiebreaker animation is outside the playable episode.",
+  "sources": {
+    "reports/native_knight_body_divergence_20260915/terminal-command-native-controls.json": "f9ac58416d57d0fffeb72932bc1d538166f098648fff52df78f064fa1f9f14b0",
+    "reports/native_knight_body_divergence_20260915/regulation-command-native-controls.json": "ade864cbf8446b150fa7bd2b98d8a3b3a4981b3d3ce410fa29d52ded98a38209",
+    "reports/native_knight_body_divergence_20260915/terminal-command-complete-native-controls.json": "345a78d7b1b50d228846e17b9a853eff8e2ead42233e239caab1f879db587fda"
+  },
+  "cases": [
+    {
+      "kind": "tiebreaker",
+      "owner": 0,
+      "submitted": 5998,
+      "accepted": true,
+      "before_hp": 3052,
+      "after_hp": 3004,
+      "native_after_tick": 5999,
+      "native_winner": 0,
+      "native_finalized_tick": 6166,
+      "native_final_crowns": [
+        1,
+        0
+      ]
+    },
+    {
+      "kind": "tiebreaker",
+      "owner": 0,
+      "submitted": 5999,
+      "accepted": true,
+      "before_hp": 3052,
+      "after_hp": 3004,
+      "native_after_tick": 6000,
+      "native_winner": 0,
+      "native_finalized_tick": 6166,
+      "native_final_crowns": [
+        1,
+        0
+      ]
+    },
+    {
+      "kind": "tiebreaker",
+      "owner": 0,
+      "submitted": 6000,
+      "accepted": true,
+      "before_hp": 3052,
+      "after_hp": 3004,
+      "native_after_tick": 6001,
+      "native_winner": 0,
+      "native_finalized_tick": 6166,
+      "native_final_crowns": [
+        1,
+        0
+      ]
+    },
+    {
+      "kind": "tiebreaker",
+      "owner": 0,
+      "submitted": 6001,
+      "accepted": false,
+      "before_hp": 3052,
+      "after_hp": 3052,
+      "native_after_tick": 6002,
+      "native_winner": null,
+      "native_finalized_tick": 6068,
+      "native_final_crowns": [
+        0,
+        0
+      ]
+    },
+    {
+      "kind": "tiebreaker",
+      "owner": 0,
+      "submitted": 6002,
+      "accepted": false,
+      "before_hp": 3052,
+      "after_hp": 3052,
+      "native_after_tick": 6003,
+      "native_winner": null,
+      "native_finalized_tick": 6068,
+      "native_final_crowns": [
+        0,
+        0
+      ]
+    },
+    {
+      "kind": "tiebreaker",
+      "owner": 0,
+      "submitted": 6020,
+      "accepted": false,
+      "before_hp": 3052,
+      "after_hp": 3052,
+      "native_after_tick": 6021,
+      "native_winner": null,
+      "native_finalized_tick": 6068,
+      "native_final_crowns": [
+        0,
+        0
+      ]
+    },
+    {
+      "kind": "regulation",
+      "owner": 1,
+      "submitted": 3599,
+      "accepted": true,
+      "before_hp": 3052,
+      "after_hp": 3004,
+      "native_after_tick": 3600,
+      "native_winner": 0,
+      "native_finalized_tick": 3601
+    },
+    {
+      "kind": "regulation",
+      "owner": 1,
+      "submitted": 3600,
+      "accepted": true,
+      "before_hp": 3052,
+      "after_hp": 3004,
+      "native_after_tick": 3601,
+      "native_winner": 0,
+      "native_finalized_tick": 3601
+    },
+    {
+      "kind": "regulation",
+      "owner": 1,
+      "submitted": 3601,
+      "accepted": false,
+      "before_hp": 3052,
+      "after_hp": 3052,
+      "native_after_tick": 3601,
+      "native_winner": 0,
+      "native_finalized_tick": 3601
+    }
+  ]
+}

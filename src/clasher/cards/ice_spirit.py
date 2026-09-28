@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import math
 from typing import TYPE_CHECKING
 
@@ -6,6 +6,7 @@ from ..arena import Position
 from ..mechanics.mechanic_base import BaseMechanic
 from ..kinematics import (
     logic_units_to_tiles,
+    pending_projectile_duration_ms,
     speed_work_for_duration,
     tiles_to_logic_units,
     vector_towards_logic_units,
@@ -22,6 +23,8 @@ class IceSpiritFreeze(BaseMechanic):
     freeze_duration_ms: int = 1200
     hop_duration_ms: int = 200
     jump_speed_logic_units_per_tick: int = 400
+    _pending_target: 'Entity | None' = field(default=None, init=False, repr=False)
+    _pending_active: bool = field(default=False, init=False, repr=False)
 
     def on_attach(self, entity: 'Entity') -> None:
         entity._force_melee_attack = True
@@ -85,6 +88,8 @@ class IceSpiritFreeze(BaseMechanic):
             # target is defeated during flight.
             origin = Position(entity.position.x, entity.position.y)
             self._freeze(entity, origin)
+            self._pending_active = False
+            self._pending_target = None
             entity._ice_spirit_detonated = True
             entity.take_damage(entity.hitpoints)
 
@@ -93,12 +98,49 @@ class IceSpiritFreeze(BaseMechanic):
         return
 
     def on_attack_start(self, entity: 'Entity', target: 'Entity') -> None:
+        # Native replaces the character with a projectile at launch. Keep
+        # our flight carrier out of character avoidance through impact.
+        entity._self_projectile_launched = True
+        entity.entity_kind = 2
+        entity._self_projectile_launch_tick = entity.battle_state.tick
         entity._ice_spirit_jump_origin = (entity.position.x, entity.position.y)
         entity._ice_spirit_jump_target = target.id
         entity._ice_spirit_jump_destination = (target.position.x, target.position.y)
         entity._ice_spirit_jump_timer = 0.0
         entity._special_move_active = True
         entity._special_move_consumed_tick = True
+        self._pending_target = target
+        self._pending_active = False
+        if (
+            not entity.is_alive
+            and entity.id in getattr(entity.battle_state, "_combat_phase_eligible_ids", ())
+        ):
+            # Native creates a live projectile even when an earlier combat
+            # component depleted the launching character this frame. This
+            # object now carries that projectile, not the defeated troop.
+            entity.hitpoints = 1
+            entity.is_alive = True
+
+    def activate_pending_damage(self, entity: 'Entity') -> None:
+        """Publish homing damage after the launch frame's character ticks."""
+        target = self._pending_target
+        if target is None or self._pending_active or not entity.is_alive:
+            return
+        dx = tiles_to_logic_units(target.position.x - entity.position.x)
+        dy = tiles_to_logic_units(target.position.y - entity.position.y)
+        duration = pending_projectile_duration_ms(
+            math.isqrt(dx * dx + dy * dy), self.jump_speed_logic_units_per_tick,
+        )
+        target._pending_projectile_max_duration_ms = max(
+            target._pending_projectile_max_duration_ms, duration,
+        )
+        self._pending_active = True
+
+    def pending_damage_against(self, entity: 'Entity', target: 'Entity') -> float:
+        """Reserve only the committed primary target, not nearby splash victims."""
+        if self._pending_active and entity.is_alive and target is self._pending_target:
+            return max(0.0, float(entity.damage))
+        return 0.0
 
     def modify_incoming_damage(self, entity: 'Entity', amount: float) -> float:
         return 0.0 if getattr(entity, "_special_move_active", False) else amount
@@ -178,4 +220,5 @@ class IceSpiritFreeze(BaseMechanic):
                 self.freeze_duration_ms / 1000.0,
                 source_kind=source_kind,
                 affects_hidden=affects_hidden,
+                interrupt_combat=False,
             )

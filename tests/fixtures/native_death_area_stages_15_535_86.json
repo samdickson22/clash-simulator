@@ -1,0 +1,492 @@
+{
+  "scope": "Opened native development controls for staged death objects; no acceptance claim.",
+  "sources": {
+    "reports/native_knight_body_divergence_20260915/lumberjack-area-birth-native.json": "9f72f74d11c83933e6b42c440d6a7181dbd9649ea51e254bf7c35be445ecda7f",
+    "reports/native_knight_body_divergence_20260915/phase-death-native-controls.json": "99d9f893b5f01f5e51168650ce0b58d53c9a989fb3c28459fa7473c7e1d50b2d"
+  },
+  "lumberjack": {
+    "config": {
+      "seed": 1286004,
+      "elixir": [
+        6.0,
+        6.0
+      ]
+    },
+    "frames": [
+      {
+        "tick": 169,
+        "stages": [],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 170,
+        "stages": [
+          "start"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 171,
+        "stages": [
+          "bottle"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 172,
+        "stages": [
+          "bottle"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 173,
+        "stages": [
+          "bottle"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 174,
+        "stages": [
+          "bottle"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 175,
+        "stages": [
+          "bottle"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 176,
+        "stages": [
+          "bottle"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 177,
+        "stages": [
+          "bottle"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 178,
+        "stages": [
+          "bottle"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 179,
+        "stages": [
+          "bottle"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 180,
+        "stages": [
+          "bottle"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 181,
+        "stages": [
+          "bottle",
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 182,
+        "stages": [
+          "damage",
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2790,
+        "rage_ms": 0
+      },
+      {
+        "tick": 183,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2611,
+        "rage_ms": 0
+      },
+      {
+        "tick": 184,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2611,
+        "rage_ms": 0
+      },
+      {
+        "tick": 185,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2611,
+        "rage_ms": 0
+      },
+      {
+        "tick": 186,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2611,
+        "rage_ms": 0
+      },
+      {
+        "tick": 187,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2611,
+        "rage_ms": 1000
+      },
+      {
+        "tick": 188,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2611,
+        "rage_ms": 950
+      },
+      {
+        "tick": 189,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2611,
+        "rage_ms": 900
+      },
+      {
+        "tick": 190,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2611,
+        "rage_ms": 850
+      },
+      {
+        "tick": 191,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2409,
+        "rage_ms": 800
+      },
+      {
+        "tick": 192,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2409,
+        "rage_ms": 750
+      },
+      {
+        "tick": 193,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2409,
+        "rage_ms": 1000
+      },
+      {
+        "tick": 194,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2409,
+        "rage_ms": 950
+      },
+      {
+        "tick": 195,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2409,
+        "rage_ms": 900
+      },
+      {
+        "tick": 196,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2409,
+        "rage_ms": 850
+      },
+      {
+        "tick": 197,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2409,
+        "rage_ms": 800
+      },
+      {
+        "tick": 198,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2409,
+        "rage_ms": 750
+      },
+      {
+        "tick": 199,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2409,
+        "rage_ms": 1000
+      },
+      {
+        "tick": 200,
+        "stages": [
+          "rage"
+        ],
+        "knight_hp": 1766,
+        "pekka_hp": 2409,
+        "rage_ms": 950
+      }
+    ]
+  },
+  "ice_golem": [
+    {
+      "tick": 320,
+      "slow_ms": 0
+    },
+    {
+      "tick": 321,
+      "slow_ms": 0
+    },
+    {
+      "tick": 322,
+      "slow_ms": 0
+    },
+    {
+      "tick": 323,
+      "slow_ms": 2000
+    },
+    {
+      "tick": 324,
+      "slow_ms": 1950
+    },
+    {
+      "tick": 325,
+      "slow_ms": 1900
+    },
+    {
+      "tick": 326,
+      "slow_ms": 1850
+    },
+    {
+      "tick": 327,
+      "slow_ms": 1800
+    },
+    {
+      "tick": 328,
+      "slow_ms": 1750
+    },
+    {
+      "tick": 329,
+      "slow_ms": 1700
+    },
+    {
+      "tick": 330,
+      "slow_ms": 1650
+    },
+    {
+      "tick": 331,
+      "slow_ms": 1600
+    },
+    {
+      "tick": 332,
+      "slow_ms": 1550
+    },
+    {
+      "tick": 333,
+      "slow_ms": 1500
+    },
+    {
+      "tick": 334,
+      "slow_ms": 1450
+    },
+    {
+      "tick": 335,
+      "slow_ms": 1400
+    },
+    {
+      "tick": 336,
+      "slow_ms": 1350
+    },
+    {
+      "tick": 337,
+      "slow_ms": 1300
+    },
+    {
+      "tick": 338,
+      "slow_ms": 1250
+    },
+    {
+      "tick": 339,
+      "slow_ms": 1200
+    },
+    {
+      "tick": 340,
+      "slow_ms": 1150
+    },
+    {
+      "tick": 341,
+      "slow_ms": 1100
+    },
+    {
+      "tick": 342,
+      "slow_ms": 1050
+    },
+    {
+      "tick": 343,
+      "slow_ms": 1000
+    },
+    {
+      "tick": 344,
+      "slow_ms": 950
+    },
+    {
+      "tick": 345,
+      "slow_ms": 900
+    },
+    {
+      "tick": 346,
+      "slow_ms": 850
+    },
+    {
+      "tick": 347,
+      "slow_ms": 800
+    },
+    {
+      "tick": 348,
+      "slow_ms": 750
+    },
+    {
+      "tick": 349,
+      "slow_ms": 700
+    },
+    {
+      "tick": 350,
+      "slow_ms": 650
+    },
+    {
+      "tick": 351,
+      "slow_ms": 600
+    },
+    {
+      "tick": 352,
+      "slow_ms": 550
+    },
+    {
+      "tick": 353,
+      "slow_ms": 500
+    },
+    {
+      "tick": 354,
+      "slow_ms": 450
+    },
+    {
+      "tick": 355,
+      "slow_ms": 400
+    },
+    {
+      "tick": 356,
+      "slow_ms": 350
+    },
+    {
+      "tick": 357,
+      "slow_ms": 300
+    },
+    {
+      "tick": 358,
+      "slow_ms": 250
+    },
+    {
+      "tick": 359,
+      "slow_ms": 200
+    },
+    {
+      "tick": 360,
+      "slow_ms": 150
+    },
+    {
+      "tick": 361,
+      "slow_ms": 100
+    },
+    {
+      "tick": 362,
+      "slow_ms": 50
+    },
+    {
+      "tick": 363,
+      "slow_ms": 0
+    },
+    {
+      "tick": 364,
+      "slow_ms": 0
+    },
+    {
+      "tick": 365,
+      "slow_ms": 0
+    }
+  ]
+}

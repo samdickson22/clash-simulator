@@ -1,0 +1,1360 @@
+{
+  "scope": "Opened native Log controls; first impact and13 following movement frames.",
+  "sources": {
+    "reports/native_knight_body_divergence_20260915/log-push-native-controls.json": "91d5e1e853e2697b809586d56c87c905464e1dac36fc17da799bf6a55cad9916",
+    "reports/native_knight_body_divergence_20260915/log-active-hit-native-control.json": "b3fe659a894578365e285c34b8a0e5decc04cdf83291d035a8ce63efb1de42eb"
+  },
+  "cases": [
+    {
+      "name": "rolling-center",
+      "seed": 1287011,
+      "elixir": [
+        6.0,
+        6.0
+      ],
+      "commands": [
+        [
+          100,
+          1,
+          26000000,
+          3500,
+          18500
+        ],
+        [
+          140,
+          0,
+          28000011,
+          3500,
+          14500
+        ]
+      ],
+      "frames": [
+        {
+          "tick": 153,
+          "xy": [
+            3306,
+            16559
+          ],
+          "hp": 1766,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 154,
+          "xy": [
+            3304,
+            16500
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 155,
+          "xy": [
+            3276,
+            16647
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 156,
+          "xy": [
+            3253,
+            16769
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 157,
+          "xy": [
+            3234,
+            16867
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 158,
+          "xy": [
+            3220,
+            16940
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 159,
+          "xy": [
+            3211,
+            16988
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 160,
+          "xy": [
+            3207,
+            17012
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 161,
+          "xy": [
+            3207,
+            17012
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 162,
+          "xy": [
+            3212,
+            16988
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 163,
+          "xy": [
+            3213,
+            16928
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 164,
+          "xy": [
+            3214,
+            16868
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 165,
+          "xy": [
+            3215,
+            16808
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 166,
+          "xy": [
+            3216,
+            16748
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 167,
+          "xy": [
+            3217,
+            16688
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        }
+      ]
+    },
+    {
+      "name": "rolling-offset",
+      "seed": 1287011,
+      "elixir": [
+        6.0,
+        6.0
+      ],
+      "commands": [
+        [
+          100,
+          1,
+          26000000,
+          4500,
+          18500
+        ],
+        [
+          140,
+          0,
+          28000011,
+          3500,
+          14500
+        ]
+      ],
+      "frames": [
+        {
+          "tick": 153,
+          "xy": [
+            3998,
+            16620
+          ],
+          "hp": 1766,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 154,
+          "xy": [
+            3965,
+            16571
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 155,
+          "xy": [
+            4024,
+            16708
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 156,
+          "xy": [
+            4073,
+            16822
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 157,
+          "xy": [
+            4112,
+            16913
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 158,
+          "xy": [
+            4141,
+            16981
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 159,
+          "xy": [
+            4161,
+            17026
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 160,
+          "xy": [
+            4170,
+            17048
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 161,
+          "xy": [
+            4170,
+            17048
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 162,
+          "xy": [
+            4160,
+            17026
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 163,
+          "xy": [
+            4178,
+            16970
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 164,
+          "xy": [
+            4148,
+            16919
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 165,
+          "xy": [
+            4129,
+            16863
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 166,
+          "xy": [
+            4110,
+            16807
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 167,
+          "xy": [
+            4091,
+            16751
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        }
+      ]
+    },
+    {
+      "name": "landing-front",
+      "seed": 1287011,
+      "elixir": [
+        6.0,
+        6.0
+      ],
+      "commands": [
+        [
+          100,
+          1,
+          26000000,
+          3500,
+          18500
+        ],
+        [
+          170,
+          0,
+          28000011,
+          3500,
+          14500
+        ]
+      ],
+      "frames": [
+        {
+          "tick": 178,
+          "xy": [
+            3276,
+            15065
+          ],
+          "hp": 1766,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 179,
+          "xy": [
+            3275,
+            15005
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 180,
+          "xy": [
+            3215,
+            15142
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 181,
+          "xy": [
+            3165,
+            15255
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 182,
+          "xy": [
+            3125,
+            15346
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 183,
+          "xy": [
+            3095,
+            15414
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 184,
+          "xy": [
+            3075,
+            15459
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 185,
+          "xy": [
+            3065,
+            15481
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 186,
+          "xy": [
+            3065,
+            15481
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 187,
+          "xy": [
+            3075,
+            15459
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 188,
+          "xy": [
+            3081,
+            15400
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 189,
+          "xy": [
+            3087,
+            15341
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 190,
+          "xy": [
+            3093,
+            15282
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 191,
+          "xy": [
+            3099,
+            15223
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 192,
+          "xy": [
+            3105,
+            15164
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        }
+      ]
+    },
+    {
+      "name": "landing-rear",
+      "seed": 1287011,
+      "elixir": [
+        6.0,
+        6.0
+      ],
+      "commands": [
+        [
+          100,
+          1,
+          26000000,
+          3500,
+          18500
+        ],
+        [
+          180,
+          0,
+          28000011,
+          3500,
+          14500
+        ]
+      ],
+      "frames": [
+        {
+          "tick": 188,
+          "xy": [
+            3270,
+            14465
+          ],
+          "hp": 1766,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 189,
+          "xy": [
+            3270,
+            14405
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 190,
+          "xy": [
+            3132,
+            14349
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 191,
+          "xy": [
+            3017,
+            14302
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 192,
+          "xy": [
+            2925,
+            14264
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 193,
+          "xy": [
+            2856,
+            14236
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 194,
+          "xy": [
+            2811,
+            14217
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 195,
+          "xy": [
+            2788,
+            14208
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 196,
+          "xy": [
+            2788,
+            14208
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 197,
+          "xy": [
+            2811,
+            14217
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 198,
+          "xy": [
+            2804,
+            14158
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 199,
+          "xy": [
+            2801,
+            14099
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 200,
+          "xy": [
+            2799,
+            14039
+          ],
+          "hp": 1389,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 201,
+          "xy": [
+            2797,
+            13979
+          ],
+          "hp": 1389,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 202,
+          "xy": [
+            2795,
+            13919
+          ],
+          "hp": 1389,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        }
+      ]
+    },
+    {
+      "name": "landing-rear-reversed",
+      "seed": 1287011,
+      "elixir": [
+        6.0,
+        6.0
+      ],
+      "commands": [
+        [
+          100,
+          0,
+          26000000,
+          14500,
+          13500
+        ],
+        [
+          180,
+          1,
+          28000011,
+          14500,
+          17500
+        ]
+      ],
+      "frames": [
+        {
+          "tick": 188,
+          "xy": [
+            14730,
+            17534
+          ],
+          "hp": 1766,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 189,
+          "xy": [
+            14730,
+            17594
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 190,
+          "xy": [
+            14868,
+            17650
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 191,
+          "xy": [
+            14983,
+            17696
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 192,
+          "xy": [
+            15075,
+            17733
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 193,
+          "xy": [
+            15144,
+            17761
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 194,
+          "xy": [
+            15190,
+            17780
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 195,
+          "xy": [
+            15213,
+            17789
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 196,
+          "xy": [
+            15213,
+            17789
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 197,
+          "xy": [
+            15190,
+            17780
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 198,
+          "xy": [
+            15197,
+            17839
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 199,
+          "xy": [
+            15200,
+            17898
+          ],
+          "hp": 1498,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 200,
+          "xy": [
+            15202,
+            17958
+          ],
+          "hp": 1389,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 201,
+          "xy": [
+            15204,
+            18018
+          ],
+          "hp": 1389,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 202,
+          "xy": [
+            15206,
+            18078
+          ],
+          "hp": 1389,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        }
+      ]
+    },
+    {
+      "name": "engaged-knight",
+      "seed": 1287011,
+      "elixir": [
+        6.0,
+        6.0
+      ],
+      "commands": [
+        [
+          100,
+          0,
+          27000000,
+          3500,
+          13500
+        ],
+        [
+          100,
+          1,
+          26000000,
+          3500,
+          18500
+        ],
+        [
+          140,
+          0,
+          28000011,
+          3500,
+          14500
+        ]
+      ],
+      "frames": [
+        {
+          "tick": 153,
+          "xy": [
+            3306,
+            16559
+          ],
+          "hp": 1564,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 154,
+          "xy": [
+            3304,
+            16500
+          ],
+          "hp": 1296,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 155,
+          "xy": [
+            3276,
+            16647
+          ],
+          "hp": 1296,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 156,
+          "xy": [
+            3253,
+            16769
+          ],
+          "hp": 1296,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 157,
+          "xy": [
+            3234,
+            16867
+          ],
+          "hp": 1296,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 158,
+          "xy": [
+            3220,
+            16940
+          ],
+          "hp": 1296,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 159,
+          "xy": [
+            3211,
+            16988
+          ],
+          "hp": 1296,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 160,
+          "xy": [
+            3207,
+            17012
+          ],
+          "hp": 1296,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 161,
+          "xy": [
+            3207,
+            17012
+          ],
+          "hp": 1094,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 162,
+          "xy": [
+            3212,
+            16988
+          ],
+          "hp": 1094,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 163,
+          "xy": [
+            3213,
+            16928
+          ],
+          "hp": 1094,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 164,
+          "xy": [
+            3214,
+            16868
+          ],
+          "hp": 1094,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 165,
+          "xy": [
+            3215,
+            16808
+          ],
+          "hp": 1094,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 166,
+          "xy": [
+            3216,
+            16748
+          ],
+          "hp": 1094,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 167,
+          "xy": [
+            3217,
+            16688
+          ],
+          "hp": 1094,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        }
+      ]
+    },
+    {
+      "name": "active-hit",
+      "seed": 1287011,
+      "elixir": [
+        6.0,
+        6.0
+      ],
+      "commands": [
+        [
+          100,
+          0,
+          27000000,
+          3500,
+          13500
+        ],
+        [
+          100,
+          1,
+          26000000,
+          3500,
+          18500
+        ],
+        [
+          200,
+          0,
+          28000011,
+          3500,
+          14500
+        ]
+      ],
+      "frames": [
+        {
+          "tick": 209,
+          "xy": [
+            3287,
+            15785
+          ],
+          "hp": 958,
+          "attack_remaining": 0.75,
+          "timeline": 2850,
+          "load": 250
+        },
+        {
+          "tick": 210,
+          "xy": [
+            3287,
+            15785
+          ],
+          "hp": 690,
+          "attack_remaining": 0.7,
+          "timeline": 2900,
+          "load": 200
+        },
+        {
+          "tick": 211,
+          "xy": [
+            3259,
+            15932
+          ],
+          "hp": 690,
+          "attack_remaining": 0.65,
+          "timeline": 0,
+          "load": 150
+        },
+        {
+          "tick": 212,
+          "xy": [
+            3236,
+            16054
+          ],
+          "hp": 690,
+          "attack_remaining": 0.6,
+          "timeline": 0,
+          "load": 100
+        },
+        {
+          "tick": 213,
+          "xy": [
+            3217,
+            16152
+          ],
+          "hp": 690,
+          "attack_remaining": 0.55,
+          "timeline": 0,
+          "load": 50
+        },
+        {
+          "tick": 214,
+          "xy": [
+            3203,
+            16225
+          ],
+          "hp": 690,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 215,
+          "xy": [
+            3194,
+            16273
+          ],
+          "hp": 690,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 216,
+          "xy": [
+            3190,
+            16297
+          ],
+          "hp": 690,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 217,
+          "xy": [
+            3190,
+            16297
+          ],
+          "hp": 690,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 218,
+          "xy": [
+            3195,
+            16273
+          ],
+          "hp": 690,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 219,
+          "xy": [
+            3198,
+            16214
+          ],
+          "hp": 690,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 220,
+          "xy": [
+            3200,
+            16154
+          ],
+          "hp": 488,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 221,
+          "xy": [
+            3202,
+            16094
+          ],
+          "hp": 488,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 222,
+          "xy": [
+            3204,
+            16034
+          ],
+          "hp": 488,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        },
+        {
+          "tick": 223,
+          "xy": [
+            3206,
+            15974
+          ],
+          "hp": 488,
+          "attack_remaining": 0.5,
+          "timeline": 0,
+          "load": 0
+        }
+      ]
+    }
+  ]
+}

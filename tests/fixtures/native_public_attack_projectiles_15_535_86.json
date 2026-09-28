@@ -1,0 +1,1256 @@
+{
+  "source": "reports/calibration_development_20260915/reversed-rich-public-capture/frames.jsonl.gz",
+  "sha256": "58b2274f8468e3e5626b868405f4146119e034369728eb16df6ed1f527cefda6",
+  "cases": [
+    {
+      "tick": 691,
+      "projectile_ids": [
+        10000002,
+        10000003
+      ],
+      "ordinary": {
+        "ok": true,
+        "generation": 4,
+        "stateEpoch": 4,
+        "tick": 691,
+        "steps": 691,
+        "ended": false,
+        "finalized": false,
+        "worldResult": null,
+        "worldResultRaw": 0,
+        "winner": null,
+        "crownsRaw": [
+          0,
+          0
+        ],
+        "snapshotHandles": 0,
+        "count": 13,
+        "queuedCommands": 0,
+        "players": [
+          {
+            "owner": 0,
+            "accountId": 1,
+            "accountIdHigh": 0,
+            "accountIdLow": 1,
+            "elixirRaw": 22998,
+            "elixir": 2.2998,
+            "crownsRaw": 0,
+            "hand": [
+              {
+                "handIndex": 0,
+                "deckSlot": 2,
+                "cardId": 26000027,
+                "commandCardId": 26000027,
+                "cardParameter": 1086334976,
+                "cost": 4
+              },
+              {
+                "handIndex": 1,
+                "deckSlot": 5,
+                "cardId": 28000000,
+                "commandCardId": 28000000,
+                "cardParameter": 1098917888,
+                "cost": 4
+              },
+              {
+                "handIndex": 2,
+                "deckSlot": 0,
+                "cardId": 26000003,
+                "commandCardId": 26000003,
+                "cardParameter": 1346381824,
+                "cost": 5
+              },
+              {
+                "handIndex": 3,
+                "deckSlot": 1,
+                "cardId": 26000016,
+                "commandCardId": 26000016,
+                "cardParameter": 1350576128,
+                "cost": 5
+              }
+            ],
+            "cycle": [
+              {
+                "cycleIndex": 0,
+                "deckSlot": 4,
+                "cardId": 27000006
+              },
+              {
+                "cycleIndex": 1,
+                "deckSlot": 6,
+                "cardId": 28000008
+              },
+              {
+                "cycleIndex": 2,
+                "deckSlot": 7,
+                "cardId": 28000006
+              },
+              {
+                "cycleIndex": 3,
+                "deckSlot": 3,
+                "cardId": 26000001
+              }
+            ],
+            "nextCard": {
+              "deckSlot": 4,
+              "cardId": 27000006
+            },
+            "deck": [
+              {
+                "deckSlot": 0,
+                "cardId": 26000003,
+                "commandCardId": 26000003,
+                "cardParameter": 1346381824,
+                "cost": 5
+              },
+              {
+                "deckSlot": 1,
+                "cardId": 26000016,
+                "commandCardId": 26000016,
+                "cardParameter": 1350576128,
+                "cost": 5
+              },
+              {
+                "deckSlot": 2,
+                "cardId": 26000027,
+                "commandCardId": 26000027,
+                "cardParameter": 1086334976,
+                "cost": 4
+              },
+              {
+                "deckSlot": 3,
+                "cardId": 26000001,
+                "commandCardId": 26000001,
+                "cardParameter": 822093824,
+                "cost": 3
+              },
+              {
+                "deckSlot": 4,
+                "cardId": 27000006,
+                "commandCardId": 27000006,
+                "cardParameter": 1094723584,
+                "cost": 4
+              },
+              {
+                "deckSlot": 5,
+                "cardId": 28000000,
+                "commandCardId": 28000000,
+                "cardParameter": 1098917888,
+                "cost": 4
+              },
+              {
+                "deckSlot": 6,
+                "cardId": 28000008,
+                "commandCardId": 28000008,
+                "cardParameter": 566241280,
+                "cost": 2
+              },
+              {
+                "deckSlot": 7,
+                "cardId": 28000006,
+                "commandCardId": 26000001,
+                "cardParameter": 1107307520,
+                "cost": 4
+              }
+            ]
+          },
+          {
+            "owner": 1,
+            "accountId": 2,
+            "accountIdHigh": 0,
+            "accountIdLow": 2,
+            "elixirRaw": 2998,
+            "elixir": 0.2998,
+            "crownsRaw": 0,
+            "hand": [
+              {
+                "handIndex": 0,
+                "deckSlot": 0,
+                "cardId": 26000021,
+                "commandCardId": 26000021,
+                "cardParameter": 1077946368,
+                "cost": 4
+              },
+              {
+                "handIndex": 1,
+                "deckSlot": 1,
+                "cardId": 26000014,
+                "commandCardId": 26000014,
+                "cardParameter": 1082140672,
+                "cost": 4
+              },
+              {
+                "handIndex": 2,
+                "deckSlot": 6,
+                "cardId": 28000000,
+                "commandCardId": 28000000,
+                "cardParameter": 1103112192,
+                "cost": 4
+              },
+              {
+                "handIndex": 3,
+                "deckSlot": 4,
+                "cardId": 26000038,
+                "commandCardId": 26000038,
+                "cardParameter": 557852672,
+                "cost": 2
+              }
+            ],
+            "cycle": [
+              {
+                "cycleIndex": 0,
+                "deckSlot": 5,
+                "cardId": 26000030
+              },
+              {
+                "cycleIndex": 1,
+                "deckSlot": 7,
+                "cardId": 28000011
+              },
+              {
+                "cycleIndex": 2,
+                "deckSlot": 2,
+                "cardId": 27000000
+              },
+              {
+                "cycleIndex": 3,
+                "deckSlot": 3,
+                "cardId": 26000010
+              }
+            ],
+            "nextCard": {
+              "deckSlot": 5,
+              "cardId": 26000030
+            },
+            "deck": [
+              {
+                "deckSlot": 0,
+                "cardId": 26000021,
+                "commandCardId": 26000021,
+                "cardParameter": 1077946368,
+                "cost": 4
+              },
+              {
+                "deckSlot": 1,
+                "cardId": 26000014,
+                "commandCardId": 26000014,
+                "cardParameter": 1082140672,
+                "cost": 4
+              },
+              {
+                "deckSlot": 2,
+                "cardId": 27000000,
+                "commandCardId": 27000000,
+                "cardParameter": 817899520,
+                "cost": 3
+              },
+              {
+                "deckSlot": 3,
+                "cardId": 26000010,
+                "commandCardId": 26000010,
+                "cardParameter": 285222912,
+                "cost": 1
+              },
+              {
+                "deckSlot": 4,
+                "cardId": 26000038,
+                "commandCardId": 26000038,
+                "cardParameter": 557852672,
+                "cost": 2
+              },
+              {
+                "deckSlot": 5,
+                "cardId": 26000030,
+                "commandCardId": 26000030,
+                "cardParameter": 293611520,
+                "cost": 1
+              },
+              {
+                "deckSlot": 6,
+                "cardId": 28000000,
+                "commandCardId": 28000000,
+                "cardParameter": 1103112192,
+                "cost": 4
+              },
+              {
+                "deckSlot": 7,
+                "cardId": 28000011,
+                "commandCardId": 28000011,
+                "cardParameter": 570435584,
+                "cost": 2
+              }
+            ]
+          }
+        ],
+        "objects": [
+          {
+            "slot": 0,
+            "nativeObjectId": 4000029,
+            "owner": 0,
+            "cardId": 26000001,
+            "x": 14504,
+            "y": 25455,
+            "targetX": 14546,
+            "targetY": 24856,
+            "objectIndex": 3,
+            "secondaryIndex": 4,
+            "hp": null,
+            "maxHp": null
+          },
+          {
+            "slot": 1,
+            "nativeObjectId": 4000030,
+            "owner": 1,
+            "cardId": -1,
+            "x": 14606,
+            "y": 24005,
+            "targetX": 14561,
+            "targetY": 24603,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": null,
+            "maxHp": null
+          },
+          {
+            "slot": 2,
+            "nativeObjectId": 5000000,
+            "owner": 0,
+            "cardId": -1,
+            "x": 9000,
+            "y": 3000,
+            "targetX": 9000,
+            "targetY": 3000,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": 4824,
+            "maxHp": 4824
+          },
+          {
+            "slot": 3,
+            "nativeObjectId": 5000001,
+            "owner": 0,
+            "cardId": -1,
+            "x": 3500,
+            "y": 6500,
+            "targetX": 3500,
+            "targetY": 6500,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": 2418,
+            "maxHp": 3052
+          },
+          {
+            "slot": 4,
+            "nativeObjectId": 5000002,
+            "owner": 0,
+            "cardId": -1,
+            "x": 14500,
+            "y": 6500,
+            "targetX": 14500,
+            "targetY": 6500,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": 3052,
+            "maxHp": 3052
+          },
+          {
+            "slot": 5,
+            "nativeObjectId": 5000003,
+            "owner": 1,
+            "cardId": -1,
+            "x": 9000,
+            "y": 29000,
+            "targetX": 9000,
+            "targetY": 29000,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": 4824,
+            "maxHp": 4824
+          },
+          {
+            "slot": 6,
+            "nativeObjectId": 5000004,
+            "owner": 1,
+            "cardId": -1,
+            "x": 3500,
+            "y": 25500,
+            "targetX": 3500,
+            "targetY": 25500,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": 1456,
+            "maxHp": 3052
+          },
+          {
+            "slot": 7,
+            "nativeObjectId": 5000005,
+            "owner": 1,
+            "cardId": -1,
+            "x": 14500,
+            "y": 25500,
+            "targetX": 14500,
+            "targetY": 25500,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": 2940,
+            "maxHp": 3052
+          },
+          {
+            "slot": 8,
+            "nativeObjectId": 5000015,
+            "owner": 0,
+            "cardId": 26000001,
+            "x": 14988,
+            "y": 19041,
+            "targetX": 14952,
+            "targetY": 19026,
+            "objectIndex": 3,
+            "secondaryIndex": 4,
+            "hp": 304,
+            "maxHp": 304
+          },
+          {
+            "slot": 9,
+            "nativeObjectId": 5000016,
+            "owner": 1,
+            "cardId": 27000000,
+            "x": 3500,
+            "y": 21500,
+            "targetX": 3500,
+            "targetY": 21500,
+            "objectIndex": 2,
+            "secondaryIndex": 6,
+            "hp": 768,
+            "maxHp": 824
+          },
+          {
+            "slot": 10,
+            "nativeObjectId": 5000017,
+            "owner": 1,
+            "cardId": 26000010,
+            "x": 14378,
+            "y": 18605,
+            "targetX": 14500,
+            "targetY": 18692,
+            "objectIndex": 3,
+            "secondaryIndex": 7,
+            "hp": 81,
+            "maxHp": 81
+          },
+          {
+            "slot": 11,
+            "nativeObjectId": 5000018,
+            "owner": 1,
+            "cardId": 26000010,
+            "x": 15234,
+            "y": 20047,
+            "targetX": 15199,
+            "targetY": 19902,
+            "objectIndex": 3,
+            "secondaryIndex": 7,
+            "hp": 81,
+            "maxHp": 81
+          },
+          {
+            "slot": 12,
+            "nativeObjectId": 5000019,
+            "owner": 1,
+            "cardId": 26000010,
+            "x": 13801,
+            "y": 19902,
+            "targetX": 13801,
+            "targetY": 19902,
+            "objectIndex": 3,
+            "secondaryIndex": 7,
+            "hp": 81,
+            "maxHp": 81
+          }
+        ],
+        "returned": 13,
+        "truncated": false
+      },
+      "rich": {
+        "ok": true,
+        "schema": "native-rich-telemetry.v3",
+        "tick": 691,
+        "generation": 4,
+        "stateEpoch": 4,
+        "count": 13,
+        "returned": 13,
+        "truncated": false,
+        "objects": [
+          {
+            "nativeObjectId": 4000029,
+            "owner": 0,
+            "cardId": 26000001,
+            "x": 14504,
+            "y": 25455,
+            "hp": null,
+            "maxHp": null,
+            "dataGlobalId": 10000002,
+            "projectile": {
+              "projectileDataGlobalId": 10000002,
+              "sourceEntityKey": [
+                0,
+                -2,
+                5000015
+              ],
+              "sourceEntityValidated": true,
+              "targetEntityKey": [
+                1,
+                -2,
+                5000005
+              ],
+              "targetEntityValidated": true,
+              "homingTargetEntityKey": null,
+              "homingTargetEntityValidated": true,
+              "destinationX": 14500,
+              "destinationY": 25500,
+              "terminal": false,
+              "nativePhase": "in_flight",
+              "dragStage": null
+            }
+          },
+          {
+            "nativeObjectId": 4000030,
+            "owner": 1,
+            "cardId": -1,
+            "x": 14606,
+            "y": 24005,
+            "hp": null,
+            "maxHp": null,
+            "dataGlobalId": 10000003,
+            "projectile": {
+              "projectileDataGlobalId": 10000003,
+              "sourceEntityKey": [
+                1,
+                -2,
+                5000005
+              ],
+              "sourceEntityValidated": true,
+              "targetEntityKey": [
+                0,
+                -2,
+                5000015
+              ],
+              "targetEntityValidated": true,
+              "homingTargetEntityKey": null,
+              "homingTargetEntityValidated": true,
+              "destinationX": 14988,
+              "destinationY": 19041,
+              "terminal": false,
+              "nativePhase": "in_flight",
+              "dragStage": null
+            }
+          },
+          {
+            "nativeObjectId": 5000000,
+            "owner": 0,
+            "cardId": -1,
+            "x": 9000,
+            "y": 3000,
+            "hp": 4824,
+            "maxHp": 4824,
+            "dataGlobalId": 35000000,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000001,
+            "owner": 0,
+            "cardId": -1,
+            "x": 3500,
+            "y": 6500,
+            "hp": 2418,
+            "maxHp": 3052,
+            "dataGlobalId": 35000001,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000002,
+            "owner": 0,
+            "cardId": -1,
+            "x": 14500,
+            "y": 6500,
+            "hp": 3052,
+            "maxHp": 3052,
+            "dataGlobalId": 35000001,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000003,
+            "owner": 1,
+            "cardId": -1,
+            "x": 9000,
+            "y": 29000,
+            "hp": 4824,
+            "maxHp": 4824,
+            "dataGlobalId": 35000000,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000004,
+            "owner": 1,
+            "cardId": -1,
+            "x": 3500,
+            "y": 25500,
+            "hp": 1456,
+            "maxHp": 3052,
+            "dataGlobalId": 35000001,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000005,
+            "owner": 1,
+            "cardId": -1,
+            "x": 14500,
+            "y": 25500,
+            "hp": 2940,
+            "maxHp": 3052,
+            "dataGlobalId": 35000001,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000015,
+            "owner": 0,
+            "cardId": 26000001,
+            "x": 14988,
+            "y": 19041,
+            "hp": 304,
+            "maxHp": 304,
+            "dataGlobalId": 34000001,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000016,
+            "owner": 1,
+            "cardId": 27000000,
+            "x": 3500,
+            "y": 21500,
+            "hp": 768,
+            "maxHp": 824,
+            "dataGlobalId": 35000002,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000017,
+            "owner": 1,
+            "cardId": 26000010,
+            "x": 14378,
+            "y": 18605,
+            "hp": 81,
+            "maxHp": 81,
+            "dataGlobalId": 34000008,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000018,
+            "owner": 1,
+            "cardId": 26000010,
+            "x": 15234,
+            "y": 20047,
+            "hp": 81,
+            "maxHp": 81,
+            "dataGlobalId": 34000008,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000019,
+            "owner": 1,
+            "cardId": 26000010,
+            "x": 13801,
+            "y": 19902,
+            "hp": 81,
+            "maxHp": 81,
+            "dataGlobalId": 34000008,
+            "projectile": null
+          }
+        ]
+      }
+    },
+    {
+      "tick": 2431,
+      "projectile_ids": [
+        10000006
+      ],
+      "ordinary": {
+        "ok": true,
+        "generation": 4,
+        "stateEpoch": 4,
+        "tick": 2431,
+        "steps": 2431,
+        "ended": false,
+        "finalized": false,
+        "worldResult": null,
+        "worldResultRaw": 0,
+        "winner": null,
+        "crownsRaw": [
+          0,
+          0
+        ],
+        "snapshotHandles": 0,
+        "count": 10,
+        "queuedCommands": 0,
+        "players": [
+          {
+            "owner": 0,
+            "accountId": 1,
+            "accountIdHigh": 0,
+            "accountIdLow": 1,
+            "elixirRaw": 18267,
+            "elixir": 1.8267,
+            "crownsRaw": 0,
+            "hand": [
+              {
+                "handIndex": 0,
+                "deckSlot": 4,
+                "cardId": 27000006,
+                "commandCardId": 27000006,
+                "cardParameter": 1094723584,
+                "cost": 4
+              },
+              {
+                "handIndex": 1,
+                "deckSlot": 2,
+                "cardId": 26000027,
+                "commandCardId": 26000027,
+                "cardParameter": 1086334976,
+                "cost": 4
+              },
+              {
+                "handIndex": 2,
+                "deckSlot": 0,
+                "cardId": 26000003,
+                "commandCardId": 26000003,
+                "cardParameter": 1346381824,
+                "cost": 5
+              },
+              {
+                "handIndex": 3,
+                "deckSlot": 1,
+                "cardId": 26000016,
+                "commandCardId": 26000016,
+                "cardParameter": 1350576128,
+                "cost": 5
+              }
+            ],
+            "cycle": [
+              {
+                "cycleIndex": 0,
+                "deckSlot": 5,
+                "cardId": 28000000
+              },
+              {
+                "cycleIndex": 1,
+                "deckSlot": 6,
+                "cardId": 28000008
+              },
+              {
+                "cycleIndex": 2,
+                "deckSlot": 7,
+                "cardId": 28000006
+              },
+              {
+                "cycleIndex": 3,
+                "deckSlot": 3,
+                "cardId": 26000001
+              }
+            ],
+            "nextCard": {
+              "deckSlot": 5,
+              "cardId": 28000000
+            },
+            "deck": [
+              {
+                "deckSlot": 0,
+                "cardId": 26000003,
+                "commandCardId": 26000003,
+                "cardParameter": 1346381824,
+                "cost": 5
+              },
+              {
+                "deckSlot": 1,
+                "cardId": 26000016,
+                "commandCardId": 26000016,
+                "cardParameter": 1350576128,
+                "cost": 5
+              },
+              {
+                "deckSlot": 2,
+                "cardId": 26000027,
+                "commandCardId": 26000027,
+                "cardParameter": 1086334976,
+                "cost": 4
+              },
+              {
+                "deckSlot": 3,
+                "cardId": 26000001,
+                "commandCardId": 26000001,
+                "cardParameter": 822093824,
+                "cost": 3
+              },
+              {
+                "deckSlot": 4,
+                "cardId": 27000006,
+                "commandCardId": 27000006,
+                "cardParameter": 1094723584,
+                "cost": 4
+              },
+              {
+                "deckSlot": 5,
+                "cardId": 28000000,
+                "commandCardId": 28000000,
+                "cardParameter": 1098917888,
+                "cost": 4
+              },
+              {
+                "deckSlot": 6,
+                "cardId": 28000008,
+                "commandCardId": 28000008,
+                "cardParameter": 566241280,
+                "cost": 2
+              },
+              {
+                "deckSlot": 7,
+                "cardId": 28000006,
+                "commandCardId": 26000001,
+                "cardParameter": 1107307520,
+                "cost": 4
+              }
+            ]
+          },
+          {
+            "owner": 1,
+            "accountId": 2,
+            "accountIdHigh": 0,
+            "accountIdLow": 2,
+            "elixirRaw": 8267,
+            "elixir": 0.8267,
+            "crownsRaw": 0,
+            "hand": [
+              {
+                "handIndex": 0,
+                "deckSlot": 0,
+                "cardId": 26000021,
+                "commandCardId": 26000021,
+                "cardParameter": 1077946368,
+                "cost": 4
+              },
+              {
+                "handIndex": 1,
+                "deckSlot": 1,
+                "cardId": 26000014,
+                "commandCardId": 26000014,
+                "cardParameter": 1082140672,
+                "cost": 4
+              },
+              {
+                "handIndex": 2,
+                "deckSlot": 5,
+                "cardId": 26000030,
+                "commandCardId": 26000030,
+                "cardParameter": 293611520,
+                "cost": 1
+              },
+              {
+                "handIndex": 3,
+                "deckSlot": 4,
+                "cardId": 26000038,
+                "commandCardId": 26000038,
+                "cardParameter": 557852672,
+                "cost": 2
+              }
+            ],
+            "cycle": [
+              {
+                "cycleIndex": 0,
+                "deckSlot": 7,
+                "cardId": 28000011
+              },
+              {
+                "cycleIndex": 1,
+                "deckSlot": 2,
+                "cardId": 27000000
+              },
+              {
+                "cycleIndex": 2,
+                "deckSlot": 3,
+                "cardId": 26000010
+              },
+              {
+                "cycleIndex": 3,
+                "deckSlot": 6,
+                "cardId": 28000000
+              }
+            ],
+            "nextCard": {
+              "deckSlot": 7,
+              "cardId": 28000011
+            },
+            "deck": [
+              {
+                "deckSlot": 0,
+                "cardId": 26000021,
+                "commandCardId": 26000021,
+                "cardParameter": 1077946368,
+                "cost": 4
+              },
+              {
+                "deckSlot": 1,
+                "cardId": 26000014,
+                "commandCardId": 26000014,
+                "cardParameter": 1082140672,
+                "cost": 4
+              },
+              {
+                "deckSlot": 2,
+                "cardId": 27000000,
+                "commandCardId": 27000000,
+                "cardParameter": 817899520,
+                "cost": 3
+              },
+              {
+                "deckSlot": 3,
+                "cardId": 26000010,
+                "commandCardId": 26000010,
+                "cardParameter": 285222912,
+                "cost": 1
+              },
+              {
+                "deckSlot": 4,
+                "cardId": 26000038,
+                "commandCardId": 26000038,
+                "cardParameter": 557852672,
+                "cost": 2
+              },
+              {
+                "deckSlot": 5,
+                "cardId": 26000030,
+                "commandCardId": 26000030,
+                "cardParameter": 293611520,
+                "cost": 1
+              },
+              {
+                "deckSlot": 6,
+                "cardId": 28000000,
+                "commandCardId": 28000000,
+                "cardParameter": 1103112192,
+                "cost": 4
+              },
+              {
+                "deckSlot": 7,
+                "cardId": 28000011,
+                "commandCardId": 28000011,
+                "cardParameter": 570435584,
+                "cost": 2
+              }
+            ]
+          }
+        ],
+        "objects": [
+          {
+            "slot": 0,
+            "nativeObjectId": 4000108,
+            "owner": 1,
+            "cardId": 27000000,
+            "x": 14897,
+            "y": 14520,
+            "targetX": 14797,
+            "targetY": 15515,
+            "objectIndex": 2,
+            "secondaryIndex": 21,
+            "hp": null,
+            "maxHp": null
+          },
+          {
+            "slot": 1,
+            "nativeObjectId": 4000109,
+            "owner": 1,
+            "cardId": 28000000,
+            "x": 9278,
+            "y": 28469,
+            "targetX": 9000,
+            "targetY": 29000,
+            "objectIndex": 6,
+            "secondaryIndex": 23,
+            "hp": null,
+            "maxHp": null
+          },
+          {
+            "slot": 2,
+            "nativeObjectId": 5000000,
+            "owner": 0,
+            "cardId": -1,
+            "x": 9000,
+            "y": 3000,
+            "targetX": 9000,
+            "targetY": 3000,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": 4824,
+            "maxHp": 4824
+          },
+          {
+            "slot": 3,
+            "nativeObjectId": 5000001,
+            "owner": 0,
+            "cardId": -1,
+            "x": 3500,
+            "y": 6500,
+            "targetX": 3500,
+            "targetY": 6500,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": 2250,
+            "maxHp": 3052
+          },
+          {
+            "slot": 4,
+            "nativeObjectId": 5000002,
+            "owner": 0,
+            "cardId": -1,
+            "x": 14500,
+            "y": 6500,
+            "targetX": 14500,
+            "targetY": 6500,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": 3052,
+            "maxHp": 3052
+          },
+          {
+            "slot": 5,
+            "nativeObjectId": 5000003,
+            "owner": 1,
+            "cardId": -1,
+            "x": 9000,
+            "y": 29000,
+            "targetX": 9000,
+            "targetY": 29000,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": 4824,
+            "maxHp": 4824
+          },
+          {
+            "slot": 6,
+            "nativeObjectId": 5000004,
+            "owner": 1,
+            "cardId": -1,
+            "x": 3500,
+            "y": 25500,
+            "targetX": 3500,
+            "targetY": 25500,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": 1008,
+            "maxHp": 3052
+          },
+          {
+            "slot": 7,
+            "nativeObjectId": 5000005,
+            "owner": 1,
+            "cardId": -1,
+            "x": 14500,
+            "y": 25500,
+            "targetX": 14500,
+            "targetY": 25500,
+            "objectIndex": -1,
+            "secondaryIndex": -1,
+            "hp": 1274,
+            "maxHp": 3052
+          },
+          {
+            "slot": 8,
+            "nativeObjectId": 5000038,
+            "owner": 1,
+            "cardId": 27000000,
+            "x": 14500,
+            "y": 18500,
+            "targetX": 14500,
+            "targetY": 18500,
+            "objectIndex": 2,
+            "secondaryIndex": 21,
+            "hp": 481,
+            "maxHp": 824
+          },
+          {
+            "slot": 9,
+            "nativeObjectId": 5000043,
+            "owner": 0,
+            "cardId": 26000001,
+            "x": 15000,
+            "y": 13500,
+            "targetX": 15000,
+            "targetY": 13500,
+            "objectIndex": 3,
+            "secondaryIndex": 14,
+            "hp": 304,
+            "maxHp": 304
+          }
+        ],
+        "returned": 10,
+        "truncated": false
+      },
+      "rich": {
+        "ok": true,
+        "schema": "native-rich-telemetry.v3",
+        "tick": 2431,
+        "generation": 4,
+        "stateEpoch": 4,
+        "count": 10,
+        "returned": 10,
+        "truncated": false,
+        "objects": [
+          {
+            "nativeObjectId": 4000108,
+            "owner": 1,
+            "cardId": 27000000,
+            "x": 14897,
+            "y": 14520,
+            "hp": null,
+            "maxHp": null,
+            "dataGlobalId": 10000006,
+            "projectile": {
+              "projectileDataGlobalId": 10000006,
+              "sourceEntityKey": [
+                1,
+                -2,
+                5000038
+              ],
+              "sourceEntityValidated": true,
+              "targetEntityKey": [
+                0,
+                -2,
+                5000043
+              ],
+              "targetEntityValidated": true,
+              "homingTargetEntityKey": null,
+              "homingTargetEntityValidated": true,
+              "destinationX": 15000,
+              "destinationY": 13500,
+              "terminal": false,
+              "nativePhase": "in_flight",
+              "dragStage": null
+            }
+          },
+          {
+            "nativeObjectId": 4000109,
+            "owner": 1,
+            "cardId": 28000000,
+            "x": 9278,
+            "y": 28469,
+            "hp": null,
+            "maxHp": null,
+            "dataGlobalId": 10000000,
+            "projectile": {
+              "projectileDataGlobalId": 10000000,
+              "sourceEntityKey": [
+                1,
+                -2,
+                5000003
+              ],
+              "sourceEntityValidated": true,
+              "targetEntityKey": null,
+              "targetEntityValidated": true,
+              "homingTargetEntityKey": null,
+              "homingTargetEntityValidated": true,
+              "destinationX": 14500,
+              "destinationY": 18500,
+              "terminal": false,
+              "nativePhase": "in_flight",
+              "dragStage": null
+            }
+          },
+          {
+            "nativeObjectId": 5000000,
+            "owner": 0,
+            "cardId": -1,
+            "x": 9000,
+            "y": 3000,
+            "hp": 4824,
+            "maxHp": 4824,
+            "dataGlobalId": 35000000,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000001,
+            "owner": 0,
+            "cardId": -1,
+            "x": 3500,
+            "y": 6500,
+            "hp": 2250,
+            "maxHp": 3052,
+            "dataGlobalId": 35000001,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000002,
+            "owner": 0,
+            "cardId": -1,
+            "x": 14500,
+            "y": 6500,
+            "hp": 3052,
+            "maxHp": 3052,
+            "dataGlobalId": 35000001,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000003,
+            "owner": 1,
+            "cardId": -1,
+            "x": 9000,
+            "y": 29000,
+            "hp": 4824,
+            "maxHp": 4824,
+            "dataGlobalId": 35000000,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000004,
+            "owner": 1,
+            "cardId": -1,
+            "x": 3500,
+            "y": 25500,
+            "hp": 1008,
+            "maxHp": 3052,
+            "dataGlobalId": 35000001,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000005,
+            "owner": 1,
+            "cardId": -1,
+            "x": 14500,
+            "y": 25500,
+            "hp": 1274,
+            "maxHp": 3052,
+            "dataGlobalId": 35000001,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000038,
+            "owner": 1,
+            "cardId": 27000000,
+            "x": 14500,
+            "y": 18500,
+            "hp": 481,
+            "maxHp": 824,
+            "dataGlobalId": 35000002,
+            "projectile": null
+          },
+          {
+            "nativeObjectId": 5000043,
+            "owner": 0,
+            "cardId": 26000001,
+            "x": 15000,
+            "y": 13500,
+            "hp": 304,
+            "maxHp": 304,
+            "dataGlobalId": 34000001,
+            "projectile": null
+          }
+        ]
+      }
+    }
+  ]
+}

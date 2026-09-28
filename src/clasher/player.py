@@ -20,6 +20,10 @@ class PlayerState:
     deck: List[str] = field(default_factory=lambda: ["Knight", "Archer", "Giant", "Minions", "Musketeer", "BabyDragon", "Balloon", "Wizard"])
     cycle_queue: Deque[str] = field(default_factory=deque)
     
+    # Accepted own-card history; failed commands and Champion abilities do not change it.
+    last_played_card: str | None = None
+    last_played_card_cost: int | None = None
+
     # Tower HP 
     king_tower_hp: float = 4824.0      # King tower HP
     left_tower_hp: float = 3052.0      # Level 11 Tower Princess HP
@@ -34,8 +38,11 @@ class PlayerState:
     def regenerate_elixir(self, dt: float, base_regen_time: float = 2.8) -> None:
         """Regenerate elixir over time"""
         if self.elixir < self.max_elixir:
-            elixir_per_second = 1.0 / base_regen_time
-            self.elixir = min(self.max_elixir, self.elixir + elixir_per_second * dt)
+            # Native resources use 1/10000-elixir units and truncate each
+            # fixed logic frame's production before adding it to the balance.
+            produced_units = int(dt * 10000 / base_regen_time)
+            balance_units = round(self.elixir * 10000)
+            self.elixir = min(self.max_elixir, (balance_units + produced_units) / 10000)
     
     def can_play_card(self, card_name: str, card_stats: CardStatsCompat) -> bool:
         """Check if player can afford to play this card"""

@@ -1,3 +1,4 @@
+from ..gamedata_normalization import normalized_walking_speed
 from typing import Dict, Any, Optional, Tuple
 from ..card_types import (
     CardDefinition, CardKind, Rarity, TroopStats, BuildingStats, SpellStats,
@@ -94,7 +95,7 @@ def _create_troop_stats(entry: Dict[str, Any]) -> Optional[TroopStats]:
         hit_speed_ms=char_data.get("hitSpeed"),
         sight_range_tiles=char_data.get("sightRange", 0) / 1000.0,
         collision_radius_tiles=char_data.get("collisionRadius", 0) / 1000.0,
-        speed_logic_units_per_tick=char_data.get("speed"),
+        speed_logic_units_per_tick=normalized_walking_speed(char_data),
         deploy_time_ms=char_data.get("deployTime", 1000),
         # An omitted load time means the attack can be fully preloaded.  Use
         # the card's own hit interval rather than an unrelated one-second

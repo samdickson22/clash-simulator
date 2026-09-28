@@ -1,0 +1,63 @@
+{
+  "role": "development",
+  "scope": "Conditional native2980 Knight live-target swap, unrelated bodies omitted",
+  "bodies": [
+    {
+      "slot": 10,
+      "nativeObjectId": 5000055,
+      "owner": 0,
+      "cardId": 26000000,
+      "x": 3839,
+      "y": 18471,
+      "targetX": 3832,
+      "targetY": 18480,
+      "objectIndex": 2,
+      "secondaryIndex": 20,
+      "hp": 1464,
+      "maxHp": 1766
+    },
+    {
+      "slot": 12,
+      "nativeObjectId": 5000058,
+      "owner": 1,
+      "cardId": 26000002,
+      "x": 1738,
+      "y": 17738,
+      "targetX": 1738,
+      "targetY": 17738,
+      "objectIndex": 3,
+      "secondaryIndex": 30,
+      "hp": 202,
+      "maxHp": 202
+    },
+    {
+      "slot": 13,
+      "nativeObjectId": 5000059,
+      "owner": 1,
+      "cardId": 26000002,
+      "x": 3202,
+      "y": 17662,
+      "targetX": 3202,
+      "targetY": 17662,
+      "objectIndex": 3,
+      "secondaryIndex": 30,
+      "hp": 202,
+      "maxHp": 202
+    }
+  ],
+  "old_target_id": 5000058,
+  "new_target_id": 5000059,
+  "initial_clock": [
+    900,
+    550
+  ],
+  "expected_after_one": [
+    950,
+    500
+  ],
+  "expected_hit_step": 6,
+  "sources": {
+    "reports/calibration_development_20260915/pending-dead-next-retarget.json": "d41f7d6c2bc27cf9a436f4b9d5f86c76f2e8110d8723d059ee8d3df6a89ae114",
+    "reports/calibration_development_20260915/native-live-retarget-reset.txt": "cfb95d54063798aac46bbad17df1b967e7d2197d5eaaabe6f030b5ce2be3ffb1"
+  }
+}

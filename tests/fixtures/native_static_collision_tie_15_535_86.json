@@ -1,0 +1,237 @@
+{
+  "scope": "Blue Knight exact-center Cannon collision and red Bandit near-center control. Red Bandit starts one unit below Cannon, so only the blue case is an exact tie.",
+  "source": "reports/calibration_development_20260915/coincident-static-native-controls.json",
+  "sha256": "4f328d46b82be5b92ec0c4112afe5d2b58e2ea434cd4e8012bad366d29cd7abc",
+  "cases": [
+    {
+      "name": "Knight",
+      "owner": 0,
+      "card": 26000000,
+      "seed": 1291602,
+      "commands": [
+        [
+          100,
+          0,
+          26000000,
+          14500,
+          11500
+        ],
+        [
+          101,
+          0,
+          27000000,
+          14500,
+          11500
+        ]
+      ],
+      "elixir": [
+        6.0,
+        6.0
+      ],
+      "frames": [
+        {
+          "tick": 101,
+          "positions": {
+            "target": [
+              14500,
+              11500
+            ]
+          }
+        },
+        {
+          "tick": 102,
+          "positions": {
+            "target": [
+              14500,
+              11350
+            ],
+            "building": [
+              14500,
+              11500
+            ]
+          }
+        },
+        {
+          "tick": 103,
+          "positions": {
+            "target": [
+              14500,
+              11200
+            ],
+            "building": [
+              14500,
+              11500
+            ]
+          }
+        },
+        {
+          "tick": 104,
+          "positions": {
+            "target": [
+              14500,
+              11050
+            ],
+            "building": [
+              14500,
+              11500
+            ]
+          }
+        },
+        {
+          "tick": 105,
+          "positions": {
+            "target": [
+              14500,
+              10900
+            ],
+            "building": [
+              14500,
+              11500
+            ]
+          }
+        },
+        {
+          "tick": 106,
+          "positions": {
+            "target": [
+              14500,
+              10750
+            ],
+            "building": [
+              14500,
+              11500
+            ]
+          }
+        },
+        {
+          "tick": 107,
+          "positions": {
+            "target": [
+              14500,
+              10600
+            ],
+            "building": [
+              14500,
+              11500
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bandit",
+      "owner": 1,
+      "card": 26000046,
+      "seed": 1291602,
+      "commands": [
+        [
+          100,
+          1,
+          26000046,
+          14500,
+          20500
+        ],
+        [
+          101,
+          1,
+          27000000,
+          14500,
+          20500
+        ]
+      ],
+      "elixir": [
+        6.0,
+        6.0
+      ],
+      "frames": [
+        {
+          "tick": 101,
+          "positions": {
+            "target": [
+              14500,
+              20499
+            ]
+          }
+        },
+        {
+          "tick": 102,
+          "positions": {
+            "target": [
+              14500,
+              20349
+            ],
+            "building": [
+              14500,
+              20500
+            ]
+          }
+        },
+        {
+          "tick": 103,
+          "positions": {
+            "target": [
+              14500,
+              20199
+            ],
+            "building": [
+              14500,
+              20500
+            ]
+          }
+        },
+        {
+          "tick": 104,
+          "positions": {
+            "target": [
+              14500,
+              20049
+            ],
+            "building": [
+              14500,
+              20500
+            ]
+          }
+        },
+        {
+          "tick": 105,
+          "positions": {
+            "target": [
+              14500,
+              19899
+            ],
+            "building": [
+              14500,
+              20500
+            ]
+          }
+        },
+        {
+          "tick": 106,
+          "positions": {
+            "target": [
+              14500,
+              19749
+            ],
+            "building": [
+              14500,
+              20500
+            ]
+          }
+        },
+        {
+          "tick": 107,
+          "positions": {
+            "target": [
+              14500,
+              19599
+            ],
+            "building": [
+              14500,
+              20500
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

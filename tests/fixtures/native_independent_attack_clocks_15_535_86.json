@@ -1,0 +1,1222 @@
+{
+  "scope": "Opened development; clock transitions conditional on recorded engagement, removal and Freeze inputs. Not complete simulation acceptance.",
+  "source_sha256": {
+    "reports/native_knight_body_divergence_20260915/phase-death-native-controls.json": "99d9f893b5f01f5e51168650ce0b58d53c9a989fb3c28459fa7473c7e1d50b2d",
+    "reports/native_knight_body_divergence_20260915/frozen-load-native-control.json": "ae1b2506e0512005a2f375eb620400efb89d1ce3d10a244cf15de86e4c45ba04",
+    "reports/native_knight_body_divergence_20260915/frozen-pending-load-native-control.json": "bd59f4dd2f7eafabb21324c7a431653d755bff28d33ff9a6a979ca5d1cd0d8a9"
+  },
+  "cases": [
+    {
+      "name": "tesla-261",
+      "hit_interval_ms": 1100,
+      "load_time_ms": 700,
+      "initial": {
+        "hit_timeline_ms": 990,
+        "load_remaining_ms": 50
+      },
+      "frames": [
+        {
+          "tick": 332,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": true,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1025,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 333,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1025,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 334,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1025,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 335,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1025,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 336,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1025,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 337,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 0,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 338,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 0,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 339,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 0,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 340,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 0,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        }
+      ]
+    },
+    {
+      "name": "tesla-271",
+      "hit_interval_ms": 1100,
+      "load_time_ms": 700,
+      "initial": {
+        "hit_timeline_ms": 790,
+        "load_remaining_ms": 50
+      },
+      "frames": [
+        {
+          "tick": 338,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": true,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 825,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 339,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 825,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 340,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 825,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 341,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 825,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 342,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 825,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 343,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 0,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 344,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 0,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 345,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 0,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 346,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 0,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        }
+      ]
+    },
+    {
+      "name": "tesla-281",
+      "hit_interval_ms": 1100,
+      "load_time_ms": 700,
+      "initial": {
+        "hit_timeline_ms": 750,
+        "load_remaining_ms": 300
+      },
+      "frames": [
+        {
+          "tick": 322,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": true,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 800,
+            "load_remaining_ms": 250
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 323,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 800,
+            "load_remaining_ms": 200
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 324,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 800,
+            "load_remaining_ms": 150
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 325,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 800,
+            "load_remaining_ms": 100
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 326,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 800,
+            "load_remaining_ms": 50
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 327,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 0,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 328,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 735,
+            "load_remaining_ms": 700
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 329,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 770,
+            "load_remaining_ms": 650
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 330,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 805,
+            "load_remaining_ms": 600
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 331,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 840,
+            "load_remaining_ms": 550
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 332,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 875,
+            "load_remaining_ms": 500
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 333,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 910,
+            "load_remaining_ms": 450
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 334,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 945,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 335,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 980,
+            "load_remaining_ms": 350
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 336,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1015,
+            "load_remaining_ms": 300
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 337,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1050,
+            "load_remaining_ms": 250
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 338,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1085,
+            "load_remaining_ms": 200
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 339,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": true,
+          "remove_after": true,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1120,
+            "load_remaining_ms": 700
+          },
+          "expected_hits": 1
+        },
+        {
+          "tick": 340,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1120,
+            "load_remaining_ms": 650
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 341,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1120,
+            "load_remaining_ms": 600
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 342,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1120,
+            "load_remaining_ms": 550
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 343,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 1120,
+            "load_remaining_ms": 500
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 344,
+          "elapsed_ms": 50,
+          "hit_work_ms": 35,
+          "engaged": false,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 0,
+            "load_remaining_ms": 450
+          },
+          "expected_hits": 0
+        }
+      ]
+    },
+    {
+      "name": "frozen-load-native-control.json",
+      "hit_interval_ms": 1200,
+      "load_time_ms": 700,
+      "initial": {
+        "hit_timeline_ms": 3150,
+        "load_remaining_ms": 0
+      },
+      "frames": [
+        {
+          "tick": 200,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 201,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 202,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 203,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 204,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 205,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 206,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 207,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 208,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 209,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 210,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 211,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 212,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 213,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 214,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 215,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 216,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 217,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 218,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 219,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 220,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 221,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 222,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 3200,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 223,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 3250,
+            "load_remaining_ms": 0
+          },
+          "expected_hits": 0
+        }
+      ]
+    },
+    {
+      "name": "frozen-pending-load-native-control.json",
+      "hit_interval_ms": 1200,
+      "load_time_ms": 700,
+      "initial": {
+        "hit_timeline_ms": 2650,
+        "load_remaining_ms": 450
+      },
+      "frames": [
+        {
+          "tick": 190,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 191,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 192,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 193,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 194,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 195,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 196,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 197,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 198,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 199,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 200,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 201,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 202,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 203,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 204,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 205,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 206,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 207,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 208,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 209,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 210,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 211,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 212,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": true,
+          "expected": {
+            "hit_timeline_ms": 2700,
+            "load_remaining_ms": 400
+          },
+          "expected_hits": 0
+        },
+        {
+          "tick": 213,
+          "elapsed_ms": 50,
+          "hit_work_ms": 50,
+          "engaged": true,
+          "remove_after": false,
+          "frozen": false,
+          "expected": {
+            "hit_timeline_ms": 2750,
+            "load_remaining_ms": 350
+          },
+          "expected_hits": 0
+        }
+      ]
+    }
+  ]
+}

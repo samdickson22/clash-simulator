@@ -1,0 +1,167 @@
+{
+  "role": "opened development",
+  "source": "reports/native_third_tower_divergence_20260915/fireball-command-prefix/frames.json",
+  "source_sha256": "5470f2e4af90fe88d94ba8563aa5c394d765110506cd44eb4bfc00037ccfe93e",
+  "owner": 1,
+  "submitted_tick": 1020,
+  "destination": [
+    3500,
+    18500
+  ],
+  "native_gravity": 50,
+  "native_speed": 600,
+  "frames": [
+    {
+      "tick": 1021,
+      "position": [
+        8722,
+        28469
+      ]
+    },
+    {
+      "tick": 1022,
+      "position": [
+        8444,
+        27938
+      ]
+    },
+    {
+      "tick": 1023,
+      "position": [
+        8166,
+        27407
+      ]
+    },
+    {
+      "tick": 1024,
+      "position": [
+        7888,
+        26876
+      ]
+    },
+    {
+      "tick": 1025,
+      "position": [
+        7610,
+        26345
+      ]
+    },
+    {
+      "tick": 1026,
+      "position": [
+        7332,
+        25814
+      ]
+    },
+    {
+      "tick": 1027,
+      "position": [
+        7054,
+        25283
+      ]
+    },
+    {
+      "tick": 1028,
+      "position": [
+        6776,
+        24752
+      ]
+    },
+    {
+      "tick": 1029,
+      "position": [
+        6498,
+        24221
+      ]
+    },
+    {
+      "tick": 1030,
+      "position": [
+        6220,
+        23690
+      ]
+    },
+    {
+      "tick": 1031,
+      "position": [
+        5942,
+        23159
+      ]
+    },
+    {
+      "tick": 1032,
+      "position": [
+        5664,
+        22628
+      ]
+    },
+    {
+      "tick": 1033,
+      "position": [
+        5386,
+        22097
+      ]
+    },
+    {
+      "tick": 1034,
+      "position": [
+        5108,
+        21566
+      ]
+    },
+    {
+      "tick": 1035,
+      "position": [
+        4830,
+        21035
+      ]
+    },
+    {
+      "tick": 1036,
+      "position": [
+        4552,
+        20504
+      ]
+    },
+    {
+      "tick": 1037,
+      "position": [
+        4274,
+        19973
+      ]
+    },
+    {
+      "tick": 1038,
+      "position": [
+        3995,
+        19442
+      ]
+    },
+    {
+      "tick": 1039,
+      "position": [
+        3716,
+        18911
+      ]
+    },
+    {
+      "tick": 1040,
+      "position": null
+    },
+    {
+      "tick": 1041,
+      "position": null
+    },
+    {
+      "tick": 1042,
+      "position": null
+    }
+  ],
+  "terminal_event": {
+    "tick": 1039,
+    "sequence": 18459,
+    "projectile_id": 4000039,
+    "terminal_reason": "unknown"
+  },
+  "scope": "Recorded Fireball XY travel and terminal frame. No damage recipient was in this impact area. Does not establish gravity semantics for other payloads or visual height."
+}

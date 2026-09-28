@@ -272,6 +272,11 @@ class SelfPlayBattleEnv:
             return cached[1]
         public = degrade_simulator_public_observation(
             ActorObservation(
+                entity_levels=exact.entity_levels,
+                entity_level_confidence=exact.entity_level_confidence,
+                terminal=exact.terminal,
+                board_rotated=exact.board_rotated,
+                own_last_play=exact.own_last_play,
                 entity_ids=exact.entity_ids,
                 entity_features=exact.entity_features,
                 entity_mask=exact.entity_mask,
@@ -294,6 +299,10 @@ class SelfPlayBattleEnv:
         actor = observed.observation
         projected = replace(
             exact,
+            own_last_play=actor.own_last_play,
+            terminal=actor.terminal,
+            entity_levels=actor.entity_levels,
+            entity_level_confidence=actor.entity_level_confidence,
             entity_ids=actor.entity_ids,
             entity_features=actor.entity_features,
             entity_mask=actor.entity_mask,

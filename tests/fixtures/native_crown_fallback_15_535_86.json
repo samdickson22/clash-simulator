@@ -1,0 +1,355 @@
+{
+  "role": "development",
+  "physical_roots": 1,
+  "independent_acceptance_roots": 0,
+  "cases": [
+    {
+      "x": 3.5,
+      "owner": 1,
+      "xy": [
+        3186,
+        18493
+      ],
+      "hp": 1113,
+      "towers": [
+        {
+          "slot": 1,
+          "nativeObjectId": 5000000,
+          "owner": 0,
+          "cardId": -1,
+          "x": 9000,
+          "y": 3000,
+          "targetX": 9000,
+          "targetY": 3000,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 4824,
+          "maxHp": 4824
+        },
+        {
+          "slot": 2,
+          "nativeObjectId": 5000002,
+          "owner": 0,
+          "cardId": -1,
+          "x": 14500,
+          "y": 6500,
+          "targetX": 14500,
+          "targetY": 6500,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 3017,
+          "maxHp": 3052
+        },
+        {
+          "slot": 3,
+          "nativeObjectId": 5000003,
+          "owner": 1,
+          "cardId": -1,
+          "x": 9000,
+          "y": 29000,
+          "targetX": 9000,
+          "targetY": 29000,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 4824,
+          "maxHp": 4824
+        },
+        {
+          "slot": 4,
+          "nativeObjectId": 5000004,
+          "owner": 1,
+          "cardId": -1,
+          "x": 3500,
+          "y": 25500,
+          "targetX": 3500,
+          "targetY": 25500,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 520,
+          "maxHp": 3052
+        },
+        {
+          "slot": 5,
+          "nativeObjectId": 5000005,
+          "owner": 1,
+          "cardId": -1,
+          "x": 14500,
+          "y": 25500,
+          "targetX": 14500,
+          "targetY": 25500,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 3052,
+          "maxHp": 3052
+        }
+      ],
+      "expected_target_xy": [
+        9000,
+        3000
+      ],
+      "source": "reports/calibration_development_20260915/crown-fallback-placement-controls/3.5/native/frames.json",
+      "source_sha256": "4890fc0c44d74bcaa2a9bf4fee3ab0378d964adb2473a53233c48bc9e0311999"
+    },
+    {
+      "x": 8.5,
+      "owner": 1,
+      "xy": [
+        8499,
+        18499
+      ],
+      "hp": 1315,
+      "towers": [
+        {
+          "slot": 1,
+          "nativeObjectId": 5000000,
+          "owner": 0,
+          "cardId": -1,
+          "x": 9000,
+          "y": 3000,
+          "targetX": 9000,
+          "targetY": 3000,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 4824,
+          "maxHp": 4824
+        },
+        {
+          "slot": 2,
+          "nativeObjectId": 5000002,
+          "owner": 0,
+          "cardId": -1,
+          "x": 14500,
+          "y": 6500,
+          "targetX": 14500,
+          "targetY": 6500,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 3017,
+          "maxHp": 3052
+        },
+        {
+          "slot": 3,
+          "nativeObjectId": 5000003,
+          "owner": 1,
+          "cardId": -1,
+          "x": 9000,
+          "y": 29000,
+          "targetX": 9000,
+          "targetY": 29000,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 4824,
+          "maxHp": 4824
+        },
+        {
+          "slot": 4,
+          "nativeObjectId": 5000004,
+          "owner": 1,
+          "cardId": -1,
+          "x": 3500,
+          "y": 25500,
+          "targetX": 3500,
+          "targetY": 25500,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 520,
+          "maxHp": 3052
+        },
+        {
+          "slot": 5,
+          "nativeObjectId": 5000005,
+          "owner": 1,
+          "cardId": -1,
+          "x": 14500,
+          "y": 25500,
+          "targetX": 14500,
+          "targetY": 25500,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 3052,
+          "maxHp": 3052
+        }
+      ],
+      "expected_target_xy": [
+        9000,
+        3000
+      ],
+      "source": "reports/calibration_development_20260915/crown-fallback-placement-controls/8.5/native/frames.json",
+      "source_sha256": "888337cf831f13176b3dfb0e4bc9cf82b1ab4ce549a5031f24cde2099168cc3d"
+    },
+    {
+      "x": 9.5,
+      "owner": 1,
+      "xy": [
+        9500,
+        18499
+      ],
+      "hp": 1315,
+      "towers": [
+        {
+          "slot": 1,
+          "nativeObjectId": 5000000,
+          "owner": 0,
+          "cardId": -1,
+          "x": 9000,
+          "y": 3000,
+          "targetX": 9000,
+          "targetY": 3000,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 4824,
+          "maxHp": 4824
+        },
+        {
+          "slot": 2,
+          "nativeObjectId": 5000002,
+          "owner": 0,
+          "cardId": -1,
+          "x": 14500,
+          "y": 6500,
+          "targetX": 14500,
+          "targetY": 6500,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 3017,
+          "maxHp": 3052
+        },
+        {
+          "slot": 3,
+          "nativeObjectId": 5000003,
+          "owner": 1,
+          "cardId": -1,
+          "x": 9000,
+          "y": 29000,
+          "targetX": 9000,
+          "targetY": 29000,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 4824,
+          "maxHp": 4824
+        },
+        {
+          "slot": 4,
+          "nativeObjectId": 5000004,
+          "owner": 1,
+          "cardId": -1,
+          "x": 3500,
+          "y": 25500,
+          "targetX": 3500,
+          "targetY": 25500,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 520,
+          "maxHp": 3052
+        },
+        {
+          "slot": 5,
+          "nativeObjectId": 5000005,
+          "owner": 1,
+          "cardId": -1,
+          "x": 14500,
+          "y": 25500,
+          "targetX": 14500,
+          "targetY": 25500,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 3052,
+          "maxHp": 3052
+        }
+      ],
+      "expected_target_xy": [
+        14500,
+        6500
+      ],
+      "source": "reports/calibration_development_20260915/crown-fallback-placement-controls/9.5/native/frames.json",
+      "source_sha256": "29a93b2a126fe42ab85b846b2a93feade34f7598b3e68dc5922d2f792a63c21c"
+    },
+    {
+      "x": 14.5,
+      "owner": 1,
+      "xy": [
+        14500,
+        18499
+      ],
+      "hp": 1315,
+      "towers": [
+        {
+          "slot": 1,
+          "nativeObjectId": 5000000,
+          "owner": 0,
+          "cardId": -1,
+          "x": 9000,
+          "y": 3000,
+          "targetX": 9000,
+          "targetY": 3000,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 4824,
+          "maxHp": 4824
+        },
+        {
+          "slot": 2,
+          "nativeObjectId": 5000002,
+          "owner": 0,
+          "cardId": -1,
+          "x": 14500,
+          "y": 6500,
+          "targetX": 14500,
+          "targetY": 6500,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 3017,
+          "maxHp": 3052
+        },
+        {
+          "slot": 3,
+          "nativeObjectId": 5000003,
+          "owner": 1,
+          "cardId": -1,
+          "x": 9000,
+          "y": 29000,
+          "targetX": 9000,
+          "targetY": 29000,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 4824,
+          "maxHp": 4824
+        },
+        {
+          "slot": 4,
+          "nativeObjectId": 5000004,
+          "owner": 1,
+          "cardId": -1,
+          "x": 3500,
+          "y": 25500,
+          "targetX": 3500,
+          "targetY": 25500,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 520,
+          "maxHp": 3052
+        },
+        {
+          "slot": 5,
+          "nativeObjectId": 5000005,
+          "owner": 1,
+          "cardId": -1,
+          "x": 14500,
+          "y": 25500,
+          "targetX": 14500,
+          "targetY": 25500,
+          "objectIndex": -1,
+          "secondaryIndex": -1,
+          "hp": 3052,
+          "maxHp": 3052
+        }
+      ],
+      "expected_target_xy": [
+        14500,
+        6500
+      ],
+      "source": "reports/calibration_development_20260915/crown-fallback-placement-controls/14.5/native/frames.json",
+      "source_sha256": "05ec2279745cbe6ce2def46244108026a56017ba53f8f52f854b973217ae6891"
+    }
+  ]
+}

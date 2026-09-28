@@ -1,0 +1,32 @@
+{
+  "role": "development",
+  "native_version": "15.535.86",
+  "nativeObjectId": 5000047,
+  "tick": 2700,
+  "owner": 1,
+  "xy": [
+    14309,
+    17665
+  ],
+  "facing": [
+    -1,
+    -256
+  ],
+  "avoidance": -180,
+  "command": {
+    "name": "Goblins",
+    "xy": [
+      14.5,
+      17.5
+    ]
+  },
+  "expected_avoidance": -150,
+  "sources": {
+    "reports/calibration_development_20260915/seed2-spatial-preboundary-fields.json": "d5b24329b51c4d5f654b6c9d332cbc2186ab6c3fd336c6a3bdac824abeb0ec10",
+    "reports/calibration_development_20260915/seed2-golem-collision-fields.json": "d21c93779a4d672198f96fc7b00ffa3239dc0da98ed8eb77c8b3c567beb49e6c",
+    "reports/calibration_development_20260915/seed2-golem-collision-boundary/frames.json": "2f95704481c630c2784ec87128bd53a57d74e80c408dd74eb3af9d96da3068f1",
+    "reports/calibration_development_20260915/native-spatial-grid-refresh.txt": "192807a3d9eca64fe20b45862c29ab4b66826c2bdd414d734dfbc2a1f5ff161e",
+    "reports/calibration_development_20260915/native-spatial-grid-mutations.txt": "29cb6b2b8f214dc77ff09963a12bb024b856820fe4c0f4c87acca79b37af99f8",
+    "reports/calibration_development_20260915/native-avoidance-f34afc.txt": "4223cdcffd35811b8f88aee401cb92a31803c71a071c389d796705b1d2d05ca1"
+  }
+}

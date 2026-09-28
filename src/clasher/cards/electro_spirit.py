@@ -46,6 +46,9 @@ class ElectroSpiritChain(BaseMechanic):
         )
 
     def on_attack_start(self, entity: 'Entity', target: 'Entity') -> None:
+        entity._self_projectile_launched = True
+        entity.entity_kind = 2
+        entity._self_projectile_launch_tick = entity.battle_state.tick
         entity._electro_spirit_jump_target_id = target.id
         entity._electro_spirit_jump_origin = (entity.position.x, entity.position.y)
         entity._electro_spirit_jump_destination = (target.position.x, target.position.y)

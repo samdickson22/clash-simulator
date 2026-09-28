@@ -1,0 +1,169 @@
+{
+  "scope": "Conditional component regression using recorded target positions. Not an autonomous rollout or acceptance gate.",
+  "source": "reports/native_knight_body_divergence_20260915/tower-3487-native/frames.json",
+  "sha256": "97ce9e5ee24243f8289cae3d522ebfe12dd14c85c7c8e5c139815a8eb2847138",
+  "frames": [
+    {
+      "tick": 3471,
+      "knight_xy": [
+        14678,
+        15269
+      ],
+      "timeline": 2400,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3472,
+      "knight_xy": [
+        14669,
+        15305
+      ],
+      "timeline": 2450,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3473,
+      "knight_xy": [
+        14661,
+        15333
+      ],
+      "timeline": 2500,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3474,
+      "knight_xy": [
+        14650,
+        15368
+      ],
+      "timeline": 2550,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3475,
+      "knight_xy": [
+        14636,
+        15407
+      ],
+      "timeline": 2600,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3476,
+      "knight_xy": [
+        14636,
+        15407
+      ],
+      "timeline": 2650,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3477,
+      "knight_xy": [
+        14616,
+        15457
+      ],
+      "timeline": 2700,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3478,
+      "knight_xy": [
+        14600,
+        15494
+      ],
+      "timeline": 2750,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3479,
+      "knight_xy": [
+        14580,
+        15538
+      ],
+      "timeline": 2800,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3480,
+      "knight_xy": [
+        14558,
+        15582
+      ],
+      "timeline": 2850,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3481,
+      "knight_xy": [
+        14535,
+        15626
+      ],
+      "timeline": 2900,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3482,
+      "knight_xy": [
+        14507,
+        15677
+      ],
+      "timeline": 2950,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3483,
+      "knight_xy": [
+        14482,
+        15721
+      ],
+      "timeline": 3000,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3484,
+      "knight_xy": [
+        14455,
+        15766
+      ],
+      "timeline": 3050,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3485,
+      "knight_xy": [
+        14424,
+        15816
+      ],
+      "timeline": 3100,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3486,
+      "knight_xy": [
+        14396,
+        15859
+      ],
+      "timeline": 3150,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3487,
+      "knight_xy": [
+        14392,
+        15866
+      ],
+      "timeline": 3200,
+      "keeps_knight": true
+    },
+    {
+      "tick": 3488,
+      "knight_xy": [
+        14392,
+        15866
+      ],
+      "timeline": 0,
+      "keeps_knight": false
+    }
+  ]
+}
