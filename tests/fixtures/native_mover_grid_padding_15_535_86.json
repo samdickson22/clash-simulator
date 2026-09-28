@@ -1,0 +1,93 @@
+{
+  "role": "development",
+  "scope": "Conditional2851 Knight avoidance with native indexed/live geometry and scalar-conditioned component fields; distant non-candidates omitted",
+  "rows": [
+    {
+      "id": 214,
+      "name": "IceGolemite",
+      "xy": [
+        3735,
+        15308
+      ],
+      "avoidance": -70,
+      "facing": [
+        -450,
+        -966
+      ],
+      "deploy": 0.0,
+      "stagger": 0.0,
+      "native_id": 5000051,
+      "indexed_xy": [
+        3700,
+        15216
+      ]
+    },
+    {
+      "id": 216,
+      "name": "Archer",
+      "xy": [
+        4287,
+        13997
+      ],
+      "avoidance": 0,
+      "facing": [
+        -461,
+        1139
+      ],
+      "deploy": 0.0,
+      "stagger": 0.0,
+      "native_id": 5000052,
+      "indexed_xy": [
+        4161,
+        14077
+      ]
+    },
+    {
+      "id": 217,
+      "name": "Archer",
+      "xy": [
+        2716,
+        14283
+      ],
+      "avoidance": 0,
+      "facing": [
+        840,
+        893
+      ],
+      "deploy": 0.0,
+      "stagger": 0.0,
+      "native_id": 5000053,
+      "indexed_xy": [
+        2860,
+        14323
+      ]
+    },
+    {
+      "id": 225,
+      "name": "Knight",
+      "xy": [
+        3499,
+        14500
+      ],
+      "avoidance": 0,
+      "facing": [
+        0,
+        1000
+      ],
+      "deploy": 1.0,
+      "stagger": 0.0,
+      "native_id": 5000055,
+      "indexed_xy": [
+        3499,
+        14500
+      ]
+    }
+  ],
+  "expected": 190,
+  "sources": {
+    "reports/calibration_development_20260915/knight-padding-scalar-boundary.json": "54dc578ed4fbd7169f00ca0e0ed3f111af6140603f250886b174c354da7b6e41",
+    "reports/calibration_development_20260915/knight-early-native/frames.json": "7c465233bbfd5924f2245bf52b8cc636b2f7d788b043840e53b6a3954b6cbf21",
+    "reports/calibration_development_20260915/native-knight-padding-fields.json": "03e8a397340a410aeb3159f348f72523cfb3a5ba34a2183c7e9ece6aa7f30fe9",
+    "reports/calibration_development_20260915/native-spatial-grid-mutations.txt": "29cb6b2b8f214dc77ff09963a12bb024b856820fe4c0f4c87acca79b37af99f8"
+  }
+}

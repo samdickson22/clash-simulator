@@ -1,3 +1,4 @@
+import copy
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -127,12 +128,16 @@ class PeriodicSpawner(BaseMechanic):
                 self.unit_name,
                 self.unit_data,
                 elixir=0,
+                raw_overrides={"level": getattr(entity.card_stats, "level", 11)},
                 rarity=self.unit_data.get("rarity", "Common"),
             )
 
         # Fall back to canonical card loader entry when raw spawn data is unavailable.
         if not spawn_stats:
             spawn_stats = battle_state.card_loader.get_card(self.unit_name)
+            if spawn_stats is not None:
+                spawn_stats = copy.copy(spawn_stats)
+                spawn_stats.level = getattr(entity.card_stats, "level", 11)
 
         if not spawn_stats:
             raise ValueError(
@@ -179,6 +184,7 @@ class PeriodicSpawner(BaseMechanic):
                 entity.player_id,
                 spawn_stats,
                 deploy_delay_override=None if self.spawn_with_deploy else 0.0,
+                is_clone=getattr(entity, "is_clone", False),
                 # The zero-radius branch has already performed its native
                 # terrain check; the radial branch performs no such check.
                 snap_to_valid=False,

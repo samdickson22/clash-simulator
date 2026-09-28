@@ -1,0 +1,390 @@
+{
+  "reference": "Null's 15.535.86 opened completed friendly-building controls",
+  "decision_tick": 221,
+  "cases": [
+    {
+      "troop": "HogRider",
+      "building": null,
+      "owner": 0,
+      "horizon": 1200,
+      "native_tower_damage": 2219,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "HogRider-none-0.json",
+      "sha256": "d2eb3a2bad8407b3f4ab220e8ca694b0b5fd550ef62b3ce50dd0f287fab7074c",
+      "placements": [
+        [
+          "HogRider",
+          3.5,
+          8.5
+        ]
+      ]
+    },
+    {
+      "troop": "HogRider",
+      "building": null,
+      "owner": 1,
+      "horizon": 1200,
+      "native_tower_damage": 2219,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "HogRider-none-1.json",
+      "sha256": "577e4adc71ffe448d7d96640a7472adda070aaa2f9d3f4ae4b2efc4d8805c990",
+      "placements": [
+        [
+          "HogRider",
+          14.5,
+          23.5
+        ]
+      ]
+    },
+    {
+      "troop": "HogRider",
+      "building": "Cannon",
+      "owner": 0,
+      "horizon": 1200,
+      "native_tower_damage": 2219,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "HogRider-Cannon-0.json",
+      "sha256": "b8498f930f32a1239841a335dcae7f12194c31551f3e01fa0e175c6497db59ad",
+      "placements": [
+        [
+          "HogRider",
+          3.5,
+          8.5
+        ],
+        [
+          "Cannon",
+          3.5,
+          11.5
+        ]
+      ]
+    },
+    {
+      "troop": "HogRider",
+      "building": "Cannon",
+      "owner": 1,
+      "horizon": 1200,
+      "native_tower_damage": 2219,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "HogRider-Cannon-1.json",
+      "sha256": "ea29f80ddee622f2b9dc45bb031b2df0171afda711462bea0666afc6ef908e44",
+      "placements": [
+        [
+          "HogRider",
+          14.5,
+          23.5
+        ],
+        [
+          "Cannon",
+          14.5,
+          20.5
+        ]
+      ]
+    },
+    {
+      "troop": "HogRider",
+      "building": "Tesla",
+      "owner": 0,
+      "horizon": 1200,
+      "native_tower_damage": 2219,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "HogRider-Tesla-0.json",
+      "sha256": "03535374e4622451a184f3eeee8b0c74977ab605587d15b442d238e4fa704304",
+      "placements": [
+        [
+          "HogRider",
+          3.5,
+          8.5
+        ],
+        [
+          "Tesla",
+          3.5,
+          11.5
+        ]
+      ]
+    },
+    {
+      "troop": "HogRider",
+      "building": "Tesla",
+      "owner": 1,
+      "horizon": 1200,
+      "native_tower_damage": 2219,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "HogRider-Tesla-1.json",
+      "sha256": "34c8cd6e0fe07fabdbd3c5b94c464c29aefce0c9c49756b7f5af0c0aaa207e1c",
+      "placements": [
+        [
+          "HogRider",
+          14.5,
+          23.5
+        ],
+        [
+          "Tesla",
+          14.5,
+          20.5
+        ]
+      ]
+    },
+    {
+      "troop": "Giant",
+      "building": null,
+      "owner": 0,
+      "horizon": 1200,
+      "native_tower_damage": 3305,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "Giant-none-0.json",
+      "sha256": "b94b1e4fb0377b4f82f649c5ba0687b00bdf5c845626d8da7b1434e3a42f013f",
+      "placements": [
+        [
+          "Giant",
+          3.5,
+          8.5
+        ]
+      ]
+    },
+    {
+      "troop": "Giant",
+      "building": null,
+      "owner": 1,
+      "horizon": 1200,
+      "native_tower_damage": 3305,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "Giant-none-1.json",
+      "sha256": "1af057eafeb5b26ece76186c2d296af022ae75836b8ab60c8b50bdf66f324881",
+      "placements": [
+        [
+          "Giant",
+          14.5,
+          23.5
+        ]
+      ]
+    },
+    {
+      "troop": "Giant",
+      "building": "Cannon",
+      "owner": 0,
+      "horizon": 1200,
+      "native_tower_damage": 3305,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "Giant-Cannon-0.json",
+      "sha256": "25e3cf31bfa6f5a8ca3267feec2a1a4ede106d58321e9dd325584f0f4a8c6358",
+      "placements": [
+        [
+          "Giant",
+          3.5,
+          8.5
+        ],
+        [
+          "Cannon",
+          3.5,
+          11.5
+        ]
+      ]
+    },
+    {
+      "troop": "Giant",
+      "building": "Cannon",
+      "owner": 1,
+      "horizon": 1200,
+      "native_tower_damage": 3305,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "Giant-Cannon-1.json",
+      "sha256": "47eadedb884dda2f36f882adc292d8addad5dd7668eb01d21895d251518facde",
+      "placements": [
+        [
+          "Giant",
+          14.5,
+          23.5
+        ],
+        [
+          "Cannon",
+          14.5,
+          20.5
+        ]
+      ]
+    },
+    {
+      "troop": "Giant",
+      "building": "Tesla",
+      "owner": 0,
+      "horizon": 1200,
+      "native_tower_damage": 3305,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "Giant-Tesla-0.json",
+      "sha256": "cedfc5872348753bc4e0cf17887fd40b62d26d4769060afbd75efab3b51dfdc0",
+      "placements": [
+        [
+          "Giant",
+          3.5,
+          8.5
+        ],
+        [
+          "Tesla",
+          3.5,
+          11.5
+        ]
+      ]
+    },
+    {
+      "troop": "Giant",
+      "building": "Tesla",
+      "owner": 1,
+      "horizon": 1200,
+      "native_tower_damage": 3305,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "Giant-Tesla-1.json",
+      "sha256": "40c51c1c1aabf18497cc49e5dfef9610cec808ac25a41396afe029b660a81e4c",
+      "placements": [
+        [
+          "Giant",
+          14.5,
+          23.5
+        ],
+        [
+          "Tesla",
+          14.5,
+          20.5
+        ]
+      ]
+    },
+    {
+      "troop": "Knight",
+      "building": null,
+      "owner": 0,
+      "horizon": 1200,
+      "native_tower_damage": 1414,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "Knight-none-0.json",
+      "sha256": "ba4c459ca138ebdd6fe4684ce5024d918bd15f210ded10b02b5af1358164193e",
+      "placements": [
+        [
+          "Knight",
+          3.5,
+          8.5
+        ]
+      ]
+    },
+    {
+      "troop": "Knight",
+      "building": null,
+      "owner": 1,
+      "horizon": 1200,
+      "native_tower_damage": 1414,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "Knight-none-1.json",
+      "sha256": "d6334d70dd5395a8a2bd0ad9b502da2c60b4f12271676b336c7a83edc29e5290",
+      "placements": [
+        [
+          "Knight",
+          14.5,
+          23.5
+        ]
+      ]
+    },
+    {
+      "troop": "Knight",
+      "building": "Cannon",
+      "owner": 0,
+      "horizon": 1200,
+      "native_tower_damage": 1414,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "Knight-Cannon-0.json",
+      "sha256": "79a5390c9a8af3dfc2168f0251c961e191b4abef7d65d3499885be743334427b",
+      "placements": [
+        [
+          "Knight",
+          3.5,
+          8.5
+        ],
+        [
+          "Cannon",
+          3.5,
+          11.5
+        ]
+      ]
+    },
+    {
+      "troop": "Knight",
+      "building": "Cannon",
+      "owner": 1,
+      "horizon": 1200,
+      "native_tower_damage": 1414,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "Knight-Cannon-1.json",
+      "sha256": "1f185a38f2d0fe19f96ba43cd26d22cae9245bc358f89e468da5b937d484b7f5",
+      "placements": [
+        [
+          "Knight",
+          14.5,
+          23.5
+        ],
+        [
+          "Cannon",
+          14.5,
+          20.5
+        ]
+      ]
+    },
+    {
+      "troop": "Knight",
+      "building": "Tesla",
+      "owner": 0,
+      "horizon": 1200,
+      "native_tower_damage": 1414,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "Knight-Tesla-0.json",
+      "sha256": "62758146fc3588086e427551295fe8859bdefb3cc4536760e521b24af84f6583",
+      "placements": [
+        [
+          "Knight",
+          3.5,
+          8.5
+        ],
+        [
+          "Tesla",
+          3.5,
+          11.5
+        ]
+      ]
+    },
+    {
+      "troop": "Knight",
+      "building": "Tesla",
+      "owner": 1,
+      "horizon": 1200,
+      "native_tower_damage": 1414,
+      "native_troop_alive": false,
+      "end_tick": 1421,
+      "capture": "Knight-Tesla-1.json",
+      "sha256": "e48ce17b579bc13cec70518fc38a8079560f1131d737693179861ca9988f207c",
+      "placements": [
+        [
+          "Knight",
+          14.5,
+          23.5
+        ],
+        [
+          "Tesla",
+          14.5,
+          20.5
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "source": "reports/native_knight_body_divergence_20260915/command-death-native-control.json",
+  "source_sha256": "01ebf2aa51b0edcc2772ea40fa571492e0bc7ac585d5af4f3644ebf601c8b124",
+  "scope": "Opened native command-phase target death control; Knight response.",
+  "frames": [
+    {
+      "tick": 28,
+      "xy": [
+        3427,
+        17213
+      ],
+      "hp": 1766,
+      "has_target": true
+    },
+    {
+      "tick": 29,
+      "xy": [
+        3427,
+        17213
+      ],
+      "hp": 1766,
+      "has_target": true
+    },
+    {
+      "tick": 30,
+      "xy": [
+        3427,
+        17213
+      ],
+      "hp": 1766,
+      "has_target": true
+    },
+    {
+      "tick": 31,
+      "xy": [
+        3427,
+        17213
+      ],
+      "hp": 1766,
+      "has_target": false
+    },
+    {
+      "tick": 32,
+      "xy": [
+        3427,
+        17213
+      ],
+      "hp": 1766,
+      "has_target": false
+    },
+    {
+      "tick": 33,
+      "xy": [
+        3427,
+        17213
+      ],
+      "hp": 1766,
+      "has_target": false
+    },
+    {
+      "tick": 34,
+      "xy": [
+        3427,
+        17213
+      ],
+      "hp": 1766,
+      "has_target": false
+    },
+    {
+      "tick": 35,
+      "xy": [
+        3427,
+        17213
+      ],
+      "hp": 1766,
+      "has_target": false
+    },
+    {
+      "tick": 36,
+      "xy": [
+        3427,
+        17213
+      ],
+      "hp": 1766,
+      "has_target": false
+    },
+    {
+      "tick": 37,
+      "xy": [
+        3406,
+        17157
+      ],
+      "hp": 1766,
+      "has_target": true
+    },
+    {
+      "tick": 38,
+      "xy": [
+        3396,
+        17098
+      ],
+      "hp": 1766,
+      "has_target": true
+    },
+    {
+      "tick": 39,
+      "xy": [
+        3390,
+        17039
+      ],
+      "hp": 1766,
+      "has_target": true
+    },
+    {
+      "tick": 40,
+      "xy": [
+        3384,
+        16980
+      ],
+      "hp": 1766,
+      "has_target": true
+    },
+    {
+      "tick": 41,
+      "xy": [
+        3378,
+        16921
+      ],
+      "hp": 1766,
+      "has_target": true
+    },
+    {
+      "tick": 42,
+      "xy": [
+        3372,
+        16862
+      ],
+      "hp": 1766,
+      "has_target": true
+    },
+    {
+      "tick": 43,
+      "xy": [
+        3366,
+        16803
+      ],
+      "hp": 1766,
+      "has_target": true
+    },
+    {
+      "tick": 44,
+      "xy": [
+        3360,
+        16744
+      ],
+      "hp": 1766,
+      "has_target": true
+    },
+    {
+      "tick": 45,
+      "xy": [
+        3356,
+        16685
+      ],
+      "hp": 1766,
+      "has_target": true
+    }
+  ]
+}

@@ -14,8 +14,8 @@ from clasher.battle import BattleState
 from clasher.card_aliases import resolve_card_name
 from clasher.data import CardDataLoader
 from clasher.entities import Building, ChainLightning, RollingProjectile, TimedExplosive
-from clasher.kinematics import logic_time_milliseconds
-from clasher.unit_traits import is_airborne_target
+from clasher.kinematics import logic_speed_to_tiles_per_second, logic_time_milliseconds
+from clasher.unit_traits import is_airborne_target, unit_mass
 
 from .card_semantics import (
     SEMANTIC_EXTRA_FEATURE_INDICES,
@@ -24,6 +24,7 @@ from .card_semantics import (
 )
 from .common import BOARD_HEIGHT, BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
 from .deck_pool import load_deck_pool, unique_cards_from_decks
+from .own_card_history import AcceptedOwnPlay
 
 ENTITY_FEATURE_SIZE = 32
 ACTOR_GLOBAL_SIZE = 18
@@ -86,6 +87,7 @@ class StructuredObservationSpec:
     critic_global_size: int = CRITIC_GLOBAL_SIZE
     public_history_slots: int = 0
     public_seen_card_slots: int = 0
+    public_entity_levels: bool = False
 
     @property
     def num_tokens(self) -> int:
@@ -111,6 +113,13 @@ class StructuredObservation:
     entity_feature_confidence: np.ndarray | None = None
     hand_id_confidence: np.ndarray | None = None
     global_feature_confidence: np.ndarray | None = None
+    own_last_play: AcceptedOwnPlay | None = None
+    # None means the current source cannot establish match lifecycle.
+    terminal: bool | None = None
+    # Whether public coordinates were rotated 180 degrees from arena coordinates.
+    board_rotated: bool | None = None
+    entity_levels: np.ndarray | None = None
+    entity_level_confidence: np.ndarray | None = None
 
 
 @dataclass(frozen=True)
@@ -125,6 +134,13 @@ class ActorObservation:
     opponent_history_ids: np.ndarray
     opponent_history_ages: np.ndarray
     opponent_seen_card_ids: np.ndarray
+    own_last_play: AcceptedOwnPlay | None = None
+    # None means the current source cannot establish match lifecycle.
+    terminal: bool | None = None
+    # Whether public coordinates were rotated 180 degrees from arena coordinates.
+    board_rotated: bool | None = None
+    entity_levels: np.ndarray | None = None
+    entity_level_confidence: np.ndarray | None = None
 
 
 def _walk_named_payloads(value: Any) -> Iterable[str]:
@@ -195,6 +211,7 @@ class StructuredObservationBuilder:
         self,
         *,
         decks_path: str | Path = "decks.json",
+        card_loader: CardDataLoader | None = None,
         card_vocab: Sequence[str] | None = None,
         max_entities: int = DEFAULT_MAX_ENTITIES,
         canonical_perspective: bool = True,
@@ -203,22 +220,24 @@ class StructuredObservationBuilder:
         card_semantics_version: int = 1,
         public_history_slots: int = 0,
         public_seen_card_slots: int = 0,
+        public_entity_levels: bool = False,
     ) -> None:
         if max_entities <= 0:
             raise ValueError("max_entities must be positive")
-        if card_semantics_version not in {1, 2, 3}:
-            raise ValueError("card_semantics_version must be 1, 2, or 3")
+        if card_semantics_version not in {1, 2, 3, 4}:
+            raise ValueError("card_semantics_version must be 1, 2, 3, or 4")
         if public_history_slots < 0:
             raise ValueError("public_history_slots must be non-negative")
         if public_seen_card_slots < 0:
             raise ValueError("public_seen_card_slots must be non-negative")
+        self.public_entity_levels = bool(public_entity_levels)
         self.max_entities = int(max_entities)
         self.canonical_perspective = bool(canonical_perspective)
         self.canonical_lane_globals = bool(canonical_lane_globals)
         self.card_semantics_version = int(card_semantics_version)
         self.public_history_slots = int(public_history_slots)
         self.public_seen_card_slots = int(public_seen_card_slots)
-        self.loader = CardDataLoader()
+        self.loader = card_loader if card_loader is not None else CardDataLoader()
         definitions = self.loader.load_card_definitions()
 
         if card_vocab is None:
@@ -266,6 +285,7 @@ class StructuredObservationBuilder:
             max_entities=self.max_entities,
             public_history_slots=self.public_history_slots,
             public_seen_card_slots=self.public_seen_card_slots,
+            public_entity_levels=self.public_entity_levels,
         )
         self.card_stat_features = self._build_card_stat_features()
 
@@ -315,7 +335,7 @@ class StructuredObservationBuilder:
 
     def _build_card_stat_features(self) -> np.ndarray:
         semantic_features: np.ndarray | None = None
-        if self.card_semantics_version in {2, 3}:
+        if self.card_semantics_version in {2, 3, 4}:
             semantic_features = np.zeros(
                 (len(self.token_names), len(SEMANTIC_FEATURE_NAMES)),
                 dtype=np.float32,
@@ -368,7 +388,21 @@ class StructuredObservationBuilder:
             features[token_id, 13] = _unit_clip(_safe_float(getattr(stats, "summon_count", 0)) / 20.0)
             features[token_id, 14] = float(bool(getattr(stats, "attacks_ground", False)))
             features[token_id, 15] = float(bool(getattr(stats, "attacks_air", False)))
-        if self.card_semantics_version == 3:
+            if self.card_semantics_version == 4:
+                # Compact exports encode these flags in the target category.
+                # Keep v1-v3 byte-compatible with their existing checkpoints.
+                target_type = str(getattr(stats, "target_type", "") or "").upper()
+                if target_type:
+                    features[token_id, 14] = float(
+                        "GROUND" in target_type or "BUILDINGS" in target_type
+                    )
+                    features[token_id, 15] = float("AIR" in target_type)
+                assert semantic_features is not None
+                if kind in {"troop", "building", "champion"}:
+                    semantic_features[token_id, SEMANTIC_FEATURE_NAMES.index("mass")] = (
+                        _unit_clip(unit_mass(stats) / 20.0)
+                    )
+        if self.card_semantics_version in {3, 4}:
             assert semantic_features is not None
             return np.concatenate(
                 (
@@ -552,6 +586,19 @@ class StructuredObservationBuilder:
             if token_id > 1:
                 break
         row[4 + kind] = 1.0
+        if getattr(entity, "_self_projectile_launched", False):
+            # The remaining Troop object only carries the flight callback.
+            # Native removed its character body at launch: HP, shields,
+            # collision, deployment and character status clocks are absent.
+            # Encode only the projectile's visible type/position and public
+            # serialized payload metadata, never the carrier's stale fields.
+            projectile = getattr(entity.card_stats, "projectile_data", {}) or {}
+            speed = logic_speed_to_tiles_per_second(_safe_float(projectile.get("speed", 0)))
+            row[23] = _unit_clip(math.log1p(abs(speed)) / math.log1p(1000.0))
+            row[30] = _unit_clip(
+                math.log1p(max(0.0, _safe_float(getattr(entity, "damage", 0)))) / 8.0
+            )
+            return token_id, row
         row[9] = _unit_clip(
             _safe_float(getattr(entity, "hitpoints", 0))
             / max(1.0, _safe_float(getattr(entity, "max_hitpoints", 1), 1.0))
@@ -753,6 +800,44 @@ class StructuredObservationBuilder:
             dtype=np.float32,
         )
 
+    @staticmethod
+    def _own_last_play(battle: BattleState, player_id: int) -> AcceptedOwnPlay | None:
+        player = battle.players[player_id]
+        if player.last_played_card is None or player.last_played_card_cost is None:
+            return None
+        return AcceptedOwnPlay(player.last_played_card, player.last_played_card_cost)
+
+    def _public_levels(self, battle, player_id):
+        if not self.public_entity_levels:
+            return {}
+        rows = []
+        for entity in battle.entities.values():
+            if not entity.is_alive or not entity.is_visible_to(player_id):
+                continue
+            token, features = self._entity_row(entity, player_id)
+            kind = int(entity.entity_kind)
+            key = (kind, int(entity.player_id != player_id), token,
+                   round(float(features[1]), 5), round(float(features[0]), 5))
+            stats = entity.card_stats
+            # Pre-scaled Crown stats declare their public level separately from
+            # the level1 multiplier placeholder. Effects have no unit label.
+            known = (kind in (0, 1) and stats is not None
+                     and not getattr(entity, '_self_projectile_launched', False))
+            level = int(stats.level) if known else 0
+            if known and stats.name in {'Tower', 'KingTower'}:
+                level = int(stats._raw_entry.get('publicLevel', 0))
+                known = level > 0
+            if known and not 1 <= level <= 127:
+                raise ValueError('public unit level outside supported range')
+            rows.append((key, level))
+        rows.sort(key=lambda row: row[0])
+        levels = np.zeros(self.max_entities, dtype=np.int64)
+        confidence = np.zeros(self.max_entities, dtype=np.float32)
+        for index, (_, level) in enumerate(rows):
+            levels[index] = level
+            confidence[index] = float(level != 0)
+        return {'entity_levels': levels, 'entity_level_confidence': confidence}
+
     def build(self, battle: BattleState, player_id: int) -> StructuredObservation:
         actor_entities, critic_entities = self._build_actor_and_critic_entities(
             battle, player_id
@@ -781,6 +866,10 @@ class StructuredObservationBuilder:
             ]
         ).astype(np.float32, copy=False)
         return StructuredObservation(
+            **self._public_levels(battle, player_id),
+            terminal=bool(battle.game_over),
+            board_rotated=bool(self.canonical_perspective and player_id == 1),
+            own_last_play=self._own_last_play(battle, player_id),
             entity_ids=entity_ids,
             entity_features=entity_features,
             entity_mask=entity_mask,
@@ -808,6 +897,10 @@ class StructuredObservationBuilder:
             player_id,
         )
         return ActorObservation(
+            **self._public_levels(battle, player_id),
+            terminal=bool(battle.game_over),
+            board_rotated=bool(self.canonical_perspective and player_id == 1),
+            own_last_play=self._own_last_play(battle, player_id),
             entity_ids=entity_ids,
             entity_features=entity_features,
             entity_mask=entity_mask,

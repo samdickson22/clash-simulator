@@ -1,0 +1,369 @@
+{
+  "source_sha256": {
+    "cases.json": "3c6a44c2fc9b424737067c31a5853b1798307042f311dded2d5204e5faf0b0b7",
+    "both-seat-fractions.json": "7c7ece8bcdd515adc27a4a31197db4fc9e1bfd027eeff619c9c097c0876be488",
+    "other-footprints.json": "d6981ebf5dbbe9f94341bd5e45117589d30f54a9838f6bacaa1f221ebd2f5d86"
+  },
+  "cases": [
+    {
+      "name": "Tesla",
+      "owner": 1,
+      "requested": [
+        2.5,
+        17.5
+      ],
+      "expected": [
+        3.0,
+        18.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 1,
+      "requested": [
+        3.5,
+        17.5
+      ],
+      "expected": [
+        4.0,
+        18.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 1,
+      "requested": [
+        4.5,
+        17.5
+      ],
+      "expected": [
+        5.0,
+        18.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 1,
+      "requested": [
+        2.5,
+        18.5
+      ],
+      "expected": [
+        2.0,
+        18.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 1,
+      "requested": [
+        3.5,
+        18.5
+      ],
+      "expected": [
+        3.0,
+        18.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 1,
+      "requested": [
+        4.5,
+        18.5
+      ],
+      "expected": [
+        4.0,
+        18.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 0,
+      "requested": [
+        2.0,
+        14.0
+      ],
+      "expected": [
+        2.0,
+        14.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 0,
+      "requested": [
+        2.2,
+        14.2
+      ],
+      "expected": [
+        2.0,
+        14.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 0,
+      "requested": [
+        2.8,
+        14.8
+      ],
+      "expected": [
+        2.0,
+        14.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 0,
+      "requested": [
+        3.0,
+        14.0
+      ],
+      "expected": [
+        3.0,
+        14.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 0,
+      "requested": [
+        3.5,
+        14.0
+      ],
+      "expected": [
+        3.0,
+        14.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 0,
+      "requested": [
+        3.5,
+        13.0
+      ],
+      "expected": [
+        3.0,
+        13.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 1,
+      "requested": [
+        2.0,
+        17.0
+      ],
+      "expected": [
+        2.0,
+        18.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 1,
+      "requested": [
+        2.2,
+        17.2
+      ],
+      "expected": [
+        2.0,
+        18.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 1,
+      "requested": [
+        2.8,
+        17.8
+      ],
+      "expected": [
+        3.0,
+        18.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 1,
+      "requested": [
+        3.0,
+        17.0
+      ],
+      "expected": [
+        3.0,
+        18.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 1,
+      "requested": [
+        3.5,
+        17.0
+      ],
+      "expected": [
+        4.0,
+        18.0
+      ]
+    },
+    {
+      "name": "Tesla",
+      "owner": 1,
+      "requested": [
+        3.5,
+        18.0
+      ],
+      "expected": [
+        3.0,
+        18.0
+      ]
+    },
+    {
+      "name": "Cannon",
+      "owner": 0,
+      "requested": [
+        2.5,
+        14.5
+      ],
+      "expected": [
+        2.5,
+        13.5
+      ]
+    },
+    {
+      "name": "Cannon",
+      "owner": 0,
+      "requested": [
+        3.5,
+        14.5
+      ],
+      "expected": [
+        3.5,
+        13.5
+      ]
+    },
+    {
+      "name": "Cannon",
+      "owner": 0,
+      "requested": [
+        0.5,
+        13.5
+      ],
+      "expected": [
+        1.5,
+        12.5
+      ]
+    },
+    {
+      "name": "Cannon",
+      "owner": 1,
+      "requested": [
+        2.5,
+        17.5
+      ],
+      "expected": [
+        2.5,
+        18.5
+      ]
+    },
+    {
+      "name": "Cannon",
+      "owner": 1,
+      "requested": [
+        3.5,
+        17.5
+      ],
+      "expected": [
+        3.5,
+        18.5
+      ]
+    },
+    {
+      "name": "Cannon",
+      "owner": 1,
+      "requested": [
+        0.5,
+        18.5
+      ],
+      "expected": [
+        1.5,
+        19.5
+      ]
+    },
+    {
+      "name": "Xbow",
+      "owner": 0,
+      "requested": [
+        2.5,
+        14.5
+      ],
+      "expected": [
+        2.5,
+        13.5
+      ]
+    },
+    {
+      "name": "Xbow",
+      "owner": 0,
+      "requested": [
+        3.5,
+        14.5
+      ],
+      "expected": [
+        3.5,
+        13.5
+      ]
+    },
+    {
+      "name": "Xbow",
+      "owner": 0,
+      "requested": [
+        0.5,
+        13.5
+      ],
+      "expected": [
+        1.5,
+        12.5
+      ]
+    },
+    {
+      "name": "Xbow",
+      "owner": 1,
+      "requested": [
+        2.5,
+        17.5
+      ],
+      "expected": [
+        2.5,
+        18.5
+      ]
+    },
+    {
+      "name": "Xbow",
+      "owner": 1,
+      "requested": [
+        3.5,
+        17.5
+      ],
+      "expected": [
+        3.5,
+        18.5
+      ]
+    },
+    {
+      "name": "Xbow",
+      "owner": 1,
+      "requested": [
+        0.5,
+        18.5
+      ],
+      "expected": [
+        1.5,
+        19.5
+      ]
+    }
+  ]
+}

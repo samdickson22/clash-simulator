@@ -1,0 +1,103 @@
+{
+  "source": "reports/calibration_development_20260915/dash-deploy-native-controls.json",
+  "sha256": "e52fa35196f60dee509b99a0a75d2127f5e9e33eb25e0a2862782686fd7f2d0e",
+  "scope": "Initial ground-body anchors only; no dash or leap combat certification.",
+  "cases": [
+    {
+      "name": "Bandit",
+      "owner": 0,
+      "command": [
+        3500,
+        11500
+      ],
+      "position": [
+        3499,
+        11500
+      ]
+    },
+    {
+      "name": "Bandit",
+      "owner": 0,
+      "command": [
+        14500,
+        11500
+      ],
+      "position": [
+        14500,
+        11500
+      ]
+    },
+    {
+      "name": "Bandit",
+      "owner": 1,
+      "command": [
+        3500,
+        20500
+      ],
+      "position": [
+        3499,
+        20499
+      ]
+    },
+    {
+      "name": "Bandit",
+      "owner": 1,
+      "command": [
+        14500,
+        20500
+      ],
+      "position": [
+        14500,
+        20499
+      ]
+    },
+    {
+      "name": "MegaKnight",
+      "owner": 0,
+      "command": [
+        3500,
+        11500
+      ],
+      "position": [
+        3499,
+        11500
+      ]
+    },
+    {
+      "name": "MegaKnight",
+      "owner": 0,
+      "command": [
+        14500,
+        11500
+      ],
+      "position": [
+        14500,
+        11500
+      ]
+    },
+    {
+      "name": "MegaKnight",
+      "owner": 1,
+      "command": [
+        3500,
+        20500
+      ],
+      "position": [
+        3499,
+        20499
+      ]
+    },
+    {
+      "name": "MegaKnight",
+      "owner": 1,
+      "command": [
+        14500,
+        20500
+      ],
+      "position": [
+        14500,
+        20499
+      ]
+    }
+  ]
+}

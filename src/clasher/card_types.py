@@ -1,3 +1,4 @@
+from .gamedata_normalization import normalized_walking_speed
 from dataclasses import dataclass, field
 from typing import Optional, Sequence, Protocol, Literal, Callable, Any, List, Dict
 from abc import ABC, abstractmethod
@@ -168,14 +169,6 @@ class CardStatsCompat:
                 return None
             return value / 1000.0
 
-        def coerce_float(value: Optional[Any]) -> Optional[float]:
-            if value is None:
-                return None
-            try:
-                return float(value)
-            except (TypeError, ValueError):
-                return None
-
         # Combat stats
         troop_stats = card_def.troop_stats
         building_stats = card_def.building_stats
@@ -204,7 +197,7 @@ class CardStatsCompat:
                             else building_stats.sight_range_tiles if building_stats and building_stats.sight_range_tiles is not None
                             else units_to_tiles(char_data.get("sightRange")))
         self.speed = (troop_stats.speed_logic_units_per_tick if troop_stats and troop_stats.speed_logic_units_per_tick is not None
-                      else coerce_float(char_data.get("speed")))
+                      else normalized_walking_speed(char_data))
         self.hit_speed = (troop_stats.hit_speed_ms if troop_stats and troop_stats.hit_speed_ms is not None
                           else building_stats.hit_speed_ms if building_stats and building_stats.hit_speed_ms is not None
                           else char_data.get("hitSpeed"))
@@ -234,8 +227,6 @@ class CardStatsCompat:
         self.summon_radius = (
             None
             if raw_summon_radius is None
-            else float(raw_summon_radius)
-            if abs(float(raw_summon_radius)) <= 10
             else units_to_tiles(raw_summon_radius)
         )
         self.summon_deploy_delay = raw.get("summonDeployDelay")
@@ -313,6 +304,9 @@ class CardStatsCompat:
         self.spawn_speed_multiplier = char_data.get("spawnSpeedMultiplier")
 
         # Special timing mechanics
+        self.keep_target_with_pending_damage = bool(
+            char_data.get("keepTargetWithPendingDamage", True)
+        )
         self.special_load_time = char_data.get("specialLoadTime")
         self.special_range = char_data.get("specialRange")
         self.special_min_range = char_data.get("specialMinRange")

@@ -1,0 +1,342 @@
+{
+  "reference": "Null's 15.535.86 offline reference; not official parity",
+  "cases_sha256": "7fd4f0a27135cfd9420c6ae306c30b6cd5b53dbf9f351c1d550d54d56d08c99f",
+  "cases": [
+    {
+      "card": "Tesla",
+      "owner": 0,
+      "radius": 0.5,
+      "command_xy": [
+        7500,
+        10500
+      ],
+      "native_xy": [
+        7000,
+        10000
+      ],
+      "capture": "Tesla-7500.json"
+    },
+    {
+      "card": "Tesla",
+      "owner": 1,
+      "radius": 0.5,
+      "command_xy": [
+        7500,
+        21500
+      ],
+      "native_xy": [
+        7000,
+        21000
+      ],
+      "capture": "Tesla-7500.json"
+    },
+    {
+      "card": "Tesla",
+      "owner": 0,
+      "radius": 0.5,
+      "command_xy": [
+        7800,
+        10800
+      ],
+      "native_xy": [
+        7000,
+        10000
+      ],
+      "capture": "Tesla-7800.json"
+    },
+    {
+      "card": "Tesla",
+      "owner": 1,
+      "radius": 0.5,
+      "command_xy": [
+        7800,
+        21800
+      ],
+      "native_xy": [
+        7000,
+        21000
+      ],
+      "capture": "Tesla-7800.json"
+    },
+    {
+      "card": "Tesla",
+      "owner": 0,
+      "radius": 0.5,
+      "command_xy": [
+        8000,
+        10000
+      ],
+      "native_xy": [
+        8000,
+        10000
+      ],
+      "capture": "Tesla-8000.json"
+    },
+    {
+      "card": "Tesla",
+      "owner": 1,
+      "radius": 0.5,
+      "command_xy": [
+        8000,
+        21000
+      ],
+      "native_xy": [
+        8000,
+        21000
+      ],
+      "capture": "Tesla-8000.json"
+    },
+    {
+      "card": "Tesla",
+      "owner": 0,
+      "radius": 0.5,
+      "command_xy": [
+        8200,
+        10200
+      ],
+      "native_xy": [
+        8000,
+        10000
+      ],
+      "capture": "Tesla-8200.json"
+    },
+    {
+      "card": "Tesla",
+      "owner": 1,
+      "radius": 0.5,
+      "command_xy": [
+        8200,
+        21200
+      ],
+      "native_xy": [
+        8000,
+        21000
+      ],
+      "capture": "Tesla-8200.json"
+    },
+    {
+      "card": "Cannon",
+      "owner": 0,
+      "radius": 0.6,
+      "command_xy": [
+        7500,
+        10500
+      ],
+      "native_xy": [
+        7500,
+        10500
+      ],
+      "capture": "Cannon-7500.json"
+    },
+    {
+      "card": "Cannon",
+      "owner": 1,
+      "radius": 0.6,
+      "command_xy": [
+        7500,
+        21500
+      ],
+      "native_xy": [
+        7500,
+        21500
+      ],
+      "capture": "Cannon-7500.json"
+    },
+    {
+      "card": "Cannon",
+      "owner": 0,
+      "radius": 0.6,
+      "command_xy": [
+        7800,
+        10800
+      ],
+      "native_xy": [
+        7500,
+        10500
+      ],
+      "capture": "Cannon-7800.json"
+    },
+    {
+      "card": "Cannon",
+      "owner": 1,
+      "radius": 0.6,
+      "command_xy": [
+        7800,
+        21800
+      ],
+      "native_xy": [
+        7500,
+        21500
+      ],
+      "capture": "Cannon-7800.json"
+    },
+    {
+      "card": "Cannon",
+      "owner": 0,
+      "radius": 0.6,
+      "command_xy": [
+        8000,
+        10000
+      ],
+      "native_xy": [
+        8500,
+        10500
+      ],
+      "capture": "Cannon-8000.json"
+    },
+    {
+      "card": "Cannon",
+      "owner": 1,
+      "radius": 0.6,
+      "command_xy": [
+        8000,
+        21000
+      ],
+      "native_xy": [
+        8500,
+        21500
+      ],
+      "capture": "Cannon-8000.json"
+    },
+    {
+      "card": "Cannon",
+      "owner": 0,
+      "radius": 0.6,
+      "command_xy": [
+        8200,
+        10200
+      ],
+      "native_xy": [
+        8500,
+        10500
+      ],
+      "capture": "Cannon-8200.json"
+    },
+    {
+      "card": "Cannon",
+      "owner": 1,
+      "radius": 0.6,
+      "command_xy": [
+        8200,
+        21200
+      ],
+      "native_xy": [
+        8500,
+        21500
+      ],
+      "capture": "Cannon-8200.json"
+    },
+    {
+      "card": "Xbow",
+      "owner": 0,
+      "radius": 0.6,
+      "command_xy": [
+        7500,
+        10500
+      ],
+      "native_xy": [
+        7500,
+        10500
+      ],
+      "capture": "Xbow-7500.json"
+    },
+    {
+      "card": "Xbow",
+      "owner": 1,
+      "radius": 0.6,
+      "command_xy": [
+        7500,
+        21500
+      ],
+      "native_xy": [
+        7500,
+        21500
+      ],
+      "capture": "Xbow-7500.json"
+    },
+    {
+      "card": "Xbow",
+      "owner": 0,
+      "radius": 0.6,
+      "command_xy": [
+        7800,
+        10800
+      ],
+      "native_xy": [
+        7500,
+        10500
+      ],
+      "capture": "Xbow-7800.json"
+    },
+    {
+      "card": "Xbow",
+      "owner": 1,
+      "radius": 0.6,
+      "command_xy": [
+        7800,
+        21800
+      ],
+      "native_xy": [
+        7500,
+        21500
+      ],
+      "capture": "Xbow-7800.json"
+    },
+    {
+      "card": "Xbow",
+      "owner": 0,
+      "radius": 0.6,
+      "command_xy": [
+        8000,
+        10000
+      ],
+      "native_xy": [
+        8500,
+        10500
+      ],
+      "capture": "Xbow-8000.json"
+    },
+    {
+      "card": "Xbow",
+      "owner": 1,
+      "radius": 0.6,
+      "command_xy": [
+        8000,
+        21000
+      ],
+      "native_xy": [
+        8500,
+        21500
+      ],
+      "capture": "Xbow-8000.json"
+    },
+    {
+      "card": "Xbow",
+      "owner": 0,
+      "radius": 0.6,
+      "command_xy": [
+        8200,
+        10200
+      ],
+      "native_xy": [
+        8500,
+        10500
+      ],
+      "capture": "Xbow-8200.json"
+    },
+    {
+      "card": "Xbow",
+      "owner": 1,
+      "radius": 0.6,
+      "command_xy": [
+        8200,
+        21200
+      ],
+      "native_xy": [
+        8500,
+        21500
+      ],
+      "capture": "Xbow-8200.json"
+    }
+  ]
+}

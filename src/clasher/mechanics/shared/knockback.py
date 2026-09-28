@@ -20,6 +20,7 @@ def apply_directional_knockback(
     source_kind: str | None = None,
     ignores_mass: bool = False,
     interrupts_combat: bool = True,
+    reset_hit_on_movement: bool = False,
 ) -> bool:
     """Schedule native pushback along an already-committed direction."""
     from ...entities import Building
@@ -50,6 +51,7 @@ def apply_directional_knockback(
         distance_units,
         source_kind=source_kind,
         interrupts_combat=interrupts_combat,
+        reset_hit_on_movement=reset_hit_on_movement,
     )
 
 
@@ -63,6 +65,7 @@ def apply_radial_knockback(
     ignores_mass: bool = False,
     fallback_direction: tuple[float, float] | None = None,
     interrupts_combat: bool = True,
+    reset_hit_on_movement: bool = False,
 ) -> bool:
     """Schedule one native movement-component pushback.
 
@@ -89,6 +92,7 @@ def apply_radial_knockback(
         source_kind=source_kind,
         ignores_mass=ignores_mass,
         interrupts_combat=interrupts_combat,
+        reset_hit_on_movement=reset_hit_on_movement,
     )
 
 

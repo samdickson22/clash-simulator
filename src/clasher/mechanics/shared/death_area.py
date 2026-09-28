@@ -3,9 +3,22 @@ from typing import Any
 
 from ..mechanic_base import BaseMechanic
 from ...arena import Position
-from ...balance import tournament_spell_stat
+from ...balance import TOURNAMENT_LEVEL, tournament_spell_stat
 from ...gamedata_normalization import serialized_hit_planes
 from ...kinematics import LOGIC_TICK_SECONDS
+
+
+def _register_death_object(battle_state, entity):
+    # Accepted commands outside step() become visible at the next boundary.
+    # Objects created by component/object work belong to the current boundary.
+    # Neither consumes an object tick on its own birth boundary.
+    entity._native_object_birth_tick = battle_state.tick + int(
+        not getattr(battle_state, "_logic_tick_active", False)
+    )
+    entity.battle_state = battle_state
+    battle_state.entities[entity.id] = entity
+    battle_state.next_entity_id += 1
+    return entity
 
 
 def _first_action_spawn(value: Any) -> dict | None:
@@ -89,11 +102,12 @@ def spawn_death_area_object(
     live_impact_damage = (
         tournament_spell_stat(area_name, "damage") if area_name else None
     )
-    if live_impact_damage is not None:
+    tournament_level = getattr(card_stats, "level", TOURNAMENT_LEVEL) == TOURNAMENT_LEVEL
+    if live_impact_damage is not None and tournament_level:
         impact_damage = float(live_impact_damage)
     crown_tower_damage = (
         tournament_spell_stat(area_name, "crown_tower_damage")
-        if area_name
+        if area_name and tournament_level
         else None
     )
     crown_multiplier = max(
@@ -128,6 +142,7 @@ def spawn_death_area_object(
             effect_tick_interval=hit_interval,
             effect_on_spawn_only=hit_interval <= 0.0,
             impact_damage=impact_damage,
+            impact_area_data=impact_data or None,
             impact_affects_hidden=bool(
                 impact_data.get("affectsHidden", False)
             ),
@@ -174,10 +189,7 @@ def spawn_death_area_object(
         )
 
     effect.spell_name = str(area_data.get("name", "") or "death-area")
-    effect.battle_state = battle_state
-    battle_state.entities[effect.id] = effect
-    battle_state.next_entity_id += 1
-    return effect
+    return _register_death_object(battle_state, effect)
 
 
 def spawn_death_area_payload(
@@ -204,6 +216,28 @@ def spawn_death_area_payload(
             area_data=area_data,
         )
 
+    from ...entities import DeathAreaStartAction
+
+    action = DeathAreaStartAction(
+        id=battle_state.next_entity_id,
+        position=Position(position.x, position.y),
+        player_id=player_id,
+        card_stats=card_stats,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=0,
+        range=0,
+        sight_range=0,
+        spawn_data=action_spawn,
+        area_data=nested_area,
+    )
+    return _register_death_object(battle_state, action)
+
+
+def spawn_death_area_container(
+    battle_state, *, player_id, position, card_stats, spawn_data, area_data,
+):
+    """Materialize the starting action's delayed character container."""
     from ...entities import DeathAreaEffectContainer
 
     container = DeathAreaEffectContainer(
@@ -218,14 +252,11 @@ def spawn_death_area_payload(
         sight_range=0,
         activation_delay=max(
             0.0,
-            float(action_spawn.get("deployTime", 0) or 0) / 1000.0,
+            float(spawn_data.get("deployTime", 0) or 0) / 1000.0,
         ),
-        area_data=nested_area,
+        area_data=area_data,
     )
-    container.battle_state = battle_state
-    battle_state.entities[container.id] = container
-    battle_state.next_entity_id += 1
-    return container
+    return _register_death_object(battle_state, container)
 
 
 @dataclass

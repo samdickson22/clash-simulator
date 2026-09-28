@@ -1,0 +1,26 @@
+{
+  "role": "development",
+  "scope": "Conditional Goblin heading and route boundary; other bodies and collision pressures omitted",
+  "native_id": 5000049,
+  "tick": 2760,
+  "xy": [
+    15632,
+    14468
+  ],
+  "facing": [
+    -186,
+    -175
+  ],
+  "avoidance": 0,
+  "expected_facing": [
+    -248,
+    -61
+  ],
+  "expected_remaining_route": [],
+  "sources": {
+    "reports/calibration_development_20260915/seed2-route-phase-preboundary-fields.json": "38a301a0422a419f30b5519d4e22585234236d579b9c577fd88aaa9db4d2a5ec",
+    "reports/calibration_development_20260915/seed2-archer-spawn-goblin-fields.json": "b1be824a995e006ec8c9d94b88870e7e0d48e2b34b1328fc8985689c7b56124e",
+    "reports/calibration_development_20260915/native-route-prepare-callers.txt": "f7190108fb1d6770f39a2b1bb320e0dff8fce037a32786c00c02bb9704f59eb5",
+    "reports/calibration_development_20260915/native-movement-route-getters.txt": "f5517aa164d41447091c36235158ec6bbfbc8f38d458b19e6914da304d040a47"
+  }
+}

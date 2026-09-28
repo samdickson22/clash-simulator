@@ -200,7 +200,7 @@ def uses_air_collision_plane(entity: Any) -> bool:
     hover = getattr(entity, "_is_hover_unit", None)
     if hover is None:
         hover = is_hover_unit_card(getattr(entity, "card_stats", None))
-    return bool(is_above_ground_surface(entity) or hover)
+    return bool(is_above_ground_surface(entity) or hover or (getattr(entity, "_river_landed_tick", -2) == getattr(getattr(entity, "battle_state", None), "tick", -1)))
 
 
 def is_in_transit(entity: Any) -> bool:
@@ -227,10 +227,10 @@ def is_knockback_immune(card_stats: Any) -> bool:
 
 
 def unit_mass(card_stats: Any) -> float:
-    """Return the runtime collision mass for a troop or spawned character."""
+    """Return explicit, known, or radius-derived native character mass."""
     raw = getattr(card_stats, "_raw_entry", {}) or {}
     character_data = raw.get("summonCharacterData", {}) or {}
-    explicit = character_data.get("mass")
+    explicit = character_data.get("mass", raw.get("mass"))
     if explicit is None:
         explicit = getattr(card_stats, "mass", None)
     if explicit is not None:
@@ -243,7 +243,13 @@ def unit_mass(card_stats: Any) -> float:
         value = UNIT_MASS_BY_NAME.get(_normalize(name))
         if value is not None:
             return value
-    # Five is the game's ordinary medium-unit class. Enabled deck cards and
-    # all of their descendants are enumerated above; this remains a safe
-    # forward-compatible default for unknown custom data.
+    radius = getattr(card_stats, "collision_radius", None)
+    if radius is not None:
+        # LogicCharacterData d97344-d973a4 derives an omitted mass from radius.
+        # Preserve both integer divisions: Cannon600 ->13, Tesla500 ->8,
+        # and crown towers reach the native maximum20.
+        radius_units = max(0, round(float(radius) * 1000))
+        derived = (radius_units * radius_units // 250) * radius_units // 62500
+        return float(max(1, min(20, derived)))
+    # Synthetic callers without character geometry keep their legacy default.
     return 5.0

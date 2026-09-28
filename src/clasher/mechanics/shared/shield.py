@@ -15,7 +15,17 @@ class Shield(BaseMechanic):
         scaler = getattr(getattr(entity, "card_stats", None), "get_scaled_stat", None)
         self.current_shield = int(scaler(self.shield_hp)) if callable(scaler) else self.shield_hp
         self.max_shield = self.current_shield
+        if getattr(entity, "is_clone", False):
+            self.current_shield = self.max_shield = 1
         entity._shield_break_count = getattr(entity, "_shield_break_count", 0)
+
+    def on_clone_from(self, entity, source) -> None:
+        """Copy only a surviving shield; never regenerate a broken one."""
+        shield_alive = any(
+            isinstance(mechanic, Shield) and mechanic.current_shield > 0
+            for mechanic in source.mechanics
+        )
+        self.current_shield = self.max_shield = int(shield_alive)
 
     def modify_incoming_damage(self, entity, amount: float) -> float:
         """Absorb incoming damage with shield HP first."""

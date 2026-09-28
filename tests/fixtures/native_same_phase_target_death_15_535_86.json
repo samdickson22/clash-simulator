@@ -1,0 +1,120 @@
+{
+  "source": "reports/native_knight_body_divergence_20260915/phase-death-native-controls.json",
+  "source_sha256": "99d9f893b5f01f5e51168650ce0b58d53c9a989fb3c28459fa7473c7e1d50b2d",
+  "scope": "Opened native development controls, target retention and finish only. Not full clock or position acceptance.",
+  "cases": [
+    {
+      "tesla_tick": 161,
+      "frames": [
+        {
+          "tick": 231,
+          "has_target": true
+        },
+        {
+          "tick": 232,
+          "has_target": false
+        },
+        {
+          "tick": 233,
+          "has_target": false
+        },
+        {
+          "tick": 234,
+          "has_target": false
+        },
+        {
+          "tick": 235,
+          "has_target": false
+        },
+        {
+          "tick": 236,
+          "has_target": false
+        },
+        {
+          "tick": 237,
+          "has_target": false
+        }
+      ]
+    },
+    {
+      "tesla_tick": 171,
+      "frames": [
+        {
+          "tick": 237,
+          "has_target": true
+        },
+        {
+          "tick": 238,
+          "has_target": false
+        },
+        {
+          "tick": 239,
+          "has_target": false
+        },
+        {
+          "tick": 240,
+          "has_target": false
+        },
+        {
+          "tick": 241,
+          "has_target": false
+        },
+        {
+          "tick": 242,
+          "has_target": false
+        },
+        {
+          "tick": 243,
+          "has_target": false
+        }
+      ]
+    },
+    {
+      "tesla_tick": 181,
+      "frames": [
+        {
+          "tick": 221,
+          "has_target": true
+        },
+        {
+          "tick": 222,
+          "has_target": false
+        },
+        {
+          "tick": 223,
+          "has_target": false
+        },
+        {
+          "tick": 224,
+          "has_target": false
+        },
+        {
+          "tick": 225,
+          "has_target": false
+        },
+        {
+          "tick": 226,
+          "has_target": false
+        },
+        {
+          "tick": 227,
+          "has_target": false
+        }
+      ],
+      "knight_clocks": [
+        {
+          "tick": 228,
+          "remaining": 0.865
+        },
+        {
+          "tick": 229,
+          "remaining": 0.83
+        },
+        {
+          "tick": 230,
+          "remaining": 0.795
+        }
+      ]
+    }
+  ]
+}

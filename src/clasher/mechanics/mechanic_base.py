@@ -99,6 +99,10 @@ class BaseMechanic(Mechanic, ABC):
         """
         return False
 
+    def allows_deployment_combat(self, entity, dt_ms: float) -> bool:
+        """Whether deployment completion runs combat in the object update."""
+        return False
+
     def modify_outgoing_damage(self, entity, target, damage: float) -> float:
         """Modify one attack payload for one recipient."""
         return damage

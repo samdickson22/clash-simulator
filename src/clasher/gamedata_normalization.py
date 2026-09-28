@@ -8,8 +8,27 @@ resolves those action edges and named object references at the data boundary.
 
 from __future__ import annotations
 
+from collections.abc import Iterator, Mapping
 from copy import deepcopy
-from typing import Any, Iterator, Mapping
+from typing import Any
+
+
+def normalized_walking_speed(character_data: Mapping[str, Any]) -> float | None:
+    """Convert average serialized speed to the native active-stride speed.
+
+    Native data compensates for StopMovementAfterMS/WaitMS before buffs and
+    gait timing. Integer truncation matches Giant52, Golem54, and IceGolem52.
+    The original asset values stay unchanged in the raw data.
+    """
+    raw = character_data.get("speed")
+    if raw is None:
+        return None
+    speed = float(raw)
+    stop_ms = int(character_data.get("stopMovementAfterMS", 0) or 0)
+    wait_ms = int(character_data.get("waitMS", 0) or 0)
+    if stop_ms > 0 and wait_ms > 0:
+        return float(int(speed) * (stop_ms + wait_ms) // stop_ms)
+    return speed
 
 
 _ACTION_KEYS = {

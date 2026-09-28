@@ -1,0 +1,301 @@
+{
+  "source": "reports/native_knight_body_divergence_20260915/frozen-pending-load-native-control.json",
+  "source_sha256": "bd59f4dd2f7eafabb21324c7a431653d755bff28d33ff9a6a979ca5d1cd0d8a9",
+  "scope": "Opened native pending-load Freeze control; target observations, hit work and Cannon HP.",
+  "frames": [
+    {
+      "tick": 89,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.95,
+      "cannon_hp": 326
+    },
+    {
+      "tick": 90,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 325
+    },
+    {
+      "tick": 91,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 323
+    },
+    {
+      "tick": 92,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 322
+    },
+    {
+      "tick": 93,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 320
+    },
+    {
+      "tick": 94,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 319
+    },
+    {
+      "tick": 95,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 318
+    },
+    {
+      "tick": 96,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 316
+    },
+    {
+      "tick": 97,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 315
+    },
+    {
+      "tick": 98,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 314
+    },
+    {
+      "tick": 99,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 312
+    },
+    {
+      "tick": 100,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 311
+    },
+    {
+      "tick": 101,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 310
+    },
+    {
+      "tick": 102,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 308
+    },
+    {
+      "tick": 103,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 307
+    },
+    {
+      "tick": 104,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 305
+    },
+    {
+      "tick": 105,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 304
+    },
+    {
+      "tick": 106,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 303
+    },
+    {
+      "tick": 107,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 301
+    },
+    {
+      "tick": 108,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 300
+    },
+    {
+      "tick": 109,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 299
+    },
+    {
+      "tick": 110,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 297
+    },
+    {
+      "tick": 111,
+      "has_target": false,
+      "frozen": true,
+      "remaining": 0.9,
+      "cannon_hp": 296
+    },
+    {
+      "tick": 112,
+      "has_target": false,
+      "frozen": false,
+      "remaining": 0.9,
+      "cannon_hp": 294
+    },
+    {
+      "tick": 113,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.85,
+      "cannon_hp": 293
+    },
+    {
+      "tick": 114,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.8,
+      "cannon_hp": 292
+    },
+    {
+      "tick": 115,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.75,
+      "cannon_hp": 290
+    },
+    {
+      "tick": 116,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.7,
+      "cannon_hp": 289
+    },
+    {
+      "tick": 117,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.65,
+      "cannon_hp": 288
+    },
+    {
+      "tick": 118,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.6,
+      "cannon_hp": 286
+    },
+    {
+      "tick": 119,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.55,
+      "cannon_hp": 285
+    },
+    {
+      "tick": 120,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.5,
+      "cannon_hp": 283
+    },
+    {
+      "tick": 121,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.45,
+      "cannon_hp": 282
+    },
+    {
+      "tick": 122,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.4,
+      "cannon_hp": 281
+    },
+    {
+      "tick": 123,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.35,
+      "cannon_hp": 279
+    },
+    {
+      "tick": 124,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.3,
+      "cannon_hp": 278
+    },
+    {
+      "tick": 125,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.25,
+      "cannon_hp": 277
+    },
+    {
+      "tick": 126,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.2,
+      "cannon_hp": 275
+    },
+    {
+      "tick": 127,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.15,
+      "cannon_hp": 274
+    },
+    {
+      "tick": 128,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.1,
+      "cannon_hp": 273
+    },
+    {
+      "tick": 129,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 0.05,
+      "cannon_hp": 271
+    },
+    {
+      "tick": 130,
+      "has_target": true,
+      "frozen": false,
+      "remaining": 1.2,
+      "cannon_hp": 68
+    }
+  ]
+}

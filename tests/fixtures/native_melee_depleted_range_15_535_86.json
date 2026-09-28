@@ -1,0 +1,288 @@
+{
+  "cases": [
+    {
+      "role": "development",
+      "scope": "Conditional native Goblin attack clocks and geometry at2771; distant Golem/towers omitted",
+      "units": [
+        {
+          "nativeObjectId": 5000048,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 14984,
+          "y": 15650,
+          "hp": 202,
+          "target": 5000053,
+          "timeline": 1050,
+          "load": 0
+        },
+        {
+          "nativeObjectId": 5000049,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 16054,
+          "y": 14119,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 950,
+          "load": 100
+        },
+        {
+          "nativeObjectId": 5000050,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 13180,
+          "y": 15729,
+          "hp": 202,
+          "target": 5000053,
+          "timeline": 1050,
+          "load": 0
+        },
+        {
+          "nativeObjectId": 5000051,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 14101,
+          "y": 16120,
+          "hp": 202,
+          "target": 5000053,
+          "timeline": 1050,
+          "load": 0
+        },
+        {
+          "nativeObjectId": 5000053,
+          "cardId": 26000001,
+          "owner": 0,
+          "x": 13681,
+          "y": 14860,
+          "hp": 194
+        },
+        {
+          "nativeObjectId": 5000054,
+          "cardId": 26000001,
+          "owner": 0,
+          "x": 15224,
+          "y": 14678,
+          "hp": 194
+        }
+      ],
+      "observer_id": 5000051,
+      "expected_clock": [
+        1100,
+        500,
+        1
+      ],
+      "sources": {
+        "reports/calibration_development_20260915/seed2-due-hit-death-window/frames.json": "154b134cdf1f61c8dcd23c58655b1d2b2855a5f772f50456357da97c0308896f",
+        "reports/calibration_development_20260915/seed2-due-hit-death-fields.json": "3f6902069cdab6bb4827312527f081e971436daec4b2d72e66b54bf5038933b8"
+      },
+      "name": "due2772"
+    },
+    {
+      "name": "non_due2793_5000049",
+      "role": "development",
+      "scope": "Conditional native2792 geometry and clocks; distant Golem/towers omitted",
+      "units": [
+        {
+          "nativeObjectId": 5000048,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 15053,
+          "y": 15653,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 1050,
+          "load": 0
+        },
+        {
+          "nativeObjectId": 5000049,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 16060,
+          "y": 14114,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 2000,
+          "load": 0
+        },
+        {
+          "nativeObjectId": 5000050,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 13782,
+          "y": 14391,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 550,
+          "load": 500
+        },
+        {
+          "nativeObjectId": 5000051,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 14052,
+          "y": 15605,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 950,
+          "load": 100
+        },
+        {
+          "nativeObjectId": 5000054,
+          "cardId": 26000001,
+          "owner": 0,
+          "x": 15224,
+          "y": 14666,
+          "hp": 69
+        }
+      ],
+      "observer_id": 5000049,
+      "expected_clock": [
+        2050,
+        0,
+        1
+      ],
+      "sources": {
+        "reports/calibration_development_20260915/seed2-in-range-death-window/frames.json": "25e2e1de1e74f14a89f8b62642d5c37cdb4d4a251544b410390e03e86722fe90",
+        "reports/calibration_development_20260915/seed2-in-range-death-fields.json": "95c0edac60e28663cbe156acfc96e5947207b5fd3fa171ceafe31428cbbfe526"
+      }
+    },
+    {
+      "name": "non_due2793_5000050",
+      "role": "development",
+      "scope": "Conditional native2792 geometry and clocks; distant Golem/towers omitted",
+      "units": [
+        {
+          "nativeObjectId": 5000048,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 15053,
+          "y": 15653,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 1050,
+          "load": 0
+        },
+        {
+          "nativeObjectId": 5000049,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 16060,
+          "y": 14114,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 2000,
+          "load": 0
+        },
+        {
+          "nativeObjectId": 5000050,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 13782,
+          "y": 14391,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 550,
+          "load": 500
+        },
+        {
+          "nativeObjectId": 5000051,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 14052,
+          "y": 15605,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 950,
+          "load": 100
+        },
+        {
+          "nativeObjectId": 5000054,
+          "cardId": 26000001,
+          "owner": 0,
+          "x": 15224,
+          "y": 14666,
+          "hp": 69
+        }
+      ],
+      "observer_id": 5000050,
+      "expected_clock": [
+        600,
+        450,
+        1
+      ],
+      "sources": {
+        "reports/calibration_development_20260915/seed2-in-range-death-window/frames.json": "25e2e1de1e74f14a89f8b62642d5c37cdb4d4a251544b410390e03e86722fe90",
+        "reports/calibration_development_20260915/seed2-in-range-death-fields.json": "95c0edac60e28663cbe156acfc96e5947207b5fd3fa171ceafe31428cbbfe526"
+      }
+    },
+    {
+      "name": "non_due2793_5000051",
+      "role": "development",
+      "scope": "Conditional native2792 geometry and clocks; distant Golem/towers omitted",
+      "units": [
+        {
+          "nativeObjectId": 5000048,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 15053,
+          "y": 15653,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 1050,
+          "load": 0
+        },
+        {
+          "nativeObjectId": 5000049,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 16060,
+          "y": 14114,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 2000,
+          "load": 0
+        },
+        {
+          "nativeObjectId": 5000050,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 13782,
+          "y": 14391,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 550,
+          "load": 500
+        },
+        {
+          "nativeObjectId": 5000051,
+          "cardId": 26000002,
+          "owner": 1,
+          "x": 14052,
+          "y": 15605,
+          "hp": 202,
+          "target": 5000054,
+          "timeline": 950,
+          "load": 100
+        },
+        {
+          "nativeObjectId": 5000054,
+          "cardId": 26000001,
+          "owner": 0,
+          "x": 15224,
+          "y": 14666,
+          "hp": 69
+        }
+      ],
+      "observer_id": 5000051,
+      "expected_clock": [
+        1000,
+        50,
+        1
+      ],
+      "sources": {
+        "reports/calibration_development_20260915/seed2-in-range-death-window/frames.json": "25e2e1de1e74f14a89f8b62642d5c37cdb4d4a251544b410390e03e86722fe90",
+        "reports/calibration_development_20260915/seed2-in-range-death-fields.json": "95c0edac60e28663cbe156acfc96e5947207b5fd3fa171ceafe31428cbbfe526"
+      }
+    }
+  ]
+}

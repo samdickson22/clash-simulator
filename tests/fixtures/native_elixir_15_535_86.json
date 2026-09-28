@@ -1,0 +1,109 @@
+{
+  "capture_sha256": "03f682b0d22453596c4b1e8718f7b337a319d4ec5a71405d96bd271143a4293c",
+  "cases": [
+    [
+      {
+        "tick": 201,
+        "elixir_raw": 65778
+      },
+      {
+        "tick": 202,
+        "elixir_raw": 65956
+      },
+      {
+        "tick": 203,
+        "elixir_raw": 66134
+      },
+      {
+        "tick": 204,
+        "elixir_raw": 66312
+      },
+      {
+        "tick": 205,
+        "elixir_raw": 66490
+      },
+      {
+        "tick": 206,
+        "elixir_raw": 66668
+      }
+    ],
+    [
+      {
+        "tick": 2399,
+        "elixir_raw": 70178
+      },
+      {
+        "tick": 2400,
+        "elixir_raw": 70356
+      },
+      {
+        "tick": 2401,
+        "elixir_raw": 70713
+      },
+      {
+        "tick": 2402,
+        "elixir_raw": 71070
+      },
+      {
+        "tick": 2403,
+        "elixir_raw": 71427
+      },
+      {
+        "tick": 2404,
+        "elixir_raw": 71784
+      }
+    ],
+    [
+      {
+        "tick": 3601,
+        "elixir_raw": 70357
+      },
+      {
+        "tick": 3602,
+        "elixir_raw": 70714
+      },
+      {
+        "tick": 3603,
+        "elixir_raw": 71071
+      },
+      {
+        "tick": 3604,
+        "elixir_raw": 71428
+      },
+      {
+        "tick": 3605,
+        "elixir_raw": 71785
+      },
+      {
+        "tick": 3606,
+        "elixir_raw": 72142
+      }
+    ],
+    [
+      {
+        "tick": 4799,
+        "elixir_raw": 70357
+      },
+      {
+        "tick": 4800,
+        "elixir_raw": 70714
+      },
+      {
+        "tick": 4801,
+        "elixir_raw": 71251
+      },
+      {
+        "tick": 4802,
+        "elixir_raw": 71788
+      },
+      {
+        "tick": 4803,
+        "elixir_raw": 72325
+      },
+      {
+        "tick": 4804,
+        "elixir_raw": 72862
+      }
+    ]
+  ]
+}

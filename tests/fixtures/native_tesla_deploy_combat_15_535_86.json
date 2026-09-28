@@ -1,0 +1,25 @@
+{
+  "clock_source": "reports/native_first_body_hp_20260915/tesla-deployment-clock.json",
+  "clock_sha256": "1fa49aaeb230c3713720c17490d419ced9341e7449b72677c27c6fc331126104",
+  "observation_sha256": "5ab88a4d39df56024b29e954c27faa47e59ed7a0119a3429377f93748dad2496",
+  "frames": [
+    {
+      "elapsed_tick": 19,
+      "hp": 1182,
+      "target_present": false,
+      "attack_remaining": null
+    },
+    {
+      "elapsed_tick": 20,
+      "hp": 1182,
+      "target_present": true,
+      "attack_remaining": 0.35
+    },
+    {
+      "elapsed_tick": 21,
+      "hp": 1180,
+      "target_present": true,
+      "attack_remaining": 0.3
+    }
+  ]
+}

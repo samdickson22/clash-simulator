@@ -1,0 +1,397 @@
+{
+  "source": "reports/calibration_development_20260915/tesla-native-render/idle.json",
+  "sha256": "6d37b1372f735550c42176021b10bd4953ab4eafcb8d4e8e4a923efa2a8a5342",
+  "visual_source": "reports/calibration_development_20260915/tesla-native-render/idle.png",
+  "visual_sha256": "f8c308e80c19f8d2068df81625f91ebb8cc803dda6c9be00e08945feb58bc9d9",
+  "ordinary": {
+    "ok": true,
+    "generation": 2,
+    "stateEpoch": 2,
+    "tick": 253,
+    "steps": 5971,
+    "ended": false,
+    "finalized": false,
+    "worldResult": null,
+    "worldResultRaw": 0,
+    "winner": null,
+    "crownsRaw": [
+      0,
+      0
+    ],
+    "snapshotHandles": 0,
+    "count": 8,
+    "queuedCommands": 0,
+    "players": [
+      {
+        "owner": 0,
+        "accountId": 1,
+        "accountIdHigh": 0,
+        "accountIdLow": 1,
+        "elixirRaw": 65034,
+        "elixir": 6.5034,
+        "crownsRaw": 0,
+        "hand": [
+          {
+            "handIndex": 0,
+            "deckSlot": 2,
+            "cardId": 26000000,
+            "commandCardId": 26000000,
+            "cardParameter": 817899520,
+            "cost": 3
+          },
+          {
+            "handIndex": 1,
+            "deckSlot": 5,
+            "cardId": 28000000,
+            "commandCardId": 28000000,
+            "cardParameter": 1098917888,
+            "cost": 4
+          },
+          {
+            "handIndex": 2,
+            "deckSlot": 3,
+            "cardId": 26000001,
+            "commandCardId": 26000001,
+            "cardParameter": 822093824,
+            "cost": 3
+          },
+          {
+            "handIndex": 3,
+            "deckSlot": 6,
+            "cardId": 28000008,
+            "commandCardId": 28000008,
+            "cardParameter": 566241280,
+            "cost": 2
+          }
+        ],
+        "cycle": [
+          {
+            "cycleIndex": 0,
+            "deckSlot": 7,
+            "cardId": 28000006
+          },
+          {
+            "cycleIndex": 1,
+            "deckSlot": 0,
+            "cardId": 26000003
+          },
+          {
+            "cycleIndex": 2,
+            "deckSlot": 1,
+            "cardId": 26000016
+          },
+          {
+            "cycleIndex": 3,
+            "deckSlot": 4,
+            "cardId": 27000006
+          }
+        ],
+        "nextCard": {
+          "deckSlot": 7,
+          "cardId": 28000006
+        },
+        "deck": [
+          {
+            "deckSlot": 0,
+            "cardId": 26000003,
+            "commandCardId": 26000003,
+            "cardParameter": 1346381824,
+            "cost": 5
+          },
+          {
+            "deckSlot": 1,
+            "cardId": 26000016,
+            "commandCardId": 26000016,
+            "cardParameter": 1350576128,
+            "cost": 5
+          },
+          {
+            "deckSlot": 2,
+            "cardId": 26000000,
+            "commandCardId": 26000000,
+            "cardParameter": 817899520,
+            "cost": 3
+          },
+          {
+            "deckSlot": 3,
+            "cardId": 26000001,
+            "commandCardId": 26000001,
+            "cardParameter": 822093824,
+            "cost": 3
+          },
+          {
+            "deckSlot": 4,
+            "cardId": 27000006,
+            "commandCardId": 27000006,
+            "cardParameter": 1094723584,
+            "cost": 4
+          },
+          {
+            "deckSlot": 5,
+            "cardId": 28000000,
+            "commandCardId": 28000000,
+            "cardParameter": 1098917888,
+            "cost": 4
+          },
+          {
+            "deckSlot": 6,
+            "cardId": 28000008,
+            "commandCardId": 28000008,
+            "cardParameter": 566241280,
+            "cost": 2
+          },
+          {
+            "deckSlot": 7,
+            "cardId": 28000006,
+            "commandCardId": 27000006,
+            "cardParameter": 1375742976,
+            "cost": 5
+          }
+        ]
+      },
+      {
+        "owner": 1,
+        "accountId": 2,
+        "accountIdHigh": 0,
+        "accountIdLow": 2,
+        "elixirRaw": 65034,
+        "elixir": 6.5034,
+        "crownsRaw": 0,
+        "hand": [
+          {
+            "handIndex": 0,
+            "deckSlot": 5,
+            "cardId": 28000000,
+            "commandCardId": 28000000,
+            "cardParameter": 1098917888,
+            "cost": 4
+          },
+          {
+            "handIndex": 1,
+            "deckSlot": 6,
+            "cardId": 28000008,
+            "commandCardId": 28000008,
+            "cardParameter": 566241280,
+            "cost": 2
+          },
+          {
+            "handIndex": 2,
+            "deckSlot": 2,
+            "cardId": 26000000,
+            "commandCardId": 26000000,
+            "cardParameter": 817899520,
+            "cost": 3
+          },
+          {
+            "handIndex": 3,
+            "deckSlot": 1,
+            "cardId": 26000016,
+            "commandCardId": 26000016,
+            "cardParameter": 1350576128,
+            "cost": 5
+          }
+        ],
+        "cycle": [
+          {
+            "cycleIndex": 0,
+            "deckSlot": 3,
+            "cardId": 26000001
+          },
+          {
+            "cycleIndex": 1,
+            "deckSlot": 0,
+            "cardId": 26000003
+          },
+          {
+            "cycleIndex": 2,
+            "deckSlot": 7,
+            "cardId": 28000006
+          },
+          {
+            "cycleIndex": 3,
+            "deckSlot": 4,
+            "cardId": 27000006
+          }
+        ],
+        "nextCard": {
+          "deckSlot": 3,
+          "cardId": 26000001
+        },
+        "deck": [
+          {
+            "deckSlot": 0,
+            "cardId": 26000003,
+            "commandCardId": 26000003,
+            "cardParameter": 1346381824,
+            "cost": 5
+          },
+          {
+            "deckSlot": 1,
+            "cardId": 26000016,
+            "commandCardId": 26000016,
+            "cardParameter": 1350576128,
+            "cost": 5
+          },
+          {
+            "deckSlot": 2,
+            "cardId": 26000000,
+            "commandCardId": 26000000,
+            "cardParameter": 817899520,
+            "cost": 3
+          },
+          {
+            "deckSlot": 3,
+            "cardId": 26000001,
+            "commandCardId": 26000001,
+            "cardParameter": 822093824,
+            "cost": 3
+          },
+          {
+            "deckSlot": 4,
+            "cardId": 27000006,
+            "commandCardId": 27000006,
+            "cardParameter": 1094723584,
+            "cost": 4
+          },
+          {
+            "deckSlot": 5,
+            "cardId": 28000000,
+            "commandCardId": 28000000,
+            "cardParameter": 1098917888,
+            "cost": 4
+          },
+          {
+            "deckSlot": 6,
+            "cardId": 28000008,
+            "commandCardId": 28000008,
+            "cardParameter": 566241280,
+            "cost": 2
+          },
+          {
+            "deckSlot": 7,
+            "cardId": 28000006,
+            "commandCardId": 27000006,
+            "cardParameter": 1375742976,
+            "cost": 5
+          }
+        ]
+      }
+    ],
+    "objects": [
+      {
+        "slot": 0,
+        "nativeObjectId": 5000000,
+        "owner": 0,
+        "cardId": -1,
+        "x": 9000,
+        "y": 3000,
+        "targetX": 9000,
+        "targetY": 3000,
+        "objectIndex": -1,
+        "secondaryIndex": -1,
+        "hp": 4824,
+        "maxHp": 4824
+      },
+      {
+        "slot": 1,
+        "nativeObjectId": 5000001,
+        "owner": 0,
+        "cardId": -1,
+        "x": 3500,
+        "y": 6500,
+        "targetX": 3500,
+        "targetY": 6500,
+        "objectIndex": -1,
+        "secondaryIndex": -1,
+        "hp": 3052,
+        "maxHp": 3052
+      },
+      {
+        "slot": 2,
+        "nativeObjectId": 5000002,
+        "owner": 0,
+        "cardId": -1,
+        "x": 14500,
+        "y": 6500,
+        "targetX": 14500,
+        "targetY": 6500,
+        "objectIndex": -1,
+        "secondaryIndex": -1,
+        "hp": 3052,
+        "maxHp": 3052
+      },
+      {
+        "slot": 3,
+        "nativeObjectId": 5000003,
+        "owner": 1,
+        "cardId": -1,
+        "x": 9000,
+        "y": 29000,
+        "targetX": 9000,
+        "targetY": 29000,
+        "objectIndex": -1,
+        "secondaryIndex": -1,
+        "hp": 4824,
+        "maxHp": 4824
+      },
+      {
+        "slot": 4,
+        "nativeObjectId": 5000004,
+        "owner": 1,
+        "cardId": -1,
+        "x": 3500,
+        "y": 25500,
+        "targetX": 3500,
+        "targetY": 25500,
+        "objectIndex": -1,
+        "secondaryIndex": -1,
+        "hp": 3052,
+        "maxHp": 3052
+      },
+      {
+        "slot": 5,
+        "nativeObjectId": 5000005,
+        "owner": 1,
+        "cardId": -1,
+        "x": 14500,
+        "y": 25500,
+        "targetX": 14500,
+        "targetY": 25500,
+        "objectIndex": -1,
+        "secondaryIndex": -1,
+        "hp": 3052,
+        "maxHp": 3052
+      },
+      {
+        "slot": 6,
+        "nativeObjectId": 5000006,
+        "owner": 0,
+        "cardId": 27000006,
+        "x": 5000,
+        "y": 11000,
+        "targetX": 5000,
+        "targetY": 11000,
+        "objectIndex": 4,
+        "secondaryIndex": 0,
+        "hp": 1112,
+        "maxHp": 1182
+      },
+      {
+        "slot": 7,
+        "nativeObjectId": 5000007,
+        "owner": 1,
+        "cardId": 27000006,
+        "x": 12000,
+        "y": 20000,
+        "targetX": 12000,
+        "targetY": 20000,
+        "objectIndex": 4,
+        "secondaryIndex": 0,
+        "hp": 1112,
+        "maxHp": 1182
+      }
+    ],
+    "returned": 8,
+    "truncated": false
+  }
+}

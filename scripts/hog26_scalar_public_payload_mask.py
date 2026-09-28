@@ -12,6 +12,8 @@ from dataclasses import dataclass, fields, replace
 import numpy as np
 import torch
 
+from clasher.arena import Position
+from clasher.placement import building_anchor
 from clasher.torch_sim.resident_outputs import TensorPublicStructuredObservation
 from clasher.torch_sim.simple_public_mask import SimplePublicMaskV2Result
 from scripts.hog26_scalar_policy_inputs import scalar_policy_inputs
@@ -90,12 +92,41 @@ class ScalarPublicPayloadMaskProvider:
         self.base_provider = base_provider
         self.tables = base_provider.tables
         self.rules = rules
+        if self.tables.device.type != "cpu":
+            raise ValueError("scalar timed-body mask proposal requires CPU public tables")
+        radius = torch.round(self.tables.deploy_radius_tiles * 1000).long()
+        footprint = ((2 * radius + 999) // 1000 + 1).clamp_min(1)
+        sizes = sorted(set(footprint[self.tables.is_building].tolist()) | {1})
+        size_index = {size: index for index, size in enumerate(sizes)}
+        self.building_size_indices = torch.tensor(
+            [size_index.get(size, size_index[1]) for size in footprint.tolist()],
+            dtype=torch.int64,
+        )
+        anchors = []
+        for size in sizes:
+            seats = []
+            for seat in (0, 1):
+                positions = []
+                for tile in range(576):
+                    x, y = tile % 18 + 0.5, tile // 18 + 0.5
+                    world = Position(x, y) if seat == 0 else Position(18 - x, 32 - y)
+                    resolved = building_anchor(world, size)
+                    ax, ay = (resolved.x, resolved.y) if seat == 0 else (18 - resolved.x, 32 - resolved.y)
+                    positions.append([round(ax * 1000), round(ay * 1000)])
+                seats.append(positions)
+            anchors.append(seats)
+        self.building_anchor_units = torch.tensor(anchors, dtype=torch.int64)
+        anchor_digest = hashlib.sha256(
+            self.building_anchor_units.numpy().tobytes()
+            + self.building_size_indices.numpy().tobytes()
+        ).hexdigest()
         semantics = dict(self.tables.semantics)
         semantics.update(
-            semantics_id="public-action-mask-v2/scalar-public-timed-bodies-v1",
+            semantics_id="public-action-mask-v2/scalar-public-timed-bodies-v2",
             base_semantics_digest=self.tables.semantics_digest,
             scalar_public_payload_digest=rules.digest,
-            scalar_public_payload_geometry="inclusive logic-grid circle/circle and circle/placement-square",
+            scalar_public_payload_geometry="inclusive logic-grid circle/circle and circle/resolved-building-square",
+            scalar_public_building_anchor_sha256=anchor_digest,
             scalar_public_payload_inputs="unmapped public token, current center, seat-visible mask; no owner restriction",
         )
         self.semantics = semantics
@@ -143,8 +174,12 @@ class ScalarPublicPayloadMaskProvider:
         # Scalar building placement uses ceil(2*collision_radius)+1 tile square.
         footprint_tiles = ((2 * troop_radius + 999) // 1000 + 1).clamp_min(1)
         half = footprint_tiles * 500
-        square_dx = (dx - half[..., None, None]).clamp_min(0)
-        square_dy = (dy - half[..., None, None]).clamp_min(0)
+        seat = torch.arange(2, dtype=torch.int64)[None, :, None]
+        anchors = self.building_anchor_units[self.building_size_indices[hand], seat]
+        building_dx = (anchors[..., 0, None] - x[:, :, None, None, :]).abs()
+        building_dy = (anchors[..., 1, None] - y[:, :, None, None, :]).abs()
+        square_dx = (building_dx - half[..., None, None]).clamp_min(0)
+        square_dy = (building_dy - half[..., None, None]).clamp_min(0)
         square = square_dx.square() + square_dy.square() <= payload_radius.square()
         overlap = torch.where(self.tables.is_building[hand][..., None, None], square, circle)
         blocked = (overlap & blockers[:, :, None, None, :]).any(dim=-1)

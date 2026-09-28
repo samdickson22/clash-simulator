@@ -1,0 +1,78 @@
+{
+  "source": "reports/native_first_body_hp_20260915/tesla-clock-sequence.json",
+  "source_sha256": "456933c86097aae1c5cd09840402d1594455f97de48dc4158213add7256cd53d",
+  "frames": [
+    {
+      "tick": 837,
+      "rows": [
+        {
+          "id": 5000022,
+          "state": 2,
+          "timeline": 1100,
+          "load": 700,
+          "finish": 1,
+          "started_flag": 0,
+          "pending_target": 0,
+          "prior_hit": 1,
+          "hit_speed": 1100,
+          "target": null
+        }
+      ]
+    },
+    {
+      "tick": 838,
+      "rows": [
+        {
+          "id": 5000022,
+          "state": 2,
+          "timeline": 1100,
+          "load": 650,
+          "finish": 51,
+          "started_flag": 0,
+          "pending_target": 0,
+          "prior_hit": 1,
+          "hit_speed": 1100,
+          "target": null
+        }
+      ]
+    },
+    {
+      "tick": 842,
+      "rows": [
+        {
+          "id": 5000022,
+          "state": 2,
+          "timeline": 0,
+          "load": 450,
+          "finish": 0,
+          "started_flag": 0,
+          "pending_target": 0,
+          "prior_hit": 1,
+          "hit_speed": 1100,
+          "target": null
+        }
+      ]
+    },
+    {
+      "tick": 843,
+      "rows": [
+        {
+          "id": 5000022,
+          "state": 2,
+          "timeline": 350,
+          "load": 700,
+          "finish": 0,
+          "started_flag": 1,
+          "pending_target": 0,
+          "prior_hit": 0,
+          "hit_speed": 1100,
+          "target": [
+            0,
+            -2,
+            5000021
+          ]
+        }
+      ]
+    }
+  ]
+}

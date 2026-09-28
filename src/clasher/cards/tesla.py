@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 
 from ..mechanics.mechanic_base import BaseMechanic
-from ..unit_traits import is_airborne_target
 
 
 @dataclass
@@ -11,6 +10,11 @@ class HideWhenIdle(BaseMechanic):
     hide_delay_ms: int = 1000
     rise_time_ms: int = 1000
     _phase_ms: float = field(init=False, default=0.0)
+
+    def allows_deployment_combat(self, entity, dt_ms: float) -> bool:
+        # Native Tesla acquires and advances its first hit from the object
+        # update on the final deployment frame, after projectile impacts.
+        return 0 < entity.deploy_delay_remaining <= dt_ms / 1000.0 + 1e-9
 
     def on_attach(self, entity) -> None:
         raw = getattr(getattr(entity, "card_stats", None), "_raw_entry", {}) or {}
@@ -34,7 +38,8 @@ class HideWhenIdle(BaseMechanic):
         entity._hidden_building = False
         entity._special_move_active = False
 
-    def on_object_tick(self, entity, dt_ms: int) -> None:
+    def on_object_tick(self, entity, dt_ms: float) -> None:
+        # Native character state drives hiding after spells and combat work.
         battle = getattr(entity, "battle_state", None)
         if battle is None:
             return
@@ -43,17 +48,11 @@ class HideWhenIdle(BaseMechanic):
         # complete its retreat while frozen.
         if entity.is_stunned():
             return
-        has_target = False
-        for candidate in battle.entities.values():
-            if not candidate.is_targetable_by(entity.player_id):
-                continue
-            if is_airborne_target(candidate) and not entity._can_attack_air():
-                continue
-            if (not is_airborne_target(candidate)) and not entity._can_attack_ground():
-                continue
-            if entity.is_within_attack_reach(candidate):
-                has_target = True
-                break
+        has_target = (
+            entity.target_id is not None
+            or entity._attack_finish_elapsed_ms > 0
+            or entity._attack_finish_tick == battle.tick
+        )
 
         native_tick_work = entity._native_scaled_speed(
             50,

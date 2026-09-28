@@ -26,14 +26,14 @@ def test_real_deficit_still_rejects_without_spending_or_cycling():
     assert player.hand == ["Fireball"] and tuple(player.cycle_queue) == queue
 
 
-def test_regeneration_and_integer_spending_match_rational_resource_timeline():
+def test_regeneration_and_spending_match_quantized_resource_timeline():
     player = PlayerState(0, elixir=0.0, hand=["Skeletons"])
     exact = Fraction(0)
     spent = 0
     for tick in range(1, 6001):
         rate = Fraction(14, 5) if tick < 2400 else Fraction(7, 5) if tick < 4800 else Fraction(93, 100)
         player.regenerate_elixir(.05, float(rate))
-        exact = min(Fraction(10), exact + Fraction(1, 20) / rate)
+        exact = min(Fraction(10), exact + Fraction(int(Fraction(500) / rate), 10000))
         player.hand = ["Skeletons"]
         affordable = exact >= 1
         assert player.can_play_card("Skeletons", SimpleNamespace(mana_cost=1)) == affordable, tick

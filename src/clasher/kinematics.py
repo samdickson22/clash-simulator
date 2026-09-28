@@ -9,10 +9,17 @@ LOGIC_TICK_MILLISECONDS = 50
 LOGIC_TICK_SECONDS = LOGIC_TICK_MILLISECONDS / 1000.0
 LOGIC_UNITS_PER_TILE = 1000
 NATIVE_MOVEMENT_SUBSTEP_UNITS = 250
-# Card commands resolve after this native server action window. Serialized
-# action-group deadlines are measured from the command, while runtime spell
-# entities are created after the window, so both systems share this constant.
-SERVER_ACTION_DELAY_SECONDS = 1.0
+# Accepted game commands have no additional transport delay inside the engine.
+# Character deployment and serialized spell payload delays remain separate.
+SERVER_ACTION_DELAY_SECONDS = 0.0
+
+
+def pending_projectile_duration_ms(distance_units: int, speed_units: int) -> int:
+    """Quantize the target's launch-duration reservation to native frames."""
+    if speed_units <= 0:
+        return 1000
+    duration_ms = (distance_units * 50) // speed_units
+    return min(1000, ((duration_ms + 49) // 50) * 50)
 
 
 def logic_time_milliseconds(seconds: float | int) -> int:
@@ -130,9 +137,9 @@ def movement_component_vector_logic_units(
 
     ``updateMovementTowards`` first computes ``(delta << 8) / distance`` with
     signed division truncated toward zero. It then multiplies that direction
-    by the capped movement work and arithmetic-shifts by eight. This loses a
-    unit on many diagonals compared with direct full-precision normalization;
-    the loss (including the signed-shift asymmetry) is serialized behavior.
+    by the capped movement work and divides by256, again toward zero. Native
+    f67fa0-f67fb8 adds255 to negative products before the arithmetic shift.
+    Quantizing the direction still loses precision versus direct normalization.
     """
 
     dx_units = int(dx_units)
@@ -148,8 +155,8 @@ def movement_component_vector_logic_units(
     direction_x = trunc_div(dx_units << 8, remaining_units)
     direction_y = trunc_div(dy_units << 8, remaining_units)
     return (
-        direction_x * capped_movement >> 8,
-        direction_y * capped_movement >> 8,
+        trunc_div(direction_x * capped_movement, 256),
+        trunc_div(direction_y * capped_movement, 256),
     )
 
 

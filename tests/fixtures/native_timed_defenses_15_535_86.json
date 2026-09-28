@@ -1,0 +1,2225 @@
+{
+  "scope": "Opened Nulls 15.535.86 timed controls; not independent acceptance",
+  "cases": [
+    {
+      "name": "native_timed_defenses_20260915/case-000.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "97f5c784009b61833580b4a366b1f8064bca6a50b64b7f67af9f88bfbf9320a2",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        }
+      ],
+      "native_damage": 2219,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-001.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "0c2a54a7268534eb285b35dcb6cfe816f6e6831e4bb15afe15f25da20c402894",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 317,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-002.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "bcbf2b000084d975477e0b7737746f40f38955036f6d415e724ea25d14fba1d7",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 317,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-003.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "9eefade797bdc9fed5d7e922757d4430e3e97dc43eaccca575b0284841c36d66",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 317,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-004.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "32138553817682418641d0d5320560a3a4e8c08387dcc5e710dda245630d4c8e",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-005.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "998ba0a2df574bab4fc27e2e0b4d455a1e9ca83e4884b787999725157bb23d38",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-006.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "94f2ad8369182eb9cc0d8e33f0ea9b5b8462a6767a4d227d739b31cf117bc6fb",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 317,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-007.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "ac5640aac6327a4ec85bc71305fee6ef5331d54b391d773d2722a177c359be59",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-008.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "385695d68fbcff5040e7976372438853415a1448075c0232db334cbcf23b46bb",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-009.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "90f47a0c8f10b9c4d0bd59294d36bfe24bb8ca49b82d3a23064a57147d7d51e7",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-010.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "5b16878584635b8691172d5f64045e683910af22a4ec140fb63f2962ecdd53cc",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-011.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "b1aa0b56f081be035f47332fdc9dc87c72d33a28584526bcdeaf88878ebe80b2",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-012.json",
+      "owner": 0,
+      "attacker": "HogRider",
+      "capture_sha256": "d0bfbb89769acf2f0a2bfed430325bc83523229d66906989f0d517ca3a395966",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-013.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "c86173067a53020cf8065a3605ed29791c18fb59c6d316527e088939951130bc",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        }
+      ],
+      "native_damage": 2219,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-014.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "c558aec7728d621b766e444863a09794b71b09babbab7fe75d99a2aa98a97b0a",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 317,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-015.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "cc62cede6e126858d5f0022c1071012c1bbb927776b1c98654dbcc89d64a1361",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 317,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-016.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "00f19bd3c3e64ef2c4eb1322b84a57dce070de620258f40dba74696baa39ac84",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 317,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-017.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "224b59c18d32fff68cac46925d2b782dd7a79e7d81b601bab81f19043adb4df4",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-018.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "cb76f3b1e86a34c5a9ff847c5d5a42c78dc21fb4f81e8e4ec8291678e6cc4b7b",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-019.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "72383e26bf3c856c1256f5bab2b77c5bd2c9437557732577a80cea551d66e62e",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 317,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-020.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "c825703e8698ba143f7f73c48a6625d57a7e1c1a84d8d4bccecca377f4f75c30",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-021.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "7d90eb4f989b0fb22b3d27f169dda464837a43a0b18b3ccc0ea063257335c426",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-022.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "1891de8c4f88c8294d4fb4946d1e046276399428f566f3ecdd3691f8cd2a5461",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-023.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "993c71a61f9512049103f49d7e50d585bd0de3d70bb8a638763aa86ed446693a",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-024.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "91ad0d810c25f4bc065b51120ad466d72d75b5cb456be7046e6c06daf0811eb4",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_20260915/case-025.json",
+      "owner": 1,
+      "attacker": "HogRider",
+      "capture_sha256": "b76b8723d177f2c7b2f0d0504e77b390b8f5ddc79cf2fa0e7365cd0519ccdc76",
+      "commands": [
+        {
+          "name": "HogRider",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 0,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-000.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "40348778b0ad7a2d4b634b1dfea5fb88da57d33aeffe89e499d0b3ad8eb80e99",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        }
+      ],
+      "native_damage": 3305,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-001.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "f423d1f8ebabf866a44eee02eb70c567be499e9e1270b3c6923289f5d3c03c19",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 2277,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-002.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "3448ea9a927b87a5c6a94e27f79ee92442cc463d7edd72a9d9f3b1ed9a6a617c",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 2530,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-003.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "201df2bcc7ea5a73bbbb2f967fb59b649480f5e50159a957b18ab68e0edcb10f",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 2783,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-004.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "6818d2f38a71657c9bdffa737f2d7a999c9c3b35a3d61e60c035fd4451a484ad",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 1518,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-005.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "ec454707394326dc3a61d5ec8ff30b0ec352b9dd92d0bdcb13e3b95f55571a07",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 1771,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-006.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "de16d16882e7e98b4a22e3b8ca95d3c2557b4d0045f4e569a4fe5ea91794ad61",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 1771,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-007.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "3c519710b008f3e9fda23c85f082bfa01962a209e670e4419dda360a38fa7102",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 2530,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-008.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "d23e2e69f4935d8f5c37e14386538f018f04c34e0a941394b6e124aec5391d44",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 2783,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-009.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "1a3a4fd6e2965197fe1f885136f2679031fc3b0e176232451cdc9b9896df183a",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 2024,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-010.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "eebd49af4aae3e82f8563fabd0640de62a928e10d4e324e595c221a52c1ab6f8",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 1012,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-011.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "1aa422af8eee47a9ec2cafa4e6c57447ee80addb5cce3751e0a4e8eaa6d09fcd",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 1265,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-012.json",
+      "owner": 0,
+      "attacker": "Giant",
+      "capture_sha256": "a8c25a0476be63ddac49340861b71127fadeb82cbcd11ba43cff1e4a94f63026",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 1265,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-013.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "98ec46fdaa6ccaa17d7e24aa8c67e8e76fc342306340b59076902bdf5ca3d6f9",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        }
+      ],
+      "native_damage": 3305,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-014.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "82cc70f199f993640df71d591238e5f73b9988523f14c2fae2a49ea0e2e35888",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 2277,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-015.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "3224a4a8f8181b0bf809520c5f0f440db99b4dc15c1e80a1640975c68e5a89c6",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 2530,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-016.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "9c242acaad74e5598bfe97741257e0a653b8166439c01d49ad84adbf390cac8b",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 2783,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-017.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "67500e691bfebbeacd808201befd8cb3a2457a37d66196f020100d2e5b6179b8",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 1518,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-018.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "442f451cab6138a36211662337e82b11c9a6e3cb8f13655f4402d174d4ffe193",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 1771,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-019.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "eff02bc66e1f92976e3bd4608da0e1d71c6757155098041fc034bc0762228c77",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 1771,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-020.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "26c413af374722fd92f11d65223a079d13ab9364e2f7abed73aca9708d8c87b4",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 1265,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-021.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "c4586e9b5316dbf25adc5f816946a36e91b9c34092fa0938e03c58e0fcdc864d",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 1265,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-022.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "4c17118f4173361ab9281fbc1bd58ff9db0f87d60bdebc7ba3142c6b66db430e",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 1518,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-023.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "4c4341219184c506a1c1ba17263fa52491db87f84bc792531937c2268670c836",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 506,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-024.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "a82eea73e709c8e32f4f42bb963aab55c0db520905171605584b31b2e8ad42e1",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 506,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-025.json",
+      "owner": 1,
+      "attacker": "Giant",
+      "capture_sha256": "acd8e4d76b13f7ea2bbe3ae27af346f622469a20ea8afdc0845428260b452503",
+      "commands": [
+        {
+          "name": "Giant",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 759,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-026.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "fac1e1c37f0bec0d302caa2b81c6375db3e012fea1b988d8affd043834dc1d3b",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        }
+      ],
+      "native_damage": 4226,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-027.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "65350dae9570ba908556ec1f52b79cbc9235eb65628f060b90baac33780ca675",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 2738,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-028.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "dde2e373fe59d652aff42dc9c27ce11887bccddba7ad6a513c2bbd8cd8fde1a1",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 3835,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-029.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "3927f5b931fda88f4615ef317bd2ababc76a9b59ca6b435d6d1f1513221ddd73",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 3835,
+      "end_tick": 1421,
+      "samples": [
+        {
+          "tick": 291,
+          "name": "Cannon",
+          "hp": 41
+        }
+      ]
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-030.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "36de7a67efdeb706283b2fd55c0cc3818acdb667ddca4c1566f567ccbf45c6ec",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 3052,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-031.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "049efbdba9957dd268f9e5277fbc71a503cd214c1b5e2babcec6329f65a2b441",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 2738,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-032.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "8d37cc79e2a4ae987c5c5c94c331e7c9632a0a9d0774b7473d87570d3c3a69b1",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 2347,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-033.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "3e7ea0392711785fa1d1cc20bd561a6a8b1f6daff54158966e4d34e98d3a8ea6",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 2347,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-034.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "e9e60d09fa338701e013dbdf75a270c4458f9a72172f7ae5ac38a3b1bd37ad40",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 2738,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-035.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "ff1e4cf6a8548df67afe90dcc2ddcd2893bdeefaba807646f3f39c4fd7259a8d",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            5.5,
+            18.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 2738,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-036.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "3bfc5762f19dfce81321ffec50b81074bb38a23870ddd55d53092e3aa659b842",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 2347,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-037.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "9bfa2ad8be574adb9711fecf15142cc450225079cb69353c1f1646eaa43e72b7",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 2347,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-038.json",
+      "owner": 0,
+      "attacker": "Prince",
+      "capture_sha256": "1aed6ca35efaabfe2582436edf7d34f25d66cdcb4992be6d187807ae8b40e1b8",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 0,
+          "xy": [
+            3.5,
+            14.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 1,
+          "xy": [
+            7.5,
+            19.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 2347,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-039.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "ffd64e6bc99eb2d494a228de999d558f46d2b4b8a46713ac1467dc50439eabf0",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        }
+      ],
+      "native_damage": 4226,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-040.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "cacc98b6f29c375c6e44ce3dd8da1159122f01609299989cc496c69cd7905eb4",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 2738,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-041.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "79d8d994aba2cdab46aabe33556468b537ce5c8a05dbab9af045442588f40c02",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 3835,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-042.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "e36d1fa0a575545802bb586a9332b62a7ebeb1462ddc13f4074af1ee0cc62c1e",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 3835,
+      "end_tick": 1421,
+      "samples": [
+        {
+          "tick": 291,
+          "name": "Cannon",
+          "hp": 41
+        }
+      ]
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-043.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "ec4d97b659d34b2f334fe12cb37d4d8f2d6793985ba80a2d4dd6e1d37a9396b7",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 3052,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-044.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "de1d22d23827f687c002b6ca087dc794bec7f69e97e936d1a22dc064bb8b5e54",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 2738,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-045.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "c507d933ef167ba1bd3f9ef74740ad0d54f4787b62644d5f703c262ff135c3d0",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Cannon",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 2347,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-046.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "5707cd1953476634063c4cd16b05efcfd05256f0541c6055fe97b9bdecaaaec1",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 2347,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-047.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "63e1480d2bddeba82f9b0aff8b34660fcf04979b99ee77e1c906559ebfd07df8",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 2738,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-048.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "edcef859baf0b3552d02370ea1cb36a6ae44cb3a0e13641272e46f9858e84bba",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            12.5,
+            13.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 2738,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-049.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "99cd6cf86d2ccf770395d004e4d4d7790fdf7dea1ed1ca9a73801553c609c2f1",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 251
+        }
+      ],
+      "native_damage": 1565,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-050.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "27e593bae57ac557937290afd2dd39edfa2f0daf50019bdedb3b36b28e6e13de",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 271
+        }
+      ],
+      "native_damage": 1956,
+      "end_tick": 1421,
+      "samples": []
+    },
+    {
+      "name": "native_timed_defenses_broad_20260915/case-051.json",
+      "owner": 1,
+      "attacker": "Prince",
+      "capture_sha256": "e314957d0cc677d14cb4c0d13114650364b40953a6c409a8f2e82637149573ca",
+      "commands": [
+        {
+          "name": "Prince",
+          "owner": 1,
+          "xy": [
+            14.5,
+            17.5
+          ],
+          "expected_execution_tick": 222
+        },
+        {
+          "name": "Tesla",
+          "owner": 0,
+          "xy": [
+            10.5,
+            12.5
+          ],
+          "expected_execution_tick": 291
+        }
+      ],
+      "native_damage": 1956,
+      "end_tick": 1421,
+      "samples": []
+    }
+  ]
+}

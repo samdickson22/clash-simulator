@@ -1,0 +1,562 @@
+{
+  "source_sha256": {
+    "cases.json": "9253a0b956f8633fc75966b875b95eaae1fddec3bc4b319e660bf830f3153e7f",
+    "fraction-controls.json": "8105b2eda5da71e1b9a44e7f1ad58a31aeba47af0c0c4debd132e398aa1541f3",
+    "corner-controls.json": "28dcc376369302da8bf8db8198b861d679be32dac80c3a07fbfdc33d409edaca",
+    "larger-troop-controls.json": "653949c258e93d881a53279d9f30740e31190bd7fda4e10a068ec68b52b61f82"
+  },
+  "cases": [
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        2.5,
+        13.5
+      ],
+      "expected": [
+        [
+          1499,
+          13500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        3.5,
+        13.5
+      ],
+      "expected": [
+        [
+          3499,
+          14500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        4.5,
+        13.5
+      ],
+      "expected": [
+        [
+          4499,
+          13500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Archers",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        2.5,
+        13.5
+      ],
+      "expected": [
+        [
+          2000,
+          13500
+        ],
+        [
+          999,
+          13500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Archers",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        3.5,
+        13.5
+      ],
+      "expected": [
+        [
+          4000,
+          14500
+        ],
+        [
+          2999,
+          14500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Archers",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        4.5,
+        13.5
+      ],
+      "expected": [
+        [
+          5000,
+          13500
+        ],
+        [
+          3999,
+          13500
+        ]
+      ]
+    },
+    {
+      "owner": 1,
+      "name": "Knight",
+      "building": [
+        14.5,
+        18.5
+      ],
+      "command": [
+        13.5,
+        18.5
+      ],
+      "expected": [
+        [
+          12500,
+          18499
+        ]
+      ]
+    },
+    {
+      "owner": 1,
+      "name": "Knight",
+      "building": [
+        14.5,
+        18.5
+      ],
+      "command": [
+        14.5,
+        18.5
+      ],
+      "expected": [
+        [
+          14500,
+          19499
+        ]
+      ]
+    },
+    {
+      "owner": 1,
+      "name": "Knight",
+      "building": [
+        14.5,
+        18.5
+      ],
+      "command": [
+        15.5,
+        18.5
+      ],
+      "expected": [
+        [
+          15500,
+          18499
+        ]
+      ]
+    },
+    {
+      "owner": 1,
+      "name": "Archers",
+      "building": [
+        14.5,
+        18.5
+      ],
+      "command": [
+        13.5,
+        18.5
+      ],
+      "expected": [
+        [
+          11999,
+          18499
+        ],
+        [
+          13000,
+          18499
+        ]
+      ]
+    },
+    {
+      "owner": 1,
+      "name": "Archers",
+      "building": [
+        14.5,
+        18.5
+      ],
+      "command": [
+        14.5,
+        18.5
+      ],
+      "expected": [
+        [
+          13999,
+          19499
+        ],
+        [
+          15000,
+          19499
+        ]
+      ]
+    },
+    {
+      "owner": 1,
+      "name": "Archers",
+      "building": [
+        14.5,
+        18.5
+      ],
+      "command": [
+        15.5,
+        18.5
+      ],
+      "expected": [
+        [
+          14999,
+          18499
+        ],
+        [
+          16000,
+          18499
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        3.0,
+        13.0
+      ],
+      "expected": [
+        [
+          2499,
+          14500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        3.2,
+        13.2
+      ],
+      "expected": [
+        [
+          3499,
+          14500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        3.8,
+        13.8
+      ],
+      "expected": [
+        [
+          3499,
+          14500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        3.5,
+        12.5
+      ],
+      "expected": [
+        [
+          3499,
+          11500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        2.5,
+        12.5
+      ],
+      "expected": [
+        [
+          2499,
+          11500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        6.2,
+        12.2
+      ],
+      "expected": [
+        [
+          6499,
+          12500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        6.0,
+        12.0
+      ],
+      "expected": [
+        [
+          6499,
+          12500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        4.0,
+        13.0
+      ],
+      "expected": [
+        [
+          4499,
+          13500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        4.2,
+        13.2
+      ],
+      "expected": [
+        [
+          4499,
+          13500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        3.8,
+        14.2
+      ],
+      "expected": [
+        [
+          3499,
+          14500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Knight",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        1.8,
+        13.2
+      ],
+      "expected": [
+        [
+          1499,
+          13500
+        ]
+      ]
+    },
+    {
+      "owner": 0,
+      "name": "Giant",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        2.5,
+        13.5
+      ],
+      "expected": [
+        [
+          1499,
+          13500
+        ]
+      ],
+      "wait_ticks": 111
+    },
+    {
+      "owner": 0,
+      "name": "Giant",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        3.5,
+        13.5
+      ],
+      "expected": [
+        [
+          3499,
+          14500
+        ]
+      ],
+      "wait_ticks": 111
+    },
+    {
+      "owner": 0,
+      "name": "IceGolem",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        2.5,
+        13.5
+      ],
+      "expected": [
+        [
+          1499,
+          13500
+        ]
+      ],
+      "wait_ticks": 111
+    },
+    {
+      "owner": 0,
+      "name": "IceGolem",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        3.5,
+        13.5
+      ],
+      "expected": [
+        [
+          3499,
+          14500
+        ]
+      ],
+      "wait_ticks": 111
+    },
+    {
+      "owner": 0,
+      "name": "Prince",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        2.5,
+        13.5
+      ],
+      "expected": [
+        [
+          1499,
+          13500
+        ]
+      ],
+      "wait_ticks": 111
+    },
+    {
+      "owner": 0,
+      "name": "Prince",
+      "building": [
+        3.5,
+        13.5
+      ],
+      "command": [
+        3.5,
+        13.5
+      ],
+      "expected": [
+        [
+          3499,
+          14500
+        ]
+      ],
+      "wait_ticks": 111
+    }
+  ]
+}

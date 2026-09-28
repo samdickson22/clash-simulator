@@ -1,0 +1,387 @@
+{
+  "scope": "Opened native staggered-Archer controls, current target and hit work across lethal reservations/removal.",
+  "source": "reports/native_knight_body_divergence_20260915/archer-pending-native-controls.json",
+  "source_sha256": "3b0abd09d5fc9113a702adb52c1e843f3e12b3f6571e7d4654126f8874209257",
+  "cases": [
+    {
+      "center": 3500,
+      "seed": 1288002,
+      "elixir": [
+        6.0,
+        6.0
+      ],
+      "frames": [
+        {
+          "tick": 129,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000007,
+              "remaining": 0.05
+            },
+            {
+              "id": 5000011,
+              "target": 5000007,
+              "remaining": 0.15
+            }
+          ]
+        },
+        {
+          "tick": 130,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000007,
+              "remaining": 0.9
+            },
+            {
+              "id": 5000011,
+              "target": 5000007,
+              "remaining": 0.1
+            }
+          ]
+        },
+        {
+          "tick": 131,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000007,
+              "remaining": 0.85
+            },
+            {
+              "id": 5000011,
+              "target": 5000008,
+              "remaining": 0.05
+            }
+          ]
+        },
+        {
+          "tick": 132,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000007,
+              "remaining": 0.8
+            },
+            {
+              "id": 5000011,
+              "target": 5000008,
+              "remaining": 0.9
+            }
+          ]
+        },
+        {
+          "tick": 133,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000007,
+              "remaining": 0.75
+            },
+            {
+              "id": 5000011,
+              "target": 5000008,
+              "remaining": 0.85
+            }
+          ]
+        },
+        {
+          "tick": 134,
+          "units": [
+            {
+              "id": 5000010,
+              "target": null,
+              "remaining": 0.7
+            },
+            {
+              "id": 5000011,
+              "target": 5000008,
+              "remaining": 0.8
+            }
+          ]
+        },
+        {
+          "tick": 135,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000009,
+              "remaining": 0.65
+            },
+            {
+              "id": 5000011,
+              "target": 5000008,
+              "remaining": 0.75
+            }
+          ]
+        },
+        {
+          "tick": 136,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000009,
+              "remaining": 0.6
+            },
+            {
+              "id": 5000011,
+              "target": 5000008,
+              "remaining": 0.7
+            }
+          ]
+        },
+        {
+          "tick": 137,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000009,
+              "remaining": 0.55
+            },
+            {
+              "id": 5000011,
+              "target": null,
+              "remaining": 0.65
+            }
+          ]
+        },
+        {
+          "tick": 138,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000009,
+              "remaining": 0.5
+            },
+            {
+              "id": 5000011,
+              "target": 5000009,
+              "remaining": 0.6
+            }
+          ]
+        },
+        {
+          "tick": 139,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000009,
+              "remaining": 0.45
+            },
+            {
+              "id": 5000011,
+              "target": 5000009,
+              "remaining": 0.55
+            }
+          ]
+        },
+        {
+          "tick": 140,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000009,
+              "remaining": 0.4
+            },
+            {
+              "id": 5000011,
+              "target": 5000009,
+              "remaining": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "center": 4500,
+      "seed": 1288002,
+      "elixir": [
+        6.0,
+        6.0
+      ],
+      "frames": [
+        {
+          "tick": 129,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000007,
+              "remaining": 0.05
+            },
+            {
+              "id": 5000011,
+              "target": 5000007,
+              "remaining": 0.15
+            }
+          ]
+        },
+        {
+          "tick": 130,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000007,
+              "remaining": 0.9
+            },
+            {
+              "id": 5000011,
+              "target": 5000007,
+              "remaining": 0.1
+            }
+          ]
+        },
+        {
+          "tick": 131,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000007,
+              "remaining": 0.85
+            },
+            {
+              "id": 5000011,
+              "target": 5000008,
+              "remaining": 0.05
+            }
+          ]
+        },
+        {
+          "tick": 132,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000007,
+              "remaining": 0.8
+            },
+            {
+              "id": 5000011,
+              "target": 5000008,
+              "remaining": 0.9
+            }
+          ]
+        },
+        {
+          "tick": 133,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000007,
+              "remaining": 0.75
+            },
+            {
+              "id": 5000011,
+              "target": 5000008,
+              "remaining": 0.85
+            }
+          ]
+        },
+        {
+          "tick": 134,
+          "units": [
+            {
+              "id": 5000010,
+              "target": null,
+              "remaining": 0.7
+            },
+            {
+              "id": 5000011,
+              "target": 5000008,
+              "remaining": 0.8
+            }
+          ]
+        },
+        {
+          "tick": 135,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000009,
+              "remaining": 0.65
+            },
+            {
+              "id": 5000011,
+              "target": 5000008,
+              "remaining": 0.75
+            }
+          ]
+        },
+        {
+          "tick": 136,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000009,
+              "remaining": 0.6
+            },
+            {
+              "id": 5000011,
+              "target": 5000008,
+              "remaining": 0.7
+            }
+          ]
+        },
+        {
+          "tick": 137,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000009,
+              "remaining": 0.55
+            },
+            {
+              "id": 5000011,
+              "target": null,
+              "remaining": 0.65
+            }
+          ]
+        },
+        {
+          "tick": 138,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000009,
+              "remaining": 0.5
+            },
+            {
+              "id": 5000011,
+              "target": 5000009,
+              "remaining": 0.6
+            }
+          ]
+        },
+        {
+          "tick": 139,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000009,
+              "remaining": 0.45
+            },
+            {
+              "id": 5000011,
+              "target": 5000009,
+              "remaining": 0.55
+            }
+          ]
+        },
+        {
+          "tick": 140,
+          "units": [
+            {
+              "id": 5000010,
+              "target": 5000009,
+              "remaining": 0.4
+            },
+            {
+              "id": 5000011,
+              "target": 5000009,
+              "remaining": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

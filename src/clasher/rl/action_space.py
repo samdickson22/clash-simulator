@@ -1,17 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Optional, Tuple
 
 import numpy as np
 
 from clasher.arena import Position, TileGrid
 from clasher.battle import BattleState
 from clasher.card_aliases import resolve_card_name
+from clasher.placement import building_anchor
 from clasher.spells import SPELL_REGISTRY
+from clasher.unit_traits import is_air_unit_card
 
 from .common import BOARD_HEIGHT, BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
-
 
 # Reference switch used by parity and performance tests. The guarded path
 # snapshots the exact capability-based set once per mask.
@@ -21,8 +21,8 @@ _USE_DEPLOYMENT_BLOCKER_GUARD = True
 @dataclass(frozen=True)
 class ActionSelection:
     action_id: int
-    slot: Optional[int]
-    position: Optional[Position]
+    slot: int | None
+    position: Position | None
     is_no_op: bool
     is_ability: bool = False
 
@@ -42,13 +42,13 @@ class DiscreteTileActionSpace:
         self.no_op_action = placement_actions
         self.ability_action = placement_actions + 1
         self.num_actions = placement_actions + 2
-        self._positions_by_player: Dict[int, list[Position]] = {0: [], 1: []}
-        self._non_rolling_spell_tiles: Dict[int, np.ndarray] = {}
-        self._non_blocked_mask_by_player: Dict[int, np.ndarray] = {}
-        self._world_tile_xy_by_player: Dict[int, np.ndarray] = {}
-        self._card_meta_cache: Dict[str, Tuple[str, bool, object, bool]] = {}
-        self._deploy_zone_mask_cache: Dict[Tuple[int, bool, bool], np.ndarray] = {}
-        self._tower_mask_cache: Dict[Tuple[int, Tuple[bool, bool, bool, bool, bool, bool]], np.ndarray] = {}
+        self._positions_by_player: dict[int, list[Position]] = {0: [], 1: []}
+        self._non_rolling_spell_tiles: dict[int, np.ndarray] = {}
+        self._non_blocked_mask_by_player: dict[int, np.ndarray] = {}
+        self._world_tile_xy_by_player: dict[int, np.ndarray] = {}
+        self._card_meta_cache: dict[str, tuple[str, bool, object, bool]] = {}
+        self._deploy_zone_mask_cache: dict[tuple[int, bool, bool], np.ndarray] = {}
+        self._tower_mask_cache: dict[tuple[int, tuple[bool, bool, bool, bool, bool, bool]], np.ndarray] = {}
         blocked_tiles = set(TileGrid.BLOCKED_TILES)
 
         for player_id in (0, 1):
@@ -165,17 +165,19 @@ class DiscreteTileActionSpace:
                 ):
                     return False
             else:
-                if battle.is_position_occupied_by_building(
-                    position, probe_radius
-                ) or battle.is_deployment_payload_occupied(
+                if battle.is_deployment_payload_occupied(
                     position,
                     mover_radius=probe_radius,
                 ):
                     return False
+                if not is_air_unit_card(card_stats):
+                    return battle.resolve_ground_troop_anchor(position, player_id, card_stats) is not None
+                if battle.is_position_occupied_by_building(position, probe_radius):
+                    return False
 
         return True
 
-    def _get_card_meta(self, battle: BattleState, card_name: str) -> Tuple[str, bool, object, bool]:
+    def _get_card_meta(self, battle: BattleState, card_name: str) -> tuple[str, bool, object, bool]:
         cached = self._card_meta_cache.get(card_name)
         if cached is not None:
             return cached
@@ -191,13 +193,13 @@ class DiscreteTileActionSpace:
         self._card_meta_cache[card_name] = meta
         return meta
 
-    def _zone_key(self, battle: BattleState, player_id: int) -> Tuple[int, bool, bool]:
+    def _zone_key(self, battle: BattleState, player_id: int) -> tuple[int, bool, bool]:
         enemy_id = 1 - player_id
         enemy_left_dead = battle.players[enemy_id].left_tower_hp <= 0.0
         enemy_right_dead = battle.players[enemy_id].right_tower_hp <= 0.0
         return (player_id, enemy_left_dead, enemy_right_dead)
 
-    def _zone_ranges_from_key(self, key: Tuple[int, bool, bool]) -> list[tuple[int, int, int, int]]:
+    def _zone_ranges_from_key(self, key: tuple[int, bool, bool]) -> list[tuple[int, int, int, int]]:
         player_id, enemy_left_dead, enemy_right_dead = key
         if player_id == 0:
             zones = [(0, 1, BOARD_WIDTH, 15), (6, 0, 12, 6)]
@@ -264,7 +266,11 @@ class DiscreteTileActionSpace:
         size_tiles: int,
     ) -> np.ndarray:
         world_mask = battle.get_building_placement_blocked_mask_world(size_tiles)
-        world_xy = self._world_tile_xy_by_player[player_id]
+        resolved = [
+            building_anchor(p, size_tiles)
+            for p in self._positions_by_player[player_id]
+        ]
+        world_xy = np.asarray([(int(p.x), int(p.y)) for p in resolved], dtype=np.int32)
         return np.asarray(
             world_mask[world_xy[:, 1], world_xy[:, 0]], dtype=np.bool_
         )
@@ -290,15 +296,16 @@ class DiscreteTileActionSpace:
         for slot, card_name in enumerate(player.hand[:NUM_HAND_SLOTS]):
             if card_name is None:
                 continue
-            card_stats = battle.card_loader.get_card(card_name)
-            if card_stats is None:
+            play = battle.resolve_card_play(player_id, card_name)
+            if play is None:
                 continue
+            effective_name, card_stats, _ = play
 
             if not player.can_play_card(card_name, card_stats):
                 continue
 
             resolved_name, is_spell, spell_obj, non_rolling_spell = self._get_card_meta(
-                battle, card_name
+                battle, effective_name
             )
             slot_base = slot * NUM_TILES
 
@@ -355,12 +362,15 @@ class DiscreteTileActionSpace:
         for slot, card_name in enumerate(player.hand[:NUM_HAND_SLOTS]):
             if card_name is None:
                 continue
-            card_stats = battle.card_loader.get_card(card_name)
-            if card_stats is None or not player.can_play_card(card_name, card_stats):
+            play = battle.resolve_card_play(player_id, card_name)
+            if play is None:
+                continue
+            effective_name, card_stats, _ = play
+            if not player.can_play_card(card_name, card_stats):
                 continue
 
             resolved_name, is_spell, spell_obj, non_rolling_spell = self._get_card_meta(
-                battle, card_name
+                battle, effective_name
             )
             slot_base = slot * NUM_TILES
             if non_rolling_spell:
@@ -406,7 +416,7 @@ class DiscreteTileActionSpace:
                     )
                     building_blocked_by_size[size_tiles] = blocked_building_tiles
                 candidate_mask = candidate_mask & (~blocked_building_tiles)
-            elif not is_spell:
+            elif not is_spell and is_air_unit_card(card_stats):
                 blocked_troop_tiles = troop_blocked_by_radius.get(probe_radius)
                 if blocked_troop_tiles is None:
                     blocked_troop_tiles = self._troop_placement_blocked_mask_canonical(
@@ -422,6 +432,13 @@ class DiscreteTileActionSpace:
             )
             for tile_idx in candidate_tiles.tolist():
                 pos = positions[tile_idx]
+                if not is_spell and not is_building_card and not is_air_unit_card(card_stats):
+                    if self._is_legal_deploy(
+                        battle, player_id, card_stats, resolved_name, pos,
+                        is_spell, spell_obj, probe_radius,
+                    ):
+                        mask[slot_base + tile_idx] = True
+                    continue
                 if deploy_w_margin > 0:
                     world_tile_x = int(pos.x)
                     if not (
@@ -457,13 +474,15 @@ class DiscreteTileActionSpace:
                     )
                 ):
                     continue
-                if is_spell and (
-                    battle.arena._requires_deploy_zone_spell(spell_obj)
-                    or getattr(spell_obj, "requires_walkable_target", False)
+                if (
+                    is_spell
+                    and (
+                        battle.arena._requires_deploy_zone_spell(spell_obj)
+                        or getattr(spell_obj, "requires_walkable_target", False)
+                    )
+                    and not battle.arena.can_deploy_at(pos, player_id, battle, True, spell_obj)
                 ):
-                    # Keep exact territory/terrain parity for constrained spells.
-                    if not battle.arena.can_deploy_at(pos, player_id, battle, True, spell_obj):
-                        continue
+                    continue
                 mask[slot_base + tile_idx] = True
         return mask
 
@@ -472,7 +491,7 @@ class DiscreteTileActionSpace:
         battle: BattleState,
         player_id: int,
         *,
-        fast_path: Optional[bool] = None,
+        fast_path: bool | None = None,
     ) -> np.ndarray:
         use_fast = fast_path if fast_path is not None else bool(getattr(battle, "fast_path", False))
         if use_fast:
@@ -510,7 +529,7 @@ class DiscreteTileActionSpace:
         player_id: int,
         rng: np.random.Generator,
         *,
-        fast_path: Optional[bool] = None,
+        fast_path: bool | None = None,
     ) -> int:
         mask = self.legal_action_mask(battle, player_id, fast_path=fast_path)
         legal = np.flatnonzero(mask)

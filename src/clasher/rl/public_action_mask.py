@@ -1,22 +1,26 @@
 from __future__ import annotations
 
+import copy
 import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import numpy as np
 
-from clasher.arena import TileGrid
+from clasher.arena import Position, TileGrid
 from clasher.card_aliases import resolve_card_name
-from clasher.spells import SPELL_REGISTRY
+from clasher.placement import native_deployment_search
+from clasher.spells import SPELL_REGISTRY, MirrorSpell
+from clasher.unit_traits import is_air_unit_card
 
 from .common import BOARD_HEIGHT, BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
+from .own_card_history import AcceptedOwnPlay
 
 if TYPE_CHECKING:
     from .public_observation import ConfidenceAwareActorObservation
     from .structured_obs import StructuredObservation, StructuredObservationBuilder
 
-PUBLIC_ACTION_MASK_CONTRACT_VERSION = 2
+PUBLIC_ACTION_MASK_CONTRACT_VERSION = 5
 
 
 @dataclass(frozen=True)
@@ -29,6 +33,10 @@ class PublicActionMaskInput:
     entity_id_confidence: np.ndarray | None
     hand_id_confidence: np.ndarray | None
     global_feature_confidence: np.ndarray | None
+    own_last_play: AcceptedOwnPlay | None = None
+    terminal: bool | None = None
+    # Whether public coordinates were rotated 180 degrees from arena coordinates.
+    board_rotated: bool | None = None
 
     @classmethod
     def from_confidence_observation(
@@ -44,6 +52,9 @@ class PublicActionMaskInput:
             entity_id_confidence=source.entity_id_confidence,
             hand_id_confidence=source.hand_id_confidence,
             global_feature_confidence=source.global_feature_confidence,
+            own_last_play=observation.own_last_play,
+            terminal=observation.terminal,
+            board_rotated=observation.board_rotated,
         )
 
 
@@ -65,6 +76,9 @@ class PublicActionMaskBuilder:
         self, observation: StructuredObservation | PublicActionMaskInput
     ) -> np.ndarray:
         zones = [(0, 1, BOARD_WIDTH, 15), (6, 0, 12, 6)]
+        rotation = observation.board_rotated
+        if rotation is not None and type(rotation) is not bool:
+            raise ValueError("board rotation must be bool or unknown")
         confidence = observation.global_feature_confidence
         if (
             confidence is not None
@@ -72,21 +86,36 @@ class PublicActionMaskBuilder:
             and observation.global_features[11] <= 1e-4
         ):
             zones.append((0, 17, 9, 21))
+            if rotation is None:
+                raise ValueError("expanded bridge legality requires public board orientation")
+            zones.append((2, 15, 5, 17))
         if (
             confidence is not None
             and confidence[12] > 0.0
             and observation.global_features[12] <= 1e-4
         ):
             zones.append((9, 17, BOARD_WIDTH, 21))
+            if rotation is None:
+                raise ValueError("expanded bridge legality requires public board orientation")
+            zones.append((13, 15, 16, 17))
         result = np.zeros((NUM_TILES,), dtype=np.bool_)
         for y in range(BOARD_HEIGHT):
             for x in range(BOARD_WIDTH):
-                if any(x1 <= x + 0.5 < x2 and y1 <= y + 0.5 < y2 for x1, y1, x2, y2 in zones):
+                if any(
+                    x1 <= x + 0.5 < x2 and y1 <= y + 0.5 < y2
+                    for x1, y1, x2, y2 in zones
+                ):
+                    world_x = BOARD_WIDTH - (x + 0.5) if rotation else x + 0.5
+                    if 15 <= y + 0.5 < 17 and not (
+                        2.5 <= world_x < 4.5 or 13.5 <= world_x < 15.5
+                    ):
+                        continue
                     result[y * BOARD_WIDTH + x] = True
         return result
 
     def _building_blockers(
-        self, observation: StructuredObservation | PublicActionMaskInput
+        self, observation: StructuredObservation | PublicActionMaskInput,
+        *, crowns_only: bool = False,
     ) -> list[tuple[float, float, float, float]]:
         blockers: list[tuple[float, float, float, float]] = []
         identity_confidence = observation.entity_id_confidence
@@ -97,6 +126,8 @@ class PublicActionMaskBuilder:
                 continue
             token = int(observation.entity_ids[index])
             if not 0 <= token < len(self.builder.token_names):
+                continue
+            if crowns_only and self.builder.token_names[token] not in {"Tower", "KingTower"}:
                 continue
             radius = float(self.builder.card_stat_features[token, 12]) * 3.0
             footprint_size = max(1, math.ceil(max(0.0, radius) * 2.0) + 1)
@@ -128,8 +159,7 @@ class PublicActionMaskBuilder:
             if building_footprint_half is not None:
                 if (
                     abs(x - blocker_x) < building_footprint_half + blocker_half
-                    and abs(y - blocker_y)
-                    < building_footprint_half + blocker_half
+                    and abs(y - blocker_y) < building_footprint_half + blocker_half
                 ):
                     return True
                 continue
@@ -140,10 +170,7 @@ class PublicActionMaskBuilder:
                 deploy_radius + blocker_radius
             ) ** 2:
                 return True
-            if (
-                abs(x - blocker_x) < blocker_half
-                and abs(y - blocker_y) < blocker_half
-            ):
+            if abs(x - blocker_x) < blocker_half and abs(y - blocker_y) < blocker_half:
                 return True
         return False
 
@@ -155,6 +182,9 @@ class PublicActionMaskBuilder:
         # Ability state is not yet in the proven camera contract. Fail closed
         # instead of leaking the simulator's exact Champion mechanic state.
         mask[self.ability_action] = False
+        # Unknown match status cannot authorize a game command.
+        if observation.terminal is not False:
+            return mask
         hand_confidence = observation.hand_id_confidence
         global_confidence = observation.global_feature_confidence
         if global_confidence is None or global_confidence[5] <= 0.0:
@@ -167,10 +197,7 @@ class PublicActionMaskBuilder:
             # The vision contract emits a nonzero token only after accepting
             # the identity. Confidence describes observation quality for the
             # policy; it must not independently erase an accepted public card.
-            if (
-                hand_confidence is not None
-                and hand_confidence[slot] <= 0.0
-            ):
+            if hand_confidence is not None and hand_confidence[slot] <= 0.0:
                 continue
             token = int(observation.hand_ids[slot])
             if not 0 < token < len(self.builder.token_names):
@@ -189,6 +216,35 @@ class PublicActionMaskBuilder:
             )
             is_spell = resolved in SPELL_REGISTRY
             spell = SPELL_REGISTRY.get(resolved) if is_spell else None
+            if isinstance(spell, MirrorSpell):
+                history = observation.own_last_play
+                if history is None:
+                    continue
+                copied = self.builder.loader.get_card(history.card_name)
+                if copied is None:
+                    continue
+                resolved = resolve_card_name(
+                    history.card_name, self.builder.loader.load_card_definitions()
+                )
+                spell = SPELL_REGISTRY.get(resolved)
+                if isinstance(spell, MirrorSpell):
+                    continue
+                stats = copy.copy(copied)
+                mirror = self.builder.loader.get_card(card_name)
+                stats.level = mirror.level + 1
+                stats.mana_cost = history.elixir_cost + 1
+                if stats.mana_cost > elixir + 1e-6:
+                    continue
+                if spell is not None:
+                    from clasher.dynamic_spells import create_spell_from_json
+
+                    try:
+                        spell = create_spell_from_json(
+                            stats._raw_entry, level=stats.level
+                        )
+                    except ValueError:
+                        continue
+                is_spell = spell is not None
             non_rolling_spell = bool(
                 is_spell
                 and not self._tile_grid._requires_deploy_zone_spell(spell)
@@ -224,6 +280,31 @@ class PublicActionMaskBuilder:
                     blockers,
                     building_footprint_half=building_footprint_half,
                 ):
-                    continue
+                    if is_building or is_air_unit_card(stats):
+                        continue
+                    crowns = self._building_blockers(observation, crowns_only=True)
+                    if self._occupied(x, y, base_radius, crowns, building_footprint_half=None):
+                        continue
+
+                    def available(
+                        candidate: Position,
+                        enemy_side: bool = can_deploy_enemy_side,
+                        radius: float = base_radius,
+                    ) -> bool:
+                        if not self._tile_grid.is_valid_position(candidate):
+                            return False
+                        index = int(candidate.y) * BOARD_WIDTH + int(candidate.x)
+                        return bool(
+                            self._non_blocked[index]
+                            and (enemy_side or zone[index])
+                            and self._tile_grid.is_walkable(candidate)
+                            and not self._occupied(
+                                candidate.x, candidate.y, radius, blockers,
+                                building_footprint_half=None,
+                            )
+                        )
+
+                    if native_deployment_search(Position(x, y), Position(x, y), available) is None:
+                        continue
                 mask[slot * NUM_TILES + tile] = True
         return mask

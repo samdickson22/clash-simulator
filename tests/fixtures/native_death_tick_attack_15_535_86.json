@@ -1,0 +1,98 @@
+[
+  {
+    "owner": 0,
+    "commands": [
+      {
+        "name": "HogRider",
+        "owner": 0,
+        "xy": [
+          3.5,
+          14.5
+        ],
+        "expected_execution_tick": 222
+      },
+      {
+        "name": "Cannon",
+        "owner": 1,
+        "xy": [
+          7.5,
+          19.5
+        ],
+        "expected_execution_tick": 271
+      }
+    ],
+    "capture_sha256": "998ba0a2df574bab4fc27e2e0b4d455a1e9ca83e4884b787999725157bb23d38",
+    "death_tick": 368,
+    "samples": [
+      {
+        "tick": 367,
+        "hog_hp": 437,
+        "cannon_alive": true
+      },
+      {
+        "tick": 368,
+        "hog_hp": 437,
+        "cannon_alive": false
+      },
+      {
+        "tick": 369,
+        "hog_hp": 235,
+        "cannon_alive": false
+      },
+      {
+        "tick": 370,
+        "hog_hp": 235,
+        "cannon_alive": false
+      }
+    ],
+    "tower_damage": 0
+  },
+  {
+    "owner": 1,
+    "commands": [
+      {
+        "name": "HogRider",
+        "owner": 1,
+        "xy": [
+          14.5,
+          17.5
+        ],
+        "expected_execution_tick": 222
+      },
+      {
+        "name": "Cannon",
+        "owner": 0,
+        "xy": [
+          10.5,
+          12.5
+        ],
+        "expected_execution_tick": 271
+      }
+    ],
+    "capture_sha256": "cb76f3b1e86a34c5a9ff847c5d5a42c78dc21fb4f81e8e4ec8291678e6cc4b7b",
+    "death_tick": 368,
+    "samples": [
+      {
+        "tick": 367,
+        "hog_hp": 437,
+        "cannon_alive": true
+      },
+      {
+        "tick": 368,
+        "hog_hp": 437,
+        "cannon_alive": false
+      },
+      {
+        "tick": 369,
+        "hog_hp": 235,
+        "cannon_alive": false
+      },
+      {
+        "tick": 370,
+        "hog_hp": 235,
+        "cannon_alive": false
+      }
+    ],
+    "tower_damage": 0
+  }
+]

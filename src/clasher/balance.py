@@ -47,10 +47,9 @@ DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS = (
     (300.0, 350),
 )
 
-# Global cleanup interval for a serialized AttackSequence whose target is
-# lost mid-sequence. Character data can opt into its own AttackFinishTime,
-# including an explicit zero. The same global duration also gates the native
-# death-spawn target-immunity marker below.
+# Native attack-finish interval after eligible target-removal callbacks.
+# Ordinary non-sequence weapons without an explicit finish override can arm
+# this gate. The same duration also gates death-spawn target immunity.
 GLOBAL_ATTACK_FINISH_TIME_MS = 250
 
 # Current csv_logic/globals.csv behavior. Characters created by a parent's
@@ -122,23 +121,21 @@ LOGIC_PRESERVE_TARGET_IF_HIT_STARTED = True
 LOGIC_RANGE_EXTENSION_TO_KEEP_TARGET = 25
 LOGIC_PENDING_DAMAGE_IGNORE_IF_DURATION_LESS = 600
 
-# Version 15.546.41 no longer uses the path lane captured at character birth
-# to choose a fallback Crown Tower. The current x position selects the default
-# Princess Tower for every character collision plane.
+# Current x selects a candidate Princess Tower; the native selector still
+# applies spawn-lane guards and compares that candidate against the King.
 LOGIC_DEFAULT_TARGET_USE_LANE_ID = False
 LOGIC_XPOS_BASED_TOWER_TARGETING = True
 
-# A surviving Princess Tower remains the default Crown objective even when
-# the King Tower is geometrically closer.  The King can still be acquired as
-# an ordinary in-sight target; this flag governs only the no-target fallback.
+# This flag permits Princess default candidates; it does not exclude the King.
 LOGIC_PRINCESS_TOWERS_ALWAYS_AS_DEFAULT_TARGET = True
 
 # Breaking a shield interrupts a connected continuous-damage channel's stage
 # clock even though the attacker retains the same underlying character lock.
 LOGIC_INFERNO_RESET_ON_SHIELD_LOST = True
 
-# Lethal pending projectile damage filters both acquisition candidates and an
-# already-held ranged-character lock in the current client.
+# Pending damage filters acquisition and current-target validation. A weapon
+# with KeepTargetWithPendingDamage can retain an established post-hit lock;
+# the alternate validation ignores pending damage and marks that retention.
 CURRENT_TARGET_IGNORES_PENDING_DAMAGE = True
 
 # Equal-distance building scans run in owner-relative order.  This prevents
@@ -691,6 +688,12 @@ TOURNAMENT_SPELL_OVERRIDES: dict[str, dict[str, float]] = {
 
 
 ENTRY_PATH_OVERRIDES: dict[str, dict[tuple[str, ...], Any]] = {
+    "Lightning": {
+        # The compact export omits selection/count. The public card rule is
+        # up to three enemy troops/buildings with the most hitpoints.
+        ("areaEffectObjectData", "targetSelection"): "highest_hitpoints",
+        ("areaEffectObjectData", "maxTargets"): 3,
+    },
     "ArcherQueen": {
         # character_abilities.csv serializes the Cloaking Cape action
         # separately from the character row. The compact bundled snapshot

@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from collections.abc import Iterator, Mapping
 from threading import RLock
 from typing import Dict, List, TYPE_CHECKING
@@ -29,6 +29,7 @@ class Spell(ABC):
     damage: float = 0.0
     requires_territory: bool = False
     requires_walkable_target: bool = False
+    level: int = field(default=11, kw_only=True)
     
     @abstractmethod
     def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
@@ -47,6 +48,92 @@ class Spell(ABC):
     def _hitbox_overlaps_with_area(self, entity: 'Entity', area_center: Position) -> bool:
         """Check if entity's hitbox overlaps with spell area using collision detection"""
         return entity.intersects_native_area(area_center, self.radius)
+
+
+@dataclass
+class MirrorSpell(Spell):
+    """Hand action resolved to the previous card before placement and payment."""
+
+    def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
+        raise RuntimeError("Mirror must be resolved through BattleState.deploy_card")
+
+
+@dataclass
+class RankedStrikeSpell(Spell):
+    """Create a finite sequence of highest-hitpoint enemy strikes."""
+
+    max_targets: int = 3
+    duration: float = 1.5
+    strike_interval: float = 0.46
+    stun_duration: float = 0.5
+    crown_tower_damage: float | None = None
+    crown_tower_damage_multiplier: float = 0.25
+    hits_air: bool = True
+    hits_ground: bool = True
+
+    def cast(
+        self, battle_state: "BattleState", player_id: int, target_pos: Position
+    ) -> bool:
+        from .entities import RankedStrikeArea
+
+        effect = RankedStrikeArea(
+            id=battle_state.next_entity_id,
+            position=Position(target_pos.x, target_pos.y),
+            player_id=player_id,
+            card_stats=None,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=self.damage,
+            range=self.radius,
+            sight_range=self.radius,
+            radius=self.radius,
+            duration=self.duration,
+            max_targets=self.max_targets,
+            strike_interval=self.strike_interval,
+            stun_duration=self.stun_duration,
+            crown_tower_damage=self.crown_tower_damage,
+            crown_tower_damage_multiplier=self.crown_tower_damage_multiplier,
+            hits_air=self.hits_air,
+            hits_ground=self.hits_ground,
+        )
+        effect.spell_name = self.name
+        effect.battle_state = battle_state
+        battle_state.entities[effect.id] = effect
+        battle_state.next_entity_id += 1
+        return True
+
+
+@dataclass
+class SummonedAreaSpell(Spell):
+    """A temporary summoned carrier that releases a serialized death area."""
+
+    character_data: dict = field(default_factory=dict)
+
+    def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
+        from .entities import DeathAreaEffectContainer
+        from .factory.dynamic_factory import troop_from_character_data
+
+        stats = troop_from_character_data(
+            self.name, self.character_data,
+            raw_overrides={"level": self.level},
+        )
+        container = DeathAreaEffectContainer(
+            id=battle_state.next_entity_id,
+            position=Position(target_pos.x, target_pos.y),
+            player_id=player_id,
+            card_stats=stats,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=0,
+            range=0,
+            sight_range=0,
+            activation_delay=max(0, self.character_data.get("deployTime", 0)) / 1000,
+            area_data=self.character_data["deathAreaEffectData"],
+        )
+        container.battle_state = battle_state
+        battle_state.entities[container.id] = container
+        battle_state.next_entity_id += 1
+        return True
 
 
 @dataclass
@@ -491,6 +578,7 @@ class SpawnProjectileSpell(ProjectileSpell):
             splash_radius=self.radius,
             spawn_count=self.spawn_count,
             spawn_character=self.spawn_character,
+            spawn_level=self.level,
             spawn_character_data=self.spawn_character_data,
             spawn_radius=self.spawn_radius,
             spawn_deploy_delay_override=self.spawn_deploy_delay,
@@ -536,6 +624,7 @@ class RoyalDeliverySpell(Spell):
             splash_radius=self.radius,
             spawn_count=self.spawn_count,
             spawn_character=self.spawn_character,
+            spawn_level=self.level,
             spawn_character_data=self.spawn_character_data,
             spawn_radius=0.0,
             activation_delay=self.impact_delay,
@@ -619,35 +708,31 @@ class CloneSpell(Spell):
         # Find friendly troops in radius
         troops_to_clone = []
         for entity in list(battle_state.entities.values()):
-            if entity.player_id != player_id or not entity.is_alive:
+            if (
+                entity.player_id != player_id
+                or not entity.is_alive
+                or not isinstance(entity, Troop)
+                or entity.is_clone
+                or entity.card_stats is None
+            ):
                 continue
             
             distance = entity.position.distance_to(target_pos)
             if distance <= self.radius + 1e-9:
-                # Only clone troops, not buildings
-                if hasattr(entity, 'speed') and hasattr(entity, 'card_stats'):
-                    troops_to_clone.append(entity)
-                    targets_hit += 1
+                troops_to_clone.append(entity)
+                targets_hit += 1
         
         # Create clones
         for troop in troops_to_clone:
-            clone = Troop(
-                id=battle_state.next_entity_id,
-                position=Position(troop.position.x, troop.position.y),
-                player_id=player_id,
-                card_stats=troop.card_stats,
-                hitpoints=troop.hitpoints,
-                max_hitpoints=troop.max_hitpoints,
-                damage=troop.damage,
-                range=troop.range,
-                sight_range=troop.sight_range,
-                speed=troop.speed,
-                is_air_unit=troop.is_air_unit
+            battle_state._spawn_unit_at_position(
+                Position(troop.position.x, troop.position.y),
+                player_id,
+                troop.card_stats,
+                deploy_delay_override=0.0,
+                snap_to_valid=False,
+                is_clone=True,
+                clone_source=troop,
             )
-            # Mark as clone after creation
-            clone.is_clone = True
-            battle_state.entities[battle_state.next_entity_id] = clone
-            battle_state.next_entity_id += 1
         
         return targets_hit > 0
 
@@ -694,11 +779,10 @@ class RollingProjectileSpell(Spell):
     
     def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
         """Spawn rolling projectile at target position"""
-        launch_pos = self._get_launch_position(battle_state, player_id)
-        casting_distance = max(
-            launch_pos.distance_to(target_pos),
-            self.casting_min_distance,
-        )
+        # Lane rollers are thrown from MinDistance behind their placement,
+        # not from the King Tower. Native Log travels three tiles before its
+        # rolling child appears at the selected point.
+        casting_distance = self.casting_min_distance
         casting_delay = casting_distance / max(
             self.casting_speed,
             1e-9,
@@ -717,7 +801,9 @@ class RollingProjectileSpell(Spell):
             travel_speed=self.travel_speed,
             projectile_range=self.projectile_range,
             spawn_delay=casting_delay,
+            radial_knockback=True,
             spawn_character=self.spawn_character,
+            spawn_level=self.level,
             spawn_character_data=self.spawn_character_data,
             spawn_deploy_delay_override=self.spawn_deploy_delay,
             radius_y=self.radius_y,
@@ -834,6 +920,7 @@ class GraveyardSpell(Spell):
             orient_pattern_y_by_player=self.orient_pattern_y_by_player,
             spawn_deploy_delay_override=self.spawn_deploy_delay_override,
             spawn_character=self.spawn_character,
+            spawn_level=self.level,
             skeleton_data=self.skeleton_data or {
                 "hitpoints": 67,
                 "damage": 67,
@@ -861,7 +948,7 @@ class GraveyardSpell(Spell):
 ARROWS = DirectDamageSpell("Arrows", 3, radius=400.0, damage=144)
 FIREBALL = ProjectileSpell("Fireball", 4, radius=250.0, damage=572, travel_speed=logic_speed_to_tiles_per_second(600.0))
 ZAP = DirectDamageSpell("Zap", 2, radius=250.0, damage=159, stun_duration=0.5)
-LIGHTNING = DirectDamageSpell("Lightning", 6, radius=350.0, damage=864, stun_duration=0.5)
+LIGHTNING = RankedStrikeSpell("Lightning", 6, radius=3.5, damage=1057, crown_tower_damage=265)
 
 # Projectile spell speeds are serialized distance per 50 ms logic tick.
 ROCKET = ProjectileSpell("Rocket", 6, radius=2000.0/1000.0, damage=580, travel_speed=logic_speed_to_tiles_per_second(350.0))
@@ -892,7 +979,7 @@ GOBLIN_BARREL = SpawnProjectileSpell(
 # Area effect spells that stay on ground
 FREEZE = AreaEffectSpell("Freeze", 4, radius=3000.0/1000.0, damage=45, duration=4.0, freeze_effect=True)
 RAGE = BuffSpell("Rage", 2, radius=3000.0, damage=0, buff_duration=6.0, speed_multiplier=1.5, damage_multiplier=1.4)
-MIRROR = DirectDamageSpell("Mirror", 3, radius=0.0, damage=0)  # Special case - handled in battle logic
+MIRROR = MirrorSpell("Mirror", 1)  # Effective cost is resolved from accepted play history.
 POISON = DirectDamageSpell("Poison", 4, radius=3000.0, damage=78)  # Damage over time
 GRAVEYARD = GraveyardSpell("Graveyard", 5, radius=2.5, damage=0, spawn_interval=0.5, max_skeletons=20, duration=10.0)
 LOG = ProjectileSpell("Log", 2, radius=250.0, damage=240, travel_speed=logic_speed_to_tiles_per_second(1200.0))

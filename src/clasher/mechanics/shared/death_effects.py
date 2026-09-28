@@ -1,3 +1,4 @@
+import copy
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -132,6 +133,7 @@ class DeathSpawn(BaseMechanic):
             for _ in range(self.count):
                 explosive = TimedExplosive(
                     id=battle_state.next_entity_id,
+                    is_clone=getattr(entity, "is_clone", False),
                     position=Position(entity.position.x, entity.position.y),
                     player_id=entity.player_id,
                     card_stats=entity.card_stats,
@@ -194,11 +196,15 @@ class DeathSpawn(BaseMechanic):
                 self.unit_name,
                 self.unit_data,
                 elixir=0,
+                raw_overrides={"level": getattr(entity.card_stats, "level", 11)},
                 rarity=self.unit_data.get("rarity", "Common"),
             )
         if not death_spawn_stats:
             # Fall back to canonical card loader entry when raw spawn data is unavailable.
             death_spawn_stats = battle_state.card_loader.get_card(self.unit_name)
+            if death_spawn_stats is not None:
+                death_spawn_stats = copy.copy(death_spawn_stats)
+                death_spawn_stats.level = getattr(entity.card_stats, "level", 11)
         if not death_spawn_stats:
             raise ValueError(
                 f"Missing death-spawn character data for {self.unit_name}"
@@ -259,6 +265,7 @@ class DeathSpawn(BaseMechanic):
                 deploy_delay_override=max(0.0, self.deploy_time_ms / 1000.0),
                 snap_to_valid=False,
                 death_spawn=True,
+                is_clone=getattr(entity, "is_clone", False),
                 death_spawn_travel_origin=(
                     entity.position
                     if self.radial_pushback and radius > 0.0

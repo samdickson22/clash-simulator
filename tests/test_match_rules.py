@@ -303,7 +303,7 @@ def test_wide_troop_cards_respect_their_serialized_edge_tile_margin():
     assert len(hogs) == 4
 
 
-def test_cannot_deploy_non_spell_on_building_footprint():
+def test_ground_troop_deployment_relocates_around_building_footprint():
     battle = BattleState()
     player = battle.players[0]
     player.elixir = 10.0
@@ -311,7 +311,10 @@ def test_cannot_deploy_non_spell_on_building_footprint():
     player.deck = ["Cannon", "Knight"]
     player.cycle_queue = deque()
     assert battle.deploy_card(0, "Cannon", Position(9.0, 10.0))
-    assert not battle.deploy_card(0, "Knight", Position(9.0, 10.0))
+    assert battle.deploy_card(0, "Knight", Position(9.0, 10.0))
+    knight = next(e for e in battle.entities.values() if isinstance(e, Troop))
+    assert not battle.is_position_occupied_by_building(knight.position, knight.get_collision_radius())
+    assert player.elixir == 4
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
@@ -387,12 +390,14 @@ def test_elixir_phase_regen_rates():
     regular = player.elixir
     # Double
     battle.time = 120.0
+    battle.tick = 2400
     player.elixir = 0.0
     for _ in range(30):
         battle.step()
     double = player.elixir
     # Triple
     battle.time = 240.0
+    battle.tick = 4800
     player.elixir = 0.0
     for _ in range(30):
         battle.step()
@@ -484,7 +489,7 @@ def test_champion_cycles_normally_and_can_be_redeployed_while_alive():
 
 def test_sudden_death_and_tiebreaker_damage():
     battle = BattleState()
-    battle.time = 180.0
+    battle.time = 180.05
     battle._check_win_conditions()
     assert battle.sudden_death
     assert not battle.game_over
@@ -492,7 +497,7 @@ def test_sudden_death_and_tiebreaker_damage():
     # No crown change; reach the 5:00 tiebreak with uneven tower health.
     red_left = _get_tower(battle, 1, "left")
     red_left.hitpoints -= 200
-    battle.time = 300.0
+    battle.time = 300.05
     battle._check_win_conditions()
     assert battle.game_over
     assert battle.winner == 0
@@ -500,7 +505,7 @@ def test_sudden_death_and_tiebreaker_damage():
 
 def test_tiebreaker_uses_lowest_tower_hp_when_total_damage_equal():
     battle = BattleState()
-    battle.time = 300.0
+    battle.time = 300.05
 
     # Equal total damage (200 each), but player 1 has a lower minimum tower HP.
     blue_left = _get_tower(battle, 0, "left")
@@ -517,7 +522,7 @@ def test_tiebreaker_uses_lowest_tower_hp_when_total_damage_equal():
 
 def test_tiebreaker_exact_lowest_tower_health_tie_is_draw():
     battle = BattleState()
-    battle.time = 300.0
+    battle.time = 300.05
     battle._check_win_conditions()
     assert battle.game_over
     assert battle.winner is None
@@ -547,13 +552,16 @@ def test_regulation_ends_at_three_minutes_on_crown_advantage():
 
     battle.time = 180.0
     battle._check_win_conditions()
+    assert not battle.game_over
+    battle.time = 180.05
+    battle._check_win_conditions()
     assert battle.game_over
     assert battle.winner == 0
 
 
 def test_first_overtime_crown_advantage_ends_match_immediately():
     battle = BattleState()
-    battle.time = 180.0
+    battle.time = 180.05
     battle._check_win_conditions()
     assert battle.sudden_death
 
@@ -565,7 +573,7 @@ def test_first_overtime_crown_advantage_ends_match_immediately():
     assert battle.winner == 0
 
 
-def test_stun_restarts_complete_attack_cycle_and_clears_current_target_lock():
+def test_stun_preserves_ordinary_attack_clock_and_clears_target_lock():
     battle = BattleState()
     _prepare_single_card(battle, 0, "Knight")
     assert battle.deploy_card(0, "Knight", Position(9.0, 10.0))
@@ -581,7 +589,7 @@ def test_stun_restarts_complete_attack_cycle_and_clears_current_target_lock():
         if isinstance(entity, Building) and entity.player_id == 1
     )
     knight.apply_stun(0.5)
-    assert knight.attack_cooldown == knight.get_base_attack_interval_seconds()
+    assert knight.attack_cooldown == pytest.approx(0.17)
     assert knight.target_id is None
 
 
@@ -599,9 +607,15 @@ def test_slow_increases_attack_interval():
     slowed_interval = knight.get_attack_interval_seconds()
     assert slowed_interval > base_interval
 
-    knight.attack_cooldown = 1.0
-    knight._has_attacked_once = True
-    knight.update(battle.dt, battle)
+    from clasher.attack_clock import OrdinaryAttackClock
+    from clasher.ordinary_combat_clock import publish
+
+    # Seed an active hit cycle; passive loading while walking is unscaled.
+    knight._ordinary_clock = OrdinaryAttackClock(
+        1200, 700, hit_timeline_ms=200, load_remaining_ms=700,
+    )
+    publish(knight, knight._ordinary_clock)
+    knight.advance_attack_clock(battle.dt, target_in_range=True)
     # Native combat clocks truncate 50ms * 65% to 32ms of work.
     assert abs(knight.attack_cooldown - (1.0 - 0.032)) < 1e-9
 

@@ -1,4 +1,41 @@
+import json
+
+import pytest
+
 from clasher.data import CardDataLoader
+from clasher.paths import gamedata_path
+from clasher.stat_scaling import level_multiplier, scale_stat
+
+
+def test_scaling_uses_serialized_high_level_multipliers():
+    # gamedata.json Common.powerLevelMultiplier explicitly defines these
+    # values. Repeated truncation of 1.1 diverges after level 16.
+    assert scale_stat(2, level=17) == 9
+    assert scale_stat(100, level=18) == 495
+    assert scale_stat(100, level=19) == 545
+    assert scale_stat(100, level=20) == 600
+
+
+def test_all_serialized_levels_scale_integral_stats_exactly():
+    feed = json.loads(gamedata_path().read_text())
+    rarity = next(row for row in feed["items"]["rarities"] if row["name"] == "Common")
+    percentages = [100, *rarity["powerLevelMultiplier"]]
+    for level, percentage in enumerate(percentages, 1):
+        assert level_multiplier(level) == percentage / 100
+        for value in (0, 1, 2, 100, 124, 690, 1469):
+            assert scale_stat(value, level) == value * percentage // 100
+
+
+@pytest.mark.parametrize("level", [True, 1.5, "11"])
+def test_invalid_level_types_are_not_silently_coerced(level):
+    with pytest.raises(TypeError):
+        level_multiplier(level)
+
+
+@pytest.mark.parametrize("level", [0, -1, 21])
+def test_levels_outside_serialized_table_are_not_extrapolated(level):
+    with pytest.raises(ValueError):
+        level_multiplier(level)
 
 
 def test_level_multipliers_match_game_tables():
@@ -59,12 +96,18 @@ def test_current_balance_layer_updates_enabled_base_cards():
         name: loader.get_card(name).charge_speed_multiplier
         for name in ("Prince", "DarkPrince", "BattleRam")
     } == {"Prince": 200, "DarkPrince": 200, "BattleRam": 200}
-    assert loader.get_card("RoyalGhost")._raw_entry["summonCharacterData"][
-        "buffWhenNotAttackingTime"
-    ] == 2000
-    assert loader.get_card("ArcherQueen")._raw_entry["summonCharacterData"][
-        "abilityData"
-    ]["castTime"] == 933
+    assert (
+        loader.get_card("RoyalGhost")._raw_entry["summonCharacterData"][
+            "buffWhenNotAttackingTime"
+        ]
+        == 2000
+    )
+    assert (
+        loader.get_card("ArcherQueen")._raw_entry["summonCharacterData"]["abilityData"][
+            "castTime"
+        ]
+        == 933
+    )
     assert loader.get_card("Firecracker").projectile_speed == 500
     assert loader.get_card("Firecracker").sight_range == 8.0
     assert loader.get_card("InfernoDragon").projectile_start_radius == 0.45
@@ -73,7 +116,10 @@ def test_current_balance_layer_updates_enabled_base_cards():
     assert loader.get_card("Tesla").lifetime_ms == 25000
     assert loader.get_card("SpearGoblins").summon_radius == 0.8
     assert loader.get_card("DarkPrince").scaled_damage_special == 532
-    assert (loader.get_card("BattleRam").load_time, loader.get_card("BattleRam").first_hit_time) == (
+    assert (
+        loader.get_card("BattleRam").load_time,
+        loader.get_card("BattleRam").first_hit_time,
+    ) == (
         350,
         50,
     )

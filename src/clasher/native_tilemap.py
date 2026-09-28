@@ -195,3 +195,60 @@ def clamp_native_object_axis(value: float, arena_size: int) -> float:
         OUTERMOST_OBJECT_CENTER_TILES,
         min(float(arena_size) - OUTERMOST_OBJECT_CENTER_TILES, float(value)),
     )
+
+
+def recover_native_ground_position(x_units: int, y_units: int) -> tuple[int, int]:
+    """Recover an obstructed character center using LogicBattle::cf44d8.
+
+    Candidates are offsets from the current point, not snapped cell centers.
+    Row-major scanning and strict replacement preserve the native world-side
+    tie break. The distance approximation is max + floor(53 * min / 128).
+    """
+    x = max(250, min(int(x_units), STANDARD_PATH_WIDTH * 500 - 250))
+    y = max(250, min(int(y_units), STANDARD_PATH_HEIGHT * 500 - 250))
+    if not native_spawn_tile_blocked(x // 500, y // 500):
+        return x, y
+    best = (x, y)
+    best_distance = 0x7FFFFFFF
+    for dy in range(-2250, 2751, 500):
+        candidate_y = y + dy
+        if not 0 <= candidate_y < STANDARD_PATH_HEIGHT * 500:
+            continue
+        for dx in range(-2250, 2751, 500):
+            candidate_x = x + dx
+            if not 0 <= candidate_x < STANDARD_PATH_WIDTH * 500:
+                continue
+            if native_spawn_tile_blocked(candidate_x // 500, candidate_y // 500):
+                continue
+            distance = max(abs(dx), abs(dy)) + (53 * min(abs(dx), abs(dy)) >> 7)
+            if distance < best_distance:
+                best = candidate_x, candidate_y
+                best_distance = distance
+    return best
+
+
+def clip_native_ground_pressure(
+    x_units: int, y_units: int, dx_units: int, dy_units: int,
+) -> tuple[int, int]:
+    """Clip idle ground pressure against adjacent river cells.
+
+    LogicTileMap::moveObject (15.535.86, 0x115db8c) tests each axis
+    against the original half-tile cell. Positive crossings stop one logic
+    unit before the edge; negative crossings stop on the edge itself.
+    Outer arena bounds remain the caller's responsibility.
+    """
+    cell_x, cell_y = trunc_div(x_units, 500), trunc_div(y_units, 500)
+    x, y = x_units + dx_units, y_units + dy_units
+
+    def water(cx: int, cy: int) -> bool:
+        return cy in STANDARD_BLOCKED_RIVER_ROWS and native_spawn_tile_blocked(cx, cy)
+
+    if dx_units > 0 and x >= (cell_x + 1) * 500 and water(cell_x + 1, cell_y):
+        x = (cell_x + 1) * 500 - 1
+    elif dx_units < 0 and x < cell_x * 500 and water(cell_x - 1, cell_y):
+        x = cell_x * 500
+    if dy_units > 0 and y >= (cell_y + 1) * 500 and water(cell_x, cell_y + 1):
+        y = (cell_y + 1) * 500 - 1
+    elif dy_units < 0 and y < cell_y * 500 and water(cell_x, cell_y - 1):
+        y = cell_y * 500
+    return x, y

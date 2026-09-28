@@ -1,0 +1,352 @@
+{
+  "scope": "Opened reverse-seat DarkPrince/Hog/Zap command replay; verifies threshold reached without charge-hit arming.",
+  "source": "reports/calibration_development_20260915/dark-prince-opening-native/frames.json",
+  "sha256": "a9242563a5ca5c5cd6283b7465b26ef89d0d7e45cab05e2521099c5c51bc4ad0",
+  "seed": 1291101,
+  "commands": [
+    {
+      "tick": 90,
+      "owner": 1,
+      "name": "Fireball",
+      "xy": [
+        14.5,
+        18.5
+      ]
+    },
+    {
+      "tick": 120,
+      "owner": 0,
+      "name": "DarkPrince",
+      "xy": [
+        3.5,
+        13.5
+      ]
+    },
+    {
+      "tick": 120,
+      "owner": 1,
+      "name": "HogRider",
+      "xy": [
+        3.5,
+        18.5
+      ]
+    },
+    {
+      "tick": 150,
+      "owner": 0,
+      "name": "Tesla",
+      "xy": [
+        14.5,
+        13.5
+      ]
+    },
+    {
+      "tick": 180,
+      "owner": 1,
+      "name": "Skeletons",
+      "xy": [
+        14.5,
+        18.5
+      ]
+    },
+    {
+      "tick": 240,
+      "owner": 0,
+      "name": "Zap",
+      "xy": [
+        3.5,
+        8.5
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "tick": 250,
+      "charge": 6200,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 251,
+      "charge": 6400,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 252,
+      "charge": 6600,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 253,
+      "charge": 6800,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 254,
+      "charge": 7000,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 255,
+      "charge": 7200,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 256,
+      "charge": 7400,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 257,
+      "charge": 7600,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 258,
+      "charge": 7800,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 259,
+      "charge": 8000,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 260,
+      "charge": 8200,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 261,
+      "charge": 8400,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 262,
+      "charge": 8600,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 263,
+      "charge": 8800,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 264,
+      "charge": 9000,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 265,
+      "charge": 9200,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 428,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 266,
+      "charge": 9400,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 319,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 267,
+      "charge": 9600,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 319,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 268,
+      "charge": 9800,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 319,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 269,
+      "charge": 10000,
+      "timeline": 0,
+      "load": 0,
+      "hog_hp": 319,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 270,
+      "charge": 0,
+      "timeline": 1050,
+      "load": 1000,
+      "hog_hp": 319,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 271,
+      "charge": 0,
+      "timeline": 1100,
+      "load": 950,
+      "hog_hp": 319,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 272,
+      "charge": 0,
+      "timeline": 1150,
+      "load": 900,
+      "hog_hp": 319,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 273,
+      "charge": 0,
+      "timeline": 1200,
+      "load": 850,
+      "hog_hp": 319,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 274,
+      "charge": 0,
+      "timeline": 1250,
+      "load": 800,
+      "hog_hp": 319,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 275,
+      "charge": 0,
+      "timeline": 1300,
+      "load": 750,
+      "hog_hp": 319,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 276,
+      "charge": 0,
+      "timeline": 1350,
+      "load": 700,
+      "hog_hp": 319,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 277,
+      "charge": 0,
+      "timeline": 1400,
+      "load": 1000,
+      "hog_hp": 53,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 278,
+      "charge": 0,
+      "timeline": 1450,
+      "load": 950,
+      "hog_hp": 53,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 279,
+      "charge": 0,
+      "timeline": 1500,
+      "load": 900,
+      "hog_hp": 53,
+      "tower_hp": 2735
+    },
+    {
+      "tick": 280,
+      "charge": 0,
+      "timeline": 1550,
+      "load": 850,
+      "hog_hp": 53,
+      "tower_hp": 2418
+    },
+    {
+      "tick": 281,
+      "charge": 0,
+      "timeline": 1600,
+      "load": 800,
+      "hog_hp": 53,
+      "tower_hp": 2418
+    },
+    {
+      "tick": 282,
+      "charge": 0,
+      "timeline": 1650,
+      "load": 750,
+      "hog_hp": null,
+      "tower_hp": 2418
+    },
+    {
+      "tick": 283,
+      "charge": 0,
+      "timeline": 1650,
+      "load": 700,
+      "hog_hp": null,
+      "tower_hp": 2418
+    },
+    {
+      "tick": 284,
+      "charge": 0,
+      "timeline": 1650,
+      "load": 650,
+      "hog_hp": null,
+      "tower_hp": 2418
+    },
+    {
+      "tick": 285,
+      "charge": 0,
+      "timeline": 1650,
+      "load": 600,
+      "hog_hp": null,
+      "tower_hp": 2418
+    }
+  ]
+}
