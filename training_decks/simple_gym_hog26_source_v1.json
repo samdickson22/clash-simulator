@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "purpose": "Hog 2.6 mirror curriculum for the first Simple Gym policy phase",
+  "decks": [
+    {
+      "name": "Hog 2.6 Cycle",
+      "cards": [
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceGolem",
+        "IceSpirit",
+        "Musketeer",
+        "Skeletons",
+        "Log"
+      ]
+    }
+  ]
+}

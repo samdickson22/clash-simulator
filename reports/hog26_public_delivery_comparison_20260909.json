@@ -1,0 +1,105 @@
+{
+  "status": "Bounded delivery-flight route verified; complete coverage not established",
+  "actor_trace_preserved": true,
+  "cpu_delivery": {
+    "card": "GoblinBarrel",
+    "pool_active_frame_counts": {
+      "effects": 69,
+      "travel_effects": 0,
+      "death_effects": 0,
+      "triggered_effects": 0,
+      "rolling_spells": 0,
+      "payload_containers": 0,
+      "positive_buff_areas": 0
+    },
+    "primary_allocations": {
+      "projectile": 7,
+      "area": 0,
+      "direct": 7
+    },
+    "sidecar_frames": 69,
+    "rejected_frames": 0,
+    "transition_gap_frames": 0,
+    "visible_token_frame_counts": {
+      "297": 59,
+      "494": 10
+    },
+    "last_sidecar_frame_tick": 157,
+    "first_sidecar_frame": {
+      "tick": 1,
+      "tokens": [
+        297,
+        297
+      ],
+      "features": [
+        [
+          0.4948333203792572,
+          0.09028124809265137,
+          1.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.5051666498184204,
+          0.9097187519073486,
+          0.0,
+          1.0,
+          1.0,
+          0.0
+        ]
+      ]
+    }
+  },
+  "mps_delivery": {
+    "card": "GoblinBarrel",
+    "pool_active_frame_counts": {
+      "effects": 69,
+      "travel_effects": 0,
+      "death_effects": 0,
+      "triggered_effects": 0,
+      "rolling_spells": 0,
+      "payload_containers": 0,
+      "positive_buff_areas": 0
+    },
+    "primary_allocations": {
+      "projectile": 7,
+      "area": 0,
+      "direct": 7
+    },
+    "sidecar_frames": 69,
+    "rejected_frames": 0,
+    "transition_gap_frames": 0,
+    "visible_token_frame_counts": {
+      "297": 59,
+      "494": 10
+    },
+    "last_sidecar_frame_tick": 157,
+    "first_sidecar_frame": {
+      "tick": 1,
+      "tokens": [
+        297,
+        297
+      ],
+      "features": [
+        [
+          0.4948333203792572,
+          0.09028124809265137,
+          1.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.5051666498184204,
+          0.9097187519073486,
+          0.0,
+          1.0,
+          1.0,
+          0.0
+        ]
+      ]
+    }
+  },
+  "scope": "Only current carrier identity/position/affiliation emitted. Payload and landing target are not sidecar inputs. Known unmodified-runtime tower launch precision difference remains."
+}

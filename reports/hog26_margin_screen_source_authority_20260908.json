@@ -1,0 +1,9 @@
+{
+  "scope": "Temporal-screen implementation authority. Source was unchanged during its execution. Static screen preceded addition of the temporal branch; this is not exact source proof for the static run.",
+  "sources": {
+    "scripts/screen_hog26_training_family_margin.py": "ae54a20c0f2ff157246203b26f438ee0505563ce2b9d7791535e1ebf6780a214",
+    "scripts/train_hog26_actor_outcome.py": "24ca84934fdbf8c2494d23a699907c0f6865272afee0e6b761b9476c14bad04e",
+    "src/clasher/rl/outcome_model.py": "efd242ad5dbf7e31d59a387aacf17340ac402266eea1e2d6fccb252154d4496c",
+    "src/clasher/rl/temporal_margin.py": "5a4f267fab4085682d6a7311e48a8a10d0c453f25cb4498e53ec8aecf778644f"
+  }
+}

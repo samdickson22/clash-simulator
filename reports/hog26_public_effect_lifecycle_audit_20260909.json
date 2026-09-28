@@ -1,0 +1,49 @@
+{
+  "status": "Native primitive is insufficient as a public appearance/lifecycle certificate",
+  "scope": "Static and executable factory audit, not camera verification or complete-game event replay. Native area entries include both public area spells and internal direct-hit queues. Debug visualizer target markers/trails are not approved actor inputs.",
+  "records": [
+    {
+      "name": "Fireball",
+      "native_effect_primitive": 1,
+      "scalar_spell_class": "ProjectileSpell",
+      "scalar_projectiles_per_wave": 1,
+      "scalar_damage_waves": 1,
+      "scalar_wave_interval_seconds": 0.0,
+      "production_visibility_authorized": false
+    },
+    {
+      "name": "Arrows",
+      "native_effect_primitive": 2,
+      "scalar_spell_class": "ProjectileSpell",
+      "scalar_projectiles_per_wave": 10,
+      "scalar_damage_waves": 3,
+      "scalar_wave_interval_seconds": 0.2,
+      "production_visibility_authorized": false
+    },
+    {
+      "name": "Poison",
+      "native_effect_primitive": 2,
+      "scalar_spell_class": "AreaEffectSpell",
+      "scalar_projectiles_per_wave": null,
+      "scalar_damage_waves": null,
+      "scalar_wave_interval_seconds": null,
+      "production_visibility_authorized": false
+    },
+    {
+      "name": "Zap",
+      "native_effect_primitive": 2,
+      "scalar_spell_class": "DirectDamageSpell",
+      "scalar_projectiles_per_wave": null,
+      "scalar_damage_waves": null,
+      "scalar_wave_interval_seconds": null,
+      "production_visibility_authorized": false
+    }
+  ],
+  "source_sha256": {
+    "src/clasher/dynamic_spells.py": "963dacbacf563c031211dbf55120d9e9ab0bc230c46c8bb4068ee9e5e813ab95",
+    "src/clasher/spells.py": "249bbe215209a9bca48daf6ae9c4c8916a6a153ff979ddd376359f2d319a8f40",
+    "src/clasher/torch_sim/simple_catalog.py": "7b429b4bd0c6c7e10b629768303b22e953ec50a97485af03a06d4c373837cef3",
+    "src/clasher/torch_sim/simple_attack_effects.py": "d26315423d2a3575bcb2e086f15a235f4d6b275035050885bd520e964cc2c5a1",
+    "visualize_battle.py": "1ad89861d80148e65b8cdf211c1b944a9d04c60d3f55b24b53dba5e07a47ead7"
+  }
+}

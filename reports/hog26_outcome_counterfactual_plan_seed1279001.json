@@ -1,0 +1,45 @@
+{
+  "schema": "clasher.hog26.outcome-counterfactual-plan.v1",
+  "status": "predeclared-before-natural-holdout-publication",
+  "policy_checkpoint": "checkpoints/hog26_direct_constant_event_seed1263001/candidate.pt",
+  "policy_checkpoint_sha256": "f609b60b3e7b7b574e084b15255e0fc247447e3c18d8552714213ccd0c709336",
+  "required_outcome_models": 3,
+  "required_outcome_model_seeds": [1277501, 1278101, 1278102],
+  "candidate_selector": "hand-slot-spatial-stratified-v1",
+  "action_samples": 8,
+  "random_candidate_fraction": 0.25,
+  "short_horizon_steps": 24,
+  "terminal_authority": "stop-when-all-terminal",
+  "root_selection": "first-causal-public-state-in-phase-with-eight-legal-actions-v1",
+  "proposal_strategies": [
+    "balanced",
+    "bridge-pressure",
+    "reactive-defense",
+    "spell-control"
+  ],
+  "aggregate_gates": {
+    "minimum_roots": 12,
+    "minimum_roots_per_phase": 2,
+    "minimum_roots_per_seat": 3,
+    "minimum_opponent_strategies": 3,
+    "minimum_roots_per_opponent": 2,
+    "maximum_worse_terminal_outcomes": 0,
+    "minimum_pairwise_concordance": 0.65,
+    "maximum_mean_same_outcome_margin_regret": 0.1
+  },
+  "roots": [
+    {"id": "early-01", "seed": 1279001, "phase": "early", "progress": [0.05, 0.30], "warmup_steps": 1, "root_search_steps": 800, "learner_seat": 0, "opponent_strategy": "bridge-pressure", "opponent_deck": "Hog FC 2.6 Cycle"},
+    {"id": "early-02", "seed": 1279002, "phase": "early", "progress": [0.05, 0.30], "warmup_steps": 1, "root_search_steps": 800, "learner_seat": 1, "opponent_strategy": "reactive-defense", "opponent_deck": "WB Valk Log Bait 2.8"},
+    {"id": "early-03", "seed": 1279003, "phase": "early", "progress": [0.05, 0.30], "warmup_steps": 1, "root_search_steps": 800, "learner_seat": 0, "opponent_strategy": "spell-control", "opponent_deck": "Hog 2.6 (Barbarian Barrel)"},
+    {"id": "early-04", "seed": 1279004, "phase": "early", "progress": [0.05, 0.30], "warmup_steps": 1, "root_search_steps": 800, "learner_seat": 1, "opponent_strategy": "bridge-pressure", "opponent_deck": "Golem Hog Fireball 3.4"},
+    {"id": "middle-01", "seed": 1279005, "phase": "middle", "progress": [0.38, 0.62], "warmup_steps": 1, "root_search_steps": 1200, "learner_seat": 0, "opponent_strategy": "reactive-defense", "opponent_deck": "Hog FC 2.6 Cycle"},
+    {"id": "middle-02", "seed": 1279006, "phase": "middle", "progress": [0.38, 0.62], "warmup_steps": 1, "root_search_steps": 1200, "learner_seat": 1, "opponent_strategy": "spell-control", "opponent_deck": "WB Valk Log Bait 2.8"},
+    {"id": "middle-03", "seed": 1279007, "phase": "middle", "progress": [0.38, 0.62], "warmup_steps": 1, "root_search_steps": 1200, "learner_seat": 0, "opponent_strategy": "bridge-pressure", "opponent_deck": "Hog 2.6 (Barbarian Barrel)"},
+    {"id": "middle-04", "seed": 1279008, "phase": "middle", "progress": [0.38, 0.62], "warmup_steps": 1, "root_search_steps": 1200, "learner_seat": 1, "opponent_strategy": "reactive-defense", "opponent_deck": "Golem Hog Fireball 3.4"},
+    {"id": "late-01", "seed": 1279009, "phase": "late", "progress": [0.70, 0.95], "warmup_steps": 1, "root_search_steps": 2400, "learner_seat": 0, "opponent_strategy": "spell-control", "opponent_deck": "Hog FC 2.6 Cycle"},
+    {"id": "late-02", "seed": 1279010, "phase": "late", "progress": [0.70, 0.95], "warmup_steps": 1, "root_search_steps": 2400, "learner_seat": 1, "opponent_strategy": "bridge-pressure", "opponent_deck": "WB Valk Log Bait 2.8"},
+    {"id": "late-03", "seed": 1279011, "phase": "late", "progress": [0.70, 0.95], "warmup_steps": 1, "root_search_steps": 2400, "learner_seat": 0, "opponent_strategy": "reactive-defense", "opponent_deck": "Hog 2.6 (Barbarian Barrel)"},
+    {"id": "late-04", "seed": 1279012, "phase": "late", "progress": [0.70, 0.95], "warmup_steps": 1, "root_search_steps": 2400, "learner_seat": 1, "opponent_strategy": "spell-control", "opponent_deck": "Golem Hog Fireball 3.4"}
+  ],
+  "mutation_authorized": false
+}

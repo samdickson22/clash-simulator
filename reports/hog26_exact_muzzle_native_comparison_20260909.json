@@ -1,0 +1,30 @@
+{
+  "status": "Isolated exact variant passes bounded native differential checks; not promoted",
+  "reports": {
+    "legacy_cpu": "hog26_legacy_muzzle_runtime_cpu_20260909.json",
+    "exact_cpu": "hog26_exact_muzzle_runtime_cpu_20260909.json",
+    "exact_mps": "hog26_exact_muzzle_runtime_mps_20260909.json"
+  },
+  "legacy_cpu_vs_exact_cpu": {
+    "actor_observation_trace_sha256": true,
+    "sidecar_trace_sha256": true,
+    "final_native_state_sha256": true,
+    "cases": true
+  },
+  "exact_cpu_vs_exact_mps": {
+    "actor_observation_trace_sha256": true,
+    "sidecar_trace_sha256": true,
+    "final_native_state_sha256": true,
+    "cases": true
+  },
+  "semantic_tests": {
+    "passed": 5,
+    "cuda_skipped": 2,
+    "source_hot_path_check_deselected": 1
+  },
+  "scope": "Seven scripted160tick fixtures. No complete-game outcome recertification or hot-path performance/capture proof. Production physics and existing corpus authority remain unchanged. The diagnostic kernel still performs value-domain checks requiring host synchronization.",
+  "prototype_sources": {
+    "scripts/hog26_integer_muzzle_probe.py": "6ef6452c0b443861e676b0c28eb3d1c6e9949cb9ab9a077b72207a93a58f38ee",
+    "scripts/hog26_exact_allocator_variant.py": "400b0cded707cc26cd721e14a9168a51f8f04dca5b590d621c4d36b25e987374"
+  }
+}

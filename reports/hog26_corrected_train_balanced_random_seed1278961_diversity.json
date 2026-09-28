@@ -1,0 +1,1440 @@
+{
+  "all_streams_have_distinct_public_transcripts": true,
+  "corpus": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_corrected_train_balanced_random_seed1278961/corpus.npz",
+  "corpus_sha256": "38135e48f49b5aa3200ad1ab575b31da179e71e5efc6bd2010a027d03604bea5",
+  "episodes": [
+    {
+      "decisions": 532,
+      "ordinal": 0,
+      "public_transcript_sha256": "f1118509d640df7d198bce9412808b78d0a8cf0291e0aa5ff9899f65d19413fa",
+      "stream": 0
+    },
+    {
+      "decisions": 585,
+      "ordinal": 0,
+      "public_transcript_sha256": "b41d4a0d60683a12c24593e427139edcf4943b521281f3903e4b5988054467fd",
+      "stream": 1
+    },
+    {
+      "decisions": 233,
+      "ordinal": 0,
+      "public_transcript_sha256": "f524d6a828888b60ad9874a4c493596707a10657ac61a0bfb42579b38859247f",
+      "stream": 2
+    },
+    {
+      "decisions": 349,
+      "ordinal": 0,
+      "public_transcript_sha256": "20f62de766c8bd48e135550a5a0fe3cc2900e02b9a3ef83c7a01481bc488db84",
+      "stream": 3
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "7fd7c80f686eed332f79c074f37fe21e413bb9e71212a01e3daad575a24cebc3",
+      "stream": 4
+    },
+    {
+      "decisions": 449,
+      "ordinal": 0,
+      "public_transcript_sha256": "b1267705089ca65fa82660b9997a90516848ecdf131f7629a90377cc9f1c24e5",
+      "stream": 5
+    },
+    {
+      "decisions": 417,
+      "ordinal": 0,
+      "public_transcript_sha256": "1c7833b658637f705885829624589d73a8d2c82c8b2a8e7216b23f5400fd9606",
+      "stream": 6
+    },
+    {
+      "decisions": 375,
+      "ordinal": 0,
+      "public_transcript_sha256": "bcd2f39ca9c49157afca77c7c691fe9da7d492edf5bdfeed44909effcdc3e70e",
+      "stream": 7
+    },
+    {
+      "decisions": 454,
+      "ordinal": 0,
+      "public_transcript_sha256": "48b209c6ffaa69076deca48a9721622cb0c280b3630f7ddecc13138ee1385786",
+      "stream": 8
+    },
+    {
+      "decisions": 431,
+      "ordinal": 0,
+      "public_transcript_sha256": "ce91735b9239ac10eee81c29f1ba167aff7be1f8eb8b7de69ac5428b1134fda7",
+      "stream": 9
+    },
+    {
+      "decisions": 445,
+      "ordinal": 0,
+      "public_transcript_sha256": "f3f220a7411ed9a50432c32b7d63c762b8133f73b4f034ab2542c41cdfcbc7a1",
+      "stream": 10
+    },
+    {
+      "decisions": 478,
+      "ordinal": 0,
+      "public_transcript_sha256": "b629f9ca9f94cf3eb93d9ea3efbc5d1b009814d8ec9e9e150f85551cdc213040",
+      "stream": 11
+    },
+    {
+      "decisions": 428,
+      "ordinal": 0,
+      "public_transcript_sha256": "2619558b2dc289dbcca9150f92ea96b71523f2b97519953af914d7d9ea527534",
+      "stream": 12
+    },
+    {
+      "decisions": 428,
+      "ordinal": 0,
+      "public_transcript_sha256": "d0aefcdffc34806a6dacadfd04e77cb259e378e90347fddc772f04df646c9b0e",
+      "stream": 13
+    },
+    {
+      "decisions": 152,
+      "ordinal": 0,
+      "public_transcript_sha256": "52004dc11d3cae62a3c822e8ad7e31afc7d4dd8f265da4bca1ac269b984c85de",
+      "stream": 14
+    },
+    {
+      "decisions": 474,
+      "ordinal": 0,
+      "public_transcript_sha256": "0ef5dd1df3528c21c71d4500618ab7eda77545dd73ac9fb8474b2978bd9f0ba1",
+      "stream": 15
+    },
+    {
+      "decisions": 520,
+      "ordinal": 0,
+      "public_transcript_sha256": "2e9851daefe8ebe00e514fb5bbccfd9b12e8c7ca32f55932e16c8fc84d5c9306",
+      "stream": 16
+    },
+    {
+      "decisions": 413,
+      "ordinal": 0,
+      "public_transcript_sha256": "3e592ad74867a9251a132ba853de606e0b3fb0b9358716185ba6292d915ff9fa",
+      "stream": 17
+    },
+    {
+      "decisions": 182,
+      "ordinal": 0,
+      "public_transcript_sha256": "5862f828c08061a505651c5d6e30e2742e311e3eb31fd82aaaf678f115cb2e12",
+      "stream": 18
+    },
+    {
+      "decisions": 402,
+      "ordinal": 0,
+      "public_transcript_sha256": "0450fdb52f955075a6db8db3be889da019af295607f7cedc5b0c8107e35c0395",
+      "stream": 19
+    },
+    {
+      "decisions": 503,
+      "ordinal": 0,
+      "public_transcript_sha256": "5926d91575c9ed7d4abd7c8b43feb6c9da2649c6922594edb5ab77e4b2e4fd0c",
+      "stream": 20
+    },
+    {
+      "decisions": 503,
+      "ordinal": 0,
+      "public_transcript_sha256": "1f7580ef7adf2434a6129e9a921c7bbd61411dad8bd1439cd094d2fc3ad19cd5",
+      "stream": 21
+    },
+    {
+      "decisions": 171,
+      "ordinal": 0,
+      "public_transcript_sha256": "50bd2731ec6d4eb97502f9d55946156e65f3cbce51addb1bf215634bae8311d9",
+      "stream": 22
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "32e34e6e08f3bdd2a754c87e93a327e38dfa7a2894a46ff043134481527aa7fd",
+      "stream": 23
+    },
+    {
+      "decisions": 409,
+      "ordinal": 0,
+      "public_transcript_sha256": "c2677b32315900c34e618869c08a039e8e81d634d8886bc200fd3c1724921f26",
+      "stream": 24
+    },
+    {
+      "decisions": 356,
+      "ordinal": 0,
+      "public_transcript_sha256": "3a35a8f85bde26f0f94d79ccb731a3ffa0e55623b371dc211f93d9f526583947",
+      "stream": 25
+    },
+    {
+      "decisions": 413,
+      "ordinal": 0,
+      "public_transcript_sha256": "9d395ec00f00b39ab7f95e9f0649e0921500ad22c2203d0a6a742d74bc49b424",
+      "stream": 26
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "5a30de669bf9db0b05c9d8a5f7b13fe58f03db93f1b6ad239407aefb94b00d52",
+      "stream": 27
+    },
+    {
+      "decisions": 502,
+      "ordinal": 0,
+      "public_transcript_sha256": "58e82117672497a617d8d115cea8466458fa32af7e8cad0019d962069a7e2482",
+      "stream": 28
+    },
+    {
+      "decisions": 495,
+      "ordinal": 0,
+      "public_transcript_sha256": "961d5ff35a0b0c3f9d2baa8f32711bd26f3266f18c26b16c7374d25ed38f9acc",
+      "stream": 29
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "d198b09dd2d5def5b180321064ab01936a94ead569ea5bf2c87329d4e3dc45f5",
+      "stream": 30
+    },
+    {
+      "decisions": 403,
+      "ordinal": 0,
+      "public_transcript_sha256": "ae2208ba5a2fbf312ce80e35f744cf41faa1cab0223b9d2678cc4ed95499eb7a",
+      "stream": 31
+    },
+    {
+      "decisions": 603,
+      "ordinal": 0,
+      "public_transcript_sha256": "751f10df766a5277ae3990a99782836f9012407986d03f4e5d2bb1a2a71e83e1",
+      "stream": 32
+    },
+    {
+      "decisions": 603,
+      "ordinal": 0,
+      "public_transcript_sha256": "8cf927349b469df2f47233183c5be37b6b324a2d19e87dc2c14a191d63152677",
+      "stream": 33
+    },
+    {
+      "decisions": 434,
+      "ordinal": 0,
+      "public_transcript_sha256": "18af90864eaf4f96244ab6d4e071795f3dc99639a0e84e1a100eb676223b0e75",
+      "stream": 34
+    },
+    {
+      "decisions": 351,
+      "ordinal": 0,
+      "public_transcript_sha256": "7065f31bde430b6f0167a27deca076ae2188db28c2a001c0a18112fd9c3bcfec",
+      "stream": 35
+    },
+    {
+      "decisions": 370,
+      "ordinal": 0,
+      "public_transcript_sha256": "e5a78d56ee1e570eff046f635283ed44e9c6f4dcf1c9e8d57558ab48d303f072",
+      "stream": 36
+    },
+    {
+      "decisions": 366,
+      "ordinal": 0,
+      "public_transcript_sha256": "b1c1592f4bdfa7362969bd94f1c573fed76ceae170ab38bb8dd87c844f32233e",
+      "stream": 37
+    },
+    {
+      "decisions": 435,
+      "ordinal": 0,
+      "public_transcript_sha256": "de80ed23bfb6e15144fcf9645c27af8e90b6e244ba69d4770e148fae299cf3d6",
+      "stream": 38
+    },
+    {
+      "decisions": 489,
+      "ordinal": 0,
+      "public_transcript_sha256": "c61518531374a5a63a6bcde9bbb44f33d955dd03ec64f98403764d17db8fe640",
+      "stream": 39
+    },
+    {
+      "decisions": 418,
+      "ordinal": 0,
+      "public_transcript_sha256": "a491415738953b3103f44acc9246a923d59a32bf720de6b917b5f98bbef2410f",
+      "stream": 40
+    },
+    {
+      "decisions": 420,
+      "ordinal": 0,
+      "public_transcript_sha256": "fe3641e986a6b31aeaf649fb8da21e908cdf4f84a407bb95227f7fb58ec348f2",
+      "stream": 41
+    },
+    {
+      "decisions": 346,
+      "ordinal": 0,
+      "public_transcript_sha256": "6fa808039b75c03fe5cc837d9beb7374a496f51459b74a20ed1f671177320ec9",
+      "stream": 42
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "07caee3f3934a0e3dd12b3ff1de33751ba08e5e80dd9dc6399497b7a1dfd03cf",
+      "stream": 43
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "2fbcd156b150f50937bfaf07f2ecbb8d4a0d3a9cf624690cd96740973d2e73d1",
+      "stream": 44
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "36dcfa9f61741defad3f52f5c5f74efb26364dbe851542925efcf1e521e55ed7",
+      "stream": 45
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "12e129d6d518529d0a5f6385116b8a5f80cb4f81fa97880216f6b42f6b2f86aa",
+      "stream": 46
+    },
+    {
+      "decisions": 378,
+      "ordinal": 0,
+      "public_transcript_sha256": "d7134925245a4685a813db5edf51c9708248ec2d1c5486429b55e20bdca5f718",
+      "stream": 47
+    },
+    {
+      "decisions": 440,
+      "ordinal": 0,
+      "public_transcript_sha256": "bb570f1c50bd9f0b920795ac0994850af2b43040799bbd493a357aa4794467ba",
+      "stream": 48
+    },
+    {
+      "decisions": 442,
+      "ordinal": 0,
+      "public_transcript_sha256": "84c75d750d76b5dc72e6743883bc1dd58bfbe7e43a1c53f4de5868586d0ed91b",
+      "stream": 49
+    },
+    {
+      "decisions": 412,
+      "ordinal": 0,
+      "public_transcript_sha256": "20c92875cfe87fe8baba458523a014d87caae9646e0d9b22ec0f3d3b0f9ec3fe",
+      "stream": 50
+    },
+    {
+      "decisions": 434,
+      "ordinal": 0,
+      "public_transcript_sha256": "1c6a9641aec78873dc55a839607c2e0965646059518fcb8532b54e0e830fdfa2",
+      "stream": 51
+    },
+    {
+      "decisions": 673,
+      "ordinal": 0,
+      "public_transcript_sha256": "bb7c4c01c221b1d7c81f7a793965b992227a3b26ca5437fc5302db9d2a1cc4d5",
+      "stream": 52
+    },
+    {
+      "decisions": 669,
+      "ordinal": 0,
+      "public_transcript_sha256": "e1db43737d00b7777c2d31e89fd45f5081bb73cafda0c572832b6c8baae2f2e6",
+      "stream": 53
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "a4842fdc7582bb67749f2356d84d53bf4f76df653932c164f9e4bffc371f80a2",
+      "stream": 54
+    },
+    {
+      "decisions": 535,
+      "ordinal": 0,
+      "public_transcript_sha256": "5e11fe125a6f9fff339d47aefb886c3bd84d4e180fe000f4bc2028c3bba82585",
+      "stream": 55
+    },
+    {
+      "decisions": 561,
+      "ordinal": 0,
+      "public_transcript_sha256": "ccf462a5d94e54133ff757902cd25e4c7d172bf28aef43de5b9a024aa2496de6",
+      "stream": 56
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "ca2ca28d824f6f6b8b5e8f77e4c824f196fbd6435e40d9ccaa9c4fd35fcbf98c",
+      "stream": 57
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "47fd6f2db3c54dc10bc6e89c0afa072fd60e0444bec4e171d7a6f14ff3cdef10",
+      "stream": 58
+    },
+    {
+      "decisions": 471,
+      "ordinal": 0,
+      "public_transcript_sha256": "a7fa7281c62ef444c3614030f00153556d6057a28541c6d54598715d357b82c1",
+      "stream": 59
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "e076f81848af6f7a7124613d661fa918e530539b359b705e6d42909b60773d7b",
+      "stream": 60
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "5d566b30fe9dcbde4339a45db9ad59590c3a549638c06fa9d65ccaf6a35afc58",
+      "stream": 61
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "f3fa1ec02bb8a2f899999fa9fea313b087607456a7eb928d486e2b2e2f1daf6b",
+      "stream": 62
+    },
+    {
+      "decisions": 480,
+      "ordinal": 0,
+      "public_transcript_sha256": "012f2b3836f79bb515dc2e24e8e722a657edc6503da04fee128f34e30868ef9a",
+      "stream": 63
+    },
+    {
+      "decisions": 488,
+      "ordinal": 0,
+      "public_transcript_sha256": "76382721ed8e7ce76053bb792012f31226c842b6e22ccb71ed1eb73d04027c21",
+      "stream": 64
+    },
+    {
+      "decisions": 507,
+      "ordinal": 0,
+      "public_transcript_sha256": "fa52b7634f671fa2d931fd50cc041b29e3479b91a8e867833abdc31478619550",
+      "stream": 65
+    },
+    {
+      "decisions": 495,
+      "ordinal": 0,
+      "public_transcript_sha256": "a19391b59d32720e1f1e5e5f752ed793981b090cb31a1c33cbc18307735fcfec",
+      "stream": 66
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "00721cfea463e13e479b02385b5890cffc9dbe8a513736b57ae8f0cecea9a10d",
+      "stream": 67
+    },
+    {
+      "decisions": 604,
+      "ordinal": 0,
+      "public_transcript_sha256": "68e373cebfd95000532a49787b0b31612508e5ffae5df3f4861bdd6eacd96148",
+      "stream": 68
+    },
+    {
+      "decisions": 604,
+      "ordinal": 0,
+      "public_transcript_sha256": "fa5489c2df22facfac8d433bf3ec43ae13349ac1e7915aa80e02a4418143c202",
+      "stream": 69
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "703943b28bab42c8886a1efcc39b2999d09d979db0be30aedd5de6b16eb6adde",
+      "stream": 70
+    },
+    {
+      "decisions": 522,
+      "ordinal": 0,
+      "public_transcript_sha256": "37508d237ad04c5f7133c60a7ecd3d1b02e02c99e95567ccef5e2aed65358bc3",
+      "stream": 71
+    },
+    {
+      "decisions": 537,
+      "ordinal": 0,
+      "public_transcript_sha256": "8c7e92371ca51bf422a89601195fdc4aa75b15dafcb321bdfec502f6ceefef58",
+      "stream": 72
+    },
+    {
+      "decisions": 537,
+      "ordinal": 0,
+      "public_transcript_sha256": "66fd2c47bc139d8212766ac832c338086f4aa3188fd87bbaf44399c040286410",
+      "stream": 73
+    },
+    {
+      "decisions": 412,
+      "ordinal": 0,
+      "public_transcript_sha256": "991d09db25d3bb471a8b053bd0e8e1f053faed59dd151fb1058d1a1afb6846d1",
+      "stream": 74
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "b236a82acea0fc448cc28f1f80c5faa99d75cfe625bf37aa07fc5bef3c8d73d2",
+      "stream": 75
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "80df18b5ecb159de73191f896d42895924db15f56840c2b9abc66694fdaafcdd",
+      "stream": 76
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "dd0110944b2fc1a7afe3ddd119ac45161a84e860c5702c5667f8aa1c225b070d",
+      "stream": 77
+    },
+    {
+      "decisions": 449,
+      "ordinal": 0,
+      "public_transcript_sha256": "62a622cd2b3ad7ed5803a31ee067c316449cf0e30f54952bbe61d6f6e544296a",
+      "stream": 78
+    },
+    {
+      "decisions": 335,
+      "ordinal": 0,
+      "public_transcript_sha256": "17ce637e12a42b653442ba28045b4668e63a575264d77698647bbd8b92b0bee4",
+      "stream": 79
+    },
+    {
+      "decisions": 476,
+      "ordinal": 0,
+      "public_transcript_sha256": "2c5fd81c0c91e088b921f0ad7f267dee616beac48a86fad86689fbe26ba4c0ea",
+      "stream": 80
+    },
+    {
+      "decisions": 415,
+      "ordinal": 0,
+      "public_transcript_sha256": "8d7f46d3f86e0ef5361128e8a2f288c4582fd0393ccadf3bb4819106ad8b63b1",
+      "stream": 81
+    },
+    {
+      "decisions": 400,
+      "ordinal": 0,
+      "public_transcript_sha256": "36efe2cdf78adba1088829ffc75cc68d91f8ef90cd5a9715186efcc29f8da3c0",
+      "stream": 82
+    },
+    {
+      "decisions": 366,
+      "ordinal": 0,
+      "public_transcript_sha256": "caa4ad82e9fded4cdd78c120b41c75202febddf5297811b86beb20a0f59c00f9",
+      "stream": 83
+    },
+    {
+      "decisions": 412,
+      "ordinal": 0,
+      "public_transcript_sha256": "36fc3c5f5b5ae92c65e3e21f44893fb1f14efa73f63203bacaea225c90dfe014",
+      "stream": 84
+    },
+    {
+      "decisions": 412,
+      "ordinal": 0,
+      "public_transcript_sha256": "d86d919f8eea5f89a98ef3eef20a598bee87481318e8a66314007e88b135a325",
+      "stream": 85
+    },
+    {
+      "decisions": 547,
+      "ordinal": 0,
+      "public_transcript_sha256": "17d8b1f3dc09cc4c71535e65c98d13bdc8e8a073d9efa73690a89ebeeeb3500b",
+      "stream": 86
+    },
+    {
+      "decisions": 580,
+      "ordinal": 0,
+      "public_transcript_sha256": "7f348909e06e3702e058cf469c14d4793552b31e69079fab2760c41cc85c7a26",
+      "stream": 87
+    },
+    {
+      "decisions": 449,
+      "ordinal": 0,
+      "public_transcript_sha256": "76e2f0a3af037db2c15d5e1f30af42596740575acbdd5cb19209003d5ce51d2d",
+      "stream": 88
+    },
+    {
+      "decisions": 376,
+      "ordinal": 0,
+      "public_transcript_sha256": "a3f6a1402f11cc8f13e9a496014df8f2a2ee9212ad45ab60f2b5cbcfb3b61514",
+      "stream": 89
+    },
+    {
+      "decisions": 151,
+      "ordinal": 0,
+      "public_transcript_sha256": "c21140f89545ac027810d305b10f69739f0d6eae7a545a201ba9193194caf42b",
+      "stream": 90
+    },
+    {
+      "decisions": 420,
+      "ordinal": 0,
+      "public_transcript_sha256": "96b63e056aea8ec4655d17884de4d5d1cd53a8fad81d0e869b9f37b950ed1c5d",
+      "stream": 91
+    },
+    {
+      "decisions": 577,
+      "ordinal": 0,
+      "public_transcript_sha256": "f22fa07d3c4832193f9514b4680b0dc3a11ef096e465619c787128d0b436cbc4",
+      "stream": 92
+    },
+    {
+      "decisions": 577,
+      "ordinal": 0,
+      "public_transcript_sha256": "c45d2d7204e9e9f8245de9465102183498502adf5b93782209e8446f50b73f4a",
+      "stream": 93
+    },
+    {
+      "decisions": 396,
+      "ordinal": 0,
+      "public_transcript_sha256": "1756c3307bfe7fab4778492671b2e742e5816307d53a2224c49cf9230bd230a8",
+      "stream": 94
+    },
+    {
+      "decisions": 362,
+      "ordinal": 0,
+      "public_transcript_sha256": "a50542144ac6d2e9e0bbfb25641ce59158d0019d14e065c5bee0d9faf692f049",
+      "stream": 95
+    },
+    {
+      "decisions": 482,
+      "ordinal": 0,
+      "public_transcript_sha256": "a62b64c9306cdb6bb26835eb46b49cbd9a0df8dfcdb475484642ecfccac55bf1",
+      "stream": 96
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "64bfddded3db00b66e7d72f57b0e9e461b748103ad49b0a1eaa77d84c6330e65",
+      "stream": 97
+    },
+    {
+      "decisions": 347,
+      "ordinal": 0,
+      "public_transcript_sha256": "b9f30a0e2b31302ee74c95bdef71737eaa65a641c5115ffd7ed01c277832268d",
+      "stream": 98
+    },
+    {
+      "decisions": 161,
+      "ordinal": 0,
+      "public_transcript_sha256": "e00096f89737ea16cd605ee682b713c60002dce0c37f407214e3b8869978f447",
+      "stream": 99
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "b32ba304685658dffb752501ae6c8e7f59e23d2d8dceaa2c3a17df265a1646e1",
+      "stream": 100
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "94e63b786c3503621a1d68602dc7d39d2ec039ad39af9b7017c003869c363e4a",
+      "stream": 101
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "50d2cda670ed046c66c8a38f629fad968c0bf0330c4c1ff4f70bd96b6ec64d69",
+      "stream": 102
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "00f511e6a6105b89c3fe8753b9deccaf65dd81e9d53cb008f01e8e4b15aecd2d",
+      "stream": 103
+    },
+    {
+      "decisions": 497,
+      "ordinal": 0,
+      "public_transcript_sha256": "4776f984d68253a5e6a4feb4e4bc6a021ffe44a78bd09c9d3a1edc7e650542ac",
+      "stream": 104
+    },
+    {
+      "decisions": 497,
+      "ordinal": 0,
+      "public_transcript_sha256": "1924455670d460a8a1b8f5b202225be72accea3e508bed6ee25423ddc0c9afeb",
+      "stream": 105
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "e8c442c067d7f73fd1f1c10c52fd3abff75a57537118a9a5aef474d136108963",
+      "stream": 106
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "63b59541f2aba5558bbb44ccad1aac5da9f677395c22836bf0991d86a90c0206",
+      "stream": 107
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "d4cf286859442e8942a954f57b0f5c7085f322f010e0574b83745defdd1a85d4",
+      "stream": 108
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "52bda5b01c87672e50cfaffd7394f814c6ea56265fd27a7d710c1a03cdf9d502",
+      "stream": 109
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "34170c430d9e20e58d7a98c0f18b02c36e404f637c6a833dec24ce8e0f6119fc",
+      "stream": 110
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "08f53f3dd1db1df62da00b8b8891ff0e19d2c20dd86a21d3ae56f0f829c61934",
+      "stream": 111
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "1b4af7037b116ed0faf50a1e8de25f3a63524125e1f83b081f28123e59982678",
+      "stream": 112
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "a6dc7851484c09fde1bb9f7b3a11350472c5b38aeb91576c8e881a915104bb12",
+      "stream": 113
+    },
+    {
+      "decisions": 438,
+      "ordinal": 0,
+      "public_transcript_sha256": "45652fe72d3127c312554825a5f50f62194c6f9e0fd66d8e816436ae2dd3c5f0",
+      "stream": 114
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "cf8f90c2507495a1179db83c9c8bda5dc0730353511014704d1bd04197840a9f",
+      "stream": 115
+    },
+    {
+      "decisions": 177,
+      "ordinal": 0,
+      "public_transcript_sha256": "144c913cb655104a2189be9078594c14d941be5c5fa2a91d4bff624a0d72aed5",
+      "stream": 116
+    },
+    {
+      "decisions": 177,
+      "ordinal": 0,
+      "public_transcript_sha256": "517b85e23ca92deec7c7a0fff3e8a8d7f9e30c37ee268f5909aad54a7d94d7a0",
+      "stream": 117
+    },
+    {
+      "decisions": 457,
+      "ordinal": 0,
+      "public_transcript_sha256": "b9269a455f7a56c4beadd5bfbb94febe94e505af75315519d607e2e652d221da",
+      "stream": 118
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "5d89ace6253510fb60c7447559314f1c4bc797d4e156b1da83b4b2cbd0d10dab",
+      "stream": 119
+    },
+    {
+      "decisions": 687,
+      "ordinal": 0,
+      "public_transcript_sha256": "a758a658ec07998a00af6e0529f94fe35d65d83ecefa581f97e92f254e378e19",
+      "stream": 120
+    },
+    {
+      "decisions": 617,
+      "ordinal": 0,
+      "public_transcript_sha256": "ee9f4020f12e451489470343766f9cc33c7142165ce539f1cfe54866bf745fb1",
+      "stream": 121
+    },
+    {
+      "decisions": 145,
+      "ordinal": 0,
+      "public_transcript_sha256": "a1fc40e8d346dc98897ff797172888dbbae89f398cfad5b7a11a3c42ae989afd",
+      "stream": 122
+    },
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "0c6f46add29c761aee974ca761e8098a19dccdac9bcadab456065fdf4a0cb068",
+      "stream": 123
+    },
+    {
+      "decisions": 582,
+      "ordinal": 0,
+      "public_transcript_sha256": "923f2ccb5054da7ad401544b894e7ccc1467a05d496205e8432577b5a1b567c6",
+      "stream": 124
+    },
+    {
+      "decisions": 582,
+      "ordinal": 0,
+      "public_transcript_sha256": "b216eeb77b0c06df7ccc6bc5d450422beffc524e3125defc0ada063c510e4ffa",
+      "stream": 125
+    },
+    {
+      "decisions": 215,
+      "ordinal": 0,
+      "public_transcript_sha256": "5493780971c65abef7c4f81e1dc905c50cb2fd91879de4110622354163b307a2",
+      "stream": 126
+    },
+    {
+      "decisions": 174,
+      "ordinal": 0,
+      "public_transcript_sha256": "7403d4f44180bb639922e2f933bb5589c510ced5649655feaac3c7c090c2efaf",
+      "stream": 127
+    }
+  ],
+  "fields": [
+    "entity_ids",
+    "entity_features",
+    "entity_mask",
+    "hand_ids",
+    "global_features",
+    "actions"
+  ],
+  "limitation": "One retained game per stream. Within-stream uniqueness is vacuous; opening reconstruction and paired scenario grouping remain required.",
+  "role": "corrected-fitting-corpus-diversity-audit",
+  "schema": "clasher.public-episode-diversity.v1",
+  "scope": "exact public trajectory diversity; not a statistical independence or model acceptance certificate",
+  "streams": [
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 0
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 1
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 2
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 3
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 4
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 5
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 6
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 7
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 8
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 9
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 10
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 11
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 12
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 13
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 14
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 15
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 16
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 17
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 18
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 19
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 20
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 21
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 22
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 23
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 24
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 25
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 26
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 27
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 28
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 29
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 30
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 31
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 32
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 33
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 34
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 35
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 36
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 37
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 38
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 39
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 40
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 41
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 42
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 43
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 44
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 45
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 46
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 47
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 48
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 49
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 50
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 51
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 52
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 53
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 54
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 55
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 56
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 57
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 58
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 59
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 60
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 61
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 62
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 63
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 64
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 65
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 66
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 67
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 68
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 69
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 70
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 71
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 72
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 73
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 74
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 75
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 76
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 77
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 78
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 79
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 80
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 81
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 82
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 83
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 84
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 85
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 86
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 87
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 88
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 89
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 90
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 91
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 92
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 93
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 94
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 95
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 96
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 97
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 98
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 99
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 100
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 101
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 102
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 103
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 104
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 105
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 106
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 107
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 108
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 109
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 110
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 111
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 112
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 113
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 114
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 115
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 116
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 117
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 118
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 119
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 120
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 121
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 122
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 123
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 124
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 125
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 126
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 127
+    }
+  ],
+  "style_diversity": {
+    "balanced": {
+      "distinct_public_transcripts": 64,
+      "episodes": 64
+    },
+    "random": {
+      "distinct_public_transcripts": 64,
+      "episodes": 64
+    }
+  },
+  "within_stream_opening_diversity_assessable": false
+}

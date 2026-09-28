@@ -1,0 +1,23 @@
+{
+  "scope": "synthetic feasibility only; no corpus or outcome training",
+  "shape": {
+    "batch_games": 2,
+    "decisions": 750,
+    "entities": 128
+  },
+  "device": "cpu",
+  "threads": 1,
+  "torch": "2.10.0",
+  "dtype": "float32",
+  "bptt": "full-game; no detach or truncation",
+  "global_parameters": 2339,
+  "entity_parameters": 116900,
+  "synthetic_generation_seconds": 0.013920666999183595,
+  "forward_including_optimizer_setup_seconds": 0.7654907499672845,
+  "backward_optimizer_seconds": 0.40337087505031377,
+  "total_seconds": 1.1827822920167819,
+  "peak_process_rss_bytes": 1337999360,
+  "gradient_norm": 32.167686462402344,
+  "loss": 1.9059364795684814,
+  "finite_gradients": true
+}

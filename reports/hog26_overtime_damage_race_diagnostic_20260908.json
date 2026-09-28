@@ -1,0 +1,67 @@
+{
+  "plan": {
+    "window_decisions": 20,
+    "scope": "Fixed public-history overtime diagnostic on completed training corpora only. No fitting, parameter sweep, or candidate promotion. Assumes recent tower damage rates persist until first tower loss or clock expiry."
+  },
+  "representative_overall": {
+    "rows": 797,
+    "baseline_mae": 0.22343604266643524,
+    "mae": 0.22197574377059937,
+    "mae_improvement": 0.0014602988958358765
+  },
+  "representative_by_phase": {
+    "early": {
+      "rows": 384,
+      "baseline_mae": 0.3013068735599518,
+      "mae": 0.3013068735599518,
+      "mae_improvement": 0.0
+    },
+    "middle": {
+      "rows": 361,
+      "baseline_mae": 0.1623026728630066,
+      "mae": 0.1623026728630066,
+      "mae_improvement": 0.0
+    },
+    "late": {
+      "rows": 52,
+      "baseline_mae": 0.07279641926288605,
+      "mae": 0.05041453614830971,
+      "mae_improvement": 0.02238188311457634
+    }
+  },
+  "full_phase": {
+    "early": {
+      "games": 384,
+      "rows": 94342,
+      "mae": 0.29271759854358,
+      "baseline_mae": 0.29271759854358,
+      "mae_improvement": 0.0
+    },
+    "middle": {
+      "games": 361,
+      "rows": 67469,
+      "mae": 0.1810848439883678,
+      "baseline_mae": 0.1812570360385996,
+      "mae_improvement": 0.00017219205023179094
+    },
+    "late": {
+      "games": 52,
+      "rows": 5789,
+      "mae": 0.09778086769354279,
+      "baseline_mae": 0.1153338390465181,
+      "mae_improvement": 0.017552971352975313
+    }
+  },
+  "late_endpoint": {
+    "rows": 32,
+    "baseline_mae": 0.011623622849583626,
+    "mae": 0.003912318963557482,
+    "mae_improvement": 0.007711303886026144
+  },
+  "late_nonendpoint": {
+    "rows": 20,
+    "baseline_mae": 0.17067289352416992,
+    "mae": 0.12481807172298431,
+    "mae_improvement": 0.04585482180118561
+  }
+}

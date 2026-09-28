@@ -1,0 +1,58 @@
+{
+  "schema": "clasher.hog26.training-family-margin-screen.v1",
+  "purpose": "Diagnose output suppression versus public representation using complete training games only. No candidate promotion or policy learning.",
+  "corpus": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
+  "corpus_sha256": "7edd615cfe63400bd64644b6be7d26dbd9532fca00f05bebfb3e29d7e7849a3f",
+  "protocol": "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json",
+  "held_out_training_families": [
+    [
+      "family-000",
+      "family-001"
+    ],
+    [
+      "family-002",
+      "family-003"
+    ],
+    [
+      "family-004",
+      "family-005"
+    ],
+    [
+      "family-006",
+      "family-007"
+    ]
+  ],
+  "margin_feature_sets": [
+    "full-state"
+  ],
+  "margin_progress_powers": [
+    0.0,
+    1.0
+  ],
+  "seeds": [
+    1278901,
+    1278902
+  ],
+  "hidden_size": 16,
+  "epochs": 30,
+  "batch_size": 512,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.0001,
+  "margin_residual_scale": 0.5,
+  "loss": "Absolute error with unchanged episode/reached-phase weights",
+  "epoch_selection": "Fixed final epoch; no tuning to held-out training-fold labels.",
+  "evaluation": "All out-of-fold phase representative predictions retained. Report pooled and per-fold/phase/seat/style gains, training fit and correction magnitude. Do not choose a model from an aggregate concealing late regressions.",
+  "decision_rule": "A candidate is plausible only if both seeds improve pooled out-of-fold MAE by at least 0.005 and each phase has no more than 0.01 regression. Any failing fold is reported. This screen cannot establish final acceptance, recurrence sufficiency or late coverage. If no variant qualifies, do not select the least-bad variant.",
+  "output": "reports/hog26_spatial_mechanics_balanced_random_full_20260908.json",
+  "device": "cpu",
+  "torch_threads": 1,
+  "margin_loss": "absolute",
+  "screen_source_sha256": "8e89d2b6d0cf08d6d1884a72a8d5af5cd9619d547202264f4828fdbadfca714a",
+  "paired_huber_report": "reports/hog26_margin_family_screen_20260908.json",
+  "comparison": "Paired spatial-mechanics input versus a zeroed added-feature block, retaining identical feature dimension, head shape, initial seed, optimizer, loss, fitting weights, epoch budget and whole-family folds. Both public spatial moments and visible counts are ablated together. No development or final labels.",
+  "aggregate_phase_balance": true,
+  "paired_equal_episode_report": "reports/hog26_margin_family_screen_absolute_20260908.json",
+  "actor_feature_set": "spatial-mechanics",
+  "zero_spatial_mechanics": false,
+  "feature_source_sha256": "be7546765ffae9d2f1ab6937aefc53f1fc69ff6f5f77db2f64c7a6562f0a7427"
+}

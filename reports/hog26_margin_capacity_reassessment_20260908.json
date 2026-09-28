@@ -1,0 +1,167 @@
+{
+  "interpretation": "Oracle bounds only, not learned performance; no development or holdout labels read.",
+  "samples": {
+    "all_retained_rows": {
+      "early": {
+        "current_margin_mae": 0.30068451166152954,
+        "power_bounds": {
+          "0": {
+            "fraction_target_outside_cap": 0.17500940910801657,
+            "oracle_max_mae_improvement": 0.2821803092956543
+          },
+          "1": {
+            "fraction_target_outside_cap": 0.28421778948688997,
+            "oracle_max_mae_improvement": 0.2604213356971741
+          },
+          "2": {
+            "fraction_target_outside_cap": 0.38088069251035,
+            "oracle_max_mae_improvement": 0.23488472402095795
+          },
+          "4": {
+            "fraction_target_outside_cap": 0.5186613975661774,
+            "oracle_max_mae_improvement": 0.1878870129585266
+          },
+          "6": {
+            "fraction_target_outside_cap": 0.6293438715343119,
+            "oracle_max_mae_improvement": 0.15138447284698486
+          }
+        },
+        "rows": 31884
+      },
+      "late": {
+        "current_margin_mae": 0.18244798481464386,
+        "power_bounds": {
+          "0": {
+            "fraction_target_outside_cap": 0.0,
+            "oracle_max_mae_improvement": 0.18244798481464386
+          },
+          "1": {
+            "fraction_target_outside_cap": 0.6537396121883656,
+            "oracle_max_mae_improvement": 0.07607849687337875
+          },
+          "2": {
+            "fraction_target_outside_cap": 0.806786703601108,
+            "oracle_max_mae_improvement": 0.024295249953866005
+          },
+          "4": {
+            "fraction_target_outside_cap": 0.9916897506925207,
+            "oracle_max_mae_improvement": 0.0022480410989373922
+          },
+          "6": {
+            "fraction_target_outside_cap": 0.9986149584487535,
+            "oracle_max_mae_improvement": 0.00019754494132939726
+          }
+        },
+        "rows": 1444
+      },
+      "middle": {
+        "current_margin_mae": 0.19177652895450592,
+        "power_bounds": {
+          "0": {
+            "fraction_target_outside_cap": 0.04441670357991383,
+            "oracle_max_mae_improvement": 0.1876944899559021
+          },
+          "1": {
+            "fraction_target_outside_cap": 0.2845407320903636,
+            "oracle_max_mae_improvement": 0.1567498743534088
+          },
+          "2": {
+            "fraction_target_outside_cap": 0.5358595417388153,
+            "oracle_max_mae_improvement": 0.10832206904888153
+          },
+          "4": {
+            "fraction_target_outside_cap": 0.8324407039020658,
+            "oracle_max_mae_improvement": 0.04141632840037346
+          },
+          "6": {
+            "fraction_target_outside_cap": 0.932710506181291,
+            "oracle_max_mae_improvement": 0.01475908886641264
+          }
+        },
+        "rows": 24833
+      }
+    },
+    "trainer_phase_representatives": {
+      "early": {
+        "current_margin_mae": 0.3133988082408905,
+        "power_bounds": {
+          "0": {
+            "fraction_target_outside_cap": 0.2265625,
+            "oracle_max_mae_improvement": 0.29007676243782043
+          },
+          "1": {
+            "fraction_target_outside_cap": 0.2890625,
+            "oracle_max_mae_improvement": 0.2683972120285034
+          },
+          "2": {
+            "fraction_target_outside_cap": 0.4296875,
+            "oracle_max_mae_improvement": 0.24372388422489166
+          },
+          "4": {
+            "fraction_target_outside_cap": 0.5703125,
+            "oracle_max_mae_improvement": 0.18983832001686096
+          },
+          "6": {
+            "fraction_target_outside_cap": 0.671875,
+            "oracle_max_mae_improvement": 0.14273199439048767
+          }
+        },
+        "rows": 128
+      },
+      "late": {
+        "current_margin_mae": 0.07924902439117432,
+        "power_bounds": {
+          "0": {
+            "fraction_target_outside_cap": 0.0,
+            "oracle_max_mae_improvement": 0.07924902439117432
+          },
+          "1": {
+            "fraction_target_outside_cap": 0.2857142857142857,
+            "oracle_max_mae_improvement": 0.030958151444792747
+          },
+          "2": {
+            "fraction_target_outside_cap": 0.2857142857142857,
+            "oracle_max_mae_improvement": 0.011116881854832172
+          },
+          "4": {
+            "fraction_target_outside_cap": 0.9285714285714286,
+            "oracle_max_mae_improvement": 0.0019699300173670053
+          },
+          "6": {
+            "fraction_target_outside_cap": 1.0,
+            "oracle_max_mae_improvement": 0.0001533263857709244
+          }
+        },
+        "rows": 14
+      },
+      "middle": {
+        "current_margin_mae": 0.1705641895532608,
+        "power_bounds": {
+          "0": {
+            "fraction_target_outside_cap": 0.023809523809523808,
+            "oracle_max_mae_improvement": 0.17032800614833832
+          },
+          "1": {
+            "fraction_target_outside_cap": 0.2777777777777778,
+            "oracle_max_mae_improvement": 0.1414080262184143
+          },
+          "2": {
+            "fraction_target_outside_cap": 0.5238095238095238,
+            "oracle_max_mae_improvement": 0.09078791737556458
+          },
+          "4": {
+            "fraction_target_outside_cap": 0.8571428571428571,
+            "oracle_max_mae_improvement": 0.028954381123185158
+          },
+          "6": {
+            "fraction_target_outside_cap": 0.9523809523809523,
+            "oracle_max_mae_improvement": 0.007688411511480808
+          }
+        },
+        "rows": 126
+      }
+    }
+  },
+  "sha256": "7edd615cfe63400bd64644b6be7d26dbd9532fca00f05bebfb3e29d7e7849a3f",
+  "source": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz"
+}

@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "source_authority_sha256": "9de069399d79f7741e8087fc52ddd565b65eddfd20c2e8547de28652674008a4",
+  "evidence": {
+    "datasets/derived/hog26_scaling_preflight_20260912/complete.json": "66d076cf73b43425a087f409fb49fc1776476f3647f45f928b06f6c78952291e",
+    "reports/hog26_scaling_preflight_resume_20260912.log": "c6c22c57a4fc38da1b4641c52a7130416067c14178e475231d9ae7f5ca2d2763",
+    "reports/hog26_scaling_tests_20260912.log": "b13b42a2e6a54cef7a9a5163916c8e255cf6c3056950ac243af9babbce447db8",
+    "reports/hog26_data_scaling_memory_20260912.json": "e40e76580bbbcc0c63a1bfe9cd2b28b9be1f039ccc6b973bbc8cfa4752793ac2",
+    "reports/hog26_scaling_compact_loader_20260912.json": "4fc67a113da3c4835c0cafcd007d438247a12651fae0647d56441985051946ce",
+    "reports/hog26_data_scaling_draft_20260912.json": "451e9c01ed62ef10af75d973216dc52b6483992ed2fe81854c8fc74ee6fb8d1a",
+    "reports/hog26_scalar_pilot_comparison_plan_20260911.json": "72697f6e56cf9bae9145a0fc4b73764c1e9a01f0d2c43b0a238e550fa5c5d9cb"
+  },
+  "checks": {
+    "preflight_games": 12,
+    "tests": 11,
+    "source_unchanged": true,
+    "reserved_roles_unchanged": true,
+    "new_scenarios_disjoint": true,
+    "combined_fold_counts_tested": true,
+    "compact_original_games_audited": 384,
+    "disk_free_above10GiB": true
+  },
+  "scope": "Collection of exactly1152 new training games only. Fitting requires complete combined audit and separate memory/implementation pin."
+}

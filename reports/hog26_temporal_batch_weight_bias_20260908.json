@@ -1,0 +1,87 @@
+{
+  "scope": "Exact game-phase weighting arithmetic for the complete training mixture over 1000 random episode batchings per fold. This does not model optimizer trajectories or predict model quality.",
+  "phase_order": [
+    "early",
+    "middle",
+    "late"
+  ],
+  "episode_batch_size": 24,
+  "folds": [
+    {
+      "fold": 0,
+      "fitting_games": 436,
+      "target_phase_mass": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "old_mean_effective_phase_mass": [
+        0.34037365909873335,
+        0.3400407616396516,
+        0.3195855792616145
+      ],
+      "corrected_mean_effective_phase_mass": [
+        0.333309927792874,
+        0.3333759118586831,
+        0.3332204073401925
+      ]
+    },
+    {
+      "fold": 1,
+      "fitting_games": 436,
+      "target_phase_mass": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "old_mean_effective_phase_mass": [
+        0.34017083572333284,
+        0.3398453599933828,
+        0.31998380428328366
+      ],
+      "corrected_mean_effective_phase_mass": [
+        0.3333111747156061,
+        0.33332799531761675,
+        0.3335317940445012
+      ]
+    },
+    {
+      "fold": 2,
+      "fitting_games": 436,
+      "target_phase_mass": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "old_mean_effective_phase_mass": [
+        0.34053373587279956,
+        0.340304678599077,
+        0.31916158552812374
+      ],
+      "corrected_mean_effective_phase_mass": [
+        0.3332681979674445,
+        0.33332611026718034,
+        0.33389120667522376
+      ]
+    },
+    {
+      "fold": 3,
+      "fitting_games": 436,
+      "target_phase_mass": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "old_mean_effective_phase_mass": [
+        0.34117406626580665,
+        0.34076683090837373,
+        0.31805910282581973
+      ],
+      "corrected_mean_effective_phase_mass": [
+        0.33333458484083317,
+        0.33332908844841896,
+        0.3333543494152074
+      ]
+    }
+  ]
+}

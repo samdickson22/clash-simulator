@@ -1,0 +1,26 @@
+{
+  "scope": "Natural training data only. Compare existing representative and equal-game full-phase metric distributions; no acceptance threshold changes.",
+  "results": {
+    "early": {
+      "games": 384,
+      "rows": 92443,
+      "representatives_at_final_decision": 7,
+      "representative_final_fraction": 0.018229166666666668,
+      "full_phase_equal_game_final_mass": 0.0007230740834446416
+    },
+    "middle": {
+      "games": 339,
+      "rows": 62866,
+      "representatives_at_final_decision": 53,
+      "representative_final_fraction": 0.15634218289085547,
+      "full_phase_equal_game_final_mass": 0.00997046846886263
+    },
+    "late": {
+      "games": 60,
+      "rows": 4190,
+      "representatives_at_final_decision": 51,
+      "representative_final_fraction": 0.85,
+      "full_phase_equal_game_final_mass": 0.04780131757508616
+    }
+  }
+}

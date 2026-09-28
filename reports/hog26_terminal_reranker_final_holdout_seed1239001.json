@@ -1,0 +1,229 @@
+{
+  "development_probes": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_strategy_terminal_outcome_v4_playaligned_validation_seed1228001/probes",
+  "frozen_override_probability_margin": 0.1,
+  "frozen_rank": 8,
+  "holdout_probes": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_terminal_reranker_final_holdout_seed1239001/probes",
+  "metrics": {
+    "candidates": 12,
+    "outcome_bce": 0.520267128944397,
+    "parent_best_outcome_accuracy": 0.8333333134651184,
+    "roots": 6,
+    "threshold_curve": [
+      {
+        "best_outcome_accuracy": 0.6666666865348816,
+        "correctable_captured": 1,
+        "correctable_roots": 1,
+        "equal_outcomes": 3,
+        "improved_outcomes": 1,
+        "mean_dense_return_delta": -0.22299052774906158,
+        "overrides": 4,
+        "threshold": 0.0,
+        "worse_outcomes": 2
+      },
+      {
+        "best_outcome_accuracy": 0.6666666865348816,
+        "correctable_captured": 1,
+        "correctable_roots": 1,
+        "equal_outcomes": 3,
+        "improved_outcomes": 1,
+        "mean_dense_return_delta": -0.22299052774906158,
+        "overrides": 4,
+        "threshold": 0.025,
+        "worse_outcomes": 2
+      },
+      {
+        "best_outcome_accuracy": 0.8333333134651184,
+        "correctable_captured": 1,
+        "correctable_roots": 1,
+        "equal_outcomes": 4,
+        "improved_outcomes": 1,
+        "mean_dense_return_delta": -0.0010205308208242059,
+        "overrides": 3,
+        "threshold": 0.05,
+        "worse_outcomes": 1
+      },
+      {
+        "best_outcome_accuracy": 0.8333333134651184,
+        "correctable_captured": 1,
+        "correctable_roots": 1,
+        "equal_outcomes": 4,
+        "improved_outcomes": 1,
+        "mean_dense_return_delta": -0.0010205308208242059,
+        "overrides": 3,
+        "threshold": 0.1,
+        "worse_outcomes": 1
+      },
+      {
+        "best_outcome_accuracy": 0.6666666865348816,
+        "correctable_captured": 0,
+        "correctable_roots": 1,
+        "equal_outcomes": 5,
+        "improved_outcomes": 0,
+        "mean_dense_return_delta": -0.09389960020780563,
+        "overrides": 1,
+        "threshold": 0.15,
+        "worse_outcomes": 1
+      },
+      {
+        "best_outcome_accuracy": 0.8333333134651184,
+        "correctable_captured": 0,
+        "correctable_roots": 1,
+        "equal_outcomes": 6,
+        "improved_outcomes": 0,
+        "mean_dense_return_delta": 0.0,
+        "overrides": 0,
+        "threshold": 0.2,
+        "worse_outcomes": 0
+      },
+      {
+        "best_outcome_accuracy": 0.8333333134651184,
+        "correctable_captured": 0,
+        "correctable_roots": 1,
+        "equal_outcomes": 6,
+        "improved_outcomes": 0,
+        "mean_dense_return_delta": 0.0,
+        "overrides": 0,
+        "threshold": 0.3,
+        "worse_outcomes": 0
+      },
+      {
+        "best_outcome_accuracy": 0.8333333134651184,
+        "correctable_captured": 0,
+        "correctable_roots": 1,
+        "equal_outcomes": 6,
+        "improved_outcomes": 0,
+        "mean_dense_return_delta": 0.0,
+        "overrides": 0,
+        "threshold": 0.4,
+        "worse_outcomes": 0
+      },
+      {
+        "best_outcome_accuracy": 0.8333333134651184,
+        "correctable_captured": 0,
+        "correctable_roots": 1,
+        "equal_outcomes": 6,
+        "improved_outcomes": 0,
+        "mean_dense_return_delta": 0.0,
+        "overrides": 0,
+        "threshold": 0.5,
+        "worse_outcomes": 0
+      }
+    ]
+  },
+  "minimum_outcome_improvements": 2,
+  "parent_checkpoint": "/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt",
+  "parent_checkpoint_sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372",
+  "promotion_scope": "offline architecture gate only; passing does not promote gameplay policy",
+  "reranker_checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_terminal_reranker_rank8_seed1236001/candidate.pt",
+  "reranker_checkpoint_sha256": "a28c41547467d65607ac0befdc0954a381b207fe5076614c97c6615c9c707a4e",
+  "root_details": [
+    {
+      "best_available_outcome": -1,
+      "override": true,
+      "parent_action": 1944,
+      "parent_dense_return": -0.20330992341041565,
+      "parent_outcome": -1,
+      "proposed_probability_margin": 0.10563507676124573,
+      "root": "000_w097_balanced_1239001",
+      "selected_action": 2304,
+      "selected_dense_return": -0.23957285284996033,
+      "selected_outcome": -1,
+      "strategy": "balanced",
+      "warmup_steps": 97
+    },
+    {
+      "best_available_outcome": 1,
+      "override": false,
+      "parent_action": 1368,
+      "parent_dense_return": 0.7843974828720093,
+      "parent_outcome": 1,
+      "proposed_probability_margin": 0.04584917426109314,
+      "root": "001_w097_bridge-pressure_1239002",
+      "selected_action": 1368,
+      "selected_dense_return": 0.7843974828720093,
+      "selected_outcome": 1,
+      "strategy": "bridge-pressure",
+      "warmup_steps": 97
+    },
+    {
+      "best_available_outcome": -1,
+      "override": false,
+      "parent_action": 1350,
+      "parent_dense_return": -0.1210126057267189,
+      "parent_outcome": -1,
+      "proposed_probability_margin": 0.0,
+      "root": "002_w097_reactive-defense_1239003",
+      "selected_action": 1350,
+      "selected_dense_return": -0.1210126057267189,
+      "selected_outcome": -1,
+      "strategy": "reactive-defense",
+      "warmup_steps": 97
+    },
+    {
+      "best_available_outcome": -1,
+      "override": false,
+      "parent_action": 1368,
+      "parent_dense_return": -0.18539053201675415,
+      "parent_outcome": -1,
+      "proposed_probability_margin": 0.0,
+      "root": "003_w097_spell-control_1239004",
+      "selected_action": 1368,
+      "selected_dense_return": -0.18539053201675415,
+      "selected_outcome": -1,
+      "strategy": "spell-control",
+      "warmup_steps": 97
+    },
+    {
+      "best_available_outcome": 1,
+      "override": true,
+      "parent_action": 1944,
+      "parent_dense_return": -0.4313593804836273,
+      "parent_outcome": -1,
+      "proposed_probability_margin": 0.10168817639350891,
+      "root": "004_w097_slow-push_1239005",
+      "selected_action": 2304,
+      "selected_dense_return": 0.1621779203414917,
+      "selected_outcome": 1,
+      "strategy": "slow-push",
+      "warmup_steps": 97
+    },
+    {
+      "best_available_outcome": 1,
+      "override": true,
+      "parent_action": 1944,
+      "parent_dense_return": 0.1468985378742218,
+      "parent_outcome": 1,
+      "proposed_probability_margin": 0.16022557020187378,
+      "root": "005_w097_split-lane_1239006",
+      "selected_action": 2304,
+      "selected_dense_return": -0.4164990484714508,
+      "selected_outcome": -1,
+      "strategy": "split-lane",
+      "warmup_steps": 97
+    }
+  ],
+  "root_fingerprint_overlap": {
+    "development_holdout": 0,
+    "train_development": 0,
+    "train_holdout": 0
+  },
+  "schema": "clasher.hog26.terminal-action-reranker-holdout.v1",
+  "selected_threshold_metrics": {
+    "best_outcome_accuracy": 0.8333333134651184,
+    "correctable_captured": 1,
+    "correctable_roots": 1,
+    "equal_outcomes": 4,
+    "improved_outcomes": 1,
+    "mean_dense_return_delta": -0.0010205308208242059,
+    "overrides": 3,
+    "threshold": 0.1,
+    "worse_outcomes": 1
+  },
+  "split_root_counts": {
+    "development": 21,
+    "holdout": 6,
+    "train": 24
+  },
+  "status": "rejected",
+  "train_probes": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_strategy_terminal_outcome_v4_train_seed1221001/probes"
+}

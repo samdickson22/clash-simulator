@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict, Any, Optional, List
 from functools import lru_cache
+import copy
 import json
 
 from .card_types import CardDefinition, CardStatsCompat
@@ -45,6 +46,39 @@ def _load_definition_snapshot(
                 f"Could not load card definition for {card_name}"
             ) from exc
     return alias_card_map(card_definitions)
+
+
+@lru_cache(maxsize=4)
+def _load_princess_tower_character_snapshot(
+    data_file: str,
+    modified_ns: int,
+    file_size: int,
+) -> dict[str, Any]:
+    """Parse one revision's support-tower character payload once."""
+    del modified_ns, file_size
+    with open(data_file, "r") as source:
+        spells = json.load(source).get("items", {}).get("spells", [])
+    for entry in spells:
+        if entry.get("name") != "King_PrincessTowers":
+            continue
+        data = entry.get("statCharacterData")
+        if isinstance(data, dict):
+            return data
+        raise ValueError("King_PrincessTowers has no statCharacterData")
+    raise ValueError("King_PrincessTowers is missing from game data")
+
+
+def load_princess_tower_character_data(data_file: str | Path) -> dict[str, Any]:
+    """Return an isolated copy of cached immutable-revision support data."""
+    path = Path(data_file)
+    file_stat = path.stat()
+    return copy.deepcopy(
+        _load_princess_tower_character_snapshot(
+            str(path),
+            file_stat.st_mtime_ns,
+            file_stat.st_size,
+        )
+    )
 
 
 class CardDataLoader:

@@ -1,0 +1,1183 @@
+{
+  "device": "mps:0",
+  "status": "diagnostic; known grouped-projectile mismatch",
+  "scope": "Stationary crown targets, both seats, isolated scalar spell updates. No full-game parity claim.",
+  "cases": [
+    {
+      "owner": 0,
+      "seed": 1279011,
+      "scalar_projectile_count": 30,
+      "scalar_group_sizes": [
+        10,
+        10,
+        10
+      ],
+      "scalar_damage_per_wave": 122.0,
+      "scalar_crown_damage_per_wave": 25.0,
+      "launch_delays": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4
+      ],
+      "destinations": [
+        [
+          4.152,
+          24.971
+        ],
+        [
+          6.623,
+          25.087
+        ],
+        [
+          4.8149999999999995,
+          26.776
+        ],
+        [
+          3.241,
+          28.55
+        ],
+        [
+          3.009,
+          27.759
+        ],
+        [
+          1.1030000000000002,
+          27.242
+        ],
+        [
+          1.2040000000000002,
+          25.405
+        ],
+        [
+          2.238,
+          22.614
+        ],
+        [
+          4.5760000000000005,
+          23.453
+        ],
+        [
+          4.901,
+          23.238
+        ],
+        [
+          4.318,
+          25.688
+        ],
+        [
+          6.65,
+          25.487
+        ],
+        [
+          4.696,
+          27.238
+        ],
+        [
+          3.132,
+          28.249
+        ],
+        [
+          1.334,
+          27.716
+        ],
+        [
+          0.6949999999999998,
+          26.932
+        ],
+        [
+          0.6589999999999998,
+          25.356
+        ],
+        [
+          2.0229999999999997,
+          24.021
+        ],
+        [
+          4.235,
+          23.675
+        ],
+        [
+          5.194,
+          24.556
+        ],
+        [
+          3.47,
+          26.339
+        ],
+        [
+          6.404999999999999,
+          24.696
+        ],
+        [
+          6.1080000000000005,
+          26.594
+        ],
+        [
+          4.678,
+          28.422
+        ],
+        [
+          1.435,
+          27.397
+        ],
+        [
+          0.44899999999999984,
+          25.774
+        ],
+        [
+          1.0739999999999998,
+          25.426
+        ],
+        [
+          1.775,
+          23.936
+        ],
+        [
+          4.436,
+          22.493
+        ],
+        [
+          6.0329999999999995,
+          23.629
+        ]
+      ],
+      "trace": [
+        {
+          "tick": 1,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 2,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 3,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 4,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 5,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 6,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 7,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 8,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 9,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 10,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 11,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 12,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 13,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 14,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 15,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 16,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 17,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 18,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 19,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 20,
+          "scalar_tower_hp": 3027.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 27,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 21,
+          "scalar_tower_hp": 3027.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 25,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 22,
+          "scalar_tower_hp": 3027.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 25,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 23,
+          "scalar_tower_hp": 3027.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 23,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 24,
+          "scalar_tower_hp": 3002.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 20,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 25,
+          "scalar_tower_hp": 3002.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 17,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 26,
+          "scalar_tower_hp": 3002.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 15,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 27,
+          "scalar_tower_hp": 3002.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 12,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 28,
+          "scalar_tower_hp": 3002.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 9,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 29,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 6,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 30,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 6,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 31,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 2,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 32,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 33,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 34,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 35,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 36,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 37,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 38,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 39,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 40,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 41,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 42,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 43,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 44,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 45,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 46,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 47,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 48,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 49,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 50,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 51,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 52,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 53,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 54,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 55,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 56,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 57,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 58,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 59,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 60,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        }
+      ]
+    },
+    {
+      "owner": 1,
+      "seed": 1279011,
+      "scalar_projectile_count": 30,
+      "scalar_group_sizes": [
+        10,
+        10,
+        10
+      ],
+      "scalar_damage_per_wave": 122.0,
+      "scalar_crown_damage_per_wave": 25.0,
+      "launch_delays": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4
+      ],
+      "destinations": [
+        [
+          13.848,
+          7.029
+        ],
+        [
+          11.376999999999999,
+          6.913
+        ],
+        [
+          13.185,
+          5.224
+        ],
+        [
+          14.759,
+          3.4499999999999993
+        ],
+        [
+          14.991,
+          4.241
+        ],
+        [
+          16.897,
+          4.757999999999999
+        ],
+        [
+          16.796,
+          6.595
+        ],
+        [
+          15.762,
+          9.386
+        ],
+        [
+          13.424,
+          8.547
+        ],
+        [
+          13.099,
+          8.762
+        ],
+        [
+          13.682,
+          6.312
+        ],
+        [
+          11.350000000000001,
+          6.513
+        ],
+        [
+          13.304,
+          4.7620000000000005
+        ],
+        [
+          14.868,
+          3.7509999999999994
+        ],
+        [
+          16.666,
+          4.283999999999999
+        ],
+        [
+          17.305,
+          5.068
+        ],
+        [
+          17.341,
+          6.644
+        ],
+        [
+          15.977,
+          7.979
+        ],
+        [
+          13.765,
+          8.325
+        ],
+        [
+          12.806000000000001,
+          7.444
+        ],
+        [
+          14.53,
+          5.661
+        ],
+        [
+          11.594999999999999,
+          7.304
+        ],
+        [
+          11.892,
+          5.406
+        ],
+        [
+          13.322,
+          3.5779999999999994
+        ],
+        [
+          16.564999999999998,
+          4.603
+        ],
+        [
+          17.551000000000002,
+          6.226
+        ],
+        [
+          16.926000000000002,
+          6.574
+        ],
+        [
+          16.225,
+          8.064
+        ],
+        [
+          13.564,
+          9.507
+        ],
+        [
+          11.966999999999999,
+          8.371
+        ]
+      ],
+      "trace": [
+        {
+          "tick": 1,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 2,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 3,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 4,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 5,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 6,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 7,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 8,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 9,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 10,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 11,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 12,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 13,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 14,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 15,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 16,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 17,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 18,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 19,
+          "scalar_tower_hp": 3052,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 30,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 20,
+          "scalar_tower_hp": 3027.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 27,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 21,
+          "scalar_tower_hp": 3027.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 25,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 22,
+          "scalar_tower_hp": 3027.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 25,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 23,
+          "scalar_tower_hp": 3027.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 23,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 24,
+          "scalar_tower_hp": 3002.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 20,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 25,
+          "scalar_tower_hp": 3002.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 17,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 26,
+          "scalar_tower_hp": 3002.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 15,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 27,
+          "scalar_tower_hp": 3002.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 12,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 28,
+          "scalar_tower_hp": 3002.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 9,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 29,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 6,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 30,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 6,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 31,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 2,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 32,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 33,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 34,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 35,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 36,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 37,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 38,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 39,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 40,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 41,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 42,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 43,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 44,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 45,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 46,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 47,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 48,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 49,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 50,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 51,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 52,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 53,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 54,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 55,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 56,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 57,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 58,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 59,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        },
+        {
+          "tick": 60,
+          "scalar_tower_hp": 2977.0,
+          "native_tower_hp": 3023.199951171875,
+          "scalar_alive": 0,
+          "native_primary_active": 0
+        }
+      ]
+    }
+  ]
+}

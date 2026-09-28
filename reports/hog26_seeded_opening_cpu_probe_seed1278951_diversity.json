@@ -1,0 +1,48 @@
+{
+  "all_streams_have_distinct_public_transcripts": true,
+  "corpus": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_seeded_opening_cpu_probe_seed1278951/corpus.npz",
+  "corpus_sha256": "d8c1bfc2727251037e2337bd08c58dd24356815116e8b7ee15ed974fec9000f8",
+  "episode_lengths": [
+    432,
+    349
+  ],
+  "episodes": [
+    {
+      "decisions": 432,
+      "ordinal": 0,
+      "public_transcript_sha256": "33cb37c8f9e0c62367568c2cd4cba9123abad45d53ce4a0c376b759fbb1ce05c",
+      "stream": 0
+    },
+    {
+      "decisions": 349,
+      "ordinal": 0,
+      "public_transcript_sha256": "1a1647ec7c6a8193ccf5b1da87de027679bd2eea9f131a9df6290b257ad9c636",
+      "stream": 1
+    }
+  ],
+  "fields": [
+    "entity_ids",
+    "entity_features",
+    "entity_mask",
+    "hand_ids",
+    "global_features",
+    "actions"
+  ],
+  "limitation": "One retained game per stream. Uniqueness is vacuous within a stream; this probe does not establish opening diversity.",
+  "role": "training-only-duplicate-device-probe",
+  "schema": "clasher.public-episode-diversity.v1",
+  "scope": "exact public trajectory diversity; not a statistical independence or model acceptance certificate",
+  "streams": [
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 0
+    },
+    {
+      "distinct_public_transcripts": 1,
+      "episodes": 1,
+      "stream": 1
+    }
+  ],
+  "within_stream_opening_diversity_assessable": false
+}

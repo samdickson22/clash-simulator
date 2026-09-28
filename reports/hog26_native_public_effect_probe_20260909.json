@@ -1,0 +1,400 @@
+{
+  "status": "bounded fixture passed; not production event coverage",
+  "scope": "One explicitly visible native projectile fixture. No complete-game enrichment, appearance registry, real-camera acceptance or model acceptance is established.",
+  "policy_inputs_changed": false,
+  "results": [
+    {
+      "device": "cpu",
+      "frames": [
+        {
+          "tick": 0,
+          "features": [
+            [
+              [
+                [
+                  0.0,
+                  0.0,
+                  1.0,
+                  0.0,
+                  1.0,
+                  0.0
+                ]
+              ],
+              [
+                [
+                  1.0,
+                  1.0,
+                  0.0,
+                  1.0,
+                  1.0,
+                  0.0
+                ]
+              ]
+            ]
+          ],
+          "mask": [
+            [
+              [
+                true
+              ],
+              [
+                true
+              ]
+            ]
+          ]
+        },
+        {
+          "tick": 1,
+          "features": [
+            [
+              [
+                [
+                  0.02222222276031971,
+                  0.0,
+                  1.0,
+                  0.0,
+                  1.0,
+                  0.0
+                ]
+              ],
+              [
+                [
+                  0.9777777791023254,
+                  1.0,
+                  0.0,
+                  1.0,
+                  1.0,
+                  0.0
+                ]
+              ]
+            ]
+          ],
+          "mask": [
+            [
+              [
+                true
+              ],
+              [
+                true
+              ]
+            ]
+          ]
+        },
+        {
+          "tick": 2,
+          "features": [
+            [
+              [
+                [
+                  0.04444444552063942,
+                  0.0,
+                  1.0,
+                  0.0,
+                  1.0,
+                  0.0
+                ]
+              ],
+              [
+                [
+                  0.9555555582046509,
+                  1.0,
+                  0.0,
+                  1.0,
+                  1.0,
+                  0.0
+                ]
+              ]
+            ]
+          ],
+          "mask": [
+            [
+              [
+                true
+              ],
+              [
+                true
+              ]
+            ]
+          ]
+        },
+        {
+          "tick": 3,
+          "features": [
+            [
+              [
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              ],
+              [
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              ]
+            ]
+          ],
+          "mask": [
+            [
+              [
+                false
+              ],
+              [
+                false
+              ]
+            ]
+          ]
+        }
+      ],
+      "projection_is_read_only": true,
+      "native_control_trace_identical": true,
+      "private_fields_perturbed_without_changing_projection": [
+        "kind",
+        "source_card_id",
+        "source_x_units",
+        "source_y_units",
+        "target_id",
+        "target_x_units",
+        "target_y_units",
+        "tracks_target",
+        "speed_units_per_tick",
+        "damage",
+        "tower_damage_multiplier",
+        "building_damage_multiplier",
+        "radius_units",
+        "status_kind",
+        "status_duration_ticks",
+        "lifetime_ticks",
+        "damage_interval_ticks",
+        "next_damage_tick",
+        "damage_on_spawn",
+        "damage_hits_remaining",
+        "status_interval_ticks",
+        "next_status_tick",
+        "status_scans_remaining",
+        "hits_air",
+        "hits_ground",
+        "affects_hidden",
+        "multi_target_count",
+        "multi_target_range_units",
+        "multi_repeat_primary",
+        "chain_target_count",
+        "chain_hop_radius_units",
+        "line_range_units",
+        "line_half_width_units",
+        "fan_ray_count",
+        "fan_range_units",
+        "fan_radius_units",
+        "fan_spread_degrees"
+      ],
+      "post_impact_hp_for_physics_audit_only": 90.0
+    },
+    {
+      "device": "mps:0",
+      "frames": [
+        {
+          "tick": 0,
+          "features": [
+            [
+              [
+                [
+                  0.0,
+                  0.0,
+                  1.0,
+                  0.0,
+                  1.0,
+                  0.0
+                ]
+              ],
+              [
+                [
+                  1.0,
+                  1.0,
+                  0.0,
+                  1.0,
+                  1.0,
+                  0.0
+                ]
+              ]
+            ]
+          ],
+          "mask": [
+            [
+              [
+                true
+              ],
+              [
+                true
+              ]
+            ]
+          ]
+        },
+        {
+          "tick": 1,
+          "features": [
+            [
+              [
+                [
+                  0.02222222276031971,
+                  0.0,
+                  1.0,
+                  0.0,
+                  1.0,
+                  0.0
+                ]
+              ],
+              [
+                [
+                  0.9777777791023254,
+                  1.0,
+                  0.0,
+                  1.0,
+                  1.0,
+                  0.0
+                ]
+              ]
+            ]
+          ],
+          "mask": [
+            [
+              [
+                true
+              ],
+              [
+                true
+              ]
+            ]
+          ]
+        },
+        {
+          "tick": 2,
+          "features": [
+            [
+              [
+                [
+                  0.04444444552063942,
+                  0.0,
+                  1.0,
+                  0.0,
+                  1.0,
+                  0.0
+                ]
+              ],
+              [
+                [
+                  0.9555555582046509,
+                  1.0,
+                  0.0,
+                  1.0,
+                  1.0,
+                  0.0
+                ]
+              ]
+            ]
+          ],
+          "mask": [
+            [
+              [
+                true
+              ],
+              [
+                true
+              ]
+            ]
+          ]
+        },
+        {
+          "tick": 3,
+          "features": [
+            [
+              [
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              ],
+              [
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+              ]
+            ]
+          ],
+          "mask": [
+            [
+              [
+                false
+              ],
+              [
+                false
+              ]
+            ]
+          ]
+        }
+      ],
+      "projection_is_read_only": true,
+      "native_control_trace_identical": true,
+      "private_fields_perturbed_without_changing_projection": [
+        "kind",
+        "source_card_id",
+        "source_x_units",
+        "source_y_units",
+        "target_id",
+        "target_x_units",
+        "target_y_units",
+        "tracks_target",
+        "speed_units_per_tick",
+        "damage",
+        "tower_damage_multiplier",
+        "building_damage_multiplier",
+        "radius_units",
+        "status_kind",
+        "status_duration_ticks",
+        "lifetime_ticks",
+        "damage_interval_ticks",
+        "next_damage_tick",
+        "damage_on_spawn",
+        "damage_hits_remaining",
+        "status_interval_ticks",
+        "next_status_tick",
+        "status_scans_remaining",
+        "hits_air",
+        "hits_ground",
+        "affects_hidden",
+        "multi_target_count",
+        "multi_target_range_units",
+        "multi_repeat_primary",
+        "chain_target_count",
+        "chain_hop_radius_units",
+        "line_range_units",
+        "line_half_width_units",
+        "fan_ray_count",
+        "fan_range_units",
+        "fan_radius_units",
+        "fan_spread_degrees"
+      ],
+      "post_impact_hp_for_physics_audit_only": 90.0
+    }
+  ],
+  "cpu_mps_frames_identical": true,
+  "script_sha256": "c6c4c194f691a27e4dfbb71355a8ee8cb1cdf7921dc8161e61c52f71e5021d4b",
+  "projection_sha256": "c9e53d09f0a7525e4e35d96419dc5d876e392fceffddd92d41ab063d4a4d8c07"
+}

@@ -1,0 +1,187 @@
+{
+  "schema": "clasher.hog26.factorized-prior-and-strategy-audit.v1",
+  "checkpoint_sha256": "3b651bce56b036b8948eefa0f0b85611c19ac558cbd86e64bece399f23ae3cc5",
+  "training_play_class_weight": 8.0,
+  "exact_inverse_logit_bias": -2.0794415416798357,
+  "fitted_platt_scale": 1.237244,
+  "fitted_platt_bias": -2.106543,
+  "validation_rows": 24256,
+  "validation_actual_play_rate": 0.11935191601514816,
+  "seed_validation": [
+    {
+      "seed": 1244001,
+      "raw": {
+        "exact_action_accuracy": 0.8442447229551451,
+        "play_precision": 0.6284116331096197,
+        "play_recall": 0.970293609671848,
+        "wait_accuracy": 0.9222414680960629,
+        "predicted_play_rate": 0.18428430079155672
+      },
+      "inverse_prior_corrected": {
+        "exact_action_accuracy": 0.8922740765171504,
+        "play_precision": 0.8747960848287113,
+        "play_recall": 0.7409326424870466,
+        "wait_accuracy": 0.985628013669772,
+        "predicted_play_rate": 0.10108839050131926
+      }
+    },
+    {
+      "seed": 1244002,
+      "raw": {
+        "exact_action_accuracy": 0.8473779683377308,
+        "play_precision": 0.6292335115864528,
+        "play_recall": 0.975474956822107,
+        "wait_accuracy": 0.922101025232901,
+        "predicted_play_rate": 0.18502638522427442
+      },
+      "inverse_prior_corrected": {
+        "exact_action_accuracy": 0.8939643799472295,
+        "play_precision": 0.8654212733511246,
+        "play_recall": 0.7841105354058722,
+        "wait_accuracy": 0.9834745564346239,
+        "predicted_play_rate": 0.10813819261213721
+      }
+    },
+    {
+      "seed": 1244003,
+      "raw": {
+        "exact_action_accuracy": 0.8489445910290238,
+        "play_precision": 0.6245320414005726,
+        "play_recall": 0.9796200345423144,
+        "wait_accuracy": 0.920181639436356,
+        "predicted_play_rate": 0.18721141160949867
+      },
+      "inverse_prior_corrected": {
+        "exact_action_accuracy": 0.896108179419525,
+        "play_precision": 0.8561176892716182,
+        "play_recall": 0.8241796200345423,
+        "wait_accuracy": 0.9812274706240345,
+        "predicted_play_rate": 0.11489940633245382
+      }
+    }
+  ],
+  "seed1244001_probability_metrics": {
+    "raw": {
+      "mean_play_probability": 0.1691438853740692,
+      "brier": 0.047689493745565414,
+      "nll": 0.13818705081939697
+    },
+    "inverse_prior_corrected": {
+      "mean_play_probability": 0.09840608388185501,
+      "brier": 0.03322247415781021,
+      "nll": 0.10438169538974762
+    }
+  },
+  "closed_loop_bias_sweep_4x64": [
+    {
+      "play_logit_bias": 0.0,
+      "placements_per_row": [7, 7, 7, 7],
+      "placement_rate": 0.109375
+    },
+    {
+      "play_logit_bias": -0.5,
+      "placements_per_row": [8, 8, 8, 8],
+      "placement_rate": 0.125
+    },
+    {
+      "play_logit_bias": -1.0,
+      "placements_per_row": [0, 0, 8, 0],
+      "placement_rate": 0.03125
+    },
+    {
+      "play_logit_bias": -1.5,
+      "placements_per_row": [0, 0, 0, 0],
+      "placement_rate": 0.0
+    },
+    {
+      "play_logit_bias": -2.0794415416798357,
+      "placements_per_row": [0, 0, 0, 0],
+      "placement_rate": 0.0
+    }
+  ],
+  "inverse_prior_terminal_screen": {
+    "games": 4,
+    "wins": 0,
+    "losses": 4,
+    "draws": 0,
+    "balanced": {
+      "games": 2,
+      "placements": 0,
+      "decisions": 264
+    },
+    "random": {
+      "games": 2,
+      "placements": 0,
+      "decisions": 713
+    }
+  },
+  "simple_strategy_student_state_audit": {
+    "rows": 768,
+    "exact_action_matches": 536,
+    "exact_action_accuracy": 0.6979166666666666,
+    "student_plays": 86,
+    "teacher_plays": 217,
+    "play_overlap": 69,
+    "play_precision": 0.8023255813953488,
+    "play_recall": 0.31797235023041476,
+    "student_hog_plays": 0,
+    "student_musketeer_plays": 0,
+    "teacher_hog_plays": 90,
+    "teacher_musketeer_plays": 4,
+    "styles": [
+      {
+        "name": "bridge-pressure",
+        "student_plays": 16,
+        "teacher_plays": 46,
+        "play_precision": 1.0,
+        "play_recall": 0.34782608695652173,
+        "exact_action_accuracy": 0.6484375
+      },
+      {
+        "name": "slow-push",
+        "student_plays": 14,
+        "teacher_plays": 33,
+        "play_precision": 0.6428571428571429,
+        "play_recall": 0.2727272727272727,
+        "exact_action_accuracy": 0.703125
+      },
+      {
+        "name": "spell-control",
+        "student_plays": 14,
+        "teacher_plays": 46,
+        "play_precision": 1.0,
+        "play_recall": 0.30434782608695654,
+        "exact_action_accuracy": 0.6484375
+      },
+      {
+        "name": "reactive-defense",
+        "student_plays": 14,
+        "teacher_plays": 2,
+        "play_precision": 0.14285714285714285,
+        "play_recall": 1.0,
+        "exact_action_accuracy": 0.890625
+      },
+      {
+        "name": "split-lane",
+        "student_plays": 14,
+        "teacher_plays": 44,
+        "play_precision": 1.0,
+        "play_recall": 0.3181818181818182,
+        "exact_action_accuracy": 0.65625
+      },
+      {
+        "name": "balanced",
+        "student_plays": 14,
+        "teacher_plays": 46,
+        "play_precision": 1.0,
+        "play_recall": 0.30434782608695654,
+        "exact_action_accuracy": 0.640625
+      }
+    ]
+  },
+  "notes": [
+    "All validation metrics use the replay-disjoint 24256-row executed-strategy validation corpus.",
+    "The inverse-prior correction changes only the play-mode logit and does not retrain any parameter.",
+    "Closed-loop screens are bounded diagnostics, not policy promotion evidence."
+  ]
+}

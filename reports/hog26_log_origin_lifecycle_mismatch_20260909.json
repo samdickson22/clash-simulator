@@ -1,0 +1,65 @@
+{
+  "scalar_spell_class": "RollingProjectileSpell",
+  "spawned_objects": [
+    {
+      "class": "RollingProjectile",
+      "position": [
+        3.5,
+        14.5
+      ],
+      "spawn_delay_seconds": 1.8333859420061231,
+      "projectile_range": 10.1
+    }
+  ],
+  "native_fixture": {
+    "card": "Log",
+    "pool_active_frame_counts": {
+      "effects": 0,
+      "travel_effects": 0,
+      "death_effects": 0,
+      "triggered_effects": 0,
+      "rolling_spells": 50,
+      "payload_containers": 0,
+      "positive_buff_areas": 0
+    },
+    "primary_allocations": {
+      "projectile": 0,
+      "area": 0,
+      "direct": 0
+    },
+    "sidecar_frames": 50,
+    "rejected_frames": 0,
+    "transition_gap_frames": 0,
+    "visible_token_frame_counts": {
+      "316": 50
+    },
+    "last_sidecar_frame_tick": 50,
+    "first_sidecar_frame": {
+      "tick": 1,
+      "tokens": [
+        316,
+        316
+      ],
+      "features": [
+        [
+          0.4953888952732086,
+          0.08381249755620956,
+          1.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.5046111345291138,
+          0.9161875247955322,
+          0.0,
+          1.0,
+          1.0,
+          0.0
+        ]
+      ]
+    }
+  },
+  "status": "Native rolling origin/delay diverges from scalar spell definition; rolling appearance not certified",
+  "scope": "Same player0cast target(3.5,14.5). Static plus instantiated scalar-cast comparison; not a full scalar/native battle parity result."
+}

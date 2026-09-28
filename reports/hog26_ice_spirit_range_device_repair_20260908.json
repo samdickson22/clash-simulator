@@ -1,0 +1,32 @@
+{
+  "artifacts": {
+    "reports/hog26_ice_spirit_cpu_native_trace_20260908.npz": "f732881f5a3186e1b7779822d664e40d7cacc23eb08d6c893723aa19ae54e1bd",
+    "reports/hog26_ice_spirit_cpu_native_trace_fixed_20260908.npz": "f732881f5a3186e1b7779822d664e40d7cacc23eb08d6c893723aa19ae54e1bd",
+    "reports/hog26_ice_spirit_mps_native_trace_20260908.npz": "23da7309f82e714653f2161abc29572028c7a7676599375d4960373d265d87f6",
+    "reports/hog26_ice_spirit_mps_native_trace_fixed_20260908.npz": "f732881f5a3186e1b7779822d664e40d7cacc23eb08d6c893723aa19ae54e1bd",
+    "reports/hog26_ice_spirit_native_trace_difference_20260908.json": "0c58b4f709af87e27976ea53a1bc27f878bc0b5b8629b6e704b1cef05225e456",
+    "reports/hog26_ice_spirit_native_trace_fixed_difference_20260908.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "scripts/probe_hog26_ice_spirit_device_trace.py": "7a2d90327753366d1016697fb20219726690164c3133ffaf6c847225c9bc7838",
+    "scripts/probe_hog26_ice_spirit_device_trace_fixed.py": "b3c392567eb5f5d489e79ca666a812a73ee8440ab547407f624682b6d8576e71"
+  },
+  "before": "CPU attack-range true and cooldown3; MPS false and cooldown4 on identical positions",
+  "first_damage_difference_index": 117,
+  "first_native_difference_index": 106,
+  "fixed_trace_batch": 2,
+  "fixed_trace_fields_identical": true,
+  "fixed_trace_ticks": 128,
+  "repair": "squared-distance comparisons for acquisition sight/attack range, retained target sight/attack range, and post-movement attack/contact range; int64 arithmetic for integer-unit geometry",
+  "root_cause": "MPS float32 sqrt(3500^2) returns3500.000244140625, rejecting the exact2000-unit edge range after subtracting1500 target radius. CPU returns3500 exactly.",
+  "schema": "clasher.hog26.ice-spirit-range-device-repair.v1",
+  "scope": "targeted production collector prefix; not full-game parity or model acceptance",
+  "tests": {
+    "runtime_reset_spells_standard": {
+      "passed": 25,
+      "skipped_cuda": 9
+    },
+    "targeting_attack_locks_engine": {
+      "passed": 39,
+      "skipped_cuda": 24
+    }
+  }
+}

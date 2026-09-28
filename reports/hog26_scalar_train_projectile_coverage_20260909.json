@@ -1,0 +1,1854 @@
+{
+  "status": "training-only static reachability and creation-route audit; no visibility or gameplay acceptance",
+  "scope": {
+    "families": [
+      "family-000",
+      "family-001",
+      "family-002",
+      "family-003",
+      "family-004",
+      "family-005",
+      "family-006",
+      "family-007"
+    ],
+    "training_decks": 32,
+    "fixed_learner_decks": 1,
+    "root_cards": [
+      "Archers",
+      "Arrows",
+      "BabyDragon",
+      "Balloon",
+      "Bandit",
+      "BarbarianBarrel",
+      "Bats",
+      "BattleRam",
+      "BombTower",
+      "Bomber",
+      "Bowler",
+      "Cannon",
+      "DarkPrince",
+      "DartGoblin",
+      "Earthquake",
+      "ElectroDragon",
+      "ElectroSpirit",
+      "ElectroWizard",
+      "Fireball",
+      "Firecracker",
+      "Freeze",
+      "Giant",
+      "GiantSnowball",
+      "GoblinBarrel",
+      "GoblinGang",
+      "Golem",
+      "Graveyard",
+      "Guards",
+      "HogRider",
+      "IceGolem",
+      "IceSpirit",
+      "IceWizard",
+      "InfernoDragon",
+      "InfernoTower",
+      "Knight",
+      "LavaHound",
+      "Log",
+      "Lumberjack",
+      "MagicArcher",
+      "MegaKnight",
+      "MegaMinion",
+      "Miner",
+      "MiniPekka",
+      "Minions",
+      "Musketeer",
+      "NightWitch",
+      "Pekka",
+      "Poison",
+      "Prince",
+      "Princess",
+      "Rocket",
+      "RoyalGhost",
+      "SkeletonBarrel",
+      "Skeletons",
+      "SpearGoblins",
+      "Tesla",
+      "Tombstone",
+      "Tornado",
+      "Valkyrie",
+      "Wallbreakers",
+      "Witch",
+      "Xbow",
+      "Zap"
+    ],
+    "corpora_opened": [],
+    "excluded_variant_paths": [
+      "Archers/evolvedSpellsData",
+      "BabyDragon/evolvedSpellsData",
+      "Bats/evolvedSpellsData",
+      "BattleRam/evolvedSpellsData",
+      "Bomber/evolvedSpellsData",
+      "Cannon/evolvedSpellsData",
+      "DartGoblin/evolvedSpellsData",
+      "ElectroDragon/evolvedSpellsData",
+      "Firecracker/evolvedSpellsData",
+      "GiantSnowball/evolvedSpellsData",
+      "GoblinBarrel/evolvedSpellsData",
+      "IceSpirit/evolvedSpellsData",
+      "InfernoDragon/evolvedSpellsData",
+      "Knight/evolvedSpellsData",
+      "Lumberjack/evolvedSpellsData",
+      "MegaKnight/evolvedSpellsData",
+      "Musketeer/evolvedSpellsData",
+      "Pekka/evolvedSpellsData",
+      "Princess/evolvedSpellsData",
+      "RoyalGhost/evolvedSpellsData",
+      "SkeletonBarrel/evolvedSpellsData",
+      "Skeletons/evolvedSpellsData",
+      "Tesla/evolvedSpellsData",
+      "Valkyrie/evolvedSpellsData",
+      "Wallbreakers/evolvedSpellsData",
+      "Witch/evolvedSpellsData",
+      "Zap/evolvedSpellsData"
+    ]
+  },
+  "authority": {
+    "manifest_sha256": "6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8",
+    "protocol_sha256": "08ed4604d01a3c8fb4aab24ec499ec83c596ad54ab7547bd48bbf7f887744eae",
+    "gamedata_sha256": "3d99987c19cb94a0c8a6795e943829771078e564859e34c1411e221e5d57486a",
+    "vocabulary_sha256": "960c1c1d68dea56786b0e196c5fc772b298fa16db168a81ca6c6d36c60c54704",
+    "actor_tokens": 494
+  },
+  "classification_counts": {
+    "common_creation_candidate_needs_receipt_test": 14,
+    "no_ordinary_projectile_serialized": 36,
+    "rolling_special": 1,
+    "existing_receipt_rule": 2,
+    "ordinary_parent_plus_chainlightning": 1,
+    "spirit_body_plus_chainlightning_no_ordinary_projectile": 1,
+    "piercing_special": 2,
+    "carrier_with_dynamic_child_projectiles": 1,
+    "spirit_body_nova_no_ordinary_projectile": 1,
+    "decoration_and_combat_identity_split": 1
+  },
+  "bodies": [
+    {
+      "body_name": "Archer",
+      "parents": [
+        "Archers"
+      ],
+      "paths": [
+        "Archers/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "410d9293ee0ec731d5c499041481f7c030915a9de4203b3cce3d840dca9282b6",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "ArcherArrow",
+      "actual_projectile_token": 264,
+      "raw_projectile_identity": "ArcherArrow",
+      "raw_projectile_token": 264,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Assassin",
+      "parents": [
+        "Bandit"
+      ],
+      "paths": [
+        "Bandit/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "d3b9dc0707f3a56772ce3bf734bbb208edaef9ce6f6335963844214b9b0c1351",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "BanditDash"
+      ],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "BabyDragon",
+      "parents": [
+        "BabyDragon"
+      ],
+      "paths": [
+        "BabyDragon/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "aa9784b2269e44e3335b85a5155e0274bc74c8236500c171e67414089f50babb",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "BabyDragonProjectile",
+      "actual_projectile_token": 270,
+      "raw_projectile_identity": "BabyDragonProjectile",
+      "raw_projectile_token": 270,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Balloon",
+      "parents": [
+        "Balloon"
+      ],
+      "paths": [
+        "Balloon/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "c0df58112acbc27cb2a3b4f3b134aafea54d8efe9c33e94692eb7085fde9e72d",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "DeathSpawn"
+      ],
+      "risks": [
+        "source has separate spawn/death object routes; no inherited projectile appearance"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "BalloonBomb",
+      "parents": [
+        "Balloon"
+      ],
+      "paths": [
+        "Balloon/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "is_internal_body": true,
+      "serialized_subtree_sha256": "0c53738e54d62faa22932a9855394d05d851cc491b5340c0f3f4d03d3f32382c",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "Balloon/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "Barbarian",
+      "parents": [
+        "BarbarianBarrel",
+        "BattleRam"
+      ],
+      "paths": [
+        "BarbarianBarrel/projectileData/spawnProjectileData/spawnCharacterData",
+        "BattleRam/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "is_internal_body": true,
+      "serialized_subtree_sha256": "9f7677f56d50ae9208cb8412f0d1c9162d09acbf422fc8d654af928073a08545",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "BarbarianBarrel/projectileData/spawnProjectileData/spawnCharacterData",
+        "BattleRam/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "Bat",
+      "parents": [
+        "Bats",
+        "NightWitch"
+      ],
+      "paths": [
+        "Bats/summonCharacterData",
+        "NightWitch/summonCharacterData/deathSpawnCharacterData",
+        "NightWitch/summonCharacterData/spawnCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "51855d2f70fc016a41e73addf2b22f21d74e06d72d996203db5428f26add31c9",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "NightWitch/summonCharacterData/deathSpawnCharacterData",
+        "NightWitch/summonCharacterData/spawnCharacterData"
+      ],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "BattleRam",
+      "parents": [
+        "BattleRam"
+      ],
+      "paths": [
+        "BattleRam/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "6924731f451090bb07b1b224bcfc7b3b4501cd0c0a63c285d7850efa63bff4e5",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "BattleRamCharge",
+        "DeathSpawn"
+      ],
+      "risks": [
+        "source has separate spawn/death object routes; no inherited projectile appearance"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "BlowdartGoblin",
+      "parents": [
+        "DartGoblin"
+      ],
+      "paths": [
+        "DartGoblin/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "c8d4af423445ad4eaec8fa5edc6d0af6ed659bd80fee3c0a1ded88adae687cea",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "BlowdartGoblinProjectile",
+      "actual_projectile_token": 274,
+      "raw_projectile_identity": "BlowdartGoblinProjectile",
+      "raw_projectile_token": 274,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "BombTower",
+      "parents": [
+        "BombTower"
+      ],
+      "paths": [
+        "BombTower/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "413e6c575d3936713d6deb3d8b40d2348682d96ff01b6cbd5d0e4e465ea99449",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Building._create_projectile",
+      "actual_projectile_identity": "BombTowerProjectile",
+      "actual_projectile_token": 279,
+      "raw_projectile_identity": "BombTowerProjectile",
+      "raw_projectile_token": 279,
+      "mechanics": [
+        "DeathSpawn"
+      ],
+      "risks": [
+        "source has separate spawn/death object routes; no inherited projectile appearance"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "BombTowerBomb",
+      "parents": [
+        "BombTower"
+      ],
+      "paths": [
+        "BombTower/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "is_internal_body": true,
+      "serialized_subtree_sha256": "dc001eca11171fed71c25fe407fbc37a980b31f43df5899865ac27afdcddd16f",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "BombTower/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "Bomber",
+      "parents": [
+        "Bomber"
+      ],
+      "paths": [
+        "Bomber/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "595427bd4cfa778fdd1a3d0ed4d3ad4176edf07b7039e45dfc57973ea6c112e8",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "BombSkeletonProjectile",
+      "actual_projectile_token": 276,
+      "raw_projectile_identity": "BombSkeletonProjectile",
+      "raw_projectile_token": 276,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Bowler",
+      "parents": [
+        "Bowler"
+      ],
+      "paths": [
+        "Bowler/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "25b3570b086b60416abf30a9064bf3e3d219c63af15a49b633a4ecdc02e51f03",
+      "classification": "rolling_special",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "BowlerProjectile",
+      "actual_projectile_token": 280,
+      "raw_projectile_identity": "BowlerProjectile",
+      "raw_projectile_token": 280,
+      "mechanics": [],
+      "risks": [
+        "synchronous resolve_start_collision can create further objects before wrapper returns"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Cannon",
+      "parents": [
+        "Cannon"
+      ],
+      "paths": [
+        "Cannon/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "0cd17024d4fe71e08bf9a5281eddad554a59b136a928d6700aacbab2aff417f0",
+      "classification": "existing_receipt_rule",
+      "creation_hook": "Building._create_projectile",
+      "actual_projectile_identity": "TowerCannonball",
+      "actual_projectile_token": 342,
+      "raw_projectile_identity": "TowerCannonball",
+      "raw_projectile_token": 342,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "DarkPrince",
+      "parents": [
+        "DarkPrince"
+      ],
+      "paths": [
+        "DarkPrince/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "c08db716f38a0212d041f447d00562f33d0d8219ce73aa7bdd7d6db75dcc3bb8",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "Shield"
+      ],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "DarkWitch",
+      "parents": [
+        "NightWitch"
+      ],
+      "paths": [
+        "NightWitch/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "b80406125f1a0668d3a40d30bb03035bca156302d7db09f3b03aa68518321b75",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "DeathSpawn",
+        "PeriodicSpawner"
+      ],
+      "risks": [
+        "source has separate spawn/death object routes; no inherited projectile appearance"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "ElectroDragon",
+      "parents": [
+        "ElectroDragon"
+      ],
+      "paths": [
+        "ElectroDragon/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "06fbcf51010c9793f36144a32ccf76d465f22b96c39854cf7a20d570ee85e620",
+      "classification": "ordinary_parent_plus_chainlightning",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "ElectroDragonProjectile",
+      "actual_projectile_token": 283,
+      "raw_projectile_identity": "ElectroDragonProjectile",
+      "raw_projectile_token": 283,
+      "mechanics": [
+        "ElectroDragonChainLightning"
+      ],
+      "risks": [
+        "ChainLightning created by on_attack_hit requires separate appearance lifecycle rule"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "ElectroSpirit",
+      "parents": [
+        "ElectroSpirit"
+      ],
+      "paths": [
+        "ElectroSpirit/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "ea9da060cfe121a66db2b60803d86e2cf02a9facfb199ef9277c6fd7d4955466",
+      "classification": "spirit_body_plus_chainlightning_no_ordinary_projectile",
+      "creation_hook": "ElectroSpiritChain.on_movement_tick",
+      "actual_projectile_identity": "ElectroSpiritProjectile",
+      "actual_projectile_token": 284,
+      "raw_projectile_identity": "ElectroSpiritProjectile",
+      "raw_projectile_token": 284,
+      "mechanics": [
+        "ElectroSpiritChain"
+      ],
+      "risks": [
+        "_force_melee_attack means projectileData is payload metadata, not ordinary projectile birth"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "ElectroWizard",
+      "parents": [
+        "ElectroWizard"
+      ],
+      "paths": [
+        "ElectroWizard/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "8374bfd8f19d58cc0dd5b9903d37fded7f83b4df62e5aeb0ae3fc5f19485a11d",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "MultipleTargetAttack",
+        "SerializedOnHitBuff",
+        "SpawnAreaEffect"
+      ],
+      "risks": [
+        "source has separate spawn/death object routes; no inherited projectile appearance"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "ElectroWizard",
+      "parents": [
+        "ElectroWizard"
+      ],
+      "paths": [
+        "ElectroWizard/areaEffectObjectData/onStartingActionData/spawnDataData"
+      ],
+      "is_internal_body": true,
+      "serialized_subtree_sha256": "c40cf22a2091fbb9bd771478c94cd0ba14d3e4834c488f773382551d20cf0a6c",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "ElectroWizard/areaEffectObjectData/onStartingActionData/spawnDataData"
+      ],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "EliteArcher",
+      "parents": [
+        "MagicArcher"
+      ],
+      "paths": [
+        "MagicArcher/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "cd99af2531c36a0c46fbda0d83c167f5e4f0acc584b665947b8c382250974255",
+      "classification": "piercing_special",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "EliteArcherArrow",
+      "actual_projectile_token": 285,
+      "raw_projectile_identity": "EliteArcherArrow",
+      "raw_projectile_token": 285,
+      "mechanics": [],
+      "risks": [
+        "synchronous resolve_start_collision can create further objects before wrapper returns"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Firecracker",
+      "parents": [
+        "Firecracker"
+      ],
+      "paths": [
+        "Firecracker/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "df9feb14e54bd1403189538f9d93420dbad870252a9a82c4dd94488edb80fb81",
+      "classification": "carrier_with_dynamic_child_projectiles",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "FirecrackerProjectile",
+      "actual_projectile_token": 292,
+      "raw_projectile_identity": "FirecrackerProjectile",
+      "raw_projectile_token": 292,
+      "mechanics": [
+        "AttackRecoil"
+      ],
+      "risks": [
+        "parent insertion hook alone does not bind child effects"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Ghost",
+      "parents": [
+        "RoyalGhost"
+      ],
+      "paths": [
+        "RoyalGhost/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "bde01636f638e2978e3981e06ff538416e394406cedd23e961eeadb314321f82",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "InvisibilityWhenNotAttacking"
+      ],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Giant",
+      "parents": [
+        "Giant"
+      ],
+      "paths": [
+        "Giant/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "5fed94d58528a423f19e2d93fd087620892cb7967460fb9588f2f44079cfc555",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Goblin",
+      "parents": [
+        "GoblinBarrel"
+      ],
+      "paths": [
+        "GoblinBarrel/projectileData/spawnCharacterData"
+      ],
+      "is_internal_body": true,
+      "serialized_subtree_sha256": "4c14b114762df0995c08269cd71c2ccd9a74445f4f4ba168b7e48d3dd31c2ef5",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "GoblinBarrel/projectileData/spawnCharacterData"
+      ],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "Goblin_Stab",
+      "parents": [
+        "GoblinGang"
+      ],
+      "paths": [
+        "GoblinGang/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "77a1fb0c598c8e8d4f4d215342c8b32e048211942f23a34c2fe01a9b1cfc940e",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Golem",
+      "parents": [
+        "Golem"
+      ],
+      "paths": [
+        "Golem/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "037f53654730c10c33d26ec7d45490d682859faae4b9e5e6abb0281c34b47a2b",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "DeathDamage",
+        "DeathSpawn"
+      ],
+      "risks": [
+        "source has separate spawn/death object routes; no inherited projectile appearance"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Golemite",
+      "parents": [
+        "Golem"
+      ],
+      "paths": [
+        "Golem/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "is_internal_body": true,
+      "serialized_subtree_sha256": "50ee9493ba24eef5aa73a7927e1102b7fe65b2f1dcbf747640a6f4ad20294063",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "Golem/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "HogRider",
+      "parents": [
+        "HogRider"
+      ],
+      "paths": [
+        "HogRider/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "3b68ea7220d2d4c96160635569408c407274252dbd7a2f3de992243ed9e231b9",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "IceGolemite",
+      "parents": [
+        "IceGolem"
+      ],
+      "paths": [
+        "IceGolem/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "197070b8be42e2fc8a011c6be5476f69fb292d2fa2e8e7171b9bee09963ca345",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "DeathAreaEffect",
+        "DeathDamage"
+      ],
+      "risks": [
+        "source has separate spawn/death object routes; no inherited projectile appearance"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "IceSpirits",
+      "parents": [
+        "IceSpirit"
+      ],
+      "paths": [
+        "IceSpirit/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "58014ab07765b0de53f838f5b1e1c999239613a5b48f1ba15fa7d23a25924598",
+      "classification": "spirit_body_nova_no_ordinary_projectile",
+      "creation_hook": "IceSpiritFreeze.on_movement_tick",
+      "actual_projectile_identity": "IceSpiritsProjectile",
+      "actual_projectile_token": 308,
+      "raw_projectile_identity": "IceSpiritsProjectile",
+      "raw_projectile_token": 308,
+      "mechanics": [
+        "IceSpiritFreeze"
+      ],
+      "risks": [
+        "_force_melee_attack; no new ordinary projectile should be invented"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "IceWizard",
+      "parents": [
+        "IceWizard"
+      ],
+      "paths": [
+        "IceWizard/areaEffectObjectData/onStartingActionData/spawnDataData"
+      ],
+      "is_internal_body": true,
+      "serialized_subtree_sha256": "ca80f13b9d92a24d4b406d3aefd1f379fbebb02533244c35bc4615be3bab7242",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "Ice_wizardProjectile",
+      "actual_projectile_token": 310,
+      "raw_projectile_identity": "Ice_wizardProjectile",
+      "raw_projectile_token": 310,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "IceWizard/areaEffectObjectData/onStartingActionData/spawnDataData"
+      ],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "IceWizard",
+      "parents": [
+        "IceWizard"
+      ],
+      "paths": [
+        "IceWizard/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "d0fd4009cc62058a2cd06ce7370d4ba2e2de9e436df6a85ed5c27a46a7a20107",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "Ice_wizardProjectile",
+      "actual_projectile_token": 310,
+      "raw_projectile_identity": "Ice_wizardProjectile",
+      "raw_projectile_token": 310,
+      "mechanics": [
+        "SpawnAreaEffect"
+      ],
+      "risks": [
+        "source has separate spawn/death object routes; no inherited projectile appearance"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "InfernoDragon",
+      "parents": [
+        "InfernoDragon"
+      ],
+      "paths": [
+        "InfernoDragon/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "89e50a55f8e9e0ac713f00c9bd3afc32ac86564a1a8525f5b2665e424d42b5e7",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "DamageRamp"
+      ],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "InfernoTower",
+      "parents": [
+        "InfernoTower"
+      ],
+      "paths": [
+        "InfernoTower/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "cd99eae34ae1f0011ae3a8c2997fe55a3e7421f20b85237ab96f3e619da749e2",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "DamageRamp"
+      ],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Knight",
+      "parents": [
+        "Knight"
+      ],
+      "paths": [
+        "Knight/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "3b97f60f5c4b1da203bbc128cf0675c1a2daaa0230d0f1710f79f444e5957678",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "LavaHound",
+      "parents": [
+        "LavaHound"
+      ],
+      "paths": [
+        "LavaHound/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "f27d897b69fc2d8d22350b2d42a4b3927cc6c55fc4b86961bf4987979d88709c",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "LavaHoundProjectile",
+      "actual_projectile_token": 311,
+      "raw_projectile_identity": "LavaHoundProjectile",
+      "raw_projectile_token": 311,
+      "mechanics": [
+        "DeathSpawn"
+      ],
+      "risks": [
+        "source has separate spawn/death object routes; no inherited projectile appearance"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "LavaPups",
+      "parents": [
+        "LavaHound"
+      ],
+      "paths": [
+        "LavaHound/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "is_internal_body": true,
+      "serialized_subtree_sha256": "1f54362fbc1def6a92365628580f03f0335af888eb3aa425661f487dee6fd4d2",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "LavaPupProjectile",
+      "actual_projectile_token": 312,
+      "raw_projectile_identity": "LavaPupProjectile",
+      "raw_projectile_token": 312,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "LavaHound/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "MegaKnight",
+      "parents": [
+        "MegaKnight"
+      ],
+      "paths": [
+        "MegaKnight/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "bd5c66387ace19eb9c35d3abc8c6b819ec1bae0335aea821fa849cf0c8c4c6a9",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "MegaKnightSlam",
+        "SpawnPushback"
+      ],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "MegaMinion",
+      "parents": [
+        "MegaMinion"
+      ],
+      "paths": [
+        "MegaMinion/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "10f602689c2bc71dcf37e5a3fd65529e8611e891d825e393b11b774d22f52641",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "MegaMinionSpit",
+      "actual_projectile_token": 318,
+      "raw_projectile_identity": "MegaMinionSpit",
+      "raw_projectile_token": 318,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Miner",
+      "parents": [
+        "Miner"
+      ],
+      "paths": [
+        "Miner/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "ac6b102ce5bb2544a47917c759b50719df64379e55dffc5b1a7a7bc2abda55bd",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "CrownTowerScaling",
+        "UndergroundDeployment"
+      ],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "MiniPekka",
+      "parents": [
+        "MiniPekka"
+      ],
+      "paths": [
+        "MiniPekka/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "8d7d96c07b03117cb37ff75b1ff2fdb42f2e06af26d31edca6891e432d3e44fe",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Minion",
+      "parents": [
+        "Minions"
+      ],
+      "paths": [
+        "Minions/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "58ebf11c09435bc4175f695bc18e64edfa492bb2c4f8f429361a80244cb07a4d",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "MinionSpit",
+      "actual_projectile_token": 320,
+      "raw_projectile_identity": "MinionSpit",
+      "raw_projectile_token": 320,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Musketeer",
+      "parents": [
+        "Musketeer"
+      ],
+      "paths": [
+        "Musketeer/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "539905b0bfb0ceea2ab7a0356553453839b2a8f0d0bd655a06f41fcdfc3221d1",
+      "classification": "existing_receipt_rule",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "MusketeerProjectile",
+      "actual_projectile_token": 324,
+      "raw_projectile_identity": "MusketeerProjectile",
+      "raw_projectile_token": 324,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Pekka",
+      "parents": [
+        "Pekka"
+      ],
+      "paths": [
+        "Pekka/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "63e6b983733ff732f913d1bfc59f0d1917c8b1e9efdd3e81018da81340c72290",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Prince",
+      "parents": [
+        "Prince"
+      ],
+      "paths": [
+        "Prince/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "5572132c0b75c2a05109a88f684913efd6891fd2b957bcdbe793a85de7731aa3",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Princess",
+      "parents": [
+        "Princess"
+      ],
+      "paths": [
+        "Princess/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "d56529d684dfed8aa3554a6eda08bf12cdfe4f7c7d3fe44d5a39276368769896",
+      "classification": "decoration_and_combat_identity_split",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "PrincessProjectile",
+      "actual_projectile_token": 326,
+      "raw_projectile_identity": "PrincessProjectileDeco",
+      "raw_projectile_token": 327,
+      "mechanics": [],
+      "risks": [
+        "CardStatsCompat chooses customFirstProjectileData; decoration volley is not materialized by ordinary scalar attack"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "RageBarbarian",
+      "parents": [
+        "Lumberjack"
+      ],
+      "paths": [
+        "Lumberjack/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "55f23f2316f842987b0594b5b172fc0edd313e6a3f2549a93af2e4032994f99e",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "DeathAreaEffect"
+      ],
+      "risks": [
+        "source has separate spawn/death object routes; no inherited projectile appearance"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "RageBarbarianBottle",
+      "parents": [
+        "Lumberjack"
+      ],
+      "paths": [
+        "Lumberjack/summonCharacterData/deathAreaEffectData/onStartingActionData/spawnDataData",
+        "Lumberjack/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "is_internal_body": true,
+      "serialized_subtree_sha256": "b8d21abdf65a8b570a2dbb41ea486ffb6ffd12518c26288cba915fd5c4af90ee",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "Lumberjack/summonCharacterData/deathAreaEffectData/onStartingActionData/spawnDataData",
+        "Lumberjack/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "referenced_spawn_paths": [
+        "Lumberjack/summonCharacterData/deathSpawnCharacter"
+      ],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "Skeleton",
+      "parents": [
+        "SkeletonBarrel",
+        "Skeletons",
+        "Tombstone",
+        "Witch"
+      ],
+      "paths": [
+        "SkeletonBarrel/summonCharacterData/deathSpawnCharacterData/deathSpawnCharacterData",
+        "Skeletons/summonCharacterData",
+        "Tombstone/summonCharacterData/deathSpawnCharacterData",
+        "Tombstone/summonCharacterData/spawnCharacterData",
+        "Witch/summonCharacterData/spawnCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "02841f5d7818f5241d8333987b61ff52fb2ec45c20a5ee9d351c68ce0d0d528f",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "SkeletonBarrel/summonCharacterData/deathSpawnCharacterData/deathSpawnCharacterData",
+        "Tombstone/summonCharacterData/deathSpawnCharacterData",
+        "Tombstone/summonCharacterData/spawnCharacterData",
+        "Witch/summonCharacterData/spawnCharacterData"
+      ],
+      "referenced_spawn_paths": [
+        "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/0/spawnCharacter",
+        "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/1/spawnCharacter",
+        "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/2/spawnCharacter",
+        "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/3/spawnCharacter",
+        "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/4/spawnCharacter",
+        "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/5/spawnCharacter",
+        "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/6/spawnCharacter",
+        "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/7/spawnCharacter",
+        "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/8/spawnCharacter",
+        "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/9/spawnCharacter",
+        "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/10/spawnCharacter",
+        "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/11/spawnCharacter",
+        "SkeletonBarrel/summonCharacterData/deathSpawnCharacterData/deathSpawnCharacter"
+      ],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "SkeletonBalloon",
+      "parents": [
+        "SkeletonBarrel"
+      ],
+      "paths": [
+        "SkeletonBarrel/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "4145a71ac94c469c5f46f22f031578770083a04b749dae7cd43732dda196b4a1",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "BattleRamCharge",
+        "DeathSpawn"
+      ],
+      "risks": [
+        "source has separate spawn/death object routes; no inherited projectile appearance"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "SkeletonContainerNew",
+      "parents": [
+        "SkeletonBarrel"
+      ],
+      "paths": [
+        "SkeletonBarrel/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "is_internal_body": true,
+      "serialized_subtree_sha256": "5e3f7442099932975a0bd4f32ace476f22f649c0de8a8bc92829ad64c5c7ea36",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "SkeletonBarrel/summonCharacterData/deathSpawnCharacterData"
+      ],
+      "referenced_spawn_paths": [
+        "SkeletonBarrel/summonCharacterData/deathSpawnCharacter"
+      ],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "SkeletonWarrior",
+      "parents": [
+        "Guards"
+      ],
+      "paths": [
+        "Guards/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "8790f6b79ed2c4e23500d480821cb1f2e679f3ca8f7a0f6a1635f1710ea25b4d",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "Shield"
+      ],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "SpearGoblin",
+      "parents": [
+        "GoblinGang",
+        "SpearGoblins"
+      ],
+      "paths": [
+        "GoblinGang/summonCharacterSecondData",
+        "SpearGoblins/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "8f1232c1fa0d859dd9b569e5203f971cf4a47d50094602a721aff2fd3949ce29",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "SpearGoblinProjectile",
+      "actual_projectile_token": 338,
+      "raw_projectile_identity": "SpearGoblinProjectile",
+      "raw_projectile_token": 338,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [
+        "GoblinGang/summonCharacterSecondData"
+      ],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": true
+    },
+    {
+      "body_name": "Tesla",
+      "parents": [
+        "Tesla"
+      ],
+      "paths": [
+        "Tesla/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "dccd04231ba54abe424e6d24fb3332e3a22b6fe280674d2e56761e9d41e875ea",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "HideWhenIdle"
+      ],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Tombstone",
+      "parents": [
+        "Tombstone"
+      ],
+      "paths": [
+        "Tombstone/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "ac57e92b720f3e3a0d9183331606360edd2066af8099e3b12ed0328d2a3c3916",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [
+        "DeathSpawn",
+        "PeriodicSpawner"
+      ],
+      "risks": [
+        "source has separate spawn/death object routes; no inherited projectile appearance"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Valkyrie",
+      "parents": [
+        "Valkyrie"
+      ],
+      "paths": [
+        "Valkyrie/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "10866d94a903792973f326eacf88703fd41115d9a0844907947f19a42b3bd0e0",
+      "classification": "no_ordinary_projectile_serialized",
+      "creation_hook": null,
+      "actual_projectile_identity": null,
+      "actual_projectile_token": null,
+      "raw_projectile_identity": null,
+      "raw_projectile_token": null,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Wallbreaker",
+      "parents": [
+        "Wallbreakers"
+      ],
+      "paths": [
+        "Wallbreakers/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "a095f46b3d367ef6db569c2f7e30a59568d0656e31ec01bad353e7f72dfc713b",
+      "classification": "piercing_special",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "WallbreakerProjectile",
+      "actual_projectile_token": 345,
+      "raw_projectile_identity": "WallbreakerProjectile",
+      "raw_projectile_token": 345,
+      "mechanics": [
+        "WallBreakersDemolition"
+      ],
+      "risks": [
+        "synchronous resolve_start_collision can create further objects before wrapper returns",
+        "one-logic-unit projectile plus source destruction after attack commit; visibility needs independent proof"
+      ],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Witch",
+      "parents": [
+        "Witch"
+      ],
+      "paths": [
+        "Witch/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "f803b15b783a3a9965353ed3c99d11f29d9401444ea1f36e427f1d61c956d937",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Troop._create_projectile",
+      "actual_projectile_identity": "WitchProjectile",
+      "actual_projectile_token": 347,
+      "raw_projectile_identity": "WitchProjectile",
+      "raw_projectile_token": 347,
+      "mechanics": [
+        "PeriodicSpawner"
+      ],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    },
+    {
+      "body_name": "Xbow",
+      "parents": [
+        "Xbow"
+      ],
+      "paths": [
+        "Xbow/summonCharacterData"
+      ],
+      "is_internal_body": false,
+      "serialized_subtree_sha256": "545b9be8cce13792cbe612137c72b4660c406c208e342ea5e14b0eb1be0a5a31",
+      "classification": "common_creation_candidate_needs_receipt_test",
+      "creation_hook": "Building._create_projectile",
+      "actual_projectile_identity": "Xbow_projectile",
+      "actual_projectile_token": 349,
+      "raw_projectile_identity": "Xbow_projectile",
+      "raw_projectile_token": 349,
+      "mechanics": [],
+      "risks": [],
+      "visibility_authorized": false,
+      "internal_paths": [],
+      "referenced_spawn_paths": [],
+      "reachable_via_internal_spawn": false
+    }
+  ],
+  "dynamic_projectile_children": [
+    {
+      "parents": [
+        "Firecracker"
+      ],
+      "parent_projectile": "FirecrackerProjectile",
+      "identity": "FirecrackerExplosion",
+      "token": 290,
+      "hook": "Projectile._spawn_impact_projectiles",
+      "spawn_count": 5,
+      "projectile_range": 5000,
+      "requires_own_receipt": true,
+      "visibility_authorized": false
+    }
+  ],
+  "source_evidence": {
+    "common_troop": "src/clasher/entities.py:3217-3407",
+    "common_building": "src/clasher/entities.py:4168-4277",
+    "dynamic_projectile_children": "src/clasher/entities.py:4682-4770",
+    "princess_identity_selection": "src/clasher/card_types.py:155-164",
+    "electro_dragon_chain": "src/clasher/cards/electro_dragon.py:32-58",
+    "electro_spirit_force_melee_and_chain": "src/clasher/cards/electro_spirit.py:29-34,114",
+    "ice_spirit_force_melee": "src/clasher/cards/ice_spirit.py:26-28",
+    "wallbreaker_lifecycle": "src/clasher/cards/wallbreakers.py:11-28"
+  },
+  "limits": [
+    "Traversal excludes evolution branches not admitted by declared base-card train decks.",
+    "A reachable serialized appearance is not proof of current visible rendering.",
+    "Common route classification identifies a candidate for extending receipts, not approval to expose effects.",
+    "Non-projectile area, chain, explosive and body appearance coverage is separate.",
+    "Special callbacks can spawn objects during the same object phase; per-step endpoint diffs are not sufficient birth provenance."
+  ],
+  "string_spawn_references": [
+    {
+      "root": "Graveyard",
+      "path": "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/0/spawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    },
+    {
+      "root": "Graveyard",
+      "path": "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/1/spawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    },
+    {
+      "root": "Graveyard",
+      "path": "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/2/spawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    },
+    {
+      "root": "Graveyard",
+      "path": "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/3/spawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    },
+    {
+      "root": "Graveyard",
+      "path": "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/4/spawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    },
+    {
+      "root": "Graveyard",
+      "path": "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/5/spawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    },
+    {
+      "root": "Graveyard",
+      "path": "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/6/spawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    },
+    {
+      "root": "Graveyard",
+      "path": "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/7/spawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    },
+    {
+      "root": "Graveyard",
+      "path": "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/8/spawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    },
+    {
+      "root": "Graveyard",
+      "path": "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/9/spawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    },
+    {
+      "root": "Graveyard",
+      "path": "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/10/spawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    },
+    {
+      "root": "Graveyard",
+      "path": "Graveyard/areaEffectObjectData/onStartingActionData/subActionsData/11/spawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    },
+    {
+      "root": "Lumberjack",
+      "path": "Lumberjack/summonCharacterData/deathSpawnCharacter",
+      "body_name": "RageBarbarianBottle",
+      "matched_body_records": [
+        "RageBarbarianBottle"
+      ]
+    },
+    {
+      "root": "SkeletonBarrel",
+      "path": "SkeletonBarrel/summonCharacterData/deathSpawnCharacter",
+      "body_name": "SkeletonContainerNew",
+      "matched_body_records": [
+        "SkeletonContainerNew"
+      ]
+    },
+    {
+      "root": "SkeletonBarrel",
+      "path": "SkeletonBarrel/summonCharacterData/deathSpawnCharacterData/deathSpawnCharacter",
+      "body_name": "Skeleton",
+      "matched_body_records": [
+        "Skeleton"
+      ]
+    }
+  ],
+  "unresolved_string_spawn_references": [],
+  "missing_actual_projectile_tokens": [],
+  "common_candidate_identities": [
+    "ArcherArrow",
+    "BabyDragonProjectile",
+    "BlowdartGoblinProjectile",
+    "BombSkeletonProjectile",
+    "BombTowerProjectile",
+    "Ice_wizardProjectile",
+    "LavaHoundProjectile",
+    "LavaPupProjectile",
+    "MegaMinionSpit",
+    "MinionSpit",
+    "SpearGoblinProjectile",
+    "WitchProjectile",
+    "Xbow_projectile"
+  ]
+}

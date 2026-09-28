@@ -1,0 +1,228 @@
+{
+  "status": "diagnostic_seeded_replay_verified",
+  "scope": "Diagnostic training deck13 only, balanced/random styles, one seeded deal per style, paired seats and exact repeats. Not collection authority or independent repeat samples.",
+  "raw_report_path": "reports/hog26_scalar_seeded_replay_20260911.json",
+  "raw_report_sha256": "30d346828e51905afd0e960340dcedadb21065a280ab18c1573bf0daca3dc0e8",
+  "source_unchanged": true,
+  "resources_unchanged": true,
+  "runtime": {
+    "python": "3.12.13",
+    "numpy": "2.3.5",
+    "torch": "2.10.0"
+  },
+  "source_files": 380,
+  "resource_sha256": {
+    "manifest": "6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8",
+    "checkpoint": "f609b60b3e7b7b574e084b15255e0fc247447e3c18d8552714213ccd0c709336",
+    "card_data": "3d99987c19cb94a0c8a6795e943829771078e564859e34c1411e221e5d57486a"
+  },
+  "vocabulary_sha256": "960c1c1d68dea56786b0e196c5fc772b298fa16db168a81ca6c6d36c60c54704",
+  "unique_seat_scenarios": 4,
+  "relative_deal_style_clusters": 2,
+  "executions": 8,
+  "global_rng_unchanged": true,
+  "public_hand_and_full_deal_reconstruction_passed": true,
+  "scenarios": [
+    {
+      "style": "balanced",
+      "learner_seat": 0,
+      "executions": 2,
+      "ticks": 3600,
+      "decisions": 450,
+      "scenario_id": "f96087712040c47c72716488dbbfa36d96cb847888d08d5640df65172c101520",
+      "cluster_id": "2407d0a9ab1e318925b93f9b8bc7839b6d263f13ed7ff5dade6d1e005cffbde2",
+      "initial_ordered_decks": [
+        [
+          "Musketeer",
+          "IceGolem",
+          "Cannon",
+          "Log",
+          "IceSpirits",
+          "Skeletons",
+          "HogRider",
+          "Fireball"
+        ],
+        [
+          "Bats",
+          "Zap",
+          "Miner",
+          "MegaKnight",
+          "IceGolem",
+          "Musketeer",
+          "InfernoDragon",
+          "BombTower"
+        ]
+      ],
+      "initial_public_hand_ids": [
+        [
+          206,
+          1,
+          118,
+          187,
+          175
+        ],
+        [
+          104,
+          261,
+          194,
+          188,
+          1
+        ]
+      ],
+      "rejected_card_actions": 0,
+      "mask_semantics_digest": "e65ad67bc3360c29775dcded7c07a508da48c55acd1065fcefe74cd2ec5e8e70"
+    },
+    {
+      "style": "balanced",
+      "learner_seat": 1,
+      "executions": 2,
+      "ticks": 4592,
+      "decisions": 574,
+      "scenario_id": "f96087712040c47c72716488dbbfa36d96cb847888d08d5640df65172c101520",
+      "cluster_id": "2407d0a9ab1e318925b93f9b8bc7839b6d263f13ed7ff5dade6d1e005cffbde2",
+      "initial_ordered_decks": [
+        [
+          "Bats",
+          "Zap",
+          "Miner",
+          "MegaKnight",
+          "IceGolem",
+          "Musketeer",
+          "InfernoDragon",
+          "BombTower"
+        ],
+        [
+          "Musketeer",
+          "IceGolem",
+          "Cannon",
+          "Log",
+          "IceSpirits",
+          "Skeletons",
+          "HogRider",
+          "Fireball"
+        ]
+      ],
+      "initial_public_hand_ids": [
+        [
+          104,
+          261,
+          194,
+          188,
+          1
+        ],
+        [
+          206,
+          1,
+          118,
+          187,
+          175
+        ]
+      ],
+      "rejected_card_actions": 0,
+      "mask_semantics_digest": "e65ad67bc3360c29775dcded7c07a508da48c55acd1065fcefe74cd2ec5e8e70"
+    },
+    {
+      "style": "random",
+      "learner_seat": 0,
+      "executions": 2,
+      "ticks": 3600,
+      "decisions": 450,
+      "scenario_id": "408c7f6a01705337e059f452a01bc5a32d0069f91ebdf660acdceabdb9417d99",
+      "cluster_id": "012ea50a125b4590f273dd4e20677aa4c6d4b38927894f6774eb5858a740d8aa",
+      "initial_ordered_decks": [
+        [
+          "Musketeer",
+          "Log",
+          "HogRider",
+          "Skeletons",
+          "Cannon",
+          "IceSpirits",
+          "Fireball",
+          "IceGolem"
+        ],
+        [
+          "InfernoDragon",
+          "Musketeer",
+          "IceGolem",
+          "Bats",
+          "Zap",
+          "Miner",
+          "MegaKnight",
+          "BombTower"
+        ]
+      ],
+      "initial_public_hand_ids": [
+        [
+          206,
+          187,
+          170,
+          237,
+          118
+        ],
+        [
+          178,
+          206,
+          1,
+          104,
+          261
+        ]
+      ],
+      "rejected_card_actions": 0,
+      "mask_semantics_digest": "e65ad67bc3360c29775dcded7c07a508da48c55acd1065fcefe74cd2ec5e8e70"
+    },
+    {
+      "style": "random",
+      "learner_seat": 1,
+      "executions": 2,
+      "ticks": 3600,
+      "decisions": 450,
+      "scenario_id": "408c7f6a01705337e059f452a01bc5a32d0069f91ebdf660acdceabdb9417d99",
+      "cluster_id": "012ea50a125b4590f273dd4e20677aa4c6d4b38927894f6774eb5858a740d8aa",
+      "initial_ordered_decks": [
+        [
+          "InfernoDragon",
+          "Musketeer",
+          "IceGolem",
+          "Bats",
+          "Zap",
+          "Miner",
+          "MegaKnight",
+          "BombTower"
+        ],
+        [
+          "Musketeer",
+          "Log",
+          "HogRider",
+          "Skeletons",
+          "Cannon",
+          "IceSpirits",
+          "Fireball",
+          "IceGolem"
+        ]
+      ],
+      "initial_public_hand_ids": [
+        [
+          178,
+          206,
+          1,
+          104,
+          261
+        ],
+        [
+          206,
+          187,
+          170,
+          237,
+          118
+        ]
+      ],
+      "rejected_card_actions": 0,
+      "mask_semantics_digest": "e65ad67bc3360c29775dcded7c07a508da48c55acd1065fcefe74cd2ec5e8e70"
+    }
+  ],
+  "limitations": [
+    "Training deck13 only; not whole-family seeded coverage.",
+    "No data-collection authority frozen, training corpus retained, calibrated model accepted or heldout outcomes opened.",
+    "RoyalDelivery flight remains an explicitly unavailable public observation; synthetic reserved-card fixtures are not heldout games."
+  ]
+}

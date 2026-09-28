@@ -1,0 +1,36 @@
+{
+  "scope": "Coverage audit of natural training observations; zero counts do not by themselves prove a causal explanation for model errors.",
+  "sources": [
+    "src/clasher/torch_sim/simple_projection.py",
+    "src/clasher/rl/simple_pytorch_backend.py"
+  ],
+  "corpora": [
+    {
+      "corpus": "datasets/derived/hog26_corrected_train_balanced_random_seed1278961/corpus.npz",
+      "decision_rows": 56223,
+      "projectile_kind": 0,
+      "area_effect_kind": 0,
+      "projectile_tokens": 0,
+      "nonzero_motion": 0,
+      "nonzero_entity_damage": 0
+    },
+    {
+      "corpus": "datasets/derived/hog26_corrected_train_bridge_reactive_seed1278962/corpus.npz",
+      "decision_rows": 51227,
+      "projectile_kind": 0,
+      "area_effect_kind": 0,
+      "projectile_tokens": 0,
+      "nonzero_motion": 0,
+      "nonzero_entity_damage": 0
+    },
+    {
+      "corpus": "datasets/derived/hog26_corrected_train_slow_spell_seed1278963/corpus.npz",
+      "decision_rows": 52049,
+      "projectile_kind": 0,
+      "area_effect_kind": 0,
+      "projectile_tokens": 0,
+      "nonzero_motion": 0,
+      "nonzero_entity_damage": 0
+    }
+  ]
+}

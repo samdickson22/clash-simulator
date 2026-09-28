@@ -267,3 +267,18 @@ def test_reset_optimizer_flag_is_disabled_by_default_and_can_be_enabled(monkeypa
     assert configured.causal_spatial_rehearsal_corpus == "spatial.npz"
     assert configured.causal_spatial_rehearsal_coef == pytest.approx(0.5)
     assert configured.causal_spatial_rehearsal_tile_coef == pytest.approx(0.25)
+
+
+def test_parallel_worker_config_carries_public_teacher_contract():
+    config = _config("random", (OpponentSpec(kind="random"),))
+    configured = ActorWorkerConfig(
+        **{
+            **config.__dict__,
+            "learner_teacher_strategy": "balanced",
+            "learner_teacher_balanced_config": {"minimum_elixir_to_play": 3.0},
+        }
+    )
+    assert configured.learner_teacher_strategy == "balanced"
+    assert configured.learner_teacher_balanced_config == {
+        "minimum_elixir_to_play": 3.0
+    }

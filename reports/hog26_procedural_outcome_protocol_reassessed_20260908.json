@@ -1,0 +1,568 @@
+{
+  "amendment": {
+    "date": "2026-09-08",
+    "reason": "Legacy opponent contamination and incomplete acceptance design; original remains historical.",
+    "supersedes": "reports/hog26_procedural_outcome_protocol_seed1278401.json",
+    "supersedes_sha256": "d4cb8ad2f20bc962bc4a2948c23c8cedfa95f621a800ffcc9211cc0764f7230c"
+  },
+  "base_policy": {
+    "path": "checkpoints/hog26_direct_constant_event_seed1263001/candidate.pt",
+    "sha256": "f609b60b3e7b7b574e084b15255e0fc247447e3c18d8552714213ccd0c709336"
+  },
+  "corrected_draw_controls": {
+    "training": {
+      "actor_views": 4,
+      "audit_report": "reports/hog26_corrected_draw_training_seed1278964_audit.json",
+      "battles": 2,
+      "episodes_per_battle": 1,
+      "output_corpus": "datasets/derived/hog26_corrected_draw_training_seed1278964/corpus.npz",
+      "output_report": "reports/hog26_corrected_draw_training_seed1278964.json",
+      "seed": 1278964
+    },
+    "validation": {
+      "actor_views": 4,
+      "audit_report": "reports/hog26_corrected_draw_validation_seed1278965_audit.json",
+      "battles": 2,
+      "episodes_per_battle": 1,
+      "output_corpus": "datasets/derived/hog26_corrected_draw_validation_seed1278965/corpus.npz",
+      "output_report": "reports/hog26_corrected_draw_validation_seed1278965.json",
+      "seed": 1278965
+    }
+  },
+  "corrected_training_refresh": {
+    "base_policy_updates": false,
+    "collection_order": [
+      1278961,
+      1278962,
+      1278963,
+      1278964
+    ],
+    "device": "mps",
+    "expected_natural_games": 384,
+    "expected_training_draw_actor_views": 4,
+    "mechanics_evidence": "reports/hog26_corrected_complete_device_comparison_20260908.json",
+    "previous_mps_corpora_use": "historical diagnostics only, excluded from fitting",
+    "role": "fitting-and-training-family-diagnostics-only",
+    "source_authority": {
+      "runtime": {
+        "numpy": "2.3.5",
+        "torch": "2.10.0"
+      },
+      "schema": "clasher.hog26.inference-authority.v1",
+      "sources": {
+        "scripts/audit_hog26_outcome_corpora.py": "8a3e4639b866ecfa7e7ee1b7117b8ff12423bbc7ca17ff27218bf409b7f67311",
+        "scripts/audit_hog26_procedural_outcome_shard.py": "b547b41a620bc07938dda44afe042f5aacf628e594ddfa0670b81fdd35ff6900",
+        "scripts/collect_hog26_complete_outcomes.py": "d46ade82546e983db247ebba35b337600a570ff6efb072ddbf6a0170a8ae497f",
+        "scripts/collect_hog26_frozen_final.py": "a2fd794190e45503a8757226e1a313f880a9a090a744f1e387f0955aa817ce9d",
+        "scripts/evaluate_hog26_frozen_outcome.py": "c0cf83e2833bd1c5fa3c30a017900fce815e9d486103e01260c713740322f904",
+        "scripts/freeze_hog26_outcome_cohort.py": "9e0c1dd9b28dd63318fe232a2ca2692d3b469ed4c444be171a5c934f58de8305",
+        "scripts/hog26_frozen_outcome.py": "7d2f3f3bb0a70b775eb215d6306820f8ece2134fb60ee3d75403593bedc54192",
+        "scripts/hog26_inference_authority.py": "73364bcf08c896b8c9b469e3284341bc4545e52caadb608e2fa4955a064e2640",
+        "scripts/hog26_public_outcome_projection.py": "c110af897cb109850f2fe26feb9d62f91362c324d1a70745097998521c2bc540",
+        "scripts/hog26_public_slice_gates.py": "63557cee1c0c548b518049f6cb1aa43aede1b42edc38ccde5e8dcc5458bd2bec",
+        "scripts/hog26_scenario_clusters.py": "fa911b5ab98d347e702178df2814803a77018652515634c22bb1e1d9f0602347",
+        "scripts/hog26_seeded_opening_audit.py": "2a20f90759d5a692793df934a993fa13c25e34add95151bf53face9d33ec9330",
+        "scripts/run_hog26_procedural_outcome_shard.py": "8b162dbefae269be3e01793fe213837db12af58ca7a9d4f9d7c8b026bc62f1ec",
+        "scripts/train_hog26_actor_outcome.py": "b8e7ddb3a677f2a2dfb3df2cf63efba4f99ac693858fb2d705feb1497f0d112f",
+        "scripts/train_hog26_procedural_outcome_candidate.py": "8e8401412330351122c5ed51566f428191b3bb17d26ee88e87441f88ecceb635",
+        "src/clasher/rl/direct_simple_behavior.py": "3864b6290980cd1b1b72ff01deca2a41c7357c1fc339e7b0a1cc021d0229b27b",
+        "src/clasher/rl/outcome_model.py": "5dd1fd8f9f651324518c5d71e2ae04fd395cff48a13cdf49147f12279dc47377",
+        "src/clasher/rl/public_margin_dynamics.py": "76f5519789b9c5f7f0486f5222dde0ee70aaf78a046631137caadc85417977e6",
+        "src/clasher/rl/seeded_deals.py": "8dc9067cfd005c965eb63ac0f7cc6d63f0add3a4a01910759b8fc7042725847d",
+        "src/clasher/torch_sim/simple_attack_locks.py": "b47a5dc78780d8194590b2306bdc86e2b593352050dc57baebbe005f6092a3d0",
+        "src/clasher/torch_sim/simple_engine.py": "baea02fc062a05837788e98e514b0e0d628a50c90cd6da6c9a35409a0ecd08a6",
+        "src/clasher/torch_sim/simple_targeting.py": "c437770401bb97bde0e64041e459e2fae6ad656c6cd4ea6e574ed10757b7e7b9"
+      }
+    }
+  },
+  "development_selection": {
+    "audit_report": "reports/hog26_procedural_development_selection_seed1278601_audit.json",
+    "episodes_per_seat": 32,
+    "expected_games": 1024,
+    "family_ids": [
+      "family-009",
+      "family-010"
+    ],
+    "opening_schedule": "seeded-ordered-decks-v1",
+    "opponents": [
+      "balanced",
+      "reactive-defense"
+    ],
+    "output_corpus": "datasets/derived/hog26_procedural_development_selection_seed1278601/corpus.npz",
+    "output_report": "reports/hog26_procedural_development_selection_seed1278601.json",
+    "seed": 1278601,
+    "split": "development"
+  },
+  "final_holdout": {
+    "controlled_draw": {
+      "actor_views": 16,
+      "audit_report": "reports/hog26_procedural_final_draw_seed1278703_audit.json",
+      "battles": 8,
+      "collector": "scripts/collect_hog26_symmetric_draw_outcomes.py",
+      "episodes_per_battle": 1,
+      "output_corpus": "datasets/derived/hog26_procedural_final_draw_seed1278703/corpus.npz",
+      "output_report": "reports/hog26_procedural_final_draw_seed1278703.json",
+      "physical_games": 8,
+      "scope": "Controlled symmetry diagnostic, not calibration of natural draw frequency; paired views count as one physical game.",
+      "seed": 1278703
+    },
+    "generated": {
+      "audit_report": "reports/hog26_procedural_final_holdout_seed1278701_audit.json",
+      "episodes_per_seat": 16,
+      "expected_games": 1536,
+      "family_ids": [
+        "family-008",
+        "family-011",
+        "family-012",
+        "family-015"
+      ],
+      "opening_schedule": "seeded-ordered-decks-v1",
+      "opponents": [
+        "balanced",
+        "reactive-defense",
+        "split-lane"
+      ],
+      "output_corpus": "datasets/derived/hog26_procedural_final_holdout_seed1278701/corpus.npz",
+      "output_report": "reports/hog26_procedural_final_holdout_seed1278701.json",
+      "seed": 1278701,
+      "split": "holdout"
+    },
+    "reserved_original": {
+      "audit_report": "reports/hog26_rhogs_aq_final_holdout_seed1278702_audit.json",
+      "deck": "RHogs AQ 2.9 Cycle",
+      "episodes_per_seat": 6,
+      "expected_games": 36,
+      "opening_schedule": "seeded-ordered-decks-v1",
+      "opponents": [
+        "balanced",
+        "reactive-defense",
+        "split-lane"
+      ],
+      "output_corpus": "datasets/derived/hog26_rhogs_aq_final_holdout_seed1278702/corpus.npz",
+      "output_report": "reports/hog26_rhogs_aq_final_holdout_seed1278702.json",
+      "seed": 1278702
+    }
+  },
+  "gates": {
+    "actor_input_excludes_outcome_labels": true,
+    "cluster_bootstrap_replicates": 2000,
+    "complete_episodes_only": true,
+    "counterfactual_ranking_required_before_search": true,
+    "critic_inputs_absent": true,
+    "maximum_ece": 0.2,
+    "maximum_margin_mae": 0.25,
+    "maximum_natural_draw_probability": 0.1,
+    "maximum_phase_margin_mae_regression": 0.01,
+    "minimum_clusters_per_phase": 8,
+    "minimum_controlled_draw_auc": 0.8,
+    "minimum_controlled_draw_endpoint_probability_lift": 0.03,
+    "minimum_margin_mae_improvement": 0.005,
+    "minimum_natural_auc": 0.6,
+    "minimum_natural_phase_auc": 0.55,
+    "minimum_nll_improvement": 0.02,
+    "minimum_phase_auc_lower_95": 0.5,
+    "phase_balanced_metrics": true,
+    "policy_updates_forbidden_before_all_gates": true,
+    "seeds_and_bytes_disjoint": true,
+    "whole_family_split_isolation": true,
+    "whole_family_split_isolation_scope": "Generated families only. Legacy original parent decks may have been seen; this is not unseen-parent or unseen-card acceptance."
+  },
+  "generalization_evaluation": {
+    "controlled_draw_scope": "Eight physical paired-view controls measure symmetry recognition only; natural draw calibration remains a natural-game result with uncertainty reported.",
+    "coverage_budget_amendment": {
+      "fixed_before_labels": true,
+      "games_per_generated_style_per_seat": 256,
+      "planning_limit": "The earlier plug-in calculation assumes independent trials. Legacy deterministic-strategy episodes repeat identical public/action transcripts, so repeated ordinals do not establish that assumption. Budget remains provisional until seeded initial-scenario variation is verified; inadequate actual coverage still rejects.",
+      "reason": "Observed completed training rates imply the prior 32-game development slices are very unlikely to satisfy eight late clusters and two late wins/losses. Choose a larger fixed unopened budget instead of outcome-dependent top-ups.",
+      "resource_note": "Multi-day local collection workload; no new collection until design readiness. Final controlled and reserved-original budgets unchanged because their declared precision scopes differ.",
+      "source": "reports/hog26_late_coverage_budget_diagnostic_20260908.json"
+    },
+    "declared_before_new_development_or_final_labels": true,
+    "development_scope": "Apply the same natural slice rules to development_selection opponents. Inadequate development evidence rejects the candidate before final collection.",
+    "full_phase_classification_gate": {
+      "combination": "Required in addition to all existing representative-point and full-phase margin gates.",
+      "declared_before_new_development_or_final_labels": true,
+      "reported": "Weighted NLL, Brier score, top-label and classwise ECE, decisive AUC, predicted and empirical class mass. Report zero observed natural draw mass without interpreting controlled draws as natural calibration data.",
+      "required": "Every natural generated phase independently meets the existing maximum ECE, minimum natural phase decisive AUC, and maximum natural draw probability. Require both top-label and each-class ECE under the same maximum.",
+      "weighting": "Same equal-game-within-phase-v1 state weights as the full-phase margin gate."
+    },
+    "full_phase_margin_gate": {
+      "combination": "Required in addition to every existing representative-point public slice; no existing gate removed or relaxed.",
+      "declared_before_new_development_or_final_labels": true,
+      "reason": "Training-only audit found 21 of 35 late representatives at the last recorded decision. Full-phase forecasts require evidence across the recorded phase, not only the nearest-center or endpoint substitute.",
+      "scope": "All recorded natural generated states within each reached phase, in development and final evaluation; controlled draws and reserved-original challenge excluded from this additional gate.",
+      "thresholds": "Use unchanged phase_margin_learning_gate point and clustered lower-95 improvement floors plus existing per-slice independent/decisive cluster coverage.",
+      "weighting": "equal-game-within-phase-v1"
+    },
+    "implementation_status": "Public-slice and full-phase margin gates implemented; frozen-cohort collection and evaluation commands implemented with synthetic tests; real end-to-end acceptance remains pending a defensible candidate.",
+    "insufficient_coverage_status": "inconclusive-reject; no acceptance and no outcome-dependent extra-seed collection",
+    "minimum_clusters_with_each_decisive_outcome_per_slice": 2,
+    "minimum_independent_matchup_clusters_per_slice": 8,
+    "natural_generated_slices": [
+      "overall",
+      "each_phase",
+      "each_seat",
+      "each_opponent",
+      "each_phase_x_seat_x_opponent"
+    ],
+    "natural_only_margins_and_classification": true,
+    "paired_seats_share_cluster": true,
+    "phase_margin_learning_gate": {
+      "minimum_cluster_bootstrap_lower_95_improvement": 0.0,
+      "minimum_mae_improvement": 0.001,
+      "scope": "Every natural generated phase; existing overall and non-regression thresholds also apply."
+    },
+    "rationale": "Shard0 has only 14 late episode representatives and two winning late matchup clusters. Increase unopened development and final budgets; do not adaptively add favorable seeds after evaluation.",
+    "required_generated_styles": [
+      "balanced",
+      "reactive-defense",
+      "split-lane"
+    ],
+    "reserved_original_scope": "Separate combined new-deck/new-card shift challenge; do not let generated games conceal its overall failure. Apply existing overall thresholds and report all subgroup counts; do not claim precise per-phase/seat/style generalization on this single reserved deck.",
+    "seat_and_style_gates": "Each natural generated seat and each style independently meets existing overall NLL improvement, ECE, decisive AUC and margin MAE/improvement thresholds. Joint phase/seat/style slices must meet coverage, ECE and existing phase AUC/margin non-regression thresholds."
+  },
+  "historical_pre_range_fix_candidate_data": {
+    "calibration_corpora": [
+      "probability_calibration.output_corpus"
+    ],
+    "holdout_corpora": [],
+    "legacy_audit_reports": {
+      "datasets/derived/hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908/corpus.npz": "reports/hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908_audit.json",
+      "datasets/derived/hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908/corpus.npz": "reports/hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908_audit.json",
+      "datasets/derived/hog26_crossed_train4_seed1276001_no_split_lane_20260908/corpus.npz": "reports/hog26_crossed_train4_seed1276001_no_split_lane_20260908_audit.json",
+      "datasets/derived/hog26_symmetric_draw_outcomes_seed1270001/corpus.npz": "reports/hog26_symmetric_draw_outcomes_seed1270001_reassessment_audit_20260908.json",
+      "datasets/derived/hog26_symmetric_draw_outcomes_seed1271001/corpus.npz": "reports/hog26_symmetric_draw_outcomes_seed1271001_reassessment_audit_20260908.json"
+    },
+    "legacy_training_corpora": [
+      "datasets/derived/hog26_crossed_train4_seed1276001_no_split_lane_20260908/corpus.npz",
+      "datasets/derived/hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908/corpus.npz",
+      "datasets/derived/hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908/corpus.npz",
+      "datasets/derived/hog26_symmetric_draw_outcomes_seed1270001/corpus.npz"
+    ],
+    "new_training_corpora": "all three training rows in this protocol",
+    "opened_historical_holdout_forbidden": true,
+    "validation_corpora": [
+      "development_selection.output_corpus",
+      "datasets/derived/hog26_symmetric_draw_outcomes_seed1271001/corpus.npz"
+    ]
+  },
+  "historical_pre_range_fix_training": [
+    {
+      "audit_report": "reports/hog26_procedural_train_balanced_random_seed1278501_audit.json",
+      "episodes_per_seat": 1,
+      "expected_games": 128,
+      "family_ids": [
+        "family-000",
+        "family-001",
+        "family-002",
+        "family-003",
+        "family-004",
+        "family-005",
+        "family-006",
+        "family-007"
+      ],
+      "opening_schedule": "fixed-template",
+      "opponents": [
+        "balanced",
+        "random"
+      ],
+      "output_corpus": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
+      "output_report": "reports/hog26_procedural_train_balanced_random_seed1278501.json",
+      "seed": 1278501,
+      "split": "train"
+    },
+    {
+      "audit_report": "reports/hog26_procedural_train_bridge_reactive_seed1278502_audit.json",
+      "episodes_per_seat": 1,
+      "expected_games": 128,
+      "family_ids": [
+        "family-000",
+        "family-001",
+        "family-002",
+        "family-003",
+        "family-004",
+        "family-005",
+        "family-006",
+        "family-007"
+      ],
+      "opening_schedule": "fixed-template",
+      "opponents": [
+        "bridge-pressure",
+        "reactive-defense"
+      ],
+      "output_corpus": "datasets/derived/hog26_procedural_train_bridge_reactive_seed1278502/corpus.npz",
+      "output_report": "reports/hog26_procedural_train_bridge_reactive_seed1278502.json",
+      "seed": 1278502,
+      "split": "train"
+    },
+    {
+      "audit_report": "reports/hog26_procedural_train_slow_spell_seed1278503_audit.json",
+      "episodes_per_seat": 1,
+      "expected_games": 128,
+      "family_ids": [
+        "family-000",
+        "family-001",
+        "family-002",
+        "family-003",
+        "family-004",
+        "family-005",
+        "family-006",
+        "family-007"
+      ],
+      "opening_schedule": "fixed-template",
+      "opponents": [
+        "slow-push",
+        "spell-control"
+      ],
+      "output_corpus": "datasets/derived/hog26_procedural_train_slow_spell_seed1278503/corpus.npz",
+      "output_report": "reports/hog26_procedural_train_slow_spell_seed1278503.json",
+      "seed": 1278503,
+      "split": "train"
+    }
+  ],
+  "inference_authority": {
+    "runtime": {
+      "numpy": "2.3.5",
+      "torch": "2.10.0"
+    },
+    "schema": "clasher.hog26.inference-authority.v1",
+    "sources": {
+      "scripts/audit_hog26_outcome_corpora.py": "8a3e4639b866ecfa7e7ee1b7117b8ff12423bbc7ca17ff27218bf409b7f67311",
+      "scripts/audit_hog26_procedural_outcome_shard.py": "b547b41a620bc07938dda44afe042f5aacf628e594ddfa0670b81fdd35ff6900",
+      "scripts/collect_hog26_complete_outcomes.py": "d46ade82546e983db247ebba35b337600a570ff6efb072ddbf6a0170a8ae497f",
+      "scripts/collect_hog26_frozen_final.py": "a2fd794190e45503a8757226e1a313f880a9a090a744f1e387f0955aa817ce9d",
+      "scripts/evaluate_hog26_frozen_outcome.py": "c0cf83e2833bd1c5fa3c30a017900fce815e9d486103e01260c713740322f904",
+      "scripts/freeze_hog26_outcome_cohort.py": "9e0c1dd9b28dd63318fe232a2ca2692d3b469ed4c444be171a5c934f58de8305",
+      "scripts/hog26_frozen_outcome.py": "7d2f3f3bb0a70b775eb215d6306820f8ece2134fb60ee3d75403593bedc54192",
+      "scripts/hog26_inference_authority.py": "73364bcf08c896b8c9b469e3284341bc4545e52caadb608e2fa4955a064e2640",
+      "scripts/hog26_public_outcome_projection.py": "c110af897cb109850f2fe26feb9d62f91362c324d1a70745097998521c2bc540",
+      "scripts/hog26_public_slice_gates.py": "63557cee1c0c548b518049f6cb1aa43aede1b42edc38ccde5e8dcc5458bd2bec",
+      "scripts/hog26_scenario_clusters.py": "fa911b5ab98d347e702178df2814803a77018652515634c22bb1e1d9f0602347",
+      "scripts/hog26_seeded_opening_audit.py": "2a20f90759d5a692793df934a993fa13c25e34add95151bf53face9d33ec9330",
+      "scripts/run_hog26_procedural_outcome_shard.py": "8b162dbefae269be3e01793fe213837db12af58ca7a9d4f9d7c8b026bc62f1ec",
+      "scripts/train_hog26_actor_outcome.py": "b8e7ddb3a677f2a2dfb3df2cf63efba4f99ac693858fb2d705feb1497f0d112f",
+      "scripts/train_hog26_procedural_outcome_candidate.py": "8e8401412330351122c5ed51566f428191b3bb17d26ee88e87441f88ecceb635",
+      "src/clasher/rl/direct_simple_behavior.py": "3864b6290980cd1b1b72ff01deca2a41c7357c1fc339e7b0a1cc021d0229b27b",
+      "src/clasher/rl/outcome_model.py": "5dd1fd8f9f651324518c5d71e2ae04fd395cff48a13cdf49147f12279dc47377",
+      "src/clasher/rl/public_margin_dynamics.py": "76f5519789b9c5f7f0486f5222dde0ee70aaf78a046631137caadc85417977e6",
+      "src/clasher/rl/seeded_deals.py": "8dc9067cfd005c965eb63ac0f7cc6d63f0add3a4a01910759b8fc7042725847d",
+      "src/clasher/torch_sim/simple_attack_locks.py": "b47a5dc78780d8194590b2306bdc86e2b593352050dc57baebbe005f6092a3d0",
+      "src/clasher/torch_sim/simple_engine.py": "baea02fc062a05837788e98e514b0e0d628a50c90cd6da6c9a35409a0ecd08a6",
+      "src/clasher/torch_sim/simple_targeting.py": "c437770401bb97bde0e64041e459e2fae6ad656c6cd4ea6e574ed10757b7e7b9"
+    }
+  },
+  "opponent_generalization": {
+    "base_policy_exposure_evidence": [
+      "reports/hog26_direct_constant_event_seed1263001.json",
+      "datasets/derived/hog26_direct_simple_behavior_factor_seed1261001/corpus.npz",
+      "datasets/derived/hog26_direct_simple_behavior_factor_seed1262001/corpus.npz"
+    ],
+    "base_policy_training_exposure": [
+      "balanced",
+      "bridge-pressure",
+      "reactive-defense",
+      "slow-push",
+      "spell-control",
+      "split-lane",
+      "random"
+    ],
+    "head_held_out_styles": [
+      "split-lane"
+    ],
+    "scope": "New outcome-head fitting and calibration only. Historical development decisions and frozen behavior-policy lineage have seen split-lane. This does not establish unseen-opponent generalization for the complete system."
+  },
+  "original_decks": {
+    "path": "training_decks/simple_gym_supported_v1.json",
+    "sha256": "c93de9989841743b535fe5fde182abe19e1983c8f67a0a27d0c191ea9ccd212f"
+  },
+  "primary_candidate": {
+    "aggregate_phase_margin_training": true,
+    "batch_size": 512,
+    "calibration_timing": "once-after-outcome-and-margin-epoch-selection-v1",
+    "epochs": 30,
+    "feature_set": "public-global-dynamics",
+    "final_holdout_forbidden_until_state_sha_frozen": true,
+    "hidden_size": 16,
+    "learning_rate": 0.0001,
+    "margin_coefficient": 1.0,
+    "margin_dynamics": "overtime-damage-race-v1",
+    "margin_feature_set": "public-globals",
+    "margin_loss": "absolute",
+    "margin_progress_power": 0.0,
+    "margin_residual_scale": 0.5,
+    "outcome_and_margin_epoch_selection_independent": true,
+    "output_checkpoint": "checkpoints/hog26_procedural_outcome_primary_seed1278801/candidate.pt",
+    "output_report": "reports/hog26_procedural_outcome_primary_seed1278801.json",
+    "phase_balanced_margin_training": true,
+    "phase_balanced_outcome_training": true,
+    "probability_shrinkage_uses_only_probability_calibration": true,
+    "public_history_window_decisions": 20,
+    "seed": 1278801,
+    "selection_uses_only_development_selection": true,
+    "sequence_steps": 128,
+    "structured_residual_scale": 0.0,
+    "target_class_mass_loss_draw_win": [
+      0.45,
+      0.1,
+      0.45
+    ]
+  },
+  "primary_candidate_data": {
+    "calibration_corpora": [
+      "probability_calibration.output_corpus"
+    ],
+    "holdout_corpora": [],
+    "legacy_audit_reports": {
+      "datasets/derived/hog26_corrected_draw_training_seed1278964/corpus.npz": "reports/hog26_corrected_draw_training_seed1278964_audit.json",
+      "datasets/derived/hog26_corrected_draw_validation_seed1278965/corpus.npz": "reports/hog26_corrected_draw_validation_seed1278965_audit.json"
+    },
+    "legacy_training_corpora": [
+      "datasets/derived/hog26_corrected_draw_training_seed1278964/corpus.npz"
+    ],
+    "new_training_corpora": "all three training rows in this protocol",
+    "opened_historical_holdout_forbidden": true,
+    "validation_corpora": [
+      "development_selection.output_corpus",
+      "datasets/derived/hog26_corrected_draw_validation_seed1278965/corpus.npz"
+    ]
+  },
+  "probability_calibration": {
+    "audit_report": "reports/hog26_procedural_probability_calibration_seed1278602_audit.json",
+    "episodes_per_seat": 32,
+    "expected_games": 1024,
+    "family_ids": [
+      "family-013",
+      "family-014"
+    ],
+    "opening_schedule": "seeded-ordered-decks-v1",
+    "opponents": [
+      "balanced",
+      "reactive-defense"
+    ],
+    "output_corpus": "datasets/derived/hog26_procedural_probability_calibration_seed1278602/corpus.npz",
+    "output_report": "reports/hog26_procedural_probability_calibration_seed1278602.json",
+    "seed": 1278602,
+    "split": "development"
+  },
+  "procedural_decks": {
+    "path": "training_decks/hog26_procedural_supported_seed1278401.json",
+    "sha256": "6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8"
+  },
+  "replication": {
+    "candidates": [
+      {
+        "output_checkpoint": "checkpoints/hog26_procedural_outcome_replica_seed1278802/candidate.pt",
+        "output_report": "reports/hog26_procedural_outcome_replica_seed1278802.json",
+        "seed": 1278802
+      },
+      {
+        "output_checkpoint": "checkpoints/hog26_procedural_outcome_replica_seed1278803/candidate.pt",
+        "output_report": "reports/hog26_procedural_outcome_replica_seed1278803.json",
+        "seed": 1278803
+      }
+    ],
+    "counterfactual_rule": "Only after all public-state gates pass, freeze a bounded exact-terminal ranking plan with roots balanced across phase, seat and opponent. No deployed search or policy updates until ranking acceptance.",
+    "rule": "Primary and both replicas must independently pass unchanged public-state gates; no best-seed selection. Freeze all three tensor-state digests before opening any fresh final labels. Same training, selection and calibration corpora and candidate design.",
+    "seeds": [
+      1278802,
+      1278803
+    ]
+  },
+  "schema": "clasher.hog26.procedural-outcome-protocol.v1",
+  "training": [
+    {
+      "audit_report": "reports/hog26_corrected_train_balanced_random_seed1278961_audit.json",
+      "episodes_per_seat": 1,
+      "expected_games": 128,
+      "family_ids": [
+        "family-000",
+        "family-001",
+        "family-002",
+        "family-003",
+        "family-004",
+        "family-005",
+        "family-006",
+        "family-007"
+      ],
+      "opening_schedule": "seeded-ordered-decks-v1",
+      "opponents": [
+        "balanced",
+        "random"
+      ],
+      "output_corpus": "datasets/derived/hog26_corrected_train_balanced_random_seed1278961/corpus.npz",
+      "output_report": "reports/hog26_corrected_train_balanced_random_seed1278961.json",
+      "seed": 1278961,
+      "split": "train"
+    },
+    {
+      "audit_report": "reports/hog26_corrected_train_bridge_reactive_seed1278962_audit.json",
+      "episodes_per_seat": 1,
+      "expected_games": 128,
+      "family_ids": [
+        "family-000",
+        "family-001",
+        "family-002",
+        "family-003",
+        "family-004",
+        "family-005",
+        "family-006",
+        "family-007"
+      ],
+      "opening_schedule": "seeded-ordered-decks-v1",
+      "opponents": [
+        "bridge-pressure",
+        "reactive-defense"
+      ],
+      "output_corpus": "datasets/derived/hog26_corrected_train_bridge_reactive_seed1278962/corpus.npz",
+      "output_report": "reports/hog26_corrected_train_bridge_reactive_seed1278962.json",
+      "seed": 1278962,
+      "split": "train"
+    },
+    {
+      "audit_report": "reports/hog26_corrected_train_slow_spell_seed1278963_audit.json",
+      "episodes_per_seat": 1,
+      "expected_games": 128,
+      "family_ids": [
+        "family-000",
+        "family-001",
+        "family-002",
+        "family-003",
+        "family-004",
+        "family-005",
+        "family-006",
+        "family-007"
+      ],
+      "opening_schedule": "seeded-ordered-decks-v1",
+      "opponents": [
+        "slow-push",
+        "spell-control"
+      ],
+      "output_corpus": "datasets/derived/hog26_corrected_train_slow_spell_seed1278963/corpus.npz",
+      "output_report": "reports/hog26_corrected_train_slow_spell_seed1278963.json",
+      "seed": 1278963,
+      "split": "train"
+    }
+  ],
+  "training_readiness": {
+    "blocking_issues": [
+      "All three corrected natural fitting shards and corrected training draw control are complete and audited. Corrected WDL training-family diagnostics support continued outcome-head development, not final acceptance.",
+      "Corrected margin diagnostics regress on families 006/007 and bridge-pressure. Public spatial-mechanics features reduce but do not remove those regressions. Neither design is ready for candidate freeze.",
+      "Fixed overtime damage extrapolation has uncertain late improvement and large wrong-direction errors. Reassess the hard override and public temporal representation before selecting a replacement model.",
+      "Coverage audit found no projectile or area-effect observations in any corrected natural training decision. Pause further head tuning for a bounded public-event projection audit; do not infer causation or acceptance from this omission alone.",
+      "Native rolling origin, casting delay, rectangle footprint and percentage damage are repaired and pass bounded scalar CPU/MPS tests. Full-game and broader spell recertification remain pending. Existing corpora are pre-rolling-repair and the old inference authority intentionally fails current validation."
+    ],
+    "collection_allowed": "No collection or fitting under this stale authority. Finish native lifecycle audit and freeze a new source/data protocol before resuming.",
+    "reassessment_reports": [
+      "reports/hog26_corrected_wdl_complete_globals_screen_20260909.json",
+      "reports/hog26_corrected_margin_reassessment_20260909.json",
+      "reports/hog26_corrected_margin_representation_comparison_20260909.json",
+      "reports/hog26_corrected_margin_signed_errors_20260909.json",
+      "reports/hog26_corrected_late_margin_errors_20260909.json",
+      "reports/hog26_corrected_tree_geometry_comparison_20260909.json",
+      "reports/hog26_corrected_public_event_coverage_20260909.json",
+      "reports/hog26_log_origin_lifecycle_mismatch_20260909.json",
+      "reports/hog26_native_rolling_repair_20260909.json"
+    ],
+    "status": "under-review"
+  }
+}

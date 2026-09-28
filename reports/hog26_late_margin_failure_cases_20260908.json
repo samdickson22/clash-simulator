@@ -1,0 +1,1667 @@
+{
+  "scope": "Training-only diagnosis of the two complete-mixture public-global power0 heads. Uses mean errors across seeds, not an ensemble prediction. No model selection or acceptance.",
+  "summary": {
+    "endpoint": {
+      "samples": 32,
+      "mean_baseline_error": 0.011623622849583626,
+      "mean_model_error": 0.053539368163910694,
+      "mae_improvement": -0.04191574594005942
+    },
+    "not_endpoint": {
+      "samples": 20,
+      "mean_baseline_error": 0.17067290842533112,
+      "mean_model_error": 0.11232584109529853,
+      "mae_improvement": 0.058347062487155196
+    }
+  },
+  "late_samples": [
+    {
+      "row": 72538,
+      "episode": 162,
+      "style": "reactive-defense",
+      "deck": "Procedural train 002-0",
+      "seat": 0,
+      "remaining_recorded_decisions": 124,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 1.0,
+      "current_margin": 0.2514197826385498,
+      "true_remaining_margin_change": 0.05646577477455139,
+      "predicted_remaining_margin_changes": [
+        -0.2871798574924469,
+        -0.2706340551376343
+      ],
+      "mean_extra_absolute_error": 0.2789069563150406,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.9616644978523254,
+        0.9616644978523254,
+        1.0,
+        0.16906946897506714,
+        1.0,
+        1.0
+      ],
+      "crowns": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "row": 25545,
+      "episode": 56,
+      "style": "balanced",
+      "deck": "Procedural train 003-2",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7400000095367432,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 1.0,
+      "current_margin": 0.08573615550994873,
+      "true_remaining_margin_change": 0.02173435688018799,
+      "predicted_remaining_margin_changes": [
+        -0.18497052788734436,
+        -0.19885744154453278
+      ],
+      "mean_extra_absolute_error": 0.19191398471593857,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.3283092975616455,
+        0.6385976672172546,
+        1.0,
+        0.06520314514636993,
+        0.64449542760849,
+        1.0
+      ],
+      "crowns": [
+        0.0,
+        0.0
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 106124,
+      "episode": 243,
+      "style": "reactive-defense",
+      "deck": "Procedural train 007-0",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7080000042915344,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 1.0,
+      "current_margin": 0.06094364449381828,
+      "true_remaining_margin_change": -0.014526009559631348,
+      "predicted_remaining_margin_changes": [
+        -0.19373128935694695,
+        -0.2074558399617672
+      ],
+      "mean_extra_absolute_error": 0.17154154554009438,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.9361074566841125,
+        0.04357798025012016,
+        1.0,
+        0.3161861002445221,
+        0.48066842555999756,
+        1.0
+      ],
+      "crowns": [
+        0.0,
+        0.0
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 11321,
+      "episode": 23,
+      "style": "random",
+      "deck": "Procedural train 001-1",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7133333086967468,
+      "own_king_hp": 0.01326699834316969,
+      "enemy_king_hp": 0.29083746671676636,
+      "current_margin": 0.011342843063175678,
+      "true_remaining_margin_change": -0.004422346595674753,
+      "predicted_remaining_margin_changes": [
+        -0.1684215860441327,
+        -0.1546049164608121
+      ],
+      "mean_extra_absolute_error": 0.1526685580611229,
+      "overtime": 1.0,
+      "tower_hp": [
+        1.0,
+        0.0,
+        0.01326699834316969,
+        0.0,
+        0.6884010434150696,
+        0.29083746671676636
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "king-destroyed"
+    },
+    {
+      "row": 77497,
+      "episode": 175,
+      "style": "reactive-defense",
+      "deck": "Procedural train 002-3",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7400000095367432,
+      "own_king_hp": 0.934286892414093,
+      "enemy_king_hp": 0.6057214140892029,
+      "current_margin": 0.43062272667884827,
+      "true_remaining_margin_change": 0.005242437124252319,
+      "predicted_remaining_margin_changes": [
+        -0.14535477757453918,
+        -0.15011897683143616
+      ],
+      "mean_extra_absolute_error": 0.14773687720298767,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.9790301322937012,
+        0.934286892414093,
+        0.0,
+        0.015727391466498375,
+        0.6057214140892029
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 93219,
+      "episode": 214,
+      "style": "reactive-defense",
+      "deck": "Procedural train 005-1",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.8080000281333923,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 1.0,
+      "current_margin": -0.23350811004638672,
+      "true_remaining_margin_change": -0.013761445879936218,
+      "predicted_remaining_margin_changes": [
+        -0.12393549084663391,
+        -0.12331271171569824
+      ],
+      "mean_extra_absolute_error": 0.09610120952129364,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.44954127073287964,
+        0.04128440469503403,
+        1.0,
+        0.4757536053657532,
+        0.7155963182449341,
+        1.0
+      ],
+      "crowns": [
+        0.0,
+        0.0
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 93826,
+      "episode": 215,
+      "style": "reactive-defense",
+      "deck": "Procedural train 005-1",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.8080000281333923,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 1.0,
+      "current_margin": -0.23350811004638672,
+      "true_remaining_margin_change": -0.013761445879936218,
+      "predicted_remaining_margin_changes": [
+        -0.12393549084663391,
+        -0.12331271171569824
+      ],
+      "mean_extra_absolute_error": 0.09610120952129364,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.44954127073287964,
+        0.04128440469503403,
+        1.0,
+        0.4757536053657532,
+        0.7155963182449341,
+        1.0
+      ],
+      "crowns": [
+        0.0,
+        0.0
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 107315,
+      "episode": 246,
+      "style": "reactive-defense",
+      "deck": "Procedural train 007-1",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.6666666865348816,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 1.0,
+      "current_margin": -0.07221492379903793,
+      "true_remaining_margin_change": -0.01159898191690445,
+      "predicted_remaining_margin_changes": [
+        -0.10737324506044388,
+        -0.09938672930002213
+      ],
+      "mean_extra_absolute_error": 0.0801820233464241,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.03479691967368126,
+        0.6866317391395569,
+        1.0,
+        0.6651375889778137,
+        0.27293577790260315,
+        1.0
+      ],
+      "crowns": [
+        0.0,
+        0.0
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 107816,
+      "episode": 247,
+      "style": "reactive-defense",
+      "deck": "Procedural train 007-1",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.6666666865348816,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 1.0,
+      "current_margin": -0.07221492379903793,
+      "true_remaining_margin_change": -0.01159898191690445,
+      "predicted_remaining_margin_changes": [
+        -0.10737324506044388,
+        -0.09938672930002213
+      ],
+      "mean_extra_absolute_error": 0.0801820233464241,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.03479691967368126,
+        0.6866317391395569,
+        1.0,
+        0.6651375889778137,
+        0.27293577790260315,
+        1.0
+      ],
+      "crowns": [
+        0.0,
+        0.0
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 1896,
+      "episode": 3,
+      "style": "random",
+      "deck": "Procedural train 000-0",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7279999852180481,
+      "own_king_hp": 0.0091210613027215,
+      "enemy_king_hp": 0.13163350522518158,
+      "current_margin": -0.17692311108112335,
+      "true_remaining_margin_change": -0.0030403584241867065,
+      "predicted_remaining_margin_changes": [
+        -0.0804949551820755,
+        -0.07791273295879364
+      ],
+      "mean_extra_absolute_error": 0.07312312722206116,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.44954127073287964,
+        0.0,
+        0.0091210613027215,
+        0.0,
+        0.857798159122467,
+        0.13163350522518158
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "king-destroyed"
+    },
+    {
+      "row": 157231,
+      "episode": 359,
+      "style": "spell-control",
+      "deck": "Procedural train 006-1",
+      "seat": 1,
+      "remaining_recorded_decisions": 124,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.8706467747688293,
+      "enemy_king_hp": 0.7371475696563721,
+      "current_margin": 0.23410217463970184,
+      "true_remaining_margin_change": -0.008084535598754883,
+      "predicted_remaining_margin_changes": [
+        -0.07453492283821106,
+        -0.09233395755290985
+      ],
+      "mean_extra_absolute_error": 0.06726536899805069,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        1.0,
+        0.8706467747688293,
+        0.0,
+        0.43119266629219055,
+        0.7371475696563721
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 59938,
+      "episode": 131,
+      "style": "reactive-defense",
+      "deck": "Procedural train 000-0",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.8146666884422302,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 1.0,
+      "current_margin": -0.139143705368042,
+      "true_remaining_margin_change": -0.00830058753490448,
+      "predicted_remaining_margin_changes": [
+        -0.07733723521232605,
+        -0.05347953736782074
+      ],
+      "mean_extra_absolute_error": 0.048807211220264435,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.024901703000068665,
+        1.0,
+        0.0,
+        0.4423328936100006,
+        1.0
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 116450,
+      "episode": 267,
+      "style": "spell-control",
+      "deck": "Procedural train 000-2",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.6786666512489319,
+      "own_king_hp": 0.5329601764678955,
+      "enemy_king_hp": 0.7336235642433167,
+      "current_margin": -0.35205593705177307,
+      "true_remaining_margin_change": -0.01354306936264038,
+      "predicted_remaining_margin_changes": [
+        -0.0694296658039093,
+        -0.057576537132263184
+      ],
+      "mean_extra_absolute_error": 0.03641696274280548,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.04062909632921219,
+        0.5329601764678955,
+        0.0,
+        0.8961336612701416,
+        0.7336235642433167
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 115940,
+      "episode": 266,
+      "style": "spell-control",
+      "deck": "Procedural train 000-2",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.6973333358764648,
+      "own_king_hp": 0.858208954334259,
+      "enemy_king_hp": 0.868573784828186,
+      "current_margin": -0.3239005506038666,
+      "true_remaining_margin_change": -0.012887716293334961,
+      "predicted_remaining_margin_changes": [
+        -0.06641918420791626,
+        -0.05014216899871826
+      ],
+      "mean_extra_absolute_error": 0.03250524401664734,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.038663171231746674,
+        0.858208954334259,
+        0.0,
+        1.0,
+        0.868573784828186
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 86800,
+      "episode": 198,
+      "style": "reactive-defense",
+      "deck": "Procedural train 004-1",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7493333220481873,
+      "own_king_hp": 0.9581260085105896,
+      "enemy_king_hp": 0.7371475696563721,
+      "current_margin": -0.15995782613754272,
+      "true_remaining_margin_change": -0.004914805293083191,
+      "predicted_remaining_margin_changes": [
+        -0.01641404628753662,
+        -0.0659174919128418
+      ],
+      "mean_extra_absolute_error": 0.03133615851402283,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.014744429849088192,
+        0.9581260085105896,
+        0.0,
+        0.7155963182449341,
+        0.7371475696563721
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 113078,
+      "episode": 259,
+      "style": "spell-control",
+      "deck": "Procedural train 000-0",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.6840000152587891,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 0.6057214140892029,
+      "current_margin": -0.10404777526855469,
+      "true_remaining_margin_change": -0.003058113157749176,
+      "predicted_remaining_margin_changes": [
+        -0.041249051690101624,
+        -0.026826560497283936
+      ],
+      "mean_extra_absolute_error": 0.027921579778194427,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.00917431153357029,
+        1.0,
+        0.0,
+        0.7155963182449341,
+        0.6057214140892029
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 142581,
+      "episode": 326,
+      "style": "spell-control",
+      "deck": "Procedural train 004-1",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.6679999828338623,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 0.5400083065032959,
+      "current_margin": -0.16875331103801727,
+      "true_remaining_margin_change": -0.011249452829360962,
+      "predicted_remaining_margin_changes": [
+        -0.03290605545043945,
+        -0.05626685917377472
+      ],
+      "mean_extra_absolute_error": 0.022087551653385162,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.033748362213373184,
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        0.5400083065032959
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 38117,
+      "episode": 84,
+      "style": "balanced",
+      "deck": "Procedural train 005-1",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7519999742507935,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 0.4465174078941345,
+      "current_margin": -0.016357699409127235,
+      "true_remaining_margin_change": -0.0030581168830394745,
+      "predicted_remaining_margin_changes": [
+        -0.013452379032969475,
+        -0.03899621032178402
+      ],
+      "mean_extra_absolute_error": 0.020108060911297798,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.00917431153357029,
+        0.0,
+        1.0,
+        0.0,
+        0.6117300391197205,
+        0.4465174078941345
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 38682,
+      "episode": 85,
+      "style": "balanced",
+      "deck": "Procedural train 005-1",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7519999742507935,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 0.4465174078941345,
+      "current_margin": -0.016357699409127235,
+      "true_remaining_margin_change": -0.0030581168830394745,
+      "predicted_remaining_margin_changes": [
+        -0.013452379032969475,
+        -0.03899621032178402
+      ],
+      "mean_extra_absolute_error": 0.020108060911297798,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.00917431153357029,
+        0.0,
+        1.0,
+        0.0,
+        0.6117300391197205,
+        0.4465174078941345
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 161007,
+      "episode": 367,
+      "style": "spell-control",
+      "deck": "Procedural train 006-3",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.6746666431427002,
+      "own_king_hp": 0.19968904554843903,
+      "enemy_king_hp": 0.802860677242279,
+      "current_margin": -0.3948099613189697,
+      "true_remaining_margin_change": -0.021079063415527344,
+      "predicted_remaining_margin_changes": [
+        -0.06786549091339111,
+        -0.048306167125701904
+      ],
+      "mean_extra_absolute_error": 0.01592770218849182,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.06323722004890442,
+        0.19968904554843903,
+        0.0,
+        0.64449542760849,
+        0.802860677242279
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 143082,
+      "episode": 327,
+      "style": "spell-control",
+      "deck": "Procedural train 004-1",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.6666666865348816,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 0.6057214140892029,
+      "current_margin": -0.18028199672698975,
+      "true_remaining_margin_change": -0.021625161170959473,
+      "predicted_remaining_margin_changes": [
+        -0.04689371585845947,
+        -0.06942209601402283
+      ],
+      "mean_extra_absolute_error": 0.014907583594322205,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.06487549096345901,
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        0.6057214140892029
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 26576,
+      "episode": 58,
+      "style": "random",
+      "deck": "Procedural train 003-2",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7733333110809326,
+      "own_king_hp": 0.8423507213592529,
+      "enemy_king_hp": 0.868573784828186,
+      "current_margin": -0.24705469608306885,
+      "true_remaining_margin_change": -0.0002184361219406128,
+      "predicted_remaining_margin_changes": [
+        -0.023532450199127197,
+        -0.0025434792041778564
+      ],
+      "mean_extra_absolute_error": 0.012601092457771301,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0006553080165758729,
+        0.0,
+        0.8423507213592529,
+        0.0,
+        0.7155963182449341,
+        0.868573784828186
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 99262,
+      "episode": 227,
+      "style": "reactive-defense",
+      "deck": "Procedural train 006-0",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7226666808128357,
+      "own_king_hp": 0.6593283414840698,
+      "enemy_king_hp": 0.7543532252311707,
+      "current_margin": -0.06560900062322617,
+      "true_remaining_margin_change": -0.007787242531776428,
+      "predicted_remaining_margin_changes": [
+        -0.030441679060459137,
+        -0.02495398372411728
+      ],
+      "mean_extra_absolute_error": 0.012123346328735352,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.023361746221780777,
+        0.6593283414840698,
+        0.0,
+        0.12516382336616516,
+        0.7543532252311707
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 41527,
+      "episode": 91,
+      "style": "random",
+      "deck": "Procedural train 005-2",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.6826666593551636,
+      "own_king_hp": 0.49937811493873596,
+      "enemy_king_hp": 0.6194030046463013,
+      "current_margin": -0.3512795865535736,
+      "true_remaining_margin_change": -0.022062063217163086,
+      "predicted_remaining_margin_changes": [
+        -0.03693637251853943,
+        -0.06537777185440063
+      ],
+      "mean_extra_absolute_error": 0.00703294575214386,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.06618610769510269,
+        0.0,
+        0.49937811493873596,
+        0.0,
+        1.0,
+        0.6194030046463013
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 88813,
+      "episode": 203,
+      "style": "reactive-defense",
+      "deck": "Procedural train 004-2",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7519999742507935,
+      "own_king_hp": 0.7910447716712952,
+      "enemy_king_hp": 0.4722222089767456,
+      "current_margin": -0.2141714245080948,
+      "true_remaining_margin_change": -0.012887716293334961,
+      "predicted_remaining_margin_changes": [
+        0.0006403923034667969,
+        -0.035478800535202026
+      ],
+      "mean_extra_absolute_error": 0.005171880125999451,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.038663171231746674,
+        0.7910447716712952,
+        0.0,
+        1.0,
+        0.4722222089767456
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 53748,
+      "episode": 118,
+      "style": "random",
+      "deck": "Procedural train 007-1",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7319999933242798,
+      "own_king_hp": 0.45031094551086426,
+      "enemy_king_hp": 0.12810945510864258,
+      "current_margin": -0.1017192006111145,
+      "true_remaining_margin_change": -0.00535283237695694,
+      "predicted_remaining_margin_changes": [
+        0.0019571036100387573,
+        0.0019904300570487976
+      ],
+      "mean_extra_absolute_error": 0.0019737668335437775,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.0610419400036335,
+        0.45031094551086426,
+        0.0,
+        0.6884010434150696,
+        0.12810945510864258
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 160050,
+      "episode": 365,
+      "style": "slow-push",
+      "deck": "Procedural train 006-3",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7200000286102295,
+      "own_king_hp": 0.6345978379249573,
+      "enemy_king_hp": 0.3387230634689331,
+      "current_margin": -0.23216362297534943,
+      "true_remaining_margin_change": -0.002544790506362915,
+      "predicted_remaining_margin_changes": [
+        -0.009952619671821594,
+        -0.0020948201417922974
+      ],
+      "mean_extra_absolute_error": 0.0013841092586517334,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0076343342661857605,
+        0.0,
+        0.6345978379249573,
+        0.0,
+        1.0,
+        0.3387230634689331
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 129407,
+      "episode": 297,
+      "style": "slow-push",
+      "deck": "Procedural train 002-2",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.6946666836738586,
+      "own_king_hp": 0.09079602360725403,
+      "enemy_king_hp": 0.5080845952033997,
+      "current_margin": -0.4540809094905853,
+      "true_remaining_margin_change": -0.018348604440689087,
+      "predicted_remaining_margin_changes": [
+        -0.03768807649612427,
+        -0.03184306621551514
+      ],
+      "mean_extra_absolute_error": -0.0019316375255584717,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.055045872926712036,
+        0.0,
+        0.09079602360725403,
+        0.0,
+        1.0,
+        0.5080845952033997
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 5130,
+      "episode": 10,
+      "style": "random",
+      "deck": "Procedural train 000-2",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7066666483879089,
+      "own_king_hp": 0.35323384404182434,
+      "enemy_king_hp": 0.09846600145101547,
+      "current_margin": -0.23912720382213593,
+      "true_remaining_margin_change": -0.00928354263305664,
+      "predicted_remaining_margin_changes": [
+        -0.007685855031013489,
+        0.0014508366584777832
+      ],
+      "mean_extra_absolute_error": -0.003117509186267853,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.027850590646266937,
+        0.0,
+        0.35323384404182434,
+        0.0,
+        1.0,
+        0.09846600145101547
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 139868,
+      "episode": 319,
+      "style": "spell-control",
+      "deck": "Procedural train 003-3",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.8106666803359985,
+      "own_king_hp": 0.8550994992256165,
+      "enemy_king_hp": 0.34286898374557495,
+      "current_margin": -0.14970213174819946,
+      "true_remaining_margin_change": -0.012887716293334961,
+      "predicted_remaining_margin_changes": [
+        -0.01740965247154236,
+        -0.022496774792671204
+      ],
+      "mean_extra_absolute_error": -0.005822218954563141,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.038663171231746674,
+        0.8550994992256165,
+        0.0,
+        1.0,
+        0.34286898374557495
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 139259,
+      "episode": 318,
+      "style": "spell-control",
+      "deck": "Procedural train 003-3",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.765333354473114,
+      "own_king_hp": 0.9272388219833374,
+      "enemy_king_hp": 0.40858209133148193,
+      "current_margin": -0.14526645839214325,
+      "true_remaining_margin_change": -0.015181303024291992,
+      "predicted_remaining_margin_changes": [
+        -0.004664480686187744,
+        -0.0076276808977127075
+      ],
+      "mean_extra_absolute_error": -0.006146080791950226,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.04554390534758568,
+        0.9272388219833374,
+        0.0,
+        1.0,
+        0.40858209133148193
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 69148,
+      "episode": 154,
+      "style": "reactive-defense",
+      "deck": "Procedural train 001-2",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7639999985694885,
+      "own_king_hp": 0.89552241563797,
+      "enemy_king_hp": 0.5122305154800415,
+      "current_margin": 0.07610384374856949,
+      "true_remaining_margin_change": -0.01630500704050064,
+      "predicted_remaining_margin_changes": [
+        -0.026472672820091248,
+        -0.016838066279888153
+      ],
+      "mean_extra_absolute_error": -0.010954644531011581,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.014089121483266354,
+        0.0,
+        0.89552241563797,
+        0.0,
+        0.16906946897506714,
+        0.5122305154800415
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 135273,
+      "episode": 309,
+      "style": "slow-push",
+      "deck": "Procedural train 003-1",
+      "seat": 1,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7266666889190674,
+      "own_king_hp": 0.4601989984512329,
+      "enemy_king_hp": 0.19320066273212433,
+      "current_margin": -0.2255484014749527,
+      "true_remaining_margin_change": -0.0187855064868927,
+      "predicted_remaining_margin_changes": [
+        -0.012449339032173157,
+        -0.014809727668762207
+      ],
+      "mean_extra_absolute_error": -0.013629533350467682,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.056356485933065414,
+        0.0,
+        0.4601989984512329,
+        0.0,
+        1.0,
+        0.19320066273212433
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 40114,
+      "episode": 88,
+      "style": "balanced",
+      "deck": "Procedural train 005-2",
+      "seat": 0,
+      "remaining_recorded_decisions": 0,
+      "progress": 0.7400000095367432,
+      "own_king_hp": 0.08271144330501556,
+      "enemy_king_hp": 0.36007463932037354,
+      "current_margin": -0.19020450115203857,
+      "true_remaining_margin_change": -0.02785058319568634,
+      "predicted_remaining_margin_changes": [
+        -0.008545517921447754,
+        -0.025571122765541077
+      ],
+      "mean_extra_absolute_error": -0.017058320343494415,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.08355177193880081,
+        0.08271144330501556,
+        0.0,
+        0.37680208683013916,
+        0.36007463932037354
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ],
+      "terminal_pattern": "overtime-crown-change"
+    },
+    {
+      "row": 88232,
+      "episode": 202,
+      "style": "reactive-defense",
+      "deck": "Procedural train 004-2",
+      "seat": 0,
+      "remaining_recorded_decisions": 16,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.7910447716712952,
+      "enemy_king_hp": 0.4950248897075653,
+      "current_margin": -0.13832978904247284,
+      "true_remaining_margin_change": -0.13820423185825348,
+      "predicted_remaining_margin_changes": [
+        -0.02949342131614685,
+        -0.040684834122657776
+      ],
+      "mean_extra_absolute_error": -0.03508912771940231,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.2889908254146576,
+        0.7910447716712952,
+        0.0,
+        1.0,
+        0.4950248897075653
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 131668,
+      "episode": 302,
+      "style": "spell-control",
+      "deck": "Procedural train 002-3",
+      "seat": 0,
+      "remaining_recorded_decisions": 59,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.7371475696563721,
+      "enemy_king_hp": 0.5881011486053467,
+      "current_margin": 0.015387694351375103,
+      "true_remaining_margin_change": -0.052970729768276215,
+      "predicted_remaining_margin_changes": [
+        -0.04720207955688238,
+        -0.03961666952818632
+      ],
+      "mean_extra_absolute_error": -0.043409375473856926,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.15891218185424805,
+        0.7371475696563721,
+        0.0,
+        0.2617955505847931,
+        0.5881011486053467
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 132353,
+      "episode": 303,
+      "style": "spell-control",
+      "deck": "Procedural train 002-3",
+      "seat": 1,
+      "remaining_recorded_decisions": 59,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.7371475696563721,
+      "enemy_king_hp": 0.5881011486053467,
+      "current_margin": 0.015387694351375103,
+      "true_remaining_margin_change": -0.052970729768276215,
+      "predicted_remaining_margin_changes": [
+        -0.04720207955688238,
+        -0.03961666952818632
+      ],
+      "mean_extra_absolute_error": -0.043409375473856926,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.15891218185424805,
+        0.7371475696563721,
+        0.0,
+        0.2617955505847931,
+        0.5881011486053467
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 102762,
+      "episode": 235,
+      "style": "reactive-defense",
+      "deck": "Procedural train 006-2",
+      "seat": 1,
+      "remaining_recorded_decisions": 20,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.44527363777160645,
+      "enemy_king_hp": 0.576077938079834,
+      "current_margin": -0.21430914103984833,
+      "true_remaining_margin_change": -0.058759286999702454,
+      "predicted_remaining_margin_changes": [
+        -0.04992498457431793,
+        -0.05138485133647919
+      ],
+      "mean_extra_absolute_error": -0.05065491795539856,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.17627784609794617,
+        0.44527363777160645,
+        0.0,
+        0.6884010434150696,
+        0.576077938079834
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 98674,
+      "episode": 226,
+      "style": "reactive-defense",
+      "deck": "Procedural train 006-0",
+      "seat": 0,
+      "remaining_recorded_decisions": 45,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.6593283414840698,
+      "enemy_king_hp": 0.802860677242279,
+      "current_margin": -0.07672133296728134,
+      "true_remaining_margin_change": -0.06395526975393295,
+      "predicted_remaining_margin_changes": [
+        -0.04820825904607773,
+        -0.05703205615282059
+      ],
+      "mean_extra_absolute_error": -0.05262015759944916,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.18073396384716034,
+        0.6593283414840698,
+        0.0,
+        0.2673656642436981,
+        0.802860677242279
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 96260,
+      "episode": 222,
+      "style": "reactive-defense",
+      "deck": "Procedural train 005-3",
+      "seat": 0,
+      "remaining_recorded_decisions": 124,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.5972222089767456,
+      "enemy_king_hp": 1.0,
+      "current_margin": -0.030283769592642784,
+      "true_remaining_margin_change": -0.2861033082008362,
+      "predicted_remaining_margin_changes": [
+        -0.050422804430127144,
+        -0.06477906741201878
+      ],
+      "mean_extra_absolute_error": -0.057600926607847214,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.8853210806846619,
+        0.5972222089767456,
+        0.0,
+        0.5733944773674011,
+        1.0
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 97010,
+      "episode": 223,
+      "style": "reactive-defense",
+      "deck": "Procedural train 005-3",
+      "seat": 1,
+      "remaining_recorded_decisions": 124,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.5972222089767456,
+      "enemy_king_hp": 1.0,
+      "current_margin": -0.030283769592642784,
+      "true_remaining_margin_change": -0.2893655300140381,
+      "predicted_remaining_margin_changes": [
+        -0.050422804430127144,
+        -0.06477906741201878
+      ],
+      "mean_extra_absolute_error": -0.057600926607847214,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.8853210806846619,
+        0.5972222089767456,
+        0.0,
+        0.5733944773674011,
+        1.0
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 99888,
+      "episode": 228,
+      "style": "bridge-pressure",
+      "deck": "Procedural train 006-1",
+      "seat": 0,
+      "remaining_recorded_decisions": 50,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.5939054489135742,
+      "enemy_king_hp": 0.3528192341327667,
+      "current_margin": 0.014940500259399414,
+      "true_remaining_margin_change": -0.15636838972568512,
+      "predicted_remaining_margin_changes": [
+        -0.059244170784950256,
+        -0.07142063230276108
+      ],
+      "mean_extra_absolute_error": -0.06533240154385567,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.2844036817550659,
+        0.0,
+        0.5939054489135742,
+        0.0,
+        0.48066842555999756,
+        0.3528192341327667
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 100564,
+      "episode": 229,
+      "style": "bridge-pressure",
+      "deck": "Procedural train 006-1",
+      "seat": 1,
+      "remaining_recorded_decisions": 46,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.5851989984512329,
+      "enemy_king_hp": 0.3528192341327667,
+      "current_margin": 0.012038350105285645,
+      "true_remaining_margin_change": -0.14517436921596527,
+      "predicted_remaining_margin_changes": [
+        -0.0594930462539196,
+        -0.07171113044023514
+      ],
+      "mean_extra_absolute_error": -0.06560208834707737,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.2844036817550659,
+        0.0,
+        0.5851989984512329,
+        0.0,
+        0.48066842555999756,
+        0.3528192341327667
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 110678,
+      "episode": 254,
+      "style": "reactive-defense",
+      "deck": "Procedural train 007-3",
+      "seat": 0,
+      "remaining_recorded_decisions": 124,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 0.8872305154800415,
+      "current_margin": 0.08622463792562485,
+      "true_remaining_margin_change": -0.1462429016828537,
+      "predicted_remaining_margin_changes": [
+        -0.06337945908308029,
+        -0.08149343729019165
+      ],
+      "mean_extra_absolute_error": -0.07243645191192627,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.4843709170818329,
+        1.0,
+        0.0,
+        0.3384665846824646,
+        0.8872305154800415
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 156481,
+      "episode": 358,
+      "style": "spell-control",
+      "deck": "Procedural train 006-1",
+      "seat": 0,
+      "remaining_recorded_decisions": 124,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 0.868573784828186,
+      "current_margin": 0.15070588886737823,
+      "true_remaining_margin_change": -0.10168194770812988,
+      "predicted_remaining_margin_changes": [
+        -0.08388563990592957,
+        -0.105491504073143
+      ],
+      "mean_extra_absolute_error": -0.09087901562452316,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.0,
+        0.9651867747306824,
+        1.0,
+        0.0,
+        0.64449542760849,
+        0.868573784828186
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 56351,
+      "episode": 124,
+      "style": "balanced",
+      "deck": "Procedural train 007-3",
+      "seat": 0,
+      "remaining_recorded_decisions": 124,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.9475538730621338,
+      "enemy_king_hp": 0.16272802650928497,
+      "current_margin": 0.24904854595661163,
+      "true_remaining_margin_change": -0.11668357253074646,
+      "predicted_remaining_margin_changes": [
+        -0.128983736038208,
+        -0.13963119685649872
+      ],
+      "mean_extra_absolute_error": -0.09905967861413956,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.891218900680542,
+        0.0,
+        0.9475538730621338,
+        0.0,
+        0.9288991093635559,
+        0.16272802650928497
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 10239,
+      "episode": 21,
+      "style": "balanced",
+      "deck": "Procedural train 001-1",
+      "seat": 1,
+      "remaining_recorded_decisions": 96,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.7097843885421753,
+      "enemy_king_hp": 0.36007463932037354,
+      "current_margin": -0.06691634654998779,
+      "true_remaining_margin_change": -0.2683600187301636,
+      "predicted_remaining_margin_changes": [
+        -0.10696353018283844,
+        -0.10287472605705261
+      ],
+      "mean_extra_absolute_error": -0.10491912811994553,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.44954127073287964,
+        0.0,
+        0.7097843885421753,
+        0.0,
+        1.0,
+        0.36007463932037354
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 9517,
+      "episode": 20,
+      "style": "balanced",
+      "deck": "Procedural train 001-1",
+      "seat": 0,
+      "remaining_recorded_decisions": 96,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.7097843885421753,
+      "enemy_king_hp": 0.5572139024734497,
+      "current_margin": -0.13262943923473358,
+      "true_remaining_margin_change": -0.3234058618545532,
+      "predicted_remaining_margin_changes": [
+        -0.12762029469013214,
+        -0.1183878630399704
+      ],
+      "mean_extra_absolute_error": -0.12300409376621246,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.44954127073287964,
+        0.0,
+        0.7097843885421753,
+        0.0,
+        1.0,
+        0.5572139024734497
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 105489,
+      "episode": 242,
+      "style": "reactive-defense",
+      "deck": "Procedural train 007-0",
+      "seat": 0,
+      "remaining_recorded_decisions": 103,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 1.0,
+      "enemy_king_hp": 1.0,
+      "current_margin": 0.25109219551086426,
+      "true_remaining_margin_change": -0.3606378138065338,
+      "predicted_remaining_margin_changes": [
+        -0.10412955284118652,
+        -0.14635229110717773
+      ],
+      "mean_extra_absolute_error": -0.12524091452360153,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.4760812520980835,
+        0.8659895062446594,
+        1.0,
+        0.46363040804862976,
+        0.12516382336616516,
+        1.0
+      ],
+      "crowns": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "row": 57101,
+      "episode": 125,
+      "style": "balanced",
+      "deck": "Procedural train 007-3",
+      "seat": 1,
+      "remaining_recorded_decisions": 124,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.9475538730621338,
+      "enemy_king_hp": 0.16272802650928497,
+      "current_margin": 0.23616082966327667,
+      "true_remaining_margin_change": -0.3009560704231262,
+      "predicted_remaining_margin_changes": [
+        -0.12511153519153595,
+        -0.13556672632694244
+      ],
+      "mean_extra_absolute_error": -0.130339115858078,
+      "overtime": 1.0,
+      "tower_hp": [
+        0.8525556921958923,
+        0.0,
+        0.9475538730621338,
+        0.0,
+        0.9288991093635559,
+        0.16272802650928497
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 151456,
+      "episode": 348,
+      "style": "slow-push",
+      "deck": "Procedural train 005-3",
+      "seat": 0,
+      "remaining_recorded_decisions": 89,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.5012437701225281,
+      "enemy_king_hp": 0.5362769365310669,
+      "current_margin": 0.012022574432194233,
+      "true_remaining_margin_change": -0.24353386461734772,
+      "predicted_remaining_margin_changes": [
+        -0.12676505465060472,
+        -0.16915083397179842
+      ],
+      "mean_extra_absolute_error": -0.1479579396545887,
+      "overtime": 1.0,
+      "tower_hp": [
+        1.0,
+        0.0,
+        0.5012437701225281,
+        0.0,
+        0.9288991093635559,
+        0.5362769365310669
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    },
+    {
+      "row": 152171,
+      "episode": 349,
+      "style": "slow-push",
+      "deck": "Procedural train 005-3",
+      "seat": 1,
+      "remaining_recorded_decisions": 86,
+      "progress": 0.8333333134651184,
+      "own_king_hp": 0.5012437701225281,
+      "enemy_king_hp": 0.5362769365310669,
+      "current_margin": 0.012022574432194233,
+      "true_remaining_margin_change": -0.24353386461734772,
+      "predicted_remaining_margin_changes": [
+        -0.12676505465060472,
+        -0.16915083397179842
+      ],
+      "mean_extra_absolute_error": -0.1479579396545887,
+      "overtime": 1.0,
+      "tower_hp": [
+        1.0,
+        0.0,
+        0.5012437701225281,
+        0.0,
+        0.9288991093635559,
+        0.5362769365310669
+      ],
+      "crowns": [
+        0.3333333432674408,
+        0.3333333432674408
+      ]
+    }
+  ],
+  "endpoint_terminal_patterns": {
+    "overtime-crown-change": 30,
+    "king-destroyed": 2
+  }
+}

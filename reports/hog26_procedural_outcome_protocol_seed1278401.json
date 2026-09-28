@@ -1,0 +1,157 @@
+{
+  "schema": "clasher.hog26.procedural-outcome-protocol.v1",
+  "base_policy": {
+    "path": "checkpoints/hog26_direct_constant_event_seed1263001/candidate.pt",
+    "sha256": "f609b60b3e7b7b574e084b15255e0fc247447e3c18d8552714213ccd0c709336"
+  },
+  "procedural_decks": {
+    "path": "training_decks/hog26_procedural_supported_seed1278401.json",
+    "sha256": "6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8"
+  },
+  "original_decks": {
+    "path": "training_decks/simple_gym_supported_v1.json",
+    "sha256": "c93de9989841743b535fe5fde182abe19e1983c8f67a0a27d0c191ea9ccd212f"
+  },
+  "training": [
+    {
+      "seed": 1278501,
+      "split": "train",
+      "family_ids": ["family-000", "family-001", "family-002", "family-003", "family-004", "family-005", "family-006", "family-007"],
+      "opponents": ["balanced", "random"],
+      "episodes_per_seat": 1,
+      "expected_games": 128,
+      "output_corpus": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
+      "output_report": "reports/hog26_procedural_train_balanced_random_seed1278501.json",
+      "audit_report": "reports/hog26_procedural_train_balanced_random_seed1278501_audit.json"
+    },
+    {
+      "seed": 1278502,
+      "split": "train",
+      "family_ids": ["family-000", "family-001", "family-002", "family-003", "family-004", "family-005", "family-006", "family-007"],
+      "opponents": ["bridge-pressure", "reactive-defense"],
+      "episodes_per_seat": 1,
+      "expected_games": 128,
+      "output_corpus": "datasets/derived/hog26_procedural_train_bridge_reactive_seed1278502/corpus.npz",
+      "output_report": "reports/hog26_procedural_train_bridge_reactive_seed1278502.json",
+      "audit_report": "reports/hog26_procedural_train_bridge_reactive_seed1278502_audit.json"
+    },
+    {
+      "seed": 1278503,
+      "split": "train",
+      "family_ids": ["family-000", "family-001", "family-002", "family-003", "family-004", "family-005", "family-006", "family-007"],
+      "opponents": ["slow-push", "spell-control"],
+      "episodes_per_seat": 1,
+      "expected_games": 128,
+      "output_corpus": "datasets/derived/hog26_procedural_train_slow_spell_seed1278503/corpus.npz",
+      "output_report": "reports/hog26_procedural_train_slow_spell_seed1278503.json",
+      "audit_report": "reports/hog26_procedural_train_slow_spell_seed1278503_audit.json"
+    }
+  ],
+  "development_selection": {
+    "seed": 1278601,
+    "split": "development",
+    "family_ids": ["family-009", "family-010"],
+    "opponents": ["balanced", "reactive-defense"],
+    "episodes_per_seat": 2,
+    "expected_games": 64,
+    "output_corpus": "datasets/derived/hog26_procedural_development_selection_seed1278601/corpus.npz",
+    "output_report": "reports/hog26_procedural_development_selection_seed1278601.json",
+    "audit_report": "reports/hog26_procedural_development_selection_seed1278601_audit.json"
+  },
+  "probability_calibration": {
+    "seed": 1278602,
+    "split": "development",
+    "family_ids": ["family-013", "family-014"],
+    "opponents": ["balanced", "reactive-defense"],
+    "episodes_per_seat": 2,
+    "expected_games": 64,
+    "output_corpus": "datasets/derived/hog26_procedural_probability_calibration_seed1278602/corpus.npz",
+    "output_report": "reports/hog26_procedural_probability_calibration_seed1278602.json",
+    "audit_report": "reports/hog26_procedural_probability_calibration_seed1278602_audit.json"
+  },
+  "final_holdout": {
+    "generated": {
+      "seed": 1278701,
+      "split": "holdout",
+      "family_ids": ["family-008", "family-011", "family-012", "family-015"],
+      "opponents": ["split-lane"],
+      "episodes_per_seat": 3,
+      "expected_games": 96,
+      "output_corpus": "datasets/derived/hog26_procedural_final_holdout_seed1278701/corpus.npz",
+      "output_report": "reports/hog26_procedural_final_holdout_seed1278701.json",
+      "audit_report": "reports/hog26_procedural_final_holdout_seed1278701_audit.json"
+    },
+    "reserved_original": {
+      "seed": 1278702,
+      "deck": "RHogs AQ 2.9 Cycle",
+      "opponents": ["split-lane"],
+      "episodes_per_seat": 3,
+      "expected_games": 6,
+      "output_corpus": "datasets/derived/hog26_rhogs_aq_final_holdout_seed1278702/corpus.npz",
+      "output_report": "reports/hog26_rhogs_aq_final_holdout_seed1278702.json",
+      "audit_report": "reports/hog26_rhogs_aq_final_holdout_seed1278702_audit.json"
+    }
+  },
+  "primary_candidate": {
+    "seed": 1278801,
+    "feature_set": "structured-summary",
+    "hidden_size": 16,
+    "structured_residual_scale": 0.0,
+    "margin_residual_scale": 0.5,
+    "margin_feature_set": "public-globals",
+    "margin_progress_power": 6.0,
+    "epochs": 30,
+    "batch_size": 512,
+    "sequence_steps": 128,
+    "learning_rate": 0.0001,
+    "margin_coefficient": 1.0,
+    "phase_balanced_outcome_training": true,
+    "phase_balanced_margin_training": true,
+    "target_class_mass_loss_draw_win": [0.45, 0.10, 0.45],
+    "outcome_and_margin_epoch_selection_independent": true,
+    "selection_uses_only_development_selection": true,
+    "probability_shrinkage_uses_only_probability_calibration": true,
+    "final_holdout_forbidden_until_state_sha_frozen": true,
+    "output_checkpoint": "checkpoints/hog26_procedural_outcome_primary_seed1278801/candidate.pt",
+    "output_report": "reports/hog26_procedural_outcome_primary_seed1278801.json"
+  },
+  "primary_candidate_data": {
+    "legacy_training_corpora": [
+      "datasets/derived/hog26_crossed_train4_seed1276001/corpus.npz",
+      "datasets/derived/hog26_broad_train_fold_a_seed1277001/corpus.npz",
+      "datasets/derived/hog26_broad_train_fold_b_seed1277002/corpus.npz",
+      "datasets/derived/hog26_symmetric_draw_outcomes_seed1270001/corpus.npz"
+    ],
+    "new_training_corpora": "all three training rows in this protocol",
+    "validation_corpora": [
+      "development_selection.output_corpus",
+      "datasets/derived/hog26_symmetric_draw_outcomes_seed1271001/corpus.npz"
+    ],
+    "calibration_corpora": ["probability_calibration.output_corpus"],
+    "holdout_corpora": [],
+    "opened_historical_holdout_forbidden": true
+  },
+  "gates": {
+    "complete_episodes_only": true,
+    "actor_input_excludes_outcome_labels": true,
+    "critic_inputs_absent": true,
+    "seeds_and_bytes_disjoint": true,
+    "whole_family_split_isolation": true,
+    "phase_balanced_metrics": true,
+    "cluster_bootstrap_replicates": 2000,
+    "minimum_clusters_per_phase": 8,
+    "minimum_phase_auc_lower_95": 0.5,
+    "minimum_nll_improvement": 0.02,
+    "maximum_ece": 0.2,
+    "minimum_natural_auc": 0.6,
+    "minimum_natural_phase_auc": 0.55,
+    "minimum_controlled_draw_auc": 0.8,
+    "minimum_controlled_draw_endpoint_probability_lift": 0.03,
+    "maximum_natural_draw_probability": 0.1,
+    "maximum_margin_mae": 0.25,
+    "minimum_margin_mae_improvement": 0.005,
+    "maximum_phase_margin_mae_regression": 0.01,
+    "counterfactual_ranking_required_before_search": true,
+    "policy_updates_forbidden_before_all_gates": true
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "status": "rejected-before-fitting",
+  "corpus": "datasets/derived/hog26_scalar_pilot_seed1279221_20260911",
+  "complete_manifest_sha256": "08c09100092c023ceeab7631611a09aab3f857e422c4efd9b3f16ce2e91e64c7",
+  "games": 384,
+  "rows": 154259,
+  "reason": "Generic builder hand encoding missed thirteen typed aliases, including learner IceGolem. Actions and terminal outcomes reflect an unintended restricted policy. Relabeling or filtering rows cannot repair trajectories.",
+  "aliases": [
+    "Archers",
+    "Bandit",
+    "BarbarianBarrel",
+    "DartGoblin",
+    "GiantSnowball",
+    "Guards",
+    "IceGolem",
+    "IceSpirit",
+    "Lumberjack",
+    "MagicArcher",
+    "NightWitch",
+    "RoyalGhost",
+    "SkeletonBarrel"
+  ],
+  "fitting_started": false,
+  "retention": "historical diagnosis only; excluded from scalar fitting",
+  "fix": "setup-compiled typed registry resolver; full8card validation/cycling; unknown nonempty hand rejects; independent expectedIDs use typed resolver"
+}

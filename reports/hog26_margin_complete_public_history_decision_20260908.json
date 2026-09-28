@@ -1,0 +1,87 @@
+{
+  "status": "no-candidate-promoted",
+  "source": "reports/hog26_margin_complete_public_history_screen_20260908.json",
+  "results": [
+    {
+      "power": 0.0,
+      "seed": 1278911,
+      "representative_phase_gain": {
+        "early": 0.05260090529918671,
+        "late": 7.130950689315796e-05,
+        "middle": 0.01424640417098999
+      },
+      "full_phase_gain": {
+        "early": 0.034253116396333404,
+        "late": 0.02192283922788472,
+        "middle": 0.022602358844564643
+      },
+      "fold_representative_late_gain": [
+        -0.011290185153484344,
+        -0.04173511452972889,
+        0.014315977692604065,
+        0.018777720630168915
+      ]
+    },
+    {
+      "power": 0.0,
+      "seed": 1278912,
+      "representative_phase_gain": {
+        "early": 0.048889756202697754,
+        "late": 0.0031690672039985657,
+        "middle": 0.01346983015537262
+      },
+      "full_phase_gain": {
+        "early": 0.031231895632420976,
+        "late": 0.02299650768803146,
+        "middle": 0.021164570794469185
+      },
+      "fold_representative_late_gain": [
+        -0.018312565982341766,
+        -0.036366162821650505,
+        0.023849032819271088,
+        0.020814329385757446
+      ]
+    },
+    {
+      "power": 1.0,
+      "seed": 1278911,
+      "representative_phase_gain": {
+        "early": 0.0527518093585968,
+        "late": -0.010510541498661041,
+        "middle": 0.020098671317100525
+      },
+      "full_phase_gain": {
+        "early": 0.034427090431563556,
+        "late": 0.013508613557160761,
+        "middle": 0.027467776622643846
+      },
+      "fold_representative_late_gain": [
+        -0.018334604799747467,
+        -0.023003609851002693,
+        -0.011412262916564941,
+        0.0022363439202308655
+      ]
+    },
+    {
+      "power": 1.0,
+      "seed": 1278912,
+      "representative_phase_gain": {
+        "early": 0.052569419145584106,
+        "late": -0.013104483485221863,
+        "middle": 0.02040979266166687
+      },
+      "full_phase_gain": {
+        "early": 0.032046090035388865,
+        "late": 0.013166997827983532,
+        "middle": 0.026323917795261602
+      },
+      "fold_representative_late_gain": [
+        -0.030109457671642303,
+        -0.023170610889792442,
+        -0.010658986866474152,
+        0.000661902129650116
+      ]
+    }
+  ],
+  "reason": "Power0 improves representative late margin by 0.000071/0.003169 across seeds; one misses the 0.001 learning floor and family-fold regressions remain. Power1 regresses late. This does not establish recurrent sufficiency or independent acceptance."
+}

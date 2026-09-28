@@ -1,0 +1,2201 @@
+{
+  "best_epoch": 43,
+  "best_validation": {
+    "ability_accuracy": 0.0,
+    "accuracy": 0.9417293233082706,
+    "confusion": [
+      [
+        85,
+        27,
+        0
+      ],
+      [
+        97,
+        1919,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ],
+    "cross_entropy": 0.15543617374837904,
+    "exact_action_accuracy": 0.9417293233082706,
+    "play_f1": 0.5782312925170069,
+    "play_precision": 0.46703296703296704,
+    "play_recall": 0.7589285714285714,
+    "rows": 2128,
+    "support": {
+      "ability": 0,
+      "play": 112,
+      "wait": 2016
+    },
+    "wait_accuracy": 0.9518849206349206
+  },
+  "epochs": 48,
+  "history": [
+    {
+      "epoch": 0,
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.05263157894736842,
+        "confusion": [
+          [
+            112,
+            0,
+            0
+          ],
+          [
+            2016,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 3.3854612864946065,
+        "exact_action_accuracy": 0.05263157894736842,
+        "play_f1": 0.1,
+        "play_precision": 0.05263157894736842,
+        "play_recall": 1.0,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.0
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 1,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 8.54430866241455,
+        "loss": 0.7950681309614863,
+        "seconds": 4.43046004200005
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.5629699248120301,
+        "confusion": [
+          [
+            37,
+            75,
+            0
+          ],
+          [
+            855,
+            1161,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.6467838262704978,
+        "exact_action_accuracy": 0.5629699248120301,
+        "play_f1": 0.07370517928286853,
+        "play_precision": 0.04147982062780269,
+        "play_recall": 0.33035714285714285,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.5758928571428571
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 2,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 3.759730100631714,
+        "loss": 0.6264816147408315,
+        "seconds": 4.405172166007105
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.5051691729323309,
+        "confusion": [
+          [
+            72,
+            40,
+            0
+          ],
+          [
+            1013,
+            1003,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.6545365712696448,
+        "exact_action_accuracy": 0.5051691729323309,
+        "play_f1": 0.12030075187969926,
+        "play_precision": 0.0663594470046083,
+        "play_recall": 0.6428571428571429,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.4975198412698413
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 3,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 4.706403732299805,
+        "loss": 0.5914317513150829,
+        "seconds": 4.4110054159828
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8327067669172933,
+        "confusion": [
+          [
+            51,
+            61,
+            0
+          ],
+          [
+            295,
+            1721,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.5707500527675887,
+        "exact_action_accuracy": 0.8327067669172933,
+        "play_f1": 0.22270742358078605,
+        "play_precision": 0.14739884393063585,
+        "play_recall": 0.45535714285714285,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8536706349206349
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 4,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 5.0626444816589355,
+        "loss": 0.562880507803389,
+        "seconds": 4.469478124985471
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8087406015037594,
+        "confusion": [
+          [
+            55,
+            57,
+            0
+          ],
+          [
+            350,
+            1666,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.5292020377359892,
+        "exact_action_accuracy": 0.8087406015037594,
+        "play_f1": 0.21276595744680848,
+        "play_precision": 0.13580246913580246,
+        "play_recall": 0.49107142857142855,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8263888888888888
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 5,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 5.562789440155029,
+        "loss": 0.5113199333261166,
+        "seconds": 4.490015791991027
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8425751879699248,
+        "confusion": [
+          [
+            75,
+            37,
+            0
+          ],
+          [
+            298,
+            1718,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.5009546045746122,
+        "exact_action_accuracy": 0.8425751879699248,
+        "play_f1": 0.30927835051546393,
+        "play_precision": 0.20107238605898123,
+        "play_recall": 0.6696428571428571,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8521825396825397
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 6,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 6.960695743560791,
+        "loss": 0.47551223422799793,
+        "seconds": 4.48955133400159
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8242481203007519,
+        "confusion": [
+          [
+            84,
+            28,
+            0
+          ],
+          [
+            346,
+            1670,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.4836210307097973,
+        "exact_action_accuracy": 0.8242481203007519,
+        "play_f1": 0.30996309963099633,
+        "play_precision": 0.19534883720930232,
+        "play_recall": 0.75,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8283730158730159
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 7,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 7.2179388999938965,
+        "loss": 0.43093135660248144,
+        "seconds": 4.489766582992161
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8566729323308271,
+        "confusion": [
+          [
+            81,
+            31,
+            0
+          ],
+          [
+            274,
+            1742,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.4169874490987986,
+        "exact_action_accuracy": 0.8566729323308271,
+        "play_f1": 0.3468950749464668,
+        "play_precision": 0.22816901408450704,
+        "play_recall": 0.7232142857142857,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8640873015873016
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 8,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 7.789071083068848,
+        "loss": 0.39603713241272737,
+        "seconds": 4.484789208014263
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9116541353383458,
+        "confusion": [
+          [
+            54,
+            58,
+            0
+          ],
+          [
+            130,
+            1886,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.29713742468590126,
+        "exact_action_accuracy": 0.9116541353383458,
+        "play_f1": 0.36486486486486486,
+        "play_precision": 0.29347826086956524,
+        "play_recall": 0.48214285714285715,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.935515873015873
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 9,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 9.120209693908691,
+        "loss": 0.3906399273380105,
+        "seconds": 4.504125415987801
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8087406015037594,
+        "confusion": [
+          [
+            95,
+            17,
+            0
+          ],
+          [
+            390,
+            1626,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.4569781660697514,
+        "exact_action_accuracy": 0.8087406015037594,
+        "play_f1": 0.3182579564489112,
+        "play_precision": 0.1958762886597938,
+        "play_recall": 0.8482142857142857,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8065476190476191
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 10,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 9.109373092651367,
+        "loss": 0.36520611790807117,
+        "seconds": 4.388634250004543
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.7420112781954887,
+        "confusion": [
+          [
+            101,
+            11,
+            0
+          ],
+          [
+            538,
+            1478,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.5514400449014247,
+        "exact_action_accuracy": 0.7420112781954887,
+        "play_f1": 0.2689747003994674,
+        "play_precision": 0.15805946791862285,
+        "play_recall": 0.9017857142857143,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.7331349206349206
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 11,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 8.06342887878418,
+        "loss": 0.3477643450688837,
+        "seconds": 4.38097562501207
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9276315789473685,
+        "confusion": [
+          [
+            21,
+            91,
+            0
+          ],
+          [
+            63,
+            1953,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.20678538134447613,
+        "exact_action_accuracy": 0.9276315789473685,
+        "play_f1": 0.21428571428571427,
+        "play_precision": 0.25,
+        "play_recall": 0.1875,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.96875
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 12,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 8.00385856628418,
+        "loss": 0.34689772543996306,
+        "seconds": 4.386520500003826
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8754699248120301,
+        "confusion": [
+          [
+            87,
+            25,
+            0
+          ],
+          [
+            240,
+            1776,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.3424661585823038,
+        "exact_action_accuracy": 0.8754699248120301,
+        "play_f1": 0.39635535307517084,
+        "play_precision": 0.26605504587155965,
+        "play_recall": 0.7767857142857143,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8809523809523809
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 13,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 9.733184814453125,
+        "loss": 0.3393231404562747,
+        "seconds": 4.391849500010721
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8247180451127819,
+        "confusion": [
+          [
+            96,
+            16,
+            0
+          ],
+          [
+            357,
+            1659,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.41046683058926936,
+        "exact_action_accuracy": 0.8247180451127819,
+        "play_f1": 0.3398230088495575,
+        "play_precision": 0.2119205298013245,
+        "play_recall": 0.8571428571428571,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8229166666666666
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 14,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 7.797793388366699,
+        "loss": 0.3089562369277701,
+        "seconds": 4.431870250002248
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9234022556390977,
+        "confusion": [
+          [
+            36,
+            76,
+            0
+          ],
+          [
+            87,
+            1929,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.21117404722293517,
+        "exact_action_accuracy": 0.9234022556390977,
+        "play_f1": 0.30638297872340425,
+        "play_precision": 0.2926829268292683,
+        "play_recall": 0.32142857142857145,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9568452380952381
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 15,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 7.019232749938965,
+        "loss": 0.29081187972665895,
+        "seconds": 4.410816999996314
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8613721804511278,
+        "confusion": [
+          [
+            92,
+            20,
+            0
+          ],
+          [
+            275,
+            1741,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.35285066972885815,
+        "exact_action_accuracy": 0.8613721804511278,
+        "play_f1": 0.38413361169102295,
+        "play_precision": 0.2506811989100817,
+        "play_recall": 0.8214285714285714,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8635912698412699
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 16,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 9.6851806640625,
+        "loss": 0.29731957183685154,
+        "seconds": 4.409889292001026
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8961466165413534,
+        "confusion": [
+          [
+            90,
+            22,
+            0
+          ],
+          [
+            199,
+            1817,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.2954456126667503,
+        "exact_action_accuracy": 0.8961466165413534,
+        "play_f1": 0.4488778054862842,
+        "play_precision": 0.31141868512110726,
+        "play_recall": 0.8035714285714286,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9012896825396826
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 17,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 9.792642593383789,
+        "loss": 0.28330784294355127,
+        "seconds": 4.399195250007324
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9360902255639098,
+        "confusion": [
+          [
+            74,
+            38,
+            0
+          ],
+          [
+            98,
+            1918,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.2131771530843991,
+        "exact_action_accuracy": 0.9360902255639098,
+        "play_f1": 0.5211267605633803,
+        "play_precision": 0.43023255813953487,
+        "play_recall": 0.6607142857142857,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9513888888888888
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 18,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 8.61965274810791,
+        "loss": 0.2696543924144602,
+        "seconds": 4.409360833000392
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8406954887218046,
+        "confusion": [
+          [
+            94,
+            18,
+            0
+          ],
+          [
+            321,
+            1695,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.3640105503058075,
+        "exact_action_accuracy": 0.8406954887218046,
+        "play_f1": 0.3567362428842505,
+        "play_precision": 0.22650602409638554,
+        "play_recall": 0.8392857142857143,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8407738095238095
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 19,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 7.5668487548828125,
+        "loss": 0.26423960042718264,
+        "seconds": 4.392411917011486
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9342105263157895,
+        "confusion": [
+          [
+            70,
+            42,
+            0
+          ],
+          [
+            98,
+            1918,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.20298642254805654,
+        "exact_action_accuracy": 0.9342105263157895,
+        "play_f1": 0.5,
+        "play_precision": 0.4166666666666667,
+        "play_recall": 0.625,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9513888888888888
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 20,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 9.344820022583008,
+        "loss": 0.25136210860884084,
+        "seconds": 4.414481042011175
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8045112781954887,
+        "confusion": [
+          [
+            102,
+            10,
+            0
+          ],
+          [
+            406,
+            1610,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.4302138553694227,
+        "exact_action_accuracy": 0.8045112781954887,
+        "play_f1": 0.32903225806451614,
+        "play_precision": 0.20078740157480315,
+        "play_recall": 0.9107142857142857,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.7986111111111112
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 21,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 8.25457763671875,
+        "loss": 0.2488302170199209,
+        "seconds": 4.405008125002496
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9271616541353384,
+        "confusion": [
+          [
+            76,
+            36,
+            0
+          ],
+          [
+            119,
+            1897,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.21148688370656027,
+        "exact_action_accuracy": 0.9271616541353384,
+        "play_f1": 0.495114006514658,
+        "play_precision": 0.38974358974358975,
+        "play_recall": 0.6785714285714286,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9409722222222222
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 22,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 10.92782974243164,
+        "loss": 0.24456715395042142,
+        "seconds": 4.383984000014607
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8721804511278195,
+        "confusion": [
+          [
+            95,
+            17,
+            0
+          ],
+          [
+            255,
+            1761,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.32900759437702654,
+        "exact_action_accuracy": 0.8721804511278195,
+        "play_f1": 0.4112554112554112,
+        "play_precision": 0.2714285714285714,
+        "play_recall": 0.8482142857142857,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8735119047619048
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 23,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 9.127784729003906,
+        "loss": 0.23910894642384456,
+        "seconds": 4.407704750017729
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9097744360902256,
+        "confusion": [
+          [
+            85,
+            27,
+            0
+          ],
+          [
+            165,
+            1851,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.22945751300207654,
+        "exact_action_accuracy": 0.9097744360902256,
+        "play_f1": 0.4696132596685083,
+        "play_precision": 0.34,
+        "play_recall": 0.7589285714285714,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9181547619047619
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 24,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 10.984297752380371,
+        "loss": 0.23917387531920603,
+        "seconds": 4.399145750008756
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.875,
+        "confusion": [
+          [
+            96,
+            16,
+            0
+          ],
+          [
+            250,
+            1766,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.309853461031851,
+        "exact_action_accuracy": 0.875,
+        "play_f1": 0.4192139737991266,
+        "play_precision": 0.2774566473988439,
+        "play_recall": 0.8571428571428571,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8759920634920635
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 25,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 7.687126159667969,
+        "loss": 0.22685484233495248,
+        "seconds": 4.384905625018291
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9398496240601504,
+        "confusion": [
+          [
+            70,
+            42,
+            0
+          ],
+          [
+            86,
+            1930,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.17650039622882255,
+        "exact_action_accuracy": 0.9398496240601504,
+        "play_f1": 0.5223880597014926,
+        "play_precision": 0.44871794871794873,
+        "play_recall": 0.625,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9573412698412699
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 26,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 8.460585594177246,
+        "loss": 0.22577188687033153,
+        "seconds": 4.395876166992821
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8994360902255639,
+        "confusion": [
+          [
+            93,
+            19,
+            0
+          ],
+          [
+            195,
+            1821,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.26412921177601456,
+        "exact_action_accuracy": 0.8994360902255639,
+        "play_f1": 0.4650000000000001,
+        "play_precision": 0.3229166666666667,
+        "play_recall": 0.8303571428571429,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9032738095238095
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 27,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 12.186269760131836,
+        "loss": 0.21941383555531502,
+        "seconds": 4.407674375019269
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9074248120300752,
+        "confusion": [
+          [
+            89,
+            23,
+            0
+          ],
+          [
+            174,
+            1842,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.2373423137162861,
+        "exact_action_accuracy": 0.9074248120300752,
+        "play_f1": 0.4746666666666667,
+        "play_precision": 0.33840304182509506,
+        "play_recall": 0.7946428571428571,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9136904761904762
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 28,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 9.32344913482666,
+        "loss": 0.21440538150324887,
+        "seconds": 4.400800917006563
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8933270676691729,
+        "confusion": [
+          [
+            96,
+            16,
+            0
+          ],
+          [
+            211,
+            1805,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.2915311442562064,
+        "exact_action_accuracy": 0.8933270676691729,
+        "play_f1": 0.4582338902147971,
+        "play_precision": 0.3127035830618892,
+        "play_recall": 0.8571428571428571,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8953373015873016
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 29,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 9.760957717895508,
+        "loss": 0.21477095974426316,
+        "seconds": 4.403762709000148
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8928571428571429,
+        "confusion": [
+          [
+            94,
+            18,
+            0
+          ],
+          [
+            210,
+            1806,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.2928905295614237,
+        "exact_action_accuracy": 0.8928571428571429,
+        "play_f1": 0.4519230769230769,
+        "play_precision": 0.3092105263157895,
+        "play_recall": 0.8392857142857143,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8958333333333334
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 30,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 8.764894485473633,
+        "loss": 0.21157891622611455,
+        "seconds": 4.389142667001579
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9346804511278195,
+        "confusion": [
+          [
+            77,
+            35,
+            0
+          ],
+          [
+            104,
+            1912,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.1747660076532765,
+        "exact_action_accuracy": 0.9346804511278195,
+        "play_f1": 0.5255972696245733,
+        "play_precision": 0.425414364640884,
+        "play_recall": 0.6875,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9484126984126984
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 31,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 10.694778442382812,
+        "loss": 0.21285217461991124,
+        "seconds": 4.425258957984624
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9017857142857143,
+        "confusion": [
+          [
+            96,
+            16,
+            0
+          ],
+          [
+            193,
+            1823,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.26594139124385846,
+        "exact_action_accuracy": 0.9017857142857143,
+        "play_f1": 0.47880299251870323,
+        "play_precision": 0.33217993079584773,
+        "play_recall": 0.8571428571428571,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.904265873015873
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 32,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 9.90269947052002,
+        "loss": 0.20292675909253635,
+        "seconds": 4.415455792011926
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9055451127819549,
+        "confusion": [
+          [
+            92,
+            20,
+            0
+          ],
+          [
+            181,
+            1835,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.23519399129134372,
+        "exact_action_accuracy": 0.9055451127819549,
+        "play_f1": 0.47792207792207797,
+        "play_precision": 0.336996336996337,
+        "play_recall": 0.8214285714285714,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.910218253968254
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 33,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 12.53465747833252,
+        "loss": 0.21293353504941998,
+        "seconds": 4.411945125000784
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8153195488721805,
+        "confusion": [
+          [
+            108,
+            4,
+            0
+          ],
+          [
+            389,
+            1627,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.4309056277449866,
+        "exact_action_accuracy": 0.8153195488721805,
+        "play_f1": 0.35467980295566504,
+        "play_precision": 0.21730382293762576,
+        "play_recall": 0.9642857142857143,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8070436507936508
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 34,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 11.013285636901855,
+        "loss": 0.19810588017987488,
+        "seconds": 4.395013333007228
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9008458646616542,
+        "confusion": [
+          [
+            96,
+            16,
+            0
+          ],
+          [
+            195,
+            1821,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.25478159351260365,
+        "exact_action_accuracy": 0.9008458646616542,
+        "play_f1": 0.47642679900744417,
+        "play_precision": 0.32989690721649484,
+        "play_recall": 0.8571428571428571,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9032738095238095
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 35,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 10.374139785766602,
+        "loss": 0.18834869065904059,
+        "seconds": 4.391529541026102
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8829887218045113,
+        "confusion": [
+          [
+            106,
+            6,
+            0
+          ],
+          [
+            243,
+            1773,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.3130220263160037,
+        "exact_action_accuracy": 0.8829887218045113,
+        "play_f1": 0.45986984815618215,
+        "play_precision": 0.3037249283667622,
+        "play_recall": 0.9464285714285714,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8794642857142857
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 36,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 10.217323303222656,
+        "loss": 0.19342222830580016,
+        "seconds": 4.412139417021535
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8966165413533834,
+        "confusion": [
+          [
+            105,
+            7,
+            0
+          ],
+          [
+            213,
+            1803,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.2877328474550767,
+        "exact_action_accuracy": 0.8966165413533834,
+        "play_f1": 0.4883720930232558,
+        "play_precision": 0.330188679245283,
+        "play_recall": 0.9375,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8943452380952381
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 37,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 13.578595161437988,
+        "loss": 0.19481406010787136,
+        "seconds": 4.400331916986033
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9093045112781954,
+        "confusion": [
+          [
+            100,
+            12,
+            0
+          ],
+          [
+            181,
+            1835,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.23505147026949808,
+        "exact_action_accuracy": 0.9093045112781954,
+        "play_f1": 0.5089058524173028,
+        "play_precision": 0.35587188612099646,
+        "play_recall": 0.8928571428571429,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.910218253968254
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 38,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 10.349289894104004,
+        "loss": 0.18602483730813088,
+        "seconds": 4.412320417002775
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.900375939849624,
+        "confusion": [
+          [
+            105,
+            7,
+            0
+          ],
+          [
+            205,
+            1811,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.26738190370142684,
+        "exact_action_accuracy": 0.900375939849624,
+        "play_f1": 0.4976303317535545,
+        "play_precision": 0.3387096774193548,
+        "play_recall": 0.9375,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8983134920634921
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 39,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 12.964415550231934,
+        "loss": 0.1854959012271138,
+        "seconds": 4.404627209005412
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9069548872180451,
+        "confusion": [
+          [
+            102,
+            10,
+            0
+          ],
+          [
+            188,
+            1828,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.2345043514624126,
+        "exact_action_accuracy": 0.9069548872180451,
+        "play_f1": 0.5074626865671642,
+        "play_precision": 0.35172413793103446,
+        "play_recall": 0.9107142857142857,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9067460317460317
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 40,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 9.598601341247559,
+        "loss": 0.1793915084480042,
+        "seconds": 4.400671582989162
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9097744360902256,
+        "confusion": [
+          [
+            102,
+            10,
+            0
+          ],
+          [
+            182,
+            1834,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.23742152817015136,
+        "exact_action_accuracy": 0.9097744360902256,
+        "play_f1": 0.5151515151515151,
+        "play_precision": 0.3591549295774648,
+        "play_recall": 0.9107142857142857,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9097222222222222
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 41,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 11.68824577331543,
+        "loss": 0.18003962995083253,
+        "seconds": 4.407437417015899
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9281015037593985,
+        "confusion": [
+          [
+            102,
+            10,
+            0
+          ],
+          [
+            143,
+            1873,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.2002200654609815,
+        "exact_action_accuracy": 0.9281015037593985,
+        "play_f1": 0.5714285714285714,
+        "play_precision": 0.4163265306122449,
+        "play_recall": 0.9107142857142857,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9290674603174603
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 42,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 12.649367332458496,
+        "loss": 0.183694633495179,
+        "seconds": 4.3888449580117594
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8895676691729323,
+        "confusion": [
+          [
+            106,
+            6,
+            0
+          ],
+          [
+            229,
+            1787,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.2801873922292003,
+        "exact_action_accuracy": 0.8895676691729323,
+        "play_f1": 0.47427293064876963,
+        "play_precision": 0.3164179104477612,
+        "play_recall": 0.9464285714285714,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.8864087301587301
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 43,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 11.507458686828613,
+        "loss": 0.16926232881295228,
+        "seconds": 4.405439875001321
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9417293233082706,
+        "confusion": [
+          [
+            85,
+            27,
+            0
+          ],
+          [
+            97,
+            1919,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.15543617374837904,
+        "exact_action_accuracy": 0.9417293233082706,
+        "play_f1": 0.5782312925170069,
+        "play_precision": 0.46703296703296704,
+        "play_recall": 0.7589285714285714,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9518849206349206
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 44,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 12.753334045410156,
+        "loss": 0.18680084361507657,
+        "seconds": 4.420636959024705
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.8768796992481203,
+        "confusion": [
+          [
+            106,
+            6,
+            0
+          ],
+          [
+            256,
+            1760,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.3092542861665326,
+        "exact_action_accuracy": 0.8768796992481203,
+        "play_f1": 0.4472573839662447,
+        "play_precision": 0.292817679558011,
+        "play_recall": 0.9464285714285714,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.873015873015873
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 45,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 13.545977592468262,
+        "loss": 0.18182421755357478,
+        "seconds": 4.3822496669890825
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9337406015037594,
+        "confusion": [
+          [
+            95,
+            17,
+            0
+          ],
+          [
+            124,
+            1892,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.17891949081891462,
+        "exact_action_accuracy": 0.9337406015037594,
+        "play_f1": 0.5740181268882175,
+        "play_precision": 0.4337899543378995,
+        "play_recall": 0.8482142857142857,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9384920634920635
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 46,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 10.603915214538574,
+        "loss": 0.16959653005739841,
+        "seconds": 4.40933633298846
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9135338345864662,
+        "confusion": [
+          [
+            105,
+            7,
+            0
+          ],
+          [
+            177,
+            1839,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.2244863112534123,
+        "exact_action_accuracy": 0.9135338345864662,
+        "play_f1": 0.532994923857868,
+        "play_precision": 0.3723404255319149,
+        "play_recall": 0.9375,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9122023809523809
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 47,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 12.899504661560059,
+        "loss": 0.16686092188112006,
+        "seconds": 4.392339041020023
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9243421052631579,
+        "confusion": [
+          [
+            105,
+            7,
+            0
+          ],
+          [
+            154,
+            1862,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.20948161248509822,
+        "exact_action_accuracy": 0.9243421052631579,
+        "play_f1": 0.5660377358490566,
+        "play_precision": 0.40540540540540543,
+        "play_recall": 0.9375,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9236111111111112
+      }
+    },
+    {
+      "eligible": true,
+      "epoch": 48,
+      "training": {
+        "chunks": 112,
+        "gradient_norm_max": 9.799270629882812,
+        "loss": 0.15519214319439406,
+        "seconds": 4.407628957997076
+      },
+      "validation": {
+        "ability_accuracy": 0.0,
+        "accuracy": 0.9088345864661654,
+        "confusion": [
+          [
+            106,
+            6,
+            0
+          ],
+          [
+            188,
+            1828,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "cross_entropy": 0.23963743111090666,
+        "exact_action_accuracy": 0.9088345864661654,
+        "play_f1": 0.5221674876847291,
+        "play_precision": 0.36054421768707484,
+        "play_recall": 0.9464285714285714,
+        "rows": 2128,
+        "support": {
+          "ability": 0,
+          "play": 112,
+          "wait": 2016
+        },
+        "wait_accuracy": 0.9067460317460317
+      }
+    }
+  ],
+  "initial_checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_playgate_distill_seed1196001/initial.pt",
+  "initial_checkpoint_sha256": "320544425abddcb57dca800f635b1db4a189172604607e7ec2d4072692116ce3",
+  "initial_validation": {
+    "ability_accuracy": 0.0,
+    "accuracy": 0.05263157894736842,
+    "confusion": [
+      [
+        112,
+        0,
+        0
+      ],
+      [
+        2016,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ],
+    "cross_entropy": 3.3854612864946065,
+    "exact_action_accuracy": 0.05263157894736842,
+    "play_f1": 0.1,
+    "play_precision": 0.05263157894736842,
+    "play_recall": 1.0,
+    "rows": 2128,
+    "support": {
+      "ability": 0,
+      "play": 112,
+      "wait": 2016
+    },
+    "wait_accuracy": 0.0
+  },
+  "learning_rate": 0.0003,
+  "output_checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_playgate_distill_seed1196006/candidate.pt",
+  "output_checkpoint_sha256": "f4920a68a58d55df46026e646090fd3affd5889990f037cedfa84e0b35910bc4",
+  "play_weight": 16.0,
+  "schema": "clasher.hog26.playgate-distillation.v1",
+  "seed": 1196006,
+  "selected_nonzero_epoch": true,
+  "selection_gate": {
+    "minimum_exact_accuracy": 0.85,
+    "minimum_play_recall": 0.6,
+    "minimum_wait_accuracy": 0.9
+  },
+  "sequence_length": 96,
+  "train_corpus": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_reward_train_seed1194001/corpus.npz",
+  "train_corpus_sha256": "a5e8c8ab908ab57913355ecddd3311c00c41a739ddeefb7180bdcead38659ae3",
+  "train_episodes": 112,
+  "trainable_parameter_count": 12547,
+  "trainable_parameter_names": [
+    "hierarchical_mode_gate.0.weight",
+    "hierarchical_mode_gate.0.bias",
+    "hierarchical_mode_gate.2.weight",
+    "hierarchical_mode_gate.2.bias"
+  ],
+  "validation_corpus": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_reward_validation_seed1195001/corpus.npz",
+  "validation_corpus_sha256": "3e1a75b38a627b72063a204bfdb5ba2eedc227b16fa613d7561a2c495897862c",
+  "validation_episodes": 56,
+  "weight_decay": 0.0001
+}

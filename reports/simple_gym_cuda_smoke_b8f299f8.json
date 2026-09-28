@@ -1,0 +1,65 @@
+{
+  "acceptance": {
+    "absolute_throughput_gate": true,
+    "all_row_ticks_native": true,
+    "all_rows_committed": true,
+    "cuda_launches_lt_1000": null,
+    "cuda_zero_explicit_host_sync": null,
+    "deterministic_replay": true,
+    "no_terminal_rows_in_window": true,
+    "python_parity_evaluated": false,
+    "speedup_evaluated": false,
+    "zero_fallback": true
+  },
+  "cuda_profile": null,
+  "deck_pool": {
+    "candidate_decks": 33,
+    "rejected_decks": 0,
+    "supported_decks": 33
+  },
+  "device": "cuda:0",
+  "engine": "SimpleGymRuntime",
+  "execution_mode": "cuda-graph",
+  "median": {
+    "actor_transitions_per_second": 83.30131205545595,
+    "elapsed_seconds": 0.1922375249999959,
+    "row_ticks_per_second": 41.650656027727976
+  },
+  "policy": "first-legal",
+  "preset": "smoke",
+  "schema_version": 1,
+  "seed": 202608264,
+  "throughput_gate": {
+    "minimum_row_ticks_per_second": 1.0
+  },
+  "trials": [
+    {
+      "actor_transitions_per_second": 80.87032236578584,
+      "batch_size": 2,
+      "committed_rows": 8,
+      "digest": "7fa51c7f2f5956b9ae2bad83c59761d60d3073a29938eeb26076a9918e04c95e",
+      "elapsed_seconds": 0.19784760999999662,
+      "measured_ticks": 4,
+      "native_ticks": 8,
+      "peak_device_memory_bytes": 2016768,
+      "repetition": 0,
+      "row_ticks": 8,
+      "row_ticks_per_second": 40.43516118289292,
+      "terminal_rows": 0
+    },
+    {
+      "actor_transitions_per_second": 85.73230174512607,
+      "batch_size": 2,
+      "committed_rows": 8,
+      "digest": "7fa51c7f2f5956b9ae2bad83c59761d60d3073a29938eeb26076a9918e04c95e",
+      "elapsed_seconds": 0.1866274399999952,
+      "measured_ticks": 4,
+      "native_ticks": 8,
+      "peak_device_memory_bytes": 2016768,
+      "repetition": 1,
+      "row_ticks": 8,
+      "row_ticks_per_second": 42.86615087256303,
+      "terminal_rows": 0
+    }
+  ]
+}

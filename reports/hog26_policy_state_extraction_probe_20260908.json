@@ -1,0 +1,20 @@
+{
+  "episode": 0,
+  "exact_feature_equality": true,
+  "extraction_seconds": 0.7591396250063553,
+  "features": 210,
+  "future_field_perturbations": [
+    "final_outcomes",
+    "terminal_tower_margins",
+    "next_global_features",
+    "terminal_winners",
+    "rewards",
+    "previous_rewards",
+    "actions",
+    "old_log_probs"
+  ],
+  "rows": 450,
+  "scope": "One complete training-game public actor encoding and recurrent replay, with previous rewards forced to zero. No critic features used. This is causal-extraction evidence, not predictive acceptance.",
+  "source_sha256": "7edd615cfe63400bd64644b6be7d26dbd9532fca00f05bebfb3e29d7e7849a3f",
+  "status": "passed"
+}

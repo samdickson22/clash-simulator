@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "source_authority_sha256": "4da97f384ac4f3615e310f987f8c9bdeacbb499c340f5b9ee2c31fe61f037ffa",
+  "evidence": {
+    "datasets/derived/hog26_scalar_handfixed_preflight_20260911/complete.json": "866173e0f320e9b82cee1b46cec2ca3eabf119c4aba14d54160cdfd7c4d2ff51",
+    "reports/hog26_scalar_handfixed_noop_draw_20260911.json": "2508fa6a2b8a64a83091b7bd38684a146149b7dce23cd5b1fd771589a1e1d875",
+    "reports/hog26_scalar_pilot_comparison_plan_20260911.json": "72697f6e56cf9bae9145a0fc4b73764c1e9a01f0d2c43b0a238e550fa5c5d9cb",
+    "reports/hog26_scalar_handfixed_preflight_resume_20260911.log": "e3622298d2f5211b84239687fa8817a6f2a56116cabffd295f4b73c20d8b707d",
+    "reports/hog26_scalar_pilot_hand_alias_rejection_20260911.json": "3c0c9855f180b00b1075eaba23a6e37ee2bcc7524de9edf087b48641a0492748"
+  },
+  "checks": {
+    "complete_game_roundtrip_12": true,
+    "all_configured_hand_tokens_known": true,
+    "all8cards_and_return_cycle_tested": true,
+    "six_styles_both_seats": true,
+    "resume_hashes_unchanged": true,
+    "true_terminal_noop_draw": true,
+    "scalar_tests": 373
+  },
+  "limitations": [
+    "Natural draw coverage may be absent; no-op control excludedfromfitting.",
+    "Earlier384pilot rejected, never fitted.",
+    "No public-state/model/ranking acceptance from preflight."
+  ]
+}

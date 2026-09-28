@@ -1,0 +1,40 @@
+{
+  "acceptance": {
+    "all_row_ticks_native": true,
+    "all_rows_committed": true,
+    "deterministic_replay": true,
+    "noop_regulation_ot_tiebreak": true,
+    "python_parity_evaluated": false,
+    "terminal_boundary_reached": true,
+    "zero_fallback": true
+  },
+  "device": "cuda",
+  "engine": "SimpleGymRuntime",
+  "episodes": [
+    {
+      "committed_rows": 3363,
+      "cumulative_rewards": [
+        1.4992374757421203,
+        -1.4992374757421203
+      ],
+      "digest": "832736c223aa30db659c651ee319f932a3fc75c553a2e3fb1485b875723db3aa",
+      "done": true,
+      "entered_overtime": false,
+      "final_tick": 3363,
+      "native_ticks": 3363,
+      "policy": "first-legal",
+      "row_ticks": 3363,
+      "seed": 202608282,
+      "terminal_reason": "regulation_crown",
+      "winner": 0
+    }
+  ],
+  "execution_mode": "cuda-graph",
+  "replays": 2,
+  "schema_version": 1,
+  "timeline": {
+    "exact_3600_6000": true,
+    "regulation_ticks": 3600,
+    "tiebreak_ticks": 6000
+  }
+}

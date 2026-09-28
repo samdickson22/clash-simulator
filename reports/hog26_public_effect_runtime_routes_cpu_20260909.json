@@ -1,0 +1,205 @@
+{
+  "status": "bounded runtime route audit; not complete event coverage",
+  "device": "cpu",
+  "ticks": 160,
+  "cases": [
+    {
+      "card": "Fireball",
+      "pool_active_frame_counts": {
+        "effects": 39,
+        "travel_effects": 0,
+        "death_effects": 0,
+        "triggered_effects": 0,
+        "rolling_spells": 0,
+        "payload_containers": 0,
+        "positive_buff_areas": 0
+      },
+      "primary_allocations": {
+        "projectile": 1,
+        "area": 0,
+        "direct": 0
+      },
+      "sidecar_frames": 39,
+      "rejected_frames": 0,
+      "first_sidecar_frame": {
+        "tick": 1,
+        "tokens": [
+          289,
+          289
+        ],
+        "features": [
+          [
+            0.49222221970558167,
+            0.0963750034570694,
+            1.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.5077778100967407,
+            0.9036250114440918,
+            0.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      }
+    },
+    {
+      "card": "Arrows",
+      "pool_active_frame_counts": {
+        "effects": 0,
+        "travel_effects": 0,
+        "death_effects": 0,
+        "triggered_effects": 0,
+        "rolling_spells": 0,
+        "payload_containers": 0,
+        "positive_buff_areas": 0
+      },
+      "primary_allocations": {
+        "projectile": 0,
+        "area": 1,
+        "direct": 0
+      },
+      "sidecar_frames": 0,
+      "rejected_frames": 0,
+      "first_sidecar_frame": null
+    },
+    {
+      "card": "Poison",
+      "pool_active_frame_counts": {
+        "effects": 159,
+        "travel_effects": 0,
+        "death_effects": 0,
+        "triggered_effects": 0,
+        "rolling_spells": 0,
+        "payload_containers": 0,
+        "positive_buff_areas": 0
+      },
+      "primary_allocations": {
+        "projectile": 0,
+        "area": 1,
+        "direct": 0
+      },
+      "sidecar_frames": 0,
+      "rejected_frames": 159,
+      "first_sidecar_frame": null
+    },
+    {
+      "card": "Zap",
+      "pool_active_frame_counts": {
+        "effects": 0,
+        "travel_effects": 0,
+        "death_effects": 0,
+        "triggered_effects": 0,
+        "rolling_spells": 0,
+        "payload_containers": 0,
+        "positive_buff_areas": 0
+      },
+      "primary_allocations": {
+        "projectile": 0,
+        "area": 1,
+        "direct": 0
+      },
+      "sidecar_frames": 0,
+      "rejected_frames": 0,
+      "first_sidecar_frame": null
+    },
+    {
+      "card": "GoblinBarrel",
+      "pool_active_frame_counts": {
+        "effects": 69,
+        "travel_effects": 0,
+        "death_effects": 0,
+        "triggered_effects": 0,
+        "rolling_spells": 0,
+        "payload_containers": 0,
+        "positive_buff_areas": 0
+      },
+      "primary_allocations": {
+        "projectile": 7,
+        "area": 0,
+        "direct": 7
+      },
+      "sidecar_frames": 0,
+      "rejected_frames": 69,
+      "first_sidecar_frame": null
+    },
+    {
+      "card": "Log",
+      "pool_active_frame_counts": {
+        "effects": 0,
+        "travel_effects": 0,
+        "death_effects": 0,
+        "triggered_effects": 0,
+        "rolling_spells": 50,
+        "payload_containers": 0,
+        "positive_buff_areas": 0
+      },
+      "primary_allocations": {
+        "projectile": 0,
+        "area": 0,
+        "direct": 0
+      },
+      "sidecar_frames": 0,
+      "rejected_frames": 0,
+      "first_sidecar_frame": null
+    },
+    {
+      "card": "Musketeer",
+      "pool_active_frame_counts": {
+        "effects": 74,
+        "travel_effects": 0,
+        "death_effects": 0,
+        "triggered_effects": 0,
+        "rolling_spells": 0,
+        "payload_containers": 0,
+        "positive_buff_areas": 0
+      },
+      "primary_allocations": {
+        "projectile": 9,
+        "area": 0,
+        "direct": 0
+      },
+      "sidecar_frames": 4,
+      "rejected_frames": 55,
+      "first_sidecar_frame": {
+        "tick": 100,
+        "tokens": [
+          324,
+          324
+        ],
+        "features": [
+          [
+            0.1944444477558136,
+            0.6100000143051147,
+            1.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.8055555820465088,
+            0.38999998569488525,
+            0.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      }
+    }
+  ],
+  "unchanged_native_control_checkpoints": [
+    1,
+    40,
+    80,
+    160
+  ],
+  "actor_observation_trace_sha256": "4b4c7cbe1ffdd7a10ec36ac103ab3decba9a0a4e6b269c9c49f8d440b6541049",
+  "actor_observations_unchanged": true,
+  "scope": "Seven scripted single-cast/deployment fixtures. Not complete frozen-policy games, corpus enrichment, or model acceptance. Allocation counts include transient events that can vanish before a boundary observation.",
+  "script_sha256": "74cc589e3fa5198bf2269e5648e05ed72671fa571f60be77b6c10f63018934ba"
+}

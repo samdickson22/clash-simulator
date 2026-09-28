@@ -1,0 +1,16 @@
+{
+  "status": "Diagnostic integer offsets match exact reference; runtime not changed",
+  "test_command": "OMP_NUM_THREADS=1 PYTHONPATH=src:. /Users/sam/Desktop/code/clasher/.venv/bin/python -m pytest -q tests/test_hog26_integer_muzzle_probe.py",
+  "tests_passed": 3,
+  "geometry_cases_per_device": 4101,
+  "devices": [
+    "cpu",
+    "mps:0"
+  ],
+  "domain": "Absolute x/y deltas at most32767logic units; nonnegative radius; int64 intermediate products with radius capped to L1distance.",
+  "scope": "No full trajectory, performance, or corpus recertification claim. Integer square-root comparison corrections remove rounding dependence in bounded geometry.",
+  "sources": {
+    "scripts/hog26_integer_muzzle_probe.py": "6ef6452c0b443861e676b0c28eb3d1c6e9949cb9ab9a077b72207a93a58f38ee",
+    "tests/test_hog26_integer_muzzle_probe.py": "849aa2d6da6dec73b94d5f989374a6c768570ce013ac0c6782b68aab87146fa6"
+  }
+}

@@ -255,6 +255,12 @@ def evaluate(
 ) -> dict[str, float]:
     if games <= 0:
         raise ValueError("games must be positive")
+    if opponent_mode not in {"noop", "random", "policy", "strategy"}:
+        raise ValueError(f"unknown evaluation opponent mode: {opponent_mode}")
+    if (opponent_mode == "policy") != (opponent is not None):
+        raise ValueError("policy opponent mode and checkpoint must accompany each other")
+    if (opponent_mode == "strategy") != (opponent_bot is not None):
+        raise ValueError("strategy opponent mode and bot must accompany each other")
     torch.manual_seed(seed)
     np.random.seed(seed)
     envs = _make_evaluation_envs(

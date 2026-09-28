@@ -1,0 +1,45 @@
+{
+  "all_checked_fields_equal": true,
+  "corpora": {
+    "cpu": {
+      "path": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_corrected_cpu_probe_seed1278951/corpus.npz",
+      "sha256": "d8c1bfc2727251037e2337bd08c58dd24356815116e8b7ee15ed974fec9000f8"
+    },
+    "mps": {
+      "path": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_corrected_mps_probe_seed1278951/corpus.npz",
+      "sha256": "6f80712199c7fb467c22339152845ac746ae93c936f55e334cc376a2127c9ec3"
+    }
+  },
+  "differences": {},
+  "episode_lengths": {
+    "cpu": [
+      432,
+      349
+    ],
+    "mps": [
+      432,
+      349
+    ]
+  },
+  "exact_equal": {
+    "action_masks": true,
+    "actions": true,
+    "entity_features": true,
+    "entity_ids": true,
+    "entity_mask": true,
+    "episode_final_outcomes": true,
+    "episode_offsets": true,
+    "episode_terminal_tower_margins": true,
+    "final_outcomes": true,
+    "global_features": true,
+    "hand_ids": true,
+    "next_global_features": true,
+    "previous_actions": true,
+    "previous_rewards": true,
+    "terminal_tower_margins": true,
+    "terminal_winners": true
+  },
+  "role": "training-only-mechanics-diagnostic",
+  "schema": "clasher.hog26.corrected-complete-device-comparison.v1",
+  "scope": "two complete paired games at one training matchup/seed; not global simulator acceptance or outcome-model acceptance"
+}

@@ -1,0 +1,88 @@
+{
+  "status": "no-candidate-promoted",
+  "source": "reports/hog26_outcome_margin_transfer_screen_20260908.json",
+  "wdl_metrics_exactly_match_prior_run": true,
+  "results": [
+    {
+      "seed": 1278921,
+      "encoder": "random",
+      "representative_phase_gain": {
+        "early": 0.04828888177871704,
+        "late": -0.0035147294402122498,
+        "middle": 0.014600560069084167
+      },
+      "full_phase_gain": {
+        "early": 0.03183907165657729,
+        "late": 0.025832930432023622,
+        "middle": 0.02283730865727047
+      },
+      "fold_late_gain": [
+        -0.01235344260931015,
+        -0.03875828720629215,
+        0.0029926076531410217,
+        0.016674257814884186
+      ]
+    },
+    {
+      "seed": 1278921,
+      "encoder": "trained",
+      "representative_phase_gain": {
+        "early": 0.05226925015449524,
+        "late": 0.0024431198835372925,
+        "middle": 0.031953588128089905
+      },
+      "full_phase_gain": {
+        "early": 0.03075460100080818,
+        "late": 0.03398827327719818,
+        "middle": 0.034869093067397126
+      },
+      "fold_late_gain": [
+        -0.008792988955974579,
+        -0.04070710577070713,
+        0.04717306047677994,
+        -0.005032524466514587
+      ]
+    },
+    {
+      "seed": 1278922,
+      "encoder": "random",
+      "representative_phase_gain": {
+        "early": 0.04716724157333374,
+        "late": 0.0022533386945724487,
+        "middle": 0.013043493032455444
+      },
+      "full_phase_gain": {
+        "early": 0.03192920232928979,
+        "late": 0.03024904540507123,
+        "middle": 0.020430871924008772
+      },
+      "fold_late_gain": [
+        -0.011272922158241272,
+        -0.03417572192847729,
+        0.013212941586971283,
+        0.021968580782413483
+      ]
+    },
+    {
+      "seed": 1278922,
+      "encoder": "trained",
+      "representative_phase_gain": {
+        "early": 0.04905444383621216,
+        "late": -0.003377474844455719,
+        "middle": 0.024563953280448914
+      },
+      "full_phase_gain": {
+        "early": 0.031349385011708364,
+        "late": 0.028020609837347783,
+        "middle": 0.03201735501211147
+      },
+      "fold_late_gain": [
+        -0.01664651185274124,
+        -0.04718554951250553,
+        0.025353096425533295,
+        0.004846788942813873
+      ]
+    }
+  ],
+  "conclusion": "Learned outcome features improve pooled/middle margin scores but do not consistently improve late states or beat the random encoder there. The transfer hypothesis does not resolve the margin bottleneck."
+}

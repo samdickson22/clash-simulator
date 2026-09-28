@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "source_authority_sha256": "786d1095fdb266a28bd62386c96560c03c9795616efb4ec9a11c8816c349decb",
+  "evidence": {
+    "datasets/derived/hog26_scalar_preflight_final_20260911/complete.json": "b5b69b8a096079541f0b125f003f4222c2a7b037b09ab4bd9e153cf02aa4ebe5",
+    "reports/hog26_scalar_noop_draw_preflight_20260911.json": "ae6e99b461cd8bf435121ca6ff1eb6653e88d5f0747dbc2de2f2c28a3992711f",
+    "reports/hog26_scalar_pilot_comparison_plan_20260911.json": "72697f6e56cf9bae9145a0fc4b73764c1e9a01f0d2c43b0a238e550fa5c5d9cb",
+    "reports/hog26_scalar_preflight_resume_20260911.log": "75f847c33f7002190b4fd8cf45cc7e6329a3204899e3390eec6e37e9798061e4"
+  },
+  "checks": {
+    "full_game_npz_roundtrip_12": true,
+    "six_styles_both_seats": true,
+    "resume_no_recollection_or_rewrite": true,
+    "true_terminal_noop_draw": true,
+    "scalar_tests": 366
+  },
+  "limitations": [
+    "Noopdrawexcludedfromfitting; natural pilot may be draw-incomplete.",
+    "Mirrored frozen-policy scalar games do not necessarily draw.",
+    "No final WDL/margin/ranking acceptance from preflight."
+  ]
+}

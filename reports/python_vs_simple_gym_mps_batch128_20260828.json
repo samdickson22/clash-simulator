@@ -1,0 +1,161 @@
+{
+  "batch_size": 128,
+  "deck_pool": {
+    "decks": 33,
+    "path": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/training_decks/simple_gym_supported_v1.json"
+  },
+  "measured_ticks": 10,
+  "repetitions": 5,
+  "schema_version": 1,
+  "scope": "matched raw policy-visible tick without neural inference",
+  "seed": 202608281,
+  "semantic_limit": "within-backend determinism only; Simple projected-gym semantics are not asserted byte-identical to the Python debug oracle",
+  "simple_device": "mps",
+  "summary": {
+    "median_row_ticks_per_second": {
+      "python-exact-mask": 1615.7725495824968,
+      "python-public-v2": 3160.95495944378,
+      "simple-pytorch": 83.99588551758175
+    },
+    "simple_speed_ratio_vs_python_exact": 0.05198496876264277,
+    "simple_speed_ratio_vs_python_public_v2": 0.026572946022730474
+  },
+  "trials": [
+    {
+      "actor_transitions_per_second": 3300.274189871217,
+      "backend": "python-exact-mask",
+      "digest": "58f72e4ac72787a7ecf9c2f6f50f48194057181ef2b23993ccba197c68ad4751",
+      "elapsed_seconds": 0.7756931250914931,
+      "repetition": 0,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 1650.1370949356085
+    },
+    {
+      "actor_transitions_per_second": 6395.2222259874825,
+      "backend": "python-public-v2",
+      "digest": "2358738ecebd720ac5bfd500378dbd048c0a7561bf8136cf5ea3ab40e909158e",
+      "elapsed_seconds": 0.4002988339634612,
+      "repetition": 0,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 3197.6111129937412
+    },
+    {
+      "actor_transitions_per_second": 168.71721193341688,
+      "backend": "simple-pytorch",
+      "digest": "0503a55703f96fd662097ed58719ef293554e1c4265c64bccbdbba6bded364c5",
+      "elapsed_seconds": 15.173318540910259,
+      "repetition": 0,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 84.35860596670844
+    },
+    {
+      "actor_transitions_per_second": 167.9917710351635,
+      "backend": "simple-pytorch",
+      "digest": "0503a55703f96fd662097ed58719ef293554e1c4265c64bccbdbba6bded364c5",
+      "elapsed_seconds": 15.23884166602511,
+      "repetition": 1,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 83.99588551758175
+    },
+    {
+      "actor_transitions_per_second": 6258.198346803769,
+      "backend": "python-public-v2",
+      "digest": "2358738ecebd720ac5bfd500378dbd048c0a7561bf8136cf5ea3ab40e909158e",
+      "elapsed_seconds": 0.4090634169988334,
+      "repetition": 1,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 3129.0991734018844
+    },
+    {
+      "actor_transitions_per_second": 3231.5450991649936,
+      "backend": "python-exact-mask",
+      "digest": "58f72e4ac72787a7ecf9c2f6f50f48194057181ef2b23993ccba197c68ad4751",
+      "elapsed_seconds": 0.7921907079871744,
+      "repetition": 1,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 1615.7725495824968
+    },
+    {
+      "actor_transitions_per_second": 3310.659129033862,
+      "backend": "python-exact-mask",
+      "digest": "58f72e4ac72787a7ecf9c2f6f50f48194057181ef2b23993ccba197c68ad4751",
+      "elapsed_seconds": 0.7732599159935489,
+      "repetition": 2,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 1655.329564516931
+    },
+    {
+      "actor_transitions_per_second": 6321.90991888756,
+      "backend": "python-public-v2",
+      "digest": "2358738ecebd720ac5bfd500378dbd048c0a7561bf8136cf5ea3ab40e909158e",
+      "elapsed_seconds": 0.4049409170402214,
+      "repetition": 2,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 3160.95495944378
+    },
+    {
+      "actor_transitions_per_second": 167.64179446589645,
+      "backend": "simple-pytorch",
+      "digest": "0503a55703f96fd662097ed58719ef293554e1c4265c64bccbdbba6bded364c5",
+      "elapsed_seconds": 15.270654959022067,
+      "repetition": 2,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 83.82089723294823
+    },
+    {
+      "actor_transitions_per_second": 168.92115324164277,
+      "backend": "simple-pytorch",
+      "digest": "0503a55703f96fd662097ed58719ef293554e1c4265c64bccbdbba6bded364c5",
+      "elapsed_seconds": 15.154999541933648,
+      "repetition": 3,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 84.46057662082139
+    },
+    {
+      "actor_transitions_per_second": 6458.408897882162,
+      "backend": "python-public-v2",
+      "digest": "2358738ecebd720ac5bfd500378dbd048c0a7561bf8136cf5ea3ab40e909158e",
+      "elapsed_seconds": 0.39638245897367597,
+      "repetition": 3,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 3229.204448941081
+    },
+    {
+      "actor_transitions_per_second": 3191.877668769515,
+      "backend": "python-exact-mask",
+      "digest": "58f72e4ac72787a7ecf9c2f6f50f48194057181ef2b23993ccba197c68ad4751",
+      "elapsed_seconds": 0.8020357500063255,
+      "repetition": 3,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 1595.9388343847575
+    },
+    {
+      "actor_transitions_per_second": 3109.4004924294313,
+      "backend": "python-exact-mask",
+      "digest": "58f72e4ac72787a7ecf9c2f6f50f48194057181ef2b23993ccba197c68ad4751",
+      "elapsed_seconds": 0.823309832951054,
+      "repetition": 4,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 1554.7002462147157
+    },
+    {
+      "actor_transitions_per_second": 6001.600031350127,
+      "backend": "python-public-v2",
+      "digest": "2358738ecebd720ac5bfd500378dbd048c0a7561bf8136cf5ea3ab40e909158e",
+      "elapsed_seconds": 0.42655291699338704,
+      "repetition": 4,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 3000.8000156750636
+    },
+    {
+      "actor_transitions_per_second": 167.9303149531031,
+      "backend": "simple-pytorch",
+      "digest": "0503a55703f96fd662097ed58719ef293554e1c4265c64bccbdbba6bded364c5",
+      "elapsed_seconds": 15.244418500107713,
+      "repetition": 4,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 83.96515747655155
+    }
+  ],
+  "warmup_ticks": 2
+}

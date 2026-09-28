@@ -1,0 +1,13 @@
+{
+  "scope": "Complete training mixture contract probe; no fit or acceptance claim.",
+  "rows": 236438,
+  "feature_rows_match_causal_diagnostic_exactly": true,
+  "global_suffix_unchanged": true,
+  "aggregate_weights_match_screen": true,
+  "maximum_weight_difference": 6.103515625e-05,
+  "phase_mass": [
+    0.3333333134651184,
+    0.3333333730697632,
+    0.3333333730697632
+  ]
+}

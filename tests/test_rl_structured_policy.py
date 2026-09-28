@@ -1,3 +1,4 @@
+from unittest.mock import patch
 import math
 from collections import deque
 from copy import deepcopy
@@ -2580,3 +2581,280 @@ def test_random_opponent_does_not_build_unused_structured_observations(monkeypat
 
     # One learner observation per step plus the learner bootstrap observation.
     assert build_calls == 3
+
+
+def test_policy_temperature_concentrates_behavior_and_preserves_default() -> None:
+    builder = StructuredObservationBuilder(card_vocab=["Knight"], max_entities=16)
+    model = _tiny_model(builder)
+    type_logits = torch.tensor([[[0.0, 0.0, 0.0, 0.0, 0.5, -2.0]]])
+    location_logits = torch.zeros((1, 1, 4, 576))
+    mask = torch.zeros((1, 1, 2306), dtype=torch.bool)
+    mask[..., 0] = True
+    mask[..., 576] = True
+    mask[..., 1152] = True
+    mask[..., 1728] = True
+    mask[..., 2304] = True
+    output = PolicyOutput(
+        joint_logits=model._joint_action_logits(type_logits, location_logits, mask),
+        values=torch.zeros((1, 1)),
+        opponent_hand_logits=torch.zeros((1, 1, builder.spec.num_tokens)),
+        opponent_elixir=torch.zeros((1, 1)),
+        next_state=(torch.zeros((1, 1)), torch.zeros((1, 1))),
+        action_type_logits=type_logits,
+        location_logits=location_logits,
+        deterministic_timing_logits=torch.tensor(
+            [[[2.0, 2.0, 2.0, 2.0, 0.5, -2.0]]]
+        ),
+    )
+
+    default = output.distribution()
+    unit = output.distribution(temperature=1.0)
+    cold = output.distribution(temperature=0.25)
+    forced_play = output.distribution(
+        temperature=0.25,
+        force_play=torch.ones((1, 1), dtype=torch.bool),
+    )
+    forced_wait = output.distribution(
+        temperature=0.25,
+        force_play=torch.zeros((1, 1), dtype=torch.bool),
+    )
+    torch.testing.assert_close(default.probs, unit.probs)
+    assert cold.probs[..., :2304].sum().item() > unit.probs[..., :2304].sum().item()
+    assert cold.probs[..., 2304].item() < unit.probs[..., 2304].item()
+    torch.testing.assert_close(
+        forced_play.probs[..., :2304].sum(), torch.tensor(1.0)
+    )
+    torch.testing.assert_close(
+        forced_wait.probs[..., 2304:].sum(), torch.tensor(1.0)
+    )
+    assert forced_play.probs[..., 2304:].count_nonzero().item() == 0
+    assert forced_wait.probs[..., :2304].count_nonzero().item() == 0
+    with pytest.raises(ValueError, match="finite and positive"):
+        output.distribution(temperature=0.0)
+
+
+def test_play_gate_does_not_aggregate_prepooled_timing_logit_twice() -> None:
+    builder = StructuredObservationBuilder(card_vocab=["Knight"], max_entities=16)
+    model = ClasherPolicy(
+        PolicyConfig(
+            num_tokens=builder.spec.num_tokens,
+            max_entities=builder.spec.max_entities,
+            d_model=32,
+            num_heads=4,
+            actor_layers=1,
+            critic_layers=1,
+            memory_size=48,
+            deterministic_hierarchy="play-gate",
+        ),
+        builder.card_stat_features,
+    )
+    type_logits = torch.tensor([[[-1.0, -1.0, -1.0, -1.0, 0.0, -5.0]]])
+    location_logits = torch.zeros((1, 1, 4, 576))
+    mask = torch.zeros((1, 1, 2306), dtype=torch.bool)
+    mask[..., 0] = True
+    mask[..., 576] = True
+    mask[..., 1152] = True
+    mask[..., 1728] = True
+    mask[..., 2304] = True
+    joint = model._joint_action_logits(type_logits, location_logits, mask)
+    common = {
+        "joint_logits": joint,
+        "values": torch.zeros((1, 1)),
+        "opponent_hand_logits": torch.zeros((1, 1, builder.spec.num_tokens)),
+        "opponent_elixir": torch.zeros((1, 1)),
+        "next_state": (torch.zeros((1, 1)), torch.zeros((1, 1))),
+        "action_type_logits": type_logits,
+        "location_logits": location_logits,
+    }
+
+    raw = PolicyOutput(**common)
+    prepooled = PolicyOutput(
+        **common,
+        deterministic_timing_logits=type_logits.clone(),
+    )
+
+    # Four distinct slot logits represent four mutually exclusive ways to
+    # play, so their raw probability mass beats wait after one aggregation.
+    assert int(model._deterministic_actions(raw, mask).item()) < 2304
+    # The prepooled head represents one play-mode logit copied four times; it
+    # must be compared once, so wait (0.0) beats play (-1.0).
+    assert int(model._deterministic_actions(prepooled, mask).item()) == 2304
+
+
+def test_internal_event_mode_accumulates_factorized_play_probability() -> None:
+    builder = StructuredObservationBuilder(card_vocab=["Knight"], max_entities=16)
+    model = ClasherPolicy(
+        PolicyConfig(
+            num_tokens=builder.spec.num_tokens,
+            max_entities=builder.spec.max_entities,
+            d_model=32,
+            num_heads=4,
+            actor_layers=1,
+            critic_layers=1,
+            memory_size=48,
+            memory_kind="structured",
+            hierarchical_mode_gate_enabled=True,
+            deterministic_hierarchy="event",
+            play_hazard_threshold=0.2,
+        ),
+        builder.card_stat_features,
+    )
+    type_logits = torch.full((1, 3, 6), -torch.inf)
+    type_logits[..., 0] = torch.log(torch.tensor(0.1))
+    type_logits[..., 4] = torch.log(torch.tensor(0.9))
+    location_logits = torch.zeros((1, 3, 4, 576))
+    mask = torch.zeros((1, 3, 2306), dtype=torch.bool)
+    mask[..., 0] = True
+    mask[..., 2304] = True
+    output = PolicyOutput(
+        joint_logits=torch.zeros((1, 3, 2306)),
+        values=torch.zeros((1, 3)),
+        opponent_hand_logits=torch.zeros((1, 3, builder.spec.num_tokens)),
+        opponent_elixir=torch.zeros((1, 3)),
+        next_state=(torch.zeros((1, 48)), torch.zeros((1, 48))),
+        action_type_logits=type_logits,
+        location_logits=location_logits,
+        hierarchical_mode_logits=type_logits[..., (0, 4, 5)],
+    )
+
+    gates, accumulator = model._event_mode_force_gate(
+        output, mask, torch.zeros(1)
+    )
+    assert gates.tolist() == [[False, False, True]]
+    torch.testing.assert_close(accumulator, torch.zeros(1))
+
+    inputs = PolicyInputs(
+        entity_ids=torch.zeros((1, 3, 1), dtype=torch.long),
+        entity_features=torch.zeros((1, 3, 1, 32)),
+        entity_mask=torch.zeros((1, 3, 1), dtype=torch.bool),
+        hand_ids=torch.ones((1, 3, 5), dtype=torch.long),
+        global_features=torch.zeros((1, 3, 18)),
+        action_mask=mask,
+        previous_actions=torch.full((1, 3), 2304, dtype=torch.long),
+        previous_rewards=torch.zeros((1, 3)),
+        episode_starts=torch.tensor([[True, False, False]]),
+    )
+    with patch.object(model, "forward", return_value=output):
+        actions, _log_prob, _values, next_state, _result = model.act(
+            inputs, deterministic=True
+        )
+    assert actions.tolist() == [[2304, 2304, 0]]
+    torch.testing.assert_close(next_state[0][:, -1], torch.zeros(1))
+
+
+def test_internal_event_accumulator_persists_across_policy_calls() -> None:
+    builder = StructuredObservationBuilder(card_vocab=["Knight"], max_entities=16)
+    model = ClasherPolicy(
+        PolicyConfig(
+            num_tokens=builder.spec.num_tokens,
+            max_entities=builder.spec.max_entities,
+            d_model=32,
+            num_heads=4,
+            actor_layers=1,
+            critic_layers=1,
+            memory_size=48,
+            memory_kind="structured",
+            hierarchical_mode_gate_enabled=True,
+            deterministic_hierarchy="event",
+            play_hazard_threshold=0.2,
+        ),
+        builder.card_stat_features,
+    ).eval()
+    assert model.hierarchical_mode_gate is not None
+    output = model.hierarchical_mode_gate[-1]
+    assert isinstance(output, torch.nn.Linear)
+    with torch.no_grad():
+        output.weight.zero_()
+        output.bias.copy_(torch.tensor([np.log(0.1), np.log(0.9), 0.0]))
+    mask = torch.zeros((1, 1, 2306), dtype=torch.bool)
+    mask[..., 0] = True
+    mask[..., 2304] = True
+    state = model.initial_state(1, device="cpu")
+    actions = []
+    for step in range(3):
+        inputs = PolicyInputs(
+            entity_ids=torch.zeros((1, 1, 1), dtype=torch.long),
+            entity_features=torch.zeros((1, 1, 1, 32)),
+            entity_mask=torch.zeros((1, 1, 1), dtype=torch.bool),
+            hand_ids=torch.ones((1, 1, 5), dtype=torch.long),
+            global_features=torch.zeros((1, 1, 18)),
+            action_mask=mask,
+            previous_actions=torch.full((1, 1), 2304, dtype=torch.long),
+            previous_rewards=torch.zeros((1, 1)),
+            episode_starts=torch.tensor([[step == 0]]),
+        )
+        action, _log_prob, _value, state, _output = model.act(
+            inputs, state, deterministic=True
+        )
+        actions.append(int(action.item()))
+    assert actions == [2304, 2304, 0]
+    torch.testing.assert_close(state[0][:, -1], torch.zeros(1), atol=1e-6, rtol=0.0)
+
+
+def test_action_value_head_starts_behavior_closed() -> None:
+    env = SelfPlayBattleEnv(seed=13, max_ticks=128)
+    env.reset()
+    builder = StructuredObservationBuilder(decks_path="decks.json", max_entities=128)
+    env._structured_obs_builder = builder
+    model = ClasherPolicy(
+        PolicyConfig(
+            num_tokens=builder.spec.num_tokens,
+            max_entities=builder.spec.max_entities,
+            d_model=32,
+            num_heads=4,
+            actor_layers=1,
+            critic_layers=1,
+            memory_size=48,
+            action_value_head_enabled=True,
+        ),
+        builder.card_stat_features,
+    ).eval()
+    observation = builder.build(env.battle, 0)
+    inputs = _stack_step_inputs(
+        [observation],
+        env.get_action_mask(0)[None, :],
+        np.asarray([env.action_space.no_op_action]),
+        np.asarray([0.0], dtype=np.float32),
+        np.asarray([True]),
+        torch.device("cpu"),
+    )
+    with torch.no_grad():
+        before = model(inputs)
+        assert before.action_values is not None
+        assert model.action_value_head is not None
+        for parameter in model.action_value_head.parameters():
+            parameter.add_(torch.randn_like(parameter) * 5.0)
+        closed = model(inputs)
+        assert closed.action_values is not None
+        torch.testing.assert_close(before.joint_logits, closed.joint_logits)
+        assert not torch.equal(before.action_values, closed.action_values)
+        assert model.action_value_policy_gate is not None
+        model.action_value_policy_gate.fill_(0.5)
+        opened = model(inputs)
+        assert not torch.equal(closed.joint_logits, opened.joint_logits)
+
+
+def test_action_value_option_preserves_same_seed_shared_initialization() -> None:
+    builder = StructuredObservationBuilder(card_vocab=["Knight"], max_entities=16)
+    common = {
+        "num_tokens": builder.spec.num_tokens,
+        "max_entities": builder.spec.max_entities,
+        "d_model": 32,
+        "num_heads": 4,
+        "actor_layers": 1,
+        "critic_layers": 1,
+        "memory_size": 48,
+    }
+    torch.manual_seed(29)
+    control = ClasherPolicy(PolicyConfig(**common), builder.card_stat_features)
+    torch.manual_seed(29)
+    candidate = ClasherPolicy(
+        PolicyConfig(**common, action_value_head_enabled=True),
+        builder.card_stat_features,
+    )
+    control_state = control.state_dict()
+    candidate_state = candidate.state_dict()
+    shared = sorted(set(control_state).intersection(candidate_state))
+    assert shared
+    for name in shared:
+        torch.testing.assert_close(control_state[name], candidate_state[name], rtol=0, atol=0)

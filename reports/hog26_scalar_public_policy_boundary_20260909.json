@@ -1,0 +1,20 @@
+{
+  "status": "single_boundary_inference_only",
+  "scope": "Scripted Arrows scene; no game collection, learning, or native equivalence claim. Visibility callback uses scalar is_visible_to plus pending exclusion; full visibility audit remains required.",
+  "actions": [
+    [
+      2304
+    ],
+    [
+      2304
+    ]
+  ],
+  "all_critic_inputs_absent": true,
+  "mask_semantics_id": "public-action-mask-v2/tensor-actor-projection-v2",
+  "mask_semantics_digest": "2e51173594b938d300561fe1f96fc4cb9ec9de9c1f695cf3a95de72553eb43c6",
+  "visible_counts": [
+    16,
+    16
+  ],
+  "checkpoint": "checkpoints/hog26_direct_constant_event_seed1263001/candidate.pt"
+}

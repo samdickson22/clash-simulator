@@ -11,6 +11,7 @@ from torch.distributions import Categorical
 from torch.nn import functional as F
 
 from .common import NUM_HAND_SLOTS, NUM_TILES
+from .joint_action_value import FactorizedActionValueHead
 from .structured_memory import StructuredBeliefCell, StructuredPublicStateTracker
 from .structured_obs import (
     ACTOR_GLOBAL_SIZE,
@@ -89,6 +90,7 @@ class PolicyConfig:
     repair_stage_prototype_guard_thresholds: tuple[float, ...] = ()
     repair_stage_prototype_hard_guards: tuple[bool, ...] = ()
     repair_stage_yield_to_prior: tuple[bool, ...] = ()
+    action_value_head_enabled: bool = False
 
     def __post_init__(self) -> None:
         if self.actor_observation_domain not in {
@@ -180,6 +182,17 @@ class PolicyConfig:
             raise ValueError(
                 "hazard deterministic hierarchy and play hazard must be enabled together"
             )
+        if self.deterministic_hierarchy == "event":
+            if self.memory_kind != "structured":
+                raise ValueError("event accumulation requires structured memory")
+            if not self.hierarchical_mode_gate_enabled:
+                raise ValueError("event accumulation requires a hierarchical mode gate")
+            if self.structured_deterministic_resource_enabled:
+                raise ValueError(
+                    "event accumulation and deterministic resource cannot share hidden state"
+                )
+            if not 0.0 < self.play_hazard_threshold < 1.0:
+                raise ValueError("event accumulation threshold must be in (0, 1)")
 
     def to_dict(
         self,
@@ -280,18 +293,169 @@ class PolicyOutput:
     repair_features: Tensor | None = None
     deterministic_timing_logits: Tensor | None = None
     play_hazard_logits: Tensor | None = None
+    hierarchical_mode_logits: Tensor | None = None
+    action_values: Tensor | None = None
 
-    def distribution(self) -> Categorical:
-        return Categorical(logits=self.joint_logits)
+    def distribution(
+        self,
+        *,
+        temperature: float = 1.0,
+        force_play: Tensor | None = None,
+    ) -> Categorical:
+        if not math.isfinite(temperature) or temperature <= 0.0:
+            raise ValueError("policy temperature must be finite and positive")
+        if force_play is not None:
+            if force_play.shape != self.joint_logits.shape[:-1]:
+                raise ValueError("play gate must match policy batch and sequence")
+            placement_mask = self.joint_logits[
+                ..., : NUM_HAND_SLOTS * NUM_TILES
+            ].reshape(
+                *self.joint_logits.shape[:-1], NUM_HAND_SLOTS, NUM_TILES
+            ) > -1e8
+            slot_mask = placement_mask.any(dim=-1)
+            special_mask = self.joint_logits[
+                ..., NUM_HAND_SLOTS * NUM_TILES :
+            ] > -1e8
+            timing_logits = (
+                self.action_type_logits
+                if self.deterministic_timing_logits is None
+                else self.deterministic_timing_logits
+            )
+            slot_log_prob = torch.log_softmax(
+                (
+                    self.action_type_logits[..., :NUM_HAND_SLOTS] / temperature
+                ).masked_fill(~slot_mask, -1e9),
+                dim=-1,
+            ).masked_fill(~slot_mask, -1e9)
+            location_log_prob = torch.log_softmax(
+                (self.location_logits / temperature).masked_fill(
+                    ~placement_mask, -1e9
+                ),
+                dim=-1,
+            ).masked_fill(~placement_mask, -1e9)
+            special_log_prob = torch.log_softmax(
+                (timing_logits[..., NUM_HAND_SLOTS:] / temperature).masked_fill(
+                    ~special_mask, -1e9
+                ),
+                dim=-1,
+            ).masked_fill(~special_mask, -1e9)
+            placement_log_prob = slot_log_prob.unsqueeze(-1) + location_log_prob
+            gated_logits = torch.cat(
+                [
+                    placement_log_prob.reshape(
+                        *self.joint_logits.shape[:-1], -1
+                    ),
+                    special_log_prob,
+                ],
+                dim=-1,
+            )
+            gated_mask = torch.where(
+                force_play.unsqueeze(-1),
+                torch.cat(
+                    [
+                        placement_mask.reshape(
+                            *self.joint_logits.shape[:-1], -1
+                        ),
+                        torch.zeros_like(special_mask),
+                    ],
+                    dim=-1,
+                ),
+                torch.cat(
+                    [
+                        torch.zeros_like(
+                            placement_mask.reshape(
+                                *self.joint_logits.shape[:-1], -1
+                            )
+                        ),
+                        special_mask,
+                    ],
+                    dim=-1,
+                ),
+            )
+            return Categorical(logits=gated_logits.masked_fill(~gated_mask, -1e9))
+        if temperature == 1.0:
+            return Categorical(logits=self.joint_logits)
 
-    def entropy_components(self) -> tuple[Tensor, Tensor]:
+        # The joint policy is factorized as mode (play/wait/ability), card slot
+        # conditional on play, and tile conditional on the slot.  Cooling the
+        # already-flattened logits biases play probability by the number and
+        # entropy of legal tiles.  Temper each factor independently instead so
+        # temperature 1 preserves the exact historical distribution and the
+        # zero-temperature limit agrees with hierarchical deterministic decode.
+        placement_mask = self.joint_logits[
+            ..., : NUM_HAND_SLOTS * NUM_TILES
+        ].reshape(*self.joint_logits.shape[:-1], NUM_HAND_SLOTS, NUM_TILES) > -1e8
+        slot_mask = placement_mask.any(dim=-1)
+        special_mask = self.joint_logits[
+            ..., NUM_HAND_SLOTS * NUM_TILES :
+        ] > -1e8
+        type_mask = torch.cat([slot_mask, special_mask], dim=-1)
+        timing_logits = (
+            self.action_type_logits
+            if self.deterministic_timing_logits is None
+            else self.deterministic_timing_logits
+        )
+        masked_timing_logits = timing_logits.masked_fill(~type_mask, -1e9)
+        play_logit = torch.logsumexp(
+            masked_timing_logits[..., :NUM_HAND_SLOTS], dim=-1, keepdim=True
+        )
+        mode_logits = torch.cat(
+            [play_logit, masked_timing_logits[..., NUM_HAND_SLOTS:]], dim=-1
+        )
+        mode_mask = torch.cat(
+            [slot_mask.any(dim=-1, keepdim=True), special_mask], dim=-1
+        )
+        mode_log_prob = torch.log_softmax(
+            (mode_logits / temperature).masked_fill(~mode_mask, -1e9), dim=-1
+        ).masked_fill(~mode_mask, -1e9)
+        slot_log_prob = torch.log_softmax(
+            (
+                self.action_type_logits[..., :NUM_HAND_SLOTS] / temperature
+            ).masked_fill(~slot_mask, -1e9),
+            dim=-1,
+        ).masked_fill(~slot_mask, -1e9)
+        location_log_prob = torch.log_softmax(
+            (self.location_logits / temperature).masked_fill(
+                ~placement_mask, -1e9
+            ),
+            dim=-1,
+        ).masked_fill(~placement_mask, -1e9)
+        placement_log_prob = (
+            mode_log_prob[..., :1].unsqueeze(-1)
+            + slot_log_prob.unsqueeze(-1)
+            + location_log_prob
+        )
+        joint_log_prob = torch.cat(
+            [
+                placement_log_prob.reshape(*self.joint_logits.shape[:-1], -1),
+                mode_log_prob[..., 1:],
+            ],
+            dim=-1,
+        )
+        joint_mask = torch.cat(
+            [
+                placement_mask.reshape(*self.joint_logits.shape[:-1], -1),
+                special_mask,
+            ],
+            dim=-1,
+        )
+        return Categorical(logits=joint_log_prob.masked_fill(~joint_mask, -1e9))
+
+    def entropy_components(
+        self,
+        *,
+        temperature: float = 1.0,
+        force_play: Tensor | None = None,
+    ) -> tuple[Tensor, Tensor]:
         """Return action-type and conditional-placement entropy separately.
 
         The two components sum to the entropy of the flattened joint action
         distribution.  Keeping them separate lets training encourage choosing
         among cards/wait/ability without necessarily making placement noisier.
         """
-        distribution = self.distribution()
+        distribution = self.distribution(
+            temperature=temperature, force_play=force_play
+        )
         joint_probabilities = distribution.probs
         joint_log_probabilities = distribution.logits
         placement_probabilities = joint_probabilities[
@@ -310,7 +474,12 @@ class PolicyOutput:
         location_entropy = joint_entropy - type_entropy
         return type_entropy, location_entropy
 
-    def conditional_slot_entropy(self) -> Tensor:
+    def conditional_slot_entropy(
+        self,
+        *,
+        temperature: float = 1.0,
+        force_play: Tensor | None = None,
+    ) -> Tensor:
         """Return card-slot entropy conditional on choosing a placement action.
 
         Normalizing away total placement probability makes this independent of
@@ -318,7 +487,9 @@ class PolicyOutput:
         the joint action mask; states with fewer than two playable slots return
         zero without producing NaNs.
         """
-        joint_probabilities = self.distribution().probs
+        joint_probabilities = self.distribution(
+            temperature=temperature, force_play=force_play
+        ).probs
         placement_probabilities = joint_probabilities[
             ..., : NUM_HAND_SLOTS * NUM_TILES
         ].reshape(*joint_probabilities.shape[:-1], NUM_HAND_SLOTS, NUM_TILES)
@@ -339,6 +510,8 @@ class PolicyOutput:
             entropy,
             torch.zeros_like(entropy),
         )
+
+
 
 
 class TransformerBlock(nn.Module):
@@ -857,9 +1030,15 @@ class ClasherPolicy(nn.Module):
     ) -> None:
         super().__init__()
         self.config = config
-        if config.deterministic_hierarchy not in {"slot", "play-gate", "hazard"}:
+        if config.deterministic_hierarchy not in {
+            "slot",
+            "play-gate",
+            "hazard",
+            "event",
+        }:
             raise ValueError(
-                "deterministic hierarchy must be 'slot', 'play-gate', or 'hazard'"
+                "deterministic hierarchy must be 'slot', 'play-gate', 'hazard', "
+                "or 'event'"
             )
         if config.equivariant_slot_choice:
             if not config.actor_current_hand_slot_invariant:
@@ -1127,6 +1306,20 @@ class ClasherPolicy(nn.Module):
             nn.init.zeros_(self.equivariant_timing_query.weight)
             nn.init.zeros_(self.equivariant_timing_query.bias)
         repair_input_size = d_model + config.memory_size
+        self.action_value_head: FactorizedActionValueHead | None = None
+        self.action_value_policy_gate: nn.Parameter | None = None
+        if config.action_value_head_enabled:
+            # Optional-module construction must not advance the global RNG and
+            # silently change every later shared layer in a same-seed A/B.
+            with torch.random.fork_rng(devices=[]):
+                self.action_value_head = FactorizedActionValueHead(
+                    repair_input_size,
+                    d_model,
+                )
+            # Start as an exact behavior-preserving auxiliary head. PPO may
+            # learn to use its centered action advantages only after the
+            # return-regression objective has trained useful values.
+            self.action_value_policy_gate = nn.Parameter(torch.zeros(()))
         self.action_type_adapter: nn.Linear | None = None
         if config.action_type_adapter_enabled:
             self.action_type_adapter = nn.Linear(
@@ -1556,7 +1749,9 @@ class ClasherPolicy(nn.Module):
                 else:
                     previous_hazard = hidden[:, -1:].clone()
                     cell = self.memory(recurrent_inputs[:, index], cell)
-                    if self.config.play_hazard_enabled:
+                    if self.config.play_hazard_enabled or (
+                        self.config.deterministic_hierarchy == "event"
+                    ):
                         hidden = torch.cat([cell[:, :-1], previous_hazard], dim=-1)
                         output = cell
                     else:
@@ -1655,9 +1850,20 @@ class ClasherPolicy(nn.Module):
             # stochastic joint distribution; it changes only deterministic
             # decoding, avoiding a four-way probability-splitting bias against
             # playing any card.
-            play_logit = torch.logsumexp(
-                masked_timing_logits[..., :NUM_HAND_SLOTS], dim=-1
-            )
+            if getattr(output, "deterministic_timing_logits", None) is None:
+                play_logit = torch.logsumexp(
+                    masked_timing_logits[..., :NUM_HAND_SLOTS], dim=-1
+                )
+            else:
+                # A hierarchical/equivariant timing head has already reduced
+                # the mutually exclusive slots to one play-mode logit and
+                # broadcasts it back across legal slots for the shared output
+                # contract. Summing those copies again adds an artificial
+                # log(number of legal slots) bonus and can force continuous
+                # play. Max recovers the single pre-aggregated mode value.
+                play_logit = masked_timing_logits[
+                    ..., :NUM_HAND_SLOTS
+                ].amax(dim=-1)
             top_level_logits = torch.stack(
                 [
                     play_logit,
@@ -1672,9 +1878,9 @@ class ClasherPolicy(nn.Module):
                 best_slot,
                 NUM_HAND_SLOTS + top_level - 1,
             )
-        elif self.config.deterministic_hierarchy == "hazard":
+        elif self.config.deterministic_hierarchy in {"hazard", "event"}:
             if force_play is None or force_play.shape != action_types.shape:
-                raise ValueError("hazard hierarchy requires a shaped force-play gate")
+                raise ValueError("event hierarchy requires a shaped force-play gate")
             can_play = slot_mask.any(dim=-1)
             play_now = force_play & can_play
             special_types = (
@@ -1741,6 +1947,47 @@ class ClasherPolicy(nn.Module):
                 accumulator,
             )
         return torch.stack(gates, dim=1), accumulator
+
+    def _event_mode_force_gate(
+        self,
+        output: PolicyOutput,
+        action_mask: Tensor,
+        initial_hazard: Tensor,
+    ) -> tuple[Tensor, Tensor]:
+        """Accumulate the factorized play-mode probability in model state."""
+
+        if output.hierarchical_mode_logits is None:
+            raise ValueError("event hierarchy did not expose raw mode logits")
+        if output.hierarchical_mode_logits.shape != (*action_mask.shape[:2], 3):
+            raise ValueError("event-mode logits do not match action sequence")
+        if initial_hazard.shape != (action_mask.shape[0],):
+            raise ValueError("initial event accumulator does not match batch")
+        if bool(action_mask[..., NUM_HAND_SLOTS * NUM_TILES + 1].any()):
+            raise ValueError("event accumulation does not yet support abilities")
+        placement_mask = action_mask[..., : NUM_HAND_SLOTS * NUM_TILES].reshape(
+            *action_mask.shape[:2], NUM_HAND_SLOTS, NUM_TILES
+        )
+        slot_mask = placement_mask.any(dim=-1)
+        probabilities = torch.softmax(
+            output.hierarchical_mode_logits[..., :2], dim=-1
+        )[..., 0]
+        can_play = slot_mask.any(dim=-1)
+        accumulator = initial_hazard
+        gates: list[Tensor] = []
+        for index in range(action_mask.shape[1]):
+            probability = probabilities[:, index]
+            accumulator = 1.0 - (1.0 - accumulator) * (1.0 - probability)
+            play_now = (
+                accumulator >= self.config.play_hazard_threshold
+            ) & can_play[:, index]
+            gates.append(play_now)
+            accumulator = torch.where(
+                play_now,
+                torch.zeros_like(accumulator),
+                accumulator,
+            )
+        return torch.stack(gates, dim=1), accumulator
+
 
     def hazard_conditioned_distribution(
         self,
@@ -2386,8 +2633,11 @@ class ClasherPolicy(nn.Module):
                 ],
                 dim=-1,
             )
+        hierarchical_mode_logits: Tensor | None = None
         if self.hierarchical_mode_gate is not None:
-            mode_logits = self.hierarchical_mode_gate(repair_features).reshape(
+            hierarchical_mode_logits = self.hierarchical_mode_gate(
+                repair_features
+            ).reshape(
                 batch_size,
                 sequence_length,
                 3,
@@ -2406,7 +2656,7 @@ class ClasherPolicy(nn.Module):
                 [legal_slots.any(dim=-1, keepdim=True), special_mask], dim=-1
             )
             mode_log_prob = self._masked_log_softmax(
-                mode_logits,
+                hierarchical_mode_logits,
                 mode_mask,
                 dim=-1,
             )
@@ -2432,6 +2682,39 @@ class ClasherPolicy(nn.Module):
         joint_logits = self._joint_action_logits(
             action_type_logits, location_logits, inputs.action_mask
         )
+        action_values: Tensor | None = None
+        if self.action_value_head is not None:
+            flat_action_mask = flatten(inputs.action_mask)
+            flat_action_values = self.action_value_head(
+                repair_features,
+                card_context,
+                tile_context,
+                flat_action_mask,
+            )
+            action_values = flat_action_values.reshape(
+                batch_size,
+                sequence_length,
+                -1,
+            )
+            assert self.action_value_policy_gate is not None
+            legal_values = torch.where(
+                inputs.action_mask,
+                action_values,
+                torch.zeros_like(action_values),
+            )
+            legal_count = inputs.action_mask.sum(dim=-1, keepdim=True).clamp_min(1)
+            centered_values = action_values - (
+                legal_values.sum(dim=-1, keepdim=True)
+                / legal_count.to(action_values.dtype)
+            )
+            policy_value_delta = torch.where(
+                inputs.action_mask,
+                centered_values,
+                torch.zeros_like(centered_values),
+            )
+            joint_logits = joint_logits + torch.tanh(
+                self.action_value_policy_gate
+            ) * policy_value_delta
 
         if inputs.critic_entity_ids is not None:
             assert inputs.critic_entity_features is not None
@@ -2506,6 +2789,8 @@ class ClasherPolicy(nn.Module):
             ),
             deterministic_timing_logits=deterministic_timing_logits,
             play_hazard_logits=play_hazard_logits,
+            hierarchical_mode_logits=hierarchical_mode_logits,
+            action_values=action_values,
         )
 
     @torch.no_grad()
@@ -2516,29 +2801,29 @@ class ClasherPolicy(nn.Module):
         *,
         deterministic: bool = False,
         hazard_conditioned_stochastic: bool = False,
+        sampling_temperature: float = 1.0,
     ) -> tuple[Tensor, Tensor, Tensor, tuple[Tensor, Tensor], PolicyOutput]:
         output = self.forward(inputs, state)
-        distribution = output.distribution()
         hazard_gate: Tensor | None = None
         stored_hazard: Tensor | None = None
         if self.config.play_hazard_enabled:
             previous_hazard = output.next_state[0][:, -1]
-            if hazard_conditioned_stochastic and not deterministic:
-                distribution, hazard_gate, stored_hazard = (
-                    self.hazard_conditioned_distribution(
-                        output,
-                        inputs.action_mask,
-                        previous_hazard,
-                    )
-                )
-            else:
-                hazard_gate, stored_hazard = self._play_hazard_force_gate(
-                    output,
-                    inputs.action_mask,
-                    previous_hazard,
-                )
-        elif hazard_conditioned_stochastic:
-            raise RuntimeError("hazard-conditioned sampling requires a hazard policy")
+            hazard_gate, stored_hazard = self._play_hazard_force_gate(
+                output,
+                inputs.action_mask,
+                previous_hazard,
+            )
+        elif self.config.deterministic_hierarchy == "event":
+            previous_hazard = output.next_state[0][:, -1]
+            hazard_gate, stored_hazard = self._event_mode_force_gate(
+                output,
+                inputs.action_mask,
+                previous_hazard,
+            )
+        distribution = output.distribution(
+            temperature=sampling_temperature,
+            force_play=hazard_gate,
+        )
         if deterministic:
             actions = self._deterministic_actions(
                 output,

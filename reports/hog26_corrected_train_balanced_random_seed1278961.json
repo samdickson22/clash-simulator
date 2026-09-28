@@ -1,0 +1,2994 @@
+{
+  "actor_input_excludes_outcome_labels": true,
+  "card_counts": {
+    "card_action:Cannon": 272,
+    "card_action:HogRider": 665,
+    "card_action:IceGolemite": 785,
+    "card_action:IceSpirits": 768,
+    "card_action:Log": 255,
+    "card_action:Musketeer": 551,
+    "card_action:Skeletons": 675
+  },
+  "checkpoint": "/Users/sam/.codex/worktrees/clasher-event-policy/checkpoints/hog26_direct_constant_event_seed1263001/candidate.pt",
+  "checkpoint_sha256": "f609b60b3e7b7b574e084b15255e0fc247447e3c18d8552714213ccd0c709336",
+  "chunk_steps": 64,
+  "chunks": 11,
+  "complete_episodes_only": true,
+  "elapsed_seconds": 8796.44875458302,
+  "episode_count": 128,
+  "episode_lengths": {
+    "maximum": 687,
+    "median": 450.0,
+    "minimum": 145
+  },
+  "episode_outcomes": {
+    "draw": 0,
+    "loss": 80,
+    "win": 48
+  },
+  "episodes_per_seat": 1,
+  "initial_recurrent_state": "exact-model-reset-state-per-episode",
+  "label_authority": "undiscounted-terminal-winner-and-post-action-public-tower-fractions-v1",
+  "opening_schedule": "seeded-ordered-decks-v1",
+  "opponent_deck_split": "train",
+  "opponent_decks": [
+    "Procedural train 000-0",
+    "Procedural train 000-1",
+    "Procedural train 000-2",
+    "Procedural train 000-3",
+    "Procedural train 001-0",
+    "Procedural train 001-1",
+    "Procedural train 001-2",
+    "Procedural train 001-3",
+    "Procedural train 002-0",
+    "Procedural train 002-1",
+    "Procedural train 002-2",
+    "Procedural train 002-3",
+    "Procedural train 003-0",
+    "Procedural train 003-1",
+    "Procedural train 003-2",
+    "Procedural train 003-3",
+    "Procedural train 004-0",
+    "Procedural train 004-1",
+    "Procedural train 004-2",
+    "Procedural train 004-3",
+    "Procedural train 005-0",
+    "Procedural train 005-1",
+    "Procedural train 005-2",
+    "Procedural train 005-3",
+    "Procedural train 006-0",
+    "Procedural train 006-1",
+    "Procedural train 006-2",
+    "Procedural train 006-3",
+    "Procedural train 007-0",
+    "Procedural train 007-1",
+    "Procedural train 007-2",
+    "Procedural train 007-3"
+  ],
+  "opponent_family_ids": [
+    "family-000",
+    "family-001",
+    "family-002",
+    "family-003",
+    "family-004",
+    "family-005",
+    "family-006",
+    "family-007"
+  ],
+  "opponents": [
+    "balanced",
+    "random"
+  ],
+  "outcome_source": "natural-strategy-games",
+  "output": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_corrected_train_balanced_random_seed1278961/corpus.npz",
+  "output_sha256": "38135e48f49b5aa3200ad1ab575b31da179e71e5efc6bd2010a027d03604bea5",
+  "row_count": 56223,
+  "row_opponent_decks": [
+    "Procedural train 000-0",
+    "Procedural train 000-0",
+    "Procedural train 000-0",
+    "Procedural train 000-0",
+    "Procedural train 000-1",
+    "Procedural train 000-1",
+    "Procedural train 000-1",
+    "Procedural train 000-1",
+    "Procedural train 000-2",
+    "Procedural train 000-2",
+    "Procedural train 000-2",
+    "Procedural train 000-2",
+    "Procedural train 000-3",
+    "Procedural train 000-3",
+    "Procedural train 000-3",
+    "Procedural train 000-3",
+    "Procedural train 001-0",
+    "Procedural train 001-0",
+    "Procedural train 001-0",
+    "Procedural train 001-0",
+    "Procedural train 001-1",
+    "Procedural train 001-1",
+    "Procedural train 001-1",
+    "Procedural train 001-1",
+    "Procedural train 001-2",
+    "Procedural train 001-2",
+    "Procedural train 001-2",
+    "Procedural train 001-2",
+    "Procedural train 001-3",
+    "Procedural train 001-3",
+    "Procedural train 001-3",
+    "Procedural train 001-3",
+    "Procedural train 002-0",
+    "Procedural train 002-0",
+    "Procedural train 002-0",
+    "Procedural train 002-0",
+    "Procedural train 002-1",
+    "Procedural train 002-1",
+    "Procedural train 002-1",
+    "Procedural train 002-1",
+    "Procedural train 002-2",
+    "Procedural train 002-2",
+    "Procedural train 002-2",
+    "Procedural train 002-2",
+    "Procedural train 002-3",
+    "Procedural train 002-3",
+    "Procedural train 002-3",
+    "Procedural train 002-3",
+    "Procedural train 003-0",
+    "Procedural train 003-0",
+    "Procedural train 003-0",
+    "Procedural train 003-0",
+    "Procedural train 003-1",
+    "Procedural train 003-1",
+    "Procedural train 003-1",
+    "Procedural train 003-1",
+    "Procedural train 003-2",
+    "Procedural train 003-2",
+    "Procedural train 003-2",
+    "Procedural train 003-2",
+    "Procedural train 003-3",
+    "Procedural train 003-3",
+    "Procedural train 003-3",
+    "Procedural train 003-3",
+    "Procedural train 004-0",
+    "Procedural train 004-0",
+    "Procedural train 004-0",
+    "Procedural train 004-0",
+    "Procedural train 004-1",
+    "Procedural train 004-1",
+    "Procedural train 004-1",
+    "Procedural train 004-1",
+    "Procedural train 004-2",
+    "Procedural train 004-2",
+    "Procedural train 004-2",
+    "Procedural train 004-2",
+    "Procedural train 004-3",
+    "Procedural train 004-3",
+    "Procedural train 004-3",
+    "Procedural train 004-3",
+    "Procedural train 005-0",
+    "Procedural train 005-0",
+    "Procedural train 005-0",
+    "Procedural train 005-0",
+    "Procedural train 005-1",
+    "Procedural train 005-1",
+    "Procedural train 005-1",
+    "Procedural train 005-1",
+    "Procedural train 005-2",
+    "Procedural train 005-2",
+    "Procedural train 005-2",
+    "Procedural train 005-2",
+    "Procedural train 005-3",
+    "Procedural train 005-3",
+    "Procedural train 005-3",
+    "Procedural train 005-3",
+    "Procedural train 006-0",
+    "Procedural train 006-0",
+    "Procedural train 006-0",
+    "Procedural train 006-0",
+    "Procedural train 006-1",
+    "Procedural train 006-1",
+    "Procedural train 006-1",
+    "Procedural train 006-1",
+    "Procedural train 006-2",
+    "Procedural train 006-2",
+    "Procedural train 006-2",
+    "Procedural train 006-2",
+    "Procedural train 006-3",
+    "Procedural train 006-3",
+    "Procedural train 006-3",
+    "Procedural train 006-3",
+    "Procedural train 007-0",
+    "Procedural train 007-0",
+    "Procedural train 007-0",
+    "Procedural train 007-0",
+    "Procedural train 007-1",
+    "Procedural train 007-1",
+    "Procedural train 007-1",
+    "Procedural train 007-1",
+    "Procedural train 007-2",
+    "Procedural train 007-2",
+    "Procedural train 007-2",
+    "Procedural train 007-2",
+    "Procedural train 007-3",
+    "Procedural train 007-3",
+    "Procedural train 007-3",
+    "Procedural train 007-3"
+  ],
+  "row_opponents": [
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random",
+    "balanced",
+    "balanced",
+    "random",
+    "random"
+  ],
+  "schema": "clasher.hog26.complete-outcome-corpus.v1",
+  "seed": 1278961,
+  "seeded_deals": {
+    "episodes_per_stream": 1,
+    "initial_actor_hand_tokens_by_stream": [
+      [
+        [
+          175,
+          137,
+          237,
+          118,
+          170
+        ]
+      ],
+      [
+        [
+          175,
+          137,
+          237,
+          118,
+          170
+        ]
+      ],
+      [
+        [
+          137,
+          206,
+          187,
+          175,
+          173
+        ]
+      ],
+      [
+        [
+          137,
+          206,
+          187,
+          175,
+          173
+        ]
+      ],
+      [
+        [
+          170,
+          173,
+          137,
+          206,
+          175
+        ]
+      ],
+      [
+        [
+          170,
+          173,
+          137,
+          206,
+          175
+        ]
+      ],
+      [
+        [
+          237,
+          175,
+          173,
+          206,
+          137
+        ]
+      ],
+      [
+        [
+          237,
+          175,
+          173,
+          206,
+          137
+        ]
+      ],
+      [
+        [
+          173,
+          206,
+          175,
+          137,
+          187
+        ]
+      ],
+      [
+        [
+          173,
+          206,
+          175,
+          137,
+          187
+        ]
+      ],
+      [
+        [
+          173,
+          170,
+          118,
+          175,
+          137
+        ]
+      ],
+      [
+        [
+          173,
+          170,
+          118,
+          175,
+          137
+        ]
+      ],
+      [
+        [
+          137,
+          175,
+          187,
+          170,
+          118
+        ]
+      ],
+      [
+        [
+          137,
+          175,
+          187,
+          170,
+          118
+        ]
+      ],
+      [
+        [
+          173,
+          175,
+          170,
+          137,
+          237
+        ]
+      ],
+      [
+        [
+          173,
+          175,
+          170,
+          137,
+          237
+        ]
+      ],
+      [
+        [
+          237,
+          187,
+          170,
+          173,
+          206
+        ]
+      ],
+      [
+        [
+          237,
+          187,
+          170,
+          173,
+          206
+        ]
+      ],
+      [
+        [
+          187,
+          173,
+          118,
+          175,
+          170
+        ]
+      ],
+      [
+        [
+          187,
+          173,
+          118,
+          175,
+          170
+        ]
+      ],
+      [
+        [
+          118,
+          137,
+          187,
+          237,
+          173
+        ]
+      ],
+      [
+        [
+          118,
+          137,
+          187,
+          237,
+          173
+        ]
+      ],
+      [
+        [
+          137,
+          118,
+          237,
+          170,
+          173
+        ]
+      ],
+      [
+        [
+          137,
+          118,
+          237,
+          170,
+          173
+        ]
+      ],
+      [
+        [
+          206,
+          118,
+          170,
+          173,
+          175
+        ]
+      ],
+      [
+        [
+          206,
+          118,
+          170,
+          173,
+          175
+        ]
+      ],
+      [
+        [
+          237,
+          137,
+          206,
+          175,
+          118
+        ]
+      ],
+      [
+        [
+          237,
+          137,
+          206,
+          175,
+          118
+        ]
+      ],
+      [
+        [
+          175,
+          170,
+          118,
+          173,
+          187
+        ]
+      ],
+      [
+        [
+          175,
+          170,
+          118,
+          173,
+          187
+        ]
+      ],
+      [
+        [
+          137,
+          237,
+          118,
+          173,
+          206
+        ]
+      ],
+      [
+        [
+          137,
+          237,
+          118,
+          173,
+          206
+        ]
+      ],
+      [
+        [
+          118,
+          173,
+          175,
+          170,
+          206
+        ]
+      ],
+      [
+        [
+          118,
+          173,
+          175,
+          170,
+          206
+        ]
+      ],
+      [
+        [
+          170,
+          175,
+          173,
+          118,
+          187
+        ]
+      ],
+      [
+        [
+          170,
+          175,
+          173,
+          118,
+          187
+        ]
+      ],
+      [
+        [
+          187,
+          175,
+          118,
+          237,
+          170
+        ]
+      ],
+      [
+        [
+          187,
+          175,
+          118,
+          237,
+          170
+        ]
+      ],
+      [
+        [
+          137,
+          173,
+          118,
+          170,
+          187
+        ]
+      ],
+      [
+        [
+          137,
+          173,
+          118,
+          170,
+          187
+        ]
+      ],
+      [
+        [
+          118,
+          173,
+          137,
+          175,
+          237
+        ]
+      ],
+      [
+        [
+          118,
+          173,
+          137,
+          175,
+          237
+        ]
+      ],
+      [
+        [
+          173,
+          137,
+          206,
+          175,
+          170
+        ]
+      ],
+      [
+        [
+          173,
+          137,
+          206,
+          175,
+          170
+        ]
+      ],
+      [
+        [
+          187,
+          118,
+          237,
+          173,
+          206
+        ]
+      ],
+      [
+        [
+          187,
+          118,
+          237,
+          173,
+          206
+        ]
+      ],
+      [
+        [
+          173,
+          187,
+          175,
+          118,
+          206
+        ]
+      ],
+      [
+        [
+          173,
+          187,
+          175,
+          118,
+          206
+        ]
+      ],
+      [
+        [
+          170,
+          137,
+          206,
+          173,
+          175
+        ]
+      ],
+      [
+        [
+          170,
+          137,
+          206,
+          173,
+          175
+        ]
+      ],
+      [
+        [
+          170,
+          187,
+          237,
+          206,
+          137
+        ]
+      ],
+      [
+        [
+          170,
+          187,
+          237,
+          206,
+          137
+        ]
+      ],
+      [
+        [
+          206,
+          173,
+          118,
+          170,
+          175
+        ]
+      ],
+      [
+        [
+          206,
+          173,
+          118,
+          170,
+          175
+        ]
+      ],
+      [
+        [
+          175,
+          187,
+          137,
+          170,
+          173
+        ]
+      ],
+      [
+        [
+          175,
+          187,
+          137,
+          170,
+          173
+        ]
+      ],
+      [
+        [
+          175,
+          137,
+          170,
+          173,
+          206
+        ]
+      ],
+      [
+        [
+          175,
+          137,
+          170,
+          173,
+          206
+        ]
+      ],
+      [
+        [
+          137,
+          175,
+          187,
+          118,
+          237
+        ]
+      ],
+      [
+        [
+          137,
+          175,
+          187,
+          118,
+          237
+        ]
+      ],
+      [
+        [
+          137,
+          206,
+          237,
+          118,
+          175
+        ]
+      ],
+      [
+        [
+          137,
+          206,
+          237,
+          118,
+          175
+        ]
+      ],
+      [
+        [
+          137,
+          187,
+          170,
+          237,
+          118
+        ]
+      ],
+      [
+        [
+          137,
+          187,
+          170,
+          237,
+          118
+        ]
+      ],
+      [
+        [
+          137,
+          175,
+          237,
+          118,
+          173
+        ]
+      ],
+      [
+        [
+          137,
+          175,
+          237,
+          118,
+          173
+        ]
+      ],
+      [
+        [
+          237,
+          170,
+          118,
+          206,
+          187
+        ]
+      ],
+      [
+        [
+          237,
+          170,
+          118,
+          206,
+          187
+        ]
+      ],
+      [
+        [
+          237,
+          206,
+          187,
+          175,
+          118
+        ]
+      ],
+      [
+        [
+          237,
+          206,
+          187,
+          175,
+          118
+        ]
+      ],
+      [
+        [
+          173,
+          137,
+          170,
+          175,
+          237
+        ]
+      ],
+      [
+        [
+          173,
+          137,
+          170,
+          175,
+          237
+        ]
+      ],
+      [
+        [
+          175,
+          173,
+          170,
+          206,
+          187
+        ]
+      ],
+      [
+        [
+          175,
+          173,
+          170,
+          206,
+          187
+        ]
+      ],
+      [
+        [
+          175,
+          170,
+          137,
+          206,
+          118
+        ]
+      ],
+      [
+        [
+          175,
+          170,
+          137,
+          206,
+          118
+        ]
+      ],
+      [
+        [
+          137,
+          187,
+          118,
+          237,
+          175
+        ]
+      ],
+      [
+        [
+          137,
+          187,
+          118,
+          237,
+          175
+        ]
+      ],
+      [
+        [
+          237,
+          137,
+          173,
+          118,
+          175
+        ]
+      ],
+      [
+        [
+          237,
+          137,
+          173,
+          118,
+          175
+        ]
+      ],
+      [
+        [
+          173,
+          187,
+          237,
+          206,
+          170
+        ]
+      ],
+      [
+        [
+          173,
+          187,
+          237,
+          206,
+          170
+        ]
+      ],
+      [
+        [
+          187,
+          237,
+          173,
+          137,
+          118
+        ]
+      ],
+      [
+        [
+          187,
+          237,
+          173,
+          137,
+          118
+        ]
+      ],
+      [
+        [
+          118,
+          175,
+          187,
+          137,
+          170
+        ]
+      ],
+      [
+        [
+          118,
+          175,
+          187,
+          137,
+          170
+        ]
+      ],
+      [
+        [
+          187,
+          173,
+          137,
+          237,
+          175
+        ]
+      ],
+      [
+        [
+          187,
+          173,
+          137,
+          237,
+          175
+        ]
+      ],
+      [
+        [
+          170,
+          187,
+          118,
+          137,
+          175
+        ]
+      ],
+      [
+        [
+          170,
+          187,
+          118,
+          137,
+          175
+        ]
+      ],
+      [
+        [
+          187,
+          237,
+          175,
+          118,
+          173
+        ]
+      ],
+      [
+        [
+          187,
+          237,
+          175,
+          118,
+          173
+        ]
+      ],
+      [
+        [
+          137,
+          175,
+          173,
+          170,
+          206
+        ]
+      ],
+      [
+        [
+          137,
+          175,
+          173,
+          170,
+          206
+        ]
+      ],
+      [
+        [
+          170,
+          137,
+          118,
+          206,
+          175
+        ]
+      ],
+      [
+        [
+          170,
+          137,
+          118,
+          206,
+          175
+        ]
+      ],
+      [
+        [
+          206,
+          170,
+          137,
+          187,
+          118
+        ]
+      ],
+      [
+        [
+          206,
+          170,
+          137,
+          187,
+          118
+        ]
+      ],
+      [
+        [
+          137,
+          187,
+          175,
+          170,
+          206
+        ]
+      ],
+      [
+        [
+          137,
+          187,
+          175,
+          170,
+          206
+        ]
+      ],
+      [
+        [
+          187,
+          173,
+          137,
+          175,
+          118
+        ]
+      ],
+      [
+        [
+          187,
+          173,
+          137,
+          175,
+          118
+        ]
+      ],
+      [
+        [
+          170,
+          118,
+          237,
+          137,
+          173
+        ]
+      ],
+      [
+        [
+          170,
+          118,
+          237,
+          137,
+          173
+        ]
+      ],
+      [
+        [
+          118,
+          237,
+          173,
+          187,
+          206
+        ]
+      ],
+      [
+        [
+          118,
+          237,
+          173,
+          187,
+          206
+        ]
+      ],
+      [
+        [
+          118,
+          237,
+          137,
+          175,
+          170
+        ]
+      ],
+      [
+        [
+          118,
+          237,
+          137,
+          175,
+          170
+        ]
+      ],
+      [
+        [
+          137,
+          187,
+          118,
+          170,
+          206
+        ]
+      ],
+      [
+        [
+          137,
+          187,
+          118,
+          170,
+          206
+        ]
+      ],
+      [
+        [
+          137,
+          206,
+          173,
+          118,
+          170
+        ]
+      ],
+      [
+        [
+          137,
+          206,
+          173,
+          118,
+          170
+        ]
+      ],
+      [
+        [
+          187,
+          237,
+          137,
+          118,
+          173
+        ]
+      ],
+      [
+        [
+          187,
+          237,
+          137,
+          118,
+          173
+        ]
+      ],
+      [
+        [
+          175,
+          137,
+          173,
+          206,
+          170
+        ]
+      ],
+      [
+        [
+          175,
+          137,
+          173,
+          206,
+          170
+        ]
+      ],
+      [
+        [
+          206,
+          170,
+          237,
+          187,
+          137
+        ]
+      ],
+      [
+        [
+          206,
+          170,
+          237,
+          187,
+          137
+        ]
+      ],
+      [
+        [
+          206,
+          170,
+          237,
+          118,
+          137
+        ]
+      ],
+      [
+        [
+          206,
+          170,
+          237,
+          118,
+          137
+        ]
+      ],
+      [
+        [
+          170,
+          206,
+          137,
+          187,
+          118
+        ]
+      ],
+      [
+        [
+          170,
+          206,
+          137,
+          187,
+          118
+        ]
+      ],
+      [
+        [
+          173,
+          175,
+          237,
+          187,
+          170
+        ]
+      ],
+      [
+        [
+          173,
+          175,
+          237,
+          187,
+          170
+        ]
+      ],
+      [
+        [
+          206,
+          173,
+          137,
+          170,
+          187
+        ]
+      ],
+      [
+        [
+          206,
+          173,
+          137,
+          170,
+          187
+        ]
+      ],
+      [
+        [
+          187,
+          237,
+          118,
+          137,
+          173
+        ]
+      ],
+      [
+        [
+          187,
+          237,
+          118,
+          137,
+          173
+        ]
+      ]
+    ],
+    "paired_seats_share_relative_deals": true,
+    "retained_deals_distinct_within_matchup": true,
+    "scenario_ids_by_stream": [
+      [
+        "d675e6b63e5aa32fbc170bce1db0e9fb987735bf1a0462d5a23d9f4852f37898"
+      ],
+      [
+        "d675e6b63e5aa32fbc170bce1db0e9fb987735bf1a0462d5a23d9f4852f37898"
+      ],
+      [
+        "e124092ea4d3c4a01abb6d80f58bacf8719e2568ba1f3092cf9dcc65e90796a3"
+      ],
+      [
+        "e124092ea4d3c4a01abb6d80f58bacf8719e2568ba1f3092cf9dcc65e90796a3"
+      ],
+      [
+        "ef42046a5d27e8ae83da82b8d22a542b9bd7ebd8128c57c2f93c67f63b5b47c8"
+      ],
+      [
+        "ef42046a5d27e8ae83da82b8d22a542b9bd7ebd8128c57c2f93c67f63b5b47c8"
+      ],
+      [
+        "14ec6f5e3abaa87961474f924bec6809d564867fb9083ecbabd173a4b208482d"
+      ],
+      [
+        "14ec6f5e3abaa87961474f924bec6809d564867fb9083ecbabd173a4b208482d"
+      ],
+      [
+        "de0c31983216944768cec587fd47c481182e417f2e03a5bdb318bfe3f0cf8af7"
+      ],
+      [
+        "de0c31983216944768cec587fd47c481182e417f2e03a5bdb318bfe3f0cf8af7"
+      ],
+      [
+        "7e6bf7923992db2594e763df9399a8f382beb584e40dac22dde7bc01dfb99851"
+      ],
+      [
+        "7e6bf7923992db2594e763df9399a8f382beb584e40dac22dde7bc01dfb99851"
+      ],
+      [
+        "a38159f7e836c73896f6a014244b4aec5bbbe4dc20402558b8dd676e3545b309"
+      ],
+      [
+        "a38159f7e836c73896f6a014244b4aec5bbbe4dc20402558b8dd676e3545b309"
+      ],
+      [
+        "57a29a7cc03b6b86af513bdceb47e6eb7ef977bee1a5c55704e55e885abd8995"
+      ],
+      [
+        "57a29a7cc03b6b86af513bdceb47e6eb7ef977bee1a5c55704e55e885abd8995"
+      ],
+      [
+        "b917cb168a6d81c5c2314abdfb80ed200b2bf325a47e2f18cdb3b8cc6231d243"
+      ],
+      [
+        "b917cb168a6d81c5c2314abdfb80ed200b2bf325a47e2f18cdb3b8cc6231d243"
+      ],
+      [
+        "06d6530da3d125d6be341620ae874446c349483333776470848201e4c586113b"
+      ],
+      [
+        "06d6530da3d125d6be341620ae874446c349483333776470848201e4c586113b"
+      ],
+      [
+        "046cf72fa599944810f11d08230870ad906bd15a9f555f797a9edbd3f53c17e1"
+      ],
+      [
+        "046cf72fa599944810f11d08230870ad906bd15a9f555f797a9edbd3f53c17e1"
+      ],
+      [
+        "df217e25a37bb6dec1aa17c611c27d46580d77cf9020231de6eeaf20e4d2bb97"
+      ],
+      [
+        "df217e25a37bb6dec1aa17c611c27d46580d77cf9020231de6eeaf20e4d2bb97"
+      ],
+      [
+        "14312970c22fb450aa10a25267c90d9b53c33931d80902b56a607c95ea896dae"
+      ],
+      [
+        "14312970c22fb450aa10a25267c90d9b53c33931d80902b56a607c95ea896dae"
+      ],
+      [
+        "03906a56b11a8bcc010609cc11a309ee810247e68c723053293e9ed6a8cfa7dd"
+      ],
+      [
+        "03906a56b11a8bcc010609cc11a309ee810247e68c723053293e9ed6a8cfa7dd"
+      ],
+      [
+        "acdc3a3da928c2103a05f9986921bc3a51fdb28c67f64bf7c280e1169aaf324a"
+      ],
+      [
+        "acdc3a3da928c2103a05f9986921bc3a51fdb28c67f64bf7c280e1169aaf324a"
+      ],
+      [
+        "28c89a211861d8f2d3a5e7ef728e03882f4b387830909838c519af9097adeb3c"
+      ],
+      [
+        "28c89a211861d8f2d3a5e7ef728e03882f4b387830909838c519af9097adeb3c"
+      ],
+      [
+        "128ad8a87f94750bf12fe52f64e431d4f3416aea6d774ec8dda59c3261e739b4"
+      ],
+      [
+        "128ad8a87f94750bf12fe52f64e431d4f3416aea6d774ec8dda59c3261e739b4"
+      ],
+      [
+        "5cd680aca543dca6141bcd0add83cb143cdf6f3278e0528a442c4930427b96d5"
+      ],
+      [
+        "5cd680aca543dca6141bcd0add83cb143cdf6f3278e0528a442c4930427b96d5"
+      ],
+      [
+        "f221d0b9092d911644fed4f266c883f52307d6e31ed0f4f7fc3c5fab3f3e0628"
+      ],
+      [
+        "f221d0b9092d911644fed4f266c883f52307d6e31ed0f4f7fc3c5fab3f3e0628"
+      ],
+      [
+        "de2d72b4f0fbf209e0ce3809b781f99bcb76974ead22315370140e39eca3c1e9"
+      ],
+      [
+        "de2d72b4f0fbf209e0ce3809b781f99bcb76974ead22315370140e39eca3c1e9"
+      ],
+      [
+        "02a70711d603f795ce1faf4cad1265d011209aeaf500a6d4b5ce47ead97c41dd"
+      ],
+      [
+        "02a70711d603f795ce1faf4cad1265d011209aeaf500a6d4b5ce47ead97c41dd"
+      ],
+      [
+        "197ae6a5366b7dfd5fea16303f93d5161ee96686baa0b1c41ec347038d871e16"
+      ],
+      [
+        "197ae6a5366b7dfd5fea16303f93d5161ee96686baa0b1c41ec347038d871e16"
+      ],
+      [
+        "df45a66e603ad1c40c038a457aaf979fef568d514227cea5216347e7ad7200a5"
+      ],
+      [
+        "df45a66e603ad1c40c038a457aaf979fef568d514227cea5216347e7ad7200a5"
+      ],
+      [
+        "556ce72d4f6f45aad8379f0b7a9f8db370db6baaa2776444ba38e58764e3a913"
+      ],
+      [
+        "556ce72d4f6f45aad8379f0b7a9f8db370db6baaa2776444ba38e58764e3a913"
+      ],
+      [
+        "d305615d18bdfc5b0ee3d3d1e0958da42c4d996d9affaddc27f4ec01aa362a7e"
+      ],
+      [
+        "d305615d18bdfc5b0ee3d3d1e0958da42c4d996d9affaddc27f4ec01aa362a7e"
+      ],
+      [
+        "acbaeaf98ece79e63f8d51516e083bea1df55c9c207f6caefe6a516a00a63665"
+      ],
+      [
+        "acbaeaf98ece79e63f8d51516e083bea1df55c9c207f6caefe6a516a00a63665"
+      ],
+      [
+        "3e9e9ec46d2d1ab65a822f0318a88b0fce9541e6ae56c6f6bf0c7d86d1af3a24"
+      ],
+      [
+        "3e9e9ec46d2d1ab65a822f0318a88b0fce9541e6ae56c6f6bf0c7d86d1af3a24"
+      ],
+      [
+        "cfc641d84f74a514dec5d2b2fdd6bb0d3fd773031d7797c0c7e1229950cc729b"
+      ],
+      [
+        "cfc641d84f74a514dec5d2b2fdd6bb0d3fd773031d7797c0c7e1229950cc729b"
+      ],
+      [
+        "84dc01cbcde2c615a2a364ee8529e2253d5ca51b3884910466a27ec85848acd9"
+      ],
+      [
+        "84dc01cbcde2c615a2a364ee8529e2253d5ca51b3884910466a27ec85848acd9"
+      ],
+      [
+        "574e73a23de3fb777d80302ec546006ec1511a1a5f0f54de5ee284377c677351"
+      ],
+      [
+        "574e73a23de3fb777d80302ec546006ec1511a1a5f0f54de5ee284377c677351"
+      ],
+      [
+        "9e2b1c722c420b8e53409ce64634b75c777f6aabf4ac8e6d7b8bbf56ed2785e7"
+      ],
+      [
+        "9e2b1c722c420b8e53409ce64634b75c777f6aabf4ac8e6d7b8bbf56ed2785e7"
+      ],
+      [
+        "197647556944fa73262ec73a04b03ad3eb095d7ee04449440dca537adeac6666"
+      ],
+      [
+        "197647556944fa73262ec73a04b03ad3eb095d7ee04449440dca537adeac6666"
+      ],
+      [
+        "c4d4a11cda9519a7633b5dcc6b456e47848110a4616e3292c973b72c3fda0e6b"
+      ],
+      [
+        "c4d4a11cda9519a7633b5dcc6b456e47848110a4616e3292c973b72c3fda0e6b"
+      ],
+      [
+        "4152577f888c204c0d82ac45fbaf607746c237748c0f9ed2496a9b62721295fe"
+      ],
+      [
+        "4152577f888c204c0d82ac45fbaf607746c237748c0f9ed2496a9b62721295fe"
+      ],
+      [
+        "4a2cf14c7b0b7765333c01c877a7196339a9c2702845aa58ea63c18e2d9c2423"
+      ],
+      [
+        "4a2cf14c7b0b7765333c01c877a7196339a9c2702845aa58ea63c18e2d9c2423"
+      ],
+      [
+        "633bdc522167441ede3575fbcb1630016b5c72097fe45859dcf55e4bc6df5d6f"
+      ],
+      [
+        "633bdc522167441ede3575fbcb1630016b5c72097fe45859dcf55e4bc6df5d6f"
+      ],
+      [
+        "d1c9b3ce22ad5156df37b6436d15b442b03370893bd9273675c6b6db71413e14"
+      ],
+      [
+        "d1c9b3ce22ad5156df37b6436d15b442b03370893bd9273675c6b6db71413e14"
+      ],
+      [
+        "71fabb7940cdacdbd3dfdc33b87de14a7a6d0dd9043eaed5cf282db952b569fb"
+      ],
+      [
+        "71fabb7940cdacdbd3dfdc33b87de14a7a6d0dd9043eaed5cf282db952b569fb"
+      ],
+      [
+        "642a7797f96bf022edc16f43a103da1616f6a14f733b55699ef34ce1b070f3e4"
+      ],
+      [
+        "642a7797f96bf022edc16f43a103da1616f6a14f733b55699ef34ce1b070f3e4"
+      ],
+      [
+        "d5c0fc9a05d0f59365dd0f67557d0b4c7983f95b0a87f7679c9410f4ba79c892"
+      ],
+      [
+        "d5c0fc9a05d0f59365dd0f67557d0b4c7983f95b0a87f7679c9410f4ba79c892"
+      ],
+      [
+        "71ee0771dcc638e92257cce660d50dc15463f35dc3bc61b0489e5f1a4f862942"
+      ],
+      [
+        "71ee0771dcc638e92257cce660d50dc15463f35dc3bc61b0489e5f1a4f862942"
+      ],
+      [
+        "3cd92fdd55028ed7d307609c4e4729fbf95b52676d3396b3d940793815996bc0"
+      ],
+      [
+        "3cd92fdd55028ed7d307609c4e4729fbf95b52676d3396b3d940793815996bc0"
+      ],
+      [
+        "3add50bab7842ed612394c69a954aa0eb7b35f55244aa2544cbc8fc118644df6"
+      ],
+      [
+        "3add50bab7842ed612394c69a954aa0eb7b35f55244aa2544cbc8fc118644df6"
+      ],
+      [
+        "006192d0a7da8fce54e58baabe6f4985020f4a5c02e34a5ae2d20b4bb80dae13"
+      ],
+      [
+        "006192d0a7da8fce54e58baabe6f4985020f4a5c02e34a5ae2d20b4bb80dae13"
+      ],
+      [
+        "93a520a096ea9b4d93879c488db3dbf5a318d35b86841ed73f3770fdf8cf4900"
+      ],
+      [
+        "93a520a096ea9b4d93879c488db3dbf5a318d35b86841ed73f3770fdf8cf4900"
+      ],
+      [
+        "3826ed03bc98d1417c70ae129d3a80506c6ca93af235f23519422971a1cb5153"
+      ],
+      [
+        "3826ed03bc98d1417c70ae129d3a80506c6ca93af235f23519422971a1cb5153"
+      ],
+      [
+        "c2891886cc3824e91f9a62bb5c7b3d96a74fbeae73c71384ff6551b854ba2866"
+      ],
+      [
+        "c2891886cc3824e91f9a62bb5c7b3d96a74fbeae73c71384ff6551b854ba2866"
+      ],
+      [
+        "f95930057d5f9c2b32b000b501b6046538b5fe05c9e7277a9475bf91d86bbcc7"
+      ],
+      [
+        "f95930057d5f9c2b32b000b501b6046538b5fe05c9e7277a9475bf91d86bbcc7"
+      ],
+      [
+        "94e10789308909bdcbfc9c40bd0d1f1c39de4349109df0ed7093de2da4107dcb"
+      ],
+      [
+        "94e10789308909bdcbfc9c40bd0d1f1c39de4349109df0ed7093de2da4107dcb"
+      ],
+      [
+        "bdcd633df8af3745cfb11401bd52ecc7a507f4f1922e0775f3b274aca2f4f179"
+      ],
+      [
+        "bdcd633df8af3745cfb11401bd52ecc7a507f4f1922e0775f3b274aca2f4f179"
+      ],
+      [
+        "92f1b885e7530b6c54ec1d265191766b89a2d0604e88e1811df3c94e96436c02"
+      ],
+      [
+        "92f1b885e7530b6c54ec1d265191766b89a2d0604e88e1811df3c94e96436c02"
+      ],
+      [
+        "3715b057a6d2bca2f70b230fa092430b03ee7484564096934540fcc044200d7a"
+      ],
+      [
+        "3715b057a6d2bca2f70b230fa092430b03ee7484564096934540fcc044200d7a"
+      ],
+      [
+        "e5ddcb526a46bd854a4ab4db978896bdf1ded1350a2ff7dc785de7ff336f90ef"
+      ],
+      [
+        "e5ddcb526a46bd854a4ab4db978896bdf1ded1350a2ff7dc785de7ff336f90ef"
+      ],
+      [
+        "ac21720c64036fca27aa91c34c51cbb109cd0773aa1d3c1bd1f9667e14665241"
+      ],
+      [
+        "ac21720c64036fca27aa91c34c51cbb109cd0773aa1d3c1bd1f9667e14665241"
+      ],
+      [
+        "69c769e1e9713cadf9577c4fe4b8136e081b85c9327c2b552b7d3de2b708506f"
+      ],
+      [
+        "69c769e1e9713cadf9577c4fe4b8136e081b85c9327c2b552b7d3de2b708506f"
+      ],
+      [
+        "b442995a758d1390e17b4a3265b103fb6eabcbe8559c51fa1bc3c6c8a82bf88a"
+      ],
+      [
+        "b442995a758d1390e17b4a3265b103fb6eabcbe8559c51fa1bc3c6c8a82bf88a"
+      ],
+      [
+        "be8066ea2458c02070faa0ed5534edcf34d4d982b7648d526a6b686887e8b164"
+      ],
+      [
+        "be8066ea2458c02070faa0ed5534edcf34d4d982b7648d526a6b686887e8b164"
+      ],
+      [
+        "b6bd26df4984575993f5e4067895f21f8a2507fa0485fd2f9cc454a019f4812a"
+      ],
+      [
+        "b6bd26df4984575993f5e4067895f21f8a2507fa0485fd2f9cc454a019f4812a"
+      ],
+      [
+        "bf6f60ccdced66e340166441eac5fda33e375df14d458dae41b70166c3def693"
+      ],
+      [
+        "bf6f60ccdced66e340166441eac5fda33e375df14d458dae41b70166c3def693"
+      ],
+      [
+        "fb50f8b7cc84a848bf502b3a3e5ec6bf7a130df15e7598acac5752f623cd8d2b"
+      ],
+      [
+        "fb50f8b7cc84a848bf502b3a3e5ec6bf7a130df15e7598acac5752f623cd8d2b"
+      ],
+      [
+        "cd3db760e5eb028116078558e2da55f01596420d74b59305cc5c97e65f748e79"
+      ],
+      [
+        "cd3db760e5eb028116078558e2da55f01596420d74b59305cc5c97e65f748e79"
+      ],
+      [
+        "09517795c81f648bb13a274b0a763ba3c02762db5c8acf0ffa81f74674b7b174"
+      ],
+      [
+        "09517795c81f648bb13a274b0a763ba3c02762db5c8acf0ffa81f74674b7b174"
+      ],
+      [
+        "b713ec8a0120f290dfa3f33d54c1f75bf4f5aa00a42bfb1dda1867ca6ef773a5"
+      ],
+      [
+        "b713ec8a0120f290dfa3f33d54c1f75bf4f5aa00a42bfb1dda1867ca6ef773a5"
+      ],
+      [
+        "9b9cf071c4db3ee2416609f59a1bdd513e068a4f153b0b3d55b10cd5cba35c30"
+      ],
+      [
+        "9b9cf071c4db3ee2416609f59a1bdd513e068a4f153b0b3d55b10cd5cba35c30"
+      ]
+    ],
+    "scenario_keys": [
+      "[\"balanced\",\"Procedural train 000-0\"]",
+      "[\"balanced\",\"Procedural train 000-0\"]",
+      "[\"random\",\"Procedural train 000-0\"]",
+      "[\"random\",\"Procedural train 000-0\"]",
+      "[\"balanced\",\"Procedural train 000-1\"]",
+      "[\"balanced\",\"Procedural train 000-1\"]",
+      "[\"random\",\"Procedural train 000-1\"]",
+      "[\"random\",\"Procedural train 000-1\"]",
+      "[\"balanced\",\"Procedural train 000-2\"]",
+      "[\"balanced\",\"Procedural train 000-2\"]",
+      "[\"random\",\"Procedural train 000-2\"]",
+      "[\"random\",\"Procedural train 000-2\"]",
+      "[\"balanced\",\"Procedural train 000-3\"]",
+      "[\"balanced\",\"Procedural train 000-3\"]",
+      "[\"random\",\"Procedural train 000-3\"]",
+      "[\"random\",\"Procedural train 000-3\"]",
+      "[\"balanced\",\"Procedural train 001-0\"]",
+      "[\"balanced\",\"Procedural train 001-0\"]",
+      "[\"random\",\"Procedural train 001-0\"]",
+      "[\"random\",\"Procedural train 001-0\"]",
+      "[\"balanced\",\"Procedural train 001-1\"]",
+      "[\"balanced\",\"Procedural train 001-1\"]",
+      "[\"random\",\"Procedural train 001-1\"]",
+      "[\"random\",\"Procedural train 001-1\"]",
+      "[\"balanced\",\"Procedural train 001-2\"]",
+      "[\"balanced\",\"Procedural train 001-2\"]",
+      "[\"random\",\"Procedural train 001-2\"]",
+      "[\"random\",\"Procedural train 001-2\"]",
+      "[\"balanced\",\"Procedural train 001-3\"]",
+      "[\"balanced\",\"Procedural train 001-3\"]",
+      "[\"random\",\"Procedural train 001-3\"]",
+      "[\"random\",\"Procedural train 001-3\"]",
+      "[\"balanced\",\"Procedural train 002-0\"]",
+      "[\"balanced\",\"Procedural train 002-0\"]",
+      "[\"random\",\"Procedural train 002-0\"]",
+      "[\"random\",\"Procedural train 002-0\"]",
+      "[\"balanced\",\"Procedural train 002-1\"]",
+      "[\"balanced\",\"Procedural train 002-1\"]",
+      "[\"random\",\"Procedural train 002-1\"]",
+      "[\"random\",\"Procedural train 002-1\"]",
+      "[\"balanced\",\"Procedural train 002-2\"]",
+      "[\"balanced\",\"Procedural train 002-2\"]",
+      "[\"random\",\"Procedural train 002-2\"]",
+      "[\"random\",\"Procedural train 002-2\"]",
+      "[\"balanced\",\"Procedural train 002-3\"]",
+      "[\"balanced\",\"Procedural train 002-3\"]",
+      "[\"random\",\"Procedural train 002-3\"]",
+      "[\"random\",\"Procedural train 002-3\"]",
+      "[\"balanced\",\"Procedural train 003-0\"]",
+      "[\"balanced\",\"Procedural train 003-0\"]",
+      "[\"random\",\"Procedural train 003-0\"]",
+      "[\"random\",\"Procedural train 003-0\"]",
+      "[\"balanced\",\"Procedural train 003-1\"]",
+      "[\"balanced\",\"Procedural train 003-1\"]",
+      "[\"random\",\"Procedural train 003-1\"]",
+      "[\"random\",\"Procedural train 003-1\"]",
+      "[\"balanced\",\"Procedural train 003-2\"]",
+      "[\"balanced\",\"Procedural train 003-2\"]",
+      "[\"random\",\"Procedural train 003-2\"]",
+      "[\"random\",\"Procedural train 003-2\"]",
+      "[\"balanced\",\"Procedural train 003-3\"]",
+      "[\"balanced\",\"Procedural train 003-3\"]",
+      "[\"random\",\"Procedural train 003-3\"]",
+      "[\"random\",\"Procedural train 003-3\"]",
+      "[\"balanced\",\"Procedural train 004-0\"]",
+      "[\"balanced\",\"Procedural train 004-0\"]",
+      "[\"random\",\"Procedural train 004-0\"]",
+      "[\"random\",\"Procedural train 004-0\"]",
+      "[\"balanced\",\"Procedural train 004-1\"]",
+      "[\"balanced\",\"Procedural train 004-1\"]",
+      "[\"random\",\"Procedural train 004-1\"]",
+      "[\"random\",\"Procedural train 004-1\"]",
+      "[\"balanced\",\"Procedural train 004-2\"]",
+      "[\"balanced\",\"Procedural train 004-2\"]",
+      "[\"random\",\"Procedural train 004-2\"]",
+      "[\"random\",\"Procedural train 004-2\"]",
+      "[\"balanced\",\"Procedural train 004-3\"]",
+      "[\"balanced\",\"Procedural train 004-3\"]",
+      "[\"random\",\"Procedural train 004-3\"]",
+      "[\"random\",\"Procedural train 004-3\"]",
+      "[\"balanced\",\"Procedural train 005-0\"]",
+      "[\"balanced\",\"Procedural train 005-0\"]",
+      "[\"random\",\"Procedural train 005-0\"]",
+      "[\"random\",\"Procedural train 005-0\"]",
+      "[\"balanced\",\"Procedural train 005-1\"]",
+      "[\"balanced\",\"Procedural train 005-1\"]",
+      "[\"random\",\"Procedural train 005-1\"]",
+      "[\"random\",\"Procedural train 005-1\"]",
+      "[\"balanced\",\"Procedural train 005-2\"]",
+      "[\"balanced\",\"Procedural train 005-2\"]",
+      "[\"random\",\"Procedural train 005-2\"]",
+      "[\"random\",\"Procedural train 005-2\"]",
+      "[\"balanced\",\"Procedural train 005-3\"]",
+      "[\"balanced\",\"Procedural train 005-3\"]",
+      "[\"random\",\"Procedural train 005-3\"]",
+      "[\"random\",\"Procedural train 005-3\"]",
+      "[\"balanced\",\"Procedural train 006-0\"]",
+      "[\"balanced\",\"Procedural train 006-0\"]",
+      "[\"random\",\"Procedural train 006-0\"]",
+      "[\"random\",\"Procedural train 006-0\"]",
+      "[\"balanced\",\"Procedural train 006-1\"]",
+      "[\"balanced\",\"Procedural train 006-1\"]",
+      "[\"random\",\"Procedural train 006-1\"]",
+      "[\"random\",\"Procedural train 006-1\"]",
+      "[\"balanced\",\"Procedural train 006-2\"]",
+      "[\"balanced\",\"Procedural train 006-2\"]",
+      "[\"random\",\"Procedural train 006-2\"]",
+      "[\"random\",\"Procedural train 006-2\"]",
+      "[\"balanced\",\"Procedural train 006-3\"]",
+      "[\"balanced\",\"Procedural train 006-3\"]",
+      "[\"random\",\"Procedural train 006-3\"]",
+      "[\"random\",\"Procedural train 006-3\"]",
+      "[\"balanced\",\"Procedural train 007-0\"]",
+      "[\"balanced\",\"Procedural train 007-0\"]",
+      "[\"random\",\"Procedural train 007-0\"]",
+      "[\"random\",\"Procedural train 007-0\"]",
+      "[\"balanced\",\"Procedural train 007-1\"]",
+      "[\"balanced\",\"Procedural train 007-1\"]",
+      "[\"random\",\"Procedural train 007-1\"]",
+      "[\"random\",\"Procedural train 007-1\"]",
+      "[\"balanced\",\"Procedural train 007-2\"]",
+      "[\"balanced\",\"Procedural train 007-2\"]",
+      "[\"random\",\"Procedural train 007-2\"]",
+      "[\"random\",\"Procedural train 007-2\"]",
+      "[\"balanced\",\"Procedural train 007-3\"]",
+      "[\"balanced\",\"Procedural train 007-3\"]",
+      "[\"random\",\"Procedural train 007-3\"]",
+      "[\"random\",\"Procedural train 007-3\"]"
+    ],
+    "schema": "clasher.seeded-ordered-decks.v1",
+    "seed": 1278961,
+    "surplus_resets": "repeat-last-unretained-deal"
+  },
+  "simulation_backend_metadata": {
+    "actor_semantics_id": "typed-public-structured-canonical-v1",
+    "backend_id": "simple-pytorch-gym-v1",
+    "canonical_lane_globals": true,
+    "checkpoint_opponent_deck_name": null,
+    "execution_mode": "eager",
+    "fresh_only": true,
+    "learner_deck_name": "Hog 2.6 Cycle",
+    "learner_only": true,
+    "learner_players": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1
+    ],
+    "learner_sampling_temperature": 1.0,
+    "learner_teacher_balanced_config": null,
+    "learner_teacher_strategy": null,
+    "max_effects": 128,
+    "max_entities": 128,
+    "metadata_digest": "585f1ffbe6bf538f488e59e295c9eead3db0032f93710ce1dfe79a1844272cee",
+    "opponent_checkpoint_sha256": null,
+    "opponent_deck_names": [
+      "Procedural train 000-0",
+      "Procedural train 000-0",
+      "Procedural train 000-0",
+      "Procedural train 000-0",
+      "Procedural train 000-1",
+      "Procedural train 000-1",
+      "Procedural train 000-1",
+      "Procedural train 000-1",
+      "Procedural train 000-2",
+      "Procedural train 000-2",
+      "Procedural train 000-2",
+      "Procedural train 000-2",
+      "Procedural train 000-3",
+      "Procedural train 000-3",
+      "Procedural train 000-3",
+      "Procedural train 000-3",
+      "Procedural train 001-0",
+      "Procedural train 001-0",
+      "Procedural train 001-0",
+      "Procedural train 001-0",
+      "Procedural train 001-1",
+      "Procedural train 001-1",
+      "Procedural train 001-1",
+      "Procedural train 001-1",
+      "Procedural train 001-2",
+      "Procedural train 001-2",
+      "Procedural train 001-2",
+      "Procedural train 001-2",
+      "Procedural train 001-3",
+      "Procedural train 001-3",
+      "Procedural train 001-3",
+      "Procedural train 001-3",
+      "Procedural train 002-0",
+      "Procedural train 002-0",
+      "Procedural train 002-0",
+      "Procedural train 002-0",
+      "Procedural train 002-1",
+      "Procedural train 002-1",
+      "Procedural train 002-1",
+      "Procedural train 002-1",
+      "Procedural train 002-2",
+      "Procedural train 002-2",
+      "Procedural train 002-2",
+      "Procedural train 002-2",
+      "Procedural train 002-3",
+      "Procedural train 002-3",
+      "Procedural train 002-3",
+      "Procedural train 002-3",
+      "Procedural train 003-0",
+      "Procedural train 003-0",
+      "Procedural train 003-0",
+      "Procedural train 003-0",
+      "Procedural train 003-1",
+      "Procedural train 003-1",
+      "Procedural train 003-1",
+      "Procedural train 003-1",
+      "Procedural train 003-2",
+      "Procedural train 003-2",
+      "Procedural train 003-2",
+      "Procedural train 003-2",
+      "Procedural train 003-3",
+      "Procedural train 003-3",
+      "Procedural train 003-3",
+      "Procedural train 003-3",
+      "Procedural train 004-0",
+      "Procedural train 004-0",
+      "Procedural train 004-0",
+      "Procedural train 004-0",
+      "Procedural train 004-1",
+      "Procedural train 004-1",
+      "Procedural train 004-1",
+      "Procedural train 004-1",
+      "Procedural train 004-2",
+      "Procedural train 004-2",
+      "Procedural train 004-2",
+      "Procedural train 004-2",
+      "Procedural train 004-3",
+      "Procedural train 004-3",
+      "Procedural train 004-3",
+      "Procedural train 004-3",
+      "Procedural train 005-0",
+      "Procedural train 005-0",
+      "Procedural train 005-0",
+      "Procedural train 005-0",
+      "Procedural train 005-1",
+      "Procedural train 005-1",
+      "Procedural train 005-1",
+      "Procedural train 005-1",
+      "Procedural train 005-2",
+      "Procedural train 005-2",
+      "Procedural train 005-2",
+      "Procedural train 005-2",
+      "Procedural train 005-3",
+      "Procedural train 005-3",
+      "Procedural train 005-3",
+      "Procedural train 005-3",
+      "Procedural train 006-0",
+      "Procedural train 006-0",
+      "Procedural train 006-0",
+      "Procedural train 006-0",
+      "Procedural train 006-1",
+      "Procedural train 006-1",
+      "Procedural train 006-1",
+      "Procedural train 006-1",
+      "Procedural train 006-2",
+      "Procedural train 006-2",
+      "Procedural train 006-2",
+      "Procedural train 006-2",
+      "Procedural train 006-3",
+      "Procedural train 006-3",
+      "Procedural train 006-3",
+      "Procedural train 006-3",
+      "Procedural train 007-0",
+      "Procedural train 007-0",
+      "Procedural train 007-0",
+      "Procedural train 007-0",
+      "Procedural train 007-1",
+      "Procedural train 007-1",
+      "Procedural train 007-1",
+      "Procedural train 007-1",
+      "Procedural train 007-2",
+      "Procedural train 007-2",
+      "Procedural train 007-2",
+      "Procedural train 007-2",
+      "Procedural train 007-3",
+      "Procedural train 007-3",
+      "Procedural train 007-3",
+      "Procedural train 007-3"
+    ],
+    "opponent_league_schedule": [
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random",
+      "strategy:balanced",
+      "strategy:balanced",
+      "random",
+      "random"
+    ],
+    "opponent_mode": "league",
+    "opponent_schedule_unit": "logical-matchup-pair",
+    "opponent_strategy": null,
+    "opponent_strategy_schedule": [],
+    "public_action_mask_contract_version": 2,
+    "public_action_mask_semantics": {
+      "ability_inputs": "own-visible-live-typed-entity,deploy-ready,elixir,cooldown-ready,duration-ready",
+      "ability_multiple_owner_policy": "fail-closed-without-public-stable-owner-id",
+      "ability_owner_selection": "exactly-one-supported-own-live-entity",
+      "ability_policy": "actor-visible-supported-champion-v1",
+      "ability_stun_policy": "not-a-legality-gate",
+      "authority": "serialized-card-data-and-current-client-typed-vocabulary-v1",
+      "canonical_lane_globals": true,
+      "contract_version": 2,
+      "inputs": "simple-actor-projection-only",
+      "lookup_digest": "4cf429b74714111af3df439558c7267a95f466fdb78eb86a47e636aff6e774a1",
+      "numeric_profile": "float64-authoritative-comparison-v1",
+      "schema": "clasher.simple-public-mask.tensor-v2",
+      "semantics_id": "public-action-mask-v2/tensor-actor-projection-v2",
+      "token_count": 494,
+      "typed_tokens_required": true,
+      "uses_critic": false,
+      "uses_labels": false,
+      "uses_simulator_legal_mask": false
+    },
+    "public_action_mask_semantics_digest": "2e51173594b938d300561fe1f96fc4cb9ec9de9c1f695cf3a95de72553eb43c6",
+    "public_action_mask_semantics_id": "public-action-mask-v2/tensor-actor-projection-v2",
+    "reward_contract_digest": "ef3914ce85d8c820cd02cef18de4dbe52460c7ddee70cfd615ef7538a8d50d66",
+    "reward_contract_id": "objective-v1-gamma-v1",
+    "reward_contract_metadata": {
+      "reward_contract_digest": "ef3914ce85d8c820cd02cef18de4dbe52460c7ddee70cfd615ef7538a8d50d66",
+      "reward_contract_id": "objective-v1-gamma-v1",
+      "reward_contract_spec": {
+        "contract_id": "objective-v1-gamma-v1",
+        "crown_weight": 0.55,
+        "early_king_chip_penalty_weight": 0.2,
+        "elixir_leak_penalty_scale": 0.0,
+        "evaluation_boundary": "policy-decision",
+        "gamma": 0.995,
+        "invalid_action_penalty": 0.0,
+        "king_activation_inference": "live-king-and-hp-below-initial-or-princess-destroyed-v1",
+        "king_pressure_weight": 0.1,
+        "potential_clip": 1.5,
+        "princess_pressure_weight": 0.25,
+        "schema_version": 1,
+        "terminal_potential": "absorbing-zero",
+        "terminal_weight": 1.0,
+        "tiebreak_edge_weight": 0.1,
+        "tiebreak_fixed_point_scale": 1000,
+        "zero_sum": true
+      }
+    },
+    "standard_tiebreak_tick": 6000,
+    "support_profile_sha256": "3a6c49f4b8c7c2773bb04230e4749218e618346942b37cf95e2f88b6eaf6b0ff",
+    "supported_decks_sha256": "6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8",
+    "typed_vocabulary_sha256": "960c1c1d68dea56786b0e196c5fc772b298fa16db168a81ca6c6d36c60c54704"
+  },
+  "strategy_deck_cross_product": true,
+  "supported_deck_profile_sha256": "3a6c49f4b8c7c2773bb04230e4749218e618346942b37cf95e2f88b6eaf6b0ff",
+  "supported_decks_path": "/Users/sam/.codex/worktrees/clasher-event-policy/training_decks/hog26_procedural_supported_seed1278401.json",
+  "supported_decks_sha256": "6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8",
+  "terminal_tower_margin": {
+    "maximum": 0.797919750213623,
+    "mean": -0.09645070135593414,
+    "minimum": -0.8374836444854736
+  },
+  "token_names": [
+    "<pad>",
+    "<unknown>",
+    "area_effect:BarbarianRage",
+    "area_effect:BarbarianRageDamage",
+    "area_effect:BattleHealerHeal",
+    "area_effect:BattleHealerSpawnHeal",
+    "area_effect:BoostInvisibilityBottle",
+    "area_effect:CancelTauntAEO",
+    "area_effect:Clone",
+    "area_effect:DarkMagicAOE",
+    "area_effect:DarkMagicAOE_Damage_lv1",
+    "area_effect:DarkMagicAOE_Damage_lv2",
+    "area_effect:DarkMagicAOE_Damage_lv3",
+    "area_effect:Deflect",
+    "area_effect:DummySpawnLittlePrinceGuard",
+    "area_effect:DummyZap_EV1_Visual",
+    "area_effect:Earthquake",
+    "area_effect:ElectroWizardZap",
+    "area_effect:Event_Global_Lightning",
+    "area_effect:Event_Global_Lightning_Charge1",
+    "area_effect:Event_Global_Lightning_Charge2",
+    "area_effect:EvoRoyalGiantPush_EV1",
+    "area_effect:FirecrackerFireworksBig_EV1",
+    "area_effect:FirecrackerFireworksSmall_EV1",
+    "area_effect:Freeze",
+    "area_effect:FreezeIceGolemite",
+    "area_effect:GlobalClone",
+    "area_effect:GoblinCurse",
+    "area_effect:GoblinCurseBase",
+    "area_effect:GoblinDrillDamage",
+    "area_effect:GoblinMorphAOEDamage",
+    "area_effect:GoblinMorphAOEFoe",
+    "area_effect:GoblinMorphAOEFriend",
+    "area_effect:Goblin_machine_rocket_target_signal",
+    "area_effect:Graveyard_rework",
+    "area_effect:HealSpirit",
+    "area_effect:IceSpiritsAOE_EV1",
+    "area_effect:IceWizardCold",
+    "area_effect:InvisibilityArea",
+    "area_effect:Lightning",
+    "area_effect:Poison",
+    "area_effect:Rage",
+    "area_effect:RageBarbarianDummyForSpawn",
+    "area_effect:RageDamage",
+    "area_effect:RoyalDeliveryArea",
+    "area_effect:SkeletonKingGraveyard",
+    "area_effect:SuperArcherChargePull",
+    "area_effect:SuperFreezeIceGolemite",
+    "area_effect:SuperMiniPekkaPancakesHeal",
+    "area_effect:SuspiciousBush_DummyAEO",
+    "area_effect:Tesla_EV1_AppearStun",
+    "area_effect:Tornado",
+    "area_effect:TriWizardSpawn",
+    "area_effect:Valkyrie_MiniTornado_EV1",
+    "area_effect:Vines_AeO",
+    "area_effect:WarmAOE",
+    "area_effect:Wizard_EV1_ShieldLostExplosion",
+    "area_effect:Zap",
+    "area_effect:Zap_EV1",
+    "area_effect:Zap_EV1_SpawnAOE_medium",
+    "building_body:BalloonBomb",
+    "building_body:BarbarianHut",
+    "building_body:BarbarianLauncher",
+    "building_body:BombTower",
+    "building_body:BombTowerBomb",
+    "building_body:Cannon",
+    "building_body:ElixirCollector",
+    "building_body:GiantSkeletonBomb",
+    "building_body:GoblinCage",
+    "building_body:GoblinCage_EV1_GoblinBrawler",
+    "building_body:GoblinCage_EV1_TEMPNAME",
+    "building_body:GoblinDrill",
+    "building_body:GoblinHut_Rework",
+    "building_body:GoblinPartyHut",
+    "building_body:InfernoTower",
+    "building_body:InvisibilityBottle",
+    "building_body:MightyMinerBomb",
+    "building_body:Mortar",
+    "building_body:Mortar_EV1",
+    "building_body:RageBarbarianBottle",
+    "building_body:RageBottle",
+    "building_body:SantaPresent",
+    "building_body:SuperMiniPekkaPancakes",
+    "building_body:Tesla",
+    "building_body:Tesla_EV1",
+    "building_body:Tombstone",
+    "building_body:Xbow",
+    "card_action:AngryBarbarians",
+    "card_action:Archer",
+    "card_action:ArcherQueen",
+    "card_action:Archer_EV1",
+    "card_action:Arrows",
+    "card_action:Assassin",
+    "card_action:AxeMan",
+    "card_action:AxeMan_EV1",
+    "card_action:BabyDragon",
+    "card_action:BabyDragon_EV1",
+    "card_action:Balloon",
+    "card_action:Balloon_hero",
+    "card_action:BarbLog",
+    "card_action:BarbLog_hero",
+    "card_action:BarbarianHut",
+    "card_action:Barbarians",
+    "card_action:Barbarians_EV1",
+    "card_action:Bats",
+    "card_action:Bats_EV1",
+    "card_action:BattleHealer",
+    "card_action:BattleRam",
+    "card_action:BattleRam_EV1",
+    "card_action:Berserker",
+    "card_action:BlowdartGoblin",
+    "card_action:BlowdartGoblin_EV1",
+    "card_action:BombTower",
+    "card_action:Bomber",
+    "card_action:Bomber_EV1",
+    "card_action:BossBandit",
+    "card_action:Bowler",
+    "card_action:Bowler_hero",
+    "card_action:Cannon",
+    "card_action:Cannon_EV1",
+    "card_action:Clone",
+    "card_action:DarkMagic",
+    "card_action:DarkPrince",
+    "card_action:DarkPrince_hero",
+    "card_action:DarkWitch",
+    "card_action:DartBarrell",
+    "card_action:Earthquake",
+    "card_action:ElectroDragon",
+    "card_action:ElectroDragon_EV1",
+    "card_action:ElectroGiant",
+    "card_action:ElectroSpirit",
+    "card_action:ElectroWizard",
+    "card_action:EliteArcher",
+    "card_action:EliteArcher_hero",
+    "card_action:Elixir Collector",
+    "card_action:ElixirGolem",
+    "card_action:FireSpirits",
+    "card_action:Fireball",
+    "card_action:Firecracker",
+    "card_action:Firecracker_EV1",
+    "card_action:FirespiritHut",
+    "card_action:FirespiritHut_EV1",
+    "card_action:Fisherman",
+    "card_action:Freeze",
+    "card_action:Ghost",
+    "card_action:Ghost_EV1",
+    "card_action:Giant",
+    "card_action:GiantBuffer",
+    "card_action:GiantSkeleton",
+    "card_action:Giant_hero",
+    "card_action:GoblinBarrel",
+    "card_action:GoblinBarrel_EV1",
+    "card_action:GoblinCage",
+    "card_action:GoblinCage_EV1",
+    "card_action:GoblinCurse",
+    "card_action:GoblinDemolisher",
+    "card_action:GoblinDrill",
+    "card_action:GoblinDrill_EV1",
+    "card_action:GoblinGang",
+    "card_action:GoblinGiant",
+    "card_action:GoblinGiant_EV1",
+    "card_action:GoblinHut",
+    "card_action:GoblinMachine",
+    "card_action:Goblins",
+    "card_action:Goblins_hero",
+    "card_action:Goblinstein",
+    "card_action:GoldenKnight",
+    "card_action:Golem",
+    "card_action:Graveyard",
+    "card_action:Heal",
+    "card_action:HogRider",
+    "card_action:Hunter",
+    "card_action:Hunter_EV1",
+    "card_action:IceGolemite",
+    "card_action:IceGolemite_hero",
+    "card_action:IceSpirits",
+    "card_action:IceSpirits_EV1",
+    "card_action:IceWizard",
+    "card_action:InfernoDragon",
+    "card_action:InfernoDragon_EV1",
+    "card_action:InfernoTower",
+    "card_action:Knight",
+    "card_action:Knight_EV1",
+    "card_action:Knight_hero",
+    "card_action:LavaHound",
+    "card_action:Lightning",
+    "card_action:LittlePrince",
+    "card_action:Log",
+    "card_action:MegaKnight",
+    "card_action:MegaKnight_EV1",
+    "card_action:MegaMinion",
+    "card_action:MegaMinion_hero",
+    "card_action:MergeMaiden",
+    "card_action:MightyMiner",
+    "card_action:Miner",
+    "card_action:MiniPekka",
+    "card_action:MiniPekka_hero",
+    "card_action:MiniSparkys",
+    "card_action:MinionHorde",
+    "card_action:MinionHorde_EV1",
+    "card_action:Minions",
+    "card_action:Mirror",
+    "card_action:Monk",
+    "card_action:Mortar",
+    "card_action:Mortar_EV1",
+    "card_action:MovingCannon",
+    "card_action:Musketeer",
+    "card_action:Musketeer_EV1",
+    "card_action:Musketeer_hero",
+    "card_action:Pekka",
+    "card_action:Pekka_EV1",
+    "card_action:Phoenix",
+    "card_action:Poison",
+    "card_action:Prince",
+    "card_action:Princess",
+    "card_action:Princess_EV1",
+    "card_action:Rage",
+    "card_action:RageBarbarian",
+    "card_action:RageBarbarian_EV1",
+    "card_action:RamRider",
+    "card_action:Rascals",
+    "card_action:Rocket",
+    "card_action:Ronin",
+    "card_action:RoyalDelivery",
+    "card_action:RoyalGiant",
+    "card_action:RoyalGiant_EV1",
+    "card_action:RoyalHogs",
+    "card_action:RoyalHogs_EV1",
+    "card_action:RoyalRecruits",
+    "card_action:RoyalRecruits_EV1",
+    "card_action:SkeletonArmy",
+    "card_action:SkeletonArmy_EV1",
+    "card_action:SkeletonBalloon",
+    "card_action:SkeletonBalloon_EV1",
+    "card_action:SkeletonDragons",
+    "card_action:SkeletonKing",
+    "card_action:SkeletonWarriors",
+    "card_action:Skeletons",
+    "card_action:Skeletons_EV1",
+    "card_action:Snowball",
+    "card_action:Snowball_EV1",
+    "card_action:SpearGoblins",
+    "card_action:SuspiciousBush",
+    "card_action:Tesla",
+    "card_action:Tesla_EV1",
+    "card_action:ThreeMusketeers",
+    "card_action:Tombstone",
+    "card_action:Tombstone_hero",
+    "card_action:Tornado",
+    "card_action:Valkyrie",
+    "card_action:Valkyrie_EV1",
+    "card_action:Vines",
+    "card_action:Wallbreakers",
+    "card_action:Wallbreakers_EV1",
+    "card_action:Witch",
+    "card_action:WitchMother",
+    "card_action:Witch_EV1",
+    "card_action:Wizard",
+    "card_action:Wizard_EV1",
+    "card_action:Wizard_hero",
+    "card_action:Xbow",
+    "card_action:Zap",
+    "card_action:ZapMachine",
+    "card_action:Zap_EV1",
+    "projectile:ArcherArrow",
+    "projectile:ArcherQueenArrow",
+    "projectile:Archer_EV1_Arrow",
+    "projectile:Archer_EV1_ArrowDoubleDamage",
+    "projectile:ArrowsSpell",
+    "projectile:AxeManProjectile",
+    "projectile:BabyDragonProjectile",
+    "projectile:BarbLogProjectile",
+    "projectile:BarbLogProjectileRolling",
+    "projectile:BarbarianLauncherProjectile",
+    "projectile:BlowdartGoblinProjectile",
+    "projectile:BlowdartGoblinProjectileParty",
+    "projectile:BombSkeletonProjectile",
+    "projectile:BombSkeletonProjectile_2_EV1",
+    "projectile:BombSkeletonProjectile_EV1",
+    "projectile:BombTowerProjectile",
+    "projectile:BowlerProjectile",
+    "projectile:Chr_wizardProjectile",
+    "projectile:DartBarrellProjectile",
+    "projectile:ElectroDragonProjectile",
+    "projectile:ElectroSpiritProjectile",
+    "projectile:EliteArcherArrow",
+    "projectile:FireSpiritsProjectile",
+    "projectile:FireWallMovingProjectile",
+    "projectile:FireWallProjectile",
+    "projectile:FireballSpell",
+    "projectile:FirecrackerExplosion",
+    "projectile:FirecrackerExplosion_EV1",
+    "projectile:FirecrackerProjectile",
+    "projectile:FirecrackerProjectile_EV1",
+    "projectile:FishermanProjectile",
+    "projectile:Furnace_Rework_Projectile",
+    "projectile:GiantBuffProjectile",
+    "projectile:GoblinBarrelSpell",
+    "projectile:GoblinBarrelSpell_EV1",
+    "projectile:GoblinBarrelSpell_EV1_Decoy",
+    "projectile:GoblinDemolisherDeathProjectile",
+    "projectile:GoblinDemolisherProjectile",
+    "projectile:GoblinMachineRocketProjectile",
+    "projectile:GoblinMorphProjectile",
+    "projectile:GoblinProjectile",
+    "projectile:HealSpiritProjectile",
+    "projectile:HunterProjectile",
+    "projectile:Hunter_EV1_bear_trap_projectile",
+    "projectile:IceSpiritsProjectile",
+    "projectile:IceSpiritsProjectile_EV1",
+    "projectile:Ice_wizardProjectile",
+    "projectile:LavaHoundProjectile",
+    "projectile:LavaPupProjectile",
+    "projectile:LighningSpell",
+    "projectile:LittlePrinceProjectile",
+    "projectile:LogProjectile",
+    "projectile:LogProjectileRolling",
+    "projectile:MegaKnightAppear",
+    "projectile:MegaMinionSpit",
+    "projectile:MergeMaidenProjectile_Mounted",
+    "projectile:MinionSpit",
+    "projectile:MortarProjectile",
+    "projectile:MortarProjectile_EV1",
+    "projectile:MovingCannonProjectile",
+    "projectile:MusketeerProjectile",
+    "projectile:PhoenixFireball",
+    "projectile:PrincessProjectile",
+    "projectile:PrincessProjectileDeco",
+    "projectile:Prj_goblinstein_doctor",
+    "projectile:RamRiderBola",
+    "projectile:RascalGirlProjectile",
+    "projectile:RocketSpell",
+    "projectile:RoyalDeliveryProjectile",
+    "projectile:RoyalGiantProjectile",
+    "projectile:RoyalGiantProjectile_EV1",
+    "projectile:SkeletonDragonProjectile",
+    "projectile:SnowballSpell",
+    "projectile:SpearGoblinGiantProjectile",
+    "projectile:SpearGoblinProjectile",
+    "projectile:SuperArcherChargeArrow",
+    "projectile:SuperEliteArcherArrow",
+    "projectile:SuperMiniPekkaHit",
+    "projectile:TowerCannonball",
+    "projectile:VoodooProjectile",
+    "projectile:WallbreakerMiniProjectile",
+    "projectile:WallbreakerProjectile",
+    "projectile:WallbreakerProjectile_EV1",
+    "projectile:WitchProjectile",
+    "projectile:Wizard_EV1_Projectile",
+    "projectile:Xbow_projectile",
+    "projectile:ZapMachineProjectile",
+    "tower:KingTower",
+    "tower:Tower",
+    "troop_body:AngryBarbarian",
+    "troop_body:Archer",
+    "troop_body:ArcherQueen",
+    "troop_body:Archer_EV1",
+    "troop_body:Assassin",
+    "troop_body:AxeMan",
+    "troop_body:BabyDragon",
+    "troop_body:Balloon",
+    "troop_body:Barbarian",
+    "troop_body:Barbarian_EV1",
+    "troop_body:Bat",
+    "troop_body:Bat_EV1",
+    "troop_body:BattleHealer",
+    "troop_body:BattleRam",
+    "troop_body:BattleRam_EV1",
+    "troop_body:Berserker",
+    "troop_body:BlowdartGoblin",
+    "troop_body:Bomber",
+    "troop_body:Bomber_EV1",
+    "troop_body:BossBandit",
+    "troop_body:Bowler",
+    "troop_body:BrokenCannon",
+    "troop_body:BushGoblin",
+    "troop_body:ChampionGuard",
+    "troop_body:DarkPrince",
+    "troop_body:DarkWitch",
+    "troop_body:DartBarrell",
+    "troop_body:DeliveryRecruit",
+    "troop_body:ElectroDragon",
+    "troop_body:ElectroGiant",
+    "troop_body:ElectroSpirit",
+    "troop_body:ElectroWizard",
+    "troop_body:Electro_dragon_ev1",
+    "troop_body:EliteArcher",
+    "troop_body:ElixirGolem1",
+    "troop_body:ElixirGolem2",
+    "troop_body:ElixirGolem4",
+    "troop_body:FireSpirits",
+    "troop_body:Firecracker",
+    "troop_body:Firecracker_EV1",
+    "troop_body:Fisherman",
+    "troop_body:Furnace_EV1",
+    "troop_body:Furnace_rework",
+    "troop_body:Ghost",
+    "troop_body:Giant",
+    "troop_body:GiantBuffer",
+    "troop_body:GiantSkeleton",
+    "troop_body:Goblin",
+    "troop_body:GoblinBrawler",
+    "troop_body:GoblinCurseGoblin",
+    "troop_body:GoblinDemolisher",
+    "troop_body:GoblinDemolisher_kamikaze_form",
+    "troop_body:GoblinDrillDig",
+    "troop_body:GoblinDummy",
+    "troop_body:GoblinGiant",
+    "troop_body:GoblinMachine",
+    "troop_body:GoblinParty",
+    "troop_body:Goblin_Stab",
+    "troop_body:Goblinstein",
+    "troop_body:Goblinstein_doctor",
+    "troop_body:GoldenKnight",
+    "troop_body:Golem",
+    "troop_body:Golemite",
+    "troop_body:HealSpirit",
+    "troop_body:HogRider",
+    "troop_body:Hunter",
+    "troop_body:IceGolemite",
+    "troop_body:IceSpirits",
+    "troop_body:IceSpirits_EV1",
+    "troop_body:IceWizard",
+    "troop_body:InfernoDragon",
+    "troop_body:Knight",
+    "troop_body:Knight_EV1",
+    "troop_body:LavaHound",
+    "troop_body:LavaPups",
+    "troop_body:LittlePrince",
+    "troop_body:MegaKnight",
+    "troop_body:MegaMinion",
+    "troop_body:MergeMaiden_Mounted",
+    "troop_body:MergeMaiden_Normal",
+    "troop_body:MightyMiner",
+    "troop_body:Miner",
+    "troop_body:MiniPekka",
+    "troop_body:MiniZapMachine",
+    "troop_body:Minion",
+    "troop_body:Monk",
+    "troop_body:MovingCannon",
+    "troop_body:Musketeer",
+    "troop_body:Pekka",
+    "troop_body:Phoenix",
+    "troop_body:PhoenixEgg",
+    "troop_body:PhoenixNoRespawn",
+    "troop_body:Prince",
+    "troop_body:PrinceBuff",
+    "troop_body:Princess",
+    "troop_body:RageBarbarian",
+    "troop_body:Ram",
+    "troop_body:RamRider",
+    "troop_body:RascalBoy",
+    "troop_body:RascalGirl",
+    "troop_body:Recruit",
+    "troop_body:Recruit_Chess",
+    "troop_body:Recruit_EV1",
+    "troop_body:Ronin",
+    "troop_body:RoyalGiant",
+    "troop_body:RoyalGiant_EV1",
+    "troop_body:RoyalHog",
+    "troop_body:RoyalHog_EV1",
+    "troop_body:Skeleton",
+    "troop_body:SkeletonArmy_EV1_Soldier",
+    "troop_body:SkeletonBalloon",
+    "troop_body:SkeletonDragon",
+    "troop_body:SkeletonKing",
+    "troop_body:SkeletonKingSkeleton",
+    "troop_body:SkeletonWarrior",
+    "troop_body:Skeleton_EV1",
+    "troop_body:SpearGoblin",
+    "troop_body:SpearGoblinGiant",
+    "troop_body:SpearGoblinGiant_EV1",
+    "troop_body:SuperArcher",
+    "troop_body:SuperEliteArcher",
+    "troop_body:SuperHogRider",
+    "troop_body:SuperHogRider_Terry",
+    "troop_body:SuperIceGolemite",
+    "troop_body:SuperLavaHound",
+    "troop_body:SuperLavaHound2",
+    "troop_body:SuperMiniPekka",
+    "troop_body:SuperWitch",
+    "troop_body:SuspiciousBush",
+    "troop_body:TriWizard",
+    "troop_body:Valkyrie",
+    "troop_body:Valkyrie_EV1",
+    "troop_body:VoodooHog",
+    "troop_body:Wallbreaker",
+    "troop_body:Wallbreaker_EV1",
+    "troop_body:Wallbreaker_mini",
+    "troop_body:Witch",
+    "troop_body:WitchMother",
+    "troop_body:Wizard",
+    "troop_body:Wizard_EV1",
+    "troop_body:ZapMachine"
+  ]
+}

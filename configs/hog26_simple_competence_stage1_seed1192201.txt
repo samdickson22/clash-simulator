@@ -1,0 +1,35 @@
+# One controller per logical paired matchup.  The tensor Gym duplicates each
+# line across learner seats 0/1.  Frozen-parent rows use an exact Hog mirror;
+# random and strategy rows retain their diverse assigned opponent decks.
+random
+__FROZEN_PARENT__
+random
+strategy:balanced
+random
+__FROZEN_PARENT__
+random
+strategy:slow-push
+__FROZEN_PARENT__
+random
+strategy:reactive-defense
+random
+__FROZEN_PARENT__
+random
+strategy:spell-control
+__FROZEN_PARENT__
+random
+strategy:bridge-pressure
+random
+__FROZEN_PARENT__
+random
+strategy:split-lane
+__FROZEN_PARENT__
+random
+strategy:balanced
+random
+__FROZEN_PARENT__
+random
+strategy:slow-push
+__FROZEN_PARENT__
+random
+__FROZEN_PARENT__

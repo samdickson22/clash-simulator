@@ -1,0 +1,21 @@
+{
+  "after_sha256": "d8c1bfc2727251037e2337bd08c58dd24356815116e8b7ee15ed974fec9000f8",
+  "all_checked_fields_equal": true,
+  "before_sha256": "d8c1bfc2727251037e2337bd08c58dd24356815116e8b7ee15ed974fec9000f8",
+  "exact_equal": {
+    "actions": true,
+    "entity_features": true,
+    "entity_ids": true,
+    "entity_mask": true,
+    "episode_final_outcomes": true,
+    "episode_offsets": true,
+    "episode_terminal_tower_margins": true,
+    "final_outcomes": true,
+    "global_features": true,
+    "hand_ids": true,
+    "next_global_features": true,
+    "terminal_tower_margins": true
+  },
+  "schema": "clasher.hog26.corrected-cpu-regression-probe.v1",
+  "scope": "two completed CPU games only; does not certify old corpora generally"
+}

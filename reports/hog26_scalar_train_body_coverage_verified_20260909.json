@@ -1,0 +1,811 @@
+{
+  "scope": "Training/learner manifest cards only. One seat, 200 real ticks plus synthetic forced parent deaths. Not complete-game coverage or actor-view acceptance.",
+  "manifest_sha256": "6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8",
+  "source_sha256": {
+    "scripts/audit_hog26_scalar_train_bodies_20260909.py": "6f9c968ea21720ced85122c6b416aaa41c0ef387f26cfafef78e9508d1b6ff17",
+    "scripts/hog26_scalar_actor_projection.py": "fcaa4034c9cefc92e42bc8d86c12b4873b1edb88b3ace426a63043032282bc87",
+    "src/clasher/battle.py": "e0bd8c1d4581953a58f45a42a386a254ceec16eb2f29954be411a7eccf2f01f9",
+    "src/clasher/entities.py": "5df49b70a7491b9bb5e26571f4531f20070417c15e14cb8d7c5cb33624ff9233"
+  },
+  "cards": [
+    {
+      "card": "Archers",
+      "canonical_card": "Archers",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Archer",
+          "token": "troop_body:Archer"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Arrows",
+      "canonical_card": "Arrows",
+      "deployment_accepted": true,
+      "bodies": [],
+      "unresolved": []
+    },
+    {
+      "card": "BabyDragon",
+      "canonical_card": "BabyDragon",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "BabyDragon",
+          "token": "troop_body:BabyDragon"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Balloon",
+      "canonical_card": "Balloon",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Balloon",
+          "token": "troop_body:Balloon"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Bandit",
+      "canonical_card": "Bandit",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Assassin",
+          "token": "troop_body:Assassin"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "BarbarianBarrel",
+      "canonical_card": "BarbarianBarrel",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Barbarian",
+          "token": "troop_body:Barbarian"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Bats",
+      "canonical_card": "Bats",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Bats",
+          "token": "troop_body:Bat"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "BattleRam",
+      "canonical_card": "BattleRam",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Barbarian",
+          "token": "troop_body:Barbarian"
+        },
+        {
+          "class": "Troop",
+          "stats_name": "BattleRam",
+          "token": "troop_body:BattleRam"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "BombTower",
+      "canonical_card": "BombTower",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Building",
+          "stats_name": "BombTower",
+          "token": "building_body:BombTower"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Bomber",
+      "canonical_card": "Bomber",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Bomber",
+          "token": "troop_body:Bomber"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Bowler",
+      "canonical_card": "Bowler",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Bowler",
+          "token": "troop_body:Bowler"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Cannon",
+      "canonical_card": "Cannon",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Building",
+          "stats_name": "Cannon",
+          "token": "building_body:Cannon"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "DarkPrince",
+      "canonical_card": "DarkPrince",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "DarkPrince",
+          "token": "troop_body:DarkPrince"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "DartGoblin",
+      "canonical_card": "DartGoblin",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "BlowdartGoblin",
+          "token": "troop_body:BlowdartGoblin"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Earthquake",
+      "canonical_card": "Earthquake",
+      "deployment_accepted": true,
+      "bodies": [],
+      "unresolved": []
+    },
+    {
+      "card": "ElectroDragon",
+      "canonical_card": "ElectroDragon",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "ElectroDragon",
+          "token": "troop_body:ElectroDragon"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "ElectroSpirit",
+      "canonical_card": "ElectroSpirit",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "ElectroSpirit",
+          "token": "troop_body:ElectroSpirit"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "ElectroWizard",
+      "canonical_card": "ElectroWizard",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "ElectroWizard",
+          "token": "troop_body:ElectroWizard"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Fireball",
+      "canonical_card": "Fireball",
+      "deployment_accepted": true,
+      "bodies": [],
+      "unresolved": []
+    },
+    {
+      "card": "Firecracker",
+      "canonical_card": "Firecracker",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Firecracker",
+          "token": "troop_body:Firecracker"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Freeze",
+      "canonical_card": "Freeze",
+      "deployment_accepted": true,
+      "bodies": [],
+      "unresolved": []
+    },
+    {
+      "card": "Giant",
+      "canonical_card": "Giant",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Giant",
+          "token": "troop_body:Giant"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "GiantSnowball",
+      "canonical_card": "GiantSnowball",
+      "deployment_accepted": true,
+      "bodies": [],
+      "unresolved": []
+    },
+    {
+      "card": "GoblinBarrel",
+      "canonical_card": "GoblinBarrel",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Goblin",
+          "token": "troop_body:Goblin"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "GoblinGang",
+      "canonical_card": "GoblinGang",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Goblin_Stab",
+          "token": "troop_body:Goblin_Stab"
+        },
+        {
+          "class": "Troop",
+          "stats_name": "SpearGoblin",
+          "token": "troop_body:SpearGoblin"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Golem",
+      "canonical_card": "Golem",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Golem",
+          "token": "troop_body:Golem"
+        },
+        {
+          "class": "Troop",
+          "stats_name": "Golemite",
+          "token": "troop_body:Golemite"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Graveyard",
+      "canonical_card": "Graveyard",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Skeleton",
+          "token": "troop_body:Skeleton"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Guards",
+      "canonical_card": "Guards",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "SkeletonWarriors",
+          "token": "troop_body:SkeletonWarrior"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "HogRider",
+      "canonical_card": "HogRider",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "HogRider",
+          "token": "troop_body:HogRider"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "IceGolem",
+      "canonical_card": "IceGolem",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "IceGolemite",
+          "token": "troop_body:IceGolemite"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "IceSpirit",
+      "canonical_card": "IceSpirit",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "IceSpirits",
+          "token": "troop_body:IceSpirits"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "IceWizard",
+      "canonical_card": "IceWizard",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "IceWizard",
+          "token": "troop_body:IceWizard"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "InfernoDragon",
+      "canonical_card": "InfernoDragon",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "InfernoDragon",
+          "token": "troop_body:InfernoDragon"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "InfernoTower",
+      "canonical_card": "InfernoTower",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Building",
+          "stats_name": "InfernoTower",
+          "token": "building_body:InfernoTower"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Knight",
+      "canonical_card": "Knight",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Knight",
+          "token": "troop_body:Knight"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "LavaHound",
+      "canonical_card": "LavaHound",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "LavaHound",
+          "token": "troop_body:LavaHound"
+        },
+        {
+          "class": "Troop",
+          "stats_name": "LavaPups",
+          "token": "troop_body:LavaPups"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Log",
+      "canonical_card": "Log",
+      "deployment_accepted": true,
+      "bodies": [],
+      "unresolved": []
+    },
+    {
+      "card": "Lumberjack",
+      "canonical_card": "Lumberjack",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "RageBarbarian",
+          "token": "troop_body:RageBarbarian"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "MagicArcher",
+      "canonical_card": "MagicArcher",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "EliteArcher",
+          "token": "troop_body:EliteArcher"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "MegaKnight",
+      "canonical_card": "MegaKnight",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "MegaKnight",
+          "token": "troop_body:MegaKnight"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "MegaMinion",
+      "canonical_card": "MegaMinion",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "MegaMinion",
+          "token": "troop_body:MegaMinion"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Miner",
+      "canonical_card": "Miner",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Miner",
+          "token": "troop_body:Miner"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "MiniPekka",
+      "canonical_card": "MiniPekka",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "MiniPekka",
+          "token": "troop_body:MiniPekka"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Minions",
+      "canonical_card": "Minions",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Minions",
+          "token": "troop_body:Minion"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Musketeer",
+      "canonical_card": "Musketeer",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Musketeer",
+          "token": "troop_body:Musketeer"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "NightWitch",
+      "canonical_card": "NightWitch",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Bat",
+          "token": "troop_body:Bat"
+        },
+        {
+          "class": "Troop",
+          "stats_name": "DarkWitch",
+          "token": "troop_body:DarkWitch"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Pekka",
+      "canonical_card": "Pekka",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Pekka",
+          "token": "troop_body:Pekka"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Poison",
+      "canonical_card": "Poison",
+      "deployment_accepted": true,
+      "bodies": [],
+      "unresolved": []
+    },
+    {
+      "card": "Prince",
+      "canonical_card": "Prince",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Prince",
+          "token": "troop_body:Prince"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Princess",
+      "canonical_card": "Princess",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Princess",
+          "token": "troop_body:Princess"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Rocket",
+      "canonical_card": "Rocket",
+      "deployment_accepted": true,
+      "bodies": [],
+      "unresolved": []
+    },
+    {
+      "card": "RoyalGhost",
+      "canonical_card": "RoyalGhost",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Ghost",
+          "token": "troop_body:Ghost"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "SkeletonBarrel",
+      "canonical_card": "SkeletonBarrel",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Skeleton",
+          "token": "troop_body:Skeleton"
+        },
+        {
+          "class": "Troop",
+          "stats_name": "SkeletonBalloon",
+          "token": "troop_body:SkeletonBalloon"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Skeletons",
+      "canonical_card": "Skeletons",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Skeletons",
+          "token": "troop_body:Skeleton"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "SpearGoblins",
+      "canonical_card": "SpearGoblins",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "SpearGoblins",
+          "token": "troop_body:SpearGoblin"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Tesla",
+      "canonical_card": "Tesla",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Building",
+          "stats_name": "Tesla",
+          "token": "building_body:Tesla"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Tombstone",
+      "canonical_card": "Tombstone",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Building",
+          "stats_name": "Tombstone",
+          "token": "building_body:Tombstone"
+        },
+        {
+          "class": "Troop",
+          "stats_name": "Skeleton",
+          "token": "troop_body:Skeleton"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Tornado",
+      "canonical_card": "Tornado",
+      "deployment_accepted": true,
+      "bodies": [],
+      "unresolved": []
+    },
+    {
+      "card": "Valkyrie",
+      "canonical_card": "Valkyrie",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Valkyrie",
+          "token": "troop_body:Valkyrie"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Wallbreakers",
+      "canonical_card": "Wallbreakers",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Wallbreakers",
+          "token": "troop_body:Wallbreaker"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Witch",
+      "canonical_card": "Witch",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Troop",
+          "stats_name": "Skeleton",
+          "token": "troop_body:Skeleton"
+        },
+        {
+          "class": "Troop",
+          "stats_name": "Witch",
+          "token": "troop_body:Witch"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Xbow",
+      "canonical_card": "Xbow",
+      "deployment_accepted": true,
+      "bodies": [
+        {
+          "class": "Building",
+          "stats_name": "Xbow",
+          "token": "building_body:Xbow"
+        }
+      ],
+      "unresolved": []
+    },
+    {
+      "card": "Zap",
+      "canonical_card": "Zap",
+      "deployment_accepted": true,
+      "bodies": [],
+      "unresolved": []
+    }
+  ]
+}

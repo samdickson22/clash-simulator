@@ -1,0 +1,552 @@
+{
+  "scope": "Actual BattleState.step dispatch after direct spell.cast; no scheduler replacement or deferred-mode override. Does not certify action ingress timing or native parity.",
+  "source_sha256": {
+    "src/clasher/battle.py": "e0bd8c1d4581953a58f45a42a386a254ceec16eb2f29954be411a7eccf2f01f9",
+    "src/clasher/entities.py": "5df49b70a7491b9bb5e26571f4531f20070417c15e14cb8d7c5cb33624ff9233",
+    "src/clasher/spells.py": "249bbe215209a9bca48daf6ae9c4c8916a6a153ff979ddd376359f2d319a8f40",
+    "scripts/probe_hog26_scalar_frame_contract_20260909.py": "3f838d70819d02f2ebad1aff65259318831220e8c8e9f455676aa33322d19c15"
+  },
+  "cases": [
+    {
+      "card": "Arrows",
+      "initial_hp": 3052,
+      "final_hp": 2977.0,
+      "damage_events": [
+        {
+          "tick": 20,
+          "entity_id": 15,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3052,
+          "target_hp_after": 3027.0
+        },
+        {
+          "tick": 20,
+          "entity_id": 15,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3052,
+          "target_hp_after": 3027.0
+        },
+        {
+          "tick": 24,
+          "entity_id": 25,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3027.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 24,
+          "entity_id": 25,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3027.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 29,
+          "entity_id": 34,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 2977.0
+        },
+        {
+          "tick": 29,
+          "entity_id": 34,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 2977.0
+        }
+      ],
+      "tick25_dispatch": [
+        {
+          "tick": 25,
+          "entity_id": 4,
+          "method": "update_combat_component",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 4,
+          "method": "update_movement_component",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 4,
+          "method": "update_hitpoint_component",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 4,
+          "method": "update_buff_component",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 4,
+          "method": "tick_character_object_phase",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 10,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 10,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 17,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 18,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 19,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 20,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 21,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 22,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 23,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 24,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 24,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 26,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 26,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 27,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 28,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 29,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 30,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 31,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 32,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 33,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 34,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 35,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 36,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        }
+      ],
+      "all_impact_resolution_events": [
+        {
+          "tick": 20,
+          "entity_id": 14,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3052,
+          "target_hp_after": 3052
+        },
+        {
+          "tick": 20,
+          "entity_id": 15,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3052,
+          "target_hp_after": 3027.0
+        },
+        {
+          "tick": 20,
+          "entity_id": 16,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3027.0,
+          "target_hp_after": 3027.0
+        },
+        {
+          "tick": 21,
+          "entity_id": 7,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3027.0,
+          "target_hp_after": 3027.0
+        },
+        {
+          "tick": 21,
+          "entity_id": 8,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3027.0,
+          "target_hp_after": 3027.0
+        },
+        {
+          "tick": 23,
+          "entity_id": 9,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3027.0,
+          "target_hp_after": 3027.0
+        },
+        {
+          "tick": 23,
+          "entity_id": 13,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3027.0,
+          "target_hp_after": 3027.0
+        },
+        {
+          "tick": 24,
+          "entity_id": 11,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3027.0,
+          "target_hp_after": 3027.0
+        },
+        {
+          "tick": 24,
+          "entity_id": 12,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3027.0,
+          "target_hp_after": 3027.0
+        },
+        {
+          "tick": 24,
+          "entity_id": 25,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3027.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 10,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 24,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 26,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 26,
+          "entity_id": 17,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 26,
+          "entity_id": 18,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 27,
+          "entity_id": 19,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 27,
+          "entity_id": 23,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 27,
+          "entity_id": 35,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 28,
+          "entity_id": 21,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 28,
+          "entity_id": 22,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 28,
+          "entity_id": 36,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 29,
+          "entity_id": 20,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 29,
+          "entity_id": 28,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 3002.0
+        },
+        {
+          "tick": 29,
+          "entity_id": 34,
+          "method": "_resolve_impact",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3002.0,
+          "target_hp_after": 2977.0
+        }
+      ]
+    },
+    {
+      "card": "Poison",
+      "initial_hp": 3052,
+      "final_hp": 3031.0,
+      "damage_events": [
+        {
+          "tick": 25,
+          "entity_id": 4,
+          "method": "update_buff_component",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3052,
+          "target_hp_after": 3031.0
+        }
+      ],
+      "tick25_dispatch": [
+        {
+          "tick": 25,
+          "entity_id": 4,
+          "method": "update_combat_component",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3052,
+          "target_hp_after": 3052
+        },
+        {
+          "tick": 25,
+          "entity_id": 4,
+          "method": "update_movement_component",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3052,
+          "target_hp_after": 3052
+        },
+        {
+          "tick": 25,
+          "entity_id": 4,
+          "method": "update_hitpoint_component",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3052,
+          "target_hp_after": 3052
+        },
+        {
+          "tick": 25,
+          "entity_id": 4,
+          "method": "update_buff_component",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3052,
+          "target_hp_after": 3031.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 4,
+          "method": "tick_character_object_phase",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3031.0,
+          "target_hp_after": 3031.0
+        },
+        {
+          "tick": 25,
+          "entity_id": 7,
+          "method": "update",
+          "deferred_projectile_mode": false,
+          "target_hp_before": 3031.0,
+          "target_hp_after": 3031.0
+        }
+      ],
+      "all_impact_resolution_events": []
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "status": "single_boundary_deterministic_inference_only",
+  "scope": "Scripted Arrows scene, two independently initialized inference calls. No full-game replay, corpus, training, or observation acceptance claim.",
+  "actions": [
+    [
+      2304
+    ],
+    [
+      2304
+    ]
+  ],
+  "visible_counts": [
+    16,
+    16
+  ],
+  "all_critic_inputs_absent": true,
+  "zero_reward_feedback": true,
+  "input_sha256": {
+    "entity_ids": "caf5dbd44510ea9a74215e6941e40fae160da82fb98702b167eee066581e89ab",
+    "entity_features": "22e4a7bbe62a731c2346099f93bdda82bacdf36196565ac8ab849583485a867e",
+    "entity_mask": "c75d5ea7500c0a8414d20d79f2b2f15c2aaa79420d53a5226aceeb8b88050933",
+    "hand_ids": "6a329d5ee102e0cf053a01193a95ed4bf804c5c24ac98fcc1017a4fb1e02cd96",
+    "global_features": "e106627cde1ec0464080fd8559f702dee3da158770e169e2153c0895dbdbf891",
+    "action_mask": "2341e06915812e9f59a136de9c5d866178d3b88e3c794e52fae99ab233da9b68",
+    "previous_actions": "68bc86dfb1eaa1df786ab5748dfa452f3149597f533f0e570261586b5d2ef881",
+    "previous_rewards": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+    "episode_starts": "9dcf97a184f32623d11a73124ceb99a5709b083721e878a16d78f596718ba7b2",
+    "entity_id_confidence": "bd03ada28362e55174b46b7457e6a8c53a91914841177a22f46876653173fe5b",
+    "entity_feature_confidence": "4ce67ba2c9e44403bc586489879ba8aae299d1f02f9d7188bea4af6cb52752ef",
+    "hand_id_confidence": "00e1a993efd5074e1fc9c7ff6fc46a151ee4ed93935d05ee2ab229ded34975c1",
+    "global_feature_confidence": "a7942a89cf64580e599b37094919a9f0379c99dece7f1be35fdf2ac8bc58993e"
+  },
+  "recurrent_sha256": [
+    "dd09e77842bddaf5786ac871a1021a31f64603909d3d0c458fe38db6ff1ee426",
+    "7ffffd4a905425b9047865fa6722dabf7d8c6d4627ad95147c16f4a09dc768bf"
+  ],
+  "mask_semantics_id": "public-action-mask-v2/tensor-actor-projection-v2",
+  "mask_semantics_digest": "2e51173594b938d300561fe1f96fc4cb9ec9de9c1f695cf3a95de72553eb43c6",
+  "checkpoint_sha256": "f609b60b3e7b7b574e084b15255e0fc247447e3c18d8552714213ccd0c709336",
+  "source_sha256": {
+    "scripts/probe_hog26_scalar_policy_boundary_20260909.py": "2ddff7b14e41f5f0990b530bba46b0869cb9d5df39c120a007cbdd32db448be8",
+    "scripts/hog26_scalar_policy_inputs.py": "c90f0609bff2fcb619af1dbf290d9b1b95763f92eecb70b804d31ae9c061ee95",
+    "scripts/hog26_scalar_actor_projection.py": "02de59c6c67011ca901cf8ab28e06224a4edc96d78d2ee741ffa359f5b6d65d3",
+    "scripts/hog26_scalar_public_effect_adapter.py": "19190c4836bc24ccf2f8715a2e6b0813c131aa0c23b99311366b3bef990d1a5c",
+    "src/clasher/rl/model.py": "95fd58626664b4a1a34792c643c4b3caedf2ccd08f54be6b4d678acdd7a91296",
+    "src/clasher/torch_sim/simple_public_mask.py": "bb622d8bc8e1a6a753e365a26d990c9bbb7e02c55e76811b447a0b16ea4cedf9"
+  }
+}

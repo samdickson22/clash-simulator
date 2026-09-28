@@ -1,0 +1,29 @@
+{
+  "scope": "synthetic exact scaling-training step; no actual-corpus fitting",
+  "shape": [
+    2,
+    750,
+    128
+  ],
+  "full_bptt": true,
+  "epochs": 1,
+  "steps": 1,
+  "peak_rss_bytes": 1451671552,
+  "seconds": 1.1929875829955563,
+  "finite_gradients": true,
+  "parameters": 116900,
+  "runtime": {
+    "torch": "2.10.0",
+    "device": "cpu",
+    "threads": 1
+  },
+  "sources": {
+    "experiments/hog26_scaling_fit/benchmark_neural.py": "a0da21b1adc54384f6eeb53ebce5866ce3b8ffda2e43d12f30175046675b3c0e",
+    "experiments/hog26_scaling_fit/scaling_training.py": "baac99be7f0e72b4b5b33a25c1cd1355e37dad89cec80cac18cc1d93761cf0f7",
+    "experiments/hog26_data_scaling/compact_public.py": "e7a73c142857439b54eda72670d365396bdca5fe13d8c34e9204bd0f3a396daf",
+    "experiments/hog26_data_scaling/scaling_dataset.py": "a1f5f27bdabff4717c41405aaf649537a37b8495048bf84804ca3e7ba89c70c5",
+    "experiments/hog26_scalar_pilot/scalar_models.py": "4a5d421acb2a16ab1a6a083844570b676d473c3db8710991821f7a28bf074428",
+    "experiments/hog26_scalar_pilot/test_scalar_models.py": "adf7ed207e1802e16b36da8d7aab78ceffe5eb399f142159fd4c33abac182ddf"
+  },
+  "full_combined_memory_verified": false
+}

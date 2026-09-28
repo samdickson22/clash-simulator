@@ -1,0 +1,11 @@
+{
+  "scope": "Replay of existing audited training rows; no new games or labels.",
+  "source_sha256": "611699015ae3a506454aa8a9f11ae009213ae773d4213266b2f9f120f39314e1",
+  "rows": 56347,
+  "games": 128,
+  "all_arrays_and_terminal_labels_equal": true,
+  "completed_episodes_stored_as_paths": true,
+  "full_roundtrip_audit_status": "passed",
+  "scratch_released": true,
+  "elapsed_seconds": 8.359582999954
+}

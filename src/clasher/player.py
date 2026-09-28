@@ -5,6 +5,8 @@ from collections import deque
 from .card_types import CardStatsCompat
 from .balance import DEFAULT_BATTLE_TIMELINE_STARTING_ELIXIR
 
+ELIXIR_ROUNDOFF_TOLERANCE = 1e-9
+
 
 @dataclass
 class PlayerState:
@@ -38,7 +40,7 @@ class PlayerState:
     def can_play_card(self, card_name: str, card_stats: CardStatsCompat) -> bool:
         """Check if player can afford to play this card"""
         return (card_name in self.hand and
-                self.elixir + 1e-9 >= card_stats.mana_cost and
+                self.elixir + ELIXIR_ROUNDOFF_TOLERANCE >= card_stats.mana_cost and
                 self.is_alive())
     
     def play_card(self, card_name: str, card_stats: CardStatsCompat) -> bool:
@@ -47,7 +49,7 @@ class PlayerState:
             return False
         
         # Spend elixir
-        self.elixir -= card_stats.mana_cost
+        self.elixir = max(0.0, self.elixir - card_stats.mana_cost)
         
         # Native leaves the played slot empty until the player tick refills it.
         # The used card joins the back of the cycle immediately.

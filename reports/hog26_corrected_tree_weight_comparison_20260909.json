@@ -1,0 +1,247 @@
+{
+  "status": "Not ready for candidate freeze",
+  "scope": "Training-family comparison with fixed50/50loss weights; unchanged acceptance metrics.",
+  "baseline_pooled": {
+    "by_phase": {
+      "early": {
+        "baseline_mae": 0.2765272557735443,
+        "mae": 0.24175626039505005,
+        "mae_improvement": 0.03477099537849426,
+        "mean_abs_correction": 0.10848941653966904,
+        "rows": 384
+      },
+      "late": {
+        "baseline_mae": 0.024689918383955956,
+        "mae": 0.049280088394880295,
+        "mae_improvement": -0.02459017001092434,
+        "mean_abs_correction": 0.05342518538236618,
+        "rows": 60
+      },
+      "middle": {
+        "baseline_mae": 0.15255634486675262,
+        "mae": 0.11760365962982178,
+        "mae_improvement": 0.03495268523693085,
+        "mean_abs_correction": 0.11822500824928284,
+        "rows": 339
+      }
+    },
+    "by_seat": {
+      "0": {
+        "baseline_mae": 0.19975604116916656,
+        "mae": 0.17140312492847443,
+        "mae_improvement": 0.02835291624069214,
+        "mean_abs_correction": 0.10818881541490555,
+        "rows": 391
+      },
+      "1": {
+        "baseline_mae": 0.20734652876853943,
+        "mae": 0.1751026213169098,
+        "mae_improvement": 0.03224390745162964,
+        "mean_abs_correction": 0.10878034681081772,
+        "rows": 392
+      }
+    },
+    "by_style": {
+      "balanced": {
+        "baseline_mae": 0.20438505709171295,
+        "mae": 0.16928406059741974,
+        "mae_improvement": 0.03510099649429321,
+        "mean_abs_correction": 0.1146652102470398,
+        "rows": 148
+      },
+      "bridge-pressure": {
+        "baseline_mae": 0.10162068903446198,
+        "mae": 0.10764964669942856,
+        "mae_improvement": -0.006028957664966583,
+        "mean_abs_correction": 0.04083763062953949,
+        "rows": 111
+      },
+      "random": {
+        "baseline_mae": 0.2108156830072403,
+        "mae": 0.18676649034023285,
+        "mae_improvement": 0.024049192667007446,
+        "mean_abs_correction": 0.11781693994998932,
+        "rows": 123
+      },
+      "reactive-defense": {
+        "baseline_mae": 0.2277301549911499,
+        "mae": 0.1869724541902542,
+        "mae_improvement": 0.04075770080089569,
+        "mean_abs_correction": 0.13939325511455536,
+        "rows": 150
+      },
+      "slow-push": {
+        "baseline_mae": 0.200283482670784,
+        "mae": 0.1702449470758438,
+        "mae_improvement": 0.030038535594940186,
+        "mean_abs_correction": 0.0864938423037529,
+        "rows": 122
+      },
+      "spell-control": {
+        "baseline_mae": 0.25838083028793335,
+        "mae": 0.20827649533748627,
+        "mae_improvement": 0.05010433495044708,
+        "mean_abs_correction": 0.13556259870529175,
+        "rows": 129
+      }
+    },
+    "overall": {
+      "baseline_mae": 0.2035561501979828,
+      "mae": 0.17325524985790253,
+      "mae_improvement": 0.03030090034008026,
+      "mean_abs_correction": 0.10848496109247208,
+      "rows": 783
+    }
+  },
+  "mixed_pooled": {
+    "by_phase": {
+      "early": {
+        "baseline_mae": 0.2765272557735443,
+        "mae": 0.23904941976070404,
+        "mae_improvement": 0.03747783601284027,
+        "mean_abs_correction": 0.11638381332159042,
+        "rows": 384
+      },
+      "late": {
+        "baseline_mae": 0.024689918383955956,
+        "mae": 0.03159957006573677,
+        "mae_improvement": -0.006909651681780815,
+        "mean_abs_correction": 0.030148224905133247,
+        "rows": 60
+      },
+      "middle": {
+        "baseline_mae": 0.15255634486675262,
+        "mae": 0.10811450332403183,
+        "mae_improvement": 0.044441841542720795,
+        "mean_abs_correction": 0.12013208866119385,
+        "rows": 339
+      }
+    },
+    "by_seat": {
+      "0": {
+        "baseline_mae": 0.19975604116916656,
+        "mae": 0.16495847702026367,
+        "mae_improvement": 0.03479756414890289,
+        "mean_abs_correction": 0.11075703054666519,
+        "rows": 391
+      },
+      "1": {
+        "baseline_mae": 0.20734652876853943,
+        "mae": 0.1679668426513672,
+        "mae_improvement": 0.03937968611717224,
+        "mean_abs_correction": 0.11203838139772415,
+        "rows": 392
+      }
+    },
+    "by_style": {
+      "balanced": {
+        "baseline_mae": 0.20438505709171295,
+        "mae": 0.15910935401916504,
+        "mae_improvement": 0.04527570307254791,
+        "mean_abs_correction": 0.11319882422685623,
+        "rows": 148
+      },
+      "bridge-pressure": {
+        "baseline_mae": 0.10162068903446198,
+        "mae": 0.10935639590024948,
+        "mae_improvement": -0.007735706865787506,
+        "mean_abs_correction": 0.04899930581450462,
+        "rows": 111
+      },
+      "random": {
+        "baseline_mae": 0.2108156830072403,
+        "mae": 0.1800871044397354,
+        "mae_improvement": 0.030728578567504883,
+        "mean_abs_correction": 0.11603911966085434,
+        "rows": 123
+      },
+      "reactive-defense": {
+        "baseline_mae": 0.2277301549911499,
+        "mae": 0.17718710005283356,
+        "mae_improvement": 0.050543054938316345,
+        "mean_abs_correction": 0.1378682553768158,
+        "rows": 150
+      },
+      "slow-push": {
+        "baseline_mae": 0.200283482670784,
+        "mae": 0.15498226881027222,
+        "mae_improvement": 0.04530121386051178,
+        "mean_abs_correction": 0.09407936781644821,
+        "rows": 122
+      },
+      "spell-control": {
+        "baseline_mae": 0.25838083028793335,
+        "mae": 0.2094450294971466,
+        "mae_improvement": 0.04893580079078674,
+        "mean_abs_correction": 0.14420127868652344,
+        "rows": 129
+      }
+    },
+    "overall": {
+      "baseline_mae": 0.2035561501979828,
+      "mae": 0.16646458208560944,
+      "mae_improvement": 0.03709156811237335,
+      "mean_abs_correction": 0.11139853298664093,
+      "rows": 783
+    }
+  },
+  "baseline_full_phase": {
+    "early": {
+      "baseline_mae": 0.28922552834652987,
+      "games": 384,
+      "mae": 0.2588680701252694,
+      "mae_improvement": 0.030357458221260458,
+      "rows": 92443
+    },
+    "late": {
+      "baseline_mae": 0.08110850805727145,
+      "games": 60,
+      "mae": 0.06832464849576354,
+      "mae_improvement": 0.0127838595615079,
+      "rows": 4190
+    },
+    "middle": {
+      "baseline_mae": 0.17525494878955053,
+      "games": 339,
+      "mae": 0.13189163285920227,
+      "mae_improvement": 0.04336331593034828,
+      "rows": 62866
+    }
+  },
+  "mixed_full_phase": {
+    "early": {
+      "baseline_mae": 0.28922552834652987,
+      "games": 384,
+      "mae": 0.25786241953028366,
+      "mae_improvement": 0.03136310881624619,
+      "rows": 92443
+    },
+    "late": {
+      "baseline_mae": 0.08110850805727145,
+      "games": 60,
+      "mae": 0.06748136315339555,
+      "mae_improvement": 0.013627144903875888,
+      "rows": 4190
+    },
+    "middle": {
+      "baseline_mae": 0.17525494878955053,
+      "games": 339,
+      "mae": 0.13524273983381446,
+      "mae_improvement": 0.04001220895573607,
+      "rows": 62866
+    }
+  },
+  "fitting_late_gains": [
+    0.026002343511208892,
+    0.011547001835424453,
+    0.028024302679114044,
+    0.027887252741493285
+  ],
+  "excluded_family_late_gains": [
+    -0.022550003603100777,
+    0.003735009580850601,
+    -0.007204899564385414,
+    -0.008508136495947838
+  ],
+  "finding": "Mixed weighting resolves late fitting regression for this tree configuration but leaves excluded-family late regression. It does not establish generalization or independent acceptance."
+}

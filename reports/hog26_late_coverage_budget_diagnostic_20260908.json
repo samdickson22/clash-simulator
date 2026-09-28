@@ -1,0 +1,240 @@
+{
+  "scope": "Observed completed training games only; rates are planning heuristics, not predictions for heldout families.",
+  "observed": [
+    {
+      "style": "balanced",
+      "seat": 0,
+      "games": 32,
+      "late_games": 5,
+      "late_wins": 2,
+      "late_losses": 3
+    },
+    {
+      "style": "balanced",
+      "seat": 1,
+      "games": 32,
+      "late_games": 3,
+      "late_wins": 1,
+      "late_losses": 2
+    },
+    {
+      "style": "random",
+      "seat": 0,
+      "games": 32,
+      "late_games": 3,
+      "late_wins": 0,
+      "late_losses": 3
+    },
+    {
+      "style": "random",
+      "seat": 1,
+      "games": 32,
+      "late_games": 3,
+      "late_wins": 0,
+      "late_losses": 3
+    },
+    {
+      "style": "bridge-pressure",
+      "seat": 0,
+      "games": 32,
+      "late_games": 1,
+      "late_wins": 0,
+      "late_losses": 1
+    },
+    {
+      "style": "bridge-pressure",
+      "seat": 1,
+      "games": 32,
+      "late_games": 1,
+      "late_wins": 0,
+      "late_losses": 1
+    },
+    {
+      "style": "reactive-defense",
+      "seat": 0,
+      "games": 32,
+      "late_games": 10,
+      "late_wins": 1,
+      "late_losses": 9
+    },
+    {
+      "style": "reactive-defense",
+      "seat": 1,
+      "games": 32,
+      "late_games": 9,
+      "late_wins": 1,
+      "late_losses": 8
+    }
+  ],
+  "development_games_per_style_per_seat": 32,
+  "generated_final_games_per_style_per_seat": 96,
+  "required_late_clusters_per_joint_slice": 8,
+  "required_clusters_per_decisive_class_per_joint_slice": 2,
+  "planning_assumptions": [
+    "Plug-in training rates; independent future trials assumed for this arithmetic only.",
+    "Small training counts and changed heldout families make these probabilities uncertain; they are not acceptance evidence or guarantees.",
+    "Only late coverage is assessed; predictive and confidence gates may still fail."
+  ],
+  "coverage_planning": [
+    {
+      "games_per_style_seat": 32,
+      "seen_style_seat_slices": [
+        {
+          "style": "balanced",
+          "seat": 0,
+          "probability": 0.10463207112542237
+        },
+        {
+          "style": "balanced",
+          "seat": 1,
+          "probability": 0.006576389774125081
+        },
+        {
+          "style": "reactive-defense",
+          "seat": 0,
+          "probability": 0.24344968019589697
+        },
+        {
+          "style": "reactive-defense",
+          "seat": 1,
+          "probability": 0.22478062754956654
+        }
+      ],
+      "union_bound_for_all_four_slices": 0
+    },
+    {
+      "games_per_style_seat": 64,
+      "seen_style_seat_slices": [
+        {
+          "style": "balanced",
+          "seat": 0,
+          "probability": 0.7652710567776628
+        },
+        {
+          "style": "balanced",
+          "seat": 1,
+          "probability": 0.2117610890635425
+        },
+        {
+          "style": "reactive-defense",
+          "seat": 0,
+          "probability": 0.5982730829295301
+        },
+        {
+          "style": "reactive-defense",
+          "seat": 1,
+          "probability": 0.5981584573140988
+        }
+      ],
+      "union_bound_for_all_four_slices": 0
+    },
+    {
+      "games_per_style_seat": 96,
+      "seen_style_seat_slices": [
+        {
+          "style": "balanced",
+          "seat": 0,
+          "probability": 0.9750403818379683
+        },
+        {
+          "style": "balanced",
+          "seat": 1,
+          "probability": 0.6128941210429778
+        },
+        {
+          "style": "reactive-defense",
+          "seat": 0,
+          "probability": 0.8055684578309213
+        },
+        {
+          "style": "reactive-defense",
+          "seat": 1,
+          "probability": 0.8055684002469086
+        }
+      ],
+      "union_bound_for_all_four_slices": 0.19907136095877598
+    },
+    {
+      "games_per_style_seat": 128,
+      "seen_style_seat_slices": [
+        {
+          "style": "balanced",
+          "seat": 0,
+          "probability": 0.9972093574887867
+        },
+        {
+          "style": "balanced",
+          "seat": 1,
+          "probability": 0.8595249255452048
+        },
+        {
+          "style": "reactive-defense",
+          "seat": 0,
+          "probability": 0.9118677178141003
+        },
+        {
+          "style": "reactive-defense",
+          "seat": 1,
+          "probability": 0.9118677178025519
+        }
+      ],
+      "union_bound_for_all_four_slices": 0.6804697186506437
+    },
+    {
+      "games_per_style_seat": 192,
+      "seen_style_seat_slices": [
+        {
+          "style": "balanced",
+          "seat": 0,
+          "probability": 0.9999424570452164
+        },
+        {
+          "style": "balanced",
+          "seat": 1,
+          "probability": 0.9823681068976572
+        },
+        {
+          "style": "reactive-defense",
+          "seat": 0,
+          "probability": 0.9837971075992495
+        },
+        {
+          "style": "reactive-defense",
+          "seat": 1,
+          "probability": 0.9837971075992449
+        }
+      ],
+      "union_bound_for_all_four_slices": 0.9499047791413681
+    },
+    {
+      "games_per_style_seat": 256,
+      "seen_style_seat_slices": [
+        {
+          "style": "balanced",
+          "seat": 0,
+          "probability": 0.9999987931827814
+        },
+        {
+          "style": "balanced",
+          "seat": 1,
+          "probability": 0.9972475646959982
+        },
+        {
+          "style": "reactive-defense",
+          "seat": 0,
+          "probability": 0.99726649813474
+        },
+        {
+          "style": "reactive-defense",
+          "seat": 1,
+          "probability": 0.9972664981347339
+        }
+      ],
+      "union_bound_for_all_four_slices": 0.9917793541482535
+    }
+  ],
+  "amended_games_per_style_seat": 256,
+  "amended_development_games": 1024,
+  "amended_calibration_games": 1024,
+  "amended_generated_final_games": 1536
+}

@@ -1,0 +1,2789 @@
+{
+  "behavior_coef": 1.0,
+  "best_epoch": 0,
+  "best_validation": {
+    "behavior": {
+      "ability_accuracy": 0.0,
+      "accuracy": 0.9417293233082706,
+      "confusion": [
+        [
+          85,
+          27,
+          0
+        ],
+        [
+          97,
+          1919,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "exact_action_accuracy": 0.9417293233082706,
+      "nll": 0.3240773323223107,
+      "play_f1": 0.5782312925170069,
+      "play_precision": 0.46703296703296704,
+      "play_recall": 0.7589285714285714,
+      "rows": 2128,
+      "support": {
+        "ability": 0,
+        "play": 112,
+        "wait": 2016
+      },
+      "wait_accuracy": 0.9518849206349206
+    },
+    "preferences": {
+      "corrective": {
+        "accuracy": 0.0,
+        "mean_margin": -10.375457763671875,
+        "pairs": 89
+      },
+      "overall": {
+        "accuracy": 0.3358208955223881,
+        "mean_margin": -2.9005138874053955,
+        "pairs": 134
+      },
+      "safety": {
+        "accuracy": 1.0,
+        "mean_margin": 11.88326644897461,
+        "pairs": 45
+      }
+    }
+  },
+  "counterfactual_coef": 1.0,
+  "epochs": 40,
+  "history": [
+    {
+      "epoch": 0,
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9417293233082706,
+          "confusion": [
+            [
+              85,
+              27,
+              0
+            ],
+            [
+              97,
+              1919,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9417293233082706,
+          "nll": 0.3240773323223107,
+          "play_f1": 0.5782312925170069,
+          "play_precision": 0.46703296703296704,
+          "play_recall": 0.7589285714285714,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9518849206349206
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -10.375457763671875,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.9005138874053955,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 11.88326644897461,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 1,
+      "training": {
+        "behavior": 0.20803960475625768,
+        "chunks": 112,
+        "gradient_norm_max": 43.961429595947266,
+        "loss": 3.2474145834587813,
+        "preference": 3.0393749848008156,
+        "seconds": 11.154917790991021
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9417293233082706,
+          "confusion": [
+            [
+              81,
+              31,
+              0
+            ],
+            [
+              93,
+              1923,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9351503759398496,
+          "nll": 0.25529998038629337,
+          "play_f1": 0.5664335664335663,
+          "play_precision": 0.46551724137931033,
+          "play_recall": 0.7232142857142857,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9538690476190477
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -10.171967506408691,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.6439404487609863,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.24482250213623,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 2,
+      "training": {
+        "behavior": 0.16661342015348574,
+        "chunks": 112,
+        "gradient_norm_max": 47.49229049682617,
+        "loss": 3.1915317030715022,
+        "preference": 3.0249182752200534,
+        "seconds": 10.746048207976855
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9426691729323309,
+          "confusion": [
+            [
+              81,
+              31,
+              0
+            ],
+            [
+              91,
+              1925,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9271616541353384,
+          "nll": 0.22449170272181132,
+          "play_f1": 0.5704225352112676,
+          "play_precision": 0.47093023255813954,
+          "play_recall": 0.7232142857142857,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9548611111111112
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -10.03620719909668,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.511789560317993,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.369836807250977,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 3,
+      "training": {
+        "behavior": 0.15166995911152167,
+        "chunks": 112,
+        "gradient_norm_max": 54.03435134887695,
+        "loss": 3.131662631471824,
+        "preference": 2.979992655238935,
+        "seconds": 10.86439595799311
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9454887218045113,
+          "confusion": [
+            [
+              78,
+              34,
+              0
+            ],
+            [
+              82,
+              1934,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.930921052631579,
+          "nll": 0.2075686797209056,
+          "play_f1": 0.5735294117647058,
+          "play_precision": 0.4875,
+          "play_recall": 0.6964285714285714,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9593253968253969
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -10.071310043334961,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.4844272136688232,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.520739555358887,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 4,
+      "training": {
+        "behavior": 0.1443482639879221,
+        "chunks": 112,
+        "gradient_norm_max": 58.03669357299805,
+        "loss": 3.143472913430222,
+        "preference": 2.9991246531052247,
+        "seconds": 10.94360279198736
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9464285714285714,
+          "confusion": [
+            [
+              72,
+              40,
+              0
+            ],
+            [
+              74,
+              1942,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9328007518796992,
+          "nll": 0.19579196090571918,
+          "play_f1": 0.5581395348837208,
+          "play_precision": 0.4931506849315068,
+          "play_recall": 0.6428571428571429,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9632936507936508
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -10.153169631958008,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.4812092781066895,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.692224502563477,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 5,
+      "training": {
+        "behavior": 0.1369853554310144,
+        "chunks": 112,
+        "gradient_norm_max": 57.606788635253906,
+        "loss": 3.146768556990927,
+        "preference": 3.0097831961299693,
+        "seconds": 10.72789645800367
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.950187969924812,
+          "confusion": [
+            [
+              72,
+              40,
+              0
+            ],
+            [
+              66,
+              1950,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9431390977443609,
+          "nll": 0.18939247141991342,
+          "play_f1": 0.5760000000000001,
+          "play_precision": 0.5217391304347826,
+          "play_recall": 0.6428571428571429,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9672619047619048
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -10.160372734069824,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.466461420059204,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.750385284423828,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 6,
+      "training": {
+        "behavior": 0.13438074506536526,
+        "chunks": 112,
+        "gradient_norm_max": 62.79926681518555,
+        "loss": 3.1425296265182885,
+        "preference": 3.0081488777484213,
+        "seconds": 11.016431291995104
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.950187969924812,
+          "confusion": [
+            [
+              72,
+              40,
+              0
+            ],
+            [
+              66,
+              1950,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9459586466165414,
+          "nll": 0.18861699316832692,
+          "play_f1": 0.5760000000000001,
+          "play_precision": 0.5217391304347826,
+          "play_recall": 0.6428571428571429,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9672619047619048
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -10.051705360412598,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.4092020988464355,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.705968856811523,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 7,
+      "training": {
+        "behavior": 0.13249605394958053,
+        "chunks": 112,
+        "gradient_norm_max": 63.50944137573242,
+        "loss": 3.121753162728315,
+        "preference": 2.98925710309829,
+        "seconds": 10.932714750000741
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9506578947368421,
+          "confusion": [
+            [
+              70,
+              42,
+              0
+            ],
+            [
+              63,
+              1953,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9473684210526315,
+          "nll": 0.18153363749335863,
+          "play_f1": 0.5714285714285714,
+          "play_precision": 0.5263157894736842,
+          "play_recall": 0.625,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.96875
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -10.205044746398926,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.4694085121154785,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.82995891571045,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 8,
+      "training": {
+        "behavior": 0.13023134852223198,
+        "chunks": 112,
+        "gradient_norm_max": 62.910064697265625,
+        "loss": 3.117025756532842,
+        "preference": 2.9867944169257368,
+        "seconds": 10.78332399998908
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9511278195488722,
+          "confusion": [
+            [
+              72,
+              40,
+              0
+            ],
+            [
+              64,
+              1952,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9468984962406015,
+          "nll": 0.1825940684709502,
+          "play_f1": 0.5806451612903226,
+          "play_precision": 0.5294117647058824,
+          "play_recall": 0.6428571428571429,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9682539682539683
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -10.008550643920898,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.38268780708313,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.699572563171387,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 9,
+      "training": {
+        "behavior": 0.12686452497707382,
+        "chunks": 112,
+        "gradient_norm_max": 68.04801177978516,
+        "loss": 3.141572307219446,
+        "preference": 3.014707769134215,
+        "seconds": 11.083685332996538
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9520676691729323,
+          "confusion": [
+            [
+              72,
+              40,
+              0
+            ],
+            [
+              62,
+              1954,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9487781954887218,
+          "nll": 0.17997178900111607,
+          "play_f1": 0.5853658536585366,
+          "play_precision": 0.5373134328358209,
+          "play_recall": 0.6428571428571429,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9692460317460317
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.980965614318848,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.356733560562134,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.722302436828613,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 10,
+      "training": {
+        "behavior": 0.13002428189377366,
+        "chunks": 112,
+        "gradient_norm_max": 67.0254135131836,
+        "loss": 3.0594340945140823,
+        "preference": 2.929409809410572,
+        "seconds": 10.91435583398561
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9520676691729323,
+          "confusion": [
+            [
+              72,
+              40,
+              0
+            ],
+            [
+              62,
+              1954,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9487781954887218,
+          "nll": 0.1780149452265744,
+          "play_f1": 0.5853658536585366,
+          "play_precision": 0.5373134328358209,
+          "play_recall": 0.6428571428571429,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9692460317460317
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.962069511413574,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.3659892082214355,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.657368659973145,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 11,
+      "training": {
+        "behavior": 0.12783965292432445,
+        "chunks": 112,
+        "gradient_norm_max": 68.82828521728516,
+        "loss": 3.045811786428593,
+        "preference": 2.917972134692328,
+        "seconds": 10.909645042003831
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9530075187969925,
+          "confusion": [
+            [
+              70,
+              42,
+              0
+            ],
+            [
+              58,
+              1958,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9506578947368421,
+          "nll": 0.17522295658945813,
+          "play_f1": 0.5833333333333334,
+          "play_precision": 0.546875,
+          "play_recall": 0.625,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9712301587301587
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.990335464477539,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.3736186027526855,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.690557479858398,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 12,
+      "training": {
+        "behavior": 0.1279936316880464,
+        "chunks": 112,
+        "gradient_norm_max": 70.8781509399414,
+        "loss": 3.039089809795509,
+        "preference": 2.9110961641584123,
+        "seconds": 10.899240083002951
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9515977443609023,
+          "confusion": [
+            [
+              72,
+              40,
+              0
+            ],
+            [
+              63,
+              1953,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9492481203007519,
+          "nll": 0.17737947436945892,
+          "play_f1": 0.582995951417004,
+          "play_precision": 0.5333333333333333,
+          "play_recall": 0.6428571428571429,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.96875
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.783975601196289,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.301194429397583,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.498085021972656,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 13,
+      "training": {
+        "behavior": 0.12394606157613453,
+        "chunks": 112,
+        "gradient_norm_max": 69.39469146728516,
+        "loss": 3.032471879593296,
+        "preference": 2.908525811242206,
+        "seconds": 11.185134375002235
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9548872180451128,
+          "confusion": [
+            [
+              70,
+              42,
+              0
+            ],
+            [
+              54,
+              1962,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9525375939849624,
+          "nll": 0.17257952930657824,
+          "play_f1": 0.5932203389830509,
+          "play_precision": 0.5645161290322581,
+          "play_recall": 0.625,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9732142857142857
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.888891220092773,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.327674627304077,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.626730918884277,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 14,
+      "training": {
+        "behavior": 0.12385333614033048,
+        "chunks": 112,
+        "gradient_norm_max": 72.8797378540039,
+        "loss": 3.0254760332609294,
+        "preference": 2.9016227094190463,
+        "seconds": 11.154238749993965
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9515977443609023,
+          "confusion": [
+            [
+              72,
+              40,
+              0
+            ],
+            [
+              63,
+              1953,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9492481203007519,
+          "nll": 0.17423348255189403,
+          "play_f1": 0.582995951417004,
+          "play_precision": 0.5333333333333333,
+          "play_recall": 0.6428571428571429,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.96875
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.732730865478516,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.284557342529297,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.446272850036621,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 15,
+      "training": {
+        "behavior": 0.12311817285600617,
+        "chunks": 112,
+        "gradient_norm_max": 73.20124053955078,
+        "loss": 3.0087519260518354,
+        "preference": 2.88563375760402,
+        "seconds": 11.113406499993289
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9553571428571429,
+          "confusion": [
+            [
+              70,
+              42,
+              0
+            ],
+            [
+              53,
+              1963,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9530075187969925,
+          "nll": 0.1689582659260727,
+          "play_f1": 0.5957446808510639,
+          "play_precision": 0.5691056910569106,
+          "play_recall": 0.625,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9737103174603174
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.831787109375,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.3127806186676025,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.558143615722656,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 16,
+      "training": {
+        "behavior": 0.12460714130741378,
+        "chunks": 112,
+        "gradient_norm_max": 71.67611694335938,
+        "loss": 2.9589540662397797,
+        "preference": 2.834346903754132,
+        "seconds": 11.275978000019677
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9553571428571429,
+          "confusion": [
+            [
+              70,
+              42,
+              0
+            ],
+            [
+              53,
+              1963,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9530075187969925,
+          "nll": 0.16912205076314285,
+          "play_f1": 0.5957446808510639,
+          "play_precision": 0.5691056910569106,
+          "play_recall": 0.625,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9737103174603174
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.821203231811523,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.3158810138702393,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.527976989746094,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 17,
+      "training": {
+        "behavior": 0.12286982738234135,
+        "chunks": 112,
+        "gradient_norm_max": 73.61369323730469,
+        "loss": 2.9565738448436605,
+        "preference": 2.8337040139096126,
+        "seconds": 11.583580999984406
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9558270676691729,
+          "confusion": [
+            [
+              70,
+              42,
+              0
+            ],
+            [
+              52,
+              1964,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9534774436090225,
+          "nll": 0.1658265711932226,
+          "play_f1": 0.5982905982905983,
+          "play_precision": 0.5737704918032787,
+          "play_recall": 0.625,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9742063492063492
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.850647926330566,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.31355619430542,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.59313678741455,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 18,
+      "training": {
+        "behavior": 0.12259137589717284,
+        "chunks": 112,
+        "gradient_norm_max": 74.96664428710938,
+        "loss": 2.9434384695757347,
+        "preference": 2.8208470913980688,
+        "seconds": 11.521310499985702
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9577067669172933,
+          "confusion": [
+            [
+              70,
+              42,
+              0
+            ],
+            [
+              48,
+              1968,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9553571428571429,
+          "nll": 0.16354044745816268,
+          "play_f1": 0.6086956521739131,
+          "play_precision": 0.5932203389830508,
+          "play_recall": 0.625,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9761904761904762
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.840970039367676,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.2870934009552,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.652795791625977,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 19,
+      "training": {
+        "behavior": 0.11970112534514296,
+        "chunks": 112,
+        "gradient_norm_max": 75.62722778320312,
+        "loss": 2.9554151969392217,
+        "preference": 2.8357140677315846,
+        "seconds": 11.246611291979207
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9586466165413534,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              45,
+              1971,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.956296992481203,
+          "nll": 0.16022679880366458,
+          "play_f1": 0.6106194690265486,
+          "play_precision": 0.6052631578947368,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9776785714285714
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.951150894165039,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.3439602851867676,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.701374053955078,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 20,
+      "training": {
+        "behavior": 0.11842382518391657,
+        "chunks": 112,
+        "gradient_norm_max": 78.73103332519531,
+        "loss": 2.954399488643893,
+        "preference": 2.8359756698565826,
+        "seconds": 11.332592958002351
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9586466165413534,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              45,
+              1971,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.956296992481203,
+          "nll": 0.16169102399091803,
+          "play_f1": 0.6106194690265486,
+          "play_precision": 0.6052631578947368,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9776785714285714
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.821714401245117,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.2730817794799805,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.6564359664917,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 21,
+      "training": {
+        "behavior": 0.12051386539886673,
+        "chunks": 112,
+        "gradient_norm_max": 78.67249298095703,
+        "loss": 2.9064156123370464,
+        "preference": 2.7859017460473945,
+        "seconds": 11.261155457992572
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9558270676691729,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              51,
+              1965,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9534774436090225,
+          "nll": 0.16122705193194456,
+          "play_f1": 0.5948275862068966,
+          "play_precision": 0.575,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9747023809523809
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.830044746398926,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.2894668579101562,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.62411880493164,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 22,
+      "training": {
+        "behavior": 0.11876264240189423,
+        "chunks": 112,
+        "gradient_norm_max": 79.3120346069336,
+        "loss": 2.9104077817818115,
+        "preference": 2.7916451522282193,
+        "seconds": 10.255823749990668
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9548872180451128,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              53,
+              1963,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9525375939849624,
+          "nll": 0.16233790201779202,
+          "play_f1": 0.5897435897435898,
+          "play_precision": 0.5655737704918032,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9737103174603174
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.662027359008789,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.1996896266937256,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.559155464172363,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 23,
+      "training": {
+        "behavior": 0.11941006224930918,
+        "chunks": 112,
+        "gradient_norm_max": 78.45360565185547,
+        "loss": 2.8771015916801326,
+        "preference": 2.757691541420562,
+        "seconds": 8.60563379197265
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.956296992481203,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              50,
+              1966,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9539473684210527,
+          "nll": 0.159252084926457,
+          "play_f1": 0.5974025974025975,
+          "play_precision": 0.5798319327731093,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9751984126984127
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.826425552368164,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.2814035415649414,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.640974998474121,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 24,
+      "training": {
+        "behavior": 0.11666561196034309,
+        "chunks": 112,
+        "gradient_norm_max": 81.44245147705078,
+        "loss": 2.9024395658343565,
+        "preference": 2.7857739669936046,
+        "seconds": 8.375323874992318
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.956766917293233,
+          "confusion": [
+            [
+              71,
+              41,
+              0
+            ],
+            [
+              51,
+              1965,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9544172932330827,
+          "nll": 0.16135548510679737,
+          "play_f1": 0.6068376068376068,
+          "play_precision": 0.5819672131147541,
+          "play_recall": 0.6339285714285714,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9747023809523809
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.63980484008789,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.1767704486846924,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.583452224731445,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 25,
+      "training": {
+        "behavior": 0.11793640239609106,
+        "chunks": 112,
+        "gradient_norm_max": 80.83653259277344,
+        "loss": 2.8690350000896223,
+        "preference": 2.7510985960917815,
+        "seconds": 8.319986166985473
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.956296992481203,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              50,
+              1966,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9539473684210527,
+          "nll": 0.15972349069718467,
+          "play_f1": 0.5974025974025975,
+          "play_precision": 0.5798319327731093,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9751984126984127
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.698241233825684,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.1972897052764893,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.63792610168457,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 26,
+      "training": {
+        "behavior": 0.11625725405091154,
+        "chunks": 112,
+        "gradient_norm_max": 82.99583435058594,
+        "loss": 2.8843116505158832,
+        "preference": 2.7680543921887875,
+        "seconds": 8.316146207973361
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.956766917293233,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              49,
+              1967,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9544172932330827,
+          "nll": 0.15880048906962788,
+          "play_f1": 0.6,
+          "play_precision": 0.5847457627118644,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9756944444444444
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.632705688476562,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.142775297164917,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.670641899108887,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 27,
+      "training": {
+        "behavior": 0.1140436144269188,
+        "chunks": 112,
+        "gradient_norm_max": 85.27582550048828,
+        "loss": 2.8835651284815476,
+        "preference": 2.769521536571639,
+        "seconds": 8.252823916001944
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9572368421052632,
+          "confusion": [
+            [
+              71,
+              41,
+              0
+            ],
+            [
+              50,
+              1966,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9548872180451128,
+          "nll": 0.15916180980384798,
+          "play_f1": 0.6094420600858369,
+          "play_precision": 0.5867768595041323,
+          "play_recall": 0.6339285714285714,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9751984126984127
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.585809707641602,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.1106834411621094,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.673452377319336,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 28,
+      "training": {
+        "behavior": 0.12003952400638289,
+        "chunks": 112,
+        "gradient_norm_max": 85.83320617675781,
+        "loss": 2.7824555681935244,
+        "preference": 2.6624160456870283,
+        "seconds": 8.2231104579987
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.956766917293233,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              49,
+              1967,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9544172932330827,
+          "nll": 0.15633863438782108,
+          "play_f1": 0.6,
+          "play_precision": 0.5847457627118644,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9756944444444444
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.748197555541992,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.186706066131592,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.768243789672852,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 29,
+      "training": {
+        "behavior": 0.11417724837623869,
+        "chunks": 112,
+        "gradient_norm_max": 87.27542114257812,
+        "loss": 2.8577573371273632,
+        "preference": 2.743580099195242,
+        "seconds": 8.207292834005784
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9591165413533834,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              44,
+              1972,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.956766917293233,
+          "nll": 0.1536710878564535,
+          "play_f1": 0.6133333333333333,
+          "play_precision": 0.6106194690265486,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9781746031746031
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.750734329223633,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.14762544631958,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.88963508605957,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 30,
+      "training": {
+        "behavior": 0.11489526521368784,
+        "chunks": 112,
+        "gradient_norm_max": 87.54850769042969,
+        "loss": 2.8235026531058662,
+        "preference": 2.7086073798792705,
+        "seconds": 8.165167666011257
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9572368421052632,
+          "confusion": [
+            [
+              71,
+              41,
+              0
+            ],
+            [
+              50,
+              1966,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9548872180451128,
+          "nll": 0.15872920780176564,
+          "play_f1": 0.6094420600858369,
+          "play_precision": 0.5867768595041323,
+          "play_recall": 0.6339285714285714,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9751984126984127
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.534825325012207,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.079172372817993,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.66645336151123,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 31,
+      "training": {
+        "behavior": 0.11743761103779045,
+        "chunks": 112,
+        "gradient_norm_max": 86.76432800292969,
+        "loss": 2.776805853331877,
+        "preference": 2.6593682473259315,
+        "seconds": 8.060952125000767
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.956766917293233,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              49,
+              1967,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9544172932330827,
+          "nll": 0.1555938976204121,
+          "play_f1": 0.6,
+          "play_precision": 0.5847457627118644,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9756944444444444
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.63806438446045,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.11138653755188,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.774709701538086,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 32,
+      "training": {
+        "behavior": 0.1168323080668675,
+        "chunks": 112,
+        "gradient_norm_max": 86.39464569091797,
+        "loss": 2.76018154223857,
+        "preference": 2.643349228160722,
+        "seconds": 8.061806958023226
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9619360902255639,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              38,
+              1978,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9595864661654135,
+          "nll": 0.15124498531082295,
+          "play_f1": 0.6301369863013699,
+          "play_precision": 0.6448598130841121,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9811507936507936
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.797869682312012,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.1669960021972656,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.925174713134766,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 33,
+      "training": {
+        "behavior": 0.1112408117863067,
+        "chunks": 112,
+        "gradient_norm_max": 89.72369384765625,
+        "loss": 2.828756868741558,
+        "preference": 2.717516060386385,
+        "seconds": 8.037346583005274
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9577067669172933,
+          "confusion": [
+            [
+              71,
+              41,
+              0
+            ],
+            [
+              49,
+              1967,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9553571428571429,
+          "nll": 0.15553928781790952,
+          "play_f1": 0.6120689655172414,
+          "play_precision": 0.5916666666666667,
+          "play_recall": 0.6339285714285714,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9756944444444444
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.577048301696777,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.059145927429199,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.809596061706543,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 34,
+      "training": {
+        "behavior": 0.11696328346027128,
+        "chunks": 112,
+        "gradient_norm_max": 91.61953735351562,
+        "loss": 2.7662590647399026,
+        "preference": 2.649295773357153,
+        "seconds": 8.054681250010617
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9577067669172933,
+          "confusion": [
+            [
+              71,
+              41,
+              0
+            ],
+            [
+              49,
+              1967,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9553571428571429,
+          "nll": 0.15557689482129103,
+          "play_f1": 0.6120689655172414,
+          "play_precision": 0.5916666666666667,
+          "play_recall": 0.6339285714285714,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9756944444444444
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.531647682189941,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.0353991985321045,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.790514945983887,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 35,
+      "training": {
+        "behavior": 0.11404756316187559,
+        "chunks": 112,
+        "gradient_norm_max": 90.65930938720703,
+        "loss": 2.7606445801668866,
+        "preference": 2.6465970197958604,
+        "seconds": 8.040182374999858
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.956766917293233,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              49,
+              1967,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9544172932330827,
+          "nll": 0.15333993768116416,
+          "play_f1": 0.6,
+          "play_precision": 0.5847457627118644,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9756944444444444
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.654146194458008,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.0837490558624268,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.888813972473145,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 36,
+      "training": {
+        "behavior": 0.11292782653721847,
+        "chunks": 112,
+        "gradient_norm_max": 92.35275268554688,
+        "loss": 2.7819132688288977,
+        "preference": 2.668985434408699,
+        "seconds": 8.042677125020418
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9577067669172933,
+          "confusion": [
+            [
+              71,
+              41,
+              0
+            ],
+            [
+              49,
+              1967,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9553571428571429,
+          "nll": 0.15393774391894222,
+          "play_f1": 0.6120689655172414,
+          "play_precision": 0.5916666666666667,
+          "play_recall": 0.6339285714285714,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9756944444444444
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.568133354187012,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.026200532913208,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.890069961547852,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 37,
+      "training": {
+        "behavior": 0.11363970899921176,
+        "chunks": 112,
+        "gradient_norm_max": 93.89299774169922,
+        "loss": 2.7481597052059703,
+        "preference": 2.6345200022416457,
+        "seconds": 8.049784000002546
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.956766917293233,
+          "confusion": [
+            [
+              69,
+              43,
+              0
+            ],
+            [
+              49,
+              1967,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9544172932330827,
+          "nll": 0.1508034836794985,
+          "play_f1": 0.6,
+          "play_precision": 0.5847457627118644,
+          "play_recall": 0.6160714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9756944444444444
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.748085021972656,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.110607385635376,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.994627952575684,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 38,
+      "training": {
+        "behavior": 0.11183305329905124,
+        "chunks": 112,
+        "gradient_norm_max": 91.5118179321289,
+        "loss": 2.7612412716927275,
+        "preference": 2.6494082201804434,
+        "seconds": 8.051246999995783
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.9577067669172933,
+          "confusion": [
+            [
+              71,
+              41,
+              0
+            ],
+            [
+              49,
+              1967,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9553571428571429,
+          "nll": 0.1531071132486616,
+          "play_f1": 0.6120689655172414,
+          "play_precision": 0.5916666666666667,
+          "play_recall": 0.6339285714285714,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9756944444444444
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.573460578918457,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -2.032071828842163,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.883118629455566,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 39,
+      "training": {
+        "behavior": 0.11263421978739123,
+        "chunks": 112,
+        "gradient_norm_max": 95.29305267333984,
+        "loss": 2.7610669366383394,
+        "preference": 2.648432715662888,
+        "seconds": 8.051837707986124
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.956296992481203,
+          "confusion": [
+            [
+              76,
+              36,
+              0
+            ],
+            [
+              57,
+              1959,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9539473684210527,
+          "nll": 0.1556616937163937,
+          "play_f1": 0.6204081632653061,
+          "play_precision": 0.5714285714285714,
+          "play_recall": 0.6785714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9717261904761905
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.40400218963623,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -1.9504997730255127,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.790871620178223,
+            "pairs": 45
+          }
+        }
+      }
+    },
+    {
+      "eligible": false,
+      "epoch": 40,
+      "training": {
+        "behavior": 0.11154168610145072,
+        "chunks": 112,
+        "gradient_norm_max": 97.38079833984375,
+        "loss": 2.7618737567307625,
+        "preference": 2.650332063436508,
+        "seconds": 8.056978084001457
+      },
+      "validation": {
+        "behavior": {
+          "ability_accuracy": 0.0,
+          "accuracy": 0.956296992481203,
+          "confusion": [
+            [
+              76,
+              36,
+              0
+            ],
+            [
+              57,
+              1959,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "exact_action_accuracy": 0.9539473684210527,
+          "nll": 0.15505224409429147,
+          "play_f1": 0.6204081632653061,
+          "play_precision": 0.5714285714285714,
+          "play_recall": 0.6785714285714286,
+          "rows": 2128,
+          "support": {
+            "ability": 0,
+            "play": 112,
+            "wait": 2016
+          },
+          "wait_accuracy": 0.9717261904761905
+        },
+        "preferences": {
+          "corrective": {
+            "accuracy": 0.0,
+            "mean_margin": -9.444178581237793,
+            "pairs": 89
+          },
+          "overall": {
+            "accuracy": 0.3358208955223881,
+            "mean_margin": -1.956455945968628,
+            "pairs": 134
+          },
+          "safety": {
+            "accuracy": 1.0,
+            "mean_margin": 12.8525972366333,
+            "pairs": 45
+          }
+        }
+      }
+    }
+  ],
+  "initial_checkpoint": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/checkpoints/hog26_playgate_distill_seed1196006/candidate.pt",
+  "initial_checkpoint_sha256": "f4920a68a58d55df46026e646090fd3affd5889990f037cedfa84e0b35910bc4",
+  "initial_validation": {
+    "behavior": {
+      "ability_accuracy": 0.0,
+      "accuracy": 0.9417293233082706,
+      "confusion": [
+        [
+          85,
+          27,
+          0
+        ],
+        [
+          97,
+          1919,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "exact_action_accuracy": 0.9417293233082706,
+      "nll": 0.3240773323223107,
+      "play_f1": 0.5782312925170069,
+      "play_precision": 0.46703296703296704,
+      "play_recall": 0.7589285714285714,
+      "rows": 2128,
+      "support": {
+        "ability": 0,
+        "play": 112,
+        "wait": 2016
+      },
+      "wait_accuracy": 0.9518849206349206
+    },
+    "preferences": {
+      "corrective": {
+        "accuracy": 0.0,
+        "mean_margin": -10.375457763671875,
+        "pairs": 89
+      },
+      "overall": {
+        "accuracy": 0.3358208955223881,
+        "mean_margin": -2.9005138874053955,
+        "pairs": 134
+      },
+      "safety": {
+        "accuracy": 1.0,
+        "mean_margin": 11.88326644897461,
+        "pairs": 45
+      }
+    }
+  },
+  "learning_rate": 1e-05,
+  "output_checkpoint": null,
+  "root_behavior_weight": 0.1,
+  "schema": "clasher.hog26.factorized-counterfactual.v1",
+  "seed": 1197103,
+  "selected_nonzero_epoch": false,
+  "selection_gate": {
+    "maximum_exact_regression": 0.01,
+    "maximum_safety_regression": 0.01,
+    "minimum_corrective_improvement": 0.05
+  },
+  "train_corpus": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_reward_train_seed1194001/corpus.npz",
+  "train_corpus_sha256": "a5e8c8ab908ab57913355ecddd3311c00c41a739ddeefb7180bdcead38659ae3",
+  "train_preferences": 264,
+  "trainable_parameter_count": 243274,
+  "trainable_parameter_names": [
+    "tile_decoder.query_norm.weight",
+    "tile_decoder.query_norm.bias",
+    "tile_decoder.context_norm.weight",
+    "tile_decoder.context_norm.bias",
+    "tile_decoder.attention.in_proj_weight",
+    "tile_decoder.attention.in_proj_bias",
+    "tile_decoder.attention.out_proj.weight",
+    "tile_decoder.attention.out_proj.bias",
+    "tile_decoder.mlp_norm.weight",
+    "tile_decoder.mlp_norm.bias",
+    "tile_decoder.mlp.0.weight",
+    "tile_decoder.mlp.0.bias",
+    "tile_decoder.mlp.2.weight",
+    "tile_decoder.mlp.2.bias",
+    "tile_key.weight",
+    "card_query.0.weight",
+    "card_query.0.bias",
+    "card_query.2.weight",
+    "location_bias.weight",
+    "location_bias.bias",
+    "action_type_head.0.weight",
+    "action_type_head.0.bias",
+    "action_type_head.2.weight",
+    "action_type_head.2.bias",
+    "hierarchical_mode_gate.0.weight",
+    "hierarchical_mode_gate.0.bias",
+    "hierarchical_mode_gate.2.weight",
+    "hierarchical_mode_gate.2.bias",
+    "semantic_slot_choice_query.weight",
+    "mechanics_slot_choice_query.weight"
+  ],
+  "trainable_prefixes": [
+    "hierarchical_mode_gate.",
+    "action_type_head.",
+    "semantic_slot_choice_query.",
+    "mechanics_slot_choice_query.",
+    "card_query.",
+    "tile_decoder.",
+    "tile_key.",
+    "location_bias."
+  ],
+  "validation_corpus": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_reward_validation_seed1195001/corpus.npz",
+  "validation_corpus_sha256": "3e1a75b38a627b72063a204bfdb5ba2eedc227b16fa613d7561a2c495897862c",
+  "validation_preferences": 134
+}

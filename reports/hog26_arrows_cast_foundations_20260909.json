@@ -1,0 +1,25 @@
+{
+  "status": "validated foundations; runtime integration pending",
+  "commit": "5c544bb9",
+  "tests": {
+    "passed": 25,
+    "scope": [
+      "CPU and MPS supplied-state cast draws and final CPython RNG state",
+      "inactive rows, selective reset, independent fork and fanout",
+      "all359 angles and10 members, both seats, three radius profiles",
+      "actual Arrows factory combined RNG and geometry cast comparison"
+    ]
+  },
+  "limitations": [
+    "not integrated into SimpleGymRuntime",
+    "no projectile lifecycle or complete-game parity yet",
+    "CPU RNG mask/output transfers explicit; validation synchronizes",
+    "source authority remains stale; no new collection or fitting"
+  ],
+  "source_sha256": {
+    "src/clasher/torch_sim/simple_cast_rng.py": "34fb41874f6ba883742d7af20335d8d1f513e92f086518ab98ba9b752308c169",
+    "src/clasher/torch_sim/simple_grouped_geometry.py": "88fa13fb76c7d49dc6c7ac23fbba70913f8dee6d78ae3e3d997ddfaf808e67b1",
+    "tests/test_torch_simple_cast_rng.py": "46652b367ecee8eccb3b489a5af7eef08a9bb11d849141a4a2082ed63d57df30",
+    "tests/test_torch_simple_grouped_geometry.py": "e1942658aa68dc84d1810ce33342745db235c6ada1eea2d4a3fb6b6b95fb3a70"
+  }
+}

@@ -1,0 +1,224 @@
+{
+  "status": "no-candidate-promoted",
+  "source": "reports/hog26_margin_complete_training_screen_20260908.json",
+  "results": [
+    {
+      "features": "public-globals",
+      "power": 0.0,
+      "seed": 1278901,
+      "representative_phase_gain": {
+        "early": 0.053471729159355164,
+        "late": -0.004929788410663605,
+        "middle": 0.023972034454345703
+      },
+      "full_phase_gain": {
+        "early": 0.03405542834661901,
+        "late": 0.025456899172590617,
+        "middle": 0.0277423379063049
+      },
+      "fold_late_representative_gain": [
+        -0.016444027423858643,
+        -0.052170777693390846,
+        0.011388629674911499,
+        0.015233509242534637
+      ],
+      "fold_late_full_phase_gain": [
+        0.021811541425995527,
+        -0.03026217301376164,
+        0.04106658312181632,
+        0.046603901530889905
+      ]
+    },
+    {
+      "features": "public-globals",
+      "power": 0.0,
+      "seed": 1278902,
+      "representative_phase_gain": {
+        "early": 0.051398128271102905,
+        "late": -0.001776471734046936,
+        "middle": 0.02070547640323639
+      },
+      "full_phase_gain": {
+        "early": 0.03269829415755036,
+        "late": 0.02763604559452058,
+        "middle": 0.024789739102176765
+      },
+      "fold_late_representative_gain": [
+        -0.009445443749427795,
+        -0.05119135417044163,
+        0.008652754127979279,
+        0.022600002586841583
+      ],
+      "fold_late_full_phase_gain": [
+        0.02532862916123122,
+        -0.02801569220609963,
+        0.041644404052446286,
+        0.049369349445709414
+      ]
+    },
+    {
+      "features": "public-globals",
+      "power": 1.0,
+      "seed": 1278901,
+      "representative_phase_gain": {
+        "early": 0.05461190640926361,
+        "late": -0.015524722635746002,
+        "middle": 0.022679761052131653
+      },
+      "full_phase_gain": {
+        "early": 0.03190908062000138,
+        "late": 0.013245965483992431,
+        "middle": 0.026897162783354356
+      },
+      "fold_late_representative_gain": [
+        -0.027852855622768402,
+        -0.03855740465223789,
+        -0.008156843483448029,
+        -0.001225307583808899
+      ],
+      "fold_late_full_phase_gain": [
+        0.004694357025437057,
+        -0.008352282037958503,
+        0.019333692640066145,
+        0.02560965092304875
+      ]
+    },
+    {
+      "features": "public-globals",
+      "power": 1.0,
+      "seed": 1278902,
+      "representative_phase_gain": {
+        "early": 0.055219024419784546,
+        "late": -0.01547028124332428,
+        "middle": 0.024492502212524414
+      },
+      "full_phase_gain": {
+        "early": 0.03322302654851228,
+        "late": 0.011900497412380692,
+        "middle": 0.028259375662777645
+      },
+      "fold_late_representative_gain": [
+        -0.027999870479106903,
+        -0.030283944681286812,
+        -0.016893945634365082,
+        0.0018701553344726562
+      ],
+      "fold_late_full_phase_gain": [
+        0.005440386454574763,
+        -0.005784779717214405,
+        0.012525790805617968,
+        0.025551937410936636
+      ]
+    },
+    {
+      "features": "full-state",
+      "power": 0.0,
+      "seed": 1278901,
+      "representative_phase_gain": {
+        "early": 0.06702350080013275,
+        "late": -0.03309750556945801,
+        "middle": 0.029660925269126892
+      },
+      "full_phase_gain": {
+        "early": 0.04564797052686723,
+        "late": 0.00014295720477373555,
+        "middle": 0.033546893236967745
+      },
+      "fold_late_representative_gain": [
+        -0.030261173844337463,
+        -0.0913595799356699,
+        -0.028018437325954437,
+        -0.004975639283657074
+      ],
+      "fold_late_full_phase_gain": [
+        0.012594904634170234,
+        -0.01698144655674696,
+        0.0018040059755245845,
+        0.0014258296612431021
+      ]
+    },
+    {
+      "features": "full-state",
+      "power": 0.0,
+      "seed": 1278902,
+      "representative_phase_gain": {
+        "early": 0.07321354746818542,
+        "late": -0.031668029725551605,
+        "middle": 0.031698018312454224
+      },
+      "full_phase_gain": {
+        "early": 0.05089567422207134,
+        "late": 0.0022893330359903094,
+        "middle": 0.035493673680613326
+      },
+      "fold_late_representative_gain": [
+        -0.03918013721704483,
+        -0.07091390527784824,
+        -0.03316333144903183,
+        -0.0028439462184906006
+      ],
+      "fold_late_full_phase_gain": [
+        0.0046655642567202445,
+        -0.010181241109967232,
+        0.009732959046959876,
+        0.0016592765117392821
+      ]
+    },
+    {
+      "features": "full-state",
+      "power": 1.0,
+      "seed": 1278901,
+      "representative_phase_gain": {
+        "early": 0.07565094530582428,
+        "late": -0.013533130288124084,
+        "middle": 0.03384929895401001
+      },
+      "full_phase_gain": {
+        "early": 0.04732103601175671,
+        "late": 0.007171651970845862,
+        "middle": 0.036797504795978354
+      },
+      "fold_late_representative_gain": [
+        -0.026031039655208588,
+        -0.02389647625386715,
+        -0.013430796563625336,
+        -0.00017562508583068848
+      ],
+      "fold_late_full_phase_gain": [
+        0.008942763763479888,
+        0.0016471868380904197,
+        0.010927535220980644,
+        0.006065492244327769
+      ]
+    },
+    {
+      "features": "full-state",
+      "power": 1.0,
+      "seed": 1278902,
+      "representative_phase_gain": {
+        "early": 0.07748469710350037,
+        "late": -0.014041438698768616,
+        "middle": 0.033975496888160706
+      },
+      "full_phase_gain": {
+        "early": 0.047758330018647634,
+        "late": 0.005950291296288084,
+        "middle": 0.036543907970448035
+      },
+      "fold_late_representative_gain": [
+        -0.025094203650951385,
+        -0.023520195856690407,
+        -0.01760099083185196,
+        0.0011767148971557617
+      ],
+      "fold_late_full_phase_gain": [
+        0.0100744892610237,
+        0.0016871590167284011,
+        0.009620622172951699,
+        0.0027934901197167006
+      ]
+    }
+  ],
+  "conclusion": "Complete-mixture public-global power0 heads improve full-phase late margins, but every configuration still regresses at late representatives. Old screen non-regression passes are insufficient for the full protocol.",
+  "next_diagnostic": "Separate terminal-adjacent failure from full-phase forecasting and resolve the known temporal minibatch normalization confound before interpreting another recurrent comparison."
+}

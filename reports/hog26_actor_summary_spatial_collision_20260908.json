@@ -1,0 +1,37 @@
+{
+  "base_policy_sha256": "f609b60b3e7b7b574e084b15255e0fc247447e3c18d8552714213ccd0c709336",
+  "entities": [
+    {
+      "position_after": [
+        0.8055555820465088,
+        0.528124988079071
+      ],
+      "position_before": [
+        0.8055555820465088,
+        0.3218750059604645
+      ],
+      "slot": 6,
+      "token": "troop_body:IceSpirits"
+    },
+    {
+      "position_after": [
+        0.8055555820465088,
+        0.3218750059604645
+      ],
+      "position_before": [
+        0.8055555820465088,
+        0.528124988079071
+      ],
+      "slot": 7,
+      "token": "troop_body:Princess"
+    }
+  ],
+  "maximum_raw_coordinate_change": 0.20624998211860657,
+  "maximum_summary_difference": 0.0,
+  "row": 13,
+  "scope": "Swapping only the coordinates of two different visible enemy troop types preserves the pooled summary. This demonstrates lost identity-position association, not a simulated outcome difference or a reachable alternate trajectory.",
+  "source": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
+  "source_sha256": "7edd615cfe63400bd64644b6be7d26dbd9532fca00f05bebfb3e29d7e7849a3f",
+  "status": "information-loss-demonstrated",
+  "summary_features": 398
+}

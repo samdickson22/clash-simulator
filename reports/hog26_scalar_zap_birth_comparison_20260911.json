@@ -1,0 +1,28 @@
+{
+  "identical": true,
+  "different_keys": [],
+  "patched_sha256": "f9f6c8acdc713c96186fc2d4391f36b945bf20366477b24a7fd701d2eeb642a5",
+  "control_sha256": "f9f6c8acdc713c96186fc2d4391f36b945bf20366477b24a7fd701d2eeb642a5",
+  "terminal": {
+    "ticks": 4985,
+    "winner": 1,
+    "outcome": "loss",
+    "terminal_tower_hp_by_slot": [
+      [
+        0.0,
+        0.0,
+        4824.0
+      ],
+      [
+        303.0,
+        0.0,
+        2605.0
+      ]
+    ],
+    "terminal_tower_margin": 0.12023751564008991,
+    "battle_rng_sha256": "0d10d5c8fa7c338c809e58ba014bf264994ac4c788fc5151410cb92f94ae90ed",
+    "order_rng_sha256": "fa461aa478f851f949cbfdb5db84b405b7e85bb40f082177e787ba50e671222b"
+  },
+  "decisions": 624,
+  "control": "original55302792 receipts with only zero-entity spell bind bypassed; other bindings unchanged; no physics/RNG overrides"
+}

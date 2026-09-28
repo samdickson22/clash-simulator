@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "source_authority_sha256": "2a41e9c2bc7eeb272e1c4cb941f65c8d88f9f6781c56c3897a60ee0942f6541a",
+  "evidence": {
+    "datasets/derived/hog26_seed_transfer_preflight_20260911/complete.json": "eca1a9d9a75a8a38abff3a6dd7dc567b9f26de74b7b4abcf7b16e0c6b75d944e",
+    "reports/hog26_seed_transfer_preflight_resume_20260911.log": "5ce41ef74c95c444a95df85819de793113e9421f0d1e8dd18c2c0f430085b38c",
+    "reports/hog26_seed_transfer_spec_20260911.json": "db26411e42e3f6510919fde62838125782f20dc66073c36d3b6a7d59552f33f4",
+    "reports/hog26_scalar_pilot_completed_comparison_review_20260911.json": "50f2ef6991105763780dfd179a6f90efc41fe18d374d5ee91cf92c9692d1f79a",
+    "reports/hog26_scalar_pilot_comparison_plan_20260911.json": "72697f6e56cf9bae9145a0fc4b73764c1e9a01f0d2c43b0a238e550fa5c5d9cb"
+  },
+  "checks": {
+    "preflight_games": 12,
+    "original_simulator_projection_sources_unchanged": true,
+    "fresh_deals_disjoint": true,
+    "all_frozen_model_artifacts_pinned": true,
+    "protocol_tests": 3,
+    "resume_revalidated": true
+  },
+  "scope": "Frozen-model seed-transfer diagnostic, no training or promotion."
+}

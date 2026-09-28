@@ -1,0 +1,214 @@
+{
+  "cell_outcomes": {
+    "bridge-pressure|Golem Hog Fireball 3.4|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 3
+    },
+    "bridge-pressure|Golem Hog Fireball 3.4|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 3
+    },
+    "bridge-pressure|Hog 2.6 (Barbarian Barrel)|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 3
+    },
+    "bridge-pressure|Hog 2.6 (Barbarian Barrel)|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 3
+    },
+    "bridge-pressure|Hog FC 2.6 Cycle|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 3
+    },
+    "bridge-pressure|Hog FC 2.6 Cycle|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 3
+    },
+    "bridge-pressure|WB Valk Log Bait 2.8|seat0": {
+      "draw": 0,
+      "loss": 3,
+      "win": 0
+    },
+    "bridge-pressure|WB Valk Log Bait 2.8|seat1": {
+      "draw": 0,
+      "loss": 3,
+      "win": 0
+    },
+    "reactive-defense|Golem Hog Fireball 3.4|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 3
+    },
+    "reactive-defense|Golem Hog Fireball 3.4|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 3
+    },
+    "reactive-defense|Hog 2.6 (Barbarian Barrel)|seat0": {
+      "draw": 0,
+      "loss": 3,
+      "win": 0
+    },
+    "reactive-defense|Hog 2.6 (Barbarian Barrel)|seat1": {
+      "draw": 0,
+      "loss": 3,
+      "win": 0
+    },
+    "reactive-defense|Hog FC 2.6 Cycle|seat0": {
+      "draw": 0,
+      "loss": 3,
+      "win": 0
+    },
+    "reactive-defense|Hog FC 2.6 Cycle|seat1": {
+      "draw": 0,
+      "loss": 3,
+      "win": 0
+    },
+    "reactive-defense|WB Valk Log Bait 2.8|seat0": {
+      "draw": 0,
+      "loss": 3,
+      "win": 0
+    },
+    "reactive-defense|WB Valk Log Bait 2.8|seat1": {
+      "draw": 0,
+      "loss": 3,
+      "win": 0
+    },
+    "spell-control|Golem Hog Fireball 3.4|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 3
+    },
+    "spell-control|Golem Hog Fireball 3.4|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 3
+    },
+    "spell-control|Hog 2.6 (Barbarian Barrel)|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 3
+    },
+    "spell-control|Hog 2.6 (Barbarian Barrel)|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 3
+    },
+    "spell-control|Hog FC 2.6 Cycle|seat0": {
+      "draw": 0,
+      "loss": 3,
+      "win": 0
+    },
+    "spell-control|Hog FC 2.6 Cycle|seat1": {
+      "draw": 0,
+      "loss": 3,
+      "win": 0
+    },
+    "spell-control|WB Valk Log Bait 2.8|seat0": {
+      "draw": 0,
+      "loss": 3,
+      "win": 0
+    },
+    "spell-control|WB Valk Log Bait 2.8|seat1": {
+      "draw": 0,
+      "loss": 3,
+      "win": 0
+    }
+  },
+  "checks": {
+    "complete_stream_coverage": true,
+    "contiguous_stream_ordinals": true,
+    "critic_inputs_absent": true,
+    "exact_actor_relative_terminal_labels": true,
+    "exact_episode_boundaries": true,
+    "finite_outcomes_and_margins": true,
+    "unique_hashes": true,
+    "unique_seeds": true
+  },
+  "corpora": [
+    {
+      "episodes": 72,
+      "margin_maximum": 0.6000514626502991,
+      "margin_minimum": -0.6488317251205444,
+      "outcomes": {
+        "draw": 0,
+        "loss": 36,
+        "win": 36
+      },
+      "path": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_untouched_holdout_seed1278001/corpus.npz",
+      "rows": 35511,
+      "seed": 1278001,
+      "sha256": "48bd09fd472267325e90893d20f535c8fb66e41b504e1b5f83e128ea52b131e4"
+    },
+    {
+      "episodes": 16,
+      "margin_maximum": 0.0,
+      "margin_minimum": 0.0,
+      "outcomes": {
+        "draw": 16,
+        "loss": 0,
+        "win": 0
+      },
+      "path": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_symmetric_draw_holdout_seed1278002/corpus.npz",
+      "rows": 6208,
+      "seed": 1278002,
+      "sha256": "2b4f55133ae6b84e91bbca0c08cc811cf704257e07f7b7e592e5f94c25b7fe57"
+    }
+  ],
+  "corpus_count": 2,
+  "episodes": 88,
+  "natural_diversity": {
+    "cells_with_both_decisive_outcomes": 0,
+    "opponent_decks": [
+      "Golem Hog Fireball 3.4",
+      "Hog 2.6 (Barbarian Barrel)",
+      "Hog FC 2.6 Cycle",
+      "WB Valk Log Bait 2.8"
+    ],
+    "opponent_styles": [
+      "bridge-pressure",
+      "reactive-defense",
+      "spell-control"
+    ],
+    "phase_matchup_clusters": {
+      "early": {
+        "clusters": 36,
+        "with_both": 0,
+        "with_loss": 18,
+        "with_win": 18
+      },
+      "late": {
+        "clusters": 12,
+        "with_both": 0,
+        "with_loss": 6,
+        "with_win": 6
+      },
+      "middle": {
+        "clusters": 33,
+        "with_both": 0,
+        "with_loss": 15,
+        "with_win": 18
+      }
+    },
+    "style_deck_seat_cells": 24
+  },
+  "outcomes": {
+    "draw": 16,
+    "loss": 36,
+    "win": 36
+  },
+  "phase_rows": {
+    "early": 21688,
+    "late": 3840,
+    "middle": 16191
+  },
+  "rows": 41719,
+  "schema": "clasher.hog26.outcome-corpus-audit.v1",
+  "status": "passed"
+}

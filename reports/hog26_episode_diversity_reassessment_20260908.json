@@ -1,0 +1,1472 @@
+{
+  "scope": "Completed legacy training corpora only. Hash covers full per-game public globals and actions; it does not claim equality of every simulator state field.",
+  "within_seed_by_style": [
+    {
+      "style": "balanced",
+      "episodes": 32,
+      "unique_public_action_transcripts": 6,
+      "per_stream_unique_counts": [
+        1
+      ]
+    },
+    {
+      "style": "random",
+      "episodes": 32,
+      "unique_public_action_transcripts": 32,
+      "per_stream_unique_counts": [
+        4
+      ]
+    },
+    {
+      "style": "slow-push",
+      "episodes": 32,
+      "unique_public_action_transcripts": 7,
+      "per_stream_unique_counts": [
+        1
+      ]
+    }
+  ],
+  "cross_seed_shared_matchups": [],
+  "episode_records": [
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Log Bait",
+      "seat": 0,
+      "stream": 0,
+      "ordinal": 0,
+      "transcript_sha256": "420f03ed9f00c637aaded0f69afa681b5890b3fcf75a278cca440ef9212d8de4"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Log Bait",
+      "seat": 0,
+      "stream": 0,
+      "ordinal": 1,
+      "transcript_sha256": "420f03ed9f00c637aaded0f69afa681b5890b3fcf75a278cca440ef9212d8de4"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Log Bait",
+      "seat": 0,
+      "stream": 0,
+      "ordinal": 2,
+      "transcript_sha256": "420f03ed9f00c637aaded0f69afa681b5890b3fcf75a278cca440ef9212d8de4"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Log Bait",
+      "seat": 0,
+      "stream": 0,
+      "ordinal": 3,
+      "transcript_sha256": "420f03ed9f00c637aaded0f69afa681b5890b3fcf75a278cca440ef9212d8de4"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Log Bait",
+      "seat": 1,
+      "stream": 1,
+      "ordinal": 0,
+      "transcript_sha256": "57fe1cf80212dfe66d38a8a829d86dacdcacb0a3fb30e8fb20cda965552546a9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Log Bait",
+      "seat": 1,
+      "stream": 1,
+      "ordinal": 1,
+      "transcript_sha256": "57fe1cf80212dfe66d38a8a829d86dacdcacb0a3fb30e8fb20cda965552546a9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Log Bait",
+      "seat": 1,
+      "stream": 1,
+      "ordinal": 2,
+      "transcript_sha256": "57fe1cf80212dfe66d38a8a829d86dacdcacb0a3fb30e8fb20cda965552546a9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Log Bait",
+      "seat": 1,
+      "stream": 1,
+      "ordinal": 3,
+      "transcript_sha256": "57fe1cf80212dfe66d38a8a829d86dacdcacb0a3fb30e8fb20cda965552546a9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Log Bait",
+      "seat": 0,
+      "stream": 2,
+      "ordinal": 0,
+      "transcript_sha256": "f22e80430f15f7d43cf6f5552364428bb86f0a297689ab5d483fe210bed4b94d"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Log Bait",
+      "seat": 0,
+      "stream": 2,
+      "ordinal": 1,
+      "transcript_sha256": "f22e80430f15f7d43cf6f5552364428bb86f0a297689ab5d483fe210bed4b94d"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Log Bait",
+      "seat": 0,
+      "stream": 2,
+      "ordinal": 2,
+      "transcript_sha256": "f22e80430f15f7d43cf6f5552364428bb86f0a297689ab5d483fe210bed4b94d"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Log Bait",
+      "seat": 0,
+      "stream": 2,
+      "ordinal": 3,
+      "transcript_sha256": "f22e80430f15f7d43cf6f5552364428bb86f0a297689ab5d483fe210bed4b94d"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Log Bait",
+      "seat": 1,
+      "stream": 3,
+      "ordinal": 0,
+      "transcript_sha256": "2e10ae093093012a38bf68594743a449276734b782ae119233280db4be708a4f"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Log Bait",
+      "seat": 1,
+      "stream": 3,
+      "ordinal": 1,
+      "transcript_sha256": "2e10ae093093012a38bf68594743a449276734b782ae119233280db4be708a4f"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Log Bait",
+      "seat": 1,
+      "stream": 3,
+      "ordinal": 2,
+      "transcript_sha256": "2e10ae093093012a38bf68594743a449276734b782ae119233280db4be708a4f"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Log Bait",
+      "seat": 1,
+      "stream": 3,
+      "ordinal": 3,
+      "transcript_sha256": "2e10ae093093012a38bf68594743a449276734b782ae119233280db4be708a4f"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Log Bait",
+      "seat": 0,
+      "stream": 4,
+      "ordinal": 0,
+      "transcript_sha256": "d8f1763ce4e08c919cb3f69705c155f3697a845182c4dccd5a792a32d6622179"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Log Bait",
+      "seat": 0,
+      "stream": 4,
+      "ordinal": 1,
+      "transcript_sha256": "1721ab3b89ead57f9cf5649733569970005fd7036851361d426183040d98e000"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Log Bait",
+      "seat": 0,
+      "stream": 4,
+      "ordinal": 2,
+      "transcript_sha256": "843c8fdd52a5139bd51a9b20fbb519a1f93dca650d6d0cf0627b0f22d8374d72"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Log Bait",
+      "seat": 0,
+      "stream": 4,
+      "ordinal": 3,
+      "transcript_sha256": "e8f744125e64db4f94364f043a518cff53ac99d6fa3aff9740b27487cc281267"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Log Bait",
+      "seat": 1,
+      "stream": 5,
+      "ordinal": 0,
+      "transcript_sha256": "c8d9c184e6efca1d12a80e39fb5efb71612abf6b1a431fc24ed668c725e487e3"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Log Bait",
+      "seat": 1,
+      "stream": 5,
+      "ordinal": 1,
+      "transcript_sha256": "064be8a7b5a07dbe56f3d7331b93b42a16f4aea64e899eba325e0b9e2ec0ec21"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Log Bait",
+      "seat": 1,
+      "stream": 5,
+      "ordinal": 2,
+      "transcript_sha256": "f0ded84aede3bb93eb79a0e40bff3f0a9bb749add4893207619694786c978852"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Log Bait",
+      "seat": 1,
+      "stream": 5,
+      "ordinal": 3,
+      "transcript_sha256": "e167640adc8e34694b211c0ecbd13a567be33941757bfbdad2cdc591aa688073"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 0,
+      "stream": 6,
+      "ordinal": 0,
+      "transcript_sha256": "54250a78cf56b3e4e527a9695be972e011463f27ad0207a955348b8e2f535a84"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 0,
+      "stream": 6,
+      "ordinal": 1,
+      "transcript_sha256": "54250a78cf56b3e4e527a9695be972e011463f27ad0207a955348b8e2f535a84"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 0,
+      "stream": 6,
+      "ordinal": 2,
+      "transcript_sha256": "54250a78cf56b3e4e527a9695be972e011463f27ad0207a955348b8e2f535a84"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 0,
+      "stream": 6,
+      "ordinal": 3,
+      "transcript_sha256": "54250a78cf56b3e4e527a9695be972e011463f27ad0207a955348b8e2f535a84"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 1,
+      "stream": 7,
+      "ordinal": 0,
+      "transcript_sha256": "9828281c8d97498211bddf3ca8c01ba3704a4ceb8b7842380420ed83d346eb91"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 1,
+      "stream": 7,
+      "ordinal": 1,
+      "transcript_sha256": "9828281c8d97498211bddf3ca8c01ba3704a4ceb8b7842380420ed83d346eb91"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 1,
+      "stream": 7,
+      "ordinal": 2,
+      "transcript_sha256": "9828281c8d97498211bddf3ca8c01ba3704a4ceb8b7842380420ed83d346eb91"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 1,
+      "stream": 7,
+      "ordinal": 3,
+      "transcript_sha256": "9828281c8d97498211bddf3ca8c01ba3704a4ceb8b7842380420ed83d346eb91"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 0,
+      "stream": 8,
+      "ordinal": 0,
+      "transcript_sha256": "10fd0c9e5f10a0c5792e452f52c6c4ae7da4c7c165e61a9850c396c53cb9326e"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 0,
+      "stream": 8,
+      "ordinal": 1,
+      "transcript_sha256": "10fd0c9e5f10a0c5792e452f52c6c4ae7da4c7c165e61a9850c396c53cb9326e"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 0,
+      "stream": 8,
+      "ordinal": 2,
+      "transcript_sha256": "10fd0c9e5f10a0c5792e452f52c6c4ae7da4c7c165e61a9850c396c53cb9326e"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 0,
+      "stream": 8,
+      "ordinal": 3,
+      "transcript_sha256": "10fd0c9e5f10a0c5792e452f52c6c4ae7da4c7c165e61a9850c396c53cb9326e"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 1,
+      "stream": 9,
+      "ordinal": 0,
+      "transcript_sha256": "a7cbe59813baa8a1cc31e253c0211be7cb29782370b9e1d9a1faa09d72414e85"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 1,
+      "stream": 9,
+      "ordinal": 1,
+      "transcript_sha256": "a7cbe59813baa8a1cc31e253c0211be7cb29782370b9e1d9a1faa09d72414e85"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 1,
+      "stream": 9,
+      "ordinal": 2,
+      "transcript_sha256": "a7cbe59813baa8a1cc31e253c0211be7cb29782370b9e1d9a1faa09d72414e85"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 1,
+      "stream": 9,
+      "ordinal": 3,
+      "transcript_sha256": "a7cbe59813baa8a1cc31e253c0211be7cb29782370b9e1d9a1faa09d72414e85"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 0,
+      "stream": 10,
+      "ordinal": 0,
+      "transcript_sha256": "17b84da6ed96e0a7c01d38c57286fd5dc9c63f83b6be677ff5624873a4f88df3"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 0,
+      "stream": 10,
+      "ordinal": 1,
+      "transcript_sha256": "8fb8303d03ee19b0886b8a925959687e9fec469bb350458f9753320ba9875eb9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 0,
+      "stream": 10,
+      "ordinal": 2,
+      "transcript_sha256": "1aeceb37f4d8f691a74f472ddf9b599adf56fbc5e106d38a57cb293c9cc7b67d"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 0,
+      "stream": 10,
+      "ordinal": 3,
+      "transcript_sha256": "cbc1b6d47b910ab75248cb606a846b8e96796042ffcf2ed756b774d5f74a6337"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 1,
+      "stream": 11,
+      "ordinal": 0,
+      "transcript_sha256": "4e71bca69f486a4bf78388c3ba6e494ca0e262ab0a1c31d64fb7f052ad5e6eef"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 1,
+      "stream": 11,
+      "ordinal": 1,
+      "transcript_sha256": "e3d5152f9e3f1f2f59d16ba4130edc54b6e94e91d0a73c4076c932d4ba6f2da5"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 1,
+      "stream": 11,
+      "ordinal": 2,
+      "transcript_sha256": "73cc652faa25b977954b107cee4a8eaa5ca769e7b88898fa5bce0ec2e1367b70"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "X-Bow 3.0 Cycle (ESpirit)",
+      "seat": 1,
+      "stream": 11,
+      "ordinal": 3,
+      "transcript_sha256": "adf22d130c9f6eec6e3411c18722d018dea67b4323ab311122d340376bda68d4"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 0,
+      "stream": 12,
+      "ordinal": 0,
+      "transcript_sha256": "55c1034bff069f31ab3740ed803b6a4f06493aed8e8282f9d35a14e98f3a96a6"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 0,
+      "stream": 12,
+      "ordinal": 1,
+      "transcript_sha256": "55c1034bff069f31ab3740ed803b6a4f06493aed8e8282f9d35a14e98f3a96a6"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 0,
+      "stream": 12,
+      "ordinal": 2,
+      "transcript_sha256": "55c1034bff069f31ab3740ed803b6a4f06493aed8e8282f9d35a14e98f3a96a6"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 0,
+      "stream": 12,
+      "ordinal": 3,
+      "transcript_sha256": "55c1034bff069f31ab3740ed803b6a4f06493aed8e8282f9d35a14e98f3a96a6"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 1,
+      "stream": 13,
+      "ordinal": 0,
+      "transcript_sha256": "55c1034bff069f31ab3740ed803b6a4f06493aed8e8282f9d35a14e98f3a96a6"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 1,
+      "stream": 13,
+      "ordinal": 1,
+      "transcript_sha256": "55c1034bff069f31ab3740ed803b6a4f06493aed8e8282f9d35a14e98f3a96a6"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 1,
+      "stream": 13,
+      "ordinal": 2,
+      "transcript_sha256": "55c1034bff069f31ab3740ed803b6a4f06493aed8e8282f9d35a14e98f3a96a6"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 1,
+      "stream": 13,
+      "ordinal": 3,
+      "transcript_sha256": "55c1034bff069f31ab3740ed803b6a4f06493aed8e8282f9d35a14e98f3a96a6"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 0,
+      "stream": 14,
+      "ordinal": 0,
+      "transcript_sha256": "07c86c00fd5bd95c7bb9928348890b7fe71c55e3cc715305e0c49dae6b292f60"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 0,
+      "stream": 14,
+      "ordinal": 1,
+      "transcript_sha256": "07c86c00fd5bd95c7bb9928348890b7fe71c55e3cc715305e0c49dae6b292f60"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 0,
+      "stream": 14,
+      "ordinal": 2,
+      "transcript_sha256": "07c86c00fd5bd95c7bb9928348890b7fe71c55e3cc715305e0c49dae6b292f60"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 0,
+      "stream": 14,
+      "ordinal": 3,
+      "transcript_sha256": "07c86c00fd5bd95c7bb9928348890b7fe71c55e3cc715305e0c49dae6b292f60"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 1,
+      "stream": 15,
+      "ordinal": 0,
+      "transcript_sha256": "0669c25210349dc227bc2b68685d9d5dd03d83c830843b10dad286f9fd227aaa"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 1,
+      "stream": 15,
+      "ordinal": 1,
+      "transcript_sha256": "0669c25210349dc227bc2b68685d9d5dd03d83c830843b10dad286f9fd227aaa"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 1,
+      "stream": 15,
+      "ordinal": 2,
+      "transcript_sha256": "0669c25210349dc227bc2b68685d9d5dd03d83c830843b10dad286f9fd227aaa"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 1,
+      "stream": 15,
+      "ordinal": 3,
+      "transcript_sha256": "0669c25210349dc227bc2b68685d9d5dd03d83c830843b10dad286f9fd227aaa"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 0,
+      "stream": 16,
+      "ordinal": 0,
+      "transcript_sha256": "03183e23056099b249bd6ebde4f79bf0100c6c2ebfaaa0b4c440ab192384f0a8"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 0,
+      "stream": 16,
+      "ordinal": 1,
+      "transcript_sha256": "cc92c4d0c9506c8cb4cafee4b0656641087532ee2faf6202b7dd5e9f406852c6"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 0,
+      "stream": 16,
+      "ordinal": 2,
+      "transcript_sha256": "35fcb7efd64ff8b7b283b4593ae535f7927bc2da10c446fdccacf9914931eb6d"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 0,
+      "stream": 16,
+      "ordinal": 3,
+      "transcript_sha256": "76280c11a1e4ee92ccaf32edebfe6cfcb06a2e82899eae97dab6be8c170c1930"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 1,
+      "stream": 17,
+      "ordinal": 0,
+      "transcript_sha256": "6ac9d6c2f0998108ba01e8ae4f96ed7e843b8ef69892b8605c18d849cf175ff3"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 1,
+      "stream": 17,
+      "ordinal": 1,
+      "transcript_sha256": "1faa8b83736cf88d130c66d3323be423c2f5dab7ed74363c63c9a086e5b80699"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 1,
+      "stream": 17,
+      "ordinal": 2,
+      "transcript_sha256": "7d14a0456ccd6f6568deb852198263a5cf13c9bbed040f9f1999e75b1e9a853e"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Pekka Bandit EWiz Bridge Spam",
+      "seat": 1,
+      "stream": 17,
+      "ordinal": 3,
+      "transcript_sha256": "091a2335c66240948bce43eefc69a009663aed8b9587ef03313f028dae6665e1"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Giant",
+      "seat": 0,
+      "stream": 18,
+      "ordinal": 0,
+      "transcript_sha256": "bcb843e8beb2349f9f27263d4324fb96fff42f2f9808d0dacc97bf401a428418"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Giant",
+      "seat": 0,
+      "stream": 18,
+      "ordinal": 1,
+      "transcript_sha256": "bcb843e8beb2349f9f27263d4324fb96fff42f2f9808d0dacc97bf401a428418"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Giant",
+      "seat": 0,
+      "stream": 18,
+      "ordinal": 2,
+      "transcript_sha256": "bcb843e8beb2349f9f27263d4324fb96fff42f2f9808d0dacc97bf401a428418"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Giant",
+      "seat": 0,
+      "stream": 18,
+      "ordinal": 3,
+      "transcript_sha256": "bcb843e8beb2349f9f27263d4324fb96fff42f2f9808d0dacc97bf401a428418"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Giant",
+      "seat": 1,
+      "stream": 19,
+      "ordinal": 0,
+      "transcript_sha256": "bcb843e8beb2349f9f27263d4324fb96fff42f2f9808d0dacc97bf401a428418"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Giant",
+      "seat": 1,
+      "stream": 19,
+      "ordinal": 1,
+      "transcript_sha256": "bcb843e8beb2349f9f27263d4324fb96fff42f2f9808d0dacc97bf401a428418"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Giant",
+      "seat": 1,
+      "stream": 19,
+      "ordinal": 2,
+      "transcript_sha256": "bcb843e8beb2349f9f27263d4324fb96fff42f2f9808d0dacc97bf401a428418"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "balanced",
+      "deck": "Giant",
+      "seat": 1,
+      "stream": 19,
+      "ordinal": 3,
+      "transcript_sha256": "bcb843e8beb2349f9f27263d4324fb96fff42f2f9808d0dacc97bf401a428418"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Giant",
+      "seat": 0,
+      "stream": 20,
+      "ordinal": 0,
+      "transcript_sha256": "25c67d9b54993f3248a8df6ecc7dd80d7c2853919f43a3186e9b6229c69007e9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Giant",
+      "seat": 0,
+      "stream": 20,
+      "ordinal": 1,
+      "transcript_sha256": "25c67d9b54993f3248a8df6ecc7dd80d7c2853919f43a3186e9b6229c69007e9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Giant",
+      "seat": 0,
+      "stream": 20,
+      "ordinal": 2,
+      "transcript_sha256": "25c67d9b54993f3248a8df6ecc7dd80d7c2853919f43a3186e9b6229c69007e9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Giant",
+      "seat": 0,
+      "stream": 20,
+      "ordinal": 3,
+      "transcript_sha256": "25c67d9b54993f3248a8df6ecc7dd80d7c2853919f43a3186e9b6229c69007e9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Giant",
+      "seat": 1,
+      "stream": 21,
+      "ordinal": 0,
+      "transcript_sha256": "25c67d9b54993f3248a8df6ecc7dd80d7c2853919f43a3186e9b6229c69007e9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Giant",
+      "seat": 1,
+      "stream": 21,
+      "ordinal": 1,
+      "transcript_sha256": "25c67d9b54993f3248a8df6ecc7dd80d7c2853919f43a3186e9b6229c69007e9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Giant",
+      "seat": 1,
+      "stream": 21,
+      "ordinal": 2,
+      "transcript_sha256": "25c67d9b54993f3248a8df6ecc7dd80d7c2853919f43a3186e9b6229c69007e9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "slow-push",
+      "deck": "Giant",
+      "seat": 1,
+      "stream": 21,
+      "ordinal": 3,
+      "transcript_sha256": "25c67d9b54993f3248a8df6ecc7dd80d7c2853919f43a3186e9b6229c69007e9"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Giant",
+      "seat": 0,
+      "stream": 22,
+      "ordinal": 0,
+      "transcript_sha256": "c72d2aa3cdb3f60267bf5f06e85c08674ce03ef85e0605ab63af23a1d04d54fb"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Giant",
+      "seat": 0,
+      "stream": 22,
+      "ordinal": 1,
+      "transcript_sha256": "9eb0dfa3d23733d6fa310f6139047af73a3eaac449c49d25f3d359e4cbe3a834"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Giant",
+      "seat": 0,
+      "stream": 22,
+      "ordinal": 2,
+      "transcript_sha256": "29018e4f9ba79422e096ff93798a82fb22352bc3193fa02ba24d6559fb74c674"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Giant",
+      "seat": 0,
+      "stream": 22,
+      "ordinal": 3,
+      "transcript_sha256": "ff9e6a54e177e1fb093ca7193eeb61b3799311fb4a8bec0e61269239d5c110d3"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Giant",
+      "seat": 1,
+      "stream": 23,
+      "ordinal": 0,
+      "transcript_sha256": "3c69681316a046083a3690e4589a7c938b76880ec257473f2e6c301956aa7be1"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Giant",
+      "seat": 1,
+      "stream": 23,
+      "ordinal": 1,
+      "transcript_sha256": "c418192420e23f1e72e62b446d3a7194fed87ede20bdfa32903526845297bdc6"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Giant",
+      "seat": 1,
+      "stream": 23,
+      "ordinal": 2,
+      "transcript_sha256": "07eb1992357108eb657cec53ffd2aa96f76a1812ce95b85418b1c9edaedb9696"
+    },
+    {
+      "source": "hog26_crossed_train4_seed1276001_no_split_lane_20260908",
+      "seed": 1276001,
+      "style": "random",
+      "deck": "Giant",
+      "seat": 1,
+      "stream": 23,
+      "ordinal": 3,
+      "transcript_sha256": "051478f58457e19fea55672dda4ff0f80a60e1ccba6d02200bb8d9d17d126de0"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "balanced",
+      "deck": "X-Bow 3.0 Cycle (ISpirit)",
+      "seat": 0,
+      "stream": 0,
+      "ordinal": 0,
+      "transcript_sha256": "506df75ea4aae8a582c5e95c2e2d3803709e83d550f83edfb8d74872f5fcdaa1"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "balanced",
+      "deck": "X-Bow 3.0 Cycle (ISpirit)",
+      "seat": 1,
+      "stream": 1,
+      "ordinal": 0,
+      "transcript_sha256": "f6d941fbcdcbf27fa81152620b7878402973080cad4bb54d724a90b693f1c020"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "slow-push",
+      "deck": "X-Bow 3.0 Cycle (ISpirit)",
+      "seat": 0,
+      "stream": 2,
+      "ordinal": 0,
+      "transcript_sha256": "40d97190380f184ede99056a5ed4dbc534cdbdec54f943cdd56c3971b4257e8d"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "slow-push",
+      "deck": "X-Bow 3.0 Cycle (ISpirit)",
+      "seat": 1,
+      "stream": 3,
+      "ordinal": 0,
+      "transcript_sha256": "26c9b42ecde3471f36b3cadffd2bd5b864009ecf91fac220f405c091cfae1491"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "random",
+      "deck": "X-Bow 3.0 Cycle (ISpirit)",
+      "seat": 0,
+      "stream": 4,
+      "ordinal": 0,
+      "transcript_sha256": "47997d39d96f6c77033510e503914bd38ff57de6b976994e657a0f1044bbadf5"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "random",
+      "deck": "X-Bow 3.0 Cycle (ISpirit)",
+      "seat": 1,
+      "stream": 5,
+      "ordinal": 0,
+      "transcript_sha256": "ac7ff48331d7f7568dd42f53ea8f0f2dca9e6a623700cdc89094eb25c901c564"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "balanced",
+      "deck": "Valk Log Bait",
+      "seat": 0,
+      "stream": 6,
+      "ordinal": 0,
+      "transcript_sha256": "9ae160d52b4a8e95bd5d8f1ef03041ec5485a37ef53b47294152b834f809702f"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "balanced",
+      "deck": "Valk Log Bait",
+      "seat": 1,
+      "stream": 7,
+      "ordinal": 0,
+      "transcript_sha256": "cac25a0aaf25233f2e807b9fa2b1487994d130053a0828cf702351be7460e9ef"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "slow-push",
+      "deck": "Valk Log Bait",
+      "seat": 0,
+      "stream": 8,
+      "ordinal": 0,
+      "transcript_sha256": "b78a039e61dc22e6542bb83dd4982db83128aff81006ad949afd36ce80a32517"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "slow-push",
+      "deck": "Valk Log Bait",
+      "seat": 1,
+      "stream": 9,
+      "ordinal": 0,
+      "transcript_sha256": "173e2c97f49d60318e3901fe3f34217ab1391d30870d7d1b287013dbcf375a06"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "random",
+      "deck": "Valk Log Bait",
+      "seat": 0,
+      "stream": 10,
+      "ordinal": 0,
+      "transcript_sha256": "55717eb2912a8e0173850a4daae17e178faa83bfb6fa8727707f4882ea91f0c2"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "random",
+      "deck": "Valk Log Bait",
+      "seat": 1,
+      "stream": 11,
+      "ordinal": 0,
+      "transcript_sha256": "7a522198fb0dd768141c8d3fcb83d35592b24a7cc87da33397b22780d2aa6854"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "balanced",
+      "deck": "Hog Valk FC 2.8 Cycle",
+      "seat": 0,
+      "stream": 12,
+      "ordinal": 0,
+      "transcript_sha256": "032ead0323b69dfde2a721992158b809218dc73f58eb2d07159743e55fe9f582"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "balanced",
+      "deck": "Hog Valk FC 2.8 Cycle",
+      "seat": 1,
+      "stream": 13,
+      "ordinal": 0,
+      "transcript_sha256": "032ead0323b69dfde2a721992158b809218dc73f58eb2d07159743e55fe9f582"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "slow-push",
+      "deck": "Hog Valk FC 2.8 Cycle",
+      "seat": 0,
+      "stream": 14,
+      "ordinal": 0,
+      "transcript_sha256": "8c9c9148d0a8998e7cc23cf8044fad09a443e85a6e00f363a789e8167abcbdf3"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "slow-push",
+      "deck": "Hog Valk FC 2.8 Cycle",
+      "seat": 1,
+      "stream": 15,
+      "ordinal": 0,
+      "transcript_sha256": "8c9c9148d0a8998e7cc23cf8044fad09a443e85a6e00f363a789e8167abcbdf3"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "random",
+      "deck": "Hog Valk FC 2.8 Cycle",
+      "seat": 0,
+      "stream": 16,
+      "ordinal": 0,
+      "transcript_sha256": "b67bcf531ad99e86cd2a62eb90e8488beffae217e7f4fb5d8183b262ab0466c4"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "random",
+      "deck": "Hog Valk FC 2.8 Cycle",
+      "seat": 1,
+      "stream": 17,
+      "ordinal": 0,
+      "transcript_sha256": "d407f709b1a4d636f7219b216c8950ef4a304616274e617dc153ff3333a79340"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "balanced",
+      "deck": "Giant GY Bowler Witch",
+      "seat": 0,
+      "stream": 18,
+      "ordinal": 0,
+      "transcript_sha256": "2728ab1033ee06cb3870a1838196128e68daa76454bbc1077e9aa43b26e9c99f"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "balanced",
+      "deck": "Giant GY Bowler Witch",
+      "seat": 1,
+      "stream": 19,
+      "ordinal": 0,
+      "transcript_sha256": "c9b778ab4805835e95fcfeac70d64169d414d476e6e7af10346bf09aab299026"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "slow-push",
+      "deck": "Giant GY Bowler Witch",
+      "seat": 0,
+      "stream": 20,
+      "ordinal": 0,
+      "transcript_sha256": "f52cf4f57bbcc8ae4cb35eead03fc9b8c5bc870a457bf6d941c1f4228ecc586a"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "slow-push",
+      "deck": "Giant GY Bowler Witch",
+      "seat": 1,
+      "stream": 21,
+      "ordinal": 0,
+      "transcript_sha256": "f52cf4f57bbcc8ae4cb35eead03fc9b8c5bc870a457bf6d941c1f4228ecc586a"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "random",
+      "deck": "Giant GY Bowler Witch",
+      "seat": 0,
+      "stream": 22,
+      "ordinal": 0,
+      "transcript_sha256": "d10498ca4f534e4299177c791e2c1e93675e0204ef4b01664878722672d3f2c3"
+    },
+    {
+      "source": "hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908",
+      "seed": 1277001,
+      "style": "random",
+      "deck": "Giant GY Bowler Witch",
+      "seat": 1,
+      "stream": 23,
+      "ordinal": 0,
+      "transcript_sha256": "11acfe02db714b748eb9b91f909054d73c1c45572c8c93d51470cce1f5487b01"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "balanced",
+      "deck": "WB Miner MA Nado",
+      "seat": 0,
+      "stream": 0,
+      "ordinal": 0,
+      "transcript_sha256": "22e7be33455dd2cf5281b992479bf4ee4c17001f3bbf7441add80ec84ca04fae"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "balanced",
+      "deck": "WB Miner MA Nado",
+      "seat": 1,
+      "stream": 1,
+      "ordinal": 0,
+      "transcript_sha256": "22e7be33455dd2cf5281b992479bf4ee4c17001f3bbf7441add80ec84ca04fae"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "slow-push",
+      "deck": "WB Miner MA Nado",
+      "seat": 0,
+      "stream": 2,
+      "ordinal": 0,
+      "transcript_sha256": "bf581bab5c9e01fbf79a386b7fb53a3030716a6138490e02caadc68a71c542f5"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "slow-push",
+      "deck": "WB Miner MA Nado",
+      "seat": 1,
+      "stream": 3,
+      "ordinal": 0,
+      "transcript_sha256": "cc861ae6a90730aa5ef34302c1cd63190f18e49677974b86991447013eb819d0"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "random",
+      "deck": "WB Miner MA Nado",
+      "seat": 0,
+      "stream": 4,
+      "ordinal": 0,
+      "transcript_sha256": "b0f8f236f1e0f996b17956ab45333dddf8da9788178832fe0696ae02b6db12f6"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "random",
+      "deck": "WB Miner MA Nado",
+      "seat": 1,
+      "stream": 5,
+      "ordinal": 0,
+      "transcript_sha256": "7183fbf9d0f60f3537b24bda99ccd060a274dae2ea6842407c19f52649a9b83a"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "balanced",
+      "deck": "Pekka Bandit EWiz Poison",
+      "seat": 0,
+      "stream": 6,
+      "ordinal": 0,
+      "transcript_sha256": "a74e3e87deb9e4a23b8aa2b847f5aa2a900d5debd397f8b020e47e4369238f72"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "balanced",
+      "deck": "Pekka Bandit EWiz Poison",
+      "seat": 1,
+      "stream": 7,
+      "ordinal": 0,
+      "transcript_sha256": "e8b3f9b7a63dda34827ea176cfd4817f81da952cf035f5e64f6202cf95a11882"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "slow-push",
+      "deck": "Pekka Bandit EWiz Poison",
+      "seat": 0,
+      "stream": 8,
+      "ordinal": 0,
+      "transcript_sha256": "4f7840380a8bcb7fc46a910bc387bd3490e93550897b693c9ef0cff80b41d5d9"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "slow-push",
+      "deck": "Pekka Bandit EWiz Poison",
+      "seat": 1,
+      "stream": 9,
+      "ordinal": 0,
+      "transcript_sha256": "4f7840380a8bcb7fc46a910bc387bd3490e93550897b693c9ef0cff80b41d5d9"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "random",
+      "deck": "Pekka Bandit EWiz Poison",
+      "seat": 0,
+      "stream": 10,
+      "ordinal": 0,
+      "transcript_sha256": "c080277b2204503af4973fe25899faf3bced96f08e89eaec1c3abecafd18be8c"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "random",
+      "deck": "Pekka Bandit EWiz Poison",
+      "seat": 1,
+      "stream": 11,
+      "ordinal": 0,
+      "transcript_sha256": "350a932c7f5759d547276c6296e89672f96e68b237bab25461bef06cb9d803e9"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "balanced",
+      "deck": "MK Miner ID Bats",
+      "seat": 0,
+      "stream": 12,
+      "ordinal": 0,
+      "transcript_sha256": "302da773250bd10a7b9e684f06cc32b6d8fe09e4eb6ef200b2e8f4830e0aa97b"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "balanced",
+      "deck": "MK Miner ID Bats",
+      "seat": 1,
+      "stream": 13,
+      "ordinal": 0,
+      "transcript_sha256": "6e20a9e491597e2cf2cd398496d5472ba2c95a6b58a0ad89b26d728e6e54b9fa"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "slow-push",
+      "deck": "MK Miner ID Bats",
+      "seat": 0,
+      "stream": 14,
+      "ordinal": 0,
+      "transcript_sha256": "372049f8f0c927cc4d758c29a03ffd655d8c1f158b914e8113a9892c73f166d7"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "slow-push",
+      "deck": "MK Miner ID Bats",
+      "seat": 1,
+      "stream": 15,
+      "ordinal": 0,
+      "transcript_sha256": "29599ba4dd51335863928d3fea3d37a0ed23a59128dc47efa1bb2d5a94e6c287"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "random",
+      "deck": "MK Miner ID Bats",
+      "seat": 0,
+      "stream": 16,
+      "ordinal": 0,
+      "transcript_sha256": "8c0a59ca3dc486415e8ac8cf6f0bb1505db373ec9e02e6e45e84be3bb04ff47b"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "random",
+      "deck": "MK Miner ID Bats",
+      "seat": 1,
+      "stream": 17,
+      "ordinal": 0,
+      "transcript_sha256": "0514054fa184c3175a47535f07554dcc4c78d45234e714802f99eca501b3f355"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "balanced",
+      "deck": "Loon Miner 2.9 Cycle",
+      "seat": 0,
+      "stream": 18,
+      "ordinal": 0,
+      "transcript_sha256": "3cd6dd652d89a27039a37f2824b8cdafd1a4a156d34b224bfb8568bcf99e3deb"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "balanced",
+      "deck": "Loon Miner 2.9 Cycle",
+      "seat": 1,
+      "stream": 19,
+      "ordinal": 0,
+      "transcript_sha256": "3cd6dd652d89a27039a37f2824b8cdafd1a4a156d34b224bfb8568bcf99e3deb"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "slow-push",
+      "deck": "Loon Miner 2.9 Cycle",
+      "seat": 0,
+      "stream": 20,
+      "ordinal": 0,
+      "transcript_sha256": "632f08d26050b7a7415483859690825b324f479cd278c5c4edb10fec390c9e2b"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "slow-push",
+      "deck": "Loon Miner 2.9 Cycle",
+      "seat": 1,
+      "stream": 21,
+      "ordinal": 0,
+      "transcript_sha256": "632f08d26050b7a7415483859690825b324f479cd278c5c4edb10fec390c9e2b"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "random",
+      "deck": "Loon Miner 2.9 Cycle",
+      "seat": 0,
+      "stream": 22,
+      "ordinal": 0,
+      "transcript_sha256": "540b49dc1a74cd8cc41c972bf697408cce256bc7ad11e3906b3315ed7285c5da"
+    },
+    {
+      "source": "hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908",
+      "seed": 1277002,
+      "style": "random",
+      "deck": "Loon Miner 2.9 Cycle",
+      "seat": 1,
+      "stream": 23,
+      "ordinal": 0,
+      "transcript_sha256": "e2dc6f6c2c205547d75da5ef38078dc3af1bf0ebdcc6ad93731d64dc4238df57"
+    }
+  ]
+}

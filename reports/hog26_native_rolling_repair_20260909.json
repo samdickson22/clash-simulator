@@ -1,0 +1,37 @@
+{
+  "status": "Rolling repair passes bounded paired scalar checks; full-game recertification pending",
+  "changes": [
+    "Placement is rolling origin; forward direction is owner-relative.",
+    "Casting delay compiled from scalar spell metadata and evaluated with integer-corrected ceil-distance arithmetic.",
+    "Pending rollers cannot move, hit or reveal queued placement.",
+    "Log-family rectangular footprint and native integer percentage damage used; generic capsule commands retain legacy defaults."
+  ],
+  "validation": {
+    "passed": 22,
+    "cuda_skipped": 7,
+    "paired_cases": [
+      "Log CPU",
+      "Log MPS",
+      "BarbLog CPU",
+      "BarbLog MPS"
+    ],
+    "paired_seats": true,
+    "per_tick_positions_and_tower_hp": true,
+    "payload_count_owner_position": true,
+    "reset_tests": true,
+    "old_protocol_rejects_changed_authority": true
+  },
+  "limitations": [
+    "Not complete-game or all-spell parity.",
+    "Existing corpora remain pre-repair data; source authority was not recaptured to relabel them.",
+    "Arrows timing and complete public-effect coverage remain unresolved."
+  ],
+  "source_sha256": {
+    "src/clasher/torch_sim/simple_catalog.py": "35702dea8b1e85cab052cc60344fce888d6ffe35952ce05f3238606d633f2f18",
+    "src/clasher/torch_sim/simple_runtime.py": "9b3e933842387db184b8b0bb483e3613c7bb0cd2708111796740f1711ef717d3",
+    "src/clasher/torch_sim/simple_rolling_spells.py": "e7b12b0545b6f52fc18f4d256ddcfb7f5d6dda823b7d3a0dc8b2afe3efcae48f",
+    "scripts/hog26_inference_authority.py": "b00e0377e9ca4e05e38b9a2f4e2a593e9497ebd5af203fac3a0826e9acc2ab2b",
+    "scripts/hog26_public_rolling_sidecar.py": "56da6c7c834ddc4ec6faefd2dba374a3962fd9f2b74ce7e1af191d03939e647b",
+    "tests/test_hog26_rolling_scalar_lifecycle.py": "baa30545ab8e8ab97c86c80ffa087f71c6108d9d0ea9faaf19e1a32207fd8f12"
+  }
+}

@@ -1,0 +1,287 @@
+{
+  "schema": "clasher.hog26.scalar-training-family-pilot-comparison.v1",
+  "status": "predeclared-no-fitting-authorized-by-this-file",
+  "date": "2026-09-11",
+  "purpose": "Compare fitting and excluded-family generalization on the complete fresh scalar pilot. This is not candidate acceptance.",
+  "data": {
+    "natural_games": 384,
+    "families": [
+      "family-000",
+      "family-001",
+      "family-002",
+      "family-003",
+      "family-004",
+      "family-005",
+      "family-006",
+      "family-007"
+    ],
+    "styles": [
+      "balanced",
+      "random",
+      "bridge-pressure",
+      "reactive-defense",
+      "slow-push",
+      "spell-control"
+    ],
+    "source": "Fresh scalar corpus only, after collection-authority and complete-corpus audits pass.",
+    "historical_native_corpora": "excluded",
+    "auxiliary_draw_controls": "excluded from fitting; genuine no-op terminal draw fixture checks labels only",
+    "heldout_labels": "No development selection, calibration, final, reserved-original, or historical opened holdout outcomes.",
+    "input_manifest": "Pin all accepted corpus paths, hashes and frozen collection authority before fitting. Refuse missing or substituted games."
+  },
+  "folds": {
+    "excluded_families": [
+      [
+        "family-000",
+        "family-001"
+      ],
+      [
+        "family-002",
+        "family-003"
+      ],
+      [
+        "family-004",
+        "family-005"
+      ],
+      [
+        "family-006",
+        "family-007"
+      ]
+    ],
+    "expected_fit_games": 288,
+    "expected_excluded_games": 96,
+    "isolation": "Exclude complete families, both seats, all styles and every row. Fit preprocessing and priors only on fitting games.",
+    "natural_game_pairing": "Keep paired seats in the same verified scenario cluster."
+  },
+  "targets": {
+    "wdl": "Undiscounted terminal loss/draw/win in learner coordinates, order [-1,0,1].",
+    "margin": "Recorded normalized terminal tower margin, same definition as independently validated corpus.",
+    "forbidden_inputs": [
+      "terminal labels",
+      "terminal tick",
+      "future observations",
+      "family/deck/style/seed metadata",
+      "critic arrays",
+      "behavior-policy recurrent state",
+      "current chosen action or success"
+    ],
+    "allowed_inputs": [
+      "entity_ids",
+      "entity_features",
+      "entity_mask",
+      "entity_id_confidence",
+      "entity_feature_confidence",
+      "hand_ids",
+      "hand_id_confidence",
+      "global_features",
+      "global_feature_confidence"
+    ],
+    "behavior_policy": "Frozen collection policy remains unchanged; all learned parameters belong to new outcome models."
+  },
+  "phases": {
+    "source": "global_features[:,0]",
+    "intervals": [
+      {
+        "name": "early",
+        "lower": 0,
+        "upper": 0.3333333333333333,
+        "center": 0.16666666666666666
+      },
+      {
+        "name": "middle",
+        "lower": 0.3333333333333333,
+        "upper": 0.6666666666666666,
+        "center": 0.5
+      },
+      {
+        "name": "late",
+        "lower": 0.6666666666666666,
+        "upper": null,
+        "center": 0.8333333333333334
+      }
+    ],
+    "representative": "Nearest observed decision to phase center within each reached phase; earliest row breaks ties.",
+    "evaluation_distributions": [
+      "one representative per reached game-phase",
+      "all recorded states, equal-game-within-phase-v1"
+    ]
+  },
+  "weights": {
+    "base": "Each fitting game has equal total mass; divide equally among reached phases, uniformly among rows in each phase.",
+    "wdl": "Ordinary cross-entropy with base game/phase weights. No label-dependent class balancing or target class masses.",
+    "margin": "Normalize base fitting weights so each phase has equal aggregate mass; then preserve each game-phase mass while allocating 50 percent uniformly and 50 percent to its representative.",
+    "representative_margin_mass": 0.5,
+    "excluded_rows": "exactly zero fitting mass",
+    "batch_normalization": "Fixed expected batch weight computed from fitting games/rows, not realized per-batch weight normalization."
+  },
+  "draw_scope": {
+    "natural_only": true,
+    "if_zero_observed_draws": "Draw learning and calibration remain inconclusive; report zero natural draw count and empirical mass without manufacturing examples or a prior.",
+    "wdl_output": "Retain three logits even if a class is unobserved.",
+    "class_balancing": false,
+    "artificial_draw_mass": false,
+    "old_native_controls": false,
+    "future_acceptance": "All existing WDL, controlled-draw and natural draw calibration requirements remain unchanged; this pilot cannot establish draw acceptance."
+  },
+  "models": {
+    "public_globals_wdl": {
+      "input": "18 reviewed actor public globals multiplied by availability confidence, with 18 confidence values concatenated.",
+      "hidden_sizes": [
+        32,
+        32
+      ],
+      "activation": "GELU",
+      "output": "3 raw logits; ordinary softmax, no outcome-dependent prior shift",
+      "batch_rows": 512,
+      "margin_prediction": "current public tower margin baseline"
+    },
+    "tree_margin": {
+      "feature_spec": "scalar-public-summary-v1",
+      "groups": "Cartesian product of own/enemy affiliation and troop/building/projectile/nonprojectile-effect kind from public features.",
+      "selected_entity_indices": [
+        0,
+        1,
+        9,
+        10,
+        12,
+        23,
+        24,
+        25,
+        26,
+        30
+      ],
+      "features": "Per group: count, masked mean and max of each selected available feature, and 4 by 4 normalized arena occupancy counts. Empty group reductions are zero with count zero. Append 18 public globals and confidence, current 4-slot hand token IDs represented as fixed vocabulary one-hot, plus causal global differences at 1,5,20 decision lags and three lag-available flags. No integer identity-as-ordinal feature.",
+      "history": "Strict same-game past; unavailable lags give zero differences and available flag zero.",
+      "loss": "absolute_error",
+      "learning_rate": 0.05,
+      "max_iter": 100,
+      "max_leaf_nodes": 15,
+      "min_samples_leaf": 20,
+      "l2_regularization": 1,
+      "max_bins": 255,
+      "early_stopping": false,
+      "target": "terminal margin minus current public tower margin",
+      "prediction": "clip(current public tower margin + learned residual, -1, 1)",
+      "wdl_prediction": "paired public_globals_wdl model"
+    },
+    "entity_history_wdl_margin": {
+      "token_embedding": 16,
+      "entity_encoder_hidden": [
+        64,
+        64
+      ],
+      "activation": "GELU",
+      "entity_inputs": "Token embedding times identity confidence, identity confidence, 32 public features times their confidence, 32 feature confidences, and relative dx/dy/distance plus presence bit to each current visible tower.",
+      "tower_order": "Own towers then enemy towers, within each side left/princess, king, right/princess by serialized tower token and canonical position. Missing tower slot gives zero geometry and presence zero. No hidden tower entity access.",
+      "pooling": "Masked mean, max and count over each own/enemy by troop/building/projectile/nonprojectile-effect group. Empty groups zero.",
+      "frame_inputs": "Pooled entities plus confidence-masked 18 globals and their confidence, and four ordered hand embeddings with hand confidence.",
+      "frame_projection": 64,
+      "gru_hidden": 64,
+      "gru_layers": 1,
+      "output": "Separate linear three-logit WDL and one-scalar tanh terminal margin heads.",
+      "loss": "Weighted cross-entropy plus weighted absolute margin error; coefficient 1.0 for each independently normalized objective.",
+      "batch_games": 2,
+      "bptt": "Full-game backpropagation; no truncation, hidden detachment, or shuffled state windows.",
+      "sequence_reset": "Exactly zero hidden state at every game start, including evaluation.",
+      "padding": "Padded timesteps have zero loss and cannot alter live-sequence hidden state.",
+      "margin_time_caps": false,
+      "overtime_override": false
+    }
+  },
+  "training": {
+    "neural_seeds": [
+      1279501,
+      1279502
+    ],
+    "tree_seeds": [
+      1279501
+    ],
+    "seed_rule": "Use declared seed plus fold index.",
+    "epochs": 30,
+    "epoch_selection": "Fixed final epoch; no excluded-family epoch selection.",
+    "optimizer": "AdamW",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "gradient_clip_norm": 1,
+    "device": "cpu",
+    "torch_threads": 1,
+    "parallel_fits": 1,
+    "precision": "float32",
+    "hyperparameter_sweeps": false,
+    "preprocessing": "No fitted normalization needed for already bounded scalar arrays; any added fitted transform requires fitting-fold-only statistics and a pre-fitting plan revision.",
+    "memory_check": "Before fitting or inspecting pilot labels, run a synthetic maximal declared game-length/capacity batch of two with backward pass; record peak process memory and runtime. If the contract cannot fit, revise and freeze the plan before any fitting. No silent switch to truncated BPTT.",
+    "artifact_rule": "Freeze implementation and feature/vocabulary hashes, runtime versions, plan hash and input manifest before fitting. Record parameter counts and train/evaluation source hashes."
+  },
+  "evaluation": {
+    "fitting_metrics": true,
+    "out_of_fold_predictions": true,
+    "slices": [
+      "overall",
+      "fold",
+      "phase",
+      "seat",
+      "style",
+      "phase x seat x style"
+    ],
+    "wdl_metrics": [
+      "NLL",
+      "NLL improvement over fitting-game empirical prior",
+      "Brier score",
+      "top-label ECE with 10 fixed bins",
+      "each-class ECE with 10 fixed bins",
+      "decisive AUC",
+      "mean predicted class mass",
+      "observed class mass"
+    ],
+    "prior": "Natural fitting-game empirical frequency only; numerical log floor 1e-12, no auxiliary counts.",
+    "margin_metrics": [
+      "MAE",
+      "current-margin baseline MAE",
+      "paired MAE improvement"
+    ],
+    "coverage": [
+      "games",
+      "decision rows",
+      "verified unique scenario clusters",
+      "clusters containing each decisive outcome",
+      "natural draws"
+    ],
+    "cluster_bootstrap_replicates": 2000,
+    "bootstrap_seed": 1279511,
+    "cluster_rule": "Use audited public scenario/deal identity; paired seats and repeated identical scenarios stay together. Do not treat row count or repeated executions as independent evidence.",
+    "calibration_fitting": "None during pilot; report raw probabilities and reserve probability calibration for its declared later stage.",
+    "model_selection": "No aggregate score may conceal phase or family regressions. Report both fitting and excluded-family results; this comparison cannot promote a candidate."
+  },
+  "acceptance": {
+    "pilot_can_pass_final_acceptance": false,
+    "unchanged_protocol": "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json",
+    "preserved_sections": [
+      "gates",
+      "generalization_evaluation"
+    ],
+    "threshold_summary": {
+      "minimum_nll_improvement": 0.02,
+      "maximum_ece": 0.2,
+      "minimum_natural_auc": 0.6,
+      "minimum_natural_phase_auc": 0.55,
+      "minimum_phase_auc_lower_95": 0.5,
+      "maximum_margin_mae": 0.25,
+      "minimum_margin_mae_improvement": 0.005,
+      "minimum_phase_margin_mae_improvement": 0.001,
+      "minimum_phase_margin_cluster_lower_95": 0,
+      "maximum_natural_draw_probability": 0.1
+    },
+    "rule": "Summary does not replace any existing threshold, distribution, slice, coverage or draw gate. Missing coverage remains inconclusive-reject.",
+    "policy_updates": false,
+    "search": false,
+    "counterfactual_ranking": "Only after independent public-state acceptance under a separately frozen ranking plan."
+  },
+  "implementation_references": [
+    "scripts/screen_hog26_training_family_margin.py",
+    "scripts/train_hog26_actor_outcome.py",
+    "scripts/hog26_public_slice_gates.py",
+    "scripts/hog26_tree_margin_diagnostic.py",
+    "scripts/hog26_scenario_clusters.py",
+    "scripts/hog26_scalar_corpus.py"
+  ]
+}

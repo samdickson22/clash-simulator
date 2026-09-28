@@ -1,0 +1,121 @@
+{
+  "base_seed": 1264001,
+  "behavior_gate_pass": true,
+  "bucket_regressions_larger_than_one_game": 0,
+  "cadence_ratio": 1.0,
+  "card_usage_total_variation": 0.0,
+  "duration_buckets_above_1_5x": 0,
+  "duration_ratio": 1.0,
+  "games": 14,
+  "minimum_scale_games": 56,
+  "missing_teacher_supported_cards": [],
+  "opponents": [
+    {
+      "duration_ratio": 1.0,
+      "opponent": "bridge-pressure",
+      "score_delta": 0,
+      "student_decisions": 396,
+      "student_placement_rate": 0.0707070707070707,
+      "student_score": 2,
+      "teacher_decisions": 396,
+      "teacher_placement_rate": 0.0707070707070707,
+      "teacher_score": 2
+    },
+    {
+      "duration_ratio": 1.0,
+      "opponent": "slow-push",
+      "score_delta": 0,
+      "student_decisions": 970,
+      "student_placement_rate": 0.07010309278350516,
+      "student_score": -2,
+      "teacher_decisions": 970,
+      "teacher_placement_rate": 0.07010309278350516,
+      "teacher_score": -2
+    },
+    {
+      "duration_ratio": 1.0,
+      "opponent": "spell-control",
+      "score_delta": 0,
+      "student_decisions": 1338,
+      "student_placement_rate": 0.07025411061285501,
+      "student_score": -2,
+      "teacher_decisions": 1338,
+      "teacher_placement_rate": 0.07025411061285501,
+      "teacher_score": -2
+    },
+    {
+      "duration_ratio": 1.0,
+      "opponent": "reactive-defense",
+      "score_delta": 0,
+      "student_decisions": 900,
+      "student_placement_rate": 0.07111111111111111,
+      "student_score": -2,
+      "teacher_decisions": 900,
+      "teacher_placement_rate": 0.07111111111111111,
+      "teacher_score": -2
+    },
+    {
+      "duration_ratio": 1.0,
+      "opponent": "split-lane",
+      "score_delta": 0,
+      "student_decisions": 870,
+      "student_placement_rate": 0.07126436781609195,
+      "student_score": 0,
+      "teacher_decisions": 870,
+      "teacher_placement_rate": 0.07126436781609195,
+      "teacher_score": 0
+    },
+    {
+      "duration_ratio": 1.0,
+      "opponent": "balanced",
+      "score_delta": 0,
+      "student_decisions": 1500,
+      "student_placement_rate": 0.07066666666666667,
+      "student_score": 2,
+      "teacher_decisions": 1500,
+      "teacher_placement_rate": 0.07066666666666667,
+      "teacher_score": 2
+    },
+    {
+      "duration_ratio": 1.0,
+      "opponent": "random",
+      "score_delta": 0,
+      "student_decisions": 959,
+      "student_placement_rate": 0.07090719499478623,
+      "student_score": 0,
+      "teacher_decisions": 959,
+      "teacher_placement_rate": 0.07090719499478623,
+      "teacher_score": 0
+    }
+  ],
+  "scale_gate_met": false,
+  "schema": "clasher.hog26.closed-loop-behavior-reproduction.v1",
+  "score_delta": 0,
+  "status": "passed-smoke-not-promotion",
+  "student_card_counts": {
+    "card_action:Cannon": 25,
+    "card_action:HogRider": 85,
+    "card_action:IceGolemite": 100,
+    "card_action:IceSpirits": 97,
+    "card_action:Log": 28,
+    "card_action:Musketeer": 70,
+    "card_action:Skeletons": 85
+  },
+  "student_checkpoint_sha256": "f609b60b3e7b7b574e084b15255e0fc247447e3c18d8552714213ccd0c709336",
+  "student_decisions": 6933,
+  "student_placement_rate": 0.07071623067029811,
+  "student_score": -2,
+  "teacher_card_counts": {
+    "card_action:Cannon": 25,
+    "card_action:HogRider": 85,
+    "card_action:IceGolemite": 100,
+    "card_action:IceSpirits": 97,
+    "card_action:Log": 28,
+    "card_action:Musketeer": 70,
+    "card_action:Skeletons": 85
+  },
+  "teacher_checkpoint_sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372",
+  "teacher_decisions": 6933,
+  "teacher_placement_rate": 0.07071623067029811,
+  "teacher_score": -2
+}

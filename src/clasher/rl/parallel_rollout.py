@@ -15,7 +15,7 @@ from typing_extensions import Self
 from .model import ClasherPolicy, PolicyConfig
 from .reward_model import OBJECTIVE_V1
 from .selfplay_env import SelfPlayBattleEnv
-from .strategy_bots import STRATEGY_NAMES, StrategyBot
+from .strategy_bots import STRATEGY_NAMES, BalancedStrategyConfig, StrategyBot
 from .structured_obs import StructuredObservationBuilder
 from .train_recurrent import (
     RolloutBatch,
@@ -71,6 +71,8 @@ class ActorWorkerConfig:
     matchup_probability: float = 0.0
     trim_rollout_entity_padding: bool = False
     hazard_conditioned_rollouts: bool = False
+    learner_teacher_strategy: str | None = None
+    learner_teacher_balanced_config: dict[str, Any] | None = None
 
 
 def concatenate_rollouts(rollouts: Iterable[RolloutBatch]) -> RolloutBatch:
@@ -86,6 +88,12 @@ def concatenate_rollouts(rollouts: Iterable[RolloutBatch]) -> RolloutBatch:
         values = [getattr(batch, field.name) for batch in batches]
         if isinstance(values[0], np.ndarray):
             payload[field.name] = np.concatenate(values, axis=0)
+        elif values[0] is None:
+            if any(value is not None for value in values):
+                raise ValueError(
+                    f"parallel rollout field {field.name} mixes absent and present data"
+                )
+            payload[field.name] = None
         else:
             payload[field.name] = sum(int(value) for value in values)
     return RolloutBatch(**payload)
@@ -213,6 +221,17 @@ def _actor_worker_main(
         if opponent_spec is not None and opponent_spec.kind == "strategy":
             assert opponent_spec.strategy is not None
             opponent_bot = StrategyBot(opponent_spec.strategy)
+        learner_teacher_bot: StrategyBot | None = None
+        if config.learner_teacher_strategy is not None:
+            teacher_config = (
+                BalancedStrategyConfig(**config.learner_teacher_balanced_config)
+                if config.learner_teacher_balanced_config is not None
+                else BalancedStrategyConfig()
+            )
+            learner_teacher_bot = StrategyBot(
+                config.learner_teacher_strategy,
+                balanced_config=teacher_config,
+            )
         if opponent_spec is not None and opponent_spec.kind == "checkpoint":
             assert opponent_spec.checkpoint is not None
             opponent_model = load_checkpoint_opponent(
@@ -338,6 +357,7 @@ def _actor_worker_main(
                     opponent_episode_starts=opponent_episode_starts,
                     quiet_engine=config.quiet_engine,
                     opponent_bot=opponent_bot,
+                    learner_teacher_bot=learner_teacher_bot,
                     opponent_noop=(
                         opponent_spec is not None and opponent_spec.kind == "noop"
                     ),

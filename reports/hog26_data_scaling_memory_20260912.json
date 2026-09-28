@@ -1,0 +1,11 @@
+{
+  "games_checked": 384,
+  "paired_batches_bit_identical": 192,
+  "raw_public_bytes": 5362033796,
+  "compact_public_bytes": 926991522,
+  "estimated_1536_compact_public_bytes": 3707966088,
+  "max_live_storage_width": 47,
+  "median_live_storage_width": 20.0,
+  "scope": "Exact storage-only batch equivalence on every original pilot game; estimate is not a full1536-game training memory measurement.",
+  "remaining": "Integrate sequential audited compaction and measure combined loader/model peak before fitting."
+}

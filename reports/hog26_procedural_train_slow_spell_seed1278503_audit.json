@@ -1,0 +1,755 @@
+{
+  "cell_outcomes": {
+    "slow-push|Procedural train 000-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 000-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 000-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 000-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 000-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 000-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 000-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 000-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 001-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 001-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 001-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 001-1|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 001-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 001-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 001-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 001-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 002-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 002-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 002-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 002-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 002-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 002-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 002-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 002-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 003-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 003-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 003-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 003-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 003-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 003-2|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 003-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 003-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 004-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 004-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 004-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 004-1|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 004-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 004-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 004-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 004-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 005-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 005-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 005-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 005-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 005-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 005-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 005-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 005-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 006-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 006-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 006-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 006-1|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 006-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 006-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 006-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 006-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 007-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 007-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 007-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 007-1|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 007-2|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 007-2|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "slow-push|Procedural train 007-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "slow-push|Procedural train 007-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 000-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 000-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 000-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 000-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 000-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 000-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 000-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 000-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 001-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 001-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 001-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 001-1|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 001-2|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 001-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 001-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 001-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 002-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 002-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 002-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 002-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 002-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 002-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 002-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 002-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 003-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 003-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 003-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 003-1|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 003-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 003-2|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 003-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 003-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 004-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 004-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 004-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 004-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 004-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 004-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 004-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 004-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 005-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 005-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 005-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 005-1|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 005-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 005-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 005-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 005-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 006-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 006-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 006-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 006-1|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 006-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 006-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 006-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 006-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 007-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 007-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 007-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 007-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "spell-control|Procedural train 007-2|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 007-2|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 007-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "spell-control|Procedural train 007-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    }
+  },
+  "checks": {
+    "complete_stream_coverage": true,
+    "contiguous_stream_ordinals": true,
+    "critic_inputs_absent": true,
+    "current_causal_actor_contract": true,
+    "exact_actor_relative_terminal_labels": true,
+    "exact_episode_boundaries": true,
+    "expected_decks_exact": true,
+    "expected_opponents_exact": true,
+    "expected_split_exact": true,
+    "finite_outcomes_and_margins": true,
+    "label_independent_public_mask_v2": true,
+    "supported_deck_authority_exact": true,
+    "unique_hashes": true,
+    "unique_seeds": true
+  },
+  "corpora": [
+    {
+      "episodes": 128,
+      "margin_maximum": 0.8358371257781982,
+      "margin_minimum": -0.7484709620475769,
+      "opponent_deck_split": "train",
+      "outcomes": {
+        "draw": 0,
+        "loss": 81,
+        "win": 47
+      },
+      "path": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_procedural_train_slow_spell_seed1278503/corpus.npz",
+      "rows": 56347,
+      "seed": 1278503,
+      "sha256": "611699015ae3a506454aa8a9f11ae009213ae773d4213266b2f9f120f39314e1",
+      "supported_decks_sha256": "6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8"
+    }
+  ],
+  "corpus_count": 1,
+  "episodes": 128,
+  "natural_diversity": {
+    "cells_with_both_decisive_outcomes": 0,
+    "opponent_decks": [
+      "Procedural train 000-0",
+      "Procedural train 000-1",
+      "Procedural train 000-2",
+      "Procedural train 000-3",
+      "Procedural train 001-0",
+      "Procedural train 001-1",
+      "Procedural train 001-2",
+      "Procedural train 001-3",
+      "Procedural train 002-0",
+      "Procedural train 002-1",
+      "Procedural train 002-2",
+      "Procedural train 002-3",
+      "Procedural train 003-0",
+      "Procedural train 003-1",
+      "Procedural train 003-2",
+      "Procedural train 003-3",
+      "Procedural train 004-0",
+      "Procedural train 004-1",
+      "Procedural train 004-2",
+      "Procedural train 004-3",
+      "Procedural train 005-0",
+      "Procedural train 005-1",
+      "Procedural train 005-2",
+      "Procedural train 005-3",
+      "Procedural train 006-0",
+      "Procedural train 006-1",
+      "Procedural train 006-2",
+      "Procedural train 006-3",
+      "Procedural train 007-0",
+      "Procedural train 007-1",
+      "Procedural train 007-2",
+      "Procedural train 007-3"
+    ],
+    "opponent_styles": [
+      "slow-push",
+      "spell-control"
+    ],
+    "phase_matchup_clusters": {
+      "early": {
+        "clusters": 64,
+        "with_both": 5,
+        "with_loss": 43,
+        "with_win": 26
+      },
+      "late": {
+        "clusters": 11,
+        "with_both": 0,
+        "with_loss": 10,
+        "with_win": 1
+      },
+      "middle": {
+        "clusters": 63,
+        "with_both": 5,
+        "with_loss": 42,
+        "with_win": 26
+      }
+    },
+    "style_deck_seat_cells": 128
+  },
+  "outcomes": {
+    "draw": 0,
+    "loss": 81,
+    "win": 47
+  },
+  "phase_rows": {
+    "early": 31715,
+    "late": 1648,
+    "middle": 22984
+  },
+  "rows": 56347,
+  "schema": "clasher.hog26.outcome-corpus-audit.v1",
+  "status": "passed"
+}

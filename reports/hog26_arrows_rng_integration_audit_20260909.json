@@ -1,0 +1,39 @@
+{
+  "status": "diagnostic; MPS exact RNG not certified",
+  "seed": 1278961,
+  "cpu_30_draws_match": true,
+  "cpu_final_state_match": true,
+  "initial_word_copy_equal": true,
+  "mps_twist_mismatching_words": 623,
+  "first_mismatches": [
+    [
+      0,
+      741778584,
+      3040744512
+    ],
+    [
+      1,
+      1948536007,
+      1948535808
+    ],
+    [
+      2,
+      2809311139,
+      2809310784
+    ],
+    [
+      3,
+      2198566311,
+      2198567424
+    ]
+  ],
+  "next_uint32_cpu": [
+    3073706369
+  ],
+  "next_uint32_mps": [
+    1222697402
+  ],
+  "scope": "Stock MPS constructor fails on float64 Gaussian storage. This diagnostic substitutes float32 only for an uncached zero Gaussian field to inspect integer twist; this is not a production workaround. Underlying MPS expression defect not diagnosed.",
+  "source_sha256": "07c2fd1b6b5e1a46ac0e76ceabf7fb973f303d1d2ff607f3262842e6271cdc26",
+  "integration_decision": "Start with CPU-owned supplied exact state, explicit reset and fanout, and measured cast-time transfers. No whole-game RNG parity claim without shared ingress and consumer ordering."
+}

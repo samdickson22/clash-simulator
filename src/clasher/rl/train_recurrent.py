@@ -2,14 +2,16 @@ from __future__ import annotations
 
 import argparse
 import atexit
+import hashlib
 import json
+import math
 import time
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 from functools import wraps
 from pathlib import Path
-from typing import Any, Literal, ParamSpec, TypeVar
+from typing import Any, Literal, ParamSpec, TypeVar, cast
 
 import numpy as np
 import torch
@@ -26,6 +28,7 @@ from clasher.paths import (
 )
 
 from .causal_rehearsal import CausalDecisionRehearsal
+from .common import NUM_HAND_SLOTS, NUM_TILES
 from .imitation_objective import (
     PLACEMENT_ACTIONS,
     SpatialImitationConfig,
@@ -35,8 +38,14 @@ from .imitation_objective import (
 )
 from .model import ClasherPolicy, PolicyConfig, PolicyInputs, PolicyOutput
 from .reward_model import OBJECTIVE_V1, REWARD_PROFILES
+from .rollout_audit import write_rollout_audit
 from .selfplay_env import SelfPlayBattleEnv
-from .strategy_bots import STRATEGY_NAMES, StrategyBot, allocate_pfsp_slots
+from .strategy_bots import (
+    STRATEGY_NAMES,
+    BalancedStrategyConfig,
+    StrategyBot,
+    allocate_pfsp_slots,
+)
 from .structured_obs import StructuredObservation, StructuredObservationBuilder
 
 
@@ -121,6 +130,7 @@ class RolloutBatch:
     wins: int
     losses: int
     draws: int
+    strategy_teacher_actions: np.ndarray | None = None
 
     @property
     def num_sequences(self) -> int:
@@ -849,6 +859,7 @@ def collect_rollout_stationary_opponents(
     opponent_episode_starts: np.ndarray,
     quiet_engine: bool,
     opponent_bot: StrategyBot | None = None,
+    learner_teacher_bot: StrategyBot | None = None,
     opponent_noop: bool = False,
     hazard_conditioned_rollouts: bool = False,
 ) -> tuple[
@@ -900,6 +911,11 @@ def collect_rollout_stationary_opponents(
     initial_hidden = recurrent_state[0].detach().cpu().numpy().copy()
     initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
     episodes_finished = wins = losses = draws = 0
+    strategy_teacher_actions = (
+        np.empty((agents, rollout_steps), dtype=np.int64)
+        if learner_teacher_bot is not None
+        else None
+    )
 
     for step in range(rollout_steps):
         with maybe_silence_stdio(quiet_engine):
@@ -917,6 +933,23 @@ def collect_rollout_stationary_opponents(
             episode_starts,
             step,
         )
+        if learner_teacher_bot is not None:
+            assert strategy_teacher_actions is not None
+            strategy_teacher_actions[:, step] = np.asarray(
+                [
+                    learner_teacher_bot.select_action(
+                        env,
+                        player_id,
+                        action_mask=mask,
+                    )
+                    for env, player_id, mask in zip(
+                        envs,
+                        learner_players,
+                        action_masks,
+                    )
+                ],
+                dtype=np.int64,
+            )
         inputs = _stack_step_inputs(
             observations,
             action_masks,
@@ -1108,6 +1141,7 @@ def collect_rollout_stationary_opponents(
         wins=wins,
         losses=losses,
         draws=draws,
+        strategy_teacher_actions=strategy_teacher_actions,
     )
     return (
         rollout,
@@ -1260,13 +1294,18 @@ def parameter_anchor_l2(
 
 
 def policy_anchor_kl(
-    current_joint_logits: Tensor, anchor_joint_logits: Tensor
+    current_joint_logits: Tensor,
+    anchor_joint_logits: Tensor,
+    *,
+    temperature: float = 1.0,
 ) -> Tensor:
     """Mean forward KL from a frozen anchor policy to the current policy."""
     if current_joint_logits.shape != anchor_joint_logits.shape:
         raise ValueError("anchor and current policy logits must have matching shapes")
-    current_log_prob = torch.log_softmax(current_joint_logits, dim=-1)
-    anchor_log_prob = torch.log_softmax(anchor_joint_logits, dim=-1)
+    if not math.isfinite(temperature) or temperature <= 0.0:
+        raise ValueError("policy temperature must be finite and positive")
+    current_log_prob = torch.log_softmax(current_joint_logits / temperature, dim=-1)
+    anchor_log_prob = torch.log_softmax(anchor_joint_logits / temperature, dim=-1)
     anchor_prob = anchor_log_prob.exp()
     return (anchor_prob * (anchor_log_prob - current_log_prob)).sum(dim=-1).mean()
 
@@ -1325,6 +1364,142 @@ def factorized_policy_anchor_kl(
     return per_decision[valid].mean()
 
 
+def online_strategy_teacher_loss(
+    output: PolicyOutput,
+    action_mask: Tensor,
+    teacher_actions: Tensor,
+    *,
+    decision_coef: float,
+    card_coef: float,
+    tile_coef: float,
+    play_weight: float,
+) -> dict[str, Tensor]:
+    """Supervise timing, card, and tile independently on learner states."""
+
+    expected_actions = PLACEMENT_ACTIONS + 2
+    if action_mask.shape != (*teacher_actions.shape, expected_actions):
+        raise ValueError("online teacher action-mask shape differs")
+    if action_mask.dtype != torch.bool or teacher_actions.dtype != torch.long:
+        raise ValueError("online teacher mask/actions have invalid dtypes")
+    flat_actions = teacher_actions.reshape(-1)
+    flat_mask = action_mask.reshape(-1, expected_actions)
+    if bool(
+        ((flat_actions < 0) | (flat_actions >= expected_actions)).any()
+    ):
+        raise ValueError("online teacher action is outside the action space")
+    if not bool(flat_mask.gather(1, flat_actions[:, None]).all()):
+        raise ValueError("online teacher emitted a non-public-legal action")
+
+    type_logits = output.action_type_logits.reshape(-1, NUM_HAND_SLOTS + 2)
+    tile_logits = output.location_logits.reshape(
+        -1, NUM_HAND_SLOTS, NUM_TILES
+    )
+    placement_mask = flat_mask[:, :PLACEMENT_ACTIONS].reshape(
+        -1, NUM_HAND_SLOTS, NUM_TILES
+    )
+    card_mask = placement_mask.any(dim=-1)
+    decision_mask = torch.stack(
+        (
+            card_mask.any(dim=-1),
+            flat_mask[:, PLACEMENT_ACTIONS],
+            flat_mask[:, PLACEMENT_ACTIONS + 1],
+        ),
+        dim=-1,
+    )
+    masked_card_logits = type_logits[:, :NUM_HAND_SLOTS].masked_fill(
+        ~card_mask, -1e9
+    )
+    decision_logits = torch.stack(
+        (
+            torch.logsumexp(masked_card_logits, dim=-1),
+            type_logits[:, NUM_HAND_SLOTS],
+            type_logits[:, NUM_HAND_SLOTS + 1],
+        ),
+        dim=-1,
+    ).masked_fill(~decision_mask, -1e9)
+    placement = flat_actions < PLACEMENT_ACTIONS
+    decision_targets = torch.where(
+        placement,
+        torch.zeros_like(flat_actions),
+        torch.where(
+            flat_actions == PLACEMENT_ACTIONS,
+            torch.ones_like(flat_actions),
+            torch.full_like(flat_actions, 2),
+        ),
+    )
+    decision_weights = torch.where(
+        placement,
+        torch.full_like(flat_actions, play_weight, dtype=torch.float32),
+        torch.ones_like(flat_actions, dtype=torch.float32),
+    )
+    decision_per_row = F.cross_entropy(
+        decision_logits, decision_targets, reduction="none"
+    )
+    decision_loss = (decision_per_row * decision_weights).sum() / (
+        decision_weights.sum().clamp_min(1.0)
+    )
+
+    placement_rows = torch.nonzero(placement, as_tuple=False).flatten()
+    if placement_rows.numel():
+        placement_actions = flat_actions.index_select(0, placement_rows)
+        card_targets = torch.div(
+            placement_actions, NUM_TILES, rounding_mode="floor"
+        )
+        tile_targets = placement_actions.remainder(NUM_TILES)
+        selected_card_logits = masked_card_logits.index_select(0, placement_rows)
+        card_loss = F.cross_entropy(selected_card_logits, card_targets)
+        row_indices = torch.arange(
+            placement_rows.numel(), device=flat_actions.device
+        )
+        selected_tile_logits = tile_logits.index_select(0, placement_rows)[
+            row_indices, card_targets
+        ]
+        selected_tile_mask = placement_mask.index_select(0, placement_rows)[
+            row_indices, card_targets
+        ]
+        tile_loss = F.cross_entropy(
+            selected_tile_logits.masked_fill(~selected_tile_mask, -1e9),
+            tile_targets,
+        )
+        card_accuracy = (
+            selected_card_logits.argmax(dim=-1) == card_targets
+        ).float().mean()
+        tile_accuracy = (
+            selected_tile_logits.masked_fill(~selected_tile_mask, -1e9).argmax(
+                dim=-1
+            )
+            == tile_targets
+        ).float().mean()
+    else:
+        card_loss = masked_card_logits.sum() * 0.0
+        tile_loss = tile_logits.sum() * 0.0
+        card_accuracy = card_loss.detach()
+        tile_accuracy = tile_loss.detach()
+    decision_predictions = decision_logits.argmax(dim=-1)
+    decision_accuracy = (decision_predictions == decision_targets).float().mean()
+    play_recall = (
+        (decision_predictions[placement] == 0).float().mean()
+        if placement_rows.numel()
+        else decision_accuracy.detach() * 0.0
+    )
+    total = (
+        decision_coef * decision_loss
+        + card_coef * card_loss
+        + tile_coef * tile_loss
+    )
+    return {
+        "loss": total,
+        "decision_loss": decision_loss,
+        "card_loss": card_loss,
+        "tile_loss": tile_loss,
+        "decision_accuracy": decision_accuracy,
+        "play_recall": play_recall,
+        "card_accuracy": card_accuracy,
+        "tile_accuracy": tile_accuracy,
+        "play_rate": placement.float().mean(),
+    }
+
+
 def ppo_update(
     *,
     model: ClasherPolicy,
@@ -1341,9 +1516,16 @@ def ppo_update(
     hand_aux_coef: float,
     elixir_aux_coef: float,
     target_kl: float,
+    action_value_coef: float = 0.0,
+    sampling_temperature: float = 1.0,
     action_type_entropy_coef: float | None = None,
     location_entropy_coef: float | None = None,
     conditional_slot_entropy_coef: float = 0.0,
+    online_strategy_teacher_coef: float = 0.0,
+    online_strategy_teacher_decision_coef: float = 1.0,
+    online_strategy_teacher_card_coef: float = 1.0,
+    online_strategy_teacher_tile_coef: float = 1.0,
+    online_strategy_teacher_play_weight: float = 4.0,
     anchor_parameters: tuple[Tensor | None, ...] | None = None,
     anchor_l2_coef: float = 0.0,
     anchor_model: ClasherPolicy | None = None,
@@ -1368,6 +1550,10 @@ def ppo_update(
     anchor_rehearsal_batch_sequences: int = 1,
     hazard_conditioned_rollouts: bool = False,
 ) -> dict[str, float]:
+    if not math.isfinite(sampling_temperature) or sampling_temperature <= 0.0:
+        raise ValueError("sampling temperature must be finite and positive")
+    if not math.isfinite(action_value_coef) or action_value_coef < 0.0:
+        raise ValueError("action value coefficient must be finite and nonnegative")
     model.train()
     normalized_advantages = (advantages - float(advantages.mean())) / (
         float(advantages.std()) + 1e-8
@@ -1376,6 +1562,8 @@ def ppo_update(
         "loss": 0.0,
         "policy_loss": 0.0,
         "value_loss": 0.0,
+        "action_value_loss": 0.0,
+        "action_value_policy_gate": 0.0,
         "entropy": 0.0,
         "action_type_entropy": 0.0,
         "location_entropy": 0.0,
@@ -1392,6 +1580,16 @@ def ppo_update(
         "causal_spatial_rehearsal_weighted_loss": 0.0,
         "anchor_rehearsal_kl": 0.0,
         "anchor_rehearsal_loss": 0.0,
+        "online_teacher_loss": 0.0,
+        "online_teacher_weighted_loss": 0.0,
+        "online_teacher_decision_loss": 0.0,
+        "online_teacher_card_loss": 0.0,
+        "online_teacher_tile_loss": 0.0,
+        "online_teacher_decision_accuracy": 0.0,
+        "online_teacher_play_recall": 0.0,
+        "online_teacher_card_accuracy": 0.0,
+        "online_teacher_tile_accuracy": 0.0,
+        "online_teacher_play_rate": 0.0,
         "hand_loss": 0.0,
         "elixir_loss": 0.0,
         "approx_kl": 0.0,
@@ -1425,6 +1623,20 @@ def ppo_update(
         normalized_advantages, dtype=torch.float32, device=device
     )
     all_returns = torch.as_tensor(returns, dtype=torch.float32, device=device)
+    all_teacher_actions = (
+        None
+        if rollout.strategy_teacher_actions is None
+        else torch.as_tensor(
+            rollout.strategy_teacher_actions,
+            dtype=torch.long,
+            device=device,
+        )
+    )
+    if (all_teacher_actions is None) != (online_strategy_teacher_coef == 0.0):
+        raise ValueError(
+            "online teacher rollout labels and a positive coefficient are "
+            "required together"
+        )
 
     for _epoch in range(epochs):
         order = np.random.permutation(rollout.num_sequences)
@@ -1438,14 +1650,19 @@ def ppo_update(
             )
             output = model(inputs, initial_state)
             actions = all_actions.index_select(0, index_tensor)
-            if hazard_conditioned_rollouts:
-                distribution = model.distribution_for_hazard_gate(
-                    output,
-                    inputs.action_mask,
-                    actions < PLACEMENT_ACTIONS,
-                )
-            else:
-                distribution = output.distribution()
+            force_play: Tensor | None = None
+            if model.config.play_hazard_enabled:
+                # The hard recurrent hazard gate is part of the behavior state
+                # that generated this rollout.  Recomputing it after an optimizer
+                # step can flip support and make a stored legal action have
+                # probability zero.  Gated collection guarantees placement iff
+                # the behavior gate fired, so the stored action exactly recovers
+                # that discrete conditioning variable for PPO ratio evaluation.
+                force_play = actions < PLACEMENT_ACTIONS
+            distribution = output.distribution(
+                temperature=sampling_temperature,
+                force_play=force_play,
+            )
             old_log_prob = all_old_log_prob.index_select(0, index_tensor)
             old_values = all_old_values.index_select(0, index_tensor)
             advantage = all_advantages.index_select(0, index_tensor)
@@ -1465,11 +1682,36 @@ def ppo_update(
             value_loss = (
                 0.5 * torch.maximum(value_loss_unclipped, value_loss_clipped).mean()
             )
+            if output.action_values is None:
+                if action_value_coef > 0.0:
+                    raise ValueError(
+                        "positive action-value coefficient requires the action-value head"
+                    )
+                action_value_loss = output.values.sum() * 0.0
+                action_value_policy_gate = output.values.sum() * 0.0
+            else:
+                selected_action_values = output.action_values.gather(
+                    -1, actions.unsqueeze(-1)
+                ).squeeze(-1)
+                action_value_loss = F.smooth_l1_loss(
+                    selected_action_values,
+                    return_target.detach(),
+                )
+                assert model.action_value_policy_gate is not None
+                action_value_policy_gate = torch.tanh(
+                    model.action_value_policy_gate
+                )
             entropy = distribution.entropy().mean()
-            action_type_entropy, location_entropy = output.entropy_components()
+            action_type_entropy, location_entropy = output.entropy_components(
+                temperature=sampling_temperature,
+                force_play=force_play,
+            )
             action_type_entropy = action_type_entropy.mean()
             location_entropy = location_entropy.mean()
-            conditional_slot_entropy = output.conditional_slot_entropy().mean()
+            conditional_slot_entropy = output.conditional_slot_entropy(
+                temperature=sampling_temperature,
+                force_play=force_play,
+            ).mean()
 
             assert inputs.critic_card_ids is not None
             assert inputs.critic_global_features is not None
@@ -1516,9 +1758,43 @@ def ppo_update(
             else:
                 with torch.no_grad():
                     anchor_output = anchor_model(inputs, initial_state)
+                    anchor_distribution = anchor_output.distribution(
+                        temperature=sampling_temperature,
+                        force_play=force_play,
+                    )
                 anchor_policy_kl = policy_anchor_kl(
-                    output.joint_logits, anchor_output.joint_logits
+                    distribution.logits,
+                    anchor_distribution.logits,
                 )
+                if model.config.play_hazard_enabled:
+                    if (
+                        output.play_hazard_logits is None
+                        or anchor_output.play_hazard_logits is None
+                    ):
+                        raise ValueError(
+                            "hazard-enabled anchor policies must emit hazard logits"
+                        )
+                    anchor_hazard_prob = torch.sigmoid(
+                        anchor_output.play_hazard_logits
+                        - math.log(anchor_model.config.play_hazard_positive_weight)
+                    )
+                    current_hazard_logits = (
+                        output.play_hazard_logits
+                        - math.log(model.config.play_hazard_positive_weight)
+                    )
+                    hazard_cross_entropy = F.binary_cross_entropy_with_logits(
+                        current_hazard_logits,
+                        anchor_hazard_prob,
+                    )
+                    hazard_entropy = F.binary_cross_entropy(
+                        anchor_hazard_prob,
+                        anchor_hazard_prob,
+                    )
+                    anchor_policy_kl = (
+                        anchor_policy_kl
+                        + hazard_cross_entropy
+                        - hazard_entropy
+                    )
             anchor_policy_kl_loss = anchor_policy_kl_coef * anchor_policy_kl
             if rehearsal is None:
                 rehearsal_loss = torch.zeros(
@@ -1580,9 +1856,40 @@ def ppo_update(
                     batch_sequences=anchor_rehearsal_batch_sequences,
                 )
             anchor_rehearsal_loss = anchor_rehearsal_coef * anchor_rehearsal_kl
+            if all_teacher_actions is None:
+                online_teacher = {
+                    name: torch.zeros(
+                        (), dtype=output.values.dtype, device=device
+                    )
+                    for name in (
+                        "loss",
+                        "decision_loss",
+                        "card_loss",
+                        "tile_loss",
+                        "decision_accuracy",
+                        "play_recall",
+                        "card_accuracy",
+                        "tile_accuracy",
+                        "play_rate",
+                    )
+                }
+            else:
+                online_teacher = online_strategy_teacher_loss(
+                    output,
+                    inputs.action_mask,
+                    all_teacher_actions.index_select(0, index_tensor),
+                    decision_coef=online_strategy_teacher_decision_coef,
+                    card_coef=online_strategy_teacher_card_coef,
+                    tile_coef=online_strategy_teacher_tile_coef,
+                    play_weight=online_strategy_teacher_play_weight,
+                )
+            online_teacher_weighted_loss = (
+                online_strategy_teacher_coef * online_teacher["loss"]
+            )
             loss = (
                 policy_loss
                 + value_coef * value_loss
+                + action_value_coef * action_value_loss
                 - entropy_bonus
                 + anchor_loss
                 + anchor_policy_kl_loss
@@ -1590,6 +1897,7 @@ def ppo_update(
                 + causal_rehearsal_weighted_loss
                 + causal_spatial_rehearsal_weighted_loss
                 + anchor_rehearsal_loss
+                + online_teacher_weighted_loss
                 + hand_aux_coef * hand_loss
                 + elixir_aux_coef * elixir_loss
             )
@@ -1609,6 +1917,8 @@ def ppo_update(
                     f"{float(causal_spatial_rehearsal_loss.detach()):.9g} "
                     "anchor_rehearsal_kl="
                     f"{float(anchor_rehearsal_kl.detach()):.9g}"
+                    " online_teacher="
+                    f"{float(online_teacher['loss'].detach()):.9g}"
                 )
 
             optimizer.zero_grad(set_to_none=True)
@@ -1647,6 +1957,8 @@ def ppo_update(
                 "loss": loss,
                 "policy_loss": policy_loss,
                 "value_loss": value_loss,
+                "action_value_loss": action_value_loss,
+                "action_value_policy_gate": action_value_policy_gate,
                 "entropy": entropy,
                 "action_type_entropy": action_type_entropy,
                 "location_entropy": location_entropy,
@@ -1665,6 +1977,18 @@ def ppo_update(
                 ),
                 "anchor_rehearsal_kl": anchor_rehearsal_kl,
                 "anchor_rehearsal_loss": anchor_rehearsal_loss,
+                "online_teacher_loss": online_teacher["loss"],
+                "online_teacher_weighted_loss": online_teacher_weighted_loss,
+                "online_teacher_decision_loss": online_teacher["decision_loss"],
+                "online_teacher_card_loss": online_teacher["card_loss"],
+                "online_teacher_tile_loss": online_teacher["tile_loss"],
+                "online_teacher_decision_accuracy": online_teacher[
+                    "decision_accuracy"
+                ],
+                "online_teacher_play_recall": online_teacher["play_recall"],
+                "online_teacher_card_accuracy": online_teacher["card_accuracy"],
+                "online_teacher_tile_accuracy": online_teacher["tile_accuracy"],
+                "online_teacher_play_rate": online_teacher["play_rate"],
                 "hand_loss": hand_loss,
                 "elixir_loss": elixir_loss,
                 "approx_kl": approx_kl,
@@ -1709,6 +2033,7 @@ def save_checkpoint(
     update: int,
     total_transitions: int,
     metrics: dict[str, float] | None = None,
+    simulation_backend_metadata: dict[str, Any] | None = None,
 ) -> None:
     torch.save(
         {
@@ -1722,6 +2047,7 @@ def save_checkpoint(
             "update": update,
             "total_transitions": total_transitions,
             "metrics": metrics or {},
+            "simulation_backend_metadata": simulation_backend_metadata,
         },
         path,
     )
@@ -1732,6 +2058,56 @@ def parse_args() -> argparse.Namespace:
         description="Train the recurrent entity-spatial policy with PPO self-play"
     )
     parser.add_argument("--decks-path", default="decks.json")
+    parser.add_argument(
+        "--simulation-backend",
+        choices=("python", "simple-pytorch"),
+        default="python",
+        help="battle backend; simple-pytorch is a fresh-only dense tensor Gym",
+    )
+    parser.add_argument(
+        "--simple-supported-decks-path",
+        default="training_decks/simple_gym_supported_v1.json",
+        help="fail-closed supported-deck artifact for --simulation-backend simple-pytorch",
+    )
+    parser.add_argument(
+        "--simple-token-vocabulary-path",
+        default="reports/current_client_youtube_stable_vocabulary_v1.json",
+        help="typed current-client actor vocabulary for the simple PyTorch backend",
+    )
+    parser.add_argument(
+        "--simple-max-entities",
+        type=int,
+        default=128,
+        help="fresh Simple Gym entity/observation capacity; persisted in checkpoints",
+    )
+    parser.add_argument(
+        "--simple-max-effects",
+        type=int,
+        default=128,
+        help="fresh Simple Gym persistent-effect capacity; persisted in checkpoints",
+    )
+    parser.add_argument(
+        "--simple-learner-sampling-temperature",
+        type=float,
+        default=1.0,
+        help=(
+            "stochastic learner-policy temperature for Simple Gym collection and "
+            "the matching PPO behavior distribution"
+        ),
+    )
+    parser.add_argument(
+        "--simple-learner-deck-name",
+        default="Hog 2.6 Cycle",
+        help="exact supported-deck name assigned to every stationary learner row",
+    )
+    parser.add_argument(
+        "--simple-checkpoint-opponent-deck-name",
+        default=None,
+        help=(
+            "optional exact supported deck assigned to frozen checkpoint rows; "
+            "use the learner deck for a true frozen-parent mirror"
+        ),
+    )
     parser.add_argument(
         "--card-semantics-version",
         type=int,
@@ -1784,6 +2160,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--checkpoint-dir", default="checkpoints/entity_selfplay")
     parser.add_argument("--resume-latest", action="store_true")
     parser.add_argument("--resume-from", default=None)
+    parser.add_argument(
+        "--initialize-policy-from",
+        default=None,
+        help=(
+            "initialize only model weights/config/vocabulary from a V2 policy; "
+            "optimizer, update counters, simulator state, and RNG start fresh"
+        ),
+    )
     parser.add_argument("--seed", type=int, default=23)
     parser.add_argument("--updates", type=int, default=500)
     parser.add_argument("--num-envs", type=int, default=6)
@@ -1808,6 +2192,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument("--rollout-steps", type=int, default=48)
+    parser.add_argument(
+        "--first-rollout-audit-json",
+        default=None,
+        help=(
+            "optional fail-closed exact digest of the first collected rollout, "
+            "published before GAE or optimization"
+        ),
+    )
     parser.add_argument("--decision-interval", type=int, default=8)
     parser.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
     parser.add_argument("--mirror-match", action="store_true")
@@ -1857,6 +2249,33 @@ def parse_args() -> argparse.Namespace:
         help="public-information strategy used by --opponent-mode strategy",
     )
     parser.add_argument(
+        "--online-strategy-teacher",
+        choices=STRATEGY_NAMES,
+        default=None,
+        help=(
+            "optional public-information teacher evaluated on the learner's "
+            "own resident rollout states"
+        ),
+    )
+    parser.add_argument(
+        "--online-strategy-teacher-balanced-config",
+        default=None,
+        help="optional JSON BalancedStrategyConfig for the balanced learner teacher",
+    )
+    parser.add_argument("--online-strategy-teacher-coef", type=float, default=0.0)
+    parser.add_argument(
+        "--online-strategy-teacher-decision-coef", type=float, default=1.0
+    )
+    parser.add_argument(
+        "--online-strategy-teacher-card-coef", type=float, default=1.0
+    )
+    parser.add_argument(
+        "--online-strategy-teacher-tile-coef", type=float, default=1.0
+    )
+    parser.add_argument(
+        "--online-strategy-teacher-play-weight", type=float, default=4.0
+    )
+    parser.add_argument(
         "--opponent-checkpoint",
         action="append",
         default=[],
@@ -1884,7 +2303,10 @@ def parse_args() -> argparse.Namespace:
         "--pfsp-strategy-workers",
         type=int,
         default=None,
-        help="number of league worker slots allocated from --pfsp-report",
+        help=(
+            "number of league slots allocated from --pfsp-report; one slot is "
+            "one paired logical matchup on simple-pytorch"
+        ),
     )
     parser.add_argument(
         "--engine-fast-path", choices=["off", "shadow", "on"], default="off"
@@ -1914,6 +2336,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--actor-layers", type=int, default=4)
     parser.add_argument("--critic-layers", type=int, default=2)
     parser.add_argument("--memory-size", type=int, default=256)
+    parser.add_argument(
+        "--action-value-head",
+        action="store_true",
+        help=(
+            "fresh-lineage actor-visible factorized action-value head; starts "
+            "behavior-closed and must be paired with --action-value-coef"
+        ),
+    )
+    parser.add_argument(
+        "--fresh-factorized-action-head",
+        action="store_true",
+        help=(
+            "fresh-lineage explicit play/wait/ability gate, shared slot-equivariant "
+            "mechanics-aware card pointer, and unchanged exact placement heatmap"
+        ),
+    )
     parser.add_argument(
         "--encoder-kind",
         choices=("attention", "deepsets"),
@@ -2043,6 +2481,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gae-lambda", type=float, default=0.95)
     parser.add_argument("--clip-ratio", type=float, default=0.2)
     parser.add_argument("--value-coef", type=float, default=0.5)
+    parser.add_argument(
+        "--action-value-coef",
+        type=float,
+        default=0.0,
+        help="Huber coefficient for selected actor-visible action returns",
+    )
     parser.add_argument("--entropy-coef", type=float, default=0.01)
     parser.add_argument(
         "--action-type-entropy-coef",
@@ -2292,6 +2736,77 @@ def _load_resume_state(
     return torch.load(path, map_location=device, weights_only=False), path
 
 
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _load_initial_policy_state(
+    args: argparse.Namespace,
+    device: torch.device,
+) -> tuple[dict[str, Any] | None, Path | None]:
+    if not args.initialize_policy_from:
+        return None, None
+    if args.simulation_backend != "simple-pytorch":
+        raise ValueError(
+            "--initialize-policy-from is currently gated only for simple-pytorch"
+        )
+    if args.resume_latest or args.resume_from:
+        raise ValueError(
+            "--initialize-policy-from cannot be combined with checkpoint resume"
+        )
+    path = resolve_path(args.initialize_policy_from, must_exist=True)
+    payload = torch.load(path, map_location=device, weights_only=False)
+    if int(payload.get("format_version", 0)) != 2:
+        raise ValueError("initial policy is not a V2 checkpoint")
+    if payload.get("model_type") != "entity_spatial_recurrent":
+        raise ValueError("initial policy has an unsupported model type")
+    if not isinstance(payload.get("model_config"), dict):
+        raise TypeError("initial policy has no model configuration")
+    if not isinstance(payload.get("model_state_dict"), dict):
+        raise TypeError("initial policy has no model state")
+    token_names = payload.get("token_names")
+    if not isinstance(token_names, (list, tuple)) or not token_names:
+        raise ValueError("initial policy has no token vocabulary")
+    return payload, path
+
+
+def _validate_simple_initial_policy_contract(
+    payload: dict[str, Any],
+    *,
+    token_names: tuple[str, ...],
+    max_entities: int,
+) -> PolicyConfig:
+    """Accept only policy state the fresh Simple Gym can consume exactly."""
+
+    configured_tokens = tuple(str(name) for name in payload["token_names"])
+    if configured_tokens != token_names:
+        raise ValueError("initial policy token vocabulary does not match Simple Gym")
+    config = PolicyConfig.from_dict(payload["model_config"])
+    if config.num_tokens != len(token_names):
+        raise ValueError("initial policy token count does not match its vocabulary")
+    if not config.canonical_lane_globals:
+        raise ValueError("initial policy must use canonical lane globals")
+    if config.public_history_slots or config.public_seen_card_slots:
+        raise ValueError("Simple Gym initialization does not support history slots")
+    if config.structured_deterministic_resource_enabled:
+        raise ValueError(
+            "Simple Gym initialization does not support deterministic resource state"
+        )
+    # Entity count is a padding/validation bound, not a learned tensor axis in
+    # the set-attention policy. Rebinding it preserves every parameter; the
+    # runtime admission gate independently proves whether the requested bound
+    # is large enough for the configured deck pool.
+    return (
+        config
+        if config.max_entities == max_entities
+        else replace(config, max_entities=max_entities)
+    )
+
+
 def restore_optimizer_state(
     optimizer: torch.optim.Optimizer,
     state_dict: dict[str, Any],
@@ -2309,20 +2824,173 @@ def _canonical_lane_globals_for_run(
     *,
     actor_observation_domain: str,
     resume_config: PolicyConfig | None,
+    simulation_backend: str = "python",
 ) -> bool:
     """Keep the observation builder and checkpoint contract on one lane frame."""
 
     if resume_config is not None:
         return bool(resume_config.canonical_lane_globals)
+    if simulation_backend == "simple-pytorch":
+        return True
     return actor_observation_domain in {"causal-vision-v1", "causal-frame-v1"}
+
+
+def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
+    """Fail before side effects unless the fresh dense-Gym contract is exact."""
+
+    if (args.online_strategy_teacher is None) != (
+        args.online_strategy_teacher_coef == 0.0
+    ):
+        raise ValueError(
+            "online strategy teacher and a positive teacher coefficient are "
+            "required together"
+        )
+    if args.online_strategy_teacher_coef < 0.0:
+        raise ValueError("online strategy teacher coefficient cannot be negative")
+    for name in (
+        "online_strategy_teacher_decision_coef",
+        "online_strategy_teacher_card_coef",
+        "online_strategy_teacher_tile_coef",
+    ):
+        if getattr(args, name) < 0.0:
+            raise ValueError(f"{name} cannot be negative")
+    if args.online_strategy_teacher_play_weight < 1.0:
+        raise ValueError("online strategy teacher play weight must be at least one")
+    if (
+        args.online_strategy_teacher_balanced_config is not None
+        and args.online_strategy_teacher != "balanced"
+    ):
+        raise ValueError(
+            "online balanced teacher config requires the balanced teacher"
+        )
+    if args.online_strategy_teacher is not None and args.opponent_mode == "selfplay":
+        raise ValueError("online strategy teacher requires a learner-only opponent")
+
+    if args.simulation_backend != "simple-pytorch":
+        if args.simple_learner_sampling_temperature != 1.0:
+            raise ValueError(
+                "--simple-learner-sampling-temperature requires simple-pytorch"
+            )
+        return
+    if (
+        not math.isfinite(args.simple_learner_sampling_temperature)
+        or args.simple_learner_sampling_temperature <= 0.0
+    ):
+        raise ValueError(
+            "--simple-learner-sampling-temperature must be finite and positive"
+        )
+    if args.actor_workers != 1:
+        raise ValueError("simple-pytorch requires --actor-workers 1")
+    if args.simple_max_entities < 16:
+        raise ValueError("simple-pytorch requires --simple-max-entities >= 16")
+    if args.simple_max_effects < 1:
+        raise ValueError("simple-pytorch requires --simple-max-effects >= 1")
+    if args.resume_latest or args.resume_from:
+        raise ValueError("simple-pytorch is fresh-only until exact resume is gated")
+    if args.opponent_mode not in {
+        "selfplay",
+        "noop",
+        "random",
+        "strategy",
+        "league",
+        "checkpoint",
+    }:
+        raise ValueError(
+            "simple-pytorch supports selfplay, noop, random, strategy, league, "
+            "or checkpoint"
+        )
+    if args.opponent_mode != "selfplay" and args.mirror_match:
+        raise ValueError(
+            "simple-pytorch stationary opponents require asymmetric deck rows"
+        )
+    if args.opponent_mode == "checkpoint" and len(args.opponent_checkpoint) != 1:
+        raise ValueError(
+            "simple-pytorch checkpoint mode requires exactly one frozen checkpoint"
+        )
+    if args.opponent_mode == "league":
+        simple_league = tuple(args.league_opponent)
+        unknown_strategies = [
+            value.removeprefix("strategy:")
+            for value in simple_league
+            if value.startswith("strategy:")
+            and value.removeprefix("strategy:") not in STRATEGY_NAMES
+        ]
+        if unknown_strategies:
+            raise ValueError(
+                "simple-pytorch league contains unknown strategies: "
+                + ", ".join(sorted(set(unknown_strategies)))
+            )
+        checkpoint_specs = {
+            value
+            for value in simple_league
+            if value != "random" and not value.startswith("strategy:")
+        }
+        if len(checkpoint_specs) > 1:
+            raise ValueError(
+                "simple-pytorch league supports one unique checkpoint policy"
+            )
+        if not args.pfsp_report and len(set(simple_league)) < 2:
+            raise ValueError(
+                "simple-pytorch league currently requires at least two explicit "
+                "opponents or a PFSP report"
+            )
+    if args.simple_checkpoint_opponent_deck_name is not None:
+        has_checkpoint = args.opponent_mode == "checkpoint" or (
+            args.opponent_mode == "league"
+            and any(
+                value != "random" and not value.startswith("strategy:")
+                for value in args.league_opponent
+            )
+        )
+        if not has_checkpoint:
+            raise ValueError(
+                "--simple-checkpoint-opponent-deck-name requires a checkpoint "
+                "opponent"
+            )
+    if args.actor_observation_domain != "simulator-exact":
+        raise ValueError(
+            "simple-pytorch owns an exact public projection actor domain"
+        )
+    if args.reward_profile != OBJECTIVE_V1 or args.reward_shaping_gamma is not None:
+        raise ValueError(
+            "simple-pytorch uses only its persisted objective-v1-gamma-v1 reward"
+        )
+    if args.elixir_leak_penalty_scale != 0.0:
+        raise ValueError(
+            "simple-pytorch requires --elixir-leak-penalty-scale 0"
+        )
+    if args.engine_fast_path != "off":
+        raise ValueError("simple-pytorch does not compose the legacy engine fast path")
+    if args.max_ticks != STANDARD_MATCH_TICKS:
+        raise ValueError("simple-pytorch currently requires the standard match horizon")
+    if (
+        args.sampling_decks_path is not None
+        or args.learner_sampling_decks_path is not None
+        or args.opponent_sampling_decks_path is not None
+        or args.matchups_path is not None
+        or args.defense_scenario_probability != 0.0
+    ):
+        raise ValueError(
+            "simple-pytorch deck sampling is owned by its supported-deck artifact"
+        )
 
 
 def main() -> None:
     global _USE_TRIMMED_ROLLOUT_ENTITY_PADDING
     args = parse_args()
+    _validate_simple_pytorch_args(args)
     _USE_TRIMMED_ROLLOUT_ENTITY_PADDING = bool(args.trim_rollout_entity_padding)
     if args.num_envs <= 0 or args.rollout_steps <= 0:
         raise ValueError("num_envs and rollout_steps must be positive")
+    first_rollout_audit_path = (
+        Path(args.first_rollout_audit_json).expanduser().resolve()
+        if args.first_rollout_audit_json is not None
+        else None
+    )
+    if first_rollout_audit_path is not None and first_rollout_audit_path.exists():
+        raise FileExistsError(
+            f"refusing to overwrite rollout audit: {first_rollout_audit_path}"
+        )
     if args.actor_workers <= 0 or args.actor_workers > args.num_envs:
         raise ValueError("actor_workers must be between 1 and num_envs")
     if args.actor_threads <= 0:
@@ -2506,7 +3174,11 @@ def main() -> None:
         raise ValueError("league/PFSP options require --opponent-mode league")
     if args.pfsp_strategy_workers is not None and not args.pfsp_report:
         raise ValueError("--pfsp-strategy-workers requires --pfsp-report")
-    if args.opponent_mode in {"checkpoint", "league"} and args.actor_workers == 1:
+    if (
+        args.simulation_backend != "simple-pytorch"
+        and args.opponent_mode in {"checkpoint", "league"}
+        and args.actor_workers == 1
+    ):
         raise ValueError(
             "checkpoint and league opponents currently require parallel actors"
         )
@@ -2591,14 +3263,41 @@ def main() -> None:
         report_weights = report.get("pfsp", {}).get("weights")
         if not isinstance(report_weights, dict):
             raise ValueError("--pfsp-report has no pfsp.weights object")
+        simple_matchup_slots = args.num_envs // 2
+        if args.simulation_backend == "simple-pytorch" and args.num_envs % 2:
+            raise ValueError("simple league requires an even number of environments")
         strategy_workers = (
             args.pfsp_strategy_workers
             if args.pfsp_strategy_workers is not None
-            else args.actor_workers - len(league_opponents)
+            else (
+                simple_matchup_slots - len(league_opponents)
+                if args.simulation_backend == "simple-pytorch"
+                else args.actor_workers - len(league_opponents)
+            )
         )
+        if strategy_workers <= 0:
+            raise ValueError("PFSP strategy allocation has no remaining worker slots")
         strategy_names = allocate_pfsp_slots(report_weights, strategy_workers)
         league_opponents += tuple(("strategy", name) for name in strategy_names)
-    if args.opponent_mode == "league":
+    if args.opponent_mode == "league" and args.simulation_backend == "simple-pytorch":
+        if args.num_envs % 2:
+            raise ValueError("simple league requires an even number of environments")
+        if len(league_opponents) > args.num_envs // 2:
+            raise ValueError(
+                "simple league opponent slots exceed paired matchup rows"
+            )
+        if len(set(league_opponents)) < 2:
+            raise ValueError("simple league requires at least two distinct opponents")
+        checkpoint_paths = {
+            path
+            for kind, path in league_opponents
+            if kind == "checkpoint" and path is not None
+        }
+        if len(checkpoint_paths) > 1:
+            raise ValueError(
+                "simple-pytorch league supports one unique checkpoint policy"
+            )
+    if args.opponent_mode == "league" and args.simulation_backend != "simple-pytorch":
         if len(league_opponents) > args.actor_workers:
             raise ValueError("league opponent slots cannot exceed actor workers")
         kinds = {kind for kind, _ in league_opponents}
@@ -2606,19 +3305,52 @@ def main() -> None:
             raise ValueError("league mode requires at least two opponent kinds")
     directory = checkpoints_dir(args.checkpoint_dir, create=True)
     resume, resume_path = _load_resume_state(args, directory, learner_device)
+    initial_policy, initial_policy_path = _load_initial_policy_state(
+        args, learner_device
+    )
 
     token_names = resume.get("token_names") if resume is not None else None
+    if args.simulation_backend == "simple-pytorch":
+        from .simple_pytorch_backend import load_current_client_typed_vocabulary
+
+        token_names = load_current_client_typed_vocabulary(
+            resolve_path(args.simple_token_vocabulary_path, must_exist=True)
+        ).token_names
     resume_config = (
         PolicyConfig.from_dict(resume["model_config"]) if resume is not None else None
     )
+    initial_policy_config: PolicyConfig | None = None
+    if initial_policy is not None:
+        if token_names is None:
+            raise ValueError("initial policy requires an explicit run vocabulary")
+        initial_policy_config = _validate_simple_initial_policy_contract(
+            initial_policy,
+            token_names=tuple(str(name) for name in token_names),
+            max_entities=args.simple_max_entities,
+        )
+    base_config = resume_config or initial_policy_config
+    if args.fresh_factorized_action_head:
+        if base_config is not None:
+            raise ValueError(
+                "--fresh-factorized-action-head cannot modify an existing policy"
+            )
+        if args.card_semantics_version != 3:
+            raise ValueError(
+                "--fresh-factorized-action-head requires card semantics v3"
+            )
+        if args.memory_kind != "structured":
+            raise ValueError(
+                "--fresh-factorized-action-head requires structured memory"
+            )
     canonical_lane_globals = _canonical_lane_globals_for_run(
         actor_observation_domain=args.actor_observation_domain,
-        resume_config=resume_config,
+        resume_config=base_config,
+        simulation_backend=args.simulation_backend,
     )
     target_public_history_slots = (
         args.add_public_history_slots
         if args.add_public_history_slots
-        else (resume_config.public_history_slots if resume_config else 0)
+        else (base_config.public_history_slots if base_config else 0)
     )
     # Deterministic-state training needs one exact teacher event pulse.  This
     # does not change the model's public-history input contract: the adapter
@@ -2636,15 +3368,23 @@ def main() -> None:
     target_public_seen_card_slots = (
         args.add_public_seen_card_slots
         if args.add_public_seen_card_slots
-        else (resume_config.public_seen_card_slots if resume_config else 0)
+        else (base_config.public_seen_card_slots if base_config else 0)
     )
     builder = StructuredObservationBuilder(
         decks_path=decks_path,
-        max_entities=(resume_config.max_entities if resume_config else 128),
+        max_entities=(
+            base_config.max_entities
+            if base_config is not None
+            else (
+                args.simple_max_entities
+                if args.simulation_backend == "simple-pytorch"
+                else 128
+            )
+        ),
         token_names=token_names,
         card_semantics_version=(
-            resume_config.card_semantics_version
-            if resume_config is not None
+            base_config.card_semantics_version
+            if base_config is not None
             else args.card_semantics_version
         ),
         canonical_lane_globals=canonical_lane_globals,
@@ -2727,7 +3467,7 @@ def main() -> None:
         and resume_config.play_hazard_adapter_size > 0
     ):
         raise ValueError("resumed checkpoint already has a play hazard adapter")
-    config = resume_config or PolicyConfig(
+    config = base_config or PolicyConfig(
         num_tokens=builder.spec.num_tokens,
         max_entities=builder.spec.max_entities,
         card_semantics_version=args.card_semantics_version,
@@ -2745,7 +3485,30 @@ def main() -> None:
         decoder_kind=args.decoder_kind,
         memory_kind=args.memory_kind,
         card_input_mode=args.card_input_mode,
+        action_value_head_enabled=args.action_value_head,
+        deterministic_hierarchy=(
+            "play-gate" if args.fresh_factorized_action_head else "slot"
+        ),
+        hierarchical_mode_gate_enabled=args.fresh_factorized_action_head,
+        semantic_slot_choice_adapter_enabled=args.fresh_factorized_action_head,
+        semantic_slot_choice_replace_base=args.fresh_factorized_action_head,
+        mechanics_slot_choice_adapter_enabled=args.fresh_factorized_action_head,
+        mechanics_slot_choice_replace_base=args.fresh_factorized_action_head,
+        actor_current_hand_slot_invariant=args.fresh_factorized_action_head,
+        equivariant_slot_choice=args.fresh_factorized_action_head,
     )
+    added_action_value_to_initial = bool(
+        initial_policy is not None
+        and args.action_value_head
+        and not config.action_value_head_enabled
+    )
+    if added_action_value_to_initial:
+        config = replace(config, action_value_head_enabled=True)
+    if config.action_value_head_enabled != (args.action_value_coef > 0.0):
+        raise ValueError(
+            "fresh action-value head and a positive action-value coefficient "
+            "must be enabled together"
+        )
     if args.add_repair_adapter_size:
         config = replace(config, repair_adapter_size=args.add_repair_adapter_size)
     if args.add_play_hazard_adapter_size:
@@ -2885,6 +3648,23 @@ def main() -> None:
             )
         start_update = int(resume.get("update", 0)) + 1
         total_transitions = int(resume.get("total_transitions", 0))
+    elif initial_policy is not None:
+        incompatible = model.load_state_dict(
+            initial_policy["model_state_dict"],
+            strict=not added_action_value_to_initial,
+        )
+        if added_action_value_to_initial and (
+            incompatible.unexpected_keys
+            or not incompatible.missing_keys
+            or not all(
+                name == "action_value_policy_gate"
+                or name.startswith("action_value_head.")
+                for name in incompatible.missing_keys
+            )
+        ):
+            raise ValueError(
+                "only action-value parameters may be absent from the initializer"
+            )
     if args.trainable_prefix:
         prefixes = tuple(args.trainable_prefix)
         for name, parameter in model.named_parameters():
@@ -2908,7 +3688,10 @@ def main() -> None:
         anchor = torch.load(
             anchor_path, map_location=learner_device, weights_only=False
         )
-        anchor_config = PolicyConfig.from_dict(anchor["model_config"])
+        anchor_config = replace(
+            PolicyConfig.from_dict(anchor["model_config"]),
+            max_entities=config.max_entities,
+        )
         compatible_zero_prior = (
             config.placement_prior_enabled
             and not anchor_config.placement_prior_enabled
@@ -3093,7 +3876,143 @@ def main() -> None:
 
     envs: list[SelfPlayBattleEnv] = []
     parallel_collector: Any = None
-    if args.actor_workers == 1:
+    simple_collector: Any = None
+    simulation_backend_metadata: dict[str, Any] | None = None
+    learner_teacher_balanced_config: BalancedStrategyConfig | None = None
+    if args.online_strategy_teacher_balanced_config is not None:
+        teacher_config_path = resolve_path(
+            args.online_strategy_teacher_balanced_config,
+            must_exist=True,
+        )
+        teacher_config_payload = json.loads(
+            teacher_config_path.read_text(encoding="utf-8")
+        )
+        if not isinstance(teacher_config_payload, dict):
+            raise TypeError("online balanced teacher config must be an object")
+        learner_teacher_balanced_config = BalancedStrategyConfig(
+            **teacher_config_payload
+        )
+    learner_teacher_bot = (
+        StrategyBot(
+            args.online_strategy_teacher,
+            balanced_config=(
+                learner_teacher_balanced_config or BalancedStrategyConfig()
+            ),
+        )
+        if args.online_strategy_teacher is not None
+        else None
+    )
+    if args.simulation_backend == "simple-pytorch":
+        from .simple_pytorch_backend import SimplePytorchTrainingCollector
+        simple_opponent_model: ClasherPolicy | None = None
+        simple_opponent_sha256: str | None = None
+        simple_checkpoint_path: Path | None = None
+        if args.opponent_mode == "checkpoint":
+            simple_checkpoint_path = Path(opponent_checkpoints[0])
+        elif args.opponent_mode == "league":
+            simple_checkpoint_paths: set[str] = {
+                path
+                for kind, path in league_opponents
+                if kind == "checkpoint" and path is not None
+            }
+            if simple_checkpoint_paths:
+                simple_checkpoint_path = Path(next(iter(simple_checkpoint_paths)))
+        if simple_checkpoint_path is not None:
+            from .parallel_rollout import load_checkpoint_opponent
+
+            simple_opponent_model = load_checkpoint_opponent(
+                simple_checkpoint_path,
+                device=actor_device,
+                builder=builder,
+                learner_config=config,
+                token_names=tuple(builder.token_names),
+            )
+            simple_opponent_sha256 = _sha256(simple_checkpoint_path)
+
+        simple_collector = SimplePytorchTrainingCollector(
+            model=actor_model,
+            builder=builder,
+            batch_size=args.num_envs,
+            device=actor_device,
+            decision_interval=args.decision_interval,
+            gamma=args.gamma,
+            supported_decks_path=resolve_path(
+                args.simple_supported_decks_path, must_exist=True
+            ),
+            typed_vocabulary_path=resolve_path(
+                args.simple_token_vocabulary_path, must_exist=True
+            ),
+            mirror_match=args.mirror_match,
+            opponent_mode=args.opponent_mode,
+            opponent_model=simple_opponent_model,
+            opponent_checkpoint_sha256=simple_opponent_sha256,
+            opponent_strategy=(
+                args.opponent_strategy
+                if args.opponent_mode == "strategy"
+                else None
+            ),
+            opponent_strategy_schedule=(
+                tuple(
+                    str(path)
+                    for kind, path in league_opponents
+                    if kind == "strategy" and path is not None
+                )
+                if args.opponent_mode == "league"
+                else ()
+            ),
+            opponent_league_schedule=(
+                cast(
+                    tuple[
+                        tuple[
+                            Literal["random", "strategy", "checkpoint"],
+                            str | None,
+                        ],
+                        ...,
+                    ],
+                    league_opponents,
+                )
+                if args.opponent_mode == "league"
+                else ()
+            ),
+            learner_deck_name=args.simple_learner_deck_name,
+            checkpoint_opponent_deck_name=(
+                args.simple_checkpoint_opponent_deck_name
+            ),
+            learner_teacher_strategy=args.online_strategy_teacher,
+            learner_teacher_balanced_config=(
+                learner_teacher_balanced_config
+            ),
+            learner_sampling_temperature=(
+                args.simple_learner_sampling_temperature
+            ),
+            max_effects=args.simple_max_effects,
+        )
+        simulation_backend_metadata = simple_collector.checkpoint_metadata()
+        simulation_backend_metadata["collector_actor_projection_domain"] = (
+            "simulator-exact-public"
+        )
+        simulation_backend_metadata["policy_actor_observation_domain"] = (
+            model.config.actor_observation_domain
+        )
+        if initial_policy_path is not None:
+            assert initial_policy is not None
+            source_policy_config = PolicyConfig.from_dict(
+                initial_policy["model_config"]
+            )
+            simulation_backend_metadata["initial_policy"] = {
+                "path": str(initial_policy_path),
+                "sha256": _sha256(initial_policy_path),
+                "weights_only": True,
+                "source_max_entities": source_policy_config.max_entities,
+                "runtime_max_entities": config.max_entities,
+                "entity_capacity_rebound": (
+                    source_policy_config.max_entities != config.max_entities
+                ),
+                "optimizer_reset": True,
+                "update_reset": True,
+                "simulator_state_reset": True,
+            }
+    elif args.actor_workers == 1:
         with maybe_silence_stdio(args.quiet_engine):
             for index in range(args.num_envs):
                 learner_player = index % 2
@@ -3203,6 +4122,12 @@ def main() -> None:
                 matchup_probability=args.matchup_probability,
                 trim_rollout_entity_padding=args.trim_rollout_entity_padding,
                 hazard_conditioned_rollouts=args.hazard_conditioned_rollouts,
+                learner_teacher_strategy=args.online_strategy_teacher,
+                learner_teacher_balanced_config=(
+                    asdict(learner_teacher_balanced_config)
+                    if learner_teacher_balanced_config is not None
+                    else None
+                ),
             ),
         )
         atexit.register(parallel_collector.close)
@@ -3231,6 +4156,7 @@ def main() -> None:
     parameter_count = sum(parameter.numel() for parameter in model.parameters())
 
     print(f"learner_device={learner_device} actor_device={actor_device}")
+    print(f"simulation_backend={args.simulation_backend}")
     print(f"decks_path={decks_path}")
     print(f"sampling_decks_path={sampling_decks_path}")
     print(f"learner_sampling_decks_path={learner_sampling_decks_path}")
@@ -3342,8 +4268,11 @@ def main() -> None:
             args=args,
             update=0,
             total_transitions=0,
+            simulation_backend_metadata=simulation_backend_metadata,
         )
         print(f"saved_initial_checkpoint={initial_checkpoint}")
+        if initial_policy_path is not None:
+            print(f"initialized_policy_from={initial_policy_path}")
 
     if start_update > args.updates:
         print(
@@ -3364,7 +4293,16 @@ def main() -> None:
             learning_rate = float(optimizer.param_groups[0]["lr"])
 
         collect_start = time.perf_counter()
-        if parallel_collector is None:
+        if simple_collector is not None:
+            (
+                simple_arrays,
+                recurrent_state,
+                previous_actions,
+                previous_rewards,
+                episode_starts,
+            ) = simple_collector.collect(args.rollout_steps, recurrent_state)
+            rollout = RolloutBatch(**simple_arrays)
+        elif parallel_collector is None:
             (
                 rollout,
                 recurrent_state,
@@ -3399,6 +4337,7 @@ def main() -> None:
                         if args.opponent_mode == "strategy"
                         else None
                     ),
+                    learner_teacher_bot=learner_teacher_bot,
                     opponent_noop=args.opponent_mode == "noop",
                 )
                 if args.opponent_mode in {"noop", "random", "strategy"}
@@ -3429,6 +4368,17 @@ def main() -> None:
                 policy_version=update - 1,
             )
         collect_seconds = time.perf_counter() - collect_start
+        if update == start_update and first_rollout_audit_path is not None:
+            audit = write_rollout_audit(
+                first_rollout_audit_path,
+                rollout,
+                update=update,
+                seed=args.seed,
+            )
+            print(
+                f"first_rollout_audit={first_rollout_audit_path} "
+                f"sha256={audit['rollout_sha256']}"
+            )
         advantages, returns = compute_gae(
             rollout, gamma=args.gamma, gae_lambda=args.gae_lambda
         )
@@ -3444,10 +4394,24 @@ def main() -> None:
             sequence_batch_size=args.sequence_batch_size,
             clip_ratio=args.clip_ratio,
             value_coef=args.value_coef,
+            action_value_coef=args.action_value_coef,
             entropy_coef=args.entropy_coef,
             action_type_entropy_coef=args.action_type_entropy_coef,
             location_entropy_coef=args.location_entropy_coef,
             conditional_slot_entropy_coef=args.conditional_slot_entropy_coef,
+            online_strategy_teacher_coef=args.online_strategy_teacher_coef,
+            online_strategy_teacher_decision_coef=(
+                args.online_strategy_teacher_decision_coef
+            ),
+            online_strategy_teacher_card_coef=(
+                args.online_strategy_teacher_card_coef
+            ),
+            online_strategy_teacher_tile_coef=(
+                args.online_strategy_teacher_tile_coef
+            ),
+            online_strategy_teacher_play_weight=(
+                args.online_strategy_teacher_play_weight
+            ),
             anchor_parameters=anchor_parameters,
             anchor_l2_coef=args.anchor_l2_coef,
             anchor_model=anchor_model,
@@ -3488,6 +4452,9 @@ def main() -> None:
             elixir_aux_coef=args.elixir_aux_coef,
             target_kl=args.target_kl,
             hazard_conditioned_rollouts=args.hazard_conditioned_rollouts,
+            sampling_temperature=(
+                args.simple_learner_sampling_temperature
+            ),
         )
         update_seconds = time.perf_counter() - update_start
         sync_start = time.perf_counter()
@@ -3520,6 +4487,8 @@ def main() -> None:
                 f"abs_reward={float(np.abs(rollout.rewards).mean()):.5f} "
                 f"loss={stats['loss']:.4f} policy={stats['policy_loss']:.4f} "
                 f"value={stats['value_loss']:.4f} entropy={stats['entropy']:.3f} "
+                f"action_q={stats['action_value_loss']:.4f} "
+                f"q_gate={stats['action_value_policy_gate']:+.4f} "
                 f"type_ent={stats['action_type_entropy']:.3f} "
                 f"loc_ent={stats['location_entropy']:.3f} "
                 f"slot_ent={stats['conditional_slot_entropy']:.3f} "
@@ -3538,6 +4507,15 @@ def main() -> None:
                 f"{stats['causal_spatial_rehearsal_weighted_loss']:.4f} "
                 f"anchor_rehearsal_kl={stats['anchor_rehearsal_kl']:.5f} "
                 f"anchor_rehearsal_loss={stats['anchor_rehearsal_loss']:.4f} "
+                f"teacher={stats['online_teacher_loss']:.3f} "
+                f"teacher_loss={stats['online_teacher_weighted_loss']:.4f} "
+                f"teacher_dct={stats['online_teacher_decision_loss']:.3f}/"
+                f"{stats['online_teacher_card_loss']:.3f}/"
+                f"{stats['online_teacher_tile_loss']:.3f} "
+                f"teacher_acc={stats['online_teacher_decision_accuracy']:.3f}/"
+                f"{stats['online_teacher_play_recall']:.3f}/"
+                f"{stats['online_teacher_card_accuracy']:.3f}/"
+                f"{stats['online_teacher_tile_accuracy']:.3f} "
                 f"hand={stats['hand_loss']:.3f} elixir={stats['elixir_loss']:.4f} "
                 f"kl={stats['approx_kl']:.5f} clip={stats['clip_fraction']:.3f} "
                 f"opt_steps={int(stats['optimizer_steps'])} "
@@ -3562,6 +4540,7 @@ def main() -> None:
                 args=args,
                 update=update,
                 total_transitions=total_transitions,
+                simulation_backend_metadata=simulation_backend_metadata,
                 metrics={
                     **stats,
                     "reward_mean": float(rollout.rewards.mean()),
