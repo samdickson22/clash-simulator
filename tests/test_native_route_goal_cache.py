@@ -100,3 +100,28 @@ def test_native_route_goal_cache_preserves_fixed_seed_rollout(
 
     assert cached.sha256 == uncached.sha256
     assert cached.mask_shadow_mismatches == uncached.mask_shadow_mismatches == 0
+
+
+def test_route_goal_cache_tracks_changed_building_occupancy(monkeypatch):
+    battle = BattleState()
+    mover = _spawn_knight(battle, 0, Position(4.25, 8.25))
+    target = _spawn_knight(battle, 1, Position(4.25, 11.25))
+    occupied = {}
+    monkeypatch.setattr(pathfinding, "native_building_cost_cells", lambda _: occupied)
+    monkeypatch.setattr(pathfinding, "_USE_NATIVE_ROUTE_GOAL_CACHE", True)
+    pathfinding._cached_native_route_goal_cell_units.cache_clear()
+    original = pathfinding.native_route_goal_cell(mover, target, required_range_tiles=1.5)
+    assert original is not None
+
+    occupied[original] = 1
+    changed = pathfinding.native_route_goal_cell(mover, target, required_range_tiles=1.5)
+    assert changed != original
+    monkeypatch.setattr(pathfinding, "_USE_NATIVE_ROUTE_GOAL_CACHE", False)
+    assert changed == pathfinding.native_route_goal_cell(
+        mover, target, required_range_tiles=1.5
+    )
+    occupied.clear()
+    monkeypatch.setattr(pathfinding, "_USE_NATIVE_ROUTE_GOAL_CACHE", True)
+    assert original == pathfinding.native_route_goal_cell(
+        mover, target, required_range_tiles=1.5
+    )

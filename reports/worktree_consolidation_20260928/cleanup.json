@@ -1,0 +1,6 @@
+{
+  "free_before": 17051017216,
+  "free_after": 17157783552,
+  "free_delta_bytes": 106766336,
+  "compatibility_aliases": "Old worktree paths point to preserved data under main/artifacts/worktree-data; source paths there point to main. Neither is a registered worktree."
+}

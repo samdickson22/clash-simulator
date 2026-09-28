@@ -41,3 +41,6 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 
+
+# Local evidence relocated from retired worktrees; do not put bulk captures in Git.
+/artifacts/worktree-data/

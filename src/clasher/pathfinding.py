@@ -180,21 +180,19 @@ def native_route_goal_cell(
     *,
     required_range_tiles: float | None = None,
 ) -> tuple[int, int] | None:
-    """Return ``getClosestTilePositionToTarget`` for an ordinary attack.
+    """Return the native approach cell, accounting for occupied building cells.
 
-    The movement component does not route to a target object's occupied tile.
-    It scans half-tile centers inside the attacker's serialized range of the
-    target *center*, then keeps the candidate closest to the mover. The scan
-    is y-major/x-minor and replaces only on a strictly smaller distance, so a
-    geometric tie keeps the lowest world-grid y and then x.
-
-    Target collision radius deliberately does not participate here. Native
-    combat uses it when deciding whether an attack can begin, while route goal
-    selection calls the point overload of ``getDistanceToObjectSquared``.
+    Ground movers prefer unblocked cells. Equal candidates retain the native
+    world-side scan order. Cache identity includes flight and building occupancy
+    so repeated geometry cannot reuse a goal from a different arena state.
     """
 
     range_tiles = (
-        max(0.0, mover.get_effective_attack_range() - mover.get_attack_approach_range_reduction(target))
+        max(
+            0.0,
+            mover.get_effective_attack_range()
+            - mover.get_attack_approach_range_reduction(target),
+        )
         if required_range_tiles is None
         else float(required_range_tiles)
     )

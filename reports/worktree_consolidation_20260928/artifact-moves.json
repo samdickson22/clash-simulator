@@ -1,0 +1,38 @@
+[
+  {
+    "source": "/Users/sam/.codex/worktrees/clasher-event-policy/reports",
+    "destination": "/Users/sam/Desktop/code/clasher/artifacts/worktree-data/clasher-event-policy/reports",
+    "directory_inode": 60336154,
+    "operation": "rename_then_compatibility_symlink"
+  },
+  {
+    "source": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets",
+    "destination": "/Users/sam/Desktop/code/clasher/artifacts/worktree-data/clasher-event-policy/datasets",
+    "directory_inode": 60752222,
+    "operation": "rename_then_compatibility_symlink"
+  },
+  {
+    "source": "/Users/sam/.codex/worktrees/clasher-event-policy/checkpoints",
+    "destination": "/Users/sam/Desktop/code/clasher/artifacts/worktree-data/clasher-event-policy/checkpoints",
+    "directory_inode": 60336137,
+    "operation": "rename_then_compatibility_symlink"
+  },
+  {
+    "source": "/Users/sam/.codex/worktrees/clasher-simulator-fidelity-20260913/reports",
+    "destination": "/Users/sam/Desktop/code/clasher/artifacts/worktree-data/clasher-simulator-fidelity-20260913/reports",
+    "directory_inode": 68477870,
+    "operation": "rename_then_compatibility_symlink"
+  },
+  {
+    "source": "/Users/sam/.codex/worktrees/clasher-simulator-fidelity-20260913/datasets",
+    "destination": "/Users/sam/Desktop/code/clasher/artifacts/worktree-data/clasher-simulator-fidelity-20260913/datasets",
+    "directory_inode": 68477805,
+    "operation": "rename_then_compatibility_symlink"
+  },
+  {
+    "source": "/Users/sam/.codex/worktrees/clasher-simulator-fidelity-20260913/checkpoints",
+    "destination": "/Users/sam/Desktop/code/clasher/artifacts/worktree-data/clasher-simulator-fidelity-20260913/checkpoints",
+    "directory_inode": 68477792,
+    "operation": "rename_then_compatibility_symlink"
+  }
+]

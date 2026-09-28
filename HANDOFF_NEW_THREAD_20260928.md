@@ -1,6 +1,16 @@
 # Clasher handoff — 2026-09-28
 
-## Start here
+## Consolidation update — 2026-09-28 (supersedes workspace locations below)
+
+All work from both registered Clasher worktrees is now merged into local `main` at `/Users/sam/Desktop/code/clasher`. Work only there. Both extra worktree registrations and their task branches were removed after committing and merging their changes. Main's pre-existing work was committed and preserved too. No remote push was performed.
+
+Reports, datasets and checkpoints were moved, without bulk copying, to `artifacts/worktree-data/clasher-event-policy/` and `artifacts/worktree-data/clasher-simulator-fidelity-20260913/` inside main. Unique artifact groups are also linked under main's reports/datasets/checkpoints. Conflicting artifact names retain separate originals. Old worktree paths are compatibility symlinks to the preserved data directories, whose source links resolve to main; they are not independent checkouts. Historical source snapshots remain available in Git. Source pins must be rechecked before reusing any campaign with merged code.
+
+Final validation: 1,598 native/public/policy tests passed; 56 additional training/inference tests passed; 9 route-cache tests passed, including a new changing-building-occupancy regression. CLI help, lock consistency, compile and focused undefined-name/duplicate-definition checks passed. No training, native collection or emulator was started. V7 still has its original failed status and training remains unauthorized.
+
+See `WORKTREE_CONSOLIDATION_20260928.md` and `reports/worktree_consolidation_20260928/` for preserved commits, move receipts and test logs.
+
+## Original pre-consolidation handoff
 
 Sam is clearing a very large chat thread. This file preserves the work state; writing it did not resume collection or training. Resume from this file, then read the fidelity worktree's PIPELINE_DESIGN.md and relevant tail of HANDOFF.md. Prefer durable receipts over old chat or narrative status.
 
