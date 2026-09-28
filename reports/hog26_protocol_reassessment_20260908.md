@@ -1,3 +1,5 @@
+> USER PAUSE 2026-09-13: Training and automatic continuation are paused pending comparison with external Clash Royale bots. Do not launch the queued late-continuation probe, further fitting, collection, search, or policy updates. The three-class campaign completed; its artifacts are preserved. A fresh pipeline requires the next user decision.
+
 # Hog 2.6 outcome objective: September 8 reassessment
 
 Authority: existing `clasher-event-policy` worktree, branch
@@ -2499,6 +2501,480 @@ Data-scaling memory prerequisite, 2026-09-12:
 - The evaluator refuses before diagnostic access until globals/tree/entity are
   all complete, verifies shared1536-game fitting authority/source/vocabulary,
   pins checkpoints and its own code, and derives priors only from exact original
- 384+new1152training manifests. One focused incomplete-fit refusal test passes;
+  384+new1152training manifests. One focused incomplete-fit refusal test passes;
   imports/CLI and Ruff pass. No scaled models exist yet, so prediction execution
   remains unverified until fitting completes. No collection source was edited.
+- The1152-game extension completed with463338rows and zero rejected card actions.
+  Independent full-corpus audits found1536games/618149rows/768paired clusters and
+  zero diagnostic games in fitting. Neural full-batch backpropagation peaked at
+  3950428160bytes RSS; the largest tree fold matrix, binning and one iteration
+  peaked at9019834368bytes. Both passed the fixed18GiB cutoff with synthetic
+  targets and no outcome model saved.
+- Fitting readiness was published only after matching both memory-report hashes,
+  the complete data audit, exact fitting-source inventory, collection-plan hash
+  and runtime. Seventeen focused tests pass and Ruff is clean. Readiness:
+  hog26_scaling_fitting_readiness_20260912.json.
+- One locked supervisor launched the unchanged1536-game comparison, running
+  globals, tree and entity sequentially with an external18GiB RSS guard. Globals
+  is active; later stages start only after the previous complete.json exists.
+  State: /Users/sam/Library/Application Support/ClasherMonitor/comparison-status.json.
+  Supervisor log: hog26_scaling_fit_sequence_20260912.log. No duplicate fits.
+
+- September 12 continuation moved to thread 01a09804-13c8-77f1-a297-cdea4701e0c5.
+  Sam requested a persistent goal and continuous work. The goal is active for the
+  actor-visible outcome model and preserved calibration/ranking protocol.
+  The ten-minute scheduler and its deduplication check now target this thread;
+  backups of both prior scheduler files are preserved. The fitting supervisor
+  remains PID 30659 and was neither restarted nor duplicated.
+- Globals completed all eight fits and the exact 30-file inventory audit passed.
+  Review source is outside pinned fitting resources at
+  experiments/hog26_scaling_review/review_completed.py. The current preliminary
+  review is hog26_scaling_globals_preliminary_review_with_coverage_20260912.json.
+  It supersedes the earlier preliminary review only by adding the existing
+  eight-cluster/two-decisive-cluster coverage checks. Both artifacts are retained.
+  Source and memory-report hashes match the readiness record.
+- Globals out-of-fold pooled NLL gains are +0.14794955 and +0.15747944 across the
+  two fixed seeds, but subgroup regressions remain. Nine of twelve late seat/style
+  slices fall below an existing independent or decisive cluster coverage floor;
+  four have no examples of one decisive outcome. Natural draws remain absent.
+  These are diagnostic coverage comparisons, not acceptance evaluations.
+  The full comparison review correctly refuses an incomplete tree stage before
+  diagnostic access. Tree has completed three folds; entity remains queued.
+
+- Prepared paired diagnostic review outside all pinned fit/evaluation source:
+  experiments/hog26_scaling_review/{paired_errors,review_transfer}.py. It requires
+  the completed three-model fitting review and all 20 completed original and
+  scaled diagnostic evaluations before corpus access. It verifies exact output
+  inventories, matching cohort audits and pinned model resources.
+  Paired scenario-cluster intervals compare direct NLL, Brier and margin MAE
+  changes on identical rows; prior gains remain separate because training priors
+  differ. Every fold, seed and slice remains in the review. Other metric changes
+  are point estimates only. Five synthetic tests pass, including zero change,
+  sign reversal, and repeated-row invariance. Ruff passes. No diagnostic corpus
+  was loaded for this preparation. Fixed epochs also increase optimizer updates
+  with more games, so the comparison cannot isolate data from compute effects.
+
+- Tree completed all four fixed fits and published complete.json. The supervisor
+  recorded peak RSS 9,317,154,816 bytes, below 18 GiB, then launched entity PID
+  75051. The latest preliminary completed-stage review is
+  hog26_scaling_globals_tree_preliminary_review_20260912.json. Exact inventories
+  passed for globals 30 files and tree 17 files. Shared training authority agrees;
+  every prediction archive has the expected 618,149 rows, finite bounded margins,
+  and valid probability mass. All source and review input hashes remained stable.
+- Tree all-state margin gain is +0.04375419 overall with clustered 95 percent
+  interval [0.03524417, 0.05137474], and +0.01866497 late with interval
+  [0.00519808, 0.03244168]. Representative gain is +0.02973700 overall, but late
+  representative gain is -0.00509034 with interval [-0.01575920, 0.00625456].
+  Late coverage remains 80 games and 70 paired-scenario clusters. Bridge-pressure
+  and family-007 margin gains are negative in both distributions. The fourth
+  excluded fold has late representative gain -0.01752176. More data improves
+  some forecasts but has not resolved required distribution/subgroup failures.
+  No acceptance or diagnostic evaluation has been authorized by pooled gains.
+
+- Entity seed 1279501 fold 0 completed in 1,464.73 seconds. Its preliminary
+  single-fit review is hog26_scaling_entity_seed1279501_fold0_preliminary_review_20260912.json.
+  All-state NLL is 0.21630 fitting versus 0.88790 excluded, with excluded NLL gain
+  -0.32476 and decisive AUC 0.88317. Excluded margin gain is +0.04543 overall,
+  but late representative gain is -0.06689 on only 10 games and 10 clusters,
+  including two win-containing clusters. These are point estimates from one fit.
+  The complete fixed eight-fit sequence continues without outcome-based changes.
+
+- Entity seed 1279501 fold 1 completed in 1,365.70 seconds. Its preliminary
+  single-fit review is hog26_scaling_entity_seed1279501_fold1_preliminary_review_20260912.json.
+  All-state NLL is 0.19372 fitting versus 1.37018 excluded, with excluded NLL gain
+  -0.75797 and decisive AUC 0.70792. Excluded margin gain is -0.01367 overall and
+  -0.03469 late across all states; representative gains are -0.03444 overall and
+  -0.05928 late. This second fold also shows a large fitting/generalization gap.
+  Six fixed entity fits remain. No fitting settings or acceptance gates changed.
+
+- Entity seed 1279501 fold 2 completed in 1,502.28 seconds. Preliminary review:
+  hog26_scaling_entity_seed1279501_fold2_preliminary_review_20260912.json.
+  Excluded all-state NLL gain is +0.03002 overall, but -0.30353 early. Late NLL
+  appears strong on only five excluded games with no wins; decisive AUC is
+  undefined. Excluded late margin gains are -0.05628 all-state and -0.10390
+  representative. Overall representative margin gain is -0.02408. This fit
+  illustrates why pooled scores cannot conceal phase regression or absent class
+  coverage. Five fixed entity fits remain; the sequence is unchanged.
+
+- Entity seed 1279501 fold 3 completed all 30 epochs. Preliminary review:
+  hog26_scaling_entity_seed1279501_fold3_preliminary_review_20260912.json.
+  All-state NLL is 0.15216 fitting versus 1.30073 excluded, with excluded NLL gain
+  -0.70032. Excluded margin gains are -0.03760 overall and -0.08151 late across
+  all states; representative gains are -0.07138 overall and -0.13296 late.
+  The first seed's four fits are complete and clustered summary computation is
+  active. The second seed's four fits remain. No early stopping or selection.
+
+- Entity seed 1279501 published its complete out-of-fold summary. All five
+  prediction archives for that seed passed row-count, finite-value, probability
+  mass and margin-bound checks. Preliminary completed-seed review:
+  hog26_scaling_entity_seed1279501_preliminary_review_20260912.json.
+  All-state NLL gain is -0.54220 with clustered 95 percent interval
+  [-0.75639, -0.34968]; all three phase NLL-gain intervals are below zero.
+  All-state margin gain is -0.00120 overall, with interval spanning zero, but
+  late gain is -0.04921 with interval [-0.08047, -0.01975]. Representative
+  margin gain is -0.02734 overall and -0.09157 late, both with wholly negative
+  intervals. This seed does not meet the model-quality requirements. Seed
+  1279502 is running unchanged; full fitting review and fresh diagnostic remain
+  pending. No candidate was selected or promoted.
+- Paired diagnostic review now uses the same float64 log-loss precision as the
+  published metric implementation and refuses if computed paired point changes
+  disagree with the report differences. Six synthetic tests and Ruff pass.
+  Actual paired diagnostic validation remains pending the completed evaluations.
+
+- Entity seed 1279502 fold 0 completed in 1,474.22 seconds. Preliminary review:
+  hog26_scaling_entity_seed1279502_fold0_preliminary_review_20260912.json.
+  All-state NLL is 0.19954 fitting versus 1.00862 excluded, with excluded NLL gain
+  -0.44548. Late margin gains are already negative on fitting games: -0.01591
+  all-state and -0.04823 representative. Excluded late margin gains are -0.02821
+  and -0.09055 respectively. WDL family generalization and late-margin fitting
+  are therefore distinct problems to investigate; neither is resolved by pooled
+  scores. Three fixed entity fits remain, with no settings changed.
+
+- Read-only tower-input audit completed over all 1,536 fitted games and 618,149
+  rows, verifying each archive hash against the entity fitting manifest. No
+  terminal-label arrays or fresh diagnostic data were accessed. All six
+  tower-health global confidences equal one, and the baseline from available
+  inputs matches the recorded current-margin baseline exactly on every row.
+  The model code passes those globals into the frame projection. Missing or
+  confidence-masked tower health is ruled out on this fitted corpus; this does
+  not identify the optimization cause. Report:
+  hog26_scaling_tower_input_availability_audit_20260912.json.
+
+- Read-only token-exposure audit verified all 1,536 training archive hashes and
+  compared confidence-positive entity plus four-slot hand identities across the
+  fixed family folds. Excluded games containing identities absent from fitting
+  inputs total 220/384, 362/384, 363/384 and 326/384 for folds 0 through 3.
+  Those folds have 6, 14, 14 and 16 such token IDs respectively. Report:
+  hog26_scaling_token_exposure_audit_20260912.json. This establishes substantial
+  identity covariate shift, not that learned identity embeddings cause the
+  observed errors. No outcome labels or fresh diagnostic data were used.
+
+- Existing public card-stat helpers were inspected without model changes.
+  src/clasher/rl/card_semantics.py and StructuredObservationBuilder already
+  provide semantic metadata; the current scalar outcome model instead uses
+  learned token embeddings plus confidence-masked observations. Of the 50
+  identities absent from fitting inputs in at least one fold, 28 resolve through
+  the existing standalone semantic-card profile and 22 do not. Missing entries
+  include projectiles, effects and spawned units. Availability is not a
+  correctness or model-quality certificate. Any semantic redesign needs an
+  explicit verified public-only mapping or missing-feature contract. Report:
+  hog26_scaling_public_semantic_helper_coverage_20260912.json.
+
+- Entity seed 1279502 fold 1 is complete. Preliminary review:
+  hog26_scaling_entity_seed1279502_fold1_preliminary_review_20260912.json.
+  All-state NLL is 0.23227 fitting versus 1.20943 excluded, with excluded NLL gain
+  -0.59722. Excluded margin gains are -0.00324 overall and -0.02670 late across
+  all states; representative gains are -0.02369 overall and -0.05957 late.
+  The second seed therefore repeats failure on the second excluded-family pair.
+  Six of eight entity fits are complete. Two remain before the full audit.
+
+- Entity seed 1279502 fold 2 is complete. Preliminary review:
+  hog26_scaling_entity_seed1279502_fold2_preliminary_review_20260912.json.
+  Excluded all-state NLL gain is +0.10570 overall but -0.10275 early. The late
+  slice again has only five games, all losses, so decisive AUC is undefined.
+  Late margin gains are -0.06582 all-state and -0.11712 representative. Overall
+  representative margin gain is -0.01989. Both seeds therefore reproduce the
+  same phase/coverage failure on this family pair. One fixed entity fit remains.
+
+- The additional paired diagnostic analysis is now frozen before scaled
+  diagnostic predictions. Plan:
+  hog26_scaling_paired_diagnostic_review_plan_20260912.json, SHA256
+  c61755ee6682e2a61c455562be9d4a9df8b541ddab40b2eeaf2e9251423a6813.
+  It pins all six Python files in experiments/hog26_scaling_review, direct
+  float64 NLL/Brier/MAE reductions, 2,000 paired-cluster replicates and seed
+  1279511, both distributions, all slices and 288/96 game groups. The inference
+  supervisor and paired reviewer verify this source pin before access. Six
+  synthetic tests and Ruff pass; incomplete fitting review still refuses before
+  diagnostic access. Do not edit these analysis sources while this evaluation
+  and review are outstanding without a separately documented revision.
+
+- All 20 scaled fits and both entity summaries are complete. The supervisor
+  stopped normally; entity peak RSS was 6,203,113,472 bytes. Fit-authority checking
+  pinned 26 checkpoint/completion/manifest resources. Independent final review
+  verified exact 30/17/30 artifact inventories, all prediction arrays, all
+  distributions and slices, shared 1,536-game/618,149-row authority and source
+  hashes. Completed review, written and interpreted before diagnostic access:
+  hog26_scaling_completed_comparison_review_20260912.json.
+- Entity all-state NLL gains are -0.54220 and -0.53414 across the two seeds;
+  every phase in both distributions has a wholly negative NLL-gain interval.
+  Late all-state margin gains are -0.04921 and -0.06091, and late representative
+  gains are -0.09157 and -0.10326, all with wholly negative intervals. Every
+  entity fitting fold also has negative late representative margin gain.
+  WDL family generalization and late-margin fitting remain separate failures.
+  Globals/tree findings and all coverage limitations remain as recorded. No
+  candidate is accepted. Proceed only to the predeclared inference-only opened
+  diagnostic, followed by the frozen paired review; no reserved data or policy work.
+
+- The locked scaled fresh-seed evaluation launched after the finalized fitting
+  review. Supervisor PID 88219; inference worker PID 88220. Both were verified
+  live. The shared state pins fitting-review SHA256
+  3235e254a4225e7a70bab96461dd4ef4893ec0afc1618a7c59423ab039844e22
+  and the pre-prediction paired-review plan hash. Logs:
+  hog26_scaling_seed_transfer_sequence_20260912.log and
+  hog26_scaling_seed_transfer_evaluation_20260912.log. No fitting occurs in this
+  stage. Scheduled continuations now describe the inference and paired-review
+  steps; the prior scheduler file is preserved in a backup.
+
+- All 20 scaled fresh-seed evaluations completed normally. Peak inference RSS
+  was 8,787,623,936 bytes. The frozen paired review completed, validating exact
+  42-file inventories for both evaluations, identical 384-game/155,496-row
+  authority, all 288/96 groups and source pins. Every computed paired error
+  change matched the published metric difference. Reports:
+  hog26_scaling_seed_transfer_review_20260912.json and
+  hog26_scaling_comparison_conclusion_20260912.json.
+- On fresh seen-family games, entity overall margin error improved versus its
+  original fits in all eight fits, with positive paired intervals in both
+  distributions. Late margin gains still remain negative in all eight fits.
+  Entity NLL gain is negative in every seen/excluded fit in both distributions;
+  fresh seen-family early NLL-gain intervals are wholly negative for all eight
+  fits. Failure is not confined to excluded families or sparse late examples.
+- Globals retains positive overall NLL gain in all seen fits and seven of eight
+  excluded fits; paired scaling gains are mixed and some late comparisons
+  regress. Tree retains positive overall margin gain in every seen/excluded fit,
+  but most paired scaling intervals cross zero and late representatives fail.
+  The fresh diagnostic has only 21 late games, 16 clusters and one win-containing
+  cluster. It cannot pass the required late coverage/calibration gates.
+- The fixed comparison is closed with no accepted candidate. The next authorized
+  training-only experiment will rebuild the margin component around an explicit
+  current-margin residual and public numeric summaries, preserving the globals
+  WDL reference. Freeze the exact model, feature contract, budgets, authority
+  and memory evidence before fitting. No reserved outcomes or policy work.
+
+- The new residual baseline is frozen in
+  hog26_residual_margin_frozen_plan_20260912.json, SHA256
+  43c7d690902812692a4b8cfbb56ee742ed851905bb7111421643826977002853.
+  Code lives separately in experiments/hog26_residual_margin. It uses 425 public
+  numeric features, two 32-unit GELU layers, 14,721 parameters and a zero-initialized
+  linear margin residual. Hand columns preserve empty plus the eight declared
+  Hog identities resolved through the existing alias-aware vocabulary. Counts
+  are reversibly scaled by 128. No entity ID embedding, learned recurrence,
+  time caps, epoch selection, class reweighting or WDL refitting is introduced.
+- Fourteen focused tests and Ruff pass. The full-corpus memory audit passed
+  1,536 games/618,149 rows and exact baseline initialization on every row.
+  Feature matrix is 618,149 by 425 float32, 1,050,853,300 bytes, SHA256
+  4b0e0b8e3a66ee46497adac492a7571cea3f625b8cf275cfc09199da933a5ccd.
+  The maximal synthetic optimizer step had finite gradients. Peak RSS was
+  5,370,068,992 bytes. No outcome model was saved by that probe.
+- Matching readiness was published at hog26_residual_margin_readiness_20260912.json.
+  One locked fitting supervisor launched: PID 15189, worker PID 15237, logs
+  hog26_residual_margin_fit_sequence_20260912.log and
+  hog26_residual_margin_fit_20260912.log. It runs all eight fixed fits with the
+  original two seeds, four family folds, 30 epochs and unchanged margin weights.
+  WDL probabilities reuse the matching globals fit. Fitting rechecks the full
+  feature matrix hash against the probe. Do not modify any Python in this
+  fitting directory or its pinned dependencies/resources. Prepare later review
+  and inference code separately in experiments/hog26_residual_eval.
+
+- All eight numeric residual fits completed normally. Peak supervised RSS was
+  5,741,740,032 bytes. Independent audit verified all 30 expected files, source,
+  plan, readiness and feature authority, valid arrays, and exact globals
+  probabilities/OOF priors. Review:
+  hog26_residual_margin_fitting_review_20260912.json.
+- Late representative fitting margin gain is positive in all eight folds, so
+  the baseline residual fixes that observed fitting shortfall. Excluded-family
+  generalization still fails: late representative gains are -0.01642 and
+  -0.02070, with wholly negative clustered intervals. All-state overall gains
+  are +0.04180 and +0.04093, slightly below the scaled tree's point estimate.
+  Bridge-pressure and family-007 representative regressions remain. WDL is
+  unchanged reference evidence. No candidate accepted.
+- Separate evaluator code in experiments/hog26_residual_eval is prepared for
+  all eight opened-diagnostic evaluations plus paired margin error changes
+  against the matching scaled tree. Three refusal tests and Ruff pass. It
+  requires completed fitting review and a pre-prediction source/checkpoint pin.
+
+- Residual inference was frozen with evaluation pin SHA256
+  8c732f8bad522dc7caac8008ec9f23442633bc6729cfbf361d3471d2e78f9b97
+  after full fitting review. All eight evaluations and paired margin comparisons
+  completed under the shared lock and 18 GiB guard. Peak RSS was 5,962,203,136
+  bytes. Independent audit verified the exact 18-file inventory, source/reference
+  hashes, all 288/96 group and slice counts, finite bounded margins, identical
+  globals probabilities and matching WDL point metrics. Review:
+  hog26_residual_margin_diagnostic_review_20260912.json.
+- Every fresh seen-family fit improves overall margin versus current margin,
+  but none establishes overall paired improvement over the scaled tree. All
+  eight seen-family late representative gains are negative, as are all six
+  nonempty excluded-family late representative gains. The diagnostic has only
+  one late win-containing cluster. Combined with the excluded-family fitting
+  review, this baseline is not accepted. All models and reports are preserved.
+- Next work is a public-stat representation audit before another frozen training
+  test. Existing numeric summaries omit maximum unit health and explicit static
+  air/targeting capabilities. The repository has compositional object registries
+  and dynamic card factories that may cover the identities missing from the
+  standalone semantic helper. Verify mappings and uncertainty from public data;
+  do not invent traits or access hidden runtime state as model inputs.
+
+- Public body-registry audit found 54 observed body identities, all resolvable
+  without ambiguous name mappings. Existing scalar static fields are constant
+  across recorded appearances. Reconstructing each body through the normalized
+  object registry, existing card factory and crown-tower helper exactly matched
+  all five recorded static fields for all 54 identities. Reports:
+  hog26_public_body_registry_audit_20260912.json and
+  hog26_public_body_stat_reconstruction_20260912.json.
+- The collector's scalar projection explicitly uses card_stats metadata for
+  those fields, not mutable entity speed/damage. Additional descriptors must be
+  object-level physical facts. Whole-card semantic profiles aggregate nested
+  payloads and deployment counts, which must not be mistaken for one body's
+  DPS or flying status. No new outcome fit is authorized until the object-level
+  descriptor schema and validation are frozen with a new experiment plan.
+
+Public semantic feature implementation: added a separate, unfrozen experiment directory with direct body-stat lookup and 384 physical summary columns appended to the unchanged 425 numeric columns. Nine synthetic/static reconstruction checks pass, covering unavailable identities, padding, causality, entity order, crown visibility and parent/child semantics. A streaming audit of all 1,536 previously audited training archives is running; it reads only the nine public arrays and verifies archive hashes, with no outcome fitting. A successful feature audit will still require a separately frozen model plan and full resident memory gate.
+
+The public semantic audit completed all 1,536 training archives and 618,149 rows with 809 finite columns; feature SHA256 0b5ac234a3adb74b40f13aefaedace2f62f3d86c395a8785b83a0303a32da10c. Ten descriptor/feature tests passed. The first streaming attempts were stopped before publication to correct equal-distance confidence tie handling and an unused variable; their logs remain preserved. No outcome fits used those earlier implementations.
+
+The new eight-fit semantic residual experiment is frozen by reports/hog26_semantic_margin_frozen_plan_20260912.json (SHA256 c7dba3f7be9588f02897568d4ccfa71ccb5b025d5dce3e9da0d05843a6f5508a). It retains the numeric residual loss, 30 epochs, two seeds, four family folds and all data roles, adding 384 public physical summaries. Four model/gating tests passed. Full resident memory passed at 6,430,916,608 bytes, with exact feature hash agreement and zero initial baseline error; readiness is published. The shared-lock fitting supervisor is active. Preserve all Python in hog26_semantic_margin and hog26_public_semantics and all pinned resources. Prepare the separately frozen evaluator in hog26_semantic_eval; compare against both numeric residual and tree, retaining all slices. No candidate accepted.
+
+All eight semantic residual fits completed, with peak supervised RSS 7,103,397,888 bytes. The fitting review verified all 30 files and exact globals WDL reuse. OOF representative late gains are -0.020372 and -0.023220, with wholly negative 95 percent intervals for both seeds. Every fitting-family late representative gain is positive and every excluded-family gain negative. The inference-only evaluator is frozen by reports/hog26_semantic_margin_evaluation_pin_20260912.json (SHA256 84076fff7a3840a026413d6b90dc21177c56e58b21265f33c646939009765e5e) and is running all eight paired comparisons against numeric residual and tree. No model accepted.
+
+A separate retrospective position audit reproduces the fixed late baseline MAEs exactly. Of 80 late representatives, 65 (81.25 percent) are the final decision, versus only 3.918 percent of the all-state late evaluation mass. Baseline MAE is 0.032511 for representatives versus 0.077363 for all late states. This helps explain why unnecessary residual corrections can hurt the representative metric. The audit uses terminal timing only as analysis metadata; no terminal flag, future endpoint proximity or endpoint override enters any model. The metric and gate remain unchanged. Evidence: reports/hog26_late_representative_position_audit_20260912.json.
+
+Semantic diagnostic closeout: all eight evaluations completed, peak RSS 6,105,120,768 bytes. The frozen closeout script hit a KeyError on preserved empty slices without a coverage object. A separate reviewer in experiments/hog26_semantic_review_close handles that existing format; no frozen evaluator, model, prediction or metric changed. The completed review verifies all 18 files, unchanged sources/resources, exact WDL reuse and both paired comparisons. On fresh seen families, all eight overall paired MAE gains over numeric residual are positive (seven wholly positive intervals for all states, three for representatives). However, all eight seen-family representative late gains remain negative, as do all six nonempty excluded-family late representative gains. All eight seen-family representative late paired points lose to tree (four negative intervals). No candidate accepted. Evidence: reports/hog26_semantic_margin_diagnostic_review_20260912.json.
+
+Retrospective OOF decomposition across tree, numeric and semantic models: every model improves the 15 earlier late representatives but regresses on the 65 final-decision representatives. The latter baseline MAE is only 0.012847; earlier positions have baseline MAE 0.117724. This motivates testing whether public state can predict impending termination or little remaining margin change, using future events only as supervised labels. It does not authorize endpoint flags as inputs or a hard-coded zero correction. Evidence: reports/hog26_late_representative_error_decomposition_20260912.json.
+
+The auxiliary next-decision terminal-label audit passed all 1,536 complete games: exactly one positive row per game, 1,536 positives among 618,149 rows, label SHA256 39e01ecd0a2029df096e9ce1538312f2191471a396b7370173eb2161b10c3c7a. Labels use actual terminal timing only; public inputs remain the exact semantic feature matrix. The fixed auxiliary plan is reports/hog26_terminal_auxiliary_frozen_plan_20260912.json, SHA256 5a2a531e2125b36fa8d350468e9af8666aac2080b4697f2393c52587c4a2ab7f. Five tests and Ruff passed. Full resident memory with synthetic BCE step passed at 5,739,659,264 bytes. Readiness is published and eight fixed auxiliary fits are running. No outcome model changes or opened diagnostic evaluation belong to this test.
+
+Before auxiliary fitting, the independent review was pinned by reports/hog26_terminal_auxiliary_review_pin_20260912.json, SHA256 483eacb78463016fc58e755a6d0a49cc0cf155f016e565bbc628ae5fd333422f. It will reproduce every saved probability from its checkpoint, every fold report and OOF interval, and compare against a public phase-only terminal-frequency reference estimated exclusively on fitting families. Preserve Python in hog26_terminal_auxiliary and hog26_terminal_review.
+
+All eight auxiliary terminal fits and the pinned independent review completed. Every saved probability reproduces exactly from its checkpoint; all fold reports, OOF compositions and clustered intervals reproduce. Peak supervised fit RSS was 6,404,931,584 bytes. Both seeds severely underpredict termination on late representatives: mean predictions 0.048997 and 0.062296 versus observed 0.8125, with late representative NLL gains versus the fitting-only phase reference -2.624936 and -2.886470. This failure also appears in fitting families, so lack of cross-family transfer alone cannot explain it. No outcome model changes or diagnostic data access occurred.
+
+An exact replay of auxiliary seed1279501/fold0 is running in experiments/hog26_weighted_optimizer_audit/audit_clipping.py. It records existing preclip gradient norms and coefficient retention by label/phase/representative group, then requires exact equality with the saved checkpoint and predictions before publishing findings. It changes no old source or optimizer and saves no candidate. The replay holds the shared lock; a live RSS watchdog is attached. This investigates whether uniform-row batches plus large importance weights and clipping suppress rare representative examples, without yet claiming a cause or changing the next recipe.
+
+September 13 continuation (existing frozen campaign filenames retained): the exact clipping replay reproduced auxiliary seed1279501/fold0 weights and probabilities. Late representative coefficient retention was 0.1900 and weighted logit-derivative retention 0.03313, versus nonterminal derivative retention 0.84059. These describe clipping before Adam, not effective parameter influence or a sole-cause finding. The live watchdog observed 6,567,280,640 bytes and did not terminate the replay.
+
+A separate sampler-only auxiliary comparison is frozen by reports/hog26_terminal_weighted_sampler_frozen_plan_20260912.json, SHA256 e3941a9ecdb3628d79f7827294f1dcc1b07246933fa67f1538a42537a099a0d6. It draws the same fitting-row count per epoch with replacement proportional to the original loss weights and uses unweighted minibatch mean BCE. Exact enumeration tests verify the same expected unclipped loss and gradient; exclusion and readiness tests pass. Model, initial priors, AdamW settings, clip1, batch512, 30-epoch update count, seeds, folds and data are unchanged. Sampling changes repeated exposure and gradient noise, so it does not isolate clipping alone. Full resident memory and the 474,642-draw buffer passed at 5,944,557,568 bytes. Readiness and the independent paired review pin are published; eight fits are now running. Preserve hog26_terminal_weighted_sampler and hog26_terminal_sampler_review sources. No outcome model changes or opened diagnostic access.
+
+Weighted-sampler auxiliary closeout reproduced all checkpoints, reports and intervals. Compared with the original sampler, both seeds worsen held-out overall and late NLL in both distributions with wholly negative paired intervals. This is not an accepted auxiliary predictor and it is not added to any outcome model.
+
+The direct weighted-sampling margin comparison is frozen by reports/hog26_weighted_margin_frozen_plan_20260913.json, SHA256 26a18ec52c1fc90d1909eb8fa0143385b07f3e5ab63e657b5d066a5c02f1503c. It independently tests both existing numeric and semantic margin architectures with unchanged matrices, initialization, loss weights, optimizer and update count. Four tests verify expected absolute loss/gradient equivalence, original baseline initialization, excluded-row isolation and readiness refusal. Full two-matrix memory passed at 5,870,125,056 bytes, including the maximal sampling buffer and synthetic steps. Sixteen fits are running under the shared lock and 18 GiB guard. The separately prepared hog26_weighted_margin_eval directory will require all 62 fitting artifacts before pinning all sixteen opened-diagnostic evaluations, with paired comparisons against the corresponding original sampler and tree. Three evaluation refusal tests pass. Preserve fitting sources and all prior pins.
+
+All sixteen weighted-margin fits completed and the 62-artifact fitting review passed, with supervised peak RSS 6,571,884,544 bytes. Every fitting-family late representative gain is positive and every excluded-family gain negative; all four OOF late representative gains are worse than their original sampler point estimates. No candidate accepted. The sixteen-model opened diagnostic evaluation is frozen by reports/hog26_weighted_margin_evaluation_pin_20260913.json, SHA256 cce12c89464d5139880ecc13149bc9b438f5b7857c3f11eec59f010f0f221274, and is running. Preserve all six weighted evaluation Python files.
+
+The unfiltered training expansion is implemented separately in experiments/hog26_training_expansion. Three tests verify the 4,608-game schedule, preserved requirements, excluded preflight and refusal of partial evidence. The actual source/schedule draft validates with collection_allowed=false; no expansion games have run yet. It would add twelve new paired scenarios per training deck/style with both seats, using campaign seeds1280101/2/3, preserving the fixed policy and all existing roles. Full preflight auditing must precede collection authority.
+
+The streamed feature prototype passed all 1,536 existing training archives, both exact frozen matrix hashes and 512 random batch reads. Cache shape618149x809, bytes2,000,330,164; semantic SHA256 0b5ac234a3adb74b40f13aefaedace2f62f3d86c395a8785b83a0303a32da10c; numeric-prefix SHA2564b0e0b8e3a66ee46497adac492a7571cea3f625b8cf275cfc09199da933a5ccd. Peak RSS2,509,733,888 bytes. This does not certify 6,144-game fitting memory. The first launch failed on a missing import path before any output data; corrected launch and failure log are preserved. A local /reports/**/*.f32 exclusion was added alongside existing generated binary exclusions in the shared .git/info/exclude to keep the 2GB cache out of automatic VCS checkpoints; no tracked ignore rule or index changed. Evidence: reports/hog26_streamed_feature_probe_20260913/complete.json.
+
+The weighted-margin diagnostic review completed all sixteen evaluations and 38 artifacts, with supervised peak RSS6,867,173,376 bytes. Every nonempty late representative gain against current margin remains negative in both architectures and both fresh-family groups. The final comparison summary and interpretation are in reports/hog26_weighted_margin_diagnostic_review_20260913.json. No candidate accepted.
+
+Training expansion preflight completed all twelve excluded games at peak RSS560,152,576 bytes. Independent publication reproduced all audit records, source/schedule metadata, actual-terminal flags and zero rejected actions, and checked fresh-deal disjointness. Collection is frozen by reports/hog26_training_expansion_frozen_plan_20260913.json, SHA256 a2f3a62b053eb1f197c88572588fa4020e6d5e81f3ac3570c6a4afb7d049f345; preflight pin SHA25670588673f9e239b2547d3b706fd17dc8cd6fb2e2d0ea27d0da9b3131b12fa34e. The 4,608-game collection is running under expansion_supervisor.py, with shared lock and 18 GiB guard. Preserve every Python file in hog26_training_expansion and all src/clasher/scripts sources while collecting. Every scheduled complete game is retained. No automatic fitting follows completion; the combined6,144-game audit, source pin and memory gate remain mandatory. Future combined loader/feature work belongs in a separate directory.
+
+Parallel execution validation: four fresh processes reproduced all non-provenance arrays in the twelve excluded preflight games in21.11 seconds of worker execution, peak combined RSS1,846,984,704 bytes. Eight processes reproduced the same arrays in14.14 seconds, peak3,349,348,352 bytes. A separate production parallel collector then passed its own twelve-game preflight and independent array comparison, with peak3,456,761,856 bytes. The eight-process setting retains the full original schedule and all data/role requirements.
+
+Parallel collection authority is reports/hog26_training_expansion_parallel_frozen_plan_20260913.json, SHA256 ba7cf0d1763bdb801f4cf2b9f89176199b4f7a2f1f57a029b4c5edeee3ac2f56; preflight pin SHA25662bb30e865ce30b894feed452b3c563d50274ad1fa751387a5083a0ecc5133cb. Only after that authority passed, owned sequential collector PID9941 was deliberately terminated. Its supervisor records exit241 from the intentional SIGTERM; this was a performance transition, not a data-validity failure. All sequential files remain intact. The prefix audit independently validated581 completed games with zero unverified tail files and published reports/hog26_training_expansion_sequential_retired_prefix_20260913.json. This partial prefix is execution evidence, not an additional fitting corpus.
+
+The parallel collector now runs the entire unchanged4608-game schedule in datasets/derived/hog26_training_expansion_parallel_seed1280101_20260913, parent PID30196. It holds the shared lock, uses eight isolated processes with atomic validated archive publication, and enforces18GiB combined RSS. Preserve all seven Python files in hog26_parallel_expansion and all reused probe/collector/core sources. After all4608games complete, prefix_audit.py --mode compare must establish array parity with every retained sequential game before combined training access. Future expanded-corpus code lives separately in hog26_expanded_corpus and refuses partial collection or missing prefix parity before setup/arrays. No model accepted and no fitting authorized by collection.
+
+Current execution: parallel collection completed all 4,608 new games; the full 581-game retired prefix matches exactly. The combined 6,144-game corpus and 2,465,152-row public feature cache passed independent review, with 4,684 losses, 1,460 wins and no natural draws. Late representatives now cover 325 games, 275 paired scenarios and 73 scenarios containing wins. No model is accepted. Full-size synthetic memory probes are running for the draft public tree WDL/residual-margin candidate and unchanged globals baseline. Read comparison-status.json and reports/hog26_expanded_tree_value_memory_sequence_20260913.log. Keep all completed collection, expanded_corpus, cache review and memory-probe sources immutable. New outcome fitting still requires a separately frozen model plan and memory readiness. All reserved roles and calibration/ranking gates remain unchanged.
+
+Current execution: the expanded public outcome comparison is frozen and fitting has started under reports/hog26_expanded_value_frozen_plan_20260913.json (SHA256 a970c9ae20ec550f017b0315dd2d79eaecac9fd20c7a061ac8cd1b8556106c99). It runs eight unchanged GlobalWDL fits and eight paired tree WDL/residual-margin bundles, followed by four exact OOF reviews. The actual-loss full-size synthetic memory probe passed at 11,168,481,280 bytes, with all 2,465,152 inference rows checked; readiness reserves another 2 GiB and production retains the 18 GiB guard. The preliminary row-layout tree probe was intentionally retired after profiling column binning; its source and evidence remain preserved. Six model/storage tests passed, including exact globals updates and storage-layout tree predictions. All eleven Python files in hog26_expanded_value_fit are now frozen. Read comparison-status.json and reports/hog26_expanded_value_fit_sequence_20260913.log; do not duplicate the supervisor. No model accepted; complete every fit and exact review before a separate opened-diagnostic plan.
+
+Expanded fitting follow-up preparation: the scientific closeout is frozen by reports/hog26_expanded_value_scientific_review_pin_20260913.json (SHA256 71780d02c001e135712c7057796f329a2729836dd6b39e540b1f49526ea3bffa). Run experiments/hog26_expanded_value_review/review_comparison.py only after all four exact OOF reviews complete. The separate hog26_expanded_value_eval directory is prepared but NOT frozen or executed against diagnostic data. Its two synthetic tests pass; actual pin publication requires the scientific closeout. It retains all sixteen models, both fresh seen/excluded groups, every slice and paired references, then reproduces checkpoint predictions, points and paired intervals. All calibration/ranking and reserved-role gates remain unchanged.
+
+Training-support analysis after model freeze: reports/hog26_expanded_training_support_20260913.json reproduces the original 80/65 late/final counts and finds 325/271 in the expanded corpus (83.3846% final-decision representatives, versus 5.8208% of all-state late weight). Current public-margin MAE is 0.0116627 on those 271 endpoint representatives and 0.1065235 on the earlier54. Four of twelve late phase/seat/style cells remain below existing decisive-cluster floors: bridge-pressure has six clusters per seat (seat1 only one loss); slow-push has zero late wins in seat0 and one in seat1. This retrospective training analysis changes no feature, sampler, metric, quota, or frozen fit. Actual endpoint flags remain excluded from model inputs.
+
+Current execution changed for a separately gated performance replay: all eight globals folds are complete. The first serial tree bundle (seed1279501/fold0) is still running; its classifier is complete and regressor active. The synthetic OpenMP1/8 probe reproduces complete normalized estimator state and predictions exactly for binary and three-class cases, with roughly2.3x speedup. Full-corpus equivalence is NOT yet established. The owned original supervisor PID96292 is intentionally paused; child6657 continues unchanged under guard15744 in experiments/hog26_tree_thread_handoff/guard_reference.py. This guard retains the same18GiB threshold, then retires the old launcher only after the complete first-tree bundle is audited. See reports/hog26_tree_thread_handoff_sequence_20260913.log and comparison-status.json. Do not manually resume the old parent while the takeover guard is active. A full-size eight-thread replay must match the saved serial estimator states and all-row predictions before any remaining tree fits switch threads. All original sources, outputs, model settings and data roles remain preserved.
+
+Current execution: the first serial tree bundle completed in1713.1148 seconds and its artifacts were audited; the original supervisor and child are now retired, with all outputs preserved. Full-size thread replay is frozen by reports/hog26_tree_full_thread_replay_plan_20260913.json (SHA256 f36c61e2cad45a7e0000c7d9c069546ee2b6340f855f01a679da7ebcf9479f40) and is running under the shared lock and18GiB guard. Follow reports/hog26_tree_full_thread_replay_sequence_20260913.log. All four Python files in hog26_tree_full_thread_replay are now frozen. Require identical normalized estimator state (only copied bin-mapper thread metadata normalized) and exact dtype/shape/prediction bytes on all2465152 rows before a separate continuation authority. The unfinished hog26_threaded_value_fit directory prepares that continuation; it is not yet frozen or executable as production. All eight serial globals and the complete serial tree remain preserved. No model accepted.
+
+Full thread replay correction: the first replay failed whole-object pickle hashing at the classifier, and all failure evidence remains preserved. An unchanged-model negative control in reports/hog26_tree_state_serialization_control_20260913.json proves that serializing/reloading the same saved estimator changes that whole-object hash even though every individual state field retains identical bytes. This is a checker false-rejection mechanism, not proof that the eight-thread model is unchanged. The corrected field-by-field replay is frozen by reports/hog26_tree_state_replay_plan_20260913.json (SHA256 c5ba01a7c3309240b51d9d22e27aa41a6be87c48f54289bf7982d2bcc3320427) and is running. It ignores no learned fields, normalizes only copied bin-mapper thread metadata, preserves component checkpoints before checks and still requires exact all-row prediction bytes. All six Python files in hog26_tree_thread_state_replay are frozen. No remaining production fit may switch threads before this corrected full-size proof and memory guard pass.
+
+Current execution: corrected full-size thread replay PASSED all41 classifier fields, all39 regressor fields, and exact dtype/shape/prediction bytes across2465152 rows. Peak supervised RSS11257266176 bytes; no memory termination. The replay completed in284.8587 seconds excluding initial data/matrix preparation, while the serial full bundle took1713.1148 seconds including reporting; these timing scopes differ. The separately frozen continuation plan reports/hog26_threaded_value_continuation_plan_20260913.json has SHA256 dc7f350d45cff1d2a880c6c460c03920fc894dbc7afb0631beed51d594481536. All six Python files in hog26_threaded_value_fit are now immutable. Its supervisor is running seven remaining tree pairs at8 OpenMP threads, with independent copies of the eight completed globals and the verified replay pair in reports/hog26_expanded_value_threaded_comparison_20260913. Original observations, model settings, seeds, targets and weights are unchanged; every tree manifest records execution provenance. Four exact OOF reviews follow. The new scientific closeout is frozen by reports/hog26_threaded_value_scientific_review_pin_20260913.json (SHA256 1facefec6fb79755a7c67667359a89f382d27a85ff291c5b002cd397b71ff939), using hog26_threaded_value_review/review_comparison.py. Do not use the retired serial supervisor or old serial closeout for this continuation. The WIP hog26_expanded_value_eval now targets this continuation but remains unpinned and has not accessed diagnostic data. All prior failed checkers and reports are retained. No accepted model; all data-role and public calibration/ranking gates remain intact.
+
+Current execution: all16 fold bundles and all24 model estimators are complete. Exact reviews now run concurrently in four unchanged single-thread workers under experiments/hog26_parallel_value_review/supervise.py, with one combined18GiB guard. Schedule pin is inside the continuation output at review_schedule_plan.json (SHA256 6f26b5e92851f7f0c1fc4befd7114020f53fa2a0a5729809eeecef488ae7fadd). Guard PID58095 covers existing globals seed1279501 review PID53678 plus new workers58133/58134/58135. Original continuation parent30925 is intentionally paused and must not be resumed while this guard is active; the guard will retire it after all four exact reviews finish and publish the same completion contract with explicit scheduling provenance. Worker source, seeds, metrics, bootstraps and output paths are unchanged; each process writes distinct review/OOF artifacts. All model sources and this new scheduler source are frozen. Do not start scientific interpretation or opened diagnostics before complete review. Follow reports/hog26_parallel_value_review_sequence_20260913.log and comparison-status.json.
+
+Current execution: all four exact fitting reviews and the frozen scientific closeout are COMPLETE. Parallel review peak was6086230016 bytes; all16 checkpoints, predictions and point reports reproduced exactly. The old continuation parent30925 and parallel review guard have finished; no paused training launcher remains. The fitting conclusion is in reports/hog26_threaded_value_fitting_conclusion_20260913.json. Both tree seeds improve held-family late margin: representative MAE0.0274242 to0.0173195/0.0171308, with gain CIs[0.0060411,0.0147282]/[0.0061443,0.0148884]; all-state late gain0.0244358/0.0240862 also has positive CIs. However, early bridge-pressure margin regresses by about0.02 in both seats and both seeds with negative CIs, and late representative tree NLL trails globals. No model accepted. The separately frozen all16-model opened diagnostic is now running under experiments/hog26_expanded_value_eval/supervise.py --mode evaluate. Pin reports/hog26_expanded_value_evaluation_pin_20260913.json has SHA256 e00d4985a22c059e94d795aaa764f4d9aa097558b5c4969366ba3c5fc6d2cedb and freezes all nine Python files in that directory. Main log reports/hog26_expanded_value_diagnostic_sequence_20260913.log; detailed log reports/hog26_expanded_value_diagnostic_20260913.log. After evaluation completes, run the same supervisor with --mode review for exact checkpoint/point/paired-interval reproduction. Keep all reserved roles and public calibration/ranking gates unchanged.
+
+Training-only post-fit localization is complete in reports/hog26_expanded_error_localization_20260913.json (SHA256 58e2b697e58562a507a4cf00a0dbd53aaf93c5032df669f4efaab2ffd1ece263). It uses no opened-diagnostic results. Late representative gains mainly come from the54 earlier positions: baseline MAE0.1065235 falls to0.0500697/0.0505440, with gain CIs[0.0360144,0.0740922]/[0.0362827,0.0734090]. The271 endpoint representatives remain near baseline (small gain intervals cross zero). Early bridge-pressure is a separate ordinary-play failure: zero of512 seat0 early representatives and only one of512 seat1 representatives are final decisions. Families003/006/007 show large negative early-bridge margin changes; fitting-family early-bridge point gains are negative in six of eight models, with the models excluding006/007 the exceptions. This supports investigating missing public temporal information or objective/capacity limitations from training evidence; it does not identify a cause or authorize changes to the frozen models. All16 opened diagnostic evaluations completed under the guard at6867550208 peak RSS; their exact review is now running.
+
+Current execution: all16 opened diagnostic evaluations and the independent36-artifact review are COMPLETE. Review peak RSS7007797248 bytes; all checkpoint predictions, point metrics and paired intervals reproduced. The conclusion is reports/hog26_expanded_value_diagnostic_conclusion_20260913.json. Late margin gains carry to familiar families (all8 positive representative gains,7 positive intervals); excluded-family late representatives remain mixed (4 positive/2 negative nonempty cases,2 empty), though all6 beat the old scaled tree. Late tree WDL remains weaker than globals in familiar-family cases. Counts overlap diagnostic games; the entire late diagnostic has only one win-containing cluster. No accepted candidate and no fitting authorization derives from this opened diagnostic. Continue training-only investigation anchored in reports/hog26_expanded_error_localization_20260913.json: test causal public-history features and their information content before a separately frozen next outcome fit. All current models, readers, evaluators and source pins remain preserved.
+
+Current execution: public entity-history extraction and readback passed all6144 games/2465152 rows. The97-column cache is956478976 bytes with SHA256 9fde495104adfe4a11b590e509e9fd8e4d4e62f0b287459bc916ab6fcfe5514b; no column is constant. Every game passed prefix checks,12 fixed games passed complete streaming/future-perturbation byte equality, and512 random reads matched. Peak guard RSS1199587328 bytes. History/cache plan SHA2565a4b201826d77138f9d206269d7a633fac9ed1f6cade5f855e3cc2abd14e1116 freezes both public_history Python files and all four history_cache Python files. Existing global-resource histories are unchanged; new lags1/5/20 and20-transition variation operate on24 masked entity summaries. The training-only early bridge-behavior information probe is now frozen and fitting16 classifiers under reports/hog26_early_behavior_probe_plan_20260913.json (SHA256 a612a29754c4edc425f6551106fbdee0d7431dee634c198554526c633f9b2001). It compares814 versus911 public inputs at one existing early representative per each of6144 games; style is a binary target only. Two seeds/four whole-family folds, same classifier settings, no outcome targets or auxiliary predictions as outcome input. Full6144x911 synthetic memory proof passed below0.90GB. All nine Python files in hog26_early_behavior_probe are frozen. Follow its fit log and live state, then run supervise.py --mode review. No outcome model or policy has been updated by this probe; no accepted candidate.
+
+Current execution: the early-behavior information probe and exact review are COMPLETE. Public entity history improves overall held-family binary NLL from 0.21538291 to 0.19225271 and AUC from 0.94749527 to 0.95907974; paired NLL gain 0.02313020 has CI [0.01744572, 0.02921784]. Both seats improve, but family006 has a negative point change with an interval crossing zero. The two configured seeds produced identical prediction bytes in every representation/fold; loaded estimator seeds differ correctly, but this small, fully binned/all-feature learner has no effective seed variability. Do not count these as independent replications. This establishes usable behavior information, not outcome improvement.
+
+A separate training-only early-margin assay is now frozen by reports/hog26_early_margin_probe_plan_20260913.json (SHA256 a76563b8d4b56911215f2c57a68139e06e2f343f104c69959ce215c7ab47c37c). All ten Python files in experiments/hog26_early_margin_probe are frozen. It compares base814 and history911 on identical existing early representatives for all 6144 games, four whole-family folds, one fixed seed1280501, equal-game absolute residual loss: eight regressors. Full-training OOF references are checked through the scientific/completion/exact-review hash chain and early bridge scores reproduce. All29 groups and seven contrasts are retained; paired intervals are unadjusted diagnostics. Comparing focused base with focused history isolates added features under the learner; comparing either with full-training trees also changes phase/sample allocation and binning. The full-shape synthetic memory gate is running, then fit and exact review follow under the shared lease. This is not a full-phase candidate or acceptance test. No model accepted.
+
+Latest execution: all eight focused early-margin fits and exact checkpoint/point review are COMPLETE. Peak fitting RSS1193541632 bytes; review1166098432. History worsens overall early MAE from0.20913676 to0.21072830 (paired gain CI[-0.00240498,-0.00079882]); behavioral identifiability did not imply outcome improvement. Focused base814 improves versus both full-training references overall and in bridge-pressure; bridge MAE falls from0.24767778/0.24987485 to0.23052708, but its gain over current0.22701047 remains inconclusive. No full-phase candidate or acceptance claim. See reports/hog26_early_margin_probe_conclusion_20260913.json. Next separate training hypothesis: fixed public-phase-specific margin regressors with unchanged814 features and unchanged globals WDL, evaluated across every original slice/distribution. No history outcome candidate proceeds from this failed assay. All early-margin sources are frozen; do not rerun completed supervisors.
+
+Current execution: the separate public-phase margin comparison is frozen by reports/hog26_phase_margin_plan_20260913.json (SHA256 d810b4e570c3c4566d75518b0a2f5deb82caa29b30e9985104dab3fa00e760ee). All nine Python files in experiments/hog26_phase_margin are now immutable. It fits three margin experts per seed/fold (24 regressors), using the same814 public features and original margin weights restricted/renormalized per phase. Fixed1/3 and2/3 public-clock thresholds were checked against every2465152 cache row. Same reviewed globals checkpoints provide WDL; no classifier refit. Early/middle bin subsampling may vary by seed, while late fits are expected to be deterministic and must not be counted as independent replication. Two boundary/weight tests and Ruff pass. Full-size synthetic memory is running for the largest populations: early1144736, middle730490, late22074 rows. On success, supervisor --mode run fits all eight bundles and performs two exact reviews plus scientific paired comparisons across every original slice and both distributions. This changes capacity, phase allocation and per-phase binning; it does not isolate a cause. No accepted candidate, diagnostic access or policy update.
+
+Execution update: the phase memory gate PASSED each largest phase matrix plus all2465152 routed inference rows. Worker peak RSS9375645696 bytes, supervised peak9295806464;2GiB headroom remains below18GiB. The phase supervisor --mode run is active (parent32596, initial child32645), exec session53235. It will fit all24 regressors and perform both exact reviews plus scientific closeout automatically. Do not launch duplicate fitting/review workers. All phase sources remain frozen.
+
+A separate boundary discontinuity audit is frozen by reports/hog26_phase_boundary_audit_pin_20260913.json (SHA256 d9500011282bb83218b29ce8d105fa0df05e18c329447c1403073af529f26ccf). Both Python files in experiments/hog26_phase_boundary_audit are immutable. This audit must wait until phase supervisor completion/exact/scientific reviews and the shared lease release. Then run its supervise.py using the phaseBoundaryEnv prefix. It compares adjacent phase experts on identical last-before/first-after public states, verifies routed OOF equality, and reports switch magnitudes without outcome-based selection or scoring. This is predictor extrapolation, not environment-action counterfactual ranking or acceptance. No boundary audit process is running yet.
+
+Read-only feasibility audit: reports/hog26_early_margin_feasibility_audit_20260913.json checks existing early predictions against[-current enemy mean tower fraction,current own mean tower fraction], with1e-6 floating tolerance. All6144 early targets satisfy the interval. Full-tree seeds violate it at3/2 early points; focused base/history at6/7 points. None of the1024 early bridge-pressure predictions or targets violate it, so this mechanism does not explain the bridge regression. No clipping or model change was applied. Source experiments/hog26_early_margin_bounds/audit_bounds.py is preserved by its report hash. This is an exploratory training-only early check, not a full simulator invariant proof. Phase fitting continues unchanged.
+
+Synthetic binning control: reports/hog26_binning_weight_synthetic_control_20260913.json confirms installed sklearn1.7.2 binning ignores sample weights. Two synthetic8192x2 fits with opposite100:1/1:100 weights produced identical bin-threshold bytes but different predictions, proving weights still affect the loss/fit. Local gradient_boosting.py calls _bin_mapper.fit_transform(X) without weights; binning.py uses uniform row subsampling above200000 and unweighted quantiles. Source experiments/hog26_binning_weight_probe/probe.py and package-source hashes are retained in the result. This distinguishes representative-only fitting from full-row weighted fitting, but does not establish a cause of observed outcome error. It supplies no result-dependent change to the ongoing phase comparison. A future binning/weight-allocation study, if warranted by complete training reviews, requires a separate fixed plan.
+
+Execution scheduling update: experiments/hog26_phase_parallel_review/supervise.py is now immutable (SHA256 494f36217bc469921766bd8ad085cc7940b8c1bfc7699d5c096afa21a8f5bd60) and running in waiting mode, exec session88424; follow reports/hog26_phase_parallel_review_sequence_20260913.log. Original phase parent32596 continues fitting unchanged. Only after all eight bundles and their guards complete and the first exact review starts will the scheduler publish reports/hog26_phase_parallel_review_plan_20260913.json, pause parent32596, and run the second unchanged single-thread seed review concurrently under one combined18GiB guard. The paused original parent retains the shared lease during review. Do not manually resume it after handoff. After both exact reviews pass, the new scheduler retires that parent, acquires the lease, invokes the unchanged scientific worker and publishes phase root completion with scheduling provenance. Existing first-review exit status is unavailable to the new parent; its exact exclusive completion/OOF artifact is required and receipt memory scope is explicit. No model, data, metric or bootstrap changes. This replaces the serial review schedule only. Boundary audit remains queued after complete scientific review.
+
+Current execution: all24 phase regressors and all eight fitting guards are COMPLETE. Largest fitting guard peak10442948608 bytes. Parallel exact reviews are now active under scheduler48595, workers51422/51648, exec session88424. Schedule plan reports/hog26_phase_parallel_review_plan_20260913.json SHA256 fb677a4947f529f800b80f225eca8f42b3eedfe3447e6a0c27a2f09641c6735c. Original parent32596 is intentionally paused and retains the shared lease; do not resume it. The new scheduler will retire it after both exact reviews and then invoke unchanged scientific closeout. Follow reports/hog26_phase_parallel_review_sequence_20260913.log and the two phase review logs. No model-quality interpretation before full review. Boundary audit remains queued.
+
+Current execution: both phase exact reviews are COMPLETE. Every24 new regressor and all eight unchanged global checkpoint predictions and point reports reproduced. Per-worker review peaks2416738304/2411806720 bytes; first receipt explicitly records unavailable non-child exit code and verified completion/OOF authority. Original parent32596 was deliberately retired after both completions; unified session53235 ended143(SIGTERM), and PID32596 is absent. No paused parent remains. Parallel scheduler48595 now owns the lease and is running unchanged phase_science.py, child60510, log reports/hog26_phase_margin_science_20260913.log. Wait for root complete and scheduler session88424 success, then run pinned boundary audit. No accepted model.
+
+Phase comparison and boundary audit are COMPLETE. All24 regressors and eight globals reproduce exactly; scientific closeout passed. Parallel-review aggregate peak4828545024 bytes, science2177155072; boundary1188757504. No active or paused phase process remains. See reports/hog26_phase_margin_conclusion_20260913.json. Early/middle margins improve versus old trees with positive paired intervals; late representative MAE0.01585856 versus current0.02742418, gain0.01156562 CI[0.00864704,0.01507803]. Added late improvement over old trees remains inconclusive. Late predictions are byte-identical between seeds, not independent replication. Early bridge representatives nearly match current baseline, while all-state bridge points remain about0.008-0.0095 worse with CIs crossing zero. One supported late balanced seat1 representative slice regresses versus previous seed1279502 tree (gain-0.00496344 CI[-0.01090092,-0.00034048]); do not hide it. Four late cells lack support and one seed1279501 late-random seat0 representative class-ECE point exceeds0.2. Hard routing has substantial discontinuity: same-state early-to-middle expert switch averages0.0570/0.0578 absolute,95th-percentile0.1504/0.1529. This is not an environment counterfactual ranking result. No candidate accepted. Next: separately freeze inference-only evaluation of all eight fixed bundles on the permanently opened seed-transfer diagnostic. That evaluation cannot authorize fitting, selection, calibration or acceptance. New evaluator sources are being prepared separately; all previous sources remain immutable.
+
+Current execution: all eight fixed phase bundles are being evaluated on the permanently opened diagnostic under experiments/hog26_phase_value_eval/supervise.py --mode run, exec session23752. Its pin reports/hog26_phase_margin_evaluation_pin_20260913.json has SHA256 ede357d930127e73c30ad39e063c6f08420831d19c82a89bbb2e53d6af5bffa1 and freezes all nine Python files. Three access/checkpoint-chain tests and Ruff passed. The supervisor performs evaluation then exact prediction/point/paired-interval review automatically. Both margin contrasts keep expanded-globals WDL identical. No fitting or acceptance authority comes from this diagnostic. A separate next training hypothesis is fixed before transfer feedback in reports/hog26_overlap_margin_training_hypothesis_20260913.json: fresh smooth overlapping experts, original6144 games/features/learner, triangular public-clock gates centered1/6,1/2,5/6; original margin weights times gate, normalized per expert. This is a proposal, not execution authority. It addresses training-observed hard-switch discontinuity and retains native unweighted binning. Future fitting requires completed diagnostic review plus its own fixed source and full memory gate.
+
+The eight-bundle phase transfer diagnostic and its exact18-artifact review are COMPLETE, with evaluation/review peaks8049246208/8049655808 bytes. No diagnostic process remains. See reports/hog26_phase_margin_diagnostic_conclusion_20260913.json. Overall gains versus current margin have positive intervals in all eight familiar and all eight excluded-family cases on both distributions. Familiar-family early/middle gains versus prior trees are consistently positive; excluded-family improvements and comparative late results are less uniform. Cases overlap384 games, and late still has only21 games/16 clusters/one win-containing cluster. No accepted model or fitting authorization derives from this set. The already fixed smooth-overlap proposal proceeds only from training boundary evidence, with new source/plan/memory readiness still required. Its core gate/inference tests pass in WIP experiments/hog26_overlap_margin; that directory is not yet frozen or authorized for fitting.
+
+Current execution: smooth-overlap comparison is frozen and fitting has started. Plan reports/hog26_overlap_margin_plan_20260913.json SHA256 9b3b1b3318d1f60c2835f13593008700110e3fc80d149cddb45a0becaf5f741c freezes all13 Python files in experiments/hog26_overlap_margin. Do not edit or add Python there. It implements the pre-transfer training-only proposal with no setting change. Five tests pass. Statistical reuse reproduces all240 actual reference bootstrap dictionaries exactly; changed-margin controls also match the full original bootstrap on all22415 late states and325 late representatives. Source-bound proof files are preserved. The full-size synthetic memory guard passed at10100932608 supervised peak RSS with2GiB headroom under18GiB. Largest expert fitting row counts are1653689,1318176,240204. Supervisor --mode run fits24 regressors, then runs two unchanged-seed exact reviews concurrently under one aggregate18GiB guard, reusing only verified unchanged WDL statistics, and performs current/full-tree/hard-phase paired scientific comparisons. No active older diagnostic, fitting or paused process remains. New overlap fitting uses only the original6144 training games; no diagnostic values selected its configuration. No model accepted.
+
+The follow-up overlap boundary audit is pinned before model-result inspection: reports/hog26_overlap_boundary_audit_pin_20260913.json SHA256 19763da7808795b708107f72bcdcfc7b980ccc60e8bf3586da6362a5f7212cfa. Both Python files in experiments/hog26_overlap_boundary_audit are immutable. After full overlap comparison/exact/scientific completion and lease release, run its supervise.py with overlapBoundaryEnv. It covers centers1/6,1/2,5/6 and old boundaries1/3,2/3; decomposes gate versus head changes, checks sum agreement and the6*delta_clock routing bound, reproduces OOF bytes and compares observed changes with hard-phase/full-tree/current references. No outcome target is used, and this is not action ranking or acceptance. Overlap training remains active under parent82765, exec session25172; its first bundle completed at10910351360 supervised peak RSS, second bundle is running. No old paused process remains.
+
+An unwired bounded online encoder is now frozen in experiments/hog26_online_value_features (all five Python files). Pin reports/hog26_online_value_features_pin_20260913.json SHA256 8d7b7675c3f599edb8d2ea283c68db369a75213c1cee61158c5a1a2e25b70a63 selects16 fixed evenly spaced complete training games. Four tests pass:814-column streaming/batch byte parity,20-frame masked-global history, resets, clone/input ownership, transactional refusal and ignored optional next-card slot. The real-game audit has NOT run. After overlap comparison and overlap boundary audit finish and release the lease, run experiments/hog26_online_value_features/supervise.py --mode audit with onlineValueEnv. It checks every frame against the complete feature cache and cloned continuations without loading outcome arrays or changing any policy. Static layout/body metadata remain shared immutable resources. This is encoding parity, not visibility-mask, model-quality or counterfactual-ranking acceptance.
+
+Current execution: all eight overlapping bundles and24 regressors are COMPLETE. Two exact reviewers5471/5472 now run concurrently under the original overlap supervisor82765 and shared18GiB aggregate guard, exec session25172. No supervisor handoff or paused parent is involved. Follow reports/hog26_overlap_margin_review-seed1279501_20260913.log and the corresponding seed1279502 log; scientific closeout follows automatically. The compact current handoff is HANDOFF_ACTIVE_TRAINING_20260913.md. After root completion, run the pinned overlap boundary audit, then the pinned16-game online encoder audit, in that order under the shared lease. No candidate accepted.
+
+Overlap exact reviews are COMPLETE: both worker exit codes0, all24 regressors and eight globals reproduce, and the verified WDL-statistic reuse completed without discrepancies. Combined review peak4707385344 bytes. Supervisor82765 is running the scientific comparison (child10558) against current/full-tree/hard-phase margins; exec session25172 remains active. After root completion, the pinned boundary-component audit and then16-game online encoder audit remain queued. No accepted model.
+
+Overlap fitting, exact reviews, scientific closeout and boundary-component audit are COMPLETE. No accepted model. See reports/hog26_overlap_margin_conclusion_20260913.json. Overlap improves all-state late MAE to0.04124/0.04104 versus hard0.04211, but worsens middle all-state error by0.00285/0.00309 and middle representative error by0.00405/0.00435, with negative paired intervals. Late representative MAE rises from hard0.01586 to0.01744/0.01728, also significantly worse. Overall errors worsen modestly versus hard experts while remaining better than current and original full-tree baselines. A supported late-random seat1 representative slice also regresses versus the original full tree in seed1279501. Boundary audit verifies exact OOF reconstruction and decomposition: mean actual jumps at the old first boundary shrink from0.0572/0.0581 to0.00685/0.00693; second boundary from0.0358/0.0344 to0.00406/0.00389. Routing-only components are about0.00025 and0.00009 respectively. Tree-head changes remain; this is not action-ranking acceptance. Boundary peak1426948096 bytes. The queued16-game online-feature audit is now running under experiments/hog26_online_value_features/supervise.py --mode audit. All old model processes are complete; no paused parent remains.
+
+The 16-game online encoder audit is COMPLETE: all 6,313 frames match the audited 814-feature cache exactly, cloned continuations match, divergent clones remain isolated, and history stays bounded at 20. Peak supervised RSS 861372416 bytes; no policy/model changes. All model and boundary jobs are complete. A separate training-only numerical readiness screen is now pinned and running in experiments/hog26_training_gate_screen (all five Python files immutable). Pin reports/hog26_training_natural_rule_screen_pin_20260913.json has SHA256 f8b81a83dd10f393dd1e22904dbb1903a5e97eeb14f19732f1cead1cee1d8e27. It uses the actual preserved representative public-slice evaluator and original full-phase metric/bootstrap helpers on each held-family fold, comparing joint/hard/overlap margins with identical globals WDL. It retains the protocol's development-style subset and all training styles, separates numerical from coverage failures, and uses no reserved data. This does not test the full acceptance procedure or grant acceptance. Relative changes against prior models are distinct from the unchanged declared thresholds.
+
+The natural-rule screen FAILED before scoring: the unchanged legacy representative evaluator rejects a zero entry in the training prior, while the scalar natural corpus has exactly zero draws. Guard exit1 and its log are preserved; all five screen Python files remain frozen. No prior smoothing, invented draw mass, gate bypass or acceptance claim was introduced. The declared corrected training draw controls are separate, but they came from the older tensor backend and cannot be silently mixed into the scalar corpus. A new excluded scalar control feasibility probe is now pinned and running in experiments/hog26_scalar_draw_feasibility (all three Python files immutable). Pin reports/hog26_scalar_draw_feasibility_pin_20260913.json SHA256 5e27a5cfd7c1442eb49877507ac561b3f538ecf2934ec5b92706ddf34a2624ee. It uses the existing unchanged scalar run(policy_selfplay=True) on identical Hog decks for seeds1281001/1281002, repeats the first exactly, and runs a no-op terminal control at1281003. Every outcome is retained and one actor view is captured per physical run. All four runs remain excluded from fitting, selection/calibration and final evidence; no-op draws do not establish natural-draw calibration or replace the required frozen-policy mirror controls. No learning or physics change occurs. The current model/encoder/overlap audits are complete; no other campaign is active.
+
+The excluded scalar draw feasibility is COMPLETE: both frozen-policy mirror games (1281001/1281002) lost from seat0 at tick2938 with margin -0.0093283582; exact replay passed. Only the no-op control drew. All probe data remain excluded. Identical actions/success/visible counts at all368 decisions; the two seeds differ at170 action-order entries but all recorded actor/policy/recurrent hashes and other trace fields agree. A separate observational tick replay is being audited in experiments/hog26_scalar_mirror_trace_v2. The first trace audit is preserved as failed: its comparison did not normalize Python tuples against JSON lists, and its entity snapshot used hp instead of hitpoints; it emitted no completed report. V2 corrects these audit defects and preflights six initial tower snapshots, without editing frozen simulator or collector sources. No model accepted; natural-rule prior support remains unresolved. No training or reserved validation is running.
+
+The scalar mirror tick audit v2 is COMPLETE with exact original trace/result equality after JSON representation normalization. Forty-seven logic ticks had unequal rotated tower HP; the first was779. At tick2938 seat0 king dies while seat1 retains135HP; this is not just a winner-label tie-check issue. Both mirror trace Python directories and their pins remain frozen, including failed v1. No physics changed.
+
+A new explicitly diagnostic numerical screen is pinned/running in experiments/hog26_training_supported_metrics. All six Python files are frozen by reports/hog26_training_supported_metrics_pin_20260913.json (SHA2563b7502af33461c44ff360d2da103f7f021bc94c86ee1a93553fab1580848d7e1). It copies the representative evaluator with only its prior-domain check changed: zero is allowed for unobserved labels, observed zero-support outcomes are refused. It preserves the native positive-prior failure separately and cannot establish acceptance. Three tests pass: source diff restricted to those changes, full report equality on positive priors, native zero-prior refusal plus finite diagnostic NLL and observed-zero refusal. Same48 planned training-fold/design/style cases, unchanged priors/probabilities/margins and numerical thresholds; no reserved labels. Source/rules unchanged in scripts and old screen. Exec session75135 supervises the new audit under comparison.lock.
+
+The supported-metrics screen is COMPLETE:48 cases, exit0, peak1451802624 bytes. Source-bound summary reports/hog26_training_supported_metrics_conclusion_20260913.json. On declared balanced/reactive-defense styles, hard-phase margins have no numerical margin failure among covered representative slices. Supported WDL failures are late balanced seat1 fold3 top-ECE0.22463/0.20229 (limit0.2), and early reactive-defense seat1 fold2 seed1279502 AUC0.535714 (limit0.55; only2win clusters). Broader styles retain fourteen supported margin-check failures across repeated seed/fold cases, especially early bridge-pressure. Counts are not independent replications. Coverage and native zero-draw prior still fail. No acceptance.
+
+Before new fitting, a fixed comparison of the two already reviewed WDL heads (globals/trees) with identical hard-phase margins is pinned/running in experiments/hog26_training_wdl_screen. Three Python files frozen; pinSHA88a15b5f5df5e462494d014b9e378bf8e6c31ad0da68001c0a3b261ecbd74296; supplementary helper authority reports/hog26_training_wdl_screen_helper_pin_20260913.json binds unchanged supported-metric helpers. Verify helper hashes again after completion.32cases across2heads,2seeds,4folds,2style scopes. No new fitting, model combination, probability calibration, or reserved labels. Exec session97322. Initial standalone helper validation omitted torch.set_num_threads(1) and failed runtime guard; rerun with requiredthreads1 verified unchanged sources successfully.
+
+Existing-WDL screen is COMPLETE:32cases, exit0, peak1332428800 bytes; supplementary helper hashes match after run. Source-bound conclusion reports/hog26_training_wdl_screen_conclusion_20260913.json. Full-tree WDL resolves the covered early reactive AUC failure but has covered late reactive-defense calibration failures (topECE0.20599/0.26220) and additional broad-style late failures. Neither unchanged head is a clean replacement; all prior/coverage restrictions remain.
+
+The next supervised experiment is pinned/running: experiments/hog26_late_classifier/supervise.py --mode run, exec session34897, lateClassifierEnv. All five Python files are immutable (late_contract,fit_late,review_late,supervise,test_late). Pin reports/hog26_late_classifier_pin_20260913.json SHA256372c05fc36f0e34b0881d633dd82c64e73677658b842ef9819e7a6d32165ad9b. Hypothesis was saved before implementation in reports/hog26_late_classifier_hypothesis_20260913.json. Eight native HGB log-loss100-iteration fits on late-only22415rows; fittingfolds18499/11130/22074/15542rows. Same814features and original WDL weights restricted tolate, mean1. Both classes0/2 required, drawprobability0 recorded as absent support. Two seeds1279501/2,4family folds,8fitthreads/1inference,18GiB guard. Exact pickle prediction replay and all late fold/style metrics follow automatically. Comparison uses unchanged hard-phase margin and globals/tree WDL references, and does not create an early/late probability composite. Paired NLL bootstrap preserves game and scenario weights; duplication-invariance test passes. Identical seed outputs expected at this small population and must not be counted as independent replication. No new controls, reserved labels, calibration, policy or physics changes.
+
+The late classifier is COMPLETE:8fits and exact saved-model prediction replays, fitpeak1506869248 bytes/reviewpeak1303347200, both exit0. Source-bound summary reports/hog26_late_classifier_conclusion_20260913.json. Candidate predictions are identical acrossseeds (one effective result). No covered representative late classification failure in either style scope; covered full-late classification checks pass. Fold2 still has no late wins and fails coverage. Representative NLL gains versus globals are positive with clustered intervals in fold3 (~0.17 for both reference seeds), but other fold comparisons remain uncertain. Margin artifacts computed on late-only aggregates are not full-phase protocol acceptance gates; unchanged hard margins retained. No composite/fresh-validation/calibration or acceptance.
+
+Next excluded feasibility is running: experiments/hog26_mirror_order_feasibility/supervise.py --mode run, execsession78723, mirrorOrderEnv. All3Pythonfiles frozen by reports/hog26_mirror_order_feasibility_pin_20260913.json SHA256603f7ef5ec7ad7f1124f5c7ea2eb9ad76afc4b4f14aa32e929f9c0336ee012e7. Fixed16 mirrored initialorders (eight cyclic and eight reversed cyclic), deterministic unchanged frozen policy, current scalar physics, independently domain-hashed battle/action-order streams. Every outcome retained, plus exact replay of order0. Existing Scenario object supplies identical decks without mutating run.DECK or physics. One actual actorview perphysicalgame. No no-op, scripted override, outcome filtering, or fitting role. This tests opening dependence because old two-seed fixed-order mirrors had identical trajectories. Even if draws occur, this excluded data cannot be silently relabeled as training/calibration.
+
+Mirror-order feasibility is COMPLETE:16unique physicalgames produced8wins/6losses/2draws fromseat0; exactfirstreplay passed, peak615546880 bytes. Drawsorder06/order12 terminateat3032/3329 withbothkingsdestroyed andmargin0. Summary reports/hog26_mirror_order_feasibility_conclusion_20260913.json. This is not natural draw-frequency evidence, and all16remain excluded.
+
+Paired public-view proof is COMPLETE: excluded order0loss plus bothdraws, exactoriginalseat0arraybytes/fullphysicaltrace, actualbothseatactions and independentlyauditedoppositemargins. Bothpublicviews acceptedbyonline814encoder. Peak474562560 bytes. All4Pythonfiles in experiments/hog26_scalar_paired_views frozen by pinSHA22c30a8e49522d1a6469bcd560722590af461a2a777059bb31199ffaf0aedae6. PairedWriter wraps build/step observationally, callsoriginalonce and restoresmethods aftercontext; neverrerunsbattleforoppositeview.
+
+Separate prospective training-control collection is now pinned/running: experiments/hog26_scalar_mirror_training/supervise.py --mode run, exec session53317, mirrorTrainingEnv. All5Pythonfiles frozen by reports/hog26_scalar_mirror_training_pin_20260913.json SHAd2049576cd62fbbfe518a92bf8f0e36c2f7bf15613925a65153e9c6dc36612b7. Four ordinary subprocess collectors, shared18GiBguard/lease, then independentserialaudit.256fixed uniquepermutations fromrole-domain1281301 excludeall16opened feasibilityorders;512actualactorviews from256physicalgames. No outcome filtering or quota, evenifdrawsupportpoor. Roletrain-scalar-mirror-controls is separate fromnaturalcalibration distribution. No fitting occurs here; anyWDLuse needsnewpinned mixing/weight plan. Outputdatasets/derived/hog26_scalar_mirror_training_controls_seed1281301_20260913. One schedule test verifiesdeterminism, uniqueness, disjointopeneddeals andzero globalRNGconsumption. All priortraining andfeasibility jobs complete.
+
+The prospective training-control collection and independent review are COMPLETE. All256 physical games were retained:129losses/96wins/31draws fromseat0; actual paired views give225losses/225wins/62draws over202408rows. Four worker exits0; reviewexit0. Aggregate collector peak2602319872 bytes; reviewpeak410238976. Source-bound summary reports/hog26_scalar_mirror_training_conclusion_20260913.json. All31draws endbetween1671and3477ticks; none reacheslatephase. Controls remain separate fromnatural class-frequency evidence. No fitting yet.
+
+The feature cache/audit is now pinned/running: experiments/hog26_mirror_training_features/supervise.py --mode run, execsession50275, supervisor49402/worker49413, mirrorFeaturesEnv. All4Python files frozen by pinSHA bef943c4c33a00089a5ad38ff4ddcd3d2561513634505af6638895abc5eaf182. It verifies every814-column batch/stream frame, explicitrawWDL-toLDWlabels, exactpublicclock and physicalpairidentity; labelsnever enterencoder. A separate future-fit hypothesis was written before implementation in reports/hog26_three_class_phase_hypothesis_20260913.json: same6144natural games plusall512markedtrainingcontrolviews,24public-phaseWDLclassifiers, matchinghardmargins, originalequal-game/reached-phaseweightsrestrictedperphase, actualunsmoothedcombinedprior andseparate natural/controlfrequencies, no outcome balancing. It is not a fit authorization artifact by itself; completecache and separately frozen code/plan/memoryproof stillrequired. Latephasehasno draw examples; absentclass mustremain explicit.
+
+The control feature audit is COMPLETE: all202408×814 values reproduce streaming/batch bytes exactly, rawWDL-to-LDWlabels verified, peak513736704 bytes, exit0. Cache659040448bytes, shape[202408,814],256physical clusters/512views, no fitting. Summary reports/hog26_mirror_training_features_conclusion_20260913.json.
+
+Three-class phase fitting is now separately pinned, with all10Pythonfiles in experiments/hog26_three_class_phase immutable. Pin reports/hog26_three_class_phase_pin_20260913.json SHA c15412931b138e64f629d4c46e97046bb0d80331f6ffd6dff4ad2f6a78725106. Same6144natural games plus512controlviews;2667560combinedrows.24classifiers over2seeds×4natural familyfolds×3public phases. Largest phase fitting populations1272408/803360/23940. Early/middle actualclasses[0,1,2]; late[0,2] in everyfold. Combinedactualfittingprior drawmass62/5120=0.012109375; natural-onlyprior stillzero and separate. This controlled mixture is not a naturaldrawrate estimate. Existinghardmargin models/predictions remain unchanged. Two tests pass for public-clock routing/absentclass behavior and exact cross-store feature materialization. Fourfold fitting controlrole is always training, never controlvalidation.
+
+The largest-phase synthetic memory proof is being run under the shared18GiBguard before any real labels fit: threeClassEnv experiments/hog26_three_class_phase/supervise.py --mode memory. It allocates1272408×814float64, three syntheticclasses, two iterations, no checkpoint; requires2GiBheadroom before --mode run. After proof succeeds, --mode run fits8bundles sequentially, runs2exactseedreviews concurrently, then nativepositive-prior numerical screens and paired natural WDL comparisons. Allzero-draw-priorfailedlineages remainpreserved; this newpriorgetsactualcontrolsupport, not inventedmass. No reserveddata, probabilitycalibration, policyupdates or acceptance.
+
+The three-class synthetic memory proof passed:1272408×814float64 features, three syntheticclasses, two iterations, no checkpoint or realfittinglabels. Peak11082137600bytes leaves required2GiBheadroom below18GiB. The actual campaign is now RUNNING under experiments/hog26_three_class_phase/supervise.py --mode run, execsession64635, supervisor55200; firstworker55251 fitsseed1279501/fold0. It fits24classifiers across8bundles, then runs2exactseedreviews and science automatically. All10Pythonfiles remain frozen by pinc15412931b138e64f629d4c46e97046bb0d80331f6ffd6dff4ad2f6a78725106. At an initial99second snapshot the firstworker used10.22GiB RSS and695CPUseconds, consistent with active8threadfitting. No prior process remains active. No accepted model.
+
+A separately pinned excluded late-continuation feasibility probe is ready but NOT RUNNING. All5Pythonfiles in experiments/hog26_late_continuation_feasibility are immutable; pinSHA f8f245b2e2461eb4eb55157ce9e9514b30d9136d4d0c59c56d491bbe079a6baf. After the current three-class campaign and its exact/scientific reviews finish and release comparison.lock, run lateContinuationEnv experiments/hog26_late_continuation_feasibility/supervise.py --mode run. It uses8fresh mirrored orders disjoint fromthe16opened and256training orders, each with a real forced-pass prefix to tick4000or4800, then the unchanged frozen policy through actual terminal. No clock/state/physics shortcut; all outcomes retained. Extra zero-prefix control must reproduce originalorder0 fulltrace/arrays exactly; firstlatecase repeats exactly. Both actual views retained and allframes checked byonlineencoder. A unit test proves onlyselectedactions change before release and originalpolicyresult/hiddenstate objects pass through unchanged afterward. This is not ranking, search, calibration or fitting. ALL18physical runs remain excluded, including pre/postrelease states. Only postrelease states would have the unmodified-policy future if a distinct later training collection were designed; prefixlabels must never be silently used as original-policy targets.
+
+The first three-class bundle (seed1279501/fold0) has completed fitting and point reports; exactreview andotherfolds pending. Preliminary natural held-family meanpDraw is0.000826 onall-state weighting; controlfitting meanpDraw0.113639 versusobserved0.121094. A separate read-only fitting diagnostic found within-control drawAUC0.97293 overstates and0.98437 atlastdecisions; actualdraw endpoints meanpDraw0.63149 versus0.04016 fordecisivecontrols. These are training-control diagnostics, not independent controlled validation or acceptance. The fixed current campaign is unchanged.
+
+The user asked to inspect Instagram reel DdMGvYLsyL- and compare the creator's approach. The36.63s Day50 reel (2026-09-12, bz_builds_stuff/vegetableleaf) was downloaded with yt-dlp and inspected in frame sheets; ending shows a match win and+30trophies. Public repo vegetableleaf/ClashAI was inspected at commit431d34c9cebccd189cc720190fb2d04d36daa58e. User-facing comparison: their current live policy is pro-action imitation with real-engine replay generation and screen-perception adapters; our active task is terminal-value forecasting with a frozen playing policy. Their old RL/search failures and perception problems were distinguished from demonstrated live gameplay. No claim that our additional audits make us a stronger player. Current training was left intact. Evidence and read-only notes: reports/hog26_external_clashai_comparison_20260913.md and reports/external_reel_DdMGvYLsyL_20260913/. Downloaded third-party code was not executed.
+
+Bounded follow-up: their engine wrapper imports external native_core from research/ext/cr-native-sandbox; mainrepo alone is not runnable engine. Public HF dataset VanguardX101/IL_Replay was verified ungated at revision059d43a02138a34b1b3009cc2acc7630fb99a638. Dataset card lists252238replays/17836160actions. One fixed first shard(5000replays,17432059bytes,SHA9f6127099b57d91eef64da308873a2635f72b27ae8fd9d802fc7d1767363b656) was downloaded and audited with our own streaming parser, entirely excluded fromfitting/calibration. It contains210same-base-Hog26sides butzeroexactvanilla matches, withEvo/Heroforms retained;365362placementevents allhave ticks andin-boundsnativeXY. This is a convenience shard, not a global estimate. sample_audit.json recordsalllimits. No form aliasing, replay reconstruction or externaldatafitting was performed. Anonymization removesplayerIDs/dates, limitingplayer/patchsplit claims. Existinggamebinary/runtime is notavailable frommainrepo and nohook/client/extraction workwas attempted.
+
+A lightweight memory pass for the previousTVRoyale study used MEMORY.md:410-445 and rollout_summaries/2026-08-18T00-22-04-2aRA-tv_royale_structured_replay_feasibility.md (rollout01a0123f-282c-7cb2-9cfc-11d13bebcd52). This was context for acquisition boundaries, not a freshproof ofAPI availability. Publicdataset metadata wasverifiedlive. Include these memorycitations if a finalresponseis eventuallysent; no memoryfiles wereedited.

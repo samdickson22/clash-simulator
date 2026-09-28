@@ -1,0 +1,9 @@
+This continues the same expanded public outcome comparison after a separately verified thread-only replay. The original sources, eight globals fits, serial tree reference and failed whole-pickle replay remain preserved.
+
+The initial equality checker could reject an unchanged saved model because whole-object pickle memoization changed across serialization. A negative control established the flaw. The corrected replay checks all individually serialized estimator fields, normalizing only the copied bin mapper's thread count, and requires exact shape, dtype and prediction bytes on all 2,465,152 rows. No learned field or numerical tolerance is exempted.
+
+After that full-size replay and its memory guard pass, `supervisor.py --mode pin` freezes this continuation. `supervisor.py --mode run` makes independent copies of all eight completed globals and the replay tree pair, then fits the seven remaining tree pairs with eight OpenMP threads. Model settings, observations, seeds, targets and fitting weights are unchanged. Inference and reviews use the original single-thread runtime. Every tree manifest records the execution authority and actual fitting thread count.
+
+The copied replay pair reuses the serial point statistics because all prediction bytes match. The subsequent exact review recomputes those statistics from the copied checkpoint. The original serial reporting time remains identified separately from replay time.
+
+The continuation reserves 2 GiB above the measured replay peak for the slightly larger remaining fold and retains the 18 GiB live guard. It produces the same 16 fold bundles and 24 estimators, including ten imported estimators and fourteen new tree estimators. All four exact OOF reviews remain required before scientific closeout. No model is accepted, and diagnostic or reserved data roles do not change.
