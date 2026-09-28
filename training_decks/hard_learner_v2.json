@@ -1,0 +1,12 @@
+{
+  "decks": [
+    {"name": "WB Valk Log Bait 2.8", "cards": ["Cannon", "DartGoblin", "GoblinBarrel", "GoblinGang", "IceSpirit", "Princess", "Valkyrie", "Wallbreakers"]},
+    {"name": "LavaLoon Miner", "cards": ["Arrows", "Balloon", "Fireball", "LavaHound", "MegaMinion", "Miner", "Minions", "Tombstone"]},
+    {"name": "Golem Hog Fireball 3.4", "cards": ["Cannon", "Fireball", "Golem", "HogRider", "IceSpirit", "Musketeer", "Skeletons", "Log"]},
+    {"name": "RHogs AQ 2.9 Cycle", "cards": ["ArcherQueen", "Cannon", "Earthquake", "IceSpirit", "RoyalDelivery", "RoyalHogs", "Skeletons", "Log"]},
+    {"name": "Log Bait 3.0 Cycle", "cards": ["Fireball", "GoblinBarrel", "GoblinGang", "IceSpirit", "InfernoTower", "Knight", "Princess", "Log"]},
+    {"name": "Golem Night Witch Beatdown", "cards": ["BabyDragon", "BarbarianBarrel", "Bomber", "Golem", "Lumberjack", "NightWitch", "Tornado", "Zap"]},
+    {"name": "Hog 2.6 Cycle", "cards": ["Cannon", "Fireball", "HogRider", "IceGolem", "IceSpirit", "Musketeer", "Skeletons", "Log"]},
+    {"name": "Hog 2.6 (Zap)", "cards": ["Cannon", "Fireball", "HogRider", "IceGolem", "IceSpirit", "Musketeer", "Skeletons", "Zap"]}
+  ]
+}

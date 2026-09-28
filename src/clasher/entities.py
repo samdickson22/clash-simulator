@@ -15,6 +15,7 @@ from .factory.dynamic_factory import troop_from_character_data
 from .unit_traits import (
     is_above_ground_surface,
     is_airborne_target,
+    is_hover_unit_card,
     is_native_building_target,
     uses_air_collision_plane,
 )
@@ -159,6 +160,7 @@ class Entity(ABC):
     target_id: Optional[int] = None
     is_alive: bool = True
     is_air_unit: bool = False  # True for flying troops like Minions, Balloon, Dragon
+    _is_hover_unit: bool = field(default=False, init=False, repr=False)
     entity_kind: int = 0  # 0=troop,1=building,2=projectile,3=aura/effect,4=other
     # Native death spawns carry a source-dependent target-eligibility marker.
     # LogicCharacter::tick advances it in integer milliseconds and clears it
@@ -249,6 +251,7 @@ class Entity(ABC):
     def __post_init__(self) -> None:
         if self.max_hitpoints == 0:
             self.max_hitpoints = self.hitpoints
+        self._is_hover_unit = is_hover_unit_card(self.card_stats)
         # Classify by the gameplay base type, not the concrete class name.
         # Exact-name checks silently turn specialized/custom subclasses into
         # ``other`` entities, which makes targeting, collision, and effects

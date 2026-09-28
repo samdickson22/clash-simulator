@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
+from collections.abc import Iterable, Sequence
+from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any
 
 import numpy as np
 
@@ -11,13 +13,17 @@ from clasher.arena import TileGrid
 from clasher.battle import BattleState
 from clasher.card_aliases import resolve_card_name
 from clasher.data import CardDataLoader
-from clasher.entities import Building
+from clasher.entities import Building, ChainLightning, RollingProjectile, TimedExplosive
 from clasher.kinematics import logic_time_milliseconds
 from clasher.unit_traits import is_airborne_target
 
+from .card_semantics import (
+    SEMANTIC_EXTRA_FEATURE_INDICES,
+    SEMANTIC_FEATURE_NAMES,
+    semantic_card_profile,
+)
 from .common import BOARD_HEIGHT, BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
 from .deck_pool import load_deck_pool, unique_cards_from_decks
-
 
 ENTITY_FEATURE_SIZE = 32
 ACTOR_GLOBAL_SIZE = 18
@@ -25,6 +31,46 @@ CRITIC_GLOBAL_SIZE = 20
 VISIBLE_CARD_SLOTS = NUM_HAND_SLOTS + 1
 PRIVILEGED_CARD_SLOTS = 2 * VISIBLE_CARD_SLOTS
 DEFAULT_MAX_ENTITIES = 128
+DEFAULT_PUBLIC_HISTORY_SLOTS = 4
+TYPED_TOKEN_NAMESPACES = frozenset(
+    {
+        "card_action",
+        "troop_body",
+        "building_body",
+        "projectile",
+        "area_effect",
+        "tower",
+    }
+)
+
+
+def _canonical_card_token_name(name: str, definitions: dict[str, Any]) -> str:
+    """Resolve deck aliases even though the loader also exposes alias keys."""
+
+    aliased = resolve_card_name(name)
+    return resolve_card_name(aliased, definitions)
+
+
+@lru_cache(maxsize=1)
+def _crown_tower_observation_stats() -> dict[str, Any]:
+    """Return the same tower stat payloads used by live simulator entities.
+
+    Crown Towers are arena entities rather than playable catalog cards, so
+    ``CardDataLoader.get_card`` cannot supply their static observation fields.
+    Build the authoritative runtime payloads once instead of leaving imported
+    replay towers with zero range, damage, and collision radius.
+    """
+
+    battle = BattleState()
+    stats_by_name: dict[str, Any] = {}
+    for entity in battle.entities.values():
+        stats = getattr(entity, "card_stats", None)
+        name = str(getattr(stats, "name", ""))
+        if name in {"Tower", "KingTower"}:
+            stats_by_name.setdefault(name, stats)
+    if set(stats_by_name) != {"Tower", "KingTower"}:
+        raise RuntimeError("Live battle did not provide both Crown Tower stat payloads")
+    return stats_by_name
 
 
 class EntityCapacityError(RuntimeError):
@@ -38,6 +84,8 @@ class StructuredObservationSpec:
     entity_feature_size: int = ENTITY_FEATURE_SIZE
     actor_global_size: int = ACTOR_GLOBAL_SIZE
     critic_global_size: int = CRITIC_GLOBAL_SIZE
+    public_history_slots: int = 0
+    public_seen_card_slots: int = 0
 
     @property
     def num_tokens(self) -> int:
@@ -56,6 +104,13 @@ class StructuredObservation:
     critic_entity_mask: np.ndarray
     critic_card_ids: np.ndarray
     critic_global_features: np.ndarray
+    opponent_history_ids: np.ndarray
+    opponent_history_ages: np.ndarray
+    opponent_seen_card_ids: np.ndarray
+    entity_id_confidence: np.ndarray | None = None
+    entity_feature_confidence: np.ndarray | None = None
+    hand_id_confidence: np.ndarray | None = None
+    global_feature_confidence: np.ndarray | None = None
 
 
 @dataclass(frozen=True)
@@ -67,6 +122,9 @@ class ActorObservation:
     entity_mask: np.ndarray
     hand_ids: np.ndarray
     global_features: np.ndarray
+    opponent_history_ids: np.ndarray
+    opponent_history_ages: np.ndarray
+    opponent_seen_card_ids: np.ndarray
 
 
 def _walk_named_payloads(value: Any) -> Iterable[str]:
@@ -95,8 +153,31 @@ def _safe_float(value: Any, default: float = 0.0) -> float:
     return result if math.isfinite(result) else default
 
 
-def _unit_clip(value: float) -> float:
+def _unit_clip_numpy(value: float) -> float:
     return float(np.clip(value, 0.0, 1.0))
+
+
+def _unit_clip(value: float) -> float:
+    if value < 0.0:
+        return 0.0
+    if value > 1.0:
+        return 1.0
+    return float(value)
+
+
+def _range_clip_numpy(value: float, lower: float, upper: float) -> float:
+    return float(np.clip(value, lower, upper))
+
+
+def _range_clip_scalar(value: float, lower: float, upper: float) -> float:
+    if value < lower:
+        return float(lower)
+    if value > upper:
+        return float(upper)
+    return float(value)
+
+
+_range_clip = _range_clip_scalar
 
 
 class StructuredObservationBuilder:
@@ -117,12 +198,26 @@ class StructuredObservationBuilder:
         card_vocab: Sequence[str] | None = None,
         max_entities: int = DEFAULT_MAX_ENTITIES,
         canonical_perspective: bool = True,
+        canonical_lane_globals: bool = False,
         token_names: Sequence[str] | None = None,
+        card_semantics_version: int = 1,
+        public_history_slots: int = 0,
+        public_seen_card_slots: int = 0,
     ) -> None:
         if max_entities <= 0:
             raise ValueError("max_entities must be positive")
+        if card_semantics_version not in {1, 2, 3}:
+            raise ValueError("card_semantics_version must be 1, 2, or 3")
+        if public_history_slots < 0:
+            raise ValueError("public_history_slots must be non-negative")
+        if public_seen_card_slots < 0:
+            raise ValueError("public_seen_card_slots must be non-negative")
         self.max_entities = int(max_entities)
         self.canonical_perspective = bool(canonical_perspective)
+        self.canonical_lane_globals = bool(canonical_lane_globals)
+        self.card_semantics_version = int(card_semantics_version)
+        self.public_history_slots = int(public_history_slots)
+        self.public_seen_card_slots = int(public_seen_card_slots)
         self.loader = CardDataLoader()
         definitions = self.loader.load_card_definitions()
 
@@ -150,28 +245,99 @@ class StructuredObservationBuilder:
 
         self.token_names = tuple(ordered)
         self._name_to_id = {name: idx for idx, name in enumerate(self.token_names)}
+        self._uses_typed_tokens = any(
+            self._typed_token_parts(name) is not None for name in self.token_names[2:]
+        )
         for name in tuple(self._name_to_id):
             if name.startswith("<"):
                 continue
-            resolved = resolve_card_name(name, definitions)
-            self._name_to_id.setdefault(resolved, self._name_to_id[name])
+            typed = self._typed_token_parts(name)
+            if typed is None:
+                resolved = _canonical_card_token_name(name, definitions)
+                self._name_to_id.setdefault(resolved, self._name_to_id[name])
+            elif typed[0] == "card_action":
+                resolved = _canonical_card_token_name(typed[1], definitions)
+                self._name_to_id.setdefault(
+                    f"card_action:{resolved}", self._name_to_id[name]
+                )
 
         self.spec = StructuredObservationSpec(
             token_names=self.token_names,
             max_entities=self.max_entities,
+            public_history_slots=self.public_history_slots,
+            public_seen_card_slots=self.public_seen_card_slots,
         )
         self.card_stat_features = self._build_card_stat_features()
 
-    def token_id(self, name: str | None) -> int:
+    @staticmethod
+    def _typed_token_parts(name: str) -> tuple[str, str] | None:
+        namespace, separator, canonical = str(name).partition(":")
+        if separator and namespace in TYPED_TOKEN_NAMESPACES and canonical:
+            return namespace, canonical
+        return None
+
+    def token_id(
+        self,
+        name: str | None,
+        *,
+        namespace: str | None = None,
+    ) -> int:
         if not name:
             return self._name_to_id[self.UNKNOWN_TOKEN]
         direct = self._name_to_id.get(str(name))
         if direct is not None:
             return direct
-        resolved = resolve_card_name(str(name), self.loader.load_card_definitions())
+        resolved = _canonical_card_token_name(
+            str(name), self.loader.load_card_definitions()
+        )
+        if self._uses_typed_tokens:
+            selected_namespace = namespace or "card_action"
+            if selected_namespace not in TYPED_TOKEN_NAMESPACES:
+                raise ValueError(f"unknown typed token namespace {selected_namespace!r}")
+            for canonical in (str(name), resolved):
+                typed = self._name_to_id.get(f"{selected_namespace}:{canonical}")
+                if typed is not None:
+                    return typed
+            return self._name_to_id[self.UNKNOWN_TOKEN]
         return self._name_to_id.get(resolved, self._name_to_id[self.UNKNOWN_TOKEN])
 
+    def card_name_for_token_id(self, token_id: int) -> str | None:
+        """Return a loader-facing card name only for playable card tokens."""
+
+        if not 0 < token_id < len(self.token_names):
+            return None
+        token_name = self.token_names[token_id]
+        typed = self._typed_token_parts(token_name)
+        if typed is None:
+            return token_name
+        namespace, canonical = typed
+        return canonical if namespace == "card_action" else None
+
     def _build_card_stat_features(self) -> np.ndarray:
+        semantic_features: np.ndarray | None = None
+        if self.card_semantics_version in {2, 3}:
+            semantic_features = np.zeros(
+                (len(self.token_names), len(SEMANTIC_FEATURE_NAMES)),
+                dtype=np.float32,
+            )
+            for token_id, name in enumerate(self.token_names):
+                if name.startswith("<"):
+                    continue
+                typed = self._typed_token_parts(name)
+                if typed is not None:
+                    name = typed[1]
+                try:
+                    semantic_features[token_id] = semantic_card_profile(
+                        name,
+                        loader=self.loader,
+                    ).vector
+                except ValueError:
+                    # Some transient spawned payload names have no standalone
+                    # public card definition. Their learned token remains usable.
+                    continue
+            if self.card_semantics_version == 2:
+                return semantic_features
+
         # Public, immutable card metadata helps the shared action head transfer
         # placement concepts between cards instead of memorizing IDs alone.
         features = np.zeros((len(self.token_names), 16), dtype=np.float32)
@@ -179,7 +345,12 @@ class StructuredObservationBuilder:
         for token_id, name in enumerate(self.token_names):
             if name.startswith("<"):
                 continue
+            typed = self._typed_token_parts(name)
+            if typed is not None:
+                name = typed[1]
             stats = self.loader.get_card(name)
+            if stats is None and name in {"Tower", "KingTower"}:
+                stats = _crown_tower_observation_stats()[name]
             if stats is None:
                 continue
             kind = str(getattr(stats, "card_type", "") or "").lower()
@@ -197,18 +368,114 @@ class StructuredObservationBuilder:
             features[token_id, 13] = _unit_clip(_safe_float(getattr(stats, "summon_count", 0)) / 20.0)
             features[token_id, 14] = float(bool(getattr(stats, "attacks_ground", False)))
             features[token_id, 15] = float(bool(getattr(stats, "attacks_air", False)))
+        if self.card_semantics_version == 3:
+            assert semantic_features is not None
+            return np.concatenate(
+                (
+                    features,
+                    semantic_features[:, SEMANTIC_EXTRA_FEATURE_INDICES],
+                ),
+                axis=1,
+            )
         return features
 
     @staticmethod
-    def _visible_entity_name(entity: Any) -> str:
-        stats_name = getattr(getattr(entity, "card_stats", None), "name", "")
-        if stats_name:
-            return str(stats_name)
+    def _payload_name(value: Any) -> str | None:
+        if not isinstance(value, dict):
+            return None
+        name = value.get("name")
+        return str(name) if isinstance(name, str) and name else None
+
+    def _typed_identity_candidates(
+        self,
+        entity: Any,
+        namespace: str,
+    ) -> tuple[str, ...]:
+        """Return serialized runtime identities in semantic priority order."""
+
+        stats = getattr(entity, "card_stats", None)
+        raw = getattr(stats, "_raw_entry", None) or {}
+        candidates: list[str] = []
+
+        def add(value: Any) -> None:
+            name = self._payload_name(value) if isinstance(value, dict) else value
+            if name not in {None, "", "Unknown"} and str(name) not in candidates:
+                candidates.append(str(name))
+
+        def add_projectiles(value: Any, *, rolling: bool) -> None:
+            if not isinstance(value, dict):
+                return
+            child = value.get("spawnProjectileData")
+            if rolling:
+                add(child)
+                add(value)
+            else:
+                add(value)
+                add(child)
+
+        if namespace in {"troop_body", "building_body"}:
+            add(getattr(stats, "summon_character_data", None))
+            add(raw.get("summonCharacterData"))
+        elif namespace == "projectile":
+            rolling = isinstance(entity, RollingProjectile)
+            add(getattr(entity, "spawn_projectile_data", None))
+            add_projectiles(getattr(stats, "projectile_data", None), rolling=rolling)
+            add_projectiles(raw.get("projectileData"), rolling=rolling)
+            source = getattr(entity, "source_entity", None)
+            source_stats = getattr(source, "card_stats", None)
+            source_raw = getattr(source_stats, "_raw_entry", None) or {}
+            add_projectiles(
+                getattr(source_stats, "projectile_data", None),
+                rolling=rolling,
+            )
+            add_projectiles(source_raw.get("projectileData"), rolling=rolling)
+        elif namespace == "area_effect":
+            add(getattr(entity, "area_data", None))
+            add(getattr(entity, "buff_data", None))
+            add(getattr(stats, "buff_data", None))
+            add(raw.get("buffData"))
+
         for attribute in ("spell_name", "source_name", "spawn_character"):
-            value = getattr(entity, attribute, "")
-            if value not in {None, "", "Unknown"}:
-                return str(value)
-        return ""
+            add(getattr(entity, attribute, None))
+        add(getattr(stats, "name", None))
+
+        source_names = tuple(candidates)
+        for source_name in source_names:
+            try:
+                source_stats = self.loader.get_card(source_name)
+            except (KeyError, ValueError):
+                source_stats = None
+            if source_stats is None:
+                continue
+            source_raw = getattr(source_stats, "_raw_entry", None) or {}
+            if namespace in {"troop_body", "building_body"}:
+                add(getattr(source_stats, "summon_character_data", None))
+                add(source_raw.get("summonCharacterData"))
+            elif namespace == "projectile":
+                add_projectiles(
+                    getattr(source_stats, "projectile_data", None),
+                    rolling=isinstance(entity, RollingProjectile),
+                )
+                add_projectiles(
+                    source_raw.get("projectileData"),
+                    rolling=isinstance(entity, RollingProjectile),
+                )
+            elif namespace == "area_effect":
+                add(getattr(source_stats, "buff_data", None))
+                add(source_raw.get("buffData"))
+            for payload_name in _walk_named_payloads(source_raw):
+                add(payload_name)
+
+        for payload_name in _walk_named_payloads(raw):
+            add(payload_name)
+        return tuple(candidates)
+
+    def _runtime_entity_token_id(self, entity: Any, namespace: str) -> int:
+        for candidate in self._typed_identity_candidates(entity, namespace):
+            token_id = self.token_id(candidate, namespace=namespace)
+            if token_id > 1:
+                return token_id
+        return self.token_id(None, namespace=namespace)
 
     def _canonical_position(self, x: float, y: float, player_id: int) -> tuple[float, float]:
         if self.canonical_perspective and player_id == 1:
@@ -243,8 +510,6 @@ class StructuredObservationBuilder:
         return _unit_clip(elapsed / duration)
 
     def _entity_row(self, entity: Any, perspective_player: int) -> tuple[int, np.ndarray]:
-        name = self._visible_entity_name(entity)
-        token_id = self.token_id(name)
         row = np.zeros((ENTITY_FEATURE_SIZE,), dtype=np.float32)
 
         x, y = self._canonical_position(
@@ -257,7 +522,35 @@ class StructuredObservationBuilder:
         own = int(entity.player_id) == perspective_player
         row[2] = float(own)
         row[3] = float(not own)
-        kind = int(np.clip(int(getattr(entity, "entity_kind", 4)), 0, 4))
+        kind = int(_range_clip(int(getattr(entity, "entity_kind", 4)), 0, 4))
+        stats_name = str(getattr(getattr(entity, "card_stats", None), "name", ""))
+        namespaces: tuple[str, ...]
+        if stats_name in {"Tower", "KingTower"}:
+            namespaces = ("tower",)
+        elif isinstance(entity, TimedExplosive):
+            # Timed payloads execute in the area/effect phase. Bombs expose a
+            # typed building child; falling troop containers instead retain
+            # their serialized source-body identity.
+            namespaces = ("building_body", "troop_body")
+        elif isinstance(entity, ChainLightning):
+            # Chained hit controllers execute in the effect phase while
+            # retaining their serialized projectile identity.
+            namespaces = ("projectile",)
+        else:
+            namespaces = (
+                (
+                    "troop_body",
+                    "building_body",
+                    "projectile",
+                    "area_effect",
+                    "card_action",
+                )[kind],
+            )
+        token_id = 1
+        for namespace in namespaces:
+            token_id = self._runtime_entity_token_id(entity, namespace)
+            if token_id > 1:
+                break
         row[4 + kind] = 1.0
         row[9] = _unit_clip(
             _safe_float(getattr(entity, "hitpoints", 0))
@@ -300,8 +593,8 @@ class StructuredObservationBuilder:
             _safe_float(facing_x), _safe_float(facing_y), perspective_player
         )
         magnitude = max(1.0, math.hypot(facing_x, facing_y))
-        row[27] = float(np.clip(facing_x / magnitude, -1.0, 1.0))
-        row[28] = float(np.clip(facing_y / magnitude, -1.0, 1.0))
+        row[27] = _range_clip(facing_x / magnitude, -1.0, 1.0)
+        row[28] = _range_clip(facing_y / magnitude, -1.0, 1.0)
         row[29] = self._effect_progress(entity)
         row[30] = _unit_clip(
             math.log1p(max(0.0, _safe_float(getattr(entity, "damage", 0)))) / 8.0
@@ -425,6 +718,17 @@ class StructuredObservationBuilder:
             )
 
         progress = _unit_clip(battle.time / max(1.0, battle.tiebreaker_time))
+        own_left = "left"
+        own_right = "right"
+        enemy_left = "left"
+        enemy_right = "right"
+        if (
+            self.canonical_perspective
+            and self.canonical_lane_globals
+            and player_id == 1
+        ):
+            own_left, own_right = own_right, own_left
+            enemy_left, enemy_right = enemy_right, enemy_left
         return np.asarray(
             [
                 progress,
@@ -435,11 +739,11 @@ class StructuredObservationBuilder:
                 _unit_clip(own.elixir / max(1.0, own.max_elixir)),
                 battle.get_crown_count(player_id) / 3.0,
                 battle.get_crown_count(enemy_id) / 3.0,
-                self._tower_fraction(battle, player_id, "left"),
-                self._tower_fraction(battle, player_id, "right"),
+                self._tower_fraction(battle, player_id, own_left),
+                self._tower_fraction(battle, player_id, own_right),
                 self._tower_fraction(battle, player_id, "king"),
-                self._tower_fraction(battle, enemy_id, "left"),
-                self._tower_fraction(battle, enemy_id, "right"),
+                self._tower_fraction(battle, enemy_id, enemy_left),
+                self._tower_fraction(battle, enemy_id, enemy_right),
                 self._tower_fraction(battle, enemy_id, "king"),
                 _unit_clip(ability_cooldown),
                 _unit_clip(ability_duration),
@@ -458,6 +762,11 @@ class StructuredObservationBuilder:
         hand_ids = self._card_ids_for_player(battle, player_id)
         enemy_ids = self._card_ids_for_player(battle, 1 - player_id)
         actor_globals = self._actor_globals(battle, player_id)
+        opponent_history_ids, opponent_history_ages = self._opponent_history(
+            battle,
+            player_id,
+        )
+        opponent_seen_card_ids = self._opponent_seen_cards(battle, player_id)
         enemy = battle.players[1 - player_id]
         critic_globals = np.concatenate(
             [
@@ -482,6 +791,9 @@ class StructuredObservationBuilder:
             critic_entity_mask=critic_entity_mask,
             critic_card_ids=np.concatenate([hand_ids, enemy_ids]).astype(np.int64, copy=False),
             critic_global_features=critic_globals,
+            opponent_history_ids=opponent_history_ids,
+            opponent_history_ages=opponent_history_ages,
+            opponent_seen_card_ids=opponent_seen_card_ids,
         )
 
     def build_actor(self, battle: BattleState, player_id: int) -> ActorObservation:
@@ -491,13 +803,57 @@ class StructuredObservationBuilder:
             player_id,
             privileged=False,
         )
+        opponent_history_ids, opponent_history_ages = self._opponent_history(
+            battle,
+            player_id,
+        )
         return ActorObservation(
             entity_ids=entity_ids,
             entity_features=entity_features,
             entity_mask=entity_mask,
             hand_ids=self._card_ids_for_player(battle, player_id),
             global_features=self._actor_globals(battle, player_id),
+            opponent_history_ids=opponent_history_ids,
+            opponent_history_ages=opponent_history_ages,
+            opponent_seen_card_ids=self._opponent_seen_cards(battle, player_id),
         )
+
+    def _opponent_history(
+        self,
+        battle: BattleState,
+        player_id: int,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        ids = np.zeros((self.public_history_slots,), dtype=np.int64)
+        ages = np.zeros((self.public_history_slots,), dtype=np.float32)
+        if self.public_history_slots == 0:
+            return ids, ages
+        history = battle.public_card_play_history[1 - player_id]
+        recent = reversed(history[-self.public_history_slots :])
+        for index, (played_tick, card_name) in enumerate(recent):
+            ids[index] = self.token_id(card_name)
+            elapsed_seconds = max(0, battle.tick - played_tick) * battle.dt
+            ages[index] = _unit_clip(elapsed_seconds / 60.0)
+        return ids, ages
+
+    def _opponent_seen_cards(
+        self,
+        battle: BattleState,
+        player_id: int,
+    ) -> np.ndarray:
+        ids = np.zeros((self.public_seen_card_slots,), dtype=np.int64)
+        if self.public_seen_card_slots == 0:
+            return ids
+        discovered: set[str] = set()
+        output_index = 0
+        for _played_tick, card_name in battle.public_card_play_history[1 - player_id]:
+            if card_name in discovered:
+                continue
+            discovered.add(card_name)
+            ids[output_index] = self.token_id(card_name)
+            output_index += 1
+            if output_index == self.public_seen_card_slots:
+                break
+        return ids
 
 
 def build_canonical_tile_features() -> np.ndarray:

@@ -1,6 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 import time
 import math
 import random
@@ -133,6 +133,13 @@ class BattleState:
     card_loader: CardDataLoader = field(default_factory=CardDataLoader)
     rng: random.Random = field(default_factory=random.Random, repr=False)
     next_entity_id: int = 1
+    # Successful card plays are public information once committed. Keep a
+    # compact chronological record for observation-side cycle beliefs; combat
+    # mechanics never consult it.
+    public_card_play_history: dict[int, list[tuple[int, str]]] = field(
+        default_factory=lambda: {0: [], 1: []},
+        init=False,
+    )
     _starting_total_tower_hp: Dict[int, float] = field(default_factory=dict, init=False)
     _starting_tower_hps: Dict[int, Dict[str, float]] = field(default_factory=dict, init=False)
     _sudden_death_crowns: Tuple[int, int] = field(default=(0, 0), init=False)
@@ -146,6 +153,9 @@ class BattleState:
         default_factory=lambda: np.zeros((32, 18), dtype=np.bool_), init=False
     )
     _building_placement_blocked_masks: Dict[int, np.ndarray] = field(default_factory=dict, init=False)
+    _troop_placement_blocked_masks: dict[float, np.ndarray] = field(
+        default_factory=dict, init=False
+    )
     _building_cache_signature: Tuple[int, ...] = field(default_factory=tuple, init=False)
     _cached_tower_alive_flags: Tuple[bool, bool, bool, bool, bool, bool] = field(
         default_factory=lambda: (False, False, False, False, False, False), init=False
@@ -212,6 +222,17 @@ class BattleState:
             },
         }
         self._refresh_fast_path_caches()
+
+    def clone(self) -> "BattleState":
+        """Clone mutable battle state without copying the full card catalog."""
+
+        loader = self.card_loader.clone_lazy()
+        memo: dict[int, Any] = {id(self.card_loader): loader}
+        for definition in self.card_loader.load_card_definitions().values():
+            # CardDefinition is frozen and its normalized source snapshot is
+            # process-global. Mutable CardStatsCompat wrappers are still copied.
+            memo[id(definition)] = definition
+        return copy.deepcopy(self, memo)
     
     def _create_towers(self) -> None:
         """Create tower entities for both players"""
@@ -349,6 +370,7 @@ class BattleState:
             self._alive_buildings = alive_buildings
             self._building_cache_signature = building_sig
             self._building_placement_blocked_masks.clear()
+            self._troop_placement_blocked_masks.clear()
 
     def _rebuild_target_cache(self) -> None:
         self._target_cache_entity_count = len(self.entities)
@@ -659,6 +681,38 @@ class BattleState:
         else:
             mask = np.zeros((self.arena.height, self.arena.width), dtype=np.bool_)
         self._building_placement_blocked_masks[size_tiles] = mask
+        return mask
+
+    def get_troop_placement_blocked_mask_world(
+        self, mover_radius: float
+    ) -> np.ndarray:
+        """Return world tiles where a troop radius overlaps a live building."""
+        self._refresh_alive_buildings_cache()
+        radius = float(mover_radius)
+        cached = self._troop_placement_blocked_masks.get(radius)
+        if cached is not None:
+            return cached
+
+        mask = np.zeros((self.arena.height, self.arena.width), dtype=np.bool_)
+        for entity in self._alive_buildings:
+            building_radius = (
+                getattr(entity.card_stats, "collision_radius", 1.0) or 1.0
+            )
+            collision_units = tiles_to_logic_units(float(building_radius) + radius)
+            collision_sq = collision_units * collision_units
+            for ty in range(self.arena.height):
+                dy_units = tiles_to_logic_units(ty + 0.5 - entity.position.y)
+                dy_sq = dy_units * dy_units
+                if dy_sq >= collision_sq:
+                    continue
+                for tx in range(self.arena.width):
+                    if mask[ty, tx]:
+                        continue
+                    dx_units = tiles_to_logic_units(tx + 0.5 - entity.position.x)
+                    if dx_units * dx_units + dy_sq < collision_sq:
+                        mask[ty, tx] = True
+
+        self._troop_placement_blocked_masks[radius] = mask
         return mask
     
     def step(self, speed_factor: float = 1.0) -> None:
@@ -1108,7 +1162,8 @@ class BattleState:
                 entity = self.entities[entity_id]
                 if isinstance(entity, (Troop, Building)) and entity.deploy_delay_remaining > 1e-9:
                     entity.placement_pending = True
-        
+
+        self.public_card_play_history[player_id].append((self.tick, resolved_name))
         return True
 
     def _apply_symmetric_deploy_snap(
@@ -2301,6 +2356,7 @@ class BattleState:
         *,
         mover_radius: float = 0.5,
         card_stats: CardStatsCompat | None = None,
+        deployment_blockers: Iterable[Entity] | None = None,
     ) -> bool:
         """Return whether a live effect payload blocks card placement here.
 
@@ -2309,7 +2365,12 @@ class BattleState:
         resolve. The entity capability keeps this general for future payload
         types without teaching deployment code individual card names.
         """
-        for entity in self.entities.values():
+        candidates = (
+            self.entities.values()
+            if deployment_blockers is None
+            else deployment_blockers
+        )
+        for entity in candidates:
             if not entity.is_alive or not getattr(entity, "blocks_deployment", False):
                 continue
             payload_radius = float(
@@ -2497,6 +2558,7 @@ class BattleState:
             getattr(troop.card_stats, "collision_radius", 0.5) or 0.5,
         )
         own_mass = max(1e-9, unit_mass(troop.card_stats))
+        own_air_collision = uses_air_collision_plane(troop)
         for other in self.entities.values():
             other_airborne_leap = (
                 getattr(other, "_mk_leap_phase", None) == "airborne"
@@ -2510,8 +2572,7 @@ class BattleState:
                     and not getattr(other, "_river_jump_active", False)
                     and not other_airborne_leap
                 )
-                or uses_air_collision_plane(troop)
-                != uses_air_collision_plane(other)
+                or own_air_collision != uses_air_collision_plane(other)
             ):
                 continue
             other_radius = max(
@@ -2528,7 +2589,7 @@ class BattleState:
             if vector is not None:
                 troop.accumulate_movement_vector_units(*vector)
 
-        if uses_air_collision_plane(troop):
+        if own_air_collision:
             return
         # Static objects do not receive a reciprocal vector. Native supplies
         # mass 20 and caps the moving character's radius contribution at 0.5.

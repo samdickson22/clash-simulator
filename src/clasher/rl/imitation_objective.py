@@ -7,7 +7,7 @@ import torch
 from torch import Tensor, nn
 
 from clasher.card_aliases import resolve_card_name
-from clasher.spells import RollingProjectileSpell, SPELL_REGISTRY
+from clasher.spells import SPELL_REGISTRY, RollingProjectileSpell
 
 from .common import BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
 from .structured_obs import StructuredObservationBuilder
@@ -102,7 +102,7 @@ class ImitationLoss:
     location: Tensor
 
 
-def _logic_or_tile_radius(value: object) -> float:
+def _logic_or_tile_radius(value: float | str | None) -> float:
     radius = max(0.0, float(value or 0.0))
     # Older static spell declarations retain native 1/1000-tile units, while
     # dynamically loaded mechanics are already expressed in tiles.
@@ -128,7 +128,10 @@ def build_token_spatial_semantics(
     for token_id, token_name in enumerate(builder.token_names):
         if token_name.startswith("<"):
             continue
-        stats = builder.loader.get_card(token_name)
+        card_name = builder.card_name_for_token_id(token_id)
+        if card_name is None:
+            continue
+        stats = builder.loader.get_card(card_name)
         if stats is None:
             continue
         card_kind = str(getattr(stats, "card_type", "") or "").lower()
@@ -137,7 +140,7 @@ def build_token_spatial_semantics(
             continue
         if card_kind == "spell":
             kind[token_id] = SPELL_KIND
-            resolved = resolve_card_name(token_name, definitions)
+            resolved = resolve_card_name(card_name, definitions)
             spell = SPELL_REGISTRY.get(resolved)
             if spell is None or isinstance(spell, RollingProjectileSpell):
                 continue
@@ -222,7 +225,18 @@ def _joint_and_type_log_probs(
     placement = joint_log_probs[:, :PLACEMENT_ACTIONS].reshape(
         -1, NUM_HAND_SLOTS, NUM_TILES
     )
-    slot_log_probs = torch.logsumexp(placement, dim=-1)
+    placement_mask = action_masks[:, :PLACEMENT_ACTIONS].reshape(
+        -1, NUM_HAND_SLOTS, NUM_TILES
+    )
+    valid_slots = placement_mask.any(dim=-1)
+    safe_placement = placement.masked_fill(
+        ~valid_slots.unsqueeze(-1),
+        0.0,
+    )
+    slot_log_probs = torch.logsumexp(safe_placement, dim=-1).masked_fill(
+        ~valid_slots,
+        -torch.inf,
+    )
     type_log_probs = torch.cat(
         [slot_log_probs, joint_log_probs[:, PLACEMENT_ACTIONS:]],
         dim=-1,
@@ -258,7 +272,10 @@ def factorized_spatial_imitation_loss(
     exact_nll = -joint_log_probs.gather(1, targets.unsqueeze(1)).squeeze(1)
     location_nll = torch.zeros_like(type_nll)
 
-    placement_rows = torch.flatnonzero(targets < PLACEMENT_ACTIONS)
+    placement_rows = torch.nonzero(
+        targets < PLACEMENT_ACTIONS,
+        as_tuple=False,
+    ).flatten()
     if placement_rows.numel() > 0:
         placement_targets = targets.index_select(0, placement_rows)
         target_slots = placement_targets // NUM_TILES
@@ -313,7 +330,10 @@ def factorized_spatial_imitation_loss(
         effective_mass = neighbor_mass * has_neighbors.to(neighbor_mass.dtype)
         normalized_weight = weight_sum.clamp_min(1e-12).unsqueeze(1)
         neighbor_distribution = neighbor_weights / normalized_weight
-        neighbor_nll = -(neighbor_distribution * conditional_log_probs).sum(dim=-1)
+        neighbor_nll = -(
+            neighbor_distribution
+            * conditional_log_probs.masked_fill(~neighbor_mask, 0.0)
+        ).sum(dim=-1)
         placement_location_nll = (
             (1.0 - effective_mass) * exact_location_nll
             + effective_mass * neighbor_nll
@@ -353,9 +373,28 @@ def imitation_metric_sums(
     """Return additive exact, hierarchical, spatial, and mechanic metrics."""
 
     _validate_batch(joint_logits, targets, action_masks, hand_ids, semantics)
-    predictions = joint_logits.masked_fill(~action_masks, -torch.inf).argmax(dim=-1)
+    joint_log_probs, type_log_probs = _joint_and_type_log_probs(
+        joint_logits, action_masks
+    )
+    predicted_types = type_log_probs.argmax(dim=-1)
+    placement_log_probs = joint_log_probs[:, :PLACEMENT_ACTIONS].reshape(
+        -1, NUM_HAND_SLOTS, NUM_TILES
+    )
+    best_tiles = placement_log_probs.argmax(dim=-1)
+    selected_slots = predicted_types.clamp(max=NUM_HAND_SLOTS - 1)
+    selected_tiles = best_tiles.gather(
+        1, selected_slots.unsqueeze(1)
+    ).squeeze(1)
+    placement_predictions = predicted_types * NUM_TILES + selected_tiles
+    special_predictions = PLACEMENT_ACTIONS + (
+        predicted_types - NUM_HAND_SLOTS
+    )
+    predictions = torch.where(
+        predicted_types < NUM_HAND_SLOTS,
+        placement_predictions,
+        special_predictions,
+    )
     target_types = _action_types(targets)
-    predicted_types = _action_types(predictions)
     exact = predictions == targets
     type_correct = predicted_types == target_types
     target_placement = targets < PLACEMENT_ACTIONS

@@ -91,9 +91,9 @@ uv run python run_clasher.py train -- \
   --checkpoint-dir checkpoints/historical_curriculum
 ```
 
-For a mixed league, repeat `--league-opponent` with `random` and frozen
-checkpoints. Repetition controls worker weights; the following assigns four of
-the twelve workers to each opponent:
+For a mixed league, repeat `--league-opponent` with `random`, a
+`strategy:NAME`, and frozen checkpoints. Repetition controls worker weights;
+the following assigns four of the twelve workers to each opponent:
 
 ```bash
 uv run python run_clasher.py train -- \
@@ -104,7 +104,7 @@ uv run python run_clasher.py train -- \
   --actor-threads 1 \
   --rollout-steps 64 \
   --opponent-mode league \
-  --league-opponent random \
+  --league-opponent strategy:reactive-defense \
   --league-opponent checkpoints/random_curriculum/policy_v2_update_000800.pt \
   --league-opponent checkpoints/historical_curriculum/policy_v2_update_001300.pt \
   --engine-fast-path on \
@@ -130,7 +130,92 @@ uv run python run_clasher.py eval -- \
 
 Evaluation replays each seeded deck matchup with the candidate on both seats and
 reports a score interval, crown differential, and no-op rate when another action
-was actually legal.
+was actually legal. Add `--json-out reports/eval.json` for a machine-readable
+scorecard. Defense diagnostics report incoming tower danger, board-value edge,
+and action rate while threatened.
+
+The opt-in `defense-v2` reward keeps the original tower objective dominant while
+adding telescoping public board-value and tower-danger potentials:
+
+```bash
+uv run python run_clasher.py train -- \
+  --resume-from checkpoints/mixed_league_champion50_lr1e4/policy_v2_update_001400.pt \
+  --updates 1420 --reward-profile defense-v2 \
+  --opponent-mode checkpoint \
+  --opponent-checkpoint checkpoints/mixed_league_champion50_lr1e4/policy_v2_update_001400.pt \
+  --num-envs 64 --actor-workers 12 --actor-threads 1 \
+  --rollout-steps 64 --device mps --actor-device cpu
+```
+
+`objective-v1` remains the default so old checkpoints and experiments do not
+silently change objective.
+
+### Strategy benchmark and PFSP inputs
+
+Clasher includes six deterministic, card-agnostic public-information opponents:
+bridge pressure, slow push, spell control, reactive defense, split lane, and
+balanced play. Evaluate the entire roster and emit both JSON and Markdown:
+
+```bash
+uv run python run_clasher.py strategy-benchmark -- \
+  --checkpoint checkpoints/mixed_league_champion50_lr1e4/policy_v2_update_001400.pt \
+  --games-per-opponent 24 --device cpu \
+  --json-out reports/strategy_update1400.json \
+  --markdown-out reports/strategy_update1400.md
+```
+
+The JSON includes PFSP weights computed from measured score rates. Feed it back
+into league training with `--pfsp-report reports/strategy_update1400.json` and
+`--pfsp-strategy-workers N`; the largest-remainder allocator deterministically
+maps the weights onto exactly `N` actor workers. Keep at least one frozen
+checkpoint in that league. Strategy bots can also be used directly with
+`--opponent-mode strategy --opponent-strategy reactive-defense` or as an
+explicit `--league-opponent strategy:reactive-defense`.
+
+### Fixed oracle imitation baseline
+
+Generate a deterministic V2 public-observation corpus from the existing
+fixed-depth oracle, then fit an imitation warm start and an untouched control
+checkpoint from exactly the same initialization:
+
+```bash
+uv run python run_clasher.py imitation -- collect \
+  --output datasets/oracle_v2_seed4401.npz \
+  --decisions 5000 --seed 4401 --workers 12 --reward-profile defense-v2
+
+uv run python run_clasher.py imitation -- fit \
+  --corpus datasets/oracle_v2_seed4401.npz \
+  --output-checkpoint checkpoints/imitation/oracle_warmstart.pt \
+  --control-checkpoint checkpoints/imitation/matched_control.pt \
+  --manifest-out reports/imitation_seed4401.json \
+  --device mps --epochs 10 --seed 5501
+```
+
+Both outputs use the normal V2 checkpoint format and can receive identical PPO
+decision budgets. The corpus is fixed and versioned, so oracle drift cannot
+confound the comparison.
+
+The oracle and corpus default to `defense-v2`; selecting `objective-v1` remains
+available for a deliberate legacy ablation.
+
+### Read-only real-replay validation
+
+`replay-validate` compares two normalized public-frame JSONL traces and records
+spawn, damage, tower-damage, and death/visibility mismatches. It never automates
+or mutates a commercial client:
+
+```bash
+uv run python run_clasher.py replay-validate -- \
+  --observed reports/replays/real_match.jsonl \
+  --simulated reports/replays/clasher_trace.jsonl \
+  --report-out reports/replays/parity_report.json \
+  --events-out reports/replays/derived_events.json
+```
+
+Each JSONL row contains `timestamp_ms`, public `towers`, and visible `entities`
+with `track_id`, `player_id`, `card`, `x`, `y`, and optional `hp`. This is an
+adapter boundary for manual labels or a future video detector, not a claim that
+pixel extraction is already solved.
 
 ### 5) Watch the V2 checkpoint play itself
 
@@ -142,8 +227,55 @@ uv run python run_clasher.py watch -- \
 
 The viewer runs the same recurrent policy on both seats unless
 `--opponent-checkpoint` or `--opponent-random` is supplied. Controls are
-Space to pause, R to reset, 1-5 for simulation speed, and Escape to quit.
-Stochastic action sampling is the default; add `--deterministic` for argmax play.
+Space to pause, R/Enter to reset, 1-5 for simulation speed, D for sight/lock
+overlays, S for a screenshot, and Escape to quit. Stochastic action sampling is
+the default; add `--deterministic` for argmax play.
+
+To play a recorded human evaluation match against a checkpoint:
+
+```bash
+uv run python run_clasher.py watch -- \
+  --checkpoint checkpoints/tv_raw1000_spatial_value_rl_seed1044801/policy_v2_update_000040.pt \
+  --human-player 0 \
+  --human-label evaluator-1 \
+  --human-ladder-label mid-ladder \
+  --deterministic \
+  --device cpu \
+  --record-out reports/human_vs_policy_matches.jsonl
+```
+
+Player 0 is shown at the bottom. Click one of the four current hand cards or use
+Q/W/E/R, then click an exactly legal highlighted arena tile; A activates a legal
+champion ability. Enter starts a new match. Each completed game appends one JSONL
+record containing the checkpoint SHA-256, seats, decks, crowns, candidate-perspective
+outcome, human actions, and invalid input count. Run a second block with
+`--human-player 1` with the same `--seed` to replay the sampled matchups with
+human/candidate deck roles held fixed and physical arena seats swapped. Human
+mode cannot be combined with a second policy or random opponent.
+
+Human matches are locked to the simulator's native 20 Hz wall-clock pace; the
+1-5 speed controls are disabled. Recorded rows include pacing metadata, and the
+summary gate rejects legacy or accelerated sessions.
+
+After balancing the candidate across both seats, summarize the evidence with:
+
+```bash
+uv run python scripts/summarize_human_policy_matches.py \
+  --records reports/human_vs_policy_matches.jsonl \
+  --output reports/human_vs_policy_summary.json \
+  --required-games 40 \
+  --required-distinct-decks 8 \
+  --required-score-rate 0.5 \
+  --required-human-ladder-label mid-ladder \
+  --fail-on-gate
+```
+
+The strict gate requires one checkpoint hash, recorded evaluator labels, only
+the exact required ladder cohort, globally balanced seats, every matchup paired
+equally across both candidate seats, enough distinct decks and matchups, at
+least the requested score, and a 95% score-interval lower bound at or above that
+score. Passing simulator or bot gates alone is not reported as human-level
+evidence.
 
 ### 6) Print the latest V2 checkpoint
 
@@ -239,3 +371,8 @@ export CLASHER_ROOT=/absolute/path/to/clasher
   inference batches are faster on CPU, while full PPO sequences are faster on MPS.
 - Evaluation defaults to CPU because it performs latency-sensitive batch-one inference.
 - If a checkpoint/decks/data file is missing, commands now fail with the resolved absolute path in the error.
+- The accepted update-1400 model is documented in
+  [`reports/model_card_update1400.md`](reports/model_card_update1400.md), and
+  canonical video metadata lives in
+  [`reports/canonical_replays.json`](reports/canonical_replays.json).
+- The project is available under the [MIT License](LICENSE).

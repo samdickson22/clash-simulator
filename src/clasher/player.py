@@ -38,7 +38,7 @@ class PlayerState:
     def can_play_card(self, card_name: str, card_stats: CardStatsCompat) -> bool:
         """Check if player can afford to play this card"""
         return (card_name in self.hand and
-                self.elixir >= card_stats.mana_cost and
+                self.elixir + 1e-9 >= card_stats.mana_cost and
                 self.is_alive())
     
     def play_card(self, card_name: str, card_stats: CardStatsCompat) -> bool:

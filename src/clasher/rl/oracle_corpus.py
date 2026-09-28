@@ -34,11 +34,12 @@ class CorpusShardSpec:
     shard_count: int
     decisions: int
     seed: int
+    samples_per_decision: int = 2
     schema_version: int = SHARD_SCHEMA_VERSION
 
     @property
     def samples(self) -> int:
-        return 2 * self.decisions
+        return self.samples_per_decision * self.decisions
 
     def to_json(self) -> str:
         return json.dumps(asdict(self), sort_keys=True, separators=(",", ":"))

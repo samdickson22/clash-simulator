@@ -1,0 +1,12 @@
+{
+  "decks": [
+    {"name": "WB Valk Log Bait 2.8", "cards": ["Cannon", "DartGoblin", "GoblinBarrel", "GoblinGang", "IceSpirit", "Princess", "Valkyrie", "Wallbreakers"]},
+    {"name": "Log Bait 3.0 Cycle", "cards": ["Fireball", "GoblinBarrel", "GoblinGang", "IceSpirit", "InfernoTower", "Knight", "Princess", "Log"]},
+    {"name": "Pekka Bandit EWiz Bridge Spam", "cards": ["Bandit", "BattleRam", "ElectroWizard", "Fireball", "MagicArcher", "Pekka", "RoyalGhost", "Zap"]},
+    {"name": "Log Bait 2.9 Cycle", "cards": ["DartGoblin", "GoblinBarrel", "GoblinGang", "IceSpirit", "InfernoTower", "Knight", "Princess", "Log"]},
+    {"name": "X-Bow 3.0 Cycle (ISpirit)", "cards": ["Archers", "Fireball", "IceSpirit", "Knight", "Skeletons", "Tesla", "Log", "Xbow"]},
+    {"name": "Hog 2.8 Cycle", "cards": ["Cannon", "Fireball", "HogRider", "IceSpirit", "Knight", "Musketeer", "Skeletons", "Log"]},
+    {"name": "Valk Log Bait (Tesla)", "cards": ["GoblinBarrel", "GoblinGang", "IceSpirit", "Princess", "Rocket", "Tesla", "Log", "Valkyrie"]},
+    {"name": "Pekka Bandit EWiz Poison", "cards": ["Bandit", "BattleRam", "ElectroWizard", "MagicArcher", "Pekka", "Poison", "RoyalGhost", "Zap"]}
+  ]
+}

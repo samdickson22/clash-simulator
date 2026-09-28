@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "3Uv1wUqYjrs=",
+  "success": true,
+  "projectFilePath": "/Users/sam/Desktop/code/clasher/tools/youtube_explode_canary/YoutubeExplodeCanary.csproj",
+  "expectedPackageFiles": [
+    "/Users/sam/.nuget/packages/youtubeexplode/6.6.1/youtubeexplode.6.6.1.nupkg.sha512"
+  ],
+  "logs": []
+}

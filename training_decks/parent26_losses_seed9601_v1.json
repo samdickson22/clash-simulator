@@ -1,0 +1,511 @@
+{
+  "schema_version": 1,
+  "source_checkpoint": "checkpoints/champion1400_random_specialist_seed26_u1401/policy_v2_update_001401.pt",
+  "source_seed": 9601,
+  "matchups": [
+    {
+      "name": "seed10610-seat0",
+      "learner_cards": [
+        "Arrows",
+        "Skeletons",
+        "Tornado",
+        "Pekka",
+        "IceWizard",
+        "ElectroDragon",
+        "Balloon",
+        "Cannon"
+      ],
+      "opponent_cards": [
+        "Xbow",
+        "Log",
+        "Skeletons",
+        "Knight",
+        "Tesla",
+        "Fireball",
+        "ElectroSpirit",
+        "Archers"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed22718-seat1",
+      "learner_cards": [
+        "Skeletons",
+        "Fireball",
+        "IceSpirit",
+        "IceGolem",
+        "Musketeer",
+        "HogRider",
+        "Cannon",
+        "Log"
+      ],
+      "opponent_cards": [
+        "Fireball",
+        "IceSpirit",
+        "Knight",
+        "GoblinBarrel",
+        "Log",
+        "GoblinGang",
+        "Princess",
+        "InfernoTower"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed25745-seat1",
+      "learner_cards": [
+        "Princess",
+        "Valkyrie",
+        "GoblinGang",
+        "Log",
+        "IceSpirit",
+        "Rocket",
+        "InfernoTower",
+        "GoblinBarrel"
+      ],
+      "opponent_cards": [
+        "Princess",
+        "GoblinBarrel",
+        "GoblinGang",
+        "Log",
+        "Rocket",
+        "IceSpirit",
+        "Cannon",
+        "Knight"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed29781-seat1",
+      "learner_cards": [
+        "Skeletons",
+        "Cannon",
+        "Musketeer",
+        "HogRider",
+        "IceGolem",
+        "Fireball",
+        "Zap",
+        "IceSpirit"
+      ],
+      "opponent_cards": [
+        "Miner",
+        "SpearGoblins",
+        "Knight",
+        "Tornado",
+        "BombTower",
+        "Log",
+        "MagicArcher",
+        "Wallbreakers"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed34826-seat1",
+      "learner_cards": [
+        "Princess",
+        "DartGoblin",
+        "IceSpirit",
+        "Valkyrie",
+        "Wallbreakers",
+        "Cannon",
+        "GoblinBarrel",
+        "GoblinGang"
+      ],
+      "opponent_cards": [
+        "DartGoblin",
+        "GoblinBarrel",
+        "Wallbreakers",
+        "Princess",
+        "GoblinGang",
+        "IceSpirit",
+        "Cannon",
+        "Valkyrie"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed35835-seat0",
+      "learner_cards": [
+        "LavaHound",
+        "MegaMinion",
+        "Miner",
+        "Fireball",
+        "Arrows",
+        "Minions",
+        "Balloon",
+        "Tombstone"
+      ],
+      "opponent_cards": [
+        "InfernoTower",
+        "Log",
+        "Princess",
+        "Fireball",
+        "IceSpirit",
+        "GoblinGang",
+        "GoblinBarrel",
+        "Knight"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed39871-seat0",
+      "learner_cards": [
+        "MegaKnight",
+        "InfernoDragon",
+        "GoblinGang",
+        "SkeletonBarrel",
+        "Bats",
+        "Zap",
+        "Miner",
+        "SpearGoblins"
+      ],
+      "opponent_cards": [
+        "Knight",
+        "Archers",
+        "Fireball",
+        "Tesla",
+        "Skeletons",
+        "Log",
+        "Xbow",
+        "ElectroSpirit"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed41889-seat0",
+      "learner_cards": [
+        "HogRider",
+        "IceSpirit",
+        "Log",
+        "Cannon",
+        "Skeletons",
+        "Fireball",
+        "Musketeer",
+        "Golem"
+      ],
+      "opponent_cards": [
+        "GoblinGang",
+        "InfernoTower",
+        "Fireball",
+        "GoblinBarrel",
+        "Log",
+        "Knight",
+        "IceSpirit",
+        "Princess"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed44916-seat1",
+      "learner_cards": [
+        "RoyalDelivery",
+        "Earthquake",
+        "ArcherQueen",
+        "Skeletons",
+        "Log",
+        "IceSpirit",
+        "Cannon",
+        "RoyalHogs"
+      ],
+      "opponent_cards": [
+        "Pekka",
+        "RoyalGhost",
+        "Bandit",
+        "Zap",
+        "MagicArcher",
+        "Fireball",
+        "BattleRam",
+        "ElectroWizard"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed46934-seat0",
+      "learner_cards": [
+        "GoblinGang",
+        "Log",
+        "InfernoTower",
+        "Fireball",
+        "Knight",
+        "GoblinBarrel",
+        "IceSpirit",
+        "Princess"
+      ],
+      "opponent_cards": [
+        "MagicArcher",
+        "ElectroWizard",
+        "BattleRam",
+        "Bandit",
+        "Fireball",
+        "RoyalGhost",
+        "Pekka",
+        "Zap"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed48952-seat1",
+      "learner_cards": [
+        "BarbarianBarrel",
+        "BabyDragon",
+        "NightWitch",
+        "Golem",
+        "Zap",
+        "Tornado",
+        "Lumberjack",
+        "Bomber"
+      ],
+      "opponent_cards": [
+        "GoblinGang",
+        "IceSpirit",
+        "Log",
+        "Knight",
+        "Princess",
+        "GoblinBarrel",
+        "InfernoTower",
+        "DartGoblin"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed60051-seat1",
+      "learner_cards": [
+        "Arrows",
+        "Fireball",
+        "LavaHound",
+        "Miner",
+        "MegaMinion",
+        "Minions",
+        "Tombstone",
+        "Balloon"
+      ],
+      "opponent_cards": [
+        "IceSpirit",
+        "Tesla",
+        "Xbow",
+        "Fireball",
+        "Archers",
+        "Skeletons",
+        "Knight",
+        "Log"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed61060-seat1",
+      "learner_cards": [
+        "Miner",
+        "InfernoDragon",
+        "GoblinGang",
+        "SkeletonBarrel",
+        "Zap",
+        "Bats",
+        "SpearGoblins",
+        "MegaKnight"
+      ],
+      "opponent_cards": [
+        "MagicArcher",
+        "Miner",
+        "Tornado",
+        "Log",
+        "BombTower",
+        "Wallbreakers",
+        "SpearGoblins",
+        "Knight"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed65096-seat1",
+      "learner_cards": [
+        "Log",
+        "RoyalHogs",
+        "Skeletons",
+        "Earthquake",
+        "RoyalDelivery",
+        "ArcherQueen",
+        "IceSpirit",
+        "Cannon"
+      ],
+      "opponent_cards": [
+        "IceSpirit",
+        "Knight",
+        "GoblinBarrel",
+        "GoblinGang",
+        "Log",
+        "DartGoblin",
+        "InfernoTower",
+        "Princess"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed68123-seat0",
+      "learner_cards": [
+        "Tornado",
+        "Wallbreakers",
+        "Log",
+        "SpearGoblins",
+        "MagicArcher",
+        "Miner",
+        "Knight",
+        "BombTower"
+      ],
+      "opponent_cards": [
+        "Skeletons",
+        "Knight",
+        "Log",
+        "Archers",
+        "Fireball",
+        "Xbow",
+        "IceSpirit",
+        "Tesla"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed77204-seat0",
+      "learner_cards": [
+        "Musketeer",
+        "Cannon",
+        "Zap",
+        "Fireball",
+        "HogRider",
+        "IceSpirit",
+        "Skeletons",
+        "IceGolem"
+      ],
+      "opponent_cards": [
+        "Log",
+        "GoblinGang",
+        "Knight",
+        "IceSpirit",
+        "GoblinBarrel",
+        "DartGoblin",
+        "Cannon",
+        "Princess"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed79222-seat1",
+      "learner_cards": [
+        "Log",
+        "Skeletons",
+        "IceGolem",
+        "IceSpirit",
+        "HogRider",
+        "Musketeer",
+        "Fireball",
+        "Cannon"
+      ],
+      "opponent_cards": [
+        "HogRider",
+        "Cannon",
+        "Log",
+        "Fireball",
+        "Skeletons",
+        "Musketeer",
+        "Knight",
+        "IceSpirit"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed85276-seat0",
+      "learner_cards": [
+        "Musketeer",
+        "IceGolem",
+        "HogRider",
+        "IceSpirit",
+        "Fireball",
+        "Cannon",
+        "Zap",
+        "Skeletons"
+      ],
+      "opponent_cards": [
+        "Rocket",
+        "IceSpirit",
+        "Princess",
+        "GoblinBarrel",
+        "Log",
+        "Valkyrie",
+        "GoblinGang",
+        "Tesla"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed86285-seat1",
+      "learner_cards": [
+        "Cannon",
+        "Earthquake",
+        "RoyalDelivery",
+        "Skeletons",
+        "RoyalHogs",
+        "Log",
+        "ArcherQueen",
+        "IceSpirit"
+      ],
+      "opponent_cards": [
+        "BattleRam",
+        "ElectroWizard",
+        "Poison",
+        "RoyalGhost",
+        "Pekka",
+        "Bandit",
+        "Zap",
+        "MagicArcher"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed88303-seat1",
+      "learner_cards": [
+        "LavaHound",
+        "Minions",
+        "Fireball",
+        "Tombstone",
+        "Miner",
+        "Balloon",
+        "Arrows",
+        "MegaMinion"
+      ],
+      "opponent_cards": [
+        "RoyalGhost",
+        "Poison",
+        "Zap",
+        "BattleRam",
+        "MagicArcher",
+        "ElectroWizard",
+        "Pekka",
+        "Bandit"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "seed103438-seat0",
+      "learner_cards": [
+        "Earthquake",
+        "Skeletons",
+        "IceSpirit",
+        "RoyalHogs",
+        "Log",
+        "Cannon",
+        "ArcherQueen",
+        "RoyalDelivery"
+      ],
+      "opponent_cards": [
+        "HogRider",
+        "Valkyrie",
+        "Firecracker",
+        "Tesla",
+        "Log",
+        "IceSpirit",
+        "Skeletons",
+        "Earthquake"
+      ],
+      "weight": 1.0
+    }
+  ]
+}

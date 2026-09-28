@@ -280,6 +280,17 @@ def test_every_enabled_card_mask_matches_both_engines_and_canonical_sides():
     battle = BattleState(fast_path=True)
     action_space = DiscreteTileActionSpace(canonical_perspective=True)
     cards = unique_cards_from_decks(load_deck_pool())
+    cannon_stats = battle.card_loader.get_card("Cannon")
+    assert cannon_stats is not None
+    for player_id, position in (
+        (0, Position(8.5, 10.5)),
+        (1, Position(9.5, 21.5)),
+    ):
+        entity_id = battle.next_entity_id
+        battle._spawn_troop(position, player_id, cannon_stats)
+        building = battle.entities[entity_id]
+        building.deploy_delay_remaining = 0.0
+        building.placement_pending = False
 
     for card_name in cards:
         for player_id in (0, 1):
@@ -330,6 +341,38 @@ def test_fast_mask_sees_building_spawned_earlier_in_same_decision_window():
     )
 
     assert not mask[second_action]
+
+
+def test_fast_troop_occupancy_cache_matches_scalar_and_invalidates():
+    battle = BattleState(fast_path=True)
+    _prepare_hand(battle, 0, ["Knight", "Giant"] * 4)
+    action_space = DiscreteTileActionSpace(canonical_perspective=True)
+    cannon_stats = battle.card_loader.get_card("Cannon")
+    assert cannon_stats is not None
+
+    legacy_without_building = action_space.legal_action_mask(
+        battle, 0, fast_path=False
+    )
+    fast_without_building = action_space.legal_action_mask(battle, 0, fast_path=True)
+    np.testing.assert_array_equal(legacy_without_building, fast_without_building)
+    assert battle._troop_placement_blocked_masks
+
+    battle._spawn_troop(Position(7.5, 10.5), 1, cannon_stats)
+    building = battle.entities[battle.next_entity_id - 1]
+    building.deploy_delay_remaining = 0.0
+    building.placement_pending = False
+
+    legacy = action_space.legal_action_mask(battle, 0, fast_path=False)
+    fast = action_space.legal_action_mask(battle, 0, fast_path=True)
+    np.testing.assert_array_equal(legacy, fast)
+    assert battle._troop_placement_blocked_masks
+    assert np.count_nonzero(fast) < np.count_nonzero(fast_without_building)
+
+    building.take_damage(building.hitpoints)
+    legacy_after_death = action_space.legal_action_mask(battle, 0, fast_path=False)
+    fast_after_death = action_space.legal_action_mask(battle, 0, fast_path=True)
+    np.testing.assert_array_equal(legacy_after_death, fast_after_death)
+    np.testing.assert_array_equal(fast_after_death, fast_without_building)
 
 
 def test_timed_death_payload_blocks_troop_and_building_actions_in_both_masks():

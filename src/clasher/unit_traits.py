@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from functools import lru_cache
 from typing import Any
 
 
+@lru_cache(maxsize=512)
 def _normalize(name: str) -> str:
     return "".join(ch for ch in name.casefold() if ch.isalnum())
 
@@ -195,10 +197,10 @@ def uses_air_collision_plane(entity: Any) -> bool:
     plane. This lets them pass through ground characters and buildings while
     still spacing flying characters.
     """
-    return bool(
-        is_above_ground_surface(entity)
-        or is_hover_unit_card(getattr(entity, "card_stats", None))
-    )
+    hover = getattr(entity, "_is_hover_unit", None)
+    if hover is None:
+        hover = is_hover_unit_card(getattr(entity, "card_stats", None))
+    return bool(is_above_ground_surface(entity) or hover)
 
 
 def is_in_transit(entity: Any) -> bool:

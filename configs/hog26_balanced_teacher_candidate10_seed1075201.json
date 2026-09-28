@@ -1,0 +1,15 @@
+{
+  "cost_weight": 0.6660749113786515,
+  "defense_fit_weight": 4.1885810848434835,
+  "defensive_building_bonus": 0.4893084533312184,
+  "efficiency_weight": 1.0317925978680609,
+  "noop_elixir_threshold": 6.946428779988062,
+  "noop_score": 2.8774593253494256,
+  "noop_threat_threshold": 0.07496170377976494,
+  "offense_position_weight": 4.126025847470508,
+  "offense_y": 13.16359312148365,
+  "offense_y_scale": 2.6679288041575777,
+  "spell_cluster_weight": 1.2371042865227473,
+  "threat_scale": 0.9815487574698513,
+  "tower_pressure_weight": 4.00737189982308
+}

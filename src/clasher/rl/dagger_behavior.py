@@ -104,6 +104,8 @@ def actor_policy_action(
         episode_start=episode_start,
         device=device,
     )
+    if model.config.public_observation_confidence:
+        inputs = inputs.with_exact_actor_confidence()
     action, _, _, next_state, _ = model.act(
         inputs,
         state,
