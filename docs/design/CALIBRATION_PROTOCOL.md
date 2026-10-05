@@ -4,7 +4,7 @@ Status: development protocol, no learning/search acceptance yet. This protocol
 implements the active goal's entry gates; it does not authorize a policy run.
 The pinned offline native runtime is a reference for its declared ruleset,
 not proof of official-game equivalence. Official observations and human playing
-strength remain separate requirements in PIPELINE_DESIGN.md.
+strength remain separate requirements in docs/design/PIPELINE_DESIGN.md.
 
 The existing native traces, all fixed placement families and friendly-building
 controls are opened development evidence. They remain permanently in that role.

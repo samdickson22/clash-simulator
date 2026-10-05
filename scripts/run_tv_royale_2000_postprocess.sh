@@ -96,7 +96,7 @@ PYTHONPATH=src:. uv run python scripts/verify_tv_royale_type_split.py \
 parent=checkpoints/tv_raw1000_spatial_value_rl_seed1044801/policy_v2_update_000040.pt
 for seed in 1045901 1045902; do
   checkpoint_root="checkpoints/tv_raw2000_headonly_seed${seed}"
-  PYTHONPATH=src:. uv run python run_clasher.py imitation -- fit \
+  PYTHONPATH=src:. uv run python scripts/run_clasher.py imitation -- fit \
     --corpus "$split_root/train.npz" \
     --initial-checkpoint "$parent" \
     --output-checkpoint "$checkpoint_root/epoch20.pt" \

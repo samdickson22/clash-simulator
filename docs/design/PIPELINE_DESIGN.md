@@ -14,8 +14,8 @@ On September 28 the user reinforced the comparison with players adapting to bala
 
 Simulator development is underway in the consolidated checkout at
 `/Users/sam/Desktop/code/clasher`. The old training scheduler remains paused.
-`HANDOFF_NEW_THREAD_20260928.md` supersedes historical workspace and live-job
-status in `HANDOFF.md`; linked native reports preserve the evidence. Public-state calibration and
+`docs/history/HANDOFF_NEW_THREAD_20260928.md` supersedes historical workspace and live-job
+status in `docs/history/HANDOFF.md`; linked native reports preserve the evidence. Public-state calibration and
 counterfactual-ranking gates must pass before any policy training or search.
 Passing narrow mechanics tests does not satisfy those gates or demonstrate
 playing strength.

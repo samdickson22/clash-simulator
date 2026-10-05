@@ -24,7 +24,7 @@
 - **Load time**: `loadTime: 50` suggests special attack timing not implemented
 
 ## Notes
-- Battle Ram is mapped in `random_battle.py` but no specific class implementation exists
+- Battle Ram is mapped in `examples/random_battle.py` but no specific class implementation exists
 - Generic `Troop` class handles basic movement and combat
 - Death spawn system exists but not configured for Battle Ram's Barbarian spawns
 - No special charge/dash mechanics implemented despite charge range in data

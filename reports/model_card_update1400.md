@@ -93,7 +93,7 @@ behavior.
 Watch update 1400 play update 800:
 
 ```bash
-uv run python run_clasher.py watch -- \
+uv run python scripts/run_clasher.py watch -- \
   --checkpoint checkpoints/mixed_league_champion50_lr1e4/policy_v2_update_001400.pt \
   --opponent-checkpoint checkpoints/random_curriculum/policy_v2_update_000800.pt \
   --device cpu
@@ -102,7 +102,7 @@ uv run python run_clasher.py watch -- \
 Run a paired random evaluation and save JSON:
 
 ```bash
-uv run python run_clasher.py eval -- \
+uv run python scripts/run_clasher.py eval -- \
   --checkpoint checkpoints/mixed_league_champion50_lr1e4/policy_v2_update_001400.pt \
   --opponent random --games 72 --seed 4101 --stochastic --device cpu \
   --json-out reports/eval_update1400_random.json
@@ -111,7 +111,7 @@ uv run python run_clasher.py eval -- \
 Run the public-information strategy benchmark:
 
 ```bash
-uv run python run_clasher.py strategy-benchmark -- \
+uv run python scripts/run_clasher.py strategy-benchmark -- \
   --checkpoint checkpoints/mixed_league_champion50_lr1e4/policy_v2_update_001400.pt \
   --games-per-opponent 24 --device cpu \
   --json-out reports/strategy_update1400.json \

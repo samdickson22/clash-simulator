@@ -31,7 +31,7 @@ run_workload() {
     VECLIB_MAXIMUM_THREADS=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONPATH=src:. \
-    uv run python run_clasher.py eval -- \
+    uv run python scripts/run_clasher.py eval -- \
       --checkpoint "$candidate" \
       "$@" \
       --games "$games" \
@@ -79,7 +79,7 @@ nice -n 10 env \
   VECLIB_MAXIMUM_THREADS=1 \
   PYTHONUNBUFFERED=1 \
   PYTHONPATH=src:. \
-  uv run python run_clasher.py eval -- \
+  uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$candidate" \
     --opponent strategy \
     --opponent-strategy balanced \

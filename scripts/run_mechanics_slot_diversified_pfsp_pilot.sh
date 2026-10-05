@@ -145,7 +145,7 @@ PY
 
 mkdir -p "$root" "$checkpoint_dir"
 
-env PYTHONPATH=src:. uv run python run_clasher.py strategy-benchmark -- \
+env PYTHONPATH=src:. uv run python scripts/run_clasher.py strategy-benchmark -- \
   --checkpoint "$parent" \
   --decks-path decks.json \
   --sampling-decks-path "$pfsp_decks" \
@@ -158,7 +158,7 @@ env PYTHONPATH=src:. uv run python run_clasher.py strategy-benchmark -- \
   --quiet-engine \
   > "$root/parent_strategy.log" 2>&1
 
-env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py train -- \
+env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py train -- \
   --decks-path decks.json \
   --sampling-decks-path "$train_pool" \
   --checkpoint-dir "$checkpoint_dir" \
@@ -234,7 +234,7 @@ env PYTHONPATH=src:. uv run python scripts/audit_rl_state_dict_changes.py \
   --value-prefix value_head. \
   --output "$root/state_dict_audit.json"
 
-env PYTHONPATH=src:. uv run python run_clasher.py strategy-benchmark -- \
+env PYTHONPATH=src:. uv run python scripts/run_clasher.py strategy-benchmark -- \
   --checkpoint "$candidate" \
   --decks-path decks.json \
   --sampling-decks-path "$pfsp_decks" \
@@ -255,7 +255,7 @@ for split in validation heldout; do
     decks=$heldout_decks
     seed=1056302
   fi
-  env PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$candidate" \
     --opponent policy \
     --opponent-checkpoint "$parent" \
@@ -276,7 +276,7 @@ run_candidate_workload() {
   local games=$2
   local seed=$3
   shift 3
-  env PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$candidate" \
     "$@" \
     --games "$games" \
@@ -314,7 +314,7 @@ run_candidate_workload split6 6 1056016 \
   --opponent strategy --opponent-strategy split-lane \
   --sampling-decks-path "$heldout_decks" --mirror-match
 
-env PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+env PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
   --checkpoint "$candidate" \
   --opponent strategy \
   --opponent-strategy balanced \
@@ -351,7 +351,7 @@ run_win_condition_utilization() {
   local card=$4
   local deck_pool=$5
   local seed=$6
-  env PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" \
     --opponent strategy \
     --opponent-strategy balanced \

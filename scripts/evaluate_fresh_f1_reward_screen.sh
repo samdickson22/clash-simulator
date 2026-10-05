@@ -31,7 +31,7 @@ for arm in parent legacy gamma gamma_noleak; do
   arm_root="$root/$arm"
   mkdir -p "$arm_root"
 
-  env PYTHONPATH=src:. uv run python run_clasher.py strategy-benchmark -- \
+  env PYTHONPATH=src:. uv run python scripts/run_clasher.py strategy-benchmark -- \
     --checkpoint "$checkpoint" \
     --decks-path decks.json \
     --sampling-decks-path "$development_decks" \
@@ -46,7 +46,7 @@ for arm in parent legacy gamma gamma_noleak; do
     --markdown-out "$arm_root/strategy.md" \
     > "$arm_root/strategy.log" 2>&1
 
-  env PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" \
     --opponent random \
     --decks-path decks.json \
@@ -64,7 +64,7 @@ for arm in parent legacy gamma gamma_noleak; do
     > "$arm_root/random12.log" 2>&1
 
   if [[ "$arm" != parent ]]; then
-    env PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+    env PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
       --checkpoint "$checkpoint" \
       --opponent policy \
       --opponent-checkpoint "$parent" \

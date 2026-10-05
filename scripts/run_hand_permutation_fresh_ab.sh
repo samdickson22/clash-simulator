@@ -61,7 +61,7 @@ env \
   PYTHONUNBUFFERED=1 \
   PYTHONPATH=src:. \
   PYTORCH_ENABLE_MPS_FALLBACK=1 \
-  uv run python run_clasher.py imitation -- fit \
+  uv run python scripts/run_clasher.py imitation -- fit \
     --corpus datasets/human_safety_balanced_v1.npz \
     --output-checkpoint "$checkpoint" \
     --control-checkpoint "$checkpoint_dir/random_control.pt" \

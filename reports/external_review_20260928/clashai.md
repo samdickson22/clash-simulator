@@ -3,7 +3,7 @@
 Date: 2026-09-28. Reviewer: read-only subagent. Scope: evidence-based comparison. No code, weights or data were copied into Clasher, nothing in Clasher was modified except this report, and no package was installed.
 
 - **ClashAI clone:** shallow, at `/Users/sam/Desktop/code/external/ClashAI`. HEAD `61e372d5d0655d7b54deb888f7cf5331df9b3c0a` (2026-09-26, "L68be: HANDOFF -- live lag root cause ..."). About 1.9 GB and 7,710 files. Repo created 2026-07-25; 171 stars at review time.
-- **Clasher reference state:** `HANDOFF_NEW_THREAD_20260928.md` ("Current continuation state") and `reports/strategy_council_20260928/strategy.md` (approved SHA `2be09f05...`).
+- **Clasher reference state:** `docs/history/HANDOFF_NEW_THREAD_20260928.md` ("Current continuation state") and `reports/strategy_council_20260928/strategy.md` (approved SHA `2be09f05...`).
 - **Citations:** ClashAI paths are relative to the clone root. Clasher paths are relative to `/Users/sam/Desktop/code/clasher` unless given as absolute `~/.cache/...` paths.
 - **ClashAI's own journal:** `HANDOFF.md` is a roughly 5,000-line journal. Line numbers refer to that file at the HEAD above.
 

@@ -71,7 +71,7 @@ for update in 56 72 88 104; do
       pool=datasets/deck_curriculum_v2_seed1040001/heldout.json
       seed=1048712
     fi
-    uv run python run_clasher.py eval -- \
+    uv run python scripts/run_clasher.py eval -- \
       --checkpoint "$candidate" \
       --opponent policy \
       --opponent-checkpoint "$parent" \

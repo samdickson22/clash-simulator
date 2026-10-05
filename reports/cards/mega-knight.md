@@ -29,7 +29,7 @@
 
 ## Notes
 - Card name mapping: "MegaKnight" in code matches gamedata.json entry
-- Only references found are in `decks.json` (card list) and `random_battle.py` (name mapping)
+- Only references found are in `decks.json` (card list) and `examples/random_battle.py` (name mapping)
 - No specific Mega Knight implementation found - relies on generic Troop class
 - Evolution data exists but was excluded per requirements
 - Key missing features are the signature spawn impact and jump mechanics that define the card

@@ -26,7 +26,7 @@ for coefficient in 0010 0025; do
   [[ ! -e "$candidate" ]] || { print -u2 -- "refusing existing candidate: $candidate"; exit 1; }
   mkdir -p "$root" "$checkpoint_dir"
 
-  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py train -- \
+  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py train -- \
     --decks-path decks.json --sampling-decks-path "$train_decks" \
     --checkpoint-dir "$checkpoint_dir" --resume-from "$parent" \
     --seed "$seed" --updates 10 --num-envs 64 --actor-workers 12 --actor-threads 1 \

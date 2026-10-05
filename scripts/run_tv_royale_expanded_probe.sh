@@ -28,7 +28,7 @@ for split in validation heldout; do
     seed=1046602
     decks=datasets/deck_curriculum_v2_seed1040001/heldout.json
   fi
-  nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" \
     --opponent policy \
     --opponent-checkpoint "$parent" \

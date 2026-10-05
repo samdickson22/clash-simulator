@@ -88,7 +88,7 @@ run_arm() {
     gamma_args+=(--reward-shaping-gamma "$shaping_gamma")
   fi
 
-  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py train -- \
+  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py train -- \
     --decks-path decks.json \
     --sampling-decks-path "$train_decks" \
     --checkpoint-dir "$checkpoint_dir" \

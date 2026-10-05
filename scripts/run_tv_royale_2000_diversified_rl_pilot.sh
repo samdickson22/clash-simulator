@@ -55,7 +55,7 @@ PYTHONPATH=src:. uv run python scripts/exclude_deck_pool_signatures.py \
   --output "$rl_train_pool" \
   --manifest-out "$rl_train_pool_manifest"
 
-env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py train -- \
+env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py train -- \
   --decks-path decks.json \
   --sampling-decks-path "$rl_train_pool" \
   --checkpoint-dir "$checkpoint_dir" \
@@ -153,7 +153,7 @@ for split in validation heldout; do
     seed=1047102
     decks=datasets/deck_curriculum_v2_seed1040001/heldout.json
   fi
-  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$candidate" \
     --opponent policy \
     --opponent-checkpoint "$parent" \
@@ -214,7 +214,7 @@ fi
 run_priority() {
   local name=$1
   shift
-  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$candidate" \
     "$@" \
     --device cpu \
@@ -289,7 +289,7 @@ fi
 run_full() {
   local name=$1
   shift
-  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$candidate" \
     "$@" \
     --device cpu \
@@ -418,7 +418,7 @@ for view in uniform frequency_weighted; do
   else
     seed=1047202
   fi
-  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$candidate" \
     --opponent policy \
     --opponent-checkpoint "$parent" \

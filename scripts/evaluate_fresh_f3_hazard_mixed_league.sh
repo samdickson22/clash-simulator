@@ -23,13 +23,13 @@ done
 [[ ! -e "$root/decision.json" ]] || { print -u2 -- "refusing existing league decision"; exit 1; }
 mkdir -p "$root/candidate"
 
-env PYTHONPATH=src:. uv run python run_clasher.py strategy-benchmark -- \
+env PYTHONPATH=src:. uv run python scripts/run_clasher.py strategy-benchmark -- \
   --checkpoint "$candidate" --decks-path decks.json --sampling-decks-path "$development" \
   --games-per-opponent 6 --seed 1068601 --decision-interval 8 --max-ticks 6000 \
   --device cpu --reward-profile objective-v1 --quiet-engine \
   --json-out "$root/candidate/strategy.json" --markdown-out "$root/candidate/strategy.md" \
   > "$root/candidate/strategy.log" 2>&1
-env PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+env PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
   --checkpoint "$candidate" --opponent random --decks-path decks.json \
   --sampling-decks-path "$development" --games 24 --mirror-match --seed 1068602 \
   --decision-interval 8 --max-ticks 6000 --device cpu --reward-profile objective-v1 \
@@ -40,7 +40,7 @@ env PYTHONPATH=src:. uv run python scripts/evaluate_recurrent_corpus.py \
   --checkpoint "$candidate" --decks-path decks.json --max-episodes 64 \
   --episode-seed 1068604 --device mps --json-out "$root/candidate/human64.json" \
   > "$root/candidate/human64.log" 2>&1
-env PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+env PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
   --checkpoint "$candidate" --opponent policy --opponent-checkpoint "$parent" \
   --decks-path decks.json --sampling-decks-path "$validation" --games 24 --mirror-match \
   --seed 1068803 --decision-interval 8 --max-ticks 6000 --device cpu \

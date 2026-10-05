@@ -37,21 +37,21 @@ evaluate_arm() {
     --reward-profile objective-v1 --quiet-engine
   )
   nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-    uv run python run_clasher.py eval -- ${shared[@]} --opponent random \
+    uv run python scripts/run_clasher.py eval -- ${shared[@]} --opponent random \
     --games 12 --seed 1070401 --json-out "$out/random12.metrics.json" \
     --games-json-out "$out/random12.games.json" > "$out/random12.log" 2>&1
   nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-    uv run python run_clasher.py eval -- ${shared[@]} --opponent strategy \
+    uv run python scripts/run_clasher.py eval -- ${shared[@]} --opponent strategy \
     --opponent-strategy balanced --games 6 --seed 1070402 \
     --json-out "$out/balanced6.metrics.json" \
     --games-json-out "$out/balanced6.games.json" > "$out/balanced6.log" 2>&1
   nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-    uv run python run_clasher.py eval -- ${shared[@]} --opponent strategy \
+    uv run python scripts/run_clasher.py eval -- ${shared[@]} --opponent strategy \
     --opponent-strategy reactive-defense --games 6 --seed 1070403 \
     --json-out "$out/reactive6.metrics.json" \
     --games-json-out "$out/reactive6.games.json" > "$out/reactive6.log" 2>&1
   nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-    uv run python run_clasher.py eval -- ${shared[@]} --opponent policy \
+    uv run python scripts/run_clasher.py eval -- ${shared[@]} --opponent policy \
     --opponent-checkpoint "$direct_parent" --games 12 --seed 1070404 \
     --json-out "$out/direct12.metrics.json" \
     --games-json-out "$out/direct12.games.json" > "$out/direct12.log" 2>&1
