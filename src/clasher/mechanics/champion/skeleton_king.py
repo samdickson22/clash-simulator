@@ -1,11 +1,7 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
 
 from .ability import ChampionAbilityMechanic, ActiveAbility
 from ...effects import SpawnUnits
-
-if TYPE_CHECKING:
-    from ...battle import BattleState
 
 
 @dataclass
@@ -102,7 +98,6 @@ class SkeletonKingSoulCollector(ChampionAbilityMechanic):
             return
 
         import math
-        import random
         from ...arena import Position
 
         # Spawn skeletons in a circle around death position

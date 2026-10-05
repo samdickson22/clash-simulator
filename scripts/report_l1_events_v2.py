@@ -1,7 +1,6 @@
 """Write the measured v2 verdict without promoting missing or failed gates."""
 import hashlib
 import json
-from pathlib import Path
 import zipfile
 
 from collect_l1_rendered import REPORT,progress

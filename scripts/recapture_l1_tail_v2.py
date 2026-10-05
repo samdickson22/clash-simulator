@@ -11,7 +11,7 @@ import numpy as np
 
 from clasher.data import CardDataLoader
 from clasher.vision.l1_stream import GrpcScreenStream
-from collect_l1_rendered import REPORT,capture,append,progress,digest
+from collect_l1_rendered import REPORT,capture,append,progress
 from smoke_reference_battle import request
 
 

@@ -1,6 +1,6 @@
 """Opt-in stored-state replay, with a reference captured before implementation."""
 from copy import deepcopy
-from dataclasses import fields, replace
+from dataclasses import fields
 from pathlib import Path
 import runpy
 
@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 import torch
 
-from clasher.rl.train_recurrent import collect_rollout, compute_gae, ppo_update, _sequence_inputs
+from clasher.rl.train_recurrent import collect_rollout, ppo_update, _sequence_inputs
 from clasher.rl.tbptt import chunk_minibatches, rollout_chunk_state, select_steps
 
 ROOT = Path(__file__).resolve().parents[1]

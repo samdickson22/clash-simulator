@@ -1,5 +1,4 @@
 """Privacy and scoring regressions for L1's offline screen boundary."""
-import json
 from pathlib import Path
 
 import cv2

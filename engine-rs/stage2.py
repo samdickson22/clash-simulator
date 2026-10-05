@@ -12,7 +12,6 @@ import clasher_core
 from clasher.paths import gamedata_path
 from differential import (
     CARDS,
-    ES,
     ROOT,
     Position,
     battle_digest,

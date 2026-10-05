@@ -129,8 +129,8 @@ impl BattleState {
         if e.avoidance != 0 {
             let retained = 256 - e.avoidance.abs();
             (mx, my) = norm(
-                (retained * mx >> 8) + (e.avoidance * my >> 8),
-                (retained * my >> 8) + (-mx * e.avoidance >> 8),
+                ((retained * mx) >> 8) + ((e.avoidance * my) >> 8),
+                ((retained * my) >> 8) + ((-mx * e.avoidance) >> 8),
                 work,
             );
         }

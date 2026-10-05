@@ -1,13 +1,9 @@
 import copy
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
 
 from ..mechanic_base import BaseMechanic
 from ...unit_traits import is_above_ground_surface, is_airborne_target
 from ...logic_math import spawn_target_distance_discount_sq_units
-
-if TYPE_CHECKING:
-    from ...battle import BattleState
 
 
 @dataclass

@@ -1,5 +1,5 @@
 from ..gamedata_normalization import normalized_walking_speed
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional
 from ..card_types import (
     CardDefinition, CardKind, Rarity, TroopStats, BuildingStats, SpellStats,
     TargetingBehavior, MovementBehavior, AttackBehavior, Mechanic, Effect

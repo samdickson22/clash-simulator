@@ -2,7 +2,6 @@
 
 import argparse
 from collections import deque
-import hashlib
 import json
 from pathlib import Path
 import random
@@ -19,7 +18,7 @@ from clasher.rl.native_public_observation import (
 from clasher.rl.public_observation import reference_public_observation
 from clasher.rl.public_scripted_opponent import PublicScriptedOpponent
 from clasher.rl.public_action_mask import PublicActionMaskBuilder, PublicActionMaskInput
-from differential import ROOT, ES, BattleState, config, snapshot, battle_digest
+from differential import ES, BattleState, config, snapshot, battle_digest
 from diagnostics import detail, phase_step
 from stage2 import fingerprint
 

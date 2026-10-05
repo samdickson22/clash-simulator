@@ -4337,7 +4337,6 @@ class Troop(Entity):
         external_x, external_y = self.take_pending_movement_vector()
         external_x_units = tiles_to_logic_units(external_x)
         external_y_units = tiles_to_logic_units(external_y)
-        self_movement = 0.0
         if distance > 0:
             # ``speed`` mirrors the debuffed value for observations and legacy
             # callers. Movement starts from the current unslowed mode (normal
@@ -4397,7 +4396,6 @@ class Troop(Entity):
                     move_y_units,
                     intended_movement_units,
                 )
-            move_distance = logic_units_to_tiles(intended_movement_units)
 
             combined_x_units = move_x_units + external_x_units
             combined_y_units = move_y_units + external_y_units
@@ -4434,13 +4432,10 @@ class Troop(Entity):
             if has_external and battle_state is not None:
                 self.position.x = new_position.x
                 self.position.y = new_position.y
-                self_movement = move_distance
             elif self.is_air_unit:
                 self.position = new_position
-                self_movement = move_distance
             else:
                 self.position = new_position
-                self_movement = move_distance
 
         elif abs(external_x) > 1e-15 or abs(external_y) > 1e-15:
             moved_x = logic_units_to_tiles(

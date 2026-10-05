@@ -1,11 +1,7 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
 
 from ..mechanic_base import BaseMechanic
 from ...balance import LOGIC_CHARACTER_CONTINUOUS_DAMAGE_ATTACK_CLOSER
-
-if TYPE_CHECKING:
-    from ...entities import Entity
 
 
 @dataclass

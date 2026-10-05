@@ -46,7 +46,6 @@ from .selfplay_env import resolve_match_horizon
 from .structured_obs import (
     ACTOR_GLOBAL_SIZE,
     ENTITY_FEATURE_SIZE,
-    VISIBLE_CARD_SLOTS,
     EntityCapacityError,
     StructuredObservationBuilder,
 )

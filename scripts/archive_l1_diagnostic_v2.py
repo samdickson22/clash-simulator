@@ -1,7 +1,6 @@
 """Losslessly pack the unscored pacing diagnostic, then remove verified loose JPEGs."""
 import hashlib
 import json
-from pathlib import Path
 import tarfile
 import time
 

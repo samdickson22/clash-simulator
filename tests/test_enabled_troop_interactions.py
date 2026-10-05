@@ -29,7 +29,6 @@ from clasher.kinematics import (
     speed_work_for_duration,
     spawn_path_travel_tick_count,
     tiles_to_logic_units,
-    vector_towards_logic_units,
 )
 from clasher.mechanics.shared.scaling import CrownTowerScaling
 from clasher.mechanics.shared.death_area import spawn_death_area_object

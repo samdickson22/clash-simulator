@@ -14,11 +14,11 @@ os.environ.setdefault('PYTORCH_MPS_LOW_WATERMARK_RATIO','0.25')
 import cv2
 import numpy as np
 import torch
-from torch.utils.data import Dataset,DataLoader
+from torch.utils.data import Dataset
 
 from clasher.vision.l1_events_v2 import CARDS,EventNet,reduced,stack_pixels
 from clasher.vision.l1_offline import offline_ml
-from collect_l1_rendered import REPORT,progress
+from collect_l1_rendered import progress
 
 
 class Windows(Dataset):

@@ -12,7 +12,7 @@ from clasher.data import CardDataLoader
 from clasher.rl.live_inference_contract import parse_public_vision_frame
 from clasher.vision.l1_events_v3 import StreamFusion
 from clasher.vision.l1_derived_v3 import OpponentPosterior,StreamPublicClock
-from collect_l1_rendered import REPORT,append,progress
+from collect_l1_rendered import append,progress
 from evaluate_l1_events_v2 import score_events
 
 

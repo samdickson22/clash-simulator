@@ -6,7 +6,7 @@ import random
 import pytest
 
 from clasher.arena import Position
-from clasher.battle import BattleState, SERVER_ACTION_DELAY_SECONDS
+from clasher.battle import BattleState
 from clasher.entities import (
     AreaEffect,
     Building,

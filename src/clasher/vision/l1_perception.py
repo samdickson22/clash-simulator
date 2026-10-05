@@ -1,9 +1,7 @@
 """L1 YOLO/HUD pixel inference. This module cannot load native observations."""
 from __future__ import annotations
 
-import json
 from dataclasses import asdict
-from pathlib import Path
 from types import MappingProxyType, SimpleNamespace
 
 import cv2

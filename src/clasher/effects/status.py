@@ -1,11 +1,6 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 
 from .effect_base import BaseEffect
-
-if TYPE_CHECKING:
-    from ..battle import BattleState
-    from ..arena import Position
 
 
 @dataclass

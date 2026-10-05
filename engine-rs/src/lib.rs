@@ -1674,8 +1674,8 @@ impl BattleState {
         let (mut mx, mut my) = (vx * work / 256, vy * work / 256);
         if e.avoidance != 0 {
             let retained = 256 - e.avoidance.abs();
-            let rx = (retained * mx >> 8) + (e.avoidance * my >> 8);
-            let ry = (retained * my >> 8) + (-mx * e.avoidance >> 8);
+            let rx = ((retained * mx) >> 8) + ((e.avoidance * my) >> 8);
+            let ry = ((retained * my) >> 8) + ((-mx * e.avoidance) >> 8);
             (mx, my) = norm(rx, ry, work);
         }
         e.x = ((units(e.x) + mx + external.0).clamp(0, 17999)) as f64 / 1000.0;
@@ -1982,7 +1982,7 @@ impl BattleState {
                     {
                         continue;
                     }
-                    let d = dx.abs().max(dy.abs()) + (53 * dx.abs().min(dy.abs()) >> 7);
+                    let d = dx.abs().max(dy.abs()) + ((53 * dx.abs().min(dy.abs())) >> 7);
                     if d < distance {
                         best = (cx, cy);
                         distance = d;
@@ -2013,8 +2013,8 @@ impl BattleState {
         if e.avoidance != 0 && work != 0 {
             let retained = 256 - e.avoidance.abs();
             (mx, my) = norm(
-                (retained * mx >> 8) + (e.avoidance * my >> 8),
-                (retained * my >> 8) + (-mx * e.avoidance >> 8),
+                ((retained * mx) >> 8) + ((e.avoidance * my) >> 8),
+                ((retained * my) >> 8) + ((-mx * e.avoidance) >> 8),
                 work,
             );
         }
@@ -2704,8 +2704,8 @@ impl BattleState {
                 if e.avoidance != 0 {
                     let retained = 256 - e.avoidance.abs();
                     (mx, my) = norm(
-                        (retained * mx >> 8) + (e.avoidance * my >> 8),
-                        (retained * my >> 8) + (-mx * e.avoidance >> 8),
+                        ((retained * mx) >> 8) + ((e.avoidance * my) >> 8),
+                        ((retained * my) >> 8) + ((-mx * e.avoidance) >> 8),
                         work.min(isqrt(dx * dx + dy * dy)),
                     );
                 }
@@ -3381,8 +3381,8 @@ impl BattleState {
                     let mut dx=cos*radius/1024;let mut dy=sin*radius/1024;
                     if source.stats.death_spawn_const {
                         let (x,y)=cell(source.x,source.y);
-                        if self.config.lane_ids[(y*36+x) as usize]==1 {dx=-dx;}
-                        if source.owner==1 {dy=-dy;}
+                        if self.config.lane_ids[(y*36+x) as usize]==1 {dx = -dx;}
+                        if source.owner==1 {dy = -dy;}
                     }
                     ((units(source.x) + dx).clamp(250, 17750) as f64 / 1000.0,
                      (units(source.y) + dy).clamp(250, 31750) as f64 / 1000.0)

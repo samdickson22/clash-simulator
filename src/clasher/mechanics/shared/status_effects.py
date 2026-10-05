@@ -1,10 +1,6 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 
 from ..mechanic_base import BaseMechanic
-
-if TYPE_CHECKING:
-    from ...entities import Entity
 
 
 @dataclass

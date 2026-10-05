@@ -2,7 +2,6 @@
 import argparse
 from bisect import bisect_right
 from collections import Counter
-import hashlib
 import json
 from pathlib import Path
 

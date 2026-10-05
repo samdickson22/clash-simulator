@@ -1,7 +1,6 @@
 """Deadline admission, cancellation, complete-set ordering and fallback."""
 import time
 import unittest
-from dataclasses import replace
 from unittest.mock import Mock
 from c56_controller import CARDS, resources
 from differential import config, initial

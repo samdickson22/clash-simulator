@@ -1,13 +1,12 @@
 """Synthetic corruption probes for the opened native known-channel auditor."""
 from copy import deepcopy
-from pathlib import Path
 import json
 
 import numpy as np
 import pytest
 from pydantic import ValidationError
 
-from test_native_public_refill import source, FRAMES
+from test_native_public_refill import FRAMES, source as source
 from clasher.rl.native_public_calibration import NativeCalibrationReceipt, audit_native_frame, verify_calibration_receipt
 from clasher.rl.native_public_observation import NativeProjectileCatalog
 
