@@ -1,6 +1,5 @@
 """Render the completed v3 measurements without promoting failed or unmeasured gates."""
 import json
-from pathlib import Path
 
 import numpy as np
 

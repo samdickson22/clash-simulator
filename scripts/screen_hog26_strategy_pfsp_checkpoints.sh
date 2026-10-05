@@ -37,15 +37,15 @@ evaluate_arm() {
     --reward-profile objective-v1 --quiet-engine
   )
   nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-    uv run python run_clasher.py eval -- ${shared[@]} --opponent random \
+    uv run python scripts/run_clasher.py eval -- ${shared[@]} --opponent random \
     --games 8 --seed 1071201 --json-out "$out/random8.metrics.json" \
     > "$out/random8.log" 2>&1
   nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-    uv run python run_clasher.py eval -- ${shared[@]} --opponent policy \
+    uv run python scripts/run_clasher.py eval -- ${shared[@]} --opponent policy \
     --opponent-checkpoint "$direct_parent" --games 8 --seed 1071203 \
     --json-out "$out/direct8.metrics.json" > "$out/direct8.log" 2>&1
   nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-    uv run python run_clasher.py strategy-benchmark -- \
+    uv run python scripts/run_clasher.py strategy-benchmark -- \
     --checkpoint "$checkpoint" --decks-path decks.json \
     --sampling-decks-path "$opponent_decks" \
     --candidate-sampling-decks-path "$candidate_decks" \

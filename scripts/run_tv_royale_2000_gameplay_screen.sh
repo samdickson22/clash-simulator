@@ -49,7 +49,7 @@ run_development_checkpoint() {
   local slug="${checkpoint_root}_${checkpoint_name}"
   local output_root="$screen_root/$slug"
   mkdir -p "$output_root"
-  nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" \
     --opponent policy \
     --opponent-checkpoint "$parent" \
@@ -62,7 +62,7 @@ run_development_checkpoint() {
     --json-out "$output_root/validation12.metrics.json" \
     --games-json-out "$output_root/validation12.json" \
     > "$output_root/validation12.log" 2>&1
-  nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" \
     --opponent policy \
     --opponent-checkpoint "$parent" \
@@ -124,7 +124,7 @@ for split in validation heldout; do
     seed=1046602
     decks=datasets/deck_curriculum_v2_seed1040001/heldout.json
   fi
-  nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$selected" \
     --opponent policy \
     --opponent-checkpoint "$parent" \
@@ -180,7 +180,7 @@ fi
 
 priority_root="$screen_root/priority"
 mkdir -p "$priority_root"
-nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
   --checkpoint "$selected" \
   --opponent random \
   --games 12 \
@@ -190,7 +190,7 @@ nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py e
   --json-out "$priority_root/broad_random.metrics.json" \
   --games-json-out "$priority_root/broad_random.json" \
   > "$priority_root/broad_random.log" 2>&1
-nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
   --checkpoint "$selected" \
   --opponent policy \
   --opponent-checkpoint checkpoints/generalized_twentyfourth_robust2_kernel999_lr01_seed15033/policy_v2_repair_step_0050.pt \
@@ -201,7 +201,7 @@ nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py e
   --json-out "$priority_root/safety24.metrics.json" \
   --games-json-out "$priority_root/safety24.json" \
   > "$priority_root/safety24.log" 2>&1
-nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
   --checkpoint "$selected" \
   --opponent policy \
   --opponent-checkpoint checkpoints/katacr_human_u28_repair3_fresh60701_stage2_seed60702/policy_v2_repair_step_0200.pt \
@@ -269,7 +269,7 @@ mkdir -p "$full_root"
 run_full_workload() {
   local name=$1
   shift
-  nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$selected" \
     "$@" \
     --device cpu \
@@ -405,7 +405,7 @@ for view in uniform frequency_weighted; do
   else
     seed=1046702
   fi
-  nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  nice -n 5 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$selected" \
     --opponent policy \
     --opponent-checkpoint "$parent" \

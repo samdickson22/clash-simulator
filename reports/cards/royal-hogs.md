@@ -32,7 +32,7 @@
 ## Notes
 - Royal Hogs appear to be treated as a standard troop summon card
 - Jump mechanics are explicitly defined in gamedata.json but no jump implementation found in codebase
-- Card name mapping exists: "Royal Hogs" → "RoyalHogs" (random_battle.py)
+- Card name mapping exists: "Royal Hogs" → "RoyalHogs" (examples/random_battle.py)
 - Uses generic Troop class with no special behavior overrides
 - Targeting is set to buildings only, but no special building attack logic implemented
 - Jump parameters suggest they should be able to jump over obstacles/structures, but this mechanic is not implemented in the codebase

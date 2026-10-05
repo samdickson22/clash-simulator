@@ -1,7 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any, Dict, Iterable, List, Optional, Tuple
-import time
 import math
 import random
 import copy
@@ -2165,7 +2164,6 @@ class BattleState:
                 return bank_position
         
         # Try to find nearest valid position within reasonable distance
-        search_radius = 2.0  # tiles
         best_position = position
         min_distance = float('inf')
         

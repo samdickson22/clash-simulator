@@ -37,7 +37,7 @@ run_workload() {
   local games=$2
   local seed=$3
   shift 3
-  nice -n 15 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  nice -n 15 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$candidate_checkpoint" \
     "$@" \
     --games "$games" \
@@ -71,7 +71,7 @@ run_workload split6 6 1056016 \
   --opponent strategy --opponent-strategy split-lane \
   --sampling-decks-path "$heldout_decks" --mirror-match
 
-nice -n 15 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+nice -n 15 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
   --checkpoint "$candidate_checkpoint" \
   --opponent strategy \
   --opponent-strategy balanced \

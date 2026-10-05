@@ -27,15 +27,15 @@ for update in 10 20; do
     --reward-profile objective-v1 --quiet-engine
   )
   seed=$((gate_seed_base + update * 10))
-  env OMP_NUM_THREADS=2 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env OMP_NUM_THREADS=2 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     "${common[@]}" --opponent random --games 6 --seed "$seed" \
     --json-out "$root/random6.json" > "$root/random6.log" 2>&1
-  env OMP_NUM_THREADS=2 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env OMP_NUM_THREADS=2 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     "${common[@]}" --opponent policy \
     --opponent-checkpoint checkpoints/fresh_f3_hazard_fullweight_outcome_seed1068401/policy_v2_update_000020.pt \
     --games 6 --seed $((seed + 2)) --json-out "$root/direct6.json" \
     > "$root/direct6.log" 2>&1
-  env OMP_NUM_THREADS=2 PYTHONPATH=src:. uv run python run_clasher.py strategy-benchmark -- \
+  env OMP_NUM_THREADS=2 PYTHONPATH=src:. uv run python scripts/run_clasher.py strategy-benchmark -- \
     "${common[@]}" --games-per-opponent 2 --seed $((seed + 1)) \
     --json-out "$root/strategy.json" --markdown-out "$root/strategy.md" \
     > "$root/strategy.log" 2>&1

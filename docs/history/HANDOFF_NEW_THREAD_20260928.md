@@ -122,7 +122,7 @@ The active v6 study also has a documented dependency limitation: its original pl
 
 ## Recovery update — 2026-09-28
 
-User steering during recovery: treat modest dynamics and level differences like balance changes that a capable player should adapt to. A different tower outcome in one fixed-command replay does not establish a bad learned strategy. Prioritize systematic decision errors, repeatable exploits, and basic adaptive model competence; avoid an endless exact-mechanics prerequisite. Existing frozen failures/exposures remain unchanged. See the September 28 clarification near the start of `PIPELINE_DESIGN.md`.
+User steering during recovery: treat modest dynamics and level differences like balance changes that a capable player should adapt to. A different tower outcome in one fixed-command replay does not establish a bad learned strategy. Prioritize systematic decision errors, repeatable exploits, and basic adaptive model competence; avoid an endless exact-mechanics prerequisite. Existing frozen failures/exposures remain unchanged. See the September 28 clarification near the start of `docs/design/PIPELINE_DESIGN.md`.
 
 V7 is now diagnosed and evaluated. See `reports/v7_recovery_20260928/README.md` and `diagnosis.json`. Twelve configurations completed; configuration 13 stopped when scalar prefix replay rejected Goblins at tick 1350. Native had lost the owner's right Princess Tower, while scalar retained 128 HP, blocking the recorded placement on its footprint. The cause was a movement clamp incorrectly reusing the quarter-tile spawn margin. The repaired scalar and tensor movement clamps preserve native outer-cell movement while retaining spawn margins. Native disassembly, phase events, regression tests, and an independent agent review support the repair.
 
@@ -140,7 +140,7 @@ Reports, datasets and checkpoints were moved, without bulk copying, to `artifact
 
 Final validation: 1,598 native/public/policy tests passed; 56 additional training/inference tests passed; 9 route-cache tests passed, including a new changing-building-occupancy regression. CLI help, lock consistency, compile and focused undefined-name/duplicate-definition checks passed. No training, native collection or emulator was started. V7 still has its original failed status and training remains unauthorized.
 
-See `WORKTREE_CONSOLIDATION_20260928.md` and `reports/worktree_consolidation_20260928/` for preserved commits, move receipts and test logs.
+See `docs/history/WORKTREE_CONSOLIDATION_20260928.md` and `reports/worktree_consolidation_20260928/` for preserved commits, move receipts and test logs.
 
 ## Original pre-consolidation handoff
 
@@ -186,7 +186,7 @@ Evidence below was recorded September 22 in fidelity/HANDOFF.md and receipts und
 
 ## Next actions when development is resumed
 
-1. Read current AGENTS.md/AGENTS.local.md if present, git status, PIPELINE_DESIGN.md and durable v7 receipts. Preserve all dirty changes.
+1. Read current AGENTS.md/AGENTS.local.md if present, git status, docs/design/PIPELINE_DESIGN.md and durable v7 receipts. Preserve all dirty changes.
 2. Diagnose v7 terminal failure from launcher/child logs and completion receipts. Separate operational failure from simulator mismatch. Run the original frozen evaluator with missing-case rules when appropriate; do not replace failed cases or silently reuse opened cases as fresh acceptance.
 3. Only after preserving/evaluating that attempt, decide repairs and any new frozen campaign. Confirm disk headroom, source identity and native ownership first. The emulator was explicitly shut off by Sam; do not restart merely to inspect status or clean disk.
 4. Continue through the documented gates toward training and independently measured playing strength. No credible completion percentage or human-strength claim is currently established.
@@ -213,7 +213,7 @@ September 24 inventory (STALE estimates; not current measurements): main dataset
 
 ## Continuity files
 
-- This handoff: `/Users/sam/Desktop/code/clasher/HANDOFF_NEW_THREAD_20260928.md`
+- This handoff: `/Users/sam/Desktop/code/clasher/docs/history/HANDOFF_NEW_THREAD_20260928.md`
 - Detailed chronological engineering log: `/Users/sam/.codex/worktrees/clasher-simulator-fidelity-20260913/HANDOFF.md`
 - Pipeline: `/Users/sam/.codex/worktrees/clasher-simulator-fidelity-20260913/PIPELINE_DESIGN.md`
 - Latest campaign: fidelity `reports/calibration_acceptance_20260922_v7/`

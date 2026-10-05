@@ -1,10 +1,10 @@
-> CURRENT USER STEERING: Train across professional decks, test procedural/random legal deck coverage, then specialize as useful. Validate simulator mechanics broadly. External bit-for-bit parity is NOT a universal prerequisite; measure tactical fidelity and robustness to bounded swarm/timing variation. See updated PIPELINE_DESIGN.md.
+> CURRENT USER STEERING: Train across professional decks, test procedural/random legal deck coverage, then specialize as useful. Validate simulator mechanics broadly. External bit-for-bit parity is NOT a universal prerequisite; measure tactical fidelity and robustness to bounded swarm/timing variation. See updated docs/design/PIPELINE_DESIGN.md.
 
 > ACTIVE GOAL 2026-09-13: User requested the new persistent goal and autonomous execution. Goal is active for the full simulator-centered pipeline; old scheduler remains paused. Current implementation status below supersedes the historical planning checkpoint.
 
 # Simulator and learning pipeline handoff
 
-Read [PIPELINE_DESIGN.md](PIPELINE_DESIGN.md) before implementation. It is the current architecture decision for the next lineage. The user wants strong human play and an attempt at the strongest comparable bot, and explicitly authorized improving the simulator. The latest instruction was to finish the entire pipeline design before development so the user can lower the reasoning setting.
+Read [docs/design/PIPELINE_DESIGN.md](../design/PIPELINE_DESIGN.md) before implementation. It is the current architecture decision for the next lineage. The user wants strong human play and an attempt at the strongest comparable bot, and explicitly authorized improving the simulator. The latest instruction was to finish the entire pipeline design before development so the user can lower the reasoning setting.
 
 The architecture is simulator-centered: external fidelity evidence, shared public observations and memory, a human-demonstration action policy, synchronous recurrent PPO against diverse opponents, validated search and distillation, and real-game evaluation. Search and large compute have explicit entry gates. Imitation is an initialization, not the final objective.
 
@@ -154,7 +154,7 @@ Next work:
 2. Verify native sight/acquisition and ranged attack phase directly. A process-local sight-radius experiment improved Hog HP agreement to94/100 but was not adopted. Prince still has wrong initial target/route; Baby Dragon stops too early in scalar.
 3. Prince native tick112 retained route: [(8,31),(9,32),(10,33),(11,34),(12,35)], state1, attacker collision radius600. `prince-first-route.json` records it. Do not assume previous A* lane-cost claims are globally exact; compare actual runtime route creation.
 4. Reverse-seat Hog coordinate error is at most0.044 tile in the short sample; prioritize strategic outcomes over bit parity, as the user requested.
-5. Once public-state calibration and counterfactual ranking gates pass, resume the broader pipeline in PIPELINE_DESIGN.md; do not use these controlled traces to authorize learning yet.
+5. Once public-state calibration and counterfactual ranking gates pass, resume the broader pipeline in docs/design/PIPELINE_DESIGN.md; do not use these controlled traces to authorize learning yet.
 
 Runtime: emulator5580 remains running headless (owned emulator session10750), paused synthetic Hog/Cannon battle tick151, local probe26789, per-app network blocks and pointer-tagging workaround intact. Final live inspection is `hog-contact-route-validated.json`. No other long-running tests/training/capture jobs should remain after completion. Cache/SDK/APK/native probe paths from previous handoff remain valid.
 
@@ -224,7 +224,7 @@ All 42 short tactical placement outcomes and all 14 completed Giant pushes match
 
 Verification: `stride-regression-repaired.txt` 811 passed; `extended-regression.txt` 251 passed, overlapping on short placement tests. New scripts/tests and normalization helper pass Ruff; diff whitespace passes. Fixed the new gait test's CardDefinition API typo, removed unused float helper, and updated old geometry/base-speed assumptions while preserving actual boundary, timing, and tie assertions. Generic diagnosis script is `scripts/diagnose_native_placement_case.py`.
 
-Next: friendly-building occlusion controls in both seats and broader prospective calibration protocol. Current active user goal requires public-state calibration and counterfactual-ranking gates before any policy training or search; that instruction takes precedence over any more permissive historical wording in PIPELINE_DESIGN.md. No training/search/model promotion/paid compute/online game started. Old campaign and scheduler preserved. All owned tests terminal. Native status was revalidated: ready, headless, paused at tick145, generation98, local26789, unchanged Hog speed control. Do not restart it unnecessarily.
+Next: friendly-building occlusion controls in both seats and broader prospective calibration protocol. Current active user goal requires public-state calibration and counterfactual-ranking gates before any policy training or search; that instruction takes precedence over any more permissive historical wording in docs/design/PIPELINE_DESIGN.md. No training/search/model promotion/paid compute/online game started. Old campaign and scheduler preserved. All owned tests terminal. Native status was revalidated: ready, headless, paused at tick145, generation98, local26789, unchanged Hog speed control. Do not restart it unnecessarily.
 
 ## 2026-09-15: dynamic building routing and remaining avoidance boundary
 
@@ -240,7 +240,7 @@ Progress: isolated the lower-seat friendly Cannon divergence to combat observati
 
 Read `reports/native_friendly_heading_20260915/README.md`. All18 controls recaptured. Lower Hog/Cannon maximum error improves0.472->0.0465 tile, with matched HP. Permanent fixture tests22 native position/HP samples and the two exact avoidance values in scalar/fast. Remaining cases are mixed: upper Hog/Cannon0.340, lower Giant/Cannon0.232, lower Knight/Cannon0.291; no blanket fidelity claim. No-building trajectories unchanged. Next inspect upper-seat Hog/Cannon's first residual divergence and dynamic route lifecycle/invalidation; do not patch coordinate offsets.
 
-Final regression875 passed, new tests/inspector Ruff and diff whitespace clean. Boundary-egress test explicitly sets retained heading to exercise the same clipping hazard independently of target acquisition. PIPELINE_DESIGN.md updated to current active status and mandatory pre-learning calibration/ranking gates, removing superseded pause/no-repairs/retired-gate wording. Old scheduler and campaign remain preserved. All owned tests/captures terminal. Native paused lower-seat Hog/friendly Cannon tick264, local26789. Goal active; no training/search/promotion/paid compute/online play.
+Final regression875 passed, new tests/inspector Ruff and diff whitespace clean. Boundary-egress test explicitly sets retained heading to exercise the same clipping hazard independently of target acquisition. docs/design/PIPELINE_DESIGN.md updated to current active status and mandatory pre-learning calibration/ranking gates, removing superseded pause/no-repairs/retired-gate wording. Old scheduler and campaign remain preserved. All owned tests/captures terminal. Native paused lower-seat Hog/friendly Cannon tick264, local26789. Goal active; no training/search/promotion/paid compute/online play.
 
 ## 2026-09-15: completed friendly controls and prospective calibration protocol
 
@@ -248,7 +248,7 @@ Progress: all18 friendly-building controls extended to native/scalar tick1421; e
 
 `compare_native_friendly_obstacles.py` now accepts --horizon, writes it into the prospective plan, and records final damage/survival. Reports in `reports/native_friendly_completed_20260915/`, all18 hashed cases added to native_friendly_completed fixture and tested in both modes. Focused suite40 passed; Ruff/diff whitespace clean. No engine changes this continuation.
 
-New CALIBRATION_PROTOCOL.md freezes opened evidence as development, lays out public-state and reacting counterfactual entry requirements, and specifies the next timed collection: Hog/Giant/Prince versus Cannon/Tesla at(5.5,18.5)/(7.5,19.5), both seats, defense first-body ticks251/271/291 from boundary221, plus no-defense baseline. Use working play submission22 ticks before desired first-body tick; verify actual card/body/elixir execution, not queue status. Native first attacker appears222. Retain paired roots and complete horizons. This is a development protocol, not a passed gate or authorization to train; independent acceptance sample sizes/tolerances must be frozen prospectively after development variance/annotation audit.
+New docs/design/CALIBRATION_PROTOCOL.md freezes opened evidence as development, lays out public-state and reacting counterfactual entry requirements, and specifies the next timed collection: Hog/Giant/Prince versus Cannon/Tesla at(5.5,18.5)/(7.5,19.5), both seats, defense first-body ticks251/271/291 from boundary221, plus no-defense baseline. Use working play submission22 ticks before desired first-body tick; verify actual card/body/elixir execution, not queue status. Native first attacker appears222. Retain paired roots and complete horizons. This is a development protocol, not a passed gate or authorization to train; independent acceptance sample sizes/tolerances must be frozen prospectively after development variance/annotation audit.
 
 Next implement and execute the timed response collector, then repair any consequential value/ranking discrepancies and progress public feature/compatible replay reconstruction. Native remains paused on last Knight/Tesla owner1 control at tick1421, local26789. All owned captures/tests terminal. Full goal active; no search/training/model update/paid compute/online match. Frozen campaign/scheduler preserved.
 
@@ -278,7 +278,7 @@ Progress: late Prince/Cannon failure was retarget timing, NOT command materializ
 
 All78 timed completed outcomes now exact in charged-retarget-rescore.json. New tests/test_native_timed_defenses.py and hashed fixture cover78 cases in both modes plus both immediate deployment-frame HP checks. Charged-retarget regression798 passed (includes156 timed checks). Native timed controls remain opened development, not independent calibration/ranking acceptance or demonstrated strength. No training/search authorization.
 
-Next address the public observation/serialization gate. Confirmed current gap: structured_obs.py emits own_last_play metadata for Mirror, but model.py PolicyInputs has no own-last-play tensor field and scripts/hog26_scalar_corpus.py ACTOR_FIELDS omits it. Implement a versioned new public numeric representation and compatible serialization/inference path, preserving frozen old data/checkpoints; don't mutate the retired campaign schema in place. Also audit target confidence, unknown history, both-seat round trips and private actor leakage before fitting. Follow CALIBRATION_PROTOCOL.md and PIPELINE_DESIGN.md.
+Next address the public observation/serialization gate. Confirmed current gap: structured_obs.py emits own_last_play metadata for Mirror, but model.py PolicyInputs has no own-last-play tensor field and scripts/hog26_scalar_corpus.py ACTOR_FIELDS omits it. Implement a versioned new public numeric representation and compatible serialization/inference path, preserving frozen old data/checkpoints; don't mutate the retired campaign schema in place. Also audit target confidence, unknown history, both-seat round trips and private actor leakage before fitting. Follow docs/design/CALIBRATION_PROTOCOL.md and docs/design/PIPELINE_DESIGN.md.
 
 Native remains ready/headless/paused on lower-seat Prince/Cannon at292, local26789. All native capture/rescore work terminal. Old scheduler/frozen campaign preserved; full goal active, no paid compute/online play/policy learning. Extended spell/route/mask regression was started as exec4030; poll it if no appended completion below. New timed tests and diff whitespace pass.
 
@@ -294,7 +294,7 @@ Public-control boundary: degrade_simulator_public_observation still DROPS exact 
 
 Verification34 passed,3 deselected in reports/public_policy_contract_v2_20260915/verification.txt: roundtrip, inference history influence, hidden enemy perturbations both seats, metadata/config/vocab/shape failures, visual tracking/receipt propagation, confidence contract, legacy actor behavior. Skipped rollout/PPO/training tests, no optimizer/model fit. New module/tests/adapter Ruff and diff whitespace pass. All owned jobs terminal; native unchanged (Prince/Cannon292).
 
-Next integrate the v2 public sequence into a NEW corpus/collector with match/ruleset/tick/action/split provenance and validate mask/command round trips, without retrofitting frozen campaign files. Legacy recurrent training helpers still omit these new fields; v2 rejects that omission. Audit remaining public confidence/history semantics and independently calibrate before fitting. CALIBRATION_PROTOCOL.md remains authoritative for entry gates; all native opened controls are development only. Full goal active, old scheduler paused, no paid compute/online play/training/search.
+Next integrate the v2 public sequence into a NEW corpus/collector with match/ruleset/tick/action/split provenance and validate mask/command round trips, without retrofitting frozen campaign files. Legacy recurrent training helpers still omit these new fields; v2 rejects that omission. Audit remaining public confidence/history semantics and independently calibrate before fitting. docs/design/CALIBRATION_PROTOCOL.md remains authoritative for entry gates; all native opened controls are development only. Full goal active, old scheduler paused, no paid compute/online play/training/search.
 
 ## 2026-09-15: public match provenance and diagnostic collector verified
 
@@ -1949,7 +1949,7 @@ Golem3301 stillnative206/scalar94. Next capture Archer load/timeline through the
 Log push3260-3300 and map hit-reset-with-preserved-load into the independent clock
 model; preserving a single remaining cooldown is insufficient there.
 
-CALIBRATION_PROTOCOL.md now labels old22tick controls historical, points new runs
+docs/design/CALIBRATION_PROTOCOL.md now labels old22tick controls historical, points new runs
 to the verified one-tick schedule, and explicitly lists entry prerequisites after
 197tower matches. Supported ruleset/forms stillunfrozen (partialIceSpiritHPprofile),
 known decision-changing errors/public transient representations remain, numerical
@@ -3048,7 +3048,7 @@ New scripts:
   Separates strict reversals and tie disagreements; never marks acceptance.
 - tests/test_reacting_branch_audit.py: six tests pass, covering missing/duplicate/
   failed/nonterminal evidence, result precedence over HP and tie accounting.
-  Ruff and git diff checks pass. Updated CALIBRATION_PROTOCOL.md with scope.
+  Ruff and git diff checks pass. Updated docs/design/CALIBRATION_PROTOCOL.md with scope.
 
 Protocol frozen BEFORE collection:
 reports/calibration_development_20260915/reacting-log-pilot-protocol.json
@@ -3437,7 +3437,7 @@ Fresh-model public metadata v4 implemented:
   Cannon13/Tesla8/etc mass, unchangedunrelatedfeatures/legacycontracts, and a
   no-gradient level-aware publiccontract3 recurrentmodel forward. This tests
   interfaces, not playing strength.
-CALIBRATION_PROTOCOL.md now requires explicitverifiedmetadata for newlineage;
+docs/design/CALIBRATION_PROTOCOL.md now requires explicitverifiedmetadata for newlineage;
 cardmetadata4 is distinct from policyinputcontract3 and sequencearchive4.
 
 Validation:114targeted publicprojection/metadata/levels/archive/checkpoint tests
@@ -4174,7 +4174,7 @@ unchanged frozen native with hashes in crown-fallback-reacting-paired:
 exact, neighbor2811.5native vs2902.5scalar. Thus opened root best-action ordering
 matches, but all candidates still win and aggregation remains exploratory.
 
-BOTH LEARNING GATES STILL CLOSED. CALIBRATION_PROTOCOL.md requires independent
+BOTH LEARNING GATES STILL CLOSED. docs/design/CALIBRATION_PROTOCOL.md requires independent
 physical roots and frozen numerical thresholds after development variance/coverage
 estimation. This one opened root/two response seeds is not acceptance and does
 not establish human-level play. No training/search started.
@@ -6875,7 +6875,7 @@ confidence-awarefailures,noprivilegedtargets/clocks/elixir,staticpublicruleset
 lookups,reactive/nondegeneratebehaviorchecks,paireddevelopmentqualification.
 DoNOTrequirealreadyhuman-levelopponentsbeforefirsttraining gate; humanbenchmark
 remainsfinalseparate. Numericalacceptancethresholdsandfreshindependentroots
-remainunfrozen/uncollected;CALIBRATION_PROTOCOL.md authoritativeentrywork.
+remainunfrozen/uncollected;docs/design/CALIBRATION_PROTOCOL.md authoritativeentrywork.
 No policytraining/search/distillation/promotions orpaidcompute. Goalactive.
 
 ## 2026-09-16: public-only scripted opponent and native qualification pilot
@@ -7270,7 +7270,7 @@ P/resident-fallback-production-rechecks/registered-family-decision-audit.json:
 family-decision-audit.json is initial pre-ledger audit retained as development.
 All 25 paired winners agree; selected action regret zero; earlier 631 HP /424
 ending-tick residuals remain explicitly recorded. Root metric is narrower than
-all action-value accuracy. CALIBRATION_PROTOCOL.md updated with draft status.
+all action-value accuracy. docs/design/CALIBRATION_PROTOCOL.md updated with draft status.
 
 NEXT: finish prospective supported-scope and numeric public-state calibration
 contract, then independent sampler/collector integration. Do not create fresh
@@ -7425,7 +7425,7 @@ Must poll that exact session to terminal; don't assume completion from v1.
 73tests passed1.59s: public_reference_checks, native_public_observation,
 native_public_levels. Ruff touchedfilespassed. No physics changes/native jobs/
 learning/search/acceptance run. Draft reference-statecriteria saved to
-B/public-reference-criteria-draft-v1.json and CALIBRATION_PROTOCOL.md explained
+B/public-reference-criteria-draft-v1.json and docs/design/CALIBRATION_PROTOCOL.md explained
 reference-label precision vs camera noise and simulator decision sufficiency.
 
 NEXT: independent identity/level matching and transient-effect completeness,

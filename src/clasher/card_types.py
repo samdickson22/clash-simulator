@@ -1,7 +1,6 @@
 from .gamedata_normalization import normalized_walking_speed
 from dataclasses import dataclass, field
-from typing import Optional, Sequence, Protocol, Literal, Callable, Any, List, Dict
-from abc import ABC, abstractmethod
+from typing import Optional, Sequence, Protocol, Literal, Any, Dict
 
 CardKind = Literal["troop", "building", "spell", "champion"]
 Rarity = Literal["Common", "Rare", "Epic", "Legendary", "Champion"]

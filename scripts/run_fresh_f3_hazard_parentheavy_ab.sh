@@ -41,7 +41,7 @@ train_arm() {
   if [[ "$anchor_coef" != 0 ]]; then
     anchor_args=(--anchor-checkpoint "$source_checkpoint" --anchor-policy-kl-coef "$anchor_coef")
   fi
-  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py train -- \
+  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py train -- \
     --decks-path decks.json --sampling-decks-path "$train_decks" \
     --checkpoint-dir "$directory" --resume-from "$source_checkpoint" \
     --seed 1069901 --updates 28 --num-envs 64 --actor-workers 12 --actor-threads 1 \

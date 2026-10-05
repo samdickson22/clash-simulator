@@ -16,7 +16,7 @@ root=reports/fresh_f3_hazard_fullweight_outcome_seed1068401
 [[ -f "$parent" ]] || { print -u2 -- "missing update-10 hazard parent"; exit 1; }
 [[ ! -e "$candidate" ]] || { print -u2 -- "refusing existing update-20 hazard candidate"; exit 1; }
 
-env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py train -- \
+env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py train -- \
   --decks-path decks.json --sampling-decks-path "$train_decks" \
   --checkpoint-dir "$checkpoint_dir" --resume-from "$parent" \
   --seed 1068401 --updates 20 --num-envs 64 --actor-workers 12 --actor-threads 1 \

@@ -50,7 +50,7 @@ queue_eval() {
   mkdir -p "$output_root"
   nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. \
     OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 \
-    uv run python run_clasher.py eval -- \
+    uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" "$@" --games "$games" --mirror-match \
     --seed "$seed" --decision-interval 8 --max-ticks 6000 --device cpu \
     --reward-profile objective-v1 --quiet-engine \
@@ -103,7 +103,7 @@ for block in 0 1 2; do
   done
 done
 
-env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
   --checkpoint "$candidate" --opponent policy --opponent-checkpoint "$parent" \
   --sampling-decks-path "$heldout" --games 96 --mirror-match --seed 1069401 \
   --decision-interval 8 --max-ticks 6000 --device cpu --reward-profile objective-v1 \

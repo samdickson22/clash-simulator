@@ -47,8 +47,10 @@ PYTHONPATH=engine-rs:src nice -n 10 .venv/bin/python -B engine-rs/stage2_matches
 
 `differential.py` retains the Stage 1b four-card diagnostic suite and defaults; its historical `stage2_go` field means admission to Stage 2 implementation, not completion of Stage 2. Final Stage 2 admission is recorded in STAGE2.md and `stage2_manifest.json`.
 
-`build.sh` uses one Cargo job, nice 10 and an external target directory. Keep the copied extension and clean intermediates when idle:
+`build.sh` uses one Cargo job and nice 10. Its default target directory is `engine-rs/target` in this checkout; `CARGO_TARGET_DIR` and `PYO3_PYTHON` can override the build directory and Python interpreter. Keep the copied extension and clean only this checkout's intermediates when idle:
 
 ```sh
-CARGO_TARGET_DIR="$HOME/.cache/clasher-engine-speed/stage1-target" cargo clean --manifest-path engine-rs/Cargo.toml
+cargo clean --manifest-path engine-rs/Cargo.toml
 ```
+
+Some regression and full-game checks require frozen deck files, snapshots, and checkpoints that are not distributed in Git. The [public cleanup verification notes](../docs/history/public-cleanup-verification.md) distinguish checkout-only failures from checks supplied with local fixtures. Stage reports retain the historical admission scope and receipts.

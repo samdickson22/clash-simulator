@@ -1,10 +1,6 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
 
 from ..mechanics.mechanic_base import BaseMechanic
-
-if TYPE_CHECKING:
-    from ..entities import Troop
 
 
 @dataclass

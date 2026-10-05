@@ -67,7 +67,7 @@ New evidence, from the 13 opened v7 roots in `reports/v7_recovery_20260928/opene
 | Roots where all five candidates including wait tie exactly | 2 of 13 |
 | Roots that discriminate among play candidates (2–4 distinct native results) | 7 of 13 |
 
-Two consequences. First, the cross-engine residual on these branches is zero, so opened data cannot supply a cross-engine noise floor; a floor must come from same-engine repetition (§B2.2). Second, and more important, under the v7 candidate generator roughly half of the families tested only play-versus-wait and two tested nothing at all: a ±1-tile or 1-tick perturbation frequently produces a bit-identical continuation. Zero material failures across 32 such families would be weaker evidence than the 8.9% bound suggests, and `CALIBRATION_PROTOCOL.md` already states that fixed no-more-play branches cannot satisfy the ranking gate by themselves.
+Two consequences. First, the cross-engine residual on these branches is zero, so opened data cannot supply a cross-engine noise floor; a floor must come from same-engine repetition (§B2.2). Second, and more important, under the v7 candidate generator roughly half of the families tested only play-versus-wait and two tested nothing at all: a ±1-tile or 1-tick perturbation frequently produces a bit-identical continuation. Zero material failures across 32 such families would be weaker evidence than the 8.9% bound suggests, and `docs/design/CALIBRATION_PROTOCOL.md` already states that fixed no-more-play branches cannot satisfy the ranking gate by themselves.
 
 Proposal for the protocol text:
 1. A family is **informative** if, on the reference, at least two *play* candidates differ in mean match score, or their mean margins differ by more than the frozen noise floor.

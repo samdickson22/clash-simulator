@@ -35,7 +35,7 @@ for update in $(seq 41 "$end_update"); do
   fi
 done
 
-env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py train -- \
+env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py train -- \
   --decks-path decks.json \
   --sampling-decks-path "$train_pool" \
   --checkpoint-dir "$checkpoint_dir" \

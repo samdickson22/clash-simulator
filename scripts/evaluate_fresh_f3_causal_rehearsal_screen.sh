@@ -26,13 +26,13 @@ for arm in parent 0010 0025; do
   esac
   [[ -f "$checkpoint" ]] || { print -u2 -- "missing screen checkpoint: $checkpoint"; exit 1; }
   mkdir -p "$arm_root"
-  env PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" --opponent random --decks-path decks.json \
     --sampling-decks-path "$development" --games 12 --mirror-match --seed 1067902 \
     --decision-interval 8 --max-ticks 6000 --device cpu --reward-profile objective-v1 \
     --quiet-engine --json-out "$arm_root/random12.metrics.json" \
     --games-json-out "$arm_root/random12.games.json" > "$arm_root/random12.log" 2>&1
-  env PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" --opponent strategy --opponent-strategy balanced \
     --decks-path decks.json --sampling-decks-path "$development" --games 12 \
     --mirror-match --seed 1067903 --decision-interval 8 --max-ticks 6000 \

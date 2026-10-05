@@ -33,7 +33,7 @@ import json
 import random
 import zipfile
 from collections import deque
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping, Sequence

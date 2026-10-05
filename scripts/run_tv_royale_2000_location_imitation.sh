@@ -97,7 +97,7 @@ while IFS= read -r parent; do
       output_root="$checkpoint_root/${slug}_epoch${location_epochs}_seed${location_seed}"
       endpoint="$output_root/endpoint.pt"
       mkdir -p "$output_root"
-      PYTHONPATH=src:. uv run python run_clasher.py imitation -- fit \
+      PYTHONPATH=src:. uv run python scripts/run_clasher.py imitation -- fit \
         --corpus "$location_split_root/train.npz" \
         --initial-checkpoint "$parent" \
         --output-checkpoint "$endpoint" \

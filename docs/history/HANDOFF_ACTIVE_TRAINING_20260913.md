@@ -42,7 +42,7 @@ Completed findings:
 - The first fixed-order mirror probe gave no draws. A fixed 16-order excluded probe then produced 2 draws, 8 wins and 6 losses; both draws destroyed both kings before the time limit. These 16 games remain excluded from fitting/calibration.
 - Paired-view capture passed exact physical-trace and original-seat array parity on one loss and both draw games. Both actual views passed label/action and online-feature checks. All four files in experiments/hog26_scalar_paired_views are frozen.
 
-Read the latest entries in HANDOFF_MODEL_TRAINING_20260913.md and reports/hog26_protocol_reassessment_20260908.md for complete provenance. No older paused process remains. Do not relaunch completed campaigns.
+Read the latest entries in docs/history/HANDOFF_MODEL_TRAINING_20260913.md and reports/hog26_protocol_reassessment_20260908.md for complete provenance. No older paused process remains. Do not relaunch completed campaigns.
 
 Preserve the dirty tree, failed artifacts, reserved development/calibration/final roles, and all frozen Python directories. Do not edit src/clasher or scripts. Do not commit, reset, clean, stash, merge, push or disturb unrelated work. No subagents are authorized. Python/Ruff/pytest is /Users/sam/Desktop/code/clasher/.venv/bin. Current prefixes:threeClassEnv, mirrorTrainingEnv, mirrorFeaturesEnv, lateClassifierEnv. threeClassEnv prepends the three-class and supported-metrics directories to mirrorFeaturesEnv. The active model code imports both control feature and natural cache authorities.
 

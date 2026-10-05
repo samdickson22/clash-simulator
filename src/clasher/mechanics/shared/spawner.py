@@ -1,13 +1,9 @@
 import copy
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
 
 from ..mechanic_base import BaseMechanic
 from ...factory.dynamic_factory import troop_from_character_data
 from ...formations import native_radial_spawn_offset
-
-if TYPE_CHECKING:
-    from ...battle import BattleState
 
 
 @dataclass

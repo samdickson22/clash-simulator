@@ -4,11 +4,10 @@ Analysis of card attribute loading vs actual usage in the battle system.
 This script identifies the gap between available data and what's actually used.
 """
 
-import json
 from pathlib import Path
 import sys
 
-REPO_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))

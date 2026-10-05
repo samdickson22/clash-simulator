@@ -5,7 +5,7 @@ from ..mechanics.shared import (
     CrownTowerScaling, KnockbackOnHit, PeriodicSpawner, SpawnAreaEffect,
     DeathAreaEffect, MultipleTargetAttack, SerializedOnHitBuff, SpawnPushback,
 )
-from ..mechanics.champion import SkeletonKingSoulCollector, ChampionAbilityMechanic, ActiveAbility
+from ..mechanics.champion import SkeletonKingSoulCollector
 from ..cards import (
     AttackRecoil,
     ArcherQueenCloak,

@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
 import math
 
 from ..mechanics.mechanic_base import BaseMechanic
@@ -12,9 +11,6 @@ from ..kinematics import (
     tiles_to_logic_units,
     vector_towards_logic_units,
 )
-
-if TYPE_CHECKING:
-    from ..entities import Troop
 
 
 @dataclass

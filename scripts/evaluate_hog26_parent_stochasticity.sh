@@ -28,7 +28,7 @@ run_eval() {
   cd "$desktop_root"
   local command=(
     nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1
-    "$python_bin" run_clasher.py eval --
+    "$python_bin" scripts/run_clasher.py eval --
     --checkpoint "$checkpoint" --decks-path decks.json \
     --sampling-decks-path "$opponent_decks" \
     --candidate-sampling-decks-path "$candidate_decks" \

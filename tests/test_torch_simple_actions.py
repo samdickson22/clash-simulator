@@ -6,7 +6,7 @@ import pytest
 import torch
 
 from clasher.battle import BattleState
-from clasher.rl.common import BOARD_HEIGHT, BOARD_WIDTH, NUM_TILES
+from clasher.rl.common import BOARD_WIDTH, NUM_TILES
 from clasher.torch_sim.actions import ABILITY_ACTION, NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.simple_actions import FastActionKernel, FastActionState

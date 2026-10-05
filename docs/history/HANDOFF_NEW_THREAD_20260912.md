@@ -34,7 +34,7 @@ competent Clash Royale playing policy or a measured mid-ladder rating.
 - Python: `/Users/sam/Desktop/code/clasher/.venv/bin/python`
 - Base checkout: `/Users/sam/Desktop/code/clasher`
 - Original September 8 handoff:
-  `/Users/sam/Desktop/code/clasher/HANDOFF_NEW_THREAD_20260908.md`
+  `/Users/sam/Desktop/code/clasher/docs/history/HANDOFF_NEW_THREAD_20260908.md`
 
 Use the worktree above. Do not reset, clean, stash, merge, or delete its data and
 reports. The worktree contains many intentional untracked datasets and generated
@@ -314,7 +314,7 @@ calibration fitting, epoch selection, or outcome-dependent changes.
 
 ## Files to read in order
 
-1. `HANDOFF_NEW_THREAD_20260912.md`
+1. `docs/history/HANDOFF_NEW_THREAD_20260912.md`
 2. `reports/hog26_active_objective_20260911.md`
 3. Latest section of `reports/hog26_protocol_reassessment_20260908.md`
 4. `/Users/sam/Library/Application Support/ClasherMonitor/comparison-status.json`

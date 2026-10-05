@@ -1,11 +1,7 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 
 from ..mechanics.mechanic_base import BaseMechanic
 from ..kinematics import logic_time_milliseconds
-
-if TYPE_CHECKING:
-    from ..entities import Troop
 
 
 @dataclass

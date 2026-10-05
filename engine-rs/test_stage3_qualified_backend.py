@@ -3,7 +3,6 @@
 import hashlib
 import json
 from pathlib import Path
-import time
 import cloudpickle
 import numpy as np
 from differential import ES

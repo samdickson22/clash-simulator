@@ -24,7 +24,7 @@ screen_update() {
   [[ -f "$checkpoint" ]] || return 1
   mkdir -p "$root/update${update}"
   nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-    uv run python run_clasher.py strategy-benchmark -- \
+    uv run python scripts/run_clasher.py strategy-benchmark -- \
     --checkpoint "$checkpoint" --sampling-decks-path "$decks" \
     --games-per-opponent 4 --seed 1069801 --decision-interval 8 --max-ticks 6000 \
     --device cpu --reward-profile objective-v1 --quiet-engine \
@@ -32,7 +32,7 @@ screen_update() {
     --markdown-out "$root/update${update}/strategy.md" \
     > "$root/update${update}/strategy.log" 2>&1
   nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-    uv run python run_clasher.py eval -- \
+    uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" --opponent random --sampling-decks-path "$decks" \
     --games 24 --mirror-match --seed 1069802 --decision-interval 8 --max-ticks 6000 \
     --device cpu --reward-profile objective-v1 --quiet-engine \
@@ -40,7 +40,7 @@ screen_update() {
     --games-json-out "$root/update${update}/random24.games.json" \
     > "$root/update${update}/random24.log" 2>&1
   nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-    uv run python run_clasher.py eval -- \
+    uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" --opponent strategy --opponent-strategy balanced \
     --sampling-decks-path "$hog" --games 12 --mirror-match --seed 1069803 \
     --decision-interval 8 --max-ticks 6000 --device cpu --reward-profile objective-v1 \

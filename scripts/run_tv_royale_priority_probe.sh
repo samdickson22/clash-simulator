@@ -23,7 +23,7 @@ fi
 run_workload() {
   local name=$1
   shift
-  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" \
     "$@" \
     --device cpu \

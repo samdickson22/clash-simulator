@@ -16,7 +16,6 @@ from clasher.torch_sim.simple_outcomes import (
 )
 from clasher.torch_sim.simple_state import (
     FAST_KIND_BUILDING,
-    FAST_WINNER_IN_PROGRESS,
     FastGymState,
 )
 

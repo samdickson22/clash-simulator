@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 
 import sys
-REPO_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
@@ -190,7 +190,7 @@ def analyze_decks():
     print(f"📦 Found {len(sorted_cards)} unique cards across {len(decks_data.get('decks', []))} decks")
     print()
 
-    # Comprehensive alias map from random_battle.py
+    # Comprehensive alias map from examples/random_battle.py
     alias = {
         "The Log": "Log",
         "Log": "Log",

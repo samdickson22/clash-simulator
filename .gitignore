@@ -44,3 +44,45 @@ __pycache__/
 
 # Local evidence relocated from retired worktrees; do not put bulk captures in Git.
 /artifacts/worktree-data/
+
+# Local caches and native/build products.
+.DS_Store
+.mypy_cache/
+.hypothesis/
+.cache/
+build/
+dist/
+/engine-rs/target/
+*.so
+*.dylib
+*.dll
+
+# Generated research artifacts. Keep small reports/configuration in Git.
+*.log
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.sqlite3-*
+/reports/**/*.npz
+/reports/**/*.pt
+/reports/**/*.pth
+/reports/**/*.pkl
+/reports/**/frames/
+/reports/**/captures/
+/reports/**/runtime/
+/reports/**/runtime-*/
+/reports/**/pilot-runtime*/
+/runtime-snapshots/
+
+# Per-worktree maintenance receipts.
+/.cleanup-evidence/
+/PROGRESS.md
+
+# Local credentials and downloaded client/private-server binaries.
+.env.*
+!.env.example
+!.env.*.example
+*.apk
+*.aab
+*.ipa
+*.obb

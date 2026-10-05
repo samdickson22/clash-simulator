@@ -33,11 +33,11 @@ shared=(
 )
 
 nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-  uv run python run_clasher.py eval -- ${shared[@]} --opponent random \
+  uv run python scripts/run_clasher.py eval -- ${shared[@]} --opponent random \
   --games 24 --seed 1070501 --json-out "$out/random24.metrics.json" \
   --games-json-out "$out/random24.games.json" > "$out/random24.log" 2>&1
 nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-  uv run python run_clasher.py strategy-benchmark -- \
+  uv run python scripts/run_clasher.py strategy-benchmark -- \
   --checkpoint "$checkpoint" --decks-path decks.json \
   --sampling-decks-path "$opponent_decks" \
   --candidate-sampling-decks-path "$candidate_decks" \
@@ -47,12 +47,12 @@ nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
   --json-out "$out/strategy.json" --markdown-out "$out/strategy.md" \
   > "$out/strategy.log" 2>&1
 nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-  uv run python run_clasher.py eval -- ${shared[@]} --opponent policy \
+  uv run python scripts/run_clasher.py eval -- ${shared[@]} --opponent policy \
   --opponent-checkpoint "$direct_parent" --games 24 --seed 1070503 \
   --json-out "$out/direct24.metrics.json" \
   --games-json-out "$out/direct24.games.json" > "$out/direct24.log" 2>&1
 nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-  uv run python run_clasher.py eval -- ${shared[@]} --opponent strategy \
+  uv run python scripts/run_clasher.py eval -- ${shared[@]} --opponent strategy \
   --opponent-strategy balanced --games 12 --seed 1070504 \
   --json-out "$out/utilization12.metrics.json" \
   --games-json-out "$out/utilization12.games.json" \

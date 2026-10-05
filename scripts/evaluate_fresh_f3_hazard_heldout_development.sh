@@ -21,13 +21,13 @@ for arm in parent candidate; do
   checkpoint=$parent
   [[ "$arm" == candidate ]] && checkpoint=$candidate
   mkdir -p "$root/$arm"
-  env PYTHONPATH=src:. uv run python run_clasher.py strategy-benchmark -- \
+  env PYTHONPATH=src:. uv run python scripts/run_clasher.py strategy-benchmark -- \
     --checkpoint "$checkpoint" --decks-path decks.json --sampling-decks-path "$heldout" \
     --games-per-opponent 4 --seed 1068901 --decision-interval 8 --max-ticks 6000 \
     --device cpu --reward-profile objective-v1 --quiet-engine \
     --json-out "$root/$arm/strategy.json" --markdown-out "$root/$arm/strategy.md" \
     > "$root/$arm/strategy.log" 2>&1
-  env PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" --opponent random --decks-path decks.json \
     --sampling-decks-path "$heldout" --games 24 --mirror-match --seed 1068902 \
     --decision-interval 8 --max-ticks 6000 --device cpu --reward-profile objective-v1 \
@@ -35,7 +35,7 @@ for arm in parent candidate; do
     --games-json-out "$root/$arm/random24.games.json" > "$root/$arm/random24.log" 2>&1
 done
 
-env PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+env PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
   --checkpoint "$candidate" --opponent policy --opponent-checkpoint "$parent" \
   --decks-path decks.json --sampling-decks-path "$heldout" --games 48 --mirror-match \
   --seed 1068903 --decision-interval 8 --max-ticks 6000 --device cpu \

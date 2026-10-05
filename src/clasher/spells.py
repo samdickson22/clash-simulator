@@ -1,10 +1,10 @@
 from dataclasses import dataclass, field
 from collections.abc import Iterator, Mapping
 from threading import RLock
-from typing import Dict, List, TYPE_CHECKING
+from typing import Dict, TYPE_CHECKING
 from abc import ABC, abstractmethod
 
-from .entities import Entity, Projectile, Troop, AreaEffect, SpawnProjectile, RollingProjectile, TimedExplosive, Graveyard
+from .entities import Entity, Projectile, Troop, AreaEffect, SpawnProjectile, RollingProjectile, Graveyard
 from .arena import Position
 from .unit_traits import is_above_ground_surface, is_airborne_target
 from .kinematics import (

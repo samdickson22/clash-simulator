@@ -1,9 +1,7 @@
 """Timing, ownership of observations and absence handling for L1 v1."""
 from dataclasses import replace
-import sys
 from pathlib import Path
 import threading
-import time
 
 import numpy as np
 import pytest

@@ -25,15 +25,15 @@ for update in 5 10 20; do
     --opponent-sampling-decks-path "$opponent_decks" \
     --decision-interval 8 --max-ticks 6000 --device cpu \
     --reward-profile objective-v1 --quiet-engine)
-  nice -n 15 env PYTHONPATH=src:. OMP_NUM_THREADS=1 uv run python run_clasher.py eval -- \
+  nice -n 15 env PYTHONPATH=src:. OMP_NUM_THREADS=1 uv run python scripts/run_clasher.py eval -- \
     ${shared[@]} --opponent random --games 6 --seed 1071001 \
     --json-out "$out/random6.metrics.json" > "$out/random6.log" 2>&1
-  nice -n 15 env PYTHONPATH=src:. OMP_NUM_THREADS=1 uv run python run_clasher.py eval -- \
+  nice -n 15 env PYTHONPATH=src:. OMP_NUM_THREADS=1 uv run python scripts/run_clasher.py eval -- \
     ${shared[@]} --opponent policy --opponent-checkpoint "$direct_parent" \
     --games 6 --seed 1071003 --json-out "$out/direct6.metrics.json" \
     > "$out/direct6.log" 2>&1
   nice -n 15 env PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-    uv run python run_clasher.py strategy-benchmark -- \
+    uv run python scripts/run_clasher.py strategy-benchmark -- \
     --checkpoint "$checkpoint" --decks-path decks.json \
     --sampling-decks-path "$opponent_decks" \
     --candidate-sampling-decks-path "$learner_decks" \

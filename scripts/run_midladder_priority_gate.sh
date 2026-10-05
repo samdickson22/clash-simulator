@@ -30,7 +30,7 @@ mkdir -p "$priority_root"
 run_priority() {
   local name=$1
   shift
-  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$candidate" \
     "$@" \
     --device cpu \
@@ -108,7 +108,7 @@ mkdir -p "$full_root"
 run_full() {
   local name=$1
   shift
-  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$candidate" \
     "$@" \
     --device cpu \
@@ -236,7 +236,7 @@ for view in uniform frequency_weighted; do
   else
     seed=1046702
   fi
-  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$candidate" \
     --opponent policy \
     --opponent-checkpoint "$parent" \

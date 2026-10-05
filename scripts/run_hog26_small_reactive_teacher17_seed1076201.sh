@@ -29,7 +29,7 @@ done
 mkdir -p "$root" "$checkpoint_root"
 
 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. PYTORCH_ENABLE_MPS_FALLBACK=1 \
-  uv run python run_clasher.py imitation -- fit \
+  uv run python scripts/run_clasher.py imitation -- fit \
   --corpus "$corpus" --public-observation-sidecar "$sidecar" \
   --output-checkpoint "$candidate" --control-checkpoint "$control" \
   --manifest-out "$root/manifest.json" --decks-path decks.json \

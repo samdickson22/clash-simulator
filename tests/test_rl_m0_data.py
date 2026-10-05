@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 import torch
 
-from clasher.rl.deck_curriculum import CurriculumDeck, curriculum_families, pilot_curriculum, split_curriculum
+from clasher.rl.deck_curriculum import CurriculumDeck, pilot_curriculum, split_curriculum
 from clasher.rl.imitation import _batch_inputs, _sequence_batch_inputs, load_corpus, permute_hand_imitation_batch, validate_corpus_levels
 from clasher.rl.scripted_demonstrations import collect_public_script_game
 from clasher.rl.selfplay_env import SelfPlayBattleEnv, StepInfo

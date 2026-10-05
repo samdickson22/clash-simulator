@@ -36,7 +36,7 @@ for split in validation heldout; do
     decks=datasets/deck_curriculum_v2_seed1040001/heldout.json
     seed=1056002
   fi
-  nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$candidate" \
     --opponent policy \
     --opponent-checkpoint "$parent" \
@@ -64,7 +64,7 @@ run_paired_workload() {
     else
       checkpoint=$candidate
     fi
-    nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+    nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
       --checkpoint "$checkpoint" \
       "$@" \
       --games "$games" \
@@ -124,7 +124,7 @@ for role in parent candidate; do
   else
     checkpoint=$candidate
   fi
-  nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python run_clasher.py eval -- \
+  nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. uv run python scripts/run_clasher.py eval -- \
     --checkpoint "$checkpoint" \
     --opponent strategy \
     --opponent-strategy balanced \

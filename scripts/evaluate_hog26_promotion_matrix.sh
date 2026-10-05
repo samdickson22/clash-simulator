@@ -33,7 +33,7 @@ run_eval() {
     opponent_args=(--opponent strategy --opponent-strategy "$opponent")
   fi
   nice -n 10 env PYTHONUNBUFFERED=1 PYTHONPATH="$desktop_root/src:$desktop_root" OMP_NUM_THREADS=1 \
-    "$python_bin" "$desktop_root/run_clasher.py" eval -- \
+    "$python_bin" "$desktop_root/scripts/run_clasher.py" eval -- \
     --checkpoint "$checkpoint" --decks-path "$desktop_root/decks.json" \
     --sampling-decks-path "$opponent_decks" \
     --candidate-sampling-decks-path "$candidate_decks" \

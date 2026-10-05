@@ -28,7 +28,7 @@ done
 mkdir -p "$report_root" "$checkpoint_root"
 
 env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=1 \
-  uv run python run_clasher.py train -- \
+  uv run python scripts/run_clasher.py train -- \
   --decks-path decks.json --sampling-decks-path "$opponent_decks" \
   --learner-sampling-decks-path "$learner_decks" \
   --opponent-sampling-decks-path "$opponent_decks" \

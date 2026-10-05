@@ -33,7 +33,7 @@ def test_rl_pilot_rejects_stale_bounded_checkpoints_before_training() -> None:
     ).read_text(encoding="utf-8")
 
     stale_guard = script.index("refusing stale bounded-phase checkpoint")
-    training = script.index("run_clasher.py train")
+    training = script.index("scripts/run_clasher.py train")
     assert stale_guard < training
 
 
@@ -116,7 +116,7 @@ def test_mechanics_pfsp_pilot_is_gated_and_uses_strict_deck_pools() -> None:
     marker = script.index('[[ ! -f "$initializer_marker" ]]')
     preflight = script.index("pfsp_pilot_preflight_passed")
     parent_benchmark = script.index('"$root/parent_strategy.json"')
-    training = script.index("run_clasher.py train")
+    training = script.index("scripts/run_clasher.py train")
     stability = script.index("scripts/verify_rl_training_stability.py")
     direct = script.index('"$root/direct_${split}12.metrics.json"')
     win_condition_matrix = script.index("run_win_condition_utilization parent")
