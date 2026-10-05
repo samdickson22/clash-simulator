@@ -56,7 +56,7 @@ The relocated CLI resolved worktree-local data paths, and its headless smoke com
 
 The tracked base does not include `engine-speed/check_identity.sh` or the frozen baselines. The equivalent checks use byte-identical copies of the tracked P16, C56, broad-identity, and OQ drivers in a private input tree. `CLASHER_ROOT` and `PYTHONPATH` select the cleanup worktree's gamedata and engine. Deck files, recordings, and the policy checkpoint stay in that private tree and are not committed.
 
-The completed pre-change P16 check covered 12 episodes and 15,949 digest boundaries with zero mismatches. C56 covered seven episodes and 2,900 boundaries with zero mismatches. The immutable admitted recorded/random receipts serve as the other pre-change baselines. Post-change P16 and C56 checks also passed with zero mismatches. All 24 random-placement episodes passed with zero mismatches, covering all 16 cards, 7,198 boundaries, and 231 pocket placements. The eight-game recorded replay was interrupted by a second server restart before its first receipt. It is now running in two disjoint batches of four games through the same unmodified OQ driver; the final merged receipt will be checked by the original identity checker.
+The completed pre-change P16 check covered 12 episodes and 15,949 digest boundaries with zero mismatches. C56 covered seven episodes and 2,900 boundaries with zero mismatches. The immutable admitted recorded/random receipts serve as the other pre-change baselines. Post-change P16 and C56 checks also passed with zero mismatches. All 24 random-placement episodes passed with zero mismatches, covering all 16 cards, 7,198 boundaries, and 231 pocket placements. The eight-game recorded replay was interrupted by a second server restart before its first receipt. It was later completed on f35 after the rebase described below.
 
 For a locally supplied input tree with the original `reports/` topology, the wrapper equivalent is:
 
@@ -81,3 +81,16 @@ Check every command's exit status and the final receipt's episode count and mism
 Ruff's selected rules `F401,F841,E9,F63,F7,F82` went from 87 findings to 20 across `src`, `tests`, `scripts`, and `engine-rs`. Imports with possible side effects, benchmark clone lifetimes, and calls whose unused return value does not prove the call dead were retained. The existing `robust` warning in `scripts/evaluate_l1_events_v2.py` was not repaired in a behavior-preserving cleanup.
 
 Vulture and reference searches covered `src`, `tests`, `scripts`, `reports`, and `configs`. Referenced API/context-manager parameters remain. Historical report code, including two existing syntax errors in live-loop L2 analysis copies, remains attached to its original evidence. Fixing those reports or broad simulator/native regressions is separate work.
+
+## Rebase onto main `786d6bdb8` (2026-10-05, f35)
+
+The branch was rebased onto `786d6bdb8`, which adds Stage 6 Rust sources and report files, and its verification was rerun on f35. That machine runs Linux x86_64 with Python 3.12.13 and rustc 1.99.0. The rebase applied cleanly. The new main commit changes nothing under `src/` or `tests/`, so the Python suite comparison above still applies. A search of the rebased tree found no remaining use of any removed import, including the `stage2_matches` names, through either `from` imports or attribute access.
+
+- **Native extension:** the release build of the rebased branch is byte-identical to main's. Both `clasher_core.abi3.so` files have SHA-256 `e5ad6d17…f2bf1a`. The Rust edits are therefore behaviour-neutral by construction.
+- **Simulator identity:** the four modes use main's drivers and frozen baselines, with `CLASHER_ROOT` and `PYTHONPATH` pointing at the rebased tree. All had zero mismatches:
+  - P16: 12 episodes, 15,949 boundaries.
+  - C56: 7 episodes, 2,900 boundaries.
+  - Random placement: 24 episodes.
+  - Recorded: all 8 games, matching outcome, crowns, ticks and planner calls. This is the replay that was outstanding above.
+- **Main on the same machine:** the same four modes also passed with zero mismatches, and `engine-rs/test_parity.py` passed 13/13.
+
