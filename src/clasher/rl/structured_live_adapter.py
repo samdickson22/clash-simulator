@@ -4,7 +4,8 @@ The adapter accepts only :class:`PublicVisionFrame`.  It builds confidence-aware
 actor tensors, constructs the public legal-action mask itself, and owns every
 piece of temporal policy state.  It deliberately does not import the battle
 simulator, structured simulator observations, critic payloads, expert labels,
-or accumulated public history.
+or accumulated opponent history. Confirmed own control history may be supplied
+explicitly; command submissions never become acceptance evidence.
 """
 
 from __future__ import annotations
@@ -101,6 +102,12 @@ class LivePolicyInputs:
     opponent_seen_card_ids: Tensor | None = None
     opponent_play_event_ids: Tensor | None = None
     opponent_play_event_confidence: Tensor | None = None
+    own_last_play_ids: Tensor | None = None
+    own_last_play_features: Tensor | None = None
+    entity_levels: Tensor | None = None
+    entity_level_confidence: Tensor | None = None
+    hand_levels: Tensor | None = None
+    hand_level_confidence: Tensor | None = None
 
     @property
     def batch_size(self) -> int:
@@ -267,11 +274,13 @@ class StructuredLiveInferenceAdapter:
         NDArray[np.bool_],
         NDArray[np.float32],
         NDArray[np.float32],
+        NDArray[np.int64],
+        NDArray[np.float32],
         dict[str, Any],
     ]:
         max_entities = int(self.model.config.max_entities)
         rows: list[
-            tuple[tuple[Any, ...], int, NDArray[np.float32], NDArray[np.float32], float]
+            tuple[tuple[Any, ...], int, NDArray[np.float32], NDArray[np.float32], float, int, float]
         ] = []
         unknown_entities: list[str] = []
         ignored_statuses = 0
@@ -335,7 +344,7 @@ class StructuredLiveInferenceAdapter:
                 round(float(row[0]), 5),
                 entity.track_id,
             )
-            rows.append((sort_key, token_id, row, confidence, entity.confidence))
+            rows.append((sort_key, token_id, row, confidence, entity.confidence, entity.level or 0, entity.level_confidence))
         rows.sort(key=lambda item: item[0])
         if len(rows) > max_entities:
             raise InferenceContractError(
@@ -348,7 +357,11 @@ class StructuredLiveInferenceAdapter:
         feature_confidence = np.zeros(
             (max_entities, ENTITY_FEATURE_SIZE), dtype=np.float32
         )
-        for index, (_, token_id, row, confidence, id_confidence) in enumerate(rows):
+        entity_levels = np.zeros(max_entities, dtype=np.int64)
+        entity_level_confidence = np.zeros(max_entities, dtype=np.float32)
+        for index, (_, token_id, row, confidence, id_confidence, level, level_confidence) in enumerate(rows):
+            entity_levels[index] = level
+            entity_level_confidence[index] = level_confidence
             entity_ids[index] = token_id
             entity_features[index] = row
             entity_mask[index] = True
@@ -360,6 +373,8 @@ class StructuredLiveInferenceAdapter:
             entity_mask,
             identity_confidence,
             feature_confidence,
+            entity_levels,
+            entity_level_confidence,
             {
                 "unknown_entity_track_ids": unknown_entities,
                 "ignored_visible_status_count": ignored_statuses,
@@ -508,6 +523,8 @@ class StructuredLiveInferenceAdapter:
             entity_mask,
             entity_id_confidence,
             entity_feature_confidence,
+            entity_levels,
+            entity_level_confidence,
             entity_diagnostics,
         ) = self._entity_rows(frame)
         hand_ids, hand_confidence, hand_diagnostics = self._hand(frame)
@@ -524,13 +541,29 @@ class StructuredLiveInferenceAdapter:
             entity_id_confidence=entity_id_confidence,
             hand_id_confidence=hand_confidence,
             global_feature_confidence=global_confidence,
+            own_last_play=frame.own_last_play,
+            board_rotated=self.actor_id == 1,
         )
         action_mask = self.public_action_mask_builder.build(mask_input)
         if action_mask.shape != (self.public_action_mask_builder.num_actions,):
             raise LiveAdapterError("public action-mask builder returned wrong shape")
         if not action_mask[self.public_action_mask_builder.no_op_action]:
             raise LiveAdapterError("public action mask must retain no-op")
+        contract_version = int(getattr(self.model.config, "public_contract_version", 1))
+        hand_levels = np.asarray([level or 0 for level in frame.own_card_levels], dtype=np.int64)
+        hand_level_confidence = np.asarray(frame.own_card_level_confidence, dtype=np.float32)
+        hand_levels[hand_ids == 0] = 0
+        hand_level_confidence[hand_ids == 0] = 0
+        own_play_id = 0 if frame.own_last_play is None else self._token_id(frame.own_last_play.card_name)
+        own_play_known = frame.own_last_play is not None and own_play_id > 1
+        own_play_features = np.asarray([float(own_play_known), frame.own_last_play.elixir_cost / 10 if own_play_known else 0], dtype=np.float32)
         inputs = LivePolicyInputs(
+            own_last_play_ids=torch.as_tensor([[own_play_id if own_play_known else 0]], dtype=torch.long, device=self.device) if contract_version >= 2 else None,
+            own_last_play_features=_tensor(own_play_features, torch.float32, self.device) if contract_version >= 2 else None,
+            entity_levels=_tensor(entity_levels, torch.long, self.device) if contract_version >= 3 else None,
+            entity_level_confidence=_tensor(entity_level_confidence, torch.float32, self.device) if contract_version >= 3 else None,
+            hand_levels=_tensor(hand_levels, torch.long, self.device) if contract_version >= 4 else None,
+            hand_level_confidence=_tensor(hand_level_confidence, torch.float32, self.device) if contract_version >= 4 else None,
             entity_ids=_tensor(entity_ids, torch.long, self.device),
             entity_features=_tensor(entity_features, torch.float32, self.device),
             entity_mask=_tensor(entity_mask, torch.bool, self.device),
@@ -579,6 +612,9 @@ class StructuredLiveInferenceAdapter:
             "mask_source": "PublicActionMaskBuilder_current_public_frame",
             "critic_inputs": "absent",
             "previous_reward": "forced_zero",
+            "match_lifecycle": "unknown_wait_only",
+            "own_accepted_play": "confirmed" if own_play_known else "unknown",
+            "levels": "measured_only_no_default_inference",
             **entity_diagnostics,
             **hand_diagnostics,
             **global_diagnostics,

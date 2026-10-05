@@ -1,0 +1,1693 @@
+{
+ "schema": "level-extension-native-spell-events-v1",
+ "description": "Unmodified native combatEvents rows from level-extension-evidence-v2 coverage games (native-final-v7 runtime, emulator-5580, attestation 864227bf...). 'expected' is the declared spell whose hitpoints damage the row records (null: not spell HP damage).",
+ "probes": {
+  "0": {
+   "frames": {
+    "path": "reports/strategy_council_20260928/m0/level-extension-evidence-v2/native/probe-0/frames.jsonl.gz",
+    "sha256": "c0af665cdcb9a362ef64695c1bdc002d3f46b41360474534930cdaf3f1777507"
+   },
+   "plan": {
+    "card_level": 10,
+    "king_levels": [
+     10,
+     12
+    ],
+    "native_scope": "uniform_cards_asymmetric_kings"
+   },
+   "attacker": 0,
+   "caster": 1,
+   "events": [
+    {
+     "frame_tick": 275,
+     "frame_generation": 868,
+     "frame_state_epoch": 868,
+     "expected": "Fireball",
+     "event": {
+      "sequence": 617197,
+      "tick": 274,
+      "generation": 868,
+      "stateEpoch": 868,
+      "kind": "damage",
+      "hookOffset": 16138948,
+      "callerOffset": null,
+      "causeSequence": null,
+      "pool": "hitpoints",
+      "terminalReason": "none",
+      "lethal": true,
+      "deploymentContext": null,
+      "target": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000006,
+       "entityKey": [
+        0,
+        -2,
+        5000006
+       ],
+       "owner": 0,
+       "objectIndex": 2,
+       "secondaryIndex": 0,
+       "cardId": 26000027,
+       "objectKind": 5,
+       "position": [
+        3237,
+        22721
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "immediateSource": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000008,
+       "entityKey": [
+        1,
+        -2,
+        4000008
+       ],
+       "owner": 1,
+       "objectIndex": 4,
+       "secondaryIndex": 2,
+       "cardId": 28000000,
+       "objectKind": 4,
+       "position": [
+        3500,
+        22500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "source": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000003,
+       "entityKey": [
+        1,
+        -2,
+        5000003
+       ],
+       "owner": 1,
+       "objectIndex": -1,
+       "secondaryIndex": -1,
+       "cardId": -1,
+       "objectKind": 5,
+       "position": [
+        9000,
+        29000
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "projectile": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000008,
+       "entityKey": [
+        1,
+        -2,
+        4000008
+       ],
+       "owner": 1,
+       "objectIndex": 4,
+       "secondaryIndex": 2,
+       "cardId": 28000000,
+       "objectKind": 4,
+       "position": [
+        3500,
+        22500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "related": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "spawnProvenance": null,
+      "requestedAmount": 626,
+      "actualAmount": 498,
+      "preHp": 498,
+      "postHp": 0,
+      "preBuiltInShield": 0,
+      "postBuiltInShield": 0,
+      "preBuffShield": null,
+      "postBuffShield": null,
+      "destinationBefore": null,
+      "destinationAfter": null
+     }
+    },
+    {
+     "frame_tick": 1070,
+     "frame_generation": 868,
+     "frame_state_epoch": 868,
+     "expected": null,
+     "event": {
+      "sequence": 617337,
+      "tick": 1066,
+      "generation": 868,
+      "stateEpoch": 868,
+      "kind": "damage",
+      "hookOffset": 16138948,
+      "callerOffset": null,
+      "causeSequence": null,
+      "pool": "built_in_shield",
+      "terminalReason": "none",
+      "lethal": false,
+      "deploymentContext": null,
+      "target": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000013,
+       "entityKey": [
+        0,
+        -2,
+        5000013
+       ],
+       "owner": 0,
+       "objectIndex": 2,
+       "secondaryIndex": 5,
+       "cardId": 26000027,
+       "objectKind": 5,
+       "position": [
+        3695,
+        18168
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "immediateSource": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000043,
+       "entityKey": [
+        1,
+        -2,
+        4000043
+       ],
+       "owner": 1,
+       "objectIndex": 4,
+       "secondaryIndex": 7,
+       "cardId": 28000000,
+       "objectKind": 4,
+       "position": [
+        3500,
+        17500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "source": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000003,
+       "entityKey": [
+        1,
+        -2,
+        5000003
+       ],
+       "owner": 1,
+       "objectIndex": -1,
+       "secondaryIndex": -1,
+       "cardId": -1,
+       "objectKind": 5,
+       "position": [
+        9000,
+        29000
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "projectile": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000043,
+       "entityKey": [
+        1,
+        -2,
+        4000043
+       ],
+       "owner": 1,
+       "objectIndex": 4,
+       "secondaryIndex": 7,
+       "cardId": 28000000,
+       "objectKind": 4,
+       "position": [
+        3500,
+        17500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "related": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "spawnProvenance": null,
+      "requestedAmount": 626,
+      "actualAmount": 35,
+      "preHp": 1092,
+      "postHp": 1092,
+      "preBuiltInShield": 35,
+      "postBuiltInShield": 0,
+      "preBuffShield": null,
+      "postBuffShield": null,
+      "destinationBefore": null,
+      "destinationAfter": null
+     }
+    },
+    {
+     "frame_tick": 370,
+     "frame_generation": 868,
+     "frame_state_epoch": 868,
+     "expected": "Zap",
+     "event": {
+      "sequence": 617204,
+      "tick": 365,
+      "generation": 868,
+      "stateEpoch": 868,
+      "kind": "damage",
+      "hookOffset": 16138948,
+      "callerOffset": null,
+      "causeSequence": null,
+      "pool": "hitpoints",
+      "terminalReason": "none",
+      "lethal": false,
+      "deploymentContext": null,
+      "target": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000009,
+       "entityKey": [
+        0,
+        -2,
+        5000009
+       ],
+       "owner": 0,
+       "objectIndex": 1,
+       "secondaryIndex": 2,
+       "cardId": 26000014,
+       "objectKind": 5,
+       "position": [
+        3273,
+        17114
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "immediateSource": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 3000000,
+       "entityKey": [
+        1,
+        -2,
+        3000000
+       ],
+       "owner": 1,
+       "objectIndex": 6,
+       "secondaryIndex": 3,
+       "cardId": 28000008,
+       "objectKind": 3,
+       "position": [
+        3500,
+        17500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "source": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 3000000,
+       "entityKey": [
+        1,
+        -2,
+        3000000
+       ],
+       "owner": 1,
+       "objectIndex": 6,
+       "secondaryIndex": 3,
+       "cardId": 28000008,
+       "objectKind": 3,
+       "position": [
+        3500,
+        17500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "projectile": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "related": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "spawnProvenance": null,
+      "requestedAmount": 174,
+      "actualAmount": 174,
+      "preHp": 657,
+      "postHp": 483,
+      "preBuiltInShield": 0,
+      "postBuiltInShield": 0,
+      "preBuffShield": null,
+      "postBuffShield": null,
+      "destinationBefore": null,
+      "destinationAfter": null
+     }
+    },
+    {
+     "frame_tick": 810,
+     "frame_generation": 868,
+     "frame_state_epoch": 868,
+     "expected": "Log",
+     "event": {
+      "sequence": 617293,
+      "tick": 809,
+      "generation": 868,
+      "stateEpoch": 868,
+      "kind": "damage",
+      "hookOffset": 16138948,
+      "callerOffset": null,
+      "causeSequence": null,
+      "pool": "hitpoints",
+      "terminalReason": "none",
+      "lethal": false,
+      "deploymentContext": null,
+      "target": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000012,
+       "entityKey": [
+        0,
+        -2,
+        5000012
+       ],
+       "owner": 0,
+       "objectIndex": 7,
+       "secondaryIndex": 4,
+       "cardId": 26000021,
+       "objectKind": 5,
+       "position": [
+        3303,
+        15275
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "immediateSource": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000034,
+       "entityKey": [
+        1,
+        -2,
+        4000034
+       ],
+       "owner": 1,
+       "objectIndex": 5,
+       "secondaryIndex": 5,
+       "cardId": 28000011,
+       "objectKind": 4,
+       "position": [
+        3500,
+        16300
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "source": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000034,
+       "entityKey": [
+        1,
+        -2,
+        4000034
+       ],
+       "owner": 1,
+       "objectIndex": 5,
+       "secondaryIndex": 5,
+       "cardId": 28000011,
+       "objectKind": 4,
+       "position": [
+        3500,
+        16300
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "projectile": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000034,
+       "entityKey": [
+        1,
+        -2,
+        4000034
+       ],
+       "owner": 1,
+       "objectIndex": 5,
+       "secondaryIndex": 5,
+       "cardId": 28000011,
+       "objectKind": 4,
+       "position": [
+        3500,
+        16300
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "related": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "spawnProvenance": null,
+      "requestedAmount": 244,
+      "actualAmount": 244,
+      "preHp": 1544,
+      "postHp": 1300,
+      "preBuiltInShield": 0,
+      "postBuiltInShield": 0,
+      "preBuffShield": null,
+      "postBuffShield": null,
+      "destinationBefore": null,
+      "destinationAfter": null
+     }
+    },
+    {
+     "frame_tick": 275,
+     "frame_generation": 868,
+     "frame_state_epoch": 868,
+     "expected": null,
+     "event": {
+      "sequence": 617198,
+      "tick": 274,
+      "generation": 868,
+      "stateEpoch": 868,
+      "kind": "death",
+      "hookOffset": 16138948,
+      "callerOffset": null,
+      "causeSequence": 617197,
+      "pool": "hitpoints",
+      "terminalReason": "none",
+      "lethal": true,
+      "deploymentContext": null,
+      "target": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000006,
+       "entityKey": [
+        0,
+        -2,
+        5000006
+       ],
+       "owner": 0,
+       "objectIndex": 2,
+       "secondaryIndex": 0,
+       "cardId": 26000027,
+       "objectKind": 5,
+       "position": [
+        3237,
+        22721
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "immediateSource": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000008,
+       "entityKey": [
+        1,
+        -2,
+        4000008
+       ],
+       "owner": 1,
+       "objectIndex": 4,
+       "secondaryIndex": 2,
+       "cardId": 28000000,
+       "objectKind": 4,
+       "position": [
+        3500,
+        22500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "source": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000003,
+       "entityKey": [
+        1,
+        -2,
+        5000003
+       ],
+       "owner": 1,
+       "objectIndex": -1,
+       "secondaryIndex": -1,
+       "cardId": -1,
+       "objectKind": 5,
+       "position": [
+        9000,
+        29000
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "projectile": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000008,
+       "entityKey": [
+        1,
+        -2,
+        4000008
+       ],
+       "owner": 1,
+       "objectIndex": 4,
+       "secondaryIndex": 2,
+       "cardId": 28000000,
+       "objectKind": 4,
+       "position": [
+        3500,
+        22500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "related": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "spawnProvenance": null,
+      "requestedAmount": 626,
+      "actualAmount": 498,
+      "preHp": 498,
+      "postHp": 0,
+      "preBuiltInShield": 0,
+      "postBuiltInShield": 0,
+      "preBuffShield": null,
+      "postBuffShield": null,
+      "destinationBefore": null,
+      "destinationAfter": null
+     }
+    },
+    {
+     "frame_tick": 265,
+     "frame_generation": 868,
+     "frame_state_epoch": 868,
+     "expected": null,
+     "event": {
+      "sequence": 617194,
+      "tick": 260,
+      "generation": 868,
+      "stateEpoch": 868,
+      "kind": "damage",
+      "hookOffset": 16138948,
+      "callerOffset": null,
+      "causeSequence": null,
+      "pool": "hitpoints",
+      "terminalReason": "none",
+      "lethal": false,
+      "deploymentContext": null,
+      "target": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000006,
+       "entityKey": [
+        0,
+        -2,
+        5000006
+       ],
+       "owner": 0,
+       "objectIndex": 2,
+       "secondaryIndex": 0,
+       "cardId": 26000027,
+       "objectKind": 5,
+       "position": [
+        3237,
+        22721
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "immediateSource": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000007,
+       "entityKey": [
+        1,
+        -2,
+        4000007
+       ],
+       "owner": 1,
+       "objectIndex": -1,
+       "secondaryIndex": -1,
+       "cardId": -1,
+       "objectKind": 4,
+       "position": [
+        3237,
+        22721
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "source": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000004,
+       "entityKey": [
+        1,
+        -2,
+        5000004
+       ],
+       "owner": 1,
+       "objectIndex": -1,
+       "secondaryIndex": -1,
+       "cardId": -1,
+       "objectKind": 5,
+       "position": [
+        3500,
+        25500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "projectile": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000007,
+       "entityKey": [
+        1,
+        -2,
+        4000007
+       ],
+       "owner": 1,
+       "objectIndex": -1,
+       "secondaryIndex": -1,
+       "cardId": -1,
+       "objectKind": 4,
+       "position": [
+        3237,
+        22721
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "related": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "spawnProvenance": null,
+      "requestedAmount": 99,
+      "actualAmount": 99,
+      "preHp": 597,
+      "postHp": 498,
+      "preBuiltInShield": 0,
+      "postBuiltInShield": 0,
+      "preBuffShield": null,
+      "postBuffShield": null,
+      "destinationBefore": null,
+      "destinationAfter": null
+     }
+    }
+   ]
+  },
+  "3": {
+   "frames": {
+    "path": "reports/strategy_council_20260928/m0/level-extension-evidence-v2/native/probe-3/frames.jsonl.gz",
+    "sha256": "1a5ea363f42be02b93969a068b928ac59cd782c47050d6f3beed726cb75edbef"
+   },
+   "plan": {
+    "card_level": 12,
+    "king_levels": [
+     10,
+     12
+    ],
+    "native_scope": "uniform_cards_asymmetric_kings"
+   },
+   "attacker": 1,
+   "caster": 0,
+   "events": [
+    {
+     "frame_tick": 205,
+     "frame_generation": 883,
+     "frame_state_epoch": 883,
+     "expected": "Fireball",
+     "event": {
+      "sequence": 620102,
+      "tick": 201,
+      "generation": 883,
+      "stateEpoch": 883,
+      "kind": "damage",
+      "hookOffset": 16138948,
+      "callerOffset": null,
+      "causeSequence": null,
+      "pool": "hitpoints",
+      "terminalReason": "none",
+      "lethal": true,
+      "deploymentContext": null,
+      "target": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000006,
+       "entityKey": [
+        1,
+        -2,
+        5000006
+       ],
+       "owner": 1,
+       "objectIndex": 1,
+       "secondaryIndex": 0,
+       "cardId": 26000014,
+       "objectKind": 5,
+       "position": [
+        14819,
+        14596
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "immediateSource": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000002,
+       "entityKey": [
+        0,
+        -2,
+        4000002
+       ],
+       "owner": 0,
+       "objectIndex": 4,
+       "secondaryIndex": 2,
+       "cardId": 28000000,
+       "objectKind": 4,
+       "position": [
+        14500,
+        14500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "source": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000000,
+       "entityKey": [
+        0,
+        -2,
+        5000000
+       ],
+       "owner": 0,
+       "objectIndex": -1,
+       "secondaryIndex": -1,
+       "cardId": -1,
+       "objectKind": 5,
+       "position": [
+        9000,
+        3000
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "projectile": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000002,
+       "entityKey": [
+        0,
+        -2,
+        4000002
+       ],
+       "owner": 0,
+       "objectIndex": 4,
+       "secondaryIndex": 2,
+       "cardId": 28000000,
+       "objectKind": 4,
+       "position": [
+        14500,
+        14500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "related": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "spawnProvenance": null,
+      "requestedAmount": 755,
+      "actualAmount": 168,
+      "preHp": 168,
+      "postHp": 0,
+      "preBuiltInShield": 0,
+      "postBuiltInShield": 0,
+      "preBuffShield": null,
+      "postBuffShield": null,
+      "destinationBefore": null,
+      "destinationAfter": null
+     }
+    },
+    {
+     "frame_tick": 175,
+     "frame_generation": 883,
+     "frame_state_epoch": 883,
+     "expected": "Zap",
+     "event": {
+      "sequence": 620089,
+      "tick": 170,
+      "generation": 883,
+      "stateEpoch": 883,
+      "kind": "damage",
+      "hookOffset": 16138948,
+      "callerOffset": null,
+      "causeSequence": null,
+      "pool": "hitpoints",
+      "terminalReason": "none",
+      "lethal": false,
+      "deploymentContext": null,
+      "target": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000006,
+       "entityKey": [
+        1,
+        -2,
+        5000006
+       ],
+       "owner": 1,
+       "objectIndex": 1,
+       "secondaryIndex": 0,
+       "cardId": 26000014,
+       "objectKind": 5,
+       "position": [
+        14727,
+        14885
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "immediateSource": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 3000000,
+       "entityKey": [
+        0,
+        -2,
+        3000000
+       ],
+       "owner": 0,
+       "objectIndex": 6,
+       "secondaryIndex": 0,
+       "cardId": 28000008,
+       "objectKind": 3,
+       "position": [
+        14500,
+        14500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "source": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 3000000,
+       "entityKey": [
+        0,
+        -2,
+        3000000
+       ],
+       "owner": 0,
+       "objectIndex": 6,
+       "secondaryIndex": 0,
+       "cardId": 28000008,
+       "objectKind": 3,
+       "position": [
+        14500,
+        14500
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "projectile": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "related": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "spawnProvenance": null,
+      "requestedAmount": 210,
+      "actualAmount": 210,
+      "preHp": 792,
+      "postHp": 582,
+      "preBuiltInShield": 0,
+      "postBuiltInShield": 0,
+      "preBuffShield": null,
+      "postBuffShield": null,
+      "destinationBefore": null,
+      "destinationAfter": null
+     }
+    },
+    {
+     "frame_tick": 185,
+     "frame_generation": 883,
+     "frame_state_epoch": 883,
+     "expected": "Log",
+     "event": {
+      "sequence": 620097,
+      "tick": 184,
+      "generation": 883,
+      "stateEpoch": 883,
+      "kind": "damage",
+      "hookOffset": 16138948,
+      "callerOffset": null,
+      "causeSequence": null,
+      "pool": "hitpoints",
+      "terminalReason": "none",
+      "lethal": false,
+      "deploymentContext": null,
+      "target": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 5000006,
+       "entityKey": [
+        1,
+        -2,
+        5000006
+       ],
+       "owner": 1,
+       "objectIndex": 1,
+       "secondaryIndex": 0,
+       "cardId": 26000014,
+       "objectKind": 5,
+       "position": [
+        14730,
+        14645
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "immediateSource": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000003,
+       "entityKey": [
+        0,
+        -2,
+        4000003
+       ],
+       "owner": 0,
+       "objectIndex": 5,
+       "secondaryIndex": 1,
+       "cardId": 28000011,
+       "objectKind": 4,
+       "position": [
+        14500,
+        13700
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "source": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000003,
+       "entityKey": [
+        0,
+        -2,
+        4000003
+       ],
+       "owner": 0,
+       "objectIndex": 5,
+       "secondaryIndex": 1,
+       "cardId": 28000011,
+       "objectKind": 4,
+       "position": [
+        14500,
+        13700
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "projectile": {
+       "validated": true,
+       "present": true,
+       "nativeObjectId": 4000003,
+       "entityKey": [
+        0,
+        -2,
+        4000003
+       ],
+       "owner": 0,
+       "objectIndex": 5,
+       "secondaryIndex": 1,
+       "cardId": 28000011,
+       "objectKind": 4,
+       "position": [
+        14500,
+        13700
+       ],
+       "visibilityValidated": true,
+       "invisibleCount": 0
+      },
+      "related": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetBefore": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeSourceAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "routeTargetAfter": {
+       "validated": false,
+       "present": false,
+       "nativeObjectId": null,
+       "entityKey": null,
+       "owner": null,
+       "objectIndex": null,
+       "secondaryIndex": null,
+       "cardId": null,
+       "objectKind": null,
+       "position": null,
+       "visibilityValidated": false,
+       "invisibleCount": null
+      },
+      "spawnProvenance": null,
+      "requestedAmount": 295,
+      "actualAmount": 295,
+      "preHp": 582,
+      "postHp": 287,
+      "preBuiltInShield": 0,
+      "postBuiltInShield": 0,
+      "preBuffShield": null,
+      "postBuffShield": null,
+      "destinationBefore": null,
+      "destinationAfter": null
+     }
+    }
+   ]
+  }
+ }
+}

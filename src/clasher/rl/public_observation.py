@@ -231,6 +231,22 @@ class ConfidenceAwareActorObservation:
                 or ((levels == 0) != (level_confidence == 0)).any()
                 or ((~observation.entity_mask) & ((levels != 0) | (level_confidence != 0))).any()):
                 raise ValueError('invalid public entity levels or confidence')
+        hand_levels, hand_confidence = observation.hand_levels, observation.hand_level_confidence
+        if (hand_levels is None) != (hand_confidence is None):
+            raise ValueError("incomplete public hand level fields")
+        if hand_levels is not None:
+            if levels is None:
+                raise ValueError("public hand levels require entity level fields")
+            if (hand_levels.dtype != np.int64 or hand_confidence.dtype != np.float32
+                or hand_levels.shape != observation.hand_ids.shape
+                or hand_confidence.shape != hand_levels.shape
+                or hand_levels.shape[-1] != VISIBLE_CARD_SLOTS):
+                raise ValueError("invalid public hand level shape or dtype")
+            _finite_unit_interval("hand level confidence", hand_confidence)
+            if (((hand_levels < 0) | (hand_levels > 127)).any()
+                or ((hand_levels == 0) != (hand_confidence == 0)).any()
+                or ((observation.hand_ids == 0) & (hand_levels != 0)).any()):
+                raise ValueError("invalid public hand levels or confidence")
         expected_shapes = {
             "entity_id_confidence": observation.entity_ids.shape,
             "entity_feature_confidence": observation.entity_features.shape,
@@ -500,6 +516,8 @@ def degrade_simulator_public_observation(
 
     projected = ActorObservation(
         # The current visual extractor has no calibrated level-label reader.
+        hand_levels=None if observation.hand_levels is None else np.zeros_like(observation.hand_levels),
+        hand_level_confidence=None if observation.hand_level_confidence is None else np.zeros_like(observation.hand_level_confidence),
         entity_levels=None if observation.entity_levels is None else np.zeros_like(observation.entity_levels),
         entity_level_confidence=None if observation.entity_level_confidence is None else np.zeros_like(observation.entity_level_confidence),
         terminal=observation.terminal,
@@ -526,6 +544,37 @@ def degrade_simulator_public_observation(
         opponent_seen_card_confidence=np.zeros(
             observation.opponent_seen_card_ids.shape, dtype=np.float32
         ),
+    )
+    result.validate()
+    validate_real_play_feature_contract(result)
+    return result
+
+
+def project_council_public_observation(
+    observation: ActorObservation | ConfidenceAwareActorObservation,
+) -> ConfidenceAwareActorObservation:
+    """Project clean public state onto real-play-v2 while preserving missingness.
+
+    This projection adds no perception noise and never infers missing levels.
+    It is the public-v4 simulator contract; the privileged critic is separate.
+    """
+    source = (observation if isinstance(observation, ConfidenceAwareActorObservation)
+              else exact_public_observation(observation))
+    source.validate()
+    payload = source.observation
+    entity_allowed = np.zeros(payload.entity_features.shape, dtype=bool)
+    entity_allowed[..., sorted(REAL_PLAY_ENTITY_FEATURE_INDICES)] = True
+    global_allowed = np.zeros(payload.global_features.shape, dtype=bool)
+    global_allowed[..., sorted(REAL_PLAY_GLOBAL_FEATURE_INDICES)] = True
+    result = replace(
+        source,
+        observation=replace(
+            payload,
+            entity_features=np.where(entity_allowed, payload.entity_features, 0),
+            global_features=np.where(global_allowed, payload.global_features, 0),
+        ),
+        entity_feature_confidence=np.where(entity_allowed, source.entity_feature_confidence, 0),
+        global_feature_confidence=np.where(global_allowed, source.global_feature_confidence, 0),
     )
     result.validate()
     validate_real_play_feature_contract(result)

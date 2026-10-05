@@ -1,0 +1,16 @@
+# B4 audit (buildings / deploy-anywhere / champions) - read-only code+probe audit, 2026-10-03
+
+| Card | Engine path | Status | Gap / evidence | Sev. | Suggested native scenario |
+|---|---|---|---|---|---|
+| Furnace (FirespiritHut) | battle.py:1311 (spawned as Building: gamedata tidType BUILDING) | GAP | native Furnace_rework is a walking troop (speed 60, 284 HP, 70-dmg projectile, ActionInterval spawning FireSpirits every 7000 ms, StartCounterAt 1950, spawn DeployTime 500). Engine: static building, no lifetime, no spawns in 10 s. onStartingActionData unhandled (spawner detector needs spawnPauseTime, mechanic_detector.py:198-243) | consequential | Furnace at bridge: movement, first spirit time, spawn gap |
+| Goblin Hut | building with DeathSpawn only (mechanic_detector.py:69) | GAP | native ActionGoblinHutLifeState: wakes when enemy within 6000, waits 1000 ms, spawns SpearGoblin_Dummy every 2200 ms (offset 1200, DeployTime 500). Gamedata SpawnNumber 0, no action -> 0 spawns alive. Death spawn (1 SpearGoblin) and 30 s lifetime OK | consequential | Hut alone vs hut + Knight in range: spawn times |
+| Inferno Tower | mechanic_detector.py:116-140, damage_ramp.py:37, balance.py:238 | implemented | stages 17/62/331 at 0/2000/4000 ms, reset on retarget/zap/shield break | - | ramp receipts vs Golem |
+| X-Bow | battle.py:2704 (3x3), balance.py:292 | implemented | deploy 3500, range 11.5, hit speed 300; TurretMovement 10 (turn rate) not modelled | small | wide-angle retarget delay |
+| Bomb Tower | death_effects.py:116, balance.py:357 | implemented | death bomb ~3 s fuse, 87 dmg r3000 | - | death bomb timing |
+| Miner | battle.py:1235-1245, balance.py:264,704, mechanic_detector.py:166-179 | GAP | crown damage pinned 39 (balance.py:176, gamedata -80%); native miner.toml CrownTowerDamagePercent=-75 (~48 at L11). WalkingSpeedTweakPercentage 20 unchecked | consequential | Miner on Princess Tower: dmg/hit |
+| Goblin Barrel | spells.py:956, balance.py:756 | implemented | King-tower launch, 3 goblins, 1100 ms deploy | - | - |
+| Mighty Miner | Troop + DamageRamp 16/80/160 | GAP | no ability (champion setup only SkeletonKing, mechanic_detector.py:333-354). native MightyMinerLaneSwitch cost 1, cd 13000, cast 933, trigger 500, lane switch + MightyMinerBomb 130 dmg r3000 pushback 1800, 1 s fuse. Mass 6 / IgnorePushback missing | consequential | ability: lane switch position, bomb dmg/push |
+| Goblinstein | two bodies battle.py:1553-1623 | PARTIAL | Doctor + Monster spawn; ability missing: native cost 2, cd 17000, 4000 ms tether, width 2000, 42 dmg/500 ms (9 crown). Monster mass 18 / IgnorePushback missing | consequential | tether dmg ticks |
+| Archer Queen | cards/archer_queen.py, mechanic_detector.py:315-321 | implemented | cost 1, cd 17000, buff 3500, cast 933, trigger 200, hitspeed x2.8, move x0.75, invisible (area dmg still hits) | - | cloak first rapid shot timing |
+
+Champion API: BattleState.can_activate_champion_ability / activate_champion_ability (battle.py:1513-1529); newest live copy owns ability; readiness ability.py:26-57 (elixir, alive, deployed, cooldown from effect start + duration + cooldown). Cost on ability.elixir_cost (not observed). One-champion rule: not enforced; unknown native -> scenario.

@@ -13,6 +13,7 @@ def _reward_env(*, gamma: float | None, previous: float) -> SelfPlayBattleEnv:
     env.battle = object()  # type: ignore[assignment]
     env.reward_profile = OBJECTIVE_V1
     env.reward_shaping_gamma = gamma
+    env.reward_potential_scale = 1.0  # legacy (pre-council) scale
     env._prev_reward_potential_p0 = previous
     return env
 

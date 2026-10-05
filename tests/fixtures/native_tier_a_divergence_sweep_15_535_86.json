@@ -1,0 +1,379 @@
+{
+ "role": "development",
+ "scope": "Opened Tier A development evidence (m0 tier-a-fresh-v4/v6). Native 15.535.86 reference frames (5-tick native_frame in the reference decisions) for scalar branches replayed closed-loop through run_readiness_v2 with the frozen branch plans. Divergence sweep 2026-09-30.",
+ "sources": "reports/strategy_council_20260928/m0/readiness/divergence-sweep-20260930/README.md",
+ "cases": [
+  {
+   "name": "crown_tower_retarget_keeps_hit",
+   "attempt": "tier-a-fresh-v6",
+   "scalar_job": 398,
+   "native_job": 399,
+   "native_source": "readiness/tier-a-fresh-v6/branches-reference-shard7-of8/job-00399/decisions.jsonl.gz",
+   "mechanism": "Owner 0 right Princess Tower acquires Skeleton 5000008 at 290 (timeline 50), loses it at 291 (0.034 tiles past reach) and retargets the in-range Knight 5000011; native keeps the timeline (fires 305, arrow hits the Knight 109 at 320). Reset-on-retarget fires at 306 and hits at 321.",
+   "checks": [
+    {
+     "tick": 320,
+     "select": [
+      [
+       1,
+       "Knight"
+      ]
+     ],
+     "bodies": [
+      {
+       "owner": 1,
+       "card": "Knight",
+       "native_id": 5000011,
+       "xy": [
+        14828,
+        15486
+       ],
+       "hp": 969
+      }
+     ]
+    },
+    {
+     "tick": 305,
+     "select": [
+      [
+       1,
+       "Knight"
+      ]
+     ],
+     "bodies": [
+      {
+       "owner": 1,
+       "card": "Knight",
+       "native_id": 5000011,
+       "xy": [
+        14828,
+        15486
+       ],
+       "hp": 1078
+      }
+     ]
+    }
+   ],
+   "terminal": [
+    0.0,
+    7540.0,
+    7583.0
+   ]
+  },
+  {
+   "name": "frozen_push_keeps_hit",
+   "attempt": "tier-a-fresh-v4",
+   "scalar_job": 110,
+   "native_job": 111,
+   "native_source": "readiness/tier-a-fresh-v4/branches-reference-shard7-of8/job-00111/decisions.jsonl.gz",
+   "mechanism": "Owner 1 Knight is frozen mid-windup (timeline 800) at 520, pushed by owner 0 Log at ~527 while frozen; native keeps the timeline 800 through the push and after thaw fires at 550, killing Skeleton 5000020. Stopping the hit on the push leaves the Skeleton alive and reverses the branch outcome.",
+   "checks": [
+    {
+     "tick": 550,
+     "select": [
+      [
+       0,
+       "Skeletons"
+      ],
+      [
+       1,
+       "Knight"
+      ]
+     ],
+     "bodies": [
+      {
+       "owner": 1,
+       "card": "Knight",
+       "native_id": 5000018,
+       "xy": [
+        14257,
+        16299
+       ],
+       "hp": 1142
+      },
+      {
+       "owner": 0,
+       "card": "Skeletons",
+       "native_id": 5000021,
+       "xy": [
+        13132,
+        15314
+       ],
+       "hp": 81
+      }
+     ]
+    }
+   ],
+   "terminal": [
+    1.0,
+    9191.0,
+    7288.0
+   ]
+  },
+  {
+   "name": "killed_building_avoidance_obstacle",
+   "attempt": "tier-a-fresh-v4",
+   "scalar_job": 898,
+   "native_job": 899,
+   "native_source": "readiness/tier-a-fresh-v4/branches-reference-shard1-of8/job-00899/decisions.jsonl.gz",
+   "mechanism": "Owner 0 Knight kills owner 1 Tesla 5000020 in combat at 612. Goblin 5000024, walking past it, still counts the Tesla as a static avoidance obstacle in that tick (avoidance -90 -> -110 -> -100, step (-4,-120)); skipping the dead Tesla gives (-21,-118).",
+   "checks": [
+    {
+     "tick": 615,
+     "select": [
+      [
+       1,
+       "Goblins"
+      ]
+     ],
+     "bodies": [
+      {
+       "owner": 1,
+       "card": "Goblins",
+       "native_id": 5000022,
+       "xy": [
+        15606,
+        16754
+       ],
+       "hp": 202
+      },
+      {
+       "owner": 1,
+       "card": "Goblins",
+       "native_id": 5000023,
+       "xy": [
+        14674,
+        16604
+       ],
+       "hp": 202
+      },
+      {
+       "owner": 1,
+       "card": "Goblins",
+       "native_id": 5000024,
+       "xy": [
+        15025,
+        17585
+       ],
+       "hp": 202
+      },
+      {
+       "owner": 1,
+       "card": "Goblins",
+       "native_id": 5000025,
+       "xy": [
+        14954,
+        18797
+       ],
+       "hp": 202
+      }
+     ]
+    },
+    {
+     "tick": 620,
+     "select": [
+      [
+       1,
+       "Goblins"
+      ],
+      [
+       0,
+       "Knight"
+      ]
+     ],
+     "bodies": [
+      {
+       "owner": 0,
+       "card": "Knight",
+       "native_id": 5000019,
+       "xy": [
+        14063,
+        15746
+       ],
+       "hp": 101
+      },
+      {
+       "owner": 1,
+       "card": "Goblins",
+       "native_id": 5000022,
+       "xy": [
+        15418,
+        16469
+       ],
+       "hp": 202
+      },
+      {
+       "owner": 1,
+       "card": "Goblins",
+       "native_id": 5000023,
+       "xy": [
+        14496,
+        16592
+       ],
+       "hp": 202
+      },
+      {
+       "owner": 1,
+       "card": "Goblins",
+       "native_id": 5000024,
+       "xy": [
+        14863,
+        17322
+       ],
+       "hp": 202
+      },
+      {
+       "owner": 1,
+       "card": "Goblins",
+       "native_id": 5000025,
+       "xy": [
+        15167,
+        18243
+       ],
+       "hp": 202
+      }
+     ]
+    }
+   ],
+   "terminal": null
+  },
+  {
+   "name": "displaced_deploy_snap_side",
+   "attempt": "tier-a-fresh-v6",
+   "scalar_job": 320,
+   "native_job": 321,
+   "native_source": "readiness/tier-a-fresh-v6/branches-reference-shard0-of8/job-00321/decisions.jsonl.gz",
+   "mechanism": "Owner 0 Ice Golem requested at (9.5,11.5) is relocated by the placement search to the free tile (8.5,11.5) (Cannon occupies the request). Native places it at x=8500: the one-unit symmetric nudge follows the requested (right-of-centre) anchor, so no x decrement; the searched anchor rule gives 8499.",
+   "checks": [
+    {
+     "tick": 400,
+     "select": [
+      [
+       0,
+       "IceGolemite"
+      ]
+     ],
+     "bodies": [
+      {
+       "owner": 0,
+       "card": "IceGolemite",
+       "native_id": 5000019,
+       "xy": [
+        8500,
+        11500
+       ],
+       "hp": 1315
+      }
+     ]
+    },
+    {
+     "tick": 420,
+     "select": [
+      [
+       0,
+       "IceGolemite"
+      ]
+     ],
+     "bodies": [
+      {
+       "owner": 0,
+       "card": "IceGolemite",
+       "native_id": 5000019,
+       "xy": [
+        8376,
+        11725
+       ],
+       "hp": 1315
+      }
+     ]
+    }
+   ],
+   "terminal": null
+  },
+  {
+   "name": "zap_push_outlasting_stun_stops_hit",
+   "attempt": "tier-a-fresh-v6",
+   "scalar_job": 156,
+   "native_job": 157,
+   "native_source": "readiness/tier-a-fresh-v6/branches-reference-shard6-of8/job-00157/decisions.jsonl.gz",
+   "mechanism": "Owner 1 Knight (timeline 8000) is Zapped at ~2529 (ZapFreeze 300 ms) and pushed by owner 0 Fireball from ~2532; the push outlasts the stun. Native stops the hit on the first push frame after the thaw (no hit on the Giant before 2550). Dropping the stop entirely (stop cancelled because the push began under the stun) lets the Knight hit the Giant early (202 HP) and moves this frame-exact branch away from native. Guards the deferral half of the frozen-push rule.",
+   "checks": [
+    {
+     "tick": 2550,
+     "select": [
+      [
+       0,
+       "Giant"
+      ],
+      [
+       1,
+       "Knight"
+      ]
+     ],
+     "bodies": [
+      {
+       "owner": 0,
+       "card": "Giant",
+       "native_id": 5000047,
+       "xy": [
+        3193,
+        22630
+       ],
+       "hp": 792
+      },
+      {
+       "owner": 1,
+       "card": "Knight",
+       "native_id": 5000052,
+       "xy": [
+        4311,
+        24102
+       ],
+       "hp": 886
+      }
+     ]
+    },
+    {
+     "tick": 2560,
+     "select": [
+      [
+       0,
+       "Giant"
+      ],
+      [
+       1,
+       "Knight"
+      ]
+     ],
+     "bodies": [
+      {
+       "owner": 0,
+       "card": "Giant",
+       "native_id": 5000047,
+       "xy": [
+        3193,
+        22630
+       ],
+       "hp": 261
+      },
+      {
+       "owner": 1,
+       "card": "Knight",
+       "native_id": 5000052,
+       "xy": [
+        4311,
+        24102
+       ],
+       "hp": 886
+      }
+     ]
+    }
+   ],
+   "terminal": [
+    1.0,
+    6333.0,
+    6546.0
+   ]
+  }
+ ]
+}

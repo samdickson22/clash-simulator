@@ -353,7 +353,13 @@ def test_fast_mask_sees_building_spawned_earlier_in_same_decision_window():
 
 def test_fast_troop_occupancy_cache_matches_scalar_and_invalidates():
     battle = BattleState(fast_path=True)
-    _prepare_hand(battle, 0, ["Knight", "Giant"] * 4)
+    # Ground troops no longer use the radius occupancy cache: their legality
+    # is the native LogicSummoner ring search (placement.native_deployment_search
+    # via BattleState.resolve_ground_troop_anchor), which relocates a troop
+    # requested on a building tile. Evidence: tests/test_native_spawn_terrain_
+    # footprint.py (opened mix1-forward3300 DarkPrince relocation). Only air
+    # troops still gather this cache, so exercise it with air cards.
+    _prepare_hand(battle, 0, ["Minions", "BabyDragon"] * 4)
     action_space = DiscreteTileActionSpace(canonical_perspective=True)
     cannon_stats = battle.card_loader.get_card("Cannon")
     assert cannon_stats is not None

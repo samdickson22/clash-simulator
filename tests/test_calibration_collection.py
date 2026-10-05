@@ -266,6 +266,7 @@ def test_branch_source_must_match_original_claimed_path(frozen, tmp_path):
 
     path, args, family = frozen
     capture = tmp_path / "original"
+    capture.mkdir()
     binding = {
         "family_id": "f",
         "root_id": family.root_ids[0],
@@ -313,6 +314,161 @@ def test_branch_attempts_are_atomic_and_cannot_be_replaced(frozen, tmp_path):
     with pytest.raises(ValueError, match="protocol changed"):
         claim_acceptance_branches(
             args["registry"], **branch, attempts=[("recorded", "scalar")]
+        )
+
+
+@pytest.fixture(params=["collection", "branches"])
+def reserved_directory(frozen, tmp_path, request):
+    from clasher.rl.calibration_families import (
+        claim_acceptance_branches,
+        require_branch_claims,
+        require_collection_claim,
+    )
+
+    protocol, args, family = frozen
+    registry = args["registry"]
+    original = tmp_path / "original"
+    binding = {
+        "family_id": family.family_id,
+        "root_id": family.root_ids[0],
+        "protocol_sha256": digest(protocol),
+    }
+    # Reservations are valid before the producer creates any output.
+    claim_acceptance_collection(registry, **binding, output_path=original)
+    if request.param == "branches":
+        binding |= {
+            "branch_protocol_sha256": "e" * 64,
+            "attempts": [("wait", "native"), ("wait", "scalar")],
+        }
+        claim_acceptance_branches(registry, **binding, output_path=original)
+
+    def verify(directory, **overrides):
+        if request.param == "collection":
+            require_collection_claim(
+                registry, **(binding | overrides), capture_path=directory
+            )
+        else:
+            require_branch_claims(
+                registry, **(binding | overrides), output_path=directory
+            )
+
+    return original, registry, verify
+
+
+def test_claim_follows_relocation_without_rewriting_ledger(reserved_directory, tmp_path):
+    original, registry, verify = reserved_directory
+    original.mkdir()
+    (original / "artifact.json").write_text("{}")
+    before = registry.read_bytes()
+    verify(original)
+    relocated = tmp_path / "relocated"
+    original.rename(relocated)
+    original.symlink_to(relocated.name, target_is_directory=True)
+    alias = tmp_path / "alias"
+    alias.symlink_to(original.name, target_is_directory=True)
+    for directory in (original, relocated, alias):
+        verify(directory)
+    assert registry.read_bytes() == before
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        "copy",
+        "unrelated_symlink",
+        "missing",
+        "missing_supplied",
+        "dangling",
+        "missing_original",
+        "symlink_loop",
+        "file",
+    ],
+)
+def test_claim_rejects_unbound_or_unavailable_directory(
+    reserved_directory, tmp_path, fault
+):
+    import shutil
+
+    original, _, verify = reserved_directory
+    supplied = original
+    if fault in ("copy", "unrelated_symlink"):
+        original.mkdir()
+        (original / "artifact.json").write_text("{}")
+        supplied = tmp_path / "copy"
+        shutil.copytree(original, supplied)
+        if fault == "unrelated_symlink":
+            alias = tmp_path / "alias"
+            alias.symlink_to(supplied, target_is_directory=True)
+            supplied = alias
+    elif fault == "missing_supplied":
+        original.mkdir()
+        supplied = tmp_path / "missing"
+    elif fault == "dangling":
+        supplied = tmp_path / "missing-target"
+        original.symlink_to(supplied, target_is_directory=True)
+    elif fault == "missing_original":
+        original.mkdir()
+        supplied = tmp_path / "relocated"
+        original.rename(supplied)
+    elif fault == "symlink_loop":
+        original.symlink_to(original.name, target_is_directory=True)
+    elif fault == "file":
+        original.write_text("not a directory")
+    with pytest.raises(ValueError, match="claim|reserved attempts"):
+        verify(supplied)
+
+
+@pytest.mark.parametrize(
+    "override",
+    [
+        {"family_id": "different"},
+        {"root_id": "native-root-v1:" + "f" * 64},
+        {"protocol_sha256": "f" * 64},
+    ],
+)
+def test_relocation_preserves_claim_metadata(reserved_directory, tmp_path, override):
+    original, _, verify = reserved_directory
+    relocated = tmp_path / "relocated"
+    relocated.mkdir()
+    original.symlink_to(relocated, target_is_directory=True)
+    with pytest.raises(ValueError, match="claim|reserved attempts"):
+        verify(relocated, **override)
+
+
+@pytest.mark.parametrize(
+    "override",
+    [
+        {"branch_protocol_sha256": "f" * 64},
+        {"attempts": [("other-candidate", "native")]},
+        {"attempts": [("wait", "other-engine")]},
+        {"attempts": [("wait", "native"), ("unreserved", "scalar")]},
+    ],
+)
+def test_relocation_preserves_branch_bindings(frozen, tmp_path, override):
+    from clasher.rl.calibration_families import (
+        claim_acceptance_branches,
+        require_branch_claims,
+    )
+
+    protocol, args, family = frozen
+    binding = {
+        "family_id": family.family_id,
+        "root_id": family.root_ids[0],
+        "protocol_sha256": digest(protocol),
+    }
+    original = tmp_path / "original"
+    claim_acceptance_collection(args["registry"], **binding, output_path=original)
+    binding |= {
+        "branch_protocol_sha256": "e" * 64,
+        "attempts": [("wait", "native")],
+    }
+    claim_acceptance_branches(args["registry"], **binding, output_path=original)
+    relocated = tmp_path / "relocated"
+    relocated.mkdir()
+    original.symlink_to(relocated, target_is_directory=True)
+    with pytest.raises(ValueError, match="reserved attempts"):
+        require_branch_claims(
+            args["registry"], **(binding | override), output_path=relocated
         )
 
 

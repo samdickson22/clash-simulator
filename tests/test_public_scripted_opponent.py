@@ -200,3 +200,99 @@ def test_unknown_shield_is_not_assumed_depleted_for_spell_value():
     # It may defend with a troop/building, but cannot buy a Fireball using
     # damage value computed from a fabricated empty shield.
     assert bot.select_action(p) // 576 != 2
+
+
+@pytest.fixture
+def native_refill_public(tmp_path):
+    """Use the recorded tick-100 HUD and its measured body-level evidence."""
+    import gzip
+    import hashlib
+    import json
+    from pathlib import Path
+
+    from clasher.data import CardDataLoader
+    from clasher.rl.native_public_observation import (
+        PUBLIC_REFERENCE_CARDS,
+        NativePublicLevelEvidence,
+        NativePublicObservationAdapter,
+        NativePublicScope,
+    )
+
+    fixtures = Path(__file__).parent / "fixtures"
+    archive = json.loads((fixtures / "native_hand_refill_15_535_86.json").read_text())
+    levels = json.loads(
+        (fixtures / "native_hand_refill_levels_15_535_86.json").read_text()
+    )
+    assert levels["source_frame_sha256"] == archive["source_sha256"]["frame.json"]
+    snapshot = next(frame for frame in archive["snapshots"] if frame["tick"] == 100)
+    data = gzip.decompress(
+        (fixtures / "native_gamedata_15_535_86_daa58b28.json.gz").read_bytes()
+    )
+    assert hashlib.sha256(data).hexdigest() == archive["ruleset_source_sha256"]
+    ruleset = tmp_path / "gamedata.json"
+    ruleset.write_bytes(data)
+    builder = StructuredObservationBuilder(
+        card_vocab=PUBLIC_REFERENCE_CARDS,
+        card_loader=CardDataLoader(ruleset),
+        canonical_lane_globals=True,
+        public_entity_levels=True,
+        public_hand_levels=True,
+        card_semantics_version=4,
+    )
+    adapter = NativePublicObservationAdapter(
+        builder,
+        NativePublicScope("15.535.86", archive["ruleset_source_sha256"]),
+        card_names=PUBLIC_REFERENCE_CARDS,
+    )
+    readings = {int(key): value for key, value in levels["levels"].items()}
+    evidence = NativePublicLevelEvidence(
+        tick=levels["tick"],
+        generation=levels["generation"],
+        state_epoch=levels["state_epoch"],
+        source_sha256=levels["source_frame_sha256"],
+        levels=readings,
+        confidence={key: 1.0 for key in readings},
+    )
+    return builder, adapter.project(snapshot, 1, level_evidence=evidence)
+
+
+@pytest.mark.parametrize("style", ["balanced", "pressure", "defense"])
+def test_recorded_refill_gap_is_playable_without_compacting_slots(
+    native_refill_public, style
+):
+    from clasher.rl.public_action_mask import PublicActionMaskInput
+
+    builder, public = native_refill_public
+    bot = PublicScriptedOpponent(builder, style=style)
+    before = public.observation.hand_ids.copy()
+    assert before[0] == 0 and public.hand_id_confidence[0] == 0
+    assert all(before[1:4] > 1)
+    mask = bot.mask_builder.build(
+        PublicActionMaskInput.from_confidence_observation(public)
+    )
+    assert not mask[:576].any()
+    assert mask[bot.decide(public).action_id]
+    plays = bot.ranked_plays(public)
+    assert plays
+    assert all(
+        choice.action_id // 576 in (1, 2, 3) and mask[choice.action_id]
+        for choice in plays
+    )
+    np.testing.assert_array_equal(public.observation.hand_ids, before)
+
+
+@pytest.mark.parametrize("uncertain", ["present_card", "elixir", "ambiguous_empty"])
+def test_refill_gap_does_not_relax_uncertain_card_or_elixir_checks(
+    native_refill_public, uncertain
+):
+    builder, public = native_refill_public
+    if uncertain == "elixir":
+        confidence = public.global_feature_confidence.copy()
+        confidence[5] = 0.5
+        public = replace(public, global_feature_confidence=confidence)
+    else:
+        confidence = public.hand_id_confidence.copy()
+        confidence[1 if uncertain == "present_card" else 0] = 0.5
+        public = replace(public, hand_id_confidence=confidence)
+    with pytest.raises(ValueError, match="uncertain own hand or elixir"):
+        PublicScriptedOpponent(builder).decide(public)

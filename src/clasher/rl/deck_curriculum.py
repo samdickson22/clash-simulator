@@ -81,6 +81,8 @@ def _profile_map(
 def _is_valid_deck(
     cards: Sequence[str],
     profiles: dict[str, CardSemanticProfile],
+    *,
+    require_win_condition: bool = True,
 ) -> bool:
     if len(cards) != 8 or len(set(cards)) != 8:
         return False
@@ -89,7 +91,7 @@ def _is_valid_deck(
     if not 2.2 <= average_elixir <= 5.5:
         return False
     roles = [profile.role for profile in selected]
-    if not any(
+    if require_win_condition and not any(
         role in {"building_target", "siege", "spawn_spell"} for role in roles
     ) and not ({"Miner", "Wallbreakers"} & set(cards)):
         return False
@@ -151,13 +153,11 @@ def generate_structured_decks(
     profiles = _profile_map(all_names, loader)
     neighbors = _replacement_neighbors(profiles, neighbor_pool=neighbor_pool)
     rng = random.Random(seed)
-    generated: list[CurriculumDeck] = []
-    seen: set[tuple[str, ...]] = set()
+    # Reserve every parent before generating variants so an earlier derivative
+    # cannot replace a later parent's provenance record.
+    generated = list(seed_decks)
+    seen = {tuple(sorted(source.cards)) for source in seed_decks}
     for source in seed_decks:
-        canonical = tuple(sorted(source.cards))
-        if canonical not in seen:
-            generated.append(source)
-            seen.add(canonical)
         produced = 0
         for _ in range(max_attempts_per_seed):
             if produced >= variants_per_seed:
@@ -179,7 +179,7 @@ def generate_structured_decks(
             if (
                 changed == 0
                 or infer_archetype(cards) != source.archetype
-                or not _is_valid_deck(cards, profiles)
+                or not _is_valid_deck(cards, profiles, require_win_condition=source.archetype != "control")
             ):
                 continue
             canonical = tuple(sorted(cards))
@@ -209,19 +209,114 @@ def split_curriculum(
 ) -> tuple[list[CurriculumDeck], list[CurriculumDeck], list[CurriculumDeck]]:
     if not 0.0 < validation_fraction < 1.0:
         raise ValueError("validation_fraction must be between zero and one")
-    held_out = [deck for deck in decks if deck.archetype in held_out_archetypes]
-    eligible = [deck for deck in decks if deck.archetype not in held_out_archetypes]
+    groups = curriculum_families(decks)
+    held_out: list[CurriculumDeck] = []
+    by_archetype: dict[str, list[list[CurriculumDeck]]] = {}
+    for group in groups:
+        if any(deck.archetype in held_out_archetypes for deck in group):
+            held_out.extend(group)
+        else:
+            by_archetype.setdefault(min(deck.archetype for deck in group), []).append(group)
     rng = random.Random(seed)
-    by_archetype: dict[str, list[CurriculumDeck]] = {}
-    for deck in eligible:
-        by_archetype.setdefault(deck.archetype, []).append(deck)
     train: list[CurriculumDeck] = []
     validation: list[CurriculumDeck] = []
     for archetype in sorted(by_archetype):
-        group = sorted(by_archetype[archetype], key=lambda deck: deck.name)
-        rng.shuffle(group)
-        count = max(1, round(len(group) * validation_fraction))
-        validation.extend(group[:count])
-        train.extend(group[count:])
+        groups_for_archetype = by_archetype[archetype]
+        rng.shuffle(groups_for_archetype)
+        # A lone family stays in training; splitting its variants would leak.
+        count = min(len(groups_for_archetype) - 1, max(1, round(len(groups_for_archetype) * validation_fraction)))
+        validation.extend(deck for group in groups_for_archetype[:count] for deck in group)
+        train.extend(deck for group in groups_for_archetype[count:] for deck in group)
     key = lambda deck: (deck.archetype, deck.name)
     return sorted(train, key=key), sorted(validation, key=key), sorted(held_out, key=key)
+
+
+def curriculum_families(decks: Sequence[CurriculumDeck]) -> list[list[CurriculumDeck]]:
+    """Connect parents, descendants and identical rosters before assigning roles."""
+    by_name = {deck.name: deck for deck in decks}
+    if len(by_name) != len(decks):
+        raise ValueError("curriculum names must be unique")
+    roots: dict[str, str] = {}
+
+    def root(name: str) -> str:
+        roots.setdefault(name, name)
+        if roots[name] != name:
+            roots[name] = root(roots[name])
+        return roots[name]
+
+    def join(left: str, right: str) -> None:
+        a, b = sorted((root(left), root(right)))
+        roots[b] = a
+
+    rosters: dict[tuple[str, ...], str] = {}
+    for deck in sorted(decks, key=lambda item: item.name):
+        root(deck.name)
+        if deck.parent:
+            join(deck.name, deck.parent)
+        roster = tuple(sorted(deck.cards))
+        if roster in rosters:
+            join(deck.name, rosters[roster])
+        rosters[roster] = deck.name
+    groups: dict[str, list[CurriculumDeck]] = {}
+    for deck in sorted(decks, key=lambda item: item.name):
+        groups.setdefault(root(deck.name), []).append(deck)
+    return [groups[name] for name in sorted(groups)]
+
+
+def pilot_curriculum(*, seed: int = 20260928, variants_per_seed: int = 2) -> dict[str, list[dict[str, Any]]]:
+    """Prepare prospective 16-card roles, without collecting games or labels.
+
+    These are engineering rosters. Each role samples structured, neighboring
+    and legal stress decks with mass 0.6, 0.3 and 0.1 respectively.
+    """
+    from .public_scripted_opponent import SUPPORTED_CARDS
+
+    # These independently authored engineering roots define family identity.
+    # Every generated substitution below inherits its actual root name.
+    bases = (
+        ("hog-cycle", ("HogRider", "Musketeer", "Cannon", "Fireball", "Log", "Skeletons", "IceGolem", "IceSpirit")),
+        ("hog-knight-control", ("HogRider", "Knight", "Tesla", "Archers", "Goblins", "Zap", "Fireball", "IceSpirit")),
+        ("hog-prince-pressure", ("HogRider", "Prince", "DarkPrince", "Goblins", "Zap", "Fireball", "Skeletons", "Musketeer")),
+        ("hog-double-building", ("HogRider", "Cannon", "Tesla", "Knight", "Archers", "Zap", "Log", "IceGolem")),
+        ("giant-double-prince", ("Giant", "Musketeer", "Prince", "DarkPrince", "Archers", "Goblins", "Zap", "Fireball")),
+        ("giant-cycle", ("Giant", "Knight", "Archers", "IceSpirit", "Skeletons", "Zap", "Fireball", "Tesla")),
+        ("giant-control", ("Giant", "Musketeer", "Cannon", "IceGolem", "Goblins", "Log", "Fireball", "Knight")),
+        ("giant-heavy-pressure", ("Giant", "Prince", "DarkPrince", "Knight", "Archers", "Tesla", "Zap", "Log")),
+        ("prince-tesla-control", ("Prince", "DarkPrince", "Knight", "Archers", "Goblins", "Tesla", "Log", "Zap")),
+        ("prince-cycle", ("Prince", "Musketeer", "Cannon", "IceGolem", "Skeletons", "IceSpirit", "Zap", "Fireball")),
+        ("knight-double-building", ("Knight", "Archers", "Musketeer", "Tesla", "Cannon", "Skeletons", "Log", "Fireball")),
+        ("dark-prince-pressure", ("DarkPrince", "Prince", "Archers", "Musketeer", "Goblins", "IceSpirit", "Fireball", "Log")),
+    )
+    parents = [CurriculumDeck(f"pilot-{name}", cards, infer_archetype(cards), "engineering-structured") for name, cards in bases]
+    used = {tuple(sorted(deck.cards)) for deck in parents}
+    if len(used) != len(parents):
+        raise ValueError("duplicate pilot parent")
+    rng = random.Random(seed)
+    generated = generate_structured_decks(parents, card_pool=sorted(SUPPORTED_CARDS), variants_per_seed=variants_per_seed, seed=seed)
+    roles: dict[str, list[CurriculumDeck]] = {name: [] for name in ("training", "development", "acceptance")}
+    by_archetype: dict[str, list[list[CurriculumDeck]]] = {}
+    for group in curriculum_families(generated):
+        by_archetype.setdefault(group[0].archetype, []).append(group)
+    for archetype in sorted(by_archetype):
+        families = by_archetype[archetype]
+        rng.shuffle(families)
+        for index, family in enumerate(families):
+            role = "development" if index == 0 else "acceptance" if index == 1 else "training"
+            roles[role].extend(family)
+    used.update(tuple(sorted(deck.cards)) for deck in generated)
+    for role, decks in roles.items():
+        while True:
+            cards = tuple(rng.sample(sorted(SUPPORTED_CARDS), 8))
+            canonical = tuple(sorted(cards))
+            if canonical not in used:
+                used.add(canonical)
+                break
+        decks.append(CurriculumDeck(f"pilot-{role}-stress", cards, infer_archetype(cards), "legal-stress"))
+    masses = {"engineering-structured": 0.6, "semantic-procedural": 0.3, "legal-stress": 0.1}
+    result: dict[str, list[dict[str, Any]]] = {}
+    for role, decks in roles.items():
+        counts = {source: sum(deck.source == source for deck in decks) for source in masses}
+        if not all(counts.values()):
+            raise ValueError("every pilot role requires structured, neighbor and stress decks")
+        result[role] = [deck.as_json() | {"role": role, "sampling_weight": masses[deck.source] / counts[deck.source]} for deck in sorted(decks, key=lambda item: item.name)]
+    return result

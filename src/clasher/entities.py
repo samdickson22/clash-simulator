@@ -1786,6 +1786,18 @@ class Entity(ABC):
                 and self.is_within_attack_engagement_reach(target)
             ):
                 preserve_hit = True
+            # Crown Towers keep the legacy cooldown projection, but native
+            # applies the same in-range retarget rule to them: a Princess
+            # Tower whose lock leaves reach mid-windup keeps its hit on the
+            # replacement. Evidence: tier-a-fresh-v6 episode-12 native
+            # job-00399 and native_crown_tower_retarget_keeps_hit fixture.
+            if (
+                self._ordinary_clock is None
+                and getattr(getattr(self, "card_stats", None), "name", None)
+                in ("Tower", "KingTower")
+                and self.is_within_attack_engagement_reach(target)
+            ):
+                preserve_hit = True
             # A completed charge can release against a newly acquired target
             # immediately; ordinary retarget wind-up must not erase that hit.
             charged_hit_ready = bool(
@@ -2471,35 +2483,26 @@ class Entity(ABC):
             candidate_entities = battle_state.iter_entities_in_radius(self.position, query_radius)
 
         for entity in candidate_entities:
-            # Only check if entity is valid target (excludes spell entities)
+            # Reject geometry/plane mismatches before scanning pending projectile damage.
+            airborne = is_airborne_target(entity)
+            if airborne and not can_attack_air:
+                continue
+            if (not airborne) and not can_attack_ground:
+                continue
+            is_building = is_native_building_target(entity)
+            if not is_building and targets_only_buildings:
+                continue
+            if not self.is_within_sight(entity):
+                continue
             if not self._is_valid_target(entity):
                 continue
-
-            # Additional safety: never target spell entities explicitly by class types
             if getattr(entity, "entity_kind", 4) in {2, 3}:
                 continue
-                
             distance = self.native_target_distance_to(entity)
-            
-            # Check air targeting rules
-            if is_airborne_target(entity) and not can_attack_air:
-                continue  # Skip air units if we can't attack air
-            if (not is_airborne_target(entity)) and not can_attack_ground:
-                continue  # Skip ground units if we can't attack ground
-            
-            # Only consider targets within sight range for troops vs troops
-            if is_native_building_target(entity):
-                # Buildings primarily require sight-range aggro.
-                # Crown towers are kept as fallback objectives so building-targeting
-                # troops still path across the map when nothing is in sight.
-                if self.is_within_sight(entity):
-                    building_targets.append((entity, distance))
+            if is_building:
+                building_targets.append((entity, distance))
             else:
-                # For troop targets, only consider if within sight range
-                if self.is_within_sight(entity):
-                    # Skip troops if we only target buildings
-                    if not targets_only_buildings:
-                        troop_targets.append((entity, distance))
+                troop_targets.append((entity, distance))
         
         def _fallback_crown_targets() -> list[tuple[Entity, float]]:
             towers: list[tuple[Entity, float]] = []
@@ -3011,6 +3014,10 @@ class Troop(Entity):
             return
         if self.spawn_stagger_remaining > 1e-9:
             return
+        if self._native_natural_movement_active and getattr(
+            self, "_native_frozen_stop_route", None
+        ) is not None:
+            self._native_frozen_stop_route = None
         target = battle_state.entities.get(self._movement_target_id)
         if (
             target is not None
@@ -3023,6 +3030,7 @@ class Troop(Entity):
             and not getattr(self, "_special_move_active", False)
             and not getattr(self, "_special_move_consumed_tick", False)
         ):
+            self._resume_native_frozen_stop_route(target)
             # Native f65790 refreshes the walking route before f65dcc scans
             # avoidance. A static body can remove the newly selected first
             # node; scanning the previous target's route changes this step.
@@ -3075,17 +3083,26 @@ class Troop(Entity):
             # the following stopped movement component clears it.
             self.reset_charge()
             self._native_natural_movement_active = False
+            stop_route = getattr(self, "_native_frozen_stop_route", None)
+            if stop_route is not None:
+                stop_route["frozen"] = True
+                stop_route["reacquired"] = False
             return
         movement_target_id = getattr(self, "_movement_target_id", None)
         if movement_target_id is None:
+            stopping = self._native_natural_movement_active or getattr(
+                self, "_native_ground_route_cells", None
+            )
+            if stopping:
+                self._stash_native_frozen_stop_route(battle_state)
+            else:
+                self._note_native_frozen_stop_reacquire()
             # Reaching charge speed is not enough: a subsequent movement call
             # must arm the ready hit. Stopping on the threshold clears that
             # unarmed bank instead of granting special damage to a normal hit.
             if not self.is_charging or self.attack_cooldown > 0:
                 self.reset_charge()
-            if self._native_natural_movement_active or getattr(
-                self, "_native_ground_route_cells", None
-            ):
+            if stopping:
                 # Stopping clears the native route even when an immediate
                 # charged hit cleared its windup latch or a preceding stun
                 # cleared the moving flag while retaining the walking route.
@@ -3125,6 +3142,84 @@ class Troop(Entity):
                 self._ground_path_cache_key = None
             self._native_natural_movement_active = True
         self._move_towards_target(target, dt, battle_state)
+
+    # Native 15.535.86: a troop that stops in range of its navigation target
+    # (a building) keeps its unconsumed walking route through a freeze if it
+    # re-acquires that target standing in its stop cell, and resumes that
+    # route when later pushed out of range, instead of rebuilding one from
+    # the restart cell. A troop displaced out of its stop cell, or whose head
+    # node already passes the reached test at the re-acquisition, rebuilds as
+    # usual. Evidence: tests/fixtures/native_frozen_stop_route_15_535_86.json
+    # (scenario 7) and tier-a-fresh-v6 episode-24 (native job-00781).
+    def _stash_native_frozen_stop_route(self, battle_state: 'BattleState') -> None:
+        route = getattr(self, "_native_ground_route_cells", None)
+        nav_id = self._native_navigation_target_id
+        if (
+            not self._native_natural_movement_active
+            or not route
+            or self.is_charging
+            or nav_id is None
+            or self.target_id != nav_id
+            or not isinstance(battle_state.entities.get(nav_id), Building)
+        ):
+            if getattr(self, "_native_frozen_stop_route", None) is not None:
+                self._native_frozen_stop_route = None
+            return
+        from .pathfinding import _cell_for_position
+
+        self._native_frozen_stop_route = {
+            "target_id": nav_id,
+            "route": list(route),
+            "cache_key": self._ground_path_cache_key,
+            "direction": getattr(self, "_native_ground_route_direction", None),
+            "position": Position(self.position.x, self.position.y),
+            "cell": _cell_for_position(self.position),
+            "frozen": False,
+            "reacquired": False,
+            "resumable": False,
+        }
+
+    def _note_native_frozen_stop_reacquire(self) -> None:
+        stop_route = getattr(self, "_native_frozen_stop_route", None)
+        if (
+            stop_route is None
+            or not stop_route["frozen"]
+            or stop_route["reacquired"]
+            or self.target_id != stop_route["target_id"]
+        ):
+            return
+        from .pathfinding import _cell_center, _cell_for_position
+
+        stop_route["reacquired"] = True
+        head = _cell_center(stop_route["route"][0])
+        direction = stop_route["direction"] or normalized_vector_logic_units(
+            tiles_to_logic_units(head.x - stop_route["position"].x),
+            tiles_to_logic_units(head.y - stop_route["position"].y),
+            256,
+        )
+        # advance_native_ground_route's reached projection, without travel.
+        remaining = (
+            trunc_div(direction[0] * tiles_to_logic_units(head.x - self.position.x), 256)
+            + trunc_div(direction[1] * tiles_to_logic_units(head.y - self.position.y), 256)
+        )
+        stop_route["resumable"] = (
+            remaining >= 1001
+            and _cell_for_position(self.position) == stop_route["cell"]
+        )
+
+    def _resume_native_frozen_stop_route(self, target: 'Entity') -> None:
+        stop_route = getattr(self, "_native_frozen_stop_route", None)
+        if stop_route is None or self._native_natural_movement_active:
+            return
+        self._native_frozen_stop_route = None
+        if (
+            stop_route["resumable"]
+            and target.id == stop_route["target_id"]
+            and not getattr(self, "_native_ground_route_cells", None)
+        ):
+            self._native_ground_route_cells = list(stop_route["route"])
+            self._ground_path_cache_key = stop_route["cache_key"]
+            self._native_ground_route_direction = stop_route["direction"]
 
     def _native_movement_component_stopped(self) -> bool:
         """Return the serialized movement component's stop-byte equivalent."""
@@ -3202,13 +3297,24 @@ class Troop(Entity):
         from .native_spatial import NativeAvoidanceGrid
 
         grid = getattr(battle_state, "_native_avoidance_grid", None)
+        # Native builds this grid before the tick's component updates. A
+        # building killed by earlier combat in this tick is still resident
+        # in it and remains a static obstacle for later movement scans (as
+        # it remains a routing obstacle). Evidence: tier-a-fresh-v4
+        # episode-28 native job-00899 and native_killed_building_avoidance
+        # fixture.
+        keep_killed_buildings = grid is not None
         if grid is None:
             grid = NativeAvoidanceGrid(battle_state.entities.values())
         for other in grid.query(probe_x, probe_y, probe_radius):
             launched_spirit = getattr(other, "_self_projectile_launched", False)
             if (
                 other is self
-                or (not other.is_alive and not isinstance(other, Troop))
+                or (
+                    not other.is_alive
+                    and not isinstance(other, Troop)
+                    and not (keep_killed_buildings and isinstance(other, Building))
+                )
                 or not isinstance(other, (Troop, Building))
                 or (
                     launched_spirit
@@ -3323,10 +3429,25 @@ class Troop(Entity):
         if target is None:
             return
         self._native_knockback_movement_tick = battle_state.tick
-        if self._knockback_reset_hit_on_movement and self._attack_finish_elapsed_ms > 0:
+        defer_reset_hit = self.is_stunned()
+        if (
+            self._knockback_reset_hit_on_movement
+            and self._attack_finish_elapsed_ms > 0
+            and not defer_reset_hit
+        ):
             # A push cannot cancel recovery installed by target removal.
             self._knockback_reset_hit_on_movement = False
-        if self._knockback_reset_hit_on_movement:
+        # A push does not stop the hit while the unit is stunned: the stop is
+        # deferred to the first push movement frame after the thaw, and is
+        # dropped if the push ends first (native keeps a Frozen Knight's
+        # timeline through a Log push and fires on it after the thaw, but a
+        # Fireball push outlasting a Zap stops the hit). Evidence:
+        # tier-a-fresh-v4 episode-03 native job-00111 and tier-a-fresh-v6
+        # episode-04 native job-00157 (fixture native_tier_a_divergence_sweep).
+        if self._knockback_reset_hit_on_movement and defer_reset_hit:
+            self._knockback_hit_stop_deferred = True
+        if self._knockback_reset_hit_on_movement and not defer_reset_hit:
+            self._knockback_hit_stop_deferred = False
             self._knockback_reset_hit_on_movement = False
             self._attack_finish_elapsed_ms = 0
             self._attack_windup_active = False
@@ -3347,6 +3468,9 @@ class Troop(Entity):
                         target_entity=combat_target,
                         backwards_reference=combat_target.position,
                     )
+                    # Record the routed target, as _native_movement_waypoint
+                    # does, so a later target change during the push rebuilds.
+                    self._native_navigation_target_id = combat_target.id
                     self._native_natural_movement_active = True
         if (
             self._movement_target_id is not None
@@ -3481,6 +3605,10 @@ class Troop(Entity):
             self._knockback_velocity_work = 0
             self._knockback_interrupts_combat = True
             self.forced_movement_active = False
+            # A hit stop still deferred by a stun lapses with the push.
+            if getattr(self, "_knockback_hit_stop_deferred", False):
+                self._knockback_reset_hit_on_movement = False
+                self._knockback_hit_stop_deferred = False
 
     def _update_death_spawn_travel(self, battle_state: 'BattleState') -> None:
         """Advance one native 250-unit radial child-travel frame."""
@@ -4671,6 +4799,22 @@ class Building(Entity):
     def _update_active_combat(self, dt: float, battle_state: 'BattleState') -> None:
         """Run the building combat component before lifetime and buff ticks."""
         if self._freeze_target_pause_remaining > 0:
+            # Native 15.535.86: a King Tower's wake-up delay keeps running
+            # while Zapped or Frozen (a Zap anywhere in the first ~3.3 s adds
+            # no delay to the first shot). The paused frame still does no
+            # targeting or firing, and the first-hit remainder is retained
+            # like an ordinary loaded attack (a Zap or Ice Spirit freeze in
+            # the last ~0.7 s delays the shot by the pause). Evidence:
+            # tests/fixtures/native_king_wakeup_stun_15_535_86.json.
+            if (
+                getattr(self, "_tower_active", True)
+                and self.activation_delay_remaining > 0
+            ):
+                self.activation_delay_remaining = max(
+                    0.0, self.activation_delay_remaining - dt,
+                )
+                if self.activation_delay_remaining <= 1e-9:
+                    self.activation_delay_remaining = 0.0
             return
         if self._tick_attack_finish(dt):
             return
@@ -4693,10 +4837,10 @@ class Building(Entity):
 
         if self.activation_first_hit_delay_remaining > 0:
             # This is the building action's one-time post-aim phase, not an
-            # ordinary attack wind-up. Native stun resets combat timers but
-            # does not rewind or pause an activation action (notably, a King
-            # Tower completes its wake-up while Frozen). Keep the phase on its
-            # own clock so every status source gets the same behavior.
+            # ordinary attack wind-up. It is not rewound by stun; like a
+            # loaded attack it is retained, not advanced, while the Zap/Freeze
+            # pause above is active. Keep the phase on its own clock so every
+            # status source gets the same behavior.
             activation_hit_work = min(
                 dt,
                 self.activation_first_hit_delay_remaining,
@@ -4707,6 +4851,17 @@ class Building(Entity):
             )
             dt -= activation_hit_work
             if self.activation_first_hit_delay_remaining > 1e-9:
+                # Native aims during this phase: the first target is acquired
+                # and locked here, without advancing the attack clock, so a
+                # unit that becomes nearer before the shot does not steal it.
+                # Evidence: tier-a-fresh-v3 episode-05 native job-00161 and
+                # tests/fixtures/native_king_activation_target_lock_15_535_86.json.
+                self._retain_or_acquire_target(
+                    battle_state.entities.get(self.target_id)
+                    if self.target_id is not None
+                    else None,
+                    battle_state,
+                )
                 return
             # Completion is an event, not a nearly-zero timer. Leaving the
             # floating remainder positive re-arms this shot on the next tick.
@@ -4735,20 +4890,7 @@ class Building(Entity):
             else None
         )
         pending_retarget = self._pending_damage_retargets_hit(target)
-        if (
-            target is None
-            or not self._is_valid_target(target, is_current_target=True)
-            or (
-                not self._retains_depleted_combat_target(target)
-                and not self.can_affect_target_plane(target)
-            )
-            or not self.is_within_target_keep_reach(target)
-        ):
-            self.target_id = None
-            target = self.get_nearest_target(battle_state.entities)
-            if target is not None and not self.can_attack_target(target):
-                target = None
-            self.target_id = target.id if target else None
+        target = self._retain_or_acquire_target(target, battle_state)
         if activation_completed and target is None:
             # An activation with no available target does not bank an instant
             # shot. A later acquisition uses the ordinary preloaded first hit.
@@ -4817,6 +4959,28 @@ class Building(Entity):
             self._has_attacked_current_target = True
             self._attack_preload_blocked = False
             self.last_attack_time = 0.0  # Reset for visualization
+
+    def _retain_or_acquire_target(
+        self,
+        target: Optional['Entity'],
+        battle_state: 'BattleState',
+    ) -> Optional['Entity']:
+        """Keep a valid in-reach building lock, else acquire the nearest."""
+        if (
+            target is None
+            or not self._is_valid_target(target, is_current_target=True)
+            or (
+                not self._retains_depleted_combat_target(target)
+                and not self.can_affect_target_plane(target)
+            )
+            or not self.is_within_target_keep_reach(target)
+        ):
+            self.target_id = None
+            target = self.get_nearest_target(battle_state.entities)
+            if target is not None and not self.can_attack_target(target):
+                target = None
+            self.target_id = target.id if target else None
+        return target
 
     def _update_intrinsic_lifetime(self, dt: float) -> None:
         """Tick the native hitpoint component after the combat component."""

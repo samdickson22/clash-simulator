@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import random
 from collections import deque
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import NamedTuple, cast
 
@@ -74,25 +74,30 @@ def unique_cards_from_decks(decks: Sequence[Sequence[str]]) -> list[str]:
     return sorted({card for deck in decks for card in deck})
 
 
-def apply_deck_to_player(player: PlayerState, deck: Sequence[str], rng: random.Random) -> None:
+def apply_deck_to_player(
+    player: PlayerState, deck: Sequence[str], rng: random.Random,
+    *, card_levels: Mapping[str, int] | None = None,
+) -> None:
     if len(deck) < 8:
         raise ValueError("Deck must contain at least 8 cards")
 
     shuffled = list(deck[:8])
     rng.shuffle(shuffled)
 
-    apply_ordered_deck_to_player(player, shuffled)
+    apply_ordered_deck_to_player(player, shuffled, card_levels=card_levels)
 
 
 def apply_ordered_deck_to_player(
     player: PlayerState,
     deck: Sequence[str],
+    *, card_levels: Mapping[str, int] | None = None,
 ) -> None:
     """Install an already-shuffled deck without consuming battle RNG."""
     if len(deck) < 8:
         raise ValueError("Deck must contain at least 8 cards")
 
     ordered = list(deck[:8])
+    player.set_card_levels(card_levels or {})
     player.deck = ordered
     player.hand = cast(list[str | None], ordered[:4])
     player.cycle_queue = deque(ordered[4:])

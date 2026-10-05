@@ -68,10 +68,18 @@ class PublicScriptedOpponent:
     """Deterministic scoring over legal actions; no simulation or rollout search."""
 
     def __init__(
-        self, builder: StructuredObservationBuilder, *, style: str = "balanced"
+        self, builder: StructuredObservationBuilder, *, style: str = "balanced", card_scope: str = "p16"
     ):
         if style not in {"balanced", "pressure", "defense"}:
             raise ValueError("unsupported public opponent style")
+        if card_scope not in {"p16", "c56"}:
+            raise ValueError("unsupported public opponent card scope")
+        self.card_scope = card_scope
+        if card_scope == "c56":
+            from .c56_scripted import initialize
+
+            initialize(self, builder, style)
+            return
         if not builder.canonical_perspective or not builder.canonical_lane_globals:
             raise ValueError("public opponent requires canonical coordinates and lanes")
         if not builder.public_entity_levels or builder.card_semantics_version != 4:
@@ -193,17 +201,27 @@ class PublicScriptedOpponent:
             )
         return result
 
-    def decide(self, packet: ConfidenceAwareActorObservation) -> PublicScriptedDecision:
+    def _ranked_actions(
+        self, packet: ConfidenceAwareActorObservation, *, all_plays: bool = False
+    ) -> tuple[PublicScriptedDecision, ...]:
+        if self.card_scope == "c56":
+            from .c56_scripted import ranked_actions
+
+            return ranked_actions(self, packet, all_plays=all_plays)
         if not isinstance(packet, ConfidenceAwareActorObservation):
             raise TypeError("public confidence-aware observation required")
         packet.validate()
         obs = packet.observation
         if obs.terminal is True:
-            return PublicScriptedDecision(2304, "terminal", 0.0)
+            return (PublicScriptedDecision(2304, "terminal", 0.0),)
         if obs.terminal is None or obs.board_rotated is None:
             raise ValueError("unknown public lifecycle or board orientation")
+        hand_confidence = packet.hand_id_confidence[:4]
+        # The public HUD leaves a slot empty while its next card refills.
+        # Only explicit empty slots bypass the identity-confidence requirement.
+        empty_slots = (obs.hand_ids[:4] == 0) & (hand_confidence == 0)
         if (
-            np.any(packet.hand_id_confidence[:4] < 1)
+            np.any((hand_confidence < 1) & ~empty_slots)
             or packet.global_feature_confidence[5] < 1
         ):
             raise ValueError("uncertain own hand or elixir")
@@ -225,6 +243,7 @@ class PublicScriptedOpponent:
         best = PublicScriptedDecision(
             2304, "reserve elixir", 2.8 if threat is None and elixir < reserve else -0.5
         )
+        decisions = [best]
         for slot in range(4):
             token = int(obs.hand_ids[slot])
             if token == 0:
@@ -310,13 +329,40 @@ class PublicScriptedOpponent:
                     if building:
                         scores -= 3
                     reason = "lane pressure"
-            at = int(np.argmax(scores))
-            score = float(scores[at])
-            action = slot * 576 + int(legal[at])
-            if score > best.score or (score == best.score and action < best.action_id):
-                best = PublicScriptedDecision(action, reason, score)
-        assert mask[best.action_id], "public opponent selected an illegal action"
-        return best
+            if all_plays:
+                decisions.extend(
+                    PublicScriptedDecision(slot * 576 + int(tile), reason, float(score))
+                    for tile, score in zip(legal, scores)
+                )
+            else:
+                at = int(np.argmax(scores))
+                decisions.append(
+                    PublicScriptedDecision(
+                        slot * 576 + int(legal[at]), reason, float(scores[at])
+                    )
+                )
+        ranked = tuple(
+            sorted(decisions, key=lambda item: (-item.score, item.action_id))
+        )
+        assert mask[ranked[0].action_id], "public opponent selected an illegal action"
+        return ranked
+
+    def ranked_plays(
+        self, packet: ConfidenceAwareActorObservation
+    ) -> tuple[PublicScriptedDecision, ...]:
+        """All legal immediate plays, best score first, then lowest action id.
+
+        Wait remains available through ``decide``. Poor but legal spell plays
+        retain their scores; ranking does not silently replace them with wait.
+        """
+        return tuple(
+            item
+            for item in self._ranked_actions(packet, all_plays=True)
+            if item.action_id < 2304
+        )
+
+    def decide(self, packet: ConfidenceAwareActorObservation) -> PublicScriptedDecision:
+        return self._ranked_actions(packet)[0]
 
     def select_action(self, packet: ConfidenceAwareActorObservation) -> int:
         return self.decide(packet).action_id

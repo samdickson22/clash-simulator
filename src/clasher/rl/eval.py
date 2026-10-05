@@ -28,7 +28,7 @@ from .reward_model import (
     incoming_tower_danger,
     potential_breakdown_p0,
 )
-from .selfplay_env import SelfPlayBattleEnv
+from .selfplay_env import SelfPlayBattleEnv, resolve_match_horizon
 from .strategy_bots import STRATEGY_NAMES, StrategyBot
 from .structured_obs import StructuredObservationBuilder
 from .train_recurrent import (
@@ -72,7 +72,10 @@ def load_policy_checkpoint(
         canonical_lane_globals=config.canonical_lane_globals,
         public_history_slots=config.public_history_slots,
         public_seen_card_slots=config.public_seen_card_slots,
+        public_entity_levels=config.public_contract_version >= 3,
+        public_hand_levels=config.public_contract_version >= 4,
     )
+    builder.public_contract_version = config.public_contract_version
     model = ClasherPolicy(config, builder.card_stat_features).to(device)
     model.load_state_dict(state["model_state_dict"])
     model.eval()
@@ -98,6 +101,14 @@ def _policy_step(
     PolicyOutput,
 ]:
     assert env.battle is not None
+    loaded.builder.public_contract_version = getattr(
+        loaded.model.config, "public_contract_version", 1
+    )
+    env._structured_obs_builder = loaded.builder
+    env._public_action_mask_builder = None
+    env.public_contract_version = getattr(
+        loaded.model.config, "public_contract_version", 1
+    )
     actor_observation_domain = loaded.model.config.actor_observation_domain
     observation = env.get_structured_observation(
         player_id,
@@ -112,12 +123,20 @@ def _policy_step(
         [observation],
         mask,
         np.asarray([previous_action], dtype=np.int64),
-        np.asarray([previous_reward], dtype=np.float32),
+        np.asarray(
+            [
+                0.0
+                if getattr(loaded.model.config, "public_contract_version", 1) >= 4
+                else previous_reward
+            ],
+            dtype=np.float32,
+        ),
         np.asarray([episode_start], dtype=np.bool_),
         device,
         public_observation_confidence=(
             loaded.model.config.public_observation_confidence
         ),
+        builder=loaded.builder,
     )
     action, _, _, next_state, output = loaded.model.act(
         inputs, state, deterministic=deterministic
@@ -181,16 +200,15 @@ def _make_evaluation_envs(
             else (other_pool, candidate_pool)
         )
         envs[candidate_player] = SelfPlayBattleEnv(
+            public_contract_version=getattr(
+                candidate.model.config, "public_contract_version", 1
+            ),
             decision_interval_ticks=decision_interval,
             max_ticks=max_ticks,
             decks_path=decks_path,
             sampling_decks_path=sampling_decks_path,
-            player0_sampling_decks_path=(
-                player_pools[0] if asymmetric_decks else None
-            ),
-            player1_sampling_decks_path=(
-                player_pools[1] if asymmetric_decks else None
-            ),
+            player0_sampling_decks_path=(player_pools[0] if asymmetric_decks else None),
+            player1_sampling_decks_path=(player_pools[1] if asymmetric_decks else None),
             learner_player_id=candidate_player,
             seed=seed,
             mirror_match=mirror_match,
@@ -252,15 +270,29 @@ def evaluate(
     game_records: list[dict[str, Any]] | None = None,
     decision_trace_records: list[dict[str, Any]] | None = None,
     decision_trace_games: set[int] | None = None,
+    public_script_style: str | None = None,
+    level_mode: str = "nominal",
 ) -> dict[str, float]:
     if games <= 0:
         raise ValueError("games must be positive")
-    if opponent_mode not in {"noop", "random", "policy", "strategy"}:
+    if opponent_mode not in {"noop", "random", "policy", "strategy", "public-script"}:
         raise ValueError(f"unknown evaluation opponent mode: {opponent_mode}")
     if (opponent_mode == "policy") != (opponent is not None):
         raise ValueError("policy opponent mode and checkpoint must accompany each other")
     if (opponent_mode == "strategy") != (opponent_bot is not None):
         raise ValueError("strategy opponent mode and bot must accompany each other")
+    if (opponent_mode == "public-script") != (public_script_style is not None):
+        raise ValueError(
+            "public scripted evaluation requires exactly one declared style"
+        )
+    if public_script_style not in {None, "balanced", "pressure", "defense"}:
+        raise ValueError("unknown public script style")
+    if level_mode not in {"nominal", "mixed"}:
+        raise ValueError("evaluation level mode must be nominal or mixed")
+    if level_mode == "mixed" and candidate.model.config.public_contract_version < 4:
+        raise ValueError(
+            "mixed level evaluation requires the level-aware public contract"
+        )
     torch.manual_seed(seed)
     np.random.seed(seed)
     envs = _make_evaluation_envs(
@@ -275,6 +307,17 @@ def evaluate(
         mirror_match=mirror_match,
         reward_profile=reward_profile,
     )
+    if level_mode == "mixed":
+        for env in envs.values():
+            env.level_randomization_after = 0
+            env.mixed_level_probability = 1.0
+    public_bot = None
+    if public_script_style is not None:
+        from .public_scripted_opponent import PublicScriptedOpponent
+
+        public_bot = PublicScriptedOpponent(
+            candidate.builder, style=public_script_style
+        )
     asymmetric_decks = (
         candidate_sampling_decks_path is not None
         or opponent_sampling_decks_path is not None
@@ -450,6 +493,17 @@ def evaluate(
                     if legal.size
                     else env.action_space.no_op_action
                 )
+            elif opponent_mode == "public-script":
+                from .public_observation import project_council_public_observation
+
+                observation = env.get_structured_observation(other_player)
+                other_mask = env.get_action_mask(
+                    other_player, structured_observation=observation
+                )
+                assert public_bot is not None
+                other_action = public_bot.select_action(
+                    project_council_public_observation(observation)
+                )
             elif opponent_mode == "strategy":
                 if opponent_bot is None:
                     raise ValueError("strategy opponent requires a strategy bot")
@@ -586,6 +640,13 @@ def evaluate(
             abilities += int(candidate_action == env.action_space.ability_action)
 
         assert env.battle is not None
+        if (
+            candidate.model.config.public_contract_version >= 4
+            and not env.battle.game_over
+        ):
+            raise ValueError(
+                "council playing-strength evaluation requires completed matches"
+            )
         candidate_crown_count = env.battle.get_crown_count(candidate_player)
         opponent_crown_count = env.battle.get_crown_count(other_player)
         ticks += env.battle.tick
@@ -612,10 +673,17 @@ def evaluate(
                     "matchup_seed": matchup_seed,
                     "candidate_player": candidate_player,
                     "outcome": outcome,
+                    "terminated": bool(env.battle.game_over),
+                    "truncated": not bool(env.battle.game_over),
                     "candidate_crowns": candidate_crown_count,
                     "opponent_crowns": opponent_crown_count,
                     "ticks": env.battle.tick,
                     "candidate_deck": list(candidate_state_at_end.deck),
+                    "level_mode": level_mode,
+                    "candidate_card_levels": {card: candidate_state_at_end.card_level(card) for card in candidate_state_at_end.deck},
+                    "opponent_card_levels": {card: opponent_state_at_end.card_level(card) for card in opponent_state_at_end.deck},
+                    "candidate_tower_level": candidate_state_at_end.tower_level,
+                    "opponent_tower_level": opponent_state_at_end.tower_level,
                     "opponent_deck": list(opponent_state_at_end.deck),
                     "candidate_tower_hp": [
                         float(candidate_state_at_end.left_tower_hp),
@@ -684,10 +752,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--checkpoint-dir", default="checkpoints/entity_selfplay")
     parser.add_argument(
         "--opponent",
-        choices=["random", "noop", "strategy", "policy"],
+        choices=["random", "noop", "strategy", "policy", "public-script"],
         default="random",
     )
     parser.add_argument("--opponent-strategy", choices=STRATEGY_NAMES, default=None)
+    parser.add_argument(
+        "--public-script-style", choices=("balanced", "pressure", "defense")
+    )
+    parser.add_argument("--level-mode", choices=("nominal", "mixed"), default="nominal")
     parser.add_argument("--opponent-checkpoint", default=None)
     parser.add_argument("--decks-path", default="decks.json")
     parser.add_argument(
@@ -759,6 +831,8 @@ def parse_args() -> argparse.Namespace:
         help="zero-based game index to include in --decisions-json-out; repeatable",
     )
     parser.add_argument("--stochastic", dest="deterministic", action="store_false")
+    parser.add_argument("--deterministic", dest="deterministic", action="store_true")
+    parser.set_defaults(deterministic=False)
     parser.add_argument(
         "--quiet-engine", dest="quiet_engine", action="store_true", default=True
     )
@@ -800,6 +874,9 @@ def main() -> None:
     candidate = load_policy_checkpoint(
         checkpoint_path, device=device, decks_path=decks_path
     )
+    args.max_ticks = resolve_match_horizon(
+        args.max_ticks, candidate.model.config.public_contract_version
+    )
     opponent: LoadedPolicy | None = None
     if args.opponent == "policy":
         if not args.opponent_checkpoint:
@@ -834,6 +911,8 @@ def main() -> None:
         decision_interval=args.decision_interval,
         max_ticks=args.max_ticks,
         opponent_mode=args.opponent,
+        public_script_style=args.public_script_style,
+        level_mode=args.level_mode,
         opponent=opponent,
         deterministic=args.deterministic,
         quiet_engine=args.quiet_engine,
@@ -906,6 +985,15 @@ def main() -> None:
             "checkpoint": str(checkpoint_path),
             "checkpoint_sha256": _file_sha256(checkpoint_path),
             "checkpoint_update": int(candidate.checkpoint.get("update", 0)),
+            "model_config_sha256": hashlib.sha256(json.dumps(candidate.model.config.to_dict(),sort_keys=True,separators=(",",":")).encode()).hexdigest(),
+            "gamedata_sha256": _file_sha256(candidate.builder.loader.data_file),
+            "checkpoint_gamedata_sha256": candidate.checkpoint.get("gamedata_sha256"),
+            "checkpoint_training_seed": candidate.checkpoint.get("args", {}).get("seed"),
+            "decision_interval_ticks": args.decision_interval,
+            "max_ticks": args.max_ticks,
+            "public_contract_version": candidate.model.config.public_contract_version,
+            "sampling_temperature": 1.0,
+            "candidate_defense_strategy": args.candidate_defense_strategy,
             "opponent_mode": args.opponent,
             "opponent_checkpoint": (
                 str(resolve_path(args.opponent_checkpoint, must_exist=True))
@@ -918,6 +1006,8 @@ def main() -> None:
                 else None
             ),
             "opponent_strategy": args.opponent_strategy,
+            "public_script_style": args.public_script_style,
+            "level_mode": args.level_mode,
             "reward_profile": args.reward_profile,
             "sampling_decks_path": (
                 str(sampling_decks_path) if sampling_decks_path is not None else None

@@ -182,6 +182,11 @@ TOURNAMENT_STAT_OVERRIDES: dict[str, dict[str, int]] = {
 # correction consistent for Skeletons created by Graveyard, Witch, Tombstone,
 # Skeleton Barrel, and every other source.
 CHARACTER_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
+    # C56 audit: the export keeps Berserker's damage only in
+    # attackSequenceList ([40, 40, 40], AttackSequenceMode None) and drops
+    # Range 800 (decoded-logic characters/berserker.toml). Equal sequence
+    # entries make the sequence a constant per-hit damage.
+    "Berserker": {"damage": 40, "range": 800},
     # The bundled compact snapshot omits projectile muzzle geometry. The
     # engine launches in the target direction from this forward radius; it is
     # gameplay data because it changes flight time and the start of rolling
@@ -362,6 +367,17 @@ CHARACTER_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
 # These are copied from the current character tables and keyed by the nested
 # character identity so card aliases and every spawn source share one value.
 CHARACTER_RUNTIME_TRAITS: dict[str, dict[str, Any]] = {
+    # C56 audit 2026-10-03: native decoded-logic Mass / IgnorePushback for
+    # characters whose export omits them (engine fell back to radius mass).
+    "AngryBarbarian": {"mass": 4},
+    "Berserker": {"mass": 2},
+    "FireSpirits": {"mass": 1},
+    "Furnace_rework": {"mass": 6},
+    "Goblinstein": {"mass": 18, "ignorePushback": True},
+    "Goblinstein_doctor": {"mass": 4},
+    "MightyMiner": {"mass": 6, "ignorePushback": True},
+    "RascalBoy": {"mass": 10},
+    "RascalGirl": {"mass": 2},
     "ArcherQueen": {"mass": 6},
     "Archer": {"mass": 3},
     "BabyDragon": {"mass": 5, "flyingHeight": 3500},
@@ -805,12 +821,88 @@ def _apply_nested_data_overrides(result: dict[str, Any]) -> None:
             stack.extend(value)
 
 
+def _heal_spirit_entry(entry: dict[str, Any]) -> None:
+    """Heal Spirit: the export keeps the legacy spell row; native is a troop.
+
+    decoded-logic characters/healspirit.toml: a 1-elixir kamikaze character
+    (Hitpoints 90, Range 2500, Speed 120, AttacksAir/Ground) whose
+    HealSpiritProjectile damages enemies and heals own troops.
+    """
+    character = entry.get("summonCharacterData")
+    if not isinstance(character, dict) or not character.get("kamikaze"):
+        return
+    entry["tidType"] = "TID_CARD_TYPE_CHARACTER"
+    entry["summonNumber"] = 1
+    entry.pop("spellAsDeploy", None)
+    character.setdefault("attacksAir", True)
+    character.setdefault("tidTarget", "TID_TARGETS_AIR_AND_GROUND")
+
+
+def _goblin_drill_entry(entry: dict[str, Any]) -> None:
+    """Goblin Drill: dig to any tile, then morph into the spawning building.
+
+    decoded-logic characters/goblindrilldig.toml + buildings.toml: the
+    GoblinDrillDig carrier travels underground at SpawnPathfindSpeed 300 and
+    morphs into BUILDING.GoblinDrill (513 HP base, LifeTime 10000, one Goblin
+    every SpawnPauseTime 3000 from SpawnStartTime 1000, 2 Goblins on death at
+    DeathSpawnRadius 500 / DeployTime 500, GoblinDrillDamage on emergence).
+    """
+    dig = entry.get("summonCharacterData")
+    morph = dig.get("spawnPathfindMorphData") if isinstance(dig, dict) else None
+    if not isinstance(morph, dict):
+        return
+    character = deepcopy(morph)
+    character["spawnPathfindSpeed"] = 300
+    character.setdefault("spawnStartTime", 1000)
+    character.setdefault("deathSpawnRadius", 500)
+    character.setdefault("deathSpawnMinRadius", 500)
+    character.setdefault("deathSpawnDeployTime", 500)
+    entry["summonCharacterData"] = character
+    entry["canDeployOnEnemySide"] = True
+    entry.pop("spellAsDeploy", None)
+
+
+def _furnace_entry(entry: dict[str, Any]) -> None:
+    """Expose the walking Furnace and its ActionInterval spirit production."""
+    character = entry.get("summonCharacterData")
+    if not isinstance(character, dict) or character.get("name") != "Furnace_rework":
+        return
+    action = character.get("onStartingActionData", {})
+    spawn = action.get("actionToExecuteData", {}).get("spawnDataData")
+    if not isinstance(spawn, dict):
+        return
+    entry["tidType"] = "TID_CARD_TYPE_CHARACTER"
+    entry["summonNumber"] = 1
+    character.update(
+        attacksAir=True,
+        projectileStartRadius=2000,
+        spawnPauseTime=5000,
+        # ActionInterval starts at 1950. Native first-wave phase awaits a trace.
+        spawnStartTime=3050,
+        spawnNumber=1,
+        spawnCharacterWithDeploy=True,
+        spawnCharacterData={**deepcopy(spawn), "deployTime": 500},
+    )
+
+
+# Structural rewrites for engine-scope cards whose export row has the wrong
+# shape (not value patches). Keyed by card name; no pilot card is listed.
+ENTRY_TRANSFORMS = {
+    "Heal": _heal_spirit_entry,
+    "GoblinDrill": _goblin_drill_entry,
+    "FirespiritHut": _furnace_entry,
+}
+
+
 def apply_entry_overrides(
     entry: dict[str, Any],
     object_registry: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     patches = ENTRY_PATH_OVERRIDES.get(str(entry.get("name", "")))
     result = normalize_entry(entry, object_registry)
+    transform = ENTRY_TRANSFORMS.get(str(entry.get("name", "")))
+    if transform is not None:
+        transform(result)
 
     # Character and projectile changes must reach nested payloads as well as
     # ordinary deck troops (barrels, death spawns, spawners, and mixed swarms

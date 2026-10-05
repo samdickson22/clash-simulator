@@ -88,6 +88,7 @@ class StructuredObservationSpec:
     public_history_slots: int = 0
     public_seen_card_slots: int = 0
     public_entity_levels: bool = False
+    public_hand_levels: bool = False
 
     @property
     def num_tokens(self) -> int:
@@ -120,6 +121,8 @@ class StructuredObservation:
     board_rotated: bool | None = None
     entity_levels: np.ndarray | None = None
     entity_level_confidence: np.ndarray | None = None
+    hand_levels: np.ndarray | None = None
+    hand_level_confidence: np.ndarray | None = None
 
 
 @dataclass(frozen=True)
@@ -141,6 +144,8 @@ class ActorObservation:
     board_rotated: bool | None = None
     entity_levels: np.ndarray | None = None
     entity_level_confidence: np.ndarray | None = None
+    hand_levels: np.ndarray | None = None
+    hand_level_confidence: np.ndarray | None = None
 
 
 def _walk_named_payloads(value: Any) -> Iterable[str]:
@@ -221,6 +226,7 @@ class StructuredObservationBuilder:
         public_history_slots: int = 0,
         public_seen_card_slots: int = 0,
         public_entity_levels: bool = False,
+        public_hand_levels: bool = False,
     ) -> None:
         if max_entities <= 0:
             raise ValueError("max_entities must be positive")
@@ -230,6 +236,9 @@ class StructuredObservationBuilder:
             raise ValueError("public_history_slots must be non-negative")
         if public_seen_card_slots < 0:
             raise ValueError("public_seen_card_slots must be non-negative")
+        if public_hand_levels and not public_entity_levels:
+            raise ValueError("public hand levels require public entity levels")
+        self.public_hand_levels = bool(public_hand_levels)
         self.public_entity_levels = bool(public_entity_levels)
         self.max_entities = int(max_entities)
         self.canonical_perspective = bool(canonical_perspective)
@@ -286,6 +295,7 @@ class StructuredObservationBuilder:
             public_history_slots=self.public_history_slots,
             public_seen_card_slots=self.public_seen_card_slots,
             public_entity_levels=self.public_entity_levels,
+            public_hand_levels=self.public_hand_levels,
         )
         self.card_stat_features = self._build_card_stat_features()
 
@@ -511,6 +521,14 @@ class StructuredObservationBuilder:
                 return token_id
         return self.token_id(None, namespace=namespace)
 
+    def _actor_visible(self, entity: Any, player_id: int) -> bool:
+        """Whether an entity is present in the player's public actor state.
+
+        Contract v1-v4 use the engine's visual-state rule unchanged. Later
+        contracts may hide more (for example enemy stealth) by overriding this.
+        """
+        return bool(entity.is_visible_to(player_id))
+
     def _canonical_position(self, x: float, y: float, player_id: int) -> tuple[float, float]:
         if self.canonical_perspective and player_id == 1:
             return BOARD_WIDTH - x, BOARD_HEIGHT - y
@@ -660,7 +678,7 @@ class StructuredObservationBuilder:
         for entity in battle.entities.values():
             if not entity.is_alive:
                 continue
-            if not privileged and not entity.is_visible_to(player_id):
+            if not privileged and not self._actor_visible(entity, player_id):
                 continue
             token_id, features = self._entity_row(entity, player_id)
             # Spatial/semantic order is deterministic but carries no private
@@ -719,7 +737,7 @@ class StructuredObservationBuilder:
             )
             row = (sort_key, token_id, features)
             privileged_rows.append(row)
-            if entity.is_visible_to(player_id):
+            if self._actor_visible(entity, player_id):
                 public_rows.append(row)
         return (
             self._pack_entity_rows(public_rows),
@@ -812,7 +830,7 @@ class StructuredObservationBuilder:
             return {}
         rows = []
         for entity in battle.entities.values():
-            if not entity.is_alive or not entity.is_visible_to(player_id):
+            if not entity.is_alive or not self._actor_visible(entity, player_id):
                 continue
             token, features = self._entity_row(entity, player_id)
             kind = int(entity.entity_kind)
@@ -836,7 +854,21 @@ class StructuredObservationBuilder:
         for index, (_, level) in enumerate(rows):
             levels[index] = level
             confidence[index] = float(level != 0)
-        return {'entity_levels': levels, 'entity_level_confidence': confidence}
+        result = {'entity_levels': levels, 'entity_level_confidence': confidence}
+        if self.public_hand_levels:
+            player = battle.players[player_id]
+            names = list(player.hand[:NUM_HAND_SLOTS])
+            names.extend([None] * (NUM_HAND_SLOTS - len(names)))
+            names.append(player.cycle_queue[0] if player.cycle_queue else None)
+            hand_levels = np.asarray(
+                [0 if name is None else player.card_level(name) for name in names],
+                dtype=np.int64,
+            )
+            result.update(
+                hand_levels=hand_levels,
+                hand_level_confidence=(hand_levels > 0).astype(np.float32),
+            )
+        return result
 
     def build(self, battle: BattleState, player_id: int) -> StructuredObservation:
         actor_entities, critic_entities = self._build_actor_and_critic_entities(

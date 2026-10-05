@@ -17,6 +17,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Protocol
 
+from .own_card_history import AcceptedOwnPlay
+
 LIVE_VISION_SCHEMA_VERSION = 1
 LIVE_PREDICTION_SCHEMA_VERSION = 1
 LIVE_LABEL_SCHEMA_VERSION = 1
@@ -175,6 +177,8 @@ class VisionEntity:
     hp_fraction: float | None = None
     hp_confidence: float = 0.0
     statuses: tuple[str, ...] = ()
+    level: int | None = None
+    level_confidence: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -189,7 +193,11 @@ class PublicPlayEvent:
 
 @dataclass(frozen=True)
 class PublicVisionFrame:
-    """One current-frame measurement; it contains no accumulated history."""
+    """Current public measurements and optional confirmed own control metadata.
+
+    There is no accumulated opponent history. Omitted levels and own accepted
+    play remain unknown; a submitted command is not an accepted-play source.
+    """
 
     episode_id: str
     frame_id: str
@@ -204,6 +212,10 @@ class PublicVisionFrame:
     own_next_card_confidence: float
     entities: tuple[VisionEntity, ...]
     play_events: tuple[PublicPlayEvent, ...]
+    # Four own hand slots and visible next, supplied only when measured.
+    own_card_levels: tuple[int | None, ...] = (None,) * 5
+    own_card_level_confidence: tuple[float, ...] = (0.0,) * 5
+    own_last_play: AcceptedOwnPlay | None = None
 
 
 @dataclass(frozen=True)
@@ -275,12 +287,22 @@ class LiveInferenceAdapter(Protocol):
     def step(self, frame: PublicVisionFrame) -> ModelPrediction: ...
 
 
+def _observed_level(value: object, confidence_value: object, path: str) -> tuple[int | None, float]:
+    confidence = _unit(f"{path} confidence", confidence_value)
+    if value is None:
+        if confidence != 0:
+            raise InferenceContractError(f"{path} is missing but has confidence")
+    elif type(value) is not int or not 1 <= value <= 127 or confidence <= 0:
+        raise InferenceContractError(f"{path} requires integer level 1..127 and positive confidence")
+    return value, confidence
+
+
 def _parse_entity(payload: object, path: str) -> VisionEntity:
     if not isinstance(payload, Mapping):
         raise InferenceContractError(f"{path} must be an object")
     _strict_keys(
         payload,
-        {"track_id", "card", "kind", "player_id", "x_tiles", "y_tiles", "confidence", "hp_fraction", "hp_confidence", "statuses"},
+        {"track_id", "card", "kind", "player_id", "x_tiles", "y_tiles", "confidence", "hp_fraction", "hp_confidence", "statuses", "level", "level_confidence"},
         path,
     )
     statuses = tuple(str(value) for value in payload.get("statuses", ()))
@@ -299,7 +321,10 @@ def _parse_entity(payload: object, path: str) -> VisionEntity:
     player_id = int(payload["player_id"])
     if player_id not in {0, 1}:
         raise InferenceContractError(f"{path}.player_id must be 0 or 1")
+    level, level_confidence = _observed_level(payload.get("level"), payload.get("level_confidence", 0.0), f"{path}.level")
     return VisionEntity(
+        level=level,
+        level_confidence=level_confidence,
         track_id=str(payload["track_id"]),
         card=str(payload["card"]),
         kind=kind,
@@ -358,6 +383,9 @@ def parse_public_vision_frame(payload: object) -> PublicVisionFrame:
             "own_next_card_confidence",
             "entities",
             "play_events",
+            "own_card_levels",
+            "own_card_level_confidence",
+            "own_last_play",
         },
         "input.public",
     )
@@ -402,6 +430,26 @@ def parse_public_vision_frame(payload: object) -> PublicVisionFrame:
         raise InferenceContractError("own next card is missing but has confidence")
     if own_next_card is not None and next_confidence <= 0.0:
         raise InferenceContractError("own next card fabricates a zero-confidence value")
+    raw_levels = public.get("own_card_levels", (None,) * 5)
+    raw_confidence = public.get("own_card_level_confidence", (0.0,) * 5)
+    if not isinstance(raw_levels, (list, tuple)) or not isinstance(raw_confidence, (list, tuple)) or len(raw_levels) != 5 or len(raw_confidence) != 5:
+        raise InferenceContractError("own card levels require five hand-plus-next slots")
+    observed_levels = tuple(_observed_level(level, confidence, f"own card level {index}")
+        for index, (level, confidence) in enumerate(zip(raw_levels, raw_confidence)))
+    for index, (level, _) in enumerate(observed_levels):
+        if level is not None and ((index < 4 and index >= len(own_hand)) or (index == 4 and own_next_card is None)):
+            raise InferenceContractError("absent own card cannot have an observed level")
+    own_last_play = None
+    raw_play = public.get("own_last_play")
+    if raw_play is not None:
+        if not isinstance(raw_play, Mapping):
+            raise InferenceContractError("own_last_play must be a confirmed play object or unknown")
+        _strict_keys(raw_play, {"card_name", "elixir_cost"}, "own_last_play")
+        _require_keys(raw_play, {"card_name", "elixir_cost"}, "own_last_play")
+        try:
+            own_last_play = AcceptedOwnPlay(raw_play["card_name"], raw_play["elixir_cost"])
+        except ValueError as exc:
+            raise InferenceContractError(str(exc)) from exc
     entities = tuple(
         _parse_entity(row, f"input.public.entities[{index}]")
         for index, row in enumerate(public.get("entities", ()))
@@ -431,6 +479,9 @@ def parse_public_vision_frame(payload: object) -> PublicVisionFrame:
         own_next_card_confidence=next_confidence,
         entities=entities,
         play_events=plays,
+        own_card_levels=tuple(level for level, _ in observed_levels),
+        own_card_level_confidence=tuple(confidence for _, confidence in observed_levels),
+        own_last_play=own_last_play,
     )
 
 
@@ -455,6 +506,9 @@ def validate_public_vision_frame(frame: PublicVisionFrame) -> None:
             "own_next_card_confidence": frame.own_next_card_confidence,
             "entities": [asdict(entity) for entity in frame.entities],
             "play_events": [asdict(event) for event in frame.play_events],
+            "own_card_levels": list(frame.own_card_levels),
+            "own_card_level_confidence": list(frame.own_card_level_confidence),
+            "own_last_play": None if frame.own_last_play is None else asdict(frame.own_last_play),
         },
     }
     reparsed = parse_public_vision_frame(payload)

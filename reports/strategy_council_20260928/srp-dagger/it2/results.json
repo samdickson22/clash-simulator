@@ -1,0 +1,191 @@
+{
+  "artifact_bytes": 139188071,
+  "fit": {
+    "bytes": 138756679,
+    "checkpoint_sha256": "1abe86908ac00dec18b7d0468fb46e136d054e91a2031a2cea8c92899c7e21ff",
+    "curves": [
+      {
+        "epoch": 0,
+        "heldout": {
+          "candidate_ce": 9.825357443756527,
+          "kept": 36,
+          "kl_student_initial": 0.0,
+          "queried": 2875
+        },
+        "train": {
+          "candidate_ce": 9.251458963609071,
+          "kept": 231,
+          "kl_student_initial": 0.0,
+          "queried": 11374
+        }
+      },
+      {
+        "epoch": 1,
+        "heldout": {
+          "candidate_ce": 9.037089884281158,
+          "kept": 36,
+          "kl_student_initial": 0.006412757644834725,
+          "queried": 2875
+        },
+        "train": {
+          "candidate_ce": 8.414267857030874,
+          "kept": 231,
+          "kl_student_initial": 0.005677512102295778,
+          "queried": 11374
+        }
+      }
+    ],
+    "initial_tbptt_fullprefix_max_logit_delta": 3.814697265625e-06,
+    "outside_candidate_direct_gradient_zero": true,
+    "updates": 206,
+    "wall_s": 234.64913041703403
+  },
+  "full": {
+    "cells": [
+      {
+        "cell": "holdout-nominal-balanced",
+        "final_wins": 16,
+        "games": 32,
+        "initial_wins": 17,
+        "score_difference": -0.03125
+      },
+      {
+        "cell": "holdout-nominal-pressure",
+        "final_wins": 15,
+        "games": 32,
+        "initial_wins": 10,
+        "score_difference": 0.15625
+      },
+      {
+        "cell": "holdout-nominal-defense",
+        "final_wins": 13,
+        "games": 32,
+        "initial_wins": 15,
+        "score_difference": -0.0625
+      },
+      {
+        "cell": "hog26-nominal-balanced",
+        "final_wins": 14,
+        "games": 32,
+        "initial_wins": 18,
+        "score_difference": -0.125
+      },
+      {
+        "cell": "hog26-nominal-pressure",
+        "final_wins": 16,
+        "games": 32,
+        "initial_wins": 14,
+        "score_difference": 0.0625
+      },
+      {
+        "cell": "hog26-nominal-defense",
+        "final_wins": 13,
+        "games": 32,
+        "initial_wins": 14,
+        "score_difference": -0.03125
+      }
+    ],
+    "final_wins": 87,
+    "games": 192,
+    "gate_passed": false,
+    "initial_wins": 88,
+    "matchup_pairs": 96,
+    "paired_bootstrap_95ci": [
+      -0.08854166666666667,
+      0.078125
+    ],
+    "paired_exact_sign_flip_p": 1.0,
+    "score_difference": -0.005208333333333333
+  },
+  "full_evaluation_run": true,
+  "quick": {
+    "cells": [
+      {
+        "cell": "holdout-nominal-balanced",
+        "final_wins": 1,
+        "games": 8,
+        "initial_wins": 3,
+        "score_difference": -0.25
+      },
+      {
+        "cell": "holdout-nominal-pressure",
+        "final_wins": 2,
+        "games": 8,
+        "initial_wins": 3,
+        "score_difference": -0.125
+      },
+      {
+        "cell": "holdout-nominal-defense",
+        "final_wins": 6,
+        "games": 8,
+        "initial_wins": 6,
+        "score_difference": 0.0
+      },
+      {
+        "cell": "hog26-nominal-balanced",
+        "final_wins": 5,
+        "games": 8,
+        "initial_wins": 5,
+        "score_difference": 0.0
+      },
+      {
+        "cell": "hog26-nominal-pressure",
+        "final_wins": 4,
+        "games": 8,
+        "initial_wins": 3,
+        "score_difference": 0.125
+      },
+      {
+        "cell": "hog26-nominal-defense",
+        "final_wins": 6,
+        "games": 8,
+        "initial_wins": 3,
+        "score_difference": 0.375
+      }
+    ],
+    "final_wins": 24,
+    "games": 48,
+    "gate_passed": true,
+    "initial_wins": 23,
+    "matchup_pairs": 24,
+    "paired_bootstrap_95ci": [
+      -0.14583333333333334,
+      0.1875
+    ],
+    "paired_exact_sign_flip_p": 1.0,
+    "score_difference": 0.020833333333333332
+  },
+  "targets": {
+    "advantage_quantiles": [
+      0.0,
+      0.0,
+      0.00022422677817778708,
+      0.01058507750329736,
+      0.023098550919806175,
+      0.06715132497547972,
+      1.9499711525743741
+    ],
+    "candidate_count_quantiles": [
+      17.0,
+      20.0,
+      22.0
+    ],
+    "kept": 267,
+    "kept_fraction": 0.01873815706365359,
+    "margin": 0.05,
+    "median_entropy_all_kept": 1.0134714252431232,
+    "median_entropy_all_queried": 2.761114480499928,
+    "median_entropy_training_kept": 1.0,
+    "queried": 14249,
+    "score_quantiles": [
+      -2.0,
+      -2.0,
+      0.04873479666453504,
+      2.0,
+      2.0
+    ],
+    "tau": 0.009697969186939555,
+    "tau_fit_split": "training kept decisions only",
+    "train_kept": 231
+  }
+}

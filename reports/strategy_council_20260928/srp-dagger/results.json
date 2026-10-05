@@ -1,0 +1,218 @@
+{
+  "artifact_bytes": 54355758,
+  "backend_counts": {
+    "native": 40,
+    "python": 0
+  },
+  "canonical_data": {
+    "admitted_path": "/Users/sam/Desktop/code/clasher/reports/strategy_council_20260928/m0/runtime-snapshots/pilot-runtime-v5/gamedata.json",
+    "admitted_sha256": "daa58b28cf4e45d753e83ca69a76794285b63704e62363ee58e617af3a30ecc3",
+    "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+    "goblin_damage": 49,
+    "ice_spirit_hp": 84,
+    "marker_sha256": "fa71544e603fd16393f29480de83b285dc2d133ac31ea08f9e4d66f1079b861a",
+    "non_meta_equal": true
+  },
+  "decisions": 38936,
+  "evaluation": {
+    "cells": [
+      {
+        "cell": "holdout-nominal-balanced",
+        "final_noop_when_playable": 0.6202961883952416,
+        "final_wins": 6,
+        "games": 32,
+        "initial_noop_when_playable": 0.9446402820060887,
+        "initial_wins": 17,
+        "score_difference": -0.34375
+      },
+      {
+        "cell": "holdout-nominal-pressure",
+        "final_noop_when_playable": 0.5868817773075906,
+        "final_wins": 4,
+        "games": 32,
+        "initial_noop_when_playable": 0.9400278333478299,
+        "initial_wins": 10,
+        "score_difference": -0.1875
+      },
+      {
+        "cell": "holdout-nominal-defense",
+        "final_noop_when_playable": 0.6255839822024472,
+        "final_wins": 5,
+        "games": 32,
+        "initial_noop_when_playable": 0.9425892416515874,
+        "initial_wins": 15,
+        "score_difference": -0.3125
+      },
+      {
+        "cell": "hog26-nominal-balanced",
+        "final_noop_when_playable": 0.6413837559088956,
+        "final_wins": 0,
+        "games": 32,
+        "initial_noop_when_playable": 0.9371426393230159,
+        "initial_wins": 18,
+        "score_difference": -0.5625
+      },
+      {
+        "cell": "hog26-nominal-pressure",
+        "final_noop_when_playable": 0.5465824498082562,
+        "final_wins": 0,
+        "games": 32,
+        "initial_noop_when_playable": 0.9335371471647542,
+        "initial_wins": 14,
+        "score_difference": -0.4375
+      },
+      {
+        "cell": "hog26-nominal-defense",
+        "final_noop_when_playable": 0.6330637577581343,
+        "final_wins": 1,
+        "games": 32,
+        "initial_noop_when_playable": 0.9373735771229128,
+        "initial_wins": 14,
+        "score_difference": -0.40625
+      }
+    ],
+    "final_wins": 16,
+    "games": 192,
+    "initial_wins": 88,
+    "matchup_pairs": 96,
+    "paired_bootstrap_95ci": [
+      -0.4583333333333333,
+      -0.296875
+    ],
+    "paired_exact_sign_flip_p": 1.3766765505351941e-14,
+    "score_difference": -0.375
+  },
+  "final_evaluation_cpu_s": 1959.485963,
+  "final_sha256": "2c54aaa109fc1a2ea4bd07cdd38a35498c2fa5eb67ec1ba431532620157176e2",
+  "fit_cpu_s": 1242.4828949999999,
+  "full_projection_assumptions": "linear collection and BC scaling; measured initial/final evaluation CPU",
+  "games": 40,
+  "heldout_final": {
+    "agreement": 0.42704626334519574,
+    "ce": 3.5129064570602937,
+    "labels": 1967,
+    "play_agreement": 0.0,
+    "teacher_waits": 841,
+    "wait_agreement": 0.9988109393579072
+  },
+  "heldout_initial": {
+    "agreement": 0.42755465175394003,
+    "ce": 5.992108667448322,
+    "labels": 1967,
+    "play_agreement": 0.0,
+    "teacher_waits": 841,
+    "wait_agreement": 1.0
+  },
+  "initial_evaluation_cpu_s": 2229.219683,
+  "initial_sha256": "e6bc82c4d357ee6b17a3c266b221b2786494a2752880616101f2fc1340c980a3",
+  "labels": 9565,
+  "labels_per_game": 239.125,
+  "native_labels": 9565,
+  "native_parity": {
+    "decisions": 721,
+    "exact_arrays": [
+      "board_rotated",
+      "terminal_status",
+      "entity_ids",
+      "entity_features",
+      "entity_mask",
+      "hand_ids",
+      "global_features",
+      "opponent_history_ids",
+      "opponent_history_ages",
+      "opponent_seen_card_ids",
+      "own_last_play_ids",
+      "own_last_play_features",
+      "global_feature_confidence",
+      "entity_feature_confidence",
+      "entity_id_confidence",
+      "hand_id_confidence",
+      "entity_levels",
+      "hand_level_confidence",
+      "entity_level_confidence",
+      "hand_levels",
+      "action_masks",
+      "expert_actions",
+      "previous_actions",
+      "previous_rewards",
+      "episode_starts",
+      "episode_ids",
+      "expert_action_supervision_valid",
+      "submitted_actions",
+      "submitted_ticks",
+      "accepted_commands",
+      "student_actions",
+      "teacher_executed",
+      "root_candidate_ids",
+      "root_candidate_rows"
+    ],
+    "game": 0,
+    "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+    "labels": 192,
+    "native_game_cpu_s": 13.980312999999967,
+    "native_planner_cpu_s": 4.916827999999953,
+    "native_sha256": "0c800e5a9b8ec72e53ac5421e725ed06858a5dce88a1e02662749018a3961c87",
+    "passed": true,
+    "python_game_cpu_s": 446.423918,
+    "python_planner_cpu_s": 437.78729600000014,
+    "python_sha256": "e5f5480dddd07c3666e7050296a0bf819a839bdf130bf7b12d5841a55facc2fc",
+    "root_score_differences": [
+      {
+        "action": 604,
+        "index": 2486,
+        "native": -0.016466938546059552,
+        "python": -0.01648301441768991,
+        "row": 531
+      },
+      {
+        "action": 651,
+        "index": 2488,
+        "native": -0.016466938546059552,
+        "python": -0.01648301441768991,
+        "row": 531
+      },
+      {
+        "action": 769,
+        "index": 2491,
+        "native": -0.016466938546059552,
+        "python": -0.01648301441768991,
+        "row": 531
+      },
+      {
+        "action": 829,
+        "index": 2494,
+        "native": -0.014850436120760103,
+        "python": -0.014866470637409698,
+        "row": 531
+      },
+      {
+        "action": 768,
+        "index": 2498,
+        "native": -0.016466938546059552,
+        "python": -0.01648301441768991,
+        "row": 531
+      },
+      {
+        "action": 666,
+        "index": 2500,
+        "native": -0.016466938546059552,
+        "python": -0.01648301441768991,
+        "row": 531
+      }
+    ]
+  },
+  "native_planner_core_s_per_call": 0.02799245185572386,
+  "native_planner_cpu_s": 267.7478019999987,
+  "native_root_score_max_abs_difference": 1.607587163035898e-05,
+  "p16_source_guard_passed": true,
+  "planner_core_s_per_call": 0.02799245185572386,
+  "planner_cpu_s": 267.7478019999987,
+  "prior_invalid_run": "archive/noncanonical-3d99987c/INVALID.json; excluded from all pilot metrics",
+  "projected_300_at_200_calls_core_hours": 0.4665408642620644,
+  "projected_300_core_hours_with_cached_baseline": 4.743898239722223,
+  "projected_300_core_hours_with_two_evaluations": 5.363125929444445,
+  "projected_300_game_collection_core_hours": 1.6110905520833338,
+  "projected_300_game_planner_core_hours": 0.5578079208333308,
+  "projection_assumptions": "native-only cost per call and other CPU per decision at the 40-game query/decision rate; same beta/decks/cadence; QA replay excluded",
+  "workspace_sources_unchanged": true
+}

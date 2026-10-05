@@ -1,9 +1,12 @@
 from dataclasses import dataclass, field
 from typing import List, Optional, Deque
 from collections import deque
+from collections.abc import Mapping
 
 from .card_types import CardStatsCompat
 from .balance import DEFAULT_BATTLE_TIMELINE_STARTING_ELIXIR
+from .card_aliases import resolve_card_name
+from .stat_scaling import level_multiplier
 
 ELIXIR_ROUNDOFF_TOLERANCE = 1e-9
 
@@ -28,12 +31,32 @@ class PlayerState:
     king_tower_hp: float = 4824.0      # King tower HP
     left_tower_hp: float = 3052.0      # Level 11 Tower Princess HP
     right_tower_hp: float = 3052.0     # Level 11 Tower Princess HP
+
+    # Undeployed card levels belong to this player, never the shared loader.
+    card_levels: dict[str, int] = field(default_factory=dict)
+    tower_level: int = 11
     
     def __post_init__(self) -> None:
         """Initialize cycle queue with remaining deck cards"""
         if not self.cycle_queue:
             remaining = [card for card in self.deck if card not in self.hand]
             self.cycle_queue = deque(remaining)
+        self.set_card_levels(self.card_levels)
+        level_multiplier(self.tower_level)
+
+    def set_card_levels(self, levels: Mapping[str, int]) -> None:
+        normalized: dict[str, int] = {}
+        for name, level in levels.items():
+            level_multiplier(level)
+            canonical = resolve_card_name(name)
+            if canonical in normalized and normalized[canonical] != level:
+                raise ValueError(f"Conflicting levels for {canonical}")
+            normalized[canonical] = level
+        self.card_levels = normalized
+
+    def card_level(self, card_name: str) -> int:
+        """Return the actual owned-card level, including its visible next slot."""
+        return self.card_levels.get(resolve_card_name(card_name), 11)
     
     def regenerate_elixir(self, dt: float, base_regen_time: float = 2.8) -> None:
         """Regenerate elixir over time"""

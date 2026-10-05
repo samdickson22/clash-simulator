@@ -1,0 +1,36 @@
+{
+  "n": 50,
+  "configured": 50,
+  "ended": 50,
+  "exceptions": {
+    "null": 50
+  },
+  "schedule_states": {
+    "succeeded": 2299,
+    "failed": 323,
+    "pending": 1150
+  },
+  "schedule_errors": {
+    "none": 3449,
+    "card-unavailable": 301,
+    "ability-unavailable": 22
+  },
+  "all_scheduled_injected": 1,
+  "matches_by_action_problem": {
+    "card-unavailable": 49,
+    "none": 50,
+    "ability-unavailable": 15
+  },
+  "matches_pending": 35,
+  "crown_pair_exact": 16,
+  "winner_exact": 28,
+  "all_six_hp_exact_lane_invariant": 1,
+  "hp_mae": 1459.6566666666668,
+  "total_s": 66.0521740866825,
+  "duration_s_mean": 224.70000000000002,
+  "native_ticks_mean": 3665.74,
+  "observations": 9201,
+  "loop_s": 54.308722039917484,
+  "early_terminal_before_recorded_end": 43,
+  "early_terminal_before_recorded_end_minus91": 37
+}

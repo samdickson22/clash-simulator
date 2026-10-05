@@ -1,0 +1,27 @@
+[package]
+name = "clasher_core"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+extension-module = ["pyo3/extension-module"]
+
+[dependencies]
+pyo3 = { version = "=0.23.5", features = ["abi3-py312"] }
+serde = { version = "1", features = ["derive", "rc"] }
+serde_json = { version = "1", features = ["float_roundtrip"] }
+sha2 = "0.10"
+
+[build-dependencies]
+pyo3-build-config = "=0.23.5"
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+debug = false
+strip = "none"
+incremental = false

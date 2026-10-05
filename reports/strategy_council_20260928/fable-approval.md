@@ -1,0 +1,21 @@
+# Fable — final same-version approval
+
+**Approved file:** `reports/strategy_council_20260928/strategy.md`
+**SHA-256:** `2be09f05cfda1a76a2536593df363afde8112377afa70bec55b9489a564da17f` (recomputed locally on 2026-09-28; 4,440 words)
+
+I approve this exact version. It is the strategy I agree to jointly with Astra.
+
+## What I verified
+
+1. **Continuation design (Tier A, paragraph beginning "Use four declared continuation conditions").** The text is the replacement I supplied in Round 4: four frozen ordered pairs of deterministic public controller styles for (root owner, other player), default grid owner ∈ {balanced, defense} × other ∈ {pressure, balanced}, confirmed for non-wait coverage on scalar development roots before freezing; any three cells cover both owner styles and both other-player styles; response seeds do not create distinct continuations for deterministic controllers; the `response_styles` guard is cited correctly; the geometry controller is excluded; the v2 runner enumerates conditions × candidates × engines with one seed label per condition; the frozen v7 runner is untouched. The 20-tick-delay sentence follows unchanged. This matches the verified behaviour of `compare_reacting_public_branches.py` (lines 93–109, 291, 474) and `PublicScriptedOpponent.decide`.
+2. **Margin normalizer (paragraph beginning "Normalize own-minus-enemy remaining Crown HP margin").** The denominator is the root owner's initial total Crown HP at the root's declared tower levels, full starting HP rather than HP remaining at the root: 10,928 HP at level 11 from two Princess Towers of 3,052 and a King Tower of 4,824, matching `native_public_observation.TOWER_ANCHORS`; 1% ≈ 109 HP and 5% ≈ 546 HP; the same fixed denominator is used for every margin threshold and floor in a family. This is my Round 4 clause with two precisions I agree with. The material-failure sentence now says "5% of the root owner's initial total Crown HP", consistent with it.
+3. **Consistency edits.** Bias item 1 now notes that seed labels alone do not vary the deterministic controllers; item 3 now reads "both owner styles and both other-player styles". Both are the optional wordings I offered.
+4. **Everything else.** Read in full against candidate v2 as reviewed in Round 4: objective, authority and evidence boundaries, actor and action contract, data and initialization, oracle admission order, human-observation audit, learning experiment, levels and scope growth, parameter-specific dynamics study, Tier A coverage and regret rules, the four-family automatic bias block, Tier B, playing-strength evaluation with the subgroup definition deferred to the evaluation-configuration freeze, M0, scheduled follow-on work, decision rules, compute envelopes and the approval-status section are unchanged.
+
+## Scope of this approval
+
+- I approve the architecture, the two mandatory initialization arms with the qualified oracle third arm, the gamma-1 objective with fixed potential shaping, the level curriculum, the `training-readiness-v2` protocol as written (32 families, four candidate roles, four deterministic continuation conditions, 16-of-32 consequential coverage, material-failure and four-family bias rules with identical-execution floors), Tier B, the evaluation and promotion rules, M0, the timing and visible-status schedule, and the compute ceilings.
+- The non-blocking items from my Rounds 3–4 (Astra's Round 4 subgroup table as the definition to freeze, the telescoping shaping test with its truncated-segment boundary term, the ≤16-family oracle-substage cap, the deterministic displaced-placement rule) are not requirements of this version. Both members accepted them in discussion; I expect them to reach the implementer as guidance, and their absence from the protocol text is not a discrepancy.
+- Per the document's own status line, joint approval makes it the implementation handoff but authorizes no launch. Two execution decisions remain Sam's: the bounded emulator restart for Tier A, and the content-policy question on any video extraction.
+
+No source, tests, registries, frozen evidence or training state were touched during the council. v7, its evaluator, ledgers and exposure history remain unchanged.

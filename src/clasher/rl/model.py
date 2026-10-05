@@ -10,6 +10,7 @@ from torch import Tensor, nn
 from torch.distributions import Categorical
 from torch.nn import functional as F
 
+from .card_semantics import SEMANTIC_EXTRA_FEATURE_INDICES
 from .common import NUM_HAND_SLOTS, NUM_TILES
 from .joint_action_value import FactorizedActionValueHead
 from .structured_memory import StructuredBeliefCell, StructuredPublicStateTracker
@@ -95,8 +96,12 @@ class PolicyConfig:
     action_value_head_enabled: bool = False
 
     def __post_init__(self) -> None:
-        if self.public_contract_version not in (1, 2, 3):
+        if self.public_contract_version not in (1, 2, 3, 4, 5):
             raise ValueError("unsupported public observation contract")
+        if self.public_contract_version >= 4 and not self.public_observation_confidence:
+            raise ValueError("public contract v4 requires observation confidence")
+        if (self.public_contract_version == 5) != (self.card_semantics_version == 5):
+            raise ValueError("public contract v5 and card semantics v5 go together")
         if self.public_contract_version >= 2 and (
             len(self.public_token_names) != self.num_tokens
             or self.public_token_names[:2] != ("<pad>", "<unknown>")
@@ -259,6 +264,8 @@ class PolicyInputs:
     own_last_play_features: Tensor | None = None
     entity_levels: Tensor | None = None
     entity_level_confidence: Tensor | None = None
+    hand_levels: Tensor | None = None
+    hand_level_confidence: Tensor | None = None
 
     @property
     def batch_size(self) -> int:
@@ -611,6 +618,7 @@ class EntityEncoder(nn.Module):
         confidence_aware: bool = False,
         current_hand_slot_invariant: bool = False,
         level_aware: bool = False,
+        hand_level_aware: bool = False,
     ) -> None:
         super().__init__()
         if encoder_kind not in {"attention", "deepsets"}:
@@ -623,6 +631,7 @@ class EntityEncoder(nn.Module):
         }:
             raise ValueError(f"unknown card input mode {card_input_mode!r}")
         self.level_projection = nn.Linear(2, d_model, bias=False) if level_aware else None
+        self.hand_level_projection = nn.Linear(2, d_model, bias=False) if hand_level_aware else None
         self.encoder_kind = encoder_kind
         self.card_input_mode = card_input_mode
         self.confidence_aware = confidence_aware
@@ -648,6 +657,21 @@ class EntityEncoder(nn.Module):
                 "semantic_card_features",
                 card_stat_features[:, 16:].clone().float(),
             )
+        elif card_semantics_version == 5:
+            # v4 columns (16 base + semantic extras) followed by the v5
+            # mechanic descriptors, which enter the semantic projection's
+            # first layer through separate zero-initialized input weights.
+            v4_width = 16 + len(SEMANTIC_EXTRA_FEATURE_INDICES)
+            if card_stat_features.shape[-1] <= v4_width:
+                raise ValueError("semantic-v5 requires v4 features and v5 descriptors")
+            self.register_buffer(
+                "card_stat_features",
+                card_stat_features[:, :16].clone().float(),
+            )
+            self.register_buffer(
+                "semantic_card_features",
+                card_stat_features[:, 16:v4_width].clone().float(),
+            )
         else:
             self.register_buffer(
                 "card_stat_features", card_stat_features.clone().float()
@@ -665,6 +689,20 @@ class EntityEncoder(nn.Module):
                 nn.init.zeros_(card_stat_output.weight)
                 nn.init.zeros_(card_stat_output.bias)
         self.semantic_card_projection: nn.Sequential | None = None
+        self.v5_card_descriptors: Tensor | None
+        self.v5_descriptor_input: nn.Linear | None = None
+        if card_semantics_version == 5 and card_input_mode != "id-only":
+            v4_width = 16 + len(SEMANTIC_EXTRA_FEATURE_INDICES)
+            self.register_buffer(
+                "v5_card_descriptors",
+                card_stat_features[:, v4_width:].clone().float(),
+            )
+            self.v5_descriptor_input = nn.Linear(
+                card_stat_features.shape[-1] - v4_width, d_model, bias=False
+            )
+            nn.init.zeros_(self.v5_descriptor_input.weight)
+        else:
+            self.v5_card_descriptors = None
         if self.semantic_card_features is not None:
             semantic_output = nn.Linear(d_model, d_model)
             self.semantic_card_projection = nn.Sequential(
@@ -786,7 +824,15 @@ class EntityEncoder(nn.Module):
         if self.card_stat_projection is None or self.card_stat_features is None:
             return torch.zeros((*ids.shape, self.d_model), device=ids.device)
         result = self.card_stat_projection(self.card_stat_features[ids])
-        if self.semantic_card_projection is not None:
+        if self.v5_descriptor_input is not None:
+            assert self.semantic_card_projection is not None
+            assert self.semantic_card_features is not None
+            assert self.v5_card_descriptors is not None
+            projection = self.semantic_card_projection
+            hidden = projection[0](self.semantic_card_features[ids])
+            hidden = hidden + self.v5_descriptor_input(self.v5_card_descriptors[ids])
+            result = result + projection[2](projection[1](hidden))
+        elif self.semantic_card_projection is not None:
             assert self.semantic_card_features is not None
             result = result + self.semantic_card_projection(
                 self.semantic_card_features[ids]
@@ -805,6 +851,7 @@ class EntityEncoder(nn.Module):
         card_id_confidence: Tensor | None = None,
         global_feature_confidence: Tensor | None = None,
         entity_level_features: Tensor | None = None,
+        hand_level_features: Tensor | None = None,
     ) -> tuple[Tensor, Tensor, Tensor, Tensor]:
         if card_ids.shape[-1] > self.max_card_slots:
             raise ValueError(
@@ -816,6 +863,12 @@ class EntityEncoder(nn.Module):
             + self.kind_embedding.weight[0].view(1, -1)
         ).unsqueeze(1)
         card_tokens = self._card_tokens(card_ids, card_ids.shape[-1])
+        if self.hand_level_projection is not None:
+            if hand_level_features is None:
+                raise ValueError("level-aware hand encoder requires public hand levels")
+            card_tokens = card_tokens + self.hand_level_projection(hand_level_features)
+        elif hand_level_features is not None:
+            raise ValueError("legacy hand encoder cannot consume hand levels")
         entity_tokens = (
             self._card_identity_embedding(entity_ids)
             + self._card_stat_embedding(entity_ids)
@@ -1127,7 +1180,8 @@ class ClasherPolicy(nn.Module):
             card_input_mode=config.card_input_mode,
             confidence_aware=config.public_observation_confidence,
             current_hand_slot_invariant=config.actor_current_hand_slot_invariant,
-            level_aware=config.public_contract_version == 3,
+            level_aware=config.public_contract_version >= 3,
+            hand_level_aware=config.public_contract_version >= 4,
         )
         self.own_history_projection = (
             nn.Linear(d_model + 2, d_model)
@@ -1394,7 +1448,7 @@ class ClasherPolicy(nn.Module):
                 raise ValueError(
                     "mechanics slot replacement cannot also set a base scale"
                 )
-            if config.card_semantics_version not in {1, 3, 4}:
+            if config.card_semantics_version not in {1, 3, 4, 5}:
                 raise ValueError(
                     "mechanics slot adapter requires the 16 base card features"
                 )
@@ -1425,7 +1479,7 @@ class ClasherPolicy(nn.Module):
         self.robust_action_card_stats: Tensor | None
         self.robust_action_type_adapter: nn.Sequential | None = None
         if config.robust_action_type_adapter_size > 0:
-            if config.card_semantics_version not in {1, 3, 4}:
+            if config.card_semantics_version not in {1, 3, 4, 5}:
                 raise ValueError(
                     "robust action adapter requires base public card features"
                 )
@@ -2252,6 +2306,29 @@ class ClasherPolicy(nn.Module):
         inputs: PolicyInputs,
         state: tuple[Tensor, Tensor] | None = None,
     ) -> PolicyOutput:
+        if self.config.public_contract_version >= 4:
+            from .public_observation import (
+                REAL_PLAY_ENTITY_FEATURE_INDICES, REAL_PLAY_GLOBAL_FEATURE_INDICES,
+            )
+            entity_allowed = torch.zeros(inputs.entity_features.shape[-1], device=inputs.entity_features.device, dtype=torch.bool)
+            entity_allowed[..., sorted(REAL_PLAY_ENTITY_FEATURE_INDICES)] = True
+            global_allowed = torch.zeros(inputs.global_features.shape[-1], device=inputs.global_features.device, dtype=torch.bool)
+            global_allowed[..., sorted(REAL_PLAY_GLOBAL_FEATURE_INDICES)] = True
+            if self.config.public_contract_version >= 5:
+                # Contract v5 adds the own Champion ability button (cooldown
+                # and active duration), public while the button is shown.
+                from .contract_v5 import CHAMPION_GLOBAL_INDICES
+                global_allowed[..., list(CHAMPION_GLOBAL_INDICES)] = True
+            inputs = replace(
+                inputs,
+                entity_features=torch.where(entity_allowed, inputs.entity_features, 0),
+                global_features=torch.where(global_allowed, inputs.global_features, 0),
+                entity_feature_confidence=None if inputs.entity_feature_confidence is None else
+                    torch.where(entity_allowed, inputs.entity_feature_confidence, 0),
+                global_feature_confidence=None if inputs.global_feature_confidence is None else
+                    torch.where(global_allowed, inputs.global_feature_confidence, 0),
+                previous_rewards=torch.zeros_like(inputs.previous_rewards),
+            )
         batch_size = inputs.batch_size
         sequence_length = inputs.sequence_length
         flat_size = batch_size * sequence_length
@@ -2289,11 +2366,13 @@ class ClasherPolicy(nn.Module):
                 )
 
         level_features = None
-        if self.config.public_contract_version == 3:
+        if self.config.public_contract_version >= 3:
             levels, confidence = inputs.entity_levels, inputs.entity_level_confidence
             if levels is None or confidence is None:
                 raise ValueError('public contract v3 requires entity levels and confidence')
-            if levels.dtype != torch.long or not confidence.is_floating_point() or levels.shape != inputs.entity_ids.shape or confidence.shape != levels.shape:
+            if (levels.dtype != torch.long or not confidence.is_floating_point()
+                or (self.config.public_contract_version >= 4 and confidence.dtype != torch.float32)
+                or levels.shape != inputs.entity_ids.shape or confidence.shape != levels.shape):
                 raise ValueError('invalid public entity level shape or dtype')
             if (not torch.isfinite(confidence).all() or torch.any((confidence < 0) | (confidence > 1))
                 or torch.any((levels < 0) | (levels > 127))
@@ -2303,6 +2382,27 @@ class ClasherPolicy(nn.Module):
             level_features = torch.stack([levels.to(inputs.entity_features.dtype) / 16, confidence], dim=-1)
         elif inputs.entity_levels is not None or inputs.entity_level_confidence is not None:
             raise ValueError('entity levels require public contract v3')
+
+        hand_level_features = None
+        if self.config.public_contract_version >= 4:
+            levels, confidence = inputs.hand_levels, inputs.hand_level_confidence
+            if levels is None or confidence is None:
+                raise ValueError("public contract v4 requires hand levels and confidence")
+            if (levels.dtype != torch.long or confidence.dtype != torch.float32
+                or levels.shape != inputs.hand_ids.shape or confidence.shape != levels.shape
+                or levels.shape[-1] != VISIBLE_CARD_SLOTS):
+                raise ValueError("invalid public hand level shape or dtype")
+            if (not torch.isfinite(confidence).all()
+                or torch.any((confidence < 0) | (confidence > 1))
+                or torch.any((levels < 0) | (levels > 127))
+                or torch.any((levels == 0) != (confidence == 0))
+                or torch.any((inputs.hand_ids == 0) & (levels != 0))):
+                raise ValueError("invalid public hand levels or confidence")
+            hand_level_features = torch.stack(
+                [levels.to(inputs.entity_features.dtype) / 16, confidence], dim=-1
+            )
+        elif inputs.hand_levels is not None or inputs.hand_level_confidence is not None:
+            raise ValueError("hand levels require public contract v4")
 
         actor_global, actor_cards, actor_entities, actor_valid = self.actor_encoder(
             flatten(inputs.entity_ids),
@@ -2323,6 +2423,7 @@ class ClasherPolicy(nn.Module):
             if actor_global_confidence is None
             else flatten(actor_global_confidence),
             None if level_features is None else flatten(level_features),
+            None if hand_level_features is None else flatten(hand_level_features),
         )
         if self.config.public_contract_version >= 2:
             if inputs.own_last_play_ids is None or inputs.own_last_play_features is None:
@@ -2390,7 +2491,7 @@ class ClasherPolicy(nn.Module):
         )
         actor_global_sequence = actor_global.reshape(batch_size, sequence_length, -1)
         actor_previous_rewards = inputs.previous_rewards
-        if self.config.actor_observation_domain in {
+        if self.config.public_contract_version >= 4 or self.config.actor_observation_domain in {
             "causal-vision-v1",
             "causal-frame-v1",
         }:

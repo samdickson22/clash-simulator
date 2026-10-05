@@ -1971,7 +1971,7 @@ class TensorResidentProjectileSpellBridge:
             torch.where(
                 active,
                 (runtime.battle.entity_x_units.to(torch.int64) + move_x).clamp(
-                    250, 17_750
+                    0, 17_999
                 ),
                 runtime.battle.entity_x_units.to(torch.int64),
             ).to(torch.int32)
@@ -1980,7 +1980,7 @@ class TensorResidentProjectileSpellBridge:
             torch.where(
                 active,
                 (runtime.battle.entity_y_units.to(torch.int64) + move_y).clamp(
-                    250, 31_750
+                    0, 31_999
                 ),
                 runtime.battle.entity_y_units.to(torch.int64),
             ).to(torch.int32)

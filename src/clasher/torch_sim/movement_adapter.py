@@ -27,7 +27,7 @@ from clasher.entities import Entity, Troop
 from clasher.kinematics import logic_units_to_tiles, tiles_to_logic_units
 from clasher.native_tilemap import STANDARD_PATH_HEIGHT, STANDARD_PATH_WIDTH
 from clasher.pathfinding import ground_path_waypoint, native_single_node_waypoint
-from clasher.unit_traits import is_in_transit, uses_air_collision_plane
+from clasher.unit_traits import is_in_transit, unit_mass, uses_air_collision_plane
 
 from .movement import (
     CollisionBatch,
@@ -545,7 +545,7 @@ class TensorMovementAdapter:
                     0, tiles_to_logic_units(entity.get_collision_radius())
                 )
                 mass_milliunits[batch_index, slot] = max(
-                    1, round(entity.get_unit_mass() * 1000.0)
+                    1, round(unit_mass(entity.card_stats) * 1000.0)
                 )
                 air_collision[batch_index, slot] = uses_air_collision_plane(entity)
                 in_transit_tensor[batch_index, slot] = is_in_transit(entity)

@@ -1,0 +1,17 @@
+Both public players pass the amended preregistration at K=1. All 896 games completed.
+
+Design: exact public elixir/hand/cycle deductions; sample unresolved cards and RNG; reconstruct the public board. The policy variant uses top-8 proposals.
+
+Non-privilege: 8/8 invariance and 8/8 denied-read checks pass. Across 24 full-game replays: 0/23,058 elixir errors, zero determined-hand/cycle errors. Final-run hands were determined at 79.95%/79.30% of decisions.
+
+Benchmark core-s, K=1/4/8: pub 0.0368/0.0966/0.1790; pol 0.0329/0.0719/0.1231. Final K=1 core-s/search: 0.0269/0.0208; all-decision means: 0.00381/0.00700; maximum wall: 0.112/0.0968 s; zero overruns. K=4 failed at 0.271 s. Pre-game warmup required.
+
+All intervals are 95% matchup bootstraps.
+
+srp-pub: PASS. Holdout 207/256, 0.809 [0.754,0.863]; defense 67/84, 0.798 [0.690,0.893]. Hog26 26/64, 0.406 [0.266,0.563]. Paired difference versus privileged: holdout -0.059 [-0.105,-0.012]; Hog -0.188 [-0.313,-0.078]. Head-to-head 75/128, 0.586 [0.484,0.680].
+
+srp-pub-pol: PASS. Holdout 204/256, 0.797 [0.734,0.855]; defense 66/84, 0.786 [0.667,0.893]. Hog26 33/64, 0.516 [0.391,0.641]. Paired difference versus privileged: holdout -0.070 [-0.125,-0.020]; Hog -0.078 [-0.234,0.078]. Head-to-head 81/128, 0.633 [0.547,0.719].
+
+Recommend prewarmed srp-pub-pol K=1; Hog26 remains a weakness.
+
+Files changed: srp-public/ only: design/prereg/progress, derived-state module, planner, tests, evaluation/analysis scripts and receipts. No engine changes. Earlier runs are archived and excluded.

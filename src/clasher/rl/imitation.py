@@ -9,6 +9,7 @@ from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from types import SimpleNamespace
 
 import numpy as np
 import torch
@@ -131,6 +132,10 @@ class CorpusMetadata:
     label_checkpoint: str | None = None
     label_checkpoint_sha256: str | None = None
     sampling_decks_path: str | None = None
+    public_contract_version: int = 0
+    public_history_slots: int = 0
+    public_seen_card_slots: int = 0
+    provenance: str | None = None
 
     def to_json(self) -> str:
         payload = self.__dict__.copy()
@@ -645,6 +650,29 @@ def collect_oracle_corpus(
     return metadata
 
 
+def validate_corpus_levels(arrays: dict[str, np.ndarray], *, required: bool = False) -> None:
+    """Keep old corpora unknown; reject partial or fabricated level records."""
+    for scope, identity, mask in (("entity", "entity_ids", "entity_mask"), ("hand", "hand_ids", None)):
+        names = (f"{scope}_levels", f"{scope}_level_confidence")
+        present = [name in arrays for name in names]
+        if not any(present) and not required:
+            continue
+        if not all(present):
+            raise ValueError(f"missing {scope} level/confidence pair")
+        levels, confidence = (arrays[name] for name in names)
+        if levels.dtype != np.int64 or confidence.dtype != np.float32:
+            raise ValueError(f"invalid {scope} level dtype")
+        expected_shape = arrays[identity].shape if scope == "entity" else (*arrays[identity].shape[:-1], VISIBLE_CARD_SLOTS)
+        if levels.shape != expected_shape or confidence.shape != levels.shape:
+            raise ValueError(f"invalid {scope} level shape")
+        if (not np.isfinite(confidence).all() or np.any((confidence < 0) | (confidence > 1))
+            or np.any((levels < 0) | (levels > 127))
+            or np.any((levels == 0) != (confidence == 0))):
+            raise ValueError(f"invalid {scope} levels or confidence")
+        if mask and np.any(levels[~arrays[mask]] != 0):
+            raise ValueError("padded entity levels must be unknown")
+
+
 def load_corpus(path: Path) -> tuple[CorpusMetadata, dict[str, np.ndarray]]:
     with np.load(path, allow_pickle=False) as payload:
         metadata = CorpusMetadata.from_json(str(payload["metadata_json"].item()))
@@ -667,6 +695,17 @@ def load_corpus(path: Path) -> tuple[CorpusMetadata, dict[str, np.ndarray]]:
             )
         }
         for optional_name in (
+            "board_rotated",
+            "terminal_status",
+            "entity_levels",
+            "entity_level_confidence",
+            "hand_levels",
+            "hand_level_confidence",
+            "opponent_history_ids",
+            "opponent_history_ages",
+            "opponent_seen_card_ids",
+            "own_last_play_ids",
+            "own_last_play_features",
             "entity_id_confidence",
             "entity_feature_confidence",
             "hand_id_confidence",
@@ -674,11 +713,14 @@ def load_corpus(path: Path) -> tuple[CorpusMetadata, dict[str, np.ndarray]]:
             "expert_action_supervision_valid",
             "source_frames",
             "source_replays",
+            "source_family_ids",
+            "fit_split",
             "source_actor_ids",
             "source_snapshots",
         ):
             if optional_name in payload:
                 arrays[optional_name] = payload[optional_name].copy()
+    validate_corpus_levels(arrays, required=metadata.public_contract_version >= 4)
     if arrays["expert_actions"].shape[0] != metadata.samples:
         raise ValueError("corpus sample count does not match metadata")
     legal = arrays["action_masks"][
@@ -696,6 +738,15 @@ def load_corpus(path: Path) -> tuple[CorpusMetadata, dict[str, np.ndarray]]:
         arrays["expert_action_supervision_valid"] = supervision_valid
     if np.any(supervision_valid & ~legal):
         raise ValueError("corpus contains a supervised illegal expert action")
+    if metadata.public_contract_version >= 4:
+        from .public_policy_contract import ARRAY_DTYPES, CONFIDENCE_FIELDS, ALL_LEVEL_DTYPES, PublicPolicySequence
+        names = set(ARRAY_DTYPES) | set(CONFIDENCE_FIELDS) | set(ALL_LEVEL_DTYPES)
+        if missing := names - arrays.keys():
+            raise ValueError(f"public-v4 corpus fields missing: {sorted(missing)}")
+        public = PublicPolicySequence(metadata.token_names, {name: arrays[name] for name in names if name in arrays})
+        public.validate_action_mask(arrays["action_masks"])
+        if np.any(arrays["previous_rewards"] != 0):
+            raise ValueError("public-v4 corpus must not expose previous rewards")
     return metadata, arrays
 
 
@@ -752,6 +803,10 @@ def load_public_observation_sidecar(
         if missing:
             raise ValueError(f"public observation sidecar is missing arrays: {missing}")
         sidecar = {name: payload[name].copy() for name in required}
+        for name in ("entity_levels", "entity_level_confidence", "hand_levels", "hand_level_confidence"):
+            if name in payload:
+                sidecar[name] = payload[name].copy()
+        validate_corpus_levels(sidecar)
         for alignment_name in ("expert_actions", "episode_ids", "source_frames"):
             if (
                 alignment_name in payload
@@ -852,6 +907,8 @@ def load_public_observation_sidecar(
             f"entity={leaked_entities}, global={leaked_globals}"
         )
     merged = dict(base_arrays)
+    for name in ("entity_levels", "entity_level_confidence", "hand_levels", "hand_level_confidence"):
+        merged.pop(name, None)
     merged.update(sidecar)
     # Keep masked demonstrations as recurrent context, but never train their
     # target through a policy mask that says the action was unavailable.
@@ -1190,7 +1247,23 @@ def _batch_inputs(
         entity_feature_confidence = optional_tensor(
             "entity_feature_confidence", torch.float32
         )
+    entity_levels = optional_tensor("entity_levels", torch.long)
+    entity_level_confidence = optional_tensor("entity_level_confidence", torch.float32)
+    if trim_entity_padding:
+        if entity_levels is not None:
+            entity_levels = entity_levels[..., :entity_ids.shape[-1]]
+        if entity_level_confidence is not None:
+            entity_level_confidence = entity_level_confidence[..., :entity_ids.shape[-1]]
     return PolicyInputs(
+        entity_levels=entity_levels,
+        entity_level_confidence=entity_level_confidence,
+        hand_levels=optional_tensor("hand_levels", torch.long),
+        hand_level_confidence=optional_tensor("hand_level_confidence", torch.float32),
+        opponent_history_ids=optional_tensor("opponent_history_ids", torch.long),
+        opponent_history_ages=optional_tensor("opponent_history_ages", torch.float32),
+        opponent_seen_card_ids=optional_tensor("opponent_seen_card_ids", torch.long),
+        own_last_play_ids=optional_tensor("own_last_play_ids", torch.long),
+        own_last_play_features=optional_tensor("own_last_play_features", torch.float32),
         entity_ids=entity_ids,
         entity_features=entity_features,
         entity_mask=entity_mask,
@@ -1217,8 +1290,9 @@ def sequence_chunks(
     indices: np.ndarray,
     *,
     sequence_length: int,
+    preserve_tails: bool = False,
 ) -> np.ndarray:
-    """Return non-overlapping contiguous episode chunks for truncated BPTT."""
+    """Return episode chunks; public terminal context can pad a final short tail."""
 
     if sequence_length <= 1:
         raise ValueError("sequence_length must be greater than one")
@@ -1227,11 +1301,14 @@ def sequence_chunks(
     chunks: list[np.ndarray] = []
     for episode_id in np.unique(episode_ids[indices]):
         episode_indices = np.flatnonzero((episode_ids == episode_id) & allowed)
-        if episode_indices.size < sequence_length:
+        if episode_indices.size < sequence_length and not preserve_tails:
             continue
         if np.any(np.diff(episode_indices) != 1):
             raise ValueError("episode samples must be contiguous")
         usable = episode_indices.size - episode_indices.size % sequence_length
+        if preserve_tails and usable < episode_indices.size:
+            tail = episode_indices[usable:]
+            chunks.append(np.pad(tail, (0, sequence_length - len(tail)), constant_values=tail[-1]))
         chunks.extend(
             episode_indices[start : start + sequence_length]
             for start in range(0, usable, sequence_length)
@@ -1253,6 +1330,7 @@ def _sequence_batch_inputs(
     device: torch.device,
     *,
     trim_entity_padding: bool = False,
+    reset_memory: bool = True,
 ) -> PolicyInputs:
     def tensor(name: str, dtype: torch.dtype) -> torch.Tensor:
         return torch.as_tensor(arrays[name][chunk_indices], dtype=dtype, device=device)
@@ -1262,7 +1340,8 @@ def _sequence_batch_inputs(
 
     episode_starts = tensor("episode_starts", torch.bool).clone()
     # Truncated chunks do not carry hidden state across optimizer batches.
-    episode_starts[:, 0] = True
+    if reset_memory:
+        episode_starts[:, 0] = True
     if trim_entity_padding:
         selected_mask = arrays["entity_mask"][chunk_indices]
         entity_width = _packed_entity_width_numpy(selected_mask)
@@ -1309,7 +1388,23 @@ def _sequence_batch_inputs(
         entity_feature_confidence = optional_tensor(
             "entity_feature_confidence", torch.float32
         )
+    entity_levels = optional_tensor("entity_levels", torch.long)
+    entity_level_confidence = optional_tensor("entity_level_confidence", torch.float32)
+    if trim_entity_padding:
+        if entity_levels is not None:
+            entity_levels = entity_levels[..., :entity_ids.shape[-1]]
+        if entity_level_confidence is not None:
+            entity_level_confidence = entity_level_confidence[..., :entity_ids.shape[-1]]
     return PolicyInputs(
+        entity_levels=entity_levels,
+        entity_level_confidence=entity_level_confidence,
+        hand_levels=optional_tensor("hand_levels", torch.long),
+        hand_level_confidence=optional_tensor("hand_level_confidence", torch.float32),
+        opponent_history_ids=optional_tensor("opponent_history_ids", torch.long),
+        opponent_history_ages=optional_tensor("opponent_history_ages", torch.float32),
+        opponent_seen_card_ids=optional_tensor("opponent_seen_card_ids", torch.long),
+        own_last_play_ids=optional_tensor("own_last_play_ids", torch.long),
+        own_last_play_features=optional_tensor("own_last_play_features", torch.float32),
         entity_ids=entity_ids,
         entity_features=entity_features,
         entity_mask=entity_mask,
@@ -1326,6 +1421,60 @@ def _sequence_batch_inputs(
             "global_feature_confidence", torch.float32
         ),
     )
+
+
+def _council_imitation_state(
+    model: ClasherPolicy,
+    arrays: dict[str, np.ndarray],
+    chunk_indices: np.ndarray,
+    *,
+    device: torch.device,
+    episode_offsets: dict[int, int],
+) -> tuple[torch.Tensor, torch.Tensor]:
+    from .council_recurrence import reconstruct_recurrent_state
+
+    prefixes = []
+    for chunk in chunk_indices:
+        first = int(chunk[0])
+        episode = int(arrays["episode_ids"][first])
+        begin = episode_offsets[episode]
+        prefixes.append(None if begin == first else _sequence_batch_inputs(
+            arrays, np.arange(begin, first)[None, :], torch.device("cpu"),
+            trim_entity_padding=True, reset_memory=False,
+        ))
+    return reconstruct_recurrent_state(model, tuple(prefixes), device=device)
+
+
+def _imitation_evaluation_batches(model, arrays, indices, *, batch_size, device, trim_entity_padding):
+    """Evaluate v4 in episode order, including unsupervised recurrent context."""
+    if model.config.public_contract_version < 4:
+        for start in range(0, len(indices), batch_size):
+            selected = indices[start:start + batch_size]
+            inputs = _batch_inputs(arrays, selected, device, trim_entity_padding=trim_entity_padding)
+            yield selected, inputs, model(inputs)
+        return
+    allowed = np.zeros(len(arrays["episode_ids"]), dtype=bool)
+    allowed[indices] = True
+    for episode in np.unique(arrays["episode_ids"][indices]):
+        rows = np.flatnonzero(arrays["episode_ids"] == episode)
+        if np.any(np.diff(rows) != 1) or not arrays["episode_starts"][rows[0]]:
+            raise ValueError("council evaluation requires complete contiguous episodes")
+        state = model.initial_state(1, device=device)
+        for begin in range(0, len(rows), min(batch_size, 128)):
+            chunk = rows[begin:begin + min(batch_size, 128)]
+            inputs = _sequence_batch_inputs(arrays, chunk[None, :], device,
+                trim_entity_padding=trim_entity_padding, reset_memory=False)
+            output = model(inputs, state)
+            state = output.next_state
+            chosen = np.flatnonzero(allowed[chunk])
+            if len(chosen):
+                selected = chunk[chosen]
+                # Metrics use single-step batch shapes; inference above retained
+                # the entire causal prefix and current chunk's real recurrence.
+                metric_inputs = _batch_inputs(arrays, selected, device, trim_entity_padding=trim_entity_padding)
+                metric_output = SimpleNamespace(**{name: getattr(output, name)[0, chosen].unsqueeze(1)
+                    for name in ("joint_logits", "action_type_logits", "location_logits")})
+                yield selected, metric_inputs, metric_output
 
 
 def mirror_imitation_batch(
@@ -1427,6 +1576,15 @@ def permute_hand_imitation_batch(
             ..., :NUM_HAND_SLOTS
         ].gather(-1, hand_indices)
 
+    def permute_levels(values: torch.Tensor | None) -> torch.Tensor | None:
+        if values is None:
+            return None
+        result = values.clone()
+        result[..., :NUM_HAND_SLOTS] = values[..., :NUM_HAND_SLOTS].gather(-1, hand_indices)
+        return result
+
+    hand_levels = permute_levels(inputs.hand_levels)
+    hand_level_confidence = permute_levels(inputs.hand_level_confidence)
     action_mask = inputs.action_mask.clone()
     placement_mask = inputs.action_mask[..., :PLACEMENT_ACTIONS].reshape(
         batch_size, sequence_length, NUM_HAND_SLOTS, NUM_TILES
@@ -1477,6 +1635,8 @@ def permute_hand_imitation_batch(
         replace(
             inputs,
             hand_ids=hand_ids,
+            hand_levels=hand_levels,
+            hand_level_confidence=hand_level_confidence,
             hand_id_confidence=hand_id_confidence,
             action_mask=action_mask,
             previous_actions=remap_actions(inputs.previous_actions),
@@ -1585,18 +1745,13 @@ def evaluate_imitation(
     hierarchical_counts = {"decision": 0.0, "card": 0.0, "tile": 0.0}
     hierarchical_metrics: dict[str, float] = {}
     metric_totals: dict[str, float] = {}
-    for start in range(0, len(indices), batch_size):
-        batch_indices = indices[start : start + batch_size]
-        inputs = _batch_inputs(
-            arrays,
-            batch_indices,
-            device,
-            trim_entity_padding=trim_entity_padding,
-        )
+    for batch_indices, inputs, output in _imitation_evaluation_batches(
+        model, arrays, indices, batch_size=batch_size, device=device,
+        trim_entity_padding=trim_entity_padding,
+    ):
         targets = torch.as_tensor(
             arrays["expert_actions"][batch_indices], dtype=torch.long, device=device
         )
-        output = model(inputs)
         logits = output.joint_logits[:, 0]
         breakdown = factorized_spatial_imitation_loss(
             logits,
@@ -1780,7 +1935,7 @@ def _checkpoint_payload(
         if trained and metadata.label_source == "human-replay":
             initialization = "human_replay_imitation"
         else:
-            initialization = "oracle_imitation" if trained else "matched_random_control"
+            initialization = ("public_script_imitation" if metadata.label_source == "public-script" else "oracle_imitation") if trained else "matched_random_control"
     else:
         if trained and metadata.label_source == "human-replay":
             initialization = "human_replay_imitation_finetune"
@@ -1893,10 +2048,15 @@ def fit_imitation_corpus(
     card_input_mode: str = "hybrid",
     card_semantics_version: int = 1,
     initial_checkpoint: Path | None = None,
+    model_config_override: PolicyConfig | None = None,
+    checkpoint_metadata: dict[str, Any] | None = None,
     train_on_forced_actions: bool = False,
     imitation_objective: str = "exact",
     spatial_config: SpatialImitationConfig | None = None,
     sequence_length: int = 1,
+    recurrent_update_mode: str = "full-prefix",
+    tbptt_chunk: int = 64,
+    tbptt_burn_in: int = 16,
     left_right_augmentation: bool = False,
     hand_permutation_augmentation: bool = False,
     hand_permutation_augmentation_probability: float = 1.0,
@@ -1917,9 +2077,45 @@ def fit_imitation_corpus(
     equivariant_slot_choice_only: bool = False,
     hierarchical_mode_gate: bool = False,
 ) -> dict[str, Any]:
+    from .tbptt import ImitationStateCache, validate_mode
+
+    validate_mode(recurrent_update_mode, tbptt_chunk, tbptt_burn_in)
+    stored_state = recurrent_update_mode == "stored-state"
+    if stored_state:
+        if tbptt_chunk < 2:
+            raise ValueError("imitation TBPTT chunk must be at least two")
+        if left_right_augmentation or hand_permutation_augmentation:
+            raise ValueError("stored-state fitting requires unaugmented sequences")
+        sequence_length = tbptt_chunk
+    if checkpoint_metadata:
+        allowed = {"gamedata_sha256", "strategy_sha256", "source_pins_sha256", "training_decks_sha256", "admission_sha256", "warmstart_plan_sha256", "resource_budget"}
+        if set(checkpoint_metadata) - allowed:
+            raise ValueError("unsupported checkpoint provenance fields")
+        if any(not isinstance(value, str) or len(value) != 64 or set(value) - set("0123456789abcdef") for key, value in checkpoint_metadata.items() if key != "resource_budget"):
+            raise ValueError("checkpoint provenance must contain SHA-256 digests")
+        if "resource_budget" in checkpoint_metadata:
+            from .council_budget import BudgetSnapshot
+            BudgetSnapshot.model_validate(checkpoint_metadata["resource_budget"])
     if epochs <= 0 or batch_size <= 0 or sequence_length <= 0:
         raise ValueError("epochs and batch_size must be positive")
     metadata, arrays = load_corpus(corpus_path)
+    council_corpus = metadata.public_contract_version >= 4
+    if stored_state and not council_corpus:
+        raise ValueError("stored-state imitation requires complete public-v4 or later episodes")
+    if council_corpus:
+        provenance = json.loads(metadata.provenance or "{}")
+        if provenance.get("role") != "training":
+            raise ValueError("public-v4 fitting requires an explicit training data role")
+        if sequence_length <= 1:
+            raise ValueError("public-v4 imitation requires recurrent sequences")
+        if left_right_augmentation or hand_permutation_augmentation:
+            raise ValueError("council exact-prefix fitting currently requires unaugmented sequences")
+        if any((expert_card_balance_power, expert_action_type_balance_power)) or defensive_context_weight != 1.0:
+            raise ValueError("council script warm start preserves the natural timing prior")
+        if placement_actions_only:
+            raise ValueError("council script warm start must preserve waits")
+        card_semantics_version = 4
+        canonical_lane_globals = True
     if public_observation_sidecar is not None:
         arrays = load_public_observation_sidecar(
             public_observation_sidecar,
@@ -1949,8 +2145,8 @@ def fit_imitation_corpus(
         raise ValueError(
             "hand permutation augmentation probability must be between zero and one"
         )
-    if card_semantics_version not in {1, 2, 3}:
-        raise ValueError("card_semantics_version must be 1, 2, or 3")
+    if card_semantics_version not in {1, 2, 3, 4}:
+        raise ValueError("card_semantics_version must be 1, 2, 3, or 4")
     if equivariant_hand_policy and equivariant_slot_choice_only:
         raise ValueError(
             "equivariant hand policy and slot-choice-only policy are mutually exclusive"
@@ -1972,8 +2168,15 @@ def fit_imitation_corpus(
         placement_actions_only = True
     spatial_config.validate()
     initial_payload: dict[str, Any] | None = None
-    config: PolicyConfig | None = None
+    config: PolicyConfig | None = model_config_override
     upgrade_legacy_confidence = False
+    if model_config_override is not None:
+        if initial_checkpoint is not None:
+            raise ValueError("fresh model config cannot override an initial checkpoint")
+        if model_config_override.public_contract_version != metadata.public_contract_version or tuple(model_config_override.public_token_names) != metadata.token_names:
+            raise ValueError("fresh model config does not match the corpus public contract")
+        if model_config_override.max_entities != metadata.max_entities:
+            raise ValueError("fresh model entity capacity differs from corpus")
     if initial_checkpoint is not None:
         initial_payload = torch.load(
             initial_checkpoint, map_location=device, weights_only=False
@@ -1985,7 +2188,9 @@ def fit_imitation_corpus(
                 "initial checkpoint token vocabulary does not match corpus"
             )
         config = PolicyConfig.from_dict(initial_payload["model_config"])
-        if config.public_observation_confidence and public_observation_sidecar is None:
+        if council_corpus and config.public_contract_version != metadata.public_contract_version:
+            raise ValueError("initial checkpoint public contract does not match corpus")
+        if config.public_observation_confidence and public_observation_sidecar is None and not council_corpus:
             raise ValueError(
                 "confidence-aware checkpoint requires a public observation sidecar"
             )
@@ -2014,9 +2219,11 @@ def fit_imitation_corpus(
             if config is not None
             else canonical_lane_globals
         ),
-        public_history_slots=(config.public_history_slots if config is not None else 0),
+        public_entity_levels=council_corpus or (config is not None and config.public_contract_version >= 3),
+        public_hand_levels=council_corpus,
+        public_history_slots=(config.public_history_slots if config is not None else metadata.public_history_slots),
         public_seen_card_slots=(
-            config.public_seen_card_slots if config is not None else 0
+            config.public_seen_card_slots if config is not None else metadata.public_seen_card_slots
         ),
     )
     if config is None:
@@ -2027,6 +2234,10 @@ def fit_imitation_corpus(
             num_tokens=builder.spec.num_tokens,
             max_entities=builder.max_entities,
             card_semantics_version=card_semantics_version,
+            public_contract_version=4 if council_corpus else 1,
+            public_token_names=builder.token_names if council_corpus else (),
+            public_history_slots=metadata.public_history_slots,
+            public_seen_card_slots=metadata.public_seen_card_slots,
             d_model=d_model,
             num_heads=num_heads,
             actor_layers=actor_layers,
@@ -2037,10 +2248,10 @@ def fit_imitation_corpus(
             memory_kind=memory_kind,
             card_input_mode=card_input_mode,
             canonical_lane_globals=canonical_lane_globals,
-            public_observation_confidence=public_observation_sidecar is not None,
+            public_observation_confidence=council_corpus or public_observation_sidecar is not None,
             actor_observation_domain=(
                 "causal-frame-v1"
-                if public_observation_sidecar is not None
+                if council_corpus or public_observation_sidecar is not None
                 else "simulator-exact"
             ),
             actor_current_hand_slot_invariant=equivariant_slot_choice,
@@ -2112,11 +2323,20 @@ def fit_imitation_corpus(
     split_groups = arrays.get("source_replays", arrays["episode_ids"])
     if split_groups.shape != arrays["episode_ids"].shape:
         raise ValueError("corpus replay split groups are not aligned")
-    all_training, all_validation = split_indices(
-        split_groups,
-        validation_fraction=validation_fraction,
-        seed=effective_split_seed,
-    )
+    if council_corpus and "fit_split" in arrays:
+        fit_split = arrays["fit_split"]
+        if fit_split.shape != arrays["episode_ids"].shape or not np.isin(fit_split, [0, 1]).all():
+            raise ValueError("invalid predefined warm-start fit split")
+        all_training, all_validation = np.flatnonzero(fit_split == 0), np.flatnonzero(fit_split == 1)
+        for episode in np.unique(arrays["episode_ids"]):
+            if len(np.unique(fit_split[arrays["episode_ids"] == episode])) != 1:
+                raise ValueError("warm-start fit split crosses an episode")
+    else:
+        all_training, all_validation = split_indices(
+            split_groups,
+            validation_fraction=validation_fraction,
+            seed=effective_split_seed,
+        )
     supervised = imitation_supervision_mask(
         arrays["action_masks"],
         arrays["expert_actions"],
@@ -2180,10 +2400,10 @@ def fit_imitation_corpus(
     validation_chunks: np.ndarray | None = None
     if sequence_length > 1:
         training_chunks = sequence_chunks(
-            arrays["episode_ids"], all_training, sequence_length=sequence_length
+            arrays["episode_ids"], all_training, sequence_length=sequence_length, preserve_tails=council_corpus
         )
         validation_chunks = sequence_chunks(
-            arrays["episode_ids"], all_validation, sequence_length=sequence_length
+            arrays["episode_ids"], all_validation, sequence_length=sequence_length, preserve_tails=council_corpus
         )
 
     control_metrics = evaluate_imitation(
@@ -2229,13 +2449,24 @@ def fit_imitation_corpus(
             max_combined_sample_weight=max_combined_sample_weight,
             defensive_context_weight=defensive_context_weight,
             defensive_context_maximum_y=defensive_context_maximum_y,
-        ),
+        ) | (checkpoint_metadata or {}) | ({"recurrent_update": {
+            "mode": recurrent_update_mode, "chunk": tbptt_chunk, "burn_in": tbptt_burn_in,
+            "state_refresh": "once-per-epoch"}} if stored_state else {}),
         control_checkpoint,
     )
 
+    episode_offsets = {int(episode): int(np.flatnonzero(arrays["episode_ids"] == episode)[0]) for episode in np.unique(arrays["episode_ids"])} if council_corpus else {}
+    if council_corpus:
+        for episode, first in episode_offsets.items():
+            rows = np.flatnonzero(arrays["episode_ids"] == episode)
+            if not arrays["episode_starts"][first] or arrays["terminal_status"][rows[-1]] != 1 or arrays["expert_action_supervision_valid"][rows[-1]]:
+                raise ValueError("council fitting needs complete episodes ending in unsupervised terminal context")
     rng = np.random.default_rng(seed + 1)
     fit_started = time.monotonic()
     for epoch in range(epochs):
+        state_cache = (ImitationStateCache(model, arrays, training_chunks,
+                       episode_offsets=episode_offsets, burn_in=tbptt_burn_in, device=device)
+                       if stored_state else None)
         model.train()
         if training_chunks is None:
             shuffled_batches = rng.permutation(training)
@@ -2253,6 +2484,7 @@ def fit_imitation_corpus(
                     batch_indices,
                     device,
                     trim_entity_padding=trim_entity_padding,
+                    reset_memory=not council_corpus,
                 )
             targets = torch.as_tensor(
                 arrays["expert_actions"][batch_indices], dtype=torch.long, device=device
@@ -2282,7 +2514,11 @@ def fit_imitation_corpus(
                     targets,
                     orders,
                 )
-            model_output = model(inputs)
+            if state_cache is not None:
+                recurrent_state = state_cache.initial_state(model, arrays, batch_indices, device=device)
+            else:
+                recurrent_state = _council_imitation_state(model, arrays, batch_indices, device=device, episode_offsets=episode_offsets) if council_corpus else None
+            model_output = model(inputs, recurrent_state)
             logits = model_output.joint_logits
             flat_logits = logits.reshape(-1, logits.shape[-1])
             flat_targets = targets.reshape(-1)
@@ -2463,7 +2699,9 @@ def fit_imitation_corpus(
             max_combined_sample_weight=max_combined_sample_weight,
             defensive_context_weight=defensive_context_weight,
             defensive_context_maximum_y=defensive_context_maximum_y,
-        ),
+        ) | (checkpoint_metadata or {}) | ({"recurrent_update": {
+            "mode": recurrent_update_mode, "chunk": tbptt_chunk, "burn_in": tbptt_burn_in,
+            "state_refresh": "once-per-epoch"}} if stored_state else {}),
         output_checkpoint,
     )
     return {
@@ -2514,6 +2752,9 @@ def fit_imitation_corpus(
             )
         ),
         "sequence_length": sequence_length,
+        "recurrence": "stored-state-tbptt" if stored_state else "current-weight-full-episode-prefix" if council_corpus else "legacy-chunk-reset",
+        **({"tbptt_chunk": tbptt_chunk, "tbptt_burn_in": tbptt_burn_in} if stored_state else {}),
+        "predefined_fit_split": council_corpus and "fit_split" in arrays,
         "left_right_augmentation": left_right_augmentation,
         "hand_permutation_augmentation": hand_permutation_augmentation,
         "hand_permutation_augmentation_probability": (
@@ -2698,6 +2939,10 @@ def parse_args() -> argparse.Namespace:
         help="public card descriptor schema for a fresh imitation model",
     )
     fit.add_argument("--sequence-length", type=int, default=1)
+    fit.add_argument("--recurrent-update-mode", choices=("full-prefix", "stored-state"), default=argparse.SUPPRESS)
+    fit.add_argument("--tbptt-chunk", type=int, default=argparse.SUPPRESS)
+    fit.add_argument("--tbptt-burn-in", type=int, default=argparse.SUPPRESS)
+    fit.add_argument("--recurrent-config", type=Path, default=argparse.SUPPRESS)
     fit.add_argument(
         "--left-right-augmentation",
         action="store_true",
@@ -2861,7 +3106,8 @@ def parse_args() -> argparse.Namespace:
             "selector on play; combine with --equivariant-slot-choice-only for F3"
         ),
     )
-    return parser.parse_args()
+    from .tbptt import apply_cli_config
+    return apply_cli_config(parser.parse_args())
 
 
 def main() -> None:
@@ -2937,6 +3183,9 @@ def main() -> None:
         imitation_objective=args.imitation_objective,
         spatial_config=spatial_config,
         sequence_length=args.sequence_length,
+        recurrent_update_mode=getattr(args, "recurrent_update_mode", "full-prefix"),
+        tbptt_chunk=getattr(args, "tbptt_chunk", 64),
+        tbptt_burn_in=getattr(args, "tbptt_burn_in", 16),
         left_right_augmentation=args.left_right_augmentation,
         hand_permutation_augmentation=args.hand_permutation_augmentation,
         hand_permutation_augmentation_probability=(

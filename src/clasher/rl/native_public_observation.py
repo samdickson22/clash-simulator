@@ -56,6 +56,69 @@ def integer(value, name, minimum=0):
     return value
 
 
+# Native arena extent in logic units (thousandths of a tile).
+NATIVE_ARENA_WIDTH = 18000
+NATIVE_ARENA_HEIGHT = 32000
+# Native objects may legitimately sit outside the arena rectangle. For the
+# supported pilot roster the worst case is the thrown Log: LogProjectile starts
+# MinDistance=3000 behind its placement along the owner's y axis (balance.py
+# PROJECTILE_FIELD_OVERRIDES; tests/fixtures/native_public_log_phases shows
+# 11500 placement, 9220 at +2 ticks at speed 360, so start=8500) and x is
+# unchanged. Rolling spells are restricted to the deploy zone, whose outermost
+# tile centres are y=500 (owner 0) and y=31500 (owner 1), so the thrown log
+# reaches y=-2500 or y=34500: 2500 outside. Everything else stays inside:
+# LogicBattle::spawnObject clamps character centres (Goblins/Skeletons
+# formation spread, Tesla/Cannon anchors) to [250, extent-250]; Fireball is
+# launched from its owner's King Tower; Zap resolves at its tile centre; the
+# rolling Log travels 10100 forward from a deploy-zone tile (at most 30600 or
+# at least 1400). The margin is that 2500 plus one 500 half-tile of safety.
+# Anything farther is a corrupt frame and still fails the projection.
+NATIVE_OUT_OF_ARENA_MARGIN = 3000
+
+
+def clip_native_position(x: int, y: int) -> tuple[int, int]:
+    """Clip native logic coordinates onto the arena for observation features."""
+    return (
+        min(max(x, 0), NATIVE_ARENA_WIDTH),
+        min(max(y, 0), NATIVE_ARENA_HEIGHT),
+    )
+
+
+def native_public_position(x, y) -> tuple[int, int]:
+    """Validate raw native coordinates and return their clipped feature position.
+
+    Positions within ``NATIVE_OUT_OF_ARENA_MARGIN`` outside any of the four
+    arena edges are accepted and clipped; raw values remain in the stored
+    native frame and in :func:`native_out_of_arena_positions`.
+    """
+    for value, name in ((x, 'x'), (y, 'y')):
+        if type(value) is not int:
+            raise NativePublicProjectionError(f'invalid {name}')
+    margin = NATIVE_OUT_OF_ARENA_MARGIN
+    if not (-margin <= x <= NATIVE_ARENA_WIDTH + margin and -margin <= y <= NATIVE_ARENA_HEIGHT + margin):
+        raise NativePublicProjectionError('out-of-arena body')
+    return clip_native_position(x, y)
+
+
+def native_out_of_arena_positions(snapshot: dict) -> list[dict]:
+    """Diagnostics for objects whose raw position was clipped by the projection."""
+    result = []
+    for obj in snapshot.get('objects', ()):
+        x, y = obj.get('x'), obj.get('y')
+        if type(x) is not int or type(y) is not int:
+            continue
+        clipped = clip_native_position(x, y)
+        if clipped != (x, y):
+            result.append({
+                'nativeObjectId': obj.get('nativeObjectId'),
+                'owner': obj.get('owner'),
+                'cardId': obj.get('cardId'),
+                'raw': [x, y],
+                'clipped': list(clipped),
+            })
+    return result
+
+
 @dataclass(frozen=True)
 class NativePublicScope:
     """Caller-bound provenance for standard level11 base-form offline matches."""
@@ -98,8 +161,14 @@ class NativeProjectileCatalog:
         return self.names[index]
 
 
-def public_reference_builder(loader, catalog, *, card_semantics_version=4):
-    """Use the declared public roster, never either player's hidden deck."""
+def public_reference_builder(loader, catalog, *, card_semantics_version=4, public_contract_version=3):
+    """Use the declared public roster, never either player's hidden deck.
+
+    Version 4 serializes own-card level missingness; it does not establish a
+    native HUD level reader. The legacy v3 builder remains the default.
+    """
+    if public_contract_version not in (3, 4):
+        raise ValueError("public reference builder supports contract v3 or v4")
     base = StructuredObservationBuilder(card_loader=loader, card_vocab=PUBLIC_REFERENCE_CARDS)
     tokens = ['<pad>', '<unknown>', *sorted(set(base.token_names[2:]) | set(catalog.names))]
     return StructuredObservationBuilder(
@@ -108,6 +177,7 @@ def public_reference_builder(loader, catalog, *, card_semantics_version=4):
         token_names=tokens,
         canonical_lane_globals=True,
         public_entity_levels=True,
+        public_hand_levels=public_contract_version >= 4,
         card_semantics_version=card_semantics_version,
     )
 
@@ -215,22 +285,28 @@ class NativePublicObservationAdapter:
         if elixir > 100000:
             raise NativePublicProjectionError('own elixir exceeds capacity')
         hand = own.get('hand')
-        if not isinstance(hand, list) or len(hand) != 4 or sorted(c.get('handIndex', -1) for c in hand) != list(range(4)):
-            raise NativePublicProjectionError('incomplete own hand')
+        if not isinstance(hand, list) or len(hand) > 4 or any(not isinstance(card, dict) for card in hand):
+            raise NativePublicProjectionError('malformed own hand')
+        slots = [card.get('handIndex') for card in hand]
+        if any(type(slot) is not int or not 0 <= slot < 4 for slot in slots) or len(set(slots)) != len(slots):
+            raise NativePublicProjectionError('invalid or duplicate own hand slot')
+        # Native HUD snapshots omit a slot while its next card refills. Its
+        # absence is not a shorter hand whose remaining cards shift left.
         hand = sorted(hand, key=lambda c: c['handIndex'])
         next_card = own.get('nextCard')
         if not isinstance(next_card, dict):
             raise NativePublicProjectionError('missing visible next card')
         hand_ids = np.zeros(VISIBLE_CARD_SLOTS, dtype=np.int64)
-        for index, card in enumerate([*hand, next_card]):
+        visible_cards = [(card['handIndex'], card) for card in hand] + [(4, next_card)]
+        for index, card in visible_cards:
             identity = card.get('cardId')
-            if identity not in self.cards:
+            if type(identity) is not int or identity not in self.cards:
                 raise NativePublicProjectionError(f'unsupported visible card {identity}')
             name, _ = self.cards[identity]
             command_identity = card.get('commandCardId', identity)
             # Mirror keeps its own hand identity while native dispatch names
             # the copied card. Do not infer accepted-play history from this.
-            if command_identity != identity and (identity != 28000006 or command_identity not in self.cards):
+            if type(command_identity) is not int or (command_identity != identity and (identity != 28000006 or command_identity not in self.cards)):
                 raise NativePublicProjectionError('alternate card form is unsupported')
             hand_ids[index] = self.builder.token_id(name, namespace='card_action')
         rows, tower_hp, seen_ids = [], {}, set()
@@ -243,9 +319,9 @@ class NativePublicObservationAdapter:
             owner = integer(obj.get('owner'), 'body owner')
             if owner not in (0, 1):
                 raise NativePublicProjectionError('unsupported neutral object')
-            x, y = integer(obj.get('x'), 'x'), integer(obj.get('y'), 'y')
-            if x > 18000 or y > 32000:
-                raise NativePublicProjectionError('out-of-arena body')
+            # Bounded out-of-arena positions (thrown Log) are clipped; crown
+            # anchors below are inside the arena, so clipping cannot alias them.
+            x, y = native_public_position(obj.get('x'), obj.get('y'))
             observed_level = 0 if level_evidence is None else level_evidence.levels.get(identity, 0)
             observed_confidence = 0.0 if level_evidence is None else level_evidence.confidence.get(identity, 0.0)
             if obj.get('hp') is None:
@@ -339,6 +415,15 @@ class NativePublicObservationAdapter:
             for index, (_, level, certainty) in enumerate(sorted(level_rows, key=lambda r: r[0])):
                 levels[index], confidence[index] = level, certainty
             level_fields = {'entity_levels': levels, 'entity_level_confidence': confidence}
+        if self.builder.public_hand_levels:
+            # The pinned reader supplies body-label levels only. Neither the
+            # nominal scope, scaled HP nor undeclared raw HUD keys establish an
+            # owned-card reading. Preserve five explicit unknown slots until a
+            # separately bound own-HUD/next-card source has been calibrated.
+            level_fields.update(
+                hand_levels=np.zeros(VISIBLE_CARD_SLOTS, dtype=np.int64),
+                hand_level_confidence=np.zeros(VISIBLE_CARD_SLOTS, dtype=np.float32),
+            )
         actor = ActorObservation(
             **level_fields,
             entity_ids=ids, entity_features=features, entity_mask=mask,
@@ -352,10 +437,41 @@ class NativePublicObservationAdapter:
         result = ConfidenceAwareActorObservation(
             observation=actor, entity_id_confidence=mask.astype(np.float32),
             entity_feature_confidence=feature_confidence,
-            hand_id_confidence=np.ones_like(hand_ids, dtype=np.float32),
+            hand_id_confidence=(hand_ids > 0).astype(np.float32),
             global_feature_confidence=global_confidence,
             opponent_history_confidence=np.zeros_like(actor.opponent_history_ages),
             opponent_seen_card_confidence=np.zeros_like(actor.opponent_seen_card_ids, dtype=np.float32),
         )
         validate_real_play_feature_contract(result)
         return result
+
+
+def native_public_level_coverage(
+    builder: StructuredObservationBuilder, public: ConfidenceAwareActorObservation,
+) -> dict[str, dict[str, int]]:
+    """Report measured channel coverage separately from structural validity.
+
+    A valid v4 packet may have no measured own-card levels. These counts make
+    that limitation explicit; they do not certify source calibration or infer
+    level values from the nominal ruleset or unit health.
+    """
+    public.validate()
+    actor = public.observation
+    body = actor.entity_mask & ((actor.entity_features[:, 4] + actor.entity_features[:, 5]) > 0)
+    towers = body & np.isin(actor.entity_ids, [
+        builder.token_id("Tower", namespace="tower"),
+        builder.token_id("KingTower", namespace="tower"),
+    ])
+    entity_known = (np.zeros_like(actor.entity_mask) if actor.entity_level_confidence is None
+                    else actor.entity_level_confidence > 0)
+    hand_visible = actor.hand_ids > 1
+    hand_known = (np.zeros_like(hand_visible) if actor.hand_level_confidence is None
+                  else actor.hand_level_confidence > 0)
+    def counts(visible, known):
+        return {"observed": int(np.count_nonzero(visible & known)), "visible": int(np.count_nonzero(visible))}
+    return {
+        "body_levels": counts(body & ~towers, entity_known),
+        "tower_levels": counts(towers, entity_known),
+        "own_hand_levels": counts(hand_visible[:4], hand_known[:4]),
+        "own_next_card_level": counts(hand_visible[4:], hand_known[4:]),
+    }

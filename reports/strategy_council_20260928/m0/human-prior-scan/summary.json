@@ -1,0 +1,651 @@
+{
+ "source": {
+  "revision": "059d43a02138a34b1b3009cc2acc7630fb99a638",
+  "shards": "52 replay shards, SHA-256 verified; see scan_shards.json",
+  "payload_pools": {
+   "p16": 262,
+   "g66": 1500,
+   "s120": 400
+  }
+ },
+ "funnel": {
+  "matches_in_corpus": 252238,
+  "1v1_with_two_8card_decks": 252238,
+  "both_sides_action_logs": 251665,
+  "both_logs_and_all_plays_have_coords_and_no_unmatched_events": 251665,
+  "result_decisive": 251192
+ },
+ "tiers_by_scope": {
+  "p16": {
+   "c_le2_unsupported_per_deck": 663,
+   "a_all16_supported": 262,
+   "b_le1_unsupported_per_deck": 424,
+   "a_and_no_evo_or_hero_forms": 7,
+   "a_and_all_level_11": 74,
+   "a_and_princess_tower_both": 262
+  },
+  "g66": {
+   "b_le1_unsupported_per_deck": 25974,
+   "c_le2_unsupported_per_deck": 58171,
+   "a_all16_supported": 6386,
+   "a_and_no_evo_or_hero_forms": 24,
+   "a_and_all_level_11": 756,
+   "a_and_princess_tower_both": 5921
+  },
+  "s120": {
+   "a_all16_supported": 146290,
+   "b_le1_unsupported_per_deck": 246803,
+   "c_le2_unsupported_per_deck": 251645,
+   "a_and_no_evo_or_hero_forms": 65,
+   "a_and_all_level_11": 19606,
+   "a_and_princess_tower_both": 126667
+  }
+ },
+ "scope_definitions": {
+  "p16": "the 16 pilot cards (native-calibrated public roster)",
+  "g66": "66 cards in training_decks/simple_gym_supported_v1.json (tensor simple-Gym support profile)",
+  "s120": "all base cards that pass the scalar smoke test (deploy accepted at L11, defining effect observed); excludes NO_EFFECT and BODY_ONLY"
+ },
+ "greedy_top20": {
+  "p16": [
+   {
+    "add": "electro-spirit",
+    "new_tier_a": 99,
+    "cumulative_tier_a": 361
+   },
+   {
+    "add": "x-bow",
+    "new_tier_a": 142,
+    "cumulative_tier_a": 503
+   },
+   {
+    "add": "berserker",
+    "new_tier_a": 91,
+    "cumulative_tier_a": 594
+   },
+   {
+    "add": "rocket",
+    "new_tier_a": 97,
+    "cumulative_tier_a": 691
+   },
+   {
+    "add": "lightning",
+    "new_tier_a": 33,
+    "cumulative_tier_a": 724
+   },
+   {
+    "add": "elite-barbarians",
+    "new_tier_a": 15,
+    "cumulative_tier_a": 739
+   },
+   {
+    "add": "minions",
+    "new_tier_a": 17,
+    "cumulative_tier_a": 756
+   },
+   {
+    "add": "firecracker",
+    "new_tier_a": 14,
+    "cumulative_tier_a": 770
+   },
+   {
+    "add": "earthquake",
+    "new_tier_a": 41,
+    "cumulative_tier_a": 811
+   },
+   {
+    "add": "mighty-miner",
+    "new_tier_a": 483,
+    "cumulative_tier_a": 1294
+   },
+   {
+    "add": "barbarian-barrel",
+    "new_tier_a": 486,
+    "cumulative_tier_a": 1780
+   },
+   {
+    "add": "furnace",
+    "new_tier_a": 54,
+    "cumulative_tier_a": 1834
+   },
+   {
+    "add": "royal-hogs",
+    "new_tier_a": 35,
+    "cumulative_tier_a": 1869
+   },
+   {
+    "add": "goblin-hut",
+    "new_tier_a": 188,
+    "cumulative_tier_a": 2057
+   },
+   {
+    "add": "royal-ghost",
+    "new_tier_a": 759,
+    "cumulative_tier_a": 2816
+   },
+   {
+    "add": "wizard",
+    "new_tier_a": 107,
+    "cumulative_tier_a": 2923
+   },
+   {
+    "add": "bomb-tower",
+    "new_tier_a": 151,
+    "cumulative_tier_a": 3074
+   },
+   {
+    "add": "goblinstein",
+    "new_tier_a": 403,
+    "cumulative_tier_a": 3477
+   },
+   {
+    "add": "valkyrie",
+    "new_tier_a": 170,
+    "cumulative_tier_a": 3647
+   },
+   {
+    "add": "baby-dragon",
+    "new_tier_a": 127,
+    "cumulative_tier_a": 3774
+   }
+  ],
+  "g66": [
+   {
+    "add": "mighty-miner",
+    "new_tier_a": 2301,
+    "cumulative_tier_a": 8687
+   },
+   {
+    "add": "berserker",
+    "new_tier_a": 2498,
+    "cumulative_tier_a": 11185
+   },
+   {
+    "add": "skeleton-army",
+    "new_tier_a": 2547,
+    "cumulative_tier_a": 13732
+   },
+   {
+    "add": "elite-barbarians",
+    "new_tier_a": 2421,
+    "cumulative_tier_a": 16153
+   },
+   {
+    "add": "phoenix",
+    "new_tier_a": 1747,
+    "cumulative_tier_a": 17900
+   },
+   {
+    "add": "lightning",
+    "new_tier_a": 1727,
+    "cumulative_tier_a": 19627
+   },
+   {
+    "add": "furnace",
+    "new_tier_a": 2010,
+    "cumulative_tier_a": 21637
+   },
+   {
+    "add": "goblin-hut",
+    "new_tier_a": 3978,
+    "cumulative_tier_a": 25615
+   },
+   {
+    "add": "electro-giant",
+    "new_tier_a": 1693,
+    "cumulative_tier_a": 27308
+   },
+   {
+    "add": "goblin-cage",
+    "new_tier_a": 2099,
+    "cumulative_tier_a": 29407
+   },
+   {
+    "add": "goblinstein",
+    "new_tier_a": 2128,
+    "cumulative_tier_a": 31535
+   },
+   {
+    "add": "skeleton-dragons",
+    "new_tier_a": 2057,
+    "cumulative_tier_a": 33592
+   },
+   {
+    "add": "elixir-collector",
+    "new_tier_a": 4073,
+    "cumulative_tier_a": 37665
+   },
+   {
+    "add": "barbarians",
+    "new_tier_a": 2225,
+    "cumulative_tier_a": 39890
+   },
+   {
+    "add": "wizard",
+    "new_tier_a": 2153,
+    "cumulative_tier_a": 42043
+   },
+   {
+    "add": "golden-knight",
+    "new_tier_a": 2165,
+    "cumulative_tier_a": 44208
+   },
+   {
+    "add": "executioner",
+    "new_tier_a": 2208,
+    "cumulative_tier_a": 46416
+   },
+   {
+    "add": "goblins",
+    "new_tier_a": 3600,
+    "cumulative_tier_a": 50016
+   },
+   {
+    "add": "zappies",
+    "new_tier_a": 3377,
+    "cumulative_tier_a": 53393
+   },
+   {
+    "add": "mother-witch",
+    "new_tier_a": 3205,
+    "cumulative_tier_a": 56598
+   }
+  ],
+  "s120": [
+   {
+    "add": "vines",
+    "new_tier_a": 34742,
+    "cumulative_tier_a": 181032
+   },
+   {
+    "add": "elixir-collector",
+    "new_tier_a": 26622,
+    "cumulative_tier_a": 207654
+   },
+   {
+    "add": "goblin-drill",
+    "new_tier_a": 17794,
+    "cumulative_tier_a": 225448
+   },
+   {
+    "add": "void",
+    "new_tier_a": 16691,
+    "cumulative_tier_a": 242139
+   },
+   {
+    "add": "goblin-curse",
+    "new_tier_a": 9526,
+    "cumulative_tier_a": 251665
+   }
+  ]
+ },
+ "marginal_top": {
+  "p16": [
+   [
+    "electro-spirit",
+    99
+   ],
+   [
+    "berserker",
+    12
+   ],
+   [
+    "lightning",
+    9
+   ],
+   [
+    "rocket",
+    8
+   ],
+   [
+    "elite-barbarians",
+    6
+   ],
+   [
+    "bats",
+    4
+   ],
+   [
+    "x-bow",
+    3
+   ],
+   [
+    "valkyrie",
+    3
+   ],
+   [
+    "princess",
+    2
+   ],
+   [
+    "witch",
+    1
+   ],
+   [
+    "earthquake",
+    1
+   ],
+   [
+    "skeleton-army",
+    1
+   ]
+  ],
+  "g66": [
+   [
+    "mighty-miner",
+    2301
+   ],
+   [
+    "berserker",
+    2156
+   ],
+   [
+    "skeleton-army",
+    1717
+   ],
+   [
+    "elite-barbarians",
+    1309
+   ],
+   [
+    "skeleton-dragons",
+    531
+   ],
+   [
+    "lightning",
+    436
+   ],
+   [
+    "goblin-cage",
+    377
+   ],
+   [
+    "golden-knight",
+    289
+   ],
+   [
+    "goblins",
+    275
+   ],
+   [
+    "phoenix",
+    267
+   ],
+   [
+    "executioner",
+    256
+   ],
+   [
+    "rage",
+    251
+   ],
+   [
+    "barbarians",
+    237
+   ],
+   [
+    "giant-skeleton",
+    221
+   ],
+   [
+    "furnace",
+    219
+   ],
+   [
+    "mother-witch",
+    217
+   ],
+   [
+    "wizard",
+    215
+   ],
+   [
+    "vines",
+    188
+   ],
+   [
+    "goblinstein",
+    171
+   ],
+   [
+    "fire-spirit",
+    165
+   ]
+  ],
+  "s120": [
+   [
+    "vines",
+    34742
+   ],
+   [
+    "elixir-collector",
+    22760
+   ],
+   [
+    "goblin-drill",
+    14510
+   ],
+   [
+    "void",
+    12821
+   ],
+   [
+    "goblin-curse",
+    6103
+   ]
+  ]
+ },
+ "support_counts": {
+  "base_cards_in_corpus": 122,
+  "pilot16": 16,
+  "simple_gym66": 66,
+  "scalar_s120_supported_or_approx": 117,
+  "no_effect": [
+   "goblin-curse",
+   "vines",
+   "void"
+  ],
+  "body_only": [
+   "elixir-collector",
+   "goblin-drill"
+  ],
+  "approx": [
+   "heal-spirit",
+   "spirit-empress"
+  ],
+  "slugs_with_evo": 42,
+  "slugs_with_hero": 16
+ },
+ "resim": {
+  "resim_g66_n100": {
+   "pool": "g66",
+   "pool_size": 1500,
+   "n": 100,
+   "errors": 0,
+   "winner_agreement": 0.64,
+   "crowns_exact_rate": 0.49,
+   "mean_crown_abs_err": 0.96,
+   "mean_tower_down_agreement_6": 0.7483333333333333,
+   "placement_accept_rate": 0.9969493593654668,
+   "hand_forced_rate": 0.002287980475899939,
+   "elixir_topup_rate": 0.000762660158633313,
+   "matches_without_timed_contradiction": 36,
+   "contradiction_kinds_first": {
+    "sim_kill_of_tower_standing_in_real": 59,
+    "pocket_play_but_sim_tower_alive": 5
+   },
+   "matches_with_real_kill_missing_in_sim": 72,
+   "real_team_win_rate_in_sample": 0.6,
+   "sim_team_win_rate_in_sample": 0.56,
+   "wall_s": 291.7,
+   "median_first_contradiction_frac_incl_uncontradicted_as_1": 0.9165000000000001,
+   "median_first_contradiction_s_contradicted_only": 164.075
+  },
+  "resim_g66_n100_control": {
+   "pool": "g66",
+   "pool_size": 1500,
+   "n": 100,
+   "errors": 0,
+   "winner_agreement": 0.49,
+   "crowns_exact_rate": 0.03,
+   "mean_crown_abs_err": 2.49,
+   "mean_tower_down_agreement_6": 0.5216666666666666,
+   "placement_accept_rate": 0.9975290338522362,
+   "hand_forced_rate": 0.0029651593773165306,
+   "elixir_topup_rate": 0.001235483073881888,
+   "matches_without_timed_contradiction": 1,
+   "contradiction_kinds_first": {
+    "sim_kill_of_tower_standing_in_real": 98,
+    "pocket_play_but_sim_tower_alive": 1
+   },
+   "matches_with_real_kill_missing_in_sim": 54,
+   "real_team_win_rate_in_sample": 0.6,
+   "sim_team_win_rate_in_sample": 0.55,
+   "wall_s": 222.6,
+   "median_first_contradiction_frac_incl_uncontradicted_as_1": 0.256,
+   "median_first_contradiction_s_contradicted_only": 56.85
+  },
+  "resim_p16_n20": {
+   "pool": "p16",
+   "pool_size": 262,
+   "n": 20,
+   "errors": 0,
+   "winner_agreement": 0.7,
+   "crowns_exact_rate": 0.5,
+   "mean_crown_abs_err": 0.85,
+   "mean_tower_down_agreement_6": 0.7416666666666666,
+   "placement_accept_rate": 0.9953798767967146,
+   "hand_forced_rate": 0.004106776180698152,
+   "elixir_topup_rate": 0.000513347022587269,
+   "matches_without_timed_contradiction": 6,
+   "contradiction_kinds_first": {
+    "sim_kill_of_tower_standing_in_real": 12,
+    "pocket_play_but_sim_tower_alive": 2
+   },
+   "matches_with_real_kill_missing_in_sim": 17,
+   "real_team_win_rate_in_sample": 0.55,
+   "sim_team_win_rate_in_sample": 0.35,
+   "wall_s": 52.2,
+   "median_first_contradiction_frac_incl_uncontradicted_as_1": 0.8825000000000001,
+   "median_first_contradiction_s_contradicted_only": 198.85000000000002
+  },
+  "resim_p16_n20_control": {
+   "pool": "p16",
+   "pool_size": 262,
+   "n": 20,
+   "errors": 0,
+   "winner_agreement": 0.45,
+   "crowns_exact_rate": 0.05,
+   "mean_crown_abs_err": 2.45,
+   "mean_tower_down_agreement_6": 0.5416666666666666,
+   "placement_accept_rate": 0.9937555753791257,
+   "hand_forced_rate": 0.008028545941123996,
+   "elixir_topup_rate": 0.0008920606601248885,
+   "matches_without_timed_contradiction": 0,
+   "contradiction_kinds_first": {
+    "sim_kill_of_tower_standing_in_real": 20
+   },
+   "matches_with_real_kill_missing_in_sim": 8,
+   "real_team_win_rate_in_sample": 0.55,
+   "sim_team_win_rate_in_sample": 0.5,
+   "wall_s": 45.0,
+   "median_first_contradiction_frac_incl_uncontradicted_as_1": 0.262,
+   "median_first_contradiction_s_contradicted_only": 64.025
+  },
+  "resim_p16_n262": {
+   "pool": "p16",
+   "pool_size": 262,
+   "n": 262,
+   "errors": 0,
+   "winner_agreement": 0.6526717557251909,
+   "crowns_exact_rate": 0.4847328244274809,
+   "mean_crown_abs_err": 0.9045801526717557,
+   "mean_tower_down_agreement_6": 0.7767175572519084,
+   "placement_accept_rate": 0.9977175239069694,
+   "hand_forced_rate": 0.0015347684073826295,
+   "elixir_topup_rate": 0.00015741214434693637,
+   "matches_without_timed_contradiction": 118,
+   "contradiction_kinds_first": {
+    "sim_kill_of_tower_standing_in_real": 129,
+    "pocket_play_but_sim_tower_alive": 15
+   },
+   "matches_with_real_kill_missing_in_sim": 195,
+   "real_team_win_rate_in_sample": 0.6030534351145038,
+   "sim_team_win_rate_in_sample": 0.5076335877862596,
+   "wall_s": 738.9,
+   "median_first_contradiction_frac_incl_uncontradicted_as_1": 0.971,
+   "median_first_contradiction_s_contradicted_only": 204.425
+  },
+  "resim_p16_n262_control": {
+   "pool": "p16",
+   "pool_size": 262,
+   "n": 262,
+   "errors": 0,
+   "winner_agreement": 0.5152671755725191,
+   "crowns_exact_rate": 0.022900763358778626,
+   "mean_crown_abs_err": 2.6297709923664123,
+   "mean_tower_down_agreement_6": 0.5407124681933841,
+   "placement_accept_rate": 0.9953435690913667,
+   "hand_forced_rate": 0.00478228039265039,
+   "elixir_topup_rate": 0.0002516989680342311,
+   "matches_without_timed_contradiction": 9,
+   "contradiction_kinds_first": {
+    "sim_kill_of_tower_standing_in_real": 250,
+    "pocket_play_but_sim_tower_alive": 3
+   },
+   "matches_with_real_kill_missing_in_sim": 106,
+   "real_team_win_rate_in_sample": 0.6030534351145038,
+   "sim_team_win_rate_in_sample": 0.49236641221374045,
+   "wall_s": 618.8,
+   "median_first_contradiction_frac_incl_uncontradicted_as_1": 0.265,
+   "median_first_contradiction_s_contradicted_only": 69.7
+  },
+  "resim_s120_n100": {
+   "pool": "s120",
+   "pool_size": 400,
+   "n": 100,
+   "errors": 0,
+   "winner_agreement": 0.68,
+   "crowns_exact_rate": 0.42,
+   "mean_crown_abs_err": 1.18,
+   "mean_tower_down_agreement_6": 0.725,
+   "placement_accept_rate": 0.9939693830214937,
+   "hand_forced_rate": 0.0057213545693520955,
+   "elixir_topup_rate": 0.0013916808411937528,
+   "matches_without_timed_contradiction": 40,
+   "contradiction_kinds_first": {
+    "sim_kill_of_tower_standing_in_real": 53,
+    "pocket_play_but_sim_tower_alive": 7
+   },
+   "matches_with_real_kill_missing_in_sim": 75,
+   "real_team_win_rate_in_sample": 0.74,
+   "sim_team_win_rate_in_sample": 0.61,
+   "wall_s": 320.3,
+   "median_first_contradiction_frac_incl_uncontradicted_as_1": 0.889,
+   "median_first_contradiction_s_contradicted_only": 156.375
+  },
+  "resim_s120_n100_control": {
+   "pool": "s120",
+   "pool_size": 400,
+   "n": 100,
+   "errors": 0,
+   "winner_agreement": 0.43,
+   "crowns_exact_rate": 0.02,
+   "mean_crown_abs_err": 2.91,
+   "mean_tower_down_agreement_6": 0.515,
+   "placement_accept_rate": 0.992893100384957,
+   "hand_forced_rate": 0.0035534498075214687,
+   "elixir_topup_rate": 0.0014806040864672786,
+   "matches_without_timed_contradiction": 6,
+   "contradiction_kinds_first": {
+    "sim_kill_of_tower_standing_in_real": 94
+   },
+   "matches_with_real_kill_missing_in_sim": 52,
+   "real_team_win_rate_in_sample": 0.74,
+   "sim_team_win_rate_in_sample": 0.51,
+   "wall_s": 223.6,
+   "median_first_contradiction_frac_incl_uncontradicted_as_1": 0.2665,
+   "median_first_contradiction_s_contradicted_only": 58.75
+  }
+ }
+}

@@ -1,0 +1,40 @@
+{
+  "complete": true,
+  "pass_admission": true,
+  "utc": 1791159530.0295942,
+  "manifest": "4cd1fdd26d2d5fee2348fd290b077e0a01b6c58bbb0c67dd70d595ef98e99cca",
+  "result_sha256": "c52b566096c7101603ae02e4b3b52c62390abbbfd0db8c01b407076f11da5a87",
+  "audit_sha256": "17d0fdb07e0c2cee516b778e72f2b14924e30c92b5f18aed495a9824fac9026c",
+  "report_sha256": "917d33726c118b60cd3341c07c92724c4fd8aa23668b7f7aa2948bbec4619410",
+  "head_to_head": {
+    "games": 256,
+    "score": 0.5,
+    "ci": [
+      0.5,
+      0.5
+    ],
+    "wins": 128,
+    "draws": 0,
+    "pass_strength": true
+  },
+  "scripts": {
+    "games": 128,
+    "score": 0.90625,
+    "ci": [
+      0.84375,
+      0.9609375
+    ],
+    "wins": 116,
+    "draws": 0,
+    "pass_strength": true
+  },
+  "timing": {
+    "decisions": 348102,
+    "p99": 0.11106061434373259,
+    "max": 0.22981412499211729,
+    "search_p99": 0.16133093371288845,
+    "overruns": 0
+  },
+  "truncations": 84,
+  "fallbacks": 0
+}

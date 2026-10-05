@@ -1,0 +1,187 @@
+{
+  "complete": true,
+  "manifest": "a344f739929fbe58d93d1f8b60941dee4920ff2330791ca1b6dc9c27f1e6d101",
+  "pooled": {
+    "games": 256,
+    "pairs": 128,
+    "ability_accepted": 49,
+    "wins": 224,
+    "draws": 0,
+    "score": 0.875,
+    "ci": [
+      0.828125,
+      0.91796875
+    ],
+    "pass_gate": true
+  },
+  "styles": {
+    "balanced": {
+      "games": 86,
+      "pairs": 43,
+      "ability_accepted": 10,
+      "wins": 75,
+      "draws": 0,
+      "score": 0.872093023255814,
+      "ci": [
+        0.7906976744186046,
+        0.9418604651162791
+      ],
+      "pass_gate": true
+    },
+    "pressure": {
+      "games": 86,
+      "pairs": 43,
+      "ability_accepted": 20,
+      "wins": 75,
+      "draws": 0,
+      "score": 0.872093023255814,
+      "ci": [
+        0.7790697674418605,
+        0.9534883720930233
+      ],
+      "pass_gate": true
+    },
+    "defense": {
+      "games": 84,
+      "pairs": 42,
+      "ability_accepted": 19,
+      "wins": 74,
+      "draws": 0,
+      "score": 0.8809523809523809,
+      "ci": [
+        0.7976190476190477,
+        0.9523809523809523
+      ],
+      "pass_gate": true
+    }
+  },
+  "families": {
+    "Hog 2.6": {
+      "games": 38,
+      "pairs": 19,
+      "ability_accepted": 0,
+      "wins": 27,
+      "draws": 0,
+      "score": 0.7105263157894737,
+      "ci": [
+        0.5263157894736842,
+        0.868421052631579
+      ],
+      "pass_gate": true
+    },
+    "Hog EQ/Firecracker/MM": {
+      "games": 38,
+      "pairs": 19,
+      "ability_accepted": 19,
+      "wins": 34,
+      "draws": 0,
+      "score": 0.8947368421052632,
+      "ci": [
+        0.7894736842105263,
+        0.9736842105263158
+      ],
+      "pass_gate": true
+    },
+    "Royal Hogs/Furnace": {
+      "games": 36,
+      "pairs": 18,
+      "ability_accepted": 0,
+      "wins": 36,
+      "draws": 0,
+      "score": 1.0,
+      "ci": [
+        1.0,
+        1.0
+      ],
+      "pass_gate": true
+    },
+    "X-Bow": {
+      "games": 36,
+      "pairs": 18,
+      "ability_accepted": 0,
+      "wins": 33,
+      "draws": 0,
+      "score": 0.9166666666666666,
+      "ci": [
+        0.8333333333333334,
+        1.0
+      ],
+      "pass_gate": true
+    },
+    "bait": {
+      "games": 36,
+      "pairs": 18,
+      "ability_accepted": 2,
+      "wins": 35,
+      "draws": 0,
+      "score": 0.9722222222222222,
+      "ci": [
+        0.9166666666666666,
+        1.0
+      ],
+      "pass_gate": true
+    },
+    "Goblinstein": {
+      "games": 36,
+      "pairs": 18,
+      "ability_accepted": 6,
+      "wins": 32,
+      "draws": 0,
+      "score": 0.8888888888888888,
+      "ci": [
+        0.75,
+        1.0
+      ],
+      "pass_gate": true
+    },
+    "AQ": {
+      "games": 36,
+      "pairs": 18,
+      "ability_accepted": 22,
+      "wins": 27,
+      "draws": 0,
+      "score": 0.75,
+      "ci": [
+        0.5833333333333334,
+        0.8888888888888888
+      ],
+      "pass_gate": true
+    }
+  },
+  "statistical_pass": true,
+  "timing": {
+    "decisions": 209575,
+    "searches": 22913,
+    "p99": 0.12338159310631466,
+    "max": 0.3113048749510199,
+    "search_p99": 0.1701698120310903,
+    "search_max": 0.3113048749510199,
+    "overruns": 16,
+    "pass_budget": false
+  },
+  "abilities": {
+    "MightyMiner": {
+      "opportunities": 192,
+      "attempts": 21,
+      "accepted": 21
+    },
+    "Goblinstein": {
+      "opportunities": 184,
+      "attempts": 6,
+      "accepted": 6
+    },
+    "ArcherQueen": {
+      "opportunities": 152,
+      "attempts": 22,
+      "accepted": 22
+    }
+  },
+  "rejected": [
+    2,
+    31
+  ],
+  "derived_checks": 209575,
+  "hand_determined": 34657,
+  "cycle_determined": 202757,
+  "receipts_sha256": "68fd477c7e062f02145cf903ab6824b7d27fcd82dd093832811547bcf538ad4f"
+}

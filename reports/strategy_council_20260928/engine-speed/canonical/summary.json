@@ -1,0 +1,65 @@
+{
+  "time": "2026-10-04T05:51:20+00:00",
+  "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+  "admitted_gamedata_sha256": "daa58b28cf4e45d753e83ca69a76794285b63704e62363ee58e617af3a30ecc3",
+  "identity": {
+    "p16": {
+      "checked_episodes": 12,
+      "digest_boundaries": 15949,
+      "mismatches": []
+    },
+    "c56": {
+      "mode": "check",
+      "episodes": 7,
+      "digest_boundaries": 2900,
+      "mismatches": [],
+      "baseline_sha256": "002a57a9685b6ee008c84dbc17af2c83fd8076c8c3525e0ce0557407c52da66b"
+    },
+    "recorded": {
+      "episodes": 8,
+      "mismatches": []
+    },
+    "random": {
+      "episodes": 24,
+      "boundaries": 7198,
+      "pocket_placements": [
+        118,
+        113
+      ],
+      "mismatches": []
+    }
+  },
+  "rust": {
+    "stage2_games": 64,
+    "stage2_boundaries": 303198,
+    "live_imports": {
+      "imports": 512,
+      "ticks": 102400,
+      "max_clone_us": 6.730000000061409,
+      "clone_gate": true
+    },
+    "placements": 8177,
+    "placement_boundaries": 523328,
+    "planner_calls": 50,
+    "candidates": 999,
+    "rollout_ticks": 159840,
+    "native_games": 8,
+    "native_game_ticks": 42950,
+    "mismatches": 0
+  },
+  "native_recorded": {
+    "games": 8,
+    "planner_calls": 666,
+    "mismatches": 0
+  },
+  "rust_binary_sha256": "552e200cf76ecf7296e09a9f240c03cab57f8b284a6847522b00008adbc0581e",
+  "report": "reports/strategy_council_20260928/engine-speed/GAMEDATA_CANONICAL.md",
+  "report_sha256": "7be3e1edc8b5c3e5560fbf7f7a80fc1dd468777f3adee082b0f0392398729706",
+  "regressions": {
+    "existing_stage1": 13,
+    "existing_stage2": 24,
+    "new_canonical": 1,
+    "failures": 0
+  },
+  "cargo_clean": "Removed 457 files, 116.9 MiB; tested extension retained"
+}

@@ -15,7 +15,6 @@ from dataclasses import dataclass
 import torch
 
 LOGIC_UNITS_PER_TILE = 1000
-OUTERMOST_OBJECT_CENTER_UNITS = 250
 DEFAULT_ARENA_WIDTH_UNITS = 18_000
 DEFAULT_ARENA_HEIGHT_UNITS = 32_000
 NATIVE_COLLISION_CAP_UNITS = 300
@@ -152,18 +151,21 @@ def clamp_native_positions(
     arena_width_units: int = DEFAULT_ARENA_WIDTH_UNITS,
     arena_height_units: int = DEFAULT_ARENA_HEIGHT_UNITS,
 ) -> torch.Tensor:
-    """Clip object centers to the native outer half-cell midpoint."""
+    """Clip moving centers to the last logic unit inside the arena.
+
+    The quarter-tile formation margin belongs to spawn placement, not motion.
+    """
 
     position_units = _as_int64(position_units)
     lower = torch.tensor(
-        (OUTERMOST_OBJECT_CENTER_UNITS, OUTERMOST_OBJECT_CENTER_UNITS),
+        (0, 0),
         dtype=torch.int64,
         device=position_units.device,
     )
     upper = torch.tensor(
         (
-            arena_width_units - OUTERMOST_OBJECT_CENTER_UNITS,
-            arena_height_units - OUTERMOST_OBJECT_CENTER_UNITS,
+            arena_width_units - 1,
+            arena_height_units - 1,
         ),
         dtype=torch.int64,
         device=position_units.device,

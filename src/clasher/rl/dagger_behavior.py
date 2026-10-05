@@ -97,13 +97,18 @@ def actor_policy_action(
     observation_builder: StructuredObservationBuilder | None = None,
 ) -> tuple[int, tuple[torch.Tensor, torch.Tensor]]:
     """Act from prebuilt public inputs without evaluating the critic encoder."""
-    if model.config.public_contract_version == 2:
+    if model.config.public_contract_version >= 2:
         from .public_policy_contract import PublicPolicySequence
 
         if observation_builder is None:
             raise ValueError("public contract v2 inference requires its observation builder")
         if observation_builder.token_names != model.config.public_token_names:
             raise ValueError("public observation vocabulary does not match policy")
+        if model.config.public_contract_version >= 4:
+            from .public_observation import project_council_public_observation
+
+            observation = project_council_public_observation(observation)
+            previous_reward = 0.0
         sequence = PublicPolicySequence.from_observations(observation_builder, [observation])
         inputs = sequence.policy_inputs(
             action_mask=np.asarray(action_mask)[None, :],

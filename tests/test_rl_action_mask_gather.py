@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from clasher.placement import building_anchor
 from clasher.rl.action_space import DiscreteTileActionSpace
 
 
@@ -40,6 +41,21 @@ def test_canonical_occupancy_gather_matches_world_tile_order(player_id):
         count=len(world_xy),
     )
 
+    # Building commands are resolved to the native footprint anchor before the
+    # world gather (odd footprints on tile centres, blocked footprints move to
+    # the nearest buildable anchor). Evidence: tests/fixtures/
+    # native_building_anchors_15_535_86.json and
+    # native_bank_building_anchors_15_535_86.json (test_native_building_anchors).
+    anchors = [
+        building_anchor(position, 3)
+        for position in action_space._positions_by_player[player_id]
+    ]
+    expected_building = np.fromiter(
+        (bool(world_mask[int(p.y), int(p.x)]) for p in anchors),
+        dtype=np.bool_,
+        count=len(anchors),
+    )
+
     building = action_space._building_placement_blocked_mask_canonical(
         source, player_id, 3
     )
@@ -47,7 +63,7 @@ def test_canonical_occupancy_gather_matches_world_tile_order(player_id):
         source, player_id, 0.75
     )
 
-    np.testing.assert_array_equal(building, expected)
+    np.testing.assert_array_equal(building, expected_building)
     np.testing.assert_array_equal(troop, expected)
     assert not np.shares_memory(building, world_mask)
     assert not np.shares_memory(troop, world_mask)

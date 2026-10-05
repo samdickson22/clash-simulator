@@ -1,0 +1,18 @@
+{
+  "scope": "Observed development level evidence for tick100 refill controller regression only",
+  "source_frame_sha256": "552ac7122ca58e0fca261c0ee0d7e1b985ce869e2ad6ee4fd47b52c2ee2afe9e",
+  "tick": 100,
+  "generation": 2,
+  "state_epoch": 2,
+  "levels": {
+    "5000000": 11,
+    "5000001": 11,
+    "5000002": 11,
+    "5000003": 11,
+    "5000004": 11,
+    "5000005": 11,
+    "5000006": 11,
+    "5000007": 11,
+    "5000008": 11
+  }
+}

@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import random
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 
 import numpy as np
 
 from clasher.battle import STANDARD_MATCH_TICKS, BattleState
+from clasher.player import PlayerState
 
 from .action_space import DiscreteTileActionSpace
 from .causal_vision import CausalVisionTracker
@@ -40,10 +41,23 @@ from .structured_obs import (
 )
 
 
+def resolve_match_horizon(max_ticks: int, public_contract_version: int) -> int:
+    """Include the interval after the nominal deadline for council matches.
+
+    BattleState resolves its tiebreaker strictly after 300 seconds. Historical
+    caps and deliberately shorter truncations retain their previous meaning.
+    """
+    if public_contract_version >= 4 and max_ticks == STANDARD_MATCH_TICKS:
+        return STANDARD_MATCH_TICKS + 1
+    return max_ticks
+
+
 @dataclass
 class StepInfo:
     action_success: dict[int, bool]
     ticks_advanced: int
+    terminated: bool = False
+    truncated: bool = False
 
 
 class SelfPlayBattleEnv:
@@ -74,9 +88,54 @@ class SelfPlayBattleEnv:
         defense_scenario_maximum_elixir: int = 7,
         defense_scenario_horizon_ticks: int = 240,
         defense_scenario_reward_scale: float = 1.0,
+        public_contract_version: int = 1,
+        card_levels: tuple[Mapping[str, int], Mapping[str, int]] | None = None,
+        tower_levels: tuple[int, int] = (11, 11),
+        reward_potential_scale: float | None = None,
+        level_randomization_after: int | None = None,
+        mixed_level_probability: float = 0.5,
     ) -> None:
+        if level_randomization_after is not None and (
+            public_contract_version < 4 or level_randomization_after < 0
+        ):
+            raise ValueError(
+                "level randomization requires council v4 and a nonnegative decision threshold"
+            )
+        if not 0 <= mixed_level_probability <= 1:
+            raise ValueError("mixed level probability must lie in [0, 1]")
+        self.level_randomization_after = level_randomization_after
+        self.mixed_level_probability = mixed_level_probability
+        self.learner_decisions = 0
+        self.episode_mixed_levels = False
+        self.public_contract_version = public_contract_version
+        self.card_levels = (
+            tuple(dict(levels) for levels in card_levels)
+            if card_levels is not None
+            else ({}, {})
+        )
+        self.tower_levels = tuple(tower_levels)
+        if len(self.card_levels) != 2 or len(self.tower_levels) != 2:
+            raise ValueError("levels must specify both player seats")
+        council = public_contract_version >= 4
+        if council and defense_scenario_probability:
+            raise ValueError("council lineage disables defense scenarios")
+        self.reward_potential_scale = (
+            (0.05 if council else 1.0)
+            if reward_potential_scale is None
+            else float(reward_potential_scale)
+        )
+        if (
+            not np.isfinite(self.reward_potential_scale)
+            or self.reward_potential_scale < 0
+        ):
+            raise ValueError("reward potential scale must be finite and nonnegative")
+        if council:
+            reward_shaping_gamma = (
+                1.0 if reward_shaping_gamma is None else reward_shaping_gamma
+            )
+            elixir_leak_penalty_scale = 0.0
         self.decision_interval_ticks = decision_interval_ticks
-        self.max_ticks = max_ticks
+        self.max_ticks = resolve_match_horizon(max_ticks, public_contract_version)
         self.mirror_match = mirror_match
         if engine_fast_path not in {"off", "shadow", "on"}:
             raise ValueError("engine_fast_path must be one of: off, shadow, on")
@@ -207,8 +266,29 @@ class SelfPlayBattleEnv:
                 if self.mirror_match
                 else sample_deck(self.player1_decks, self.rng)
             )
-        apply_deck_to_player(self.battle.players[0], deck0, rng=self.rng)
-        apply_deck_to_player(self.battle.players[1], deck1, rng=self.rng)
+        self._sample_episode_card_levels((deck0, deck1))
+        apply_deck_to_player(
+            self.battle.players[0], deck0, rng=self.rng, card_levels=self.card_levels[0]
+        )
+        apply_deck_to_player(
+            self.battle.players[1], deck1, rng=self.rng, card_levels=self.card_levels[1]
+        )
+
+    def set_learner_decisions(self, decisions: int) -> None:
+        if decisions < self.learner_decisions:
+            raise ValueError("learner decision counter cannot move backwards")
+        self.learner_decisions = decisions
+
+    def _sample_episode_card_levels(
+        self, decks: tuple[Sequence[str], Sequence[str]]
+    ) -> None:
+        if self.level_randomization_after is not None:
+            self.card_levels = tuple(
+                {card: self.rng.randint(10, 12) for card in deck}
+                if self.episode_mixed_levels
+                else {}
+                for deck in decks
+            )
 
     def _reset_reward_trackers(self) -> None:
         assert self.battle is not None
@@ -222,22 +302,53 @@ class SelfPlayBattleEnv:
         seed: int | None = None,
         *,
         ordered_decks: tuple[Sequence[str], Sequence[str]] | None = None,
+        card_levels: tuple[Mapping[str, int], Mapping[str, int]] | None = None,
+        tower_levels: tuple[int, int] | None = None,
     ) -> None:
         if seed is not None:
             self.rng.seed(seed)
             self.np_rng = np.random.default_rng(seed)
+        if self.level_randomization_after is not None:
+            if card_levels is not None or tower_levels is not None:
+                raise ValueError(
+                    "explicit episode levels cannot override the training level schedule"
+                )
+            self.episode_mixed_levels = (
+                self.learner_decisions >= self.level_randomization_after
+                and self.rng.random() < self.mixed_level_probability
+            )
+            self.tower_levels = (
+                tuple(self.rng.randint(10, 12) for _ in (0, 1))
+                if self.episode_mixed_levels
+                else (11, 11)
+            )
+        if card_levels is not None:
+            self.card_levels = tuple(dict(levels) for levels in card_levels)
+        if tower_levels is not None:
+            self.tower_levels = tuple(tower_levels)
+        if len(self.card_levels) != 2 or len(self.tower_levels) != 2:
+            raise ValueError("levels must specify both player seats")
         self.battle = BattleState(
+            players=[
+                PlayerState(player_id=seat, tower_level=self.tower_levels[seat])
+                for seat in (0, 1)
+            ],
             fast_path=self.engine_fast_path in {"shadow", "on"},
             rng=self.rng,
         )
         if ordered_decks is None:
             self._sample_and_apply_decks()
         else:
+            self._sample_episode_card_levels(ordered_decks)
             apply_ordered_deck_to_player(
-                self.battle.players[0], ordered_decks[0]
+                self.battle.players[0],
+                ordered_decks[0],
+                card_levels=self.card_levels[0],
             )
             apply_ordered_deck_to_player(
-                self.battle.players[1], ordered_decks[1]
+                self.battle.players[1],
+                ordered_decks[1],
+                card_levels=self.card_levels[1],
             )
         self.defense_scenario = None
         if self.rng.random() < self.defense_scenario_probability:
@@ -264,6 +375,8 @@ class SelfPlayBattleEnv:
                 decks_path=self.decks_path,
                 canonical_perspective=self._canonical_perspective,
                 canonical_lane_globals=self._canonical_lane_globals,
+                public_entity_levels=self.public_contract_version >= 3,
+                public_hand_levels=self.public_contract_version >= 4,
             )
         return self._structured_obs_builder
 
@@ -275,6 +388,24 @@ class SelfPlayBattleEnv:
     ) -> StructuredObservation:
         assert self.battle is not None
         exact = self.structured_obs_builder.build(self.battle, player_id)
+        if self.public_contract_version >= 4:
+            from .public_observation import project_council_public_observation
+
+            projected = project_council_public_observation(exact)
+            exact = replace(
+                exact,
+                entity_features=projected.observation.entity_features,
+                global_features=projected.observation.global_features,
+                **{
+                    name: getattr(projected, name)
+                    for name in (
+                        "entity_id_confidence",
+                        "entity_feature_confidence",
+                        "hand_id_confidence",
+                        "global_feature_confidence",
+                    )
+                },
+            )
         if actor_observation_domain == "simulator-exact":
             return exact
         if actor_observation_domain not in {
@@ -288,6 +419,8 @@ class SelfPlayBattleEnv:
             return cached[1]
         public = degrade_simulator_public_observation(
             ActorObservation(
+                hand_levels=exact.hand_levels,
+                hand_level_confidence=exact.hand_level_confidence,
                 entity_levels=exact.entity_levels,
                 entity_level_confidence=exact.entity_level_confidence,
                 terminal=exact.terminal,
@@ -317,6 +450,8 @@ class SelfPlayBattleEnv:
             exact,
             own_last_play=actor.own_last_play,
             terminal=actor.terminal,
+            hand_levels=actor.hand_levels,
+            hand_level_confidence=actor.hand_level_confidence,
             entity_levels=actor.entity_levels,
             entity_level_confidence=actor.entity_level_confidence,
             entity_ids=actor.entity_ids,
@@ -346,7 +481,10 @@ class SelfPlayBattleEnv:
         structured_observation: StructuredObservation | None = None,
     ) -> np.ndarray:
         assert self.battle is not None
-        if actor_observation_domain in {"causal-vision-v1", "causal-frame-v1"}:
+        if self.public_contract_version >= 4 or actor_observation_domain in {
+            "causal-vision-v1",
+            "causal-frame-v1",
+        }:
             observation = structured_observation or self.get_structured_observation(
                 player_id,
                 actor_observation_domain=actor_observation_domain,
@@ -410,7 +548,10 @@ class SelfPlayBattleEnv:
                 - self._prev_reward_potential_p0
             )
         self._prev_reward_potential_p0 = current_p0
-        return {0: float(delta), 1: float(-delta)}
+        return {
+            0: float(delta * self.reward_potential_scale),
+            1: float(-delta * self.reward_potential_scale),
+        }
 
     def _can_spend_elixir_now(self, player_id: int) -> bool:
         assert self.battle is not None
@@ -529,13 +670,19 @@ class SelfPlayBattleEnv:
             >= self.defense_scenario_horizon_ticks
         )
         done = self.battle.game_over or self.battle.tick >= self.max_ticks or scenario_done
-        rewards = self._compute_dense_rewards(done=done)
+        terminated = bool(self.battle.game_over)
+        truncated = bool(done and not terminated)
+        rewards = self._compute_dense_rewards(
+            done=terminated if self.public_contract_version >= 4 else done
+        )
 
         # Tiny invalid-action penalty (no-op is always valid).
         for player_id in (0, 1):
             attempted = actions.get(player_id, self.action_space.no_op_action)
-            if attempted != self.action_space.no_op_action and not action_success.get(
-                player_id, True
+            if (
+                self.public_contract_version < 4
+                and attempted != self.action_space.no_op_action
+                and not action_success.get(player_id, True)
             ):
                 rewards[player_id] -= 0.01
 
@@ -567,5 +714,10 @@ class SelfPlayBattleEnv:
         return (
             rewards,
             done,
-            StepInfo(action_success=action_success, ticks_advanced=ticks),
+            StepInfo(
+                action_success=action_success,
+                ticks_advanced=ticks,
+                terminated=terminated,
+                truncated=truncated,
+            ),
         )

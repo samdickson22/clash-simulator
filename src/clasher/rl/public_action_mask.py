@@ -113,6 +113,11 @@ class PublicActionMaskBuilder:
                     result[y * BOARD_WIDTH + x] = True
         return result
 
+    @staticmethod
+    def _footprint_size(radius: float) -> int:
+        """Tile footprint of a building with the given collision radius."""
+        return max(1, math.ceil(max(0.0, radius) * 2.0) + 1)
+
     def _building_blockers(
         self, observation: StructuredObservation | PublicActionMaskInput,
         *, crowns_only: bool = False,
@@ -130,7 +135,7 @@ class PublicActionMaskBuilder:
             if crowns_only and self.builder.token_names[token] not in {"Tower", "KingTower"}:
                 continue
             radius = float(self.builder.card_stat_features[token, 12]) * 3.0
-            footprint_size = max(1, math.ceil(max(0.0, radius) * 2.0) + 1)
+            footprint_size = self._footprint_size(radius)
             # The actor sees body centres, not the simulator's exact hitbox.
             # Preserve the data-derived native footprint and add half a tile
             # for localization uncertainty. This also safely covers Crown
@@ -173,6 +178,11 @@ class PublicActionMaskBuilder:
             if abs(x - blocker_x) < blocker_half and abs(y - blocker_y) < blocker_half:
                 return True
         return False
+
+    def _placement_occupied(self, x, y, radius, blockers, *, building_footprint_half,
+                            observation, can_deploy_enemy_side):
+        return self._occupied(x, y, radius, blockers,
+                              building_footprint_half=building_footprint_half)
 
     def build(
         self, observation: StructuredObservation | PublicActionMaskInput
@@ -262,7 +272,7 @@ class PublicActionMaskBuilder:
             deploy_margin = int(getattr(stats, "deploy_w_tile_margin", 0) or 0)
             base_radius = float(getattr(stats, "collision_radius", 0.5) or 0.5)
             building_footprint_half = (
-                (max(1, math.ceil(max(0.0, base_radius) * 2.0) + 1) / 2.0)
+                (self._footprint_size(base_radius) / 2.0)
                 if is_building
                 else None
             )
@@ -273,12 +283,14 @@ class PublicActionMaskBuilder:
                     deploy_margin <= x < BOARD_WIDTH - deploy_margin
                 ):
                     continue
-                if not is_spell and self._occupied(
+                if not is_spell and self._placement_occupied(
                     x,
                     y,
                     base_radius,
                     blockers,
                     building_footprint_half=building_footprint_half,
+                    observation=observation,
+                    can_deploy_enemy_side=can_deploy_enemy_side,
                 ):
                     if is_building or is_air_unit_card(stats):
                         continue

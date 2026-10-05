@@ -1,0 +1,56 @@
+{
+  "status": "draft_requires_captures",
+  "requested_episodes": 32,
+  "captured_roots": 0,
+  "candidate_banks_created": 0,
+  "reference_branch_outcomes": 0,
+  "master_seed": 192801,
+  "root_owner_counts": {
+    "0": 16,
+    "1": 16
+  },
+  "focal_card_requests": {
+    "Archers": 2,
+    "Cannon": 2,
+    "DarkPrince": 2,
+    "Fireball": 2,
+    "Giant": 2,
+    "Goblins": 2,
+    "HogRider": 2,
+    "IceGolem": 2,
+    "IceSpirit": 2,
+    "Knight": 2,
+    "Log": 2,
+    "Musketeer": 2,
+    "Prince": 2,
+    "Skeletons": 2,
+    "Tesla": 2,
+    "Zap": 2
+  },
+  "public_context_requests": {
+    "own_half_threat": 8,
+    "enemy_cluster": 8,
+    "bridge_contact": 8,
+    "contested_board": 8
+  },
+  "conditions": [
+    "balanced/pressure",
+    "balanced/balanced",
+    "defense/pressure",
+    "defense/balanced"
+  ],
+  "source_sha256": {
+    "src/clasher/rl/readiness_root_bank.py": "9c0e3c703f1c1288aa1cb2be52ae733562c207ac7f02644415ea76f8cd11f53b",
+    "scripts/declare_readiness_root_bank.py": "ae7fc2885fc155521e2e7128e7f51b760496d6320ece60d64381f027a364ecbd",
+    "tests/test_readiness_root_bank.py": "012fc810bc50f59ecaf1f1c450b3eefce07d1e7c8924e5ccb96da615b4d0126f"
+  },
+  "remaining_inputs": [
+    "32 separate complete-episode capture bindings, one root per source episode; concrete native configs now in native-configs/",
+    "five-tick public packet histories for bounded root eligibility scans",
+    "prospective native source, capture ownership and exposure-ledger binding",
+    "scalar four-condition continuation coverage study",
+    "both-engine identical-execution floors before freeze"
+  ],
+  "materialized_native_configs": 32,
+  "native_config_manifest": "native-configs/manifest.json"
+}

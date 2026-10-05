@@ -34,7 +34,11 @@ def test_special_spell_loaders_follow_payload_shape_after_card_rename():
     assert determine_spell_type(graveyard) is GraveyardSpell
     repeated_spawn = create_spell_from_json(graveyard, registry)
     assert repeated_spawn.spawn_character == "Skeleton"
-    assert repeated_spawn.spawn_deadlines[0] == 1.2
+    # Serialized action deadlines are measured from the accepted command with
+    # no extra engine transport delay (kinematics.SERVER_ACTION_DELAY_SECONDS
+    # is 0.0); tests/test_enabled_spell_interactions.py pins Graveyard's first
+    # deadline at 2.2 s.
+    assert repeated_spawn.spawn_deadlines[0] == 2.2
     assert len(repeated_spawn.spawn_offsets) == 12
 
     delivery = apply_entry_overrides(entries["RoyalDelivery"], registry)

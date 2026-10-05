@@ -6,7 +6,7 @@ import math
 import random
 import re
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import cast
@@ -404,18 +404,50 @@ class PolicyBattleVisualizer(BattleVisualizer):
                 )
             )
 
+        policy.builder.public_contract_version = (
+            policy.model.config.public_contract_version
+        )
         observation = policy.builder.build(self.battle, player_id)
-        mask = self.action_space.legal_action_mask(self.battle, player_id)[None, :]
+        if policy.model.config.public_contract_version >= 4:
+            from .public_action_mask import PublicActionMaskBuilder
+            from .public_observation import project_council_public_observation
+
+            public = project_council_public_observation(observation)
+            observation = replace(
+                observation,
+                entity_features=public.observation.entity_features,
+                global_features=public.observation.global_features,
+                **{
+                    name: getattr(public, name)
+                    for name in (
+                        "entity_id_confidence",
+                        "entity_feature_confidence",
+                        "hand_id_confidence",
+                        "global_feature_confidence",
+                    )
+                },
+            )
+            mask = PublicActionMaskBuilder(policy.builder).build(observation)[None, :]
+        else:
+            mask = self.action_space.legal_action_mask(self.battle, player_id)[None, :]
         inputs = _stack_step_inputs(
             [observation],
             mask,
             np.asarray([self.previous_actions[player_id]], dtype=np.int64),
-            np.asarray([self.previous_rewards[player_id]], dtype=np.float32),
+            np.asarray(
+                [
+                    0.0
+                    if policy.model.config.public_contract_version >= 4
+                    else self.previous_rewards[player_id]
+                ],
+                dtype=np.float32,
+            ),
             np.asarray([self.episode_starts[player_id]], dtype=np.bool_),
             self.device,
             public_observation_confidence=(
                 policy.model.config.public_observation_confidence
             ),
+            builder=policy.builder,
         )
         recurrent_state = self.recurrent_states[player_id]
         if recurrent_state is None:

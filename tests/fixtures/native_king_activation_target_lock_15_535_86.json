@@ -1,0 +1,230 @@
+{
+ "role": "development",
+ "scope": "Opened native 15.535.86 branch evidence. After activation the King locks its first target during the 700 ms first-hit phase and keeps it when another unit becomes nearer; the first shot goes to the locked unit.",
+ "sources": {
+  "reports/strategy_council_20260928/m0/readiness/tier-a-fresh-v3/branches-reference-shard0-of8/job-00161/decisions.jsonl.gz": "0a033ab43f9134483417594841ae1260d88f96464b3be597cf2e6adee292b5b5",
+  "reports/strategy_council_20260928/m0/readiness/tier-a-fresh-v3/branches-scalar/job-00160/decisions.jsonl.gz": "40aaa044276b09df2aefac51defdc081083356cc233e59ed5fad181e1ba1ce89"
+ },
+ "gamedata_sha256": "daa58b28cf4e45d753e83ca69a76794285b63704e62363ee58e617af3a30ecc3",
+ "king_owner": 1,
+ "king_xy": [
+  9000,
+  29000
+ ],
+ "activation_delay_end_tick": 2355,
+ "first_shot_tick": 2369,
+ "locked_goblin": 5000046,
+ "nearer_goblin": 5000045,
+ "frames": {
+  "2350": {
+   "king": {
+    "id": 5000003,
+    "xy": [
+     9000,
+     29000
+    ],
+    "hp": 4699,
+    "target": 5000002,
+    "attack_timeline_ms": 0
+   },
+   "goblins": {
+    "5000045": {
+     "id": 5000045,
+     "xy": [
+      6252,
+      28781
+     ],
+     "hp": 10,
+     "target": 5000003
+    },
+    "5000046": {
+     "id": 5000046,
+     "xy": [
+      7192,
+      29126
+     ],
+     "hp": 10,
+     "target": 5000003
+    }
+   },
+   "king_projectiles": []
+  },
+  "2355": {
+   "king": {
+    "id": 5000003,
+    "xy": [
+     9000,
+     29000
+    ],
+    "hp": 4449,
+    "target": 5000002,
+    "attack_timeline_ms": 0
+   },
+   "goblins": {
+    "5000045": {
+     "id": 5000045,
+     "xy": [
+      6421,
+      28732
+     ],
+     "hp": 10,
+     "target": 5000003
+    },
+    "5000046": {
+     "id": 5000046,
+     "xy": [
+      7170,
+      29397
+     ],
+     "hp": 10,
+     "target": 5000003
+    }
+   },
+   "king_projectiles": []
+  },
+  "2360": {
+   "king": {
+    "id": 5000003,
+    "xy": [
+     9000,
+     29000
+    ],
+    "hp": 4449,
+    "target": 5000046,
+    "attack_timeline_ms": 550
+   },
+   "goblins": {
+    "5000045": {
+     "id": 5000045,
+     "xy": [
+      6707,
+      28692
+     ],
+     "hp": 10,
+     "target": 5000003
+    },
+    "5000046": {
+     "id": 5000046,
+     "xy": [
+      7140,
+      29595
+     ],
+     "hp": 10,
+     "target": 5000003
+    }
+   },
+   "king_projectiles": []
+  },
+  "2365": {
+   "king": {
+    "id": 5000003,
+    "xy": [
+     9000,
+     29000
+    ],
+    "hp": 4449,
+    "target": 5000046,
+    "attack_timeline_ms": 800
+   },
+   "goblins": {
+    "5000045": {
+     "id": 5000045,
+     "xy": [
+      7000,
+      29101
+     ],
+     "hp": 10,
+     "target": 5000003
+    },
+    "5000046": {
+     "id": 5000046,
+     "xy": [
+      7271,
+      30088
+     ],
+     "hp": 10,
+     "target": 5000003
+    }
+   },
+   "king_projectiles": []
+  },
+  "2370": {
+   "king": {
+    "id": 5000003,
+    "xy": [
+     9000,
+     29000
+    ],
+    "hp": 4324,
+    "target": 5000046,
+    "attack_timeline_ms": 1050
+   },
+   "goblins": {
+    "5000045": {
+     "id": 5000045,
+     "xy": [
+      7100,
+      29212
+     ],
+     "hp": 10,
+     "target": 5000003
+    },
+    "5000046": {
+     "id": 5000046,
+     "xy": [
+      7291,
+      30195
+     ],
+     "hp": 10,
+     "target": 5000003
+    }
+   },
+   "king_projectiles": [
+    {
+     "id": 4000131,
+     "xy": [
+      7702,
+      29758
+     ],
+     "target": 5000046
+    }
+   ]
+  },
+  "2375": {
+   "king": {
+    "id": 5000003,
+    "xy": [
+     9000,
+     29000
+    ],
+    "hp": 4199,
+    "target": 5000045,
+    "attack_timeline_ms": 1300
+   },
+   "goblins": {
+    "5000045": {
+     "id": 5000045,
+     "xy": [
+      7100,
+      29212
+     ],
+     "hp": 10,
+     "target": 5000003
+    }
+   },
+   "king_projectiles": []
+  }
+ },
+ "episode_05_replay": {
+  "capture": "reports/strategy_council_20260928/m0/readiness/tier-a-fresh-v3/prefixes/episode-05",
+  "capture_sha256": {
+   "initial.json": "459adbd71a05a49dffde77b5d16bfc715f6ce2f6353b1fae86b2cb5fab17fdd9",
+   "plan.json": "315176ad0dba7f36433fa0e5db65c074eb392b234c3d2f5645b24372de9a8c0f",
+   "result.json": "342b091a4da136ca84fd01ff57cc393d12130c4cdc1cc261ab55e5274eab6787",
+   "gamedata.json": "daa58b28cf4e45d753e83ca69a76794285b63704e62363ee58e617af3a30ecc3"
+  },
+  "root_tick": 1185,
+  "actions": "reports/strategy_council_20260928/m0/readiness/tier-a-fresh-v3/branches-scalar/job-00160/decisions.jsonl.gz",
+  "native_king_hp_2375": 4199
+ }
+}

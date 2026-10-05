@@ -5,10 +5,11 @@ import atexit
 import hashlib
 import json
 import math
+import os
 import time
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
-from dataclasses import asdict, dataclass, replace
+from dataclasses import asdict, dataclass, fields, replace
 from functools import wraps
 from pathlib import Path
 from typing import Any, Literal, ParamSpec, TypeVar, cast
@@ -39,7 +40,7 @@ from .imitation_objective import (
 from .model import ClasherPolicy, PolicyConfig, PolicyInputs, PolicyOutput
 from .reward_model import OBJECTIVE_V1, REWARD_PROFILES
 from .rollout_audit import write_rollout_audit
-from .selfplay_env import SelfPlayBattleEnv
+from .selfplay_env import SelfPlayBattleEnv, resolve_match_horizon
 from .strategy_bots import (
     STRATEGY_NAMES,
     BalancedStrategyConfig,
@@ -130,7 +131,24 @@ class RolloutBatch:
     wins: int
     losses: int
     draws: int
+    action_success: np.ndarray | None = None
+    recurrent_prefixes: tuple[PolicyInputs | None, ...] | None = None
+    truncation_bootstrap_values: np.ndarray | None = None
     strategy_teacher_actions: np.ndarray | None = None
+    entity_levels: np.ndarray | None = None
+    entity_level_confidence: np.ndarray | None = None
+    hand_levels: np.ndarray | None = None
+    hand_level_confidence: np.ndarray | None = None
+    own_last_play_ids: np.ndarray | None = None
+    own_last_play_features: np.ndarray | None = None
+
+    stored_hidden: np.ndarray | None = None
+    stored_cell: np.ndarray | None = None
+    burn_in_prefixes: tuple[PolicyInputs | None, ...] | None = None
+    burn_in_hidden: np.ndarray | None = None
+    burn_in_cell: np.ndarray | None = None
+    burn_in_states_hidden: np.ndarray | None = None
+    burn_in_states_cell: np.ndarray | None = None
 
     @property
     def num_sequences(self) -> int:
@@ -388,6 +406,57 @@ def synchronize_actor_model(
     actor_model.load_state_dict(learner_model.state_dict())
 
 
+def _public_extension_arrays(
+    observations: list[StructuredObservation],
+    builder: StructuredObservationBuilder | None = None,
+) -> dict[str, np.ndarray]:
+    arrays: dict[str, np.ndarray] = {}
+    for observation in observations:
+        for prefix in ("entity", "hand"):
+            levels = getattr(observation, f"{prefix}_levels", None)
+            confidence = getattr(observation, f"{prefix}_level_confidence", None)
+            if (levels is None) != (confidence is None):
+                raise ValueError(
+                    f"{prefix} levels and confidence must be supplied together"
+                )
+    for name in (
+        "entity_levels",
+        "entity_level_confidence",
+        "hand_levels",
+        "hand_level_confidence",
+    ):
+        values = [getattr(observation, name, None) for observation in observations]
+        if any(value is not None for value in values):
+            if not all(value is not None for value in values):
+                raise ValueError(f"mixed public contract for {name}")
+            arrays[name] = np.stack(values)
+    if builder is not None and getattr(builder, "public_contract_version", 1) >= 2:
+        accepted = [observation.own_last_play for observation in observations]
+        ids = np.asarray(
+            [
+                0
+                if item is None
+                else builder.token_id(item.card_name, namespace="card_action")
+                for item in accepted
+            ],
+            dtype=np.int64,
+        )
+        if np.any(ids == 1):
+            raise ValueError("accepted own card is outside the declared vocabulary")
+        arrays["own_last_play_ids"] = ids
+        arrays["own_last_play_features"] = np.asarray(
+            [
+                [
+                    float(item is not None),
+                    0.0 if item is None else item.elixir_cost / 10,
+                ]
+                for item in accepted
+            ],
+            dtype=np.float32,
+        )
+    return arrays
+
+
 def _stack_step_inputs(
     observations: list[StructuredObservation],
     action_masks: np.ndarray,
@@ -397,6 +466,7 @@ def _stack_step_inputs(
     device: torch.device,
     *,
     public_observation_confidence: bool = False,
+    builder: StructuredObservationBuilder | None = None,
 ) -> PolicyInputs:
     actor_width: int | None = None
     critic_width: int | None = None
@@ -456,6 +526,19 @@ def _stack_step_inputs(
         critic_card_ids=stack("critic_card_ids", torch.long),
         critic_global_features=stack("critic_global_features", torch.float32),
     )
+    extensions = _public_extension_arrays(observations, builder)
+    if actor_width is not None:
+        extensions = {
+            name: value[:, :actor_width] if name.startswith("entity_") else value
+            for name, value in extensions.items()
+        }
+    inputs = replace(
+        inputs,
+        **{
+            name: torch.as_tensor(value, device=device).unsqueeze(1)
+            for name, value in extensions.items()
+        },
+    )
     if not public_observation_confidence:
         return inputs
     confidence_names = (
@@ -489,7 +572,7 @@ def _empty_rollout_arrays(
     num_actions: int,
 ) -> dict[str, np.ndarray]:
     spec = builder.spec
-    return {
+    arrays = {
         "entity_ids": np.zeros((agents, steps, spec.max_entities), dtype=np.int64),
         "entity_features": np.zeros(
             (agents, steps, spec.max_entities, spec.entity_feature_size),
@@ -545,7 +628,25 @@ def _empty_rollout_arrays(
         "old_values": np.zeros((agents, steps), dtype=np.float32),
         "rewards": np.zeros((agents, steps), dtype=np.float32),
         "dones": np.zeros((agents, steps), dtype=np.bool_),
+        "action_success": np.ones((agents, steps), dtype=np.bool_),
+        "truncation_bootstrap_values": np.zeros((agents, steps), dtype=np.float32),
     }
+
+    if getattr(builder, "public_contract_version", 1) >= 2:
+        arrays["own_last_play_ids"] = np.zeros((agents, steps), dtype=np.int64)
+        arrays["own_last_play_features"] = np.zeros(
+            (agents, steps, 2), dtype=np.float32
+        )
+    for prefix, size, enabled in (
+        ("entity", spec.max_entities, spec.public_entity_levels),
+        ("hand", 5, getattr(spec, "public_hand_levels", False)),
+    ):
+        if enabled:
+            arrays[f"{prefix}_levels"] = np.zeros((agents, steps, size), dtype=np.int64)
+            arrays[f"{prefix}_level_confidence"] = np.zeros(
+                (agents, steps, size), dtype=np.float32
+            )
+    return arrays
 
 
 def _store_observations(
@@ -556,7 +657,17 @@ def _store_observations(
     previous_rewards: np.ndarray,
     episode_starts: np.ndarray,
     step: int,
+    *,
+    builder: StructuredObservationBuilder | None = None,
 ) -> None:
+    extensions = _public_extension_arrays(observations, builder)
+    for name, value in extensions.items():
+        if name not in arrays:
+            raise ValueError(f"rollout builder omitted observed field {name}")
+        arrays[name][:, step] = value
+    for name in ("entity_levels", "hand_levels"):
+        if name in arrays and name not in extensions:
+            raise ValueError(f"observation omitted required {name}")
     observation_fields = (
         "entity_ids",
         "entity_features",
@@ -709,22 +820,56 @@ def collect_rollout(
     episode_starts: np.ndarray,
     quiet_engine: bool,
     hazard_conditioned_rollouts: bool = False,
+    recurrent_update_mode: str = "full-prefix",
+    tbptt_burn_in: int = 16,
 ) -> tuple[RolloutBatch, tuple[Tensor, Tensor], np.ndarray, np.ndarray, np.ndarray]:
+    from .tbptt import RolloutStateRecorder, validate_mode
+
+    validate_mode(recurrent_update_mode, 1, tbptt_burn_in)
     model.eval()
-    causal_actor = model.config.actor_observation_domain in {
-        "causal-vision-v1",
-        "causal-frame-v1",
-    }
+    causal_actor = (
+        model.config.public_contract_version >= 4
+        or model.config.actor_observation_domain
+        in {
+            "causal-vision-v1",
+            "causal-frame-v1",
+        }
+    )
     if causal_actor:
         previous_rewards = np.zeros_like(previous_rewards, dtype=np.float32)
     agents = len(envs) * 2
     num_actions = envs[0].action_space.num_actions
+    if model.config.public_contract_version >= 4 and any(
+        env.public_contract_version != model.config.public_contract_version
+        for env in envs
+    ):
+        raise ValueError(
+            "council collection requires matching public environment contracts"
+        )
+    builder.public_contract_version = model.config.public_contract_version
     arrays = _empty_rollout_arrays(
         agents=agents,
         steps=rollout_steps,
         builder=builder,
         num_actions=num_actions,
     )
+    history = None
+    recurrent_prefixes = None
+    if model.config.public_contract_version >= 4 and recurrent_update_mode == "full-prefix":
+        from .council_recurrence import RecurrentHistory, reconstruct_recurrent_state
+
+        history = getattr(model, "_council_rollout_history", None)
+        if history is None:
+            history = RecurrentHistory(agents)
+            model._council_rollout_history = history
+        recurrent_prefixes = history.snapshot()
+        recurrent_state = reconstruct_recurrent_state(
+            model,
+            recurrent_prefixes,
+            device=device,
+        )
+    recorder = (RolloutStateRecorder(model, recurrent_state, rollout_steps, tbptt_burn_in)
+                if recurrent_update_mode == "stored-state" else None)
     initial_hidden = recurrent_state[0].detach().cpu().numpy().copy()
     initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
     episodes_finished = 0
@@ -744,6 +889,7 @@ def collect_rollout(
             previous_rewards,
             episode_starts,
             step,
+            builder=builder,
         )
         inputs = _stack_step_inputs(
             observations,
@@ -753,7 +899,12 @@ def collect_rollout(
             episode_starts,
             device,
             public_observation_confidence=model.config.public_observation_confidence,
+            builder=builder,
         )
+        if recorder is not None:
+            recorder.append(inputs, recurrent_state, step)
+        if history is not None:
+            history.append(inputs)
         actions_t, log_probs_t, values_t, recurrent_state, _ = model.act(
             inputs,
             recurrent_state,
@@ -771,7 +922,7 @@ def collect_rollout(
         with maybe_silence_stdio(quiet_engine):
             for env_index, env in enumerate(envs):
                 base = 2 * env_index
-                rewards, done, _ = env.step(
+                rewards, done, step_info = env.step(
                     {0: int(actions[base]), 1: int(actions[base + 1])},
                     pre_action_masks={
                         0: action_masks[base],
@@ -781,9 +932,32 @@ def collect_rollout(
                 arrays["rewards"][base, step] = float(rewards[0])
                 arrays["rewards"][base + 1, step] = float(rewards[1])
                 arrays["dones"][base : base + 2, step] = done
+                arrays["action_success"][base : base + 2, step] = [
+                    step_info.action_success[0],
+                    step_info.action_success[1],
+                ]
                 if not causal_actor:
                     next_previous_rewards[base] = float(rewards[0])
                     next_previous_rewards[base + 1] = float(rewards[1])
+                if (
+                    done
+                    and step_info.truncated
+                    and model.config.public_contract_version >= 4
+                ):
+                    seats = (0, 1)
+                    indices_for_env = np.asarray([base, base + 1])
+                    arrays["truncation_bootstrap_values"][indices_for_env, step] = (
+                        _truncated_bootstrap(
+                            model,
+                            env,
+                            seats,
+                            indices_for_env,
+                            recurrent_state,
+                            actions,
+                            builder,
+                            device,
+                        )
+                    )
                 if done:
                     episodes_finished += 1
                     assert env.battle is not None
@@ -817,11 +991,14 @@ def collect_rollout(
         episode_starts,
         device,
         public_observation_confidence=model.config.public_observation_confidence,
+        builder=builder,
     )
     bootstrap_values = model.forward(bootstrap_inputs, recurrent_state).values[:, 0]
 
     rollout = RolloutBatch(
         **arrays,
+        **(recorder.payload() if recorder is not None else {}),
+        recurrent_prefixes=recurrent_prefixes,
         initial_hidden=initial_hidden,
         initial_cell=initial_cell,
         bootstrap_values=bootstrap_values.cpu().numpy(),
@@ -862,6 +1039,8 @@ def collect_rollout_stationary_opponents(
     learner_teacher_bot: StrategyBot | None = None,
     opponent_noop: bool = False,
     hazard_conditioned_rollouts: bool = False,
+    recurrent_update_mode: str = "full-prefix",
+    tbptt_burn_in: int = 16,
 ) -> tuple[
     RolloutBatch,
     tuple[Tensor, Tensor],
@@ -880,21 +1059,32 @@ def collect_rollout_stationary_opponents(
     the loss with actions sampled by the opponent policy.
     """
 
+    from .tbptt import RolloutStateRecorder, validate_mode
+
+    validate_mode(recurrent_update_mode, 1, tbptt_burn_in)
     model.eval()
-    causal_actor = model.config.actor_observation_domain in {
-        "causal-vision-v1",
-        "causal-frame-v1",
-    }
+    causal_actor = (
+        model.config.public_contract_version >= 4
+        or model.config.actor_observation_domain
+        in {
+            "causal-vision-v1",
+            "causal-frame-v1",
+        }
+    )
     if causal_actor:
         previous_rewards = np.zeros_like(previous_rewards, dtype=np.float32)
     if opponent_model is not None:
         opponent_model.eval()
         if opponent_recurrent_state is None:
             raise ValueError("checkpoint opponent requires recurrent state")
-        if opponent_model.config.actor_observation_domain in {
-            "causal-vision-v1",
-            "causal-frame-v1",
-        }:
+        if (
+            opponent_model.config.public_contract_version >= 4
+            or opponent_model.config.actor_observation_domain
+            in {
+                "causal-vision-v1",
+                "causal-frame-v1",
+            }
+        ):
             opponent_previous_rewards = np.zeros_like(
                 opponent_previous_rewards, dtype=np.float32
             )
@@ -902,12 +1092,37 @@ def collect_rollout_stationary_opponents(
     if agents != len(learner_players):
         raise ValueError("learner_players must have one seat per environment")
     num_actions = envs[0].action_space.num_actions
+    if model.config.public_contract_version >= 4 and any(
+        env.public_contract_version != model.config.public_contract_version
+        for env in envs
+    ):
+        raise ValueError(
+            "council collection requires matching public environment contracts"
+        )
+    builder.public_contract_version = model.config.public_contract_version
     arrays = _empty_rollout_arrays(
         agents=agents,
         steps=rollout_steps,
         builder=builder,
         num_actions=num_actions,
     )
+    history = None
+    recurrent_prefixes = None
+    if model.config.public_contract_version >= 4 and recurrent_update_mode == "full-prefix":
+        from .council_recurrence import RecurrentHistory, reconstruct_recurrent_state
+
+        history = getattr(model, "_council_rollout_history", None)
+        if history is None:
+            history = RecurrentHistory(agents)
+            model._council_rollout_history = history
+        recurrent_prefixes = history.snapshot()
+        recurrent_state = reconstruct_recurrent_state(
+            model,
+            recurrent_prefixes,
+            device=device,
+        )
+    recorder = (RolloutStateRecorder(model, recurrent_state, rollout_steps, tbptt_burn_in)
+                if recurrent_update_mode == "stored-state" else None)
     initial_hidden = recurrent_state[0].detach().cpu().numpy().copy()
     initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
     episodes_finished = wins = losses = draws = 0
@@ -932,6 +1147,7 @@ def collect_rollout_stationary_opponents(
             previous_rewards,
             episode_starts,
             step,
+            builder=builder,
         )
         if learner_teacher_bot is not None:
             assert strategy_teacher_actions is not None
@@ -958,7 +1174,12 @@ def collect_rollout_stationary_opponents(
             episode_starts,
             device,
             public_observation_confidence=model.config.public_observation_confidence,
+            builder=builder,
         )
+        if recorder is not None:
+            recorder.append(inputs, recurrent_state, step)
+        if history is not None:
+            history.append(inputs)
         actions_t, log_probs_t, values_t, recurrent_state, _ = model.act(
             inputs,
             recurrent_state,
@@ -997,6 +1218,7 @@ def collect_rollout_stationary_opponents(
                 public_observation_confidence=(
                     opponent_model.config.public_observation_confidence
                 ),
+                builder=builder,
             )
             (
                 opponent_actions_t,
@@ -1067,7 +1289,7 @@ def collect_rollout_stationary_opponents(
                 zip(envs, learner_players)
             ):
                 opponent_player = 1 - learner_player
-                rewards, done, _ = env.step(
+                rewards, done, step_info = env.step(
                     {
                         learner_player: int(actions[env_index]),
                         opponent_player: int(opponent_actions[env_index]),
@@ -1080,15 +1302,37 @@ def collect_rollout_stationary_opponents(
                 learner_reward = float(rewards[learner_player])
                 arrays["rewards"][env_index, step] = learner_reward
                 arrays["dones"][env_index, step] = done
+                arrays["action_success"][env_index, step] = step_info.action_success[
+                    learner_player
+                ]
                 if not causal_actor:
                     next_previous_rewards[env_index] = learner_reward
                 if (
                     opponent_model is not None
+                    and opponent_model.config.public_contract_version < 4
                     and opponent_model.config.actor_observation_domain
                     not in {"causal-vision-v1", "causal-frame-v1"}
                 ):
                     next_opponent_previous_rewards[env_index] = float(
                         rewards[opponent_player]
+                    )
+                if (
+                    done
+                    and step_info.truncated
+                    and model.config.public_contract_version >= 4
+                ):
+                    indices_for_env = np.asarray([env_index])
+                    arrays["truncation_bootstrap_values"][indices_for_env, step] = (
+                        _truncated_bootstrap(
+                            model,
+                            env,
+                            (learner_player,),
+                            indices_for_env,
+                            recurrent_state,
+                            actions,
+                            builder,
+                            device,
+                        )
                     )
                 if done:
                     episodes_finished += 1
@@ -1099,6 +1343,10 @@ def collect_rollout_stationary_opponents(
                         wins += 1
                     else:
                         losses += 1
+                    record_outcome = getattr(opponent_bot, "record_outcome", None)
+                    if record_outcome is not None:
+                        # Monitoring-only per-opponent outcome log.
+                        record_outcome(env, learner_player)
                     env.reset()
                     next_previous_actions[env_index] = env.action_space.no_op_action
                     next_previous_rewards[env_index] = 0.0
@@ -1130,10 +1378,13 @@ def collect_rollout_stationary_opponents(
         episode_starts,
         device,
         public_observation_confidence=model.config.public_observation_confidence,
+        builder=builder,
     )
     bootstrap_values = model.forward(bootstrap_inputs, recurrent_state).values[:, 0]
     rollout = RolloutBatch(
         **arrays,
+        **(recorder.payload() if recorder is not None else {}),
+        recurrent_prefixes=recurrent_prefixes,
         initial_hidden=initial_hidden,
         initial_cell=initial_cell,
         bootstrap_values=bootstrap_values.cpu().numpy(),
@@ -1163,6 +1414,270 @@ def collect_rollout_stationary_opponents(
     )
 
 
+@torch.no_grad()
+def _truncated_bootstrap(model, env, seats, indices, state, actions, builder, device):
+    observations = [
+        env.get_structured_observation(
+            seat, actor_observation_domain=model.config.actor_observation_domain
+        )
+        for seat in seats
+    ]
+    masks = np.stack(
+        [
+            env.get_action_mask(
+                seat,
+                actor_observation_domain=model.config.actor_observation_domain,
+                structured_observation=obs,
+            )
+            for seat, obs in zip(seats, observations)
+        ]
+    )
+    inputs = _stack_step_inputs(
+        observations,
+        masks,
+        actions[indices],
+        np.zeros(len(seats), dtype=np.float32),
+        np.zeros(len(seats), dtype=np.bool_),
+        device,
+        public_observation_confidence=model.config.public_observation_confidence,
+        builder=builder,
+    )
+    selected = torch.as_tensor(indices, dtype=torch.long, device=device)
+    next_state = tuple(value.index_select(0, selected) for value in state)
+    return model(inputs, next_state).values[:, 0].cpu().numpy()
+
+
+def _inputs_to_device(inputs: PolicyInputs, device: torch.device) -> PolicyInputs:
+    if device.type == "cpu":
+        return inputs
+    return PolicyInputs(
+        **{
+            field.name: None
+            if getattr(inputs, field.name) is None
+            else getattr(inputs, field.name).to(device)
+            for field in fields(PolicyInputs)
+        }
+    )
+
+
+@torch.no_grad()
+def _truncated_bootstrap_from_observation(
+    model, observation, mask, index, state, actions, builder, device
+):
+    """``_truncated_bootstrap`` for one learner seat whose terminal observation
+    was captured by an actor process before its environment reset."""
+    inputs = _stack_step_inputs(
+        [observation],
+        np.stack([mask]),
+        actions[np.asarray([index])],
+        np.zeros(1, dtype=np.float32),
+        np.zeros(1, dtype=np.bool_),
+        device,
+        public_observation_confidence=model.config.public_observation_confidence,
+        builder=builder,
+    )
+    selected = torch.as_tensor([index], dtype=torch.long, device=device)
+    next_state = tuple(value.index_select(0, selected) for value in state)
+    return model(inputs, next_state).values[:, 0].cpu().numpy()
+
+
+@_rollout_grad_mode
+def collect_rollout_learner_inference(
+    *,
+    backend: Any,
+    builder: StructuredObservationBuilder,
+    model: ClasherPolicy,
+    device: torch.device,
+    rollout_steps: int,
+    carry: dict[str, Any],
+    policy_version: int,
+    learner_decisions: int,
+    state_dict: Any,
+    quiet_engine: bool,
+    hazard_conditioned_rollouts: bool = False,
+    recurrent_update_mode: str = "full-prefix",
+    tbptt_burn_in: int = 16,
+) -> tuple[RolloutBatch, dict[str, Any]]:
+    """Learner half of ``collect_rollout_stationary_opponents`` over a backend.
+
+    The backend (actor processes or in-process environments) returns learner
+    observations and masks and applies opponent actions and simulator steps in
+    global environment order. This function performs every learner-side step of
+    the admitted collector in the same order: exact prefix reconstruction,
+    observation storage, one batched ``model.act`` over all environments with the
+    learner Torch RNG, truncation bootstraps with the post-action state, and the
+    final bootstrap value. Inputs are stacked on the CPU (also the history copy)
+    and then moved to ``device``.
+    """
+    from .tbptt import RolloutStateRecorder, validate_mode
+
+    validate_mode(recurrent_update_mode, 1, tbptt_burn_in)
+    model.eval()
+    causal_actor = (
+        model.config.public_contract_version >= 4
+        or model.config.actor_observation_domain
+        in {
+            "causal-vision-v1",
+            "causal-frame-v1",
+        }
+    )
+    recurrent_state = carry["recurrent_state"]
+    previous_actions = carry["previous_actions"]
+    previous_rewards = carry["previous_rewards"]
+    episode_starts = carry["episode_starts"]
+    history = carry.get("history")
+    if causal_actor:
+        previous_rewards = np.zeros_like(previous_rewards, dtype=np.float32)
+    agents = backend.num_envs
+    if model.config.public_contract_version >= 4 and backend.public_contract_versions != {
+        model.config.public_contract_version
+    }:
+        raise ValueError(
+            "council collection requires matching public environment contracts"
+        )
+    builder.public_contract_version = model.config.public_contract_version
+    observations, action_masks_list = backend.begin(
+        policy_version=policy_version,
+        learner_decisions=learner_decisions,
+        state_dict=state_dict,
+    )
+    num_actions = int(action_masks_list[0].shape[-1])
+    no_op = num_actions - 2
+    arrays = _empty_rollout_arrays(
+        agents=agents,
+        steps=rollout_steps,
+        builder=builder,
+        num_actions=num_actions,
+    )
+    recurrent_prefixes = None
+    if model.config.public_contract_version >= 4 and recurrent_update_mode == "full-prefix":
+        from .council_recurrence import RecurrentHistory, reconstruct_recurrent_state
+
+        if history is None:
+            history = RecurrentHistory(agents)
+        recurrent_prefixes = history.snapshot()
+        recurrent_state = reconstruct_recurrent_state(
+            model,
+            recurrent_prefixes,
+            device=device,
+        )
+    recorder = (RolloutStateRecorder(model, recurrent_state, rollout_steps, tbptt_burn_in)
+                if recurrent_update_mode == "stored-state" else None)
+    initial_hidden = recurrent_state[0].detach().cpu().numpy().copy()
+    initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
+    episodes_finished = wins = losses = draws = 0
+    cpu = torch.device("cpu")
+
+    for step in range(rollout_steps):
+        action_masks = np.stack(action_masks_list)
+        _store_observations(
+            arrays,
+            observations,
+            action_masks,
+            previous_actions,
+            previous_rewards,
+            episode_starts,
+            step,
+            builder=builder,
+        )
+        inputs = _stack_step_inputs(
+            observations,
+            action_masks,
+            previous_actions,
+            previous_rewards,
+            episode_starts,
+            cpu,
+            public_observation_confidence=model.config.public_observation_confidence,
+            builder=builder,
+        )
+        if recorder is not None:
+            recorder.append(inputs, recurrent_state, step)
+        if history is not None:
+            history.append(inputs)
+        actions_t, log_probs_t, values_t, recurrent_state, _ = model.act(
+            _inputs_to_device(inputs, device),
+            recurrent_state,
+            deterministic=False,
+            hazard_conditioned_stochastic=hazard_conditioned_rollouts,
+        )
+        actions = actions_t[:, 0].cpu().numpy().astype(np.int64, copy=False)
+        arrays["actions"][:, step] = actions
+        arrays["old_log_probs"][:, step] = log_probs_t[:, 0].cpu().numpy()
+        arrays["old_values"][:, step] = values_t[:, 0].cpu().numpy()
+
+        results, observations, action_masks_list = backend.step(actions)
+        next_previous_actions = actions.copy()
+        next_previous_rewards = np.zeros((agents,), dtype=np.float32)
+        next_episode_starts = np.zeros((agents,), dtype=np.bool_)
+        for env_index, result in enumerate(results):
+            arrays["rewards"][env_index, step] = result.reward
+            arrays["dones"][env_index, step] = result.done
+            arrays["action_success"][env_index, step] = result.action_success
+            if not causal_actor:
+                next_previous_rewards[env_index] = result.reward
+            if (
+                result.truncation_observation is not None
+                and model.config.public_contract_version >= 4
+            ):
+                arrays["truncation_bootstrap_values"][[env_index], step] = (
+                    _truncated_bootstrap_from_observation(
+                        model,
+                        result.truncation_observation,
+                        result.truncation_mask,
+                        env_index,
+                        recurrent_state,
+                        actions,
+                        builder,
+                        device,
+                    )
+                )
+            if result.done:
+                episodes_finished += 1
+                if result.learner_result == "draw":
+                    draws += 1
+                elif result.learner_result == "win":
+                    wins += 1
+                else:
+                    losses += 1
+                next_previous_actions[env_index] = no_op
+                next_previous_rewards[env_index] = 0.0
+                next_episode_starts[env_index] = True
+        previous_actions = next_previous_actions
+        previous_rewards = next_previous_rewards
+        episode_starts = next_episode_starts
+
+    bootstrap_inputs = _stack_step_inputs(
+        observations,
+        np.stack(action_masks_list),
+        previous_actions,
+        previous_rewards,
+        episode_starts,
+        device,
+        public_observation_confidence=model.config.public_observation_confidence,
+        builder=builder,
+    )
+    bootstrap_values = model.forward(bootstrap_inputs, recurrent_state).values[:, 0]
+    rollout = RolloutBatch(
+        **arrays,
+        **(recorder.payload() if recorder is not None else {}),
+        recurrent_prefixes=recurrent_prefixes,
+        initial_hidden=initial_hidden,
+        initial_cell=initial_cell,
+        bootstrap_values=bootstrap_values.cpu().numpy(),
+        episodes_finished=episodes_finished,
+        wins=wins,
+        losses=losses,
+        draws=draws,
+    )
+    return rollout, {
+        "recurrent_state": (recurrent_state[0].detach(), recurrent_state[1].detach()),
+        "previous_actions": previous_actions,
+        "previous_rewards": previous_rewards,
+        "episode_starts": episode_starts,
+        "history": history,
+    }
+
+
 def compute_gae(
     rollout: RolloutBatch,
     *,
@@ -1179,6 +1694,9 @@ def compute_gae(
             + gamma * next_values * non_terminal
             - rollout.old_values[:, step]
         )
+        truncation_values = getattr(rollout, "truncation_bootstrap_values", None)
+        if truncation_values is not None:
+            delta += gamma * truncation_values[:, step]
         last_gae = delta + gamma * gae_lambda * non_terminal * last_gae
         advantages[:, step] = last_gae
         next_values = rollout.old_values[:, step]
@@ -1196,6 +1714,24 @@ def _sequence_inputs(
         )
 
     return PolicyInputs(
+        entity_levels=None
+        if rollout.entity_levels is None
+        else tensor("entity_levels", torch.long),
+        entity_level_confidence=None
+        if rollout.entity_level_confidence is None
+        else tensor("entity_level_confidence", torch.float32),
+        hand_levels=None
+        if rollout.hand_levels is None
+        else tensor("hand_levels", torch.long),
+        hand_level_confidence=None
+        if rollout.hand_level_confidence is None
+        else tensor("hand_level_confidence", torch.float32),
+        own_last_play_ids=None
+        if rollout.own_last_play_ids is None
+        else tensor("own_last_play_ids", torch.long),
+        own_last_play_features=None
+        if rollout.own_last_play_features is None
+        else tensor("own_last_play_features", torch.float32),
         entity_ids=tensor("entity_ids", torch.long),
         entity_features=tensor("entity_features", torch.float32),
         entity_mask=tensor("entity_mask", torch.bool),
@@ -1229,6 +1765,12 @@ def _index_policy_inputs(inputs: PolicyInputs, indices: Tensor) -> PolicyInputs:
         return None if value is None else value.index_select(0, indices)
 
     return PolicyInputs(
+        entity_levels=select(inputs.entity_levels),
+        entity_level_confidence=select(inputs.entity_level_confidence),
+        hand_levels=select(inputs.hand_levels),
+        hand_level_confidence=select(inputs.hand_level_confidence),
+        own_last_play_ids=select(inputs.own_last_play_ids),
+        own_last_play_features=select(inputs.own_last_play_features),
         entity_ids=inputs.entity_ids.index_select(0, indices),
         entity_features=inputs.entity_features.index_select(0, indices),
         entity_mask=inputs.entity_mask.index_select(0, indices),
@@ -1549,9 +2091,29 @@ def ppo_update(
     anchor_rehearsal_coef: float = 0.0,
     anchor_rehearsal_batch_sequences: int = 1,
     hazard_conditioned_rollouts: bool = False,
+    critic_only: bool = False,
+    apply_optimizer_step: bool = True,
+    recurrent_update_mode: str = "full-prefix",
+    tbptt_chunk: int = 64,
+    tbptt_burn_in: int = 16,
 ) -> dict[str, float]:
+    """Run PPO epochs over one rollout.
+
+    ``critic_only`` is the post-warm-start critic warm-up: the loss is the value
+    loss alone and every parameter outside the separate critic encoder and
+    value head keeps a ``None`` gradient, so AdamW leaves it (and its optimizer
+    state) bit-identical.
+
+    ``apply_optimizer_step=False`` is the launch preflight: every loss, backward
+    and gradient check runs, ``optimizer.step()`` is never called, and gradients
+    are cleared afterward, so weights and optimizer state stay bit-identical.
+    """
+    from .tbptt import validate_mode, chunk_minibatches, select_steps, rollout_chunk_state, trim_entity_padding
+
+    validate_mode(recurrent_update_mode, tbptt_chunk, tbptt_burn_in)
     if not math.isfinite(sampling_temperature) or sampling_temperature <= 0.0:
         raise ValueError("sampling temperature must be finite and positive")
+    critic_names = critic_parameter_names(model) if critic_only else frozenset()
     if not math.isfinite(action_value_coef) or action_value_coef < 0.0:
         raise ValueError("action value coefficient must be finite and nonnegative")
     model.train()
@@ -1568,6 +2130,7 @@ def ppo_update(
         "action_type_entropy": 0.0,
         "location_entropy": 0.0,
         "conditional_slot_entropy": 0.0,
+        "mode_entropy": 0.0,
         "anchor_l2": 0.0,
         "anchor_loss": 0.0,
         "anchor_policy_kl": 0.0,
@@ -1639,17 +2202,42 @@ def ppo_update(
         )
 
     for _epoch in range(epochs):
-        order = np.random.permutation(rollout.num_sequences)
-        for start in range(0, rollout.num_sequences, sequence_batch_size):
-            indices = order[start : start + sequence_batch_size]
-            index_tensor = torch.as_tensor(indices, dtype=torch.long, device=device)
-            inputs = _index_policy_inputs(all_inputs, index_tensor)
-            initial_state = (
-                all_initial_hidden.index_select(0, index_tensor),
-                all_initial_cell.index_select(0, index_tensor),
-            )
+        if recurrent_update_mode == "stored-state":
+            minibatches = chunk_minibatches(rollout.episode_starts, tbptt_chunk, sequence_batch_size)
+        else:
+            order = np.random.permutation(rollout.num_sequences)
+            minibatches = (order[start:start + sequence_batch_size]
+                           for start in range(0, rollout.num_sequences, sequence_batch_size))
+        for indices in minibatches:
+            if recurrent_update_mode == "stored-state":
+                rows = torch.tensor([item[0] for item in indices], device=device)[:, None]
+                times = torch.tensor([list(range(item[1], item[2])) for item in indices], device=device)
+                inputs = trim_entity_padding(select_steps(all_inputs, rows, times))
+                initial_state = rollout_chunk_state(model, rollout, all_inputs, indices,
+                                                    tbptt_burn_in, device=device)
+                def select(value):
+                    return value[rows, times]
+            else:
+                index_tensor = torch.as_tensor(indices, dtype=torch.long, device=device)
+                inputs = _index_policy_inputs(all_inputs, index_tensor)
+                initial_state = (
+                    all_initial_hidden.index_select(0, index_tensor),
+                    all_initial_cell.index_select(0, index_tensor),
+                )
+                if model.config.public_contract_version >= 4:
+                    from .council_recurrence import reconstruct_recurrent_state
+
+                    if rollout.recurrent_prefixes is None:
+                        raise ValueError("council PPO requires retained episode prefixes")
+                    initial_state = reconstruct_recurrent_state(
+                        model,
+                        tuple(rollout.recurrent_prefixes[int(index)] for index in indices),
+                        device=device,
+                    )
+                def select(value):
+                    return value.index_select(0, index_tensor)
             output = model(inputs, initial_state)
-            actions = all_actions.index_select(0, index_tensor)
+            actions = select(all_actions)
             force_play: Tensor | None = None
             if model.config.play_hazard_enabled:
                 # The hard recurrent hazard gate is part of the behavior state
@@ -1663,10 +2251,10 @@ def ppo_update(
                 temperature=sampling_temperature,
                 force_play=force_play,
             )
-            old_log_prob = all_old_log_prob.index_select(0, index_tensor)
-            old_values = all_old_values.index_select(0, index_tensor)
-            advantage = all_advantages.index_select(0, index_tensor)
-            return_target = all_returns.index_select(0, index_tensor)
+            old_log_prob = select(all_old_log_prob)
+            old_values = select(all_old_values)
+            advantage = select(all_advantages)
+            return_target = select(all_returns)
 
             new_log_prob = distribution.log_prob(actions)
             log_ratio = new_log_prob - old_log_prob
@@ -1712,6 +2300,18 @@ def ppo_update(
                 temperature=sampling_temperature,
                 force_play=force_play,
             ).mean()
+            mode_probabilities = torch.cat(
+                (
+                    distribution.probs[..., :PLACEMENT_ACTIONS].sum(-1, keepdim=True),
+                    distribution.probs[..., PLACEMENT_ACTIONS:],
+                ),
+                dim=-1,
+            )
+            mode_entropy = (
+                -(mode_probabilities * mode_probabilities.clamp_min(1e-30).log())
+                .sum(-1)
+                .mean()
+            )
 
             assert inputs.critic_card_ids is not None
             assert inputs.critic_global_features is not None
@@ -1877,7 +2477,7 @@ def ppo_update(
                 online_teacher = online_strategy_teacher_loss(
                     output,
                     inputs.action_mask,
-                    all_teacher_actions.index_select(0, index_tensor),
+                    select(all_teacher_actions),
                     decision_coef=online_strategy_teacher_decision_coef,
                     card_coef=online_strategy_teacher_card_coef,
                     tile_coef=online_strategy_teacher_tile_coef,
@@ -1901,6 +2501,8 @@ def ppo_update(
                 + hand_aux_coef * hand_loss
                 + elixir_aux_coef * elixir_loss
             )
+            if critic_only:
+                loss = value_coef * value_loss
 
             if not bool(torch.isfinite(loss)):
                 raise FloatingPointError(
@@ -1923,6 +2525,10 @@ def ppo_update(
 
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
+            if critic_only:
+                for name, parameter in model.named_parameters():
+                    if name not in critic_names:
+                        parameter.grad = None
             nonfinite_gradients = [
                 name
                 for name, parameter in model.named_parameters()
@@ -1938,7 +2544,8 @@ def ppo_update(
                 raise FloatingPointError(
                     f"non-finite PPO gradient norm: {float(grad_norm.detach()):.9g}"
                 )
-            optimizer.step()
+            if apply_optimizer_step:
+                optimizer.step()
             nonfinite_parameters = [
                 name
                 for name, parameter in model.named_parameters()
@@ -1963,6 +2570,7 @@ def ppo_update(
                 "action_type_entropy": action_type_entropy,
                 "location_entropy": location_entropy,
                 "conditional_slot_entropy": conditional_slot_entropy,
+                "mode_entropy": mode_entropy,
                 "anchor_l2": anchor_l2,
                 "anchor_loss": anchor_loss,
                 "anchor_policy_kl": anchor_policy_kl,
@@ -1982,9 +2590,7 @@ def ppo_update(
                 "online_teacher_decision_loss": online_teacher["decision_loss"],
                 "online_teacher_card_loss": online_teacher["card_loss"],
                 "online_teacher_tile_loss": online_teacher["tile_loss"],
-                "online_teacher_decision_accuracy": online_teacher[
-                    "decision_accuracy"
-                ],
+                "online_teacher_decision_accuracy": online_teacher["decision_accuracy"],
                 "online_teacher_play_recall": online_teacher["play_recall"],
                 "online_teacher_card_accuracy": online_teacher["card_accuracy"],
                 "online_teacher_tile_accuracy": online_teacher["tile_accuracy"],
@@ -2004,11 +2610,15 @@ def ppo_update(
         if stop_early:
             break
 
+    if not apply_optimizer_step:
+        optimizer.zero_grad(set_to_none=True)
     if updates:
         for key in stat_sums:
             stat_sums[key] /= updates
-    stat_sums["optimizer_steps"] = float(updates)
+    stat_sums["optimizer_steps"] = float(updates if apply_optimizer_step else 0)
+    stat_sums["evaluated_minibatches"] = float(updates)
     stat_sums["kl_early_stop"] = float(stop_early)
+    stat_sums["critic_warmup"] = float(critic_only)
     prediction = rollout.old_values.reshape(-1)
     target = returns.reshape(-1)
     variance = float(np.var(target))
@@ -2016,6 +2626,21 @@ def ppo_update(
         float(1.0 - np.var(target - prediction) / variance) if variance > 1e-8 else 0.0
     )
     return stat_sums
+
+
+CRITIC_PARAMETER_PREFIXES = ("critic_encoder.", "value_head.")
+
+
+def critic_parameter_names(model: ClasherPolicy) -> frozenset[str]:
+    """Parameters that only the privileged critic path owns."""
+    names = frozenset(
+        name
+        for name, _ in model.named_parameters()
+        if name.startswith(CRITIC_PARAMETER_PREFIXES)
+    )
+    if not any(name.startswith("value_head.") for name in names):
+        raise ValueError("critic warm-up requires a separate value head")
+    return names
 
 
 def find_latest_checkpoint(directory: Path) -> Path | None:
@@ -2034,11 +2659,40 @@ def save_checkpoint(
     total_transitions: int,
     metrics: dict[str, float] | None = None,
     simulation_backend_metadata: dict[str, Any] | None = None,
+    council_initialization: dict[str, Any] | None = None,
 ) -> None:
+    resource_budget = None
+    if getattr(args, "council_budget_ledger", None) is not None:
+        from .council_budget import budget_snapshot
+        resource_budget = budget_snapshot(args.council_budget_ledger)
+    temporary = path.with_name(f".{path.name}.tmp-{os.getpid()}")
     torch.save(
         {
             "format_version": 2,
+            "gamedata_sha256": _sha256(builder.loader.data_file),
+            "council_config_sha256": (
+                _sha256(args.council_config)
+                if getattr(args, "council_config", None) is not None
+                else None
+            ),
+            "admission_sha256": (
+                _sha256(args.council_admission)
+                if getattr(args, "council_admission", None) is not None
+                else None
+            ),
             "model_type": "entity_spatial_recurrent",
+            "resource_budget": resource_budget,
+            "council_recipe": (
+                {
+                    "arm": getattr(args, "council_arm", None),
+                    "critic_warmup_updates": getattr(
+                        args, "critic_warmup_updates", 0
+                    ),
+                    "target_kl": getattr(args, "target_kl", None),
+                }
+                if getattr(args, "council_config", None) is not None
+                else None
+            ),
             "model_config": model.config.to_dict(),
             "token_names": builder.token_names,
             "model_state_dict": model.state_dict(),
@@ -2048,9 +2702,40 @@ def save_checkpoint(
             "total_transitions": total_transitions,
             "metrics": metrics or {},
             "simulation_backend_metadata": simulation_backend_metadata,
+            "council_initialization": council_initialization,
         },
-        path,
+        temporary,
     )
+    os.replace(temporary, path)
+
+
+def planned_rollout_steps(
+    *,
+    total_decisions: int,
+    target_decisions: int | None,
+    checkpoint_decisions: tuple[int, ...],
+    agents: int,
+    rollout_steps: int,
+) -> int:
+    """Shorten the final chunk so learner-decision milestones are exact."""
+    if agents <= 0 or rollout_steps <= 0:
+        raise ValueError("rollout dimensions must be positive")
+    if target_decisions is None:
+        return rollout_steps
+    if total_decisions >= target_decisions:
+        return 0
+    boundary = min(
+        [
+            target_decisions,
+            *(value for value in checkpoint_decisions if value > total_decisions),
+        ]
+    )
+    remaining = boundary - total_decisions
+    if remaining % agents:
+        raise ValueError(
+            "decision boundaries must be divisible by learner sequence count"
+        )
+    return min(rollout_steps, remaining // agents)
 
 
 def parse_args() -> argparse.Namespace:
@@ -2058,6 +2743,10 @@ def parse_args() -> argparse.Namespace:
         description="Train the recurrent entity-spatial policy with PPO self-play"
     )
     parser.add_argument("--decks-path", default="decks.json")
+    parser.add_argument("--council-config", type=Path)
+    parser.add_argument("--council-admission", type=Path)
+    parser.add_argument("--council-opponent-pool", type=Path)
+    parser.add_argument("--council-budget-ledger", type=Path)
     parser.add_argument(
         "--simulation-backend",
         choices=("python", "simple-pytorch"),
@@ -2108,6 +2797,11 @@ def parse_args() -> argparse.Namespace:
             "use the learner deck for a true frozen-parent mirror"
         ),
     )
+    parser.add_argument(
+        "--public-contract-version", type=int, choices=(1, 2, 3, 4), default=1
+    )
+    parser.add_argument("--public-history-slots", type=int, default=0)
+    parser.add_argument("--public-seen-card-slots", type=int, default=0)
     parser.add_argument(
         "--card-semantics-version",
         type=int,
@@ -2172,6 +2866,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=23)
     parser.add_argument("--updates", type=int, default=500)
     parser.add_argument("--num-envs", type=int, default=6)
+    parser.add_argument("--torch-threads", type=int, default=None)
+    parser.add_argument("--total-decisions", type=int, default=None)
+    parser.add_argument("--checkpoint-decisions", type=int, action="append", default=[])
+    parser.add_argument("--level-randomization-after", type=int, default=None)
+    parser.add_argument("--mixed-level-probability", type=float, default=0.5)
+    parser.add_argument("--reward-potential-scale", type=float, default=None)
     parser.add_argument(
         "--actor-workers",
         type=int,
@@ -2183,6 +2883,17 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=2,
         help="PyTorch CPU threads per rollout process",
+    )
+    parser.add_argument(
+        "--rollout-inference",
+        choices=["worker", "learner"],
+        default="worker",
+        help=(
+            "worker: each actor process runs its own CPU policy copy; learner: "
+            "actor processes only step simulators and opponents and the learner "
+            "process runs one batched policy forward over every environment on "
+            "--actor-device (transitions do not depend on the actor partition)"
+        ),
     )
     parser.add_argument(
         "--trim-rollout-entity-padding",
@@ -2710,6 +3421,44 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--epochs", type=int, default=2)
     parser.add_argument("--sequence-batch-size", type=int, default=2)
     parser.add_argument("--target-kl", type=float, default=0.03)
+    parser.add_argument(
+        "--critic-warmup-updates",
+        type=int,
+        default=0,
+        help=(
+            "first N updates optimize only the separate critic (value loss) with "
+            "every actor parameter frozen; used after a scripted warm start"
+        ),
+    )
+    parser.add_argument(
+        "--council-arm",
+        choices=("scripted", "scratch"),
+        default=None,
+        help="council pilot initialization arm, recorded in checkpoint metadata",
+    )
+    parser.add_argument(
+        "--preflight-no-update",
+        action="store_true",
+        help=(
+            "launch preflight only: run startup, initialization, environment "
+            "creation, one rollout collection and the (critic warm-up and) PPO "
+            "loss/backward code paths, then exit before any optimizer.step(). "
+            "Writes no checkpoint, asserts bit-identical weights, and skips the "
+            "Tier A admission lookup (a preflight is never gameplay fitting)"
+        ),
+    )
+    parser.add_argument(
+        "--preflight-rollout-steps",
+        type=int,
+        default=None,
+        help="cap the single preflight rollout at this many steps per environment",
+    )
+    parser.add_argument(
+        "--preflight-report-json",
+        type=Path,
+        default=None,
+        help="write the preflight weight-digest/timing receipt here (new file)",
+    )
     parser.add_argument("--save-every", type=int, default=10)
     parser.add_argument("--log-every", type=int, default=1)
     parser.add_argument("--no-lr-anneal", dest="lr_anneal", action="store_false")
@@ -2717,7 +3466,12 @@ def parse_args() -> argparse.Namespace:
         "--quiet-engine", dest="quiet_engine", action="store_true", default=True
     )
     parser.add_argument("--no-quiet-engine", dest="quiet_engine", action="store_false")
-    return parser.parse_args()
+    parser.add_argument("--recurrent-update-mode", choices=("full-prefix", "stored-state"), default=argparse.SUPPRESS)
+    parser.add_argument("--tbptt-chunk", type=int, default=argparse.SUPPRESS)
+    parser.add_argument("--tbptt-burn-in", type=int, default=argparse.SUPPRESS)
+    parser.add_argument("--recurrent-config", type=Path, default=argparse.SUPPRESS)
+    from .tbptt import apply_cli_config
+    return apply_cli_config(parser.parse_args())
 
 
 def _load_resume_state(
@@ -2751,9 +3505,21 @@ def _load_initial_policy_state(
 ) -> tuple[dict[str, Any] | None, Path | None]:
     if not args.initialize_policy_from:
         return None, None
-    if args.simulation_backend != "simple-pytorch":
+    # Weights-only initialization is verified for two paths: the Simple Gym
+    # (exact vocabulary/capacity contract below) and the python-backend council
+    # pilot at public contract v4, where council_pilot.validate_council_initial_policy
+    # binds contract/semantics versions, vocabulary, provenance digests,
+    # BudgetSnapshot, published opponent hash and a post-load weight digest.
+    # Every other python-backend run stays gated.
+    council_path = (
+        args.simulation_backend == "python"
+        and getattr(args, "council_config", None) is not None
+        and args.public_contract_version == 4
+    )
+    if args.simulation_backend != "simple-pytorch" and not council_path:
         raise ValueError(
-            "--initialize-policy-from is currently gated only for simple-pytorch"
+            "--initialize-policy-from is gated for simple-pytorch and the "
+            "public-v4 council pilot path only"
         )
     if args.resume_latest or args.resume_from:
         raise ValueError(
@@ -2976,13 +3742,266 @@ def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
         )
 
 
+_MAIN_STARTED = time.perf_counter()
+
+
+def _finish_launch_preflight(
+    preflight: dict[str, Any],
+    *,
+    args: argparse.Namespace,
+    model: ClasherPolicy,
+    actor_model: ClasherPolicy,
+    optimizer: torch.optim.Optimizer,
+    rollout: RolloutBatch,
+    advantages: np.ndarray,
+    returns: np.ndarray,
+    run_ppo_update: Any,
+    scheduled_critic_only: bool,
+    collect_seconds: float,
+    training_monitor: Any,
+    update: int,
+    directory: Path,
+) -> dict[str, Any]:
+    """Exercise the scheduled update path with zero optimizer steps, then prove it.
+
+    The scheduled path runs first (critic warm-up for the scripted arm, full PPO
+    for scratch); when that was critic-only, the full PPO path also runs on the
+    same rollout so both code paths are covered. Losses, backward, gradient
+    finiteness checks and clipping all run; ``optimizer.step()`` never does.
+    """
+    from .council_pilot import state_dict_sha256
+
+    paths = [("critic_warmup" if scheduled_critic_only else "ppo", scheduled_critic_only)]
+    if scheduled_critic_only:
+        paths.append(("ppo", False))
+    update_stats: dict[str, dict[str, float]] = {}
+    started = time.perf_counter()
+    for label, critic_only in paths:
+        stats = run_ppo_update(
+            rollout,
+            advantages,
+            returns,
+            critic_only=critic_only,
+            apply_optimizer_step=False,
+        )
+        if stats["optimizer_steps"] != 0.0:
+            raise RuntimeError("preflight update reported optimizer steps")
+        if stats["evaluated_minibatches"] <= 0:
+            raise RuntimeError("preflight did not evaluate any PPO minibatch")
+        update_stats[label] = {key: float(value) for key, value in stats.items()}
+    update_seconds = time.perf_counter() - started
+    if training_monitor is not None:
+        training_monitor.observe_update(
+            update=update,
+            learner_decisions=int(rollout.transitions),
+            actions=rollout.actions,
+            hand_ids=rollout.hand_ids,
+            episodes_finished=rollout.episodes_finished,
+            stats=update_stats[paths[-1][0]],
+            action_masks=rollout.action_masks,
+        )
+    after = state_dict_sha256(model.state_dict())
+    actor_after = state_dict_sha256(actor_model.state_dict())
+    gradients_left = [
+        name for name, parameter in model.named_parameters() if parameter.grad is not None
+    ]
+    written = sorted(str(path) for path in directory.rglob("*.pt"))
+    preflight.update(
+        {
+            "weights_sha256_after": after,
+            "actor_weights_sha256_after": actor_after,
+            "weights_unchanged": after == preflight["weights_sha256_before"],
+            "optimizer_state_entries_after": len(optimizer.state),
+            "gradients_left_after": len(gradients_left),
+            "checkpoints_written": written,
+            "rollout_steps": int(rollout.actions.shape[1]),
+            "rollout_transitions": int(rollout.transitions),
+            "rollout_episodes_finished": int(rollout.episodes_finished),
+            "rollout_rejected_actions": (
+                int(np.count_nonzero(~rollout.action_success))
+                if rollout.action_success is not None
+                else 0
+            ),
+            "update_paths": [label for label, _ in paths],
+            "update_stats": update_stats,
+            "collect_seconds": collect_seconds,
+            "update_seconds": update_seconds,
+            "total_seconds": time.perf_counter() - _MAIN_STARTED,
+        }
+    )
+    ok = (
+        preflight["weights_unchanged"]
+        and actor_after == after
+        and not optimizer.state
+        and not gradients_left
+        and not written
+    )
+    preflight["status"] = "passed" if ok else "failed"
+    if args.preflight_report_json is not None:
+        report = Path(args.preflight_report_json)
+        report.parent.mkdir(parents=True, exist_ok=True)
+        with report.open("x") as stream:
+            json.dump(preflight, stream, indent=2, sort_keys=True)
+            stream.write("\n")
+    print(
+        f"preflight_status={preflight['status']} "
+        f"weights_before={preflight['weights_sha256_before']} weights_after={after} "
+        f"update_paths={','.join(preflight['update_paths'])} "
+        f"collect_s={collect_seconds:.2f} update_s={update_seconds:.2f}",
+        flush=True,
+    )
+    if not ok:
+        raise RuntimeError("launch preflight changed state or wrote a checkpoint")
+    return preflight
+
+
+# Resume RNG continuity (pilot/diagnosis-1M bug 3). A resumed run used to
+# re-seed every stream from ``--seed`` and replay the first segment's games and
+# opponent assignments. Now each saved checkpoint gets a learner RNG sidecar
+# (Python, NumPy, Torch) that a resume restores, and every resumed segment
+# derives a fresh base seed for environments, opponents and actor processes,
+# whose RNG lives in other processes and cannot be carried over.
+RNG_STATE_DIRECTORY = "rng-state"
+RUN_SEGMENTS_FILE = "run-segments.jsonl"
+_RESUME_SEED_LIMIT = 2**31 - 2**27  # leaves room for per-env/worker seed offsets
+
+
+def rng_state_path(directory: Path, update: int) -> Path:
+    return Path(directory) / RNG_STATE_DIRECTORY / f"update_{update:06d}.pt"
+
+
+def capture_rng_state() -> dict[str, Any]:
+    import random
+
+    state: dict[str, Any] = {
+        "python": random.getstate(),
+        "numpy": np.random.get_state(),
+        "torch": torch.get_rng_state(),
+    }
+    if torch.backends.mps.is_available():
+        state["torch_mps"] = torch.mps.get_rng_state()
+    if torch.cuda.is_available():
+        state["torch_cuda"] = torch.cuda.get_rng_state_all()
+    return state
+
+
+def restore_rng_state(state: dict[str, Any]) -> None:
+    import random
+
+    random.setstate(state["python"])
+    np.random.set_state(state["numpy"])
+    torch.set_rng_state(state["torch"])
+    if "torch_mps" in state and torch.backends.mps.is_available():
+        torch.mps.set_rng_state(state["torch_mps"])
+    if "torch_cuda" in state and torch.cuda.is_available():
+        torch.cuda.set_rng_state_all(state["torch_cuda"])
+
+
+def save_rng_state(
+    directory: Path, *, checkpoint: Path, update: int, rollout_seed: int
+) -> Path:
+    path = rng_state_path(directory, update)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.tmp-{os.getpid()}")
+    torch.save(
+        {
+            "schema": "clasher.train-rng-state.v1",
+            "update": update,
+            "checkpoint": checkpoint.name,
+            "checkpoint_sha256": _sha256(checkpoint),
+            "rollout_seed": rollout_seed,
+            "state": capture_rng_state(),
+        },
+        temporary,
+    )
+    os.replace(temporary, path)
+    return path
+
+
+def load_rng_state(directory: Path, *, checkpoint: Path, update: int) -> dict | None:
+    """The sidecar saved with this exact checkpoint, or None if absent/mismatched."""
+    path = rng_state_path(directory, update)
+    if not path.exists():
+        return None
+    payload = torch.load(path, map_location="cpu", weights_only=False)
+    if payload.get("update") != update or payload.get(
+        "checkpoint_sha256"
+    ) != _sha256(checkpoint):
+        return None
+    return payload
+
+
+def resume_rollout_seed(seed: int, *, start_update: int, segment: int) -> int:
+    """Base seed for environments, opponents and actor processes of a resumed
+    segment, distinct per (seed, start update, segment index)."""
+    state = np.random.SeedSequence(
+        [int(seed), int(start_update), int(segment), 0x5EED]
+    ).generate_state(1, dtype=np.uint64)[0]
+    return int(state % _RESUME_SEED_LIMIT)
+
+
+def entropy_recipe_record(args: argparse.Namespace) -> dict[str, Any]:
+    """Entropy coefficients exactly as ppo_update combines them."""
+    joint = args.action_type_entropy_coef is None and args.location_entropy_coef is None
+    return {
+        "entropy_coef": args.entropy_coef,
+        "action_type_entropy_coef": args.action_type_entropy_coef,
+        "location_entropy_coef": args.location_entropy_coef,
+        "conditional_slot_entropy_coef": args.conditional_slot_entropy_coef,
+        "joint_entropy_term_applies": joint,
+        "effective_type_coef": (
+            None
+            if joint
+            else (
+                args.entropy_coef
+                if args.action_type_entropy_coef is None
+                else args.action_type_entropy_coef
+            )
+        ),
+        "effective_location_coef": (
+            None
+            if joint
+            else (
+                args.entropy_coef
+                if args.location_entropy_coef is None
+                else args.location_entropy_coef
+            )
+        ),
+    }
+
+
+def card_costs_for_monitor(builder: StructuredObservationBuilder) -> dict[str, int]:
+    costs: dict[str, int] = {}
+    for name in builder.token_names:
+        if str(name).startswith("<"):
+            continue
+        try:
+            stats = builder.loader.get_card(str(name))
+        except Exception:  # noqa: BLE001 - monitoring metadata only
+            stats = None
+        cost = getattr(stats, "mana_cost", None) if stats is not None else None
+        if isinstance(cost, (int, float)) and cost > 0:
+            costs[str(name)] = int(round(float(cost)))
+    return costs
+
+
 def main() -> None:
     global _USE_TRIMMED_ROLLOUT_ENTITY_PADDING
+    global _MAIN_STARTED
+    _MAIN_STARTED = time.perf_counter()
     args = parse_args()
     _validate_simple_pytorch_args(args)
     _USE_TRIMMED_ROLLOUT_ENTITY_PADDING = bool(args.trim_rollout_entity_padding)
     if args.num_envs <= 0 or args.rollout_steps <= 0:
         raise ValueError("num_envs and rollout_steps must be positive")
+    if args.critic_warmup_updates < 0:
+        raise ValueError("--critic-warmup-updates must be nonnegative")
+    if args.critic_warmup_updates and not (
+        args.initialize_policy_from or args.resume_from or args.resume_latest
+    ):
+        raise ValueError(
+            "critic warm-up protects an initialized actor; a fresh policy has none"
+        )
     first_rollout_audit_path = (
         Path(args.first_rollout_audit_json).expanduser().resolve()
         if args.first_rollout_audit_json is not None
@@ -3200,12 +4219,27 @@ def main() -> None:
 
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
-    torch.set_num_threads(max(1, min(8, torch.get_num_threads())))
+    if args.torch_threads is not None and args.torch_threads < 1:
+        raise ValueError("--torch-threads must be positive")
+    torch.set_num_threads(args.torch_threads or max(1, min(8, torch.get_num_threads())))
     learner_device = resolve_learner_device(args.device)
     actor_device = resolve_torch_device(args.actor_device)
-    if args.actor_workers > 1 and actor_device.type != "cpu":
+    if (
+        args.actor_workers > 1
+        and actor_device.type != "cpu"
+        and args.rollout_inference != "learner"
+    ):
         raise ValueError(
             "parallel rollout workers currently require --actor-device cpu"
+        )
+    if args.rollout_inference == "learner" and (
+        args.simulation_backend != "python"
+        or args.opponent_mode not in {"noop", "random", "strategy"}
+        or args.online_strategy_teacher is not None
+    ):
+        raise ValueError(
+            "learner-side inference supports the scalar backend with noop, random, "
+            "strategy or council opponents and no online teacher"
         )
     decks_path = resolve_decks_path(args.decks_path, must_exist=True)
     sampling_decks_path = (
@@ -3321,7 +4355,15 @@ def main() -> None:
         PolicyConfig.from_dict(resume["model_config"]) if resume is not None else None
     )
     initial_policy_config: PolicyConfig | None = None
-    if initial_policy is not None:
+    if initial_policy is not None and args.simulation_backend == "python":
+        # Council path (see _load_initial_policy_state). The run vocabulary is
+        # the builder's own; the checkpoint's contract, vocabulary, provenance
+        # and weights are all checked against it in the council block below
+        # before any environment exists.
+        initial_policy_config = PolicyConfig.from_dict(initial_policy["model_config"])
+        if initial_policy_config.public_contract_version != 4:
+            raise ValueError("council initial policy is not a public-v4 actor")
+    elif initial_policy is not None:
         if token_names is None:
             raise ValueError("initial policy requires an explicit run vocabulary")
         initial_policy_config = _validate_simple_initial_policy_contract(
@@ -3329,6 +4371,18 @@ def main() -> None:
             token_names=tuple(str(name) for name in token_names),
             max_entities=args.simple_max_entities,
         )
+    if args.preflight_no_update:
+        if args.resume_from or args.resume_latest:
+            raise ValueError("launch preflight never resumes a run")
+        if args.preflight_rollout_steps is not None and args.preflight_rollout_steps <= 0:
+            raise ValueError("--preflight-rollout-steps must be positive")
+        if (
+            args.preflight_report_json is not None
+            and Path(args.preflight_report_json).exists()
+        ):
+            raise FileExistsError("refusing to overwrite a preflight report")
+    elif args.preflight_rollout_steps is not None or args.preflight_report_json:
+        raise ValueError("preflight options require --preflight-no-update")
     base_config = resume_config or initial_policy_config
     if args.fresh_factorized_action_head:
         if base_config is not None:
@@ -3348,10 +4402,30 @@ def main() -> None:
         resume_config=base_config,
         simulation_backend=args.simulation_backend,
     )
+    public_contract_version = (
+        base_config.public_contract_version
+        if base_config
+        else args.public_contract_version
+    )
+    if args.total_decisions is not None and args.total_decisions <= 0:
+        raise ValueError("--total-decisions must be positive")
+    if any(value <= 0 for value in args.checkpoint_decisions):
+        raise ValueError("checkpoint decision counts must be positive")
+    if public_contract_version >= 4 and args.reward_potential_scale is None:
+        args.reward_potential_scale = 0.05
+    args.max_ticks = resolve_match_horizon(args.max_ticks, public_contract_version)
+    if public_contract_version >= 4:
+        canonical_lane_globals = True
+        if args.simulation_backend != "python":
+            raise ValueError("council public contract requires the scalar backend")
     target_public_history_slots = (
         args.add_public_history_slots
         if args.add_public_history_slots
-        else (base_config.public_history_slots if base_config else 0)
+        else (
+            base_config.public_history_slots
+            if base_config
+            else args.public_history_slots
+        )
     )
     # Deterministic-state training needs one exact teacher event pulse.  This
     # does not change the model's public-history input contract: the adapter
@@ -3369,7 +4443,11 @@ def main() -> None:
     target_public_seen_card_slots = (
         args.add_public_seen_card_slots
         if args.add_public_seen_card_slots
-        else (base_config.public_seen_card_slots if base_config else 0)
+        else (
+            base_config.public_seen_card_slots
+            if base_config
+            else args.public_seen_card_slots
+        )
     )
     builder = StructuredObservationBuilder(
         decks_path=decks_path,
@@ -3391,6 +4469,8 @@ def main() -> None:
         canonical_lane_globals=canonical_lane_globals,
         public_history_slots=teacher_public_history_slots,
         public_seen_card_slots=target_public_seen_card_slots,
+        public_entity_levels=public_contract_version >= 3,
+        public_hand_levels=public_contract_version >= 4,
     )
     if args.add_repair_adapter_size and resume_config is None:
         raise ValueError("--add-repair-adapter-size requires a resumed checkpoint")
@@ -3469,11 +4549,16 @@ def main() -> None:
     ):
         raise ValueError("resumed checkpoint already has a play hazard adapter")
     config = base_config or PolicyConfig(
+        public_contract_version=public_contract_version,
+        public_token_names=builder.token_names if public_contract_version >= 2 else (),
+        public_history_slots=target_public_history_slots,
+        public_seen_card_slots=target_public_seen_card_slots,
         num_tokens=builder.spec.num_tokens,
         max_entities=builder.spec.max_entities,
         card_semantics_version=args.card_semantics_version,
         public_observation_confidence=(
-            args.actor_observation_domain in {"causal-vision-v1", "causal-frame-v1"}
+            public_contract_version >= 4
+            or args.actor_observation_domain in {"causal-vision-v1", "causal-frame-v1"}
         ),
         actor_observation_domain=args.actor_observation_domain,
         canonical_lane_globals=canonical_lane_globals,
@@ -3550,7 +4635,116 @@ def main() -> None:
                 args.add_repair_stage_size,
             ),
         )
+    council_initialization: dict[str, Any] | None = None
+    preflight_admission: str | None = None
+    if initial_policy is not None and args.simulation_backend == "python" and (
+        config.public_contract_version < 4
+    ):
+        raise ValueError("python-backend initialization is gated to the council path")
+    if config.public_contract_version >= 4:
+        from .council_pilot import (
+            load_pilot_config,
+            require_pilot_admission,
+            validate_council_trainer_args,
+        )
+
+        if args.council_config is None or args.council_admission is None:
+            raise ValueError(
+                "council gameplay fitting requires a pinned config and Tier A admission receipt"
+            )
+        pilot_config = load_pilot_config(args.council_config)
+        validate_council_trainer_args(pilot_config, args, config, builder)
+        levels = (
+            (10, 11, 12)
+            if (
+                args.level_randomization_after is not None
+                and args.total_decisions is not None
+                and args.total_decisions > args.level_randomization_after
+            )
+            else (11,)
+        )
+        if args.preflight_no_update:
+            # A launch preflight never steps the optimizer and writes no
+            # checkpoint, so it is not gameplay fitting and does not consume a
+            # Tier A receipt. Source pins are still verified; the admission
+            # file is used only as the digest the initializer must carry.
+            from .council_pilot import load_source_pins
+
+            load_source_pins(pilot_config)
+            preflight_admission = "not-checked-preflight-no-update"
+        else:
+            require_pilot_admission(
+                pilot_config, args.council_admission, levels=levels
+            )
+            preflight_admission = None
+        from .council_budget import require_owned_budget
+        require_owned_budget(args.council_budget_ledger)
+        if initial_policy is not None:
+            from .council_pilot import (
+                is_continuation,
+                is_human_prior,
+                validate_council_continuation,
+                validate_council_human_prior,
+                validate_council_initial_policy,
+            )
+
+            assert initial_policy_path is not None
+            # Three initializer paths: the declared continuation, the declared
+            # human prior (research artifact; scripted-arm slot), otherwise the
+            # admission-bound warm-start / random-control check.
+            validate_initializer = (
+                validate_council_continuation
+                if is_continuation(pilot_config, args.seed, args.council_arm)
+                else validate_council_human_prior
+                if is_human_prior(pilot_config, args.seed, args.council_arm)
+                else validate_council_initial_policy
+            )
+            council_initialization = validate_initializer(
+                pilot_config,
+                initial_policy,
+                initialization_path=initial_policy_path,
+                args=args,
+                builder=builder,
+            )
+        source_checkpoint = resume if resume is not None else initial_policy
+        if (
+            source_checkpoint is not None
+            and source_checkpoint.get("gamedata_sha256") != pilot_config.gamedata_sha256
+        ):
+            raise ValueError(
+                "council checkpoint ruleset differs from the admitted runtime"
+            )
+        if resume is not None and resume.get("council_config_sha256") != _sha256(
+            args.council_config
+        ):
+            raise ValueError("resumed council run has a different pilot configuration")
+        if resume is not None and initial_policy is None:
+            from .council_pilot import is_human_prior
+
+            if is_human_prior(pilot_config, args.seed, args.council_arm):
+                # Keep the human-prior initialization record (research-artifact
+                # status included) in every later checkpoint of the run.
+                carried = resume.get("council_initialization") or {}
+                if (
+                    carried.get("initialization") != "human_prior"
+                    or carried.get("sha256")
+                    != pilot_config.human_prior_checkpoint_sha256
+                ):
+                    raise ValueError(
+                        "resumed human-prior run lost its declared initialization record"
+                    )
+                council_initialization = carried
     model = ClasherPolicy(config, builder.card_stat_features).to(learner_device)
+    if config.public_contract_version >= 4 and source_checkpoint is not None:
+        for name, value in model.state_dict().items():
+            if name.endswith(
+                ("card_stat_features", "semantic_card_features")
+            ) and not torch.equal(
+                value.cpu(), source_checkpoint["model_state_dict"][name].cpu()
+            ):
+                raise ValueError(
+                    "council checkpoint semantic buffers differ from the bound ruleset"
+                )
     if actor_device == learner_device:
         actor_model = model
     else:
@@ -3666,6 +4860,12 @@ def main() -> None:
             raise ValueError(
                 "only action-value parameters may be absent from the initializer"
             )
+        if council_initialization is not None:
+            from .council_pilot import require_initialized_weights
+
+            # Strict load plus an exact post-load digest: no key, dtype, shape
+            # or byte of the published initializer may differ in the learner.
+            require_initialized_weights(model, council_initialization, optimizer)
     if args.trainable_prefix:
         prefixes = tuple(args.trainable_prefix)
         for name, parameter in model.named_parameters():
@@ -3875,8 +5075,45 @@ def main() -> None:
         )
     synchronize_actor_model(model, actor_model)
 
+    # Fresh runs keep --seed; a resumed segment gets fresh environment, opponent
+    # and actor-process streams and restores the learner RNG saved with its
+    # checkpoint (just before the first update below).
+    segments_path = directory / RUN_SEGMENTS_FILE
+    segment_index = (
+        sum(1 for line in segments_path.read_text().splitlines() if line.strip())
+        if segments_path.exists()
+        else 0
+    )
+    rollout_seed = (
+        args.seed
+        if resume is None
+        else resume_rollout_seed(
+            args.seed, start_update=start_update, segment=segment_index
+        )
+    )
+    resume_rng: dict[str, Any] | None = None
+    if resume is not None:
+        assert resume_path is not None
+        earlier_starts = (
+            {
+                json.loads(line).get("start_update")
+                for line in segments_path.read_text().splitlines()
+                if line.strip()
+            }
+            if segments_path.exists()
+            else set()
+        )
+        # Restoring the same checkpoint's learner RNG twice would replay the
+        # earlier continuation (e.g. games played after it before a crash), so
+        # only the first resume from a given update restores; later ones reseed.
+        if start_update not in earlier_starts:
+            resume_rng = load_rng_state(
+                resume_path.parent, checkpoint=resume_path, update=start_update - 1
+            )
+
     envs: list[SelfPlayBattleEnv] = []
     parallel_collector: Any = None
+    batched_collector: Any = None
     simple_collector: Any = None
     simulation_backend_metadata: dict[str, Any] | None = None
     learner_teacher_balanced_config: BalancedStrategyConfig | None = None
@@ -4013,6 +5250,62 @@ def main() -> None:
                 "update_reset": True,
                 "simulator_state_reset": True,
             }
+    elif args.rollout_inference == "learner":
+        from .parallel_rollout import (
+            ActorWorkerConfig,
+            BatchedInferenceCollector,
+            OpponentSpec,
+        )
+
+        learner_opponent_pool: tuple[OpponentSpec, ...] = (
+            (OpponentSpec(kind="strategy", strategy=args.opponent_strategy),)
+            if args.opponent_mode == "strategy"
+            else (OpponentSpec(kind=args.opponent_mode),)
+        )
+        batched_collector = BatchedInferenceCollector.with_actor_processes(
+            num_workers=args.actor_workers,
+            num_envs=args.num_envs,
+            builder=builder,
+            config=ActorWorkerConfig(
+                decks_path=str(decks_path),
+                token_names=builder.token_names,
+                model_config=config.to_dict(),
+                recurrent_update_mode=getattr(args, "recurrent_update_mode", "full-prefix"),
+                tbptt_burn_in=getattr(args, "tbptt_burn_in", 16),
+                decision_interval=args.decision_interval,
+                max_ticks=args.max_ticks,
+                mirror_match=args.mirror_match,
+                opponent_mode=args.opponent_mode,
+                opponent_pool=learner_opponent_pool,
+                engine_fast_path=args.engine_fast_path,
+                quiet_engine=args.quiet_engine,
+                base_seed=rollout_seed,
+                torch_threads=args.actor_threads,
+                reward_profile=args.reward_profile,
+                reward_potential_scale=args.reward_potential_scale,
+                level_randomization_after=args.level_randomization_after,
+                mixed_level_probability=args.mixed_level_probability,
+                initial_learner_decisions=total_transitions,
+                council_opponent_pool=str(args.council_opponent_pool)
+                if args.council_opponent_pool is not None
+                else None,
+                reward_shaping_gamma=args.reward_shaping_gamma,
+                elixir_leak_penalty_scale=args.elixir_leak_penalty_scale,
+                defense_scenario_probability=args.defense_scenario_probability,
+                defense_scenario_minimum_elixir=(args.defense_scenario_minimum_elixir),
+                defense_scenario_maximum_elixir=(args.defense_scenario_maximum_elixir),
+                defense_scenario_horizon_ticks=args.defense_scenario_horizon_ticks,
+                defense_scenario_reward_scale=args.defense_scenario_reward_scale,
+                sampling_decks_path=str(sampling_decks_path),
+                learner_sampling_decks_path=str(learner_sampling_decks_path),
+                opponent_sampling_decks_path=str(opponent_sampling_decks_path),
+                matchups_path=str(matchups_path) if matchups_path is not None else None,
+                matchup_probability=args.matchup_probability,
+                trim_rollout_entity_padding=args.trim_rollout_entity_padding,
+                hazard_conditioned_rollouts=args.hazard_conditioned_rollouts,
+            ),
+        )
+        atexit.register(batched_collector.close)
     elif args.actor_workers == 1:
         with maybe_silence_stdio(args.quiet_engine):
             for index in range(args.num_envs):
@@ -4023,6 +5316,10 @@ def main() -> None:
                     else (opponent_sampling_decks_path, learner_sampling_decks_path)
                 )
                 env = SelfPlayBattleEnv(
+                    public_contract_version=config.public_contract_version,
+                    level_randomization_after=args.level_randomization_after,
+                    mixed_level_probability=args.mixed_level_probability,
+                    reward_potential_scale=args.reward_potential_scale,
                     decision_interval_ticks=args.decision_interval,
                     max_ticks=args.max_ticks,
                     decks_path=decks_path,
@@ -4032,7 +5329,7 @@ def main() -> None:
                     matchups_path=matchups_path,
                     matchup_probability=args.matchup_probability,
                     learner_player_id=learner_player,
-                    seed=args.seed + index * 1009,
+                    seed=rollout_seed + index * 1009,
                     mirror_match=args.mirror_match,
                     canonical_perspective=True,
                     canonical_lane_globals=config.canonical_lane_globals,
@@ -4053,7 +5350,8 @@ def main() -> None:
                     defense_scenario_reward_scale=(args.defense_scenario_reward_scale),
                 )
                 env._structured_obs_builder = builder
-                env.reset(seed=args.seed + index * 1009)
+                env.set_learner_decisions(total_transitions)
+                env.reset(seed=rollout_seed + index * 1009)
                 envs.append(env)
     else:
         from .parallel_rollout import (
@@ -4099,6 +5397,8 @@ def main() -> None:
                 decks_path=str(decks_path),
                 token_names=builder.token_names,
                 model_config=config.to_dict(),
+                recurrent_update_mode=getattr(args, "recurrent_update_mode", "full-prefix"),
+                tbptt_burn_in=getattr(args, "tbptt_burn_in", 16),
                 decision_interval=args.decision_interval,
                 max_ticks=args.max_ticks,
                 mirror_match=args.mirror_match,
@@ -4106,9 +5406,16 @@ def main() -> None:
                 opponent_pool=opponent_pool,
                 engine_fast_path=args.engine_fast_path,
                 quiet_engine=args.quiet_engine,
-                base_seed=args.seed,
+                base_seed=rollout_seed,
                 torch_threads=args.actor_threads,
                 reward_profile=args.reward_profile,
+                reward_potential_scale=args.reward_potential_scale,
+                level_randomization_after=args.level_randomization_after,
+                mixed_level_probability=args.mixed_level_probability,
+                initial_learner_decisions=total_transitions,
+                council_opponent_pool=str(args.council_opponent_pool)
+                if args.council_opponent_pool is not None
+                else None,
                 reward_shaping_gamma=args.reward_shaping_gamma,
                 elixir_leak_penalty_scale=args.elixir_leak_penalty_scale,
                 defense_scenario_probability=args.defense_scenario_probability,
@@ -4132,6 +5439,23 @@ def main() -> None:
             ),
         )
         atexit.register(parallel_collector.close)
+
+    council_opponent_bot = None
+    if (
+        args.council_opponent_pool is not None
+        and parallel_collector is None
+        and batched_collector is None
+    ):
+        from .council_opponents import CouncilLeagueOpponent
+
+        council_opponent_bot = CouncilLeagueOpponent(
+            builder=builder,
+            learner_model=actor_model,
+            pool_path=args.council_opponent_pool,
+            seed=rollout_seed,
+            assignment_log=Path(args.council_opponent_pool).parent
+            / "worker-0-assignments.jsonl",
+        )
 
     agents = (
         args.num_envs
@@ -4246,6 +5570,23 @@ def main() -> None:
         f"elixir_leak_penalty_scale={args.elixir_leak_penalty_scale}"
     )
     print(f"hazard_conditioned_rollouts={args.hazard_conditioned_rollouts}")
+    entropy_record = entropy_recipe_record(args)
+    entropy_name = None
+    if getattr(args, "council_config", None) is not None:
+        from .council_pilot import entropy_recipe
+
+        entropy_name = entropy_recipe(args)
+    print(
+        f"entropy_recipe={entropy_name} entropy_coef={args.entropy_coef} "
+        f"action_type_entropy_coef={args.action_type_entropy_coef} "
+        f"location_entropy_coef={args.location_entropy_coef} "
+        f"conditional_slot_entropy_coef={args.conditional_slot_entropy_coef} "
+        f"joint_entropy_term_applies={int(entropy_record['joint_entropy_term_applies'])}"
+    )
+    print(
+        f"run_segment={segment_index} rollout_seed={rollout_seed} "
+        f"rng_state_restored={int(resume_rng is not None)}"
+    )
     if args.opponent_mode == "league":
         league_labels = [
             "random"
@@ -4254,11 +5595,31 @@ def main() -> None:
             for kind, path in league_opponents
         ]
         print(f"league_opponents={league_labels}")
+    if args.total_decisions is not None:
+        planned_rollout_steps(
+            total_decisions=total_transitions,
+            target_decisions=args.total_decisions,
+            checkpoint_decisions=tuple(args.checkpoint_decisions),
+            agents=agents,
+            rollout_steps=args.rollout_steps,
+        )
+        args.updates = (
+            start_update
+            + math.ceil(
+                max(0, args.total_decisions - total_transitions)
+                / (agents * args.rollout_steps)
+            )
+            + len(args.checkpoint_decisions)
+        )
     if resume_path is not None:
         print(
             f"resumed_from={resume_path} start_update={start_update} "
             f"total_transitions={total_transitions}"
         )
+    elif args.preflight_no_update:
+        print("preflight_no_update=1 initial_checkpoint=not-written")
+        if initial_policy_path is not None:
+            print(f"initialized_policy_from={initial_policy_path}")
     else:
         initial_checkpoint = directory / "policy_v2_update_000000.pt"
         save_checkpoint(
@@ -4270,6 +5631,10 @@ def main() -> None:
             update=0,
             total_transitions=0,
             simulation_backend_metadata=simulation_backend_metadata,
+            council_initialization=council_initialization,
+        )
+        save_rng_state(
+            directory, checkpoint=initial_checkpoint, update=0, rollout_seed=rollout_seed
         )
         print(f"saved_initial_checkpoint={initial_checkpoint}")
         if initial_policy_path is not None:
@@ -4282,109 +5647,47 @@ def main() -> None:
         if parallel_collector is not None:
             parallel_collector.close()
             atexit.unregister(parallel_collector.close)
+        if batched_collector is not None:
+            batched_collector.close()
+            atexit.unregister(batched_collector.close)
         return
 
-    for update in range(start_update, args.updates + 1):
-        if args.lr_anneal:
-            progress = (update - 1) / max(1, args.updates - 1)
-            learning_rate = args.learning_rate * max(0.1, 1.0 - progress)
-            for group in optimizer.param_groups:
-                group["lr"] = learning_rate
-        else:
-            learning_rate = float(optimizer.param_groups[0]["lr"])
+    training_monitor = None
+    if getattr(args, "council_config", None) is not None:
+        from .council_monitor import TrainingAlarmMonitor
 
-        collect_start = time.perf_counter()
-        if simple_collector is not None:
-            (
-                simple_arrays,
-                recurrent_state,
-                previous_actions,
-                previous_rewards,
-                episode_starts,
-            ) = simple_collector.collect(args.rollout_steps, recurrent_state)
-            rollout = RolloutBatch(**simple_arrays)
-        elif parallel_collector is None:
-            (
-                rollout,
-                recurrent_state,
-                previous_actions,
-                previous_rewards,
-                episode_starts,
-                _,
-                opponent_previous_actions,
-                opponent_previous_rewards,
-                opponent_episode_starts,
-            ) = (
-                collect_rollout_stationary_opponents(
-                    envs=envs,
-                    learner_players=learner_players,
-                    builder=builder,
-                    model=actor_model,
-                    device=actor_device,
-                    rollout_steps=args.rollout_steps,
-                    recurrent_state=recurrent_state,
-                    previous_actions=previous_actions,
-                    previous_rewards=previous_rewards,
-                    episode_starts=episode_starts,
-                    opponent_model=None,
-                    opponent_recurrent_state=None,
-                    opponent_previous_actions=opponent_previous_actions,
-                    opponent_previous_rewards=opponent_previous_rewards,
-                    opponent_episode_starts=opponent_episode_starts,
-                    quiet_engine=args.quiet_engine,
-                    hazard_conditioned_rollouts=args.hazard_conditioned_rollouts,
-                    opponent_bot=(
-                        StrategyBot(args.opponent_strategy)
-                        if args.opponent_mode == "strategy"
-                        else None
-                    ),
-                    learner_teacher_bot=learner_teacher_bot,
-                    opponent_noop=args.opponent_mode == "noop",
-                )
-                if args.opponent_mode in {"noop", "random", "strategy"}
-                else collect_rollout(
-                    envs=envs,
-                    builder=builder,
-                    model=actor_model,
-                    device=actor_device,
-                    rollout_steps=args.rollout_steps,
-                    recurrent_state=recurrent_state,
-                    previous_actions=previous_actions,
-                    previous_rewards=previous_rewards,
-                    episode_starts=episode_starts,
-                    quiet_engine=args.quiet_engine,
-                    hazard_conditioned_rollouts=args.hazard_conditioned_rollouts,
-                )
-                + (
-                    None,
-                    opponent_previous_actions,
-                    opponent_previous_rewards,
-                    opponent_episode_starts,
-                )
-            )
-        else:
-            rollout = parallel_collector.collect(
-                model=model,
-                rollout_steps=args.rollout_steps,
-                policy_version=update - 1,
-            )
-        collect_seconds = time.perf_counter() - collect_start
-        if update == start_update and first_rollout_audit_path is not None:
-            audit = write_rollout_audit(
-                first_rollout_audit_path,
-                rollout,
-                update=update,
-                seed=args.seed,
-            )
-            print(
-                f"first_rollout_audit={first_rollout_audit_path} "
-                f"sha256={audit['rollout_sha256']}"
-            )
-        advantages, returns = compute_gae(
-            rollout, gamma=args.gamma, gae_lambda=args.gae_lambda
+        # Monitoring only: alarms are logged, never acted on automatically.
+        from .council_monitor import initial_opponent_labels
+
+        training_monitor = TrainingAlarmMonitor(
+            output_dir=directory,
+            token_names=tuple(builder.token_names),
+            outcome_dir=(
+                Path(args.council_opponent_pool).parent
+                if args.council_opponent_pool is not None
+                else None
+            ),
+            card_costs=card_costs_for_monitor(builder),
+            opponent_labels=(
+                initial_opponent_labels(args.council_opponent_pool)
+                if args.council_opponent_pool is not None
+                else None
+            ),
+            resume=resume is not None,
+            segment_start_update=start_update,
         )
-        update_start = time.perf_counter()
-        stats = ppo_update(
+
+    def run_ppo_update(
+        rollout: RolloutBatch,
+        advantages: np.ndarray,
+        returns: np.ndarray,
+        *,
+        critic_only: bool,
+        apply_optimizer_step: bool = True,
+    ) -> dict[str, float]:
+        # One call site for training and the launch preflight, so the
+        # preflight exercises the exact PPO/critic-warm-up configuration.
+        return ppo_update(
             model=model,
             optimizer=optimizer,
             rollout=rollout,
@@ -4393,6 +5696,9 @@ def main() -> None:
             device=learner_device,
             epochs=args.epochs,
             sequence_batch_size=args.sequence_batch_size,
+            recurrent_update_mode=getattr(args, "recurrent_update_mode", "full-prefix"),
+            tbptt_chunk=getattr(args, "tbptt_chunk", 64),
+            tbptt_burn_in=getattr(args, "tbptt_burn_in", 16),
             clip_ratio=args.clip_ratio,
             value_coef=args.value_coef,
             action_value_coef=args.action_value_coef,
@@ -4456,6 +5762,250 @@ def main() -> None:
             sampling_temperature=(
                 args.simple_learner_sampling_temperature
             ),
+            critic_only=critic_only,
+            apply_optimizer_step=apply_optimizer_step,
+        )
+
+    preflight: dict[str, Any] | None = None
+    if args.preflight_no_update:
+        from .council_pilot import state_dict_sha256
+
+        def _forbidden_optimizer_step(*_args: Any, **_kwargs: Any) -> None:
+            raise RuntimeError("launch preflight must never call optimizer.step()")
+
+        # Belt and braces: ppo_update skips the step in preflight mode, and any
+        # stray call on this optimizer instance fails loudly instead.
+        optimizer.step = _forbidden_optimizer_step  # type: ignore[method-assign]
+        preflight = {
+            "schema": "clasher.council-launch-preflight-trainer.v1",
+            "gameplay_fitting": False,
+            "optimizer_step_calls": 0,
+            "checkpoints_written": [],
+            "admission": preflight_admission or "not-applicable",
+            "seed": args.seed,
+            "council_arm": getattr(args, "council_arm", None),
+            "critic_warmup_updates": args.critic_warmup_updates,
+            "target_kl": args.target_kl,
+            "num_envs": args.num_envs,
+            "actor_workers": args.actor_workers,
+            "configured_rollout_steps": args.rollout_steps,
+            "initialization": council_initialization,
+            "initialized_policy_path": (
+                str(initial_policy_path) if initial_policy_path is not None else None
+            ),
+            "parameter_count": parameter_count,
+            "weights_sha256_before": state_dict_sha256(model.state_dict()),
+            "optimizer_state_entries_before": len(optimizer.state),
+            "startup_seconds": time.perf_counter() - _MAIN_STARTED,
+        }
+        if (
+            council_initialization is not None
+            and preflight["weights_sha256_before"]
+            != council_initialization["state_sha256"]
+        ):
+            raise RuntimeError("preflight weights differ from the initializer digest")
+
+    if preflight is None:
+        segment_record = {
+            "schema": "clasher.train-run-segment.v1",
+            "segment": segment_index,
+            "created_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "start_update": start_update,
+            "target_updates": args.updates,
+            "total_transitions_at_start": total_transitions,
+            "resumed_from": str(resume_path) if resume_path is not None else None,
+            "seed": args.seed,
+            "rollout_seed": rollout_seed,
+            "rng_state_restored": resume_rng is not None,
+            "entropy_recipe": entropy_name,
+            "entropy": entropy_record,
+            "council_opponent_pool": (
+                str(args.council_opponent_pool)
+                if args.council_opponent_pool is not None
+                else None
+            ),
+            "council_opponent_pool_sha256": (
+                _sha256(args.council_opponent_pool)
+                if args.council_opponent_pool is not None
+                else None
+            ),
+        }
+        with segments_path.open("a") as stream:
+            stream.write(json.dumps(segment_record, sort_keys=True) + "\n")
+    if resume is not None:
+        if resume_rng is not None:
+            restore_rng_state(resume_rng["state"])
+        else:
+            # No sidecar (older checkpoint) or a repeated resume of this update:
+            # use the segment's own seed, never the --seed or an earlier stream.
+            import random
+
+            random.seed(rollout_seed)
+            np.random.seed(rollout_seed)
+            torch.manual_seed(rollout_seed)
+
+    for update in range(start_update, args.updates + 1):
+        rollout_steps = planned_rollout_steps(
+            total_decisions=total_transitions,
+            target_decisions=args.total_decisions,
+            checkpoint_decisions=tuple(args.checkpoint_decisions),
+            agents=agents,
+            rollout_steps=args.rollout_steps,
+        )
+        if rollout_steps == 0:
+            break
+        if preflight is not None and args.preflight_rollout_steps is not None:
+            rollout_steps = min(rollout_steps, args.preflight_rollout_steps)
+        for env in envs:
+            env.set_learner_decisions(total_transitions)
+        if args.lr_anneal:
+            progress = (update - 1) / max(1, args.updates - 1)
+            learning_rate = args.learning_rate * max(0.1, 1.0 - progress)
+            for group in optimizer.param_groups:
+                group["lr"] = learning_rate
+        else:
+            learning_rate = float(optimizer.param_groups[0]["lr"])
+
+        if council_opponent_bot is not None:
+            council_opponent_bot.set_context(
+                policy_version=update - 1, learner_decisions=total_transitions
+            )
+        collect_start = time.perf_counter()
+        if simple_collector is not None:
+            (
+                simple_arrays,
+                recurrent_state,
+                previous_actions,
+                previous_rewards,
+                episode_starts,
+            ) = simple_collector.collect(rollout_steps, recurrent_state)
+            rollout = RolloutBatch(**simple_arrays)
+        elif batched_collector is not None:
+            rollout = batched_collector.collect(
+                model=actor_model,
+                rollout_steps=rollout_steps,
+                policy_version=update - 1,
+                learner_decisions=total_transitions,
+                quiet_engine=args.quiet_engine,
+                hazard_conditioned_rollouts=args.hazard_conditioned_rollouts,
+            )
+        elif parallel_collector is None:
+            (
+                rollout,
+                recurrent_state,
+                previous_actions,
+                previous_rewards,
+                episode_starts,
+                _,
+                opponent_previous_actions,
+                opponent_previous_rewards,
+                opponent_episode_starts,
+            ) = (
+                collect_rollout_stationary_opponents(
+                    envs=envs,
+                    learner_players=learner_players,
+                    builder=builder,
+                    model=actor_model,
+                    device=actor_device,
+                    rollout_steps=rollout_steps,
+                    recurrent_update_mode=getattr(args, "recurrent_update_mode", "full-prefix"),
+                    tbptt_burn_in=getattr(args, "tbptt_burn_in", 16),
+                    recurrent_state=recurrent_state,
+                    previous_actions=previous_actions,
+                    previous_rewards=previous_rewards,
+                    episode_starts=episode_starts,
+                    opponent_model=None,
+                    opponent_recurrent_state=None,
+                    opponent_previous_actions=opponent_previous_actions,
+                    opponent_previous_rewards=opponent_previous_rewards,
+                    opponent_episode_starts=opponent_episode_starts,
+                    quiet_engine=args.quiet_engine,
+                    hazard_conditioned_rollouts=args.hazard_conditioned_rollouts,
+                    opponent_bot=(
+                        council_opponent_bot
+                        if council_opponent_bot is not None
+                        else StrategyBot(args.opponent_strategy)
+                        if args.opponent_mode == "strategy"
+                        else None
+                    ),
+                    learner_teacher_bot=learner_teacher_bot,
+                    opponent_noop=args.opponent_mode == "noop",
+                )
+                if args.opponent_mode in {"noop", "random", "strategy"}
+                else collect_rollout(
+                    envs=envs,
+                    builder=builder,
+                    model=actor_model,
+                    device=actor_device,
+                    rollout_steps=rollout_steps,
+                    recurrent_update_mode=getattr(args, "recurrent_update_mode", "full-prefix"),
+                    tbptt_burn_in=getattr(args, "tbptt_burn_in", 16),
+                    recurrent_state=recurrent_state,
+                    previous_actions=previous_actions,
+                    previous_rewards=previous_rewards,
+                    episode_starts=episode_starts,
+                    quiet_engine=args.quiet_engine,
+                    hazard_conditioned_rollouts=args.hazard_conditioned_rollouts,
+                )
+                + (
+                    None,
+                    opponent_previous_actions,
+                    opponent_previous_rewards,
+                    opponent_episode_starts,
+                )
+            )
+        else:
+            rollout = parallel_collector.collect(
+                model=model,
+                rollout_steps=rollout_steps,
+                policy_version=update - 1,
+                learner_decisions=total_transitions,
+            )
+        collect_seconds = time.perf_counter() - collect_start
+        if update == start_update and first_rollout_audit_path is not None:
+            audit = write_rollout_audit(
+                first_rollout_audit_path,
+                rollout,
+                update=update,
+                seed=args.seed,
+            )
+            print(
+                f"first_rollout_audit={first_rollout_audit_path} "
+                f"sha256={audit['rollout_sha256']}"
+            )
+        advantages, returns = compute_gae(
+            rollout, gamma=args.gamma, gae_lambda=args.gae_lambda
+        )
+        if preflight is not None:
+            _finish_launch_preflight(
+                preflight,
+                args=args,
+                model=model,
+                actor_model=actor_model,
+                optimizer=optimizer,
+                rollout=rollout,
+                advantages=advantages,
+                returns=returns,
+                run_ppo_update=run_ppo_update,
+                scheduled_critic_only=update <= args.critic_warmup_updates,
+                collect_seconds=collect_seconds,
+                training_monitor=training_monitor,
+                update=update,
+                directory=directory,
+            )
+            if parallel_collector is not None:
+                parallel_collector.close()
+                atexit.unregister(parallel_collector.close)
+            if batched_collector is not None:
+                batched_collector.close()
+                atexit.unregister(batched_collector.close)
+            return
+        update_start = time.perf_counter()
+        stats = run_ppo_update(
+            rollout,
+            advantages,
+            returns,
+            critic_only=update <= args.critic_warmup_updates,
         )
         update_seconds = time.perf_counter() - update_start
         sync_start = time.perf_counter()
@@ -4464,6 +6014,11 @@ def main() -> None:
         sync_seconds = time.perf_counter() - sync_start
         total_transitions += rollout.transitions
 
+        rejected_actions = (
+            int(np.count_nonzero(~rollout.action_success))
+            if rollout.action_success is not None
+            else 0
+        )
         placement = rollout.actions < no_op
         no_op_rate = float(np.mean(rollout.actions == no_op))
         ability_rate = float(np.mean(rollout.actions == no_op + 1))
@@ -4477,6 +6032,19 @@ def main() -> None:
         transition_rate = rollout.transitions / max(
             1e-6, collect_seconds + update_seconds + sync_seconds
         )
+        if training_monitor is not None:
+            try:
+                training_monitor.observe_update(
+                    update=update,
+                    learner_decisions=total_transitions,
+                    actions=rollout.actions,
+                    hand_ids=rollout.hand_ids,
+                    episodes_finished=rollout.episodes_finished,
+                    stats=stats,
+                    action_masks=rollout.action_masks,
+                )
+            except Exception as error:  # noqa: BLE001 - monitoring never stops training
+                print(f"training_monitor_error={error!r}", flush=True)
         if (
             update % args.log_every == 0
             or update == start_update
@@ -4492,7 +6060,8 @@ def main() -> None:
                 f"q_gate={stats['action_value_policy_gate']:+.4f} "
                 f"type_ent={stats['action_type_entropy']:.3f} "
                 f"loc_ent={stats['location_entropy']:.3f} "
-                f"slot_ent={stats['conditional_slot_entropy']:.3f} "
+                f"card_ent={stats['conditional_slot_entropy']:.3f} "
+                f"mode_ent={stats['mode_entropy']:.3f} "
                 f"anchor_l2={stats['anchor_l2']:.3f} "
                 f"anchor_loss={stats['anchor_loss']:.4f} "
                 f"anchor_policy_kl={stats['anchor_policy_kl']:.5f} "
@@ -4521,17 +6090,24 @@ def main() -> None:
                 f"kl={stats['approx_kl']:.5f} clip={stats['clip_fraction']:.3f} "
                 f"opt_steps={int(stats['optimizer_steps'])} "
                 f"kl_stop={int(stats['kl_early_stop'])} "
+                f"critic_warmup={int(stats['critic_warmup'])} "
                 f"ev={stats['explained_variance']:+.3f} "
                 f"play={float(placement.mean()):.3f} noop={no_op_rate:.3f} "
                 f"noop_when_playable={conditional_no_op:.3f} "
                 f"ability={ability_rate:.4f} episodes={rollout.episodes_finished} "
+                f"rejected_actions={rejected_actions} "
                 f"wld={rollout.wins}/{rollout.losses}/{rollout.draws} "
                 f"collect_s={collect_seconds:.2f} learn_s={update_seconds:.2f} "
                 f"sync_s={sync_seconds:.2f} "
                 f"tps={transition_rate:.1f} lr={learning_rate:.2e}"
             )
 
-        if update % args.save_every == 0 or update == args.updates:
+        if (
+            update % args.save_every == 0
+            or update == args.updates
+            or total_transitions in args.checkpoint_decisions
+            or total_transitions == args.total_decisions
+        ):
             checkpoint = directory / f"policy_v2_update_{update:06d}.pt"
             save_checkpoint(
                 checkpoint,
@@ -4542,6 +6118,7 @@ def main() -> None:
                 update=update,
                 total_transitions=total_transitions,
                 simulation_backend_metadata=simulation_backend_metadata,
+                council_initialization=council_initialization,
                 metrics={
                     **stats,
                     "reward_mean": float(rollout.rewards.mean()),
@@ -4556,11 +6133,47 @@ def main() -> None:
                     "transitions_per_second": transition_rate,
                 },
             )
+            save_rng_state(
+                directory, checkpoint=checkpoint, update=update, rollout_seed=rollout_seed
+            )
             print(f"saved_checkpoint={checkpoint}")
+            if training_monitor is not None:
+                try:
+                    training_monitor.observe_checkpoint(
+                        update=update,
+                        learner_decisions=total_transitions,
+                        checkpoint=str(checkpoint),
+                    )
+                except Exception as error:  # noqa: BLE001 - monitoring only
+                    print(f"training_monitor_error={error!r}", flush=True)
+            if (
+                args.council_opponent_pool is not None
+                and total_transitions >= 1_000_000
+            ):
+                from .council_pilot import retain_league_checkpoint
+
+                retain_league_checkpoint(
+                    args.council_opponent_pool, checkpoint, total_transitions
+                )
+
+            if (
+                total_transitions in args.checkpoint_decisions
+                or total_transitions == args.total_decisions
+            ):
+                import shutil
+
+                milestone = directory / f"policy_decisions_{total_transitions:09d}.pt"
+                temporary_milestone = milestone.with_suffix(".tmp")
+                shutil.copyfile(checkpoint, temporary_milestone)
+                os.replace(temporary_milestone, milestone)
+                print(f"saved_decision_checkpoint={milestone}")
 
     if parallel_collector is not None:
         parallel_collector.close()
         atexit.unregister(parallel_collector.close)
+    if batched_collector is not None:
+        batched_collector.close()
+        atexit.unregister(batched_collector.close)
 
 
 if __name__ == "__main__":

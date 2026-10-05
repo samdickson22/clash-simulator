@@ -242,6 +242,11 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
             unit_data=spawn_data or None,
         ))
 
+    if char_data.get("manaGenerateTimeMs"):
+        from ..cards.elixir_collector import ElixirProduction
+
+        mechanics.append(ElixirProduction())
+
     if bool(char_data.get("hidesWhenNotAttacking", False)):
         mechanics.append(HideWhenIdle())
 
@@ -311,8 +316,30 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
             and float(projectile_data.get("radius", 0) or 0) > 0
         ):
             mechanics.append(WallBreakersDemolition())
+        elif (
+            (projectile_data.get("spawnAreaEffectObjectData", {}) or {})
+            .get("buffData", {}) or {}
+        ).get("healPerSecond"):
+            # Heal Spirit: splash on impact, then heals own troops.
+            from ..cards.kamikaze_spirits import HealSpiritBurst
+
+            mechanics.append(HealSpiritBurst())
+        elif float(projectile_data.get("radius", 0) or 0) > 0:
+            # Fire Spirit: a kamikaze self-projectile with plain splash.
+            from ..cards.kamikaze_spirits import KamikazeSplash
+
+            mechanics.append(KamikazeSplash())
 
     ability_data = char_data.get("abilityData", {}) or {}
+    ability_name = str(ability_data.get("name", "")).casefold()
+    if ability_name == "mightyminerlaneswitch":
+        from ..cards.c56_champions import MightyMinerSwitch
+
+        mechanics.append(MightyMinerSwitch())
+    elif ability_name == "goblinstein_ability":
+        from ..cards.c56_champions import GoblinsteinTether
+
+        mechanics.append(GoblinsteinTether())
     if (
         "invisibility"
         in str(ability_data.get("tid", "")).casefold()

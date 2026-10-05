@@ -1,0 +1,381 @@
+{
+ "role": "development",
+ "scope": "Opened native 15.535.86 development controls; King wake-up under Zap stun and Ice Spirit freeze. First King shot = tick a projectile sourced by the King first exists.",
+ "gamedata_sha256": "daa58b28cf4e45d753e83ca69a76794285b63704e62363ee58e617af3a30ecc3",
+ "sources": {
+  "reports/strategy_council_20260928/m0/native-mechanics-20260928/s1b_zap_sweep_pre_repair.json": "a2c113dc9aafd533c9f52090e2f1bb2ee2676c37eaab72c682a36912ff230c80",
+  "reports/strategy_council_20260928/m0/native-mechanics-20260928/s1c_icespirit_freeze_pre_repair.json": "d3f1c97127f5d1c8763ac26dfc90a730bc06fb12122b1c146d1b164eb3dbe724"
+ },
+ "zap_sweep": {
+  "seed": 1609280041,
+  "decks": [
+   [
+    "Knight",
+    "Giant",
+    "Skeletons",
+    "DarkPrince",
+    "IceGolem",
+    "Musketeer",
+    "Cannon",
+    "Arrows"
+   ],
+   [
+    "HogRider",
+    "Fireball",
+    "Zap",
+    "Knight",
+    "Log",
+    "IceSpirit",
+    "DarkPrince",
+    "Giant"
+   ]
+  ],
+  "initial": {
+   "0": {
+    "deck": [
+     "Knight",
+     "Giant",
+     "Skeletons",
+     "DarkPrince",
+     "IceGolem",
+     "Musketeer",
+     "Cannon",
+     "Arrows"
+    ],
+    "hand": [
+     "Giant",
+     "Knight",
+     "Arrows",
+     "Musketeer"
+    ],
+    "cycle": [
+     "IceGolem",
+     "Cannon",
+     "Skeletons",
+     "DarkPrince"
+    ],
+    "elixir": 6.0
+   },
+   "1": {
+    "deck": [
+     "HogRider",
+     "Fireball",
+     "Zap",
+     "Knight",
+     "Log",
+     "IceSpirit",
+     "DarkPrince",
+     "Giant"
+    ],
+    "hand": [
+     "Zap",
+     "Giant",
+     "Fireball",
+     "HogRider"
+    ],
+    "cycle": [
+     "IceSpirit",
+     "DarkPrince",
+     "Log",
+     "Knight"
+    ],
+    "elixir": 6.0
+   }
+  },
+  "base_commands": [
+   {
+    "tick": 250,
+    "owner": 1,
+    "card": "HogRider",
+    "xy": [
+     3.5,
+     17.5
+    ]
+   },
+   {
+    "tick": 250,
+    "owner": 1,
+    "card": "Fireball",
+    "xy": [
+     9.0,
+     3.0
+    ]
+   }
+  ],
+  "zap_target": [
+   9.0,
+   3.0
+  ],
+  "rows": [
+   {
+    "zap_cast_tick": null,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 286,
+    "native_activation_tick": 287,
+    "native_first_shot_tick": 367
+   },
+   {
+    "zap_cast_tick": 289,
+    "native_activation_tick": 290,
+    "native_first_shot_tick": 370
+   },
+   {
+    "zap_cast_tick": 292,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 295,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 298,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 301,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 304,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 307,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 310,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 313,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 316,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 319,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 322,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 325,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 328,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 331,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 334,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 337,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 340,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 343,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 346,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 349,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 352,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 355,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 376
+   },
+   {
+    "zap_cast_tick": 358,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 379
+   },
+   {
+    "zap_cast_tick": 361,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 382
+   },
+   {
+    "zap_cast_tick": 364,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 383
+   },
+   {
+    "zap_cast_tick": 367,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 383
+   },
+   {
+    "zap_cast_tick": 370,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 383
+   },
+   {
+    "zap_cast_tick": 373,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   },
+   {
+    "zap_cast_tick": 376,
+    "native_activation_tick": 293,
+    "native_first_shot_tick": 373
+   }
+  ]
+ },
+ "ice_spirit": {
+  "seed": 1609280005,
+  "decks": [
+   [
+    "Skeletons",
+    "Knight",
+    "Fireball",
+    "Zap",
+    "Giant",
+    "Musketeer",
+    "Cannon",
+    "Arrows"
+   ],
+   [
+    "Giant",
+    "HogRider",
+    "Knight",
+    "IceSpirit",
+    "Log",
+    "IceGolem",
+    "Tesla",
+    "DarkPrince"
+   ]
+  ],
+  "initial": {
+   "0": {
+    "deck": [
+     "Skeletons",
+     "Knight",
+     "Fireball",
+     "Zap",
+     "Giant",
+     "Musketeer",
+     "Cannon",
+     "Arrows"
+    ],
+    "hand": [
+     "Cannon",
+     "Arrows",
+     "Fireball",
+     "Skeletons"
+    ],
+    "cycle": [
+     "Knight",
+     "Giant",
+     "Zap",
+     "Musketeer"
+    ],
+    "elixir": 6.0
+   },
+   "1": {
+    "deck": [
+     "Giant",
+     "HogRider",
+     "Knight",
+     "IceSpirit",
+     "Log",
+     "IceGolem",
+     "Tesla",
+     "DarkPrince"
+    ],
+    "hand": [
+     "Giant",
+     "Log",
+     "Tesla",
+     "IceSpirit"
+    ],
+    "cycle": [
+     "Knight",
+     "IceGolem",
+     "HogRider",
+     "DarkPrince"
+    ],
+    "elixir": 6.0
+   }
+  },
+  "prefix": [
+   {
+    "tick": 100,
+    "owner": 1,
+    "card": "Giant",
+    "xy": [
+     3.5,
+     17.5
+    ]
+   }
+  ],
+  "cases": {
+   "none": {
+    "test": null,
+    "native_fall_tick": 668,
+    "native_king_first_hp_loss": 801,
+    "native_first_shot_tick": 748
+   },
+   "ice_f1_x6.5": {
+    "test": [
+     "IceSpirit",
+     [
+      6.5,
+      11.5
+     ],
+     1
+    ],
+    "native_fall_tick": 668,
+    "native_king_first_hp_loss": 745,
+    "native_first_shot_tick": 770
+   }
+  }
+ }
+}

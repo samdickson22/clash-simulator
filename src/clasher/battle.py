@@ -249,11 +249,32 @@ class BattleState:
         return copy.deepcopy(self, memo)
     
     def _create_towers(self) -> None:
-        """Create tower entities for both players"""
-        from .balance import TOURNAMENT_LEVEL, tournament_tower_stat
+        """Create each player's Crown Towers at that player's declared level."""
+        towers = []
+        stats_by_level = {}
+        for player_id, anchors in enumerate((
+            (self.arena.BLUE_LEFT_TOWER, self.arena.BLUE_RIGHT_TOWER, self.arena.BLUE_KING_TOWER),
+            (self.arena.RED_LEFT_TOWER, self.arena.RED_RIGHT_TOWER, self.arena.RED_KING_TOWER),
+        )):
+            level = self.players[player_id].tower_level
+            if level not in stats_by_level:
+                stats_by_level[level] = self._tower_stats(level)
+            princess, king = stats_by_level[level]
+            for slot, anchor, stats in zip(("left", "right", "king"), anchors, (princess, princess, king)):
+                tower = self._spawn_entity(Building, Position(anchor.x, anchor.y), player_id, stats)
+                tower._crown_tower_slot = slot
+                towers.append(tower)
+        # Arena towers predate battle placement; retain their native attack timing.
+        for tower in towers:
+            tower.deploy_delay_remaining = 0.0
+            tower.on_spawn()
+
+    def _tower_stats(self, level: int) -> tuple[CardStatsCompat, CardStatsCompat]:
+        from .balance import tournament_tower_stat
+        from .tower_scaling import tower_stat
 
         princess_data = self._load_princess_tower_character_data()
-        princess_hitpoints = tournament_tower_stat("PrincessTower", "hitpoints") or 3052
+        princess_hitpoints = tower_stat("PrincessTower", "hitpoints", level)
         princess_range_tiles = princess_data["range"] / 1000.0
         princess_sight_tiles = princess_data["sightRange"] / 1000.0
         princess_hit_speed_ms = princess_data["hitSpeed"]
@@ -262,7 +283,7 @@ class BattleState:
         princess_deploy_ms = 0
         princess_collision_tiles = princess_data["collisionRadius"] / 1000.0
         princess_projectile = princess_data["projectileData"]
-        princess_damage = tournament_tower_stat("PrincessTower", "damage") or 109
+        princess_damage = tower_stat("PrincessTower", "damage", level)
         princess_projectile_speed = princess_projectile.get("speed", 600)
         princess_projectile_start_radius = tournament_tower_stat(
             "PrincessTower",
@@ -288,11 +309,11 @@ class BattleState:
             projectile_damage=princess_damage,
             projectile_start_radius=princess_projectile_start_radius,
             target_type=princess_target_type,
-            raw_overrides={"level": 1, "publicLevel": TOURNAMENT_LEVEL},
+            raw_overrides={"level": 1, "publicLevel": level},
         )
 
-        king_hitpoints = tournament_tower_stat("KingTower", "hitpoints") or 4824
-        king_damage = tournament_tower_stat("KingTower", "damage") or 109
+        king_hitpoints = tower_stat("KingTower", "hitpoints", level)
+        king_damage = tower_stat("KingTower", "damage", level)
         king_load_time = tournament_tower_stat("KingTower", "load_time")
         king_activation_duration = tournament_tower_stat(
             "KingTower",
@@ -318,37 +339,10 @@ class BattleState:
             projectile_start_radius=750,
             projectile_y_offset=400,
             target_type="TID_TARGETS_AIR_AND_GROUND",
-            raw_overrides={"level": 1, "publicLevel": TOURNAMENT_LEVEL},
+            raw_overrides={"level": 1, "publicLevel": level},
         )
         
-        # Player 0 towers (blue) - create new Position objects to avoid sharing references
-        blue_left = Position(self.arena.BLUE_LEFT_TOWER.x, self.arena.BLUE_LEFT_TOWER.y)
-        blue_right = Position(self.arena.BLUE_RIGHT_TOWER.x, self.arena.BLUE_RIGHT_TOWER.y)
-        blue_king = Position(self.arena.BLUE_KING_TOWER.x, self.arena.BLUE_KING_TOWER.y)
-        blue_towers = (
-            self._spawn_entity(Building, blue_left, 0, tower_stats),
-            self._spawn_entity(Building, blue_right, 0, tower_stats),
-            self._spawn_entity(Building, blue_king, 0, king_stats),
-        )
-        
-        # Player 1 towers (red) - create new Position objects to avoid sharing references
-        red_left = Position(self.arena.RED_LEFT_TOWER.x, self.arena.RED_LEFT_TOWER.y)
-        red_right = Position(self.arena.RED_RIGHT_TOWER.x, self.arena.RED_RIGHT_TOWER.y)
-        red_king = Position(self.arena.RED_KING_TOWER.x, self.arena.RED_KING_TOWER.y)
-        red_towers = (
-            self._spawn_entity(Building, red_left, 1, tower_stats),
-            self._spawn_entity(Building, red_right, 1, tower_stats),
-            self._spawn_entity(Building, red_king, 1, king_stats),
-        )
-        for towers in (blue_towers, red_towers):
-            for tower, slot in zip(towers, ("left", "right", "king")):
-                tower._crown_tower_slot = slot
-        # Arena towers exist before the match begins. Their serialized deploy
-        # animation time is an attack-animation datum, not a battle placement
-        # window.
-        for tower in blue_towers + red_towers:
-            tower.deploy_delay_remaining = 0.0
-            tower.on_spawn()
+        return tower_stats, king_stats
 
     def _load_princess_tower_character_data(self) -> dict:
         """Load Princess Tower baseline stats from support-card data in gamedata."""
@@ -1168,10 +1162,18 @@ class BattleState:
         stats = self.card_loader.get_card(resolved)
         if stats is None:
             return None
+        player = self.players[player_id]
+        level = player.card_level(resolved)
+        if stats.level != level:
+            stats = copy.copy(stats)
+            stats.level = level
         spell = SPELL_REGISTRY.get(resolved)
         if not isinstance(spell, MirrorSpell):
+            if spell is not None and spell.level != level:
+                from .dynamic_spells import create_spell_from_json
+                # Unsupported non-tournament payloads fail before payment.
+                spell = create_spell_from_json(stats._raw_entry, level=level)
             return resolved, stats, spell
-        player = self.players[player_id]
         if player.last_played_card is None or player.last_played_card_cost is None:
             return None
         source = self.card_loader.get_card(player.last_played_card)
@@ -1218,6 +1220,7 @@ class BattleState:
         """Deploy a card at the given position"""
         if self.game_over:
             return False
+        requested_position = Position(position.x, position.y)
         player = self.players[player_id]
         play = self.resolve_card_play(player_id, card_name)
         if play is None:
@@ -1312,6 +1315,7 @@ class BattleState:
                     position,
                     player_id,
                     card_stats,
+                    requested=requested_position,
                 )
                 edge = self._card_formation_forward_edge(position, player_id, card_stats)
                 self._spawn_troop(
@@ -1380,8 +1384,17 @@ class BattleState:
         position: Position,
         player_id: int,
         card_stats: CardStatsCompat,
+        *,
+        requested: Position | None = None,
     ) -> Position:
-        """Apply LogicSummoner's post-search one-unit anchor adjustment."""
+        """Apply LogicSummoner's post-search one-unit anchor adjustment.
+
+        The x-side decision follows the requested anchor, not the searched
+        one: a request right of centre relocated to a free tile left of
+        centre keeps the tile-centre x. Evidence: tier-a-fresh-v6
+        episode-10 native job-00321 (Ice Golem requested at 9.5,11.5,
+        placed at 8.500) and native_displaced_deploy_snap fixture.
+        """
         if not LOGIC_SYMMETRICAL_DEPLOY_SNAP:
             return position
 
@@ -1395,7 +1408,10 @@ class BattleState:
 
         x_units = tiles_to_logic_units(position.x)
         y_units = tiles_to_logic_units(position.y)
-        if x_units < tiles_to_logic_units(self.arena.width) // 2:
+        side_x_units = (
+            tiles_to_logic_units(requested.x) if requested is not None else x_units
+        )
+        if side_x_units < tiles_to_logic_units(self.arena.width) // 2:
             x_units -= 1
         # Native findPositionForSpell receives player_id == 0 as this side
         # flag and decrements y only when it is false.

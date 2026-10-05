@@ -91,7 +91,7 @@ def test_incomplete_or_unsupported_native_frame_fails(problem):
     elif problem == 'count': frame['count'] += 1
     elif problem == 'effect': frame['objects'][-1]['hp'] = None
     elif problem == 'level': frame['objects'][-1]['maxHp'] += 1
-    elif problem == 'hand': frame['players'][0]['hand'].pop()
+    elif problem == 'hand': frame['players'][0]['hand'][0]['handIndex'] = 4
     elif problem == 'form': frame['players'][0]['hand'][0]['commandCardId'] = 999
     elif problem == 'duplicate': frame['objects'][-1]['nativeObjectId'] = frame['objects'][0]['nativeObjectId']
     elif problem == 'presentation': frame['finalized'] = True

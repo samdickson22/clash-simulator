@@ -8,6 +8,8 @@ from collections import Counter
 
 import numpy as np
 
+from .native_public_observation import clip_native_position
+
 
 def check_reference_packet(snapshot, packet, perspective, *, card_tokens):
     """Return explicit failures; require exact integer round trips and coverage.
@@ -60,12 +62,24 @@ def check_reference_packet(snapshot, packet, perspective, *, card_tokens):
     ):
         errors.append("own elixir integer round trip failed")
 
-    hand = sorted(own["hand"], key=lambda c: c["handIndex"]) + [own["nextCard"]]
-    expected_hand = [card_tokens[c["cardId"]] for c in hand]
+    hand, next_card = own.get("hand"), own.get("nextCard")
+    if not isinstance(hand, list) or len(hand) > 4 or any(not isinstance(card, dict) for card in hand):
+        return errors + ["malformed reference own hand"]
+    slots = [card.get("handIndex") for card in hand]
+    if any(type(slot) is not int or not 0 <= slot < 4 for slot in slots) or len(set(slots)) != len(slots):
+        return errors + ["invalid or duplicate reference hand slot"]
+    if not isinstance(next_card, dict):
+        return errors + ["missing reference visible next card"]
+    expected_hand = [0] * 5
+    for index, card in [(card["handIndex"], card) for card in hand] + [(4, next_card)]:
+        identity = card.get("cardId")
+        if type(identity) is not int or identity not in card_tokens:
+            return errors + ["unknown reference visible card"]
+        expected_hand[index] = card_tokens[identity]
     if actor.hand_ids.tolist() != expected_hand:
         errors.append("own hand or visible next card differs from reference")
-    if not np.all(packet.hand_id_confidence == 1):
-        errors.append("own hand confidence missing")
+    if not np.array_equal(packet.hand_id_confidence, np.asarray(expected_hand) > 0):
+        errors.append("own hand confidence differs from reference slot presence")
 
     # Match multisets, not row order or native IDs. HP fractions are rounded to
     # their float32 reference encoding before comparison, with no gameplay error
@@ -74,7 +88,8 @@ def check_reference_packet(snapshot, packet, perspective, *, card_tokens):
     for obj in snapshot["objects"]:
         if obj.get("hp") is None or obj["hp"] == 0:
             continue
-        x, y = obj["x"], obj["y"]
+        # The adapter clips bounded out-of-arena positions (thrown Log).
+        x, y = clip_native_position(obj["x"], obj["y"])
         if perspective:
             x, y = 18000 - x, 32000 - y
         expected[
@@ -158,7 +173,8 @@ def check_reference_entities(
             kind, token = 1, tower_tokens["KingTower" if obj["x"] == 9000 else "Tower"]
         else:
             kind, token = body_tokens[obj["cardId"]]
-        x, y = obj["x"], obj["y"]
+        # The adapter clips bounded out-of-arena positions (thrown Log).
+        x, y = clip_native_position(obj["x"], obj["y"])
         if perspective:
             x, y = 18000 - x, 32000 - y
         hp = (

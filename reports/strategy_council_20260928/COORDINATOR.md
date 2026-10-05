@@ -1,0 +1,77 @@
+# Coordinator state (resume here after a session restart)
+
+Rules: long jobs via pilot/detach.sh (setsid; nohup jobs die on teardown). Implementation -> GPT-6-Astra (high)
+via T3 delegate_task; research -> Opus subagents. Decisions log: amendments/2026-10-01-search-and-human-prior.md.
+
+## Detached jobs (check with ps; relaunch via detach.sh with the same env)
+- caffeinate (pilot/caffeinate.pid), host watchdog (pilot/host_watchdog.pid, log pilot/logs/host-watchdog.log)
+- v7r4h seeds 2901/2902 league phase -> stopped at 2M by pilot/stop_v7r4h_at_2m.sh (log pilot/logs/stop-v7r4h-at-2m.log),
+  which then starts seed 2903 `launch.sh 2903 scripted --through nominal` and runs 2M fresh-seed evals.
+  The v7r4h orchestrator was stopped on purpose (2026-10-03 21:1xZ).
+- fresh-seed evals of v7r4h 1M checkpoints: pilot/eval_v7r4h_1m.sh (log pilot/logs/eval-v7r4h-1M.log),
+  results human-prior-p16/evaluation/v7r4h-1M-s290{1,2}/
+- srp confirmation (256 games, pre-registered): oracle-qualification oq_run.py x2 (nice 15) with CLASHER_ROOT/
+  PYTHONPATH of m0/runtime-snapshots/pilot-runtime-v4; final `python3 oq_report.py srp_xm_c256 ckpt2903`.
+- C56 full human extraction: c56/data/scripts/run_full.sh (3 workers), ETA ~2026-10-05; see c56/data/PROGRESS.md.
+
+## Delegated / agent tracks
+- learner-tbptt: 3x faster but v7r5 1M (47/43) << v7r4h (60/88): NOT used for PPO; BC only after side-by-side check.
+- engine-speed Stage 0 DONE (srp 1.75x, Cython 1.4x); Rust Stage 1b DONE: 4-card slice byte-identical (24 games + coordinator check of 8 unseen cases to 4000 ticks), 61-78x, clone ~1.4us ; Stage 2 DONE (all 16 cards byte-identical; coordinator re-check 16 unseen full matches OK; ~50x) -> Stage 3 native srp (Astra engine-rs-stage3-astra-20261004-1)
+- tower-gap/ DONE (README: replay drift; clamp rule adopted)
+- done: c56/engine (Astra; audit/C56_AUDIT.md, 51 native scenarios unrun), c56/data QA (Astra), engine-speed profile (Opus)
+
+## Next after current work
+- v7r4h 2M result -> decide league fate; seed 2903 1M.
+- C56 extraction v3 RUNNING (driver 27633, ETA 2026-10-05 ~03:45 PDT, ~7.4 GiB; runtime af205b0b; QA retention 76.3% -> 85.5%), then C56 BC with TBPTT; evaluate on the frozen held-out human set.
+- Native validation of C56 bundles B1-B4 (emulators; needs CPU: schedule when extraction ends), Tornado rule.
+- srp-dagger: it1 regressed (premature spending), it2 neutral (87 vs 88). Shelved. NEW: srp-public/ = public-information srp as the player (Astra srp-public-astra-20261004-1), pre-registered 256 games + head-to-head vs s2902 1M.
+- NOTE: a T3 server restart cancels delegated Astra tasks and native subagents (detached jobs survive). Resume Astra by re-delegating with "RESUME ... read PROGRESS.md first"; resume Opus agents with SendMessage to their agentId.
+
+## Disk (2026-10-03 ~22:00Z)
+- Data container ~96% (≈20 GB unallocated). Compressed 71 large JSON frame dumps in artifacts/worktree-data with zstd
+  (24.2 GB originals; verified sha256 round trip; manifest artifacts/worktree-data/COMPRESSED_MANIFEST.tsv; restore `zstd -d`).
+  The freed space was absorbed by concurrent growth (swap ~10.7 GB, other projects on this Mac).
+- ~/.claude/worktrees (19 GB) belong to assistant-ui/harness-sdk agents (recent, some dirty): not pruned.
+- Do not delete evidence (m0/readiness tier-a-fresh-v*, artifacts/, datasets/). Watchdog pauses only oq_run.py below 18 GiB.
+- srp hog26 secondary games are paused by the watchdog (primary 256-game confirmation already PASSED).
+- 2026-10-03 23:26Z: watchdog v2 (pilot/host_watchdog.sh; v1 kept as host_watchdog.v1.sh): tier 2 pauses c56/data extraction
+  and srp-dagger process groups below 11 GiB free (resume >= 14). Patterns anchored to python interpreters — an
+  unanchored pgrep once SIGSTOPped an agent shell. v7r4h seed 2903 auto-start disabled (lock
+  pilot/v7r4h-launch/locks/coord-2903-started) because of swap/disk pressure; start it manually with
+  `launch.sh 2903 scripted --through nominal` via detach.sh when memory allows.
+- C56 v3: clamp QA retention 76.5% -> 85.3% (placement 99.77%, 0 illegal labels, reuse check 202/202); launch was blocked
+  by a Goblinstein tether crash (c56_champions.py:148) -> Astra c56-v3-launch-astra-20261003-1 fixes it and launches v3.
+- 2026-10-04: gamedata drift (workspace IceSpirit HP 90 / Goblin stab 47 vs admitted 84 / 49). Astra
+  gamedata-canonical-astra-20261004-1 patches workspace + broadens identity + re-verifies Rust, then writes
+  GAMEDATA_CANONICAL_READY; srp-dagger waits on that marker and regenerates labels with native srp.
+- v7r4h 2M: s2901 60->79, s2902 88->59 (/192): league phase not dependable; no more league in this form; s2902 1M = best.
+- 2026-10-04 ~06:20Z: GAMEDATA canonical (sha 892fbfa0): identity P16 12/12, recorded srp games 8/8, random placements 24/24, C56 7/7 vs admitted baselines; Rust re-verified (+1 pending-lethal guard). Coordinator check: 2 recorded confirmation games reproduce exactly on the workspace with both python and native srp (native ~23x whole-game). Use `bash engine-speed/check_identity.sh` after any engine/data edit.
+- 2026-10-04 Sam rule: opponent-derivable private state is fair (exact elixir tracking; hand/cycle once enough cards are revealed). srp-public steered to compute these exactly. TODO after its derived-state module exists: add derived opponent elixir + known-hand/next-card features to the policy contract (C56 v5/v6) before C56 BC, via a post-pass if the stored history allows, else at the next re-extraction.
+- 2026-10-04 ~10:45Z: srp-public PASSED (fair search player; beats best policy 0.633 h2h). Expert iteration exit/
+  (Astra exit-loop-astra-20261004-1). C56 extraction v3 crashed (champion bug) -> repair+resume (Astra
+  c56-v3-resume-astra-20261004-1).
+- 2026-10-04: ExIt FAILED pre-registered confirmation (0.48). Keep s2902 1M proposer. Now: search-tuning/ (Astra search-tuning-astra-20261004-1) + Rust Stage 4 C56 (Astra engine-rs-stage4-astra-20261004-1).
+  proposer. Decision: the policy's role is the search player's proposal network; gate on search strength. Pre-registered
+  256-game confirmation + (if pass) iterations 2-3 (Astra exit-confirm-astra-20261004-1).
+- CHECK LATER: ExIt's re-evaluation of the s2902 1M policy gave 83/192 vs 88/192 earlier on the same nominal seeds —
+  confirm whether run_eval stochastic play is exactly reproducible (thread nondeterminism?) before relying on
+  cross-run pairing.
+- 2026-10-04: search tuning PASSED: srp-pub-mix (opponent-model mixture) = best player (0.629 h2h vs srp-pub-pol; scripts 117/128 holdout, 53/64 hog26). Config in search-tuning/RESULTS.md.
+- 2026-10-04: live-loop/SURVEY.md written; L1 (rendered-frame perception) running (Astra live-loop-l1-astra-20261004-1). L3 (official client) needs Sam's explicit go.
+- 2026-10-04: live L1 v0 failed gates (entities 63%, events mostly missed, capture 0.5-1.6 FPS; HUD/clock good). L1 v1 running (Astra live-loop-l1v1-astra-20261004-1): 10-20k frames, track-birth events, HP association, streaming capture.
+- 2026-10-04: C56 extraction v3b RUNNING (driver 15128; Goblinstein timer fix; 0 exceptions over 27,649 swept perspectives; reuse 253/253 identical; per-perspective error isolation; ETA 2026-10-05 ~09:00 PDT, ~6.1-7.4 GiB). Uses base gamedata 3d99987c (known difference).
+- 2026-10-04: ClashAI ~11k trophies via full-corpus BC + live loop. native-corpus/ feasibility running (Astra native-replay-feasibility-astra-20261004-1).
+- 2026-10-04: native-corpus NO-GO (slow, and replays drift even natively). NEXT after C56 extraction (~2026-10-05 09:00 PDT): S122 actor-scope extraction on the Python sim (<=6 GiB), then generalist BC.
+- 2026-10-04: Rust Stage 4 DONE (all 56 cards + champions + native C56 scripts byte-identical; coordinator re-check 8 unseen champion/B4 full games OK, 37-49x). Stage 5 (srp-pub-mix on C56, real-meta deck prior, pre-registered 256 games) running: Astra engine-rs-stage5-astra-20261004-1.
+- 2026-10-04 ~22:00Z: LIVE PLAY AUTHORIZED by Sam (throwaway account, Mac mini emulator only). L3a official-client AVD + account + capture/input plumbing (Astra live-l3a-official-client-astra-20261004-1). Disk critical (~10 GiB free; others: roader 33 GB, colima 14 GB — not ours); pnpm store pruned; C56 extraction paused by watchdog tier 2 (<11 GiB).
+- 2026-10-04 ~23:30Z: official client crashed on Google APIs (rootable) image at native init; retry with Google Play image blocked by disk (4.4 GiB). roader grew 57->67 GB in hours (not ours; cannot message its thread). Coordinator freed ~5 GiB (deleted superseded official AVD, git gc). Retry 2 running (Astra live-l3a-retry2-playimage-astra-20261004-1).
+- 2026-10-04: official client crashed (frrh.aC: 02) on BOTH stock emulator images (Google APIs, Google Play); no workaround attempted; Play AVD+image deleted. Next: BlueStacks Air (Astra live-l3a-bluestacks-astra-20261004-1). Free disk 19 GiB.
+- 2026-10-05: Rust Stage 5 strength PASS (C56 fair search 224/256 = 0.875 vs C56 scripts; per-family Hog2.6 0.71 ... RH/Furnace 1.00) but timing FAIL (max 311 ms, 16 >250 ms). Stage 5b deadline/anytime + 2-thread rollouts, pre-registered non-inferiority (Astra engine-rs-stage5b-astra-20261004-1).
+- 2026-10-05: BlueStacks Air 5.21.790.7505 downloaded (signed now.gg UJYFHY4XNR, notarized) but install needs macOS admin authorization (SecurityAgent refuses automation; sudo needs password). WAITING ON SAM: run `sudo installer -pkg /Users/sam/.cache/clasher-official/bluestacks-downloads/BlueStacksInstaller_5.21.790.7505.pkg -target /` (or double-click the pkg) on the Mac mini, approve any system-extension/Hypervisor prompts, then tell the coordinator.
+- 2026-10-05: L1 v1: entities 97%/HP/HUD/clock/FPS PASS; events (71% recall, 49% precision) and placement 59% FAIL -> derived opponent state fails. L1 v2 deploy-event detection (Astra live-loop-l1v2-events-astra-20261005-1).
+- 2026-10-05: Stage 5b PASS (200 ms anytime search, 2 threads; max 230 ms over 384 games under load; 0 overruns; 116/128 vs C56 scripts; h2h identical behaviour 0.500). C56 fair search player is live-budget ready. Stage 6 (remaining S122 cards to Rust, low-arena cards first) running: Astra engine-rs-stage6-astra-20261005-1.
+- 2026-10-05: L1 v2 events: stepped 88/78/68% but real 10 FPS stream 24/19/24% (200 deployments; stream timing uncertified). L1 v3 (stream timing, >=3k deployments, track-birth fusion, uncertainty-aware derived state) running: Astra live-loop-l1v3-events-astra-20261005-1.
+- 2026-10-05: Stage 6 Astra task FAILED (model at capacity) after 10 low-arena cards passed the early group gate; resumed on GPT-6.1-Sol high (engine-rs-stage6-sol-resume-20261005-1). If Astra is at capacity, fall back to 6.1-Sol per routing rule.
+- 2026-10-05: L1 v3 events 64% recall / 67% precision / 58% placement (3,070 deployments, timing p95 27 ms); elixir MAE 2.1. Decision: stop gating L2 on 90% events; run (a) sim degradation study with measured perception noise (Astra perception-degradation-astra-20261005-1) and (b) L2 closed loop from pixels on the offline renderer, pre-registered vs sim (Astra live-loop-l2-astra-20261005-1).
+- 2026-10-05 04:50Z: BlueStacks Air installed by coordinator with Sam's admin password (not stored anywhere); app verified Developer ID now.gg UJYFHY4XNR, notarized. L3a continuation (Astra live-l3a-bluestacks-run-20261005-1). Free disk 9 GiB.
+- 2026-10-05: BlueStacks first boot timed out at 90 s (StartingKernel); ADB toggle did not save; BlueStacks' bundled hd-adb kill-server can disrupt other emulators' adb. NEXT: retry after L2 finishes, with >=10 min boot timeout, separate ADB server port (ANDROID_ADB_SERVER_PORT) for our tools, and no other emulators running. Evidence live-loop/l3/bluestacks/resume/.

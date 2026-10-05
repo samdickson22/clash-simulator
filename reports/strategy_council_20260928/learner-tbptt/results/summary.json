@@ -1,0 +1,139 @@
+{
+  "bench-full-pinned": {
+    "completed": true,
+    "decisions": 4096,
+    "updates": 4,
+    "derived_from": "ab-full-pinned: first 4096 decisions",
+    "update_ms_per_decision": 50.720035420965814,
+    "decisions_per_second": 13.429623462104965
+  },
+  "bench-t32-fixed": {
+    "completed": true,
+    "decisions": 4096,
+    "elapsed_seconds": 100.33057108288631,
+    "wins": 0,
+    "losses": 1,
+    "draws": 0,
+    "update_ms_per_decision": 10.605530995292156,
+    "decisions_per_second": 40.88552963198629,
+    "updates": 4
+  },
+  "bench-t64-fixed": {
+    "completed": true,
+    "decisions": 4096,
+    "updates": 4,
+    "derived_from": "ab-t64-fixed: first 4096 decisions",
+    "update_ms_per_decision": 11.292692271069882,
+    "decisions_per_second": 36.69720686879551
+  },
+  "ab-full-pinned": {
+    "receipt": {
+      "completed": true,
+      "decisions": 150000,
+      "elapsed_seconds": 11549.22420208389,
+      "wins": 26,
+      "losses": 174,
+      "draws": 0,
+      "update_ms_per_decision": 49.55454942635261,
+      "decisions_per_second": 12.988311044353594,
+      "updates": 147
+    },
+    "completed": true,
+    "last_decisions": 150000,
+    "all_monitor_values_finite": true,
+    "early": {
+      "decisions": 24576,
+      "games": 24,
+      "wins": 9,
+      "win_rate": 0.375,
+      "mean_reward": -0.0002447511668322022,
+      "entropy": 0.3676297344056712,
+      "value_loss": 0.00518200172834462,
+      "approx_kl": 0.0024898302171720843,
+      "clip_fraction": 0.014200846354166666,
+      "grad_norm": 0.3565668903230246,
+      "explained_variance": 0.3233506654699643
+    },
+    "late": {
+      "decisions": 25072,
+      "games": 33,
+      "wins": 6,
+      "win_rate": 0.18181818181818182,
+      "mean_reward": -0.0008367768766638724,
+      "entropy": 0.3138316718577935,
+      "value_loss": 0.0033271466497384063,
+      "approx_kl": 0.007098149610748889,
+      "clip_fraction": 0.026924932364999415,
+      "grad_norm": 0.9289139082558235,
+      "explained_variance": 0.7521536144087402
+    },
+    "overall": {
+      "decisions": 150000,
+      "games": 200,
+      "wins": 26,
+      "win_rate": 0.13,
+      "mean_reward": -0.0009868778751115316,
+      "entropy": 0.31256544183890406,
+      "value_loss": 0.003129599472923855,
+      "approx_kl": 0.006083449943245101,
+      "clip_fraction": 0.025788285710908118,
+      "grad_norm": 0.6942082091018643,
+      "explained_variance": 0.6065835790888469
+    }
+  },
+  "ab-t64-fixed": {
+    "receipt": {
+      "completed": true,
+      "decisions": 150000,
+      "elapsed_seconds": 4102.587501708185,
+      "wins": 30,
+      "losses": 146,
+      "draws": 0,
+      "update_ms_per_decision": 11.44761788057629,
+      "decisions_per_second": 36.56474039628167,
+      "updates": 147
+    },
+    "completed": true,
+    "last_decisions": 150000,
+    "all_monitor_values_finite": true,
+    "early": {
+      "decisions": 24576,
+      "games": 28,
+      "wins": 9,
+      "win_rate": 0.32142857142857145,
+      "mean_reward": -0.0004076165615742866,
+      "entropy": 0.39691047233322424,
+      "value_loss": 0.0065783969497140845,
+      "approx_kl": 0.0022983107393233443,
+      "clip_fraction": 0.012525770399305554,
+      "grad_norm": 0.3710040353342063,
+      "explained_variance": 0.2650710940361023
+    },
+    "late": {
+      "decisions": 25072,
+      "games": 29,
+      "wins": 4,
+      "win_rate": 0.13793103448275862,
+      "mean_reward": -0.000839495356722147,
+      "entropy": 0.2938307672648237,
+      "value_loss": 0.002800194179786903,
+      "approx_kl": 0.005532696722618928,
+      "clip_fraction": 0.027618173937027046,
+      "grad_norm": 0.7072061978258809,
+      "explained_variance": 0.7949376513262654
+    },
+    "overall": {
+      "decisions": 150000,
+      "games": 176,
+      "wins": 30,
+      "win_rate": 0.17045454545454544,
+      "mean_reward": -0.0007735251598347288,
+      "entropy": 0.34721823746443176,
+      "value_loss": 0.003796830942324899,
+      "approx_kl": 0.0051414593814744294,
+      "clip_fraction": 0.02606453968124825,
+      "grad_norm": 0.6036793444384658,
+      "explained_variance": 0.6152555601374309
+    }
+  }
+}

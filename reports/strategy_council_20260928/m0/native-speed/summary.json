@@ -1,0 +1,131 @@
+{
+  "schema": "native-speed-phase-a.v1",
+  "date": "2026-09-28",
+  "scope": "opened-development roots only (native-prefix-development-v2-tail episodes 00,01,05,03; families 16,17,21,19); condition balanced/pressure; candidates immediate_play and wait; native engine only; no ledger, claims, training or fresh acceptance",
+  "instances": {
+    "instance-1": "emulator-5580 port 26789",
+    "instance-2": "emulator-5582 port 26790",
+    "final_state": "both ready/paused, snapshotHandles 0, renderSuppressed false; left configured at tick 3601 (last branch), not the tick-70 handoff frame"
+  },
+  "modes": {
+    "legacy": "per-command TCP connection, historical observe sequence, prefix replay from zero (runner default)",
+    "fast": "one session-v1 connection per branch; caller observe shared with level reader; observe-rich read inside the reader closing observe==before bracket; tick lookups reuse last observed paused frame; step response tick/advanced checked; pid+stat in one ADB exchange",
+    "snapshot": "configure + replay prefix to root-1, snapshot-create, then per branch: restore H (receipt digest/bytes/tick/generation/configRevision/steps must equal creation; stateEpoch must increase), replay-schedule-clear, re-schedule prefix commands in [root-1, root), step 1, verify root frame vs archive"
+  },
+  "finding_root_snapshot_invalid": "restore taken exactly at the root leaves stale non-serialized per-object caches (ordinary objects targetX/targetY; rich deployPreviousMs) after any divergence (1..500 ticks tested); probe digest still verifies; runner root check failed (superseded-root-snapshot-i2/job-00049). Snapshot at root-1 plus one replayed tick reproduces the full ordinary root frame (diag-restore-root19-pre1.json, pre5.json).",
+  "equivalence": {
+    "legacy-vs-fast-snapshot": {
+      "pairs": 8,
+      "identical_pairs": 8,
+      "file": "reports/strategy_council_20260928/m0/native-speed/equivalence/compare-legacy-vs-fast-snapshot.json"
+    },
+    "legacy-vs-fast-replay": {
+      "pairs": 4,
+      "identical_pairs": 4,
+      "file": "reports/strategy_council_20260928/m0/native-speed/equivalence/compare-legacy-vs-fast-replay.json"
+    },
+    "fast-replay-vs-fast-snapshot": {
+      "pairs": 4,
+      "identical_pairs": 4,
+      "file": "reports/strategy_council_20260928/m0/native-speed/equivalence/compare-fast-replay-vs-fast-snapshot.json"
+    },
+    "render-off": {
+      "pairs": 4,
+      "identical_pairs": 4,
+      "file": "reports/strategy_council_20260928/m0/native-speed/equivalence/compare-render-off.json"
+    }
+  },
+  "equivalence_gate": "per pair: identical decision ticks, both seats actions and public packet hashes at every decision; identical command strings/selections/receipts (excluding process-global schedule sequence and allocation epochs) and before/after transport snapshots; identical terminal tick, winner, finalization, all tower HP and terminal ordinary frames; identical result score/HP/level coverage",
+  "first_post_restore_frame": "ordinary frame identical except generation/stateEpoch/snapshotHandles; level map identical; rich differs only in probe hook-telemetry (trace envelopes/events and per-object phaseRuntime last-step records reset with the telemetry epoch); zero non-telemetry compact-frame differences at every decision of every pair",
+  "restores_after_full_game_divergence": [
+    "job49",
+    "job1",
+    "job17",
+    "job33"
+  ],
+  "timing_host_gpu": {
+    "isolated_single_branch_root19_immediate": {
+      "legacy_wall_s": 196.4,
+      "legacy_s_per_decision": 0.2687,
+      "fast_root_snapshot_wall_s": 179.1,
+      "fast_s_per_decision": 0.2449,
+      "decisions": 723,
+      "note": "fast figure from superseded root-snapshot run; its decision loop is identical to the final path"
+    },
+    "eight_branch_pairs_concurrent": {
+      "legacy_total_wall_s": 1672.1,
+      "fast_snapshot_total_wall_s": 1469.3,
+      "speedup": 1.138,
+      "legacy_s_per_decision": 0.3242,
+      "fast_snapshot_s_per_decision": 0.2849,
+      "decisions": 5157,
+      "per_branch_speedup_range": [
+        1.023,
+        1.213
+      ]
+    },
+    "time_to_root_s": {
+      "legacy": "0.40-0.52",
+      "snapshot_restore": "0.30-0.47"
+    },
+    "render_off": {
+      "s_per_decision_jobs32_33": {
+        "render_off": 0.2499,
+        "render_on": 0.2633
+      },
+      "idle_emulator_cpu_pct": {
+        "render_on": "33-44",
+        "render_off": "11-14"
+      },
+      "gameplay_identical": true,
+      "receipt": "reports/strategy_council_20260928/m0/native-speed/render-gate-idle-cpu-i2.json"
+    },
+    "per_decision_breakdown_ms": {
+      "legacy": {
+        "adb_memory": 157.7,
+        "adb_pid_stat": 28.5,
+        "probe_observe_rich": 64.7,
+        "compact_frame": 43.0,
+        "probe_observe": 12.7,
+        "probe_status": 2.8,
+        "probe_step": 3.2,
+        "host_projection_controller_mask": 3.0
+      },
+      "fast_snapshot": {
+        "adb_memory": 158.8,
+        "adb_pid_stat": 20.6,
+        "probe_observe_rich": 53.0,
+        "compact_frame": 34.1,
+        "probe_observe": 3.6,
+        "probe_status": 1.5,
+        "probe_step": 2.3,
+        "host_projection_controller_mask": 3.0
+      }
+    },
+    "micro_benchmark": "reports/strategy_council_20260928/m0/native-speed/micro-bench-i1.json"
+  },
+  "files_changed": [
+    "src/clasher/rl/native_probe_transport.py (new)",
+    "scripts/run_readiness_v2.py",
+    "scripts/read_native_public_levels.py",
+    "tests/test_native_probe_transport.py (new)",
+    "tests/test_native_level_reader.py",
+    "tests/test_readiness_execution.py"
+  ],
+  "final_source_sha256": {
+    "src/clasher/rl/native_probe_transport.py": "3d1d6fbdc59ed1e026cfab8618118eaf87d7d84374487cbfb0257bb7caf1d8eb",
+    "scripts/run_readiness_v2.py": "73fda8b2aeceee34f45d92cc8900da8220b536e869cedb183a2ff5efe5044517",
+    "scripts/read_native_public_levels.py": "cedc39d6fff3a92440c3b3afa1e0e5244e001fa75e3f2eb0f3e66f9f2432cba8"
+  },
+  "post_run_source_change": "after the equivalence runs, run_readiness_v2.py render-restore fallback narrowed from except Exception to except (OSError, ValueError) (lint); no other executed-path change. Executed hashes are in each run-summary.json sources_at_start/end.",
+  "design_note": "reports/strategy_council_20260928/m0/native-speed/phase-b-design.md",
+  "executed_source_versions": {
+    "read_native_public_levels.py": "cedc39d6... in every run",
+    "run_readiness_v2.py": {
+      "legacy-profile-i1": "f8593366... (pre render-fallback, pre lead-tick)",
+      "legacy-i1-b": "bda1bd14... (edited on disk during the run; loaded module unchanged; legacy path identical across versions)",
+      "fast-snapshot-i2, fast-replay-i1, fast-snapshot-renderoff-i2": "58715c6b... (lead-tick snapshot)",
+      "final": "73fda8b2... (lint-only fallback narrowing)"
+    }
+  }
+}

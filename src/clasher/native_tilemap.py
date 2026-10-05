@@ -80,8 +80,8 @@ STANDARD_PATH_ROWS: tuple[str, ...] = (
 STANDARD_PATH_WIDTH = 36
 STANDARD_PATH_HEIGHT = 64
 HALF_TILE_LOGIC_UNITS = 500
-# LogicTileMap::moveObject clips a center at the midpoint of the outermost
-# half-tile cell. This is independent of the object's collision radius.
+# LogicBattle::spawnObject places centers at least half a pathing cell from
+# the edge. Movement can subsequently use the remainder of that outer cell.
 OUTERMOST_OBJECT_CENTER_UNITS = HALF_TILE_LOGIC_UNITS // 2
 OUTERMOST_OBJECT_CENTER_TILES = (
     OUTERMOST_OBJECT_CENTER_UNITS / LOGIC_UNITS_PER_TILE
@@ -172,29 +172,29 @@ def nearest_native_path_id(
     return closest_path
 
 
+_BLOCKED_SPAWN_CELLS = frozenset(
+    (x, y)
+    for y in STANDARD_BLOCKED_RIVER_ROWS
+    for x in range(STANDARD_PATH_WIDTH)
+    if not any(start <= x <= end for start, end in STANDARD_BRIDGE_CELL_RANGES)
+)
+
+
 def native_spawn_tile_blocked(cell_x: int, cell_y: int) -> bool:
     """Return LogicTileMap's bit-5 obstruction value for one map cell."""
-
-    if not (
-        0 <= int(cell_x) < STANDARD_PATH_WIDTH
-        and 0 <= int(cell_y) < STANDARD_PATH_HEIGHT
-    ):
+    x, y = int(cell_x), int(cell_y)
+    if not (0 <= x < STANDARD_PATH_WIDTH and 0 <= y < STANDARD_PATH_HEIGHT):
         return True
-    if int(cell_y) not in STANDARD_BLOCKED_RIVER_ROWS:
-        return False
-    return not any(
-        start <= int(cell_x) <= end
-        for start, end in STANDARD_BRIDGE_CELL_RANGES
-    )
+    return (x, y) in _BLOCKED_SPAWN_CELLS
 
 
 def clamp_native_object_axis(value: float, arena_size: int) -> float:
     """Clamp one moving object center like LogicTileMap::moveObject."""
 
-    return max(
-        OUTERMOST_OBJECT_CENTER_TILES,
-        min(float(arena_size) - OUTERMOST_OBJECT_CENTER_TILES, float(value)),
-    )
+    # moveObject clips a positive outer-cell crossing to cell * 500 + 499
+    # and a negative crossing to cell * 500 (15.535.86: 115dd80/115ddac).
+    # The quarter-tile spawn margin does not constrain subsequent movement.
+    return max(0.0, min(float(arena_size) - 1 / LOGIC_UNITS_PER_TILE, float(value)))
 
 
 def recover_native_ground_position(x_units: int, y_units: int) -> tuple[int, int]:

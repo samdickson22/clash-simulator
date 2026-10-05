@@ -1,0 +1,875 @@
+{
+  "confirmation": {
+    "h2h": {
+      "ci95": [
+        0.578125,
+        0.6796875
+      ],
+      "n": 256,
+      "score": 0.62890625
+    },
+    "hog26": {
+      "ci95": [
+        0.627906976744186,
+        0.8023255813953488
+      ],
+      "n": 86,
+      "score": 0.7209302325581395
+    },
+    "scripts": {
+      "hog26": {
+        "by_style": {
+          "balanced": {
+            "current": {
+              "ci95": [
+                0.3181818181818182,
+                0.7727272727272727
+              ],
+              "n": 22,
+              "score": 0.5454545454545454
+            },
+            "winner": {
+              "ci95": [
+                0.5454545454545454,
+                0.9090909090909091
+              ],
+              "n": 22,
+              "score": 0.7272727272727273
+            }
+          },
+          "defense": {
+            "current": {
+              "ci95": [
+                0.45,
+                0.95
+              ],
+              "n": 20,
+              "score": 0.7
+            },
+            "winner": {
+              "ci95": [
+                0.6,
+                0.9
+              ],
+              "n": 20,
+              "score": 0.75
+            }
+          },
+          "pressure": {
+            "current": {
+              "ci95": [
+                0.5909090909090909,
+                1.0
+              ],
+              "n": 22,
+              "score": 0.8181818181818182
+            },
+            "winner": {
+              "ci95": [
+                1.0,
+                1.0
+              ],
+              "n": 22,
+              "score": 1.0
+            }
+          }
+        },
+        "current": {
+          "ci95": [
+            0.546875,
+            0.8125
+          ],
+          "n": 64,
+          "score": 0.6875
+        },
+        "drop": -0.140625,
+        "winner": {
+          "ci95": [
+            0.734375,
+            0.921875
+          ],
+          "n": 64,
+          "score": 0.828125
+        }
+      },
+      "holdout": {
+        "by_style": {
+          "balanced": {
+            "current": {
+              "ci95": [
+                0.5909090909090909,
+                0.9318181818181818
+              ],
+              "n": 44,
+              "score": 0.7727272727272727
+            },
+            "winner": {
+              "ci95": [
+                0.75,
+                0.9545454545454546
+              ],
+              "n": 44,
+              "score": 0.8636363636363636
+            }
+          },
+          "defense": {
+            "current": {
+              "ci95": [
+                0.6190476190476191,
+                0.9285714285714286
+              ],
+              "n": 42,
+              "score": 0.7857142857142857
+            },
+            "winner": {
+              "ci95": [
+                0.7857142857142857,
+                1.0
+              ],
+              "n": 42,
+              "score": 0.9047619047619048
+            }
+          },
+          "pressure": {
+            "current": {
+              "ci95": [
+                0.6904761904761905,
+                0.9523809523809523
+              ],
+              "n": 42,
+              "score": 0.8333333333333334
+            },
+            "winner": {
+              "ci95": [
+                0.9285714285714286,
+                1.0
+              ],
+              "n": 42,
+              "score": 0.9761904761904762
+            }
+          }
+        },
+        "current": {
+          "ci95": [
+            0.7109375,
+            0.8828125
+          ],
+          "n": 128,
+          "score": 0.796875
+        },
+        "drop": -0.1171875,
+        "winner": {
+          "ci95": [
+            0.859375,
+            0.9609375
+          ],
+          "n": 128,
+          "score": 0.9140625
+        }
+      }
+    },
+    "secondary_pass": true,
+    "timing": {
+      "n": 421400,
+      "overruns": 0,
+      "search_cpu_mean": 0.04458437228513495,
+      "wall_max": 0.1278424160555005,
+      "wall_p99": 0.06314571388997138
+    },
+    "verdict": "PASS"
+  },
+  "stages": {
+    "1": [
+      {
+        "all": {
+          "ci95": [
+            0.5833333333333334,
+            0.7708333333333334
+          ],
+          "n": 48,
+          "score": 0.6666666666666666
+        },
+        "hog26": {
+          "ci95": [
+            0.625,
+            0.9375
+          ],
+          "n": 16,
+          "score": 0.8125
+        },
+        "name": "mixture",
+        "timing": {
+          "n": 46862,
+          "overruns": 0,
+          "search_cpu_mean": 0.04500232026143759,
+          "wall_max": 0.134077874943614,
+          "wall_p99": 0.06492128890706222
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.5625,
+            0.7708333333333334
+          ],
+          "n": 48,
+          "score": 0.6666666666666666
+        },
+        "hog26": {
+          "ci95": [
+            0.5625,
+            0.9375
+          ],
+          "n": 16,
+          "score": 0.75
+        },
+        "name": "h320",
+        "timing": {
+          "n": 47192,
+          "overruns": 0,
+          "search_cpu_mean": 0.0334803236603154,
+          "wall_max": 0.10454583307728171,
+          "wall_p99": 0.04561924165813252
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.5208333333333334,
+            0.7291666666666666
+          ],
+          "n": 48,
+          "score": 0.625
+        },
+        "hog26": {
+          "ci95": [
+            0.375,
+            0.75
+          ],
+          "n": 16,
+          "score": 0.5625
+        },
+        "name": "h160-i20",
+        "timing": {
+          "n": 47894,
+          "overruns": 0,
+          "search_cpu_mean": 0.02088427460063944,
+          "wall_max": 0.07476400001905859,
+          "wall_p99": 0.02909973963163793
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.4375,
+            0.6875
+          ],
+          "n": 48,
+          "score": 0.5625
+        },
+        "hog26": {
+          "ci95": [
+            0.4375,
+            0.9375
+          ],
+          "n": 16,
+          "score": 0.6875
+        },
+        "name": "k2",
+        "timing": {
+          "n": 47447,
+          "overruns": 0,
+          "search_cpu_mean": 0.03464800566006484,
+          "wall_max": 0.11212791688740253,
+          "wall_p99": 0.04943579562939705
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.3958333333333333,
+            0.6458333333333334
+          ],
+          "n": 48,
+          "score": 0.5208333333333334
+        },
+        "hog26": {
+          "ci95": [
+            0.1875,
+            0.8125
+          ],
+          "n": 16,
+          "score": 0.5
+        },
+        "name": "policy16",
+        "timing": {
+          "n": 45820,
+          "overruns": 0,
+          "search_cpu_mean": 0.029259012745812416,
+          "wall_max": 0.0966764590702951,
+          "wall_p99": 0.040623708707280444
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.5,
+            0.5
+          ],
+          "n": 48,
+          "score": 0.5
+        },
+        "hog26": {
+          "ci95": [
+            0.5,
+            0.5
+          ],
+          "n": 16,
+          "score": 0.5
+        },
+        "name": "terminal4",
+        "timing": {
+          "n": 42814,
+          "overruns": 0,
+          "search_cpu_mean": 0.020754684027105078,
+          "wall_max": 0.12780004111118615,
+          "wall_p99": 0.02862417623866351
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.3958333333333333,
+            0.6041666666666666
+          ],
+          "n": 48,
+          "score": 0.5
+        },
+        "hog26": {
+          "ci95": [
+            0.125,
+            0.4375
+          ],
+          "n": 16,
+          "score": 0.3125
+        },
+        "name": "h600-i10",
+        "timing": {
+          "n": 44858,
+          "overruns": 0,
+          "search_cpu_mean": 0.05344608621323624,
+          "wall_max": 0.11789145786315203,
+          "wall_p99": 0.07476544827222825
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.3541666666666667,
+            0.6041666666666666
+          ],
+          "n": 48,
+          "score": 0.4791666666666667
+        },
+        "hog26": {
+          "ci95": [
+            0.125,
+            0.75
+          ],
+          "n": 16,
+          "score": 0.4375
+        },
+        "name": "h320-i20",
+        "timing": {
+          "n": 44748,
+          "overruns": 0,
+          "search_cpu_mean": 0.03210766666666532,
+          "wall_max": 0.09834429086185992,
+          "wall_p99": 0.044575476006139064
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.3333333333333333,
+            0.6041666666666666
+          ],
+          "n": 48,
+          "score": 0.4791666666666667
+        },
+        "hog26": {
+          "ci95": [
+            0.0,
+            0.625
+          ],
+          "n": 16,
+          "score": 0.3125
+        },
+        "name": "wide",
+        "timing": {
+          "n": 43238,
+          "overruns": 0,
+          "search_cpu_mean": 0.032221607967316185,
+          "wall_max": 0.11194704216904938,
+          "wall_p99": 0.04421930083306502
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.3541666666666667,
+            0.5625
+          ],
+          "n": 48,
+          "score": 0.4583333333333333
+        },
+        "hog26": {
+          "ci95": [
+            0.25,
+            0.625
+          ],
+          "n": 16,
+          "score": 0.4375
+        },
+        "name": "h320-tower",
+        "timing": {
+          "n": 44103,
+          "overruns": 0,
+          "search_cpu_mean": 0.031920612082364096,
+          "wall_max": 0.10679466603323817,
+          "wall_p99": 0.044196979897096776
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.3541666666666667,
+            0.5625
+          ],
+          "n": 48,
+          "score": 0.4583333333333333
+        },
+        "hog26": {
+          "ci95": [
+            0.25,
+            0.625
+          ],
+          "n": 16,
+          "score": 0.4375
+        },
+        "name": "k4-i20",
+        "timing": {
+          "n": 45347,
+          "overruns": 0,
+          "search_cpu_mean": 0.05712797618237354,
+          "wall_max": 0.1558866670820862,
+          "wall_p99": 0.08150218479800972
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.3541666666666667,
+            0.5625
+          ],
+          "n": 48,
+          "score": 0.4583333333333333
+        },
+        "hog26": {
+          "ci95": [
+            0.25,
+            0.625
+          ],
+          "n": 16,
+          "score": 0.4375
+        },
+        "name": "script8",
+        "timing": {
+          "n": 44355,
+          "overruns": 0,
+          "search_cpu_mean": 0.024733984891406473,
+          "wall_max": 0.09545195801183581,
+          "wall_p99": 0.034117271048016824
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.3020833333333333,
+            0.5104166666666666
+          ],
+          "n": 48,
+          "score": 0.40625
+        },
+        "hog26": {
+          "ci95": [
+            0.125,
+            0.4375
+          ],
+          "n": 16,
+          "score": 0.3125
+        },
+        "name": "h600-i20",
+        "timing": {
+          "n": 44324,
+          "overruns": 0,
+          "search_cpu_mean": 0.05098131371777447,
+          "wall_max": 0.14294450008310378,
+          "wall_p99": 0.07072290091076862
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.2916666666666667,
+            0.4583333333333333
+          ],
+          "n": 48,
+          "score": 0.375
+        },
+        "hog26": {
+          "ci95": [
+            0.0625,
+            0.375
+          ],
+          "n": 16,
+          "score": 0.1875
+        },
+        "name": "tower",
+        "timing": {
+          "n": 47166,
+          "overruns": 0,
+          "search_cpu_mean": 0.021735645339216857,
+          "wall_max": 0.09387391596101224,
+          "wall_p99": 0.029361277108546337
+        }
+      }
+    ],
+    "2": [
+      {
+        "all": {
+          "ci95": [
+            0.5520833333333334,
+            0.71875
+          ],
+          "n": 96,
+          "score": 0.6354166666666666
+        },
+        "hog26": {
+          "ci95": [
+            0.53125,
+            0.84375
+          ],
+          "n": 32,
+          "score": 0.6875
+        },
+        "name": "mixture",
+        "timing": {
+          "n": 94521,
+          "overruns": 0,
+          "search_cpu_mean": 0.04468724509572042,
+          "wall_max": 0.1322284999769181,
+          "wall_p99": 0.06396819227375092
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.53125,
+            0.6979166666666666
+          ],
+          "n": 96,
+          "score": 0.6145833333333334
+        },
+        "hog26": {
+          "ci95": [
+            0.40625,
+            0.71875
+          ],
+          "n": 32,
+          "score": 0.5625
+        },
+        "name": "k2",
+        "timing": {
+          "n": 93189,
+          "overruns": 0,
+          "search_cpu_mean": 0.033980045778066105,
+          "wall_max": 0.10233733407221735,
+          "wall_p99": 0.047962869964539995
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.4895833333333333,
+            0.6354166666666666
+          ],
+          "n": 96,
+          "score": 0.5625
+        },
+        "hog26": {
+          "ci95": [
+            0.40625,
+            0.71875
+          ],
+          "n": 32,
+          "score": 0.5625
+        },
+        "name": "policy16",
+        "timing": {
+          "n": 91916,
+          "overruns": 0,
+          "search_cpu_mean": 0.028932176861700395,
+          "wall_max": 0.11694616614840925,
+          "wall_p99": 0.040123449917882685
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.4583333333333333,
+            0.625
+          ],
+          "n": 96,
+          "score": 0.5416666666666666
+        },
+        "hog26": {
+          "ci95": [
+            0.3125,
+            0.625
+          ],
+          "n": 32,
+          "score": 0.46875
+        },
+        "name": "h160-i20",
+        "timing": {
+          "n": 93601,
+          "overruns": 0,
+          "search_cpu_mean": 0.020358824479823016,
+          "wall_max": 0.09700195910409093,
+          "wall_p99": 0.028301415964961052
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.4375,
+            0.6145833333333334
+          ],
+          "n": 96,
+          "score": 0.53125
+        },
+        "hog26": {
+          "ci95": [
+            0.4375,
+            0.75
+          ],
+          "n": 32,
+          "score": 0.59375
+        },
+        "name": "h320",
+        "timing": {
+          "n": 92472,
+          "overruns": 0,
+          "search_cpu_mean": 0.03302478617279712,
+          "wall_max": 0.13136583310551941,
+          "wall_p99": 0.04555964234517885
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.5,
+            0.5
+          ],
+          "n": 96,
+          "score": 0.5
+        },
+        "hog26": {
+          "ci95": [
+            0.5,
+            0.5
+          ],
+          "n": 32,
+          "score": 0.5
+        },
+        "name": "terminal4",
+        "timing": {
+          "n": 88972,
+          "overruns": 0,
+          "search_cpu_mean": 0.02080765539337551,
+          "wall_max": 0.09055237495340407,
+          "wall_p99": 0.02889086043229319
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.2916666666666667,
+            0.4375
+          ],
+          "n": 96,
+          "score": 0.3645833333333333
+        },
+        "hog26": {
+          "ci95": [
+            0.0625,
+            0.3125
+          ],
+          "n": 32,
+          "score": 0.1875
+        },
+        "name": "h600-i10",
+        "timing": {
+          "n": 87493,
+          "overruns": 0,
+          "search_cpu_mean": 0.05282906734654793,
+          "wall_max": 0.15078558307141066,
+          "wall_p99": 0.07324435642920438
+        }
+      }
+    ],
+    "3": [
+      {
+        "all": {
+          "ci95": [
+            0.5416666666666666,
+            0.65625
+          ],
+          "n": 192,
+          "score": 0.5989583333333334
+        },
+        "hog26": {
+          "ci95": [
+            0.578125,
+            0.796875
+          ],
+          "n": 64,
+          "score": 0.6875
+        },
+        "name": "mixture",
+        "timing": {
+          "n": 191053,
+          "overruns": 0,
+          "search_cpu_mean": 0.04468786428832636,
+          "wall_max": 0.14678075001575053,
+          "wall_p99": 0.06340001359581951
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.5208333333333334,
+            0.6458333333333334
+          ],
+          "n": 192,
+          "score": 0.5833333333333334
+        },
+        "hog26": {
+          "ci95": [
+            0.484375,
+            0.734375
+          ],
+          "n": 64,
+          "score": 0.609375
+        },
+        "name": "k2",
+        "timing": {
+          "n": 182487,
+          "overruns": 0,
+          "search_cpu_mean": 0.03381319271084587,
+          "wall_max": 0.13307449989952147,
+          "wall_p99": 0.04736471964046359
+        }
+      },
+      {
+        "all": {
+          "ci95": [
+            0.3854166666666667,
+            0.5
+          ],
+          "n": 192,
+          "score": 0.4427083333333333
+        },
+        "hog26": {
+          "ci95": [
+            0.203125,
+            0.390625
+          ],
+          "n": 64,
+          "score": 0.296875
+        },
+        "name": "policy16",
+        "timing": {
+          "n": 188197,
+          "overruns": 0,
+          "search_cpu_mean": 0.028919218421529436,
+          "wall_max": 0.12138895806856453,
+          "wall_p99": 0.03988089566119019
+        }
+      }
+    ]
+  },
+  "status": "games and isolated-worker timing complete; quiet-core verification unavailable",
+  "winner": {
+    "horizon": 160,
+    "interval": 10,
+    "k": 1,
+    "name": "mixture",
+    "opponent": "mixture",
+    "policy_top": 8,
+    "script_top": 4,
+    "terminal": 2.0,
+    "tower_weight": 0.0
+  },
+  "winner_timing": {
+    "host_after": {
+      "load": [
+        4.595703125,
+        5.62646484375,
+        6.6728515625
+      ],
+      "processes": "  PID  PPID NI  %CPU     ELAPSED COMM\n    1     0  0   4.1 19-00:14:49 /sbin/launchd\n  381 23250  0   0.0       08:09 claude\n  555     1  0   2.9 19-00:13:22 /usr/libexec/logd\n  558     1  0   0.0 19-00:13:22 /usr/libexec/UserEventAgent\n  560     1  0   1.8 19-00:13:22 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd\n  561     1  0   0.0 19-00:13:22 /System/Library/PrivateFrameworks/MediaRemote.framework/Support/mediaremoted\n  564     1  0   0.0 19-00:13:22 /usr/sbin/systemstats\n  568     1  0   0.0 19-00:13:22 /usr/libexec/configd\n  570     1  0   0.0 19-00:13:22 /System/Library/CoreServices/powerd.bundle/powerd\n  571     1  0   0.0 19-00:13:22 /usr/libexec/IOMFB_bics_daemon\n  575     1  0   0.0 19-00:13:22 /usr/libexec/remoted\n  579     1  0   0.0 19-00:13:22 /System/Library/PrivateFrameworks/CoreSpeech.framework/corespeechd_system\n  581     1  0   0.0 19-00:13:22 /usr/libexec/watchdogd\n  584     1  0   2.0 19-00:13:22 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mds\n  586     1  0   0.0 19-00:13:22 /usr/libexec/kernelmanagerd\n  587     1  0   0.0 19-00:13:22 /usr/libexec/diskarbitrationd\n  591     1  0   0.0 19-00:13:22 /usr/sbin/syslogd\n  593     1  0   0.0 19-00:13:22 /usr/libexec/thermalmonitord\n  594     1  0   0.7 19-00:13:22 /System/Library/PrivateFrameworks/CoreDuetContext.framework/Resources/contextstored\n  595     1  0   0.0 19-00:13:22 /usr/libexec/xprotectd\n  596     1  0   5.5 19-00:13:22 /usr/libexec/opendirectoryd\n  597     1  0   0.4 19-00:13:22 /System/Library/PrivateFrameworks/ApplePushService.framework/apsd\n  598     1  0   0.0 19-00:13:22 /System/Library/CoreServices/launchservicesd\n  599     1  0   0.0 19-00:13:22 /usr/libexec/timed\n  601     1  0   0.0 19-00:13:22 /usr/sbin/securityd\n  603     1  0   0.3 19-00:13:22 /usr/libexec/locationd\n  606     1  0   0.0 19-00:13:22 autofsd\n  607     1  0  33.9 19-00:13:22 /usr/libexec/dasd\n  611     1  0   0.1 19-00:13:22 /usr/sbin/distnoted\n  614     1  0   0.0 19-00:13:22 /System/Library/CoreServices/logind\n  615     1  0   0.0 19-00:13:22 /System/Library/PrivateFrameworks/GenerationalStorage.framework/Versions/A/Support/revisiond\n  616     1  0   0.0 19-00:13:22 /usr/sbin/KernelEventAgent\n  620     1  0   1.3 19-00:13:22 /usr/sbin/bluetoothd\n  621     1  0   1.5 19-00:13:22 /usr/sbin/notifyd\n  623     1  0   0.0 19-00:13:22 /usr/libexec/corebrightnessd\n  624     1  0   0.0 19-00:13:22 /System/Library/Frameworks/CoreMediaIO.framework/Versions/A/Resources/com.apple.cmio.registerassistantservice\n  630     1  0   7.1 19-00:13:22 /usr/sbin/cfprefsd\n  632     1  0   0.9 19-00:13:22 /usr/libexec/runningboardd\n  659     1  0   0.0 19-00:13:22 /System/Library/CoreServices/coreservicesd\n  669     1  0   0.0 19-00:13:22 /System/Library/PrivateFrameworks/CoreAnalytics.framework/Support/analyticsd\n  678     1  0   0.0 19-00:13:22 /usr/libexec/lsd\n  679     1  0   0.3 19-00:13:22 /usr/sbin/mDNSResponder\n  681     1  0   0.0 19-00:13:22 /usr/libexec/nsurlsessiond\n  683     1  0   0.0 19-00:13:22 /usr/libexec/apfsd\n  687     1  0   0.0 19-00:13:21 /usr/libexec/PowerUIAgent\n  688     1  0   0.1 19-00:13:21 /usr/libexec/clocksyncd\n  691     1  0   0.0 19-00:13:21 /usr/sbin/mDNSResponderHelper\n  695     1  0   0.0 19-00:13:21 /usr/libexec/airportd\n  696     1  0   0.0 19-00:13:21 /usr/libexec/corercd\n  697     1  0   0.3 19-00:13:21 /usr/libexec/symptomsd\n  703     1  0   0.0 19-00:13:21 /usr/libexec/eligibilityd\n  706     1  0   0.0 19-00:13:21 /System/Library/Frameworks/Security.framework/Versions/A/XPCServices/authd.xpc/Contents/MacOS/authd\n  708     1  0   0.0 19-00:13:21 /usr/sbin/distnoted\n  709     1  0   0.0 19-00:13:21 /usr/sbin/distnoted\n  719     1  0   0.0 19-00:13:21 /usr/libexec/syspolicyd\n  724     1  0   0.0 19-00:13:21 /usr/sbin/WirelessRadioManagerd\n  728     1  0   0.0 19-00:13:20 /usr/libexec/ApplicationFirewall/socketfilterfw\n  732     1  0   0.0 19-00:13:20 /System/Library/PrivateFrameworks/BackgroundTaskManagement.framework/Resources/backgroundtaskmanagementd\n  734     1  0   0.0 19-00:13:20 /System/Library/CoreServices/Software Update.app/Contents/Resources/suhelperd\n  737     1  0   0.0 19-00:13:20 /System/Library/DriverExtensions/com.apple.DriverKit-IOUserDockChannelSerial.dext/com.apple.DriverKit-IOUserDockChannelSerial\n  738     1  0   2.0 19-00:13:20 /System/Library/DriverExtensions/com.apple.DriverKit-AppleBCMWLAN.dext/com.apple.DriverKit-AppleBCMWLAN\n  739     1  0   0.8 19-00:13:20 /System/Library/DriverExtensions/com.apple.AppleUserHIDDrivers.dext/com.apple.AppleUserHIDDrivers\n  748     1  0   0.0 19-00:13:20 /usr/sbin/distnoted\n  772     1  0   0.0 19-00:13:20 /usr/sbin/distnoted\n  780     1  0   0.0 19-00:13:20 /usr/libexec/com.apple.cmio.videodriverkithostextension.systemextension/Contents/MacOS/com.apple.cmio.videodriverkithostextension\n  783     1  0   0.0 19-00:13:19 /usr/libexec/cameracaptured\n  785     1  0   0.0 19-00:13:19 /System/Library/Frameworks/CoreMediaIO.framework/Versions/A/Resources/UVCAssistant.systemextension/Contents/MacOS/UVCAssistant\n  787     1  0   0.0 19-00:13:19 /usr/sbin/distnoted\n  798     1  0   0.0 19-00:13:19 /usr/libexec/audiomxd\n  800     1  0   0.0 19-00:13:19 /usr/sbin/BTLEServer\n  801     1  0   0.0 19-00:13:19 /usr/sbin/distnoted\n  802     1  0   0.6 19-00:13:18 /usr/libexec/searchpartyd\n  815   564  0   0.0 19-00:13:04 /usr/sbin/systemstats\n  817     1  0   0.0 19-00:13:04 /System/Library/CoreServices/appleeventsd\n  818     1  0   0.0 19-00:13:04 /usr/sbin/distnoted\n  821     1  0   0.0 19-00:13:03 /opt/homebrew/opt/tailscale/bin/tailscaled\n  825     1  0   0.0 19-00:13:03 /usr/sbin/distnoted\n  828     1  0   0.0 19-00:13:03 /System/Library/DriverExtensions/IOUserBluetoothSerialDriver.dext/IOUserBluetoothSerialDriver\n  838     1  0   2.5 19-00:13:03 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mds_stores\n  839     1  0   0.0 19-00:13:03 /usr/sbin/distnoted\n  867     1  0   0.0 19-00:13:03 /usr/sbin/distnoted\n  868     1  0   0.6 19-00:13:03 /usr/sbin/cfprefsd\n  880     1  0   0.0 19-00:13:03 /usr/sbin/distnoted\n  919     1  0   0.0 19-00:13:02 /System/Library/PrivateFrameworks/Heimdal.framework/Helpers/kdc\n  921     1  0   0.0 19-00:13:02 /usr/sbin/distnoted\n  933     1  0   0.0 19-00:13:02 /usr/libexec/secd\n  952     1  0   0.0 19-00:13:01 /usr/libexec/lsd\n  967     1  0   0.0 19-00:13:01 /System/Library/PrivateFrameworks/SystemMigrationNetwork.framework/Resources/migrationhelper\n  972     1  0   0.0 19-00:13:01 /usr/libexec/languageassetd\n 1024     1  0   0.0 19-00:13:00 /System/Library/Frameworks/CryptoTokenKit.framework/ctkd\n 1027     1  0   0.0 19-00:13:00 /usr/sbin/filecoordinationd\n 1037     1  0   0.0 19-00:12:58 /usr/sbin/distnoted\n 1053     1  0   0.0 19-00:12:57 /usr/sbin/distnoted\n 1071     1  0   0.0 19-00:12:57 /usr/sbin/distnoted\n 1093     1  0   0.0 19-00:12:56 /usr/libexec/nearbyd\n 1113     1  0   0.0 19-00:12:55 /usr/sbin/distnoted\n 1119     1 17   0.0 19-00:12:55 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 1167     1 17   0.0 19-00:12:53 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 1175     1  0   0.0 19-00:12:53 /usr/sbin/distnoted\n 1219     1 17   0.0 19-00:12:51 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 1220     1  0   0.0 19-00:12:51 /usr/sbin/distnoted\n 1254     1 17   0.0 19-00:12:50 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 1262     1  0   0.0 19-00:12:49 /usr/sbin/distnoted\n 1263     1  0   0.0 19-00:12:49 /System/Library/PrivateFrameworks/CoreFP.framework/Versions/A/fairplayd\n 1279     1  0   0.0 19-00:12:49 /usr/sbin/distnoted\n 1305     1  0   0.0 19-00:12:48 /usr/libexec/lsd\n 1307     1  0   0.0 19-00:12:48 /usr/libexec/lsd\n 1309     1  0   0.0 19-00:12:48 /usr/libexec/lsd\n 1366     1  0   0.0 19-00:12:34 /System/Library/CoreServices/SubmitDiagInfo\n 1379     1  0   0.0 01-19:11:59 /System/Library/PrivateFrameworks/People.framework/peopled\n 1402     1  0   0.0 19-00:11:58 /System/Library/CoreServices/CrashReporterSupportHelper\n 1409 36958  0   0.0       07:35 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n 1410 36958  0   0.0       07:35 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n 1416     1  0   0.0 19-00:11:50 /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/CVMServer\n 1417     1  0   0.0    01:46:01 /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/XPCServices/EAUpdaterService.xpc/Contents/MacOS/EAUpdaterService\n 1443  1409  0   0.0       07:35 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n 1482     1  0   0.0 19-00:10:45 /usr/sbin/distnoted\n 1516     1  0   0.0 19-00:09:56 /usr/sbin/distnoted\n 1517     1 17   0.0 19-00:09:55 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 1530     1  0   0.0 19-00:09:55 /usr/libexec/lsd\n 1551     1  0   0.0 19-00:09:32 /usr/sbin/distnoted\n 1552     1 17   0.0 19-00:09:31 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 1555     1  0   0.0 19-00:09:31 /usr/libexec/lsd\n 1784     1  0   0.0 01-19:11:16 /System/Library/PrivateFrameworks/TextInputUIMacHelper.framework/Versions/A/XPCServices/CursorUIViewService.xpc/Contents/MacOS/CursorUIViewService\n 1989     1  0   0.0 18-23:42:57 /usr/sbin/distnoted\n 1992     1  0   0.0 18-23:42:57 /usr/libexec/lsd\n 1998     1 17   0.0 18-23:42:52 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 2019     1  0   0.0 18-23:42:10 /usr/sbin/distnoted\n 2312     1  0   0.0 18-23:09:22 /usr/sbin/distnoted\n 2339     1  0   0.0 18-23:08:59 automountd\n 2859     1  0   0.0 18-23:08:22 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/152.0.7977.83/Helpers/browser_crashpad_handler\n 2861     1  0   0.0 18-23:08:22 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/152.0.7977.83/Helpers/browser_crashpad_handler\n 3550     1  0   0.0    12:45:01 /System/Library/PrivateFrameworks/IntelligencePlatformCore.framework/Versions/A/intelligenceplatformd\n 3556     1  0   0.0    12:45:00 /System/Library/PrivateFrameworks/AppStoreDaemon.framework/Support/appstoreagent\n 3939     1  0   0.0    12:44:42 /System/Library/PrivateFrameworks/AppleMediaServices.framework/Resources/amsaccountsd\n 3940     1  0   0.0    12:44:42 /System/Library/PrivateFrameworks/iTunesCloud.framework/Support/itunescloudd\n 3942     1  0   0.0    12:44:41 /usr/libexec/storagekitd\n 3943     1  0   0.0    12:44:41 /usr/libexec/pkd\n 3944     1  0   0.0    12:44:41 /System/Library/PrivateFrameworks/InstallCoordination.framework/Support/installcoordinationd\n 3945     1  0   0.0    12:44:41 /usr/libexec/fskitd\n 3946     1  0   0.0    12:44:41 /System/Library/PrivateFrameworks/CacheDelete.framework/deleted\n 3947     1  0   0.0    12:44:41 /System/Library/PrivateFrameworks/AppStoreDaemon.framework/Versions/A/XPCServices/com.apple.AppStoreDaemon.StorePrivilegedODRService.xpc/Contents/MacOS/com.apple.AppStoreDaemon.StorePrivilegedODRService\n 3948     1  0   0.0    12:44:41 /System/Library/PrivateFrameworks/AppStoreDaemon.framework/Support/appstored\n 3949     1  0   0.0    12:44:41 /System/Library/PrivateFrameworks/CacheDelete.framework/deleted_helper\n 3950     1  0   0.0    12:44:41 /usr/libexec/AssetCache/AssetCache\n 3951     1  0   0.0    12:44:41 /System/Library/Frameworks/QuickLookThumbnailing.framework/Support/com.apple.quicklook.ThumbnailsAgent\n 3952     1  0   0.0    12:44:41 /System/Library/PrivateFrameworks/PackageKit.framework/Resources/system_installd\n 3953     1  0   0.0    12:44:41 /System/Library/PrivateFrameworks/GeoServices.framework/geodMachServiceBridge\n 3954     1  0   0.0    12:44:41 /System/Library/PrivateFrameworks/CloudKitDaemon.framework/Support/cloudd\n 3955     1  0   0.0    12:44:41 /System/Library/PrivateFrameworks/PackageKit.framework/Resources/installd\n 3957     1  0   0.0    12:44:40 /System/Library/PrivateFrameworks/AssetCacheServicesExtensions.framework/XPCServices/AssetCacheTetheratorService.xpc/Contents/MacOS/AssetCacheTetheratorService\n 3958     1  0   0.0    12:44:40 /System/Library/PrivateFrameworks/AppleMediaServicesUI.framework/amsengagementd\n 3959     1  0   0.0    12:44:40 /usr/libexec/promotedcontentd\n 3961     1  0   0.0    12:44:40 /usr/libexec/fairplaydeviceidentityd\n 4030     1  0   0.0    12:44:37 /System/Library/PrivateFrameworks/iCloudDriveService.framework/XPCServices/ContainerMetadataExtractor.xpc/Contents/MacOS/ContainerMetadataExtractor\n 4045     1  0  25.6    15:47:25 /usr/libexec/spotlightknowledged.updater\n 4063     1  0   0.0    12:44:37 /System/Library/PrivateFrameworks/WorkflowKit.framework/XPCServices/ShortcutsViewService.xpc/Contents/MacOS/ShortcutsViewService\n 4084     1  0   0.0    12:44:37 /System/Library/Frameworks/Security.framework/Versions/A/XPCServices/com.apple.CodeSigningHelper.xpc/Contents/MacOS/com.apple.CodeSigningHelper\n 4085     1  0   0.0    12:44:37 /System/Library/PrivateFrameworks/SessionCore.framework/Support/liveactivitiesd\n 4086     1  0   0.0    12:44:37 /System/Library/PrivateFrameworks/ReplicatorCore.framework/Support/replicatord\n 4087     1  0   0.0    12:44:37 /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/XPCServices/com.apple.hiservices-xpcservice.xpc/Contents/MacOS/com.apple.hiservices-xpcservice\n 4088     1  0   0.0    12:44:37 /System/Library/PrivateFrameworks/StatusKit.framework/StatusKitAgent\n 4192 36958  0   0.0    15:47:15 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n 4193 36958  0   0.0    15:47:15 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n 4313  4193  0   0.0    15:47:15 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n 4828     1  0   0.3 01-19:10:36 /System/Library/PrivateFrameworks/PassKitCore.framework/passd\n 4868     1  0   0.0 01-19:10:29 /System/Library/PrivateFrameworks/SiriInference.framework/Versions/A/siriinferenced\n 5119     1  0   0.0    09:34:23 /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\n 5496     1  0   0.0 01-19:10:11 /usr/libexec/spotlightknowledged.importer\n 5851     1  0   0.0    09:33:49 /usr/libexec/feedbackd\n 5966     1  0   0.0    09:33:43 /usr/libexec/assessmentagent\n 5967     1  0   0.0    09:33:42 /System/Library/PrivateFrameworks/EmailDaemon.framework/Versions/A/maild\n 6097     1  0   0.0       03:48 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared\n 6468     1  0   0.0    11:09:40 /usr/libexec/trustd\n 7051     1  0   0.0 18-16:00:35 /System/Library/CoreServices/sharedfilelistd\n 7336     1  0   0.0    19:07:32 /System/Library/PrivateFrameworks/HearingCore.framework/heard\n 7683     1  0   0.0 18-16:00:28 /System/Library/PrivateFrameworks/SystemMigrationNetwork.framework/Resources/migrationhelper\n 7688     1  0   0.0 18-16:00:28 /usr/libexec/languageassetd\n 9594 36958  0   0.0    04:45:49 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n 9595 36958  0   0.0    04:45:49 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n 9625  9595  0   0.0    04:45:49 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n 9658     1  0   0.8       00:43 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared\n 9765 16045  0   0.0       00:31 sleep\n10080 20614  5   0.0       00:12 sleep\n10085 20616  5   0.0       00:11 sleep\n10091 20615  5   0.0       00:09 sleep\n10092 64666 10   0.0       00:06 sleep\n10163     1  0   1.4       00:01 /System/Library/PrivateFrameworks/IntelligenceTasksEngine.framework/Support/intelligencetasksd\n10164     1  0   7.0       00:01 /System/Library/PrivateFrameworks/TextToSpeechVoiceBankingSupport.framework/Support/voicebankingd\n10165     1  0   2.3       00:01 /System/Library/PrivateFrameworks/DeviceCheckInternal.framework/devicecheckd\n10166     1  0  33.5       00:01 /System/Library/Frameworks/FinanceKit.framework/financed\n10167     1  0  23.3       00:01 /System/Library/PrivateFrameworks/CoreParsec.framework/parsec-fbf\n10168     1  0   4.3       00:01 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/managedcorespotlightd\n10169     1  0   7.8       00:01 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n10170     1  0   0.0       00:00 /System/Library/Frameworks/CoreSpotlight.framework/spotlightknowledged\n10171 33152 10   0.0       00:00 ps\n10172     1  0   0.0       00:00 /System/Library/PrivateFrameworks/HomeKitEvents.framework/Support/homeeventsd\n11983     1  0   0.0 01-19:06:16 /System/Cryptexes/App/usr/libexec/PasswordBreachAgent\n12896     1  0   0.0 10-19:26:18 keyboxd\n13168 36958  0   0.0    03:09:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n13169 36958  0   0.0    03:09:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n13200 13169  0   0.0    03:09:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n13538     1  0   0.0    12:35:51 /System/Library/PrivateFrameworks/UsageTracking.framework/Versions/A/UsageTrackingAgent\n13539     1  0   0.0    12:35:51 /System/Library/PrivateFrameworks/CoreRecents.framework/Versions/A/Support/recentsd\n13866     1  0   0.0    12:35:40 /usr/libexec/siriknowledged\n13867     1  0   0.0    12:35:40 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n13868     1  0   0.0    12:35:40 /usr/libexec/assetsubscriptiond\n14664 36958  0   0.0    18:54:37 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n14665 36958  0   0.0    18:54:37 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n14689 14664  0   0.0    18:54:36 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n16045     1  0   0.0    18:52:02 bash\n18883     1  0   0.0    07:44:10 /System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTDecoderXPCService.xpc/Contents/MacOS/VTDecoderXPCService\n18885     1  0   0.0    07:44:10 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n18948     1  0   0.0    07:44:08 /System/Library/ExtensionKit/Extensions/TGOnDeviceInferenceProviderService.appex/Contents/MacOS/TGOnDeviceInferenceProviderService\n19081     1  0   0.0    07:44:02 /System/Library/Frameworks/AudioToolbox.framework/XPCServices/com.apple.audio.SandboxHelper.xpc/Contents/MacOS/com.apple.audio.SandboxHelper\n19464 36958  0   0.0    18:48:53 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n19465 36958  0   0.0    18:48:53 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n19488 19464  0   0.0    18:48:53 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n19571     1  0   0.0    07:43:29 /usr/libexec/dirhelper\n19720     1  0   0.0    07:43:18 /System/Library/ExtensionKit/Extensions/GenerativeExperiencesSafetyInferenceProvider.appex/Contents/MacOS/GenerativeExperiencesSafetyInferenceProvider\n20614     1  5   0.0 02-23:04:02 /bin/bash\n20615     1  5   0.0 02-23:04:02 /bin/bash\n20616     1  5   0.0 02-23:04:02 /bin/bash\n22313     1  0   0.0    09:16:31 /usr/libexec/appleaccountd\n22506     1  0   0.0    07:40:28 /usr/libexec/keyboardservicesd\n22969     1  0   0.1    20:52:04 /Applications/T3 Code (Nightly).app/Contents/MacOS/T3 Code (Nightly)\n22981 22969  0   0.7    20:52:02 /Applications/T3 Code (Nightly).app/Contents/Frameworks/T3 Code (Nightly) Helper.app/Contents/MacOS/T3 Code (Nightly) Helper\n22982 22969  0   0.0    20:52:02 /Applications/T3 Code (Nightly).app/Contents/Frameworks/T3 Code (Nightly) Helper.app/Contents/MacOS/T3 Code (Nightly) Helper\n23058     1  0   0.0    15:22:30 /System/Library/CoreServices/RemoteManagement/SSMenuAgent.app/Contents/MacOS/SSMenuAgent\n23249 22969  0   1.9    20:52:00 /Applications/T3 Code (Nightly).app/Contents/Frameworks/T3 Code (Nightly) Helper (Renderer).app/Contents/MacOS/T3 Code (Nightly) Helper (Renderer)\n23250 22969  0   0.3    20:52:00 /Applications/T3 Code (Nightly).app/Contents/MacOS/T3 Code (Nightly)\n23526 23250  0   0.0    20:51:57 /Applications/T3 Code (Nightly).app/Contents/Resources/resource-monitor/t3-resource-monitor\n23861 23250  0   0.0    20:51:56 /Users/sam/.t3/tools/cloudflared/2026.5.2/darwin-arm64/cloudflared\n24338     1  0   0.0    18:41:33 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdwrite\n24343     1  0   0.0    18:41:32 /System/Library/CoreServices/UserNotificationCenter.app/Contents/MacOS/UserNotificationCenter\n24474     1  0   0.0    20:51:55 /System/Library/PrivateFrameworks/SafariPlatformSupport.framework/Versions/A/XPCServices/com.apple.SafariPlatformSupport.Helper.xpc/Contents/MacOS/com.apple.SafariPlatformSupport.Helper\n24690 36958  0   0.0    01:23:25 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n24691 36958  0   0.0    01:23:25 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n24720 24690  0   0.0    01:23:25 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n24924 36958  0   0.0    06:01:47 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n24925 36958  0   0.0    06:01:47 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n24963 24924  0   0.0    06:01:47 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n25739     1  0   0.0    02:57:26 /usr/sbin/spindump\n25755 36958  0   0.0    04:30:52 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n25756 36958  0   0.0    04:30:52 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n25773 25756  0   0.0    04:30:52 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n26425 36958  0   0.0    07:38:02 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n26426 36958  0   0.0    07:38:02 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n26463 26425  0   0.0    07:38:02 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n26663     1  0   0.1 01-08:58:26 /usr/libexec/containermanagerd\n27116     1  0   0.4 01-08:57:40 /System/Library/PrivateFrameworks/TCC.framework/Support/tccd\n27119     1  0   1.0 01-08:57:40 /System/Library/PrivateFrameworks/TCC.framework/Support/tccd\n27324 36958  0   0.0    07:37:40 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n27325 36958  0   0.0    07:37:40 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n27365 27325  0   0.0    07:37:40 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n29373     1  0  31.3    13:48:47 /usr/libexec/mobileassetd\n29987     1  0   0.0    13:48:04 /System/Library/PrivateFrameworks/HomeKitDaemon.framework/Support/homed\n30198     1  0   0.0    13:47:55 /usr/libexec/containermanagerd_system\n30420 36958  0   0.0    02:52:58 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n30421 36958  0   0.0    02:52:58 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n30449 30421  0   0.0    02:52:58 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n30496     1  0   0.0    13:47:31 /usr/libexec/mlhostd\n30497     1  0   0.0    13:47:31 cloudphotod\n30499     1  0   0.0    13:47:31 /System/Library/PrivateFrameworks/VoiceShortcuts.framework/Versions/A/Support/siriactionsd\n30502     1  0   0.0    13:47:31 /System/Library/PrivateFrameworks/iCloudDriveCore.framework/Versions/A/Support/bird\n30505     1  0   0.0    13:47:30 /System/Library/PrivateFrameworks/PhotoLibraryServices.framework/Versions/A/Support/photolibraryd\n30506     1  0   0.0    13:47:30 /usr/libexec/secinitd\n30507     1  0   0.0    13:47:30 /System/Library/CoreServices/ScopedBookmarkAgent\n30521     1  0   0.0    13:47:29 /System/Library/Frameworks/ManagedSettings.framework/Versions/A/ManagedSettingsAgent\n30530     1  0   0.0    13:47:28 /usr/libexec/triald_system\n30538     1  0   0.0    13:47:28 /System/Library/PrivateFrameworks/GeoServices.framework/Versions/A/XPCServices/com.apple.geod.xpc/Contents/MacOS/com.apple.geod\n30541     1  0   0.0    13:47:27 /System/Library/PrivateFrameworks/GeoServices.framework/Versions/A/XPCServices/com.apple.geod.xpc/Contents/MacOS/com.apple.geod\n30542     1  0   0.0    13:47:27 /System/Library/PrivateFrameworks/GeoServices.framework/Versions/A/XPCServices/com.apple.geod.xpc/Contents/MacOS/com.apple.geod\n30558     1  0   0.0    13:47:27 /System/Library/PrivateFrameworks/AuthKit.framework/Versions/A/Support/akd\n30561     1  0   0.0    13:47:27 /System/Library/PrivateFrameworks/CoreADI.framework/adid\n30564     1  0   0.0    13:47:27 /System/Library/Frameworks/CryptoTokenKit.framework/ctkd\n30565     1  0   0.0    13:47:27 /System/Library/Frameworks/LocalAuthentication.framework/Support/coreauthd\n30711     1  0   0.2    20:48:53 /Applications/ChatGPT.app/Contents/MacOS/ChatGPT\n30764     1  0   0.0    20:48:51 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/browser_crashpad_handler\n30766     1  0   0.0    20:48:51 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/browser_crashpad_handler\n30856 30711  0   0.7    20:48:51 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)\n30857 30711  0   0.0    20:48:51 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)\n30865 30711  0   0.0    20:48:51 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)\n30990     1  0   0.0    13:47:20 /System/Library/CoreServices/TimeMachine/backupd\n31073     1  0   0.0 18-22:46:39 /usr/libexec/taskgated\n31188 30711  0   0.0    20:48:47 /Applications/ChatGPT.app/Contents/Resources/native/bare-modifier-monitor\n31191 30711  0   0.0    20:48:47 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31192 30711  0   0.0    20:48:47 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31193 30711  0   0.0    20:48:47 /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex\n31230 30711  0   0.0    20:48:42 /Users/sam/.codex/computer-use/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService\n31232     1  0   0.0    20:48:42 /System/Library/PrivateFrameworks/SafariPlatformSupport.framework/Versions/A/XPCServices/com.apple.SafariPlatformSupport.Helper.xpc/Contents/MacOS/com.apple.SafariPlatformSupport.Helper\n31253 30711  0   0.0    20:48:41 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31333     1  0   0.0    13:46:51 /usr/libexec/wifip2pd\n31362     1  0   0.0 06-05:36:16 /System/Library/CoreServices/Software Update.app/Contents/Resources/softwareupdated\n31404     1  0   0.0    13:46:50 /System/Library/PrivateFrameworks/PowerLog.framework/Versions/A/XPCServices/PerfPowerTelemetryClientRegistrationService.xpc/Contents/MacOS/PerfPowerTelemetryClientRegistrationService\n31420 30711  0   0.0    20:48:37 /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex\n31437     1  0   0.0    13:46:49 /usr/libexec/sysmond\n31459     1  0   0.0    13:46:48 /usr/libexec/AirPlayXPCHelper\n31470 30711  0   0.2    20:48:37 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31471     1  0   0.0    13:46:47 /usr/libexec/ospredictiond\n31515 30711  0   0.1    20:48:36 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31557 30711  0   0.0    20:48:35 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31570     1  0   0.0    13:46:27 /System/Library/PrivateFrameworks/CloudSubscriptionFeatures.framework/FeatureAccessAgent\n31571     1  0   0.0    13:46:27 /System/Library/PrivateFrameworks/CoreFollowUp.framework/Versions/A/Support/followupd\n31572     1  0   0.0    13:46:27 /System/Library/PrivateFrameworks/CoreSuggestions.framework/Versions/A/Support/suggestd\n31573     1  0   0.1    13:46:27 /System/Library/PrivateFrameworks/SyncedDefaults.framework/Support/syncdefaultsd\n31574     1  0   0.0    13:46:26 /System/Library/Frameworks/Contacts.framework/Support/contactsd\n31647 31193  0   0.0    20:48:35 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n31648 31193  0   0.0    20:48:35 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n31652 31193  0   0.0    20:48:35 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n31666 30711  0   0.0    20:48:35 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31669 31648  0   0.0    20:48:35 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n31691     1 10  98.6    07:34:40 .venv/bin/python\n31697     1 10  97.8    07:34:40 .venv/bin/python\n31721     1  0   0.0    13:46:23 /System/Library/PrivateFrameworks/CalendarDaemon.framework/Support/calaccessd\n31722     1  0   0.0    13:46:23 /System/Library/CoreServices/CoreLocationAgent.app/Contents/MacOS/CoreLocationAgent\n31864     1  0   0.0    13:46:22 /System/Library/PrivateFrameworks/FamilyCircle.framework/Versions/A/Resources/familycircled\n31967     1  0   0.0    13:46:19 /usr/libexec/sandboxd\n32055 31193  0   0.0    20:48:32 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n32061 31193  0   0.0    20:48:31 /Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex-code-mode-host\n32530     1  0   0.0    13:45:34 /System/Library/PrivateFrameworks/ScreenTimeCore.framework/Versions/A/ScreenTimeAgent\n32531     1  0   0.0    13:45:33 /usr/libexec/dmd\n32532     1  0   0.0    13:45:33 /System/Library/PrivateFrameworks/ScreenTimeSettingsFoundation.framework/Versions/A/ScreenTimeSettingsAgent\n32964     1  0   0.0    13:45:14 /usr/libexec/logd_helper\n33107     1  0   0.0    12:18:27 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33112     1  0   0.0    12:18:27 /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\n33113     1  0   0.0    12:18:27 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33114     1  0   0.0    12:18:27 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33120     1  0   0.0    12:18:24 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33152     1 10  97.2    04:24:24 .venv/bin/python\n33194     1  0   0.0    12:18:17 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33232     1  0   0.0    13:44:52 /System/Library/PrivateFrameworks/CoreAnalytics.framework/Support/analyticsagent\n33247     1  0   0.0    15:14:20 /System/Library/PrivateFrameworks/BiomeStreams.framework/Support/biomed\n33539 30711  0   0.0    20:45:51 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)\n33613     1  0   0.0    13:44:35 /System/Library/PrivateFrameworks/CloudTelemetry.framework/Support/cloudtelemetryd\n33773     1  0   0.0    12:17:42 /System/Library/PrivateFrameworks/MessagesBlastDoorSupport.framework/Versions/A/XPCServices/MessagesBlastDoorService.xpc/Contents/MacOS/MessagesBlastDoorService\n33776     1  0   0.0    12:17:41 /usr/libexec/textunderstandingd\n33777     1  0   0.0    12:17:41 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33778     1  0   0.0    12:17:41 /System/Library/PrivateFrameworks/SocialLayer.framework/sociallayerd.app/Contents/MacOS/sociallayerd\n33779     1  0   0.0    12:17:41 /System/Applications/Messages.app/Contents/PlugIns/Messages Assistant Extension.appex/Contents/MacOS/Messages Assistant Extension\n33780     1  0   0.0    12:17:41 /System/Library/PrivateFrameworks/MediaAnalysis.framework/Versions/A/mediaanalysisd\n33781     1  0   0.0    12:17:41 /System/Library/PrivateFrameworks/ToneLibrary.framework/Versions/A/XPCServices/com.apple.tonelibraryd.xpc/Contents/MacOS/com.apple.tonelibraryd\n33782     1  0   0.0    12:17:41 /System/Library/Frameworks/Intents.framework/XPCServices/intents_helper.xpc/Contents/MacOS/intents_helper\n33783     1  0   0.0    12:17:41 /System/Library/PrivateFrameworks/CoreEmbeddedSpeechRecognition.framework/speechmaintenanced\n33784     1  0   0.0    12:17:41 /usr/libexec/hybridsearchd\n33786     1  0   0.0    12:17:41 /System/Library/Frameworks/Contacts.framework/Support/postersyncd\n33787     1  0   0.0    12:17:40 /System/Library/CoreServices/ReportCrash\n33855     1  0   0.0    12:17:40 /System/Library/PrivateFrameworks/XprotectFramework.framework/Versions/A/XPCServices/XProtectBridgeService.xpc/Contents/MacOS/XProtectBridgeService\n33876     1  0   0.0    12:17:40 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33908     1  0   0.0    12:17:40 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33910     1  0   0.0    12:17:40 /usr/libexec/textcomposerd\n33911     1  0   0.0    12:17:40 /System/Library/PrivateFrameworks/ContextKit.framework/Versions/A/XPCServices/ContextService.xpc/Contents/MacOS/ContextService\n33917     1  0   0.0    12:17:38 /System/Library/Frameworks/Intents.framework/XPCServices/intents_helper.xpc/Contents/MacOS/intents_helper\n34085     1  0   0.0    15:13:36 /usr/libexec/aned\n34358     1  0   0.0    15:13:21 /System/Library/PrivateFrameworks/DoNotDisturbServer.framework/Support/donotdisturbd\n34943     1  0   0.0 16-17:56:35 node\n34948 34943  0   0.0 16-17:56:35 /Users/sam/.nvm/versions/node/v24.19.0/bin/node\n34950 34948  0   0.0 16-17:56:35 codex\n35377 34950  0   0.0 16-17:55:55 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n35378 34950  0   0.0 16-17:55:55 /Users/sam/.nvm/versions/node/v24.19.0/bin/node\n36162     1  0   0.0    15:11:57 /usr/libexec/knowledge-agent\n36342     1  0   0.0    01:12:34 /usr/libexec/applekeystored\n36353 34950  0   0.0 16-17:55:44 /Users/sam/.codex/packages/standalone/releases/0.154.0-aarch64-apple-darwin/bin/codex-code-mode-host\n36718     1  0   0.1 01-04:06:05 /System/Library/CoreServices/audioaccessoryd\n36809 57822  0   0.0    20:45:07 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n36810 36809  0   0.0    20:45:07 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n36816 34950  0   0.0    20:45:05 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n36817 36816  0   0.0    20:45:05 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n36907     1  0   0.0    13:43:06 /System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter\n36908     1  0   0.0    13:43:06 /usr/libexec/nehelper\n36909     1  0   0.0    13:43:06 /System/Library/PrivateFrameworks/TelephonyUtilities.framework/callservicesd\n36915     1  0   0.0    13:43:05 /System/Library/CoreServices/UIKitSystem.app/Contents/MacOS/UIKitSystem\n36920     1  0   0.0    13:43:05 /usr/libexec/neagent\n36942     1  0   0.0    13:43:04 /usr/libexec/rtcreportingd\n36958 23250  0   0.3    20:45:00 codex\n37085     1  0   0.9    13:43:00 /System/Library/PrivateFrameworks/ModelCatalogRuntime.framework/Versions/A/modelcatalogd\n37208 36958  0   0.0    20:44:59 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n37209 36958  0   0.0    20:44:59 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n37216 37209  0   0.0    20:44:59 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n37420     1  0   0.0    01:11:31 /System/Library/PrivateFrameworks/ProtectedCloudStorage.framework/Helpers/ProtectedCloudKeySyncing\n37659     1  0   0.0    13:42:32 /usr/libexec/securityd_system\n37723     1  0   0.0 17-21:54:38 /usr/sbin/distnoted\n37963 36958  0   0.0    04:20:16 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n37964 36958  0   0.0    04:20:16 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n37994 37964  0   0.0    04:20:16 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n38207     1  0   0.0    13:42:05 /System/Library/PrivateFrameworks/IMDPersistence.framework/XPCServices/IMDPersistenceAgent.xpc/Contents/MacOS/IMDPersistenceAgent\n38208     1  0   0.0    13:42:01 /System/Library/CoreServices/TimeMachine/backupd-helper\n38209     1  0   0.0    13:42:01 /usr/libexec/seputil\n38210     1  0   0.0    13:42:01 /usr/libexec/online-auth-agent\n38563     1  0   0.1    18:12:48 /usr/libexec/usermanagerd\n38713 36958  0   0.0    20:44:47 /Users/sam/.codex/packages/standalone/releases/0.160.0-aarch64-apple-darwin/bin/codex-code-mode-host\n38765     1  0   0.0 01-14:02:31 /usr/bin/ssh-agent\n38775 36958  0   0.0    13:41:27 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n38776 36958  0   0.0    13:41:27 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n38854 38776  0   0.0    13:41:27 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n39699     1  0   0.0    13:41:20 /System/Library/CoreServices/CoreServicesUIAgent.app/Contents/MacOS/CoreServicesUIAgent\n40107     1  0   0.0    12:13:06 /System/Library/PrivateFrameworks/CoreLSKD.framework/Versions/A/lskdd\n40109     1  0   0.0    12:13:06 /usr/libexec/mmaintenanced\n40110     1  0   0.0    12:13:06 /usr/libexec/fpassetmanagerd\n40199     1  0   0.0    12:12:49 /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support/accessoryupdaterd\n40200     1  0   0.0    12:12:49 /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/XPCServices/UARPUpdaterServiceLegacyAudio.xpc/Contents/MacOS/UARPUpdaterServiceLegacyAudio\n40201     1  0   0.0    12:12:49 /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/XPCServices/UARPUpdaterServiceDisplay.xpc/Contents/MacOS/UARPUpdaterServiceDisplay\n40302     1  0   0.0    12:12:45 /usr/libexec/tzd\n40303     1  0   0.0    12:12:45 /System/Library/PrivateFrameworks/XprotectFramework.framework/Versions/A/XPCServices/XProtectUpdateService.xpc/Contents/MacOS/XProtectUpdateService\n40374     1  0   0.0    12:12:44 /System/Library/PrivateFrameworks/AssetCacheServices.framework/Versions/A/XPCServices/AssetCacheLocatorService.xpc/Contents/MacOS/AssetCacheLocatorService\n40657 36958  0   0.0    20:42:07 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n40658 36958  0   0.0    20:42:07 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n40685 40657  0   0.0    20:42:07 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n41542 36958  0   0.0    20:41:56 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n41543 36958  0   0.0    20:41:56 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n41548 41542  0   0.0    20:41:56 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n42128     1  0   0.0    13:40:39 /usr/libexec/amfid\n43135     1  0   0.0    13:40:15 /usr/libexec/searchpartyuseragent\n43136     1  0   0.0    13:40:14 /usr/libexec/findmylocateagent\n43141     1  0   0.0    13:40:14 /usr/libexec/findmydevice-user-agent\n43142     1  0   0.0    13:40:14 /System/Library/PrivateFrameworks/SystemStatusServer.framework/Support/systemstatusd\n43155     1  0   0.0    13:40:13 /System/Library/PrivateFrameworks/IDSBlastDoorSupport.framework/Versions/A/XPCServices/IDSBlastDoorService.xpc/Contents/MacOS/IDSBlastDoorService\n43919     1  0   0.0    13:39:32 /System/Library/PrivateFrameworks/XprotectFramework.framework/Versions/A/XPCServices/XprotectService.xpc/Contents/MacOS/XprotectService\n43920     1  0   0.0    13:39:31 /System/Library/CoreServices/ReportCrash\n43923     1  0   0.0    13:39:31 /System/Library/PrivateFrameworks/CoreSymbolication.framework/coresymbolicationd\n44044 36958  0   0.0    13:39:28 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n44045 36958  0   0.0    13:39:28 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n44083 44044  0   0.0    13:39:28 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n45629     1  0   0.2 01-12:03:52 /usr/local/bin/cloudflared\n47228     1  0   0.0    13:37:27 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/DictionaryServices.framework/Versions/A/XPCServices/com.apple.DictionaryServiceHelper.xpc/Contents/MacOS/com.apple.DictionaryServiceHelper\n47229     1  0   0.0    13:37:27 /System/Library/PrivateFrameworks/SafariSafeBrowsing.framework/com.apple.Safari.SafeBrowsing.Service\n47230     1  0   0.0    13:37:27 /usr/libexec/routined\n47231     1  0   0.0    13:37:27 /usr/libexec/networkserviceproxy\n47288     1  0   0.0    12:06:09 /usr/sbin/systemsoundserverd\n47289     1  0   0.0    12:06:09 /usr/libexec/audioanalyticsd\n47290     1  0   0.0    12:06:09 /System/Library/Frameworks/AudioToolbox.framework/AudioComponentRegistrar\n47291     1  0   0.0    12:06:09 /System/Library/Frameworks/AudioToolbox.framework/XPCServices/com.apple.audio.SandboxHelper.xpc/Contents/MacOS/com.apple.audio.SandboxHelper\n47337 36958  0   0.0    05:40:48 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n47338 36958  0   0.0    05:40:48 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n47366 47337  0   0.0    05:40:48 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n47815 36958  0   0.0    10:28:47 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n47816 36958  0   0.0    10:28:47 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n47854 47815  0   0.0    10:28:47 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n48796 57203  5   0.0       59:53 sleep\n49191     1  0   0.0    13:35:48 /System/Library/PrivateFrameworks/Stickers.framework/Support/stickersd\n49192     1  0   0.0    13:35:48 /System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTDecoderXPCService.xpc/Contents/MacOS/VTDecoderXPCService\n49194     1  0   0.0    13:35:47 /usr/libexec/modelmanagerd\n49201     1  0   0.0    13:35:47 /System/Library/ExtensionKit/Extensions/TGOnDeviceInferenceProviderService.appex/Contents/MacOS/TGOnDeviceInferenceProviderService\n51342 36958  0   0.0    02:33:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n51343 36958  0   0.0    02:33:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n51383 51342  0   0.0    02:33:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n52373     1  0   0.0    12:00:48 /System/Library/PrivateFrameworks/TrialServer.framework/Versions/A/XPCServices/TrialArchivingService.xpc/Contents/MacOS/TrialArchivingService\n53250     1  0   0.0    12:00:03 /System/Library/PrivateFrameworks/GenerativeExperiencesRuntime.framework/Versions/A/generativeexperiencesd\n53983 36958  0   0.0    04:05:40 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n53984 36958  0   0.0    04:05:40 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n54010 53983  0   0.0    04:05:40 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n54022     1  0   0.0    11:59:16 /System/Library/PrivateFrameworks/SoftwareUpdate.framework/Resources/SoftwareUpdateNotificationManager.app/Contents/MacOS/SoftwareUpdateNotificationManager\n54023     1  0   0.0    11:59:16 /System/Library/PrivateFrameworks/Ecosystem.framework/Support/ecosystemd\n54024     1  0   0.0    11:59:16 /System/Library/PrivateFrameworks/UIFoundation.framework/Versions/A/XPCServices/nsattributedstringagent.xpc/Contents/MacOS/nsattributedstringagent\n54037     1  0   0.0    11:59:16 /System/Library/Frameworks/MediaAccessibility.framework/Versions/A/XPCServices/com.apple.accessibility.mediaaccessibilityd.xpc/Contents/MacOS/com.apple.accessibility.mediaaccessibilityd\n54040     1  0   0.0    11:59:15 /System/Library/Frameworks/AudioToolbox.framework/AudioComponentRegistrar\n54046     1  0   0.0    11:59:15 /usr/libexec/smd\n54047     1  0   0.0    11:59:14 /System/Library/CoreServices/diagnosticservicesd\n54239     1  0   0.0    07:11:46 /System/Library/PrivateFrameworks/SiriTTSService.framework/sirittsd\n54240     1  0   0.0    07:11:46 /System/Library/PrivateFrameworks/AXAssetLoader.framework/Support/axassetsd\n54241     1  0   0.0    07:11:45 /System/Library/PrivateFrameworks/FaceTimeMessageStore.framework/facetimemessagestored\n54243     1  0   0.0    07:11:45 /System/Library/PrivateFrameworks/IntlPreferences.framework/Support/localizationswitcherd\n54245     1  0   0.0    07:11:45 /usr/libexec/sysdiagnosed\n54246     1  0   0.0    07:11:45 /usr/libexec/symptomsd-diag\n54320     1  0   0.0    07:11:44 /System/Library/PrivateFrameworks/Categories.framework/Versions/A/XPCServices/CategoriesService.xpc/Contents/MacOS/CategoriesService\n54321     1  0   0.0    07:11:44 /usr/libexec/MTLAssetUpgraderD\n54984     1  0   0.0    07:11:11 /System/Library/PrivateFrameworks/CallHistory.framework/Support/CallHistorySyncHelper\n55263     1  0   0.0    07:10:45 /System/Library/PrivateFrameworks/AssistantServices.framework/Versions/A/XPCServices/media-indexer.xpc/Contents/MacOS/media-indexer\n55265     1  0   0.0    07:10:45 /System/Library/PrivateFrameworks/AMPLibrary.framework/Versions/A/Support/AMPLibraryAgent\n55336     1  0   0.0    07:10:44 /System/Library/PrivateFrameworks/PodcastServices.framework/XPCServices/PodcastContentService.xpc/Contents/MacOS/PodcastContentService\n55337     1  0   0.0    07:10:44 /System/Library/PrivateFrameworks/BookKit.framework/Versions/A/XPCServices/com.apple.BKAgentService.xpc/Contents/MacOS/com.apple.BKAgentService\n55338     1  0   0.0    07:10:44 /System/Library/PrivateFrameworks/AMPLibrary.framework/Versions/A/Support/AMPArtworkAgent\n55530     1  0   0.0       53:11 /System/Library/PrivateFrameworks/AppSSO.framework/Support/AppSSOAgent.app/Contents/MacOS/AppSSOAgent\n55531     1  0   0.0       53:11 /usr/libexec/nesessionmanager\n55532     1  0   0.0       53:11 /System/Library/Frameworks/SystemExtensions.framework/Versions/A/Helpers/sysextd\n55533     1  0   0.0       53:11 /System/Library/Frameworks/GSS.framework/Helpers/GSSCred\n55534     1  0   0.0       53:11 /System/Library/PrivateFrameworks/AppSSO.framework/Support/AppSSODaemon\n55535     1  0   0.0       53:11 /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/XPCServices/com.apple.hiservices-xpcservice.xpc/Contents/MacOS/com.apple.hiservices-xpcservice\n55848     1  0   0.0    13:28:51 /System/Library/PrivateFrameworks/SuggestedImage.framework/Support/imageplaygroundd\n55849     1  0   0.0    13:28:51 /System/Library/PrivateFrameworks/PhotoAnalysis.framework/Versions/A/Support/photoanalysisd\n55912     1  0   0.0    13:28:51 /System/Library/PrivateFrameworks/IntelligencePlatformCompute.framework/Versions/A/XPCServices/IntelligencePlatformComputeService.xpc/Contents/MacOS/IntelligencePlatformComputeService\n57150     1  0   0.0 18-11:55:12 /usr/sbin/distnoted\n57203     1  5   0.0 05-23:02:26 /bin/bash\n57363     1  0   0.0    13:27:25 /usr/libexec/countryd\n57815     1  0   0.0 16-17:34:03 node\n57820 57815  0   0.0 16-17:34:03 /Users/sam/.nvm/versions/node/v24.19.0/bin/node\n57822 57820  0   0.0 16-17:34:03 codex\n58616     1  0   0.0    07:07:28 /usr/libexec/swcd\n59928     1  0   0.0    07:06:05 /System/Library/CoreServices/EscrowSecurityAlert.app/Contents/MacOS/EscrowSecurityAlert\n60085     1  0   0.0    07:06:00 /System/Library/PrivateFrameworks/OnDeviceStorage.framework/Support/amsondevicestoraged\n60086     1  0  60.5    07:06:00 /System/Library/PrivateFrameworks/ModelCatalogRuntime.framework/Versions/A/ModelCatalogAgent\n60908     1  0   0.1 18-22:14:50 /usr/libexec/gamepolicyd\n61919     1  0   0.0    13:22:59 /System/Library/PrivateFrameworks/AssetCacheServices.framework/Versions/A/XPCServices/AssetCacheLocatorService.xpc/Contents/MacOS/AssetCacheLocatorService\n63001 36958  0   0.0    17:16:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n63002 36958  0   0.0    17:16:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n63032 63002  0   0.0    17:16:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n63251 36958  0   0.0    13:22:14 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n63252 36958  0   0.0    13:22:14 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n63277 63252  0   0.0    13:22:14 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n63487 36958  0   0.0    08:35:56 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n63488 36958  0   0.0    08:35:56 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n63526 63487  0   0.0    08:35:56 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n63661     1  0   0.0 05-19:56:45 /System/Library/Frameworks/CryptoTokenKit.framework/ctkd\n63884     1  0   0.0    03:56:31 /System/iOSSupport/System/Library/PrivateFrameworks/HomeEnergyDaemon.framework/Support/homeenergyd\n64317     1 10  96.7    07:01:37 .venv/bin/python\n64511     1  0   0.0 01-13:41:05 caffeinate\n64666     1 10   0.0    07:01:24 bash\n64982     1  0   0.0    07:01:04 /usr/libexec/mobilerepaird\n64983     1  0   0.0    07:01:04 /usr/libexec/corerepaird\n64984     1  0   0.0    07:01:04 /System/Library/PrivateFrameworks/AppleDeviceQuerySupport.framework/Versions/A/XPCServices/AppleDeviceQueryService.xpc/Contents/MacOS/AppleDeviceQueryService\n64986     1  0   0.0    07:01:04 /usr/libexec/nfcd\n64987     1  0   0.0    07:01:04 /System/Library/PrivateFrameworks/NearFieldPrivateServices.framework/Versions/A/XPCServices/NFStorageServer.xpc/Contents/MacOS/NFStorageServer\n65335     1  0   0.0    11:47:26 /usr/sbin/cfprefsd\n65347     1  0   0.0    11:47:22 /System/Library/PrivateFrameworks/IMTranscoding.framework/XPCServices/IMTranscoderAgent.xpc/Contents/MacOS/IMTranscoderAgent\n65348     1  0   0.0    11:47:22 /System/Library/Frameworks/AudioToolbox.framework/XPCServices/com.apple.audio.SandboxHelper.xpc/Contents/MacOS/com.apple.audio.SandboxHelper\n65349     1  0   0.0    11:47:22 /System/Library/PrivateFrameworks/MessagesBlastDoorSupport.framework/Versions/A/XPCServices/MessagesBlastDoorService.xpc/Contents/MacOS/MessagesBlastDoorService\n65350     1  0   0.0    11:47:22 /System/Library/PrivateFrameworks/MessagesBlastDoorSupport.framework/Versions/A/XPCServices/UnknownSendersBlastDoorService.xpc/Contents/MacOS/UnknownSendersBlastDoorService\n65351     1  0   0.0    11:47:22 /System/Library/PrivateFrameworks/MessagesEscrow.framework/Daemon/messagesescrowd.xpc/Contents/MacOS/messagesescrowd\n65800     1  0   0.0    10:11:57 /usr/libexec/textcontextd\n65806     1  0   0.0    10:11:57 /System/Library/PrivateFrameworks/MediaConversionService.framework/Versions/A/XPCServices/com.apple.photos.ImageConversionService.xpc/Contents/MacOS/com.apple.photos.ImageConversionService\n65810     1  0   0.0    10:11:57 /System/Library/Frameworks/AudioToolbox.framework/XPCServices/com.apple.audio.SandboxHelper.xpc/Contents/MacOS/com.apple.audio.SandboxHelper\n65813     1  0   0.0    10:11:57 /System/Library/PrivateFrameworks/MessagesBlastDoorSupport.framework/Versions/A/XPCServices/HubbleBlastDoorService.xpc/Contents/MacOS/HubbleBlastDoorService\n66018     1  0   0.0    13:20:34 /System/Library/CoreServices/osanalyticshelper\n66027 36958  0   0.0    05:22:44 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n66028 36958  0   0.0    05:22:44 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n66053 66027  0   0.0    05:22:44 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n66823     1  0   0.0    11:46:03 /System/Library/Frameworks/ManagedAppDistribution.framework/Support/managedappdistributiond\n66871     1  0   0.1 05-22:59:40 adb\n67000     1  0   0.0    13:19:31 /usr/libexec/coreduetd\n67261     1  0   0.0    13:19:08 /usr/libexec/peakpowermanagerd\n67725     1  0   0.0    13:18:41 /System/Library/PrivateFrameworks/CommerceKit.framework/Versions/A/Resources/commerce\n68722     1  0   0.0    10:09:00 /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/XPCServices/UARPUpdaterServiceUSBPD.xpc/Contents/MacOS/UARPUpdaterServiceUSBPD\n71921 36958  0   0.0    17:00:23 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n71922 36958  0   0.0    17:00:23 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n71950 71922  0   0.0    17:00:23 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n72642     1  0   0.0    05:16:53 /System/Library/CoreServices/iconservicesagent\n72643     1  0   0.0    05:16:53 /System/Library/CoreServices/iconservicesd\n72644     1  0   0.0    05:16:53 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n73924 36958  0   0.0    08:29:00 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n73925 36958  0   0.0    08:29:00 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n73966 73924  0   0.0    08:29:00 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n74259     1  0   0.0    13:12:01 /usr/libexec/triald\n74265     1  0   0.0    13:12:01 /System/Library/PrivateFrameworks/TrialServer.framework/Versions/A/XPCServices/TrialArchivingService.xpc/Contents/MacOS/TrialArchivingService\n74601 36958  0   0.0    03:46:07 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n74602 36958  0   0.0    03:46:07 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n74631 74602  0   0.0    03:46:07 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n74908 57822  0   0.0 16-17:17:08 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n74909 57822  0   0.0 16-17:17:08 /Users/sam/.nvm/versions/node/v24.19.0/bin/node\n75402     1  0   0.0    13:10:55 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/DictionaryServices.framework/Versions/A/XPCServices/com.apple.DictionaryServiceHelper.xpc/Contents/MacOS/com.apple.DictionaryServiceHelper\n75603 57822  0   0.0 16-17:17:01 /Users/sam/.codex/packages/standalone/releases/0.154.0-aarch64-apple-darwin/bin/codex-code-mode-host\n76508     1  0   0.0    11:36:03 /System/Library/PrivateFrameworks/MobileSoftwareUpdate.framework/Support/softwareupdated\n76509     1  0   0.0    11:36:03 /System/Library/PrivateFrameworks/MobileSoftwareUpdate.framework/Versions/A/XPCServices/com.apple.MobileSoftwareUpdate.CleanupPreparePathService.xpc/Contents/MacOS/com.apple.MobileSoftwareUpdate.CleanupPreparePathService\n76512     1  0   0.0    11:36:02 /System/Library/PrivateFrameworks/UIFoundation.framework/Versions/A/XPCServices/nsattributedstringagent.xpc/Contents/MacOS/nsattributedstringagent\n76516     1  0   0.0    11:36:02 /System/Library/Frameworks/MediaAccessibility.framework/Versions/A/XPCServices/com.apple.accessibility.mediaaccessibilityd.xpc/Contents/MacOS/com.apple.accessibility.mediaaccessibilityd\n76517     1  0   0.0    11:36:02 /usr/sbin/cfprefsd\n76525     1  0   0.0    11:36:02 /System/Library/PrivateFrameworks/IASUtilities.framework/Versions/A/Resources/installerauthagent\n76662     1  0   0.0    11:35:47 /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/XPCServices/com.apple.hiservices-xpcservice.xpc/Contents/MacOS/com.apple.hiservices-xpcservice\n77680     1  0   0.0    05:11:53 /System/Library/PrivateFrameworks/TelephonyUtilities.framework/XPCServices/com.apple.FaceTime.FTConversationService.xpc/Contents/MacOS/com.apple.FaceTime.FTConversationService\n78627     1  0   0.0    13:07:34 /System/Library/PrivateFrameworks/IntelligenceFlowRuntime.framework/Versions/A/intelligenceflowd\n78703     1  0   0.0    13:07:30 /System/Library/PrivateFrameworks/IntelligenceFlowContextRuntime.framework/Versions/A/intelligencecontextd\n79563     1  0   0.0    08:24:02 /System/Library/PrivateFrameworks/PrivateCloudCompute.framework/privatecloudcomputed.app/Contents/MacOS/privatecloudcomputed\n80306     1  0   0.0    16:42:13 /usr/libexec/duetexpertd\n81037     1  0   0.0    13:05:06 /usr/libexec/tipsd\n81038     1  0   0.0    13:05:06 /usr/libexec/keybagd\n81041     1  0   0.0    13:05:06 /usr/libexec/proactiveeventtrackerd\n81042     1  0   0.0    13:05:06 /usr/libexec/transparencyd\n81043     1  0   0.0    13:05:06 /System/Library/Frameworks/Security.framework/Versions/A/XPCServices/TrustedPeersHelper.xpc/Contents/MacOS/TrustedPeersHelper\n81044     1  0   0.0    13:05:05 /System/Library/PrivateFrameworks/CloudServices.framework/Helpers/com.apple.sbd\n81056     1  0   0.3    13:05:04 /System/Library/PrivateFrameworks/MapsSync.framework/mapssyncd\n81057     1  0   0.0    13:05:03 /usr/libexec/mobileactivationd\n81128     1  0   0.0    13:05:02 /System/Library/PrivateFrameworks/CoreCDP.framework/Versions/A/Resources/cdpd\n82074     1  0   0.0    19:49:37 /System/Library/Frameworks/LocalAuthentication.framework/Support/coreauthd\n82486     1  0   0.0    08:21:01 /System/Library/PrivateFrameworks/GeoAnalytics.framework/geoanalyticsd\n82487     1  0   0.0    08:21:01 /usr/libexec/filevaultd\n82488     1  0   0.0    08:21:01 /System/Cryptexes/App/usr/libexec/AuthenticationServicesAgent\n82489     1  0   0.0    08:21:01 /usr/libexec/keychainsharingmessagingd\n84380 36958  0   0.0    19:44:59 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n84381 36958  0   0.0    19:44:59 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n84463 84381  0   0.0    19:44:59 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n85122     1  0   0.3 15-23:35:18 /usr/libexec/trustd\n85123     1  0   5.9 15-23:35:18 /usr/libexec/trustd\n85234 36958  0   0.0    13:01:09 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n85235 36958  0   0.0    13:01:09 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n85297 85235  0   0.0    13:01:09 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n86164     1  0   0.0    13:00:48 /usr/libexec/replayd\n86498 36958  0   0.0    01:59:43 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n86499 36958  0   0.0    01:59:43 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n86516 86498  0   0.0    01:59:43 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n86754     1  0   1.5    13:00:26 /System/Library/PrivateFrameworks/CoreDuetContext.framework/Resources/ContextStoreAgent\n86782     1  0   0.0    13:00:15 /usr/libexec/linkd\n87633     1  0   0.0    19:40:25 /System/Library/Frameworks/Contacts.framework/PlugIns/ContactsCoreSpotlightExtension.appex/Contents/MacOS/ContactsCoreSpotlightExtension\n88042     1  0   0.0 13-14:28:03 /usr/sbin/coreaudiod\n88171     1  0   0.0    05:01:01 /usr/libexec/dbtelemetryd\n88172     1  0   0.0    05:01:01 /usr/libexec/ValidUpdater\n90141 36958  0   0.0    05:00:26 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n90142 36958  0   0.0    05:00:26 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n90179 90142  0   0.0    05:00:26 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n91170 36958  0   0.0    05:00:13 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n91171 36958  0   0.0    05:00:13 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n91209 91171  0   0.0    05:00:13 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n91480 36958  0   0.0    11:22:10 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n91481 36958  0   0.0    11:22:10 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n91556 91481  0   0.0    11:22:10 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n92629 36958  0   0.0    19:31:55 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n92630 36958  0   0.0    19:31:55 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n92737 92629  0   0.0    19:31:55 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n93066 36958  0   0.0    04:59:48 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n93067 36958  0   0.0    04:59:48 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n93105 93066  0   0.0    04:59:48 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n93121     1  0   3.0 02-15:52:40 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer\n93144     1  0   0.0 02-15:52:38 /System/Library/CoreServices/loginwindow.app/Contents/MacOS/loginwindow\n93362     1  0   0.0 02-15:52:29 /System/Library/PrivateFrameworks/AmbientDisplay.framework/Versions/A/XPCServices/com.apple.AmbientDisplayAgent.xpc/Contents/MacOS/com.apple.AmbientDisplayAgent\n93392     1  0   0.0 02-15:52:08 /System/Library/PrivateFrameworks/MobileDevice.framework/Versions/A/Resources/usbmuxd\n94007     1  0   0.0    11:20:46 /usr/libexec/microstackshot\n94501     1  0   0.0    06:31:01 /usr/libexec/wifivelocityd\n95987 36958  0   0.0    19:28:53 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n95988 36958  0   0.0    19:28:53 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n95994 95987  0   0.0    19:28:53 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n96072     1  0   0.0    14:16:05 /usr/sbin/BTLEServerAgent\n96333     1  0   0.0    11:18:29 /usr/libexec/remindd\n96334     1  0   0.0    11:18:29 /System/Library/PrivateFrameworks/MobileTimer.framework/Executables/mobiletimerd\n96338     1  0   0.0    11:18:29 aslmanager\n96346     1  0   0.0    11:18:28 /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\n96566     1  0   0.0       11:31 /System/Library/PrivateFrameworks/RemoteManagement.framework/RemoteManagementAgent\n96618     1  0   0.0       11:31 /System/Library/PrivateFrameworks/SafariFoundation.framework/Versions/A/XPCServices/SafariConfigurationSubscriber.xpc/Contents/MacOS/SafariConfigurationSubscriber\n96619     1  0   0.0       11:31 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/SecuritySubscriber.xpc/Contents/MacOS/SecuritySubscriber\n96620     1  0   0.0       11:30 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/InteractiveLegacyProfilesSubscriber.xpc/Contents/MacOS/InteractiveLegacyProfilesSubscriber\n96624     1  0   0.0       11:30 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/ScreenSharingSubscriber.xpc/Contents/MacOS/ScreenSharingSubscriber\n96625     1  0   0.0       11:30 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/LegacyProfilesSubscriber.xpc/Contents/MacOS/LegacyProfilesSubscriber\n96626     1  0   0.0       11:30 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/PasscodeSettingsSubscriber.xpc/Contents/MacOS/PasscodeSettingsSubscriber\n96627     1  0   0.0       11:30 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/AccountSubscriber.xpc/Contents/MacOS/AccountSubscriber\n96628     1  0   0.0       11:30 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/DeviceConfigurationSubscriber.xpc/Contents/MacOS/DeviceConfigurationSubscriber\n96629     1  0   0.0       11:29 /System/Library/PrivateFrameworks/DeviceConfiguration.framework/Versions/A/DeviceConfigurationAgent\n96630     1  0   0.0       11:29 /System/Library/PrivateFrameworks/DeviceConfiguration.framework/Versions/A/deviceconfigurationd\n96631     1  0   0.0       11:29 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/ManagedAppsSubscriber.xpc/Contents/MacOS/ManagedAppsSubscriber\n96632     1  0   0.0       11:29 /System/Library/Frameworks/ManagedAppDistribution.framework/Support/managedappdistributionagent\n96633     1  0   0.0       11:29 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/NetworkExtensionSubscriber.xpc/Contents/MacOS/NetworkExtensionSubscriber\n96636     1  0   0.0       11:29 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/ManagementTestSubscriber.xpc/Contents/MacOS/ManagementTestSubscriber\n96640     1  0   0.0       11:29 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/ASConfigurationSubscriber.xpc/Contents/MacOS/ASConfigurationSubscriber\n96641     1  0   0.0       11:28 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/ManagedSettingsSubscriber.xpc/Contents/MacOS/ManagedSettingsSubscriber\n96642     1  0   0.0       11:28 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/ExtensibleSSOSubscriber.xpc/Contents/MacOS/ExtensibleSSOSubscriber\n97002     1  0   4.1    04:57:06 /usr/libexec/PerfPowerServices\n98013     1  0   0.0 01-19:12:22 /usr/libexec/UserEventAgent\n98017     1  0   0.1 01-19:12:21 /System/Library/CoreServices/ControlCenter.app/Contents/MacOS/ControlCenter\n98019     1  0   0.0 01-19:12:21 /usr/sbin/universalaccessd\n98022     1  0   0.0 01-19:12:21 /usr/libexec/pboard\n98024     1  0   0.0 01-19:12:21 /System/Library/PrivateFrameworks/UserNotificationsCore.framework/Support/usernotificationsd\n98026     1  0   0.1 01-19:12:21 /System/Library/Frameworks/Accounts.framework/Versions/A/Support/accountsd\n98029     1  0   0.0 01-19:12:21 /System/Library/CoreServices/MenuBarAgent.app/Contents/MacOS/MenuBarAgent\n98031     1  0   0.0 01-19:12:21 /Applications/Google Chrome.app/Contents/MacOS/Google Chrome\n98033     1  0   0.0 01-19:12:21 /System/Library/Frameworks/ApplicationServices.framework/Frameworks/ATS.framework/Support/fontd\n98035     1  0   0.0 01-19:12:21 /System/Library/CoreServices/WindowManager.app/Contents/MacOS/WindowManager\n98036     1  0   0.0 01-19:12:21 /System/Library/CoreServices/Dock.app/Contents/MacOS/Dock\n98037     1  0   0.0 01-19:12:21 /usr/libexec/rapportd\n98038     1  0   0.0 01-19:12:21 /System/Library/CoreServices/SystemUIServer.app/Contents/MacOS/SystemUIServer\n98040     1  0   0.0 01-19:12:21 /usr/libexec/nsurlsessiond\n98042     1  0   0.0 01-19:12:21 /usr/sbin/usernoted\n98045     1  0   1.7 01-19:12:21 /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder\n98048     1  0   0.0 01-19:12:21 /usr/libexec/ContinuityCaptureAgent\n98052     1  0   0.0 01-19:12:21 /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/Support/fontworker\n98054     1  0   0.0 01-19:12:21 /System/Library/CoreServices/AccessibilityUIServer.app/Contents/MacOS/AccessibilityUIServer\n98056     1  0  87.5 01-19:12:21 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/corespotlightd\n98057     1  0   0.0 01-19:12:21 /System/Library/CoreServices/WallpaperAgent.app/Contents/MacOS/WallpaperAgent\n98060     1  0   0.0 01-19:12:21 /System/Library/CoreServices/sharedfilelistd\n98063     1  0   0.0 01-19:12:21 /System/Library/PrivateFrameworks/FileProvider.framework/Support/fileproviderd\n98067     1  0   0.0 01-19:12:21 /System/Library/PrivateFrameworks/AMPDevices.framework/Versions/A/Support/AMPDeviceDiscoveryAgent\n98069     1  0   0.0 01-19:12:21 /System/Library/PrivateFrameworks/ViewBridge.framework/Versions/A/XPCServices/ViewBridgeAuxiliary.xpc/Contents/MacOS/ViewBridgeAuxiliary\n98076     1  0   0.0 01-19:12:21 /System/Library/PrivateFrameworks/UserActivity.framework/Agents/useractivityd\n98080     1  0   0.0 01-19:12:21 /System/Library/PrivateFrameworks/IDS.framework/identityservicesd.app/Contents/MacOS/identityservicesd\n98081     1  0   0.0 01-19:12:21 /System/Library/CoreServices/Dock.app/Contents/XPCServices/com.apple.dock.extra.xpc/Contents/MacOS/com.apple.dock.extra\n98082     1  0   0.0 01-19:12:21 /System/Library/ExtensionKit/Extensions/WallpaperAerialsExtension.appex/Contents/MacOS/WallpaperAerialsExtension\n98084     1  0   0.1 01-19:12:21 /usr/libexec/sharingd\n98085     1  0   0.0 01-19:12:21 /System/Applications/Siri AI.app/Contents/MacOS/Siri AI\n98086     1  0   0.0 01-19:12:21 /System/Library/CoreServices/Dock.app/Contents/XPCServices/com.apple.dock.external.extra.arm64.xpc/Contents/MacOS/com.apple.dock.external.extra.arm64\n98089     1  0   1.5 01-19:12:21 /System/Library/PrivateFrameworks/CloudKitDaemon.framework/Support/cloudd\n98096     1  0   0.0 01-19:12:21 /System/Library/PrivateFrameworks/ChronoCore.framework/Support/chronod\n98100     1  0   0.0 01-19:12:21 /System/Library/PrivateFrameworks/IMCore.framework/imagent.app/Contents/MacOS/imagent\n98109     1  0   0.0 01-19:12:20 /System/Library/PrivateFrameworks/AgentSessionKitRuntime.framework/Versions/A/agentstored\n98112     1  0   0.0 01-19:12:20 /System/Library/PrivateFrameworks/AssistantServices.framework/Versions/A/Support/assistantd\n98147     1  0   0.0 01-19:12:20 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/151.0.7922.109/Helpers/chrome_crashpad_handler\n98191 98031  0   0.0 01-19:12:19 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/151.0.7922.109/Helpers/Google Chrome Helper.app/Contents/MacOS/Google Chrome Helper\n98192 98031  0   0.0 01-19:12:19 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/151.0.7922.109/Helpers/Google Chrome Helper.app/Contents/MacOS/Google Chrome Helper\n98424     1  0   0.0 01-19:12:18 /System/Applications/Weather.app/Contents/PlugIns/WeatherWidget.appex/Contents/MacOS/WeatherWidget\n98425     1  0   0.0 01-19:12:18 /System/Applications/Photos.app/Contents/PlugIns/PhotosReliveWidget.appex/Contents/MacOS/PhotosReliveWidget\n98428     1  0   0.0 01-19:12:18 /System/Library/PrivateFrameworks/CommunicationsFilter.framework/CMFSyncAgent\n98435     1  0   0.0 01-19:12:18 /System/Applications/Calendar.app/Contents/PlugIns/CalendarWidgetExtension.appex/Contents/MacOS/CalendarWidgetExtension\n98679     1 20   0.0 17-09:38:09 /usr/sbin/netbiosd\n98696 98031  0   0.0 01-19:12:17 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/151.0.7922.109/Helpers/Google Chrome Helper.app/Contents/MacOS/Google Chrome Helper\n98818     1  0   0.0 01-19:12:15 /System/Library/CoreServices/WiFiAgent.app/Contents/MacOS/WiFiAgent\n98827     1  0   0.0 01-19:12:15 /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/MacOS/ARDAgent\n98860     1  0   0.0 01-19:12:13 /System/Library/CoreServices/NotificationCenter.app/Contents/MacOS/NotificationCenter\n98863     1  0   0.0 01-19:12:13 /System/Library/PrivateFrameworks/CloudDocs.framework/PlugIns/com.apple.CloudDocs.iCloudDriveFileProvider.appex/Contents/MacOS/com.apple.CloudDocs.iCloudDriveFileProvider\n98884     1  0   0.0 01-19:12:10 /System/Library/PrivateFrameworks/MediaRemote.framework/Support/mediaremoteagent\n98885     1  0   0.0 01-19:12:10 /usr/libexec/avconferenced\n98895     1  0   0.0 01-19:12:10 /System/Library/PrivateFrameworks/CoreSpeech.framework/corespeechd\n98897     1  0   0.0 01-19:12:10 /Users/sam/.nvm/versions/node/v24.11.1/bin/node\n98899     1  0   0.0 01-19:12:10 /Users/sam/.local/bin/python3\n98900     1  0   0.0 01-19:12:10 /System/Library/Frameworks/InputMethodKit.framework/Resources/imklaunchagent\n98902     1  0   0.0 01-19:12:10 /usr/bin/caffeinate\n98903     1  0   0.0 01-19:12:10 /System/Library/Image Capture/Support/icdd\n98909     1  0   0.0 01-19:12:10 /System/Library/CoreServices/AirPlayUIAgent.app/Contents/MacOS/AirPlayUIAgent\n98910     1  0   0.0 01-19:12:10 /System/Library/CoreServices/diagnostics_agent\n98911     1  0   0.0 01-19:12:10 /System/Library/CoreServices/TextInputMenuAgent.app/Contents/MacOS/TextInputMenuAgent\n98914     1  0   0.0 01-19:12:10 /System/Library/Frameworks/CryptoTokenKit.framework/ctkahp.bundle/Contents/MacOS/ctkahp\n99467     1  0   1.9    15:52:09 /System/Library/PrivateFrameworks/BiomeStreams.framework/Support/BiomeAgent\n"
+    },
+    "host_before": {
+      "load": [
+        4.43896484375,
+        5.74072265625,
+        6.76171875
+      ],
+      "processes": "  PID  PPID NI  %CPU     ELAPSED COMM\n    1     0  0   0.0 19-00:14:05 /sbin/launchd\n  381 23250  0   0.0       07:25 claude\n  555     1  0   0.0 19-00:12:38 /usr/libexec/logd\n  558     1  0   0.0 19-00:12:38 /usr/libexec/UserEventAgent\n  560     1  0   0.0 19-00:12:38 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd\n  561     1  0   0.0 19-00:12:38 /System/Library/PrivateFrameworks/MediaRemote.framework/Support/mediaremoted\n  564     1  0   0.0 19-00:12:38 /usr/sbin/systemstats\n  568     1  0   0.0 19-00:12:38 /usr/libexec/configd\n  570     1  0   0.0 19-00:12:38 /System/Library/CoreServices/powerd.bundle/powerd\n  571     1  0   0.0 19-00:12:38 /usr/libexec/IOMFB_bics_daemon\n  575     1  0   0.0 19-00:12:38 /usr/libexec/remoted\n  579     1  0   0.0 19-00:12:38 /System/Library/PrivateFrameworks/CoreSpeech.framework/corespeechd_system\n  581     1  0   0.0 19-00:12:38 /usr/libexec/watchdogd\n  584     1  0   0.0 19-00:12:38 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mds\n  586     1  0   0.0 19-00:12:38 /usr/libexec/kernelmanagerd\n  587     1  0   0.0 19-00:12:38 /usr/libexec/diskarbitrationd\n  591     1  0   0.0 19-00:12:38 /usr/sbin/syslogd\n  593     1  0   0.0 19-00:12:38 /usr/libexec/thermalmonitord\n  594     1  0   0.0 19-00:12:38 /System/Library/PrivateFrameworks/CoreDuetContext.framework/Resources/contextstored\n  595     1  0   0.0 19-00:12:38 /usr/libexec/xprotectd\n  596     1  0   0.0 19-00:12:38 /usr/libexec/opendirectoryd\n  597     1  0   0.0 19-00:12:38 /System/Library/PrivateFrameworks/ApplePushService.framework/apsd\n  598     1  0   0.0 19-00:12:38 /System/Library/CoreServices/launchservicesd\n  599     1  0   0.0 19-00:12:38 /usr/libexec/timed\n  601     1  0   0.0 19-00:12:38 /usr/sbin/securityd\n  603     1  0   0.0 19-00:12:38 /usr/libexec/locationd\n  606     1  0   0.0 19-00:12:38 autofsd\n  607     1  0   0.0 19-00:12:38 /usr/libexec/dasd\n  611     1  0   0.0 19-00:12:38 /usr/sbin/distnoted\n  614     1  0   0.0 19-00:12:38 /System/Library/CoreServices/logind\n  615     1  0   0.0 19-00:12:38 /System/Library/PrivateFrameworks/GenerationalStorage.framework/Versions/A/Support/revisiond\n  616     1  0   0.0 19-00:12:38 /usr/sbin/KernelEventAgent\n  620     1  0   0.0 19-00:12:38 /usr/sbin/bluetoothd\n  621     1  0   0.0 19-00:12:38 /usr/sbin/notifyd\n  623     1  0   0.0 19-00:12:38 /usr/libexec/corebrightnessd\n  624     1  0   0.0 19-00:12:38 /System/Library/Frameworks/CoreMediaIO.framework/Versions/A/Resources/com.apple.cmio.registerassistantservice\n  630     1  0   0.0 19-00:12:38 /usr/sbin/cfprefsd\n  632     1  0   0.0 19-00:12:38 /usr/libexec/runningboardd\n  659     1  0   0.0 19-00:12:38 /System/Library/CoreServices/coreservicesd\n  669     1  0   0.0 19-00:12:38 /System/Library/PrivateFrameworks/CoreAnalytics.framework/Support/analyticsd\n  678     1  0   0.0 19-00:12:38 /usr/libexec/lsd\n  679     1  0   0.0 19-00:12:38 /usr/sbin/mDNSResponder\n  681     1  0   0.0 19-00:12:38 /usr/libexec/nsurlsessiond\n  683     1  0   0.0 19-00:12:38 /usr/libexec/apfsd\n  687     1  0   0.0 19-00:12:37 /usr/libexec/PowerUIAgent\n  688     1  0   0.1 19-00:12:37 /usr/libexec/clocksyncd\n  691     1  0   0.0 19-00:12:37 /usr/sbin/mDNSResponderHelper\n  695     1  0   0.0 19-00:12:37 /usr/libexec/airportd\n  696     1  0   0.0 19-00:12:37 /usr/libexec/corercd\n  697     1  0   0.0 19-00:12:37 /usr/libexec/symptomsd\n  703     1  0   0.0 19-00:12:37 /usr/libexec/eligibilityd\n  706     1  0   0.0 19-00:12:37 /System/Library/Frameworks/Security.framework/Versions/A/XPCServices/authd.xpc/Contents/MacOS/authd\n  708     1  0   0.0 19-00:12:37 /usr/sbin/distnoted\n  709     1  0   0.0 19-00:12:37 /usr/sbin/distnoted\n  719     1  0   0.0 19-00:12:37 /usr/libexec/syspolicyd\n  724     1  0   0.0 19-00:12:37 /usr/sbin/WirelessRadioManagerd\n  728     1  0   0.0 19-00:12:36 /usr/libexec/ApplicationFirewall/socketfilterfw\n  732     1  0   0.0 19-00:12:36 /System/Library/PrivateFrameworks/BackgroundTaskManagement.framework/Resources/backgroundtaskmanagementd\n  734     1  0   0.0 19-00:12:36 /System/Library/CoreServices/Software Update.app/Contents/Resources/suhelperd\n  737     1  0   0.0 19-00:12:36 /System/Library/DriverExtensions/com.apple.DriverKit-IOUserDockChannelSerial.dext/com.apple.DriverKit-IOUserDockChannelSerial\n  738     1  0   0.1 19-00:12:36 /System/Library/DriverExtensions/com.apple.DriverKit-AppleBCMWLAN.dext/com.apple.DriverKit-AppleBCMWLAN\n  739     1  0   0.2 19-00:12:36 /System/Library/DriverExtensions/com.apple.AppleUserHIDDrivers.dext/com.apple.AppleUserHIDDrivers\n  748     1  0   0.0 19-00:12:36 /usr/sbin/distnoted\n  772     1  0   0.0 19-00:12:36 /usr/sbin/distnoted\n  780     1  0   0.0 19-00:12:36 /usr/libexec/com.apple.cmio.videodriverkithostextension.systemextension/Contents/MacOS/com.apple.cmio.videodriverkithostextension\n  783     1  0   0.0 19-00:12:35 /usr/libexec/cameracaptured\n  785     1  0   0.0 19-00:12:35 /System/Library/Frameworks/CoreMediaIO.framework/Versions/A/Resources/UVCAssistant.systemextension/Contents/MacOS/UVCAssistant\n  787     1  0   0.0 19-00:12:35 /usr/sbin/distnoted\n  798     1  0   0.0 19-00:12:35 /usr/libexec/audiomxd\n  800     1  0   0.0 19-00:12:35 /usr/sbin/BTLEServer\n  801     1  0   0.0 19-00:12:35 /usr/sbin/distnoted\n  802     1  0   0.0 19-00:12:34 /usr/libexec/searchpartyd\n  815   564  0   0.0 19-00:12:20 /usr/sbin/systemstats\n  817     1  0   0.0 19-00:12:20 /System/Library/CoreServices/appleeventsd\n  818     1  0   0.0 19-00:12:20 /usr/sbin/distnoted\n  821     1  0   0.0 19-00:12:19 /opt/homebrew/opt/tailscale/bin/tailscaled\n  825     1  0   0.0 19-00:12:19 /usr/sbin/distnoted\n  828     1  0   0.0 19-00:12:19 /System/Library/DriverExtensions/IOUserBluetoothSerialDriver.dext/IOUserBluetoothSerialDriver\n  838     1  0   0.0 19-00:12:19 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mds_stores\n  839     1  0   0.0 19-00:12:19 /usr/sbin/distnoted\n  867     1  0   0.0 19-00:12:19 /usr/sbin/distnoted\n  868     1  0   0.0 19-00:12:19 /usr/sbin/cfprefsd\n  880     1  0   0.0 19-00:12:19 /usr/sbin/distnoted\n  919     1  0   0.0 19-00:12:18 /System/Library/PrivateFrameworks/Heimdal.framework/Helpers/kdc\n  921     1  0   0.0 19-00:12:18 /usr/sbin/distnoted\n  933     1  0   0.0 19-00:12:18 /usr/libexec/secd\n  952     1  0   0.0 19-00:12:17 /usr/libexec/lsd\n  967     1  0   0.0 19-00:12:17 /System/Library/PrivateFrameworks/SystemMigrationNetwork.framework/Resources/migrationhelper\n  972     1  0   0.0 19-00:12:17 /usr/libexec/languageassetd\n 1024     1  0   0.0 19-00:12:16 /System/Library/Frameworks/CryptoTokenKit.framework/ctkd\n 1027     1  0   0.0 19-00:12:16 /usr/sbin/filecoordinationd\n 1037     1  0   0.0 19-00:12:14 /usr/sbin/distnoted\n 1053     1  0   0.0 19-00:12:13 /usr/sbin/distnoted\n 1071     1  0   0.0 19-00:12:13 /usr/sbin/distnoted\n 1093     1  0   0.0 19-00:12:12 /usr/libexec/nearbyd\n 1113     1  0   0.0 19-00:12:11 /usr/sbin/distnoted\n 1119     1 17   0.0 19-00:12:11 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 1167     1 17   0.0 19-00:12:09 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 1175     1  0   0.0 19-00:12:09 /usr/sbin/distnoted\n 1219     1 17   0.0 19-00:12:07 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 1220     1  0   0.0 19-00:12:07 /usr/sbin/distnoted\n 1254     1 17   0.0 19-00:12:06 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 1262     1  0   0.0 19-00:12:05 /usr/sbin/distnoted\n 1263     1  0   0.0 19-00:12:05 /System/Library/PrivateFrameworks/CoreFP.framework/Versions/A/fairplayd\n 1279     1  0   0.0 19-00:12:05 /usr/sbin/distnoted\n 1305     1  0   0.0 19-00:12:04 /usr/libexec/lsd\n 1307     1  0   0.0 19-00:12:04 /usr/libexec/lsd\n 1309     1  0   0.0 19-00:12:04 /usr/libexec/lsd\n 1366     1  0   0.0 19-00:11:50 /System/Library/CoreServices/SubmitDiagInfo\n 1379     1  0   0.0 01-19:11:15 /System/Library/PrivateFrameworks/People.framework/peopled\n 1402     1  0   0.0 19-00:11:14 /System/Library/CoreServices/CrashReporterSupportHelper\n 1409 36958  0   0.0       06:51 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n 1410 36958  0   0.0       06:51 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n 1416     1  0   0.0 19-00:11:06 /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/CVMServer\n 1417     1  0   0.0    01:45:17 /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/XPCServices/EAUpdaterService.xpc/Contents/MacOS/EAUpdaterService\n 1443  1409  0   0.0       06:51 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n 1482     1  0   0.0 19-00:10:01 /usr/sbin/distnoted\n 1516     1  0   0.0 19-00:09:12 /usr/sbin/distnoted\n 1517     1 17   0.0 19-00:09:11 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 1530     1  0   0.0 19-00:09:11 /usr/libexec/lsd\n 1551     1  0   0.0 19-00:08:48 /usr/sbin/distnoted\n 1552     1 17   0.0 19-00:08:47 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 1555     1  0   0.0 19-00:08:47 /usr/libexec/lsd\n 1784     1  0   0.0 01-19:10:32 /System/Library/PrivateFrameworks/TextInputUIMacHelper.framework/Versions/A/XPCServices/CursorUIViewService.xpc/Contents/MacOS/CursorUIViewService\n 1989     1  0   0.0 18-23:42:13 /usr/sbin/distnoted\n 1992     1  0   0.0 18-23:42:13 /usr/libexec/lsd\n 1998     1 17   0.0 18-23:42:08 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdbulkimport\n 2019     1  0   0.0 18-23:41:26 /usr/sbin/distnoted\n 2312     1  0   0.0 18-23:08:38 /usr/sbin/distnoted\n 2339     1  0   0.0 18-23:08:15 automountd\n 2859     1  0   0.0 18-23:07:38 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/152.0.7977.83/Helpers/browser_crashpad_handler\n 2861     1  0   0.0 18-23:07:38 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/152.0.7977.83/Helpers/browser_crashpad_handler\n 3550     1  0   0.0    12:44:17 /System/Library/PrivateFrameworks/IntelligencePlatformCore.framework/Versions/A/intelligenceplatformd\n 3556     1  0   0.0    12:44:16 /System/Library/PrivateFrameworks/AppStoreDaemon.framework/Support/appstoreagent\n 3939     1  0   0.0    12:43:58 /System/Library/PrivateFrameworks/AppleMediaServices.framework/Resources/amsaccountsd\n 3940     1  0   0.0    12:43:58 /System/Library/PrivateFrameworks/iTunesCloud.framework/Support/itunescloudd\n 3942     1  0   0.0    12:43:57 /usr/libexec/storagekitd\n 3943     1  0   0.0    12:43:57 /usr/libexec/pkd\n 3944     1  0   0.0    12:43:57 /System/Library/PrivateFrameworks/InstallCoordination.framework/Support/installcoordinationd\n 3945     1  0   0.0    12:43:57 /usr/libexec/fskitd\n 3946     1  0   0.0    12:43:57 /System/Library/PrivateFrameworks/CacheDelete.framework/deleted\n 3947     1  0   0.0    12:43:57 /System/Library/PrivateFrameworks/AppStoreDaemon.framework/Versions/A/XPCServices/com.apple.AppStoreDaemon.StorePrivilegedODRService.xpc/Contents/MacOS/com.apple.AppStoreDaemon.StorePrivilegedODRService\n 3948     1  0   0.0    12:43:57 /System/Library/PrivateFrameworks/AppStoreDaemon.framework/Support/appstored\n 3949     1  0   0.0    12:43:57 /System/Library/PrivateFrameworks/CacheDelete.framework/deleted_helper\n 3950     1  0   0.0    12:43:57 /usr/libexec/AssetCache/AssetCache\n 3951     1  0   0.0    12:43:57 /System/Library/Frameworks/QuickLookThumbnailing.framework/Support/com.apple.quicklook.ThumbnailsAgent\n 3952     1  0   0.0    12:43:57 /System/Library/PrivateFrameworks/PackageKit.framework/Resources/system_installd\n 3953     1  0   0.0    12:43:57 /System/Library/PrivateFrameworks/GeoServices.framework/geodMachServiceBridge\n 3954     1  0   0.0    12:43:57 /System/Library/PrivateFrameworks/CloudKitDaemon.framework/Support/cloudd\n 3955     1  0   0.0    12:43:57 /System/Library/PrivateFrameworks/PackageKit.framework/Resources/installd\n 3957     1  0   0.0    12:43:56 /System/Library/PrivateFrameworks/AssetCacheServicesExtensions.framework/XPCServices/AssetCacheTetheratorService.xpc/Contents/MacOS/AssetCacheTetheratorService\n 3958     1  0   0.0    12:43:56 /System/Library/PrivateFrameworks/AppleMediaServicesUI.framework/amsengagementd\n 3959     1  0   0.0    12:43:56 /usr/libexec/promotedcontentd\n 3961     1  0   0.0    12:43:56 /usr/libexec/fairplaydeviceidentityd\n 4030     1  0   0.0    12:43:53 /System/Library/PrivateFrameworks/iCloudDriveService.framework/XPCServices/ContainerMetadataExtractor.xpc/Contents/MacOS/ContainerMetadataExtractor\n 4045     1  0   0.0    15:46:41 /usr/libexec/spotlightknowledged.updater\n 4063     1  0   0.0    12:43:53 /System/Library/PrivateFrameworks/WorkflowKit.framework/XPCServices/ShortcutsViewService.xpc/Contents/MacOS/ShortcutsViewService\n 4084     1  0   0.0    12:43:53 /System/Library/Frameworks/Security.framework/Versions/A/XPCServices/com.apple.CodeSigningHelper.xpc/Contents/MacOS/com.apple.CodeSigningHelper\n 4085     1  0   0.0    12:43:53 /System/Library/PrivateFrameworks/SessionCore.framework/Support/liveactivitiesd\n 4086     1  0   0.0    12:43:53 /System/Library/PrivateFrameworks/ReplicatorCore.framework/Support/replicatord\n 4087     1  0   0.0    12:43:53 /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/XPCServices/com.apple.hiservices-xpcservice.xpc/Contents/MacOS/com.apple.hiservices-xpcservice\n 4088     1  0   0.0    12:43:53 /System/Library/PrivateFrameworks/StatusKit.framework/StatusKitAgent\n 4192 36958  0   0.0    15:46:31 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n 4193 36958  0   0.0    15:46:31 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n 4313  4193  0   0.0    15:46:31 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n 4828     1  0   0.0 01-19:09:52 /System/Library/PrivateFrameworks/PassKitCore.framework/passd\n 4868     1  0   0.0 01-19:09:45 /System/Library/PrivateFrameworks/SiriInference.framework/Versions/A/siriinferenced\n 5119     1  0   0.0    09:33:39 /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\n 5496     1  0   0.0 01-19:09:27 /usr/libexec/spotlightknowledged.importer\n 5851     1  0   0.0    09:33:05 /usr/libexec/feedbackd\n 5966     1  0   0.0    09:32:59 /usr/libexec/assessmentagent\n 5967     1  0   0.0    09:32:58 /System/Library/PrivateFrameworks/EmailDaemon.framework/Versions/A/maild\n 6097     1  0   0.0       03:04 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared\n 6098     1  0   0.0       03:04 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared\n 6468     1  0   0.0    11:08:56 /usr/libexec/trustd\n 7051     1  0   0.0 18-15:59:51 /System/Library/CoreServices/sharedfilelistd\n 7336     1  0   0.0    19:06:48 /System/Library/PrivateFrameworks/HearingCore.framework/heard\n 7683     1  0   0.0 18-15:59:44 /System/Library/PrivateFrameworks/SystemMigrationNetwork.framework/Resources/migrationhelper\n 7688     1  0   0.0 18-15:59:44 /usr/libexec/languageassetd\n 8894 16045  0   0.0       00:47 sleep\n 9246 20614  5   0.0       00:13 sleep\n 9251 20616  5   0.0       00:12 sleep\n 9257 20615  5   0.0       00:10 sleep\n 9594 36958  0   0.0    04:45:05 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n 9595 36958  0   0.0    04:45:05 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n 9625  9595  0   0.0    04:45:05 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n 9654     1  0   0.0       00:05 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdworker_shared\n 9655 64666 10   0.0       00:02 sleep\n 9657 33152 10   0.0       00:00 ps\n11983     1  0   0.0 01-19:05:32 /System/Cryptexes/App/usr/libexec/PasswordBreachAgent\n12896     1  0   0.0 10-19:25:34 keyboxd\n13168 36958  0   0.0    03:08:27 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n13169 36958  0   0.0    03:08:27 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n13200 13169  0   0.0    03:08:27 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n13538     1  0   0.0    12:35:07 /System/Library/PrivateFrameworks/UsageTracking.framework/Versions/A/UsageTrackingAgent\n13539     1  0   0.0    12:35:07 /System/Library/PrivateFrameworks/CoreRecents.framework/Versions/A/Support/recentsd\n13866     1  0   0.0    12:34:56 /usr/libexec/siriknowledged\n13867     1  0   0.0    12:34:56 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n13868     1  0   0.0    12:34:56 /usr/libexec/assetsubscriptiond\n14664 36958  0   0.0    18:53:53 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n14665 36958  0   0.0    18:53:53 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n14689 14664  0   0.0    18:53:52 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n16045     1  0   0.0    18:51:18 bash\n18883     1  0   0.0    07:43:26 /System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTDecoderXPCService.xpc/Contents/MacOS/VTDecoderXPCService\n18885     1  0   0.0    07:43:26 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n18948     1  0   0.0    07:43:24 /System/Library/ExtensionKit/Extensions/TGOnDeviceInferenceProviderService.appex/Contents/MacOS/TGOnDeviceInferenceProviderService\n19081     1  0   0.0    07:43:18 /System/Library/Frameworks/AudioToolbox.framework/XPCServices/com.apple.audio.SandboxHelper.xpc/Contents/MacOS/com.apple.audio.SandboxHelper\n19464 36958  0   0.0    18:48:09 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n19465 36958  0   0.0    18:48:09 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n19488 19464  0   0.0    18:48:09 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n19571     1  0   0.0    07:42:45 /usr/libexec/dirhelper\n19720     1  0   0.0    07:42:34 /System/Library/ExtensionKit/Extensions/GenerativeExperiencesSafetyInferenceProvider.appex/Contents/MacOS/GenerativeExperiencesSafetyInferenceProvider\n20614     1  5   0.0 02-23:03:18 /bin/bash\n20615     1  5   0.0 02-23:03:18 /bin/bash\n20616     1  5   0.0 02-23:03:18 /bin/bash\n22313     1  0   0.0    09:15:47 /usr/libexec/appleaccountd\n22506     1  0   0.0    07:39:44 /usr/libexec/keyboardservicesd\n22969     1  0   0.0    20:51:20 /Applications/T3 Code (Nightly).app/Contents/MacOS/T3 Code (Nightly)\n22981 22969  0   0.5    20:51:18 /Applications/T3 Code (Nightly).app/Contents/Frameworks/T3 Code (Nightly) Helper.app/Contents/MacOS/T3 Code (Nightly) Helper\n22982 22969  0   0.0    20:51:18 /Applications/T3 Code (Nightly).app/Contents/Frameworks/T3 Code (Nightly) Helper.app/Contents/MacOS/T3 Code (Nightly) Helper\n23058     1  0   0.0    15:21:46 /System/Library/CoreServices/RemoteManagement/SSMenuAgent.app/Contents/MacOS/SSMenuAgent\n23249 22969  0   1.0    20:51:16 /Applications/T3 Code (Nightly).app/Contents/Frameworks/T3 Code (Nightly) Helper (Renderer).app/Contents/MacOS/T3 Code (Nightly) Helper (Renderer)\n23250 22969  0   0.4    20:51:16 /Applications/T3 Code (Nightly).app/Contents/MacOS/T3 Code (Nightly)\n23526 23250  0   0.0    20:51:13 /Applications/T3 Code (Nightly).app/Contents/Resources/resource-monitor/t3-resource-monitor\n23861 23250  0   0.0    20:51:12 /Users/sam/.t3/tools/cloudflared/2026.5.2/darwin-arm64/cloudflared\n24338     1  0   0.0    18:40:49 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mdwrite\n24343     1  0   0.0    18:40:48 /System/Library/CoreServices/UserNotificationCenter.app/Contents/MacOS/UserNotificationCenter\n24474     1  0   0.0    20:51:11 /System/Library/PrivateFrameworks/SafariPlatformSupport.framework/Versions/A/XPCServices/com.apple.SafariPlatformSupport.Helper.xpc/Contents/MacOS/com.apple.SafariPlatformSupport.Helper\n24690 36958  0   0.0    01:22:41 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n24691 36958  0   0.0    01:22:41 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n24720 24690  0   0.0    01:22:41 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n24924 36958  0   0.0    06:01:03 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n24925 36958  0   0.0    06:01:03 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n24963 24924  0   0.0    06:01:03 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n25739     1  0   0.0    02:56:42 /usr/sbin/spindump\n25755 36958  0   0.0    04:30:08 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n25756 36958  0   0.0    04:30:08 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n25773 25756  0   0.0    04:30:08 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n26425 36958  0   0.0    07:37:18 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n26426 36958  0   0.0    07:37:18 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n26463 26425  0   0.0    07:37:18 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n26663     1  0   0.0 01-08:57:42 /usr/libexec/containermanagerd\n27116     1  0   0.0 01-08:56:56 /System/Library/PrivateFrameworks/TCC.framework/Support/tccd\n27119     1  0   0.0 01-08:56:56 /System/Library/PrivateFrameworks/TCC.framework/Support/tccd\n27324 36958  0   0.0    07:36:56 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n27325 36958  0   0.0    07:36:56 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n27365 27325  0   0.0    07:36:56 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n29373     1  0   0.0    13:48:03 /usr/libexec/mobileassetd\n29987     1  0   0.0    13:47:20 /System/Library/PrivateFrameworks/HomeKitDaemon.framework/Support/homed\n30198     1  0   0.0    13:47:11 /usr/libexec/containermanagerd_system\n30420 36958  0   0.0    02:52:14 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n30421 36958  0   0.0    02:52:14 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n30449 30421  0   0.0    02:52:14 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n30496     1  0   0.0    13:46:47 /usr/libexec/mlhostd\n30497     1  0   0.0    13:46:47 cloudphotod\n30499     1  0   0.0    13:46:47 /System/Library/PrivateFrameworks/VoiceShortcuts.framework/Versions/A/Support/siriactionsd\n30502     1  0   0.0    13:46:47 /System/Library/PrivateFrameworks/iCloudDriveCore.framework/Versions/A/Support/bird\n30505     1  0   0.0    13:46:46 /System/Library/PrivateFrameworks/PhotoLibraryServices.framework/Versions/A/Support/photolibraryd\n30506     1  0   0.0    13:46:46 /usr/libexec/secinitd\n30507     1  0   0.0    13:46:46 /System/Library/CoreServices/ScopedBookmarkAgent\n30521     1  0   0.0    13:46:45 /System/Library/Frameworks/ManagedSettings.framework/Versions/A/ManagedSettingsAgent\n30530     1  0   0.0    13:46:44 /usr/libexec/triald_system\n30538     1  0   0.0    13:46:44 /System/Library/PrivateFrameworks/GeoServices.framework/Versions/A/XPCServices/com.apple.geod.xpc/Contents/MacOS/com.apple.geod\n30541     1  0   0.0    13:46:43 /System/Library/PrivateFrameworks/GeoServices.framework/Versions/A/XPCServices/com.apple.geod.xpc/Contents/MacOS/com.apple.geod\n30542     1  0   0.0    13:46:43 /System/Library/PrivateFrameworks/GeoServices.framework/Versions/A/XPCServices/com.apple.geod.xpc/Contents/MacOS/com.apple.geod\n30558     1  0   0.0    13:46:43 /System/Library/PrivateFrameworks/AuthKit.framework/Versions/A/Support/akd\n30561     1  0   0.0    13:46:43 /System/Library/PrivateFrameworks/CoreADI.framework/adid\n30564     1  0   0.0    13:46:43 /System/Library/Frameworks/CryptoTokenKit.framework/ctkd\n30565     1  0   0.0    13:46:43 /System/Library/Frameworks/LocalAuthentication.framework/Support/coreauthd\n30711     1  0   0.3    20:48:09 /Applications/ChatGPT.app/Contents/MacOS/ChatGPT\n30764     1  0   0.0    20:48:07 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/browser_crashpad_handler\n30766     1  0   0.0    20:48:07 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/browser_crashpad_handler\n30856 30711  0   0.0    20:48:07 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)\n30857 30711  0   0.1    20:48:07 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)\n30865 30711  0   0.0    20:48:07 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)\n30990     1  0   0.0    13:46:36 /System/Library/CoreServices/TimeMachine/backupd\n31073     1  0   0.0 18-22:45:55 /usr/libexec/taskgated\n31188 30711  0   0.0    20:48:03 /Applications/ChatGPT.app/Contents/Resources/native/bare-modifier-monitor\n31191 30711  0   0.0    20:48:03 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31192 30711  0   0.0    20:48:03 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31193 30711  0   0.0    20:48:03 /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex\n31230 30711  0   0.0    20:47:58 /Users/sam/.codex/computer-use/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService\n31232     1  0   0.0    20:47:58 /System/Library/PrivateFrameworks/SafariPlatformSupport.framework/Versions/A/XPCServices/com.apple.SafariPlatformSupport.Helper.xpc/Contents/MacOS/com.apple.SafariPlatformSupport.Helper\n31253 30711  0   0.0    20:47:57 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31333     1  0   0.0    13:46:07 /usr/libexec/wifip2pd\n31362     1  0   0.0 06-05:35:32 /System/Library/CoreServices/Software Update.app/Contents/Resources/softwareupdated\n31404     1  0   0.0    13:46:06 /System/Library/PrivateFrameworks/PowerLog.framework/Versions/A/XPCServices/PerfPowerTelemetryClientRegistrationService.xpc/Contents/MacOS/PerfPowerTelemetryClientRegistrationService\n31420 30711  0   0.0    20:47:53 /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex\n31437     1  0   0.0    13:46:05 /usr/libexec/sysmond\n31459     1  0   0.0    13:46:04 /usr/libexec/AirPlayXPCHelper\n31470 30711  0   0.0    20:47:53 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31471     1  0   0.0    13:46:03 /usr/libexec/ospredictiond\n31515 30711  0   0.0    20:47:52 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31557 30711  0   0.0    20:47:51 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31570     1  0   0.0    13:45:43 /System/Library/PrivateFrameworks/CloudSubscriptionFeatures.framework/FeatureAccessAgent\n31571     1  0   0.0    13:45:43 /System/Library/PrivateFrameworks/CoreFollowUp.framework/Versions/A/Support/followupd\n31572     1  0   0.0    13:45:43 /System/Library/PrivateFrameworks/CoreSuggestions.framework/Versions/A/Support/suggestd\n31573     1  0   0.0    13:45:43 /System/Library/PrivateFrameworks/SyncedDefaults.framework/Support/syncdefaultsd\n31574     1  0   0.0    13:45:42 /System/Library/Frameworks/Contacts.framework/Support/contactsd\n31647 31193  0   0.0    20:47:51 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n31648 31193  0   0.0    20:47:51 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n31652 31193  0   0.0    20:47:51 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n31666 30711  0   0.0    20:47:51 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)\n31669 31648  0   0.0    20:47:51 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n31691     1 10  99.3    07:33:56 .venv/bin/python\n31697     1 10  98.8    07:33:56 .venv/bin/python\n31721     1  0   0.0    13:45:39 /System/Library/PrivateFrameworks/CalendarDaemon.framework/Support/calaccessd\n31722     1  0   0.0    13:45:39 /System/Library/CoreServices/CoreLocationAgent.app/Contents/MacOS/CoreLocationAgent\n31864     1  0   0.0    13:45:38 /System/Library/PrivateFrameworks/FamilyCircle.framework/Versions/A/Resources/familycircled\n31967     1  0   0.0    13:45:35 /usr/libexec/sandboxd\n32055 31193  0   0.0    20:47:48 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n32061 31193  0   0.0    20:47:47 /Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex-code-mode-host\n32530     1  0   0.0    13:44:50 /System/Library/PrivateFrameworks/ScreenTimeCore.framework/Versions/A/ScreenTimeAgent\n32531     1  0   0.0    13:44:49 /usr/libexec/dmd\n32532     1  0   0.0    13:44:49 /System/Library/PrivateFrameworks/ScreenTimeSettingsFoundation.framework/Versions/A/ScreenTimeSettingsAgent\n32964     1  0   0.0    13:44:30 /usr/libexec/logd_helper\n33107     1  0   0.0    12:17:43 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33112     1  0   0.0    12:17:43 /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\n33113     1  0   0.0    12:17:43 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33114     1  0   0.0    12:17:43 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33120     1  0   0.0    12:17:40 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33152     1 10  96.7    04:23:40 .venv/bin/python\n33194     1  0   0.0    12:17:33 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33232     1  0   0.0    13:44:08 /System/Library/PrivateFrameworks/CoreAnalytics.framework/Support/analyticsagent\n33247     1  0   0.0    15:13:36 /System/Library/PrivateFrameworks/BiomeStreams.framework/Support/biomed\n33539 30711  0   0.0    20:45:07 /Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/154.0.8037.98/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)\n33613     1  0   0.0    13:43:51 /System/Library/PrivateFrameworks/CloudTelemetry.framework/Support/cloudtelemetryd\n33773     1  0   0.0    12:16:58 /System/Library/PrivateFrameworks/MessagesBlastDoorSupport.framework/Versions/A/XPCServices/MessagesBlastDoorService.xpc/Contents/MacOS/MessagesBlastDoorService\n33776     1  0   0.0    12:16:57 /usr/libexec/textunderstandingd\n33777     1  0   0.0    12:16:57 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33778     1  0   0.0    12:16:57 /System/Library/PrivateFrameworks/SocialLayer.framework/sociallayerd.app/Contents/MacOS/sociallayerd\n33779     1  0   0.0    12:16:57 /System/Applications/Messages.app/Contents/PlugIns/Messages Assistant Extension.appex/Contents/MacOS/Messages Assistant Extension\n33780     1  0   0.0    12:16:57 /System/Library/PrivateFrameworks/MediaAnalysis.framework/Versions/A/mediaanalysisd\n33781     1  0   0.0    12:16:57 /System/Library/PrivateFrameworks/ToneLibrary.framework/Versions/A/XPCServices/com.apple.tonelibraryd.xpc/Contents/MacOS/com.apple.tonelibraryd\n33782     1  0   0.0    12:16:57 /System/Library/Frameworks/Intents.framework/XPCServices/intents_helper.xpc/Contents/MacOS/intents_helper\n33783     1  0   0.0    12:16:57 /System/Library/PrivateFrameworks/CoreEmbeddedSpeechRecognition.framework/speechmaintenanced\n33784     1  0   0.0    12:16:57 /usr/libexec/hybridsearchd\n33786     1  0   0.0    12:16:57 /System/Library/Frameworks/Contacts.framework/Support/postersyncd\n33787     1  0   0.0    12:16:56 /System/Library/CoreServices/ReportCrash\n33855     1  0   0.0    12:16:56 /System/Library/PrivateFrameworks/XprotectFramework.framework/Versions/A/XPCServices/XProtectBridgeService.xpc/Contents/MacOS/XProtectBridgeService\n33876     1  0   0.0    12:16:56 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33908     1  0   0.0    12:16:56 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n33910     1  0   0.0    12:16:56 /usr/libexec/textcomposerd\n33911     1  0   0.0    12:16:56 /System/Library/PrivateFrameworks/ContextKit.framework/Versions/A/XPCServices/ContextService.xpc/Contents/MacOS/ContextService\n33917     1  0   0.0    12:16:54 /System/Library/Frameworks/Intents.framework/XPCServices/intents_helper.xpc/Contents/MacOS/intents_helper\n34085     1  0   0.0    15:12:52 /usr/libexec/aned\n34358     1  0   0.0    15:12:37 /System/Library/PrivateFrameworks/DoNotDisturbServer.framework/Support/donotdisturbd\n34943     1  0   0.0 16-17:55:51 node\n34948 34943  0   0.0 16-17:55:51 /Users/sam/.nvm/versions/node/v24.19.0/bin/node\n34950 34948  0   0.0 16-17:55:51 codex\n35377 34950  0   0.0 16-17:55:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n35378 34950  0   0.0 16-17:55:11 /Users/sam/.nvm/versions/node/v24.19.0/bin/node\n36162     1  0   0.0    15:11:13 /usr/libexec/knowledge-agent\n36342     1  0   0.0    01:11:50 /usr/libexec/applekeystored\n36353 34950  0   0.0 16-17:55:00 /Users/sam/.codex/packages/standalone/releases/0.154.0-aarch64-apple-darwin/bin/codex-code-mode-host\n36718     1  0   0.0 01-04:05:21 /System/Library/CoreServices/audioaccessoryd\n36809 57822  0   0.0    20:44:23 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n36810 36809  0   0.0    20:44:23 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n36816 34950  0   0.0    20:44:21 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n36817 36816  0   0.0    20:44:21 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n36907     1  0   0.0    13:42:22 /System/Library/Frameworks/CoreTelephony.framework/Support/CommCenter\n36908     1  0   0.0    13:42:22 /usr/libexec/nehelper\n36909     1  0   0.0    13:42:22 /System/Library/PrivateFrameworks/TelephonyUtilities.framework/callservicesd\n36915     1  0   0.0    13:42:21 /System/Library/CoreServices/UIKitSystem.app/Contents/MacOS/UIKitSystem\n36920     1  0   0.0    13:42:21 /usr/libexec/neagent\n36942     1  0   0.0    13:42:20 /usr/libexec/rtcreportingd\n36958 23250  0   0.0    20:44:16 codex\n37085     1  0   0.0    13:42:16 /System/Library/PrivateFrameworks/ModelCatalogRuntime.framework/Versions/A/modelcatalogd\n37208 36958  0   0.0    20:44:15 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n37209 36958  0   0.0    20:44:15 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n37216 37209  0   0.0    20:44:15 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n37420     1  0   0.0    01:10:47 /System/Library/PrivateFrameworks/ProtectedCloudStorage.framework/Helpers/ProtectedCloudKeySyncing\n37659     1  0   0.0    13:41:48 /usr/libexec/securityd_system\n37723     1  0   0.0 17-21:53:54 /usr/sbin/distnoted\n37963 36958  0   0.0    04:19:32 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n37964 36958  0   0.0    04:19:32 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n37994 37964  0   0.0    04:19:32 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n38207     1  0   0.0    13:41:21 /System/Library/PrivateFrameworks/IMDPersistence.framework/XPCServices/IMDPersistenceAgent.xpc/Contents/MacOS/IMDPersistenceAgent\n38208     1  0   0.0    13:41:17 /System/Library/CoreServices/TimeMachine/backupd-helper\n38209     1  0   0.0    13:41:17 /usr/libexec/seputil\n38210     1  0   0.0    13:41:17 /usr/libexec/online-auth-agent\n38563     1  0   0.0    18:12:04 /usr/libexec/usermanagerd\n38713 36958  0   0.0    20:44:03 /Users/sam/.codex/packages/standalone/releases/0.160.0-aarch64-apple-darwin/bin/codex-code-mode-host\n38765     1  0   0.0 01-14:01:47 /usr/bin/ssh-agent\n38775 36958  0   0.0    13:40:43 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n38776 36958  0   0.0    13:40:43 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n38854 38776  0   0.0    13:40:43 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n39699     1  0   0.0    13:40:36 /System/Library/CoreServices/CoreServicesUIAgent.app/Contents/MacOS/CoreServicesUIAgent\n40107     1  0   0.0    12:12:22 /System/Library/PrivateFrameworks/CoreLSKD.framework/Versions/A/lskdd\n40109     1  0   0.0    12:12:22 /usr/libexec/mmaintenanced\n40110     1  0   0.0    12:12:22 /usr/libexec/fpassetmanagerd\n40199     1  0   0.0    12:12:05 /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/Support/accessoryupdaterd\n40200     1  0   0.0    12:12:05 /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/XPCServices/UARPUpdaterServiceLegacyAudio.xpc/Contents/MacOS/UARPUpdaterServiceLegacyAudio\n40201     1  0   0.0    12:12:05 /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/XPCServices/UARPUpdaterServiceDisplay.xpc/Contents/MacOS/UARPUpdaterServiceDisplay\n40302     1  0   0.0    12:12:01 /usr/libexec/tzd\n40303     1  0   0.0    12:12:01 /System/Library/PrivateFrameworks/XprotectFramework.framework/Versions/A/XPCServices/XProtectUpdateService.xpc/Contents/MacOS/XProtectUpdateService\n40374     1  0   0.0    12:12:00 /System/Library/PrivateFrameworks/AssetCacheServices.framework/Versions/A/XPCServices/AssetCacheLocatorService.xpc/Contents/MacOS/AssetCacheLocatorService\n40657 36958  0   0.0    20:41:23 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n40658 36958  0   0.0    20:41:23 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n40685 40657  0   0.0    20:41:23 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n41542 36958  0   0.0    20:41:12 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n41543 36958  0   0.0    20:41:12 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n41548 41542  0   0.0    20:41:12 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n42128     1  0   0.0    13:39:55 /usr/libexec/amfid\n43135     1  0   0.0    13:39:31 /usr/libexec/searchpartyuseragent\n43136     1  0   0.0    13:39:30 /usr/libexec/findmylocateagent\n43141     1  0   0.0    13:39:30 /usr/libexec/findmydevice-user-agent\n43142     1  0   0.0    13:39:30 /System/Library/PrivateFrameworks/SystemStatusServer.framework/Support/systemstatusd\n43155     1  0   0.0    13:39:29 /System/Library/PrivateFrameworks/IDSBlastDoorSupport.framework/Versions/A/XPCServices/IDSBlastDoorService.xpc/Contents/MacOS/IDSBlastDoorService\n43919     1  0   0.0    13:38:48 /System/Library/PrivateFrameworks/XprotectFramework.framework/Versions/A/XPCServices/XprotectService.xpc/Contents/MacOS/XprotectService\n43920     1  0   0.0    13:38:47 /System/Library/CoreServices/ReportCrash\n43923     1  0   0.0    13:38:47 /System/Library/PrivateFrameworks/CoreSymbolication.framework/coresymbolicationd\n44044 36958  0   0.0    13:38:44 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n44045 36958  0   0.0    13:38:44 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n44083 44044  0   0.0    13:38:44 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n45629     1  0   0.0 01-12:03:08 /usr/local/bin/cloudflared\n47228     1  0   0.0    13:36:43 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/DictionaryServices.framework/Versions/A/XPCServices/com.apple.DictionaryServiceHelper.xpc/Contents/MacOS/com.apple.DictionaryServiceHelper\n47229     1  0   0.0    13:36:43 /System/Library/PrivateFrameworks/SafariSafeBrowsing.framework/com.apple.Safari.SafeBrowsing.Service\n47230     1  0   0.0    13:36:43 /usr/libexec/routined\n47231     1  0   0.0    13:36:43 /usr/libexec/networkserviceproxy\n47288     1  0   0.0    12:05:25 /usr/sbin/systemsoundserverd\n47289     1  0   0.0    12:05:25 /usr/libexec/audioanalyticsd\n47290     1  0   0.0    12:05:25 /System/Library/Frameworks/AudioToolbox.framework/AudioComponentRegistrar\n47291     1  0   0.0    12:05:25 /System/Library/Frameworks/AudioToolbox.framework/XPCServices/com.apple.audio.SandboxHelper.xpc/Contents/MacOS/com.apple.audio.SandboxHelper\n47337 36958  0   0.0    05:40:04 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n47338 36958  0   0.0    05:40:04 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n47366 47337  0   0.0    05:40:04 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n47815 36958  0   0.0    10:28:03 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n47816 36958  0   0.0    10:28:03 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n47854 47815  0   0.0    10:28:03 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n48796 57203  5   0.0       59:09 sleep\n49191     1  0   0.0    13:35:04 /System/Library/PrivateFrameworks/Stickers.framework/Support/stickersd\n49192     1  0   0.0    13:35:04 /System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTDecoderXPCService.xpc/Contents/MacOS/VTDecoderXPCService\n49194     1  0   0.0    13:35:03 /usr/libexec/modelmanagerd\n49201     1  0   0.0    13:35:03 /System/Library/ExtensionKit/Extensions/TGOnDeviceInferenceProviderService.appex/Contents/MacOS/TGOnDeviceInferenceProviderService\n51342 36958  0   0.0    02:32:27 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n51343 36958  0   0.0    02:32:27 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n51383 51342  0   0.0    02:32:27 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n52373     1  0   0.0    12:00:04 /System/Library/PrivateFrameworks/TrialServer.framework/Versions/A/XPCServices/TrialArchivingService.xpc/Contents/MacOS/TrialArchivingService\n53250     1  0   0.0    11:59:19 /System/Library/PrivateFrameworks/GenerativeExperiencesRuntime.framework/Versions/A/generativeexperiencesd\n53983 36958  0   0.0    04:04:56 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n53984 36958  0   0.0    04:04:56 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n54010 53983  0   0.0    04:04:56 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n54022     1  0   0.0    11:58:32 /System/Library/PrivateFrameworks/SoftwareUpdate.framework/Resources/SoftwareUpdateNotificationManager.app/Contents/MacOS/SoftwareUpdateNotificationManager\n54023     1  0   0.0    11:58:32 /System/Library/PrivateFrameworks/Ecosystem.framework/Support/ecosystemd\n54024     1  0   0.0    11:58:32 /System/Library/PrivateFrameworks/UIFoundation.framework/Versions/A/XPCServices/nsattributedstringagent.xpc/Contents/MacOS/nsattributedstringagent\n54037     1  0   0.0    11:58:32 /System/Library/Frameworks/MediaAccessibility.framework/Versions/A/XPCServices/com.apple.accessibility.mediaaccessibilityd.xpc/Contents/MacOS/com.apple.accessibility.mediaaccessibilityd\n54040     1  0   0.0    11:58:31 /System/Library/Frameworks/AudioToolbox.framework/AudioComponentRegistrar\n54046     1  0   0.0    11:58:31 /usr/libexec/smd\n54047     1  0   0.0    11:58:30 /System/Library/CoreServices/diagnosticservicesd\n54239     1  0   0.0    07:11:02 /System/Library/PrivateFrameworks/SiriTTSService.framework/sirittsd\n54240     1  0   0.0    07:11:02 /System/Library/PrivateFrameworks/AXAssetLoader.framework/Support/axassetsd\n54241     1  0   0.0    07:11:01 /System/Library/PrivateFrameworks/FaceTimeMessageStore.framework/facetimemessagestored\n54243     1  0   0.0    07:11:01 /System/Library/PrivateFrameworks/IntlPreferences.framework/Support/localizationswitcherd\n54245     1  0   0.0    07:11:01 /usr/libexec/sysdiagnosed\n54246     1  0   0.0    07:11:01 /usr/libexec/symptomsd-diag\n54320     1  0   0.0    07:11:00 /System/Library/PrivateFrameworks/Categories.framework/Versions/A/XPCServices/CategoriesService.xpc/Contents/MacOS/CategoriesService\n54321     1  0   0.0    07:11:00 /usr/libexec/MTLAssetUpgraderD\n54984     1  0   0.0    07:10:27 /System/Library/PrivateFrameworks/CallHistory.framework/Support/CallHistorySyncHelper\n55263     1  0   0.0    07:10:01 /System/Library/PrivateFrameworks/AssistantServices.framework/Versions/A/XPCServices/media-indexer.xpc/Contents/MacOS/media-indexer\n55265     1  0   0.0    07:10:01 /System/Library/PrivateFrameworks/AMPLibrary.framework/Versions/A/Support/AMPLibraryAgent\n55336     1  0   0.0    07:10:00 /System/Library/PrivateFrameworks/PodcastServices.framework/XPCServices/PodcastContentService.xpc/Contents/MacOS/PodcastContentService\n55337     1  0   0.0    07:10:00 /System/Library/PrivateFrameworks/BookKit.framework/Versions/A/XPCServices/com.apple.BKAgentService.xpc/Contents/MacOS/com.apple.BKAgentService\n55338     1  0   0.0    07:10:00 /System/Library/PrivateFrameworks/AMPLibrary.framework/Versions/A/Support/AMPArtworkAgent\n55530     1  0   0.0       52:27 /System/Library/PrivateFrameworks/AppSSO.framework/Support/AppSSOAgent.app/Contents/MacOS/AppSSOAgent\n55531     1  0   0.0       52:27 /usr/libexec/nesessionmanager\n55532     1  0   0.0       52:27 /System/Library/Frameworks/SystemExtensions.framework/Versions/A/Helpers/sysextd\n55533     1  0   0.0       52:27 /System/Library/Frameworks/GSS.framework/Helpers/GSSCred\n55534     1  0   0.0       52:27 /System/Library/PrivateFrameworks/AppSSO.framework/Support/AppSSODaemon\n55535     1  0   0.0       52:27 /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/XPCServices/com.apple.hiservices-xpcservice.xpc/Contents/MacOS/com.apple.hiservices-xpcservice\n55848     1  0   0.0    13:28:07 /System/Library/PrivateFrameworks/SuggestedImage.framework/Support/imageplaygroundd\n55849     1  0   0.0    13:28:07 /System/Library/PrivateFrameworks/PhotoAnalysis.framework/Versions/A/Support/photoanalysisd\n55912     1  0   0.0    13:28:07 /System/Library/PrivateFrameworks/IntelligencePlatformCompute.framework/Versions/A/XPCServices/IntelligencePlatformComputeService.xpc/Contents/MacOS/IntelligencePlatformComputeService\n57150     1  0   0.0 18-11:54:28 /usr/sbin/distnoted\n57203     1  5   0.0 05-23:01:42 /bin/bash\n57363     1  0   0.0    13:26:41 /usr/libexec/countryd\n57815     1  0   0.0 16-17:33:19 node\n57820 57815  0   0.0 16-17:33:19 /Users/sam/.nvm/versions/node/v24.19.0/bin/node\n57822 57820  0   0.0 16-17:33:19 codex\n58616     1  0   0.0    07:06:44 /usr/libexec/swcd\n59928     1  0   0.0    07:05:21 /System/Library/CoreServices/EscrowSecurityAlert.app/Contents/MacOS/EscrowSecurityAlert\n60085     1  0   0.0    07:05:16 /System/Library/PrivateFrameworks/OnDeviceStorage.framework/Support/amsondevicestoraged\n60086     1  0   0.0    07:05:16 /System/Library/PrivateFrameworks/ModelCatalogRuntime.framework/Versions/A/ModelCatalogAgent\n60908     1  0   0.0 18-22:14:06 /usr/libexec/gamepolicyd\n61919     1  0   0.0    13:22:15 /System/Library/PrivateFrameworks/AssetCacheServices.framework/Versions/A/XPCServices/AssetCacheLocatorService.xpc/Contents/MacOS/AssetCacheLocatorService\n63001 36958  0   0.0    17:15:27 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n63002 36958  0   0.0    17:15:27 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n63032 63002  0   0.0    17:15:27 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n63251 36958  0   0.0    13:21:30 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n63252 36958  0   0.0    13:21:30 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n63277 63252  0   0.0    13:21:30 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n63487 36958  0   0.0    08:35:12 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n63488 36958  0   0.0    08:35:12 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n63526 63487  0   0.0    08:35:12 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n63661     1  0   0.0 05-19:56:01 /System/Library/Frameworks/CryptoTokenKit.framework/ctkd\n63884     1  0   0.0    03:55:47 /System/iOSSupport/System/Library/PrivateFrameworks/HomeEnergyDaemon.framework/Support/homeenergyd\n64317     1 10  99.7    07:00:53 .venv/bin/python\n64511     1  0   0.0 01-13:40:21 caffeinate\n64666     1 10   0.0    07:00:40 bash\n64982     1  0   0.0    07:00:20 /usr/libexec/mobilerepaird\n64983     1  0   0.0    07:00:20 /usr/libexec/corerepaird\n64984     1  0   0.0    07:00:20 /System/Library/PrivateFrameworks/AppleDeviceQuerySupport.framework/Versions/A/XPCServices/AppleDeviceQueryService.xpc/Contents/MacOS/AppleDeviceQueryService\n64986     1  0   0.0    07:00:20 /usr/libexec/nfcd\n64987     1  0   0.0    07:00:20 /System/Library/PrivateFrameworks/NearFieldPrivateServices.framework/Versions/A/XPCServices/NFStorageServer.xpc/Contents/MacOS/NFStorageServer\n65335     1  0   0.0    11:46:42 /usr/sbin/cfprefsd\n65347     1  0   0.0    11:46:38 /System/Library/PrivateFrameworks/IMTranscoding.framework/XPCServices/IMTranscoderAgent.xpc/Contents/MacOS/IMTranscoderAgent\n65348     1  0   0.0    11:46:38 /System/Library/Frameworks/AudioToolbox.framework/XPCServices/com.apple.audio.SandboxHelper.xpc/Contents/MacOS/com.apple.audio.SandboxHelper\n65349     1  0   0.0    11:46:38 /System/Library/PrivateFrameworks/MessagesBlastDoorSupport.framework/Versions/A/XPCServices/MessagesBlastDoorService.xpc/Contents/MacOS/MessagesBlastDoorService\n65350     1  0   0.0    11:46:38 /System/Library/PrivateFrameworks/MessagesBlastDoorSupport.framework/Versions/A/XPCServices/UnknownSendersBlastDoorService.xpc/Contents/MacOS/UnknownSendersBlastDoorService\n65351     1  0   0.0    11:46:38 /System/Library/PrivateFrameworks/MessagesEscrow.framework/Daemon/messagesescrowd.xpc/Contents/MacOS/messagesescrowd\n65800     1  0   0.0    10:11:13 /usr/libexec/textcontextd\n65806     1  0   0.0    10:11:13 /System/Library/PrivateFrameworks/MediaConversionService.framework/Versions/A/XPCServices/com.apple.photos.ImageConversionService.xpc/Contents/MacOS/com.apple.photos.ImageConversionService\n65810     1  0   0.0    10:11:13 /System/Library/Frameworks/AudioToolbox.framework/XPCServices/com.apple.audio.SandboxHelper.xpc/Contents/MacOS/com.apple.audio.SandboxHelper\n65813     1  0   0.0    10:11:13 /System/Library/PrivateFrameworks/MessagesBlastDoorSupport.framework/Versions/A/XPCServices/HubbleBlastDoorService.xpc/Contents/MacOS/HubbleBlastDoorService\n66018     1  0   0.0    13:19:50 /System/Library/CoreServices/osanalyticshelper\n66027 36958  0   0.0    05:22:00 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n66028 36958  0   0.0    05:22:00 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n66053 66027  0   0.0    05:22:00 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n66823     1  0   0.0    11:45:19 /System/Library/Frameworks/ManagedAppDistribution.framework/Support/managedappdistributiond\n66871     1  0   0.7 05-22:58:56 adb\n67000     1  0   0.0    13:18:47 /usr/libexec/coreduetd\n67261     1  0   0.0    13:18:24 /usr/libexec/peakpowermanagerd\n67725     1  0   0.0    13:17:57 /System/Library/PrivateFrameworks/CommerceKit.framework/Versions/A/Resources/commerce\n68722     1  0   0.0    10:08:16 /System/Library/PrivateFrameworks/MobileAccessoryUpdater.framework/XPCServices/UARPUpdaterServiceUSBPD.xpc/Contents/MacOS/UARPUpdaterServiceUSBPD\n71921 36958  0   0.0    16:59:39 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n71922 36958  0   0.0    16:59:39 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n71950 71922  0   0.0    16:59:39 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n72642     1  0   0.0    05:16:09 /System/Library/CoreServices/iconservicesagent\n72643     1  0   0.0    05:16:09 /System/Library/CoreServices/iconservicesd\n72644     1  0   0.0    05:16:09 /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\n73924 36958  0   0.0    08:28:16 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n73925 36958  0   0.0    08:28:16 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n73966 73924  0   0.0    08:28:16 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n74259     1  0   0.0    13:11:17 /usr/libexec/triald\n74265     1  0   0.0    13:11:17 /System/Library/PrivateFrameworks/TrialServer.framework/Versions/A/XPCServices/TrialArchivingService.xpc/Contents/MacOS/TrialArchivingService\n74601 36958  0   0.0    03:45:23 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n74602 36958  0   0.0    03:45:23 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n74631 74602  0   0.0    03:45:23 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n74908 57822  0   0.0 16-17:16:24 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n74909 57822  0   0.0 16-17:16:24 /Users/sam/.nvm/versions/node/v24.19.0/bin/node\n75402     1  0   0.0    13:10:11 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/DictionaryServices.framework/Versions/A/XPCServices/com.apple.DictionaryServiceHelper.xpc/Contents/MacOS/com.apple.DictionaryServiceHelper\n75603 57822  0   0.0 16-17:16:17 /Users/sam/.codex/packages/standalone/releases/0.154.0-aarch64-apple-darwin/bin/codex-code-mode-host\n76508     1  0   0.0    11:35:19 /System/Library/PrivateFrameworks/MobileSoftwareUpdate.framework/Support/softwareupdated\n76509     1  0   0.0    11:35:19 /System/Library/PrivateFrameworks/MobileSoftwareUpdate.framework/Versions/A/XPCServices/com.apple.MobileSoftwareUpdate.CleanupPreparePathService.xpc/Contents/MacOS/com.apple.MobileSoftwareUpdate.CleanupPreparePathService\n76512     1  0   0.0    11:35:18 /System/Library/PrivateFrameworks/UIFoundation.framework/Versions/A/XPCServices/nsattributedstringagent.xpc/Contents/MacOS/nsattributedstringagent\n76516     1  0   0.0    11:35:18 /System/Library/Frameworks/MediaAccessibility.framework/Versions/A/XPCServices/com.apple.accessibility.mediaaccessibilityd.xpc/Contents/MacOS/com.apple.accessibility.mediaaccessibilityd\n76517     1  0   0.0    11:35:18 /usr/sbin/cfprefsd\n76525     1  0   0.0    11:35:18 /System/Library/PrivateFrameworks/IASUtilities.framework/Versions/A/Resources/installerauthagent\n76662     1  0   0.0    11:35:03 /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/XPCServices/com.apple.hiservices-xpcservice.xpc/Contents/MacOS/com.apple.hiservices-xpcservice\n77680     1  0   0.0    05:11:09 /System/Library/PrivateFrameworks/TelephonyUtilities.framework/XPCServices/com.apple.FaceTime.FTConversationService.xpc/Contents/MacOS/com.apple.FaceTime.FTConversationService\n78627     1  0   0.0    13:06:50 /System/Library/PrivateFrameworks/IntelligenceFlowRuntime.framework/Versions/A/intelligenceflowd\n78703     1  0   0.0    13:06:46 /System/Library/PrivateFrameworks/IntelligenceFlowContextRuntime.framework/Versions/A/intelligencecontextd\n79563     1  0   0.0    08:23:18 /System/Library/PrivateFrameworks/PrivateCloudCompute.framework/privatecloudcomputed.app/Contents/MacOS/privatecloudcomputed\n80306     1  0   0.0    16:41:29 /usr/libexec/duetexpertd\n81037     1  0   0.0    13:04:22 /usr/libexec/tipsd\n81038     1  0   0.0    13:04:22 /usr/libexec/keybagd\n81041     1  0   0.0    13:04:22 /usr/libexec/proactiveeventtrackerd\n81042     1  0   0.0    13:04:22 /usr/libexec/transparencyd\n81043     1  0   0.0    13:04:22 /System/Library/Frameworks/Security.framework/Versions/A/XPCServices/TrustedPeersHelper.xpc/Contents/MacOS/TrustedPeersHelper\n81044     1  0   0.0    13:04:21 /System/Library/PrivateFrameworks/CloudServices.framework/Helpers/com.apple.sbd\n81056     1  0   0.0    13:04:20 /System/Library/PrivateFrameworks/MapsSync.framework/mapssyncd\n81057     1  0   0.0    13:04:19 /usr/libexec/mobileactivationd\n81128     1  0   0.0    13:04:18 /System/Library/PrivateFrameworks/CoreCDP.framework/Versions/A/Resources/cdpd\n82074     1  0   0.0    19:48:53 /System/Library/Frameworks/LocalAuthentication.framework/Support/coreauthd\n82486     1  0   0.0    08:20:17 /System/Library/PrivateFrameworks/GeoAnalytics.framework/geoanalyticsd\n82487     1  0   0.0    08:20:17 /usr/libexec/filevaultd\n82488     1  0   0.0    08:20:17 /System/Cryptexes/App/usr/libexec/AuthenticationServicesAgent\n82489     1  0   0.0    08:20:17 /usr/libexec/keychainsharingmessagingd\n84380 36958  0   0.0    19:44:15 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n84381 36958  0   0.0    19:44:15 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n84463 84381  0   0.0    19:44:15 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n85122     1  0   0.0 15-23:34:34 /usr/libexec/trustd\n85123     1  0   0.0 15-23:34:34 /usr/libexec/trustd\n85234 36958  0   0.0    13:00:25 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n85235 36958  0   0.0    13:00:25 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n85297 85235  0   0.0    13:00:25 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n86164     1  0   0.0    13:00:04 /usr/libexec/replayd\n86498 36958  0   0.0    01:58:59 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n86499 36958  0   0.0    01:58:59 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n86516 86498  0   0.0    01:58:59 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n86754     1  0   0.0    12:59:42 /System/Library/PrivateFrameworks/CoreDuetContext.framework/Resources/ContextStoreAgent\n86782     1  0   0.0    12:59:31 /usr/libexec/linkd\n87633     1  0   0.0    19:39:41 /System/Library/Frameworks/Contacts.framework/PlugIns/ContactsCoreSpotlightExtension.appex/Contents/MacOS/ContactsCoreSpotlightExtension\n88042     1  0   0.0 13-14:27:19 /usr/sbin/coreaudiod\n88171     1  0   0.0    05:00:17 /usr/libexec/dbtelemetryd\n88172     1  0   0.0    05:00:17 /usr/libexec/ValidUpdater\n90141 36958  0   0.0    04:59:42 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n90142 36958  0   0.0    04:59:42 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n90179 90142  0   0.0    04:59:42 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n91170 36958  0   0.0    04:59:29 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n91171 36958  0   0.0    04:59:29 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n91209 91171  0   0.0    04:59:29 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n91480 36958  0   0.0    11:21:26 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n91481 36958  0   0.0    11:21:26 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n91556 91481  0   0.0    11:21:26 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n92629 36958  0   0.0    19:31:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n92630 36958  0   0.0    19:31:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n92737 92629  0   0.0    19:31:11 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n93066 36958  0   0.0    04:59:04 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n93067 36958  0   0.0    04:59:04 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n93105 93066  0   0.0    04:59:04 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n93121     1  0   1.3 02-15:51:56 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer\n93144     1  0   0.0 02-15:51:54 /System/Library/CoreServices/loginwindow.app/Contents/MacOS/loginwindow\n93362     1  0   0.0 02-15:51:45 /System/Library/PrivateFrameworks/AmbientDisplay.framework/Versions/A/XPCServices/com.apple.AmbientDisplayAgent.xpc/Contents/MacOS/com.apple.AmbientDisplayAgent\n93392     1  0   0.0 02-15:51:24 /System/Library/PrivateFrameworks/MobileDevice.framework/Versions/A/Resources/usbmuxd\n94007     1  0   0.0    11:20:02 /usr/libexec/microstackshot\n94501     1  0   0.0    06:30:17 /usr/libexec/wifivelocityd\n95987 36958  0   0.0    19:28:09 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node\n95988 36958  0   0.0    19:28:09 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n95994 95987  0   0.0    19:28:09 /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl\n96072     1  0   0.0    14:15:21 /usr/sbin/BTLEServerAgent\n96333     1  0   0.0    11:17:45 /usr/libexec/remindd\n96334     1  0   0.0    11:17:45 /System/Library/PrivateFrameworks/MobileTimer.framework/Executables/mobiletimerd\n96338     1  0   0.0    11:17:45 aslmanager\n96346     1  0   0.0    11:17:44 /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\n96566     1  0   0.0       10:47 /System/Library/PrivateFrameworks/RemoteManagement.framework/RemoteManagementAgent\n96618     1  0   0.0       10:47 /System/Library/PrivateFrameworks/SafariFoundation.framework/Versions/A/XPCServices/SafariConfigurationSubscriber.xpc/Contents/MacOS/SafariConfigurationSubscriber\n96619     1  0   0.0       10:47 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/SecuritySubscriber.xpc/Contents/MacOS/SecuritySubscriber\n96620     1  0   0.0       10:46 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/InteractiveLegacyProfilesSubscriber.xpc/Contents/MacOS/InteractiveLegacyProfilesSubscriber\n96624     1  0   0.0       10:46 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/ScreenSharingSubscriber.xpc/Contents/MacOS/ScreenSharingSubscriber\n96625     1  0   0.0       10:46 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/LegacyProfilesSubscriber.xpc/Contents/MacOS/LegacyProfilesSubscriber\n96626     1  0   0.0       10:46 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/PasscodeSettingsSubscriber.xpc/Contents/MacOS/PasscodeSettingsSubscriber\n96627     1  0   0.0       10:46 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/AccountSubscriber.xpc/Contents/MacOS/AccountSubscriber\n96628     1  0   0.0       10:46 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/DeviceConfigurationSubscriber.xpc/Contents/MacOS/DeviceConfigurationSubscriber\n96629     1  0   0.0       10:45 /System/Library/PrivateFrameworks/DeviceConfiguration.framework/Versions/A/DeviceConfigurationAgent\n96630     1  0   0.0       10:45 /System/Library/PrivateFrameworks/DeviceConfiguration.framework/Versions/A/deviceconfigurationd\n96631     1  0   0.0       10:45 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/ManagedAppsSubscriber.xpc/Contents/MacOS/ManagedAppsSubscriber\n96632     1  0   0.0       10:45 /System/Library/Frameworks/ManagedAppDistribution.framework/Support/managedappdistributionagent\n96633     1  0   0.0       10:45 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/NetworkExtensionSubscriber.xpc/Contents/MacOS/NetworkExtensionSubscriber\n96636     1  0   0.0       10:45 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/ManagementTestSubscriber.xpc/Contents/MacOS/ManagementTestSubscriber\n96640     1  0   0.0       10:45 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/ASConfigurationSubscriber.xpc/Contents/MacOS/ASConfigurationSubscriber\n96641     1  0   0.0       10:44 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/ManagedSettingsSubscriber.xpc/Contents/MacOS/ManagedSettingsSubscriber\n96642     1  0   0.0       10:44 /System/Library/PrivateFrameworks/RemoteManagement.framework/XPCServices/ExtensibleSSOSubscriber.xpc/Contents/MacOS/ExtensibleSSOSubscriber\n97002     1  0   0.0    04:56:22 /usr/libexec/PerfPowerServices\n98013     1  0   0.0 01-19:11:38 /usr/libexec/UserEventAgent\n98017     1  0   0.1 01-19:11:37 /System/Library/CoreServices/ControlCenter.app/Contents/MacOS/ControlCenter\n98019     1  0   0.0 01-19:11:37 /usr/sbin/universalaccessd\n98022     1  0   0.0 01-19:11:37 /usr/libexec/pboard\n98024     1  0   0.0 01-19:11:37 /System/Library/PrivateFrameworks/UserNotificationsCore.framework/Support/usernotificationsd\n98026     1  0   0.0 01-19:11:37 /System/Library/Frameworks/Accounts.framework/Versions/A/Support/accountsd\n98029     1  0   0.0 01-19:11:37 /System/Library/CoreServices/MenuBarAgent.app/Contents/MacOS/MenuBarAgent\n98031     1  0   0.0 01-19:11:37 /Applications/Google Chrome.app/Contents/MacOS/Google Chrome\n98033     1  0   0.0 01-19:11:37 /System/Library/Frameworks/ApplicationServices.framework/Frameworks/ATS.framework/Support/fontd\n98035     1  0   0.0 01-19:11:37 /System/Library/CoreServices/WindowManager.app/Contents/MacOS/WindowManager\n98036     1  0   0.0 01-19:11:37 /System/Library/CoreServices/Dock.app/Contents/MacOS/Dock\n98037     1  0   0.0 01-19:11:37 /usr/libexec/rapportd\n98038     1  0   0.0 01-19:11:37 /System/Library/CoreServices/SystemUIServer.app/Contents/MacOS/SystemUIServer\n98040     1  0   0.0 01-19:11:37 /usr/libexec/nsurlsessiond\n98042     1  0   0.0 01-19:11:37 /usr/sbin/usernoted\n98045     1  0   0.0 01-19:11:37 /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder\n98048     1  0   0.0 01-19:11:37 /usr/libexec/ContinuityCaptureAgent\n98052     1  0   0.0 01-19:11:37 /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/Support/fontworker\n98054     1  0   0.0 01-19:11:37 /System/Library/CoreServices/AccessibilityUIServer.app/Contents/MacOS/AccessibilityUIServer\n98056     1  0   0.0 01-19:11:37 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/corespotlightd\n98057     1  0   0.0 01-19:11:37 /System/Library/CoreServices/WallpaperAgent.app/Contents/MacOS/WallpaperAgent\n98060     1  0   0.0 01-19:11:37 /System/Library/CoreServices/sharedfilelistd\n98063     1  0   0.0 01-19:11:37 /System/Library/PrivateFrameworks/FileProvider.framework/Support/fileproviderd\n98067     1  0   0.0 01-19:11:37 /System/Library/PrivateFrameworks/AMPDevices.framework/Versions/A/Support/AMPDeviceDiscoveryAgent\n98069     1  0   0.0 01-19:11:37 /System/Library/PrivateFrameworks/ViewBridge.framework/Versions/A/XPCServices/ViewBridgeAuxiliary.xpc/Contents/MacOS/ViewBridgeAuxiliary\n98076     1  0   0.0 01-19:11:37 /System/Library/PrivateFrameworks/UserActivity.framework/Agents/useractivityd\n98080     1  0   0.0 01-19:11:37 /System/Library/PrivateFrameworks/IDS.framework/identityservicesd.app/Contents/MacOS/identityservicesd\n98081     1  0   0.0 01-19:11:37 /System/Library/CoreServices/Dock.app/Contents/XPCServices/com.apple.dock.extra.xpc/Contents/MacOS/com.apple.dock.extra\n98082     1  0   0.0 01-19:11:37 /System/Library/ExtensionKit/Extensions/WallpaperAerialsExtension.appex/Contents/MacOS/WallpaperAerialsExtension\n98084     1  0   0.0 01-19:11:37 /usr/libexec/sharingd\n98085     1  0   0.0 01-19:11:37 /System/Applications/Siri AI.app/Contents/MacOS/Siri AI\n98086     1  0   0.0 01-19:11:37 /System/Library/CoreServices/Dock.app/Contents/XPCServices/com.apple.dock.external.extra.arm64.xpc/Contents/MacOS/com.apple.dock.external.extra.arm64\n98089     1  0   0.0 01-19:11:37 /System/Library/PrivateFrameworks/CloudKitDaemon.framework/Support/cloudd\n98096     1  0   0.0 01-19:11:37 /System/Library/PrivateFrameworks/ChronoCore.framework/Support/chronod\n98100     1  0   0.0 01-19:11:37 /System/Library/PrivateFrameworks/IMCore.framework/imagent.app/Contents/MacOS/imagent\n98109     1  0   0.0 01-19:11:36 /System/Library/PrivateFrameworks/AgentSessionKitRuntime.framework/Versions/A/agentstored\n98112     1  0   0.0 01-19:11:36 /System/Library/PrivateFrameworks/AssistantServices.framework/Versions/A/Support/assistantd\n98147     1  0   0.0 01-19:11:36 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/151.0.7922.109/Helpers/chrome_crashpad_handler\n98191 98031  0   0.0 01-19:11:35 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/151.0.7922.109/Helpers/Google Chrome Helper.app/Contents/MacOS/Google Chrome Helper\n98192 98031  0   0.0 01-19:11:35 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/151.0.7922.109/Helpers/Google Chrome Helper.app/Contents/MacOS/Google Chrome Helper\n98424     1  0   0.0 01-19:11:34 /System/Applications/Weather.app/Contents/PlugIns/WeatherWidget.appex/Contents/MacOS/WeatherWidget\n98425     1  0   0.0 01-19:11:34 /System/Applications/Photos.app/Contents/PlugIns/PhotosReliveWidget.appex/Contents/MacOS/PhotosReliveWidget\n98428     1  0   0.0 01-19:11:34 /System/Library/PrivateFrameworks/CommunicationsFilter.framework/CMFSyncAgent\n98435     1  0   0.0 01-19:11:34 /System/Applications/Calendar.app/Contents/PlugIns/CalendarWidgetExtension.appex/Contents/MacOS/CalendarWidgetExtension\n98679     1 20   0.0 17-09:37:25 /usr/sbin/netbiosd\n98696 98031  0   0.0 01-19:11:33 /Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/151.0.7922.109/Helpers/Google Chrome Helper.app/Contents/MacOS/Google Chrome Helper\n98818     1  0   0.0 01-19:11:31 /System/Library/CoreServices/WiFiAgent.app/Contents/MacOS/WiFiAgent\n98827     1  0   0.0 01-19:11:31 /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/MacOS/ARDAgent\n98860     1  0   0.0 01-19:11:29 /System/Library/CoreServices/NotificationCenter.app/Contents/MacOS/NotificationCenter\n98863     1  0   0.0 01-19:11:29 /System/Library/PrivateFrameworks/CloudDocs.framework/PlugIns/com.apple.CloudDocs.iCloudDriveFileProvider.appex/Contents/MacOS/com.apple.CloudDocs.iCloudDriveFileProvider\n98884     1  0   0.0 01-19:11:26 /System/Library/PrivateFrameworks/MediaRemote.framework/Support/mediaremoteagent\n98885     1  0   0.0 01-19:11:26 /usr/libexec/avconferenced\n98895     1  0   0.0 01-19:11:26 /System/Library/PrivateFrameworks/CoreSpeech.framework/corespeechd\n98897     1  0   0.0 01-19:11:26 /Users/sam/.nvm/versions/node/v24.11.1/bin/node\n98899     1  0   0.0 01-19:11:26 /Users/sam/.local/bin/python3\n98900     1  0   0.0 01-19:11:26 /System/Library/Frameworks/InputMethodKit.framework/Resources/imklaunchagent\n98902     1  0   0.0 01-19:11:26 /usr/bin/caffeinate\n98903     1  0   0.0 01-19:11:26 /System/Library/Image Capture/Support/icdd\n98909     1  0   0.0 01-19:11:26 /System/Library/CoreServices/AirPlayUIAgent.app/Contents/MacOS/AirPlayUIAgent\n98910     1  0   0.0 01-19:11:26 /System/Library/CoreServices/diagnostics_agent\n98911     1  0   0.0 01-19:11:26 /System/Library/CoreServices/TextInputMenuAgent.app/Contents/MacOS/TextInputMenuAgent\n98914     1  0   0.0 01-19:11:26 /System/Library/Frameworks/CryptoTokenKit.framework/ctkahp.bundle/Contents/MacOS/ctkahp\n99467     1  0   0.0    15:51:25 /System/Library/PrivateFrameworks/BiomeStreams.framework/Support/BiomeAgent\n"
+    },
+    "limitation": "macOS does not expose hard core affinity here. External jobs remain running. Four Torch threads do not parallelize native search, which holds the Python GIL; this is a four-thread inference variant, not a four-core search speedup.",
+    "quiet_core_verified": false,
+    "variants": {
+      "current-torch-threads-1": {
+        "n": 96,
+        "overruns": 0,
+        "search_cpu_mean": 0.049509491228069906,
+        "wall_max": 0.07699670898728073,
+        "wall_p99": 0.07670458408538253
+      },
+      "current-torch-threads-4": {
+        "n": 96,
+        "overruns": 0,
+        "search_cpu_mean": 0.051321894736841754,
+        "wall_max": 0.07662550103850663,
+        "wall_p99": 0.07632751727942377
+      },
+      "mixture-torch-threads-1": {
+        "n": 96,
+        "overruns": 0,
+        "search_cpu_mean": 0.07731005263157857,
+        "wall_max": 0.11460729199461639,
+        "wall_p99": 0.11436852564802394
+      },
+      "mixture-torch-threads-4": {
+        "n": 96,
+        "overruns": 0,
+        "search_cpu_mean": 0.07884492982456127,
+        "wall_max": 0.11566816712729633,
+        "wall_p99": 0.11540850062156097
+      }
+    }
+  }
+}

@@ -81,6 +81,11 @@ def test_public_mask_accepts_typed_card_action_but_not_body_token() -> None:
             entity_id_confidence=np.zeros((2,), dtype=np.float32),
             hand_id_confidence=np.ones((5,), dtype=np.float32),
             global_feature_confidence=global_confidence,
+            # PublicActionMaskBuilder now fails closed on unknown match status
+            # (terminal=None -> no-op only; public_action_mask.py "Unknown
+            # match status cannot authorize a game command"). Real structured
+            # observations always carry terminal=bool(battle.game_over).
+            terminal=False,
         )
 
     assert masks.build(observation(2)).sum() > 1

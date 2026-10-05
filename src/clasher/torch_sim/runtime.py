@@ -22,7 +22,7 @@ import torch
 from clasher.battle import BattleState
 from clasher.entities import Building, Entity, Troop
 from clasher.kinematics import LOGIC_TICK_SECONDS, tiles_to_logic_units
-from clasher.unit_traits import is_airborne_target, is_native_building_target
+from clasher.unit_traits import is_airborne_target, is_native_building_target, unit_mass
 
 from .actions import (
     NO_OP_ACTION,
@@ -614,7 +614,7 @@ class TensorTickRuntime:
             getattr(entity, "_has_attacked_once", False)
         )
         mass_milliunits[battle_index, slot] = round(
-            (entity.get_unit_mass() if isinstance(entity, Troop) else 5.0) * 1_000
+            (unit_mass(entity.card_stats) if isinstance(entity, Troop) else 5.0) * 1_000
         )
         facing_x_units[battle_index, slot] = entity._facing_x_units
         facing_y_units[battle_index, slot] = entity._facing_y_units

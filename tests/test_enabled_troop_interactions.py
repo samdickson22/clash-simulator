@@ -11346,8 +11346,10 @@ def test_avoiding_air_troops_remain_clipped_to_the_native_arena_boundary():
 
     bats._move_towards_target(target, battle.dt, battle)
 
-    assert bats.position.x == 17.75
-    assert 0.25 <= bats.position.y <= 31.75
+    # Native movement clips moving centers to [0, size - 0.001]; the
+    # quarter-tile inset applies only to spawning.
+    assert 17.75 < bats.position.x <= battle.arena.width - 0.001
+    assert 0.0 <= bats.position.y <= battle.arena.height - 0.001
 
 
 @pytest.mark.parametrize("fast_path", (False, True))
@@ -11396,9 +11398,12 @@ def test_avoiding_ground_spawn_egress_stays_clipped_to_native_boundary(
     # The target geometry affects lateral movement; the boundary invariant
     # is clipping Y while allowing the outward egress step along X.
     assert right.position.x > 5.5
-    assert right.position.y == 0.25
+    assert 0.0 <= right.position.y < 0.25
+    # Moving bodies follow native movement bounds; the spawn-placement
+    # predicate (is_entity_position_in_bounds) keeps its quarter-tile inset.
     assert all(
-        battle.is_entity_position_in_bounds(entity.position, entity)
+        0.0 <= entity.position.x <= battle.arena.width - 0.001
+        and 0.0 <= entity.position.y <= battle.arena.height - 0.001
         for entity in stab_goblins
     )
 
@@ -11568,11 +11573,11 @@ def test_collision_separation_keeps_centers_on_outermost_arena_tiles(card_name):
     _consume_collision_vectors(battle, first, second)
 
     for troop in (first, second):
-        assert 0.25 <= troop.position.x <= battle.arena.width - 0.25
-        assert 0.25 <= troop.position.y <= battle.arena.height - 0.25
-    # LogicTileMap::moveObject clips centers to the midpoint of the outermost
-    # 500-unit cell, not to a collision-radius-sized half tile.
-    assert first.position.x == 0.25
+        assert 0.0 <= troop.position.x <= battle.arena.width - 0.001
+        assert 0.0 <= troop.position.y <= battle.arena.height - 0.001
+    # LogicTileMap::moveObject lets moving centers use the whole outer 500-unit
+    # cell (0..17999 on x), so neither body is pinned to the spawn inset.
+    assert first.position.x == pytest.approx(0.15)
     assert second.position.x - 0.4 == pytest.approx(0.15)
 
 

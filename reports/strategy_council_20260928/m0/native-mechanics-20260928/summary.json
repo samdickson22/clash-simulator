@@ -1,0 +1,1264 @@
+{
+ "1_king_wakeup_stun": {
+  "native_control_first_shot_after_activation_ticks": 80,
+  "zap_sweep": [
+   {
+    "zap_cast_tick": null,
+    "native": 373,
+    "scalar_pre_repair": 374,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 286,
+    "native": 367,
+    "scalar_pre_repair": 377,
+    "scalar_post_repair": 367,
+    "triage_T1": 367
+   },
+   {
+    "zap_cast_tick": 289,
+    "native": 370,
+    "scalar_pre_repair": 380,
+    "scalar_post_repair": 370,
+    "triage_T1": 370
+   },
+   {
+    "zap_cast_tick": 292,
+    "native": 373,
+    "scalar_pre_repair": 383,
+    "scalar_post_repair": 373,
+    "triage_T1": 373
+   },
+   {
+    "zap_cast_tick": 295,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 298,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 301,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 304,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 307,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 310,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 313,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 316,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 319,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 322,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 325,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 328,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 331,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 334,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 337,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 340,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 343,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 346,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 349,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 352,
+    "native": 373,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 377,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 355,
+    "native": 376,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 380,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 358,
+    "native": 379,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 383,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 361,
+    "native": 382,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 384,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 364,
+    "native": 383,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 384,
+    "triage_T1": 376
+   },
+   {
+    "zap_cast_tick": 367,
+    "native": 383,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 384,
+    "triage_T1": 379
+   },
+   {
+    "zap_cast_tick": 370,
+    "native": 383,
+    "scalar_pre_repair": 384,
+    "scalar_post_repair": 384,
+    "triage_T1": 382
+   },
+   {
+    "zap_cast_tick": 373,
+    "native": 373,
+    "scalar_pre_repair": 374,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   },
+   {
+    "zap_cast_tick": 376,
+    "native": 373,
+    "scalar_pre_repair": 374,
+    "scalar_post_repair": 374,
+    "triage_T1": 374
+   }
+  ],
+  "max_abs_error_ticks": {
+   "pre_repair": 11,
+   "post_repair": 4,
+   "triage_T1": 8
+  },
+  "ice_spirit_freeze_end_of_wake_up": {
+   "native": 770,
+   "scalar_pre_repair": 770,
+   "scalar_post_repair": 770,
+   "triage_T1": 768,
+   "control_native": 748
+  },
+  "verdict_pre_repair": "consequential/systematic: every Zap in the first 3.3 s of a King wake-up delayed the scalar first shot by 10-11 ticks (0.5-0.55 s) where native adds none",
+  "verdict_post_repair": "small dynamics difference: <=4 ticks (0.2 s) in the last 0.7 s; exact (+/-1 baseline) elsewhere; Ice Spirit case exact"
+ },
+ "2_shield": {
+  "duel_left": {
+   "Knight": {
+    "max_abs_diff_xy_hp": 0,
+    "ticks": 219,
+    "native_events": [
+     [
+      152,
+      1500,
+      0
+     ],
+     [
+      180,
+      1234,
+      0
+     ],
+     [
+      208,
+      968,
+      0
+     ],
+     [
+      236,
+      702,
+      0
+     ],
+     [
+      264,
+      436,
+      0
+     ],
+     [
+      292,
+      170,
+      0
+     ]
+    ],
+    "scalar_events": [
+     [
+      152,
+      1500.0,
+      null
+     ],
+     [
+      180,
+      1234.0,
+      null
+     ],
+     [
+      208,
+      968.0,
+      null
+     ],
+     [
+      236,
+      702.0,
+      null
+     ],
+     [
+      264,
+      436.0,
+      null
+     ],
+     [
+      292,
+      170.0,
+      null
+     ]
+    ]
+   },
+   "DarkPrince": {
+    "max_abs_diff_xy_hp": 0,
+    "ticks": 291,
+    "native_events": [
+     [
+      154,
+      1200,
+      38
+     ],
+     [
+      178,
+      1200,
+      0
+     ],
+     [
+      202,
+      998,
+      0
+     ],
+     [
+      226,
+      796,
+      0
+     ],
+     [
+      250,
+      594,
+      0
+     ],
+     [
+      274,
+      392,
+      0
+     ],
+     [
+      298,
+      190,
+      0
+     ],
+     [
+      379,
+      81,
+      0
+     ]
+    ],
+    "scalar_events": [
+     [
+      154,
+      1200,
+      38.0
+     ],
+     [
+      178,
+      1200,
+      0.0
+     ],
+     [
+      202,
+      998.0,
+      0.0
+     ],
+     [
+      226,
+      796.0,
+      0.0
+     ],
+     [
+      250,
+      594.0,
+      0.0
+     ],
+     [
+      274,
+      392.0,
+      0.0
+     ],
+     [
+      298,
+      190.0,
+      0.0
+     ],
+     [
+      379,
+      81.0,
+      0.0
+     ]
+    ]
+   }
+  },
+  "duel_right": {
+   "Knight": {
+    "max_abs_diff_xy_hp": 0,
+    "ticks": 219,
+    "native_events": [
+     [
+      152,
+      1500,
+      0
+     ],
+     [
+      180,
+      1234,
+      0
+     ],
+     [
+      208,
+      968,
+      0
+     ],
+     [
+      236,
+      702,
+      0
+     ],
+     [
+      264,
+      436,
+      0
+     ],
+     [
+      292,
+      170,
+      0
+     ]
+    ],
+    "scalar_events": [
+     [
+      152,
+      1500.0,
+      null
+     ],
+     [
+      180,
+      1234.0,
+      null
+     ],
+     [
+      208,
+      968.0,
+      null
+     ],
+     [
+      236,
+      702.0,
+      null
+     ],
+     [
+      264,
+      436.0,
+      null
+     ],
+     [
+      292,
+      170.0,
+      null
+     ]
+    ]
+   },
+   "DarkPrince": {
+    "max_abs_diff_xy_hp": 0,
+    "ticks": 291,
+    "native_events": [
+     [
+      154,
+      1200,
+      38
+     ],
+     [
+      178,
+      1200,
+      0
+     ],
+     [
+      202,
+      998,
+      0
+     ],
+     [
+      226,
+      796,
+      0
+     ],
+     [
+      250,
+      594,
+      0
+     ],
+     [
+      274,
+      392,
+      0
+     ],
+     [
+      298,
+      190,
+      0
+     ],
+     [
+      379,
+      81,
+      0
+     ]
+    ],
+    "scalar_events": [
+     [
+      154,
+      1200,
+      38.0
+     ],
+     [
+      178,
+      1200,
+      0.0
+     ],
+     [
+      202,
+      998.0,
+      0.0
+     ],
+     [
+      226,
+      796.0,
+      0.0
+     ],
+     [
+      250,
+      594.0,
+      0.0
+     ],
+     [
+      274,
+      392.0,
+      0.0
+     ],
+     [
+      298,
+      190.0,
+      0.0
+     ],
+     [
+      379,
+      81.0,
+      0.0
+     ]
+    ]
+   }
+  },
+  "fireball": {
+   "DarkPrince": {
+    "max_abs_diff_xy_hp": 0,
+    "ticks": 100,
+    "native_events": [
+     [
+      133,
+      1200,
+      0
+     ]
+    ],
+    "scalar_events": [
+     [
+      132,
+      1200,
+      0.0
+     ]
+    ]
+   }
+  },
+  "zap_then_fireball": {
+   "DarkPrince": {
+    "max_abs_diff_xy_hp": 0,
+    "ticks": 120,
+    "native_events": [
+     [
+      171,
+      1200,
+      0
+     ]
+    ],
+    "scalar_events": [
+     [
+      171,
+      1200,
+      0.0
+     ]
+    ]
+   }
+  },
+  "verdict": "match: breaking hit fully absorbed natively (no spill into HP), Knight dies at tick 319 with the Dark Prince on 190 HP in both; only Fireball contact is 1 tick earlier in scalar"
+ },
+ "3_hog_skeletons": {
+  "unblocked": {
+   "hog_max_abs_diff_xy_hp": 0,
+   "ticks": 296,
+   "native_first_tower_hit_tick": 204,
+   "native_n_tower_hits": 7,
+   "native_tower_damage": 2219,
+   "native_hog_death_tick": 396,
+   "scalar_first_tower_hit_tick": 204,
+   "scalar_n_tower_hits": 7,
+   "scalar_tower_damage": 2219.0,
+   "scalar_hog_death_tick": 396
+  },
+  "skel_path_y11.5_t140": {
+   "hog_max_abs_diff_xy_hp": 0,
+   "ticks": 152,
+   "native_first_tower_hit_tick": 213,
+   "native_n_tower_hits": 2,
+   "native_tower_damage": 634,
+   "native_hog_death_tick": 252,
+   "scalar_first_tower_hit_tick": 213,
+   "scalar_n_tower_hits": 2,
+   "scalar_tower_damage": 634.0,
+   "scalar_hog_death_tick": 252
+  },
+  "skel_path_y12.5_t150": {
+   "hog_max_abs_diff_xy_hp": 0,
+   "ticks": 168,
+   "native_first_tower_hit_tick": 210,
+   "native_n_tower_hits": 2,
+   "native_tower_damage": 634,
+   "native_hog_death_tick": 268,
+   "scalar_first_tower_hit_tick": 210,
+   "scalar_n_tower_hits": 2,
+   "scalar_tower_damage": 634.0,
+   "scalar_hog_death_tick": 268
+  },
+  "skel_early_y10.5_t120": {
+   "hog_max_abs_diff_xy_hp": 0,
+   "ticks": 158,
+   "native_first_tower_hit_tick": 208,
+   "native_n_tower_hits": 2,
+   "native_tower_damage": 634,
+   "native_hog_death_tick": 258,
+   "scalar_first_tower_hit_tick": 208,
+   "scalar_n_tower_hits": 2,
+   "scalar_tower_damage": 634.0,
+   "scalar_hog_death_tick": 258
+  },
+  "skel_offset_x4.5_y11.5_t140": {
+   "hog_max_abs_diff_xy_hp": 0,
+   "ticks": 167,
+   "native_first_tower_hit_tick": 208,
+   "native_n_tower_hits": 2,
+   "native_tower_damage": 634,
+   "native_hog_death_tick": 267,
+   "scalar_first_tower_hit_tick": 208,
+   "scalar_n_tower_hits": 2,
+   "scalar_tower_damage": 634.0,
+   "scalar_hog_death_tick": 267
+  },
+  "verdict": "match: tick-exact Hog path/HP, hits (7 unblocked, 2 blocked), no retarget in either"
+ },
+ "4_log_pushback": {
+  "Giant": {
+   "max_abs_diff_xy_hp": 0,
+   "ticks": 199,
+   "native_max_dy_mm": 906,
+   "native_final_dy_mm": 750,
+   "native_first_push_tick": 236,
+   "native_log_damage": 268,
+   "scalar_max_dy_mm": 906,
+   "scalar_final_dy_mm": 750,
+   "scalar_first_push_tick": 236,
+   "scalar_log_damage": 268.0
+  },
+  "IceGolem": {
+   "max_abs_diff_xy_hp": 0,
+   "ticks": 196,
+   "native_max_dy_mm": 920,
+   "native_final_dy_mm": 868,
+   "native_first_push_tick": 234,
+   "native_log_damage": 268,
+   "scalar_max_dy_mm": 920,
+   "scalar_final_dy_mm": 868,
+   "scalar_first_push_tick": 234,
+   "scalar_log_damage": 268.0
+  },
+  "HogRider": {
+   "max_abs_diff_xy_hp": 0,
+   "ticks": 138,
+   "native_max_dy_mm": 1453,
+   "native_final_dy_mm": -107,
+   "native_first_push_tick": 172,
+   "native_log_damage": 268,
+   "scalar_max_dy_mm": 1453,
+   "scalar_final_dy_mm": -107,
+   "scalar_first_push_tick": 172,
+   "scalar_log_damage": 268.0
+  },
+  "verdict": "match: tick-exact pushback on Giant, Ice Golem and Hog"
+ },
+ "5_lane_after_tower": {
+  "none": {
+   "fall": [
+    668,
+    668
+   ],
+   "king_first_shot": [
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    },
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    }
+   ],
+   "units": {
+    "Giant": {
+     "native_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "scalar_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    }
+   },
+   "scalar_rejected": [
+    {
+     "tick": 170,
+     "owner": 1,
+     "card": "HogRider",
+     "xy": [
+      3.5,
+      17.5
+     ]
+    }
+   ]
+  },
+  "knight_lane": {
+   "fall": [
+    668,
+    668
+   ],
+   "king_first_shot": [
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    },
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    }
+   ],
+   "units": {
+    "Giant": {
+     "native_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "scalar_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    },
+    "Knight": {
+     "native_targets": [
+      "King0"
+     ],
+     "scalar_targets": [
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    }
+   },
+   "scalar_rejected": [
+    {
+     "tick": 170,
+     "owner": 1,
+     "card": "HogRider",
+     "xy": [
+      3.5,
+      17.5
+     ]
+    }
+   ]
+  },
+  "giant_lane": {
+   "fall": [
+    456,
+    456
+   ],
+   "king_first_shot": [
+    {
+     "tick": 536,
+     "target": "DarkPrince#1"
+    },
+    {
+     "tick": 536,
+     "target": "DarkPrince#1"
+    }
+   ],
+   "units": {
+    "HogRider": {
+     "native_targets": [
+      "PrincessL0"
+     ],
+     "scalar_targets": [
+      "PrincessL0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    },
+    "Giant": {
+     "native_targets": [
+      "King0"
+     ],
+     "scalar_targets": [
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    }
+   },
+   "scalar_rejected": []
+  },
+  "hog_lane": {
+   "fall": [
+    668,
+    668
+   ],
+   "king_first_shot": [
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    },
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    }
+   ],
+   "units": {
+    "Giant": {
+     "native_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "scalar_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    },
+    "HogRider": {
+     "native_targets": [
+      "King0"
+     ],
+     "scalar_targets": [
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    }
+   },
+   "scalar_rejected": [
+    {
+     "tick": 230,
+     "owner": 1,
+     "card": "DarkPrince",
+     "xy": [
+      3.5,
+      17.5
+     ]
+    }
+   ]
+  },
+  "knight_centre": {
+   "fall": [
+    668,
+    668
+   ],
+   "king_first_shot": [
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    },
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    }
+   ],
+   "units": {
+    "Giant": {
+     "native_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "scalar_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    },
+    "Knight": {
+     "native_targets": [
+      "King0"
+     ],
+     "scalar_targets": [
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    }
+   },
+   "scalar_rejected": [
+    {
+     "tick": 170,
+     "owner": 1,
+     "card": "HogRider",
+     "xy": [
+      3.5,
+      17.5
+     ]
+    }
+   ]
+  },
+  "hog_centre": {
+   "fall": [
+    668,
+    668
+   ],
+   "king_first_shot": [
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    },
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    }
+   ],
+   "units": {
+    "Giant": {
+     "native_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "scalar_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    },
+    "HogRider": {
+     "native_targets": [
+      "PrincessR0"
+     ],
+     "scalar_targets": [
+      "PrincessR0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    }
+   },
+   "scalar_rejected": [
+    {
+     "tick": 230,
+     "owner": 1,
+     "card": "DarkPrince",
+     "xy": [
+      3.5,
+      17.5
+     ]
+    }
+   ]
+  },
+  "giant_centre": {
+   "fall": [
+    456,
+    456
+   ],
+   "king_first_shot": [
+    {
+     "tick": 536,
+     "target": "DarkPrince#1"
+    },
+    {
+     "tick": 536,
+     "target": "DarkPrince#1"
+    }
+   ],
+   "units": {
+    "HogRider": {
+     "native_targets": [
+      "PrincessL0"
+     ],
+     "scalar_targets": [
+      "PrincessL0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    },
+    "Giant": {
+     "native_targets": [
+      "King0"
+     ],
+     "scalar_targets": [
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    }
+   },
+   "scalar_rejected": []
+  },
+  "knight_pocket": {
+   "fall": [
+    668,
+    668
+   ],
+   "king_first_shot": [
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    },
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    }
+   ],
+   "units": {
+    "Giant": {
+     "native_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "scalar_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    },
+    "Knight": {
+     "native_targets": [
+      "King0"
+     ],
+     "scalar_targets": [
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    }
+   },
+   "scalar_rejected": [
+    {
+     "tick": 170,
+     "owner": 1,
+     "card": "HogRider",
+     "xy": [
+      3.5,
+      17.5
+     ]
+    }
+   ]
+  },
+  "hog_pocket": {
+   "fall": [
+    668,
+    668
+   ],
+   "king_first_shot": [
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    },
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    }
+   ],
+   "units": {
+    "Giant": {
+     "native_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "scalar_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    },
+    "HogRider": {
+     "native_targets": [
+      "King0"
+     ],
+     "scalar_targets": [
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    }
+   },
+   "scalar_rejected": [
+    {
+     "tick": 230,
+     "owner": 1,
+     "card": "DarkPrince",
+     "xy": [
+      3.5,
+      17.5
+     ]
+    }
+   ]
+  },
+  "icespirit_pocket": {
+   "fall": [
+    668,
+    668
+   ],
+   "king_first_shot": [
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    },
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    }
+   ],
+   "units": {
+    "Giant": {
+     "native_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "scalar_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    },
+    "IceSpirit": {
+     "native_targets": [
+      "King0"
+     ],
+     "scalar_targets": [
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    }
+   },
+   "scalar_rejected": [
+    {
+     "tick": 170,
+     "owner": 1,
+     "card": "HogRider",
+     "xy": [
+      3.5,
+      17.5
+     ]
+    }
+   ]
+  },
+  "icespirit_pocket_early": {
+   "fall": [
+    668,
+    668
+   ],
+   "king_first_shot": [
+    {
+     "tick": 770,
+     "target": "Giant#1"
+    },
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    }
+   ],
+   "units": {
+    "Giant": {
+     "native_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "scalar_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    }
+   },
+   "scalar_rejected": [
+    {
+     "tick": 170,
+     "owner": 1,
+     "card": "HogRider",
+     "xy": [
+      3.5,
+      17.5
+     ]
+    },
+    {
+     "tick": 669,
+     "owner": 1,
+     "card": "IceSpirit",
+     "xy": [
+      6.5,
+      10.5
+     ]
+    }
+   ]
+  },
+  "icespirit_pocket_early_b": {
+   "fall": [
+    668,
+    668
+   ],
+   "king_first_shot": [
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    },
+    {
+     "tick": 748,
+     "target": "Giant#1"
+    }
+   ],
+   "units": {
+    "Giant": {
+     "native_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "scalar_targets": [
+      "PrincessL0",
+      "King0"
+     ],
+     "path_max_abs_diff_mm_10tick": 0
+    }
+   },
+   "scalar_rejected": [
+    {
+     "tick": 170,
+     "owner": 1,
+     "card": "HogRider",
+     "xy": [
+      3.5,
+      17.5
+     ]
+    },
+    {
+     "tick": 669,
+     "owner": 1,
+     "card": "IceSpirit",
+     "xy": [
+      8.5,
+      10.5
+     ]
+    }
+   ]
+  },
+  "verdict": "match: identical fall ticks, targets and paths; lane/pocket units go to the King, a Hog at x=8.5 goes to the surviving Princess in both. Side note: native snaps an out-of-zone pocket placement (y=10.5) to y=11.5; scalar rejects it"
+ }
+}

@@ -210,7 +210,7 @@ def test_short_stun_during_king_activation_does_not_change_first_shot_time():
     assert _king_has_launched(battle)
 
 
-def test_freeze_does_not_add_a_new_windup_after_king_activation():
+def test_freeze_completes_king_wake_up_but_retains_first_hit_phase():
     battle = BattleState()
     blue_king, _ = _spawn_king_activation_target(battle)
 
@@ -229,12 +229,19 @@ def test_freeze_does_not_add_a_new_windup_after_king_activation():
     for _ in range(80):
         blue_king.update(0.05, battle)
 
-    # Combat runs before status expiry on the final frozen frame. The tower
-    # has nevertheless completed and armed its activation shot.
+    # Native 15.535.86 (tests/fixtures/native_king_wakeup_stun_15_535_86.json):
+    # the 3.3 s wake-up delay runs while frozen, but the 0.7 s first-hit
+    # phase is retained like a loaded attack until the pause ends. A Zap that
+    # covers the end of the wake-up delays the first shot to about 0.5 s after
+    # thaw natively; this retained phase lands it 0.7 s after thaw.
     assert not _king_has_launched(battle)
     assert blue_king.stun_timer == 0.0
-    assert blue_king.attack_cooldown == 0.0
+    assert blue_king.activation_delay_remaining == 0.0
+    assert blue_king.activation_first_hit_delay_remaining == pytest.approx(0.7)
 
+    for _ in range(13):
+        blue_king.update(0.05, battle)
+    assert not _king_has_launched(battle)
     blue_king.update(0.05, battle)
     assert _king_has_launched(battle)
 

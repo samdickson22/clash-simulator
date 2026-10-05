@@ -1,0 +1,18 @@
+# Strategy benchmark: update 20
+
+Checkpoint: `/Users/sam/Desktop/code/clasher/checkpoints/hog26_simultaneous_dualsource_hazard_seed1081401/train/policy_v2_update_000020.pt`
+
+Protocol: 2 paired-seat games per opponent, seed 1081702, reward profile `objective-v1`. Opponents use public information only.
+
+| Opponent | W-L-D | Score | Crown diff | Incoming danger | Defense action rate | PFSP weight |
+|---|---:|---:|---:|---:|---:|---:|
+| bridge-pressure | 0-2-0 | 0.000 | -3.000 | 0.1714 | 0.016 | 0.167 |
+| slow-push | 0-2-0 | 0.000 | -3.000 | 0.1723 | 0.020 | 0.167 |
+| spell-control | 0-2-0 | 0.000 | -2.000 | 0.0859 | 0.019 | 0.167 |
+| reactive-defense | 0-2-0 | 0.000 | -3.000 | 0.1307 | 0.022 | 0.167 |
+| split-lane | 0-2-0 | 0.000 | -3.000 | 0.1019 | 0.014 | 0.167 |
+| balanced | 0-2-0 | 0.000 | -3.000 | 0.1449 | 0.016 | 0.167 |
+
+Mean score: **0.000**. Worst matchup: **bridge-pressure** at **0.000**.
+
+The PFSP weights are inputs for a subsequent training phase, not promotion evidence by themselves.

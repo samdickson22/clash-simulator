@@ -1,6 +1,11 @@
 {
   "meta": {
-    "fingerprint": "ef863332281e7c47d628d23a80881ed300d47ede"
+    "fingerprint": "ef863332281e7c47d628d23a80881ed300d47ede",
+    "canonicalization": {
+      "admitted_source": "reports/strategy_council_20260928/m0/runtime-snapshots/pilot-runtime-v5/gamedata.json",
+      "admitted_sha256": "daa58b28cf4e45d753e83ca69a76794285b63704e62363ee58e617af3a30ecc3",
+      "note": "Canonical native-validated P16 values: IceSpirits summonCharacterData hitpoints 90 -> 84; Goblin_Stab damage 47 -> 49 at all 11 admitted paths. Original workspace fingerprint retained."
+    }
   },
   "items": {
     "spells": [
@@ -200,7 +205,7 @@
         "summonCharacterData": {
           "attacksGround": true,
           "collisionRadius": 500,
-          "damage": 47,
+          "damage": 49,
           "deployTime": 1000,
           "hitSpeed": 1100,
           "hitpoints": 79,
@@ -2302,7 +2307,7 @@
           "collisionRadius": 400,
           "deployTime": 1000,
           "hitSpeed": 300,
-          "hitpoints": 90,
+          "hitpoints": 84,
           "kamikaze": true,
           "loadTime": 100,
           "name": "IceSpirits",
@@ -3165,7 +3170,7 @@
         "summonCharacterData": {
           "attacksGround": true,
           "collisionRadius": 500,
-          "damage": 47,
+          "damage": 49,
           "deployTime": 1000,
           "hitSpeed": 1100,
           "hitpoints": 79,
@@ -4909,7 +4914,7 @@
                   "spawnDataData": {
                     "attacksGround": true,
                     "collisionRadius": 500,
-                    "damage": 47,
+                    "damage": 49,
                     "deployTime": 1000,
                     "hitSpeed": 1100,
                     "hitpoints": 79,
@@ -8096,7 +8101,7 @@
               "spawnCharacterData": {
                 "attacksGround": true,
                 "collisionRadius": 500,
-                "damage": 47,
+                "damage": 49,
                 "deployTime": 1000,
                 "hitSpeed": 1100,
                 "hitpoints": 79,
@@ -9040,7 +9045,7 @@
             "spawnCharacterData": {
               "attacksGround": true,
               "collisionRadius": 500,
-              "damage": 47,
+              "damage": 49,
               "deployTime": 1000,
               "hitSpeed": 1100,
               "hitpoints": 79,
@@ -9058,7 +9063,7 @@
             "deathSpawnCharacterData": {
               "attacksGround": true,
               "collisionRadius": 500,
-              "damage": 47,
+              "damage": 49,
               "deployTime": 1000,
               "hitSpeed": 1100,
               "hitpoints": 79,
@@ -9136,7 +9141,7 @@
             "spawnCharacterData": {
               "attacksGround": true,
               "collisionRadius": 500,
-              "damage": 47,
+              "damage": 49,
               "deployTime": 1000,
               "hitSpeed": 1100,
               "hitpoints": 79,
@@ -9154,7 +9159,7 @@
             "deathSpawnCharacterData": {
               "attacksGround": true,
               "collisionRadius": 500,
-              "damage": 47,
+              "damage": 49,
               "deployTime": 1000,
               "hitSpeed": 1100,
               "hitpoints": 79,
@@ -9273,7 +9278,7 @@
             "spawnCharacterData": {
               "attacksGround": true,
               "collisionRadius": 500,
-              "damage": 47,
+              "damage": 49,
               "deployTime": 1000,
               "hitSpeed": 1100,
               "hitpoints": 79,
@@ -9464,7 +9469,7 @@
           "spawnCharacterData": {
             "attacksGround": true,
             "collisionRadius": 500,
-            "damage": 47,
+            "damage": 49,
             "deployTime": 1000,
             "hitSpeed": 1100,
             "hitpoints": 79,
@@ -10589,7 +10594,7 @@
                             "attacksGround": true,
                             "blueExportName": "goblin1",
                             "collisionRadius": 500,
-                            "damage": 47,
+                            "damage": 49,
                             "damageEffect": "goblins_hit",
                             "damageExportName": "filter_damage",
                             "deathEffect": "goblins_die",

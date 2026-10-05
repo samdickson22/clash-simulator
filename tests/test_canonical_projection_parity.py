@@ -325,7 +325,7 @@ def test_entities_project_consistently_at_every_corner_for_both_teams(
 
     for actor_id in (0, 1):
         _, simulator_row = projection.builder._entity_row(simulator, actor_id)
-        live_ids, live_rows, live_mask, _, _, diagnostics = projection.adapters[
+        live_ids, live_rows, live_mask, _, _, _, _, diagnostics = projection.adapters[
             actor_id
         ]._entity_rows(_vision_frame(actor_id=actor_id, entities=(vision,)))
         assert np.count_nonzero(live_mask) == 1

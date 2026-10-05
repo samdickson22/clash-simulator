@@ -7,6 +7,7 @@ from .electro_wizard import ElectroWizardSpawnZap
 from .firecracker import AttackRecoil, FirecrackerRecoil
 from .fisherman import FishermanHook
 from .hog_rider import HogRiderJump
+from .goblin_hut import GoblinHutProduction
 from .ice_golem import IceGolemChill
 from .ice_spirit import IceSpiritFreeze
 from .lumberjack import LumberjackRage
@@ -22,6 +23,7 @@ from .wallbreakers import WallBreakersDemolition
 CARD_MECHANICS = {
     'Fisherman': [FishermanHook],
     'Sparky': [SparkyChargeUp],
+    'GoblinHut': [GoblinHutProduction],
 }
 
 __all__ = [

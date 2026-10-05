@@ -34,6 +34,9 @@ ARRAY_DTYPES = {
 }
 LEVEL_DTYPES = {"entity_levels": np.dtype("int64"), "entity_level_confidence": np.dtype("float32")}
 
+HAND_LEVEL_DTYPES = {"hand_levels": np.dtype("int64"), "hand_level_confidence": np.dtype("float32")}
+ALL_LEVEL_DTYPES = LEVEL_DTYPES | HAND_LEVEL_DTYPES
+
 CONFIDENCE_FIELDS = (
     "entity_id_confidence",
     "entity_feature_confidence",
@@ -54,7 +57,7 @@ class PublicPolicySequence:
             raise ValueError("invalid token vocabulary")
         if not set(ARRAY_DTYPES) <= self.arrays.keys() or set(self.arrays) - set(
             ARRAY_DTYPES
-        ) - set(CONFIDENCE_FIELDS) - set(LEVEL_DTYPES):
+        ) - set(CONFIDENCE_FIELDS) - set(ALL_LEVEL_DTYPES):
             raise ValueError("public contract fields missing or unknown")
         level_fields = set(self.arrays) & set(LEVEL_DTYPES)
         if level_fields and level_fields != set(LEVEL_DTYPES):
@@ -71,12 +74,27 @@ class PublicPolicySequence:
                 or ((levels == 0) != (confidence == 0)).any()
                 or ((~mask) & ((levels != 0) | (confidence != 0))).any()):
                 raise ValueError('invalid public entity levels or confidence')
+        hand_fields = set(self.arrays) & set(HAND_LEVEL_DTYPES)
+        if hand_fields:
+            if hand_fields != set(HAND_LEVEL_DTYPES) or not level_fields:
+                raise ValueError("incomplete public hand level contract")
+            levels, confidence = self.arrays["hand_levels"], self.arrays["hand_level_confidence"]
+            if (levels.dtype != np.int64 or confidence.dtype != np.float32
+                or levels.shape != self.arrays["hand_ids"].shape
+                or confidence.shape != levels.shape):
+                raise ValueError("invalid public hand level shape or dtype")
+            if (not np.isfinite(confidence).all()
+                or ((confidence < 0) | (confidence > 1)).any()
+                or ((levels < 0) | (levels > 127)).any()
+                or ((levels == 0) != (confidence == 0)).any()
+                or ((self.arrays["hand_ids"] == 0) & (levels != 0)).any()):
+                raise ValueError("invalid public hand levels or confidence")
         confidence = set(self.arrays) & set(CONFIDENCE_FIELDS)
         if confidence and confidence != set(CONFIDENCE_FIELDS):
             raise ValueError("incomplete public confidence fields")
         counts = set()
         for name, array in self.arrays.items():
-            expected = ARRAY_DTYPES.get(name, LEVEL_DTYPES.get(name, np.dtype("float32")))
+            expected = ARRAY_DTYPES.get(name, ALL_LEVEL_DTYPES.get(name, np.dtype("float32")))
             if array.dtype != expected or array.ndim < 1:
                 raise ValueError(f"invalid public array {name}")
             counts.add(array.shape[0])
@@ -166,13 +184,13 @@ class PublicPolicySequence:
         }
         rows.update({name: [] for name in confidence_present})
         first = getattr(observations[0], 'observation', observations[0])
-        level_present = {name for name in LEVEL_DTYPES if getattr(first, name, None) is not None}
-        if level_present and level_present != set(LEVEL_DTYPES):
+        level_present = {name for name in ALL_LEVEL_DTYPES if getattr(first, name, None) is not None}
+        if level_present and level_present not in (set(LEVEL_DTYPES), set(ALL_LEVEL_DTYPES)):
             raise ValueError('incomplete public entity level fields')
         rows.update({name: [] for name in level_present})
         for observation in observations:
             payload = getattr(observation, "observation", observation)
-            if {name for name in LEVEL_DTYPES if getattr(payload, name, None) is not None} != level_present:
+            if {name for name in ALL_LEVEL_DTYPES if getattr(payload, name, None) is not None} != level_present:
                 raise ValueError('entity level contract changes within sequence')
             present = {
                 name
@@ -184,7 +202,7 @@ class PublicPolicySequence:
             for name in set(rows) - {"own_last_play_ids", "own_last_play_features", "terminal_status", "board_rotated"}:
                 source = observation if name in confidence_present else payload
                 value = np.asarray(getattr(source, name))
-                expected = ARRAY_DTYPES.get(name, LEVEL_DTYPES.get(name, np.dtype("float32")))
+                expected = ARRAY_DTYPES.get(name, ALL_LEVEL_DTYPES.get(name, np.dtype("float32")))
                 if value.dtype != expected:
                     raise ValueError(f"public source dtype mismatch for {name}")
                 rows[name].append(value)
@@ -210,7 +228,7 @@ class PublicPolicySequence:
                 ]
             )
         arrays = {
-            name: np.asarray(values, dtype=ARRAY_DTYPES.get(name, LEVEL_DTYPES.get(name, np.dtype("float32"))))
+            name: np.asarray(values, dtype=ARRAY_DTYPES.get(name, ALL_LEVEL_DTYPES.get(name, np.dtype("float32"))))
             for name, values in rows.items()
         }
         return cls(builder.token_names, arrays)
@@ -218,7 +236,7 @@ class PublicPolicySequence:
     def save(self, path: Path):
         self.__post_init__()
         metadata = json.dumps(
-            {"schema": "clasher.public-policy.v5", "token_names": self.token_names},
+            {"schema": "clasher.public-policy.v6" if "hand_levels" in self.arrays else "clasher.public-policy.v5", "token_names": self.token_names},
             separators=(",", ":"),
         )
         with path.open("xb") as stream:
@@ -230,7 +248,7 @@ class PublicPolicySequence:
             metadata = json.loads(str(archive["metadata"].item()))
             if (
                 set(metadata) != {"schema", "token_names"}
-                or metadata["schema"] not in {"clasher.public-policy.v3", "clasher.public-policy.v4", "clasher.public-policy.v5"}
+                or metadata["schema"] not in {"clasher.public-policy.v3", "clasher.public-policy.v4", "clasher.public-policy.v5", "clasher.public-policy.v6"}
             ):
                 raise ValueError("unsupported public policy schema")
             if tuple(metadata["token_names"]) != token_names:
@@ -240,9 +258,11 @@ class PublicPolicySequence:
                 for name in archive.files
                 if name != "metadata"
             }
-        if metadata['schema'] != 'clasher.public-policy.v5' and ('entity_levels' in arrays) != (metadata['schema'] == 'clasher.public-policy.v4'):
+        if metadata['schema'] not in {'clasher.public-policy.v5', 'clasher.public-policy.v6'} and ('entity_levels' in arrays) != (metadata['schema'] == 'clasher.public-policy.v4'):
             raise ValueError('public level fields disagree with archive version')
-        if metadata['schema'] != 'clasher.public-policy.v5':
+        if ('hand_levels' in arrays) != (metadata['schema'] == 'clasher.public-policy.v6'):
+            raise ValueError('public hand level fields disagree with archive version')
+        if metadata['schema'] not in {'clasher.public-policy.v5', 'clasher.public-policy.v6'}:
             if 'board_rotated' in arrays:
                 raise ValueError('board rotation requires archive version 5')
             arrays['board_rotated'] = np.full(len(arrays['terminal_status']), -1, dtype=np.int8)
@@ -296,7 +316,7 @@ class PublicPolicySequence:
         controls = {
             "action_mask": mask,
             "previous_actions": actions.astype(np.int64),
-            "previous_rewards": rewards,
+            "previous_rewards": np.zeros_like(rewards) if "hand_levels" in self.arrays else rewards,
             "episode_starts": starts,
         }
         policy_arrays = {k: v for k, v in self.arrays.items() if k not in {"terminal_status", "board_rotated"}}

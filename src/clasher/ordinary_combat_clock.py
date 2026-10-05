@@ -28,7 +28,7 @@ def supported(entity) -> bool:
     return all(
         getattr(type(mechanic), method, None) is getattr(BaseMechanic, method)
         for mechanic in entity.mechanics
-        if type(mechanic) is not IceSpiritFreeze
+        if not isinstance(mechanic, IceSpiritFreeze)
         for method in ("on_attack_start", "on_attack_committed")
     )
 

@@ -155,7 +155,7 @@ def is_airborne_target(entity: Any) -> bool:
     return bool(
         getattr(entity, "is_air_unit", False)
         or getattr(entity, "_river_jump_active", False)
-    )
+    ) and not getattr(entity, "_vines_grounded", False)
 
 
 def is_native_building_target(entity: Any) -> bool:
@@ -186,7 +186,7 @@ def is_above_ground_surface(entity: Any) -> bool:
         getattr(entity, "is_air_unit", False)
         or getattr(entity, "_river_jump_active", False)
         or getattr(entity, "_mk_leap_phase", None) == "airborne"
-    )
+    ) and not getattr(entity, "_vines_grounded", False)
 
 
 def uses_air_collision_plane(entity: Any) -> bool:

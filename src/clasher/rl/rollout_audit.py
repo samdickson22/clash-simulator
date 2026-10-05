@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Protocol
 
 import numpy as np
+import torch
 
 
 class RolloutLike(Protocol):
@@ -21,10 +22,14 @@ def _array_record(value: np.ndarray) -> dict[str, Any]:
         "kind": "ndarray",
         "dtype": contiguous.dtype.str,
         "shape": list(contiguous.shape),
-        "sha256": hashlib.sha256(
-            contiguous.tobytes(order="C")
-        ).hexdigest(),
+        "sha256": hashlib.sha256(contiguous.tobytes(order="C")).hexdigest(),
     }
+
+
+def _tensor_record(value: torch.Tensor) -> dict[str, Any]:
+    if not isinstance(value, torch.Tensor):
+        raise TypeError("recurrent prefix values must be tensors or missing")
+    return _array_record(value.detach().cpu().numpy())
 
 
 def build_rollout_audit(
@@ -45,6 +50,23 @@ def build_rollout_audit(
         value = getattr(rollout, field.name)
         if isinstance(value, np.ndarray):
             records[field.name] = _array_record(value)
+        elif field.name == "recurrent_prefixes" and isinstance(value, tuple):
+            records[field.name] = {
+                "kind": "recurrent-prefixes",
+                "sequences": [
+                    None
+                    if prefix is None
+                    else {
+                        item.name: (
+                            None
+                            if getattr(prefix, item.name) is None
+                            else _tensor_record(getattr(prefix, item.name))
+                        )
+                        for item in fields(prefix)
+                    }
+                    for prefix in value
+                ],
+            }
         elif value is None:
             records[field.name] = {"kind": "none"}
         elif isinstance(value, (bool, int, float, str)):

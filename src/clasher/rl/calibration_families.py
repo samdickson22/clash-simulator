@@ -242,6 +242,15 @@ def claim_acceptance_collection(
         )
 
 
+def _same_existing_directory(recorded: str, supplied: Path) -> bool:
+    """Follow relocation symlinks without admitting missing artifact locations."""
+    try:
+        destination = Path(recorded).resolve(strict=True)
+        return destination.is_dir() and destination == supplied.resolve(strict=True)
+    except (OSError, RuntimeError):
+        return False
+
+
 def require_collection_claim(
     path: Path,
     *,
@@ -256,8 +265,11 @@ def require_collection_claim(
             "SELECT family_id, protocol_sha256, output_path FROM calibration_collections WHERE root_id=?",
             (root_id,),
         ).fetchone()
-        expected = (family_id, protocol_sha256, str(capture_path.resolve()))
-        if row != expected:
+        if (
+            row is None
+            or row[:2] != (family_id, protocol_sha256)
+            or not _same_existing_directory(row[2], capture_path)
+        ):
             raise ValueError("capture does not match its acceptance collection claim")
 
 
@@ -397,14 +409,17 @@ def require_branch_claims(
             family_id,
             protocol_sha256,
             branch_protocol_sha256,
-            str(output_path.resolve()),
         )
         for candidate, engine in attempts:
             row = db.execute(
                 "SELECT family_id,protocol_sha256,branch_protocol_sha256,output_path FROM calibration_branches WHERE root_id=? AND candidate=? AND engine=?",
                 (root_id, candidate, engine),
             ).fetchone()
-            if row != expected:
+            if (
+                row is None
+                or row[:3] != expected
+                or not _same_existing_directory(row[3], output_path)
+            ):
                 raise ValueError(
                     "branch artifacts do not match their reserved attempts"
                 )

@@ -174,6 +174,12 @@ _cached_native_route_goal_cell_units = lru_cache(maxsize=32_768)(
 )
 
 
+@lru_cache(maxsize=128)
+def _occupied_cell_set(cells: tuple[tuple[int, int], ...]) -> frozenset[tuple[int, int]]:
+    """Reuse the occupancy set while a building footprint snapshot is unchanged."""
+    return frozenset(cells)
+
+
 def native_route_goal_cell(
     mover: "Entity",
     target: "Entity",
@@ -200,7 +206,7 @@ def native_route_goal_cell(
 
     battle_state = getattr(mover, "battle_state", None)
     occupied_cells = (
-        frozenset(native_building_cost_cells(battle_state))
+        _occupied_cell_set(tuple(native_building_cost_cells(battle_state)))
         if (
             battle_state is not None
             and not getattr(mover, "is_air_unit", False)
@@ -320,45 +326,55 @@ def _native_grid_route(
     closed: set[tuple[int, int]] = set()
     heap: list[tuple[int, int]] = [start]
 
+    pos: dict[tuple[int, int], int] = {start: 0}
+
     def push(cell: tuple[int, int]) -> None:
-        if cell in heap:
-            index = heap.index(cell)
-        else:
+        index = pos.get(cell)
+        if index is None:
             heap.append(cell)
             index = len(heap) - 1
+        pc = priorities[cell]
         while index > 0:
             parent_index = (index - 1) // 2
             parent = heap[parent_index]
-            if priorities[parent] <= priorities[cell]:
+            if priorities[parent] <= pc:
                 break
             heap[index] = parent
+            pos[parent] = index
             index = parent_index
         heap[index] = cell
+        pos[cell] = index
 
     def pop() -> tuple[int, int]:
         root = heap[0]
+        del pos[root]
         last = heap.pop()
         if not heap:
             return root
         heap[0] = last
+        pos[last] = 0
         index = 0
+        n = len(heap)
         while True:
             chosen = index
             right = index * 2 + 2
             if (
-                right < len(heap)
+                right < n
                 and priorities[heap[right]] < priorities[heap[chosen]]
             ):
                 chosen = right
             left = index * 2 + 1
             if (
-                left < len(heap)
+                left < n
                 and priorities[heap[left]] < priorities[heap[chosen]]
             ):
                 chosen = left
             if chosen == index:
                 break
-            heap[index], heap[chosen] = heap[chosen], heap[index]
+            a, b = heap[chosen], heap[index]
+            heap[index], heap[chosen] = a, b
+            pos[a] = index
+            pos[b] = chosen
             index = chosen
         return root
 
@@ -554,6 +570,11 @@ def native_friendly_building_signature(battle_state: BattleState, owner: int) ->
     ))
 
 
+@lru_cache(maxsize=16)
+def _plain_cost_map(lane_id: int, jump_height: bool) -> dict[tuple[int, int], int]:
+    return dict(_standard_path_cost_map(lane_id, jump_height))
+
+
 @lru_cache(maxsize=2048)
 def _cached_dynamic_grid_route(
     start: tuple[int, int],
@@ -562,10 +583,18 @@ def _cached_dynamic_grid_route(
     jump_height: bool,
     building_cells: tuple[tuple[int, int], ...],
 ) -> tuple[tuple[int, int], ...] | None:
-    costs = dict(_standard_path_cost_map(lane_id, jump_height))
-    for cell in building_cells:
-        costs[cell] = max(costs[cell], 50)
-    route = _native_grid_route(start, goal, costs.get)
+    base = _plain_cost_map(lane_id, jump_height)
+    if building_cells:
+        over = {cell: max(base[cell], 50) for cell in building_cells}
+        base_get = base.get
+        over_get = over.get
+
+        def tile_cost(cell):
+            v = over_get(cell)
+            return base_get(cell) if v is None else v
+    else:
+        tile_cost = base.get
+    route = _native_grid_route(start, goal, tile_cost)
     return None if route is None else tuple(route)
 
 

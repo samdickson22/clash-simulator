@@ -1,0 +1,296 @@
+{
+ "hog26": {
+  "cells": {
+   "balanced": {
+    "actions_outside_public_mask": 0,
+    "cpu_seconds_per_game": 543.6682130000008,
+    "crown_diff": -0.4,
+    "draws": 0,
+    "failed_actions": 0,
+    "losses": 9,
+    "mean_ticks": 5212.9,
+    "n": 10,
+    "placements_per_game": 83.6,
+    "planner_calls_per_game": 139.6,
+    "planner_cpu_seconds_per_call": 3.825469743552982,
+    "planner_cpu_seconds_per_game": 534.0355761999963,
+    "planner_seconds_per_call": 4.443920256625354,
+    "planner_seconds_per_game": 620.3712678248994,
+    "score": 0.1,
+    "score_boot95": [
+     0.0,
+     0.3
+    ],
+    "win_rate_wilson95": [
+     0.017876212896073995,
+     0.4041500295247722
+    ],
+    "wins": 1
+   },
+   "defense": {
+    "actions_outside_public_mask": 0,
+    "cpu_seconds_per_game": 677.7696764999986,
+    "crown_diff": -0.1,
+    "draws": 0,
+    "failed_actions": 0,
+    "losses": 2,
+    "mean_ticks": 5761.0,
+    "n": 10,
+    "placements_per_game": 98.2,
+    "planner_calls_per_game": 160.0,
+    "planner_cpu_seconds_per_call": 4.163200274374967,
+    "planner_cpu_seconds_per_game": 666.1120438999948,
+    "planner_seconds_per_call": 4.838844886816223,
+    "planner_seconds_per_game": 774.2151818905957,
+    "score": 0.8,
+    "score_boot95": [
+     0.4,
+     1.0
+    ],
+    "win_rate_wilson95": [
+     0.4901624691221323,
+     0.9433178490622331
+    ],
+    "wins": 8
+   },
+   "pressure": {
+    "actions_outside_public_mask": 0,
+    "cpu_seconds_per_game": 439.8025651999989,
+    "crown_diff": 0.7,
+    "draws": 0,
+    "failed_actions": 0,
+    "losses": 0,
+    "mean_ticks": 4664.0,
+    "n": 10,
+    "placements_per_game": 70.8,
+    "planner_calls_per_game": 123.9,
+    "planner_cpu_seconds_per_call": 3.4856918054882526,
+    "planner_cpu_seconds_per_game": 431.8772146999945,
+    "planner_seconds_per_call": 4.058767336863638,
+    "planner_seconds_per_game": 502.88127303740475,
+    "score": 1.0,
+    "score_boot95": [
+     1.0,
+     1.0
+    ],
+    "win_rate_wilson95": [
+     0.7224671969739421,
+     0.9999999999999999
+    ],
+    "wins": 10
+   }
+  },
+  "ckpt_alone": {
+   "actions_outside_public_mask": 0,
+   "cpu_seconds_per_game": 9.78288378124978,
+   "crown_diff": -1.46875,
+   "draws": 0,
+   "failed_actions": 0,
+   "losses": 62,
+   "mean_ticks": 3497.40625,
+   "n": 64,
+   "placements_per_game": 37.84375,
+   "planner_calls_per_game": 0.0,
+   "planner_cpu_seconds_per_call": 0.0,
+   "planner_cpu_seconds_per_game": 0.0,
+   "planner_seconds_per_call": 0.0,
+   "planner_seconds_per_game": 0.0,
+   "score": 0.03125,
+   "score_boot95": [
+    0.0,
+    0.078125
+   ],
+   "win_rate_wilson95": [
+    0.008612138268632274,
+    0.10697291857715885
+   ],
+   "wins": 2
+  },
+  "note": "incomplete: using games 0..9 per cell (completed per cell: [11, 11, 11])",
+  "paired_vs_ckpt": {
+   "ckpt_score": 0.03333333333333333,
+   "diff": 0.6,
+   "diff_boot95": [
+    0.36666666666666664,
+    0.8333333333333334
+   ],
+   "n": 30
+  },
+  "pooled": {
+   "actions_outside_public_mask": 0,
+   "cpu_seconds_per_game": 553.7468182333328,
+   "crown_diff": 0.06666666666666667,
+   "draws": 0,
+   "failed_actions": 0,
+   "losses": 11,
+   "mean_ticks": 5212.633333333333,
+   "n": 30,
+   "placements_per_game": 84.2,
+   "planner_calls_per_game": 141.16666666666666,
+   "planner_cpu_seconds_per_call": 3.85365958630457,
+   "planner_cpu_seconds_per_game": 544.0082782666618,
+   "planner_seconds_per_call": 4.480443265059976,
+   "planner_seconds_per_game": 632.4892409176333,
+   "score": 0.6333333333333333,
+   "score_boot95": [
+    0.4,
+    0.8666666666666667
+   ],
+   "win_rate_wilson95": [
+    0.4551356351862472,
+    0.7812607928773656
+   ],
+   "wins": 19
+  }
+ },
+ "holdout": {
+  "cells": {
+   "balanced": {
+    "actions_outside_public_mask": 0,
+    "cpu_seconds_per_game": 349.7523731511626,
+    "crown_diff": 0.7790697674418605,
+    "draws": 0,
+    "failed_actions": 0,
+    "losses": 7,
+    "mean_ticks": 4600.127906976744,
+    "n": 86,
+    "placements_per_game": 52.604651162790695,
+    "planner_calls_per_game": 101.52325581395348,
+    "planner_cpu_seconds_per_call": 3.3681606644141584,
+    "planner_cpu_seconds_per_game": 341.94663675581415,
+    "planner_seconds_per_call": 3.9920984359135736,
+    "planner_seconds_per_game": 405.29083074373733,
+    "score": 0.9186046511627907,
+    "score_boot95": [
+     0.8604651162790697,
+     0.9651162790697675
+    ],
+    "win_rate_wilson95": [
+     0.8413981725871794,
+     0.9600135686795198
+    ],
+    "wins": 79
+   },
+   "defense": {
+    "actions_outside_public_mask": 0,
+    "cpu_seconds_per_game": 444.392494,
+    "crown_diff": 0.4523809523809524,
+    "draws": 0,
+    "failed_actions": 0,
+    "losses": 13,
+    "mean_ticks": 5078.285714285715,
+    "n": 84,
+    "placements_per_game": 62.73809523809524,
+    "planner_calls_per_game": 124.32142857142857,
+    "planner_cpu_seconds_per_call": 3.503132219477166,
+    "planner_cpu_seconds_per_game": 435.51440200000053,
+    "planner_seconds_per_call": 4.118426113403568,
+    "planner_seconds_per_game": 512.0086178842079,
+    "score": 0.8452380952380952,
+    "score_boot95": [
+     0.7619047619047619,
+     0.9166666666666666
+    ],
+    "win_rate_wilson95": [
+     0.7530135770583347,
+     0.9072668957236342
+    ],
+    "wins": 71
+   },
+   "pressure": {
+    "actions_outside_public_mask": 0,
+    "cpu_seconds_per_game": 308.2436493255813,
+    "crown_diff": 0.7790697674418605,
+    "draws": 0,
+    "failed_actions": 0,
+    "losses": 14,
+    "mean_ticks": 4248.03488372093,
+    "n": 86,
+    "placements_per_game": 47.73255813953488,
+    "planner_calls_per_game": 96.68604651162791,
+    "planner_cpu_seconds_per_call": 3.119729543836449,
+    "planner_cpu_seconds_per_game": 301.6343157790706,
+    "planner_seconds_per_call": 3.6161216895584345,
+    "planner_seconds_per_game": 349.6285098683533,
+    "score": 0.8372093023255814,
+    "score_boot95": [
+     0.7441860465116279,
+     0.9186046511627907
+    ],
+    "win_rate_wilson95": [
+     0.745102990545678,
+     0.9004786899191634
+    ],
+    "wins": 72
+   }
+  },
+  "ckpt_alone": {
+   "actions_outside_public_mask": 0,
+   "cpu_seconds_per_game": 12.749159718749999,
+   "crown_diff": -0.1953125,
+   "draws": 0,
+   "failed_actions": 0,
+   "losses": 159,
+   "mean_ticks": 4168.93359375,
+   "n": 256,
+   "placements_per_game": 37.14453125,
+   "planner_calls_per_game": 0.0,
+   "planner_cpu_seconds_per_call": 0.0,
+   "planner_cpu_seconds_per_game": 0.0,
+   "planner_seconds_per_call": 0.0,
+   "planner_seconds_per_game": 0.0,
+   "score": 0.37890625,
+   "score_boot95": [
+    0.3046875,
+    0.45703125
+   ],
+   "win_rate_wilson95": [
+    0.32168476251067823,
+    0.43970820277311207
+   ],
+   "wins": 97
+  },
+  "note": "complete",
+  "paired_vs_ckpt": {
+   "ckpt_score": 0.37890625,
+   "diff": 0.48828125,
+   "diff_boot95": [
+    0.41015625,
+    0.56640625
+   ],
+   "n": 256
+  },
+  "pooled": {
+   "actions_outside_public_mask": 0,
+   "cpu_seconds_per_game": 366.86182589453114,
+   "crown_diff": 0.671875,
+   "draws": 0,
+   "failed_actions": 0,
+   "losses": 34,
+   "mean_ticks": 4638.7421875,
+   "n": 256,
+   "placements_per_game": 54.29296875,
+   "planner_calls_per_game": 107.37890625,
+   "planner_cpu_seconds_per_call": 3.344289413438107,
+   "planner_cpu_seconds_per_game": 359.106139398438,
+   "planner_seconds_per_call": 3.9263628067559115,
+   "planner_seconds_per_game": 421.6085437301299,
+   "score": 0.8671875,
+   "score_boot95": [
+    0.8203125,
+    0.91015625
+   ],
+   "win_rate_wilson95": [
+    0.820139655862975,
+    0.9033784494055324
+   ],
+   "wins": 222
+  },
+  "verdict": {
+   "PASS": true,
+   "analysed_games": 256,
+   "defense_ok": true,
+   "pooled_ok": true
+  }
+ }
+}

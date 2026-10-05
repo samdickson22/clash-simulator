@@ -261,6 +261,12 @@ def create_spell_from_json(
     types whose level inheritance is not implemented yet.
     """
     level_multiplier(level)  # Validate even spells without damage.
+    # Engine-scope cards with native action graphs (Vines, Void, Goblin Curse).
+    from .scope_spells import build_scope_spell
+
+    scope_spell = build_scope_spell(spell_data, level)
+    if scope_spell is not None:
+        return scope_spell
     if level != TOURNAMENT_LEVEL:
         baseline = create_spell_from_json(spell_data, object_registry)
         crown = getattr(baseline, "crown_tower_damage", None)
@@ -770,6 +776,8 @@ def load_dynamic_spells(data_file: str | Path | None = None) -> Dict[str, Spell]
     spell_registry = {}
     for spell_data in actual_spells:
         spell_data = apply_entry_overrides(spell_data, object_registry)
+        if spell_data.get('tidType') != 'TID_CARD_TYPE_SPELL':
+            continue  # structurally rewritten (Heal Spirit is a troop)
         spell = create_spell_from_json(spell_data, object_registry)
         spell_registry[spell.name] = spell
 

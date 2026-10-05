@@ -837,6 +837,10 @@ def step_stationary_combat_(
         base_actionable = (
             component_available & ~activation_delay_return & ~first_delay_return
         )
+        # Native aims during the first-hit phase: the lock is taken (and kept)
+        # there without advancing the attack clock, so a unit that becomes
+        # nearer before the shot does not steal it.
+        target_selectable = component_available & ~activation_delay_return
 
         resolved = _resolve_target_for_attackers(state, attacker_slots)
         old_target = _gather(state.target_slot, attacker_slots)
@@ -844,7 +848,7 @@ def step_stationary_combat_(
             state.target_slot,
             attacker_slots,
             resolved,
-            base_actionable & (resolved != old_target),
+            target_selectable & (resolved != old_target),
         )
         current = torch.where(base_actionable, resolved, old_target)
 

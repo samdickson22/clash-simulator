@@ -704,6 +704,8 @@ class CausalVisionTracker:
         observation = source.observation
         tracked = ConfidenceAwareActorObservation(
             observation=ActorObservation(
+                hand_levels=observation.hand_levels,
+                hand_level_confidence=observation.hand_level_confidence,
                 entity_levels=entity_levels,
                 entity_level_confidence=entity_level_confidence,
                 terminal=observation.terminal,
