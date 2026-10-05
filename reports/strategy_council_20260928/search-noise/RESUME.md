@@ -27,3 +27,5 @@ The schedule has 1,664 terminal games: four variants each with 128 games versus 
 Before reporting completion, verify 1,664 receipts, completion.json, all worker exits and launcher.exit equal to zero, unchanged manifest files, outputs below 300 MB, and no active owned worker. Read RESULTS.md and FINAL.txt, check the uncertainty and modelling limits, then return the requested plain-text final report of no more than 200 words. A placeholder RESULTS.md or a progress count is not completion evidence.
 
 Preparation passed five boundary tests, a 50,000-event-per-condition rate check, nine terminal development games, seven-family smoke coverage, and a final terminal smoke verifying 0.66099 all-truth HP coverage and 0.04977 readable-bar MAE. Seed audit scanned 918,159 seed fields and 3,946 NPZ archives. A pre-confirmation amendment restored unknown event placements and corrected the HP coverage denominator. No confirmation outcomes informed these changes.
+
+Restart incident 20261005T073001Z: verified 991 receipts and all 456 source hashes. See INCIDENT-20261005T073001Z.md and resume-audit-20261005T073001Z.json.

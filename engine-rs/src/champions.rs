@@ -14,6 +14,10 @@ pub(super) struct Ability {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(tag = "kind")]
 pub(super) enum Effect {
+    Skeleton {
+        threshold: i64,
+        offsets: Vec<(f64, f64)>,
+    },
     Goblin {
         monster: Option<i32>,
         anchor: Option<(f64, f64)>,
@@ -167,13 +171,20 @@ impl BattleState {
             return false;
         }
         let i = self.ability_owner(owner).unwrap();
+        if let Effect::Skeleton { threshold, .. } = &self.entities[i].champion.as_ref().unwrap().effect {
+            if self.entities[i].souls_collected < *threshold { return false; }
+        }
         let now = self.tick * 50;
         let c = self.entities[i].champion.as_mut().unwrap();
         self.players[owner].elixir -= c.ability.cost;
         c.ability.last_use = now;
         c.ability.active = true;
         c.ability.start = now;
+        let mut summon = None;
         match &mut c.effect {
+            Effect::Skeleton { threshold, offsets } => {
+                summon = Some((*threshold, offsets.clone()));
+            }
             Effect::Goblin {
                 next_hit,
                 cast_until,
@@ -203,6 +214,11 @@ impl BattleState {
                 c.ability.start = now + *delay;
             }
         }
+        if let Some((threshold, offsets)) = summon {
+            let source = self.entities[i].clone();
+            self.spawn_soul_groups(&source, offsets);
+            self.entities[i].souls_collected = (self.entities[i].souls_collected - threshold).max(0);
+        }
         true
     }
     /// Returns the combat lock after normal character-owned mechanic ticks.
@@ -216,6 +232,12 @@ impl BattleState {
         }
         let e = &mut self.entities[i];
         let blocked = match &mut c.effect {
+            Effect::Skeleton { threshold, .. } => {
+                c.ability.cost = if e.souls_collected >= *threshold {
+                    (3 - e.souls_collected / 10).max(1) as f64
+                } else { 3.0 };
+                false
+            }
             Effect::Mighty { cast_until, .. } | Effect::Goblin { cast_until, .. } => {
                 now < *cast_until
             }
@@ -274,7 +296,7 @@ impl BattleState {
         }
         *pending = None;
         let e = &mut self.entities[i];
-        let mut bomb = self.config.ability_bombs[&e.stats.name].clone();
+        let mut bomb = self.config.ability_bombs[e.stats.key()].clone();
         bomb.id = self.next_id as i32;
         self.next_id += 1;
         bomb.owner = e.owner;
@@ -391,8 +413,10 @@ impl BattleState {
         let Some(c) = &mut e.champion else {
             return;
         };
+        if matches!(c.effect, Effect::Skeleton { .. }) { return; }
         c.ability.active = false;
         match &mut c.effect {
+            Effect::Skeleton { .. } => unreachable!(),
             Effect::Goblin { next_hit, .. } => *next_hit = None,
             Effect::Mighty { pending, .. } => *pending = None,
             Effect::Queen {

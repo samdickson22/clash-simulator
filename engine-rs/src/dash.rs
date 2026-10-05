@@ -27,7 +27,9 @@ impl Entity {
         } else { self.clock.interval-self.clock.timeline.rem_euclid(self.clock.interval) }
     }
     pub(super) fn consume_clock_reseed(&mut self) {
-        let Some(remaining) = self.clock_reseed.take() else { return; };
+        let remaining=self.clock_reseed.take();
+        if self.stats.ordinary { self.clock_initialized=true; }
+        let Some(remaining)=remaining else {return;};
         let finish = self.clock.finish;
         self.clock.stop();self.force_due=remaining==0;
         let first=self.clock.interval-self.clock.load;

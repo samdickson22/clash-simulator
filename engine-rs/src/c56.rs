@@ -260,7 +260,7 @@ impl BattleState {
             self.damage(j, source.stats.damage);
             self.stun_target(j, source.stats.spirit_stun);
             let target = &self.entities[j];
-            let mut chain = self.config.cards["ElectroSpirit"].chain.clone().unwrap();
+            let mut chain = self.config.cards[source.stats.key()].chain.clone().unwrap();
             chain.owner = source.owner;
             chain.id = self.next_id as i32;
             self.next_id += 1;
@@ -279,7 +279,7 @@ impl BattleState {
     pub(super) fn dragon_chain_hit(&mut self, i: usize, j: usize) {
         if !self.entities[i].stats.dragon_chain { return; }
         let source = &self.entities[i];
-        let Some(template) = self.config.cards.get(&source.stats.name).and_then(|c| c.chain.as_ref()) else { return; };
+        let Some(template) = self.config.cards.get(source.stats.key()).and_then(|c| c.chain.as_ref()) else { return; };
         let mut chain = template.clone();
         chain.id = self.next_id as i32; self.next_id += 1;
         chain.owner = source.owner;

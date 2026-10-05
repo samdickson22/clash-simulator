@@ -26,7 +26,7 @@ EARLY = ('SpearGoblins', 'GoblinCage', 'Bomber', 'Tombstone', 'Barbarians',
          'Bowler', 'EliteArcher', 'GoldenKnight', 'DarkWitch', 'SkeletonBalloon',
          'LavaHound', 'ElixirGolem', 'BarbarianHut', 'Graveyard',
          'Rage', 'RageBarbarian', 'SuspiciousBush', 'ElectroDragon',
-         'Assassin', 'BossBandit', 'MegaKnight', 'Fisherman', 'Clone', 'Mirror')
+         'Assassin', 'BossBandit', 'MegaKnight')
 BLOCKED_CONTROLLER_CARDS = frozenset({'ThreeMusketeers'})
 CONTROLLER_CARDS = tuple(c for c in EARLY if c not in BLOCKED_CONTROLLER_CARDS)
 

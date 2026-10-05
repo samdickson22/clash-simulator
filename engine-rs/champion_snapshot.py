@@ -10,13 +10,20 @@ def champion(e):
             m
             for m in e.mechanics
             if type(m).__name__
-            in ("ArcherQueenCloak", "MightyMinerSwitch", "GoblinsteinTether")
+            in ("ArcherQueenCloak", "MightyMinerSwitch", "GoblinsteinTether", "SkeletonKingSoulCollector")
         ),
         None,
     )
     if m is None:
         return None
-    if type(m).__name__ == "MightyMinerSwitch":
+    if type(m).__name__ == "SkeletonKingSoulCollector":
+        import math
+        spawn = m.ability.effects[0]
+        effect = dict(kind="Skeleton", threshold=m.souls_per_activation,
+                      offsets=[(spawn.radius_tiles * math.cos(2 * math.pi * i / spawn.count),
+                                spawn.radius_tiles * math.sin(2 * math.pi * i / spawn.count))
+                               for i in range(spawn.count)])
+    elif type(m).__name__ == "MightyMinerSwitch":
         effect = dict(kind="Mighty", pending=m.pending_ms, cast_until=m.cast_until_ms)
     elif type(m).__name__ == "GoblinsteinTether":
         effect = dict(

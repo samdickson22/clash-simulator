@@ -261,7 +261,20 @@ impl NativeScripts {
             let Some(name) = name else {
                 continue;
             };
-            let m = &self.meta.cards[name];
+            let resolved_name = if name == "Mirror" {
+                let Some(previous) = b.players[seat].last_card.as_ref() else { continue; };
+                if !b.config.cards.contains_key(&format!("level12:{previous}")) { continue; }
+                previous
+            } else { name };
+            let mirrored;
+            let m = if name == "Mirror" {
+                let Some(previous_cost) = b.players[seat].last_cost else { continue; };
+                let Some(base) = self.meta.cards.get(resolved_name) else { continue; };
+                let mut effective = base.clone();
+                effective.cost = previous_cost + 1.0;
+                mirrored = effective;
+                &mirrored
+            } else { &self.meta.cards[name] };
             if m.cost > v.elixir + 1e-6 {
                 continue;
             }
@@ -291,7 +304,7 @@ impl NativeScripts {
                     continue;
                 }
                 let blocked=if self.meta.c56 && m.building && m.unrestricted {
-                    self.anchored_building_occupied(b,seat,name,x,y,half.unwrap(),&v.bodies)
+                    self.anchored_building_occupied(b,seat,resolved_name,x,y,half.unwrap(),&v.bodies)
                 } else { occupied(x,y,m.radius,half,&v.bodies,false,self.meta.c56) };
                 if !m.spell && blocked {
                     if m.building

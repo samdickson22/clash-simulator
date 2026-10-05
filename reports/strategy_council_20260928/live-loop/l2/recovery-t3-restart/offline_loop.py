@@ -127,8 +127,6 @@ def main():
         if tick<220:call(f'advance-native {220-tick}')
         initial=call('observe')
         prior_setup=HERE/'recovery-forward'/f"native-pair-{ep['pair']:02d}-partial"/'setup-evaluation-only.json'
-        restart_setup=HERE/'recovery-t3-restart'/f"native-pair-{ep['pair']:02d}-partial"/'setup-evaluation-only.json'
-        if restart_setup.exists():prior_setup=restart_setup
         if prior_setup.exists():
             old_setup=json.loads(prior_setup.read_text())['initial']
             def opening(state):

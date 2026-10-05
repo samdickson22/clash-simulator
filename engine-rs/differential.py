@@ -28,16 +28,19 @@ import clasher_core
 CARDS = ("Knight", "Archers", "Giant", "Musketeer")
 
 
-def initial(seed=1, cards=CARDS):
+def initial(seed=1, cards=CARDS, *, level=11):
     b = BattleState(rng=random.Random(seed))
     for p in b.players:
+        if level != 11:
+            p.set_card_levels({name: level for name in cards})
         p.hand = list(cards[:4])
         p.deck = (list(cards) * 2)[:8]
         p.cycle_queue = deque((list(cards) * 2)[4:8])
     return b
 
 
-def entity(e):
+def entity(e, *, clone_prototype=True):
+    from mirror_snapshot import payload_key
     from clasher.unit_traits import is_knockback_immune, is_hover_unit_card
     from clasher.gamedata_normalization import serialized_hit_planes
     from clasher.ordinary_combat_clock import supported
@@ -246,6 +249,7 @@ def entity(e):
         lifetime=int(getattr(s, "lifetime_ms", 0) or 0),
         max_hp=float(e.max_hitpoints),
         name=getattr(s, "name", ""),
+        payload_key=payload_key(getattr(s, 'name', ''), getattr(s, 'level', 11)),
         radius=e.get_collision_radius(),
         mass=unit_mass(s),
         range=float(getattr(e, "range", 0)),
@@ -286,7 +290,7 @@ def entity(e):
     def coord(value):
         return (value.x, value.y) if value is not None else (0.0, 0.0)
 
-    return dict(
+    out = dict(
         souls_collected=getattr(souls, "souls_collected", 0),
         kamikaze_primed=bool(getattr(e,'kamikaze_primed',False)),
         kamikaze_timer=float(getattr(e,'kamikaze_timer_remaining',0)),
@@ -299,7 +303,7 @@ def entity(e):
         move_mode=float(e.movement_mode_multiplier),
         attack_mode=float(e.attack_mode_multiplier),
         production=spawn_state,
-        spawn_area_done=all(
+        spawn_area_done=bool(e.is_clone and getattr(e, '_spawn_hook_fired', False)) or all(
             getattr(m, "_applied", False)
             for m in e.mechanics
             if type(m).__name__ == "SpawnAreaEffect"
@@ -366,14 +370,21 @@ def entity(e):
         active=bool(getattr(e, "_tower_active", True)),
         lane=int(getattr(e, "_native_lane_id", 0)),
         age=int(getattr(e, "_native_deployed_elapsed_ms", 0)),
+        clock_initialized=e._ordinary_clock is not None,
         clock=dict(interval=interval, load=load, timeline=0, remaining=0, finish=0),
         facing=[int(e._facing_x_units), int(e._facing_y_units)],
         cooldown=float(e.attack_cooldown),
         force_due=stats["ordinary"] and e.attack_cooldown <= 0,
     )
+    if clone_prototype and type(e).__name__ == 'Troop' and not e.is_clone and s is not None:
+        from clone_snapshot import prototype
+        out['clone_template'] = prototype(e)
+    return out
 
 
-def config(cards=CARDS):
+def config(cards=CARDS, *, level=11, mirror_templates=True):
+    from functools import partial
+    template_battle = partial(initial, level=level)
     from clasher.logic_math import logic_cos, logic_sin, _ATAN_TABLE
 
     out = dict(
@@ -401,7 +412,7 @@ def config(cards=CARDS):
     out["lane_ids"] = [
         nearest_native_path_id(x * 500, y * 500) for y in range(64) for x in range(36)
     ]
-    arena = initial().arena
+    arena = template_battle().arena
     out["blocked_tiles"] = [
         (x, y) in arena.BLOCKED_TILES for y in range(32) for x in range(18)
     ]
@@ -417,7 +428,10 @@ def config(cards=CARDS):
         for x in range(18)
     ]
     for card in cards:
-        b = initial(cards=(card,) + CARDS)
+        if card == 'Mirror':
+            out['cards'][card] = dict(cost=1.0, units=[[], []], mirror=True, footprint=0)
+            continue
+        b = template_battle(cards=(card,) + CARDS)
         _, stats, spell = b.resolve_card_play(0, card)
         if spell is not None:
             from dataclasses import asdict
@@ -431,7 +445,7 @@ def config(cards=CARDS):
                 "SpawnProjectileSpell",
             ):
                 for seat in (0, 1):
-                    probe = initial()
+                    probe = template_battle()
                     spell.cast(probe, seat, Position(4.5, 10.5))
                     templates[seat] = [entity(probe.entities[max(probe.entities)])]
                     templates[seat][0]["stats"]["speed"] = round(
@@ -478,7 +492,7 @@ def config(cards=CARDS):
                 "SummonedAreaSpell",
             ):
                 for seat in (0, 1):
-                    probe = initial()
+                    probe = template_battle()
                     spell.cast(probe, seat, Position(4.5, 10.5))
                     templates[seat] = [entity(probe.entities[max(probe.entities)])]
                     templates[seat][0]["spell_name"] = card
@@ -511,7 +525,7 @@ def config(cards=CARDS):
             continue
         formations = []
         for seat in (0, 1):
-            b = initial(cards=(card,) + tuple(c for c in CARDS if c != card))
+            b = template_battle(cards=(card,) + tuple(c for c in CARDS if c != card))
             b.players[seat].elixir = 10
             old = set(b.entities)
             x, y = (8.5 if card == "RoyalRecruits" else 4.5), 10.5 if seat == 0 else 21.5
@@ -643,7 +657,7 @@ def config(cards=CARDS):
             groups = [[], []]
             for owner in (0, 1):
                 for x in (4.5, 13.5):
-                    probe = initial()
+                    probe = template_battle()
                     first = probe.next_entity_id
                     probe._spawn_troop(Position(x, 10.5), owner, probe.card_loader.get_card("Skeleton"))
                     group = []
@@ -673,6 +687,9 @@ def config(cards=CARDS):
         if card in ('DarkWitch','SkeletonBalloon','LavaHound','ElixirGolem','BarbarianHut'):
             from payload_snapshot import export_payloads
             export_payloads(b.entities[units[0]['id']],b,out)
+    if mirror_templates and 'Mirror' in cards:
+        from mirror_snapshot import extend
+        extend(out, cards)
     return out
 
 
@@ -697,10 +714,12 @@ def snapshot(b, cfg):
                     hand=p.hand,
                     cycle=list(p.cycle_queue),
                     refill=p.next_card_refill_cooldown_ms,
+                    last_card=p.last_played_card,
+                    last_cost=p.last_played_card_cost,
                 )
                 for p in b.players
             ],
-            entities=[live_entity(e, b) for e in b.entities.values()],
+            entities=[live_entity(e, b, cfg) for e in b.entities.values()],
             pending_casts=pending_casts(b),
             sudden_death=b.sudden_death,
             rng=dict(state=list(rng[:-1]), index=rng[-1]),
@@ -777,6 +796,8 @@ def native_fields(native):
     data.pop("rng")
     for p in data["players"]:
         p.pop("refill")
+        p.pop("last_card", None)
+        p.pop("last_cost", None)
     keep = {"id", "owner", "x", "y", "hp", "alive", "class", "target"}
     data["entities"] = [
         {k: v for k, v in e.items() if k in keep} for e in data["entities"]

@@ -276,3 +276,69 @@ Registered pair 5 completed a real terminal with 1926 processed frames and 316 a
 2026-10-04 22:59:28: Native pair 6 complete: frames=2063, actions=317, terminal=True, pixel_end=True. No interim aggregate strength inspection.
 
 2026-10-04 23:00:07: Simulator pair 7 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-04 23:08:15: Native pair 7 complete: frames=2210, actions=309, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-04 23:08:55: Simulator pair 8 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-04 23:16:22: Native pair 8 complete: frames=2052, actions=322, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+Deferred-report verification: fixed a missing parenthesis in the unsealed analyzer, then parsed analyzer/finalizer successfully. Two in-memory paired-bootstrap sanity checks passed for identical-arm differences and constant negative differences. No episode outcomes were read for these checks. Gameplay source pins and collected data are unchanged.
+
+2026-10-04 23:17:00: Simulator pair 9 complete, terminal tick 3631; no interim aggregate strength inspection.
+
+2026-10-04 23:23:54: Native pair 9 complete: frames=2016, actions=284, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-04 23:24:34: Simulator pair 10 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-04 23:31:58: Native pair 10 complete: frames=2188, actions=342, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-04 23:32:29: Simulator pair 11 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-04 23:39:13: Native pair 11 complete: frames=2218, actions=304, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-04 23:39:43: Simulator pair 12 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-04 23:45:15: Native pair 12 complete: frames=2308, actions=257, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-04 23:45:40: Simulator pair 13 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-04 23:48:25: Native pair 13 complete: frames=1421, actions=125, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-04 23:49:00: Simulator pair 14 complete, terminal tick 4314; no interim aggregate strength inspection.
+
+2026-10-04 23:56:30: Native pair 14 complete: frames=2057, actions=335, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-04 23:57:08: Simulator pair 15 complete, terminal tick 6001; no interim aggregate strength inspection.
+
+2026-10-04 23:57:08: Simulator p16 worker finished.
+
+2026-10-05 00:07:42: Native pair 15 complete: frames=2310, actions=396, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 00:07:42: Native p16 worker finished.
+
+2026-10-05 00:07:51: p16 native and simulator workers exited zero.
+
+2026-10-05 00:08:44: Simulator pair 16 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 00:22:27: Native pair 16 complete: frames=2497, actions=434, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 00:23:03: Simulator pair 17 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 00:30:20: T3 restart recovery: all 493 pre-restart source pins match. Validated terminal receipts and complete JSON/gzip streams for native pairs 0-16 and simulator pairs 0-17 without aggregate strength inspection. Native pair 17 has no terminal or result receipt; its 357 decisions, 977 public frames and 1188 evaluator rows parse cleanly but are incomplete. Preserved all partial evidence and old emulator/worker receipts under recovery-t3-restart. No L2 jobs or emulator survived; foreign processes are untouched. Technical rerun retains every completed outcome, replays only native pair 17 with exact opening equality, and isolates adb on port 5041. README/RESULTS files do not yet exist; the RESULTS draft is embedded in analyze.py and was read.
+
+2026-10-05 00:31:05: Emulator booted on dedicated adb server 5041. Launcher root handshake returned a closed connection while adbd restarted; follow-up reports adbd already root. No app launch or evaluation occurred. Retained launcher attempt and continuing setup on the same owned emulator.
+
+2026-10-05 00:31:43: Evaluation driver starting after source-pin verification.
+
+2026-10-05 00:31:43: p16 native and simulator workers exited zero.
+
+2026-10-05 00:35:34: Restart replay opening equality passed at tick 220; native pair 17 is processing pixel decisions. All processes launched through detach.sh; owned emulator and workers use dedicated adb port 5041. Five recovery checks and L2 syntax parsing passed. Expanded deferred analyzer with descriptive hand/elixir, spatial body/HP and event-window diagnostics plus receive-to-submission deployment quantiles and explicit gate booleans. Validated only against excluded smoke logs, including accounting and JSON serialization; no primary outcomes inspected. Gameplay pins are unchanged by reporting work. Added README.md with recovery and receipt semantics.
+
+2026-10-05 00:42:15: Native pair 17 complete: frames=2874, actions=374, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 00:42:56: Simulator pair 18 complete, terminal tick 5882; no interim aggregate strength inspection.
+
+2026-10-05 00:46:40: Native pair 18 complete: frames=1578, actions=139, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 00:47:05: Simulator pair 19 complete, terminal tick 3601; no interim aggregate strength inspection.

@@ -730,3 +730,85 @@ Rules: read-only on src/, <=2 procs, nice -n 10, kill own PIDs only.
 - Private34 three hookreducers PASS (8 building/Giant/seat/stunfixtures,livephases,Bandittravel exception,saveddrag continuation). Focused0-5 pass;Fisherman6 fails935. Retaining freshfocusedroot/phase viareplay_focused before nextfix. No broad/C56gate onfailing34;all63 priorcertificates unchanged.
 
 - Hook935 reduces to pending literalweaponreset whileFisherman11 startsanotherhookwindup. Sourceget_clock isnotcalled whilemechanic consumescombat;native reseededbeforehook andlosttimeline1250,so laterdeadtargetremoval missedfinish1. Movependingreset consumption afterspecial handlers (retainfinish/river-jump clockboundaries);normalhookforced-interrupt doesnotconsumeoldpendingwrite. Referencesentities.py:3720-3750,1672-1720,ordinary_combat_clock.py:50-68. Savedroot899/meta andnew180-tick regression;root934/phase935 retained. Private35 building;34unqualified,63priorcards preserved.
+
+- Private35 build0. Two quickworkers runfourhookreducers and8focusedcases onfixedpins;onlyownednice10 workers. Broader49-method/controller62/C56/mixedgates wait until these pass.
+
+- Private35 fourhookreducers PASS;focusedFisherman0-6 PASS including old935. Case7 fails2004;pin freshroot/phase withhook-replay-r35 beforefix. No broadgroup/C56worker active;63 priorcertificates remain.
+
+- Hook2004 firstlatent2003: Fisherman188 hasneverenteredordinaryweaponpath beforehook/drag;SourceclockNone,cooldown1.3. Nativeplaceholderclocklookedfullyloaded andfired194early. Addedclock_initialized export/nativebit andlazyseedfromcurrentcooldown atactualweapon/finish/jump access;targetcleanup onlydiscardspendingwrite ifaSourceclock exists. Referenceordinary_combat_clock.py:34-68. Savedroot2002/meta/clockwindow andnew180-tick regression;root2003/phase2004 retained. Private36 building;35unqualified,63priorcards preserved.
+
+- build36 detachedlaunch disappears withemptylog/noexit andnoPID262/compiler;verifiedpsbefore freshbuild36b retry. Sourcepinsfixed andprivate35 binary remains until successfulbuild. No duplicate/protectedprocess touches.
+
+- Private36 build36b exit0. Two quickworkers rerunfivehookreducers and8focused cases onfixednewpins. No duplicateworkers;private36 notqualified untilallgates pass,63priorcards preserved.
+
+- Private36 five hookreducers PASS,8focused PASS including former935/2004. Startedhook-r36 cumulative51 methods/controller62,focusedreceiptresume then12mixed;parallelc56-r36 88controls. Atmost2nice10workers,core/bridge/controller fixed until bothexit.63priorcards remainqualified,Fisherman notyetadmitted. Clone Arc-prototype draft prepared only inreportspace.
+
+- Private36 broadergate FAIL:7C56 and4Stage6 failures fromautomaticinitialization altering established special/knockback weapon paths. Noqualification. Narrowedlazy-clock fix: preserveinitializedbit tokeep pendinghookwrites throughcleanup;reseed onlyexplicit pendingwrites,not everyuninitializednative placeholder. Hook interruption alwayscapturesfullliteralwrite ifSourceclockabsent. Frozen36unqualified;private37 building afterallworkers exit. All63oldcertificates remainonoriginalpins.
+
+- Resume audit: no prior Stage6/compiler workers remain. build37.log is empty with no exit receipt; private binary is still build36. Retaining failed launch, retrying as build37b with the existing narrowed pending-write fix. Read required workspace guidance; no protected source/process changes. 63 historical card certificates remain; no new qualification.
+
+- Private37b build exit0,23.11s. Starting five Fisherman reducers and eight focused cases on fixed pins as two detached nice10 workers. Full cumulative/C56 gates follow only after these pass. No Python/data/admitted native edits.
+
+- Private37 five Fisherman reducers and all8 focused cases PASS. Starting cumulative51/controller62/mixed12 hook-r37 and separate88 C56 controls on unchanged pins. Existing focused receipt will resume without replay. Two owned nice10 workers maximum.
+
+- Private37 repeats7 C56/4 Stage6 failures despite5 Fisherman reducers/8 focused passes. hook-push-r37.json isolates imported knockback: Source clears forced_movement_active at130; native retained it and first diverged131. Diagnostic clearing only that flag yields180 exact ticks. Fixed native push completion and added explicit180-tick flag/digest regression. Source entities.py:3603-3607. Build37 frozen unqualified; all workers exited before private38 build. Earlier claim that automatic clock initialization explained all broader failures is superseded by this evidence.
+
+- Private38 build exit0. Starting cumulative52 Stage6/controller62 then fresh focused8/mixed12, plus88 C56 controls. New regression checks imported forced-movement flag every tick; six Fisherman-related reducers included. Two owned nice10 workers, fixed source/private pins.
+
+- Private38 clears all88 C56 controls; cumulative Stage6 gate continues without failures so far. Starting earlier P16/Stage2/Stage3 regression and Stage5/5b search controls in the freed slot. Cleaned idle owned Cargo intermediates127.7MiB; Stage6 outputs116MB.
+
+- Fisherman QUALIFIED frozen38:8 focused/17600 ticks,12 terminal/54188 ticks,138 imports,912 placements,44.568x,max clone7.600us,52 cumulative Stage6/controller62 +88 C56 +47 earlier P16/Stage2/Stage3/Stage5/5b tests,0 mismatches. Total64/66 incremental cards. Frozen62-card controller drivers before adding Fisherman to63 eligible. Clone/Mirror and final S122 gates remain open.
+
+- Clone private39 implementation: fresh immutable Arc prototypes exported from separate oracle battles, immediate friendly nonclone recipient snapshot, surviving1HP shields, suppressed deployment hooks, cloned production/death/bomb descendants. References spells.py:701-737,battle.py:1923-2047,mechanics/shared/shield.py:18-29,spawner.py:187,death_effects.py:268,entities.py:7147. New both-seat/shield/recursive-payload regressions prepared; no Python-engine behavior changes. Previous workers exited before edits.
+
+- Private39 compiles successfully in52.34s. Starting Clone reducers before broader gates, one owned nice10 worker. Fisherman64-card historical certificates remain frozen; no Clone qualification yet.
+
+- Clone39 reductions pass Knight/DarkPrince/Witch/ElixirGolem/SkeletonBalloon/MegaKnight/LavaHound both seats and broken-shield/reclone exclusion, but BattleHealer live imports fail31 in both seats. Imported suppressed Clone spawn hooks were reconstructed from SpawnAreaEffect._applied=False, reintroducing the area. Export now also respects clone _spawn_hook_fired (battle.py:2031-2032). Frozen39-unqualified; bridge-only39b needs fresh receipts. No Python engine crash/change.
+
+- Clone39b reducers PASS both methods,16 card/seat fixtures and shield/reclone controls. Starting cumulative54/controller63,focused8,mixed12 and separate prior88 C56 then47 earlier regressions, at most2 owned nice10 workers. No core/bridge/controller edits during these gates.
+
+- Clone QUALIFIED frozen39b:8 focused/17600 ticks,12 terminal/47714 ticks,122 imports,765 placements,41.332x,max clone6.240us,54 cumulative Stage6/controller63 +88 C56 +47 earlier tests,0 mismatches. Total65/66 incremental cards; Mirror remains. Frozen63-card controller drivers before adding Clone to64 eligible. Beginning Mirror with all prior workers exited.
+
+- Mirror private40 implementation captures accepted own card/cost, leaves rejected/Mirror commands out of history, resolves payment/placement from level12 card tables and retains qualified payload keys through spells, death/production/chain children and imports. Public native mask resolves Mirror from own history without changing Python scoring. References battle.py:1158-1194,1298-1305;player.py:30-32,79-96;public_action_mask.py:229-255. New tests cover no-history/insufficient-elixir rejection and both-seat bodies/spells/nested live imports. No Python engine/script changes.
+
+- Private40 build exit0 in29.27s. Starting Mirror history/level12/import reducers first. The old generic focused/reserved fixture prioritizes Mirror before any history; preparing report-only Mirror-aware drivers that make a real accepted first play, without changing original engine/scripts.
+
+- Private40 Mirror reduced tests PASS: no-history/insufficient-elixir rejection and16 both-seat level12 body/spell/payload/import fixtures. Starting57 cumulative methods including new Mirror public-mask/scoring test,8 history-aware focused cases,12 mixed,plus88 C56/47 earlier controls. Report fixtures now make accepted own history before selecting Mirror; original source scripts unchanged.
+
+- Mirror40 cumulative run reports an error in the new public-controller fixture before physics tests. Stopped only owned test child19628 after ancestry verification, retained exit143/partial log, and launched single mirror-public-r40 for traceback. Prior controls continue unchanged as the second worker. No source edits or duplicate worker.
+
+- Mirror oracle inventory121 base predecessors: Clone/Earthquake/Poison/Tornado reject level12 resolution. Clone inheritance is unimplemented; the others have unresolved crown-damage overrides. This is a normal Python Mirror rejection, not a crash. Native exporter must omit those templates and native action/mask must reject them without payment/history changes. Recorded python-issues.json and mirror-oracle-inventory.json; no Source change. Private40 broad gate remains unqualified; prior controls still active before fix.
+
+- Private40 prior controls PASS88 C56+47 earlier; Mirror not qualified because exporter attempted rejected level12 spells. Frozen40-unqualified. Private41 now preflights Mirror with its unchanged Python resolver, omits rejected templates, and rejects missing Mirror payloads in action/public mask without spending or history changes. Added explicit Clone/Earthquake/Poison/Tornado rejection tests. Human64 driver prepared with original frozen decks/seeds and200-tick imports, not run.
+
+- Private41 builds0 in29.39s. Starting physical Mirror reducers including four oracle rejections and separate public mask/scoring reductions as two quick workers. No broad gate until both pass; source/private pins fixed.
+
+- Private41 three physical Mirror methods and public-mask/scoring method PASS, including all four unchanged oracle rejections and both seats before/after Mirror. Starting cumulative58/controller64,8 focused,12 mixed, plus prior88 C56 then47 earlier regressions. Two owned nice10 workers, fixed pins.
+
+- Prepared final human driver using untouched human64-plan.json, public-legal scripted placements and200-tick imports. Before any final game, froze optional32-game supplement from first16 existing human-deck pairs with fresh paired seeds; append strictly in order only if64 miss1000 imports/4000 placements/all66 accepted-card coverage. Final100-searchable planner driver prepared for10 late mechanics with full-scope config, original scoring/sampling and explicit accepted history for Mirror. Neither final gate has run.
+
+- Resume 2026-10-05 after T3 restart: ps shows no surviving Stage6 build/gate workers. Mirror actually finished before cancellation: sealed build41,58 cumulative methods,8 focused cases,12 terminal mixed games/43450 ticks,110 imports,603 placements,43.128x,max clone6.520us;88 C56+47 earlier controls pass. All66 cards now have incremental body/core certificates, but final S122 gates and SkeletonKing active summon remain open. No final human/planner receipt exists; no interrupted final gate is credited. Retain prior interrupted launches and start fresh labels for resumed work. Required instructions read; protected processes untouched.
+
+- SkeletonKing active summon now exports its own ability state and source ring offsets, rejects activation below20 souls while preserving the misleading public-ready bit, charges the dynamic cost, consumes20 souls after spawning15 three-Skeleton groups, and updates active/cooldown timers. Shared death-swarm placement preserves45 bodies and both-seat/lane behavior. References champion/skeleton_king.py,champion/ability.py,effects/spawn.py. GoldenKnight has no ability in the oracle. Added Mirror to the opt-in controller roster after its sealed certificate. Private42 build/reduced gates pending;Python behavior unchanged.
+
+- Build42 compiler rejected the missing Skeleton enum death arm; no replacement occurred. Added explicit no-op matching inherited Python death behavior and retained build42.log/exit101. Fresh build42b retry; old empty build36/build37/leap-reduced-r31 launches already have completed superseding receipts and are not credited. No interrupted current gate found.
+
+- Private42b build exit0. Started skeleton-reduced-r42 through detach as the only owned heavy worker; broad/final gates wait for this reducer. Added final_controls.sh to rerun every cumulative Stage6 reduction/controller test plus88 C56/47 earlier controls on final pins. Mirror ranking fixture now creates accepted history before deployment.
+
+- SkeletonKing/GoldenKnight reducer PASS2 methods in42.163s, both seats with0/19/20/30 souls, exact45-body summon/payment/timers and100-tick live-import continuations. Started final-controls-r42 (60 cumulative methods/controller65 then88 C56/47 earlier) and human-r42 (frozen64+optional32 human-deck schedule) as two detached nice10 workers. Core/bridge/controller pins fixed until both exit. No final admission yet.
+
+- Private42 reference audit PASS367 protected files. Cleaned128MiB owned idle Cargo intermediates and13 superseded unqualified binaries, retaining their source/pin/failure receipts and all qualified frozen builds. resume-r42-audit.json records deleted binary hashes. Human/control workers remain pinned; no protected process touched.
+
+- Prospective numeric-threshold reserve frozen before any reserve game: human128-reserve.json repeats every original human64 episode in unchanged order with fresh paired seeds669000+pair then670000+pair. Use only if original64+32 miss1000 imports/4000 placements/coverage, stopping at first qualifying pair boundary. No deck/outcome selection or original-driver changes; current human/control workers continue fixed.
+
+- Human-r42 has passed its first64 terminal games; current passing count69, imports871, placements2224. All66 required cards played. Numeric thresholds still pending, so the original frozen32 supplement runs in order. Froze private42 source/binary under build42/; prepared human_reserve.py to preserve all96 originals if reserve is required, and seal_final.py to reject mismatches/missing receipts while explicitly withholding full admission for ThreeMusketeers controller failure. Final controls still active; no source changes.
+
+- Private42 cumulative60 Stage6/controller65 methods PASS in482.920s;88 C56 then47 earlier controls continue in the same worker. Human gate passed64 originals and is processing the supplement with no mismatches. Prepared separate SkeletonKing edge/centre-ring test for8 seat/position fixtures; it will run in a freed slot before final seal. Updated user AGENTS instructions acknowledged; no remote work or unrelated-process action needed.
+
+- Original human64+32 COMPLETE:96 terminal games,1162 live imports,2919 public-legal accepted placements,all66 cards,0 mismatches,45.443x stepping,max clone17.610us. human-r42 exits1 solely because4000 placements are not yet met; retain this complete receipt, do not rerun its games. Frozen reserve will append when a slot frees. Started planner-suite-r42 in the freed human slot:8 SkeletonKing edge/centre-ring fixtures then100 searchable planner calls over10 late mechanics, includingMirror/Clone/SkeletonKing. Earlier controls remain the second worker.
+
+- Skeleton edge fixture failed before four deployments because centre x8.5/9.5 at y4.5/27.5 overlaps the King tower. This is a test placement error, not a parity mismatch/Python crash; four outer-edge fixtures passed. Retained failed fixture/log/exit under r42, corrected all8 fixtures to legal y13.5/18.5, and retry as planner-suite-r42b on unchanged native/source pins. Planner itself has not run yet.
+
+- Private42 final controls COMPLETE exit0:60 cumulative Stage6/controller65 methods,88 C56 and47 earlier P16/Stage2/3/5/5b tests,0 failures. Started human-reserve-r42 in the freed slot, preserving all96 original human results and their exact driver/source/native hashes. Planner-suite-r42b remains the second worker, currently checking corrected SkeletonKing edge fixtures. No source/private changes.
+
+- Interrupted launch incident: planner-suite-r42b PID33881 vanished with an empty log and no wrapper/edge/planner exit receipts. ps confirms no matching Python child or planner remains. Discard this incomplete run entirely; no edge/planner credit. Preserve empty r42b.log and retry the whole corrected edge/planner chain under fresh planner-suite-r42c, unchanged source/native/test pins. Human reserve is still the only surviving owned heavy worker.

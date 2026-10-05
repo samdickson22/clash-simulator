@@ -42,7 +42,7 @@ impl BattleState {
             return;
         }
         self.entities[i].spawn_area_done = true;
-        if let Some(template) = self.config.spawn_areas.get(&self.entities[i].stats.name) {
+        if let Some(template) = self.config.spawn_areas.get(self.entities[i].stats.key()) {
             let parent = &self.entities[i];
             let mut area = template.clone();
             area.id = self.next_id as i32;
@@ -83,7 +83,8 @@ impl BattleState {
     }
     fn production_child(&mut self, i: usize, index: usize, count: usize, spec: &Spec) {
         let parent = &self.entities[i];
-        let mut child = self.config.production_children[&parent.stats.name].clone();
+        let mut child = self.config.production_children[parent.stats.key()].clone();
+        Self::clone_payload(&mut child, parent);
         let (px, py) = (units(parent.x), units(parent.y));
         let (x, y) = if spec.radius > 0.0 {
             let base = if spec.angle != 0 {

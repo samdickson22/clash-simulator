@@ -8,6 +8,24 @@ class Hook(unittest.TestCase):
     same=test_early.EarlyCards.same
     continuation=test_early.EarlyCards.continuation
 
+    def test_imported_knockback_clears_forced_flag_before_combat_resumes(self):
+        import cloudpickle, hashlib, json
+        from pathlib import Path
+        root=Path(__file__).resolve().parent/'leap-spawn-r31-root120.pkl'
+        pins=json.loads(root.with_suffix('.meta.json').read_text())
+        self.assertEqual(hashlib.sha256(root.read_bytes()).hexdigest(),pins['root_sha256'])
+        for name,expected in pins['reference'].items():
+            self.assertEqual(hashlib.sha256((root.parent.parents[3]/name).read_bytes()).hexdigest(),expected)
+        b,old,_=cloudpickle.loads(root.read_bytes());cfg=config(tuple(old['cards']))
+        r=clasher_core.BattleState(snapshot(b,cfg))
+        self.assertTrue(b.entities[7].forced_movement_active)
+        for _ in range(180):
+            b.step();r.step();self.same(b,r)
+            e=b.entities.get(7)
+            if e is not None:
+                native=next(n for n in json.loads(r.snapshot())['entities'] if n['id']==7)
+                self.assertEqual(e.forced_movement_active,native['forced_active'],b.tick)
+
     def test_building_self_pull_troop_drag_stun_and_live_states(self):
         for victim in ('Cannon','Giant'):
             cards=('Fisherman',victim,'Zap','Knight');cfg=config(cards)
@@ -79,6 +97,18 @@ class Hook(unittest.TestCase):
         b,old,_=cloudpickle.loads(root.read_bytes());cfg=config(tuple(old['cards']))
         actor=b.entities[11]
         self.assertNotEqual(actor.attack_cooldown,actor._ordinary_clock_projection)
+        self.continuation(b,cfg,180)
+
+    def test_first_weapon_clock_is_initialized_after_hook_and_drag(self):
+        import cloudpickle,hashlib,json
+        from pathlib import Path
+        root=Path(__file__).resolve().parent/'hook-clock-r35-root2002.pkl'
+        pins=json.loads(root.with_suffix('.meta.json').read_text())
+        self.assertEqual(hashlib.sha256(root.read_bytes()).hexdigest(),pins['root_sha256'])
+        for name,expected in pins['reference'].items():
+            self.assertEqual(hashlib.sha256((root.parent.parents[3]/name).read_bytes()).hexdigest(),expected)
+        b,old,_=cloudpickle.loads(root.read_bytes());cfg=config(tuple(old['cards']))
+        self.assertIsNone(b.entities[188]._ordinary_clock)
         self.continuation(b,cfg,180)
 
 if __name__=='__main__':unittest.main()

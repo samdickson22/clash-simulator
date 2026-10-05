@@ -91,7 +91,7 @@ impl BattleState {
             e.consume_clock_reseed();
             e.charge=0;e.force_due=false;e.clock.stop();e.clock.remaining=0;e.preload_blocked=false;
         } else {
-            if e.stats.ordinary && e.clock_projection_ms()!=e.stats.interval {e.clock_reseed=Some(e.stats.interval);}
+            if e.stats.ordinary && (!e.clock_initialized || e.clock_projection_ms()!=e.stats.interval) {e.clock_reseed=Some(e.stats.interval);}
             e.cooldown=e.cooldown.max(e.stats.interval as f64/1000.0);e.preload_blocked=true;
         }
         e.cancel_dash_for_hook();e.cancel_leap_for_hook();

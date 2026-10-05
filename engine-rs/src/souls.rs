@@ -1,4 +1,4 @@
-//! Skeleton King's automatic soul collection and death drop.
+//! Skeleton King soul collection and shared active/death swarm spawning.
 use super::*;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -22,6 +22,10 @@ impl BattleState {
         let count = (source.souls_collected / 2).min(10).max(0) as usize;
         if count == 0 { return; }
         let offsets = self.config.soul_offsets[count-1].clone();
+        self.spawn_soul_groups(source, offsets);
+    }
+
+    pub(super) fn spawn_soul_groups(&mut self, source: &Entity, offsets: Vec<(f64, f64)>) {
         for (dx,dy) in offsets {
             let (x,y) = (source.x+dx,source.y+dy);
             let templates = self.config.soul_skeletons[source.owner as usize][usize::from(x>9.0)].clone();

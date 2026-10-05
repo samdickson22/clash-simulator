@@ -9,7 +9,7 @@ def position(value, default=(0.0, 0.0)):
     return (value.x, value.y)
 
 
-def live_entity(e, b):
+def live_entity(e, b, cfg=None):
     from differential import entity
 
     out = entity(e)
@@ -219,12 +219,16 @@ def live_entity(e, b):
             reacquired=saved["reacquired"],
             resumable=saved["resumable"],
         )
+    if cfg is not None:
+        from mirror_snapshot import live_spell_key
+        out['spell_name'] = live_spell_key(e, out['spell_name'], cfg)
     return out
 
 
 def pending_casts(b):
+    from mirror_snapshot import payload_key
     return [
-        dict(player=c.player_id, name=c.spell_name, x=c.position.x, y=c.position.y)
+        dict(player=c.player_id, name=payload_key(c.spell_name, getattr(c.spell, 'level', 11)), x=c.position.x, y=c.position.y)
         for c in sorted(
             b._pending_spell_casts, key=lambda c: (c.execute_at, c.sequence)
         )

@@ -15,9 +15,6 @@ class Ranking(unittest.TestCase):
                 with self.subTest(card=card,seat=seat):
                     b=initial(cards=(card,'Knight','Archers','Giant'))
                     b.players[seat].elixir=10
-                    if card == 'Mirror':
-                        self.assertTrue(b.deploy_card(seat,'Knight',Position(4.5,10.5 if seat==0 else 21.5)))
-                        b.players[seat].elixir=10
                     self.assertTrue(b.deploy_card(seat,card,Position(8.5,10.5 if seat==0 else 21.5)))
                     for _ in range(25):b.step()
                     r=clasher_core.BattleState(snapshot(b,cfg))

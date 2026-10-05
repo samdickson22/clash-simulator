@@ -8,6 +8,7 @@ mod deployment;
 mod dash;
 mod leap;
 mod hook;
+mod clone;
 mod clock;
 mod leaf;
 mod mt;
@@ -59,6 +60,8 @@ fn center(c: (i32, i32)) -> (i64, i64) {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Stats {
+    #[serde(default)]
+    payload_key: String,
     #[serde(default)]
     spawn_push: Option<(f64,f64,bool,bool)>,
     #[serde(default)]
@@ -260,9 +263,13 @@ struct FrozenStopRoute {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Entity {
     #[serde(default)]
+    clone_template: Option<Arc<Entity>>,
+    #[serde(default)]
     spawn_push_done: bool,
     #[serde(default)]
     clock_reseed: Option<i64>,
+    #[serde(default)]
+    clock_initialized: bool,
     #[serde(default)]
     dash: Option<dash::State>,
     #[serde(default)]
@@ -516,6 +523,10 @@ struct Entity {
 }
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Player {
+    #[serde(default)]
+    last_card: Option<String>,
+    #[serde(default)]
+    last_cost: Option<f64>,
     elixir: f64,
     hand: Vec<Option<String>>,
     cycle: VecDeque<String>,
@@ -612,6 +623,8 @@ struct Cast {
 }
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct Card {
+    #[serde(default)]
+    mirror: bool,
     #[serde(default)]
     recruits_line: bool,
     #[serde(default)]
@@ -750,6 +763,12 @@ fn sight(a: &Entity, b: &Entity) -> bool {
     }
     let behind = if a.owner == 0 { a.y - b.y } else { b.y - a.y };
     !(a.stats.sight_back > 0.0 && behind > (r - a.stats.sight_back).max(0.0) + 1e-9)
+}
+
+impl Stats {
+    fn key(&self) -> &str {
+        if self.payload_key.is_empty() { &self.name } else { &self.payload_key }
+    }
 }
 
 impl BattleState {
@@ -981,7 +1000,7 @@ impl BattleState {
                 self.stun_target_mode(j, source.stats.spirit_stun, false);
             }
         }
-        if let Some(template) = self.config.spirit_areas.get(&source.stats.name) {
+        if let Some(template) = self.config.spirit_areas.get(source.stats.key()) {
             let mut area = template.clone();
             area.id = self.next_id as i32;
             self.next_id += 1;
@@ -2005,6 +2024,7 @@ impl BattleState {
             e.push = None;
             e.push_velocity = 0;
             e.push_reset = false;
+            e.forced_active = false;
         }
     }
     fn combat_one(&mut self, i: usize, grid: &[Vec<usize>]) {
@@ -3112,7 +3132,7 @@ impl BattleState {
             if e.alive && e.target.is_some_and(|id| dead.contains(&id)) {
                 e.target = None;
                 e.move_target = None;
-                e.clock_reseed = None;
+                if e.clock_initialized { e.clock_reseed = None; }
                 if e.pending_lethal {
                     e.last_target = None;
                     e.pending_lethal = false;
@@ -3262,9 +3282,9 @@ impl BattleState {
             && !e.alive
             && (e.stats.collect_death > 0.0
                 || e.stats.death_damage > 0.0
-                || self.config.death_objects.contains_key(&e.stats.name)
-                || self.config.death_areas.contains_key(&e.stats.name)
-                || self.config.death_children.contains_key(&e.stats.name)
+                || self.config.death_objects.contains_key(e.stats.key())
+                || self.config.death_areas.contains_key(e.stats.key())
+                || self.config.death_children.contains_key(e.stats.key())
                 || e.souls_collected > 0);
         let died = was_alive && !e.alive;
         let source = if death { Some(e.clone()) } else { None };
@@ -3314,10 +3334,10 @@ impl BattleState {
                 None,
             );
         }
-        if let Some(templates) = self.config.death_children.get(&source.stats.name).cloned() {
+        if let Some(templates) = self.config.death_children.get(source.stats.key()).cloned() {
             self.spawn_death_templates(&source,templates);
         }
-        if let Some(template) = self.config.death_areas.get(&source.stats.name) {
+        if let Some(template) = self.config.death_areas.get(source.stats.key()) {
             let mut effect = template.clone();
             effect.id = self.next_id as i32;
             self.next_id += 1;
@@ -3327,8 +3347,9 @@ impl BattleState {
             effect.birth = self.tick;
             self.entities.push(effect);
         }
-        if let Some(template) = self.config.death_objects.get(&source.stats.name) {
+        if let Some(template) = self.config.death_objects.get(source.stats.key()) {
             let mut effect = template.clone();
+            effect.is_clone = source.is_clone;
             effect.id = self.next_id as i32;
             self.next_id += 1;
             effect.x = source.x;
@@ -3342,6 +3363,7 @@ impl BattleState {
     fn spawn_death_templates(&mut self, source: &Entity, templates: Vec<Entity>) {
             let count = templates.len();
             for (index, mut child) in templates.into_iter().enumerate() {
+                Self::clone_payload(&mut child, source);
                 let target = if source.stats.death_zero_count > 0 {
                     let (x, y) = self.child_position_without_radius(
                         &source, &child, source.stats.death_zero_count == 1,
@@ -3525,6 +3547,20 @@ impl BattleState {
         if self.game_over {
             return Ok(false);
         }
+        let mirror = c.mirror;
+        let effective_name = if mirror {
+            let Some(name) = &self.players[player].last_card else { return Ok(false); };
+            format!("level12:{name}")
+        } else { card.to_owned() };
+        let c = match config.cards.get(&effective_name) {
+            Some(payload) => payload,
+            None if mirror => return Ok(false),
+            None => return Err(PyValueError::new_err("missing card payload")),
+        };
+        let cost = if mirror {
+            let Some(previous) = self.players[player].last_cost else { return Ok(false); };
+            previous + 1.0
+        } else { c.cost };
         if x.floor() < c.margin as f64 || x.floor() >= (18 - c.margin) as f64 {
             return Ok(false);
         }
@@ -3621,13 +3657,21 @@ impl BattleState {
         };
         let p = &mut self.players[player];
         let slot = p.hand.iter().position(|n| n.as_deref() == Some(card));
-        if p.elixir + 1e-9 < c.cost || slot.is_none() {
+        if p.elixir + 1e-9 < cost || slot.is_none() {
             return Ok(false);
         }
-        p.elixir = (p.elixir - c.cost).max(0.0);
+        p.elixir = (p.elixir - cost).max(0.0);
         p.hand[slot.unwrap()] = None;
         p.cycle.push_back(card.into());
+        if !mirror {
+            p.last_card = Some(card.into());
+            p.last_cost = Some(cost);
+        }
         if let Some(spell) = &c.spell {
+            if spell.name == "Clone" {
+                self.clone_spell(&Cast { player, name: card.into(), x, y }, spell);
+                return Ok(true);
+            }
             if spell.travel_speed > 0.0 {
                 if spell.multiple_projectiles.unwrap_or(1) > 1 {
                     let volley = c.clone();
@@ -3661,7 +3705,7 @@ impl BattleState {
             } else {
                 self.pending_casts.push(Cast {
                     player,
-                    name: card.into(),
+                    name: effective_name,
                     x,
                     y,
                 });
