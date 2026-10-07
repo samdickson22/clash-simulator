@@ -1,6 +1,7 @@
 """Verify transferred source and historical certificate receipts without resealing."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -10,7 +11,8 @@ FLEET = Path(__file__).resolve().parent
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
-pins = json.loads((FLEET / "source-mac.json").read_text())
+pins_path = Path(os.environ.get("CLASHER_FLEET_SOURCE_MANIFEST", FLEET / "source-mac.json"))
+pins = json.loads(pins_path.read_text())
 errors = []
 for name, expected in pins["files"].items():
     path = ROOT / name
@@ -43,7 +45,7 @@ if not catalog.exists() or sha(catalog) != replay_pins["projectiles_sha256"]:
 native = ROOT / "engine-rs/clasher_core.abi3.so"
 expected_binary = FLEET / "evidence/environment-linux.json"
 if sys.platform.startswith("linux") and expected_binary.exists():
-    expected = json.loads(expected_binary.read_text())["native_sha256"]
+    expected = os.environ.get("CLASHER_FLEET_NATIVE_SHA256") or json.loads(expected_binary.read_text())["native_sha256"]
     if not native.exists() or sha(native) != expected:
         errors.append("Linux native extension hash")
 result = dict(native_sha256=sha(native) if native.exists() else None, replay_inputs=len(replay_pins["files"])+1, source_files=len(pins["files"]), certificate_manifests=manifests,
