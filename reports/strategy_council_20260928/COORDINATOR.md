@@ -97,3 +97,20 @@ via T3 delegate_task; research -> Opus subagents. Decisions log: amendments/2026
   - The NFS home is shared across hosts with a quota of about 5 GB, so all caches and toolchains go under `/mpac/sdicks02` (`env.sh`). Rust is pinned to 1.97.1 to match the Mac; Python is 3.12 via uv.
 - **Copy:** Mac → 127x02 with `pilot/transfer_to_fleet.sh` (P=6 chunks, then local-data, a final sweep and a dry-run verify).
 - **Delegated:** "Fleet bring-up + Linux parity gate", GPT-6-Astra (high). It covers the venv and engine-rs build; all four identity modes and the Rust parity harnesses on Linux; replication to 01–08; and a `fleet/` README with `PARITY-LINUX.md`. Resuming Stage 6, the noise study and C56 extraction on the fleet waits on that parity gate.
+- **Outcomes recovered from the Mac tree and committed** (`9a63cab2d`):
+  - **L2: NOT READY.** Pixels won 27/48 vs simulator 48/48; the difference is -43.8 pp, CI [-58, -29].
+  - **Noise study: FAIL.** Against C56 scripts the player drops from 86.7% clean to 50.0% under full noise; repairing events alone recovers +16.4 pp.
+  - **Stage 6:** the human gate and final controls pass. The planner fails at call 36 on a Fisherman seat-1 rollout parity defect.
+  - **C56 extraction:** 811/1,767 units, stopped.
+- **Perception weights lost locally:** deleting `live-loop/l1/v3` on 2026-10-07 also removed the v3 detector weights (`model/last.pt`, about 1 MB) and `hud.npz`; the only copies are on f35. This was my error: the manifest check treated the folder as evidence only. They are regenerable from the Mac renderer and L1 code, and v4 replaces them anyway. Four tracked docs/scripts in that folder were restored from git.
+- **Delegated:**
+  - Stage 6 Fisherman fix plus final gate (Astra high, Mac).
+  - Perception v4 design (Opus high, research only, writing `live-loop/v4/DESIGN.md`).
+- **2026-10-07 22:00 UTC: perception v4 design accepted** (`live-loop/v4/DESIGN.md`, Opus). Root causes of the L2 loss:
+  1. The serial loop starved the event detector. Gaps over 300 ms reset its history, so in-loop opponent-event recall was 3.1%.
+  2. The player re-tapped plays whose spend wasn't yet recorded (no pending-spend ledger; it acted on frames about 400 ms old).
+  3. The search planned against a single draw from a wide opponent posterior.
+
+  **Decision:** a 5-process pipelined runtime on the Mac; a temporal event head; a hypothesis-belief tracker with a 4-root search; a verified actuation channel; training on the fleet A6000s and inference on the Mac.
+
+  **Delegated:** T2 (actuation bench) and T1 (20 FPS collector streaming to `127x02:/mpac/sdicks02/repos/clasher-v4-data`), as one Astra-high task. T3 (the S1 noise-robust search study on the fleet CPUs) waits for the Linux parity gate.
