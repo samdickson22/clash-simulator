@@ -1,0 +1,15 @@
+{
+  "receipt": {
+    "kind": "storage-rehearsal",
+    "training_eligible": false
+  },
+  "hub": {
+    "episode": "v4-storage-smoke",
+    "verified_files": 2,
+    "hashes": {
+      "payload.txt": "d6d9e30f3a4939e608e10c4cdfe47cd8ef4f6d66cc10d197f01dacf4c05534fb",
+      "receipt.json": "6fb72bc0373178823028540e1318d5856a3c9305d727759e9c499dcc425cb729"
+    },
+    "bytes": 100
+  }
+}

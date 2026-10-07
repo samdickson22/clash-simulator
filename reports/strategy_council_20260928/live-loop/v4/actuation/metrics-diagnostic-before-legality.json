@@ -1,0 +1,27 @@
+{
+  "complete": false,
+  "trials": 162,
+  "cells": {
+    "('grpc', 0.0, 3, 0.1)": 40,
+    "('grpc', 0.0, 3, 1.0)": 40,
+    "('grpc', 0.0, 24, 0.1)": 40,
+    "('grpc', 0.0, 24, 1.0)": 40,
+    "('grpc', 0.02, 3, 0.1)": 2
+  },
+  "methods": {
+    "grpc": {
+      "trials": 162,
+      "accepted": 162,
+      "acceptance": 1.0,
+      "two_tap_p95_ms": 1.4777664211578658,
+      "pixel_600ms": 0,
+      "sensitivity_600ms": 0.0,
+      "truth_latency_p50_ms": 1150.2336038975045,
+      "pixel_latency_p95_ms": 1192.510541062802,
+      "detected_within_600ms_of_native_observation": 161,
+      "pixel_minus_native_p95_ms": 37.119833054021,
+      "median_capture_fps": 59.13213392231872
+    }
+  },
+  "reproduction": null
+}

@@ -1,0 +1,1155 @@
+{
+  "preconfirmation_linux_cpu_hours": 9.876400000000002,
+  "metered_jobs": [
+    {
+      "log": "s1-pilot-full-17-r2.log",
+      "cpu_seconds": 1114.62
+    },
+    {
+      "log": "s1-optimized-full-pilot-r1.log",
+      "cpu_seconds": 824.25
+    },
+    {
+      "log": "s1-pilot-full-16-r1.log",
+      "cpu_seconds": 1025.7
+    },
+    {
+      "log": "s1-pilot-full-1-r1.log",
+      "cpu_seconds": 696.3100000000001
+    },
+    {
+      "log": "s1-pilot-full-9-r1.log",
+      "cpu_seconds": 613.35
+    },
+    {
+      "log": "s1-pilot-full-10-r1.log",
+      "cpu_seconds": 1523.44
+    },
+    {
+      "log": "s1-pilot-full-0-r1.log",
+      "cpu_seconds": 427.55
+    },
+    {
+      "log": "s1-tests-seal-r1.log",
+      "cpu_seconds": 225.9
+    },
+    {
+      "log": "s1-pilot-full-17-r1.log",
+      "cpu_seconds": 181.31
+    },
+    {
+      "log": "s1-pilot-e4-r3.log",
+      "cpu_seconds": 81.49000000000001
+    },
+    {
+      "log": "s1-tests-seal-r4.log",
+      "cpu_seconds": 71.11999999999999
+    },
+    {
+      "log": "s1-pilot-e4-r1.log",
+      "cpu_seconds": 51.45
+    },
+    {
+      "log": "s1-pilot-full-4-r1.log",
+      "cpu_seconds": 1299.02
+    },
+    {
+      "log": "s1-pilot-full-5-r1.log",
+      "cpu_seconds": 873.21
+    },
+    {
+      "log": "s1-exact-replays-2-r1.log",
+      "cpu_seconds": 267.95
+    },
+    {
+      "log": "s1-pilot-full-7-r1.log",
+      "cpu_seconds": 1191.22
+    },
+    {
+      "log": "s1-pilot-full-8-r1.log",
+      "cpu_seconds": 1202.6000000000001
+    },
+    {
+      "log": "s1-tests-r1.log",
+      "cpu_seconds": 68.02999999999999
+    },
+    {
+      "log": "s1-fork-pilot-r1.log",
+      "cpu_seconds": 1649.75
+    },
+    {
+      "log": "s1-pilot-full-2-r1.log",
+      "cpu_seconds": 701.5
+    },
+    {
+      "log": "s1-tests-final-r1.log",
+      "cpu_seconds": 209.48
+    },
+    {
+      "log": "s1-pilot-full-6-r1.log",
+      "cpu_seconds": 829.99
+    },
+    {
+      "log": "s1-pilot-e4-r2.log",
+      "cpu_seconds": 5.13
+    },
+    {
+      "log": "s1-pilot-full-11-r1.log",
+      "cpu_seconds": 962.65
+    },
+    {
+      "log": "s1-pilot-full-3-r1.log",
+      "cpu_seconds": 625.9300000000001
+    },
+    {
+      "log": "s1-exact-replays-1-r1.log",
+      "cpu_seconds": 296.96999999999997
+    },
+    {
+      "log": "s1-tests-seal-r3.log",
+      "cpu_seconds": 229.19
+    },
+    {
+      "log": "s1-tests-seal-r2.log",
+      "cpu_seconds": 231.08
+    },
+    {
+      "log": "s1-exact-replays-0-r1.log",
+      "cpu_seconds": 293.31
+    },
+    {
+      "log": "s1-pilot-full-15-r1.log",
+      "cpu_seconds": 1003.72
+    },
+    {
+      "log": "s1-pilot-full-13-r1.log",
+      "cpu_seconds": 1026.45
+    },
+    {
+      "log": "s1-pilot-full-12-r1.log",
+      "cpu_seconds": 1001.08
+    },
+    {
+      "log": "s1-pilot-full-14-r1.log",
+      "cpu_seconds": 1097.5200000000002
+    },
+    {
+      "log": "s1-pilot-e4-r4.log",
+      "cpu_seconds": 151.92
+    },
+    {
+      "log": "s1-final-full-pilots-r1.log",
+      "cpu_seconds": 13500.85
+    }
+  ],
+  "passed": true,
+  "utc": 1791415005.0710902,
+  "evidence": {
+    "s1-exact-replays-0-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "fa1752d71f6a1b08f3c5ff73ce6d5aa9cb3d89949c343ed769f27baa78e5026e"
+    },
+    "s1-exact-replays-1-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "d07db756dfcf1e4e24a60b1338019a97035efe702b1de39f0cd41c76e3692893"
+    },
+    "s1-exact-replays-2-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "664962eb010cabc99adbdfb25505251494f701e275816f2b7275b624044c2fce"
+    },
+    "s1-tests-seal-r4": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "a37c07ad715c4ff763c6c75131fa464f86b8305eb4ca5a6b84cfc194b05ee6df"
+    },
+    "s1-fork-pilot-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "2bafb664426b02279266cb6bc506fe701a62200001b22829b48e38885eb46089"
+    },
+    "s1-final-full-pilots-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "438ded202a610d84cb40d942cf9d1f27a6ff79f31f698a777bfd7834ffaa7a54"
+    },
+    "s1-optimized-full-pilot-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "c728fd5c5fb5ec73d63ada1cbd818485b1d6435191582644ab633e47474a5f72"
+    },
+    "s1-fullpilot-36-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "bfa637ddf22b89305404f484c74413fcee4722171261446a598cc9dc9df1ca87"
+    },
+    "s1-fullpilot-37-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "8531cef634c438a0058b247527088d3266216368ef065f93029d4a71f2e338dd"
+    },
+    "s1-fullpilot-38-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "188bb83d17444e93ac38260c851ba3693050c393ddc00863833d464d4f01ad0b"
+    },
+    "s1-fullpilot-39-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "ed1c968b4ab932dd8fd5868d3e6daee199ed04ed4d5bee51bb4d0bccef7247cc"
+    },
+    "s1-fullpilot-40-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "b16a89026ae591c9fb9922c38a710bdb070ea99758e0161681fff04f4f849934"
+    },
+    "s1-fullpilot-41-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "c347f4c4e42d362311a48e3f69a82945b85f6da413770b77929072cf99e9e64e"
+    },
+    "s1-fullpilot-42-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "d8ae929be7a44511cec9fac1f33f15b43995a1429053155b2341791062a0a690"
+    },
+    "s1-fullpilot-43-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "50a0ab56a948092a6faf175a6b4314e69bcd1f4283f916d8a8ba6a04ffa9951b"
+    },
+    "s1-fullpilot-44-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "e7c3b53495cf90b12dc333c1add50d5744f8aec3f3e308552c32a22e00ab967d"
+    },
+    "s1-fullpilot-45-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "a4ee40cd39d466873b367a1758125af23a44f7df570e97061774cada84fa1a19"
+    },
+    "s1-fullpilot-46-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "06bc8d649b8b18cb021c1b2ec00f0ba16d9bb52668f6d9fc95f7299b3042e809"
+    },
+    "s1-fullpilot-47-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "a87edafb0bcbf0e8f4b8a258559c31272f0a448cdc08aff7d439c45f5b3d0e1f"
+    },
+    "s1-fullpilot-48-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "eb47ba6db73e2b321c3adb8e36a2034304620ecf2ae6e6a7d8486d742af09fdb"
+    },
+    "s1-fullpilot-49-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "0aa6c5934540284aeb6b80409d42cf4cf4238b455057539a71f4caace44295a4"
+    },
+    "s1-fullpilot-50-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "3e2ea8de10da74d075812902517dce0d3b2a43b0a93e7835a8b17813209c03fd"
+    },
+    "s1-fullpilot-51-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "296a8337511240ee915c7f826619d931d9a7ecfa6898deb01a7f3498526efef5"
+    },
+    "s1-fullpilot-52-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "2c20c0f6b28d2957d4469b33dc5e825a0e16798ee985341bb7a5ca6bff1575ec"
+    },
+    "s1-fullpilot-53-r1": {
+      "exit_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "log_sha256": "bce96fb19fa977559771d8a2b5c1c617f930a1f529edcd797f758424292d90e8"
+    },
+    "derived-audit-0.json": "0154a9477a2e69b9dd470bb12909662156f592ea78b429a723d16be7655181ac",
+    "derived-audit-1.json": "fe3b764595dbed27c5fe9460d7b4c34f5ea9f8747c4523fdc98b6afd8a3ab7a1",
+    "derived-audit-2.json": "db064413a82a30556f07e47f4d5f755735c326bc7e83c956fedb552632ed8adb",
+    "pilot-36-full.json": "465db03b89d22db2af3cc41bddd65ddc2b555196fe99fc2d74f4410e4a6a43f2",
+    "pilot-37-full.json": "446afa788e6464da3257cbad5b0dde0c38ae474dc56f3ee80598236b09163a81",
+    "pilot-38-full.json": "e26a3e6835d84bc3713b2445ccab8802bec07a3ad1e7805f3cbb303dbe19f0f7",
+    "pilot-39-full.json": "bc61e5798475d93ad5e74ec7ad06d0caffae9e1ee53d152dc1f4a3fc7eecf170",
+    "pilot-40-full.json": "de56712b49bd11f63257830e7a23ba154ad3fbf2e2792f55696131ecd24df58a",
+    "pilot-41-full.json": "e3b67233cdc555aae559d1b6d8cc3dff0e979e669328f7d206cce6da10e61504",
+    "pilot-42-full.json": "2fa753838a1a860c63f13c44f77938a13fe7355775b3f68edfdb69474ca09384",
+    "pilot-43-full.json": "0042a9d0978f6fb4c921aa5b1ba10b414522802c6cce4b1e3f6b61d34c3eb13e",
+    "pilot-44-full.json": "98a5e18764f9d37c444d0311445b98f032c117cd9a17858eeff2b2f4287a11a6",
+    "pilot-45-full.json": "6c2cca4a766c736fb00f0b44fe04626e27ec24aafc65ce6e3af2a14a9af459c6",
+    "pilot-46-full.json": "12fe6106af867e548b90f4a3e2183eb75abc76f7ce428f9901f813bd56f834a3",
+    "pilot-47-full.json": "0ab16fd6abce10a4c8d8844d71bee97c8e7050b305b86ec31f96446be9dc29a8",
+    "pilot-48-full.json": "5188f2d88b779a633e7f0ef332bbfb2ae8101a93da33d3932ddb7cfc181adb96",
+    "pilot-49-full.json": "acbadd8d0a39c11d4db5501b99c78fbc5deeb1e6f912dfbbce5ec288667399ae",
+    "pilot-50-full.json": "a67166b523294387cd6076a3a4c1944eaea023061e0486007bd9f7fcb3fab338",
+    "pilot-51-full.json": "88bb85fccaf5c89a891df9747eefa936c7ab537f0da32cc1d409e946cef808f6",
+    "pilot-52-full.json": "f1bb398451480bcf8727f7bd1d5bd83ccfabb768cc5d7e20ef762bfd80ace0de",
+    "pilot-53-full.json": "5c317e8d0af54c4f94b126b77642d85e3d58dffe0685cd3186100dab0782ba27",
+    "optimized_action_equivalence": "721925ab686a0c4e6095622a54969ff1c80710f9e88b7aaad6d6a28d8ff34e66"
+  },
+  "exact_replay_games": 24,
+  "exact_checks": 23058,
+  "pilots": [
+    {
+      "variant": "A",
+      "terminal": true,
+      "ticks": 3601,
+      "elapsed": 284.99974822998047,
+      "cpu_seconds": 284.17169317099996,
+      "timing": {
+        "decisions": 1756,
+        "p50": 0.02897442039102316,
+        "p99": 1.8633345328737052,
+        "max": 2.358988223830238,
+        "overruns": 114,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          33.75,
+          31.29,
+          22.58
+        ],
+        "pid": 3305803,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 20134
+      },
+      "action_sha256": "8e45ea94e332739f99d814b3f3bc101f2ee7024fcbffbd7722bdb707b2da9595"
+    },
+    {
+      "variant": "B-N64",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 555.9824080467224,
+      "cpu_seconds": 554.3538259149999,
+      "timing": {
+        "decisions": 2954,
+        "p50": 0.033624363015405834,
+        "p99": 2.604923462334553,
+        "max": 3.903617362026125,
+        "overruns": 155,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          26.37,
+          29.3,
+          24.04
+        ],
+        "pid": 3305804,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 40570,
+        "non_tower_entities": 21687,
+        "position_hits": 39207,
+        "hand_trials": 11824,
+        "elixir_trials": 2956,
+        "truth_events": 106,
+        "matched_events": 69,
+        "placement_hits": 60,
+        "hp_trials": 21687,
+        "hp_observed": 14252,
+        "hp_abs_error": 717.2854304223438,
+        "phantom_entities": 3032,
+        "dropped_entities": 1293,
+        "hp_imputed": 6142,
+        "missed_events": 35,
+        "elixir_errors": 90,
+        "hand_errors": 36,
+        "spurious_events": 16,
+        "confused_events": 2
+      },
+      "action_sha256": "6e3ca4351f89e5db7652165758b27e311a2976e81812f9566222973dd66f4b4f"
+    },
+    {
+      "variant": "B-N90",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 530.6152527332306,
+      "cpu_seconds": 528.915465113,
+      "timing": {
+        "decisions": 2954,
+        "p50": 0.033657614956609905,
+        "p99": 2.269681468859772,
+        "max": 3.316124841105193,
+        "overruns": 170,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          27.26,
+          29.71,
+          24.03
+        ],
+        "pid": 3305805,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 39604,
+        "non_tower_entities": 20666,
+        "position_hits": 38276,
+        "hand_trials": 11824,
+        "elixir_trials": 2956,
+        "truth_events": 104,
+        "matched_events": 95,
+        "placement_hits": 91,
+        "hp_trials": 20666,
+        "hp_imputed": 5796,
+        "phantom_entities": 2971,
+        "elixir_errors": 79,
+        "hp_observed": 13618,
+        "hp_abs_error": 672.2454088007798,
+        "dropped_entities": 1252,
+        "spurious_events": 7,
+        "hand_errors": 37,
+        "missed_events": 7,
+        "confused_events": 2
+      },
+      "action_sha256": "786ee4f34bb1792ebe311fcdb01f9d54f0ce5a80532a78ebb648c545868643b1"
+    },
+    {
+      "variant": "B-N97",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 558.0381042957306,
+      "cpu_seconds": 556.403947632,
+      "timing": {
+        "decisions": 2954,
+        "p50": 0.03383846941869706,
+        "p99": 2.1894594237185077,
+        "max": 2.871705814031884,
+        "overruns": 193,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          26.18,
+          29.21,
+          24.04
+        ],
+        "pid": 3305806,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 39401,
+        "non_tower_entities": 20674,
+        "position_hits": 38088,
+        "hand_trials": 11824,
+        "elixir_trials": 2956,
+        "truth_events": 104,
+        "matched_events": 102,
+        "placement_hits": 92,
+        "hp_trials": 20674,
+        "hp_observed": 13594,
+        "hp_abs_error": 683.5953788979677,
+        "phantom_entities": 2922,
+        "dropped_entities": 1241,
+        "hp_imputed": 5839,
+        "spurious_events": 3,
+        "elixir_errors": 90,
+        "hand_errors": 36,
+        "missed_events": 2
+      },
+      "action_sha256": "ce399dd576e8b202762c01edf40be14e4e98dbb7d81faf15e545a2fef1734978"
+    },
+    {
+      "variant": "E1-N64",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 924.6361944675446,
+      "cpu_seconds": 922.419851825,
+      "timing": {
+        "decisions": 2954,
+        "p50": 0.026316974544897676,
+        "p99": 3.3319347806973165,
+        "max": 71.55767389084212,
+        "overruns": 169,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          12.14,
+          19.88,
+          21.72
+        ],
+        "pid": 3305807,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 40926,
+        "non_tower_entities": 21295,
+        "position_hits": 39651,
+        "hand_trials": 12272,
+        "elixir_trials": 3068,
+        "truth_events": 103,
+        "matched_events": 67,
+        "placement_hits": 66,
+        "hp_trials": 21295,
+        "hp_imputed": 6097,
+        "phantom_entities": 3087,
+        "elixir_errors": 82,
+        "hp_observed": 14002,
+        "hp_abs_error": 692.6573563872371,
+        "dropped_entities": 1196,
+        "spurious_events": 19,
+        "hand_errors": 39,
+        "missed_events": 34,
+        "confused_events": 2
+      },
+      "action_sha256": "a3e1d27bf6a8018ff88e21e1ce9f4fa842bd3f4072d54b06ea8819feef0ebae6"
+    },
+    {
+      "variant": "E1-N90",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 785.9016225337982,
+      "cpu_seconds": 783.71055445,
+      "timing": {
+        "decisions": 2954,
+        "p50": 0.03088346100412309,
+        "p99": 2.9682850519777206,
+        "max": 49.75600968813524,
+        "overruns": 197,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          19.24,
+          24.31,
+          23.19
+        ],
+        "pid": 3305808,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 41539,
+        "non_tower_entities": 22069,
+        "position_hits": 40112,
+        "hand_trials": 12268,
+        "elixir_trials": 3067,
+        "truth_events": 104,
+        "matched_events": 95,
+        "placement_hits": 88,
+        "hp_trials": 22069,
+        "hp_observed": 14481,
+        "hp_abs_error": 724.8951618715073,
+        "phantom_entities": 3177,
+        "dropped_entities": 1342,
+        "hp_imputed": 6246,
+        "spurious_events": 7,
+        "elixir_errors": 93,
+        "hand_errors": 39,
+        "missed_events": 9
+      },
+      "action_sha256": "0c36784027547136fb6b96e8229acad8ef6b17093a1848fd804be08c8d9a17f0"
+    },
+    {
+      "variant": "E1-N97",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 681.1239647865295,
+      "cpu_seconds": 679.213238405,
+      "timing": {
+        "decisions": 2954,
+        "p50": 0.03069091134238988,
+        "p99": 2.361419820939182,
+        "max": 55.158476429991424,
+        "overruns": 205,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          21.7,
+          26.55,
+          23.69
+        ],
+        "pid": 3305809,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 41247,
+        "non_tower_entities": 21744,
+        "position_hits": 39909,
+        "hand_trials": 12288,
+        "elixir_trials": 3072,
+        "truth_events": 106,
+        "matched_events": 103,
+        "placement_hits": 100,
+        "hp_trials": 21744,
+        "hp_imputed": 6191,
+        "phantom_entities": 3116,
+        "elixir_errors": 82,
+        "hp_observed": 14291,
+        "hp_abs_error": 702.3175945618423,
+        "dropped_entities": 1262,
+        "hand_errors": 39,
+        "spurious_events": 3,
+        "missed_events": 2,
+        "confused_events": 1
+      },
+      "action_sha256": "2bb8a2f8406cbac86802a99d3e72e5dd819a16cdc7cbf4b853ebf26ce24419c4"
+    },
+    {
+      "variant": "E4-N64",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 899.272837638855,
+      "cpu_seconds": 896.8675221249999,
+      "timing": {
+        "decisions": 2954,
+        "p50": 0.027840960887260735,
+        "p99": 3.3877799254911927,
+        "max": 43.77352459309623,
+        "overruns": 206,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          13.36,
+          20.76,
+          22.04
+        ],
+        "pid": 3305810,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 39418,
+        "non_tower_entities": 19889,
+        "position_hits": 38143,
+        "hand_trials": 12264,
+        "elixir_trials": 3066,
+        "truth_events": 100,
+        "matched_events": 66,
+        "placement_hits": 58,
+        "hp_trials": 19889,
+        "hp_observed": 13072,
+        "hp_abs_error": 660.297192308004,
+        "phantom_entities": 2938,
+        "dropped_entities": 1216,
+        "hp_imputed": 5601,
+        "missed_events": 32,
+        "elixir_errors": 93,
+        "hand_errors": 39,
+        "spurious_events": 16,
+        "confused_events": 2
+      },
+      "action_sha256": "721925ab686a0c4e6095622a54969ff1c80710f9e88b7aaad6d6a28d8ff34e66"
+    },
+    {
+      "variant": "E4-N90",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 887.9899897575378,
+      "cpu_seconds": 885.3759343620001,
+      "timing": {
+        "decisions": 2954,
+        "p50": 0.028665565536357462,
+        "p99": 2.8162348850513794,
+        "max": 73.173064612085,
+        "overruns": 232,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          13.86,
+          21.11,
+          22.17
+        ],
+        "pid": 3305811,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 38539,
+        "non_tower_entities": 18819,
+        "position_hits": 37378,
+        "hand_trials": 12264,
+        "elixir_trials": 3066,
+        "truth_events": 103,
+        "matched_events": 94,
+        "placement_hits": 90,
+        "hp_trials": 18819,
+        "hp_imputed": 5272,
+        "phantom_entities": 2886,
+        "elixir_errors": 82,
+        "hp_observed": 12458,
+        "hp_abs_error": 617.5161424288526,
+        "dropped_entities": 1089,
+        "spurious_events": 7,
+        "hand_errors": 39,
+        "missed_events": 7,
+        "confused_events": 2
+      },
+      "action_sha256": "4ae45add79c67e3bfa635518be3bd30d2fb9ff25e5ee54516f9eaf1f1bce3546"
+    },
+    {
+      "variant": "E4-N97",
+      "terminal": true,
+      "ticks": 3601,
+      "elapsed": 449.93731451034546,
+      "cpu_seconds": 448.694452415,
+      "timing": {
+        "decisions": 1754,
+        "p50": 0.03041706036310643,
+        "p99": 2.772339611677453,
+        "max": 47.62965602404438,
+        "overruns": 110,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          29.55,
+          30.68,
+          23.79
+        ],
+        "pid": 3305813,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 21027,
+        "non_tower_entities": 10659,
+        "position_hits": 20339,
+        "hand_trials": 7224,
+        "elixir_trials": 1806,
+        "truth_events": 48,
+        "matched_events": 48,
+        "placement_hits": 44,
+        "hp_trials": 10659,
+        "hp_observed": 7024,
+        "hp_abs_error": 352.60329264204483,
+        "phantom_entities": 1596,
+        "dropped_entities": 647,
+        "hp_imputed": 2988,
+        "elixir_errors": 59,
+        "spurious_events": 1,
+        "hand_errors": 27
+      },
+      "action_sha256": "2c89fb399ec05ac52c393c9bfbc5ac2751342f96f01e450b922d3f6bbbded0aa"
+    },
+    {
+      "variant": "E4R-N64",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 978.9488644599915,
+      "cpu_seconds": 976.709541085,
+      "timing": {
+        "decisions": 2954,
+        "p50": 0.02515757642686367,
+        "p99": 3.2737249110429443,
+        "max": 62.971727835945785,
+        "overruns": 218,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          9.97,
+          17.98,
+          20.96
+        ],
+        "pid": 3305814,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 38688,
+        "non_tower_entities": 19317,
+        "position_hits": 37462,
+        "hand_trials": 12268,
+        "elixir_trials": 3067,
+        "truth_events": 105,
+        "matched_events": 68,
+        "placement_hits": 67,
+        "hp_trials": 19317,
+        "hp_imputed": 5462,
+        "phantom_entities": 2912,
+        "elixir_errors": 82,
+        "hp_observed": 12696,
+        "hp_abs_error": 631.3186625979142,
+        "dropped_entities": 1159,
+        "spurious_events": 19,
+        "missed_events": 35,
+        "hand_errors": 39,
+        "confused_events": 2
+      },
+      "action_sha256": "76616528729a0a4c578be8629403e23e698117f16a0d3a9fbc0e66fb0d5fc7fd"
+    },
+    {
+      "variant": "E4R-N90",
+      "terminal": true,
+      "ticks": 5304,
+      "elapsed": 756.9167320728302,
+      "cpu_seconds": 754.732509186,
+      "timing": {
+        "decisions": 2605,
+        "p50": 0.02992397896014154,
+        "p99": 3.0407358796615154,
+        "max": 39.80432843323797,
+        "overruns": 219,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          19.98,
+          24.96,
+          23.36
+        ],
+        "pid": 3305815,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 32906,
+        "non_tower_entities": 15835,
+        "position_hits": 31928,
+        "hand_trials": 10776,
+        "elixir_trials": 2694,
+        "truth_events": 83,
+        "matched_events": 75,
+        "placement_hits": 70,
+        "hp_trials": 15835,
+        "hp_observed": 10471,
+        "hp_abs_error": 529.4084565100493,
+        "phantom_entities": 2438,
+        "dropped_entities": 922,
+        "hp_imputed": 4442,
+        "elixir_errors": 86,
+        "spurious_events": 6,
+        "hand_errors": 34,
+        "missed_events": 8
+      },
+      "action_sha256": "302e516e0558605cda01965ed082b93ddb079a50308012bc5214d0b7f73a8005"
+    },
+    {
+      "variant": "E4R-N97",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 836.0483710765839,
+      "cpu_seconds": 833.744195122,
+      "timing": {
+        "decisions": 2954,
+        "p50": 0.030383020406588912,
+        "p99": 2.8965743930265293,
+        "max": 38.95038136700168,
+        "overruns": 261,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          17.47,
+          23.05,
+          22.82
+        ],
+        "pid": 3305816,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 40011,
+        "non_tower_entities": 20544,
+        "position_hits": 38742,
+        "hand_trials": 12276,
+        "elixir_trials": 3069,
+        "truth_events": 107,
+        "matched_events": 104,
+        "placement_hits": 100,
+        "hp_trials": 20544,
+        "hp_imputed": 5794,
+        "phantom_entities": 3025,
+        "elixir_errors": 82,
+        "hp_observed": 13563,
+        "hp_abs_error": 664.3193341770675,
+        "dropped_entities": 1187,
+        "hand_errors": 39,
+        "spurious_events": 3,
+        "missed_events": 2,
+        "confused_events": 1
+      },
+      "action_sha256": "bc3ae604f723f9e8f2e8e4b23569066a5fa577557f027e85c9142ce2a554000d"
+    },
+    {
+      "variant": "E4-N90-old",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 843.5338053703308,
+      "cpu_seconds": 841.272524964,
+      "timing": {
+        "decisions": 2846,
+        "p50": 0.03012486908119172,
+        "p99": 2.835393464926175,
+        "max": 52.889162266859785,
+        "overruns": 246,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          16.71,
+          22.7,
+          22.71
+        ],
+        "pid": 3305817,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 40105,
+        "non_tower_entities": 20489,
+        "position_hits": 38852,
+        "hand_trials": 12256,
+        "elixir_trials": 3064,
+        "truth_events": 107,
+        "matched_events": 98,
+        "placement_hits": 91,
+        "hp_trials": 20489,
+        "hp_observed": 13510,
+        "hp_abs_error": 680.8918386268197,
+        "phantom_entities": 3015,
+        "dropped_entities": 1182,
+        "hp_imputed": 5797,
+        "spurious_events": 7,
+        "elixir_errors": 93,
+        "hand_errors": 39,
+        "missed_events": 9
+      },
+      "action_sha256": "943368c8e6d612905ba7aee6fe0b77b288b0174abdcb1d02f92db74ef24f4a79"
+    },
+    {
+      "variant": "E4-N90-l2",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 874.6342341899872,
+      "cpu_seconds": 872.214167358,
+      "timing": {
+        "decisions": 2952,
+        "p50": 0.029747414984740317,
+        "p99": 2.807488461600148,
+        "max": 52.651627980172634,
+        "overruns": 260,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          14.6,
+          21.62,
+          22.35
+        ],
+        "pid": 3305818,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 39906,
+        "non_tower_entities": 20307,
+        "position_hits": 38670,
+        "hand_trials": 12284,
+        "elixir_trials": 3071,
+        "truth_events": 103,
+        "matched_events": 94,
+        "placement_hits": 90,
+        "hp_trials": 20307,
+        "hp_imputed": 5734,
+        "phantom_entities": 2974,
+        "elixir_errors": 82,
+        "hp_observed": 13410,
+        "hp_abs_error": 665.4696545070037,
+        "dropped_entities": 1163,
+        "spurious_events": 7,
+        "hand_errors": 39,
+        "missed_events": 7,
+        "confused_events": 2
+      },
+      "action_sha256": "0271a74d3b959d587a271732b8aed3807b0509656abdd8219ba4cbdb2d943070"
+    },
+    {
+      "variant": "E4-N90-fail10",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 817.4019019603729,
+      "cpu_seconds": 815.1660925389999,
+      "timing": {
+        "decisions": 2945,
+        "p50": 0.03061237302608788,
+        "p99": 2.9772772507742045,
+        "max": 47.8930659762118,
+        "overruns": 230,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          18.01,
+          23.43,
+          22.94
+        ],
+        "pid": 3305819,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 40597,
+        "non_tower_entities": 21014,
+        "position_hits": 39330,
+        "hand_trials": 12260,
+        "elixir_trials": 3065,
+        "truth_events": 105,
+        "matched_events": 96,
+        "placement_hits": 89,
+        "hp_trials": 21014,
+        "hp_observed": 13926,
+        "hp_abs_error": 698.2834104440408,
+        "phantom_entities": 3044,
+        "dropped_entities": 1187,
+        "hp_imputed": 5901,
+        "spurious_events": 7,
+        "elixir_errors": 93,
+        "hand_errors": 39,
+        "missed_events": 9
+      },
+      "action_sha256": "0c907761d4b66aad1058e48a2657f5bdebf1938f81c34ed190d356da97a73599"
+    },
+    {
+      "variant": "E4-N90-fail60",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 834.4064824581146,
+      "cpu_seconds": 832.1703339119999,
+      "timing": {
+        "decisions": 2884,
+        "p50": 0.029662908520549536,
+        "p99": 2.9346758709871215,
+        "max": 43.36470769206062,
+        "overruns": 214,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          17.47,
+          23.05,
+          22.82
+        ],
+        "pid": 3305820,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 39939,
+        "non_tower_entities": 20336,
+        "position_hits": 38704,
+        "hand_trials": 12272,
+        "elixir_trials": 3068,
+        "truth_events": 102,
+        "matched_events": 93,
+        "placement_hits": 89,
+        "hp_trials": 20336,
+        "hp_imputed": 5727,
+        "phantom_entities": 3148,
+        "elixir_errors": 82,
+        "hp_observed": 13440,
+        "hp_abs_error": 662.6219725270057,
+        "dropped_entities": 1169,
+        "spurious_events": 7,
+        "hand_errors": 39,
+        "missed_events": 7,
+        "confused_events": 2
+      },
+      "action_sha256": "95a7644895b8d3f0a8e70d74cc94434c688c785b2f4ef0bdf4f92b9ad83ffc73"
+    },
+    {
+      "variant": "E4-N90-identity",
+      "terminal": true,
+      "ticks": 6001,
+      "elapsed": 828.6811380386353,
+      "cpu_seconds": 826.443593309,
+      "timing": {
+        "decisions": 2954,
+        "p50": 0.030124958604574203,
+        "p99": 2.896732746118214,
+        "max": 57.77981296693906,
+        "overruns": 235,
+        "truncations": 0,
+        "fallbacks": 0
+      },
+      "host": {
+        "load": [
+          17.78,
+          23.21,
+          22.87
+        ],
+        "pid": 3305821,
+        "nice": 10,
+        "native_threads": 1,
+        "hostname": "127x02"
+      },
+      "perception": {
+        "entities": 39619,
+        "non_tower_entities": 19965,
+        "position_hits": 38424,
+        "hand_trials": 12256,
+        "elixir_trials": 3064,
+        "truth_events": 103,
+        "matched_events": 94,
+        "placement_hits": 87,
+        "hp_trials": 19965,
+        "hp_observed": 13183,
+        "hp_abs_error": 662.9412857693969,
+        "phantom_entities": 3016,
+        "dropped_entities": 1129,
+        "identity_confusions": 1945,
+        "hp_imputed": 5653,
+        "elixir_errors": 93,
+        "spurious_events": 7,
+        "hand_errors": 39,
+        "missed_events": 9
+      },
+      "action_sha256": "3cad210e81c8ead48f1e4a46d9fbf6d3dec2e7f3fad5231d61b175247b30ca53"
+    }
+  ],
+  "files": {
+    "test_protocol.py": "c44ecb7baa626ff80819834bf0450520aff4f9f23f625dc47f183b9c415be5d2",
+    "bootstrap.py": "65d5019e7550e50b546f337edd5856283d5560b75f2647f4ea66842be90e7cc3",
+    "replay_exact.py": "8b37bcdfe52613649288f7f361b279364527fb81c1e7bab9f5308dd67287bd12",
+    "elt.py": "c9522794066155002ef20b60ac6644bd34ef2e0f5925cde3f0abf050842e8f58",
+    "prepare.py": "e6ab143b456fa7f917788002b3d63efe14d0a25df60aac11567899572514e995",
+    "distribute.py": "6b968a9d017709a63b03705f9fb3aaa863f34c3bbfda5f91ea2081526a2ebeae",
+    "calibrate_budget.py": "af953945655300bf9471c0605fe93a6854f955450a6d245d60e0a5974e2725c3",
+    "test_boundary.py": "46d4c708535133c4c160e23937a3ec3e988dc6602e6b3d99617967e5d3234d37",
+    "launch_node.py": "dfbd4fb25c5ee39823efc524a36d5ca54a73cb34f9301898aca51d204661558f",
+    "cells.py": "bbf751bdd53e680a5505f504d2d75951c97728148af721301d9b8a7ee179985a",
+    "player.py": "24dfcf5258cf1a78f6133e80a5bcf339225f0437201f085530985cbc9e2253df",
+    "noise.py": "e3df14a45cb7c7069a8e35b99cd4c218979782d526e3d0264a08d5d4d78b9e3d",
+    "analyze.py": "e3be672bdf247627d790d52b2d0a3125522b6fc18a2d8663fa5e740df5f42cfd",
+    "register.py": "13cd025d7f4fb9c0e9831a1dd521ad5d7c5f9ffa6ebfdebae596b533c50f42b2",
+    "test_elt.py": "3b79b5d859bc98ab8d5143977ba1bb3999e2ef52ed031c08c371d8ea0e096ee1",
+    "worker.py": "8e63343fc7b40d2763493ec11b5649b330e149a1af2d3a25565e9fea2936fff3",
+    "preflight.py": "0709618fef5ff8d21ed2673d905eee107b657730dc33eb4cc8bf45382c53cd6f",
+    "own_state.py": "a78fdc0ec50575264b2f527b905d556485e0491d0f4292b7984b374e4bc49c59",
+    "collect.py": "eec7528549c4035254c7689c40e23db696416d10ffad33379ab4ec573cd0f90b",
+    "evaluate.py": "9e013a8db506b5845a9517e6f2d95c71d9bf471b568b385d0121a80e6785d114",
+    "seal.py": "2f88b4d16f5551bd8939b5efd6f3b734b0a50d07688d1a24691028f30da8b314"
+  }
+}

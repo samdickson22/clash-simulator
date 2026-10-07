@@ -1,0 +1,24 @@
+{
+  "utc": "2026-10-07T23:29:46.805212+00:00",
+  "status": "blocked_fleet_unreachable",
+  "hub": "127x02",
+  "hub_tailnet_error": "SSH 100.116.20.62 port 22 timed out",
+  "hub_lan_error": "SSH from 127x07 to 127x02: No route to host",
+  "peers": {
+    "127x07": "reachable; smoke-p16-linux-20261007.exit absent",
+    "127x08": "reachable; smoke exit absent; no S1 supervisor PID or exit"
+  },
+  "last_observed_confirmation_receipts": 0,
+  "last_observed_completed_partitions": 0,
+  "current_hub_process_state": "unknown; do not infer termination",
+  "manifest": "253aba47a826e6dbb2d951114d0f7596b0d45bd3eee294d65e6c032c0513c849",
+  "preconfirmation_linux_cpu_hours": 9.876400000000002,
+  "confirmation_cpu_hours": null,
+  "results_inspected": false,
+  "jobs": {
+    "hub_confirmation": "s1-confirm-node-127x02-r1",
+    "collector": "s1-collect-r1",
+    "peer_ready_launcher": "s1-peer-ready-launch-r2"
+  },
+  "operational_incident": "scp/SFTP transfer closed; ready-launch r1 exited 127 before any peer work. Source transferred successfully with rsync; r2 launched. Both logs retained on hub."
+}

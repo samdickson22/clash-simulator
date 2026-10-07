@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "attestation": {
+    "version": "runner-attestation.v1",
+    "protocol_version": "cr-native-control.v1",
+    "package_name": "nullsroyale.rel.free",
+    "abi": "arm64-v8a",
+    "probe_sha256": "2ea5e10dff5cfe763218d07ec17acdb4be1379eac51d6b4f827d887edc3c645c",
+    "libg_sha256": "110aa2b5cac391c498645e072b0d88729428c2c2845e7e2737ca8ee979059783",
+    "libg_build_id": "90e6f351f0dec4a28b494c3812d2629fd45d5a83",
+    "content_fingerprint_sha256": "e0cb2fb9eb2fdd0df1afcb00df3e3ba61cf25aa8b24e39c17cc391d952a4e339",
+    "content_assets_sha256": "4b99bfd5d5fb52fe79bba74cd1990ce08fc4f46064d905c64cb5c281b6474e7b",
+    "content_version": "15.535.86",
+    "content_manifest_sha1": "41d8df308b22bf144c2a4f2b75f6e6fbf69a0c82",
+    "hook_install_ok": true,
+    "hooks": {
+      "game_state_load": true,
+      "game_state_step": true,
+      "native_replay_runner": true,
+      "render_gate": true,
+      "replay_json_setter": true
+    },
+    "capabilities": {
+      "headless": true,
+      "native_render": true,
+      "snapshot_restore": true,
+      "structured_observation": true,
+      "two_sided_actions": true
+    },
+    "content_ready": true,
+    "content_assets_mapped": true,
+    "production_ready": true,
+    "attestation_digest": "e7c4494b95bd3b30dd1c7d2237608af572fc9b5660027cafdb270bf6ad19276e"
+  }
+}

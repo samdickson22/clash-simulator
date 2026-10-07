@@ -1,0 +1,12 @@
+{
+  "pid": 66755,
+  "app_uid": 10208,
+  "serial": "emulator-5584",
+  "probe_port": 26794,
+  "grpc_port": 8558,
+  "read_only_avd": true,
+  "attestation_sha256": "864227bf7208aa9c06cd976db3fa0734a32277b0552f92e496ad283a917b4a93",
+  "render_backend": "host",
+  "adb_port": 5042,
+  "process_start": "Wed Oct  7 14:54:41 2026"
+}

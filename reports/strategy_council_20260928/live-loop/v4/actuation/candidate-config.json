@@ -1,0 +1,9 @@
+{
+  "transport": "grpc",
+  "inter_tap_delay_ms": 20,
+  "elixir_margin": 0.1,
+  "verification_ms": 600,
+  "ledger_timeout_ms": 800,
+  "qualified": false,
+  "reason": "Pinned touch execution exceeds 600 ms; no production admission"
+}

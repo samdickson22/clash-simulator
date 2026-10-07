@@ -133,3 +133,34 @@ via T3 delegate_task; research -> Opus subagents. Decisions log: amendments/2026
   - **Delegated (Astra high):**
     - C56 extraction resume on 127x01/03/04, starting from the Mac's 811/1,767 units and first proving Linux reproduces finished units byte-for-byte.
     - The S1 noise-robust search study on 127x07/08/02. It uses the current Rust build with its known defect, recorded in PREREG; all arms share the build.
+
+## 2026-10-07 23:35 UTC: Mac thread hands off to the 127x05 coordinator and stops its workers
+
+At Sam's request, the Mac thread cancelled its delegated agents. Stage 6, live-loop v4 T1/T2 and S1 were cancelled. The C56 extraction agent had already finished, blocked. The new 127x05 thread owns everything from here.
+
+**Mac jobs still running (detached; left alive for the new owner):**
+- live-loop v4: PGID 8556 runs `actuation/bench.py`, and PGID 9517 runs `v4/pipeline.py --wait-bench-pid 8559` (the T1 collector pipeline).
+- The offline renderer emulator, PID 66755 (`clasher_reference_api35`, port 5584).
+- Their state is in `live-loop/v4/T2-RESULTS.md`, `T1-PROGRESS.md` and `PREREG.md`.
+
+**Open decision: T2 timing.** gRPC taps were accepted 100% of the time, but the renderer hook adds about 1.1 s before acceptance.
+
+**Stage 6:**
+- Build 45 passed the human reserve, but its final manifest no longer counts as qualification.
+- A third native defect was found: Inferno Dragon's damage-ramp channel targeting during Bandit's dash (Python's `DamageRamp.allows_target` rejects dash targets).
+- A fix is drafted in the Rust source, and private46 is pending. No Stage 6 worker is running. See `engine-speed/PROGRESS.md`.
+
+**127x02 (the fleet hub) went down around 23:25 UTC.** It's unreachable over Tailscale and the LAN; 127x01 can't ping it either. Data that exists only there:
+- `/mpac/sdicks02/repos/clasher-v4-data`: T1 stream.
+
+Also on the hub, but with copies elsewhere:
+- the hub's full repo copy, its `.venv` and the Linux build;
+- the C56 base verification. The 811 units are also on the Mac and on the 01/03/04 copies.
+
+**Fleet status:**
+- 127x01, 03, 04, 07 and 08 are up and idle.
+- Fan-out copies to them may be incomplete, and their smoke receipts are missing.
+- S1 (`search-noise-v2/`) has its PREREG frozen but no games run; it's blocked by the hub outage (`INCIDENT-fleet-unreachable.json`).
+- The C56 extraction resume hasn't started any compute. State is in `c56/data/PROGRESS.md` and `FLEET-RESULTS.md`.
+
+**Suggested first move:** pick a new hub among 01/03/04/07/08, or wait for 127x02 to return. Note that each node's `/mpac` copy came from 127x02 and may be partial.

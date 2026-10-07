@@ -1,0 +1,41 @@
+{
+  "seeds_unique": true,
+  "deck_multisets_unique": true,
+  "phase_range": [
+    1975100700,
+    1975103099
+  ],
+  "smoke_range": [
+    1975100000,
+    1975100002
+  ],
+  "prior_ranges": "L1 261007xxx; L2 196704xxxx; explicit prior schedule scan at freeze",
+  "scanned": [
+    "reports/strategy_council_20260928/live-loop/l1/rejected-paused-intro/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/rejected-presentation-ready/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/rejected-intro-dataset/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/dataset/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/smoke-dataset/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/rejected-fraction-labels/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/support-dataset/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v1/dataset-second2/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v1/dataset-second/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v1/inference/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v1/dataset-smoke/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v1/dataset-grpc-smoke/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v2/smoke/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v2/inference-heldout-10.9141/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v2/inference-validation-initial/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v2/inference-heldout-20/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v2/inference-validation/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v2/inference-heldout-10/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v2/rejected-blocking-stream-dataset/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v2/inference-fast-stream-subsampled/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v2/model/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v2/inference-fast-stream/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l1/v2/inference-fast-stream-rejected-timestamps/manifest.json",
+    "reports/strategy_council_20260928/live-loop/l2/schedule.json"
+  ],
+  "prior_seed_count": 87,
+  "overlap": []
+}

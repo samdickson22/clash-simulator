@@ -1,0 +1,21 @@
+{
+  "receipt": {
+    "schema": "clasher.live-v4.registration.v1",
+    "source_manifest_sha256": "ac5221390d1d5f6b4504a03d4a95f87e4aa3fad704138020b09d895d4f0bbf6d",
+    "training_eligible": false
+  },
+  "hub": {
+    "episode": "v4-registration-ac5221390d1d5f6b",
+    "verified_files": 7,
+    "hashes": {
+      "PREREG.md": "433cdfaa248637b35b3ddf8e2c51c0f3de3fd21b364f16869e822fbfbe30c422",
+      "body-catalog.json": "9edabb29bada9e612c5edbd0504c02e439cc283fdb797a2ffc5e4f0ee53948c0",
+      "frozen-manifest.json": "ac5221390d1d5f6b4504a03d4a95f87e4aa3fad704138020b09d895d4f0bbf6d",
+      "producer-source.tar.gz": "c9443a667546f91d4af952a1f0854585ec600be19fd309d5fa6abe72f5a8d992",
+      "receipt.json": "6d9cfd71be271d4a6bdd33b0d6a609e6487168244bec6866417ccd6381d4eed8",
+      "seed-audit.json": "f7a2380a670a7c280e839fc60a977efadc8a19e750273b254db3693998e422ea",
+      "split.json": "3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258"
+    },
+    "bytes": 3461756
+  }
+}

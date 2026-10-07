@@ -1,0 +1,26 @@
+{
+  "pid": 66755,
+  "command": [
+    "/Users/sam/.cache/clasher-native-reference/android-sdk/emulator/emulator",
+    "-avd",
+    "clasher_reference_api35",
+    "-port",
+    "5584",
+    "-no-window",
+    "-no-audio",
+    "-no-snapshot",
+    "-no-boot-anim",
+    "-gpu",
+    "host",
+    "-memory",
+    "3072",
+    "-cores",
+    "2",
+    "-grpc",
+    "8558",
+    "-grpc-use-token",
+    "-read-only"
+  ],
+  "avd_home": "/Users/sam/.cache/clasher-native-reference/avd",
+  "resumed_from": null
+}

@@ -1,0 +1,5391 @@
+{
+  "utc": "2026-10-07T22:44:06.305443+00:00",
+  "pairs": [
+    {
+      "pair": 0,
+      "mode": "head-to-head",
+      "seed": 7612000001,
+      "noise_seed": 8612000001,
+      "family": "Hog 2.6",
+      "style": "balanced",
+      "planning_deck": [
+        "Skeletons",
+        "HogRider",
+        "Fireball",
+        "IceSpirit",
+        "Musketeer",
+        "IceGolem",
+        "Cannon",
+        "Log"
+      ],
+      "opponent_deck": [
+        "HogRider",
+        "Cannon",
+        "Fireball",
+        "Musketeer",
+        "Skeletons",
+        "Log",
+        "IceSpirit",
+        "IceGolem"
+      ]
+    },
+    {
+      "pair": 1,
+      "mode": "head-to-head",
+      "seed": 7612001010,
+      "noise_seed": 8612001010,
+      "family": "Hog 2.6",
+      "style": "pressure",
+      "planning_deck": [
+        "Musketeer",
+        "IceGolem",
+        "Log",
+        "Skeletons",
+        "Cannon",
+        "Fireball",
+        "IceSpirit",
+        "HogRider"
+      ],
+      "opponent_deck": [
+        "BarbLog",
+        "HogRider",
+        "Firecracker",
+        "Skeletons",
+        "Cannon",
+        "Earthquake",
+        "ElectroSpirit",
+        "MightyMiner"
+      ]
+    },
+    {
+      "pair": 2,
+      "mode": "head-to-head",
+      "seed": 7612002019,
+      "noise_seed": 8612002019,
+      "family": "Hog 2.6",
+      "style": "defense",
+      "planning_deck": [
+        "IceGolem",
+        "Skeletons",
+        "HogRider",
+        "Musketeer",
+        "Cannon",
+        "Fireball",
+        "Log",
+        "IceSpirit"
+      ],
+      "opponent_deck": [
+        "Log",
+        "Musketeer",
+        "Cannon",
+        "IceSpirit",
+        "Skeletons",
+        "HogRider",
+        "IceGolem",
+        "Fireball"
+      ]
+    },
+    {
+      "pair": 3,
+      "mode": "head-to-head",
+      "seed": 7612003028,
+      "noise_seed": 8612003028,
+      "family": "Hog 2.6",
+      "style": "balanced",
+      "planning_deck": [
+        "Cannon",
+        "IceSpirit",
+        "Log",
+        "Musketeer",
+        "IceGolem",
+        "Fireball",
+        "HogRider",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "BlowdartGoblin",
+        "GoblinBarrel",
+        "SkeletonArmy",
+        "Valkyrie",
+        "Wallbreakers",
+        "Princess",
+        "Cannon",
+        "RoyalDelivery"
+      ]
+    },
+    {
+      "pair": 4,
+      "mode": "head-to-head",
+      "seed": 7612004037,
+      "noise_seed": 8612004037,
+      "family": "Hog 2.6",
+      "style": "pressure",
+      "planning_deck": [
+        "Fireball",
+        "IceSpirit",
+        "HogRider",
+        "Log",
+        "Skeletons",
+        "IceGolem",
+        "Musketeer",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "BombTower",
+        "Berserker",
+        "BarbLog",
+        "Archers",
+        "Skeletons",
+        "Lightning",
+        "ElectroSpirit",
+        "RoyalHogs"
+      ]
+    },
+    {
+      "pair": 5,
+      "mode": "head-to-head",
+      "seed": 7612005046,
+      "noise_seed": 8612005046,
+      "family": "Hog 2.6",
+      "style": "defense",
+      "planning_deck": [
+        "Fireball",
+        "Log",
+        "HogRider",
+        "IceSpirit",
+        "Skeletons",
+        "IceGolem",
+        "Cannon",
+        "Musketeer"
+      ],
+      "opponent_deck": [
+        "Log",
+        "ElectroSpirit",
+        "Skeletons",
+        "Tesla",
+        "Archers",
+        "Knight",
+        "Fireball",
+        "Xbow"
+      ]
+    },
+    {
+      "pair": 6,
+      "mode": "head-to-head",
+      "seed": 7612006055,
+      "noise_seed": 8612006055,
+      "family": "Hog 2.6",
+      "style": "balanced",
+      "planning_deck": [
+        "Fireball",
+        "IceSpirit",
+        "Cannon",
+        "Log",
+        "Musketeer",
+        "Skeletons",
+        "IceGolem",
+        "HogRider"
+      ],
+      "opponent_deck": [
+        "Princess",
+        "GoblinBarrel",
+        "ElectroSpirit",
+        "SkeletonArmy",
+        "BlowdartGoblin",
+        "InfernoTower",
+        "Knight",
+        "Log"
+      ]
+    },
+    {
+      "pair": 7,
+      "mode": "head-to-head",
+      "seed": 7612007064,
+      "noise_seed": 8612007064,
+      "family": "Hog 2.6",
+      "style": "pressure",
+      "planning_deck": [
+        "Fireball",
+        "HogRider",
+        "Skeletons",
+        "IceSpirit",
+        "Musketeer",
+        "IceGolem",
+        "Log",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "Ghost",
+        "RoyalHogs",
+        "BarbLog",
+        "ElectroSpirit",
+        "Fireball",
+        "GoblinHut",
+        "FirespiritHut",
+        "Berserker"
+      ]
+    },
+    {
+      "pair": 8,
+      "mode": "head-to-head",
+      "seed": 7612008073,
+      "noise_seed": 8612008073,
+      "family": "Hog 2.6",
+      "style": "defense",
+      "planning_deck": [
+        "Log",
+        "Skeletons",
+        "HogRider",
+        "Musketeer",
+        "Fireball",
+        "IceGolem",
+        "IceSpirit",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "Firecracker",
+        "BarbLog",
+        "Skeletons",
+        "Berserker",
+        "Lightning",
+        "Cannon",
+        "HogRider"
+      ]
+    },
+    {
+      "pair": 9,
+      "mode": "head-to-head",
+      "seed": 7612009082,
+      "noise_seed": 8612009082,
+      "family": "Hog 2.6",
+      "style": "balanced",
+      "planning_deck": [
+        "Skeletons",
+        "Cannon",
+        "Log",
+        "HogRider",
+        "IceSpirit",
+        "IceGolem",
+        "Musketeer",
+        "Fireball"
+      ],
+      "opponent_deck": [
+        "GoblinHut",
+        "Fireball",
+        "Berserker",
+        "RoyalHogs",
+        "Skeletons",
+        "ElectroSpirit",
+        "FirespiritHut",
+        "Log"
+      ]
+    },
+    {
+      "pair": 10,
+      "mode": "head-to-head",
+      "seed": 7612010091,
+      "noise_seed": 8612010091,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "pressure",
+      "planning_deck": [
+        "HogRider",
+        "Firecracker",
+        "MightyMiner",
+        "ElectroSpirit",
+        "Log",
+        "Earthquake",
+        "Skeletons",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "Berserker",
+        "GoblinBarrel",
+        "Log",
+        "FireSpirits",
+        "BlowdartGoblin",
+        "Cannon",
+        "Rocket",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 11,
+      "mode": "head-to-head",
+      "seed": 7612011100,
+      "noise_seed": 8612011100,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "defense",
+      "planning_deck": [
+        "Log",
+        "Cannon",
+        "ElectroSpirit",
+        "Earthquake",
+        "Firecracker",
+        "MightyMiner",
+        "Skeletons",
+        "HogRider"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "Cannon",
+        "Musketeer",
+        "Skeletons",
+        "IceGolem",
+        "HogRider",
+        "IceSpirit",
+        "Log"
+      ]
+    },
+    {
+      "pair": 12,
+      "mode": "head-to-head",
+      "seed": 7612012109,
+      "noise_seed": 8612012109,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "balanced",
+      "planning_deck": [
+        "ElectroSpirit",
+        "Firecracker",
+        "HogRider",
+        "BarbLog",
+        "Skeletons",
+        "MightyMiner",
+        "Earthquake",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "Skeletons",
+        "Log",
+        "Musketeer",
+        "Cannon",
+        "IceGolem",
+        "IceSpirit",
+        "HogRider",
+        "Fireball"
+      ]
+    },
+    {
+      "pair": 13,
+      "mode": "head-to-head",
+      "seed": 7612013118,
+      "noise_seed": 8612013118,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "pressure",
+      "planning_deck": [
+        "Log",
+        "Skeletons",
+        "HogRider",
+        "ElectroSpirit",
+        "MightyMiner",
+        "Firecracker",
+        "Cannon",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "Rocket",
+        "Tesla",
+        "Berserker",
+        "Princess",
+        "Skeletons",
+        "Log",
+        "GoblinBarrel"
+      ]
+    },
+    {
+      "pair": 14,
+      "mode": "head-to-head",
+      "seed": 7612014127,
+      "noise_seed": 8612014127,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "defense",
+      "planning_deck": [
+        "HogRider",
+        "Cannon",
+        "Firecracker",
+        "MightyMiner",
+        "Skeletons",
+        "Log",
+        "ElectroSpirit",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "HogRider",
+        "IceSpirit",
+        "Log",
+        "Cannon",
+        "IceGolem",
+        "Musketeer",
+        "Fireball",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 15,
+      "mode": "head-to-head",
+      "seed": 7612015136,
+      "noise_seed": 8612015136,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "balanced",
+      "planning_deck": [
+        "Cannon",
+        "Earthquake",
+        "Skeletons",
+        "BarbLog",
+        "HogRider",
+        "ElectroSpirit",
+        "Firecracker",
+        "MightyMiner"
+      ],
+      "opponent_deck": [
+        "Wallbreakers",
+        "GoblinBarrel",
+        "SkeletonArmy",
+        "Log",
+        "DarkPrince",
+        "Rascals",
+        "BlowdartGoblin",
+        "InfernoTower"
+      ]
+    },
+    {
+      "pair": 16,
+      "mode": "head-to-head",
+      "seed": 7612016145,
+      "noise_seed": 8612016145,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "pressure",
+      "planning_deck": [
+        "ElectroSpirit",
+        "IceGolem",
+        "HogRider",
+        "AngryBarbarians",
+        "Skeletons",
+        "Firecracker",
+        "Log",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "Skeletons",
+        "Musketeer",
+        "Cannon",
+        "ElectroSpirit",
+        "Log",
+        "HogRider",
+        "IceGolem",
+        "Fireball"
+      ]
+    },
+    {
+      "pair": 17,
+      "mode": "head-to-head",
+      "seed": 7612017154,
+      "noise_seed": 8612017154,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "defense",
+      "planning_deck": [
+        "IceGolem",
+        "ElectroSpirit",
+        "AngryBarbarians",
+        "Earthquake",
+        "HogRider",
+        "Log",
+        "Skeletons",
+        "Firecracker"
+      ],
+      "opponent_deck": [
+        "InfernoTower",
+        "GoblinBarrel",
+        "Rocket",
+        "GoblinGang",
+        "Princess",
+        "Knight",
+        "Log",
+        "IceSpirit"
+      ]
+    },
+    {
+      "pair": 18,
+      "mode": "head-to-head",
+      "seed": 7612018163,
+      "noise_seed": 8612018163,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "balanced",
+      "planning_deck": [
+        "Skeletons",
+        "HogRider",
+        "Firecracker",
+        "BarbLog",
+        "Cannon",
+        "MightyMiner",
+        "ElectroSpirit",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "Wizard",
+        "Berserker",
+        "GoblinHut",
+        "Lightning",
+        "RoyalHogs",
+        "BarbLog",
+        "Ghost",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 19,
+      "mode": "head-to-head",
+      "seed": 7612019172,
+      "noise_seed": 8612019172,
+      "family": "Royal Hogs/Furnace",
+      "style": "pressure",
+      "planning_deck": [
+        "BarbLog",
+        "GoblinHut",
+        "Berserker",
+        "RoyalHogs",
+        "FirespiritHut",
+        "Fireball",
+        "Ghost",
+        "ElectroSpirit"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "MightyMiner",
+        "Musketeer",
+        "Poison",
+        "Skeletons",
+        "Log",
+        "HogRider",
+        "Cannon"
+      ]
+    },
+    {
+      "pair": 20,
+      "mode": "head-to-head",
+      "seed": 7612020181,
+      "noise_seed": 8612020181,
+      "family": "Royal Hogs/Furnace",
+      "style": "defense",
+      "planning_deck": [
+        "GoblinHut",
+        "ElectroSpirit",
+        "FirespiritHut",
+        "Berserker",
+        "RoyalHogs",
+        "Ghost",
+        "Fireball",
+        "BarbLog"
+      ],
+      "opponent_deck": [
+        "Cannon",
+        "Skeletons",
+        "Log",
+        "ElectroSpirit",
+        "Firecracker",
+        "HogRider",
+        "MightyMiner",
+        "Earthquake"
+      ]
+    },
+    {
+      "pair": 21,
+      "mode": "head-to-head",
+      "seed": 7612021190,
+      "noise_seed": 8612021190,
+      "family": "Royal Hogs/Furnace",
+      "style": "balanced",
+      "planning_deck": [
+        "FirespiritHut",
+        "Ghost",
+        "BarbLog",
+        "RoyalHogs",
+        "Berserker",
+        "ElectroSpirit",
+        "Lightning",
+        "GoblinHut"
+      ],
+      "opponent_deck": [
+        "RoyalHogs",
+        "Archers",
+        "ElectroSpirit",
+        "BombTower",
+        "Goblinstein",
+        "Lightning",
+        "BarbLog",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 22,
+      "mode": "head-to-head",
+      "seed": 7612022199,
+      "noise_seed": 8612022199,
+      "family": "Royal Hogs/Furnace",
+      "style": "pressure",
+      "planning_deck": [
+        "Berserker",
+        "BarbLog",
+        "Ghost",
+        "FirespiritHut",
+        "Fireball",
+        "ElectroSpirit",
+        "GoblinHut",
+        "RoyalHogs"
+      ],
+      "opponent_deck": [
+        "AngryBarbarians",
+        "Lightning",
+        "IceGolem",
+        "Firecracker",
+        "Skeletons",
+        "ElectroSpirit",
+        "Log",
+        "HogRider"
+      ]
+    },
+    {
+      "pair": 23,
+      "mode": "head-to-head",
+      "seed": 7612023208,
+      "noise_seed": 8612023208,
+      "family": "Royal Hogs/Furnace",
+      "style": "defense",
+      "planning_deck": [
+        "Ghost",
+        "BarbLog",
+        "ElectroSpirit",
+        "Berserker",
+        "Fireball",
+        "FirespiritHut",
+        "RoyalHogs",
+        "GoblinHut"
+      ],
+      "opponent_deck": [
+        "MightyMiner",
+        "ElectroSpirit",
+        "Skeletons",
+        "Cannon",
+        "HogRider",
+        "Earthquake",
+        "Log",
+        "Firecracker"
+      ]
+    },
+    {
+      "pair": 24,
+      "mode": "head-to-head",
+      "seed": 7612024217,
+      "noise_seed": 8612024217,
+      "family": "Royal Hogs/Furnace",
+      "style": "balanced",
+      "planning_deck": [
+        "Ghost",
+        "BarbLog",
+        "FirespiritHut",
+        "Berserker",
+        "RoyalHogs",
+        "GoblinHut",
+        "ElectroSpirit",
+        "Fireball"
+      ],
+      "opponent_deck": [
+        "GoblinHut",
+        "RoyalHogs",
+        "FirespiritHut",
+        "Log",
+        "Skeletons",
+        "Lightning",
+        "Berserker",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 25,
+      "mode": "head-to-head",
+      "seed": 7612025226,
+      "noise_seed": 8612025226,
+      "family": "Royal Hogs/Furnace",
+      "style": "pressure",
+      "planning_deck": [
+        "Ghost",
+        "ElectroSpirit",
+        "BarbLog",
+        "Fireball",
+        "GoblinHut",
+        "RoyalHogs",
+        "Berserker",
+        "FirespiritHut"
+      ],
+      "opponent_deck": [
+        "Log",
+        "IceSpirit",
+        "Musketeer",
+        "Fireball",
+        "Skeletons",
+        "IceGolem",
+        "HogRider",
+        "Cannon"
+      ]
+    },
+    {
+      "pair": 26,
+      "mode": "head-to-head",
+      "seed": 7612026235,
+      "noise_seed": 8612026235,
+      "family": "Royal Hogs/Furnace",
+      "style": "defense",
+      "planning_deck": [
+        "AngryBarbarians",
+        "GoblinHut",
+        "Wizard",
+        "RoyalHogs",
+        "Skeletons",
+        "ElectroSpirit",
+        "BarbLog",
+        "Lightning"
+      ],
+      "opponent_deck": [
+        "IceSpirit",
+        "BlowdartGoblin",
+        "SkeletonArmy",
+        "Knight",
+        "InfernoTower",
+        "GoblinBarrel",
+        "Log",
+        "Princess"
+      ]
+    },
+    {
+      "pair": 27,
+      "mode": "head-to-head",
+      "seed": 7612027244,
+      "noise_seed": 8612027244,
+      "family": "Royal Hogs/Furnace",
+      "style": "balanced",
+      "planning_deck": [
+        "Fireball",
+        "GoblinHut",
+        "Berserker",
+        "ElectroSpirit",
+        "Ghost",
+        "RoyalHogs",
+        "BarbLog",
+        "FirespiritHut"
+      ],
+      "opponent_deck": [
+        "HogRider",
+        "Log",
+        "Skeletons",
+        "Cannon",
+        "Fireball",
+        "IceGolem",
+        "Musketeer",
+        "IceSpirit"
+      ]
+    },
+    {
+      "pair": 28,
+      "mode": "head-to-head",
+      "seed": 7612028253,
+      "noise_seed": 8612028253,
+      "family": "X-Bow",
+      "style": "pressure",
+      "planning_deck": [
+        "Wizard",
+        "IceSpirit",
+        "Tesla",
+        "Log",
+        "Knight",
+        "Xbow",
+        "Skeletons",
+        "Rocket"
+      ],
+      "opponent_deck": [
+        "Princess",
+        "Bats",
+        "InfernoTower",
+        "Berserker",
+        "Log",
+        "SkeletonArmy",
+        "ElectroSpirit",
+        "Rocket"
+      ]
+    },
+    {
+      "pair": 29,
+      "mode": "head-to-head",
+      "seed": 7612029262,
+      "noise_seed": 8612029262,
+      "family": "X-Bow",
+      "style": "defense",
+      "planning_deck": [
+        "Knight",
+        "Log",
+        "Skeletons",
+        "Xbow",
+        "ElectroSpirit",
+        "Fireball",
+        "Archers",
+        "Tesla"
+      ],
+      "opponent_deck": [
+        "Log",
+        "ElectroSpirit",
+        "Skeletons",
+        "Earthquake",
+        "Cannon",
+        "MightyMiner",
+        "HogRider",
+        "Firecracker"
+      ]
+    },
+    {
+      "pair": 30,
+      "mode": "head-to-head",
+      "seed": 7612030271,
+      "noise_seed": 8612030271,
+      "family": "X-Bow",
+      "style": "balanced",
+      "planning_deck": [
+        "Berserker",
+        "ElectroSpirit",
+        "Log",
+        "Fireball",
+        "Xbow",
+        "Tesla",
+        "Archers",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "GoblinHut",
+        "Fireball",
+        "Ghost",
+        "Berserker",
+        "ElectroSpirit",
+        "RoyalHogs",
+        "FirespiritHut",
+        "BarbLog"
+      ]
+    },
+    {
+      "pair": 31,
+      "mode": "head-to-head",
+      "seed": 7612031280,
+      "noise_seed": 8612031280,
+      "family": "X-Bow",
+      "style": "pressure",
+      "planning_deck": [
+        "Xbow",
+        "Archers",
+        "Skeletons",
+        "ElectroSpirit",
+        "Berserker",
+        "Fireball",
+        "Log",
+        "Tesla"
+      ],
+      "opponent_deck": [
+        "RoyalHogs",
+        "Ghost",
+        "GoblinHut",
+        "ElectroSpirit",
+        "FirespiritHut",
+        "Berserker",
+        "Fireball",
+        "BarbLog"
+      ]
+    },
+    {
+      "pair": 32,
+      "mode": "head-to-head",
+      "seed": 7612032289,
+      "noise_seed": 8612032289,
+      "family": "X-Bow",
+      "style": "defense",
+      "planning_deck": [
+        "Xbow",
+        "Wizard",
+        "Skeletons",
+        "Rocket",
+        "Knight",
+        "IceSpirit",
+        "Log",
+        "Tesla"
+      ],
+      "opponent_deck": [
+        "Knight",
+        "ElectroSpirit",
+        "Tesla",
+        "Princess",
+        "Rocket",
+        "Skeletons",
+        "Log",
+        "GoblinBarrel"
+      ]
+    },
+    {
+      "pair": 33,
+      "mode": "head-to-head",
+      "seed": 7612033298,
+      "noise_seed": 8612033298,
+      "family": "X-Bow",
+      "style": "balanced",
+      "planning_deck": [
+        "Tesla",
+        "Skeletons",
+        "Xbow",
+        "Berserker",
+        "Archers",
+        "Fireball",
+        "Log",
+        "ElectroSpirit"
+      ],
+      "opponent_deck": [
+        "BarbLog",
+        "Ghost",
+        "Berserker",
+        "GoblinHut",
+        "ElectroSpirit",
+        "FirespiritHut",
+        "Fireball",
+        "RoyalHogs"
+      ]
+    },
+    {
+      "pair": 34,
+      "mode": "head-to-head",
+      "seed": 7612034307,
+      "noise_seed": 8612034307,
+      "family": "X-Bow",
+      "style": "pressure",
+      "planning_deck": [
+        "Log",
+        "Tesla",
+        "Archers",
+        "Xbow",
+        "Fireball",
+        "ElectroSpirit",
+        "Knight",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Wallbreakers",
+        "GoblinBarrel",
+        "SkeletonArmy",
+        "Princess",
+        "Cannon",
+        "BlowdartGoblin",
+        "IceSpirit",
+        "Valkyrie"
+      ]
+    },
+    {
+      "pair": 35,
+      "mode": "head-to-head",
+      "seed": 7612035316,
+      "noise_seed": 8612035316,
+      "family": "X-Bow",
+      "style": "defense",
+      "planning_deck": [
+        "Log",
+        "Berserker",
+        "Fireball",
+        "Archers",
+        "Skeletons",
+        "ElectroSpirit",
+        "Xbow",
+        "Tesla"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "BarbLog",
+        "RoyalHogs",
+        "Ghost",
+        "Berserker",
+        "ElectroSpirit",
+        "GoblinHut",
+        "FirespiritHut"
+      ]
+    },
+    {
+      "pair": 36,
+      "mode": "head-to-head",
+      "seed": 7612036325,
+      "noise_seed": 8612036325,
+      "family": "X-Bow",
+      "style": "balanced",
+      "planning_deck": [
+        "Skeletons",
+        "Log",
+        "Archers",
+        "ElectroSpirit",
+        "Fireball",
+        "Tesla",
+        "Xbow",
+        "Berserker"
+      ],
+      "opponent_deck": [
+        "Tesla",
+        "Skeletons",
+        "RoyalHogs",
+        "ElectroSpirit",
+        "DarkPrince",
+        "Lightning",
+        "RoyalDelivery",
+        "Archers"
+      ]
+    },
+    {
+      "pair": 37,
+      "mode": "head-to-head",
+      "seed": 7612037334,
+      "noise_seed": 8612037334,
+      "family": "bait",
+      "style": "pressure",
+      "planning_deck": [
+        "GoblinBarrel",
+        "SkeletonArmy",
+        "BlowdartGoblin",
+        "Knight",
+        "Princess",
+        "InfernoTower",
+        "IceSpirit",
+        "Log"
+      ],
+      "opponent_deck": [
+        "Archers",
+        "Skeletons",
+        "Log",
+        "Fireball",
+        "Tesla",
+        "Xbow",
+        "Knight",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 38,
+      "mode": "head-to-head",
+      "seed": 7612038343,
+      "noise_seed": 8612038343,
+      "family": "bait",
+      "style": "defense",
+      "planning_deck": [
+        "ElectroSpirit",
+        "GoblinGang",
+        "GoblinBarrel",
+        "Princess",
+        "Log",
+        "Tesla",
+        "Knight",
+        "Rocket"
+      ],
+      "opponent_deck": [
+        "HogRider",
+        "GoblinGang",
+        "InfernoTower",
+        "Prince",
+        "Zap",
+        "Princess",
+        "Wizard",
+        "Knight"
+      ]
+    },
+    {
+      "pair": 39,
+      "mode": "head-to-head",
+      "seed": 7612039352,
+      "noise_seed": 8612039352,
+      "family": "bait",
+      "style": "balanced",
+      "planning_deck": [
+        "IceSpirit",
+        "Cannon",
+        "Princess",
+        "Valkyrie",
+        "GoblinBarrel",
+        "BlowdartGoblin",
+        "Wallbreakers",
+        "SkeletonArmy"
+      ],
+      "opponent_deck": [
+        "Berserker",
+        "FirespiritHut",
+        "Fireball",
+        "RoyalHogs",
+        "GoblinHut",
+        "BarbLog",
+        "ElectroSpirit",
+        "Ghost"
+      ]
+    },
+    {
+      "pair": 40,
+      "mode": "head-to-head",
+      "seed": 7612040361,
+      "noise_seed": 8612040361,
+      "family": "bait",
+      "style": "pressure",
+      "planning_deck": [
+        "SkeletonArmy",
+        "Knight",
+        "Log",
+        "InfernoTower",
+        "IceSpirit",
+        "Princess",
+        "GoblinBarrel",
+        "BlowdartGoblin"
+      ],
+      "opponent_deck": [
+        "IceGolem",
+        "Log",
+        "Skeletons",
+        "Fireball",
+        "Musketeer",
+        "HogRider",
+        "Cannon",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 41,
+      "mode": "head-to-head",
+      "seed": 7612041370,
+      "noise_seed": 8612041370,
+      "family": "bait",
+      "style": "defense",
+      "planning_deck": [
+        "GoblinBarrel",
+        "Log",
+        "Knight",
+        "IceSpirit",
+        "BlowdartGoblin",
+        "InfernoTower",
+        "SkeletonArmy",
+        "Princess"
+      ],
+      "opponent_deck": [
+        "HogRider",
+        "Musketeer",
+        "IceGolem",
+        "Cannon",
+        "Skeletons",
+        "IceSpirit",
+        "Log",
+        "Fireball"
+      ]
+    },
+    {
+      "pair": 42,
+      "mode": "head-to-head",
+      "seed": 7612042379,
+      "noise_seed": 8612042379,
+      "family": "bait",
+      "style": "balanced",
+      "planning_deck": [
+        "Princess",
+        "IceSpirit",
+        "SkeletonArmy",
+        "GoblinBarrel",
+        "BlowdartGoblin",
+        "Log",
+        "InfernoTower",
+        "Knight"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "Ghost",
+        "GoblinHut",
+        "RoyalHogs",
+        "BarbLog",
+        "FirespiritHut",
+        "Fireball",
+        "Berserker"
+      ]
+    },
+    {
+      "pair": 43,
+      "mode": "head-to-head",
+      "seed": 7612043388,
+      "noise_seed": 8612043388,
+      "family": "bait",
+      "style": "pressure",
+      "planning_deck": [
+        "Princess",
+        "Log",
+        "GoblinBarrel",
+        "Knight",
+        "SkeletonArmy",
+        "IceSpirit",
+        "BlowdartGoblin",
+        "InfernoTower"
+      ],
+      "opponent_deck": [
+        "Tesla",
+        "Log",
+        "Skeletons",
+        "Berserker",
+        "ElectroSpirit",
+        "Archers",
+        "Xbow",
+        "Fireball"
+      ]
+    },
+    {
+      "pair": 44,
+      "mode": "head-to-head",
+      "seed": 7612044397,
+      "noise_seed": 8612044397,
+      "family": "bait",
+      "style": "defense",
+      "planning_deck": [
+        "Log",
+        "Princess",
+        "Tesla",
+        "Knight",
+        "Rocket",
+        "ElectroSpirit",
+        "Skeletons",
+        "GoblinBarrel"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "RoyalHogs",
+        "Goblinstein",
+        "Archers",
+        "BombTower",
+        "BarbLog",
+        "Skeletons",
+        "Lightning"
+      ]
+    },
+    {
+      "pair": 45,
+      "mode": "head-to-head",
+      "seed": 7612045406,
+      "noise_seed": 8612045406,
+      "family": "bait",
+      "style": "balanced",
+      "planning_deck": [
+        "Wallbreakers",
+        "Princess",
+        "IceSpirit",
+        "BlowdartGoblin",
+        "GoblinBarrel",
+        "Valkyrie",
+        "SkeletonArmy",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "MightyMiner",
+        "Log",
+        "Earthquake",
+        "Firecracker",
+        "Tesla",
+        "Skeletons",
+        "ElectroSpirit",
+        "HogRider"
+      ]
+    },
+    {
+      "pair": 46,
+      "mode": "head-to-head",
+      "seed": 7612046415,
+      "noise_seed": 8612046415,
+      "family": "Goblinstein",
+      "style": "pressure",
+      "planning_deck": [
+        "Archers",
+        "Lightning",
+        "BarbLog",
+        "Goblinstein",
+        "BombTower",
+        "RoyalHogs",
+        "ElectroSpirit",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Tesla",
+        "BarbLog",
+        "Earthquake",
+        "MightyMiner",
+        "Skeletons",
+        "HogRider",
+        "Firecracker",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 47,
+      "mode": "head-to-head",
+      "seed": 7612047424,
+      "noise_seed": 8612047424,
+      "family": "Goblinstein",
+      "style": "defense",
+      "planning_deck": [
+        "BarbLog",
+        "RoyalHogs",
+        "Archers",
+        "ElectroSpirit",
+        "Lightning",
+        "BombTower",
+        "Goblinstein",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "ElectroSpirit",
+        "BarbLog",
+        "Berserker",
+        "FirespiritHut",
+        "RoyalHogs",
+        "GoblinHut",
+        "Ghost"
+      ]
+    },
+    {
+      "pair": 48,
+      "mode": "head-to-head",
+      "seed": 7612048433,
+      "noise_seed": 8612048433,
+      "family": "Goblinstein",
+      "style": "balanced",
+      "planning_deck": [
+        "Goblinstein",
+        "ElectroSpirit",
+        "Lightning",
+        "Archers",
+        "RoyalHogs",
+        "Skeletons",
+        "BombTower",
+        "BarbLog"
+      ],
+      "opponent_deck": [
+        "BombTower",
+        "BarbLog",
+        "Skeletons",
+        "ElectroSpirit",
+        "Archers",
+        "Goblinstein",
+        "Lightning",
+        "RoyalHogs"
+      ]
+    },
+    {
+      "pair": 49,
+      "mode": "head-to-head",
+      "seed": 7612049442,
+      "noise_seed": 8612049442,
+      "family": "Goblinstein",
+      "style": "pressure",
+      "planning_deck": [
+        "BombTower",
+        "ElectroSpirit",
+        "BarbLog",
+        "Skeletons",
+        "Archers",
+        "RoyalHogs",
+        "Lightning",
+        "Goblinstein"
+      ],
+      "opponent_deck": [
+        "Log",
+        "IceSpirit",
+        "Princess",
+        "SkeletonArmy",
+        "GoblinBarrel",
+        "InfernoTower",
+        "BlowdartGoblin",
+        "Knight"
+      ]
+    },
+    {
+      "pair": 50,
+      "mode": "head-to-head",
+      "seed": 7612050451,
+      "noise_seed": 8612050451,
+      "family": "Goblinstein",
+      "style": "defense",
+      "planning_deck": [
+        "RoyalHogs",
+        "ElectroSpirit",
+        "Skeletons",
+        "Archers",
+        "BombTower",
+        "Lightning",
+        "BarbLog",
+        "Goblinstein"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "Musketeer",
+        "IceGolem",
+        "IceSpirit",
+        "Log",
+        "Cannon",
+        "HogRider",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 51,
+      "mode": "head-to-head",
+      "seed": 7612051460,
+      "noise_seed": 8612051460,
+      "family": "Goblinstein",
+      "style": "balanced",
+      "planning_deck": [
+        "ElectroSpirit",
+        "Lightning",
+        "BombTower",
+        "BarbLog",
+        "Goblinstein",
+        "RoyalHogs",
+        "Archers",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "IceSpirit",
+        "Log",
+        "IceGolem",
+        "Cannon",
+        "HogRider",
+        "Musketeer",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 52,
+      "mode": "head-to-head",
+      "seed": 7612052469,
+      "noise_seed": 8612052469,
+      "family": "Goblinstein",
+      "style": "pressure",
+      "planning_deck": [
+        "BombTower",
+        "RoyalHogs",
+        "Goblinstein",
+        "Archers",
+        "ElectroSpirit",
+        "BarbLog",
+        "Lightning",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "Skeletons",
+        "Cannon",
+        "Firecracker",
+        "HogRider",
+        "MightyMiner",
+        "Log",
+        "Earthquake"
+      ]
+    },
+    {
+      "pair": 53,
+      "mode": "head-to-head",
+      "seed": 7612053478,
+      "noise_seed": 8612053478,
+      "family": "Goblinstein",
+      "style": "defense",
+      "planning_deck": [
+        "RoyalHogs",
+        "Goblinstein",
+        "BombTower",
+        "BarbLog",
+        "Skeletons",
+        "ElectroSpirit",
+        "Archers",
+        "Lightning"
+      ],
+      "opponent_deck": [
+        "Earthquake",
+        "Log",
+        "RoyalDelivery",
+        "RoyalHogs",
+        "IceSpirit",
+        "Cannon",
+        "Skeletons",
+        "ArcherQueen"
+      ]
+    },
+    {
+      "pair": 54,
+      "mode": "head-to-head",
+      "seed": 7612054487,
+      "noise_seed": 8612054487,
+      "family": "Goblinstein",
+      "style": "balanced",
+      "planning_deck": [
+        "ElectroSpirit",
+        "BarbLog",
+        "Lightning",
+        "Goblinstein",
+        "RoyalHogs",
+        "BombTower",
+        "Archers",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Cannon",
+        "Log",
+        "Fireball",
+        "IceSpirit",
+        "Musketeer",
+        "IceGolem",
+        "HogRider",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 55,
+      "mode": "head-to-head",
+      "seed": 7612055496,
+      "noise_seed": 8612055496,
+      "family": "AQ",
+      "style": "pressure",
+      "planning_deck": [
+        "RoyalHogs",
+        "Skeletons",
+        "RoyalDelivery",
+        "IceSpirit",
+        "Log",
+        "Cannon",
+        "Earthquake",
+        "ArcherQueen"
+      ],
+      "opponent_deck": [
+        "Minions",
+        "Firecracker",
+        "AngryBarbarians",
+        "Fireball",
+        "Prince",
+        "RoyalDelivery",
+        "Ghost",
+        "Giant"
+      ]
+    },
+    {
+      "pair": 56,
+      "mode": "head-to-head",
+      "seed": 7612056505,
+      "noise_seed": 8612056505,
+      "family": "AQ",
+      "style": "defense",
+      "planning_deck": [
+        "Skeletons",
+        "RoyalHogs",
+        "Berserker",
+        "ElectroSpirit",
+        "RoyalDelivery",
+        "Cannon",
+        "Earthquake",
+        "ArcherQueen"
+      ],
+      "opponent_deck": [
+        "Cannon",
+        "Princess",
+        "IceSpirit",
+        "SkeletonArmy",
+        "Wallbreakers",
+        "Valkyrie",
+        "GoblinBarrel",
+        "BlowdartGoblin"
+      ]
+    },
+    {
+      "pair": 57,
+      "mode": "head-to-head",
+      "seed": 7612057514,
+      "noise_seed": 8612057514,
+      "family": "AQ",
+      "style": "balanced",
+      "planning_deck": [
+        "ArcherQueen",
+        "RoyalHogs",
+        "Earthquake",
+        "RoyalDelivery",
+        "Skeletons",
+        "Log",
+        "Cannon",
+        "IceSpirit"
+      ],
+      "opponent_deck": [
+        "Log",
+        "HogRider",
+        "Cannon",
+        "MightyMiner",
+        "Firecracker",
+        "Earthquake",
+        "Skeletons",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 58,
+      "mode": "head-to-head",
+      "seed": 7612058523,
+      "noise_seed": 8612058523,
+      "family": "AQ",
+      "style": "pressure",
+      "planning_deck": [
+        "ArcherQueen",
+        "RoyalDelivery",
+        "Earthquake",
+        "Skeletons",
+        "Cannon",
+        "Log",
+        "IceSpirit",
+        "RoyalHogs"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "Ghost",
+        "GoblinHut",
+        "RoyalHogs",
+        "ElectroSpirit",
+        "FirespiritHut",
+        "BarbLog",
+        "Berserker"
+      ]
+    },
+    {
+      "pair": 59,
+      "mode": "head-to-head",
+      "seed": 7612059532,
+      "noise_seed": 8612059532,
+      "family": "AQ",
+      "style": "defense",
+      "planning_deck": [
+        "Earthquake",
+        "Cannon",
+        "Skeletons",
+        "Log",
+        "IceSpirit",
+        "RoyalHogs",
+        "RoyalDelivery",
+        "ArcherQueen"
+      ],
+      "opponent_deck": [
+        "Log",
+        "Cannon",
+        "IceSpirit",
+        "Skeletons",
+        "RoyalDelivery",
+        "RoyalHogs",
+        "ArcherQueen",
+        "Earthquake"
+      ]
+    },
+    {
+      "pair": 60,
+      "mode": "head-to-head",
+      "seed": 7612060541,
+      "noise_seed": 8612060541,
+      "family": "AQ",
+      "style": "balanced",
+      "planning_deck": [
+        "RoyalHogs",
+        "ArcherQueen",
+        "Earthquake",
+        "Cannon",
+        "IceSpirit",
+        "Log",
+        "Skeletons",
+        "RoyalDelivery"
+      ],
+      "opponent_deck": [
+        "RoyalHogs",
+        "Fireball",
+        "GoblinHut",
+        "ElectroSpirit",
+        "Ghost",
+        "BarbLog",
+        "FirespiritHut",
+        "Berserker"
+      ]
+    },
+    {
+      "pair": 61,
+      "mode": "head-to-head",
+      "seed": 7612061550,
+      "noise_seed": 8612061550,
+      "family": "AQ",
+      "style": "pressure",
+      "planning_deck": [
+        "Log",
+        "ArcherQueen",
+        "Earthquake",
+        "Cannon",
+        "IceSpirit",
+        "RoyalHogs",
+        "RoyalDelivery",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Bats",
+        "Earthquake",
+        "Log",
+        "HogRider",
+        "AngryBarbarians",
+        "IceGolem",
+        "Firecracker",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 62,
+      "mode": "head-to-head",
+      "seed": 7612062559,
+      "noise_seed": 8612062559,
+      "family": "AQ",
+      "style": "defense",
+      "planning_deck": [
+        "RoyalDelivery",
+        "Earthquake",
+        "Log",
+        "RoyalHogs",
+        "ArcherQueen",
+        "Skeletons",
+        "Cannon",
+        "IceSpirit"
+      ],
+      "opponent_deck": [
+        "IceSpirit",
+        "Musketeer",
+        "HogRider",
+        "Skeletons",
+        "Fireball",
+        "Cannon",
+        "IceGolem",
+        "Zap"
+      ]
+    },
+    {
+      "pair": 63,
+      "mode": "head-to-head",
+      "seed": 7612063568,
+      "noise_seed": 8612063568,
+      "family": "AQ",
+      "style": "balanced",
+      "planning_deck": [
+        "Cannon",
+        "RoyalHogs",
+        "ArcherQueen",
+        "Earthquake",
+        "Log",
+        "Skeletons",
+        "RoyalDelivery",
+        "IceSpirit"
+      ],
+      "opponent_deck": [
+        "Skeletons",
+        "Tesla",
+        "Knight",
+        "Xbow",
+        "Log",
+        "Archers",
+        "Fireball",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 64,
+      "mode": "scripts",
+      "seed": 7612064577,
+      "noise_seed": 8612064577,
+      "family": "Hog 2.6",
+      "style": "pressure",
+      "planning_deck": [
+        "HogRider",
+        "Log",
+        "Musketeer",
+        "IceSpirit",
+        "Fireball",
+        "IceGolem",
+        "Cannon",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "GoblinBarrel",
+        "MightyMiner",
+        "Princess",
+        "Goblins",
+        "Rocket",
+        "IceSpirit",
+        "Cannon",
+        "Log"
+      ]
+    },
+    {
+      "pair": 65,
+      "mode": "scripts",
+      "seed": 7612065586,
+      "noise_seed": 8612065586,
+      "family": "Hog 2.6",
+      "style": "defense",
+      "planning_deck": [
+        "HogRider",
+        "Cannon",
+        "IceGolem",
+        "Fireball",
+        "Musketeer",
+        "Log",
+        "Skeletons",
+        "IceSpirit"
+      ],
+      "opponent_deck": [
+        "Log",
+        "IceSpirit",
+        "Cannon",
+        "Fireball",
+        "IceGolem",
+        "Musketeer",
+        "HogRider",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 66,
+      "mode": "scripts",
+      "seed": 7612066595,
+      "noise_seed": 8612066595,
+      "family": "Hog 2.6",
+      "style": "balanced",
+      "planning_deck": [
+        "HogRider",
+        "Musketeer",
+        "Cannon",
+        "Log",
+        "IceSpirit",
+        "Skeletons",
+        "IceGolem",
+        "Fireball"
+      ],
+      "opponent_deck": [
+        "Log",
+        "Berserker",
+        "Tesla",
+        "ElectroSpirit",
+        "FirespiritHut",
+        "Lightning",
+        "Skeletons",
+        "RoyalHogs"
+      ]
+    },
+    {
+      "pair": 67,
+      "mode": "scripts",
+      "seed": 7612067604,
+      "noise_seed": 8612067604,
+      "family": "Hog 2.6",
+      "style": "pressure",
+      "planning_deck": [
+        "Cannon",
+        "Musketeer",
+        "Log",
+        "HogRider",
+        "Skeletons",
+        "IceSpirit",
+        "IceGolem",
+        "Fireball"
+      ],
+      "opponent_deck": [
+        "Log",
+        "Earthquake",
+        "Skeletons",
+        "ElectroSpirit",
+        "Cannon",
+        "MightyMiner",
+        "Firecracker",
+        "HogRider"
+      ]
+    },
+    {
+      "pair": 68,
+      "mode": "scripts",
+      "seed": 7612068613,
+      "noise_seed": 8612068613,
+      "family": "Hog 2.6",
+      "style": "defense",
+      "planning_deck": [
+        "Musketeer",
+        "IceGolem",
+        "Log",
+        "Skeletons",
+        "HogRider",
+        "Fireball",
+        "Cannon",
+        "IceSpirit"
+      ],
+      "opponent_deck": [
+        "Log",
+        "IceSpirit",
+        "IceGolem",
+        "HogRider",
+        "Skeletons",
+        "Cannon",
+        "Musketeer",
+        "Fireball"
+      ]
+    },
+    {
+      "pair": 69,
+      "mode": "scripts",
+      "seed": 7612069622,
+      "noise_seed": 8612069622,
+      "family": "Hog 2.6",
+      "style": "balanced",
+      "planning_deck": [
+        "Musketeer",
+        "Cannon",
+        "Skeletons",
+        "IceSpirit",
+        "Fireball",
+        "Log",
+        "IceGolem",
+        "HogRider"
+      ],
+      "opponent_deck": [
+        "Log",
+        "Fireball",
+        "HogRider",
+        "IceSpirit",
+        "Cannon",
+        "Musketeer",
+        "IceGolem",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 70,
+      "mode": "scripts",
+      "seed": 7612070631,
+      "noise_seed": 8612070631,
+      "family": "Hog 2.6",
+      "style": "pressure",
+      "planning_deck": [
+        "Fireball",
+        "HogRider",
+        "Cannon",
+        "IceGolem",
+        "Musketeer",
+        "Skeletons",
+        "Log",
+        "IceSpirit"
+      ],
+      "opponent_deck": [
+        "GoblinHut",
+        "Fireball",
+        "ElectroSpirit",
+        "BarbLog",
+        "Berserker",
+        "RoyalHogs",
+        "FirespiritHut",
+        "Ghost"
+      ]
+    },
+    {
+      "pair": 71,
+      "mode": "scripts",
+      "seed": 7612071640,
+      "noise_seed": 8612071640,
+      "family": "Hog 2.6",
+      "style": "defense",
+      "planning_deck": [
+        "IceGolem",
+        "IceSpirit",
+        "Cannon",
+        "Log",
+        "Skeletons",
+        "Musketeer",
+        "HogRider",
+        "Fireball"
+      ],
+      "opponent_deck": [
+        "Rocket",
+        "Princess",
+        "Berserker",
+        "Skeletons",
+        "Log",
+        "Tesla",
+        "GoblinBarrel",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 72,
+      "mode": "scripts",
+      "seed": 7612072649,
+      "noise_seed": 8612072649,
+      "family": "Hog 2.6",
+      "style": "balanced",
+      "planning_deck": [
+        "HogRider",
+        "Log",
+        "Fireball",
+        "IceGolem",
+        "Cannon",
+        "Skeletons",
+        "IceSpirit",
+        "Musketeer"
+      ],
+      "opponent_deck": [
+        "Musketeer",
+        "Fireball",
+        "Skeletons",
+        "IceGolem",
+        "IceSpirit",
+        "HogRider",
+        "Cannon",
+        "Log"
+      ]
+    },
+    {
+      "pair": 73,
+      "mode": "scripts",
+      "seed": 7612073658,
+      "noise_seed": 8612073658,
+      "family": "Hog 2.6",
+      "style": "pressure",
+      "planning_deck": [
+        "IceSpirit",
+        "Fireball",
+        "Log",
+        "Cannon",
+        "Skeletons",
+        "IceGolem",
+        "Musketeer",
+        "HogRider"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "RoyalHogs",
+        "Berserker",
+        "Ghost",
+        "BarbLog",
+        "GoblinHut",
+        "FirespiritHut",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 74,
+      "mode": "scripts",
+      "seed": 7612074667,
+      "noise_seed": 8612074667,
+      "family": "Hog 2.6",
+      "style": "defense",
+      "planning_deck": [
+        "HogRider",
+        "IceSpirit",
+        "Log",
+        "Musketeer",
+        "IceGolem",
+        "Cannon",
+        "Skeletons",
+        "Fireball"
+      ],
+      "opponent_deck": [
+        "Ghost",
+        "ElectroSpirit",
+        "FirespiritHut",
+        "Fireball",
+        "Berserker",
+        "RoyalHogs",
+        "BarbLog",
+        "GoblinHut"
+      ]
+    },
+    {
+      "pair": 75,
+      "mode": "scripts",
+      "seed": 7612075676,
+      "noise_seed": 8612075676,
+      "family": "Hog 2.6",
+      "style": "balanced",
+      "planning_deck": [
+        "Cannon",
+        "HogRider",
+        "IceGolem",
+        "IceSpirit",
+        "Skeletons",
+        "Musketeer",
+        "Fireball",
+        "Log"
+      ],
+      "opponent_deck": [
+        "Log",
+        "GoblinGang",
+        "IceSpirit",
+        "InfernoTower",
+        "Princess",
+        "Knight",
+        "Rocket",
+        "GoblinBarrel"
+      ]
+    },
+    {
+      "pair": 76,
+      "mode": "scripts",
+      "seed": 7612076685,
+      "noise_seed": 8612076685,
+      "family": "Hog 2.6",
+      "style": "pressure",
+      "planning_deck": [
+        "Fireball",
+        "HogRider",
+        "Musketeer",
+        "IceSpirit",
+        "Log",
+        "Cannon",
+        "IceGolem",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "MightyMiner",
+        "Earthquake",
+        "HogRider",
+        "Log",
+        "Firecracker",
+        "Skeletons",
+        "Cannon"
+      ]
+    },
+    {
+      "pair": 77,
+      "mode": "scripts",
+      "seed": 7612077694,
+      "noise_seed": 8612077694,
+      "family": "Hog 2.6",
+      "style": "defense",
+      "planning_deck": [
+        "Fireball",
+        "Log",
+        "IceSpirit",
+        "IceGolem",
+        "Musketeer",
+        "Skeletons",
+        "HogRider",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "Tesla",
+        "Log",
+        "Earthquake",
+        "ElectroSpirit",
+        "HogRider",
+        "Skeletons",
+        "MightyMiner",
+        "Firecracker"
+      ]
+    },
+    {
+      "pair": 78,
+      "mode": "scripts",
+      "seed": 7612078703,
+      "noise_seed": 8612078703,
+      "family": "Hog 2.6",
+      "style": "balanced",
+      "planning_deck": [
+        "Skeletons",
+        "Cannon",
+        "IceGolem",
+        "Fireball",
+        "HogRider",
+        "Musketeer",
+        "IceSpirit",
+        "Log"
+      ],
+      "opponent_deck": [
+        "Musketeer",
+        "IceSpirit",
+        "Skeletons",
+        "IceGolem",
+        "HogRider",
+        "Rocket",
+        "Cannon",
+        "Log"
+      ]
+    },
+    {
+      "pair": 79,
+      "mode": "scripts",
+      "seed": 7612079712,
+      "noise_seed": 8612079712,
+      "family": "Hog 2.6",
+      "style": "pressure",
+      "planning_deck": [
+        "IceGolem",
+        "IceSpirit",
+        "Cannon",
+        "Musketeer",
+        "Log",
+        "HogRider",
+        "Fireball",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Lightning",
+        "Log",
+        "ElectroSpirit",
+        "Cannon",
+        "HogRider",
+        "Skeletons",
+        "MightyMiner",
+        "Firecracker"
+      ]
+    },
+    {
+      "pair": 80,
+      "mode": "scripts",
+      "seed": 7612080721,
+      "noise_seed": 8612080721,
+      "family": "Hog 2.6",
+      "style": "defense",
+      "planning_deck": [
+        "Cannon",
+        "Musketeer",
+        "IceSpirit",
+        "Fireball",
+        "IceGolem",
+        "Skeletons",
+        "Log",
+        "HogRider"
+      ],
+      "opponent_deck": [
+        "Skeletons",
+        "Log",
+        "BlowdartGoblin",
+        "Berserker",
+        "Cannon",
+        "Rocket",
+        "FireSpirits",
+        "GoblinBarrel"
+      ]
+    },
+    {
+      "pair": 81,
+      "mode": "scripts",
+      "seed": 7612081730,
+      "noise_seed": 8612081730,
+      "family": "Hog 2.6",
+      "style": "balanced",
+      "planning_deck": [
+        "IceSpirit",
+        "Cannon",
+        "Musketeer",
+        "HogRider",
+        "Log",
+        "Skeletons",
+        "Fireball",
+        "IceGolem"
+      ],
+      "opponent_deck": [
+        "Firecracker",
+        "MightyMiner",
+        "HogRider",
+        "Cannon",
+        "Skeletons",
+        "Earthquake",
+        "BarbLog",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 82,
+      "mode": "scripts",
+      "seed": 7612082739,
+      "noise_seed": 8612082739,
+      "family": "Hog 2.6",
+      "style": "pressure",
+      "planning_deck": [
+        "Log",
+        "IceGolem",
+        "HogRider",
+        "Musketeer",
+        "IceSpirit",
+        "Cannon",
+        "Skeletons",
+        "Fireball"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "HogRider",
+        "Log",
+        "MightyMiner",
+        "Tesla",
+        "Skeletons",
+        "Firecracker",
+        "Earthquake"
+      ]
+    },
+    {
+      "pair": 83,
+      "mode": "scripts",
+      "seed": 7612083748,
+      "noise_seed": 8612083748,
+      "family": "Hog 2.6",
+      "style": "defense",
+      "planning_deck": [
+        "Musketeer",
+        "Fireball",
+        "IceSpirit",
+        "Cannon",
+        "Log",
+        "HogRider",
+        "Skeletons",
+        "IceGolem"
+      ],
+      "opponent_deck": [
+        "Lightning",
+        "Wizard",
+        "BarbLog",
+        "Berserker",
+        "ElectroSpirit",
+        "RoyalHogs",
+        "GoblinHut",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 84,
+      "mode": "scripts",
+      "seed": 7612084757,
+      "noise_seed": 8612084757,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "balanced",
+      "planning_deck": [
+        "ElectroSpirit",
+        "HogRider",
+        "Firecracker",
+        "Earthquake",
+        "MightyMiner",
+        "Tesla",
+        "Log",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "Musketeer",
+        "IceGolem",
+        "Skeletons",
+        "Cannon",
+        "HogRider",
+        "Log",
+        "IceSpirit"
+      ]
+    },
+    {
+      "pair": 85,
+      "mode": "scripts",
+      "seed": 7612085766,
+      "noise_seed": 8612085766,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "pressure",
+      "planning_deck": [
+        "Cannon",
+        "Firecracker",
+        "HogRider",
+        "Earthquake",
+        "BarbLog",
+        "Skeletons",
+        "ElectroSpirit",
+        "MightyMiner"
+      ],
+      "opponent_deck": [
+        "Cannon",
+        "Skeletons",
+        "Log",
+        "IceGolem",
+        "IceSpirit",
+        "Fireball",
+        "Musketeer",
+        "HogRider"
+      ]
+    },
+    {
+      "pair": 86,
+      "mode": "scripts",
+      "seed": 7612086775,
+      "noise_seed": 8612086775,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "defense",
+      "planning_deck": [
+        "Tesla",
+        "Berserker",
+        "Earthquake",
+        "Firecracker",
+        "HogRider",
+        "ElectroSpirit",
+        "Log",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Cannon",
+        "Fireball",
+        "IceSpirit",
+        "IceGolem",
+        "HogRider",
+        "Log",
+        "Skeletons",
+        "Musketeer"
+      ]
+    },
+    {
+      "pair": 87,
+      "mode": "scripts",
+      "seed": 7612087784,
+      "noise_seed": 8612087784,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "balanced",
+      "planning_deck": [
+        "Skeletons",
+        "HogRider",
+        "Firecracker",
+        "MightyMiner",
+        "Earthquake",
+        "ElectroSpirit",
+        "Log",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "MightyMiner",
+        "IceSpirit",
+        "Goblins",
+        "GoblinBarrel",
+        "Rocket",
+        "Cannon",
+        "Log",
+        "Princess"
+      ]
+    },
+    {
+      "pair": 88,
+      "mode": "scripts",
+      "seed": 7612088793,
+      "noise_seed": 8612088793,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "pressure",
+      "planning_deck": [
+        "Skeletons",
+        "MightyMiner",
+        "ElectroSpirit",
+        "Cannon",
+        "Firecracker",
+        "HogRider",
+        "BarbLog",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "Goblinstein",
+        "ElectroSpirit",
+        "Archers",
+        "Lightning",
+        "BombTower",
+        "RoyalHogs",
+        "Skeletons",
+        "BarbLog"
+      ]
+    },
+    {
+      "pair": 89,
+      "mode": "scripts",
+      "seed": 7612089802,
+      "noise_seed": 8612089802,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "defense",
+      "planning_deck": [
+        "Earthquake",
+        "HogRider",
+        "Firecracker",
+        "ElectroSpirit",
+        "BarbLog",
+        "Skeletons",
+        "Cannon",
+        "MightyMiner"
+      ],
+      "opponent_deck": [
+        "Musketeer",
+        "Log",
+        "Skeletons",
+        "Cannon",
+        "HogRider",
+        "IceGolem",
+        "IceSpirit",
+        "Fireball"
+      ]
+    },
+    {
+      "pair": 90,
+      "mode": "scripts",
+      "seed": 7612090811,
+      "noise_seed": 8612090811,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "balanced",
+      "planning_deck": [
+        "ElectroSpirit",
+        "Firecracker",
+        "Earthquake",
+        "HogRider",
+        "BarbLog",
+        "MightyMiner",
+        "Skeletons",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "Knight",
+        "Fireball",
+        "GoblinGang",
+        "Minions",
+        "RoyalHogs",
+        "Log",
+        "Firecracker",
+        "MiniPekka"
+      ]
+    },
+    {
+      "pair": 91,
+      "mode": "scripts",
+      "seed": 7612091820,
+      "noise_seed": 8612091820,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "pressure",
+      "planning_deck": [
+        "Firecracker",
+        "Tesla",
+        "HogRider",
+        "Skeletons",
+        "ElectroSpirit",
+        "Earthquake",
+        "MightyMiner",
+        "BarbLog"
+      ],
+      "opponent_deck": [
+        "Cannon",
+        "IceSpirit",
+        "MightyMiner",
+        "GoblinBarrel",
+        "Rocket",
+        "Princess",
+        "Goblins",
+        "Log"
+      ]
+    },
+    {
+      "pair": 92,
+      "mode": "scripts",
+      "seed": 7612092829,
+      "noise_seed": 8612092829,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "defense",
+      "planning_deck": [
+        "ElectroSpirit",
+        "Earthquake",
+        "HogRider",
+        "MightyMiner",
+        "BarbLog",
+        "Firecracker",
+        "Skeletons",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "Princess",
+        "GoblinGang",
+        "ElectroSpirit",
+        "InfernoTower",
+        "GoblinBarrel",
+        "Log",
+        "Knight",
+        "Rocket"
+      ]
+    },
+    {
+      "pair": 93,
+      "mode": "scripts",
+      "seed": 7612093838,
+      "noise_seed": 8612093838,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "balanced",
+      "planning_deck": [
+        "ElectroSpirit",
+        "BarbLog",
+        "Skeletons",
+        "MightyMiner",
+        "HogRider",
+        "Cannon",
+        "Firecracker",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "IceSpirit",
+        "Skeletons",
+        "HogRider",
+        "Cannon",
+        "Log",
+        "Musketeer",
+        "IceGolem"
+      ]
+    },
+    {
+      "pair": 94,
+      "mode": "scripts",
+      "seed": 7612094847,
+      "noise_seed": 8612094847,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "pressure",
+      "planning_deck": [
+        "Firecracker",
+        "Cannon",
+        "HogRider",
+        "BarbLog",
+        "MightyMiner",
+        "ElectroSpirit",
+        "Skeletons",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "Cannon",
+        "IceSpirit",
+        "GoblinBarrel",
+        "Goblins",
+        "Princess",
+        "MightyMiner",
+        "Rocket",
+        "Log"
+      ]
+    },
+    {
+      "pair": 95,
+      "mode": "scripts",
+      "seed": 7612095856,
+      "noise_seed": 8612095856,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "defense",
+      "planning_deck": [
+        "Log",
+        "Skeletons",
+        "IceGolem",
+        "Earthquake",
+        "ElectroSpirit",
+        "HogRider",
+        "AngryBarbarians",
+        "Firecracker"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "Tesla",
+        "Knight",
+        "Skeletons",
+        "Xbow",
+        "Log",
+        "Archers",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 96,
+      "mode": "scripts",
+      "seed": 7612096865,
+      "noise_seed": 8612096865,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "balanced",
+      "planning_deck": [
+        "HogRider",
+        "Firecracker",
+        "Skeletons",
+        "Cannon",
+        "MightyMiner",
+        "ElectroSpirit",
+        "Log",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "BarbLog",
+        "BombTower",
+        "RoyalHogs",
+        "Lightning",
+        "Skeletons",
+        "ElectroSpirit",
+        "Archers",
+        "Goblinstein"
+      ]
+    },
+    {
+      "pair": 97,
+      "mode": "scripts",
+      "seed": 7612097874,
+      "noise_seed": 8612097874,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "pressure",
+      "planning_deck": [
+        "MightyMiner",
+        "HogRider",
+        "Earthquake",
+        "ElectroSpirit",
+        "Cannon",
+        "Firecracker",
+        "Log",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "RoyalDelivery",
+        "RoyalHogs",
+        "Log",
+        "Cannon",
+        "Skeletons",
+        "Earthquake",
+        "ArcherQueen",
+        "IceSpirit"
+      ]
+    },
+    {
+      "pair": 98,
+      "mode": "scripts",
+      "seed": 7612098883,
+      "noise_seed": 8612098883,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "defense",
+      "planning_deck": [
+        "HogRider",
+        "MightyMiner",
+        "Log",
+        "Cannon",
+        "ElectroSpirit",
+        "Skeletons",
+        "Earthquake",
+        "Firecracker"
+      ],
+      "opponent_deck": [
+        "BlowdartGoblin",
+        "Valkyrie",
+        "SkeletonArmy",
+        "Cannon",
+        "Princess",
+        "Wallbreakers",
+        "IceSpirit",
+        "GoblinBarrel"
+      ]
+    },
+    {
+      "pair": 99,
+      "mode": "scripts",
+      "seed": 7612099892,
+      "noise_seed": 8612099892,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "balanced",
+      "planning_deck": [
+        "Log",
+        "HogRider",
+        "ElectroSpirit",
+        "Cannon",
+        "Earthquake",
+        "Skeletons",
+        "Firecracker",
+        "MightyMiner"
+      ],
+      "opponent_deck": [
+        "Wallbreakers",
+        "Log",
+        "FireSpirits",
+        "Skeletons",
+        "BlowdartGoblin",
+        "Tesla",
+        "MightyMiner",
+        "GoblinBarrel"
+      ]
+    },
+    {
+      "pair": 100,
+      "mode": "scripts",
+      "seed": 7612100901,
+      "noise_seed": 8612100901,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "pressure",
+      "planning_deck": [
+        "Firecracker",
+        "HogRider",
+        "Earthquake",
+        "BarbLog",
+        "Cannon",
+        "MightyMiner",
+        "ElectroSpirit",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Firecracker",
+        "HogRider",
+        "ElectroSpirit",
+        "Earthquake",
+        "Tesla",
+        "Log",
+        "MightyMiner",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 101,
+      "mode": "scripts",
+      "seed": 7612101910,
+      "noise_seed": 8612101910,
+      "family": "Hog EQ/Firecracker/MM",
+      "style": "defense",
+      "planning_deck": [
+        "Earthquake",
+        "MightyMiner",
+        "Skeletons",
+        "Cannon",
+        "ElectroSpirit",
+        "HogRider",
+        "Firecracker",
+        "Log"
+      ],
+      "opponent_deck": [
+        "IceSpirit",
+        "Cannon",
+        "Log",
+        "Skeletons",
+        "Musketeer",
+        "Fireball",
+        "IceGolem",
+        "HogRider"
+      ]
+    },
+    {
+      "pair": 102,
+      "mode": "scripts",
+      "seed": 7612102919,
+      "noise_seed": 8612102919,
+      "family": "Royal Hogs/Furnace",
+      "style": "balanced",
+      "planning_deck": [
+        "GoblinHut",
+        "Fireball",
+        "FirespiritHut",
+        "ElectroSpirit",
+        "BarbLog",
+        "Berserker",
+        "Ghost",
+        "RoyalHogs"
+      ],
+      "opponent_deck": [
+        "Log",
+        "GoblinBarrel",
+        "Tesla",
+        "Princess",
+        "ElectroSpirit",
+        "Rocket",
+        "Skeletons",
+        "Knight"
+      ]
+    },
+    {
+      "pair": 103,
+      "mode": "scripts",
+      "seed": 7612103928,
+      "noise_seed": 8612103928,
+      "family": "Royal Hogs/Furnace",
+      "style": "pressure",
+      "planning_deck": [
+        "GoblinHut",
+        "Berserker",
+        "RoyalHogs",
+        "Ghost",
+        "BarbLog",
+        "FirespiritHut",
+        "ElectroSpirit",
+        "Lightning"
+      ],
+      "opponent_deck": [
+        "Archers",
+        "RoyalHogs",
+        "BombTower",
+        "Goblinstein",
+        "BarbLog",
+        "ElectroSpirit",
+        "Lightning",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 104,
+      "mode": "scripts",
+      "seed": 7612104937,
+      "noise_seed": 8612104937,
+      "family": "Royal Hogs/Furnace",
+      "style": "defense",
+      "planning_deck": [
+        "BarbLog",
+        "ElectroSpirit",
+        "Wizard",
+        "AngryBarbarians",
+        "GoblinHut",
+        "RoyalHogs",
+        "Skeletons",
+        "Lightning"
+      ],
+      "opponent_deck": [
+        "Log",
+        "Rocket",
+        "InfernoTower",
+        "Skeletons",
+        "Knight",
+        "GoblinGang",
+        "Princess",
+        "GoblinBarrel"
+      ]
+    },
+    {
+      "pair": 105,
+      "mode": "scripts",
+      "seed": 7612105946,
+      "noise_seed": 8612105946,
+      "family": "Royal Hogs/Furnace",
+      "style": "balanced",
+      "planning_deck": [
+        "RoyalHogs",
+        "Lightning",
+        "ElectroSpirit",
+        "GoblinHut",
+        "BarbLog",
+        "Ghost",
+        "Berserker",
+        "FirespiritHut"
+      ],
+      "opponent_deck": [
+        "Archers",
+        "RoyalHogs",
+        "Goblinstein",
+        "Skeletons",
+        "BarbLog",
+        "BombTower",
+        "ElectroSpirit",
+        "Lightning"
+      ]
+    },
+    {
+      "pair": 106,
+      "mode": "scripts",
+      "seed": 7612106955,
+      "noise_seed": 8612106955,
+      "family": "Royal Hogs/Furnace",
+      "style": "pressure",
+      "planning_deck": [
+        "GoblinHut",
+        "ElectroSpirit",
+        "RoyalHogs",
+        "BarbLog",
+        "Fireball",
+        "Berserker",
+        "FirespiritHut",
+        "Ghost"
+      ],
+      "opponent_deck": [
+        "Skeletons",
+        "Musketeer",
+        "Cannon",
+        "Fireball",
+        "IceSpirit",
+        "IceGolem",
+        "HogRider",
+        "Log"
+      ]
+    },
+    {
+      "pair": 107,
+      "mode": "scripts",
+      "seed": 7612107964,
+      "noise_seed": 8612107964,
+      "family": "Royal Hogs/Furnace",
+      "style": "defense",
+      "planning_deck": [
+        "ElectroSpirit",
+        "Lightning",
+        "Ghost",
+        "FirespiritHut",
+        "RoyalHogs",
+        "Berserker",
+        "BarbLog",
+        "GoblinHut"
+      ],
+      "opponent_deck": [
+        "Archers",
+        "Tesla",
+        "Xbow",
+        "Fireball",
+        "Log",
+        "Knight",
+        "ElectroSpirit",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 108,
+      "mode": "scripts",
+      "seed": 7612108973,
+      "noise_seed": 8612108973,
+      "family": "Royal Hogs/Furnace",
+      "style": "balanced",
+      "planning_deck": [
+        "Lightning",
+        "RoyalHogs",
+        "Skeletons",
+        "Berserker",
+        "Log",
+        "Cannon",
+        "ElectroSpirit",
+        "BabyDragon"
+      ],
+      "opponent_deck": [
+        "Knight",
+        "GoblinGang",
+        "IceSpirit",
+        "GoblinBarrel",
+        "InfernoTower",
+        "Log",
+        "Rocket",
+        "Princess"
+      ]
+    },
+    {
+      "pair": 109,
+      "mode": "scripts",
+      "seed": 7612109982,
+      "noise_seed": 8612109982,
+      "family": "Royal Hogs/Furnace",
+      "style": "pressure",
+      "planning_deck": [
+        "RoyalHogs",
+        "AngryBarbarians",
+        "GoblinHut",
+        "Wizard",
+        "BarbLog",
+        "Skeletons",
+        "ElectroSpirit",
+        "Lightning"
+      ],
+      "opponent_deck": [
+        "MightyMiner",
+        "ElectroSpirit",
+        "HogRider",
+        "Earthquake",
+        "Cannon",
+        "Log",
+        "Firecracker",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 110,
+      "mode": "scripts",
+      "seed": 7612110991,
+      "noise_seed": 8612110991,
+      "family": "Royal Hogs/Furnace",
+      "style": "defense",
+      "planning_deck": [
+        "Berserker",
+        "BarbLog",
+        "RoyalHogs",
+        "FirespiritHut",
+        "Fireball",
+        "GoblinHut",
+        "Ghost",
+        "ElectroSpirit"
+      ],
+      "opponent_deck": [
+        "Valkyrie",
+        "SkeletonArmy",
+        "IceSpirit",
+        "Cannon",
+        "Princess",
+        "BlowdartGoblin",
+        "GoblinBarrel",
+        "Wallbreakers"
+      ]
+    },
+    {
+      "pair": 111,
+      "mode": "scripts",
+      "seed": 7612112000,
+      "noise_seed": 8612112000,
+      "family": "Royal Hogs/Furnace",
+      "style": "balanced",
+      "planning_deck": [
+        "GoblinHut",
+        "Lightning",
+        "Berserker",
+        "ElectroSpirit",
+        "Wizard",
+        "RoyalHogs",
+        "BarbLog",
+        "Ghost"
+      ],
+      "opponent_deck": [
+        "Log",
+        "IceGolem",
+        "HogRider",
+        "ElectroSpirit",
+        "Fireball",
+        "Cannon",
+        "Skeletons",
+        "Musketeer"
+      ]
+    },
+    {
+      "pair": 112,
+      "mode": "scripts",
+      "seed": 7612113009,
+      "noise_seed": 8612113009,
+      "family": "Royal Hogs/Furnace",
+      "style": "pressure",
+      "planning_deck": [
+        "FirespiritHut",
+        "RoyalHogs",
+        "ElectroSpirit",
+        "GoblinHut",
+        "Fireball",
+        "BarbLog",
+        "Ghost",
+        "Berserker"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "IceGolem",
+        "Skeletons",
+        "IceSpirit",
+        "Musketeer",
+        "Log",
+        "Cannon",
+        "HogRider"
+      ]
+    },
+    {
+      "pair": 113,
+      "mode": "scripts",
+      "seed": 7612114018,
+      "noise_seed": 8612114018,
+      "family": "Royal Hogs/Furnace",
+      "style": "defense",
+      "planning_deck": [
+        "GoblinHut",
+        "Lightning",
+        "BarbLog",
+        "Ghost",
+        "FirespiritHut",
+        "ElectroSpirit",
+        "Berserker",
+        "RoyalHogs"
+      ],
+      "opponent_deck": [
+        "SkeletonArmy",
+        "Princess",
+        "Log",
+        "IceSpirit",
+        "Cannon",
+        "BlowdartGoblin",
+        "Berserker",
+        "GoblinBarrel"
+      ]
+    },
+    {
+      "pair": 114,
+      "mode": "scripts",
+      "seed": 7612115027,
+      "noise_seed": 8612115027,
+      "family": "Royal Hogs/Furnace",
+      "style": "balanced",
+      "planning_deck": [
+        "Ghost",
+        "BarbLog",
+        "Berserker",
+        "FirespiritHut",
+        "Fireball",
+        "ElectroSpirit",
+        "RoyalHogs",
+        "GoblinHut"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "Earthquake",
+        "HogRider",
+        "Firecracker",
+        "Skeletons",
+        "Cannon",
+        "BarbLog",
+        "MightyMiner"
+      ]
+    },
+    {
+      "pair": 115,
+      "mode": "scripts",
+      "seed": 7612116036,
+      "noise_seed": 8612116036,
+      "family": "Royal Hogs/Furnace",
+      "style": "pressure",
+      "planning_deck": [
+        "ElectroSpirit",
+        "Berserker",
+        "FirespiritHut",
+        "RoyalHogs",
+        "GoblinHut",
+        "BarbLog",
+        "Fireball",
+        "Ghost"
+      ],
+      "opponent_deck": [
+        "GoblinBarrel",
+        "Princess",
+        "InfernoTower",
+        "Log",
+        "Knight",
+        "ElectroSpirit",
+        "Rocket",
+        "GoblinGang"
+      ]
+    },
+    {
+      "pair": 116,
+      "mode": "scripts",
+      "seed": 7612117045,
+      "noise_seed": 8612117045,
+      "family": "Royal Hogs/Furnace",
+      "style": "defense",
+      "planning_deck": [
+        "Lightning",
+        "ElectroSpirit",
+        "Log",
+        "GoblinHut",
+        "RoyalHogs",
+        "Skeletons",
+        "Berserker",
+        "FirespiritHut"
+      ],
+      "opponent_deck": [
+        "Musketeer",
+        "Cannon",
+        "Skeletons",
+        "HogRider",
+        "IceGolem",
+        "Fireball",
+        "Log",
+        "IceSpirit"
+      ]
+    },
+    {
+      "pair": 117,
+      "mode": "scripts",
+      "seed": 7612118054,
+      "noise_seed": 8612118054,
+      "family": "Royal Hogs/Furnace",
+      "style": "balanced",
+      "planning_deck": [
+        "Lightning",
+        "Berserker",
+        "RoyalHogs",
+        "GoblinHut",
+        "Ghost",
+        "FirespiritHut",
+        "BarbLog",
+        "ElectroSpirit"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "Firecracker",
+        "HogRider",
+        "Cannon",
+        "MightyMiner",
+        "Log",
+        "Skeletons",
+        "Earthquake"
+      ]
+    },
+    {
+      "pair": 118,
+      "mode": "scripts",
+      "seed": 7612119063,
+      "noise_seed": 8612119063,
+      "family": "Royal Hogs/Furnace",
+      "style": "pressure",
+      "planning_deck": [
+        "Ghost",
+        "RoyalHogs",
+        "ElectroSpirit",
+        "Fireball",
+        "Berserker",
+        "FirespiritHut",
+        "BarbLog",
+        "GoblinHut"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "Skeletons",
+        "Valkyrie",
+        "Wizard",
+        "GoblinHut",
+        "Log",
+        "Lightning",
+        "RoyalHogs"
+      ]
+    },
+    {
+      "pair": 119,
+      "mode": "scripts",
+      "seed": 7612120072,
+      "noise_seed": 8612120072,
+      "family": "Royal Hogs/Furnace",
+      "style": "defense",
+      "planning_deck": [
+        "RoyalHogs",
+        "GoblinHut",
+        "Ghost",
+        "FirespiritHut",
+        "Lightning",
+        "BarbLog",
+        "ElectroSpirit",
+        "Berserker"
+      ],
+      "opponent_deck": [
+        "HogRider",
+        "Cannon",
+        "Log",
+        "IceGolem",
+        "Fireball",
+        "Musketeer",
+        "IceSpirit",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 120,
+      "mode": "scripts",
+      "seed": 7612121081,
+      "noise_seed": 8612121081,
+      "family": "X-Bow",
+      "style": "balanced",
+      "planning_deck": [
+        "ElectroSpirit",
+        "Fireball",
+        "Log",
+        "Xbow",
+        "Tesla",
+        "Knight",
+        "Archers",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Cannon",
+        "IceSpirit",
+        "Skeletons",
+        "ArcherQueen",
+        "Earthquake",
+        "Log",
+        "RoyalHogs",
+        "RoyalDelivery"
+      ]
+    },
+    {
+      "pair": 121,
+      "mode": "scripts",
+      "seed": 7612122090,
+      "noise_seed": 8612122090,
+      "family": "X-Bow",
+      "style": "pressure",
+      "planning_deck": [
+        "Skeletons",
+        "Log",
+        "Xbow",
+        "Knight",
+        "Fireball",
+        "ElectroSpirit",
+        "Archers",
+        "Tesla"
+      ],
+      "opponent_deck": [
+        "IceSpirit",
+        "Skeletons",
+        "Log",
+        "IceGolem",
+        "HogRider",
+        "Fireball",
+        "Cannon",
+        "Musketeer"
+      ]
+    },
+    {
+      "pair": 122,
+      "mode": "scripts",
+      "seed": 7612123099,
+      "noise_seed": 8612123099,
+      "family": "X-Bow",
+      "style": "defense",
+      "planning_deck": [
+        "Skeletons",
+        "Log",
+        "ElectroSpirit",
+        "Rocket",
+        "Archers",
+        "Tesla",
+        "Xbow",
+        "Knight"
+      ],
+      "opponent_deck": [
+        "BlowdartGoblin",
+        "InfernoTower",
+        "Rascals",
+        "Wallbreakers",
+        "Valkyrie",
+        "Princess",
+        "GoblinBarrel",
+        "SkeletonArmy"
+      ]
+    },
+    {
+      "pair": 123,
+      "mode": "scripts",
+      "seed": 7612124108,
+      "noise_seed": 8612124108,
+      "family": "X-Bow",
+      "style": "balanced",
+      "planning_deck": [
+        "Xbow",
+        "ElectroSpirit",
+        "Log",
+        "Tesla",
+        "Archers",
+        "Skeletons",
+        "Berserker",
+        "Fireball"
+      ],
+      "opponent_deck": [
+        "Valkyrie",
+        "Cannon",
+        "BlowdartGoblin",
+        "Wallbreakers",
+        "GoblinBarrel",
+        "Princess",
+        "SkeletonArmy",
+        "IceSpirit"
+      ]
+    },
+    {
+      "pair": 124,
+      "mode": "scripts",
+      "seed": 7612125117,
+      "noise_seed": 8612125117,
+      "family": "X-Bow",
+      "style": "pressure",
+      "planning_deck": [
+        "Berserker",
+        "ElectroSpirit",
+        "Log",
+        "Tesla",
+        "Skeletons",
+        "Xbow",
+        "Archers",
+        "Fireball"
+      ],
+      "opponent_deck": [
+        "Skeletons",
+        "Wizard",
+        "Log",
+        "Tornado",
+        "Valkyrie",
+        "Earthquake",
+        "Cannon",
+        "HogRider"
+      ]
+    },
+    {
+      "pair": 125,
+      "mode": "scripts",
+      "seed": 7612126126,
+      "noise_seed": 8612126126,
+      "family": "X-Bow",
+      "style": "defense",
+      "planning_deck": [
+        "Knight",
+        "ElectroSpirit",
+        "Archers",
+        "Xbow",
+        "Fireball",
+        "Skeletons",
+        "Log",
+        "Tesla"
+      ],
+      "opponent_deck": [
+        "Princess",
+        "Prince",
+        "Rascals",
+        "Rocket",
+        "Log",
+        "Berserker",
+        "GoblinBarrel",
+        "BlowdartGoblin"
+      ]
+    },
+    {
+      "pair": 126,
+      "mode": "scripts",
+      "seed": 7612127135,
+      "noise_seed": 8612127135,
+      "family": "X-Bow",
+      "style": "balanced",
+      "planning_deck": [
+        "Log",
+        "Xbow",
+        "Knight",
+        "Tesla",
+        "ElectroSpirit",
+        "Archers",
+        "Fireball",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "GoblinBarrel",
+        "Rocket",
+        "Log",
+        "IceSpirit",
+        "Cannon",
+        "MightyMiner",
+        "Goblins",
+        "Princess"
+      ]
+    },
+    {
+      "pair": 127,
+      "mode": "scripts",
+      "seed": 7612128144,
+      "noise_seed": 8612128144,
+      "family": "X-Bow",
+      "style": "pressure",
+      "planning_deck": [
+        "Archers",
+        "Tesla",
+        "Skeletons",
+        "ElectroSpirit",
+        "Fireball",
+        "Xbow",
+        "Log",
+        "Berserker"
+      ],
+      "opponent_deck": [
+        "Musketeer",
+        "HogRider",
+        "Fireball",
+        "Log",
+        "Cannon",
+        "IceSpirit",
+        "IceGolem",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 128,
+      "mode": "scripts",
+      "seed": 7612129153,
+      "noise_seed": 8612129153,
+      "family": "X-Bow",
+      "style": "defense",
+      "planning_deck": [
+        "Skeletons",
+        "Fireball",
+        "Xbow",
+        "Archers",
+        "Log",
+        "ElectroSpirit",
+        "Knight",
+        "Tesla"
+      ],
+      "opponent_deck": [
+        "MightyMiner",
+        "GoblinBarrel",
+        "Log",
+        "SkeletonArmy",
+        "InfernoTower",
+        "Wallbreakers",
+        "BlowdartGoblin",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 129,
+      "mode": "scripts",
+      "seed": 7612130162,
+      "noise_seed": 8612130162,
+      "family": "X-Bow",
+      "style": "balanced",
+      "planning_deck": [
+        "Xbow",
+        "Skeletons",
+        "Tesla",
+        "Log",
+        "Fireball",
+        "ElectroSpirit",
+        "Archers",
+        "Berserker"
+      ],
+      "opponent_deck": [
+        "Log",
+        "Skeletons",
+        "Berserker",
+        "Tesla",
+        "Rocket",
+        "GoblinBarrel",
+        "Princess",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 130,
+      "mode": "scripts",
+      "seed": 7612131171,
+      "noise_seed": 8612131171,
+      "family": "X-Bow",
+      "style": "pressure",
+      "planning_deck": [
+        "Knight",
+        "Skeletons",
+        "Archers",
+        "Log",
+        "Fireball",
+        "Xbow",
+        "ElectroSpirit",
+        "Tesla"
+      ],
+      "opponent_deck": [
+        "Berserker",
+        "Lightning",
+        "Skeletons",
+        "ElectroSpirit",
+        "Log",
+        "GoblinHut",
+        "FirespiritHut",
+        "RoyalHogs"
+      ]
+    },
+    {
+      "pair": 131,
+      "mode": "scripts",
+      "seed": 7612132180,
+      "noise_seed": 8612132180,
+      "family": "X-Bow",
+      "style": "defense",
+      "planning_deck": [
+        "Xbow",
+        "Skeletons",
+        "Log",
+        "ElectroSpirit",
+        "Fireball",
+        "Berserker",
+        "Archers",
+        "Tesla"
+      ],
+      "opponent_deck": [
+        "Log",
+        "Berserker",
+        "Musketeer",
+        "ElectroSpirit",
+        "Skeletons",
+        "HogRider",
+        "Tesla",
+        "Lightning"
+      ]
+    },
+    {
+      "pair": 132,
+      "mode": "scripts",
+      "seed": 7612133189,
+      "noise_seed": 8612133189,
+      "family": "X-Bow",
+      "style": "balanced",
+      "planning_deck": [
+        "Log",
+        "Tesla",
+        "Skeletons",
+        "Rocket",
+        "Knight",
+        "ElectroSpirit",
+        "Archers",
+        "Xbow"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "Skeletons",
+        "IceSpirit",
+        "HogRider",
+        "Musketeer",
+        "Cannon",
+        "Log",
+        "IceGolem"
+      ]
+    },
+    {
+      "pair": 133,
+      "mode": "scripts",
+      "seed": 7612134198,
+      "noise_seed": 8612134198,
+      "family": "X-Bow",
+      "style": "pressure",
+      "planning_deck": [
+        "Archers",
+        "Skeletons",
+        "Berserker",
+        "Log",
+        "Xbow",
+        "Tesla",
+        "ElectroSpirit",
+        "Fireball"
+      ],
+      "opponent_deck": [
+        "Log",
+        "Skeletons",
+        "ElectroSpirit",
+        "Xbow",
+        "Tesla",
+        "Knight",
+        "Fireball",
+        "Archers"
+      ]
+    },
+    {
+      "pair": 134,
+      "mode": "scripts",
+      "seed": 7612135207,
+      "noise_seed": 8612135207,
+      "family": "X-Bow",
+      "style": "defense",
+      "planning_deck": [
+        "Fireball",
+        "Log",
+        "Archers",
+        "ElectroSpirit",
+        "Tesla",
+        "Xbow",
+        "Knight",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "FirespiritHut",
+        "Ghost",
+        "ElectroSpirit",
+        "Berserker",
+        "BarbLog",
+        "GoblinHut",
+        "RoyalHogs",
+        "Fireball"
+      ]
+    },
+    {
+      "pair": 135,
+      "mode": "scripts",
+      "seed": 7612136216,
+      "noise_seed": 8612136216,
+      "family": "X-Bow",
+      "style": "balanced",
+      "planning_deck": [
+        "ElectroSpirit",
+        "Fireball",
+        "Log",
+        "Skeletons",
+        "Berserker",
+        "Archers",
+        "Tesla",
+        "Xbow"
+      ],
+      "opponent_deck": [
+        "Rocket",
+        "FireSpirits",
+        "Bats",
+        "MiniPekka",
+        "Log",
+        "Princess",
+        "HogRider",
+        "IceGolem"
+      ]
+    },
+    {
+      "pair": 136,
+      "mode": "scripts",
+      "seed": 7612137225,
+      "noise_seed": 8612137225,
+      "family": "X-Bow",
+      "style": "pressure",
+      "planning_deck": [
+        "ElectroSpirit",
+        "Skeletons",
+        "Tesla",
+        "Fireball",
+        "Archers",
+        "Xbow",
+        "Berserker",
+        "Log"
+      ],
+      "opponent_deck": [
+        "Skeletons",
+        "IceSpirit",
+        "Log",
+        "RoyalDelivery",
+        "ArcherQueen",
+        "Earthquake",
+        "Cannon",
+        "RoyalHogs"
+      ]
+    },
+    {
+      "pair": 137,
+      "mode": "scripts",
+      "seed": 7612138234,
+      "noise_seed": 8612138234,
+      "family": "X-Bow",
+      "style": "defense",
+      "planning_deck": [
+        "Log",
+        "Archers",
+        "Tesla",
+        "Skeletons",
+        "ElectroSpirit",
+        "Fireball",
+        "Berserker",
+        "Xbow"
+      ],
+      "opponent_deck": [
+        "Tesla",
+        "Log",
+        "Xbow",
+        "Fireball",
+        "ElectroSpirit",
+        "Knight",
+        "Skeletons",
+        "Archers"
+      ]
+    },
+    {
+      "pair": 138,
+      "mode": "scripts",
+      "seed": 7612139243,
+      "noise_seed": 8612139243,
+      "family": "bait",
+      "style": "balanced",
+      "planning_deck": [
+        "ElectroSpirit",
+        "InfernoTower",
+        "SkeletonArmy",
+        "Princess",
+        "GoblinBarrel",
+        "Log",
+        "BlowdartGoblin",
+        "Berserker"
+      ],
+      "opponent_deck": [
+        "Archers",
+        "Tesla",
+        "Skeletons",
+        "Fireball",
+        "Xbow",
+        "ElectroSpirit",
+        "Log",
+        "Berserker"
+      ]
+    },
+    {
+      "pair": 139,
+      "mode": "scripts",
+      "seed": 7612140252,
+      "noise_seed": 8612140252,
+      "family": "bait",
+      "style": "pressure",
+      "planning_deck": [
+        "Log",
+        "BlowdartGoblin",
+        "SkeletonArmy",
+        "GoblinBarrel",
+        "Princess",
+        "InfernoTower",
+        "Knight",
+        "ElectroSpirit"
+      ],
+      "opponent_deck": [
+        "SkeletonArmy",
+        "Princess",
+        "BlowdartGoblin",
+        "GoblinBarrel",
+        "InfernoTower",
+        "Log",
+        "Knight",
+        "IceSpirit"
+      ]
+    },
+    {
+      "pair": 140,
+      "mode": "scripts",
+      "seed": 7612141261,
+      "noise_seed": 8612141261,
+      "family": "bait",
+      "style": "defense",
+      "planning_deck": [
+        "Knight",
+        "IceSpirit",
+        "Log",
+        "SkeletonArmy",
+        "InfernoTower",
+        "GoblinBarrel",
+        "BlowdartGoblin",
+        "Princess"
+      ],
+      "opponent_deck": [
+        "RoyalHogs",
+        "Berserker",
+        "Log",
+        "Cannon",
+        "ElectroSpirit",
+        "BabyDragon",
+        "Goblins",
+        "Lightning"
+      ]
+    },
+    {
+      "pair": 141,
+      "mode": "scripts",
+      "seed": 7612142270,
+      "noise_seed": 8612142270,
+      "family": "bait",
+      "style": "balanced",
+      "planning_deck": [
+        "Skeletons",
+        "Tesla",
+        "Knight",
+        "ElectroSpirit",
+        "Log",
+        "Rocket",
+        "GoblinBarrel",
+        "Princess"
+      ],
+      "opponent_deck": [
+        "Log",
+        "HogRider",
+        "Tesla",
+        "Earthquake",
+        "ElectroSpirit",
+        "Firecracker",
+        "MightyMiner",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 142,
+      "mode": "scripts",
+      "seed": 7612143279,
+      "noise_seed": 8612143279,
+      "family": "bait",
+      "style": "pressure",
+      "planning_deck": [
+        "GoblinBarrel",
+        "Cannon",
+        "SkeletonArmy",
+        "BlowdartGoblin",
+        "Princess",
+        "IceSpirit",
+        "Valkyrie",
+        "Wallbreakers"
+      ],
+      "opponent_deck": [
+        "Prince",
+        "SkeletonArmy",
+        "AngryBarbarians",
+        "Zap",
+        "HogRider",
+        "FireSpirits",
+        "Log",
+        "InfernoTower"
+      ]
+    },
+    {
+      "pair": 143,
+      "mode": "scripts",
+      "seed": 7612144288,
+      "noise_seed": 8612144288,
+      "family": "bait",
+      "style": "defense",
+      "planning_deck": [
+        "Princess",
+        "BlowdartGoblin",
+        "IceSpirit",
+        "GoblinBarrel",
+        "Log",
+        "Knight",
+        "SkeletonArmy",
+        "InfernoTower"
+      ],
+      "opponent_deck": [
+        "GoblinGang",
+        "InfernoTower",
+        "GoblinBarrel",
+        "ElectroSpirit",
+        "Log",
+        "Rocket",
+        "Knight",
+        "Princess"
+      ]
+    },
+    {
+      "pair": 144,
+      "mode": "scripts",
+      "seed": 7612145297,
+      "noise_seed": 8612145297,
+      "family": "bait",
+      "style": "balanced",
+      "planning_deck": [
+        "Knight",
+        "BlowdartGoblin",
+        "InfernoTower",
+        "SkeletonArmy",
+        "Princess",
+        "Log",
+        "GoblinBarrel",
+        "IceSpirit"
+      ],
+      "opponent_deck": [
+        "Skeletons",
+        "Berserker",
+        "ElectroSpirit",
+        "Lightning",
+        "GoblinHut",
+        "RoyalHogs",
+        "BarbLog",
+        "Wizard"
+      ]
+    },
+    {
+      "pair": 145,
+      "mode": "scripts",
+      "seed": 7612146306,
+      "noise_seed": 8612146306,
+      "family": "bait",
+      "style": "pressure",
+      "planning_deck": [
+        "Cannon",
+        "GoblinBarrel",
+        "Valkyrie",
+        "SkeletonArmy",
+        "BlowdartGoblin",
+        "Wallbreakers",
+        "IceSpirit",
+        "Princess"
+      ],
+      "opponent_deck": [
+        "Log",
+        "Cannon",
+        "IceGolem",
+        "IceSpirit",
+        "Skeletons",
+        "Musketeer",
+        "HogRider",
+        "Fireball"
+      ]
+    },
+    {
+      "pair": 146,
+      "mode": "scripts",
+      "seed": 7612147315,
+      "noise_seed": 8612147315,
+      "family": "bait",
+      "style": "defense",
+      "planning_deck": [
+        "Princess",
+        "BlowdartGoblin",
+        "Valkyrie",
+        "IceSpirit",
+        "SkeletonArmy",
+        "Wallbreakers",
+        "GoblinBarrel",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "IceSpirit",
+        "InfernoTower",
+        "Princess",
+        "GoblinBarrel",
+        "Log",
+        "GoblinGang",
+        "Rocket",
+        "Knight"
+      ]
+    },
+    {
+      "pair": 147,
+      "mode": "scripts",
+      "seed": 7612148324,
+      "noise_seed": 8612148324,
+      "family": "bait",
+      "style": "balanced",
+      "planning_deck": [
+        "SkeletonArmy",
+        "ElectroSpirit",
+        "Knight",
+        "InfernoTower",
+        "GoblinBarrel",
+        "Princess",
+        "BlowdartGoblin",
+        "Log"
+      ],
+      "opponent_deck": [
+        "Log",
+        "HogRider",
+        "Cannon",
+        "MightyMiner",
+        "Skeletons",
+        "Earthquake",
+        "IceSpirit",
+        "Firecracker"
+      ]
+    },
+    {
+      "pair": 148,
+      "mode": "scripts",
+      "seed": 7612149333,
+      "noise_seed": 8612149333,
+      "family": "bait",
+      "style": "pressure",
+      "planning_deck": [
+        "Valkyrie",
+        "GoblinBarrel",
+        "Cannon",
+        "Princess",
+        "IceSpirit",
+        "Wallbreakers",
+        "SkeletonArmy",
+        "BlowdartGoblin"
+      ],
+      "opponent_deck": [
+        "Tesla",
+        "Xbow",
+        "ElectroSpirit",
+        "Fireball",
+        "Archers",
+        "Log",
+        "Berserker",
+        "Skeletons"
+      ]
+    },
+    {
+      "pair": 149,
+      "mode": "scripts",
+      "seed": 7612150342,
+      "noise_seed": 8612150342,
+      "family": "bait",
+      "style": "defense",
+      "planning_deck": [
+        "Princess",
+        "Wallbreakers",
+        "Valkyrie",
+        "IceSpirit",
+        "GoblinBarrel",
+        "BlowdartGoblin",
+        "SkeletonArmy",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "IceSpirit",
+        "IceGolem",
+        "Skeletons",
+        "Musketeer",
+        "Log",
+        "Cannon",
+        "Fireball",
+        "HogRider"
+      ]
+    },
+    {
+      "pair": 150,
+      "mode": "scripts",
+      "seed": 7612151351,
+      "noise_seed": 8612151351,
+      "family": "bait",
+      "style": "balanced",
+      "planning_deck": [
+        "Rocket",
+        "InfernoTower",
+        "IceSpirit",
+        "Valkyrie",
+        "GoblinBarrel",
+        "GoblinGang",
+        "Princess",
+        "Log"
+      ],
+      "opponent_deck": [
+        "HogRider",
+        "IceGolem",
+        "Musketeer",
+        "Log",
+        "Skeletons",
+        "Fireball",
+        "Cannon",
+        "IceSpirit"
+      ]
+    },
+    {
+      "pair": 151,
+      "mode": "scripts",
+      "seed": 7612152360,
+      "noise_seed": 8612152360,
+      "family": "bait",
+      "style": "pressure",
+      "planning_deck": [
+        "Knight",
+        "IceSpirit",
+        "Princess",
+        "Log",
+        "SkeletonArmy",
+        "BlowdartGoblin",
+        "GoblinBarrel",
+        "InfernoTower"
+      ],
+      "opponent_deck": [
+        "IceSpirit",
+        "MightyMiner",
+        "Skeletons",
+        "BarbLog",
+        "Tesla",
+        "Lightning",
+        "HogRider",
+        "Firecracker"
+      ]
+    },
+    {
+      "pair": 152,
+      "mode": "scripts",
+      "seed": 7612153369,
+      "noise_seed": 8612153369,
+      "family": "bait",
+      "style": "defense",
+      "planning_deck": [
+        "Knight",
+        "SkeletonArmy",
+        "GoblinBarrel",
+        "Log",
+        "BlowdartGoblin",
+        "IceSpirit",
+        "Princess",
+        "InfernoTower"
+      ],
+      "opponent_deck": [
+        "Lightning",
+        "Skeletons",
+        "MightyMiner",
+        "FirespiritHut",
+        "Cannon",
+        "HogRider",
+        "Log",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 153,
+      "mode": "scripts",
+      "seed": 7612154378,
+      "noise_seed": 8612154378,
+      "family": "bait",
+      "style": "balanced",
+      "planning_deck": [
+        "Princess",
+        "GoblinBarrel",
+        "ElectroSpirit",
+        "Log",
+        "Tesla",
+        "GoblinGang",
+        "Valkyrie",
+        "Rocket"
+      ],
+      "opponent_deck": [
+        "Firecracker",
+        "HogRider",
+        "Knight",
+        "Log",
+        "IceSpirit",
+        "Tesla",
+        "Skeletons",
+        "Earthquake"
+      ]
+    },
+    {
+      "pair": 154,
+      "mode": "scripts",
+      "seed": 7612155387,
+      "noise_seed": 8612155387,
+      "family": "bait",
+      "style": "pressure",
+      "planning_deck": [
+        "MightyMiner",
+        "IceSpirit",
+        "Rocket",
+        "GoblinBarrel",
+        "Princess",
+        "Log",
+        "Cannon",
+        "Goblins"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "Earthquake",
+        "Skeletons",
+        "HogRider",
+        "Cannon",
+        "MightyMiner",
+        "Firecracker",
+        "BarbLog"
+      ]
+    },
+    {
+      "pair": 155,
+      "mode": "scripts",
+      "seed": 7612156396,
+      "noise_seed": 8612156396,
+      "family": "bait",
+      "style": "defense",
+      "planning_deck": [
+        "Rocket",
+        "GoblinBarrel",
+        "Goblins",
+        "Princess",
+        "Cannon",
+        "MightyMiner",
+        "IceSpirit",
+        "Log"
+      ],
+      "opponent_deck": [
+        "HogRider",
+        "Log",
+        "IceSpirit",
+        "Skeletons",
+        "Fireball",
+        "IceGolem",
+        "Musketeer",
+        "Cannon"
+      ]
+    },
+    {
+      "pair": 156,
+      "mode": "scripts",
+      "seed": 7612157405,
+      "noise_seed": 8612157405,
+      "family": "Goblinstein",
+      "style": "balanced",
+      "planning_deck": [
+        "BarbLog",
+        "Skeletons",
+        "Lightning",
+        "BombTower",
+        "RoyalHogs",
+        "Goblinstein",
+        "ElectroSpirit",
+        "Archers"
+      ],
+      "opponent_deck": [
+        "Cannon",
+        "Musketeer",
+        "HogRider",
+        "Fireball",
+        "Log",
+        "IceGolem",
+        "Skeletons",
+        "IceSpirit"
+      ]
+    },
+    {
+      "pair": 157,
+      "mode": "scripts",
+      "seed": 7612158414,
+      "noise_seed": 8612158414,
+      "family": "Goblinstein",
+      "style": "pressure",
+      "planning_deck": [
+        "RoyalHogs",
+        "Archers",
+        "Skeletons",
+        "Lightning",
+        "BarbLog",
+        "ElectroSpirit",
+        "BombTower",
+        "Goblinstein"
+      ],
+      "opponent_deck": [
+        "Berserker",
+        "ElectroSpirit",
+        "Fireball",
+        "FirespiritHut",
+        "RoyalHogs",
+        "Log",
+        "Ghost",
+        "GoblinHut"
+      ]
+    },
+    {
+      "pair": 158,
+      "mode": "scripts",
+      "seed": 7612159423,
+      "noise_seed": 8612159423,
+      "family": "Goblinstein",
+      "style": "defense",
+      "planning_deck": [
+        "BombTower",
+        "RoyalHogs",
+        "Lightning",
+        "Archers",
+        "Goblinstein",
+        "BarbLog",
+        "ElectroSpirit",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Firecracker",
+        "Earthquake",
+        "BarbLog",
+        "Skeletons",
+        "ElectroSpirit",
+        "MightyMiner",
+        "HogRider",
+        "Cannon"
+      ]
+    },
+    {
+      "pair": 159,
+      "mode": "scripts",
+      "seed": 7612160432,
+      "noise_seed": 8612160432,
+      "family": "Goblinstein",
+      "style": "balanced",
+      "planning_deck": [
+        "Archers",
+        "Skeletons",
+        "RoyalHogs",
+        "Fireball",
+        "BarbLog",
+        "BombTower",
+        "Goblinstein",
+        "ElectroSpirit"
+      ],
+      "opponent_deck": [
+        "GoblinBarrel",
+        "MightyMiner",
+        "IceSpirit",
+        "Princess",
+        "Goblins",
+        "Cannon",
+        "Rocket",
+        "Log"
+      ]
+    },
+    {
+      "pair": 160,
+      "mode": "scripts",
+      "seed": 7612161441,
+      "noise_seed": 8612161441,
+      "family": "Goblinstein",
+      "style": "pressure",
+      "planning_deck": [
+        "Lightning",
+        "ElectroSpirit",
+        "RoyalHogs",
+        "BarbLog",
+        "Goblinstein",
+        "BombTower",
+        "Skeletons",
+        "Archers"
+      ],
+      "opponent_deck": [
+        "Log",
+        "Wallbreakers",
+        "Skeletons",
+        "BlowdartGoblin",
+        "Cannon",
+        "ElectroSpirit",
+        "GoblinBarrel",
+        "Berserker"
+      ]
+    },
+    {
+      "pair": 161,
+      "mode": "scripts",
+      "seed": 7612162450,
+      "noise_seed": 8612162450,
+      "family": "Goblinstein",
+      "style": "defense",
+      "planning_deck": [
+        "BombTower",
+        "Archers",
+        "Lightning",
+        "Skeletons",
+        "BarbLog",
+        "RoyalHogs",
+        "ElectroSpirit",
+        "Goblinstein"
+      ],
+      "opponent_deck": [
+        "MightyMiner",
+        "ElectroSpirit",
+        "Earthquake",
+        "Log",
+        "Cannon",
+        "Firecracker",
+        "Skeletons",
+        "HogRider"
+      ]
+    },
+    {
+      "pair": 162,
+      "mode": "scripts",
+      "seed": 7612163459,
+      "noise_seed": 8612163459,
+      "family": "Goblinstein",
+      "style": "balanced",
+      "planning_deck": [
+        "Lightning",
+        "BombTower",
+        "ElectroSpirit",
+        "Goblinstein",
+        "BarbLog",
+        "RoyalHogs",
+        "Archers",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "Cannon",
+        "Log",
+        "ElectroSpirit",
+        "HogRider",
+        "Skeletons",
+        "Lightning",
+        "FirespiritHut",
+        "Berserker"
+      ]
+    },
+    {
+      "pair": 163,
+      "mode": "scripts",
+      "seed": 7612164468,
+      "noise_seed": 8612164468,
+      "family": "Goblinstein",
+      "style": "pressure",
+      "planning_deck": [
+        "BarbLog",
+        "ElectroSpirit",
+        "Skeletons",
+        "RoyalHogs",
+        "BombTower",
+        "Archers",
+        "Lightning",
+        "Goblinstein"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "Musketeer",
+        "HogRider",
+        "IceSpirit",
+        "Cannon",
+        "Log",
+        "Skeletons",
+        "IceGolem"
+      ]
+    },
+    {
+      "pair": 164,
+      "mode": "scripts",
+      "seed": 7612165477,
+      "noise_seed": 8612165477,
+      "family": "Goblinstein",
+      "style": "defense",
+      "planning_deck": [
+        "Skeletons",
+        "RoyalHogs",
+        "Lightning",
+        "Archers",
+        "BombTower",
+        "BarbLog",
+        "ElectroSpirit",
+        "Goblinstein"
+      ],
+      "opponent_deck": [
+        "Princess",
+        "BarbLog",
+        "Skeletons",
+        "AngryBarbarians",
+        "Fireball",
+        "BlowdartGoblin",
+        "Wallbreakers",
+        "Knight"
+      ]
+    },
+    {
+      "pair": 165,
+      "mode": "scripts",
+      "seed": 7612166486,
+      "noise_seed": 8612166486,
+      "family": "Goblinstein",
+      "style": "balanced",
+      "planning_deck": [
+        "RoyalHogs",
+        "Skeletons",
+        "ElectroSpirit",
+        "Archers",
+        "BarbLog",
+        "BombTower",
+        "Lightning",
+        "Goblinstein"
+      ],
+      "opponent_deck": [
+        "Skeletons",
+        "Firecracker",
+        "Earthquake",
+        "ElectroSpirit",
+        "Log",
+        "Cannon",
+        "HogRider",
+        "Berserker"
+      ]
+    },
+    {
+      "pair": 166,
+      "mode": "scripts",
+      "seed": 7612167495,
+      "noise_seed": 8612167495,
+      "family": "Goblinstein",
+      "style": "pressure",
+      "planning_deck": [
+        "Archers",
+        "ElectroSpirit",
+        "BarbLog",
+        "BombTower",
+        "Skeletons",
+        "Lightning",
+        "Goblinstein",
+        "RoyalHogs"
+      ],
+      "opponent_deck": [
+        "Cannon",
+        "ElectroSpirit",
+        "Log",
+        "HogRider",
+        "Skeletons",
+        "Musketeer",
+        "Fireball",
+        "IceGolem"
+      ]
+    },
+    {
+      "pair": 167,
+      "mode": "scripts",
+      "seed": 7612168504,
+      "noise_seed": 8612168504,
+      "family": "Goblinstein",
+      "style": "defense",
+      "planning_deck": [
+        "Lightning",
+        "Archers",
+        "Goblinstein",
+        "RoyalHogs",
+        "Berserker",
+        "ElectroSpirit",
+        "BarbLog",
+        "BombTower"
+      ],
+      "opponent_deck": [
+        "Ghost",
+        "GoblinHut",
+        "FirespiritHut",
+        "RoyalHogs",
+        "Fireball",
+        "BarbLog",
+        "ElectroSpirit",
+        "Berserker"
+      ]
+    },
+    {
+      "pair": 168,
+      "mode": "scripts",
+      "seed": 7612169513,
+      "noise_seed": 8612169513,
+      "family": "Goblinstein",
+      "style": "balanced",
+      "planning_deck": [
+        "Archers",
+        "RoyalHogs",
+        "Goblinstein",
+        "Skeletons",
+        "BombTower",
+        "BarbLog",
+        "Lightning",
+        "ElectroSpirit"
+      ],
+      "opponent_deck": [
+        "Goblins",
+        "Log",
+        "RoyalHogs",
+        "Firecracker",
+        "Bats",
+        "Fireball",
+        "IceGolem",
+        "AngryBarbarians"
+      ]
+    },
+    {
+      "pair": 169,
+      "mode": "scripts",
+      "seed": 7612170522,
+      "noise_seed": 8612170522,
+      "family": "Goblinstein",
+      "style": "pressure",
+      "planning_deck": [
+        "Archers",
+        "Lightning",
+        "RoyalHogs",
+        "Goblinstein",
+        "Skeletons",
+        "BarbLog",
+        "BombTower",
+        "ElectroSpirit"
+      ],
+      "opponent_deck": [
+        "GoblinGang",
+        "Knight",
+        "Log",
+        "Rocket",
+        "IceSpirit",
+        "GoblinBarrel",
+        "Princess",
+        "InfernoTower"
+      ]
+    },
+    {
+      "pair": 170,
+      "mode": "scripts",
+      "seed": 7612171531,
+      "noise_seed": 8612171531,
+      "family": "Goblinstein",
+      "style": "defense",
+      "planning_deck": [
+        "Goblinstein",
+        "Lightning",
+        "BombTower",
+        "Skeletons",
+        "ElectroSpirit",
+        "Archers",
+        "RoyalHogs",
+        "BarbLog"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "Earthquake",
+        "HogRider",
+        "Skeletons",
+        "MightyMiner",
+        "Firecracker",
+        "Cannon",
+        "Log"
+      ]
+    },
+    {
+      "pair": 171,
+      "mode": "scripts",
+      "seed": 7612172540,
+      "noise_seed": 8612172540,
+      "family": "Goblinstein",
+      "style": "balanced",
+      "planning_deck": [
+        "Lightning",
+        "Goblinstein",
+        "Archers",
+        "Skeletons",
+        "RoyalHogs",
+        "BarbLog",
+        "ElectroSpirit",
+        "BombTower"
+      ],
+      "opponent_deck": [
+        "Berserker",
+        "GoblinHut",
+        "Skeletons",
+        "BarbLog",
+        "Lightning",
+        "Wizard",
+        "ElectroSpirit",
+        "RoyalHogs"
+      ]
+    },
+    {
+      "pair": 172,
+      "mode": "scripts",
+      "seed": 7612173549,
+      "noise_seed": 8612173549,
+      "family": "Goblinstein",
+      "style": "pressure",
+      "planning_deck": [
+        "ElectroSpirit",
+        "Goblinstein",
+        "Skeletons",
+        "Archers",
+        "Lightning",
+        "RoyalHogs",
+        "BarbLog",
+        "BombTower"
+      ],
+      "opponent_deck": [
+        "RoyalDelivery",
+        "Log",
+        "Cannon",
+        "Earthquake",
+        "Skeletons",
+        "IceSpirit",
+        "ArcherQueen",
+        "HogRider"
+      ]
+    },
+    {
+      "pair": 173,
+      "mode": "scripts",
+      "seed": 7612174558,
+      "noise_seed": 8612174558,
+      "family": "Goblinstein",
+      "style": "defense",
+      "planning_deck": [
+        "BarbLog",
+        "Archers",
+        "Skeletons",
+        "Lightning",
+        "RoyalHogs",
+        "Goblinstein",
+        "ElectroSpirit",
+        "BombTower"
+      ],
+      "opponent_deck": [
+        "SkeletonArmy",
+        "Log",
+        "IceSpirit",
+        "Knight",
+        "InfernoTower",
+        "GoblinBarrel",
+        "BlowdartGoblin",
+        "Princess"
+      ]
+    },
+    {
+      "pair": 174,
+      "mode": "scripts",
+      "seed": 7612175567,
+      "noise_seed": 8612175567,
+      "family": "AQ",
+      "style": "balanced",
+      "planning_deck": [
+        "Skeletons",
+        "IceSpirit",
+        "ArcherQueen",
+        "Log",
+        "RoyalHogs",
+        "Cannon",
+        "Earthquake",
+        "RoyalDelivery"
+      ],
+      "opponent_deck": [
+        "Earthquake",
+        "Tesla",
+        "Skeletons",
+        "BarbLog",
+        "ElectroSpirit",
+        "Firecracker",
+        "HogRider",
+        "MightyMiner"
+      ]
+    },
+    {
+      "pair": 175,
+      "mode": "scripts",
+      "seed": 7612176576,
+      "noise_seed": 8612176576,
+      "family": "AQ",
+      "style": "pressure",
+      "planning_deck": [
+        "Earthquake",
+        "Log",
+        "Skeletons",
+        "Cannon",
+        "RoyalHogs",
+        "RoyalDelivery",
+        "IceSpirit",
+        "ArcherQueen"
+      ],
+      "opponent_deck": [
+        "Log",
+        "Skeletons",
+        "Tesla",
+        "Fireball",
+        "ElectroSpirit",
+        "Knight",
+        "Xbow",
+        "Archers"
+      ]
+    },
+    {
+      "pair": 176,
+      "mode": "scripts",
+      "seed": 7612177585,
+      "noise_seed": 8612177585,
+      "family": "AQ",
+      "style": "defense",
+      "planning_deck": [
+        "RoyalDelivery",
+        "Cannon",
+        "Skeletons",
+        "IceSpirit",
+        "Earthquake",
+        "RoyalHogs",
+        "ArcherQueen",
+        "Log"
+      ],
+      "opponent_deck": [
+        "Earthquake",
+        "Skeletons",
+        "HogRider",
+        "Tesla",
+        "ElectroSpirit",
+        "Firecracker",
+        "BarbLog",
+        "MightyMiner"
+      ]
+    },
+    {
+      "pair": 177,
+      "mode": "scripts",
+      "seed": 7612178594,
+      "noise_seed": 8612178594,
+      "family": "AQ",
+      "style": "balanced",
+      "planning_deck": [
+        "ArcherQueen",
+        "RoyalDelivery",
+        "Skeletons",
+        "Cannon",
+        "Log",
+        "IceSpirit",
+        "RoyalHogs",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "RoyalHogs",
+        "BarbLog",
+        "Fireball",
+        "GoblinHut",
+        "FirespiritHut",
+        "Berserker",
+        "Ghost",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 178,
+      "mode": "scripts",
+      "seed": 7612179603,
+      "noise_seed": 8612179603,
+      "family": "AQ",
+      "style": "pressure",
+      "planning_deck": [
+        "Earthquake",
+        "Skeletons",
+        "Berserker",
+        "RoyalHogs",
+        "Cannon",
+        "RoyalDelivery",
+        "ElectroSpirit",
+        "ArcherQueen"
+      ],
+      "opponent_deck": [
+        "SkeletonArmy",
+        "BlowdartGoblin",
+        "IceSpirit",
+        "InfernoTower",
+        "Princess",
+        "Log",
+        "GoblinBarrel",
+        "Knight"
+      ]
+    },
+    {
+      "pair": 179,
+      "mode": "scripts",
+      "seed": 7612180612,
+      "noise_seed": 8612180612,
+      "family": "AQ",
+      "style": "defense",
+      "planning_deck": [
+        "IceSpirit",
+        "Cannon",
+        "RoyalDelivery",
+        "Log",
+        "ArcherQueen",
+        "RoyalHogs",
+        "Earthquake",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "SkeletonArmy",
+        "Wallbreakers",
+        "Knight",
+        "Log",
+        "BlowdartGoblin",
+        "GoblinBarrel",
+        "ElectroSpirit",
+        "Tesla"
+      ]
+    },
+    {
+      "pair": 180,
+      "mode": "scripts",
+      "seed": 7612181621,
+      "noise_seed": 8612181621,
+      "family": "AQ",
+      "style": "balanced",
+      "planning_deck": [
+        "Log",
+        "Skeletons",
+        "ArcherQueen",
+        "Cannon",
+        "RoyalHogs",
+        "RoyalDelivery",
+        "IceSpirit",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "Ghost",
+        "ElectroSpirit",
+        "BarbLog",
+        "GoblinHut",
+        "Fireball",
+        "FirespiritHut",
+        "Berserker",
+        "RoyalHogs"
+      ]
+    },
+    {
+      "pair": 181,
+      "mode": "scripts",
+      "seed": 7612182630,
+      "noise_seed": 8612182630,
+      "family": "AQ",
+      "style": "pressure",
+      "planning_deck": [
+        "IceSpirit",
+        "RoyalDelivery",
+        "RoyalHogs",
+        "ArcherQueen",
+        "Cannon",
+        "Log",
+        "Earthquake",
+        "Skeletons"
+      ],
+      "opponent_deck": [
+        "BlowdartGoblin",
+        "Princess",
+        "GoblinBarrel",
+        "Valkyrie",
+        "Cannon",
+        "ElectroSpirit",
+        "Wallbreakers",
+        "SkeletonArmy"
+      ]
+    },
+    {
+      "pair": 182,
+      "mode": "scripts",
+      "seed": 7612183639,
+      "noise_seed": 8612183639,
+      "family": "AQ",
+      "style": "defense",
+      "planning_deck": [
+        "Log",
+        "Earthquake",
+        "IceSpirit",
+        "ArcherQueen",
+        "Skeletons",
+        "RoyalHogs",
+        "Cannon",
+        "RoyalDelivery"
+      ],
+      "opponent_deck": [
+        "Valkyrie",
+        "IceSpirit",
+        "SkeletonArmy",
+        "Cannon",
+        "GoblinBarrel",
+        "Princess",
+        "Wallbreakers",
+        "BlowdartGoblin"
+      ]
+    },
+    {
+      "pair": 183,
+      "mode": "scripts",
+      "seed": 7612184648,
+      "noise_seed": 8612184648,
+      "family": "AQ",
+      "style": "balanced",
+      "planning_deck": [
+        "RoyalDelivery",
+        "Skeletons",
+        "Cannon",
+        "IceSpirit",
+        "Earthquake",
+        "ArcherQueen",
+        "RoyalHogs",
+        "Log"
+      ],
+      "opponent_deck": [
+        "Archers",
+        "BarbLog",
+        "Goblinstein",
+        "RoyalHogs",
+        "Skeletons",
+        "Lightning",
+        "BombTower",
+        "ElectroSpirit"
+      ]
+    },
+    {
+      "pair": 184,
+      "mode": "scripts",
+      "seed": 7612185657,
+      "noise_seed": 8612185657,
+      "family": "AQ",
+      "style": "pressure",
+      "planning_deck": [
+        "ArcherQueen",
+        "Log",
+        "IceSpirit",
+        "RoyalHogs",
+        "RoyalDelivery",
+        "Cannon",
+        "Skeletons",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "Skeletons",
+        "Cannon",
+        "IceSpirit",
+        "Musketeer",
+        "Log",
+        "IceGolem",
+        "HogRider"
+      ]
+    },
+    {
+      "pair": 185,
+      "mode": "scripts",
+      "seed": 7612186666,
+      "noise_seed": 8612186666,
+      "family": "AQ",
+      "style": "defense",
+      "planning_deck": [
+        "ArcherQueen",
+        "Cannon",
+        "Skeletons",
+        "RoyalHogs",
+        "RoyalDelivery",
+        "IceSpirit",
+        "Log",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "Cannon",
+        "MightyMiner",
+        "GoblinBarrel",
+        "Log",
+        "Goblins",
+        "IceSpirit",
+        "Rocket",
+        "Princess"
+      ]
+    },
+    {
+      "pair": 186,
+      "mode": "scripts",
+      "seed": 7612187675,
+      "noise_seed": 8612187675,
+      "family": "AQ",
+      "style": "balanced",
+      "planning_deck": [
+        "Cannon",
+        "RoyalHogs",
+        "Earthquake",
+        "Log",
+        "RoyalDelivery",
+        "ArcherQueen",
+        "Skeletons",
+        "IceSpirit"
+      ],
+      "opponent_deck": [
+        "Berserker",
+        "Skeletons",
+        "ElectroSpirit",
+        "Lightning",
+        "BarbLog",
+        "BombTower",
+        "Archers",
+        "RoyalHogs"
+      ]
+    },
+    {
+      "pair": 187,
+      "mode": "scripts",
+      "seed": 7612188684,
+      "noise_seed": 8612188684,
+      "family": "AQ",
+      "style": "pressure",
+      "planning_deck": [
+        "Skeletons",
+        "RoyalHogs",
+        "RoyalDelivery",
+        "Log",
+        "ArcherQueen",
+        "Earthquake",
+        "Cannon",
+        "IceSpirit"
+      ],
+      "opponent_deck": [
+        "IceSpirit",
+        "BlowdartGoblin",
+        "Princess",
+        "Log",
+        "Berserker",
+        "InfernoTower",
+        "GoblinBarrel",
+        "SkeletonArmy"
+      ]
+    },
+    {
+      "pair": 188,
+      "mode": "scripts",
+      "seed": 7612189693,
+      "noise_seed": 8612189693,
+      "family": "AQ",
+      "style": "defense",
+      "planning_deck": [
+        "Cannon",
+        "IceSpirit",
+        "RoyalDelivery",
+        "ArcherQueen",
+        "Skeletons",
+        "Log",
+        "RoyalHogs",
+        "Earthquake"
+      ],
+      "opponent_deck": [
+        "ElectroSpirit",
+        "Log",
+        "HogRider",
+        "Skeletons",
+        "Princess",
+        "Berserker",
+        "Earthquake",
+        "Tesla"
+      ]
+    },
+    {
+      "pair": 189,
+      "mode": "scripts",
+      "seed": 7612190702,
+      "noise_seed": 8612190702,
+      "family": "AQ",
+      "style": "balanced",
+      "planning_deck": [
+        "Skeletons",
+        "Log",
+        "RoyalDelivery",
+        "Earthquake",
+        "Cannon",
+        "ArcherQueen",
+        "RoyalHogs",
+        "IceSpirit"
+      ],
+      "opponent_deck": [
+        "Fireball",
+        "ElectroSpirit",
+        "Berserker",
+        "GoblinHut",
+        "RoyalHogs",
+        "FirespiritHut",
+        "Ghost",
+        "BarbLog"
+      ]
+    },
+    {
+      "pair": 190,
+      "mode": "scripts",
+      "seed": 7612191711,
+      "noise_seed": 8612191711,
+      "family": "AQ",
+      "style": "pressure",
+      "planning_deck": [
+        "ArcherQueen",
+        "Log",
+        "RoyalHogs",
+        "Skeletons",
+        "Earthquake",
+        "IceSpirit",
+        "RoyalDelivery",
+        "Cannon"
+      ],
+      "opponent_deck": [
+        "MightyMiner",
+        "Earthquake",
+        "HogRider",
+        "Firecracker",
+        "Log",
+        "Skeletons",
+        "ElectroSpirit",
+        "Cannon"
+      ]
+    },
+    {
+      "pair": 191,
+      "mode": "scripts",
+      "seed": 7612192720,
+      "noise_seed": 8612192720,
+      "family": "AQ",
+      "style": "defense",
+      "planning_deck": [
+        "Skeletons",
+        "Log",
+        "Earthquake",
+        "RoyalDelivery",
+        "IceSpirit",
+        "ArcherQueen",
+        "Cannon",
+        "RoyalHogs"
+      ],
+      "opponent_deck": [
+        "GoblinBarrel",
+        "Princess",
+        "Wallbreakers",
+        "IceSpirit",
+        "BlowdartGoblin",
+        "Valkyrie",
+        "SkeletonArmy",
+        "Cannon"
+      ]
+    }
+  ],
+  "sources": {
+    "/Users/sam/Desktop/code/clasher/reports/strategy_council_20260928/c56/data/roles/c56_roles_v1.json": "7e357f64ad6df13e232ec9b1c7c143bbcd734d12a9cdceec2cef999bbe74fcdc",
+    "/Users/sam/Desktop/code/clasher/reports/strategy_council_20260928/c56/data/index/perspectives.jsonl.gz": "f368af125b72e423d54826e16c5a75db113dae3cc4a8a2102adb68d0b362bb45",
+    "/Users/sam/Desktop/code/clasher/reports/strategy_council_20260928/c56/engine/root-v3/human_deck_catalog.json": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+    "/Users/sam/Desktop/code/clasher/reports/strategy_council_20260928/engine-speed/stage5/decks.py": "fc6f63b9c6db6f832aaa2ead3fda64d21722c5645913684fa64b3c89a2c39c0d",
+    "/Users/sam/Desktop/code/clasher/reports/strategy_council_20260928/search-noise-v2/PREREG.md": "aa8f046c4203ada384b274ca35799f1090a321e9bba15264bc1088bc52e255c4",
+    "/Users/sam/Desktop/code/clasher/reports/strategy_council_20260928/search-noise-v2/noise-model.json": "a7c97ebccc48316b99f764b0365c648483516e3928a4d1380715569036826f2b"
+  },
+  "seed_audit_sha256": "150d623eb199a8c06a50e4b24f45a9d826655785e872151c995ed8f7c352173c",
+  "protocol_finalized_utc": "2026-10-07T23:14:27.798402+00:00"
+}

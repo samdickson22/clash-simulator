@@ -1,0 +1,47 @@
+{
+  "complete": false,
+  "trials": 447,
+  "cells": {
+    "('grpc', 0.0, 3, 0.1)": 40,
+    "('grpc', 0.0, 3, 1.0)": 40,
+    "('grpc', 0.0, 24, 0.1)": 40,
+    "('grpc', 0.0, 24, 1.0)": 40,
+    "('grpc', 0.02, 3, 0.1)": 40,
+    "('grpc', 0.02, 3, 1.0)": 40,
+    "('grpc', 0.02, 24, 0.1)": 40,
+    "('grpc', 0.02, 24, 1.0)": 40,
+    "('adb-spawn', 0.0, 3, 0.1)": 40,
+    "('adb-spawn', 0.0, 3, 1.0)": 40,
+    "('adb-spawn', 0.0, 24, 0.1)": 40,
+    "('adb-spawn', 0.0, 24, 1.0)": 7
+  },
+  "methods": {
+    "grpc": {
+      "trials": 320,
+      "accepted": 320,
+      "acceptance": 1.0,
+      "two_tap_p95_ms": 26.90712675685063,
+      "pixel_600ms": 0,
+      "sensitivity_600ms": 0.0,
+      "truth_latency_p50_ms": 1151.6914791427553,
+      "pixel_latency_p95_ms": 1212.251697317697,
+      "detected_within_600ms_of_native_observation": 316,
+      "pixel_minus_native_p95_ms": 39.920374925713986,
+      "median_capture_fps": 59.133771608820666
+    },
+    "adb-spawn": {
+      "trials": 127,
+      "accepted": 127,
+      "acceptance": 1.0,
+      "two_tap_p95_ms": 59.79407937265931,
+      "pixel_600ms": 0,
+      "sensitivity_600ms": 0.0,
+      "truth_latency_p50_ms": 1186.0292919445783,
+      "pixel_latency_p95_ms": 1232.777239580173,
+      "detected_within_600ms_of_native_observation": 126,
+      "pixel_minus_native_p95_ms": 36.50915651815012,
+      "median_capture_fps": 59.14046011149772
+    }
+  },
+  "reproduction": null
+}

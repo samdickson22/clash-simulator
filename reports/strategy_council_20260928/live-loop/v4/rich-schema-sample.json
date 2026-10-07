@@ -1,0 +1,1998 @@
+{
+  "ok": true,
+  "schema": "native-rich-telemetry.v3",
+  "statusEnum": [
+    "authoritative",
+    "derived",
+    "pending",
+    "unavailable"
+  ],
+  "generation": 103,
+  "stateEpoch": 103,
+  "tick": 964,
+  "provenance": {
+    "slot": {
+      "status": "derived",
+      "source": "object-vector-index",
+      "validation": "bounded-object-vector",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "nativeObjectId": {
+      "status": "authoritative",
+      "source": "LogicGameObject+0x08",
+      "validation": "nonzero;unique-in-current-bounded-object-vector;named-live-fresh-towers-5000000-through-5000005-and-cross-projectile-damage-5000005",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "entityKey": {
+      "status": "derived",
+      "source": "tagged-nativeObjectId",
+      "validation": "owner-minus2-nativeObjectId;nativeObjectId-nonzero-and-current-vector-unique;raw-index-tuples-are-not-identities;slot-and-pointer-never-used",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "owner": {
+      "status": "authoritative",
+      "source": "LogicGameObject+0x78",
+      "validation": "exact-build-runtime-observation",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "cardId": {
+      "status": "authoritative",
+      "source": "LogicGameObject+0xac",
+      "validation": "exact-build-runtime-observation",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "dataGlobalId": {
+      "status": "authoritative",
+      "source": "LogicGameObject+0x48->LogicData+0x10",
+      "validation": "positive-uint32-logic-data-identity",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "x": {
+      "status": "authoritative",
+      "source": "LogicGameObject+0x7c",
+      "validation": "exact-build-runtime-observation",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "y": {
+      "status": "authoritative",
+      "source": "LogicGameObject+0x80",
+      "validation": "exact-build-runtime-observation",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "targetX": {
+      "status": "authoritative",
+      "source": "LogicGameObject+0x84",
+      "validation": "coordinate-only;not-target-entity",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "targetY": {
+      "status": "authoritative",
+      "source": "LogicGameObject+0x88",
+      "validation": "coordinate-only;not-target-entity",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "targetEntityKey": {
+      "status": "authoritative",
+      "source": "engine-component-type-0+0x10/current-object-vector-identity",
+      "validation": "owner-backlink;engine-type-0;readable-field;bounded-pointer-identity;named-live-golden-giant-26000003-generation-1-state-epoch-1-ticks-131-180-530",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "targetEntityValidated": {
+      "status": "derived",
+      "source": "targetEntityKey-validation",
+      "validation": "true-only-for-null-target-or-current-object-vector-match",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "objectIndex": {
+      "status": "authoritative",
+      "source": "LogicGameObject+0x94",
+      "validation": "exact-build-runtime-observation",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "secondaryIndex": {
+      "status": "authoritative",
+      "source": "LogicGameObject+0x98",
+      "validation": "exact-build-runtime-observation",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "hp": {
+      "status": "authoritative",
+      "source": "engine-component-type-2+0x10",
+      "validation": "owner-backlink;engine-type;captured-damage-delta",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "maxHp": {
+      "status": "authoritative",
+      "source": "engine-component-type-2+0x14",
+      "validation": "owner-backlink;engine-type;nonnegative",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "shield.current": {
+      "status": "authoritative",
+      "source": "engine-component-type-2+0x28",
+      "validation": "owner-backlink;engine-type-2;readable-through-0x2f;0<=current<=max;static-loader-d9712c-accessor-d98360-init-f6261c-constructor-f624c0;named-live-golden-dark-prince-26000027-generation-13-state-epoch-13-ticks-131-234-247-261-277",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "shield.max": {
+      "status": "authoritative",
+      "source": "engine-component-type-2+0x2c",
+      "validation": "owner-backlink;engine-type-2;readable-through-0x2f;nonnegative;static-loader-d9712c-accessor-d98360-init-f6261c-constructor-f624c0;named-live-golden-dark-prince-26000027-generation-13-state-epoch-13-ticks-131-234-247-261-277",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "attackSequenceStage": {
+      "status": "authoritative",
+      "source": "engine-component-type-0+0x20",
+      "validation": "owner-backlink;engine-type-0;readable-through-0x23;wire-bound-0-255;configured-sequence-count-is-card-specific;named-live-golden-inferno-dragon-26000037-generation-18-state-epoch-18-observed-stages-0-1-2-ticks-351-391-497-536-576",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "activeEffects": {
+      "status": "authoritative",
+      "source": "engine-component-type-3+0x18/+0x20/+0x24",
+      "validation": "owner-backlink;engine-type-3;bounded-pointer-vector;child-size-0x70;all-entries-or-null",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "activeEffects.buffGlobalId": {
+      "status": "authoritative",
+      "source": "buff-asset+0x40",
+      "validation": "asset-vtable-libg+0x1882500;class-getter-libg+d961f4;static-layout-libg+dc2570;positive-global-id;ice-wizard-slow-down-golden-9000003",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "activeEffects.name": {
+      "status": "authoritative",
+      "source": "buff-asset+0x28-LibgString",
+      "validation": "static-layout-libg+dc25ec;readable;1-128-byte-valid-utf8;named-goldens-Rage-Freeze-IceWizardSlowDown-Invisibility",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "activeEffects.remainingMs": {
+      "status": "authoritative",
+      "source": "type-3-child+0x08",
+      "validation": "range-minus-1-or-nonnegative;minus-1-means-non-expiring;ice-wizard-slow-down-countdown-minus-50-per-tick-and-hit-renewal-to-about-2500ms",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "activeEffects.sourceEntityKey": {
+      "status": "authoritative",
+      "source": "type-3-child+0x38/current-object-vector-identity",
+      "validation": "exposed-only-for-bounded-pointer-identity;absolute-pointer-not-exposed;ice-wizard-slow-down-source-golden",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "activeEffects.sourceEntityValidated": {
+      "status": "derived",
+      "source": "type-3-child+0x38-pointer-validation",
+      "validation": "true-for-null-or-current-bounded-vector-member;false-for-nonmember",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "invisibleCount": {
+      "status": "authoritative",
+      "source": "engine-component-type-3+0x34",
+      "validation": "owner-backlink;engine-type-3;range-0-to-active-entry-count;named-live-golden-royal-ghost-26000050-generation-19-state-epoch-19-ticks-131-276-537-569",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "visibilityState": {
+      "status": "derived",
+      "source": "invisibleCount",
+      "validation": "invisible-iff-count-greater-than-zero;owner-relative-render-visibility-not-claimed",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "components.container": {
+      "status": "authoritative",
+      "source": "LogicGameObject+0x18/+0x20/+0x24",
+      "validation": "count-capacity-pointer-bounds",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "components.slots.present": {
+      "status": "authoritative",
+      "source": "component-vector-entry",
+      "validation": "bounded-component-vector",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "components.slots.ownerBacklinkValid": {
+      "status": "authoritative",
+      "source": "component+0x08",
+      "validation": "equals-containing-object",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "components.slots.vtableLibgOffset": {
+      "status": "authoritative",
+      "source": "validated-vtable-minus-libg-base",
+      "validation": "inside-readable-libg-segment;named-live-golden-generation-1-tower-tick-0-and-giant-26000003-tick-131;absolute-pointer-not-exposed",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "components.slots.typeGetterLibgOffset": {
+      "status": "authoritative",
+      "source": "validated-vtable+0x20-minus-libg-base",
+      "validation": "inside-executable-libg-segment;named-live-golden-generation-1-tower-tick-0-and-giant-26000003-tick-131;absolute-pointer-not-exposed",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "components.slots.engineType": {
+      "status": "authoritative",
+      "source": "libg+0x113b194/vtable+0x20",
+      "validation": "owner-backlink;readable-vtable;executable-getter;range-0-31;named-live-golden-generation-1-tower-tick-0-and-giant-26000003-tick-131",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "components.slots.typeValid": {
+      "status": "derived",
+      "source": "engineType-validation",
+      "validation": "all-guards-passed",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "components.slots.slotMatchesType": {
+      "status": "derived",
+      "source": "slot-equals-engineType",
+      "validation": "only-when-typeValid",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "projectile": {
+      "status": "derived",
+      "source": "exact-kind-4-LogicProjectile",
+      "validation": "exact-vtable-kind-getter-and-LogicProjectileData-type-0x0a;static-high-no-named-live-transition",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "projectile.projectileDataGlobalId": {
+      "status": "derived",
+      "source": "LogicProjectileData+0x40",
+      "validation": "positive-global-id-after-exact-data-type-check",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "projectile.sourceEntityKey": {
+      "status": "derived",
+      "source": "LogicProjectile+0x100",
+      "validation": "same-bounded-object-vector-identity-or-null",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "projectile.targetEntityKey": {
+      "status": "derived",
+      "source": "LogicProjectile+0x108",
+      "validation": "same-bounded-object-vector-identity-or-null",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "projectile.homingTargetEntityKey": {
+      "status": "derived",
+      "source": "LogicProjectile+0x110",
+      "validation": "same-bounded-object-vector-identity-or-null;destination-getters-prefer-this-target;cleared-by-object-removal-callback",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "projectile.destination": {
+      "status": "derived",
+      "source": "LogicProjectile+0x120/+0x124",
+      "validation": "current-flight-destination-coordinates-only",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "projectile.terminal": {
+      "status": "derived",
+      "source": "LogicProjectile+0x170",
+      "validation": "strict-bit;terminal-reason-not-claimed",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "projectile.nativePhase": {
+      "status": "derived",
+      "source": "projectile.terminal",
+      "validation": "zero-in-flight;one-terminal-or-finished-processing;never-impact-or-expiry",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "projectile.dragStage": {
+      "status": "authoritative",
+      "source": "LogicProjectile+0x189 gated by LogicProjectileData+0x1b0 DragBackSpeed",
+      "validation": "exact-projectile-vtable-and-data-type;only-drag-capable-data;strict-0-or-1-persisted-latch",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "entityResourceRuntime": {
+      "status": "authoritative",
+      "source": "LogicCharacter+0x1f0 gated by CharacterData+0x710 CharacterAbilityData+0x104/+0x108",
+      "validation": "exact-character-and-ability-data-vtables;base-positive;limit-greater-than-base;raw-bounded-by-limit-minus-base",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "periodicAttackModifierRuntime": {
+      "status": "authoritative",
+      "source": "exact periodic-attack-modifier runtime/action-data vtables in carrier action queue",
+      "validation": "owner-backlink;period-bounded-counter;native-lifecycle-state;source-identity;linger-timer",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "captureRuntime": {
+      "status": "authoritative",
+      "source": "exact ActionCaptureCharacter runtime/action-data vtables and owner action queue",
+      "validation": "owner-backlink;bounded-active-completed-elapsed-vectors;completed-subset;live-evo-positive-and-basic-negative",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "thresholdRelocationRuntime": {
+      "status": "authoritative",
+      "source": "exact threshold-relocation runtime/action-data vtables and owner action queue",
+      "validation": "owner-backlink;bounded-threshold-vector;stage-derived-from-threshold-count;live-two-cycle-positive-and-basic-negative",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "players.ownerRoot": {
+      "status": "derived",
+      "source": "exact-kind-5-player-owner-root",
+      "validation": "unique-current-vector-member;exact-vtable-kind-manager-and-owner-selector",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "players.abilityRuntime": {
+      "status": "derived",
+      "source": "owner+0x3a0/+0x3a8-champion-controllers",
+      "validation": "exact-controller-action-data-selected-character-and-champion-vector-joins;static-high",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "players.abilityRuntime.buttonState": {
+      "status": "derived",
+      "source": "champion-controller+0x98",
+      "validation": "exact-enum-0-through-14;available-only-for-Ready-value-2",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "players.abilityRuntime.cooldown": {
+      "status": "derived",
+      "source": "champion-controller+0x78/+0x7c",
+      "validation": "zero-to-configured-and-configured-equals-character-ability-data+0xb4",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "players.abilityRuntime.charges": {
+      "status": "derived",
+      "source": "champion-controller+0x80",
+      "validation": "minus-one-unlimited-or-bounded-by-character-ability-data+0xac",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "players.evolutionRuntime": {
+      "status": "derived",
+      "source": "owner+0x2e8-progress-vector-and-exact-deck-slot-join",
+      "validation": "bounded-slot-vector;exact-base-spell;unique-form-1-candidate;static-high",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "players.evolutionRuntime.cycle": {
+      "status": "derived",
+      "source": "progress-and-EvoForm-DarkElixirCost+0x284",
+      "validation": "zero-to-threshold;remaining-max-threshold-minus-progress-zero;ready-at-threshold",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "players.evolutionRuntime.playedForm": {
+      "status": "unavailable",
+      "source": "consumed-runtime-card-descriptor-not-retained",
+      "validation": "no-state-snapshot-substitution;no-per-entity-evolved-claim",
+      "confidence": "none",
+      "failClosed": true
+    },
+    "towerTroopRuntime": {
+      "status": "derived",
+      "source": "exact-ActionBurstAttack-and-ActionChefTower-runtime",
+      "validation": "sha-build-id-four-prologues-runtime-and-static-vtables-bounded-object-identities",
+      "confidence": "high",
+      "failClosed": true
+    }
+  },
+  "capabilities": {
+    "entityCore": {
+      "status": "authoritative",
+      "source": "LogicGameObject-runtime",
+      "validation": "exact-build-observe-path",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "targetCoordinates": {
+      "status": "authoritative",
+      "source": "LogicGameObject+0x84/+0x88",
+      "validation": "coordinates-only",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "hitpoints": {
+      "status": "authoritative",
+      "source": "engine-component-type-2",
+      "validation": "captured-live-damage-delta",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "componentInventory": {
+      "status": "authoritative",
+      "source": "engine-component-hash-virtual-getter",
+      "validation": "static-rela-identity;named-live-golden-generation-1-state-epoch-1-tower-component-slots-0-2-3-tick-0-and-giant-26000003-object-slot-6-component-slots-0-1-2-3-tick-131",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "shield": {
+      "status": "authoritative",
+      "source": "engine-component-type-2+0x28/+0x2c",
+      "validation": "static-producer-consumer-paths;named-live-golden-dark-prince-26000027-generation-13-state-epoch-13-150-to-0-before-hp-damage;no-shield-objects-are-0/0",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "attackSequenceStage": {
+      "status": "authoritative",
+      "source": "engine-component-type-0+0x20",
+      "validation": "wire-bound-0-255;card-specific-sequence-count;inferno-dragon-observed-0-1-2-damage-ramp-and-target-reset-golden",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "buffs": {
+      "status": "authoritative",
+      "source": "engine-component-type-3-activeEffects",
+      "validation": "exact-Buff-asset-identity;bounded-all-entry-decoding;named-live-goldens",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "debuffs": {
+      "status": "unavailable",
+      "source": "no-validated-entity-traversal",
+      "validation": "fail-closed-null",
+      "confidence": "none",
+      "failClosed": true
+    },
+    "slow": {
+      "status": "derived",
+      "source": "phaseRuntime-Buff-Speed-and-HitSpeed-consumers",
+      "validation": "exact-build-f5b3c8-f5b4ac;catalog-identity;fail-closed-envelope",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "rage": {
+      "status": "derived",
+      "source": "phaseRuntime-Buff-Speed-and-HitSpeed-consumers",
+      "validation": "exact-build-f5b3c8-f5b4ac;catalog-identity;fail-closed-envelope",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "stun": {
+      "status": "derived",
+      "source": "phaseRuntime-full-stop-Buff-and-consumer-zero",
+      "validation": "pending-attack-plus-effect-apply-plus-f5b4ac-zero;reset-separate",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "freeze": {
+      "status": "derived",
+      "source": "phaseRuntime-full-stop-Buff-consumers",
+      "validation": "exact-Buff-ID-join-and-zero-native-step;fail-closed-envelope",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "attackPhase": {
+      "status": "derived",
+      "source": "phaseRuntime-attested-hook-edges-and-type0-timers",
+      "validation": "start-release-load-gate-interrupt;ambiguous-snapshot-unknown",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "deployPhase": {
+      "status": "derived",
+      "source": "LogicCharacter+0x15c-and-phaseRuntime-deploy-step",
+      "validation": "live-remaining-budget;wall-time-only-with-known-consumer-step",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "chargeStage": {
+      "status": "derived",
+      "source": "type0-AttackSequence-plus-named-Inferno-static-join",
+      "validation": "Inferno-only;generic-stage-not-promoted;classic-charge-separate",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "targetEntity": {
+      "status": "authoritative",
+      "source": "engine-component-type-0+0x10",
+      "validation": "bounded-current-object-pointer-identity;named-live-golden-giant-26000003-generation-1-state-epoch-1-null-tick-131-positive-ticks-180-and-530",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "sourceEntity": {
+      "status": "unavailable",
+      "source": "no-validated-runtime-layout",
+      "validation": "fail-closed-null",
+      "confidence": "none",
+      "failClosed": true
+    },
+    "projectile": {
+      "status": "derived",
+      "source": "exact-kind-4-LogicProjectile-runtime",
+      "validation": "exact-build-static-high-layout;bounded-relations;no-impact-inference",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "impact": {
+      "status": "unavailable",
+      "source": "no-validated-runtime-layout",
+      "validation": "fail-closed-null",
+      "confidence": "none",
+      "failClosed": true
+    },
+    "visibility": {
+      "status": "unavailable",
+      "source": "no-validated-runtime-layout",
+      "validation": "fail-closed-null",
+      "confidence": "none",
+      "failClosed": true
+    },
+    "invisibility": {
+      "status": "authoritative",
+      "source": "engine-component-type-3+0x34",
+      "validation": "royal-ghost-26000050-generation-19-state-epoch-19-entry-and-count-synchronous-transitions",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "abilityRuntime": {
+      "status": "derived",
+      "source": "exact-player-owner-champion-controller-runtime",
+      "validation": "static-high-exact-layout-and-bounded-joins;catalog-ID-resolution-host-side",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "evolutionRuntime": {
+      "status": "derived",
+      "source": "exact-player-owner-progress-vector-runtime",
+      "validation": "static-high-exact-deck-slot-and-EvoForm-threshold-join;played-form-unavailable",
+      "confidence": "medium",
+      "failClosed": true
+    },
+    "towerTroopRuntime": {
+      "status": "derived",
+      "source": "exact-tower-troop-action-runtime-hooks",
+      "validation": "Dagger-charge-and-reload;Chef-delay-contribution-and-pending-target",
+      "confidence": "high",
+      "failClosed": true
+    }
+  },
+  "count": 9,
+  "objects": [
+    {
+      "slot": 0,
+      "nativeObjectId": 4000042,
+      "entityKey": [
+        1,
+        -2,
+        4000042
+      ],
+      "owner": 1,
+      "cardId": 28000011,
+      "dataGlobalId": 10000031,
+      "x": 14500,
+      "y": 30060,
+      "targetX": 14500,
+      "targetY": 30420,
+      "targetEntityKey": null,
+      "targetEntityValidated": false,
+      "objectIndex": 4,
+      "secondaryIndex": 6,
+      "hp": null,
+      "maxHp": null,
+      "shield": null,
+      "attackSequenceStage": null,
+      "invisibleCount": null,
+      "visibilityState": null,
+      "projectile": {
+        "projectileDataGlobalId": 10000031,
+        "sourceEntityKey": [
+          1,
+          -2,
+          5000003
+        ],
+        "sourceEntityValidated": true,
+        "targetEntityKey": null,
+        "targetEntityValidated": true,
+        "homingTargetEntityKey": null,
+        "homingTargetEntityValidated": true,
+        "destinationX": 14500,
+        "destinationY": 28500,
+        "terminal": false,
+        "nativePhase": "in_flight",
+        "dragStage": null
+      },
+      "entityResourceRuntime": null,
+      "periodicAttackModifierRuntime": null,
+      "captureRuntime": null,
+      "thresholdRelocationRuntime": null,
+      "phaseRuntime": null,
+      "towerTroopRuntime": null,
+      "activeEffects": null,
+      "components": {
+        "valid": true,
+        "count": 0,
+        "capacity": 0,
+        "slots": []
+      }
+    },
+    {
+      "slot": 1,
+      "nativeObjectId": 4000043,
+      "entityKey": [
+        0,
+        -2,
+        4000043
+      ],
+      "owner": 0,
+      "cardId": -1,
+      "dataGlobalId": 10000003,
+      "x": 3487,
+      "y": 6799,
+      "targetX": 3487,
+      "targetY": 6799,
+      "targetEntityKey": null,
+      "targetEntityValidated": false,
+      "objectIndex": -1,
+      "secondaryIndex": -1,
+      "hp": null,
+      "maxHp": null,
+      "shield": null,
+      "attackSequenceStage": null,
+      "invisibleCount": null,
+      "visibilityState": null,
+      "projectile": {
+        "projectileDataGlobalId": 10000003,
+        "sourceEntityKey": [
+          0,
+          -2,
+          5000001
+        ],
+        "sourceEntityValidated": true,
+        "targetEntityKey": [
+          1,
+          -2,
+          5000013
+        ],
+        "targetEntityValidated": true,
+        "homingTargetEntityKey": null,
+        "homingTargetEntityValidated": true,
+        "destinationX": 3250,
+        "destinationY": 11933,
+        "terminal": false,
+        "nativePhase": "in_flight",
+        "dragStage": null
+      },
+      "entityResourceRuntime": null,
+      "periodicAttackModifierRuntime": null,
+      "captureRuntime": null,
+      "thresholdRelocationRuntime": null,
+      "phaseRuntime": null,
+      "towerTroopRuntime": null,
+      "activeEffects": null,
+      "components": {
+        "valid": true,
+        "count": 0,
+        "capacity": 0,
+        "slots": []
+      }
+    },
+    {
+      "slot": 2,
+      "nativeObjectId": 5000000,
+      "entityKey": [
+        0,
+        -2,
+        5000000
+      ],
+      "owner": 0,
+      "cardId": -1,
+      "dataGlobalId": 35000000,
+      "x": 9000,
+      "y": 3000,
+      "targetX": 9000,
+      "targetY": 3000,
+      "targetEntityKey": [
+        1,
+        -2,
+        5000004
+      ],
+      "targetEntityValidated": true,
+      "objectIndex": -1,
+      "secondaryIndex": -1,
+      "hp": 2952,
+      "maxHp": 4824,
+      "shield": {
+        "current": 0,
+        "max": 0,
+        "status": "authoritative"
+      },
+      "attackSequenceStage": 0,
+      "invisibleCount": 0,
+      "visibilityState": "visible",
+      "projectile": null,
+      "entityResourceRuntime": null,
+      "periodicAttackModifierRuntime": null,
+      "captureRuntime": null,
+      "thresholdRelocationRuntime": null,
+      "phaseRuntime": {
+        "schema": "native-phase-object.v1",
+        "attackValidated": true,
+        "movementValidated": false,
+        "buffsValidated": true,
+        "attackSequenceStage": 0,
+        "attackTimelineMs": 0,
+        "loadRemainingMs": 50,
+        "deployRemainingMs": 0,
+        "deployPreviousMs": 0,
+        "configuredDeployTimeMs": 0,
+        "hitSpeedMs": 1000,
+        "attackDashTimeMs": 0,
+        "baseMovementSpeed": 0,
+        "chargeSpeedMultiplier": 0,
+        "classicChargeProgress": null,
+        "speedPositivePercent": 100,
+        "speedNegativeMagnitude": 0,
+        "hitSpeedPositivePercent": 100,
+        "hitSpeedNegativeMagnitude": 0,
+        "attackStepInput": 50,
+        "attackStepOutput": 50,
+        "attackStepTick": 961,
+        "movementStepInput": null,
+        "movementStepOutput": null,
+        "movementStepTick": -1,
+        "deployStepInput": null,
+        "deployStepOutput": null,
+        "deployStepTick": -1,
+        "effectiveMovementSpeed": null,
+        "effectiveMovementSpeedTick": -1,
+        "movementDelta": null,
+        "movementDeltaTick": -1,
+        "attackSequenceProgressRaw": null,
+        "attackSequenceProgressLimit": null,
+        "attackSequenceDecayRemainingMs": null,
+        "attackSequenceDecayDurationMs": null
+      },
+      "towerTroopRuntime": null,
+      "activeEffects": [],
+      "components": {
+        "valid": true,
+        "count": 4,
+        "capacity": 4,
+        "slots": [
+          {
+            "slot": 0,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828816,
+            "typeGetterLibgOffset": 16107640,
+            "engineType": 0,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 1,
+            "present": false,
+            "ownerBacklinkValid": null,
+            "vtableLibgOffset": null,
+            "typeGetterLibgOffset": null,
+            "engineType": null,
+            "typeValid": false,
+            "slotMatchesType": null
+          },
+          {
+            "slot": 2,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25829056,
+            "typeGetterLibgOffset": 16134016,
+            "engineType": 2,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 3,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828696,
+            "typeGetterLibgOffset": 16095916,
+            "engineType": 3,
+            "typeValid": true,
+            "slotMatchesType": true
+          }
+        ]
+      }
+    },
+    {
+      "slot": 3,
+      "nativeObjectId": 5000001,
+      "entityKey": [
+        0,
+        -2,
+        5000001
+      ],
+      "owner": 0,
+      "cardId": -1,
+      "dataGlobalId": 35000001,
+      "x": 3500,
+      "y": 6500,
+      "targetX": 3500,
+      "targetY": 6500,
+      "targetEntityKey": [
+        1,
+        -2,
+        5000013
+      ],
+      "targetEntityValidated": true,
+      "objectIndex": -1,
+      "secondaryIndex": -1,
+      "hp": 3052,
+      "maxHp": 3052,
+      "shield": {
+        "current": 0,
+        "max": 0,
+        "status": "authoritative"
+      },
+      "attackSequenceStage": 0,
+      "invisibleCount": 0,
+      "visibilityState": "visible",
+      "projectile": null,
+      "entityResourceRuntime": null,
+      "periodicAttackModifierRuntime": null,
+      "captureRuntime": null,
+      "thresholdRelocationRuntime": null,
+      "phaseRuntime": {
+        "schema": "native-phase-object.v1",
+        "attackValidated": true,
+        "movementValidated": false,
+        "buffsValidated": true,
+        "attackSequenceStage": 0,
+        "attackTimelineMs": 4000,
+        "loadRemainingMs": 0,
+        "deployRemainingMs": 0,
+        "deployPreviousMs": 0,
+        "configuredDeployTimeMs": 0,
+        "hitSpeedMs": 800,
+        "attackDashTimeMs": 0,
+        "baseMovementSpeed": 0,
+        "chargeSpeedMultiplier": 0,
+        "classicChargeProgress": null,
+        "speedPositivePercent": 100,
+        "speedNegativeMagnitude": 0,
+        "hitSpeedPositivePercent": 100,
+        "hitSpeedNegativeMagnitude": 0,
+        "attackStepInput": 50,
+        "attackStepOutput": 50,
+        "attackStepTick": 963,
+        "movementStepInput": null,
+        "movementStepOutput": null,
+        "movementStepTick": -1,
+        "deployStepInput": null,
+        "deployStepOutput": null,
+        "deployStepTick": -1,
+        "effectiveMovementSpeed": null,
+        "effectiveMovementSpeedTick": -1,
+        "movementDelta": null,
+        "movementDeltaTick": -1,
+        "attackSequenceProgressRaw": null,
+        "attackSequenceProgressLimit": null,
+        "attackSequenceDecayRemainingMs": null,
+        "attackSequenceDecayDurationMs": null
+      },
+      "towerTroopRuntime": null,
+      "activeEffects": [],
+      "components": {
+        "valid": true,
+        "count": 4,
+        "capacity": 4,
+        "slots": [
+          {
+            "slot": 0,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828816,
+            "typeGetterLibgOffset": 16107640,
+            "engineType": 0,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 1,
+            "present": false,
+            "ownerBacklinkValid": null,
+            "vtableLibgOffset": null,
+            "typeGetterLibgOffset": null,
+            "engineType": null,
+            "typeValid": false,
+            "slotMatchesType": null
+          },
+          {
+            "slot": 2,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25829056,
+            "typeGetterLibgOffset": 16134016,
+            "engineType": 2,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 3,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828696,
+            "typeGetterLibgOffset": 16095916,
+            "engineType": 3,
+            "typeValid": true,
+            "slotMatchesType": true
+          }
+        ]
+      }
+    },
+    {
+      "slot": 4,
+      "nativeObjectId": 5000003,
+      "entityKey": [
+        1,
+        -2,
+        5000003
+      ],
+      "owner": 1,
+      "cardId": -1,
+      "dataGlobalId": 35000000,
+      "x": 9000,
+      "y": 29000,
+      "targetX": 9000,
+      "targetY": 29000,
+      "targetEntityKey": null,
+      "targetEntityValidated": true,
+      "objectIndex": -1,
+      "secondaryIndex": -1,
+      "hp": 4824,
+      "maxHp": 4824,
+      "shield": {
+        "current": 0,
+        "max": 0,
+        "status": "authoritative"
+      },
+      "attackSequenceStage": 0,
+      "invisibleCount": 0,
+      "visibilityState": "visible",
+      "projectile": null,
+      "entityResourceRuntime": null,
+      "periodicAttackModifierRuntime": null,
+      "captureRuntime": null,
+      "thresholdRelocationRuntime": null,
+      "phaseRuntime": {
+        "schema": "native-phase-object.v1",
+        "attackValidated": true,
+        "movementValidated": false,
+        "buffsValidated": true,
+        "attackSequenceStage": 0,
+        "attackTimelineMs": 0,
+        "loadRemainingMs": 0,
+        "deployRemainingMs": 0,
+        "deployPreviousMs": 0,
+        "configuredDeployTimeMs": 0,
+        "hitSpeedMs": 1000,
+        "attackDashTimeMs": 0,
+        "baseMovementSpeed": 0,
+        "chargeSpeedMultiplier": 0,
+        "classicChargeProgress": null,
+        "speedPositivePercent": 100,
+        "speedNegativeMagnitude": 0,
+        "hitSpeedPositivePercent": 100,
+        "hitSpeedNegativeMagnitude": 0,
+        "attackStepInput": null,
+        "attackStepOutput": null,
+        "attackStepTick": -1,
+        "movementStepInput": null,
+        "movementStepOutput": null,
+        "movementStepTick": -1,
+        "deployStepInput": null,
+        "deployStepOutput": null,
+        "deployStepTick": -1,
+        "effectiveMovementSpeed": null,
+        "effectiveMovementSpeedTick": -1,
+        "movementDelta": null,
+        "movementDeltaTick": -1,
+        "attackSequenceProgressRaw": null,
+        "attackSequenceProgressLimit": null,
+        "attackSequenceDecayRemainingMs": null,
+        "attackSequenceDecayDurationMs": null
+      },
+      "towerTroopRuntime": null,
+      "activeEffects": [],
+      "components": {
+        "valid": true,
+        "count": 4,
+        "capacity": 4,
+        "slots": [
+          {
+            "slot": 0,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828816,
+            "typeGetterLibgOffset": 16107640,
+            "engineType": 0,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 1,
+            "present": false,
+            "ownerBacklinkValid": null,
+            "vtableLibgOffset": null,
+            "typeGetterLibgOffset": null,
+            "engineType": null,
+            "typeValid": false,
+            "slotMatchesType": null
+          },
+          {
+            "slot": 2,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25829056,
+            "typeGetterLibgOffset": 16134016,
+            "engineType": 2,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 3,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828696,
+            "typeGetterLibgOffset": 16095916,
+            "engineType": 3,
+            "typeValid": true,
+            "slotMatchesType": true
+          }
+        ]
+      }
+    },
+    {
+      "slot": 5,
+      "nativeObjectId": 5000004,
+      "entityKey": [
+        1,
+        -2,
+        5000004
+      ],
+      "owner": 1,
+      "cardId": -1,
+      "dataGlobalId": 35000001,
+      "x": 3500,
+      "y": 25500,
+      "targetX": 3500,
+      "targetY": 25500,
+      "targetEntityKey": [
+        0,
+        -2,
+        5000001
+      ],
+      "targetEntityValidated": true,
+      "objectIndex": -1,
+      "secondaryIndex": -1,
+      "hp": 3052,
+      "maxHp": 3052,
+      "shield": {
+        "current": 0,
+        "max": 0,
+        "status": "authoritative"
+      },
+      "attackSequenceStage": 0,
+      "invisibleCount": 0,
+      "visibilityState": "visible",
+      "projectile": null,
+      "entityResourceRuntime": null,
+      "periodicAttackModifierRuntime": null,
+      "captureRuntime": null,
+      "thresholdRelocationRuntime": null,
+      "phaseRuntime": {
+        "schema": "native-phase-object.v1",
+        "attackValidated": true,
+        "movementValidated": false,
+        "buffsValidated": true,
+        "attackSequenceStage": 0,
+        "attackTimelineMs": 0,
+        "loadRemainingMs": 0,
+        "deployRemainingMs": 0,
+        "deployPreviousMs": 0,
+        "configuredDeployTimeMs": 0,
+        "hitSpeedMs": 800,
+        "attackDashTimeMs": 0,
+        "baseMovementSpeed": 0,
+        "chargeSpeedMultiplier": 0,
+        "classicChargeProgress": null,
+        "speedPositivePercent": 100,
+        "speedNegativeMagnitude": 0,
+        "hitSpeedPositivePercent": 100,
+        "hitSpeedNegativeMagnitude": 0,
+        "attackStepInput": null,
+        "attackStepOutput": null,
+        "attackStepTick": -1,
+        "movementStepInput": null,
+        "movementStepOutput": null,
+        "movementStepTick": -1,
+        "deployStepInput": null,
+        "deployStepOutput": null,
+        "deployStepTick": -1,
+        "effectiveMovementSpeed": null,
+        "effectiveMovementSpeedTick": -1,
+        "movementDelta": null,
+        "movementDeltaTick": -1,
+        "attackSequenceProgressRaw": null,
+        "attackSequenceProgressLimit": null,
+        "attackSequenceDecayRemainingMs": null,
+        "attackSequenceDecayDurationMs": null
+      },
+      "towerTroopRuntime": null,
+      "activeEffects": [],
+      "components": {
+        "valid": true,
+        "count": 4,
+        "capacity": 4,
+        "slots": [
+          {
+            "slot": 0,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828816,
+            "typeGetterLibgOffset": 16107640,
+            "engineType": 0,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 1,
+            "present": false,
+            "ownerBacklinkValid": null,
+            "vtableLibgOffset": null,
+            "typeGetterLibgOffset": null,
+            "engineType": null,
+            "typeValid": false,
+            "slotMatchesType": null
+          },
+          {
+            "slot": 2,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25829056,
+            "typeGetterLibgOffset": 16134016,
+            "engineType": 2,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 3,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828696,
+            "typeGetterLibgOffset": 16095916,
+            "engineType": 3,
+            "typeValid": true,
+            "slotMatchesType": true
+          }
+        ]
+      }
+    },
+    {
+      "slot": 6,
+      "nativeObjectId": 5000005,
+      "entityKey": [
+        1,
+        -2,
+        5000005
+      ],
+      "owner": 1,
+      "cardId": -1,
+      "dataGlobalId": 35000001,
+      "x": 14500,
+      "y": 25500,
+      "targetX": 14500,
+      "targetY": 25500,
+      "targetEntityKey": [
+        0,
+        -2,
+        5000000
+      ],
+      "targetEntityValidated": true,
+      "objectIndex": -1,
+      "secondaryIndex": -1,
+      "hp": 3052,
+      "maxHp": 3052,
+      "shield": {
+        "current": 0,
+        "max": 0,
+        "status": "authoritative"
+      },
+      "attackSequenceStage": 0,
+      "invisibleCount": 0,
+      "visibilityState": "visible",
+      "projectile": null,
+      "entityResourceRuntime": null,
+      "periodicAttackModifierRuntime": null,
+      "captureRuntime": null,
+      "thresholdRelocationRuntime": null,
+      "phaseRuntime": {
+        "schema": "native-phase-object.v1",
+        "attackValidated": true,
+        "movementValidated": false,
+        "buffsValidated": true,
+        "attackSequenceStage": 0,
+        "attackTimelineMs": 0,
+        "loadRemainingMs": 0,
+        "deployRemainingMs": 0,
+        "deployPreviousMs": 0,
+        "configuredDeployTimeMs": 0,
+        "hitSpeedMs": 800,
+        "attackDashTimeMs": 0,
+        "baseMovementSpeed": 0,
+        "chargeSpeedMultiplier": 0,
+        "classicChargeProgress": null,
+        "speedPositivePercent": 100,
+        "speedNegativeMagnitude": 0,
+        "hitSpeedPositivePercent": 100,
+        "hitSpeedNegativeMagnitude": 0,
+        "attackStepInput": null,
+        "attackStepOutput": null,
+        "attackStepTick": -1,
+        "movementStepInput": null,
+        "movementStepOutput": null,
+        "movementStepTick": -1,
+        "deployStepInput": null,
+        "deployStepOutput": null,
+        "deployStepTick": -1,
+        "effectiveMovementSpeed": null,
+        "effectiveMovementSpeedTick": -1,
+        "movementDelta": null,
+        "movementDeltaTick": -1,
+        "attackSequenceProgressRaw": null,
+        "attackSequenceProgressLimit": null,
+        "attackSequenceDecayRemainingMs": null,
+        "attackSequenceDecayDurationMs": null
+      },
+      "towerTroopRuntime": null,
+      "activeEffects": [],
+      "components": {
+        "valid": true,
+        "count": 4,
+        "capacity": 4,
+        "slots": [
+          {
+            "slot": 0,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828816,
+            "typeGetterLibgOffset": 16107640,
+            "engineType": 0,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 1,
+            "present": false,
+            "ownerBacklinkValid": null,
+            "vtableLibgOffset": null,
+            "typeGetterLibgOffset": null,
+            "engineType": null,
+            "typeValid": false,
+            "slotMatchesType": null
+          },
+          {
+            "slot": 2,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25829056,
+            "typeGetterLibgOffset": 16134016,
+            "engineType": 2,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 3,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828696,
+            "typeGetterLibgOffset": 16095916,
+            "engineType": 3,
+            "typeValid": true,
+            "slotMatchesType": true
+          }
+        ]
+      }
+    },
+    {
+      "slot": 7,
+      "nativeObjectId": 5000011,
+      "entityKey": [
+        1,
+        -2,
+        5000011
+      ],
+      "owner": 1,
+      "cardId": 27000000,
+      "dataGlobalId": 35000002,
+      "x": 4500,
+      "y": 22500,
+      "targetX": 4500,
+      "targetY": 22500,
+      "targetEntityKey": [
+        0,
+        -2,
+        5000001
+      ],
+      "targetEntityValidated": true,
+      "objectIndex": 6,
+      "secondaryIndex": 3,
+      "hp": 189,
+      "maxHp": 824,
+      "shield": {
+        "current": 0,
+        "max": 0,
+        "status": "authoritative"
+      },
+      "attackSequenceStage": 0,
+      "invisibleCount": 0,
+      "visibilityState": "visible",
+      "projectile": null,
+      "entityResourceRuntime": null,
+      "periodicAttackModifierRuntime": null,
+      "captureRuntime": null,
+      "thresholdRelocationRuntime": null,
+      "phaseRuntime": {
+        "schema": "native-phase-object.v1",
+        "attackValidated": true,
+        "movementValidated": false,
+        "buffsValidated": true,
+        "attackSequenceStage": 0,
+        "attackTimelineMs": 0,
+        "loadRemainingMs": 0,
+        "deployRemainingMs": 0,
+        "deployPreviousMs": 0,
+        "configuredDeployTimeMs": 1000,
+        "hitSpeedMs": 1000,
+        "attackDashTimeMs": 0,
+        "baseMovementSpeed": 0,
+        "chargeSpeedMultiplier": 0,
+        "classicChargeProgress": null,
+        "speedPositivePercent": 100,
+        "speedNegativeMagnitude": 0,
+        "hitSpeedPositivePercent": 100,
+        "hitSpeedNegativeMagnitude": 0,
+        "attackStepInput": null,
+        "attackStepOutput": null,
+        "attackStepTick": -1,
+        "movementStepInput": null,
+        "movementStepOutput": null,
+        "movementStepTick": -1,
+        "deployStepInput": null,
+        "deployStepOutput": null,
+        "deployStepTick": -1,
+        "effectiveMovementSpeed": null,
+        "effectiveMovementSpeedTick": -1,
+        "movementDelta": null,
+        "movementDeltaTick": -1,
+        "attackSequenceProgressRaw": null,
+        "attackSequenceProgressLimit": null,
+        "attackSequenceDecayRemainingMs": null,
+        "attackSequenceDecayDurationMs": null
+      },
+      "towerTroopRuntime": null,
+      "activeEffects": [],
+      "components": {
+        "valid": true,
+        "count": 4,
+        "capacity": 4,
+        "slots": [
+          {
+            "slot": 0,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828816,
+            "typeGetterLibgOffset": 16107640,
+            "engineType": 0,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 1,
+            "present": false,
+            "ownerBacklinkValid": null,
+            "vtableLibgOffset": null,
+            "typeGetterLibgOffset": null,
+            "engineType": null,
+            "typeValid": false,
+            "slotMatchesType": null
+          },
+          {
+            "slot": 2,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25829056,
+            "typeGetterLibgOffset": 16134016,
+            "engineType": 2,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 3,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828696,
+            "typeGetterLibgOffset": 16095916,
+            "engineType": 3,
+            "typeValid": true,
+            "slotMatchesType": true
+          }
+        ]
+      }
+    },
+    {
+      "slot": 8,
+      "nativeObjectId": 5000013,
+      "entityKey": [
+        1,
+        -2,
+        5000013
+      ],
+      "owner": 1,
+      "cardId": 26000038,
+      "dataGlobalId": 34000036,
+      "x": 3250,
+      "y": 11881,
+      "targetX": 3250,
+      "targetY": 11933,
+      "targetEntityKey": [
+        0,
+        -2,
+        5000001
+      ],
+      "targetEntityValidated": true,
+      "objectIndex": 3,
+      "secondaryIndex": 5,
+      "hp": 879,
+      "maxHp": 1315,
+      "shield": {
+        "current": 0,
+        "max": 0,
+        "status": "authoritative"
+      },
+      "attackSequenceStage": 0,
+      "invisibleCount": 0,
+      "visibilityState": "visible",
+      "projectile": null,
+      "entityResourceRuntime": null,
+      "periodicAttackModifierRuntime": null,
+      "captureRuntime": null,
+      "thresholdRelocationRuntime": null,
+      "phaseRuntime": {
+        "schema": "native-phase-object.v1",
+        "attackValidated": true,
+        "movementValidated": true,
+        "buffsValidated": true,
+        "attackSequenceStage": 0,
+        "attackTimelineMs": 0,
+        "loadRemainingMs": 0,
+        "deployRemainingMs": 0,
+        "deployPreviousMs": 0,
+        "configuredDeployTimeMs": 1000,
+        "hitSpeedMs": 2500,
+        "attackDashTimeMs": 0,
+        "baseMovementSpeed": 52,
+        "chargeSpeedMultiplier": 0,
+        "classicChargeProgress": -1,
+        "speedPositivePercent": 100,
+        "speedNegativeMagnitude": 0,
+        "hitSpeedPositivePercent": 100,
+        "hitSpeedNegativeMagnitude": 0,
+        "attackStepInput": null,
+        "attackStepOutput": null,
+        "attackStepTick": -1,
+        "movementStepInput": 52,
+        "movementStepOutput": 52,
+        "movementStepTick": 964,
+        "deployStepInput": null,
+        "deployStepOutput": null,
+        "deployStepTick": -1,
+        "effectiveMovementSpeed": 52,
+        "effectiveMovementSpeedTick": 964,
+        "movementDelta": null,
+        "movementDeltaTick": -1,
+        "attackSequenceProgressRaw": null,
+        "attackSequenceProgressLimit": null,
+        "attackSequenceDecayRemainingMs": null,
+        "attackSequenceDecayDurationMs": null
+      },
+      "towerTroopRuntime": null,
+      "activeEffects": [],
+      "components": {
+        "valid": true,
+        "count": 4,
+        "capacity": 4,
+        "slots": [
+          {
+            "slot": 0,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828816,
+            "typeGetterLibgOffset": 16107640,
+            "engineType": 0,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 1,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25829176,
+            "typeGetterLibgOffset": 16159644,
+            "engineType": 1,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 2,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25829056,
+            "typeGetterLibgOffset": 16134016,
+            "engineType": 2,
+            "typeValid": true,
+            "slotMatchesType": true
+          },
+          {
+            "slot": 3,
+            "present": true,
+            "ownerBacklinkValid": true,
+            "vtableLibgOffset": 25828696,
+            "typeGetterLibgOffset": 16095916,
+            "engineType": 3,
+            "typeValid": true,
+            "slotMatchesType": true
+          }
+        ]
+      }
+    }
+  ],
+  "players": [
+    {
+      "owner": 0,
+      "ownerRootValidated": true,
+      "ownerEntityKey": [
+        0,
+        -2,
+        5000000
+      ],
+      "abilityRuntime": [],
+      "evolutionRuntime": [
+        {
+          "deckSlot": 0,
+          "cardId": 26000021,
+          "baseSpellGlobalId": 26000021,
+          "evolvable": false,
+          "evolutionFormGlobalId": null,
+          "progress": 0,
+          "cycleRequired": null,
+          "cycleRemaining": null,
+          "ready": null
+        },
+        {
+          "deckSlot": 1,
+          "cardId": 26000014,
+          "baseSpellGlobalId": 26000014,
+          "evolvable": true,
+          "evolutionFormGlobalId": 13000014,
+          "progress": 0,
+          "cycleRequired": 2,
+          "cycleRemaining": 2,
+          "ready": false
+        },
+        {
+          "deckSlot": 2,
+          "cardId": 28000000,
+          "baseSpellGlobalId": 28000000,
+          "evolvable": false,
+          "evolutionFormGlobalId": null,
+          "progress": 0,
+          "cycleRequired": null,
+          "cycleRemaining": null,
+          "ready": null
+        },
+        {
+          "deckSlot": 3,
+          "cardId": 27000000,
+          "baseSpellGlobalId": 27000000,
+          "evolvable": true,
+          "evolutionFormGlobalId": 13000096,
+          "progress": 0,
+          "cycleRequired": 2,
+          "cycleRemaining": 2,
+          "ready": false
+        },
+        {
+          "deckSlot": 4,
+          "cardId": 28000011,
+          "baseSpellGlobalId": 28000011,
+          "evolvable": false,
+          "evolutionFormGlobalId": null,
+          "progress": 0,
+          "cycleRequired": null,
+          "cycleRemaining": null,
+          "ready": null
+        },
+        {
+          "deckSlot": 5,
+          "cardId": 26000010,
+          "baseSpellGlobalId": 26000010,
+          "evolvable": true,
+          "evolutionFormGlobalId": 13000010,
+          "progress": 0,
+          "cycleRequired": 2,
+          "cycleRemaining": 2,
+          "ready": false
+        },
+        {
+          "deckSlot": 6,
+          "cardId": 26000038,
+          "baseSpellGlobalId": 26000038,
+          "evolvable": false,
+          "evolutionFormGlobalId": null,
+          "progress": 0,
+          "cycleRequired": null,
+          "cycleRemaining": null,
+          "ready": null
+        },
+        {
+          "deckSlot": 7,
+          "cardId": 26000030,
+          "baseSpellGlobalId": 26000030,
+          "evolvable": true,
+          "evolutionFormGlobalId": 13000030,
+          "progress": 0,
+          "cycleRequired": 2,
+          "cycleRemaining": 2,
+          "ready": false
+        }
+      ]
+    },
+    {
+      "owner": 1,
+      "ownerRootValidated": true,
+      "ownerEntityKey": [
+        1,
+        -2,
+        5000003
+      ],
+      "abilityRuntime": [],
+      "evolutionRuntime": [
+        {
+          "deckSlot": 0,
+          "cardId": 26000014,
+          "baseSpellGlobalId": 26000014,
+          "evolvable": true,
+          "evolutionFormGlobalId": 13000014,
+          "progress": 0,
+          "cycleRequired": 2,
+          "cycleRemaining": 2,
+          "ready": false
+        },
+        {
+          "deckSlot": 1,
+          "cardId": 26000030,
+          "baseSpellGlobalId": 26000030,
+          "evolvable": true,
+          "evolutionFormGlobalId": 13000030,
+          "progress": 0,
+          "cycleRequired": 2,
+          "cycleRemaining": 2,
+          "ready": false
+        },
+        {
+          "deckSlot": 2,
+          "cardId": 28000000,
+          "baseSpellGlobalId": 28000000,
+          "evolvable": false,
+          "evolutionFormGlobalId": null,
+          "progress": 0,
+          "cycleRequired": null,
+          "cycleRemaining": null,
+          "ready": null
+        },
+        {
+          "deckSlot": 3,
+          "cardId": 26000038,
+          "baseSpellGlobalId": 26000038,
+          "evolvable": false,
+          "evolutionFormGlobalId": null,
+          "progress": 0,
+          "cycleRequired": null,
+          "cycleRemaining": null,
+          "ready": null
+        },
+        {
+          "deckSlot": 4,
+          "cardId": 28000011,
+          "baseSpellGlobalId": 28000011,
+          "evolvable": false,
+          "evolutionFormGlobalId": null,
+          "progress": 0,
+          "cycleRequired": null,
+          "cycleRemaining": null,
+          "ready": null
+        },
+        {
+          "deckSlot": 5,
+          "cardId": 26000010,
+          "baseSpellGlobalId": 26000010,
+          "evolvable": true,
+          "evolutionFormGlobalId": 13000010,
+          "progress": 0,
+          "cycleRequired": 2,
+          "cycleRemaining": 2,
+          "ready": false
+        },
+        {
+          "deckSlot": 6,
+          "cardId": 27000000,
+          "baseSpellGlobalId": 27000000,
+          "evolvable": true,
+          "evolutionFormGlobalId": 13000096,
+          "progress": 0,
+          "cycleRequired": 2,
+          "cycleRemaining": 2,
+          "ready": false
+        },
+        {
+          "deckSlot": 7,
+          "cardId": 26000021,
+          "baseSpellGlobalId": 26000021,
+          "evolvable": false,
+          "evolutionFormGlobalId": null,
+          "progress": 0,
+          "cycleRequired": null,
+          "cycleRemaining": null,
+          "ready": null
+        }
+      ]
+    }
+  ],
+  "combatEvents": {
+    "ok": true,
+    "schema": "native-combat-events.v1",
+    "generation": 103,
+    "stateEpoch": 103,
+    "observationTick": 964,
+    "capacity": 1024,
+    "hookSetAttested": true,
+    "hookSetInstalled": true,
+    "capability": {
+      "status": "derived",
+      "source": "exact-build-native-hook-ring",
+      "validation": "libg-sha-build-id-offset-prologue-abi-bounded-identity",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "epochFirstSequence": 8332,
+    "oldestRetainedSequence": 8332,
+    "transmitFromSequence": 8332,
+    "nextSequence": 8501,
+    "overflowCount": 0,
+    "sequenceGapBeforeOldest": false,
+    "rejectedCaptureCount": 0,
+    "complete": true
+  },
+  "phaseRuntime": {
+    "ok": true,
+    "schema": "native-phase-runtime.v1",
+    "generation": 103,
+    "stateEpoch": 103,
+    "observationTick": 964,
+    "capacity": 4096,
+    "hookSetAttested": true,
+    "hookSetInstalled": true,
+    "capability": {
+      "status": "derived",
+      "source": "exact-build-native-phase-hook-ring",
+      "validation": "sha-build-id-prologue-abi-bounded-identity",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "epochFirstSequence": 181993,
+    "oldestRetainedSequence": 181993,
+    "transmitFromSequence": 181993,
+    "nextSequence": 185847,
+    "overflowCount": 0,
+    "rejectedCount": 0,
+    "sequenceGapBeforeOldest": false,
+    "complete": true
+  },
+  "specialMovementRuntime": {
+    "ok": true,
+    "schema": "native-special-movement-runtime.v1",
+    "generation": 103,
+    "stateEpoch": 103,
+    "observationTick": 964,
+    "capacity": 1024,
+    "hookSetAttested": true,
+    "hookSetInstalled": true,
+    "capability": {
+      "status": "derived",
+      "source": "caller-filtered-native-special-movement-hook-ring",
+      "validation": "sha-build-id-prologue-abi-type0-owner-target-identity",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "epochFirstSequence": 1,
+    "oldestRetainedSequence": 1,
+    "nextSequence": 1,
+    "overflowCount": 0,
+    "rejectedCount": 0,
+    "sequenceGapBeforeOldest": false,
+    "complete": true
+  },
+  "actionMovementRuntime": {
+    "ok": true,
+    "schema": "native-action-movement-runtime.v1",
+    "generation": 103,
+    "stateEpoch": 103,
+    "observationTick": 964,
+    "capacity": 1024,
+    "hookSetAttested": true,
+    "hookSetInstalled": true,
+    "capability": {
+      "status": "derived",
+      "source": "allowlisted-native-action-movement-hook-ring",
+      "validation": "sha-build-id-prologue-abi-action-name-global-id-class-vtable-source-identity",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "epochFirstSequence": 1,
+    "oldestRetainedSequence": 1,
+    "nextSequence": 1,
+    "overflowCount": 0,
+    "rejectedCount": 0,
+    "sequenceGapBeforeOldest": false,
+    "complete": true
+  },
+  "characterStateRuntime": {
+    "ok": true,
+    "schema": "native-character-state-runtime.v1",
+    "generation": 103,
+    "stateEpoch": 103,
+    "observationTick": 964,
+    "capacity": 2048,
+    "hookSetAttested": true,
+    "hookSetInstalled": true,
+    "capability": {
+      "status": "derived",
+      "source": "allowlisted-native-character-state-hook-ring",
+      "validation": "sha-build-id-prologue-abi-kind5-card-identity-committed-state",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "epochFirstSequence": 1,
+    "oldestRetainedSequence": 1,
+    "nextSequence": 1,
+    "overflowCount": 0,
+    "rejectedCount": 0,
+    "sequenceGapBeforeOldest": false,
+    "complete": true
+  },
+  "visibilityRuntime": {
+    "ok": true,
+    "schema": "native-visibility-runtime.v1",
+    "generation": 103,
+    "stateEpoch": 103,
+    "observationTick": 964,
+    "capacity": 4096,
+    "hookSetAttested": true,
+    "transitionHookSetInstalled": true,
+    "contextualGateHookSetInstalled": false,
+    "capability": {
+      "status": "derived",
+      "source": "exact-build-native-invisibility-transition-ring",
+      "validation": "sha-build-id-call-and-prologue-fingerprint-abi-count-edge",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "contextualGateCapability": {
+      "status": "unavailable",
+      "source": "no-safe-pc-relative-gate-bridge",
+      "validation": "fail-closed-no-generic-trampoline",
+      "confidence": "none",
+      "failClosed": true
+    },
+    "ownerRelativeVisibility": {
+      "publicByOwner": {
+        "status": "unavailable",
+        "reason": "no-exact-owner-conditioned-native-producer"
+      },
+      "targetableByOwner": {
+        "status": "unavailable",
+        "reason": "no-exact-owner-conditioned-native-producer"
+      }
+    },
+    "epochFirstSequence": 1,
+    "oldestRetainedSequence": 1,
+    "transmitFromSequence": 1,
+    "nextSequence": 1,
+    "overflowCount": 0,
+    "rejectedCount": 0,
+    "sequenceGapBeforeOldest": false,
+    "complete": true
+  },
+  "remainingRuntime": {
+    "ok": true,
+    "schema": "native-remaining-runtime.v1",
+    "generation": 103,
+    "stateEpoch": 103,
+    "observationTick": 964,
+    "capacity": 4096,
+    "hookSetAttested": true,
+    "hookSetInstalled": true,
+    "capability": {
+      "status": "derived",
+      "source": "exact-build-native-remaining-hook-ring",
+      "validation": "sha-build-id-16-byte-fingerprint-abi-identity",
+      "confidence": "high",
+      "failClosed": true
+    },
+    "ownerRelativeVisibility": {
+      "publicByOwner": {
+        "status": "unavailable",
+        "reason": "no-exact-owner-conditioned-native-producer"
+      },
+      "targetableByOwner": {
+        "status": "unavailable",
+        "reason": "no-exact-owner-conditioned-native-producer"
+      }
+    },
+    "epochFirstSequence": 4540,
+    "oldestRetainedSequence": 4540,
+    "transmitFromSequence": 4540,
+    "nextSequence": 4668,
+    "overflowCount": 0,
+    "rejectedCount": 6,
+    "sequenceGapBeforeOldest": false,
+    "complete": false
+  },
+  "towerTroopRuntime": {
+    "ok": true,
+    "schema": "native-tower-troop-runtime.v1",
+    "generation": 103,
+    "stateEpoch": 103,
+    "observationTick": 964,
+    "hookSetAttested": true,
+    "hookSetInstalled": true,
+    "rejectedCount": 0,
+    "complete": true
+  },
+  "returned": 9,
+  "truncated": false
+}
