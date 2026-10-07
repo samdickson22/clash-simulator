@@ -165,3 +165,28 @@ Also on the hub, but with copies elsewhere:
 
 **Suggested first move:** pick a new hub among 01/03/04/07/08, or wait for 127x02 to return. Note that each node's `/mpac` copy came from 127x02 and may be partial.
 - **2026-10-07 23:45 UTC:** all clasher jobs on the Mac are stopped (SIGTERM): v4 bench PGID 8556, v4 pipeline PGID 9517, renderer emulator 66755, the owned adb servers on ports 5041 and 5042, caffeinate and host_watchdog. The Mac now runs nothing for clasher. T1 collection stopped partway; its state is in live-loop/v4/T1-PROGRESS.md.
+
+## 2026-10-07 23:55 UTC: 127x05 coordinator takes over; decisions
+
+- **Ownership.** The 127x05 thread owns all tracks; the Mac thread and all its agents are stopped (entries above).
+  Mac reachable from fleet hosts via `ssh macmini-fleet` (userspace tailnet `tailscale nc`; alias added to the
+  shared `~/.ssh/config`).
+- **T2 timing: decided, option B** (`amendments/2026-10-07-t2-actuation-timing.md`). Keep the attested hook and its
+  ~1.1 s command latency; make the verifier/ledger windows backend-relative (`D_b,p99 + 600 ms`, rollback +200 ms);
+  restate the T2 sensitivity gate as within 600 ms of native acceptance (316/320 = 98.75% now, four misses to be
+  explained); the planner applies its own actions `D_b` ticks later; L2-v4 gains a simulator arm S-d with the same
+  delay. No APK/hook change or re-attestation. Reason: P − O cancels the delay; the official client also delays
+  commands, so a player that can't handle it fails L3 anyway; shortening the hook would match nothing real.
+- **T1 coverage:** Phase A runs until the heldout split has ≥1,500 opponent events and ≥20 matches, capped at 36
+  emulator-hours (count-only stopping rule, split unchanged). Same amendment file.
+- **Hub outage (127x02 down since ~23:25Z, off LAN and tailnet).** New hub: **127x01** (A6000, idle, already holds
+  ~43 GB of the fan-out). Rebuilt from the Mac tree (code and evidence authority), re-verified by rerunning the Linux
+  parity gate, then fanned out over LAN to 03/04/07/08 with smoke receipts. **127x04** keeps a periodic mirror of the
+  hub's data directories, so one lab box going dark no longer stops every track. If 127x02 returns it becomes a
+  compute node; its unique contents (S1 hub receipts, T1 registration bundles) are reconciled, not trusted
+  blindly. Nothing irreplaceable was lost: T1 had collected no matches, S1 had 0 terminal games, and the C56 base
+  is on the Mac.
+- **Stage 6 moves to the fleet** once the new hub passes parity. The Mac is emulator-only from now on. The Inferno
+  Dragon dash-channel fix (private46 draft) is finished and gated there.
+- **Sequencing.** Now: hub bring-up (Astra), T1/T2 resume on the Mac emulator (Astra), GPU training env T0
+  (6.1-Sol). After the hub is ready: Stage 6 completion, C56 extraction resume, S1 confirmation relaunch.
