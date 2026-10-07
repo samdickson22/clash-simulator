@@ -227,3 +227,5 @@ Evidence: qa/v3b/gates.json, reuse-summary.json, sweep-coverage.json, crashes-be
 V3 extraction PAUSED: {"utc": "2026-10-04T21:31:10.384998+00:00", "driver": 15128, "workers": [15375, 16099, 19380], "free_gib": 11.966854095458984, "data_gib": 3.2823390532284975, "reason": "disk limit; workers and driver SIGSTOP; manual resume required"}
 
 V3 extraction PAUSED: {"utc": "2026-10-05T04:01:07.159524+00:00", "driver": 15128, "workers": [75880, 78820, 80416], "free_gib": 11.973094940185547, "data_gib": 3.5046241292729974, "reason": "disk limit; workers and driver SIGSTOP; manual resume required"}
+
+V3 extraction PAUSED: {"utc": "2026-10-05T17:38:27.848568+00:00", "driver": 15128, "workers": [72288, 72289, 72290], "free_gib": 11.997325897216797, "data_gib": 3.5123116075992584, "reason": "disk limit; workers and driver SIGSTOP; manual resume required"}

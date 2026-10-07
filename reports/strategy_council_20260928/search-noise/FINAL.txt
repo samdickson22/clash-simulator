@@ -1,0 +1,8 @@
+Noise used 10-FPS input packets, measured entity/HP/HUD errors, 64.3% recall/66.7% precision opponent events, and modelled image/action latency. Engine state stayed clean.
+Scores with 95% paired-matchup CIs, versus A / scripts:
+A: 49.2% [47.7, 50.0] / 86.7% [80.5, 92.2].
+B: 35.9% [30.5, 41.4] / 50.0% [39.8, 60.2].
+C: 32.0% [25.8, 37.5] / 43.0% [32.0, 53.9].
+D: 35.9% [30.5, 41.4] / 47.7% [36.7, 59.4].
+Conditional script-score costs: events +16.4 pp [+7.8, +25.0]; hp -0.8 pp [-9.4, +7.8]; hud -2.3 pp [-11.7, +7.0]; latency -2.3 pp [-10.2, +5.5]; board -4.7 pp [-14.1, +4.7]. Event placement: zero direct effect in this adapter.
+Current perception fails the simulator strength gate. Improve it before claiming closed-loop readiness. Largest point-estimated cost: events. P16-to-C56 error extrapolation and latency assumptions limit this result.

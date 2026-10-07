@@ -1,0 +1,1 @@
+Offloaded to f35 (2026-10-07, disk full): artifacts/worktree-data (archival pre-consolidation worktree evidence) and live-loop/l1/v3 (perception frames). Verified identical copies at f35:/data2/sdicks02/repos/clasher/ (rsync dry-run + checksums 2026-10-05). File manifest: reports/strategy_council_20260928/pilot/logs/offloaded-to-f35-manifest-20261007.tsv

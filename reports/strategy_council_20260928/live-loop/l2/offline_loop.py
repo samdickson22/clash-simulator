@@ -129,6 +129,8 @@ def main():
         prior_setup=HERE/'recovery-forward'/f"native-pair-{ep['pair']:02d}-partial"/'setup-evaluation-only.json'
         restart_setup=HERE/'recovery-t3-restart'/f"native-pair-{ep['pair']:02d}-partial"/'setup-evaluation-only.json'
         if restart_setup.exists():prior_setup=restart_setup
+        sigstop_setup=HERE/'recovery-sigstop-20261005'/f"native-pair-{ep['pair']:02d}-partial"/'setup-evaluation-only.json'
+        if sigstop_setup.exists():prior_setup=sigstop_setup
         if prior_setup.exists():
             old_setup=json.loads(prior_setup.read_text())['initial']
             def opening(state):

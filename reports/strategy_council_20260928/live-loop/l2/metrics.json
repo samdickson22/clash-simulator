@@ -1,0 +1,207 @@
+{
+  "pairs": 48,
+  "native": {
+    "wins": 27,
+    "draws": 0,
+    "win_rate": 0.5625,
+    "score": 0.5625,
+    "losses": 21
+  },
+  "simulator": {
+    "wins": 48,
+    "draws": 0,
+    "win_rate": 1.0,
+    "score": 1.0,
+    "losses": 0
+  },
+  "paired_win_difference": -0.4375,
+  "paired_win_ci95": [
+    -0.5833333333333334,
+    -0.2916666666666667
+  ],
+  "paired_score_difference": -0.4375,
+  "paired_score_ci95": [
+    -0.5833333333333334,
+    -0.2916666666666667
+  ],
+  "latency_all_ms": {
+    "n": 23594,
+    "p50": 408.9014530181885,
+    "p95": 841.9931411743161,
+    "p99": 1138.0863928794859,
+    "max": 2139.1780376434326
+  },
+  "latency_deploy_ms": {
+    "n": 9460,
+    "p50": 633.1784725189209,
+    "p95": 991.5320396423339,
+    "p99": 1304.6086621284485,
+    "max": 2139.1780376434326
+  },
+  "receive_latency_all_ms": {
+    "n": 23594,
+    "p50": 344.84445897396654,
+    "p95": 764.4262646324931,
+    "p99": 1022.4277609726413,
+    "max": 2086.88920782879
+  },
+  "receive_latency_deploy_ms": {
+    "n": 9460,
+    "p50": 578.4143125638366,
+    "p95": 906.9681881577707,
+    "p99": 1190.5249487049873,
+    "max": 2086.88920782879
+  },
+  "tap_ms": {
+    "n": 9460,
+    "p50": 173.56858297716826,
+    "p95": 448.5418170923361,
+    "p99": 665.6496616173536,
+    "max": 1424.9858751427382
+  },
+  "recorded_search_ms": {
+    "n": 16785,
+    "p50": 105.00412504188716,
+    "p95": 207.62960826978087,
+    "p99": 225.01099326647818,
+    "max": 335.15458297915757
+  },
+  "search_over_200_ms": 4488,
+  "attempts": 9460,
+  "rejection": {
+    "confirmed": 1626,
+    "rejected": 5531,
+    "unknown": 2303
+  },
+  "rejection_rate_known": 0.7728098365236831,
+  "wrong_slot_card": 1599,
+  "unaffordable": 1627,
+  "attempts_per_game_minute": 46.348314606741575,
+  "attempts_per_wall_minute": 39.15696034042731,
+  "pixel_end_detected": 48,
+  "pixel_result_known": 48,
+  "pixel_result_correct": 44,
+  "opponent_elixir": {
+    "n": 16763,
+    "mae": 3.911264211438572,
+    "coverage": 0.31885700650241605,
+    "mean_interval_width": 7.474227055766965
+  },
+  "opponent_observation_skips": 19,
+  "opponent_skip_episodes": [
+    7,
+    8,
+    14,
+    15,
+    16
+  ],
+  "maximum_coherent_state_gap_s": 2.834108999930322,
+  "processed_fps": 4.18775109395449,
+  "frame_gaps_ms": {
+    "n": 60586,
+    "p50": 188.0,
+    "p95": 610.0,
+    "p99": 805.0,
+    "max": 2075.0
+  },
+  "temporal_reset_gaps": 14423,
+  "observed_native_ticks_per_wall_second": {
+    "n": 48,
+    "p50": 19.819887119962377,
+    "p95": 19.994118185860206,
+    "p99": 19.997368374145996,
+    "max": 19.997575316002752
+  },
+  "native_ticks": 244928,
+  "families": {
+    "Hog 2.6": {
+      "n": 16,
+      "native_wins": 9,
+      "sim_wins": 16,
+      "difference": -0.4375
+    },
+    "Royal Hogs spawners": {
+      "n": 16,
+      "native_wins": 11,
+      "sim_wins": 16,
+      "difference": -0.3125
+    },
+    "X-Bow cycle": {
+      "n": 16,
+      "native_wins": 7,
+      "sim_wins": 16,
+      "difference": -0.5625
+    }
+  },
+  "styles": {
+    "balanced": {
+      "n": 16,
+      "native_wins": 9,
+      "sim_wins": 16,
+      "difference": -0.4375
+    },
+    "defense": {
+      "n": 16,
+      "native_wins": 9,
+      "sim_wins": 16,
+      "difference": -0.4375
+    },
+    "pressure": {
+      "n": 16,
+      "native_wins": 9,
+      "sim_wins": 16,
+      "difference": -0.4375
+    }
+  },
+  "L3_ready": false,
+  "qualification": "whole adapted pixel-loop comparison across different engines; no pure perception causal claim",
+  "perception_audit": {
+    "aligned_decisions": 20537,
+    "unaligned_decisions": 3057,
+    "hand_slots": 82075,
+    "wrong_hand_slots": 7008,
+    "unknown_hand_slots": 0,
+    "body_truth": 106952,
+    "body_predictions": 123163,
+    "body_matches": 93952,
+    "body_identity_disagreements": 38883,
+    "body_identity_unresolved": 0,
+    "body_hp_missing": 67998,
+    "king_predictions": 41049,
+    "king_hp_missing": 41049,
+    "body_unmatched_truth": 13000,
+    "body_unmatched_predictions": 29211,
+    "opponent_successes_bracketed": 3733,
+    "opponent_successes_unbracketed": 0,
+    "opponent_failed_receipts": 756,
+    "opponent_event_predictions": 435,
+    "opponent_events_matched_500ms": 116,
+    "opponent_events_missed_500ms": 3617,
+    "own_elixir_absolute_errors": {
+      "n": 20537,
+      "p50": 0.5746000000000002,
+      "p95": 1.0910200000000003,
+      "p99": 3.7689199999999996,
+      "max": 9.048255790641415,
+      "mean": 0.6482538403844431
+    },
+    "body_hp_absolute_errors": {
+      "n": 25954,
+      "p50": 0.2961977186311787,
+      "p95": 0.9166666666666666,
+      "p99": 1.0,
+      "max": 1.0,
+      "mean": 0.3611369392953778
+    },
+    "method": "Descriptive only: previous coherent observation within 250 ms of frame reception; same-owner body matching within one tile. Native visibility is unknown. Identity uses native card summon metadata, which can alias spawned or transformed bodies. Events require prediction after the upper observed execution-time bound and within 500 ms of the lower bound."
+  },
+  "gates": {
+    "full_pairs": true,
+    "noninferiority": false,
+    "latency_p99": false,
+    "search_deadline": false,
+    "pixel_lifecycle": false,
+    "calibrated_uncertainty_interface": false,
+    "L1_certification": false
+  }
+}

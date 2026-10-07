@@ -342,3 +342,139 @@ Deferred-report verification: fixed a missing parenthesis in the unsealed analyz
 2026-10-05 00:46:40: Native pair 18 complete: frames=1578, actions=139, terminal=True, pixel_end=True. No interim aggregate strength inspection.
 
 2026-10-05 00:47:05: Simulator pair 19 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 13:42:08: SIGSTOP recovery (UTC 2026-10-05T20:42:08Z, coordinator agent on f35 via ssh): the previous coordinator SIGSTOPped pipeline 95700, native worker 95753 and simulator worker 95820 at about 07:49Z for about 12 h 50 min. The owned emulator 89739 kept running, so native pair 19 ended in-engine with no controller input (probe lifecycle: tick 6219, ended; winner not read). A plain SIGCONT would have written a terminal pair-19 receipt through the exhausted wall-guard path, so the stopped owned groups were SIGKILLed before running. No exit, error or receipt file was written. Native 0-18 and simulator 0-19 receipts are retained. The pair-19 partial (287 decisions, 1,092 frames, 1,201 evaluator rows, perceived tick 2368, clean parse), logs and pre-change sources are preserved in recovery-sigstop-20261005 (incident.json). 493 pins matched before the change. Owner and IPv4/IPv6 UID REJECT verified. The emulator was paused with render off, as the worker's own finally block would have done. The PREREG amendment is dated before the replay. offline_loop.py gains only the recovery-sigstop opening-equality lookup. Re-sealed: 493 pins, of which only offline_loop.py and PREREG.md changed. test_recovery 5/5 OK. Relaunching the pipeline and one finalizer via detach.sh/run.sh on adb port 5041. Only native pair 19 is replayed, and exact opening equality is required. No interim strength outcomes inspected.
+
+2026-10-05 13:42:14: Evaluation driver starting after source-pin verification.
+
+2026-10-05 13:42:14: p16 native and simulator workers exited zero.
+
+2026-10-05 13:46:11: Native pair 19 complete: frames=748, actions=115, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 13:46:51: Simulator pair 20 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 13:51:20: Native pair 20 complete: frames=910, actions=210, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 13:51:36: SIGSTOP recovery verified (UTC 2026-10-05T20:51:36Z). The pair-19 technical rerun passed exact opening equality at tick 220 against recovery-sigstop-20261005/native-pair-19-partial and completed a real native terminal with pixel end. Its existing simulator pair-19 baseline is retained. Pair 20 native and simulator are complete, and the workers continue. One read-only forward reconnection has occurred since relaunch, handled by the amended reconnect path. A single finalizer is running (75174). No interim strength outcomes inspected.
+
+2026-10-05 13:52:02: Simulator pair 21 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 13:54:23: Native pair 21 complete: frames=513, actions=105, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 13:54:56: Simulator pair 22 complete, terminal tick 2836; no interim aggregate strength inspection.
+
+2026-10-05 13:59:33: Native pair 22 complete: frames=801, actions=206, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:00:15: Simulator pair 23 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:02:37: Native pair 23 complete: frames=507, actions=101, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:03:21: Simulator pair 24 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:06:39: Native pair 24 complete: frames=645, actions=142, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:07:22: Simulator pair 25 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:11:25: Native pair 25 complete: frames=717, actions=180, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:12:04: Simulator pair 26 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:16:34: Native pair 26 complete: frames=922, actions=229, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:17:32: Simulator pair 27 complete, terminal tick 5135; no interim aggregate strength inspection.
+
+2026-10-05 14:19:37: Native pair 27 complete: frames=515, actions=97, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:20:18: Simulator pair 28 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:22:40: Native pair 28 complete: frames=574, actions=107, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:23:18: Simulator pair 29 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:25:43: Native pair 29 complete: frames=559, actions=102, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:26:17: Simulator pair 30 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:28:47: Native pair 30 complete: frames=534, actions=115, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:29:35: Simulator pair 31 complete, terminal tick 3934; no interim aggregate strength inspection.
+
+2026-10-05 14:33:56: Native pair 31 complete: frames=805, actions=217, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:34:29: Simulator pair 32 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:37:51: Native pair 32 complete: frames=773, actions=132, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:38:27: Simulator pair 33 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:40:54: Native pair 33 complete: frames=605, actions=91, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:41:32: Simulator pair 34 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:46:03: Native pair 34 complete: frames=924, actions=195, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:46:37: Simulator pair 35 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:51:14: Native pair 35 complete: frames=1004, actions=202, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:51:51: Simulator pair 36 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:54:18: Native pair 36 complete: frames=583, actions=91, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:54:55: Simulator pair 37 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 14:57:21: Native pair 37 complete: frames=574, actions=97, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 14:57:58: Simulator pair 38 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 15:01:08: Native pair 38 complete: frames=683, actions=115, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 15:01:46: Simulator pair 39 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 15:05:06: Native pair 39 complete: frames=735, actions=129, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 15:05:37: Simulator pair 40 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 15:08:10: Native pair 40 complete: frames=569, actions=91, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 15:08:45: Simulator pair 41 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 15:13:20: Native pair 41 complete: frames=874, actions=209, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 15:14:00: Simulator pair 42 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 15:17:21: Native pair 42 complete: frames=746, actions=126, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 15:17:54: Simulator pair 43 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 15:20:24: Native pair 43 complete: frames=581, actions=89, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 15:20:59: Simulator pair 44 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 15:25:34: Native pair 44 complete: frames=1031, actions=193, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 15:26:12: Simulator pair 45 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 15:28:38: Native pair 45 complete: frames=573, actions=91, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 15:29:11: Simulator pair 46 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 15:33:47: Native pair 46 complete: frames=974, actions=216, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 15:34:23: Simulator pair 47 complete, terminal tick 3601; no interim aggregate strength inspection.
+
+2026-10-05 15:34:23: Simulator c56 worker finished.
+
+2026-10-05 15:38:56: Native pair 47 complete: frames=941, actions=187, terminal=True, pixel_end=True. No interim aggregate strength inspection.
+
+2026-10-05 15:38:56: Native c56 worker finished.
+
+2026-10-05 15:39:00: c56 native and simulator workers exited zero.
+
+2026-10-05 15:39:09: All registered evaluation workers completed. Starting frozen-outcome analysis.
+
+2026-10-05 15:39:32: Analysis exit 0
+
+2026-10-05 15:39:35: Owned emulator cleanup verified=True. No foreign process touched.
+
+2026-10-05 15:39:35: L2 evaluation, analysis, report and owned-emulator cleanup complete; L3 verdict remains NOT READY.
