@@ -164,3 +164,4 @@ Also on the hub, but with copies elsewhere:
 - The C56 extraction resume hasn't started any compute. State is in `c56/data/PROGRESS.md` and `FLEET-RESULTS.md`.
 
 **Suggested first move:** pick a new hub among 01/03/04/07/08, or wait for 127x02 to return. Note that each node's `/mpac` copy came from 127x02 and may be partial.
+- **2026-10-07 23:45 UTC:** all clasher jobs on the Mac are stopped (SIGTERM): v4 bench PGID 8556, v4 pipeline PGID 9517, renderer emulator 66755, the owned adb servers on ports 5041 and 5042, caffeinate and host_watchdog. The Mac now runs nothing for clasher. T1 collection stopped partway; its state is in live-loop/v4/T1-PROGRESS.md.
