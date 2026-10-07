@@ -191,3 +191,15 @@ Also on the hub, but with copies elsewhere:
 - **Sequencing.** Now: hub bring-up (Astra), T1/T2 resume on the Mac emulator (Astra), GPU training env T0
   (6.1-Sol). After the hub is ready: Stage 6 completion, C56 extraction resume, S1 confirmation relaunch.
 - **2026-10-07 23:40 UTC:** hub recovery on 127x01 is underway: label `recovery-copy-20261008` (PID 3288950), a two-stream read-only pull from the Mac. The 10 stale receivers left from 127x02 are terminated. A second, unrequested Mac→fleet push was found: two detached `pilot/transfer_to_fleet.sh` runs (PGIDs 29023 and 29029, started 23:37:33Z, hub=127x01 and hub=127x04, launched by neither this thread nor the hub worker). I stopped both with SIGTERM on their verified process groups so the hub copy has a single writer. Any partial files are overwritten by the pull and checked by its checksum sweep. 127x04 gets its copy by LAN fan-out from 127x01 after the hub's checks pass.
+- **2026-10-07 23:50 UTC: correction and copy plan.** The two Mac pushes stopped at 23:39Z were the old Mac thread's
+  first complete copies to 127x01/127x04 (its cleanup work, not project work). They are dead and stay dead:
+  one copy plan only. **127x01** (hub) is filled by the hub worker's pull from the Mac (`recovery-copy-20261008`).
+  **127x04** (second copy), **03, 07, 08** get it by LAN fan-out from 127x01 after bootstrap + parity gate.
+  The hub worker sources clasher-local-data from the Mac caches (no APK).
+  **Mac bulk offload** (`pilot/offload_mac_bulk.sh`, ~33 GB): the Mac's
+  `transfer-to-fleet-*.log` will never say DONE now. The signal instead is `127x01:/mpac/sdicks02/jobs/clasher/hub-ready.json`,
+  which includes the script's dry-run result (0 checksum differences on 127x01 and 127x04). Only then may the Mac run
+  it with `--delete`. The script rechecks both copies itself before deleting. By then 03/07/08 also hold copies, so
+  the offloaded data exists on five fleet nodes. Rule from then on: never delete offloaded data on any fleet node
+  without first making another copy. The T1 stream from earlier today was registration bundles only (no matches),
+  so losing it with 127x02 costs nothing.
