@@ -203,3 +203,10 @@ Also on the hub, but with copies elsewhere:
   the offloaded data exists on five fleet nodes. Rule from then on: never delete offloaded data on any fleet node
   without first making another copy. The T1 stream from earlier today was registration bundles only (no matches),
   so losing it with 127x02 costs nothing.
+- **2026-10-08 00:20 UTC: T0 GPU env PASS** (6.1-Sol high; `fleet/GPU-CHECK.md`, `gpu_env.sh`, `gpu_check.py`).
+  `/mpac/sdicks02/envs/clasher-gpu` on 127x04/07/08: Python 3.12, torch 2.7.1+cu118 (newest cu118 build) on driver
+  470, ultralytics 8.1.24. Per GPU: FP32 ~24, TF32 ~62, bf16 ~105 TFLOPS; YOLOv8s synthetic epoch ~1.75 s; conv, transformer
+  AMP and 16-worker loading pass. `torch.compile` fails ("device kernel image is invalid"), so train eager. Old
+  ultralytics needs `TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1`, for trusted local checkpoints only. The v3 trainer
+  entry points need a CUDA device port (they target MPS). Coordinator re-check on 127x08: torch 2.7.1+cu118 sees the A6000; warm
+  bf16 8192² matmul 113.7 TFLOPS. Separate from the repo's parity-pinned `.venv`.
