@@ -1,0 +1,1107 @@
+{
+  "index": 4,
+  "tick": 900,
+  "seat": 0,
+  "expected": {
+    "index": 4,
+    "tick": 900,
+    "seat": 0,
+    "candidates": 19,
+    "ability_candidate": false,
+    "action": 120,
+    "rollouts": 57,
+    "ticks": 9120,
+    "continuation_actions": 1710,
+    "trace_sha256": "0323ee822a6f04af26c264314c85517ecd6108e32b025e79fb1754c73ed51114",
+    "python_wall": 4.285834624897689,
+    "native_wall": 0.057263500057160854
+  },
+  "differences": [
+    {
+      "path": "root.scores[14]",
+      "python": -0.001769718360278746,
+      "native": -0.001955628983916651,
+      "python_hex": "-0x1.cfebc9ec0f858p-10",
+      "native_hex": "-0x1.0054050edd3f1p-9"
+    },
+    {
+      "path": "root.scores[15]",
+      "python": -0.007308399199635801,
+      "native": -0.007550936396754148,
+      "python_hex": "-0x1.def6978c6daa0p-8",
+      "native_hex": "-0x1.eedbb0e0d404cp-8"
+    },
+    {
+      "path": "root.scores[17]",
+      "python": -0.002146212178676158,
+      "native": -0.0023887493757945065,
+      "python_hex": "-0x1.194eee3c41feep-9",
+      "native_hex": "-0x1.391920e50eb4ap-9"
+    },
+    {
+      "path": "root.traces[1][2][4][20][3]",
+      "python": "f9337ce9ebc73ed221983e2e72adf5ee8ecd5b22c590a5f71e1f71caee66d8ea:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "cb20a37bc701fdcd5254ad0d1d0ab9a3aca0eed6da1804acb6e7e4b501be97b5:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[1][2][4][21][3]",
+      "python": "f9337ce9ebc73ed221983e2e72adf5ee8ecd5b22c590a5f71e1f71caee66d8ea:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "cb20a37bc701fdcd5254ad0d1d0ab9a3aca0eed6da1804acb6e7e4b501be97b5:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[1][2][4][22][3]",
+      "python": "dd5225572f9eb208616d564046ec75dd5904850cd1b6a7cef53a964baa37dc6f:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "41bd4001b181e191aa0734bfd6c0a3b9cf92fcca6b3a79480f24ceca87fa09a2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[1][2][4][23][3]",
+      "python": "dd5225572f9eb208616d564046ec75dd5904850cd1b6a7cef53a964baa37dc6f:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "41bd4001b181e191aa0734bfd6c0a3b9cf92fcca6b3a79480f24ceca87fa09a2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[2][2][4][20][3]",
+      "python": "2d94cfb8f2912d58c7c596cc24ae99fad83b1e1d950e367ff741258a16f64ce7:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b9fc0b63779e78b6865a5790a1ae10bf3f1efe54a7e6d64c99d252d6d5513293:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[2][2][4][21][3]",
+      "python": "2d94cfb8f2912d58c7c596cc24ae99fad83b1e1d950e367ff741258a16f64ce7:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b9fc0b63779e78b6865a5790a1ae10bf3f1efe54a7e6d64c99d252d6d5513293:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[2][2][4][22][3]",
+      "python": "7f873b2b0f4fb9bd38e0c220b11311ab8a9bbc45c7448887bf2cd074f79cb9bc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "ff906b7d6c4e8e7f099e1f58c40a4103d40adf192806d3d76b42a2094b0213a9:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[2][2][4][23][3]",
+      "python": "7f873b2b0f4fb9bd38e0c220b11311ab8a9bbc45c7448887bf2cd074f79cb9bc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "ff906b7d6c4e8e7f099e1f58c40a4103d40adf192806d3d76b42a2094b0213a9:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[3][2][4][20][3]",
+      "python": "ed220f40281f3a9e11c133388777969afdd171c4c60cdfc26c39e8d52be4d132:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "ab7fa9bafc2bcb614b7e7cde44b8be33d2215f4833cdda40d5842779282418c2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[3][2][4][21][3]",
+      "python": "ed220f40281f3a9e11c133388777969afdd171c4c60cdfc26c39e8d52be4d132:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "ab7fa9bafc2bcb614b7e7cde44b8be33d2215f4833cdda40d5842779282418c2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[3][2][4][22][3]",
+      "python": "2aa64811b9e8b89391aecd4e739cad08f5fbf4b12ea9e27cc122a0e55fe3d047:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "320b07fafa9ddf3508672180d72566ea7b076abfaef589787ed3f98dda8445df:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[3][2][4][23][3]",
+      "python": "2aa64811b9e8b89391aecd4e739cad08f5fbf4b12ea9e27cc122a0e55fe3d047:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "320b07fafa9ddf3508672180d72566ea7b076abfaef589787ed3f98dda8445df:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[4][2][4][18][3]",
+      "python": "56c9869145af3d3fb37340e370f35cf0f915f5ace50b6f45180f48dbd4fb978c:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "7697cdaf244f9d4cec48124d601f1207f480238afa43024f96e9c16e2ae107de:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[4][2][4][19][3]",
+      "python": "56c9869145af3d3fb37340e370f35cf0f915f5ace50b6f45180f48dbd4fb978c:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "7697cdaf244f9d4cec48124d601f1207f480238afa43024f96e9c16e2ae107de:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[4][2][4][20][3]",
+      "python": "295f003a5e1de0edc60423503767abac1b6195111de8b6671f06b56e2f728df4:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "44df2357ab5e6cd83019b9c4070034a22f75f8b2af368b9b89afe65e8b902606:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[4][2][4][21][3]",
+      "python": "295f003a5e1de0edc60423503767abac1b6195111de8b6671f06b56e2f728df4:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "44df2357ab5e6cd83019b9c4070034a22f75f8b2af368b9b89afe65e8b902606:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[5][2][4][18][3]",
+      "python": "7319c8e357e3644b92554e72410975589c902c3435271ae89acf99cd674ab6e6:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "29885ca696f04b5d7a06dd2ad2b15b468b2a4a4debc9f4da14b851471001ec0e:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[5][2][4][19][3]",
+      "python": "7319c8e357e3644b92554e72410975589c902c3435271ae89acf99cd674ab6e6:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "29885ca696f04b5d7a06dd2ad2b15b468b2a4a4debc9f4da14b851471001ec0e:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[5][2][4][20][3]",
+      "python": "158127cd39c449f262d81ed14674e71cae1975b1898fba54bc64df83de9eed2b:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "3956e150d2abed7929bc6adbd29a5fb58896a9e99b1ad45c9a6c66f4d7f75abc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[5][2][4][21][3]",
+      "python": "158127cd39c449f262d81ed14674e71cae1975b1898fba54bc64df83de9eed2b:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "3956e150d2abed7929bc6adbd29a5fb58896a9e99b1ad45c9a6c66f4d7f75abc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[6][2][4][20][3]",
+      "python": "9c5c95f4477c6d9326324c5077463a51ce77aa0a414dfcd5ecb3a2510a5b23b9:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "ac122539ac433c3c506f608628a0ff0059d8e7c352a7c921b127179455719feb:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[6][2][4][21][3]",
+      "python": "9c5c95f4477c6d9326324c5077463a51ce77aa0a414dfcd5ecb3a2510a5b23b9:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "ac122539ac433c3c506f608628a0ff0059d8e7c352a7c921b127179455719feb:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[6][2][4][22][3]",
+      "python": "5e22a66684bfcf9907f4228151094dd97907acff73d9ba48f69e8425506c4d96:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "6d2f1f338a508deccd48f520816b7642832fe791fcbd370d5f9e22b0ba246823:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[6][2][4][23][3]",
+      "python": "5e22a66684bfcf9907f4228151094dd97907acff73d9ba48f69e8425506c4d96:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "6d2f1f338a508deccd48f520816b7642832fe791fcbd370d5f9e22b0ba246823:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[7][2][4][26][3]",
+      "python": "abc71803b414f28f815b8e87a2035e3f060eca51e6c737bcb28d08fc5dc498fc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4c2f058ece42534e6730da496e85607259e00fc89d29c43103c5bf20a6d20a11:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[7][2][4][27][3]",
+      "python": "abc71803b414f28f815b8e87a2035e3f060eca51e6c737bcb28d08fc5dc498fc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4c2f058ece42534e6730da496e85607259e00fc89d29c43103c5bf20a6d20a11:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[7][2][4][28][3]",
+      "python": "79b36296ee9f4074f74b20db324ef4437a7023f3f8a8dd0808f41d560d533da1:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4ccd73e30ce31270d5009b40f7d61f4252690f117b5035d37ad23398cc2b9625:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[7][2][4][29][3]",
+      "python": "79b36296ee9f4074f74b20db324ef4437a7023f3f8a8dd0808f41d560d533da1:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4ccd73e30ce31270d5009b40f7d61f4252690f117b5035d37ad23398cc2b9625:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[8][2][4][12][3]",
+      "python": "0bd8d0226ddf771beeea92d851dd1925dc97039c77aae794590db7fd322eee1c:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b28d8ec7d67305b96ec824934f6a0308b8eca3e67d77c696050efb67ef1fb11e:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[8][2][4][13][3]",
+      "python": "0bd8d0226ddf771beeea92d851dd1925dc97039c77aae794590db7fd322eee1c:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b28d8ec7d67305b96ec824934f6a0308b8eca3e67d77c696050efb67ef1fb11e:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[8][2][4][14][3]",
+      "python": "d358abcaec8d9894c78f32fa81cda78c20a85b058ea47b83f46158427b06eaba:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "a16bf245de496e877389500234c86e044c178dca3f49dad41403907019978fb2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[8][2][4][15][3]",
+      "python": "d358abcaec8d9894c78f32fa81cda78c20a85b058ea47b83f46158427b06eaba:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "a16bf245de496e877389500234c86e044c178dca3f49dad41403907019978fb2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[9][2][4][12][3]",
+      "python": "4a0c93c5351e2d7eaccdf68ef4417513bc51fbf0cbe1529499c121fcb2b6c907:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "58a7ee425fa45d3f2bf56f14a778c66bc944228f6f65f32fe35186fb9581f966:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[9][2][4][13][3]",
+      "python": "4a0c93c5351e2d7eaccdf68ef4417513bc51fbf0cbe1529499c121fcb2b6c907:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "58a7ee425fa45d3f2bf56f14a778c66bc944228f6f65f32fe35186fb9581f966:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[9][2][4][14][3]",
+      "python": "a035d8b8d3f3440a31cc2691074b4c29c0bd758070342750eeaa13750dd1e044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "185a9f7b4a2247793f24671f40f6da4d05ec96d19477291957036d1a4eddc79d:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[9][2][4][15][3]",
+      "python": "a035d8b8d3f3440a31cc2691074b4c29c0bd758070342750eeaa13750dd1e044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "185a9f7b4a2247793f24671f40f6da4d05ec96d19477291957036d1a4eddc79d:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[10][2][4][16][3]",
+      "python": "c0645fac238c85286ccc840f403f4d8415d271dcbcfacd9e2ffbd1ac335dba13:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "87412c7cb54172f18aa98282cd96d0495c1ba2e4999972ce88f3ab7af9e1b396:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[10][2][4][17][3]",
+      "python": "c0645fac238c85286ccc840f403f4d8415d271dcbcfacd9e2ffbd1ac335dba13:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "87412c7cb54172f18aa98282cd96d0495c1ba2e4999972ce88f3ab7af9e1b396:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[10][2][4][18][3]",
+      "python": "ceaaf90f9f7eac2769e32192fabed9472459990b6f530f0026c652b32fa89044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4e1f2fb6dbef74ebd948fcf653d8b94d891e0fab54336ed3d5803ad671b052d6:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[10][2][4][19][3]",
+      "python": "ceaaf90f9f7eac2769e32192fabed9472459990b6f530f0026c652b32fa89044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4e1f2fb6dbef74ebd948fcf653d8b94d891e0fab54336ed3d5803ad671b052d6:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[11][2][4][26][3]",
+      "python": "a4b9a33b60dcfeb385046b63dd6114fbf3a13b9f29c599367fe6bd5152d5794a:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "5d4fa36365c50c5e5ac848ce6a1d5c9cb5ec15385c731fb57277418826bf6d49:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[11][2][4][27][3]",
+      "python": "a4b9a33b60dcfeb385046b63dd6114fbf3a13b9f29c599367fe6bd5152d5794a:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "5d4fa36365c50c5e5ac848ce6a1d5c9cb5ec15385c731fb57277418826bf6d49:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[11][2][4][28][3]",
+      "python": "930dc6b60bd94d652cba9c4c002095e416cecd73acfc2e42e20e0dfbaec06acb:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "fc891478e4480163ce2ff92574ce9538267a4daf43e2b4205c965ac8982bc774:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[11][2][4][29][3]",
+      "python": "930dc6b60bd94d652cba9c4c002095e416cecd73acfc2e42e20e0dfbaec06acb:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "fc891478e4480163ce2ff92574ce9538267a4daf43e2b4205c965ac8982bc774:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[12][2][4][12][3]",
+      "python": "26f79c507481a73c967ded2fb287440476fa4b0b102759db7dcda7ffe268a3a3:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b32b263659a74709119c0c92821e3c81771ce8b78317c2d5bd713a5031e33044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[12][2][4][13][3]",
+      "python": "26f79c507481a73c967ded2fb287440476fa4b0b102759db7dcda7ffe268a3a3:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b32b263659a74709119c0c92821e3c81771ce8b78317c2d5bd713a5031e33044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[12][2][4][14][3]",
+      "python": "7939323fab6de4ac4838c1d32d064f7edf32dc421ad9db4e3e9a0f2af8afe698:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b082f0fdeb2fa0387767a19b8cf56b301c6db5186a65ebe1ae1049129e3de5f4:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[12][2][4][15][3]",
+      "python": "7939323fab6de4ac4838c1d32d064f7edf32dc421ad9db4e3e9a0f2af8afe698:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b082f0fdeb2fa0387767a19b8cf56b301c6db5186a65ebe1ae1049129e3de5f4:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[13][2][4][14][3]",
+      "python": "c5abb9aa7a77d8c9b1e7c2e4b6dc304e8fda632f142c07be085e4f065dfd7269:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "fd4e8fea5e731348f98edc77d8528aa576231440148124d2307f3cd630d8bb35:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[13][2][4][15][3]",
+      "python": "c5abb9aa7a77d8c9b1e7c2e4b6dc304e8fda632f142c07be085e4f065dfd7269:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "fd4e8fea5e731348f98edc77d8528aa576231440148124d2307f3cd630d8bb35:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[13][2][4][16][3]",
+      "python": "9dba4122b940bef5bd64c0627888f0b826097743c01b58f3384bc5fa867d2da2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b15dc5a114262937e15b83fa5d4233697797c6ad495929966f5b5809bbe3a1f7:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[13][2][4][17][3]",
+      "python": "9dba4122b940bef5bd64c0627888f0b826097743c01b58f3384bc5fa867d2da2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b15dc5a114262937e15b83fa5d4233697797c6ad495929966f5b5809bbe3a1f7:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[14][2][0]",
+      "python": -0.003062908769198262,
+      "native": -0.0033417747046551195,
+      "python_hex": "-0x1.917629fd19e3cp-9",
+      "native_hex": "-0x1.b6035a225a1e4p-9"
+    },
+    {
+      "path": "root.traces[14][2][4][28][3]",
+      "python": "502c09b01a4b88c01f4089b3347754969ee8bf07c731a9e78935c1f9652aa061:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "dab1d6786ed1c7e8af1924de8025234b2588a3bbd4bcf126fd17b86e3dbb9605:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[14][2][4][29][3]",
+      "python": "502c09b01a4b88c01f4089b3347754969ee8bf07c731a9e78935c1f9652aa061:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "dab1d6786ed1c7e8af1924de8025234b2588a3bbd4bcf126fd17b86e3dbb9605:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[14][2][5]",
+      "python": "8bbf81486386d1537c5ac52a5c66a58b3b4d683636d75720334d6bc6bd19cda7:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "81278108c04b0679d4761b07a3a73410387a8dde19a0fcd09546b4057ff36673:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[15][2][0]",
+      "python": -0.011187237401984953,
+      "native": -0.011551043197662475,
+      "python_hex": "-0x1.6e9559631625bp-7",
+      "native_hex": "-0x1.7a812c6262e9dp-7"
+    },
+    {
+      "path": "root.traces[15][2][5]",
+      "python": "8d7d9961b0e177153fd6328241aed1731395deefffe8450ca2a4af95980c2237:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "f3643cfe4b107b6ae8d33747cf6af02f3117da6f13ac82b2c38d5ed618dc300b:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[16][2][4][16][3]",
+      "python": "c0645fac238c85286ccc840f403f4d8415d271dcbcfacd9e2ffbd1ac335dba13:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "87412c7cb54172f18aa98282cd96d0495c1ba2e4999972ce88f3ab7af9e1b396:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[16][2][4][17][3]",
+      "python": "c0645fac238c85286ccc840f403f4d8415d271dcbcfacd9e2ffbd1ac335dba13:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "87412c7cb54172f18aa98282cd96d0495c1ba2e4999972ce88f3ab7af9e1b396:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[16][2][4][18][3]",
+      "python": "ceaaf90f9f7eac2769e32192fabed9472459990b6f530f0026c652b32fa89044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4e1f2fb6dbef74ebd948fcf653d8b94d891e0fab54336ed3d5803ad671b052d6:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[16][2][4][19][3]",
+      "python": "ceaaf90f9f7eac2769e32192fabed9472459990b6f530f0026c652b32fa89044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4e1f2fb6dbef74ebd948fcf653d8b94d891e0fab54336ed3d5803ad671b052d6:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[17][2][0]",
+      "python": -0.0034439568705454896,
+      "native": -0.0038077626662230118,
+      "python_hex": "-0x1.c368044172974p-9",
+      "native_hex": "-0x1.f317503ea5a7cp-9"
+    },
+    {
+      "path": "root.traces[17][2][4][28][3]",
+      "python": "dbf096f7ccc42e34166f0da422c8e0794457cd6c0291899171aa2cf056c1fbcc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "f85a5bb805fbd52ffed89e463f7cafbefbef0c130cdb0bf47aca2af4a164df40:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[17][2][4][29][3]",
+      "python": "dbf096f7ccc42e34166f0da422c8e0794457cd6c0291899171aa2cf056c1fbcc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "f85a5bb805fbd52ffed89e463f7cafbefbef0c130cdb0bf47aca2af4a164df40:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[17][2][5]",
+      "python": "26155ed94eeadb19039e0551ad6de9f8cbc76b692a98d2f1c5ec35042645b9ca:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "46bc9b0586e40a8099ed9dd4b918ab7a5bbf60c1ef2b9f2d82ddbf122d799da0:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[18][2][4][24][3]",
+      "python": "c4feaa9e7baea5c00b30ec6cdc6c55738ea27aedfe62511a1d557d3e7f03453f:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "f78a77acadb9c6e45f94643d661d6fdcdb3c721d565615219dc1f5489efa45d5:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[18][2][4][25][3]",
+      "python": "c4feaa9e7baea5c00b30ec6cdc6c55738ea27aedfe62511a1d557d3e7f03453f:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "f78a77acadb9c6e45f94643d661d6fdcdb3c721d565615219dc1f5489efa45d5:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[18][2][4][26][3]",
+      "python": "e61148bf256e85a00ef713a980d82e933442ab9ed4277fb376b563253eb0cd50:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "7f8a01e49177569d0fb49ed00eee4e3f073df93e5c919dc40e518c064ac6c711:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[18][2][4][27][3]",
+      "python": "e61148bf256e85a00ef713a980d82e933442ab9ed4277fb376b563253eb0cd50:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "7f8a01e49177569d0fb49ed00eee4e3f073df93e5c919dc40e518c064ac6c711:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[27][2][4][12][3]",
+      "python": "0bd8d0226ddf771beeea92d851dd1925dc97039c77aae794590db7fd322eee1c:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b28d8ec7d67305b96ec824934f6a0308b8eca3e67d77c696050efb67ef1fb11e:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[27][2][4][13][3]",
+      "python": "0bd8d0226ddf771beeea92d851dd1925dc97039c77aae794590db7fd322eee1c:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b28d8ec7d67305b96ec824934f6a0308b8eca3e67d77c696050efb67ef1fb11e:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[27][2][4][14][3]",
+      "python": "d358abcaec8d9894c78f32fa81cda78c20a85b058ea47b83f46158427b06eaba:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "a16bf245de496e877389500234c86e044c178dca3f49dad41403907019978fb2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[27][2][4][15][3]",
+      "python": "d358abcaec8d9894c78f32fa81cda78c20a85b058ea47b83f46158427b06eaba:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "a16bf245de496e877389500234c86e044c178dca3f49dad41403907019978fb2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[28][2][4][12][3]",
+      "python": "4a0c93c5351e2d7eaccdf68ef4417513bc51fbf0cbe1529499c121fcb2b6c907:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "58a7ee425fa45d3f2bf56f14a778c66bc944228f6f65f32fe35186fb9581f966:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[28][2][4][13][3]",
+      "python": "4a0c93c5351e2d7eaccdf68ef4417513bc51fbf0cbe1529499c121fcb2b6c907:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "58a7ee425fa45d3f2bf56f14a778c66bc944228f6f65f32fe35186fb9581f966:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[28][2][4][14][3]",
+      "python": "a035d8b8d3f3440a31cc2691074b4c29c0bd758070342750eeaa13750dd1e044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "185a9f7b4a2247793f24671f40f6da4d05ec96d19477291957036d1a4eddc79d:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[28][2][4][15][3]",
+      "python": "a035d8b8d3f3440a31cc2691074b4c29c0bd758070342750eeaa13750dd1e044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "185a9f7b4a2247793f24671f40f6da4d05ec96d19477291957036d1a4eddc79d:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[31][2][4][12][3]",
+      "python": "26f79c507481a73c967ded2fb287440476fa4b0b102759db7dcda7ffe268a3a3:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b32b263659a74709119c0c92821e3c81771ce8b78317c2d5bd713a5031e33044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[31][2][4][13][3]",
+      "python": "26f79c507481a73c967ded2fb287440476fa4b0b102759db7dcda7ffe268a3a3:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b32b263659a74709119c0c92821e3c81771ce8b78317c2d5bd713a5031e33044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[31][2][4][14][3]",
+      "python": "7939323fab6de4ac4838c1d32d064f7edf32dc421ad9db4e3e9a0f2af8afe698:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b082f0fdeb2fa0387767a19b8cf56b301c6db5186a65ebe1ae1049129e3de5f4:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[31][2][4][15][3]",
+      "python": "7939323fab6de4ac4838c1d32d064f7edf32dc421ad9db4e3e9a0f2af8afe698:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b082f0fdeb2fa0387767a19b8cf56b301c6db5186a65ebe1ae1049129e3de5f4:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[39][2][4][20][3]",
+      "python": "f9337ce9ebc73ed221983e2e72adf5ee8ecd5b22c590a5f71e1f71caee66d8ea:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "cb20a37bc701fdcd5254ad0d1d0ab9a3aca0eed6da1804acb6e7e4b501be97b5:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[39][2][4][21][3]",
+      "python": "f9337ce9ebc73ed221983e2e72adf5ee8ecd5b22c590a5f71e1f71caee66d8ea:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "cb20a37bc701fdcd5254ad0d1d0ab9a3aca0eed6da1804acb6e7e4b501be97b5:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[39][2][4][22][3]",
+      "python": "dd5225572f9eb208616d564046ec75dd5904850cd1b6a7cef53a964baa37dc6f:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "41bd4001b181e191aa0734bfd6c0a3b9cf92fcca6b3a79480f24ceca87fa09a2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[39][2][4][23][3]",
+      "python": "dd5225572f9eb208616d564046ec75dd5904850cd1b6a7cef53a964baa37dc6f:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "41bd4001b181e191aa0734bfd6c0a3b9cf92fcca6b3a79480f24ceca87fa09a2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[40][2][4][20][3]",
+      "python": "2d94cfb8f2912d58c7c596cc24ae99fad83b1e1d950e367ff741258a16f64ce7:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b9fc0b63779e78b6865a5790a1ae10bf3f1efe54a7e6d64c99d252d6d5513293:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[40][2][4][21][3]",
+      "python": "2d94cfb8f2912d58c7c596cc24ae99fad83b1e1d950e367ff741258a16f64ce7:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b9fc0b63779e78b6865a5790a1ae10bf3f1efe54a7e6d64c99d252d6d5513293:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[40][2][4][22][3]",
+      "python": "7f873b2b0f4fb9bd38e0c220b11311ab8a9bbc45c7448887bf2cd074f79cb9bc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "ff906b7d6c4e8e7f099e1f58c40a4103d40adf192806d3d76b42a2094b0213a9:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[40][2][4][23][3]",
+      "python": "7f873b2b0f4fb9bd38e0c220b11311ab8a9bbc45c7448887bf2cd074f79cb9bc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "ff906b7d6c4e8e7f099e1f58c40a4103d40adf192806d3d76b42a2094b0213a9:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[41][2][4][20][3]",
+      "python": "ed220f40281f3a9e11c133388777969afdd171c4c60cdfc26c39e8d52be4d132:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "ab7fa9bafc2bcb614b7e7cde44b8be33d2215f4833cdda40d5842779282418c2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[41][2][4][21][3]",
+      "python": "ed220f40281f3a9e11c133388777969afdd171c4c60cdfc26c39e8d52be4d132:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "ab7fa9bafc2bcb614b7e7cde44b8be33d2215f4833cdda40d5842779282418c2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[41][2][4][22][3]",
+      "python": "2aa64811b9e8b89391aecd4e739cad08f5fbf4b12ea9e27cc122a0e55fe3d047:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "320b07fafa9ddf3508672180d72566ea7b076abfaef589787ed3f98dda8445df:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[41][2][4][23][3]",
+      "python": "2aa64811b9e8b89391aecd4e739cad08f5fbf4b12ea9e27cc122a0e55fe3d047:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "320b07fafa9ddf3508672180d72566ea7b076abfaef589787ed3f98dda8445df:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[42][2][4][18][3]",
+      "python": "56c9869145af3d3fb37340e370f35cf0f915f5ace50b6f45180f48dbd4fb978c:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "7697cdaf244f9d4cec48124d601f1207f480238afa43024f96e9c16e2ae107de:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[42][2][4][19][3]",
+      "python": "56c9869145af3d3fb37340e370f35cf0f915f5ace50b6f45180f48dbd4fb978c:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "7697cdaf244f9d4cec48124d601f1207f480238afa43024f96e9c16e2ae107de:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[42][2][4][20][3]",
+      "python": "295f003a5e1de0edc60423503767abac1b6195111de8b6671f06b56e2f728df4:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "44df2357ab5e6cd83019b9c4070034a22f75f8b2af368b9b89afe65e8b902606:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[42][2][4][21][3]",
+      "python": "295f003a5e1de0edc60423503767abac1b6195111de8b6671f06b56e2f728df4:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "44df2357ab5e6cd83019b9c4070034a22f75f8b2af368b9b89afe65e8b902606:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[43][2][4][18][3]",
+      "python": "7319c8e357e3644b92554e72410975589c902c3435271ae89acf99cd674ab6e6:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "29885ca696f04b5d7a06dd2ad2b15b468b2a4a4debc9f4da14b851471001ec0e:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[43][2][4][19][3]",
+      "python": "7319c8e357e3644b92554e72410975589c902c3435271ae89acf99cd674ab6e6:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "29885ca696f04b5d7a06dd2ad2b15b468b2a4a4debc9f4da14b851471001ec0e:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[43][2][4][20][3]",
+      "python": "158127cd39c449f262d81ed14674e71cae1975b1898fba54bc64df83de9eed2b:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "3956e150d2abed7929bc6adbd29a5fb58896a9e99b1ad45c9a6c66f4d7f75abc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[43][2][4][21][3]",
+      "python": "158127cd39c449f262d81ed14674e71cae1975b1898fba54bc64df83de9eed2b:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "3956e150d2abed7929bc6adbd29a5fb58896a9e99b1ad45c9a6c66f4d7f75abc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[44][2][4][20][3]",
+      "python": "9c5c95f4477c6d9326324c5077463a51ce77aa0a414dfcd5ecb3a2510a5b23b9:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "ac122539ac433c3c506f608628a0ff0059d8e7c352a7c921b127179455719feb:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[44][2][4][21][3]",
+      "python": "9c5c95f4477c6d9326324c5077463a51ce77aa0a414dfcd5ecb3a2510a5b23b9:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "ac122539ac433c3c506f608628a0ff0059d8e7c352a7c921b127179455719feb:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[44][2][4][22][3]",
+      "python": "5e22a66684bfcf9907f4228151094dd97907acff73d9ba48f69e8425506c4d96:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "6d2f1f338a508deccd48f520816b7642832fe791fcbd370d5f9e22b0ba246823:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[44][2][4][23][3]",
+      "python": "5e22a66684bfcf9907f4228151094dd97907acff73d9ba48f69e8425506c4d96:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "6d2f1f338a508deccd48f520816b7642832fe791fcbd370d5f9e22b0ba246823:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[45][2][4][26][3]",
+      "python": "abc71803b414f28f815b8e87a2035e3f060eca51e6c737bcb28d08fc5dc498fc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4c2f058ece42534e6730da496e85607259e00fc89d29c43103c5bf20a6d20a11:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[45][2][4][27][3]",
+      "python": "abc71803b414f28f815b8e87a2035e3f060eca51e6c737bcb28d08fc5dc498fc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4c2f058ece42534e6730da496e85607259e00fc89d29c43103c5bf20a6d20a11:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[45][2][4][28][3]",
+      "python": "79b36296ee9f4074f74b20db324ef4437a7023f3f8a8dd0808f41d560d533da1:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4ccd73e30ce31270d5009b40f7d61f4252690f117b5035d37ad23398cc2b9625:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[45][2][4][29][3]",
+      "python": "79b36296ee9f4074f74b20db324ef4437a7023f3f8a8dd0808f41d560d533da1:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4ccd73e30ce31270d5009b40f7d61f4252690f117b5035d37ad23398cc2b9625:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[46][2][4][12][3]",
+      "python": "0bd8d0226ddf771beeea92d851dd1925dc97039c77aae794590db7fd322eee1c:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b28d8ec7d67305b96ec824934f6a0308b8eca3e67d77c696050efb67ef1fb11e:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[46][2][4][13][3]",
+      "python": "0bd8d0226ddf771beeea92d851dd1925dc97039c77aae794590db7fd322eee1c:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b28d8ec7d67305b96ec824934f6a0308b8eca3e67d77c696050efb67ef1fb11e:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[46][2][4][14][3]",
+      "python": "d358abcaec8d9894c78f32fa81cda78c20a85b058ea47b83f46158427b06eaba:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "a16bf245de496e877389500234c86e044c178dca3f49dad41403907019978fb2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[46][2][4][15][3]",
+      "python": "d358abcaec8d9894c78f32fa81cda78c20a85b058ea47b83f46158427b06eaba:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "a16bf245de496e877389500234c86e044c178dca3f49dad41403907019978fb2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[47][2][4][12][3]",
+      "python": "4a0c93c5351e2d7eaccdf68ef4417513bc51fbf0cbe1529499c121fcb2b6c907:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "58a7ee425fa45d3f2bf56f14a778c66bc944228f6f65f32fe35186fb9581f966:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[47][2][4][13][3]",
+      "python": "4a0c93c5351e2d7eaccdf68ef4417513bc51fbf0cbe1529499c121fcb2b6c907:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "58a7ee425fa45d3f2bf56f14a778c66bc944228f6f65f32fe35186fb9581f966:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[47][2][4][14][3]",
+      "python": "a035d8b8d3f3440a31cc2691074b4c29c0bd758070342750eeaa13750dd1e044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "185a9f7b4a2247793f24671f40f6da4d05ec96d19477291957036d1a4eddc79d:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[47][2][4][15][3]",
+      "python": "a035d8b8d3f3440a31cc2691074b4c29c0bd758070342750eeaa13750dd1e044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "185a9f7b4a2247793f24671f40f6da4d05ec96d19477291957036d1a4eddc79d:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[48][2][4][16][3]",
+      "python": "c0645fac238c85286ccc840f403f4d8415d271dcbcfacd9e2ffbd1ac335dba13:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "87412c7cb54172f18aa98282cd96d0495c1ba2e4999972ce88f3ab7af9e1b396:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[48][2][4][17][3]",
+      "python": "c0645fac238c85286ccc840f403f4d8415d271dcbcfacd9e2ffbd1ac335dba13:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "87412c7cb54172f18aa98282cd96d0495c1ba2e4999972ce88f3ab7af9e1b396:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[48][2][4][18][3]",
+      "python": "ceaaf90f9f7eac2769e32192fabed9472459990b6f530f0026c652b32fa89044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4e1f2fb6dbef74ebd948fcf653d8b94d891e0fab54336ed3d5803ad671b052d6:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[48][2][4][19][3]",
+      "python": "ceaaf90f9f7eac2769e32192fabed9472459990b6f530f0026c652b32fa89044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4e1f2fb6dbef74ebd948fcf653d8b94d891e0fab54336ed3d5803ad671b052d6:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[49][2][4][26][3]",
+      "python": "a4b9a33b60dcfeb385046b63dd6114fbf3a13b9f29c599367fe6bd5152d5794a:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "5d4fa36365c50c5e5ac848ce6a1d5c9cb5ec15385c731fb57277418826bf6d49:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[49][2][4][27][3]",
+      "python": "a4b9a33b60dcfeb385046b63dd6114fbf3a13b9f29c599367fe6bd5152d5794a:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "5d4fa36365c50c5e5ac848ce6a1d5c9cb5ec15385c731fb57277418826bf6d49:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[49][2][4][28][3]",
+      "python": "930dc6b60bd94d652cba9c4c002095e416cecd73acfc2e42e20e0dfbaec06acb:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "fc891478e4480163ce2ff92574ce9538267a4daf43e2b4205c965ac8982bc774:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[49][2][4][29][3]",
+      "python": "930dc6b60bd94d652cba9c4c002095e416cecd73acfc2e42e20e0dfbaec06acb:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "fc891478e4480163ce2ff92574ce9538267a4daf43e2b4205c965ac8982bc774:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[50][2][4][12][3]",
+      "python": "26f79c507481a73c967ded2fb287440476fa4b0b102759db7dcda7ffe268a3a3:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b32b263659a74709119c0c92821e3c81771ce8b78317c2d5bd713a5031e33044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[50][2][4][13][3]",
+      "python": "26f79c507481a73c967ded2fb287440476fa4b0b102759db7dcda7ffe268a3a3:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b32b263659a74709119c0c92821e3c81771ce8b78317c2d5bd713a5031e33044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[50][2][4][14][3]",
+      "python": "7939323fab6de4ac4838c1d32d064f7edf32dc421ad9db4e3e9a0f2af8afe698:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b082f0fdeb2fa0387767a19b8cf56b301c6db5186a65ebe1ae1049129e3de5f4:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[50][2][4][15][3]",
+      "python": "7939323fab6de4ac4838c1d32d064f7edf32dc421ad9db4e3e9a0f2af8afe698:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b082f0fdeb2fa0387767a19b8cf56b301c6db5186a65ebe1ae1049129e3de5f4:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[51][2][4][14][3]",
+      "python": "c5abb9aa7a77d8c9b1e7c2e4b6dc304e8fda632f142c07be085e4f065dfd7269:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "fd4e8fea5e731348f98edc77d8528aa576231440148124d2307f3cd630d8bb35:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[51][2][4][15][3]",
+      "python": "c5abb9aa7a77d8c9b1e7c2e4b6dc304e8fda632f142c07be085e4f065dfd7269:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "fd4e8fea5e731348f98edc77d8528aa576231440148124d2307f3cd630d8bb35:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[51][2][4][16][3]",
+      "python": "9dba4122b940bef5bd64c0627888f0b826097743c01b58f3384bc5fa867d2da2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b15dc5a114262937e15b83fa5d4233697797c6ad495929966f5b5809bbe3a1f7:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[51][2][4][17][3]",
+      "python": "9dba4122b940bef5bd64c0627888f0b826097743c01b58f3384bc5fa867d2da2:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "b15dc5a114262937e15b83fa5d4233697797c6ad495929966f5b5809bbe3a1f7:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[52][2][0]",
+      "python": -0.003062908769198262,
+      "native": -0.0033417747046551195,
+      "python_hex": "-0x1.917629fd19e3cp-9",
+      "native_hex": "-0x1.b6035a225a1e4p-9"
+    },
+    {
+      "path": "root.traces[52][2][4][28][3]",
+      "python": "502c09b01a4b88c01f4089b3347754969ee8bf07c731a9e78935c1f9652aa061:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "dab1d6786ed1c7e8af1924de8025234b2588a3bbd4bcf126fd17b86e3dbb9605:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[52][2][4][29][3]",
+      "python": "502c09b01a4b88c01f4089b3347754969ee8bf07c731a9e78935c1f9652aa061:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "dab1d6786ed1c7e8af1924de8025234b2588a3bbd4bcf126fd17b86e3dbb9605:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[52][2][5]",
+      "python": "8bbf81486386d1537c5ac52a5c66a58b3b4d683636d75720334d6bc6bd19cda7:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "81278108c04b0679d4761b07a3a73410387a8dde19a0fcd09546b4057ff36673:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[53][2][0]",
+      "python": -0.011187237401984953,
+      "native": -0.011551043197662475,
+      "python_hex": "-0x1.6e9559631625bp-7",
+      "native_hex": "-0x1.7a812c6262e9dp-7"
+    },
+    {
+      "path": "root.traces[53][2][5]",
+      "python": "8d7d9961b0e177153fd6328241aed1731395deefffe8450ca2a4af95980c2237:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "f3643cfe4b107b6ae8d33747cf6af02f3117da6f13ac82b2c38d5ed618dc300b:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[54][2][4][16][3]",
+      "python": "c0645fac238c85286ccc840f403f4d8415d271dcbcfacd9e2ffbd1ac335dba13:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "87412c7cb54172f18aa98282cd96d0495c1ba2e4999972ce88f3ab7af9e1b396:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[54][2][4][17][3]",
+      "python": "c0645fac238c85286ccc840f403f4d8415d271dcbcfacd9e2ffbd1ac335dba13:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "87412c7cb54172f18aa98282cd96d0495c1ba2e4999972ce88f3ab7af9e1b396:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[54][2][4][18][3]",
+      "python": "ceaaf90f9f7eac2769e32192fabed9472459990b6f530f0026c652b32fa89044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4e1f2fb6dbef74ebd948fcf653d8b94d891e0fab54336ed3d5803ad671b052d6:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[54][2][4][19][3]",
+      "python": "ceaaf90f9f7eac2769e32192fabed9472459990b6f530f0026c652b32fa89044:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "4e1f2fb6dbef74ebd948fcf653d8b94d891e0fab54336ed3d5803ad671b052d6:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[55][2][0]",
+      "python": -0.0034439568705454896,
+      "native": -0.0038077626662230118,
+      "python_hex": "-0x1.c368044172974p-9",
+      "native_hex": "-0x1.f317503ea5a7cp-9"
+    },
+    {
+      "path": "root.traces[55][2][4][28][3]",
+      "python": "dbf096f7ccc42e34166f0da422c8e0794457cd6c0291899171aa2cf056c1fbcc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "f85a5bb805fbd52ffed89e463f7cafbefbef0c130cdb0bf47aca2af4a164df40:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[55][2][4][29][3]",
+      "python": "dbf096f7ccc42e34166f0da422c8e0794457cd6c0291899171aa2cf056c1fbcc:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "f85a5bb805fbd52ffed89e463f7cafbefbef0c130cdb0bf47aca2af4a164df40:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[55][2][5]",
+      "python": "26155ed94eeadb19039e0551ad6de9f8cbc76b692a98d2f1c5ec35042645b9ca:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "46bc9b0586e40a8099ed9dd4b918ab7a5bbf60c1ef2b9f2d82ddbf122d799da0:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[56][2][4][24][3]",
+      "python": "c4feaa9e7baea5c00b30ec6cdc6c55738ea27aedfe62511a1d557d3e7f03453f:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "f78a77acadb9c6e45f94643d661d6fdcdb3c721d565615219dc1f5489efa45d5:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[56][2][4][25][3]",
+      "python": "c4feaa9e7baea5c00b30ec6cdc6c55738ea27aedfe62511a1d557d3e7f03453f:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "f78a77acadb9c6e45f94643d661d6fdcdb3c721d565615219dc1f5489efa45d5:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[56][2][4][26][3]",
+      "python": "e61148bf256e85a00ef713a980d82e933442ab9ed4277fb376b563253eb0cd50:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "7f8a01e49177569d0fb49ed00eee4e3f073df93e5c919dc40e518c064ac6c711:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    },
+    {
+      "path": "root.traces[56][2][4][27][3]",
+      "python": "e61148bf256e85a00ef713a980d82e933442ab9ed4277fb376b563253eb0cd50:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "native": "7f8a01e49177569d0fb49ed00eee4e3f073df93e5c919dc40e518c064ac6c711:c7630a9c76c40d8808f08f77109bb9edddc7022df66c7fc3488c082940dd5258",
+      "python_hex": null,
+      "native_hex": null
+    }
+  ],
+  "python_matches_mac": true
+}

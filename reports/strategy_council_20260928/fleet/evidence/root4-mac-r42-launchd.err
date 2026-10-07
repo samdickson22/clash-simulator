@@ -1,0 +1,44 @@
+Fatal Python error: init_import_site: Failed to import the site module
+Python runtime state: initialized
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176, in exec_module
+  File "<frozen site>", line 636, in <module>
+  File "<frozen site>", line 619, in main
+  File "<frozen site>", line 537, in venv
+PermissionError: [Errno 1] Operation not permitted: '/Users/sam/Desktop/code/clasher/.venv/pyvenv.cfg'
+Fatal Python error: init_import_site: Failed to import the site module
+Python runtime state: initialized
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176, in exec_module
+  File "<frozen site>", line 636, in <module>
+  File "<frozen site>", line 619, in main
+  File "<frozen site>", line 537, in venv
+PermissionError: [Errno 1] Operation not permitted: '/Users/sam/Desktop/code/clasher/.venv/pyvenv.cfg'
+Fatal Python error: init_import_site: Failed to import the site module
+Python runtime state: initialized
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176, in exec_module
+  File "<frozen site>", line 636, in <module>
+  File "<frozen site>", line 619, in main
+  File "<frozen site>", line 537, in venv
+PermissionError: [Errno 1] Operation not permitted: '/Users/sam/Desktop/code/clasher/.venv/pyvenv.cfg'
+Fatal Python error: init_import_site: Failed to import the site module
+Python runtime state: initialized
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176, in exec_module
+  File "<frozen site>", line 636, in <module>
+  File "<frozen site>", line 619, in main
+  File "<frozen site>", line 537, in venv
+PermissionError: [Errno 1] Operation not permitted: '/Users/sam/Desktop/code/clasher/.venv/pyvenv.cfg'

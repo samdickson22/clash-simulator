@@ -1,0 +1,39 @@
+{
+  "diagnostic_only": true,
+  "accepted": false,
+  "result": [
+    {
+      "diagnostic_stagger_filter": false,
+      "tick": 1007,
+      "python_target": 127,
+      "native_target": 124,
+      "python_position": [
+        4.167,
+        17.456
+      ],
+      "native_position": [
+        4.544,
+        17.833
+      ],
+      "digest_equal": false,
+      "target127_stagger": 0.05000000000000007
+    },
+    {
+      "diagnostic_stagger_filter": true,
+      "tick": 1007,
+      "python_target": 124,
+      "native_target": 124,
+      "python_position": [
+        4.544,
+        17.833
+      ],
+      "native_position": [
+        4.544,
+        17.833
+      ],
+      "digest_equal": true,
+      "target127_stagger": 0.05000000000000007
+    }
+  ],
+  "explanation": "Adding the native stagger exclusion to the Python target chooser alone reproduces the native first-tick digest. The oracle remains unchanged."
+}

@@ -1,0 +1,97 @@
+{
+  "overall": "BLOCKED: pre-existing native chain-targeting parity regression; no fan-out",
+  "compute_hosts": [
+    "127x01",
+    "127x02",
+    "127x03",
+    "127x04",
+    "127x07",
+    "127x08"
+  ],
+  "excluded_command_center": "127x05",
+  "linux": {
+    "bootstrap-20261007-r3": {
+      "exit": 0,
+      "wall_seconds": 19.33,
+      "cpu_seconds": 38.92
+    },
+    "p16-linux-20261007": {
+      "exit": 0,
+      "wall_seconds": 246.91,
+      "cpu_seconds": 246.76
+    },
+    "c56-linux-20261007": {
+      "exit": 0,
+      "wall_seconds": 45.59,
+      "cpu_seconds": 45.54
+    },
+    "random-linux-20261007": {
+      "exit": 0,
+      "wall_seconds": 102.81,
+      "cpu_seconds": 102.73
+    },
+    "recorded-linux-20261007": {
+      "exit": 0,
+      "wall_seconds": 1416.48,
+      "cpu_seconds": 4435.1
+    },
+    "fast-linux-20261007": {
+      "exit": 0,
+      "wall_seconds": 6.56,
+      "cpu_seconds": 6.51
+    },
+    "stage2-linux-20261007": {
+      "exit": 0,
+      "wall_seconds": 154.21,
+      "cpu_seconds": 154.08
+    },
+    "stage4-linux-20261007": {
+      "exit": 0,
+      "wall_seconds": 301.32,
+      "cpu_seconds": 301.03999999999996
+    },
+    "stage5-linux-20261007": {
+      "exit": 0,
+      "wall_seconds": 35.3,
+      "cpu_seconds": 35.26
+    },
+    "stage5-replay-linux-20261007": {
+      "exit": 1,
+      "wall_seconds": 25.09,
+      "cpu_seconds": 25.04
+    },
+    "stage6-linux-20261007": {
+      "exit": 1,
+      "wall_seconds": 549.84,
+      "cpu_seconds": 549.34
+    },
+    "stage6-resolved-linux-20261007-r2": {
+      "exit": 0,
+      "wall_seconds": 32.21,
+      "cpu_seconds": 32.15
+    },
+    "speed-linux-20261007": {
+      "exit": 0,
+      "wall_seconds": 88.0,
+      "cpu_seconds": 87.93
+    }
+  },
+  "historical_mac": {
+    "p16": {
+      "wall_seconds": 111.3,
+      "cpu_seconds": 110.99
+    },
+    "c56": {
+      "wall_seconds": 20.08,
+      "cpu_seconds": 20.02
+    },
+    "random": {
+      "wall_seconds": 46.63,
+      "cpu_seconds": 46.28
+    },
+    "recorded": {
+      "wall_seconds": 2285.98,
+      "cpu_seconds": 2053.18
+    }
+  }
+}

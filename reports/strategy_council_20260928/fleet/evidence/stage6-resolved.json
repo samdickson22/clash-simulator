@@ -1,0 +1,25 @@
+{
+  "original_tests": 60,
+  "originally_passed": 46,
+  "source_hash_failures": [
+    "test_hook.Hook.test_first_weapon_clock_is_initialized_after_hook_and_drag",
+    "test_hook.Hook.test_imported_knockback_clears_forced_flag_before_combat_resumes",
+    "test_hook.Hook.test_pending_weapon_reset_stays_deferred_during_new_hook_windup",
+    "test_hook.Hook.test_saved_drag_continuation_preserves_blocked_preload",
+    "test_leap.Leap.test_spawn_pushback_bypasses_giant_mass_after_live_import",
+    "test_dash.Dash.test_cancelled_windup_retains_new_out_of_band_crown_target",
+    "test_dash.Dash.test_lethal_dash_preserves_preload_when_cleanup_publishes_clock",
+    "test_arena8.Arena8.test_combat_births_join_avoidance_before_later_movers",
+    "test_ranged.Ranged.test_lethal_secondary_stun_cancels_eligible_hunter_shot",
+    "test_reuse.Reused.test_vines_release_rejects_ground_only_committed_shot",
+    "test_souls.Souls.test_saved_two_souls_drop_one_skeleton_swarm",
+    "test_placement_cache.PlacementCache.test_moved_drill_keeps_cached_mask_until_membership_changes",
+    "test_golden.Golden.test_dash_speed_without_jump_height_keeps_ordinary_water_costs",
+    "test_dragon_chain.DragonChain.test_combat_killed_crown_has_no_projectile_hit_hook"
+  ],
+  "audited_reruns_passed": 14,
+  "unique_tests_passed": 60,
+  "physics_mismatches": 0,
+  "original_log_sha256": "36a8b671a69a42c8001a7849487d9ac79c7145d1fa1d1c4a9115ce89902a7730",
+  "note": "Original physics assertions unchanged; only exact reviewed source hash expectations migrated."
+}

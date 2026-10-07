@@ -1,0 +1,37 @@
+{
+  "fingerprint": "eef2b8e90c29370c35f98c19befd5a65fd5ed8899c090630780831a6f96a7f42",
+  "driver": "qualify.py",
+  "config": {
+    "samples": 16,
+    "script_top": 4,
+    "horizon": 160,
+    "interval": 10,
+    "elixir_weight": 1.0,
+    "deadline_seconds": null,
+    "threads": 1
+  },
+  "results": [
+    {
+      "index": 0,
+      "diagnostic_skipped": true
+    },
+    {
+      "index": 1,
+      "diagnostic_skipped": true
+    },
+    {
+      "index": 2,
+      "diagnostic_skipped": true
+    },
+    {
+      "index": 3,
+      "diagnostic_skipped": true
+    },
+    {
+      "index": 4,
+      "diagnostic": true
+    }
+  ],
+  "complete": true,
+  "pid": 3295843
+}

@@ -1,0 +1,6 @@
+{
+  "transfer_done": "2026-10-07T21:54:31Z",
+  "original_verify_differences": 200,
+  "explanation": "Concurrent .git metadata plus Stage6 and transfer logs; see preserved verify listing. Engine and replay inputs separately SHA256 verified after restoring pinned source.",
+  "transfer_log_sha256": "ca3887eeecbdcab1da1f5f3b734446e59aebe4994f1de58d12b8b15478c37b7e"
+}

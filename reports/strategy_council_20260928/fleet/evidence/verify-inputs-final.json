@@ -1,0 +1,11 @@
+{
+  "native_sha256": "830fcc54cee623da0e9db021d943a7043474f08faa8e677e21d360c266b962fd",
+  "replay_inputs": 34,
+  "source_files": 1150,
+  "certificate_manifests": 17,
+  "certificate_receipts": 179,
+  "incremental_cards": 66,
+  "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+  "errors": [],
+  "note": "Historical receipt integrity only; Linux differential reruns are separate. No S122 admission."
+}

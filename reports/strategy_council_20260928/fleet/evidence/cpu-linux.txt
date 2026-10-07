@@ -1,0 +1,11 @@
+Architecture:                         x86_64
+CPU(s):                               128
+On-line CPU(s) list:                  0-127
+Thread(s) per core:                   2
+Core(s) per socket:                   64
+Socket(s):                            1
+Model name:                           AMD Ryzen Threadripper 3990X 64-Core Processor
+CPU MHz:                              2200.000
+CPU max MHz:                          2900.0000
+CPU min MHz:                          2200.0000
+NUMA node0 CPU(s):                    0-127

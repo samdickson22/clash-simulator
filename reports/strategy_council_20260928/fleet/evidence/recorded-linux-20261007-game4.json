@@ -1,0 +1,51 @@
+{
+  "index": 4,
+  "provenance": {
+    "driver_sha256": "6023f0cc5005f5cd404ea448a8f5df46e7c883e6b143f308748effb9fb8ae143",
+    "gamedata": "/mpac/sdicks02/repos/clasher/gamedata.json",
+    "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+    "data_sha256": "dbbe7e6bfb6833eea5041e2542810619ea260a6a9172a73bedf669e546a034c0",
+    "source": "/mpac/sdicks02/repos/clasher/src/clasher",
+    "source_sha256": "896111aa9640decdfcdae0ea5a7bb304bfb15a037926723e5343f9f80eac1165"
+  },
+  "driver": "d80d406daf09b3fb39f42f53863ba3881c5531f44d128d9749b7716f50c72ff2",
+  "row": {
+    "recording": "reports/strategy_council_20260928/oracle-qualification/games/srp_xm_c256/srp_xm_c256__holdout__pressure__s71000022__g000.json",
+    "recording_sha256": "b259f20e102c6bdbfd5df61c06d203cae18be51b4b2f8df2b271d89e81412833",
+    "spec": {
+      "game": 0,
+      "opponent": "pressure",
+      "player": {
+        "horizon": 160,
+        "kind": "srp",
+        "mask_public": true,
+        "name": "srp_xm_c256",
+        "opponent_model": "sb-balanced",
+        "plan_every": 2,
+        "rollout_interval": 10,
+        "samples": 16,
+        "script_top": 4,
+        "style": "balanced"
+      },
+      "role": "holdout",
+      "seed": 71000022
+    },
+    "expected": {
+      "outcome": "win",
+      "candidate_crowns": 1,
+      "opponent_crowns": 0,
+      "ticks": 3601,
+      "planner_calls": 49
+    },
+    "actual": {
+      "outcome": "win",
+      "candidate_crowns": 1,
+      "opponent_crowns": 0,
+      "ticks": 3601,
+      "planner_calls": 49
+    }
+  },
+  "wall_seconds": 320.3666985637974,
+  "cpu_seconds": 320.184074516,
+  "ok": true
+}

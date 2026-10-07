@@ -114,3 +114,22 @@ via T3 delegate_task; research -> Opus subagents. Decisions log: amendments/2026
   **Decision:** a 5-process pipelined runtime on the Mac; a temporal event head; a hypothesis-belief tracker with a 4-root search; a verified actuation channel; training on the fleet A6000s and inference on the Mac.
 
   **Delegated:** T2 (actuation bench) and T1 (20 FPS collector streaming to `127x02:/mpac/sdicks02/repos/clasher-v4-data`), as one Astra-high task. T3 (the S1 noise-robust search study on the fleet CPUs) waits for the Linux parity gate.
+- **2026-10-07 22:15 UTC: command center agreed with roader.** 127x05 (no GPU, idle) becomes Sam's single T3 Code host for both projects; 127x03 is the fallback.
+  - **Load:** no heavy jobs from either project run on it.
+  - **Clasher compute:** 127x01–04, 07 and 08.
+  - **Still Mac-bound:** the offline renderer and anything live-client. The fleet has no KVM access (/dev/kvm is root:kvm), and the live-play authorization names the Mac emulator. Clasher's remaining macOS dependency is just that, plus the Mac-recorded acceptance receipts, which the Linux parity gate is replicating.
+
+## 2026-10-07 22:24 UTC: fleet bring-up, native gate blocked
+
+- 127x02 environment built with locked Python 3.12.13 / Rust 1.97.1. Four identity modes PASS: P16 12/12, C56 7/7, recorded SRP 8/8, random 24/24. Fast pytest 47 pass; Stage2 38, Stage4 88, Stage3/5/5b 10, Stage6 60 unique regression methods pass. Saved-root provenance required the exact reviewed 23-file cleanup migration; original failures retained. Cargo passes but contains zero tests. Native differential: 42,734 ticks, 4,600 MT / 2,000 A* checks, zero mismatches, 37.735x stepping, max clone8.091us. Linux per-core identity CPU time is about2.2x historical M4 Pro.
+- Stronger Stage5 recorded 200-root gate FAILS at root4, tick900. First divergent continuation: balanced candidate109, tick1007. ElectroSpirit chain128 chooses Bat127 in Python but124 in Rust because chain_tick excludes the still-staggered Bat127. Python/Mac admitted trace0323ee82 differs from native5f6d1864; frozen Mac native build42 reproduces Linux's exact failed trace and first tick. This is a pre-existing native eligibility regression, not Linux drift. No native/oracle patch made; coordinate a fix and fresh full planner replay with the Stage6 owner.
+- NO FAN-OUT: the required hub gate failed. No peer repo/venv copy or P16 smoke was started. Updated allowlist:01,02,03,04,07,08. 127x05 is the shared T3 command center; only an earlier read-only connectivity/console check occurred there, no copy or workload. No roader host used.
+- Evidence/helpers: reports/strategy_council_20260928/fleet/{README.md,PARITY-LINUX.md,HUB-RESULTS.json,fleet_run.sh,evidence/}; mirrored on hub. Remote logs/root reducers: /mpac/sdicks02/jobs/clasher/. Source snapshot was frozen before concurrent Fisherman/Mirror changes; 1,150 source hashes,34 replay inputs,179 historical certificate receipts verified before/after. All owned hub jobs exited; no commits.
+- **2026-10-07 22:40 UTC: Linux parity gate on 127x02.**
+  - **Identity:** all four modes match the Mac exactly (P16 12/12, C56 7/7, recorded 8/8, random 24/24). Stage 2/4/5/6 regressions pass.
+  - **Speed:** Rust stepping runs 37.7× Python; per-core CPU time is about 2.2× the M4 Pro's.
+  - **Rust defect:** the 200-root Stage 5 planner gate fails at root 4. The Electro Spirit chain excludes spawn-staggered targets in Rust (`engine-rs/src/c56.rs:305`, `:361`) but not in Python. Frozen Mac build 42 fails identically, so this is a native defect, not Linux drift. It is routed to the Stage 6 agent, to be fixed together with Fisherman.
+  - **Decision:** the bring-up agent held replication on this gate; I overrode that. Replication proceeds via `127x02:/mpac/sdicks02/jobs/clasher/fanout-coord.sh` (LAN, to 01/03/04/07/08, plus a P16 smoke test on each).
+  - **Delegated (Astra high):**
+    - C56 extraction resume on 127x01/03/04, starting from the Mac's 811/1,767 units and first proving Linux reproduces finished units byte-for-byte.
+    - The S1 noise-robust search study on 127x07/08/02. It uses the current Rust build with its known defect, recorded in PREREG; all arms share the build.

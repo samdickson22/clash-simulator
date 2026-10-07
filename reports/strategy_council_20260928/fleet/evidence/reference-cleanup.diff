@@ -1,0 +1,364 @@
+diff --git a/src/clasher/battle.py b/src/clasher/battle.py
+index 73d60b220..5e6093922 100644
+--- a/src/clasher/battle.py
++++ b/src/clasher/battle.py
+@@ -2,5 +2,4 @@ from collections import defaultdict
+ from dataclasses import dataclass, field
+ from typing import Any, Dict, Iterable, List, Optional, Tuple
+-import time
+ import math
+ import random
+@@ -2166,5 +2165,4 @@ class BattleState:
+         
+         # Try to find nearest valid position within reasonable distance
+-        search_radius = 2.0  # tiles
+         best_position = position
+         min_distance = float('inf')
+diff --git a/src/clasher/card_types.py b/src/clasher/card_types.py
+index 40d807aee..645db1b74 100644
+--- a/src/clasher/card_types.py
++++ b/src/clasher/card_types.py
+@@ -1,6 +1,5 @@
+ from .gamedata_normalization import normalized_walking_speed
+ from dataclasses import dataclass, field
+-from typing import Optional, Sequence, Protocol, Literal, Callable, Any, List, Dict
+-from abc import ABC, abstractmethod
++from typing import Optional, Sequence, Protocol, Literal, Any, Dict
+ 
+ CardKind = Literal["troop", "building", "spell", "champion"]
+diff --git a/src/clasher/cards/bandit.py b/src/clasher/cards/bandit.py
+index 682397579..1d9d0e309 100644
+--- a/src/clasher/cards/bandit.py
++++ b/src/clasher/cards/bandit.py
+@@ -1,4 +1,3 @@
+ from dataclasses import dataclass, field
+-from typing import TYPE_CHECKING
+ import math
+ 
+@@ -14,7 +13,4 @@ from ..kinematics import (
+ )
+ 
+-if TYPE_CHECKING:
+-    from ..entities import Troop
+-
+ 
+ @dataclass
+diff --git a/src/clasher/cards/hog_rider.py b/src/clasher/cards/hog_rider.py
+index a34530e7f..c7d479a81 100644
+--- a/src/clasher/cards/hog_rider.py
++++ b/src/clasher/cards/hog_rider.py
+@@ -1,11 +1,7 @@
+ from dataclasses import dataclass
+-from typing import TYPE_CHECKING
+ 
+ from ..mechanics.mechanic_base import BaseMechanic
+ from ..kinematics import logic_time_milliseconds
+ 
+-if TYPE_CHECKING:
+-    from ..entities import Troop
+-
+ 
+ @dataclass
+diff --git a/src/clasher/cards/sparky.py b/src/clasher/cards/sparky.py
+index a519ae89a..618b35087 100644
+--- a/src/clasher/cards/sparky.py
++++ b/src/clasher/cards/sparky.py
+@@ -1,10 +1,6 @@
+ from dataclasses import dataclass, field
+-from typing import TYPE_CHECKING
+ 
+ from ..mechanics.mechanic_base import BaseMechanic
+ 
+-if TYPE_CHECKING:
+-    from ..entities import Troop
+-
+ 
+ @dataclass
+diff --git a/src/clasher/data.py b/src/clasher/data.py
+index aff8851fb..018e47aac 100644
+--- a/src/clasher/data.py
++++ b/src/clasher/data.py
+@@ -1,4 +1,4 @@
+ from pathlib import Path
+-from typing import Dict, Any, Optional, List
++from typing import Dict, Any, Optional
+ from functools import lru_cache
+ import copy
+diff --git a/src/clasher/effects/area.py b/src/clasher/effects/area.py
+index bbdc2bb22..444320eb8 100644
+--- a/src/clasher/effects/area.py
++++ b/src/clasher/effects/area.py
+@@ -1,11 +1,6 @@
+ from dataclasses import dataclass
+-from typing import TYPE_CHECKING
+ 
+ from .effect_base import BaseEffect
+ 
+-if TYPE_CHECKING:
+-    from ..battle import BattleState
+-    from ..arena import Position
+-
+ 
+ @dataclass
+diff --git a/src/clasher/effects/buff.py b/src/clasher/effects/buff.py
+index 4e6615a53..d51d7a417 100644
+--- a/src/clasher/effects/buff.py
++++ b/src/clasher/effects/buff.py
+@@ -1,11 +1,6 @@
+ from dataclasses import dataclass
+-from typing import TYPE_CHECKING
+ 
+ from .effect_base import BaseEffect
+ 
+-if TYPE_CHECKING:
+-    from ..battle import BattleState
+-    from ..arena import Position
+-
+ 
+ @dataclass
+diff --git a/src/clasher/effects/damage.py b/src/clasher/effects/damage.py
+index bb3924df1..88db33ea1 100644
+--- a/src/clasher/effects/damage.py
++++ b/src/clasher/effects/damage.py
+@@ -1,11 +1,6 @@
+ from dataclasses import dataclass
+-from typing import TYPE_CHECKING
+ 
+ from .effect_base import BaseEffect
+ 
+-if TYPE_CHECKING:
+-    from ..battle import BattleState
+-    from ..arena import Position
+-
+ 
+ @dataclass
+diff --git a/src/clasher/effects/spawn.py b/src/clasher/effects/spawn.py
+index 7e2b0b006..e35630f56 100644
+--- a/src/clasher/effects/spawn.py
++++ b/src/clasher/effects/spawn.py
+@@ -1,13 +1,7 @@
+ from dataclasses import dataclass
+-from typing import TYPE_CHECKING
+ import math
+-import random
+ 
+ from .effect_base import BaseEffect
+ 
+-if TYPE_CHECKING:
+-    from ..battle import BattleState
+-    from ..arena import Position
+-
+ 
+ @dataclass
+diff --git a/src/clasher/effects/status.py b/src/clasher/effects/status.py
+index 03231b821..8c31b4fb1 100644
+--- a/src/clasher/effects/status.py
++++ b/src/clasher/effects/status.py
+@@ -1,11 +1,6 @@
+ from dataclasses import dataclass
+-from typing import TYPE_CHECKING
+ 
+ from .effect_base import BaseEffect
+ 
+-if TYPE_CHECKING:
+-    from ..battle import BattleState
+-    from ..arena import Position
+-
+ 
+ @dataclass
+diff --git a/src/clasher/entities.py b/src/clasher/entities.py
+index 230961f78..39b4e231a 100644
+--- a/src/clasher/entities.py
++++ b/src/clasher/entities.py
+@@ -4338,5 +4338,4 @@ class Troop(Entity):
+         external_x_units = tiles_to_logic_units(external_x)
+         external_y_units = tiles_to_logic_units(external_y)
+-        self_movement = 0.0
+         if distance > 0:
+             # ``speed`` mirrors the debuffed value for observations and legacy
+@@ -4398,5 +4397,4 @@ class Troop(Entity):
+                     intended_movement_units,
+                 )
+-            move_distance = logic_units_to_tiles(intended_movement_units)
+ 
+             combined_x_units = move_x_units + external_x_units
+@@ -4435,11 +4433,8 @@ class Troop(Entity):
+                 self.position.x = new_position.x
+                 self.position.y = new_position.y
+-                self_movement = move_distance
+             elif self.is_air_unit:
+                 self.position = new_position
+-                self_movement = move_distance
+             else:
+                 self.position = new_position
+-                self_movement = move_distance
+ 
+         elif abs(external_x) > 1e-15 or abs(external_y) > 1e-15:
+diff --git a/src/clasher/factory/card_factory.py b/src/clasher/factory/card_factory.py
+index 48ceb9e5c..f551ced54 100644
+--- a/src/clasher/factory/card_factory.py
++++ b/src/clasher/factory/card_factory.py
+@@ -1,4 +1,4 @@
+ from ..gamedata_normalization import normalized_walking_speed
+-from typing import Dict, Any, Optional, Tuple
++from typing import Dict, Any, Optional
+ from ..card_types import (
+     CardDefinition, CardKind, Rarity, TroopStats, BuildingStats, SpellStats,
+diff --git a/src/clasher/factory/mechanic_detector.py b/src/clasher/factory/mechanic_detector.py
+index 4894f3b8d..04290b27a 100644
+--- a/src/clasher/factory/mechanic_detector.py
++++ b/src/clasher/factory/mechanic_detector.py
+@@ -6,5 +6,5 @@ from ..mechanics.shared import (
+     DeathAreaEffect, MultipleTargetAttack, SerializedOnHitBuff, SpawnPushback,
+ )
+-from ..mechanics.champion import SkeletonKingSoulCollector, ChampionAbilityMechanic, ActiveAbility
++from ..mechanics.champion import SkeletonKingSoulCollector
+ from ..cards import (
+     AttackRecoil,
+diff --git a/src/clasher/mechanics/champion/skeleton_king.py b/src/clasher/mechanics/champion/skeleton_king.py
+index 95eed56f9..ac499446b 100644
+--- a/src/clasher/mechanics/champion/skeleton_king.py
++++ b/src/clasher/mechanics/champion/skeleton_king.py
+@@ -1,11 +1,7 @@
+ from dataclasses import dataclass, field
+-from typing import TYPE_CHECKING
+ 
+ from .ability import ChampionAbilityMechanic, ActiveAbility
+ from ...effects import SpawnUnits
+ 
+-if TYPE_CHECKING:
+-    from ...battle import BattleState
+-
+ 
+ @dataclass
+@@ -103,5 +99,4 @@ class SkeletonKingSoulCollector(ChampionAbilityMechanic):
+ 
+         import math
+-        import random
+         from ...arena import Position
+ 
+diff --git a/src/clasher/mechanics/mechanic_base.py b/src/clasher/mechanics/mechanic_base.py
+index 55010a44c..59712c89b 100644
+--- a/src/clasher/mechanics/mechanic_base.py
++++ b/src/clasher/mechanics/mechanic_base.py
+@@ -1,4 +1,4 @@
+ from dataclasses import dataclass
+-from abc import ABC, abstractmethod
++from abc import ABC
+ 
+ from ..card_types import Mechanic
+diff --git a/src/clasher/mechanics/shared/damage_ramp.py b/src/clasher/mechanics/shared/damage_ramp.py
+index d4ef94465..3a0d53a72 100644
+--- a/src/clasher/mechanics/shared/damage_ramp.py
++++ b/src/clasher/mechanics/shared/damage_ramp.py
+@@ -1,11 +1,7 @@
+ from dataclasses import dataclass, field
+-from typing import TYPE_CHECKING
+ 
+ from ..mechanic_base import BaseMechanic
+ from ...balance import LOGIC_CHARACTER_CONTINUOUS_DAMAGE_ATTACK_CLOSER
+ 
+-if TYPE_CHECKING:
+-    from ...entities import Entity
+-
+ 
+ @dataclass
+diff --git a/src/clasher/mechanics/shared/death_effects.py b/src/clasher/mechanics/shared/death_effects.py
+index 75e2a5e70..5fa3034be 100644
+--- a/src/clasher/mechanics/shared/death_effects.py
++++ b/src/clasher/mechanics/shared/death_effects.py
+@@ -1,5 +1,4 @@
+ import copy
+ from dataclasses import dataclass, field
+-from typing import TYPE_CHECKING
+ 
+ from ..mechanic_base import BaseMechanic
+@@ -7,7 +6,4 @@ from ...unit_traits import is_above_ground_surface, is_airborne_target
+ from ...logic_math import spawn_target_distance_discount_sq_units
+ 
+-if TYPE_CHECKING:
+-    from ...battle import BattleState
+-
+ 
+ @dataclass
+diff --git a/src/clasher/mechanics/shared/spawner.py b/src/clasher/mechanics/shared/spawner.py
+index 6d6008103..0b05f46c4 100644
+--- a/src/clasher/mechanics/shared/spawner.py
++++ b/src/clasher/mechanics/shared/spawner.py
+@@ -1,5 +1,4 @@
+ import copy
+ from dataclasses import dataclass, field
+-from typing import TYPE_CHECKING
+ 
+ from ..mechanic_base import BaseMechanic
+@@ -7,7 +6,4 @@ from ...factory.dynamic_factory import troop_from_character_data
+ from ...formations import native_radial_spawn_offset
+ 
+-if TYPE_CHECKING:
+-    from ...battle import BattleState
+-
+ 
+ @dataclass
+diff --git a/src/clasher/mechanics/shared/status_effects.py b/src/clasher/mechanics/shared/status_effects.py
+index e0363e312..07026b282 100644
+--- a/src/clasher/mechanics/shared/status_effects.py
++++ b/src/clasher/mechanics/shared/status_effects.py
+@@ -1,10 +1,6 @@
+ from dataclasses import dataclass
+-from typing import TYPE_CHECKING
+ 
+ from ..mechanic_base import BaseMechanic
+ 
+-if TYPE_CHECKING:
+-    from ...entities import Entity
+-
+ 
+ @dataclass
+diff --git a/src/clasher/rl/human_replay_demonstrations.py b/src/clasher/rl/human_replay_demonstrations.py
+index f10a7c5e6..e7ecde280 100644
+--- a/src/clasher/rl/human_replay_demonstrations.py
++++ b/src/clasher/rl/human_replay_demonstrations.py
+@@ -47,5 +47,4 @@ from .structured_obs import (
+     ACTOR_GLOBAL_SIZE,
+     ENTITY_FEATURE_SIZE,
+-    VISIBLE_CARD_SLOTS,
+     EntityCapacityError,
+     StructuredObservationBuilder,
+diff --git a/src/clasher/rl/human_replay_v5.py b/src/clasher/rl/human_replay_v5.py
+index 991297461..179dcaaab 100644
+--- a/src/clasher/rl/human_replay_v5.py
++++ b/src/clasher/rl/human_replay_v5.py
+@@ -34,5 +34,5 @@ import random
+ import zipfile
+ from collections import deque
+-from dataclasses import dataclass, replace
++from dataclasses import dataclass
+ from datetime import datetime, timezone
+ from pathlib import Path
+diff --git a/src/clasher/spells.py b/src/clasher/spells.py
+index 33f416cc5..e1ed62aae 100644
+--- a/src/clasher/spells.py
++++ b/src/clasher/spells.py
+@@ -2,8 +2,8 @@ from dataclasses import dataclass, field
+ from collections.abc import Iterator, Mapping
+ from threading import RLock
+-from typing import Dict, List, TYPE_CHECKING
++from typing import Dict, TYPE_CHECKING
+ from abc import ABC, abstractmethod
+ 
+-from .entities import Entity, Projectile, Troop, AreaEffect, SpawnProjectile, RollingProjectile, TimedExplosive, Graveyard
++from .entities import Entity, Projectile, Troop, AreaEffect, SpawnProjectile, RollingProjectile, Graveyard
+ from .arena import Position
+ from .unit_traits import is_above_ground_surface, is_airborne_target
+diff --git a/src/clasher/vision/l1_perception.py b/src/clasher/vision/l1_perception.py
+index d7032a9e1..342e5c8c1 100644
+--- a/src/clasher/vision/l1_perception.py
++++ b/src/clasher/vision/l1_perception.py
+@@ -2,7 +2,5 @@
+ from __future__ import annotations
+ 
+-import json
+ from dataclasses import asdict
+-from pathlib import Path
+ from types import MappingProxyType, SimpleNamespace
+ 

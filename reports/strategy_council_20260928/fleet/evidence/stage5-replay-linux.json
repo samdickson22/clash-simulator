@@ -1,0 +1,53 @@
+{
+  "fingerprint": "eef2b8e90c29370c35f98c19befd5a65fd5ed8899c090630780831a6f96a7f42",
+  "driver": "qualify.py",
+  "config": {
+    "samples": 16,
+    "script_top": 4,
+    "horizon": 160,
+    "interval": 10,
+    "elixir_weight": 1.0,
+    "deadline_seconds": null,
+    "threads": 1
+  },
+  "results": [
+    {
+      "index": 0,
+      "tick": 900,
+      "seat": 0,
+      "action": 1994,
+      "trace_sha256": "7ab1cb9f4aac0306451d843b9d9718e05b5da3f86daa5d3a9a548a0e277834a7",
+      "candidates": 20,
+      "wall": 0.3250077289994806
+    },
+    {
+      "index": 1,
+      "tick": 1300,
+      "seat": 1,
+      "action": 685,
+      "trace_sha256": "c21371ef3637cb3ab975a9daed4cbbae3b0df457d3e05d3d9844d310ee44892f",
+      "candidates": 20,
+      "wall": 0.4434055550955236
+    },
+    {
+      "index": 2,
+      "tick": 1400,
+      "seat": 0,
+      "action": 1888,
+      "trace_sha256": "e6dc052dc7f424696841f4b228a9f4525728d18bd8ed5700d83c981f0a06fd44",
+      "candidates": 20,
+      "wall": 0.34783119708299637
+    },
+    {
+      "index": 3,
+      "tick": 1800,
+      "seat": 1,
+      "action": 827,
+      "trace_sha256": "a9f3d8f7c04f1e3f6347d9724f703d38f361901077f577e7efdac99f943b2430",
+      "candidates": 20,
+      "wall": 0.3981887449044734
+    }
+  ],
+  "complete": false,
+  "pid": 3295369
+}
