@@ -277,3 +277,21 @@ Also on the hub, but with copies elsewhere:
   equal except reuse provenance). Production extraction of the remaining 956 units proceeds. The original
   extractor deletes reused v2 NPZs, so the 137 retained v2 archives are copied aside before any run that could reuse
   them.
+- **2026-10-08 01:30 UTC: S1 r2 sealed and running; 127x07 went offline (~01:14Z).**
+  - r2 manifest `3ad63c0a…` (468 files, sealed 01:07:36Z). Full preflight passed again: 24 replays / 23,058 exact checks,
+    14 tests, fork pilot, 18 timing pilots, optimized vs reference action-digest equality. Launched on 04/07/08 at
+    48/100/100. At 01:19Z, 397/4,992 receipts (04: 149, 08: 248). No outcomes inspected.
+  - **127x07 dropped off LAN and tailnet ~01:14Z**, about 5 min after S1 put 100 workers on it. 127x02 dropped at ~23:25Z,
+    about 6 min after S1 put 48 workers on it. Survivors under similar load show nothing wrong: 127x08 at load 100 has no
+    OOM kills, zero memory pressure and Tctl 65 °C; 127x04 is at 75 °C; no swap configured. Cause unknown: possibly
+    physical power-off or reboot by lab users, or a hardware/power issue under sustained all-core load. Reported to Sam.
+  - **Decisions.**
+    1. **Migrate 127x07's partitions** (worker indices 48–147, 2,000 games) to the surviving S1 hosts as their own
+       partitions finish: 127x08, then 127x04. Game assignment by job index is frozen; host mapping is operational. Games
+       are deterministic per seed and no outcome was seen, so the host change cannot bias anything. Frozen files stay
+       untouched: use an operational override, recorded as a deviation. If 127x07 returns, its valid receipts are
+       compared by identity and action digest with the migrated reruns (a free determinism check), and only one copy
+       per game is admitted. Its supervisor is not restarted.
+    2. **Load cap:** new launches keep our total worker processes ≤80 per host (≤16 with a console user), leaving ~40%
+       of threads free. It costs some wall time and lowers whatever risk sustained full load carries on shared lab
+       boxes.
