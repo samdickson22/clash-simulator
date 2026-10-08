@@ -812,3 +812,7 @@ Also on the hub, but with copies elsewhere:
   4. **Expensive spells are starved.** Fireball 0.11 vs 0.84, Rocket 0 vs 0.66, while Log is overplayed (3.0 vs 1.5).
   5. **Win-condition commits during threats:** 34% vs 24%.
   - **Next (exploration):** a paired sim A/B on candidate coverage and reserve-aware leaf value.
+- **23:00 UTC utilization: GPUs 10/11 usable busy** (62–99%: 01/02/04/08/09/11/13/14/15/16; 03 has no GPU; 06/07/18 down). **CPUs are nearly idle fleet-wide (1–11%), ~1,400 cores free.** Actions (Sam: "prioritize making the most of the compute, changing the pipeline where beneficial"):
+  1. **Exploration A/B** (Sol high): fair-search candidate coverage and a reserve-aware leaf value, ≥1,000 paired sim seeds per arm on 01/04/08 CPU.
+  2. **Lease wrapper v2** (Sol high): concurrent clasher jobs per leased host under aggregate caps, replacing the exclusive lock that idles ~700 leased cores while perception GPU jobs hold it.
+  3. **Gates f35 bounds:** use git history as the launch catalog. Fallback if gaps are real: a hash-committed fresh seed namespace.
