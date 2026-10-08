@@ -295,3 +295,24 @@ Also on the hub, but with copies elsewhere:
     2. **Load cap:** new launches keep our total worker processes ≤80 per host (≤16 with a console user), leaving ~40%
        of threads free. It costs some wall time and lowers whatever risk sustained full load carries on shared lab
        boxes.
+- **2026-10-08 02:05 UTC: incident: a stale Mac push overwrote fleet files, and S1 r2 stopped.** At 01:39–01:44Z the
+  old Mac thread re-ran `pilot/transfer_to_fleet.sh` to 127x01 and 127x04 (logs: "DONE 01:44:49Z").
+  `rsync -a` without `--update` replaced ~3.5k files on 01 and ~4k on 04 with older Mac versions:
+  - S1's sealed r2 files, now a mixed r1/r2 tree; the 41 files that differ include `launch_node.py`. All 48 S1
+    workers on 04 then failed the frozen-file guard and stopped, as designed.
+  - Stage 6 drivers and `engine-rs/src/{lib.rs,hook.rs}` on 01. The Stage 6 worker saved the overwritten set under
+    `engine-speed/stage6/shared-tree-overwrite-20261008T0139/`.
+  - Five fleet scripts on 01/04 (restored from untouched 127x03 by the coordinator; pushed versions backed up in
+    `jobs/clasher/recovery-conflicts/push-20261008T0139/`).
+  - A few C56 scripts/docs and live-loop v4 copies. The Mac is the v4 authority, so those copies are harmless.
+
+  127x03 and 127x08 were not touched. **Prevention:** a guard at the top of the Mac's `transfer_to_fleet.sh` now
+  refuses to run unless `CLASHER_FLEET_PUSH_AUTHORIZED=127x05-coordinator` is set (original saved as
+  `.pre-guard-20261008`; tested: exit 3). Sam has been asked to have the Mac thread stop pushing. The Stage 6 and C56
+  workers were told to audit their pins by hash and rerun anything whose inputs changed under it.
+  **S1 adjudication:** the external file replacement is a technical failure, not a frozen-code defect, so identical-input
+  recovery is permitted. Recovery authority is the hash-verified 468-file r2 snapshot taken from intact 127x08
+  (`operations/incident-seal-overwrite-r2b/frozen-r2/`). Restore it on 01/04 and verify all 468. Receipt eligibility:
+  every 127x08 receipt; 127x04 receipts only if the game finished before 01:39:00Z, while any 127x04 game in
+  flight at or after 01:39:00Z is replayed from its seed. Then resume 04's partitions, run the prepared 07 migration
+  split (48–85 → 04, 86–147 → 08) and collect complete-only.

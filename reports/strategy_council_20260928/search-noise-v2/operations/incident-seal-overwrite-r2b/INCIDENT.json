@@ -1,0 +1,111 @@
+{
+  "utc": 1791424047.97547,
+  "kind": "external sealed-study overwrite; no statistical result",
+  "r2_manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+  "observed_r1_manifest": "253aba47a826e6dbb2d951114d0f7596b0d45bd3eee294d65e6c032c0513c849",
+  "hub_replacement_ctime_utc": "2026-10-08 01:40:56 UTC",
+  "r2_mismatches": {
+    "127x01": 41,
+    "127x04": 41,
+    "127x08": 0
+  },
+  "intact_snapshot": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-v2/operations/incident-seal-overwrite-r2b/frozen-r2",
+  "intact_snapshot_verified_files": 468,
+  "migration_started": false,
+  "migration_intents": [],
+  "collector": {
+    "label": "s1-collect-r2c",
+    "launcher_pid": 3355179,
+    "exit": 1
+  },
+  "preservation": {
+    "label": "s1-receipt-preserve-r2d",
+    "launcher_pid": 3369776,
+    "active": true,
+    "scope": "copy only; no admission, launch or analysis; six-hour maximum"
+  },
+  "state": {
+    "utc": 1791423989.1584196,
+    "scope": "backup only after external seal overwrite; no admission, restart or analysis",
+    "identity_valid_preserved_receipts": 1936,
+    "per_physical_host": {
+      "127x04": 635,
+      "127x08": 1301
+    },
+    "recorded_game_cpu_hours": 85.17031672449879,
+    "nodes": {
+      "127x04": {
+        "supervisor_exit": "1",
+        "exited_workers": 48,
+        "failed_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        "successful_indices": []
+      },
+      "127x08": {
+        "supervisor_exit": null,
+        "exited_workers": 0,
+        "failed_indices": [],
+        "successful_indices": []
+      }
+    },
+    "outcomes_inspected": false,
+    "qualification": "Receipt identities pass against preserved r2 manifest; runtime integrity incident requires adjudication"
+  },
+  "quarantine_07": {
+    "last_probe": "unreachable: No route to host",
+    "receipts": 0,
+    "comparisons": 0,
+    "mismatches": null,
+    "process_state": "unknown; untouched"
+  },
+  "outcomes_inspected": false,
+  "results_generated": false
+}

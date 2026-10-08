@@ -1,0 +1,77 @@
+{
+  "utc": 1791424302.3148239,
+  "scope": "backup only after external seal overwrite; no admission, restart or analysis",
+  "identity_valid_preserved_receipts": 2129,
+  "per_physical_host": {
+    "127x04": 635,
+    "127x08": 1494
+  },
+  "recorded_game_cpu_hours": 93.64415987572605,
+  "nodes": {
+    "127x04": {
+      "supervisor_exit": "1",
+      "exited_workers": 48,
+      "failed_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "successful_indices": []
+    },
+    "127x08": {
+      "supervisor_exit": null,
+      "exited_workers": 1,
+      "failed_indices": [],
+      "successful_indices": [
+        162
+      ]
+    }
+  },
+  "outcomes_inspected": false,
+  "qualification": "Receipt identities pass against preserved r2 manifest; runtime integrity incident requires adjudication"
+}

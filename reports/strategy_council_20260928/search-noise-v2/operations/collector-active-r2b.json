@@ -1,0 +1,11 @@
+{
+  "utc": 1791423107.8061442,
+  "host": "127x01",
+  "active_label": "s1-collect-r2c",
+  "launcher_pid": 3355179,
+  "script_sha256": "038678c6efd766eb38ff434b8b9473de69b8c9377b3e4621d6976dd249f81c1c",
+  "prior_labels": {
+    "s1-reachable-backup-r2": 143,
+    "s1-collect-r2b": 143
+  }
+}

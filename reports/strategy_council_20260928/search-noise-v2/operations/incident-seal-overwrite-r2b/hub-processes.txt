@@ -1,0 +1,81 @@
+3257031       1   0 Ss      04:27:04 /lib/systemd/systemd --user
+3257032 3257031   0 S       04:27:04 (sd-pam)
+3257040 3257031   - SNsl    04:27:04 /usr/libexec/tracker-miner-fs
+3257051 3257031   0 Ss      04:27:04 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+3257078 3257031   0 Ssl     04:27:04 /usr/libexec/gvfsd
+3257083 3257031   0 Sl      04:27:03 /usr/libexec/gvfsd-fuse /run/user/3822945/gvfs -f -o big_writes
+3257085 3257031   0 Ssl     04:27:03 /usr/libexec/gvfs-udisks2-volume-monitor
+3257116 3257031   0 Ssl     04:27:03 /usr/libexec/gvfs-gphoto2-volume-monitor
+3257129 3257031   0 Ssl     04:27:03 /usr/libexec/gvfs-afc-volume-monitor
+3257143 3257031   0 Ssl     04:27:03 /usr/libexec/gvfs-mtp-volume-monitor
+3257148 3257031   0 Ssl     04:27:03 /usr/libexec/gvfs-goa-volume-monitor
+3257153 3257031   0 Sl      04:27:03 /usr/libexec/goa-daemon
+3257171 3257031   0 Sl      04:27:03 /usr/libexec/goa-identity-service
+3257228       1  10 SNsl    04:27:01 //home/sdicks02/.local/opt/csc-tailscale/1.102.5/tailscaled --tun=userspace-networking --statedir=//home/sdicks02/.local/share/csc-tailscale/127x01 --socket=/tmp/csc-tailscale-3822945/tailscaled.sock --port=0
+3270586 3270499   0 S       03:13:23 sshd: sdicks02@notty
+3297019       1  10 SNs     02:00:59 bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh --worker hub-mirror-127x04-20261008-r2 bash /mpac/sdicks02/jobs/clasher/hub_mirror.sh
+3297031 3297019  10 SN      02:00:59 /usr/bin/time -v bash /mpac/sdicks02/jobs/clasher/hub_mirror.sh
+3297033 3297031  19 SN      02:00:59 bash /mpac/sdicks02/jobs/clasher/hub_mirror.sh --nice
+3342500       1  19 SNs        29:19 bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh --worker c56-v3b-production-20261008-extract env CLASHER_ROOT=/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/runtime-engine-v3b PYTHONPATH=/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/runtime-engine-v3b/src C56_FLEET_Q=/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/qa/fleet-v3b/production-20261008 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 /mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/scripts/fleet_v3b.py extract --workers 44
+3342514 3342500  19 SN         29:19 /usr/bin/time -v env CLASHER_ROOT=/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/runtime-engine-v3b PYTHONPATH=/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/runtime-engine-v3b/src C56_FLEET_Q=/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/qa/fleet-v3b/production-20261008 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 /mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/scripts/fleet_v3b.py extract --workers 44
+3342515 3342514  19 SNl        29:19 /mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/scripts/fleet_v3b.py extract --workers 44
+3342565 3342515  19 SN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.resource_tracker import main;main(10)
+3342566 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=15) --multiprocessing-fork
+3342569 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=17) --multiprocessing-fork
+3342570 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=19) --multiprocessing-fork
+3342571 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=21) --multiprocessing-fork
+3342572 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=23) --multiprocessing-fork
+3342573 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=25) --multiprocessing-fork
+3342574 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=27) --multiprocessing-fork
+3342575 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=29) --multiprocessing-fork
+3342576 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=31) --multiprocessing-fork
+3342577 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=33) --multiprocessing-fork
+3342578 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=35) --multiprocessing-fork
+3342579 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=37) --multiprocessing-fork
+3342580 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=39) --multiprocessing-fork
+3342581 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=41) --multiprocessing-fork
+3342582 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=43) --multiprocessing-fork
+3342583 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=45) --multiprocessing-fork
+3342584 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=47) --multiprocessing-fork
+3342585 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=49) --multiprocessing-fork
+3342586 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=51) --multiprocessing-fork
+3342587 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=53) --multiprocessing-fork
+3342588 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=55) --multiprocessing-fork
+3342589 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=57) --multiprocessing-fork
+3342590 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=59) --multiprocessing-fork
+3342591 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=61) --multiprocessing-fork
+3342592 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=63) --multiprocessing-fork
+3342593 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=65) --multiprocessing-fork
+3342594 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=67) --multiprocessing-fork
+3342595 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=69) --multiprocessing-fork
+3342596 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=71) --multiprocessing-fork
+3342597 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=73) --multiprocessing-fork
+3342598 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=75) --multiprocessing-fork
+3342599 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=77) --multiprocessing-fork
+3342600 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=79) --multiprocessing-fork
+3342601 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=81) --multiprocessing-fork
+3342602 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=83) --multiprocessing-fork
+3342603 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=85) --multiprocessing-fork
+3342604 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=87) --multiprocessing-fork
+3342605 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=89) --multiprocessing-fork
+3342606 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=91) --multiprocessing-fork
+3342607 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=93) --multiprocessing-fork
+3342608 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=95) --multiprocessing-fork
+3342609 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=97) --multiprocessing-fork
+3342610 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=99) --multiprocessing-fork
+3342611 3342515  19 RN         29:13 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=101) --multiprocessing-fork
+3366802 3270586   0 Ss         02:53 rsync --server -logDtprze.iLsfxCIvu --partial . /mpac/sdicks02/repos/clasher/
+3366803 3366802   0 S          02:53 rsync --server -logDtprze.iLsfxCIvu --partial . /mpac/sdicks02/repos/clasher/
+3368041       1  10 SNs        00:53 bash reports/strategy_council_20260928/fleet/fleet_run.sh --worker c56-v3b-production-20261008-supervise-r4 /mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/scripts/fleet_v3b_production_20261008.py supervise
+3368053 3368041  10 SN         00:53 /usr/bin/time -v /mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/scripts/fleet_v3b_production_20261008.py supervise
+3368054 3368053  10 SNl        00:53 /mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/scripts/fleet_v3b_production_20261008.py supervise
+3368181 3368054  10 SN         00:44 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.resource_tracker import main;main(10)
+3368323 3368054  10 RN         00:24 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=15) --multiprocessing-fork
+3368326 3368054  10 RN         00:24 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=17) --multiprocessing-fork
+3368327 3368054  10 RN         00:24 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=19) --multiprocessing-fork
+3368328 3368054  10 RN         00:24 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=21) --multiprocessing-fork
+3368345 3297033  19 SN         00:16 sleep 1800
+3368770 3368679   0 S          00:00 sshd: sdicks02@notty
+3368772 3368770   0 Ss         00:00 bash -c source /mpac/sdicks02/env.sh; cd /mpac/sdicks02/repos/clasher; mkdir -p reports/strategy_council_20260928/search-noise-v2/operations/incident-seal-overwrite-r2b; rsync -a 127x08:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-v2/evaluation-manifest.json reports/strategy_council_20260928/search-noise-v2/operations/incident-seal-overwrite-r2b/evaluation-manifest-r2.json; .venv/bin/python -B -
+3368835 3368772   0 S          00:00 .venv/bin/python -B -
+3368836 3368835   0 R          00:00 ps -u 3822945 -o pid,ppid,ni,stat,etime,args --no-headers

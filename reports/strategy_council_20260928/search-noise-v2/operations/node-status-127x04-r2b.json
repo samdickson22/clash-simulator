@@ -1,0 +1,346 @@
+{
+  "utc": 1791423707.8095107,
+  "host": "127x04",
+  "who": "",
+  "attempts": {
+    "r2": {
+      "supervisor_exit": null,
+      "pid": "2218782",
+      "partitions": {
+        "2": {
+          "exit": "1",
+          "label": "s1-confirm-2-r2"
+        },
+        "3": {
+          "exit": "1",
+          "label": "s1-confirm-3-r2"
+        },
+        "5": {
+          "exit": "1",
+          "label": "s1-confirm-5-r2"
+        },
+        "6": {
+          "exit": "1",
+          "label": "s1-confirm-6-r2"
+        },
+        "7": {
+          "exit": "1",
+          "label": "s1-confirm-7-r2"
+        },
+        "8": {
+          "exit": "1",
+          "label": "s1-confirm-8-r2"
+        },
+        "9": {
+          "exit": "1",
+          "label": "s1-confirm-9-r2"
+        },
+        "11": {
+          "exit": "1",
+          "label": "s1-confirm-11-r2"
+        },
+        "13": {
+          "exit": "1",
+          "label": "s1-confirm-13-r2"
+        },
+        "17": {
+          "exit": "1",
+          "label": "s1-confirm-17-r2"
+        },
+        "19": {
+          "exit": "1",
+          "label": "s1-confirm-19-r2"
+        },
+        "20": {
+          "exit": "1",
+          "label": "s1-confirm-20-r2"
+        },
+        "23": {
+          "exit": "1",
+          "label": "s1-confirm-23-r2"
+        },
+        "27": {
+          "exit": "1",
+          "label": "s1-confirm-27-r2"
+        },
+        "37": {
+          "exit": "1",
+          "label": "s1-confirm-37-r2"
+        },
+        "40": {
+          "exit": "1",
+          "label": "s1-confirm-40-r2"
+        },
+        "41": {
+          "exit": "1",
+          "label": "s1-confirm-41-r2"
+        },
+        "42": {
+          "exit": "1",
+          "label": "s1-confirm-42-r2"
+        },
+        "44": {
+          "exit": "1",
+          "label": "s1-confirm-44-r2"
+        },
+        "47": {
+          "exit": "1",
+          "label": "s1-confirm-47-r2"
+        }
+      },
+      "launch": {
+        "workers": [
+          {
+            "index": 0,
+            "label": "s1-confirm-0-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 1,
+            "label": "s1-confirm-1-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 2,
+            "label": "s1-confirm-2-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 3,
+            "label": "s1-confirm-3-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 4,
+            "label": "s1-confirm-4-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 5,
+            "label": "s1-confirm-5-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 6,
+            "label": "s1-confirm-6-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 7,
+            "label": "s1-confirm-7-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 8,
+            "label": "s1-confirm-8-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 9,
+            "label": "s1-confirm-9-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 10,
+            "label": "s1-confirm-10-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 11,
+            "label": "s1-confirm-11-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 12,
+            "label": "s1-confirm-12-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 13,
+            "label": "s1-confirm-13-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 14,
+            "label": "s1-confirm-14-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 15,
+            "label": "s1-confirm-15-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 16,
+            "label": "s1-confirm-16-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 17,
+            "label": "s1-confirm-17-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 18,
+            "label": "s1-confirm-18-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 19,
+            "label": "s1-confirm-19-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 20,
+            "label": "s1-confirm-20-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 21,
+            "label": "s1-confirm-21-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 22,
+            "label": "s1-confirm-22-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 23,
+            "label": "s1-confirm-23-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 24,
+            "label": "s1-confirm-24-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 25,
+            "label": "s1-confirm-25-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 26,
+            "label": "s1-confirm-26-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 27,
+            "label": "s1-confirm-27-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 28,
+            "label": "s1-confirm-28-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 29,
+            "label": "s1-confirm-29-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 30,
+            "label": "s1-confirm-30-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 31,
+            "label": "s1-confirm-31-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 32,
+            "label": "s1-confirm-32-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 33,
+            "label": "s1-confirm-33-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 34,
+            "label": "s1-confirm-34-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 35,
+            "label": "s1-confirm-35-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 36,
+            "label": "s1-confirm-36-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 37,
+            "label": "s1-confirm-37-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 38,
+            "label": "s1-confirm-38-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 39,
+            "label": "s1-confirm-39-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 40,
+            "label": "s1-confirm-40-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 41,
+            "label": "s1-confirm-41-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 42,
+            "label": "s1-confirm-42-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 43,
+            "label": "s1-confirm-43-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 44,
+            "label": "s1-confirm-44-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 45,
+            "label": "s1-confirm-45-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 46,
+            "label": "s1-confirm-46-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 47,
+            "label": "s1-confirm-47-r2",
+            "host": "127x04"
+          }
+        ],
+        "launched_at": 1791421758.4598453,
+        "who": "",
+        "concurrency": 48
+      }
+    },
+    "r2b": {
+      "supervisor_exit": null,
+      "pid": null,
+      "partitions": {}
+    }
+  },
+  "processes": "2153775       1   0 Ss   systemd         /lib/systemd/systemd --user\n2153776 2153775   0 S    (sd-pam)        (sd-pam)\n2153783 2153775   - SNsl tracker-miner-f /usr/libexec/tracker-miner-fs\n2153794 2153775   0 Ss   dbus-daemon     /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only\n2153821 2153775   0 Ssl  gvfsd           /usr/libexec/gvfsd\n2153826 2153775   0 Sl   gvfsd-fuse      /usr/libexec/gvfsd-fuse /run/user/3822945/gvfs -f -o big_writes\n2153828 2153775   0 Ssl  gvfs-udisks2-vo /usr/libexec/gvfs-udisks2-volume-monitor\n2153858 2153775   0 Ssl  gvfs-gphoto2-vo /usr/libexec/gvfs-gphoto2-volume-monitor\n2153867 2153775   0 Ssl  gvfs-afc-volume /usr/libexec/gvfs-afc-volume-monitor\n2153882 2153775   0 Ssl  gvfs-mtp-volume /usr/libexec/gvfs-mtp-volume-monitor\n2153891 2153775   0 Ssl  gvfs-goa-volume /usr/libexec/gvfs-goa-volume-monitor\n2153897 2153775   0 Sl   goa-daemon      /usr/libexec/goa-daemon\n2153913 2153775   0 Sl   goa-identity-se /usr/libexec/goa-identity-service\n2153963 2153775   0 Ssl  tracker-store   /usr/libexec/tracker-store\n2153972       1  10 SNsl tailscaled      //home/sdicks02/.local/opt/csc-tailscale/1.102.5/tailscaled --tun=userspace-networking --statedir=//home/sdicks02/.local/share/csc-tailscale/127x04 --socket=/tmp/csc-tailscale-3822945/tailscaled.sock --port=0\n2154233 2153775   - SNsl tracker-extract /usr/libexec/tracker-extract\n2218782       1  10 SNs  bash            bash reports/strategy_council_20260928/fleet/fleet_run.sh --worker s1-confirm-node-127x04-r2 .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2218794 2218782  10 SN   time            /usr/bin/time -v .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2218795 2218794  10 SN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219152 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219153 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219156 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219162 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219164 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219166 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219167 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219168 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219170 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219173 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219174 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219176 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219177 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219178 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219180 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219181 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219182 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219183 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219184 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219185 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219186 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219187 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219188 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219190 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219191 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219195 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219197 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2219198 2218795  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n2224829       1  10 SNs  bash            bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh --worker c56-v3b-production-20261008-extract env CLASHER_ROOT=/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/runtime-engine-v3b PYTHONPATH=/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/runtime-engine-v3b/src C56_FLEET_Q=/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/qa/fleet-v3b/production-20261008 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 /mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/scripts/fleet_v3b.py extract --workers 32\n2224841 2224829  10 SN   time            /usr/bin/time -v env CLASHER_ROOT=/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/runtime-engine-v3b PYTHONPATH=/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/runtime-engine-v3b/src C56_FLEET_Q=/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/qa/fleet-v3b/production-20261008 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 /mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/scripts/fleet_v3b.py extract --workers 32\n2224842 2224841  10 SNl  python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/scripts/fleet_v3b.py extract --workers 32\n2224928 2224842  10 SN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.resource_tracker import main;main(10)\n2224929 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=15) --multiprocessing-fork\n2224932 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=17) --multiprocessing-fork\n2224933 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=19) --multiprocessing-fork\n2224934 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=21) --multiprocessing-fork\n2224935 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=23) --multiprocessing-fork\n2224936 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=25) --multiprocessing-fork\n2224937 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=27) --multiprocessing-fork\n2224938 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=29) --multiprocessing-fork\n2224939 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=31) --multiprocessing-fork\n2224940 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=33) --multiprocessing-fork\n2224941 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=35) --multiprocessing-fork\n2224942 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=37) --multiprocessing-fork\n2224943 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=39) --multiprocessing-fork\n2224944 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=41) --multiprocessing-fork\n2224945 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=43) --multiprocessing-fork\n2224946 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=45) --multiprocessing-fork\n2224947 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=47) --multiprocessing-fork\n2224948 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=49) --multiprocessing-fork\n2224949 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=51) --multiprocessing-fork\n2224950 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=53) --multiprocessing-fork\n2224951 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=55) --multiprocessing-fork\n2224952 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=57) --multiprocessing-fork\n2224953 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=59) --multiprocessing-fork\n2224954 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=61) --multiprocessing-fork\n2224955 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=63) --multiprocessing-fork\n2224956 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=65) --multiprocessing-fork\n2224957 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=67) --multiprocessing-fork\n2224958 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=69) --multiprocessing-fork\n2224959 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=71) --multiprocessing-fork\n2224960 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=73) --multiprocessing-fork\n2224961 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=75) --multiprocessing-fork\n2224962 2224842  10 RN   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=77) --multiprocessing-fork\n2237620 2237564   0 S    sshd            sshd: sdicks02@notty\n2245545 2237620   0 Ss   rsync           rsync --server -logDtprze.iLsfxCIvu --partial . /mpac/sdicks02/repos/clasher/\n2245546 2245545   0 S    rsync           rsync --server -logDtprze.iLsfxCIvu --partial . /mpac/sdicks02/repos/clasher/\n2245717 2245661   0 S    sshd            sshd: sdicks02@notty\n2245718 2245717   0 Ss   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -\n2245720 2245718   0 R    ps              ps -u 3822945 -o pid,ppid,ni,stat,comm,args --no-headers\n"
+}

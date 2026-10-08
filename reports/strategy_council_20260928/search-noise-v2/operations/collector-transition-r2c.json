@@ -1,0 +1,9 @@
+{
+  "utc": 1791423076.1097786,
+  "verified_pid": 3353845,
+  "verified_parent": 3353844,
+  "verified_launcher": 3353832,
+  "reason": "Handle exact already-admitted hub backup replicas on04; operational collector only",
+  "action": "SIGTERM then fresh s1-collect-r2c",
+  "frozen_files_changed": false
+}

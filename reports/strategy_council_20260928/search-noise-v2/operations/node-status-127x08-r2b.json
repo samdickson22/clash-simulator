@@ -1,0 +1,525 @@
+{
+  "utc": 1791423645.5594518,
+  "host": "127x08",
+  "who": "",
+  "attempts": {
+    "r2": {
+      "supervisor_exit": null,
+      "pid": "3375468",
+      "partitions": {},
+      "launch": {
+        "workers": [
+          {
+            "index": 148,
+            "label": "s1-confirm-148-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 149,
+            "label": "s1-confirm-149-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 150,
+            "label": "s1-confirm-150-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 151,
+            "label": "s1-confirm-151-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 152,
+            "label": "s1-confirm-152-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 153,
+            "label": "s1-confirm-153-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 154,
+            "label": "s1-confirm-154-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 155,
+            "label": "s1-confirm-155-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 156,
+            "label": "s1-confirm-156-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 157,
+            "label": "s1-confirm-157-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 158,
+            "label": "s1-confirm-158-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 159,
+            "label": "s1-confirm-159-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 160,
+            "label": "s1-confirm-160-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 161,
+            "label": "s1-confirm-161-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 162,
+            "label": "s1-confirm-162-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 163,
+            "label": "s1-confirm-163-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 164,
+            "label": "s1-confirm-164-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 165,
+            "label": "s1-confirm-165-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 166,
+            "label": "s1-confirm-166-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 167,
+            "label": "s1-confirm-167-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 168,
+            "label": "s1-confirm-168-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 169,
+            "label": "s1-confirm-169-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 170,
+            "label": "s1-confirm-170-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 171,
+            "label": "s1-confirm-171-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 172,
+            "label": "s1-confirm-172-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 173,
+            "label": "s1-confirm-173-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 174,
+            "label": "s1-confirm-174-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 175,
+            "label": "s1-confirm-175-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 176,
+            "label": "s1-confirm-176-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 177,
+            "label": "s1-confirm-177-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 178,
+            "label": "s1-confirm-178-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 179,
+            "label": "s1-confirm-179-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 180,
+            "label": "s1-confirm-180-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 181,
+            "label": "s1-confirm-181-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 182,
+            "label": "s1-confirm-182-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 183,
+            "label": "s1-confirm-183-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 184,
+            "label": "s1-confirm-184-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 185,
+            "label": "s1-confirm-185-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 186,
+            "label": "s1-confirm-186-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 187,
+            "label": "s1-confirm-187-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 188,
+            "label": "s1-confirm-188-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 189,
+            "label": "s1-confirm-189-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 190,
+            "label": "s1-confirm-190-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 191,
+            "label": "s1-confirm-191-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 192,
+            "label": "s1-confirm-192-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 193,
+            "label": "s1-confirm-193-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 194,
+            "label": "s1-confirm-194-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 195,
+            "label": "s1-confirm-195-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 196,
+            "label": "s1-confirm-196-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 197,
+            "label": "s1-confirm-197-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 198,
+            "label": "s1-confirm-198-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 199,
+            "label": "s1-confirm-199-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 200,
+            "label": "s1-confirm-200-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 201,
+            "label": "s1-confirm-201-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 202,
+            "label": "s1-confirm-202-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 203,
+            "label": "s1-confirm-203-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 204,
+            "label": "s1-confirm-204-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 205,
+            "label": "s1-confirm-205-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 206,
+            "label": "s1-confirm-206-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 207,
+            "label": "s1-confirm-207-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 208,
+            "label": "s1-confirm-208-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 209,
+            "label": "s1-confirm-209-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 210,
+            "label": "s1-confirm-210-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 211,
+            "label": "s1-confirm-211-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 212,
+            "label": "s1-confirm-212-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 213,
+            "label": "s1-confirm-213-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 214,
+            "label": "s1-confirm-214-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 215,
+            "label": "s1-confirm-215-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 216,
+            "label": "s1-confirm-216-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 217,
+            "label": "s1-confirm-217-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 218,
+            "label": "s1-confirm-218-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 219,
+            "label": "s1-confirm-219-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 220,
+            "label": "s1-confirm-220-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 221,
+            "label": "s1-confirm-221-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 222,
+            "label": "s1-confirm-222-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 223,
+            "label": "s1-confirm-223-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 224,
+            "label": "s1-confirm-224-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 225,
+            "label": "s1-confirm-225-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 226,
+            "label": "s1-confirm-226-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 227,
+            "label": "s1-confirm-227-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 228,
+            "label": "s1-confirm-228-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 229,
+            "label": "s1-confirm-229-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 230,
+            "label": "s1-confirm-230-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 231,
+            "label": "s1-confirm-231-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 232,
+            "label": "s1-confirm-232-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 233,
+            "label": "s1-confirm-233-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 234,
+            "label": "s1-confirm-234-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 235,
+            "label": "s1-confirm-235-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 236,
+            "label": "s1-confirm-236-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 237,
+            "label": "s1-confirm-237-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 238,
+            "label": "s1-confirm-238-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 239,
+            "label": "s1-confirm-239-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 240,
+            "label": "s1-confirm-240-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 241,
+            "label": "s1-confirm-241-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 242,
+            "label": "s1-confirm-242-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 243,
+            "label": "s1-confirm-243-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 244,
+            "label": "s1-confirm-244-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 245,
+            "label": "s1-confirm-245-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 246,
+            "label": "s1-confirm-246-r2",
+            "host": "127x08"
+          },
+          {
+            "index": 247,
+            "label": "s1-confirm-247-r2",
+            "host": "127x08"
+          }
+        ],
+        "launched_at": 1791421759.2589998,
+        "who": "",
+        "concurrency": 100
+      }
+    },
+    "r2b": {
+      "supervisor_exit": null,
+      "pid": null,
+      "partitions": {}
+    }
+  },
+  "processes": "3328813       1   0 Ss   systemd         /lib/systemd/systemd --user\n3328814 3328813   0 S    (sd-pam)        (sd-pam)\n3328821 3328813   - SNsl tracker-extract /usr/libexec/tracker-extract\n3328832 3328813   0 Ss   dbus-daemon     /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only\n3328860 3328813   0 Ssl  gvfsd           /usr/libexec/gvfsd\n3328865 3328813   0 Sl   gvfsd-fuse      /usr/libexec/gvfsd-fuse /run/user/3822945/gvfs -f -o big_writes\n3328867 3328813   0 Ssl  gvfs-udisks2-vo /usr/libexec/gvfs-udisks2-volume-monitor\n3328899 3328813   0 Ssl  gvfs-goa-volume /usr/libexec/gvfs-goa-volume-monitor\n3328905 3328813   0 Sl   goa-daemon      /usr/libexec/goa-daemon\n3328928 3328813   0 Sl   goa-identity-se /usr/libexec/goa-identity-service\n3328933 3328813   0 Ssl  gvfs-mtp-volume /usr/libexec/gvfs-mtp-volume-monitor\n3328946 3328813   0 Ssl  gvfs-gphoto2-vo /usr/libexec/gvfs-gphoto2-volume-monitor\n3328955 3328813   0 Ssl  gvfs-afc-volume /usr/libexec/gvfs-afc-volume-monitor\n3329003       1  10 SNsl tailscaled      //home/sdicks02/.local/opt/csc-tailscale/1.102.5/tailscaled --tun=userspace-networking --statedir=//home/sdicks02/.local/share/csc-tailscale/127x08 --socket=/tmp/csc-tailscale-3822945/tailscaled.sock --port=0\n3329292 3328813   - SNsl tracker-miner-f /usr/libexec/tracker-miner-fs\n3375468       1  10 SNs  bash            bash reports/strategy_council_20260928/fleet/fleet_run.sh --worker s1-confirm-node-127x08-r2 .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375480 3375468  10 SN   time            /usr/bin/time -v .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375481 3375480  10 SN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375798 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375799 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375800 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375801 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375802 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375803 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375804 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375805 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375806 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375807 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375808 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375809 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375810 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375811 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375812 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375813 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375814 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375815 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375816 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375817 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375818 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375819 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375820 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375821 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375822 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375823 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375824 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375825 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375826 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375827 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375828 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375829 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375830 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375831 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375832 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375833 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375834 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375835 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375836 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375837 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375838 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375839 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375840 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375841 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375842 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375843 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375844 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375845 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375846 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375847 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375848 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375849 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375850 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375851 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375852 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375854 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375855 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375856 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375857 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375858 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375859 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375860 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375861 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375863 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375864 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375865 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375866 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375867 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375868 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375869 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375870 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375871 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375872 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375873 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375874 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375875 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375876 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375877 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375878 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375879 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375880 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375881 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375882 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375883 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375884 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375885 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375886 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375887 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375888 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375889 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375890 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375891 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375892 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375893 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375894 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375895 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375896 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375897 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375898 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3375899 3375481  10 RN   python          .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2\n3391860 3391763   0 S    sshd            sshd: sdicks02@notty\n3391861 3391860   0 Ss   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -\n3391863 3391861   0 R    ps              ps -u 3822945 -o pid,ppid,ni,stat,comm,args --no-headers\n"
+}

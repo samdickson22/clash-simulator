@@ -1,0 +1,9 @@
+{
+  "utc": 1791422939.1152825,
+  "pid": 3345142,
+  "parent_pid": 3345141,
+  "supervisor_pid": 3345125,
+  "verified_cmdline": ".venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/operations/reachable_backup_r2.py ",
+  "action": "SIGTERM exact verified light backup process after replacement collection validation",
+  "outcomes_inspected": false
+}

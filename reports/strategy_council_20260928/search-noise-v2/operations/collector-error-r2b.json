@@ -1,0 +1,47 @@
+{
+  "utc": 1791423708.3467498,
+  "error": "AssertionError(('worker failure', '127x04', 2, '1'))",
+  "traceback": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-v2/operations/collect_r2b.py\", line 277, in main\n    collect_status(host, nodes[host])\n  File \"/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-v2/operations/collect_r2b.py\", line 142, in collect_status\n    assert entry['exit'] == '0', ('worker failure', host, i, entry['exit'])\n           ^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('worker failure', '127x04', 2, '1')\n",
+  "last_complete_poll": {
+    "utc": 1791423646.279553,
+    "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+    "valid_terminal_receipts": 1658,
+    "expected_receipts": 4992,
+    "successful_collected_partitions": 0,
+    "expected_partitions": 248,
+    "per_host_receipts": {
+      "127x04": 582,
+      "127x08": 1076
+    },
+    "completed_game_cpu_hours": 73.60470632589721,
+    "complete_only_ready": false,
+    "outcomes_inspected": false,
+    "nodes": {
+      "127x04": {
+        "r2": {
+          "supervisor_exit": null,
+          "pid": "2218782",
+          "completed_partitions": 0
+        },
+        "r2b": {
+          "supervisor_exit": null,
+          "pid": null,
+          "completed_partitions": 0
+        }
+      },
+      "127x08": {
+        "r2": {
+          "supervisor_exit": null,
+          "pid": "3375468",
+          "completed_partitions": 0
+        },
+        "r2b": {
+          "supervisor_exit": null,
+          "pid": null,
+          "completed_partitions": 0
+        }
+      }
+    }
+  },
+  "no_automatic_retry": true
+}

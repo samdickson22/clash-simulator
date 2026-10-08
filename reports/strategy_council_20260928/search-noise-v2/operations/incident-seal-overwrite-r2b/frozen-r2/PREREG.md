@@ -73,3 +73,52 @@ Sum recorded per-game process CPU seconds for compute, separately report initial
 Seed-audit coverage note: six historical report NPZ symlinks point at removed worktree artifacts. They are listed under unavailable_archives and cannot be inspected again. All available text/seed metadata and all available NPZ archives are audited; the predecessor audit had inspected those historical archives before removal. No positive collision was found. Disjointness claims apply to retained auditable evidence, with this explicit historical coverage limitation.
 
 Timing-calibration scope: budget.json pins the Mac extension used for the one-time pilot, copied from the predecessor runtime. The Linux experiment extension is separately pinned above. Quiet-core isolation on the Mac was not established. The calibration measures an allocation for this study; it does not certify v4 real-time latency.
+
+## 2026-10-08 r2 deviation — lost runtime and replacement fleet
+
+The coordinator authorized this deviation before any confirmation outcome was
+inspected. The r1 Linux runtime was lost with 127x02 after its outage around
+2026-10-07 23:25 UTC. The recovered copy could not reproduce r1: 8 of 465
+manifest-listed files were missing and 32 differed. The r1 manifest remains
+253aba47a826e6dbb2d951114d0f7596b0d45bd3eee294d65e6c032c0513c849.
+Surviving r1 documents, manifests, runtime fragments and receipts are retained
+under r1-archive/. No r1 confirmation receipt is admitted to r2. If 127x02
+returns, its r1 receipts must be archived unread and never merged.
+
+Protocol r2 snapshots the current qualified 127x01 source tree into a fresh
+isolated runtime. The Linux native extension is
+13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309,
+qualified by the hub's full Linux parity gate at 2026-10-08 00:32:53 UTC.
+This build includes the Electro Spirit chain fix and the drafted Inferno
+Dragon dash-channel fix. The build change applies equally to every arm.
+This paragraph supersedes r1's engine-build and known-defect statements;
+the hub gate is not a claim of full Stage 6 admission.
+
+The question, arms, noise/latency models, allocation budget, all 192 paired
+worlds, 4,992 games, original seeds, cell allocation, job-index modulo 248
+partition, analysis, bootstrap seed and pass rules are unchanged.
+execution.json moves only worker indices 0–47 from 127x02 to 127x04.
+Indices 48–147 remain on 127x07 and 148–247 remain on 127x08. Maximum
+concurrency is 48/100/100 respectively, reduced to four when a console user
+is present. 127x01 runs the light collector; 127x05 runs no study compute.
+127x04's separate C56 extraction allocation remains capped at 32.
+
+All preflight gates are rerun on this isolated runtime before the single r2
+seal: the 24 original full-game replays with ELT exact at every observation
+and the original terminal assertions, the 14-test Linux study suite, the
+four-child fork pilot, the 18 terminal timing-only cell pilots, and full-game
+optimized-versus-slow-reference action-digest equality. The slow reference
+performs the documented clone/advance/check path and tries latent repairs
+without the optimized rejection short-circuits; it changes no confirmation
+code and uses the original pilot inputs. Outcomes are suppressed.
+Fresh r2 receipts and source hashes are required; r1 receipts earn no r2
+preflight credit.
+
+Operational scripts use the recovered peers' recovery-smoke-127xNN-20261008
+receipts and -r2 job labels. Distribution continues to copy manifest-listed
+files and verify every peer hash. No confirmation outcome or interim strength
+aggregate is inspected before all 4,992 valid terminal receipts and all 248
+successful partition exit/done receipts exist. The original technical-rerun
+and post-seal correctness-bug rules remain in force. Small audit artifacts,
+documents and final results are mirrored to the 127x05 checkout; runtime
+binaries and raw confirmation receipts remain on the fleet.
