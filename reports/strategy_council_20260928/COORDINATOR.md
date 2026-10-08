@@ -663,3 +663,10 @@ Also on the hub, but with copies elsewhere:
   and require 36/36 tests. This is an L2-v4 prerequisite.
   Perception formal fits had not launched: the worker was idle after I told it to delete its Phase A poll. Explicitly told to
   launch on 09/15 now, using the mirrored T1 completion evidence.
+- **2026-10-08 18:24 UTC: Mac native engine = build48 (isolated runtime root), verified.** (`live-loop/v4/MAC-NATIVE-BUILD48.md/.json`.)
+  66 source pins match; Rust 1.97.1; Mac native `9263a8f7…`. Identity P16 12/12, C56 7/7, random 24/24, recorded 8/8; Stage 5
+  200/200 roots; Stage 6 69/69; runtime tests 36/36 (both zero-delay S6 comparisons now pass). Smoke 58 taps: p50 187.8 / p99
+  269.2 ms. Live Mac checkout and .venv untouched. **Coordinator re-check on the Mac:** C56 identity with the isolated build48
+  .so loaded gives 7/7, 2,900 boundaries, 0 mismatches, baseline `002a57a9…`.
+  **Next:** L2-v4 PREREG drafting delegated to Opus (arms P/O/S-d/S, entry criteria incl. perception gates and the P4 verifier
+  re-test with the v4 HUD head, power and wall-time analysis).
