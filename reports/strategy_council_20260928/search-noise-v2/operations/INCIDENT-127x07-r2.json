@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-08T01:15:00Z",
+  "protocol": "r2",
+  "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+  "host": "127x07",
+  "direct_check": "SSH from 127x05 timed out",
+  "hub_check": "SSH from 127x01: No route to host",
+  "original_supervisor": "s1-confirm-node-127x07-r2",
+  "last_known_launcher_pid": 3322105,
+  "process_state": "unknown; no termination inferred",
+  "last_observed_node_terminal_files": 0,
+  "collector": {
+    "label": "s1-collect-r2",
+    "launcher_pid": 3336667,
+    "exit": 1,
+    "ended_utc": "2026-10-08T01:14:25Z",
+    "reason": "rsync SSH transport failure to 127x07"
+  },
+  "other_nodes": "127x04 and 127x08 active; no observed partition failures; preserve their progress",
+  "outcomes_inspected": false,
+  "reassignment": false,
+  "r1_receipts_merged": false
+}

@@ -7,15 +7,15 @@ from evaluate import write
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--wait',action='store_true');args=ap.parse_args()
-    assert __import__('socket').gethostname().split('.')[0]=='127x02'
+    assert __import__('socket').gethostname().split('.')[0]=='127x01'
     execution=json.loads((HERE/'execution.json').read_text())
     status=HERE/'collected-status';status.mkdir(exist_ok=True)
     while True:
-        for host in ('127x07','127x08'):
+        for host in ('127x04','127x07','127x08'):
             for pattern in ('confirmation/','worker-*-done.json','launch-*.json'):
                 dest=HERE/'confirmation' if pattern=='confirmation/' else HERE
                 dest.mkdir(exist_ok=True)
-                proc=subprocess.run(['rsync','-a','--exclude=*.tmp',f'{host}:{HERE}/{pattern}',str(dest)+'/'],capture_output=True,text=True)
+                proc=subprocess.run(['rsync','-a',*(['--ignore-existing'] if pattern=='confirmation/' else []),'--exclude=*.tmp',f'{host}:{HERE}/{pattern}',str(dest)+'/'],capture_output=True,text=True)
                 if proc.returncode not in (0,23):raise RuntimeError(proc.stderr)
         complete=0;failed=[]
         for worker in execution['workers']:
@@ -26,7 +26,7 @@ def main():
                 launches.extend(w for w in json.loads(p.read_text())['workers'] if w['index']==i)
             if not launches:continue
             attempt=launches[-1];path=f'/mpac/sdicks02/jobs/clasher/{attempt["label"]}.exit'
-            proc=subprocess.run((['cat',path] if host=='127x02' else ['ssh','-o','BatchMode=yes',host,'cat',path]),capture_output=True,text=True)
+            proc=subprocess.run((['cat',path] if host=='127x01' else ['ssh','-o','BatchMode=yes',host,'cat',path]),capture_output=True,text=True)
             if proc.returncode:continue
             code=proc.stdout.strip()
             if code!='0':failed.append(dict(index=i,host=host,label=attempt['label'],exit=code));continue
@@ -34,7 +34,7 @@ def main():
             (status/f'worker-{i}.exit').write_text(code+'\n')
             __import__('shutil').copyfile(done,status/done.name)
             log=path.removesuffix('.exit')+'.log'
-            proc=subprocess.run((['cat',log] if host=='127x02' else ['ssh','-o','BatchMode=yes',host,'cat',log]),capture_output=True,text=True,check=True)
+            proc=subprocess.run((['cat',log] if host=='127x01' else ['ssh','-o','BatchMode=yes',host,'cat',log]),capture_output=True,text=True,check=True)
             (status/f'worker-{i}.log').write_text(proc.stdout)
             complete+=1
         receipts=len(list((HERE/'confirmation').glob('*.json')))

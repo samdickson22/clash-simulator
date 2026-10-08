@@ -1,0 +1,9 @@
+{
+  "utc": 1791420958.5803952,
+  "host": "127x01",
+  "native_sha256": "13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309",
+  "qualified_source_manifest_sha256": "e2e5a6bd5900a9a97af2368bb20ad3af71d2e3408f8580685feb19593e292707",
+  "qualified_files_verified": 459,
+  "snapshot_entries": 434,
+  "source_copies_sha256": "341bda22d3f7b04edd7054a693d90ebc081599746a0e71ef83c1d4ae64320804"
+}

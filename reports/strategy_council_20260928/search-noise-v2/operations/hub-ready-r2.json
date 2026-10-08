@@ -1,0 +1,342 @@
+{
+  "utc": "2026-10-08T00:54:44.911798+00:00",
+  "hub": "127x01",
+  "source": "macmini-fleet:/Users/sam/Desktop/code/clasher",
+  "source_manifest_sha256": "e2e5a6bd5900a9a97af2368bb20ad3af71d2e3408f8580685feb19593e292707",
+  "source_manifest": "/mpac/sdicks02/jobs/clasher/recovery-source-mac.json",
+  "source_pin_files": 1217,
+  "source_pin_bytes": 22011025,
+  "native_sha256": "13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309",
+  "copy": {
+    "exit_receipt": "/mpac/sdicks02/jobs/clasher/recovery-copy-20261008.exit",
+    "repo": {
+      "regular_files": 188266,
+      "directories": 19187,
+      "symlinks": 802,
+      "bytes": 52003560426,
+      "checksum_differences": 0,
+      "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-repo.log"
+    },
+    "local_data": {
+      "clasher-engine-speed": {
+        "regular_files": 1552,
+        "bytes": 184517318,
+        "checksum_differences": 0
+      },
+      "decoded-logic-1e505767": {
+        "regular_files": 340,
+        "bytes": 4156108,
+        "checksum_differences": 0
+      }
+    }
+  },
+  "gates": {
+    "p16": {
+      "baseline": 12,
+      "passed": 12,
+      "result": {
+        "checked_episodes": 12,
+        "digest_boundaries": 15949,
+        "mismatches": []
+      },
+      "exit_receipt": "/mpac/sdicks02/jobs/clasher/p16-linux-20261007.exit"
+    },
+    "c56": {
+      "baseline": 7,
+      "passed": 7,
+      "result": {
+        "mode": "check",
+        "episodes": 7,
+        "digest_boundaries": 2900,
+        "mismatches": [],
+        "baseline_sha256": "002a57a9685b6ee008c84dbc17af2c83fd8076c8c3525e0ce0557407c52da66b"
+      },
+      "exit_receipt": "/mpac/sdicks02/jobs/clasher/c56-linux-20261007.exit"
+    },
+    "random": {
+      "baseline": 24,
+      "passed": 24,
+      "result": {
+        "suite": "random",
+        "checked": 24,
+        "mismatches": []
+      },
+      "exit_receipt": "/mpac/sdicks02/jobs/clasher/random-linux-20261007.exit"
+    },
+    "recorded": {
+      "baseline": 8,
+      "passed": 8,
+      "result": {
+        "suite": "recorded",
+        "checked": 8,
+        "mismatches": []
+      },
+      "exit_receipt": "/mpac/sdicks02/jobs/clasher/recovery-recorded-20261008.exit"
+    }
+  },
+  "regressions": {
+    "fast": {
+      "passed": 47,
+      "exit_receipt": "/mpac/sdicks02/jobs/clasher/fast-linux-20261007.exit",
+      "log": "/mpac/sdicks02/jobs/clasher/fast-linux-20261007.log"
+    },
+    "stage2": {
+      "passed": 38,
+      "exit_receipt": "/mpac/sdicks02/jobs/clasher/stage2-linux-20261007.exit",
+      "log": "/mpac/sdicks02/jobs/clasher/stage2-linux-20261007.log"
+    },
+    "stage4": {
+      "passed": 88,
+      "exit_receipt": "/mpac/sdicks02/jobs/clasher/stage4-linux-20261007.exit",
+      "log": "/mpac/sdicks02/jobs/clasher/stage4-linux-20261007.log"
+    },
+    "stage5": {
+      "passed": 10,
+      "exit_receipt": "/mpac/sdicks02/jobs/clasher/stage5-linux-20261007.exit",
+      "log": "/mpac/sdicks02/jobs/clasher/stage5-linux-20261007.log"
+    },
+    "stage5-replay": {
+      "passed": 200,
+      "exit_receipt": "/mpac/sdicks02/jobs/clasher/stage5-replay-linux-20261007.exit",
+      "log": "/mpac/sdicks02/jobs/clasher/stage5-replay-linux-20261007.log"
+    },
+    "speed": {
+      "passed": 24,
+      "exit_receipt": "/mpac/sdicks02/jobs/clasher/speed-linux-20261007.exit",
+      "log": "/mpac/sdicks02/jobs/clasher/speed-linux-20261007.log"
+    }
+  },
+  "stage6": {
+    "informational_only": true,
+    "admission": false,
+    "passed": 66,
+    "total": 66,
+    "exit_receipt": "/mpac/sdicks02/jobs/clasher/recovery-stage6-info-20261008.exit"
+  },
+  "input_verification": {
+    "native_sha256": "13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309",
+    "replay_inputs": 34,
+    "source_files": 1217,
+    "certificate_manifests": 17,
+    "certificate_receipts": 179,
+    "incremental_cards": 66,
+    "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+    "errors": [],
+    "historical_final_manifests": [
+      {
+        "manifest": "final-r45b-manifest.json",
+        "status": "Private core gates passed; full Stage6 admission blocked by unchanged Python controller exception",
+        "final_s122_admitted": false,
+        "receipts": 64,
+        "drift": [
+          "stage6/final_controls.sh"
+        ],
+        "informational_only": true
+      }
+    ],
+    "historical_driver_drift": [
+      {
+        "manifest": "early-manifest.json",
+        "file": "reports/strategy_council_20260928/engine-speed/stage6/regressions.py",
+        "expected": "4367887f1e4a7efa8f8344706d3211dac5913d631e57ceb7f2467615e4e1d3bb",
+        "current_mac": "57fe6301bc250e4d61f3f593ae7fea0924507a9b118673f4baa81406ba8315ae"
+      }
+    ],
+    "note": "Historical receipt integrity only; Linux differential reruns are separate. No S122 admission."
+  },
+  "peers": {
+    "127x03": {
+      "copy_exit_receipt": "/mpac/sdicks02/jobs/clasher/recovery-copy-127x03-20261008-r2.exit",
+      "checksum": {
+        "tools": {
+          "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-127x03-tools.log",
+          "differences": 0,
+          "number_of_files": "12,249 (reg: 9,175, dir: 963, link: 2,111)",
+          "total_file_size": "1,533,777,275 bytes"
+        },
+        "repos_clasher": {
+          "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-127x03-repos_clasher.log",
+          "differences": 0,
+          "number_of_files": "243,663 (reg: 220,656, dir: 22,201, link: 806)",
+          "total_file_size": "60,000,153,026 bytes"
+        },
+        "repos_clasher-local-data": {
+          "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-127x03-repos_clasher-local-data.log",
+          "differences": 0,
+          "number_of_files": "2,045 (reg: 1,886, dir: 159)",
+          "total_file_size": "188,535,431 bytes"
+        }
+      },
+      "smoke": {
+        "passed": 12,
+        "baseline": 12,
+        "result": {
+          "checked_episodes": 12,
+          "digest_boundaries": 15949,
+          "mismatches": []
+        },
+        "exit": 0,
+        "host": "127x03",
+        "exit_receipt": "/mpac/sdicks02/jobs/clasher/recovery-smoke-127x03-20261008.exit",
+        "log": "/mpac/sdicks02/jobs/clasher/recovery-smoke-127x03-20261008.log",
+        "hub_receipt_copy": "/mpac/sdicks02/jobs/clasher/recovery-smoke-127x03-20261008.peer-receipt.log",
+        "completed_utc": "2026-10-08T00:50:28Z",
+        "wall": "3:31.51"
+      }
+    },
+    "127x04": {
+      "copy_exit_receipt": "/mpac/sdicks02/jobs/clasher/recovery-copy-127x04-20261008-r2.exit",
+      "checksum": {
+        "tools": {
+          "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-127x04-tools.log",
+          "differences": 0,
+          "number_of_files": "12,249 (reg: 9,175, dir: 963, link: 2,111)",
+          "total_file_size": "1,533,777,275 bytes"
+        },
+        "repos_clasher": {
+          "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-127x04-repos_clasher.log",
+          "differences": 0,
+          "number_of_files": "243,663 (reg: 220,656, dir: 22,201, link: 806)",
+          "total_file_size": "60,000,153,026 bytes"
+        },
+        "repos_clasher-local-data": {
+          "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-127x04-repos_clasher-local-data.log",
+          "differences": 0,
+          "number_of_files": "2,045 (reg: 1,886, dir: 159)",
+          "total_file_size": "188,535,431 bytes"
+        }
+      },
+      "smoke": {
+        "passed": 12,
+        "baseline": 12,
+        "result": {
+          "checked_episodes": 12,
+          "digest_boundaries": 15949,
+          "mismatches": []
+        },
+        "exit": 0,
+        "host": "127x04",
+        "exit_receipt": "/mpac/sdicks02/jobs/clasher/recovery-smoke-127x04-20261008.exit",
+        "log": "/mpac/sdicks02/jobs/clasher/recovery-smoke-127x04-20261008.log",
+        "hub_receipt_copy": "/mpac/sdicks02/jobs/clasher/recovery-smoke-127x04-20261008.peer-receipt.log",
+        "completed_utc": "2026-10-08T00:50:33Z",
+        "wall": "3:35.94"
+      }
+    },
+    "127x07": {
+      "copy_exit_receipt": "/mpac/sdicks02/jobs/clasher/recovery-copy-127x07-20261008-r2.exit",
+      "checksum": {
+        "tools": {
+          "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-127x07-tools.log",
+          "differences": 0,
+          "number_of_files": "12,249 (reg: 9,175, dir: 963, link: 2,111)",
+          "total_file_size": "1,533,777,275 bytes"
+        },
+        "repos_clasher": {
+          "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-127x07-repos_clasher.log",
+          "differences": 0,
+          "number_of_files": "243,663 (reg: 220,656, dir: 22,201, link: 806)",
+          "total_file_size": "60,000,153,026 bytes"
+        },
+        "repos_clasher-local-data": {
+          "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-127x07-repos_clasher-local-data.log",
+          "differences": 0,
+          "number_of_files": "2,045 (reg: 1,886, dir: 159)",
+          "total_file_size": "188,535,431 bytes"
+        }
+      },
+      "smoke": {
+        "passed": 12,
+        "baseline": 12,
+        "result": {
+          "checked_episodes": 12,
+          "digest_boundaries": 15949,
+          "mismatches": []
+        },
+        "exit": 0,
+        "host": "127x07",
+        "exit_receipt": "/mpac/sdicks02/jobs/clasher/recovery-smoke-127x07-20261008.exit",
+        "log": "/mpac/sdicks02/jobs/clasher/recovery-smoke-127x07-20261008.log",
+        "hub_receipt_copy": "/mpac/sdicks02/jobs/clasher/recovery-smoke-127x07-20261008.peer-receipt.log",
+        "completed_utc": "2026-10-08T00:51:42Z",
+        "wall": "4:39.49"
+      }
+    },
+    "127x08": {
+      "copy_exit_receipt": "/mpac/sdicks02/jobs/clasher/recovery-copy-127x08-20261008-r2.exit",
+      "checksum": {
+        "tools": {
+          "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-127x08-tools.log",
+          "differences": 0,
+          "number_of_files": "12,249 (reg: 9,175, dir: 963, link: 2,111)",
+          "total_file_size": "1,533,777,275 bytes"
+        },
+        "repos_clasher": {
+          "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-127x08-repos_clasher.log",
+          "differences": 0,
+          "number_of_files": "243,663 (reg: 220,656, dir: 22,201, link: 806)",
+          "total_file_size": "60,000,153,026 bytes"
+        },
+        "repos_clasher-local-data": {
+          "log": "/mpac/sdicks02/jobs/clasher/recovery-verify-127x08-repos_clasher-local-data.log",
+          "differences": 0,
+          "number_of_files": "2,045 (reg: 1,886, dir: 159)",
+          "total_file_size": "188,535,431 bytes"
+        }
+      },
+      "smoke": {
+        "passed": 12,
+        "baseline": 12,
+        "result": {
+          "checked_episodes": 12,
+          "digest_boundaries": 15949,
+          "mismatches": []
+        },
+        "exit": 0,
+        "host": "127x08",
+        "exit_receipt": "/mpac/sdicks02/jobs/clasher/recovery-smoke-127x08-20261008.exit",
+        "log": "/mpac/sdicks02/jobs/clasher/recovery-smoke-127x08-20261008.log",
+        "hub_receipt_copy": "/mpac/sdicks02/jobs/clasher/recovery-smoke-127x08-20261008.peer-receipt.log",
+        "completed_utc": "2026-10-08T00:50:25Z",
+        "wall": "3:31.90"
+      }
+    }
+  },
+  "offload_dry_run": {
+    "stamp": "20261008T004942Z",
+    "files": 81517,
+    "bytes": 35759582884,
+    "host_differences": {
+      "127x01": 0,
+      "127x04": 0
+    },
+    "exit_receipt": "/mpac/sdicks02/jobs/clasher/recovery-offload-dry-run-20261008.exit",
+    "log": "/mpac/sdicks02/jobs/clasher/recovery-offload-dry-run-20261008.log",
+    "deleted": false
+  },
+  "mirror": {
+    "host": "127x04",
+    "label": "hub-mirror-127x04-20261008-r2",
+    "launcher_pid": 3297019,
+    "interval_seconds": 1800,
+    "bandwidth_kib_per_second": 51200,
+    "latest_heartbeat": {
+      "utc": "2026-10-08T00:43:08Z",
+      "hub": "127x01",
+      "mirror": "127x04",
+      "cycle_exit": 0
+    }
+  },
+  "resolved_conflict": {
+    "path": "reports/strategy_council_20260928/c56/data/qa/fleet-v3b/mac-base.json",
+    "sha256": "25f22b39eb4ce0b6469df0b24727bd323c4c94c4ffa079526c45bb594345beae",
+    "hosts": [
+      "127x03",
+      "127x04",
+      "127x07",
+      "127x08"
+    ],
+    "originals": "/mpac/sdicks02/jobs/clasher/recovery-conflicts/<host>/originals.json",
+    "reason": "Identical JSON; peer lacked final newline; coordinator authorized exact hub copy after preserving originals."
+  }
+}

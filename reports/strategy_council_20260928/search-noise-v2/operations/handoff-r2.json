@@ -1,0 +1,20 @@
+{
+  "as_of": "2026-10-08 01:19:05 UTC",
+  "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+  "valid_terminal_receipts": 397,
+  "expected_receipts": 4992,
+  "completed_partitions": 0,
+  "expected_partitions": 248,
+  "per_host": {
+    "127x04": 149,
+    "127x08": 248
+  },
+  "completed_game_cpu_hours": 20.152728397056386,
+  "preflight_cpu_hours": 0.7188388888888889,
+  "unresolved_host": "127x07",
+  "collector_exit": 1,
+  "reachable_backup_label": "s1-reachable-backup-r2",
+  "reachable_backup_launcher_pid": 3345125,
+  "outcomes_inspected": false,
+  "analysis_permitted": false
+}

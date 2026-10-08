@@ -1,0 +1,9 @@
+{
+  "protocol": "r2",
+  "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+  "sealed_unix": 1791421656.7472093,
+  "files": 468,
+  "preflight_passed": true,
+  "preflight_cpu_hours": 0.7188388888888889,
+  "confirmation_launched": false
+}

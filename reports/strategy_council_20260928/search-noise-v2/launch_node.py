@@ -30,9 +30,9 @@ def child(index,total,label,resources,pilot=False,max_tick=1200):
     raise SystemExit(code)
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--attempt',default='r1');ap.add_argument('--fork-pilot',action='store_true');ap.add_argument('--full-pilot',action='store_true');args=ap.parse_args()
-    host=socket.gethostname().split('.')[0];assert host in ('127x02','127x07','127x08')
-    if host!='127x02':assert (JOBS/'smoke-p16-linux-20261007.exit').read_text().strip()=='0'
+    ap=argparse.ArgumentParser();ap.add_argument('--attempt',default='r2');ap.add_argument('--concurrency',type=int);ap.add_argument('--fork-pilot',action='store_true');ap.add_argument('--full-pilot',action='store_true');args=ap.parse_args()
+    host=socket.gethostname().split('.')[0];assert host in ('127x04','127x07','127x08')
+    assert (JOBS/f'recovery-smoke-{host}-20261008.exit').read_text().strip()=='0'
     pilot=args.fork_pilot or args.full_pilot
     if pilot:
         workers=[dict(index=(36 if args.full_pilot else 25)+i,host=host) for i in range(18 if args.full_pilot else 4)];total=len(workers)
@@ -40,10 +40,11 @@ def main():
         manifest=json.loads((HERE/'evaluation-manifest.json').read_text());verify(manifest)
         execution=json.loads((HERE/'execution.json').read_text());total=len(execution['workers'])
         workers=[w for w in execution['workers'] if w['host']==host]
-    assert len(workers)<=(48 if host=='127x02' else 100)
+    assert len(workers)<=(48 if host=='127x04' else 100)
     who=subprocess.check_output(['who'],text=True)
     # Fixed partitions can run in smaller waves without changing any game inputs.
-    concurrency=min(len(workers),4 if who.strip() else len(workers))
+    assert args.concurrency is None or 1<=args.concurrency<=(48 if host=='127x04' else 100)
+    concurrency=min(len(workers),4 if who.strip() else len(workers),args.concurrency or len(workers))
     r=Resources();prior=json.loads((HERE/'runtime/support/human_deck_catalog.json').read_text())
     r.initial_belief=DerivedPublicState(prior,r.costs)
     context=multiprocessing.get_context('fork');pending=list(workers);active=[];failed=[]

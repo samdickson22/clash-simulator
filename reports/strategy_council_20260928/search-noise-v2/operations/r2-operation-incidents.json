@@ -1,0 +1,9 @@
+[
+  {
+    "kind": "documentation_command",
+    "exit": 127,
+    "reason": "Remote relative .venv path lacked repository cwd; no document write occurred.",
+    "resolution": "Repeated with absolute /mpac/sdicks02/repos/clasher/.venv/bin/python; documents written and mirrored.",
+    "affects_study_inputs": false
+  }
+]

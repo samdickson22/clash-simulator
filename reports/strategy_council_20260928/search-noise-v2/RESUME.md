@@ -1,29 +1,109 @@
-# Resume S1
+# Resume S1 r2 — 127x07 unavailable
 
-Mac code directory: reports/strategy_council_20260928/search-noise-v2. Fleet uses the same relative path under /mpac/sdicks02/repos/clasher. Read PROGRESS.md and PREREG.md first. The manifest is the authority after freezing. Never rerun prepare.py, regenerate the schedule, replace the runtime, or sync Mac runtime binaries over a frozen Linux study.
+Last verified state: 2026-10-08 01:16:58 UTC.
+Authority: 127x01:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-v2/.
+127x05 holds only docs/source/small audit artifacts. No heavy work there.
 
-Before any action, inspect the named fleet_run jobs, their PID ancestry, locks, exit receipts and current/done files. Do not duplicate a live partition. Only the assigned 127x02/07/08 hosts may execute this study. Do not inspect confirmation score/winner fields until all games and partitions complete. Do not commit.
+## Frozen seal and passed preflight
 
-The node supervisor is detached with fleet_run.sh. Each child shares immutable resources by fork, runs one-thread search/BLAS at inherited nice 10, obtains its own worker lock and writes atomic terminal receipts. execution.json maps all 248 worker indices to hosts. Worker i owns global game indices congruent to i modulo 248. Console users reduce simultaneous concurrency to four without changing assignments.
+Manifest: 3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677.
+Sealed once at 2026-10-08 01:07:36 UTC; 468 files.
+Native: 13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309.
+Fresh runtime matches 459 qualified source pins, with 434 copied runtime files.
+All 24 original replays / 23,058 observation checks, original terminal
+assertions, 14 Linux tests, four fork-pilot children, 18 terminal timing
+cells, and optimized/reference full-game action-digest equality passed.
+Fresh r2 preflight CPU: 0.7188388889 core-hours.
+All peers verified the 468 frozen hashes before launch. The seal and
+preflight were mirrored to 05 before confirmation began.
 
-After an interruption, retain completed receipts and all failure evidence. If the old supervisor is gone, launch the same node partition through fleet_run.sh with a new attempt label and pass --attempt r2 to launch_node.py. Valid terminal games are skipped, incomplete games replay from the same seed, and the previous unfinished current file is archived under interrupted/. An invalid terminal receipt or source-hash mismatch stops the worker. Do not overwrite it or change code to bypass it.
+The original design, 192 worlds, seeds, 4,992 games, arms, analysis,
+bootstrap seed, pass rules and job-index modulo 248 assignment are unchanged.
+R1's surviving artifacts remain under r1-archive/<host> on 01/04/07/08/05.
+The original surviving copy had 8 missing / 32 differing files of 465.
+No r1 outcomes were inspected or admitted. Never contact 127x02 or merge
+its receipts; archive them unread if it returns.
 
-The hub collector copies only completed JSON receipts and status files from peers. It writes monitor.json with counts and technical failures. With --wait it analyzes only after all partitions finish successfully. If a child fails, inspect its technical traceback, preserve the failed attempt, and apply the preregistered rerun rule. A correctness bug in frozen code invalidates continuation and requires a new protocol with fresh seeds.
+## Active and failed processes
 
-After complete-only analysis, mirror RESULTS.md, result.json, PROGRESS.md, PREREG.md, evaluation-manifest.json, source-copies.json, preflight.json, execution.json and small audit receipts to the Mac. Keep confirmation/ and runtime binaries on the fleet. Timing-only pilot receipts can be mirrored. Raw game receipts must remain on the hub.
+All labels live under /mpac/sdicks02/jobs/clasher/ on their named host.
+Verify PID identity, ancestry, lock and exit receipts before any action.
+Never infer that an unreachable process has stopped.
 
-## Current pre-freeze completion commands
+- 127x04: s1-confirm-node-127x04-r2, launcher PID 2218782, ACTIVE.
+  Fixed worker indices 0–47, cap 48, expected 992 games.
+- 127x07: s1-confirm-node-127x07-r2, launcher PID 3322105, STATE UNKNOWN.
+  Fixed indices 48–147, cap 100, expected 2,000 games.
+  Last observed launch had all 100 workers; last observed terminal count was 0.
+  Direct SSH from 05 timed out; one bounded hub check returned No route to host.
+  No network changes or repeated connectivity retry loop were attempted.
+- 127x08: s1-confirm-node-127x08-r2, launcher PID 3375468, ACTIVE.
+  Fixed indices 148–247, cap 100, expected 2,000 games.
+- 127x01: s1-collect-r2, launcher PID 3336667, EXIT 1 at 01:14:25 UTC.
+  Cause: rsync/SSH to 127x07 returned No route to host (255).
+  Its log/exit are preserved under operations/ as well as jobs/.
+- 127x01: s1-reachable-backup-r2, launcher PID 3345125, ACTIVE.
+  Runs operations/reachable_backup_r2.py at nice 10. Copies only receipts/status
+  from 04 and 08, with --ignore-existing for immutable game receipts.
+  No 07 probing, analysis, reassignment, or frozen-file edits.
+  Stops after both reachable supervisors finish, on validation failure, or
+  after its six-hour operational window (approximately 07:16:55 UTC).
+  See operations/reachable-monitor-r2.json and the job log/exit.
 
-Final prerequisites are encoded in preflight.py: 24 original replays, final 14-test Linux suite, fork pilot, the 18-cell final pilot supervisor, and exact full-game action-digest equality of pilot 61 and pilot 43. The latter verifies the affordability fast path without inspecting outcomes. Labels and receipts are under /mpac/sdicks02/jobs/clasher. Poll their exit receipts and technical logs, not scores.
+All launch who checks were empty; nice 10 and one native/BLAS thread.
+Console users reduce a node to four concurrent S1 workers; --concurrency
+supports a lower technical cap without changing assignments. 04's separate
+C56 extraction cap remains 32.
 
-After all pass, finalize PREREG's status on the Mac and sync only study source/docs to the hub, excluding runtime and raw output. Run preflight.py on the hub, then seal.py exactly once. Copy the manifest, source-copies.json and preflight.json to the Mac before launching any confirmation game. Do not sync an old Mac source-copies.json over the authoritative Linux one.
+## Counts and compute
 
-Launch the hub through fleet_run.sh with label s1-confirm-node-127x02-r1 and command `.venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r1`. Wait for each peer's smoke exit 0, then run `distribute.py 127x07` or `distribute.py 127x08` on the hub. This copies only manifest-listed files and verifies every frozen hash on the peer. Launch each peer with its corresponding s1-confirm-node-127xNN-r1 label and the same launch_node command.
+At 01:16:58 UTC, the hub's outcome-blind validator confirmed 286 / 4,992
+terminal receipts: 04 = 110, 08 = 176. No 07 receipts were collected.
+0 / 248 completed partitions. No 04/08 worker failure was observed.
+Completed-game CPU recorded in these 286 receipts: 14.7149011330 core-hours.
+This is a partial lower bound; live/incomplete games and 07 CPU are unknown.
+Use the live backup monitor for newer counts. No outcomes have been inspected.
 
-Once all nodes are launched, use fleet_run.sh on the hub to detach `collect.py --wait` under s1-collect-r1. It records counts and technical failures only until complete. If it exits on an actual failed worker, apply the technical-rerun protocol and relaunch collection with a fresh label. Preserve all failed supervisor/worker logs and exits.
+## Recovery steps
 
-## Fleet availability incident
+1. Restore 127x07 availability externally. Do not touch network daemons,
+   crontab, other-project hosts, or 127x02. Do not migrate its partitions.
+2. Once 07 is reachable, inspect its original supervisor and all assigned
+   worker PIDs/ancestry/locks/exit/current/done receipts. Preserve every receipt.
+   If still running, leave it running. Do not duplicate it.
+3. Only a permitted technical failure may resume identical inputs under a new
+   attempt label. Example after verified termination and diagnosis:
+   fleet_run.sh s1-confirm-node-127x07-r2a .venv/bin/python -B
+   reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r2a
+   Keep valid terminal receipts; the frozen worker validates and skips them.
+   Wrong identity/hash receipts are hard failures, not overwrite candidates.
+   A correctness bug in frozen code means STOP and report for a new protocol
+   with fresh seeds; never patch or use an outcome-based rerun.
+4. When 07 is reachable and its state is reconciled, restart the unchanged
+   collector on 01 under a fresh label:
+   fleet_run.sh s1-collect-r2a .venv/bin/python -B
+   reports/strategy_council_20260928/search-noise-v2/collect.py --wait
+   Retain s1-collect-r2's exit 1. Retire the reachable-only backup only after
+   verifying its actual process identities and confirming full collection works.
+5. Monitor technical fields only. operations/technical_status.py checks
+   manifest, job, seeds, seat, cell, host and terminal status without accessing
+   score/winner fields. The frozen collector invokes the unchanged analysis
+   only after all partitions succeed; analysis validates all 4,992 receipts.
+6. Only after completion inspect RESULTS.md/result.json. The unchanged
+   analyze.py retains an r1 narrative sentence about known engine defects;
+   preserve its generated report, then correct that report text to identify
+   the qualified r2 build/deviation without changing statistical output.
+7. Mirror PREREG, PROGRESS, RESUME, manifest, preflight, execution, small
+   audits and final RESULTS.md/result.json to 05. Keep raw confirmation/
+   and runtime binaries on the fleet. No commits, engine/gamedata edits,
+   data deletions, broad process kills, or network changes.
 
-As of 2026-10-07 23:28 UTC, hub 127x02 is unreachable on Tailscale and from 127x07 over LAN. Both peers are reachable but have no successful smoke receipt, so their S1 work is not authorized to begin yet. Do not retry the disconnected hub in a loop or touch Tailscale. Restore connectivity externally, then inspect the existing detached jobs before launching anything. The hub's actual process state is unknown.
+Do not rerun prepare.py, seal.py, registration, tests, pilots or distribution.
+Do not edit any manifest-listed file. No RESULTS.md/result.json exists yet;
+the pre-registered verdict and per-cell intervals remain unavailable.
 
-The confirmation supervisor is s1-confirm-node-127x02-r1, collector s1-collect-r1, and bounded peer-ready launcher s1-peer-ready-launch-r2. That operational launcher waits for each peer smoke exit 0, copies only manifest-listed files, verifies inputs under nice 10, and submits the correct peer supervisor. It stops immediately on SSH failure and after at most 180 readiness polls. Its r1 attempt failed before deployment because scp/SFTP was unavailable; rsync fixed transfer, with all logs retained. The launcher source is archived locally under operations/peer-ready-launch.source.txt. No frozen source or engine changed after seal.
+## Latest handoff checkpoint
+
+2026-10-08 01:19:05 UTC: handoff checkpoint 397/4992 validated receipts, 0/248 completed partitions; per-host {'127x04': 149, '127x08': 248}; completed-game CPU 20.15272840 core-hours. 04/08 and reachable-only backup remain active; 07 unresolved. No outcomes inspected.
+
+This dated checkpoint supersedes earlier receipt/CPU counts above. Full machine-readable state: operations/handoff-r2.json. Live detached backup status: operations/reachable-monitor-r2.json.

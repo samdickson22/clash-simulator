@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Operational wait/launch only. Never changes a manifest-listed study file.
+set -euo pipefail
+root=/mpac/sdicks02/repos/clasher
+study=$root/reports/strategy_council_20260928/search-noise-v2
+jobs=/mpac/sdicks02/jobs/clasher
+cd "$root"
+.venv/bin/python - "$study" "$jobs/s1-frozen-files.txt" <<'PY'
+import json,sys
+from pathlib import Path
+p=Path(sys.argv[1]);m=json.loads((p/'evaluation-manifest.json').read_text())
+Path(sys.argv[2]).write_text('\n'.join(sorted(m['files'])+['evaluation-manifest.json'])+'\n')
+PY
+expected=$(sha256sum "$study/evaluation-manifest.json" | cut -d' ' -f1)
+launch_peer() {
+  local host=$1 receipt rc previous ready=0
+  for attempt in $(seq 1 180); do
+    set +e
+    receipt=$(ssh -o BatchMode=yes -o ConnectTimeout=15 "$host" 'if test -f /mpac/sdicks02/jobs/clasher/smoke-p16-linux-20261007.exit; then cat /mpac/sdicks02/jobs/clasher/smoke-p16-linux-20261007.exit; else echo pending; fi')
+    rc=$?
+    set -e
+    if [ "$rc" -ne 0 ]; then echo "$host SSH failed with $rc; no tailnet retry"; return "$rc"; fi
+    if [ "$receipt" = 0 ]; then ready=1; break; fi
+    if [ "$receipt" != pending ]; then echo "$host smoke failed: $receipt"; return 1; fi
+    sleep 60
+  done
+  if [ "$ready" != 1 ]; then echo "$host readiness wait exhausted"; return 1; fi
+  date -u +%FT%TZ
+  echo "$host smoke exit 0"
+  previous=$(ssh "$host" "if test -f $study/evaluation-manifest.json; then sha256sum $study/evaluation-manifest.json; fi")
+  if [ -n "$previous" ] && [ "${previous%% *}" != "$expected" ]; then echo "$host has a different manifest"; return 1; fi
+  ssh "$host" "mkdir -p $study"
+  rsync -a --files-from="$jobs/s1-frozen-files.txt" "$study/" "$host:$study/"
+  ssh "$host" "cd $root && nice -n 10 .venv/bin/python -B -c \"import sys;sys.path.insert(0,'$study');from evaluate import verify;import json;verify(json.load(open('$study/evaluation-manifest.json')));print('frozen inputs verified')\""
+  ssh "$host" "cd $root && who && bash reports/strategy_council_20260928/fleet/fleet_run.sh s1-confirm-node-$host-r1 .venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/launch_node.py --attempt r1"
+  echo "$host confirmation supervisor submitted; manifest=$expected"
+}
+launch_peer 127x07 > "$jobs/s1-peer-ready-127x07.log" 2>&1 & p07=$!
+launch_peer 127x08 > "$jobs/s1-peer-ready-127x08.log" 2>&1 & p08=$!
+status=0
+wait "$p07" || status=1
+wait "$p08" || status=1
+exit "$status"

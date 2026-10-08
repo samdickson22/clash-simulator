@@ -1,0 +1,17 @@
+{
+  "utc": "2026-10-08T01:03:33.198306+00:00",
+  "host": "127x04",
+  "labels": {
+    "s1-tests-seal-r2": 2209945,
+    "s1-exact-replays-0-r2": 2209955,
+    "s1-exact-replays-1-r2": 2209970,
+    "s1-exact-replays-2-r2": 2209990,
+    "s1-fork-pilot-r2": 2210769,
+    "s1-final-full-pilots-r2": 2211634,
+    "s1-reference-full-pilot-r2": 2211645
+  },
+  "nice": 10,
+  "console_users_at_launch": [],
+  "max_concurrent_pilot_workers": 19,
+  "confirmation_launched": false
+}

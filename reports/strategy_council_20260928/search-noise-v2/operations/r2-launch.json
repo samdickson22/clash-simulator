@@ -1,0 +1,44 @@
+{
+  "utc": "2026-10-08T01:09:50.419270+00:00",
+  "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+  "nodes": {
+    "127x04": {
+      "label": "s1-confirm-node-127x04-r2",
+      "launcher_pid": 2218782,
+      "cap": 48,
+      "worker_indices": [
+        0,
+        47
+      ],
+      "expected_games": 992
+    },
+    "127x07": {
+      "label": "s1-confirm-node-127x07-r2",
+      "launcher_pid": 3322105,
+      "cap": 100,
+      "worker_indices": [
+        48,
+        147
+      ],
+      "expected_games": 2000
+    },
+    "127x08": {
+      "label": "s1-confirm-node-127x08-r2",
+      "launcher_pid": 3375468,
+      "cap": 100,
+      "worker_indices": [
+        148,
+        247
+      ],
+      "expected_games": 2000
+    }
+  },
+  "collector": {
+    "host": "127x01",
+    "label": "s1-collect-r2",
+    "launcher_pid": 3336667
+  },
+  "nice": 10,
+  "console_users_at_launch": [],
+  "outcomes_inspected": false
+}
