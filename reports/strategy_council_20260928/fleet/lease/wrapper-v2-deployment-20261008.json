@@ -1,0 +1,416 @@
+{
+  "source_sha256": {
+    "run_v2.sh": "df42368d035d50fd3e1a7d1e887188b6ab144f81d3870f84c9db1e41963cc22b",
+    "lease_watch_v2.py": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9"
+  },
+  "hosts": [
+    {
+      "host": "127x09",
+      "verified_utc": "2026-10-08T23:17:11.611947+00:00",
+      "rsync_command": "rsync -c --itemize-changes run_v2.sh lease_watch_v2.py 127x09:/mpac/sdicks02/repos/clasher-lease/",
+      "rsync_changes": [
+        "<f+++++++++ lease_watch_v2.py",
+        "<f+++++++++ run_v2.sh",
+        "<fcsT...... lease_watch_v2.py",
+        "<fcsT...... lease_watch_v2.py"
+      ],
+      "before": {
+        "host": "127x09",
+        "lease": {
+          "project": "clasher",
+          "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+          "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+          "start_utc": "2026-10-08T05:29:33.976698+00:00",
+          "expected_end_utc": "2026-10-09T05:30Z",
+          "max_workers": 96,
+          "gpu": true,
+          "shared": true,
+          "gpu_only": false,
+          "cpu": true,
+          "cap_raised_utc": "2026-10-08T11:13Z",
+          "cap_raised_by": "roader coordinator f552b138: builds done; shared CPU+GPU <=96, <=16 with console user"
+        },
+        "lease_sha256": "06b650ecc57d918c378a5c48a1bf61c61abcb5b4054b54e1caf3c0375b6a523d",
+        "files": {
+          "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+          "lease_watch.py": "0efdd7cd8784e8635bb550ddb5f5730ebf5ada89554f1a77b7faff966ed40128"
+        },
+        "v1_lock": {
+          "device": 66304,
+          "inode": 43665188,
+          "size": 0,
+          "mtime_ns": 1791437637511169104
+        }
+      },
+      "after": {
+        "host": "127x09",
+        "lease": {
+          "project": "clasher",
+          "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+          "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+          "start_utc": "2026-10-08T05:29:33.976698+00:00",
+          "expected_end_utc": "2026-10-09T05:30Z",
+          "max_workers": 96,
+          "gpu": true,
+          "shared": true,
+          "gpu_only": false,
+          "cpu": true,
+          "cap_raised_utc": "2026-10-08T11:13Z",
+          "cap_raised_by": "roader coordinator f552b138: builds done; shared CPU+GPU <=96, <=16 with console user"
+        },
+        "lease_sha256": "06b650ecc57d918c378a5c48a1bf61c61abcb5b4054b54e1caf3c0375b6a523d",
+        "files": {
+          "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+          "lease_watch.py": "0efdd7cd8784e8635bb550ddb5f5730ebf5ada89554f1a77b7faff966ed40128",
+          "run_v2.sh": "df42368d035d50fd3e1a7d1e887188b6ab144f81d3870f84c9db1e41963cc22b",
+          "lease_watch_v2.py": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9"
+        },
+        "v1_lock": {
+          "device": 66304,
+          "inode": 43665188,
+          "size": 0,
+          "mtime_ns": 1791437637511169104
+        }
+      },
+      "v1_untouched": true,
+      "lease_untouched": true
+    },
+    {
+      "host": "127x11",
+      "verified_utc": "2026-10-08T23:17:17.040743+00:00",
+      "rsync_command": "rsync -c --itemize-changes run_v2.sh lease_watch_v2.py 127x11:/mpac/sdicks02/repos/clasher-lease/",
+      "rsync_changes": [
+        "<f+++++++++ lease_watch_v2.py",
+        "<f+++++++++ run_v2.sh",
+        "<fcsT...... lease_watch_v2.py",
+        "<fcsT...... lease_watch_v2.py"
+      ],
+      "before": {
+        "host": "127x11",
+        "lease": {
+          "project": "clasher",
+          "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+          "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+          "start_utc": "2026-10-08T05:29:33.958249+00:00",
+          "expected_end_utc": "2026-10-09T05:30Z",
+          "max_workers": 96,
+          "gpu": true,
+          "shared": false
+        },
+        "lease_sha256": "732d6da04b8fdd8e83a8905f99ab2fa3b5d4cc4592272cbd4aa36602104f6109",
+        "files": {
+          "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+          "lease_watch.py": "00cdaa8ad3be41a0a85481d318ad03920b87e2564ab541e8f9a9d5bf801d246f"
+        },
+        "v1_lock": {
+          "device": 66304,
+          "inode": 45091490,
+          "size": 0,
+          "mtime_ns": 1791437637508502551
+        }
+      },
+      "after": {
+        "host": "127x11",
+        "lease": {
+          "project": "clasher",
+          "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+          "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+          "start_utc": "2026-10-08T05:29:33.958249+00:00",
+          "expected_end_utc": "2026-10-09T05:30Z",
+          "max_workers": 96,
+          "gpu": true,
+          "shared": false
+        },
+        "lease_sha256": "732d6da04b8fdd8e83a8905f99ab2fa3b5d4cc4592272cbd4aa36602104f6109",
+        "files": {
+          "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+          "lease_watch.py": "00cdaa8ad3be41a0a85481d318ad03920b87e2564ab541e8f9a9d5bf801d246f",
+          "run_v2.sh": "df42368d035d50fd3e1a7d1e887188b6ab144f81d3870f84c9db1e41963cc22b",
+          "lease_watch_v2.py": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9"
+        },
+        "v1_lock": {
+          "device": 66304,
+          "inode": 45091490,
+          "size": 0,
+          "mtime_ns": 1791437637508502551
+        }
+      },
+      "v1_untouched": true,
+      "lease_untouched": true
+    },
+    {
+      "host": "127x13",
+      "verified_utc": "2026-10-08T23:17:17.767238+00:00",
+      "rsync_command": "rsync -c --itemize-changes run_v2.sh lease_watch_v2.py 127x13:/mpac/sdicks02/repos/clasher-lease/",
+      "rsync_changes": [
+        "<f+++++++++ lease_watch_v2.py",
+        "<f+++++++++ run_v2.sh",
+        "<fcsT...... lease_watch_v2.py",
+        "<fcsT...... lease_watch_v2.py"
+      ],
+      "before": {
+        "host": "127x13",
+        "lease": {
+          "project": "clasher",
+          "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+          "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+          "start_utc": "2026-10-08T05:29:33.958533+00:00",
+          "expected_end_utc": "2026-10-09T05:30Z",
+          "max_workers": 96,
+          "gpu": true,
+          "shared": true,
+          "cap_raised_utc": "2026-10-08T12:53Z",
+          "cap_raised_by": "roader coordinator f552b138: mesh fix done; roader keeps <=16 light review procs"
+        },
+        "lease_sha256": "a34b3b94380f225c4239177601660ad72692300b1f2c7ed0d7b691fd6ba2de8b",
+        "files": {
+          "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+          "lease_watch.py": "00cdaa8ad3be41a0a85481d318ad03920b87e2564ab541e8f9a9d5bf801d246f"
+        },
+        "v1_lock": {
+          "device": 66304,
+          "inode": 33184880,
+          "size": 0,
+          "mtime_ns": 1791437637494191698
+        }
+      },
+      "after": {
+        "host": "127x13",
+        "lease": {
+          "project": "clasher",
+          "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+          "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+          "start_utc": "2026-10-08T05:29:33.958533+00:00",
+          "expected_end_utc": "2026-10-09T05:30Z",
+          "max_workers": 96,
+          "gpu": true,
+          "shared": true,
+          "cap_raised_utc": "2026-10-08T12:53Z",
+          "cap_raised_by": "roader coordinator f552b138: mesh fix done; roader keeps <=16 light review procs"
+        },
+        "lease_sha256": "a34b3b94380f225c4239177601660ad72692300b1f2c7ed0d7b691fd6ba2de8b",
+        "files": {
+          "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+          "lease_watch.py": "00cdaa8ad3be41a0a85481d318ad03920b87e2564ab541e8f9a9d5bf801d246f",
+          "run_v2.sh": "df42368d035d50fd3e1a7d1e887188b6ab144f81d3870f84c9db1e41963cc22b",
+          "lease_watch_v2.py": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9"
+        },
+        "v1_lock": {
+          "device": 66304,
+          "inode": 33184880,
+          "size": 0,
+          "mtime_ns": 1791437637494191698
+        }
+      },
+      "v1_untouched": true,
+      "lease_untouched": true
+    },
+    {
+      "host": "127x14",
+      "verified_utc": "2026-10-08T23:17:18.508687+00:00",
+      "rsync_command": "rsync -c --itemize-changes run_v2.sh lease_watch_v2.py 127x14:/mpac/sdicks02/repos/clasher-lease/",
+      "rsync_changes": [
+        "<f+++++++++ lease_watch_v2.py",
+        "<f+++++++++ run_v2.sh",
+        "<fcsT...... lease_watch_v2.py",
+        "<fcsT...... lease_watch_v2.py"
+      ],
+      "before": {
+        "host": "127x14",
+        "lease": {
+          "project": "clasher",
+          "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+          "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+          "start_utc": "2026-10-08T05:29:33.969521+00:00",
+          "expected_end_utc": "2026-10-09T05:30Z",
+          "max_workers": 96,
+          "gpu": true,
+          "shared": true,
+          "cap_raised_utc": "2026-10-08T12:53Z",
+          "cap_raised_by": "roader coordinator f552b138: mesh fix done; roader keeps <=16 light review procs"
+        },
+        "lease_sha256": "1ffdaa6736adbb5bb03a2df4cb76e43f6363a3c0fa7d8579767d95411d92f0e0",
+        "files": {
+          "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+          "lease_watch.py": "00cdaa8ad3be41a0a85481d318ad03920b87e2564ab541e8f9a9d5bf801d246f"
+        },
+        "v1_lock": {
+          "device": 66304,
+          "inode": 21645600,
+          "size": 0,
+          "mtime_ns": 1791437637501049842
+        }
+      },
+      "after": {
+        "host": "127x14",
+        "lease": {
+          "project": "clasher",
+          "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+          "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+          "start_utc": "2026-10-08T05:29:33.969521+00:00",
+          "expected_end_utc": "2026-10-09T05:30Z",
+          "max_workers": 96,
+          "gpu": true,
+          "shared": true,
+          "cap_raised_utc": "2026-10-08T12:53Z",
+          "cap_raised_by": "roader coordinator f552b138: mesh fix done; roader keeps <=16 light review procs"
+        },
+        "lease_sha256": "1ffdaa6736adbb5bb03a2df4cb76e43f6363a3c0fa7d8579767d95411d92f0e0",
+        "files": {
+          "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+          "lease_watch.py": "00cdaa8ad3be41a0a85481d318ad03920b87e2564ab541e8f9a9d5bf801d246f",
+          "run_v2.sh": "df42368d035d50fd3e1a7d1e887188b6ab144f81d3870f84c9db1e41963cc22b",
+          "lease_watch_v2.py": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9"
+        },
+        "v1_lock": {
+          "device": 66304,
+          "inode": 21645600,
+          "size": 0,
+          "mtime_ns": 1791437637501049842
+        }
+      },
+      "v1_untouched": true,
+      "lease_untouched": true
+    },
+    {
+      "host": "127x15",
+      "verified_utc": "2026-10-08T23:17:19.252409+00:00",
+      "rsync_command": "rsync -c --itemize-changes run_v2.sh lease_watch_v2.py 127x15:/mpac/sdicks02/repos/clasher-lease/",
+      "rsync_changes": [
+        "<f+++++++++ lease_watch_v2.py",
+        "<f+++++++++ run_v2.sh",
+        "<fcsT...... lease_watch_v2.py",
+        "<fcsT...... lease_watch_v2.py"
+      ],
+      "before": {
+        "host": "127x15",
+        "lease": {
+          "project": "clasher",
+          "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+          "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+          "start_utc": "2026-10-08T05:29:33.970979+00:00",
+          "expected_end_utc": "2026-10-09T05:30Z",
+          "max_workers": 96,
+          "gpu": true,
+          "shared": true,
+          "gpu_only": false,
+          "cpu": true,
+          "cap_raised_utc": "2026-10-08T11:13Z",
+          "cap_raised_by": "roader coordinator f552b138: builds done; shared CPU+GPU <=96, <=16 with console user"
+        },
+        "lease_sha256": "83966367dc7025aea955bc5ac17c8ee0bdfe2e03d01545b9aa97a513e6e66a13",
+        "files": {
+          "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+          "lease_watch.py": "0efdd7cd8784e8635bb550ddb5f5730ebf5ada89554f1a77b7faff966ed40128"
+        },
+        "v1_lock": {
+          "device": 66304,
+          "inode": 1310793,
+          "size": 0,
+          "mtime_ns": 1791437637516894566
+        }
+      },
+      "after": {
+        "host": "127x15",
+        "lease": {
+          "project": "clasher",
+          "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+          "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+          "start_utc": "2026-10-08T05:29:33.970979+00:00",
+          "expected_end_utc": "2026-10-09T05:30Z",
+          "max_workers": 96,
+          "gpu": true,
+          "shared": true,
+          "gpu_only": false,
+          "cpu": true,
+          "cap_raised_utc": "2026-10-08T11:13Z",
+          "cap_raised_by": "roader coordinator f552b138: builds done; shared CPU+GPU <=96, <=16 with console user"
+        },
+        "lease_sha256": "83966367dc7025aea955bc5ac17c8ee0bdfe2e03d01545b9aa97a513e6e66a13",
+        "files": {
+          "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+          "lease_watch.py": "0efdd7cd8784e8635bb550ddb5f5730ebf5ada89554f1a77b7faff966ed40128",
+          "run_v2.sh": "df42368d035d50fd3e1a7d1e887188b6ab144f81d3870f84c9db1e41963cc22b",
+          "lease_watch_v2.py": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9"
+        },
+        "v1_lock": {
+          "device": 66304,
+          "inode": 1310793,
+          "size": 0,
+          "mtime_ns": 1791437637516894566
+        }
+      },
+      "v1_untouched": true,
+      "lease_untouched": true
+    },
+    {
+      "host": "127x16",
+      "verified_utc": "2026-10-08T23:17:20.046139+00:00",
+      "rsync_command": "rsync -c --itemize-changes run_v2.sh lease_watch_v2.py 127x16:/mpac/sdicks02/repos/clasher-lease/",
+      "rsync_changes": [
+        "<f+++++++++ lease_watch_v2.py",
+        "<f+++++++++ run_v2.sh",
+        "<fcsT...... lease_watch_v2.py",
+        "<fcsT...... lease_watch_v2.py"
+      ],
+      "before": {
+        "host": "127x16",
+        "lease": {
+          "project": "clasher",
+          "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+          "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+          "start_utc": "2026-10-08T05:29:33.955779+00:00",
+          "expected_end_utc": "2026-10-09T05:30Z",
+          "max_workers": 96,
+          "gpu": true,
+          "shared": true,
+          "cap_raised_utc": "2026-10-08T06:50Z",
+          "cap_raised_by": "roader coordinator f552b138 (speedup job finished; roader keeps <=8 light procs)"
+        },
+        "lease_sha256": "5ffe8dfe0a149db0c82e5d9155790966b6f09980bbd03f35e5bed0480afa4767",
+        "files": {
+          "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+          "lease_watch.py": "00cdaa8ad3be41a0a85481d318ad03920b87e2564ab541e8f9a9d5bf801d246f"
+        },
+        "v1_lock": {
+          "device": 66304,
+          "inode": 67513257,
+          "size": 0,
+          "mtime_ns": 1791437637463940650
+        }
+      },
+      "after": {
+        "host": "127x16",
+        "lease": {
+          "project": "clasher",
+          "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+          "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+          "start_utc": "2026-10-08T05:29:33.955779+00:00",
+          "expected_end_utc": "2026-10-09T05:30Z",
+          "max_workers": 96,
+          "gpu": true,
+          "shared": true,
+          "cap_raised_utc": "2026-10-08T06:50Z",
+          "cap_raised_by": "roader coordinator f552b138 (speedup job finished; roader keeps <=8 light procs)"
+        },
+        "lease_sha256": "5ffe8dfe0a149db0c82e5d9155790966b6f09980bbd03f35e5bed0480afa4767",
+        "files": {
+          "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+          "lease_watch.py": "00cdaa8ad3be41a0a85481d318ad03920b87e2564ab541e8f9a9d5bf801d246f",
+          "run_v2.sh": "df42368d035d50fd3e1a7d1e887188b6ab144f81d3870f84c9db1e41963cc22b",
+          "lease_watch_v2.py": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9"
+        },
+        "v1_lock": {
+          "device": 66304,
+          "inode": 67513257,
+          "size": 0,
+          "mtime_ns": 1791437637463940650
+        }
+      },
+      "v1_untouched": true,
+      "lease_untouched": true
+    }
+  ],
+  "status": "pass",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b"
+}
