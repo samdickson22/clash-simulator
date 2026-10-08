@@ -1,0 +1,9 @@
+{
+  "utc": 1791424650.4239767,
+  "verified_launcher": 3369776,
+  "verified_time": 3369788,
+  "signaled_pid": 3369789,
+  "command": ".venv/bin/python -B reports/strategy_council_20260928/search-noise-v2/operations/preserve_after_drift_r2d.py ",
+  "signal": "SIGTERM",
+  "reason": "replacement collector completed outcome-blind fetch/validation and original failure preservation"
+}

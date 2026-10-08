@@ -1,6 +1,223 @@
 {
-  "sealed_unix": 1791421656.7472093,
-  "files": {
+  "utc": 1791424462.260114,
+  "host": "127x04",
+  "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+  "sealed_files_verified": 468,
+  "manifest_verified": true,
+  "changes": [
+    {
+      "path": "launch_node.py",
+      "before": "dfbd4fb25c5ee39823efc524a36d5ca54a73cb34f9301898aca51d204661558f",
+      "after": "5ac609ba283c28de05a782098a12ef817523fb0db7b99fbfd8897a438bb507d7"
+    },
+    {
+      "path": "source-copies.json",
+      "before": "462de7e1bede9b63802801e656252b2266f12102d53253cedb2c524b9a7d0657",
+      "after": "341bda22d3f7b04edd7054a693d90ebc081599746a0e71ef83c1d4ae64320804"
+    },
+    {
+      "path": "preflight.json",
+      "before": "0812cfd9f254eeddaddff873627c42f4615cad7216cce5e6cd9e48179fbdcb30",
+      "after": "883e0fa9301d8fbc10587cc6f2279f62bd5b29c5cbba07230a8cad715143044b"
+    },
+    {
+      "path": "PREREG.md",
+      "before": "aa8f046c4203ada384b274ca35799f1090a321e9bba15264bc1088bc52e255c4",
+      "after": "f3ed9744220575bf04fd772ec1cf97a06abe132cc35fe1643a409cb710ac1255"
+    },
+    {
+      "path": "distribute.py",
+      "before": "6b968a9d017709a63b03705f9fb3aaa863f34c3bbfda5f91ea2081526a2ebeae",
+      "after": "3257f00d00f63d5e78236d9b54d409b4bf50948944373bb7fdfcd5ddcb7ef9d2"
+    },
+    {
+      "path": "preflight.py",
+      "before": "0709618fef5ff8d21ed2673d905eee107b657730dc33eb4cc8bf45382c53cd6f",
+      "after": "f635f1dc6846000fe6df48499c50e00041bd2bffea8e8c1633b4d801f92c5cab"
+    },
+    {
+      "path": "collect.py",
+      "before": "eec7528549c4035254c7689c40e23db696416d10ffad33379ab4ec573cd0f90b",
+      "after": "cc6fdfb61924401546fc60b90e99dec6740a3db1dad773eebc203fa8ffd392ef"
+    },
+    {
+      "path": "seal.py",
+      "before": "2f88b4d16f5551bd8939b5efd6f3b734b0a50d07688d1a24691028f30da8b314",
+      "after": "9be66ce611ee8d9941855520b05bc8766a478bf641d56b5f8ce83b5a7dd6b53e"
+    },
+    {
+      "path": "execution.json",
+      "before": "6e40af4d255da7b62d75900ec0e39f08e8332fbba7f6d5b94b59715867e4503b",
+      "after": "d14d2c2df8ff3bc75ea7913748d89c64e7049291be83d626b5fda9df0fc2ea6c"
+    },
+    {
+      "path": "runtime/engine-rs/stage2.py",
+      "before": "f36a4883aeb12f4053adce39b141ee9ee86d39b43792265e94c45684f179c470",
+      "after": "5641fd99a002445293ef16950becf6713032d9e08b89e022bae2bafbbbbed951"
+    },
+    {
+      "path": "runtime/engine-rs/test_stage5b_deadline.py",
+      "before": "6cb2a17963d26adaa8068dda32344c5733d5a1ac8b9fbf10f6a66d373fde48bf",
+      "after": "fc3f091db879cc01fab63efb30249f72aa9512f9bb258831eab517e2f78688c7"
+    },
+    {
+      "path": "runtime/engine-rs/stage2_matches.py",
+      "before": "01456d1d73724378765daa6fb4b3e766a34138f7c7352e21d79bc4334c61572d",
+      "after": "18f679d752cbaed512125854c2f539e5d4a542ef234fc6c50bd4704f6ba05b7c"
+    },
+    {
+      "path": "runtime/engine-rs/live_snapshot.py",
+      "before": "02166f0326d41b3014b092fc1ecf0cb9af9c1a050534131351b15dafa776eacd",
+      "after": "c570596018c06241c3215af6b523dac81622a1d3e44b8e2e3c0b9e0224c9a962"
+    },
+    {
+      "path": "runtime/engine-rs/scope_snapshot.py",
+      "before": "9d7953753689dd881b7ebef00a2955f90c5aa4fe48f1f967ccc31fad6cdba41e",
+      "after": "cde958eb13946d979ebd9094c55c0e7d23aa27495693902e91d28270424577eb"
+    },
+    {
+      "path": "runtime/engine-rs/test_stage3_qualified_backend.py",
+      "before": "fabb1200906c08515da0e021d3fcab5b446f7195dc18b55f924acff02f2a6f33",
+      "after": "b8a594f7a3cb35dc7efeb4c1c5f8cb1938dda04cb2cd729ce2738728447aba0c"
+    },
+    {
+      "path": "runtime/engine-rs/champion_snapshot.py",
+      "before": "56dff13428b30e67fb206b744114c016b30e5a8c1a406bb9ee9d5ea44adc6be5",
+      "after": "35ae9f2106943384a26531317ce59d6f513adec13a39af5f4de2786311d866f3"
+    },
+    {
+      "path": "runtime/engine-rs/differential.py",
+      "before": "f1f40103e4a25d1d3cf1da55ecc8439d07f689965fde1ecebc836fe1d394996c",
+      "after": "378d46047a68e8e6c95bd6379f96d7e05b3171d122b59df9385482fd5f3c0da2"
+    },
+    {
+      "path": "runtime/src/clasher/battle.py",
+      "before": "58aaf0cd2d73f43d416a06005388ae42674dd262d12cdaed9eb13c3da0c8c3bb",
+      "after": "1dbabf23c495c7318339f6e524fee7c88960fbe78bf3cd3f93e20b10524944b2"
+    },
+    {
+      "path": "runtime/src/clasher/data.py",
+      "before": "2938e456ce5c4238abee985f70cf8b2ab74580fb7949d3a1dee292f35a9b0da2",
+      "after": "ed4ca93fcbc84553725e1dcfc57ce8da4c0dff58bdb01cded5e30fbc98fc332d"
+    },
+    {
+      "path": "runtime/src/clasher/spells.py",
+      "before": "8f0be2017aaed0e43c338f084619dfd136b5c9877c2adce710b13a942eb55340",
+      "after": "6214658ec5b0ee6b51a0f62ce10a2531f2488753845911b1ff40165e7ddf0944"
+    },
+    {
+      "path": "runtime/src/clasher/entities.py",
+      "before": "803f3f0bc9be7fddfb77d2d7d6aadbe0ba2bd235a808f72e78d2275be3a62086",
+      "after": "917da0be17cdbea1ad434e42080fdb11ac9afabbe47a6aae099974f830cc098a"
+    },
+    {
+      "path": "runtime/src/clasher/card_types.py",
+      "before": "8750ac6fa0bed400547d4b6ce5e356859c0054b64f071b58807f4c226ece31e5",
+      "after": "f8dc3251bb3bbd6ef587a3d543ba7c7179325bb3b44d99b61e1e853b7b1247b5"
+    },
+    {
+      "path": "runtime/src/clasher/cards/bandit.py",
+      "before": "8971088d78d201bdfe16e4aa88b5808cd2cd75d5a4ed72ad758cb4a55869043d",
+      "after": "228a6cbe8c0cae7b3eff7a2e5ea8d94bc9e4c6cc8a7aafa6bafe2587c8c8cbf9"
+    },
+    {
+      "path": "runtime/src/clasher/cards/sparky.py",
+      "before": "d1949c36cc98774ddbadc73f283a9ac8a9c367ed08df2d2f7cc2113e766512e4",
+      "after": "8e5020439dfa0c7202ba609273dc379ccf75b9129669f09b6a310136b458dca4"
+    },
+    {
+      "path": "runtime/src/clasher/cards/hog_rider.py",
+      "before": "3c76146aee5be43caeea756f33ee37fcb4232f9cb2ff5601810d61b69219f9d1",
+      "after": "8626b6ad801553f6292f25b6c6146e996f289bf6c179309901bc63c06894e847"
+    },
+    {
+      "path": "runtime/src/clasher/rl/human_replay_v5.py",
+      "before": "8d457b9975404f6503ce722fee98efa126c2a7f2337e095f621f10b3eac0e03a",
+      "after": "43598ffcf1baf81615cc6695d64bf7466441072e9d9fe90877ac386cada30368"
+    },
+    {
+      "path": "runtime/src/clasher/rl/human_replay_demonstrations.py",
+      "before": "703f25c447c119bf1bd7d31b2ffc9980efee445a0a871c86e470be46a204af4b",
+      "after": "e3ab5285b83820367a35d54e6a188185ed6ad78e916b3416f2c5f09c1cd05699"
+    },
+    {
+      "path": "runtime/src/clasher/effects/spawn.py",
+      "before": "670b4650deb6f8d2a29d01c1ee0c5c0278948dce783ee2de325bdc89b4a84bab",
+      "after": "c88367d096c5fc1683376c9723752d4787d50cc3ae43b51625a91306125d6549"
+    },
+    {
+      "path": "runtime/src/clasher/effects/status.py",
+      "before": "5b6ba2c49b7454fdf666755f3870ac8025bbd6b6bab55d5b82f0ca6e85826c74",
+      "after": "29e8f73a98acb83baaf2be83b258d27eed323dc4e5619cc9433462867de2d546"
+    },
+    {
+      "path": "runtime/src/clasher/effects/area.py",
+      "before": "ef82b80f49c2df2720371e055729fcb24736b4a762be032e232feb96a2b07bcd",
+      "after": "1411ce401f4ed54893b54b578fc2e3205dea7a21810af8b6a71eb690f6e6df6a"
+    },
+    {
+      "path": "runtime/src/clasher/effects/buff.py",
+      "before": "583f711b2c4c9ad9066d59638e7e07246f5f616b49f96527545f183678fc33b8",
+      "after": "cf4887ca3fb3416468baa054253c28471f17ab773cde7fb4a04885a9159876dc"
+    },
+    {
+      "path": "runtime/src/clasher/effects/damage.py",
+      "before": "80e59f2dce7f4f5802d6929f20162d32f5775bdb231e421161dd3bc1ab63aeb2",
+      "after": "6215625ae72dd9d5de2d7113188a2ff507643cff10c8909b9768ba3feec1fb4b"
+    },
+    {
+      "path": "runtime/src/clasher/vision/l1_perception.py",
+      "before": "7bcaacda941b389fa76fd130ba0e9c404c0b1cb0df66fa7f50741b245dd1eb11",
+      "after": "8b8f61151e301b8092f1c3f50919e32379335d95585c59af2de884993e3ef13d"
+    },
+    {
+      "path": "runtime/src/clasher/mechanics/mechanic_base.py",
+      "before": "ee25721813c8b01f5767ef365e38fcc3b85b5dfd94e076279ba3427b67a41b77",
+      "after": "aa50a4be109d20e43f7f9ccc19de7688958dc3561c6eec38cdfd87493b812464"
+    },
+    {
+      "path": "runtime/src/clasher/factory/mechanic_detector.py",
+      "before": "3b48d71f854edaf1bf1915b8678d06fc8dd7b294db515e37056ef9c63fb88572",
+      "after": "0afb5d583e1fc7f2481ab8b89d98cccd8256ef706fb861ace080ceb85eb47cf5"
+    },
+    {
+      "path": "runtime/src/clasher/factory/card_factory.py",
+      "before": "869d94c9487592f03296a4300825f4fa0adf031f8de190c10afb023f03c6be90",
+      "after": "1053110888ed4435729ef57fc00fe48e9ac803ea96e0d9542cecd6b71cbd11c5"
+    },
+    {
+      "path": "runtime/src/clasher/mechanics/shared/status_effects.py",
+      "before": "41df5bc33aef3543322e5ebc23f694860a9e99ccbb0242c3349dd9a715977791",
+      "after": "1770df89be4150d513e05f353f787efaba5e582280a1f1bd81967da855caeb43"
+    },
+    {
+      "path": "runtime/src/clasher/mechanics/shared/damage_ramp.py",
+      "before": "c79ade96e3afc78152b6cb05c5a744a97867b6e0cce4325c489ea88d49939df1",
+      "after": "d7573c0cad45b636b3ef0935e3572d97c1dc847f33801050231037952f841298"
+    },
+    {
+      "path": "runtime/src/clasher/mechanics/shared/death_effects.py",
+      "before": "8fca925b75b992b2cd65f69658cfba00cc81c102986bcef04bee6f9b5d6069bf",
+      "after": "70c3d2f09fe5c3dccdd92e095b9b56cb3d7ae7673aa447592abd9f4508e62602"
+    },
+    {
+      "path": "runtime/src/clasher/mechanics/shared/spawner.py",
+      "before": "38eeb57755da8c5b6ad118b2c620ef22eb9f248e5b0b260598af9a7639c247e9",
+      "after": "33baabfeed204c71b310ae14b919ca3ac9d8abb222d94479fb21dde79e3a16d8"
+    },
+    {
+      "path": "runtime/src/clasher/mechanics/champion/skeleton_king.py",
+      "before": "c4e451540b042340442fe3097dbafa82865b168acd6ef7bc37a6b9d557460808",
+      "after": "26909c17b7211a2659d9d048bcede4405ee8c885fb9e0532fa4fc06e90c10ac4"
+    },
+    {
+      "path": "evaluation-manifest.json",
+      "before": "253aba47a826e6dbb2d951114d0f7596b0d45bd3eee294d65e6c032c0513c849",
+      "after": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677"
+    }
+  ],
+  "backup": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-v2/operations/incident-seal-overwrite-r2b/overwritten-127x04-recovery-1791424462194033560",
+  "hashes": {
     "launch_node.py": "5ac609ba283c28de05a782098a12ef817523fb0db7b99fbfd8897a438bb507d7",
     "source-copies.json": "341bda22d3f7b04edd7054a693d90ebc081599746a0e71ef83c1d4ae64320804",
     "player.py": "24dfcf5258cf1a78f6133e80a5bcf339225f0437201f085530985cbc9e2253df",
@@ -468,6 +685,7 @@
     "runtime/src/clasher/mechanics/shared/spawn_pushback.py": "e8d7d4587467cbae75abfaf7c8d06f4177d9f080da3273eeff32744d82f9fb70",
     "runtime/src/clasher/mechanics/champion/ability.py": "23a1b88aa2927c56c4ce10cc96d29e5b8c5151685c846bc74250cac676b7246d",
     "runtime/src/clasher/mechanics/champion/skeleton_king.py": "26909c17b7211a2659d9d048bcede4405ee8c885fb9e0532fa4fc06e90c10ac4",
-    "runtime/src/clasher/mechanics/champion/__init__.py": "4882d341cbc737d2becd61025588c2a894b02c6ca191de88b35507962aaacefd"
+    "runtime/src/clasher/mechanics/champion/__init__.py": "4882d341cbc737d2becd61025588c2a894b02c6ca191de88b35507962aaacefd",
+    "evaluation-manifest.json": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677"
   }
 }

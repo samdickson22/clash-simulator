@@ -1,0 +1,236 @@
+{
+  "utc": 1791429360.87839,
+  "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+  "result_json_sha256": "8934a98c1e7f3d75171fb59f182939e7a2738869fceeecf525c5a445a8d59a5f",
+  "eligible_games": 4992,
+  "successful_partitions": 248,
+  "restoration_hashes": {
+    "127x01": 468,
+    "127x04": 468,
+    "127x08": 468
+  },
+  "original_04_admitted": 541,
+  "original_04_excluded": 94,
+  "original_08_admitted": 2000,
+  "original_08_excluded": 0,
+  "receipt_rule": "08: every identity-valid receipt; 04: receipt started + elapsed < 2026-10-08T01:39:00Z, terminal log precedes all verify failures",
+  "physical_host_counts": {
+    "127x04": 1752,
+    "127x08": 3240
+  },
+  "eligible_game_cpu_hours": 191.19578643453636,
+  "excluded_original_04_game_cpu_hours": 3.5908500357955533,
+  "original_04_failed_attempt_worker_cpu_hours": 26.1609022125,
+  "successful_attempt_worker_cpu_hours": 168.98000629027777,
+  "total_observed_attempt_worker_cpu_hours": 195.14090850277776,
+  "total_observed_supervisor_and_worker_cpu_hours": 195.18457222222224,
+  "supervisor_initialization_and_control_cpu_hours": 0.04366371944448133,
+  "preflight_cpu_hours": 0.7188388888888889,
+  "quarantine": {
+    "utc": 1791429299.6573946,
+    "reachable": false,
+    "exit": 255,
+    "error": "ssh: connect to host 127x07 port 22: No route to host\n",
+    "valid_receipts": 0,
+    "comparisons": 0,
+    "mismatches": 0,
+    "original_process_state": "unknown",
+    "policy": "single bounded completion-barrier probe; no restart, signals or retry"
+  },
+  "accounting": "Failed+successful worker totals include eligible and excluded games, interrupted work, and per-worker overhead; do not add eligible/excluded game CPU again. Supervisor totals include those workers plus initialization/control. Unknown 07 work and unmetered Mac work are additional. Quarantined 07 metered games, if any, are separate.",
+  "decision_timing": {
+    "scripts": {
+      "A": {
+        "games": 256,
+        "decisions": 523218,
+        "over_250ms": 16942,
+        "maximum_decision_seconds": 1.5468995708506554,
+        "median_game_p50_seconds": 0.004755500180181116,
+        "median_game_p99_seconds": 0.3834103777317801,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "B-N64": {
+        "games": 256,
+        "decisions": 606976,
+        "over_250ms": 20593,
+        "maximum_decision_seconds": 1.9085527709685266,
+        "median_game_p50_seconds": 0.005742967245168984,
+        "median_game_p99_seconds": 0.46117790995398533,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "B-N90": {
+        "games": 256,
+        "decisions": 588118,
+        "over_250ms": 19129,
+        "maximum_decision_seconds": 1.9929169910028577,
+        "median_game_p50_seconds": 0.00574848719406873,
+        "median_game_p99_seconds": 0.42634111223858706,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "B-N97": {
+        "games": 256,
+        "decisions": 583711,
+        "over_250ms": 19121,
+        "maximum_decision_seconds": 1.715309991268441,
+        "median_game_p50_seconds": 0.00580243457807228,
+        "median_game_p99_seconds": 0.4301108678046147,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E1-N64": {
+        "games": 256,
+        "decisions": 631204,
+        "over_250ms": 28196,
+        "maximum_decision_seconds": 52.394036198966205,
+        "median_game_p50_seconds": 0.005194742057938129,
+        "median_game_p99_seconds": 0.6884110027982384,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E1-N90": {
+        "games": 256,
+        "decisions": 607864,
+        "over_250ms": 24957,
+        "maximum_decision_seconds": 31.996074656024575,
+        "median_game_p50_seconds": 0.005163808295037597,
+        "median_game_p99_seconds": 0.5633896256680597,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E1-N97": {
+        "games": 256,
+        "decisions": 586023,
+        "over_250ms": 23112,
+        "maximum_decision_seconds": 39.81251599895768,
+        "median_game_p50_seconds": 0.005263443570584059,
+        "median_game_p99_seconds": 0.5279235148825686,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4-N64": {
+        "games": 256,
+        "decisions": 624970,
+        "over_250ms": 38739,
+        "maximum_decision_seconds": 49.617159122019075,
+        "median_game_p50_seconds": 0.005290275119477883,
+        "median_game_p99_seconds": 0.7636656515044171,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4-N90": {
+        "games": 256,
+        "decisions": 612386,
+        "over_250ms": 35693,
+        "maximum_decision_seconds": 31.409337498946115,
+        "median_game_p50_seconds": 0.0052861765143461525,
+        "median_game_p99_seconds": 0.6491588454076552,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4-N90-fail10": {
+        "games": 256,
+        "decisions": 603147,
+        "over_250ms": 35355,
+        "maximum_decision_seconds": 35.97681930381805,
+        "median_game_p50_seconds": 0.005257554992567748,
+        "median_game_p99_seconds": 0.6541640931135041,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4-N90-fail60": {
+        "games": 256,
+        "decisions": 607304,
+        "over_250ms": 36113,
+        "maximum_decision_seconds": 37.23568374000024,
+        "median_game_p50_seconds": 0.005282655300106853,
+        "median_game_p99_seconds": 0.6575600331311555,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4-N90-identity": {
+        "games": 256,
+        "decisions": 609730,
+        "over_250ms": 35603,
+        "maximum_decision_seconds": 29.104723813943565,
+        "median_game_p50_seconds": 0.005343763856217265,
+        "median_game_p99_seconds": 0.6515141116234006,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4-N90-l2": {
+        "games": 256,
+        "decisions": 602654,
+        "over_250ms": 35908,
+        "maximum_decision_seconds": 29.95832064608112,
+        "median_game_p50_seconds": 0.005408792989328504,
+        "median_game_p99_seconds": 0.6758624859247357,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4-N90-old": {
+        "games": 256,
+        "decisions": 603065,
+        "over_250ms": 36377,
+        "maximum_decision_seconds": 40.7023842940107,
+        "median_game_p50_seconds": 0.005366375378798693,
+        "median_game_p99_seconds": 0.6810159006167684,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4-N97": {
+        "games": 256,
+        "decisions": 595721,
+        "over_250ms": 33615,
+        "maximum_decision_seconds": 36.76809612591751,
+        "median_game_p50_seconds": 0.0053093472379259765,
+        "median_game_p99_seconds": 0.5907979475753393,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4R-N64": {
+        "games": 256,
+        "decisions": 620123,
+        "over_250ms": 43133,
+        "maximum_decision_seconds": 53.524577792035416,
+        "median_game_p50_seconds": 0.005372765997890383,
+        "median_game_p99_seconds": 0.7989363592135482,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4R-N90": {
+        "games": 256,
+        "decisions": 605717,
+        "over_250ms": 40145,
+        "maximum_decision_seconds": 31.079608022002503,
+        "median_game_p50_seconds": 0.005390997801441699,
+        "median_game_p99_seconds": 0.7168380659533425,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4R-N97": {
+        "games": 256,
+        "decisions": 593292,
+        "over_250ms": 36642,
+        "maximum_decision_seconds": 27.07106872810982,
+        "median_game_p50_seconds": 0.005376761720981449,
+        "median_game_p99_seconds": 0.6421499466442038,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      }
+    },
+    "head-to-head": {
+      "B-N64": {
+        "games": 128,
+        "decisions": 294392,
+        "over_250ms": 9308,
+        "maximum_decision_seconds": 2.3263792167417705,
+        "median_game_p50_seconds": 0.005451687786262482,
+        "median_game_p99_seconds": 0.46147673790343113,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4-N64": {
+        "games": 128,
+        "decisions": 297583,
+        "over_250ms": 17214,
+        "maximum_decision_seconds": 35.77158563886769,
+        "median_game_p50_seconds": 0.00499936641426757,
+        "median_game_p99_seconds": 0.7096385095635195,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      },
+      "E4R-N64": {
+        "games": 128,
+        "decisions": 291039,
+        "over_250ms": 19001,
+        "maximum_decision_seconds": 36.21218723594211,
+        "median_game_p50_seconds": 0.0051495049556251615,
+        "median_game_p99_seconds": 0.7633585400512675,
+        "qualification": "Medians of per-game quantiles, not pooled decision quantiles; host-load-sensitive wall time"
+      }
+    }
+  }
+}

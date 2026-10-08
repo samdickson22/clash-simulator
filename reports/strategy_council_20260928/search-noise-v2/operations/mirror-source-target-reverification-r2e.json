@@ -1,0 +1,18 @@
+{
+  "utc": 1791424775.1201546,
+  "checks": {
+    "127x04": {
+      "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+      "verified": 468
+    },
+    "127x08": {
+      "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+      "verified": 468
+    },
+    "127x01": {
+      "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+      "verified": 468
+    }
+  },
+  "method": "direct verification after restoration and relaunch; mirror rsync -au without delete remains active"
+}

@@ -1,0 +1,11 @@
+{
+  "utc": 1791429413.6008685,
+  "hashes_verified": {
+    "127x01": 468,
+    "127x04": 468,
+    "127x08": 468
+  },
+  "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+  "result_json_sha256": "8934a98c1e7f3d75171fb59f182939e7a2738869fceeecf525c5a445a8d59a5f",
+  "collector_exit": 0
+}

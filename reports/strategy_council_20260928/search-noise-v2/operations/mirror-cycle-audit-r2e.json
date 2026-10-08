@@ -1,0 +1,15 @@
+{
+  "utc": 1791425725.3197377,
+  "heartbeat": {
+    "utc": "2026-10-08T02:13:47Z",
+    "hub": "127x01",
+    "mirror": "127x04",
+    "cycle_exit": 0
+  },
+  "hub_verified": 468,
+  "peer": {
+    "sealed_hashes_verified": 468,
+    "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677"
+  },
+  "mirror_unchanged": true
+}

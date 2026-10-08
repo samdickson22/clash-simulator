@@ -1,12 +1,12 @@
 {
-  "utc": 1791424302.3148239,
+  "utc": 1791424615.6863306,
   "scope": "backup only after external seal overwrite; no admission, restart or analysis",
-  "identity_valid_preserved_receipts": 2129,
+  "identity_valid_preserved_receipts": 2307,
   "per_physical_host": {
     "127x04": 635,
-    "127x08": 1494
+    "127x08": 1672
   },
-  "recorded_game_cpu_hours": 93.64415987572605,
+  "recorded_game_cpu_hours": 102.46538243635659,
   "nodes": {
     "127x04": {
       "supervisor_exit": "1",
@@ -65,10 +65,13 @@
     },
     "127x08": {
       "supervisor_exit": null,
-      "exited_workers": 1,
+      "exited_workers": 4,
       "failed_indices": [],
       "successful_indices": [
-        162
+        158,
+        160,
+        162,
+        167
       ]
     }
   },

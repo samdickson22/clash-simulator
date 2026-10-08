@@ -1,0 +1,51 @@
+{
+  "utc": 1791424601.6600142,
+  "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+  "valid_terminal_receipts": 2207,
+  "expected_receipts": 4992,
+  "successful_collected_partitions": 4,
+  "expected_partitions": 248,
+  "per_host_receipts": {
+    "127x04": 541,
+    "127x08": 1666
+  },
+  "completed_game_cpu_hours": 98.60098078448313,
+  "complete_only_ready": false,
+  "outcomes_inspected": false,
+  "nodes": {
+    "127x04": {
+      "r2": {
+        "supervisor_exit": "1",
+        "pid": "2218782",
+        "completed_partitions": 48
+      },
+      "r2e": {
+        "supervisor_exit": null,
+        "pid": null,
+        "completed_partitions": 0
+      },
+      "r2f": {
+        "supervisor_exit": null,
+        "pid": null,
+        "completed_partitions": 0
+      }
+    },
+    "127x08": {
+      "r2": {
+        "supervisor_exit": null,
+        "pid": "3375468",
+        "completed_partitions": 4
+      },
+      "r2e": {
+        "supervisor_exit": null,
+        "pid": null,
+        "completed_partitions": 0
+      },
+      "r2f": {
+        "supervisor_exit": null,
+        "pid": null,
+        "completed_partitions": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "utc": 1791426668.9803972,
+  "eligible_original_assignment": 992,
+  "original_receipts_preserved_byte_exact": 541,
+  "new_identical_input_games": 451,
+  "excluded_replayed": 94,
+  "previously_unfinished_games": 357,
+  "successful_partitions": 48,
+  "original_failed_attempt_preserved": true
+}

@@ -1,7 +1,8 @@
-# S1 r2 authorized recovery and complete-only collection
-
-## 2026-10-08 01:58:16 UTC — authorized identical-input recovery r2e
-
+import json,shutil,time,hashlib
+from pathlib import Path
+HERE=Path('/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-v2');OPS=HERE/'operations'
+stamp=time.strftime('%Y-%m-%d %H:%M:%S UTC',time.gmtime())
+note=f'''\n## {stamp} — authorized identical-input recovery r2e\n
 The coordinator's adjudication (02:05 UTC entry, confirmed by the explicit recovery task) supersedes the incident stop. The stale Mac transfer is guarded. This was an external technical failure, not a diagnosed frozen-code defect. No reseal, new seeds, engine edit or outcome inspection occurred.
 
 Restoration: all 468 sealed hashes plus manifest verified on 127x01, 127x04 and 127x08. On each of 01 and 04, 41 conflicting files plus the manifest were preserved before replacement from the authenticated frozen-r2 archive. 08 required no replacement. Audits: operations/restoration-audit-<host>-r2e.json. The hub mirror remains active (rsync -au, no deletion); correct source and direct target hash verification establish safety. Original archive and overwritten-* evidence remain intact.
@@ -15,74 +16,10 @@ Migration: s1-confirm-node-127x04-r2f (48–85; 38 workers) after 04 r2e succeed
 Collector: s1-collect-r2e on 01, operations/collect_r2e.py. It preserves but disregards 04's superseded r2 failure, requires 04 r2e/r2f and 08 r2/r2f success, rejects any old 04 post-cutoff receipt, tracks all 248 successful done/exit receipts, and admits exactly one immutable receipt per game. It stops on first surviving-host transport/worker failure or identity/action mismatch with no retry. s1-receipt-preserve-r2d was retired only after a successful replacement collection pass, by SIGTERM to its verified Python PID 3369789 (launcher 3369776, time parent 3369788); evidence in preservation-retirement-r2e.json.
 
 Analysis remains outcome-blind until 4992 eligible receipts and 248 successful partitions plus every required supervisor exit exist. At that barrier, one bounded 07 quarantine probe compares identities/action digests against duplicates, never restarts 07, and stops on mismatch. The sealed analysis then runs unchanged through the reviewed host-map facade. Its generated report is preserved before correcting operational engine/exclusion narrative; statistical result.json is untouched. Small docs/audits/results mirror to 05; raw game receipts and runtime binaries stay on fleet.
-
-Live status: operations/migration-monitor-r2e.json. Inspect exact job PID/exit/locks before any manual resubmission. No retry after a host loss.
-
-## Recovery r2e live checkpoint
-
-2026-10-08 03:15:09 UTC
-
-```json
-{
-  "utc": 1791429295.8415897,
-  "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
-  "valid_terminal_receipts": 4992,
-  "expected_receipts": 4992,
-  "successful_collected_partitions": 248,
-  "expected_partitions": 248,
-  "per_host_receipts": {
-    "127x04": 1752,
-    "127x08": 3240
-  },
-  "completed_game_cpu_hours": 191.19578643453582,
-  "complete_only_ready": true,
-  "outcomes_inspected": true,
-  "nodes": {
-    "127x04": {
-      "r2": {
-        "supervisor_exit": "1",
-        "pid": "2218782",
-        "completed_partitions": 48
-      },
-      "r2e": {
-        "supervisor_exit": "0",
-        "pid": "2256725",
-        "completed_partitions": 48
-      },
-      "r2f": {
-        "supervisor_exit": "0",
-        "pid": "2269621",
-        "completed_partitions": 38
-      }
-    },
-    "127x08": {
-      "r2": {
-        "supervisor_exit": "0",
-        "pid": "3375468",
-        "completed_partitions": 100
-      },
-      "r2e": {
-        "supervisor_exit": null,
-        "pid": null,
-        "completed_partitions": 0
-      },
-      "r2f": {
-        "supervisor_exit": "0",
-        "pid": "3400252",
-        "completed_partitions": 62
-      }
-    }
-  },
-  "analysis_complete": true
-}
-```
-
-COMPLETE: result.json and RESULTS.md published after all completion gates. No remaining study launch.
-
-## Recovery and complete-only audit
-
-All 468 sealed hashes and manifest matched on 01, 04 and 08 (1,404 file checks). Original 04 receipts: 541 admitted before 01:39:00Z, 94 preserved and replayed at or after the cutoff. Original 08 receipts: all identity-valid copies admitted, zero excluded. Each of the 4,992 scheduled games contributes one eligible receipt. All 248 partitions completed successfully. Attempts: 04 originals r2e; migrations on 04/08 r2f; collector r2e. Original 04 r2 failures remain preserved.
-
-Eligible game CPU: 191.19578643 core-hours. Excluded original 04 game CPU: 3.59085004 core-hours (additional to eligible game CPU). Total observed worker CPU across failed and successful attempts: 195.14090850 core-hours, including 26.16090221 in the preserved failed 04 attempt. This total already includes eligible and excluded game work; these quantities must not be added together. The five original/recovery/migration supervisors and their workers together recorded 195.18457222 core-hours; the difference, 0.04366372 core-hours, is supervisor initialization/control overhead. R2 preflight CPU: 0.71883889 core-hours. Unknown 07 work and unmetered Mac work remain additional. Completion/quarantine and per-cell decision-timing summaries: operations/completion-audit-r2e.json.
-
-2026-10-08 03:16 UTC final: all 4992 eligible games and 248 successful partitions complete. Original 04 recovery and both migrations exited 0; collector exited 0. Primary FAIL: E4 minus B at N64 -3.90625 pp, paired 95% CI [-9.765625, 1.953125]. Neither event gate passes; retain 95/95 provisional and require further decision-side work. The single completion-barrier 07 probe returned No route to host: zero 07 receipts or comparisons; its original process state and extra CPU remain unknown. Final all-host 468-file audit passed again. RESULTS.md, unmodified statistical result.json, completion CPU/timing audit, and final integrity audit are mirrored to 05. No further S1 launch is needed.
+'''
+for name in ('PROGRESS.md','PREREG-r2b-DEVIATION.md'):
+    with (HERE/name).open('a') as f:f.write(note)
+shutil.copy2(HERE/'RESUME.md',OPS/'RESUME-before-r2e.md')
+(HERE/'RESUME.md').write_text('# S1 r2 authorized recovery and complete-only collection\n'+note+'\nLive status: operations/migration-monitor-r2e.json. Inspect exact job PID/exit/locks before any manual resubmission. No retry after a host loss.\n')
+proofs={n:hashlib.sha256((OPS/n).read_bytes()).hexdigest() for n in ('migration_r2b.py','migration_r2e.py','migration-split-r2b.json','migration-proof-r2b.json','launcher-dry-proof-r2b.json','launcher-dry-proof-r2e.json','collect_r2e.py')}
+(OPS/'recovery-operational-hashes-r2e.json').write_text(json.dumps(dict(utc=time.time(),hashes=proofs),indent=2)+'\n')

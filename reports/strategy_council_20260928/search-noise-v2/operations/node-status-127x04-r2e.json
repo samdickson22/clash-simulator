@@ -1,0 +1,1769 @@
+{
+  "utc": 1791429292.041013,
+  "host": "127x04",
+  "who": "",
+  "attempts": {
+    "r2": {
+      "supervisor_exit": "1",
+      "pid": "2218782",
+      "partitions": {
+        "0": {
+          "exit": "1",
+          "label": "s1-confirm-0-r2"
+        },
+        "1": {
+          "exit": "1",
+          "label": "s1-confirm-1-r2"
+        },
+        "2": {
+          "exit": "1",
+          "label": "s1-confirm-2-r2"
+        },
+        "3": {
+          "exit": "1",
+          "label": "s1-confirm-3-r2"
+        },
+        "4": {
+          "exit": "1",
+          "label": "s1-confirm-4-r2"
+        },
+        "5": {
+          "exit": "1",
+          "label": "s1-confirm-5-r2"
+        },
+        "6": {
+          "exit": "1",
+          "label": "s1-confirm-6-r2"
+        },
+        "7": {
+          "exit": "1",
+          "label": "s1-confirm-7-r2"
+        },
+        "8": {
+          "exit": "1",
+          "label": "s1-confirm-8-r2"
+        },
+        "9": {
+          "exit": "1",
+          "label": "s1-confirm-9-r2"
+        },
+        "10": {
+          "exit": "1",
+          "label": "s1-confirm-10-r2"
+        },
+        "11": {
+          "exit": "1",
+          "label": "s1-confirm-11-r2"
+        },
+        "12": {
+          "exit": "1",
+          "label": "s1-confirm-12-r2"
+        },
+        "13": {
+          "exit": "1",
+          "label": "s1-confirm-13-r2"
+        },
+        "14": {
+          "exit": "1",
+          "label": "s1-confirm-14-r2"
+        },
+        "15": {
+          "exit": "1",
+          "label": "s1-confirm-15-r2"
+        },
+        "16": {
+          "exit": "1",
+          "label": "s1-confirm-16-r2"
+        },
+        "17": {
+          "exit": "1",
+          "label": "s1-confirm-17-r2"
+        },
+        "18": {
+          "exit": "1",
+          "label": "s1-confirm-18-r2"
+        },
+        "19": {
+          "exit": "1",
+          "label": "s1-confirm-19-r2"
+        },
+        "20": {
+          "exit": "1",
+          "label": "s1-confirm-20-r2"
+        },
+        "21": {
+          "exit": "1",
+          "label": "s1-confirm-21-r2"
+        },
+        "22": {
+          "exit": "1",
+          "label": "s1-confirm-22-r2"
+        },
+        "23": {
+          "exit": "1",
+          "label": "s1-confirm-23-r2"
+        },
+        "24": {
+          "exit": "1",
+          "label": "s1-confirm-24-r2"
+        },
+        "25": {
+          "exit": "1",
+          "label": "s1-confirm-25-r2"
+        },
+        "26": {
+          "exit": "1",
+          "label": "s1-confirm-26-r2"
+        },
+        "27": {
+          "exit": "1",
+          "label": "s1-confirm-27-r2"
+        },
+        "28": {
+          "exit": "1",
+          "label": "s1-confirm-28-r2"
+        },
+        "29": {
+          "exit": "1",
+          "label": "s1-confirm-29-r2"
+        },
+        "30": {
+          "exit": "1",
+          "label": "s1-confirm-30-r2"
+        },
+        "31": {
+          "exit": "1",
+          "label": "s1-confirm-31-r2"
+        },
+        "32": {
+          "exit": "1",
+          "label": "s1-confirm-32-r2"
+        },
+        "33": {
+          "exit": "1",
+          "label": "s1-confirm-33-r2"
+        },
+        "34": {
+          "exit": "1",
+          "label": "s1-confirm-34-r2"
+        },
+        "35": {
+          "exit": "1",
+          "label": "s1-confirm-35-r2"
+        },
+        "36": {
+          "exit": "1",
+          "label": "s1-confirm-36-r2"
+        },
+        "37": {
+          "exit": "1",
+          "label": "s1-confirm-37-r2"
+        },
+        "38": {
+          "exit": "1",
+          "label": "s1-confirm-38-r2"
+        },
+        "39": {
+          "exit": "1",
+          "label": "s1-confirm-39-r2"
+        },
+        "40": {
+          "exit": "1",
+          "label": "s1-confirm-40-r2"
+        },
+        "41": {
+          "exit": "1",
+          "label": "s1-confirm-41-r2"
+        },
+        "42": {
+          "exit": "1",
+          "label": "s1-confirm-42-r2"
+        },
+        "43": {
+          "exit": "1",
+          "label": "s1-confirm-43-r2"
+        },
+        "44": {
+          "exit": "1",
+          "label": "s1-confirm-44-r2"
+        },
+        "45": {
+          "exit": "1",
+          "label": "s1-confirm-45-r2"
+        },
+        "46": {
+          "exit": "1",
+          "label": "s1-confirm-46-r2"
+        },
+        "47": {
+          "exit": "1",
+          "label": "s1-confirm-47-r2"
+        }
+      },
+      "launch": {
+        "workers": [
+          {
+            "index": 0,
+            "label": "s1-confirm-0-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 1,
+            "label": "s1-confirm-1-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 2,
+            "label": "s1-confirm-2-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 3,
+            "label": "s1-confirm-3-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 4,
+            "label": "s1-confirm-4-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 5,
+            "label": "s1-confirm-5-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 6,
+            "label": "s1-confirm-6-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 7,
+            "label": "s1-confirm-7-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 8,
+            "label": "s1-confirm-8-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 9,
+            "label": "s1-confirm-9-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 10,
+            "label": "s1-confirm-10-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 11,
+            "label": "s1-confirm-11-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 12,
+            "label": "s1-confirm-12-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 13,
+            "label": "s1-confirm-13-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 14,
+            "label": "s1-confirm-14-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 15,
+            "label": "s1-confirm-15-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 16,
+            "label": "s1-confirm-16-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 17,
+            "label": "s1-confirm-17-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 18,
+            "label": "s1-confirm-18-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 19,
+            "label": "s1-confirm-19-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 20,
+            "label": "s1-confirm-20-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 21,
+            "label": "s1-confirm-21-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 22,
+            "label": "s1-confirm-22-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 23,
+            "label": "s1-confirm-23-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 24,
+            "label": "s1-confirm-24-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 25,
+            "label": "s1-confirm-25-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 26,
+            "label": "s1-confirm-26-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 27,
+            "label": "s1-confirm-27-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 28,
+            "label": "s1-confirm-28-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 29,
+            "label": "s1-confirm-29-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 30,
+            "label": "s1-confirm-30-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 31,
+            "label": "s1-confirm-31-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 32,
+            "label": "s1-confirm-32-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 33,
+            "label": "s1-confirm-33-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 34,
+            "label": "s1-confirm-34-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 35,
+            "label": "s1-confirm-35-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 36,
+            "label": "s1-confirm-36-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 37,
+            "label": "s1-confirm-37-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 38,
+            "label": "s1-confirm-38-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 39,
+            "label": "s1-confirm-39-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 40,
+            "label": "s1-confirm-40-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 41,
+            "label": "s1-confirm-41-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 42,
+            "label": "s1-confirm-42-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 43,
+            "label": "s1-confirm-43-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 44,
+            "label": "s1-confirm-44-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 45,
+            "label": "s1-confirm-45-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 46,
+            "label": "s1-confirm-46-r2",
+            "host": "127x04"
+          },
+          {
+            "index": 47,
+            "label": "s1-confirm-47-r2",
+            "host": "127x04"
+          }
+        ],
+        "launched_at": 1791421758.4598453,
+        "who": "",
+        "concurrency": 48
+      }
+    },
+    "r2e": {
+      "supervisor_exit": "0",
+      "pid": "2256725",
+      "partitions": {
+        "0": {
+          "exit": "0",
+          "label": "s1-confirm-0-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425916.854453
+          },
+          "log": "{\"job\": 2480, \"terminal\": true, \"elapsed\": 131.54488849639893, \"cpu_seconds\": 131.432164729}\n{\"job\": 2728, \"terminal\": true, \"elapsed\": 46.36505150794983, \"cpu_seconds\": 46.33583657400001}\n{\"job\": 2976, \"terminal\": true, \"elapsed\": 53.513526916503906, \"cpu_seconds\": 53.482883969}\n{\"job\": 3224, \"terminal\": true, \"elapsed\": 86.90944719314575, \"cpu_seconds\": 86.84612702600003}\n{\"job\": 3472, \"terminal\": true, \"elapsed\": 83.61131572723389, \"cpu_seconds\": 83.55581638400002}\n{\"job\": 3720, \"terminal\": true, \"elapsed\": 145.68438291549683, \"cpu_seconds\": 145.585654332}\n{\"job\": 3968, \"terminal\": true, \"elapsed\": 198.04734253883362, \"cpu_seconds\": 197.90995084899998}\n{\"job\": 4216, \"terminal\": true, \"elapsed\": 165.41843724250793, \"cpu_seconds\": 165.307378138}\n{\"job\": 4464, \"terminal\": true, \"elapsed\": 97.69304966926575, \"cpu_seconds\": 97.63588027100002}\n{\"job\": 4712, \"terminal\": true, \"elapsed\": 121.57266044616699, \"cpu_seconds\": 121.51197668900011}\n{\"job\": 4960, \"terminal\": true, \"elapsed\": 58.832799673080444, \"cpu_seconds\": 58.80692923700008}\nUser time (seconds): 1187.908973\nSystem time (seconds): 2.626268\nMaximum resident set size (kbytes): 999320\nElapsed seconds: 1191.318645954132\n"
+        },
+        "1": {
+          "exit": "0",
+          "label": "s1-confirm-1-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425738.4512618
+          },
+          "log": "{\"job\": 2729, \"terminal\": true, \"elapsed\": 49.43266797065735, \"cpu_seconds\": 49.391436062000004}\n{\"job\": 2977, \"terminal\": true, \"elapsed\": 43.37634897232056, \"cpu_seconds\": 43.348831348999994}\n{\"job\": 3225, \"terminal\": true, \"elapsed\": 83.01699423789978, \"cpu_seconds\": 82.960444374}\n{\"job\": 3473, \"terminal\": true, \"elapsed\": 100.61583757400513, \"cpu_seconds\": 100.54607179999999}\n{\"job\": 3721, \"terminal\": true, \"elapsed\": 151.34690833091736, \"cpu_seconds\": 151.24382743400002}\n{\"job\": 3969, \"terminal\": true, \"elapsed\": 120.95700168609619, \"cpu_seconds\": 120.88071241500006}\n{\"job\": 4217, \"terminal\": true, \"elapsed\": 150.176908493042, \"cpu_seconds\": 150.06547870999998}\n{\"job\": 4465, \"terminal\": true, \"elapsed\": 115.3749372959137, \"cpu_seconds\": 115.29549264399998}\n{\"job\": 4713, \"terminal\": true, \"elapsed\": 113.3928713798523, \"cpu_seconds\": 113.32839307099994}\n{\"job\": 4961, \"terminal\": true, \"elapsed\": 83.11880230903625, \"cpu_seconds\": 83.07357921699997}\nUser time (seconds): 1010.327895\nSystem time (seconds): 1.902734\nMaximum resident set size (kbytes): 1045140\nElapsed seconds: 1012.9063696861267\n"
+        },
+        "2": {
+          "exit": "0",
+          "label": "s1-confirm-2-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425955.21697
+          },
+          "log": "{\"job\": 2234, \"terminal\": true, \"elapsed\": 135.76400780677795, \"cpu_seconds\": 135.654265468}\n{\"job\": 2482, \"terminal\": true, \"elapsed\": 103.16633653640747, \"cpu_seconds\": 103.09738533000001}\n{\"job\": 2730, \"terminal\": true, \"elapsed\": 40.90938973426819, \"cpu_seconds\": 40.88141625999998}\n{\"job\": 2978, \"terminal\": true, \"elapsed\": 91.42681884765625, \"cpu_seconds\": 91.374040643}\n{\"job\": 3226, \"terminal\": true, \"elapsed\": 92.47584366798401, \"cpu_seconds\": 92.41795159099996}\n{\"job\": 3474, \"terminal\": true, \"elapsed\": 93.67472219467163, \"cpu_seconds\": 93.61043252499996}\n{\"job\": 3722, \"terminal\": true, \"elapsed\": 135.57532000541687, \"cpu_seconds\": 135.490343017}\n{\"job\": 3970, \"terminal\": true, \"elapsed\": 166.48070192337036, \"cpu_seconds\": 166.372303612}\n{\"job\": 4218, \"terminal\": true, \"elapsed\": 141.6819760799408, \"cpu_seconds\": 141.602357278}\n{\"job\": 4466, \"terminal\": true, \"elapsed\": 78.3693675994873, \"cpu_seconds\": 78.32501901}\n{\"job\": 4714, \"terminal\": true, \"elapsed\": 108.613849401474, \"cpu_seconds\": 108.56321641900013}\n{\"job\": 4962, \"terminal\": true, \"elapsed\": 39.178404092788696, \"cpu_seconds\": 39.161841215000095}\nUser time (seconds): 1227.052962\nSystem time (seconds): 1.842848\nMaximum resident set size (kbytes): 1057768\nElapsed seconds: 1229.6632630825043\n"
+        },
+        "3": {
+          "exit": "0",
+          "label": "s1-confirm-3-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425887.6838787
+          },
+          "log": "{\"job\": 2483, \"terminal\": true, \"elapsed\": 123.85252809524536, \"cpu_seconds\": 123.74863930999999}\n{\"job\": 2731, \"terminal\": true, \"elapsed\": 43.16428065299988, \"cpu_seconds\": 43.135525216000005}\n{\"job\": 2979, \"terminal\": true, \"elapsed\": 43.77621507644653, \"cpu_seconds\": 43.748147851}\n{\"job\": 3227, \"terminal\": true, \"elapsed\": 82.72431421279907, \"cpu_seconds\": 82.660093423}\n{\"job\": 3475, \"terminal\": true, \"elapsed\": 109.15089178085327, \"cpu_seconds\": 109.08003001999998}\n{\"job\": 3723, \"terminal\": true, \"elapsed\": 151.86644220352173, \"cpu_seconds\": 151.75722117399994}\n{\"job\": 3971, \"terminal\": true, \"elapsed\": 154.93205857276917, \"cpu_seconds\": 154.82922648800002}\n{\"job\": 4219, \"terminal\": true, \"elapsed\": 150.80698156356812, \"cpu_seconds\": 150.7082475100001}\n{\"job\": 4467, \"terminal\": true, \"elapsed\": 162.03947710990906, \"cpu_seconds\": 161.94676736199995}\n{\"job\": 4715, \"terminal\": true, \"elapsed\": 100.13700723648071, \"cpu_seconds\": 100.08415167699991}\n{\"job\": 4963, \"terminal\": true, \"elapsed\": 37.514018058776855, \"cpu_seconds\": 37.49730082000019}\nUser time (seconds): 1159.25642\nSystem time (seconds): 2.094605\nMaximum resident set size (kbytes): 1056956\nElapsed seconds: 1162.1211655139923\n"
+        },
+        "4": {
+          "exit": "0",
+          "label": "s1-confirm-4-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425584.092259
+          },
+          "log": "{\"job\": 3476, \"terminal\": true, \"elapsed\": 85.1914758682251, \"cpu_seconds\": 85.11676359699999}\n{\"job\": 3724, \"terminal\": true, \"elapsed\": 136.98593020439148, \"cpu_seconds\": 136.88816527799997}\n{\"job\": 3972, \"terminal\": true, \"elapsed\": 89.72483563423157, \"cpu_seconds\": 89.66223268499999}\n{\"job\": 4220, \"terminal\": true, \"elapsed\": 201.06681442260742, \"cpu_seconds\": 200.93673539200006}\n{\"job\": 4468, \"terminal\": true, \"elapsed\": 145.90757369995117, \"cpu_seconds\": 145.810663675}\n{\"job\": 4716, \"terminal\": true, \"elapsed\": 102.36971259117126, \"cpu_seconds\": 102.299373189}\n{\"job\": 4964, \"terminal\": true, \"elapsed\": 95.8249351978302, \"cpu_seconds\": 95.76328925100006}\nUser time (seconds): 856.371525\nSystem time (seconds): 1.5549309999999998\nMaximum resident set size (kbytes): 1129208\nElapsed seconds: 858.5205035209656\n"
+        },
+        "5": {
+          "exit": "0",
+          "label": "s1-confirm-5-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791426102.0460534
+          },
+          "log": "{\"job\": 2237, \"terminal\": true, \"elapsed\": 121.03069067001343, \"cpu_seconds\": 120.933170919}\n{\"job\": 2485, \"terminal\": true, \"elapsed\": 70.67667698860168, \"cpu_seconds\": 70.62967737}\n{\"job\": 2733, \"terminal\": true, \"elapsed\": 128.91120886802673, \"cpu_seconds\": 128.819065092}\n{\"job\": 2981, \"terminal\": true, \"elapsed\": 89.26039934158325, \"cpu_seconds\": 89.206519786}\n{\"job\": 3229, \"terminal\": true, \"elapsed\": 35.772300481796265, \"cpu_seconds\": 35.748236668000004}\n{\"job\": 3477, \"terminal\": true, \"elapsed\": 84.90014028549194, \"cpu_seconds\": 84.84807577699996}\n{\"job\": 3725, \"terminal\": true, \"elapsed\": 154.50294065475464, \"cpu_seconds\": 154.40278706899994}\n{\"job\": 3973, \"terminal\": true, \"elapsed\": 153.74189281463623, \"cpu_seconds\": 153.632698999}\n{\"job\": 4221, \"terminal\": true, \"elapsed\": 217.8652684688568, \"cpu_seconds\": 217.723912111}\n{\"job\": 4469, \"terminal\": true, \"elapsed\": 86.38259792327881, \"cpu_seconds\": 86.34225005899998}\n{\"job\": 4717, \"terminal\": true, \"elapsed\": 90.64209794998169, \"cpu_seconds\": 90.59842952599979}\n{\"job\": 4965, \"terminal\": true, \"elapsed\": 140.48109078407288, \"cpu_seconds\": 140.41832271099997}\nUser time (seconds): 1372.701522\nSystem time (seconds): 2.898179\nMaximum resident set size (kbytes): 1040900\nElapsed seconds: 1376.4650013446808\n"
+        },
+        "6": {
+          "exit": "0",
+          "label": "s1-confirm-6-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425671.299168
+          },
+          "log": "{\"job\": 3230, \"terminal\": true, \"elapsed\": 105.04283928871155, \"cpu_seconds\": 104.961286533}\n{\"job\": 3478, \"terminal\": true, \"elapsed\": 76.07671546936035, \"cpu_seconds\": 76.029422047}\n{\"job\": 3726, \"terminal\": true, \"elapsed\": 138.7567982673645, \"cpu_seconds\": 138.66651466400003}\n{\"job\": 3974, \"terminal\": true, \"elapsed\": 91.27672600746155, \"cpu_seconds\": 91.21615014499997}\n{\"job\": 4222, \"terminal\": true, \"elapsed\": 158.0696222782135, \"cpu_seconds\": 157.96995900199994}\n{\"job\": 4470, \"terminal\": true, \"elapsed\": 131.04396677017212, \"cpu_seconds\": 130.9597567699999}\n{\"job\": 4718, \"terminal\": true, \"elapsed\": 155.18894243240356, \"cpu_seconds\": 155.078529441}\n{\"job\": 4966, \"terminal\": true, \"elapsed\": 88.58474826812744, \"cpu_seconds\": 88.53478840799994}\nUser time (seconds): 943.102049\nSystem time (seconds): 1.9826920000000001\nMaximum resident set size (kbytes): 996388\nElapsed seconds: 945.7089915275574\n"
+        },
+        "7": {
+          "exit": "0",
+          "label": "s1-confirm-7-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791426029.8882742
+          },
+          "log": "{\"job\": 2487, \"terminal\": true, \"elapsed\": 153.93641805648804, \"cpu_seconds\": 153.810501345}\n{\"job\": 2735, \"terminal\": true, \"elapsed\": 86.21136426925659, \"cpu_seconds\": 86.158222965}\n{\"job\": 2983, \"terminal\": true, \"elapsed\": 90.09075808525085, \"cpu_seconds\": 90.02993628199997}\n{\"job\": 3231, \"terminal\": true, \"elapsed\": 47.991257667541504, \"cpu_seconds\": 47.962190393000014}\n{\"job\": 3479, \"terminal\": true, \"elapsed\": 146.85919880867004, \"cpu_seconds\": 146.75850134400002}\n{\"job\": 3727, \"terminal\": true, \"elapsed\": 166.59253573417664, \"cpu_seconds\": 166.47403714300003}\n{\"job\": 3975, \"terminal\": true, \"elapsed\": 145.96611189842224, \"cpu_seconds\": 145.87599924699998}\n{\"job\": 4223, \"terminal\": true, \"elapsed\": 183.52159714698792, \"cpu_seconds\": 183.41425535500002}\n{\"job\": 4471, \"terminal\": true, \"elapsed\": 74.5890634059906, \"cpu_seconds\": 74.55200328100011}\n{\"job\": 4719, \"terminal\": true, \"elapsed\": 138.76865458488464, \"cpu_seconds\": 138.7039718840001}\n{\"job\": 4967, \"terminal\": true, \"elapsed\": 67.63431572914124, \"cpu_seconds\": 67.6035740499999}\nUser time (seconds): 1301.558897\nSystem time (seconds): 1.9108\nMaximum resident set size (kbytes): 1071564\nElapsed seconds: 1304.2883825302124\n"
+        },
+        "8": {
+          "exit": "0",
+          "label": "s1-confirm-8-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425659.687126
+          },
+          "log": "{\"job\": 2984, \"terminal\": true, \"elapsed\": 161.70165085792542, \"cpu_seconds\": 161.57705538200003}\n{\"job\": 3232, \"terminal\": true, \"elapsed\": 45.2422559261322, \"cpu_seconds\": 45.21575278399999}\n{\"job\": 3480, \"terminal\": true, \"elapsed\": 35.8958854675293, \"cpu_seconds\": 35.87208965899998}\n{\"job\": 3728, \"terminal\": true, \"elapsed\": 122.01528692245483, \"cpu_seconds\": 121.938152094}\n{\"job\": 3976, \"terminal\": true, \"elapsed\": 88.98792290687561, \"cpu_seconds\": 88.925683359}\n{\"job\": 4224, \"terminal\": true, \"elapsed\": 152.14116048812866, \"cpu_seconds\": 152.046586806}\n{\"job\": 4472, \"terminal\": true, \"elapsed\": 101.31140851974487, \"cpu_seconds\": 101.24448644899996}\n{\"job\": 4720, \"terminal\": true, \"elapsed\": 147.68843913078308, \"cpu_seconds\": 147.59242751800002}\n{\"job\": 4968, \"terminal\": true, \"elapsed\": 77.23173904418945, \"cpu_seconds\": 77.18610685400006}\nUser time (seconds): 932.608729\nSystem time (seconds): 0.8514339999999999\nMaximum resident set size (kbytes): 1008792\nElapsed seconds: 934.077668428421\n"
+        },
+        "9": {
+          "exit": "0",
+          "label": "s1-confirm-9-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425948.7317543
+          },
+          "log": "{\"job\": 2489, \"terminal\": true, \"elapsed\": 141.31399631500244, \"cpu_seconds\": 141.19638589500002}\n{\"job\": 2737, \"terminal\": true, \"elapsed\": 81.91604542732239, \"cpu_seconds\": 81.860626451}\n{\"job\": 2985, \"terminal\": true, \"elapsed\": 168.83669877052307, \"cpu_seconds\": 168.721394949}\n{\"job\": 3233, \"terminal\": true, \"elapsed\": 45.56867337226868, \"cpu_seconds\": 45.538678167}\n{\"job\": 3481, \"terminal\": true, \"elapsed\": 34.468271017074585, \"cpu_seconds\": 34.44686223100001}\n{\"job\": 3729, \"terminal\": true, \"elapsed\": 134.68772506713867, \"cpu_seconds\": 134.58948059900007}\n{\"job\": 3977, \"terminal\": true, \"elapsed\": 84.69492483139038, \"cpu_seconds\": 84.64325132900001}\n{\"job\": 4225, \"terminal\": true, \"elapsed\": 174.84016132354736, \"cpu_seconds\": 174.72647376399993}\n{\"job\": 4473, \"terminal\": true, \"elapsed\": 162.93670439720154, \"cpu_seconds\": 162.839990865}\n{\"job\": 4721, \"terminal\": true, \"elapsed\": 117.9747269153595, \"cpu_seconds\": 117.91936851399987}\n{\"job\": 4969, \"terminal\": true, \"elapsed\": 73.70411562919617, \"cpu_seconds\": 73.66422931400007}\nUser time (seconds): 1219.813935\nSystem time (seconds): 2.502371\nMaximum resident set size (kbytes): 1069572\nElapsed seconds: 1223.112360239029\n"
+        },
+        "10": {
+          "exit": "0",
+          "label": "s1-confirm-10-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425808.24327
+          },
+          "log": "{\"job\": 2986, \"terminal\": true, \"elapsed\": 120.00028729438782, \"cpu_seconds\": 119.913699497}\n{\"job\": 3234, \"terminal\": true, \"elapsed\": 86.75805950164795, \"cpu_seconds\": 86.70258089599999}\n{\"job\": 3482, \"terminal\": true, \"elapsed\": 40.68199825286865, \"cpu_seconds\": 40.65161606199999}\n{\"job\": 3730, \"terminal\": true, \"elapsed\": 133.44392013549805, \"cpu_seconds\": 133.353336699}\n{\"job\": 3978, \"terminal\": true, \"elapsed\": 148.50061321258545, \"cpu_seconds\": 148.39970227000003}\n{\"job\": 4226, \"terminal\": true, \"elapsed\": 137.07781982421875, \"cpu_seconds\": 136.98502959200005}\n{\"job\": 4474, \"terminal\": true, \"elapsed\": 173.50257396697998, \"cpu_seconds\": 173.38394871000003}\n{\"job\": 4722, \"terminal\": true, \"elapsed\": 74.16163039207458, \"cpu_seconds\": 74.10627480700009}\n{\"job\": 4970, \"terminal\": true, \"elapsed\": 166.65847301483154, \"cpu_seconds\": 166.5606027550001}\nUser time (seconds): 1079.890053\nSystem time (seconds): 1.994659\nMaximum resident set size (kbytes): 989240\nElapsed seconds: 1082.6144387722015\n"
+        },
+        "11": {
+          "exit": "0",
+          "label": "s1-confirm-11-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425771.4794996
+          },
+          "log": "{\"job\": 2987, \"terminal\": true, \"elapsed\": 146.87573337554932, \"cpu_seconds\": 146.760982551}\n{\"job\": 3235, \"terminal\": true, \"elapsed\": 49.724666357040405, \"cpu_seconds\": 49.69670614899999}\n{\"job\": 3483, \"terminal\": true, \"elapsed\": 38.93906617164612, \"cpu_seconds\": 38.91583086099999}\n{\"job\": 3731, \"terminal\": true, \"elapsed\": 136.76666402816772, \"cpu_seconds\": 136.670484387}\n{\"job\": 3979, \"terminal\": true, \"elapsed\": 137.22998189926147, \"cpu_seconds\": 137.135689979}\n{\"job\": 4227, \"terminal\": true, \"elapsed\": 148.39041805267334, \"cpu_seconds\": 148.28539308500007}\n{\"job\": 4475, \"terminal\": true, \"elapsed\": 102.5353193283081, \"cpu_seconds\": 102.46858690299996}\n{\"job\": 4723, \"terminal\": true, \"elapsed\": 140.44736194610596, \"cpu_seconds\": 140.35565018900002}\n{\"job\": 4971, \"terminal\": true, \"elapsed\": 143.12255477905273, \"cpu_seconds\": 143.04002283900002}\nUser time (seconds): 1043.103801\nSystem time (seconds): 2.034626\nMaximum resident set size (kbytes): 1051068\nElapsed seconds: 1045.8412325382233\n"
+        },
+        "12": {
+          "exit": "0",
+          "label": "s1-confirm-12-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425817.95445
+          },
+          "log": "{\"job\": 2988, \"terminal\": true, \"elapsed\": 132.44603443145752, \"cpu_seconds\": 132.347813475}\n{\"job\": 3236, \"terminal\": true, \"elapsed\": 100.80936646461487, \"cpu_seconds\": 100.749615751}\n{\"job\": 3484, \"terminal\": true, \"elapsed\": 39.95612978935242, \"cpu_seconds\": 39.92822741399999}\n{\"job\": 3732, \"terminal\": true, \"elapsed\": 44.98192048072815, \"cpu_seconds\": 44.95606573800001}\n{\"job\": 3980, \"terminal\": true, \"elapsed\": 150.72808504104614, \"cpu_seconds\": 150.62443598199997}\n{\"job\": 4228, \"terminal\": true, \"elapsed\": 158.55724382400513, \"cpu_seconds\": 158.45885460800002}\n{\"job\": 4476, \"terminal\": true, \"elapsed\": 119.28806972503662, \"cpu_seconds\": 119.201678432}\n{\"job\": 4724, \"terminal\": true, \"elapsed\": 182.77146673202515, \"cpu_seconds\": 182.6547365460001}\n{\"job\": 4972, \"terminal\": true, \"elapsed\": 160.93694806098938, \"cpu_seconds\": 160.85673138999994}\nUser time (seconds): 1089.578066\nSystem time (seconds): 2.030706\nMaximum resident set size (kbytes): 997180\nElapsed seconds: 1092.306364774704\n"
+        },
+        "13": {
+          "exit": "0",
+          "label": "s1-confirm-13-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425684.511386
+          },
+          "log": "{\"job\": 2989, \"terminal\": true, \"elapsed\": 79.06038641929626, \"cpu_seconds\": 78.996642917}\n{\"job\": 3237, \"terminal\": true, \"elapsed\": 125.15468096733093, \"cpu_seconds\": 125.076066151}\n{\"job\": 3485, \"terminal\": true, \"elapsed\": 41.344207763671875, \"cpu_seconds\": 41.31743203400001}\n{\"job\": 3733, \"terminal\": true, \"elapsed\": 40.22584581375122, \"cpu_seconds\": 40.194888687}\n{\"job\": 3981, \"terminal\": true, \"elapsed\": 141.26592445373535, \"cpu_seconds\": 141.16936843099995}\n{\"job\": 4229, \"terminal\": true, \"elapsed\": 170.71514868736267, \"cpu_seconds\": 170.598547032}\n{\"job\": 4477, \"terminal\": true, \"elapsed\": 86.40483045578003, \"cpu_seconds\": 86.34882575400002}\n{\"job\": 4725, \"terminal\": true, \"elapsed\": 169.56355381011963, \"cpu_seconds\": 169.4536961560001}\n{\"job\": 4973, \"terminal\": true, \"elapsed\": 103.3104076385498, \"cpu_seconds\": 103.24311359399996}\nUser time (seconds): 956.814801\nSystem time (seconds): 1.3910559999999998\nMaximum resident set size (kbytes): 942112\nElapsed seconds: 958.8533124923706\n"
+        },
+        "14": {
+          "exit": "0",
+          "label": "s1-confirm-14-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425820.500955
+          },
+          "log": "{\"job\": 2990, \"terminal\": true, \"elapsed\": 227.25026893615723, \"cpu_seconds\": 227.096572921}\n{\"job\": 3238, \"terminal\": true, \"elapsed\": 69.88132762908936, \"cpu_seconds\": 69.83281938899998}\n{\"job\": 3486, \"terminal\": true, \"elapsed\": 45.70436501502991, \"cpu_seconds\": 45.67785410099998}\n{\"job\": 3734, \"terminal\": true, \"elapsed\": 35.67873549461365, \"cpu_seconds\": 35.65451929599999}\n{\"job\": 3982, \"terminal\": true, \"elapsed\": 142.6424949169159, \"cpu_seconds\": 142.54782053099996}\n{\"job\": 4230, \"terminal\": true, \"elapsed\": 169.97704362869263, \"cpu_seconds\": 169.866179645}\n{\"job\": 4478, \"terminal\": true, \"elapsed\": 123.28346133232117, \"cpu_seconds\": 123.1998160039999}\n{\"job\": 4726, \"terminal\": true, \"elapsed\": 172.31896257400513, \"cpu_seconds\": 172.22039266599995}\n{\"job\": 4974, \"terminal\": true, \"elapsed\": 106.25697064399719, \"cpu_seconds\": 106.20187268199993}\nUser time (seconds): 1092.961268\nSystem time (seconds): 1.175248\nMaximum resident set size (kbytes): 1009896\nElapsed seconds: 1094.832716703415\n"
+        },
+        "15": {
+          "exit": "0",
+          "label": "s1-confirm-15-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425868.755549
+          },
+          "log": "{\"job\": 2743, \"terminal\": true, \"elapsed\": 100.59185457229614, \"cpu_seconds\": 100.500842322}\n{\"job\": 2991, \"terminal\": true, \"elapsed\": 208.4842827320099, \"cpu_seconds\": 208.33970143599998}\n{\"job\": 3239, \"terminal\": true, \"elapsed\": 82.79635787010193, \"cpu_seconds\": 82.741549147}\n{\"job\": 3487, \"terminal\": true, \"elapsed\": 42.032630443573, \"cpu_seconds\": 42.00248119600002}\n{\"job\": 3735, \"terminal\": true, \"elapsed\": 38.03663969039917, \"cpu_seconds\": 38.01155361399998}\n{\"job\": 3983, \"terminal\": true, \"elapsed\": 131.18873572349548, \"cpu_seconds\": 131.10749596000005}\n{\"job\": 4231, \"terminal\": true, \"elapsed\": 151.64600324630737, \"cpu_seconds\": 151.54124876800006}\n{\"job\": 4479, \"terminal\": true, \"elapsed\": 85.91853666305542, \"cpu_seconds\": 85.86386316400001}\n{\"job\": 4727, \"terminal\": true, \"elapsed\": 152.21444153785706, \"cpu_seconds\": 152.12074529699998}\n{\"job\": 4975, \"terminal\": true, \"elapsed\": 148.17199778556824, \"cpu_seconds\": 148.09960534499987}\nUser time (seconds): 1140.864831\nSystem time (seconds): 1.459054\nMaximum resident set size (kbytes): 1064420\nElapsed seconds: 1143.076886177063\n"
+        },
+        "16": {
+          "exit": "0",
+          "label": "s1-confirm-16-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425884.5458317
+          },
+          "log": "{\"job\": 2744, \"terminal\": true, \"elapsed\": 224.1282730102539, \"cpu_seconds\": 223.96939543500002}\n{\"job\": 2992, \"terminal\": true, \"elapsed\": 147.41130709648132, \"cpu_seconds\": 147.317858644}\n{\"job\": 3240, \"terminal\": true, \"elapsed\": 92.67552733421326, \"cpu_seconds\": 92.613414568}\n{\"job\": 3488, \"terminal\": true, \"elapsed\": 59.748152017593384, \"cpu_seconds\": 59.70855580599999}\n{\"job\": 3736, \"terminal\": true, \"elapsed\": 35.4962375164032, \"cpu_seconds\": 35.475790508000046}\n{\"job\": 3984, \"terminal\": true, \"elapsed\": 86.2903962135315, \"cpu_seconds\": 86.235236128}\n{\"job\": 4232, \"terminal\": true, \"elapsed\": 163.81378054618835, \"cpu_seconds\": 163.70895445399992}\n{\"job\": 4480, \"terminal\": true, \"elapsed\": 140.08699369430542, \"cpu_seconds\": 140.000429144}\n{\"job\": 4728, \"terminal\": true, \"elapsed\": 82.53501915931702, \"cpu_seconds\": 82.4932528899999}\n{\"job\": 4976, \"terminal\": true, \"elapsed\": 124.65816640853882, \"cpu_seconds\": 124.59716441599994}\nUser time (seconds): 1157.268728\nSystem time (seconds): 0.86346\nMaximum resident set size (kbytes): 1076524\nElapsed seconds: 1158.8568279743195\n"
+        },
+        "17": {
+          "exit": "0",
+          "label": "s1-confirm-17-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425697.5131328
+          },
+          "log": "{\"job\": 2993, \"terminal\": true, \"elapsed\": 168.74064898490906, \"cpu_seconds\": 168.621519299}\n{\"job\": 3241, \"terminal\": true, \"elapsed\": 83.07148122787476, \"cpu_seconds\": 83.01739205599998}\n{\"job\": 3489, \"terminal\": true, \"elapsed\": 78.18376207351685, \"cpu_seconds\": 78.13131073999998}\n{\"job\": 3737, \"terminal\": true, \"elapsed\": 34.868138790130615, \"cpu_seconds\": 34.844495454000025}\n{\"job\": 3985, \"terminal\": true, \"elapsed\": 80.30701160430908, \"cpu_seconds\": 80.25707214199997}\n{\"job\": 4233, \"terminal\": true, \"elapsed\": 140.24663734436035, \"cpu_seconds\": 140.14962395699996}\n{\"job\": 4481, \"terminal\": true, \"elapsed\": 80.36269950866699, \"cpu_seconds\": 80.31460523700002}\n{\"job\": 4729, \"terminal\": true, \"elapsed\": 91.49314785003662, \"cpu_seconds\": 91.43046777500001}\n{\"job\": 4977, \"terminal\": true, \"elapsed\": 212.69269490242004, \"cpu_seconds\": 212.559550553}\nUser time (seconds): 969.050433\nSystem time (seconds): 2.122594\nMaximum resident set size (kbytes): 1044992\nElapsed seconds: 971.8137412071228\n"
+        },
+        "18": {
+          "exit": "0",
+          "label": "s1-confirm-18-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791426061.8335114
+          },
+          "log": "{\"job\": 2746, \"terminal\": true, \"elapsed\": 214.39015746116638, \"cpu_seconds\": 214.232626864}\n{\"job\": 2994, \"terminal\": true, \"elapsed\": 132.3905918598175, \"cpu_seconds\": 132.308767596}\n{\"job\": 3242, \"terminal\": true, \"elapsed\": 172.3910093307495, \"cpu_seconds\": 172.27940287399997}\n{\"job\": 3490, \"terminal\": true, \"elapsed\": 75.93656587600708, \"cpu_seconds\": 75.88595093699996}\n{\"job\": 3738, \"terminal\": true, \"elapsed\": 35.98154592514038, \"cpu_seconds\": 35.955915860999994}\n{\"job\": 3986, \"terminal\": true, \"elapsed\": 89.68883681297302, \"cpu_seconds\": 89.630674516}\n{\"job\": 4234, \"terminal\": true, \"elapsed\": 158.989408493042, \"cpu_seconds\": 158.89020956000002}\n{\"job\": 4482, \"terminal\": true, \"elapsed\": 138.57089829444885, \"cpu_seconds\": 138.49336666700003}\n{\"job\": 4730, \"terminal\": true, \"elapsed\": 134.0635449886322, \"cpu_seconds\": 133.99288404699985}\n{\"job\": 4978, \"terminal\": true, \"elapsed\": 181.7240812778473, \"cpu_seconds\": 181.64168172899986}\nUser time (seconds): 1333.968569\nSystem time (seconds): 1.339177\nMaximum resident set size (kbytes): 1010732\nElapsed seconds: 1336.1236164569855\n"
+        },
+        "19": {
+          "exit": "0",
+          "label": "s1-confirm-19-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425624.3487754
+          },
+          "log": "{\"job\": 3243, \"terminal\": true, \"elapsed\": 167.7823076248169, \"cpu_seconds\": 167.665417692}\n{\"job\": 3491, \"terminal\": true, \"elapsed\": 67.86553502082825, \"cpu_seconds\": 67.81916486200001}\n{\"job\": 3739, \"terminal\": true, \"elapsed\": 35.90313911437988, \"cpu_seconds\": 35.88255616999999}\n{\"job\": 3987, \"terminal\": true, \"elapsed\": 38.76913380622864, \"cpu_seconds\": 38.74509795300003}\n{\"job\": 4235, \"terminal\": true, \"elapsed\": 146.3147487640381, \"cpu_seconds\": 146.22111929099998}\n{\"job\": 4483, \"terminal\": true, \"elapsed\": 138.64823126792908, \"cpu_seconds\": 138.56412975999996}\n{\"job\": 4731, \"terminal\": true, \"elapsed\": 94.80801963806152, \"cpu_seconds\": 94.7487918349999}\n{\"job\": 4979, \"terminal\": true, \"elapsed\": 206.86838603019714, \"cpu_seconds\": 206.74288500199998}\nUser time (seconds): 896.443705\nSystem time (seconds): 1.614976\nMaximum resident set size (kbytes): 1045388\nElapsed seconds: 898.6297817230225\n"
+        },
+        "20": {
+          "exit": "0",
+          "label": "s1-confirm-20-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425689.6085696
+          },
+          "log": "{\"job\": 3244, \"terminal\": true, \"elapsed\": 84.06521534919739, \"cpu_seconds\": 83.993445491}\n{\"job\": 3492, \"terminal\": true, \"elapsed\": 68.7723274230957, \"cpu_seconds\": 68.724280451}\n{\"job\": 3740, \"terminal\": true, \"elapsed\": 135.45706510543823, \"cpu_seconds\": 135.361733489}\n{\"job\": 3988, \"terminal\": true, \"elapsed\": 83.8940372467041, \"cpu_seconds\": 83.83424975399998}\n{\"job\": 4236, \"terminal\": true, \"elapsed\": 88.6882336139679, \"cpu_seconds\": 88.63615645600004}\n{\"job\": 4484, \"terminal\": true, \"elapsed\": 158.00220394134521, \"cpu_seconds\": 157.89778499800002}\n{\"job\": 4732, \"terminal\": true, \"elapsed\": 170.26102495193481, \"cpu_seconds\": 170.14084175699998}\n{\"job\": 4980, \"terminal\": true, \"elapsed\": 173.092764377594, \"cpu_seconds\": 172.99087034899992}\nUser time (seconds): 962.253201\nSystem time (seconds): 0.9713339999999999\nMaximum resident set size (kbytes): 1031712\nElapsed seconds: 963.8782303333282\n"
+        },
+        "21": {
+          "exit": "0",
+          "label": "s1-confirm-21-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791426117.246546
+          },
+          "log": "{\"job\": 2253, \"terminal\": true, \"elapsed\": 92.92028403282166, \"cpu_seconds\": 92.84427523}\n{\"job\": 2501, \"terminal\": true, \"elapsed\": 131.92902064323425, \"cpu_seconds\": 131.84645887699998}\n{\"job\": 2749, \"terminal\": true, \"elapsed\": 97.2104139328003, \"cpu_seconds\": 97.141135634}\n{\"job\": 2997, \"terminal\": true, \"elapsed\": 226.8510570526123, \"cpu_seconds\": 226.70712322300005}\n{\"job\": 3245, \"terminal\": true, \"elapsed\": 93.64749598503113, \"cpu_seconds\": 93.58409163600004}\n{\"job\": 3493, \"terminal\": true, \"elapsed\": 55.620768308639526, \"cpu_seconds\": 55.58369185099991}\n{\"job\": 3741, \"terminal\": true, \"elapsed\": 160.2499177455902, \"cpu_seconds\": 160.14039738399993}\n{\"job\": 3989, \"terminal\": true, \"elapsed\": 66.13986277580261, \"cpu_seconds\": 66.09549530000004}\n{\"job\": 4237, \"terminal\": true, \"elapsed\": 81.78649592399597, \"cpu_seconds\": 81.7364004960001}\n{\"job\": 4485, \"terminal\": true, \"elapsed\": 87.47207355499268, \"cpu_seconds\": 87.42653196899994}\n{\"job\": 4733, \"terminal\": true, \"elapsed\": 127.99011945724487, \"cpu_seconds\": 127.92965542499996}\n{\"job\": 4981, \"terminal\": true, \"elapsed\": 167.37048506736755, \"cpu_seconds\": 167.277650796}\nUser time (seconds): 1388.826708\nSystem time (seconds): 1.802861\nMaximum resident set size (kbytes): 1099904\nElapsed seconds: 1391.505461215973\n"
+        },
+        "22": {
+          "exit": "0",
+          "label": "s1-confirm-22-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425786.385066
+          },
+          "log": "{\"job\": 2998, \"terminal\": true, \"elapsed\": 168.50674557685852, \"cpu_seconds\": 168.378659113}\n{\"job\": 3246, \"terminal\": true, \"elapsed\": 88.59923982620239, \"cpu_seconds\": 88.53825524199999}\n{\"job\": 3494, \"terminal\": true, \"elapsed\": 94.19785118103027, \"cpu_seconds\": 94.13813202900002}\n{\"job\": 3742, \"terminal\": true, \"elapsed\": 126.8357720375061, \"cpu_seconds\": 126.749888704}\n{\"job\": 3990, \"terminal\": true, \"elapsed\": 79.96623396873474, \"cpu_seconds\": 79.92015678899998}\n{\"job\": 4238, \"terminal\": true, \"elapsed\": 104.90158581733704, \"cpu_seconds\": 104.83249911500002}\n{\"job\": 4486, \"terminal\": true, \"elapsed\": 121.72152376174927, \"cpu_seconds\": 121.64399283799992}\n{\"job\": 4734, \"terminal\": true, \"elapsed\": 156.7340705394745, \"cpu_seconds\": 156.63848438900004}\n{\"job\": 4982, \"terminal\": true, \"elapsed\": 117.3290638923645, \"cpu_seconds\": 117.26578802699999}\nUser time (seconds): 1059.219641\nSystem time (seconds): 0.727529\nMaximum resident set size (kbytes): 1007560\nElapsed seconds: 1060.6337909698486\n"
+        },
+        "23": {
+          "exit": "0",
+          "label": "s1-confirm-23-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425584.644198
+          },
+          "log": "{\"job\": 3247, \"terminal\": true, \"elapsed\": 111.1108386516571, \"cpu_seconds\": 111.029223878}\n{\"job\": 3495, \"terminal\": true, \"elapsed\": 91.78957533836365, \"cpu_seconds\": 91.728689956}\n{\"job\": 3743, \"terminal\": true, \"elapsed\": 73.85546207427979, \"cpu_seconds\": 73.80390053299999}\n{\"job\": 3991, \"terminal\": true, \"elapsed\": 81.89864802360535, \"cpu_seconds\": 81.84517288500001}\n{\"job\": 4239, \"terminal\": true, \"elapsed\": 90.82954382896423, \"cpu_seconds\": 90.768042165}\n{\"job\": 4487, \"terminal\": true, \"elapsed\": 117.46379446983337, \"cpu_seconds\": 117.387548289}\n{\"job\": 4735, \"terminal\": true, \"elapsed\": 142.15733671188354, \"cpu_seconds\": 142.06242332599993}\n{\"job\": 4983, \"terminal\": true, \"elapsed\": 148.0683228969574, \"cpu_seconds\": 147.9724082529999}\nUser time (seconds): 857.454907\nSystem time (seconds): 0.851426\nMaximum resident set size (kbytes): 981228\nElapsed seconds: 858.8821976184845\n"
+        },
+        "24": {
+          "exit": "0",
+          "label": "s1-confirm-24-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425518.22174
+          },
+          "log": "{\"job\": 3248, \"terminal\": true, \"elapsed\": 201.55727863311768, \"cpu_seconds\": 201.416173687}\n{\"job\": 3496, \"terminal\": true, \"elapsed\": 90.57650852203369, \"cpu_seconds\": 90.51584483199997}\n{\"job\": 3744, \"terminal\": true, \"elapsed\": 67.8608558177948, \"cpu_seconds\": 67.81069686500001}\n{\"job\": 3992, \"terminal\": true, \"elapsed\": 74.98772549629211, \"cpu_seconds\": 74.93597855999997}\n{\"job\": 4240, \"terminal\": true, \"elapsed\": 93.16160178184509, \"cpu_seconds\": 93.10698543900003}\n{\"job\": 4488, \"terminal\": true, \"elapsed\": 43.75511980056763, \"cpu_seconds\": 43.72834640999997}\n{\"job\": 4736, \"terminal\": true, \"elapsed\": 101.78766775131226, \"cpu_seconds\": 101.71766395200007}\n{\"job\": 4984, \"terminal\": true, \"elapsed\": 117.08424162864685, \"cpu_seconds\": 117.00517831000002}\nUser time (seconds): 791.03145\nSystem time (seconds): 0.8834\nMaximum resident set size (kbytes): 1006476\nElapsed seconds: 792.4491500854492\n"
+        },
+        "25": {
+          "exit": "0",
+          "label": "s1-confirm-25-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425943.022156
+          },
+          "log": "{\"job\": 2505, \"terminal\": true, \"elapsed\": 163.71674346923828, \"cpu_seconds\": 163.59267207399998}\n{\"job\": 2753, \"terminal\": true, \"elapsed\": 94.99882936477661, \"cpu_seconds\": 94.93395824099997}\n{\"job\": 3001, \"terminal\": true, \"elapsed\": 151.57586884498596, \"cpu_seconds\": 151.47727178600002}\n{\"job\": 3249, \"terminal\": true, \"elapsed\": 148.42925429344177, \"cpu_seconds\": 148.32702019700002}\n{\"job\": 3497, \"terminal\": true, \"elapsed\": 75.92850184440613, \"cpu_seconds\": 75.87650962400005}\n{\"job\": 3745, \"terminal\": true, \"elapsed\": 101.62233757972717, \"cpu_seconds\": 101.55185352399997}\n{\"job\": 3993, \"terminal\": true, \"elapsed\": 96.57509160041809, \"cpu_seconds\": 96.51012122400005}\n{\"job\": 4241, \"terminal\": true, \"elapsed\": 90.69924235343933, \"cpu_seconds\": 90.64826137}\n{\"job\": 4489, \"terminal\": true, \"elapsed\": 31.670696258544922, \"cpu_seconds\": 31.65489317899994}\n{\"job\": 4737, \"terminal\": true, \"elapsed\": 132.586412191391, \"cpu_seconds\": 132.51829738699996}\n{\"job\": 4985, \"terminal\": true, \"elapsed\": 127.25228595733643, \"cpu_seconds\": 127.18960456100012}\nUser time (seconds): 1214.328783\nSystem time (seconds): 2.134637\nMaximum resident set size (kbytes): 1053512\nElapsed seconds: 1217.238850593567\n"
+        },
+        "26": {
+          "exit": "0",
+          "label": "s1-confirm-26-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425848.3505616
+          },
+          "log": "{\"job\": 2754, \"terminal\": true, \"elapsed\": 161.80117464065552, \"cpu_seconds\": 161.682734866}\n{\"job\": 3002, \"terminal\": true, \"elapsed\": 144.9850833415985, \"cpu_seconds\": 144.89208551299998}\n{\"job\": 3250, \"terminal\": true, \"elapsed\": 78.07098746299744, \"cpu_seconds\": 78.021460359}\n{\"job\": 3498, \"terminal\": true, \"elapsed\": 71.65459060668945, \"cpu_seconds\": 71.61150355200004}\n{\"job\": 3746, \"terminal\": true, \"elapsed\": 103.60723948478699, \"cpu_seconds\": 103.54281980300004}\n{\"job\": 3994, \"terminal\": true, \"elapsed\": 73.83056282997131, \"cpu_seconds\": 73.78343007700005}\n{\"job\": 4242, \"terminal\": true, \"elapsed\": 95.9557957649231, \"cpu_seconds\": 95.901647454}\n{\"job\": 4490, \"terminal\": true, \"elapsed\": 93.25325798988342, \"cpu_seconds\": 93.19414496500008}\n{\"job\": 4738, \"terminal\": true, \"elapsed\": 149.93528199195862, \"cpu_seconds\": 149.84379659}\n{\"job\": 4986, \"terminal\": true, \"elapsed\": 147.43678307533264, \"cpu_seconds\": 147.36577523000005}\nUser time (seconds): 1121.173126\nSystem time (seconds): 0.6915709999999999\nMaximum resident set size (kbytes): 1005308\nElapsed seconds: 1122.5564494132996\n"
+        },
+        "27": {
+          "exit": "0",
+          "label": "s1-confirm-27-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425953.6824403
+          },
+          "log": "{\"job\": 2507, \"terminal\": true, \"elapsed\": 140.93354630470276, \"cpu_seconds\": 140.82102524299998}\n{\"job\": 2755, \"terminal\": true, \"elapsed\": 99.74148464202881, \"cpu_seconds\": 99.680631694}\n{\"job\": 3003, \"terminal\": true, \"elapsed\": 147.8481960296631, \"cpu_seconds\": 147.75216282499997}\n{\"job\": 3251, \"terminal\": true, \"elapsed\": 123.08854794502258, \"cpu_seconds\": 123.00378023100001}\n{\"job\": 3499, \"terminal\": true, \"elapsed\": 67.74809384346008, \"cpu_seconds\": 67.69852177899998}\n{\"job\": 3747, \"terminal\": true, \"elapsed\": 141.79205536842346, \"cpu_seconds\": 141.694767329}\n{\"job\": 3995, \"terminal\": true, \"elapsed\": 122.5551176071167, \"cpu_seconds\": 122.48051822799994}\n{\"job\": 4243, \"terminal\": true, \"elapsed\": 94.85185313224792, \"cpu_seconds\": 94.79105236999999}\n{\"job\": 4491, \"terminal\": true, \"elapsed\": 59.10767197608948, \"cpu_seconds\": 59.07960760399999}\n{\"job\": 4739, \"terminal\": true, \"elapsed\": 139.45062041282654, \"cpu_seconds\": 139.3841450320001}\n{\"job\": 4987, \"terminal\": true, \"elapsed\": 88.58575344085693, \"cpu_seconds\": 88.54465636700002}\nUser time (seconds): 1225.189237\nSystem time (seconds): 1.9147889999999999\nMaximum resident set size (kbytes): 986440\nElapsed seconds: 1227.8776433467865\n"
+        },
+        "28": {
+          "exit": "0",
+          "label": "s1-confirm-28-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425779.5639493
+          },
+          "log": "{\"job\": 2756, \"terminal\": true, \"elapsed\": 111.51030921936035, \"cpu_seconds\": 111.411726081}\n{\"job\": 3004, \"terminal\": true, \"elapsed\": 149.48844742774963, \"cpu_seconds\": 149.388638103}\n{\"job\": 3252, \"terminal\": true, \"elapsed\": 98.43156361579895, \"cpu_seconds\": 98.37169702200003}\n{\"job\": 3500, \"terminal\": true, \"elapsed\": 87.62380623817444, \"cpu_seconds\": 87.56079091200002}\n{\"job\": 3748, \"terminal\": true, \"elapsed\": 88.79443740844727, \"cpu_seconds\": 88.736501949}\n{\"job\": 3996, \"terminal\": true, \"elapsed\": 62.82683753967285, \"cpu_seconds\": 62.77991132599993}\n{\"job\": 4244, \"terminal\": true, \"elapsed\": 134.78913474082947, \"cpu_seconds\": 134.69865371499998}\n{\"job\": 4492, \"terminal\": true, \"elapsed\": 72.48853540420532, \"cpu_seconds\": 72.44402182800002}\n{\"job\": 4740, \"terminal\": true, \"elapsed\": 81.27895855903625, \"cpu_seconds\": 81.22761235899998}\n{\"job\": 4988, \"terminal\": true, \"elapsed\": 164.4810848236084, \"cpu_seconds\": 164.3926888489999}\nUser time (seconds): 1052.103431\nSystem time (seconds): 0.943371\nMaximum resident set size (kbytes): 963520\nElapsed seconds: 1053.7481853961945\n"
+        },
+        "29": {
+          "exit": "0",
+          "label": "s1-confirm-29-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791426030.6314328
+          },
+          "log": "{\"job\": 2013, \"terminal\": true, \"elapsed\": 170.45357060432434, \"cpu_seconds\": 170.31693393900002}\n{\"job\": 2261, \"terminal\": true, \"elapsed\": 79.65528678894043, \"cpu_seconds\": 79.60472726700002}\n{\"job\": 2509, \"terminal\": true, \"elapsed\": 43.22452116012573, \"cpu_seconds\": 43.19826456199999}\n{\"job\": 2757, \"terminal\": true, \"elapsed\": 102.40461659431458, \"cpu_seconds\": 102.33576232600001}\n{\"job\": 3005, \"terminal\": true, \"elapsed\": 164.5874683856964, \"cpu_seconds\": 164.47810996199996}\n{\"job\": 3253, \"terminal\": true, \"elapsed\": 78.4073977470398, \"cpu_seconds\": 78.35667346399998}\n{\"job\": 3501, \"terminal\": true, \"elapsed\": 100.25862145423889, \"cpu_seconds\": 100.19139309899992}\n{\"job\": 3749, \"terminal\": true, \"elapsed\": 138.0602743625641, \"cpu_seconds\": 137.96305731899997}\n{\"job\": 3997, \"terminal\": true, \"elapsed\": 72.49118518829346, \"cpu_seconds\": 72.44887762600001}\n{\"job\": 4245, \"terminal\": true, \"elapsed\": 127.04676628112793, \"cpu_seconds\": 126.98452055799999}\n{\"job\": 4493, \"terminal\": true, \"elapsed\": 52.91850733757019, \"cpu_seconds\": 52.89470478999988}\n{\"job\": 4741, \"terminal\": true, \"elapsed\": 35.88257908821106, \"cpu_seconds\": 35.86702856800002}\n{\"job\": 4989, \"terminal\": true, \"elapsed\": 136.90236067771912, \"cpu_seconds\": 136.84100847800005}\nUser time (seconds): 1302.635869\nSystem time (seconds): 1.3551549999999999\nMaximum resident set size (kbytes): 1155156\nElapsed seconds: 1304.8044323921204\n"
+        },
+        "30": {
+          "exit": "0",
+          "label": "s1-confirm-30-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425823.059244
+          },
+          "log": "{\"job\": 2758, \"terminal\": true, \"elapsed\": 106.43416357040405, \"cpu_seconds\": 106.353183557}\n{\"job\": 3006, \"terminal\": true, \"elapsed\": 155.63700103759766, \"cpu_seconds\": 155.54241217900002}\n{\"job\": 3254, \"terminal\": true, \"elapsed\": 139.9872386455536, \"cpu_seconds\": 139.89551134599998}\n{\"job\": 3502, \"terminal\": true, \"elapsed\": 110.6102180480957, \"cpu_seconds\": 110.53243592499996}\n{\"job\": 3750, \"terminal\": true, \"elapsed\": 79.86430716514587, \"cpu_seconds\": 79.80712963500002}\n{\"job\": 3998, \"terminal\": true, \"elapsed\": 161.7393593788147, \"cpu_seconds\": 161.630033647}\n{\"job\": 4246, \"terminal\": true, \"elapsed\": 124.96843481063843, \"cpu_seconds\": 124.88590883900008}\n{\"job\": 4494, \"terminal\": true, \"elapsed\": 85.99004054069519, \"cpu_seconds\": 85.94135385499999}\n{\"job\": 4742, \"terminal\": true, \"elapsed\": 36.939348459243774, \"cpu_seconds\": 36.920911074999935}\n{\"job\": 4990, \"terminal\": true, \"elapsed\": 93.07430386543274, \"cpu_seconds\": 93.02782029500008}\nUser time (seconds): 1095.113831\nSystem time (seconds): 1.399097\nMaximum resident set size (kbytes): 1035368\nElapsed seconds: 1097.2213084697723\n"
+        },
+        "31": {
+          "exit": "0",
+          "label": "s1-confirm-31-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425826.861047
+          },
+          "log": "{\"job\": 2511, \"terminal\": true, \"elapsed\": 52.60174894332886, \"cpu_seconds\": 52.550896606}\n{\"job\": 2759, \"terminal\": true, \"elapsed\": 143.65415477752686, \"cpu_seconds\": 143.56400572500002}\n{\"job\": 3007, \"terminal\": true, \"elapsed\": 174.89165472984314, \"cpu_seconds\": 174.77259263499997}\n{\"job\": 3255, \"terminal\": true, \"elapsed\": 99.7713394165039, \"cpu_seconds\": 99.70655008800003}\n{\"job\": 3503, \"terminal\": true, \"elapsed\": 78.37756776809692, \"cpu_seconds\": 78.32297889900002}\n{\"job\": 3751, \"terminal\": true, \"elapsed\": 75.63513946533203, \"cpu_seconds\": 75.58396178299995}\n{\"job\": 3999, \"terminal\": true, \"elapsed\": 106.78203058242798, \"cpu_seconds\": 106.70925416399996}\n{\"job\": 4247, \"terminal\": true, \"elapsed\": 130.9209485054016, \"cpu_seconds\": 130.83403256200006}\n{\"job\": 4495, \"terminal\": true, \"elapsed\": 52.7054660320282, \"cpu_seconds\": 52.67536178900002}\n{\"job\": 4743, \"terminal\": true, \"elapsed\": 36.082757234573364, \"cpu_seconds\": 36.06461386700005}\n{\"job\": 4991, \"terminal\": true, \"elapsed\": 147.26848721504211, \"cpu_seconds\": 147.18888033400003}\nUser time (seconds): 1097.69483\nSystem time (seconds): 2.598302\nMaximum resident set size (kbytes): 1101828\nElapsed seconds: 1101.011950492859\n"
+        },
+        "32": {
+          "exit": "0",
+          "label": "s1-confirm-32-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425753.4961998
+          },
+          "log": "{\"job\": 2512, \"terminal\": true, \"elapsed\": 105.85662388801575, \"cpu_seconds\": 105.766722863}\n{\"job\": 2760, \"terminal\": true, \"elapsed\": 40.10069012641907, \"cpu_seconds\": 40.077626166}\n{\"job\": 3008, \"terminal\": true, \"elapsed\": 139.43582320213318, \"cpu_seconds\": 139.34783396400002}\n{\"job\": 3256, \"terminal\": true, \"elapsed\": 80.57568740844727, \"cpu_seconds\": 80.52039872099999}\n{\"job\": 3504, \"terminal\": true, \"elapsed\": 88.18264961242676, \"cpu_seconds\": 88.12183512600001}\n{\"job\": 3752, \"terminal\": true, \"elapsed\": 115.65235638618469, \"cpu_seconds\": 115.57958992700003}\n{\"job\": 4000, \"terminal\": true, \"elapsed\": 101.46936893463135, \"cpu_seconds\": 101.39868030599996}\n{\"job\": 4248, \"terminal\": true, \"elapsed\": 113.3086256980896, \"cpu_seconds\": 113.23296980999999}\n{\"job\": 4496, \"terminal\": true, \"elapsed\": 203.486656665802, \"cpu_seconds\": 203.36005657499993}\n{\"job\": 4744, \"terminal\": true, \"elapsed\": 37.52249836921692, \"cpu_seconds\": 37.50408211099989}\nUser time (seconds): 1025.846803\nSystem time (seconds): 1.107264\nMaximum resident set size (kbytes): 993160\nElapsed seconds: 1027.6358678340912\n"
+        },
+        "33": {
+          "exit": "0",
+          "label": "s1-confirm-33-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425634.8270946
+          },
+          "log": "{\"job\": 2513, \"terminal\": true, \"elapsed\": 51.749347448349, \"cpu_seconds\": 51.707341637999995}\n{\"job\": 2761, \"terminal\": true, \"elapsed\": 36.42558479309082, \"cpu_seconds\": 36.402644347000006}\n{\"job\": 3009, \"terminal\": true, \"elapsed\": 169.89829063415527, \"cpu_seconds\": 169.78337249900002}\n{\"job\": 3257, \"terminal\": true, \"elapsed\": 102.73471021652222, \"cpu_seconds\": 102.66874547200001}\n{\"job\": 3505, \"terminal\": true, \"elapsed\": 77.2437629699707, \"cpu_seconds\": 77.193556693}\n{\"job\": 3753, \"terminal\": true, \"elapsed\": 106.10419130325317, \"cpu_seconds\": 106.03072739400005}\n{\"job\": 4001, \"terminal\": true, \"elapsed\": 99.35108971595764, \"cpu_seconds\": 99.283519641}\n{\"job\": 4249, \"terminal\": true, \"elapsed\": 140.6239550113678, \"cpu_seconds\": 140.52504190799993}\n{\"job\": 4497, \"terminal\": true, \"elapsed\": 85.4683449268341, \"cpu_seconds\": 85.410831089}\n{\"job\": 4745, \"terminal\": true, \"elapsed\": 37.2487907409668, \"cpu_seconds\": 37.22827036199999}\nUser time (seconds): 905.611166\nSystem time (seconds): 2.730152\nMaximum resident set size (kbytes): 1006804\nElapsed seconds: 908.9557538032532\n"
+        },
+        "34": {
+          "exit": "0",
+          "label": "s1-confirm-34-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425620.8260767
+          },
+          "log": "{\"job\": 3010, \"terminal\": true, \"elapsed\": 159.34880900382996, \"cpu_seconds\": 159.229159403}\n{\"job\": 3258, \"terminal\": true, \"elapsed\": 91.12851309776306, \"cpu_seconds\": 91.066506892}\n{\"job\": 3506, \"terminal\": true, \"elapsed\": 98.88544964790344, \"cpu_seconds\": 98.819183157}\n{\"job\": 3754, \"terminal\": true, \"elapsed\": 88.90729641914368, \"cpu_seconds\": 88.843889343}\n{\"job\": 4002, \"terminal\": true, \"elapsed\": 80.75449848175049, \"cpu_seconds\": 80.701345849}\n{\"job\": 4250, \"terminal\": true, \"elapsed\": 161.114182472229, \"cpu_seconds\": 161.00432144400008}\n{\"job\": 4498, \"terminal\": true, \"elapsed\": 174.0103416442871, \"cpu_seconds\": 173.89523233}\n{\"job\": 4746, \"terminal\": true, \"elapsed\": 39.142032623291016, \"cpu_seconds\": 39.11769398499996}\nUser time (seconds): 893.178647\nSystem time (seconds): 1.151204\nMaximum resident set size (kbytes): 1249536\nElapsed seconds: 894.9436273574829\n"
+        },
+        "35": {
+          "exit": "0",
+          "label": "s1-confirm-35-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425824.266221
+          },
+          "log": "{\"job\": 2267, \"terminal\": true, \"elapsed\": 82.68817067146301, \"cpu_seconds\": 82.614994595}\n{\"job\": 2515, \"terminal\": true, \"elapsed\": 108.28103017807007, \"cpu_seconds\": 108.21244519700001}\n{\"job\": 2763, \"terminal\": true, \"elapsed\": 93.62944006919861, \"cpu_seconds\": 93.57366765199998}\n{\"job\": 3011, \"terminal\": true, \"elapsed\": 147.4249963760376, \"cpu_seconds\": 147.32639571299995}\n{\"job\": 3259, \"terminal\": true, \"elapsed\": 92.57547974586487, \"cpu_seconds\": 92.51576120700003}\n{\"job\": 3507, \"terminal\": true, \"elapsed\": 73.81524181365967, \"cpu_seconds\": 73.76791389899995}\n{\"job\": 3755, \"terminal\": true, \"elapsed\": 101.39859318733215, \"cpu_seconds\": 101.33273857899997}\n{\"job\": 4003, \"terminal\": true, \"elapsed\": 66.17978096008301, \"cpu_seconds\": 66.13459101700005}\n{\"job\": 4251, \"terminal\": true, \"elapsed\": 160.33291840553284, \"cpu_seconds\": 160.247428883}\n{\"job\": 4499, \"terminal\": true, \"elapsed\": 126.4801766872406, \"cpu_seconds\": 126.4148251150001}\n{\"job\": 4747, \"terminal\": true, \"elapsed\": 43.35025477409363, \"cpu_seconds\": 43.328373016999876}\nUser time (seconds): 1096.07337\nSystem time (seconds): 1.610984\nMaximum resident set size (kbytes): 1090252\nElapsed seconds: 1098.3725905418396\n"
+        },
+        "36": {
+          "exit": "0",
+          "label": "s1-confirm-36-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425336.7854364
+          },
+          "log": "{\"job\": 3756, \"terminal\": true, \"elapsed\": 89.70557761192322, \"cpu_seconds\": 89.628709529}\n{\"job\": 4004, \"terminal\": true, \"elapsed\": 118.33024287223816, \"cpu_seconds\": 118.25303626}\n{\"job\": 4252, \"terminal\": true, \"elapsed\": 153.1193549633026, \"cpu_seconds\": 153.01212052099999}\n{\"job\": 4500, \"terminal\": true, \"elapsed\": 110.5016279220581, \"cpu_seconds\": 110.43204001199996}\n{\"job\": 4748, \"terminal\": true, \"elapsed\": 138.14687299728394, \"cpu_seconds\": 138.05221223600006}\nUser time (seconds): 609.280384\nSystem time (seconds): 1.175175\nMaximum resident set size (kbytes): 1239952\nElapsed seconds: 610.8804805278778\n"
+        },
+        "37": {
+          "exit": "0",
+          "label": "s1-confirm-37-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425443.1432416
+          },
+          "log": "{\"job\": 3261, \"terminal\": true, \"elapsed\": 101.74992322921753, \"cpu_seconds\": 101.668151511}\n{\"job\": 3509, \"terminal\": true, \"elapsed\": 80.36427021026611, \"cpu_seconds\": 80.314841325}\n{\"job\": 3757, \"terminal\": true, \"elapsed\": 72.36447048187256, \"cpu_seconds\": 72.32176907000002}\n{\"job\": 4005, \"terminal\": true, \"elapsed\": 97.91632533073425, \"cpu_seconds\": 97.85343438799998}\n{\"job\": 4253, \"terminal\": true, \"elapsed\": 167.81753945350647, \"cpu_seconds\": 167.71438349799996}\n{\"job\": 4501, \"terminal\": true, \"elapsed\": 78.00747680664062, \"cpu_seconds\": 77.95995167900003}\n{\"job\": 4749, \"terminal\": true, \"elapsed\": 117.55391716957092, \"cpu_seconds\": 117.48895658499998}\nUser time (seconds): 715.21181\nSystem time (seconds): 1.563011\nMaximum resident set size (kbytes): 991288\nElapsed seconds: 717.2271909713745\n"
+        },
+        "38": {
+          "exit": "0",
+          "label": "s1-confirm-38-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425729.8804133
+          },
+          "log": "{\"job\": 3014, \"terminal\": true, \"elapsed\": 93.22231721878052, \"cpu_seconds\": 93.146888026}\n{\"job\": 3262, \"terminal\": true, \"elapsed\": 89.3155107498169, \"cpu_seconds\": 89.261940164}\n{\"job\": 3510, \"terminal\": true, \"elapsed\": 95.2661612033844, \"cpu_seconds\": 95.19502341999998}\n{\"job\": 3758, \"terminal\": true, \"elapsed\": 135.180650472641, \"cpu_seconds\": 135.09537881100005}\n{\"job\": 4006, \"terminal\": true, \"elapsed\": 167.79104924201965, \"cpu_seconds\": 167.67908178800002}\n{\"job\": 4254, \"terminal\": true, \"elapsed\": 154.21863460540771, \"cpu_seconds\": 154.11938576599994}\n{\"job\": 4502, \"terminal\": true, \"elapsed\": 169.14671659469604, \"cpu_seconds\": 169.02677955599995}\n{\"job\": 4750, \"terminal\": true, \"elapsed\": 98.08189678192139, \"cpu_seconds\": 98.01772870700006}\nUser time (seconds): 1001.104043\nSystem time (seconds): 2.166537\nMaximum resident set size (kbytes): 1055320\nElapsed seconds: 1003.9531402587891\n"
+        },
+        "39": {
+          "exit": "0",
+          "label": "s1-confirm-39-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425501.6385634
+          },
+          "log": "{\"job\": 3263, \"terminal\": true, \"elapsed\": 116.03122329711914, \"cpu_seconds\": 115.93476086400001}\n{\"job\": 3511, \"terminal\": true, \"elapsed\": 82.93685460090637, \"cpu_seconds\": 82.88828653099999}\n{\"job\": 3759, \"terminal\": true, \"elapsed\": 84.59106254577637, \"cpu_seconds\": 84.53305192799999}\n{\"job\": 4007, \"terminal\": true, \"elapsed\": 162.07723903656006, \"cpu_seconds\": 161.96890088599997}\n{\"job\": 4255, \"terminal\": true, \"elapsed\": 149.96523690223694, \"cpu_seconds\": 149.86348933500005}\n{\"job\": 4503, \"terminal\": true, \"elapsed\": 85.94306802749634, \"cpu_seconds\": 85.89211540199994}\n{\"job\": 4751, \"terminal\": true, \"elapsed\": 92.53930282592773, \"cpu_seconds\": 92.47141035699997}\nUser time (seconds): 773.740559\nSystem time (seconds): 1.427019\nMaximum resident set size (kbytes): 997752\nElapsed seconds: 775.6997246742249\n"
+        },
+        "40": {
+          "exit": "0",
+          "label": "s1-confirm-40-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425680.7139688
+          },
+          "log": "{\"job\": 2768, \"terminal\": true, \"elapsed\": 154.88204169273376, \"cpu_seconds\": 154.74491907299998}\n{\"job\": 3016, \"terminal\": true, \"elapsed\": 88.64327383041382, \"cpu_seconds\": 88.592893857}\n{\"job\": 3264, \"terminal\": true, \"elapsed\": 39.6404972076416, \"cpu_seconds\": 39.61551289299999}\n{\"job\": 3512, \"terminal\": true, \"elapsed\": 93.66513586044312, \"cpu_seconds\": 93.60976479600004}\n{\"job\": 3760, \"terminal\": true, \"elapsed\": 135.06952095031738, \"cpu_seconds\": 134.97973962500004}\n{\"job\": 4008, \"terminal\": true, \"elapsed\": 75.44298434257507, \"cpu_seconds\": 75.38863116599998}\n{\"job\": 4256, \"terminal\": true, \"elapsed\": 181.22767639160156, \"cpu_seconds\": 181.10556694599995}\n{\"job\": 4504, \"terminal\": true, \"elapsed\": 115.66680932044983, \"cpu_seconds\": 115.59224274899998}\n{\"job\": 4752, \"terminal\": true, \"elapsed\": 68.65224552154541, \"cpu_seconds\": 68.61433585400005}\nUser time (seconds): 952.725474\nSystem time (seconds): 1.3910559999999998\nMaximum resident set size (kbytes): 1082848\nElapsed seconds: 954.7635717391968\n"
+        },
+        "41": {
+          "exit": "0",
+          "label": "s1-confirm-41-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425552.070208
+          },
+          "log": "{\"job\": 3017, \"terminal\": true, \"elapsed\": 102.41931343078613, \"cpu_seconds\": 102.34292160599999}\n{\"job\": 3265, \"terminal\": true, \"elapsed\": 40.74853229522705, \"cpu_seconds\": 40.723541250999986}\n{\"job\": 3513, \"terminal\": true, \"elapsed\": 75.81439805030823, \"cpu_seconds\": 75.76499730199998}\n{\"job\": 3761, \"terminal\": true, \"elapsed\": 123.75141716003418, \"cpu_seconds\": 123.66771283700001}\n{\"job\": 4009, \"terminal\": true, \"elapsed\": 86.67607998847961, \"cpu_seconds\": 86.61874533600002}\n{\"job\": 4257, \"terminal\": true, \"elapsed\": 201.49485087394714, \"cpu_seconds\": 201.36334017099995}\n{\"job\": 4505, \"terminal\": true, \"elapsed\": 93.45775604248047, \"cpu_seconds\": 93.39470642699996}\n{\"job\": 4753, \"terminal\": true, \"elapsed\": 100.13300251960754, \"cpu_seconds\": 100.06127328900004}\nUser time (seconds): 824.290868\nSystem time (seconds): 1.259142\nMaximum resident set size (kbytes): 984476\nElapsed seconds: 826.1084623336792\n"
+        },
+        "42": {
+          "exit": "0",
+          "label": "s1-confirm-42-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425836.935778
+          },
+          "log": "{\"job\": 2770, \"terminal\": true, \"elapsed\": 139.82233786582947, \"cpu_seconds\": 139.714639618}\n{\"job\": 3018, \"terminal\": true, \"elapsed\": 89.48125123977661, \"cpu_seconds\": 89.42226782700001}\n{\"job\": 3266, \"terminal\": true, \"elapsed\": 46.0637481212616, \"cpu_seconds\": 46.030756693}\n{\"job\": 3514, \"terminal\": true, \"elapsed\": 96.95891094207764, \"cpu_seconds\": 96.88688578299997}\n{\"job\": 3762, \"terminal\": true, \"elapsed\": 113.0764672756195, \"cpu_seconds\": 113.00499828200003}\n{\"job\": 4010, \"terminal\": true, \"elapsed\": 129.21444964408875, \"cpu_seconds\": 129.13027556299994}\n{\"job\": 4258, \"terminal\": true, \"elapsed\": 182.3442997932434, \"cpu_seconds\": 182.219867003}\n{\"job\": 4506, \"terminal\": true, \"elapsed\": 71.85006761550903, \"cpu_seconds\": 71.80486276199997}\n{\"job\": 4754, \"terminal\": true, \"elapsed\": 240.30427193641663, \"cpu_seconds\": 240.16448143399998}\nUser time (seconds): 1108.134201\nSystem time (seconds): 2.090608\nMaximum resident set size (kbytes): 1203316\nElapsed seconds: 1110.962203502655\n"
+        },
+        "43": {
+          "exit": "0",
+          "label": "s1-confirm-43-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425644.1674967
+          },
+          "log": "{\"job\": 3019, \"terminal\": true, \"elapsed\": 99.61050415039062, \"cpu_seconds\": 99.529884524}\n{\"job\": 3267, \"terminal\": true, \"elapsed\": 64.55101823806763, \"cpu_seconds\": 64.51397485500001}\n{\"job\": 3515, \"terminal\": true, \"elapsed\": 92.45059585571289, \"cpu_seconds\": 92.38910283299998}\n{\"job\": 3763, \"terminal\": true, \"elapsed\": 78.53909492492676, \"cpu_seconds\": 78.48606556099998}\n{\"job\": 4011, \"terminal\": true, \"elapsed\": 142.648766040802, \"cpu_seconds\": 142.55165243200003}\n{\"job\": 4259, \"terminal\": true, \"elapsed\": 194.8304636478424, \"cpu_seconds\": 194.70259913900003}\n{\"job\": 4507, \"terminal\": true, \"elapsed\": 88.57696175575256, \"cpu_seconds\": 88.51593878599999}\n{\"job\": 4755, \"terminal\": true, \"elapsed\": 155.3167700767517, \"cpu_seconds\": 155.21846544100003}\nUser time (seconds): 915.706555\nSystem time (seconds): 1.858746\nMaximum resident set size (kbytes): 1136036\nElapsed seconds: 918.1826646327972\n"
+        },
+        "44": {
+          "exit": "0",
+          "label": "s1-confirm-44-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791425674.7563288
+          },
+          "log": "{\"job\": 3020, \"terminal\": true, \"elapsed\": 132.365713596344, \"cpu_seconds\": 132.26791292299998}\n{\"job\": 3268, \"terminal\": true, \"elapsed\": 53.10425591468811, \"cpu_seconds\": 53.07156338599998}\n{\"job\": 3516, \"terminal\": true, \"elapsed\": 42.23604989051819, \"cpu_seconds\": 42.211291324}\n{\"job\": 3764, \"terminal\": true, \"elapsed\": 139.06445407867432, \"cpu_seconds\": 138.973566005}\n{\"job\": 4012, \"terminal\": true, \"elapsed\": 79.04570388793945, \"cpu_seconds\": 78.99412274300005}\n{\"job\": 4260, \"terminal\": true, \"elapsed\": 161.99494814872742, \"cpu_seconds\": 161.89739948299996}\n{\"job\": 4508, \"terminal\": true, \"elapsed\": 209.63107419013977, \"cpu_seconds\": 209.49457154699996}\n{\"job\": 4756, \"terminal\": true, \"elapsed\": 129.6795518398285, \"cpu_seconds\": 129.60299789200008}\nUser time (seconds): 947.135305\nSystem time (seconds): 1.015351\nMaximum resident set size (kbytes): 1161980\nElapsed seconds: 948.7596437931061\n"
+        },
+        "45": {
+          "exit": "0",
+          "label": "s1-confirm-45-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791426550.5345013
+          },
+          "log": "{\"job\": 2277, \"terminal\": true, \"elapsed\": 201.2031855583191, \"cpu_seconds\": 201.072058579}\n{\"job\": 2525, \"terminal\": true, \"elapsed\": 191.73391008377075, \"cpu_seconds\": 191.61411132700002}\n{\"job\": 2773, \"terminal\": true, \"elapsed\": 74.68656587600708, \"cpu_seconds\": 74.645363642}\n{\"job\": 3021, \"terminal\": true, \"elapsed\": 155.67961287498474, \"cpu_seconds\": 155.59401131600004}\n{\"job\": 3269, \"terminal\": true, \"elapsed\": 33.81310820579529, \"cpu_seconds\": 33.79765462800003}\n{\"job\": 3517, \"terminal\": true, \"elapsed\": 32.892049074172974, \"cpu_seconds\": 32.87734303800005}\n{\"job\": 3765, \"terminal\": true, \"elapsed\": 92.09826016426086, \"cpu_seconds\": 92.05145178499993}\n{\"job\": 4013, \"terminal\": true, \"elapsed\": 76.91809868812561, \"cpu_seconds\": 76.87614136599996}\n{\"job\": 4261, \"terminal\": true, \"elapsed\": 139.95761823654175, \"cpu_seconds\": 139.88875997899993}\n{\"job\": 4509, \"terminal\": true, \"elapsed\": 110.78751516342163, \"cpu_seconds\": 110.72376360999999}\n{\"job\": 4757, \"terminal\": true, \"elapsed\": 100.69639086723328, \"cpu_seconds\": 100.6292452570001}\nUser time (seconds): 1208.333467\nSystem time (seconds): 3.350063\nMaximum resident set size (kbytes): 1104196\nElapsed seconds: 1212.3804993629456\n"
+        },
+        "46": {
+          "exit": "0",
+          "label": "s1-confirm-46-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791426381.4134374
+          },
+          "log": "{\"job\": 2774, \"terminal\": true, \"elapsed\": 162.82282161712646, \"cpu_seconds\": 162.72103886399998}\n{\"job\": 3022, \"terminal\": true, \"elapsed\": 115.26930809020996, \"cpu_seconds\": 115.20364009}\n{\"job\": 3270, \"terminal\": true, \"elapsed\": 40.00169634819031, \"cpu_seconds\": 39.97929727799999}\n{\"job\": 3518, \"terminal\": true, \"elapsed\": 38.52889442443848, \"cpu_seconds\": 38.50838747399996}\n{\"job\": 3766, \"terminal\": true, \"elapsed\": 123.65315556526184, \"cpu_seconds\": 123.593658361}\n{\"job\": 4014, \"terminal\": true, \"elapsed\": 122.08681964874268, \"cpu_seconds\": 122.03034996499997}\n{\"job\": 4262, \"terminal\": true, \"elapsed\": 143.99614477157593, \"cpu_seconds\": 143.93080905499994}\n{\"job\": 4510, \"terminal\": true, \"elapsed\": 96.58987879753113, \"cpu_seconds\": 96.52813762999995}\n{\"job\": 4758, \"terminal\": true, \"elapsed\": 91.6472978591919, \"cpu_seconds\": 91.59182480599998}\nUser time (seconds): 934.205486\nSystem time (seconds): 1.5071759999999998\nMaximum resident set size (kbytes): 1080752\nElapsed seconds: 936.2216231822968\n"
+        },
+        "47": {
+          "exit": "0",
+          "label": "s1-confirm-47-r2e",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791426225.1694965
+          },
+          "log": "{\"job\": 3023, \"terminal\": true, \"elapsed\": 108.31530594825745, \"cpu_seconds\": 108.246010458}\n{\"job\": 3271, \"terminal\": true, \"elapsed\": 57.16360259056091, \"cpu_seconds\": 57.128597600000006}\n{\"job\": 3519, \"terminal\": true, \"elapsed\": 36.53462815284729, \"cpu_seconds\": 36.514568129}\n{\"job\": 3767, \"terminal\": true, \"elapsed\": 121.48236131668091, \"cpu_seconds\": 121.41302460599996}\n{\"job\": 4015, \"terminal\": true, \"elapsed\": 79.3813886642456, \"cpu_seconds\": 79.33910215700001}\n{\"job\": 4263, \"terminal\": true, \"elapsed\": 131.5245966911316, \"cpu_seconds\": 131.45931445699995}\n{\"job\": 4511, \"terminal\": true, \"elapsed\": 88.73420071601868, \"cpu_seconds\": 88.69224618700002}\n{\"job\": 4759, \"terminal\": true, \"elapsed\": 97.34876775741577, \"cpu_seconds\": 97.292248922}\nUser time (seconds): 720.730571\nSystem time (seconds): 0.8195429999999999\nMaximum resident set size (kbytes): 943936\nElapsed seconds: 721.949768781662\n"
+        }
+      },
+      "launch": {
+        "workers": [
+          {
+            "index": 0,
+            "label": "s1-confirm-0-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 1,
+            "label": "s1-confirm-1-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 2,
+            "label": "s1-confirm-2-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 3,
+            "label": "s1-confirm-3-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 4,
+            "label": "s1-confirm-4-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 5,
+            "label": "s1-confirm-5-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 6,
+            "label": "s1-confirm-6-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 7,
+            "label": "s1-confirm-7-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 8,
+            "label": "s1-confirm-8-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 9,
+            "label": "s1-confirm-9-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 10,
+            "label": "s1-confirm-10-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 11,
+            "label": "s1-confirm-11-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 12,
+            "label": "s1-confirm-12-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 13,
+            "label": "s1-confirm-13-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 14,
+            "label": "s1-confirm-14-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 15,
+            "label": "s1-confirm-15-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 16,
+            "label": "s1-confirm-16-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 17,
+            "label": "s1-confirm-17-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 18,
+            "label": "s1-confirm-18-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 19,
+            "label": "s1-confirm-19-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 20,
+            "label": "s1-confirm-20-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 21,
+            "label": "s1-confirm-21-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 22,
+            "label": "s1-confirm-22-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 23,
+            "label": "s1-confirm-23-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 24,
+            "label": "s1-confirm-24-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 25,
+            "label": "s1-confirm-25-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 26,
+            "label": "s1-confirm-26-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 27,
+            "label": "s1-confirm-27-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 28,
+            "label": "s1-confirm-28-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 29,
+            "label": "s1-confirm-29-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 30,
+            "label": "s1-confirm-30-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 31,
+            "label": "s1-confirm-31-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 32,
+            "label": "s1-confirm-32-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 33,
+            "label": "s1-confirm-33-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 34,
+            "label": "s1-confirm-34-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 35,
+            "label": "s1-confirm-35-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 36,
+            "label": "s1-confirm-36-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 37,
+            "label": "s1-confirm-37-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 38,
+            "label": "s1-confirm-38-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 39,
+            "label": "s1-confirm-39-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 40,
+            "label": "s1-confirm-40-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 41,
+            "label": "s1-confirm-41-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 42,
+            "label": "s1-confirm-42-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 43,
+            "label": "s1-confirm-43-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 44,
+            "label": "s1-confirm-44-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 45,
+            "label": "s1-confirm-45-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 46,
+            "label": "s1-confirm-46-r2e",
+            "host": "127x04"
+          },
+          {
+            "index": 47,
+            "label": "s1-confirm-47-r2e",
+            "host": "127x04"
+          }
+        ],
+        "launched_at": 1791424725.5256782,
+        "who": "",
+        "concurrency": 45
+      }
+    },
+    "r2f": {
+      "supervisor_exit": "0",
+      "pid": "2269621",
+      "partitions": {
+        "48": {
+          "exit": "0",
+          "label": "s1-confirm-48-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428961.1719935
+          },
+          "log": "{\"job\": 48, \"terminal\": true, \"elapsed\": 138.1098997592926, \"cpu_seconds\": 138.032462484}\n{\"job\": 296, \"terminal\": true, \"elapsed\": 165.8883719444275, \"cpu_seconds\": 165.78150186300002}\n{\"job\": 544, \"terminal\": true, \"elapsed\": 120.38801336288452, \"cpu_seconds\": 120.31779419399999}\n{\"job\": 792, \"terminal\": true, \"elapsed\": 91.48085880279541, \"cpu_seconds\": 91.42525578799996}\n{\"job\": 1040, \"terminal\": true, \"elapsed\": 178.1552255153656, \"cpu_seconds\": 178.04565583199997}\n{\"job\": 1288, \"terminal\": true, \"elapsed\": 36.45094847679138, \"cpu_seconds\": 36.42852727799993}\n{\"job\": 1536, \"terminal\": true, \"elapsed\": 35.69505524635315, \"cpu_seconds\": 35.67617817300004}\n{\"job\": 1784, \"terminal\": true, \"elapsed\": 98.43338894844055, \"cpu_seconds\": 98.37647673900005}\n{\"job\": 2032, \"terminal\": true, \"elapsed\": 104.4011242389679, \"cpu_seconds\": 104.33881421300009}\n{\"job\": 2280, \"terminal\": true, \"elapsed\": 139.8943955898285, \"cpu_seconds\": 139.81504921200008}\n{\"job\": 2528, \"terminal\": true, \"elapsed\": 150.94478797912598, \"cpu_seconds\": 150.85918339699992}\n{\"job\": 2776, \"terminal\": true, \"elapsed\": 137.42535018920898, \"cpu_seconds\": 137.35428609899986}\n{\"job\": 3024, \"terminal\": true, \"elapsed\": 121.52283263206482, \"cpu_seconds\": 121.45344245499996}\n{\"job\": 3272, \"terminal\": true, \"elapsed\": 197.76190876960754, \"cpu_seconds\": 197.64931473399997}\n{\"job\": 3520, \"terminal\": true, \"elapsed\": 39.51085710525513, \"cpu_seconds\": 39.488970996000035}\n{\"job\": 3768, \"terminal\": true, \"elapsed\": 78.44970297813416, \"cpu_seconds\": 78.40366412699996}\n{\"job\": 4016, \"terminal\": true, \"elapsed\": 76.69026303291321, \"cpu_seconds\": 76.64749425100013}\n{\"job\": 4264, \"terminal\": true, \"elapsed\": 163.48044443130493, \"cpu_seconds\": 163.384161276}\n{\"job\": 4512, \"terminal\": true, \"elapsed\": 84.32890844345093, \"cpu_seconds\": 84.28582972599997}\n{\"job\": 4760, \"terminal\": true, \"elapsed\": 173.16610288619995, \"cpu_seconds\": 173.06935645999965}\nUser time (seconds): 2329.87775\nSystem time (seconds): 4.837204\nMaximum resident set size (kbytes): 1183408\nElapsed seconds: 2336.0631556510925\n"
+        },
+        "49": {
+          "exit": "0",
+          "label": "s1-confirm-49-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428713.4872077
+          },
+          "log": "{\"job\": 49, \"terminal\": true, \"elapsed\": 143.13263750076294, \"cpu_seconds\": 143.051981766}\n{\"job\": 297, \"terminal\": true, \"elapsed\": 157.90372276306152, \"cpu_seconds\": 157.807025581}\n{\"job\": 545, \"terminal\": true, \"elapsed\": 120.13654136657715, \"cpu_seconds\": 120.06725198799995}\n{\"job\": 793, \"terminal\": true, \"elapsed\": 75.00174760818481, \"cpu_seconds\": 74.956191311}\n{\"job\": 1041, \"terminal\": true, \"elapsed\": 79.6429340839386, \"cpu_seconds\": 79.59367425399995}\n{\"job\": 1289, \"terminal\": true, \"elapsed\": 80.72742581367493, \"cpu_seconds\": 80.68191841600003}\n{\"job\": 1537, \"terminal\": true, \"elapsed\": 39.29393935203552, \"cpu_seconds\": 39.27035639400003}\n{\"job\": 1785, \"terminal\": true, \"elapsed\": 76.63941526412964, \"cpu_seconds\": 76.58740257600004}\n{\"job\": 2033, \"terminal\": true, \"elapsed\": 82.44611525535583, \"cpu_seconds\": 82.39086014199995}\n{\"job\": 2281, \"terminal\": true, \"elapsed\": 124.62752723693848, \"cpu_seconds\": 124.55036595999991}\n{\"job\": 2529, \"terminal\": true, \"elapsed\": 161.00422954559326, \"cpu_seconds\": 160.8999281539999}\n{\"job\": 2777, \"terminal\": true, \"elapsed\": 145.91045880317688, \"cpu_seconds\": 145.8147130220002}\n{\"job\": 3025, \"terminal\": true, \"elapsed\": 127.1384425163269, \"cpu_seconds\": 127.06315202500014}\n{\"job\": 3273, \"terminal\": true, \"elapsed\": 97.14375853538513, \"cpu_seconds\": 97.077532754}\n{\"job\": 3521, \"terminal\": true, \"elapsed\": 41.379849433898926, \"cpu_seconds\": 41.35517431800008}\n{\"job\": 3769, \"terminal\": true, \"elapsed\": 82.1317310333252, \"cpu_seconds\": 82.08051118999992}\n{\"job\": 4017, \"terminal\": true, \"elapsed\": 99.03719568252563, \"cpu_seconds\": 98.97489756499999}\n{\"job\": 4265, \"terminal\": true, \"elapsed\": 157.6035978794098, \"cpu_seconds\": 157.5038892990001}\n{\"job\": 4513, \"terminal\": true, \"elapsed\": 81.4174792766571, \"cpu_seconds\": 81.3681981090001}\n{\"job\": 4761, \"terminal\": true, \"elapsed\": 112.13166451454163, \"cpu_seconds\": 112.05866262199993}\nUser time (seconds): 2081.87879\nSystem time (seconds): 5.184769\nMaximum resident set size (kbytes): 1042872\nElapsed seconds: 2088.3634510040283\n"
+        },
+        "50": {
+          "exit": "0",
+          "label": "s1-confirm-50-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428742.1869156
+          },
+          "log": "{\"job\": 50, \"terminal\": true, \"elapsed\": 108.88828778266907, \"cpu_seconds\": 108.81549384}\n{\"job\": 298, \"terminal\": true, \"elapsed\": 182.5717487335205, \"cpu_seconds\": 182.46213735400002}\n{\"job\": 546, \"terminal\": true, \"elapsed\": 70.24278664588928, \"cpu_seconds\": 70.20404665000001}\n{\"job\": 794, \"terminal\": true, \"elapsed\": 90.50669765472412, \"cpu_seconds\": 90.453773614}\n{\"job\": 1042, \"terminal\": true, \"elapsed\": 121.36232304573059, \"cpu_seconds\": 121.29207366900005}\n{\"job\": 1290, \"terminal\": true, \"elapsed\": 38.97152829170227, \"cpu_seconds\": 38.94896719099995}\n{\"job\": 1538, \"terminal\": true, \"elapsed\": 40.206180810928345, \"cpu_seconds\": 40.184515798999996}\n{\"job\": 1786, \"terminal\": true, \"elapsed\": 92.28458380699158, \"cpu_seconds\": 92.22563771300008}\n{\"job\": 2034, \"terminal\": true, \"elapsed\": 92.18135833740234, \"cpu_seconds\": 92.12471781700003}\n{\"job\": 2282, \"terminal\": true, \"elapsed\": 149.74451732635498, \"cpu_seconds\": 149.65187342499996}\n{\"job\": 2530, \"terminal\": true, \"elapsed\": 158.42849278450012, \"cpu_seconds\": 158.32380337000006}\n{\"job\": 2778, \"terminal\": true, \"elapsed\": 145.6671109199524, \"cpu_seconds\": 145.57110273600006}\n{\"job\": 3026, \"terminal\": true, \"elapsed\": 146.9097740650177, \"cpu_seconds\": 146.82395813200014}\n{\"job\": 3274, \"terminal\": true, \"elapsed\": 89.01881670951843, \"cpu_seconds\": 88.9614605029999}\n{\"job\": 3522, \"terminal\": true, \"elapsed\": 42.37459707260132, \"cpu_seconds\": 42.351545690999956}\n{\"job\": 3770, \"terminal\": true, \"elapsed\": 81.06397533416748, \"cpu_seconds\": 81.01930851299994}\n{\"job\": 4018, \"terminal\": true, \"elapsed\": 72.49912190437317, \"cpu_seconds\": 72.45085979400005}\n{\"job\": 4266, \"terminal\": true, \"elapsed\": 149.0352258682251, \"cpu_seconds\": 148.95209709699998}\n{\"job\": 4514, \"terminal\": true, \"elapsed\": 99.59018611907959, \"cpu_seconds\": 99.5342501959999}\n{\"job\": 4762, \"terminal\": true, \"elapsed\": 141.62461233139038, \"cpu_seconds\": 141.53797764799992}\nUser time (seconds): 2112.932054\nSystem time (seconds): 2.83028\nMaximum resident set size (kbytes): 1097692\nElapsed seconds: 2117.0484204292297\n"
+        },
+        "51": {
+          "exit": "0",
+          "label": "s1-confirm-51-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429003.213752
+          },
+          "log": "{\"job\": 51, \"terminal\": true, \"elapsed\": 221.56820392608643, \"cpu_seconds\": 221.43642198100002}\n{\"job\": 299, \"terminal\": true, \"elapsed\": 272.20916295051575, \"cpu_seconds\": 272.05622554499996}\n{\"job\": 547, \"terminal\": true, \"elapsed\": 64.68027925491333, \"cpu_seconds\": 64.643912758}\n{\"job\": 795, \"terminal\": true, \"elapsed\": 161.8009295463562, \"cpu_seconds\": 161.7057086819999}\n{\"job\": 1043, \"terminal\": true, \"elapsed\": 116.93045091629028, \"cpu_seconds\": 116.85578403400007}\n{\"job\": 1291, \"terminal\": true, \"elapsed\": 79.31874299049377, \"cpu_seconds\": 79.27202377799995}\n{\"job\": 1539, \"terminal\": true, \"elapsed\": 47.31448030471802, \"cpu_seconds\": 47.28749612199999}\n{\"job\": 1787, \"terminal\": true, \"elapsed\": 72.47613286972046, \"cpu_seconds\": 72.42703934899998}\n{\"job\": 2035, \"terminal\": true, \"elapsed\": 71.47397541999817, \"cpu_seconds\": 71.42624527299995}\n{\"job\": 2283, \"terminal\": true, \"elapsed\": 121.2477879524231, \"cpu_seconds\": 121.17059858199991}\n{\"job\": 2531, \"terminal\": true, \"elapsed\": 91.75587034225464, \"cpu_seconds\": 91.698306581}\n{\"job\": 2779, \"terminal\": true, \"elapsed\": 127.47654700279236, \"cpu_seconds\": 127.39873290299988}\n{\"job\": 3027, \"terminal\": true, \"elapsed\": 244.19910764694214, \"cpu_seconds\": 244.0483135080001}\n{\"job\": 3275, \"terminal\": true, \"elapsed\": 100.57653903961182, \"cpu_seconds\": 100.516909339}\n{\"job\": 3523, \"terminal\": true, \"elapsed\": 40.77355146408081, \"cpu_seconds\": 40.74809243300001}\n{\"job\": 3771, \"terminal\": true, \"elapsed\": 78.83682513237, \"cpu_seconds\": 78.7869222830002}\n{\"job\": 4019, \"terminal\": true, \"elapsed\": 75.07475996017456, \"cpu_seconds\": 75.02597567499993}\n{\"job\": 4267, \"terminal\": true, \"elapsed\": 155.4871642589569, \"cpu_seconds\": 155.385593019}\n{\"job\": 4515, \"terminal\": true, \"elapsed\": 112.42880988121033, \"cpu_seconds\": 112.36157945600007}\n{\"job\": 4763, \"terminal\": true, \"elapsed\": 118.58069467544556, \"cpu_seconds\": 118.51433140099971}\nUser time (seconds): 2373.171048\nSystem time (seconds): 3.441898\nMaximum resident set size (kbytes): 1120464\nElapsed seconds: 2378.0602900981903\n"
+        },
+        "52": {
+          "exit": "0",
+          "label": "s1-confirm-52-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429003.2288835
+          },
+          "log": "{\"job\": 52, \"terminal\": true, \"elapsed\": 216.90273928642273, \"cpu_seconds\": 216.761565652}\n{\"job\": 300, \"terminal\": true, \"elapsed\": 143.18792176246643, \"cpu_seconds\": 143.111422101}\n{\"job\": 548, \"terminal\": true, \"elapsed\": 215.93900060653687, \"cpu_seconds\": 215.80877605599994}\n{\"job\": 796, \"terminal\": true, \"elapsed\": 109.49774527549744, \"cpu_seconds\": 109.42750338899998}\n{\"job\": 1044, \"terminal\": true, \"elapsed\": 119.16284275054932, \"cpu_seconds\": 119.08863522399997}\n{\"job\": 1292, \"terminal\": true, \"elapsed\": 120.34319615364075, \"cpu_seconds\": 120.27080177900007}\n{\"job\": 1540, \"terminal\": true, \"elapsed\": 41.08058500289917, \"cpu_seconds\": 41.05679987000008}\n{\"job\": 1788, \"terminal\": true, \"elapsed\": 26.920056343078613, \"cpu_seconds\": 26.900259514999902}\n{\"job\": 2036, \"terminal\": true, \"elapsed\": 104.56871223449707, \"cpu_seconds\": 104.4972114090001}\n{\"job\": 2284, \"terminal\": true, \"elapsed\": 151.852774143219, \"cpu_seconds\": 151.75213896600008}\n{\"job\": 2532, \"terminal\": true, \"elapsed\": 100.49498844146729, \"cpu_seconds\": 100.43105507899986}\n{\"job\": 2780, \"terminal\": true, \"elapsed\": 120.65302920341492, \"cpu_seconds\": 120.58238587999995}\n{\"job\": 3028, \"terminal\": true, \"elapsed\": 144.08763575553894, \"cpu_seconds\": 143.988614247}\n{\"job\": 3276, \"terminal\": true, \"elapsed\": 62.90623188018799, \"cpu_seconds\": 62.86875871500001}\n{\"job\": 3524, \"terminal\": true, \"elapsed\": 102.59535837173462, \"cpu_seconds\": 102.52946176}\n{\"job\": 3772, \"terminal\": true, \"elapsed\": 81.84425616264343, \"cpu_seconds\": 81.79661088299986}\n{\"job\": 4020, \"terminal\": true, \"elapsed\": 74.06496143341064, \"cpu_seconds\": 74.0204492370001}\n{\"job\": 4268, \"terminal\": true, \"elapsed\": 155.85194444656372, \"cpu_seconds\": 155.75554673400006}\n{\"job\": 4516, \"terminal\": true, \"elapsed\": 153.94716215133667, \"cpu_seconds\": 153.85101686300004}\n{\"job\": 4764, \"terminal\": true, \"elapsed\": 128.26238632202148, \"cpu_seconds\": 128.19128737699975}\nUser time (seconds): 2370.537851\nSystem time (seconds): 6.044231\nMaximum resident set size (kbytes): 1104532\nElapsed seconds: 2378.0604300498962\n"
+        },
+        "53": {
+          "exit": "0",
+          "label": "s1-confirm-53-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428915.3671079
+          },
+          "log": "{\"job\": 53, \"terminal\": true, \"elapsed\": 271.2996771335602, \"cpu_seconds\": 271.131934913}\n{\"job\": 301, \"terminal\": true, \"elapsed\": 140.6293752193451, \"cpu_seconds\": 140.55177156400003}\n{\"job\": 549, \"terminal\": true, \"elapsed\": 168.56948399543762, \"cpu_seconds\": 168.46632059299998}\n{\"job\": 797, \"terminal\": true, \"elapsed\": 99.6432433128357, \"cpu_seconds\": 99.58249311500003}\n{\"job\": 1045, \"terminal\": true, \"elapsed\": 79.03273892402649, \"cpu_seconds\": 78.98248336699999}\n{\"job\": 1293, \"terminal\": true, \"elapsed\": 118.82373213768005, \"cpu_seconds\": 118.74798693899993}\n{\"job\": 1541, \"terminal\": true, \"elapsed\": 53.42283320426941, \"cpu_seconds\": 53.39081488399995}\n{\"job\": 1789, \"terminal\": true, \"elapsed\": 27.430904150009155, \"cpu_seconds\": 27.415865295999993}\n{\"job\": 2037, \"terminal\": true, \"elapsed\": 111.47933745384216, \"cpu_seconds\": 111.4114008659999}\n{\"job\": 2285, \"terminal\": true, \"elapsed\": 138.81091499328613, \"cpu_seconds\": 138.72393703700004}\n{\"job\": 2533, \"terminal\": true, \"elapsed\": 105.58966565132141, \"cpu_seconds\": 105.52501782299987}\n{\"job\": 2781, \"terminal\": true, \"elapsed\": 200.90754222869873, \"cpu_seconds\": 200.78593181099995}\n{\"job\": 3029, \"terminal\": true, \"elapsed\": 143.57795572280884, \"cpu_seconds\": 143.50260937899998}\n{\"job\": 3277, \"terminal\": true, \"elapsed\": 65.45203518867493, \"cpu_seconds\": 65.41316310000002}\n{\"job\": 3525, \"terminal\": true, \"elapsed\": 115.20849990844727, \"cpu_seconds\": 115.14497047000009}\n{\"job\": 3773, \"terminal\": true, \"elapsed\": 80.8302412033081, \"cpu_seconds\": 80.782175048}\n{\"job\": 4021, \"terminal\": true, \"elapsed\": 79.06513047218323, \"cpu_seconds\": 79.0223924469999}\n{\"job\": 4269, \"terminal\": true, \"elapsed\": 90.64425349235535, \"cpu_seconds\": 90.59081597499994}\n{\"job\": 4517, \"terminal\": true, \"elapsed\": 90.52046275138855, \"cpu_seconds\": 90.46560809199991}\n{\"job\": 4765, \"terminal\": true, \"elapsed\": 105.36211371421814, \"cpu_seconds\": 105.303779631}\nUser time (seconds): 2284.399155\nSystem time (seconds): 4.421366\nMaximum resident set size (kbytes): 1129400\nElapsed seconds: 2290.183449745178\n"
+        },
+        "54": {
+          "exit": "0",
+          "label": "s1-confirm-54-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429073.609364
+          },
+          "log": "{\"job\": 54, \"terminal\": true, \"elapsed\": 132.75274682044983, \"cpu_seconds\": 132.686925646}\n{\"job\": 302, \"terminal\": true, \"elapsed\": 206.8270287513733, \"cpu_seconds\": 206.712368303}\n{\"job\": 550, \"terminal\": true, \"elapsed\": 137.00439929962158, \"cpu_seconds\": 136.930567538}\n{\"job\": 798, \"terminal\": true, \"elapsed\": 83.98503398895264, \"cpu_seconds\": 83.92901293500006}\n{\"job\": 1046, \"terminal\": true, \"elapsed\": 197.75365328788757, \"cpu_seconds\": 197.631347107}\n{\"job\": 1294, \"terminal\": true, \"elapsed\": 111.34555315971375, \"cpu_seconds\": 111.27668136499994}\n{\"job\": 1542, \"terminal\": true, \"elapsed\": 90.9184148311615, \"cpu_seconds\": 90.86611958399999}\n{\"job\": 1790, \"terminal\": true, \"elapsed\": 35.61401438713074, \"cpu_seconds\": 35.593374112000106}\n{\"job\": 2038, \"terminal\": true, \"elapsed\": 91.59222483634949, \"cpu_seconds\": 91.53156033899995}\n{\"job\": 2286, \"terminal\": true, \"elapsed\": 149.37156105041504, \"cpu_seconds\": 149.27183602800005}\n{\"job\": 2534, \"terminal\": true, \"elapsed\": 92.84106540679932, \"cpu_seconds\": 92.783081391}\n{\"job\": 2782, \"terminal\": true, \"elapsed\": 159.2860062122345, \"cpu_seconds\": 159.18741745400007}\n{\"job\": 3030, \"terminal\": true, \"elapsed\": 139.3826961517334, \"cpu_seconds\": 139.30128451199994}\n{\"job\": 3278, \"terminal\": true, \"elapsed\": 198.6335165500641, \"cpu_seconds\": 198.50664921800012}\n{\"job\": 3526, \"terminal\": true, \"elapsed\": 65.64437007904053, \"cpu_seconds\": 65.6047853959999}\n{\"job\": 3774, \"terminal\": true, \"elapsed\": 82.48283672332764, \"cpu_seconds\": 82.43435057600004}\n{\"job\": 4022, \"terminal\": true, \"elapsed\": 76.82507181167603, \"cpu_seconds\": 76.77448408700025}\n{\"job\": 4270, \"terminal\": true, \"elapsed\": 159.18694305419922, \"cpu_seconds\": 159.09519683000008}\n{\"job\": 4518, \"terminal\": true, \"elapsed\": 99.06103658676147, \"cpu_seconds\": 98.99833664900007}\n{\"job\": 4766, \"terminal\": true, \"elapsed\": 134.07190227508545, \"cpu_seconds\": 134.00377362200015}\nUser time (seconds): 2441.412595\nSystem time (seconds): 5.5326830000000005\nMaximum resident set size (kbytes): 1135460\nElapsed seconds: 2448.410260438919\n"
+        },
+        "55": {
+          "exit": "0",
+          "label": "s1-confirm-55-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428854.5782416
+          },
+          "log": "{\"job\": 55, \"terminal\": true, \"elapsed\": 53.670660734176636, \"cpu_seconds\": 53.635796398}\n{\"job\": 303, \"terminal\": true, \"elapsed\": 223.3240704536438, \"cpu_seconds\": 223.203367561}\n{\"job\": 551, \"terminal\": true, \"elapsed\": 140.48263001441956, \"cpu_seconds\": 140.41011132199998}\n{\"job\": 799, \"terminal\": true, \"elapsed\": 150.60636854171753, \"cpu_seconds\": 150.52418412300005}\n{\"job\": 1047, \"terminal\": true, \"elapsed\": 126.26267623901367, \"cpu_seconds\": 126.18516408699998}\n{\"job\": 1295, \"terminal\": true, \"elapsed\": 65.66633653640747, \"cpu_seconds\": 65.62796654699991}\n{\"job\": 1543, \"terminal\": true, \"elapsed\": 39.35210990905762, \"cpu_seconds\": 39.32886429000007}\n{\"job\": 1791, \"terminal\": true, \"elapsed\": 35.524598121643066, \"cpu_seconds\": 35.50417549500003}\n{\"job\": 2039, \"terminal\": true, \"elapsed\": 87.88288068771362, \"cpu_seconds\": 87.83336850499995}\n{\"job\": 2287, \"terminal\": true, \"elapsed\": 123.01402568817139, \"cpu_seconds\": 122.94231681500003}\n{\"job\": 2535, \"terminal\": true, \"elapsed\": 179.06640458106995, \"cpu_seconds\": 178.96405484799993}\n{\"job\": 2783, \"terminal\": true, \"elapsed\": 169.53788352012634, \"cpu_seconds\": 169.44086906300004}\n{\"job\": 3031, \"terminal\": true, \"elapsed\": 136.57962322235107, \"cpu_seconds\": 136.50275978800005}\n{\"job\": 3279, \"terminal\": true, \"elapsed\": 114.93678331375122, \"cpu_seconds\": 114.86900051199996}\n{\"job\": 3527, \"terminal\": true, \"elapsed\": 61.06585717201233, \"cpu_seconds\": 61.02881680500013}\n{\"job\": 3775, \"terminal\": true, \"elapsed\": 82.67938089370728, \"cpu_seconds\": 82.63283492699998}\n{\"job\": 4023, \"terminal\": true, \"elapsed\": 80.62271237373352, \"cpu_seconds\": 80.5779251360002}\n{\"job\": 4271, \"terminal\": true, \"elapsed\": 158.63691568374634, \"cpu_seconds\": 158.53784037900004}\n{\"job\": 4519, \"terminal\": true, \"elapsed\": 84.62042093276978, \"cpu_seconds\": 84.55770472999984}\n{\"job\": 4767, \"terminal\": true, \"elapsed\": 111.9363751411438, \"cpu_seconds\": 111.84316284999977}\nUser time (seconds): 2223.731826\nSystem time (seconds): 4.309519\nMaximum resident set size (kbytes): 1081960\nElapsed seconds: 2229.363281726837\n"
+        },
+        "56": {
+          "exit": "0",
+          "label": "s1-confirm-56-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429023.012105
+          },
+          "log": "{\"job\": 56, \"terminal\": true, \"elapsed\": 227.24211978912354, \"cpu_seconds\": 227.112372217}\n{\"job\": 304, \"terminal\": true, \"elapsed\": 251.04064321517944, \"cpu_seconds\": 250.91101372799997}\n{\"job\": 552, \"terminal\": true, \"elapsed\": 123.59925961494446, \"cpu_seconds\": 123.52820329300005}\n{\"job\": 800, \"terminal\": true, \"elapsed\": 130.54376339912415, \"cpu_seconds\": 130.47001098099997}\n{\"job\": 1048, \"terminal\": true, \"elapsed\": 149.44463300704956, \"cpu_seconds\": 149.35483515199996}\n{\"job\": 1296, \"terminal\": true, \"elapsed\": 124.09790658950806, \"cpu_seconds\": 124.02850560699994}\n{\"job\": 1544, \"terminal\": true, \"elapsed\": 124.68821668624878, \"cpu_seconds\": 124.61429705500007}\n{\"job\": 1792, \"terminal\": true, \"elapsed\": 33.128533363342285, \"cpu_seconds\": 33.11139469999989}\n{\"job\": 2040, \"terminal\": true, \"elapsed\": 29.189651012420654, \"cpu_seconds\": 29.174661587000173}\n{\"job\": 2288, \"terminal\": true, \"elapsed\": 149.9552869796753, \"cpu_seconds\": 149.86756127700005}\n{\"job\": 2536, \"terminal\": true, \"elapsed\": 121.58258986473083, \"cpu_seconds\": 121.51427257399996}\n{\"job\": 2784, \"terminal\": true, \"elapsed\": 150.691743850708, \"cpu_seconds\": 150.60513142500008}\n{\"job\": 3032, \"terminal\": true, \"elapsed\": 174.75038886070251, \"cpu_seconds\": 174.64265558700004}\n{\"job\": 3280, \"terminal\": true, \"elapsed\": 71.94008827209473, \"cpu_seconds\": 71.89880100200003}\n{\"job\": 3528, \"terminal\": true, \"elapsed\": 65.68682646751404, \"cpu_seconds\": 65.64197970300006}\n{\"job\": 3776, \"terminal\": true, \"elapsed\": 142.61766719818115, \"cpu_seconds\": 142.52075754999987}\n{\"job\": 4024, \"terminal\": true, \"elapsed\": 76.31248044967651, \"cpu_seconds\": 76.25959592800018}\n{\"job\": 4272, \"terminal\": true, \"elapsed\": 35.85293698310852, \"cpu_seconds\": 35.83056696600033}\n{\"job\": 4520, \"terminal\": true, \"elapsed\": 95.92168283462524, \"cpu_seconds\": 95.86490378600001}\n{\"job\": 4768, \"terminal\": true, \"elapsed\": 115.6251072883606, \"cpu_seconds\": 115.56647337799996}\nUser time (seconds): 2392.554303\nSystem time (seconds): 3.829762\nMaximum resident set size (kbytes): 1077008\nElapsed seconds: 2397.7818627357483\n"
+        },
+        "57": {
+          "exit": "0",
+          "label": "s1-confirm-57-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428942.9536326
+          },
+          "log": "{\"job\": 57, \"terminal\": true, \"elapsed\": 238.0754954814911, \"cpu_seconds\": 237.933182024}\n{\"job\": 305, \"terminal\": true, \"elapsed\": 235.78919577598572, \"cpu_seconds\": 235.65892044099996}\n{\"job\": 553, \"terminal\": true, \"elapsed\": 68.71003460884094, \"cpu_seconds\": 68.66937254300001}\n{\"job\": 801, \"terminal\": true, \"elapsed\": 177.94640445709229, \"cpu_seconds\": 177.842943097}\n{\"job\": 1049, \"terminal\": true, \"elapsed\": 84.75551462173462, \"cpu_seconds\": 84.70445203500003}\n{\"job\": 1297, \"terminal\": true, \"elapsed\": 64.40758156776428, \"cpu_seconds\": 64.37095063000004}\n{\"job\": 1545, \"terminal\": true, \"elapsed\": 136.08962225914001, \"cpu_seconds\": 136.00898637400007}\n{\"job\": 1793, \"terminal\": true, \"elapsed\": 35.91621208190918, \"cpu_seconds\": 35.898293282000054}\n{\"job\": 2041, \"terminal\": true, \"elapsed\": 32.30916237831116, \"cpu_seconds\": 32.29272316200013}\n{\"job\": 2289, \"terminal\": true, \"elapsed\": 124.33574914932251, \"cpu_seconds\": 124.26503637700011}\n{\"job\": 2537, \"terminal\": true, \"elapsed\": 100.26971197128296, \"cpu_seconds\": 100.20944359400005}\n{\"job\": 2785, \"terminal\": true, \"elapsed\": 147.3738579750061, \"cpu_seconds\": 147.28963028600015}\n{\"job\": 3033, \"terminal\": true, \"elapsed\": 221.26856207847595, \"cpu_seconds\": 221.13930152999978}\n{\"job\": 3281, \"terminal\": true, \"elapsed\": 112.05787587165833, \"cpu_seconds\": 111.98999317899984}\n{\"job\": 3529, \"terminal\": true, \"elapsed\": 65.57070970535278, \"cpu_seconds\": 65.53155000900006}\n{\"job\": 3777, \"terminal\": true, \"elapsed\": 139.07742500305176, \"cpu_seconds\": 138.98580635999997}\n{\"job\": 4025, \"terminal\": true, \"elapsed\": 77.77253866195679, \"cpu_seconds\": 77.73243620700032}\n{\"job\": 4273, \"terminal\": true, \"elapsed\": 77.16648602485657, \"cpu_seconds\": 77.12678679400005}\n{\"job\": 4521, \"terminal\": true, \"elapsed\": 83.24456858634949, \"cpu_seconds\": 83.20034154700033}\n{\"job\": 4769, \"terminal\": true, \"elapsed\": 91.72341132164001, \"cpu_seconds\": 91.67206830500027}\nUser time (seconds): 2313.220008\nSystem time (seconds): 3.146172\nMaximum resident set size (kbytes): 1014876\nElapsed seconds: 2317.707700252533\n"
+        },
+        "58": {
+          "exit": "0",
+          "label": "s1-confirm-58-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428848.1612222
+          },
+          "log": "{\"job\": 58, \"terminal\": true, \"elapsed\": 139.58189845085144, \"cpu_seconds\": 139.493153432}\n{\"job\": 306, \"terminal\": true, \"elapsed\": 149.5163938999176, \"cpu_seconds\": 149.43521248100004}\n{\"job\": 554, \"terminal\": true, \"elapsed\": 68.41603255271912, \"cpu_seconds\": 68.37988731299998}\n{\"job\": 802, \"terminal\": true, \"elapsed\": 103.18276333808899, \"cpu_seconds\": 103.12547968899997}\n{\"job\": 1050, \"terminal\": true, \"elapsed\": 105.5150511264801, \"cpu_seconds\": 105.45245259299998}\n{\"job\": 1298, \"terminal\": true, \"elapsed\": 148.3333044052124, \"cpu_seconds\": 148.24721009300004}\n{\"job\": 1546, \"terminal\": true, \"elapsed\": 102.63223361968994, \"cpu_seconds\": 102.57579183999997}\n{\"job\": 1794, \"terminal\": true, \"elapsed\": 32.93895173072815, \"cpu_seconds\": 32.919606471000066}\n{\"job\": 2042, \"terminal\": true, \"elapsed\": 32.16676306724548, \"cpu_seconds\": 32.146550916000024}\n{\"job\": 2290, \"terminal\": true, \"elapsed\": 141.80210161209106, \"cpu_seconds\": 141.7243574470001}\n{\"job\": 2538, \"terminal\": true, \"elapsed\": 97.57005047798157, \"cpu_seconds\": 97.509606588}\n{\"job\": 2786, \"terminal\": true, \"elapsed\": 154.1550908088684, \"cpu_seconds\": 154.07239138900013}\n{\"job\": 3034, \"terminal\": true, \"elapsed\": 156.86112093925476, \"cpu_seconds\": 156.774288867}\n{\"job\": 3282, \"terminal\": true, \"elapsed\": 72.54991698265076, \"cpu_seconds\": 72.50706368400006}\n{\"job\": 3530, \"terminal\": true, \"elapsed\": 132.2469654083252, \"cpu_seconds\": 132.170468153}\n{\"job\": 3778, \"terminal\": true, \"elapsed\": 113.26624417304993, \"cpu_seconds\": 113.20028556900002}\n{\"job\": 4026, \"terminal\": true, \"elapsed\": 75.87695503234863, \"cpu_seconds\": 75.83762648200013}\n{\"job\": 4274, \"terminal\": true, \"elapsed\": 86.74935221672058, \"cpu_seconds\": 86.70181912400017}\n{\"job\": 4522, \"terminal\": true, \"elapsed\": 139.71917247772217, \"cpu_seconds\": 139.63685375900013}\n{\"job\": 4770, \"terminal\": true, \"elapsed\": 165.9451401233673, \"cpu_seconds\": 165.8459648600001}\nUser time (seconds): 2218.39515\nSystem time (seconds): 3.230146\nMaximum resident set size (kbytes): 1081060\nElapsed seconds: 2222.899555206299\n"
+        },
+        "59": {
+          "exit": "0",
+          "label": "s1-confirm-59-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429078.8116624
+          },
+          "log": "{\"job\": 59, \"terminal\": true, \"elapsed\": 243.00727701187134, \"cpu_seconds\": 242.8735699}\n{\"job\": 307, \"terminal\": true, \"elapsed\": 147.09898233413696, \"cpu_seconds\": 147.023130647}\n{\"job\": 555, \"terminal\": true, \"elapsed\": 144.47600650787354, \"cpu_seconds\": 144.39517290100008}\n{\"job\": 803, \"terminal\": true, \"elapsed\": 164.68421602249146, \"cpu_seconds\": 164.59167203799996}\n{\"job\": 1051, \"terminal\": true, \"elapsed\": 134.0895130634308, \"cpu_seconds\": 134.00759622599992}\n{\"job\": 1299, \"terminal\": true, \"elapsed\": 146.26220393180847, \"cpu_seconds\": 146.16681539399997}\n{\"job\": 1547, \"terminal\": true, \"elapsed\": 72.43943762779236, \"cpu_seconds\": 72.39460974399992}\n{\"job\": 1795, \"terminal\": true, \"elapsed\": 34.95790719985962, \"cpu_seconds\": 34.934908494999945}\n{\"job\": 2043, \"terminal\": true, \"elapsed\": 31.884601831436157, \"cpu_seconds\": 31.867484042999877}\n{\"job\": 2291, \"terminal\": true, \"elapsed\": 127.89096093177795, \"cpu_seconds\": 127.80923263500017}\n{\"job\": 2539, \"terminal\": true, \"elapsed\": 196.44108152389526, \"cpu_seconds\": 196.3207258619998}\n{\"job\": 2787, \"terminal\": true, \"elapsed\": 148.98363518714905, \"cpu_seconds\": 148.88554457500004}\n{\"job\": 3035, \"terminal\": true, \"elapsed\": 160.30962419509888, \"cpu_seconds\": 160.20916356599992}\n{\"job\": 3283, \"terminal\": true, \"elapsed\": 90.93017625808716, \"cpu_seconds\": 90.87277484299989}\n{\"job\": 3531, \"terminal\": true, \"elapsed\": 82.61620569229126, \"cpu_seconds\": 82.55867234700008}\n{\"job\": 3779, \"terminal\": true, \"elapsed\": 127.43924260139465, \"cpu_seconds\": 127.3626608300001}\n{\"job\": 4027, \"terminal\": true, \"elapsed\": 74.57189583778381, \"cpu_seconds\": 74.52356524600009}\n{\"job\": 4275, \"terminal\": true, \"elapsed\": 79.80171537399292, \"cpu_seconds\": 79.76159486999995}\n{\"job\": 4523, \"terminal\": true, \"elapsed\": 84.64564037322998, \"cpu_seconds\": 84.60212208699977}\n{\"job\": 4771, \"terminal\": true, \"elapsed\": 157.14179301261902, \"cpu_seconds\": 157.06740883300017}\nUser time (seconds): 2449.811374\nSystem time (seconds): 2.274654\nMaximum resident set size (kbytes): 1095340\nElapsed seconds: 2453.534049510956\n"
+        },
+        "60": {
+          "exit": "0",
+          "label": "s1-confirm-60-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428917.0996213
+          },
+          "log": "{\"job\": 60, \"terminal\": true, \"elapsed\": 57.94807720184326, \"cpu_seconds\": 57.918695571}\n{\"job\": 308, \"terminal\": true, \"elapsed\": 220.17601799964905, \"cpu_seconds\": 220.05347633999997}\n{\"job\": 556, \"terminal\": true, \"elapsed\": 132.28157258033752, \"cpu_seconds\": 132.207582355}\n{\"job\": 804, \"terminal\": true, \"elapsed\": 90.6819679737091, \"cpu_seconds\": 90.62949970199998}\n{\"job\": 1052, \"terminal\": true, \"elapsed\": 219.25075221061707, \"cpu_seconds\": 219.11880065599996}\n{\"job\": 1300, \"terminal\": true, \"elapsed\": 134.34887170791626, \"cpu_seconds\": 134.26673324}\n{\"job\": 1548, \"terminal\": true, \"elapsed\": 105.79605078697205, \"cpu_seconds\": 105.73629986200001}\n{\"job\": 1796, \"terminal\": true, \"elapsed\": 104.3759913444519, \"cpu_seconds\": 104.31667010199999}\n{\"job\": 2044, \"terminal\": true, \"elapsed\": 32.24240493774414, \"cpu_seconds\": 32.22571405999997}\n{\"job\": 2292, \"terminal\": true, \"elapsed\": 23.692625045776367, \"cpu_seconds\": 23.67961897700002}\n{\"job\": 2540, \"terminal\": true, \"elapsed\": 102.89501690864563, \"cpu_seconds\": 102.83415073000015}\n{\"job\": 2788, \"terminal\": true, \"elapsed\": 158.21038436889648, \"cpu_seconds\": 158.11652337700002}\n{\"job\": 3036, \"terminal\": true, \"elapsed\": 151.08225560188293, \"cpu_seconds\": 150.9888441390001}\n{\"job\": 3284, \"terminal\": true, \"elapsed\": 173.31705498695374, \"cpu_seconds\": 173.20287468000015}\n{\"job\": 3532, \"terminal\": true, \"elapsed\": 74.0342948436737, \"cpu_seconds\": 73.98698483700014}\n{\"job\": 3780, \"terminal\": true, \"elapsed\": 106.56396698951721, \"cpu_seconds\": 106.505824222}\n{\"job\": 4028, \"terminal\": true, \"elapsed\": 124.43304109573364, \"cpu_seconds\": 124.3626965200001}\n{\"job\": 4276, \"terminal\": true, \"elapsed\": 82.92695188522339, \"cpu_seconds\": 82.88497621500005}\n{\"job\": 4524, \"terminal\": true, \"elapsed\": 75.69982314109802, \"cpu_seconds\": 75.66108752199989}\n{\"job\": 4772, \"terminal\": true, \"elapsed\": 117.94080471992493, \"cpu_seconds\": 117.87049260599997}\nUser time (seconds): 2285.778725\nSystem time (seconds): 4.693262\nMaximum resident set size (kbytes): 1094868\nElapsed seconds: 2291.806250810623\n"
+        },
+        "61": {
+          "exit": "0",
+          "label": "s1-confirm-61-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428796.574674
+          },
+          "log": "{\"job\": 61, \"terminal\": true, \"elapsed\": 58.25320839881897, \"cpu_seconds\": 58.209795925}\n{\"job\": 309, \"terminal\": true, \"elapsed\": 235.07729315757751, \"cpu_seconds\": 234.93325234}\n{\"job\": 557, \"terminal\": true, \"elapsed\": 146.4551122188568, \"cpu_seconds\": 146.369859551}\n{\"job\": 805, \"terminal\": true, \"elapsed\": 106.83296036720276, \"cpu_seconds\": 106.76782509399999}\n{\"job\": 1053, \"terminal\": true, \"elapsed\": 124.30273628234863, \"cpu_seconds\": 124.225857206}\n{\"job\": 1301, \"terminal\": true, \"elapsed\": 96.59447073936462, \"cpu_seconds\": 96.5326193379999}\n{\"job\": 1549, \"terminal\": true, \"elapsed\": 65.07279229164124, \"cpu_seconds\": 65.03437691400006}\n{\"job\": 1797, \"terminal\": true, \"elapsed\": 73.64515495300293, \"cpu_seconds\": 73.59557738600006}\n{\"job\": 2045, \"terminal\": true, \"elapsed\": 34.67631912231445, \"cpu_seconds\": 34.65670261399998}\n{\"job\": 2293, \"terminal\": true, \"elapsed\": 25.745965480804443, \"cpu_seconds\": 25.731067375000066}\n{\"job\": 2541, \"terminal\": true, \"elapsed\": 101.38790726661682, \"cpu_seconds\": 101.32523783700003}\n{\"job\": 2789, \"terminal\": true, \"elapsed\": 159.15314054489136, \"cpu_seconds\": 159.04933912900015}\n{\"job\": 3037, \"terminal\": true, \"elapsed\": 150.66850543022156, \"cpu_seconds\": 150.5718870799999}\n{\"job\": 3285, \"terminal\": true, \"elapsed\": 114.57070302963257, \"cpu_seconds\": 114.48711792099994}\n{\"job\": 3533, \"terminal\": true, \"elapsed\": 72.2015426158905, \"cpu_seconds\": 72.1569573600002}\n{\"job\": 3781, \"terminal\": true, \"elapsed\": 108.5803747177124, \"cpu_seconds\": 108.51505622500008}\n{\"job\": 4029, \"terminal\": true, \"elapsed\": 152.71177697181702, \"cpu_seconds\": 152.61485559599987}\n{\"job\": 4277, \"terminal\": true, \"elapsed\": 83.36105847358704, \"cpu_seconds\": 83.30814027099996}\n{\"job\": 4525, \"terminal\": true, \"elapsed\": 74.4892852306366, \"cpu_seconds\": 74.44523390300014}\n{\"job\": 4773, \"terminal\": true, \"elapsed\": 183.56053638458252, \"cpu_seconds\": 183.4447644610002}\nUser time (seconds): 2164.037396\nSystem time (seconds): 5.8602989999999995\nMaximum resident set size (kbytes): 1033708\nElapsed seconds: 2171.265992641449\n"
+        },
+        "62": {
+          "exit": "0",
+          "label": "s1-confirm-62-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428911.403414
+          },
+          "log": "{\"job\": 62, \"terminal\": true, \"elapsed\": 105.4621901512146, \"cpu_seconds\": 105.39351229}\n{\"job\": 310, \"terminal\": true, \"elapsed\": 235.10997462272644, \"cpu_seconds\": 234.984310068}\n{\"job\": 558, \"terminal\": true, \"elapsed\": 127.00077033042908, \"cpu_seconds\": 126.928355453}\n{\"job\": 806, \"terminal\": true, \"elapsed\": 92.18573355674744, \"cpu_seconds\": 92.12912241600003}\n{\"job\": 1054, \"terminal\": true, \"elapsed\": 92.87177348136902, \"cpu_seconds\": 92.81377321399998}\n{\"job\": 1302, \"terminal\": true, \"elapsed\": 130.0924346446991, \"cpu_seconds\": 130.02054253100005}\n{\"job\": 1550, \"terminal\": true, \"elapsed\": 145.84009623527527, \"cpu_seconds\": 145.75797861299998}\n{\"job\": 1798, \"terminal\": true, \"elapsed\": 57.75527739524841, \"cpu_seconds\": 57.72138887400001}\n{\"job\": 2046, \"terminal\": true, \"elapsed\": 36.01256251335144, \"cpu_seconds\": 35.98961977700003}\n{\"job\": 2294, \"terminal\": true, \"elapsed\": 32.28588604927063, \"cpu_seconds\": 32.26910288499994}\n{\"job\": 2542, \"terminal\": true, \"elapsed\": 198.94841074943542, \"cpu_seconds\": 198.84274334999986}\n{\"job\": 2790, \"terminal\": true, \"elapsed\": 128.85205841064453, \"cpu_seconds\": 128.77438266499985}\n{\"job\": 3038, \"terminal\": true, \"elapsed\": 145.19638395309448, \"cpu_seconds\": 145.11335368100004}\n{\"job\": 3286, \"terminal\": true, \"elapsed\": 76.2363920211792, \"cpu_seconds\": 76.19484448399999}\n{\"job\": 3534, \"terminal\": true, \"elapsed\": 69.87805652618408, \"cpu_seconds\": 69.8358598929999}\n{\"job\": 3782, \"terminal\": true, \"elapsed\": 183.06970143318176, \"cpu_seconds\": 182.9556630359998}\n{\"job\": 4030, \"terminal\": true, \"elapsed\": 123.89115810394287, \"cpu_seconds\": 123.81517180900005}\n{\"job\": 4278, \"terminal\": true, \"elapsed\": 87.66710162162781, \"cpu_seconds\": 87.61711437400027}\n{\"job\": 4526, \"terminal\": true, \"elapsed\": 37.64985942840576, \"cpu_seconds\": 37.62582465100013}\n{\"job\": 4774, \"terminal\": true, \"elapsed\": 176.2516679763794, \"cpu_seconds\": 176.15996076300007}\nUser time (seconds): 2280.034728\nSystem time (seconds): 4.725278\nMaximum resident set size (kbytes): 975104\nElapsed seconds: 2286.078153371811\n"
+        },
+        "63": {
+          "exit": "0",
+          "label": "s1-confirm-63-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429056.1991084
+          },
+          "log": "{\"job\": 63, \"terminal\": true, \"elapsed\": 245.07922625541687, \"cpu_seconds\": 244.933580528}\n{\"job\": 311, \"terminal\": true, \"elapsed\": 247.74214148521423, \"cpu_seconds\": 247.608048058}\n{\"job\": 559, \"terminal\": true, \"elapsed\": 127.26610827445984, \"cpu_seconds\": 127.19513723399996}\n{\"job\": 807, \"terminal\": true, \"elapsed\": 78.1190972328186, \"cpu_seconds\": 78.07450378499993}\n{\"job\": 1055, \"terminal\": true, \"elapsed\": 142.0033028125763, \"cpu_seconds\": 141.91369274500005}\n{\"job\": 1303, \"terminal\": true, \"elapsed\": 125.97522377967834, \"cpu_seconds\": 125.90488590200005}\n{\"job\": 1551, \"terminal\": true, \"elapsed\": 170.69887399673462, \"cpu_seconds\": 170.59643252699993}\n{\"job\": 1799, \"terminal\": true, \"elapsed\": 60.56884813308716, \"cpu_seconds\": 60.53650933899985}\n{\"job\": 2047, \"terminal\": true, \"elapsed\": 35.72655391693115, \"cpu_seconds\": 35.708333146000086}\n{\"job\": 2295, \"terminal\": true, \"elapsed\": 20.176016807556152, \"cpu_seconds\": 20.164493014999834}\n{\"job\": 2543, \"terminal\": true, \"elapsed\": 93.78690934181213, \"cpu_seconds\": 93.73318926299999}\n{\"job\": 2791, \"terminal\": true, \"elapsed\": 140.58147716522217, \"cpu_seconds\": 140.5020295070001}\n{\"job\": 3039, \"terminal\": true, \"elapsed\": 163.6071801185608, \"cpu_seconds\": 163.51424136700007}\n{\"job\": 3287, \"terminal\": true, \"elapsed\": 94.41300082206726, \"cpu_seconds\": 94.35385668200001}\n{\"job\": 3535, \"terminal\": true, \"elapsed\": 121.30169677734375, \"cpu_seconds\": 121.236492882}\n{\"job\": 3783, \"terminal\": true, \"elapsed\": 181.13822221755981, \"cpu_seconds\": 181.03562572800024}\n{\"job\": 4031, \"terminal\": true, \"elapsed\": 145.36595225334167, \"cpu_seconds\": 145.28412311800002}\n{\"job\": 4279, \"terminal\": true, \"elapsed\": 72.28513598442078, \"cpu_seconds\": 72.25027228399995}\n{\"job\": 4527, \"terminal\": true, \"elapsed\": 39.58671283721924, \"cpu_seconds\": 39.56741134499998}\n{\"job\": 4775, \"terminal\": true, \"elapsed\": 121.56385827064514, \"cpu_seconds\": 121.50553070000024}\nUser time (seconds): 2426.288473\nSystem time (seconds): 3.198192\nMaximum resident set size (kbytes): 1050564\nElapsed seconds: 2430.857941389084\n"
+        },
+        "64": {
+          "exit": "0",
+          "label": "s1-confirm-64-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428829.039052
+          },
+          "log": "{\"job\": 64, \"terminal\": true, \"elapsed\": 113.41731071472168, \"cpu_seconds\": 113.34814215200001}\n{\"job\": 312, \"terminal\": true, \"elapsed\": 126.59968852996826, \"cpu_seconds\": 126.53296592600002}\n{\"job\": 560, \"terminal\": true, \"elapsed\": 129.1177191734314, \"cpu_seconds\": 129.04721024199998}\n{\"job\": 808, \"terminal\": true, \"elapsed\": 109.80028295516968, \"cpu_seconds\": 109.73794900900003}\n{\"job\": 1056, \"terminal\": true, \"elapsed\": 92.29741358757019, \"cpu_seconds\": 92.24038951700004}\n{\"job\": 1304, \"terminal\": true, \"elapsed\": 184.4182517528534, \"cpu_seconds\": 184.31256860399992}\n{\"job\": 1552, \"terminal\": true, \"elapsed\": 152.7895691394806, \"cpu_seconds\": 152.69768946600004}\n{\"job\": 1800, \"terminal\": true, \"elapsed\": 54.78363251686096, \"cpu_seconds\": 54.754283740000005}\n{\"job\": 2048, \"terminal\": true, \"elapsed\": 79.6024112701416, \"cpu_seconds\": 79.55844300099989}\n{\"job\": 2296, \"terminal\": true, \"elapsed\": 33.7446608543396, \"cpu_seconds\": 33.72650716899989}\n{\"job\": 2544, \"terminal\": true, \"elapsed\": 38.999396324157715, \"cpu_seconds\": 38.977207573999976}\n{\"job\": 2792, \"terminal\": true, \"elapsed\": 129.16529893875122, \"cpu_seconds\": 129.089367325}\n{\"job\": 3040, \"terminal\": true, \"elapsed\": 150.436763048172, \"cpu_seconds\": 150.3424133410001}\n{\"job\": 3288, \"terminal\": true, \"elapsed\": 71.24438762664795, \"cpu_seconds\": 71.20130794900001}\n{\"job\": 3536, \"terminal\": true, \"elapsed\": 91.6628429889679, \"cpu_seconds\": 91.60426799799984}\n{\"job\": 3784, \"terminal\": true, \"elapsed\": 148.961279630661, \"cpu_seconds\": 148.87368692299992}\n{\"job\": 4032, \"terminal\": true, \"elapsed\": 115.09522294998169, \"cpu_seconds\": 115.02497286099992}\n{\"job\": 4280, \"terminal\": true, \"elapsed\": 266.4577033519745, \"cpu_seconds\": 266.29449877199977}\n{\"job\": 4528, \"terminal\": true, \"elapsed\": 38.586814403533936, \"cpu_seconds\": 38.56756808499995}\n{\"job\": 4776, \"terminal\": true, \"elapsed\": 72.66234421730042, \"cpu_seconds\": 72.62207484999999}\nUser time (seconds): 2197.858485\nSystem time (seconds): 4.529334\nMaximum resident set size (kbytes): 1133244\nElapsed seconds: 2203.6811435222626\n"
+        },
+        "65": {
+          "exit": "0",
+          "label": "s1-confirm-65-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428902.875124
+          },
+          "log": "{\"job\": 65, \"terminal\": true, \"elapsed\": 212.76921582221985, \"cpu_seconds\": 212.626715584}\n{\"job\": 313, \"terminal\": true, \"elapsed\": 137.0524938106537, \"cpu_seconds\": 136.978298534}\n{\"job\": 561, \"terminal\": true, \"elapsed\": 135.53276443481445, \"cpu_seconds\": 135.451054791}\n{\"job\": 809, \"terminal\": true, \"elapsed\": 119.30688238143921, \"cpu_seconds\": 119.23155446499999}\n{\"job\": 1057, \"terminal\": true, \"elapsed\": 114.39584159851074, \"cpu_seconds\": 114.32487146799997}\n{\"job\": 1305, \"terminal\": true, \"elapsed\": 155.01045989990234, \"cpu_seconds\": 154.91247912000006}\n{\"job\": 1553, \"terminal\": true, \"elapsed\": 140.93990397453308, \"cpu_seconds\": 140.85561924899991}\n{\"job\": 1801, \"terminal\": true, \"elapsed\": 59.09519290924072, \"cpu_seconds\": 59.05628491099992}\n{\"job\": 2049, \"terminal\": true, \"elapsed\": 80.38441610336304, \"cpu_seconds\": 80.32567966700003}\n{\"job\": 2297, \"terminal\": true, \"elapsed\": 30.7149920463562, \"cpu_seconds\": 30.69739113499986}\n{\"job\": 2545, \"terminal\": true, \"elapsed\": 41.9352343082428, \"cpu_seconds\": 41.909332408999944}\n{\"job\": 2793, \"terminal\": true, \"elapsed\": 158.79957175254822, \"cpu_seconds\": 158.69835538899997}\n{\"job\": 3041, \"terminal\": true, \"elapsed\": 158.86854910850525, \"cpu_seconds\": 158.76026410600002}\n{\"job\": 3289, \"terminal\": true, \"elapsed\": 76.65127396583557, \"cpu_seconds\": 76.60479613400003}\n{\"job\": 3537, \"terminal\": true, \"elapsed\": 94.11530232429504, \"cpu_seconds\": 94.05375099399998}\n{\"job\": 3785, \"terminal\": true, \"elapsed\": 160.29914045333862, \"cpu_seconds\": 160.2048112340001}\n{\"job\": 4033, \"terminal\": true, \"elapsed\": 120.1147575378418, \"cpu_seconds\": 120.03957299700005}\n{\"job\": 4281, \"terminal\": true, \"elapsed\": 179.90279746055603, \"cpu_seconds\": 179.7910266030001}\n{\"job\": 4529, \"terminal\": true, \"elapsed\": 53.22185921669006, \"cpu_seconds\": 53.18741408899996}\n{\"job\": 4777, \"terminal\": true, \"elapsed\": 44.48694634437561, \"cpu_seconds\": 44.45896121900023}\nUser time (seconds): 2271.070402\nSystem time (seconds): 4.996854\nMaximum resident set size (kbytes): 1043680\nElapsed seconds: 2277.499973297119\n"
+        },
+        "66": {
+          "exit": "0",
+          "label": "s1-confirm-66-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428765.1353972
+          },
+          "log": "{\"job\": 66, \"terminal\": true, \"elapsed\": 135.15177130699158, \"cpu_seconds\": 135.080151068}\n{\"job\": 314, \"terminal\": true, \"elapsed\": 203.9906768798828, \"cpu_seconds\": 203.87566972}\n{\"job\": 562, \"terminal\": true, \"elapsed\": 137.7569739818573, \"cpu_seconds\": 137.68035659599997}\n{\"job\": 810, \"terminal\": true, \"elapsed\": 84.10459494590759, \"cpu_seconds\": 84.05057167700005}\n{\"job\": 1058, \"terminal\": true, \"elapsed\": 82.10538744926453, \"cpu_seconds\": 82.05376893100004}\n{\"job\": 1306, \"terminal\": true, \"elapsed\": 83.83888077735901, \"cpu_seconds\": 83.78654540599996}\n{\"job\": 1554, \"terminal\": true, \"elapsed\": 140.9009530544281, \"cpu_seconds\": 140.818556511}\n{\"job\": 1802, \"terminal\": true, \"elapsed\": 105.43902730941772, \"cpu_seconds\": 105.3799336049999}\n{\"job\": 2050, \"terminal\": true, \"elapsed\": 58.357545375823975, \"cpu_seconds\": 58.31805196500011}\n{\"job\": 2298, \"terminal\": true, \"elapsed\": 31.621753692626953, \"cpu_seconds\": 31.6051091249999}\n{\"job\": 2546, \"terminal\": true, \"elapsed\": 82.03472924232483, \"cpu_seconds\": 81.99005660800003}\n{\"job\": 2794, \"terminal\": true, \"elapsed\": 144.09654927253723, \"cpu_seconds\": 144.01319903000012}\n{\"job\": 3042, \"terminal\": true, \"elapsed\": 141.24543118476868, \"cpu_seconds\": 141.1594397219999}\n{\"job\": 3290, \"terminal\": true, \"elapsed\": 79.22778797149658, \"cpu_seconds\": 79.17937040800007}\n{\"job\": 3538, \"terminal\": true, \"elapsed\": 83.9098391532898, \"cpu_seconds\": 83.85227800500002}\n{\"job\": 3786, \"terminal\": true, \"elapsed\": 135.0180606842041, \"cpu_seconds\": 134.93687194299991}\n{\"job\": 4034, \"terminal\": true, \"elapsed\": 144.00485515594482, \"cpu_seconds\": 143.92381829500005}\n{\"job\": 4282, \"terminal\": true, \"elapsed\": 124.59158730506897, \"cpu_seconds\": 124.51965435000011}\n{\"job\": 4530, \"terminal\": true, \"elapsed\": 59.015209674835205, \"cpu_seconds\": 58.98507299000016}\n{\"job\": 4778, \"terminal\": true, \"elapsed\": 79.4833664894104, \"cpu_seconds\": 79.44228401500004}\nUser time (seconds): 2134.677358\nSystem time (seconds): 3.81777\nMaximum resident set size (kbytes): 1010936\nElapsed seconds: 2139.743149995804\n"
+        },
+        "67": {
+          "exit": "0",
+          "label": "s1-confirm-67-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428952.9809244
+          },
+          "log": "{\"job\": 67, \"terminal\": true, \"elapsed\": 141.11488246917725, \"cpu_seconds\": 141.037039778}\n{\"job\": 315, \"terminal\": true, \"elapsed\": 209.7390899658203, \"cpu_seconds\": 209.63079189299998}\n{\"job\": 563, \"terminal\": true, \"elapsed\": 135.79710912704468, \"cpu_seconds\": 135.720832986}\n{\"job\": 811, \"terminal\": true, \"elapsed\": 125.08482027053833, \"cpu_seconds\": 125.013629138}\n{\"job\": 1059, \"terminal\": true, \"elapsed\": 133.6622040271759, \"cpu_seconds\": 133.58236451699997}\n{\"job\": 1307, \"terminal\": true, \"elapsed\": 150.22651290893555, \"cpu_seconds\": 150.131422048}\n{\"job\": 1555, \"terminal\": true, \"elapsed\": 76.7351131439209, \"cpu_seconds\": 76.68575937799994}\n{\"job\": 1803, \"terminal\": true, \"elapsed\": 76.24776649475098, \"cpu_seconds\": 76.20064484599993}\n{\"job\": 2051, \"terminal\": true, \"elapsed\": 71.31861138343811, \"cpu_seconds\": 71.27477043199997}\n{\"job\": 2299, \"terminal\": true, \"elapsed\": 31.123538970947266, \"cpu_seconds\": 31.101926512999853}\n{\"job\": 2547, \"terminal\": true, \"elapsed\": 42.74463891983032, \"cpu_seconds\": 42.71945143900007}\n{\"job\": 2795, \"terminal\": true, \"elapsed\": 144.25967049598694, \"cpu_seconds\": 144.1686613190002}\n{\"job\": 3043, \"terminal\": true, \"elapsed\": 142.4554305076599, \"cpu_seconds\": 142.36655563099998}\n{\"job\": 3291, \"terminal\": true, \"elapsed\": 96.0623722076416, \"cpu_seconds\": 95.99704851499996}\n{\"job\": 3539, \"terminal\": true, \"elapsed\": 121.02680897712708, \"cpu_seconds\": 120.9492775199999}\n{\"job\": 3787, \"terminal\": true, \"elapsed\": 129.05209970474243, \"cpu_seconds\": 128.97486286400022}\n{\"job\": 4035, \"terminal\": true, \"elapsed\": 222.34545969963074, \"cpu_seconds\": 222.1981161650001}\n{\"job\": 4283, \"terminal\": true, \"elapsed\": 149.7819881439209, \"cpu_seconds\": 149.69896114799985}\n{\"job\": 4531, \"terminal\": true, \"elapsed\": 43.56122827529907, \"cpu_seconds\": 43.535271185000056}\n{\"job\": 4779, \"terminal\": true, \"elapsed\": 81.35485887527466, \"cpu_seconds\": 81.31134934900001}\nUser time (seconds): 2320.359571\nSystem time (seconds): 5.812491\nMaximum resident set size (kbytes): 1091876\nElapsed seconds: 2327.5715692043304\n"
+        },
+        "68": {
+          "exit": "0",
+          "label": "s1-confirm-68-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428974.198042
+          },
+          "log": "{\"job\": 68, \"terminal\": true, \"elapsed\": 200.93229413032532, \"cpu_seconds\": 200.81419111900001}\n{\"job\": 316, \"terminal\": true, \"elapsed\": 198.92195653915405, \"cpu_seconds\": 198.806468569}\n{\"job\": 564, \"terminal\": true, \"elapsed\": 37.020846128463745, \"cpu_seconds\": 37.00221765399999}\n{\"job\": 812, \"terminal\": true, \"elapsed\": 107.03064370155334, \"cpu_seconds\": 106.969872737}\n{\"job\": 1060, \"terminal\": true, \"elapsed\": 138.38687252998352, \"cpu_seconds\": 138.30665247499996}\n{\"job\": 1308, \"terminal\": true, \"elapsed\": 148.1525399684906, \"cpu_seconds\": 148.06887658200003}\n{\"job\": 1556, \"terminal\": true, \"elapsed\": 111.26046752929688, \"cpu_seconds\": 111.19221040699995}\n{\"job\": 1804, \"terminal\": true, \"elapsed\": 85.44862222671509, \"cpu_seconds\": 85.40338600200016}\n{\"job\": 2052, \"terminal\": true, \"elapsed\": 53.51147723197937, \"cpu_seconds\": 53.47868247800011}\n{\"job\": 2300, \"terminal\": true, \"elapsed\": 92.58386158943176, \"cpu_seconds\": 92.52536440899985}\n{\"job\": 2548, \"terminal\": true, \"elapsed\": 52.47306418418884, \"cpu_seconds\": 52.44657737800003}\n{\"job\": 2796, \"terminal\": true, \"elapsed\": 77.75402021408081, \"cpu_seconds\": 77.71316875399998}\n{\"job\": 3044, \"terminal\": true, \"elapsed\": 148.54576349258423, \"cpu_seconds\": 148.46251280399997}\n{\"job\": 3292, \"terminal\": true, \"elapsed\": 125.40099239349365, \"cpu_seconds\": 125.3255950419998}\n{\"job\": 3540, \"terminal\": true, \"elapsed\": 102.05469751358032, \"cpu_seconds\": 101.99639966099994}\n{\"job\": 3788, \"terminal\": true, \"elapsed\": 213.2194938659668, \"cpu_seconds\": 213.10309593300008}\n{\"job\": 4036, \"terminal\": true, \"elapsed\": 138.3582603931427, \"cpu_seconds\": 138.2744220730001}\n{\"job\": 4284, \"terminal\": true, \"elapsed\": 114.83643174171448, \"cpu_seconds\": 114.76713267199989}\n{\"job\": 4532, \"terminal\": true, \"elapsed\": 125.58995199203491, \"cpu_seconds\": 125.52572353599999}\n{\"job\": 4780, \"terminal\": true, \"elapsed\": 73.45113801956177, \"cpu_seconds\": 73.4164293089998}\nUser time (seconds): 2342.528119\nSystem time (seconds): 4.905194\nMaximum resident set size (kbytes): 972436\nElapsed seconds: 2348.771551132202\n"
+        },
+        "69": {
+          "exit": "0",
+          "label": "s1-confirm-69-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428774.318064
+          },
+          "log": "{\"job\": 69, \"terminal\": true, \"elapsed\": 229.80506682395935, \"cpu_seconds\": 229.67409932}\n{\"job\": 317, \"terminal\": true, \"elapsed\": 97.9243552684784, \"cpu_seconds\": 97.86786464}\n{\"job\": 565, \"terminal\": true, \"elapsed\": 34.69596552848816, \"cpu_seconds\": 34.678639162000024}\n{\"job\": 813, \"terminal\": true, \"elapsed\": 161.32536268234253, \"cpu_seconds\": 161.23886088400002}\n{\"job\": 1061, \"terminal\": true, \"elapsed\": 88.78512859344482, \"cpu_seconds\": 88.73303671100007}\n{\"job\": 1309, \"terminal\": true, \"elapsed\": 77.91315078735352, \"cpu_seconds\": 77.86930090499993}\n{\"job\": 1557, \"terminal\": true, \"elapsed\": 114.2756724357605, \"cpu_seconds\": 114.204182317}\n{\"job\": 1805, \"terminal\": true, \"elapsed\": 66.26164555549622, \"cpu_seconds\": 66.21793757499995}\n{\"job\": 2053, \"terminal\": true, \"elapsed\": 56.92356848716736, \"cpu_seconds\": 56.887235986000064}\n{\"job\": 2301, \"terminal\": true, \"elapsed\": 77.77257347106934, \"cpu_seconds\": 77.72056639300001}\n{\"job\": 2549, \"terminal\": true, \"elapsed\": 44.08970642089844, \"cpu_seconds\": 44.06582141800004}\n{\"job\": 2797, \"terminal\": true, \"elapsed\": 80.22298288345337, \"cpu_seconds\": 80.1744592760001}\n{\"job\": 3045, \"terminal\": true, \"elapsed\": 155.83379435539246, \"cpu_seconds\": 155.73608170299985}\n{\"job\": 3293, \"terminal\": true, \"elapsed\": 83.5123119354248, \"cpu_seconds\": 83.45874641299997}\n{\"job\": 3541, \"terminal\": true, \"elapsed\": 90.20959854125977, \"cpu_seconds\": 90.15537768099989}\n{\"job\": 3789, \"terminal\": true, \"elapsed\": 203.2246265411377, \"cpu_seconds\": 203.09362171300018}\n{\"job\": 4037, \"terminal\": true, \"elapsed\": 162.260901927948, \"cpu_seconds\": 162.16018858099983}\n{\"job\": 4285, \"terminal\": true, \"elapsed\": 115.64882040023804, \"cpu_seconds\": 115.56852138999989}\n{\"job\": 4533, \"terminal\": true, \"elapsed\": 120.05046844482422, \"cpu_seconds\": 119.97927402200003}\n{\"job\": 4781, \"terminal\": true, \"elapsed\": 84.30877423286438, \"cpu_seconds\": 84.25724995400014}\nUser time (seconds): 2143.576805\nSystem time (seconds): 3.989567\nMaximum resident set size (kbytes): 1058056\nElapsed seconds: 2148.8746733665466\n"
+        },
+        "70": {
+          "exit": "0",
+          "label": "s1-confirm-70-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429097.5078452
+          },
+          "log": "{\"job\": 70, \"terminal\": true, \"elapsed\": 253.60723114013672, \"cpu_seconds\": 253.456586597}\n{\"job\": 318, \"terminal\": true, \"elapsed\": 136.4979486465454, \"cpu_seconds\": 136.42608169199997}\n{\"job\": 566, \"terminal\": true, \"elapsed\": 85.59914469718933, \"cpu_seconds\": 85.555495544}\n{\"job\": 814, \"terminal\": true, \"elapsed\": 148.33025932312012, \"cpu_seconds\": 148.24568205699995}\n{\"job\": 1062, \"terminal\": true, \"elapsed\": 111.12593078613281, \"cpu_seconds\": 111.06264036300001}\n{\"job\": 1310, \"terminal\": true, \"elapsed\": 133.76214289665222, \"cpu_seconds\": 133.68362499499995}\n{\"job\": 1558, \"terminal\": true, \"elapsed\": 160.84336304664612, \"cpu_seconds\": 160.74881792400004}\n{\"job\": 1806, \"terminal\": true, \"elapsed\": 61.99101257324219, \"cpu_seconds\": 61.953284064999934}\n{\"job\": 2054, \"terminal\": true, \"elapsed\": 126.19257688522339, \"cpu_seconds\": 126.12092171699987}\n{\"job\": 2302, \"terminal\": true, \"elapsed\": 74.46645283699036, \"cpu_seconds\": 74.4195373529999}\n{\"job\": 2550, \"terminal\": true, \"elapsed\": 52.07255744934082, \"cpu_seconds\": 52.04434553499982}\n{\"job\": 2798, \"terminal\": true, \"elapsed\": 83.29735898971558, \"cpu_seconds\": 83.25035893299992}\n{\"job\": 3046, \"terminal\": true, \"elapsed\": 152.06614017486572, \"cpu_seconds\": 151.97771439199983}\n{\"job\": 3294, \"terminal\": true, \"elapsed\": 79.7468626499176, \"cpu_seconds\": 79.69794239800012}\n{\"job\": 3542, \"terminal\": true, \"elapsed\": 66.84819769859314, \"cpu_seconds\": 66.8058538329999}\n{\"job\": 3790, \"terminal\": true, \"elapsed\": 144.46917605400085, \"cpu_seconds\": 144.38198452100005}\n{\"job\": 4038, \"terminal\": true, \"elapsed\": 132.9619596004486, \"cpu_seconds\": 132.87230876400008}\n{\"job\": 4286, \"terminal\": true, \"elapsed\": 314.282644033432, \"cpu_seconds\": 314.083722673}\n{\"job\": 4534, \"terminal\": true, \"elapsed\": 79.33055758476257, \"cpu_seconds\": 79.2908640390001}\n{\"job\": 4782, \"terminal\": true, \"elapsed\": 70.75922107696533, \"cpu_seconds\": 70.72926416500013}\nUser time (seconds): 2467.002288\nSystem time (seconds): 3.597897\nMaximum resident set size (kbytes): 1440092\nElapsed seconds: 2472.0470337867737\n"
+        },
+        "71": {
+          "exit": "0",
+          "label": "s1-confirm-71-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429154.4647894
+          },
+          "log": "{\"job\": 71, \"terminal\": true, \"elapsed\": 254.02880430221558, \"cpu_seconds\": 253.839003152}\n{\"job\": 319, \"terminal\": true, \"elapsed\": 146.74767446517944, \"cpu_seconds\": 146.64571273899998}\n{\"job\": 567, \"terminal\": true, \"elapsed\": 90.24737334251404, \"cpu_seconds\": 90.18239029399996}\n{\"job\": 815, \"terminal\": true, \"elapsed\": 154.44096159934998, \"cpu_seconds\": 154.338342082}\n{\"job\": 1063, \"terminal\": true, \"elapsed\": 134.62589263916016, \"cpu_seconds\": 134.54904166699998}\n{\"job\": 1311, \"terminal\": true, \"elapsed\": 142.23319840431213, \"cpu_seconds\": 142.15199078199998}\n{\"job\": 1559, \"terminal\": true, \"elapsed\": 160.64851093292236, \"cpu_seconds\": 160.557911331}\n{\"job\": 1807, \"terminal\": true, \"elapsed\": 70.84081768989563, \"cpu_seconds\": 70.80139630300005}\n{\"job\": 2055, \"terminal\": true, \"elapsed\": 109.62593603134155, \"cpu_seconds\": 109.55821541900013}\n{\"job\": 2303, \"terminal\": true, \"elapsed\": 88.4438374042511, \"cpu_seconds\": 88.39215023500014}\n{\"job\": 2551, \"terminal\": true, \"elapsed\": 39.76456880569458, \"cpu_seconds\": 39.744285780000155}\n{\"job\": 2799, \"terminal\": true, \"elapsed\": 87.19568824768066, \"cpu_seconds\": 87.148870408}\n{\"job\": 3047, \"terminal\": true, \"elapsed\": 153.96676516532898, \"cpu_seconds\": 153.8756018859999}\n{\"job\": 3295, \"terminal\": true, \"elapsed\": 95.15858840942383, \"cpu_seconds\": 95.10383560100013}\n{\"job\": 3543, \"terminal\": true, \"elapsed\": 89.46983814239502, \"cpu_seconds\": 89.42165707599997}\n{\"job\": 3791, \"terminal\": true, \"elapsed\": 175.82731866836548, \"cpu_seconds\": 175.72763848699992}\n{\"job\": 4039, \"terminal\": true, \"elapsed\": 128.4237871170044, \"cpu_seconds\": 128.34848557600003}\n{\"job\": 4287, \"terminal\": true, \"elapsed\": 234.0815725326538, \"cpu_seconds\": 233.95795736799982}\n{\"job\": 4535, \"terminal\": true, \"elapsed\": 93.56324553489685, \"cpu_seconds\": 93.51783940299993}\n{\"job\": 4783, \"terminal\": true, \"elapsed\": 75.86869812011719, \"cpu_seconds\": 75.8301258309998}\nUser time (seconds): 2523.042881\nSystem time (seconds): 4.429462\nMaximum resident set size (kbytes): 1051176\nElapsed seconds: 2528.9867656230927\n"
+        },
+        "72": {
+          "exit": "0",
+          "label": "s1-confirm-72-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429009.4367814
+          },
+          "log": "{\"job\": 72, \"terminal\": true, \"elapsed\": 137.5218997001648, \"cpu_seconds\": 137.452124309}\n{\"job\": 320, \"terminal\": true, \"elapsed\": 224.33762288093567, \"cpu_seconds\": 224.214265114}\n{\"job\": 568, \"terminal\": true, \"elapsed\": 80.71409249305725, \"cpu_seconds\": 80.671608564}\n{\"job\": 816, \"terminal\": true, \"elapsed\": 46.750725984573364, \"cpu_seconds\": 46.725503102999994}\n{\"job\": 1064, \"terminal\": true, \"elapsed\": 82.62034249305725, \"cpu_seconds\": 82.56900153699996}\n{\"job\": 1312, \"terminal\": true, \"elapsed\": 125.04343247413635, \"cpu_seconds\": 124.96534060299996}\n{\"job\": 1560, \"terminal\": true, \"elapsed\": 145.95616126060486, \"cpu_seconds\": 145.86675149500002}\n{\"job\": 1808, \"terminal\": true, \"elapsed\": 200.7183620929718, \"cpu_seconds\": 200.59197411800005}\n{\"job\": 2056, \"terminal\": true, \"elapsed\": 68.66165924072266, \"cpu_seconds\": 68.61827732300003}\n{\"job\": 2304, \"terminal\": true, \"elapsed\": 67.88670802116394, \"cpu_seconds\": 67.8377972190001}\n{\"job\": 2552, \"terminal\": true, \"elapsed\": 162.60380029678345, \"cpu_seconds\": 162.49743960299998}\n{\"job\": 2800, \"terminal\": true, \"elapsed\": 86.1988754272461, \"cpu_seconds\": 86.14892029199996}\n{\"job\": 3048, \"terminal\": true, \"elapsed\": 37.17695212364197, \"cpu_seconds\": 37.15341671500005}\n{\"job\": 3296, \"terminal\": true, \"elapsed\": 85.44883036613464, \"cpu_seconds\": 85.39577716400004}\n{\"job\": 3544, \"terminal\": true, \"elapsed\": 72.66241908073425, \"cpu_seconds\": 72.61311216700005}\n{\"job\": 3792, \"terminal\": true, \"elapsed\": 141.42771410942078, \"cpu_seconds\": 141.33740734699995}\n{\"job\": 4040, \"terminal\": true, \"elapsed\": 172.57685351371765, \"cpu_seconds\": 172.4732110529999}\n{\"job\": 4288, \"terminal\": true, \"elapsed\": 179.13623452186584, \"cpu_seconds\": 179.0256116989999}\n{\"job\": 4536, \"terminal\": true, \"elapsed\": 119.44453310966492, \"cpu_seconds\": 119.37233037400028}\n{\"job\": 4784, \"terminal\": true, \"elapsed\": 143.20187211036682, \"cpu_seconds\": 143.12607247799997}\nUser time (seconds): 2379.000222\nSystem time (seconds): 3.50589\nMaximum resident set size (kbytes): 1042260\nElapsed seconds: 2383.941851377487\n"
+        },
+        "73": {
+          "exit": "0",
+          "label": "s1-confirm-73-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428985.83953
+          },
+          "log": "{\"job\": 73, \"terminal\": true, \"elapsed\": 81.21053814888, \"cpu_seconds\": 81.168613688}\n{\"job\": 321, \"terminal\": true, \"elapsed\": 236.1197862625122, \"cpu_seconds\": 235.97321369600002}\n{\"job\": 569, \"terminal\": true, \"elapsed\": 79.88933897018433, \"cpu_seconds\": 79.84546564699997}\n{\"job\": 817, \"terminal\": true, \"elapsed\": 81.94645571708679, \"cpu_seconds\": 81.898945513}\n{\"job\": 1065, \"terminal\": true, \"elapsed\": 90.69668912887573, \"cpu_seconds\": 90.63577868600004}\n{\"job\": 1313, \"terminal\": true, \"elapsed\": 128.89932703971863, \"cpu_seconds\": 128.82326649799995}\n{\"job\": 1561, \"terminal\": true, \"elapsed\": 139.77392840385437, \"cpu_seconds\": 139.69491144999995}\n{\"job\": 1809, \"terminal\": true, \"elapsed\": 94.17852520942688, \"cpu_seconds\": 94.12250840700005}\n{\"job\": 2057, \"terminal\": true, \"elapsed\": 99.4232349395752, \"cpu_seconds\": 99.36641828699987}\n{\"job\": 2305, \"terminal\": true, \"elapsed\": 68.99615478515625, \"cpu_seconds\": 68.95439539099993}\n{\"job\": 2553, \"terminal\": true, \"elapsed\": 190.2642056941986, \"cpu_seconds\": 190.14984695299995}\n{\"job\": 2801, \"terminal\": true, \"elapsed\": 81.67648935317993, \"cpu_seconds\": 81.63503238399994}\n{\"job\": 3049, \"terminal\": true, \"elapsed\": 41.099311113357544, \"cpu_seconds\": 41.07602765199999}\n{\"job\": 3297, \"terminal\": true, \"elapsed\": 79.78329992294312, \"cpu_seconds\": 79.73872693400017}\n{\"job\": 3545, \"terminal\": true, \"elapsed\": 75.5062985420227, \"cpu_seconds\": 75.45924991200013}\n{\"job\": 3793, \"terminal\": true, \"elapsed\": 169.92944812774658, \"cpu_seconds\": 169.83815961699997}\n{\"job\": 4041, \"terminal\": true, \"elapsed\": 226.77084708213806, \"cpu_seconds\": 226.64137036700004}\n{\"job\": 4289, \"terminal\": true, \"elapsed\": 188.74061274528503, \"cpu_seconds\": 188.6358589529998}\n{\"job\": 4537, \"terminal\": true, \"elapsed\": 73.44923305511475, \"cpu_seconds\": 73.40300609799988}\n{\"job\": 4785, \"terminal\": true, \"elapsed\": 128.04023718833923, \"cpu_seconds\": 127.97320150699989}\nUser time (seconds): 2352.827942\nSystem time (seconds): 6.136452\nMaximum resident set size (kbytes): 1091892\nElapsed seconds: 2360.327585697174\n"
+        },
+        "74": {
+          "exit": "0",
+          "label": "s1-confirm-74-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429031.5320451
+          },
+          "log": "{\"job\": 74, \"terminal\": true, \"elapsed\": 239.31050372123718, \"cpu_seconds\": 239.165611839}\n{\"job\": 322, \"terminal\": true, \"elapsed\": 226.8047652244568, \"cpu_seconds\": 226.671498709}\n{\"job\": 570, \"terminal\": true, \"elapsed\": 84.49707555770874, \"cpu_seconds\": 84.44198225899999}\n{\"job\": 818, \"terminal\": true, \"elapsed\": 85.44865441322327, \"cpu_seconds\": 85.40172375700001}\n{\"job\": 1066, \"terminal\": true, \"elapsed\": 107.5472469329834, \"cpu_seconds\": 107.47994463300006}\n{\"job\": 1314, \"terminal\": true, \"elapsed\": 144.33887195587158, \"cpu_seconds\": 144.24082748799992}\n{\"job\": 1562, \"terminal\": true, \"elapsed\": 92.71152663230896, \"cpu_seconds\": 92.65428550299998}\n{\"job\": 1810, \"terminal\": true, \"elapsed\": 92.71570444107056, \"cpu_seconds\": 92.64994882199994}\n{\"job\": 2058, \"terminal\": true, \"elapsed\": 58.02386546134949, \"cpu_seconds\": 57.98856272900002}\n{\"job\": 2306, \"terminal\": true, \"elapsed\": 120.7012197971344, \"cpu_seconds\": 120.61951502200009}\n{\"job\": 2554, \"terminal\": true, \"elapsed\": 119.38890385627747, \"cpu_seconds\": 119.31444199099997}\n{\"job\": 2802, \"terminal\": true, \"elapsed\": 88.01777124404907, \"cpu_seconds\": 87.95899326899985}\n{\"job\": 3050, \"terminal\": true, \"elapsed\": 42.63551092147827, \"cpu_seconds\": 42.61061256999983}\n{\"job\": 3298, \"terminal\": true, \"elapsed\": 82.98532223701477, \"cpu_seconds\": 82.93655954499991}\n{\"job\": 3546, \"terminal\": true, \"elapsed\": 81.9057686328888, \"cpu_seconds\": 81.84742177599992}\n{\"job\": 3794, \"terminal\": true, \"elapsed\": 151.9099473953247, \"cpu_seconds\": 151.81540194399986}\n{\"job\": 4042, \"terminal\": true, \"elapsed\": 175.28322958946228, \"cpu_seconds\": 175.17248004199996}\n{\"job\": 4290, \"terminal\": true, \"elapsed\": 144.43836569786072, \"cpu_seconds\": 144.3493528419997}\n{\"job\": 4538, \"terminal\": true, \"elapsed\": 153.70893263816833, \"cpu_seconds\": 153.62459355400006}\n{\"job\": 4786, \"terminal\": true, \"elapsed\": 109.75650882720947, \"cpu_seconds\": 109.70221641199987}\nUser time (seconds): 2399.77185\nSystem time (seconds): 4.745065\nMaximum resident set size (kbytes): 1024484\nElapsed seconds: 2406.0034630298615\n"
+        },
+        "75": {
+          "exit": "0",
+          "label": "s1-confirm-75-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428914.0217845
+          },
+          "log": "{\"job\": 75, \"terminal\": true, \"elapsed\": 133.72920632362366, \"cpu_seconds\": 133.64353290900002}\n{\"job\": 323, \"terminal\": true, \"elapsed\": 245.05319833755493, \"cpu_seconds\": 244.905190817}\n{\"job\": 571, \"terminal\": true, \"elapsed\": 83.26621532440186, \"cpu_seconds\": 83.214819304}\n{\"job\": 819, \"terminal\": true, \"elapsed\": 85.28130841255188, \"cpu_seconds\": 85.23204037699998}\n{\"job\": 1067, \"terminal\": true, \"elapsed\": 158.429780960083, \"cpu_seconds\": 158.33198685499997}\n{\"job\": 1315, \"terminal\": true, \"elapsed\": 83.23748564720154, \"cpu_seconds\": 83.18263449000005}\n{\"job\": 1563, \"terminal\": true, \"elapsed\": 138.98476815223694, \"cpu_seconds\": 138.90342828000007}\n{\"job\": 1811, \"terminal\": true, \"elapsed\": 87.97983169555664, \"cpu_seconds\": 87.92512748299998}\n{\"job\": 2059, \"terminal\": true, \"elapsed\": 95.1260781288147, \"cpu_seconds\": 95.06100503000005}\n{\"job\": 2307, \"terminal\": true, \"elapsed\": 100.52973508834839, \"cpu_seconds\": 100.46779635899998}\n{\"job\": 2555, \"terminal\": true, \"elapsed\": 119.4409487247467, \"cpu_seconds\": 119.35964390499998}\n{\"job\": 2803, \"terminal\": true, \"elapsed\": 42.160009145736694, \"cpu_seconds\": 42.13708423900016}\n{\"job\": 3051, \"terminal\": true, \"elapsed\": 38.553847312927246, \"cpu_seconds\": 38.53298413099992}\n{\"job\": 3299, \"terminal\": true, \"elapsed\": 85.29649376869202, \"cpu_seconds\": 85.24367534099997}\n{\"job\": 3547, \"terminal\": true, \"elapsed\": 81.14444279670715, \"cpu_seconds\": 81.09520174299996}\n{\"job\": 3795, \"terminal\": true, \"elapsed\": 144.6277265548706, \"cpu_seconds\": 144.53805411299982}\n{\"job\": 4043, \"terminal\": true, \"elapsed\": 175.95965147018433, \"cpu_seconds\": 175.847064563}\n{\"job\": 4291, \"terminal\": true, \"elapsed\": 150.75413179397583, \"cpu_seconds\": 150.65693160299998}\n{\"job\": 4539, \"terminal\": true, \"elapsed\": 162.02629470825195, \"cpu_seconds\": 161.93135470499965}\n{\"job\": 4787, \"terminal\": true, \"elapsed\": 72.97260665893555, \"cpu_seconds\": 72.93532175500013}\nUser time (seconds): 2283.319493\nSystem time (seconds): 3.745682\nMaximum resident set size (kbytes): 1041992\nElapsed seconds: 2288.476934194565\n"
+        },
+        "76": {
+          "exit": "0",
+          "label": "s1-confirm-76-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429289.622423
+          },
+          "log": "{\"job\": 76, \"terminal\": true, \"elapsed\": 318.31280970573425, \"cpu_seconds\": 318.115605941}\n{\"job\": 324, \"terminal\": true, \"elapsed\": 148.6400158405304, \"cpu_seconds\": 148.551963984}\n{\"job\": 572, \"terminal\": true, \"elapsed\": 126.26930356025696, \"cpu_seconds\": 126.19023056700001}\n{\"job\": 820, \"terminal\": true, \"elapsed\": 68.94278407096863, \"cpu_seconds\": 68.90148127300006}\n{\"job\": 1068, \"terminal\": true, \"elapsed\": 80.16005873680115, \"cpu_seconds\": 80.110479543}\n{\"job\": 1316, \"terminal\": true, \"elapsed\": 126.3780825138092, \"cpu_seconds\": 126.29723867400003}\n{\"job\": 1564, \"terminal\": true, \"elapsed\": 145.2861864566803, \"cpu_seconds\": 145.19595873600008}\n{\"job\": 1812, \"terminal\": true, \"elapsed\": 74.58405232429504, \"cpu_seconds\": 74.53562710400013}\n{\"job\": 2060, \"terminal\": true, \"elapsed\": 115.11608076095581, \"cpu_seconds\": 115.04378795599996}\n{\"job\": 2308, \"terminal\": true, \"elapsed\": 104.06866717338562, \"cpu_seconds\": 104.00103190599998}\n{\"job\": 2556, \"terminal\": true, \"elapsed\": 79.57923913002014, \"cpu_seconds\": 79.53114707500004}\n{\"job\": 2804, \"terminal\": true, \"elapsed\": 202.16986203193665, \"cpu_seconds\": 202.03768643900003}\n{\"job\": 3052, \"terminal\": true, \"elapsed\": 62.37068796157837, \"cpu_seconds\": 62.33453806500006}\n{\"job\": 3300, \"terminal\": true, \"elapsed\": 32.846919298172, \"cpu_seconds\": 32.82612249800013}\n{\"job\": 3548, \"terminal\": true, \"elapsed\": 126.57408452033997, \"cpu_seconds\": 126.49713585099994}\n{\"job\": 3796, \"terminal\": true, \"elapsed\": 149.31345391273499, \"cpu_seconds\": 149.22088652399998}\n{\"job\": 4044, \"terminal\": true, \"elapsed\": 165.52924585342407, \"cpu_seconds\": 165.4240038569999}\n{\"job\": 4292, \"terminal\": true, \"elapsed\": 320.18492579460144, \"cpu_seconds\": 319.99913285899993}\n{\"job\": 4540, \"terminal\": true, \"elapsed\": 117.21427512168884, \"cpu_seconds\": 117.14598029800027}\n{\"job\": 4788, \"terminal\": true, \"elapsed\": 96.69463396072388, \"cpu_seconds\": 96.63342530799991}\nUser time (seconds): 2656.93021\nSystem time (seconds): 5.484602\nMaximum resident set size (kbytes): 1439652\nElapsed seconds: 2664.0604934692383\n"
+        },
+        "77": {
+          "exit": "0",
+          "label": "s1-confirm-77-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429018.5590024
+          },
+          "log": "{\"job\": 77, \"terminal\": true, \"elapsed\": 231.4550383090973, \"cpu_seconds\": 231.302738091}\n{\"job\": 325, \"terminal\": true, \"elapsed\": 160.7564594745636, \"cpu_seconds\": 160.668977268}\n{\"job\": 573, \"terminal\": true, \"elapsed\": 139.68786096572876, \"cpu_seconds\": 139.599115445}\n{\"job\": 821, \"terminal\": true, \"elapsed\": 86.36351609230042, \"cpu_seconds\": 86.30772221799998}\n{\"job\": 1069, \"terminal\": true, \"elapsed\": 77.56106042861938, \"cpu_seconds\": 77.521726522}\n{\"job\": 1317, \"terminal\": true, \"elapsed\": 132.93971705436707, \"cpu_seconds\": 132.86533281000004}\n{\"job\": 1565, \"terminal\": true, \"elapsed\": 144.39110231399536, \"cpu_seconds\": 144.30880303499998}\n{\"job\": 1813, \"terminal\": true, \"elapsed\": 75.88239312171936, \"cpu_seconds\": 75.83719339099991}\n{\"job\": 2061, \"terminal\": true, \"elapsed\": 98.45687627792358, \"cpu_seconds\": 98.39515411599996}\n{\"job\": 2309, \"terminal\": true, \"elapsed\": 94.68794846534729, \"cpu_seconds\": 94.62850003300014}\n{\"job\": 2557, \"terminal\": true, \"elapsed\": 68.84167766571045, \"cpu_seconds\": 68.79871960900005}\n{\"job\": 2805, \"terminal\": true, \"elapsed\": 125.10520315170288, \"cpu_seconds\": 125.02729699200017}\n{\"job\": 3053, \"terminal\": true, \"elapsed\": 43.23319387435913, \"cpu_seconds\": 43.20596357999989}\n{\"job\": 3301, \"terminal\": true, \"elapsed\": 34.96143865585327, \"cpu_seconds\": 34.93883290300005}\n{\"job\": 3549, \"terminal\": true, \"elapsed\": 83.30955410003662, \"cpu_seconds\": 83.26218990500001}\n{\"job\": 3797, \"terminal\": true, \"elapsed\": 170.24865126609802, \"cpu_seconds\": 170.148055203}\n{\"job\": 4045, \"terminal\": true, \"elapsed\": 130.4004578590393, \"cpu_seconds\": 130.31988639899987}\n{\"job\": 4293, \"terminal\": true, \"elapsed\": 263.59315490722656, \"cpu_seconds\": 263.4394290339999}\n{\"job\": 4541, \"terminal\": true, \"elapsed\": 119.15041422843933, \"cpu_seconds\": 119.08216186999971}\n{\"job\": 4789, \"terminal\": true, \"elapsed\": 108.10402083396912, \"cpu_seconds\": 108.05402417899995}\nUser time (seconds): 2385.857462\nSystem time (seconds): 5.70061\nMaximum resident set size (kbytes): 1046652\nElapsed seconds: 2392.9795644283295\n"
+        },
+        "78": {
+          "exit": "0",
+          "label": "s1-confirm-78-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428958.7334409
+          },
+          "log": "{\"job\": 78, \"terminal\": true, \"elapsed\": 61.887701988220215, \"cpu_seconds\": 61.840302105999996}\n{\"job\": 326, \"terminal\": true, \"elapsed\": 220.12643671035767, \"cpu_seconds\": 219.99799597100002}\n{\"job\": 574, \"terminal\": true, \"elapsed\": 120.33641290664673, \"cpu_seconds\": 120.26931960799999}\n{\"job\": 822, \"terminal\": true, \"elapsed\": 74.45579528808594, \"cpu_seconds\": 74.405372}\n{\"job\": 1070, \"terminal\": true, \"elapsed\": 101.50256896018982, \"cpu_seconds\": 101.43892107100004}\n{\"job\": 1318, \"terminal\": true, \"elapsed\": 107.37623643875122, \"cpu_seconds\": 107.308582258}\n{\"job\": 1566, \"terminal\": true, \"elapsed\": 145.45851588249207, \"cpu_seconds\": 145.366154628}\n{\"job\": 1814, \"terminal\": true, \"elapsed\": 71.29803943634033, \"cpu_seconds\": 71.25375200799999}\n{\"job\": 2062, \"terminal\": true, \"elapsed\": 83.4987485408783, \"cpu_seconds\": 83.44114804700007}\n{\"job\": 2310, \"terminal\": true, \"elapsed\": 70.85940551757812, \"cpu_seconds\": 70.80762373000005}\n{\"job\": 2558, \"terminal\": true, \"elapsed\": 192.49434781074524, \"cpu_seconds\": 192.36917189999986}\n{\"job\": 2806, \"terminal\": true, \"elapsed\": 130.68107986450195, \"cpu_seconds\": 130.59731414199996}\n{\"job\": 3054, \"terminal\": true, \"elapsed\": 47.1321017742157, \"cpu_seconds\": 47.10404756899993}\n{\"job\": 3302, \"terminal\": true, \"elapsed\": 40.196486949920654, \"cpu_seconds\": 40.17198994199998}\n{\"job\": 3550, \"terminal\": true, \"elapsed\": 74.22391605377197, \"cpu_seconds\": 74.17840247699996}\n{\"job\": 3798, \"terminal\": true, \"elapsed\": 144.8785490989685, \"cpu_seconds\": 144.7921113020002}\n{\"job\": 4046, \"terminal\": true, \"elapsed\": 145.92934679985046, \"cpu_seconds\": 145.83481096700007}\n{\"job\": 4294, \"terminal\": true, \"elapsed\": 183.90824389457703, \"cpu_seconds\": 183.79324641599987}\n{\"job\": 4542, \"terminal\": true, \"elapsed\": 149.44074773788452, \"cpu_seconds\": 149.34850487300014}\n{\"job\": 4790, \"terminal\": true, \"elapsed\": 163.50122952461243, \"cpu_seconds\": 163.41416001199968}\nUser time (seconds): 2326.274817\nSystem time (seconds): 5.404614\nMaximum resident set size (kbytes): 1038364\nElapsed seconds: 2333.1369709968567\n"
+        },
+        "79": {
+          "exit": "0",
+          "label": "s1-confirm-79-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428842.038956
+          },
+          "log": "{\"job\": 79, \"terminal\": true, \"elapsed\": 60.21249008178711, \"cpu_seconds\": 60.174376122}\n{\"job\": 327, \"terminal\": true, \"elapsed\": 192.36510682106018, \"cpu_seconds\": 192.247705779}\n{\"job\": 575, \"terminal\": true, \"elapsed\": 125.74960160255432, \"cpu_seconds\": 125.67109709699997}\n{\"job\": 823, \"terminal\": true, \"elapsed\": 39.18740248680115, \"cpu_seconds\": 39.165266401}\n{\"job\": 1071, \"terminal\": true, \"elapsed\": 64.82904076576233, \"cpu_seconds\": 64.79347881300004}\n{\"job\": 1319, \"terminal\": true, \"elapsed\": 144.12863492965698, \"cpu_seconds\": 144.04453813799995}\n{\"job\": 1567, \"terminal\": true, \"elapsed\": 102.12378406524658, \"cpu_seconds\": 102.06193940699995}\n{\"job\": 1815, \"terminal\": true, \"elapsed\": 73.87260699272156, \"cpu_seconds\": 73.82720241499999}\n{\"job\": 2063, \"terminal\": true, \"elapsed\": 97.11059093475342, \"cpu_seconds\": 97.05076787400003}\n{\"job\": 2311, \"terminal\": true, \"elapsed\": 90.14455008506775, \"cpu_seconds\": 90.08268749199999}\n{\"job\": 2559, \"terminal\": true, \"elapsed\": 246.33423447608948, \"cpu_seconds\": 246.18302641900004}\n{\"job\": 2807, \"terminal\": true, \"elapsed\": 71.41793513298035, \"cpu_seconds\": 71.37629142500009}\n{\"job\": 3055, \"terminal\": true, \"elapsed\": 41.02269959449768, \"cpu_seconds\": 40.99861766900017}\n{\"job\": 3303, \"terminal\": true, \"elapsed\": 37.258179903030396, \"cpu_seconds\": 37.23825543499993}\n{\"job\": 3551, \"terminal\": true, \"elapsed\": 70.6807279586792, \"cpu_seconds\": 70.63764268}\n{\"job\": 3799, \"terminal\": true, \"elapsed\": 146.9890058040619, \"cpu_seconds\": 146.90533925399995}\n{\"job\": 4047, \"terminal\": true, \"elapsed\": 156.3141016960144, \"cpu_seconds\": 156.22094323199985}\n{\"job\": 4295, \"terminal\": true, \"elapsed\": 153.51778388023376, \"cpu_seconds\": 153.42981513100017}\n{\"job\": 4543, \"terminal\": true, \"elapsed\": 99.4839174747467, \"cpu_seconds\": 99.42798839500006}\n{\"job\": 4791, \"terminal\": true, \"elapsed\": 199.7716031074524, \"cpu_seconds\": 199.66157837499986}\nUser time (seconds): 2211.572697\nSystem time (seconds): 3.533891\nMaximum resident set size (kbytes): 1182668\nElapsed seconds: 2216.425812482834\n"
+        },
+        "80": {
+          "exit": "0",
+          "label": "s1-confirm-80-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429033.0097413
+          },
+          "log": "{\"job\": 80, \"terminal\": true, \"elapsed\": 154.0798692703247, \"cpu_seconds\": 153.975590065}\n{\"job\": 328, \"terminal\": true, \"elapsed\": 246.85711026191711, \"cpu_seconds\": 246.72178227000003}\n{\"job\": 576, \"terminal\": true, \"elapsed\": 112.81264734268188, \"cpu_seconds\": 112.74147792100007}\n{\"job\": 824, \"terminal\": true, \"elapsed\": 195.24526500701904, \"cpu_seconds\": 195.11764815499998}\n{\"job\": 1072, \"terminal\": true, \"elapsed\": 86.31424260139465, \"cpu_seconds\": 86.261537815}\n{\"job\": 1320, \"terminal\": true, \"elapsed\": 36.437278747558594, \"cpu_seconds\": 36.41601786199999}\n{\"job\": 1568, \"terminal\": true, \"elapsed\": 125.18079233169556, \"cpu_seconds\": 125.10414077400003}\n{\"job\": 1816, \"terminal\": true, \"elapsed\": 76.27291631698608, \"cpu_seconds\": 76.22310168499996}\n{\"job\": 2064, \"terminal\": true, \"elapsed\": 78.39475345611572, \"cpu_seconds\": 78.34733485700008}\n{\"job\": 2312, \"terminal\": true, \"elapsed\": 105.49149107933044, \"cpu_seconds\": 105.42636694099997}\n{\"job\": 2560, \"terminal\": true, \"elapsed\": 155.9557547569275, \"cpu_seconds\": 155.85771854300015}\n{\"job\": 2808, \"terminal\": true, \"elapsed\": 90.38410711288452, \"cpu_seconds\": 90.33121549500015}\n{\"job\": 3056, \"terminal\": true, \"elapsed\": 155.80232405662537, \"cpu_seconds\": 155.713791742}\n{\"job\": 3304, \"terminal\": true, \"elapsed\": 44.48560404777527, \"cpu_seconds\": 44.46123352399991}\n{\"job\": 3552, \"terminal\": true, \"elapsed\": 36.487595319747925, \"cpu_seconds\": 36.46504384900004}\n{\"job\": 3800, \"terminal\": true, \"elapsed\": 139.96995973587036, \"cpu_seconds\": 139.88839448}\n{\"job\": 4048, \"terminal\": true, \"elapsed\": 148.69367003440857, \"cpu_seconds\": 148.61066342799995}\n{\"job\": 4296, \"terminal\": true, \"elapsed\": 150.6112277507782, \"cpu_seconds\": 150.518978844}\n{\"job\": 4544, \"terminal\": true, \"elapsed\": 140.96592736244202, \"cpu_seconds\": 140.88375929400036}\n{\"job\": 4792, \"terminal\": true, \"elapsed\": 123.06215453147888, \"cpu_seconds\": 123.00188669099998}\nUser time (seconds): 2399.186821\nSystem time (seconds): 6.751944\nMaximum resident set size (kbytes): 1094156\nElapsed seconds: 2407.378952741623\n"
+        },
+        "81": {
+          "exit": "0",
+          "label": "s1-confirm-81-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791429016.3978148
+          },
+          "log": "{\"job\": 81, \"terminal\": true, \"elapsed\": 161.75448870658875, \"cpu_seconds\": 161.64623978699998}\n{\"job\": 329, \"terminal\": true, \"elapsed\": 274.9185791015625, \"cpu_seconds\": 274.761406974}\n{\"job\": 577, \"terminal\": true, \"elapsed\": 122.98153066635132, \"cpu_seconds\": 122.91152461699994}\n{\"job\": 825, \"terminal\": true, \"elapsed\": 127.02753067016602, \"cpu_seconds\": 126.955513731}\n{\"job\": 1073, \"terminal\": true, \"elapsed\": 95.23644542694092, \"cpu_seconds\": 95.18383258300003}\n{\"job\": 1321, \"terminal\": true, \"elapsed\": 36.03960943222046, \"cpu_seconds\": 36.01978359499992}\n{\"job\": 1569, \"terminal\": true, \"elapsed\": 139.5453598499298, \"cpu_seconds\": 139.463888762}\n{\"job\": 1817, \"terminal\": true, \"elapsed\": 79.76571893692017, \"cpu_seconds\": 79.717714033}\n{\"job\": 2065, \"terminal\": true, \"elapsed\": 86.06470942497253, \"cpu_seconds\": 86.01271709699995}\n{\"job\": 2313, \"terminal\": true, \"elapsed\": 105.07639765739441, \"cpu_seconds\": 105.01224991699996}\n{\"job\": 2561, \"terminal\": true, \"elapsed\": 158.18515539169312, \"cpu_seconds\": 158.08263493000004}\n{\"job\": 2809, \"terminal\": true, \"elapsed\": 64.66884565353394, \"cpu_seconds\": 64.63278234400013}\n{\"job\": 3057, \"terminal\": true, \"elapsed\": 159.09281086921692, \"cpu_seconds\": 158.99904389900007}\n{\"job\": 3305, \"terminal\": true, \"elapsed\": 39.4884352684021, \"cpu_seconds\": 39.46486198000002}\n{\"job\": 3553, \"terminal\": true, \"elapsed\": 39.226053953170776, \"cpu_seconds\": 39.20568404900018}\n{\"job\": 3801, \"terminal\": true, \"elapsed\": 152.15029096603394, \"cpu_seconds\": 152.06441518799988}\n{\"job\": 4049, \"terminal\": true, \"elapsed\": 178.08892035484314, \"cpu_seconds\": 177.97369883099987}\n{\"job\": 4297, \"terminal\": true, \"elapsed\": 140.47186279296875, \"cpu_seconds\": 140.39633104199993}\n{\"job\": 4545, \"terminal\": true, \"elapsed\": 91.54063057899475, \"cpu_seconds\": 91.48797687099977}\n{\"job\": 4793, \"terminal\": true, \"elapsed\": 135.61450719833374, \"cpu_seconds\": 135.53329502199995}\nUser time (seconds): 2385.559583\nSystem time (seconds): 3.773759\nMaximum resident set size (kbytes): 1065628\nElapsed seconds: 2390.74892783165\n"
+        },
+        "82": {
+          "exit": "0",
+          "label": "s1-confirm-82-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428948.4884467
+          },
+          "log": "{\"job\": 82, \"terminal\": true, \"elapsed\": 172.63882756233215, \"cpu_seconds\": 172.530375634}\n{\"job\": 330, \"terminal\": true, \"elapsed\": 45.68784284591675, \"cpu_seconds\": 45.664400809}\n{\"job\": 578, \"terminal\": true, \"elapsed\": 146.01064348220825, \"cpu_seconds\": 145.922434102}\n{\"job\": 826, \"terminal\": true, \"elapsed\": 120.9885778427124, \"cpu_seconds\": 120.92154676500002}\n{\"job\": 1074, \"terminal\": true, \"elapsed\": 86.6592013835907, \"cpu_seconds\": 86.60945488099998}\n{\"job\": 1322, \"terminal\": true, \"elapsed\": 38.6887948513031, \"cpu_seconds\": 38.66439299399997}\n{\"job\": 1570, \"terminal\": true, \"elapsed\": 146.3525140285492, \"cpu_seconds\": 146.26374691399997}\n{\"job\": 1818, \"terminal\": true, \"elapsed\": 73.38819217681885, \"cpu_seconds\": 73.34252806000006}\n{\"job\": 2066, \"terminal\": true, \"elapsed\": 120.23463773727417, \"cpu_seconds\": 120.16533662699999}\n{\"job\": 2314, \"terminal\": true, \"elapsed\": 93.99334406852722, \"cpu_seconds\": 93.92993690200012}\n{\"job\": 2562, \"terminal\": true, \"elapsed\": 146.09570384025574, \"cpu_seconds\": 146.00338561900003}\n{\"job\": 2810, \"terminal\": true, \"elapsed\": 142.98545956611633, \"cpu_seconds\": 142.89359993800008}\n{\"job\": 3058, \"terminal\": true, \"elapsed\": 131.005863904953, \"cpu_seconds\": 130.92631596800015}\n{\"job\": 3306, \"terminal\": true, \"elapsed\": 40.4721302986145, \"cpu_seconds\": 40.441974957000184}\n{\"job\": 3554, \"terminal\": true, \"elapsed\": 62.69976544380188, \"cpu_seconds\": 62.66028790999985}\n{\"job\": 3802, \"terminal\": true, \"elapsed\": 145.81530046463013, \"cpu_seconds\": 145.72296864400005}\n{\"job\": 4050, \"terminal\": true, \"elapsed\": 141.06754732131958, \"cpu_seconds\": 140.98310808099995}\n{\"job\": 4298, \"terminal\": true, \"elapsed\": 179.67388248443604, \"cpu_seconds\": 179.56560196300006}\n{\"job\": 4546, \"terminal\": true, \"elapsed\": 158.07328701019287, \"cpu_seconds\": 157.97030034299974}\n{\"job\": 4794, \"terminal\": true, \"elapsed\": 126.41169238090515, \"cpu_seconds\": 126.34680765800022}\nUser time (seconds): 2318.625514\nSystem time (seconds): 2.7782999999999998\nMaximum resident set size (kbytes): 1307340\nElapsed seconds: 2322.8216869831085\n"
+        },
+        "83": {
+          "exit": "0",
+          "label": "s1-confirm-83-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428941.6271756
+          },
+          "log": "{\"job\": 83, \"terminal\": true, \"elapsed\": 180.29105758666992, \"cpu_seconds\": 180.172071187}\n{\"job\": 331, \"terminal\": true, \"elapsed\": 54.07542324066162, \"cpu_seconds\": 54.04264449600001}\n{\"job\": 579, \"terminal\": true, \"elapsed\": 167.3095064163208, \"cpu_seconds\": 167.21197572100002}\n{\"job\": 827, \"terminal\": true, \"elapsed\": 114.2133264541626, \"cpu_seconds\": 114.14595496800007}\n{\"job\": 1075, \"terminal\": true, \"elapsed\": 89.65217924118042, \"cpu_seconds\": 89.59960617800004}\n{\"job\": 1323, \"terminal\": true, \"elapsed\": 81.2968544960022, \"cpu_seconds\": 81.24872704299992}\n{\"job\": 1571, \"terminal\": true, \"elapsed\": 137.22268223762512, \"cpu_seconds\": 137.13495212299995}\n{\"job\": 1819, \"terminal\": true, \"elapsed\": 73.19401669502258, \"cpu_seconds\": 73.155263375}\n{\"job\": 2067, \"terminal\": true, \"elapsed\": 91.28863334655762, \"cpu_seconds\": 91.23647562999997}\n{\"job\": 2315, \"terminal\": true, \"elapsed\": 108.55460572242737, \"cpu_seconds\": 108.481525261}\n{\"job\": 2563, \"terminal\": true, \"elapsed\": 147.93757104873657, \"cpu_seconds\": 147.84432685700017}\n{\"job\": 2811, \"terminal\": true, \"elapsed\": 163.36915588378906, \"cpu_seconds\": 163.2709696500001}\n{\"job\": 3059, \"terminal\": true, \"elapsed\": 100.79480457305908, \"cpu_seconds\": 100.73159573999988}\n{\"job\": 3307, \"terminal\": true, \"elapsed\": 39.39296627044678, \"cpu_seconds\": 39.368424962999825}\n{\"job\": 3555, \"terminal\": true, \"elapsed\": 37.5006902217865, \"cpu_seconds\": 37.4773427409998}\n{\"job\": 3803, \"terminal\": true, \"elapsed\": 141.89710116386414, \"cpu_seconds\": 141.810208397}\n{\"job\": 4051, \"terminal\": true, \"elapsed\": 171.87066102027893, \"cpu_seconds\": 171.76423720100001}\n{\"job\": 4299, \"terminal\": true, \"elapsed\": 130.5219178199768, \"cpu_seconds\": 130.44220746199994}\n{\"job\": 4547, \"terminal\": true, \"elapsed\": 134.4950339794159, \"cpu_seconds\": 134.4141668230002}\n{\"job\": 4795, \"terminal\": true, \"elapsed\": 147.14535903930664, \"cpu_seconds\": 147.06329772499976}\nUser time (seconds): 2312.641021\nSystem time (seconds): 1.8908459999999998\nMaximum resident set size (kbytes): 1108168\nElapsed seconds: 2315.9425876140594\n"
+        },
+        "84": {
+          "exit": "0",
+          "label": "s1-confirm-84-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428827.564616
+          },
+          "log": "{\"job\": 84, \"terminal\": true, \"elapsed\": 140.94902896881104, \"cpu_seconds\": 140.869644926}\n{\"job\": 332, \"terminal\": true, \"elapsed\": 89.16120314598083, \"cpu_seconds\": 89.10463837500001}\n{\"job\": 580, \"terminal\": true, \"elapsed\": 132.43790411949158, \"cpu_seconds\": 132.35438686700002}\n{\"job\": 828, \"terminal\": true, \"elapsed\": 113.2387945652008, \"cpu_seconds\": 113.17088666699999}\n{\"job\": 1076, \"terminal\": true, \"elapsed\": 155.7590925693512, \"cpu_seconds\": 155.668645315}\n{\"job\": 1324, \"terminal\": true, \"elapsed\": 72.70572400093079, \"cpu_seconds\": 72.6600168}\n{\"job\": 1572, \"terminal\": true, \"elapsed\": 34.537113189697266, \"cpu_seconds\": 34.51617603200009}\n{\"job\": 1820, \"terminal\": true, \"elapsed\": 76.71224594116211, \"cpu_seconds\": 76.66137835400002}\n{\"job\": 2068, \"terminal\": true, \"elapsed\": 76.68567132949829, \"cpu_seconds\": 76.63518357500004}\n{\"job\": 2316, \"terminal\": true, \"elapsed\": 92.92564082145691, \"cpu_seconds\": 92.86665941600006}\n{\"job\": 2564, \"terminal\": true, \"elapsed\": 221.57827639579773, \"cpu_seconds\": 221.42693609499997}\n{\"job\": 2812, \"terminal\": true, \"elapsed\": 113.9786946773529, \"cpu_seconds\": 113.90735611500008}\n{\"job\": 3060, \"terminal\": true, \"elapsed\": 62.82195854187012, \"cpu_seconds\": 62.785051909}\n{\"job\": 3308, \"terminal\": true, \"elapsed\": 111.61065292358398, \"cpu_seconds\": 111.53749004500014}\n{\"job\": 3556, \"terminal\": true, \"elapsed\": 60.033464193344116, \"cpu_seconds\": 59.99700679700004}\n{\"job\": 3804, \"terminal\": true, \"elapsed\": 34.37007021903992, \"cpu_seconds\": 34.351131971000086}\n{\"job\": 4052, \"terminal\": true, \"elapsed\": 141.02896976470947, \"cpu_seconds\": 140.93922377700005}\n{\"job\": 4300, \"terminal\": true, \"elapsed\": 197.73486256599426, \"cpu_seconds\": 197.61101640099992}\n{\"job\": 4548, \"terminal\": true, \"elapsed\": 84.71077275276184, \"cpu_seconds\": 84.65731442000015}\n{\"job\": 4796, \"terminal\": true, \"elapsed\": 185.02663040161133, \"cpu_seconds\": 184.9177005590002}\nUser time (seconds): 2194.282144\nSystem time (seconds): 6.208113\nMaximum resident set size (kbytes): 1060244\nElapsed seconds: 2201.8621957302094\n"
+        },
+        "85": {
+          "exit": "0",
+          "label": "s1-confirm-85-r2f",
+          "done": {
+            "complete": true,
+            "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+            "finished": 1791428828.1005874
+          },
+          "log": "{\"job\": 85, \"terminal\": true, \"elapsed\": 117.30065321922302, \"cpu_seconds\": 117.23651195800001}\n{\"job\": 333, \"terminal\": true, \"elapsed\": 130.64062309265137, \"cpu_seconds\": 130.55914139}\n{\"job\": 581, \"terminal\": true, \"elapsed\": 140.09844040870667, \"cpu_seconds\": 140.01786833900002}\n{\"job\": 829, \"terminal\": true, \"elapsed\": 108.42917013168335, \"cpu_seconds\": 108.36246244699998}\n{\"job\": 1077, \"terminal\": true, \"elapsed\": 159.3011417388916, \"cpu_seconds\": 159.19693656799996}\n{\"job\": 1325, \"terminal\": true, \"elapsed\": 40.83792853355408, \"cpu_seconds\": 40.815218250000044}\n{\"job\": 1573, \"terminal\": true, \"elapsed\": 33.975154399871826, \"cpu_seconds\": 33.95597653499999}\n{\"job\": 1821, \"terminal\": true, \"elapsed\": 79.20237565040588, \"cpu_seconds\": 79.152881707}\n{\"job\": 2069, \"terminal\": true, \"elapsed\": 96.69788432121277, \"cpu_seconds\": 96.63726035499997}\n{\"job\": 2317, \"terminal\": true, \"elapsed\": 86.25814628601074, \"cpu_seconds\": 86.20228404300008}\n{\"job\": 2565, \"terminal\": true, \"elapsed\": 210.15400624275208, \"cpu_seconds\": 210.0180272120001}\n{\"job\": 2813, \"terminal\": true, \"elapsed\": 116.11082339286804, \"cpu_seconds\": 116.0427354200001}\n{\"job\": 3061, \"terminal\": true, \"elapsed\": 66.27918076515198, \"cpu_seconds\": 66.24358493799991}\n{\"job\": 3309, \"terminal\": true, \"elapsed\": 82.10737681388855, \"cpu_seconds\": 82.05761103700002}\n{\"job\": 3557, \"terminal\": true, \"elapsed\": 37.613327980041504, \"cpu_seconds\": 37.591285797999944}\n{\"job\": 3805, \"terminal\": true, \"elapsed\": 50.42237114906311, \"cpu_seconds\": 50.39681984599997}\n{\"job\": 4053, \"terminal\": true, \"elapsed\": 164.13850450515747, \"cpu_seconds\": 164.04391041600002}\n{\"job\": 4301, \"terminal\": true, \"elapsed\": 181.78716230392456, \"cpu_seconds\": 181.6757198319999}\n{\"job\": 4549, \"terminal\": true, \"elapsed\": 117.29164028167725, \"cpu_seconds\": 117.21983058899991}\n{\"job\": 4797, \"terminal\": true, \"elapsed\": 179.8863091468811, \"cpu_seconds\": 179.7806368370002}\nUser time (seconds): 2194.486771\nSystem time (seconds): 6.564036\nMaximum resident set size (kbytes): 1093400\nElapsed seconds: 2202.3802642822266\n"
+        }
+      },
+      "launch": {
+        "workers": [
+          {
+            "index": 48,
+            "label": "s1-confirm-48-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 49,
+            "label": "s1-confirm-49-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 50,
+            "label": "s1-confirm-50-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 51,
+            "label": "s1-confirm-51-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 52,
+            "label": "s1-confirm-52-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 53,
+            "label": "s1-confirm-53-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 54,
+            "label": "s1-confirm-54-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 55,
+            "label": "s1-confirm-55-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 56,
+            "label": "s1-confirm-56-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 57,
+            "label": "s1-confirm-57-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 58,
+            "label": "s1-confirm-58-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 59,
+            "label": "s1-confirm-59-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 60,
+            "label": "s1-confirm-60-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 61,
+            "label": "s1-confirm-61-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 62,
+            "label": "s1-confirm-62-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 63,
+            "label": "s1-confirm-63-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 64,
+            "label": "s1-confirm-64-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 65,
+            "label": "s1-confirm-65-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 66,
+            "label": "s1-confirm-66-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 67,
+            "label": "s1-confirm-67-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 68,
+            "label": "s1-confirm-68-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 69,
+            "label": "s1-confirm-69-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 70,
+            "label": "s1-confirm-70-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 71,
+            "label": "s1-confirm-71-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 72,
+            "label": "s1-confirm-72-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 73,
+            "label": "s1-confirm-73-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 74,
+            "label": "s1-confirm-74-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 75,
+            "label": "s1-confirm-75-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 76,
+            "label": "s1-confirm-76-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 77,
+            "label": "s1-confirm-77-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 78,
+            "label": "s1-confirm-78-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 79,
+            "label": "s1-confirm-79-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 80,
+            "label": "s1-confirm-80-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 81,
+            "label": "s1-confirm-81-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 82,
+            "label": "s1-confirm-82-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 83,
+            "label": "s1-confirm-83-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 84,
+            "label": "s1-confirm-84-r2f",
+            "host": "127x04"
+          },
+          {
+            "index": 85,
+            "label": "s1-confirm-85-r2f",
+            "host": "127x04"
+          }
+        ],
+        "launched_at": 1791426625.0917447,
+        "who": "",
+        "concurrency": 38
+      }
+    }
+  },
+  "processes": "2153775       1   0 Ss   systemd         /lib/systemd/systemd --user\n2153776 2153775   0 S    (sd-pam)        (sd-pam)\n2153783 2153775   - SNsl tracker-miner-f /usr/libexec/tracker-miner-fs\n2153794 2153775   0 Ss   dbus-daemon     /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only\n2153821 2153775   0 Ssl  gvfsd           /usr/libexec/gvfsd\n2153826 2153775   0 Sl   gvfsd-fuse      /usr/libexec/gvfsd-fuse /run/user/3822945/gvfs -f -o big_writes\n2153828 2153775   0 Ssl  gvfs-udisks2-vo /usr/libexec/gvfs-udisks2-volume-monitor\n2153858 2153775   0 Ssl  gvfs-gphoto2-vo /usr/libexec/gvfs-gphoto2-volume-monitor\n2153867 2153775   0 Ssl  gvfs-afc-volume /usr/libexec/gvfs-afc-volume-monitor\n2153882 2153775   0 Ssl  gvfs-mtp-volume /usr/libexec/gvfs-mtp-volume-monitor\n2153891 2153775   0 Ssl  gvfs-goa-volume /usr/libexec/gvfs-goa-volume-monitor\n2153897 2153775   0 Sl   goa-daemon      /usr/libexec/goa-daemon\n2153913 2153775   0 Sl   goa-identity-se /usr/libexec/goa-identity-service\n2153963 2153775   0 Ssl  tracker-store   /usr/libexec/tracker-store\n2153972       1  10 SNsl tailscaled      //home/sdicks02/.local/opt/csc-tailscale/1.102.5/tailscaled --tun=userspace-networking --statedir=//home/sdicks02/.local/share/csc-tailscale/127x04 --socket=/tmp/csc-tailscale-3822945/tailscaled.sock --port=0\n2154233 2153775   - SNsl tracker-extract /usr/libexec/tracker-extract\n2284038 2283982   0 S    sshd            sshd: sdicks02@notty\n2284039 2284038   0 Ss   python          /mpac/sdicks02/repos/clasher/.venv/bin/python -B -\n2284041 2284039   0 R    ps              ps -u 3822945 -o pid,ppid,ni,stat,comm,args --no-headers\n"
+}

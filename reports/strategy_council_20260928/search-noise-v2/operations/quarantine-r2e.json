@@ -1,0 +1,11 @@
+{
+  "utc": 1791429299.6573946,
+  "reachable": false,
+  "exit": 255,
+  "error": "ssh: connect to host 127x07 port 22: No route to host\n",
+  "valid_receipts": 0,
+  "comparisons": 0,
+  "mismatches": 0,
+  "original_process_state": "unknown",
+  "policy": "single bounded completion-barrier probe; no restart, signals or retry"
+}

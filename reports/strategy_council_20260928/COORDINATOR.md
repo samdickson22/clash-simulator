@@ -377,3 +377,26 @@ Also on the hub, but with copies elsewhere:
   executes v3b (`1ec2c60c…`). All non-header arrays are equal and every common header field matches. Accepted: the
   runtime SHA marker joins reuse provenance as an exempt provenance field. Original headers are kept; actual execution
   is recorded in the sidecar manifest. Any other header difference still fails.
+- **2026-10-08 04:10 UTC: S1 r2 COMPLETE. Primary FAIL; the event gate is not met at 90/90 or 97/97.**
+  (`search-noise-v2/RESULTS.md`, `result.json`; 4,992/4,992 games, 191 core-h, 2.1 h wall on 04/08 after the recovery.)
+  - Primary: E4 − B at N64 = −3.9 pp [−9.8, +2.0], so multi-root belief search does not beat single-root.
+    Coordinator recomputation from the raw receipts on 127x01 reproduces −0.0391 [−0.0977, +0.0195] and the A/B/E4 cell
+    scores exactly.
+  - vs C56 scripts: clean A 95.7%; noisy arms 51–65% at every event level, e.g. B 59.4 / 62.9 / 64.5% at N64 / N90 /
+    N97. E4 − clean = −37.5 pp at N90 and −31.6 pp at N97, so neither event gate passes and S1 retains the provisional
+    95/95 gate plus "decision-side work required". Latency variants (old / target / L2) move scores by only ~±3 pp;
+    tap failure at 10% vs 60% gives 62.1 vs 54.7%.
+  - **Diagnosis from the S1 diagnostics.** Better events barely help because the derived opponent state stays poor even
+    at 97/97. B-N97: opponent-elixir MAE 0.74, 90% interval width 6.2, hand concentrated in 148/58,269 decisions vs
+    7,221/52,428 when clean. E4-N97 is worse: MAE 1.70, interval coverage 69% (the posterior is overconfident and
+    wrong), never concentrated. A tracker fed 97%-correct events should be nearly exact. So a few missed or spurious
+    events evidently corrupt the hypothesis set for good (no resynchronisation). Board noise is also large: 7.5% phantom
+    entities, 3% dropped, HP missing for 34% of units.
+  - **Decision.** L2-v4 stays blocked. Next is **S2, a channel-decomposition study plus a tracker diagnosis** before any
+    more perception work is prioritised:
+    (i) from the full-noise B-N97 configuration, repair one channel at a time to truth (derived opponent state, board
+    entities, HP, own HUD state, events→N100, latency→0, tap failures→0);
+    (ii) from clean A, add one channel at a time;
+    (iii) offline trace analysis of how missed or spurious events break ELT concentration and coverage.
+    Pre-registered, sim-only, fresh seeds. Its result decides whether v4's next investment is the tracker
+    (resynchronising and robust to a missed event), board perception (phantoms/drops), or HP.

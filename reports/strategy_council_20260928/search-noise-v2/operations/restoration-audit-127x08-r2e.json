@@ -1,6 +1,12 @@
 {
-  "sealed_unix": 1791421656.7472093,
-  "files": {
+  "utc": 1791424462.4636502,
+  "host": "127x08",
+  "manifest": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677",
+  "sealed_files_verified": 468,
+  "manifest_verified": true,
+  "changes": [],
+  "backup": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-v2/operations/incident-seal-overwrite-r2b/overwritten-127x08-recovery-1791424462384209000",
+  "hashes": {
     "launch_node.py": "5ac609ba283c28de05a782098a12ef817523fb0db7b99fbfd8897a438bb507d7",
     "source-copies.json": "341bda22d3f7b04edd7054a693d90ebc081599746a0e71ef83c1d4ae64320804",
     "player.py": "24dfcf5258cf1a78f6133e80a5bcf339225f0437201f085530985cbc9e2253df",
@@ -468,6 +474,7 @@
     "runtime/src/clasher/mechanics/shared/spawn_pushback.py": "e8d7d4587467cbae75abfaf7c8d06f4177d9f080da3273eeff32744d82f9fb70",
     "runtime/src/clasher/mechanics/champion/ability.py": "23a1b88aa2927c56c4ce10cc96d29e5b8c5151685c846bc74250cac676b7246d",
     "runtime/src/clasher/mechanics/champion/skeleton_king.py": "26909c17b7211a2659d9d048bcede4405ee8c885fb9e0532fa4fc06e90c10ac4",
-    "runtime/src/clasher/mechanics/champion/__init__.py": "4882d341cbc737d2becd61025588c2a894b02c6ca191de88b35507962aaacefd"
+    "runtime/src/clasher/mechanics/champion/__init__.py": "4882d341cbc737d2becd61025588c2a894b02c6ca191de88b35507962aaacefd",
+    "evaluation-manifest.json": "3ad63c0a7ad1634bac32bf5b031a7a312013497d8863aeaa3b0e2b0e077e5677"
   }
 }
