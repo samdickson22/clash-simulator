@@ -1,0 +1,13 @@
+{
+  "time": "2026-10-08T01:54:11.256372+00:00",
+  "restored": {
+    "engine-rs/src/lib.rs": "e071d8f53f27a3eb39ab701589596c2f7109aa14d89cb95a0bb5859e543dcb78",
+    "engine-rs/src/hook.rs": "55af4abd2d41c6c057e73135edf06da41f6721651f9f5cd87d86681c703c5dbb",
+    "reports/strategy_council_20260928/engine-speed/stage6/final_controls.sh": "a580d2c716a985a4f869e82514e0729003fa0aae5ec7bc89c2ed95f0d1b984b9",
+    "reports/strategy_council_20260928/engine-speed/stage6/seal_final.py": "fec36ba7cb7a77f6cc93253c1e61e8bd14f77dec7e4b7e1131100113b8af7af2",
+    "reports/strategy_council_20260928/engine-speed/stage6/independent_human.py": "aa15af63a43126b2496f3e3224f5f480237e6b6ca00778cf7a474046b431658d",
+    "reports/strategy_council_20260928/engine-speed/stage6/independent_recorded.py": "3b131ef2af84799c967bd4ffe7d7f7facc361ae450adf5046e0145125a4c872c"
+  },
+  "active_build48_source_and_drivers_match": true,
+  "isolated_runtime": "/mpac/sdicks02/repos/clasher-stage6-build48"
+}

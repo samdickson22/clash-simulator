@@ -1,0 +1,50 @@
+{
+  "build": "build48-linux",
+  "beam_dash": {
+    "before": {
+      "methods": 2,
+      "failures": 5
+    },
+    "linux46": {
+      "methods": 2,
+      "passed": 2
+    },
+    "saved_root_tick": 1894,
+    "divergent_tick": 1895,
+    "continuation_ticks": 180,
+    "semantics": "DamageRamp excludes travelling dash from channel acquisition/retention/observation; depleted-target bypass preserved; damage-only tail remains effect-targetable"
+  },
+  "holdout": {
+    "before46": {
+      "methods": 3,
+      "failures": 4
+    },
+    "before47": {
+      "methods": 1,
+      "failures": 1
+    },
+    "after48": {
+      "methods": 3,
+      "passed": 3,
+      "cases": 4,
+      "continuation_ticks": 180
+    },
+    "additional48_fix": "Interrupting knockback pauses nonordinary acquisition preload; completed-hit reset alone exposed this at3975 and firstdigest4003"
+  },
+  "receipts": {
+    "reports/strategy_council_20260928/engine-speed/stage6/beam-dash-before-r46.log": "3dc11266a78f022235106823f328dab0fae81d2e03c9436c271746bc8128419f",
+    "reports/strategy_council_20260928/engine-speed/stage6/beam-dash-r46.log": "f1bedf04e3bcff39084ae6969a5f17389415feb9b1cb12bfe097422fee62bf50",
+    "reports/strategy_council_20260928/engine-speed/stage6/beam-dash-r46-linux.log": "b950ae4faf9f1503a079022ce7b8852df2707cfed08ea099504896bdff604c4c",
+    "reports/strategy_council_20260928/engine-speed/stage6/test_beam_dash.py": "931812b4e8bd1d495d37cbd70620a96fb75db578801beebb603545fd495b7670",
+    "reports/strategy_council_20260928/engine-speed/stage6/beam-dash-root1894-r45.meta.json": "07b7b7938bafafd7fca19bf445da944a956c5b5b2fd51dae89bb548e228cbda0",
+    "reports/strategy_council_20260928/engine-speed/stage6/test_holdout47.py": "19a24092417ed406723f2ec2059dde7e1a8bf9d7c5e604be67d1513349c106a5",
+    "reports/strategy_council_20260928/engine-speed/stage6/holdout-root-causes-r47-linux.json": "c31b076f92783363598b6c31375f2bab877e2c5ce12865d52670cf18d7af9cea",
+    "reports/strategy_council_20260928/engine-speed/stage6/holdout46027-valkyrie-window-r47-linux.json": "621e3bf8147a71d6ba83dd682ef578805f869c38a5f21645aec765088083ab5d",
+    "reports/strategy_council_20260928/engine-speed/stage6/build46-linux/pins.json": "73ecc5168802b37f29d9bc66c1c3ea2afb33fc548ba311a964af6f6aed3d249a",
+    "reports/strategy_council_20260928/engine-speed/stage6/build47-linux/pins.json": "be8bfc6040780c1ae7908a7ae8be3d39ae9275bbd00c82d7b520d4d563e01b6e",
+    "reports/strategy_council_20260928/engine-speed/stage6/build48-linux/pins.json": "10c6a5e0514b4a5a310b2bea691cc5903969896165327fb3a6bf838e919e5055",
+    "/mpac/sdicks02/jobs/clasher/stage6-holdout-before-r47-linux-20261008.log": "2858beeefd1f6376963df5b53d3f97833fda6f53099e84ee2bb99c87a7803508",
+    "/mpac/sdicks02/jobs/clasher/stage6-valk-before-r48-linux-20261008.log": "ba90ae5a6c16bf20b480ead033d4b9bdb0047b1f2bf5af18369526e2b6913cdc",
+    "/mpac/sdicks02/jobs/clasher/stage6-holdout-r48-linux-20261008.log": "079bacff5c573b64c9af0112a0f5fc6fbd4bf005dffcd4a92d349e66afc6805a"
+  }
+}

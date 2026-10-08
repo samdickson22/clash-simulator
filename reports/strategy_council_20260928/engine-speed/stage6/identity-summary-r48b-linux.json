@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "episodes": {
+    "p16": 12,
+    "c56": 7,
+    "recorded": 8,
+    "random": 24
+  },
+  "mismatches": [],
+  "pins": {
+    "source": "e83c8e1fcfbae35d406f7d8058dc71e01b48472ec721ff50b1a9aab9ec6799d4",
+    "native": "78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689"
+  },
+  "receipts": {
+    "identity-p16-r48b-linux.log": "2718ddb049e0df341c01e77a10d22ef646e203044745015a7a53e7418d269ee2",
+    "identity-c56-r48b-linux.log": "e579d5e77d3c3d1ec054608e4c326304ffd599d8fcbdc7cd59992f64f3451b22",
+    "identity-recorded-r48b-linux.log": "d5c1ef2b5e5d2c03d55b92cb64e885d09b2bd65351b9d588f25837270fa459dc",
+    "identity-random-r48b-linux.log": "a73d66a0e9a982c690aafe6940d9093e0c5b8174b941c43059b84da310698726",
+    "logs/recorded_r48b-linux.json": "89c00586a94dee670e9c27c18ac2e5f87101e39b6fa67777ab3b561f45a136e6",
+    "logs/random_r48b-linux.json": "583e5739d561156f554611706be2471b95c25fb75662f616da33b1b392804e30"
+  }
+}

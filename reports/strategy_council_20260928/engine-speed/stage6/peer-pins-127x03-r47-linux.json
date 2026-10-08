@@ -1,0 +1,13 @@
+{
+  "host": "127x03",
+  "source": "68c78c6171231d7d57de09a60a4b06d8b0139321a9d0be65944464dc56c0595f",
+  "native": "1918e19ab52b3ee3098cd044191661ec939365f01df385d280a1bff9453ee1d1",
+  "archive_pins": "be8bfc6040780c1ae7908a7ae8be3d39ae9275bbd00c82d7b520d4d563e01b6e",
+  "protected_files": 367,
+  "plans": {
+    "recorded": "019b9d5d8ac40dd33fe42ad7571f7f9343cb3941751e5931f6cbdac356c324fb",
+    "human": "c7ce16a3212e83d5c4b893193f1d926e9164a714128f8836e96ffe3b32c8a8e4"
+  },
+  "recorded_driver": "3b131ef2af84799c967bd4ffe7d7f7facc361ae450adf5046e0145125a4c872c",
+  "human_driver": "aa15af63a43126b2496f3e3224f5f480237e6b6ca00778cf7a474046b431658d"
+}

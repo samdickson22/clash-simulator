@@ -1,0 +1,208 @@
+{
+  "time": "2026-10-08 02:32 UTC",
+  "state": "COMPLETE: private core QUALIFIED; full Stage6 admission BLOCKED only by unchanged Python controller exception",
+  "build": "build48-linux",
+  "pins": {
+    "host": "127x01",
+    "source": "e83c8e1fcfbae35d406f7d8058dc71e01b48472ec721ff50b1a9aab9ec6799d4",
+    "native": "78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689",
+    "archive_pins": "10c6a5e0514b4a5a310b2bea691cc5903969896165327fb3a6bf838e919e5055",
+    "protected_files": 367,
+    "plans": {
+      "recorded": "019b9d5d8ac40dd33fe42ad7571f7f9343cb3941751e5931f6cbdac356c324fb",
+      "human": "c7ce16a3212e83d5c4b893193f1d926e9164a714128f8836e96ffe3b32c8a8e4"
+    },
+    "recorded_driver": "3b131ef2af84799c967bd4ffe7d7f7facc361ae450adf5046e0145125a4c872c",
+    "human_driver": "aa15af63a43126b2496f3e3224f5f480237e6b6ca00778cf7a474046b431658d"
+  },
+  "regression_pid": 3347801,
+  "independent_jobs": {
+    "independent-recorded-r48-linux-shard00": {
+      "host": "127x03",
+      "pid": 3370624,
+      "ids": "46000,46008,46016,46024,46032,46040"
+    },
+    "independent-recorded-r48-linux-shard01": {
+      "host": "127x03",
+      "pid": 3370634,
+      "ids": "46001,46009,46017,46025,46033,46041"
+    },
+    "independent-recorded-r48-linux-shard02": {
+      "host": "127x03",
+      "pid": 3370647,
+      "ids": "46002,46010,46018,46026,46034,46042"
+    },
+    "independent-recorded-r48-linux-shard03": {
+      "host": "127x03",
+      "pid": 3370664,
+      "ids": "46003,46011,46019,46027,46035,46043"
+    },
+    "independent-recorded-r48-linux-shard04": {
+      "host": "127x03",
+      "pid": 3370684,
+      "ids": "46004,46012,46020,46028,46036,46044"
+    },
+    "independent-recorded-r48-linux-shard05": {
+      "host": "127x03",
+      "pid": 3370704,
+      "ids": "46005,46013,46021,46029,46037,46045"
+    },
+    "independent-recorded-r48-linux-shard06": {
+      "host": "127x03",
+      "pid": 3370722,
+      "ids": "46006,46014,46022,46030,46038,46046"
+    },
+    "independent-recorded-r48-linux-shard07": {
+      "host": "127x03",
+      "pid": 3370740,
+      "ids": "46007,46015,46023,46031,46039,46047"
+    },
+    "independent-human-r48-linux-shard00": {
+      "host": "127x03",
+      "pid": 3370759,
+      "ids": "47000,47004,47008,47012,47016,47020"
+    },
+    "independent-human-r48-linux-shard01": {
+      "host": "127x03",
+      "pid": 3370780,
+      "ids": "47001,47005,47009,47013,47017,47021"
+    },
+    "independent-human-r48-linux-shard02": {
+      "host": "127x03",
+      "pid": 3370798,
+      "ids": "47002,47006,47010,47014,47018,47022"
+    },
+    "independent-human-r48-linux-shard03": {
+      "host": "127x03",
+      "pid": 3370817,
+      "ids": "47003,47007,47011,47015,47019,47023"
+    }
+  },
+  "next": "No remaining authorized gate work. Coordinator reviews/commits; retain all receipts. Do not admit full S122 while ThreeMusketeers Python controller remains blocked.",
+  "core_jobs": {
+    "stage6-stage5-r48b-linux-20261008": {
+      "host": "127x01",
+      "pid": 3369444,
+      "root": "/mpac/sdicks02/repos/clasher-stage6-build48"
+    },
+    "stage6-planner-r48b-linux-20261008": {
+      "host": "127x01",
+      "pid": 3369452,
+      "root": "/mpac/sdicks02/repos/clasher-stage6-build48"
+    },
+    "stage6-controls-r48b-linux-20261008": {
+      "host": "127x01",
+      "pid": 3369466,
+      "root": "/mpac/sdicks02/repos/clasher-stage6-build48"
+    },
+    "stage6-human-r48b-linux-20261008": {
+      "host": "127x01",
+      "pid": 3369482,
+      "root": "/mpac/sdicks02/repos/clasher-stage6-build48"
+    },
+    "stage6-identity-r48b-linux-20261008": {
+      "host": "127x01",
+      "pid": 3369504,
+      "root": "/mpac/sdicks02/repos/clasher-stage6-build48"
+    }
+  },
+  "independent_status": "PASS48recorded24human66cards0mismatches",
+  "completed_core": [
+    "stage5-200:200/200",
+    "identity-p16:12/12",
+    "identity-c56:7/7"
+  ],
+  "human_original": {
+    "terminal_games": 96,
+    "imports": 1162,
+    "placements": 2919,
+    "missing_cards": [],
+    "stepping_speedup": 36.43683882199802,
+    "clone_us_max": 17.03615999986141,
+    "passed": false
+  },
+  "controls_stage6": "69/69PASS",
+  "runtime_root": "/mpac/sdicks02/repos/clasher-stage6-build48",
+  "shared_tree_overwrite": "Mainhub Stage6source/drivers restored exact48 at01:54:11; keep running isolated",
+  "incident_disposition": "mac-push-gate-disposition-20261008.json",
+  "completed_isolated": [
+    "Stage5:200/200",
+    "P16identity:12/12",
+    "C56identity:7/7",
+    "Stage6regressions:69/69",
+    "originalhuman:96/96parity"
+  ],
+  "human_final": {
+    "terminal_games": 136,
+    "imports": 1617,
+    "placements": 4017,
+    "missing_cards": [],
+    "stepping_speedup": 36.97991935803713,
+    "clone_us_max": 16.81325999982164,
+    "passed": true
+  },
+  "controls_final": {
+    "build": "build48-linux",
+    "suffix": "r48b-linux",
+    "methods": {
+      "stage6": 69,
+      "c56": 88,
+      "earlier": 47
+    },
+    "passed": true,
+    "receipt": "final-controls-r48b-linux.log",
+    "sha256": "3d12d349e73dac4a5cd32dd93a482421a76d8a79242249a8a21e59ae838d28ba"
+  },
+  "planner_final": {
+    "pins": {
+      "source": "e83c8e1fcfbae35d406f7d8058dc71e01b48472ec721ff50b1a9aab9ec6799d4",
+      "native": "78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689",
+      "drivers": {
+        "final_planner.py": "d10bffcd3e8d8bea4480015b1e7479cbf359c3abf5b2f49be7a905ed8e0e5a18",
+        "controller.py": "9d4c966794cd1af79e6b7b58b42778f14d1a8d0d4f8f9e520d906b6e45320d39"
+      }
+    },
+    "calls": 100,
+    "candidates": 2194,
+    "cards": [
+      "Assassin",
+      "BossBandit",
+      "Clone",
+      "ElectroDragon",
+      "Fisherman",
+      "Graveyard",
+      "MegaKnight",
+      "Mirror",
+      "Rage",
+      "SkeletonKing"
+    ],
+    "passed": true,
+    "receipt": "planner-r48b-linux.json",
+    "sha256": "6d4283617cd58be9d6444e3f486116e0892aed55f8758c37ed523373608985d1"
+  },
+  "all_owned_gate_workers_finished": true,
+  "qualification_receipt": "qualification-r48b-linux.json",
+  "completion_audit": "completion-audit-r48b-linux.json",
+  "identity_final": {
+    "passed": true,
+    "episodes": {
+      "p16": 12,
+      "c56": 7,
+      "recorded": 8,
+      "random": 24
+    },
+    "mismatches": [],
+    "pins": {
+      "source": "e83c8e1fcfbae35d406f7d8058dc71e01b48472ec721ff50b1a9aab9ec6799d4",
+      "native": "78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689"
+    },
+    "receipts": {
+      "identity-p16-r48b-linux.log": "2718ddb049e0df341c01e77a10d22ef646e203044745015a7a53e7418d269ee2",
+      "identity-c56-r48b-linux.log": "e579d5e77d3c3d1ec054608e4c326304ffd599d8fcbdc7cd59992f64f3451b22",
+      "identity-recorded-r48b-linux.log": "d5c1ef2b5e5d2c03d55b92cb64e885d09b2bd65351b9d588f25837270fa459dc",
+      "identity-random-r48b-linux.log": "a73d66a0e9a982c690aafe6940d9093e0c5b8174b941c43059b84da310698726",
+      "logs/recorded_r48b-linux.json": "89c00586a94dee670e9c27c18ac2e5f87101e39b6fa67777ab3b561f45a136e6",
+      "logs/random_r48b-linux.json": "583e5739d561156f554611706be2471b95c25fb75662f616da33b1b392804e30"
+    }
+  }
+}

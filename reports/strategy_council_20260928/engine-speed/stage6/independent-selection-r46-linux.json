@@ -1,0 +1,277 @@
+{
+  "seed": 2026100846,
+  "excluded_decks": 71,
+  "excluded_matches": 68,
+  "eligible_recorded": 119,
+  "eligible_human": 117184,
+  "plans": {
+    "independent-recorded-plan-r46-linux.json": "019b9d5d8ac40dd33fe42ad7571f7f9343cb3941751e5931f6cbdac356c324fb",
+    "independent-human-plan-r46-linux.json": "c7ce16a3212e83d5c4b893193f1d926e9164a714128f8836e96ffe3b32c8a8e4"
+  },
+  "coverage": {
+    "Assassin": {
+      "recorded_deck_games": 8,
+      "human_deck_games": 4
+    },
+    "AxeMan": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 2
+    },
+    "BarbarianHut": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 2
+    },
+    "Barbarians": {
+      "recorded_deck_games": 4,
+      "human_deck_games": 0
+    },
+    "BattleHealer": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 2
+    },
+    "BattleRam": {
+      "recorded_deck_games": 8,
+      "human_deck_games": 2
+    },
+    "Bomber": {
+      "recorded_deck_games": 4,
+      "human_deck_games": 0
+    },
+    "BossBandit": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 0
+    },
+    "Bowler": {
+      "recorded_deck_games": 14,
+      "human_deck_games": 0
+    },
+    "Clone": {
+      "recorded_deck_games": 4,
+      "human_deck_games": 2
+    },
+    "DarkMagic": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 6
+    },
+    "DarkWitch": {
+      "recorded_deck_games": 8,
+      "human_deck_games": 6
+    },
+    "DartBarrell": {
+      "recorded_deck_games": 4,
+      "human_deck_games": 0
+    },
+    "ElectroDragon": {
+      "recorded_deck_games": 4,
+      "human_deck_games": 6
+    },
+    "ElectroGiant": {
+      "recorded_deck_games": 6,
+      "human_deck_games": 0
+    },
+    "ElectroWizard": {
+      "recorded_deck_games": 4,
+      "human_deck_games": 4
+    },
+    "EliteArcher": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 0
+    },
+    "Elixir Collector": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 4
+    },
+    "ElixirGolem": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 0
+    },
+    "Fisherman": {
+      "recorded_deck_games": 8,
+      "human_deck_games": 4
+    },
+    "Freeze": {
+      "recorded_deck_games": 10,
+      "human_deck_games": 0
+    },
+    "GiantBuffer": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 0
+    },
+    "GiantSkeleton": {
+      "recorded_deck_games": 8,
+      "human_deck_games": 2
+    },
+    "GoblinCage": {
+      "recorded_deck_games": 6,
+      "human_deck_games": 0
+    },
+    "GoblinCurse": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 2
+    },
+    "GoblinDemolisher": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 0
+    },
+    "GoblinDrill": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 4
+    },
+    "GoblinGiant": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 2
+    },
+    "GoblinMachine": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 2
+    },
+    "GoldenKnight": {
+      "recorded_deck_games": 6,
+      "human_deck_games": 6
+    },
+    "Graveyard": {
+      "recorded_deck_games": 8,
+      "human_deck_games": 0
+    },
+    "Heal": {
+      "recorded_deck_games": 6,
+      "human_deck_games": 4
+    },
+    "Hunter": {
+      "recorded_deck_games": 10,
+      "human_deck_games": 2
+    },
+    "IceWizard": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 2
+    },
+    "InfernoDragon": {
+      "recorded_deck_games": 8,
+      "human_deck_games": 4
+    },
+    "LavaHound": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 0
+    },
+    "LittlePrince": {
+      "recorded_deck_games": 4,
+      "human_deck_games": 0
+    },
+    "MegaKnight": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 8
+    },
+    "MegaMinion": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 2
+    },
+    "MergeMaiden_Normal": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 0
+    },
+    "MiniSparkys": {
+      "recorded_deck_games": 12,
+      "human_deck_games": 2
+    },
+    "Mirror": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 2
+    },
+    "Monk": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 0
+    },
+    "Mortar": {
+      "recorded_deck_games": 12,
+      "human_deck_games": 4
+    },
+    "MovingCannon": {
+      "recorded_deck_games": 6,
+      "human_deck_games": 0
+    },
+    "Pekka": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 0
+    },
+    "Phoenix": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 4
+    },
+    "Rage": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 2
+    },
+    "RageBarbarian": {
+      "recorded_deck_games": 6,
+      "human_deck_games": 4
+    },
+    "RamRider": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 0
+    },
+    "Ronin": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 2
+    },
+    "RoyalGiant": {
+      "recorded_deck_games": 8,
+      "human_deck_games": 4
+    },
+    "RoyalRecruits": {
+      "recorded_deck_games": 6,
+      "human_deck_games": 0
+    },
+    "SkeletonBalloon": {
+      "recorded_deck_games": 8,
+      "human_deck_games": 4
+    },
+    "SkeletonDragons": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 4
+    },
+    "SkeletonKing": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 0
+    },
+    "SkeletonWarriors": {
+      "recorded_deck_games": 6,
+      "human_deck_games": 0
+    },
+    "Snowball": {
+      "recorded_deck_games": 6,
+      "human_deck_games": 6
+    },
+    "SpearGoblins": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 2
+    },
+    "SuspiciousBush": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 2
+    },
+    "ThreeMusketeers": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 6
+    },
+    "Tombstone": {
+      "recorded_deck_games": 4,
+      "human_deck_games": 2
+    },
+    "Vines": {
+      "recorded_deck_games": 0,
+      "human_deck_games": 6
+    },
+    "Witch": {
+      "recorded_deck_games": 4,
+      "human_deck_games": 0
+    },
+    "WitchMother": {
+      "recorded_deck_games": 8,
+      "human_deck_games": 4
+    },
+    "ZapMachine": {
+      "recorded_deck_games": 2,
+      "human_deck_games": 0
+    }
+  }
+}

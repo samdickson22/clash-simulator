@@ -1,0 +1,12 @@
+{
+  "build": "build48-linux",
+  "suffix": "r48b-linux",
+  "methods": {
+    "stage6": 69,
+    "c56": 88,
+    "earlier": 47
+  },
+  "passed": true,
+  "receipt": "final-controls-r48b-linux.log",
+  "sha256": "3d12d349e73dac4a5cd32dd93a482421a76d8a79242249a8a21e59ae838d28ba"
+}

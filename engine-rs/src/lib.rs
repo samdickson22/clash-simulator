@@ -1283,6 +1283,11 @@ impl BattleState {
     }
     fn target_candidate(&self, i: usize, grid: &[Vec<usize>]) -> Option<i32> {
         let a = &self.entities[i];
+        // DamageRamp allows_target rejects travel immunity, unlike ordinary
+        // weapons. Depleted current locks retain the oracle's earlier bypass.
+        let channel_targetable = |b: &Entity| {
+            a.stats.ramp_stages.is_empty() || !b.alive || !b.dash_travel()
+        };
         if let Some(j) = a.target.and_then(|id| self.index(id)) {
             let b = &self.entities[j];
             if b.owner != a.owner
@@ -1292,6 +1297,7 @@ impl BattleState {
                 && !b.underground
                 && (!b.spirit || b.spirit_launch == self.tick)
                 && a.can_hit_plane(b)
+                && channel_targetable(b)
                 && b.stagger <= 1e-9
                 && keep_reach(a, b)
                 && (a.stats.projectile_speed == 0 || a.attacked_current || !self.pending_lethal(j))
@@ -1312,6 +1318,7 @@ impl BattleState {
                     || b.spirit
                     || b.underground
                     || !a.can_hit_plane(b)
+                    || !channel_targetable(b)
                     || b.stagger > 1e-9
                     || b.owner == a.owner
                     || b.class != class
@@ -1351,6 +1358,7 @@ impl BattleState {
                             && old.stagger <= 1e-9))
                     && old.owner != a.owner
                     && a.can_hit_plane(old)
+                    && channel_targetable(old)
                     && (old.king || old.stats.name == "Tower" || sight(a, old))
                     && (a.stats.projectile_speed == 0 || !self.pending_lethal(j))
                     && best_d >= distance(a, old) - 1e-6
@@ -1408,6 +1416,7 @@ impl BattleState {
                     && !b.underground
                     && b.stagger <= 1e-9
                     && a.can_hit_plane(b)
+                    && channel_targetable(b)
                     && (a.stats.projectile_speed == 0
                         || a.attacked_current
                         || !self.pending_lethal(j))
@@ -2171,6 +2180,8 @@ impl BattleState {
         }
         if !self.entities[i].stats.ordinary
             && !self.entities[i].preload_blocked
+            // Interrupting pushback pauses acquisition preload as well as hits.
+            && !(self.entities[i].push.is_some() && !self.entities[i].push_preserve)
             && (if self.entities[i].class == "Building" {
                 old.is_none()
             } else {
@@ -2428,6 +2439,9 @@ impl BattleState {
                 } else {
                     0.0
                 };
+                // Committed payloads may synchronously knock the attacker back.
+                // Python clears the preload block after those death/hit hooks.
+                self.entities[i].preload_blocked = false;
                 self.entities[i].cooldown = self.entities[i].stats.interval as f64 / 1000.0 + carry;
                 self.entities[i].charge = 0;
                 self.entities[i].public_speed_base = Some(self.entities[i].stats.speed as f64);

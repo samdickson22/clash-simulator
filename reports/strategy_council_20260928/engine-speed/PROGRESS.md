@@ -864,3 +864,65 @@ Rules: read-only on src/, <=2 procs, nice -n 10, kill own PIDs only.
 - All8 recorded identity games passed. Two retained from serial r45, six fresh shard replays; shard wall724.057s, six-game CPU1255.291s. Original check_identity.sh r45b now validates merged rows and reruns all4 modes. Replaced waiting completion wrapper before any seal/replay to make either independent-child failure exit explicitly nonzero; old wait-only wrapper exit143 retained, no gate work discarded. New completion label r45c follows same planned receipts.
 
 - Independent verification BLOCKS build45 despite sealed core gates: allfour identity modes r45b passed and seal-final-r45b exited0; independent-human-r45 passed6 terminal games, but independent-recorded-r45 fails game2002 at1895. Complete wrapper r45c correctly exits1. Historical final-r45b-manifest remains evidence of its gates only, NOT current qualification. Reduction saves beam-dash-root1894-r45.pkl/meta and phase1895: InfernoDragon193 selects Python crown1 versus native travelling BossBandit190 during combat, then position diverges. Python DamageRamp.allows_target rejects can_receive_effect during dash; native ordinary selection omitted the channel rule. Added local channel predicate to acquisition/retention/backward retention, preserving depleted-target bypass; ramp observation also rejects travel. Damage-only landing immunity remains targetable. Baseline regression fails4 beam/seat fixtures at26 plus savedroot1895. Private46 pending; Python/data unchanged.
+
+### 2026-10-08 01:45 UTC — shared-tree overwrite; exact build48 isolated retry
+At~01:39UTC shared127x01checkout Rust lib.rs/hook.rs were reverted to46 and4reportdrivers overwritten (final_controls.sh,seal_final.py,independent_human.py,independent_recorded.py). Planner stopped37/100 andhumanreserve110games at source-fingerprint guard; NOparitymismatch. Preserved overwrittenfiles/audit in stage6/shared-tree-overwrite-20261008T0139. Cancelled remaining verifiedowned48workers, audit cancel-invalidated-r48-linux.json; allpartial/failure receipts retained. Did NOTtouchmirror/C56/S1/v4 jobs. Usernotified andaskedmirrorexclusion.
+Created127x01 `/mpac/sdicks02/repos/clasher-stage6-build48` with separate source/engine-speed files and read-only shared-data links. Restored Rust from immutablebuild48archive and gate drivers from exact pinned local/03copies. Isolatedaudit proves SAMEsource e83c8e1fcfbae35d406f7d8058dc71e01b48472ec721ff50b1a9aab9ec6799d4, native78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689, allfrozendriverhashes,367protectedfiles. Nativecode unchanged; environmental retry usesbuild48 withsuffixr48b-linux.
+All5core gates restartedfresh in isolatedtree, max6computeworkers/nice10/whoempty: {"stage6-stage5-r48b-linux-20261008": {"host": "127x01", "pid": 3369444, "root": "/mpac/sdicks02/repos/clasher-stage6-build48"}, "stage6-planner-r48b-linux-20261008": {"host": "127x01", "pid": 3369452, "root": "/mpac/sdicks02/repos/clasher-stage6-build48"}, "stage6-controls-r48b-linux-20261008": {"host": "127x01", "pid": 3369466, "root": "/mpac/sdicks02/repos/clasher-stage6-build48"}, "stage6-human-r48b-linux-20261008": {"host": "127x01", "pid": 3369482, "root": "/mpac/sdicks02/repos/clasher-stage6-build48"}, "stage6-identity-r48b-linux-20261008": {"host": "127x01", "pid": 3369504, "root": "/mpac/sdicks02/repos/clasher-stage6-build48"}}. Independent48+24PASS remainsvalid onUNCHANGED03 andsame48pins, all66coverage. Next monitor r48bcore receipts in ISOLATEDtree; seal via fleet_seal48b.py afterallpass. MainhubRust currentlyold46; authoritativebuild48source is isolatedtree/build48archive and03. Mirroronlydocs/smallJSON05.
+
+### 2026-10-08 01:55 UTC — coordinator incident audit and per-gate disposition
+Coordinator confirmed unrequested Macrsync overwrite01:39–01:45. Audited EVERYbuild46andactive48 source/native pin, driver pin, both frozenindependentplans and theirsourcepins, plus367protectedfiles on01and03. Fullhash ledgers mac-push-hash-audit-127x01-20261008.json / ...127x03.... 01build46/48archive mismatches0; protected/planmismatches0. Active01 had2Rust+4driver bytechanges, nowrestoredEXACT48 at01:54:11 (mac-push-restoration-20261008.json). NoPython/data/baseline change. 03active48source/native/independentdrivers/plans unchanged. 03neverhad46archivebodies orunusedcorehelperupdates; auditrecordsabsence explicitly, notcorruption.
+Per-gate disposition (also machine-readable mac-push-gate-disposition-20261008.json):
+- build46/build47 receipts: Pre-incident; retain as historical evidence. Native mismatches independently block those candidates; no incident reclassification.
+- build48 freeze / saved-root regression: Finished before incident; archived source/native and passing reduction receipts stand.
+- build48 independent recorded48 + human24: Finished before01:39 on unchanged127x03; exact source/native/driver/plan hashes verified afterincident; PASS stands.
+- stage5-200-r48-linux: Finished before01:39 with verified pins;200/200PASS stands; also rerunning fresh r48b.
+- identity P16/C56 r48: Finished before01:39;12/12 and7/7PASS stand; entire identity group reruns fresh r48b.
+- human-r48-linux original96: Finished before01:39;96/96parityPASS stands; numeric placementdeficit expected. Entire human/reserve reruns fresh r48b.
+- planner-r48-linux: INVALID: source changed at01:39:20; fingerprint guard stopped after37persisted passes. Preserved receipts; fresh r48b retry.
+- human-reserve-r48-linux: INVALID: source changed at01:39:20; guard stopped after110persisted passing games. Preserved receipts; fresh r48b retry.
+- final-controls-r48-linux: INVALID as aggregate: Stage6 69methods ended01:39:15, C56started01:39:15 and ran across Rust overwrite; earlier47notstarted. Conservatively rerun all69+88+47 under r48b.
+- identity-recorded-r48-linux: INVALID in-flight group across overwrite; onefinished row preserved, all8replay fresh r48b. Random hadnotstarted.
+- seal_final build48: Not run; await all fresh r48b core gates plus unaffected independent48PASS.
+- r48b-linux groups: Fresh at isolated root after exact hash audit; no changed inputs under these workers. All5groups running, max6compute,nice10.
+Authoritative runtime remains isolated `/mpac/sdicks02/repos/clasher-stage6-build48`; mainhub Stage6source/drivers restored48too. Sharedfleet scripts notusedbyStage6were notmodified; fleet_run.sh unaffected. r48b labels/PIDs remain in core-launches-r48b-linux.json.
+
+### 2026-10-08 02:01 UTC — isolated r48b core milestones
+Fresh isolated Stage5passed200/200; P16identity12/12 andC56identity7/7passed; Stage6regressions69/69passed (927.75swrapperwall). C5688nowrunning child3379173,earlier47follow. Originalhuman96/96paritypassed (1162imports,2919placements,66cards,37.2699xspeed,maxclone16.81326us); reserve109totalgamespassing. Planner37/100passing. Firstrecordedidentitygamepassed;2workerscontinue. No sourcefingerprintdrift orparityfailure in isolatedtree. Labels/PIDsremain core-launches-r48b-linux.json; next finishremaininggatesand fleet_seal48b.py.
+
+### 2026-10-08 02:04 UTC — isolated human/reserve PASS
+Fresh r48b human/reserve passed136terminalgames,1617liveimports>=1000,4017acceptedplacements>=4000,66/66cards,36.9799xstepping>=30,maxclone16.81326us<20. Corrected100-cloneprocessCPUdriver unchanged. Fullreceipt isolatedstage6/human-reserve-r48b-linux.json; small hashedsummary human-summary-r48b-linux.json mirrored05. Fleet stage6-human-r48b-linux-20261008 exit0. Planner46/100passing;C5688/earlier47andremainingidentitypending. Source/nativepins unchanged.
+
+### 2026-10-08 02:07 UTC — isolated final-controls PASS
+Allfreshbuild48/r48b controls completed69Stage6+88C56+47earlier=204methods,0failures; fleet stage6-controls-r48b-linux-20261008 exit0 at02:06:48. controls-summary-r48b-linux.json binds aggregate logSHA. Stage5andhuman/reserve alreadyPASS; expandedindependent48+24PASS unchanged03. Remainingplanner57/100 andrecordedidentity3/8;random24followsrecorded. Next finishthese2groups, then fleet_seal48b.py; runtimepins fixed.
+
+### 2026-10-08 02:21 UTC — isolated planner100 PASS
+Fresh planner-suite-r48b-linux exit0:100/100 searchablecalls,10focalcards×bothseats×5liveages, 2194candidates,0candidate/action/score/trace mismatches; parentrootpreservation passed. SkeletonEdges8/8alsoPASS. Allremainingwork isidentity:7/8recordedgamespassed (0..6),game7running,then24randomgames. AllothergatesPASS incl72expandedholdouts/all66cards. Next identityexit0 thenfleet_seal48b.py.
+
+### 2026-10-08 02:32 UTC — build48 private core qualified; full Stage 6 blocked
+
+All requested native parity gates passed and are sealed on `build48-linux`. Source fingerprint: `e83c8e1fcfbae35d406f7d8058dc71e01b48472ec721ff50b1a9aab9ec6799d4`. Native SHA: `78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689`. Archive pins SHA: `10c6a5e0514b4a5a310b2bea691cc5903969896165327fb3a6bf838e919e5055`.
+
+| Gate | Result | Pass bar |
+|---|---|---|
+| Stage 5 | 200 roots, 3,993 candidates | 200 roots; zero mismatches |
+| Planner suite | 100 calls, 2,194 candidates; SkeletonEdges 8/8 | 100 calls; zero candidate/action/score/trace mismatches |
+| Final controls | 69 Stage 6 + 88 C56 + 47 earlier methods | All pass |
+| Human/reserve | 136 terminal games, all 66 cards, 1,617 imports, 4,017 placements | At least 64 games, all cards, 1,000 imports, 4,000 placements |
+| Performance | 36.9799x stepping; maximum clone time 16.81326 us | At least 30x; below 20 us |
+| Four-mode identity | P16 12/12; C56 7/7; recorded 8/8; random 24/24 | Zero mismatches |
+| Expanded independent verification | 48 recorded + 24 human games, 258,992 ticks; all 66 cards accepted | 72 terminal games; all 66 cards; zero mismatches |
+
+Independent coverage totals 1,106 accepted Stage 6 plays, with at least two per card. The complete per-card counts are in `stage6/independent-summary-r48-linux.json`. The plans retain the pre-registered seed and selection rule; no cases were replaced after failures.
+
+`seal_final.py` passed under fleet label `stage6-seal-r48b-linux-retry2-20261008`. The first aggregation-wrapper attempt stopped before invoking it because human receipts use a `drivers` map while recorded receipts use a singular `driver` field. That wrapper and its failed receipt are preserved. Only the unpinned aggregation wrapper was corrected; gate drivers, source, native binary, and results were unchanged.
+
+Final receipts: `stage6/qualification-r48b-linux.json`, `final-r48b-linux.json`, `completion-audit-r48b-linux.json`, `independent-summary-r48-linux.json`, and the human/planner/controls/identity summary JSON files for `r48b-linux`.
+
+The Rust repairs beyond draft46 clear DamageRamp locks on Fisherman drag, cancel a flying hook immediately when its spirit target becomes projectile-kind, reset Valkyrie's preload flag after a committed hit triggers Golem death knockback, and pause acquisition preload during interrupting pushback. Build46's four independent failures and build47's residual Valkyrie failure are preserved. Three new regression methods cover four saved-root cases and pass on build48. BeamDash's five pre-fix failures are preserved; its synthetic cases and saved tick1895 pass on builds46 and48.
+
+The Mac push incident was audited by hash. Affected gates were invalidated and rerun under fresh `r48b-linux` labels in `/mpac/sdicks02/repos/clasher-stage6-build48`. Main-hub source and drivers were restored to exact build48 bytes. The completion audit verified both roots and all 367 protected files in each. The independent run finished before the incident on unchanged 127x03, and its pins were rechecked afterward. Per-gate dispositions are in `mac-push-gate-disposition-20261008.json`.
+
+All owned gate jobs have finished. Full receipts also exist in the main hub's `engine-speed/stage6` directory; documentation and small JSON receipts are mirrored to 127x05. Python engine, gamedata, and admitted baselines were not edited. No commits or pushes were made.
+
+**Verdict: private Stage 6 core QUALIFIED. Full Stage 6/S122 admission remains BLOCKED solely by the unchanged ThreeMusketeers Python controller `float(None)` exception (65/66 new controller cards).** The seal retains `final_s122_admitted=false`. No authorized gate work remains; the coordinator can review and commit the Rust/report changes. Repairing the Python oracle is outside this task.

@@ -1,0 +1,509 @@
+{
+  "gates": {
+    "recorded": {
+      "required": 48,
+      "completed": 46,
+      "passed": 45,
+      "ticks": 175051,
+      "missing": [
+        "46035",
+        "46043"
+      ]
+    },
+    "human": {
+      "required": 24,
+      "completed": 24,
+      "passed": 24,
+      "ticks": 72856,
+      "missing": []
+    }
+  },
+  "coverage": {
+    "Assassin": {
+      "deck_games": 11,
+      "attempts": 29,
+      "accepted": 29,
+      "recorded_accepted": 19,
+      "human_accepted": 10
+    },
+    "AxeMan": {
+      "deck_games": 4,
+      "attempts": 12,
+      "accepted": 12,
+      "recorded_accepted": 6,
+      "human_accepted": 6
+    },
+    "BarbarianHut": {
+      "deck_games": 2,
+      "attempts": 4,
+      "accepted": 4,
+      "recorded_accepted": 0,
+      "human_accepted": 4
+    },
+    "Barbarians": {
+      "deck_games": 4,
+      "attempts": 14,
+      "accepted": 12,
+      "recorded_accepted": 12,
+      "human_accepted": 0
+    },
+    "BattleHealer": {
+      "deck_games": 2,
+      "attempts": 2,
+      "accepted": 2,
+      "recorded_accepted": 0,
+      "human_accepted": 2
+    },
+    "BattleRam": {
+      "deck_games": 8,
+      "attempts": 24,
+      "accepted": 24,
+      "recorded_accepted": 18,
+      "human_accepted": 6
+    },
+    "Bomber": {
+      "deck_games": 3,
+      "attempts": 12,
+      "accepted": 12,
+      "recorded_accepted": 12,
+      "human_accepted": 0
+    },
+    "BossBandit": {
+      "deck_games": 2,
+      "attempts": 9,
+      "accepted": 9,
+      "recorded_accepted": 9,
+      "human_accepted": 0
+    },
+    "Bowler": {
+      "deck_games": 14,
+      "attempts": 47,
+      "accepted": 47,
+      "recorded_accepted": 47,
+      "human_accepted": 0
+    },
+    "Clone": {
+      "deck_games": 6,
+      "attempts": 13,
+      "accepted": 13,
+      "recorded_accepted": 6,
+      "human_accepted": 7
+    },
+    "DarkMagic": {
+      "deck_games": 6,
+      "attempts": 12,
+      "accepted": 12,
+      "recorded_accepted": 0,
+      "human_accepted": 12
+    },
+    "DarkWitch": {
+      "deck_games": 14,
+      "attempts": 38,
+      "accepted": 38,
+      "recorded_accepted": 28,
+      "human_accepted": 10
+    },
+    "DartBarrell": {
+      "deck_games": 4,
+      "attempts": 14,
+      "accepted": 12,
+      "recorded_accepted": 12,
+      "human_accepted": 0
+    },
+    "ElectroDragon": {
+      "deck_games": 10,
+      "attempts": 14,
+      "accepted": 14,
+      "recorded_accepted": 8,
+      "human_accepted": 6
+    },
+    "ElectroGiant": {
+      "deck_games": 6,
+      "attempts": 14,
+      "accepted": 14,
+      "recorded_accepted": 14,
+      "human_accepted": 0
+    },
+    "ElectroWizard": {
+      "deck_games": 8,
+      "attempts": 16,
+      "accepted": 16,
+      "recorded_accepted": 6,
+      "human_accepted": 10
+    },
+    "EliteArcher": {
+      "deck_games": 2,
+      "attempts": 8,
+      "accepted": 8,
+      "recorded_accepted": 8,
+      "human_accepted": 0
+    },
+    "Elixir Collector": {
+      "deck_games": 4,
+      "attempts": 8,
+      "accepted": 8,
+      "recorded_accepted": 0,
+      "human_accepted": 8
+    },
+    "ElixirGolem": {
+      "deck_games": 2,
+      "attempts": 8,
+      "accepted": 8,
+      "recorded_accepted": 8,
+      "human_accepted": 0
+    },
+    "Fisherman": {
+      "deck_games": 11,
+      "attempts": 29,
+      "accepted": 29,
+      "recorded_accepted": 21,
+      "human_accepted": 8
+    },
+    "Freeze": {
+      "deck_games": 10,
+      "attempts": 27,
+      "accepted": 27,
+      "recorded_accepted": 27,
+      "human_accepted": 0
+    },
+    "GiantBuffer": {
+      "deck_games": 2,
+      "attempts": 2,
+      "accepted": 2,
+      "recorded_accepted": 2,
+      "human_accepted": 0
+    },
+    "GiantSkeleton": {
+      "deck_games": 10,
+      "attempts": 24,
+      "accepted": 24,
+      "recorded_accepted": 18,
+      "human_accepted": 6
+    },
+    "GoblinCage": {
+      "deck_games": 6,
+      "attempts": 14,
+      "accepted": 14,
+      "recorded_accepted": 14,
+      "human_accepted": 0
+    },
+    "GoblinCurse": {
+      "deck_games": 2,
+      "attempts": 6,
+      "accepted": 6,
+      "recorded_accepted": 0,
+      "human_accepted": 6
+    },
+    "GoblinDemolisher": {
+      "deck_games": 2,
+      "attempts": 11,
+      "accepted": 11,
+      "recorded_accepted": 11,
+      "human_accepted": 0
+    },
+    "GoblinDrill": {
+      "deck_games": 4,
+      "attempts": 10,
+      "accepted": 10,
+      "recorded_accepted": 0,
+      "human_accepted": 10
+    },
+    "GoblinGiant": {
+      "deck_games": 2,
+      "attempts": 4,
+      "accepted": 4,
+      "recorded_accepted": 0,
+      "human_accepted": 4
+    },
+    "GoblinMachine": {
+      "deck_games": 2,
+      "attempts": 4,
+      "accepted": 4,
+      "recorded_accepted": 0,
+      "human_accepted": 4
+    },
+    "GoldenKnight": {
+      "deck_games": 12,
+      "attempts": 36,
+      "accepted": 32,
+      "recorded_accepted": 14,
+      "human_accepted": 18
+    },
+    "Graveyard": {
+      "deck_games": 8,
+      "attempts": 18,
+      "accepted": 18,
+      "recorded_accepted": 18,
+      "human_accepted": 0
+    },
+    "Heal": {
+      "deck_games": 9,
+      "attempts": 20,
+      "accepted": 20,
+      "recorded_accepted": 10,
+      "human_accepted": 10
+    },
+    "Hunter": {
+      "deck_games": 11,
+      "attempts": 34,
+      "accepted": 34,
+      "recorded_accepted": 31,
+      "human_accepted": 3
+    },
+    "IceWizard": {
+      "deck_games": 4,
+      "attempts": 24,
+      "accepted": 24,
+      "recorded_accepted": 20,
+      "human_accepted": 4
+    },
+    "InfernoDragon": {
+      "deck_games": 12,
+      "attempts": 38,
+      "accepted": 34,
+      "recorded_accepted": 24,
+      "human_accepted": 10
+    },
+    "LavaHound": {
+      "deck_games": 2,
+      "attempts": 4,
+      "accepted": 4,
+      "recorded_accepted": 4,
+      "human_accepted": 0
+    },
+    "LittlePrince": {
+      "deck_games": 4,
+      "attempts": 14,
+      "accepted": 14,
+      "recorded_accepted": 14,
+      "human_accepted": 0
+    },
+    "MegaKnight": {
+      "deck_games": 8,
+      "attempts": 17,
+      "accepted": 17,
+      "recorded_accepted": 0,
+      "human_accepted": 17
+    },
+    "MegaMinion": {
+      "deck_games": 4,
+      "attempts": 8,
+      "accepted": 8,
+      "recorded_accepted": 4,
+      "human_accepted": 4
+    },
+    "MergeMaiden_Normal": {
+      "deck_games": 2,
+      "attempts": 6,
+      "accepted": 6,
+      "recorded_accepted": 6,
+      "human_accepted": 0
+    },
+    "MiniSparkys": {
+      "deck_games": 13,
+      "attempts": 26,
+      "accepted": 26,
+      "recorded_accepted": 22,
+      "human_accepted": 4
+    },
+    "Mirror": {
+      "deck_games": 2,
+      "attempts": 2,
+      "accepted": 2,
+      "recorded_accepted": 0,
+      "human_accepted": 2
+    },
+    "Monk": {
+      "deck_games": 2,
+      "attempts": 2,
+      "accepted": 2,
+      "recorded_accepted": 2,
+      "human_accepted": 0
+    },
+    "Mortar": {
+      "deck_games": 15,
+      "attempts": 53,
+      "accepted": 51,
+      "recorded_accepted": 41,
+      "human_accepted": 10
+    },
+    "MovingCannon": {
+      "deck_games": 5,
+      "attempts": 14,
+      "accepted": 14,
+      "recorded_accepted": 14,
+      "human_accepted": 0
+    },
+    "Pekka": {
+      "deck_games": 2,
+      "attempts": 8,
+      "accepted": 8,
+      "recorded_accepted": 8,
+      "human_accepted": 0
+    },
+    "Phoenix": {
+      "deck_games": 4,
+      "attempts": 12,
+      "accepted": 12,
+      "recorded_accepted": 0,
+      "human_accepted": 12
+    },
+    "Rage": {
+      "deck_games": 4,
+      "attempts": 10,
+      "accepted": 10,
+      "recorded_accepted": 8,
+      "human_accepted": 2
+    },
+    "RageBarbarian": {
+      "deck_games": 10,
+      "attempts": 30,
+      "accepted": 30,
+      "recorded_accepted": 18,
+      "human_accepted": 12
+    },
+    "RamRider": {
+      "deck_games": 2,
+      "attempts": 4,
+      "accepted": 4,
+      "recorded_accepted": 4,
+      "human_accepted": 0
+    },
+    "Ronin": {
+      "deck_games": 4,
+      "attempts": 12,
+      "accepted": 12,
+      "recorded_accepted": 4,
+      "human_accepted": 8
+    },
+    "RoyalGiant": {
+      "deck_games": 11,
+      "attempts": 29,
+      "accepted": 29,
+      "recorded_accepted": 22,
+      "human_accepted": 7
+    },
+    "RoyalRecruits": {
+      "deck_games": 6,
+      "attempts": 10,
+      "accepted": 8,
+      "recorded_accepted": 8,
+      "human_accepted": 0
+    },
+    "SkeletonBalloon": {
+      "deck_games": 12,
+      "attempts": 39,
+      "accepted": 39,
+      "recorded_accepted": 30,
+      "human_accepted": 9
+    },
+    "SkeletonDragons": {
+      "deck_games": 6,
+      "attempts": 14,
+      "accepted": 14,
+      "recorded_accepted": 6,
+      "human_accepted": 8
+    },
+    "SkeletonKing": {
+      "deck_games": 2,
+      "attempts": 8,
+      "accepted": 8,
+      "recorded_accepted": 8,
+      "human_accepted": 0
+    },
+    "SkeletonWarriors": {
+      "deck_games": 6,
+      "attempts": 25,
+      "accepted": 25,
+      "recorded_accepted": 25,
+      "human_accepted": 0
+    },
+    "Snowball": {
+      "deck_games": 12,
+      "attempts": 38,
+      "accepted": 38,
+      "recorded_accepted": 20,
+      "human_accepted": 18
+    },
+    "SpearGoblins": {
+      "deck_games": 2,
+      "attempts": 2,
+      "accepted": 2,
+      "recorded_accepted": 0,
+      "human_accepted": 2
+    },
+    "SuspiciousBush": {
+      "deck_games": 4,
+      "attempts": 14,
+      "accepted": 12,
+      "recorded_accepted": 8,
+      "human_accepted": 4
+    },
+    "ThreeMusketeers": {
+      "deck_games": 6,
+      "attempts": 13,
+      "accepted": 13,
+      "recorded_accepted": 0,
+      "human_accepted": 13
+    },
+    "Tombstone": {
+      "deck_games": 6,
+      "attempts": 18,
+      "accepted": 18,
+      "recorded_accepted": 14,
+      "human_accepted": 4
+    },
+    "Vines": {
+      "deck_games": 6,
+      "attempts": 12,
+      "accepted": 12,
+      "recorded_accepted": 0,
+      "human_accepted": 12
+    },
+    "Witch": {
+      "deck_games": 4,
+      "attempts": 14,
+      "accepted": 14,
+      "recorded_accepted": 14,
+      "human_accepted": 0
+    },
+    "WitchMother": {
+      "deck_games": 11,
+      "attempts": 27,
+      "accepted": 27,
+      "recorded_accepted": 19,
+      "human_accepted": 8
+    },
+    "ZapMachine": {
+      "deck_games": 2,
+      "attempts": 2,
+      "accepted": 2,
+      "recorded_accepted": 2,
+      "human_accepted": 0
+    }
+  },
+  "receipts": {
+    "independent-recorded-r47-linux-shard00.json": "b410ca791c39a1d84447a7a944303c145e17570cf1dc380c21c355c7339a6cce",
+    "independent-recorded-r47-linux-shard01.json": "f5ae54f3094af8f9c841a5791c176c8ec3ee4001c96a899132d40f41069dd31e",
+    "independent-recorded-r47-linux-shard02.json": "ee7be4adcc9e63d13a62cee5e93ee9df62f8c54f20a09090d1a80e8f75d3efcc",
+    "independent-recorded-r47-linux-shard03.json": "ec968bf8899b81abbfe4c8f2b8b0f4bc73e5ae71a7b267153e4bdea5d3899527",
+    "independent-recorded-r47-linux-shard04.json": "7e470d6191a22bfc48c6691ca249d403415c4032bb9e5e759b6c336bd374807b",
+    "independent-recorded-r47-linux-shard05.json": "9bbe9b3e7ae77754506aa2f87ed824ad8571fb95f9805cde283da0779ed740b7",
+    "independent-recorded-r47-linux-shard06.json": "efc457a075014a8430a1fc960e637511d478548583baa81935148285d605e921",
+    "independent-recorded-r47-linux-shard07.json": "ff67e47d493d186cbe66887b290760d1a51a01cb16207a125cfd224053f317d3",
+    "independent-human-r47-linux-shard00.json": "5b3972692b71262f4b753e3d9d9498352fdad80fbe8245d45bcc2db5235ae51b",
+    "independent-human-r47-linux-shard01.json": "3414998cf6404b4a13bb1fa2829d833ed441d2d9e507265032793e2f3ffb9450",
+    "independent-human-r47-linux-shard02.json": "5be33282c3f901bbb3d95bebdb5d024b44cb4dde44a533030c30cc9489adf91e",
+    "independent-human-r47-linux-shard03.json": "bfdff538769c9ae95be28229ed1fe38bbf75b4507ccde21cb6fd4bb3f8e0e650"
+  },
+  "mismatches": [
+    {
+      "kind": "recorded",
+      "id": "46027",
+      "tick": null,
+      "error": "AssertionError(('tick', 4003))"
+    }
+  ],
+  "missing_accepted_cards": [],
+  "passed": false
+}

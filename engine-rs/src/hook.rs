@@ -94,6 +94,8 @@ impl BattleState {
             if e.stats.ordinary && (!e.clock_initialized || e.clock_projection_ms()!=e.stats.interval) {e.clock_reseed=Some(e.stats.interval);}
             e.cooldown=e.cooldown.max(e.stats.interval as f64/1000.0);e.preload_blocked=true;
         }
+        // DamageRamp.on_forced_movement clears its channel and target lock.
+        if !e.stats.ramp_stages.is_empty() {e.reset_ramp();e.target=None;}
         e.cancel_dash_for_hook();e.cancel_leap_for_hook();
     }
     pub(super) fn hook_object_tick(&mut self,i:usize) {
@@ -103,7 +105,9 @@ impl BattleState {
         let target=state.target.and_then(|id|self.index(id)).filter(|&j|self.entities[j].alive);
         let Some(j)=target else {self.hook_finish(i,&mut state,true);self.entities[i].hook=Some(state);return;};
         if state.phase=="flight" {
-            if !self.entities[i].can_hit_plane(&self.entities[j]) || state.position.is_none() {
+            // A launched spirit is projectile-kind even while its body is alive.
+            if matches!(self.entities[j].entity_kind, 2 | 3)
+                || !self.entities[i].can_hit_plane(&self.entities[j]) || state.position.is_none() {
                 self.hook_finish(i,&mut state,true);
             } else {
                 let (x,y)=state.position.unwrap();let b=&self.entities[j];

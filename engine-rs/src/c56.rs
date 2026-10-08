@@ -105,6 +105,7 @@ impl BattleState {
                     && !e.underground
                     && e.death_immunity.is_none()
                     && e.stagger <= 1e-9
+                    && !e.dash_travel()
             });
         let e = &mut self.entities[i];
         if !valid {
@@ -221,7 +222,8 @@ impl BattleState {
         {
             return;
         }
-        e.consume_clock_reseed();
+        // Python's ordinary stun path pauses the weapon without get_clock().
+        // Keep a first clock absent and any deferred cooldown write pending.
         e.dash_cancel();
         if e.stun <= 1e-9 {
             e.frozen_moving = e.moving || e.move_target.is_some();
@@ -301,7 +303,6 @@ impl BattleState {
                     && (e.class == "Troop" || e.class == "Building")
                     && e.death_immunity.is_none()
                     && chain.can_hit_plane(e)
-                    && e.stagger <= 1e-9
                     && !chain.hit_ids.contains(&e.id)
             };
             let target = chain.shot_target.and_then(|id| self.index(id));
@@ -357,7 +358,7 @@ impl BattleState {
                 || target.spirit
                 || target.underground
                 || target.death_immunity.is_some()
-                || target.stagger > 1e-9 || !chain.can_hit_plane(target)
+                || !chain.can_hit_plane(target)
                 || chain.hit_ids.contains(&target.id)
             {
                 self.entities[i].alive = false;

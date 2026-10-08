@@ -1,0 +1,23 @@
+{
+  "incident_window": "2026-10-08T01:39:00Z..01:45:00Z",
+  "actual_rust_overwrite": "2026-10-08T01:39:20.954102Z",
+  "actual_driver_overwrite": "2026-10-08T01:40:55.734762Z",
+  "audit_01": "mac-push-hash-audit-127x01-20261008.json",
+  "audit_03": "mac-push-hash-audit-127x03-20261008.json",
+  "peer_archive_note": "03 originally received46 pins only, not archive bodies; missing archival files are explicitly not corruption. Its active48 source and independent drivers match frozen48 exactly. Non-independent gate helpers on03 were not installed/updated because unused.",
+  "restoration": "mac-push-restoration-20261008.json",
+  "dispositions": {
+    "build46/build47 receipts": "Pre-incident; retain as historical evidence. Native mismatches independently block those candidates; no incident reclassification.",
+    "build48 freeze / saved-root regression": "Finished before incident; archived source/native and passing reduction receipts stand.",
+    "build48 independent recorded48 + human24": "Finished before01:39 on unchanged127x03; exact source/native/driver/plan hashes verified afterincident; PASS stands.",
+    "stage5-200-r48-linux": "Finished before01:39 with verified pins;200/200PASS stands; also rerunning fresh r48b.",
+    "identity P16/C56 r48": "Finished before01:39;12/12 and7/7PASS stand; entire identity group reruns fresh r48b.",
+    "human-r48-linux original96": "Finished before01:39;96/96parityPASS stands; numeric placementdeficit expected. Entire human/reserve reruns fresh r48b.",
+    "planner-r48-linux": "INVALID: source changed at01:39:20; fingerprint guard stopped after37persisted passes. Preserved receipts; fresh r48b retry.",
+    "human-reserve-r48-linux": "INVALID: source changed at01:39:20; guard stopped after110persisted passing games. Preserved receipts; fresh r48b retry.",
+    "final-controls-r48-linux": "INVALID as aggregate: Stage6 69methods ended01:39:15, C56started01:39:15 and ran across Rust overwrite; earlier47notstarted. Conservatively rerun all69+88+47 under r48b.",
+    "identity-recorded-r48-linux": "INVALID in-flight group across overwrite; onefinished row preserved, all8replay fresh r48b. Random hadnotstarted.",
+    "seal_final build48": "Not run; await all fresh r48b core gates plus unaffected independent48PASS.",
+    "r48b-linux groups": "Fresh at isolated root after exact hash audit; no changed inputs under these workers. All5groups running, max6compute,nice10."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "stage6-stage5-r48-linux-20261008": {
+    "host": "127x01",
+    "pid": 3348921
+  },
+  "stage6-planner-r48-linux-20261008": {
+    "host": "127x01",
+    "pid": 3348930
+  },
+  "stage6-controls-r48-linux-20261008": {
+    "host": "127x01",
+    "pid": 3348943
+  },
+  "stage6-human-r48-linux-20261008": {
+    "host": "127x01",
+    "pid": 3348958
+  },
+  "stage6-identity-r48-linux-20261008": {
+    "host": "127x01",
+    "pid": 3348978
+  }
+}

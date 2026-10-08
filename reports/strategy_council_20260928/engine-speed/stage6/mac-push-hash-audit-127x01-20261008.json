@@ -1,0 +1,3177 @@
+{
+  "host": "127x01",
+  "root": "/mpac/sdicks02/repos/clasher",
+  "archives": {
+    "46": {
+      "engine-rs/src/mt.rs": {
+        "expected": "a4d021d799cfebf614172e6fefb7a3f66376d99ac2622616b9ae3a4ff4056bfc",
+        "actual": "a4d021d799cfebf614172e6fefb7a3f66376d99ac2622616b9ae3a4ff4056bfc",
+        "match": true
+      },
+      "engine-rs/src/spawn.rs": {
+        "expected": "8bb6d6c56954b0eefcc201cd58370e1051c9891fc733edd8d0fec1318ed67fde",
+        "actual": "8bb6d6c56954b0eefcc201cd58370e1051c9891fc733edd8d0fec1318ed67fde",
+        "match": true
+      },
+      "engine-rs/src/deployment.rs": {
+        "expected": "1b2ee5592a753c28a6f0c41ea1445cccf50d64d7cbf1ab0eebe17a67152caefd",
+        "actual": "1b2ee5592a753c28a6f0c41ea1445cccf50d64d7cbf1ab0eebe17a67152caefd",
+        "match": true
+      },
+      "engine-rs/src/scripts.rs": {
+        "expected": "bcc4d68f4fd6f6f53db8bf3806868bb11d2bceacdcc7544f4be08fd280a9586a",
+        "actual": "bcc4d68f4fd6f6f53db8bf3806868bb11d2bceacdcc7544f4be08fd280a9586a",
+        "match": true
+      },
+      "engine-rs/src/champions.rs": {
+        "expected": "547d6bd8bcba738b0d9405838a514817295b7344d8b554107919ef420c506579",
+        "actual": "547d6bd8bcba738b0d9405838a514817295b7344d8b554107919ef420c506579",
+        "match": true
+      },
+      "engine-rs/src/souls.rs": {
+        "expected": "aa7f97f7d5a163f3deb94a846278f9aa6a657da4a5000bb40d45d5041226e0db",
+        "actual": "aa7f97f7d5a163f3deb94a846278f9aa6a657da4a5000bb40d45d5041226e0db",
+        "match": true
+      },
+      "engine-rs/src/dash.rs": {
+        "expected": "aaa1f3fa34cb4c641d0d6c941225f976559c6e42c9fb9d0f80cbca38dc3d34ee",
+        "actual": "aaa1f3fa34cb4c641d0d6c941225f976559c6e42c9fb9d0f80cbca38dc3d34ee",
+        "match": true
+      },
+      "engine-rs/src/hook.rs": {
+        "expected": "d2c778ac137cf8d8f62d8d792729579b02ebcc8df8deef568a71902906cae538",
+        "actual": "d2c778ac137cf8d8f62d8d792729579b02ebcc8df8deef568a71902906cae538",
+        "match": true
+      },
+      "engine-rs/src/clock.rs": {
+        "expected": "a6d459208ea7ce2395abbe054dd1cc8b30e6a50557fb73bf7217936bb743cda2",
+        "actual": "a6d459208ea7ce2395abbe054dd1cc8b30e6a50557fb73bf7217936bb743cda2",
+        "match": true
+      },
+      "engine-rs/src/scope.rs": {
+        "expected": "221fe0e1cf88e8a8475b59ddad46852a2d45773104819768026bf0a10840ff62",
+        "actual": "221fe0e1cf88e8a8475b59ddad46852a2d45773104819768026bf0a10840ff62",
+        "match": true
+      },
+      "engine-rs/src/c56.rs": {
+        "expected": "90e0e17aa4b6ffbbe70fd447bddbf974bb375a7a8ca8b08f0ff928dcf7325adb",
+        "actual": "90e0e17aa4b6ffbbe70fd447bddbf974bb375a7a8ca8b08f0ff928dcf7325adb",
+        "match": true
+      },
+      "engine-rs/src/lib.rs": {
+        "expected": "f13c730dc321b838c40b829d36641493c2494a4b1c8834e030c2c3c54ccb481a",
+        "actual": "f13c730dc321b838c40b829d36641493c2494a4b1c8834e030c2c3c54ccb481a",
+        "match": true
+      },
+      "engine-rs/src/attacks.rs": {
+        "expected": "3cc2fe353f2560f55ddca65bdef00e9de0054c2a58587cd85c8f20eacd17041e",
+        "actual": "3cc2fe353f2560f55ddca65bdef00e9de0054c2a58587cd85c8f20eacd17041e",
+        "match": true
+      },
+      "engine-rs/src/projectiles.rs": {
+        "expected": "40c53379009ba4bb780de993a5ed8aae37b4c9256760bcaa3ed20bc019d514ef",
+        "actual": "40c53379009ba4bb780de993a5ed8aae37b4c9256760bcaa3ed20bc019d514ef",
+        "match": true
+      },
+      "engine-rs/src/c56_scripts.rs": {
+        "expected": "19fc18ae0b7c8ff4aa9d49878b3094d5fabcbad29f004c9e23370f0091498387",
+        "actual": "19fc18ae0b7c8ff4aa9d49878b3094d5fabcbad29f004c9e23370f0091498387",
+        "match": true
+      },
+      "engine-rs/src/leaf.rs": {
+        "expected": "97ba990728877bb95122d51e0585c173dd76169ef957ac584c14cb0e2a711169",
+        "actual": "97ba990728877bb95122d51e0585c173dd76169ef957ac584c14cb0e2a711169",
+        "match": true
+      },
+      "engine-rs/src/leap.rs": {
+        "expected": "97e160839c4118f8db824b80ada88ca6372a6774b4645f0242854049793a07ff",
+        "actual": "97e160839c4118f8db824b80ada88ca6372a6774b4645f0242854049793a07ff",
+        "match": true
+      },
+      "engine-rs/src/clone.rs": {
+        "expected": "62303ca295d11562e653ab2ff7ec94b24c2b0dc9bdc2e405886545c1dc8fcc22",
+        "actual": "62303ca295d11562e653ab2ff7ec94b24c2b0dc9bdc2e405886545c1dc8fcc22",
+        "match": true
+      },
+      "engine-rs/src/astar.rs": {
+        "expected": "b8ac279d5c0cd15a637a7316087a494cceffc4f98bb8c7933747c3ce7ebb2144",
+        "actual": "b8ac279d5c0cd15a637a7316087a494cceffc4f98bb8c7933747c3ce7ebb2144",
+        "match": true
+      },
+      "engine-rs/test_parity.py": {
+        "expected": "a2aeaf1ccf19a3a41067678127e5615afb7354dd779d31cff72db7abdea4e26f",
+        "actual": "a2aeaf1ccf19a3a41067678127e5615afb7354dd779d31cff72db7abdea4e26f",
+        "match": true
+      },
+      "engine-rs/test_stage3_record_roots.py": {
+        "expected": "58239c6c0c1f806229b9775c0fc4879d951522bab35e23ebc376428e5c2dc8de",
+        "actual": "58239c6c0c1f806229b9775c0fc4879d951522bab35e23ebc376428e5c2dc8de",
+        "match": true
+      },
+      "engine-rs/test_stage4_scope.py": {
+        "expected": "af038cea40d828c7f05f5072768dfd435ffbf3703ec35ab179349d98cd6ec71a",
+        "actual": "af038cea40d828c7f05f5072768dfd435ffbf3703ec35ab179349d98cd6ec71a",
+        "match": true
+      },
+      "engine-rs/stage4_matches.py": {
+        "expected": "03f65a13ba7c9e9f8c4c10f65ef691b5977302a67cf6e5d7a507049d480d597f",
+        "actual": "03f65a13ba7c9e9f8c4c10f65ef691b5977302a67cf6e5d7a507049d480d597f",
+        "match": true
+      },
+      "engine-rs/test_canonical_data.py": {
+        "expected": "6f41b7fc1486b809107dbd0f38f21345ee6d5824b6d81b1cc1938fe1d52b351f",
+        "actual": "6f41b7fc1486b809107dbd0f38f21345ee6d5824b6d81b1cc1938fe1d52b351f",
+        "match": true
+      },
+      "engine-rs/death_area_snapshot.py": {
+        "expected": "ece3255800408dfd9a55bc2dd6c05c6dc2e75f39c1a396c451fe850fd70a7742",
+        "actual": "ece3255800408dfd9a55bc2dd6c05c6dc2e75f39c1a396c451fe850fd70a7742",
+        "match": true
+      },
+      "engine-rs/stage2.py": {
+        "expected": "5641fd99a002445293ef16950becf6713032d9e08b89e022bae2bafbbbbed951",
+        "actual": "5641fd99a002445293ef16950becf6713032d9e08b89e022bae2bafbbbbed951",
+        "match": true
+      },
+      "engine-rs/mirror_snapshot.py": {
+        "expected": "9844af4e77098d9323030e5787119b993e7e186c9450fa5a58e4c23e177feca4",
+        "actual": "9844af4e77098d9323030e5787119b993e7e186c9450fa5a58e4c23e177feca4",
+        "match": true
+      },
+      "engine-rs/test_stage4_champions.py": {
+        "expected": "3e5244872fc76e2a8312960586bd07f43fe5ff93fdda1ebb234cc2e81b8f8f29",
+        "actual": "3e5244872fc76e2a8312960586bd07f43fe5ff93fdda1ebb234cc2e81b8f8f29",
+        "match": true
+      },
+      "engine-rs/test_stage4_spawners.py": {
+        "expected": "e27e62d7e98e6a7a83ae42f926ce126940d05f76395bdbbf3add411602af572b",
+        "actual": "e27e62d7e98e6a7a83ae42f926ce126940d05f76395bdbbf3add411602af572b",
+        "match": true
+      },
+      "engine-rs/payload_snapshot.py": {
+        "expected": "957ab77c23694ae21b9f03a316514a8658ff8273562a7c95a1b06ca2ecb13194",
+        "actual": "957ab77c23694ae21b9f03a316514a8658ff8273562a7c95a1b06ca2ecb13194",
+        "match": true
+      },
+      "engine-rs/test_stage4_b2.py": {
+        "expected": "98c446ad825b191bab11c0f57afa5576429bb8fd9d725a5ab15e4411ca6cc890",
+        "actual": "98c446ad825b191bab11c0f57afa5576429bb8fd9d725a5ab15e4411ca6cc890",
+        "match": true
+      },
+      "engine-rs/test_stage5b_deadline.py": {
+        "expected": "fc3f091db879cc01fab63efb30249f72aa9512f9bb258831eab517e2f78688c7",
+        "actual": "fc3f091db879cc01fab63efb30249f72aa9512f9bb258831eab517e2f78688c7",
+        "match": true
+      },
+      "engine-rs/test_stage4_controller_edges.py": {
+        "expected": "71f790d64de1f5d693ded8959b30393b5a420cc07ab9adbdf9d7037ab509bd58",
+        "actual": "71f790d64de1f5d693ded8959b30393b5a420cc07ab9adbdf9d7037ab509bd58",
+        "match": true
+      },
+      "engine-rs/stage2_matches.py": {
+        "expected": "18f679d752cbaed512125854c2f539e5d4a542ef234fc6c50bd4704f6ba05b7c",
+        "actual": "18f679d752cbaed512125854c2f539e5d4a542ef234fc6c50bd4704f6ba05b7c",
+        "match": true
+      },
+      "engine-rs/test_stage4_b3.py": {
+        "expected": "00f3403929900fb43c3a270023ecfb23f756bd5ecd24fd0e3c85e508a64b2ff9",
+        "actual": "00f3403929900fb43c3a270023ecfb23f756bd5ecd24fd0e3c85e508a64b2ff9",
+        "match": true
+      },
+      "engine-rs/live_snapshot.py": {
+        "expected": "c570596018c06241c3215af6b523dac81622a1d3e44b8e2e3c0b9e0224c9a962",
+        "actual": "c570596018c06241c3215af6b523dac81622a1d3e44b8e2e3c0b9e0224c9a962",
+        "match": true
+      },
+      "engine-rs/test_stage3_corpus_views.py": {
+        "expected": "878eeb0ad8e54b085eca5c10c898ffaaeb97c82a4118753dadbde7fed6aea28f",
+        "actual": "878eeb0ad8e54b085eca5c10c898ffaaeb97c82a4118753dadbde7fed6aea28f",
+        "match": true
+      },
+      "engine-rs/scope_snapshot.py": {
+        "expected": "cde958eb13946d979ebd9094c55c0e7d23aa27495693902e91d28270424577eb",
+        "actual": "cde958eb13946d979ebd9094c55c0e7d23aa27495693902e91d28270424577eb",
+        "match": true
+      },
+      "engine-rs/dash_snapshot.py": {
+        "expected": "c59ab5ebdfe511dc22219edb923af4c14571fbeedb38920c8f9e9e03efeae591",
+        "actual": "c59ab5ebdfe511dc22219edb923af4c14571fbeedb38920c8f9e9e03efeae591",
+        "match": true
+      },
+      "engine-rs/test_stage5_search.py": {
+        "expected": "731d60af24d0bd5586bae42811fdfcaadc027e0f43d65d9df48af7baf2ccb3b0",
+        "actual": "731d60af24d0bd5586bae42811fdfcaadc027e0f43d65d9df48af7baf2ccb3b0",
+        "match": true
+      },
+      "engine-rs/test_stage3.py": {
+        "expected": "2e9c76e7691a6391948cfb431512af832679796dc6158106c474f8dfa2c05277",
+        "actual": "2e9c76e7691a6391948cfb431512af832679796dc6158106c474f8dfa2c05277",
+        "match": true
+      },
+      "engine-rs/leap_snapshot.py": {
+        "expected": "f4e9261b4b2131770795eeb0b22a4af2250add0d05db1c430c5c007f586d112c",
+        "actual": "f4e9261b4b2131770795eeb0b22a4af2250add0d05db1c430c5c007f586d112c",
+        "match": true
+      },
+      "engine-rs/stage2_snapshots.py": {
+        "expected": "bbad4c8a0d8c82ccc5d5e474bb3036c4c02e4c3ac32fd535f370c476d1dd6c7a",
+        "actual": "bbad4c8a0d8c82ccc5d5e474bb3036c4c02e4c3ac32fd535f370c476d1dd6c7a",
+        "match": true
+      },
+      "engine-rs/test_stage3_regressions.py": {
+        "expected": "2752d80b9096650b1e30cb1bb0a3f4b905c90fba64a9a072d72f5a54ba1e5559",
+        "actual": "2752d80b9096650b1e30cb1bb0a3f4b905c90fba64a9a072d72f5a54ba1e5559",
+        "match": true
+      },
+      "engine-rs/test_stage3_backend.py": {
+        "expected": "05e7986acc0ada2374141522829bb58569a0fb2d8a8d16d904c93f46219950d6",
+        "actual": "05e7986acc0ada2374141522829bb58569a0fb2d8a8d16d904c93f46219950d6",
+        "match": true
+      },
+      "engine-rs/test_stage4.py": {
+        "expected": "7731def30bc7516dfb891f0fabe5395d39ccbb59d512f1fcc68fef248e043a3f",
+        "actual": "7731def30bc7516dfb891f0fabe5395d39ccbb59d512f1fcc68fef248e043a3f",
+        "match": true
+      },
+      "engine-rs/test_stage3_qualified_backend.py": {
+        "expected": "b8a594f7a3cb35dc7efeb4c1c5f8cb1938dda04cb2cd729ce2738728447aba0c",
+        "actual": "b8a594f7a3cb35dc7efeb4c1c5f8cb1938dda04cb2cd729ce2738728447aba0c",
+        "match": true
+      },
+      "engine-rs/test_stage4_goblinstein.py": {
+        "expected": "3d44cd482ea4c93add000b846c75ca14abf27aa44d69dfba30d69d00649ad2da",
+        "actual": "3d44cd482ea4c93add000b846c75ca14abf27aa44d69dfba30d69d00649ad2da",
+        "match": true
+      },
+      "engine-rs/test_stage2.py": {
+        "expected": "536b5d3f3012da4bafc52ab8a6f1eaf1f7b3bd5008469fb7a6020217c08e3d0c",
+        "actual": "536b5d3f3012da4bafc52ab8a6f1eaf1f7b3bd5008469fb7a6020217c08e3d0c",
+        "match": true
+      },
+      "engine-rs/test_stage4_b4.py": {
+        "expected": "f02837a1dcdd4033d665af3b78a5f47be3bec70f568a7821a4361be80e7ea67b",
+        "actual": "f02837a1dcdd4033d665af3b78a5f47be3bec70f568a7821a4361be80e7ea67b",
+        "match": true
+      },
+      "engine-rs/stage2_placements.py": {
+        "expected": "46135cd320d21f9aba6e2f32ad68aba66b2bb4ea55b0bd43880b45184236c46d",
+        "actual": "46135cd320d21f9aba6e2f32ad68aba66b2bb4ea55b0bd43880b45184236c46d",
+        "match": true
+      },
+      "engine-rs/test_stage3_finalize.py": {
+        "expected": "66586df765eec6f93f42c9ad66b0abdaa8bd35f5bf500ecb74aa29cc9e951f11",
+        "actual": "66586df765eec6f93f42c9ad66b0abdaa8bd35f5bf500ecb74aa29cc9e951f11",
+        "match": true
+      },
+      "engine-rs/test_stage4_imports.py": {
+        "expected": "d3bff8e2061ae97712fad4b8c7bb905b3a1a3b9dd3a82f73f454104126bab025",
+        "actual": "d3bff8e2061ae97712fad4b8c7bb905b3a1a3b9dd3a82f73f454104126bab025",
+        "match": true
+      },
+      "engine-rs/champion_snapshot.py": {
+        "expected": "35ae9f2106943384a26531317ce59d6f513adec13a39af5f4de2786311d866f3",
+        "actual": "35ae9f2106943384a26531317ce59d6f513adec13a39af5f4de2786311d866f3",
+        "match": true
+      },
+      "engine-rs/differential.py": {
+        "expected": "378d46047a68e8e6c95bd6379f96d7e05b3171d122b59df9385482fd5f3c0da2",
+        "actual": "378d46047a68e8e6c95bd6379f96d7e05b3171d122b59df9385482fd5f3c0da2",
+        "match": true
+      },
+      "engine-rs/clone_snapshot.py": {
+        "expected": "939bc577f971d696b9258459f92f982a00762c3cd0ee5c65b0033277195980d4",
+        "actual": "939bc577f971d696b9258459f92f982a00762c3cd0ee5c65b0033277195980d4",
+        "match": true
+      },
+      "engine-rs/c56_gate.py": {
+        "expected": "aec2caf346c0766f3a31b56fdaebf301f317fcc2484965fffcdcb82cc75d953d",
+        "actual": "aec2caf346c0766f3a31b56fdaebf301f317fcc2484965fffcdcb82cc75d953d",
+        "match": true
+      },
+      "engine-rs/test_stage4_controller.py": {
+        "expected": "e1d9072deb5683a3614fdf30b8d0f39779fd78389add0e3e533f6eb00512775d",
+        "actual": "e1d9072deb5683a3614fdf30b8d0f39779fd78389add0e3e533f6eb00512775d",
+        "match": true
+      },
+      "engine-rs/test_stage3_rollouts.py": {
+        "expected": "edd333f3dacd736f9fae99c866d328733f8b413bace384bae70e1fcccb3f30eb",
+        "actual": "edd333f3dacd736f9fae99c866d328733f8b413bace384bae70e1fcccb3f30eb",
+        "match": true
+      },
+      "engine-rs/c56_controller.py": {
+        "expected": "ce36a410d25c6144aea5cfac5fbf424986ae93186ffcf2d3ed056ce41781ee6c",
+        "actual": "ce36a410d25c6144aea5cfac5fbf424986ae93186ffcf2d3ed056ce41781ee6c",
+        "match": true
+      },
+      "engine-rs/hook_snapshot.py": {
+        "expected": "0fee897fbfd8ba9cdc248b6d71cbf1d1d6d80408b067618e13f336e6b6d06de7",
+        "actual": "0fee897fbfd8ba9cdc248b6d71cbf1d1d6d80408b067618e13f336e6b6d06de7",
+        "match": true
+      },
+      "engine-rs/test_stage3_backend_edges.py": {
+        "expected": "6332711185008cfb5267c5d94bcb9862bb0427b674dffc02ca7ec8a35f5a2e28",
+        "actual": "6332711185008cfb5267c5d94bcb9862bb0427b674dffc02ca7ec8a35f5a2e28",
+        "match": true
+      },
+      "engine-rs/spawn_snapshot.py": {
+        "expected": "4b01c424a3bb7d0016e0fe6b894aa4c52bcb1bcf818bd836cf22812726228c73",
+        "actual": "4b01c424a3bb7d0016e0fe6b894aa4c52bcb1bcf818bd836cf22812726228c73",
+        "match": true
+      },
+      "engine-rs/diagnostics.py": {
+        "expected": "edb1b2daefe3df380c6b75fd297d8e799208d5120b974a7683f421905974bab1",
+        "actual": "edb1b2daefe3df380c6b75fd297d8e799208d5120b974a7683f421905974bab1",
+        "match": true
+      },
+      "engine-rs/Cargo.toml": {
+        "expected": "afeab54844a22754f7e9f5351cdb71fdb3613e801676e9b736be8e9f86c48aad",
+        "actual": "afeab54844a22754f7e9f5351cdb71fdb3613e801676e9b736be8e9f86c48aad",
+        "match": true
+      },
+      "engine-rs/Cargo.lock": {
+        "expected": "9f6c3b45ec53806ebae43a284e0a7d5a393d00974217fa62f65cac4f0ed63679",
+        "actual": "9f6c3b45ec53806ebae43a284e0a7d5a393d00974217fa62f65cac4f0ed63679",
+        "match": true
+      },
+      "private_native": {
+        "expected": "13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309",
+        "actual": "13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309",
+        "match": true
+      }
+    },
+    "48": {
+      "engine-rs/src/mt.rs": {
+        "expected": "a4d021d799cfebf614172e6fefb7a3f66376d99ac2622616b9ae3a4ff4056bfc",
+        "actual": "a4d021d799cfebf614172e6fefb7a3f66376d99ac2622616b9ae3a4ff4056bfc",
+        "match": true
+      },
+      "engine-rs/src/spawn.rs": {
+        "expected": "8bb6d6c56954b0eefcc201cd58370e1051c9891fc733edd8d0fec1318ed67fde",
+        "actual": "8bb6d6c56954b0eefcc201cd58370e1051c9891fc733edd8d0fec1318ed67fde",
+        "match": true
+      },
+      "engine-rs/src/deployment.rs": {
+        "expected": "1b2ee5592a753c28a6f0c41ea1445cccf50d64d7cbf1ab0eebe17a67152caefd",
+        "actual": "1b2ee5592a753c28a6f0c41ea1445cccf50d64d7cbf1ab0eebe17a67152caefd",
+        "match": true
+      },
+      "engine-rs/src/scripts.rs": {
+        "expected": "bcc4d68f4fd6f6f53db8bf3806868bb11d2bceacdcc7544f4be08fd280a9586a",
+        "actual": "bcc4d68f4fd6f6f53db8bf3806868bb11d2bceacdcc7544f4be08fd280a9586a",
+        "match": true
+      },
+      "engine-rs/src/champions.rs": {
+        "expected": "547d6bd8bcba738b0d9405838a514817295b7344d8b554107919ef420c506579",
+        "actual": "547d6bd8bcba738b0d9405838a514817295b7344d8b554107919ef420c506579",
+        "match": true
+      },
+      "engine-rs/src/souls.rs": {
+        "expected": "aa7f97f7d5a163f3deb94a846278f9aa6a657da4a5000bb40d45d5041226e0db",
+        "actual": "aa7f97f7d5a163f3deb94a846278f9aa6a657da4a5000bb40d45d5041226e0db",
+        "match": true
+      },
+      "engine-rs/src/dash.rs": {
+        "expected": "aaa1f3fa34cb4c641d0d6c941225f976559c6e42c9fb9d0f80cbca38dc3d34ee",
+        "actual": "aaa1f3fa34cb4c641d0d6c941225f976559c6e42c9fb9d0f80cbca38dc3d34ee",
+        "match": true
+      },
+      "engine-rs/src/hook.rs": {
+        "expected": "55af4abd2d41c6c057e73135edf06da41f6721651f9f5cd87d86681c703c5dbb",
+        "actual": "55af4abd2d41c6c057e73135edf06da41f6721651f9f5cd87d86681c703c5dbb",
+        "match": true
+      },
+      "engine-rs/src/clock.rs": {
+        "expected": "a6d459208ea7ce2395abbe054dd1cc8b30e6a50557fb73bf7217936bb743cda2",
+        "actual": "a6d459208ea7ce2395abbe054dd1cc8b30e6a50557fb73bf7217936bb743cda2",
+        "match": true
+      },
+      "engine-rs/src/scope.rs": {
+        "expected": "221fe0e1cf88e8a8475b59ddad46852a2d45773104819768026bf0a10840ff62",
+        "actual": "221fe0e1cf88e8a8475b59ddad46852a2d45773104819768026bf0a10840ff62",
+        "match": true
+      },
+      "engine-rs/src/c56.rs": {
+        "expected": "90e0e17aa4b6ffbbe70fd447bddbf974bb375a7a8ca8b08f0ff928dcf7325adb",
+        "actual": "90e0e17aa4b6ffbbe70fd447bddbf974bb375a7a8ca8b08f0ff928dcf7325adb",
+        "match": true
+      },
+      "engine-rs/src/lib.rs": {
+        "expected": "e071d8f53f27a3eb39ab701589596c2f7109aa14d89cb95a0bb5859e543dcb78",
+        "actual": "e071d8f53f27a3eb39ab701589596c2f7109aa14d89cb95a0bb5859e543dcb78",
+        "match": true
+      },
+      "engine-rs/src/attacks.rs": {
+        "expected": "3cc2fe353f2560f55ddca65bdef00e9de0054c2a58587cd85c8f20eacd17041e",
+        "actual": "3cc2fe353f2560f55ddca65bdef00e9de0054c2a58587cd85c8f20eacd17041e",
+        "match": true
+      },
+      "engine-rs/src/projectiles.rs": {
+        "expected": "40c53379009ba4bb780de993a5ed8aae37b4c9256760bcaa3ed20bc019d514ef",
+        "actual": "40c53379009ba4bb780de993a5ed8aae37b4c9256760bcaa3ed20bc019d514ef",
+        "match": true
+      },
+      "engine-rs/src/c56_scripts.rs": {
+        "expected": "19fc18ae0b7c8ff4aa9d49878b3094d5fabcbad29f004c9e23370f0091498387",
+        "actual": "19fc18ae0b7c8ff4aa9d49878b3094d5fabcbad29f004c9e23370f0091498387",
+        "match": true
+      },
+      "engine-rs/src/leaf.rs": {
+        "expected": "97ba990728877bb95122d51e0585c173dd76169ef957ac584c14cb0e2a711169",
+        "actual": "97ba990728877bb95122d51e0585c173dd76169ef957ac584c14cb0e2a711169",
+        "match": true
+      },
+      "engine-rs/src/leap.rs": {
+        "expected": "97e160839c4118f8db824b80ada88ca6372a6774b4645f0242854049793a07ff",
+        "actual": "97e160839c4118f8db824b80ada88ca6372a6774b4645f0242854049793a07ff",
+        "match": true
+      },
+      "engine-rs/src/clone.rs": {
+        "expected": "62303ca295d11562e653ab2ff7ec94b24c2b0dc9bdc2e405886545c1dc8fcc22",
+        "actual": "62303ca295d11562e653ab2ff7ec94b24c2b0dc9bdc2e405886545c1dc8fcc22",
+        "match": true
+      },
+      "engine-rs/src/astar.rs": {
+        "expected": "b8ac279d5c0cd15a637a7316087a494cceffc4f98bb8c7933747c3ce7ebb2144",
+        "actual": "b8ac279d5c0cd15a637a7316087a494cceffc4f98bb8c7933747c3ce7ebb2144",
+        "match": true
+      },
+      "engine-rs/test_parity.py": {
+        "expected": "a2aeaf1ccf19a3a41067678127e5615afb7354dd779d31cff72db7abdea4e26f",
+        "actual": "a2aeaf1ccf19a3a41067678127e5615afb7354dd779d31cff72db7abdea4e26f",
+        "match": true
+      },
+      "engine-rs/test_stage3_record_roots.py": {
+        "expected": "58239c6c0c1f806229b9775c0fc4879d951522bab35e23ebc376428e5c2dc8de",
+        "actual": "58239c6c0c1f806229b9775c0fc4879d951522bab35e23ebc376428e5c2dc8de",
+        "match": true
+      },
+      "engine-rs/test_stage4_scope.py": {
+        "expected": "af038cea40d828c7f05f5072768dfd435ffbf3703ec35ab179349d98cd6ec71a",
+        "actual": "af038cea40d828c7f05f5072768dfd435ffbf3703ec35ab179349d98cd6ec71a",
+        "match": true
+      },
+      "engine-rs/stage4_matches.py": {
+        "expected": "03f65a13ba7c9e9f8c4c10f65ef691b5977302a67cf6e5d7a507049d480d597f",
+        "actual": "03f65a13ba7c9e9f8c4c10f65ef691b5977302a67cf6e5d7a507049d480d597f",
+        "match": true
+      },
+      "engine-rs/test_canonical_data.py": {
+        "expected": "6f41b7fc1486b809107dbd0f38f21345ee6d5824b6d81b1cc1938fe1d52b351f",
+        "actual": "6f41b7fc1486b809107dbd0f38f21345ee6d5824b6d81b1cc1938fe1d52b351f",
+        "match": true
+      },
+      "engine-rs/death_area_snapshot.py": {
+        "expected": "ece3255800408dfd9a55bc2dd6c05c6dc2e75f39c1a396c451fe850fd70a7742",
+        "actual": "ece3255800408dfd9a55bc2dd6c05c6dc2e75f39c1a396c451fe850fd70a7742",
+        "match": true
+      },
+      "engine-rs/stage2.py": {
+        "expected": "5641fd99a002445293ef16950becf6713032d9e08b89e022bae2bafbbbbed951",
+        "actual": "5641fd99a002445293ef16950becf6713032d9e08b89e022bae2bafbbbbed951",
+        "match": true
+      },
+      "engine-rs/mirror_snapshot.py": {
+        "expected": "9844af4e77098d9323030e5787119b993e7e186c9450fa5a58e4c23e177feca4",
+        "actual": "9844af4e77098d9323030e5787119b993e7e186c9450fa5a58e4c23e177feca4",
+        "match": true
+      },
+      "engine-rs/test_stage4_champions.py": {
+        "expected": "3e5244872fc76e2a8312960586bd07f43fe5ff93fdda1ebb234cc2e81b8f8f29",
+        "actual": "3e5244872fc76e2a8312960586bd07f43fe5ff93fdda1ebb234cc2e81b8f8f29",
+        "match": true
+      },
+      "engine-rs/test_stage4_spawners.py": {
+        "expected": "e27e62d7e98e6a7a83ae42f926ce126940d05f76395bdbbf3add411602af572b",
+        "actual": "e27e62d7e98e6a7a83ae42f926ce126940d05f76395bdbbf3add411602af572b",
+        "match": true
+      },
+      "engine-rs/payload_snapshot.py": {
+        "expected": "957ab77c23694ae21b9f03a316514a8658ff8273562a7c95a1b06ca2ecb13194",
+        "actual": "957ab77c23694ae21b9f03a316514a8658ff8273562a7c95a1b06ca2ecb13194",
+        "match": true
+      },
+      "engine-rs/test_stage4_b2.py": {
+        "expected": "98c446ad825b191bab11c0f57afa5576429bb8fd9d725a5ab15e4411ca6cc890",
+        "actual": "98c446ad825b191bab11c0f57afa5576429bb8fd9d725a5ab15e4411ca6cc890",
+        "match": true
+      },
+      "engine-rs/test_stage5b_deadline.py": {
+        "expected": "fc3f091db879cc01fab63efb30249f72aa9512f9bb258831eab517e2f78688c7",
+        "actual": "fc3f091db879cc01fab63efb30249f72aa9512f9bb258831eab517e2f78688c7",
+        "match": true
+      },
+      "engine-rs/test_stage4_controller_edges.py": {
+        "expected": "71f790d64de1f5d693ded8959b30393b5a420cc07ab9adbdf9d7037ab509bd58",
+        "actual": "71f790d64de1f5d693ded8959b30393b5a420cc07ab9adbdf9d7037ab509bd58",
+        "match": true
+      },
+      "engine-rs/stage2_matches.py": {
+        "expected": "18f679d752cbaed512125854c2f539e5d4a542ef234fc6c50bd4704f6ba05b7c",
+        "actual": "18f679d752cbaed512125854c2f539e5d4a542ef234fc6c50bd4704f6ba05b7c",
+        "match": true
+      },
+      "engine-rs/test_stage4_b3.py": {
+        "expected": "00f3403929900fb43c3a270023ecfb23f756bd5ecd24fd0e3c85e508a64b2ff9",
+        "actual": "00f3403929900fb43c3a270023ecfb23f756bd5ecd24fd0e3c85e508a64b2ff9",
+        "match": true
+      },
+      "engine-rs/live_snapshot.py": {
+        "expected": "c570596018c06241c3215af6b523dac81622a1d3e44b8e2e3c0b9e0224c9a962",
+        "actual": "c570596018c06241c3215af6b523dac81622a1d3e44b8e2e3c0b9e0224c9a962",
+        "match": true
+      },
+      "engine-rs/test_stage3_corpus_views.py": {
+        "expected": "878eeb0ad8e54b085eca5c10c898ffaaeb97c82a4118753dadbde7fed6aea28f",
+        "actual": "878eeb0ad8e54b085eca5c10c898ffaaeb97c82a4118753dadbde7fed6aea28f",
+        "match": true
+      },
+      "engine-rs/scope_snapshot.py": {
+        "expected": "cde958eb13946d979ebd9094c55c0e7d23aa27495693902e91d28270424577eb",
+        "actual": "cde958eb13946d979ebd9094c55c0e7d23aa27495693902e91d28270424577eb",
+        "match": true
+      },
+      "engine-rs/dash_snapshot.py": {
+        "expected": "c59ab5ebdfe511dc22219edb923af4c14571fbeedb38920c8f9e9e03efeae591",
+        "actual": "c59ab5ebdfe511dc22219edb923af4c14571fbeedb38920c8f9e9e03efeae591",
+        "match": true
+      },
+      "engine-rs/test_stage5_search.py": {
+        "expected": "731d60af24d0bd5586bae42811fdfcaadc027e0f43d65d9df48af7baf2ccb3b0",
+        "actual": "731d60af24d0bd5586bae42811fdfcaadc027e0f43d65d9df48af7baf2ccb3b0",
+        "match": true
+      },
+      "engine-rs/test_stage3.py": {
+        "expected": "2e9c76e7691a6391948cfb431512af832679796dc6158106c474f8dfa2c05277",
+        "actual": "2e9c76e7691a6391948cfb431512af832679796dc6158106c474f8dfa2c05277",
+        "match": true
+      },
+      "engine-rs/leap_snapshot.py": {
+        "expected": "f4e9261b4b2131770795eeb0b22a4af2250add0d05db1c430c5c007f586d112c",
+        "actual": "f4e9261b4b2131770795eeb0b22a4af2250add0d05db1c430c5c007f586d112c",
+        "match": true
+      },
+      "engine-rs/stage2_snapshots.py": {
+        "expected": "bbad4c8a0d8c82ccc5d5e474bb3036c4c02e4c3ac32fd535f370c476d1dd6c7a",
+        "actual": "bbad4c8a0d8c82ccc5d5e474bb3036c4c02e4c3ac32fd535f370c476d1dd6c7a",
+        "match": true
+      },
+      "engine-rs/test_stage3_regressions.py": {
+        "expected": "2752d80b9096650b1e30cb1bb0a3f4b905c90fba64a9a072d72f5a54ba1e5559",
+        "actual": "2752d80b9096650b1e30cb1bb0a3f4b905c90fba64a9a072d72f5a54ba1e5559",
+        "match": true
+      },
+      "engine-rs/test_stage3_backend.py": {
+        "expected": "05e7986acc0ada2374141522829bb58569a0fb2d8a8d16d904c93f46219950d6",
+        "actual": "05e7986acc0ada2374141522829bb58569a0fb2d8a8d16d904c93f46219950d6",
+        "match": true
+      },
+      "engine-rs/test_stage4.py": {
+        "expected": "7731def30bc7516dfb891f0fabe5395d39ccbb59d512f1fcc68fef248e043a3f",
+        "actual": "7731def30bc7516dfb891f0fabe5395d39ccbb59d512f1fcc68fef248e043a3f",
+        "match": true
+      },
+      "engine-rs/test_stage3_qualified_backend.py": {
+        "expected": "b8a594f7a3cb35dc7efeb4c1c5f8cb1938dda04cb2cd729ce2738728447aba0c",
+        "actual": "b8a594f7a3cb35dc7efeb4c1c5f8cb1938dda04cb2cd729ce2738728447aba0c",
+        "match": true
+      },
+      "engine-rs/test_stage4_goblinstein.py": {
+        "expected": "3d44cd482ea4c93add000b846c75ca14abf27aa44d69dfba30d69d00649ad2da",
+        "actual": "3d44cd482ea4c93add000b846c75ca14abf27aa44d69dfba30d69d00649ad2da",
+        "match": true
+      },
+      "engine-rs/test_stage2.py": {
+        "expected": "536b5d3f3012da4bafc52ab8a6f1eaf1f7b3bd5008469fb7a6020217c08e3d0c",
+        "actual": "536b5d3f3012da4bafc52ab8a6f1eaf1f7b3bd5008469fb7a6020217c08e3d0c",
+        "match": true
+      },
+      "engine-rs/test_stage4_b4.py": {
+        "expected": "f02837a1dcdd4033d665af3b78a5f47be3bec70f568a7821a4361be80e7ea67b",
+        "actual": "f02837a1dcdd4033d665af3b78a5f47be3bec70f568a7821a4361be80e7ea67b",
+        "match": true
+      },
+      "engine-rs/stage2_placements.py": {
+        "expected": "46135cd320d21f9aba6e2f32ad68aba66b2bb4ea55b0bd43880b45184236c46d",
+        "actual": "46135cd320d21f9aba6e2f32ad68aba66b2bb4ea55b0bd43880b45184236c46d",
+        "match": true
+      },
+      "engine-rs/test_stage3_finalize.py": {
+        "expected": "66586df765eec6f93f42c9ad66b0abdaa8bd35f5bf500ecb74aa29cc9e951f11",
+        "actual": "66586df765eec6f93f42c9ad66b0abdaa8bd35f5bf500ecb74aa29cc9e951f11",
+        "match": true
+      },
+      "engine-rs/test_stage4_imports.py": {
+        "expected": "d3bff8e2061ae97712fad4b8c7bb905b3a1a3b9dd3a82f73f454104126bab025",
+        "actual": "d3bff8e2061ae97712fad4b8c7bb905b3a1a3b9dd3a82f73f454104126bab025",
+        "match": true
+      },
+      "engine-rs/champion_snapshot.py": {
+        "expected": "35ae9f2106943384a26531317ce59d6f513adec13a39af5f4de2786311d866f3",
+        "actual": "35ae9f2106943384a26531317ce59d6f513adec13a39af5f4de2786311d866f3",
+        "match": true
+      },
+      "engine-rs/differential.py": {
+        "expected": "378d46047a68e8e6c95bd6379f96d7e05b3171d122b59df9385482fd5f3c0da2",
+        "actual": "378d46047a68e8e6c95bd6379f96d7e05b3171d122b59df9385482fd5f3c0da2",
+        "match": true
+      },
+      "engine-rs/clone_snapshot.py": {
+        "expected": "939bc577f971d696b9258459f92f982a00762c3cd0ee5c65b0033277195980d4",
+        "actual": "939bc577f971d696b9258459f92f982a00762c3cd0ee5c65b0033277195980d4",
+        "match": true
+      },
+      "engine-rs/c56_gate.py": {
+        "expected": "aec2caf346c0766f3a31b56fdaebf301f317fcc2484965fffcdcb82cc75d953d",
+        "actual": "aec2caf346c0766f3a31b56fdaebf301f317fcc2484965fffcdcb82cc75d953d",
+        "match": true
+      },
+      "engine-rs/test_stage4_controller.py": {
+        "expected": "e1d9072deb5683a3614fdf30b8d0f39779fd78389add0e3e533f6eb00512775d",
+        "actual": "e1d9072deb5683a3614fdf30b8d0f39779fd78389add0e3e533f6eb00512775d",
+        "match": true
+      },
+      "engine-rs/test_stage3_rollouts.py": {
+        "expected": "edd333f3dacd736f9fae99c866d328733f8b413bace384bae70e1fcccb3f30eb",
+        "actual": "edd333f3dacd736f9fae99c866d328733f8b413bace384bae70e1fcccb3f30eb",
+        "match": true
+      },
+      "engine-rs/c56_controller.py": {
+        "expected": "ce36a410d25c6144aea5cfac5fbf424986ae93186ffcf2d3ed056ce41781ee6c",
+        "actual": "ce36a410d25c6144aea5cfac5fbf424986ae93186ffcf2d3ed056ce41781ee6c",
+        "match": true
+      },
+      "engine-rs/hook_snapshot.py": {
+        "expected": "0fee897fbfd8ba9cdc248b6d71cbf1d1d6d80408b067618e13f336e6b6d06de7",
+        "actual": "0fee897fbfd8ba9cdc248b6d71cbf1d1d6d80408b067618e13f336e6b6d06de7",
+        "match": true
+      },
+      "engine-rs/test_stage3_backend_edges.py": {
+        "expected": "6332711185008cfb5267c5d94bcb9862bb0427b674dffc02ca7ec8a35f5a2e28",
+        "actual": "6332711185008cfb5267c5d94bcb9862bb0427b674dffc02ca7ec8a35f5a2e28",
+        "match": true
+      },
+      "engine-rs/spawn_snapshot.py": {
+        "expected": "4b01c424a3bb7d0016e0fe6b894aa4c52bcb1bcf818bd836cf22812726228c73",
+        "actual": "4b01c424a3bb7d0016e0fe6b894aa4c52bcb1bcf818bd836cf22812726228c73",
+        "match": true
+      },
+      "engine-rs/diagnostics.py": {
+        "expected": "edb1b2daefe3df380c6b75fd297d8e799208d5120b974a7683f421905974bab1",
+        "actual": "edb1b2daefe3df380c6b75fd297d8e799208d5120b974a7683f421905974bab1",
+        "match": true
+      },
+      "engine-rs/Cargo.toml": {
+        "expected": "afeab54844a22754f7e9f5351cdb71fdb3613e801676e9b736be8e9f86c48aad",
+        "actual": "afeab54844a22754f7e9f5351cdb71fdb3613e801676e9b736be8e9f86c48aad",
+        "match": true
+      },
+      "engine-rs/Cargo.lock": {
+        "expected": "9f6c3b45ec53806ebae43a284e0a7d5a393d00974217fa62f65cac4f0ed63679",
+        "actual": "9f6c3b45ec53806ebae43a284e0a7d5a393d00974217fa62f65cac4f0ed63679",
+        "match": true
+      },
+      "private_native": {
+        "expected": "78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689",
+        "actual": "78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689",
+        "match": true
+      }
+    }
+  },
+  "current_source": {
+    "engine-rs/src/mt.rs": {
+      "actual": "a4d021d799cfebf614172e6fefb7a3f66376d99ac2622616b9ae3a4ff4056bfc",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/spawn.rs": {
+      "actual": "8bb6d6c56954b0eefcc201cd58370e1051c9891fc733edd8d0fec1318ed67fde",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/deployment.rs": {
+      "actual": "1b2ee5592a753c28a6f0c41ea1445cccf50d64d7cbf1ab0eebe17a67152caefd",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/scripts.rs": {
+      "actual": "bcc4d68f4fd6f6f53db8bf3806868bb11d2bceacdcc7544f4be08fd280a9586a",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/champions.rs": {
+      "actual": "547d6bd8bcba738b0d9405838a514817295b7344d8b554107919ef420c506579",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/souls.rs": {
+      "actual": "aa7f97f7d5a163f3deb94a846278f9aa6a657da4a5000bb40d45d5041226e0db",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/dash.rs": {
+      "actual": "aaa1f3fa34cb4c641d0d6c941225f976559c6e42c9fb9d0f80cbca38dc3d34ee",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/hook.rs": {
+      "actual": "d2c778ac137cf8d8f62d8d792729579b02ebcc8df8deef568a71902906cae538",
+      "matches_build46": true,
+      "matches_build48": false
+    },
+    "engine-rs/src/clock.rs": {
+      "actual": "a6d459208ea7ce2395abbe054dd1cc8b30e6a50557fb73bf7217936bb743cda2",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/scope.rs": {
+      "actual": "221fe0e1cf88e8a8475b59ddad46852a2d45773104819768026bf0a10840ff62",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/c56.rs": {
+      "actual": "90e0e17aa4b6ffbbe70fd447bddbf974bb375a7a8ca8b08f0ff928dcf7325adb",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/lib.rs": {
+      "actual": "f13c730dc321b838c40b829d36641493c2494a4b1c8834e030c2c3c54ccb481a",
+      "matches_build46": true,
+      "matches_build48": false
+    },
+    "engine-rs/src/attacks.rs": {
+      "actual": "3cc2fe353f2560f55ddca65bdef00e9de0054c2a58587cd85c8f20eacd17041e",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/projectiles.rs": {
+      "actual": "40c53379009ba4bb780de993a5ed8aae37b4c9256760bcaa3ed20bc019d514ef",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/c56_scripts.rs": {
+      "actual": "19fc18ae0b7c8ff4aa9d49878b3094d5fabcbad29f004c9e23370f0091498387",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/leaf.rs": {
+      "actual": "97ba990728877bb95122d51e0585c173dd76169ef957ac584c14cb0e2a711169",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/leap.rs": {
+      "actual": "97e160839c4118f8db824b80ada88ca6372a6774b4645f0242854049793a07ff",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/clone.rs": {
+      "actual": "62303ca295d11562e653ab2ff7ec94b24c2b0dc9bdc2e405886545c1dc8fcc22",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/src/astar.rs": {
+      "actual": "b8ac279d5c0cd15a637a7316087a494cceffc4f98bb8c7933747c3ce7ebb2144",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_parity.py": {
+      "actual": "a2aeaf1ccf19a3a41067678127e5615afb7354dd779d31cff72db7abdea4e26f",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage3_record_roots.py": {
+      "actual": "58239c6c0c1f806229b9775c0fc4879d951522bab35e23ebc376428e5c2dc8de",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage4_scope.py": {
+      "actual": "af038cea40d828c7f05f5072768dfd435ffbf3703ec35ab179349d98cd6ec71a",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/stage4_matches.py": {
+      "actual": "03f65a13ba7c9e9f8c4c10f65ef691b5977302a67cf6e5d7a507049d480d597f",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_canonical_data.py": {
+      "actual": "6f41b7fc1486b809107dbd0f38f21345ee6d5824b6d81b1cc1938fe1d52b351f",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/death_area_snapshot.py": {
+      "actual": "ece3255800408dfd9a55bc2dd6c05c6dc2e75f39c1a396c451fe850fd70a7742",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/stage2.py": {
+      "actual": "5641fd99a002445293ef16950becf6713032d9e08b89e022bae2bafbbbbed951",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/mirror_snapshot.py": {
+      "actual": "9844af4e77098d9323030e5787119b993e7e186c9450fa5a58e4c23e177feca4",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage4_champions.py": {
+      "actual": "3e5244872fc76e2a8312960586bd07f43fe5ff93fdda1ebb234cc2e81b8f8f29",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage4_spawners.py": {
+      "actual": "e27e62d7e98e6a7a83ae42f926ce126940d05f76395bdbbf3add411602af572b",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/payload_snapshot.py": {
+      "actual": "957ab77c23694ae21b9f03a316514a8658ff8273562a7c95a1b06ca2ecb13194",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage4_b2.py": {
+      "actual": "98c446ad825b191bab11c0f57afa5576429bb8fd9d725a5ab15e4411ca6cc890",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage5b_deadline.py": {
+      "actual": "fc3f091db879cc01fab63efb30249f72aa9512f9bb258831eab517e2f78688c7",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage4_controller_edges.py": {
+      "actual": "71f790d64de1f5d693ded8959b30393b5a420cc07ab9adbdf9d7037ab509bd58",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/stage2_matches.py": {
+      "actual": "18f679d752cbaed512125854c2f539e5d4a542ef234fc6c50bd4704f6ba05b7c",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage4_b3.py": {
+      "actual": "00f3403929900fb43c3a270023ecfb23f756bd5ecd24fd0e3c85e508a64b2ff9",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/live_snapshot.py": {
+      "actual": "c570596018c06241c3215af6b523dac81622a1d3e44b8e2e3c0b9e0224c9a962",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage3_corpus_views.py": {
+      "actual": "878eeb0ad8e54b085eca5c10c898ffaaeb97c82a4118753dadbde7fed6aea28f",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/scope_snapshot.py": {
+      "actual": "cde958eb13946d979ebd9094c55c0e7d23aa27495693902e91d28270424577eb",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/dash_snapshot.py": {
+      "actual": "c59ab5ebdfe511dc22219edb923af4c14571fbeedb38920c8f9e9e03efeae591",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage5_search.py": {
+      "actual": "731d60af24d0bd5586bae42811fdfcaadc027e0f43d65d9df48af7baf2ccb3b0",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage3.py": {
+      "actual": "2e9c76e7691a6391948cfb431512af832679796dc6158106c474f8dfa2c05277",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/leap_snapshot.py": {
+      "actual": "f4e9261b4b2131770795eeb0b22a4af2250add0d05db1c430c5c007f586d112c",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/stage2_snapshots.py": {
+      "actual": "bbad4c8a0d8c82ccc5d5e474bb3036c4c02e4c3ac32fd535f370c476d1dd6c7a",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage3_regressions.py": {
+      "actual": "2752d80b9096650b1e30cb1bb0a3f4b905c90fba64a9a072d72f5a54ba1e5559",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage3_backend.py": {
+      "actual": "05e7986acc0ada2374141522829bb58569a0fb2d8a8d16d904c93f46219950d6",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage4.py": {
+      "actual": "7731def30bc7516dfb891f0fabe5395d39ccbb59d512f1fcc68fef248e043a3f",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage3_qualified_backend.py": {
+      "actual": "b8a594f7a3cb35dc7efeb4c1c5f8cb1938dda04cb2cd729ce2738728447aba0c",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage4_goblinstein.py": {
+      "actual": "3d44cd482ea4c93add000b846c75ca14abf27aa44d69dfba30d69d00649ad2da",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage2.py": {
+      "actual": "536b5d3f3012da4bafc52ab8a6f1eaf1f7b3bd5008469fb7a6020217c08e3d0c",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage4_b4.py": {
+      "actual": "f02837a1dcdd4033d665af3b78a5f47be3bec70f568a7821a4361be80e7ea67b",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/stage2_placements.py": {
+      "actual": "46135cd320d21f9aba6e2f32ad68aba66b2bb4ea55b0bd43880b45184236c46d",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage3_finalize.py": {
+      "actual": "66586df765eec6f93f42c9ad66b0abdaa8bd35f5bf500ecb74aa29cc9e951f11",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage4_imports.py": {
+      "actual": "d3bff8e2061ae97712fad4b8c7bb905b3a1a3b9dd3a82f73f454104126bab025",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/champion_snapshot.py": {
+      "actual": "35ae9f2106943384a26531317ce59d6f513adec13a39af5f4de2786311d866f3",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/differential.py": {
+      "actual": "378d46047a68e8e6c95bd6379f96d7e05b3171d122b59df9385482fd5f3c0da2",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/clone_snapshot.py": {
+      "actual": "939bc577f971d696b9258459f92f982a00762c3cd0ee5c65b0033277195980d4",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/c56_gate.py": {
+      "actual": "aec2caf346c0766f3a31b56fdaebf301f317fcc2484965fffcdcb82cc75d953d",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage4_controller.py": {
+      "actual": "e1d9072deb5683a3614fdf30b8d0f39779fd78389add0e3e533f6eb00512775d",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage3_rollouts.py": {
+      "actual": "edd333f3dacd736f9fae99c866d328733f8b413bace384bae70e1fcccb3f30eb",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/c56_controller.py": {
+      "actual": "ce36a410d25c6144aea5cfac5fbf424986ae93186ffcf2d3ed056ce41781ee6c",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/hook_snapshot.py": {
+      "actual": "0fee897fbfd8ba9cdc248b6d71cbf1d1d6d80408b067618e13f336e6b6d06de7",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/test_stage3_backend_edges.py": {
+      "actual": "6332711185008cfb5267c5d94bcb9862bb0427b674dffc02ca7ec8a35f5a2e28",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/spawn_snapshot.py": {
+      "actual": "4b01c424a3bb7d0016e0fe6b894aa4c52bcb1bcf818bd836cf22812726228c73",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/diagnostics.py": {
+      "actual": "edb1b2daefe3df380c6b75fd297d8e799208d5120b974a7683f421905974bab1",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/Cargo.toml": {
+      "actual": "afeab54844a22754f7e9f5351cdb71fdb3613e801676e9b736be8e9f86c48aad",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "engine-rs/Cargo.lock": {
+      "actual": "9f6c3b45ec53806ebae43a284e0a7d5a393d00974217fa62f65cac4f0ed63679",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "private_native": {
+      "actual": "78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689",
+      "matches_build46": false,
+      "matches_build48": true
+    }
+  },
+  "current_drivers": {
+    "fleet_stage6.py": {
+      "actual": "f3543c9530444237583f1d6fb54dcb3371ddfeca457e8a72f51c3f9396c70327",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "fleet_identity_recorded.py": {
+      "actual": "ed364503ec3744e7f4f44775065b01347495644c2d685e83a7ee6599a839c977",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "fleet_independent_plan.py": {
+      "actual": "f2a8644cfb6e81b404ddb1dd6ee500e1d25dbed1791509bc316435aa4f415143",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "fleet_independent_summary.py": {
+      "actual": "91327d4456e2d79c9db1f06363c25a17c2b3851d91af47be057d83d003171ffc",
+      "matches_build46": false,
+      "matches_build48": true
+    },
+    "human_gate.py": {
+      "actual": "de5c1fd9dab0a22d66870264a11e0c6429eb8952efff8b65539ce46f4aa2e4f3",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "human_reserve.py": {
+      "actual": "c996126aa8ce9f33e63f2309f6c967e90b93f150cd09dc7031eadc6c795d4768",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "human_cases.py": {
+      "actual": "6ea407f0323131fcae65bf791e56f09b7e838589c7e10dbd7e895abcb1527d24",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "final_planner.py": {
+      "actual": "d10bffcd3e8d8bea4480015b1e7479cbf359c3abf5b2f49be7a905ed8e0e5a18",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "final_controls.sh": {
+      "actual": "5a60dbb20264fad8b0be8758acb31677bc39498e3c16922bd7ac6fe4be97769f",
+      "matches_build46": true,
+      "matches_build48": false
+    },
+    "regressions.py": {
+      "actual": "57fe6301bc250e4d61f3f593ae7fea0924507a9b118673f4baa81406ba8315ae",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "stage5_200.py": {
+      "actual": "2d9ab50e3a5b23d15ab473e4b7924d9f286128863e25c31abb325ae94a0c6a02",
+      "matches_build46": true,
+      "matches_build48": true
+    },
+    "seal_final.py": {
+      "actual": "1363319a0ea9a3173f2ba5a09c24839b759fd4192e8f6aaadab26c204e7d2ac5",
+      "matches_build46": false,
+      "matches_build48": false
+    },
+    "independent_human.py": {
+      "actual": "a193c5856c4051dfd9d5d0f0f8169fb7dca12305b6fe80b3bd7b49dfe7f9b00f",
+      "matches_build46": false,
+      "matches_build48": false
+    },
+    "independent_recorded.py": {
+      "actual": "9e3986a80b46bf91e310dc06c3005e0914866f447bd04eb192b68d0dfe159741",
+      "matches_build46": false,
+      "matches_build48": false
+    },
+    "test_holdout47.py": {
+      "actual": "19a24092417ed406723f2ec2059dde7e1a8bf9d7c5e604be67d1513349c106a5",
+      "matches_build48": true
+    },
+    "fleet_peer_audit.py": {
+      "actual": "405aca5bf82c9ad855e076b7ef462910e10b50522ae387e2fc6cb854a18a5fc9",
+      "matches_build48": true
+    }
+  },
+  "plans": {
+    "recorded": {
+      "expected": "019b9d5d8ac40dd33fe42ad7571f7f9343cb3941751e5931f6cbdac356c324fb",
+      "actual": "019b9d5d8ac40dd33fe42ad7571f7f9343cb3941751e5931f6cbdac356c324fb",
+      "match": true,
+      "sources": {
+        "reports/strategy_council_20260928/engine-speed/stage6/human64-plan.json": {
+          "expected": "44d1e423d8b53fba87cc42ceab215caf1a67f30e3ad79278083b90ecf4d00379",
+          "actual": "44d1e423d8b53fba87cc42ceab215caf1a67f30e3ad79278083b90ecf4d00379",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/human32-supplement.json": {
+          "expected": "596ed5617c7f4515593b58baf9e1b3be8768a99316572c1706af6c74903ae240",
+          "actual": "596ed5617c7f4515593b58baf9e1b3be8768a99316572c1706af6c74903ae240",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/human128-reserve.json": {
+          "expected": "0f998e6bea308bbeb0012b1a334db41f19d3a76f059c96adbda23e639ff0f1f7",
+          "actual": "0f998e6bea308bbeb0012b1a334db41f19d3a76f059c96adbda23e639ff0f1f7",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/independent-human-plan-r43.json": {
+          "expected": "ad549acb0b3192805ddbef75c6e3303c1893170c5f0b77891f72da8a6e4c64a4",
+          "actual": "ad549acb0b3192805ddbef75c6e3303c1893170c5f0b77891f72da8a6e4c64a4",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/independent-recorded-plan-r43.json": {
+          "expected": "6c9327711635a9863d4c7656ae65175328dfd6ffb95104fee65e54de2b84ebf1",
+          "actual": "6c9327711635a9863d4c7656ae65175328dfd6ffb95104fee65e54de2b84ebf1",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/independent-recorded-plan-r44.json": {
+          "expected": "94f65e095c707a1f40c67de7b6979b769095e0f55b8830ef8c3215c59733c907",
+          "actual": "94f65e095c707a1f40c67de7b6979b769095e0f55b8830ef8c3215c59733c907",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/independent-recorded-plan-r44b.json": {
+          "expected": "87a0e0bfb17ed804b3ae6e858e4f6d66f03ccc5f95af658c03802d7cf606654f",
+          "actual": "87a0e0bfb17ed804b3ae6e858e4f6d66f03ccc5f95af658c03802d7cf606654f",
+          "match": true
+        },
+        "reports/strategy_council_20260928/m0/human-prior-scan/corpus_index.jsonl.gz": {
+          "expected": "7911273c5cacd1e5aefd034599d56eaa95b864f2bcc1c62406890205555fc506",
+          "actual": "7911273c5cacd1e5aefd034599d56eaa95b864f2bcc1c62406890205555fc506",
+          "match": true
+        },
+        "reports/strategy_council_20260928/m0/human-prior-scan/payloads_s120_tier_a.jsonl.gz": {
+          "expected": "9a916fb53e3e4b3017a4ad72113d292ac7e746c5acf0e8681fcc9755b4e2ccf7",
+          "actual": "9a916fb53e3e4b3017a4ad72113d292ac7e746c5acf0e8681fcc9755b4e2ccf7",
+          "match": true
+        },
+        "reports/strategy_council_20260928/m0/human-prior-scan/supported_cards.json": {
+          "expected": "c758fb624f50cf9baecf65fe00366493d4ed6119d35e1ce82cb8b86d0b1a17de",
+          "actual": "c758fb624f50cf9baecf65fe00366493d4ed6119d35e1ce82cb8b86d0b1a17de",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/scope.json": {
+          "expected": "e28292af55b86d04ecc9fead72321fc696761f677d5d7e1e5292f4fc92521a1b",
+          "actual": "e28292af55b86d04ecc9fead72321fc696761f677d5d7e1e5292f4fc92521a1b",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/fleet_independent_plan.py": {
+          "expected": "f2a8644cfb6e81b404ddb1dd6ee500e1d25dbed1791509bc316435aa4f415143",
+          "actual": "f2a8644cfb6e81b404ddb1dd6ee500e1d25dbed1791509bc316435aa4f415143",
+          "match": true
+        }
+      }
+    },
+    "human": {
+      "expected": "c7ce16a3212e83d5c4b893193f1d926e9164a714128f8836e96ffe3b32c8a8e4",
+      "actual": "c7ce16a3212e83d5c4b893193f1d926e9164a714128f8836e96ffe3b32c8a8e4",
+      "match": true,
+      "sources": {
+        "reports/strategy_council_20260928/engine-speed/stage6/human64-plan.json": {
+          "expected": "44d1e423d8b53fba87cc42ceab215caf1a67f30e3ad79278083b90ecf4d00379",
+          "actual": "44d1e423d8b53fba87cc42ceab215caf1a67f30e3ad79278083b90ecf4d00379",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/human32-supplement.json": {
+          "expected": "596ed5617c7f4515593b58baf9e1b3be8768a99316572c1706af6c74903ae240",
+          "actual": "596ed5617c7f4515593b58baf9e1b3be8768a99316572c1706af6c74903ae240",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/human128-reserve.json": {
+          "expected": "0f998e6bea308bbeb0012b1a334db41f19d3a76f059c96adbda23e639ff0f1f7",
+          "actual": "0f998e6bea308bbeb0012b1a334db41f19d3a76f059c96adbda23e639ff0f1f7",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/independent-human-plan-r43.json": {
+          "expected": "ad549acb0b3192805ddbef75c6e3303c1893170c5f0b77891f72da8a6e4c64a4",
+          "actual": "ad549acb0b3192805ddbef75c6e3303c1893170c5f0b77891f72da8a6e4c64a4",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/independent-recorded-plan-r43.json": {
+          "expected": "6c9327711635a9863d4c7656ae65175328dfd6ffb95104fee65e54de2b84ebf1",
+          "actual": "6c9327711635a9863d4c7656ae65175328dfd6ffb95104fee65e54de2b84ebf1",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/independent-recorded-plan-r44.json": {
+          "expected": "94f65e095c707a1f40c67de7b6979b769095e0f55b8830ef8c3215c59733c907",
+          "actual": "94f65e095c707a1f40c67de7b6979b769095e0f55b8830ef8c3215c59733c907",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/independent-recorded-plan-r44b.json": {
+          "expected": "87a0e0bfb17ed804b3ae6e858e4f6d66f03ccc5f95af658c03802d7cf606654f",
+          "actual": "87a0e0bfb17ed804b3ae6e858e4f6d66f03ccc5f95af658c03802d7cf606654f",
+          "match": true
+        },
+        "reports/strategy_council_20260928/m0/human-prior-scan/corpus_index.jsonl.gz": {
+          "expected": "7911273c5cacd1e5aefd034599d56eaa95b864f2bcc1c62406890205555fc506",
+          "actual": "7911273c5cacd1e5aefd034599d56eaa95b864f2bcc1c62406890205555fc506",
+          "match": true
+        },
+        "reports/strategy_council_20260928/m0/human-prior-scan/payloads_s120_tier_a.jsonl.gz": {
+          "expected": "9a916fb53e3e4b3017a4ad72113d292ac7e746c5acf0e8681fcc9755b4e2ccf7",
+          "actual": "9a916fb53e3e4b3017a4ad72113d292ac7e746c5acf0e8681fcc9755b4e2ccf7",
+          "match": true
+        },
+        "reports/strategy_council_20260928/m0/human-prior-scan/supported_cards.json": {
+          "expected": "c758fb624f50cf9baecf65fe00366493d4ed6119d35e1ce82cb8b86d0b1a17de",
+          "actual": "c758fb624f50cf9baecf65fe00366493d4ed6119d35e1ce82cb8b86d0b1a17de",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/scope.json": {
+          "expected": "e28292af55b86d04ecc9fead72321fc696761f677d5d7e1e5292f4fc92521a1b",
+          "actual": "e28292af55b86d04ecc9fead72321fc696761f677d5d7e1e5292f4fc92521a1b",
+          "match": true
+        },
+        "reports/strategy_council_20260928/engine-speed/stage6/fleet_independent_plan.py": {
+          "expected": "f2a8644cfb6e81b404ddb1dd6ee500e1d25dbed1791509bc316435aa4f415143",
+          "actual": "f2a8644cfb6e81b404ddb1dd6ee500e1d25dbed1791509bc316435aa4f415143",
+          "match": true
+        }
+      }
+    }
+  },
+  "protected_files": {
+    "engine-rs/clasher_core.abi3.so": {
+      "expected": "13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309",
+      "actual": "13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309",
+      "match": true
+    },
+    "gamedata.json": {
+      "expected": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+      "actual": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+      "match": true
+    },
+    "src/clasher/__init__.py": {
+      "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "actual": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "match": true
+    },
+    "src/clasher/arena.py": {
+      "expected": "98561e6bb652208fe7be60bb0c616bebde057541f84cfca234d23fbb777db6b8",
+      "actual": "98561e6bb652208fe7be60bb0c616bebde057541f84cfca234d23fbb777db6b8",
+      "match": true
+    },
+    "src/clasher/attack_clock.py": {
+      "expected": "02c32a1e3f0431a49528eb3e289a817dd886ab291b00d9401af676ee3f312e95",
+      "actual": "02c32a1e3f0431a49528eb3e289a817dd886ab291b00d9401af676ee3f312e95",
+      "match": true
+    },
+    "src/clasher/balance.py": {
+      "expected": "efb7fa996462bd93a3f823cb0879dd5b3fc8ced996df4564a56a5c1a26b8cbd8",
+      "actual": "efb7fa996462bd93a3f823cb0879dd5b3fc8ced996df4564a56a5c1a26b8cbd8",
+      "match": true
+    },
+    "src/clasher/battle.py": {
+      "expected": "1dbabf23c495c7318339f6e524fee7c88960fbe78bf3cd3f93e20b10524944b2",
+      "actual": "1dbabf23c495c7318339f6e524fee7c88960fbe78bf3cd3f93e20b10524944b2",
+      "match": true
+    },
+    "src/clasher/card_aliases.py": {
+      "expected": "0747592930f0c0645e506086634ecc0919bbf853b994c71d89a5e7f889697884",
+      "actual": "0747592930f0c0645e506086634ecc0919bbf853b994c71d89a5e7f889697884",
+      "match": true
+    },
+    "src/clasher/card_types.py": {
+      "expected": "f8dc3251bb3bbd6ef587a3d543ba7c7179325bb3b44d99b61e1e853b7b1247b5",
+      "actual": "f8dc3251bb3bbd6ef587a3d543ba7c7179325bb3b44d99b61e1e853b7b1247b5",
+      "match": true
+    },
+    "src/clasher/cards/__init__.py": {
+      "expected": "1a507584e2320e76d23f3eabce632d20b1a1ae94c8e7a5619a78015fc3d14eb0",
+      "actual": "1a507584e2320e76d23f3eabce632d20b1a1ae94c8e7a5619a78015fc3d14eb0",
+      "match": true
+    },
+    "src/clasher/cards/archer_queen.py": {
+      "expected": "13238f81cff539a80e8c4cdacbc241993174914fb592ff3b238bc7c215ea3384",
+      "actual": "13238f81cff539a80e8c4cdacbc241993174914fb592ff3b238bc7c215ea3384",
+      "match": true
+    },
+    "src/clasher/cards/archers.py": {
+      "expected": "7153ac2c0c6a655c6fa261963331b2043b72b5de0499d627c956c7b904ee9e52",
+      "actual": "7153ac2c0c6a655c6fa261963331b2043b72b5de0499d627c956c7b904ee9e52",
+      "match": true
+    },
+    "src/clasher/cards/baby_dragon.py": {
+      "expected": "adcfada71c5662c9c2f43839afe22b79ac11e6718d96a30a1b01bbcd4b4ef45c",
+      "actual": "adcfada71c5662c9c2f43839afe22b79ac11e6718d96a30a1b01bbcd4b4ef45c",
+      "match": true
+    },
+    "src/clasher/cards/balloon.py": {
+      "expected": "45531350970f05639a421f1fdda9433b7f95d755841ce94098a22389bf501fbe",
+      "actual": "45531350970f05639a421f1fdda9433b7f95d755841ce94098a22389bf501fbe",
+      "match": true
+    },
+    "src/clasher/cards/bandit.py": {
+      "expected": "228a6cbe8c0cae7b3eff7a2e5ea8d94bc9e4c6cc8a7aafa6bafe2587c8c8cbf9",
+      "actual": "228a6cbe8c0cae7b3eff7a2e5ea8d94bc9e4c6cc8a7aafa6bafe2587c8c8cbf9",
+      "match": true
+    },
+    "src/clasher/cards/bats.py": {
+      "expected": "d2f7f9918c0dfe5457af75742e693e1d681eee089732a9c080bde2c5a9c73578",
+      "actual": "d2f7f9918c0dfe5457af75742e693e1d681eee089732a9c080bde2c5a9c73578",
+      "match": true
+    },
+    "src/clasher/cards/battle_ram.py": {
+      "expected": "d6263404c5f50bfd3a297f980cbf8183d16a50193711f31dde0bd32c08382dee",
+      "actual": "d6263404c5f50bfd3a297f980cbf8183d16a50193711f31dde0bd32c08382dee",
+      "match": true
+    },
+    "src/clasher/cards/bowler.py": {
+      "expected": "35d1e228054c5b32c48ca3bd6e473a97f5620c2599c9cee0e13e73c06cf2bef5",
+      "actual": "35d1e228054c5b32c48ca3bd6e473a97f5620c2599c9cee0e13e73c06cf2bef5",
+      "match": true
+    },
+    "src/clasher/cards/c56_champions.py": {
+      "expected": "c670df5510503c0b8d78d45d53da9cd201bd63943fe2c6c91e7856b332d91181",
+      "actual": "c670df5510503c0b8d78d45d53da9cd201bd63943fe2c6c91e7856b332d91181",
+      "match": true
+    },
+    "src/clasher/cards/dart_goblin.py": {
+      "expected": "9e2fc9f9617776ae328b50eda0d8d4b97c909b8419e60a89b8408b5a3b41fe66",
+      "actual": "9e2fc9f9617776ae328b50eda0d8d4b97c909b8419e60a89b8408b5a3b41fe66",
+      "match": true
+    },
+    "src/clasher/cards/electro_dragon.py": {
+      "expected": "2d8237453312c4ff04b01a1b738f609a2e81006e93809c991a87bc89230c683b",
+      "actual": "2d8237453312c4ff04b01a1b738f609a2e81006e93809c991a87bc89230c683b",
+      "match": true
+    },
+    "src/clasher/cards/electro_spirit.py": {
+      "expected": "3ddb0b8fcc810fcb0fe0006ae60a9df3fd53e414c47593a4168de45440c6a288",
+      "actual": "3ddb0b8fcc810fcb0fe0006ae60a9df3fd53e414c47593a4168de45440c6a288",
+      "match": true
+    },
+    "src/clasher/cards/electro_wizard.py": {
+      "expected": "4114cb4f395e31c233efb81930f38dfa931a5e0074382a97e55c9a88282607f6",
+      "actual": "4114cb4f395e31c233efb81930f38dfa931a5e0074382a97e55c9a88282607f6",
+      "match": true
+    },
+    "src/clasher/cards/elixir_collector.py": {
+      "expected": "d1635655b4ed0293d5fbec4d02d6cd8ab70983642d58713b57344e557c0af63d",
+      "actual": "d1635655b4ed0293d5fbec4d02d6cd8ab70983642d58713b57344e557c0af63d",
+      "match": true
+    },
+    "src/clasher/cards/firecracker.py": {
+      "expected": "2e86a573076f5bd4cf6348ff43e5f84e3428f1b78508b41e220715663af3b1fb",
+      "actual": "2e86a573076f5bd4cf6348ff43e5f84e3428f1b78508b41e220715663af3b1fb",
+      "match": true
+    },
+    "src/clasher/cards/fisherman.py": {
+      "expected": "65397d34f3ee09d807c2902c3f76cd753014981bdad6110dc6556c733869ff89",
+      "actual": "65397d34f3ee09d807c2902c3f76cd753014981bdad6110dc6556c733869ff89",
+      "match": true
+    },
+    "src/clasher/cards/giant.py": {
+      "expected": "624dbdebb27a1ec61e3f9c9b5afac6c044cb6650b184a590c2ec9a860d389525",
+      "actual": "624dbdebb27a1ec61e3f9c9b5afac6c044cb6650b184a590c2ec9a860d389525",
+      "match": true
+    },
+    "src/clasher/cards/goblin_gang.py": {
+      "expected": "1b2fe8ced9bedf67ccb3ad5c2e31f315e0ab87e506b39c8f72e747f120360de8",
+      "actual": "1b2fe8ced9bedf67ccb3ad5c2e31f315e0ab87e506b39c8f72e747f120360de8",
+      "match": true
+    },
+    "src/clasher/cards/goblin_hut.py": {
+      "expected": "daa8f3c8f933511d5273d044ec411fd2ba46af8d6532f864992e753bc2ca9a10",
+      "actual": "daa8f3c8f933511d5273d044ec411fd2ba46af8d6532f864992e753bc2ca9a10",
+      "match": true
+    },
+    "src/clasher/cards/golem.py": {
+      "expected": "faea7988a36b95281dab54c22e10b578dce21b640582684f61f43795d96109c7",
+      "actual": "faea7988a36b95281dab54c22e10b578dce21b640582684f61f43795d96109c7",
+      "match": true
+    },
+    "src/clasher/cards/guards.py": {
+      "expected": "2d9f8d767b6a6eca560eeaa765935846a4b5b3e32edf79664d9adb51bfed6f4c",
+      "actual": "2d9f8d767b6a6eca560eeaa765935846a4b5b3e32edf79664d9adb51bfed6f4c",
+      "match": true
+    },
+    "src/clasher/cards/hog_rider.py": {
+      "expected": "8626b6ad801553f6292f25b6c6146e996f289bf6c179309901bc63c06894e847",
+      "actual": "8626b6ad801553f6292f25b6c6146e996f289bf6c179309901bc63c06894e847",
+      "match": true
+    },
+    "src/clasher/cards/ice_golem.py": {
+      "expected": "8ff781aac13b78d815f364705a4bdbfc7bf5c7124d1200a9fe6b1f4e68505aa3",
+      "actual": "8ff781aac13b78d815f364705a4bdbfc7bf5c7124d1200a9fe6b1f4e68505aa3",
+      "match": true
+    },
+    "src/clasher/cards/ice_spirit.py": {
+      "expected": "b29841cbb5aef50301a70fd4f3a1db5553f6ee43d9fe9e6a1426b7ca1b2faac2",
+      "actual": "b29841cbb5aef50301a70fd4f3a1db5553f6ee43d9fe9e6a1426b7ca1b2faac2",
+      "match": true
+    },
+    "src/clasher/cards/ice_wizard.py": {
+      "expected": "e7352143a7f2510aa820f6393ce75a4d88656eaef83d836687c9d42812fc1c15",
+      "actual": "e7352143a7f2510aa820f6393ce75a4d88656eaef83d836687c9d42812fc1c15",
+      "match": true
+    },
+    "src/clasher/cards/inferno_dragon.py": {
+      "expected": "8eb66d774d38812d66c4930b738f93585af6ae8e6301b0dbfd3700a00920a42e",
+      "actual": "8eb66d774d38812d66c4930b738f93585af6ae8e6301b0dbfd3700a00920a42e",
+      "match": true
+    },
+    "src/clasher/cards/kamikaze_spirits.py": {
+      "expected": "87492df95b2664d79bca18d8f6ccb1071885a8e4ea8e61c60a6b7074bcfe8abf",
+      "actual": "87492df95b2664d79bca18d8f6ccb1071885a8e4ea8e61c60a6b7074bcfe8abf",
+      "match": true
+    },
+    "src/clasher/cards/knight.py": {
+      "expected": "c173e8ab6c098affd1495977843802f34b55450ce758a2d2915811361bfdd465",
+      "actual": "c173e8ab6c098affd1495977843802f34b55450ce758a2d2915811361bfdd465",
+      "match": true
+    },
+    "src/clasher/cards/lumberjack.py": {
+      "expected": "abd33d7a2bf7dffb2b95dd478af18b73e8b36f6d924b265f9e54ac605f5e4262",
+      "actual": "abd33d7a2bf7dffb2b95dd478af18b73e8b36f6d924b265f9e54ac605f5e4262",
+      "match": true
+    },
+    "src/clasher/cards/magic_archer.py": {
+      "expected": "ce3629a630486fafc29b13caffa08cd8ee850fa9ea0c76c5864f8abb731d9e35",
+      "actual": "ce3629a630486fafc29b13caffa08cd8ee850fa9ea0c76c5864f8abb731d9e35",
+      "match": true
+    },
+    "src/clasher/cards/mega_knight.py": {
+      "expected": "7ac3d9eaf45d9e29beee4561713fbec7aa3cd8b89ba445a4d0bb4bfb81fa49ac",
+      "actual": "7ac3d9eaf45d9e29beee4561713fbec7aa3cd8b89ba445a4d0bb4bfb81fa49ac",
+      "match": true
+    },
+    "src/clasher/cards/miner.py": {
+      "expected": "2ac51c722e4af85cca4e816edaecb90b242fd44084174ab45526f55cb530f52b",
+      "actual": "2ac51c722e4af85cca4e816edaecb90b242fd44084174ab45526f55cb530f52b",
+      "match": true
+    },
+    "src/clasher/cards/mini_pekka.py": {
+      "expected": "1ba83e95f56dfa07c4e1580a2f79afd3241507cdc454e1dc54d481bd0d6a6972",
+      "actual": "1ba83e95f56dfa07c4e1580a2f79afd3241507cdc454e1dc54d481bd0d6a6972",
+      "match": true
+    },
+    "src/clasher/cards/minions.py": {
+      "expected": "41cfb94be709c7200a5be265c11cfa5aed3d663e8dd3e422dbc0d0da87692ee1",
+      "actual": "41cfb94be709c7200a5be265c11cfa5aed3d663e8dd3e422dbc0d0da87692ee1",
+      "match": true
+    },
+    "src/clasher/cards/musketeer.py": {
+      "expected": "5203f6897b4ed738faad757862d9a1568cbcfac8f733c8428f537e7fd34440c4",
+      "actual": "5203f6897b4ed738faad757862d9a1568cbcfac8f733c8428f537e7fd34440c4",
+      "match": true
+    },
+    "src/clasher/cards/pekka.py": {
+      "expected": "9d9d03ee2179c88f8ed6e90c4a936823fe88cd796d2b5b959e96a8b6c39de076",
+      "actual": "9d9d03ee2179c88f8ed6e90c4a936823fe88cd796d2b5b959e96a8b6c39de076",
+      "match": true
+    },
+    "src/clasher/cards/princess.py": {
+      "expected": "d858a8983aef13f4fd4682ac6218f9bf2f51beb83e2c09b513ef88643574f905",
+      "actual": "d858a8983aef13f4fd4682ac6218f9bf2f51beb83e2c09b513ef88643574f905",
+      "match": true
+    },
+    "src/clasher/cards/royal_ghost.py": {
+      "expected": "b2240ad0e311dbf69eee42242e693e32df0f6ab93ac17ab3851c24cbbd769f4d",
+      "actual": "b2240ad0e311dbf69eee42242e693e32df0f6ab93ac17ab3851c24cbbd769f4d",
+      "match": true
+    },
+    "src/clasher/cards/royal_hogs.py": {
+      "expected": "6d0297cea1e0870b940f3e1c4c4c6a481c36bdfacfa6be118a7810b6d3eae401",
+      "actual": "6d0297cea1e0870b940f3e1c4c4c6a481c36bdfacfa6be118a7810b6d3eae401",
+      "match": true
+    },
+    "src/clasher/cards/skeleton_barrel.py": {
+      "expected": "9c3ad31a2cb0319e3a6fb245dc49ef9bd30408c33129cfbbd1f64cfb30234050",
+      "actual": "9c3ad31a2cb0319e3a6fb245dc49ef9bd30408c33129cfbbd1f64cfb30234050",
+      "match": true
+    },
+    "src/clasher/cards/skeletons.py": {
+      "expected": "686a32b3de824cebe69cfd80b61698c44151088602d84be0ce803c1c68fbe91a",
+      "actual": "686a32b3de824cebe69cfd80b61698c44151088602d84be0ce803c1c68fbe91a",
+      "match": true
+    },
+    "src/clasher/cards/sparky.py": {
+      "expected": "8e5020439dfa0c7202ba609273dc379ccf75b9129669f09b6a310136b458dca4",
+      "actual": "8e5020439dfa0c7202ba609273dc379ccf75b9129669f09b6a310136b458dca4",
+      "match": true
+    },
+    "src/clasher/cards/spear_goblins.py": {
+      "expected": "d161b1fdfb68f29d7b9293322f89a0c6ec9471e6097f8a201df2d1a6a405bd0f",
+      "actual": "d161b1fdfb68f29d7b9293322f89a0c6ec9471e6097f8a201df2d1a6a405bd0f",
+      "match": true
+    },
+    "src/clasher/cards/tesla.py": {
+      "expected": "96f7b212a4288260f608569346206e65a91d220f9b54d6a5598c078cd0154ae2",
+      "actual": "96f7b212a4288260f608569346206e65a91d220f9b54d6a5598c078cd0154ae2",
+      "match": true
+    },
+    "src/clasher/cards/valkyrie.py": {
+      "expected": "a03079dc9775b7369e0276bfea3dea24beafc3dbf74a071bca1b952e5ca11b46",
+      "actual": "a03079dc9775b7369e0276bfea3dea24beafc3dbf74a071bca1b952e5ca11b46",
+      "match": true
+    },
+    "src/clasher/cards/wallbreakers.py": {
+      "expected": "9dc4072750ca8de60e05938768ddb02849ecfb72fbdf404d8ee4648ac04d9342",
+      "actual": "9dc4072750ca8de60e05938768ddb02849ecfb72fbdf404d8ee4648ac04d9342",
+      "match": true
+    },
+    "src/clasher/cards/witch.py": {
+      "expected": "c9896f915bf6ba3dfcc4cee76bbff7b35298389eb96f40fba7802c1b6f018e72",
+      "actual": "c9896f915bf6ba3dfcc4cee76bbff7b35298389eb96f40fba7802c1b6f018e72",
+      "match": true
+    },
+    "src/clasher/cli.py": {
+      "expected": "1cf07dcf07d6031232c34881946d81ed75a5112114ce83b8f33b625753015921",
+      "actual": "1cf07dcf07d6031232c34881946d81ed75a5112114ce83b8f33b625753015921",
+      "match": true
+    },
+    "src/clasher/data.py": {
+      "expected": "ed4ca93fcbc84553725e1dcfc57ce8da4c0dff58bdb01cded5e30fbc98fc332d",
+      "actual": "ed4ca93fcbc84553725e1dcfc57ce8da4c0dff58bdb01cded5e30fbc98fc332d",
+      "match": true
+    },
+    "src/clasher/dynamic_spells.py": {
+      "expected": "ca90d41002d0beb41f634aa26578d5158997db2c7b5e1768107edb7a9546ac16",
+      "actual": "ca90d41002d0beb41f634aa26578d5158997db2c7b5e1768107edb7a9546ac16",
+      "match": true
+    },
+    "src/clasher/effects/__init__.py": {
+      "expected": "c0ab5a3583489ef732d7848f6fd320f03be8a5f89cc54d6e6229efb0fe099a01",
+      "actual": "c0ab5a3583489ef732d7848f6fd320f03be8a5f89cc54d6e6229efb0fe099a01",
+      "match": true
+    },
+    "src/clasher/effects/area.py": {
+      "expected": "1411ce401f4ed54893b54b578fc2e3205dea7a21810af8b6a71eb690f6e6df6a",
+      "actual": "1411ce401f4ed54893b54b578fc2e3205dea7a21810af8b6a71eb690f6e6df6a",
+      "match": true
+    },
+    "src/clasher/effects/buff.py": {
+      "expected": "cf4887ca3fb3416468baa054253c28471f17ab773cde7fb4a04885a9159876dc",
+      "actual": "cf4887ca3fb3416468baa054253c28471f17ab773cde7fb4a04885a9159876dc",
+      "match": true
+    },
+    "src/clasher/effects/damage.py": {
+      "expected": "6215625ae72dd9d5de2d7113188a2ff507643cff10c8909b9768ba3feec1fb4b",
+      "actual": "6215625ae72dd9d5de2d7113188a2ff507643cff10c8909b9768ba3feec1fb4b",
+      "match": true
+    },
+    "src/clasher/effects/effect_base.py": {
+      "expected": "dedc5da87cff06285d502e08cea6144886f9358324780ce87f186bef4d88c98a",
+      "actual": "dedc5da87cff06285d502e08cea6144886f9358324780ce87f186bef4d88c98a",
+      "match": true
+    },
+    "src/clasher/effects/projectile.py": {
+      "expected": "3e8d5cf5d08ef23e00f503f2d959f8b4c25ae681c38867f5cab215c102122ff9",
+      "actual": "3e8d5cf5d08ef23e00f503f2d959f8b4c25ae681c38867f5cab215c102122ff9",
+      "match": true
+    },
+    "src/clasher/effects/spawn.py": {
+      "expected": "c88367d096c5fc1683376c9723752d4787d50cc3ae43b51625a91306125d6549",
+      "actual": "c88367d096c5fc1683376c9723752d4787d50cc3ae43b51625a91306125d6549",
+      "match": true
+    },
+    "src/clasher/effects/status.py": {
+      "expected": "29e8f73a98acb83baaf2be83b258d27eed323dc4e5619cc9433462867de2d546",
+      "actual": "29e8f73a98acb83baaf2be83b258d27eed323dc4e5619cc9433462867de2d546",
+      "match": true
+    },
+    "src/clasher/engine.py": {
+      "expected": "a4c64e3521ba201de24f837a5c3d5453d88869ba10134956cb12ce1ac9e7ed63",
+      "actual": "a4c64e3521ba201de24f837a5c3d5453d88869ba10134956cb12ce1ac9e7ed63",
+      "match": true
+    },
+    "src/clasher/entities.py": {
+      "expected": "917da0be17cdbea1ad434e42080fdb11ac9afabbe47a6aae099974f830cc098a",
+      "actual": "917da0be17cdbea1ad434e42080fdb11ac9afabbe47a6aae099974f830cc098a",
+      "match": true
+    },
+    "src/clasher/factory/__init__.py": {
+      "expected": "b819e28b55bdc3f9da94356e1eab86c256941408814275fec05a78562c5feddc",
+      "actual": "b819e28b55bdc3f9da94356e1eab86c256941408814275fec05a78562c5feddc",
+      "match": true
+    },
+    "src/clasher/factory/card_factory.py": {
+      "expected": "1053110888ed4435729ef57fc00fe48e9ac803ea96e0d9542cecd6b71cbd11c5",
+      "actual": "1053110888ed4435729ef57fc00fe48e9ac803ea96e0d9542cecd6b71cbd11c5",
+      "match": true
+    },
+    "src/clasher/factory/dynamic_factory.py": {
+      "expected": "fa3f2ba9a21564a76af56235a87aaddc038ad900ba50055ec93fc604ed98da8b",
+      "actual": "fa3f2ba9a21564a76af56235a87aaddc038ad900ba50055ec93fc604ed98da8b",
+      "match": true
+    },
+    "src/clasher/factory/mechanic_detector.py": {
+      "expected": "0afb5d583e1fc7f2481ab8b89d98cccd8256ef706fb861ace080ceb85eb47cf5",
+      "actual": "0afb5d583e1fc7f2481ab8b89d98cccd8256ef706fb861ace080ceb85eb47cf5",
+      "match": true
+    },
+    "src/clasher/fidelity.py": {
+      "expected": "84ebb199fa7557a41a88a573311887a4c4f70a86a10517eb63b2a63f271d3be5",
+      "actual": "84ebb199fa7557a41a88a573311887a4c4f70a86a10517eb63b2a63f271d3be5",
+      "match": true
+    },
+    "src/clasher/formations.py": {
+      "expected": "29ac62b55a4b9ef4ac7385332c09d49c8ee89e5f8542e6bd6ee5749613aea2df",
+      "actual": "29ac62b55a4b9ef4ac7385332c09d49c8ee89e5f8542e6bd6ee5749613aea2df",
+      "match": true
+    },
+    "src/clasher/gamedata_normalization.py": {
+      "expected": "a1e30ba4297979de806e264ab4050983a968d8af38cad18413648777cf62935f",
+      "actual": "a1e30ba4297979de806e264ab4050983a968d8af38cad18413648777cf62935f",
+      "match": true
+    },
+    "src/clasher/kinematics.py": {
+      "expected": "e19bad94c440c80a4fb308554e1d574da8679da99542bafa50cdefe396e0bafe",
+      "actual": "e19bad94c440c80a4fb308554e1d574da8679da99542bafa50cdefe396e0bafe",
+      "match": true
+    },
+    "src/clasher/logic_math.py": {
+      "expected": "810910fd9f7edeab07506340be16116fd6231b50de4849f5e60cd73ab6608ac5",
+      "actual": "810910fd9f7edeab07506340be16116fd6231b50de4849f5e60cd73ab6608ac5",
+      "match": true
+    },
+    "src/clasher/mechanics/champion/__init__.py": {
+      "expected": "4882d341cbc737d2becd61025588c2a894b02c6ca191de88b35507962aaacefd",
+      "actual": "4882d341cbc737d2becd61025588c2a894b02c6ca191de88b35507962aaacefd",
+      "match": true
+    },
+    "src/clasher/mechanics/champion/ability.py": {
+      "expected": "23a1b88aa2927c56c4ce10cc96d29e5b8c5151685c846bc74250cac676b7246d",
+      "actual": "23a1b88aa2927c56c4ce10cc96d29e5b8c5151685c846bc74250cac676b7246d",
+      "match": true
+    },
+    "src/clasher/mechanics/champion/skeleton_king.py": {
+      "expected": "26909c17b7211a2659d9d048bcede4405ee8c885fb9e0532fa4fc06e90c10ac4",
+      "actual": "26909c17b7211a2659d9d048bcede4405ee8c885fb9e0532fa4fc06e90c10ac4",
+      "match": true
+    },
+    "src/clasher/mechanics/mechanic_base.py": {
+      "expected": "aa50a4be109d20e43f7f9ccc19de7688958dc3561c6eec38cdfd87493b812464",
+      "actual": "aa50a4be109d20e43f7f9ccc19de7688958dc3561c6eec38cdfd87493b812464",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/__init__.py": {
+      "expected": "2485437502772a5780ceb77df75e9290596c8697e540bc6495e34ec88e6d183e",
+      "actual": "2485437502772a5780ceb77df75e9290596c8697e540bc6495e34ec88e6d183e",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/damage_ramp.py": {
+      "expected": "d7573c0cad45b636b3ef0935e3572d97c1dc847f33801050231037952f841298",
+      "actual": "d7573c0cad45b636b3ef0935e3572d97c1dc847f33801050231037952f841298",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/death_area.py": {
+      "expected": "a431a772b776e030967ed1c62e62eae8ed7edc4f9c9b76b48e8f2110d742820e",
+      "actual": "a431a772b776e030967ed1c62e62eae8ed7edc4f9c9b76b48e8f2110d742820e",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/death_effects.py": {
+      "expected": "70c3d2f09fe5c3dccdd92e095b9b56cb3d7ae7673aa447592abd9f4508e62602",
+      "actual": "70c3d2f09fe5c3dccdd92e095b9b56cb3d7ae7673aa447592abd9f4508e62602",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/knockback.py": {
+      "expected": "248c0b9241dfe7e880a5c8998433689bafaabaac9682129da1068a609e024ac8",
+      "actual": "248c0b9241dfe7e880a5c8998433689bafaabaac9682129da1068a609e024ac8",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/multi_target.py": {
+      "expected": "b38619bdedb15bb425fdfb37371e7292d1dcd84f61cf0feed3b8ad7c8d52d1b6",
+      "actual": "b38619bdedb15bb425fdfb37371e7292d1dcd84f61cf0feed3b8ad7c8d52d1b6",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/on_hit_buff.py": {
+      "expected": "0f2320a0dbc1b6228d66cf9ea747b04609e8674e95ec8d6fa521364a20cdaa9b",
+      "actual": "0f2320a0dbc1b6228d66cf9ea747b04609e8674e95ec8d6fa521364a20cdaa9b",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/scaling.py": {
+      "expected": "0c6b63d169273bc612843b85e804bc0bdcab19cd99375453b6b9c1f98a1e622b",
+      "actual": "0c6b63d169273bc612843b85e804bc0bdcab19cd99375453b6b9c1f98a1e622b",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/shield.py": {
+      "expected": "e019d04093e4520ceb6e71c298cd9d5ddec4bb663f83cbc18663b8ff66d9a4f3",
+      "actual": "e019d04093e4520ceb6e71c298cd9d5ddec4bb663f83cbc18663b8ff66d9a4f3",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/spawn_area.py": {
+      "expected": "f65c138e5c4ec625cb451083b266bbd65a9ac04789961b4d7147d104ceab7057",
+      "actual": "f65c138e5c4ec625cb451083b266bbd65a9ac04789961b4d7147d104ceab7057",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/spawn_pushback.py": {
+      "expected": "e8d7d4587467cbae75abfaf7c8d06f4177d9f080da3273eeff32744d82f9fb70",
+      "actual": "e8d7d4587467cbae75abfaf7c8d06f4177d9f080da3273eeff32744d82f9fb70",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/spawner.py": {
+      "expected": "33baabfeed204c71b310ae14b919ca3ac9d8abb222d94479fb21dde79e3a16d8",
+      "actual": "33baabfeed204c71b310ae14b919ca3ac9d8abb222d94479fb21dde79e3a16d8",
+      "match": true
+    },
+    "src/clasher/mechanics/shared/status_effects.py": {
+      "expected": "1770df89be4150d513e05f353f787efaba5e582280a1f1bd81967da855caeb43",
+      "actual": "1770df89be4150d513e05f353f787efaba5e582280a1f1bd81967da855caeb43",
+      "match": true
+    },
+    "src/clasher/native_assets.py": {
+      "expected": "201301849ea9ca72f1205ca827f202e58f2e84f209fafd2bf23e5b24b8102924",
+      "actual": "201301849ea9ca72f1205ca827f202e58f2e84f209fafd2bf23e5b24b8102924",
+      "match": true
+    },
+    "src/clasher/native_spatial.py": {
+      "expected": "11ee76cf468b9c5b1905790b58be1934418dfc5741022ac2b22a0d635e868f52",
+      "actual": "11ee76cf468b9c5b1905790b58be1934418dfc5741022ac2b22a0d635e868f52",
+      "match": true
+    },
+    "src/clasher/native_tilemap.py": {
+      "expected": "1277d77f53c078dd4591be10560a90a26bd0d7fe83658ee86e01275672af9f0c",
+      "actual": "1277d77f53c078dd4591be10560a90a26bd0d7fe83658ee86e01275672af9f0c",
+      "match": true
+    },
+    "src/clasher/ordinary_combat_clock.py": {
+      "expected": "5537564d613e34d1f2bebf86ecf856f303a320069d883234276fb5713ddafbe9",
+      "actual": "5537564d613e34d1f2bebf86ecf856f303a320069d883234276fb5713ddafbe9",
+      "match": true
+    },
+    "src/clasher/pathfinding.py": {
+      "expected": "711f4184bc970c66f8743e8d060e98e6e72ddad7bdab4a0f78f828bfb6d58c93",
+      "actual": "711f4184bc970c66f8743e8d060e98e6e72ddad7bdab4a0f78f828bfb6d58c93",
+      "match": true
+    },
+    "src/clasher/paths.py": {
+      "expected": "39bd4bca9c1631af067123dd538f35bd31c90c3f42936ef50efa3dd26e81ac7f",
+      "actual": "39bd4bca9c1631af067123dd538f35bd31c90c3f42936ef50efa3dd26e81ac7f",
+      "match": true
+    },
+    "src/clasher/placement.py": {
+      "expected": "f9404ed43dad6a66745078b52fe73f2c02137b2ceb8129adc88257e05c6853da",
+      "actual": "f9404ed43dad6a66745078b52fe73f2c02137b2ceb8129adc88257e05c6853da",
+      "match": true
+    },
+    "src/clasher/player.py": {
+      "expected": "efdea56a0d222d2a0de0e7289f6452ed99e7e3e5238fa8634feea0788db520d8",
+      "actual": "efdea56a0d222d2a0de0e7289f6452ed99e7e3e5238fa8634feea0788db520d8",
+      "match": true
+    },
+    "src/clasher/replay_timeline.py": {
+      "expected": "eca30dc9b34a7d958128e77c4e5b98065cf3aa1a72b3081baec400fe1ee5c85e",
+      "actual": "eca30dc9b34a7d958128e77c4e5b98065cf3aa1a72b3081baec400fe1ee5c85e",
+      "match": true
+    },
+    "src/clasher/rl/__init__.py": {
+      "expected": "05a15b66a28eb21edc333d354cc394e479f2d65b8a722ecbec459580ab28c436",
+      "actual": "05a15b66a28eb21edc333d354cc394e479f2d65b8a722ecbec459580ab28c436",
+      "match": true
+    },
+    "src/clasher/rl/action_space.py": {
+      "expected": "ba30abecbaf8f478d207c66f27e0e4318edf72975b67832376555b0052f0d8b0",
+      "actual": "ba30abecbaf8f478d207c66f27e0e4318edf72975b67832376555b0052f0d8b0",
+      "match": true
+    },
+    "src/clasher/rl/action_value.py": {
+      "expected": "9535c8c0f06fd8a77c65ad9019283aaaa3308858c0cc7c6b4fb661c1515d1b69",
+      "actual": "9535c8c0f06fd8a77c65ad9019283aaaa3308858c0cc7c6b4fb661c1515d1b69",
+      "match": true
+    },
+    "src/clasher/rl/benchmark.py": {
+      "expected": "cd140a0acee5e5c57ee18d0ca34f76eb8024f296806510eb80d41ff4058a5246",
+      "actual": "cd140a0acee5e5c57ee18d0ca34f76eb8024f296806510eb80d41ff4058a5246",
+      "match": true
+    },
+    "src/clasher/rl/c56_rollout_planner.py": {
+      "expected": "71111c8d8f3a8aeb43c8e76e9f516a77c348ca4dab6a81d812b02185aa169ece",
+      "actual": "71111c8d8f3a8aeb43c8e76e9f516a77c348ca4dab6a81d812b02185aa169ece",
+      "match": true
+    },
+    "src/clasher/rl/c56_scripted.py": {
+      "expected": "bf4cad2650db71525ba8e4df967129d597f83052f56df286b604ccf1cd571da1",
+      "actual": "bf4cad2650db71525ba8e4df967129d597f83052f56df286b604ccf1cd571da1",
+      "match": true
+    },
+    "src/clasher/rl/calibration_artifacts.py": {
+      "expected": "4491429eca062383a46810354251548d1b7c2155ca934aca10ac03b70d6f4390",
+      "actual": "4491429eca062383a46810354251548d1b7c2155ca934aca10ac03b70d6f4390",
+      "match": true
+    },
+    "src/clasher/rl/calibration_collection.py": {
+      "expected": "c9226e0220a5518a7f2d0c399fad4789d45e2fe58d089a0da6757be0aa12345a",
+      "actual": "c9226e0220a5518a7f2d0c399fad4789d45e2fe58d089a0da6757be0aa12345a",
+      "match": true
+    },
+    "src/clasher/rl/calibration_decisions.py": {
+      "expected": "ab797451956cc9af43de3111e8fd0556d30c6fb59db802fc99c4b5741a13c4a4",
+      "actual": "ab797451956cc9af43de3111e8fd0556d30c6fb59db802fc99c4b5741a13c4a4",
+      "match": true
+    },
+    "src/clasher/rl/calibration_evaluation.py": {
+      "expected": "1f10c86ce211f6126c26940d043c61c902b39309b56129123dfeab111babecd5",
+      "actual": "1f10c86ce211f6126c26940d043c61c902b39309b56129123dfeab111babecd5",
+      "match": true
+    },
+    "src/clasher/rl/calibration_families.py": {
+      "expected": "ad1941e485af1ac6e8089f4a26c3483e0eca52678209a39b0c2c38f70d159c1b",
+      "actual": "ad1941e485af1ac6e8089f4a26c3483e0eca52678209a39b0c2c38f70d159c1b",
+      "match": true
+    },
+    "src/clasher/rl/calibration_jobs.py": {
+      "expected": "c832a9c37644083bd331b2791b337117c45cc4eeb21e2c18a79b621c05eba573",
+      "actual": "c832a9c37644083bd331b2791b337117c45cc4eeb21e2c18a79b621c05eba573",
+      "match": true
+    },
+    "src/clasher/rl/card_prototype.py": {
+      "expected": "aa0c290a4ee99ebbd15ed54634fe6d16a5cf710d88b55b1050f6d8742c695565",
+      "actual": "aa0c290a4ee99ebbd15ed54634fe6d16a5cf710d88b55b1050f6d8742c695565",
+      "match": true
+    },
+    "src/clasher/rl/card_semantics.py": {
+      "expected": "706522955f31fbed2ad6e88beb01c548d527742fe00db8a4b1b32163bcf615c4",
+      "actual": "706522955f31fbed2ad6e88beb01c548d527742fe00db8a4b1b32163bcf615c4",
+      "match": true
+    },
+    "src/clasher/rl/causal_rehearsal.py": {
+      "expected": "f19fe0714ecebebecbd80724a2ad9767344dfb0f5d4c8c5e4deb27207bcfc7b9",
+      "actual": "f19fe0714ecebebecbd80724a2ad9767344dfb0f5d4c8c5e4deb27207bcfc7b9",
+      "match": true
+    },
+    "src/clasher/rl/causal_vision.py": {
+      "expected": "e1352afaad0c997f4916e589d9740a21868ce10cc92435c93d005a4628f1748a",
+      "actual": "e1352afaad0c997f4916e589d9740a21868ce10cc92435c93d005a4628f1748a",
+      "match": true
+    },
+    "src/clasher/rl/checkpoint_upgrade.py": {
+      "expected": "3a6cac005098f11cce762527ae58b11876e04d4656425736a2292aef7052b21b",
+      "actual": "3a6cac005098f11cce762527ae58b11876e04d4656425736a2292aef7052b21b",
+      "match": true
+    },
+    "src/clasher/rl/common.py": {
+      "expected": "1638870f5d1f014a516e942337a1fed420b506fde64b2ee7fe856d36c51a3a91",
+      "actual": "1638870f5d1f014a516e942337a1fed420b506fde64b2ee7fe856d36c51a3a91",
+      "match": true
+    },
+    "src/clasher/rl/complete_outcomes.py": {
+      "expected": "94e4f9fe66ec7add67aa15d0a98314dd9b63143c29066f78fcff486dbf5b9057",
+      "actual": "94e4f9fe66ec7add67aa15d0a98314dd9b63143c29066f78fcff486dbf5b9057",
+      "match": true
+    },
+    "src/clasher/rl/contract_v5.py": {
+      "expected": "02e00388080bd94da2da2d58e64127ef9d9defc3e0139e26ec6e563bf38cbe86",
+      "actual": "02e00388080bd94da2da2d58e64127ef9d9defc3e0139e26ec6e563bf38cbe86",
+      "match": true
+    },
+    "src/clasher/rl/council_budget.py": {
+      "expected": "aaf33b6022d2ad3eb7f0feb8223649bfcde52a3a5237a013e355e8b810b4f0bf",
+      "actual": "aaf33b6022d2ad3eb7f0feb8223649bfcde52a3a5237a013e355e8b810b4f0bf",
+      "match": true
+    },
+    "src/clasher/rl/council_evaluation.py": {
+      "expected": "8550ef32a507ae84c97a1dda4e380ceecbbe8df41e48c7af8c4648de07967d28",
+      "actual": "8550ef32a507ae84c97a1dda4e380ceecbbe8df41e48c7af8c4648de07967d28",
+      "match": true
+    },
+    "src/clasher/rl/council_monitor.py": {
+      "expected": "b1819c964fa5934feae113ef9b68991326e1431846be4ea98e51eb279ff1672f",
+      "actual": "b1819c964fa5934feae113ef9b68991326e1431846be4ea98e51eb279ff1672f",
+      "match": true
+    },
+    "src/clasher/rl/council_opponents.py": {
+      "expected": "fcdd3c0cdf63ff70f30c1eb6a172092954d13d8e649f05965a0211e9c6fdbbd6",
+      "actual": "fcdd3c0cdf63ff70f30c1eb6a172092954d13d8e649f05965a0211e9c6fdbbd6",
+      "match": true
+    },
+    "src/clasher/rl/council_pilot.py": {
+      "expected": "a7edb4eec6ef19ef756f98e7c23749ed94ed53e8f6878514dc7742ab4c5c7a53",
+      "actual": "a7edb4eec6ef19ef756f98e7c23749ed94ed53e8f6878514dc7742ab4c5c7a53",
+      "match": true
+    },
+    "src/clasher/rl/council_recurrence.py": {
+      "expected": "f2feb72a7ce770a66158fc7e49a308902bdddd0fa3256cbb17398c3281a0589a",
+      "actual": "f2feb72a7ce770a66158fc7e49a308902bdddd0fa3256cbb17398c3281a0589a",
+      "match": true
+    },
+    "src/clasher/rl/council_warmstart.py": {
+      "expected": "1aa61504a4d151bbf623c53e9822d62bd6722d843b688c9483fcbce8a8e878bf",
+      "actual": "1aa61504a4d151bbf623c53e9822d62bd6722d843b688c9483fcbce8a8e878bf",
+      "match": true
+    },
+    "src/clasher/rl/counterfactual_corpus.py": {
+      "expected": "8e792d48958fe065b044d2dcc27c5b1a158744779e5db98d52d310d2e9adf3f6",
+      "actual": "8e792d48958fe065b044d2dcc27c5b1a158744779e5db98d52d310d2e9adf3f6",
+      "match": true
+    },
+    "src/clasher/rl/counterfactual_policy_iteration.py": {
+      "expected": "c306f25e0b4fc7832baf43c6918c3894a3c3a9c8686f53aca189711e05d7a73b",
+      "actual": "c306f25e0b4fc7832baf43c6918c3894a3c3a9c8686f53aca189711e05d7a73b",
+      "match": true
+    },
+    "src/clasher/rl/counterfactual_schedule.py": {
+      "expected": "e133c3c22f6bdb4580b0c398df3d7e1888f8db5fac4915c361805caa93a337c7",
+      "actual": "e133c3c22f6bdb4580b0c398df3d7e1888f8db5fac4915c361805caa93a337c7",
+      "match": true
+    },
+    "src/clasher/rl/dagger_behavior.py": {
+      "expected": "f4f1e06cb5ed00d46644deaa9c5508f912a3836550b1a4836a486843cc7f935c",
+      "actual": "f4f1e06cb5ed00d46644deaa9c5508f912a3836550b1a4836a486843cc7f935c",
+      "match": true
+    },
+    "src/clasher/rl/deck_benchmark.py": {
+      "expected": "5d0b14dc1cd4a00b10491379a61f8e9c57dccb04f3c92047293d433a07793ea2",
+      "actual": "5d0b14dc1cd4a00b10491379a61f8e9c57dccb04f3c92047293d433a07793ea2",
+      "match": true
+    },
+    "src/clasher/rl/deck_curriculum.py": {
+      "expected": "c5dfd61295e2e439f1085d4363863c16a2183990fcc2ed3ede7552dc0a83e849",
+      "actual": "c5dfd61295e2e439f1085d4363863c16a2183990fcc2ed3ede7552dc0a83e849",
+      "match": true
+    },
+    "src/clasher/rl/deck_pool.py": {
+      "expected": "468fd2f59e0992a466439e63e808c24e5161ae869eb8dc29ba16fabb2e478e7d",
+      "actual": "468fd2f59e0992a466439e63e808c24e5161ae869eb8dc29ba16fabb2e478e7d",
+      "match": true
+    },
+    "src/clasher/rl/defense_scenarios.py": {
+      "expected": "02bb23040eb3a43dc6c3e69654ec0badcf79a8405576ce3604afd208ae94778c",
+      "actual": "02bb23040eb3a43dc6c3e69654ec0badcf79a8405576ce3604afd208ae94778c",
+      "match": true
+    },
+    "src/clasher/rl/determinism_check.py": {
+      "expected": "7c3367159d04e9b300d9c1de53f4f200cec3f421f92943390db33d08f6baad71",
+      "actual": "7c3367159d04e9b300d9c1de53f4f200cec3f421f92943390db33d08f6baad71",
+      "match": true
+    },
+    "src/clasher/rl/direct_simple_behavior.py": {
+      "expected": "3864b6290980cd1b1b72ff01deca2a41c7357c1fc339e7b0a1cc021d0229b27b",
+      "actual": "3864b6290980cd1b1b72ff01deca2a41c7357c1fc339e7b0a1cc021d0229b27b",
+      "match": true
+    },
+    "src/clasher/rl/eval.py": {
+      "expected": "075104c8e4041b4c307b9539c2a2adc103567902a1c61fc229197d1f447a2c54",
+      "actual": "075104c8e4041b4c307b9539c2a2adc103567902a1c61fc229197d1f447a2c54",
+      "match": true
+    },
+    "src/clasher/rl/event_policy.py": {
+      "expected": "8de3518ac3e7266df12d15b72bfac3d8a342c961673c20eece2fe3ba24aeaf11",
+      "actual": "8de3518ac3e7266df12d15b72bfac3d8a342c961673c20eece2fe3ba24aeaf11",
+      "match": true
+    },
+    "src/clasher/rl/gym_env.py": {
+      "expected": "3374ac42b8a4beb04170d9ac45df62c1aa27b202939b1bdd5011d2eb5e999cb5",
+      "actual": "3374ac42b8a4beb04170d9ac45df62c1aa27b202939b1bdd5011d2eb5e999cb5",
+      "match": true
+    },
+    "src/clasher/rl/hierarchical_imitation.py": {
+      "expected": "8de4b550e1027c3295579b9540d184f2a99ad346652e5f23a9b943cc0bcffff3",
+      "actual": "8de4b550e1027c3295579b9540d184f2a99ad346652e5f23a9b943cc0bcffff3",
+      "match": true
+    },
+    "src/clasher/rl/human_context.py": {
+      "expected": "d29dbd5b1d7ccb17c4ba6bc7dd3920368447d0f83f7143580fd0bb38f787a1ac",
+      "actual": "d29dbd5b1d7ccb17c4ba6bc7dd3920368447d0f83f7143580fd0bb38f787a1ac",
+      "match": true
+    },
+    "src/clasher/rl/human_meta_decks.py": {
+      "expected": "e9740fba56764a67fbf7de5fdc0e8c5ef15ab2d79cf3df00a0329b4312499b08",
+      "actual": "e9740fba56764a67fbf7de5fdc0e8c5ef15ab2d79cf3df00a0329b4312499b08",
+      "match": true
+    },
+    "src/clasher/rl/human_replay_bc.py": {
+      "expected": "60f6de6970739a8946918eb5ba89ba6232b6a46b32d8ad9ad51af0100976a5fd",
+      "actual": "60f6de6970739a8946918eb5ba89ba6232b6a46b32d8ad9ad51af0100976a5fd",
+      "match": true
+    },
+    "src/clasher/rl/human_replay_demonstrations.py": {
+      "expected": "e3ab5285b83820367a35d54e6a188185ed6ad78e916b3416f2c5f09c1cd05699",
+      "actual": "e3ab5285b83820367a35d54e6a188185ed6ad78e916b3416f2c5f09c1cd05699",
+      "match": true
+    },
+    "src/clasher/rl/human_replay_v5.py": {
+      "expected": "43598ffcf1baf81615cc6695d64bf7466441072e9d9fe90877ac386cada30368",
+      "actual": "43598ffcf1baf81615cc6695d64bf7466441072e9d9fe90877ac386cada30368",
+      "match": true
+    },
+    "src/clasher/rl/imitation.py": {
+      "expected": "067a518e5a1cef6dc95425812a7f1eb360205ecdd5bf89632ac38ce137b4bdd5",
+      "actual": "067a518e5a1cef6dc95425812a7f1eb360205ecdd5bf89632ac38ce137b4bdd5",
+      "match": true
+    },
+    "src/clasher/rl/imitation_mix.py": {
+      "expected": "3938e88afb30338c455aa7797e447e5f442b55c70b10c55a20a60b9f592f9291",
+      "actual": "3938e88afb30338c455aa7797e447e5f442b55c70b10c55a20a60b9f592f9291",
+      "match": true
+    },
+    "src/clasher/rl/imitation_objective.py": {
+      "expected": "88507e9bfe6230387a8feb5153ae640429f4539cdd897fe87aa6ea95a872d4dd",
+      "actual": "88507e9bfe6230387a8feb5153ae640429f4539cdd897fe87aa6ea95a872d4dd",
+      "match": true
+    },
+    "src/clasher/rl/inference_server.py": {
+      "expected": "dccf9dab5fda2c60939fb0cbead6b7ed74e16d5b5c69a25127db914b6ae9fc14",
+      "actual": "dccf9dab5fda2c60939fb0cbead6b7ed74e16d5b5c69a25127db914b6ae9fc14",
+      "match": true
+    },
+    "src/clasher/rl/joint_action_value.py": {
+      "expected": "346d70cebf47dbb55ce12d4c6d900de94f46547a040cf881d0b2be1adadb0016",
+      "actual": "346d70cebf47dbb55ce12d4c6d900de94f46547a040cf881d0b2be1adadb0016",
+      "match": true
+    },
+    "src/clasher/rl/katacr_replay.py": {
+      "expected": "7c0e3ef718d514e959f7640e9e195506fb9711338df2a7e19ea03fe81bf018bf",
+      "actual": "7c0e3ef718d514e959f7640e9e195506fb9711338df2a7e19ea03fe81bf018bf",
+      "match": true
+    },
+    "src/clasher/rl/legacy_model.py": {
+      "expected": "efbfa003fb883de75b959a681607402ca0b3ac3a522b98a2944b614444c7e4de",
+      "actual": "efbfa003fb883de75b959a681607402ca0b3ac3a522b98a2944b614444c7e4de",
+      "match": true
+    },
+    "src/clasher/rl/live_inference_contract.py": {
+      "expected": "ee008c9a41f2f1795d64c898eddab3e1c5d3321acccaef4976ba64292eb955b7",
+      "actual": "ee008c9a41f2f1795d64c898eddab3e1c5d3321acccaef4976ba64292eb955b7",
+      "match": true
+    },
+    "src/clasher/rl/location_lookahead.py": {
+      "expected": "b5df01bb3add79b76826877ad76592ce38081d8e123c0daa908e2e20009c7357",
+      "actual": "b5df01bb3add79b76826877ad76592ce38081d8e123c0daa908e2e20009c7357",
+      "match": true
+    },
+    "src/clasher/rl/model.py": {
+      "expected": "e513b0c661fab21e35ad6f2ffc64d6cfd01d7dc7b4fc480435e38e33a285d989",
+      "actual": "e513b0c661fab21e35ad6f2ffc64d6cfd01d7dc7b4fc480435e38e33a285d989",
+      "match": true
+    },
+    "src/clasher/rl/native_command_checks.py": {
+      "expected": "27e007bd101c3841a54960c32fe6ffe3a1b395c7557acefee0531e08dc76dc7a",
+      "actual": "27e007bd101c3841a54960c32fe6ffe3a1b395c7557acefee0531e08dc76dc7a",
+      "match": true
+    },
+    "src/clasher/rl/native_frame_storage.py": {
+      "expected": "c39786b6b4f193c0d93f8b8b82f7b8c7a013d7b5c74632223b23d0fabc81f3ac",
+      "actual": "c39786b6b4f193c0d93f8b8b82f7b8c7a013d7b5c74632223b23d0fabc81f3ac",
+      "match": true
+    },
+    "src/clasher/rl/native_match_registry.py": {
+      "expected": "9de3424cfa2bf5a4fe4eb83c0bf6c4c8cf5cc3afc0e28fdfee08f0c553de53eb",
+      "actual": "9de3424cfa2bf5a4fe4eb83c0bf6c4c8cf5cc3afc0e28fdfee08f0c553de53eb",
+      "match": true
+    },
+    "src/clasher/rl/native_probe_transport.py": {
+      "expected": "02be06dfe0223ef4cd21e830b2cb134472e0472d05e5d90b14acdffa81b42357",
+      "actual": "02be06dfe0223ef4cd21e830b2cb134472e0472d05e5d90b14acdffa81b42357",
+      "match": true
+    },
+    "src/clasher/rl/native_public_calibration.py": {
+      "expected": "202fde4184e244b37b56433e23e0171734a69fe13b0740fab5dfe1cdaa814396",
+      "actual": "202fde4184e244b37b56433e23e0171734a69fe13b0740fab5dfe1cdaa814396",
+      "match": true
+    },
+    "src/clasher/rl/native_public_observation.py": {
+      "expected": "b71dbc2f82ac38e1c0117a3b6001bc127110a4fd95f170c1255736751d97675f",
+      "actual": "b71dbc2f82ac38e1c0117a3b6001bc127110a4fd95f170c1255736751d97675f",
+      "match": true
+    },
+    "src/clasher/rl/native_rich_delta.py": {
+      "expected": "13b05e2151ee1e95dbe70e7e2714770004fc721ee7148b7e6d953263a0b185a2",
+      "actual": "13b05e2151ee1e95dbe70e7e2714770004fc721ee7148b7e6d953263a0b185a2",
+      "match": true
+    },
+    "src/clasher/rl/obs_cv.py": {
+      "expected": "a2b459e7e84901d14f5600ea2fc31cc0e9892db2834a1e2ebd72c46b8ed96b9e",
+      "actual": "a2b459e7e84901d14f5600ea2fc31cc0e9892db2834a1e2ebd72c46b8ed96b9e",
+      "match": true
+    },
+    "src/clasher/rl/oracle_corpus.py": {
+      "expected": "1f616e723032c33d606f388926eec30aab8682214296e87c3e6de8d659783bfa",
+      "actual": "1f616e723032c33d606f388926eec30aab8682214296e87c3e6de8d659783bfa",
+      "match": true
+    },
+    "src/clasher/rl/oracle_direct_path.py": {
+      "expected": "e6f7db73e6812e9223b0bf0f7f00063bb145fb89175c140cd5bd0e1a16f4cae8",
+      "actual": "e6f7db73e6812e9223b0bf0f7f00063bb145fb89175c140cd5bd0e1a16f4cae8",
+      "match": true
+    },
+    "src/clasher/rl/oracle_planner.py": {
+      "expected": "5e5134f73d0ad395f4decb3f0a220b71d9e13464c16a3220c12b0544aff0ef2e",
+      "actual": "5e5134f73d0ad395f4decb3f0a220b71d9e13464c16a3220c12b0544aff0ef2e",
+      "match": true
+    },
+    "src/clasher/rl/oracle_sampling.py": {
+      "expected": "8e97314d81fee85ba4a668c63943053214717bd57827cad71397a15a9a6fede9",
+      "actual": "8e97314d81fee85ba4a668c63943053214717bd57827cad71397a15a9a6fede9",
+      "match": true
+    },
+    "src/clasher/rl/outcome_model.py": {
+      "expected": "5dd1fd8f9f651324518c5d71e2ae04fd395cff48a13cdf49147f12279dc47377",
+      "actual": "5dd1fd8f9f651324518c5d71e2ae04fd395cff48a13cdf49147f12279dc47377",
+      "match": true
+    },
+    "src/clasher/rl/own_card_history.py": {
+      "expected": "a90ad8c71218e722c2761054f4bf61a97b997145c04287c7f19ccef194ec9a30",
+      "actual": "a90ad8c71218e722c2761054f4bf61a97b997145c04287c7f19ccef194ec9a30",
+      "match": true
+    },
+    "src/clasher/rl/parallel_rollout.py": {
+      "expected": "1ad796ef8c99eb87f45e4afeaaacdb6148a1f2616b48150d2b37555e9eb01e37",
+      "actual": "1ad796ef8c99eb87f45e4afeaaacdb6148a1f2616b48150d2b37555e9eb01e37",
+      "match": true
+    },
+    "src/clasher/rl/perspective_sanitizer.py": {
+      "expected": "856b0a30b497f473f3b2b9205eb96a6f10dc8df83c0f271133b65b3ae1788b3e",
+      "actual": "856b0a30b497f473f3b2b9205eb96a6f10dc8df83c0f271133b65b3ae1788b3e",
+      "match": true
+    },
+    "src/clasher/rl/public_action_mask.py": {
+      "expected": "e6e94abae45b0988dbcc087970a11cc0b2f07fc1cc335decec75b5714798d107",
+      "actual": "e6e94abae45b0988dbcc087970a11cc0b2f07fc1cc335decec75b5714798d107",
+      "match": true
+    },
+    "src/clasher/rl/public_margin_dynamics.py": {
+      "expected": "76f5519789b9c5f7f0486f5222dde0ee70aaf78a046631137caadc85417977e6",
+      "actual": "76f5519789b9c5f7f0486f5222dde0ee70aaf78a046631137caadc85417977e6",
+      "match": true
+    },
+    "src/clasher/rl/public_match_archive.py": {
+      "expected": "2c3c339d11a7832e46f2fdbf34590fd849b022d041d78d407fa1f28a668b2af2",
+      "actual": "2c3c339d11a7832e46f2fdbf34590fd849b022d041d78d407fa1f28a668b2af2",
+      "match": true
+    },
+    "src/clasher/rl/public_observation.py": {
+      "expected": "e9b1b94aabb54d4397ba7ae6b2caed4ad8b133a34e7d2bcfc7ecc2d05201b1b2",
+      "actual": "e9b1b94aabb54d4397ba7ae6b2caed4ad8b133a34e7d2bcfc7ecc2d05201b1b2",
+      "match": true
+    },
+    "src/clasher/rl/public_outcome.py": {
+      "expected": "352240ac938fdb0d5ca7d569657c5cca0564ad97df2ba08d8b83b03da7b4efde",
+      "actual": "352240ac938fdb0d5ca7d569657c5cca0564ad97df2ba08d8b83b03da7b4efde",
+      "match": true
+    },
+    "src/clasher/rl/public_policy_contract.py": {
+      "expected": "4ffa36ecf6b3bb013507cd9ad3dc01ab39d238033786df64baff7406d9cf4dde",
+      "actual": "4ffa36ecf6b3bb013507cd9ad3dc01ab39d238033786df64baff7406d9cf4dde",
+      "match": true
+    },
+    "src/clasher/rl/public_reference_checks.py": {
+      "expected": "2876b63a1938fb925ebe50e83cb9378c41605e08dd93b6112c8018a1c289075f",
+      "actual": "2876b63a1938fb925ebe50e83cb9378c41605e08dd93b6112c8018a1c289075f",
+      "match": true
+    },
+    "src/clasher/rl/public_scripted_opponent.py": {
+      "expected": "90c3f39e91bce51e28cffedd0184244339f7a5bc965aac7bf68dc50b733e0ee0",
+      "actual": "90c3f39e91bce51e28cffedd0184244339f7a5bc965aac7bf68dc50b733e0ee0",
+      "match": true
+    },
+    "src/clasher/rl/public_strategy_context.py": {
+      "expected": "80da36abfc116cffd393e76806b211faf25f3f6229c63df6008208c30be04a1a",
+      "actual": "80da36abfc116cffd393e76806b211faf25f3f6229c63df6008208c30be04a1a",
+      "match": true
+    },
+    "src/clasher/rl/readiness_capture_ownership.py": {
+      "expected": "1808c05b1f108c5a896b708c3c0b5c855ec16916aa458dca7b5434fee9a5ac09",
+      "actual": "1808c05b1f108c5a896b708c3c0b5c855ec16916aa458dca7b5434fee9a5ac09",
+      "match": true
+    },
+    "src/clasher/rl/readiness_execution.py": {
+      "expected": "5e8d076a3872992f8c16cc193fd63e80cabce0959279d1ba75267b1ac70eae5a",
+      "actual": "5e8d076a3872992f8c16cc193fd63e80cabce0959279d1ba75267b1ac70eae5a",
+      "match": true
+    },
+    "src/clasher/rl/readiness_job_selection.py": {
+      "expected": "4d3cc12b20f0951e1ccc831ab1c7d73302c659aa008c3a5d585e2a3cca3de148",
+      "actual": "4d3cc12b20f0951e1ccc831ab1c7d73302c659aa008c3a5d585e2a3cca3de148",
+      "match": true
+    },
+    "src/clasher/rl/readiness_level_extension.py": {
+      "expected": "1cabd2ffbda2d15fd1e237f636ed6cd52fa35a959790dcd807e4f9e91ebffd69",
+      "actual": "1cabd2ffbda2d15fd1e237f636ed6cd52fa35a959790dcd807e4f9e91ebffd69",
+      "match": true
+    },
+    "src/clasher/rl/readiness_native_config.py": {
+      "expected": "f983b67d071ba23e765642d8bedf8001a1138382cfe7fd0f032b113f7d2a7ac7",
+      "actual": "f983b67d071ba23e765642d8bedf8001a1138382cfe7fd0f032b113f7d2a7ac7",
+      "match": true
+    },
+    "src/clasher/rl/readiness_prefix.py": {
+      "expected": "6cbfe1790c2d32f2f95d47ae2b5e89ba5d0b2c0877b5dbf8707eb365545afd66",
+      "actual": "6cbfe1790c2d32f2f95d47ae2b5e89ba5d0b2c0877b5dbf8707eb365545afd66",
+      "match": true
+    },
+    "src/clasher/rl/readiness_root_bank.py": {
+      "expected": "20e96305a92b145b086558bd1359fef2e2103f4d2fb6d266415ab4ed3e99c0ef",
+      "actual": "20e96305a92b145b086558bd1359fef2e2103f4d2fb6d266415ab4ed3e99c0ef",
+      "match": true
+    },
+    "src/clasher/rl/readiness_root_bank_v3.py": {
+      "expected": "78616277bc23fddbfca09dcf92662eed878a6ba7b79ce8834b41111595e281a8",
+      "actual": "78616277bc23fddbfca09dcf92662eed878a6ba7b79ce8834b41111595e281a8",
+      "match": true
+    },
+    "src/clasher/rl/readiness_tier_b.py": {
+      "expected": "695c48afa0df675cc4860e506b51f86cc8b7337437de10375df58a4049de9d51",
+      "actual": "695c48afa0df675cc4860e506b51f86cc8b7337437de10375df58a4049de9d51",
+      "match": true
+    },
+    "src/clasher/rl/readiness_tier_b_ledger.py": {
+      "expected": "c94bdc65856487e7c5a4ce6aac5b2052c01289a8233e0328e0202f9dfe842651",
+      "actual": "c94bdc65856487e7c5a4ce6aac5b2052c01289a8233e0328e0202f9dfe842651",
+      "match": true
+    },
+    "src/clasher/rl/readiness_tier_b_policy.py": {
+      "expected": "6c8ce3c5578a76e34ef36f33212edb041a841c3736690d4046d555f235718184",
+      "actual": "6c8ce3c5578a76e34ef36f33212edb041a841c3736690d4046d555f235718184",
+      "match": true
+    },
+    "src/clasher/rl/readiness_tier_b_probes.py": {
+      "expected": "e323473d728d6802c6581493931a22ea72380163a87c6c84429c6717cd7ebbf8",
+      "actual": "e323473d728d6802c6581493931a22ea72380163a87c6c84429c6717cd7ebbf8",
+      "match": true
+    },
+    "src/clasher/rl/readiness_transport.py": {
+      "expected": "3d3c707a8050ade43a125e23b70b49f797e6112cc55322642264a1e079cc3f94",
+      "actual": "3d3c707a8050ade43a125e23b70b49f797e6112cc55322642264a1e079cc3f94",
+      "match": true
+    },
+    "src/clasher/rl/recurrent_state_contract.py": {
+      "expected": "72cfd8a3072e3851b48d9865cd66a6f9e5116de0071c5b14e6e49ea7b60b7e0b",
+      "actual": "72cfd8a3072e3851b48d9865cd66a6f9e5116de0071c5b14e6e49ea7b60b7e0b",
+      "match": true
+    },
+    "src/clasher/rl/replay_split.py": {
+      "expected": "4cb1f868e20f9de44d2b37fb9d17d08addd40db128e85f8c460d90ed93e8e474",
+      "actual": "4cb1f868e20f9de44d2b37fb9d17d08addd40db128e85f8c460d90ed93e8e474",
+      "match": true
+    },
+    "src/clasher/rl/replay_validation.py": {
+      "expected": "186fbead24000c84c910b030ee348756e443468e8a584af82ee00a7e2235dfd0",
+      "actual": "186fbead24000c84c910b030ee348756e443468e8a584af82ee00a7e2235dfd0",
+      "match": true
+    },
+    "src/clasher/rl/reward_model.py": {
+      "expected": "e81b39bea0107a83b63388d11cae68e6b832958013eea167662080504b155d73",
+      "actual": "e81b39bea0107a83b63388d11cae68e6b832958013eea167662080504b155d73",
+      "match": true
+    },
+    "src/clasher/rl/rollout_audit.py": {
+      "expected": "8b4731d0b58efaf71140f6a15a4e72d5595ea7a8eaf2c78a1ed16487220ca2a0",
+      "actual": "8b4731d0b58efaf71140f6a15a4e72d5595ea7a8eaf2c78a1ed16487220ca2a0",
+      "match": true
+    },
+    "src/clasher/rl/script_rollout_planner.py": {
+      "expected": "d624bb24d16be0d3f324500dfdf5c64dbc06a08f3cdeab974aab06c3bf090c59",
+      "actual": "d624bb24d16be0d3f324500dfdf5c64dbc06a08f3cdeab974aab06c3bf090c59",
+      "match": true
+    },
+    "src/clasher/rl/scripted_demonstrations.py": {
+      "expected": "f4c64f78b2b6625e0fbe270cd7aa17a4cce2622c6fcf6a084e79f4c012fc1739",
+      "actual": "f4c64f78b2b6625e0fbe270cd7aa17a4cce2622c6fcf6a084e79f4c012fc1739",
+      "match": true
+    },
+    "src/clasher/rl/seeded_deals.py": {
+      "expected": "8dc9067cfd005c965eb63ac0f7cc6d63f0add3a4a01910759b8fc7042725847d",
+      "actual": "8dc9067cfd005c965eb63ac0f7cc6d63f0add3a4a01910759b8fc7042725847d",
+      "match": true
+    },
+    "src/clasher/rl/selfplay_env.py": {
+      "expected": "959502496cace738f191a77e254c473de369a7ee0ac027feae76c34c78bd5230",
+      "actual": "959502496cace738f191a77e254c473de369a7ee0ac027feae76c34c78bd5230",
+      "match": true
+    },
+    "src/clasher/rl/shared_rollout_ipc.py": {
+      "expected": "bd0f0c58696e16972c1ad430166841bdae5706fa5f9c7f5b8af7b65c9eeff782",
+      "actual": "bd0f0c58696e16972c1ad430166841bdae5706fa5f9c7f5b8af7b65c9eeff782",
+      "match": true
+    },
+    "src/clasher/rl/simple_pytorch_backend.py": {
+      "expected": "cf0a5c8a50fe61c3dfbfa7ffd0deff25318d69e20091657f52652a07afbf919f",
+      "actual": "cf0a5c8a50fe61c3dfbfa7ffd0deff25318d69e20091657f52652a07afbf919f",
+      "match": true
+    },
+    "src/clasher/rl/simple_tensor_collector.py": {
+      "expected": "c33ab815507b0773330e8e7432b71c3cf950d9bdd646a6a2f52994cec1eb0a0b",
+      "actual": "c33ab815507b0773330e8e7432b71c3cf950d9bdd646a6a2f52994cec1eb0a0b",
+      "match": true
+    },
+    "src/clasher/rl/strategy_benchmark.py": {
+      "expected": "779866a0e4e056cefdc2cb342b3a07e7487d35a2d153b262de808858bf803d22",
+      "actual": "779866a0e4e056cefdc2cb342b3a07e7487d35a2d153b262de808858bf803d22",
+      "match": true
+    },
+    "src/clasher/rl/strategy_bots.py": {
+      "expected": "973bffe88a17fac84c368402930c5bbf8a5d55685ad13941b19677e48a7a53d8",
+      "actual": "973bffe88a17fac84c368402930c5bbf8a5d55685ad13941b19677e48a7a53d8",
+      "match": true
+    },
+    "src/clasher/rl/structured_action_value.py": {
+      "expected": "1629de00775391a3bc88a51b62c90df866003d54c9caaceaba1174d7d86911ad",
+      "actual": "1629de00775391a3bc88a51b62c90df866003d54c9caaceaba1174d7d86911ad",
+      "match": true
+    },
+    "src/clasher/rl/structured_action_value_controller.py": {
+      "expected": "d9ae47039d85104fa9eb89fdde94a5d790773132a000f88ab8c8c6b2f7981768",
+      "actual": "d9ae47039d85104fa9eb89fdde94a5d790773132a000f88ab8c8c6b2f7981768",
+      "match": true
+    },
+    "src/clasher/rl/structured_live_adapter.py": {
+      "expected": "4a426da8581a5b8b35227cf8573ca470c0622026db06ad029cbebeb3c05fc44b",
+      "actual": "4a426da8581a5b8b35227cf8573ca470c0622026db06ad029cbebeb3c05fc44b",
+      "match": true
+    },
+    "src/clasher/rl/structured_memory.py": {
+      "expected": "c25222600af2c9cd368db0a1b6fcc72ed9b1298aa3a354049081fd7d937fb39c",
+      "actual": "c25222600af2c9cd368db0a1b6fcc72ed9b1298aa3a354049081fd7d937fb39c",
+      "match": true
+    },
+    "src/clasher/rl/structured_obs.py": {
+      "expected": "e74b97e5f5dc8f97442fee98a113dadc480126b51ed997868a11a318db5f127a",
+      "actual": "e74b97e5f5dc8f97442fee98a113dadc480126b51ed997868a11a318db5f127a",
+      "match": true
+    },
+    "src/clasher/rl/tbptt.py": {
+      "expected": "57aff18ec2e4790b09b2f3a6f02fa68de0dd8a3c7ab693fa10fd35a1fab3b7ee",
+      "actual": "57aff18ec2e4790b09b2f3a6f02fa68de0dd8a3c7ab693fa10fd35a1fab3b7ee",
+      "match": true
+    },
+    "src/clasher/rl/teacher_event_bridge.py": {
+      "expected": "fb99e1838ff2cd8f3a80b8dbf7a30ba0444da33a435deff4752b13bcff57c19d",
+      "actual": "fb99e1838ff2cd8f3a80b8dbf7a30ba0444da33a435deff4752b13bcff57c19d",
+      "match": true
+    },
+    "src/clasher/rl/temporal_margin.py": {
+      "expected": "5a4f267fab4085682d6a7311e48a8a10d0c453f25cb4498e53ec8aecf778644f",
+      "actual": "5a4f267fab4085682d6a7311e48a8a10d0c453f25cb4498e53ec8aecf778644f",
+      "match": true
+    },
+    "src/clasher/rl/terminal_action_reranker.py": {
+      "expected": "fa17ef22347251f926584c13b09a5811cc8e87236849715f08dd984b6ab459ae",
+      "actual": "fa17ef22347251f926584c13b09a5811cc8e87236849715f08dd984b6ab459ae",
+      "match": true
+    },
+    "src/clasher/rl/train_dagger_oracle.py": {
+      "expected": "d328b87ad8735be14ce6ab38b9b706dd8a63da04cdc74907c455dab6f56da062",
+      "actual": "d328b87ad8735be14ce6ab38b9b706dd8a63da04cdc74907c455dab6f56da062",
+      "match": true
+    },
+    "src/clasher/rl/train_recurrent.py": {
+      "expected": "97186aff3dc4371898cddde623e525a825cd06ecddf12357ca4d6b7ef5d23217",
+      "actual": "97186aff3dc4371898cddde623e525a825cd06ecddf12357ca4d6b7ef5d23217",
+      "match": true
+    },
+    "src/clasher/rl/train_selfplay.py": {
+      "expected": "03e6e1c68b3b86c8e544943a40683d97c45b38ff83f0ab46b287b938383a6b27",
+      "actual": "03e6e1c68b3b86c8e544943a40683d97c45b38ff83f0ab46b287b938383a6b27",
+      "match": true
+    },
+    "src/clasher/rl/train_selfplay_async.py": {
+      "expected": "6b196f5186a11d254110352e444367c7da095dc14c76d19dd7de4ad17845e451",
+      "actual": "6b196f5186a11d254110352e444367c7da095dc14c76d19dd7de4ad17845e451",
+      "match": true
+    },
+    "src/clasher/rl/training_readiness_v2.py": {
+      "expected": "802fecb0a8464a72a6202bb9f619b9603dc1ef583ef31e4b2b5952aa0c1c4a42",
+      "actual": "802fecb0a8464a72a6202bb9f619b9603dc1ef583ef31e4b2b5952aa0c1c4a42",
+      "match": true
+    },
+    "src/clasher/rl/tv_royale_public_state.py": {
+      "expected": "6fb2f133b0e1824cd2f38e8e2256281ba28253f569941c9f646cd0b309534255",
+      "actual": "6fb2f133b0e1824cd2f38e8e2256281ba28253f569941c9f646cd0b309534255",
+      "match": true
+    },
+    "src/clasher/rl/tv_royale_replay.py": {
+      "expected": "0e446c7d523fd04f7f2e60fb9395ac0f30547104f7cd91eae0b8383c47ad666f",
+      "actual": "0e446c7d523fd04f7f2e60fb9395ac0f30547104f7cd91eae0b8383c47ad666f",
+      "match": true
+    },
+    "src/clasher/rl/tv_royale_ui.py": {
+      "expected": "d84ac1fe2b21fc90c9d164071d2bda6fd8bc5e0264b8fb8a1b1b7a99617373e7",
+      "actual": "d84ac1fe2b21fc90c9d164071d2bda6fd8bc5e0264b8fb8a1b1b7a99617373e7",
+      "match": true
+    },
+    "src/clasher/rl/value_guided_search.py": {
+      "expected": "43dbe7e162315444ebbcd4f7ac3eee468e682e5084243732d0beca47c6358e0a",
+      "actual": "43dbe7e162315444ebbcd4f7ac3eee468e682e5084243732d0beca47c6358e0a",
+      "match": true
+    },
+    "src/clasher/rl/watch_policy_battle.py": {
+      "expected": "a7f2e7f6756b7c0fe3aa31fe5f003dfeee04d457376f6dae0e9fe17f49d1c664",
+      "actual": "a7f2e7f6756b7c0fe3aa31fe5f003dfeee04d457376f6dae0e9fe17f49d1c664",
+      "match": true
+    },
+    "src/clasher/rl/youtube_causal_corpus.py": {
+      "expected": "ed373ab1dacf3e29c6eab7bad845c09332025da8305ef6a87a039b09e6b613f8",
+      "actual": "ed373ab1dacf3e29c6eab7bad845c09332025da8305ef6a87a039b09e6b613f8",
+      "match": true
+    },
+    "src/clasher/scope_spells.py": {
+      "expected": "fe543d072c562c87b8a130eb477b392aff8878f43a7ef3267bd7c43df1075b7a",
+      "actual": "fe543d072c562c87b8a130eb477b392aff8878f43a7ef3267bd7c43df1075b7a",
+      "match": true
+    },
+    "src/clasher/spells.py": {
+      "expected": "6214658ec5b0ee6b51a0f62ce10a2531f2488753845911b1ff40165e7ddf0944",
+      "actual": "6214658ec5b0ee6b51a0f62ce10a2531f2488753845911b1ff40165e7ddf0944",
+      "match": true
+    },
+    "src/clasher/spells_composed.py": {
+      "expected": "82f058593f1dc08923f93f028461c05e9e7ccfb4cd5dcc41b7589cf58ddd297f",
+      "actual": "82f058593f1dc08923f93f028461c05e9e7ccfb4cd5dcc41b7589cf58ddd297f",
+      "match": true
+    },
+    "src/clasher/stat_scaling.py": {
+      "expected": "9f36a3bae9aa0f943319c627a8d3c8991c76b53ee9c6acc89f12b979c733574c",
+      "actual": "9f36a3bae9aa0f943319c627a8d3c8991c76b53ee9c6acc89f12b979c733574c",
+      "match": true
+    },
+    "src/clasher/torch_sim/__init__.py": {
+      "expected": "670789245ded89ec44b0f832dbe013359ab39d41f4b55b47c91b1b377746f4c7",
+      "actual": "670789245ded89ec44b0f832dbe013359ab39d41f4b55b47c91b1b377746f4c7",
+      "match": true
+    },
+    "src/clasher/torch_sim/actions.py": {
+      "expected": "99fb8898f63b699e2dbd5a60d3ebc08a04ed732e5693d8a360471c45dce7f0b9",
+      "actual": "99fb8898f63b699e2dbd5a60d3ebc08a04ed732e5693d8a360471c45dce7f0b9",
+      "match": true
+    },
+    "src/clasher/torch_sim/batched_env.py": {
+      "expected": "875622a5ed9a5b9410540ad5e2492f98ddf0addd7e23806c0dd9270e5950a5ec",
+      "actual": "875622a5ed9a5b9410540ad5e2492f98ddf0addd7e23806c0dd9270e5950a5ec",
+      "match": true
+    },
+    "src/clasher/torch_sim/catalog.py": {
+      "expected": "09096da167c156553d7ee79ff06adffbda9875f0691349bee214c42ae1d83f49",
+      "actual": "09096da167c156553d7ee79ff06adffbda9875f0691349bee214c42ae1d83f49",
+      "match": true
+    },
+    "src/clasher/torch_sim/combat.py": {
+      "expected": "4c0ac3e7dec9706c7d1283eb0fda2c2f8abb9eb53f0826f69bfbfae35e1c4ce1",
+      "actual": "4c0ac3e7dec9706c7d1283eb0fda2c2f8abb9eb53f0826f69bfbfae35e1c4ce1",
+      "match": true
+    },
+    "src/clasher/torch_sim/combat_adapter.py": {
+      "expected": "1e101396a8983ac7464a166f10ba317f29ab361265b6c1cb3e7b900bc6a8c96f",
+      "actual": "1e101396a8983ac7464a166f10ba317f29ab361265b6c1cb3e7b900bc6a8c96f",
+      "match": true
+    },
+    "src/clasher/torch_sim/combat_clock_transitions.py": {
+      "expected": "16d2d85f81cf49a2448f9436fdbc187eed67655992351da9b42b1118a1215658",
+      "actual": "16d2d85f81cf49a2448f9436fdbc187eed67655992351da9b42b1118a1215658",
+      "match": true
+    },
+    "src/clasher/torch_sim/combat_mechanics.py": {
+      "expected": "0b58efcef5c4a2f259cca2d08a26831349b0788d838d760659d069bf8c7411d5",
+      "actual": "0b58efcef5c4a2f259cca2d08a26831349b0788d838d760659d069bf8c7411d5",
+      "match": true
+    },
+    "src/clasher/torch_sim/dense_actions.py": {
+      "expected": "92735d3e39a5a40da0d1595746b8a85ebac7c7c3f9f5191d72673cbbb8b04761",
+      "actual": "92735d3e39a5a40da0d1595746b8a85ebac7c7c3f9f5191d72673cbbb8b04761",
+      "match": true
+    },
+    "src/clasher/torch_sim/deployment.py": {
+      "expected": "3e8cfdb329e2a44598ec4b33f03ffb314abd18d18c3dfe77fa42d5df775179c3",
+      "actual": "3e8cfdb329e2a44598ec4b33f03ffb314abd18d18c3dfe77fa42d5df775179c3",
+      "match": true
+    },
+    "src/clasher/torch_sim/diagnostics.py": {
+      "expected": "d3e30ef4f6d54cdf1b95c5e0d9f68102fcb465833a4aa77080158c1aaa1fc517",
+      "actual": "d3e30ef4f6d54cdf1b95c5e0d9f68102fcb465833a4aa77080158c1aaa1fc517",
+      "match": true
+    },
+    "src/clasher/torch_sim/differential.py": {
+      "expected": "7297858281bf423de503a72683a9b24939d8603ee11d4aacf82a92f66f0651e1",
+      "actual": "7297858281bf423de503a72683a9b24939d8603ee11d4aacf82a92f66f0651e1",
+      "match": true
+    },
+    "src/clasher/torch_sim/entity_pool.py": {
+      "expected": "9567549c2564fea3d2d75fd7d809cb8c836b3ea14ea1d8c14ae6075cb97769ab",
+      "actual": "9567549c2564fea3d2d75fd7d809cb8c836b3ea14ea1d8c14ae6075cb97769ab",
+      "match": true
+    },
+    "src/clasher/torch_sim/executor.py": {
+      "expected": "62f3a89cd8431cb92338564de5a17c7a8ad4d76762f8df7f6da7024c3c341ce6",
+      "actual": "62f3a89cd8431cb92338564de5a17c7a8ad4d76762f8df7f6da7024c3c341ce6",
+      "match": true
+    },
+    "src/clasher/torch_sim/manifest_audit.py": {
+      "expected": "6858ca41312f255aac6993fb67537ab8d9b7c75e8cc17a3c9bff667ccbc33619",
+      "actual": "6858ca41312f255aac6993fb67537ab8d9b7c75e8cc17a3c9bff667ccbc33619",
+      "match": true
+    },
+    "src/clasher/torch_sim/mechanic_dispatcher.py": {
+      "expected": "98d6976a94a23e62e087e8e5419083b38b6dac14dcfb998410515b6d86904c8c",
+      "actual": "98d6976a94a23e62e087e8e5419083b38b6dac14dcfb998410515b6d86904c8c",
+      "match": true
+    },
+    "src/clasher/torch_sim/movement.py": {
+      "expected": "0fca89634896b26ecb88e9c00ea6f53c204cd85d42cd2fa720a125109b329091",
+      "actual": "0fca89634896b26ecb88e9c00ea6f53c204cd85d42cd2fa720a125109b329091",
+      "match": true
+    },
+    "src/clasher/torch_sim/movement_adapter.py": {
+      "expected": "2374f458f6e34936e52ebb5a595e621902c08a7ddf70bc6be6e093da05ef87e2",
+      "actual": "2374f458f6e34936e52ebb5a595e621902c08a7ddf70bc6be6e093da05ef87e2",
+      "match": true
+    },
+    "src/clasher/torch_sim/native_rng.py": {
+      "expected": "d5b2b7321c0932fa63a4f963d0d15b9f4b867cc38a8cba5a390267d2c1912125",
+      "actual": "d5b2b7321c0932fa63a4f963d0d15b9f4b867cc38a8cba5a390267d2c1912125",
+      "match": true
+    },
+    "src/clasher/torch_sim/object_adapter.py": {
+      "expected": "77c65b15d8ef2fb39b816617e2c55b9889cbf224ecdf897ec618f22a06ca5f43",
+      "actual": "77c65b15d8ef2fb39b816617e2c55b9889cbf224ecdf897ec618f22a06ca5f43",
+      "match": true
+    },
+    "src/clasher/torch_sim/objects.py": {
+      "expected": "85d93b6c6dfac0a4dfba9ef6a29f5732aa5e9c6b44ab69dd1e551dc5a24e67ea",
+      "actual": "85d93b6c6dfac0a4dfba9ef6a29f5732aa5e9c6b44ab69dd1e551dc5a24e67ea",
+      "match": true
+    },
+    "src/clasher/torch_sim/observations.py": {
+      "expected": "2a159edd36a7e2bb26c0b00fc9b0505cc6f9c691610ee1dfa4387f6ab4cd6b9a",
+      "actual": "2a159edd36a7e2bb26c0b00fc9b0505cc6f9c691610ee1dfa4387f6ab4cd6b9a",
+      "match": true
+    },
+    "src/clasher/torch_sim/oracle_event_capture.py": {
+      "expected": "d3f3b126958f43e284caf242b1e08c7cefb25a88da3d4d2dbfb9b8d22d603711",
+      "actual": "d3f3b126958f43e284caf242b1e08c7cefb25a88da3d4d2dbfb9b8d22d603711",
+      "match": true
+    },
+    "src/clasher/torch_sim/passive_mechanics.py": {
+      "expected": "b2f8f4106436fa59c0ad0a50a3dbe9c3ce71eddaf697a83721cb6e4fee5fe18e",
+      "actual": "b2f8f4106436fa59c0ad0a50a3dbe9c3ce71eddaf697a83721cb6e4fee5fe18e",
+      "match": true
+    },
+    "src/clasher/torch_sim/policy_validation.py": {
+      "expected": "671858544c86e1c02eef85e83df681014656c66807d696dc5abe7765fa253de3",
+      "actual": "671858544c86e1c02eef85e83df681014656c66807d696dc5abe7765fa253de3",
+      "match": true
+    },
+    "src/clasher/torch_sim/projectile_bridge.py": {
+      "expected": "3e6a84081b3e2ae75480da315a86f19a8897271375ab550c3434c28d617591a2",
+      "actual": "3e6a84081b3e2ae75480da315a86f19a8897271375ab550c3434c28d617591a2",
+      "match": true
+    },
+    "src/clasher/torch_sim/projectile_coverage.py": {
+      "expected": "ff7a623024ef18cf79ee9760f7ab0982ac97be1e17192f8ed3b01483c7201b0c",
+      "actual": "ff7a623024ef18cf79ee9760f7ab0982ac97be1e17192f8ed3b01483c7201b0c",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_action_router.py": {
+      "expected": "6e353cdfd627242161fb77b3f952f6c00e0665072d7a1d4450aa766fb9e5e37b",
+      "actual": "6e353cdfd627242161fb77b3f952f6c00e0665072d7a1d4450aa766fb9e5e37b",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_archer_queen.py": {
+      "expected": "8c3e036e980d538eebcf5cd7ce2a672f3aaf8c479afcede792081db51ab31b7a",
+      "actual": "8c3e036e980d538eebcf5cd7ce2a672f3aaf8c479afcede792081db51ab31b7a",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_avoidance.py": {
+      "expected": "9b92cdeb09bf7683efea1f086839bb93ada2044f4c532b0f7d133f7697255a58",
+      "actual": "9b92cdeb09bf7683efea1f086839bb93ada2044f4c532b0f7d133f7697255a58",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_chain_impacts.py": {
+      "expected": "9d1cd6dc148e79d5f6ab4e92f3040d5cc76d1216e92371b6fd13911cfe173229",
+      "actual": "9d1cd6dc148e79d5f6ab4e92f3040d5cc76d1216e92371b6fd13911cfe173229",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_champion_actions.py": {
+      "expected": "ba402292e0d7f2afafbed734e1c247f71046c38c41b18a0163d43fac1de88130",
+      "actual": "ba402292e0d7f2afafbed734e1c247f71046c38c41b18a0163d43fac1de88130",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_charge_carrier.py": {
+      "expected": "558b832be18761f9dd1c3865417493488266cb98b8ab1629e03c360b74e99e8c",
+      "actual": "558b832be18761f9dd1c3865417493488266cb98b8ab1629e03c360b74e99e8c",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_continuous_areas.py": {
+      "expected": "5b5b0bb4d347e13a1ca04d0f953a704de759b535dd0a8711a7e997c0c4f9a7cb",
+      "actual": "5b5b0bb4d347e13a1ca04d0f953a704de759b535dd0a8711a7e997c0c4f9a7cb",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_damage_ramp.py": {
+      "expected": "852e3036358a1a8b4bfeae95564eadf169925064c4cb6ba2a53f8613c2fea8ee",
+      "actual": "852e3036358a1a8b4bfeae95564eadf169925064c4cb6ba2a53f8613c2fea8ee",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_death_areas.py": {
+      "expected": "ae5dba8e618f6921790b865477d4e32042c23a608c79cc6e9043f0ec0fca5311",
+      "actual": "ae5dba8e618f6921790b865477d4e32042c23a608c79cc6e9043f0ec0fca5311",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_death_payloads.py": {
+      "expected": "bd1d6949acb42cf02fa2f43659ac57b6fe5e747db79fe2e772efcad0a9af1c03",
+      "actual": "bd1d6949acb42cf02fa2f43659ac57b6fe5e747db79fe2e772efcad0a9af1c03",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_differential.py": {
+      "expected": "9fa27e7c07331ab4384c207a924df5c1b1076989e42420d8c3c7e6500b5dadc0",
+      "actual": "9fa27e7c07331ab4384c207a924df5c1b1076989e42420d8c3c7e6500b5dadc0",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_engine.py": {
+      "expected": "a5e51196e7fdb49789d392bb0f456197285bfd64bdeb4ace4c7fa5accfa8898e",
+      "actual": "a5e51196e7fdb49789d392bb0f456197285bfd64bdeb4ace4c7fa5accfa8898e",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_firecracker.py": {
+      "expected": "5390b970646ff5b0340fb6e626665afe21d9ab0323190172e5d546993986712c",
+      "actual": "5390b970646ff5b0340fb6e626665afe21d9ab0323190172e5d546993986712c",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_fisherman_hook.py": {
+      "expected": "ca4db11fabe6f8484e7cef8632d983dacd1b5e9ad9e09fa3c7b2201f1cb07cbe",
+      "actual": "ca4db11fabe6f8484e7cef8632d983dacd1b5e9ad9e09fa3c7b2201f1cb07cbe",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_graveyard.py": {
+      "expected": "4933ca969653979756657188881b6ec4a03b8fc2f8978527b087cb88f53e5e0b",
+      "actual": "4933ca969653979756657188881b6ec4a03b8fc2f8978527b087cb88f53e5e0b",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_ice_spirit.py": {
+      "expected": "43c1b48de1983c114f1191d9bc19e6c70cbcb1133960915842be47dbb7983742",
+      "actual": "43c1b48de1983c114f1191d9bc19e6c70cbcb1133960915842be47dbb7983742",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_mechanic_deployment.py": {
+      "expected": "76fe4ac97cc2efc8ac4a0247b2696c0daefad945378bea158a3ee461bb7a9462",
+      "actual": "76fe4ac97cc2efc8ac4a0247b2696c0daefad945378bea158a3ee461bb7a9462",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_miner.py": {
+      "expected": "6b8652c72cbd4cdf469f432e54c208a929d92d48fb045a60a73431408181251e",
+      "actual": "6b8652c72cbd4cdf469f432e54c208a929d92d48fb045a60a73431408181251e",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_multi_target.py": {
+      "expected": "7243fae96d956209e592d6d3577142977622a320cf8ed01fb3a993ef62baacb9",
+      "actual": "7243fae96d956209e592d6d3577142977622a320cf8ed01fb3a993ef62baacb9",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_outputs.py": {
+      "expected": "257c1d27be0de82a235bdf8ac18751e64b93ade4106dfc04a7617db7567520a4",
+      "actual": "257c1d27be0de82a235bdf8ac18751e64b93ade4106dfc04a7617db7567520a4",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_pathing.py": {
+      "expected": "6f6f4eb810e4b4480aca549510df21db4eb80920e5c4341b06cdbabdda600765",
+      "actual": "6f6f4eb810e4b4480aca549510df21db4eb80920e5c4341b06cdbabdda600765",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_pending_spells.py": {
+      "expected": "9891f0fa5a938ac8d06aefd374d5c3c1e7da8d9c7f732831a9f0a80b2c3f6ad6",
+      "actual": "9891f0fa5a938ac8d06aefd374d5c3c1e7da8d9c7f732831a9f0a80b2c3f6ad6",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_periodic_spawner.py": {
+      "expected": "c315ec0437a8fc42aa445e3d90d1daef108c2bff410bcf1e8627b05935f8cb6c",
+      "actual": "c315ec0437a8fc42aa445e3d90d1daef108c2bff410bcf1e8627b05935f8cb6c",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_piercing_projectile.py": {
+      "expected": "880037fa49bcf6cc517ea408a101ae30ff29e20c9fe010b75d967d344f2d47f9",
+      "actual": "880037fa49bcf6cc517ea408a101ae30ff29e20c9fe010b75d967d344f2d47f9",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_rolling_combat.py": {
+      "expected": "45ec53f0af53876afc48ef1db45d21b56b7a663e4ec99680148bd610efeb90ca",
+      "actual": "45ec53f0af53876afc48ef1db45d21b56b7a663e4ec99680148bd610efeb90ca",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_rolling_spell.py": {
+      "expected": "5033c0cc2b144501961dcebd60295d239092a0900919f682e3870ce001aacb4e",
+      "actual": "5033c0cc2b144501961dcebd60295d239092a0900919f682e3870ce001aacb4e",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_royal_delivery.py": {
+      "expected": "9ba0d4ccd6be8a9b1a028bc941e3fb4bc510daf892438d37ffd6319920ea84b8",
+      "actual": "9ba0d4ccd6be8a9b1a028bc941e3fb4bc510daf892438d37ffd6319920ea84b8",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_selfplay.py": {
+      "expected": "0426006056b06be5bf144d97d3f24d532ec7f89f882fe097e3ae0463ba01f0d2",
+      "actual": "0426006056b06be5bf144d97d3f24d532ec7f89f882fe097e3ae0463ba01f0d2",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_shield.py": {
+      "expected": "1cf56640b2e90855dffc1a1999c3cc8b76cfa1053ba1e1d176983ebda2df0284",
+      "actual": "1cf56640b2e90855dffc1a1999c3cc8b76cfa1053ba1e1d176983ebda2df0284",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_skeleton_king.py": {
+      "expected": "4cce38eb8945fbe5d6eef79c51f2ac4a69bd0d35e40a10811dac258550557836",
+      "actual": "4cce38eb8945fbe5d6eef79c51f2ac4a69bd0d35e40a10811dac258550557836",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_spawn_area.py": {
+      "expected": "649e6e38a8a1da19926f30f94d8cba86fe4e9fd0fc1dcf382638ba910b62e5d6",
+      "actual": "649e6e38a8a1da19926f30f94d8cba86fe4e9fd0fc1dcf382638ba910b62e5d6",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_spell_ingress.py": {
+      "expected": "c9b409b850f39eb57623b3c6bea09e9cf16c1b17005ed257da2c44428cfb9fff",
+      "actual": "c9b409b850f39eb57623b3c6bea09e9cf16c1b17005ed257da2c44428cfb9fff",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_stealth.py": {
+      "expected": "d08c22edba1cb7634c79038c0354fe97ff24f562af0dda5a09ac03391d3e64e8",
+      "actual": "d08c22edba1cb7634c79038c0354fe97ff24f562af0dda5a09ac03391d3e64e8",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_terminal_payloads.py": {
+      "expected": "20592d5a08f3bc686ad9f15c0879923afb52256d0e1567453f45bf8b7947d495",
+      "actual": "20592d5a08f3bc686ad9f15c0879923afb52256d0e1567453f45bf8b7947d495",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_terminal_pipeline.py": {
+      "expected": "cdd38a23b3dbd94c2ca9740941cf69f867edac9955e5ead02a144d4efb125cc7",
+      "actual": "cdd38a23b3dbd94c2ca9740941cf69f867edac9955e5ead02a144d4efb125cc7",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_timed_explosions.py": {
+      "expected": "b3a8fa3f3a06b4ea311c0ec31618a7c135c1f57ee6700605c8b75dbc79612586",
+      "actual": "b3a8fa3f3a06b4ea311c0ec31618a7c135c1f57ee6700605c8b75dbc79612586",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_timed_terminal_payloads.py": {
+      "expected": "41c4d3ad97df9f7eab52c72c329f7892aa8789db0625198690304f4c22340d79",
+      "actual": "41c4d3ad97df9f7eab52c72c329f7892aa8789db0625198690304f4c22340d79",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_tornado.py": {
+      "expected": "6b3eb311a854d9f70e30446a0cab8a781127b7f1d596a337b5d33b92306663d4",
+      "actual": "6b3eb311a854d9f70e30446a0cab8a781127b7f1d596a337b5d33b92306663d4",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_wall_breakers.py": {
+      "expected": "c2127eaac585cad33838d7ed5dacd42ede1e69abf57e8795f1d5700072dd9212",
+      "actual": "c2127eaac585cad33838d7ed5dacd42ede1e69abf57e8795f1d5700072dd9212",
+      "match": true
+    },
+    "src/clasher/torch_sim/resident_workspace.py": {
+      "expected": "fe52be650cc1599896d52dcab1a4da039195b89a81feae977c42c2fd0f4140a4",
+      "actual": "fe52be650cc1599896d52dcab1a4da039195b89a81feae977c42c2fd0f4140a4",
+      "match": true
+    },
+    "src/clasher/torch_sim/rng.py": {
+      "expected": "07c2fd1b6b5e1a46ac0e76ceabf7fb973f303d1d2ff607f3262842e6271cdc26",
+      "actual": "07c2fd1b6b5e1a46ac0e76ceabf7fb973f303d1d2ff607f3262842e6271cdc26",
+      "match": true
+    },
+    "src/clasher/torch_sim/rng_modes.py": {
+      "expected": "f2b1574f2a803806afa18402f8b5738681148abd69579bae200fe4455a1d8916",
+      "actual": "f2b1574f2a803806afa18402f8b5738681148abd69579bae200fe4455a1d8916",
+      "match": true
+    },
+    "src/clasher/torch_sim/runtime.py": {
+      "expected": "00cd6542a87483b0626ab3a2aba6ecca326315ec395b470f2562120d1a6d3a63",
+      "actual": "00cd6542a87483b0626ab3a2aba6ecca326315ec395b470f2562120d1a6d3a63",
+      "match": true
+    },
+    "src/clasher/torch_sim/runtime_deployment.py": {
+      "expected": "59cf64718557eb10895fd98f16b42a6bc85a2f7bb3fb7e5f16f4df8e548723b7",
+      "actual": "59cf64718557eb10895fd98f16b42a6bc85a2f7bb3fb7e5f16f4df8e548723b7",
+      "match": true
+    },
+    "src/clasher/torch_sim/runtime_mechanics.py": {
+      "expected": "61550ec3c4cd401f7d6a30e263bfe30fa0a7e8660fd40733a026fc80021ad355",
+      "actual": "61550ec3c4cd401f7d6a30e263bfe30fa0a7e8660fd40733a026fc80021ad355",
+      "match": true
+    },
+    "src/clasher/torch_sim/runtime_movement.py": {
+      "expected": "aad247956c93eb0cc45e959947647989c27534f1dbc4853b5f620ec588eaaf81",
+      "actual": "aad247956c93eb0cc45e959947647989c27534f1dbc4853b5f620ec588eaaf81",
+      "match": true
+    },
+    "src/clasher/torch_sim/runtime_objects.py": {
+      "expected": "5bda8908fb313e4aa452ec04d5aa5471027196143e40341b5531f162bfba6d29",
+      "actual": "5bda8908fb313e4aa452ec04d5aa5471027196143e40341b5531f162bfba6d29",
+      "match": true
+    },
+    "src/clasher/torch_sim/runtime_state.py": {
+      "expected": "8644fb64a97afd3ca1e7664391ef67d1d9b25e58697ce6e017324fe8e32a998d",
+      "actual": "8644fb64a97afd3ca1e7664391ef67d1d9b25e58697ce6e017324fe8e32a998d",
+      "match": true
+    },
+    "src/clasher/torch_sim/runtime_status.py": {
+      "expected": "308c4c9ea516b8d08af40d64433801308a8c2f73cf116e84123b166811f0eeed",
+      "actual": "308c4c9ea516b8d08af40d64433801308a8c2f73cf116e84123b166811f0eeed",
+      "match": true
+    },
+    "src/clasher/torch_sim/shield_champion.py": {
+      "expected": "a4325b5204936bc32279b9ee2e5581f7c919c4f13203ed35549bdc583253f598",
+      "actual": "a4325b5204936bc32279b9ee2e5581f7c919c4f13203ed35549bdc583253f598",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_abilities.py": {
+      "expected": "ea3a659653d7d05ecb3788750fdc9414d2de9e04cfe1ef24f43fad1dfc3df5f0",
+      "actual": "ea3a659653d7d05ecb3788750fdc9414d2de9e04cfe1ef24f43fad1dfc3df5f0",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_actions.py": {
+      "expected": "2569207c5d0dee0d39d62f51c1fa22e6f1aea48d91ba4baccf3360ee872f321d",
+      "actual": "2569207c5d0dee0d39d62f51c1fa22e6f1aea48d91ba4baccf3360ee872f321d",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_adapter.py": {
+      "expected": "c78a08adef60f1e5acd8fb542f9736fb00e8ec1011c1c65cc868e2f785c7a3b4",
+      "actual": "c78a08adef60f1e5acd8fb542f9736fb00e8ec1011c1c65cc868e2f785c7a3b4",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_attack_effects.py": {
+      "expected": "232b101142c1cb0b80077f9b807bcf9f4927b6a0513f894bb5a49fedfef15666",
+      "actual": "232b101142c1cb0b80077f9b807bcf9f4927b6a0513f894bb5a49fedfef15666",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_attack_locks.py": {
+      "expected": "b47a5dc78780d8194590b2306bdc86e2b593352050dc57baebbe005f6092a3d0",
+      "actual": "b47a5dc78780d8194590b2306bdc86e2b593352050dc57baebbe005f6092a3d0",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_cast_rng.py": {
+      "expected": "34fb41874f6ba883742d7af20335d8d1f513e92f086518ab98ba9b752308c169",
+      "actual": "34fb41874f6ba883742d7af20335d8d1f513e92f086518ab98ba9b752308c169",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_catalog.py": {
+      "expected": "9174edddbac106aa5a5afde3324d09f1c2985d92e525db68a62e8a551b223ea2",
+      "actual": "9174edddbac106aa5a5afde3324d09f1c2985d92e525db68a62e8a551b223ea2",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_chain_topology.py": {
+      "expected": "4904076d16b9144d85b43b3fa7fd9dba231fa067c0b94f10008712e1cca2524e",
+      "actual": "4904076d16b9144d85b43b3fa7fd9dba231fa067c0b94f10008712e1cca2524e",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_collision_navigation.py": {
+      "expected": "097252f1ae566abfca5e610378ee3adfe53167468203c148c525a551c8348a2a",
+      "actual": "097252f1ae566abfca5e610378ee3adfe53167468203c148c525a551c8348a2a",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_cuda_graph.py": {
+      "expected": "4149ae4d75bc94ad8b53907b7c941fa39c66bc40ae12cb6b56ec9e0cb87a7e9d",
+      "actual": "4149ae4d75bc94ad8b53907b7c941fa39c66bc40ae12cb6b56ec9e0cb87a7e9d",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_damage_ramp.py": {
+      "expected": "12e5723bd9a678bcb2633b7861860774451576738cf71bc818544924932d9889",
+      "actual": "12e5723bd9a678bcb2633b7861860774451576738cf71bc818544924932d9889",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_death_burst.py": {
+      "expected": "eedb3c662dee89b0c49cca64841328dad8725777b9aaea37e09dc4e7096d7a67",
+      "actual": "eedb3c662dee89b0c49cca64841328dad8725777b9aaea37e09dc4e7096d7a67",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_effects.py": {
+      "expected": "9c7437a80a5b4280ea8755b92fdaaccd79c01f615eb07275cd7681c90cb05822",
+      "actual": "9c7437a80a5b4280ea8755b92fdaaccd79c01f615eb07275cd7681c90cb05822",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_engine.py": {
+      "expected": "baea02fc062a05837788e98e514b0e0d628a50c90cd6da6c9a35409a0ecd08a6",
+      "actual": "baea02fc062a05837788e98e514b0e0d628a50c90cd6da6c9a35409a0ecd08a6",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_fan_topology.py": {
+      "expected": "f1e23adc6b54246dafcde1139776c8c9021e197dd114ac23b4b83beb2facccd0",
+      "actual": "f1e23adc6b54246dafcde1139776c8c9021e197dd114ac23b4b83beb2facccd0",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_grouped_geometry.py": {
+      "expected": "88fa13fb76c7d49dc6c7ac23fbba70913f8dee6d78ae3e3d997ddfaf808e67b1",
+      "actual": "88fa13fb76c7d49dc6c7ac23fbba70913f8dee6d78ae3e3d997ddfaf808e67b1",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_grouped_projectiles.py": {
+      "expected": "02b6f1c60cfdd5fd762be943740837101c74a96dbe1d0582ff135d93f6593dcd",
+      "actual": "02b6f1c60cfdd5fd762be943740837101c74a96dbe1d0582ff135d93f6593dcd",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_impulse.py": {
+      "expected": "057782be468b60ef38e5eb979930d28437626dc76552548d278ffb3a5919c023",
+      "actual": "057782be468b60ef38e5eb979930d28437626dc76552548d278ffb3a5919c023",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_lifecycle.py": {
+      "expected": "8d22c4d009c110b2394028df0117a717f70b442aff5c8d055b8bd26c95ed24c4",
+      "actual": "8d22c4d009c110b2394028df0117a717f70b442aff5c8d055b8bd26c95ed24c4",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_line_topology.py": {
+      "expected": "779313614f655c7a81235126549a6507640fd9d70c3ec73106843f1916305ec4",
+      "actual": "779313614f655c7a81235126549a6507640fd9d70c3ec73106843f1916305ec4",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_modifiers.py": {
+      "expected": "c9b30f155af8d673ca7b5bdb5b9c7330765967ad0709458d41417ed2e4c9c002",
+      "actual": "c9b30f155af8d673ca7b5bdb5b9c7330765967ad0709458d41417ed2e4c9c002",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_navigation.py": {
+      "expected": "3f8d7f467b5f8606344e3a75a47e8a61259d0a7d5f8b0f416530ef2e383c855d",
+      "actual": "3f8d7f467b5f8606344e3a75a47e8a61259d0a7d5f8b0f416530ef2e383c855d",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_outcomes.py": {
+      "expected": "9a89a274584846de6ba1a9800dc53ea2f5a21b4b5100068797deba706c1a2e34",
+      "actual": "9a89a274584846de6ba1a9800dc53ea2f5a21b4b5100068797deba706c1a2e34",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_payload_containers.py": {
+      "expected": "b8c4227acc04d6cd9926f45ac5aa84ac18457f079d4bcd86f45d29ce0d149dc3",
+      "actual": "b8c4227acc04d6cd9926f45ac5aa84ac18457f079d4bcd86f45d29ce0d149dc3",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_periodic_damage.py": {
+      "expected": "223ecd0fc79237359b1587be6660d219477d3b97c3e22579a06fa089428f2f0e",
+      "actual": "223ecd0fc79237359b1587be6660d219477d3b97c3e22579a06fa089428f2f0e",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_periodic_spawn.py": {
+      "expected": "28ced942909294c34240cd879c970730a6fea0a860214bff307557f154239f01",
+      "actual": "28ced942909294c34240cd879c970730a6fea0a860214bff307557f154239f01",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_policy_mechanics.py": {
+      "expected": "b7981cea7ba2012680cd9d92983f2f548936b8f6f6953d835028ed39407970d2",
+      "actual": "b7981cea7ba2012680cd9d92983f2f548936b8f6f6953d835028ed39407970d2",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_positive_buffs.py": {
+      "expected": "3fa6d0fee661c3e9a7757003b01c65664664c90bf18297395774d671b81160c3",
+      "actual": "3fa6d0fee661c3e9a7757003b01c65664664c90bf18297395774d671b81160c3",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_projection.py": {
+      "expected": "9c3e0b624a03b3d7d0d359a5bf8d5066fd6bc8b16df0ec95b73e510e1ae21968",
+      "actual": "9c3e0b624a03b3d7d0d359a5bf8d5066fd6bc8b16df0ec95b73e510e1ae21968",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_public_mask.py": {
+      "expected": "bb622d8bc8e1a6a753e365a26d990c9bbb7e02c55e76811b447a0b16ea4cedf9",
+      "actual": "bb622d8bc8e1a6a753e365a26d990c9bbb7e02c55e76811b447a0b16ea4cedf9",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_reward_v2.py": {
+      "expected": "61950f109e359c6a1771e30282ae24741707ca5db36a6d0168ed2d3da021db92",
+      "actual": "61950f109e359c6a1771e30282ae24741707ca5db36a6d0168ed2d3da021db92",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_river_jump.py": {
+      "expected": "cbb945be994bc785beccda06e9571388340be9026d0199ece7c4d425c591f4be",
+      "actual": "cbb945be994bc785beccda06e9571388340be9026d0199ece7c4d425c591f4be",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_rolling_spells.py": {
+      "expected": "e7b12b0545b6f52fc18f4d256ddcfb7f5d6dda823b7d3a0dc8b2afe3efcae48f",
+      "actual": "e7b12b0545b6f52fc18f4d256ddcfb7f5d6dda823b7d3a0dc8b2afe3efcae48f",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_rollout.py": {
+      "expected": "8cab785c8fa72c185f462d1e76a02a11fa7a7e963fd21c8a0bd435f2a022f08d",
+      "actual": "8cab785c8fa72c185f462d1e76a02a11fa7a7e963fd21c8a0bd435f2a022f08d",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_runtime.py": {
+      "expected": "6e3d7716fcfbe7ba391790c05ecb740b593b6d3674a4b0934929287c44b7d28d",
+      "actual": "6e3d7716fcfbe7ba391790c05ecb740b593b6d3674a4b0934929287c44b7d28d",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_scheduled_spawns.py": {
+      "expected": "67e894e7df38936b1b7933fb0bc28cd834af99cc64a9dadbacc035865d1592bc",
+      "actual": "67e894e7df38936b1b7933fb0bc28cd834af99cc64a9dadbacc035865d1592bc",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_spawn_blueprints.py": {
+      "expected": "8cb7bb8c90c35e49d1480969ba869a5a9e0b6255861f1bf86aa589dddda1af30",
+      "actual": "8cb7bb8c90c35e49d1480969ba869a5a9e0b6255861f1bf86aa589dddda1af30",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_standard.py": {
+      "expected": "01c3b4d5d6524bce6cd607a6e1d6cb4f7e20a56da190416135469d8d56368c95",
+      "actual": "01c3b4d5d6524bce6cd607a6e1d6cb4f7e20a56da190416135469d8d56368c95",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_state.py": {
+      "expected": "21b8d37342cc1536ca29d342f73108bcbf446d441d5bdf74096b2d1038c3b720",
+      "actual": "21b8d37342cc1536ca29d342f73108bcbf446d441d5bdf74096b2d1038c3b720",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_targeting.py": {
+      "expected": "c437770401bb97bde0e64041e459e2fae6ad656c6cd4ea6e574ed10757b7e7b9",
+      "actual": "c437770401bb97bde0e64041e459e2fae6ad656c6cd4ea6e574ed10757b7e7b9",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_travel.py": {
+      "expected": "e54783df65ff0fdf9ddbb23a9c788bfa9eca127b90fa45676cefa78efe15f0e5",
+      "actual": "e54783df65ff0fdf9ddbb23a9c788bfa9eca127b90fa45676cefa78efe15f0e5",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_travel_effects.py": {
+      "expected": "5fc55095f01550c152f48c8ad385b382ede25b2eef47a1fedbc5d70e00f5b549",
+      "actual": "5fc55095f01550c152f48c8ad385b382ede25b2eef47a1fedbc5d70e00f5b549",
+      "match": true
+    },
+    "src/clasher/torch_sim/simple_triggered_impacts.py": {
+      "expected": "80666f9f403a16fa7418c7f63a4eaf16129e2a21cd4b40c183364e126c4dd461",
+      "actual": "80666f9f403a16fa7418c7f63a4eaf16129e2a21cd4b40c183364e126c4dd461",
+      "match": true
+    },
+    "src/clasher/torch_sim/spawn.py": {
+      "expected": "f76b9dfd6cbf4541c8f8180a838f342840ec76d7f086b6e2088f4008f183fb75",
+      "actual": "f76b9dfd6cbf4541c8f8180a838f342840ec76d7f086b6e2088f4008f183fb75",
+      "match": true
+    },
+    "src/clasher/torch_sim/special_movement.py": {
+      "expected": "467cd127340fbdbbbc374771a03b243c90958ed862776da225370a466619a3f8",
+      "actual": "467cd127340fbdbbbc374771a03b243c90958ed862776da225370a466619a3f8",
+      "match": true
+    },
+    "src/clasher/torch_sim/state.py": {
+      "expected": "07860494c3b7b319b6369ddec2d9eda4a848f670b2640ce79346503bd66a86fd",
+      "actual": "07860494c3b7b319b6369ddec2d9eda4a848f670b2640ce79346503bd66a86fd",
+      "match": true
+    },
+    "src/clasher/torch_sim/status.py": {
+      "expected": "d3a5d135152460c5cebc0a360512d2642561494d288a817b7330552d67d1ead6",
+      "actual": "d3a5d135152460c5cebc0a360512d2642561494d288a817b7330552d67d1ead6",
+      "match": true
+    },
+    "src/clasher/torch_sim/status_payloads.py": {
+      "expected": "2529cd263b2b50d92a5051da8a546cf8fd2654e2c03ca9c26d52dfea7c5a1bb3",
+      "actual": "2529cd263b2b50d92a5051da8a546cf8fd2654e2c03ca9c26d52dfea7c5a1bb3",
+      "match": true
+    },
+    "src/clasher/torch_sim/tensor_ops.py": {
+      "expected": "77670b2b2eef62ffe2018db0e05fc32be2bfea541098ad2fb504c1a46d7c244a",
+      "actual": "77670b2b2eef62ffe2018db0e05fc32be2bfea541098ad2fb504c1a46d7c244a",
+      "match": true
+    },
+    "src/clasher/torch_sim/tick_common.py": {
+      "expected": "35de920c07f01eb8a398d80af1dff3a24647672ce916445c613ee6cff8ea971c",
+      "actual": "35de920c07f01eb8a398d80af1dff3a24647672ce916445c613ee6cff8ea971c",
+      "match": true
+    },
+    "src/clasher/torch_sim/two_vs_two_capability.py": {
+      "expected": "16db47b9728f6c5f2fca021885db26a49ce4d6e9ec71041944ca84efa3ce019f",
+      "actual": "16db47b9728f6c5f2fca021885db26a49ce4d6e9ec71041944ca84efa3ce019f",
+      "match": true
+    },
+    "src/clasher/tower_scaling.py": {
+      "expected": "b0c1c9ec526ea7098a85c239a243bb4c4488c664d1178f0d86cc8ed3d872f1b3",
+      "actual": "b0c1c9ec526ea7098a85c239a243bb4c4488c664d1178f0d86cc8ed3d872f1b3",
+      "match": true
+    },
+    "src/clasher/unit_traits.py": {
+      "expected": "b0c7f795d7b5d55eea49b67784f8a9442874204db439f33ae3561cc3747756e5",
+      "actual": "b0c7f795d7b5d55eea49b67784f8a9442874204db439f33ae3561cc3747756e5",
+      "match": true
+    }
+  },
+  "ctime_candidates": [
+    {
+      "path": "engine-rs/src/hook.rs",
+      "ctime": "2026-10-08T01:39:20.954102+00:00",
+      "sha256": "d2c778ac137cf8d8f62d8d792729579b02ebcc8df8deef568a71902906cae538"
+    },
+    {
+      "path": "engine-rs/src/lib.rs",
+      "ctime": "2026-10-08T01:39:20.954102+00:00",
+      "sha256": "f13c730dc321b838c40b829d36641493c2494a4b1c8834e030c2c3c54ccb481a"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/planner-r48-linux.log",
+      "ctime": "2026-10-08T01:39:42.379156+00:00",
+      "sha256": "fc6a38fa721aeecee5d7de7d0e3eea6898174987ec17534ca81a20def91f0ecb"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/seal_final.py",
+      "ctime": "2026-10-08T01:40:55.734762+00:00",
+      "sha256": "1363319a0ea9a3173f2ba5a09c24839b759fd4192e8f6aaadab26c204e7d2ac5"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/independent_recorded.py",
+      "ctime": "2026-10-08T01:40:55.734762+00:00",
+      "sha256": "9e3986a80b46bf91e310dc06c3005e0914866f447bd04eb192b68d0dfe159741"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/final-controls-r48-linux-tests.log",
+      "ctime": "2026-10-08T01:39:15.489833+00:00",
+      "sha256": "91dc6ae16ad3444519ea47177b4f38516c3229518cc4cbd954d38a426bbb27be"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/fleet_isolate48.py",
+      "ctime": "2026-10-08T01:43:39.350795+00:00",
+      "sha256": "961e9b23371ac9d3ac62b15f8b4e4f77d3f864e7220a5ff4a928ce1d77111f05"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/planner-r48-linux.exit",
+      "ctime": "2026-10-08T01:39:42.691171+00:00",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/c56-final-controls-r48-linux.log",
+      "ctime": "2026-10-08T01:42:16.250717+00:00",
+      "sha256": "8f766f5d4a2cf8b8c7834312a3642dc4d64c8ca8b12e0a5b52abe2374544c392"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/cancel-invalidated-r48-linux.json",
+      "ctime": "2026-10-08T01:42:16.270718+00:00",
+      "sha256": "c800858eda59299c8985537e7ecb327808a5136fb98d662c9a6a6c5f84f8a662"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/identity-recorded-shards-r48-linux.exit",
+      "ctime": "2026-10-08T01:42:16.278718+00:00",
+      "sha256": "0e55cbbc9d11449b186092d82905aa6974858df7a0b7d706ae51c4716c9461ef"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/human-reserve-r48-linux.json",
+      "ctime": "2026-10-08T01:39:18.297971+00:00",
+      "sha256": "fff5bf148bdae20dddf88c3cdcc33b92ec4384e7a96043a451508876b7583dc1"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/human-reserve-r48-linux.exit",
+      "ctime": "2026-10-08T01:39:29.450520+00:00",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/human-reserve-r48-linux.log",
+      "ctime": "2026-10-08T01:39:29.174506+00:00",
+      "sha256": "031f9c4a7ae627dbf748cc77e72f554d2d48f1502bd3b3e0981a0d25280702c7"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/c56-final-controls-r48-linux.exit",
+      "ctime": "2026-10-08T01:42:16.250717+00:00",
+      "sha256": "0e55cbbc9d11449b186092d82905aa6974858df7a0b7d706ae51c4716c9461ef"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/independent_human.py",
+      "ctime": "2026-10-08T01:40:55.734762+00:00",
+      "sha256": "a193c5856c4051dfd9d5d0f0f8169fb7dca12305b6fe80b3bd7b49dfe7f9b00f"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/c56-final-controls-r48-linux.pid",
+      "ctime": "2026-10-08T01:39:15.761846+00:00",
+      "sha256": "34afe2ddcdccbfac932dccd9f13dfcbe3ba6b1d5e1ccc447d614ec0d23456c20"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/final_controls.sh",
+      "ctime": "2026-10-08T01:40:55.730762+00:00",
+      "sha256": "5a60dbb20264fad8b0be8758acb31677bc39498e3c16922bd7ac6fe4be97769f"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/final-controls-r48-linux-tests.exit",
+      "ctime": "2026-10-08T01:39:15.761846+00:00",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/planner-r48-linux.json",
+      "ctime": "2026-10-08T01:39:17.249919+00:00",
+      "sha256": "02a9ce5549d7ae4c597dd4db6e75efba57db44fc664f2860012cb2362bb61488"
+    },
+    {
+      "path": "reports/strategy_council_20260928/engine-speed/stage6/identity-recorded-shards-r48-linux.log",
+      "ctime": "2026-10-08T01:42:16.206715+00:00",
+      "sha256": "2a28b0c4b2f50d9c889e78b7871cbf1d32c879931ef84becd2158df69a8eb122"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "pins": {
+    "source": "e83c8e1fcfbae35d406f7d8058dc71e01b48472ec721ff50b1a9aab9ec6799d4",
+    "native": "78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689",
+    "drivers": {
+      "final_planner.py": "d10bffcd3e8d8bea4480015b1e7479cbf359c3abf5b2f49be7a905ed8e0e5a18",
+      "controller.py": "9d4c966794cd1af79e6b7b58b42778f14d1a8d0d4f8f9e520d906b6e45320d39"
+    }
+  },
+  "calls": 100,
+  "candidates": 2194,
+  "cards": [
+    "Assassin",
+    "BossBandit",
+    "Clone",
+    "ElectroDragon",
+    "Fisherman",
+    "Graveyard",
+    "MegaKnight",
+    "Mirror",
+    "Rage",
+    "SkeletonKing"
+  ],
+  "passed": true,
+  "receipt": "planner-r48b-linux.json",
+  "sha256": "6d4283617cd58be9d6444e3f486116e0892aed55f8758c37ed523373608985d1"
+}

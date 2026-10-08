@@ -1,0 +1,86 @@
+{
+  "reason": "Expanded independent mismatches require build47 and every gate fresh; retain all partial/failure receipts",
+  "processes": [
+    {
+      "label": "stage6-planner-r46-linux-20261008",
+      "root_pid": 3328302,
+      "pid": 3328510,
+      "ppid": 3328357,
+      "depth": 3,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/final_planner.py --cards Assassin BossBandit MegaKnight Fisherman Clone Mirror SkeletonKing ElectroDragon Graveyard Rage --output /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/planner-r46-linux.json"
+    },
+    {
+      "label": "stage6-controls-r46-linux-20261008",
+      "root_pid": 3328315,
+      "pid": 3336442,
+      "ppid": 3328369,
+      "depth": 3,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/regressions.py"
+    },
+    {
+      "label": "stage6-human-r46-linux-20261008",
+      "root_pid": 3328331,
+      "pid": 3335864,
+      "ppid": 3328380,
+      "depth": 3,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/human_reserve.py --prior /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/human-r46-linux.json --output /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/human-reserve-r46-linux.json"
+    },
+    {
+      "label": "stage6-identity-r46-linux-20261008",
+      "root_pid": 3328350,
+      "pid": 3331233,
+      "ppid": 3328384,
+      "depth": 3,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/fleet_identity_recorded.py"
+    },
+    {
+      "label": "stage6-identity-r46-linux-20261008",
+      "root_pid": 3328350,
+      "pid": 3331234,
+      "ppid": 3331233,
+      "depth": 4,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/fleet_identity_recorded.py"
+    },
+    {
+      "label": "stage6-identity-r46-linux-20261008",
+      "root_pid": 3328350,
+      "pid": 3331235,
+      "ppid": 3331233,
+      "depth": 4,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/fleet_identity_recorded.py"
+    }
+  ],
+  "termination_results": [
+    {
+      "pid": 3331234,
+      "status": "SIGTERM verified owned process",
+      "current_command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/fleet_identity_recorded.py"
+    },
+    {
+      "pid": 3331235,
+      "status": "not signalled: finished or command changed",
+      "current_command": "[python]"
+    },
+    {
+      "pid": 3328510,
+      "status": "SIGTERM verified owned process",
+      "current_command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/final_planner.py --cards Assassin BossBandit MegaKnight Fisherman Clone Mirror SkeletonKing ElectroDragon Graveyard Rage --output /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/planner-r46-linux.json"
+    },
+    {
+      "pid": 3336442,
+      "status": "SIGTERM verified owned process",
+      "current_command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/regressions.py"
+    },
+    {
+      "pid": 3335864,
+      "status": "SIGTERM verified owned process",
+      "current_command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/human_reserve.py --prior /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/human-r46-linux.json --output /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/human-reserve-r46-linux.json"
+    },
+    {
+      "pid": 3331233,
+      "status": "not signalled: finished or command changed",
+      "current_command": ""
+    }
+  ],
+  "time": "2026-10-08T01:11:51.587515+00:00"
+}

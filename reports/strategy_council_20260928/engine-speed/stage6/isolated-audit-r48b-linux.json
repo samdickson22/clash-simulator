@@ -1,0 +1,7 @@
+{
+  "root": "/mpac/sdicks02/repos/clasher-stage6-build48",
+  "source": "e83c8e1fcfbae35d406f7d8058dc71e01b48472ec721ff50b1a9aab9ec6799d4",
+  "native": "78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689",
+  "drivers": "exact frozen48 pins",
+  "protected_files": 367
+}

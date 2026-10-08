@@ -1,0 +1,27 @@
+{
+  "stage6-stage5-r48b-linux-20261008": {
+    "host": "127x01",
+    "pid": 3369444,
+    "root": "/mpac/sdicks02/repos/clasher-stage6-build48"
+  },
+  "stage6-planner-r48b-linux-20261008": {
+    "host": "127x01",
+    "pid": 3369452,
+    "root": "/mpac/sdicks02/repos/clasher-stage6-build48"
+  },
+  "stage6-controls-r48b-linux-20261008": {
+    "host": "127x01",
+    "pid": 3369466,
+    "root": "/mpac/sdicks02/repos/clasher-stage6-build48"
+  },
+  "stage6-human-r48b-linux-20261008": {
+    "host": "127x01",
+    "pid": 3369482,
+    "root": "/mpac/sdicks02/repos/clasher-stage6-build48"
+  },
+  "stage6-identity-r48b-linux-20261008": {
+    "host": "127x01",
+    "pid": 3369504,
+    "root": "/mpac/sdicks02/repos/clasher-stage6-build48"
+  }
+}

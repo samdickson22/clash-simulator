@@ -329,3 +329,20 @@ Also on the hub, but with copies elsewhere:
   (`qa/fleet-v3b/production-20261008/completion-summary.json`). Coordinator spot check: 3 random units load
   (32 arrays, 26–41k rows). NaN appears only in recorded/submitted world positions, exactly as in the Mac base units
   (no-position actions), so it is by design. **Next: the all-card imitation model** (HANDOFF_F35 §5.3), design first.
+- **2026-10-08 03:00 UTC: Stage 6 core QUALIFIED on Linux build 48** (Astra `clasher-stage6-b46-fleet-20261008-1`;
+  `engine-speed/STAGE6.md`, `stage6/qualification-r48b-linux.json`, `completion-audit-r48b-linux.json`). Native `78bd9950…`,
+  source `e83c8e1f…`. Builds 46→48 fixed the Inferno Dragon dash channel (BeamDash incl. saved tick 1895), the hook/ramp
+  lock reset, hook cancellation after spirit conversion, and Valkyrie timing after death knockback. All fresh on build 48:
+  Stage 5 200/200; planner 100/100; controls 69 + 88 + 47; human/reserve 136 games, 66/66 cards, 1,617 imports,
+  4,017 placements, 36.98×, max clone 16.81 µs; identity P16 12/12, C56 7/7, recorded 8/8, random 24/24; seal passed.
+  **Expanded independent verification (pre-registered): 48/48 recorded + 24/24 human games, 0 mismatches, every
+  card accepted ≥2×.** The 01:39Z push was audited, pinned bytes restored, and affected gates rerun under fresh labels.
+  Coordinator re-ran recorded games 46017 and 46033 on build 48: both exact (actions, digests, MT state).
+  Rust changes committed (`engine-rs/src/{c56,hook,lib}.rs`, `mirror_snapshot.py`; hashes match the build 48 tree).
+  **Decision on Three Musketeers.** Canonical gamedata has no summonCharacterData/count/stats for it, so Python deploys one
+  100-HP / 0-damage placeholder. Rust reproduces that exactly, but the scripted controller crashes on it
+  (`float(None)`). This is a gamedata defect, not a parity defect. **Admit the S122 roster minus Three Musketeers
+  (121 cards)** for search, scripts and the imitation scope. Three Musketeers is marked unsupported: excluded from
+  controller decks, and human replays that play it are cut at that play by the existing contradiction rule. A
+  Three Musketeers data repair is backlog. It would change canonical gamedata (`892fbfa0`), so it needs real stats,
+  a new canonical hash and a full identity re-baseline. Do it only if the imitation or live scope shows it matters.

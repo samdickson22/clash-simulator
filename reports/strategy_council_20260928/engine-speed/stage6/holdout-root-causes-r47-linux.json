@@ -1,0 +1,50 @@
+{
+  "baseline_log": "/mpac/sdicks02/jobs/clasher/stage6-holdout-before-r47-linux-20261008.log",
+  "baseline_sha256": "2858beeefd1f6376963df5b53d3f97833fda6f53099e84ee2bb99c87a7803508",
+  "baseline_methods": 3,
+  "baseline_failures": 4,
+  "defects": [
+    {
+      "episodes": [
+        46027
+      ],
+      "first_digest_tick": 4010,
+      "latent_tick": 3969,
+      "cause": "Completed hit must clear preload block after nested Golem death knockback",
+      "rust": "engine-rs/src/lib.rs"
+    },
+    {
+      "episodes": [
+        46036,
+        46037
+      ],
+      "first_digest_tick": 1136,
+      "import_root": 1100,
+      "cause": "DamageRamp forced-movement callback resets target and channel on Fisherman hook",
+      "rust": "engine-rs/src/hook.rs"
+    },
+    {
+      "episodes": [
+        46041
+      ],
+      "first_digest_tick": 3596,
+      "latent_tick": 3594,
+      "cause": "Fisherman hook flight must reject projectile-kind spirit immediately",
+      "rust": "engine-rs/src/hook.rs"
+    }
+  ],
+  "evidence": {
+    "holdout46027-root3950-r46-linux.meta.json": "fb9be1ff712822f19764c2f63aa5ea859046902cb976055c9a6ba3fce1c8bef7",
+    "holdout46027-root4009-r46-linux.meta.json": "2c587f3f9e3ef2d4802cad3551158f166f9e62bf63c759bbf16ddd6da2c132da",
+    "holdout46036-import1100-r46-linux.meta.json": "8b87d1fdb89325f6973b9e68615f4508f0cdd007960c6455534f22febc61e0a1",
+    "holdout46036-root1135-r46-linux.meta.json": "cb99dd8371ed2b77f0aa6ac71e4b891fea141eacd8d69ccc1cfce7c5e2b9698f",
+    "holdout46037-import1100-r46-linux.meta.json": "2013ac61d9a61dd6b0c52050935af299612c56a5eb37a9e9d8e451bc280d0cd0",
+    "holdout46037-root1135-r46-linux.meta.json": "807b01fcb59aa04ea4930499ecebfae9760933e10f37f280e54e09e037194924",
+    "holdout46041-root3500-r46-linux.meta.json": "29ab5a74affc08d6673ad06667bd913052a4cc0b8315734be4a7fd5402ac176c",
+    "holdout46041-root3595-r46-linux.meta.json": "1dbfd49528468ae25a48862a0ce19405aea7c33e6190bc3394e82306cc57d366",
+    "test_holdout47.py": "19a24092417ed406723f2ec2059dde7e1a8bf9d7c5e604be67d1513349c106a5",
+    "independent-summary-r46-linux.json": "b826fea01ea6d156fdd1f6052648988b0c97ef79d8e81fe4902cdbd51d8eaa5d",
+    "build46-linux/pins.json": "73ecc5168802b37f29d9bc66c1c3ea2afb33fc548ba311a964af6f6aed3d249a",
+    "build47-linux/pins.json": "be8bfc6040780c1ae7908a7ae8be3d39ae9275bbd00c82d7b520d4d563e01b6e"
+  }
+}

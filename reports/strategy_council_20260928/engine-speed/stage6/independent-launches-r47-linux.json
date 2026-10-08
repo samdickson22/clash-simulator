@@ -1,0 +1,62 @@
+{
+  "independent-recorded-r47-linux-shard00": {
+    "host": "127x03",
+    "pid": 3367659,
+    "ids": "46000,46008,46016,46024,46032,46040"
+  },
+  "independent-recorded-r47-linux-shard01": {
+    "host": "127x03",
+    "pid": 3367668,
+    "ids": "46001,46009,46017,46025,46033,46041"
+  },
+  "independent-recorded-r47-linux-shard02": {
+    "host": "127x03",
+    "pid": 3367680,
+    "ids": "46002,46010,46018,46026,46034,46042"
+  },
+  "independent-recorded-r47-linux-shard03": {
+    "host": "127x03",
+    "pid": 3367698,
+    "ids": "46003,46011,46019,46027,46035,46043"
+  },
+  "independent-recorded-r47-linux-shard04": {
+    "host": "127x03",
+    "pid": 3367719,
+    "ids": "46004,46012,46020,46028,46036,46044"
+  },
+  "independent-recorded-r47-linux-shard05": {
+    "host": "127x03",
+    "pid": 3367737,
+    "ids": "46005,46013,46021,46029,46037,46045"
+  },
+  "independent-recorded-r47-linux-shard06": {
+    "host": "127x03",
+    "pid": 3367757,
+    "ids": "46006,46014,46022,46030,46038,46046"
+  },
+  "independent-recorded-r47-linux-shard07": {
+    "host": "127x03",
+    "pid": 3367775,
+    "ids": "46007,46015,46023,46031,46039,46047"
+  },
+  "independent-human-r47-linux-shard00": {
+    "host": "127x03",
+    "pid": 3367795,
+    "ids": "47000,47004,47008,47012,47016,47020"
+  },
+  "independent-human-r47-linux-shard01": {
+    "host": "127x03",
+    "pid": 3367812,
+    "ids": "47001,47005,47009,47013,47017,47021"
+  },
+  "independent-human-r47-linux-shard02": {
+    "host": "127x03",
+    "pid": 3367832,
+    "ids": "47002,47006,47010,47014,47018,47022"
+  },
+  "independent-human-r47-linux-shard03": {
+    "host": "127x03",
+    "pid": 3367851,
+    "ids": "47003,47007,47011,47015,47019,47023"
+  }
+}

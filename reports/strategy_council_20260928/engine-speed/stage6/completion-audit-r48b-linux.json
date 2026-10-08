@@ -1,0 +1,28 @@
+{
+  "time": "2026-10-08T02:30:18.281168+00:00",
+  "source_and_driver_roots_verified": [
+    "/mpac/sdicks02/repos/clasher-stage6-build48",
+    "/mpac/sdicks02/repos/clasher"
+  ],
+  "protected_files_per_root": 367,
+  "pins": {
+    "source": "e83c8e1fcfbae35d406f7d8058dc71e01b48472ec721ff50b1a9aab9ec6799d4",
+    "native": "78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689"
+  },
+  "all_required_exits": {
+    "stage6-stage5-r48b-linux-20261008": "0",
+    "stage6-planner-r48b-linux-20261008": "0",
+    "stage6-controls-r48b-linux-20261008": "0",
+    "stage6-human-r48b-linux-20261008": "0",
+    "stage6-identity-r48b-linux-20261008": "0",
+    "stage6-seal-r48b-linux-retry2-20261008": "0"
+  },
+  "gate_receipts": {
+    "qualification-r48b-linux.json": "93a0eeb56ecee5bebf9e2e6618f80d0f228ff2e51e3a66e4eee70547900877c8",
+    "final-r48b-linux.json": "46504104b70576b45ccbb6ced643fdb795f354a0521b3962ffb457a0e453cb5d",
+    "independent-summary-r48-linux.json": "94514bb8ca1920686dcf966814596b895c002b335bd7209ba46bf33b5552b767",
+    "human-summary-r48b-linux.json": "0a8b283dce73d83e416c9220f108d170711cbecdd65c942380d76e3627e73588",
+    "planner-summary-r48b-linux.json": "53bc941491cddb2b52858d82174bc23c1498ec538bd1e8bc3a07939735a6fa12",
+    "controls-summary-r48b-linux.json": "dea046687818e93997d0374c8d025174598f73d84604cacf4a5b7e99118c206c"
+  }
+}
