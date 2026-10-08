@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-08T15:46:41.934118+00:00",
+  "status": "schedule-deleted-coordinator-confirmed-completion",
+  "schedule_title": "Clasher v4 Phase A: bounded 15-minute checks",
+  "deleted": true,
+  "final_matches": {
+    "train": 513,
+    "validation": 64,
+    "heldout": 64
+  },
+  "heldout_opponent_events": 1520,
+  "producer_artifacts_on_hub": "stale/missing; formal admission pending",
+  "heldout_payloads_opened": false
+}

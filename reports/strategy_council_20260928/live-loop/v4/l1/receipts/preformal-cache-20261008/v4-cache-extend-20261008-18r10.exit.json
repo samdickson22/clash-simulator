@@ -1,0 +1,23 @@
+{
+  "host": "127x18",
+  "label": "v4-cache-extend-20261008-18r10",
+  "started_utc": "2026-10-08T10:59:55.482370+00:00",
+  "command": [
+    "bash",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/cache_batch.sh",
+    "build",
+    "v4-cache-extend-20261008-18r10",
+    "1",
+    "2",
+    "24",
+    "295"
+  ],
+  "supervisor_pid": 1034411,
+  "pid": 1034413,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T11:03:15.247222+00:00",
+  "stop_reason": null,
+  "peak_processes": 26,
+  "peak_rss_bytes": 7673147392
+}

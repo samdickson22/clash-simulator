@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-08T11:53:47.204036+00:00",
+  "sources": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/cache_transport_v4.py": "619ed877dd69167825ee7968631013441ec16738d8d6cec1ea06e1a8f0ba3238",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_cache_transport_v4.py": "364d4ef1a3e733d489564ad2bdf07c3a2fa4c5729d5d8afe73b06ab1cbed545a"
+  },
+  "test_label": "v4-cache-transport-tests-20261008-r2",
+  "checks": 16,
+  "synthetic_only": true,
+  "heldout_payloads_opened": false
+}

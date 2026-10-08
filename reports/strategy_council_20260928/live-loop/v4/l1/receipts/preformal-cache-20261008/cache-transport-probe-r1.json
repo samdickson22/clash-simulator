@@ -1,0 +1,19 @@
+{
+  "engineering_only": true,
+  "matches": 41,
+  "raw_and_model_samples_checked": 1366,
+  "equality_mismatches": 0,
+  "parity_seconds": 53.205106406938285,
+  "windows": 128,
+  "window_frames": 16,
+  "threads": 6,
+  "raw_fraction": 0.5,
+  "data_only_windows_per_second": 33.245272822572105,
+  "elapsed_seconds": 3.8501714419107884,
+  "manifest_sha256": "4eb97a269d92aef156c4ad0bfc532db716177794277b41a6db0827c1fc42f0e0",
+  "reference_sha256": "3b0f372305184b503ba1c1a0d4ad1d43a540949cdc86c1e65eceb7c92dd8ac38",
+  "probe_source_sha256": "4ab4415438aa2ac1434117e128d51489a1321cd9342af84cd3f60d5be44b9b90",
+  "heldout_payloads_opened": false,
+  "gpu_training_measured": false,
+  "formal_population_seal": false
+}

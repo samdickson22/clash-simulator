@@ -12,6 +12,21 @@ import shutil
 HUB = '/mpac/sdicks02/repos/clasher-v4-data/matches'
 FILES = ('receipt.json', 'frames.jsonl', 'hud.jsonl', 'events.jsonl',
          'objects.jsonl.gz', 'rich-objects.jsonl.gz', 'video.mp4')
+T6_FILES = ('setup.json', 'commands.jsonl', 'negative-windows.jsonl', 'evaluation-only.jsonl.gz')
+OPTIONAL_T6_FILES = ('observation-skips.jsonl',)
+
+
+def staging_files(rows, *, labels_only=False, all_training_payloads=False):
+    if any(r['split'] not in ('train','validation') for r in rows):raise ValueError('Heldout payload staging forbidden')
+    if labels_only and all_training_payloads:raise ValueError('Converter staging requires complete media')
+    files=[n for n in FILES if not (labels_only and n=='video.mp4')]
+    if all_training_payloads:
+        files.extend(T6_FILES)
+        required=set(files)-{'receipt.json'};allowed=required|set(OPTIONAL_T6_FILES)
+        if any(not required<=set(r['files'])<=allowed for r in rows):
+            raise ValueError('Converter receipt payload allowlist differs')
+        files.extend(OPTIONAL_T6_FILES)
+    return files
 
 
 def sha(path):
@@ -30,6 +45,8 @@ def main():
     p.add_argument('--limit', type=int, default=0)
     p.add_argument('--episodes', nargs='+')
     p.add_argument('--labels-only', action='store_true')
+    p.add_argument('--all-training-payloads', action='store_true',
+                   help='Also copy receipt-pinned train/validation converter inputs; never heldout payloads')
     p.add_argument('--heldout-receipts-only', action='store_true',help='Copy receipt JSON only for formal count admission; never payloads')
     a = p.parse_args()
     if not 0<=a.partition<a.partitions:raise ValueError('Invalid partition')
@@ -66,15 +83,15 @@ def main():
             if q.read_text()!=raw:raise ValueError('Heldout receipt changed')
         else:
             with q.open('x') as f:f.write(raw)
-    files = [n for n in FILES if not (a.labels_only and n == 'video.mp4')]
-    listing = ''.join(f'{r["episode"]}/{n}\n' for r in rows for n in files)
+    files=staging_files(rows,labels_only=a.labels_only,all_training_payloads=a.all_training_payloads)
+    listing = ''.join(f'{r["episode"]}/{n}\n' for r in rows for n in files if n=='receipt.json' or n in r['files'])
     subprocess.run(['rsync', '-a', '--checksum', '--rsync-path=nice -n 10 rsync', '--files-from=-',
                     f'127x01:{HUB}/', str(a.destination) + '/'], input=listing, text=True, check=True)
     for r in rows:
         root = a.destination / r['episode']
         if json.loads((root / 'receipt.json').read_text()) != r: raise ValueError('Receipt changed during copy')
         for n in files:
-            if n != 'receipt.json' and sha(root / n) != r['files'][n]: raise ValueError(f'Bad copy: {root / n}')
+            if n != 'receipt.json' and n in r['files'] and sha(root / n) != r['files'][n]: raise ValueError(f'Bad copy: {root / n}')
     receipt = dict(matches=len(rows), frames=sum(r['frames'] for r in rows),
                    episodes=[r['episode'] for r in rows], heldout_payloads_opened=False,
                    complete_population=not(a.limit or a.episodes or a.labels_only or a.partitions!=1) and a.heldout_receipts_only,

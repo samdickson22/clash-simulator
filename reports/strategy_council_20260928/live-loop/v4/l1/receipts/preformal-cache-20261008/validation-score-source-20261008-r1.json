@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-08T10:19:50.718083+00:00",
+  "files": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/validation_score_v4.py": "d95660293124f27f22e045f7b7b7217e625938a1096c8cf5dc3f6a34d8c176a0",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_validation_score_v4.py": "4a378284259eb5e1decae6e776186ff4deaf3cf0b875813cd3849e1463d2b9ba",
+    "reports/strategy_council_20260928/live-loop/v4/l1/validation_replay_v4.py": "4a45aa473874a40d1ec7d86d1604f5d3bd633a0d779a383cd8028ab735686edc",
+    "reports/strategy_council_20260928/live-loop/v4/l1/execution_clock_v4.py": "ed44ca8910e7040817a76ae006746ed0b4ea132f61d869f933b685526485a225",
+    "reports/strategy_council_20260928/live-loop/v4/l1/scoring_v4.py": "1a7f6d644948613058f7b476150fea234f27555c3bfc08569b73f6b0804e37fa",
+    "reports/strategy_council_20260928/live-loop/v4/l1/validation_admission_v4.py": "3fe59ccfade6fc12e04c3e51d4376b8e0f95144f3065363d3011dbd14365796a"
+  },
+  "tests": "12 synthetic file/scoring checks; wrapper pass",
+  "real_model_scoring_run": false,
+  "heldout_payloads_opened": false
+}

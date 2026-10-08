@@ -4,13 +4,14 @@ set -euo pipefail
 arm=${1:?t6 or t7}; state=${2:?T1 pipeline-state.json}; receipt=${3:?T1 phase-a-exit.json}; destination=${4:?fresh output directory}
 host=$(hostname -s)
 case $host in
-  127x01) root=/mpac/sdicks02/repos/clasher; python=/mpac/sdicks02/envs/clasher-gpu/bin/python; source=/mpac/sdicks02/repos/clasher-v4-data/matches ;;
-  127x09|127x11|127x13|127x14|127x15|127x16|127x18)
+  127x09|127x15)
     [[ ${CLASHER_LEASE_ROOT:-} == /mpac/sdicks02/repos/clasher-lease ]] || { echo 'Lease wrapper/env required' >&2; exit 2; }
+    [[ ${CLASHER_V4_RUN_SUPERVISED:-} == 1 ]] || { echo 'lease_lifecycle_v4.py required for hourly backup/deadline' >&2; exit 2; }
     root=$CLASHER_LEASE_ROOT/repo; python=$CLASHER_LEASE_ROOT/envs/clasher-gpu/bin/python
     source=$CLASHER_LEASE_ROOT/data/v4-matches ;;
-  *) echo 'Host not authorized' >&2; exit 2 ;;
+  *) echo 'Coordinator assigns T7 to 09 and T6 to 15; 01 GPU belongs to T5' >&2; exit 2 ;;
 esac
+[[ $host:$arm == 127x09:t7 || $host:$arm == 127x15:t6 ]] || { echo 'Wrong arm for assigned GPU' >&2; exit 2; }
 cache=${5:-}; prepared_t6=${6:-}
 code=$root/reports/strategy_council_20260928/live-loop/v4/l1
 split=$root/reports/strategy_council_20260928/live-loop/v4/split.json
@@ -24,22 +25,24 @@ else
   # lease_watch.py independently counts all descendants/RSS throughout the job.
   workers=$(ps -u "$(id -un)" -o args= | awk '/clasher-lease/ && !/awk/ && !/sshd/ {n++} END {print n+0}')
 fi
-cap=96
-case $host in 127x09|127x15) cap=8 ;; 127x13|127x14) cap=64 ;; 127x16|127x18) cap=48 ;; esac
+cap=$("$python" - "$host" <<'PY'
+import json,sys
+from pathlib import Path
+lease=json.loads((Path('/mpac/sdicks02/fleet-leases')/(sys.argv[1]+'.json')).read_text())
+if lease.get('cpu') is not True or lease.get('gpu_only') is not False:raise ValueError('CPU-expanded lease required')
+print(min(96,int(lease['max_workers'])))
+PY
+)
 console_users=$("$HOME/.local/bin/fleet-console-users")
 [[ $console_users =~ ^[0-9]+$ ]] || { echo 'Invalid console-cap helper response' >&2; exit 2; }
 (( console_users == 0 )) || cap=16
-case $host in 127x09|127x15) cap=8 ;; esac
 (( workers + 4 <= cap )) || { echo "Host worker capacity exceeded: $workers + 4 > $cap" >&2; exit 75; }
 free=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits | head -1)
 (( free >= 16384 )) || { echo 'Need >=16GiB free GPU memory' >&2; exit 75; }
 [[ ! -e $destination ]] || { echo 'Fresh output directory required' >&2; exit 2; }
 if [[ $arm == t7 ]]; then
-  [[ -d $cache ]] || { echo 'Validated lossless cache required for formal T7' >&2; exit 2; }
+  [[ -f $cache ]] || { echo 'Pinned full-population cache union connection file required for formal T7' >&2; exit 2; }
 fi
-case $host in 127x09|127x15)
-  [[ $arm != t6 || -f $prepared_t6/complete.json ]] || { echo 'GPU-only host requires preconverted T6 data' >&2; exit 2; } ;;
-esac
 mkdir -p "$destination"
 "$python" "$code/formal_guard.py" --phase-state "$state" --phase-exit "$receipt" --source "$source" --split "$split" --output "$destination/admission.json"
 if [[ $arm == t6 ]]; then
@@ -58,7 +61,7 @@ for r in inventory:
     import hashlib
     if hashlib.sha256((source/r['episode']/'receipt.json').read_bytes()).hexdigest()!=r['receipt_sha256']:raise ValueError('Prepared T6 receipt changed')
 PY
-  "$python" "$code/run_t6_shake.py" --dataset "$prepared_t6" --output "$destination/run" --epochs 24 --steps 400 --pixel-cache-mib 4096
+  "$python" "$code/run_t6_shake.py" --dataset "$prepared_t6" --output "$destination/run" --epochs 24 --steps 400 --pixel-cache-mib 4096 --pixel-cache-directory "$CLASHER_LEASE_ROOT/data/v4-cache/t6-$(basename "$destination")"
 else
-  "$python" "$code/train_v4.py" --source "$source" --split "$split" --output "$destination/model" --epochs 24 --steps 400 --pixel-cache "$cache" --loader-workers 6
+  "$python" "$code/train_v4.py" --source "$source" --split "$split" --output "$destination/model" --epochs 24 --steps 400 --formal-union "$cache" --phase-state "$state" --phase-exit "$receipt" --loader-workers 6
 fi

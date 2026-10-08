@@ -1,0 +1,21 @@
+{
+  "matches": 5,
+  "frames": 14592,
+  "files_verified": 10,
+  "bytes": 5910676788,
+  "equality_checked": 149,
+  "index_sha256": {
+    "v4-phase-a-1975100700": "b96a259fa5a24977b2318f6acf67001f14477398a290a0c4026f418b36d22704",
+    "v4-phase-a-1975100701": "8bede81cbf315524e0059a78ba8a82e2b3fee59e4cd7d6d54514907a7fade5ed",
+    "v4-phase-a-1975100702": "2d6167ee48e52d91decff667bf127b1d51a813bcfe4b0aa0053356d18a288f7c",
+    "v4-phase-a-1975100703": "89fea2dacf8e6ea3e2b3a26fd0002da0821f2a2c10df0a29e3f4e8aadf42e609",
+    "v4-phase-a-1975100708": "6716f6ba013c310f3dab59e92688ff881b70e2105b64856d95d78efc1b80cde2"
+  },
+  "cache": "/mpac/sdicks02/repos/clasher-lease/data/v4-cache",
+  "source_host": "127x01",
+  "heldout_opened": false,
+  "completed_utc": "2026-10-08T10:13:45.518747+00:00",
+  "bytes_on_host": 241540753803,
+  "maximum_bytes": 300000000000,
+  "minimum_free_bytes": 200000000000
+}

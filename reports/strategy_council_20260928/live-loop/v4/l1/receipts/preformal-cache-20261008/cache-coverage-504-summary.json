@@ -1,0 +1,24 @@
+{
+  "matches": 504,
+  "frames": 891013,
+  "payload_bytes": 408570134776,
+  "equality_checked": 9111,
+  "equality_mismatches": 0,
+  "files_verified": 1008,
+  "utc": "2026-10-08T14:19:00Z",
+  "splits": {
+    "train": 448,
+    "validation": 56
+  },
+  "input_sha256": {
+    "v4-cache-gather-20261008-18r10-manifest.json": "67b710014a12fb12ec363611c36b7f11bcdb97e08a01d94876efb9d6f06d8c14",
+    "v4-cache-extend-20261008-18r10-stage.json": "7729f11cb2bc33ef679aab84a871e68c3d2c635501701d139eec0b21d683f1a3",
+    "v4-cache-unique-20261008-16r4-manifest.json": "a076052a1f03beb70d55bd8d23a07dd5c3f12bcc8df8e28b4fd8890de44fc10e",
+    "v4-cache-unique-20261008-16r4-plan.json": "35beeb4a1e684eeab796abb2f3ccd06bfff090ad9ab3e4a29dd94086c5ea1b0d",
+    "v4-cache-unique-20261008-03r4-manifest.json": "5ccc58aeb6fd36a1b9603da8d2bf4576330adad0f7aa80aa024c454d70120a5c",
+    "v4-cache-unique-20261008-03r4-plan.json": "f54f3ea0863b3e6c218fae431e1c91b139299c94f90d3a5b126cc7fff38f00b8"
+  },
+  "scope": "metadata aggregation of verified disjoint shards; not runtime union or formal admission",
+  "heldout_payloads_opened": false,
+  "formal_population_seal": false
+}

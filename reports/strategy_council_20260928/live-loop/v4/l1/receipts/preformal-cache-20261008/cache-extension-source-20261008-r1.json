@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-08T11:32:55.236388+00:00",
+  "sources": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/cache_extension_v4.py": "10bfb150880579da64a4d21648dfc506e360f9692f72ccc3dc2eb0f60100ec6c",
+    "reports/strategy_council_20260928/live-loop/v4/l1/build_cache.py": "5dcda3211c59bddd727febdbf7cc13dddf8e43d9a16b00596014570ace8b9487",
+    "reports/strategy_council_20260928/live-loop/v4/l1/cache_unique_batch.sh": "d5ef4c99126a3cd0c329ac01449b93b8ea47c1eebf13447d7c42a0099b219035",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_cache_extension_v4.py": "06b0fba84c22597a17420c40a18ea760f0987904b652f62a2601ea488781358f"
+  },
+  "test_label": "v4-cache-extension-tests-20261008-r1",
+  "checks": 17,
+  "child_exit": 0,
+  "wrapper_status": "stopped",
+  "synthetic_only": true,
+  "heldout_payloads_opened": false
+}

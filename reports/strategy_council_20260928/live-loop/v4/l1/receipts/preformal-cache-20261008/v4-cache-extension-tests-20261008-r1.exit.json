@@ -1,0 +1,20 @@
+{
+  "host": "127x16",
+  "label": "v4-cache-extension-tests-20261008-r1",
+  "started_utc": "2026-10-08T11:30:44.835191+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/test_cache_extension_v4.py"
+  ],
+  "supervisor_pid": 3524175,
+  "pid": 3524177,
+  "exit_code": 0,
+  "status": "stopped",
+  "finished_utc": "2026-10-08T11:30:45.988490+00:00",
+  "stop_reason": "job exited with descendants still running",
+  "peak_processes": 2,
+  "peak_rss_bytes": 30965760,
+  "peak_pss_bytes": 23578624,
+  "memory_metric": "owned_tree_pss"
+}

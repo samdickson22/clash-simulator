@@ -1,0 +1,18 @@
+{
+  "source_sha256": {
+    "cache_budget.py": "fe77b41a09b4fada62fc64789412d190deb4bf040fe4e341074696d2a767758f",
+    "cache_home_03.py": "2ec4cc3a3c1ffd53510040a8fb02de02fdafd478af68533f45242d113ac69c4b",
+    "cache_unique_batch.sh": "4ee8f139d9576cbe743ac6dbaea1e2a932fbca5a051f94fa6ebb0436a88a2d4e",
+    "sync_pixel_cache.py": "a601ad6909eefd85c20b996de59084990b87301a7c99455672abab14834b4dcf",
+    "stage_training.py": "1305b3117b583734b66108d6c3d7332222a793d18b95c721077a92313cc541d3",
+    "stage_gpu_reassignment_v4.py": "3906175e0c7b0192f8c7407a311a2ca9c7f74d70320adcf2e7947da932b98e94",
+    "formal_train.sh": "ceb6e8150952d53f895238cb4d754e19476f94174fcac6908b773dbff2dbdd56",
+    "lease_lifecycle_v4.py": "90ccf8d556625cce3ba292a2199f860b50cb966072a8132156d1f3f2eb466d31",
+    "test_lease_lifecycle_v4.py": "1426b231a46de90de41d22fba96914e36bb24dbc7e0f8017485cfeb1ea4db03c",
+    "test_checkpoint_transfer_v4.py": "c39ee3b36332fdc21ccab6befc96f92cb04429ac8b5308cd754929ccf2e9c65a",
+    "test_cache_budget.py": "c2e824c3f7d7b3873e7ee041dbdb6a1785204c9477a27a6e7998b9d59fb3f744",
+    "test_stage_converter_files_v4.py": "24bb5c5d44d0a6003dc86d6b459d9cfd26e6d40b3f1922ecc470e3c73cc2a00a"
+  },
+  "formal_training_started": false,
+  "heldout_payloads_opened": false
+}

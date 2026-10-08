@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-08T13:25:00Z",
+  "source_sha256": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/cache_budget.py": "1d0d26a32e358e58c112976ca941c35feb4b66b77a63256ed069d8b71f610908",
+    "reports/strategy_council_20260928/live-loop/v4/l1/build_cache.py": "5c92ebd271b06be8bfa456778fef056f79a8d668553cc31e067cffdb9f877ce3",
+    "reports/strategy_council_20260928/live-loop/v4/l1/cache_extension_v4.py": "eac5b32f77ed3eb753818318340ae5aa9ccabd91c4ecbbece53fc56c06046649",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_cache_budget.py": "2642de35e6c97fa971d879ea34a3e73686adb22e44b84d816ff9d0fe8a44a595",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_cache_extension_v4.py": "e0e35ec01dd7e693c138aa339f7509e93ca8ff6d141edf928ccc64289c95614f",
+    "reports/strategy_council_20260928/live-loop/v4/l1/cache_home_03.py": "91dfc044594e149bdfb46f187c5a31042fa2419f553501352ae6b2bb8504c82f",
+    "reports/strategy_council_20260928/live-loop/v4/l1/setup_cpu_cache_03.sh": "7d843cf373c2b9e197372244cb57165147b94ddf0a25a738cecdef3092e3b75d"
+  },
+  "reservations_gb": {
+    "127x01": 300,
+    "127x16": 300,
+    "127x18": 300,
+    "127x03": 80
+  },
+  "heldout_payloads_opened": false,
+  "formal_gates": "BLOCKED"
+}

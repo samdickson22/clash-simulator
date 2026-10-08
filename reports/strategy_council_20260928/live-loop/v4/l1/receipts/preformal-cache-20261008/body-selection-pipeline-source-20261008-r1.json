@@ -1,0 +1,12 @@
+{
+  "validation_replay_v4.py": "0583e53585a5d99b95618b5ca4c1884860129aff5c47f2db711ae5decca00a7f",
+  "validation_score_v4.py": "a2ab6fdfb8febfe352d224cf4546e0338427b2f46734e5a3b873212f7a672893",
+  "selection_matrix_v4.py": "1759d81c0a3fd38ce851f4b341de3efbc5558a24891ea5998d28d407bbe99997",
+  "card_thresholds_v4.py": "154a2e17d6e9db0118e716c1084bdee7bc9c43c6e2d1060774cef716530f04b7",
+  "validation_select_v4.py": "c375bc178f8c9b64a63401b3f715db9e476df33c22efc82eb4181d1b7b8c5a73",
+  "test_validation_score_v4.py": "b7616458661ae4d52b4579ab59dd4f9e6d5c5e3f8070184249d29a91bd1a8d0f",
+  "test_selection_matrix_v4.py": "a68d6a941c0b52239728543f8f675d91a4590b0584c41955c4c0ebee8b57ce87",
+  "test_card_thresholds_v4.py": "affe4e77256ebc115a6a9d3b29f947ef1f4253194a02607f4b9589282bfe9761",
+  "test_validation_select_v4.py": "be7315ada277c15ae08149949a09b9e8b91a17396dac5cce57164357cc4d9253",
+  "test_body_selection_pipeline.sh": "6da084c4bd052b2620651d8d0c3b7e9fb4d903d2a685949b16a7e354fb27a76f"
+}

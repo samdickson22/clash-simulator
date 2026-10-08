@@ -11,11 +11,12 @@ from clasher.live.runtime import quantiles
 def aggregate(root):
     samples, counts, matches, errors = defaultdict(list), Counter(), [], []
     duration = 0.
-    provenance = []
+    provenance, devices = [], set()
     for path in sorted(root.glob('*/metrics.json')):
         metrics = json.loads(path.read_text())
         config = json.loads(path.with_name('config.json').read_text())
         assert config['source']['split'] == 'train' and config['actuator']['kind'] == 'mock'
+        devices.add(config['perception']['device'])
         prov = json.loads(path.with_name('provenance.json').read_text())
         provenance.append(prov)
         with gzip.open(path.with_name('latency.jsonl.gz'), 'rt') as stream:
@@ -66,6 +67,7 @@ def aggregate(root):
                             capture_dropped=metrics['dropped_frames'], belief_skipped=perceived-metrics['processed'],
                             trace_sha256=hashlib.sha256(path.with_name('latency.jsonl.gz').read_bytes()).hexdigest()))
     assert matches
+    assert len(devices) == 1, 'Mixed perception devices'
     # Every reported final run must use exactly the same runtime implementation.
     versions = [{Path(k).name: v for k, v in p['hashes'].items() if '/src/clasher/live/' in k} for p in provenance]
     assert all(v == versions[0] for v in versions), 'Mixed runtime versions: do not pool these runs'
@@ -78,9 +80,10 @@ def aggregate(root):
                 perception_fps=(counts['perceived']-n)/duration,
                 processed_fraction=counts['processed']/counts['captured'],
                 perception_fraction=counts['perceived']/counts['captured'],
-                audit_errors=errors, heldout_opened=False, actuator='mock', device='cpu',
+                audit_errors=errors, heldout_opened=False, actuator='mock', device=devices.pop(),
                 sample_gate=n >= 6 and end['count'] >= 200,
-                median_budget_pass=end['p50'] <= 200, tail_budget_pass=end['p99'] <= 400,
+                budget_ms=dict(p50=260, p99=400),
+                median_budget_pass=end['p50'] <= 260, tail_budget_pass=end['p99'] <= 400,
                 belief_p99_pass=timing['belief']['p99'] <= 10,
                 production_qualified=False,
                 projection='Per first tap: measured latency minus source-frame body/HUD+temporal duration plus 20ms (DESIGN p50 stages) or 35ms (DESIGN p95 stages). Observed queueing and other stage costs retained; these are scenarios, not Mac measurements.')

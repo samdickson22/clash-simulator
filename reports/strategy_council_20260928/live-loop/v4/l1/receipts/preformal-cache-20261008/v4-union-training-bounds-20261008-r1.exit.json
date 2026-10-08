@@ -1,0 +1,22 @@
+{
+  "host": "127x18",
+  "label": "v4-union-training-bounds-20261008-r1",
+  "started_utc": "2026-10-08T12:33:12.016868+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/test_union_training_bounds.py",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/v4-union-training-bounds-20261008-r1"
+  ],
+  "supervisor_pid": 1056882,
+  "status": "fail",
+  "error": "[Errno 11] Resource temporarily unavailable",
+  "exit_code": 1,
+  "finished_utc": "2026-10-08T12:33:12.016888+00:00",
+  "stop_reason": null,
+  "peak_processes": 0,
+  "peak_rss_bytes": 0,
+  "peak_pss_bytes": 0,
+  "memory_metric": "owned_tree_pss"
+}

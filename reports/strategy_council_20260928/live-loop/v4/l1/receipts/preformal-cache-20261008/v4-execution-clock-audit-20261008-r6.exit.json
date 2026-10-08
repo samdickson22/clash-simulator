@@ -1,0 +1,24 @@
+{
+  "host": "127x18",
+  "label": "v4-execution-clock-audit-20261008-r6",
+  "started_utc": "2026-10-08T11:04:16.250642+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/audit_execution_clock_v4.py",
+    "--source",
+    "/mpac/sdicks02/repos/clasher-lease/data/v4-matches",
+    "--split",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/split.json",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/v4-execution-clock-audit-20261008-r6-audit.json"
+  ],
+  "supervisor_pid": 1035819,
+  "pid": 1035823,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T11:04:21.535267+00:00",
+  "stop_reason": null,
+  "peak_processes": 2,
+  "peak_rss_bytes": 74457088
+}

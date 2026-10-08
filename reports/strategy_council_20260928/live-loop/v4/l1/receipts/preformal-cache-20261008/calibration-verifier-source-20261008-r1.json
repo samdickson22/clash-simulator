@@ -1,0 +1,11 @@
+{
+  "source_sha256": {
+    "verify_calibration_v4.py": "fc6dff127f58f327ab7d1e66fe19b7abfa7292d5b72a16526afaf7cc7ae23e1d",
+    "test_verify_calibration_v4.py": "0040a95d638bb61668caa98d369d295bf985096b4e6c90e7edbf6a61a3610818"
+  },
+  "test_label": "v4-calibration-verify-20261008-01r1",
+  "checks": 27,
+  "synthetic_only": true,
+  "selection_seal": false,
+  "heldout_payloads_opened": false
+}

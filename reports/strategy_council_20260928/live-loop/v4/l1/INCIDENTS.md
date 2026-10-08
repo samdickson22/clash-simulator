@@ -1,5 +1,18 @@
 # T6/T7 retained technical attempts
 
+## Execution-clock boundary preparation, 2026-10-08 10:00 UTC
+
+`18:v4-execution-clock-audit-20261008-r2` (1019716 / 1019718) failed before
+writing an audit result: leading clamped tick did not equal the first interior
+screenshot's lower tick. That equality was an implementation assumption;
+native samples can advance between screenshots. The corrected check requires
+constant edge clamps and monotonicity, using leading upper/trailing lower bounds
+only. No timestamps are extrapolated; unsupported sides remain unavailable.
+Regression r3 passes 41 synthetic cases; full audit r3 maps the identical 287
+receipt population, 14,393 accepted events, zero omissions. Keep failed log/exit
+and the original 14-unenclosed r1 audit. No heldout or prediction result informed
+this correction, and no collector or frozen registration file changed.
+
 ## Scorer preparation, 2026-10-08
 
 - `16:v4-scoring-tests-20261008-r1`, supervisor 3443711 / child 3443713,
@@ -86,3 +99,30 @@
   function does. Raw input timestamps and the failed stage are retained as
   validation-inputs-producer-ms.jsonl and validation-inference-fractional-ms.
   Fourth attempt resumes the same completed fit. This changes no detector logic.
+# 2026-10-08 09:23 UTC — short replay-helper test wrapper race
+
+Lease 16 `v4-validation-replay-tests-20261008-r1`, supervisor 3490685 / child
+3490687, printed 19 passing synthetic checks and child exit 0. The supervisor
+reported `stopped`, reason `job exited with descendants still running`, matching
+the retained short-command race. Peak two processes / 28,360,704 bytes RSS.
+Retain log/exit receipt; do not present this as a clean wrapper PASS or a real
+GPU replay. No retry solely to obtain a green wrapper status.
+
+09:29 extension: r2 tests the newly added completion-journal scorer adapter,
+33 checks passing, child 3493113 exit 0 / supervisor 3493111 `stopped` for the
+same descendant-exit reason; peak two processes / 28,839,936 bytes RSS. Both
+receipts retained. No wrapper change or broad process termination.
+
+
+2026-10-08 11:30 UTC: `v4-cache-extension-tests-20261008-r1` on 16 passed
+17 synthetic checks and child 3524177 exited 0. Supervisor 3524175 recorded
+`stopped: job exited with descendants still running`, the known short-job
+wrapper race. Preserve both outcomes; no retry for a green wrapper status.
+
+
+2026-10-08 11:42 UTC discovery: `v4-cache-unique-20261008-16r1` failed exit 2
+at 11:32:43 after completing all 25 selected caches. Its final `cache_manifest.py`
+was absent from 16's source snapshot. Deployed that owned verifier and launched
+`v4-cache-unique-verify-20261008-16r1` (3527218 / 3527221): PASS 11:44:22,
+50 hashes / 395 exact checks / zero mismatches. No decoding repeated, no data
+removed. Keep the original failed wrapper receipt and verification-only receipt.

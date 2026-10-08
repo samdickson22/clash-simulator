@@ -6,7 +6,7 @@ from cache_budget import validate_root,require_growth,used_bytes,MAX_BYTES,MIN_F
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--from-host',choices=('127x01','127x03','127x04','127x08','127x11','127x13','127x14','127x16','127x18'),required=True)
+    p=argparse.ArgumentParser();p.add_argument('--from-host',choices=('127x01','127x03','127x04','127x08','127x09','127x11','127x13','127x14','127x15','127x16','127x18'),required=True)
     p.add_argument('--remote-cache',required=True);p.add_argument('--cache',type=Path,required=True)
     p.add_argument('--source',type=Path,required=True);p.add_argument('--split',type=Path,required=True)
     p.add_argument('--receipt',type=Path,required=True);p.add_argument('--episodes',nargs='+');a=p.parse_args()
@@ -19,6 +19,9 @@ def main():
     script='import pathlib,json; print(json.dumps([json.loads(p.read_text()) for p in sorted(pathlib.Path('+repr(str(remote))+').glob("*/index.json"))]))'
     result=subprocess.run(['ssh','-o','BatchMode=yes',a.from_host,'python3 -'],input=script,text=True,capture_output=True,check=True)
     indices=json.loads(result.stdout);rows=[];files=[]
+    if a.episodes and (len(a.episodes)!=len(set(a.episodes)) or
+            set(a.episodes)-{i['episode'] for i in indices}):
+        raise ValueError('Requested cache episodes missing or duplicated')
     for index in indices:
         ep=index['episode']
         if a.episodes and ep not in a.episodes:continue

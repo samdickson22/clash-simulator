@@ -1,0 +1,20 @@
+{
+  "host": "127x16",
+  "label": "v4-validation-score-tests-20261008-r1",
+  "started_utc": "2026-10-08T10:16:14.768366+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/test_validation_score_v4.py",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-lease/data/v4-validation-score-fixtures-r1"
+  ],
+  "supervisor_pid": 3504170,
+  "pid": 3504172,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T10:16:15.885739+00:00",
+  "stop_reason": null,
+  "peak_processes": 2,
+  "peak_rss_bytes": 30355456
+}

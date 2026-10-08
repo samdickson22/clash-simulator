@@ -68,6 +68,27 @@ def main():
         rejection(lambda:write(adm,{}),lambda:adm.write_bytes(original_admission))
         receipt=source/'val-a/receipt.json';original_receipt=receipt.read_bytes()
         rejection(lambda:write(receipt,{}),lambda:receipt.write_bytes(original_receipt))
+        # Full-union fits retain both populations' exact index snapshots.
+        write(cache/'val-a/index.json',dict(synthetic=True,split='validation'))
+        manifest.update(formal_cache_union=True,engineering_only=False,
+            formal_admission_sha256=gate.sha(run/'admission.json'),
+            cache_union_provenance=[dict(index_sha256={ep:gate.sha(cache/ep/'index.json')
+                for ep in ('train-a','val-a')})])
+        def save_manifest():
+            write(model/'manifest.json',manifest)
+            complete=json.loads((model/'complete.json').read_text());complete['manifest']=manifest
+            write(model/'complete.json',complete)
+        save_manifest()
+        assert invoke()['validated'];checks+=1
+        val_index=cache/'val-a/index.json';original_val=val_index.read_bytes()
+        rejection(lambda:val_index.write_text('{}'),lambda:val_index.write_bytes(original_val))
+        original_pin=manifest['formal_admission_sha256']
+        def change_pin(value):manifest['formal_admission_sha256']=value;save_manifest()
+        rejection(lambda:change_pin('0'*64),lambda:change_pin(original_pin))
+        original_groups=manifest['cache_union_provenance']
+        def change_groups(value):manifest['cache_union_provenance']=value;save_manifest()
+        rejection(lambda:change_groups([dict(index_sha256=manifest['cache_index_sha256'])]),
+                  lambda:change_groups(original_groups))
     result=dict(pass_=True,checks=checks,synthetic_only=True,fixtures=str(root),heldout_payloads_opened=False)
     write(root/'complete.json',result);print(json.dumps(result),flush=True)
 

@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-08T13:34:00Z",
+  "source_sha256": {
+    "validation_replay_v4.py": "7d8b8fa2285c266b11466fa789e92a9a07b0d1a24e0eb563871e87866da1849f",
+    "validation_score_v4.py": "d91d2c30be97ec46c92b6884d91126acbcefcdfa9b368c844aa40fd42145b6f9",
+    "selection_matrix_v4.py": "1366bca7545458870d70a09e393b20f8bc8eaa9e264e714d9ff941c7def0a95b",
+    "card_thresholds_v4.py": "c53fac81f8212c0e2d4d7581bef1f1a99d61f561c36417035a8f42e6febc8a66",
+    "test_validation_replay_v4.py": "13d4fb57c2b11f0252ce7325aa2b592f92cf50661fca2b6691e5842fa950fc10",
+    "test_validation_score_v4.py": "27bec65da85800cb0c3c9e349adb053b27c4e014f02e5239c91f7d305a69726e",
+    "test_selection_matrix_v4.py": "d519ec1af751c203bc626fc9787eb6efe05424a1edc28ec4d7ce80e7a065c1f2",
+    "test_card_thresholds_v4.py": "7d59b2e392d38abf993cdd3d9d682da4e99fb3d4f964fab96c2f72fe2c8290f6"
+  },
+  "tests": 147,
+  "heldout_payloads_opened": false,
+  "formal_gates": "BLOCKED"
+}

@@ -1,0 +1,24 @@
+{
+  "host": "127x18",
+  "label": "v4-cache-transport-probe-20261008-r1",
+  "started_utc": "2026-10-08T12:04:49.116565+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/probe_cache_transport_v4.py",
+    "--server-label",
+    "v4-cache-transport-server-20261008-r1",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/v4-cache-transport-probe-20261008-r1"
+  ],
+  "supervisor_pid": 1049885,
+  "pid": 1049893,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T12:05:48.691232+00:00",
+  "stop_reason": null,
+  "peak_processes": 4,
+  "peak_rss_bytes": 1388773376,
+  "peak_pss_bytes": 23048192,
+  "memory_metric": "owned_tree_pss"
+}

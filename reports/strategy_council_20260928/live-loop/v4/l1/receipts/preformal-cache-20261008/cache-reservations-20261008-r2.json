@@ -1,0 +1,29 @@
+{
+  "utc": "2026-10-08T14:15:00Z",
+  "reservations_gb": {
+    "127x01": 300,
+    "127x18": 300,
+    "127x16": 230,
+    "127x03": 150
+  },
+  "aggregate_gb": 980,
+  "headroom_gb": 20,
+  "source_sha256": {
+    "cache_budget.py": "49a68911bd771643d460ed57372a29f42402212bd8e60d99b853eec729285df6",
+    "cache_home_03.py": "b5d22dc44948798acd21a65ae0362d307194205f3f2b31b5ba704043252d7500",
+    "cache_unique_batch.sh": "6b1b6583544168694e79a2a6fdf55ac889eeb599e84932ce6a94afe96ea43230",
+    "test_cache_budget.py": "a88d2a452391ab6821cc5a0ee04c5765ed6acc7234a96fa54cc4e766d7bea3f9"
+  },
+  "metadata_before_reallocation": {
+    "127x16": {
+      "du_bytes": 213909967016,
+      "free_bytes": 1233202065408
+    },
+    "127x03": {
+      "du_bytes": 56817326570,
+      "free_bytes": 1731909013504
+    }
+  },
+  "tests": 31,
+  "heldout_payloads_opened": false
+}

@@ -24,13 +24,17 @@ def read(path):
     return json.loads(path.read_text())
 
 
-def expected_sources():
+def expected_sources(formal_union=False):
     code = Path(__file__).resolve().parent
     root = code.parents[4]
-    return [*[code/n for n in ('train_v4.py', 'data_v4.py', 'labels_v4.py', 'pixel_cache.py')],
+    sources=[*[code/n for n in ('train_v4.py', 'data_v4.py', 'labels_v4.py', 'pixel_cache.py')],
             root/'src/clasher/vision/l1_v4.py', root/'gamedata.json',
             root/'reports/strategy_council_20260928/live-loop/l1/calibration.json',
             code.parent/'body-catalog.json']
+    if formal_union:
+        from formal_union_v4 import EXTRA_SOURCES
+        sources.extend(code/n for n in EXTRA_SOURCES)
+    return sources
 
 
 def validate_run(run, source, split, phase_state, phase_exit):
@@ -57,7 +61,7 @@ def validate_run(run, source, split, phase_state, phase_exit):
         raise ValueError('Full validation population missing')
     model = run/'model'
     manifest, complete, inventory = (read(model/p) for p in ('manifest.json', 'complete.json', 'data/inventory.json'))
-    measured = {str(p): sha(p) for p in expected_sources()}
+    measured = {str(p): sha(p) for p in expected_sources(formal_union=manifest.get('formal_cache_union') is True)}
     if manifest.get('source_hashes') != measured:
         raise ValueError('Current replay/training sources differ from measured fit')
     for path, digest in measured.items():
@@ -66,6 +70,11 @@ def validate_run(run, source, split, phase_state, phase_exit):
     if sha(model/'last.pt') != complete.get('checkpoint_sha256'):
         raise ValueError('Final checkpoint bytes changed')
     cache = Path(manifest.get('pixel_cache') or '')
+    if manifest.get('formal_cache_union') is True:
+        from formal_union_v4 import validate_provenance
+        if manifest.get('formal_admission_sha256')!=sha(run/'admission.json'):
+            raise ValueError('Formal union admission pin differs')
+        validate_provenance(manifest,populations,cache)
     for ep, digest in manifest.get('cache_index_sha256', {}).items():
         if ep not in populations['train'] or sha(cache/ep/'index.json') != digest:
             raise ValueError('Training cache index changed')

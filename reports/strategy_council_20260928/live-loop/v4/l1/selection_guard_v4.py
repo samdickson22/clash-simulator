@@ -22,6 +22,7 @@ def validate_t7_fit(manifest, complete, inventory, training_rows, *,
     for key, value in expected.items():
         if type(manifest.get(key)) is not type(value) or manifest[key] != value:
             raise ValueError(f'Not registered full T7 configuration: {key}')
+    if manifest.get('engineering_only',False):raise ValueError('Engineering fit cannot enter formal selection')
     if not manifest.get('pixel_cache'):
         raise ValueError('Formal T7 cache required')
     if complete.get('steps_completed') != 9600 or complete.get('heldout_opened') is not False:

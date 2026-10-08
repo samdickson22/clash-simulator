@@ -1,0 +1,49 @@
+{
+  "label": "v4-home-union-gpu-20261008-01r1",
+  "completed_utc": "2026-10-08T14:45:24Z",
+  "engineering_only": true,
+  "formal_population_seal": false,
+  "heldout_payloads_opened": false,
+  "staged_matches": 433,
+  "staged_frames": 770568,
+  "steps": 128,
+  "epochs": 1,
+  "seed": 6108,
+  "loader_threads": 6,
+  "precision": "bf16",
+  "end_to_end_windows_per_second": 10.054579381040831,
+  "gpu_windows_per_second": 12.853231856179175,
+  "encoded_frames_per_second": 205.6517096988668,
+  "training_loop_wall_seconds": 12.730517622781917,
+  "wrapper_wall_seconds": 652,
+  "uncached_baseline_windows_per_second": 1.282,
+  "speedup_over_uncached": 7.842885632637154,
+  "fraction_of_same_run_gpu_rate": 0.7822607958485636,
+  "mean_loader_wait_seconds": 0.011035984736736282,
+  "peak_rss_kib": 19589984,
+  "peak_gpu_allocated_mib": 2034.3076171875,
+  "peak_gpu_reserved_mib": 2534.0,
+  "parity": {
+    "samples": 16,
+    "local": 8,
+    "remote": 8,
+    "counts": {
+      "jpeg": 4,
+      "affine": 7,
+      "flip": 10
+    },
+    "historical_sampler_exact": true,
+    "parallel_tensors_exact": true,
+    "rng_exact": true,
+    "heldout_opened": false,
+    "engineering_only": true
+  },
+  "exclusions": "71-match shard on busy 16 excluded; initialization/SHA/parity excluded from training-loop rate; all formal/Mac/T5/T8 gates BLOCKED",
+  "evidence_sha256": {
+    "v4-home-union-gpu-20261008-01r1-training-complete.json": "bfb128a3e8c11108186998151b952228da4b04e6df372885d78ef4800be03f60",
+    "v4-home-union-gpu-20261008-01r1-parity.json": "e952479c303016534f62ad302a7340688119d348f12af9d5001748bf3905f3aa",
+    "v4-home-union-gpu-20261008-01r1-complete.json": "5b75e99d22cfd08c90b92dc6b92b807a3fdd51e8164b60d8b0ecf8b321ca8d4f",
+    "v4-home-union-gpu-20261008-01r1.log": "20cd4f705bfefe2ca5fe6864b6db0fe7a05f7b469b3828c7a2e5478884837550",
+    "v4-home-union-gpu-20261008-01r1.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  }
+}

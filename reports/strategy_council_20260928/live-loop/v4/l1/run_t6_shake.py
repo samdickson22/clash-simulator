@@ -18,6 +18,7 @@ def canonical_inputs(rows):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--dataset',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--pixel-cache-mib',type=int,default=4096)
+    p.add_argument('--pixel-cache-directory',type=Path)
     p.add_argument('--epochs',type=int,default=1);p.add_argument('--steps',type=int,default=40);a=p.parse_args()
     a.output.mkdir(parents=True,exist_ok=True)
     deadline=time.monotonic()+3600
@@ -28,7 +29,16 @@ def main():
     if any(e['split'] not in ('train','validation') for e in manifest['matches']):raise ValueError('Heldout forbidden')
     model=a.output/'model';inference=a.output/'validation-inference';evaluation=a.output/'validation-evaluation'
     if not (model/'complete.json').exists():
-        run(['scripts/train_l1_stream_v3.py','--dataset',a.dataset,'--audit',a.dataset/'audit','--output',model,'--device','cuda','--pixel-cache-mib',a.pixel_cache_mib,'--epochs',a.epochs,'--steps',a.steps])
+        extra=[]
+        if a.pixel_cache_directory:
+            import fcntl
+            from cache_budget import validate_root,require_growth
+            root=validate_root(a.pixel_cache_directory.parent)
+            lock=(root/'.writer.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+            require_growth(root,a.pixel_cache_mib*2**20+2*10**9)
+            if a.pixel_cache_directory.exists():raise ValueError('Fresh T6 cache directory required')
+            extra=['--pixel-cache-directory',a.pixel_cache_directory]
+        run(['scripts/train_l1_stream_v3.py','--dataset',a.dataset,'--audit',a.dataset/'audit','--output',model,'--device','cuda','--pixel-cache-mib',a.pixel_cache_mib,'--epochs',a.epochs,'--steps',a.steps,*extra])
     inputs=a.output/'validation-inputs.jsonl'
     if not inputs.exists():run(['scripts/evaluate_l1_stream_v3.py','--dataset',a.dataset,'--audit',a.dataset/'audit','--split','validation','--prepare-inputs','--output',inputs])
     # The unchanged public contract requires integer milliseconds. Preserve raw

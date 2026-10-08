@@ -1,0 +1,12 @@
+{
+  "engineering_only": true,
+  "formal_population_seal": false,
+  "heldout_payloads_opened": false,
+  "client_host": "127x01",
+  "server_host": "127x03",
+  "staged_matches": 433,
+  "scope": "explicit cached engineering subset; cannot substitute for formal full-population fitting",
+  "source_sha256": "238344a5461b50ae971b52b7949dc8357e17599871102fd36a0f9792e3d62600",
+  "training_complete_sha256": "bfb128a3e8c11108186998151b952228da4b04e6df372885d78ef4800be03f60",
+  "parity_sha256": "e952479c303016534f62ad302a7340688119d348f12af9d5001748bf3905f3aa"
+}

@@ -1,0 +1,19 @@
+{
+  "status": "verified",
+  "destination_host": "127x01",
+  "destination": "/mpac/sdicks02/repos/clasher-v4-training/checkpoint-mirrors/127x15/synthetic-run/20261008T150854467993Z",
+  "manifest_sha256": "b5116b7774c689d820d63531c0c71fdd5f3b05a1fa86fb7192958fe9146eec53",
+  "verification": {
+    "files": 2,
+    "verified": true
+  },
+  "files_sha256": {
+    "model/last.pt": "25e61108931817156f14ad953beef99c12ceb8ffc6453de71643cfd3e7c62749",
+    "model/manifest.json": "c62f79f80f0f570bfbbf9f35cebeccc420bee67cf388fc95fedd49529e438531"
+  },
+  "checkpoint_count": 1,
+  "utc": "2026-10-08T15:08:54.468672+00:00",
+  "heldout_payloads_opened": false,
+  "synthetic_only": true,
+  "checks": 2
+}

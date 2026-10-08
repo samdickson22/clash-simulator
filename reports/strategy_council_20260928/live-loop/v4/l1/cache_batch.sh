@@ -26,7 +26,7 @@ split=$root/reports/strategy_council_20260928/live-loop/v4/split.json
 users=$("$HOME/.local/bin/fleet-console-users")
 [[ $users =~ ^[0-9]+$ ]] || { echo 'Invalid console helper response' >&2; exit 2; }
 if [[ $action == build ]]; then
-  partition=${3:?partition}; partitions=${4:?partitions}; workers=${5:?workers}
+  partition=${3:?partition}; partitions=${4:?partitions}; workers=${5:?workers}; budget=${6:-280}
   (( users == 0 || workers + 4 <= 16 )) || { echo 'Console cap' >&2; exit 75; }
 fi
 "$python" -B - "$legacy" "$cache" "$jobs/$label-migration.json" "$code" <<'PY'
@@ -66,4 +66,4 @@ if [[ $host != 127x01 ]]; then
 fi
 exec "$python" -B "$code/build_cache.py" --source "$source" --split "$split" \
   --cache "$cache" --workers "$workers" --partition "$partition" --partitions "$partitions" \
-  --budget-gb 280 --receipt "$jobs/$label-build.json"
+  --budget-gb "$budget" --receipt "$jobs/$label-build.json"

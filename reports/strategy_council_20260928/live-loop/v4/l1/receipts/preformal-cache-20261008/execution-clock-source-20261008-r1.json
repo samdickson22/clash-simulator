@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-08T09:49:37.385495+00:00",
+  "files": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/execution_clock_v4.py": "27e273b652ad36c6e556e1a93c63883bbdd7dd86465f4cf4664a7303075f76a4",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_execution_clock_v4.py": "158bd6a7aa2158bf7f14c50716a44b99b9a345997747d5031afa9eb23d41d0d4",
+    "reports/strategy_council_20260928/live-loop/v4/l1/audit_execution_clock_v4.py": "729792df5a6b6020868dd354e6feae27adb0079229a5bb02a7dadc8bcfc30fb9"
+  },
+  "tests": "32 synthetic checks; wrapper pass",
+  "timing_certified": false,
+  "heldout_payloads_opened": false
+}

@@ -600,3 +600,48 @@ bit parity remain unmeasured until that gated run.
 4. Own-state/cycle/elixir validation, pixel lifecycle/end/result reader, L2-v4
    PREREG, and T9 smoke before the paired O/P/S/S-d evaluation. There is no
    result-screen or match-start controller in this pixel-playing runtime.
+
+
+## Mac runtime preparation (2026-10-08, measurement blocked)
+
+The user confirmed T1 Phase A stopped at 15:43Z and authorized stopping its two
+owned renderers for this replay. At 15:46:39Z, receipt PID/start/AVD/port checks
+matched renderer-1 PID 28907 (5584/8558) and renderer-2 PID 21614 (5586/8559).
+Both exited after verified SIGTERM. Pool claims were empty and its supervisor
+was absent. AVDs and receipts remain intact; UTM Windows and all adb servers
+were left running. Memory pressure was normal (level 1) after shutdown, memory
+free rose to 60%, and immediate load was 4.48/5.01/5.41 (later 3.21/4.38/5.10).
+Full before/after evidence is retained in `runtime-results/mac-preparation/`.
+
+The isolated Mac root is `/Users/sam/Desktop/code/clasher-runtime-v4/`.
+It contains the allowlisted runtime/test/tool copies and links to existing Mac
+repository dependencies. No differing Mac repository file was overwritten.
+The optional ARM `_lattice.dylib` was built with rustc 1.97.1 and successfully
+loaded. Twenty match folders were selected by frozen train membership before
+transfer from 127x01; receipts independently confirm train. The original split
+hash is `3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258`.
+The Mac v1 body and HUD weights match the fleet fallback hashes; MPS is available.
+
+**Mac latency and tracker parity remain NOT MEASURED.** The Mac lacks frozen
+`search-noise-s4/` and `search-noise-s6/` dependencies, outside the user's explicit
+copy allowlist. Approval to stage only those missing dependencies, the frozen
+train prior, and one development parity trace was requested and remains pending.
+No replay or parity computation has been launched. See `runtime-mac-latency.json`.
+
+The timing code is prepared: P3 now reads `planner_total_delay_ticks` via
+`planner_timing`, requiring an explicit nonnegative integer. P4 continues to
+read backend `p50_ticks` and uses backend p99 for verification. Missing planner
+calibration fails explicitly; it does not silently substitute D_b. The separate
+field is currently **provisional 28 ticks from the existing fleet median**,
+clearly marked in `actuation/backend-timing.json`; this is not a Mac result.
+It will be replaced with `round((Mac frame_to_tap.p50 + gRPC p50_ms)/50)` after
+measurement. The metric includes completion of the first-attempt mock two-tap
+submission and its 20 ms interval. A focused Mac test passes, including unchanged
+P4 verification timing and rejection of absent/invalid planner fields. The ADB
+profile has no measured total delay and is not planner-calibrated.
+
+The revised coordinator acceptance budget supersedes the historical 200 ms
+median: **p50 ≤260 ms and p99 ≤400 ms**, on ≥6 train matches and ≥200 first
+attempts. `latency_suite.py --device mps` now selects MPS explicitly and supports
+Mac process preflight; `latency_report.py` records the actual device and revised
+budget. No Mac verdict can be inferred from the provisional fleet value.

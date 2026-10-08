@@ -652,3 +652,4 @@ Also on the hub, but with copies elsewhere:
   3. T5 main03 was stopped by the lease wrapper at 15:39Z for GPU free <8 GB (our own peak); told to resume from checkpoint
      with an output-neutral eval-memory reduction.
   Fleet: 02/07/11 still offline. No reclaims.
+- **2026-10-08 15:54 UTC:** Mac latency task blocked on my copy allowlist: v4 imports the frozen S4 tracker v3 and S6 planner files, which the Mac lacked. **Approved** copying the minimum frozen dependencies plus one S4 dev parity trace into the separate runtime directory (hash-verified against the freeze manifests, no Mac repo overwrites). Done so far: T1-owned emulators 28907/21614 stopped by verified SIGTERM (AVDs kept; Mac memory free 60%); lattice dylib built; 20 train matches staged; P3 reads `planner_total_delay_ticks` (provisional 28 until the Mac measurement).

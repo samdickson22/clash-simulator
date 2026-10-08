@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-08T13:47:00Z",
+  "source_sha256": {
+    "validation_score_v4.py": "7ab8e93c6531eed144c08a3b3317766c1b5a70b9affba68aa5f92ec7754893e5",
+    "calibration_candidate_v4.py": "abde2c6556942415233fe324ee37c91ade1d6c13b5006e63e89d1dc0fc65e9c2",
+    "test_calibration_candidate_v4.py": "2a4c94d3af6cbde7b872ad7dbfd01d701772c2ef2ed2ede808e42f52409bf290",
+    "calibration_v4.py": "96d06b2147134ed4413af3a60960f78d0e64626e108e78121befaca8dd7018e2"
+  },
+  "new_checks": 19,
+  "regression_checks": 147,
+  "heldout_payloads_opened": false,
+  "selection_provenance_verified": false,
+  "formal_gates": "BLOCKED"
+}

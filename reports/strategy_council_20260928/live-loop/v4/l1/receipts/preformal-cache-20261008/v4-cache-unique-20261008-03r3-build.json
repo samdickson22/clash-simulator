@@ -1,0 +1,953 @@
+{
+  "matches": 72,
+  "results": [
+    {
+      "episode": "v4-phase-a-1975101172",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101167",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101168",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101173",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101174",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101175",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101171",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101166",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101170",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101178",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101180",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101182",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101176",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101181",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101186",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101187",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101177",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101183",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101188",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101184",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101185",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101196",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101192",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101195",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101190",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101194",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101201",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101200",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101193",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101197",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101203",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101202",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101198",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101206",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101204",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101208",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101210",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101205",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101191",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101214",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101215",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101213",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101207",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101216",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101217",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101221",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101211",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101212",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101218",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101220",
+      "reused": true
+    },
+    {
+      "episode": "v4-phase-a-1975101224",
+      "frames": 795,
+      "bytes": 425909404,
+      "seconds": 9.41651776782237,
+      "equality": {
+        "pass": true,
+        "checked": 8,
+        "frame_indices": [
+          59,
+          70,
+          368,
+          393,
+          583,
+          592,
+          671,
+          736
+        ],
+        "seed": 1975107335,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101230",
+      "frames": 1122,
+      "bytes": 629760975,
+      "seconds": 13.769636950921267,
+      "equality": {
+        "pass": true,
+        "checked": 12,
+        "frame_indices": [
+          114,
+          146,
+          259,
+          281,
+          415,
+          510,
+          538,
+          669,
+          709,
+          762,
+          765,
+          850
+        ],
+        "seed": 1975107341,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101227",
+      "frames": 1217,
+      "bytes": 612860326,
+      "seconds": 14.500206198077649,
+      "equality": {
+        "pass": true,
+        "checked": 13,
+        "frame_indices": [
+          369,
+          370,
+          401,
+          596,
+          689,
+          690,
+          709,
+          756,
+          1064,
+          1092,
+          1129,
+          1145,
+          1176
+        ],
+        "seed": 1975107338,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101223",
+      "frames": 1195,
+      "bytes": 724584174,
+      "seconds": 14.959230014123023,
+      "equality": {
+        "pass": true,
+        "checked": 12,
+        "frame_indices": [
+          36,
+          42,
+          63,
+          96,
+          116,
+          300,
+          369,
+          522,
+          930,
+          1004,
+          1006,
+          1122
+        ],
+        "seed": 1975107334,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101228",
+      "frames": 1561,
+      "bytes": 657152004,
+      "seconds": 16.884983173105866,
+      "equality": {
+        "pass": true,
+        "checked": 16,
+        "frame_indices": [
+          14,
+          194,
+          197,
+          396,
+          415,
+          418,
+          462,
+          470,
+          576,
+          662,
+          724,
+          966,
+          1313,
+          1323,
+          1437,
+          1485
+        ],
+        "seed": 1975107339,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101231",
+      "frames": 793,
+      "bytes": 462300891,
+      "seconds": 9.752654501935467,
+      "equality": {
+        "pass": true,
+        "checked": 8,
+        "frame_indices": [
+          33,
+          84,
+          263,
+          292,
+          325,
+          510,
+          682,
+          695
+        ],
+        "seed": 1975107342,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101222",
+      "frames": 1601,
+      "bytes": 1245100376,
+      "seconds": 22.828490889864042,
+      "equality": {
+        "pass": true,
+        "checked": 17,
+        "frame_indices": [
+          62,
+          78,
+          167,
+          198,
+          303,
+          313,
+          354,
+          360,
+          426,
+          631,
+          698,
+          722,
+          1058,
+          1090,
+          1138,
+          1393,
+          1554
+        ],
+        "seed": 1975107333,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101226",
+      "frames": 2417,
+      "bytes": 1006466234,
+      "seconds": 25.521364226937294,
+      "equality": {
+        "pass": true,
+        "checked": 25,
+        "frame_indices": [
+          88,
+          320,
+          329,
+          331,
+          388,
+          430,
+          568,
+          635,
+          646,
+          647,
+          766,
+          768,
+          789,
+          807,
+          913,
+          1185,
+          1278,
+          1396,
+          1401,
+          1474,
+          1476,
+          1593,
+          2176,
+          2204,
+          2317
+        ],
+        "seed": 1975107337,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101234",
+      "frames": 1218,
+      "bytes": 505246307,
+      "seconds": 12.924585284199566,
+      "equality": {
+        "pass": true,
+        "checked": 13,
+        "frame_indices": [
+          10,
+          60,
+          150,
+          187,
+          287,
+          289,
+          291,
+          480,
+          501,
+          790,
+          993,
+          1059,
+          1139
+        ],
+        "seed": 1975107345,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101238",
+      "frames": 795,
+      "bytes": 473227060,
+      "seconds": 10.158932753838599,
+      "equality": {
+        "pass": true,
+        "checked": 8,
+        "frame_indices": [
+          61,
+          69,
+          173,
+          189,
+          337,
+          455,
+          627,
+          631
+        ],
+        "seed": 1975107349,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101237",
+      "frames": 1195,
+      "bytes": 597575564,
+      "seconds": 13.972081741085276,
+      "equality": {
+        "pass": true,
+        "checked": 12,
+        "frame_indices": [
+          82,
+          171,
+          292,
+          300,
+          307,
+          417,
+          418,
+          700,
+          702,
+          737,
+          1004,
+          1159
+        ],
+        "seed": 1975107348,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101233",
+      "frames": 2415,
+      "bytes": 919026713,
+      "seconds": 25.183526593027636,
+      "equality": {
+        "pass": true,
+        "checked": 25,
+        "frame_indices": [
+          6,
+          97,
+          231,
+          318,
+          346,
+          410,
+          449,
+          451,
+          505,
+          515,
+          536,
+          975,
+          1291,
+          1337,
+          1437,
+          1604,
+          1647,
+          1722,
+          1736,
+          1804,
+          1883,
+          2068,
+          2093,
+          2302,
+          2336
+        ],
+        "seed": 1975107344,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101236",
+      "frames": 1795,
+      "bytes": 1070407751,
+      "seconds": 22.519945780048147,
+      "equality": {
+        "pass": true,
+        "checked": 18,
+        "frame_indices": [
+          14,
+          60,
+          189,
+          257,
+          306,
+          510,
+          605,
+          655,
+          741,
+          789,
+          817,
+          1043,
+          1066,
+          1274,
+          1615,
+          1690,
+          1768,
+          1769
+        ],
+        "seed": 1975107347,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101235",
+      "frames": 2026,
+      "bytes": 1261698960,
+      "seconds": 25.661618589190766,
+      "equality": {
+        "pass": true,
+        "checked": 21,
+        "frame_indices": [
+          59,
+          95,
+          219,
+          275,
+          718,
+          774,
+          903,
+          973,
+          1062,
+          1178,
+          1316,
+          1334,
+          1488,
+          1524,
+          1557,
+          1663,
+          1782,
+          1796,
+          1814,
+          1855,
+          1890
+        ],
+        "seed": 1975107346,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101232",
+      "frames": 3276,
+      "bytes": 1425599197,
+      "seconds": 36.1476936431136,
+      "equality": {
+        "pass": true,
+        "checked": 33,
+        "frame_indices": [
+          38,
+          197,
+          376,
+          408,
+          462,
+          514,
+          620,
+          647,
+          771,
+          859,
+          929,
+          1012,
+          1019,
+          1062,
+          1190,
+          1299,
+          1355,
+          1388,
+          1432,
+          1521,
+          1636,
+          1824,
+          1962,
+          2194,
+          2665,
+          2671,
+          2802,
+          2887,
+          2922,
+          2946,
+          3125,
+          3211,
+          3234
+        ],
+        "seed": 1975107343,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101241",
+      "frames": 1291,
+      "bytes": 591845348,
+      "seconds": 14.737740928074345,
+      "equality": {
+        "pass": true,
+        "checked": 13,
+        "frame_indices": [
+          114,
+          310,
+          454,
+          471,
+          585,
+          591,
+          636,
+          684,
+          716,
+          765,
+          868,
+          1033,
+          1045
+        ],
+        "seed": 1975107352,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101225",
+      "frames": 4710,
+      "bytes": 2178590216,
+      "seconds": 52.433377667097375,
+      "equality": {
+        "pass": true,
+        "checked": 48,
+        "frame_indices": [
+          28,
+          131,
+          199,
+          361,
+          366,
+          537,
+          564,
+          631,
+          730,
+          755,
+          807,
+          881,
+          889,
+          947,
+          1034,
+          1091,
+          1102,
+          1239,
+          1251,
+          1318,
+          1405,
+          1611,
+          1918,
+          2153,
+          2189,
+          2198,
+          2332,
+          2497,
+          2533,
+          2677,
+          2761,
+          2959,
+          3064,
+          3109,
+          3124,
+          3194,
+          3340,
+          3507,
+          3520,
+          3839,
+          3842,
+          3959,
+          4154,
+          4216,
+          4303,
+          4344,
+          4437,
+          4540
+        ],
+        "seed": 1975107336,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101245",
+      "frames": 797,
+      "bytes": 505320687,
+      "seconds": 10.203660866012797,
+      "equality": {
+        "pass": true,
+        "checked": 8,
+        "frame_indices": [
+          62,
+          111,
+          136,
+          148,
+          178,
+          362,
+          412,
+          482
+        ],
+        "seed": 1975107356,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101244",
+      "frames": 958,
+      "bytes": 678433293,
+      "seconds": 12.854294896125793,
+      "equality": {
+        "pass": true,
+        "checked": 10,
+        "frame_indices": [
+          24,
+          106,
+          392,
+          452,
+          457,
+          623,
+          704,
+          707,
+          741,
+          935
+        ],
+        "seed": 1975107355,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101242",
+      "frames": 2156,
+      "bytes": 1049075545,
+      "seconds": 24.576166482875124,
+      "equality": {
+        "pass": true,
+        "checked": 22,
+        "frame_indices": [
+          319,
+          322,
+          355,
+          462,
+          516,
+          574,
+          581,
+          865,
+          943,
+          1025,
+          1110,
+          1131,
+          1180,
+          1186,
+          1210,
+          1232,
+          1406,
+          1712,
+          1780,
+          1838,
+          1855,
+          1893
+        ],
+        "seed": 1975107353,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101243",
+      "frames": 1795,
+      "bytes": 1178903538,
+      "seconds": 23.167575298110023,
+      "equality": {
+        "pass": true,
+        "checked": 18,
+        "frame_indices": [
+          139,
+          193,
+          202,
+          247,
+          392,
+          396,
+          515,
+          517,
+          538,
+          819,
+          830,
+          1115,
+          1145,
+          1236,
+          1329,
+          1451,
+          1550,
+          1753
+        ],
+        "seed": 1975107354,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101240",
+      "frames": 4789,
+      "bytes": 2004268629,
+      "seconds": 49.60659311618656,
+      "equality": {
+        "pass": true,
+        "checked": 48,
+        "frame_indices": [
+          54,
+          173,
+          248,
+          256,
+          337,
+          358,
+          511,
+          513,
+          610,
+          612,
+          728,
+          751,
+          1019,
+          1029,
+          1072,
+          1212,
+          1217,
+          1232,
+          1388,
+          1422,
+          1590,
+          1724,
+          1726,
+          2025,
+          2045,
+          2140,
+          2228,
+          2269,
+          2278,
+          2402,
+          2406,
+          2530,
+          2652,
+          2654,
+          2775,
+          2787,
+          2983,
+          3058,
+          3116,
+          3546,
+          3776,
+          3987,
+          4179,
+          4274,
+          4493,
+          4510,
+          4652,
+          4653
+        ],
+        "seed": 1975107351,
+        "mismatches": 0,
+        "reference": "independent sequential OpenCV decode + prepare_pixels, exact uint8"
+      }
+    }
+  ],
+  "heldout_opened": false,
+  "cache": "/mpac/sdicks02/repos/clasher-v4-cache",
+  "partition": 0,
+  "partitions": 1,
+  "bytes_on_host": 56817027562,
+  "budget_bytes": 78000000000,
+  "minimum_free_bytes": 200000000000,
+  "stopped": false,
+  "source_matches": 72,
+  "source_inventory_sha256": "bcefbb8010571d59fc1c9aab801bce2384c65e8423bb719dda13fc83226af250"
+}

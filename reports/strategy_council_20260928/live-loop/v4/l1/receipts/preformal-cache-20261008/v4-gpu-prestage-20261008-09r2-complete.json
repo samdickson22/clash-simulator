@@ -1,0 +1,9 @@
+{
+  "host": "127x09",
+  "matches": 559,
+  "admitted_sha256": "96c746467e5909b5c0de49c3b5b3d2aafd757cf79090b3152112613245442f5a",
+  "staged_inventory_sha256": "432c4890354e0e33e3702020293571b0789d98fa4f5d210a077b563e9532369a",
+  "formal_population_seal": false,
+  "heldout_payloads_opened": false,
+  "training_started": false
+}

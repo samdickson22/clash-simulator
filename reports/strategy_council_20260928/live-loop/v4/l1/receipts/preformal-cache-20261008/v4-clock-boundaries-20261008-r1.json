@@ -1,0 +1,623 @@
+{
+  "audit_sha256": "18646c76d36ec4ce30c41c521ae602487f4e7966e69c91af502f545fd344a9f5",
+  "examined": [
+    {
+      "episode": "v4-phase-a-1975100703",
+      "split": "train",
+      "event": {
+        "event_id": "v4-phase-a-1975100703-461",
+        "exec_tick": 5517,
+        "reason": "Execution tick is not enclosed; timing endpoint remains blocked"
+      },
+      "first_frame": {
+        "seq": 0,
+        "produced_at": 1791421556.908418,
+        "tick_lo": 3600,
+        "tick_hi": 3600,
+        "bracket_extrapolated": true
+      },
+      "last_frame": {
+        "seq": 1934,
+        "produced_at": 1791421653.61218,
+        "tick_lo": 5518,
+        "tick_hi": 5518,
+        "bracket_extrapolated": true
+      },
+      "first_nonextrapolated": {
+        "seq": 1,
+        "produced_at": 1791421556.958966,
+        "tick_lo": 3600,
+        "tick_hi": 3601,
+        "bracket_extrapolated": false
+      },
+      "last_nonextrapolated": {
+        "seq": 1919,
+        "produced_at": 1791421652.861279,
+        "tick_lo": 5516,
+        "tick_hi": 5518,
+        "bracket_extrapolated": false
+      },
+      "last_upper_before": {
+        "seq": 1917,
+        "produced_at": 1791421652.76425,
+        "tick_lo": 5515,
+        "tick_hi": 5516,
+        "bracket_extrapolated": false
+      },
+      "first_lower_after": {
+        "seq": 1920,
+        "produced_at": 1791421652.911667,
+        "tick_lo": 5518,
+        "tick_hi": 5518,
+        "bracket_extrapolated": true
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975100737",
+      "split": "train",
+      "event": {
+        "event_id": "v4-phase-a-1975100737-2142",
+        "exec_tick": 5317,
+        "reason": "Execution tick is not enclosed; timing endpoint remains blocked"
+      },
+      "first_frame": {
+        "seq": 0,
+        "produced_at": 1791426048.96853,
+        "tick_lo": 2401,
+        "tick_hi": 2401,
+        "bracket_extrapolated": true
+      },
+      "last_frame": {
+        "seq": 2932,
+        "produced_at": 1791426195.578839,
+        "tick_lo": 5318,
+        "tick_hi": 5318,
+        "bracket_extrapolated": true
+      },
+      "first_nonextrapolated": {
+        "seq": 1,
+        "produced_at": 1791426049.027355,
+        "tick_lo": 2401,
+        "tick_hi": 2402,
+        "bracket_extrapolated": false
+      },
+      "last_nonextrapolated": {
+        "seq": 2917,
+        "produced_at": 1791426194.832023,
+        "tick_lo": 5315,
+        "tick_hi": 5318,
+        "bracket_extrapolated": false
+      },
+      "last_upper_before": {
+        "seq": 2914,
+        "produced_at": 1791426194.677725,
+        "tick_lo": 5313,
+        "tick_hi": 5315,
+        "bracket_extrapolated": false
+      },
+      "first_lower_after": {
+        "seq": 2918,
+        "produced_at": 1791426194.881448,
+        "tick_lo": 5318,
+        "tick_hi": 5318,
+        "bracket_extrapolated": true
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975100743",
+      "split": "train",
+      "event": {
+        "event_id": "v4-phase-a-1975100743-2357",
+        "exec_tick": 3601,
+        "reason": "Execution tick is not enclosed; timing endpoint remains blocked"
+      },
+      "first_frame": {
+        "seq": 0,
+        "produced_at": 1791426773.567875,
+        "tick_lo": 1200,
+        "tick_hi": 1200,
+        "bracket_extrapolated": true
+      },
+      "last_frame": {
+        "seq": 2416,
+        "produced_at": 1791426894.375752,
+        "tick_lo": 3601,
+        "tick_hi": 3601,
+        "bracket_extrapolated": true
+      },
+      "first_nonextrapolated": {
+        "seq": 1,
+        "produced_at": 1791426773.636477,
+        "tick_lo": 1200,
+        "tick_hi": 1201,
+        "bracket_extrapolated": false
+      },
+      "last_nonextrapolated": {
+        "seq": 2401,
+        "produced_at": 1791426893.632715,
+        "tick_lo": 3599,
+        "tick_hi": 3601,
+        "bracket_extrapolated": false
+      },
+      "last_upper_before": {
+        "seq": 2398,
+        "produced_at": 1791426893.480344,
+        "tick_lo": 3598,
+        "tick_hi": 3599,
+        "bracket_extrapolated": false
+      },
+      "first_lower_after": {
+        "seq": 2402,
+        "produced_at": 1791426893.696886,
+        "tick_lo": 3601,
+        "tick_hi": 3601,
+        "bracket_extrapolated": true
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975100773",
+      "split": "train",
+      "event": {
+        "event_id": "v4-phase-a-1975100773-3969",
+        "exec_tick": 5909,
+        "reason": "Execution tick is not enclosed; timing endpoint remains blocked"
+      },
+      "first_frame": {
+        "seq": 0,
+        "produced_at": 1791431013.590797,
+        "tick_lo": 3600,
+        "tick_hi": 3600,
+        "bracket_extrapolated": true
+      },
+      "last_frame": {
+        "seq": 2323,
+        "produced_at": 1791431129.753305,
+        "tick_lo": 5910,
+        "tick_hi": 5910,
+        "bracket_extrapolated": true
+      },
+      "first_nonextrapolated": {
+        "seq": 1,
+        "produced_at": 1791431013.657987,
+        "tick_lo": 3600,
+        "tick_hi": 3602,
+        "bracket_extrapolated": false
+      },
+      "last_nonextrapolated": {
+        "seq": 2309,
+        "produced_at": 1791431129.050571,
+        "tick_lo": 5907,
+        "tick_hi": 5910,
+        "bracket_extrapolated": false
+      },
+      "last_upper_before": {
+        "seq": 2306,
+        "produced_at": 1791431128.902417,
+        "tick_lo": 5906,
+        "tick_hi": 5907,
+        "bracket_extrapolated": false
+      },
+      "first_lower_after": {
+        "seq": 2310,
+        "produced_at": 1791431129.10297,
+        "tick_lo": 5910,
+        "tick_hi": 5910,
+        "bracket_extrapolated": true
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975100780",
+      "split": "train",
+      "event": {
+        "event_id": "v4-phase-a-1975100780-4255",
+        "exec_tick": 4397,
+        "reason": "Execution tick is not enclosed; timing endpoint remains blocked"
+      },
+      "first_frame": {
+        "seq": 0,
+        "produced_at": 1791432004.94134,
+        "tick_lo": 3600,
+        "tick_hi": 3600,
+        "bracket_extrapolated": true
+      },
+      "last_frame": {
+        "seq": 797,
+        "produced_at": 1791432051.621278,
+        "tick_lo": 4398,
+        "tick_hi": 4398,
+        "bracket_extrapolated": true
+      },
+      "first_nonextrapolated": {
+        "seq": 1,
+        "produced_at": 1791432005.01143,
+        "tick_lo": 3600,
+        "tick_hi": 3601,
+        "bracket_extrapolated": false
+      },
+      "last_nonextrapolated": {
+        "seq": 782,
+        "produced_at": 1791432050.870941,
+        "tick_lo": 4396,
+        "tick_hi": 4398,
+        "bracket_extrapolated": false
+      },
+      "last_upper_before": {
+        "seq": 781,
+        "produced_at": 1791432050.820594,
+        "tick_lo": 4395,
+        "tick_hi": 4396,
+        "bracket_extrapolated": false
+      },
+      "first_lower_after": {
+        "seq": 783,
+        "produced_at": 1791432050.921574,
+        "tick_lo": 4398,
+        "tick_hi": 4398,
+        "bracket_extrapolated": true
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975100816",
+      "split": "train",
+      "event": {
+        "event_id": "v4-phase-a-1975100816-5551",
+        "exec_tick": 5249,
+        "reason": "Execution tick is not enclosed; timing endpoint remains blocked"
+      },
+      "first_frame": {
+        "seq": 0,
+        "produced_at": 1791437685.772269,
+        "tick_lo": 4200,
+        "tick_hi": 4200,
+        "bracket_extrapolated": true
+      },
+      "last_frame": {
+        "seq": 1066,
+        "produced_at": 1791437739.077287,
+        "tick_lo": 5251,
+        "tick_hi": 5251,
+        "bracket_extrapolated": true
+      },
+      "first_nonextrapolated": {
+        "seq": 1,
+        "produced_at": 1791437685.824171,
+        "tick_lo": 4200,
+        "tick_hi": 4202,
+        "bracket_extrapolated": false
+      },
+      "last_nonextrapolated": {
+        "seq": 1051,
+        "produced_at": 1791437738.34066,
+        "tick_lo": 5247,
+        "tick_hi": 5251,
+        "bracket_extrapolated": false
+      },
+      "last_upper_before": {
+        "seq": 1046,
+        "produced_at": 1791437738.073074,
+        "tick_lo": 5246,
+        "tick_hi": 5247,
+        "bracket_extrapolated": false
+      },
+      "first_lower_after": {
+        "seq": 1052,
+        "produced_at": 1791437738.372658,
+        "tick_lo": 5251,
+        "tick_hi": 5251,
+        "bracket_extrapolated": true
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975100822",
+      "split": "train",
+      "event": {
+        "event_id": "v4-phase-a-1975100822-421",
+        "exec_tick": 5462,
+        "reason": "Execution tick is not enclosed; timing endpoint remains blocked"
+      },
+      "first_frame": {
+        "seq": 0,
+        "produced_at": 1791437972.701689,
+        "tick_lo": 3600,
+        "tick_hi": 3600,
+        "bracket_extrapolated": true
+      },
+      "last_frame": {
+        "seq": 1877,
+        "produced_at": 1791438066.569092,
+        "tick_lo": 5462,
+        "tick_hi": 5462,
+        "bracket_extrapolated": true
+      },
+      "first_nonextrapolated": {
+        "seq": 1,
+        "produced_at": 1791437972.774488,
+        "tick_lo": 3600,
+        "tick_hi": 3602,
+        "bracket_extrapolated": false
+      },
+      "last_nonextrapolated": {
+        "seq": 1862,
+        "produced_at": 1791438065.817373,
+        "tick_lo": 5461,
+        "tick_hi": 5462,
+        "bracket_extrapolated": false
+      },
+      "last_upper_before": {
+        "seq": 1861,
+        "produced_at": 1791438065.783461,
+        "tick_lo": 5460,
+        "tick_hi": 5461,
+        "bracket_extrapolated": false
+      },
+      "first_lower_after": {
+        "seq": 1863,
+        "produced_at": 1791438065.869167,
+        "tick_lo": 5462,
+        "tick_hi": 5462,
+        "bracket_extrapolated": true
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975100835",
+      "split": "train",
+      "event": {
+        "event_id": "v4-phase-a-1975100835-549",
+        "exec_tick": 3601,
+        "reason": "Execution tick is not enclosed; timing endpoint remains blocked"
+      },
+      "first_frame": {
+        "seq": 0,
+        "produced_at": 1791438439.469293,
+        "tick_lo": 2400,
+        "tick_hi": 2400,
+        "bracket_extrapolated": true
+      },
+      "last_frame": {
+        "seq": 1217,
+        "produced_at": 1791438500.420947,
+        "tick_lo": 3602,
+        "tick_hi": 3602,
+        "bracket_extrapolated": true
+      },
+      "first_nonextrapolated": {
+        "seq": 2,
+        "produced_at": 1791438439.584928,
+        "tick_lo": 2401,
+        "tick_hi": 2402,
+        "bracket_extrapolated": false
+      },
+      "last_nonextrapolated": {
+        "seq": 1202,
+        "produced_at": 1791438499.670975,
+        "tick_lo": 3600,
+        "tick_hi": 3602,
+        "bracket_extrapolated": false
+      },
+      "last_upper_before": {
+        "seq": 1201,
+        "produced_at": 1791438499.622399,
+        "tick_lo": 3599,
+        "tick_hi": 3600,
+        "bracket_extrapolated": false
+      },
+      "first_lower_after": {
+        "seq": 1203,
+        "produced_at": 1791438499.735273,
+        "tick_lo": 3602,
+        "tick_hi": 3602,
+        "bracket_extrapolated": true
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975100898",
+      "split": "validation",
+      "event": {
+        "event_id": "v4-phase-a-1975100898-7850",
+        "exec_tick": 3600,
+        "reason": "Execution tick is not enclosed; timing endpoint remains blocked"
+      },
+      "first_frame": {
+        "seq": 0,
+        "produced_at": 1791444261.162249,
+        "tick_lo": 2400,
+        "tick_hi": 2400,
+        "bracket_extrapolated": true
+      },
+      "last_frame": {
+        "seq": 1217,
+        "produced_at": 1791444322.023072,
+        "tick_lo": 3601,
+        "tick_hi": 3601,
+        "bracket_extrapolated": true
+      },
+      "first_nonextrapolated": {
+        "seq": 1,
+        "produced_at": 1791444261.239517,
+        "tick_lo": 2400,
+        "tick_hi": 2404,
+        "bracket_extrapolated": false
+      },
+      "last_nonextrapolated": {
+        "seq": 1201,
+        "produced_at": 1791444321.223559,
+        "tick_lo": 3599,
+        "tick_hi": 3601,
+        "bracket_extrapolated": false
+      },
+      "last_upper_before": {
+        "seq": 1199,
+        "produced_at": 1791444321.122374,
+        "tick_lo": 3596,
+        "tick_hi": 3599,
+        "bracket_extrapolated": false
+      },
+      "first_lower_after": {
+        "seq": 1202,
+        "produced_at": 1791444321.286845,
+        "tick_lo": 3601,
+        "tick_hi": 3601,
+        "bracket_extrapolated": true
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975100978",
+      "split": "validation",
+      "event": {
+        "event_id": "v4-phase-a-1975100978-9857",
+        "exec_tick": 5208,
+        "reason": "Execution tick is not enclosed; timing endpoint remains blocked"
+      },
+      "first_frame": {
+        "seq": 0,
+        "produced_at": 1791449853.070876,
+        "tick_lo": 4800,
+        "tick_hi": 4800,
+        "bracket_extrapolated": true
+      },
+      "last_frame": {
+        "seq": 424,
+        "produced_at": 1791449874.28478,
+        "tick_lo": 5209,
+        "tick_hi": 5209,
+        "bracket_extrapolated": true
+      },
+      "first_nonextrapolated": {
+        "seq": 1,
+        "produced_at": 1791449853.153756,
+        "tick_lo": 4800,
+        "tick_hi": 4801,
+        "bracket_extrapolated": false
+      },
+      "last_nonextrapolated": {
+        "seq": 409,
+        "produced_at": 1791449873.523891,
+        "tick_lo": 5207,
+        "tick_hi": 5209,
+        "bracket_extrapolated": false
+      },
+      "last_upper_before": {
+        "seq": 407,
+        "produced_at": 1791449873.436947,
+        "tick_lo": 5206,
+        "tick_hi": 5207,
+        "bracket_extrapolated": false
+      },
+      "first_lower_after": {
+        "seq": 410,
+        "produced_at": 1791449873.589182,
+        "tick_lo": 5209,
+        "tick_hi": 5209,
+        "bracket_extrapolated": true
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101002",
+      "split": "train",
+      "event": {
+        "event_id": "v4-phase-a-1975101002-10457",
+        "exec_tick": 3600,
+        "reason": "Execution tick is not enclosed; timing endpoint remains blocked"
+      },
+      "first_frame": {
+        "seq": 0,
+        "produced_at": 1791451289.886673,
+        "tick_lo": 1200,
+        "tick_hi": 1200,
+        "bracket_extrapolated": true
+      },
+      "last_frame": {
+        "seq": 2416,
+        "produced_at": 1791451410.704532,
+        "tick_lo": 3601,
+        "tick_hi": 3601,
+        "bracket_extrapolated": true
+      },
+      "first_nonextrapolated": {
+        "seq": 1,
+        "produced_at": 1791451289.950814,
+        "tick_lo": 1200,
+        "tick_hi": 1201,
+        "bracket_extrapolated": false
+      },
+      "last_nonextrapolated": {
+        "seq": 2402,
+        "produced_at": 1791451409.988638,
+        "tick_lo": 3599,
+        "tick_hi": 3601,
+        "bracket_extrapolated": false
+      },
+      "last_upper_before": {
+        "seq": 2400,
+        "produced_at": 1791451409.893238,
+        "tick_lo": 3597,
+        "tick_hi": 3599,
+        "bracket_extrapolated": false
+      },
+      "first_lower_after": {
+        "seq": 2403,
+        "produced_at": 1791451410.057043,
+        "tick_lo": 3601,
+        "tick_hi": 3601,
+        "bracket_extrapolated": true
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101010",
+      "split": "train",
+      "event": {
+        "event_id": "v4-phase-a-1975101010-3824",
+        "exec_tick": 4872,
+        "reason": "Execution tick is not enclosed; timing endpoint remains blocked"
+      },
+      "first_frame": {
+        "seq": 0,
+        "produced_at": 1791451944.336609,
+        "tick_lo": 2401,
+        "tick_hi": 2401,
+        "bracket_extrapolated": true
+      },
+      "last_frame": {
+        "seq": 2488,
+        "produced_at": 1791452068.739512,
+        "tick_lo": 4875,
+        "tick_hi": 4875,
+        "bracket_extrapolated": true
+      },
+      "first_nonextrapolated": {
+        "seq": 1,
+        "produced_at": 1791451944.420272,
+        "tick_lo": 2402,
+        "tick_hi": 2404,
+        "bracket_extrapolated": false
+      },
+      "last_nonextrapolated": {
+        "seq": 2473,
+        "produced_at": 1791452068.020093,
+        "tick_lo": 4871,
+        "tick_hi": 4875,
+        "bracket_extrapolated": false
+      },
+      "last_upper_before": {
+        "seq": 2470,
+        "produced_at": 1791452067.85388,
+        "tick_lo": 4870,
+        "tick_hi": 4871,
+        "bracket_extrapolated": false
+      },
+      "first_lower_after": {
+        "seq": 2474,
+        "produced_at": 1791452068.051378,
+        "tick_lo": 4875,
+        "tick_hi": 4875,
+        "bracket_extrapolated": true
+      }
+    }
+  ],
+  "absent_local": [
+    "v4-phase-a-1975100883",
+    "v4-phase-a-1975101013"
+  ],
+  "heldout_payloads_opened": false,
+  "scope": "timing boundary diagnosis only"
+}

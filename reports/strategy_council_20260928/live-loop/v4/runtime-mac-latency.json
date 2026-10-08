@@ -1,0 +1,132 @@
+{
+  "schema": "clasher.live-v4.runtime-mac-latency.v1",
+  "status": "blocked_missing_frozen_dependencies",
+  "updated_utc": "2026-10-08T15:52:36.604051+00:00",
+  "mac_root": "/Users/sam/Desktop/code/clasher-runtime-v4",
+  "authoritative_repo": "/Users/sam/Desktop/code/clasher",
+  "shutdown": [
+    {
+      "receipt": "/Users/sam/Desktop/code/clasher/reports/strategy_council_20260928/live-loop/v4/emulator-host/complete.json",
+      "receipt_sha256": "81a1da45cfa2a4bf57f17ee0b846d80b872b9ce18b2226e48d925857d06ef086",
+      "owner": {
+        "pid": 28907,
+        "app_uid": 10208,
+        "attestation_sha256": "864227bf7208aa9c06cd976db3fa0734a32277b0552f92e496ad283a917b4a93",
+        "serial": "emulator-5584",
+        "probe_port": 26794,
+        "read_only_avd": true,
+        "grpc_port": 8558,
+        "configured": {
+          "ok": true,
+          "configured": true,
+          "configRevision": 1,
+          "generation": 1,
+          "tick": 0
+        },
+        "status": "ready_paused_development_only",
+        "cloud_resources": false,
+        "policy_training": false,
+        "render_backend": "host",
+        "adb_port": 5042,
+        "process_start": "Wed Oct  7 16:37:29 2026"
+      },
+      "command": "/Users/sam/.cache/clasher-native-reference/android-sdk/emulator/qemu/darwin-aarch64/qemu-system-aarch64-headless -avd clasher_reference_api35 -port 5584 -no-window -no-audio -no-snapshot -no-boot-anim -gpu host -memory 3072 -cores 2 -grpc 8558 -grpc-use-token -read-only",
+      "verified_start": "Wed Oct  7 16:37:29 2026",
+      "signal": "SIGTERM",
+      "time": 1791474399.221397
+    },
+    {
+      "receipt": "/Users/sam/Desktop/code/clasher/reports/strategy_council_20260928/live-loop/v4/emulator-host/pool-renderer-2-retry2-20261007/complete.json",
+      "receipt_sha256": "8afb643ad01c6ce6c0bffea9d892e123e80d14cec1ff4decf63a9c6d970dc06a",
+      "owner": {
+        "pid": 21614,
+        "app_uid": 10208,
+        "attestation_sha256": "864227bf7208aa9c06cd976db3fa0734a32277b0552f92e496ad283a917b4a93",
+        "serial": "emulator-5586",
+        "probe_port": 26795,
+        "read_only_avd": true,
+        "grpc_port": 8559,
+        "configured": {
+          "ok": true,
+          "configured": true,
+          "configRevision": 1,
+          "generation": 1,
+          "tick": 0
+        },
+        "status": "ready_paused_development_only",
+        "cloud_resources": false,
+        "policy_training": false,
+        "instance_id": "renderer-2",
+        "render_backend": "host",
+        "adb_port": 5043,
+        "process_start": "Wed Oct  7 23:44:46 2026"
+      },
+      "command": "/Users/sam/.cache/clasher-native-reference/android-sdk/emulator/qemu/darwin-aarch64/qemu-system-aarch64-headless -avd clasher_reference_api35 -port 5586 -no-window -no-audio -no-snapshot -no-boot-anim -gpu host -memory 3072 -cores 2 -grpc 8559 -grpc-use-token -read-only",
+      "verified_start": "Wed Oct  7 23:44:46 2026",
+      "signal": "SIGTERM",
+      "time": 1791474399.228918
+    }
+  ],
+  "all_owned_exited": true,
+  "avd_preserved": true,
+  "host_health": {
+    "before": {
+      "uptime": {
+        "code": 0,
+        "stdout": " 8:46  up 22 days, 21:43, 4 users, load averages: 4.48 5.01 5.41\n",
+        "stderr": ""
+      },
+      "pressure": {
+        "code": 0,
+        "stdout": "The system has 25769803776 (1572864 pages with a page size of 16384).\n\nStats: \nPages free: 10168 \nPages purgeable: 5486 \nPages purged: 373845957 \n\nSwap I/O:\nSwapins: 232278979 \nSwapouts: 262144457 \n\nPage Q counts:\nPages active: 340781 \nPages inactive: 339233 \nPages speculative: 473 \nPages throttled: 0 \nPages wired down: 403201 \n\nCompressor Stats:\nPages used by compressor: 445209 \nPages decompressed: 16306859123 \nPages compressed: 19521612122 \n\nFile I/O:\nPageins: 745791211 \nPageouts: 1299563 \n\nSystem-wide memory free percentage: 44%\n",
+        "stderr": ""
+      },
+      "pressure_level": {
+        "code": 0,
+        "stdout": "1\n",
+        "stderr": ""
+      }
+    },
+    "after": {
+      "uptime": {
+        "code": 0,
+        "stdout": " 8:46  up 22 days, 21:43, 4 users, load averages: 4.48 5.01 5.41\n",
+        "stderr": ""
+      },
+      "pressure": {
+        "code": 0,
+        "stdout": "The system has 25769803776 (1572864 pages with a page size of 16384).\n\nStats: \nPages free: 360265 \nPages purgeable: 177 \nPages purged: 373845957 \n\nSwap I/O:\nSwapins: 232285043 \nSwapouts: 262144457 \n\nPage Q counts:\nPages active: 280550 \nPages inactive: 289647 \nPages speculative: 1023 \nPages throttled: 0 \nPages wired down: 323775 \n\nCompressor Stats:\nPages used by compressor: 283804 \nPages decompressed: 16306865749 \nPages compressed: 19521612122 \n\nFile I/O:\nPageins: 745792462 \nPageouts: 1299563 \n\nSystem-wide memory free percentage: 60%\n",
+        "stderr": ""
+      },
+      "pressure_level": {
+        "code": 0,
+        "stdout": "1\n",
+        "stderr": ""
+      }
+    }
+  },
+  "pool_claims": {},
+  "unrelated_utm_and_adb_preserved": true,
+  "lattice": {
+    "built": true,
+    "loaded": true,
+    "compiler": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+    "path": "/Users/sam/Desktop/code/clasher-runtime-v4/src/clasher/live/_lattice.dylib"
+  },
+  "tracker_parity": null,
+  "latency": null,
+  "budget_ms": {
+    "p50": 260,
+    "p99": 400
+  },
+  "budget_verdict": "NOT MEASURED",
+  "planner_total_delay_ticks": null,
+  "provisional_planner_total_delay_ticks": 28,
+  "provisional_source": "Fleet median 246.39782181475312 ms + gRPC p50 1151.6914791427553 ms, rounded at 50 ms/tick; not a Mac calibration",
+  "backend_delay_ms": 1151.6914791427553,
+  "timing_test": "PASS on Mac: separate total planner delay, unchanged P4 delay/verification, invalid/missing total rejected",
+  "split_sha256": "3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258",
+  "train_matches_staged": 20,
+  "heldout_opened": false,
+  "blocker": "Mac lacks frozen search-noise-s4 and search-noise-s6 dependencies; requested approval to copy minimum missing files outside original copy allowlist into isolated root. No parity/replay launched."
+}

@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-08T14:04:00Z",
+  "source_sha256": {
+    "verify_event_selection_v4.py": "b9397e072642868506a7f1e86ff68a407b36a5f0e7df41e9dc3cb06d46fd7145",
+    "test_verify_event_selection_v4.py": "a6e327eb1a7cdb4a4339fdbc06c451cd017a33ba591641eafdf4f52a9602d8f6",
+    "validation_select_v4.py": "c375bc178f8c9b64a63401b3f715db9e476df33c22efc82eb4181d1b7b8c5a73",
+    "validation_score_v4.py": "7ab8e93c6531eed144c08a3b3317766c1b5a70b9affba68aa5f92ec7754893e5"
+  },
+  "synthetic_checks": 17,
+  "heldout_payloads_opened": false,
+  "formal_gates": "BLOCKED"
+}

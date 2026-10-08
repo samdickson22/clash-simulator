@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-08T11:06:03.811348+00:00",
+  "sources": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/card_thresholds_v4.py": "e8921d0d8ba302b587715287f824548f76726610c57e0796e2e663a136109ccd",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_card_thresholds_v4.py": "c45fc7f17ec0f904934ed7fd7d22d6209532ab1eacf881d70b11e4d63ed386a1",
+    "reports/strategy_council_20260928/live-loop/v4/l1/cache_batch.sh": "d9301728f35c7ef286d8ff0930384e4d239adc577be6af52cbcae5ecd8613a51"
+  },
+  "test_label": "v4-card-threshold-tests-20261008-r1",
+  "checks": 17,
+  "synthetic_only": true,
+  "heldout_payloads_opened": false,
+  "selection_seal": false
+}

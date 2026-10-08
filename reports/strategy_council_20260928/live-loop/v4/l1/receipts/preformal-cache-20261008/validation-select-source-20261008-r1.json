@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-08T11:18:40.171898+00:00",
+  "sources": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/validation_select_v4.py": "b3756b3fce0fc3172a14dfcb4ff21699a593ecdf55a8e77db55d80c67fecefd6",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_validation_select_v4.py": "32603d3d80c8acdc64cfde9f4d8c14c84bb2ac673bce1359b25b605d985970b3"
+  },
+  "test_label": "v4-validation-select-tests-20261008-r1",
+  "checks": 14,
+  "synthetic_only": true,
+  "heldout_payloads_opened": false,
+  "selection_seal": false
+}

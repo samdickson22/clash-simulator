@@ -13,7 +13,15 @@
       "p50_ticks": 23.033829582855105,
       "p99_ticks": 23.746357476571575,
       "tick_ms": 50,
-      "ticks_semantics": "wall-latency equivalents at nominal 20 ticks/s; retained trials lack exact execution ticks"
+      "ticks_semantics": "wall-latency equivalents at nominal 20 ticks/s; retained trials lack exact execution ticks",
+      "planner_total_delay_ticks": 28,
+      "planner_frame_to_submission_p50_ms": 246.39782181475312,
+      "planner_delay_calibration": {
+        "status": "provisional fleet initialization; replace with measured Mac median after suite",
+        "source": "RUNTIME-LATENCY-METRICS.json: 223 first attempts on 127x04",
+        "formula": "round((planner_frame_to_submission_p50_ms + p50_ms) / tick_ms)",
+        "measurement": "source-frame production to completed first-attempt mock two-tap submission, including 20 ms inter-tap interval"
+      }
     },
     "offline-renderer-adb-spawn": {
       "samples": 320,

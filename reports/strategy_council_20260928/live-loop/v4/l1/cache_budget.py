@@ -8,9 +8,11 @@ MIN_FREE_BYTES = 200_000_000_000
 MAX_FLEET_BYTES = 1_000_000_000_000
 # Explicit reservations avoid independent hosts each spending the full fleet
 # allowance. Reassign reservations before adding a fourth cache host.
-HOST_RESERVATIONS = {'127x01': MAX_BYTES, '127x16': MAX_BYTES, '127x18': MAX_BYTES}
+HOST_RESERVATIONS = {'127x01': 291_000_000_000, '127x16': 215_000_000_000,
+                     '127x18': 293_000_000_000, '127x03': 129_000_000_000,
+                     '127x09': 60_000_000_000, '127x15': 10_000_000_000}
 HOME_HOSTS = {'127x01', '127x03', '127x04', '127x08'}
-LEASE_HOSTS = {'127x11', '127x13', '127x14', '127x16', '127x18'}
+LEASE_HOSTS = {'127x09', '127x11', '127x13', '127x14', '127x15', '127x16', '127x18'}
 
 
 def approved_root(host=None):
@@ -22,10 +24,16 @@ def approved_root(host=None):
     raise ValueError('Host not approved for derived caches')
 
 
-def validate_root(path):
-    host=socket.gethostname().split('.')[0]
-    if host not in HOST_RESERVATIONS or sum(HOST_RESERVATIONS.values())>MAX_FLEET_BYTES:
+def reserved_bytes(host=None):
+    host=host or socket.gethostname().split('.')[0]
+    if (host not in HOST_RESERVATIONS or sum(HOST_RESERVATIONS.values())>MAX_FLEET_BYTES
+            or any(not 0 < v <= MAX_BYTES for v in HOST_RESERVATIONS.values())):
         raise ValueError('Derived-cache fleet reservation required')
+    return HOST_RESERVATIONS[host]
+
+
+def validate_root(path):
+    reserved_bytes()
     root = approved_root()
     if Path(path).resolve() != root:
         raise ValueError(f'Use approved derived-cache root: {root}')
@@ -43,7 +51,7 @@ def used_bytes(root):
 def require_growth(root, growth, *, budget=MAX_BYTES):
     if not 0 < budget <= MAX_BYTES or growth < 0:
         raise ValueError('Invalid derived-cache budget')
-    if used_bytes(root) + growth > budget:
+    if used_bytes(root) + growth > min(budget,reserved_bytes()):
         raise RuntimeError('Derived-cache host budget would be exceeded')
     if shutil.disk_usage(root).free - growth < MIN_FREE_BYTES:
         raise RuntimeError('Derived-cache growth would cross 200 GB free-space floor')

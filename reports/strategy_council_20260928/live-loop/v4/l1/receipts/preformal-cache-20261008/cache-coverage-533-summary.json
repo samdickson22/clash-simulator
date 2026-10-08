@@ -1,0 +1,26 @@
+{
+  "matches": 533,
+  "frames": 944416,
+  "payload_bytes": 432438474189,
+  "equality_checked": 9655,
+  "equality_mismatches": 0,
+  "files_verified": 1066,
+  "utc": "2026-10-08T14:52:40.141944+00:00",
+  "splits": {
+    "train": 474,
+    "validation": 59
+  },
+  "input_sha256": {
+    "v4-cache-gather-20261008-18r10-manifest.json": "67b710014a12fb12ec363611c36b7f11bcdb97e08a01d94876efb9d6f06d8c14",
+    "v4-cache-extend-20261008-18r10-stage.json": "7729f11cb2bc33ef679aab84a871e68c3d2c635501701d139eec0b21d683f1a3",
+    "v4-cache-unique-20261008-16r4-manifest.json": "a076052a1f03beb70d55bd8d23a07dd5c3f12bcc8df8e28b4fd8890de44fc10e",
+    "v4-cache-unique-20261008-16r4-plan.json": "35beeb4a1e684eeab796abb2f3ccd06bfff090ad9ab3e4a29dd94086c5ea1b0d",
+    "v4-cache-unique-20261008-03r5-manifest.json": "979aeeff1bea676cc628bc180d4dcb205fc635509fd01e0764178e91b7b75a51",
+    "v4-cache-unique-20261008-03r5-plan.json": "975f885458911a75d77e8af3073303db22e9835f23ed92b19b3c64944241df8a"
+  },
+  "admitted_snapshot_sha256": "18a9146fd1241817759d450ffdb18f93a20a56bd7a3590c965e781b66dc8bca5",
+  "poll_time": 1791470872.2004802,
+  "scope": "metadata aggregation of verified disjoint shards; not runtime union or formal admission",
+  "heldout_payloads_opened": false,
+  "formal_population_seal": false
+}

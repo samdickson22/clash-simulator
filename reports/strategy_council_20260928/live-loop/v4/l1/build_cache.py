@@ -4,6 +4,7 @@ from concurrent.futures import ProcessPoolExecutor, wait, FIRST_COMPLETED
 import fcntl
 import json
 import math
+from multiprocessing import Manager
 import os
 from pathlib import Path
 import random
@@ -15,7 +16,20 @@ import cv2
 import numpy as np
 from clasher.vision.l1_v4 import prepare_pixels
 from pixel_cache import SCHEMA, PixelCache, encode, sha
-from cache_budget import MAX_BYTES, MIN_FREE_BYTES, validate_root, used_bytes
+from cache_budget import MAX_BYTES, MIN_FREE_BYTES, validate_root, used_bytes, reserved_bytes
+
+
+def claim_bytes(ledger, lock, size):
+    """Reserve aggregate payload space before writing; failed claims consume none.
+
+    Successful claims are never refunded, even when a worker fails: partial
+    files remain on disk. The parent's initial count includes older partials.
+    """
+    if size < 0:raise ValueError('Negative cache allocation')
+    with lock:
+        if size > ledger.value:
+            raise RuntimeError('Aggregate cache space guard; incomplete files retained')
+        ledger.value -= size
 
 
 def one(args):
@@ -42,8 +56,9 @@ def one(args):
                 block=dict(start=count-len(raw),count=len(raw))
                 for name,file,frames in [('raw.zst',rf,raw),('pixels.zst',pf,pixels)]:
                     data=encode(frames)
-                    if written+len(data)>budget or shutil.disk_usage(tmp).free-len(data)<MIN_FREE_BYTES+2*10**9:
+                    if shutil.disk_usage(tmp).free-len(data)<MIN_FREE_BYTES+2*10**9:
                         raise RuntimeError('Cache space guard; incomplete files retained')
+                    claim_bytes(*budget,len(data))
                     block[name]=[file.tell(),len(data)];file.write(data);written+=len(data)
                 blocks.append(block);raw=[];pixels=[]
                 if count% (block_size*16)==0:print(json.dumps(dict(episode=r['episode'],frames=count,bytes=written)),flush=True)
@@ -88,10 +103,12 @@ def main():
     p.add_argument('--split',type=Path,required=True);p.add_argument('--workers',type=int,default=4)
     p.add_argument('--block-size',type=int,default=16);p.add_argument('--limit',type=int,default=0)
     p.add_argument('--budget-gb',type=float,default=280);p.add_argument('--receipt',type=Path,required=True)
+    p.add_argument('--inventory',type=Path,help='Optional explicit receipt-pinned train/validation subset')
     p.add_argument('--partition',type=int,default=0);p.add_argument('--partitions',type=int,default=1);a=p.parse_args()
     if not 1<=a.workers<=32:raise ValueError('Worker cap')
     if not 0<=a.partition<a.partitions or not 0<a.budget_gb*10**9<=MAX_BYTES:raise ValueError('Partition/budget invalid')
     validate_root(a.cache)
+    if a.budget_gb*10**9 > reserved_bytes():raise ValueError('Build budget exceeds host reservation')
     lock=(a.cache/'.writer.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     if sha(a.split)!='3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258':raise ValueError('Split hash changed')
     members={r['seed']:r for r in json.loads(a.split.read_text())['matches']};rows=[]
@@ -102,17 +119,27 @@ def main():
         if (m['split'],m['decks'])!=(r['split'],r['decks']):raise ValueError('Membership changed')
         if (r['seed']-1975100700)%a.partitions!=a.partition:continue
         rows.append(q.parent)
+    inventory_sha=None
+    if a.inventory:
+        inv=json.loads(a.inventory.read_text());pins=inv['receipt_sha256']
+        if (inv.get('heldout_payloads_opened') is not False or len(inv['episodes'])!=len(set(inv['episodes']))
+                or set(inv['episodes'])!=set(pins) or inv['matches']!=len(pins)):
+            raise ValueError('Invalid explicit cache inventory')
+        available={r.name:r for r in rows}
+        if not set(pins)<=set(available) or any(sha(available[ep]/'receipt.json')!=digest for ep,digest in pins.items()):
+            raise ValueError('Explicit inventory outside admitted source or receipt changed')
+        rows=[available[ep] for ep in sorted(pins)];inventory_sha=sha(a.inventory)
     if a.limit:rows=rows[:a.limit]
     a.cache.mkdir(parents=True,exist_ok=True)
     used=used_bytes(a.cache)
     pending=[r for r in rows if not (a.cache/r.name/'index.json').exists()]
-    # Frame-weighted per-match allocation: a long match must not receive the
-    # same allowance as a 300-frame match. Reserve metadata and concurrent I/O.
+    # Compression varies substantially across matches. All workers claim from
+    # one locked byte ledger, instead of prematurely exhausting a per-frame
+    # allowance while other matches leave theirs unused. Reserve metadata/I/O.
     remaining=min(a.budget_gb*10**9-used,shutil.disk_usage(a.cache).free-MIN_FREE_BYTES)-2*10**9
     counts={r:json.loads((r/'receipt.json').read_text())['frames'] for r in pending}
     total_frames=sum(counts.values())
     if pending and (remaining<=0 or total_frames<=0):raise RuntimeError('Cache budget exhausted')
-    allowances={r:int(remaining*count/total_frames) for r,count in counts.items()}
     stopping=False
     def stop(signum,frame):
         nonlocal stopping
@@ -120,13 +147,14 @@ def main():
         print('Stop requested; finish only current per-match commits',flush=True)
     signal.signal(signal.SIGTERM,stop);signal.signal(signal.SIGUSR1,stop)
     results=[];todo=iter(rows)
-    with ProcessPoolExecutor(a.workers) as pool:
+    with Manager() as manager, ProcessPoolExecutor(a.workers) as pool:
+        ledger=manager.Value('q',max(0,int(remaining)));allocation_lock=manager.Lock()
         active={}
         def submit():
             if stopping:return False
             r=next(todo,None)
             if r is None:return False
-            active[pool.submit(one,(r,a.cache,a.block_size,allowances.get(r,0)))]=r
+            active[pool.submit(one,(r,a.cache,a.block_size,(ledger,allocation_lock)))]=r
             return True
         for _ in range(a.workers):submit()
         while active:
@@ -137,7 +165,7 @@ def main():
     result=dict(matches=len(results),results=results,heldout_opened=False,cache=str(a.cache),
                 partition=a.partition,partitions=a.partitions,bytes_on_host=used_bytes(a.cache),
                 budget_bytes=int(a.budget_gb*10**9),minimum_free_bytes=MIN_FREE_BYTES,stopped=stopping,
-                source_matches=len(rows))
+                source_matches=len(rows),source_inventory_sha256=inventory_sha)
     with a.receipt.open('x') as f:json.dump(result,f,indent=2)
     print(json.dumps(dict(matches=len(results),heldout_opened=False)),flush=True)
     if stopping:raise SystemExit(75)

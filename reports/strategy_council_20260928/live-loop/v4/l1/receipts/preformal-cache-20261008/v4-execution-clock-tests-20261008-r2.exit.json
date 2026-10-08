@@ -1,0 +1,18 @@
+{
+  "host": "127x16",
+  "label": "v4-execution-clock-tests-20261008-r2",
+  "started_utc": "2026-10-08T10:00:08.487898+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/test_execution_clock_v4.py"
+  ],
+  "supervisor_pid": 3500797,
+  "pid": 3500799,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T10:00:08.551705+00:00",
+  "stop_reason": null,
+  "peak_processes": 1,
+  "peak_rss_bytes": 12062720
+}

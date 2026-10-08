@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-08T10:47:00Z",
+  "sources": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/selection_matrix_v4.py": "3bdf9c37483e0decd7fa545d12c23de47f13cebaa79c8957ade60b0b328fa530",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_selection_matrix_v4.py": "ccb12666b4814c5d7baca4dbe493ce48950f16eccf285ed84e8f16c1acf968da",
+    "reports/strategy_council_20260928/live-loop/v4/l1/validation_score_v4.py": "92abfc335ee48ae8586023768beac42165b5d050014ffd4aec457fae074be424"
+  },
+  "test_label": "v4-selection-matrix-tests-20261008-r1",
+  "checks": 28,
+  "synthetic_only": true,
+  "heldout_payloads_opened": false,
+  "selection_seal": false
+}

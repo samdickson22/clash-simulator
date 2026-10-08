@@ -58,7 +58,8 @@ def trusted_body(o):
 
 
 class Windows:
-    def __init__(self, source, split_file, output, *, split='train', max_matches=0, windows_per_match=32, seed=6108, pixel_cache=None):
+    def __init__(self, source, split_file, output, *, split='train', max_matches=0, windows_per_match=32, seed=6108, pixel_cache=None, pixel_reader=None):
+        if pixel_cache is not None and pixel_reader is not None:raise ValueError('Choose one pixel reader')
         self.output=Path(output);self.output.mkdir(parents=True,exist_ok=True)
         self.augment=split=='train';self.rng=random.Random(seed)
         inv=self.output/'inventory.json'
@@ -103,7 +104,12 @@ class Windows:
         else:self.bodies=sorted(bodies);vocab.write_text(json.dumps(self.bodies)+'\n')
         self.paths={r['episode']:Path(r['path'])/'video.mp4' for r in self.receipts}
         from pixel_cache import PixelCache
-        self.pixel_cache=PixelCache(pixel_cache,self.receipts) if pixel_cache else None
+        self.pixel_cache=pixel_reader if pixel_reader is not None else (PixelCache(pixel_cache,self.receipts) if pixel_cache else None)
+        if pixel_reader is not None:
+            for r in self.receipts:
+                idx=pixel_reader.index[r['episode']]
+                if any(idx[k]!=r[k] for k in ('episode','split','frames','receipt_sha256')):
+                    raise ValueError('Injected pixel reader differs from training population')
         if not self.examples:raise ValueError('No training windows')
         objects=[o for rows in self.objects.values() for row in rows for o in row['objects']]
         audit=dict(object_rows=len(objects),trusted_identity=sum(bool(trusted_body(o)) for o in objects),

@@ -1,0 +1,28 @@
+{
+  "host": "127x16",
+  "label": "v4-label-audit-20261008-r16",
+  "started_utc": "2026-10-08T11:48:09.230342+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/audit_labels.py",
+    "--source",
+    "/mpac/sdicks02/repos/clasher-lease/data/v4-matches",
+    "--split",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/split.json",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/v4-label-audit-20261008-r16-audit.json",
+    "--workers",
+    "16"
+  ],
+  "supervisor_pid": 3528397,
+  "pid": 3528399,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T11:48:14.533586+00:00",
+  "stop_reason": null,
+  "peak_processes": 18,
+  "peak_rss_bytes": 873484288,
+  "peak_pss_bytes": 21568512,
+  "memory_metric": "owned_tree_pss"
+}

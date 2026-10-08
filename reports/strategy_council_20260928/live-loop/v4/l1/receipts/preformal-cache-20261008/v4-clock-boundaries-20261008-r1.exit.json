@@ -1,0 +1,26 @@
+{
+  "host": "127x16",
+  "label": "v4-clock-boundaries-20261008-r1",
+  "started_utc": "2026-10-08T09:58:54.230294+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/audit_clock_boundaries_v4.py",
+    "--source",
+    "/mpac/sdicks02/repos/clasher-lease/data/v4-matches",
+    "--split",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/split.json",
+    "--audit",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/preformal-cache-20261008/v4-execution-clock-audit-20261008-r1.json",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/v4-clock-boundaries-20261008-r1.json"
+  ],
+  "supervisor_pid": 3500318,
+  "pid": 3500320,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T09:58:55.339113+00:00",
+  "stop_reason": null,
+  "peak_processes": 2,
+  "peak_rss_bytes": 29990912
+}

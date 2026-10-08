@@ -26,15 +26,36 @@ def main():
     p.add_argument('--steps',type=int,default=400);p.add_argument('--epochs',type=int,default=24)
     p.add_argument('--max-matches',type=int,default=0);p.add_argument('--windows-per-match',type=int,default=32)
     p.add_argument('--pixel-cache',type=Path)
+    p.add_argument('--engineering-union',type=Path,help='Bounded preformal union benchmark only')
+    p.add_argument('--formal-union',type=Path,help='Full authenticated train/validation cache runtime')
+    p.add_argument('--phase-state',type=Path);p.add_argument('--phase-exit',type=Path)
     p.add_argument('--loader-workers',type=int,default=6)
     p.add_argument('--resume',action='store_true');p.add_argument('--device',default='cuda');a=p.parse_args()
+    if a.engineering_union and (a.pixel_cache or a.epochs!=1 or not 1<=a.steps<=128 or a.max_matches):
+        raise ValueError('Engineering union is restricted to full-snapshot 1x1..128 steps')
+    if a.formal_union and (a.engineering_union or a.pixel_cache or a.epochs!=24 or a.steps!=400
+            or a.max_matches or a.windows_per_match!=32 or a.loader_workers!=6 or a.device!='cuda'
+            or a.phase_state is None or a.phase_exit is None):
+        raise ValueError('Formal union requires registered full T7 configuration and producer receipts')
+    union=None
+    if a.formal_union:
+        from formal_union_v4 import open_formal_union, snapshot_indices
+        union=open_formal_union(a.source,a.split,a.phase_state,a.phase_exit,
+                                a.output.parent/'admission.json',a.formal_union)
     a.output.mkdir(parents=True,exist_ok=a.resume);torch.set_num_threads(1);cv2.setNumThreads(1)
     random.seed(6108);torch.manual_seed(6108)
     if a.device=='cuda':
         free,total=torch.cuda.mem_get_info()
         if free<16*1024**3:raise RuntimeError('Need 16GiB free before training')
         torch.cuda.set_per_process_memory_fraction(.65);torch.cuda.reset_peak_memory_stats()
-    data=Windows(a.source,a.split,a.output/'data',max_matches=a.max_matches,windows_per_match=a.windows_per_match,pixel_cache=a.pixel_cache)
+    if a.engineering_union:
+        from union_training_v4 import open_union, parity
+        union=open_union(a.source,a.split,a.engineering_union)
+    data=Windows(a.source,a.split,a.output/'data',max_matches=a.max_matches,windows_per_match=a.windows_per_match,pixel_cache=a.pixel_cache,pixel_reader=union)
+    if a.formal_union:snapshot_indices(union,a.output/'cache-indices')
+    if union and not a.resume:
+        from union_training_v4 import parity
+        (a.output/'union-parity.json').write_text(json.dumps(parity(data,union),indent=2)+'\n')
     model=PerceptionV4(len(data.cards),len(data.bodies)).to(a.device)
     opt=torch.optim.AdamW(model.parameters(),lr=.0003,weight_decay=.0001)
     first=0
@@ -49,12 +70,18 @@ def main():
     sources.append(Path(module.__file__))
     from data_v4 import ROOT,CALIBRATION
     sources.extend([ROOT/'gamedata.json',CALIBRATION,Path(__file__).parents[1]/'body-catalog.json'])
+    if union:sources.extend(Path(__file__).with_name(n) for n in ('union_training_v4.py','cache_union_v4.py','cache_transport_v4.py','cache_budget.py','formal_guard.py','reference_sample.py'))
+    if a.formal_union:sources.append(Path(__file__).with_name('formal_union_v4.py'))
+    has_cache=bool(a.pixel_cache or union)
+    pins={ep:h for shard in union.provenance for ep,h in shard['index_sha256'].items()} if union else {}
     manifest=dict(seed=6108,device=a.device,precision='bf16' if a.device=='cuda' else 'fp32',compile=False,
                   parameters=model.parameter_counts(),training_matches=len(data.receipts),windows=len(data),cards=data.cards,bodies=data.bodies,
                   source_hashes={str(x):sha(x) for x in sources},split_sha256=sha(a.split),heldout_opened=False,
                   epochs=a.epochs,steps=a.steps,max_matches=a.max_matches,windows_per_match=a.windows_per_match,
-                  pixel_cache=str(a.pixel_cache) if a.pixel_cache else None,loader_workers=a.loader_workers if a.pixel_cache else 0,
-                  cache_index_sha256={r['episode']:sha(a.pixel_cache/r['episode']/'index.json') for r in data.receipts} if a.pixel_cache else {})
+                  pixel_cache=str(a.output/'cache-indices') if a.formal_union else (str(a.pixel_cache) if a.pixel_cache else None),loader_workers=a.loader_workers if has_cache else 0,
+                  cache_index_sha256={r['episode']:pins[r['episode']] for r in data.receipts} if union else ({r['episode']:sha(a.pixel_cache/r['episode']/'index.json') for r in data.receipts} if a.pixel_cache else {}))
+    if union:manifest.update(engineering_only=not bool(a.formal_union),cache_union_provenance=union.provenance)
+    if a.formal_union:manifest.update(formal_cache_union=True,formal_admission_sha256=sha(a.output.parent/'admission.json'))
     mpath=a.output/'manifest.json'
     if a.resume:
         old=json.loads(mpath.read_text())
@@ -78,7 +105,7 @@ def main():
     # Plans are drawn serially in the original RNG order. Image/target work
     # may finish out of order, but batches and checkpoint RNGs stay ordered.
     if not 1<=a.loader_workers<=8:raise ValueError('Loader threads must be 1..8')
-    pool=ThreadPoolExecutor(max_workers=a.loader_workers) if a.pixel_cache else None
+    pool=ThreadPoolExecutor(max_workers=a.loader_workers) if has_cache else None
     pending=deque();submitted=first
     def enqueue():
         nonlocal submitted

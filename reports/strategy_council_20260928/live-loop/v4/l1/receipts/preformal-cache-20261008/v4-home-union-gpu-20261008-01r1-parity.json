@@ -1,0 +1,15 @@
+{
+  "samples": 16,
+  "local": 8,
+  "remote": 8,
+  "counts": {
+    "jpeg": 4,
+    "affine": 7,
+    "flip": 10
+  },
+  "historical_sampler_exact": true,
+  "parallel_tensors_exact": true,
+  "rng_exact": true,
+  "heldout_opened": false,
+  "engineering_only": true
+}

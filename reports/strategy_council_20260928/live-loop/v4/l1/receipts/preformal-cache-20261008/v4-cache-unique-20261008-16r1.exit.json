@@ -1,0 +1,22 @@
+{
+  "host": "127x16",
+  "label": "v4-cache-unique-20261008-16r1",
+  "started_utc": "2026-10-08T11:31:17.908154+00:00",
+  "command": [
+    "bash",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/cache_unique_batch.sh",
+    "v4-cache-unique-20261008-16r1",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/v4-cache-gather-20261008-18r10-manifest.json",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/v4-cache-extend-20261008-18r10-stage.json"
+  ],
+  "supervisor_pid": 3524629,
+  "pid": 3524633,
+  "exit_code": 2,
+  "status": "fail",
+  "finished_utc": "2026-10-08T11:32:43.929316+00:00",
+  "stop_reason": null,
+  "peak_processes": 27,
+  "peak_rss_bytes": 8911761408,
+  "peak_pss_bytes": 1748649984,
+  "memory_metric": "owned_tree_pss"
+}

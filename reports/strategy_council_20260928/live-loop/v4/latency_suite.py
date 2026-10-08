@@ -1,4 +1,4 @@
-"""Sequential fleet replay suite, frozen train membership before media access."""
+"""Sequential fleet/Mac replay suite, frozen train membership before media access."""
 import argparse
 import json
 import os
@@ -16,11 +16,13 @@ def main():
     p.add_argument('--minimum-matches', type=int, default=6)
     p.add_argument('--minimum-taps', type=int, default=200)
     p.add_argument('--maximum-matches', type=int, default=16)
+    p.add_argument('--device', choices=('cpu', 'mps'), default='cpu')
     a = p.parse_args()
     a.output.mkdir(parents=True, exist_ok=False)
     root = Path.cwd()
     env = dict(os.environ, PYTHONPATH=f'{root}/src:{root}/engine-rs:{a.data}/python-deps',
-               OMP_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1', MKL_NUM_THREADS='1', YOLO_AUTOINSTALL='false')
+               OMP_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1', MKL_NUM_THREADS='1',
+               VECLIB_MAXIMUM_THREADS='1', YOLO_AUTOINSTALL='false')
     split = a.data/'registration/split.json'
     members = [r for r in json.loads(split.read_text())['matches'] if r['split'] == 'train']
     selected = []
@@ -33,7 +35,8 @@ def main():
     taps = 0
     receipts = []
     for seed, match in selected[:a.maximum_matches]:
-        users = int(subprocess.check_output([str(Path.home()/'.local/bin/fleet-console-users')], text=True).strip())
+        users = (len(subprocess.check_output(['who'], text=True).splitlines()) if sys.platform == 'darwin'
+                 else int(subprocess.check_output([str(Path.home()/'.local/bin/fleet-console-users')], text=True).strip()))
         # Count all Python processes for this Unix account, including loaders.
         commands = subprocess.check_output(['ps', '-u', str(os.getuid()), '-o', 'comm='], text=True).splitlines()
         processes = sum('python' in c.lower() for c in commands)
@@ -43,7 +46,8 @@ def main():
         target = a.output/str(seed)
         cmd = [sys.executable, '-B', '-m', 'clasher.live', '--replay', str(match), '--split', str(split),
                '--prior', str(root/'reports/strategy_council_20260928/search-noise-s4/runtime/support/human_deck_catalog.json'),
-               '--body', str(a.data/'weights/body.pt'), '--hud', str(a.data/'weights/hud.npz'), '--output', str(target)]
+               '--body', str(a.data/'weights/body.pt'), '--hud', str(a.data/'weights/hud.npz'),
+               '--device', a.device, '--mock-input', '--output', str(target)]
         print(json.dumps(dict(seed=seed, started=time.time(), console_users=users, python_processes=processes,
                               load=os.getloadavg(), command=cmd)), flush=True)
         with (a.output/f'{seed}.log').open('x') as log:

@@ -1,0 +1,18 @@
+{
+  "host": "127x16",
+  "label": "v4-validation-replay-tests-20261008-r1",
+  "started_utc": "2026-10-08T09:23:05.056120+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/test_validation_replay_v4.py"
+  ],
+  "supervisor_pid": 3490685,
+  "pid": 3490687,
+  "exit_code": 0,
+  "status": "stopped",
+  "finished_utc": "2026-10-08T09:23:06.209348+00:00",
+  "stop_reason": "job exited with descendants still running",
+  "peak_processes": 2,
+  "peak_rss_bytes": 28360704
+}

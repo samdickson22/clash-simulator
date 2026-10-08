@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-08T09:30:08.850551+00:00",
+  "files": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/validation_replay_v4.py": "4a45aa473874a40d1ec7d86d1604f5d3bd633a0d779a383cd8028ab735686edc",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_validation_replay_v4.py": "030f78160e780e607170521ca1493a15fb16b866bd1549cd62ffb7f22ff3481c",
+    "reports/strategy_council_20260928/live-loop/v4/l1/validation_admission_v4.py": "3fe59ccfade6fc12e04c3e51d4376b8e0f95144f3065363d3011dbd14365796a",
+    "src/clasher/vision/l1_v4.py": "f8cc93be0e6b5c8fcc31d69c21c8ce2a895194e5863ca45b949a810c41ae9c3b"
+  },
+  "tests": "33 synthetic checks; child exit 0; wrapper stopped descendant-exit race",
+  "real_replay_run": false,
+  "heldout_payloads_opened": false
+}

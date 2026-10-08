@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-08T14:36:00Z",
+  "source_sha256": {
+    "benchmark_union_v4.py": "238344a5461b50ae971b52b7949dc8357e17599871102fd36a0f9792e3d62600",
+    "stage_engineering_view_v4.py": "f3ab518cda6acb6dc16bbdc1fd8fb22a44a9e9273f9e593b52879992a9e0b9ab",
+    "test_stage_engineering_view_v4.py": "403ee47738e66dcbb2f0f331389180d0d2925a6447ce9bf54b1334cabf6df68a",
+    "cache_server_home03.sh": "75581443412dcf6f5edc69162216df160cbb5ed461eb0540b2d04a315619f01b"
+  },
+  "engineering_only": true,
+  "staged_matches": 433,
+  "formal_population_seal": false,
+  "heldout_payloads_opened": false
+}
