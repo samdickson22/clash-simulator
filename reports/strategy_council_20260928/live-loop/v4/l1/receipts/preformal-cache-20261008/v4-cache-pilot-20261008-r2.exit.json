@@ -1,0 +1,18 @@
+{
+  "host": "127x18",
+  "label": "v4-cache-pilot-20261008-r2",
+  "started_utc": "2026-10-08T06:21:34.838007+00:00",
+  "command": [
+    "bash",
+    "-c",
+    "\"$CLASHER_LEASE_ROOT/envs/clasher-gpu/bin/python\" -B \"$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/l1/diagnose_seek.py\" --match \"$CLASHER_LEASE_ROOT/data/v4-matches/v4-phase-a-1975100700\" --output \"$CLASHER_LEASE_ROOT/jobs/v4-seek-drift.json\" && \"$CLASHER_LEASE_ROOT/envs/clasher-gpu/bin/python\" -B \"$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/l1/build_cache.py\" --source \"$CLASHER_LEASE_ROOT/data/v4-matches\" --split \"$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/split.json\" --cache \"$CLASHER_LEASE_ROOT/cache/v4-pixels-r2\" --workers 1 --limit 1 --budget-gb 3 --receipt \"$CLASHER_LEASE_ROOT/jobs/v4-cache-pilot-20261008-r2.json\""
+  ],
+  "supervisor_pid": 946906,
+  "pid": 946908,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T06:22:46.153174+00:00",
+  "stop_reason": null,
+  "peak_processes": 3,
+  "peak_rss_bytes": 840912896
+}

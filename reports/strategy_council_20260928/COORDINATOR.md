@@ -569,3 +569,10 @@ Also on the hub, but with copies elsewhere:
        (a) and (b) start now.
   - Remaining decision-side gap: ~7 pp to R-derived, plus ~6 pp from board noise (S2). Board precision stays the
     v4 perception priority after events.
+- **2026-10-08 07:22 UTC: v4 perception storage approved.** The perception worker's full decode cache (~97 GB projected for the
+  audited population) was blocked by the T1 PREREG's 40 GB cap and an unanswered storage request (coordinator miss).
+  Decision: the 40 GB cap covers raw acquisition only (~8 GB now, ~27 GB projected). Derived, regenerable caches get up to
+  300 GB per host on `/mpac` (~1.6 TB free everywhere; keep ≥200 GB free), under `clasher-v4-cache/` (home) or
+  `clasher-lease/data/v4-cache/` (leased; cleared within a day of lease end). The worker also finished: label audit
+  + labels_v4 (coherent rows only, ambiguous masked; amendment 03), cache pilot parity, resume tests, and scorer/selection
+  primitives (135 checks). Phase A at 07:04Z: 145 train / 18 val / 18 heldout matches, 437 heldout opponent events.

@@ -1,5 +1,41 @@
 # T6/T7 retained technical attempts
 
+## Scorer preparation, 2026-10-08
+
+- `16:v4-scoring-tests-20261008-r1`, supervisor 3443711 / child 3443713,
+  failed with a missing closing parenthesis before synthetic tests executed.
+  The log and exit-1 receipt are retained. Corrected r2 (3444011 / 3444026)
+  passed 135 synthetic checks and exited 0 with wrapper status PASS. Neither
+  attempt opened any dataset payload, selected a model, or evaluated a gate.
+
+## Preformal cache/labels, 2026-10-08
+
+- `18:v4-cache-pilot-20261008-r1`, supervisor 944143, failed its exact frame
+  check at requested frame 1,867. The legacy OpenCV VFR seek returned sequential
+  frame 1,866; 30,693 pixel elements differed. The original incomplete cache
+  remains under `clasher-lease/cache/v4-pixels/` (about 2.3 GiB). Exact sequential
+  decoding plus independent sequential verification passed in `v4-pixels-r2`.
+  `v4-seek-drift.json` preserves the counterexample. No failed data was deleted.
+- `18:v4-cache-verify-train-20261008-r1/r2` failed before training because the
+  leased source snapshot lacked the ignored historical calibration.json. It was
+  copied directly from 01, unchanged; r3 passed. The partial parity directories
+  and exit receipts remain. Neither failure consumed heldout or formal weights.
+- `03:v4-phase-watch-20261008-r1` was briefly launched while 03 had an interactive
+  `who` session and existing imitation workers exceeded the conservative
+  16-worker rule. Only our verified watcher worker PID 3494183 was signalled
+  SIGTERM; its wrapper 3494170 exited 0 at 06:26:58 UTC. The watch moved to T3
+  scheduled one-shot receipt reads; no other job was stopped or altered.
+- The first post-cleaning summary counted original visibility flags (63,061).
+  The final shared cleaner/auditor requires coherent, unambiguous same-tick rich
+  evidence, yielding 62,697. Both summaries are retained; r5 is authoritative.
+- Serial versus parallel GPU pilot losses are not bit-identical after the first
+  step (max difference 0.5334 over 64 steps). No optimization-trajectory parity
+  is claimed. Independent CPU checks show exact historical augmentation tensors,
+  concurrent tensors and RNG states over 32 windows. The registered arithmetic
+  remains bf16 eager; training accuracy is unmeasured.
+
+## Earlier shakedowns
+
 - Initial remote launch used a relative path from the SSH home directory and did
   not start. Corrected by changing to the checkout before fleet_run.sh.
 - GPU env lacked PyAV and pytest. Installed PyAV 16.0.1, pytest 8.4.2 and its

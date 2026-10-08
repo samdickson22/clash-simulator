@@ -1,0 +1,18 @@
+{
+  "host": "127x18",
+  "label": "v4-cache-copy-resume-20261008-r1",
+  "started_utc": "2026-10-08T06:43:16.697328+00:00",
+  "command": [
+    "bash",
+    "-c",
+    "set -e; rsync -a --checksum --ignore-existing --rsync-path=\"nice -n 10 rsync\" 127x16:/mpac/sdicks02/repos/clasher-lease/cache/v4-pixels-r2/ \"$CLASHER_LEASE_ROOT/cache/v4-pixels-r2/\"; for ep in v4-phase-a-1975100701 v4-phase-a-1975100702 v4-phase-a-1975100703 v4-phase-a-1975100708; do rsync -a --checksum --ignore-existing --rsync-path=\"nice -n 10 rsync\" \"127x16:/mpac/sdicks02/repos/clasher-lease/data/v4-matches/$ep\" \"$CLASHER_LEASE_ROOT/data/v4-matches/\"; done; \"$CLASHER_LEASE_ROOT/envs/clasher-gpu/bin/python\" -B \"$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/l1/verify_resume.py\" --source \"$CLASHER_LEASE_ROOT/data/v4-matches\" --split \"$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/split.json\" --cache \"$CLASHER_LEASE_ROOT/cache/v4-pixels-r2\" --output \"$CLASHER_LEASE_ROOT/data/v4-resume-test-r1\""
+  ],
+  "supervisor_pid": 962887,
+  "pid": 962889,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T06:44:13.155249+00:00",
+  "stop_reason": null,
+  "peak_processes": 5,
+  "peak_rss_bytes": 6448951296
+}

@@ -1,0 +1,20 @@
+{
+  "host": "127x16",
+  "label": "v4-formal-admission-tests-20261008-r2",
+  "started_utc": "2026-10-08T06:57:47.707659+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/test_formal_admission.py",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/v4-formal-admission-tests-20261008-r2"
+  ],
+  "supervisor_pid": 3437188,
+  "pid": 3437190,
+  "exit_code": 0,
+  "status": "stopped",
+  "finished_utc": "2026-10-08T06:57:48.861489+00:00",
+  "stop_reason": "job exited with descendants still running",
+  "peak_processes": 2,
+  "peak_rss_bytes": 30101504
+}

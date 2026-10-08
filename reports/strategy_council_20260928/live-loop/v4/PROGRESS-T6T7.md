@@ -1,8 +1,118 @@
 # T6/T7 progress
 
-Updated 2026-10-08 06:05Z. Phase A remains RUNNING; heldout payloads unopened.
-Code/docs/compact receipts live on 127x05; all decode, training, tests and exports
-run detached/nice on 127x01. No Mac/excluded host access, no commits/deletion.
+Updated 2026-10-08 07:21Z. Latest Phase A evidence remains RUNNING; heldout payloads unopened.
+Code/docs/compact receipts live on 127x05; new decode/audit/tests/training pilots
+run detached/nice on leased 16/18. No Mac/excluded host access, commits or deletion.
+
+## Current continuation: cache and label cleaning
+
+Formal work is **not launched**. Latest receipt-only poll (07:04 UTC): 145 train,
+18 validation and 18 heldout matches; heldout 437 opponent events; 4.43 recorded
+emulator-hours. Producer state `phase-a`; phase-a exit receipt absent. Neither
+the ≥20/1,500 coverage stop nor the 36-hour cap is verified complete.
+
+07:10–07:12 UTC scheduled continuation: deadline not reached. The one-shot
+correctly skipped a duplicate poll (<15 minutes since 07:04:36); counts above
+remain that snapshot, not a new observation. Existing 15-minute schedule verified
+enabled, next trigger 07:27:24 UTC. No cache expansion or duplicate jobs launched;
+the storage limit and all unmeasured formal gates remain blocking.
+07:14:46 UTC continuation likewise remained before deadline and skipped the
+duplicate receipt read. Latest actual observation is still 07:04:36 UTC; no
+new remote Phase A read, payload access, or compute launch occurred.
+
+07:15 UTC continuation also skipped the duplicate receipt poll. Independent
+scorer preparation then completed: `l1/scoring_v4.py` implements availability-
+time assignment, conservative bracket sensitivity, separate champion counts,
+all-truth placement denominators, paired match bootstrap (10,000, seed 6110),
+and exact registered threshold/epoch tie-breaks. No dataset-opening entry point.
+Synthetic tests: **135 checks pass**, including 120 exhaustive assignment-oracle
+comparisons. Lease 16 label `v4-scoring-tests-20261008-r2`, supervisor 3444011,
+child 3444026, exit 0 / wrapper PASS at 07:20:09; peak 2 processes / 33,492,992
+bytes RSS. Initial r1 syntax failure is retained in receipts/INCIDENTS.
+Live 16 lease now permits 96 processes, no console user; this tiny test used two.
+This is scorer infrastructure only: replay/tick mapping, calibration fitting,
+full-population selection and seal remain pending; no gate was measured.
+
+Lossless predecoded cache implemented in `l1/{pixel_cache,build_cache}.py`:
+uint8 BGR arena/HUD and sanitized source pixels, indexed Zstd/XOR blocks,
+per-file SHA256, atomic per-match commits, retained partial attempts and exact
+random 1% checks. Source pixels preserve JPEG-before-resize augmentation.
+Five-match pilot: **14,592 frames, 5,910,676,788 bytes, 149/149 equality checks**.
+16 has four completed matches; GPU host 18 has all five checksum-verified.
+Path on both: `/mpac/sdicks02/repos/clasher-lease/cache/v4-pixels-r2/`.
+All five are also on **01:/mpac/sdicks02/repos/clasher-v4-data/cache/**, with
+ten payload hashes and all five indices verified after transfer at 07:01 UTC.
+
+Throughput: old **1.282 windows/s** → cached single-thread 3.277 → six preparation
+threads **12.476 windows/s**, GPU-only 16.803, loading wait 9.95 ms. Four-train-
+match resumed pilot: **11.513 windows/s**, GPU-only 15.501. Full-corpus rate is
+not measured. Exact augmented-sample parity: 16/16. Historical sampler/parallel
+RNG and tensor parity: 32/32. SIGTERM at step 24 checkpointed/exited, then resumed
+to step 128 without duplicate/missing steps. All are engineering pilots.
+
+The first equality test exposed OpenCV VFR frame-seek drift: requested frame
+1,867 equals sequential frame 1,866 (30,693 differing elements). Failed cache
+retained. Reference loading now uses exact sequential frame ordinal. This is
+documented, not disguised as equality with the original buggy seek path.
+
+Label audit: **275,223 contradictions / 2,074,211 rows** in 121 train + 15 validation
+matches. 114,371 resolved catalog disagreements, 14,321 legitimate parent/child
+differences, 56,921 non-hitpoint hints, 89,610 unresolved/masked. No observed
+rich-ID changes or contradictory same-tick join mismatches. `labels_v4.py`
+uses unique reachable payload + exact max HP, with coherent same-tick flags;
+ambiguous repeated same-tick snapshots remain masked. Original collector/split/
+payloads unchanged. See `l1/LABEL-AUDIT.md` and dated amendment 03.
+
+**Resource blockers:** the 40 GB total fleet footprint remains binding pending
+the unanswered storage-only increase request. Current pilot density projects
+~97 GB for the audited population before replication. Do not launch the full
+cache or substitute the pilot for formal data. Hub transfer initially waited
+for its `who` session to clear, then passed the runbook's Python-worker check
+and completed via fleet_run (label `v4-cache-hub-copy-20261008-r1`, wrapper
+3521392, exit 0). Do not assume that headroom persists for the next job.
+01/03 are busy with imitation CPU work; do not stop another worker's processes.
+
+Recent labels below use the host-local `clasher-lease/jobs/` log, launch PID and
+`.exit.json` receipts. PIDs are historical: verify start/command before signals.
+
+| Host / label | Supervisor PID | State |
+|---|---:|---|
+| 16 / v4-stage-audit-20261008-r1 | 3411060 | complete, exit 0 |
+| 16 / v4-label-audit-20261008-r3 | 3428394 | complete, exit 0 |
+| 16 / v4-cache-pilot-20261008-16r1 | 3422308 | complete, exit 0, four processes decoding |
+| 18 / v4-cache-pilot-20261008-r1 | 944143 | equality failed, retained |
+| 18 / v4-cache-pilot-20261008-r2 | 946906 | complete, exit 0 |
+| 18 / v4-cache-verify-train-20261008-r3 | 952025 | complete, parity + 64-step pilot |
+| 18 / v4-cache-parallel-benchmark-20261008-r1 | 955747 | complete, 128 steps |
+| 18 / v4-prefetch-parity-20261008-r1 | 959531 | complete, 32 exact cases |
+| 18 / v4-cache-copy-resume-20261008-r1 | 962887 | complete, five caches on 18; resume test passed |
+| 16 / v4-label-audit-20261008-r5 | 3434454 | complete, exit 0; 62,697 coherent visible/nondeploying rows |
+| 16 / v4-final-label-cache-tests-20261008-r1 | 3439357 | complete, exit 0; 14 assertions |
+
+Resume cache construction through a fresh lease label with the same completed
+cache root; completed files are checked, partial attempts retained. Budget
+includes incomplete bytes. Resume T7 via identical flags plus `--resume`, only
+after old process exit. Checkpoint/source/options must match. Latest tested
+four-match checkpoint: `18:.../data/v4-resume-test-r1/model/`; do not use it to
+initialize formal fitting. All formal initializations remain unchanged.
+
+T3 schedule **Clasher v4 Phase A: bounded 15-minute checks** is bound to this
+thread, next initially 06:42:19 UTC, deadline **18:08:27 UTC** (12 h from first
+inspection). It must delete itself at deadline/completion. Receipt-only one-shot
+checks live in `l1/phase_watch.py --once` and `l1/receipts/phase-polls/`; they skip
+duplicate polls within 15 minutes. A briefly launched 03 watcher, label
+`v4-phase-watch-20261008-r1`, wrapper 3494170 / worker 3494183, was stopped by
+SIGTERM to the verified owned worker after noticing its interactive-session cap;
+exit 0, 06:26:58 UTC. No standalone fleet watcher remains.
+
+Remaining: approve/reconcile storage, extend/fan out the full cache as admitted
+matches arrive, verify T1 completion, fresh T6/T7 24x400 fits, validation-only
+selection/calibration and seal, complete the v4 scorer, then the one authorized
+heldout opening. Mac/T5/T8 endpoints remain external dependencies. `l1/RESULTS.md`
+contains every §5.1 gate with **BLOCKED / not measured**, not fabricated numbers.
+The synthetic formal-admission assertions also passed (five checks, child exit
+0); its lease wrapper marked `stopped` on a post-exit descendant check, so this
+is recorded separately rather than called a clean wrapper completion.
 
 ## T6
 
@@ -78,7 +188,8 @@ S1 did not lower 95/95; S3/T8 derived state and T5/Mac replay remain dependencie
 
 Formal commands are **prepared, not launched/scheduled**, in `l1/RUNBOOK.md` and
 `formal_train.sh`: authentic T1 completion receipts + fixed split/registration
-hashes + receipt-only coverage >=20 heldout matches/1,500 opponent events required.
+hashes + evidence of either coverage (>=20 heldout matches/1,500 opponent events)
+or the registered collection cap are required; cap-only coverage remains FAIL.
 Then fresh T6 24x400 and T7 24x400 fits. Selection remains validation-only; the full
 v4 scorer, model-selection seal and later authorized Mac evaluation are pending.
 There is no automatic heldout job. Export handoff is `l1/EXPORT.md`.

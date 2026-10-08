@@ -1,0 +1,32 @@
+{
+  "host": "127x18",
+  "label": "v4-cache-pilot-20261008-r1",
+  "started_utc": "2026-10-08T06:17:34.154480+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/build_cache.py",
+    "--source",
+    "/mpac/sdicks02/repos/clasher-lease/data/v4-matches",
+    "--split",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/split.json",
+    "--cache",
+    "/mpac/sdicks02/repos/clasher-lease/cache/v4-pixels",
+    "--workers",
+    "1",
+    "--limit",
+    "1",
+    "--budget-gb",
+    "4",
+    "--receipt",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/v4-cache-pilot-20261008-r1.json"
+  ],
+  "supervisor_pid": 944143,
+  "pid": 944145,
+  "exit_code": 1,
+  "status": "fail",
+  "finished_utc": "2026-10-08T06:18:33.728000+00:00",
+  "stop_reason": null,
+  "peak_processes": 3,
+  "peak_rss_bytes": 842424320
+}

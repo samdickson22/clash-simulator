@@ -1,0 +1,434 @@
+[
+  {
+    "start": 0,
+    "format": "raw",
+    "block": 1,
+    "level": 1,
+    "bytes_per_frame": 693748.796875,
+    "encode_fps": 59.231800102440374,
+    "decode_fps": 63.278215509353466
+  },
+  {
+    "start": 0,
+    "format": "raw",
+    "block": 1,
+    "level": 6,
+    "bytes_per_frame": 657163.125,
+    "encode_fps": 36.04428529758418,
+    "decode_fps": 63.310059465886376
+  },
+  {
+    "start": 0,
+    "format": "raw",
+    "block": 4,
+    "level": 1,
+    "bytes_per_frame": 244325.921875,
+    "encode_fps": 134.35132871939166,
+    "decode_fps": 100.11716880883388
+  },
+  {
+    "start": 0,
+    "format": "raw",
+    "block": 4,
+    "level": 6,
+    "bytes_per_frame": 225654.765625,
+    "encode_fps": 68.55624483122868,
+    "decode_fps": 88.15316129336608
+  },
+  {
+    "start": 0,
+    "format": "raw",
+    "block": 16,
+    "level": 1,
+    "bytes_per_frame": 158544.828125,
+    "encode_fps": 173.38179364285048,
+    "decode_fps": 145.08316781430062
+  },
+  {
+    "start": 0,
+    "format": "raw",
+    "block": 16,
+    "level": 6,
+    "bytes_per_frame": 141471.375,
+    "encode_fps": 74.61517043949978,
+    "decode_fps": 116.61892120130206
+  },
+  {
+    "start": 0,
+    "format": "raw",
+    "block": 64,
+    "level": 1,
+    "bytes_per_frame": 130570.796875,
+    "encode_fps": 176.5293718443208,
+    "decode_fps": 136.9433893080547
+  },
+  {
+    "start": 0,
+    "format": "raw",
+    "block": 64,
+    "level": 6,
+    "bytes_per_frame": 114455.328125,
+    "encode_fps": 71.97375421667445,
+    "decode_fps": 106.94829540464032
+  },
+  {
+    "start": 0,
+    "format": "pixels",
+    "block": 1,
+    "level": 1,
+    "bytes_per_frame": 718800.9375,
+    "encode_fps": 59.135965386953345,
+    "decode_fps": 87.56626667636716
+  },
+  {
+    "start": 0,
+    "format": "pixels",
+    "block": 1,
+    "level": 6,
+    "bytes_per_frame": 687782.765625,
+    "encode_fps": 39.160515387016424,
+    "decode_fps": 90.77036977534695
+  },
+  {
+    "start": 0,
+    "format": "pixels",
+    "block": 4,
+    "level": 1,
+    "bytes_per_frame": 234355.328125,
+    "encode_fps": 160.44008194142683,
+    "decode_fps": 156.15840689434253
+  },
+  {
+    "start": 0,
+    "format": "pixels",
+    "block": 4,
+    "level": 6,
+    "bytes_per_frame": 219483.15625,
+    "encode_fps": 85.87064065288935,
+    "decode_fps": 137.21032025837926
+  },
+  {
+    "start": 0,
+    "format": "pixels",
+    "block": 16,
+    "level": 1,
+    "bytes_per_frame": 137444.359375,
+    "encode_fps": 239.83111006508773,
+    "decode_fps": 100.88633391095702
+  },
+  {
+    "start": 0,
+    "format": "pixels",
+    "block": 16,
+    "level": 6,
+    "bytes_per_frame": 124247.75,
+    "encode_fps": 86.75537645590339,
+    "decode_fps": 102.21564097159208
+  },
+  {
+    "start": 0,
+    "format": "pixels",
+    "block": 64,
+    "level": 1,
+    "bytes_per_frame": 107129.703125,
+    "encode_fps": 235.90974420620077,
+    "decode_fps": 47.90532154664648
+  },
+  {
+    "start": 0,
+    "format": "pixels",
+    "block": 64,
+    "level": 6,
+    "bytes_per_frame": 94902.328125,
+    "encode_fps": 86.76483521052305,
+    "decode_fps": 45.74668884665698
+  },
+  {
+    "start": 1500,
+    "format": "raw",
+    "block": 1,
+    "level": 1,
+    "bytes_per_frame": 679066.109375,
+    "encode_fps": 61.411477724577324,
+    "decode_fps": 65.20152198314457
+  },
+  {
+    "start": 1500,
+    "format": "raw",
+    "block": 1,
+    "level": 6,
+    "bytes_per_frame": 642871.40625,
+    "encode_fps": 35.20909723062918,
+    "decode_fps": 64.71290816751662
+  },
+  {
+    "start": 1500,
+    "format": "raw",
+    "block": 4,
+    "level": 1,
+    "bytes_per_frame": 255871.46875,
+    "encode_fps": 137.25481974895766,
+    "decode_fps": 105.42796616565587
+  },
+  {
+    "start": 1500,
+    "format": "raw",
+    "block": 4,
+    "level": 6,
+    "bytes_per_frame": 236201.90625,
+    "encode_fps": 68.07440763163547,
+    "decode_fps": 91.30543837900012
+  },
+  {
+    "start": 1500,
+    "format": "raw",
+    "block": 16,
+    "level": 1,
+    "bytes_per_frame": 177405.421875,
+    "encode_fps": 160.7395566737342,
+    "decode_fps": 145.39643046654373
+  },
+  {
+    "start": 1500,
+    "format": "raw",
+    "block": 16,
+    "level": 6,
+    "bytes_per_frame": 158997.3125,
+    "encode_fps": 70.53148219554718,
+    "decode_fps": 116.0675360737708
+  },
+  {
+    "start": 1500,
+    "format": "raw",
+    "block": 64,
+    "level": 1,
+    "bytes_per_frame": 151548.734375,
+    "encode_fps": 163.7446078184172,
+    "decode_fps": 132.2528315376999
+  },
+  {
+    "start": 1500,
+    "format": "raw",
+    "block": 64,
+    "level": 6,
+    "bytes_per_frame": 134151.796875,
+    "encode_fps": 70.71384426548497,
+    "decode_fps": 105.97381460862626
+  },
+  {
+    "start": 1500,
+    "format": "pixels",
+    "block": 1,
+    "level": 1,
+    "bytes_per_frame": 712579.015625,
+    "encode_fps": 59.893410102464784,
+    "decode_fps": 91.91106423504144
+  },
+  {
+    "start": 1500,
+    "format": "pixels",
+    "block": 1,
+    "level": 6,
+    "bytes_per_frame": 681874.640625,
+    "encode_fps": 38.071091293124056,
+    "decode_fps": 90.31063943249046
+  },
+  {
+    "start": 1500,
+    "format": "pixels",
+    "block": 4,
+    "level": 1,
+    "bytes_per_frame": 257458.609375,
+    "encode_fps": 148.24053624183165,
+    "decode_fps": 152.40704193117196
+  },
+  {
+    "start": 1500,
+    "format": "pixels",
+    "block": 4,
+    "level": 6,
+    "bytes_per_frame": 241099.0625,
+    "encode_fps": 77.71330827168245,
+    "decode_fps": 134.47956200545934
+  },
+  {
+    "start": 1500,
+    "format": "pixels",
+    "block": 16,
+    "level": 1,
+    "bytes_per_frame": 168516.546875,
+    "encode_fps": 201.6873471443445,
+    "decode_fps": 91.74962539528967
+  },
+  {
+    "start": 1500,
+    "format": "pixels",
+    "block": 16,
+    "level": 6,
+    "bytes_per_frame": 153276.53125,
+    "encode_fps": 77.17868408795255,
+    "decode_fps": 92.7275625645696
+  },
+  {
+    "start": 1500,
+    "format": "pixels",
+    "block": 64,
+    "level": 1,
+    "bytes_per_frame": 140559.703125,
+    "encode_fps": 205.9055228887833,
+    "decode_fps": 48.05047618454409
+  },
+  {
+    "start": 1500,
+    "format": "pixels",
+    "block": 64,
+    "level": 6,
+    "bytes_per_frame": 126134.65625,
+    "encode_fps": 78.0743061125659,
+    "decode_fps": 40.984441046350305
+  },
+  {
+    "start": 5591,
+    "format": "raw",
+    "block": 1,
+    "level": 1,
+    "bytes_per_frame": 726843.421875,
+    "encode_fps": 57.47823580505097,
+    "decode_fps": 64.42196961894668
+  },
+  {
+    "start": 5591,
+    "format": "raw",
+    "block": 1,
+    "level": 6,
+    "bytes_per_frame": 692116.75,
+    "encode_fps": 34.973634166436064,
+    "decode_fps": 63.20543662538866
+  },
+  {
+    "start": 5591,
+    "format": "raw",
+    "block": 4,
+    "level": 1,
+    "bytes_per_frame": 330967.65625,
+    "encode_fps": 110.15931369189437,
+    "decode_fps": 101.29432702605776
+  },
+  {
+    "start": 5591,
+    "format": "raw",
+    "block": 4,
+    "level": 6,
+    "bytes_per_frame": 306143.5625,
+    "encode_fps": 53.324291271129276,
+    "decode_fps": 90.63397059616871
+  },
+  {
+    "start": 5591,
+    "format": "raw",
+    "block": 16,
+    "level": 1,
+    "bytes_per_frame": 223138.71875,
+    "encode_fps": 143.159406661155,
+    "decode_fps": 140.29991861659752
+  },
+  {
+    "start": 5591,
+    "format": "raw",
+    "block": 16,
+    "level": 6,
+    "bytes_per_frame": 201567.5625,
+    "encode_fps": 63.547158112368336,
+    "decode_fps": 116.27968436669818
+  },
+  {
+    "start": 5591,
+    "format": "raw",
+    "block": 64,
+    "level": 1,
+    "bytes_per_frame": 198501.6875,
+    "encode_fps": 139.1985951376093,
+    "decode_fps": 127.0893380388889
+  },
+  {
+    "start": 5591,
+    "format": "raw",
+    "block": 64,
+    "level": 6,
+    "bytes_per_frame": 177650.4375,
+    "encode_fps": 62.941487952455695,
+    "decode_fps": 106.26147922559989
+  },
+  {
+    "start": 5591,
+    "format": "pixels",
+    "block": 1,
+    "level": 1,
+    "bytes_per_frame": 749487.546875,
+    "encode_fps": 56.67007546885716,
+    "decode_fps": 85.50148206056208
+  },
+  {
+    "start": 5591,
+    "format": "pixels",
+    "block": 1,
+    "level": 6,
+    "bytes_per_frame": 720403.28125,
+    "encode_fps": 38.35279985440113,
+    "decode_fps": 85.26114831998377
+  },
+  {
+    "start": 5591,
+    "format": "pixels",
+    "block": 4,
+    "level": 1,
+    "bytes_per_frame": 328483.71875,
+    "encode_fps": 118.79455232644509,
+    "decode_fps": 142.02534029133835
+  },
+  {
+    "start": 5591,
+    "format": "pixels",
+    "block": 4,
+    "level": 6,
+    "bytes_per_frame": 307047.90625,
+    "encode_fps": 56.95136187480067,
+    "decode_fps": 133.36602799493502
+  },
+  {
+    "start": 5591,
+    "format": "pixels",
+    "block": 16,
+    "level": 1,
+    "bytes_per_frame": 215234.8125,
+    "encode_fps": 165.1792322846008,
+    "decode_fps": 97.86164432402713
+  },
+  {
+    "start": 5591,
+    "format": "pixels",
+    "block": 16,
+    "level": 6,
+    "bytes_per_frame": 196376.0625,
+    "encode_fps": 68.93768513906743,
+    "decode_fps": 95.5901563651119
+  },
+  {
+    "start": 5591,
+    "format": "pixels",
+    "block": 64,
+    "level": 1,
+    "bytes_per_frame": 188986.453125,
+    "encode_fps": 166.17505895301278,
+    "decode_fps": 42.35684744965073
+  },
+  {
+    "start": 5591,
+    "format": "pixels",
+    "block": 64,
+    "level": 6,
+    "bytes_per_frame": 170661.953125,
+    "encode_fps": 68.89980725415394,
+    "decode_fps": 41.71325083736745
+  }
+]

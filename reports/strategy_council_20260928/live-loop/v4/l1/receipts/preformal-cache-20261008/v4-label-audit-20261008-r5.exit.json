@@ -1,0 +1,18 @@
+{
+  "host": "127x16",
+  "label": "v4-label-audit-20261008-r5",
+  "started_utc": "2026-10-08T06:50:27.021446+00:00",
+  "command": [
+    "bash",
+    "-c",
+    "set -e; \"$CLASHER_LEASE_ROOT/envs/clasher-gpu/bin/python\" -B \"$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/l1/test_cache_labels.py\"; \"$CLASHER_LEASE_ROOT/envs/clasher-gpu/bin/python\" -B \"$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/l1/audit_labels.py\" --source \"$CLASHER_LEASE_ROOT/data/v4-matches\" --split \"$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/split.json\" --output \"$CLASHER_LEASE_ROOT/jobs/v4-label-audit-20261008-r5.json\" --workers 8"
+  ],
+  "supervisor_pid": 3434454,
+  "pid": 3434456,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T06:50:31.266359+00:00",
+  "stop_reason": null,
+  "peak_processes": 11,
+  "peak_rss_bytes": 455942144
+}

@@ -1,0 +1,108 @@
+{
+  "samples": 16,
+  "mismatches": 0,
+  "all_tensors_exact": true,
+  "rows": [
+    {
+      "index": 29,
+      "cached_seconds": 0.35200036806054413,
+      "decode_seconds": 7.263383206911385,
+      "exact": true
+    },
+    {
+      "index": 7,
+      "cached_seconds": 0.2168997279368341,
+      "decode_seconds": 2.6479532211087644,
+      "exact": true
+    },
+    {
+      "index": 24,
+      "cached_seconds": 0.229301504092291,
+      "decode_seconds": 6.2892951120156795,
+      "exact": true
+    },
+    {
+      "index": 14,
+      "cached_seconds": 0.357836508192122,
+      "decode_seconds": 5.080613834084943,
+      "exact": true
+    },
+    {
+      "index": 15,
+      "cached_seconds": 0.32805353007279336,
+      "decode_seconds": 5.201822469942272,
+      "exact": true
+    },
+    {
+      "index": 6,
+      "cached_seconds": 0.3323117068503052,
+      "decode_seconds": 2.312256866833195,
+      "exact": true
+    },
+    {
+      "index": 27,
+      "cached_seconds": 0.3386907740496099,
+      "decode_seconds": 7.067007267847657,
+      "exact": true
+    },
+    {
+      "index": 2,
+      "cached_seconds": 0.20831406489014626,
+      "decode_seconds": 1.1064513551536947,
+      "exact": true
+    },
+    {
+      "index": 18,
+      "cached_seconds": 0.22367710201069713,
+      "decode_seconds": 5.2744871829636395,
+      "exact": true
+    },
+    {
+      "index": 28,
+      "cached_seconds": 0.20850917790085077,
+      "decode_seconds": 7.129291036166251,
+      "exact": true
+    },
+    {
+      "index": 15,
+      "cached_seconds": 0.323282808996737,
+      "decode_seconds": 5.242613367037848,
+      "exact": true
+    },
+    {
+      "index": 27,
+      "cached_seconds": 0.32709743082523346,
+      "decode_seconds": 7.077456818893552,
+      "exact": true
+    },
+    {
+      "index": 11,
+      "cached_seconds": 0.20392825780436397,
+      "decode_seconds": 3.4640267270151526,
+      "exact": true
+    },
+    {
+      "index": 3,
+      "cached_seconds": 0.20531734684482217,
+      "decode_seconds": 1.6198090380057693,
+      "exact": true
+    },
+    {
+      "index": 5,
+      "cached_seconds": 0.30780796287581325,
+      "decode_seconds": 2.0963601290713996,
+      "exact": true
+    },
+    {
+      "index": 11,
+      "cached_seconds": 0.20346839213743806,
+      "decode_seconds": 3.479077588999644,
+      "exact": true
+    }
+  ],
+  "heldout_opened": false,
+  "cached_windows_per_second": 3.6642647946114075,
+  "sequential_reference_windows_per_second": 0.22114137769966624,
+  "pixel_checks": 57,
+  "pixel_population": 5655
+}

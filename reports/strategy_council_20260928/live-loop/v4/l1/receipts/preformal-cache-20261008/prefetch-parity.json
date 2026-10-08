@@ -1,0 +1,12 @@
+{
+  "samples": 32,
+  "historical_sampler_exact": true,
+  "parallel_tensors_exact": true,
+  "rng_exact": true,
+  "counts": {
+    "jpeg": 8,
+    "affine": 13,
+    "flip": 16
+  },
+  "heldout_opened": false
+}

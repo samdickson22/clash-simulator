@@ -1,0 +1,18 @@
+{
+  "host": "127x16",
+  "label": "v4-cache-pilot-20261008-16r1",
+  "started_utc": "2026-10-08T06:28:42.070074+00:00",
+  "command": [
+    "bash",
+    "-c",
+    "set -e; \"$CLASHER_LEASE_ROOT/envs/clasher-gpu/bin/python\" -B \"$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/l1/stage_training.py\" --destination \"$CLASHER_LEASE_ROOT/data/v4-matches\" --split \"$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/split.json\" --episodes v4-phase-a-1975100701 v4-phase-a-1975100702 v4-phase-a-1975100703 v4-phase-a-1975100708; \"$CLASHER_LEASE_ROOT/envs/clasher-gpu/bin/python\" -B \"$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/l1/build_cache.py\" --source \"$CLASHER_LEASE_ROOT/data/v4-matches\" --split \"$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/split.json\" --cache \"$CLASHER_LEASE_ROOT/cache/v4-pixels-r2\" --workers 4 --budget-gb 6 --receipt \"$CLASHER_LEASE_ROOT/jobs/v4-cache-pilot-20261008-16r1.json\""
+  ],
+  "supervisor_pid": 3422308,
+  "pid": 3422310,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T06:29:16.692983+00:00",
+  "stop_reason": null,
+  "peak_processes": 7,
+  "peak_rss_bytes": 2031345664
+}

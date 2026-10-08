@@ -1,0 +1,11 @@
+{
+  "scheduledTaskId": "scheduled-task:command:mcp:5eaa8034-8c9f-4cbb-a098-e5ccf5d5f81f:schedule-task:v4-t6t7-phase-a-watch-20261008-r1",
+  "title": "Clasher v4 Phase A: bounded 15-minute checks",
+  "schedule": {
+    "type": "interval",
+    "everyMs": 900000
+  },
+  "nextRunAt": "2026-10-08T07:12:23.535Z",
+  "deadline": "2026-10-08T18:08:27Z",
+  "heldout_payloads_opened": false
+}

@@ -1,0 +1,9 @@
+{
+  "pass_": true,
+  "signal_pid": 962977,
+  "stopped_step": 24,
+  "final_step": 128,
+  "steps_unique_and_contiguous": true,
+  "source_manifest_unchanged": true,
+  "heldout_opened": false
+}
