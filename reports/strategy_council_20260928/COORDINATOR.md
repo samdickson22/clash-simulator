@@ -368,3 +368,12 @@ Also on the hub, but with copies elsewhere:
   - (B) IL_Replay re-fetch and S122 payloads (T9), then the S122 extraction with the inline observer (T10) once T1
     passes;
   - (C) model, trainer, evaluator and inference API (T4), with a shakedown once the T3 store exists.
+- **2026-10-08 03:40 UTC: imitation data pipeline.** T0 PASS (GPU env on 127x01). T1 PASS: deck-free D1 module, 319,077 exact
+  elixir comparisons and 2,015,370 known-fact checks against the oracle trackers, 0 conflicts. T9 PASS (IL_Replay
+  re-fetch and S122 payloads, leak check). T2 sidecar replay running on 01/03 (64 workers each; 12,143/82,231
+  perspectives at the last checkpoint, 0 violations). T4 model code committed (`imitation/model/`, 2.40M params, 13 tests,
+  CPU proposer p99 13.08 ms); its scheduled poll runs the GPU shakedown when `T3-PASS.json` appears.
+  **Decision (header provenance):** 270 original C56 headers carry the v3 runtime SHA (`af205b0b…`), and the replay
+  executes v3b (`1ec2c60c…`). All non-header arrays are equal and every common header field matches. Accepted: the
+  runtime SHA marker joins reuse provenance as an exempt provenance field. Original headers are kept; actual execution
+  is recorded in the sidecar manifest. Any other header difference still fails.
