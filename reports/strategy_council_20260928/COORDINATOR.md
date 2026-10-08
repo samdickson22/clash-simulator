@@ -772,3 +772,7 @@ Also on the hub, but with copies elsewhere:
     - ClashAI has no license (all rights reserved): learn and cite only.
     - RoyaleSim is MIT.
     - Our C56/S122 corpus derives from HF `VanguardX101/IL_Replay`, which has no declared license. **Decision:** no IL_Replay-derived datasets or model weights are published. The public repo keeps docs and small receipts only, as now; any future release needs a licensing check first.
+- **~21:50 UTC: R19 root cause: the public mask misses engine occupancy rules.**
+  - **Evidence:** an exact recorded-action replay of 02 r9 game006, reproduced on 03 with no search or deadline involved. All 6 model-command rejections recur: BombTower ×3 hit the building-footprint guard (battle.py:1277), RoyalHog ×3 hit the deployment-payload guard (:1284). The public mask had called all 6 legal. It's deterministic, not timing, and can happen on any host.
+  - **Gates (b)/(c):** no serving or mask change (the qualified path stays frozen). R19 is restated as "zero timing/staleness/load-attributable rejections". Deterministic mask–engine rejections are part of play: same fallback for every arm (drop the command, no-op wait), reported per arm, protocol and card, each one replay-reproducible. This goes to the reviewer with the delta.
+  - **Delegated (Astra high):** mask v2 with occupancy rules from public information only, flag-guarded with the default unchanged, parity-proven on ≥100k recorded states. It's for future consumers only: v2 proposer, L2-v4 runtime, live actuator.
