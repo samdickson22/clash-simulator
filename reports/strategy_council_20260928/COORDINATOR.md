@@ -705,3 +705,8 @@ Also on the hub, but with copies elsewhere:
   - **v4 perception:** the cache budget is raised from 1.0 to up to 1.3 TB aggregate for lossless inference-output shards. Per-host limits are unchanged: ≤300 GB per host, ≥200 GB free. GPU inference may start without waiting for duplicate retirement.
   - **T11:** seed 21 checkpointed at step 5735 and exited cleanly to qualify a multi-worker loader. The runs were loader-bound at ~2k rows/s against ~12k qualified.
   - **Console check:** `fleet-console-users` is now lock/idle aware. The "console users" on 12/17 were stale locked seats in a locked room: a student logged in since Aug 24, and Sam's own login. Roader has been told.
+- **2026-10-08 20:45 UTC heartbeat (utilization 4/9 GPUs busy):**
+  - **Busy:** 01 at 81% (T5 gate (a) once-only heldout scoring; 4-run release sealed at 20:21Z, primary main02 step 22552); 08 at 31% (GRU ablation); 16/18 at 79%/89% (T11 resumed with a qualified six-worker loader, ~7.3k rows/s per run, up from ~2k).
+  - **Idle:** 04, 09, 13, 14 and 15. Perception GPU fan-out is gated on the full 64-match equality job, which was waiting on 01's cache checksum. I told the worker to use 03's verified cache and to pre-stage the fan-out.
+  - **Decision: gates (b) and (c) start now** (delegated, Astra high, clasher-imitation-gates-bc-20261008-1). They depend only on the sealed dev-selected checkpoint, not on the gate (a) verdict. They run on idle CPU (03 primary, plus 04 and leased 13–15 CPU), with the PREREGs frozen with the checkpoint hash before any game. CPU on 03 is split with the perception threshold grid (≤64 processes each).
+  - **Health:** Mac 27 Gi free, 48% memory free; no reclaims; no pending questions.
