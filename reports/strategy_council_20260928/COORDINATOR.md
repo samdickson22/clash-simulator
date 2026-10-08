@@ -460,3 +460,9 @@ Also on the hub, but with copies elsewhere:
   `imitation/data/receipts/T10-fleet-expansion-blocked-20261008-r1.json`). Throughput 66,420 perspectives/h; ETA
   ~10:20 UTC. Not worth a restart: S122 feeds v2, which comes after v1 training and gates (b)/(c), and 04/08 go to S3,
   then T5 data loaders and gate games.
+- **2026-10-08 05:27 UTC: fleet sharing with roader** (Sam: "check with roader, share the machines if one of you isn't
+  using them"). Read-only check: roader's 127x09–18 are idle (load ≤1.2, A6000s at 0%; console users on 12 and 17), while
+  clasher's 01/03/04/08 are near the cap. Drafted the protocol `/mpac/sdicks02/cc/FLEET-SHARING.md`: lease file per
+  borrowed host, separate trees only, 30-min reclaim, ≤96 processes/host, GPU headroom. Asked roader's coordinator
+  ("Take Over RoadForge Pipeline", f552b138) to lend 127x11/13/14/16/18 for ~24 h (imitation training on GPUs,
+  evaluation games on CPUs), and offered clasher hosts back when idle. **No writes to roader hosts until they answer.**
