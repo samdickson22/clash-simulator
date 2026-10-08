@@ -466,3 +466,14 @@ Also on the hub, but with copies elsewhere:
   borrowed host, separate trees only, 30-min reclaim, ≤96 processes/host, GPU headroom. Asked roader's coordinator
   ("Take Over RoadForge Pipeline", f552b138) to lend 127x11/13/14/16/18 for ~24 h (imitation training on GPUs,
   evaluation games on CPUs), and offered clasher hosts back when idle. **No writes to roader hosts until they answer.**
+- **2026-10-08 05:28 UTC: roader lent hosts until 2026-10-09 05:30Z** (`/mpac/sdicks02/cc/FLEET-SHARING.md`, rules 1–7 incl. the
+  co-tenancy rule 6). Leases:
+  - 127x11: full, ≤96 processes. Never touch the roader mirror dirs there.
+  - 127x13/14: shared, ≤64 processes.
+  - 127x16/18: shared, ≤48 processes.
+  - 127x09/15: GPU only, ≤8 processes.
+  All lent GPUs are ours apart from ≥8 GB headroom; resident memory ≤64 GB on shared hosts; 30-min reclaim. Not lendable:
+  127x10, 12, 17. Use: imitation T5 one run per GPU, gates (b)/(c) games and later S122 v2 training on the CPUs/GPUs,
+  and perception runs. First: a self-contained clasher footprint per borrowed host under `/mpac/sdicks02/repos/clasher*`
+  (own tools, uv Python and venvs; never the shared `/mpac/sdicks02/tools` or `env.sh`), qualified by the P16 identity
+  smoke before use.
