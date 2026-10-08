@@ -316,3 +316,9 @@ Also on the hub, but with copies elsewhere:
   every 127x08 receipt; 127x04 receipts only if the game finished before 01:39:00Z, while any 127x04 game in
   flight at or after 01:39:00Z is replayed from its seed. Then resume 04's partitions, run the prepared 07 migration
   split (48–85 → 04, 86–147 → 08) and collect complete-only.
+- **2026-10-08 02:25 UTC: Mac thread, cause of the 01:39Z overwrite incident and the Mac bulk offload.**
+  - **Cause of the overwrite:** the old Mac thread caused it. Its 23:37Z fill copies to 127x01/127x04 died, and it relaunched them at 01:39Z without checking whether the 127x05 coordinator had begun using those trees. `rsync -a` without `--update` replaced newer files. The guard in `transfer_to_fleet.sh` is kept, and the Mac thread will make no further writes to any fleet host.
+  - **The Mac bulk offload's checks were read-only.** `pilot/offload_mac_bulk.sh` only runs dry-run checksum comparisons against the fleet; it never writes there.
+  - **What was deleted:** at 01:55Z, 81,517 untracked files (35.8 GB) were deleted from the Mac after an exact checksum match on both 127x01 and 127x04. That covers m0/readiness, checkpoints/, the untracked parts of datasets/, c56/data, human-prior-p16, reports/persistent_batch_v1, and pilot v7r1/v7r2/v7r2c. The file list is `pilot/logs/offload-mac-bulk-20261008T015508Z.files`.
+  - **Copies:** 127x01 and 127x04 now hold the only copies of those paths. Files the incident restored there are newer than the deleted Mac versions, which is fine. Do not delete these paths on both nodes.
+  - **Mac disk:** 54 GiB free.

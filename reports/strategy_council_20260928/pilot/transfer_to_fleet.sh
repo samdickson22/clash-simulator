@@ -1,4 +1,7 @@
 #!/bin/bash
+# GUARD (127x05 coordinator, 2026-10-08): the fleet hub 127x01 is now the authority for fleet trees.
+# A push without --update overwrote sealed S1/Stage 6 files on 2026-10-08 01:39Z. Refuse unless explicitly authorized.
+if [ "${CLASHER_FLEET_PUSH_AUTHORIZED:-}" != "127x05-coordinator" ]; then echo "refused: fleet push needs CLASHER_FLEET_PUSH_AUTHORIZED=127x05-coordinator (see COORDINATOR.md 2026-10-08)" >&2; exit 3; fi
 # Copy the Clasher project from the Mac mini to the fleet hub (copy only; nothing deleted on the Mac). Re-run to resume.
 # Tailscale on the fleet is userspace (~10-30 MB/s per node), so chunks run P-way in parallel.
 set -u
@@ -6,7 +9,7 @@ HUB=${HUB:-127x02}
 SRC=/Users/sam/Desktop/code/clasher
 DST=$HUB:/mpac/sdicks02/repos/clasher/
 P=${P:-6}
-LOG=$SRC/reports/strategy_council_20260928/pilot/logs/transfer-to-fleet.log
+LOG=${LOG:-$SRC/reports/strategy_council_20260928/pilot/logs/transfer-to-fleet-$HUB.log}
 RS=/opt/homebrew/bin/rsync
 SSH="ssh -T -o BatchMode=yes -o Compression=no -o ControlMaster=no -c aes128-gcm@openssh.com"
 EX=(--exclude=/.venv/ --exclude=target/ --exclude='*.so' --exclude='*.dylib' --exclude=__pycache__/ --exclude=node_modules/ --exclude=.DS_Store)
