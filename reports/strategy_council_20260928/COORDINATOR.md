@@ -854,3 +854,9 @@ Also on the hub, but with copies elsewhere:
   2. **Misclassification:** discovery counted roader's same-UID RoadForge processes (`/mpac/sdicks02/repos/roader-perf2`, `roader-shell`) as clasher's. That inflated our aggregate and refused admission with "below nice minimum" (roader runs those at nice 0).
   - **Fix:** supervisor-liveness keyed registry; allowlist of clasher-owned argv prefixes, excluding roader. Deployed as new versioned files; running v2 jobs untouched.
   - Workers hold new leased launches until it's confirmed. Roader was asked to keep its 09 jobs at nice ≥10 (FLEET-SHARING rule 6).
+- **23:39 UTC heartbeat (utilization: 10/11 usable GPUs busy, 1 starved).**
+  - **GPU busy:** 02 97%, 04 99%, 09 86%, 11 76%, 13 97%, 14 94%, 15 98%, 16 84%, 08 61% (GRU).
+  - **01 at 30%:** T11 seed 22 is I/O-bound. Its 109 GB store column exceeds RAM, and the v4 validation-cache service on 01 evicts its page cache. Perception was asked to replicate the cache to 08/02 and retire 01 serving.
+  - **03 idle:** lent to the exploration A/B under a GATES-03-RESERVED handoff file.
+  - **Perception:** the vectorized decoder runs at **~12 frames/s vs ~1 (12×)**. The full equality gate is pending. Conditional all-capture planning range 06:00–09:00Z.
+  - **Health:** 06/07/18 down; no reclaims; roader reniced its jobs to 10.
