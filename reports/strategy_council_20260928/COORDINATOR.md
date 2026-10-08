@@ -849,3 +849,8 @@ Also on the hub, but with copies elsewhere:
   - **Fix:** the loop was stopped by verified PIDs and relaunched as `hub-mirror-127x04-v2-20261008` (`hub_mirror_v2.sh`), which writes only to `04:/mpac/sdicks02/mirrors/hub01/<abs path>`.
   - **Follow-ups:** the perception worker was asked to verify its 04 files against its SHA manifests. Gates: the 04 audit uses the preserved archive with disclosure, and H is recomputed pre-freeze.
   - **Lesson:** a backup must never write into another host's live paths.
+- **~23:50 UTC: lease wrapper v2 bugs found on 09; hotfix delegated (Sol).**
+  1. **KeyError race:** `refresh()` deletes a job whose PIDs vanished, so `supervise()` crashed on `registry['jobs'][key]` (perception's fullgate r1).
+  2. **Misclassification:** discovery counted roader's same-UID RoadForge processes (`/mpac/sdicks02/repos/roader-perf2`, `roader-shell`) as clasher's. That inflated our aggregate and refused admission with "below nice minimum" (roader runs those at nice 0).
+  - **Fix:** supervisor-liveness keyed registry; allowlist of clasher-owned argv prefixes, excluding roader. Deployed as new versioned files; running v2 jobs untouched.
+  - Workers hold new leased launches until it's confirmed. Roader was asked to keep its 09 jobs at nice ≥10 (FLEET-SHARING rule 6).
