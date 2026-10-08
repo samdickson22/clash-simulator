@@ -1,0 +1,175 @@
+{
+  "host": "127x01",
+  "utc": "2026-10-08T02:39:47.226402+00:00",
+  "python": "3.12.12 (main, Feb 12 2026, 00:42:14) [Clang 21.1.4 ]",
+  "executable": "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+  "nice": 10,
+  "versions": {
+    "torch": "2.7.1+cu118",
+    "torchvision": "0.22.1+cu118",
+    "ultralytics": "8.1.24",
+    "numpy": "1.26.4",
+    "opencv-python": "4.10.0.84",
+    "triton": "3.3.1"
+  },
+  "gpu_before": "NVIDIA RTX A6000, 470.256.02, 107, 0",
+  "checks": {
+    "imports": {
+      "status": "pass",
+      "modules": [
+        "cv2",
+        "numpy",
+        "yaml",
+        "torchvision",
+        "ultralytics",
+        "train_l1_stream_v3",
+        "train_l1_events_v2",
+        "train_l1_perception"
+      ],
+      "repo": "/mpac/sdicks02/repos/clasher",
+      "process_seconds": 8.1766396779567
+    },
+    "cuda": {
+      "status": "pass",
+      "is_available": true,
+      "device": "NVIDIA RTX A6000",
+      "capability": [
+        8,
+        6
+      ],
+      "bf16_supported_reported": true,
+      "cudnn": 90100,
+      "torchvision_cuda_nms": true,
+      "peak_allocated_mib": 0.0048828125,
+      "peak_reserved_mib": 2.0,
+      "process_seconds": 6.440238643903285
+    },
+    "fp32": {
+      "status": "pass",
+      "n": 8192,
+      "steps": 10,
+      "seconds": 0.46867352294921877,
+      "tflops": 23.460075594992233,
+      "output_dtype": "torch.float32",
+      "relative_l2_error": 1.2484562318012717e-06,
+      "peak_allocated_mib": 1056.0,
+      "peak_reserved_mib": 1058.0,
+      "process_seconds": 4.771235801978037
+    },
+    "tf32": {
+      "status": "pass",
+      "n": 8192,
+      "steps": 10,
+      "seconds": 0.18041856384277344,
+      "tflops": 60.94226693513503,
+      "output_dtype": "torch.float32",
+      "relative_l2_error": 0.00024792695114141827,
+      "peak_allocated_mib": 1056.0,
+      "peak_reserved_mib": 1058.0,
+      "process_seconds": 4.398115364136174
+    },
+    "bf16": {
+      "status": "pass",
+      "n": 8192,
+      "steps": 10,
+      "seconds": 0.10610374450683593,
+      "tflops": 103.62609094395928,
+      "output_dtype": "torch.bfloat16",
+      "relative_l2_error": 0.0029395970198147926,
+      "peak_allocated_mib": 1056.0,
+      "peak_reserved_mib": 1058.0,
+      "process_seconds": 4.295233323005959
+    },
+    "conv": {
+      "status": "pass",
+      "steps": 10,
+      "seconds": 0.09891773294657469,
+      "ms_per_step": 9.891773294657469,
+      "loss_first": 0.005110693629831076,
+      "loss_last": 0.00030343729304149747,
+      "amp": false,
+      "parameters": 11181642,
+      "input_shape": [
+        16,
+        3,
+        128,
+        128
+      ],
+      "layers": null,
+      "peak_allocated_mib": 346.8701171875,
+      "peak_reserved_mib": 404.0,
+      "process_seconds": 7.982222579885274
+    },
+    "transformer": {
+      "status": "pass",
+      "steps": 10,
+      "seconds": 0.23978981911204755,
+      "ms_per_step": 23.978981911204755,
+      "loss_first": 1.8408889770507812,
+      "loss_last": 1.5314769744873047,
+      "amp": true,
+      "parameters": 18914304,
+      "input_shape": [
+        8,
+        128,
+        512
+      ],
+      "layers": 6,
+      "peak_allocated_mib": 446.76318359375,
+      "peak_reserved_mib": 486.0,
+      "process_seconds": 7.081510128220543
+    },
+    "dataloader": {
+      "status": "pass",
+      "workers": 16,
+      "batch_size": 32,
+      "shape": [
+        3,
+        224,
+        224
+      ],
+      "dtype": "uint8",
+      "startup_and_8_warmup_batches_seconds": 1.487587183015421,
+      "measured_batches": 64,
+      "seconds": 0.25731328199617565,
+      "images_per_second": 7959.169398921424,
+      "includes_pinned_host_to_device": true,
+      "synthetic_not_disk_io": true,
+      "peak_allocated_mib": 9.1875,
+      "peak_reserved_mib": 20.0,
+      "process_seconds": 3.956209267023951
+    },
+    "compile": {
+      "status": "fail",
+      "error": "InductorError: RuntimeError: Triton Error [CUDA]: device kernel image is invalid\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n",
+      "traceback": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/t0/gpu_check.py\", line 241, in worker\n    result = {'status': 'pass', **probe(name)}\n                                  ^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/t0/gpu_check.py\", line 171, in probe\n    actual = compiled(x)\n             ^^^^^^^^^^^\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py\", line 663, in _fn\n    raise e.remove_dynamo_frames() from None  # see TORCHDYNAMO_VERBOSE=1\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_inductor/compile_fx.py\", line 760, in _compile_fx_inner\n    raise InductorError(e, currentframe()).with_traceback(\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_inductor/compile_fx.py\", line 745, in _compile_fx_inner\n    mb_compiled_graph = fx_codegen_and_compile(\n                        ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_inductor/compile_fx.py\", line 1295, in fx_codegen_and_compile\n    return scheme.codegen_and_compile(gm, example_inputs, inputs_to_check, graph_kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_inductor/compile_fx.py\", line 1197, in codegen_and_compile\n    compiled_fn = graph.compile_to_module().call\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_inductor/graph.py\", line 2083, in compile_to_module\n    return self._compile_to_module()\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_inductor/graph.py\", line 2130, in _compile_to_module\n    mod = PyCodeCache.load_by_key_path(\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_inductor/codecache.py\", line 2747, in load_by_key_path\n    mod = _reload_python_module(key, path)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_inductor/runtime/compile_tasks.py\", line 36, in _reload_python_module\n    exec(code, mod.__dict__, mod.__dict__)\n  File \"/mpac/sdicks02/cache/torchinductor/4o/c4o4x6bx66kbdcadesza4ohbixqjelyxrjqkto3gamwaxumhbv5u.py\", line 48, in <module>\n    triton_poi_fused_add_cos_pow_sin_0 = async_compile.triton('triton_poi_fused_add_cos_pow_sin_0', '''\n                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_inductor/async_compile.py\", line 346, in triton\n    kernel.precompile(warm_cache_only=False)\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_inductor/runtime/triton_heuristics.py\", line 277, in precompile\n    self._make_launchers()\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_inductor/runtime/triton_heuristics.py\", line 434, in _make_launchers\n    launchers.append(result.make_launcher())\n                     ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/torch/_inductor/runtime/triton_heuristics.py\", line 1091, in make_launcher\n    binary._init_handles()\n  File \"/mpac/sdicks02/envs/clasher-gpu/lib/python3.12/site-packages/triton/compiler/compiler.py\", line 408, in _init_handles\n    self.module, self.function, self.n_regs, self.n_spills = driver.active.utils.load_binary(\n                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntorch._inductor.exc.InductorError: RuntimeError: Triton Error [CUDA]: device kernel image is invalid\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n\n",
+      "peak_allocated_mib": 4.0068359375,
+      "peak_reserved_mib": 22.0,
+      "process_seconds": 8.806679148925468
+    },
+    "yolo": {
+      "status": "pass",
+      "train_epoch_seconds": 1.7564103440381587,
+      "train_loss": [
+        3.6270194053649902,
+        3.197956085205078,
+        4.387512683868408
+      ],
+      "train_validate_save_seconds": 5.400910378200933,
+      "train_images": 24,
+      "val_images": 8,
+      "batch_size": 4,
+      "image_size": 320,
+      "amp": false,
+      "pretrained": false,
+      "model": "YOLOv8s",
+      "artifacts": "/mpac/sdicks02/tmp/clasher-gpu-yolo-kqj_5v_1",
+      "peak_allocated_mib": 612.49609375,
+      "peak_reserved_mib": 666.0,
+      "process_seconds": 12.576931707095355
+    }
+  },
+  "gpu_after": "NVIDIA RTX A6000, 470.256.02, 107, 0",
+  "all_requested_required_passed": true,
+  "full_required_suite_passed": true
+}

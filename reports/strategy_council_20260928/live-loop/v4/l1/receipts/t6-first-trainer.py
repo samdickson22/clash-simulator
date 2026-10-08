@@ -33,9 +33,8 @@ def read(path):return [json.loads(l) for l in path.read_text().splitlines()]
 
 
 class StreamWindows:
-    def __init__(self,dataset,audit,cards,split,cache_root,cache_limit_mib=450):
+    def __init__(self,dataset,audit,cards,split,cache_root):
         self.dataset=dataset;self.cards=cards;self.examples=[];self.positive=[];self.negative=[]
-        self.cache_limit_bytes=cache_limit_mib*1024**2
         self.geometry=Geometry(REPORT/'calibration.json');self.cache_root=cache_root
         cache_root.mkdir();self.needed=defaultdict(set)
         manifest=json.loads((dataset/'manifest.json').read_text())
@@ -98,7 +97,7 @@ class StreamWindows:
                     ok,jpg=cv2.imencode('.jpg',reduced(image),[cv2.IMWRITE_JPEG_QUALITY,55])
                     if not ok:raise ValueError('Thumbnail encoding failed')
                     cache_bytes+=len(jpg)
-                    if cache_bytes>self.cache_limit_bytes:raise RuntimeError('Training pixel cache exceeded configured reserve')
+                    if cache_bytes>450*1024**2:raise RuntimeError('Training pixel cache exceeded 450 MiB reserve')
                     (self.cache_root/f"{ep}-{row['frame_index']}.jpg").write_bytes(jpg)
                 if row['frame_index']%3==0:
                     active=[e for e in events if 1<=row['estimated_tick']-e['tick']<=8 and e['card_id']//1000000!=28]
@@ -132,13 +131,12 @@ def main():
     p.add_argument('--dataset',type=Path,required=True);p.add_argument('--audit',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True);p.add_argument('--epochs',type=int,default=24)
     p.add_argument('--steps',type=int,default=400)
-    p.add_argument('--device',default='mps',choices=['mps','cuda','cpu'])
-    p.add_argument('--pixel-cache-mib',type=int,default=450);a=p.parse_args()
+    p.add_argument('--device',default='mps',choices=['mps','cuda','cpu']);a=p.parse_args()
     a.output.mkdir(parents=True,exist_ok=False);offline_ml(a.output/'offline')
     torch.set_num_threads(2);cv2.setNumThreads(1)
     random.seed(6107);np.random.seed(6107);torch.manual_seed(6107)
     manifest=json.loads((a.dataset/'manifest.json').read_text());cards=manifest['cards']
-    train=StreamWindows(a.dataset,a.audit,cards,'train',a.output/'training-pixels',cache_limit_mib=a.pixel_cache_mib)
+    train=StreamWindows(a.dataset,a.audit,cards,'train',a.output/'training-pixels')
     net=StreamEventNet(cards)
     old=torch.load(REPORT/'v2/model/last.pt',map_location='cpu',weights_only=True)['model']
     state=net.state_dict()
@@ -150,7 +148,7 @@ def main():
                 state[key][side*len(cards)+cards.index(name)]=old[key][side*len(OLD_CARDS)+i]
     net.load_state_dict(state);net.to(a.device)
     optimizer=torch.optim.AdamW(net.parameters(),lr=.0005,weight_decay=.0001)
-    meta=dict(device=a.device,pixel_cache_mib=a.pixel_cache_mib,seed=6107,training_episodes=[e['episode_id'] for e in train.entries],
+    meta=dict(device=a.device,seed=6107,training_episodes=[e['episode_id'] for e in train.entries],
         positive_windows=len(train.positive),negative_windows=len(train.negative),
         input='current pixels and two causal frame differences',timing='empirical intervals, not exact tick fences',
         heldout_pixels_or_labels_opened=False,cards=cards,hud_counts=train.fit_hud(a.output/'hud.npz'),

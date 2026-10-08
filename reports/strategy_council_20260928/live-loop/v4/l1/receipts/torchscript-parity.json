@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "traces": [
+    {
+      "stage": "frame",
+      "max_abs_error": 0.0,
+      "variants": 3,
+      "bytes": 9843928
+    },
+    {
+      "stage": "event",
+      "max_abs_error": 0.0,
+      "variants": 3,
+      "bytes": 932326
+    }
+  ],
+  "parameters": {
+    "total": 2422997,
+    "backbone": 2086560,
+    "body": 40762,
+    "hud": 78729,
+    "temporal": 216946
+  },
+  "frame_outputs": [
+    "features",
+    "body_heatmap",
+    "body_box",
+    "body_hp",
+    "body_hp_visible",
+    "hud_cards",
+    "elixir_digit",
+    "elixir_fraction",
+    "clock_seconds",
+    "phase"
+  ],
+  "event_outputs": [
+    "event_heatmap",
+    "event_age_ms",
+    "event_sigma_ms",
+    "cast_origin"
+  ],
+  "mac_run": false,
+  "coreml_converted": false
+}

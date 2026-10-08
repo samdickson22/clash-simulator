@@ -1,0 +1,2696 @@
+{
+  "thresholds": {
+    "default": 0.3,
+    "Archers": 0.3,
+    "BabyDragon": 0.8,
+    "BarbLog": 0.8,
+    "Bats": 0.8,
+    "Berserker": 0.8,
+    "BlowdartGoblin": 0.9,
+    "BombTower": 0.8,
+    "Cannon": 0.3,
+    "DarkPrince": 0.8,
+    "ElectroSpirit": 0.8,
+    "FireSpirits": 0.9,
+    "Firecracker": 0.8,
+    "FirespiritHut": 0.8,
+    "Ghost": 0.8,
+    "Giant": 0.8,
+    "GoblinGang": 0.8,
+    "GoblinHut": 0.8,
+    "Goblins": 0.3,
+    "HogRider": 0.3,
+    "IceGolem": 0.3,
+    "IceSpirit": 0.8,
+    "InfernoTower": 0.9,
+    "Log": 0.8,
+    "Miner": 0.8,
+    "Musketeer": 0.8,
+    "Poison": 0.8,
+    "Princess": 0.9,
+    "RoyalDelivery": 0.8,
+    "SkeletonArmy": 0.8,
+    "Skeletons": 0.3,
+    "Tesla": 0.9,
+    "Tornado": 0.8,
+    "Valkyrie": 0.9,
+    "Wallbreakers": 0.8,
+    "Wizard": 0.9,
+    "Zap": 0.9
+  },
+  "costs": {
+    "AngryBarbarians": 6.0,
+    "ArcherQueen": 5.0,
+    "Archers": 3.0,
+    "Arrows": 3.0,
+    "BabyDragon": 4.0,
+    "Balloon": 5.0,
+    "BarbLog": 2.0,
+    "Bats": 2.0,
+    "Berserker": 2.0,
+    "BlowdartGoblin": 3.0,
+    "BombTower": 4.0,
+    "Cannon": 3.0,
+    "DarkPrince": 4.0,
+    "Earthquake": 3.0,
+    "ElectroSpirit": 1.0,
+    "FireSpirits": 1.0,
+    "Fireball": 4.0,
+    "Firecracker": 3.0,
+    "FirespiritHut": 4.0,
+    "Ghost": 3.0,
+    "Giant": 5.0,
+    "GoblinBarrel": 3.0,
+    "GoblinGang": 3.0,
+    "GoblinHut": 4.0,
+    "Goblins": 2.0,
+    "Goblinstein": 5.0,
+    "Golem": 8.0,
+    "HogRider": 4.0,
+    "IceGolem": 2.0,
+    "IceSpirit": 1.0,
+    "InfernoTower": 5.0,
+    "Knight": 3.0,
+    "Lightning": 6.0,
+    "Log": 2.0,
+    "MightyMiner": 4.0,
+    "Miner": 3.0,
+    "MiniPekka": 4.0,
+    "MinionHorde": 5.0,
+    "Minions": 3.0,
+    "Musketeer": 4.0,
+    "Poison": 4.0,
+    "Prince": 5.0,
+    "Princess": 3.0,
+    "Rascals": 5.0,
+    "Rocket": 6.0,
+    "RoyalDelivery": 3.0,
+    "RoyalHogs": 5.0,
+    "SkeletonArmy": 3.0,
+    "Skeletons": 1.0,
+    "Tesla": 4.0,
+    "Tornado": 3.0,
+    "Valkyrie": 4.0,
+    "Wallbreakers": 2.0,
+    "Wizard": 5.0,
+    "Xbow": 6.0,
+    "Zap": 2.0
+  },
+  "event_probabilities": {
+    "Golem": 0.5,
+    "Goblins": 0.6,
+    "IceGolem": 0.5,
+    "GoblinHut": 0.5,
+    "Skeletons": 0.625,
+    "Wallbreakers": 0.5,
+    "FirespiritHut": 0.5,
+    "InfernoTower": 0.5,
+    "Cannon": 0.8571428571428571,
+    "Prince": 0.25,
+    "HogRider": 0.375,
+    "Wizard": 0.5,
+    "Ghost": 0.5,
+    "ArcherQueen": 0.5,
+    "Firecracker": 0.5,
+    "Valkyrie": 0.5,
+    "Giant": 0.5,
+    "Archers": 0.875,
+    "Rascals": 0.5,
+    "SkeletonArmy": 0.5,
+    "Zap": 0.5,
+    "Fireball": 0.5,
+    "Princess": 0.5,
+    "BabyDragon": 0.5,
+    "Tesla": 0.5,
+    "Log": 0.5,
+    "BombTower": 0.5,
+    "Berserker": 0.5,
+    "BarbLog": 0.5,
+    "GoblinGang": 0.5,
+    "Musketeer": 0.5,
+    "ElectroSpirit": 0.5,
+    "BlowdartGoblin": 0.5,
+    "Poison": 0.5,
+    "Tornado": 0.5,
+    "Miner": 0.5,
+    "Arrows": 0.5,
+    "DarkPrince": 0.5,
+    "Lightning": 0.5,
+    "FireSpirits": 0.5
+  },
+  "missed_rate": 0.21891817382829618,
+  "interval_margin": 0.0,
+  "state_event_match_window_ms": 2000,
+  "state_event_counts": {
+    "Golem": {
+      "truth": 1,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Goblins": {
+      "truth": 17,
+      "predictions": 3,
+      "matched": 2
+    },
+    "IceGolem": {
+      "truth": 5,
+      "predictions": 6,
+      "matched": 3
+    },
+    "GoblinHut": {
+      "truth": 1,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Skeletons": {
+      "truth": 10,
+      "predictions": 6,
+      "matched": 4
+    },
+    "Wallbreakers": {
+      "truth": 15,
+      "predictions": 0,
+      "matched": 0
+    },
+    "FirespiritHut": {
+      "truth": 13,
+      "predictions": 0,
+      "matched": 0
+    },
+    "InfernoTower": {
+      "truth": 7,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Cannon": {
+      "truth": 9,
+      "predictions": 5,
+      "matched": 5
+    },
+    "Prince": {
+      "truth": 1,
+      "predictions": 2,
+      "matched": 0
+    },
+    "HogRider": {
+      "truth": 11,
+      "predictions": 14,
+      "matched": 5
+    },
+    "Wizard": {
+      "truth": 5,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Ghost": {
+      "truth": 10,
+      "predictions": 0,
+      "matched": 0
+    },
+    "ArcherQueen": {
+      "truth": 2,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Firecracker": {
+      "truth": 13,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Valkyrie": {
+      "truth": 10,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Giant": {
+      "truth": 2,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Archers": {
+      "truth": 10,
+      "predictions": 6,
+      "matched": 6
+    },
+    "Rascals": {
+      "truth": 3,
+      "predictions": 0,
+      "matched": 0
+    },
+    "SkeletonArmy": {
+      "truth": 1,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Zap": {
+      "truth": 5,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Fireball": {
+      "truth": 4,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Princess": {
+      "truth": 8,
+      "predictions": 0,
+      "matched": 0
+    },
+    "BabyDragon": {
+      "truth": 1,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Tesla": {
+      "truth": 8,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Log": {
+      "truth": 9,
+      "predictions": 0,
+      "matched": 0
+    },
+    "BombTower": {
+      "truth": 6,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Berserker": {
+      "truth": 14,
+      "predictions": 0,
+      "matched": 0
+    },
+    "BarbLog": {
+      "truth": 15,
+      "predictions": 0,
+      "matched": 0
+    },
+    "GoblinGang": {
+      "truth": 1,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Musketeer": {
+      "truth": 3,
+      "predictions": 0,
+      "matched": 0
+    },
+    "ElectroSpirit": {
+      "truth": 6,
+      "predictions": 0,
+      "matched": 0
+    },
+    "BlowdartGoblin": {
+      "truth": 9,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Poison": {
+      "truth": 5,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Tornado": {
+      "truth": 8,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Miner": {
+      "truth": 2,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Arrows": {
+      "truth": 1,
+      "predictions": 0,
+      "matched": 0
+    },
+    "DarkPrince": {
+      "truth": 2,
+      "predictions": 0,
+      "matched": 0
+    },
+    "Lightning": {
+      "truth": 1,
+      "predictions": 0,
+      "matched": 0
+    },
+    "FireSpirits": {
+      "truth": 5,
+      "predictions": 0,
+      "matched": 0
+    }
+  },
+  "selected_split": "validation",
+  "trials": [
+    {
+      "threshold": 0.3,
+      "metrics": {
+        "truth": 560,
+        "predictions": 248,
+        "matched_within_500_ms": 179,
+        "false_positive": 69,
+        "missed": 381,
+        "recall": 0.3196428571428571,
+        "precision": 0.7217741935483871,
+        "placement_within_one_all_plays": 0.11607142857142858,
+        "within_one": 65,
+        "placement_within_one_detected": 0.36312849162011174,
+        "per_card": {
+          "FireSpirits": {
+            "truth": 25,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Xbow": {
+            "truth": 2,
+            "predictions": 3,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "InfernoTower": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BlowdartGoblin": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceSpirit": {
+            "truth": 27,
+            "predictions": 16,
+            "matched": 9,
+            "placed_within_one": 5
+          },
+          "Tornado": {
+            "truth": 28,
+            "predictions": 9,
+            "matched": 8,
+            "placed_within_one": 0
+          },
+          "Archers": {
+            "truth": 14,
+            "predictions": 11,
+            "matched": 10,
+            "placed_within_one": 8
+          },
+          "Goblins": {
+            "truth": 36,
+            "predictions": 19,
+            "matched": 12,
+            "placed_within_one": 8
+          },
+          "Valkyrie": {
+            "truth": 10,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "RoyalDelivery": {
+            "truth": 5,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Rascals": {
+            "truth": 3,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Wizard": {
+            "truth": 5,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "ArcherQueen": {
+            "truth": 2,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "DarkPrince": {
+            "truth": 10,
+            "predictions": 16,
+            "matched": 4,
+            "placed_within_one": 3
+          },
+          "ElectroSpirit": {
+            "truth": 16,
+            "predictions": 9,
+            "matched": 9,
+            "placed_within_one": 0
+          },
+          "Giant": {
+            "truth": 5,
+            "predictions": 4,
+            "matched": 2,
+            "placed_within_one": 1
+          },
+          "FirespiritHut": {
+            "truth": 18,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Musketeer": {
+            "truth": 13,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 4
+          },
+          "HogRider": {
+            "truth": 20,
+            "predictions": 23,
+            "matched": 10,
+            "placed_within_one": 9
+          },
+          "MinionHorde": {
+            "truth": 3,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "Poison": {
+            "truth": 12,
+            "predictions": 6,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Goblinstein": {
+            "truth": 2,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Berserker": {
+            "truth": 38,
+            "predictions": 13,
+            "matched": 13,
+            "placed_within_one": 0
+          },
+          "Bats": {
+            "truth": 8,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Log": {
+            "truth": 28,
+            "predictions": 12,
+            "matched": 12,
+            "placed_within_one": 0
+          },
+          "Wallbreakers": {
+            "truth": 16,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "BarbLog": {
+            "truth": 23,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Prince": {
+            "truth": 1,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BombTower": {
+            "truth": 12,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Balloon": {
+            "truth": 1,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Princess": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceGolem": {
+            "truth": 17,
+            "predictions": 18,
+            "matched": 11,
+            "placed_within_one": 10
+          },
+          "GoblinGang": {
+            "truth": 14,
+            "predictions": 8,
+            "matched": 8,
+            "placed_within_one": 0
+          },
+          "Firecracker": {
+            "truth": 14,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "SkeletonArmy": {
+            "truth": 7,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Arrows": {
+            "truth": 2,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinBarrel": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Tesla": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Ghost": {
+            "truth": 13,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "BabyDragon": {
+            "truth": 6,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "AngryBarbarians": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Skeletons": {
+            "truth": 22,
+            "predictions": 16,
+            "matched": 14,
+            "placed_within_one": 12
+          },
+          "Zap": {
+            "truth": 5,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Cannon": {
+            "truth": 9,
+            "predictions": 5,
+            "matched": 5,
+            "placed_within_one": 5
+          },
+          "GoblinHut": {
+            "truth": 11,
+            "predictions": 8,
+            "matched": 6,
+            "placed_within_one": 0
+          },
+          "Miner": {
+            "truth": 12,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "MightyMiner": {
+            "truth": 2,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "Minions": {
+            "truth": 1,
+            "predictions": 2,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Golem": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Fireball": {
+            "truth": 4,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Lightning": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Knight": {
+            "truth": 0,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          }
+        },
+        "timing": "Conservative: prediction after upper event-time bound and <=500 ms after lower bound",
+        "event_time_bracket_p95_ms": 208.14250060357153
+      }
+    },
+    {
+      "threshold": 0.4,
+      "metrics": {
+        "truth": 560,
+        "predictions": 184,
+        "matched_within_500_ms": 157,
+        "false_positive": 27,
+        "missed": 403,
+        "recall": 0.28035714285714286,
+        "precision": 0.8532608695652174,
+        "placement_within_one_all_plays": 0.07857142857142857,
+        "within_one": 44,
+        "placement_within_one_detected": 0.2802547770700637,
+        "per_card": {
+          "FireSpirits": {
+            "truth": 25,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Xbow": {
+            "truth": 2,
+            "predictions": 3,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "InfernoTower": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BlowdartGoblin": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceSpirit": {
+            "truth": 27,
+            "predictions": 12,
+            "matched": 9,
+            "placed_within_one": 5
+          },
+          "Tornado": {
+            "truth": 28,
+            "predictions": 9,
+            "matched": 8,
+            "placed_within_one": 0
+          },
+          "Archers": {
+            "truth": 14,
+            "predictions": 7,
+            "matched": 7,
+            "placed_within_one": 5
+          },
+          "Goblins": {
+            "truth": 36,
+            "predictions": 17,
+            "matched": 11,
+            "placed_within_one": 8
+          },
+          "Valkyrie": {
+            "truth": 10,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "RoyalDelivery": {
+            "truth": 5,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Rascals": {
+            "truth": 3,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Wizard": {
+            "truth": 5,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "ArcherQueen": {
+            "truth": 2,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "DarkPrince": {
+            "truth": 10,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 3
+          },
+          "ElectroSpirit": {
+            "truth": 16,
+            "predictions": 9,
+            "matched": 9,
+            "placed_within_one": 0
+          },
+          "Giant": {
+            "truth": 5,
+            "predictions": 3,
+            "matched": 2,
+            "placed_within_one": 1
+          },
+          "FirespiritHut": {
+            "truth": 18,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Musketeer": {
+            "truth": 13,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 4
+          },
+          "HogRider": {
+            "truth": 20,
+            "predictions": 6,
+            "matched": 5,
+            "placed_within_one": 4
+          },
+          "MinionHorde": {
+            "truth": 3,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "Poison": {
+            "truth": 12,
+            "predictions": 6,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Goblinstein": {
+            "truth": 2,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Berserker": {
+            "truth": 38,
+            "predictions": 13,
+            "matched": 13,
+            "placed_within_one": 0
+          },
+          "Bats": {
+            "truth": 8,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Log": {
+            "truth": 28,
+            "predictions": 12,
+            "matched": 12,
+            "placed_within_one": 0
+          },
+          "Wallbreakers": {
+            "truth": 16,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "BarbLog": {
+            "truth": 23,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Prince": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BombTower": {
+            "truth": 12,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Balloon": {
+            "truth": 1,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Princess": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceGolem": {
+            "truth": 17,
+            "predictions": 9,
+            "matched": 8,
+            "placed_within_one": 7
+          },
+          "GoblinGang": {
+            "truth": 14,
+            "predictions": 8,
+            "matched": 8,
+            "placed_within_one": 0
+          },
+          "Firecracker": {
+            "truth": 14,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "SkeletonArmy": {
+            "truth": 7,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Arrows": {
+            "truth": 2,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinBarrel": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Tesla": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Ghost": {
+            "truth": 13,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "BabyDragon": {
+            "truth": 6,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "AngryBarbarians": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Skeletons": {
+            "truth": 22,
+            "predictions": 9,
+            "matched": 9,
+            "placed_within_one": 7
+          },
+          "Zap": {
+            "truth": 5,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Cannon": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinHut": {
+            "truth": 11,
+            "predictions": 8,
+            "matched": 6,
+            "placed_within_one": 0
+          },
+          "Miner": {
+            "truth": 12,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "MightyMiner": {
+            "truth": 2,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "Minions": {
+            "truth": 1,
+            "predictions": 2,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Golem": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Fireball": {
+            "truth": 4,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Lightning": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          }
+        },
+        "timing": "Conservative: prediction after upper event-time bound and <=500 ms after lower bound",
+        "event_time_bracket_p95_ms": 208.14250060357153
+      }
+    },
+    {
+      "threshold": 0.5,
+      "metrics": {
+        "truth": 560,
+        "predictions": 172,
+        "matched_within_500_ms": 150,
+        "false_positive": 22,
+        "missed": 410,
+        "recall": 0.26785714285714285,
+        "precision": 0.872093023255814,
+        "placement_within_one_all_plays": 0.06607142857142857,
+        "within_one": 37,
+        "placement_within_one_detected": 0.24666666666666667,
+        "per_card": {
+          "FireSpirits": {
+            "truth": 25,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Xbow": {
+            "truth": 2,
+            "predictions": 3,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "InfernoTower": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BlowdartGoblin": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceSpirit": {
+            "truth": 27,
+            "predictions": 12,
+            "matched": 9,
+            "placed_within_one": 5
+          },
+          "Tornado": {
+            "truth": 28,
+            "predictions": 9,
+            "matched": 8,
+            "placed_within_one": 0
+          },
+          "Archers": {
+            "truth": 14,
+            "predictions": 6,
+            "matched": 6,
+            "placed_within_one": 4
+          },
+          "Goblins": {
+            "truth": 36,
+            "predictions": 10,
+            "matched": 9,
+            "placed_within_one": 6
+          },
+          "Valkyrie": {
+            "truth": 10,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "RoyalDelivery": {
+            "truth": 5,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Rascals": {
+            "truth": 3,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Wizard": {
+            "truth": 5,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "ArcherQueen": {
+            "truth": 2,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "DarkPrince": {
+            "truth": 10,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 3
+          },
+          "ElectroSpirit": {
+            "truth": 16,
+            "predictions": 9,
+            "matched": 9,
+            "placed_within_one": 0
+          },
+          "Giant": {
+            "truth": 5,
+            "predictions": 3,
+            "matched": 2,
+            "placed_within_one": 1
+          },
+          "FirespiritHut": {
+            "truth": 18,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Musketeer": {
+            "truth": 13,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 4
+          },
+          "HogRider": {
+            "truth": 20,
+            "predictions": 5,
+            "matched": 4,
+            "placed_within_one": 3
+          },
+          "MinionHorde": {
+            "truth": 3,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "Poison": {
+            "truth": 12,
+            "predictions": 6,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Goblinstein": {
+            "truth": 2,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Berserker": {
+            "truth": 38,
+            "predictions": 13,
+            "matched": 13,
+            "placed_within_one": 0
+          },
+          "Bats": {
+            "truth": 8,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Log": {
+            "truth": 28,
+            "predictions": 12,
+            "matched": 12,
+            "placed_within_one": 0
+          },
+          "Wallbreakers": {
+            "truth": 16,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "BarbLog": {
+            "truth": 23,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Prince": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BombTower": {
+            "truth": 12,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Balloon": {
+            "truth": 1,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Princess": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceGolem": {
+            "truth": 17,
+            "predictions": 8,
+            "matched": 7,
+            "placed_within_one": 6
+          },
+          "GoblinGang": {
+            "truth": 14,
+            "predictions": 8,
+            "matched": 8,
+            "placed_within_one": 0
+          },
+          "Firecracker": {
+            "truth": 14,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "SkeletonArmy": {
+            "truth": 7,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Arrows": {
+            "truth": 2,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinBarrel": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Tesla": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Ghost": {
+            "truth": 13,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "BabyDragon": {
+            "truth": 6,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "AngryBarbarians": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Skeletons": {
+            "truth": 22,
+            "predictions": 7,
+            "matched": 7,
+            "placed_within_one": 5
+          },
+          "Zap": {
+            "truth": 5,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Cannon": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinHut": {
+            "truth": 11,
+            "predictions": 8,
+            "matched": 6,
+            "placed_within_one": 0
+          },
+          "Miner": {
+            "truth": 12,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "MightyMiner": {
+            "truth": 2,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "Minions": {
+            "truth": 1,
+            "predictions": 2,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Golem": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Fireball": {
+            "truth": 4,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Lightning": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          }
+        },
+        "timing": "Conservative: prediction after upper event-time bound and <=500 ms after lower bound",
+        "event_time_bracket_p95_ms": 208.14250060357153
+      }
+    },
+    {
+      "threshold": 0.6,
+      "metrics": {
+        "truth": 560,
+        "predictions": 169,
+        "matched_within_500_ms": 147,
+        "false_positive": 22,
+        "missed": 413,
+        "recall": 0.2625,
+        "precision": 0.8698224852071006,
+        "placement_within_one_all_plays": 0.060714285714285714,
+        "within_one": 34,
+        "placement_within_one_detected": 0.23129251700680273,
+        "per_card": {
+          "FireSpirits": {
+            "truth": 25,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Xbow": {
+            "truth": 2,
+            "predictions": 3,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "InfernoTower": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BlowdartGoblin": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceSpirit": {
+            "truth": 27,
+            "predictions": 12,
+            "matched": 9,
+            "placed_within_one": 5
+          },
+          "Tornado": {
+            "truth": 28,
+            "predictions": 9,
+            "matched": 8,
+            "placed_within_one": 0
+          },
+          "Archers": {
+            "truth": 14,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 1
+          },
+          "Goblins": {
+            "truth": 36,
+            "predictions": 10,
+            "matched": 9,
+            "placed_within_one": 6
+          },
+          "Valkyrie": {
+            "truth": 10,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "RoyalDelivery": {
+            "truth": 5,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Rascals": {
+            "truth": 3,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Wizard": {
+            "truth": 5,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "ArcherQueen": {
+            "truth": 2,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "DarkPrince": {
+            "truth": 10,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 3
+          },
+          "ElectroSpirit": {
+            "truth": 16,
+            "predictions": 9,
+            "matched": 9,
+            "placed_within_one": 0
+          },
+          "Giant": {
+            "truth": 5,
+            "predictions": 3,
+            "matched": 2,
+            "placed_within_one": 1
+          },
+          "FirespiritHut": {
+            "truth": 18,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Musketeer": {
+            "truth": 13,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 4
+          },
+          "HogRider": {
+            "truth": 20,
+            "predictions": 5,
+            "matched": 4,
+            "placed_within_one": 3
+          },
+          "MinionHorde": {
+            "truth": 3,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "Poison": {
+            "truth": 12,
+            "predictions": 6,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Goblinstein": {
+            "truth": 2,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Berserker": {
+            "truth": 38,
+            "predictions": 13,
+            "matched": 13,
+            "placed_within_one": 0
+          },
+          "Bats": {
+            "truth": 8,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Log": {
+            "truth": 28,
+            "predictions": 12,
+            "matched": 12,
+            "placed_within_one": 0
+          },
+          "Wallbreakers": {
+            "truth": 16,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "BarbLog": {
+            "truth": 23,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Prince": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BombTower": {
+            "truth": 12,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Balloon": {
+            "truth": 1,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Princess": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceGolem": {
+            "truth": 17,
+            "predictions": 8,
+            "matched": 7,
+            "placed_within_one": 6
+          },
+          "GoblinGang": {
+            "truth": 14,
+            "predictions": 8,
+            "matched": 8,
+            "placed_within_one": 0
+          },
+          "Firecracker": {
+            "truth": 14,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "SkeletonArmy": {
+            "truth": 7,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Arrows": {
+            "truth": 2,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinBarrel": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Tesla": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Ghost": {
+            "truth": 13,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "BabyDragon": {
+            "truth": 6,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "AngryBarbarians": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Skeletons": {
+            "truth": 22,
+            "predictions": 7,
+            "matched": 7,
+            "placed_within_one": 5
+          },
+          "Zap": {
+            "truth": 5,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Cannon": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinHut": {
+            "truth": 11,
+            "predictions": 8,
+            "matched": 6,
+            "placed_within_one": 0
+          },
+          "Miner": {
+            "truth": 12,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "MightyMiner": {
+            "truth": 2,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "Minions": {
+            "truth": 1,
+            "predictions": 2,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Golem": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Fireball": {
+            "truth": 4,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Lightning": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          }
+        },
+        "timing": "Conservative: prediction after upper event-time bound and <=500 ms after lower bound",
+        "event_time_bracket_p95_ms": 208.14250060357153
+      }
+    },
+    {
+      "threshold": 0.7,
+      "metrics": {
+        "truth": 560,
+        "predictions": 169,
+        "matched_within_500_ms": 147,
+        "false_positive": 22,
+        "missed": 413,
+        "recall": 0.2625,
+        "precision": 0.8698224852071006,
+        "placement_within_one_all_plays": 0.060714285714285714,
+        "within_one": 34,
+        "placement_within_one_detected": 0.23129251700680273,
+        "per_card": {
+          "FireSpirits": {
+            "truth": 25,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Xbow": {
+            "truth": 2,
+            "predictions": 3,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "InfernoTower": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BlowdartGoblin": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceSpirit": {
+            "truth": 27,
+            "predictions": 12,
+            "matched": 9,
+            "placed_within_one": 5
+          },
+          "Tornado": {
+            "truth": 28,
+            "predictions": 9,
+            "matched": 8,
+            "placed_within_one": 0
+          },
+          "Archers": {
+            "truth": 14,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 1
+          },
+          "Goblins": {
+            "truth": 36,
+            "predictions": 10,
+            "matched": 9,
+            "placed_within_one": 6
+          },
+          "Valkyrie": {
+            "truth": 10,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "RoyalDelivery": {
+            "truth": 5,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Rascals": {
+            "truth": 3,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Wizard": {
+            "truth": 5,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "ArcherQueen": {
+            "truth": 2,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "DarkPrince": {
+            "truth": 10,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 3
+          },
+          "ElectroSpirit": {
+            "truth": 16,
+            "predictions": 9,
+            "matched": 9,
+            "placed_within_one": 0
+          },
+          "Giant": {
+            "truth": 5,
+            "predictions": 3,
+            "matched": 2,
+            "placed_within_one": 1
+          },
+          "FirespiritHut": {
+            "truth": 18,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Musketeer": {
+            "truth": 13,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 4
+          },
+          "HogRider": {
+            "truth": 20,
+            "predictions": 5,
+            "matched": 4,
+            "placed_within_one": 3
+          },
+          "MinionHorde": {
+            "truth": 3,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "Poison": {
+            "truth": 12,
+            "predictions": 6,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Goblinstein": {
+            "truth": 2,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Berserker": {
+            "truth": 38,
+            "predictions": 13,
+            "matched": 13,
+            "placed_within_one": 0
+          },
+          "Bats": {
+            "truth": 8,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Log": {
+            "truth": 28,
+            "predictions": 12,
+            "matched": 12,
+            "placed_within_one": 0
+          },
+          "Wallbreakers": {
+            "truth": 16,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "BarbLog": {
+            "truth": 23,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Prince": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BombTower": {
+            "truth": 12,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Balloon": {
+            "truth": 1,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Princess": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceGolem": {
+            "truth": 17,
+            "predictions": 8,
+            "matched": 7,
+            "placed_within_one": 6
+          },
+          "GoblinGang": {
+            "truth": 14,
+            "predictions": 8,
+            "matched": 8,
+            "placed_within_one": 0
+          },
+          "Firecracker": {
+            "truth": 14,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "SkeletonArmy": {
+            "truth": 7,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Arrows": {
+            "truth": 2,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinBarrel": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Tesla": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Ghost": {
+            "truth": 13,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "BabyDragon": {
+            "truth": 6,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "AngryBarbarians": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Skeletons": {
+            "truth": 22,
+            "predictions": 7,
+            "matched": 7,
+            "placed_within_one": 5
+          },
+          "Zap": {
+            "truth": 5,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Cannon": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinHut": {
+            "truth": 11,
+            "predictions": 8,
+            "matched": 6,
+            "placed_within_one": 0
+          },
+          "Miner": {
+            "truth": 12,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "MightyMiner": {
+            "truth": 2,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "Minions": {
+            "truth": 1,
+            "predictions": 2,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Golem": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Fireball": {
+            "truth": 4,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Lightning": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          }
+        },
+        "timing": "Conservative: prediction after upper event-time bound and <=500 ms after lower bound",
+        "event_time_bracket_p95_ms": 208.14250060357153
+      }
+    },
+    {
+      "threshold": 0.8,
+      "metrics": {
+        "truth": 560,
+        "predictions": 169,
+        "matched_within_500_ms": 147,
+        "false_positive": 22,
+        "missed": 413,
+        "recall": 0.2625,
+        "precision": 0.8698224852071006,
+        "placement_within_one_all_plays": 0.060714285714285714,
+        "within_one": 34,
+        "placement_within_one_detected": 0.23129251700680273,
+        "per_card": {
+          "FireSpirits": {
+            "truth": 25,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Xbow": {
+            "truth": 2,
+            "predictions": 3,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "InfernoTower": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BlowdartGoblin": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceSpirit": {
+            "truth": 27,
+            "predictions": 12,
+            "matched": 9,
+            "placed_within_one": 5
+          },
+          "Tornado": {
+            "truth": 28,
+            "predictions": 9,
+            "matched": 8,
+            "placed_within_one": 0
+          },
+          "Archers": {
+            "truth": 14,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 1
+          },
+          "Goblins": {
+            "truth": 36,
+            "predictions": 10,
+            "matched": 9,
+            "placed_within_one": 6
+          },
+          "Valkyrie": {
+            "truth": 10,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "RoyalDelivery": {
+            "truth": 5,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Rascals": {
+            "truth": 3,
+            "predictions": 2,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Wizard": {
+            "truth": 5,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "ArcherQueen": {
+            "truth": 2,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "DarkPrince": {
+            "truth": 10,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 3
+          },
+          "ElectroSpirit": {
+            "truth": 16,
+            "predictions": 9,
+            "matched": 9,
+            "placed_within_one": 0
+          },
+          "Giant": {
+            "truth": 5,
+            "predictions": 3,
+            "matched": 2,
+            "placed_within_one": 1
+          },
+          "FirespiritHut": {
+            "truth": 18,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Musketeer": {
+            "truth": 13,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 4
+          },
+          "HogRider": {
+            "truth": 20,
+            "predictions": 5,
+            "matched": 4,
+            "placed_within_one": 3
+          },
+          "MinionHorde": {
+            "truth": 3,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "Poison": {
+            "truth": 12,
+            "predictions": 6,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Goblinstein": {
+            "truth": 2,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Berserker": {
+            "truth": 38,
+            "predictions": 13,
+            "matched": 13,
+            "placed_within_one": 0
+          },
+          "Bats": {
+            "truth": 8,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Log": {
+            "truth": 28,
+            "predictions": 12,
+            "matched": 12,
+            "placed_within_one": 0
+          },
+          "Wallbreakers": {
+            "truth": 16,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "BarbLog": {
+            "truth": 23,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Prince": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BombTower": {
+            "truth": 12,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "Balloon": {
+            "truth": 1,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Princess": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceGolem": {
+            "truth": 17,
+            "predictions": 8,
+            "matched": 7,
+            "placed_within_one": 6
+          },
+          "GoblinGang": {
+            "truth": 14,
+            "predictions": 8,
+            "matched": 8,
+            "placed_within_one": 0
+          },
+          "Firecracker": {
+            "truth": 14,
+            "predictions": 1,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "SkeletonArmy": {
+            "truth": 7,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "Arrows": {
+            "truth": 2,
+            "predictions": 1,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinBarrel": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Tesla": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Ghost": {
+            "truth": 13,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "BabyDragon": {
+            "truth": 6,
+            "predictions": 4,
+            "matched": 4,
+            "placed_within_one": 0
+          },
+          "AngryBarbarians": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Skeletons": {
+            "truth": 22,
+            "predictions": 7,
+            "matched": 7,
+            "placed_within_one": 5
+          },
+          "Zap": {
+            "truth": 5,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Cannon": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinHut": {
+            "truth": 11,
+            "predictions": 8,
+            "matched": 6,
+            "placed_within_one": 0
+          },
+          "Miner": {
+            "truth": 12,
+            "predictions": 3,
+            "matched": 3,
+            "placed_within_one": 0
+          },
+          "MightyMiner": {
+            "truth": 2,
+            "predictions": 2,
+            "matched": 2,
+            "placed_within_one": 0
+          },
+          "Minions": {
+            "truth": 1,
+            "predictions": 2,
+            "matched": 1,
+            "placed_within_one": 0
+          },
+          "Golem": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Fireball": {
+            "truth": 4,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Lightning": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          }
+        },
+        "timing": "Conservative: prediction after upper event-time bound and <=500 ms after lower bound",
+        "event_time_bracket_p95_ms": 208.14250060357153
+      }
+    },
+    {
+      "threshold": 0.9,
+      "metrics": {
+        "truth": 560,
+        "predictions": 0,
+        "matched_within_500_ms": 0,
+        "false_positive": 0,
+        "missed": 560,
+        "recall": 0.0,
+        "precision": 0.0,
+        "placement_within_one_all_plays": 0.0,
+        "within_one": 0,
+        "placement_within_one_detected": 0.0,
+        "per_card": {
+          "FireSpirits": {
+            "truth": 25,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Xbow": {
+            "truth": 2,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "InfernoTower": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BlowdartGoblin": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceSpirit": {
+            "truth": 27,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Tornado": {
+            "truth": 28,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Archers": {
+            "truth": 14,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Goblins": {
+            "truth": 36,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Valkyrie": {
+            "truth": 10,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "RoyalDelivery": {
+            "truth": 5,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Rascals": {
+            "truth": 3,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Wizard": {
+            "truth": 5,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "ArcherQueen": {
+            "truth": 2,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "DarkPrince": {
+            "truth": 10,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "ElectroSpirit": {
+            "truth": 16,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Giant": {
+            "truth": 5,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "FirespiritHut": {
+            "truth": 18,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Musketeer": {
+            "truth": 13,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "HogRider": {
+            "truth": 20,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "MinionHorde": {
+            "truth": 3,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Poison": {
+            "truth": 12,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Goblinstein": {
+            "truth": 2,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Berserker": {
+            "truth": 38,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Bats": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Log": {
+            "truth": 28,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Wallbreakers": {
+            "truth": 16,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BarbLog": {
+            "truth": 23,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Prince": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BombTower": {
+            "truth": 12,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Balloon": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Princess": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "IceGolem": {
+            "truth": 17,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinGang": {
+            "truth": 14,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Firecracker": {
+            "truth": 14,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "SkeletonArmy": {
+            "truth": 7,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Arrows": {
+            "truth": 2,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinBarrel": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Tesla": {
+            "truth": 8,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Ghost": {
+            "truth": 13,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "BabyDragon": {
+            "truth": 6,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "AngryBarbarians": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Skeletons": {
+            "truth": 22,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Zap": {
+            "truth": 5,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Cannon": {
+            "truth": 9,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "GoblinHut": {
+            "truth": 11,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Miner": {
+            "truth": 12,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "MightyMiner": {
+            "truth": 2,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Minions": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Golem": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Fireball": {
+            "truth": 4,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          },
+          "Lightning": {
+            "truth": 1,
+            "predictions": 0,
+            "matched": 0,
+            "placed_within_one": 0
+          }
+        },
+        "timing": "Conservative: prediction after upper event-time bound and <=500 ms after lower bound",
+        "event_time_bracket_p95_ms": 208.14250060357153
+      }
+    }
+  ],
+  "calibration_residuals": [
+    -6.628185361328124,
+    -6.349164497936532,
+    -6.111596364982359,
+    -5.863910456779232,
+    -5.761005060168851,
+    -5.631976977696572,
+    -5.534866918157762,
+    -5.412436341985888,
+    -5.2987541680317545,
+    -5.182809415322581,
+    -5.090922420287396,
+    -4.985714277570091,
+    -4.9022457812499995,
+    -4.789573164692542,
+    -4.67668400800882,
+    -4.594653266129032,
+    -4.540837263920167,
+    -4.455154885962701,
+    -4.371347457787299,
+    -4.241997110635081,
+    -4.153658046875,
+    -4.062859302545363,
+    -3.9659370574983193,
+    -3.8699269487147188,
+    -3.7816209371849796,
+    -3.688508110956943,
+    -3.602429934790828,
+    -3.538226207347953,
+    -3.439118110824092,
+    -3.384991761592742,
+    -3.274066340095767,
+    -3.2108055664062505,
+    -3.1299915451582208,
+    -3.060475817386971,
+    -2.9904477712323585,
+    -2.9151227297068365,
+    -2.8447335291708673,
+    -2.768627154107865,
+    -2.6605311230468747,
+    -2.572280546875002,
+    -2.4787392530505774,
+    -2.406818623991937,
+    -2.3378970370023886,
+    -2.2337569102964263,
+    -2.136950294543851,
+    -2.0695155249855484,
+    -2.00518294953377,
+    -1.9184260076138315,
+    -1.7786499994838683,
+    -1.694302469643494,
+    -1.6280823144429157,
+    -1.4410996603812027,
+    -1.3348112115675408,
+    -1.2379786580452856,
+    -1.1012296745841748,
+    -0.9147133895631987,
+    -0.7916838457661286,
+    -0.5933169895203098,
+    -0.35501350587068514,
+    -0.015551665550711382,
+    0.37012355538903596,
+    1.4686317252340373,
+    4.899746220703124
+  ],
+  "calibration_samples": 1011
+}

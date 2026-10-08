@@ -1,0 +1,8 @@
+{
+  "matches": 93,
+  "splits": {
+    "train": 83,
+    "validation": 10
+  },
+  "heldout_opened": false
+}

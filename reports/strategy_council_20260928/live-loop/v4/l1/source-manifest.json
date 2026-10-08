@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-08T06:03:35.300639+00:00",
+  "files": {
+    "src/clasher/vision/l1_v4.py": "ced093d24c6b981df17239dfb1bc0cdb8cac0abca9e5cccc27ce25697f6e662c",
+    "tests/test_l1_v4.py": "26e6e487f65180ea91f4426ec0946a1e8974e74f7d98f551cb2aaecbb12cdd6b",
+    "scripts/train_l1_stream_v3.py": "51b62481c6e8597d916edafd0d15fd6c09f7617fae2b70dadf87fd54edbd9049",
+    "scripts/infer_l1_stream_v3.py": "05b086e7735a5f04f7acf7840e38bf2a69dba8758f3aff98c10d39992bce292e",
+    "reports/strategy_council_20260928/live-loop/v4/l1/data_v4.py": "b58bed5a96678716c750fe8d23ce557a471c004b35ed12cf5fb0b0e242293551",
+    "reports/strategy_council_20260928/live-loop/v4/l1/export_v4.py": "89d1f3a9b027da57db25b658a13faba4542b9cb1eda7d082b0a0821a7152240d",
+    "reports/strategy_council_20260928/live-loop/v4/l1/formal_guard.py": "b6a6e1667589a74406e368e9290288a8871d793f8bf421b3df769f8152b3ab3e",
+    "reports/strategy_council_20260928/live-loop/v4/l1/gap_t6.py": "fd5ca48b9a99eecfe000cc8b9ecf81b042ca5915baf1fffa445426c390e4cd24",
+    "reports/strategy_council_20260928/live-loop/v4/l1/prepare_t6.py": "79b5c2ffd53cda03425c435bcec13662de490b80ba0c3dd19e3357b821fa99d4",
+    "reports/strategy_council_20260928/live-loop/v4/l1/run_t6_shake.py": "91125ed6c3e1f82eeb09386cec5e2e95b1745f97e8515e579613a87d26abdf70",
+    "reports/strategy_council_20260928/live-loop/v4/l1/train_v4.py": "6040da7baf3ab40ae3ee6e8e173b3692488104cbebfd5fd4b162fa31f7b6db9a",
+    "reports/strategy_council_20260928/live-loop/v4/l1/formal_train.sh": "de7f9946540627a5c2d0ace90240220fd4a7178c92d8d624052be18b4fdef1c3",
+    "reports/strategy_council_20260928/live-loop/v4/l1/run_gap_after_t6.sh": "a04ead6d5a6c542653149764c2d139533ee833ee00b8de5423f1d903b1d410ae"
+  }
+}

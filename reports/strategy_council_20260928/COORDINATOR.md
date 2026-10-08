@@ -509,3 +509,13 @@ Also on the hub, but with copies elsewhere:
   wait, ~12 s CPU in 36 min, no I/O). Routed to the data worker to diagnose, kill only that PID, fix (thread caps / no
   fork after torch init), rerun that step, publish T3-PASS, and copy the store to 04/08 + 11/13/14/16/18. The T5 worker
   was told to run its 5 runs one per GPU on 04/08/11/13/14.
+- **2026-10-08 06:07 UTC: v4 perception T6/T7 shakedowns done; no-KVM rendering ruled out.**
+  - **T6:** v3 trainer ported to CUDA; 83 train + 10 validation Phase A matches. After 40 steps (unconverged), validation
+    opponent recall/precision is 8.5/52.4%.
+  - **T7:** model `src/clasher/vision/l1_v4.py`, 2.42M params, 15 tests, TorchScript parity. GPU 176 encoded frames/s but
+    only **1.28 windows/s including H.264 decode**: data loading is the bottleneck. The PREREG is frozen
+    (`live-loop/v4/l1/PREREG.md`; formal runs per `l1/RUNBOOK.md` after Phase A completes). Contradictory body labels
+    are masked, so an annotation review is needed before any board-precision claim.
+  - **No-KVM emulator on 127x04** (`fleet/NOKVM-EMULATOR.md`, Sol): boot 12.8 min, Settings at **0.154 FPS (130× below
+    20)**, shell 0.8 s, 0/10 screenshots within 10 s. `-gpu host` fell back to SwiftShader; MTTCG was unstable. Rendering
+    without KVM is infeasible; only a kvm group grant from CSL admins would change that.

@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-08T05:42:02.182403+00:00",
+  "heldout_payloads_opened": false,
+  "phase_a_complete": false,
+  "hashes": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/PREREG.md": "0c10ee4a9e0d1f8e2f5d946917ba55b5cd1bb8ef9f6873df6977bbd0cea97fb4",
+    "reports/strategy_council_20260928/live-loop/v4/l1/PREREG-AMENDMENT-01.md": "723fde1f085df54e34beff50a5c9d00aa2cd92a2b9db297c07bfd91fac3380ee",
+    "reports/strategy_council_20260928/live-loop/v4/l1/PREREG-AMENDMENT-02.md": "df6bacd80b83b36af50f625008820a8e13f4f157182687e1ac525bc44b71096b",
+    "reports/strategy_council_20260928/live-loop/v4/split.json": "3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258"
+  }
+}

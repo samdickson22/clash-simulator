@@ -1,0 +1,7 @@
+{
+  "object_rows": 153902,
+  "trusted_identity": 108210,
+  "contradictory_identity": 19473,
+  "visible_nondeploying": 3911,
+  "policy": "Contradictory identity, projectiles and unknown visibility are masked, never positive body targets"
+}
