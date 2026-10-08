@@ -746,3 +746,12 @@ Also on the hub, but with copies elsewhere:
     2. GRU DDP qualification uses 01+07+02 temporarily (02 at 1 GbE for correctness only), then deploys on 01+07+08.
     3. Gates (b)/(c) use home CPU only (03/02/07 plus 04/01 spare).
   - **Health:** 06 still down; Mac 28 Gi free; no reclaims.
+- **~21:35 UTC: gates (b)/(c) independent PREREG review: APPROVE WITH REQUIRED CHANGES** (`imitation/reviews/GATES-BC-PREREG-REVIEW-20261008.md`, R1–R21).
+  - **Decisions:**
+    - R16 dev-only forward equality: CPU fp32, ≥4,096 rows, |Δ log-prob| ≤ 1e-4, identical masks and top-8 lists.
+    - Gate (b) only on dedicated 127x03, unless 01/04 pass final-snapshot pilots with taskset core isolation and a frozen load ceiling.
+    - Gate (c) on 02/07/04/01.
+    - Identical environments across game hosts.
+    - Interleaved secondary order.
+    - A statement that no gate (a) material is read on 01.
+  - **Clock speeds:** 02/07 "low MHz" was an ondemand idle sample; all hosts average 2.2–2.3 GHz. 02's timing failure at 16 workers was co-tenant load.
