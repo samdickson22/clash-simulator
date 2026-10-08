@@ -1,0 +1,97 @@
+{
+  "utc": "2026-10-08T01:04:45.428343+00:00",
+  "status": "HALTED_EQUIVALENCE_FAILED",
+  "complete": false,
+  "host": "127x01",
+  "production_units": 811,
+  "expected_units": 1767,
+  "pending_units": 956,
+  "new_production_units": 0,
+  "production_perspectives": 38134,
+  "production_rows": 30483676,
+  "production_errors": 0,
+  "base_retention_only": {
+    "perspectives": 38134,
+    "retention": 0.8478630509673708,
+    "supervised_rows": 30430122,
+    "possible": 35890374,
+    "placement_acceptance": 0.997560970055271,
+    "attempts": 2634654,
+    "rejected": 6426,
+    "clamped": 16012,
+    "cuts": {
+      "sim_kill_of_tower_standing_in_real": 4272,
+      "sim_game_over": 16204,
+      "recorded_end": 10652,
+      "own_masked_tile": 2335,
+      "opponent_placement_rejected": 513,
+      "pocket_play_but_sim_tower_alive": 2715,
+      "own_placement_rejected": 863,
+      "own_insufficient_elixir": 527,
+      "opponent_insufficient_elixir": 53
+    }
+  },
+  "full_corpus_retention": null,
+  "base_files_reverified_after_replay": 1622,
+  "frozen_inputs_reverified_after_replay": 454,
+  "production_inventory_exact": true,
+  "production_bytes": 2846401104,
+  "comparison_units": 3,
+  "comparison_perspectives": 144,
+  "comparison_rows": 117776,
+  "comparison_errors": 0,
+  "comparison_raw_npz_bytes": 11097355,
+  "comparison_raw_pairs_bytes": 11189720,
+  "raw_archive_matches": 0,
+  "logical_array_matches": 3,
+  "normalized_diagnostic_matches": 3,
+  "reason": "Raw NPZ mismatch in historical v2 reuse provenance and flat_entity_features C/F storage order. Logical arrays and normalized archives match. Strict byte gate not waived.",
+  "per_node": {
+    "127x01": {
+      "production_extraction_started": false,
+      "gate_stages": {
+        "verify": {
+          "passed": true,
+          "wall_seconds": 2.015716139925644,
+          "cpu_seconds": 2.014527
+        },
+        "base-audit": {
+          "passed": true,
+          "wall_seconds": 159.43014008109458,
+          "cpu_seconds": 1265.8763459999998
+        },
+        "roundtrip": {
+          "passed": true,
+          "wall_seconds": 1.3009169090073556,
+          "cpu_seconds": 1.2994310000001406
+        },
+        "equivalence": {
+          "passed": false,
+          "wall_seconds": 338.0242185110692,
+          "cpu_seconds": 973.1331520000003
+        }
+      },
+      "whole_gate_wall_seconds": 504.25,
+      "whole_gate_cpu_seconds": 2245.8
+    },
+    "127x03": {
+      "production_extraction_started": false,
+      "extraction_wall_seconds": 0,
+      "extraction_cpu_seconds": 0
+    },
+    "127x04": {
+      "production_extraction_started": false,
+      "extraction_wall_seconds": 0,
+      "extraction_cpu_seconds": 0
+    }
+  },
+  "data_bytes": 3999658586,
+  "disk_free_bytes": 1793815760896,
+  "job_label": "c56-v3b-recovery-127x01-20261008-gates",
+  "launcher_pid": 3325932,
+  "driver_pid": 3325945,
+  "exit_code": 1,
+  "resume": "Do not launch extraction: strict gate failed. No recipe/extractor/runtime edits. Any further replay requires a fresh QA namespace.",
+  "output": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/recon/engine-v3",
+  "qa_output": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/qa/fleet-v3b/recovery-127x01-20261008"
+}

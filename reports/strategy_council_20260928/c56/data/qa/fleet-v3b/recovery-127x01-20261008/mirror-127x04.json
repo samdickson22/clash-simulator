@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-08T01:06:35.408967+00:00",
+  "complete": true,
+  "source_host": "127x01",
+  "mirror_host": "127x04",
+  "qa_source": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/qa/fleet-v3b/recovery-127x01-20261008",
+  "qa_destination": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/qa/fleet-v3b/recovery-127x01-20261008",
+  "qa_checksum_differences": 0,
+  "qa_files": 843,
+  "qa_bytes": 136839463,
+  "qa_scope": "Entire recovery QA namespace before this mirror receipt; includes raw, normalized, round-trip NPZs, sidecars and all new audits",
+  "base_and_inputs": {
+    "host": "127x04",
+    "base_files": 1622,
+    "frozen_inputs": 454,
+    "mismatches": 0,
+    "disk_free_bytes": 1757606674432,
+    "base_bytes": 2846401104
+  },
+  "wall_seconds": 3.6712347269058228,
+  "no_deletion": true,
+  "no_base_overwrite": true
+}
