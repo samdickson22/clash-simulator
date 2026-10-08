@@ -547,3 +547,4 @@ Also on the hub, but with copies elsewhere:
      after one 19.107 FPS match at 2 renderers. Decision: retry 2 once (controlled drain and restart, amendment
      first); any further failure or critical pressure means 1 for the rest of Phase A.
 - **2026-10-08 06:45 UTC heartbeat:** T3-PASS published (P16 baseline decoupled). Next: T4 shakedown poll (06:51), then T5 one run per GPU. Mac OK (26 GiB free, swap 6.9/8 GB, pressure normal; pool retry at 2 in progress). S5 preflight 7/10. Fleet reachable, console users 0 on our hosts, no lease reclaims. GPUs idle until T5.
+- **2026-10-08 06:45 UTC:** roader raised our caps on 127x16/18 from 48 to 96 processes (its speedup job finished; it keeps ≤8 light processes). ≤64 GB RSS and ≥8 GB GPU headroom unchanged. Lease files and lease-ready receipts updated (old receipts kept as `.bak-cap48`). 127x13/14 stay at ≤64.
