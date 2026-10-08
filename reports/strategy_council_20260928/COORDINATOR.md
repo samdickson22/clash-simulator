@@ -832,3 +832,13 @@ Also on the hub, but with copies elsewhere:
 - **~23:18 UTC: coordinator error corrected.** My 23:12Z reallocation put 96 exploration sim workers on 04, which tripped v4 perception's combined 96-process guard (its batch exited 1 at 23:04Z) and idled 04's GPU. The exploration A/B is now ≤40 on 04, ≤64 on 08 and ≤32 on 01; perception relaunches. **Lesson: check per-host combined clasher process counts before placing CPU work next to GPU jobs.**
   - **Perception decoder:** the vectorized candidate path is bit-exact on a real epoch-24 probe with a **4.0× speedup**. The batched nine-branch tail failed exactness and is excluded. The full equality gate is pending. 08 is staged: 24 checkpoints plus 19 of 64 cache matches.
 - **~23:30 UTC: lease wrapper v2 deployed** (Sol) on 09/11/13/14/15/16: concurrent clasher jobs under combined caps, v1 jobs and locks untouched; 37 tests plus a live smoke test on 15. Leased CPU (~700 cores idle under the GPU jobs) is opened to the exploration A/B (≤40 per host, stop by 04:30Z) and the perception CPU grid / decoder gate.
+- **~23:40 UTC: command-delay research** (Opus; `reports/research/command-delay-20261008.md`).
+  - **No double counting.** T2's "acceptance" is the execution tick (card leaves hand, elixir drops); deploy time is charged once afterwards by the engine.
+  - **The 20-tick lead is the FirstLight probe constant, and it matches the official game.** The binary's command queue checks a 20-tick age, and ClashAI's 6,721 official-client plays have tap→execution p1 19.9 / median 22.6 ticks.
+  - **Recommended d:** p50 = 26 ± 1 ticks for the renderer (27 is slightly conservative); 26–27 ± 2 for the official client, plus a network tail (p95 ~44).
+  - **Real pipeline errors found:**
+    1. Simulated opponents act with **no** command delay, both in sim games and in search rollouts. That inflates the measured latency cost and the S-d arm.
+    2. Imitation labels sit at the execution tick, so at inference the model should get the planner's forward state at t+d ("predict, then imitate").
+    3. We allow only one outstanding command, which costs about 1.3 s of silence after every play.
+    4. The official-client verifier window must come from its own measured distribution.
+  - **Decision:** validate fixes 1–3 flag-guarded in the exploration lane (paired sim, Sol). They feed prospective L2-v4 PREREG amendments before L2 starts. The Mac Training Camp frame-count protocol is deferred until Sam OKs Mac use.
