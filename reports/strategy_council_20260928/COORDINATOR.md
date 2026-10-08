@@ -734,3 +734,7 @@ Also on the hub, but with copies elsewhere:
     - **T11:** seed 21 on 16+11+13, seed 22 on 18+14+15 until 04:20Z; after 05:00Z on 01+07 and 04+08.
     - **T5 GRU:** 01+07+08 now; single-GPU on 02 from 05:00Z; grows back after T11 finishes.
   - **Roader informed.**
+- **~21:30 UTC: gates (b)/(c) decisions.**
+  1. **Model source.** The gates serve the released checkpoint with the exact post-T5 source used by gate (a) scoring (`gate4-scoring-launch.json`), not the older e3 T6/T8 snapshot (tile_width 64, entity cap 128, unpadded inference differ; weights unchanged). This requires a dev-only forward-equality check against the gate4 scorer and freezing the tree hash. Post-T5 pilots count as requalification evidence.
+  2. **Hosts.** The lease wrapper takes an exclusive host-workload lock, so the leased 13/14/15 go to GPU work: perception inference, then T11 DDP. The gates run on home CPU: 03/02/07 as main hosts, 04/01 spare. Gate (b) concurrency must be requalified on 02/07.
+  3. **Review.** The independent Opus PREREG review is running in parallel with the parallelized seed inventories.
