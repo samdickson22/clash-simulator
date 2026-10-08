@@ -738,3 +738,11 @@ Also on the hub, but with copies elsewhere:
   1. **Model source.** The gates serve the released checkpoint with the exact post-T5 source used by gate (a) scoring (`gate4-scoring-launch.json`), not the older e3 T6/T8 snapshot (tile_width 64, entity cap 128, unpadded inference differ; weights unchanged). This requires a dev-only forward-equality check against the gate4 scorer and freezing the tree hash. Post-T5 pilots count as requalification evidence.
   2. **Hosts.** The lease wrapper takes an exclusive host-workload lock, so the leased 13/14/15 go to GPU work: perception inference, then T11 DDP. The gates run on home CPU: 03/02/07 as main hosts, 04/01 spare. Gate (b) concurrency must be requalified on 02/07.
   3. **Review.** The independent Opus PREREG review is running in parallel with the parallelized seed inventories.
+- **21:13 UTC heartbeat (utilization 5/12 GPUs busy).**
+  - **Busy:** 08 GRU at 100%; 16/18 T11 at 90%/44%; 01 GRU-DDP reference test at 68%; 09 perception equality at 33%, about 57 frames/s, ETA ~21:20Z.
+  - **Idle:** 02/04/07/11/13/14/15. Perception was told to start its inference fan-out **speculatively now** on 04/11/13/14/15, with outputs quarantined until equality passes.
+  - **Decisions:**
+    1. DDP dropout: a counter-based, world-size-independent dropout RNG keyed by (seed, step, global row, site), applied to T11 and the GRU. Qualified by a p=0 numerics equivalence test, identical masks across world sizes, drop-rate sanity and kill/resume.
+    2. GRU DDP qualification uses 01+07+02 temporarily (02 at 1 GbE for correctness only), then deploys on 01+07+08.
+    3. Gates (b)/(c) use home CPU only (03/02/07 plus 04/01 spare).
+  - **Health:** 06 still down; Mac 28 Gi free; no reclaims.
