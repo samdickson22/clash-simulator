@@ -816,3 +816,9 @@ Also on the hub, but with copies elsewhere:
   1. **Exploration A/B** (Sol high): fair-search candidate coverage and a reserve-aware leaf value, ≥1,000 paired sim seeds per arm on 01/04/08 CPU.
   2. **Lease wrapper v2** (Sol high): concurrent clasher jobs per leased host under aggregate caps, replacing the exclusive lock that idles ~700 leased cores while perception GPU jobs hold it.
   3. **Gates f35 bounds:** use git history as the launch catalog. Fallback if gaps are real: a hash-committed fresh seed namespace.
+- **~23:20 UTC: gates (b)/(c) seeds move to a hash-committed fresh namespace (≥2^40)** before freeze.
+  - **Why:** the RC-5 git-history scan (7 commits, 2,595 blobs, 1,383 seed-bearing records) found zero intersections, but f35-era jobs (`readiness_root_bank.py` `getrandbits(32)` from unknown master seeds; sole artifacts and worktree data) can't be enumerated.
+  - **Construction:** derived from SHA-256 of the seed-placeholder PREREG bytes. That makes it disjoint by construction from all 32-bit draws and from all enumerated history.
+  - **Checks:** the engine and routes must accept the seeds, and the intersection against all inventories is re-run, before the reviewer delta check, freeze and launch.
+  - RC-2b gate (c) cross-host exactness PASS.
+- **~23:15 UTC: command-delay research launched** (Opus). Sam doubts the 1.1 s backend delay. The research checks whether T2 "native acceptance" includes deploy time (possible double counting in d=27), where the 20-tick live-command age comes from, the official game's real latency, and how the model and planner should account for it.
