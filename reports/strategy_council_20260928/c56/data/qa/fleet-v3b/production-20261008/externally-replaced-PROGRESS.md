@@ -1,83 +1,6 @@
 # C56 human-data track: PROGRESS
 
-Current v3b status: **COMPLETE** at 2026-10-08T02:14:11.960555+00:00: 1,767 units, 82,231 perspectives, 64,140,802 rows, 0 errors, retention 83.3255%; full checksum backup verified on 127x04.
-
-## Production completion — 2026-10-08T02:14:11.960555+00:00
-
-**COMPLETE: 1,767/1,767 units; 82,231 successful perspectives / 82,231 attempted; 64,140,802 persisted rows; 0 errors; 0 illegal labels.** Every persisted row passed the existing validators. Full-corpus retention **83.3255%**; placement acceptance **99.7213%**. Opponent-cut retention loss **0.1220 points**, within the 3-point rule. Runtime, extractor, recipe and frozen inputs remain pinned; no BC training or commits.
-
-Published NPZ/sidecar pairs: **5,933,175,007 bytes**. The 811-unit base is included exactly once; 956 new units were extracted. All 1,767 expected unit keys and 82,231 perspective attempts are covered. Both phase-specific placement/retention gates passed.
-
-- s117: 1334 units, 62,766 successful perspectives, 0 errors; retention 84.6415%; placement 99.7560%.
-- s122: 433 units, 19,465 successful perspectives, 0 errors; retention 78.8310%; placement 99.5829%.
-
-Production extraction (new units only; QA/collection overhead separate):
-
-- 127x01: 300 units, 13,736 perspectives, 10,512,763 rows, 0 errors; wall 2557.960 s, CPU 105860.721 s, 422.21 units/hour; 964,036,631 bytes.
-- 127x03: 437 units, 20,122 perspectives, 15,334,952 rows, 0 errors; wall 2582.370 s, CPU 154062.440 s, 609.21 units/hour; 1,406,301,362 bytes.
-- 127x04: 219 units, 10,239 perspectives, 7,809,411 rows, 0 errors; wall 2838.238 s, CPU 84718.970 s, 277.78 units/hour; 716,435,910 bytes.
-
-**127x04 complete-copy PASS** at 2026-10-08T02:13:43.597743+00:00: 3,547 files / 5,933,346,583 bytes, zero checksum differences, complete_corpus=true. The full `recon/engine-v3` output is at the same absolute path on 01 and 04.
-
-**V2 preservation PASS:** all 137 original archives plus sidecars on every node remain checksum-identical to their preservation copies, 415,341,863 bytes per node. Required copies are at `127x01` and `127x04:/mpac/sdicks02/repos/clasher-local-data/c56-v2-archive-preserve/`; an additional verified copy is on 03. See v2-preservation-<host>.json and v2-final-verification-<host>.json.
-
-Receipts: `qa/fleet-v3b/production-20261008/{completion-summary,production-completion,final-qa,mirror-127x04}.json`; corpus index/completion: `recon/engine-v3/{fleet-index,completion}.json`. Collector label `c56-v3b-production-20261008-supervise-r5`; extraction label `c56-v3b-production-20261008-extract` on each node. Retain all logs, exits and earlier interrupted/failed supervisor receipts.
-
-No resume is needed after successful completion. For recovery or a repeat integrity audit, use `resume.txt` / `run-production.sh` after inspecting PID, lock and exit receipts. Exact collector command (fresh label; existing completed workers are reused):
-```sh
-ssh 127x01 'bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/qa/fleet-v3b/production-20261008/run-production.sh supervise c56-v3b-production-20261008-supervise-r6'
-```
-
-Overwrite audit PASS on 01/04: all 454 frozen inputs and 1,622 base files match pins, input ctimes predate the overwrite window, zero units invalidated. Collector r5 recomputed all 956 new-unit row audits under the explicitly verified frozen runtime after r4 caught its launcher binding error; earlier QA caches remain preserved and superseded. Root reports and small receipts are mirrored to 127x05; no NPZs are copied to the command center. Intermediate raw-equivalence and external-wrapper-overwrite incidents are retained below. The production wrapper is isolated under `scripts/fleet_v3b_production_worker_20261008.py`; original extractor SHA remains 8e95786c… and runtime SHA 1ec2c60c….
-
-
-## Coordinator overwrite incident — audit completed 2026-10-08T01:53Z
-
-Coordinator confirmed an unrequested Mac→fleet `rsync -a` overwrite at 01:39–01:45 UTC, affecting 01/04, not 03. Our collector detected the reverted fleet wrapper at 01:42:02Z; the running extraction pools retained their already-loaded production code. Production now uses the isolated `fleet_v3b_production_worker_20261008.py`. All original v2 archives remained intact.
-
-Fresh audit on BOTH 01 and 04: all **1,622 base files** match mac-base.json by size and SHA256; all **454 frozen/extractor/runtime inputs** match expected pins, and **every checked input ctime predates 01:38:30Z**. Extractor 8e95786c…, runtime 1ec2c60c…, partition c365c45a… and isolated wrapper d1f47d39… all match. Therefore no extraction worker used changed input bytes; **zero units invalidated and zero reruns required**. No outputs deleted. Full per-file ctime-window inventories distinguish legitimate new production outputs/audit receipts from overwritten files; see `incident-input-audit-{127x01,127x04}.json`.
-
-Immutable recovery receipts/helper were reconciled against the exact 127x05 git objects from **61892cc**, which includes the **61e0f8e** decision/docs. They already matched on the hub; per-node committed comparisons are in `incident-committed-check-<host>.json`. Root reports now retain the full committed historical record and the newer production addendum/live checkpoint. The received stale report versions and pre-reconciliation production copies are preserved under the production QA directory. No git commit was made by this worker. Coordinator has asked the Mac thread to stop pushing.
-
-
-## Recovered-hub gates and production decision — restored after external stale copy
-
-The 2026-10-08 recovery on 127x01 independently verified 1,622 Mac-base files and 454 frozen inputs; extractor SHA256 `8e95786c1dede45e9fd8d02f8c85cd86331667d3dbc5c8a6713808f0520ac9c7`, frozen runtime `1ec2c60c254fd9cc5579b163ef994a0e233a942bd97acda864d31d91442d3493`, Python 3.12.13 / NumPy 2.3.5. Fresh base QA: 811 units, 38,134 perspectives, 30,483,676 rows, zero errors/illegal labels (159.430 s wall / 1,265.876 s CPU). Three NPZ round-trips passed. Evidence: `qa/fleet-v3b/recovery-127x01-20261008/`.
-
-Fresh simulation raw-byte gate initially stopped at 01:03:50Z: 0/3 raw NPZ matches. All logical arrays and normalized archives matched 3/3 (144 perspectives, 117,776 validated rows, zero errors; 338.024 s wall / 973.133 s CPU). Differences were only reuse-provenance headers and C/F order of flat_entity_features. Original failed strict-equivalence.json is preserved.
-
-**Gate PASSED under the final coordinator decision: COORDINATOR.md, 2026-10-08 01:15 UTC.** Every array equals in dtype, shape and C-order values; header equals except v2 reuse provenance. Production authorized. Decision and accepted-gate receipts: `qa/fleet-v3b/production-20261008/{coordinator-decision.txt,equivalence.json}`. The old raw-byte stop below is historical and superseded.
-
-Before any production launch, all 137 v2 archives plus 137 sidecars (415,341,863 bytes) were copied to `/mpac/sdicks02/repos/clasher-local-data/c56-v2-archive-preserve/` on EACH of 127x01/03/04. All three preservation manifests equal and every checksum verified; originals retained. Receipts: `v2-preservation-<host>.json`. The unchanged extractor's legacy deletion is suppressed only for v2 NPZs through a Path retention guard; reuse, recipe, engine and extractor source SHA unchanged. Do not run extract_v3.py directly.
-
-All nodes passed fresh pins/base checks and empty who before launch. Deterministic weighted partition recorded BEFORE launch: 01=300 units / 44 extraction workers, 03=437 / 64, 04=219 / 32; four hub validation workers keep total C56 workers <=48 on 01. Console cap 16. Launch 2026-10-08T01:14:36Z. Drivers: 01=3342515, 03=3366753, 04=2224842. Worker niceness is 19 on 01 (nested local launcher), 10 on 03/04; BLAS threads=1. 12 GiB free / 7.5 GiB hard data guards; 0.5% failure limit. No training, commits, forbidden hosts or archive deletion.
-
-Extraction label on each node: `c56-v3b-production-20261008-extract`. Collector r1 exited before dispatch due SSH-to-self authentication; fixed with local hub commands. Collector r2 was deliberately SIGTERM'd after verifying its collector-only group to add collection disk guards; extraction untouched. Collector r3 exited 1 at 01:42:02Z because an external bulk rsync restored old fleet_v3b.py and old root reports on 01/04 (old wrapper ccab87bb..., production wrapper d1f47d39...). All extraction pools kept their loaded production code; 137 original v2 archives remained on each node. No external rsync was stopped. Evidence: collector-restart-r3.json and wrapper-overwrite-recovery.json.
-
-Current collector: **c56-v3b-production-20261008-supervise-r4**, launcher **3368041** (Python PID in supervisor.json). Its production wrapper is isolated as `scripts/fleet_v3b_production_worker_20261008.py`, with the same d1f47d39... bytes. Collection resumes existing immutable assignments, hashes and row-validation caches. It performs continuous checksum rsync and all-row validation, full-corpus QA/retention, final preservation checks and explicit checksum backup to 04. No extraction restarted.
-
-Exact restart/collection instructions: `qa/fleet-v3b/production-20261008/resume.txt` and `run-production.sh`. If the collector alone is inactive, resume with:
-```sh
-ssh 127x01 'bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/qa/fleet-v3b/production-20261008/run-production.sh supervise c56-v3b-production-20261008-supervise-r5'
-```
-Verify PID/lock/exit first. Failed worker relaunches require a fresh per-host label in launch-labels.json and verified inactive old process trees; preserve outputs and reuse. A missing exit is never success. Full completion requires production-completion.json, final-qa.json, recon/engine-v3/completion.json and mirror-127x04.json with complete_corpus=true / zero checksum differences.
-
-Only root reports, scripts and small receipts are mirrored to 127x05; no NPZ. Current output and QA live on 127x01. 127x04 receives periodic copies plus explicit checksums. The latest partial mirror at 01:35:33Z verified 2,341 files / 4,106,228,190 bytes with zero differences; full-corpus copy remains pending.
-
-
-
-
-<!-- C56-PRODUCTION-STATUS -->
-2026-10-08T02:13:48.040428+00:00: COMPLETE; fleet 1767/1767 units; hub row-validated 1767 units / 82,231 perspectives / 64,140,802 rows; errors 0, illegal labels 0; available-corpus retention 83.3255%.
-
-- 127x01: 300 assigned units done, 44 workers, driver 3342515, wall 2558.0s / CPU 105860.7s; 422.2 units/hour; ETA 0.00 hours.
-- 127x03: 437 assigned units done, 64 workers, driver 3366753, wall 2582.4s / CPU 154062.4s; 609.2 units/hour; ETA 0.00 hours.
-- 127x04: 219 assigned units done, 32 workers, driver 2224842, wall 2838.2s / CPU 84719.0s; 277.8 units/hour; ETA 0.00 hours.
-
-Status and resume receipts: `qa/fleet-v3b/production-20261008/`; detached labels `c56-v3b-production-20261008-extract` (each node) and the hub supervisor recorded in `supervisor.json`. Full retention/final QA remains pending unless COMPLETE.
-<!-- /C56-PRODUCTION-STATUS -->
-
-## Committed historical record (61892cc / 61e0f8e)
+Current v3b status at 2026-10-07T23:28:13.625612+00:00: BLOCKED on hub access. 127x02 SSH times out both directly from the Mac and over campus LAN through 127x01. The canonical 811/1,767 units are hash-verified and fully row-validated on the hub. No fresh Linux replay or extraction had started at the 23:27Z peer check. Remaining 956 units and final QA are pending. Detached supervisor-r2 may still exist; inspect it before any relaunch. See FLEET-RESULTS.md and the final handoff below.
 
 Owner: c56-data agent. Started 2026-10-02 ~21:20 local. Resumable: read this file first.
 
@@ -396,36 +319,17 @@ Current user authorization supersedes the historical f35 ownership and three-wor
 - Last verified hub output location: `127x02:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/recon/engine-v3`. No NPZ outputs were copied to the Mac, no private-server APK was copied or used, and no commits were made. Only allowed nodes 01/02/03/04 were accessed.
 - Final PROGRESS.md and FLEET-RESULTS.md are saved in the Mac repo. Earlier versions were mirrored to the hub; these final updates cannot be mirrored while hub access is unavailable. Restore hub access, inspect the detached state, and mirror both reports after reconciling any autonomous progress. This is an infrastructure blocker, not a request to change the extraction recipe.
 
-## Recovered hub verification — 2026-10-08T00:55Z
 
-Hub-ready marker dated 2026-10-08T00:54:44.911798+00:00 was observed at 00:55:10Z after two-minute polling. No C56 fleet writes occurred before readiness. New hub is 127x01; 127x02 is excluded permanently from this task.
+<!-- C56-PRODUCTION-STATUS -->
+2026-10-08T01:44:19.363687+00:00: RUNNING; fleet 1359/1767 units; hub row-validated 1359 units / 63,562 perspectives / 50,847,344 rows; errors 0, illegal labels 0; available-corpus retention 84.4417%.
 
-Detached gate label: `c56-v3b-recovery-127x01-20261008-gates`; launcher PID 3325932. Logs/lock/PID/exit: `/mpac/sdicks02/jobs/clasher/c56-v3b-recovery-127x01-20261008-gates.*`. New receipts: `qa/fleet-v3b/recovery-127x01-20261008/`. Historical receipts are retained and not credited to this run. New helper: `scripts/fleet_v3b_recovery_20261008.py`; extractor/runtime/recipe unchanged.
+- 127x01: 185 assigned units done, 44 workers, driver 3342515, wall 1707.5s / CPU 75183.5s; 390.0 units/hour; ETA 0.29 hours.
+- 127x03: 266 assigned units done, 64 workers, driver 3366753, wall 1710.0s / CPU 109601.8s; 560.0 units/hour; ETA 0.31 hours.
+- 127x04: 97 assigned units done, 32 workers, driver 2224842, wall 1714.7s / CPU 54999.4s; 203.6 units/hour; ETA 0.60 hours.
 
-Initial re-verification PASS: 1,622 base files, 454 frozen inputs, exact 811-unit production inventory, extractor SHA256 8e95786c1dede45e9fd8d02f8c85cd86331667d3dbc5c8a6713808f0520ac9c7, runtime SHA256 1ec2c60c254fd9cc5579b163ef994a0e233a942bd97acda864d31d91442d3493. Base audit uses eight processes and a fresh cache; then three NPZ round-trips and three fresh replays. All nice 10, one-thread BLAS. Raw NPZ byte identity is required; normalized comparisons are diagnostic only.
-
-Resume/inspect: `ssh 127x01 'tail -20 /mpac/sdicks02/jobs/clasher/c56-v3b-recovery-127x01-20261008-gates.log; cat /mpac/sdicks02/jobs/clasher/c56-v3b-recovery-127x01-20261008-gates.exit'`. Missing exit means pending, not success. Verify PID/command/lock before any relaunch. Fresh equivalence outputs must not be overwritten; a retry needs a new QA namespace and label.
-
-Production extraction is NOT launched. If all gates pass, allowed worker caps are 01=48, 03=64, 04=32 (16 with console users). Keep 12 GiB free / 7.5 GiB hard data guard. Existing extractor deletes reused v2 NPZs, so a production orchestration must preserve all 137 retained v2 archives before invoking it; no data deletion is authorized.
-
-### 2026-10-08T00:59Z gate checkpoint
-Fresh base row audit PASS: 811 units, 38,134 perspectives, 30,483,676 rows, zero errors/illegal labels. Wall 159.430 s; CPU 1,265.876 s. All three NPZ round-trips PASS byte-for-byte (wall 1.301 s). Three fresh Linux simulations are running. Production extraction remains gated; launcher 3325932 / Python driver 3325945. Receipts in the new recovery namespace replace historical 127x02 verification for this hub.
-
-## Recovered-hub handoff — 2026-10-08T01:04Z
-
-Strict equivalence FAILED and production extraction STOPPED as instructed. Fresh comparison metadata differs in historical v2 reuse provenance and flat_entity_features C/F storage order; no logical simulation-row mismatch found. Normalized diagnostic archives match all three Mac hashes but were not accepted as raw-byte equivalence. Original extractor SHA and all runtime/input pins remain unchanged.
-
-Base re-verification (before/after replay): 1,622 files / 454 frozen inputs, exact production inventory. Fresh base row QA: 811 units / 38,134 perspectives / 30,483,676 rows, zero errors/illegal labels; 159.430 s wall / 1,265.876 s CPU. Three round-trips PASS. Fresh comparisons: 3 units / 144 perspectives / 117,776 rows / 0 errors; 338.024 s wall / 973.133 s CPU. Production: 0 new units, 956 pending. Base-only retention 84.7863%; full-corpus retention unavailable.
-
-Label c56-v3b-recovery-127x01-20261008-gates finished exit 1 at 01:03:50Z, launcher 3325932 / driver 3325945; no production supervisor. Entire gate job: 504.25 s wall / 2,245.80 s CPU on 01. No extraction on 03/04. Do not relaunch production under this failed gate. Existing fresh comparison outputs must be preserved; any further comparison needs a fresh namespace and label.
-
-New receipts: qa/fleet-v3b/recovery-127x01-20261008/{reverification,base-audit-receipt,serialization-roundtrip,strict-equivalence,equivalence-receipt,halted-receipt}.json. Original helper and engine unchanged; added scripts/fleet_v3b_recovery_20261008.py. Base production 2,846,401,104 bytes. Data 3,999,658,586 bytes, free 1,793,815,760,896 bytes after replay. Backup checksum and coordinator mirror completion will be appended below. No commits, training, fleet-data deletion or access to 127x02/09–18.
-
-### 2026-10-08T01:06:35Z backup verified
-Independent checksum verification on 127x04 PASS: all 1,622 canonical base files and 454 frozen inputs match, plus 843 new recovery-QA files / 136,839,463 bytes copied from 01 with zero checksum differences (scope captured before the mirror receipt itself). Raw/normalized/round-trip NPZs and every base-row audit are preserved at the same recovery QA path on both 01 and 04. No deletion or base overwrite. Receipt: qa/fleet-v3b/recovery-127x01-20261008/mirror-127x04.json. All owned gate PIDs are absent and exit 1 is confirmed; no running C56 work remains. Small reports/receipts/helper are mirrored to 127x05 only; no NPZs.
+Status and resume receipts: `qa/fleet-v3b/production-20261008/`; detached labels `c56-v3b-production-20261008-extract` (each node) and the hub supervisor recorded in `supervisor.json`. Full retention/final QA remains pending unless COMPLETE.
+<!-- /C56-PRODUCTION-STATUS -->
 
 
-## Final collector runtime binding correction
-{"utc": "2026-10-08T02:05:23.286637+00:00", "issue": "fleet_run resets CLASHER_ROOT/PYTHONPATH; run-production.sh r3/r4 exported them before launcher without post-launch env override. Remote extraction commands always had explicit env and correct verified frozen runtime. Hub collector row QA r3/r4 used workspace imports; final bind_runtime gate correctly stopped completion.", "fix": "run-production.sh now puts explicit env after fleet_run; supervisor asserts bind_runtime and frozen SHA at startup; preserve all previous collector QA caches and recompute all 956 new-unit audits under frozen runtime; reuse only 811 independently verified frozen-runtime recovery base audits, recheck every final corpus hash.", "extraction_outputs_invalidated": 0, "extraction_reruns": 0, "preserved_cache": "reports/strategy_council_20260928/c56/data/qa/fleet-v3b/production-20261008/unit-audits-before-runtime-binding-fix", "new_supervisor_label": "c56-v3b-production-20261008-supervise-r5"}
-
-Final lifecycle verification 2026-10-08T02:15:20Z: extraction and collector exit 0; all four owned driver PIDs absent. Hub C56 data 7,533,060,837 bytes (<7.5 GiB hard cap). Original fleet_v3b.py restored on 03/05 after extraction; isolated production helper remains canonical for any resume. No archive deletion. Closure receipts: closure-127x01/03/04.json.
+### Wrapper-overwrite recovery
+{"utc": "2026-10-08T01:43:02.053159+00:00", "incident": "fleet_v3b.py externally replaced on 127x01 and 127x04 with original ccab87bb...; collector r3 exit 1 at 01:42:02Z; pools retained their loaded code and continued; all 137 original NPZs remain on each node", "recovery": "unique fleet_v3b_production_worker_20261008.py with same d1f47d39... production wrapper bytes; collector r4 resumes immutable partition and cached hashes; no extraction signalled", "source_wrapper_sha256": "d1f47d39da8a6bce523117c8a6f5d7148efba337d0052bdcfdc18d230938d2f4"}

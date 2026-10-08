@@ -1,0 +1,116 @@
+{
+  "utc": "2026-10-08T02:14:11.960555+00:00",
+  "complete": true,
+  "units": 1767,
+  "perspectives": 82231,
+  "rows": 64140802,
+  "errors": 0,
+  "illegal_labels": 0,
+  "retention": 0.8332553134933557,
+  "placement_acceptance": 0.9972125614498496,
+  "output_bytes": 5933175007,
+  "nodes": {
+    "127x01": {
+      "units": 300,
+      "perspectives": 13736,
+      "rows": 10512763,
+      "errors": 0,
+      "wall_seconds": 2557.9604485034943,
+      "cpu_seconds": 105860.72086899998,
+      "bytes": 964036631,
+      "units_per_hour": 422.2113757199967
+    },
+    "127x03": {
+      "units": 437,
+      "perspectives": 20122,
+      "rows": 15334952,
+      "errors": 0,
+      "wall_seconds": 2582.3695027828217,
+      "cpu_seconds": 154062.43979200002,
+      "bytes": 1406301362,
+      "units_per_hour": 609.2079380215275
+    },
+    "127x04": {
+      "units": 219,
+      "perspectives": 10239,
+      "rows": 7809411,
+      "errors": 0,
+      "wall_seconds": 2838.2377002239227,
+      "cpu_seconds": 84718.97047399999,
+      "bytes": 716435910,
+      "units_per_hour": 277.7780028564201
+    }
+  },
+  "mirror": {
+    "bytes": 5933346583,
+    "checksum_differences": 0,
+    "complete_corpus": true,
+    "files": 3547,
+    "host": "127x04",
+    "source": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/recon/engine-v3",
+    "utc": "2026-10-08T02:13:43.597743+00:00"
+  },
+  "v2_preserved_archives_per_node": 137,
+  "v2_preserved_bytes_per_node": 415341863,
+  "final_qa_sha256": "8d73295876f9439c99efdcf4144d36dbc8538debf33685290cefd9ce415a3954",
+  "production_completion_sha256": "628ef89bc0c81f17d5513b50387ae6742950ee4591f704f054b1ee3a4fc76ba6",
+  "incident_inputs_unchanged_hosts": [
+    "127x01",
+    "127x04"
+  ],
+  "invalidated_extraction_units": [],
+  "final_collector_runtime": {
+    "utc": "2026-10-08T02:06:01.873997+00:00",
+    "supervisor": {
+      "label": "c56-v3b-production-20261008-supervise-r5",
+      "pid": 3381772,
+      "utc": "2026-10-08T02:05:26.507189+00:00"
+    },
+    "actual_process_environment": {
+      "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/runtime-engine-v3b",
+      "PYTHONPATH": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/runtime-engine-v3b/src",
+      "C56_FLEET_Q": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/qa/fleet-v3b/production-20261008",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    },
+    "startup_bind_runtime_and_manifest_assertions_passed": true
+  },
+  "closure": {
+    "127x01": {
+      "utc": "2026-10-08T02:15:20.006452+00:00",
+      "host": "127x01",
+      "driver_pid": 3342515,
+      "driver_absent": true,
+      "exit": 0,
+      "assigned_units_complete": 300,
+      "extractor_sha256": "8e95786c1dede45e9fd8d02f8c85cd86331667d3dbc5c8a6713808f0520ac9c7",
+      "supervisor": {
+        "label": "c56-v3b-production-20261008-supervise-r5",
+        "pid": 3381772,
+        "utc": "2026-10-08T02:05:26.507189+00:00"
+      },
+      "supervisor_exit": 0,
+      "supervisor_absent": true,
+      "data_bytes": 7533060837
+    },
+    "127x03": {
+      "utc": "2026-10-08T02:15:20.010764+00:00",
+      "host": "127x03",
+      "driver_pid": 3366753,
+      "driver_absent": true,
+      "exit": 0,
+      "assigned_units_complete": 437,
+      "extractor_sha256": "8e95786c1dede45e9fd8d02f8c85cd86331667d3dbc5c8a6713808f0520ac9c7"
+    },
+    "127x04": {
+      "utc": "2026-10-08T02:15:20.003527+00:00",
+      "host": "127x04",
+      "driver_pid": 2224842,
+      "driver_absent": true,
+      "exit": 0,
+      "assigned_units_complete": 219,
+      "extractor_sha256": "8e95786c1dede45e9fd8d02f8c85cd86331667d3dbc5c8a6713808f0520ac9c7"
+    }
+  }
+}

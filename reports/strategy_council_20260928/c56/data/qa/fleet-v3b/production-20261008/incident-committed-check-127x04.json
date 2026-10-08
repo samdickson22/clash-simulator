@@ -1,0 +1,1 @@
+{"utc": "2026-10-08T01:54:39.963355+00:00", "host": "127x04", "committed_source": "61892cc (includes 61e0f8e)", "immutable_receipts_and_helper_checked": 21, "restored": ["scripts/fleet_v3b_recovery_20261008.py"], "mismatches_after": 0}

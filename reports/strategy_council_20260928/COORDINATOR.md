@@ -322,3 +322,10 @@ Also on the hub, but with copies elsewhere:
   - **What was deleted:** at 01:55Z, 81,517 untracked files (35.8 GB) were deleted from the Mac after an exact checksum match on both 127x01 and 127x04. That covers m0/readiness, checkpoints/, the untracked parts of datasets/, c56/data, human-prior-p16, reports/persistent_batch_v1, and pilot v7r1/v7r2/v7r2c. The file list is `pilot/logs/offload-mac-bulk-20261008T015508Z.files`.
   - **Copies:** 127x01 and 127x04 now hold the only copies of those paths. Files the incident restored there are newer than the deleted Mac versions, which is fine. Do not delete these paths on both nodes.
   - **Mac disk:** 54 GiB free.
+- **2026-10-08 02:30 UTC: C56 extraction v3b COMPLETE.** 1,767/1,767 units, 82,231 perspectives, 64,140,802 rows,
+  0 errors, 0 illegal labels. Retention 83.33%, placement acceptance 99.72%, 5.93 GB. The 956 new units ran on 01/03/04 in
+  ~43–47 min wall (422/609/278 units per hour). All 137 v2 archives preserved. The 01:39Z push audit found unchanged inputs and base
+  outputs, so no unit was invalidated. Copies: 127x01 and 127x04 complete with identical file lists
+  (`qa/fleet-v3b/production-20261008/completion-summary.json`). Coordinator spot check: 3 random units load
+  (32 arrays, 26–41k rows). NaN appears only in recorded/submitted world positions, exactly as in the Mac base units
+  (no-position actions), so it is by design. **Next: the all-card imitation model** (HANDOFF_F35 §5.3), design first.
