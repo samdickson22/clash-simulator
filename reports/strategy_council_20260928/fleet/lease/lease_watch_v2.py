@@ -6,6 +6,7 @@ short-lived exclusive flock serializes v2 admissions and aggregate snapshots.
 Resource checks are a sampled backstop, as in v1, rather than kernel quotas.
 """
 import argparse
+import ctypes
 from contextlib import contextmanager
 import datetime as dt
 import fcntl
@@ -42,6 +43,62 @@ TERM_AFTER = 24 * 60
 KILL_AFTER = 25 * 60
 STOP_AT = dt.datetime(2026, 10, 9, 4, 30, tzinfo=dt.timezone.utc)
 EXIT_BY = dt.datetime(2026, 10, 9, 5, 0, tzinfo=dt.timezone.utc)
+REVISION = 'v2-hotfix-20261008-r1'
+CLASHER_PATH = re.compile(
+    rb'^/mpac/sdicks02/(?:repos/clasher(?:-[^/]+)?(?:/|$)|'
+    rb'jobs/clasher(?:/|$)|envs/clasher-[^/]+(?:/|$)|'
+    rb'tmp/(?:t5-|t11-|v4-)[^/]+(?:/|$))')
+DESKTOP_DAEMONS = {b'dbus-daemon', b'dbus-broker', b'systemd', b'gnome-shell',
+                   b'plasmashell', b'Xorg', b'Xwayland', b'pulseaudio', b'pipewire',
+                   b'wireplumber', b'xdg-desktop-portal'}
+
+
+def excluded_argv(argv):
+    # Classification only: never open owner repositories, jobs or caches.
+    if any(re.search(rb'/repos/roader[^/]*|(?:^|/)roader-shell(?:/|$)|\.roadforge', arg)
+           for arg in argv):
+        return True
+    executable = argv[0].rsplit(b'/', 1)[-1] if argv else b''
+    return executable in DESKTOP_DAEMONS or executable.startswith((b'gvfs', b'gnome-', b'xdg-desktop-portal'))
+
+
+def clasher_argv(argv):
+    return not excluded_argv(argv) and any(CLASHER_PATH.match(arg) for arg in argv)
+
+
+def process_argv(pid):
+    path = Path('/proc') / str(pid)
+    try:
+        if path.stat().st_uid == os.getuid():
+            return (path / 'cmdline').read_bytes().split(b'\0')
+    except (FileNotFoundError, ProcessLookupError):
+        pass
+    return []
+
+
+def pending_launcher(argv):
+    # Covers the original files, immutable hotfix files and launcher symlinks.
+    return any(arg.startswith((str(BASE) + '/').encode()) and
+               re.fullmatch(rb'(?:lease_watch|run)_v2(?:[._-][a-zA-Z0-9._-]+)?\.(?:py|sh)',
+                            arg.rsplit(b'/', 1)[-1]) for arg in argv)
+
+
+def enable_subreaper():
+    # Adopt short-lived children's descendants before their parent can vanish.
+    # This changes only this new supervisor, never an already running job.
+    libc = ctypes.CDLL(None, use_errno=True)
+    if libc.prctl(36, 1, 0, 0, 0) != 0:  # PR_SET_CHILD_SUBREAPER
+        raise OSError(ctypes.get_errno(), 'cannot enable child subreaper')
+
+
+def reap_descendants(child, rows):
+    child.poll()  # Popen must retain the direct child's real exit status.
+    for pid, row in rows.items():
+        if pid != child.pid and row[0] == os.getpid() and row[3] == 'Z':
+            try:
+                os.waitpid(pid, os.WNOHANG)
+            except ChildProcessError:
+                pass
 
 
 def utc():
@@ -202,32 +259,43 @@ def refresh(registry, rows, discover=False):
                               'sequence': -1, 'supervisor_pid': pid})
     for key, job in list(jobs.items()):
         known = expand(rows, job['known'])
+        supervisor = job.get('supervisor_pid')
+        start = job.get('supervisor_start', job['known'].get(str(supervisor)))
+        live_supervisor = (supervisor in rows and rows[supervisor][3] != 'Z'
+                           and start is not None and rows[supervisor][1] == start)
+        if job['kind'] == 'v2' and live_supervisor:
+            known[supervisor] = start
+        if job['kind'] == 'external' and discover:
+            # Reclassify persisted entries from the old overly broad discovery.
+            allowed = {pid: tick for pid, tick in known.items()
+                       if clasher_argv(process_argv(pid))}
+            filtered_rows = {pid: row for pid, row in rows.items()
+                             if pid not in known or not excluded_argv(process_argv(pid))}
+            known = expand(filtered_rows, allowed)
         if not known:
             del jobs[key]
         else:
             job['known'] = {str(pid): start for pid, start in known.items()}
     if discover:
-        # Also count unwrapped Clasher processes/sidecars in this footprint.
+        # Count only allowlisted Clasher roots and their verified descendants.
         # Only our UID's argv is read, never any repository/job/cache of the owner.
         covered = {int(pid) for job in jobs.values() for pid in job['known']}
         for pid, row in rows.items():
             if pid in covered or pid == os.getpid() or row[3] == 'Z':
                 continue
-            path = Path('/proc') / str(pid)
-            try:
-                if path.stat().st_uid != os.getuid():
-                    continue
-                argv = (path / 'cmdline').read_bytes().split(b'\0')
-            except (FileNotFoundError, ProcessLookupError):
-                continue
+            argv = process_argv(pid)
             # Pending launchers haven't acquired capacity yet; serialized
             # admission accounts for each of them before starting a workload.
-            if str(BASE / 'lease_watch_v2.py').encode() in argv or str(BASE / 'run_v2.sh').encode() in argv:
+            if pending_launcher(argv):
                 continue
-            if any(arg.startswith((str(BASE) + '/').encode()) for arg in argv):
+            if clasher_argv(argv):
                 key = 'external:' + str(pid) + ':' + row[1]
+                selected = expand(rows, {pid: row[1]})
+                filtered_rows = {p: r for p, r in rows.items()
+                                 if p not in selected or not excluded_argv(process_argv(p))}
                 jobs[key] = {'kind': 'external', 'sequence': -1,
-                             'known': {str(p): s for p, s in expand(rows, {pid: row[1]}).items()}}
+                             'known': {str(p): s for p, s in expand(filtered_rows, {pid: row[1]}).items()}}
+                covered.update(int(p) for p in jobs[key]['known'])
 
 
 def measure(registry, rows):
@@ -337,6 +405,8 @@ def send(known, sig):
     for pid, start in known.items():
         pid = int(pid)
         if pid != os.getpid() and pid in rows and rows[pid][1] == start and rows[pid][3] != 'Z':
+            if excluded_argv(process_argv(pid)):
+                continue
             try:
                 os.kill(pid, sig)
             except ProcessLookupError:
@@ -370,6 +440,7 @@ def supervise(args, child, receipt, known, key):
     try:
         while True:
             rows = processes()
+            reap_descendants(child, rows)
             known = expand(rows, known)
             count = len(known)
             rss = sum(rows[pid][2] for pid in known)
@@ -377,7 +448,23 @@ def supervise(args, child, receipt, known, key):
             now = time.monotonic()
             with accounting() as registry:
                 refresh(registry, rows)
-                own = registry['jobs'][key]
+                own = registry['jobs'].get(key)
+                if own is None:
+                    # Mixed-version peers may remove an entry as the child exits.
+                    # Finish through the normal reap/receipt path, retaining status.
+                    child_exited = child.poll() is not None
+                    rows = processes()
+                    reap_descendants(child, rows)
+                    known = expand(rows, known)
+                    if child_exited and not [pid for pid in known if pid != os.getpid()]:
+                        child.wait()
+                        break
+                    own = {'kind': 'v2', 'known': {str(pid): start for pid, start in known.items()},
+                           'sequence': receipt['admission_sequence'], 'supervisor_pid': os.getpid(),
+                           'supervisor_start': known[os.getpid()],
+                           'declared_processes': args.max_processes, 'declared_pss_bytes': args.pss_bytes,
+                           'gpu': args.gpu}
+                    registry['jobs'][key] = own
                 # Refresh all known descendants every second, including reparented
                 # ones, but sample PSS and external controls once per minute.
                 if time.time() - registry['last_check'] >= CHECK_INTERVAL:
@@ -409,6 +496,11 @@ def supervise(args, child, receipt, known, key):
                         'effective_process_cap': cap['processes'] if cap else None,
                         'aggregate': aggregate, 'accounted_jobs': job_summary(registry), 'stop_reason': reason})
             child_exited = child.poll() is not None
+            if child_exited:
+                # Capture descendants adopted during the earlier snapshot/poll.
+                rows = processes()
+                reap_descendants(child, rows)
+                known = expand(rows, known)
             # poll() can reap a child that was live in the earlier /proc
             # snapshot. That child alone is not a surviving descendant.
             others = {pid: start for pid, start in known.items()
@@ -420,7 +512,9 @@ def supervise(args, child, receipt, known, key):
                 receipt['stop_requested_utc'] = stamp()
                 send(known, signal.SIGTERM)
                 with accounting() as registry:
-                    mark_stop(registry['jobs'][key], reason)
+                    own = registry['jobs'].get(key)
+                    if own is not None:
+                        mark_stop(own, reason)
             if utc() >= exit_by or (stopping is not None and now - stopping >= KILL_AFTER):
                 send(known, signal.SIGKILL)
             elif stopping is not None and now - stopping >= TERM_AFTER:
@@ -438,6 +532,7 @@ def supervise(args, child, receipt, known, key):
         stopping = time.monotonic()
         while True:
             known = expand(processes(), known)
+            reap_descendants(child, processes())
             if child.poll() is not None and not [pid for pid in known if pid != os.getpid()]:
                 break
             elapsed = time.monotonic() - stopping
@@ -492,12 +587,13 @@ def main(argv=None):
     args = parse_args(sys.argv[1:] if argv is None else argv)
     os.nice(max(0, 10 - os.getpriority(os.PRIO_PROCESS, 0)))
     (BASE / 'jobs').mkdir(exist_ok=True)
-    receipt = {'version': 2, 'host': HOST, 'label': args.label, 'command': args.command,
+    receipt = {'version': 2, 'wrapper_revision': REVISION, 'host': HOST, 'label': args.label, 'command': args.command,
                'started_utc': stamp(), 'declared_processes': args.max_processes,
                'declared_pss_bytes': args.pss_bytes, 'gpu': args.gpu}
     admitted = False
     child = None
     try:
+        enable_subreaper()
         with accounting() as registry:
             if any((BASE / 'jobs' / (args.label + suffix)).exists()
                    for suffix in ('.launch.pid', '.exit.json', '.state.json', '.log')):
@@ -548,6 +644,7 @@ def main(argv=None):
             key = 'v2:' + args.label
             registry['jobs'][key] = {'kind': 'v2', 'sequence': registry['next_sequence'],
                 'supervisor_pid': os.getpid(), 'known': {str(pid): start for pid, start in known.items()},
+                'supervisor_start': rows[os.getpid()][1],
                 'declared_processes': args.max_processes, 'declared_pss_bytes': args.pss_bytes, 'gpu': args.gpu}
             receipt['admission_sequence'] = registry['next_sequence']
             admitted = True
@@ -566,7 +663,9 @@ def main(argv=None):
             # Hand startup failures to the same checkpoint/cleanup path.
             receipt.update(error=str(exc))
             with accounting() as registry:
-                mark_stop(registry['jobs'][key], 'startup error: ' + str(exc))
+                own = registry['jobs'].get(key)
+                if own is not None:
+                    mark_stop(own, 'startup error: ' + str(exc))
             return supervise(args, child, receipt, known, key)
         receipt.update(status='fail', error=str(exc), exit_code=1, finished_utc=stamp())
         # Never overwrite another job's receipts on duplicate-label rejection.

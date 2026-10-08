@@ -1,0 +1,328 @@
+{
+  "revision": "v2-hotfix-20261008-r1",
+  "started_utc": "2026-10-08T23:42:28.923558+00:00",
+  "sha256": {
+    "lease_watch_v2_hotfix_20261008_r1.py": "94f9aef56cc84a91df5925b5d1a95b603f8838534bf9ac01e44873b0c3b6b7f6",
+    "run_v2_hotfix_20261008_r1.sh": "229f6bc535180b0a061f05ffbc41b25152b32d46e184900ee6856a18c416fdac"
+  },
+  "tests": {
+    "host": "127x01",
+    "passed": 47,
+    "log": "wrapper-v2-hotfix-tests-20261008-r1.log"
+  },
+  "hosts": [
+    {
+      "host": "127x09",
+      "status": "pass",
+      "before": {
+        "old_supervisor_sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "jobs": {
+          "v1:3919781:128947050": {
+            "supervisor_pid": 3919781,
+            "stop_reason": null
+          },
+          "v2:cpu-search-ab-p0500-r2": {
+            "supervisor_pid": 4090758,
+            "stop_reason": null
+          },
+          "v2:cpu-delay-fixes-p0000-primary-v1": {
+            "supervisor_pid": 4101958,
+            "stop_reason": null
+          },
+          "v2:v4-vector-fullgate-20261008-09r3": {
+            "supervisor_pid": 4111505,
+            "stop_reason": null
+          }
+        }
+      },
+      "after": {
+        "old_supervisor_sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "jobs": {
+          "v1:3919781:128947050": {
+            "supervisor_pid": 3919781,
+            "stop_reason": null
+          },
+          "v2:cpu-search-ab-p0500-r2": {
+            "supervisor_pid": 4090758,
+            "stop_reason": null
+          },
+          "v2:cpu-delay-fixes-p0000-primary-v1": {
+            "supervisor_pid": 4101958,
+            "stop_reason": null
+          },
+          "v2:v4-vector-fullgate-20261008-09r3": {
+            "supervisor_pid": 4111505,
+            "stop_reason": null
+          }
+        },
+        "symlinks": {
+          "run_v2_current.sh": "run_v2_hotfix_20261008_r1.sh",
+          "run_v2.sh": "run_v2_hotfix_20261008_r1.sh"
+        },
+        "versioned_sha256": {
+          "lease_watch_v2_hotfix_20261008_r1.py": "94f9aef56cc84a91df5925b5d1a95b603f8838534bf9ac01e44873b0c3b6b7f6",
+          "run_v2_hotfix_20261008_r1.sh": "229f6bc535180b0a061f05ffbc41b25152b32d46e184900ee6856a18c416fdac"
+        }
+      }
+    },
+    {
+      "host": "127x11",
+      "status": "pass",
+      "before": {
+        "old_supervisor_sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "jobs": {
+          "v1:196228:817834": {
+            "supervisor_pid": 196228,
+            "stop_reason": null
+          },
+          "v2:cpu-delay-fixes-p0025-primary-v1": {
+            "supervisor_pid": 312364,
+            "stop_reason": null
+          }
+        }
+      },
+      "after": {
+        "old_supervisor_sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "jobs": {
+          "v1:196228:817834": {
+            "supervisor_pid": 196228,
+            "stop_reason": null
+          },
+          "v2:cpu-delay-fixes-p0025-primary-v1": {
+            "supervisor_pid": 312364,
+            "stop_reason": null
+          }
+        },
+        "symlinks": {
+          "run_v2_current.sh": "run_v2_hotfix_20261008_r1.sh",
+          "run_v2.sh": "run_v2_hotfix_20261008_r1.sh"
+        },
+        "versioned_sha256": {
+          "lease_watch_v2_hotfix_20261008_r1.py": "94f9aef56cc84a91df5925b5d1a95b603f8838534bf9ac01e44873b0c3b6b7f6",
+          "run_v2_hotfix_20261008_r1.sh": "229f6bc535180b0a061f05ffbc41b25152b32d46e184900ee6856a18c416fdac"
+        }
+      }
+    },
+    {
+      "host": "127x13",
+      "status": "pass",
+      "before": {
+        "old_supervisor_sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "jobs": {
+          "v1:4026076:128902606": {
+            "supervisor_pid": 4026076,
+            "stop_reason": null
+          },
+          "v2:cpu-delay-fixes-p0150-primary-v1": {
+            "supervisor_pid": 23205,
+            "stop_reason": null
+          }
+        }
+      },
+      "after": {
+        "old_supervisor_sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "jobs": {
+          "v1:4026076:128902606": {
+            "supervisor_pid": 4026076,
+            "stop_reason": null
+          },
+          "v2:cpu-delay-fixes-p0150-primary-v1": {
+            "supervisor_pid": 23205,
+            "stop_reason": null
+          }
+        },
+        "symlinks": {
+          "run_v2_current.sh": "run_v2_hotfix_20261008_r1.sh",
+          "run_v2.sh": "run_v2_hotfix_20261008_r1.sh"
+        },
+        "versioned_sha256": {
+          "lease_watch_v2_hotfix_20261008_r1.py": "94f9aef56cc84a91df5925b5d1a95b603f8838534bf9ac01e44873b0c3b6b7f6",
+          "run_v2_hotfix_20261008_r1.sh": "229f6bc535180b0a061f05ffbc41b25152b32d46e184900ee6856a18c416fdac"
+        }
+      }
+    },
+    {
+      "host": "127x14",
+      "status": "pass",
+      "before": {
+        "old_supervisor_sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "jobs": {
+          "v1:3951727:128923248": {
+            "supervisor_pid": 3951727,
+            "stop_reason": null
+          },
+          "v2:cpu-search-ab-p1000-r2": {
+            "supervisor_pid": 4096389,
+            "stop_reason": null
+          },
+          "v2:cpu-delay-fixes-p0075-primary-v1": {
+            "supervisor_pid": 4104927,
+            "stop_reason": null
+          }
+        }
+      },
+      "after": {
+        "old_supervisor_sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "jobs": {
+          "v1:3951727:128923248": {
+            "supervisor_pid": 3951727,
+            "stop_reason": null
+          },
+          "v2:cpu-search-ab-p1000-r2": {
+            "supervisor_pid": 4096389,
+            "stop_reason": null
+          },
+          "v2:cpu-delay-fixes-p0075-primary-v1": {
+            "supervisor_pid": 4104927,
+            "stop_reason": null
+          }
+        },
+        "symlinks": {
+          "run_v2_current.sh": "run_v2_hotfix_20261008_r1.sh",
+          "run_v2.sh": "run_v2_hotfix_20261008_r1.sh"
+        },
+        "versioned_sha256": {
+          "lease_watch_v2_hotfix_20261008_r1.py": "94f9aef56cc84a91df5925b5d1a95b603f8838534bf9ac01e44873b0c3b6b7f6",
+          "run_v2_hotfix_20261008_r1.sh": "229f6bc535180b0a061f05ffbc41b25152b32d46e184900ee6856a18c416fdac"
+        }
+      }
+    },
+    {
+      "host": "127x15",
+      "status": "pass",
+      "before": {
+        "old_supervisor_sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "jobs": {
+          "v1:4072416:128921618": {
+            "supervisor_pid": 4072416,
+            "stop_reason": null
+          },
+          "v2:cpu-search-ab-p0750-r2": {
+            "supervisor_pid": 72657,
+            "stop_reason": null
+          },
+          "v2:cpu-delay-fixes-p0100-primary-v1": {
+            "supervisor_pid": 78235,
+            "stop_reason": null
+          }
+        }
+      },
+      "after": {
+        "old_supervisor_sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "jobs": {
+          "v1:4072416:128921618": {
+            "supervisor_pid": 4072416,
+            "stop_reason": null
+          },
+          "v2:cpu-search-ab-p0750-r2": {
+            "supervisor_pid": 72657,
+            "stop_reason": null
+          },
+          "v2:cpu-delay-fixes-p0100-primary-v1": {
+            "supervisor_pid": 78235,
+            "stop_reason": null
+          }
+        },
+        "symlinks": {
+          "run_v2_current.sh": "run_v2_hotfix_20261008_r1.sh",
+          "run_v2.sh": "run_v2_hotfix_20261008_r1.sh"
+        },
+        "versioned_sha256": {
+          "lease_watch_v2_hotfix_20261008_r1.py": "94f9aef56cc84a91df5925b5d1a95b603f8838534bf9ac01e44873b0c3b6b7f6",
+          "run_v2_hotfix_20261008_r1.sh": "229f6bc535180b0a061f05ffbc41b25152b32d46e184900ee6856a18c416fdac"
+        }
+      }
+    },
+    {
+      "host": "127x16",
+      "status": "pass",
+      "before": {
+        "old_supervisor_sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "jobs": {
+          "v1:4092116:129174844": {
+            "supervisor_pid": 4092116,
+            "stop_reason": null
+          }
+        }
+      },
+      "after": {
+        "old_supervisor_sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "jobs": {
+          "v1:4092116:129174844": {
+            "supervisor_pid": 4092116,
+            "stop_reason": null
+          }
+        },
+        "symlinks": {
+          "run_v2_current.sh": "run_v2_hotfix_20261008_r1.sh",
+          "run_v2.sh": "run_v2_hotfix_20261008_r1.sh"
+        },
+        "versioned_sha256": {
+          "lease_watch_v2_hotfix_20261008_r1.py": "94f9aef56cc84a91df5925b5d1a95b603f8838534bf9ac01e44873b0c3b6b7f6",
+          "run_v2_hotfix_20261008_r1.sh": "229f6bc535180b0a061f05ffbc41b25152b32d46e184900ee6856a18c416fdac"
+        }
+      }
+    }
+  ],
+  "finished_utc": "2026-10-08T23:42:39.603334+00:00",
+  "smoke": {
+    "host": "127x09",
+    "label": "lease-v2-hotfix-fast-20261008-09r1",
+    "status": "pass",
+    "exit_code": 0,
+    "finished_utc": "2026-10-08T23:42:57.611834+00:00",
+    "receipt": "wrapper-v2-hotfix-smoke-127x09-20261008-r1.json",
+    "verification": {
+      "roader_processes_observed_by_argv_only": 15,
+      "desktop_processes_observed_by_argv_only": 9,
+      "excluded_pids_in_registry": [],
+      "remaining_jobs": {
+        "v1:3919781:128947050": {
+          "kind": "v1",
+          "sequence": -1,
+          "supervisor_pid": 3919781,
+          "processes": 11,
+          "pss_bytes": 7742024704,
+          "stop_reason": null
+        },
+        "v2:cpu-search-ab-p0500-r2": {
+          "kind": "v2",
+          "sequence": 2,
+          "supervisor_pid": 4090758,
+          "processes": 21,
+          "pss_bytes": 6311000064,
+          "stop_reason": null
+        },
+        "v2:cpu-delay-fixes-p0000-primary-v1": {
+          "kind": "v2",
+          "sequence": 4,
+          "supervisor_pid": 4101958,
+          "processes": 24,
+          "pss_bytes": 7205762048,
+          "stop_reason": null
+        },
+        "v2:v4-vector-fullgate-20261008-09r3": {
+          "kind": "v2",
+          "sequence": 6,
+          "supervisor_pid": 4111505,
+          "processes": 2,
+          "pss_bytes": 287182848,
+          "stop_reason": null
+        }
+      },
+      "prior_epoch_grid": {
+        "supervisor_pid": 4099435,
+        "status": "pass",
+        "exit_code": 0,
+        "finished_utc": "2026-10-08T23:41:44.398660+00:00",
+        "stop_reason": null
+      }
+    }
+  },
+  "source_sha256": {
+    "run_v2.sh": "229f6bc535180b0a061f05ffbc41b25152b32d46e184900ee6856a18c416fdac",
+    "lease_watch_v2.py": "94f9aef56cc84a91df5925b5d1a95b603f8838534bf9ac01e44873b0c3b6b7f6",
+    "test_watch_v2.py": "a03eb5d1f794d7be39ae0eedc0549e9b03581ca3c079d72a1f782e20b69157d2"
+  },
+  "completed_utc": "2026-10-08T23:43:41.158382+00:00"
+}

@@ -1,0 +1,77 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261008-r1",
+  "host": "127x09",
+  "label": "lease-v2-hotfix-fast-20261008-09r1",
+  "command": [
+    "/usr/bin/true"
+  ],
+  "started_utc": "2026-10-08T23:42:55.900849+00:00",
+  "declared_processes": 2,
+  "declared_pss_bytes": 100000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 69,
+    "pss_bytes": 39741755392
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 58,
+    "pss_bytes": 21545232384
+  },
+  "admission_jobs": {
+    "v1:3919781:128947050": {
+      "kind": "v1",
+      "sequence": -1,
+      "supervisor_pid": 3919781,
+      "processes": 11,
+      "pss_bytes": 7741755392,
+      "stop_reason": null
+    },
+    "v2:cpu-search-ab-p0500-r2": {
+      "kind": "v2",
+      "sequence": 2,
+      "supervisor_pid": 4090758,
+      "processes": 21,
+      "pss_bytes": 6310901760,
+      "stop_reason": null
+    },
+    "v2:cpu-delay-fixes-p0000-primary-v1": {
+      "kind": "v2",
+      "sequence": 4,
+      "supervisor_pid": 4101958,
+      "processes": 24,
+      "pss_bytes": 7205486592,
+      "stop_reason": null
+    },
+    "v2:v4-vector-fullgate-20261008-09r3": {
+      "kind": "v2",
+      "sequence": 6,
+      "supervisor_pid": 4111505,
+      "processes": 2,
+      "pss_bytes": 287088640,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 4146469,
+  "admission_sequence": 7,
+  "pid": 4146484,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T23:42:57.611834+00:00",
+  "stop_reason": null,
+  "peak_processes": 1,
+  "peak_rss_bytes": 12754944,
+  "peak_sampled_pss_bytes": 8391680,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "aggregate": {
+    "processes": 59,
+    "pss_bytes": 21553879040
+  },
+  "effective_process_cap": 80
+}

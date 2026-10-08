@@ -27,10 +27,14 @@ output = Path('/mpac/sdicks02/jobs/clasher')
 dataset_root=Path('/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data')
 t3_paths=[p for p in (dataset_root/'receipts/T3-PASS.json',dataset_root/'c56-store-v1/T3-PASS.json') if p.is_file()]
 for host in HOSTS:
+    prior=output/f'lease-ready-{host}.json'
+    if prior.exists() and json.loads(prior.read_text()).get('cpu_upgrade'):
+        print(host, 'Preserving CPU-upgrade receipt; use publish_cpu_upgrade.py for a targeted refresh')
+        continue
     result = subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=15',host,'nice -n 10 python3 -'], input=remote, text=True, capture_output=True)
     if result.returncode:
         print(host, 'COLLECTION FAILED', result.stderr);continue
-    r=json.loads(result.stdout); lease=r['lease']; cpu=host not in ('127x09','127x15')
+    r=json.loads(result.stdout); lease=r['lease']; cpu=bool(lease.get('cpu',host not in ('127x09','127x15'))) if lease else False
     smoke=r['p16']; gpu=r['gpu']; data=r['data']
     cpu_ok=bool(smoke and smoke.get('checked_episodes')==12 and smoke.get('mismatches')==[])
     gpu_ok=bool(gpu and gpu.get('full_required_suite_passed'))

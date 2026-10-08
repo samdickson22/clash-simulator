@@ -13,13 +13,15 @@ import time
 
 BASE = Path('/mpac/sdicks02/repos/clasher-lease')
 HOST = socket.gethostname().split('.')[0]
-CAPS = {'127x11': 96, '127x13': 64, '127x14': 64, '127x16': 48, '127x18': 48, '127x09': 8, '127x15': 8}
+CAPS = {'127x11': 96, '127x13': 64, '127x14': 64, '127x16': 48, '127x18': 48, '127x09': 96, '127x15': 96}
 LEASE = Path('/mpac/sdicks02/fleet-leases') / (HOST + '.json')
 COORDINATOR = '0523ae6f-baa3-4d4e-b233-b392671670db'
 CHECK_INTERVAL = 60
 POLL_INTERVAL = 1
 TERM_AFTER = 24 * 60
 KILL_AFTER = 25 * 60
+PSS_HOSTS = {'127x09', '127x15'}
+CONSOLE_HELPER = Path.home() / '.local/bin/fleet-console-users'
 
 def utc():
     return dt.datetime.now(dt.timezone.utc).isoformat()
@@ -35,6 +37,34 @@ def lease():
     assert not value.get('refused') and not value.get('reclaim'), 'refused or reclaimed'
     assert dt.datetime.fromisoformat(value['expected_end_utc'].replace('Z', '+00:00')) > dt.datetime.now(dt.timezone.utc), 'expired'
     return value
+
+def console_users():
+    if HOST in PSS_HOSTS:
+        output = subprocess.check_output([str(CONSOLE_HELPER)], text=True, timeout=15).strip()
+        if not output.isdigit():
+            raise ValueError('fleet-console-users did not return a nonnegative count')
+        return int(output)
+    return int(bool(subprocess.check_output(['who'], text=True).strip()))
+
+def tree_pss(known):
+    total = 0
+    for pid, start in known.items():
+        p = Path('/proc') / str(pid)
+        try:
+            if (p / 'stat').read_text().rsplit(')', 1)[1].split()[19] != start:
+                continue
+            value = None
+            for line in (p / 'smaps_rollup').read_text().splitlines():
+                if line.startswith('Pss:'):
+                    value = int(line.split()[1]) * 1024
+                    break
+            if value is None:
+                raise ValueError('Pss missing for verified PID ' + str(pid))
+            if (p / 'stat').read_text().rsplit(')', 1)[1].split()[19] == start:
+                total += value
+        except (FileNotFoundError, ProcessLookupError):
+            continue
+    return total
 
 def processes():
     rows = {}
@@ -80,13 +110,17 @@ def main():
     known = {}
     stopping = None
     reason = None
-    peak_count = peak_rss = 0
+    peak_count = peak_rss = peak_pss = 0
+    pss = None
+    console_count = None
+    cap = None
     last_check = 0
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         current = lease()
         users = subprocess.check_output(['who'], text=True)
-        print('who:', repr(users), flush=True)
+        console_count = console_users()
+        print('who:', repr(users), 'console_users:', console_count, flush=True)
         child = subprocess.Popen(command, cwd=BASE / 'repo' if (BASE / 'repo').is_dir() else BASE, start_new_session=True)
         receipt['pid'] = child.pid
         while True:
@@ -102,9 +136,14 @@ def main():
                 try:
                     current = lease()
                     users = subprocess.check_output(['who'], text=True)
-                    cap = min(CAPS[HOST], int(current['max_workers']), 16 if users else 96)
+                    console_count = console_users()
+                    cap = min(CAPS[HOST], int(current['max_workers']), 16 if users or console_count > 0 else 96)
                     assert count <= cap, 'process cap exceeded'
-                    assert not current.get('shared') or rss <= 64_000_000_000, '64 GB resident cap exceeded'
+                    pss = tree_pss(known) if HOST in PSS_HOSTS else None
+                    if pss is not None:
+                        peak_pss = max(peak_pss, pss)
+                    memory = pss if HOST in PSS_HOSTS else rss
+                    assert not current.get('shared') or memory <= 64_000_000_000, '64 GB memory cap exceeded'
                     free = subprocess.check_output(['nvidia-smi', '--query-gpu=memory.free', '--format=csv,noheader,nounits'], text=True)
                     assert min(int(x) for x in free.split()) >= 8192, 'GPU free memory below 8 GiB'
                 except Exception as exc:
@@ -116,7 +155,7 @@ def main():
                         checkpoint_signal = getattr(signal, os.environ.get('CLASHER_CHECKPOINT_SIGNAL', 'SIGTERM'))
                         if child.poll() is None:
                             os.kill(child.pid, checkpoint_signal)
-                atomic(BASE / 'jobs' / (label + '.state.json'), {**receipt, 'checked_utc': utc(), 'processes': count, 'rss_bytes': rss, 'stop_reason': reason})
+                atomic(BASE / 'jobs' / (label + '.state.json'), {**receipt, 'checked_utc': utc(), 'processes': count, 'rss_bytes': rss, 'pss_bytes': pss, 'memory_metric': 'pss' if HOST in PSS_HOSTS else 'rss', 'console_users': console_count, 'effective_process_cap': cap, 'stop_reason': reason})
             if child.poll() is not None and not others:
                 break
             if child.poll() is not None and stopping is None:
@@ -137,7 +176,7 @@ def main():
             time.sleep(2)
             send(known, signal.SIGKILL)
     finally:
-        receipt.update(finished_utc=utc(), stop_reason=reason, peak_processes=peak_count, peak_rss_bytes=peak_rss)
+        receipt.update(finished_utc=utc(), stop_reason=reason, peak_processes=peak_count, peak_rss_bytes=peak_rss, peak_sampled_pss_bytes=peak_pss if HOST in PSS_HOSTS else None, memory_metric='pss' if HOST in PSS_HOSTS else 'rss', console_users=console_count, effective_process_cap=cap)
         atomic(BASE / 'jobs' / (label + '.exit.json'), receipt)
         if reason:
             # Remove only our reclaimed/expired lease, after all tracked children have gone.

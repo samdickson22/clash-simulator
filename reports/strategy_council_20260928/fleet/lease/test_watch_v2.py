@@ -48,6 +48,71 @@ class AccountingTests(unittest.TestCase):
     def test_console_helper_cap(self):
         self.assertEqual(w.limits({'max_workers': 96}, 1, POLICY)['processes'], 16)
 
+    def test_clasher_argv_explicit_allowlist(self):
+        paths = ['repos/clasher/train.py', 'repos/clasher', 'repos/clasher-lease/run.sh',
+                 'repos/clasher-v4-data/a', 'repos/clasher-eval-snapshots/a',
+                 'repos/clasher-checkpoints/a', 'repos/clasher-t11-test/a',
+                 'jobs/clasher/job.py', 'envs/clasher-gpu/bin/python',
+                 'tmp/t5-test/job.py', 'tmp/t11-test/job.py', 'tmp/v4-test/job.py']
+        for path in paths:
+            with self.subTest(path=path):
+                self.assertTrue(w.clasher_argv([b'python', ('/mpac/sdicks02/' + path).encode()]))
+        for path in ('repos/clasherish/a', 'jobs/clasher-other/a', 'envs/other/bin/python',
+                     'tmp/other/a', 'tools/python', 'repos/another/a'):
+            with self.subTest(path=path):
+                self.assertFalse(w.clasher_argv([b'python', ('/mpac/sdicks02/' + path).encode()]))
+
+    def test_roader_and_desktop_exclusions_override_clasher_arguments(self):
+        for argv in ([b'python', b'/mpac/sdicks02/repos/roader-perf2/run.py'],
+                     [b'/mpac/sdicks02/roader-shell'],
+                     [b'bwrap', b'/mpac/sdicks02/.roadforge/worker'],
+                     [b'python', b'/mpac/sdicks02/repos/roader/run.py',
+                      b'/mpac/sdicks02/repos/clasher-lease/data'],
+                     [b'/usr/bin/dbus-daemon', b'/mpac/sdicks02/repos/clasher/cache'],
+                     [b'/usr/libexec/gvfsd', b'/mpac/sdicks02/repos/clasher/cache']):
+            with self.subTest(argv=argv):
+                self.assertTrue(w.excluded_argv(argv))
+                self.assertFalse(w.clasher_argv(argv))
+
+    def test_pending_versioned_launchers_are_not_external_jobs(self):
+        for name in ('lease_watch_v2.py', 'run_v2.sh',
+                     'lease_watch_v2_hotfix_20261008_r1.py', 'run_v2_hotfix_20261008_r1.sh',
+                     'run_v2_current.sh'):
+            self.assertTrue(w.pending_launcher([b'python', str(w.BASE / name).encode()]))
+        self.assertFalse(w.pending_launcher([str(w.BASE / 'repo/job.py').encode()]))
+
+    def test_refresh_preserves_live_supervisor_with_empty_known_set(self):
+        entry = {**job(known={'2': 'gone'}), 'supervisor_pid': 1, 'supervisor_start': 'a'}
+        registry = {'jobs': {'v2:fast': entry}}
+        with patch.object(w, 'legacy_holders', return_value=[]):
+            w.refresh(registry, {1: (0, 'a', 10, 'S', 10)})
+        self.assertEqual(registry['jobs']['v2:fast']['known'], {'1': 'a'})
+        self.assertEqual(w.reserved_usage(registry['jobs'])['processes'], 4)
+
+    def test_refresh_drops_dead_or_reused_supervisor_after_descendants_exit(self):
+        for rows in ({}, {1: (0, 'a', 10, 'Z', 10)}, {1: (0, 'new', 10, 'S', 10)}):
+            registry = {'jobs': {'v2:fast': {**job(), 'supervisor_pid': 1, 'supervisor_start': 'a'}}}
+            with patch.object(w, 'legacy_holders', return_value=[]):
+                w.refresh(registry, rows)
+            self.assertEqual(registry['jobs'], {})
+
+    def test_discovery_reclassifies_stale_roader_without_measuring_it(self):
+        rows = {101: (0, 'clasher', 10, 'S', 10), 102: (0, 'roader', 20, 'S', 0),
+                103: (0, 'desktop', 30, 'S', 0), 104: (101, 'child', 10, 'S', 10)}
+        argv = {101: [b'python', b'/mpac/sdicks02/repos/clasher-v4-data/job.py'],
+                102: [b'bwrap', b'/mpac/sdicks02/repos/roader-perf2/run.py'],
+                103: [b'/usr/bin/dbus-daemon'], 104: [b'python', b'-c', b'pass']}
+        registry = {'jobs': {'external:102:roader': job('external', known={'102': 'roader'})}}
+        with patch.object(w, 'legacy_holders', return_value=[]), \
+                patch.object(w, 'process_argv', side_effect=lambda pid: argv[pid]), \
+                patch.object(w, 'tree_pss', side_effect=lambda known: len(known) * 10) as pss:
+            w.refresh(registry, rows, discover=True)
+            result = w.measure(registry, rows)
+        self.assertEqual(result, {'processes': 2, 'pss_bytes': 20})
+        self.assertEqual(set(registry['jobs']), {'external:101:clasher'})
+        self.assertTrue(all(102 not in call.args[0] for call in pss.call_args_list))
+        self.assertEqual(next(iter(registry['jobs'].values()))['minimum_nice'], 10)
+
     def test_live_policy_can_tighten_caps(self):
         policy = POLICY.replace('≤96', '≤70').replace('≤16', '≤8').replace('64 GB', '32 GB')
         self.assertEqual(w.limits({'max_workers': 96}, 0, policy)['processes'], 70)
@@ -190,6 +255,9 @@ spec=importlib.util.spec_from_file_location('watch',sys.argv.pop(1)); w=importli
 w.BASE=Path(sys.argv.pop(1));w.HOST='127x15';w.LEASE=w.BASE/'lease.json';w.POLICY=w.BASE/'policy.md';w.CONSOLE_HELPER=w.BASE/'console'
 w.CHECK_INTERVAL=.08;w.POLL_INTERVAL=.02;w.TERM_AFTER=.15;w.KILL_AFTER=.3
 w.STOP_AT=dt.datetime(2099,1,1,tzinfo=dt.timezone.utc);w.EXIT_BY=dt.datetime(2099,1,2,tzinfo=dt.timezone.utc)
+# Production argv classification has dedicated synthetic unit tests. Process
+# fixtures must not discover or measure unrelated live Clasher home-host jobs.
+w.process_argv=lambda pid: []
 config=w.BASE/'config.json'
 if config.exists():
  c=json.loads(config.read_text())
@@ -203,6 +271,12 @@ if 'gpu-free' in json.loads((w.BASE/'options.json').read_text()):
   if args[0]=='nvidia-smi':return json.loads((w.BASE/'options.json').read_text())['gpu-free']
   return original(args,**kwargs)
  w.subprocess.check_output=check
+if json.loads((w.BASE/'options.json').read_text()).get('drop-own-entry'):
+ original_refresh=w.refresh
+ def refresh(registry,rows,discover=False):
+  original_refresh(registry,rows,discover)
+  registry['jobs'].pop('v2:missing-entry',None)
+ w.refresh=refresh
 sys.exit(w.main())
 '''
 
@@ -283,6 +357,52 @@ class ProcessTests(unittest.TestCase):
         self.assertEqual(receipt['peak_processes'], 2)
         self.assertGreater(receipt['peak_sampled_pss_bytes'], 0)
         self.assertEqual(receipt['effective_process_cap'], 80)
+        self.assertEqual(json.loads((self.base / 'jobs/aggregate-v2.json').read_text())['jobs'], {})
+
+    def test_fast_child_preserves_true_exit_status(self):
+        for code, expected, status in [('pass', 0, 'pass'), ('import sys; sys.exit(7)', 7, 'fail')]:
+            label = 'fast-' + str(expected)
+            proc = self.launch(label, code=code)
+            receipt = self.finish(proc, label, status)
+            self.assertEqual(receipt['exit_code'], expected)
+            self.assertEqual(proc.returncode, expected)
+            self.assertNotIn('error', receipt)
+            self.assertIsNone(receipt['stop_reason'])
+
+    def test_missing_own_entry_reaps_child_and_writes_normal_receipt(self):
+        (self.base / 'options.json').write_text(json.dumps({'drop-own-entry': True}))
+        proc = self.launch('missing-entry', code='import sys; sys.exit(7)')
+        receipt = self.finish(proc, 'missing-entry', 'fail')
+        self.assertEqual(receipt['exit_code'], 7)
+        self.assertEqual(proc.returncode, 7)
+        self.assertNotIn('error', receipt)
+        self.assertIsNone(receipt['stop_reason'])
+
+    def test_child_forks_then_exits_and_adopted_descendant_is_cleaned_up(self):
+        code = '''import os,time
+from pathlib import Path
+r,wr=os.pipe()
+pid=os.fork()
+if pid:
+ os.close(wr);os.read(r,1);os._exit(7)
+os.close(r)
+Path('forked.pid').write_text(str(os.getpid()))
+os.write(wr,b'x');os.close(wr)
+time.sleep(3)
+'''
+        receipt = self.finish(self.launch('fork-exit', code=code, processes=3), 'fork-exit', 'stopped')
+        self.assertEqual(receipt['exit_code'], 7)
+        self.assertIn('descendants', receipt['stop_reason'])
+        self.assertNotIn('error', receipt)
+        pid = int((self.base / 'forked.pid').read_text())
+        self.assertFalse(Path('/proc', str(pid)).exists())
+
+    def test_two_concurrent_fast_admissions_both_finish_cleanly(self):
+        a = self.launch('fast-a', code='pass')
+        b = self.launch('fast-b', code='pass')
+        receipts = [self.finish(a, 'fast-a'), self.finish(b, 'fast-b')]
+        self.assertTrue(all(r['exit_code'] == 0 and 'error' not in r for r in receipts))
+        self.assertEqual(len({r['admission_sequence'] for r in receipts}), 2)
         self.assertEqual(json.loads((self.base / 'jobs/aggregate-v2.json').read_text())['jobs'], {})
 
     def test_console_occupancy_limits_admission(self):
