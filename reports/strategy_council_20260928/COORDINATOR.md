@@ -436,3 +436,21 @@ Also on the hub, but with copies elsewhere:
   every endpoint; scale back if FPS or memory pressure degrades.
   Expected: ~3× throughput, so the coverage stopping rule is reached in hours rather than ~10–14 h. Astra task
   `clasher-t1-parallel-renderers-20261008-1`.
+- **2026-10-08 05:18 UTC: use all compute** (Sam: "better utilize ALL the compute").
+  Audit at 05:17Z:
+  - CPU near the 80-process cap everywhere: 01/03 S122 extraction + C56 data finish, 04/08 S3 games.
+  - All three A6000s idle at 0%.
+  - Mac: 3 renderers, 103 Phase A matches (10 heldout / 258 opponent events; ~580 matches are needed for 1,500 events).
+  - Imitation T2 PASS; the T3 store is built and baselines are being computed.
+
+  Decisions:
+  1. **GPUs.** Imitation T5 (gate (a) PREREG first, then 3 seeds + noD1 + GRU, 2 runs per GPU) on 04/08 as soon as
+     the T4 shakedown passes. v4 perception T6 (CUDA port of the v3 trainer, v3 control) and the T7 model
+     implementation start now on 01's GPU, with shakedowns on the Phase A train split only; formal runs after Phase A
+     completes.
+  2. **CPU.** Raise the per-host cap for new launches from 80 to 96 (of 128) worker processes, ≤16 with a console user.
+     Survivors ran at load 75–100 for hours with no OOM and temperatures 65–75 °C, and five copies of all data exist.
+     When S3 releases 04/08, extend the S122 extraction there.
+  3. **Critical-path code now.** Imitation T6 (search integration of the proposer) and T8 (gate (c) adapters), so
+     gates (b) and (c) can start the moment the checkpoint exists.
+  127x05 stays free of heavy jobs.
