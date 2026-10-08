@@ -1,0 +1,6972 @@
+{
+  "schema": "clasher.mask-v2-audit.v1",
+  "counts": {
+    "oracle_fast_scalar_mismatch_bits": 0,
+    "engine_guard_masks_computed": 2562,
+    "states": 25000,
+    "placement_bits": 57600000,
+    "v1_legal": 24785210,
+    "v1_false_positive": 3822,
+    "v2_legal": 25143041,
+    "v2_false_positive": 0,
+    "v2_false_negative": 0,
+    "states_v1_false_positive": 374,
+    "states_v2_mismatch": 0,
+    "human_actions": 1060,
+    "human_v1_legal": 1060,
+    "human_v1_legal_engine_rejected": 0,
+    "human_v2_legal_engine_rejected": 0,
+    "raw_human_actions": 1060,
+    "raw_human_v1_legal": 1046,
+    "raw_human_v1_legal_engine_rejected": 0,
+    "raw_human_v2_legal_engine_rejected": 0,
+    "native_states": 159,
+    "native_python_mismatch_bits": 0
+  },
+  "per_card": {
+    "AxeMan": {
+      "slot_states": 365,
+      "v1_legal": 52836,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 1,
+      "human_v1_legal": 1,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 1,
+      "raw_human_v1_legal": 1,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "BossBandit": {
+      "slot_states": 249,
+      "v1_legal": 36408,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 2,
+      "human_v1_legal": 2,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 2,
+      "raw_human_v1_legal": 2,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "HogRider": {
+      "slot_states": 4275,
+      "v1_legal": 711969,
+      "v1_false_positive": 100,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 48,
+      "human_v1_legal": 48,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 48,
+      "raw_human_v1_legal": 48,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "AngryBarbarians": {
+      "slot_states": 1273,
+      "v1_legal": 208680,
+      "v1_false_positive": 29,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 16,
+      "human_v1_legal": 16,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 16,
+      "raw_human_v1_legal": 16,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Guards": {
+      "slot_states": 286,
+      "v1_legal": 62604,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 2,
+      "human_v1_legal": 2,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 2,
+      "raw_human_v1_legal": 2,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "MinionHorde": {
+      "slot_states": 1590,
+      "v1_legal": 204195,
+      "v1_false_positive": 1473,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 5,
+      "human_v1_legal": 5,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 5,
+      "raw_human_v1_legal": 5,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Zap": {
+      "slot_states": 1977,
+      "v1_legal": 1029144,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 8,
+      "human_v1_legal": 8,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 8,
+      "raw_human_v1_legal": 8,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Freeze": {
+      "slot_states": 326,
+      "v1_legal": 136452,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 1,
+      "human_v1_legal": 1,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 1,
+      "raw_human_v1_legal": 1,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Tesla": {
+      "slot_states": 1423,
+      "v1_legal": 176922,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 14,
+      "human_v1_legal": 14,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 14,
+      "raw_human_v1_legal": 13,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "ElectroSpirit": {
+      "slot_states": 4059,
+      "v1_legal": 898728,
+      "v1_false_positive": 36,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 79,
+      "human_v1_legal": 79,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 79,
+      "raw_human_v1_legal": 79,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "GoblinBarrel": {
+      "slot_states": 5537,
+      "v1_legal": 2697804,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 63,
+      "human_v1_legal": 63,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 63,
+      "raw_human_v1_legal": 63,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Log": {
+      "slot_states": 7307,
+      "v1_legal": 1771217,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 89,
+      "human_v1_legal": 89,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 89,
+      "raw_human_v1_legal": 89,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Skeletons": {
+      "slot_states": 4097,
+      "v1_legal": 905124,
+      "v1_false_positive": 92,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 96,
+      "human_v1_legal": 96,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 96,
+      "raw_human_v1_legal": 96,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Princess": {
+      "slot_states": 4847,
+      "v1_legal": 955017,
+      "v1_false_positive": 34,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 73,
+      "human_v1_legal": 73,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 73,
+      "raw_human_v1_legal": 73,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Berserker": {
+      "slot_states": 2147,
+      "v1_legal": 448662,
+      "v1_false_positive": 6,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 26,
+      "human_v1_legal": 26,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 26,
+      "raw_human_v1_legal": 26,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Rocket": {
+      "slot_states": 4753,
+      "v1_legal": 1606736,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 31,
+      "human_v1_legal": 31,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 31,
+      "raw_human_v1_legal": 31,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Firecracker": {
+      "slot_states": 3809,
+      "v1_legal": 732891,
+      "v1_false_positive": 15,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 39,
+      "human_v1_legal": 39,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 39,
+      "raw_human_v1_legal": 39,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "MightyMiner": {
+      "slot_states": 5110,
+      "v1_legal": 897690,
+      "v1_false_positive": 52,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 51,
+      "human_v1_legal": 51,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 51,
+      "raw_human_v1_legal": 51,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Cannon": {
+      "slot_states": 8125,
+      "v1_legal": 867958,
+      "v1_false_positive": 1453,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 74,
+      "human_v1_legal": 74,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 74,
+      "raw_human_v1_legal": 69,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Earthquake": {
+      "slot_states": 4268,
+      "v1_legal": 1908136,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 18,
+      "human_v1_legal": 18,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 18,
+      "raw_human_v1_legal": 18,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "GoldenKnight": {
+      "slot_states": 273,
+      "v1_legal": 58830,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 5,
+      "human_v1_legal": 5,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 5,
+      "raw_human_v1_legal": 5,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "InfernoTower": {
+      "slot_states": 135,
+      "v1_legal": 15600,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 1,
+      "human_v1_legal": 1,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 1,
+      "raw_human_v1_legal": 1,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Knight": {
+      "slot_states": 910,
+      "v1_legal": 168054,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 4,
+      "human_v1_legal": 4,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 4,
+      "raw_human_v1_legal": 4,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Arrows": {
+      "slot_states": 1315,
+      "v1_legal": 671848,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 7,
+      "human_v1_legal": 7,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 7,
+      "raw_human_v1_legal": 7,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Valkyrie": {
+      "slot_states": 1914,
+      "v1_legal": 368598,
+      "v1_false_positive": 45,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 15,
+      "human_v1_legal": 15,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 15,
+      "raw_human_v1_legal": 15,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "GiantSnowball": {
+      "slot_states": 1811,
+      "v1_legal": 937628,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 14,
+      "human_v1_legal": 14,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 14,
+      "raw_human_v1_legal": 14,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Tombstone": {
+      "slot_states": 428,
+      "v1_legal": 48810,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 5,
+      "human_v1_legal": 5,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 5,
+      "raw_human_v1_legal": 0,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Musketeer": {
+      "slot_states": 1362,
+      "v1_legal": 227994,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 10,
+      "human_v1_legal": 10,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 10,
+      "raw_human_v1_legal": 10,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Bowler": {
+      "slot_states": 1359,
+      "v1_legal": 242646,
+      "v1_false_positive": 16,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 10,
+      "human_v1_legal": 10,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 10,
+      "raw_human_v1_legal": 10,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "DarkMagic": {
+      "slot_states": 773,
+      "v1_legal": 406068,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0
+    },
+    "Elixir Collector": {
+      "slot_states": 781,
+      "v1_legal": 61780,
+      "v1_false_positive": 24,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 4,
+      "human_v1_legal": 4,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 4,
+      "raw_human_v1_legal": 1,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "IceGolem": {
+      "slot_states": 1253,
+      "v1_legal": 257406,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 16,
+      "human_v1_legal": 16,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 16,
+      "raw_human_v1_legal": 16,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "BattleRam": {
+      "slot_states": 256,
+      "v1_legal": 42924,
+      "v1_false_positive": 15,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 4,
+      "human_v1_legal": 4,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 4,
+      "raw_human_v1_legal": 4,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "GoblinGang": {
+      "slot_states": 918,
+      "v1_legal": 150186,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 10,
+      "human_v1_legal": 10,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 10,
+      "raw_human_v1_legal": 10,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Miner": {
+      "slot_states": 456,
+      "v1_legal": 173817,
+      "v1_false_positive": 4,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 6,
+      "human_v1_legal": 6,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 6,
+      "raw_human_v1_legal": 6,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "ThreeMusketeers": {
+      "slot_states": 794,
+      "v1_legal": 13839,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 2,
+      "human_v1_legal": 2,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 2,
+      "raw_human_v1_legal": 2,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "IceSpirit": {
+      "slot_states": 2960,
+      "v1_legal": 653229,
+      "v1_false_positive": 93,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 47,
+      "human_v1_legal": 47,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 47,
+      "raw_human_v1_legal": 47,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Fireball": {
+      "slot_states": 1988,
+      "v1_legal": 950232,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 8,
+      "human_v1_legal": 8,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 8,
+      "raw_human_v1_legal": 8,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Goblins": {
+      "slot_states": 1747,
+      "v1_legal": 373848,
+      "v1_false_positive": 21,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 20,
+      "human_v1_legal": 20,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 20,
+      "raw_human_v1_legal": 20,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Bomber": {
+      "slot_states": 735,
+      "v1_legal": 154173,
+      "v1_false_positive": 16,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 5,
+      "human_v1_legal": 5,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 5,
+      "raw_human_v1_legal": 5,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Balloon": {
+      "slot_states": 265,
+      "v1_legal": 44433,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 2,
+      "human_v1_legal": 2,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 2,
+      "raw_human_v1_legal": 2,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "SkeletonArmy": {
+      "slot_states": 1734,
+      "v1_legal": 383292,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 21,
+      "human_v1_legal": 21,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 21,
+      "raw_human_v1_legal": 21,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Minions": {
+      "slot_states": 772,
+      "v1_legal": 157224,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 8,
+      "human_v1_legal": 8,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 8,
+      "raw_human_v1_legal": 8,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "InfernoDragon": {
+      "slot_states": 184,
+      "v1_legal": 40359,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 1,
+      "human_v1_legal": 1,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 1,
+      "raw_human_v1_legal": 1,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "LavaHound": {
+      "slot_states": 236,
+      "v1_legal": 24579,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 1,
+      "human_v1_legal": 1,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 1,
+      "raw_human_v1_legal": 1,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Wallbreakers": {
+      "slot_states": 1449,
+      "v1_legal": 309726,
+      "v1_false_positive": 152,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 28,
+      "human_v1_legal": 28,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 28,
+      "raw_human_v1_legal": 28,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Barbarians": {
+      "slot_states": 726,
+      "v1_legal": 117882,
+      "v1_false_positive": 16,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 5,
+      "human_v1_legal": 5,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 5,
+      "raw_human_v1_legal": 5,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "BarbarianBarrel": {
+      "slot_states": 401,
+      "v1_legal": 77568,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 3,
+      "human_v1_legal": 3,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 3,
+      "raw_human_v1_legal": 3,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "MiniSparkys": {
+      "slot_states": 538,
+      "v1_legal": 100566,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 4,
+      "human_v1_legal": 4,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 4,
+      "raw_human_v1_legal": 4,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Giant": {
+      "slot_states": 326,
+      "v1_legal": 67044,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 5,
+      "human_v1_legal": 5,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 5,
+      "raw_human_v1_legal": 5,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Witch": {
+      "slot_states": 356,
+      "v1_legal": 59718,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 4,
+      "human_v1_legal": 4,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 4,
+      "raw_human_v1_legal": 4,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Graveyard": {
+      "slot_states": 464,
+      "v1_legal": 178100,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 3,
+      "human_v1_legal": 3,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 3,
+      "raw_human_v1_legal": 3,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Mortar": {
+      "slot_states": 288,
+      "v1_legal": 27600,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 3,
+      "human_v1_legal": 3,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 3,
+      "raw_human_v1_legal": 3,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "GoblinDrill": {
+      "slot_states": 423,
+      "v1_legal": 140282,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 5,
+      "human_v1_legal": 5,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 5,
+      "raw_human_v1_legal": 5,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "FireSpirits": {
+      "slot_states": 455,
+      "v1_legal": 99234,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 4,
+      "human_v1_legal": 4,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 4,
+      "raw_human_v1_legal": 4,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "DartGoblin": {
+      "slot_states": 1698,
+      "v1_legal": 362562,
+      "v1_false_positive": 116,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 14,
+      "human_v1_legal": 14,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 14,
+      "raw_human_v1_legal": 14,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "IceWizard": {
+      "slot_states": 548,
+      "v1_legal": 111222,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 8,
+      "human_v1_legal": 8,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 8,
+      "raw_human_v1_legal": 8,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "RoyalGiant": {
+      "slot_states": 617,
+      "v1_legal": 103452,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 7,
+      "human_v1_legal": 7,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 7,
+      "raw_human_v1_legal": 7,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "FirespiritHut": {
+      "slot_states": 234,
+      "v1_legal": 39072,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 2,
+      "human_v1_legal": 2,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 2,
+      "raw_human_v1_legal": 2,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    },
+    "Heal": {
+      "slot_states": 250,
+      "v1_legal": 54612,
+      "v1_false_positive": 14,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "human_actions": 3,
+      "human_v1_legal": 3,
+      "human_v1_legal_engine_rejected": 0,
+      "human_v2_legal_engine_rejected": 0,
+      "raw_human_actions": 3,
+      "raw_human_v1_legal": 3,
+      "raw_human_v1_legal_engine_rejected": 0,
+      "raw_human_v2_legal_engine_rejected": 0
+    }
+  },
+  "per_situation": {
+    "ordinary": {
+      "states": 16573,
+      "v1_legal": 16683372,
+      "v1_false_positive": 544,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0
+    },
+    "non_crown_building": {
+      "states": 8117,
+      "v1_legal": 7835183,
+      "v1_false_positive": 935,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0
+    },
+    "payload": {
+      "states": 310,
+      "v1_legal": 266655,
+      "v1_false_positive": 2343,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0
+    }
+  },
+  "examples": [],
+  "per_scope": {
+    "S122-extension": {
+      "states": 20482,
+      "v1_legal": 20928640,
+      "v1_false_positive": 3822,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0
+    },
+    "C56": {
+      "states": 4518,
+      "v1_legal": 3856570,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0
+    }
+  },
+  "games": [
+    {
+      "record": 0,
+      "seat": 0,
+      "rows": 587,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "21daddc4311842699aa782d4059d4454",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          1
+        ],
+        "cut_reason": "sim_kill_of_tower_standing_in_real",
+        "hard_cut": true,
+        "cut_tick": 2935,
+        "cut_detail": {
+          "tick": 2935,
+          "owner": 0,
+          "slot": "right",
+          "overshoot_frac": 1.1290956749672345,
+          "threshold": 1.0
+        },
+        "playable_end_tick": 5350,
+        "rows": 587,
+        "supervised_rows": 583,
+        "supervised_plays": 12,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 33,
+        "recorded_own_abilities": 9,
+        "terminal_context_row": false,
+        "first_projected_row": null,
+        "own_deck": [
+          "AngryBarbarians",
+          "BossBandit",
+          "MinionHorde",
+          "Guards",
+          "HogRider",
+          "AxeMan",
+          "Zap",
+          "Freeze"
+        ],
+        "opponent_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Log",
+          "Earthquake",
+          "Skeletons",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "BossBandit"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          1,
+          0
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 12,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 4,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 4,
+          "own_abilities_rejected": 4,
+          "opponent_plays": 24,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 1,
+          "opponent_abilities_accepted": 1,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 3,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "elite-barbarians-ev1",
+              "boss-bandit",
+              "minion-horde-ev1",
+              "guards",
+              "hog-rider",
+              "executioner",
+              "zap",
+              "freeze"
+            ],
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "the-log",
+              "earthquake",
+              "skeletons",
+              "electro-spirit",
+              "hog-rider"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 2871,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 9,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 9,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 1.1290956749672345,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 1,
+      "seat": 1,
+      "rows": 740,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "09589b9d2315437ebb84872f9b993137",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          1
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 3695,
+        "cut_detail": {},
+        "playable_end_tick": 4450,
+        "rows": 740,
+        "supervised_rows": 736,
+        "supervised_plays": 33,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 45,
+        "recorded_own_abilities": 4,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "Princess",
+          "Berserker",
+          "Tesla",
+          "GoblinBarrel",
+          "Log",
+          "Rocket",
+          "Skeletons",
+          "ElectroSpirit"
+        ],
+        "opponent_deck": [
+          "AngryBarbarians",
+          "BossBandit",
+          "MinionHorde",
+          "Guards",
+          "HogRider",
+          "AxeMan",
+          "Zap",
+          "Freeze"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          1,
+          0
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          1,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 33,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 3,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 3,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 3,
+          "opponent_plays": 19,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 6,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 12,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "elite-barbarians-ev1",
+              "boss-bandit",
+              "minion-horde-ev1",
+              "guards",
+              "hog-rider",
+              "executioner",
+              "zap",
+              "freeze"
+            ],
+            [
+              "princess-ev1",
+              "berserker-hero",
+              "tesla-ev1",
+              "goblin-barrel",
+              "the-log",
+              "rocket",
+              "skeletons",
+              "electro-spirit"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 1649,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 10,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 10,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.6546526867627785,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 2,
+      "seat": 0,
+      "rows": 299,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "1758832e25624fb1881ef8b1344922d6",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          3,
+          0
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 1489,
+        "cut_detail": {},
+        "playable_end_tick": 1800,
+        "rows": 299,
+        "supervised_rows": 298,
+        "supervised_plays": 10,
+        "supervised_abilities": 1,
+        "recorded_own_plays": 13,
+        "recorded_own_abilities": 1,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Skeletons",
+          "Earthquake",
+          "Log",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "opponent_deck": [
+          "Xbow",
+          "Berserker",
+          "IceWizard",
+          "MegaMinion",
+          "Skeletons",
+          "Rocket",
+          "Tornado",
+          "Log"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "base",
+          "hero",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          0,
+          null
+        ],
+        "real_king_down": [
+          false,
+          true
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          2
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          true
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 10,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 1,
+          "own_abilities_labelled": 1,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 6,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 1,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 2,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "skeletons",
+              "earthquake",
+              "the-log",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "x-bow",
+              "berserker-hero",
+              "ice-wizard",
+              "mega-minion",
+              "skeletons",
+              "rocket",
+              "tornado",
+              "the-log"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              15,
+              15,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              14,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 3,
+      "seat": 1,
+      "rows": 382,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "b2144dd6c7174f14be7fe418ae789ffb",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          3
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 1902,
+        "cut_detail": {},
+        "playable_end_tick": 1920,
+        "rows": 382,
+        "supervised_rows": 379,
+        "supervised_plays": 8,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 8,
+        "recorded_own_abilities": 2,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "Princess",
+          "GoldenKnight",
+          "Firecracker",
+          "GoblinBarrel",
+          "Arrows",
+          "Valkyrie",
+          "Knight",
+          "InfernoTower"
+        ],
+        "opponent_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Skeletons",
+          "Earthquake",
+          "Log",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "GoldenKnight"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          null,
+          0
+        ],
+        "real_king_down": [
+          true,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          1,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          true,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 8,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 2,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 2,
+          "own_abilities_rejected": 2,
+          "opponent_plays": 16,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 3,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "skeletons",
+              "earthquake",
+              "the-log",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "princess-ev1",
+              "golden-knight",
+              "firecracker-ev1",
+              "goblin-barrel",
+              "arrows",
+              "valkyrie",
+              "knight",
+              "inferno-tower"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              15,
+              15,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              15,
+              14,
+              14,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 4,
+      "seat": 0,
+      "rows": 669,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "58af3386785e40e08e144ddcbb073477",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          2,
+          0
+        ],
+        "cut_reason": "sim_kill_of_tower_standing_in_real",
+        "hard_cut": true,
+        "cut_tick": 3343,
+        "cut_detail": {
+          "tick": 3343,
+          "owner": 1,
+          "slot": "king",
+          "overshoot_frac": 1.0325456053067994,
+          "threshold": 1.0
+        },
+        "playable_end_tick": 3590,
+        "rows": 669,
+        "supervised_rows": 669,
+        "supervised_plays": 29,
+        "supervised_abilities": 3,
+        "recorded_own_plays": 34,
+        "recorded_own_abilities": 3,
+        "terminal_context_row": false,
+        "first_projected_row": null,
+        "own_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Skeletons",
+          "Earthquake",
+          "Log",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "opponent_deck": [
+          "Lumberjack",
+          "Balloon",
+          "Wizard",
+          "Clone",
+          "ZapMachine",
+          "Witch",
+          "AngryBarbarians",
+          "GiantSkeleton"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          0,
+          2
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          2
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 29,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 3,
+          "own_abilities_labelled": 3,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 15,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 7,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "skeletons",
+              "earthquake",
+              "the-log",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "lumberjack-ev1",
+              "balloon-hero",
+              "wizard-ev1",
+              "clone",
+              "sparky",
+              "witch",
+              "elite-barbarians",
+              "giant-skeleton"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              15,
+              15,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 3074,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 17,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 17
+        },
+        "max_overshoot_frac": 1.0325456053067994,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 5,
+      "seat": 1,
+      "rows": 986,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "0342c2f30a1341839982d9287ecc96ea",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          1
+        ],
+        "cut_reason": "opponent_placement_rejected",
+        "hard_cut": true,
+        "cut_tick": 4925,
+        "cut_detail": {
+          "tick": 4925,
+          "card": "Cannon",
+          "world": [
+            8.5,
+            9.5
+          ],
+          "side": "opponent"
+        },
+        "playable_end_tick": 6120,
+        "rows": 986,
+        "supervised_rows": 981,
+        "supervised_plays": 30,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 45,
+        "recorded_own_abilities": 7,
+        "terminal_context_row": false,
+        "first_projected_row": 212,
+        "own_deck": [
+          "AngryBarbarians",
+          "Tombstone",
+          "Musketeer",
+          "GiantSnowball",
+          "Arrows",
+          "DarkMagic",
+          "Bowler",
+          "Skeletons"
+        ],
+        "opponent_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "GoblinBarrel",
+          "Goblins",
+          "Log",
+          "Rocket",
+          "IceSpirit"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          1,
+          0
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 30,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 5,
+          "own_elixir_topups": 0,
+          "own_abilities": 5,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 5,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 5,
+          "opponent_plays": 46,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 1,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 13,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblin-barrel",
+              "goblins",
+              "the-log",
+              "rocket",
+              "ice-spirit"
+            ],
+            [
+              "elite-barbarians-ev1",
+              "tombstone-hero",
+              "musketeer-ev1",
+              "giant-snowball",
+              "arrows",
+              "void",
+              "bowler",
+              "skeletons"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 6,
+      "seat": 0,
+      "rows": 718,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "29d4c97b94e9413787563c79a698caf3",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "recorded_end",
+        "hard_cut": false,
+        "cut_tick": 3590,
+        "cut_detail": {},
+        "playable_end_tick": 3590,
+        "rows": 718,
+        "supervised_rows": 718,
+        "supervised_plays": 35,
+        "supervised_abilities": 2,
+        "recorded_own_plays": 35,
+        "recorded_own_abilities": 2,
+        "terminal_context_row": false,
+        "first_projected_row": null,
+        "own_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Skeletons",
+          "Earthquake",
+          "Log",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "opponent_deck": [
+          "MegaKnight",
+          "Pekka",
+          "AxeMan",
+          "ElectroWizard",
+          "ZapMachine",
+          "Prince",
+          "Arrows",
+          "IceWizard"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          1
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 35,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 2,
+          "own_abilities_labelled": 2,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 18,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 9,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "skeletons",
+              "earthquake",
+              "the-log",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "mega-knight-ev1",
+              "pekka",
+              "executioner-ev1",
+              "electro-wizard",
+              "sparky",
+              "prince",
+              "arrows",
+              "ice-wizard"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              15,
+              15,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              15,
+              16,
+              16,
+              16,
+              15
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 7,
+      "seat": 1,
+      "rows": 718,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "ac99a8d965e042c1834550ae5772c151",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          1
+        ],
+        "cut_reason": "recorded_end",
+        "hard_cut": false,
+        "cut_tick": 3590,
+        "cut_detail": {},
+        "playable_end_tick": 3590,
+        "rows": 718,
+        "supervised_rows": 716,
+        "supervised_plays": 22,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 22,
+        "recorded_own_abilities": 2,
+        "terminal_context_row": false,
+        "first_projected_row": 163,
+        "own_deck": [
+          "BattleRam",
+          "IceGolem",
+          "MinionHorde",
+          "GoblinGang",
+          "Zap",
+          "Miner",
+          "Elixir Collector",
+          "ThreeMusketeers"
+        ],
+        "opponent_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "GoblinBarrel",
+          "Goblins",
+          "Log",
+          "Rocket",
+          "IceSpirit"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          1,
+          0
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          1,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 22,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 1,
+          "own_elixir_topups": 0,
+          "own_abilities": 2,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 2,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 2,
+          "opponent_plays": 28,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 3,
+          "opponent_abilities_accepted": 3,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 10,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblin-barrel",
+              "goblins",
+              "the-log",
+              "rocket",
+              "ice-spirit"
+            ],
+            [
+              "battle-ram-ev1",
+              "ice-golem-hero",
+              "minion-horde-ev1",
+              "goblin-gang",
+              "zap",
+              "miner",
+              "elixir-collector",
+              "three-musketeers"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 8,
+      "seat": 0,
+      "rows": 718,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "e4984e2458664014863d4ad3f0919b1d",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "recorded_end",
+        "hard_cut": false,
+        "cut_tick": 3590,
+        "cut_detail": {},
+        "playable_end_tick": 3590,
+        "rows": 718,
+        "supervised_rows": 718,
+        "supervised_plays": 33,
+        "supervised_abilities": 2,
+        "recorded_own_plays": 33,
+        "recorded_own_abilities": 2,
+        "terminal_context_row": false,
+        "first_projected_row": null,
+        "own_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Skeletons",
+          "Earthquake",
+          "Log",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "opponent_deck": [
+          "Witch",
+          "MiniPekka",
+          "MegaKnight",
+          "RamRider",
+          "DartGoblin",
+          "Vines",
+          "Log",
+          "Arrows"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          1
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 33,
+          "own_plays_deferred": 1,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 2,
+          "own_abilities_labelled": 2,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 22,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 2,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 1,
+          "evo_or_hero_plays_labelled": 10,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "skeletons",
+              "earthquake",
+              "the-log",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "witch-ev1",
+              "mini-pekka-hero",
+              "mega-knight-ev1",
+              "ram-rider",
+              "dart-goblin",
+              "vines",
+              "the-log",
+              "arrows"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              15,
+              15,
+              15,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              15
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 9,
+      "seat": 1,
+      "rows": 986,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "efa78643d0474f81a2d7dfa1da271549",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 4921,
+        "cut_detail": {},
+        "playable_end_tick": 4930,
+        "rows": 986,
+        "supervised_rows": 985,
+        "supervised_plays": 47,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 47,
+        "recorded_own_abilities": 0,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "Cannon",
+          "Musketeer",
+          "IceGolem",
+          "Rocket",
+          "HogRider",
+          "ElectroSpirit",
+          "Skeletons",
+          "Log"
+        ],
+        "opponent_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "GoblinBarrel",
+          "Goblins",
+          "Log",
+          "Rocket",
+          "IceSpirit"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "hero",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          1
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 47,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 0,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 45,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 17,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblin-barrel",
+              "goblins",
+              "the-log",
+              "rocket",
+              "ice-spirit"
+            ],
+            [
+              "cannon-ev1",
+              "musketeer-hero",
+              "ice-golem-hero",
+              "rocket",
+              "hog-rider",
+              "electro-spirit",
+              "skeletons",
+              "the-log"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 4529,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 9,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 9,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.44692005242463956,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 10,
+      "seat": 0,
+      "rows": 718,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "caec8b11c4d84f0bb07b66ff2701a187",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "recorded_end",
+        "hard_cut": false,
+        "cut_tick": 3590,
+        "cut_detail": {},
+        "playable_end_tick": 3590,
+        "rows": 718,
+        "supervised_rows": 718,
+        "supervised_plays": 35,
+        "supervised_abilities": 2,
+        "recorded_own_plays": 35,
+        "recorded_own_abilities": 2,
+        "terminal_context_row": false,
+        "first_projected_row": 568,
+        "own_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Skeletons",
+          "Earthquake",
+          "Log",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "opponent_deck": [
+          "SkeletonArmy",
+          "MiniPekka",
+          "Musketeer",
+          "MegaMinion",
+          "Zap",
+          "Ronin",
+          "HogRider",
+          "ElectroWizard"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          1
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 35,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 1,
+          "own_elixir_topups": 0,
+          "own_abilities": 2,
+          "own_abilities_labelled": 2,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 24,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 10,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "skeletons",
+              "earthquake",
+              "the-log",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "skeleton-army-ev1",
+              "mini-pekka-hero",
+              "musketeer-ev1",
+              "mega-minion",
+              "zap",
+              "ronin",
+              "hog-rider",
+              "electro-wizard"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              15,
+              15,
+              15,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              14,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 11,
+      "seat": 1,
+      "rows": 589,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "4b6b572ad36b4d94b31c12436b36507e",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          1
+        ],
+        "cut_reason": "opponent_placement_rejected",
+        "hard_cut": true,
+        "cut_tick": 2942,
+        "cut_detail": {
+          "tick": 2942,
+          "card": "Cannon",
+          "world": [
+            9.5,
+            11.5
+          ],
+          "side": "opponent"
+        },
+        "playable_end_tick": 6150,
+        "rows": 589,
+        "supervised_rows": 587,
+        "supervised_plays": 24,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 65,
+        "recorded_own_abilities": 4,
+        "terminal_context_row": false,
+        "first_projected_row": null,
+        "own_deck": [
+          "Cannon",
+          "IceGolem",
+          "Musketeer",
+          "Skeletons",
+          "HogRider",
+          "Fireball",
+          "IceSpirit",
+          "Log"
+        ],
+        "opponent_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "GoblinBarrel",
+          "Goblins",
+          "Log",
+          "Rocket",
+          "IceSpirit"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "hero",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          1,
+          0
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 24,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 2,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 2,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 2,
+          "opponent_plays": 22,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 1,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 8,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblin-barrel",
+              "goblins",
+              "the-log",
+              "rocket",
+              "ice-spirit"
+            ],
+            [
+              "cannon-ev1",
+              "ice-golem-hero",
+              "musketeer-hero",
+              "skeletons",
+              "hog-rider",
+              "fireball",
+              "ice-spirit",
+              "the-log"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 1180,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 16,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 16,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.8908912188728703,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 12,
+      "seat": 0,
+      "rows": 722,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "902a5c0d88d843108f09af69c26ad21f",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 3601,
+        "cut_detail": {},
+        "playable_end_tick": 6160,
+        "rows": 722,
+        "supervised_rows": 721,
+        "supervised_plays": 26,
+        "supervised_abilities": 1,
+        "recorded_own_plays": 63,
+        "recorded_own_abilities": 3,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "GoblinBarrel",
+          "Goblins",
+          "Log",
+          "Rocket",
+          "IceSpirit"
+        ],
+        "opponent_deck": [
+          "BattleRam",
+          "Berserker",
+          "AngryBarbarians",
+          "ThreeMusketeers",
+          "BarbarianBarrel",
+          "Hunter",
+          "Heal",
+          "Elixir Collector"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          1
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 26,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 1,
+          "own_abilities_labelled": 1,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 25,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 1,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 7,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblin-barrel",
+              "goblins",
+              "the-log",
+              "rocket",
+              "ice-spirit"
+            ],
+            [
+              "battle-ram-ev1",
+              "berserker-hero",
+              "elite-barbarians-ev1",
+              "three-musketeers",
+              "barbarian-barrel",
+              "hunter",
+              "heal-spirit",
+              "elixir-collector"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 3537,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 8,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 8,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.9390563564875491,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 13,
+      "seat": 1,
+      "rows": 529,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "c09beb496d02491b93d510c97fd19b17",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          3
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 2639,
+        "cut_detail": {},
+        "playable_end_tick": 2650,
+        "rows": 529,
+        "supervised_rows": 526,
+        "supervised_plays": 11,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 11,
+        "recorded_own_abilities": 2,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "SkeletonArmy",
+          "Balloon",
+          "InfernoDragon",
+          "Fireball",
+          "LavaHound",
+          "Bomber",
+          "Minions",
+          "GiantSnowball"
+        ],
+        "opponent_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Log",
+          "Earthquake",
+          "Skeletons",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          null,
+          0
+        ],
+        "real_king_down": [
+          true,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          2,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          true,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 11,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 2,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 2,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 2,
+          "opponent_plays": 19,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 2,
+          "opponent_abilities_accepted": 2,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 4,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "the-log",
+              "earthquake",
+              "skeletons",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "skeleton-army-ev1",
+              "balloon-hero",
+              "inferno-dragon-ev1",
+              "fireball",
+              "lava-hound",
+              "bomber",
+              "minions",
+              "giant-snowball"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 14,
+      "seat": 0,
+      "rows": 538,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "6ce2d0777f2546a6b68c95cc3cc4fc24",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          2,
+          0
+        ],
+        "cut_reason": "pocket_play_but_sim_tower_alive",
+        "hard_cut": true,
+        "cut_tick": 2690,
+        "cut_detail": {
+          "card": "Cannon",
+          "world": [
+            7.5,
+            18.5
+          ],
+          "tick": 2691
+        },
+        "playable_end_tick": 3590,
+        "rows": 538,
+        "supervised_rows": 538,
+        "supervised_plays": 19,
+        "supervised_abilities": 1,
+        "recorded_own_plays": 35,
+        "recorded_own_abilities": 1,
+        "terminal_context_row": false,
+        "first_projected_row": null,
+        "own_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "GoblinBarrel",
+          "Goblins",
+          "Log",
+          "Rocket",
+          "IceSpirit"
+        ],
+        "opponent_deck": [
+          "FirespiritHut",
+          "DarkPrince",
+          "SkeletonBarrel",
+          "RoyalGhost",
+          "SuspiciousBush",
+          "Ronin",
+          "Princess",
+          "GiantSnowball"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          0,
+          2
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 19,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 1,
+          "own_abilities_labelled": 1,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 17,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 6,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblin-barrel",
+              "goblins",
+              "the-log",
+              "rocket",
+              "ice-spirit"
+            ],
+            [
+              "furnace-ev1",
+              "dark-prince-hero",
+              "skeleton-barrel-ev1",
+              "royal-ghost",
+              "suspicious-bush",
+              "ronin",
+              "princess",
+              "giant-snowball"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 15,
+      "seat": 1,
+      "rows": 633,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "30c6b208fad144d0baae48dfca42bc4b",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          3
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 3157,
+        "cut_detail": {},
+        "playable_end_tick": 3160,
+        "rows": 633,
+        "supervised_rows": 632,
+        "supervised_plays": 17,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 17,
+        "recorded_own_abilities": 0,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "MinionHorde",
+          "GoblinBarrel",
+          "Wallbreakers",
+          "Barbarians",
+          "GoblinGang",
+          "Miner",
+          "Princess",
+          "Log"
+        ],
+        "opponent_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Log",
+          "Earthquake",
+          "Skeletons",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          null,
+          0
+        ],
+        "real_king_down": [
+          true,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          2,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          true,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 17,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 0,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 29,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 1,
+          "opponent_abilities_accepted": 1,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 4,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "the-log",
+              "earthquake",
+              "skeletons",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "minion-horde-ev1",
+              "goblin-barrel",
+              "wall-breakers-ev1",
+              "barbarians",
+              "goblin-gang",
+              "miner",
+              "princess",
+              "the-log"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 16,
+      "seat": 0,
+      "rows": 1202,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "8b5ab7e0f3e14ad5a9f70c76ead6f079",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 6001,
+        "cut_detail": {},
+        "playable_end_tick": 6110,
+        "rows": 1202,
+        "supervised_rows": 1201,
+        "supervised_plays": 72,
+        "supervised_abilities": 3,
+        "recorded_own_plays": 72,
+        "recorded_own_abilities": 3,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "GoblinBarrel",
+          "Goblins",
+          "Log",
+          "Rocket",
+          "IceSpirit"
+        ],
+        "opponent_deck": [
+          "RoyalHogs",
+          "Berserker",
+          "RoyalGhost",
+          "Fireball",
+          "GoblinHut",
+          "FirespiritHut",
+          "ElectroSpirit",
+          "BarbarianBarrel"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": true,
+        "unreproduced_real_kill_owner": [
+          "opponent"
+        ],
+        "counters": {
+          "own_plays_labelled": 72,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 3,
+          "own_abilities_labelled": 3,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 60,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 18,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblin-barrel",
+              "goblins",
+              "the-log",
+              "rocket",
+              "ice-spirit"
+            ],
+            [
+              "royal-hogs-ev1",
+              "berserker-hero",
+              "royal-ghost-ev1",
+              "fireball",
+              "goblin-hut",
+              "furnace",
+              "electro-spirit",
+              "barbarian-barrel"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 4438,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 20,
+        "tower_clamp_counts": {
+          "0:left": 20,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.848951507208388,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 17,
+      "seat": 1,
+      "rows": 716,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "d3c86f22ec604cf5966ee03b9d0a9ae9",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          3
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 3571,
+        "cut_detail": {},
+        "playable_end_tick": 3580,
+        "rows": 716,
+        "supervised_rows": 715,
+        "supervised_plays": 28,
+        "supervised_abilities": 2,
+        "recorded_own_plays": 28,
+        "recorded_own_abilities": 2,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "ElectroSpirit",
+          "BarbarianBarrel",
+          "Earthquake",
+          "HogRider",
+          "Skeletons"
+        ],
+        "opponent_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Log",
+          "Earthquake",
+          "Skeletons",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          null,
+          0
+        ],
+        "real_king_down": [
+          true,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          2,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          true,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 28,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 2,
+          "own_abilities_labelled": 2,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 33,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 2,
+          "opponent_abilities_accepted": 2,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 6,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "the-log",
+              "earthquake",
+              "skeletons",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "electro-spirit",
+              "barbarian-barrel",
+              "earthquake",
+              "hog-rider",
+              "skeletons"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 18,
+      "seat": 0,
+      "rows": 744,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "412cd93894e7427c9c9fe8a0c26823bd",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 3711,
+        "cut_detail": {},
+        "playable_end_tick": 4180,
+        "rows": 744,
+        "supervised_rows": 743,
+        "supervised_plays": 27,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 37,
+        "recorded_own_abilities": 0,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Log",
+          "Earthquake",
+          "Skeletons",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "opponent_deck": [
+          "Firecracker",
+          "Guards",
+          "MinionHorde",
+          "GiantSkeleton",
+          "Barbarians",
+          "Lightning",
+          "HogRider",
+          "Log"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          1
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 27,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 0,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 6,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 5,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "the-log",
+              "earthquake",
+              "skeletons",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "firecracker-ev1",
+              "guards",
+              "minion-horde-ev1",
+              "giant-skeleton",
+              "barbarians",
+              "lightning",
+              "hog-rider",
+              "the-log"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 1422,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 18,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 18,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.8109436435124509,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 19,
+      "seat": 1,
+      "rows": 926,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "c3c36e4e33d04642a62e8fdcaef63b56",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          1
+        ],
+        "cut_reason": "recorded_end",
+        "hard_cut": false,
+        "cut_tick": 4630,
+        "cut_detail": {},
+        "playable_end_tick": 4630,
+        "rows": 926,
+        "supervised_rows": 926,
+        "supervised_plays": 48,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 48,
+        "recorded_own_abilities": 0,
+        "terminal_context_row": false,
+        "first_projected_row": null,
+        "own_deck": [
+          "Tesla",
+          "Knight",
+          "Princess",
+          "Rocket",
+          "Skeletons",
+          "GoblinBarrel",
+          "Log",
+          "ElectroSpirit"
+        ],
+        "opponent_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "GoblinBarrel",
+          "Goblins",
+          "Log",
+          "Rocket",
+          "IceSpirit"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          1,
+          0
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": true,
+        "unreproduced_real_kill_owner": [
+          "own"
+        ],
+        "counters": {
+          "own_plays_labelled": 48,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 0,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 44,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 12,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblin-barrel",
+              "goblins",
+              "the-log",
+              "rocket",
+              "ice-spirit"
+            ],
+            [
+              "tesla-ev1",
+              "knight-hero",
+              "princess-ev1",
+              "rocket",
+              "skeletons",
+              "goblin-barrel",
+              "the-log",
+              "electro-spirit"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 4594,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 1,
+        "tower_clamp_counts": {
+          "0:left": 1,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.04554390563564875,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 20,
+      "seat": 0,
+      "rows": 1088,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "f47d9d00bfb34721b98763cad7abee51",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          1
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 5435,
+        "cut_detail": {},
+        "playable_end_tick": 5660,
+        "rows": 1088,
+        "supervised_rows": 1087,
+        "supervised_plays": 66,
+        "supervised_abilities": 2,
+        "recorded_own_plays": 66,
+        "recorded_own_abilities": 2,
+        "terminal_context_row": true,
+        "first_projected_row": 463,
+        "own_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Log",
+          "Earthquake",
+          "Skeletons",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "opponent_deck": [
+          "Cannon",
+          "Musketeer",
+          "Skeletons",
+          "IceGolem",
+          "HogRider",
+          "Fireball",
+          "ElectroSpirit",
+          "Log"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          1,
+          0
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          1,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 66,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 4,
+          "own_elixir_topups": 0,
+          "own_abilities": 2,
+          "own_abilities_labelled": 2,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 67,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 1,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 15,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "the-log",
+              "earthquake",
+              "skeletons",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "cannon-ev1",
+              "musketeer-hero",
+              "skeletons-ev1",
+              "ice-golem",
+              "hog-rider",
+              "fireball",
+              "electro-spirit",
+              "the-log"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 4884,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 6,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 6,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.07699868938401049,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 21,
+      "seat": 1,
+      "rows": 960,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "7c5fcfc3c10b40ca92917bac5b6329d3",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 4794,
+        "cut_detail": {},
+        "playable_end_tick": 5970,
+        "rows": 960,
+        "supervised_rows": 958,
+        "supervised_plays": 29,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 47,
+        "recorded_own_abilities": 1,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "GiantSnowball",
+          "Berserker",
+          "Witch",
+          "Giant",
+          "Graveyard",
+          "MiniSparkys",
+          "Bowler",
+          "Arrows"
+        ],
+        "opponent_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Log",
+          "Earthquake",
+          "Skeletons",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          1
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 29,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 1,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 1,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 1,
+          "opponent_plays": 53,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 3,
+          "opponent_abilities_accepted": 3,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 10,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "the-log",
+              "earthquake",
+              "skeletons",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "giant-snowball-ev1",
+              "berserker-hero",
+              "witch-ev1",
+              "giant",
+              "graveyard",
+              "zappies",
+              "bowler",
+              "arrows"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 22,
+      "seat": 0,
+      "rows": 766,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "a94048171c7349e8b42097f30e3b3572",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 3823,
+        "cut_detail": {},
+        "playable_end_tick": 6150,
+        "rows": 766,
+        "supervised_rows": 765,
+        "supervised_plays": 37,
+        "supervised_abilities": 1,
+        "recorded_own_plays": 77,
+        "recorded_own_abilities": 2,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Log",
+          "Earthquake",
+          "Skeletons",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "opponent_deck": [
+          "Mortar",
+          "Berserker",
+          "SkeletonBarrel",
+          "Minions",
+          "Log",
+          "Musketeer",
+          "Fireball",
+          "GoblinGang"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          1
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 37,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 1,
+          "own_abilities_labelled": 1,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 29,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 9,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "the-log",
+              "earthquake",
+              "skeletons",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "mortar-ev1",
+              "berserker-hero",
+              "skeleton-barrel-ev1",
+              "minions",
+              "the-log",
+              "musketeer",
+              "fireball",
+              "goblin-gang"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 2733,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 6,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 6,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.07896461336828309,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 23,
+      "seat": 1,
+      "rows": 798,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "a30cb5ce44e242199f16a6a01ddb001f",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          1
+        ],
+        "cut_reason": "recorded_end",
+        "hard_cut": false,
+        "cut_tick": 3990,
+        "cut_detail": {},
+        "playable_end_tick": 3990,
+        "rows": 798,
+        "supervised_rows": 798,
+        "supervised_plays": 24,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 24,
+        "recorded_own_abilities": 0,
+        "terminal_context_row": false,
+        "first_projected_row": null,
+        "own_deck": [
+          "Mortar",
+          "Bowler",
+          "MinionHorde",
+          "Barbarians",
+          "GoblinBarrel",
+          "Princess",
+          "Fireball",
+          "GoblinGang"
+        ],
+        "opponent_deck": [
+          "Firecracker",
+          "MightyMiner",
+          "Cannon",
+          "Log",
+          "Earthquake",
+          "Skeletons",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          1,
+          0
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": true,
+        "unreproduced_real_kill_owner": [
+          "own"
+        ],
+        "counters": {
+          "own_plays_labelled": 24,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 0,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 39,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 2,
+          "opponent_abilities_accepted": 2,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 7,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "firecracker-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "the-log",
+              "earthquake",
+              "skeletons",
+              "electro-spirit",
+              "hog-rider"
+            ],
+            [
+              "mortar-ev1",
+              "bowler-hero",
+              "minion-horde-ev1",
+              "barbarians",
+              "goblin-barrel",
+              "princess",
+              "fireball",
+              "goblin-gang"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 24,
+      "seat": 0,
+      "rows": 867,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "2db10785e4984948a74e1c06e5cc820d",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "own_masked_tile",
+        "hard_cut": true,
+        "cut_tick": 4335,
+        "cut_detail": {
+          "card": "Cannon",
+          "world": [
+            11.5,
+            8.5
+          ],
+          "tick": 4337
+        },
+        "playable_end_tick": 4670,
+        "rows": 867,
+        "supervised_rows": 867,
+        "supervised_plays": 41,
+        "supervised_abilities": 1,
+        "recorded_own_plays": 46,
+        "recorded_own_abilities": 1,
+        "terminal_context_row": false,
+        "first_projected_row": null,
+        "own_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "Goblins",
+          "GoblinBarrel",
+          "Rocket",
+          "Log",
+          "IceSpirit"
+        ],
+        "opponent_deck": [
+          "Zap",
+          "MiniPekka",
+          "Wizard",
+          "Giant",
+          "Vines",
+          "Tornado",
+          "ZapMachine",
+          "Heal"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "MightyMiner"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 41,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 1,
+          "own_abilities_labelled": 1,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 33,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 2,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 10,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblins",
+              "goblin-barrel",
+              "rocket",
+              "the-log",
+              "ice-spirit"
+            ],
+            [
+              "zap-ev1",
+              "mini-pekka-hero",
+              "wizard-ev1",
+              "giant",
+              "vines",
+              "tornado",
+              "sparky",
+              "heal-spirit"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 3356,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 8,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 8,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.5425950196592398,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 25,
+      "seat": 1,
+      "rows": 758,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "6cbe085dd3b84e17b2dd0551b3761e44",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          1
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 3783,
+        "cut_detail": {},
+        "playable_end_tick": 5070,
+        "rows": 758,
+        "supervised_rows": 756,
+        "supervised_plays": 36,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 59,
+        "recorded_own_abilities": 1,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "GiantSnowball",
+          "Berserker",
+          "Cannon",
+          "Rocket",
+          "GoblinDrill",
+          "FireSpirits",
+          "Bomber",
+          "Skeletons"
+        ],
+        "opponent_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "Goblins",
+          "GoblinBarrel",
+          "Rocket",
+          "Log",
+          "IceSpirit"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          1,
+          0
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          1,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 36,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 1,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 1,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 1,
+          "opponent_plays": 33,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 14,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblins",
+              "goblin-barrel",
+              "rocket",
+              "the-log",
+              "ice-spirit"
+            ],
+            [
+              "giant-snowball-ev1",
+              "berserker-hero",
+              "cannon-ev1",
+              "rocket",
+              "goblin-drill",
+              "fire-spirit",
+              "bomber",
+              "skeletons"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 26,
+      "seat": 0,
+      "rows": 824,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "55c7ac699b1447d29ed3fe8d77d52a3c",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 4114,
+        "cut_detail": {},
+        "playable_end_tick": 4120,
+        "rows": 824,
+        "supervised_rows": 823,
+        "supervised_plays": 40,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 40,
+        "recorded_own_abilities": 0,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "GoblinBarrel",
+          "Valkyrie",
+          "SkeletonArmy",
+          "Wallbreakers",
+          "IceSpirit",
+          "Princess",
+          "Cannon",
+          "DartGoblin"
+        ],
+        "opponent_deck": [
+          "Firecracker",
+          "Guards",
+          "MinionHorde",
+          "GiantSkeleton",
+          "Barbarians",
+          "Lightning",
+          "HogRider",
+          "Log"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          1
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 40,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 0,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 27,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 15,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "goblin-barrel-ev1",
+              "valkyrie-hero",
+              "skeleton-army-ev1",
+              "wall-breakers",
+              "ice-spirit",
+              "princess",
+              "cannon",
+              "dart-goblin"
+            ],
+            [
+              "firecracker-ev1",
+              "guards",
+              "minion-horde-ev1",
+              "giant-skeleton",
+              "barbarians",
+              "lightning",
+              "hog-rider",
+              "the-log"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 2862,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 8,
+        "tower_clamp_counts": {
+          "0:left": 7,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 1,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.41775884665792923,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 27,
+      "seat": 1,
+      "rows": 1202,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "30d29f8f6402429d9e49b54ee394f199",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          1
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 6001,
+        "cut_detail": {},
+        "playable_end_tick": 6140,
+        "rows": 1202,
+        "supervised_rows": 1201,
+        "supervised_plays": 54,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 54,
+        "recorded_own_abilities": 0,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "AngryBarbarians",
+          "Berserker",
+          "RoyalGiant",
+          "Log",
+          "Fireball",
+          "IceWizard",
+          "Minions",
+          "Zap"
+        ],
+        "opponent_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "Goblins",
+          "GoblinBarrel",
+          "Rocket",
+          "Log",
+          "IceSpirit"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          1,
+          0
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": true,
+        "unreproduced_real_kill_owner": [
+          "own"
+        ],
+        "counters": {
+          "own_plays_labelled": 54,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 0,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 73,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 2,
+          "opponent_abilities_accepted": 2,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 24,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblins",
+              "goblin-barrel",
+              "rocket",
+              "the-log",
+              "ice-spirit"
+            ],
+            [
+              "elite-barbarians-ev1",
+              "berserker-hero",
+              "royal-giant-ev1",
+              "the-log",
+              "fireball",
+              "ice-wizard",
+              "minions",
+              "zap"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 28,
+      "seat": 0,
+      "rows": 693,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "921fcd40919c4dc3ace59d9d49943230",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          2,
+          0
+        ],
+        "cut_reason": "sim_kill_of_tower_standing_in_real",
+        "hard_cut": true,
+        "cut_tick": 3461,
+        "cut_detail": {
+          "tick": 3461,
+          "owner": 0,
+          "slot": "right",
+          "overshoot_frac": 1.0596330275229358,
+          "threshold": 1.0
+        },
+        "playable_end_tick": 3590,
+        "rows": 693,
+        "supervised_rows": 693,
+        "supervised_plays": 31,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 33,
+        "recorded_own_abilities": 0,
+        "terminal_context_row": false,
+        "first_projected_row": null,
+        "own_deck": [
+          "GoblinBarrel",
+          "Valkyrie",
+          "SkeletonArmy",
+          "Wallbreakers",
+          "IceSpirit",
+          "Princess",
+          "Cannon",
+          "DartGoblin"
+        ],
+        "opponent_deck": [
+          "Zap",
+          "Giant",
+          "AngryBarbarians",
+          "NightWitch",
+          "Bomber",
+          "DarkMagic",
+          "Phoenix",
+          "Elixir Collector"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          0,
+          2
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          1
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 31,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 0,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 21,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 10,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "goblin-barrel-ev1",
+              "valkyrie-hero",
+              "skeleton-army-ev1",
+              "wall-breakers",
+              "ice-spirit",
+              "princess",
+              "cannon",
+              "dart-goblin"
+            ],
+            [
+              "zap-ev1",
+              "giant-hero",
+              "elite-barbarians-ev1",
+              "night-witch",
+              "bomber",
+              "void",
+              "phoenix",
+              "elixir-collector"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 3350,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 13,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 13,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 1.0596330275229358,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 29,
+      "seat": 1,
+      "rows": 519,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "821efcc28a3e4cf2a78f3c622be32a46",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          1
+        ],
+        "cut_reason": "own_insufficient_elixir",
+        "hard_cut": true,
+        "cut_tick": 2595,
+        "cut_detail": {
+          "shortfall": 1.6343,
+          "card": "FirespiritHut",
+          "tick": 2595
+        },
+        "playable_end_tick": 5500,
+        "rows": 519,
+        "supervised_rows": 518,
+        "supervised_plays": 16,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 48,
+        "recorded_own_abilities": 6,
+        "terminal_context_row": false,
+        "first_projected_row": 146,
+        "own_deck": [
+          "AngryBarbarians",
+          "GoldenKnight",
+          "FirespiritHut",
+          "IceGolem",
+          "Heal",
+          "Zap",
+          "Elixir Collector",
+          "ThreeMusketeers"
+        ],
+        "opponent_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "Goblins",
+          "GoblinBarrel",
+          "Rocket",
+          "Log",
+          "IceSpirit"
+        ],
+        "own_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [
+          "GoldenKnight"
+        ],
+        "ability_attributable": true,
+        "real_princess_down": [
+          1,
+          0
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 16,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 2,
+          "own_elixir_topups": 0,
+          "own_abilities": 1,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 1,
+          "own_abilities_rejected": 1,
+          "opponent_plays": 19,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 2,
+          "opponent_abilities_accepted": 2,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 4,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblins",
+              "goblin-barrel",
+              "rocket",
+              "the-log",
+              "ice-spirit"
+            ],
+            [
+              "elite-barbarians-ev1",
+              "golden-knight",
+              "furnace-ev1",
+              "ice-golem",
+              "heal-spirit",
+              "zap",
+              "elixir-collector",
+              "three-musketeers"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 1425,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 5,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 5,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.4069462647444299,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 30,
+      "seat": 0,
+      "rows": 1163,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "b5cdfa9785f945d98a7ad0d7e59b229d",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 5807,
+        "cut_detail": {},
+        "playable_end_tick": 6120,
+        "rows": 1163,
+        "supervised_rows": 1157,
+        "supervised_plays": 60,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 63,
+        "recorded_own_abilities": 5,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "GoblinBarrel",
+          "Valkyrie",
+          "SkeletonArmy",
+          "Wallbreakers",
+          "IceSpirit",
+          "Princess",
+          "Cannon",
+          "DartGoblin"
+        ],
+        "opponent_deck": [
+          "BattleRam",
+          "Wizard",
+          "RoyalGhost",
+          "GiantSkeleton",
+          "WitchMother",
+          "Vines",
+          "MiniSparkys",
+          "BarbarianBarrel"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          1
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 60,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 5,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 5,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 5,
+          "opponent_plays": 48,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 1,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 26,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "goblin-barrel-ev1",
+              "valkyrie-hero",
+              "skeleton-army-ev1",
+              "wall-breakers",
+              "ice-spirit",
+              "princess",
+              "cannon",
+              "dart-goblin"
+            ],
+            [
+              "battle-ram-ev1",
+              "wizard-hero",
+              "royal-ghost-ev1",
+              "giant-skeleton",
+              "mother-witch",
+              "vines",
+              "zappies",
+              "barbarian-barrel"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 31,
+      "seat": 1,
+      "rows": 932,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "0b2c05a731504230a1221f22057fd1c1",
+        "side": "opponent",
+        "seat": 1,
+        "episode_id": 0,
+        "recorded_result": 1,
+        "recorded_crowns": [
+          1,
+          0
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 4652,
+        "cut_detail": {},
+        "playable_end_tick": 5890,
+        "rows": 932,
+        "supervised_rows": 931,
+        "supervised_plays": 49,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 73,
+        "recorded_own_abilities": 0,
+        "terminal_context_row": true,
+        "first_projected_row": 566,
+        "own_deck": [
+          "Princess",
+          "Berserker",
+          "Tesla",
+          "GoblinBarrel",
+          "Log",
+          "Rocket",
+          "Skeletons",
+          "ElectroSpirit"
+        ],
+        "opponent_deck": [
+          "Princess",
+          "MightyMiner",
+          "Cannon",
+          "Goblins",
+          "GoblinBarrel",
+          "Rocket",
+          "Log",
+          "IceSpirit"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "base",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          0,
+          1
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          0,
+          1
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 49,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 1,
+          "own_elixir_topups": 0,
+          "own_abilities": 0,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 0,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 0,
+          "opponent_plays": 44,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 0,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 19,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "princess-ev1",
+              "mighty-miner",
+              "cannon-ev1",
+              "goblins",
+              "goblin-barrel",
+              "rocket",
+              "the-log",
+              "ice-spirit"
+            ],
+            [
+              "princess-ev1",
+              "berserker-hero",
+              "tesla-ev1",
+              "goblin-barrel",
+              "the-log",
+              "rocket",
+              "skeletons",
+              "electro-spirit"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": null,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 0,
+        "tower_clamp_counts": {
+          "0:left": 0,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 0,
+          "1:right": 0,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.0,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "record": 32,
+      "seat": 0,
+      "rows": 780,
+      "summary": {
+        "contract_version": 5,
+        "match_id": "c9527680bb054b7eaa434825f82b8564",
+        "side": "team",
+        "seat": 0,
+        "episode_id": 0,
+        "recorded_result": -1,
+        "recorded_crowns": [
+          0,
+          1
+        ],
+        "cut_reason": "sim_game_over",
+        "hard_cut": false,
+        "cut_tick": 3895,
+        "cut_detail": {},
+        "playable_end_tick": 6090,
+        "rows": 780,
+        "supervised_rows": 778,
+        "supervised_plays": 35,
+        "supervised_abilities": 0,
+        "recorded_own_plays": 69,
+        "recorded_own_abilities": 2,
+        "terminal_context_row": true,
+        "first_projected_row": null,
+        "own_deck": [
+          "GoblinBarrel",
+          "Valkyrie",
+          "SkeletonArmy",
+          "Wallbreakers",
+          "IceSpirit",
+          "Princess",
+          "Cannon",
+          "DartGoblin"
+        ],
+        "opponent_deck": [
+          "Knight",
+          "MegaMinion",
+          "LittlePrince",
+          "BarbarianBarrel",
+          "Arrows",
+          "RamRider",
+          "Zap",
+          "Pekka"
+        ],
+        "own_forms": [
+          "evo",
+          "hero",
+          "evo",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "opponent_forms": [
+          "evo",
+          "hero",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base",
+          "base"
+        ],
+        "own_champions": [],
+        "ability_attributable": false,
+        "real_princess_down": [
+          1,
+          0
+        ],
+        "real_king_down": [
+          false,
+          false
+        ],
+        "sim_princess_down_at_cut": [
+          1,
+          0
+        ],
+        "sim_king_down_at_cut": [
+          false,
+          false
+        ],
+        "unreproduced_real_kill": false,
+        "unreproduced_real_kill_owner": [],
+        "counters": {
+          "own_plays_labelled": 35,
+          "own_plays_deferred": 0,
+          "own_plays_projected": 0,
+          "own_elixir_topups": 0,
+          "own_abilities": 1,
+          "own_abilities_labelled": 0,
+          "own_abilities_unattributable": 1,
+          "own_abilities_masked": 0,
+          "own_abilities_rejected": 1,
+          "opponent_plays": 28,
+          "opponent_hand_forced": 0,
+          "opponent_elixir_topups": 0,
+          "opponent_nudged": 0,
+          "opponent_rejected": 0,
+          "opponent_abilities": 4,
+          "opponent_abilities_accepted": 0,
+          "simultaneous_own_plays": 0,
+          "evo_or_hero_plays_labelled": 13,
+          "own_elixir_topup_total": 0.0,
+          "opponent_elixir_topup_total": 0.0,
+          "opponent_max_shortfall": 0.0
+        },
+        "info": {
+          "source_shard": 0,
+          "battle_type": "pathOfLegend",
+          "game_mode": "Ranked",
+          "deck_slugs": [
+            [
+              "goblin-barrel-ev1",
+              "valkyrie-hero",
+              "skeleton-army-ev1",
+              "wall-breakers",
+              "ice-spirit",
+              "princess",
+              "cannon",
+              "dart-goblin"
+            ],
+            [
+              "knight-ev1",
+              "mega-minion-hero",
+              "little-prince",
+              "barbarian-barrel",
+              "arrows",
+              "ram-rider",
+              "zap",
+              "pekka"
+            ]
+          ],
+          "deck_levels": [
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ],
+            [
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16
+            ]
+          ],
+          "tower_cards": [
+            "tower-princess",
+            "tower-princess"
+          ]
+        },
+        "first_clamp_tick": 2021,
+        "tower_clamp_threshold": 1.0,
+        "tower_clamp_count": 13,
+        "tower_clamp_counts": {
+          "0:left": 2,
+          "0:right": 0,
+          "0:king": 0,
+          "1:left": 4,
+          "1:right": 7,
+          "1:king": 0
+        },
+        "max_overshoot_frac": 0.5425950196592398,
+        "tower_clamp_rule": "towers proven standing in the recording are held at 1 HP; cut when cumulative overshoot exceeds 1.0x tower max HP; multiply existing row weights by 0.5 at/after first clamp"
+      }
+    },
+    {
+      "source": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/payloads/shard-000.jsonl.gz",
+      "sha256": "69128e500b6bf1ea0e010ca4ab61df4361ecfbe5b74203b690e99230891a06f1"
+    }
+  ],
+  "elapsed_seconds": 425.2250802516937,
+  "oracle": "scalar engine pre-deployment guards; full 2304 placement bits; exact-input memo",
+  "source_files": {
+    "/mpac/sdicks02/repos/clasher-mask-v2/scripts/audit_public_mask_v2.py": "0cdf4787fe9703343f64d045fa4c09ec7f944c499b80e0db6cc16408d16322de",
+    "/mpac/sdicks02/repos/clasher-mask-v2/src/clasher/rl/contract_v5.py": "b0de1fb681924fc7d99525791fa24f3172cd4e391e79a4e8ddb4ac9c99e41b08",
+    "/mpac/sdicks02/repos/clasher-mask-v2/src/clasher/rl/public_placement_v2.py": "d50c0ddae1df415a93b16c9ac01d64235811c453c15bae9d4b3f0a8dedc83c12"
+  }
+}

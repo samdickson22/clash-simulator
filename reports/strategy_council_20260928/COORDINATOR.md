@@ -776,3 +776,18 @@ Also on the hub, but with copies elsewhere:
   - **Evidence:** an exact recorded-action replay of 02 r9 game006, reproduced on 03 with no search or deadline involved. All 6 model-command rejections recur: BombTower ×3 hit the building-footprint guard (battle.py:1277), RoyalHog ×3 hit the deployment-payload guard (:1284). The public mask had called all 6 legal. It's deterministic, not timing, and can happen on any host.
   - **Gates (b)/(c):** no serving or mask change (the qualified path stays frozen). R19 is restated as "zero timing/staleness/load-attributable rejections". Deterministic mask–engine rejections are part of play: same fallback for every arm (drop the command, no-op wait), reported per arm, protocol and card, each one replay-reproducible. This goes to the reviewer with the delta.
   - **Delegated (Astra high):** mask v2 with occupancy rules from public information only, flag-guarded with the default unchanged, parity-proven on ≥100k recorded states. It's for future consumers only: v2 proposer, L2-v4 runtime, live actuator.
+- **22:35–22:45 UTC (after Sam un-paused coordination).**
+  - **Utilization at 22:35Z:**
+    - 01 was idle after T11's qualification; 18, 07 and 06 are down.
+    - Perception inference ran on 7 GPUs at only 3–24%: I asked the worker to pack 3–4 passes per GPU, move CPU work out of the loop, and reach ≥60%.
+    - **T11 seed 22 resumes on 01 now** as a host-loss continuation from the newest SHA-verified 04 backup. Seed 21 moves 16→04 after 05:00Z.
+  - **Gates (b)/(c):**
+    - The R16 GPU comparison is waived (CPU fp32 passed).
+    - The 36-file SHA-only check on 13/14/15 is authorized outside the lease wrapper.
+    - **Independent review r2 launched** (Opus).
+    - The R19 restatement was re-sent after the worker applied the old zero-rejection rule to the 03 r12 pilot (4 B-arm rejections; p99 200.27 ms, 0 >250). Each rejection must reproduce under exact replay to count as deterministic mask–engine occupancy.
+  - **Mask v2 committed** (opt-in `mask_version=2`, default 1 unchanged).
+    - On 100k states: v1 false-positive placement bits 10,044 → v2 722, all from hidden buildings; v2 false negatives 0.
+    - Even 3 of 4,278 v1-legal human actions were engine-rejected.
+    - Visibility of blockers in the official client is still to be verified at live qualification.
+  - **Exploration lane created** (non-confirmatory, no prereg, never heldout). First task: a loss-review ledger vs human baselines (ClashAI lesson) on 01/08 CPU.

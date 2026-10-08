@@ -62,7 +62,7 @@ C56_ADDED_CARDS = frozenset(
 CHAMPION_ABILITY_RULE = "masked: C56 scripts never activate abilities; champion probes exercise the engine API separately"
 
 
-def initialize(bot, builder, style):
+def initialize(bot, builder, style, *, mask_version=1):
     from .public_scripted_opponent import SUPPORTED_CARDS
 
     if (
@@ -81,11 +81,11 @@ def initialize(bot, builder, style):
     if builder.card_semantics_version == 5:
         from .contract_v5 import ContractV5ActionMaskBuilder
 
-        bot.mask_builder = ContractV5ActionMaskBuilder(builder)
+        bot.mask_builder = ContractV5ActionMaskBuilder(builder, mask_version=mask_version)
     else:
         if not {resolve_card_name(n) for n in builder.card_vocab} <= canonical.keys():
             raise ValueError("C56 v4 vocabulary exceeds declared action scope")
-        bot.mask_builder = PublicActionMaskBuilder(builder)
+        bot.mask_builder = PublicActionMaskBuilder(builder, mask_version=mask_version)
     bot.cards, bot.bodies, bot.spells = {}, {}, {}
     for declared in builder.card_vocab:
         stats = copy.copy(builder.loader.get_card(declared))

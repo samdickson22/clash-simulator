@@ -17,7 +17,9 @@ CARDS = tuple(sorted(SUPPORTED_CARDS | C56_ADDED_CARDS))
 STYLES = ("balanced", "pressure", "defense")
 
 
-def metadata(builder, *, bot=None, action_cards=CARDS):
+def metadata(builder, *, bot=None, action_cards=CARDS, mask_version=1):
+    if type(mask_version) is not int or mask_version not in (1, 2):
+        raise ValueError("mask_version must be 1 (frozen) or 2")
     if bot is None:
         bot = PublicScriptedOpponent(builder, card_scope="c56")
     grid = TileGrid()
@@ -59,6 +61,9 @@ def metadata(builder, *, bot=None, action_cards=CARDS):
             or (spell is None and getattr(stats, "can_deploy_on_enemy_side", False))
         )
         if spell is not None:
+            if mask_version == 2:
+                data["requires_walkable"] = bool(getattr(spell, "requires_walkable_target", False))
+                data["requires_territory"] = grid._requires_deploy_zone_spell(spell)
             building_damage = getattr(spell, "building_damage", None)
             data["c56_spell"] = dict(
                 radius=float(spell.radius or 0),
@@ -120,7 +125,12 @@ def metadata(builder, *, bot=None, action_cards=CARDS):
             air=False,
             can_air=True,
         )
-    return dict(c56=True, cards=cards, bodies=bodies)
+    result = dict(c56=True, cards=cards, bodies=bodies)
+    if mask_version == 2:
+        from clasher.rl.public_placement_v2 import payload_radii, building_radii
+
+        result.update(mask_version=2, payload_radii=payload_radii(builder), building_radii=building_radii(builder))
+    return result
 
 
 def resources():

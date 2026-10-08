@@ -1,0 +1,56 @@
+{
+  "schema": "clasher.mask-v2-receipt-summary.v1",
+  "counts": {
+    "games": 1280,
+    "submitted_actions": 147286,
+    "candidate_rejections": 1153,
+    "opponent_rejections": 295,
+    "decisions": 2052774
+  },
+  "per_variant": {
+    "clean-d0": {
+      "games": 256,
+      "submitted_actions": 27570,
+      "candidate_rejections": 3,
+      "opponent_rejections": 56,
+      "decisions": 525045,
+      "receipts_with_recorded_actions": 0
+    },
+    "clean-d22-unaware": {
+      "games": 256,
+      "submitted_actions": 27826,
+      "candidate_rejections": 4,
+      "opponent_rejections": 67,
+      "decisions": 375408,
+      "receipts_with_recorded_actions": 0
+    },
+    "clean-d22-aware": {
+      "games": 256,
+      "submitted_actions": 28369,
+      "candidate_rejections": 13,
+      "opponent_rejections": 36,
+      "decisions": 379345,
+      "receipts_with_recorded_actions": 0
+    },
+    "T3-N97-d22-unaware": {
+      "games": 256,
+      "submitted_actions": 30306,
+      "candidate_rejections": 542,
+      "opponent_rejections": 43,
+      "decisions": 378314,
+      "receipts_with_recorded_actions": 0
+    },
+    "T3-N97-d22-aware": {
+      "games": 256,
+      "submitted_actions": 33215,
+      "candidate_rejections": 591,
+      "opponent_rejections": 93,
+      "decisions": 394662,
+      "receipts_with_recorded_actions": 0
+    }
+  },
+  "source": "/mpac/sdicks02/repos/clasher-mask-v2/receipt-inputs/s6",
+  "files": 1280,
+  "source_aggregate_sha256": "13e144f8770d083625a3bd0530f43ed7c371d5143f91304142ab50b9a68fc255",
+  "limitation": "Rejections include stale/noisy/delayed command effects. Only an action hash survives; no decision boards, proposal IDs or per-card rejection guards. These are total execution-rejection rates, not identified mask-occupancy errors."
+}

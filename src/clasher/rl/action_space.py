@@ -36,7 +36,10 @@ class DiscreteTileActionSpace:
     - `NUM_HAND_SLOTS * NUM_TILES + 1` for the active champion ability.
     """
 
-    def __init__(self, canonical_perspective: bool = True) -> None:
+    def __init__(self, canonical_perspective: bool = True, *, mask_version: int = 1) -> None:
+        if type(mask_version) is not int or mask_version not in (1, 2):
+            raise ValueError("mask_version must be 1 (frozen) or 2")
+        self.mask_version = mask_version
         self.canonical_perspective = canonical_perspective
         placement_actions = NUM_HAND_SLOTS * NUM_TILES
         self.no_op_action = placement_actions
@@ -221,7 +224,8 @@ class DiscreteTileActionSpace:
         if cached is not None:
             return cached
         mask = np.zeros(NUM_TILES, dtype=np.bool_)
-        zones = self._zone_ranges_from_key(key)
+        zones = (battle.arena.get_deploy_zones(player_id, battle)
+                 if self.mask_version == 2 else self._zone_ranges_from_key(key))
         for tile_idx, pos in enumerate(self._positions_by_player[player_id]):
             x = pos.x
             y = pos.y
@@ -405,7 +409,7 @@ class DiscreteTileActionSpace:
                     candidate_mask = deploy_mask
 
             blocked_building_tiles = None
-            if is_building_card:
+            if is_building_card and self.mask_version == 1:
                 size_tiles = battle._building_footprint_size_tiles(card_stats)
                 blocked_building_tiles = building_blocked_by_size.get(size_tiles)
                 if blocked_building_tiles is None:
@@ -432,7 +436,13 @@ class DiscreteTileActionSpace:
             )
             for tile_idx in candidate_tiles.tolist():
                 pos = positions[tile_idx]
-                if not is_spell and not is_building_card and not is_air_unit_card(card_stats):
+                if not is_spell and (
+                    (not is_building_card and not is_air_unit_card(card_stats))
+                    or (is_building_card and self.mask_version == 2)
+                ):
+                    # V2 buildings use the engine guard itself. The historical
+                    # optimized candidate cache is membership-keyed and can
+                    # retain a moving underground building's previous bounds.
                     if self._is_legal_deploy(
                         battle, player_id, card_stats, resolved_name, pos,
                         is_spell, spell_obj, probe_radius,
@@ -493,6 +503,10 @@ class DiscreteTileActionSpace:
         *,
         fast_path: bool | None = None,
     ) -> np.ndarray:
+        if self.mask_version == 2 and battle.game_over:
+            mask = np.zeros(self.num_actions, dtype=np.bool_)
+            mask[self.no_op_action] = True
+            return mask
         use_fast = fast_path if fast_path is not None else bool(getattr(battle, "fast_path", False))
         if use_fast:
             return self._legal_action_mask_fast(battle, player_id)

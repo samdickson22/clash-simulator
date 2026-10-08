@@ -55,7 +55,13 @@ class C56RolloutPlanner:
         self.native, self.native_config = native, native_config
         if backend == 'native' and (native is None or native_config is None):
             raise ValueError('native C56 metadata must be initialized before play')
-        self.space = DiscreteTileActionSpace()
+        versions = {getattr(b.mask_builder, 'mask_version', 1) for b in bots.values()}
+        if 2 in versions:
+            if versions != {2}:
+                raise ValueError('mask v2 requires every rollout script to use v2')
+            if backend == 'native' and getattr(native, 'mask_version', None) != 2:
+                raise ValueError('mask v2 requires native rollout metadata v2')
+        self.space = DiscreteTileActionSpace(mask_version=2 if versions == {2} else 1)
         self.rng = np.random.default_rng(seed)
         self.last = None
         self.deadline_stats = None

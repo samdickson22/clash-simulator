@@ -61,8 +61,16 @@ class PublicActionMaskInput:
 class PublicActionMaskBuilder:
     """Build deployability from causal actor state without simulator access."""
 
-    def __init__(self, builder: StructuredObservationBuilder) -> None:
+    def __init__(self, builder: StructuredObservationBuilder, *, mask_version: int = 1) -> None:
+        if type(mask_version) is not int or mask_version not in (1, 2):
+            raise ValueError("mask_version must be 1 (frozen) or 2")
+        self.mask_version = mask_version
         self.builder = builder
+        self._placement_v2 = None
+        if mask_version == 2:
+            from .public_placement_v2 import PublicPlacementV2
+
+            self._placement_v2 = PublicPlacementV2(builder)
         self._tile_grid = TileGrid()
         self.no_op_action = NUM_HAND_SLOTS * NUM_TILES
         self.ability_action = self.no_op_action + 1
@@ -202,6 +210,7 @@ class PublicActionMaskBuilder:
         elixir = float(observation.global_features[5]) * 10.0
         zone = self._deploy_zone(observation)
         blockers = self._building_blockers(observation)
+        board_v2 = self._placement_v2.board(observation) if self._placement_v2 else None
 
         for slot in range(NUM_HAND_SLOTS):
             # The vision contract emits a nonzero token only after accepting
@@ -265,6 +274,11 @@ class PublicActionMaskBuilder:
             can_deploy_enemy_side = bool(
                 not is_spell and getattr(stats, "can_deploy_on_enemy_side", False)
             )
+            if board_v2 is not None:
+                mask[slot * NUM_TILES : (slot + 1) * NUM_TILES] = board_v2.legal(
+                    stats, spell, zone, self._non_blocked
+                )
+                continue
             if non_rolling_spell or can_deploy_enemy_side:
                 candidates = self._non_blocked.copy()
             else:

@@ -68,7 +68,8 @@ class PublicScriptedOpponent:
     """Deterministic scoring over legal actions; no simulation or rollout search."""
 
     def __init__(
-        self, builder: StructuredObservationBuilder, *, style: str = "balanced", card_scope: str = "p16"
+        self, builder: StructuredObservationBuilder, *, style: str = "balanced", card_scope: str = "p16",
+        mask_version: int = 1,
     ):
         if style not in {"balanced", "pressure", "defense"}:
             raise ValueError("unsupported public opponent style")
@@ -78,7 +79,7 @@ class PublicScriptedOpponent:
         if card_scope == "c56":
             from .c56_scripted import initialize
 
-            initialize(self, builder, style)
+            initialize(self, builder, style, mask_version=mask_version)
             return
         if not builder.canonical_perspective or not builder.canonical_lane_globals:
             raise ValueError("public opponent requires canonical coordinates and lanes")
@@ -96,7 +97,7 @@ class PublicScriptedOpponent:
             )
         self.builder = builder
         self.style = style
-        self.mask_builder = PublicActionMaskBuilder(builder)
+        self.mask_builder = PublicActionMaskBuilder(builder, mask_version=mask_version)
         self.cards = {}
         self.bodies = {}
         self.spells = {}

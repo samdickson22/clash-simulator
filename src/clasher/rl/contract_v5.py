@@ -507,10 +507,10 @@ def global_confidence_v5(rows: int, champion_button: np.ndarray) -> np.ndarray:
 class ContractV5ActionMaskBuilder(PublicActionMaskBuilder):
     """v4 public mask with the float-robust footprint and the Champion ability."""
 
-    def __init__(self, builder: ContractV5ObservationBuilder) -> None:
+    def __init__(self, builder: ContractV5ObservationBuilder, *, mask_version: int = 1) -> None:
         if not isinstance(builder, ContractV5ObservationBuilder):
             raise TypeError("the v5 mask needs the v5 observation builder")
-        super().__init__(builder)
+        super().__init__(builder, mask_version=mask_version)
 
     @staticmethod
     def _footprint_size(radius: float) -> int:
@@ -594,11 +594,12 @@ class CachedContractV5ActionMask:
     Mirror needs own play history and bypasses the memo.
     """
 
-    def __init__(self, builder: ContractV5ObservationBuilder, *, maximum_entries: int = 20_000) -> None:
+    def __init__(self, builder: ContractV5ObservationBuilder, *, maximum_entries: int = 20_000,
+                 mask_version: int = 1) -> None:
         from clasher.spells import SPELL_REGISTRY, MirrorSpell
 
         self.builder = builder
-        self.inner = ContractV5ActionMaskBuilder(builder)
+        self.inner = ContractV5ActionMaskBuilder(builder, mask_version=mask_version)
         self.maximum_entries = maximum_entries
         self._cache: dict[tuple, np.ndarray] = {}
         self.hits = 0
@@ -617,6 +618,10 @@ class CachedContractV5ActionMask:
     def build(self, source: ConfidenceAwareActorObservation) -> np.ndarray:
         observation = source.observation
         request = PublicActionMaskInput.from_confidence_observation(source)
+        # The frozen cache key omits visible timed payloads. Never reuse it for
+        # v2; a future cache must key the complete public placement board.
+        if self.inner.mask_version == 2:
+            return self.inner.build(request)
         hand = observation.hand_ids[:NUM_HAND_SLOTS]
         if observation.terminal is not False or self._mirror[hand].any():
             return self.inner.build(request)

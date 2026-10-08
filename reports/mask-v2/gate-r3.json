@@ -1,0 +1,253 @@
+{
+  "schema": "clasher.mask-v2-audit.v1",
+  "counts": {
+    "oracle_fast_scalar_mismatch_bits": 0,
+    "engine_guard_masks_computed": 83,
+    "states": 88,
+    "placement_bits": 202752,
+    "v1_legal": 39435,
+    "v1_false_positive": 80,
+    "v2_legal": 39996,
+    "v2_false_positive": 0,
+    "v2_false_negative": 0,
+    "states_v1_false_positive": 10,
+    "states_v2_mismatch": 0,
+    "model_actions": 49,
+    "model_v1_legal": 49,
+    "model_v1_legal_engine_rejected": 6,
+    "model_v2_legal_engine_rejected": 0,
+    "native_states": 88,
+    "native_python_mismatch_bits": 0,
+    "recorded_actions": 88,
+    "recorded_acceptance_divergences": 0,
+    "script_actions": 39,
+    "script_v1_legal": 39,
+    "script_v1_legal_engine_rejected": 0,
+    "script_v2_legal_engine_rejected": 0
+  },
+  "per_card": {
+    "Lightning": {
+      "slot_states": 49,
+      "v1_legal": 1096,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "model_actions": 1,
+      "model_v1_legal": 1,
+      "model_v1_legal_engine_rejected": 0,
+      "model_v2_legal_engine_rejected": 0
+    },
+    "ElectroSpirit": {
+      "slot_states": 10,
+      "v1_legal": 2220,
+      "v1_false_positive": 1,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "model_actions": 9,
+      "model_v1_legal": 9,
+      "model_v1_legal_engine_rejected": 0,
+      "model_v2_legal_engine_rejected": 0
+    },
+    "BombTower": {
+      "slot_states": 20,
+      "v1_legal": 1383,
+      "v1_false_positive": 33,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "model_actions": 10,
+      "model_v1_legal": 10,
+      "model_v1_legal_engine_rejected": 3,
+      "model_v2_legal_engine_rejected": 0
+    },
+    "Goblinstein": {
+      "slot_states": 45,
+      "v1_legal": 1332,
+      "v1_false_positive": 25,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "model_actions": 1,
+      "model_v1_legal": 1,
+      "model_v1_legal_engine_rejected": 0,
+      "model_v2_legal_engine_rejected": 0
+    },
+    "SkeletonArmy": {
+      "slot_states": 19,
+      "v1_legal": 3108,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "script_actions": 5,
+      "script_v1_legal": 5,
+      "script_v1_legal_engine_rejected": 0,
+      "script_v2_legal_engine_rejected": 0
+    },
+    "BlowdartGoblin": {
+      "slot_states": 27,
+      "v1_legal": 4218,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "script_actions": 3,
+      "script_v1_legal": 3,
+      "script_v1_legal_engine_rejected": 0,
+      "script_v2_legal_engine_rejected": 0
+    },
+    "Knight": {
+      "slot_states": 22,
+      "v1_legal": 3552,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "script_actions": 5,
+      "script_v1_legal": 5,
+      "script_v1_legal_engine_rejected": 0,
+      "script_v2_legal_engine_rejected": 0
+    },
+    "InfernoTower": {
+      "slot_states": 31,
+      "v1_legal": 480,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "script_actions": 2,
+      "script_v1_legal": 2,
+      "script_v1_legal_engine_rejected": 0,
+      "script_v2_legal_engine_rejected": 0
+    },
+    "Archers": {
+      "slot_states": 11,
+      "v1_legal": 1776,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "model_actions": 8,
+      "model_v1_legal": 8,
+      "model_v1_legal_engine_rejected": 0,
+      "model_v2_legal_engine_rejected": 0
+    },
+    "Log": {
+      "slot_states": 10,
+      "v1_legal": 2560,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "script_actions": 8,
+      "script_v1_legal": 8,
+      "script_v1_legal_engine_rejected": 0,
+      "script_v2_legal_engine_rejected": 0
+    },
+    "BarbLog": {
+      "slot_states": 12,
+      "v1_legal": 3072,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "model_actions": 8,
+      "model_v1_legal": 8,
+      "model_v1_legal_engine_rejected": 0,
+      "model_v2_legal_engine_rejected": 0
+    },
+    "Skeletons": {
+      "slot_states": 8,
+      "v1_legal": 1776,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "model_actions": 8,
+      "model_v1_legal": 8,
+      "model_v1_legal_engine_rejected": 0,
+      "model_v2_legal_engine_rejected": 0
+    },
+    "Princess": {
+      "slot_states": 25,
+      "v1_legal": 3774,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "script_actions": 3,
+      "script_v1_legal": 3,
+      "script_v1_legal_engine_rejected": 0,
+      "script_v2_legal_engine_rejected": 0
+    },
+    "IceSpirit": {
+      "slot_states": 10,
+      "v1_legal": 2220,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "script_actions": 7,
+      "script_v1_legal": 7,
+      "script_v1_legal_engine_rejected": 0,
+      "script_v2_legal_engine_rejected": 0
+    },
+    "RoyalHogs": {
+      "slot_states": 41,
+      "v1_legal": 840,
+      "v1_false_positive": 21,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "model_actions": 4,
+      "model_v1_legal": 4,
+      "model_v1_legal_engine_rejected": 3,
+      "model_v2_legal_engine_rejected": 0
+    },
+    "GoblinBarrel": {
+      "slot_states": 12,
+      "v1_legal": 6028,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0,
+      "script_actions": 6,
+      "script_v1_legal": 6,
+      "script_v1_legal_engine_rejected": 0,
+      "script_v2_legal_engine_rejected": 0
+    }
+  },
+  "per_situation": {
+    "ordinary": {
+      "states": 10,
+      "v1_legal": 4546,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0
+    },
+    "non_crown_building": {
+      "states": 63,
+      "v1_legal": 29111,
+      "v1_false_positive": 0,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0
+    },
+    "payload": {
+      "states": 15,
+      "v1_legal": 5778,
+      "v1_false_positive": 80,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0
+    }
+  },
+  "examples": [],
+  "per_scope": {
+    "gate": {
+      "states": 88,
+      "v1_legal": 39435,
+      "v1_false_positive": 80,
+      "v2_false_positive": 0,
+      "v2_false_negative": 0
+    }
+  },
+  "games": [
+    {
+      "source": "/mpac/sdicks02/repos/clasher-eval-snapshots/inputs-bc-v1/rejection-02-r9-game006.json",
+      "sha256": "959ff2101a4bb9d88e90f2b3c104c4e99b7e34154fb5728cc3504a486f58b3a3",
+      "ticks": 3880
+    }
+  ],
+  "elapsed_seconds": 31.50855851173401,
+  "oracle": "scalar engine pre-deployment guards; full 2304 placement bits; exact-input memo",
+  "source_files": {
+    "/mpac/sdicks02/repos/clasher-mask-v2/scripts/audit_public_mask_v2.py": "0cdf4787fe9703343f64d045fa4c09ec7f944c499b80e0db6cc16408d16322de",
+    "/mpac/sdicks02/repos/clasher-mask-v2/src/clasher/rl/contract_v5.py": "b0de1fb681924fc7d99525791fa24f3172cd4e391e79a4e8ddb4ac9c99e41b08",
+    "/mpac/sdicks02/repos/clasher-mask-v2/src/clasher/rl/public_placement_v2.py": "d50c0ddae1df415a93b16c9ac01d64235811c453c15bae9d4b3f0a8dedc83c12"
+  }
+}

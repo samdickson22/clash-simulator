@@ -2,9 +2,15 @@
 use super::*;
 #[path = "c56_scripts.rs"]
 mod c56;
+#[path = "public_mask_v2.rs"]
+mod public_mask_v2;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub(crate) struct CardMeta {
+    #[serde(default)]
+    requires_walkable: bool,
+    #[serde(default)]
+    requires_territory: bool,
     #[serde(default)]
     air: bool,
     #[serde(default)]
@@ -33,11 +39,18 @@ pub(crate) struct CardMeta {
 }
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub(crate) struct Metadata {
+    #[serde(default = "legacy_mask_version")]
+    mask_version: u8,
+    #[serde(default)]
+    payload_radii: BTreeMap<i64, f64>,
+    #[serde(default)]
+    building_radii: BTreeMap<i64, f64>,
     #[serde(default)]
     pub(crate) c56: bool,
     cards: BTreeMap<String, CardMeta>,
     pub(crate) bodies: BTreeMap<String, CardMeta>,
 }
+fn legacy_mask_version() -> u8 { 1 }
 #[pyclass(module = "clasher_core")]
 #[derive(Clone)]
 pub struct NativeScripts {
@@ -276,6 +289,11 @@ impl NativeScripts {
                 &mirrored
             } else { &self.meta.cards[name] };
             if m.cost > v.elixir + 1e-6 {
+                continue;
+            }
+            if self.meta.mask_version == 2 {
+                let placements = self.placement_mask_v2(b, seat, resolved_name, m, v, &zone);
+                out[slot * 576..(slot + 1) * 576].copy_from_slice(&placements);
                 continue;
             }
             let unrestricted = if self.meta.c56 {
@@ -538,12 +556,20 @@ impl NativeScripts {
 
 #[pymethods]
 impl NativeScripts {
+    #[getter]
+    fn mask_version(&self) -> u8 { self.meta.mask_version }
+
     #[new]
     fn new(metadata: &str) -> PyResult<Self> {
-        Ok(Self {
-            meta: serde_json::from_str(metadata)
-                .map_err(|e| PyValueError::new_err(e.to_string()))?,
-        })
+        let meta: Metadata = serde_json::from_str(metadata)
+            .map_err(|e| PyValueError::new_err(e.to_string()))?;
+        if !matches!(meta.mask_version, 1 | 2) {
+            return Err(PyValueError::new_err("mask_version must be 1 (frozen) or 2"));
+        }
+        if meta.mask_version == 2 && (meta.building_radii.is_empty() || meta.payload_radii.is_empty()) {
+            return Err(PyValueError::new_err("mask v2 requires compiled public building and payload geometry"));
+        }
+        Ok(Self { meta })
     }
     /// All public-legal C56 heuristic placements, including the wait action.
     fn ranked_actions(&self, battle: &BattleState, seat: usize, style: &str) -> PyResult<Vec<(usize, f64)>> {

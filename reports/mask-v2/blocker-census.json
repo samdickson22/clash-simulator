@@ -1,0 +1,79 @@
+{
+  "routes": [
+    {
+      "source": "Balloon",
+      "body": "Balloon",
+      "child": "BalloonBomb",
+      "radius": 0.45,
+      "grandchild": null,
+      "count": null
+    },
+    {
+      "source": "GiantSkeleton",
+      "body": "GiantSkeleton",
+      "child": "GiantSkeletonBomb",
+      "radius": 0.45,
+      "grandchild": null,
+      "count": null
+    },
+    {
+      "source": "SkeletonBalloon",
+      "body": "SkeletonBalloon",
+      "child": "SkeletonContainerNew",
+      "radius": 0.5,
+      "grandchild": "Skeleton",
+      "count": 7
+    },
+    {
+      "source": "BombTower",
+      "body": "BombTower",
+      "child": "BombTowerBomb",
+      "radius": 0.45,
+      "grandchild": null,
+      "count": null
+    },
+    {
+      "source": "SkeletonBarrel",
+      "body": "SkeletonBalloon",
+      "child": "SkeletonContainerNew",
+      "radius": 0.5,
+      "grandchild": "Skeleton",
+      "count": 7
+    },
+    {
+      "source": "Skeleton Barrel",
+      "body": "SkeletonBalloon",
+      "child": "SkeletonContainerNew",
+      "radius": 0.5,
+      "grandchild": "Skeleton",
+      "count": 7
+    }
+  ],
+  "tokens": {
+    "Balloon": 0.45,
+    "GiantSkeleton": 0.45,
+    "SkeletonBalloon": 0.5,
+    "MightyMiner": 0.5,
+    "BombTower": 0.45
+  },
+  "capability_classes": [
+    "TimedExplosive"
+  ],
+  "construction_sites": [
+    "src/clasher/mechanics/shared/death_effects.py:DeathSpawn.on_death",
+    "src/clasher/cards/c56_champions.py:MightyMinerSwitch.on_object_tick"
+  ],
+  "native_equivalent": "Entity.placement_radius: Option<f64>; BattleState.payload_blocked",
+  "visibility_status": "Public effects corroborated individually; full current official-client opposing-seat blocking intervals not verified. See BLOCKERS.md; live admission pending.",
+  "source_sha256": {
+    "src/clasher/entities.py": "917da0be17cdbea1ad434e42080fdb11ac9afabbe47a6aae099974f830cc098a",
+    "src/clasher/mechanics/shared/death_effects.py": "70c3d2f09fe5c3dccdd92e095b9b56cb3d7ae7673aa447592abd9f4508e62602",
+    "src/clasher/cards/c56_champions.py": "c670df5510503c0b8d78d45d53da9cd201bd63943fe2c6c91e7856b332d91181",
+    "src/clasher/battle.py": "1dbabf23c495c7318339f6e524fee7c88960fbe78bf3cd3f93e20b10524944b2",
+    "src/clasher/rl/public_placement_v2.py": "d50c0ddae1df415a93b16c9ac01d64235811c453c15bae9d4b3f0a8dedc83c12",
+    "engine-rs/src/public_mask_v2.rs": "881092700e5ff37974158c1485df7c96c3b97c54d35eda76a73aff55ae9eea8b",
+    "engine-rs/src/lib.rs": "e071d8f53f27a3eb39ab701589596c2f7109aa14d89cb95a0bb5859e543dcb78",
+    "engine-rs/differential.py": "378d46047a68e8e6c95bd6379f96d7e05b3171d122b59df9385482fd5f3c0da2",
+    "imitation/gates-bc/receipts/rejection-02-r9-replay-with-guards.json": "9fff78fb4977a83ff189706331b5abfc859ae7a0ca563c30f92fdf41912383a3"
+  }
+}
