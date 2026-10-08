@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "real_fitting": false,
+  "heldout_scored": false,
+  "checks": {
+    "c56_sampling_identical_all_seeds_epochs": true,
+    "mixed_hash_membership_and_shuffle_exact": true,
+    "both_corpora_total_wait_ipw4_workers0_1": true,
+    "resume_cursor_reconstruction_exact": true,
+    "real_train_dev_batch_and_mmap_release_exact": true,
+    "all_supervised_plays_and_abilities_retained": true
+  },
+  "sampling_sha256": "b8886f098adc22c739f08a02a473e40aea294a9797b5783460c219de06d20788",
+  "loader_sha256": "63a33eb93592de759256c10718a8c103918968a1ff5fb0e9eada49ec8f420115",
+  "validator_sha256": "8f7fe30ef45dac963bfa23d0f4ae2a3bea1ecb6f0756d2b66777536a383235a6",
+  "smoke_manifest_sha256": "90fbe1590a955e1d881a59dd49202fd2f4cf8eabd1c08abe2d4227b5f4e4dacf",
+  "assets_sha256": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737"
+}

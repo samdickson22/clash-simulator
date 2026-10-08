@@ -1,0 +1,11 @@
+{
+  "host": "127x08",
+  "run": "gru-2026100801",
+  "checkpoint": {
+    "path": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000010.pt",
+    "bytes": 40034761,
+    "sha256": "113a2fbba42179e06614a3f8176d75bc61127f4df4a1fc94711c48a38bd5dd3c"
+  },
+  "command": "bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh t5-v1-gru-2026100801-r2-fresh-resume1 bash -c 'cd /mpac/sdicks02/tmp/t5-20261008-r2/source && exec /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant gru --freeze /mpac/sdicks02/tmp/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/dev --assets /mpac/sdicks02/tmp/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/tmp/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 10 --device cuda --resume /mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000010.pt'",
+  "guard": "Not executed. First verify own trainer has exited, inspect latest complete fresh-run checkpoint and frozen r2 hash state. Refresh checkpoint path/hash and label; never duplicate active job."
+}

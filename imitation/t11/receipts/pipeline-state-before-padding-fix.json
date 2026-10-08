@@ -1,0 +1,8 @@
+{
+  "started_at": "2026-10-08T12:03:54.001370+00:00",
+  "stage": "waiting_store",
+  "hosts": {},
+  "training_started": false,
+  "failure": "AssertionError('store finish failed')",
+  "failed_at": "2026-10-08T12:25:54.011780+00:00"
+}

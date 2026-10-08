@@ -1,0 +1,107 @@
+{
+  "host": "127x18",
+  "at": "2026-10-08T12:54:20.282318+00:00",
+  "seed": 2026100822,
+  "label": "t11-v2-main-2026100822-v1",
+  "output": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822",
+  "lease": {
+    "project": "clasher",
+    "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+    "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+    "start_utc": "2026-10-08T05:29:34.584227+00:00",
+    "expected_end_utc": "2026-10-09T05:30Z",
+    "max_workers": 96,
+    "gpu": true,
+    "shared": true,
+    "cap_raised_utc": "2026-10-08T06:50Z",
+    "cap_raised_by": "roader coordinator f552b138 (speedup job finished; roader keeps <=8 light procs)"
+  },
+  "state": null,
+  "exit": null,
+  "copy_state": {
+    "host": "127x18",
+    "label": "t11-v2-store-copy-127x18-v1",
+    "started_utc": "2026-10-08T12:31:21.053896+00:00",
+    "command": [
+      "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+      "-B",
+      "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/operations/copy_store.py"
+    ],
+    "supervisor_pid": 1056060,
+    "pid": 1056062,
+    "checked_utc": "2026-10-08T12:53:35.742432+00:00",
+    "processes": 5,
+    "rss_bytes": 2902003712,
+    "rss_sum_bytes": 2902003712,
+    "pss_bytes": 2887207936,
+    "memory_metric": "owned_tree_pss",
+    "pss_cap_bytes": 64000000000,
+    "stop_reason": null
+  },
+  "copy_exit": null,
+  "copy": null,
+  "complete": null,
+  "borrower_processes": [
+    {
+      "pid": 1056060,
+      "ppid": 1,
+      "start_ticks": 188456287,
+      "nice": 10,
+      "cpu_ticks": 5320,
+      "command": "/usr/bin/python3 /mpac/sdicks02/repos/clasher-lease/lease_watch.py t11-v2-store-copy-127x18-v1 /mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python -B /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/operations/copy_store.py ",
+      "pss_bytes": 7272448
+    },
+    {
+      "pid": 1056062,
+      "ppid": 1056060,
+      "start_ticks": 188456292,
+      "nice": 10,
+      "cpu_ticks": 1272,
+      "command": "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python -B /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/operations/copy_store.py ",
+      "pss_bytes": 2865833984
+    },
+    {
+      "pid": 1056195,
+      "ppid": 1056062,
+      "start_ticks": 188458895,
+      "nice": 10,
+      "cpu_ticks": 332,
+      "command": "rsync -cr --partial --files-from=/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/store-files.txt 127x01:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/v2-store-v1/ /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/ ",
+      "pss_bytes": 1861632
+    },
+    {
+      "pid": 1056196,
+      "ppid": 1056195,
+      "start_ticks": 188458895,
+      "nice": 10,
+      "cpu_ticks": 59288,
+      "command": "ssh 127x01 rsync --server --sender -rcRe.iLsfxC --files-from=- --from0 . /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/v2-store-v1/ ",
+      "pss_bytes": 10447872
+    },
+    {
+      "pid": 1060835,
+      "ppid": 1056195,
+      "start_ticks": 188531992,
+      "nice": 10,
+      "cpu_ticks": 54202,
+      "command": "rsync -cr --partial --files-from=/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/store-files.txt 127x01:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/v2-store-v1/ /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/ ",
+      "pss_bytes": 835584
+    }
+  ],
+  "verified_processes": [],
+  "console_users": 0,
+  "who": "",
+  "gpu": "48577, 105, 0",
+  "borrower_pss_bytes": 2886251520,
+  "process_cap": 96,
+  "checks": {
+    "live_lease": true,
+    "process_cap": true,
+    "pss_cap": true,
+    "nice": true,
+    "gpu_headroom": true
+  },
+  "destination_bytes": 162743410899,
+  "dev_curve": [],
+  "checkpoints": []
+}

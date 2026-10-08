@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "host": "127x16",
+  "finished_at": "2026-10-08T13:07:49.559452+00:00",
+  "files": 259,
+  "bytes": 243896560373,
+  "store_manifest_sha256": "7180964c1d470807a97ad7a990ac8eb145fb25d15f1c95edf165b3f87743d20f",
+  "store_receipt_sha256": "0e14fefa47388dc0f8a436d2c6415224ac30af1cc3aed98a9092485deaf4b524",
+  "manifest_sha256": "a4801df32d4a546ed7df07faf070a138d4075cf4db6c193d38373f9194ff2e44",
+  "prereg_sha256": "115ab2f62c999d96b908855ab6e45bade4d9573308a222659821f65a76e42749",
+  "all_sha256_equal": true,
+  "total_wall_seconds": 2191.0999894989654,
+  "eval_scored": false
+}

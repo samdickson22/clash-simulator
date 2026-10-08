@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "real_fitting": false,
+  "heldout_scored": false,
+  "checks": {
+    "absent_heldout_release_rejected_before_checkpoint": true,
+    "paused_run_cannot_be_selected": true
+  },
+  "score_sha256": "b141e816ce8064963cb15852f6564182b835a00fb9d0b4e496f381083428aa61",
+  "select_sha256": "00641386f3196957bd16c75d57df1188d8c94f3eb8bd67e5d46b4bc228fe0713"
+}

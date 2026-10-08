@@ -1,0 +1,43 @@
+{
+  "synthetic_gpu_replay_all_payload_except_args_bitexact": true,
+  "real_fitting": false,
+  "real_tail_probes": [
+    {
+      "variant": "main",
+      "rows": 5972,
+      "loss": {
+        "loss": 9.598286628723145,
+        "gate": 0.688554584980011,
+        "card": 1.255515456199646,
+        "tile": 5.472813129425049,
+        "intent_card": 2.0981695652008057,
+        "hazard": 6.627442836761475,
+        "grad_norm": 9.073912620544434
+      },
+      "seconds": 1.2467036240268499,
+      "peak_allocated_mib": 30027.623046875,
+      "peak_reserved_mib": 30750.0,
+      "free_mib": 16672.875,
+      "parameter_or_optimizer_update": false
+    },
+    {
+      "variant": "noD1",
+      "rows": 5972,
+      "loss": {
+        "loss": 9.513603210449219,
+        "gate": 0.6530210971832275,
+        "card": 1.2557073831558228,
+        "tile": 5.472330570220947,
+        "intent_card": 2.082212448120117,
+        "hazard": 6.447961330413818,
+        "grad_norm": 8.269268989562988
+      },
+      "seconds": 0.7031049490906298,
+      "peak_allocated_mib": 30110.2802734375,
+      "peak_reserved_mib": 30944.0,
+      "free_mib": 16478.875,
+      "parameter_or_optimizer_update": false
+    }
+  ],
+  "passed": true
+}

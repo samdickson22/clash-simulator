@@ -1,0 +1,48 @@
+{
+  "at": "2026-10-08T13:11:31Z",
+  "status": "BOTH_CONTINUATIONS_ACTIVE",
+  "operational_freeze_sha256": "c710ea1b34d73931c2bdc52f18834898ecd2473e9766839a0c482414ee9638a7",
+  "scientific_source_or_recipe_changes": false,
+  "lost_updates": 0,
+  "runs": [
+    {
+      "run": "main-2026100801",
+      "host": "127x04",
+      "checkpoint_step": 6018,
+      "first_new_step": 6019,
+      "trainer_pid": 2498867,
+      "stop_at": "2026-10-08T13:02:25.453962+00:00",
+      "operational_restart_at": "2026-10-08T13:07:20.023780+00:00",
+      "restart_gap_seconds": 294.569818,
+      "recent25_inclusive_rows_s": 7276.854976963753,
+      "free_gpu_mib": 19688
+    },
+    {
+      "run": "noD1-2026100801",
+      "host": "127x14",
+      "checkpoint_step": 5638,
+      "first_new_step": 5639,
+      "trainer_pid": 3481715,
+      "exit_at": "2026-10-08T12:52:05.599950+00:00",
+      "operational_restart_at": "2026-10-08T13:07:22.937859+00:00",
+      "restart_gap_seconds": 917.337909,
+      "latest_step": 5777,
+      "recent25_inclusive_rows_s": 7693.079080340141,
+      "resumed_dev_nll": 0.36447309169620945,
+      "free_gpu_mib": 16930
+    }
+  ],
+  "technical_validation_compute": {
+    "host": "127x04",
+    "wall_seconds": 24.5,
+    "cpu_user_seconds": 14.92,
+    "cpu_system_seconds": 9.07,
+    "peak_rss_kib": 12547092,
+    "swaps": 0,
+    "real_parameter_updates": false,
+    "gpu_allocation_peak_mib": 30110.2802734375,
+    "exit_code": 0
+  },
+  "lease_stop_at": "2026-10-09T04:20:00Z",
+  "lease_exit_deadline": "2026-10-09T05:00:00Z"
+}

@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-08T11:07:01.952467+00:00",
+  "wrapper_sha256": "00cdaa8ad3be41a0a85481d318ad03920b87e2564ab541e8f9a9d5bf801d246f",
+  "installed_hosts": [
+    "127x11",
+    "127x13",
+    "127x14",
+    "127x16",
+    "127x18"
+  ],
+  "previous_sha256": "fb527d59c341bfc728a7f431c74d341481b85959296eb0b5a66331f447ed1316",
+  "backup_name": "lease_watch.py.before-pss-20261008",
+  "validation": {
+    "host": "127x04",
+    "passed": true,
+    "checks": [
+      "PSS vs shared RSS",
+      "exact Pss field",
+      "stale/disappeared PID",
+      "fail closed missing PSS",
+      "cap scope",
+      "live smaps_rollup",
+      "supervisor included"
+    ]
+  },
+  "unrelated_existing_supervisor_not_restarted": {
+    "host": "127x18",
+    "pid": 1036180,
+    "label": "v4-cache-gather-20261008-18r10",
+    "note": "Already-loaded old code remains until its owner restarts it; no T5 interference."
+  },
+  "fresh_t5_supervisors_use_pss": true
+}

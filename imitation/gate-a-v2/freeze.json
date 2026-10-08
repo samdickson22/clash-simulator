@@ -1,0 +1,7 @@
+{
+  "frozen_at": "2026-10-08T12:31:15.471872+00:00",
+  "prereg_sha256": "115ab2f62c999d96b908855ab6e45bade4d9573308a222659821f65a76e42749",
+  "manifest_sha256": "a4801df32d4a546ed7df07faf070a138d4075cf4db6c193d38373f9194ff2e44",
+  "training_started": false,
+  "heldout_scored": false
+}

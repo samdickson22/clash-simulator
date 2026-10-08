@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "at": "2026-10-08T12:45:18.711896+00:00",
+  "synthetic_only": true,
+  "checks": [
+    "failed primary retained despite passing secondary",
+    "N/A remains N/A",
+    "paired values and CIs unchanged",
+    "descriptive OOD gap",
+    "changed v1 hash rejected"
+  ],
+  "renderer_sha256": "521a4a159206cfe9156e810ac553bb250db6d326879c4e6ede960caa1fe9176a",
+  "fixture": "/mpac/sdicks02/jobs/clasher/t11-report-synthetic-_5pyfwt6"
+}

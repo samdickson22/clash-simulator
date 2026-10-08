@@ -1,0 +1,67 @@
+[
+  {
+    "run": "main-2026100801",
+    "host": "127x04",
+    "trainer_pid": 2466903,
+    "launcher_pid": 2466890,
+    "label": "t5-v1-main-2026100801-r2",
+    "output": "/mpac/sdicks02/tmp/t5-20261008-v1/runs/main-2026100801",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/source",
+    "jobs": "/mpac/sdicks02/jobs/clasher",
+    "checkpoint_as_of_1055Z": "/mpac/sdicks02/tmp/t5-20261008-v1/runs/main-2026100801/epoch-000-step-00001880.pt",
+    "resume_command_as_of_1055Z": "bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh t5-v1-main-2026100801-r2-resume1 bash -c 'cd /mpac/sdicks02/tmp/t5-20261008-r2/source && exec /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/tmp/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/dev --assets /mpac/sdicks02/tmp/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/tmp/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/tmp/t5-20261008-v1/runs/main-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --resume /mpac/sdicks02/tmp/t5-20261008-v1/runs/main-2026100801/epoch-000-step-00001880.pt'",
+    "guard": "DO NOT EXECUTE while existing run is live. Verify PID identity, exit receipt, newest complete r2 checkpoint and checkpoint/hash state first; refresh checkpoint and use fresh unused label. Lease host command invalid after cutoff; migrate same state to home directly over LAN."
+  },
+  {
+    "run": "main-2026100802",
+    "host": "127x11",
+    "trainer_pid": 944262,
+    "launcher_pid": 944260,
+    "label": "t5-v1-main-2026100802-r2",
+    "output": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100802",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source",
+    "jobs": "/mpac/sdicks02/repos/clasher-lease/jobs",
+    "checkpoint_as_of_1055Z": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/main-2026100802.pt",
+    "resume_command_as_of_1055Z": "bash /mpac/sdicks02/repos/clasher-lease/run.sh t5-v1-main-2026100802-r2-resume1 bash -c 'cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100802 --seed 2026100802 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/main-2026100802.pt'",
+    "guard": "DO NOT EXECUTE while existing run is live. Verify PID identity, exit receipt, newest complete r2 checkpoint and checkpoint/hash state first; refresh checkpoint and use fresh unused label. Lease host command invalid after cutoff; migrate same state to home directly over LAN."
+  },
+  {
+    "run": "main-2026100803",
+    "host": "127x13",
+    "trainer_pid": 3488686,
+    "launcher_pid": 3488684,
+    "label": "t5-v1-main-2026100803-r2",
+    "output": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100803",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source",
+    "jobs": "/mpac/sdicks02/repos/clasher-lease/jobs",
+    "checkpoint_as_of_1055Z": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/main-2026100803.pt",
+    "resume_command_as_of_1055Z": "bash /mpac/sdicks02/repos/clasher-lease/run.sh t5-v1-main-2026100803-r2-resume1 bash -c 'cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100803 --seed 2026100803 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/main-2026100803.pt'",
+    "guard": "DO NOT EXECUTE while existing run is live. Verify PID identity, exit receipt, newest complete r2 checkpoint and checkpoint/hash state first; refresh checkpoint and use fresh unused label. Lease host command invalid after cutoff; migrate same state to home directly over LAN."
+  },
+  {
+    "run": "noD1-2026100801",
+    "host": "127x14",
+    "trainer_pid": 3452627,
+    "launcher_pid": 3452625,
+    "label": "t5-v1-noD1-2026100801-r2",
+    "output": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/noD1-2026100801",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source",
+    "jobs": "/mpac/sdicks02/repos/clasher-lease/jobs",
+    "checkpoint_as_of_1055Z": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/noD1-2026100801.pt",
+    "resume_command_as_of_1055Z": "bash /mpac/sdicks02/repos/clasher-lease/run.sh t5-v1-noD1-2026100801-r2-resume1 bash -c 'cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant noD1 --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/noD1-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/noD1-2026100801.pt'",
+    "guard": "DO NOT EXECUTE while existing run is live. Verify PID identity, exit receipt, newest complete r2 checkpoint and checkpoint/hash state first; refresh checkpoint and use fresh unused label. Lease host command invalid after cutoff; migrate same state to home directly over LAN."
+  },
+  {
+    "run": "gru-2026100801",
+    "host": "127x08",
+    "trainer_pid": 3544750,
+    "launcher_pid": 3544737,
+    "label": "t5-v1-gru-2026100801-r2",
+    "output": "/mpac/sdicks02/tmp/t5-20261008-r2/runs/gru-2026100801",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/source",
+    "jobs": "/mpac/sdicks02/jobs/clasher",
+    "checkpoint_as_of_1055Z": "/mpac/sdicks02/tmp/t5-20261008-r2/runs/gru-2026100801/step-00000010.pt",
+    "resume_command_as_of_1055Z": "bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh t5-v1-gru-2026100801-r2-resume1 bash -c 'cd /mpac/sdicks02/tmp/t5-20261008-r2/source && exec /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant gru --freeze /mpac/sdicks02/tmp/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/dev --assets /mpac/sdicks02/tmp/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/tmp/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/tmp/t5-20261008-r2/runs/gru-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 10 --device cuda --resume /mpac/sdicks02/tmp/t5-20261008-r2/runs/gru-2026100801/step-00000010.pt'",
+    "guard": "DO NOT EXECUTE while existing run is live. Verify PID identity, exit receipt, newest complete r2 checkpoint and checkpoint/hash state first; refresh checkpoint and use fresh unused label. Lease host command invalid after cutoff; migrate same state to home directly over LAN."
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "schema": "clasher.t5.allocator-headroom-operational-freeze.v1",
+  "at": "2026-10-08T13:06:47.072854+00:00",
+  "files": {
+    "gpu_headroom.py": "7c93701299d6fc10caa183fe57064475bad5fc9e40a17b08175a9df92ab00bd0",
+    "validate_gpu_headroom.py": "0d2300aafea07f39242648deb423fab9004aaa6ca3addc42b9576e03cda8f0c6",
+    "gpu-headroom-20261008.md": "681b57723f6682e7d719585406662014154c28fc05d3fba8b6701666d89b217b",
+    "validation-PASS.json": "5321d5fdc6ae4ecb2b46d3fa36d3fcafeb834b98779c2ff10b2f9cfca85428c0"
+  },
+  "allocator_fraction": 0.75,
+  "hosts": {
+    "127x04": {
+      "source": "/mpac/sdicks02/tmp/t5-20261008-r2/source",
+      "output": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801",
+      "variant": "main",
+      "run": "main-2026100801"
+    },
+    "127x14": {
+      "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source",
+      "output": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801",
+      "variant": "noD1",
+      "run": "noD1-2026100801"
+    }
+  },
+  "parent_manifest_sha256": "2854ce1f96fdd2fcc04dd0e6ef15dce3435758ec40369a80bba29b1a1e29db13"
+}

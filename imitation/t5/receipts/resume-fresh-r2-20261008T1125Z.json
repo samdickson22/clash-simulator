@@ -1,0 +1,53 @@
+[
+  {
+    "run": "main-2026100801",
+    "host": "127x04",
+    "checkpoint": {
+      "path": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00001000.pt",
+      "bytes": 36471954,
+      "sha256": "858aab97ef369ad53d453d57d17763d1c96fb974c8a6a5e11cad98da67a8b79d"
+    },
+    "command": "bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh t5-v1-main-2026100801-r2-fresh-resume1 bash -c 'cd /mpac/sdicks02/tmp/t5-20261008-r2/source && exec /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/tmp/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/dev --assets /mpac/sdicks02/tmp/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/tmp/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --resume /mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00001000.pt'",
+    "guard": "NOT executed: verify own trainer exit and latest complete fresh checkpoint/manifest state before resume; update checkpoint and use unused label. Never use superseded attempt checkpoints. Host11 has not saved a fresh checkpoint yet."
+  },
+  {
+    "run": "main-2026100802",
+    "host": "127x11",
+    "checkpoint": null,
+    "command": null,
+    "guard": "NOT executed: verify own trainer exit and latest complete fresh checkpoint/manifest state before resume; update checkpoint and use unused label. Never use superseded attempt checkpoints. Host11 has not saved a fresh checkpoint yet."
+  },
+  {
+    "run": "main-2026100803",
+    "host": "127x13",
+    "checkpoint": {
+      "path": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00001000.pt",
+      "bytes": 36471890,
+      "sha256": "f6482de6d208c5b042043113ba56142a97c38cf113b7a263cce078198e296fb7"
+    },
+    "command": "bash /mpac/sdicks02/repos/clasher-lease/run.sh t5-v1-main-2026100803-r2-fresh-resume1 bash -c 'cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803 --seed 2026100803 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00001000.pt'",
+    "guard": "NOT executed: verify own trainer exit and latest complete fresh checkpoint/manifest state before resume; update checkpoint and use unused label. Never use superseded attempt checkpoints. Host11 has not saved a fresh checkpoint yet."
+  },
+  {
+    "run": "noD1-2026100801",
+    "host": "127x14",
+    "checkpoint": {
+      "path": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00001000.pt",
+      "bytes": 36471954,
+      "sha256": "f227eb0a77ccca012c42cd485ef2bcc0f99f5913c19cc0f7f4d7e5db0ed3ce69"
+    },
+    "command": "bash /mpac/sdicks02/repos/clasher-lease/run.sh t5-v1-noD1-2026100801-r2-fresh-resume1 bash -c 'cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant noD1 --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00001000.pt'",
+    "guard": "NOT executed: verify own trainer exit and latest complete fresh checkpoint/manifest state before resume; update checkpoint and use unused label. Never use superseded attempt checkpoints. Host11 has not saved a fresh checkpoint yet."
+  },
+  {
+    "run": "gru-2026100801",
+    "host": "127x08",
+    "checkpoint": {
+      "path": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000030.pt",
+      "bytes": 40034761,
+      "sha256": "6c6b0ec3317dd7ee2ed9d82c26ba3df243351da36f47ee2ca8aacae3893525fe"
+    },
+    "command": "bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh t5-v1-gru-2026100801-r2-fresh-resume1 bash -c 'cd /mpac/sdicks02/tmp/t5-20261008-r2/source && exec /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant gru --freeze /mpac/sdicks02/tmp/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/dev --assets /mpac/sdicks02/tmp/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/tmp/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 10 --device cuda --resume /mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000030.pt'",
+    "guard": "NOT executed: verify own trainer exit and latest complete fresh checkpoint/manifest state before resume; update checkpoint and use unused label. Never use superseded attempt checkpoints. Host11 has not saved a fresh checkpoint yet."
+  }
+]

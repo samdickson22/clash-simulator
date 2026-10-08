@@ -1,7 +1,15 @@
 {
-  "at": "2026-10-08T09:58:21.528419+00:00",
-  "status": "START_GATES_PASS_IMPLEMENTING",
-  "T3_sha256": "6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c",
-  "throughput_receipt_sha256": "5c7e83bacc92096a30520ccdaf002321b753542a7afc489e57183df865fc7229",
-  "training_launched": false
+  "at": "2026-10-08T12:45:04.076932+00:00",
+  "status": "FIVE_FRESH_R2_ENTRANTS_ACTIVE_WITH_DOCUMENTED_TECHNICAL_CONTINUATIONS",
+  "all_start_gates": "PASS",
+  "launch_receipt": "launches-r2-fresh.json",
+  "manifest_sha256": "2854ce1f96fdd2fcc04dd0e6ef15dce3435758ec40369a80bba29b1a1e29db13",
+  "heldout_inference_started": false,
+  "next_check": "2026-10-08T12:54:34Z",
+  "latest_monitor": "status-20261008T1334Z.json",
+  "duplicate_trigger_checked_at": "2026-10-08T11:07:35.531795+00:00",
+  "duplicate_trigger_action": "Historical10:55 trigger superseded by coordinator fresh11:04 starts and PSS decision. Current healthy jobs retained; no duplicate work.",
+  "checked_at": "2026-10-08T13:34:58.299876+00:00",
+  "active_runs": "active-runs-20261008T1308Z.json",
+  "next_poll": "2026-10-08T13:14:39.997Z"
 }

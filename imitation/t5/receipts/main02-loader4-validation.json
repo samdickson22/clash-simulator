@@ -1,0 +1,80 @@
+{
+  "synthetic_checkpoint_replay_bitexact": [
+    "model",
+    "ema",
+    "optimizer",
+    "scheduler",
+    "config",
+    "state",
+    "hashes",
+    "provenance",
+    "torch_rng",
+    "python_rng",
+    "numpy_rng",
+    "cuda_rng"
+  ],
+  "real_parameter_updates": false,
+  "loader_modes": [
+    {
+      "mode": "bounded1",
+      "rows": 65536,
+      "batch_hashes": [
+        "aecf7108226c52b916f55779b20d1772f6a67bffa70e2ae94f061ef5879a273c",
+        "4b77982990be31a0c0c4061135671e7adc9e4da3acef20a2f8b084a49778c1d3",
+        "be34890b8b3e09c574253f18cf1dd45de483479ce79279eda564fe62ee59922b",
+        "beb5d2614fed3646da7ed264883f7d2c27fca549ed35ecffbf47958d48191884",
+        "9d0d2b0027acd53c9346b643e0934d652063d7d535350fbdb4a17e62f67db6e8",
+        "f75bb0a3dbfa06fba8039488ab0083aa431a21a071eca9548d287b084bf2a0eb",
+        "045204938e0693f22a9535207f413a3154272f9bae0971f5a195a5b278c50d0d",
+        "a5cd0d52653013591859bba5907011936465a923bd27cb7849946ca12ce4e531"
+      ],
+      "seconds_including_hashing_and_worker_startup": 60.762495931005105,
+      "rows_per_second": 1078.56003931134,
+      "child_system_seconds": 58.558808,
+      "child_user_seconds": 5.954726999999998,
+      "minor_faults": 1492267,
+      "major_faults": 267114
+    },
+    {
+      "mode": "original1",
+      "rows": 65536,
+      "batch_hashes": [
+        "aecf7108226c52b916f55779b20d1772f6a67bffa70e2ae94f061ef5879a273c",
+        "4b77982990be31a0c0c4061135671e7adc9e4da3acef20a2f8b084a49778c1d3",
+        "be34890b8b3e09c574253f18cf1dd45de483479ce79279eda564fe62ee59922b",
+        "beb5d2614fed3646da7ed264883f7d2c27fca549ed35ecffbf47958d48191884",
+        "9d0d2b0027acd53c9346b643e0934d652063d7d535350fbdb4a17e62f67db6e8",
+        "f75bb0a3dbfa06fba8039488ab0083aa431a21a071eca9548d287b084bf2a0eb",
+        "045204938e0693f22a9535207f413a3154272f9bae0971f5a195a5b278c50d0d",
+        "a5cd0d52653013591859bba5907011936465a923bd27cb7849946ca12ce4e531"
+      ],
+      "seconds_including_hashing_and_worker_startup": 26.055339423008263,
+      "rows_per_second": 2515.261802428419,
+      "child_system_seconds": 0.0,
+      "child_user_seconds": 0.0,
+      "minor_faults": 0,
+      "major_faults": 0
+    },
+    {
+      "mode": "original4",
+      "rows": 65536,
+      "batch_hashes": [
+        "aecf7108226c52b916f55779b20d1772f6a67bffa70e2ae94f061ef5879a273c",
+        "4b77982990be31a0c0c4061135671e7adc9e4da3acef20a2f8b084a49778c1d3",
+        "be34890b8b3e09c574253f18cf1dd45de483479ce79279eda564fe62ee59922b",
+        "beb5d2614fed3646da7ed264883f7d2c27fca549ed35ecffbf47958d48191884",
+        "9d0d2b0027acd53c9346b643e0934d652063d7d535350fbdb4a17e62f67db6e8",
+        "f75bb0a3dbfa06fba8039488ab0083aa431a21a071eca9548d287b084bf2a0eb",
+        "045204938e0693f22a9535207f413a3154272f9bae0971f5a195a5b278c50d0d",
+        "a5cd0d52653013591859bba5907011936465a923bd27cb7849946ca12ce4e531"
+      ],
+      "seconds_including_hashing_and_worker_startup": 19.614389119902626,
+      "rows_per_second": 3341.2205498411845,
+      "child_system_seconds": 43.41544300000001,
+      "child_user_seconds": 5.553100999999998,
+      "minor_faults": 1271494,
+      "major_faults": 267112
+    }
+  ],
+  "passed": true
+}

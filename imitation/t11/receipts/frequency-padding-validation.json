@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "heldout_scored": false,
+  "real_fitting": false,
+  "rows": 130,
+  "affected_dev_rows": [
+    8762043,
+    11393318
+  ],
+  "all_four_statistics_byte_equal_to_t3": true,
+  "ordinary_rows_equal_unchanged_t5": true,
+  "source_bytes_unchanged": true,
+  "nonpadding_duplicates_rejected": true,
+  "adapter_sha256": "adf292c48994a489e947ddf2666f476dc6dffddeda1fc16d8a86a03368e55f82",
+  "validator_sha256": "d73db42b1b2279b64c76e6d1bb07e127a318f4ff932c13a57418a8a4ae9f9b5e",
+  "frequency_counts_sha256": "fef76fcb1dd5eac5cd1ac51c72244afe06eaa22daddd53eba1c6a9520640d752"
+}

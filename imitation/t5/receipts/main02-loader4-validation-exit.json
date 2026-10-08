@@ -1,0 +1,20 @@
+{
+  "host": "127x11",
+  "label": "t5-main02-loader4-validation-20261008-b",
+  "started_utc": "2026-10-08T12:52:35.241194+00:00",
+  "command": [
+    "bash",
+    "-c",
+    "cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && export PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B /mpac/sdicks02/repos/clasher-lease/t5-main02-loader4-20261008/validate_main02_loader4.py --source /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source --operations /mpac/sdicks02/repos/clasher-lease/t5-main02-loader4-20261008 --output /mpac/sdicks02/repos/clasher-lease/t5-main02-loader4-20261008/validation --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz"
+  ],
+  "supervisor_pid": 969336,
+  "pid": 969338,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T12:55:59.401291+00:00",
+  "stop_reason": null,
+  "peak_processes": 11,
+  "peak_rss_bytes": 63963897856,
+  "peak_pss_bytes": 23561765888,
+  "memory_metric": "owned_tree_pss"
+}

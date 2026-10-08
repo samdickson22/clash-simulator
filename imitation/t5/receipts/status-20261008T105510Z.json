@@ -1,0 +1,243 @@
+[
+  {
+    "host": "127x04",
+    "run": "main-2026100801",
+    "at": "2026-10-08T10:55:10.210594+00:00",
+    "last": {
+      "event": "step",
+      "epoch": 1,
+      "cursor": 24576,
+      "step": 1883,
+      "best_dev": 0.43433783253200153,
+      "bad_epochs": 0,
+      "rows": 15424946,
+      "loss": 5.646670341491699,
+      "gate": 0.16659477353096008,
+      "card": 1.1108770370483398,
+      "tile": 3.3972837924957275,
+      "intent_card": 1.9703084230422974,
+      "hazard": 1.9173519611358643,
+      "grad_norm": 4.03173828125,
+      "lr": 0.0002826,
+      "rows_per_second_step": 11926.960921663609,
+      "rows_per_second_including_loader": 6014.626043698073,
+      "gpu_peak_allocated_mib": 27066.39599609375,
+      "gpu_peak_reserved_mib": 29080
+    },
+    "dev": [
+      {
+        "event": "dev",
+        "step": 1880,
+        "ema_joint_nll": 0.43433783253200153
+      }
+    ],
+    "processes": [
+      "2466890       1  3172 bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh --worker t5-v1-main-2026100801-r2 bash -c cd /mpac/sdicks02/tmp/t5-20261008-r2/source && exec /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/tmp/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/dev --assets /mpac/sdicks02/tmp/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/tmp/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/tmp/t5-20261008-v1/runs/main-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --resume /mpac/sdicks02/tmp/t5-20261008-r2/checkpoint-migrations/main-2026100801.pt",
+      "2466902 2466890   648 /usr/bin/time -v bash -c cd /mpac/sdicks02/tmp/t5-20261008-r2/source && exec /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/tmp/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/dev --assets /mpac/sdicks02/tmp/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/tmp/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/tmp/t5-20261008-v1/runs/main-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --resume /mpac/sdicks02/tmp/t5-20261008-r2/checkpoint-migrations/main-2026100801.pt"
+    ],
+    "job_files": [
+      "/mpac/sdicks02/jobs/clasher/t5-v1-main-2026100801-r2.lock",
+      "/mpac/sdicks02/jobs/clasher/t5-v1-main-2026100801-r2.pid",
+      "/mpac/sdicks02/jobs/clasher/t5-v1-main-2026100801-r2.log"
+    ],
+    "checkpoints": [
+      {
+        "path": "/mpac/sdicks02/tmp/t5-20261008-v1/runs/main-2026100801/step-00001880.pt",
+        "size": 36473234,
+        "sha256": null
+      },
+      {
+        "path": "/mpac/sdicks02/tmp/t5-20261008-v1/runs/main-2026100801/best-dev-step-00001880.pt",
+        "size": 36477979,
+        "sha256": null
+      },
+      {
+        "path": "/mpac/sdicks02/tmp/t5-20261008-v1/runs/main-2026100801/epoch-000-step-00001880.pt",
+        "size": 36478492,
+        "sha256": null
+      }
+    ],
+    "gpu": "18342, 0\n"
+  },
+  {
+    "host": "127x11",
+    "run": "main-2026100802",
+    "at": "2026-10-08T10:55:09.887547+00:00",
+    "last": {
+      "event": "step",
+      "epoch": 0,
+      "cursor": 14475264,
+      "step": 1767,
+      "best_dev": null,
+      "bad_epochs": 0,
+      "rows": 14475264,
+      "loss": 5.651689052581787,
+      "gate": 0.15570710599422455,
+      "card": 1.0835790634155273,
+      "tile": 3.427934408187866,
+      "intent_card": 1.9619450569152832,
+      "hazard": 1.9759283065795898,
+      "grad_norm": 3.07965350151062,
+      "lr": 0.0002652,
+      "rows_per_second_step": 11511.26824683603,
+      "rows_per_second_including_loader": 4773.383212586624,
+      "gpu_peak_allocated_mib": 27067.2548828125,
+      "gpu_peak_reserved_mib": 30088
+    },
+    "dev": [],
+    "processes": [
+      " 944260       1 12256 /usr/bin/python3 /mpac/sdicks02/repos/clasher-lease/lease_watch.py t5-v1-main-2026100802-r2 bash -c cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100802 --seed 2026100802 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/main-2026100802.pt",
+      " 944262  944260 6438592 /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100802 --seed 2026100802 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/main-2026100802.pt"
+    ],
+    "job_files": [
+      "/mpac/sdicks02/repos/clasher-lease/jobs/t5-v1-main-2026100802-r2.launch.pid",
+      "/mpac/sdicks02/repos/clasher-lease/jobs/t5-v1-main-2026100802-r2.log",
+      "/mpac/sdicks02/repos/clasher-lease/jobs/t5-v1-main-2026100802-r2.state.json"
+    ],
+    "checkpoints": [
+      {
+        "path": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100802/step-00001000.pt",
+        "size": 36471954,
+        "sha256": null
+      },
+      {
+        "path": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100802/step-00001452.pt",
+        "size": 36471954,
+        "sha256": null
+      }
+    ],
+    "gpu": "17334, 54\n"
+  },
+  {
+    "host": "127x13",
+    "run": "main-2026100803",
+    "at": "2026-10-08T10:55:09.770440+00:00",
+    "last": {
+      "event": "step",
+      "epoch": 0,
+      "cursor": 4489216,
+      "step": 548,
+      "best_dev": null,
+      "bad_epochs": 0,
+      "rows": 4489216,
+      "loss": 6.921374797821045,
+      "gate": 0.15938496589660645,
+      "card": 1.3038233518600464,
+      "tile": 4.409032344818115,
+      "intent_card": 2.0753557682037354,
+      "hazard": 2.1211817264556885,
+      "grad_norm": 2.1687493324279785,
+      "lr": 0.00008235,
+      "rows_per_second_step": 12009.978422741313,
+      "rows_per_second_including_loader": 7349.596895881355,
+      "gpu_peak_allocated_mib": 27066.48193359375,
+      "gpu_peak_reserved_mib": 30088
+    },
+    "dev": [],
+    "processes": [
+      "3488684       1 12224 /usr/bin/python3 /mpac/sdicks02/repos/clasher-lease/lease_watch.py t5-v1-main-2026100803-r2 bash -c cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100803 --seed 2026100803 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/main-2026100803.pt",
+      "3488686 3488684 6465256 /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100803 --seed 2026100803 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/main-2026100803.pt"
+    ],
+    "job_files": [
+      "/mpac/sdicks02/repos/clasher-lease/jobs/t5-v1-main-2026100803-r2.log",
+      "/mpac/sdicks02/repos/clasher-lease/jobs/t5-v1-main-2026100803-r2.state.json",
+      "/mpac/sdicks02/repos/clasher-lease/jobs/t5-v1-main-2026100803-r2.launch.pid"
+    ],
+    "checkpoints": [
+      {
+        "path": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100803/step-00000061.pt",
+        "size": 36471890,
+        "sha256": null
+      }
+    ],
+    "gpu": "17334, 0\n"
+  },
+  {
+    "host": "127x14",
+    "run": "noD1-2026100801",
+    "at": "2026-10-08T10:55:09.764795+00:00",
+    "last": {
+      "event": "step",
+      "epoch": 0,
+      "cursor": 4521984,
+      "step": 552,
+      "best_dev": null,
+      "bad_epochs": 0,
+      "rows": 4521984,
+      "loss": 6.650312423706055,
+      "gate": 0.14973002672195435,
+      "card": 1.1900568008422852,
+      "tile": 4.2636284828186035,
+      "intent_card": 2.084381341934204,
+      "hazard": 2.1032063961029053,
+      "grad_norm": 4.9025044441223145,
+      "lr": 0.00008295,
+      "rows_per_second_step": 11988.977427017604,
+      "rows_per_second_including_loader": 7388.141928236452,
+      "gpu_peak_allocated_mib": 27134.83447265625,
+      "gpu_peak_reserved_mib": 29210
+    },
+    "dev": [],
+    "processes": [
+      "3452625       1 12284 /usr/bin/python3 /mpac/sdicks02/repos/clasher-lease/lease_watch.py t5-v1-noD1-2026100801-r2 bash -c cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant noD1 --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/noD1-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/noD1-2026100801.pt",
+      "3452627 3452625 6462412 /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant noD1 --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/noD1-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/noD1-2026100801.pt"
+    ],
+    "job_files": [
+      "/mpac/sdicks02/repos/clasher-lease/jobs/t5-v1-noD1-2026100801-r2.launch.pid",
+      "/mpac/sdicks02/repos/clasher-lease/jobs/t5-v1-noD1-2026100801-r2.state.json",
+      "/mpac/sdicks02/repos/clasher-lease/jobs/t5-v1-noD1-2026100801-r2.log"
+    ],
+    "checkpoints": [
+      {
+        "path": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/noD1-2026100801/step-00000063.pt",
+        "size": 36471890,
+        "sha256": null
+      }
+    ],
+    "gpu": "18212, 0\n"
+  },
+  {
+    "host": "127x08",
+    "run": "gru-2026100801",
+    "at": "2026-10-08T10:55:10.193953+00:00",
+    "last": {
+      "event": "step",
+      "epoch": 0,
+      "cursor": 131072,
+      "step": 16,
+      "best_dev": null,
+      "bad_epochs": 0,
+      "rows": 131072,
+      "loss": 9.753986358642578,
+      "gate": 0.7110621333122253,
+      "card": 1.3105177879333496,
+      "tile": 5.4627532958984375,
+      "intent_card": 2.0826406478881836,
+      "hazard": 6.995972633361816,
+      "grad_norm": 3.970400094985962,
+      "lr": 0.00000255,
+      "rows_per_second_step": 236.60622151975224,
+      "rows_per_second_including_loader": 241.28424250465244,
+      "gpu_peak_allocated_mib": 27585.26904296875,
+      "gpu_peak_reserved_mib": 38520
+    },
+    "dev": [],
+    "processes": [
+      "3544737       1  3336 bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh --worker t5-v1-gru-2026100801-r2 bash -c cd /mpac/sdicks02/tmp/t5-20261008-r2/source && exec /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant gru --freeze /mpac/sdicks02/tmp/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/dev --assets /mpac/sdicks02/tmp/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/tmp/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/tmp/t5-20261008-r2/runs/gru-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 10 --device cuda",
+      "3544749 3544737   708 /usr/bin/time -v bash -c cd /mpac/sdicks02/tmp/t5-20261008-r2/source && exec /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant gru --freeze /mpac/sdicks02/tmp/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/dev --assets /mpac/sdicks02/tmp/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/tmp/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/tmp/t5-20261008-r2/runs/gru-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 10 --device cuda"
+    ],
+    "job_files": [
+      "/mpac/sdicks02/jobs/clasher/t5-v1-gru-2026100801-r2.lock",
+      "/mpac/sdicks02/jobs/clasher/t5-v1-gru-2026100801-r2.log",
+      "/mpac/sdicks02/jobs/clasher/t5-v1-gru-2026100801-r2.pid"
+    ],
+    "checkpoints": [
+      {
+        "path": "/mpac/sdicks02/tmp/t5-20261008-r2/runs/gru-2026100801/step-00000010.pt",
+        "size": 40034697,
+        "sha256": "6302b86e2e212b96598eae87c1b78ecce401c6d56c3eaaa962bb311ea0225117"
+      }
+    ],
+    "gpu": "8707, 20\n"
+  }
+]

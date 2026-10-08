@@ -1,0 +1,129 @@
+[
+  {
+    "host": "127x04",
+    "at": "2026-10-08T11:03:24.278234+00:00",
+    "old_pid_absent": 2466903,
+    "complete": {
+      "stopped_by_signal": true,
+      "epoch": 1,
+      "cursor": 2539520,
+      "step": 2190,
+      "best_dev": 0.43433783253200153,
+      "bad_epochs": 0,
+      "rows": 17939890
+    },
+    "exit_files": {
+      "/mpac/sdicks02/jobs/clasher/t5-v1-main-2026100801-r2.exit": "0\n"
+    },
+    "who": "",
+    "gpu": "48666\n",
+    "lease": null
+  },
+  {
+    "host": "127x11",
+    "at": "2026-10-08T11:03:24.275411+00:00",
+    "old_pid_absent": 944262,
+    "complete": {
+      "stopped_by_signal": true,
+      "epoch": 0,
+      "cursor": 15048704,
+      "step": 1837,
+      "best_dev": null,
+      "bad_epochs": 0,
+      "rows": 15048704
+    },
+    "exit_files": {
+      "/mpac/sdicks02/repos/clasher-lease/jobs/t5-v1-main-2026100802-r2.exit.json": "{\n  \"host\": \"127x11\",\n  \"label\": \"t5-v1-main-2026100802-r2\",\n  \"started_utc\": \"2026-10-08T10:45:53.496042+00:00\",\n  \"command\": [\n    \"bash\",\n    \"-c\",\n    \"cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100802 --seed 2026100802 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/main-2026100802.pt\"\n  ],\n  \"supervisor_pid\": 944260,\n  \"pid\": 944262,\n  \"exit_code\": 0,\n  \"status\": \"pass\",\n  \"finished_utc\": \"2026-10-08T11:01:33.587900+00:00\",\n  \"stop_reason\": null,\n  \"peak_processes\": 3,\n  \"peak_rss_bytes\": 19302834176\n}\n"
+    },
+    "who": "",
+    "gpu": "48666\n",
+    "lease": {
+      "project": "clasher",
+      "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+      "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+      "start_utc": "2026-10-08T05:29:33.958249+00:00",
+      "expected_end_utc": "2026-10-09T05:30Z",
+      "max_workers": 96,
+      "gpu": true,
+      "shared": false
+    }
+  },
+  {
+    "host": "127x13",
+    "at": "2026-10-08T11:03:24.273311+00:00",
+    "old_pid_absent": 3488686,
+    "complete": {
+      "stopped_by_signal": true,
+      "epoch": 0,
+      "cursor": 7307264,
+      "step": 892,
+      "best_dev": null,
+      "bad_epochs": 0,
+      "rows": 7307264
+    },
+    "exit_files": {
+      "/mpac/sdicks02/repos/clasher-lease/jobs/t5-v1-main-2026100803-r2.exit.json": "{\n  \"host\": \"127x13\",\n  \"label\": \"t5-v1-main-2026100803-r2\",\n  \"started_utc\": \"2026-10-08T10:45:54.086768+00:00\",\n  \"command\": [\n    \"bash\",\n    \"-c\",\n    \"cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100803 --seed 2026100803 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/main-2026100803.pt\"\n  ],\n  \"supervisor_pid\": 3488684,\n  \"pid\": 3488686,\n  \"exit_code\": 0,\n  \"status\": \"pass\",\n  \"finished_utc\": \"2026-10-08T11:01:19.000501+00:00\",\n  \"stop_reason\": null,\n  \"peak_processes\": 3,\n  \"peak_rss_bytes\": 19281534976\n}\n"
+    },
+    "who": "",
+    "gpu": "48666\n",
+    "lease": {
+      "project": "clasher",
+      "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+      "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+      "start_utc": "2026-10-08T05:29:33.958533+00:00",
+      "expected_end_utc": "2026-10-09T05:30Z",
+      "max_workers": 64,
+      "gpu": true,
+      "shared": true
+    }
+  },
+  {
+    "host": "127x14",
+    "at": "2026-10-08T11:03:24.704301+00:00",
+    "old_pid_absent": 3452627,
+    "complete": {
+      "stopped_by_signal": true,
+      "epoch": 0,
+      "cursor": 7192576,
+      "step": 878,
+      "best_dev": null,
+      "bad_epochs": 0,
+      "rows": 7192576
+    },
+    "exit_files": {
+      "/mpac/sdicks02/repos/clasher-lease/jobs/t5-v1-noD1-2026100801-r2.exit.json": "{\n  \"host\": \"127x14\",\n  \"label\": \"t5-v1-noD1-2026100801-r2\",\n  \"started_utc\": \"2026-10-08T10:45:54.714801+00:00\",\n  \"command\": [\n    \"bash\",\n    \"-c\",\n    \"cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant noD1 --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/noD1-2026100801 --seed 2026100801 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/checkpoint-migrations/noD1-2026100801.pt\"\n  ],\n  \"supervisor_pid\": 3452625,\n  \"pid\": 3452627,\n  \"exit_code\": 0,\n  \"status\": \"pass\",\n  \"finished_utc\": \"2026-10-08T11:01:19.499462+00:00\",\n  \"stop_reason\": null,\n  \"peak_processes\": 3,\n  \"peak_rss_bytes\": 19336773632\n}\n"
+    },
+    "who": "",
+    "gpu": "48666\n",
+    "lease": {
+      "project": "clasher",
+      "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+      "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+      "start_utc": "2026-10-08T05:29:33.969521+00:00",
+      "expected_end_utc": "2026-10-09T05:30Z",
+      "max_workers": 64,
+      "gpu": true,
+      "shared": true
+    }
+  },
+  {
+    "host": "127x08",
+    "at": "2026-10-08T11:03:24.284543+00:00",
+    "old_pid_absent": 3544750,
+    "complete": {
+      "stopped_by_signal": true,
+      "epoch": 0,
+      "cursor": 221184,
+      "step": 27,
+      "best_dev": null,
+      "bad_epochs": 0,
+      "rows": 221184
+    },
+    "exit_files": {
+      "/mpac/sdicks02/jobs/clasher/t5-v1-gru-2026100801-r2.exit": "0\n"
+    },
+    "who": "",
+    "gpu": "48578\n",
+    "lease": null
+  }
+]

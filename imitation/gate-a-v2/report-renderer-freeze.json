@@ -1,0 +1,14 @@
+{
+  "frozen_at": "2026-10-08T12:45:57.433862+00:00",
+  "kind": "reporting_only",
+  "training_started": false,
+  "heldout_scored": false,
+  "files": {
+    "imitation/t11/report.py": "521a4a159206cfe9156e810ac553bb250db6d326879c4e6ede960caa1fe9176a",
+    "imitation/t11/validate_report.py": "d5e6f5194e8b66b941342792af0539085445c5bec65947108788cd161c69061c",
+    "imitation/t11/receipts/report-renderer-validation.json": "5222384a76aa58d5e20e4130819fd91e31db8704e90416fce2969fabf61cdbfe",
+    "imitation/gate-a-v2/AMENDMENT-report-renderer.md": "a737dfbe4ef197fd77bed626264fc0177552389448f6a3d11648d65c00f82b42",
+    "imitation/gate-a-v2/PREREG.md": "115ab2f62c999d96b908855ab6e45bade4d9573308a222659821f65a76e42749",
+    "imitation/gate-a-v2/executable-manifest.json": "a4801df32d4a546ed7df07faf070a138d4075cf4db6c193d38373f9194ff2e44"
+  }
+}

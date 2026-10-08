@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-08T11:04:20.433218+00:00",
+  "frozen_before_fresh_training": true,
+  "active_training_manifest": "2854ce1f96fdd2fcc04dd0e6ef15dce3435758ec40369a80bba29b1a1e29db13",
+  "source_changes_to_training": false,
+  "pss_wrapper_validation_passed": true,
+  "validation_host": "127x04",
+  "files": {
+    "reports/strategy_council_20260928/imitation/gate-a/amendments/fresh-r2-coordinator.md": "46f7543a70222480a7b89dbd998832e5b8c04cfe0a17eb6e076d3c3ef4ebdc40",
+    "imitation/t5/operations/lease_watch_pss.py": "00cdaa8ad3be41a0a85481d318ad03920b87e2564ab541e8f9a9d5bf801d246f",
+    "imitation/t5/operations/test_lease_pss.py": "7d777b4589bd51a443f41ceb71a7dc7b577438c0033324043839b53bcda6c5a9",
+    "imitation/t5/receipts/fresh-r2-launch-plan.json": "073f771f571e9e4fbbc6e1744779b114e5a9b2fdbbdf825bd8d7681ed2135574"
+  }
+}

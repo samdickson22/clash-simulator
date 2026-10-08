@@ -1,0 +1,271 @@
+[
+  {
+    "host": "127x04",
+    "run": "main-2026100801",
+    "at": "2026-10-08T12:15:02.159379+00:00",
+    "pid": 2471660,
+    "pid_identity_matches": true,
+    "last": {
+      "event": "step",
+      "epoch": 1,
+      "cursor": 14581760,
+      "step": 3660,
+      "best_dev": 0.43433783253200153,
+      "bad_epochs": 0,
+      "rows": 29982130,
+      "loss": 5.610821723937988,
+      "gate": 0.17583918571472168,
+      "card": 0.928826093673706,
+      "tile": 3.5878469944000244,
+      "intent_card": 1.817958950996399,
+      "hazard": 1.8552790880203247,
+      "grad_norm": 3.484935998916626,
+      "lr": 0.0002952004421226396,
+      "rows_per_second_step": 12049.132656030224,
+      "rows_per_second_including_loader": 7086.241815166118,
+      "gpu_peak_allocated_mib": 27057.619140625,
+      "gpu_peak_reserved_mib": 29072
+    },
+    "dev": [
+      {
+        "event": "dev",
+        "step": 1880,
+        "ema_joint_nll": 0.43433783253200153
+      }
+    ],
+    "checkpoints": [
+      {
+        "path": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00003000.pt",
+        "bytes": 36471954,
+        "sha256": "fe48ffce8795efcc664e1a69fd7a8c1ecc8dcc95b861768b567ab699e33fce1c"
+      }
+    ],
+    "lease_state": null,
+    "exit_files": {},
+    "gpu": "18350, 25\n"
+  },
+  {
+    "host": "127x11",
+    "run": "main-2026100802",
+    "at": "2026-10-08T12:15:05.955049+00:00",
+    "pid": 948307,
+    "pid_identity_matches": true,
+    "last": {
+      "event": "step",
+      "epoch": 0,
+      "cursor": 5521408,
+      "step": 674,
+      "best_dev": null,
+      "bad_epochs": 0,
+      "rows": 5521408,
+      "loss": 6.75638484954834,
+      "gate": 0.14303116500377655,
+      "card": 1.2243460416793823,
+      "tile": 4.3429179191589355,
+      "intent_card": 2.0765187740325928,
+      "hazard": 2.107839822769165,
+      "grad_norm": 3.164396047592163,
+      "lr": 0.00010125,
+      "rows_per_second_step": 8402.635044222241,
+      "rows_per_second_including_loader": 1306.8384305330742,
+      "gpu_peak_allocated_mib": 27057.619140625,
+      "gpu_peak_reserved_mib": 27726
+    },
+    "dev": [],
+    "checkpoints": [],
+    "lease_state": {
+      "host": "127x11",
+      "label": "t5-v1-main-2026100802-r2-fresh",
+      "started_utc": "2026-10-08T11:04:22.056070+00:00",
+      "command": [
+        "bash",
+        "-c",
+        "cd '/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source' && exec '/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python' '-B' '-m' 'imitation.t5.train' '--variant' 'main' '--freeze' '/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json' '--store' '/mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train' '--dev' '/mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev' '--assets' '/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz' '--qualification' '/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json' '--output' '/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100802' '--seed' '2026100802' '--epochs' '12' '--batch-size' '8192' '--microbatch' '7168' '--workers' '1' '--tile-width' '64' '--warmup' '2000' '--patience' '3' '--checkpoint-every' '1000' '--device' 'cuda' '--stop-at' '2026-10-09T04:20:00Z'"
+      ],
+      "supervisor_pid": 948305,
+      "pid": 948307,
+      "checked_utc": "2026-10-08T12:14:58.522632+00:00",
+      "processes": 3,
+      "rss_bytes": 11191439360,
+      "rss_sum_bytes": 11191439360,
+      "pss_bytes": 7927970816,
+      "memory_metric": "owned_tree_pss",
+      "pss_cap_bytes": null,
+      "stop_reason": null
+    },
+    "exit_files": {},
+    "gpu": "19696, 0\n"
+  },
+  {
+    "host": "127x13",
+    "run": "main-2026100803",
+    "at": "2026-10-08T12:15:01.762258+00:00",
+    "pid": 3494088,
+    "pid_identity_matches": true,
+    "last": {
+      "event": "step",
+      "epoch": 2,
+      "cursor": 589824,
+      "step": 3831,
+      "best_dev": 0.3825878528271366,
+      "bad_epochs": 0,
+      "rows": 31376594,
+      "loss": 5.191916465759277,
+      "gate": 0.15086549520492554,
+      "card": 1.0375616550445557,
+      "tile": 3.1010897159576416,
+      "intent_card": 1.7882986068725586,
+      "hazard": 1.8213006258010864,
+      "grad_norm": 3.0506110191345215,
+      "lr": 0.0002941674735997655,
+      "rows_per_second_step": 12080.502436033443,
+      "rows_per_second_including_loader": 7424.447212061846,
+      "gpu_peak_allocated_mib": 27057.376953125,
+      "gpu_peak_reserved_mib": 30080
+    },
+    "dev": [
+      {
+        "event": "dev",
+        "step": 1880,
+        "ema_joint_nll": 0.4362334690410771
+      },
+      {
+        "event": "dev",
+        "step": 3759,
+        "ema_joint_nll": 0.3825878528271366
+      }
+    ],
+    "checkpoints": [
+      {
+        "path": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-001-step-00003759.pt",
+        "bytes": 36477084,
+        "sha256": "5fe176d195ceece155a10e795c60c4b5fc33d6daa7178dd26eb40a661866c89f"
+      }
+    ],
+    "lease_state": {
+      "host": "127x13",
+      "label": "t5-v1-main-2026100803-r2-fresh",
+      "started_utc": "2026-10-08T11:04:22.838157+00:00",
+      "command": [
+        "bash",
+        "-c",
+        "cd '/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source' && exec '/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python' '-B' '-m' 'imitation.t5.train' '--variant' 'main' '--freeze' '/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json' '--store' '/mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train' '--dev' '/mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev' '--assets' '/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz' '--qualification' '/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json' '--output' '/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803' '--seed' '2026100803' '--epochs' '12' '--batch-size' '8192' '--microbatch' '7168' '--workers' '1' '--tile-width' '64' '--warmup' '2000' '--patience' '3' '--checkpoint-every' '1000' '--device' 'cuda' '--stop-at' '2026-10-09T04:20:00Z'"
+      ],
+      "supervisor_pid": 3494086,
+      "pid": 3494088,
+      "checked_utc": "2026-10-08T12:14:23.494378+00:00",
+      "processes": 3,
+      "rss_bytes": 19316064256,
+      "rss_sum_bytes": 19316064256,
+      "pss_bytes": 13847915520,
+      "memory_metric": "owned_tree_pss",
+      "pss_cap_bytes": 64000000000,
+      "stop_reason": null
+    },
+    "exit_files": {},
+    "gpu": "17342, 0\n"
+  },
+  {
+    "host": "127x14",
+    "run": "noD1-2026100801",
+    "at": "2026-10-08T12:15:02.254365+00:00",
+    "pid": 3456816,
+    "pid_identity_matches": true,
+    "last": {
+      "event": "step",
+      "epoch": 1,
+      "cursor": 15015936,
+      "step": 3713,
+      "best_dev": 0.43625669536642914,
+      "bad_epochs": 0,
+      "rows": 30416306,
+      "loss": 5.571844100952148,
+      "gate": 0.146037757396698,
+      "card": 0.9859532117843628,
+      "tile": 3.5006282329559326,
+      "intent_card": 1.873081922531128,
+      "hazard": 1.8838170766830444,
+      "grad_norm": 2.5469627380371094,
+      "lr": 0.00029489085114844287,
+      "rows_per_second_step": 11924.665839339588,
+      "rows_per_second_including_loader": 7199.0631973808495,
+      "gpu_peak_allocated_mib": 27125.8662109375,
+      "gpu_peak_reserved_mib": 29200
+    },
+    "dev": [
+      {
+        "event": "dev",
+        "step": 1880,
+        "ema_joint_nll": 0.43625669536642914
+      }
+    ],
+    "checkpoints": [
+      {
+        "path": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00003000.pt",
+        "bytes": 36471954,
+        "sha256": "74e182de9206cf2cbb4dc0a7bd89d9dff0da78f19bcb83e9cb5de1c7addf4bef"
+      }
+    ],
+    "lease_state": {
+      "host": "127x14",
+      "label": "t5-v1-noD1-2026100801-r2-fresh",
+      "started_utc": "2026-10-08T11:04:23.599892+00:00",
+      "command": [
+        "bash",
+        "-c",
+        "cd '/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source' && exec '/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python' '-B' '-m' 'imitation.t5.train' '--variant' 'noD1' '--freeze' '/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation/gate-a/resource-r2/executable-manifest.json' '--store' '/mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train' '--dev' '/mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev' '--assets' '/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz' '--qualification' '/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json' '--output' '/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801' '--seed' '2026100801' '--epochs' '12' '--batch-size' '8192' '--microbatch' '7168' '--workers' '1' '--tile-width' '64' '--warmup' '2000' '--patience' '3' '--checkpoint-every' '1000' '--device' 'cuda' '--stop-at' '2026-10-09T04:20:00Z'"
+      ],
+      "supervisor_pid": 3456814,
+      "pid": 3456816,
+      "checked_utc": "2026-10-08T12:14:26.174217+00:00",
+      "processes": 3,
+      "rss_bytes": 19331735552,
+      "rss_sum_bytes": 19331735552,
+      "pss_bytes": 14500242432,
+      "memory_metric": "owned_tree_pss",
+      "pss_cap_bytes": 64000000000,
+      "stop_reason": null
+    },
+    "exit_files": {},
+    "gpu": "18222, 17\n"
+  },
+  {
+    "host": "127x08",
+    "run": "gru-2026100801",
+    "at": "2026-10-08T12:15:02.150327+00:00",
+    "pid": 3548451,
+    "pid_identity_matches": true,
+    "last": {
+      "event": "step",
+      "epoch": 0,
+      "cursor": 1015808,
+      "step": 124,
+      "best_dev": null,
+      "bad_epochs": 0,
+      "rows": 1015808,
+      "loss": 8.535207748413086,
+      "gate": 0.22058743238449097,
+      "card": 1.1906646490097046,
+      "tile": 5.413782119750977,
+      "intent_card": 2.0881826877593994,
+      "hazard": 4.752510070800781,
+      "grad_norm": 1.8197076320648193,
+      "lr": 0.00001875,
+      "rows_per_second_step": 245.03590529638362,
+      "rows_per_second_including_loader": 241.28726647631024,
+      "gpu_peak_allocated_mib": 27585.65771484375,
+      "gpu_peak_reserved_mib": 38520
+    },
+    "dev": [],
+    "checkpoints": [
+      {
+        "path": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000120.pt",
+        "bytes": 40034761,
+        "sha256": "d235e538f6d224bca2fa0b68675b22ef9abcdf7818f6f9d14190b8b0ca88fa9e"
+      }
+    ],
+    "lease_state": null,
+    "exit_files": {},
+    "gpu": "8707, 98\n"
+  }
+]

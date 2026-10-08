@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "real_fitting": false,
+  "heldout_scored": false,
+  "checks": {
+    "c56_sampling_identical_all_seeds_epochs": true,
+    "mixed_hash_membership_and_shuffle_exact": true,
+    "both_corpora_total_wait_ipw4_workers0_1": true,
+    "resume_cursor_reconstruction_exact": true,
+    "real_train_dev_batch_and_mmap_release_exact": true,
+    "all_supervised_plays_and_abilities_retained": true
+  }
+}
