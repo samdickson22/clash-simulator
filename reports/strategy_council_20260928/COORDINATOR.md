@@ -654,3 +654,12 @@ Also on the hub, but with copies elsewhere:
   Fleet: 02/07/11 still offline. No reclaims.
 - **2026-10-08 15:54 UTC:** Mac latency task blocked on my copy allowlist: v4 imports the frozen S4 tracker v3 and S6 planner files, which the Mac lacked. **Approved** copying the minimum frozen dependencies plus one S4 dev parity trace into the separate runtime directory (hash-verified against the freeze manifests, no Mac repo overwrites). Done so far: T1-owned emulators 28907/21614 stopped by verified SIGTERM (AVDs kept; Mac memory free 60%); lattice dylib built; 20 train matches staged; P3 reads `planner_total_delay_ticks` (provisional 28 until the Mac measurement).
 - **2026-10-08 16:45 UTC heartbeat:** the perception worker had 2 pending questions, which is why 09/15 sat idle. (1) **Approved** retiring 349 duplicate cache shards on 18 (289 GB), after re-verifying the retained 01 copies, to free space for 09/15 staging. (2) Its T1-completion check needed hub evidence: the coordinator mirrored the Mac's phase-a-results.json, pool-state.json (stop_reason coverage reached), pool exit 0, log, events, T1-PROGRESS.md and a 0-process check into `live-loop/v4/t1-completion-mirror/` on 127x01, with receipt T1-PHASE-A-COMPLETE.json (SHA256s). Pool mode has no legacy phase-a-exit.json. GPUs: 7 busy (01 main02 rerun, 04/08/13/14 T5, 16/18 T11). Mac 28 GiB, 64% free, 0 emulators. 02/07/11 offline.
+- **2026-10-08 17:45 UTC: Mac runtime latency PASS on the revised budget** (`live-loop/v4/runtime-mac-latency.json`). M4 Pro, MPS, v3
+  body/HUD perception, quiet host (T1 emulators stopped, AVDs kept). Frame→submission p50 186 ms; budget p50 ≤260 / p99 ≤400 PASS.
+  In-pipeline belief p99 still above 10 ms (noted, not blocking). Tracker parity bit-exact on the Mac (2,200 updates).
+  **planner_total_delay_ticks = 27** = round((186 + 1,152 ms)/50), configured in the runtime's backend-timing.json and read by P3.
+  Tests 34/36: the two zero-delay S6 comparisons fail because the **Mac's native extension predates build48** (no `full_rng`
+  arg). **Delegated:** build build48 on the Mac in the isolated runtime root, re-run the 4 identity modes + Stage 5/6 checks,
+  and require 36/36 tests. This is an L2-v4 prerequisite.
+  Perception formal fits had not launched: the worker was idle after I told it to delete its Phase A poll. Explicitly told to
+  launch on 09/15 now, using the mirrored T1 completion evidence.

@@ -3,10 +3,12 @@
 Implementation: `src/clasher/live/`; invocation: `python -m clasher.live`.
 This is an offline-renderer runtime implementation and a train-only replay harness.
 S6 delay-aware planning is adopted and enabled by default. Production remains
-unqualified: formal v4 weights, runtime latency qualification, the v4-HUD verifier
+unqualified: formal v4 weights, formal-v4 latency qualification, the v4-HUD verifier
 re-test, and the L2-v4 PREREG are still prerequisites.
 
-No emulator or renderer was launched, configured, queried, or tapped in this task.
+No emulator or renderer was launched, configured, queried over the network, or tapped.
+For the authorized Mac measurement, two receipt-verified T1 renderer PIDs were
+stopped with SIGTERM after Phase A; their AVDs and receipts remain intact.
 The recorded-media tests use a mock input channel. The original two train recordings remain
 on 127x04 under `/mpac/sdicks02/repos/clasher-runtime-data/`; nothing was deleted.
 The frozen research tracker, collector, APK/hook, frozen split and perception
@@ -109,8 +111,9 @@ cannot emit the retry. Inter-tap delay remains 20 ms.
 
 The observed acceptance-delay equivalents (23.034/23.746 ticks p50/p99) are
 wall-latency measurements, not exact execution ticks. The unchanged renderer
-hook's nominal delay is 22 ticks; planning uses the measured backend p50 (23 ticks
-for gRPC), as directed by the coordinator after S6 adoption. T2's 316/320 gRPC sensitivity result still fails its
+hook's nominal delay is 22 ticks. P4 retains the measured backend p50 (23 ticks
+for gRPC). P3 uses the measured total frame-to-submission plus backend delay
+(**27 ticks**), following the coordinator's latency revision. T2's 316/320 gRPC sensitivity result still fails its
 99% gate. A replay mock records submissions and preserves all ledger/verification
 logic, but cannot change recorded video; any replay confirmations are coincidental
 pixel matches, not acceptance or playing-strength evidence.
@@ -124,13 +127,15 @@ candidate-dependent pending root, leaves the physical model unspent, and execute
 the command once at t+d. Subsequent own rollout commands also obey the single
 pending command rule. The horizon, opponent scripts and leaf remain S6's.
 
-`timing.py` reads the selected backend's `p50_ticks` and rounds to the nearest
-nonnegative integer (`floor(p50_ticks + 0.5)`). Current profiles give **23 ticks
-for gRPC** and **24 for ADB-spawn**. No planner delay is hard-coded. `--backend`
-and `--backend-timing` select one profile/file for both P3 and P4; P5 rejects
-conflicting selectors before starting workers. P4 still uses that profile's
-p99 milliseconds for verification. The ADB profile supports replay comparisons;
-the live input implementation is gRPC and requires its matching profile.
+`timing.py:planner_timing` reads the selected profile's explicit
+`planner_total_delay_ticks`: **27 ticks for gRPC**, calibrated from the Mac median
+frame-to-submission plus backend p50. It rejects missing, negative, fractional,
+or boolean values rather than substituting D_b. `backend_timing` continues to
+return the rounded backend-only p50 for P4 (23 gRPC / 24 ADB-spawn ticks).
+`--backend` and `--backend-timing` select the same file/profile for P3 and P4;
+P5 rejects conflicting selectors. P4 still uses backend p99 milliseconds for
+verification. The ADB profile has no calibrated total-delay field, so P3 requires
+an explicit measurement before it can be selected. Live input remains gRPC.
 
 S6's original scorer rejects deadline mode. The runtime therefore calls its
 unchanged scorer on one candidate at a time, with a native-call deadline guard.
@@ -152,7 +157,7 @@ alter runtime ledger state. Snapshot revision/expiry/terminal fences still apply
 
 An optional `--delay-hook module:function` remains an offline experimental override
 with the previous `(resources, info, opponent_roots, candidates, DelayContext)`
-ABI; `nominal_command_ticks` now contains the selected profile's rounded p50.
+ABI; `nominal_command_ticks` contains the selected profile's total planner delay.
 Real gRPC input requires the adopted scorer, matching timing profile and completed
 qualification receipt. Source provenance includes both imported S6 files and the
 selected timing file.
@@ -460,7 +465,7 @@ before the other update work. GC alone has p99 0.97 ms, resource transitions
 quantiles are not additive). No pruning, weakened likelihood, fewer roots, or
 changed search semantics was used to force a pass.
 
-## Final fleet replay latency
+## Historical fleet replay latency (200 ms median budget)
 
 **Budget verdict: FAIL.** The final constant-source suite completed on 127x04
 with **14 train matches, 223 first-attempt submissions**, 263 total mock submissions
@@ -547,101 +552,154 @@ The baseline host was also much busier. Thus the end-to-end comparison is not a
 controlled code-only speedup; the paired tracker experiment above is.
 
 
-## Mac replay gate and exact deferred command
+## Mac MPS replay qualification (2026-10-08)
 
-**Deferred at 2026-10-08 09:13 UTC; no Mac measurement was run.**
+**PASS against the revised end-to-end budget: p50 ≤260 ms and p99 ≤400 ms.**
+The suite completed 15:56:08–16:24:33 UTC in **28 min 26 s**, on the Mac mini's
+Apple M4 Pro (24 GiB), nice 10, MPS perception, one Torch/BLAS/OpenCV thread and
+four native search threads. It used 14 complete frozen-train matches and
+**228 first-attempt mock submissions**; 273 submissions included 45 retries.
+Seeds were 1975100700–707 and 1975100710–715. Non-train 708/709 were skipped by
+split membership before media access. Twenty train folders were staged from
+127x01; only the first 14 were needed. No heldout media was opened.
 
-No Mac work is authorized while T1 Phase A is collecting. The local
-`T1-PROGRESS.md` does not confirm collection has stopped; the time estimate alone
-is not an unlock. This revision has made **no Mac connection or measurement**.
-After T1 explicitly records collection stopped, run the following on the Mac.
-It stages only train replay inputs from 127x04, uses MPS and mock input, and never
-launches, queries or taps an emulator. Its 2,400-frame limit is about two minutes
-of recorded media plus warmup. Use a fresh timestamped directory.
+The fallback is `v3-body-hud-only`: the existing Mac v1 body checkpoint on MPS
+and v3 HUD/event interfaces, with no temporal-network weights. Body/HUD hashes
+match the prior fleet measurement. This does not qualify v4 weights or ANE.
 
-```bash
-cd /Users/sam/Desktop/code/clasher
-mac_run="$PWD/reports/strategy_council_20260928/live-loop/v4/runtime-results/mac-latency-$(date -u +%Y%m%dT%H%M%SZ)"
-mkdir -p "$mac_run/data/match" "$mac_run/data/weights"
-rsync -a --include='*.py' --include='*.rs' --exclude='*' \
-  127x04:/mpac/sdicks02/repos/clasher/src/clasher/live/ src/clasher/live/
-rsync -a 127x04:/mpac/sdicks02/repos/clasher-runtime-data/matches/v4-phase-a-1975100700/ \
-  "$mac_run/data/match/"
-rsync -a 127x04:/mpac/sdicks02/repos/clasher-runtime-data/weights/ "$mac_run/data/weights/"
-rsync -a 127x04:/mpac/sdicks02/repos/clasher-runtime-data/registration/split.json "$mac_run/data/split.json"
-rsync -a 127x04:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/runtime/support/human_deck_catalog.json \
-  "$mac_run/data/prior.json"
-export PYTHONPATH="$PWD/src:$PWD/engine-rs"
-export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1
-nice -n 10 rustc --crate-type cdylib --edition=2021 -C opt-level=3 \
-  src/clasher/live/lattice.rs -o src/clasher/live/_lattice.dylib
-nice -n 10 .venv/bin/python -B -m clasher.live \
-  --replay "$mac_run/data/match" --split "$mac_run/data/split.json" \
-  --prior "$mac_run/data/prior.json" --body "$mac_run/data/weights/body.pt" \
-  --hud "$mac_run/data/weights/hud.npz" --device mps --mock-input --frames 2400 \
-  --output "$mac_run/run" > "$mac_run/console.log" 2>&1
-cat "$mac_run/run/metrics.json"
+| Stage, milliseconds | Samples | p50 | p95 | p99 |
+|---|---:|---:|---:|---:|
+| Capture production → receipt | 29,971 | 17.37 | 42.22 | 56.26 |
+| Decode + sanitize | 29,971 | 0.87 | 2.33 | 3.71 |
+| Fallback body/HUD (MPS) | 29,960 | 29.31 | 51.85 | 60.97 |
+| Fallback temporal fusion (no temporal weights) | 29,960 | 0.08 | 0.21 | 0.31 |
+| Tracker + own ledger + four roots | 29,954 | 2.55 | 7.79 | 13.70 |
+| Active S6 search, four roots | 440 | 55.64 | 83.30 | 144.41 |
+| P4 latest-pixel HUD refresh | 28,821 | 1.50 | 3.52 | 4.44 |
+| Mock two-tap submission (all attempts) | 273 | 31.18 | 160.63 | 166.53 |
+| Source frame → first-attempt submission completion | 228 | 186.06 | 284.92 | 333.95 |
+
+It captured 29,971 frames, perceived 29,960 and updated belief on 29,954:
+**99.943% processed at 19.972 FPS**. Eleven capture/perception drops plus six
+latest-observation replacements account for all 17 omitted belief frames.
+All 14 runs completed with zero worker failures, log loss, duplicate/unreserved
+taps, overlapping reservations or unresolved terminal reservations. There were
+2,775 searches, including 440 active searches, and **zero deadline overruns**.
+Source and timing-profile hashes agree across all matches. Four roots, the
+adopted S6 scorer, candidate completion rule and 200 ms deadline were unchanged.
+
+Frame-to-submission uses the original source-frame production stamp and ends
+when attempt 1's mock two-tap submission returns. It includes the nominal 20 ms
+interval and actual scheduling delay; retries are excluded. The observed mock
+submission service time is not gRPC transport or native acceptance latency.
+Capture queue age was 29.67/64.68/88.62 ms p50/p95/p99; perception→belief queue
+age was 3.95/8.69/9.47 ms; belief→decision was 4.78/9.69/15.99 ms.
+
+The separate stage targets remain mixed: total perception p95 **52.15 ms** misses
+40 ms, and in-pipeline belief p99 **13.70 ms** misses 10 ms. The end-to-end and
+throughput gates pass with this fallback; production qualification remains open.
+
+### Host preparation and frozen integrity
+
+The user confirmed T1 Phase A stopped at 15:43Z. Pool claims were empty and the
+recorded supervisor PID was absent. At 15:46:39Z, complete receipts and matching
+PID start times, AVD names and ports verified renderer-1 **28907** (5584/8558)
+and renderer-2 **21614** (5586/8559). Both exited after SIGTERM. AVDs and receipts
+were preserved; UTM Windows and all adb servers remained untouched.
+Before/after shutdown load was 4.48/5.01/5.41; memory free rose from **44% to
+60%**, with pressure level 1 before and after.
+Measurement preflight reported 72% memory free; postflight reported 64%, pressure
+level 1 and load 2.72/3.33/3.65. Full before/after readings are in the receipt.
+
+The isolated root is `/Users/sam/Desktop/code/clasher-runtime-v4/`; **no Mac
+repository files were overwritten**. It contains the allowlisted runtime/tests/
+tools and links to existing Mac dependencies. After explicit coordinator approval,
+only missing import/provenance dependencies, the frozen train prior and one S4
+development trace were copied there. The six S4 dependency hashes match both
+`dev-code-freeze-v2.json` and `RUNTIME-FROZEN-INTEGRITY.json`; S6 `delay.py` and
+`own_state.py` match its evaluation manifest. Existing Mac public reconstruction,
+planner and game-data hashes also match S6. Every added file's hash and its
+reference, where present, are recorded in `runtime-mac-latency.json`.
+
+The optional `_lattice.dylib` was built on the Mac with rustc 1.97.1. Paired Mac
+tracker equality **PASS: 2,200 S4 dev-000 updates, bit-exact**, comparing both
+full lattices, float summaries, hand masses, cycles, four roots and RNG states.
+Frozen timing was **6.41/16.47/35.50 ms**; accelerated **1.27/1.98/7.50 ms**
+p50/p95/p99. This isolated tracker result is distinct from in-pipeline belief.
+
+### Measured planner total delay
+
+`actuation/backend-timing.json` now contains:
+
+```text
+planner_frame_to_submission_p50_ms = 186.0601652879268
+D_b,p50 (existing gRPC p50_ms)      = 1151.6914791427553
+planner_total_delay_ticks          = round((186.0601652879268 + 1151.6914791427553)/50)
+                                   = 27
 ```
 
-This tests the available body/HUD fallback on actual MPS. It does not qualify
-formal v4/ANE perception or emulator-on throughput. Actual Mac timing and ARM
-bit parity remain unmeasured until that gated run.
+P3 reads `backends.offline-renderer-grpc.planner_total_delay_ticks`; P4 remains at
+23 backend ticks and a 1,787.318 ms verification window. Original backend
+acceptance measurements were preserved. Metadata documents the formula, source,
+sample count, device, measured components and metrics hash. The L2-v4 S-d arm
+should use the same **27-tick total**, per the coordinator's decision.
+
+The full calibration suite used provisional **28 ticks** from the earlier fleet
+median; its measured Mac median replaces that provisional calibration with 27.
+A separate **600-frame / six-first-tap** MPS replay verified every search used 27,
+with no audit errors or search overruns. Its 220.46/279.45/286.61 ms p50/p95/p99
+are an integration check and are not pooled into the 228-sample measurement.
+
+**Mac tests: 34/36 passed** in 25.875 s. All three new total-delay regression
+checks passed, as did recorded positive-delay S6 parity and deadline tests at 27.
+Two d=0 comparisons fail because the existing Mac `clasher_core.NativeScripts`
+`rollout` binding lacks the extra `full_rng` argument passed by the frozen
+immediate scorer. This is recorded, not suppressed; immediate/d=0 operation needs
+a matching native build before use. The measured positive-delay binary was kept
+unchanged. Full output: `runtime-results/mac-final/runtime-mac-tests.txt`.
+
+### Reproduction and receipts
+
+From the existing isolated Mac root, using fresh output names:
+
+```bash
+cd /Users/sam/Desktop/code/clasher-runtime-v4
+export PYTHONPATH="$PWD/src:$PWD/engine-rs"
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1
+bash reports/strategy_council_20260928/live-loop/v4/build_lattice.sh
+nice -n 10 .venv/bin/python -B reports/strategy_council_20260928/live-loop/v4/tracker_parity.py \
+  --dev reports/strategy_council_20260928/search-noise-s4/dev-traces/000.json.gz \
+  --limit 2200 --output tracker-parity-new.json
+nice -n 10 .venv/bin/python -B reports/strategy_council_20260928/live-loop/v4/latency_suite.py \
+  --data "$PWD/runtime-data" --matches "$PWD/runtime-data/matches" \
+  --device mps --maximum-matches 20 --output "$PWD/mac-latency-new"
+nice -n 10 .venv/bin/python -B reports/strategy_council_20260928/live-loop/v4/latency_report.py \
+  "$PWD/mac-latency-new" "$PWD/latency-metrics-new.json"
+```
+
+The default reproduction uses calibrated 27 ticks. The original measurement's
+28-tick profile is preserved at `mac-latency-r2/backend-timing-at-measurement.json`
+with its hash in the receipt. Raw logs/configs/provenance remain under Mac
+`mac-latency-r2/` and `mac-calibrated-smoke/`, mirrored to 127x05 under
+`runtime-results/mac-final/`. `runtime-mac-latency.json` contains the per-stage
+aggregate, shutdown, hashes, parity, timing calibration, tests and smoke audit.
+The failed initial `mac-latency-r1/` attempt is retained: it stopped before worker
+launch because a provenance dependency was missing, then that file was staged.
+No APK/hook, collector, frozen split, renderer network or official client changes;
+no data deletion and no git commits.
 
 ## Remaining L2-v4 prerequisites
 
 1. Selected formal v4 weights, frozen validation calibration, event/body/HUD
    gates and export parity. In-loop events ≥90/90 at 500 ms; 97/97 target.
-2. A quiet Mac replay/emulator-on throughput and latency run: ≥18 processed FPS,
-   ≥95% of captured frames, p50≤200/p99≤400 ms frame-to-submission, perception
-   p95≤40 ms and search overruns≤1%. Fleet results cannot substitute for it.
+2. Emulator-on throughput and latency, plus the formal-v4 perception stage gate.
+   Quiet Mac fallback replay now passes ≥18 FPS, ≥95% processed, and the revised
+   p50≤260/p99≤400 ms end-to-end budget. Perception p95≤40 ms remains unmet by
+   this fallback; search overruns≤1% passes. Immediate/d=0 Mac native compatibility
+   is also unresolved as described above.
 3. P4 re-test with the v4 HUD head: ≥300 positive and ≥300 negative trials and
    the coordinator's ledger-relative spend predicate, reaching ≥99% sensitivity
    and specificity. Existing T2 P4 remains unchanged and unqualified.
 4. Own-state/cycle/elixir validation, pixel lifecycle/end/result reader, L2-v4
    PREREG, and T9 smoke before the paired O/P/S/S-d evaluation. There is no
    result-screen or match-start controller in this pixel-playing runtime.
-
-
-## Mac runtime preparation (2026-10-08, measurement blocked)
-
-The user confirmed T1 Phase A stopped at 15:43Z and authorized stopping its two
-owned renderers for this replay. At 15:46:39Z, receipt PID/start/AVD/port checks
-matched renderer-1 PID 28907 (5584/8558) and renderer-2 PID 21614 (5586/8559).
-Both exited after verified SIGTERM. Pool claims were empty and its supervisor
-was absent. AVDs and receipts remain intact; UTM Windows and all adb servers
-were left running. Memory pressure was normal (level 1) after shutdown, memory
-free rose to 60%, and immediate load was 4.48/5.01/5.41 (later 3.21/4.38/5.10).
-Full before/after evidence is retained in `runtime-results/mac-preparation/`.
-
-The isolated Mac root is `/Users/sam/Desktop/code/clasher-runtime-v4/`.
-It contains the allowlisted runtime/test/tool copies and links to existing Mac
-repository dependencies. No differing Mac repository file was overwritten.
-The optional ARM `_lattice.dylib` was built with rustc 1.97.1 and successfully
-loaded. Twenty match folders were selected by frozen train membership before
-transfer from 127x01; receipts independently confirm train. The original split
-hash is `3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258`.
-The Mac v1 body and HUD weights match the fleet fallback hashes; MPS is available.
-
-**Mac latency and tracker parity remain NOT MEASURED.** The Mac lacks frozen
-`search-noise-s4/` and `search-noise-s6/` dependencies, outside the user's explicit
-copy allowlist. Approval to stage only those missing dependencies, the frozen
-train prior, and one development parity trace was requested and remains pending.
-No replay or parity computation has been launched. See `runtime-mac-latency.json`.
-
-The timing code is prepared: P3 now reads `planner_total_delay_ticks` via
-`planner_timing`, requiring an explicit nonnegative integer. P4 continues to
-read backend `p50_ticks` and uses backend p99 for verification. Missing planner
-calibration fails explicitly; it does not silently substitute D_b. The separate
-field is currently **provisional 28 ticks from the existing fleet median**,
-clearly marked in `actuation/backend-timing.json`; this is not a Mac result.
-It will be replaced with `round((Mac frame_to_tap.p50 + gRPC p50_ms)/50)` after
-measurement. The metric includes completion of the first-attempt mock two-tap
-submission and its 20 ms interval. A focused Mac test passes, including unchanged
-P4 verification timing and rejection of absent/invalid planner fields. The ADB
-profile has no measured total delay and is not planner-calibrated.
-
-The revised coordinator acceptance budget supersedes the historical 200 ms
-median: **p50 ≤260 ms and p99 ≤400 ms**, on ≥6 train matches and ≥200 first
-attempts. `latency_suite.py --device mps` now selects MPS explicitly and supports
-Mac process preflight; `latency_report.py` records the actual device and revised
-budget. No Mac verdict can be inferred from the provisional fleet value.
