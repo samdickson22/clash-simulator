@@ -266,3 +266,14 @@ Also on the hub, but with copies elsewhere:
 - **T1 Phase A started** on the Mac (pipeline PID 63610, stage phase-a), shipping to 127x01. Stage 6, C56 and S1
   workers are released by `hub-ready.json`.
 - **2026-10-08 01:05 UTC:** hub task closed; its final report matches `fleet/HUB-127X01.md`. Coordinator's independent re-check on a fan-out peer: C56 identity on 127x07 gives 7/7 episodes, 2,900 digest boundaries, 0 mismatches, baseline `002a57a9…`.
+- **2026-10-08 01:15 UTC: C56 equivalence: decision to accept and proceed.** The worker stopped correctly at the
+  raw-byte gate: 0/3 archives identical. Cause (`c56/data/FLEET-RESULTS.md`, `strict-equivalence.json`): the Mac archives
+  for s117/shard-011-part-04/05/06 reused 10/11/12 v2 episodes. Linux had no v2 archives for them and simulated every
+  episode fresh. All non-header arrays match in dtype, shape and logical bytes (144 perspectives, 117,776 rows). The
+  header differs only in the reuse-provenance `extra` field, and `flat_entity_features` differs only in C/F memory
+  order. Restoring those two gives byte-identical archives (3/3). The gate exists to prove Linux reproduces the Mac's
+  simulation, and a fresh simulation matching the reused rows exactly is stronger evidence than byte identity.
+  **Criterion going forward:** logical equivalence (every array equal in dtype, shape and C-order values; header
+  equal except reuse provenance). Production extraction of the remaining 956 units proceeds. The original
+  extractor deletes reused v2 NPZs, so the 137 retained v2 archives are copied aside before any run that could reuse
+  them.

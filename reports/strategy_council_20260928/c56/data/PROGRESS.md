@@ -1,6 +1,6 @@
 # C56 human-data track: PROGRESS
 
-Current v3b status at 2026-10-07T23:28:13.625612+00:00: BLOCKED on hub access. 127x02 SSH times out both directly from the Mac and over campus LAN through 127x01. The canonical 811/1,767 units are hash-verified and fully row-validated on the hub. No fresh Linux replay or extraction had started at the 23:27Z peer check. Remaining 956 units and final QA are pending. Detached supervisor-r2 may still exist; inspect it before any relaunch. See FLEET-RESULTS.md and the final handoff below.
+Current v3b status at 2026-10-08T01:03:50Z: HALTED on strict raw-byte equivalence. Recovered hub 127x01 passed all base/input/runtime pins, fresh full base row QA and all three NPZ round-trips. Fresh replay: 144 perspectives / 117,776 rows / zero errors, but 0/3 raw archives match (reuse-provenance headers and C/F storage order); logical arrays and normalized diagnostic archives match 3/3. Production remains 811/1,767 units; 956 pending. No extraction launched. See FLEET-RESULTS.md and the final recovered-hub entry below.
 
 Owner: c56-data agent. Started 2026-10-02 ~21:20 local. Resumable: read this file first.
 
@@ -318,3 +318,31 @@ Current user authorization supersedes the historical f35 ownership and three-wor
 - Last supervisor: hub PID 3307853, label `c56-v3b-fleet-20261007-supervise-r2`. It can continue automatically if the host is still running and prerequisites pass. Its state cannot now be confirmed. Inspect `/mpac/sdicks02/jobs/clasher/c56-v3b-fleet-20261007-supervise-r2.{pid,lock,log,exit}` and `qa/fleet-v3b/` before relaunching. Do not infer completion from the helper exit file alone: the deliberately terminated initial waiting supervisor wrote exit 0; its log says Terminated and there is no completion receipt.
 - Last verified hub output location: `127x02:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/recon/engine-v3`. No NPZ outputs were copied to the Mac, no private-server APK was copied or used, and no commits were made. Only allowed nodes 01/02/03/04 were accessed.
 - Final PROGRESS.md and FLEET-RESULTS.md are saved in the Mac repo. Earlier versions were mirrored to the hub; these final updates cannot be mirrored while hub access is unavailable. Restore hub access, inspect the detached state, and mirror both reports after reconciling any autonomous progress. This is an infrastructure blocker, not a request to change the extraction recipe.
+
+## Recovered hub verification — 2026-10-08T00:55Z
+
+Hub-ready marker dated 2026-10-08T00:54:44.911798+00:00 was observed at 00:55:10Z after two-minute polling. No C56 fleet writes occurred before readiness. New hub is 127x01; 127x02 is excluded permanently from this task.
+
+Detached gate label: `c56-v3b-recovery-127x01-20261008-gates`; launcher PID 3325932. Logs/lock/PID/exit: `/mpac/sdicks02/jobs/clasher/c56-v3b-recovery-127x01-20261008-gates.*`. New receipts: `qa/fleet-v3b/recovery-127x01-20261008/`. Historical receipts are retained and not credited to this run. New helper: `scripts/fleet_v3b_recovery_20261008.py`; extractor/runtime/recipe unchanged.
+
+Initial re-verification PASS: 1,622 base files, 454 frozen inputs, exact 811-unit production inventory, extractor SHA256 8e95786c1dede45e9fd8d02f8c85cd86331667d3dbc5c8a6713808f0520ac9c7, runtime SHA256 1ec2c60c254fd9cc5579b163ef994a0e233a942bd97acda864d31d91442d3493. Base audit uses eight processes and a fresh cache; then three NPZ round-trips and three fresh replays. All nice 10, one-thread BLAS. Raw NPZ byte identity is required; normalized comparisons are diagnostic only.
+
+Resume/inspect: `ssh 127x01 'tail -20 /mpac/sdicks02/jobs/clasher/c56-v3b-recovery-127x01-20261008-gates.log; cat /mpac/sdicks02/jobs/clasher/c56-v3b-recovery-127x01-20261008-gates.exit'`. Missing exit means pending, not success. Verify PID/command/lock before any relaunch. Fresh equivalence outputs must not be overwritten; a retry needs a new QA namespace and label.
+
+Production extraction is NOT launched. If all gates pass, allowed worker caps are 01=48, 03=64, 04=32 (16 with console users). Keep 12 GiB free / 7.5 GiB hard data guard. Existing extractor deletes reused v2 NPZs, so a production orchestration must preserve all 137 retained v2 archives before invoking it; no data deletion is authorized.
+
+### 2026-10-08T00:59Z gate checkpoint
+Fresh base row audit PASS: 811 units, 38,134 perspectives, 30,483,676 rows, zero errors/illegal labels. Wall 159.430 s; CPU 1,265.876 s. All three NPZ round-trips PASS byte-for-byte (wall 1.301 s). Three fresh Linux simulations are running. Production extraction remains gated; launcher 3325932 / Python driver 3325945. Receipts in the new recovery namespace replace historical 127x02 verification for this hub.
+
+## Recovered-hub handoff — 2026-10-08T01:04Z
+
+Strict equivalence FAILED and production extraction STOPPED as instructed. Fresh comparison metadata differs in historical v2 reuse provenance and flat_entity_features C/F storage order; no logical simulation-row mismatch found. Normalized diagnostic archives match all three Mac hashes but were not accepted as raw-byte equivalence. Original extractor SHA and all runtime/input pins remain unchanged.
+
+Base re-verification (before/after replay): 1,622 files / 454 frozen inputs, exact production inventory. Fresh base row QA: 811 units / 38,134 perspectives / 30,483,676 rows, zero errors/illegal labels; 159.430 s wall / 1,265.876 s CPU. Three round-trips PASS. Fresh comparisons: 3 units / 144 perspectives / 117,776 rows / 0 errors; 338.024 s wall / 973.133 s CPU. Production: 0 new units, 956 pending. Base-only retention 84.7863%; full-corpus retention unavailable.
+
+Label c56-v3b-recovery-127x01-20261008-gates finished exit 1 at 01:03:50Z, launcher 3325932 / driver 3325945; no production supervisor. Entire gate job: 504.25 s wall / 2,245.80 s CPU on 01. No extraction on 03/04. Do not relaunch production under this failed gate. Existing fresh comparison outputs must be preserved; any further comparison needs a fresh namespace and label.
+
+New receipts: qa/fleet-v3b/recovery-127x01-20261008/{reverification,base-audit-receipt,serialization-roundtrip,strict-equivalence,equivalence-receipt,halted-receipt}.json. Original helper and engine unchanged; added scripts/fleet_v3b_recovery_20261008.py. Base production 2,846,401,104 bytes. Data 3,999,658,586 bytes, free 1,793,815,760,896 bytes after replay. Backup checksum and coordinator mirror completion will be appended below. No commits, training, fleet-data deletion or access to 127x02/09–18.
+
+### 2026-10-08T01:06:35Z backup verified
+Independent checksum verification on 127x04 PASS: all 1,622 canonical base files and 454 frozen inputs match, plus 843 new recovery-QA files / 136,839,463 bytes copied from 01 with zero checksum differences (scope captured before the mirror receipt itself). Raw/normalized/round-trip NPZs and every base-row audit are preserved at the same recovery QA path on both 01 and 04. No deletion or base overwrite. Receipt: qa/fleet-v3b/recovery-127x01-20261008/mirror-127x04.json. All owned gate PIDs are absent and exit 1 is confirmed; no running C56 work remains. Small reports/receipts/helper are mirrored to 127x05 only; no NPZs.
