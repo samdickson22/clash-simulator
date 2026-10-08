@@ -1,0 +1,174 @@
+{
+  "status": "pass",
+  "host": "127x15",
+  "label": "wrapper-v2-cpu-smoke-20261008T231735Z",
+  "launch_output": "pid=4178708 log=/mpac/sdicks02/repos/clasher-lease/jobs/wrapper-v2-cpu-smoke-20261008T231735Z.log",
+  "remote_receipt": "/mpac/sdicks02/repos/clasher-lease/jobs/wrapper-v2-cpu-smoke-20261008T231735Z.exit.json",
+  "receipt": {
+    "version": 2,
+    "host": "127x15",
+    "label": "wrapper-v2-cpu-smoke-20261008T231735Z",
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "-c",
+      "import os,time; payload=bytearray(4*1024*1024); print('tiny CPU sum',sum(payload),'nice',os.getpriority(os.PRIO_PROCESS,0),flush=True); time.sleep(10)"
+    ],
+    "started_utc": "2026-10-08T23:17:35.898192+00:00",
+    "declared_processes": 2,
+    "declared_pss_bytes": 50000000,
+    "gpu": false,
+    "admission_usage": {
+      "processes": 14,
+      "pss_bytes": 11283459072
+    },
+    "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+    "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+    "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+    "stop_at_utc": "2026-10-09T04:30:00+00:00",
+    "exit_by_utc": "2026-10-09T05:00:00+00:00",
+    "admission_aggregate": {
+      "processes": 14,
+      "pss_bytes": 11283459072
+    },
+    "admission_jobs": {
+      "v1:4072416:128921618": {
+        "kind": "v1",
+        "sequence": -1,
+        "supervisor_pid": 4072416,
+        "processes": 14,
+        "pss_bytes": 11283459072,
+        "stop_reason": null
+      }
+    },
+    "supervisor_pid": 4178708,
+    "admission_sequence": 2,
+    "pid": 4178709,
+    "exit_code": 0,
+    "status": "pass",
+    "finished_utc": "2026-10-08T23:17:47.390491+00:00",
+    "stop_reason": null,
+    "peak_processes": 2,
+    "peak_rss_bytes": 26132480,
+    "peak_sampled_pss_bytes": 15549440,
+    "memory_metric": "pss",
+    "console_users": 0,
+    "aggregate": {
+      "processes": 16,
+      "pss_bytes": 11298977792
+    },
+    "effective_process_cap": 80
+  },
+  "measured_state": {
+    "version": 2,
+    "host": "127x15",
+    "label": "wrapper-v2-cpu-smoke-20261008T231735Z",
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "-c",
+      "import os,time; payload=bytearray(4*1024*1024); print('tiny CPU sum',sum(payload),'nice',os.getpriority(os.PRIO_PROCESS,0),flush=True); time.sleep(10)"
+    ],
+    "started_utc": "2026-10-08T23:17:35.898192+00:00",
+    "declared_processes": 2,
+    "declared_pss_bytes": 50000000,
+    "gpu": false,
+    "admission_usage": {
+      "processes": 14,
+      "pss_bytes": 11283459072
+    },
+    "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+    "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+    "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+    "stop_at_utc": "2026-10-09T04:30:00+00:00",
+    "exit_by_utc": "2026-10-09T05:00:00+00:00",
+    "admission_aggregate": {
+      "processes": 14,
+      "pss_bytes": 11283459072
+    },
+    "admission_jobs": {
+      "v1:4072416:128921618": {
+        "kind": "v1",
+        "sequence": -1,
+        "supervisor_pid": 4072416,
+        "processes": 14,
+        "pss_bytes": 11283459072,
+        "stop_reason": null
+      }
+    },
+    "supervisor_pid": 4178708,
+    "admission_sequence": 2,
+    "pid": 4178709,
+    "checked_utc": "2026-10-08T23:17:36.590582+00:00",
+    "processes": 2,
+    "rss_bytes": 24621056,
+    "pss_bytes": 15549440,
+    "memory_metric": "pss",
+    "console_users": 0,
+    "effective_process_cap": 80,
+    "aggregate": {
+      "processes": 16,
+      "pss_bytes": 11298977792
+    },
+    "accounted_jobs": {
+      "v1:4072416:128921618": {
+        "kind": "v1",
+        "sequence": -1,
+        "supervisor_pid": 4072416,
+        "processes": 14,
+        "pss_bytes": 11283428352,
+        "stop_reason": null
+      },
+      "v2:wrapper-v2-cpu-smoke-20261008T231735Z": {
+        "kind": "v2",
+        "sequence": 2,
+        "supervisor_pid": 4178708,
+        "processes": 2,
+        "pss_bytes": 15549440,
+        "stop_reason": null
+      }
+    },
+    "stop_reason": null
+  },
+  "before": {
+    "holders": {
+      "4072416": "128921618"
+    },
+    "v1_lock": {
+      "device": 66304,
+      "inode": 1310793,
+      "size": 0,
+      "mtime_ns": 1791437637516894566
+    },
+    "v1_files": {
+      "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+      "lease_watch.py": "0efdd7cd8784e8635bb550ddb5f5730ebf5ada89554f1a77b7faff966ed40128"
+    },
+    "lease_sha256": "83966367dc7025aea955bc5ac17c8ee0bdfe2e03d01545b9aa97a513e6e66a13"
+  },
+  "after": {
+    "holders": {
+      "4072416": "128921618"
+    },
+    "v1_lock": {
+      "device": 66304,
+      "inode": 1310793,
+      "size": 0,
+      "mtime_ns": 1791437637516894566
+    },
+    "v1_files": {
+      "run.sh": "53a7232f03de1bbe1f0857b2a416c564fbcd94e44050e17ea102d048fe929cab",
+      "lease_watch.py": "0efdd7cd8784e8635bb550ddb5f5730ebf5ada89554f1a77b7faff966ed40128"
+    },
+    "lease_sha256": "83966367dc7025aea955bc5ac17c8ee0bdfe2e03d01545b9aa97a513e6e66a13"
+  },
+  "v1_untouched": true,
+  "lease_untouched": true,
+  "workload_exited": true,
+  "capacity_released": true,
+  "source_sha256": {
+    "run_v2.sh": "df42368d035d50fd3e1a7d1e887188b6ab144f81d3870f84c9db1e41963cc22b",
+    "lease_watch_v2.py": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9"
+  },
+  "job_log": "tiny CPU sum 0 nice 19\n"
+}

@@ -1,0 +1,12 @@
+{
+  "status": "pass",
+  "host": "127x01",
+  "tests": 37,
+  "command": "nice -n 10 /usr/bin/python3 -B /mpac/sdicks02/jobs/clasher/lease-wrapper-v2-tests-source/test_watch_v2.py",
+  "source_sha256": {
+    "run_v2.sh": "df42368d035d50fd3e1a7d1e887188b6ab144f81d3870f84c9db1e41963cc22b",
+    "lease_watch_v2.py": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9"
+  },
+  "test_source_sha256": "749fb333dd8aa8bf912b674fc7f87a0c0ad6f1b4ff626a634b0126929df68e32",
+  "log": "wrapper-v2-tests-20261008.log"
+}
