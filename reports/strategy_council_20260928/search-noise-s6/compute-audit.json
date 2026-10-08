@@ -1,0 +1,342 @@
+{
+  "total_metered_cpu_hours": 22.76200833333333,
+  "game_cpu_hours": 21.12524429431528,
+  "confirmation_supervisors_and_workers_cpu_hours": 22.302988888888887,
+  "preflight_and_operations_cpu_hours": 0.4590194444444444,
+  "missing_timing": [],
+  "total_is_lower_bound": false,
+  "records": [
+    {
+      "host": "127x01",
+      "label": "s6-collect-127x01-r1",
+      "log_sha256": "f5b56862aebecdd0a06eec15f8e13ee4cb19c01fad71a15d0c0249f7fac40a3c",
+      "cpu_seconds": 11.079999999999998,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s6-final-integrity-127x01-r1",
+      "log_sha256": "899dae6191e957fade4ca1435a013023f5e25809f63ef3f3decc7f20e83e21bf",
+      "cpu_seconds": 0.51,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s6-integrity-127x01-r1",
+      "log_sha256": "e90260f8a21ce29e6154e5b35eebef5e023144638cc897759614cd6af6a13af9",
+      "cpu_seconds": 0.37,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s6-recompute-127x01-r1",
+      "log_sha256": "e74520b7b2bf63dffcf1459bc38f2f57f38e216b711ac96d75bc9e2951816b41",
+      "cpu_seconds": 2.0,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s6-register-127x01-r1",
+      "log_sha256": "04ebab520207aec2ced8e1bbe3b7e473a72a51d9d3c915bea12345c4a321787e",
+      "cpu_seconds": 3.83,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s6-runtime-127x01-r1",
+      "log_sha256": "5553ec9a603f8423d121f11fe3621e197bd1ca7ca34407e6f8d7904299b5882c",
+      "cpu_seconds": 0.25,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s6-seed-audit-127x01-r1",
+      "log_sha256": "426aaa31fc291287ddace05b35d6d5a4dc1dde4aea4938270730d3a65fdf93a6",
+      "cpu_seconds": 504.75,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s6-start-confirmation-127x01-r1",
+      "log_sha256": "d28453b6c3c776c1ee6f366b8c7696e0c8e66febdc5c874e5bdf14f7078be0b2",
+      "cpu_seconds": 1.15,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s6-start-preflight-127x01-r1",
+      "log_sha256": "0589e1b8bd207c7eca8775197c0ec647e15bad901b9f987b06c4e9bc1a8118d0",
+      "cpu_seconds": 0.5,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s6-collect-127x01-r1",
+      "log_sha256": "1ac1dd6517359b0913d61e730eaf0ad490b39a64f6c042b22a5ef5692b17edad",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "exact prefix of completed owner-host log"
+    },
+    {
+      "host": "127x04",
+      "label": "s6-confirm-node-127x04-r1",
+      "log_sha256": "9316c5468785bbaf7d8b177f50db5b376707fed27e2b00cee3a3aaba92c6bc43",
+      "cpu_seconds": 42517.34,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s6-final-integrity-127x04-r1",
+      "log_sha256": "f2e4269216af293e2f9da45efb610c8216d39774aec68b3f8167a274a860ab1e",
+      "cpu_seconds": 0.29,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s6-integrity-127x01-r1",
+      "log_sha256": "e90260f8a21ce29e6154e5b35eebef5e023144638cc897759614cd6af6a13af9",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "byte-identical copy"
+    },
+    {
+      "host": "127x04",
+      "label": "s6-integrity-127x04-r1",
+      "log_sha256": "1863b6194caa211d049d1a972a5468a890928647bdc65d038e303e474c48d39d",
+      "cpu_seconds": 0.15000000000000002,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s6-preflight-0-127x04-r1",
+      "log_sha256": "1df73568c424efcd36fa5b627d6bc6690b13a67c0eb8278e9f8d5fc986e2bf4f",
+      "cpu_seconds": 137.02,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s6-preflight-2-127x04-r1",
+      "log_sha256": "fc99a452dcc17fe20697ceee058d55a6688d5ca2bf42f9ea2e49790393b5a481",
+      "cpu_seconds": 142.46,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s6-preflight-4-127x04-r1",
+      "log_sha256": "b024fc40cb24ee93699918e16cbb723d15ab6a7ea64d2fc26452a0612f8a05bc",
+      "cpu_seconds": 71.94,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s6-preflight-6-127x04-r1",
+      "log_sha256": "da3f4d35be666fca85fc137b0628fa76871e0d4c566bec89b61d3d201fc49144",
+      "cpu_seconds": 75.84,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s6-register-127x01-r1",
+      "log_sha256": "04ebab520207aec2ced8e1bbe3b7e473a72a51d9d3c915bea12345c4a321787e",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "byte-identical copy"
+    },
+    {
+      "host": "127x04",
+      "label": "s6-runtime-127x01-r1",
+      "log_sha256": "5553ec9a603f8423d121f11fe3621e197bd1ca7ca34407e6f8d7904299b5882c",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "byte-identical copy"
+    },
+    {
+      "host": "127x04",
+      "label": "s6-runtime-127x04-r1",
+      "log_sha256": "d3d75222e79bc114d1ec703e64794769d5e669d19bae9ccf8c469458f7ea2bc4",
+      "cpu_seconds": 0.12000000000000001,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s6-seed-audit-127x01-r1",
+      "log_sha256": "426aaa31fc291287ddace05b35d6d5a4dc1dde4aea4938270730d3a65fdf93a6",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "byte-identical copy"
+    },
+    {
+      "host": "127x04",
+      "label": "s6-seed-audit-127x04-r1",
+      "log_sha256": "477901bf14cc7975b81edb1aef27022a2b685d290fd91b0a3d4562a1e838eb53",
+      "cpu_seconds": 203.48,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s6-start-confirmation-127x01-r1",
+      "log_sha256": "d28453b6c3c776c1ee6f366b8c7696e0c8e66febdc5c874e5bdf14f7078be0b2",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "byte-identical copy"
+    },
+    {
+      "host": "127x04",
+      "label": "s6-start-preflight-127x01-r1",
+      "log_sha256": "0589e1b8bd207c7eca8775197c0ec647e15bad901b9f987b06c4e9bc1a8118d0",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "byte-identical copy"
+    },
+    {
+      "host": "127x04",
+      "label": "s6-tests-127x04-r1",
+      "log_sha256": "1021a90e61f66acc4bc20b315b57d9e714823089f6471565411b5bb04d3a49dd",
+      "cpu_seconds": 28.110000000000003,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s6-tests-127x04-r2",
+      "log_sha256": "7f5fa0f667c97c31a8c4b263e9c232e9938ecb0b9c6d9b79cc47aa1512cdf8c5",
+      "cpu_seconds": 27.599999999999998,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s6-confirm-node-127x08-r1",
+      "log_sha256": "ed37e31db2b76e7f917023cadf119efbbb4799c94cc9367207cd62269f73d7c3",
+      "cpu_seconds": 37773.42,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s6-final-integrity-127x08-r1",
+      "log_sha256": "7cd1c8ca31dbc2687a2df6e487d7f5c74ed58642a80e53765795ad93c31e6a18",
+      "cpu_seconds": 0.31000000000000005,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s6-integrity-127x08-r1",
+      "log_sha256": "d7a6d1bfb644b549958eccd956ef6c91213b6a07e121153253008bdb11d05faa",
+      "cpu_seconds": 0.18,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s6-preflight-1-127x08-r1",
+      "log_sha256": "67fa36a42e735ad107c35d24c2a9772c3e75440fd506a219953e7c745d620556",
+      "cpu_seconds": 213.73000000000002,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s6-preflight-3-127x08-r1",
+      "log_sha256": "1308d7f64c770eb9bef0d72408613ae4051f96abb62ca56a3c30d97c2ecdd829",
+      "cpu_seconds": 64.68,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s6-preflight-5-127x08-r1",
+      "log_sha256": "bdadc5849f5eeb9922e02c8c3a3b6263214af62e233697ac070629acce30e26c",
+      "cpu_seconds": 57.22,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s6-preflight-7-127x08-r1",
+      "log_sha256": "bf6d5f3e518f3ac6af4c426a97005fbf7ffb3bc76f07a681c736652681f8c321",
+      "cpu_seconds": 104.78,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s6-runtime-127x08-r1",
+      "log_sha256": "2a9fc73207f437d3eda73769b20af9ceafb5bc836d8bf725950412d59fd17392",
+      "cpu_seconds": 0.12,
+      "timing_missing": false
+    }
+  ],
+  "accounting": "Host-specific detached labels. Wrong-host log copies are excluded after byte-identity/prefix checks against the owning host. Original aggregate and log evidence are retained. GNU time includes reaped children; game CPU overlaps. Small copying/finalization and unidentified mirror-process CPU are unmetered.",
+  "mirrored_logs_excluded": [
+    {
+      "host": "127x04",
+      "label": "s6-collect-127x01-r1",
+      "owner_host": "127x01",
+      "reason": "exact prefix of completed owner-host log",
+      "copy_sha256": "1ac1dd6517359b0913d61e730eaf0ad490b39a64f6c042b22a5ef5692b17edad",
+      "owner_sha256": "f5b56862aebecdd0a06eec15f8e13ee4cb19c01fad71a15d0c0249f7fac40a3c",
+      "previously_counted_cpu_seconds": null
+    },
+    {
+      "host": "127x04",
+      "label": "s6-integrity-127x01-r1",
+      "owner_host": "127x01",
+      "reason": "byte-identical copy",
+      "copy_sha256": "e90260f8a21ce29e6154e5b35eebef5e023144638cc897759614cd6af6a13af9",
+      "owner_sha256": "e90260f8a21ce29e6154e5b35eebef5e023144638cc897759614cd6af6a13af9",
+      "previously_counted_cpu_seconds": 0.37
+    },
+    {
+      "host": "127x04",
+      "label": "s6-register-127x01-r1",
+      "owner_host": "127x01",
+      "reason": "byte-identical copy",
+      "copy_sha256": "04ebab520207aec2ced8e1bbe3b7e473a72a51d9d3c915bea12345c4a321787e",
+      "owner_sha256": "04ebab520207aec2ced8e1bbe3b7e473a72a51d9d3c915bea12345c4a321787e",
+      "previously_counted_cpu_seconds": 3.83
+    },
+    {
+      "host": "127x04",
+      "label": "s6-runtime-127x01-r1",
+      "owner_host": "127x01",
+      "reason": "byte-identical copy",
+      "copy_sha256": "5553ec9a603f8423d121f11fe3621e197bd1ca7ca34407e6f8d7904299b5882c",
+      "owner_sha256": "5553ec9a603f8423d121f11fe3621e197bd1ca7ca34407e6f8d7904299b5882c",
+      "previously_counted_cpu_seconds": 0.25
+    },
+    {
+      "host": "127x04",
+      "label": "s6-seed-audit-127x01-r1",
+      "owner_host": "127x01",
+      "reason": "byte-identical copy",
+      "copy_sha256": "426aaa31fc291287ddace05b35d6d5a4dc1dde4aea4938270730d3a65fdf93a6",
+      "owner_sha256": "426aaa31fc291287ddace05b35d6d5a4dc1dde4aea4938270730d3a65fdf93a6",
+      "previously_counted_cpu_seconds": 504.75
+    },
+    {
+      "host": "127x04",
+      "label": "s6-start-confirmation-127x01-r1",
+      "owner_host": "127x01",
+      "reason": "byte-identical copy",
+      "copy_sha256": "d28453b6c3c776c1ee6f366b8c7696e0c8e66febdc5c874e5bdf14f7078be0b2",
+      "owner_sha256": "d28453b6c3c776c1ee6f366b8c7696e0c8e66febdc5c874e5bdf14f7078be0b2",
+      "previously_counted_cpu_seconds": 1.15
+    },
+    {
+      "host": "127x04",
+      "label": "s6-start-preflight-127x01-r1",
+      "owner_host": "127x01",
+      "reason": "byte-identical copy",
+      "copy_sha256": "0589e1b8bd207c7eca8775197c0ec647e15bad901b9f987b06c4e9bc1a8118d0",
+      "owner_sha256": "0589e1b8bd207c7eca8775197c0ec647e15bad901b9f987b06c4e9bc1a8118d0",
+      "previously_counted_cpu_seconds": 0.5
+    }
+  ]
+}

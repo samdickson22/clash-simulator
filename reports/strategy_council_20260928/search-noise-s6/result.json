@@ -1,0 +1,243 @@
+{
+  "manifest": "198d3855e37280d463dbac3b7b30abc5fe04386665fcca2cd942ee7f6d576e60",
+  "receipt_aggregate": "9a1b680277a4e0003fe5453526014f9e702ba4487a127dce6778fb68f9c72f6d",
+  "games": 1280,
+  "bootstrap_seed": 9781100003,
+  "bootstrap_samples": 10000,
+  "scores": {
+    "clean-d0": {
+      "point": 0.89453125,
+      "ci95": [
+        0.84765625,
+        0.9375
+      ]
+    },
+    "clean-d22-unaware": {
+      "point": 0.72265625,
+      "ci95": [
+        0.65234375,
+        0.7891601562499986
+      ]
+    },
+    "clean-d22-aware": {
+      "point": 0.8671875,
+      "ci95": [
+        0.81640625,
+        0.9140625
+      ]
+    },
+    "T3-N97-d22-unaware": {
+      "point": 0.5078125,
+      "ci95": [
+        0.43359375,
+        0.58203125
+      ]
+    },
+    "T3-N97-d22-aware": {
+      "point": 0.6015625,
+      "ci95": [
+        0.52734375,
+        0.67578125
+      ]
+    }
+  },
+  "contrasts": {
+    "primary": {
+      "point": 0.14453125,
+      "ci95": [
+        0.0859375,
+        0.203125
+      ],
+      "pass": true
+    },
+    "secondary": {
+      "point": 0.09375,
+      "ci95": [
+        0.03896484375000009,
+        0.15234375
+      ],
+      "pass": true
+    },
+    "latency_cost": {
+      "point": 0.02734375,
+      "ci95": [
+        -0.01953125,
+        0.07421875
+      ]
+    }
+  },
+  "diagnostics": {
+    "clean-d0": {
+      "samples": 52609,
+      "coverage": 1.0,
+      "width": 0.0,
+      "mae": 0.0,
+      "post_error_samples": 0,
+      "post_error_coverage": null,
+      "hand90_fraction": 0.18200307932102872,
+      "hand90_accuracy": 1.0,
+      "unanimity_fraction": 0.18200307932102872,
+      "hypothesis90_fraction": 1.0,
+      "cpu_hours": 3.6983689449552775,
+      "mean_decision_p50": 0.004610114889146644,
+      "rejected": 3,
+      "command_channel": {
+        "submitted": 14025,
+        "executed": 14025,
+        "rejected": 3,
+        "blocked_polls": 0,
+        "pending_at_end": 0
+      },
+      "perception": {
+        "entities": 6333860
+      },
+      "event_recall": null,
+      "event_precision": null
+    },
+    "clean-d22-unaware": {
+      "samples": 39097,
+      "coverage": 1.0,
+      "width": 0.0,
+      "mae": 0.0,
+      "post_error_samples": 0,
+      "post_error_coverage": null,
+      "hand90_fraction": 0.19868532112438295,
+      "hand90_accuracy": 1.0,
+      "unanimity_fraction": 0.19868532112438295,
+      "hypothesis90_fraction": 1.0,
+      "cpu_hours": 3.6318523367425,
+      "mean_decision_p50": 0.004636629010974502,
+      "rejected": 4,
+      "command_channel": {
+        "submitted": 14282,
+        "executed": 14182,
+        "rejected": 4,
+        "blocked_polls": 156483,
+        "pending_at_end": 100
+      },
+      "perception": {
+        "entities": 6406665
+      },
+      "event_recall": null,
+      "event_precision": null
+    },
+    "clean-d22-aware": {
+      "samples": 39523,
+      "coverage": 1.0,
+      "width": 0.0,
+      "mae": 0.0,
+      "post_error_samples": 0,
+      "post_error_coverage": null,
+      "hand90_fraction": 0.16519494977607976,
+      "hand90_accuracy": 1.0,
+      "unanimity_fraction": 0.16519494977607976,
+      "hypothesis90_fraction": 1.0,
+      "cpu_hours": 3.6689992502575004,
+      "mean_decision_p50": 0.004634574967894878,
+      "rejected": 13,
+      "command_channel": {
+        "submitted": 14497,
+        "executed": 14380,
+        "rejected": 13,
+        "blocked_polls": 158765,
+        "pending_at_end": 117
+      },
+      "perception": {
+        "entities": 6489608
+      },
+      "event_recall": null,
+      "event_precision": null
+    },
+    "T3-N97-d22-unaware": {
+      "samples": 39346,
+      "coverage": 0.9165099374777614,
+      "width": 2.3845731357698368,
+      "mae": 0.49530216937154337,
+      "post_error_samples": 18103,
+      "post_error_coverage": 0.8877534110368447,
+      "hand90_fraction": 0.1422253850454938,
+      "hand90_accuracy": 0.9217298070050036,
+      "unanimity_fraction": 0.0,
+      "hypothesis90_fraction": 0.1422253850454938,
+      "cpu_hours": 4.862447349687778,
+      "mean_decision_p50": 0.014297620586603443,
+      "rejected": 542,
+      "command_channel": {
+        "submitted": 15944,
+        "executed": 15812,
+        "rejected": 542,
+        "blocked_polls": 174524,
+        "pending_at_end": 132
+      },
+      "perception": {
+        "matched_events": 14052,
+        "position_hits": 6512825,
+        "phantom_entities": 503620,
+        "elixir_trials": 553355,
+        "hand_trials": 2213420,
+        "hp_observed": 2228997,
+        "hp_imputed": 945697,
+        "entities": 6723861,
+        "elixir_errors": 16192,
+        "hp_abs_error": 110902.11941483716,
+        "truth_events": 14448,
+        "hand_errors": 6902,
+        "confused_events": 37,
+        "hp_trials": 3373749,
+        "placement_hits": 12668,
+        "spurious_events": 420,
+        "dropped_entities": 199055,
+        "non_tower_entities": 3373749,
+        "missed_events": 359
+      },
+      "event_recall": 0.9725913621262459,
+      "event_precision": 0.96850230891171
+    },
+    "T3-N97-d22-aware": {
+      "samples": 41124,
+      "coverage": 0.9180527186071393,
+      "width": 2.443205658496255,
+      "mae": 0.5102487926011398,
+      "post_error_samples": 19742,
+      "post_error_coverage": 0.8933238780265425,
+      "hand90_fraction": 0.14317673378076062,
+      "hand90_accuracy": 0.9167798913043478,
+      "unanimity_fraction": 0.0,
+      "hypothesis90_fraction": 0.14317673378076062,
+      "cpu_hours": 5.263576412672222,
+      "mean_decision_p50": 0.01445551882966356,
+      "rejected": 591,
+      "command_channel": {
+        "submitted": 17420,
+        "executed": 17303,
+        "rejected": 591,
+        "blocked_polls": 190807,
+        "pending_at_end": 117
+      },
+      "perception": {
+        "matched_events": 15364,
+        "position_hits": 7035916,
+        "phantom_entities": 543290,
+        "elixir_trials": 585986,
+        "hand_trials": 2343944,
+        "hp_observed": 2411947,
+        "hp_imputed": 1022897,
+        "entities": 7263642,
+        "elixir_errors": 17112,
+        "hp_abs_error": 120018.35617842549,
+        "truth_events": 15814,
+        "hand_errors": 7281,
+        "confused_events": 42,
+        "hp_trials": 3649686,
+        "placement_hits": 13827,
+        "spurious_events": 463,
+        "dropped_entities": 214842,
+        "non_tower_entities": 3649686,
+        "missed_events": 408
+      },
+      "event_recall": 0.9715442013405843,
+      "event_precision": 0.9681769487680383
+    }
+  },
+  "game_cpu_hours": 21.12524429431528
+}

@@ -1,10 +1,9 @@
 """Post-analysis accounting only: identify mirrored logs without changing frozen analysis."""
 from pathlib import Path
-import hashlib,json,re,shlex,subprocess,socket
+import hashlib,json,re,shlex,subprocess
 HERE=Path(__file__).resolve().parent
 source=HERE/'compute-audit-before-attribution.json'
-if not source.exists():source.write_bytes((HERE/'compute-audit.json').read_bytes())
-else:assert source.read_bytes()==(HERE/'compute-audit.json').read_bytes(), 'original reporting aggregate changed'
+assert not source.exists();source.write_bytes((HERE/'compute-audit.json').read_bytes())
 d=json.loads(source.read_text());records=d['records'];evidence=HERE/'cpu-log-evidence';evidence.mkdir(exist_ok=True)
 foreign=[]
 for r in records:
@@ -13,8 +12,7 @@ for r in records:
  owner=next(x for x in records if x['host']==declared and x['label']==r['label'])
  copies={}
  for host in (r['host'],declared):
-  path=f"/mpac/sdicks02/jobs/clasher/{r['label']}.log"
-  data=Path(path).read_bytes() if host==socket.gethostname().split('.')[0] else subprocess.check_output(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10',host,'cat',path],timeout=30)
+  data=subprocess.check_output(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10',host,'cat',f"/mpac/sdicks02/jobs/clasher/{r['label']}.log"],timeout=30)
   assert hashlib.sha256(data).hexdigest()==(r if host==r['host'] else owner)['log_sha256']
   p=evidence/host;p.mkdir(exist_ok=True);(p/f"{r['label']}.log").write_bytes(data);copies[host]=data
  assert copies[declared].startswith(copies[r['host']]),(r['host'],r['label'])

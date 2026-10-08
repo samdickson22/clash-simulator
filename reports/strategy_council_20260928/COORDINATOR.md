@@ -578,3 +578,17 @@ Also on the hub, but with copies elsewhere:
   primitives (135 checks). Phase A at 07:04Z: 145 train / 18 val / 18 heldout matches, 437 heldout opponent events.
 - **2026-10-08 07:44 UTC heartbeat:** Mac OK (23 GiB free, 35% memory free, pool at 2 renderers with retry_used). Answered the perception worker's pending storage question (allow ≤1 TB total cache; consistent with the 300 GB/host decision). T4 shakedown failed once (dev row >64 entities, v6 contract cap) → fixed to the 128 cap, rerunning; T5 hard-stopped correctly, then **resumed by the coordinator** to wait for the rerun PASS (T5 schedule re-enabled). S6 1,253/1,280 receipts. No reclaims; console users 0.
 - **2026-10-08 07:50 UTC: GitGuardian alert on 20cff68 = false positive.** The 'Generic High Entropy Secret' is `"tokens": "35db1a76…"` (3 occurrences in imitation/model/receipts/shakedown-20261008T0714Z/{preflight.json,train.jsonl}): the SHA-256 of the public 360-name contract_v5 token list (recomputed via token_list_sha256). No credential was committed; the commit has no other secret-like fields. Added `.gitguardian.yaml` ignoring that exact hash. My commits now run `/mpac/sdicks02/cc/tools/bin/clasher-secret-scan` (gh/HF/AWS/OpenAI/Tailscale/Slack tokens, private keys) on the staged diff first.
+- **2026-10-08 07:53 UTC: S6 PASS. Delay-aware planning adopted; L2-v4 prerequisite (a) done.**
+  (`search-noise-s6/RESULTS.md`; 1,280 games, 21 core-h, 15 min.) Clean d0 89.5%; clean d22 unaware 72.3%; clean d22 aware
+  86.7%; T3-N97 d22 unaware 50.8%, aware 60.2%.
+  - Primary: aware − unaware (clean, d=22) **+14.5 pp [+8.6, +20.3] PASS**.
+  - Secondary: aware − unaware (noisy T3-N97) **+9.4 [+3.9, +15.2] PASS**.
+  - Latency cost when aware (d0 − d22-aware): 2.7 [−2.0, +7.4], not resolved.
+  - Coordinator recomputation from the 1,280 raw receipts reproduces both contrasts. 126 capacity-triggered partition
+    resumes on 04 were technical, with no exclusions.
+  - **Decisions:**
+    1. The delay-aware planner (S6 flag, d = backend D_b in ticks from `backend-timing.json`) is the default for every
+       delayed backend: renderer ≈22–23 ticks; L3 measures its own.
+    2. The L2-v4 sim arm S-d = clean d22 aware.
+    3. The remaining noisy gap at d22 is 26 pp (60.2 vs 86.7), from board noise and residual derived-state error:
+       still the decision- and perception-side agenda.

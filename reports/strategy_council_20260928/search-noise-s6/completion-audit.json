@@ -1,0 +1,20 @@
+{
+  "games": 1280,
+  "counts": {
+    "clean-d0": 256,
+    "clean-d22-unaware": 256,
+    "clean-d22-aware": 256,
+    "T3-N97-d22-unaware": 256,
+    "T3-N97-d22-aware": 256
+  },
+  "manifest": "198d3855e37280d463dbac3b7b30abc5fe04386665fcca2cd942ee7f6d576e60",
+  "receipt_aggregate": "9a1b680277a4e0003fe5453526014f9e702ba4487a127dce6778fb68f9c72f6d",
+  "independent_scores_and_all_bootstrap_intervals_match": true,
+  "all_nice_at_least_10": true,
+  "all_native_threads_one": true,
+  "game_cpu_hours_by_host": {
+    "127x04": 10.689708604641956,
+    "127x08": 10.435535689673333
+  },
+  "wall_span_minutes": 15.377044602235157
+}
