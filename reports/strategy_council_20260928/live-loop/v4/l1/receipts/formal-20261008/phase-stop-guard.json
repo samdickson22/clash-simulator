@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-08T16:41:34.433715+00:00",
+  "one_shot_result": "skipped-terminal-completion",
+  "phase_a_polled": false,
+  "schedule_previously_deleted": true,
+  "completion_artifacts_on_hub": false,
+  "source_sha256": {
+    "phase_watch.py": "215c0dd4d4ee13f000ef13a5b3611684e1e7c1fde3e0ee30bd532aa5f8ec8e20",
+    "test_phase_watch_stop.py": "31f0273c8c23da2d467035ad90987e75a8903cc9ff2a5bce81cf7d909399680b"
+  },
+  "tests": 22,
+  "exit_code": 0,
+  "heldout_payloads_opened": false
+}

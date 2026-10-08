@@ -1,0 +1,32 @@
+{
+  "host": "127x09",
+  "label": "v4-pool-admission-20261008-09r1",
+  "started_utc": "2026-10-08T16:50:39.233370+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/formal_guard.py",
+    "--phase-state",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/t1-completion-mirror/pool-state.json",
+    "--phase-exit",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/t1-completion-mirror/T1-PHASE-A-COMPLETE.json",
+    "--source",
+    "/mpac/sdicks02/repos/clasher-lease/data/v4-matches",
+    "--split",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/split.json",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/v4-pool-admission-20261008-09r1.json"
+  ],
+  "supervisor_pid": 3530017,
+  "pid": 3530022,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T16:50:40.358892+00:00",
+  "stop_reason": null,
+  "peak_processes": 2,
+  "peak_rss_bytes": 28782592,
+  "peak_sampled_pss_bytes": 23304192,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "effective_process_cap": 96
+}

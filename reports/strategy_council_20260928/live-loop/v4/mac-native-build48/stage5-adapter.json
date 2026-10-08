@@ -1,0 +1,6 @@
+{
+  "original_sha256": "2d9ab50e3a5b23d15ab473e4b7924d9f286128863e25c31abb325ae94a0c6a02",
+  "replacement_from": "assert Path(clasher_core.__file__).resolve().parent==f/'native'",
+  "replacement_to": "assert Path(clasher_core.__file__).resolve().parent==f.parents[3]/'engine-rs'",
+  "adapter_sha256": "cb3fdf80f844281ff050768a6aac0dcb3fc9befc6f003dc7e72652cda7e0f80b"
+}

@@ -1,0 +1,19 @@
+{
+  "pid": 22771,
+  "started": 1791441973.668211,
+  "claims": {},
+  "admitted_count": 2,
+  "max_count": 2,
+  "stop_reason": "heldout count coverage reached",
+  "completed_this_run": 475,
+  "retry_used": true,
+  "scale_back_count": null,
+  "draining": false,
+  "storage_pause": false,
+  "last_completion": {
+    "instance": "renderer-2",
+    "episode": "v4-phase-a-1975101340",
+    "passed": true,
+    "time": 1791474191.372818
+  }
+}

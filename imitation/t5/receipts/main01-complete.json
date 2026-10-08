@@ -1,0 +1,9 @@
+{
+  "stopped_by_signal": false,
+  "epoch": 12,
+  "cursor": 0,
+  "step": 22552,
+  "best_dev": 0.3458578509943139,
+  "bad_epochs": 0,
+  "rows": 184706276
+}

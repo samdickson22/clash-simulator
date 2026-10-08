@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-08T16:36:48.748237+00:00",
+  "source_alias": "/mpac/sdicks02/repos/clasher-lease/data/v4-final-preparation-20261008-15r1",
+  "destination": "/mpac/sdicks02/repos/clasher-lease/data/v4-cache/t6-final-dataset-20261008",
+  "matches": 577,
+  "splits": {
+    "train": 513,
+    "validation": 64
+  },
+  "metadata_sha256": {
+    "inventory.json": "177a38933b68005ddb371c1f5428989edec4fb0b8a05debb2bab741429ea2eb0",
+    "manifest.json": "6fbc713411edf2099422590c373f38843e41bc12700f650b823550cca255fed2",
+    "complete.json": "6ca237fa7fc51fa9efc36255f25e1bdd1e3adae3585ba926f26311e4c8f909b6"
+  },
+  "converter_exit_sha256": "3f13bf22ae929f132561f7c48a044ed0f416fe01cb8c8f260506fa29442ed69b",
+  "conservative_corpus_bytes": 13438050625,
+  "cache_root_bytes": 13438050625,
+  "reserved_future_growth_bytes": 6294967296,
+  "checked_internal_aliases": 1154,
+  "deleted": false,
+  "heldout_payloads_opened": false
+}

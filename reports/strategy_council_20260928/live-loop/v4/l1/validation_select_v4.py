@@ -13,6 +13,7 @@ from validation_admission_v4 import read, sha, validate_run
 from validation_score_v4 import score_run
 from selection_matrix_v4 import rank_validation_grid
 from card_thresholds_v4 import select_card_thresholds
+from body_selection_v4 import select_run as select_body
 
 
 def select_run(args):
@@ -23,6 +24,20 @@ def select_run(args):
     expected = {(epoch, i/10) for epoch in range(1,25) for i in range(1,10)}
     if plan.get('schema') != 'clasher.v4.validation-grid-input.v1' or len(entries) != len(expected):
         raise ValueError('Explicit complete 24x9 replay grid required')
+    body_grids = None
+    if 'body_grids' in plan:
+        declared = plan['body_grids']
+        if not isinstance(declared,dict) or set(declared) != {str(i) for i in range(1,25)}:
+            raise ValueError('Complete per-epoch body grid map required')
+        body_grids = {}
+        for epoch,name in declared.items():
+            if not isinstance(name,str) or not name:
+                raise ValueError('Body grid path required')
+            path = Path(name)
+            if not path.is_absolute(): path = args.grid.parent/path
+            body_grids[epoch] = path.resolve()
+        if len(set(body_grids.values())) != 24:
+            raise ValueError('Distinct body grid per epoch required')
     paths, grid = set(), {}
     for cell in entries:
         epoch, threshold = cell['epoch'], cell['threshold']
@@ -47,10 +62,25 @@ def select_run(args):
     code = Path(__file__).parent
     source_names = ('validation_select_v4.py','validation_admission_v4.py','validation_score_v4.py',
                     'selection_matrix_v4.py','card_thresholds_v4.py','scoring_v4.py','execution_clock_v4.py')
+    if body_grids is not None:
+        source_names += ('body_selection_v4.py','validation_body_score_v4.py','body_scoring_v4.py')
     manifest = dict(schema='clasher.v4.validation-selection-input.v1', readiness=readiness,
         grid_sha256=sha(args.grid), cells=[dict(epoch=e,threshold=t,replay=str(grid[e,t])) for e,t in sorted(grid)],
         sources={name:sha(code/name) for name in source_names}, heldout_payloads_opened=False,selection_seal=False)
+    if body_grids is not None:
+        manifest['body_grids_sha256'] = {e:sha(p) for e,p in body_grids.items()}
     put('manifest.json',manifest)
+    body_rankings, body_proofs = None, {}
+    if body_grids is not None:
+        body_rankings = {}
+        for epoch in map(str,range(1,25)):
+            directory = args.output/f'body-epoch-{int(epoch):02d}'
+            proposal = select_body(SimpleNamespace(run=args.run,source=args.source,split=args.split,
+                phase_state=args.phase_state,phase_exit=args.phase_exit,grid=body_grids[epoch],output=directory))
+            body_rankings[epoch] = proposal['ranking']
+            body_proofs[epoch] = dict(ranking=proposal['ranking'],
+                proposal_sha256=sha(directory/'body-selection-proposal.json'),
+                completion_sha256=sha(directory/'complete.json'))
     scores, score_files = [], {}
     for epoch,threshold in sorted(grid):
         cell_args = SimpleNamespace(run=args.run,source=args.source,split=args.split,
@@ -61,19 +91,24 @@ def select_run(args):
             raise ValueError('Replay differs from declared grid or original full admission')
         name = f'epoch-{epoch:02d}-threshold-{round(threshold*10)}.json'
         put(name,result);score_files[name] = sha(args.output/name);scores.append(result)
-    ranking = rank_validation_grid(scores)
+    ranking = rank_validation_grid(scores, body_rankings=body_rankings)
     candidate = ranking['candidate']
     thresholds = select_card_thresholds([r for r in scores if r['epoch']==candidate['epoch']],
                                        global_threshold=candidate['threshold'])
     # Refuse source/grid mutations during a long recomputation.
     if manifest['grid_sha256'] != sha(args.grid) or any(sha(code/n)!=v for n,v in manifest['sources'].items()):
         raise ValueError('Selection inputs changed during scoring')
+    if body_grids is not None and any(sha(p)!=manifest['body_grids_sha256'][e] for e,p in body_grids.items()):
+        raise ValueError('Body grids changed during scoring')
     proposal = dict(schema='clasher.v4.event-selection-proposal.v1', ranking=ranking,
         body_threshold=ranking['body_threshold'],
         card_thresholds=thresholds, checkpoint_sha256=readiness['checkpoint_sha256'][str(candidate['epoch'])],
         manifest_sha256=sha(args.output/'manifest.json'), scores_sha256=score_files,
         heldout_payloads_opened=False,heldout_opening_authorized=False,selection_seal=False,
         pending=['body thresholds','combined-threshold replay','isotonic calibration','selection freeze'])
+    if body_grids is not None:
+        proposal['body_selections'] = body_proofs
+        proposal['pending'].remove('body thresholds')
     put('event-selection-proposal.json',proposal)
     put('complete.json',dict(proposal_sha256=sha(args.output/'event-selection-proposal.json'),
         cells=len(scores),heldout_payloads_opened=False,heldout_opening_authorized=False,selection_seal=False))

@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+    "-B",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+    "recorded-0"
+  ],
+  "pid": 1125,
+  "exit_code": 0,
+  "started": 1791482246.799884,
+  "ended": 1791482681.519658,
+  "wall_seconds": 434.71977400779724
+}

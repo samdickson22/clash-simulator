@@ -1,0 +1,6 @@
+{
+  "path": "reports/strategy_council_20260928/pilot/v7r2-launch/runs/s2903/seed-2903/scripted/policy_decisions_001000000.pt",
+  "sha256": "c7aae667e45073bfab442b9d36a4b2c45bca7321df442d8ebfac419e191dc522",
+  "source": "127x01:/mpac/sdicks02/repos/clasher-stage6-build48/reports/strategy_council_20260928/pilot/v7r2-launch/runs/s2903/seed-2903/scripted/policy_decisions_001000000.pt",
+  "purpose": "Unchanged recorded identity Context frozen pilot checkpoint, absent from Mac staged dependencies"
+}

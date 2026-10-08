@@ -1,0 +1,1080 @@
+{"time":1791436849.82423,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100803"}
+{"time":1791436935.732018,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100804"}
+{"time":1791436977.760382,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100803","fps":19.999369940943545,"accepted":42,"exact":42,"hub_bytes":9648859,"passed":true,"worker_seconds":127.93395900726318}
+{"time":1791437050.005353,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100804","fps":19.97988756770293,"accepted":32,"exact":32,"hub_bytes":7554974,"passed":true,"worker_seconds":114.26932406425476}
+{"time":1791437068.708433,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100805"}
+{"time":1791437068.7216809,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100806"}
+{"time":1791437247.341471,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100805","fps":19.999722349553718,"accepted":62,"exact":62,"hub_bytes":22515954,"passed":true,"worker_seconds":178.6307828426361}
+{"time":1791437251.129905,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100806","fps":19.997776258878744,"accepted":70,"exact":70,"hub_bytes":21644707,"passed":true,"worker_seconds":182.4057629108429}
+{"time":1791437251.177356,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100807"}
+{"time":1791437251.190101,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100808"}
+{"time":1791437313.1843321,"event":"claim","instance":"renderer-3","episode":"v4-phase-a-1975100809"}
+{"time":1791437349.679729,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100807","fps":19.99607262299263,"accepted":35,"exact":35,"hub_bytes":9325458,"passed":true,"worker_seconds":98.50011610984802}
+{"time":1791437349.707456,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100810"}
+{"time":1791437408.034245,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100808","fps":19.99823933222561,"accepted":67,"exact":67,"hub_bytes":15974082,"passed":true,"worker_seconds":156.84212398529053}
+{"time":1791437408.0626,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100811"}
+{"time":1791437445.2926269,"event":"verified match","instance":"renderer-3","episode":"v4-phase-a-1975100809","fps":19.999306301142813,"accepted":74,"exact":74,"hub_bytes":12061142,"passed":true,"worker_seconds":132.10595679283142}
+{"time":1791437445.321101,"event":"claim","instance":"renderer-3","episode":"v4-phase-a-1975100812"}
+{"time":1791437477.927375,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100810","fps":19.997209079041443,"accepted":40,"exact":40,"hub_bytes":10277959,"passed":true,"worker_seconds":128.2174150943756}
+{"time":1791437477.956814,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100813"}
+{"time":1791437520.839108,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100811","fps":19.993771324275244,"accepted":35,"exact":35,"hub_bytes":7075610,"passed":true,"worker_seconds":112.77385807037354}
+{"time":1791437520.870485,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100814"}
+{"time":1791437619.694328,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100814","fps":19.99476808512133,"accepted":41,"exact":41,"hub_bytes":8947421,"passed":true,"worker_seconds":98.82132291793823}
+{"time":1791437619.731597,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100815"}
+{"time":1791437625.788822,"event":"verified match","instance":"renderer-3","episode":"v4-phase-a-1975100812","fps":19.999928218507648,"accepted":70,"exact":70,"hub_bytes":21334230,"passed":true,"worker_seconds":180.46559190750122}
+{"time":1791437629.1467872,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100813","fps":19.966904456937243,"accepted":45,"exact":45,"hub_bytes":16751987,"passed":true,"worker_seconds":151.18718433380127}
+{"time":1791437629.1844969,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100816"}
+{"time":1791437629.197951,"event":"claim","instance":"renderer-3","episode":"v4-phase-a-1975100817"}
+{"time":1791437742.72252,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100816","fps":19.998117269876726,"accepted":39,"exact":39,"hub_bytes":8714441,"passed":true,"worker_seconds":113.53601312637329}
+{"time":1791437742.753879,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100818"}
+{"time":1791437757.328562,"event":"verified match","instance":"renderer-3","episode":"v4-phase-a-1975100817","fps":19.990555743977936,"accepted":51,"exact":51,"hub_bytes":11651793,"passed":true,"worker_seconds":128.1283631324768}
+{"time":1791437757.357284,"event":"claim","instance":"renderer-3","episode":"v4-phase-a-1975100819"}
+{"time":1791437762.36497,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100815","fps":19.996803159335116,"accepted":62,"exact":62,"hub_bytes":15454952,"passed":true,"worker_seconds":142.63109397888184}
+{"time":1791437762.404224,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100820"}
+{"time":1791437839.697233,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100818","fps":19.977214641329095,"accepted":21,"exact":21,"hub_bytes":4549901,"passed":true,"worker_seconds":96.94043493270874}
+{"time":1791437839.729506,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100821"}
+{"time":1791437922.066046,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100820","fps":19.999763858219925,"accepted":53,"exact":53,"hub_bytes":18833754,"passed":true,"worker_seconds":159.65949201583862}
+{"time":1791437922.101342,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100822"}
+{"time":1791437936.71956,"event":"verified match","instance":"renderer-3","episode":"v4-phase-a-1975100819","fps":19.998638653423274,"accepted":56,"exact":56,"hub_bytes":21890854,"passed":true,"worker_seconds":179.360435962677}
+{"time":1791437938.530404,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100821","fps":19.996869298714905,"accepted":32,"exact":32,"hub_bytes":9433820,"passed":true,"worker_seconds":98.79829502105713}
+{"time":1791437938.561582,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100823"}
+{"time":1791437938.57677,"event":"claim","instance":"renderer-3","episode":"v4-phase-a-1975100824"}
+{"time":1791438061.38555,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100823","fps":19.995495812675227,"accepted":38,"exact":38,"hub_bytes":11299656,"passed":true,"worker_seconds":122.82159423828125}
+{"time":1791438061.4466019,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100825"}
+{"time":1791438067.5716748,"event":"verified match","instance":"renderer-3","episode":"v4-phase-a-1975100824","fps":19.998296699192558,"accepted":50,"exact":50,"hub_bytes":10788335,"passed":true,"worker_seconds":128.99279880523682}
+{"time":1791438067.622974,"event":"claim","instance":"renderer-3","episode":"v4-phase-a-1975100826"}
+{"time":1791438072.280389,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100822","fps":19.996291997043986,"accepted":60,"exact":60,"hub_bytes":15023277,"passed":true,"worker_seconds":150.1754310131073}
+{"time":1791438072.317369,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100827"}
+{"time":1791438173.171912,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100825","fps":19.991124339043807,"accepted":28,"exact":28,"hub_bytes":6784693,"passed":true,"worker_seconds":111.72257590293884}
+{"time":1791438173.2086852,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100828"}
+{"time":1791438217.6386151,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100827","fps":19.996948478902606,"accepted":58,"exact":58,"hub_bytes":17084602,"passed":true,"worker_seconds":145.31901788711548}
+{"time":1791438217.673287,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100829"}
+{"time":1791438246.334495,"event":"verified match","instance":"renderer-3","episode":"v4-phase-a-1975100826","fps":19.99619057558678,"accepted":54,"exact":54,"hub_bytes":21714246,"passed":true,"worker_seconds":178.7093050479889}
+{"time":1791438246.369946,"event":"claim","instance":"renderer-3","episode":"v4-phase-a-1975100830"}
+{"time":1791438273.205108,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100828","fps":19.99957795896379,"accepted":42,"exact":42,"hub_bytes":9521084,"passed":true,"worker_seconds":99.99344778060913}
+{"time":1791438273.239307,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100831"}
+{"time":1791438311.91092,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100829","fps":19.99283100880728,"accepted":27,"exact":27,"hub_bytes":7229204,"passed":true,"worker_seconds":94.23532700538635}
+{"time":1791438311.9477608,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100832"}
+{"time":1791438378.0956092,"event":"verified match","instance":"renderer-3","episode":"v4-phase-a-1975100830","fps":19.94698481178021,"accepted":46,"exact":46,"hub_bytes":11606940,"passed":true,"worker_seconds":131.72303009033203}
+{"time":1791438378.1331022,"event":"claim","instance":"renderer-3","episode":"v4-phase-a-1975100833"}
+{"time":1791438403.4931352,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100831","fps":19.92418786304007,"accepted":44,"exact":44,"hub_bytes":11362548,"passed":true,"worker_seconds":130.25177788734436}
+{"time":1791438404.3557389,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100832","fps":19.98649612561128,"accepted":15,"exact":15,"hub_bytes":3603970,"passed":true,"worker_seconds":92.40561985969543}
+{"time":1791438404.392124,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100834"}
+{"time":1791438404.4102569,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100835"}
+{"time":1791438506.4143932,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100835","fps":19.96664439739796,"accepted":27,"exact":27,"hub_bytes":8886132,"passed":true,"worker_seconds":102.0021002292633}
+{"time":1791438506.459051,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100836"}
+{"time":1791438551.465506,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100834","fps":19.93081431044608,"accepted":62,"exact":62,"hub_bytes":17305630,"passed":true,"worker_seconds":147.0710461139679}
+{"time":1791438551.505261,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100837"}
+{"time":1791438574.4171252,"event":"verified match","instance":"renderer-3","episode":"v4-phase-a-1975100833","fps":19.968553317596264,"accepted":61,"exact":61,"hub_bytes":23851747,"passed":true,"worker_seconds":196.28068828582764}
+{"time":1791438574.453608,"event":"claim","instance":"renderer-3","episode":"v4-phase-a-1975100838"}
+{"time":1791438602.9766898,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100836","fps":19.997624875084774,"accepted":22,"exact":22,"hub_bytes":7192674,"passed":true,"worker_seconds":96.51506876945496}
+{"time":1791438603.0151858,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100839"}
+{"time":1791438665.5398111,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100837","fps":19.992208745437406,"accepted":31,"exact":31,"hub_bytes":8786994,"passed":true,"worker_seconds":114.03207802772522}
+{"time":1791438665.587869,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100840"}
+{"time":1791438703.6509252,"event":"verified match","instance":"renderer-3","episode":"v4-phase-a-1975100838","fps":19.998086210667477,"accepted":42,"exact":42,"hub_bytes":10868059,"passed":true,"worker_seconds":129.19470310211182}
+{"time":1791438703.688252,"event":"claim","instance":"renderer-3","episode":"v4-phase-a-1975100841"}
+{"time":1791438715.7747269,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100839","fps":19.930704511778014,"accepted":35,"exact":35,"hub_bytes":7584724,"passed":true,"worker_seconds":112.75692701339722}
+{"time":1791438715.8164322,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100842"}
+{"time":1791438815.674679,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100842","fps":19.995482591467216,"accepted":37,"exact":37,"hub_bytes":9455846,"passed":true,"worker_seconds":99.85578107833862}
+{"time":1791438815.714647,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100843"}
+{"time":1791438846.091827,"event":"verified match","instance":"renderer-3","episode":"v4-phase-a-1975100841","fps":19.955097947639004,"accepted":41,"exact":41,"hub_bytes":16941411,"passed":true,"worker_seconds":142.40075492858887}
+{"time":1791438846.1613069,"event":"claim","instance":"renderer-3","episode":"v4-phase-a-1975100844"}
+{"time":1791438884.6663969,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100840","fps":19.940897360872484,"accepted":72,"exact":72,"hub_bytes":26864193,"passed":true,"worker_seconds":219.07430624961853}
+{"time":1791438884.7042198,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100845"}
+{"time":1791438894.133705,"event":"critical memory scale-back","count":2}
+{"time":1791438935.253678,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100843","fps":19.107108761431,"accepted":40,"exact":40,"hub_bytes":9936921,"passed":false,"worker_seconds":119.53550004959106}
+{"time":1791438935.674979,"event":"owned renderer SIGTERM","instance":"renderer-2","pid":21497}
+{"time":1791438945.637014,"event":"verified match","instance":"renderer-3","episode":"v4-phase-a-1975100844","fps":19.99868176460529,"accepted":19,"exact":19,"hub_bytes":6250973,"passed":true,"worker_seconds":99.47226214408875}
+{"time":1791438945.997668,"event":"owned renderer SIGTERM","instance":"renderer-3","pid":24095}
+{"time":1791439006.2198038,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100845","fps":19.836782494746632,"accepted":39,"exact":39,"hub_bytes":9337270,"passed":true,"worker_seconds":121.51319789886475}
+{"time":1791439006.268574,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100846"}
+{"time":1791439119.877326,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100846","fps":19.99763816939333,"accepted":28,"exact":28,"hub_bytes":6942702,"passed":true,"worker_seconds":113.60645127296448}
+{"time":1791439119.924174,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100847"}
+{"time":1791439373.6420548,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100847","fps":19.998590786492386,"accepted":118,"exact":118,"hub_bytes":35419229,"passed":true,"worker_seconds":253.71570873260498}
+{"time":1791439373.726523,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100848"}
+{"time":1791439520.044204,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100848","fps":19.99755095626392,"accepted":56,"exact":56,"hub_bytes":16173076,"passed":true,"worker_seconds":146.3150758743286}
+{"time":1791439520.0998468,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100849"}
+{"time":1791439655.610018,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100849","fps":19.999066646736924,"accepted":54,"exact":54,"hub_bytes":15472467,"passed":true,"worker_seconds":135.50779700279236}
+{"time":1791439655.6588218,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100850"}
+{"time":1791439724.894645,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100850","fps":19.994289367809642,"accepted":11,"exact":11,"hub_bytes":2929874,"passed":true,"worker_seconds":69.2324709892273}
+{"time":1791439724.948865,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100851"}
+{"time":1791439876.313762,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100851","fps":19.999700123361823,"accepted":59,"exact":59,"hub_bytes":15321916,"passed":true,"worker_seconds":151.36244916915894}
+{"time":1791439876.363038,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100852"}
+{"time":1791440005.557576,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100852","fps":19.993578332436343,"accepted":46,"exact":46,"hub_bytes":11116243,"passed":true,"worker_seconds":129.19202184677124}
+{"time":1791440005.610218,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100853"}
+{"time":1791440105.530046,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100853","fps":19.997962899387986,"accepted":22,"exact":22,"hub_bytes":5649960,"passed":true,"worker_seconds":99.91712999343872}
+{"time":1791440105.58269,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100854"}
+{"time":1791440286.052161,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100854","fps":19.99791497763816,"accepted":63,"exact":63,"hub_bytes":21540624,"passed":true,"worker_seconds":180.4667739868164}
+{"time":1791440286.095432,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100855"}
+{"time":1791440433.063835,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100855","fps":19.996788272215536,"accepted":44,"exact":44,"hub_bytes":17124360,"passed":true,"worker_seconds":146.96597576141357}
+{"time":1791440433.110073,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100856"}
+{"time":1791440536.246885,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100856","fps":19.999453923868394,"accepted":39,"exact":39,"hub_bytes":10267607,"passed":true,"worker_seconds":103.1340069770813}
+{"time":1791440536.2873988,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100857"}
+{"time":1791440699.433171,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100857","fps":19.99825558436147,"accepted":77,"exact":77,"hub_bytes":18670158,"passed":true,"worker_seconds":163.14287996292114}
+{"time":1791440699.474216,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100858"}
+{"time":1791440809.4169111,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100858","fps":19.98539769521204,"accepted":30,"exact":30,"hub_bytes":8575431,"passed":true,"worker_seconds":109.94006276130676}
+{"time":1791440809.462971,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100859"}
+{"time":1791440936.923178,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100859","fps":19.999466691428523,"accepted":40,"exact":40,"hub_bytes":10529102,"passed":true,"worker_seconds":127.45727682113647}
+{"time":1791440936.9741812,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100860"}
+{"time":1791441050.268904,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100860","fps":19.994859850293818,"accepted":30,"exact":30,"hub_bytes":8061490,"passed":true,"worker_seconds":113.29199886322021}
+{"time":1791441050.3113012,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100861"}
+{"time":1791441230.367153,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100861","fps":19.996230516178233,"accepted":54,"exact":54,"hub_bytes":22260312,"passed":true,"worker_seconds":180.05269765853882}
+{"time":1791441230.418168,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100862"}
+{"time":1791441375.27806,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100862","fps":19.996227508759482,"accepted":52,"exact":52,"hub_bytes":15544805,"passed":true,"worker_seconds":144.85721492767334}
+{"time":1791441375.319398,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100863"}
+{"time":1791441529.071863,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100863","fps":19.997781752784764,"accepted":55,"exact":55,"hub_bytes":18181168,"passed":true,"worker_seconds":153.74932980537415}
+{"time":1791441529.120781,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100864"}
+{"time":1791441688.342933,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100864","fps":19.999373992695904,"accepted":91,"exact":91,"hub_bytes":17710102,"passed":true,"worker_seconds":159.21965789794922}
+{"time":1791441688.3887029,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100865"}
+{"time":1791441839.800514,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100865","fps":19.997523825983375,"accepted":70,"exact":70,"hub_bytes":15194018,"passed":true,"worker_seconds":151.40940117835999}
+{"time":1791441973.272873,"event":"authorized one-time two-renderer retry","retry_used":true,"max_count":2}
+{"time":1791441973.768777,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100866"}
+{"time":1791441973.788414,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100867"}
+{"time":1791442087.343565,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100867","fps":19.999794716830138,"accepted":32,"exact":32,"hub_bytes":6828034,"passed":true,"worker_seconds":113.55266618728638}
+{"time":1791442087.387775,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100868"}
+{"time":1791442102.111748,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100866","fps":19.98969230505211,"accepted":44,"exact":44,"hub_bytes":11955889,"passed":true,"worker_seconds":128.33979105949402}
+{"time":1791442102.1552598,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100869"}
+{"time":1791442247.588923,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100869","fps":19.995934291516225,"accepted":52,"exact":52,"hub_bytes":17250932,"passed":true,"worker_seconds":145.43108105659485}
+{"time":1791442247.6322901,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100870"}
+{"time":1791442268.140895,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100868","fps":19.999817974882212,"accepted":71,"exact":71,"hub_bytes":21940666,"passed":true,"worker_seconds":180.75035905838013}
+{"time":1791442268.1879418,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100871"}
+{"time":1791442374.3963509,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100870","fps":19.999896921622135,"accepted":50,"exact":50,"hub_bytes":14388308,"passed":true,"worker_seconds":126.7598888874054}
+{"time":1791442374.4424791,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100872"}
+{"time":1791442444.406406,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100871","fps":19.9977798584344,"accepted":102,"exact":102,"hub_bytes":20104069,"passed":true,"worker_seconds":176.21620082855225}
+{"time":1791442444.450613,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100873"}
+{"time":1791442462.2043872,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100872","fps":19.998840293317315,"accepted":17,"exact":17,"hub_bytes":5033572,"passed":true,"worker_seconds":87.75941824913025}
+{"time":1791442462.255316,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100874"}
+{"time":1791442572.515046,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100873","fps":19.99977806369512,"accepted":53,"exact":53,"hub_bytes":10891577,"passed":true,"worker_seconds":128.06179285049438}
+{"time":1791442574.082894,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100874","fps":19.998754271457692,"accepted":32,"exact":32,"hub_bytes":7201751,"passed":true,"worker_seconds":111.82531809806824}
+{"time":1791442574.131295,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100875"}
+{"time":1791442574.152871,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100876"}
+{"time":1791442698.294763,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100875","fps":19.997257259724435,"accepted":30,"exact":30,"hub_bytes":14676436,"passed":true,"worker_seconds":124.16096687316895}
+{"time":1791442698.3415968,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100877"}
+{"time":1791442720.239656,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100876","fps":19.99648766269558,"accepted":47,"exact":47,"hub_bytes":16088869,"passed":true,"worker_seconds":146.08437085151672}
+{"time":1791442720.2890081,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100878"}
+{"time":1791442895.7789571,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100878","fps":19.99782287312445,"accepted":76,"exact":76,"hub_bytes":21981433,"passed":true,"worker_seconds":175.4874770641327}
+{"time":1791442895.845375,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100879"}
+{"time":1791442920.075846,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100877","fps":19.99926255442468,"accepted":127,"exact":127,"hub_bytes":30500836,"passed":true,"worker_seconds":221.73185992240906}
+{"time":1791442920.13566,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100880"}
+{"time":1791443000.8447602,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100879","fps":19.999085069222975,"accepted":22,"exact":22,"hub_bytes":7887745,"passed":true,"worker_seconds":104.99621319770813}
+{"time":1791443000.890997,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100881"}
+{"time":1791443005.7503831,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100880","fps":19.96495493783824,"accepted":14,"exact":14,"hub_bytes":3730373,"passed":true,"worker_seconds":85.61270332336426}
+{"time":1791443005.801277,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100882"}
+{"time":1791443112.541759,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100881","fps":19.94259752416617,"accepted":26,"exact":26,"hub_bytes":7595576,"passed":true,"worker_seconds":111.64734315872192}
+{"time":1791443112.589555,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100883"}
+{"time":1791443184.925739,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100882","fps":19.98370245443585,"accepted":61,"exact":61,"hub_bytes":23612873,"passed":true,"worker_seconds":179.12220811843872}
+{"time":1791443184.9740329,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100884"}
+{"time":1791443328.320588,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100883","fps":19.999964397901973,"accepted":111,"exact":111,"hub_bytes":27703952,"passed":true,"worker_seconds":215.72810220718384}
+{"time":1791443331.1676521,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100884","fps":19.99740303968269,"accepted":64,"exact":64,"hub_bytes":15514321,"passed":true,"worker_seconds":146.19108200073242}
+{"time":1791443331.220545,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100885"}
+{"time":1791443331.242322,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100886"}
+{"time":1791443405.249469,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100885","fps":19.98797702164322,"accepted":16,"exact":16,"hub_bytes":4053576,"passed":true,"worker_seconds":74.02568411827087}
+{"time":1791443405.29779,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100887"}
+{"time":1791443482.237401,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100886","fps":19.998757525675387,"accepted":75,"exact":75,"hub_bytes":15323543,"passed":true,"worker_seconds":150.99271202087402}
+{"time":1791443482.283903,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100888"}
+{"time":1791443534.101179,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100887","fps":19.99955349885539,"accepted":58,"exact":58,"hub_bytes":10503951,"passed":true,"worker_seconds":128.80077290534973}
+{"time":1791443534.151974,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100889"}
+{"time":1791443582.6818619,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100888","fps":19.996584790613962,"accepted":21,"exact":21,"hub_bytes":5929779,"passed":true,"worker_seconds":100.39540886878967}
+{"time":1791443582.7300858,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100890"}
+{"time":1791443687.1026602,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100889","fps":19.997968469311445,"accepted":44,"exact":44,"hub_bytes":19648009,"passed":true,"worker_seconds":152.94815611839294}
+{"time":1791443687.152055,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100891"}
+{"time":1791443726.9896262,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100890","fps":19.996904703743564,"accepted":53,"exact":53,"hub_bytes":16432549,"passed":true,"worker_seconds":144.25586986541748}
+{"time":1791443727.03902,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100892"}
+{"time":1791443855.8307781,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100891","fps":19.994891287325373,"accepted":71,"exact":71,"hub_bytes":19442004,"passed":true,"worker_seconds":168.6762409210205}
+{"time":1791443855.879456,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100893"}
+{"time":1791443902.60938,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100892","fps":19.99780088720556,"accepted":80,"exact":80,"hub_bytes":20853157,"passed":true,"worker_seconds":175.5673131942749}
+{"time":1791443902.6649191,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100894"}
+{"time":1791443981.3283288,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100893","fps":19.994051688973563,"accepted":44,"exact":44,"hub_bytes":11214389,"passed":true,"worker_seconds":125.44549894332886}
+{"time":1791443981.379004,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100895"}
+{"time":1791444009.7380931,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100894","fps":19.98982763152867,"accepted":35,"exact":35,"hub_bytes":7271875,"passed":true,"worker_seconds":107.07039308547974}
+{"time":1791444009.79357,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100896"}
+{"time":1791444093.7303,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100895","fps":19.990441669863547,"accepted":31,"exact":31,"hub_bytes":7170020,"passed":true,"worker_seconds":112.34875893592834}
+{"time":1791444093.7809348,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100897"}
+{"time":1791444226.816393,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100897","fps":19.99982254705397,"accepted":45,"exact":45,"hub_bytes":15266260,"passed":true,"worker_seconds":133.03255820274353}
+{"time":1791444226.865807,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100898"}
+{"time":1791444267.872125,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100896","fps":19.99759772668121,"accepted":119,"exact":119,"hub_bytes":33716715,"passed":true,"worker_seconds":258.07616090774536}
+{"time":1791444267.922519,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100899"}
+{"time":1791444325.431086,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100898","fps":19.99644338820531,"accepted":34,"exact":34,"hub_bytes":9852816,"passed":true,"worker_seconds":98.56227016448975}
+{"time":1791444325.4842439,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100900"}
+{"time":1791444442.706935,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100899","fps":19.99997694460156,"accepted":80,"exact":80,"hub_bytes":21844124,"passed":true,"worker_seconds":174.78200387954712}
+{"time":1791444442.759049,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100901"}
+{"time":1791444476.2984672,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100900","fps":19.996928874872985,"accepted":62,"exact":62,"hub_bytes":14782245,"passed":true,"worker_seconds":150.8109951019287}
+{"time":1791444476.355903,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100902"}
+{"time":1791444571.218488,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100901","fps":19.999511896796747,"accepted":46,"exact":46,"hub_bytes":10745912,"passed":true,"worker_seconds":128.44140791893005}
+{"time":1791444571.2695072,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100903"}
+{"time":1791444589.05502,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100902","fps":19.989859728563157,"accepted":37,"exact":37,"hub_bytes":7138150,"passed":true,"worker_seconds":112.69641304016113}
+{"time":1791444589.1067169,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100904"}
+{"time":1791444738.7165089,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100904","fps":19.998545572721003,"accepted":51,"exact":51,"hub_bytes":17430723,"passed":true,"worker_seconds":149.60701179504395}
+{"time":1791444738.7708118,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100905"}
+{"time":1791444749.019647,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100903","fps":19.986088270468866,"accepted":70,"exact":70,"hub_bytes":22092662,"passed":true,"worker_seconds":177.7472550868988}
+{"time":1791444749.0769439,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100906"}
+{"time":1791444857.2596428,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100905","fps":19.958817487343765,"accepted":36,"exact":36,"hub_bytes":12820578,"passed":true,"worker_seconds":118.48575496673584}
+{"time":1791444857.311307,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100907"}
+{"time":1791444914.401452,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100906","fps":19.99975131087888,"accepted":85,"exact":85,"hub_bytes":19625900,"passed":true,"worker_seconds":165.32139587402344}
+{"time":1791444914.4548202,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100908"}
+{"time":1791444982.195744,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100907","fps":19.99876346642762,"accepted":43,"exact":43,"hub_bytes":10268258,"passed":true,"worker_seconds":124.88142323493958}
+{"time":1791444982.249845,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100909"}
+{"time":1791445042.71311,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100908","fps":19.999711826917387,"accepted":55,"exact":55,"hub_bytes":11550818,"passed":true,"worker_seconds":128.25530004501343}
+{"time":1791445042.768287,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100910"}
+{"time":1791445093.984604,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100909","fps":19.993157595917324,"accepted":33,"exact":33,"hub_bytes":7642867,"passed":true,"worker_seconds":111.73179078102112}
+{"time":1791445094.0385,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100911"}
+{"time":1791445240.154475,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100911","fps":19.998640227910375,"accepted":54,"exact":54,"hub_bytes":16506399,"passed":true,"worker_seconds":146.11248779296875}
+{"time":1791445240.210102,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100912"}
+{"time":1791445247.7879858,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100910","fps":19.999897122531447,"accepted":65,"exact":65,"hub_bytes":27083411,"passed":true,"worker_seconds":205.01639866828918}
+{"time":1791445247.8433652,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100913"}
+{"time":1791445338.931055,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100912","fps":19.99559342593265,"accepted":29,"exact":29,"hub_bytes":8900730,"passed":true,"worker_seconds":98.71851801872253}
+{"time":1791445338.986444,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100914"}
+{"time":1791445382.650215,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100913","fps":19.998174047049012,"accepted":58,"exact":58,"hub_bytes":13928595,"passed":true,"worker_seconds":134.8048119544983}
+{"time":1791445382.710264,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100915"}
+{"time":1791445478.752366,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100915","fps":19.999828009539073,"accepted":23,"exact":23,"hub_bytes":4982690,"passed":true,"worker_seconds":96.03909993171692}
+{"time":1791445478.825491,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100916"}
+{"time":1791445489.8133729,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100914","fps":19.99705482405227,"accepted":69,"exact":69,"hub_bytes":15515636,"passed":true,"worker_seconds":150.8234670162201}
+{"time":1791445489.870058,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100917"}
+{"time":1791445590.421561,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100916","fps":19.996131737257752,"accepted":26,"exact":26,"hub_bytes":7097740,"passed":true,"worker_seconds":111.59269690513611}
+{"time":1791445590.478288,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100918"}
+{"time":1791445736.535607,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100918","fps":19.99703826389027,"accepted":55,"exact":55,"hub_bytes":17575682,"passed":true,"worker_seconds":146.0546600818634}
+{"time":1791445736.591052,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100919"}
+{"time":1791445754.769708,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100917","fps":19.99842530860565,"accepted":104,"exact":104,"hub_bytes":33925714,"passed":true,"worker_seconds":264.8971691131592}
+{"time":1791445754.827788,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100920"}
+{"time":1791445835.212509,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100919","fps":19.995754164719603,"accepted":26,"exact":26,"hub_bytes":9094930,"passed":true,"worker_seconds":98.61854887008667}
+{"time":1791445835.26861,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100921"}
+{"time":1791445840.724949,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100920","fps":19.989692363977912,"accepted":17,"exact":17,"hub_bytes":5704512,"passed":true,"worker_seconds":85.89481616020203}
+{"time":1791445840.7827961,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100922"}
+{"time":1791445932.089223,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100921","fps":19.99969472261956,"accepted":21,"exact":21,"hub_bytes":6156364,"passed":true,"worker_seconds":96.81668877601624}
+{"time":1791445932.147895,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100923"}
+{"time":1791445943.5900428,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100922","fps":19.979852842082828,"accepted":30,"exact":30,"hub_bytes":6300496,"passed":true,"worker_seconds":102.8046600818634}
+{"time":1791445943.651228,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100924"}
+{"time":1791446027.011093,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100923","fps":19.99541152626188,"accepted":22,"exact":22,"hub_bytes":4507504,"passed":true,"worker_seconds":94.86044907569885}
+{"time":1791446027.068165,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100925"}
+{"time":1791446120.146944,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100924","fps":19.999658524011636,"accepted":55,"exact":55,"hub_bytes":21218242,"passed":true,"worker_seconds":176.4931559562683}
+{"time":1791446120.202734,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100926"}
+{"time":1791446172.734279,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100925","fps":19.999133940040927,"accepted":46,"exact":46,"hub_bytes":16323250,"passed":true,"worker_seconds":145.66250586509705}
+{"time":1791446172.792725,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100927"}
+{"time":1791446285.291529,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100926","fps":19.998841032465332,"accepted":79,"exact":79,"hub_bytes":18314299,"passed":true,"worker_seconds":165.08564400672913}
+{"time":1791446285.348895,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100928"}
+{"time":1791446346.301229,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100927","fps":19.999903230808673,"accepted":90,"exact":90,"hub_bytes":19048455,"passed":true,"worker_seconds":173.50556993484497}
+{"time":1791446346.359545,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100929"}
+{"time":1791446436.182942,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100928","fps":19.995955346560876,"accepted":78,"exact":78,"hub_bytes":15915320,"passed":true,"worker_seconds":150.83133482933044}
+{"time":1791446436.2409978,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100930"}
+{"time":1791446473.599262,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100929","fps":19.993707347263225,"accepted":36,"exact":36,"hub_bytes":10282894,"passed":true,"worker_seconds":127.23694491386414}
+{"time":1791446473.664442,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100931"}
+{"time":1791446534.911981,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100930","fps":19.991585241714326,"accepted":20,"exact":20,"hub_bytes":4721292,"passed":true,"worker_seconds":98.66813015937805}
+{"time":1791446534.973585,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100932"}
+{"time":1791446648.268194,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100931","fps":19.99574445836934,"accepted":53,"exact":53,"hub_bytes":20438002,"passed":true,"worker_seconds":174.6010901927948}
+{"time":1791446648.324049,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100933"}
+{"time":1791446680.4098911,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100932","fps":19.99548188463288,"accepted":64,"exact":64,"hub_bytes":16393246,"passed":true,"worker_seconds":145.43269515037537}
+{"time":1791446680.47145,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100934"}
+{"time":1791446779.6900978,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100934","fps":19.99376379189848,"accepted":28,"exact":28,"hub_bytes":7494932,"passed":true,"worker_seconds":99.21602320671082}
+{"time":1791446779.767127,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100935"}
+{"time":1791446869.4469771,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100933","fps":19.999425949117818,"accepted":115,"exact":115,"hub_bytes":30140374,"passed":true,"worker_seconds":221.1194989681244}
+{"time":1791446869.508935,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100936"}
+{"time":1791446921.96896,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100935","fps":19.999823120198812,"accepted":67,"exact":67,"hub_bytes":16169999,"passed":true,"worker_seconds":142.19871306419373}
+{"time":1791446922.045582,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100937"}
+{"time":1791446985.932429,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100936","fps":19.995861446232425,"accepted":43,"exact":43,"hub_bytes":8974688,"passed":true,"worker_seconds":116.42095994949341}
+{"time":1791446985.996966,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100938"}
+{"time":1791447035.189636,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100937","fps":19.99962319764505,"accepted":33,"exact":33,"hub_bytes":7521761,"passed":true,"worker_seconds":113.14104199409485}
+{"time":1791447035.249056,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100939"}
+{"time":1791447164.6424341,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100938","fps":19.99998375115004,"accepted":71,"exact":71,"hub_bytes":21145311,"passed":true,"worker_seconds":178.64278507232666}
+{"time":1791447164.7031722,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100940"}
+{"time":1791447179.970185,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100939","fps":19.99849654709733,"accepted":36,"exact":36,"hub_bytes":15963894,"passed":true,"worker_seconds":144.71711683273315}
+{"time":1791447180.034118,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100941"}
+{"time":1791447257.887041,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100941","fps":19.999853398436784,"accepted":16,"exact":16,"hub_bytes":4093255,"passed":true,"worker_seconds":77.85019016265869}
+{"time":1791447257.945846,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100942"}
+{"time":1791447363.047504,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100942","fps":19.998708710805694,"accepted":32,"exact":32,"hub_bytes":7776719,"passed":true,"worker_seconds":105.09788990020752}
+{"time":1791447363.127105,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100943"}
+{"time":1791447386.567285,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100940","fps":19.998524986374527,"accepted":102,"exact":102,"hub_bytes":28174598,"passed":true,"worker_seconds":221.86148715019226}
+{"time":1791447386.637308,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100944"}
+{"time":1791447491.734248,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100943","fps":19.991635267142602,"accepted":45,"exact":45,"hub_bytes":11544794,"passed":true,"worker_seconds":128.60403180122375}
+{"time":1791447491.797225,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100945"}
+{"time":1791447499.418497,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100944","fps":19.996361987011905,"accepted":40,"exact":40,"hub_bytes":6810113,"passed":true,"worker_seconds":112.77775597572327}
+{"time":1791447499.487245,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100946"}
+{"time":1791447643.76871,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100946","fps":19.99456774368649,"accepted":50,"exact":50,"hub_bytes":17216976,"passed":true,"worker_seconds":144.27852964401245}
+{"time":1791447643.8305862,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100947"}
+{"time":1791447671.206681,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100945","fps":19.999222899229594,"accepted":98,"exact":98,"hub_bytes":22108401,"passed":true,"worker_seconds":179.4068112373352}
+{"time":1791447671.270607,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100948"}
+{"time":1791447740.224161,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100948","fps":19.997402201992923,"accepted":10,"exact":10,"hub_bytes":2489984,"passed":true,"worker_seconds":68.95129585266113}
+{"time":1791447740.286431,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100949"}
+{"time":1791447748.452378,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100947","fps":19.996026848069388,"accepted":37,"exact":37,"hub_bytes":10290131,"passed":true,"worker_seconds":104.61912417411804}
+{"time":1791447748.517283,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100950"}
+{"time":1791447859.324894,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100949","fps":19.999705401371866,"accepted":37,"exact":37,"hub_bytes":10709943,"passed":true,"worker_seconds":119.03598093986511}
+{"time":1791447859.3896818,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100951"}
+{"time":1791447875.73882,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100950","fps":19.994816821788163,"accepted":44,"exact":44,"hub_bytes":11242079,"passed":true,"worker_seconds":127.21869111061096}
+{"time":1791447875.802238,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100952"}
+{"time":1791447972.675989,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100951","fps":19.98516715805902,"accepted":28,"exact":28,"hub_bytes":6995129,"passed":true,"worker_seconds":113.28327298164368}
+{"time":1791447972.741267,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100953"}
+{"time":1791448053.151547,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100952","fps":19.995782009303102,"accepted":56,"exact":56,"hub_bytes":22590504,"passed":true,"worker_seconds":177.347021818161}
+{"time":1791448053.2165802,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100954"}
+{"time":1791448126.882197,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100953","fps":19.99921968753487,"accepted":70,"exact":70,"hub_bytes":18643085,"passed":true,"worker_seconds":154.13826084136963}
+{"time":1791448126.9461088,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100955"}
+{"time":1791448151.848938,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100954","fps":19.994782290580087,"accepted":29,"exact":29,"hub_bytes":9601932,"passed":true,"worker_seconds":98.62904810905457}
+{"time":1791448151.919754,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100956"}
+{"time":1791448242.373733,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100956","fps":19.99810669945669,"accepted":23,"exact":23,"hub_bytes":5116912,"passed":true,"worker_seconds":90.45168399810791}
+{"time":1791448242.455383,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100957"}
+{"time":1791448301.744329,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100955","fps":19.996940296980846,"accepted":82,"exact":82,"hub_bytes":20031359,"passed":true,"worker_seconds":174.7947380542755}
+{"time":1791448301.813612,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100958"}
+{"time":1791448370.332404,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100957","fps":19.994917330773013,"accepted":50,"exact":50,"hub_bytes":11626120,"passed":true,"worker_seconds":127.873291015625}
+{"time":1791448370.400139,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100959"}
+{"time":1791448405.0005782,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100958","fps":19.999990970044365,"accepted":31,"exact":31,"hub_bytes":5810795,"passed":true,"worker_seconds":103.1843330860138}
+{"time":1791448405.081666,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100960"}
+{"time":1791448547.866205,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100959","fps":19.99416005149654,"accepted":79,"exact":79,"hub_bytes":20268786,"passed":true,"worker_seconds":177.4630479812622}
+{"time":1791448547.929749,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100961"}
+{"time":1791448589.298346,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100960","fps":19.99744895280887,"accepted":62,"exact":62,"hub_bytes":22933642,"passed":true,"worker_seconds":184.21415996551514}
+{"time":1791448589.361436,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100962"}
+{"time":1791448686.152336,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100962","fps":19.990852002887724,"accepted":25,"exact":25,"hub_bytes":6937887,"passed":true,"worker_seconds":96.78781700134277}
+{"time":1791448686.2185411,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100963"}
+{"time":1791448698.006304,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100961","fps":19.99356293948757,"accepted":64,"exact":64,"hub_bytes":17281490,"passed":true,"worker_seconds":150.07400393486023}
+{"time":1791448698.075785,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100964"}
+{"time":1791448797.271008,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100964","fps":19.9845435651861,"accepted":23,"exact":23,"hub_bytes":5797667,"passed":true,"worker_seconds":99.19260120391846}
+{"time":1791448797.336425,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100965"}
+{"time":1791448837.799071,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100963","fps":19.99575900503965,"accepted":57,"exact":57,"hub_bytes":16556000,"passed":true,"worker_seconds":151.57787919044495}
+{"time":1791448837.87088,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100966"}
+{"time":1791448909.755296,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100965","fps":19.99303061379243,"accepted":27,"exact":27,"hub_bytes":6945262,"passed":true,"worker_seconds":112.41644477844238}
+{"time":1791448909.8211682,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100967"}
+{"time":1791449010.482453,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100966","fps":19.99975028363414,"accepted":48,"exact":48,"hub_bytes":19381320,"passed":true,"worker_seconds":172.60862493515015}
+{"time":1791449010.549165,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100968"}
+{"time":1791449054.909185,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100967","fps":19.99760971314085,"accepted":48,"exact":48,"hub_bytes":17165385,"passed":true,"worker_seconds":145.0851709842682}
+{"time":1791449054.991963,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100969"}
+{"time":1791449161.903832,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100968","fps":19.9972884222185,"accepted":60,"exact":60,"hub_bytes":18264679,"passed":true,"worker_seconds":151.3519470691681}
+{"time":1791449161.969333,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100970"}
+{"time":1791449199.885321,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100969","fps":19.999404565675224,"accepted":58,"exact":58,"hub_bytes":14191656,"passed":true,"worker_seconds":144.8906991481781}
+{"time":1791449199.9542348,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100971"}
+{"time":1791449247.290336,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100970","fps":19.998405430514296,"accepted":15,"exact":15,"hub_bytes":4320873,"passed":true,"worker_seconds":85.31795620918274}
+{"time":1791449247.367402,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100972"}
+{"time":1791449328.608756,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100971","fps":19.99817344992484,"accepted":52,"exact":52,"hub_bytes":12394048,"passed":true,"worker_seconds":128.65207886695862}
+{"time":1791449328.677585,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100973"}
+{"time":1791449359.2019699,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100972","fps":19.977201828564343,"accepted":31,"exact":31,"hub_bytes":7186245,"passed":true,"worker_seconds":111.83191585540771}
+{"time":1791449359.26956,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100974"}
+{"time":1791449476.6804411,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100973","fps":19.999825155339405,"accepted":42,"exact":42,"hub_bytes":18597952,"passed":true,"worker_seconds":147.99995613098145}
+{"time":1791449476.7486541,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100975"}
+{"time":1791449625.930507,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100974","fps":19.999832716500126,"accepted":130,"exact":130,"hub_bytes":34427674,"passed":true,"worker_seconds":266.6585998535156}
+{"time":1791449625.998202,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100976"}
+{"time":1791449644.2115998,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100975","fps":19.9995941538945,"accepted":67,"exact":67,"hub_bytes":22027010,"passed":true,"worker_seconds":167.4602108001709}
+{"time":1791449644.285376,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100977"}
+{"time":1791449788.728606,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100976","fps":19.998044046775558,"accepted":71,"exact":71,"hub_bytes":18877850,"passed":true,"worker_seconds":162.72690892219543}
+{"time":1791449788.797298,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100978"}
+{"time":1791449796.082165,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100977","fps":19.996560230211827,"accepted":66,"exact":66,"hub_bytes":17161257,"passed":true,"worker_seconds":151.79427886009216}
+{"time":1791449796.158805,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100979"}
+{"time":1791449876.241136,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100978","fps":19.986891481844697,"accepted":20,"exact":20,"hub_bytes":3693527,"passed":true,"worker_seconds":87.4407160282135}
+{"time":1791449876.3091571,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100980"}
+{"time":1791449908.548013,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100979","fps":19.99900767544225,"accepted":26,"exact":26,"hub_bytes":6623256,"passed":true,"worker_seconds":112.3869960308075}
+{"time":1791449908.6159391,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100981"}
+{"time":1791449951.595,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100980","fps":19.995807815852427,"accepted":22,"exact":22,"hub_bytes":8334932,"passed":true,"worker_seconds":75.28305888175964}
+{"time":1791449951.6784608,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100982"}
+{"time":1791450054.264144,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100981","fps":19.997680135491965,"accepted":51,"exact":51,"hub_bytes":17723647,"passed":true,"worker_seconds":145.64499473571777}
+{"time":1791450054.3334432,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100983"}
+{"time":1791450173.753074,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100982","fps":19.997809521371508,"accepted":170,"exact":170,"hub_bytes":31582904,"passed":true,"worker_seconds":222.07145380973816}
+{"time":1791450173.82427,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100984"}
+{"time":1791450186.334909,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100983","fps":19.999472570386708,"accepted":59,"exact":59,"hub_bytes":12792568,"passed":true,"worker_seconds":131.99884700775146}
+{"time":1791450186.4121192,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100985"}
+{"time":1791450270.939737,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100985","fps":19.98045886085647,"accepted":13,"exact":13,"hub_bytes":3014376,"passed":true,"worker_seconds":84.52539587020874}
+{"time":1791450271.0135438,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100986"}
+{"time":1791450312.953959,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100984","fps":19.99977985644113,"accepted":53,"exact":53,"hub_bytes":12767031,"passed":true,"worker_seconds":139.12620902061462}
+{"time":1791450313.030883,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100987"}
+{"time":1791450383.199897,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100986","fps":19.98334989153005,"accepted":34,"exact":34,"hub_bytes":6723224,"passed":true,"worker_seconds":112.18363308906555}
+{"time":1791450383.270253,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100988"}
+{"time":1791450491.1507819,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100987","fps":19.9997566413449,"accepted":68,"exact":68,"hub_bytes":22294954,"passed":true,"worker_seconds":178.1168348789215}
+{"time":1791450491.218722,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100989"}
+{"time":1791450552.689719,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100988","fps":19.999752714548055,"accepted":56,"exact":56,"hub_bytes":20615975,"passed":true,"worker_seconds":169.41646218299866}
+{"time":1791450552.758558,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100990"}
+{"time":1791450615.2881322,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100989","fps":19.999990167505445,"accepted":46,"exact":46,"hub_bytes":13607224,"passed":true,"worker_seconds":124.06664490699768}
+{"time":1791450615.3601532,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100991"}
+{"time":1791450639.6390479,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100990","fps":19.989447188638433,"accepted":22,"exact":22,"hub_bytes":5579815,"passed":true,"worker_seconds":86.87788820266724}
+{"time":1791450639.732857,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100992"}
+{"time":1791450695.0806432,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100991","fps":19.981746078566076,"accepted":12,"exact":12,"hub_bytes":3150582,"passed":true,"worker_seconds":79.71758127212524}
+{"time":1791450695.158699,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100993"}
+{"time":1791450767.72359,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100992","fps":19.992676068064824,"accepted":43,"exact":43,"hub_bytes":10901694,"passed":true,"worker_seconds":127.9883987903595}
+{"time":1791450767.7976902,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100994"}
+{"time":1791450789.909011,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100993","fps":19.98794292456339,"accepted":18,"exact":18,"hub_bytes":4378631,"passed":true,"worker_seconds":94.74678301811218}
+{"time":1791450789.981644,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100995"}
+{"time":1791450934.447283,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100995","fps":19.99208042468515,"accepted":48,"exact":48,"hub_bytes":17138835,"passed":true,"worker_seconds":144.46251392364502}
+{"time":1791450934.520051,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100996"}
+{"time":1791450978.417011,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100994","fps":19.998406078895844,"accepted":73,"exact":73,"hub_bytes":27955247,"passed":true,"worker_seconds":210.61674284934998}
+{"time":1791450978.488611,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100997"}
+{"time":1791451032.310842,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100996","fps":19.989733376334126,"accepted":34,"exact":34,"hub_bytes":8905168,"passed":true,"worker_seconds":97.7878429889679}
+{"time":1791451032.385299,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975100998"}
+{"time":1791451152.5173602,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100997","fps":19.99818119405887,"accepted":89,"exact":89,"hub_bytes":19659465,"passed":true,"worker_seconds":174.02565097808838}
+{"time":1791451152.588449,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975100999"}
+{"time":1791451171.59224,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975100998","fps":19.996398611017252,"accepted":40,"exact":40,"hub_bytes":13690899,"passed":true,"worker_seconds":139.20390796661377}
+{"time":1791451171.6669009,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101000"}
+{"time":1791451250.6946828,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975100999","fps":19.98934456116235,"accepted":25,"exact":25,"hub_bytes":5707158,"passed":true,"worker_seconds":98.10327577590942}
+{"time":1791451250.7716758,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101001"}
+{"time":1791451270.637877,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101000","fps":19.99748668052447,"accepted":23,"exact":23,"hub_bytes":4885750,"passed":true,"worker_seconds":98.96793508529663}
+{"time":1791451270.711627,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101002"}
+{"time":1791451414.696347,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101002","fps":19.99704365984301,"accepted":62,"exact":62,"hub_bytes":16971269,"passed":true,"worker_seconds":143.9820249080658}
+{"time":1791451414.771253,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101003"}
+{"time":1791451428.987659,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101001","fps":19.995981000670202,"accepted":68,"exact":68,"hub_bytes":22039575,"passed":true,"worker_seconds":178.21308493614197}
+{"time":1791451429.0656362,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101004"}
+{"time":1791451548.3268428,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101003","fps":19.997215958964137,"accepted":51,"exact":51,"hub_bytes":14914337,"passed":true,"worker_seconds":133.5518398284912}
+{"time":1791451548.401698,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101005"}
+{"time":1791451604.327992,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101004","fps":19.997873273620705,"accepted":100,"exact":100,"hub_bytes":22780605,"passed":true,"worker_seconds":175.2596378326416}
+{"time":1791451604.419342,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101006"}
+{"time":1791451699.04745,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101005","fps":19.999009014018462,"accepted":66,"exact":66,"hub_bytes":17606973,"passed":true,"worker_seconds":150.6425359249115}
+{"time":1791451699.1227179,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101007"}
+{"time":1791451732.1771579,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101006","fps":19.99976034730918,"accepted":46,"exact":46,"hub_bytes":10315501,"passed":true,"worker_seconds":127.75479102134705}
+{"time":1791451732.2587829,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101008"}
+{"time":1791451810.5065012,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101007","fps":19.99188442718933,"accepted":31,"exact":31,"hub_bytes":7041781,"passed":true,"worker_seconds":111.38075518608093}
+{"time":1791451810.581964,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101009"}
+{"time":1791451909.9536939,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101008","fps":19.997792068535,"accepted":59,"exact":59,"hub_bytes":22389526,"passed":true,"worker_seconds":177.6925709247589}
+{"time":1791451910.0314088,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101010"}
+{"time":1791451954.327117,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101009","fps":19.997040029375928,"accepted":51,"exact":51,"hub_bytes":15763763,"passed":true,"worker_seconds":143.7413182258606}
+{"time":1791451954.450648,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101011"}
+{"time":1791452074.862294,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101010","fps":19.999533277774923,"accepted":77,"exact":77,"hub_bytes":21409541,"passed":true,"worker_seconds":164.82816290855408}
+{"time":1791452074.9398882,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101012"}
+{"time":1791452085.5521238,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101011","fps":19.99536773455465,"accepted":47,"exact":47,"hub_bytes":11838159,"passed":true,"worker_seconds":131.09368777275085}
+{"time":1791452085.636287,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101013"}
+{"time":1791452177.642197,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101012","fps":19.999979777528917,"accepted":28,"exact":28,"hub_bytes":7457934,"passed":true,"worker_seconds":102.69877910614014}
+{"time":1791452178.7474382,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101013","fps":19.99993555435467,"accepted":19,"exact":19,"hub_bytes":4360947,"passed":true,"worker_seconds":93.10830998420715}
+{"time":1791452178.8264902,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101014"}
+{"time":1791452178.8585181,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101015"}
+{"time":1791452275.471012,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101014","fps":19.998934350415905,"accepted":17,"exact":17,"hub_bytes":4277475,"passed":true,"worker_seconds":96.6415331363678}
+{"time":1791452275.549118,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101016"}
+{"time":1791452419.620241,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101015","fps":19.98205742426312,"accepted":97,"exact":97,"hub_bytes":30344421,"passed":true,"worker_seconds":240.75927591323853}
+{"time":1791452419.696917,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101017"}
+{"time":1791452511.184872,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101016","fps":19.99986727758487,"accepted":102,"exact":102,"hub_bytes":31009373,"passed":true,"worker_seconds":235.63224983215332}
+{"time":1791452511.263525,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101018"}
+{"time":1791452538.75712,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101017","fps":19.993670014983255,"accepted":42,"exact":42,"hub_bytes":13465166,"passed":true,"worker_seconds":119.05696105957031}
+{"time":1791452538.8412821,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101019"}
+{"time":1791452596.398647,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101018","fps":19.983971875082933,"accepted":19,"exact":19,"hub_bytes":5296688,"passed":true,"worker_seconds":85.13247799873352}
+{"time":1791452596.492982,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101020"}
+{"time":1791452626.49505,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101019","fps":19.983839891870282,"accepted":19,"exact":19,"hub_bytes":4173924,"passed":true,"worker_seconds":87.651535987854}
+{"time":1791452626.58054,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101021"}
+{"time":1791452724.9150789,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101020","fps":19.999575899712585,"accepted":45,"exact":45,"hub_bytes":11326728,"passed":true,"worker_seconds":128.4189808368683}
+{"time":1791452724.995353,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101022"}
+{"time":1791452739.015027,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101021","fps":19.97831013746764,"accepted":30,"exact":30,"hub_bytes":7637952,"passed":true,"worker_seconds":112.43205523490906}
+{"time":1791452739.0940711,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101023"}
+{"time":1791452885.123636,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101023","fps":19.999830551477405,"accepted":52,"exact":52,"hub_bytes":16471941,"passed":true,"worker_seconds":146.02695989608765}
+{"time":1791452885.2185578,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101024"}
+{"time":1791452903.459163,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101022","fps":20.00001124025933,"accepted":72,"exact":72,"hub_bytes":21935385,"passed":true,"worker_seconds":178.46045970916748}
+{"time":1791452903.540892,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101025"}
+{"time":1791452993.113385,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101024","fps":19.99151151073499,"accepted":49,"exact":49,"hub_bytes":10994477,"passed":true,"worker_seconds":107.89115476608276}
+{"time":1791452993.193959,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101026"}
+{"time":1791453022.1901371,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101025","fps":19.99953827334496,"accepted":49,"exact":49,"hub_bytes":10556287,"passed":true,"worker_seconds":118.64676928520203}
+{"time":1791453022.27358,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101027"}
+{"time":1791453142.0230799,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101026","fps":19.999966896499707,"accepted":55,"exact":55,"hub_bytes":14933586,"passed":true,"worker_seconds":148.8264012336731}
+{"time":1791453143.843081,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101027","fps":19.99316264608744,"accepted":37,"exact":37,"hub_bytes":8394851,"passed":true,"worker_seconds":121.56681704521179}
+{"time":1791453143.930538,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101028"}
+{"time":1791453143.9637918,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101029"}
+{"time":1791453240.910008,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101028","fps":19.989288094552208,"accepted":24,"exact":24,"hub_bytes":4621106,"passed":true,"worker_seconds":96.97640919685364}
+{"time":1791453240.990554,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101030"}
+{"time":1791453298.196705,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101029","fps":19.995196050224838,"accepted":47,"exact":47,"hub_bytes":18806938,"passed":true,"worker_seconds":154.23026204109192}
+{"time":1791453298.2780612,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101031"}
+{"time":1791453386.9445179,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101030","fps":19.994425554186495,"accepted":53,"exact":53,"hub_bytes":16583518,"passed":true,"worker_seconds":145.95135474205017}
+{"time":1791453387.022217,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101032"}
+{"time":1791453397.164659,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101031","fps":19.996710011685884,"accepted":32,"exact":32,"hub_bytes":9346733,"passed":true,"worker_seconds":98.88364291191101}
+{"time":1791453397.252411,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101033"}
+{"time":1791453531.910062,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101033","fps":19.99585452960614,"accepted":62,"exact":62,"hub_bytes":14384114,"passed":true,"worker_seconds":134.65437412261963}
+{"time":1791453531.9918652,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101034"}
+{"time":1791453562.4080188,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101032","fps":19.993708048122656,"accepted":107,"exact":107,"hub_bytes":21141348,"passed":true,"worker_seconds":175.38347482681274}
+{"time":1791453562.4892302,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101035"}
+{"time":1791453660.58784,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101034","fps":19.99344958017571,"accepted":44,"exact":44,"hub_bytes":10105388,"passed":true,"worker_seconds":128.59337711334229}
+{"time":1791453660.6703832,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101036"}
+{"time":1791453674.4156082,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101035","fps":19.9989808664224,"accepted":34,"exact":34,"hub_bytes":7076322,"passed":true,"worker_seconds":111.92394709587097}
+{"time":1791453674.49751,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101037"}
+{"time":1791453819.1203141,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101037","fps":19.9978294911846,"accepted":52,"exact":52,"hub_bytes":17699981,"passed":true,"worker_seconds":144.62022233009338}
+{"time":1791453819.217697,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101038"}
+{"time":1791453839.269353,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101036","fps":19.997622907066013,"accepted":67,"exact":67,"hub_bytes":21746005,"passed":true,"worker_seconds":178.59627079963684}
+{"time":1791453839.355586,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101039"}
+{"time":1791453947.8375812,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101038","fps":19.995850692932592,"accepted":51,"exact":51,"hub_bytes":13894319,"passed":true,"worker_seconds":128.61626505851746}
+{"time":1791453947.9198909,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101040"}
+{"time":1791453958.0708742,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101039","fps":19.998531593867586,"accepted":35,"exact":35,"hub_bytes":10837919,"passed":true,"worker_seconds":118.71254515647888}
+{"time":1791453958.159175,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101041"}
+{"time":1791454062.5056052,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101041","fps":19.99099392970283,"accepted":29,"exact":29,"hub_bytes":6727979,"passed":true,"worker_seconds":104.34439897537231}
+{"time":1791454062.589522,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101042"}
+{"time":1791454088.045671,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101040","fps":19.99908587250094,"accepted":56,"exact":56,"hub_bytes":13217339,"passed":true,"worker_seconds":140.12269401550293}
+{"time":1791454088.1373491,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101043"}
+{"time":1791454174.690582,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101042","fps":19.999547757737744,"accepted":29,"exact":29,"hub_bytes":7433372,"passed":true,"worker_seconds":112.09755492210388}
+{"time":1791454174.775181,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101044"}
+{"time":1791454265.9778292,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101043","fps":19.999682336858775,"accepted":58,"exact":58,"hub_bytes":21287386,"passed":true,"worker_seconds":177.83828687667847}
+{"time":1791454266.125798,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101045"}
+{"time":1791454319.016063,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101044","fps":19.99843915906794,"accepted":57,"exact":57,"hub_bytes":16105786,"passed":true,"worker_seconds":144.23748874664307}
+{"time":1791454319.1176379,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101046"}
+{"time":1791454364.54577,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101045","fps":19.99821778634511,"accepted":37,"exact":37,"hub_bytes":9703017,"passed":true,"worker_seconds":98.41690826416016}
+{"time":1791454364.6390662,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101047"}
+{"time":1791454456.539985,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101046","fps":20.00001221252748,"accepted":54,"exact":54,"hub_bytes":14468861,"passed":true,"worker_seconds":137.41940093040466}
+{"time":1791454456.626337,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101048"}
+{"time":1791454515.843742,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101047","fps":19.99984014122177,"accepted":68,"exact":68,"hub_bytes":16076622,"passed":true,"worker_seconds":151.20149421691895}
+{"time":1791454515.935036,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101049"}
+{"time":1791454584.392729,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101048","fps":19.98870484677178,"accepted":56,"exact":56,"hub_bytes":10540783,"passed":true,"worker_seconds":127.76118993759155}
+{"time":1791454584.482531,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101050"}
+{"time":1791454614.637829,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101049","fps":19.987666433773747,"accepted":27,"exact":27,"hub_bytes":5045067,"passed":true,"worker_seconds":98.69980001449585}
+{"time":1791454614.7233028,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101051"}
+{"time":1791454755.861637,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101050","fps":19.996276352226822,"accepted":62,"exact":62,"hub_bytes":21013901,"passed":true,"worker_seconds":171.37614011764526}
+{"time":1791454758.688658,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101051","fps":19.997145381558774,"accepted":53,"exact":53,"hub_bytes":16115132,"passed":true,"worker_seconds":143.9624321460724}
+{"time":1791454758.778815,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101052"}
+{"time":1791454758.8149672,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101053"}
+{"time":1791454857.062711,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101052","fps":19.99877536549127,"accepted":33,"exact":33,"hub_bytes":9822081,"passed":true,"worker_seconds":98.2803168296814}
+{"time":1791454857.171652,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101054"}
+{"time":1791454933.328892,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101053","fps":19.997399776242023,"accepted":70,"exact":70,"hub_bytes":19188036,"passed":true,"worker_seconds":174.51152896881104}
+{"time":1791454933.416708,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101055"}
+{"time":1791455009.5226061,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101054","fps":19.999924767744826,"accepted":68,"exact":68,"hub_bytes":17152313,"passed":true,"worker_seconds":152.34761309623718}
+{"time":1791455009.610396,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101056"}
+{"time":1791455062.323526,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101055","fps":19.999782053876466,"accepted":39,"exact":39,"hub_bytes":11011341,"passed":true,"worker_seconds":128.9040687084198}
+{"time":1791455062.426878,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101057"}
+{"time":1791455122.5598788,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101056","fps":19.999482750025226,"accepted":37,"exact":37,"hub_bytes":7750285,"passed":true,"worker_seconds":112.94686603546143}
+{"time":1791455122.646594,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101058"}
+{"time":1791455181.744549,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101057","fps":19.996443673654724,"accepted":46,"exact":46,"hub_bytes":14034588,"passed":true,"worker_seconds":119.31391596794128}
+{"time":1791455181.8279328,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101059"}
+{"time":1791455227.955842,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101058","fps":19.99561753819745,"accepted":30,"exact":30,"hub_bytes":10861276,"passed":true,"worker_seconds":105.30629396438599}
+{"time":1791455228.043735,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101060"}
+{"time":1791455342.0320551,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101059","fps":19.998884897957463,"accepted":70,"exact":70,"hub_bytes":20456768,"passed":true,"worker_seconds":160.2009379863739}
+{"time":1791455342.1190982,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101061"}
+{"time":1791455401.845988,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101060","fps":19.996610600910014,"accepted":89,"exact":89,"hub_bytes":21682641,"passed":true,"worker_seconds":173.79984831809998}
+{"time":1791455401.9485471,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101062"}
+{"time":1791455494.582357,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101061","fps":19.999399707928873,"accepted":64,"exact":64,"hub_bytes":17951033,"passed":true,"worker_seconds":152.46057176589966}
+{"time":1791455494.670722,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101063"}
+{"time":1791455530.364487,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101062","fps":19.997297835673617,"accepted":47,"exact":47,"hub_bytes":11002571,"passed":true,"worker_seconds":128.41334295272827}
+{"time":1791455530.457629,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101064"}
+{"time":1791455607.262068,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101063","fps":19.99319181057499,"accepted":36,"exact":36,"hub_bytes":7278646,"passed":true,"worker_seconds":112.58869624137878}
+{"time":1791455607.347863,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101065"}
+{"time":1791455752.805511,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101065","fps":19.999897011602084,"accepted":52,"exact":52,"hub_bytes":15812950,"passed":true,"worker_seconds":145.4543490409851}
+{"time":1791455752.892728,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101066"}
+{"time":1791455776.502741,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101064","fps":19.98848176271273,"accepted":92,"exact":92,"hub_bytes":30499198,"passed":true,"worker_seconds":246.04208326339722}
+{"time":1791455776.593504,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101067"}
+{"time":1791455862.270306,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101066","fps":19.993001763391547,"accepted":46,"exact":46,"hub_bytes":11003517,"passed":true,"worker_seconds":109.37409806251526}
+{"time":1791455862.3727832,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101068"}
+{"time":1791455887.48503,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101067","fps":19.99935990221816,"accepted":34,"exact":34,"hub_bytes":10044392,"passed":true,"worker_seconds":110.88897395133972}
+{"time":1791455887.5819452,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101069"}
+{"time":1791455954.038014,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101068","fps":19.989359479761486,"accepted":19,"exact":19,"hub_bytes":5246158,"passed":true,"worker_seconds":91.6628987789154}
+{"time":1791455954.127291,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101070"}
+{"time":1791456015.056394,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101069","fps":19.99845646175671,"accepted":50,"exact":50,"hub_bytes":11153949,"passed":true,"worker_seconds":127.47243118286133}
+{"time":1791456015.150095,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101071"}
+{"time":1791456066.917854,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101070","fps":19.997299252762478,"accepted":35,"exact":35,"hub_bytes":7344703,"passed":true,"worker_seconds":112.78820991516113}
+{"time":1791456067.009251,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101072"}
+{"time":1791456211.651045,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101072","fps":19.995945503660238,"accepted":44,"exact":44,"hub_bytes":17030473,"passed":true,"worker_seconds":144.63875603675842}
+{"time":1791456211.739518,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101073"}
+{"time":1791456290.4553769,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101071","fps":19.999106148093304,"accepted":99,"exact":99,"hub_bytes":34860667,"passed":true,"worker_seconds":275.3025517463684}
+{"time":1791456290.54337,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101074"}
+{"time":1791456311.561822,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101073","fps":19.994619869786185,"accepted":30,"exact":30,"hub_bytes":9325294,"passed":true,"worker_seconds":99.81961989402771}
+{"time":1791456311.659183,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101075"}
+{"time":1791456382.0185049,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101074","fps":19.995304937626976,"accepted":21,"exact":21,"hub_bytes":7125543,"passed":true,"worker_seconds":91.47248101234436}
+{"time":1791456382.1247108,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101076"}
+{"time":1791456397.5511942,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101075","fps":19.98716143731151,"accepted":15,"exact":15,"hub_bytes":3893151,"passed":true,"worker_seconds":85.88952493667603}
+{"time":1791456397.649958,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101077"}
+{"time":1791456487.162059,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101077","fps":19.998888425279066,"accepted":16,"exact":16,"hub_bytes":3346192,"passed":true,"worker_seconds":89.51003217697144}
+{"time":1791456487.252181,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101078"}
+{"time":1791456509.976528,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101076","fps":19.989868893372424,"accepted":47,"exact":47,"hub_bytes":10737434,"passed":true,"worker_seconds":127.84853482246399}
+{"time":1791456510.067023,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101079"}
+{"time":1791456654.970593,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101079","fps":19.99977641227271,"accepted":43,"exact":43,"hub_bytes":15522043,"passed":true,"worker_seconds":144.90109300613403}
+{"time":1791456655.074549,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101080"}
+{"time":1791456665.104148,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101078","fps":19.99943975458739,"accepted":57,"exact":57,"hub_bytes":24165981,"passed":true,"worker_seconds":177.8492500782013}
+{"time":1791456665.202304,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101081"}
+{"time":1791456776.565042,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101081","fps":19.999113563320538,"accepted":32,"exact":32,"hub_bytes":9156548,"passed":true,"worker_seconds":111.35981392860413}
+{"time":1791456776.6719282,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101082"}
+{"time":1791456877.591913,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101080","fps":19.99831991869681,"accepted":132,"exact":132,"hub_bytes":31359167,"passed":true,"worker_seconds":222.5136320590973}
+{"time":1791456877.684056,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101083"}
+{"time":1791456928.5863209,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101082","fps":19.998763540733766,"accepted":72,"exact":72,"hub_bytes":16431102,"passed":true,"worker_seconds":151.91172075271606}
+{"time":1791456928.683608,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101084"}
+{"time":1791457005.925728,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101083","fps":19.999694350057624,"accepted":39,"exact":39,"hub_bytes":11290371,"passed":true,"worker_seconds":128.23933911323547}
+{"time":1791457006.016758,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101085"}
+{"time":1791457040.851978,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101084","fps":19.997012563052518,"accepted":34,"exact":34,"hub_bytes":7302685,"passed":true,"worker_seconds":112.16623306274414}
+{"time":1791457040.945077,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101086"}
+{"time":1791457184.389726,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101085","fps":19.999788941725157,"accepted":65,"exact":65,"hub_bytes":21105286,"passed":true,"worker_seconds":178.3702290058136}
+{"time":1791457187.306598,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101086","fps":19.980446956588963,"accepted":54,"exact":54,"hub_bytes":15977700,"passed":true,"worker_seconds":146.3592369556427}
+{"time":1791457187.406231,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101087"}
+{"time":1791457187.4445271,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101088"}
+{"time":1791457266.165864,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101088","fps":19.997598128236582,"accepted":15,"exact":15,"hub_bytes":4276590,"passed":true,"worker_seconds":78.71874189376831}
+{"time":1791457266.257961,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101089"}
+{"time":1791457286.635978,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101087","fps":19.997219453496534,"accepted":36,"exact":36,"hub_bytes":9836256,"passed":true,"worker_seconds":99.22631192207336}
+{"time":1791457286.730058,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101090"}
+{"time":1791457382.426529,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101090","fps":19.987797993147474,"accepted":23,"exact":23,"hub_bytes":5688160,"passed":true,"worker_seconds":95.6945288181305}
+{"time":1791457382.520562,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101091"}
+{"time":1791457418.8763058,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101089","fps":19.996717793983294,"accepted":60,"exact":60,"hub_bytes":17394919,"passed":true,"worker_seconds":152.61521315574646}
+{"time":1791457418.972687,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101092"}
+{"time":1791457494.094496,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101091","fps":19.99870404658216,"accepted":33,"exact":33,"hub_bytes":7791545,"passed":true,"worker_seconds":111.5710380077362}
+{"time":1791457494.18738,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101093"}
+{"time":1791457596.1980119,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101092","fps":19.998700553938274,"accepted":64,"exact":64,"hub_bytes":21145512,"passed":true,"worker_seconds":177.2230839729309}
+{"time":1791457596.2921479,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101094"}
+{"time":1791457694.676685,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101094","fps":19.993261569044705,"accepted":36,"exact":36,"hub_bytes":9091831,"passed":true,"worker_seconds":98.38162422180176}
+{"time":1791457694.774334,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101095"}
+{"time":1791457735.8535721,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101093","fps":19.996448644242182,"accepted":118,"exact":118,"hub_bytes":33617574,"passed":true,"worker_seconds":241.66321301460266}
+{"time":1791457735.9677062,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101096"}
+{"time":1791457813.020245,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101095","fps":19.99458890921166,"accepted":37,"exact":37,"hub_bytes":11573326,"passed":true,"worker_seconds":118.24163007736206}
+{"time":1791457813.115191,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101097"}
+{"time":1791457848.376883,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101096","fps":19.994432293743028,"accepted":32,"exact":32,"hub_bytes":9494605,"passed":true,"worker_seconds":112.406564950943}
+{"time":1791457848.4779809,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101098"}
+{"time":1791457941.088523,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101097","fps":19.998570932497692,"accepted":44,"exact":44,"hub_bytes":10716904,"passed":true,"worker_seconds":127.97025609016418}
+{"time":1791457941.185247,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101099"}
+{"time":1791457961.257665,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101098","fps":19.9943311437381,"accepted":32,"exact":32,"hub_bytes":7583602,"passed":true,"worker_seconds":112.77686715126038}
+{"time":1791457961.3861172,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101100"}
+{"time":1791458106.877673,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101100","fps":19.980043989839544,"accepted":51,"exact":51,"hub_bytes":16326584,"passed":true,"worker_seconds":145.4892282485962}
+{"time":1791458106.971532,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101101"}
+{"time":1791458204.9634671,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101101","fps":19.99955831044066,"accepted":28,"exact":28,"hub_bytes":9049866,"passed":true,"worker_seconds":97.98846125602722}
+{"time":1791458205.0602722,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101102"}
+{"time":1791458240.885441,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101099","fps":19.988711617913864,"accepted":114,"exact":114,"hub_bytes":39561023,"passed":true,"worker_seconds":299.6975359916687}
+{"time":1791458240.987057,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101103"}
+{"time":1791458315.052523,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101103","fps":19.824559879510517,"accepted":12,"exact":12,"hub_bytes":2718431,"passed":true,"worker_seconds":74.06329083442688}
+{"time":1791458315.167215,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101104"}
+{"time":1791458344.648811,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101102","fps":19.996077154140767,"accepted":45,"exact":45,"hub_bytes":13616248,"passed":true,"worker_seconds":139.58587217330933}
+{"time":1791458344.746881,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101105"}
+{"time":1791458419.89369,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101104","fps":19.992711301576065,"accepted":27,"exact":27,"hub_bytes":6815973,"passed":true,"worker_seconds":104.72323369979858}
+{"time":1791458419.991471,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101106"}
+{"time":1791458456.8904161,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101105","fps":19.99300521968503,"accepted":29,"exact":29,"hub_bytes":7642434,"passed":true,"worker_seconds":112.14104676246643}
+{"time":1791458456.985184,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101107"}
+{"time":1791458598.774698,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101106","fps":19.999724622693535,"accepted":60,"exact":60,"hub_bytes":20334168,"passed":true,"worker_seconds":178.77967309951782}
+{"time":1791458601.325525,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101107","fps":19.998283533555966,"accepted":57,"exact":57,"hub_bytes":15672378,"passed":true,"worker_seconds":144.33787488937378}
+{"time":1791458601.4318779,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101108"}
+{"time":1791458601.473912,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101109"}
+{"time":1791458682.601127,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101109","fps":19.990969197226896,"accepted":16,"exact":16,"hub_bytes":5164967,"passed":true,"worker_seconds":81.12396788597107}
+{"time":1791458682.701807,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101110"}
+{"time":1791458701.1685,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101108","fps":19.99912762996425,"accepted":33,"exact":33,"hub_bytes":9739897,"passed":true,"worker_seconds":99.73402380943298}
+{"time":1791458701.270368,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101111"}
+{"time":1791458761.0516229,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101110","fps":19.99421577273467,"accepted":15,"exact":15,"hub_bytes":3175532,"passed":true,"worker_seconds":78.34704375267029}
+{"time":1791458761.160185,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101112"}
+{"time":1791458830.140803,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101111","fps":19.998007929659007,"accepted":44,"exact":44,"hub_bytes":10782617,"passed":true,"worker_seconds":128.86781525611877}
+{"time":1791458830.244179,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101113"}
+{"time":1791458867.364527,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101112","fps":19.978612436182793,"accepted":30,"exact":30,"hub_bytes":7111653,"passed":true,"worker_seconds":106.2017240524292}
+{"time":1791458867.46499,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101114"}
+{"time":1791459006.799962,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101113","fps":19.99998227727688,"accepted":69,"exact":69,"hub_bytes":20438036,"passed":true,"worker_seconds":176.55318403244019}
+{"time":1791459006.9014452,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101115"}
+{"time":1791459011.753143,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101114","fps":19.9986421404943,"accepted":39,"exact":39,"hub_bytes":14790052,"passed":true,"worker_seconds":144.28567123413086}
+{"time":1791459011.8520682,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101116"}
+{"time":1791459114.637363,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101115","fps":19.961997660960005,"accepted":42,"exact":42,"hub_bytes":10741771,"passed":true,"worker_seconds":107.73277282714844}
+{"time":1791459114.734593,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101117"}
+{"time":1791459174.65058,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101116","fps":19.999566547340645,"accepted":80,"exact":80,"hub_bytes":18721900,"passed":true,"worker_seconds":162.79600381851196}
+{"time":1791459174.748563,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101118"}
+{"time":1791459265.0551941,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101117","fps":19.99879579554776,"accepted":71,"exact":71,"hub_bytes":14843954,"passed":true,"worker_seconds":150.31764793395996}
+{"time":1791459265.154779,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101119"}
+{"time":1791459279.069089,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101118","fps":19.984856746321586,"accepted":29,"exact":29,"hub_bytes":6970938,"passed":true,"worker_seconds":104.3175323009491}
+{"time":1791459279.168347,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101120"}
+{"time":1791459372.6067572,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101119","fps":19.98900970699516,"accepted":26,"exact":26,"hub_bytes":6844778,"passed":true,"worker_seconds":107.44937705993652}
+{"time":1791459372.707666,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101121"}
+{"time":1791459455.9983628,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101120","fps":19.998449343878175,"accepted":62,"exact":62,"hub_bytes":21032991,"passed":true,"worker_seconds":176.827800989151}
+{"time":1791459456.101609,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101122"}
+{"time":1791459517.340075,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101121","fps":19.998072894813838,"accepted":55,"exact":55,"hub_bytes":16402682,"passed":true,"worker_seconds":144.62937903404236}
+{"time":1791459517.452802,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101123"}
+{"time":1791459574.0672572,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101122","fps":19.99621023976524,"accepted":43,"exact":43,"hub_bytes":12672089,"passed":true,"worker_seconds":117.96319532394409}
+{"time":1791459574.167187,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101124"}
+{"time":1791459679.410366,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101123","fps":19.999867826196525,"accepted":64,"exact":64,"hub_bytes":16642790,"passed":true,"worker_seconds":161.95519495010376}
+{"time":1791459679.51919,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101125"}
+{"time":1791459709.301047,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101124","fps":19.9643307750181,"accepted":49,"exact":49,"hub_bytes":14011382,"passed":true,"worker_seconds":135.1312460899353}
+{"time":1791459709.416755,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101126"}
+{"time":1791459780.85413,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101125","fps":19.998867680145963,"accepted":25,"exact":25,"hub_bytes":6313251,"passed":true,"worker_seconds":101.33267998695374}
+{"time":1791459780.971637,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101127"}
+{"time":1791459822.023487,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101126","fps":19.99140822830174,"accepted":37,"exact":37,"hub_bytes":6901940,"passed":true,"worker_seconds":112.60444903373718}
+{"time":1791459822.1274922,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101128"}
+{"time":1791459966.687596,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101127","fps":19.982159789914018,"accepted":63,"exact":63,"hub_bytes":22417589,"passed":true,"worker_seconds":185.71319389343262}
+{"time":1791459969.6162271,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101128","fps":19.99486776215196,"accepted":39,"exact":39,"hub_bytes":16681134,"passed":true,"worker_seconds":147.4867970943451}
+{"time":1791459969.730311,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101129"}
+{"time":1791459969.773868,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101130"}
+{"time":1791460068.517801,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101129","fps":19.999261180665417,"accepted":34,"exact":34,"hub_bytes":9864059,"passed":true,"worker_seconds":98.78511905670166}
+{"time":1791460068.6221929,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101131"}
+{"time":1791460074.440866,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101130","fps":19.99381132534095,"accepted":29,"exact":29,"hub_bytes":8481708,"passed":true,"worker_seconds":104.66421294212341}
+{"time":1791460074.565525,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101132"}
+{"time":1791460201.014315,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101132","fps":19.999394534895764,"accepted":44,"exact":44,"hub_bytes":11098233,"passed":true,"worker_seconds":126.4463107585907}
+{"time":1791460201.118169,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101133"}
+{"time":1791460221.165496,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101131","fps":19.997776936035248,"accepted":59,"exact":59,"hub_bytes":16119473,"passed":true,"worker_seconds":152.54078102111816}
+{"time":1791460221.271229,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101134"}
+{"time":1791460300.136388,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101133","fps":19.997986890205205,"accepted":22,"exact":22,"hub_bytes":5522384,"passed":true,"worker_seconds":99.01488184928894}
+{"time":1791460300.257796,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101135"}
+{"time":1791460400.026886,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101134","fps":19.99751100142973,"accepted":58,"exact":58,"hub_bytes":21045664,"passed":true,"worker_seconds":178.75316405296326}
+{"time":1791460400.130275,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101136"}
+{"time":1791460404.297888,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101135","fps":19.995392223693955,"accepted":27,"exact":27,"hub_bytes":11279394,"passed":true,"worker_seconds":104.03626489639282}
+{"time":1791460404.4084458,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101137"}
+{"time":1791460500.1482391,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101137","fps":19.992252190597824,"accepted":24,"exact":24,"hub_bytes":7822447,"passed":true,"worker_seconds":95.73721599578857}
+{"time":1791460500.249964,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101138"}
+{"time":1791460549.04212,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101136","fps":19.99730686868038,"accepted":69,"exact":69,"hub_bytes":18177000,"passed":true,"worker_seconds":148.9093780517578}
+{"time":1791460549.149445,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101139"}
+{"time":1791460650.451778,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101138","fps":19.996465732143957,"accepted":53,"exact":53,"hub_bytes":15517697,"passed":true,"worker_seconds":150.1987190246582}
+{"time":1791460650.5540009,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101140"}
+{"time":1791460677.7556531,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101139","fps":19.993765217970996,"accepted":51,"exact":51,"hub_bytes":11919944,"passed":true,"worker_seconds":128.60339999198914}
+{"time":1791460677.862411,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101141"}
+{"time":1791460748.218399,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101140","fps":19.988287383784424,"accepted":24,"exact":24,"hub_bytes":4459970,"passed":true,"worker_seconds":97.66085314750671}
+{"time":1791460748.3354838,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101142"}
+{"time":1791460893.528127,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101142","fps":19.99875287711079,"accepted":47,"exact":47,"hub_bytes":15664164,"passed":true,"worker_seconds":145.19000911712646}
+{"time":1791460893.634293,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101143"}
+{"time":1791460945.933077,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101141","fps":19.998989399170554,"accepted":118,"exact":118,"hub_bytes":34402426,"passed":true,"worker_seconds":268.0679831504822}
+{"time":1791460946.0503428,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101144"}
+{"time":1791460991.816533,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101143","fps":19.9951169212688,"accepted":33,"exact":33,"hub_bytes":9371324,"passed":true,"worker_seconds":98.17919111251831}
+{"time":1791460991.9286551,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101145"}
+{"time":1791461050.2209659,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101144","fps":19.995208680735175,"accepted":30,"exact":30,"hub_bytes":8381151,"passed":true,"worker_seconds":104.16799402236938}
+{"time":1791461050.344033,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101146"}
+{"time":1791461103.1451561,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101145","fps":19.999944351790553,"accepted":28,"exact":28,"hub_bytes":8793637,"passed":true,"worker_seconds":111.21349024772644}
+{"time":1791461103.2535338,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101147"}
+{"time":1791461151.004965,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101146","fps":19.988964510218214,"accepted":33,"exact":33,"hub_bytes":6561513,"passed":true,"worker_seconds":100.65712785720825}
+{"time":1791461151.122675,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101148"}
+{"time":1791461215.476776,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101147","fps":19.999906094670912,"accepted":33,"exact":33,"hub_bytes":6968642,"passed":true,"worker_seconds":112.22022199630737}
+{"time":1791461215.586508,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101149"}
+{"time":1791461329.065838,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101148","fps":19.997961004689287,"accepted":58,"exact":58,"hub_bytes":21489255,"passed":true,"worker_seconds":177.93998408317566}
+{"time":1791461329.1714292,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101150"}
+{"time":1791461361.782807,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101149","fps":19.996753483314606,"accepted":53,"exact":53,"hub_bytes":15461384,"passed":true,"worker_seconds":146.19337010383606}
+{"time":1791461361.896509,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101151"}
+{"time":1791461481.3373508,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101151","fps":19.999896396826855,"accepted":41,"exact":41,"hub_bytes":11278163,"passed":true,"worker_seconds":119.43825387954712}
+{"time":1791461481.45208,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101152"}
+{"time":1791461504.171753,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101150","fps":19.99751889464424,"accepted":72,"exact":72,"hub_bytes":20372532,"passed":true,"worker_seconds":174.9975028038025}
+{"time":1791461504.285598,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101153"}
+{"time":1791461598.27172,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101153","fps":19.99330650053355,"accepted":20,"exact":20,"hub_bytes":4519568,"passed":true,"worker_seconds":93.98391795158386}
+{"time":1791461598.392998,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101154"}
+{"time":1791461632.906333,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101152","fps":19.999211192543747,"accepted":55,"exact":55,"hub_bytes":15652214,"passed":true,"worker_seconds":151.4501838684082}
+{"time":1791461633.018128,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101155"}
+{"time":1791461710.60348,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101154","fps":19.995223208872368,"accepted":32,"exact":32,"hub_bytes":6622318,"passed":true,"worker_seconds":112.20731902122498}
+{"time":1791461710.714657,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101156"}
+{"time":1791461811.390347,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101155","fps":19.999561080737482,"accepted":55,"exact":55,"hub_bytes":22926677,"passed":true,"worker_seconds":178.36909317970276}
+{"time":1791461811.500072,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101157"}
+{"time":1791461856.638966,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101156","fps":19.996704523132994,"accepted":46,"exact":46,"hub_bytes":15634231,"passed":true,"worker_seconds":145.92158317565918}
+{"time":1791461856.749252,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101158"}
+{"time":1791461910.883043,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101157","fps":19.997172029530905,"accepted":33,"exact":33,"hub_bytes":9253188,"passed":true,"worker_seconds":99.37945008277893}
+{"time":1791461910.991724,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101159"}
+{"time":1791461986.55076,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101158","fps":19.994668092092233,"accepted":50,"exact":50,"hub_bytes":12172418,"passed":true,"worker_seconds":129.79817414283752}
+{"time":1791461986.6635368,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101160"}
+{"time":1791462028.576141,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101159","fps":19.994570179797375,"accepted":44,"exact":44,"hub_bytes":9467590,"passed":true,"worker_seconds":117.5815589427948}
+{"time":1791462028.6889112,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101161"}
+{"time":1791462102.424733,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101160","fps":19.994032920419183,"accepted":34,"exact":34,"hub_bytes":8899343,"passed":true,"worker_seconds":115.7580087184906}
+{"time":1791462102.53743,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101162"}
+{"time":1791462141.670621,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101161","fps":19.94229428890178,"accepted":28,"exact":28,"hub_bytes":6861880,"passed":true,"worker_seconds":112.97897982597351}
+{"time":1791462141.7821481,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101163"}
+{"time":1791462280.385132,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101162","fps":19.997828070879276,"accepted":54,"exact":54,"hub_bytes":22645927,"passed":true,"worker_seconds":177.84455919265747}
+{"time":1791462280.498003,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101164"}
+{"time":1791462287.774216,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101163","fps":19.975986941920457,"accepted":51,"exact":51,"hub_bytes":15954480,"passed":true,"worker_seconds":145.98937916755676}
+{"time":1791462287.888907,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101165"}
+{"time":1791462427.755518,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101164","fps":19.99912697742616,"accepted":55,"exact":55,"hub_bytes":14738723,"passed":true,"worker_seconds":147.25421905517578}
+{"time":1791462427.86525,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101166"}
+{"time":1791462462.52099,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101165","fps":19.997661919686248,"accepted":92,"exact":92,"hub_bytes":18732043,"passed":true,"worker_seconds":174.62953805923462}
+{"time":1791462462.631655,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101167"}
+{"time":1791462549.8983371,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101167","fps":19.999274011214094,"accepted":16,"exact":16,"hub_bytes":3398097,"passed":true,"worker_seconds":87.26410818099976}
+{"time":1791462550.0097148,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101168"}
+{"time":1791462564.869903,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101166","fps":19.998951808954804,"accepted":58,"exact":58,"hub_bytes":13073162,"passed":true,"worker_seconds":137.00215578079224}
+{"time":1791462564.984556,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101169"}
+{"time":1791462663.439601,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101168","fps":19.992221668449787,"accepted":28,"exact":28,"hub_bytes":7617611,"passed":true,"worker_seconds":113.42707395553589}
+{"time":1791462663.584248,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101170"}
+{"time":1791462743.068044,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101169","fps":19.996313352549052,"accepted":57,"exact":57,"hub_bytes":22441345,"passed":true,"worker_seconds":178.08087587356567}
+{"time":1791462743.1765409,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101171"}
+{"time":1791462808.891726,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101170","fps":19.997884764805885,"accepted":53,"exact":53,"hub_bytes":16721780,"passed":true,"worker_seconds":145.304780960083}
+{"time":1791462809.002163,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101172"}
+{"time":1791462868.1335511,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101171","fps":19.993321989442936,"accepted":50,"exact":50,"hub_bytes":11951610,"passed":true,"worker_seconds":124.9533338546753}
+{"time":1791462868.2437189,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101173"}
+{"time":1791462879.523741,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101172","fps":19.995193505799993,"accepted":14,"exact":14,"hub_bytes":3167382,"passed":true,"worker_seconds":70.51838803291321}
+{"time":1791462879.644715,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101174"}
+{"time":1791462972.874354,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101173","fps":19.999329355690048,"accepted":34,"exact":34,"hub_bytes":7525405,"passed":true,"worker_seconds":104.62796688079834}
+{"time":1791462972.991145,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101175"}
+{"time":1791463006.315103,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101174","fps":19.989536451399825,"accepted":39,"exact":39,"hub_bytes":11240413,"passed":true,"worker_seconds":126.66787886619568}
+{"time":1791463006.432626,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101176"}
+{"time":1791463085.302582,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101175","fps":19.998316156865904,"accepted":38,"exact":38,"hub_bytes":7758654,"passed":true,"worker_seconds":112.30831694602966}
+{"time":1791463085.414593,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101177"}
+{"time":1791463183.962333,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101176","fps":19.98762489125881,"accepted":65,"exact":65,"hub_bytes":21639624,"passed":true,"worker_seconds":177.52719378471375}
+{"time":1791463184.07601,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101178"}
+{"time":1791463271.901921,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101177","fps":19.999449072348916,"accepted":64,"exact":64,"hub_bytes":23210219,"passed":true,"worker_seconds":186.48449993133545}
+{"time":1791463272.014519,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101179"}
+{"time":1791463281.94376,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101178","fps":19.994168147380787,"accepted":41,"exact":41,"hub_bytes":8594769,"passed":true,"worker_seconds":97.86509990692139}
+{"time":1791463282.059967,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101180"}
+{"time":1791463346.421348,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101179","fps":19.985180830350114,"accepted":13,"exact":13,"hub_bytes":4061445,"passed":true,"worker_seconds":74.40303611755371}
+{"time":1791463346.5306408,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101181"}
+{"time":1791463387.929339,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101180","fps":19.998800926529896,"accepted":38,"exact":38,"hub_bytes":8193461,"passed":true,"worker_seconds":105.86703681945801}
+{"time":1791463388.047127,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101182"}
+{"time":1791463474.627243,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101181","fps":19.993698135171662,"accepted":45,"exact":45,"hub_bytes":11585940,"passed":true,"worker_seconds":128.09371495246887}
+{"time":1791463474.739291,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101183"}
+{"time":1791463499.257737,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101182","fps":19.991422607655824,"accepted":35,"exact":35,"hub_bytes":7193736,"passed":true,"worker_seconds":111.20804500579834}
+{"time":1791463499.370314,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101184"}
+{"time":1791463645.265868,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101184","fps":19.999653471455126,"accepted":46,"exact":46,"hub_bytes":17547777,"passed":true,"worker_seconds":145.8929591178894}
+{"time":1791463645.375413,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101185"}
+{"time":1791463653.1981518,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101183","fps":19.985738005729143,"accepted":57,"exact":57,"hub_bytes":21022746,"passed":true,"worker_seconds":178.45607495307922}
+{"time":1791463653.319208,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101186"}
+{"time":1791463762.7476292,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101186","fps":19.99535670124972,"accepted":42,"exact":42,"hub_bytes":8759408,"passed":true,"worker_seconds":109.42576098442078}
+{"time":1791463762.8746839,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101187"}
+{"time":1791463821.271229,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101185","fps":19.99977970436535,"accepted":105,"exact":105,"hub_bytes":21491406,"passed":true,"worker_seconds":175.89306497573853}
+{"time":1791463821.383088,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101188"}
+{"time":1791463862.4377549,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101187","fps":19.998741372524158,"accepted":26,"exact":26,"hub_bytes":5857623,"passed":true,"worker_seconds":99.56057596206665}
+{"time":1791463862.557337,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101189"}
+{"time":1791463922.9886668,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101188","fps":19.998961428398577,"accepted":27,"exact":27,"hub_bytes":5993874,"passed":true,"worker_seconds":101.60227108001709}
+{"time":1791463923.1075578,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101190"}
+{"time":1791463975.3238919,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101189","fps":19.936478738399348,"accepted":30,"exact":30,"hub_bytes":7765902,"passed":true,"worker_seconds":112.76394081115723}
+{"time":1791463975.4390101,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101191"}
+{"time":1791464101.456477,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101190","fps":19.983097943526804,"accepted":67,"exact":67,"hub_bytes":21796112,"passed":true,"worker_seconds":178.34609389305115}
+{"time":1791464101.5691469,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101192"}
+{"time":1791464228.0380428,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101192","fps":19.973635937680626,"accepted":44,"exact":44,"hub_bytes":13512357,"passed":true,"worker_seconds":126.46570873260498}
+{"time":1791464228.153291,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101193"}
+{"time":1791464242.9872909,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101191","fps":19.999494804090748,"accepted":121,"exact":121,"hub_bytes":35942781,"passed":true,"worker_seconds":267.54576778411865}
+{"time":1791464243.1066098,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101194"}
+{"time":1791464394.099977,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101194","fps":19.999622265021177,"accepted":57,"exact":57,"hub_bytes":16213272,"passed":true,"worker_seconds":150.99097084999084}
+{"time":1791464394.216303,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101195"}
+{"time":1791464404.1853702,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101193","fps":19.98066492427121,"accepted":78,"exact":78,"hub_bytes":20961658,"passed":true,"worker_seconds":176.02866101264954}
+{"time":1791464404.3050408,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101196"}
+{"time":1791464518.051115,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101196","fps":19.999701266583084,"accepted":26,"exact":26,"hub_bytes":7153464,"passed":true,"worker_seconds":113.74378705024719}
+{"time":1791464518.16674,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101197"}
+{"time":1791464522.3095129,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101195","fps":19.99965126799033,"accepted":39,"exact":39,"hub_bytes":10307496,"passed":true,"worker_seconds":128.0904278755188}
+{"time":1791464522.4296918,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101198"}
+{"time":1791464666.7806568,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101198","fps":19.999491820996358,"accepted":57,"exact":57,"hub_bytes":16378180,"passed":true,"worker_seconds":144.34857177734375}
+{"time":1791464666.8997052,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101199"}
+{"time":1791464695.850626,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101197","fps":19.998554411130062,"accepted":53,"exact":53,"hub_bytes":20172347,"passed":true,"worker_seconds":177.6814661026001}
+{"time":1791464695.96992,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101200"}
+{"time":1791464765.011777,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101199","fps":19.99985339917927,"accepted":37,"exact":37,"hub_bytes":9253324,"passed":true,"worker_seconds":98.10942673683167}
+{"time":1791464765.13069,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101201"}
+{"time":1791464798.029386,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101200","fps":19.988039597367155,"accepted":27,"exact":27,"hub_bytes":7676461,"passed":true,"worker_seconds":102.05688810348511}
+{"time":1791464798.151291,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101202"}
+{"time":1791464862.97873,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101201","fps":19.98961632278361,"accepted":24,"exact":24,"hub_bytes":6691444,"passed":true,"worker_seconds":97.8454577922821}
+{"time":1791464863.097677,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101203"}
+{"time":1791464926.5421052,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101202","fps":19.999626757193436,"accepted":46,"exact":46,"hub_bytes":10815240,"passed":true,"worker_seconds":128.38791918754578}
+{"time":1791464926.663828,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101204"}
+{"time":1791464970.440166,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101203","fps":19.999570327514334,"accepted":30,"exact":30,"hub_bytes":6499503,"passed":true,"worker_seconds":107.33938598632812}
+{"time":1791464970.5586119,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101205"}
+{"time":1791465046.252369,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101204","fps":19.974931699320763,"accepted":28,"exact":28,"hub_bytes":12834117,"passed":true,"worker_seconds":119.5857150554657}
+{"time":1791465046.371223,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101206"}
+{"time":1791465112.157728,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101205","fps":19.996097189291714,"accepted":43,"exact":43,"hub_bytes":15116127,"passed":true,"worker_seconds":141.5963430404663}
+{"time":1791465112.27489,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101207"}
+{"time":1791465145.594066,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101206","fps":19.99886005133411,"accepted":35,"exact":35,"hub_bytes":9446846,"passed":true,"worker_seconds":99.21996808052063}
+{"time":1791465145.719457,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101208"}
+{"time":1791465242.006293,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101208","fps":19.99181057869295,"accepted":27,"exact":27,"hub_bytes":6304220,"passed":true,"worker_seconds":96.28381490707397}
+{"time":1791465242.132565,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101209"}
+{"time":1791465257.806168,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101207","fps":19.998763774352557,"accepted":66,"exact":66,"hub_bytes":16160735,"passed":true,"worker_seconds":145.52858424186707}
+{"time":1791465257.930024,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101210"}
+{"time":1791465335.695127,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101209","fps":19.99056889647696,"accepted":19,"exact":19,"hub_bytes":4566395,"passed":true,"worker_seconds":93.5600061416626}
+{"time":1791465335.815626,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101211"}
+{"time":1791465371.051591,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101210","fps":19.99919609802787,"accepted":28,"exact":28,"hub_bytes":7345263,"passed":true,"worker_seconds":113.1190857887268}
+{"time":1791465371.1696808,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101212"}
+{"time":1791465514.289061,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101211","fps":19.999909728945433,"accepted":62,"exact":62,"hub_bytes":21070113,"passed":true,"worker_seconds":178.47101092338562}
+{"time":1791465514.412104,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101213"}
+{"time":1791465527.934088,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101212","fps":19.979654643120277,"accepted":53,"exact":53,"hub_bytes":17448549,"passed":true,"worker_seconds":156.7617118358612}
+{"time":1791465528.055378,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101214"}
+{"time":1791465605.389205,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101214","fps":19.998699657267778,"accepted":14,"exact":14,"hub_bytes":4144485,"passed":true,"worker_seconds":77.33137202262878}
+{"time":1791465605.509078,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101215"}
+{"time":1791465613.648648,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101213","fps":19.99427796037193,"accepted":30,"exact":30,"hub_bytes":9700099,"passed":true,"worker_seconds":99.23273611068726}
+{"time":1791465613.802369,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101216"}
+{"time":1791465704.722937,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101215","fps":19.99252420221524,"accepted":23,"exact":23,"hub_bytes":7669478,"passed":true,"worker_seconds":99.21097302436829}
+{"time":1791465704.8456059,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101217"}
+{"time":1791465727.961143,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101216","fps":19.996592675103592,"accepted":33,"exact":33,"hub_bytes":9520978,"passed":true,"worker_seconds":114.156329870224}
+{"time":1791465728.107745,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101218"}
+{"time":1791465816.017518,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101217","fps":19.98892983105774,"accepted":27,"exact":27,"hub_bytes":7102342,"passed":true,"worker_seconds":111.1686999797821}
+{"time":1791465816.142093,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101219"}
+{"time":1791465906.049713,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101218","fps":19.97989162963387,"accepted":61,"exact":61,"hub_bytes":21330167,"passed":true,"worker_seconds":177.9393458366394}
+{"time":1791465906.175186,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101220"}
+{"time":1791465961.4518452,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101219","fps":19.997330542137327,"accepted":60,"exact":60,"hub_bytes":15672805,"passed":true,"worker_seconds":145.30710673332214}
+{"time":1791465961.577806,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101221"}
+{"time":1791466035.926888,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101221","fps":19.998828580334532,"accepted":17,"exact":17,"hub_bytes":3409130,"passed":true,"worker_seconds":74.34609317779541}
+{"time":1791466036.050835,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101222"}
+{"time":1791466091.254349,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101220","fps":19.998500884728852,"accepted":104,"exact":104,"hub_bytes":23501266,"passed":true,"worker_seconds":185.07528614997864}
+{"time":1791466091.380291,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101223"}
+{"time":1791466178.011748,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101222","fps":19.99577587670909,"accepted":60,"exact":60,"hub_bytes":13868553,"passed":true,"worker_seconds":141.95791912078857}
+{"time":1791466178.1368032,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101224"}
+{"time":1791466220.45981,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101223","fps":19.992463765787793,"accepted":42,"exact":42,"hub_bytes":10652713,"passed":true,"worker_seconds":129.07615518569946}
+{"time":1791466220.5853472,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101225"}
+{"time":1791466291.243851,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101224","fps":19.99770349407824,"accepted":35,"exact":35,"hub_bytes":6831774,"passed":true,"worker_seconds":113.10435891151428}
+{"time":1791466291.375245,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101226"}
+{"time":1791466435.8487198,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101226","fps":20.00001788930409,"accepted":55,"exact":55,"hub_bytes":16536090,"passed":true,"worker_seconds":144.47010374069214}
+{"time":1791466435.973357,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101227"}
+{"time":1791466473.650147,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101225","fps":19.999980533640674,"accepted":104,"exact":104,"hub_bytes":33399014,"passed":true,"worker_seconds":253.06182384490967}
+{"time":1791466473.7740831,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101228"}
+{"time":1791466534.622402,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101227","fps":19.9953655738637,"accepted":32,"exact":32,"hub_bytes":9493314,"passed":true,"worker_seconds":98.64583826065063}
+{"time":1791466534.748919,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101229"}
+{"time":1791466606.182562,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101228","fps":19.9962314958783,"accepted":55,"exact":55,"hub_bytes":11629620,"passed":true,"worker_seconds":132.4059920310974}
+{"time":1791466606.309867,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101230"}
+{"time":1791466684.95825,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101229","fps":19.997241199862636,"accepted":77,"exact":77,"hub_bytes":15481367,"passed":true,"worker_seconds":150.20645904541016}
+{"time":1791466685.0828319,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101231"}
+{"time":1791466731.67242,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101230","fps":19.94509708694497,"accepted":45,"exact":45,"hub_bytes":11208200,"passed":true,"worker_seconds":125.36003828048706}
+{"time":1791466731.799653,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101232"}
+{"time":1791466796.285666,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101231","fps":19.942162239088262,"accepted":32,"exact":32,"hub_bytes":6611466,"passed":true,"worker_seconds":111.19997692108154}
+{"time":1791466796.441525,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101233"}
+{"time":1791466909.631129,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101232","fps":19.997577698570637,"accepted":72,"exact":72,"hub_bytes":21063389,"passed":true,"worker_seconds":177.8287432193756}
+{"time":1791466909.7775471,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101234"}
+{"time":1791466942.195561,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101233","fps":19.972684437891743,"accepted":52,"exact":52,"hub_bytes":16576993,"passed":true,"worker_seconds":145.75052094459534}
+{"time":1791466942.328226,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101235"}
+{"time":1791467009.7820659,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101234","fps":19.999005187722393,"accepted":38,"exact":38,"hub_bytes":9685831,"passed":true,"worker_seconds":100.00113487243652}
+{"time":1791467009.91134,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101236"}
+{"time":1791467096.899413,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101235","fps":19.99330711711746,"accepted":58,"exact":58,"hub_bytes":17019291,"passed":true,"worker_seconds":154.56870102882385}
+{"time":1791467097.0265868,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101237"}
+{"time":1791467160.880197,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101236","fps":19.998734351212764,"accepted":53,"exact":53,"hub_bytes":14547900,"passed":true,"worker_seconds":150.96607089042664}
+{"time":1791467161.01281,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101238"}
+{"time":1791467224.031202,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101237","fps":19.991155652259508,"accepted":35,"exact":35,"hub_bytes":9715935,"passed":true,"worker_seconds":127.001873254776}
+{"time":1791467224.1642098,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101239"}
+{"time":1791467274.225129,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101238","fps":19.990389541284642,"accepted":25,"exact":25,"hub_bytes":7222188,"passed":true,"worker_seconds":113.20932412147522}
+{"time":1791467274.352222,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101240"}
+{"time":1791467393.8770401,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101239","fps":19.975333086099333,"accepted":56,"exact":56,"hub_bytes":20825683,"passed":true,"worker_seconds":169.70938110351562}
+{"time":1791467394.004601,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101241"}
+{"time":1791467497.503215,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101241","fps":19.91198132362039,"accepted":40,"exact":40,"hub_bytes":10449072,"passed":true,"worker_seconds":103.49499607086182}
+{"time":1791467497.6325681,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101242"}
+{"time":1791467541.011636,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101240","fps":19.969846691565124,"accepted":121,"exact":121,"hub_bytes":35178828,"passed":true,"worker_seconds":266.65696382522583}
+{"time":1791467541.143136,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101243"}
+{"time":1791467659.957748,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101242","fps":19.99990144676394,"accepted":85,"exact":85,"hub_bytes":17867836,"passed":true,"worker_seconds":162.32200813293457}
+{"time":1791467660.083046,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101244"}
+{"time":1791467691.971061,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101243","fps":19.999347642129525,"accepted":72,"exact":72,"hub_bytes":14946606,"passed":true,"worker_seconds":150.8250539302826}
+{"time":1791467692.100975,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101245"}
+{"time":1791467776.839089,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101244","fps":19.995099633875302,"accepted":44,"exact":44,"hub_bytes":8744754,"passed":true,"worker_seconds":116.75295996665955}
+{"time":1791467776.9660149,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101246"}
+{"time":1791467803.8293178,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101245","fps":19.996838182992835,"accepted":25,"exact":25,"hub_bytes":6762910,"passed":true,"worker_seconds":111.72550010681152}
+{"time":1791467803.960665,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101247"}
+{"time":1791467953.0799592,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101247","fps":19.947048465876023,"accepted":55,"exact":55,"hub_bytes":16869484,"passed":true,"worker_seconds":149.1161072254181}
+{"time":1791467953.211648,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101248"}
+{"time":1791467958.5775628,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101246","fps":19.98498348559416,"accepted":58,"exact":58,"hub_bytes":20354067,"passed":true,"worker_seconds":181.6091170310974}
+{"time":1791467958.711487,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101249"}
+{"time":1791468051.698694,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101248","fps":19.998980044006295,"accepted":40,"exact":40,"hub_bytes":9706038,"passed":true,"worker_seconds":98.48413181304932}
+{"time":1791468051.827343,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101250"}
+{"time":1791468133.47783,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101249","fps":19.978236253583166,"accepted":94,"exact":94,"hub_bytes":20007428,"passed":true,"worker_seconds":174.76346397399902}
+{"time":1791468133.609077,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101251"}
+{"time":1791468140.9568481,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101250","fps":19.975941959389125,"accepted":17,"exact":17,"hub_bytes":4949120,"passed":true,"worker_seconds":89.12668490409851}
+{"time":1791468141.088803,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101252"}
+{"time":1791468229.617583,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101251","fps":19.987340314021274,"accepted":24,"exact":24,"hub_bytes":5144569,"passed":true,"worker_seconds":96.00569915771484}
+{"time":1791468229.748199,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101253"}
+{"time":1791468251.97532,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101252","fps":19.99938794192886,"accepted":33,"exact":33,"hub_bytes":6577553,"passed":true,"worker_seconds":110.88412594795227}
+{"time":1791468252.105122,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101254"}
+{"time":1791468397.133091,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101254","fps":19.99969488413619,"accepted":53,"exact":53,"hub_bytes":18493211,"passed":true,"worker_seconds":145.0255331993103}
+{"time":1791468397.261195,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101255"}
+{"time":1791468407.156982,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101253","fps":19.984319999940354,"accepted":64,"exact":64,"hub_bytes":21632248,"passed":true,"worker_seconds":177.40583300590515}
+{"time":1791468407.290236,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101256"}
+{"time":1791468474.06901,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101256","fps":19.994645871235996,"accepted":10,"exact":10,"hub_bytes":2564293,"passed":true,"worker_seconds":66.77636408805847}
+{"time":1791468474.203659,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101257"}
+{"time":1791468561.961708,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101255","fps":19.98126198231749,"accepted":80,"exact":80,"hub_bytes":19216384,"passed":true,"worker_seconds":164.6976821422577}
+{"time":1791468562.091684,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101258"}
+{"time":1791468626.540509,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101257","fps":19.993161074459696,"accepted":54,"exact":54,"hub_bytes":17270213,"passed":true,"worker_seconds":152.33323907852173}
+{"time":1791468626.6727612,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101259"}
+{"time":1791468690.0011678,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101258","fps":19.99828853689044,"accepted":53,"exact":53,"hub_bytes":10309556,"passed":true,"worker_seconds":127.9063777923584}
+{"time":1791468690.13821,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101260"}
+{"time":1791468731.606067,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101259","fps":19.99031446036328,"accepted":25,"exact":25,"hub_bytes":5619770,"passed":true,"worker_seconds":104.93004107475281}
+{"time":1791468731.754726,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101261"}
+{"time":1791468876.23202,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101261","fps":19.999197548418014,"accepted":48,"exact":48,"hub_bytes":14645871,"passed":true,"worker_seconds":144.47440481185913}
+{"time":1791468876.365767,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101262"}
+{"time":1791468885.183862,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101260","fps":19.996305177483055,"accepted":64,"exact":64,"hub_bytes":24717606,"passed":true,"worker_seconds":195.04207682609558}
+{"time":1791468885.318597,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101263"}
+{"time":1791469019.56545,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101263","fps":19.99624170368675,"accepted":44,"exact":44,"hub_bytes":13365507,"passed":true,"worker_seconds":134.24440693855286}
+{"time":1791469019.698499,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101264"}
+{"time":1791469099.092455,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101262","fps":19.98698398266491,"accepted":121,"exact":121,"hub_bytes":31052872,"passed":true,"worker_seconds":222.72398781776428}
+{"time":1791469099.228128,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101265"}
+{"time":1791469171.699348,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101264","fps":19.999919407680522,"accepted":71,"exact":71,"hub_bytes":14706315,"passed":true,"worker_seconds":151.997967004776}
+{"time":1791469171.832599,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101266"}
+{"time":1791469218.193125,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101265","fps":19.997997823308026,"accepted":40,"exact":40,"hub_bytes":9298488,"passed":true,"worker_seconds":118.96253705024719}
+{"time":1791469218.327569,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101267"}
+{"time":1791469285.193561,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101266","fps":19.944092040323717,"accepted":35,"exact":35,"hub_bytes":7178703,"passed":true,"worker_seconds":113.35740685462952}
+{"time":1791469285.3259761,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101268"}
+{"time":1791469423.8284428,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101268","fps":19.997208598548937,"accepted":43,"exact":43,"hub_bytes":14990314,"passed":true,"worker_seconds":138.4993119239807}
+{"time":1791469423.986913,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101269"}
+{"time":1791469445.837652,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101267","fps":19.98734046953395,"accepted":77,"exact":77,"hub_bytes":28139103,"passed":true,"worker_seconds":227.50746893882751}
+{"time":1791469445.977626,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101270"}
+{"time":1791469521.6822689,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101269","fps":19.989142417741252,"accepted":35,"exact":35,"hub_bytes":9136561,"passed":true,"worker_seconds":97.69193816184998}
+{"time":1791469521.81725,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101271"}
+{"time":1791469533.416939,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101270","fps":19.98394233459004,"accepted":25,"exact":25,"hub_bytes":5918232,"passed":true,"worker_seconds":87.43690586090088}
+{"time":1791469533.5553548,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101272"}
+{"time":1791469610.732977,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101271","fps":19.994081680193176,"accepted":22,"exact":22,"hub_bytes":4669531,"passed":true,"worker_seconds":88.9126946926117}
+{"time":1791469610.866427,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101273"}
+{"time":1791469661.5094779,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101272","fps":19.99331031763378,"accepted":52,"exact":52,"hub_bytes":11143384,"passed":true,"worker_seconds":127.95136380195618}
+{"time":1791469661.650701,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101274"}
+{"time":1791469724.207246,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101273","fps":19.99142909621409,"accepted":32,"exact":32,"hub_bytes":7033167,"passed":true,"worker_seconds":113.33747720718384}
+{"time":1791469724.340021,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101275"}
+{"time":1791469840.5074072,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101274","fps":19.998096157084408,"accepted":68,"exact":68,"hub_bytes":21381521,"passed":true,"worker_seconds":178.8535921573639}
+{"time":1791469840.68788,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101276"}
+{"time":1791469873.1806169,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101275","fps":19.997146632425153,"accepted":52,"exact":52,"hub_bytes":16621096,"passed":true,"worker_seconds":148.83706402778625}
+{"time":1791469873.320587,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101277"}
+{"time":1791469938.441619,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101276","fps":19.960673717295652,"accepted":28,"exact":28,"hub_bytes":9033844,"passed":true,"worker_seconds":97.75038290023804}
+{"time":1791469938.5750341,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101278"}
+{"time":1791469988.7930539,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101277","fps":19.994779357942708,"accepted":37,"exact":37,"hub_bytes":9850567,"passed":true,"worker_seconds":115.47017478942871}
+{"time":1791469988.930134,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101279"}
+{"time":1791470030.328466,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101278","fps":19.988544097111475,"accepted":19,"exact":19,"hub_bytes":5189166,"passed":true,"worker_seconds":91.75088095664978}
+{"time":1791470030.488526,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101280"}
+{"time":1791470089.449447,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101279","fps":19.999539077640424,"accepted":26,"exact":26,"hub_bytes":6282138,"passed":true,"worker_seconds":100.51623296737671}
+{"time":1791470089.589656,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101281"}
+{"time":1791470142.168532,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101280","fps":19.99971183596308,"accepted":33,"exact":33,"hub_bytes":7810485,"passed":true,"worker_seconds":111.67673087120056}
+{"time":1791470142.32193,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101282"}
+{"time":1791470282.262188,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101281","fps":19.99986291894823,"accepted":65,"exact":65,"hub_bytes":23151001,"passed":true,"worker_seconds":192.66998195648193}
+{"time":1791470282.397936,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101283"}
+{"time":1791470287.343791,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101282","fps":19.978785220312407,"accepted":47,"exact":47,"hub_bytes":17126001,"passed":true,"worker_seconds":145.01834535598755}
+{"time":1791470287.480459,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101284"}
+{"time":1791470367.100501,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101284","fps":19.997907536788187,"accepted":19,"exact":19,"hub_bytes":4501342,"passed":true,"worker_seconds":79.6169970035553}
+{"time":1791470367.250548,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101285"}
+{"time":1791470405.503087,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101283","fps":19.99250596963281,"accepted":53,"exact":53,"hub_bytes":13033048,"passed":true,"worker_seconds":123.10210824012756}
+{"time":1791470405.645995,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101286"}
+{"time":1791470490.2874188,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101285","fps":19.995714974874865,"accepted":51,"exact":51,"hub_bytes":10531535,"passed":true,"worker_seconds":123.03259587287903}
+{"time":1791470490.4244301,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101287"}
+{"time":1791470515.045126,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101286","fps":19.937573764898772,"accepted":33,"exact":33,"hub_bytes":7270717,"passed":true,"worker_seconds":109.39585208892822}
+{"time":1791470515.185144,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101288"}
+{"time":1791470603.75422,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101287","fps":19.998477696144345,"accepted":32,"exact":32,"hub_bytes":7001946,"passed":true,"worker_seconds":113.3269591331482}
+{"time":1791470603.8912299,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101289"}
+{"time":1791470662.2050428,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101289","fps":19.98760820643745,"accepted":14,"exact":14,"hub_bytes":4985441,"passed":true,"worker_seconds":58.31085801124573}
+{"time":1791470662.33979,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101290"}
+{"time":1791470693.524456,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101288","fps":19.985281741738277,"accepted":58,"exact":58,"hub_bytes":20176987,"passed":true,"worker_seconds":178.33690285682678}
+{"time":1791470693.66382,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101291"}
+{"time":1791470830.325221,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101290","fps":19.998683044936413,"accepted":86,"exact":86,"hub_bytes":19670066,"passed":true,"worker_seconds":167.98219108581543}
+{"time":1791470830.463775,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101292"}
+{"time":1791470852.691797,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101291","fps":19.975612987964865,"accepted":77,"exact":77,"hub_bytes":16977591,"passed":true,"worker_seconds":159.02539610862732}
+{"time":1791470852.83219,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101293"}
+{"time":1791470981.2909088,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101292","fps":19.971918725059208,"accepted":67,"exact":67,"hub_bytes":14508102,"passed":true,"worker_seconds":150.8245530128479}
+{"time":1791470983.550015,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101293","fps":19.99791984853649,"accepted":45,"exact":45,"hub_bytes":10537921,"passed":true,"worker_seconds":130.71520400047302}
+{"time":1791470983.69037,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101294"}
+{"time":1791470983.7468212,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101295"}
+{"time":1791471095.338301,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101294","fps":19.997508602025523,"accepted":34,"exact":34,"hub_bytes":7464679,"passed":true,"worker_seconds":111.64490604400635}
+{"time":1791471095.485976,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101296"}
+{"time":1791471162.5050082,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101295","fps":19.99971480448658,"accepted":75,"exact":75,"hub_bytes":21302350,"passed":true,"worker_seconds":178.75580525398254}
+{"time":1791471162.640775,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101297"}
+{"time":1791471261.600917,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101297","fps":19.99999970197678,"accepted":38,"exact":38,"hub_bytes":8718341,"passed":true,"worker_seconds":98.95699524879456}
+{"time":1791471261.753151,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101298"}
+{"time":1791471273.938966,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101296","fps":19.97344314571375,"accepted":72,"exact":72,"hub_bytes":20136175,"passed":true,"worker_seconds":178.45037579536438}
+{"time":1791471274.083738,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101299"}
+{"time":1791471424.246662,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101299","fps":19.970621693465162,"accepted":57,"exact":57,"hub_bytes":16039316,"passed":true,"worker_seconds":150.16023778915405}
+{"time":1791471424.3896651,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101300"}
+{"time":1791471436.361269,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101298","fps":19.981511883859802,"accepted":67,"exact":67,"hub_bytes":18954268,"passed":true,"worker_seconds":174.6043450832367}
+{"time":1791471436.504669,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101301"}
+{"time":1791471512.5237179,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101300","fps":19.981976936970067,"accepted":17,"exact":17,"hub_bytes":3682467,"passed":true,"worker_seconds":88.1307852268219}
+{"time":1791471512.68099,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101302"}
+{"time":1791471547.6814451,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101301","fps":19.99368465915393,"accepted":30,"exact":30,"hub_bytes":6127874,"passed":true,"worker_seconds":111.1742627620697}
+{"time":1791471547.821111,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101303"}
+{"time":1791471691.796319,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101302","fps":19.968805194623524,"accepted":69,"exact":69,"hub_bytes":21632605,"passed":true,"worker_seconds":179.11221504211426}
+{"time":1791471694.7374852,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101303","fps":19.97809087765758,"accepted":49,"exact":49,"hub_bytes":17193364,"passed":true,"worker_seconds":146.91376113891602}
+{"time":1791471694.883463,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101304"}
+{"time":1791471694.939729,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101305"}
+{"time":1791471779.3612201,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101305","fps":19.9962141895602,"accepted":22,"exact":22,"hub_bytes":5382631,"passed":true,"worker_seconds":84.41887211799622}
+{"time":1791471779.5025,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101306"}
+{"time":1791471794.028385,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101304","fps":19.99932603534867,"accepted":32,"exact":32,"hub_bytes":8992658,"passed":true,"worker_seconds":99.14172577857971}
+{"time":1791471794.179192,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101307"}
+{"time":1791471887.0750568,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101307","fps":19.994393781043282,"accepted":21,"exact":21,"hub_bytes":5022588,"passed":true,"worker_seconds":92.89309692382812}
+{"time":1791471887.216248,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101308"}
+{"time":1791471930.2310889,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101306","fps":19.99640707954287,"accepted":63,"exact":63,"hub_bytes":15776536,"passed":true,"worker_seconds":150.72551774978638}
+{"time":1791471930.376797,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101309"}
+{"time":1791471999.665281,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101308","fps":19.933648658770366,"accepted":33,"exact":33,"hub_bytes":6899752,"passed":true,"worker_seconds":112.44590997695923}
+{"time":1791471999.810997,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101310"}
+{"time":1791472151.157367,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101309","fps":19.999920033897897,"accepted":92,"exact":92,"hub_bytes":30595810,"passed":true,"worker_seconds":220.77783393859863}
+{"time":1791472151.3007941,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101311"}
+{"time":1791472156.603511,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101310","fps":19.980172162324866,"accepted":45,"exact":45,"hub_bytes":17470463,"passed":true,"worker_seconds":156.7893409729004}
+{"time":1791472156.747947,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101312"}
+{"time":1791472234.3154209,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101312","fps":19.885100628170267,"accepted":14,"exact":14,"hub_bytes":3949400,"passed":true,"worker_seconds":77.56525993347168}
+{"time":1791472234.4733639,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101313"}
+{"time":1791472257.340697,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101311","fps":19.999951755415665,"accepted":34,"exact":34,"hub_bytes":9334338,"passed":true,"worker_seconds":106.03669118881226}
+{"time":1791472257.4863942,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101314"}
+{"time":1791472383.7476768,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101313","fps":19.94332673843275,"accepted":68,"exact":68,"hub_bytes":16199566,"passed":true,"worker_seconds":149.27065205574036}
+{"time":1791472386.026465,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101314","fps":19.998095692129382,"accepted":58,"exact":58,"hub_bytes":11347728,"passed":true,"worker_seconds":128.53728604316711}
+{"time":1791472386.17084,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101315"}
+{"time":1791472386.228447,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101316"}
+{"time":1791472498.2120168,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101315","fps":19.998016313971675,"accepted":34,"exact":34,"hub_bytes":6593553,"passed":true,"worker_seconds":112.03796792030334}
+{"time":1791472498.362595,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101317"}
+{"time":1791472564.025609,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101316","fps":19.997691733953474,"accepted":63,"exact":63,"hub_bytes":21069315,"passed":true,"worker_seconds":177.7947289943695}
+{"time":1791472564.173711,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101318"}
+{"time":1791472643.2865,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101317","fps":19.97720610294691,"accepted":47,"exact":47,"hub_bytes":15461882,"passed":true,"worker_seconds":144.92023491859436}
+{"time":1791472643.431254,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101319"}
+{"time":1791472675.358559,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101318","fps":19.995007403341745,"accepted":37,"exact":37,"hub_bytes":11085609,"passed":true,"worker_seconds":111.18158197402954}
+{"time":1791472675.5076008,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101320"}
+{"time":1791472741.0499341,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101319","fps":19.991167077328686,"accepted":25,"exact":25,"hub_bytes":8147535,"passed":true,"worker_seconds":97.61512422561646}
+{"time":1791472741.203559,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101321"}
+{"time":1791472784.978826,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101320","fps":19.952201733115963,"accepted":32,"exact":32,"hub_bytes":7913184,"passed":true,"worker_seconds":109.46799325942993}
+{"time":1791472785.126038,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101322"}
+{"time":1791472870.135212,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101321","fps":19.999602048237975,"accepted":55,"exact":55,"hub_bytes":10865855,"passed":true,"worker_seconds":128.9287269115448}
+{"time":1791472870.28221,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101323"}
+{"time":1791472897.07648,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101322","fps":19.999202529168507,"accepted":36,"exact":36,"hub_bytes":6724842,"passed":true,"worker_seconds":111.9473090171814}
+{"time":1791472897.22342,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101324"}
+{"time":1791472958.615772,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101323","fps":19.994929488560846,"accepted":22,"exact":22,"hub_bytes":11440492,"passed":true,"worker_seconds":88.33058214187622}
+{"time":1791472958.7658648,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101325"}
+{"time":1791473086.05349,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101324","fps":19.995532240579077,"accepted":84,"exact":84,"hub_bytes":22652848,"passed":true,"worker_seconds":188.82751178741455}
+{"time":1791473086.20097,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101326"}
+{"time":1791473132.414519,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101325","fps":19.936220445336595,"accepted":83,"exact":83,"hub_bytes":23019457,"passed":true,"worker_seconds":173.64535212516785}
+{"time":1791473132.5869272,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101327"}
+{"time":1791473208.6135108,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101326","fps":19.994325865826795,"accepted":39,"exact":39,"hub_bytes":11139934,"passed":true,"worker_seconds":122.40924286842346}
+{"time":1791473209.358249,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101327","fps":19.977391405769527,"accepted":10,"exact":10,"hub_bytes":2446953,"passed":true,"worker_seconds":76.76763701438904}
+{"time":1791473209.5079522,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101328"}
+{"time":1791473209.565077,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101329"}
+{"time":1791473290.009611,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101328","fps":19.97702946955132,"accepted":12,"exact":12,"hub_bytes":2331077,"passed":true,"worker_seconds":80.49877882003784}
+{"time":1791473290.16163,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101330"}
+{"time":1791473321.401417,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101329","fps":19.986118882093155,"accepted":28,"exact":28,"hub_bytes":6661371,"passed":true,"worker_seconds":111.83427596092224}
+{"time":1791473321.5507379,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101331"}
+{"time":1791473467.8990898,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101330","fps":19.9855202780412,"accepted":57,"exact":57,"hub_bytes":21934550,"passed":true,"worker_seconds":177.73440670967102}
+{"time":1791473470.5001879,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101331","fps":19.995323755302973,"accepted":56,"exact":56,"hub_bytes":15276935,"passed":true,"worker_seconds":148.94627404212952}
+{"time":1791473470.64935,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101332"}
+{"time":1791473470.7074828,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101333"}
+{"time":1791473568.543027,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101332","fps":19.99348601703962,"accepted":31,"exact":31,"hub_bytes":8774608,"passed":true,"worker_seconds":97.89046716690063}
+{"time":1791473568.694718,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101334"}
+{"time":1791473614.403967,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101333","fps":19.99436119264098,"accepted":50,"exact":50,"hub_bytes":14551879,"passed":true,"worker_seconds":143.69381499290466}
+{"time":1791473614.570761,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101335"}
+{"time":1791473664.67056,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101334","fps":19.999184776390067,"accepted":18,"exact":18,"hub_bytes":5624554,"passed":true,"worker_seconds":95.97221398353577}
+{"time":1791473664.825869,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101336"}
+{"time":1791473743.31999,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101335","fps":19.961226001777,"accepted":51,"exact":51,"hub_bytes":11041912,"passed":true,"worker_seconds":128.7464439868927}
+{"time":1791473743.470728,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101337"}
+{"time":1791473776.51518,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101336","fps":19.994892036786073,"accepted":33,"exact":33,"hub_bytes":6644543,"passed":true,"worker_seconds":111.68684124946594}
+{"time":1791473776.667443,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101338"}
+{"time":1791473920.440856,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101338","fps":19.999950293701627,"accepted":43,"exact":43,"hub_bytes":15464228,"passed":true,"worker_seconds":143.7714080810547}
+{"time":1791473920.5913222,"event":"claim","instance":"renderer-1","episode":"v4-phase-a-1975101339"}
+{"time":1791474016.282294,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101337","fps":19.98844515567748,"accepted":139,"exact":139,"hub_bytes":36654437,"passed":true,"worker_seconds":272.8092510700226}
+{"time":1791474016.435837,"event":"claim","instance":"renderer-2","episode":"v4-phase-a-1975101340"}
+{"time":1791474107.403424,"event":"verified match","instance":"renderer-1","episode":"v4-phase-a-1975101339","fps":19.979876827446905,"accepted":91,"exact":91,"hub_bytes":23147921,"passed":true,"worker_seconds":186.80796003341675}
+{"time":1791474191.3731241,"event":"verified match","instance":"renderer-2","episode":"v4-phase-a-1975101340","fps":19.981610746349084,"accepted":89,"exact":89,"hub_bytes":19819161,"passed":true,"worker_seconds":174.9344561100006}

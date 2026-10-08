@@ -1,0 +1,11 @@
+{
+  "name": "step-00002000.pt",
+  "source": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822/step-00002000.pt",
+  "bytes": 36471890,
+  "mtime_ns": 1791472978677240190,
+  "sha256": "26fb277de87502f54694f9c7b310d34b3abf5dd5740eabbd0bed8ab8a582ca09",
+  "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100822/26fb277de87502f54694f9c7b310d34b3abf5dd5740eabbd0bed8ab8a582ca09/step-00002000.pt",
+  "verified_at": "2026-10-08T15:23:12.963095+00:00",
+  "host": "127x18",
+  "seed": 2026100822
+}

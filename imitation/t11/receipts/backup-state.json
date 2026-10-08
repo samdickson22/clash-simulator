@@ -1,0 +1,164 @@
+{
+  "started_at": "2026-10-08T14:48:19.693513+00:00",
+  "hosts": {
+    "127x16": {
+      "seed": 2026100821,
+      "known": {
+        "step-00001000.pt": {
+          "name": "step-00001000.pt",
+          "source": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100821/step-00001000.pt",
+          "bytes": 36471954,
+          "mtime_ns": 1791469389315641028,
+          "sha256": "ec321c9cd4894b0402bdc972d55996452045ae8d5d525e498a613eb759e2c4ea",
+          "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100821/ec321c9cd4894b0402bdc972d55996452045ae8d5d525e498a613eb759e2c4ea/step-00001000.pt",
+          "verified_at": "2026-10-08T14:48:21.399436+00:00",
+          "host": "127x16",
+          "seed": 2026100821
+        },
+        "step-00002000.pt": {
+          "name": "step-00002000.pt",
+          "source": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100821/step-00002000.pt",
+          "bytes": 36471954,
+          "mtime_ns": 1791473908598787416,
+          "sha256": "94270b9bbed437053adff2002d4d3a1d774eb191dbfd5a94cc672000fd88ea97",
+          "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100821/94270b9bbed437053adff2002d4d3a1d774eb191dbfd5a94cc672000fd88ea97/step-00002000.pt",
+          "verified_at": "2026-10-08T15:39:02.595836+00:00",
+          "host": "127x16",
+          "seed": 2026100821
+        },
+        "step-00003000.pt": {
+          "name": "step-00003000.pt",
+          "source": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100821/step-00003000.pt",
+          "bytes": 36471954,
+          "mtime_ns": 1791478104148491147,
+          "sha256": "042a83b014f6a0d126ec9f5076bed97c5e418c24c32b8399611ced6e9a85b157",
+          "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100821/042a83b014f6a0d126ec9f5076bed97c5e418c24c32b8399611ced6e9a85b157/step-00003000.pt",
+          "verified_at": "2026-10-08T16:48:46.111521+00:00",
+          "host": "127x16",
+          "seed": 2026100821
+        },
+        "step-00004000.pt": {
+          "name": "step-00004000.pt",
+          "source": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100821/step-00004000.pt",
+          "bytes": 36471954,
+          "mtime_ns": 1791482324276659552,
+          "sha256": "7a3e6112bca24bf0c43f45750baa8ad51d59722faceed492937364153c9d4a29",
+          "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100821/7a3e6112bca24bf0c43f45750baa8ad51d59722faceed492937364153c9d4a29/step-00004000.pt",
+          "verified_at": "2026-10-08T17:59:27.355767+00:00",
+          "host": "127x16",
+          "seed": 2026100821
+        }
+      },
+      "last_success": "2026-10-08T18:43:44.635311+00:00",
+      "last_probe": {
+        "host": "127x16",
+        "at": "2026-10-08T18:43:44.193393+00:00",
+        "source_pss_bytes": 11073966080,
+        "source_processes": 4,
+        "gpu_free_mib": 17340,
+        "console": 0
+      },
+      "error": null,
+      "latest": {
+        "name": "step-00004000.pt",
+        "source": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100821/step-00004000.pt",
+        "bytes": 36471954,
+        "mtime_ns": 1791482324276659552,
+        "sha256": "7a3e6112bca24bf0c43f45750baa8ad51d59722faceed492937364153c9d4a29",
+        "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100821/7a3e6112bca24bf0c43f45750baa8ad51d59722faceed492937364153c9d4a29/step-00004000.pt",
+        "verified_at": "2026-10-08T17:59:27.355767+00:00",
+        "host": "127x16",
+        "seed": 2026100821
+      },
+      "checkpoint_age_seconds": 2700.358712911606
+    },
+    "127x18": {
+      "seed": 2026100822,
+      "known": {
+        "step-00001000.pt": {
+          "name": "step-00001000.pt",
+          "source": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822/step-00001000.pt",
+          "bytes": 36471890,
+          "mtime_ns": 1791468974000127054,
+          "sha256": "2b2c354c31a0442f5028f93991bde1a87b09084ee832292b77f77e404f6a865c",
+          "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100822/2b2c354c31a0442f5028f93991bde1a87b09084ee832292b77f77e404f6a865c/step-00001000.pt",
+          "verified_at": "2026-10-08T14:48:23.187853+00:00",
+          "host": "127x18",
+          "seed": 2026100822
+        },
+        "step-00002000.pt": {
+          "name": "step-00002000.pt",
+          "source": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822/step-00002000.pt",
+          "bytes": 36471890,
+          "mtime_ns": 1791472978677240190,
+          "sha256": "26fb277de87502f54694f9c7b310d34b3abf5dd5740eabbd0bed8ab8a582ca09",
+          "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100822/26fb277de87502f54694f9c7b310d34b3abf5dd5740eabbd0bed8ab8a582ca09/step-00002000.pt",
+          "verified_at": "2026-10-08T15:23:12.963095+00:00",
+          "host": "127x18",
+          "seed": 2026100822
+        },
+        "step-00003000.pt": {
+          "name": "step-00003000.pt",
+          "source": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822/step-00003000.pt",
+          "bytes": 36471890,
+          "mtime_ns": 1791476943767071611,
+          "sha256": "f3d454be56aee73f25fe2ae94210fd80269aab725f787a2dc5e6f36407382e61",
+          "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100822/f3d454be56aee73f25fe2ae94210fd80269aab725f787a2dc5e6f36407382e61/step-00003000.pt",
+          "verified_at": "2026-10-08T16:29:47.174749+00:00",
+          "host": "127x18",
+          "seed": 2026100822
+        },
+        "step-00004000.pt": {
+          "name": "step-00004000.pt",
+          "source": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822/step-00004000.pt",
+          "bytes": 36471890,
+          "mtime_ns": 1791480874832262213,
+          "sha256": "a95f9556f1f8c41c10537c6d9c0f62323edb5a69c5a994d7260c0a5986edef9f",
+          "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100822/a95f9556f1f8c41c10537c6d9c0f62323edb5a69c5a994d7260c0a5986edef9f/step-00004000.pt",
+          "verified_at": "2026-10-08T17:35:14.098952+00:00",
+          "host": "127x18",
+          "seed": 2026100822
+        },
+        "step-00005000.pt": {
+          "name": "step-00005000.pt",
+          "source": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822/step-00005000.pt",
+          "bytes": 36471890,
+          "mtime_ns": 1791484780620331849,
+          "sha256": "749b06b1b027847ec315218490c023bc68971f4edbaba0e1f77a560dcdc65c3d",
+          "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100822/749b06b1b027847ec315218490c023bc68971f4edbaba0e1f77a560dcdc65c3d/step-00005000.pt",
+          "verified_at": "2026-10-08T18:40:35.319755+00:00",
+          "host": "127x18",
+          "seed": 2026100822
+        }
+      },
+      "last_success": "2026-10-08T18:43:45.811874+00:00",
+      "last_probe": {
+        "host": "127x18",
+        "at": "2026-10-08T18:43:45.224649+00:00",
+        "source_pss_bytes": 21117203456,
+        "source_processes": 4,
+        "gpu_free_mib": 17252,
+        "console": 0
+      },
+      "error": null,
+      "latest": {
+        "name": "step-00005000.pt",
+        "source": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822/step-00005000.pt",
+        "bytes": 36471890,
+        "mtime_ns": 1791484780620331849,
+        "sha256": "749b06b1b027847ec315218490c023bc68971f4edbaba0e1f77a560dcdc65c3d",
+        "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100822/749b06b1b027847ec315218490c023bc68971f4edbaba0e1f77a560dcdc65c3d/step-00005000.pt",
+        "verified_at": "2026-10-08T18:40:35.319755+00:00",
+        "host": "127x18",
+        "seed": 2026100822
+      },
+      "checkpoint_age_seconds": 245.19160890579224
+    }
+  },
+  "pid": 2520800,
+  "poll_seconds": 60,
+  "destination": "/mpac/sdicks02/repos/clasher-checkpoints/v2",
+  "source_deadline": "2026-10-09T05:00:00+00:00",
+  "backup_code_sha256": "148aeb4d68b6e0b2047f718e57bfed410212e9fcc3d8f981b409e8fd959f1452",
+  "checked_at": "2026-10-08T18:43:45.811944+00:00"
+}

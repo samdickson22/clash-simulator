@@ -177,13 +177,15 @@ def main():
         p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--cache-union',type=Path);p.add_argument('--backup-host',choices=('127x01','127x04'),default='127x04')
     p.add_argument('--prepared-t6',type=Path)
+    p.add_argument('--resume',action='store_true')
     a=p.parse_args();host=socket.gethostname().split('.')[0]
     if (host,a.arm) not in (('127x09','t7'),('127x15','t6')):raise ValueError('Coordinator GPU assignment required')
+    if a.resume and a.arm!='t7':raise ValueError('T6 has no optimizer resume')
     root=Path('/mpac/sdicks02/repos/clasher-lease')
     for path in (a.output,a.journal):
         if root not in path.resolve().parents:raise ValueError('Run and journal must stay in lease footprint')
     command=['bash',str(Path(__file__).with_name('formal_train.sh')),a.arm,
-             str(a.phase_state),str(a.phase_exit),str(a.output),str(a.cache_union or ''),str(a.prepared_t6 or '')]
+             str(a.phase_state),str(a.phase_exit),str(a.output),str(a.cache_union or ''),str(a.prepared_t6 or ''),'resume' if a.resume else '']
     stop_at=datetime.datetime.fromisoformat(STOP_UTC).timestamp()
     raise SystemExit(supervise(command,a.journal,stop_at,lambda j:offload(a.output,j,a.backup_host)))
 

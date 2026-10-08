@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-08T16:18:18.047711+00:00",
+  "host": "127x15",
+  "label": "v4-final-conversion-20261008-15r2",
+  "supervisor_pid": 3654138,
+  "pid": 3654144,
+  "dataset": "/mpac/sdicks02/repos/clasher-lease/data/v4-final-preparation-20261008-15r1",
+  "roundtrips_complete": 301,
+  "expected_matches": 577,
+  "conversion_complete": false,
+  "exit": null,
+  "heldout_payloads_opened": false,
+  "training_started": false
+}

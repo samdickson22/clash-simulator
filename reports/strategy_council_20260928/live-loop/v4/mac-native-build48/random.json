@@ -1,0 +1,1253 @@
+{
+  "suite": "random",
+  "count": 24,
+  "provenance": {
+    "driver_sha256": "6023f0cc5005f5cd404ea448a8f5df46e7c883e6b143f308748effb9fb8ae143",
+    "gamedata": "/Users/sam/Desktop/code/clasher/gamedata.json",
+    "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+    "data_sha256": "dbbe7e6bfb6833eea5041e2542810619ea260a6a9172a73bedf669e546a034c0",
+    "source": "/Users/sam/Desktop/code/clasher/src/clasher",
+    "source_sha256": "896111aa9640decdfcdae0ea5a7bb304bfb15a037926723e5343f9f80eac1165"
+  },
+  "results": {
+    "0": {
+      "episode": {
+        "id": "p16-00",
+        "seed": 58360464,
+        "decks": [
+          [
+            "Giant",
+            "Archers",
+            "Log",
+            "HogRider",
+            "Knight",
+            "Goblins",
+            "Fireball",
+            "Cannon"
+          ],
+          [
+            "Prince",
+            "Log",
+            "Zap",
+            "Skeletons",
+            "Knight",
+            "Archers",
+            "Tesla",
+            "DarkPrince"
+          ]
+        ],
+        "styles": [
+          "defense",
+          "pressure"
+        ]
+      },
+      "pocket_fixture": false,
+      "pocket_placements": [
+        3,
+        1
+      ],
+      "cards": {
+        "Giant": 1,
+        "Prince": 1,
+        "Log": 6,
+        "Zap": 3,
+        "Skeletons": 3,
+        "Goblins": 3,
+        "Knight": 4,
+        "Archers": 5,
+        "Cannon": 2
+      },
+      "boundaries": 343,
+      "trace_sha256": "dd6cb45cbc1c4a2376b07011dff0d7104989b2227acf249e4f0b902435c9e84f",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "1": {
+      "episode": {
+        "id": "p16-01",
+        "seed": 3956770785,
+        "decks": [
+          [
+            "Musketeer",
+            "Cannon",
+            "IceGolem",
+            "Log",
+            "Knight",
+            "Giant",
+            "Skeletons",
+            "Fireball"
+          ],
+          [
+            "Zap",
+            "IceSpirit",
+            "Skeletons",
+            "Giant",
+            "Archers",
+            "Cannon",
+            "Fireball",
+            "Knight"
+          ]
+        ],
+        "styles": [
+          "balanced",
+          "defense"
+        ]
+      },
+      "pocket_fixture": false,
+      "pocket_placements": [
+        0,
+        0
+      ],
+      "cards": {
+        "Cannon": 5,
+        "Giant": 1,
+        "Knight": 6,
+        "Zap": 4,
+        "Log": 3,
+        "IceSpirit": 3,
+        "Skeletons": 6,
+        "IceGolem": 3,
+        "Archers": 2
+      },
+      "boundaries": 343,
+      "trace_sha256": "21bcf35668071011b413ed7541e4522b5be20a60fd2eae6d7de846c2f3b68571",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "2": {
+      "episode": {
+        "id": "p16-02",
+        "seed": 2036206132,
+        "decks": [
+          [
+            "HogRider",
+            "Fireball",
+            "Musketeer",
+            "DarkPrince",
+            "Goblins",
+            "Knight",
+            "Skeletons",
+            "Log"
+          ],
+          [
+            "Zap",
+            "Fireball",
+            "DarkPrince",
+            "HogRider",
+            "Musketeer",
+            "Goblins",
+            "Prince",
+            "Skeletons"
+          ]
+        ],
+        "styles": [
+          "pressure",
+          "balanced"
+        ]
+      },
+      "pocket_fixture": false,
+      "pocket_placements": [
+        0,
+        0
+      ],
+      "cards": {
+        "DarkPrince": 1,
+        "Zap": 3,
+        "Goblins": 6,
+        "Fireball": 4,
+        "Knight": 3,
+        "Skeletons": 5,
+        "Log": 3,
+        "HogRider": 2,
+        "Musketeer": 1
+      },
+      "boundaries": 343,
+      "trace_sha256": "89c9663d0fba5a3e9d5c9ff0edfa14874fb5e99edac0d60a5702e1eb0af9ba0b",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "3": {
+      "episode": {
+        "id": "p16-03",
+        "seed": 3569449237,
+        "decks": [
+          [
+            "DarkPrince",
+            "Skeletons",
+            "Log",
+            "Zap",
+            "Prince",
+            "Archers",
+            "Tesla",
+            "Knight"
+          ],
+          [
+            "Tesla",
+            "IceSpirit",
+            "Fireball",
+            "Skeletons",
+            "Zap",
+            "Archers",
+            "DarkPrince",
+            "Giant"
+          ]
+        ],
+        "styles": [
+          "defense",
+          "balanced"
+        ]
+      },
+      "pocket_fixture": false,
+      "pocket_placements": [
+        0,
+        0
+      ],
+      "cards": {
+        "Log": 4,
+        "Fireball": 4,
+        "DarkPrince": 1,
+        "Zap": 6,
+        "Skeletons": 6,
+        "IceSpirit": 3,
+        "Archers": 6,
+        "Knight": 2
+      },
+      "boundaries": 343,
+      "trace_sha256": "d24fb2cb55ccedbcef40d0a90447a955c59a72c8c1606d209af5f5c583a692b8",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "4": {
+      "episode": {
+        "id": "p16-04",
+        "seed": 627870758,
+        "decks": [
+          [
+            "Cannon",
+            "Knight",
+            "Archers",
+            "Goblins",
+            "Log",
+            "DarkPrince",
+            "Prince",
+            "Zap"
+          ],
+          [
+            "Goblins",
+            "Fireball",
+            "DarkPrince",
+            "Zap",
+            "Musketeer",
+            "Skeletons",
+            "Prince",
+            "HogRider"
+          ]
+        ],
+        "styles": [
+          "pressure",
+          "balanced"
+        ]
+      },
+      "pocket_fixture": false,
+      "pocket_placements": [
+        0,
+        0
+      ],
+      "cards": {
+        "Knight": 3,
+        "Goblins": 6,
+        "Archers": 2,
+        "Fireball": 2,
+        "Log": 3,
+        "Skeletons": 3,
+        "Zap": 6,
+        "DarkPrince": 2,
+        "Cannon": 1,
+        "HogRider": 1
+      },
+      "boundaries": 343,
+      "trace_sha256": "b4088d32e194c9db97a737af5eb8252308bba328df5479532dc19e47f881827a",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "5": {
+      "episode": {
+        "id": "p16-05",
+        "seed": 1751833992,
+        "decks": [
+          [
+            "Knight",
+            "Fireball",
+            "Zap",
+            "Goblins",
+            "Archers",
+            "HogRider",
+            "Tesla",
+            "IceSpirit"
+          ],
+          [
+            "HogRider",
+            "Goblins",
+            "Knight",
+            "Zap",
+            "IceSpirit",
+            "Tesla",
+            "Musketeer",
+            "Fireball"
+          ]
+        ],
+        "styles": [
+          "defense",
+          "pressure"
+        ]
+      },
+      "pocket_fixture": false,
+      "pocket_placements": [
+        0,
+        0
+      ],
+      "cards": {
+        "Goblins": 7,
+        "Knight": 6,
+        "Zap": 7,
+        "IceSpirit": 6,
+        "Archers": 3,
+        "Tesla": 2,
+        "Musketeer": 1
+      },
+      "boundaries": 343,
+      "trace_sha256": "42a737505393265f4d072c74a1cc97ac95b74aa1e0dafc53bf5a27081fd9970d",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "6": {
+      "episode": {
+        "id": "p16-06",
+        "seed": 3008928844,
+        "decks": [
+          [
+            "Tesla",
+            "IceSpirit",
+            "Fireball",
+            "Musketeer",
+            "Knight",
+            "Zap",
+            "Goblins",
+            "HogRider"
+          ],
+          [
+            "Tesla",
+            "Prince",
+            "Knight",
+            "Log",
+            "Zap",
+            "Archers",
+            "DarkPrince",
+            "Skeletons"
+          ]
+        ],
+        "styles": [
+          "balanced",
+          "pressure"
+        ]
+      },
+      "pocket_fixture": false,
+      "pocket_placements": [
+        0,
+        0
+      ],
+      "cards": {
+        "Fireball": 1,
+        "Prince": 1,
+        "Knight": 6,
+        "Zap": 6,
+        "IceSpirit": 3,
+        "Log": 3,
+        "Goblins": 3,
+        "Skeletons": 3,
+        "HogRider": 2,
+        "Archers": 2
+      },
+      "boundaries": 343,
+      "trace_sha256": "d1940ae7fdb1694d359073e46d18261c7e5bb71f9b622843ef5bec3825d407ea",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "7": {
+      "episode": {
+        "id": "p16-07",
+        "seed": 3598123450,
+        "decks": [
+          [
+            "Fireball",
+            "Tesla",
+            "Skeletons",
+            "Knight",
+            "Prince",
+            "IceGolem",
+            "Zap",
+            "Musketeer"
+          ],
+          [
+            "Tesla",
+            "Log",
+            "DarkPrince",
+            "Skeletons",
+            "Knight",
+            "Prince",
+            "Archers",
+            "Zap"
+          ]
+        ],
+        "styles": [
+          "defense",
+          "balanced"
+        ]
+      },
+      "pocket_fixture": false,
+      "pocket_placements": [
+        0,
+        0
+      ],
+      "cards": {
+        "Knight": 6,
+        "Log": 4,
+        "Fireball": 2,
+        "DarkPrince": 1,
+        "Skeletons": 6,
+        "Zap": 6,
+        "IceGolem": 3,
+        "Archers": 2,
+        "Tesla": 1
+      },
+      "boundaries": 343,
+      "trace_sha256": "c20c4b70704a175735ecadcd25e7973cf24dfa977ffb46c32c4613fc3a9db127",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "8": {
+      "episode": {
+        "id": "p16-08",
+        "seed": 3494662263,
+        "decks": [
+          [
+            "HogRider",
+            "Zap",
+            "Prince",
+            "Skeletons",
+            "Musketeer",
+            "DarkPrince",
+            "Fireball",
+            "Goblins"
+          ],
+          [
+            "Goblins",
+            "Tesla",
+            "Archers",
+            "Knight",
+            "Fireball",
+            "HogRider",
+            "Zap",
+            "IceSpirit"
+          ]
+        ],
+        "styles": [
+          "defense",
+          "balanced"
+        ]
+      },
+      "pocket_fixture": false,
+      "pocket_placements": [
+        0,
+        0
+      ],
+      "cards": {
+        "Prince": 1,
+        "Goblins": 6,
+        "Zap": 6,
+        "Fireball": 3,
+        "Skeletons": 3,
+        "Knight": 3,
+        "IceSpirit": 3,
+        "Archers": 2,
+        "Musketeer": 1,
+        "HogRider": 1
+      },
+      "boundaries": 343,
+      "trace_sha256": "a20f55cfa0d3af324e5d0fcce47acef8c8c883683f9bc298db63316dfea75bb6",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "9": {
+      "episode": {
+        "id": "p16-09",
+        "seed": 3894859926,
+        "decks": [
+          [
+            "Tesla",
+            "HogRider",
+            "Zap",
+            "Knight",
+            "IceSpirit",
+            "Fireball",
+            "Archers",
+            "Goblins"
+          ],
+          [
+            "HogRider",
+            "Archers",
+            "IceSpirit",
+            "Skeletons",
+            "Tesla",
+            "Knight",
+            "Zap",
+            "Fireball"
+          ]
+        ],
+        "styles": [
+          "balanced",
+          "defense"
+        ]
+      },
+      "pocket_fixture": false,
+      "pocket_placements": [
+        0,
+        0
+      ],
+      "cards": {
+        "Knight": 7,
+        "Archers": 7,
+        "Zap": 6,
+        "IceSpirit": 7,
+        "Skeletons": 4,
+        "Goblins": 3
+      },
+      "boundaries": 343,
+      "trace_sha256": "b44d57c7d082343b66b4de38b2cc984a924be68ac9559b37f43224b47235df9e",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "10": {
+      "episode": {
+        "id": "p16-10",
+        "seed": 2190470512,
+        "decks": [
+          [
+            "Zap",
+            "Cannon",
+            "IceSpirit",
+            "Skeletons",
+            "Giant",
+            "Archers",
+            "Fireball",
+            "Knight"
+          ],
+          [
+            "Log",
+            "Prince",
+            "Goblins",
+            "Tesla",
+            "Archers",
+            "Zap",
+            "DarkPrince",
+            "Knight"
+          ]
+        ],
+        "styles": [
+          "defense",
+          "defense"
+        ]
+      },
+      "pocket_fixture": false,
+      "pocket_placements": [
+        0,
+        0
+      ],
+      "cards": {
+        "Zap": 7,
+        "Tesla": 1,
+        "Giant": 1,
+        "Archers": 5,
+        "IceSpirit": 3,
+        "Skeletons": 3,
+        "Goblins": 3,
+        "Cannon": 2,
+        "Log": 3,
+        "Knight": 4
+      },
+      "boundaries": 343,
+      "trace_sha256": "8755423a740ddcf7f8498afc97762afd86172220ceaf52999558101d356304ec",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "11": {
+      "episode": {
+        "id": "p16-11",
+        "seed": 3356414588,
+        "decks": [
+          [
+            "Musketeer",
+            "Prince",
+            "Skeletons",
+            "Fireball",
+            "IceGolem",
+            "Zap",
+            "Tesla",
+            "Knight"
+          ],
+          [
+            "HogRider",
+            "Prince",
+            "Zap",
+            "Fireball",
+            "Goblins",
+            "DarkPrince",
+            "Skeletons",
+            "Musketeer"
+          ]
+        ],
+        "styles": [
+          "balanced",
+          "defense"
+        ]
+      },
+      "pocket_fixture": false,
+      "pocket_placements": [
+        0,
+        0
+      ],
+      "cards": {
+        "Skeletons": 7,
+        "Zap": 6,
+        "Fireball": 4,
+        "IceGolem": 3,
+        "Goblins": 3,
+        "Knight": 3,
+        "Musketeer": 1,
+        "DarkPrince": 1,
+        "Tesla": 1,
+        "HogRider": 1
+      },
+      "boundaries": 343,
+      "trace_sha256": "6af16d111bb0635b622f83e4192b83c0435f0d7d93ce90f16cf36d7b9fd629ff",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "12": {
+      "episode": {
+        "id": "p16-00",
+        "seed": 58360476,
+        "decks": [
+          [
+            "Giant",
+            "Archers",
+            "Log",
+            "HogRider",
+            "Knight",
+            "Goblins",
+            "Fireball",
+            "Cannon"
+          ],
+          [
+            "Prince",
+            "Log",
+            "Zap",
+            "Skeletons",
+            "Knight",
+            "Archers",
+            "Tesla",
+            "DarkPrince"
+          ]
+        ],
+        "styles": [
+          "defense",
+          "pressure"
+        ]
+      },
+      "pocket_fixture": true,
+      "pocket_placements": [
+        4,
+        5
+      ],
+      "cards": {
+        "Giant": 1,
+        "Skeletons": 2,
+        "Log": 2,
+        "Knight": 2,
+        "Zap": 2,
+        "Goblins": 1,
+        "Archers": 2,
+        "Cannon": 1
+      },
+      "boundaries": 117,
+      "trace_sha256": "818c5e5ad7390a1e04f1745969fab617cce9e79be6c76b747d103c1442195791",
+      "final_tick": 667,
+      "winner": 0
+    },
+    "13": {
+      "episode": {
+        "id": "p16-01",
+        "seed": 3956770797,
+        "decks": [
+          [
+            "Musketeer",
+            "Cannon",
+            "IceGolem",
+            "Log",
+            "Knight",
+            "Giant",
+            "Skeletons",
+            "Fireball"
+          ],
+          [
+            "Zap",
+            "IceSpirit",
+            "Skeletons",
+            "Giant",
+            "Archers",
+            "Cannon",
+            "Fireball",
+            "Knight"
+          ]
+        ],
+        "styles": [
+          "balanced",
+          "defense"
+        ]
+      },
+      "pocket_fixture": true,
+      "pocket_placements": [
+        13,
+        15
+      ],
+      "cards": {
+        "Musketeer": 1,
+        "IceSpirit": 4,
+        "Cannon": 4,
+        "Archers": 3,
+        "Skeletons": 7,
+        "Zap": 4,
+        "IceGolem": 3,
+        "Knight": 6,
+        "Log": 3
+      },
+      "boundaries": 343,
+      "trace_sha256": "b2a935215e1e9751f55385458fe5a018d862b10d3d5e8043ff697e289b8c1ccc",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "14": {
+      "episode": {
+        "id": "p16-02",
+        "seed": 2036206144,
+        "decks": [
+          [
+            "HogRider",
+            "Fireball",
+            "Musketeer",
+            "DarkPrince",
+            "Goblins",
+            "Knight",
+            "Skeletons",
+            "Log"
+          ],
+          [
+            "Zap",
+            "Fireball",
+            "DarkPrince",
+            "HogRider",
+            "Musketeer",
+            "Goblins",
+            "Prince",
+            "Skeletons"
+          ]
+        ],
+        "styles": [
+          "pressure",
+          "balanced"
+        ]
+      },
+      "pocket_fixture": true,
+      "pocket_placements": [
+        4,
+        4
+      ],
+      "cards": {
+        "DarkPrince": 2,
+        "Goblins": 2,
+        "Zap": 1,
+        "Knight": 1,
+        "Skeletons": 2,
+        "Log": 1,
+        "Musketeer": 1
+      },
+      "boundaries": 63,
+      "trace_sha256": "3bc41428aec532d37a86fe742b9af36e48fc23e5e9ef7d6aca4a176037131468",
+      "final_tick": 400,
+      "winner": 0
+    },
+    "15": {
+      "episode": {
+        "id": "p16-03",
+        "seed": 3569449249,
+        "decks": [
+          [
+            "DarkPrince",
+            "Skeletons",
+            "Log",
+            "Zap",
+            "Prince",
+            "Archers",
+            "Tesla",
+            "Knight"
+          ],
+          [
+            "Tesla",
+            "IceSpirit",
+            "Fireball",
+            "Skeletons",
+            "Zap",
+            "Archers",
+            "DarkPrince",
+            "Giant"
+          ]
+        ],
+        "styles": [
+          "defense",
+          "balanced"
+        ]
+      },
+      "pocket_fixture": true,
+      "pocket_placements": [
+        10,
+        13
+      ],
+      "cards": {
+        "Skeletons": 7,
+        "IceSpirit": 4,
+        "DarkPrince": 3,
+        "Tesla": 1,
+        "Zap": 6,
+        "Log": 3,
+        "Archers": 5,
+        "Knight": 3
+      },
+      "boundaries": 343,
+      "trace_sha256": "fbeed9611427d5d459bd6fcb7ae6424bc9f249885d79b34c7a64340ac7d9f4bd",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "16": {
+      "episode": {
+        "id": "p16-04",
+        "seed": 627870770,
+        "decks": [
+          [
+            "Cannon",
+            "Knight",
+            "Archers",
+            "Goblins",
+            "Log",
+            "DarkPrince",
+            "Prince",
+            "Zap"
+          ],
+          [
+            "Goblins",
+            "Fireball",
+            "DarkPrince",
+            "Zap",
+            "Musketeer",
+            "Skeletons",
+            "Prince",
+            "HogRider"
+          ]
+        ],
+        "styles": [
+          "pressure",
+          "balanced"
+        ]
+      },
+      "pocket_fixture": true,
+      "pocket_placements": [
+        6,
+        7
+      ],
+      "cards": {
+        "Goblins": 4,
+        "DarkPrince": 2,
+        "Cannon": 2,
+        "Log": 2,
+        "Skeletons": 2,
+        "Zap": 3,
+        "Knight": 1,
+        "Musketeer": 1,
+        "Archers": 1
+      },
+      "boundaries": 167,
+      "trace_sha256": "3b315a8a5b4b676256cd3ce5976d75ba4465d83f5b57de1e700289a699cf8e7c",
+      "final_tick": 916,
+      "winner": 1
+    },
+    "17": {
+      "episode": {
+        "id": "p16-05",
+        "seed": 1751834004,
+        "decks": [
+          [
+            "Knight",
+            "Fireball",
+            "Zap",
+            "Goblins",
+            "Archers",
+            "HogRider",
+            "Tesla",
+            "IceSpirit"
+          ],
+          [
+            "HogRider",
+            "Goblins",
+            "Knight",
+            "Zap",
+            "IceSpirit",
+            "Tesla",
+            "Musketeer",
+            "Fireball"
+          ]
+        ],
+        "styles": [
+          "defense",
+          "pressure"
+        ]
+      },
+      "pocket_fixture": true,
+      "pocket_placements": [
+        10,
+        9
+      ],
+      "cards": {
+        "Goblins": 6,
+        "Archers": 3,
+        "Knight": 4,
+        "Zap": 4,
+        "IceSpirit": 4,
+        "Musketeer": 1,
+        "Tesla": 1
+      },
+      "boundaries": 221,
+      "trace_sha256": "bb98dc8905df465e890ab3e55ed7af0cc61127df3a66ba986b4c71e6e36ce946",
+      "final_tick": 1188,
+      "winner": 0
+    },
+    "18": {
+      "episode": {
+        "id": "p16-06",
+        "seed": 3008928856,
+        "decks": [
+          [
+            "Tesla",
+            "IceSpirit",
+            "Fireball",
+            "Musketeer",
+            "Knight",
+            "Zap",
+            "Goblins",
+            "HogRider"
+          ],
+          [
+            "Tesla",
+            "Prince",
+            "Knight",
+            "Log",
+            "Zap",
+            "Archers",
+            "DarkPrince",
+            "Skeletons"
+          ]
+        ],
+        "styles": [
+          "balanced",
+          "pressure"
+        ]
+      },
+      "pocket_fixture": true,
+      "pocket_placements": [
+        10,
+        7
+      ],
+      "cards": {
+        "Musketeer": 2,
+        "Prince": 1,
+        "Knight": 5,
+        "Zap": 5,
+        "IceSpirit": 2,
+        "Log": 3,
+        "Goblins": 2,
+        "Skeletons": 2,
+        "Archers": 2,
+        "HogRider": 1
+      },
+      "boundaries": 273,
+      "trace_sha256": "b3b951472946b80d433ab1e666cff77a3f2e58ceaaca63a853be23476f2ac8af",
+      "final_tick": 1447,
+      "winner": 0
+    },
+    "19": {
+      "episode": {
+        "id": "p16-07",
+        "seed": 3598123462,
+        "decks": [
+          [
+            "Fireball",
+            "Tesla",
+            "Skeletons",
+            "Knight",
+            "Prince",
+            "IceGolem",
+            "Zap",
+            "Musketeer"
+          ],
+          [
+            "Tesla",
+            "Log",
+            "DarkPrince",
+            "Skeletons",
+            "Knight",
+            "Prince",
+            "Archers",
+            "Zap"
+          ]
+        ],
+        "styles": [
+          "defense",
+          "balanced"
+        ]
+      },
+      "pocket_fixture": true,
+      "pocket_placements": [
+        12,
+        10
+      ],
+      "cards": {
+        "Tesla": 4,
+        "Skeletons": 6,
+        "Log": 3,
+        "Knight": 6,
+        "IceGolem": 3,
+        "Zap": 6,
+        "Archers": 3
+      },
+      "boundaries": 343,
+      "trace_sha256": "7a7d70d330724430ff5613280232d53197dd00a7d62dce7b42725e5da5e0fc92",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "20": {
+      "episode": {
+        "id": "p16-08",
+        "seed": 3494662275,
+        "decks": [
+          [
+            "HogRider",
+            "Zap",
+            "Prince",
+            "Skeletons",
+            "Musketeer",
+            "DarkPrince",
+            "Fireball",
+            "Goblins"
+          ],
+          [
+            "Goblins",
+            "Tesla",
+            "Archers",
+            "Knight",
+            "Fireball",
+            "HogRider",
+            "Zap",
+            "IceSpirit"
+          ]
+        ],
+        "styles": [
+          "defense",
+          "balanced"
+        ]
+      },
+      "pocket_fixture": true,
+      "pocket_placements": [
+        8,
+        9
+      ],
+      "cards": {
+        "Prince": 1,
+        "Tesla": 1,
+        "Skeletons": 2,
+        "Archers": 2,
+        "Zap": 4,
+        "Goblins": 4,
+        "DarkPrince": 2,
+        "IceSpirit": 2,
+        "Knight": 2,
+        "Musketeer": 1
+      },
+      "boundaries": 240,
+      "trace_sha256": "07c6af918e23dc07125f831b7c7c40bed1017c6e77b44871f526064eeee1ba33",
+      "final_tick": 1284,
+      "winner": 0
+    },
+    "21": {
+      "episode": {
+        "id": "p16-09",
+        "seed": 3894859938,
+        "decks": [
+          [
+            "Tesla",
+            "HogRider",
+            "Zap",
+            "Knight",
+            "IceSpirit",
+            "Fireball",
+            "Archers",
+            "Goblins"
+          ],
+          [
+            "HogRider",
+            "Archers",
+            "IceSpirit",
+            "Skeletons",
+            "Tesla",
+            "Knight",
+            "Zap",
+            "Fireball"
+          ]
+        ],
+        "styles": [
+          "balanced",
+          "defense"
+        ]
+      },
+      "pocket_fixture": true,
+      "pocket_placements": [
+        11,
+        13
+      ],
+      "cards": {
+        "HogRider": 1,
+        "IceSpirit": 7,
+        "Archers": 6,
+        "Zap": 6,
+        "Skeletons": 3,
+        "Knight": 5,
+        "Goblins": 2
+      },
+      "boundaries": 286,
+      "trace_sha256": "289da98e89aa68c9731e31f5e107b4fa4a571d58db81aab43b0a188b5dbb6ff8",
+      "final_tick": 1511,
+      "winner": 1
+    },
+    "22": {
+      "episode": {
+        "id": "p16-10",
+        "seed": 2190470524,
+        "decks": [
+          [
+            "Zap",
+            "Cannon",
+            "IceSpirit",
+            "Skeletons",
+            "Giant",
+            "Archers",
+            "Fireball",
+            "Knight"
+          ],
+          [
+            "Log",
+            "Prince",
+            "Goblins",
+            "Tesla",
+            "Archers",
+            "Zap",
+            "DarkPrince",
+            "Knight"
+          ]
+        ],
+        "styles": [
+          "defense",
+          "defense"
+        ]
+      },
+      "pocket_fixture": true,
+      "pocket_placements": [
+        15,
+        9
+      ],
+      "cards": {
+        "Cannon": 3,
+        "Tesla": 1,
+        "IceSpirit": 4,
+        "Goblins": 3,
+        "Skeletons": 4,
+        "Zap": 7,
+        "Archers": 6,
+        "Log": 3,
+        "Knight": 3
+      },
+      "boundaries": 343,
+      "trace_sha256": "f13c04fb3b6b97490efcdf296808133148f03239bc3d30e710c9c5f3424fc47e",
+      "final_tick": 1800,
+      "winner": null
+    },
+    "23": {
+      "episode": {
+        "id": "p16-11",
+        "seed": 3356414600,
+        "decks": [
+          [
+            "Musketeer",
+            "Prince",
+            "Skeletons",
+            "Fireball",
+            "IceGolem",
+            "Zap",
+            "Tesla",
+            "Knight"
+          ],
+          [
+            "HogRider",
+            "Prince",
+            "Zap",
+            "Fireball",
+            "Goblins",
+            "DarkPrince",
+            "Skeletons",
+            "Musketeer"
+          ]
+        ],
+        "styles": [
+          "balanced",
+          "defense"
+        ]
+      },
+      "pocket_fixture": true,
+      "pocket_placements": [
+        12,
+        11
+      ],
+      "cards": {
+        "Musketeer": 4,
+        "HogRider": 3,
+        "IceGolem": 3,
+        "Goblins": 3,
+        "Skeletons": 6,
+        "Zap": 6,
+        "Knight": 3,
+        "Tesla": 1
+      },
+      "boundaries": 343,
+      "trace_sha256": "aa08f8bbe9b381ff0fd25f6cfaf73d2eb58ae7eaa163a312bf71dd5db6216c54",
+      "final_tick": 1800,
+      "winner": null
+    }
+  },
+  "mismatches": []
+}

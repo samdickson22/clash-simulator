@@ -82,6 +82,12 @@ def main(root):
             with patch.object(driver, 'verify_events', return_value=bad):
                 refuses(lambda: driver.verify_calibration(args('bad-verified-'+str(i))))
         check(json.loads((candidate/'calibration-candidate.json').read_text()) == original)
+        selected['body_selection_verified']=True
+        selected['body_selections']={str(i):dict(ranking=dict(readiness=readiness,
+            body_threshold=.6,checkpoint_sha256='a'*64)) for i in range(1,25)}
+        authenticated=driver.verify_calibration(args('body-verified'))
+        check(authenticated['body_selection_verified'] is True and authenticated['selection_seal'] is False)
+        check(authenticated['pending']==['final selection seal'])
     print(json.dumps(dict(checks=checks, passed=True, synthetic_only=True,
         body_selection_verified=False, selection_seal=False, heldout_payloads_opened=False)), flush=True)
 

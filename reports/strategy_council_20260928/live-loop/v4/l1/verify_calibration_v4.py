@@ -37,10 +37,20 @@ def verify_calibration(args):
         selection=args.selection, output=args.output/'recomputed-event-selection'))
     if (selected.get('event_selection_verified') is not True
             or selected.get('readiness') != readiness
-            or selected.get('body_selection_verified') is not False
+            or type(selected.get('body_selection_verified')) is not bool
             or any(selected.get(k) is not False for k in
                    ('selection_seal', 'heldout_opening_authorized', 'heldout_payloads_opened'))):
         raise ValueError('Authenticated unsealed event selection required')
+    body_verified = selected['body_selection_verified']
+    if body_verified:
+        bodies = selected.get('body_selections',{})
+        if set(bodies) != {str(i) for i in range(1,25)}:
+            raise ValueError('All authenticated body selections required')
+        chosen = bodies[str(selected['epoch'])]['ranking']
+        if (chosen['body_threshold'] != selected['grid_body_threshold']
+                or chosen['checkpoint_sha256'] != selected['checkpoint_sha256']
+                or chosen['readiness'] != readiness):
+            raise ValueError('Selected body configuration differs')
     if (original['epoch'] != selected['epoch']
             or original['event_thresholds'] != selected['event_thresholds']
             or original['body_threshold'] != selected['grid_body_threshold']
@@ -60,14 +70,16 @@ def verify_calibration(args):
         recomputed_candidate_sha256=sha(args.output/'recomputed-calibration/calibration-candidate.json'),
         verifier_sha256=sha(Path(__file__)),
         event_selection_verified=True, calibration_recomputed=True,
-        body_selection_verified=False, selection_provenance_verified=False,
+        body_selection_verified=body_verified, selection_provenance_verified=False,
         selection_seal=False, heldout_opening_authorized=False, heldout_payloads_opened=False,
         pending=['authenticate body threshold selection', 'final selection seal'])
+    if body_verified:
+        result['pending'].remove('authenticate body threshold selection')
     with (args.output/'calibration-verified.json').open('x') as f:
         json.dump(result, f, indent=2, allow_nan=False); f.write('\n')
     with (args.output/'complete.json').open('x') as f:
         json.dump(dict(verification_sha256=sha(args.output/'calibration-verified.json'),
-            body_selection_verified=False, selection_seal=False,
+            body_selection_verified=body_verified, selection_seal=False,
             heldout_opening_authorized=False, heldout_payloads_opened=False), f, indent=2)
     return result
 

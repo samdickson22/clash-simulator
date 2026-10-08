@@ -683,3 +683,4 @@ Also on the hub, but with copies elsewhere:
        so we don't spend ~30 renderer-hours on a likely fail).
     2. Two renderers only if both pass the loop gates concurrently after E4.
     3. The E1 tracker-row amendments (a)–(c) are approved: they replace ELT-era targets.
+- **2026-10-08 18:44 UTC heartbeat:** correction: the v4 formal T6/T7 fits are **complete** (24×400 steps each; checkpoints SHA-verified on 04; cache 1.28→13.86 windows/s; 10,420 equality checks, 0 mismatches; 544,623 label errors resolved, 413,895 unresolved rows masked). Validation jobs are active on 09 (T7 replay) and 15 (T6 scoring), mostly CPU, hence GPU 0%. Asked the worker for a bounded 20-min continuation schedule through selection, seal, the single heldout eval, `l1/RESULTS.md` and `l1/noise-measured.json` (the E9 input). T5: 04/13/14 runs finished (selection jobs running); main02 rerun on 01 and GRU on 08 continue; T11 v2 on 16/18. Mac idle (26 GiB, 55% free).

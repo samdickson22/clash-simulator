@@ -1,0 +1,27 @@
+{
+  "utc": "2026-10-08T16:34:21.121758+00:00",
+  "schema": "clasher.v4.body-scoring-preparation.v1",
+  "source_sha256": {
+    "body_scoring_v4.py": "1cf6ad9e1e9f15e4a663e1fca0612090d300a35a6079416ee4431e6ae39f07e7",
+    "validation_body_score_v4.py": "c77dead73982cd23a52e26121dfa5eaff36855b1c6d6619d6b205cd952b6bd9b",
+    "test_body_scoring_v4.py": "b63bfd70e06d32a17b7a710aaf279c5bf74a3127d09395bcc90911c97b6338a3",
+    "test_validation_body_score_v4.py": "c526c2791ea365df92d3199b68899917337d7cc8047671130b87b196a43cac53",
+    "BODY-SELECTION.md": "fb7981a17149c2177d94ddcdf96db2b7c1d27b71dfbc61940e85bb5b277652ff"
+  },
+  "tests": [
+    {
+      "label": "v4-body-scorer-test-20261008-01r1",
+      "checks": 31,
+      "exit_code": 0
+    },
+    {
+      "label": "v4-validation-body-score-test-20261008-01r1",
+      "checks": 14,
+      "exit_code": 0
+    }
+  ],
+  "actual_validation_scored": false,
+  "body_threshold_selected": false,
+  "selection_seal": false,
+  "heldout_payloads_opened": false
+}

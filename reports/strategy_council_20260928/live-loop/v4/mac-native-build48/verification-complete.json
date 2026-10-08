@@ -1,0 +1,322 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "mode": "runtime",
+      "pid": 94995,
+      "started": 1791481770.570336,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "runtime"
+      ],
+      "exit_code": 1,
+      "ended": 1791481835.72711,
+      "wall_seconds": 65.1567747592926
+    },
+    {
+      "mode": "stage5",
+      "pid": 94996,
+      "started": 1791481770.570414,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "stage5"
+      ],
+      "exit_code": 0,
+      "ended": 1791481950.583762,
+      "wall_seconds": 180.013347864151
+    },
+    {
+      "mode": "p16",
+      "pid": 97240,
+      "started": 1791481950.584162,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "p16"
+      ],
+      "exit_code": 0,
+      "ended": 1791482066.674638,
+      "wall_seconds": 116.09047603607178
+    },
+    {
+      "mode": "c56",
+      "pid": 98702,
+      "started": 1791482066.6750689,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "c56"
+      ],
+      "exit_code": 0,
+      "ended": 1791482087.739316,
+      "wall_seconds": 21.064247131347656
+    },
+    {
+      "mode": "random",
+      "pid": 99092,
+      "started": 1791482087.739721,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "random"
+      ],
+      "exit_code": 0,
+      "ended": 1791482135.748106,
+      "wall_seconds": 48.00838494300842
+    },
+    {
+      "mode": "recorded-0",
+      "pid": 99398,
+      "started": 1791482135.748532,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-0"
+      ],
+      "exit_code": 1,
+      "ended": 1791482136.842647,
+      "wall_seconds": 1.094115972518921
+    },
+    {
+      "mode": "recorded-1",
+      "pid": 99432,
+      "started": 1791482136.843012,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-1"
+      ],
+      "exit_code": 1,
+      "ended": 1791482137.923726,
+      "wall_seconds": 1.0807139873504639
+    },
+    {
+      "mode": "recorded-2",
+      "pid": 99441,
+      "started": 1791482137.9240892,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-2"
+      ],
+      "exit_code": 1,
+      "ended": 1791482138.972804,
+      "wall_seconds": 1.0487148761749268
+    },
+    {
+      "mode": "recorded-3",
+      "pid": 99448,
+      "started": 1791482138.9731462,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-3"
+      ],
+      "exit_code": 1,
+      "ended": 1791482140.027505,
+      "wall_seconds": 1.054358720779419
+    },
+    {
+      "mode": "recorded-4",
+      "pid": 99456,
+      "started": 1791482140.0278552,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-4"
+      ],
+      "exit_code": 1,
+      "ended": 1791482141.13731,
+      "wall_seconds": 1.109454870223999
+    },
+    {
+      "mode": "recorded-5",
+      "pid": 99724,
+      "started": 1791482141.138025,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-5"
+      ],
+      "exit_code": 1,
+      "ended": 1791482142.1767092,
+      "wall_seconds": 1.0386841297149658
+    },
+    {
+      "mode": "recorded-6",
+      "pid": 99745,
+      "started": 1791482142.17709,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-6"
+      ],
+      "exit_code": 1,
+      "ended": 1791482143.2233868,
+      "wall_seconds": 1.0462968349456787
+    },
+    {
+      "mode": "recorded-7",
+      "pid": 99752,
+      "started": 1791482143.223739,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-7"
+      ],
+      "exit_code": 1,
+      "ended": 1791482144.2828648,
+      "wall_seconds": 1.0591259002685547
+    },
+    {
+      "mode": "stage6",
+      "pid": 95772,
+      "started": 1791481835.727705,
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "stage6"
+      ],
+      "exit_code": 0,
+      "ended": 1791482233.3259678,
+      "wall_seconds": 397.59826397895813
+    }
+  ],
+  "retried": [
+    {
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-0"
+      ],
+      "pid": 1125,
+      "exit_code": 0,
+      "started": 1791482246.799884,
+      "ended": 1791482681.519658,
+      "wall_seconds": 434.71977400779724
+    },
+    {
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-1"
+      ],
+      "pid": 6272,
+      "exit_code": 0,
+      "started": 1791482681.5200782,
+      "ended": 1791482915.250864,
+      "wall_seconds": 233.73078680038452
+    },
+    {
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-2"
+      ],
+      "pid": 9078,
+      "exit_code": 0,
+      "started": 1791482915.251457,
+      "ended": 1791483137.432482,
+      "wall_seconds": 222.18102502822876
+    },
+    {
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-3"
+      ],
+      "pid": 11734,
+      "exit_code": 0,
+      "started": 1791483137.432791,
+      "ended": 1791483389.305165,
+      "wall_seconds": 251.8723750114441
+    },
+    {
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "runtime"
+      ],
+      "pid": 1124,
+      "exit_code": 0,
+      "started": 1791482246.7980459,
+      "ended": 1791482273.894853,
+      "wall_seconds": 27.096807956695557
+    },
+    {
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-4"
+      ],
+      "pid": 1678,
+      "exit_code": 0,
+      "started": 1791482273.895452,
+      "ended": 1791482415.761729,
+      "wall_seconds": 141.8662769794464
+    },
+    {
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-5"
+      ],
+      "pid": 3249,
+      "exit_code": 0,
+      "started": 1791482415.762156,
+      "ended": 1791482559.306251,
+      "wall_seconds": 143.54409503936768
+    },
+    {
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-6"
+      ],
+      "pid": 4849,
+      "exit_code": 0,
+      "started": 1791482559.306689,
+      "ended": 1791482721.2265449,
+      "wall_seconds": 161.9198558330536
+    },
+    {
+      "command": [
+        "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+        "-B",
+        "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+        "recorded-7"
+      ],
+      "pid": 6767,
+      "exit_code": 0,
+      "started": 1791482721.226936,
+      "ended": 1791482998.660882,
+      "wall_seconds": 277.43394589424133
+    }
+  ],
+  "initial_runtime_wrapper_attempt_excluded": true,
+  "initial_recorded_attempts_missing_checkpoint": true
+}

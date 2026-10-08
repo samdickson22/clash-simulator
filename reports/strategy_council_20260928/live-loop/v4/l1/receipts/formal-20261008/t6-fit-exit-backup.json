@@ -1,0 +1,32 @@
+{
+  "child_exit": 1,
+  "stopped": false,
+  "backup_error": null,
+  "final_backup": {
+    "status": "verified",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/repos/clasher-v4-training/checkpoint-mirrors/127x15/t6-formal-20261008-15r2/20261008T171027126698Z",
+    "manifest_sha256": "9a0cd84febcd09c39ed8809d6140c1e041aaf6eda34bdab170027625b045f4aa",
+    "verification": {
+      "files": 10,
+      "verified": true
+    },
+    "files_sha256": {
+      "admission.json": "1efdbdf9eab0fcb9ae420651318100930ecdbfdf478de5c2884bf75a67c4d6c9",
+      "run/model/complete.json": "b9362ac20ddee302e6905d8be27f3629c61817912906b70d22e356060945b935",
+      "run/model/epoch-16.pt": "c338ee9cae87edb4b02cd8cb06dcf2b6afe358d9d3969818979022046bfae2f0",
+      "run/model/epoch-24.pt": "7ed8ceaf5b9462373b496e9808d003a015365e8243eec5399cb90a1bf50484da",
+      "run/model/epoch-8.pt": "c98709ba74601774234cdc7a99dc6ccb8bf161d21bca53445c2e20790a351a92",
+      "run/model/hud.npz": "704246bff0263b2d70170c79f574c234bfd188dcf73a1bae81d0aa18dccc3bdc",
+      "run/model/last.pt": "a3860deb608483f05e43c14608cb307d8d807bb9fa39f5f672f3fd91657f4f40",
+      "run/model/manifest.json": "0bf21c81b401022d229eb9f787d25130b04177b7db62a1fb04deae31825e0bc1",
+      "run/model/marker-offsets.json": "aec84182a36ab1d2fcb3afe45ed59d69aef440130a830526de573fd94b688648",
+      "run/model/training.jsonl": "7985395da2ac2f4b8386a047118656650d2b422e5b35bcd577349e7821709257"
+    },
+    "checkpoint_count": 4,
+    "utc": "2026-10-08T17:10:27.148314+00:00",
+    "heldout_payloads_opened": false
+  },
+  "stop_at": 1791522000.0,
+  "heldout_payloads_opened": false
+}

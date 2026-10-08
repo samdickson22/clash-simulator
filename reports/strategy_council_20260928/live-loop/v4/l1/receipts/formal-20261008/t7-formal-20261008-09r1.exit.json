@@ -1,0 +1,32 @@
+{
+  "host": "127x09",
+  "label": "t7-formal-20261008-09r1",
+  "started_utc": "2026-10-08T17:01:42.623035+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/formal_cache_client_v4.py",
+    "--phase-state",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/t1-completion-mirror/pool-state.json",
+    "--phase-exit",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/t1-completion-mirror/T1-PHASE-A-COMPLETE.json",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-lease/data/t7-formal-20261008-09r1",
+    "--control",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/t7-formal-20261008-09r1-control",
+    "--services",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/formal-20261008/t7-services-plan.json"
+  ],
+  "supervisor_pid": 3532141,
+  "pid": 3532146,
+  "exit_code": 1,
+  "status": "fail",
+  "finished_utc": "2026-10-08T17:02:32.825637+00:00",
+  "stop_reason": null,
+  "peak_processes": 7,
+  "peak_rss_bytes": 1621389312,
+  "peak_sampled_pss_bytes": 24407040,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "effective_process_cap": 96
+}

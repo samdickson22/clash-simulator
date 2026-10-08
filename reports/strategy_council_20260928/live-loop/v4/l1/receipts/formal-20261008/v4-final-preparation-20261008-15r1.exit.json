@@ -1,0 +1,26 @@
+{
+  "host": "127x15",
+  "label": "v4-final-preparation-20261008-15r1",
+  "started_utc": "2026-10-08T15:53:52.577269+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/prepare_final_15.py",
+    "--label",
+    "v4-final-preparation-20261008-15r1",
+    "--admitted",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/preformal-cache-20261008/v4-cache-final-20261008-03r8-admitted.json"
+  ],
+  "supervisor_pid": 3652599,
+  "pid": 3652606,
+  "exit_code": 1,
+  "status": "fail",
+  "finished_utc": "2026-10-08T15:54:21.891710+00:00",
+  "stop_reason": null,
+  "peak_processes": 7,
+  "peak_rss_bytes": 338894848,
+  "peak_sampled_pss_bytes": 24714240,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "effective_process_cap": 96
+}

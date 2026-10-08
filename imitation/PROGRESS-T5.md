@@ -1,38 +1,135 @@
 # T5 v1 training and gate (a)
 
-## Current status — 2026-10-08 13:34 UTC
+## Current status — 2026-10-08 18:35 UTC
 
-**All five fresh entrants are active; main02 loader starvation is fixed.**
+**Two entrants remain active: main02 on01 and GRU on08. Main01, main03 and noD1 completed all12 epochs, exited0 and have dev-only selection receipts.**
 
-Latest health check **13:34 UTC**: all five current trainer identities verified,
-logs advancing, no exits or lease stop reasons. Steps04/11/13/14/08:7477/2101/8230/7060/266.
-Latest25-step loader-inclusive rows/s:7276/8163/7839/7540/242.
-GPU free19688/17332/17340/16928/8701MiB. Main02 has resumed epoch1 training after its first dev pass;
-no new dev scores this poll. Shared13/14 PSS7.75/10.44GB; full11 diagnostic
-PSS71.48GB remains uncapped by the shared-host64GB rule. Process occupancy
-5/7/4/4/5 including monitoring; no console users; live leases valid.
-No job/source/recipe changes or model held-out inference this poll.
-Receipt `t5/receipts/status-20261008T1334Z.json` includes current checkpoint hashes.
-Existing10-minute schedule continues; healthy jobs remain active.
+Read `t5/receipts/active-runs-20261008T1548Z.json` first. It supersedes earlier
+identities. Main03 completed with trainer3578942/supervisor3578940, label
+`t5-v1-main-2026100803-r2-fresh-dev-memory`; same output and seed.
+Old trainer3494088 exited0 at15:39:26Z; do not restart its old command.
+Main03 resumed unchanged step15036 after separately frozen allocator0.75 plus
+unused CUDA cache release before/after dev. Synthetic full checkpoint replay
+and both dev scores were bitexact; no fitted test or recipe change.
+Freeze SHA caffe0afff6f72a15e99ab2040cd3c98fc71df604d98796a2ae6e7989144c386.
+Exact command: `t5/receipts/main03-dev-memory-launch.json`.
+The interrupted dev pass completed: NLL .3470467336760043 at15036.
+Training resumed at15037 and reached15072 with ~7913 recent inclusive rows/s.
+No training updates were lost; stop-to-relaunch gap525.57s (8min45.57s).
+Before/after-dev reserved memory48/68MiB; free during dev45572MiB,
+post-recovery training sample free17334MiB. Recovery: `t5/receipts/main03-dev-memory-recovery.json`.
+Checkpoint step15036 is SHA-verified off-host on04. The newly completed
+epoch007 checkpoint was also verified and rehashed on04 at15:50:44Z:
+SHA008c16c9ce6baca10cf454ea3c20495266906f88be4f57c2875b3b7f74f84b9f.
+ Main02 trainer3653414, supervisor3653400, label
+`t5-v1-main-2026100802-r2-hostloss-home01-v2`. All host11 main02 artifacts are
+EXCLUDED from selection, even if11 returns. Do not resume, merge or duplicate them.
+Preserve every existing receipt. Host loss was reported by coordinator, with no
+outcome inspection informing the rerun. Earlier dev telemetry is historical.
 
-Authoritative current identities and exact continuation commands:
-`t5/receipts/active-runs-20261008T1308Z.json`. Never use the superseded PIDs or
-restart any active run. Check identities/exits before a future resume and refresh
-its checkpoint SHA and unused label. All scientific sources/recipe remain frozen r2.
-
-| Run | Host | Current trainer | Step | Recent loader-inclusive rows/s | GPU free MiB |
+| Active run | Host | Trainer | Step at18:35 | Recent loader-inclusive rows/s | GPU free MiB |
 |---|---|---:|---:|---:|---:|
-|main01|04|2498867|7477|7276|19688|
-|main02|11|972158|2101|8163|17332|
-|main03|13|3494088|8230|7839|17340|
-|noD1|14|3481715|7060|7540|16928|
-|GRU|08|3548451|266|242|8701|
+|main02|01|3653414|16915|11834|12665|
+|GRU|08|3548451|799|243|8701|
 
-Latest uncalibrated EMA dev joint NLL: main01 .3629642253437192 atstep5638;
-main02 .4401884629339961 atstep1880; main03 .3561387059512377 atstep7518;
-noD1 .36447309169620945 atstep5638. GRU has not reached its first dev pass.
-No selection, calibration or held-out inference. Current resource and checkpoint
-hashes are in the latest health receipt above.
+Two active PIDs verified; no active exits or console users. Main02 has published
+dev16915 NLL .345752863888776; sampled at the epoch boundary with12665MiB free.
+GRU has8701MiB free and no dev result yet. Continue checking its first dev
+headroom; no unvalidated cap or recipe change. Process counts01/08=10/5.
+Main01 exited0 at18:33:54Z; noD1 exited0 at18:31:16Z with no stop reason.
+Both complete.json files confirm epoch12, step22552, rows184706276 and
+stopped_by_signal=false. Neither run should restart. Main03 remains complete.
+
+**Main01/noD1 dev-only selections complete.** Full frozen source guards passed.
+CPU-only select.py on04 selected final step22552 for both:
+- main01 NLL .3458578509943139, checkpoint SHA
+  2a055934be372fd31436441d402eb864913410911106f10319ba7095f44932c9.
+- noD1 NLL .34885368464637384, checkpoint SHA
+  f97ab6a9621027f142630736507604a5b79dc8a1601d1c4fa64e5791d5121430.
+
+Receipts: t5/receipts/main01-selection.json and noD1-selection.json.
+Selection jobs exited0; each1.63wall seconds, CPU1.60/1.58seconds respectively.
+Selected/final epoch checkpoints, complete.json and final train logs were
+SHA-compared source/off-host: main01 on01, noD1 on04. Completion metadata used
+explicit rsync-c because watcher v3 omits complete.json. Final epoch SHA:
+main01 00e9d5bf3aae6d964da1cbfd9e78a74fb0c377ad92e1d8d29864bfc20d845fa7;
+noD1 115c4b7888abf7a317add1cccfee3e06480e6e6a624c4fb10a4025c0609fe5b8.
+No calibration/heldout; combined selection waits for main02 and GRU.
+
+**Main03 dev-only selection complete.** Frozen select.py on04 selected step20673,
+uncalibrated EMA dev NLL .34608675164380154. Selected checkpoint SHA
+cd583a235a41248935ee6a9d5d49b8e4db6bfefb4a0bcfd2693fa266a235efda.
+Receipt: t5/receipts/main03-selection.json. Full frozen source guard passed;
+CPU-only selection under fleet_run.sh exited0 (1.71wall/1.62CPU seconds).
+No fitted trial, calibration or heldout inference. Do not restart main03.
+Final epoch011/step22553 checkpoint was backed up04 at18:06:59Z, SHA
+0de730f0d99bcf4e759f954c595b5d4efb011714def9933baeba5d8b0bfdb21b.
+Selected/final checkpoint hashes reverified04; final train log SHA matches13.
+Watcher v3 omits complete.json, so completion metadata was explicitly rsync-c
+copied13->04 and source/destination SHA verified:
+3979151e3494d7d124d5ebd89d51054043d0b52a91366393cb282e5fcdee6a7b.
+Repeat that completion-metadata copy for each remaining run when it finishes.
+Only receipts were mirrored05; checkpoint payload stays on workers.
+Keep combined selection/calibration pending all5 completed entrants.
+
+**Home01 rerun provenance.** Fresh initialization14:51:34Z, no --resume, seed
+2026100802, same52 frozen scientific files and recipe. Effective8192/micro7168,
+12epochs, warmup2000, patience3. Actual4 qualified original loader workers,
+no per-batch mmap eviction; parent workers1 stays in immutable scientific guard.
+Existing resource-only allocator fraction0.75. Combined full synthetic GPU
+checkpoint replay was bitexact (all payload except output-path args); no real
+fitting in validation. First new real run progressed from step1 to156; recent
+inclusive throughput11949 rows/s. Initial cumulative rate includes cold startup.
+
+Operational freeze SHA47d7187800211b6e16ba632a6426b03964025723c224acab86510b55d1dfb945.
+Exact source/output/command: `t5/receipts/main02-home01-launch-v2.json`.
+Output:01 `/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802`.
+The first launcher attempt exited1 BEFORE data loading or model updates because
+its provenance file made the output nonempty. Original artifacts retained; a
+separately frozen launcher logs metadata beside the fresh output. Failed attempt
+used5.81wall/5.74CPU seconds. Future resume must first verify old exit, refresh
+checkpoint SHA, and freeze a matching home01 continuation guard; the current
+fresh-only adapter deliberately refuses --resume. Never blindly rerun its command.
+Dated note: `gate-a/amendments/main02-hostloss-home01-20261008.md`.
+
+**Off-host backups active.**04 supervisor2525895, label
+`t5-checkpoint-mirror-20261008-v3`, polls60s. Every published epoch/best checkpoint
+and latest periodic recovery checkpoint is copied with rsync-c and verified by
+source/destination SHA256. Main02/GRU/main03/noD1 copy directly to04; main01 copies
+from04 directly to01. Root `/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/HOST/RUN`.
+No payload on05. First complete pass verified13/13/12/1 checkpoints for
+main01/main03/noD1/GRU. Main02 step1000 checkpoint is now verified on04 with SHA
+ce887970802d14f0d679712ec957e8f2615b3ef0b57f84e44e17e276935724c6.
+Its first epoch checkpoint (step1880) was verified on04 at15:16:37Z, SHA
+945d07ca1272a7e82d148235532e8e02f4e288f67298ef5f39a1fe7e099aad14.
+Latest step3000 backup verified15:28:46Z, SHA
+904ad05ec728443cde31109c3ac2d322aaa7e0318f3b927ae8b88b993c6c3ec8. Mutable metadata
+uses a fixed byte snapshot with checksum verification to avoid append races.
+Earlier watcher versions were identity-verified and stopped while idle; no duplicate.
+
+Plan `t5/receipts/checkpoint-mirror-plan-v4.json`, SHA
+473424a0ad535a1642344917a8c823030d5735f3dcc7372aca074eee30eb0bf0.
+Authoritative04 `/mpac/sdicks02/tmp/t5-checkpoint-mirror-20261008/mirror-state.json`
+and `mirror-receipts.jsonl`; small mirrors in `t5/receipts/checkpoint-mirror-*.json*`.
+Five latest watcher passes18:34:25–27Z succeeded. Keep checking backup freshness.
+T11 owns its separate v2 puller and has already recorded its backup implementation;
+do not duplicate or alter those jobs.
+
+PREREG SHA b5bace9160f97f12b880f3e01471642ea0780c8ae2280deed7fd49f5a10fee02;
+scientific manifest2854ce1f96fdd2fcc04dd0e6ef15dce3435758ec40369a80bba29b1a1e29db13.
+No scientific source or recipe changed. Leased13/14 stop04:20Z Oct9, checkpoint
+AND exitby05:00Z; direct-LAN backups initiate no new leased access after04:50Z.
+Move/validate any unfinished exact state to home before expiry; no extra trial.
+Home01/04/08 continue beyond lease. Keep all5 checkpoint+temperature releases
+sealed before once-only heldout scoring. Final report remains pending training.
+Latest health/launch/backup receipt: `t5/receipts/status-20261008T1835Z.json`.
+The10-minute continuation remains enabled with these current identities.
+Final14:58 verification: main02step467,3825664rows, cumulative loader-inclusive
+10263rows/s. All18 currently published epochs (6each main01/main03/noD1) are
+verified off-host;42 checkpoint files total including best/periodic versions.
+Receipt `t5/receipts/main02-hostloss-recovery.json`; main02 first checkpoint subsequently verified on04 at15:04Z.
+
+## Historical operational recoveries (superseded identities are not restart commands)
 
 **Main02 operational loader recovery.** Old trainer948307 stopped12:50:58Z at
 step967, checkpoint SHA bb6e4ab771dfb1fb97fc69c0162c6f8df7e2aa11c78205ebc105577cf45febad.
@@ -82,7 +179,7 @@ No receipt-covered or frozen scientific source was changed. Additional executabl
 adapters and validation files were separately frozen and staged hashes checked
 before each continuation. Preserve all operational provenance in final results.
 Leased04:20Z Oct9 timers remain; checkpoint AND exit by05:00Z, directLAN migration
-before lease expiry. Scheduler remains10min; next13:14:39Z. All older PID/worker/headroom claims
+before lease expiry. Scheduler remains10min. All older PID/worker/headroom claims
 below are historical and superseded by this section.
 
 Historical prior health sample follows:

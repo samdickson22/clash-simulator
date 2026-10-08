@@ -220,6 +220,9 @@ def run(args):
                 completions.write(json.dumps(row, allow_nan=False)+'\n')
                 completions.flush()
             summaries[episode] = replay_episode(runtime, cache, episode, frames[episode], emit, journal)
+        print(json.dumps(dict(validation_episode_complete=episode,
+            matches_completed=len(summaries),matches_total=len(frames),
+            frames_completed=sum(r['frames'] for r in summaries.values()),time=time.time())),flush=True)
     write_json(args.output/'complete.json', dict(manifest_sha256=sha(args.output/'manifest.json'),
         episodes=summaries, files_sha256={p.name:sha(p) for p in sorted(args.output.glob('*.jsonl'))},
         heldout_payloads_opened=False, selection_seal=False))

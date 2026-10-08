@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+    "-B",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/engine-speed/broad_identity.py",
+    "recorded",
+    "check",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/engine-speed/recorded_identity_baseline_admitted.json",
+    "--output",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/recorded.json"
+  ],
+  "pid": 14583,
+  "exit_code": 0,
+  "started": 1791483389.710461,
+  "ended": 1791483390.927427,
+  "wall_seconds": 1.216966152191162
+}

@@ -1,0 +1,30 @@
+{
+  "host": "127x15",
+  "label": "t6-validation-20261008-15r1",
+  "started_utc": "2026-10-08T17:15:24.848430+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/continue_t6_validation.py",
+    "--run",
+    "/mpac/sdicks02/repos/clasher-lease/data/t6-formal-20261008-15r2",
+    "--dataset",
+    "/mpac/sdicks02/repos/clasher-lease/data/v4-cache/t6-final-dataset-20261008",
+    "--phase-state",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/t1-completion-mirror/pool-state.json",
+    "--phase-exit",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/t1-completion-mirror/T1-PHASE-A-COMPLETE.json",
+    "--journal",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/t6-validation-20261008-15r1-backups"
+  ],
+  "supervisor_pid": 3697475,
+  "pid": 3697482,
+  "checked_utc": "2026-10-08T17:26:32.059605+00:00",
+  "processes": 4,
+  "rss_bytes": 4666384384,
+  "pss_bytes": 4635620352,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "effective_process_cap": 96,
+  "stop_reason": null
+}

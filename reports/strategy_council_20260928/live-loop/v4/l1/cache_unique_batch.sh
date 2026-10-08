@@ -16,6 +16,6 @@ cp -p "$source/stage-inventory.json" "$jobs/$label-stage.json"
 "$python" -B "$code/cache_extension_v4.py" --current "$jobs/$label-stage.json" \
   --base-manifest "$base_manifest" --base-inventory "$base_inventory" --output "$jobs/$label-plan.json"
 "$python" -B "$code/build_cache.py" --source "$source" --cache "$cache" --split "$split" \
-  --inventory "$jobs/$label-plan.json" --workers 24 --budget-gb 215 --receipt "$jobs/$label-build.json"
+  --inventory "$jobs/$label-plan.json" --workers 24 --budget-gb 214 --receipt "$jobs/$label-build.json"
 exec "$python" -B "$code/cache_manifest.py" --source "$source" --cache "$cache" --split "$split" \
   --inventory "$jobs/$label-plan.json" --output "$jobs/$label-manifest.json"

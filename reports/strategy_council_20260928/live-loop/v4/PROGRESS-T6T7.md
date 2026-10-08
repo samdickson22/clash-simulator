@@ -1,10 +1,287 @@
 # T6/T7 progress
 
-Updated 2026-10-08 15:45Z. GPUs reassigned: T7→09, T6→15; pinned staging PASS; formal gates BLOCKED.
+Updated 2026-10-08 17:46Z. GPUs reassigned: T7→09, T6→15; pinned staging PASS; formal gates BLOCKED.
 Code/docs/compact receipts live on 127x05; decode/audit/tests/training pilots
 run detached/nice on home01/03 or leased16/18 within live caps. No Mac/excluded host access, commits or deletion.
 
 ## Current continuation: cache and label cleaning
+
+17:46 coordinator launch instruction reconciled against completed-job evidence:
+**do not duplicate either fit**. T6 full24x400/seed6107 and T7 full24x400/seed6108
+are already complete and SHA-backed to04. T7 fit exit0 at17:31:56; current09 work
+is validation wrapper3539815/child3539821, with2/64 matches and4149 frames complete
+at17:45:12. Sampled PSS4.947 GB,8 processes,47,032 MiB GPU free. T6 validation
+wrapper3697475/child3697482 is scoring after53392 completed inference frames;
+PSS1.588 GB,4 processes. These hosts are reserved but are not idle.
+
+formal_train.sh now explicitly documents its existing pool-mode admission path
+and uses producer-neutral argument help. It delegates to formal_guard.admit,
+which already authenticated the six mirror hashes, coverage stop64/1520, real
+pool exit0 and zero-running-process evidence before both fits. No legacy exit
+was fabricated; frozen registration/split and training configuration unchanged.
+This clarification changes no admission behavior. Checkpoint supervision remains
+30-minute plus exit copies to04,04:30 stop lead and05:00 exit. No new fit/job,
+Phase A poll, heldout access, deletion or roader-path access was performed.
+All unmeasured formal/Mac/T5/T8 gates stay BLOCKED.
+
+17:44 **T7 first validation cell launched** at17:43:30 after both cache services
+became ready. Full fit validation admission passed: all24 checkpoints/9600 rows,
+513 training/64 validation receipts and source pins authenticated. Batch manifest
+is mirrored as l1/receipts/formal-20261008/t7-validation-batch-manifest.json.
+09 wrapper3539815/child3539821 remains active. Cell epoch1/event0.5/body0.1 is
+initializing its full pinned cache union before pixel replay. Retain its output
+and do not duplicate. T6 evaluator15 wrapper3697475 remains active after complete
+53392-frame inference. No final validation metrics, selection seal or heldout
+opening. All §5.1 formal/Mac/T5/T8 gates remain BLOCKED.
+
+17:43 **T6 validation inference COMPLETE**,53392 frames, fleet33.721860 FPS,
+p9534.168273ms, capture excluded. Existing unchanged v3 validation evaluator is
+now scoring/selecting thresholds on15 under3697475; no final selection/quality
+result yet. Timing is not a Mac measurement or §5.1 PASS. Compact inference
+manifest/complete/timing receipts mirrored05/01; predictions remain15.
+
+T7 validation09r1 wrapper3539815 remains in bounded wait for01 validation service;
+03 is ready. Batch now derives a conservative expiry from each ready receipt's
+producer mtime and stops before the earliest service expiry, within45min and
+before04:30 lease lead.20 plan/deadline checks and13 file-backed worker checks PASS;
+five client-population checks also pass. Per-match progress logging was added to
+validation_replay_v4 before any formal T7 replay began, to expose real throughput
+without changing within-episode completion timing. Runtime/training sources stay
+pinned to the completed fit. No heldout access, new polling or deletion.
+
+17:34 **Both fresh formal fits COMPLETE**: T6 epoch24 complete as below; T7
+09r2 wrapper3533633/child3533638 **exit0 at17:31:56** with all9600 contiguous
+updates,24 checkpoints,513 training matches. Final T7 checkpoint SHA
+**e5d1acd124158dc9410a1f10bb1aaa51b180bc2abd9547da27e66a8da62f7e9c**.
+Final offload04 verified **625 files /25 checkpoint files** at
+`/mpac/sdicks02/repos/clasher-v4-training/checkpoint-mirrors/127x09/t7-formal-20261008-09r2/20261008T173151750416Z`.
+
+Full T7 cached training loop **13.862772 windows/s**,
+versus historical uncached1.282 (**10.813x**). Same-run GPU compute
+19.769086 windows/s (316.305371 encoded frames/s),
+so end-to-end reaches70.12% of GPU rate while
+including logging and eight-step checkpoint writes. Mean loader wait/transfer
+10.105862 ms; loop692.502169s. Full admission/SHA
+startup and final backup are excluded and are not hidden as training work.
+Warm repeated-feature CUDA p954.435532ms is NOT a Mac gate.
+Raw completion and offload receipts plus throughput summary are mirrored05/01.
+
+**T7 validation batch09r1 active waiting**: wrapper3539815/child3539821,
+output09:data/t7-validation-20261008-09r1; first full64-match cell is epoch1,
+event0.5/body0.1. Fresh bounded home services01 wrapper3781569 /03 wrapper3660768
+are repeating complete payload SHA verification. Old formal services both exit0.
+The client authenticates all24 checkpoints/full population before replay. The
+batch uses the existing FP32 pixel runtime and measured FIFO output journals,
+keeps partial failures, backs checkpoints04, and stops within45min (or04:30 lease
+lead).16 batch-plan/deadline checks plus29 calibration-body checks pass. No real
+T7 validation outcome or body/event threshold has been selected.
+T6 validation15 wrapper3697475 remains active,35001/53392 observed17:34.
+Retirement still queued behind T11 on18; no deletion or budget change.
+Heldout unopened. All unmeasured formal/Mac/T5/T8 gates remain BLOCKED.
+
+17:26 **T7 formal fitting ACTIVE**,09 wrapper3533633/child3533638. Both home
+r2 cache services passed verification; actual optimizer step4144/9600 observed.
+09 sampled PSS23.973 GB,8 processes,console0,44.6 GiB GPU free. Current fit uses
+all513 training matches and the authenticated577-cache union. Do not duplicate.
+T6 validation continuation15 wrapper3697475 reached19001/53392 frames; same
+completed24-epoch checkpoint, already backed up04. No validation outcome yet.
+
+Joint body/event selection preparation now passes **114 synthetic checks**
+(35 matrix,16 event selection,17 event verification,27 calibration,19 new joint).
+01 test wrapper3764888,exit0 at17:24:51. Each epoch first fits its body threshold
+on nine full-validation replays at fixed event default0.5. Its nine event cells
+then use exactly that body winner; epoch selection retains opponent F1/precision/
+earlier-epoch rule. The verifier recomputes all432 body/event cells and checks
+stored body evidence. Legacy common-body proposals remain explicitly unverified.
+No real body/event threshold, calibration, seal or heldout result exists.
+
+Retirement queue01 wrapper3741187 remains waiting for18's T11 workload lock;
+no deletion or reservation change. Poll schedule already deleted on completion;
+no further Phase A poll. All unmeasured formal/Mac/T5/T8 gates remain BLOCKED.
+
+17:16 **T6 fitting COMPLETE**, all24 epochs x400 steps, seed6107. Canonical
+`15:data/t6-formal-20261008-15r2/run/model/last.pt` SHA
+**a3860deb608483f05e43c14608cb307d8d807bb9fa39f5f672f3fd91657f4f40**.
+The pipeline then exited1 at17:10:29 during validation detector loading: missing
+`dill` (no validation predictions generated). Exact home01 dependency dill0.4.0
+installed through15 lease wrapper3697012, exit0. No refit or changed weights.
+All10 model/admission files, including four checkpoint files, were SHA-verified
+on04 at `clasher-v4-training/checkpoint-mirrors/127x15/t6-formal-20261008-15r2/20261008T171027126698Z`.
+Receipt `l1/receipts/formal-20261008/t6-fit-exit-backup.json` records the offload.
+
+**T6 validation-only continuation active:** label t6-validation-20261008-15r1,
+wrapper **3697475**, through unchanged15 lease wrapper. Owned helper
+continue_t6_validation.py first authenticates genuine pool admission, full train/
+validation inventory, all24 epoch records, immutable dataset manifest and final
+checkpoint hash; ten synthetic guard checks pass. It archives the incomplete
+inference directory (no deletion), then continues the original run_t6_shake
+pipeline with training skipped because model/complete.json is verified. Lifecycle
+backups still go04 every30min and on exit;04:30 stop/05:00 exit remains enforced.
+Never restart T6 fitting for this infrastructure failure.
+
+T7 **09r2 wrapper3533633** still waits for01r2 verification;03r2 is ready.
+Current services:01 wrapper3744026 /03 wrapper3646277. No T7 optimizer update yet.
+Retirement queue01 wrapper3741187 still sees18's workload lock occupied; no data
+removed and no budget reassignment. All formal quality/Mac/T5/T8 gates BLOCKED.
+
+17:08 active execution: T6 **15r2 supervisor3683467/child3683472** has begun
+optimizer updates; epoch8 checkpoint observed17:06. Its output is
+`15:data/t6-formal-20261008-15r2/run/model`. Full513 train matches,24x400 seed6107;
+no formal validation result yet. Backups through its lifecycle go04 every30min.
+
+T7 **09r1 supervisor3532141/child3532146 exit1 at17:02:32 before any optimizer
+update/weight file**: missing historical `live-loop/l1/calibration.json`. Copied
+exact01 calibration directly01→09, SHA af06e029c50c3e2932f829a8891d6f6bdca654912d6beff512ab5864cc8c60d8.
+All15 expected training/runtime/source assets now exist and hash-identically match01.
+Failed r1 retained; both r1 home services exited0 after client cleanup.
+Fresh home services **01r2 wrapper3744026**, **03r2 wrapper3646277** are repeating
+full payload verification. Fresh T7 **09r2 wrapper3533633** is lease-supervised
+in wait_formal_services.py (bounded30min), then automatically invokes the existing
+formal client with `t7-services-plan-r2.json`. Output `09:data/t7-formal-20261008-09r2`,
+private control `09:jobs/t7-formal-20261008-09r2-control`; do not duplicate.
+
+Retirement queue **01 wrapper3741187**, label
+`v4-duplicate-retirement-queue-20261008-01r1`, is detached/nice and waiting for18's
+exclusive workload lock. No deletion yet. Output01:jobs/v4-duplicate-retirement-20261008-01r1;
+future18 worker label v4-duplicate-retirement-20261008-18r1. Queue deadline
+2026-10-09 04:50 UTC. On lock release it re-verifies all698 retained01 payload SHAs,
+archives all349 indices/equality records, holds01's shared cache lock, and invokes
+18's unchanged lease wrapper. Worker preflights every exact path, preserves original
+indices, journals intent/deletion with fsync, and unlinks only named raw.zst/pixels.zst
+cache payloads.8 synthetic preflight checks PASS; no cleanup glob/rmtree.
+01's earlier service has already freshly verified the349-base; its compact ready
+receipt is retained. Reservations remain996 GB until actual retirement completion.
+
+16:52 **producer admission UNBLOCKED**. Coordinator supplied the genuine Mac
+pool mirror at01:`live-loop/v4/t1-completion-mirror/`, including the hash-pinned
+coordinator receipt `T1-PHASE-A-COMPLETE.json`. All six declared file hashes verified,
+stop_reason="heldout count coverage reached", exit0, empty claims, zero Mac pool/
+qemu processes. Pool counts match641 receipts/64 heldout/1,520 events exactly.
+Owned formal_guard now admits this pool format without fabricating legacy exits;
+12 synthetic rejection tests PASS. Real admission passed01/09/15 (exit0).
+The mirror, including exact frozen registration sidecars, is present09/15 and05.
+No Mac access, collector modification or heldout payload opening.
+
+**Active cache services:**01 wrapper3732926 and03 wrapper3642763, labels
+v4-cache-transport-server-formal-20261008-01r1 /03r1, each full payload re-verification
+before ready, then bounded to1 hour. Wait for ready.json before T7 client launch;
+private tokens/control must stay off05. Source plan remains t7-services-plan.json.
+T6 formal15r1 supervisor3682800 **exit1 before fitting**: missing PREREG.sha256 in
+leased checkout. Copied all original frozen registration docs/sidecars unchanged;
+09 admission3530017 and15 admission3683154 now exit0. Fresh **t6-formal-20261008-15r2**
+launched with the completed prepared dataset, 24x400/seed6107, lifecycle backups04.
+Inspect its log/state/exit before assuming optimizer steps. Failed15r1 retained.
+
+**Duplicate retirement APPROVED by user at16:45 UTC**: retire only349 redundant
+base shards on18 after re-verifying retained01 copies and preserving checksum/
+equality evidence. No raw/unique data or weights may be deleted. Existing18 T11
+supervisor1068869/child1068871 still owns its exclusive workload lock; do not
+interrupt it or bypass the lease wrapper. Retirement has NOT occurred, so current
+reservations stay996 GB. The01 cache-service full verification can provide fresh
+retained-copy evidence. Next retirement execution must wait for safe wrapper access.
+
+Body-threshold candidate preparation added: all nine full-validation body cells
+must be recomputed/authenticated for one epoch, ranked by exact F1/precision/higher
+threshold.29 synthetic ranking/file-backed checks PASS on01 wrapper3730028.
+Still unsealed; real epoch/body/event configuration consistency and calibration
+remain pending. All unmeasured formal/Mac/T5/T8 gates remain BLOCKED.
+
+16:41 queued-trigger protection: phase_watch.py now respects the existing
+terminal stopped.json instead of restarting after schedule deletion. The requested
+--once invocation skipped without a Phase A read; original completion-stop evidence
+preserved.22 synthetic tests pass (01 wrapper3725988, exit0, zero remote calls).
+Only named producer artifact paths were checked on01: phase-a-results/exit remain
+absent at16:40:47. No count poll, data job, fit, or heldout access. Existing genuine
+completion mirror request remains pending; all unmeasured gates remain BLOCKED.
+
+16:38 preparation complete: T6 converter3654138/3654144 **exit0 at16:36:25**,
+all577 matches (513 train/64 validation). Finalization wrapper3680120/3680125
+**exit0 at16:36:49**. Corpus moved atomically to
+`15:/mpac/sdicks02/repos/clasher-lease/data/v4-cache/t6-final-dataset-20261008`;
+original `data/v4-final-preparation-20261008-15r1` remains an owned alias.
+All1,154 internal aliases and metadata pins verified; nothing deleted.
+Conservative budget count13,438,050,625 bytes plus6,294,967,296 bytes reserved
+for the4 GiB JPEG cache and working space =19,733,017,921, within15's20 GB.
+Full-cache577/equality10,420/labels gates are prepared; no active T6/T7 job remains.
+
+The Phase A polling schedule is confirmed absent. Genuine phase-a-results/exit
+still absent on01 at16:37; no new Phase A count poll or heldout payload access.
+The existing request for T1 to mirror authentic producer completion is pending.
+Do not launch formal fits until guard admission succeeds; do not synthesize the
+legacy state/exit. Resume T6 with --prepared-t6 pointing at the new corpus, and
+T7 with the pinned01/03/09 union plan; refresh live leases/caps before launch.
+
+Body scoring preparation added:31 pure synthetic checks and14 file-backed guard
+checks pass on01 (supervisors3718107/3719387, both exit0). The guarded scorer uses
+all authenticated validation frames, amendment03 cleaning, latest past truth
+within5 ticks, unknown-region masks, identity/owner matching and the historical
+3-tile body radius. It reports phantom/drop rates and masked coverage. See
+l1/BODY-SELECTION.md and receipts/formal-20261008/body-scoring-preparation.json.
+No real threshold selected; body-grid selection, final configuration consistency,
+calibration and sealing remain pending. Source/docs/compact test receipts mirrored01;
+operative body scorer/docs staged09/15. No training code or frozen file changed.
+
+Historical16:18 receipt:15 conversion supervisor3654138, child3654144 had301/577 roundtrips and no exit yet. Superseded by the16:36 successful completion above; do not restart it.
+
+16:12 operating allocation correction: include the converted T6 corpus, not
+just its JPEG cache, in15's derived-cache reservation. Current **01=290,18=292,
+16=214,03=126,09=54,15=20 GB**, **996 GB aggregate**.4 GB legacy/headroom covers
+measured01 older T6 corpus1,181,607,045 bytes plus JPEG caches1,014,516,116 bytes.
+All immutable cache roots fit their reduced allocations; no deletion.03 future
+build limit124 GB;16 helper214 GB.15 active conversion output is charged against
+its20 GB and must be moved into data/v4-cache after verified completion, keeping
+an owned original-path alias. Do not move active files. This prevents subsequent
+T6 JPEG allocation from ignoring the converted corpus. At16:10,219/577 roundtrips
+were complete; conversion supervisor3654138/child3654144 remains active.
+
+Latest guarded source/client/lifecycle code staged09/15; source/compact receipts
+and docs mirrored01. Five client-configuration and ten resume-log checks pass;
+no cache services or model fits active. Producer completion mirror remains the
+external admission blocker; a pending question already requests it. No more
+Phase A count polls; schedule deletion is recorded. Frozen PREREG/split untouched.
+
+16:06 final preparation: final03 cache job3631379 **exit0 at15:51:24**.
+All **577 train/validation matches (513/64),1,019,054 frames,466,124,467,164
+payload bytes,1,154 full payload hashes,10,420 exact sampled-frame comparisons,
+zero mismatches** verified.03 shard157/root123,542,915,705 bytes, below127 GB
+operating129 GB reserved. Exact disjoint cache receipts in
+`cache-coverage-577-summary.json`;09 and15 source inventories match all577 pins
+and64 heldout receipt hashes, no heldout payloads. Both staging jobs exit0 at15:48.
+
+Final label audit on15 passed for all577 pins:9,372,031 rows,1,307,222
+contradictions,1,031,202 HP-bearing.544,623 generation disagreements resolved,
+72,684 legitimate parent/child hints,276,020 non-HP hints,413,895 unresolved/masked.
+89,334 rich IDs/81,586 contradictory same-tick joins:zero identity or field
+mismatches.7,525,150 future metadata rows excluded from visibility;272,732 coherent
+visible/nondeploying rows. Same amendment03 cleaner. Final timing audit maps all
+28,123 accepted train/validation events,zero unenclosed;p95 empirical interval
+255.849433 ms,max843.163013 ms. These are timing brackets,not prediction errors.
+
+T6 assets (v2 warm start/v1 detector/HUD/calibration) copied directly01→15 and
+SHA-verified; hashes retained in formal receipts. Preparation15r1 supervisor3652599
+**failed before conversion** due to missing PyAV; label/timing results retained.
+First setup invocation failed because tools/uv is a directory; setup15r2
+supervisor3653819 installed exact home01 version **av16.0.1**, exit0. Resumed only
+conversion in the retained inventory directory with fresh wrapper
+**v4-final-conversion-20261008-15r2**, supervisor **3654138**, two workers.
+Dataset `/mpac/sdicks02/repos/clasher-lease/data/v4-final-preparation-20261008-15r1`.
+At16:05,99 roundtrips complete. Do not duplicate this active conversion. This is
+preparation only; no model update or heldout payload read.
+
+Prepared01/03 read-only cache-service wrapper and09 owned-tunnel client; five
+configuration checks pass. Services not yet started. Formal T7 resume is now
+wired through client/lifecycle/formal_train, preserving genuine admission and
+all source/options. Interrupted log tails are copied intact before restoring
+the checkpoint's contiguous prefix; ten synthetic checks pass (partial line,
+duplicate step,boundary mismatch). New control/journal per resume; same model
+output/checkpoint, no new trial. T6 remains non-resumable after a partial fit.
+04 backup default,30-minute copies,04:30 graceful stop/05:00 exit remain enforced.
+
+The genuine T1 completion report is still absent on01 (checked only explicit
+metadata paths; no further count poll). The pending request asks T1 to mirror
+it. No synthetic completion receipt or admission bypass. Phase A schedule was
+deleted,not replaced. Final fitting,selection,calibration,seal and all unmeasured
+formal/Mac/T5/T8 gates remain BLOCKED until their actual evidence exists.
 
 Coordinator completion instruction **15:45 UTC**: T1 stopped on count coverage
 at15:43:11 UTC. Final641 hub-verified matches,31,068 exact-tick deployments,

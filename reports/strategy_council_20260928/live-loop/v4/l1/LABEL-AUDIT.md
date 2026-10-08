@@ -2,6 +2,27 @@
 
 2026-10-08, before formal training. Heldout media and labels remain unopened.
 
+## Final513-train/64-validation population, 2026-10-08 15:54 UTC
+
+All577 receipt pins match final cache/source staging. Compact evidence
+`receipts/formal-20261008/final-label-audit-summary.json`; raw retained15 with SHA
+`4c91e47028ed16c0d4b6aeb1336e045d6c4a13ab05a13d298787c8243da626f4`.
+
+| Population | Object rows | Contradictions | HP-bearing contradictions |
+|---|---:|---:|---:|
+| Train | 8,424,736 | 1,177,271 | 927,692 |
+| Validation | 947,295 | 129,951 | 103,510 |
+| Total | 9,372,031 | 1,307,222 | 1,031,202 |
+
+Causes:544,623 catalog-generation disagreements resolved,72,684 legitimate
+parent/child hints,276,020 non-HP hints,413,895 unresolved/masked.89,334 rich IDs
+and81,586 contradictory same-tick joins have no identity/field changes.
+7,525,150 future metadata rows excluded from visibility;272,732 coherent visible/
+nondeploying rows. Same cleaner and amendment03; no new label rule. Heldout labels
+remain unopened and will pass through the same split-independent cleaner.
+The outer preparation job subsequently failed on a missing converter dependency;
+that failure does not change these completed checksum-pinned audit results.
+
 ## 15:41 UTC pinned559-match audit, unchanged cleaning rule
 
 Lease15 `v4-label-audit-20261008-15r1`, supervisor3649655, exit0 at15:41:42.

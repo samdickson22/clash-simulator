@@ -1,0 +1,12 @@
+{
+  "run": "main-2026100801",
+  "variant": "main",
+  "seed": 2026100801,
+  "step": 22552,
+  "dev_joint_nll": 0.3458578509943139,
+  "checkpoint": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00022552.pt",
+  "checkpoint_sha256": "2a055934be372fd31436441d402eb864913410911106f10319ba7095f44932c9",
+  "manifest_sha256": "2854ce1f96fdd2fcc04dd0e6ef15dce3435758ec40369a80bba29b1a1e29db13",
+  "train_log_sha256": "52fd899ce75896d7017b1eabb5ebf2dd76cdc413bb0b58b3dce36d2a307c5f00",
+  "complete_sha256": "7cab64dbff0fcba57e3a3cea025bc7f0fa2839f421fef58e938b9e74e3554a9e"
+}

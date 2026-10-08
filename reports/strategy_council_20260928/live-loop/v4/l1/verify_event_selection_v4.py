@@ -33,6 +33,24 @@ def verify_run(args):
     if set(proposal.get('scores_sha256',{}))!=names:raise ValueError('Complete score evidence required')
     pins={n:sha(selection/n) for n in names|{'manifest.json','complete.json','event-selection-proposal.json'}}
     if any(pins[n]!=d for n,d in proposal['scores_sha256'].items()):raise ValueError('Stored scores changed')
+    if 'body_selections' in proposal:
+        bodies=proposal['body_selections']
+        if set(bodies)!={str(i) for i in range(1,25)}:raise ValueError('Complete body evidence required')
+        for e,proof in bodies.items():
+            prefix=f'body-epoch-{int(e):02d}'
+            root=selection/prefix
+            bp=read(root/'body-selection-proposal.json');bc=read(root/'complete.json')
+            body_names={f'body-threshold-{i}.json' for i in range(1,10)}
+            if (proof['proposal_sha256']!=sha(root/'body-selection-proposal.json')
+                    or proof['completion_sha256']!=sha(root/'complete.json')
+                    or proof['ranking']!=bp.get('ranking')
+                    or bc.get('proposal_sha256')!=proof['proposal_sha256']
+                    or bp.get('manifest_sha256')!=sha(root/'manifest.json')
+                    or set(bp.get('scores_sha256',{}))!=body_names
+                    or any(sha(root/n)!=v for n,v in bp['scores_sha256'].items())):
+                raise ValueError('Stored body evidence changed')
+            for n in body_names|{'manifest.json','complete.json','body-selection-proposal.json'}:
+                pins[f'{prefix}/{n}']=sha(root/n)
     if args.output.exists():raise ValueError('Fresh verification output required')
     args.output.mkdir()
     recomputed=select_run(SimpleNamespace(run=args.run,source=args.source,split=args.split,
@@ -49,9 +67,12 @@ def verify_run(args):
         grid_body_threshold=recomputed['body_threshold'],checkpoint_sha256=recomputed['checkpoint_sha256'],
         input_sha256=pins,grid_sha256=sha(args.grid),verifier_sha256=sha(Path(__file__)),
         recomputed_proposal_sha256=sha(args.output/'recomputed-selection/event-selection-proposal.json'),
-        event_selection_verified=True,body_selection_verified=False,selection_seal=False,
+        event_selection_verified=True,body_selection_verified='body_selections' in recomputed,selection_seal=False,
         heldout_payloads_opened=False,heldout_opening_authorized=False,
         pending=['body threshold fitting','combined validation replay','calibration','final selection seal'])
+    if result['body_selection_verified']:
+        result['body_selections'] = recomputed['body_selections']
+        result['pending'].remove('body threshold fitting')
     with (args.output/'event-selection-verified.json').open('x') as f:
         json.dump(result,f,indent=2,allow_nan=False);f.write('\n')
     with (args.output/'complete.json').open('x') as f:

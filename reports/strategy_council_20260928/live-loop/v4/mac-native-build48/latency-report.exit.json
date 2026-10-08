@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+    "-B",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/latency_report.py",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/latency-smoke",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/latency-smoke.json"
+  ],
+  "pid": 18088,
+  "exit_code": 0,
+  "started": 1791483688.739875,
+  "ended": 1791483689.1848729,
+  "wall_seconds": 0.44499778747558594
+}

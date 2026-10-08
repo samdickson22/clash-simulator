@@ -1,0 +1,20 @@
+{
+  "host": "127x13",
+  "label": "t5-main03-dev-memory-validation-20261008",
+  "started_utc": "2026-10-08T15:46:26.148545+00:00",
+  "command": [
+    "bash",
+    "-c",
+    "cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source && export PYTHONPATH=$PWD && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B /mpac/sdicks02/repos/clasher-lease/t5-main03-dev-memory-20261008/validate_main03_dev_memory.py --source /mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source --operations /mpac/sdicks02/repos/clasher-lease/t5-main03-dev-memory-20261008 --output /mpac/sdicks02/repos/clasher-lease/t5-main03-dev-memory-20261008/validation --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz"
+  ],
+  "supervisor_pid": 3577812,
+  "pid": 3577814,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T15:46:49.197517+00:00",
+  "stop_reason": null,
+  "peak_processes": 4,
+  "peak_rss_bytes": 5029199872,
+  "peak_pss_bytes": 22817792,
+  "memory_metric": "owned_tree_pss"
+}

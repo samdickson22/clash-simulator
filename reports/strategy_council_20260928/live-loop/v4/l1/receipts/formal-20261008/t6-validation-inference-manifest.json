@@ -1,0 +1,17 @@
+{
+  "labels_opened": false,
+  "sources": {
+    "/mpac/sdicks02/repos/clasher-lease/data/t6-formal-20261008-15r2/run/validation-inputs.jsonl": "7cfa6dbfd9ce259556391276e4b2754bd6631d1477a5b343be36eb7f94c23d3b",
+    "/mpac/sdicks02/repos/clasher-lease/data/t6-formal-20261008-15r2/run/model/last.pt": "a3860deb608483f05e43c14608cb307d8d807bb9fa39f5f672f3fd91657f4f40",
+    "/mpac/sdicks02/repos/clasher-lease/data/t6-formal-20261008-15r2/run/model/hud.npz": "704246bff0263b2d70170c79f574c234bfd188dcf73a1bae81d0aa18dccc3bdc",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/l1/v1/model/detector/weights/best.pt": "8b6fde6fc402e2b075cdd9e5a92a9486eb738b0428912b7c1975aa12491748a5",
+    "/mpac/sdicks02/repos/clasher-lease/repo/src/clasher/vision/l1.py": "a753af7a0fc7733ec25b49319b35533408e30da6d3da6b9c91066c0b192252b4",
+    "/mpac/sdicks02/repos/clasher-lease/repo/src/clasher/vision/l1_perception.py": "8b8f61151e301b8092f1c3f50919e32379335d95585c59af2de884993e3ef13d",
+    "/mpac/sdicks02/repos/clasher-lease/repo/src/clasher/vision/l1_temporal.py": "c89ec602c13c13e2a6d9cfff26acddd3449fa2458d54f6e06e6af0eabf097dbc",
+    "/mpac/sdicks02/repos/clasher-lease/repo/src/clasher/vision/l1_events_v2.py": "bcd899c07e25bd5025455e0cb20b9878f4e4b4884861c4c9fa5ee405f7c57cf6",
+    "/mpac/sdicks02/repos/clasher-lease/repo/src/clasher/vision/l1_events_v3.py": "34fdd2ec1b9c96587ed57f1b1de25df9c345e7de8baf738d86f71ef829ba3dd6",
+    "/mpac/sdicks02/repos/clasher-lease/repo/src/clasher/vision/l1_hud_v3.py": "c4363d8ba9e6c4a435882c642e7a312c5b49b552f56100c6767858f9b823cfc7",
+    "/mpac/sdicks02/repos/clasher-lease/repo/src/clasher/vision/l1_offline.py": "b43f11e1ec8a06a13de2e588d21b90c3bb47155338b9c0ec5311d656d0464979",
+    "/mpac/sdicks02/repos/clasher-lease/repo/scripts/infer_l1_stream_v3.py": "05b086e7735a5f04f7acf7840e38bf2a69dba8758f3aff98c10d39992bce292e"
+  }
+}

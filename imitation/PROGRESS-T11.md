@@ -1,29 +1,78 @@
 # T11 v2 store and training
 
-2026-10-08 13:34 UTC: **STORE AND BOTH COPIES PASS; BOTH FRESH SEEDS TRAINING.**
+2026-10-08 18:34 UTC: **BOTH SEEDS TRAINING; LATEST CHECKPOINTS VERIFIED OFF-HOST ON04 (SEED21 STEP4000 /SEED22 STEP4000).**
 No held-out scoring, commits or data deletions. Training is not complete.
+
+Coordinator backup instruction14:45Z implemented independently of training:
+127x04 pulls every60 seconds with `rsync -c`, source sender nice10, and
+independently verifies destination SHA256 against the source hash. Every new
+periodic, epoch and best-dev `.pt` is retained under
+`/mpac/sdicks02/repos/clasher-checkpoints/v2/main-SEED/SHA256/FILENAME`.
+No deletion, no checkpoint bytes on05, and no T4/T5 or frozen-training edits.
+Both initial step1000 copies PASS at14:48:21Z/14:48:23Z; their hashes remain
+in the step1000 audit and resume receipts. Latest checkpoint hashes are below.
+Their full CPU state audits on04 also PASS:99 optimizer parameter states,
+scheduler step1000, epoch0/cursor8,192,000, model/EMA and all RNG/state sections
+present and fingerprinted. Receipts `t11/receipts/checkpoint-audit-2026100821-step1000.json`
+and matching seed22; original training continues untouched on16/18.
+
+Detached home04 backup label `t11-v2-checkpoint-backups-20261008-v1`, launcher
+2520787 /time2520799 /Python2520800, all nice10. Log/exit/PID files under
+`/mpac/sdicks02/jobs/clasher/<label>.{log,exit,pid}`. Code
+`clasher-checkpoints/v2/operations/backup_checkpoints.py`, SHA256
+`148aeb4d68b6e0b2047f718e57bfed410212e9fcc3d8f981b409e8fd959f1452`.
+Authoritative state `127x04:/mpac/sdicks02/repos/clasher-checkpoints/v2/backup-state.json`
+mirrors each poll to `t11/receipts/backup-state.json` on01/05. At18:34:15Z
+sources healthy, no errors; last successful probes18:34:13Z/18:34:15Z,
+with checkpoint ages35.5/59.7 minutes at those respective probes. Home04
+backup Python2520800 independently verified alive. Current source checkpoint
+inventories match the backed-up files: no missing epoch or periodic files. Inspect
+this receipt each continuation; the same-thread schedule now requires it.
+The puller checks live leases/reclaims, source PSS/process/nice/GPU headroom,
+04 console/process/disk capacity, and stops leased-source access by05:00Z.
+Adapt sources/destination supervision after home migration; do not duplicate
+the running puller. After verified exit only, its exact restart command on04
+is `cd /mpac/sdicks02/repos/clasher && bash reports/strategy_council_20260928/fleet/fleet_run.sh t11-v2-checkpoint-backups-20261008-r2 python3 -B /mpac/sdicks02/repos/clasher-checkpoints/v2/operations/backup_checkpoints.py`.
+
+Recovery-window limitation: frequent copy checks do not create newer training
+state. The step1000→2000 intervals were75.3 minutes for seed21 and66.7
+minutes for seed22. Thus the
+requested hard≤1h training-loss bound is not established by backup frequency
+alone. All available checkpoints are copied promptly; frozen training cadence
+has not been silently changed. Report checkpoint age separately from last
+successful backup probe. CPU off-host audit label
+`t11-v2-offhost-audit-20261008-step1000-v1`, launcher2522124, exited0 at14:50:52Z.
 
 Current training (supersedes the historical copy/build notes below):
 
-| Host | Run label | Supervisor / trainer / loader PIDs | Start UTC | Step / rows at13:34:19Z | Loader-inclusive rows/s |
+| Host | Run label | Supervisor / trainer / loader PIDs | Start UTC | Step / rows at18:34:30Z | Loader-inclusive rows/s |
 |---|---|---|---|---|---:|
-|127x16|t11-v2-main-2026100821-v1|3555507 /3555509 /3555662|13:08:19Z|299 /2,449,408|1,610.4|
-|127x18|t11-v2-main-2026100822-v1|1068869 /1068871 /1068993|13:07:40Z|356 /2,916,352|1,868.2|
+|127x16|t11-v2-main-2026100821-v1|3555507 /3555509 /3555662|13:08:19Z|4509 /36,937,728|1,891.3|
+|127x18|t11-v2-main-2026100822-v1|1068869 /1068871 /1068993|13:07:40Z|4920 /40,304,640|2,059.3|
 
 Each PID independently verified by UID, command line, parent and start ticks
-in `t11/receipts/status-127x16-20261008T1334Z.json` and matching127x18.
+in `t11/receipts/status-127x16-20261008T1834Z.json` and matching127x18
+(actual snapshots18:34:30Z).
 Both are fresh registered seeds, one per GPU, micro7168/effective8192,
 one unchanged T5 bounded loader, six epochs maximum, dev patience3.
-Initial train loss declines9.9553→7.5264 and9.7748→7.5218, respectively;
-last20-step mean losses7.5828/7.4941. Both remain in epoch0 and progressed
-138/150 steps since13:24:25Z. These are weighted minibatch losses, not dev NLL. No full epoch/dev
-curve, selected checkpoint or checkpoint file yet (first regular save step1000).
+Initial train loss declines9.9553→5.2775 and9.7748→5.3847, respectively;
+last20-step mean losses5.3830/5.2934. Both remain in epoch0 and progressed
+143/154 steps since18:24:29Z. These are weighted minibatch losses, not dev NLL.
+No full epoch/dev curve or selected checkpoint. Seed21 saved step4000 at
+17:58:44Z, verified on04 at17:59:27Z. Seed22 saved step4000 at17:34:34Z,
+verified on04 at17:35:14Z. All old saves retained; no restart. The seed21
+step3000→4000 interval was70.3 minutes, still exceeding one hour.
 
-At13:34:19Z: all resource/live-lease checks PASS. Three borrower processes
-per host, all nice10; total PSS19,423,000,576/19,622,871,040 bytes below64GB.
+At18:34:30Z: all resource/live-lease checks PASS. Three borrower processes
+per host, all nice10; total PSS14,622,082,048/20,276,871,168 bytes below64GB.
 GPU free17,340/17,252MiB, above8192MiB. No reclaim/refusal, console user,
 stop reason or exit receipt. Leased deadline argument independently verified
 `--stop-at 2026-10-09T04:20:00Z`; must checkpoint AND exit before05:00Z.
+The intermediate15:04:28Z snapshot also passed, with four borrower processes
+on16: the additional PID3580964 was a nice10 rsync sender for `data/v4-cache/`,
+outside the T11 training tree. It was absent at15:08:28Z; no action taken.
+Hub and05 progress/pipeline hashes matched before this update. No duplicate
+jobs, migration, recipe changes or held-out scoring during this continuation.
 
 Observed loader-inclusive throughput is materially below the T4 qualification;
 do not report optimizer-step throughput as achieved training throughput.
@@ -46,9 +95,34 @@ Copy receipt SHA256 (16 then18):
 Run directories: `/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/`
 `main-2026100821` (16) and `main-2026100822` (18). Wrapper logs/states/exits:
 `/mpac/sdicks02/repos/clasher-lease/jobs/<run-label>.{log,state.json,exit.json}`.
-Frozen source: sibling `source/`; copy/store paths unchanged. Resume is NOT
-currently executable because no checkpoint exists yet. On first durable save,
-record its SHA and a concrete `--resume` command using the exact argv above.
+Frozen source: sibling `source/`; copy/store paths unchanged. Seed21 latest checkpoint
+`main-2026100821/step-00004000.pt`,36,471,954 bytes, SHA256
+`7a3e6112bca24bf0c43f45750baa8ad51d59722faceed492937364153c9d4a29`.
+Seed22 latest checkpoint
+`main-2026100822/step-00004000.pt`,36,471,890 bytes, SHA256
+`a95f9556f1f8c41c10537c6d9c0f62323edb5a69c5a994d7260c0a5986edef9f`.
+Source/destination checksum receipts are `t11/receipts/backup-2026100821-step4000.json`
+and `t11/receipts/backup-2026100822-step4000.json`. All earlier checkpoints and
+step1000 full-state audits remain retained; latest copies are SHA-verified, with fresh full-state
+audits required before resume.
+Exact checkpoint-specific argv/wrapper command and preconditions are recorded
+in `t11/receipts/resume-2026100821-step4000.json` and
+`t11/receipts/resume-2026100822-step4000.json`;
+execute_now=false. The exact commands are also printed at the bottom of this
+file. Supersede them with the latest save and use only after verified prior exit.
+Full state inspection of both step1000 off-host copies now PASS (see above).
+The T11-only CPU `checkpoint_evidence.py`
+auditor passed synthetic typed-fingerprint checks on01; it fingerprints every
+model/EMA/optimizer/scheduler/RNG/state byte and validates the frozen recipe.
+Its attempted separate lease job `t11-checkpoint-audit-2026100822-step1000-v1`
+(supervisor1081741) exited1 BEFORE creating a child: the unchanged lease
+wrapper's host-workload.lock is held by the active trainer. This is not a
+training failure. Failure receipt retained as
+`t11/receipts/checkpoint-audit-2026100822-step1000-v1-exit.json`. Do not retry or
+bypass the exclusive lock. The coordinator's later explicit off-host backup
+authorization allowed CPU audits of the backed-up copies on04 without
+touching either active trainer. Only a read-only SHA check ran on leased
+sources; the successful audits ran solely on04.
 Never restart these active runs. Migration requires verified old exit plus
 direct-LAN checksummed optimizer/scheduler/EMA/RNG/sampler state and logs to
 available home01/04/08; remove only the leased stop-at argument on home.
@@ -280,3 +354,19 @@ First nextRunAt2026-10-08T12:13:53.490Z. It owns monitoring, failure recovery,
 lease migration, selection, embargo release and final gate reporting. Disable
 after final completion or an explicitly reported unresolved external blocker.
 It does not replace the fleet coordinator's separate heartbeat.
+
+<!-- T11 exact recovery commands -->
+
+Exact lease-local recovery commands for current durable files (seed21 step4000; seed22 step4000). **Do not execute while either original run is active.** Require verified old wrapper exit and all original tree PIDs gone, latest-checkpoint choice, state audit, frozen-source/checkpoint SHA checks and fresh resource/lease preflight. These preserve the original recipe and output directory. Later saves supersede these checkpoint paths. On home migration, derive commands with verified home paths and remove the leased stop timer; never launch here after04:20Z.
+
+127x16 / seed2026100821; checkpoint SHA256 `7a3e6112bca24bf0c43f45750baa8ad51d59722faceed492937364153c9d4a29`:
+
+```bash
+source /mpac/sdicks02/repos/clasher-lease/env.sh && bash /mpac/sdicks02/repos/clasher-lease/run.sh t11-v2-main-2026100821-resume-step4000-r1 bash -c 'cd /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source && exec env PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t11.train --freeze /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source/imitation/gate-a-v2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/T11-STORE-PASS.json --output /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100821 --seed 2026100821 --epochs 6 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100821/step-00004000.pt'
+```
+
+127x18 / seed2026100822; checkpoint SHA256 `a95f9556f1f8c41c10537c6d9c0f62323edb5a69c5a994d7260c0a5986edef9f`:
+
+```bash
+source /mpac/sdicks02/repos/clasher-lease/env.sh && bash /mpac/sdicks02/repos/clasher-lease/run.sh t11-v2-main-2026100822-resume-step4000-r1 bash -c 'cd /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source && exec env PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t11.train --freeze /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source/imitation/gate-a-v2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/T11-STORE-PASS.json --output /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822 --seed 2026100822 --epochs 6 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z --resume /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822/step-00004000.pt'
+```

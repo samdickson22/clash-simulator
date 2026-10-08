@@ -1,0 +1,227 @@
+{
+  "host": "127x18",
+  "at": "2026-10-08T17:14:30.180394+00:00",
+  "seed": 2026100822,
+  "label": "t11-v2-main-2026100822-v1",
+  "output": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822",
+  "lease": {
+    "project": "clasher",
+    "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+    "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+    "start_utc": "2026-10-08T05:29:34.584227+00:00",
+    "expected_end_utc": "2026-10-09T05:30Z",
+    "max_workers": 96,
+    "gpu": true,
+    "shared": true,
+    "cap_raised_utc": "2026-10-08T06:50Z",
+    "cap_raised_by": "roader coordinator f552b138 (speedup job finished; roader keeps <=8 light procs)"
+  },
+  "state": {
+    "host": "127x18",
+    "label": "t11-v2-main-2026100822-v1",
+    "started_utc": "2026-10-08T13:07:40.684451+00:00",
+    "command": [
+      "bash",
+      "-c",
+      "cd /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source && exec env PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t11.train --freeze /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source/imitation/gate-a-v2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/T11-STORE-PASS.json --output /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822 --seed 2026100822 --epochs 6 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z"
+    ],
+    "supervisor_pid": 1068869,
+    "pid": 1068871,
+    "checked_utc": "2026-10-08T17:13:59.228115+00:00",
+    "processes": 3,
+    "rss_bytes": 18252480512,
+    "rss_sum_bytes": 18252480512,
+    "pss_bytes": 11456220160,
+    "memory_metric": "owned_tree_pss",
+    "pss_cap_bytes": 64000000000,
+    "stop_reason": null
+  },
+  "exit": null,
+  "copy_state": {
+    "host": "127x18",
+    "label": "t11-v2-store-copy-127x18-v1",
+    "started_utc": "2026-10-08T12:31:21.053896+00:00",
+    "command": [
+      "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+      "-B",
+      "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/operations/copy_store.py"
+    ],
+    "supervisor_pid": 1056060,
+    "pid": 1056062,
+    "checked_utc": "2026-10-08T13:06:44.291172+00:00",
+    "processes": 2,
+    "rss_bytes": 2880978944,
+    "rss_sum_bytes": 2880978944,
+    "pss_bytes": 2873470976,
+    "memory_metric": "owned_tree_pss",
+    "pss_cap_bytes": 64000000000,
+    "stop_reason": null
+  },
+  "copy_exit": {
+    "host": "127x18",
+    "label": "t11-v2-store-copy-127x18-v1",
+    "started_utc": "2026-10-08T12:31:21.053896+00:00",
+    "command": [
+      "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+      "-B",
+      "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/operations/copy_store.py"
+    ],
+    "supervisor_pid": 1056060,
+    "pid": 1056062,
+    "exit_code": 0,
+    "status": "pass",
+    "finished_utc": "2026-10-08T13:07:18.743446+00:00",
+    "stop_reason": null,
+    "peak_processes": 5,
+    "peak_rss_bytes": 3985694720,
+    "peak_pss_bytes": 2887212032,
+    "memory_metric": "owned_tree_pss"
+  },
+  "copy": {
+    "passed": true,
+    "host": "127x18",
+    "finished_at": "2026-10-08T13:07:16.975016+00:00",
+    "files": 259,
+    "bytes": 243896560373,
+    "store_manifest_sha256": "7180964c1d470807a97ad7a990ac8eb145fb25d15f1c95edf165b3f87743d20f",
+    "store_receipt_sha256": "0e14fefa47388dc0f8a436d2c6415224ac30af1cc3aed98a9092485deaf4b524",
+    "manifest_sha256": "a4801df32d4a546ed7df07faf070a138d4075cf4db6c193d38373f9194ff2e44",
+    "prereg_sha256": "115ab2f62c999d96b908855ab6e45bade4d9573308a222659821f65a76e42749",
+    "all_sha256_equal": true,
+    "total_wall_seconds": 2155.857519036159,
+    "eval_scored": false
+  },
+  "complete": null,
+  "borrower_processes": [
+    {
+      "pid": 1068869,
+      "ppid": 1,
+      "start_ticks": 188674249,
+      "nice": 10,
+      "cpu_ticks": 66616,
+      "command": "/usr/bin/python3 /mpac/sdicks02/repos/clasher-lease/lease_watch.py t11-v2-main-2026100822-v1 bash -c cd /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source && exec env PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t11.train --freeze /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source/imitation/gate-a-v2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/T11-STORE-PASS.json --output /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822 --seed 2026100822 --epochs 6 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z ",
+      "pss_bytes": 7222272
+    },
+    {
+      "pid": 1068871,
+      "ppid": 1068869,
+      "start_ticks": 188674255,
+      "nice": 10,
+      "cpu_ticks": 280769,
+      "command": "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t11.train --freeze /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source/imitation/gate-a-v2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/T11-STORE-PASS.json --output /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822 --seed 2026100822 --epochs 6 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z ",
+      "pss_bytes": 5687481344
+    },
+    {
+      "pid": 1068993,
+      "ppid": 1068871,
+      "start_ticks": 188678754,
+      "nice": 10,
+      "cpu_ticks": 988099,
+      "command": "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t11.train --freeze /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source/imitation/gate-a-v2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/T11-STORE-PASS.json --output /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822 --seed 2026100822 --epochs 6 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z ",
+      "pss_bytes": 8884442112
+    }
+  ],
+  "verified_processes": [
+    {
+      "pid": 1068869,
+      "ppid": 1,
+      "start_ticks": 188674249,
+      "nice": 10,
+      "cpu_ticks": 66616,
+      "command": "/usr/bin/python3 /mpac/sdicks02/repos/clasher-lease/lease_watch.py t11-v2-main-2026100822-v1 bash -c cd /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source && exec env PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t11.train --freeze /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source/imitation/gate-a-v2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/T11-STORE-PASS.json --output /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822 --seed 2026100822 --epochs 6 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z ",
+      "pss_bytes": 7222272
+    },
+    {
+      "pid": 1068871,
+      "ppid": 1068869,
+      "start_ticks": 188674255,
+      "nice": 10,
+      "cpu_ticks": 280769,
+      "command": "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t11.train --freeze /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source/imitation/gate-a-v2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/T11-STORE-PASS.json --output /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822 --seed 2026100822 --epochs 6 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z ",
+      "pss_bytes": 5687481344
+    },
+    {
+      "pid": 1068993,
+      "ppid": 1068871,
+      "start_ticks": 188678754,
+      "nice": 10,
+      "cpu_ticks": 988099,
+      "command": "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t11.train --freeze /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source/imitation/gate-a-v2/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/inputs/T11-STORE-PASS.json --output /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822 --seed 2026100822 --epochs 6 --batch-size 8192 --microbatch 7168 --workers 1 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z ",
+      "pss_bytes": 8884442112
+    }
+  ],
+  "console_users": 0,
+  "who": "",
+  "gpu": "17252, 31430, 0",
+  "borrower_pss_bytes": 14579145728,
+  "process_cap": 96,
+  "checks": {
+    "live_lease": true,
+    "process_cap": true,
+    "pss_cap": true,
+    "nice": true,
+    "gpu_headroom": true
+  },
+  "destination_bytes": 243896580853,
+  "dev_curve": [],
+  "first_step": {
+    "event": "step",
+    "epoch": 0,
+    "cursor": 8192,
+    "step": 1,
+    "best_dev": null,
+    "bad_epochs": 0,
+    "rows": 8192,
+    "loss": 9.774823188781738,
+    "gate": 0.7648075222969055,
+    "card": 1.2634514570236206,
+    "tile": 5.5031514167785645,
+    "intent_card": 2.087651252746582,
+    "hazard": 6.886001110076904,
+    "grad_norm": 9.346522331237793,
+    "lr": 3e-07,
+    "rows_per_second_step": 3430.720925977699,
+    "rows_per_second_including_loader": 429.1514100994619,
+    "gpu_peak_allocated_mib": 27032.205078125,
+    "gpu_peak_reserved_mib": 27712.0
+  },
+  "last_step": {
+    "event": "step",
+    "epoch": 0,
+    "cursor": 30244864,
+    "step": 3692,
+    "best_dev": null,
+    "bad_epochs": 0,
+    "rows": 30244864,
+    "loss": 5.51165771484375,
+    "gate": 0.1276247501373291,
+    "card": 1.0688396692276,
+    "tile": 3.3818655014038086,
+    "intent_card": 1.9631547927856445,
+    "hazard": 1.7701568603515625,
+    "grad_norm": 2.8908448219299316,
+    "lr": 0.00029892939967123136,
+    "rows_per_second_step": 12420.49057264129,
+    "rows_per_second_including_loader": 2047.6414162796332,
+    "gpu_peak_allocated_mib": 27057.56298828125,
+    "gpu_peak_reserved_mib": 30082.0
+  },
+  "last_20_step_loss_mean": 5.400378084182739,
+  "checkpoints": [
+    {
+      "path": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822/step-00001000.pt",
+      "bytes": 36471890,
+      "mtime": 1791468974.000127
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822/step-00002000.pt",
+      "bytes": 36471890,
+      "mtime": 1791472978.6772401
+    },
+    {
+      "path": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822/step-00003000.pt",
+      "bytes": 36471890,
+      "mtime": 1791476943.7670717
+    }
+  ]
+}

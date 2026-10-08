@@ -1,0 +1,49 @@
+{
+  "new": {
+    "count": 58,
+    "p50": 187.76122480630875,
+    "p95": 264.37722019618377,
+    "p99": 269.20210615266114
+  },
+  "historical_all_matches": {
+    "count": 228,
+    "p50": 186.0601652879268,
+    "p95": 284.9186292150989,
+    "p99": 333.9485199865884
+  },
+  "historical_same_matches": {
+    "count": 58,
+    "p50": 173.87194908224046,
+    "p95": 291.9297539512627,
+    "p99": 341.51848381152377
+  },
+  "delta_vs_historical_all_ms": {
+    "p50": 1.7010595183819532,
+    "p95": -20.541409018915147,
+    "p99": -64.74641383392725
+  },
+  "delta_vs_historical_same_matches_ms": {
+    "p50": 13.889275724068284,
+    "p95": -27.552533755078912,
+    "p99": -72.31637765886262
+  },
+  "new_active_search": {
+    "count": 183,
+    "p50": 56.60224985331297,
+    "p95": 79.36866253148764,
+    "p99": 101.48393046110881
+  },
+  "historical_same_matches_active_search": {
+    "count": 177,
+    "p50": 54.96933404356241,
+    "p95": 78.0780330765992,
+    "p99": 101.81765506044054
+  },
+  "original_native_sha256": "3ae315d98fafd01cf2c0651cde05b6e9f1b6105adbbf97c7f685565fca61aa7a",
+  "smoke_native_sha256": "9263a8f72d18c202cf490e2e3f8fec214243d51ef91104990fb049458f831180",
+  "timing_note": "Smoke uses the configured 27-tick total delay; original 228-submission calibration used provisional 28 ticks. Short smoke with a different sample count and scheduling; not a controlled binary-only speedup or full latency requalification.",
+  "configured_delay_ticks": 27,
+  "observed_diagnostic_delays": [
+    27
+  ]
+}

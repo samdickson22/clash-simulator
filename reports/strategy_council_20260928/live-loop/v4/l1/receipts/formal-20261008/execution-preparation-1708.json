@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-08T17:09:26.595583+00:00",
+  "source_sha256": {
+    "retire_duplicates_v4.py": "27441e593bd39b0f0fae91226d2030caeea4aaf206975febf601632713cde945",
+    "test_retire_duplicates_v4.py": "a529489adac5b3515f4fb9cad1452748a35f4afc4a65c76f42c119177770e578",
+    "wait_formal_services.py": "3303a93d40c87af44dc5dcd6b1b9a64696d131db2085045c3724a9ee50d0fc9b",
+    "body_selection_v4.py": "71ef4ac6a5abceb06317d020713955315b597f7aa50e077b26d6d5698d86b705",
+    "test_body_selection_v4.py": "7c9bbd4a73224097ee3bf0b37280acfdeea66a32f8313527d335a1f8309e562f"
+  },
+  "retirement_preflight_tests": 8,
+  "body_selection_tests": 29,
+  "retirement_queue_pid": 3741187,
+  "retirement_executed": false,
+  "heldout_payloads_opened": false
+}

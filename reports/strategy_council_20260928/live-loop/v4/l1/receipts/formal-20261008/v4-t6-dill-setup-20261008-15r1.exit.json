@@ -1,0 +1,25 @@
+{
+  "host": "127x15",
+  "label": "v4-t6-dill-setup-20261008-15r1",
+  "started_utc": "2026-10-08T17:13:46.112441+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/tools/uv/uv",
+    "pip",
+    "install",
+    "--python",
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "dill==0.4.0"
+  ],
+  "supervisor_pid": 3697012,
+  "pid": 3697017,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T17:13:47.237169+00:00",
+  "stop_reason": null,
+  "peak_processes": 2,
+  "peak_rss_bytes": 38670336,
+  "peak_sampled_pss_bytes": 32905216,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "effective_process_cap": 96
+}

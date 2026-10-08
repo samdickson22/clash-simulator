@@ -1,15 +1,20 @@
 {
   "at": "2026-10-08T12:45:04.076932+00:00",
-  "status": "FIVE_FRESH_R2_ENTRANTS_ACTIVE_WITH_DOCUMENTED_TECHNICAL_CONTINUATIONS",
+  "status": "TWO_ACTIVE_THREE_COMPLETE",
   "all_start_gates": "PASS",
   "launch_receipt": "launches-r2-fresh.json",
   "manifest_sha256": "2854ce1f96fdd2fcc04dd0e6ef15dce3435758ec40369a80bba29b1a1e29db13",
   "heldout_inference_started": false,
   "next_check": "2026-10-08T12:54:34Z",
-  "latest_monitor": "status-20261008T1334Z.json",
+  "latest_monitor": "imitation/t5/receipts/status-20261008T1835Z.json",
   "duplicate_trigger_checked_at": "2026-10-08T11:07:35.531795+00:00",
   "duplicate_trigger_action": "Historical10:55 trigger superseded by coordinator fresh11:04 starts and PSS decision. Current healthy jobs retained; no duplicate work.",
-  "checked_at": "2026-10-08T13:34:58.299876+00:00",
-  "active_runs": "active-runs-20261008T1308Z.json",
-  "next_poll": "2026-10-08T13:14:39.997Z"
+  "checked_at": "2026-10-08T18:35:13.998528+00:00",
+  "active_runs": "imitation/t5/receipts/active-runs-20261008T1548Z.json",
+  "next_poll": "2026-10-08T13:14:39.997Z",
+  "completed_runs": [
+    "main-2026100801",
+    "main-2026100803",
+    "noD1-2026100801"
+  ]
 }

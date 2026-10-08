@@ -1,0 +1,22 @@
+{
+  "schema": "clasher.t5.main03-dev-memory-operational-freeze.v1",
+  "at": "2026-10-08T15:47:38.687364+00:00",
+  "files": {
+    "main03_dev_memory.py": "3d06d4d3eb8d77d1bd6a7a95511d8c9581c17538421d5bff65dce3ae56a44886",
+    "validate_main03_dev_memory.py": "7b01b3ff169bd9fc489841e42983c8138d8767460660ab3b24adfc8f64b277e6",
+    "main03-dev-memory-20261008.md": "1b46fd087ae820065b380739f0794181bf30b806bd56d29183332ff91555a234",
+    "validation-PASS.json": "49861fa426c8a8672054c750ce78db68f1928dfb53972bfe0a9a6bc165da508b"
+  },
+  "allocator_fraction": 0.75,
+  "empty_cache_before_after_dev": true,
+  "eval_batch_unchanged": 1024,
+  "hosts": {
+    "127x13": {
+      "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source",
+      "output": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803",
+      "variant": "main",
+      "seed": 2026100803
+    }
+  },
+  "parent_manifest_sha256": "2854ce1f96fdd2fcc04dd0e6ef15dce3435758ec40369a80bba29b1a1e29db13"
+}

@@ -42,19 +42,33 @@ def main():
     p=argparse.ArgumentParser()
     for name in ('phase-state','phase-exit','output','control','services'):
         p.add_argument('--'+name,type=Path,required=True)
+    p.add_argument('--resume',action='store_true')
+    p.add_argument('--replay-plan',type=Path)
+    p.add_argument('--completed-run',type=Path)
     a=p.parse_args();root=Path('/mpac/sdicks02/repos/clasher-lease');code=Path(__file__).parent
     if socket.gethostname().split('.')[0]!='127x09' or os.environ.get('CLASHER_LEASE_ROOT')!=str(root):
         raise ValueError('Assigned09 lease wrapper required')
     for q in (a.output,a.control):
-        if root not in q.resolve().parents or q.exists():raise ValueError('Fresh lease-local paths required')
+        if root not in q.resolve().parents:raise ValueError('Lease-local paths required')
+    if a.control.exists() or (a.output.exists()!=a.resume):raise ValueError('Fresh control and matching fresh/resume output required')
     source=root/'data/v4-matches';split=code.parent/'split.json'
     admission=admit(a.phase_state,a.phase_exit,source,split,code)
+    if (a.replay_plan is None)!=(a.completed_run is None) or (a.replay_plan is not None and a.resume):
+        raise ValueError('Replay requires completed run and plan, never training resume')
+    if a.completed_run is not None:
+        if root not in a.completed_run.resolve().parents:raise ValueError('Lease-local completed run required')
+        from validation_admission_v4 import validate_run
+        validate_run(a.completed_run,source,split,a.phase_state,a.phase_exit)
+        from validation_batch_v4 import batch_cells
+        batch_cells(json.loads(a.replay_plan.read_text()))
+    if a.resume and json.loads((a.output/'admission.json').read_text())!=admission:
+        raise ValueError('Resume admission changed')
     plan=json.loads(a.services.read_text())
     if {r['host'] for r in plan['remote']}!={'127x01','127x03'} or len(plan['remote'])!=2:
         raise ValueError('Only the two pinned home services allowed')
     a.control.mkdir();proof=a.control/'admission.json'
     proof.write_text(json.dumps(admission,indent=2)+'\n')
-    tunnels=[];child=None;stopped=False
+    tunnels=[];service_deadlines=[];child=None;stopped=False
     def stop(*unused):
         nonlocal stopped
         stopped=True
@@ -78,6 +92,12 @@ def main():
                 subprocess.run(['scp','-q','-o','ConnectTimeout=10',host+':'+str(path),str(dst)],check=True,timeout=30)
                 if sha(dst)!=expected:raise ValueError('Service evidence changed')
             ready=json.loads((folder/'ready.json').read_text())
+            if a.replay_plan is not None:
+                # These owned home services are started with max-seconds3600.
+                # File mtime is taken on the producer host, before transfer.
+                stamp=subprocess.check_output(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10',host,
+                    'stat','-c','%Y',str(jobs/(label+'.ready.json'))],text=True,timeout=20)
+                service_deadlines.append(int(stamp.strip())+3600)
             with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
             tunnel=subprocess.Popen(['ssh','-N','-o','BatchMode=yes','-o','ExitOnForwardFailure=yes',
                 '-o','ServerAliveInterval=15','-o','ServerAliveCountMax=2',
@@ -97,6 +117,13 @@ def main():
         command=[sys.executable,'-B',str(code/'lease_lifecycle_v4.py'),'--arm','t7',
             '--phase-state',str(a.phase_state),'--phase-exit',str(a.phase_exit),'--output',str(a.output),
             '--journal',str(a.control/'backups'),'--backup-host','127x04','--cache-union',str(runtime)]
+        if a.replay_plan is not None:
+            command=[sys.executable,'-B',str(code/'validation_batch_v4.py'),
+                '--run',str(a.completed_run),'--source',str(source),'--split',str(split),
+                '--phase-state',str(a.phase_state),'--phase-exit',str(a.phase_exit),
+                '--output',str(a.output),'--plan',str(a.replay_plan),'--cache-union',str(runtime),
+                '--journal',str(a.control/'backups'),'--service-deadline',str(min(service_deadlines))]
+        if a.resume:command.append('--resume')
         if stopped:raise SystemExit(75)
         child=subprocess.Popen(command);rc=child.wait()
         (a.control/'client-exit.json').write_text(json.dumps(dict(code=rc,stopped=stopped,

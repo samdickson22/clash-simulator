@@ -1,0 +1,5 @@
+{
+  "pid": 96953,
+  "command": ".venv/bin/python -B reports/strategy_council_20260928/live-loop/v4/mac-native-build48/post_checks.py\n",
+  "reason": "Add missing frozen pilot checkpoint and retry recorded identity; waiting wrapper stopped before work"
+}

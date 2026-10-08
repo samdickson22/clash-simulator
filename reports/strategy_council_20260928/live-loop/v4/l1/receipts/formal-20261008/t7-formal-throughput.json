@@ -1,0 +1,38 @@
+{
+  "utc": "2026-10-08T17:34:00Z",
+  "steps": 9600,
+  "training_matches": 513,
+  "parameters": {
+    "total": 2424687,
+    "backbone": 2086560,
+    "body": 42452,
+    "hud": 78729,
+    "temporal": 216946
+  },
+  "uncached_historical_windows_per_second": 1.282,
+  "cached_formal_windows_per_second": 13.862772469016189,
+  "speedup": 10.813395061635093,
+  "gpu_only_windows_per_second": 19.769085717571166,
+  "fraction_of_gpu_only": 0.7012348809178705,
+  "encoded_frames_per_second": 316.30537148113865,
+  "training_loop_seconds": 692.502168772975,
+  "loader_wait_and_transfer_ms": 10.105861732105648,
+  "checkpoint_sha256": "e5d1acd124158dc9410a1f10bb1aaa51b180bc2abd9547da27e66a8da62f7e9c",
+  "offhost_backup": {
+    "status": "verified",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/repos/clasher-v4-training/checkpoint-mirrors/127x09/t7-formal-20261008-09r2/20261008T173151750416Z",
+    "manifest_sha256": "3b231cb91aa0d1908f5d5138e343485ff01b596fd7bb5445302534525e9aed0c",
+    "verification": {
+      "files": 625,
+      "verified": true
+    },
+    "checkpoint_count": 25,
+    "utc": "2026-10-08T17:31:52.370166+00:00",
+    "heldout_payloads_opened": false
+  },
+  "heldout_payloads_opened": false,
+  "selection_seal": false,
+  "quality_gates": "BLOCKED",
+  "timing_scope": "Full9600-step training loop including cache loading/logging/checkpoint writes; excludes initial full-SHA verification/admission and final backup. Historical uncached comparison used another population; same-run GPU ratio shown separately."
+}

@@ -16,7 +16,7 @@ def counts(row):
     return values
 
 
-def rank_validation_grid(cells):
+def rank_validation_grid(cells, body_rankings=None):
     cells = list(cells)
     if len(cells) != 24*9:
         raise ValueError('All 24 epochs and nine registered thresholds required')
@@ -36,6 +36,23 @@ def rank_validation_grid(cells):
     checkpoints = readiness.get('checkpoint_sha256', {})
     if set(checkpoints) != {str(i) for i in range(1, 25)} or not all(_sha(v) for v in checkpoints.values()):
         raise ValueError('Complete formal checkpoint set required')
+    # Caller must recompute these rankings from all nine authenticated body
+    # replays per epoch. Body configuration may vary between epochs, never
+    # between event-threshold cells belonging to the same epoch.
+    if body_rankings is not None:
+        if set(body_rankings) != {str(i) for i in range(1,25)}:
+            raise ValueError('All 24 authenticated body rankings required')
+        for e, ranking in body_rankings.items():
+            t = ranking.get('body_threshold')
+            if (ranking.get('schema') != 'clasher.v4.body-grid-ranking.v1'
+                    or type(ranking.get('epoch')) is not int or ranking['epoch'] != int(e)
+                    or ranking.get('readiness') != readiness
+                    or ranking.get('checkpoint_sha256') != checkpoints[e]
+                    or ranking.get('event_thresholds') != {'default': .5}
+                    or type(t) not in (int,float) or t not in [i/10 for i in range(1,10)]
+                    or any(ranking.get(k) is not False for k in
+                           ('selection_seal','heldout_opening_authorized','heldout_payloads_opened'))):
+                raise ValueError('Body ranking differs from full fit or registered configuration')
     receipts = readiness['validation_receipt_sha256']
     if not receipts or not all(_sha(v) for v in receipts.values()):
         raise ValueError('Full validation receipt population required')
@@ -58,7 +75,9 @@ def rank_validation_grid(cells):
                 or cell.get('heldout_payloads_opened') is not False
                 or cell.get('selection_seal') is not False or cell.get('readiness') != readiness
                 or cell.get('validation_receipts') != receipts or cell.get('sources') != sources
-                or type(cell.get('body_threshold')) not in (int,float) or cell['body_threshold']!=body_threshold
+                or type(cell.get('body_threshold')) not in (int,float)
+                or cell['body_threshold'] != (body_rankings[str(epoch)]['body_threshold']
+                                             if body_rankings is not None else body_threshold)
                 or cell.get('truth_payloads') != truth_files):
             raise ValueError('Mixed fit, validation population, or scorer sources')
         identity = epoch, threshold
@@ -88,6 +107,8 @@ def rank_validation_grid(cells):
                              replay_manifest_sha256=replay)
     candidates = [select_threshold([grid[epoch, i/10] for i in range(1, 10)]) for epoch in range(1, 25)]
     candidate = select_epoch(candidates)
+    if body_rankings is not None:
+        body_threshold = body_rankings[str(candidate['epoch'])]['body_threshold']
     return dict(schema='clasher.v4.validation-grid.v1', candidate=candidate,
                 body_threshold=body_threshold,
                 epoch_candidates=candidates, cells=len(grid), readiness=readiness,

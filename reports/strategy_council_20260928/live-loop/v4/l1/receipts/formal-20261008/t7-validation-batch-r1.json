@@ -1,0 +1,10 @@
+{
+  "schema": "clasher.v4.validation-batch.v1",
+  "cells": [
+    {
+      "epoch": 1,
+      "threshold": 0.5,
+      "body_threshold": 0.1
+    }
+  ]
+}

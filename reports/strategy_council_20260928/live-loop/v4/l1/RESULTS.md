@@ -1,6 +1,52 @@
 # T6/T7 results — formal evaluation remains blocked
 
-## Pre-formal cache and label work, 2026-10-08
+## Current formal fitting status, 2026-10-08 17:34 UTC
+
+Both formal fits have completed: T6 epoch24, seed6107; T7 all24x400 updates,
+seed6108, all513 training matches. Both have SHA-verified checkpoint backups on04.
+T7 final checkpoint SHA `e5d1acd124158dc9410a1f10bb1aaa51b180bc2abd9547da27e66a8da62f7e9c`.
+T6 validation inference is complete (53392 frames,33.721860 fleet FPS,
+p9534.168273ms excluding capture); validation scoring/selection remains active.
+T7 passed full fit admission and launched its first complete-validation cell
+(epoch1,event0.5,body0.1) at17:43:30; it is initializing the cache union. Selection, calibration and a selection seal are still
+pending. No heldout payload has been opened; every unmeasured §5.1 gate remains
+BLOCKED. Historical preparation notes below are superseded by this status.
+
+| Training data rate | Measured windows/s |
+|---|---:|
+| Historical on-the-fly H.264 baseline | 1.282 |
+| Full formal cached9600-step loop | 13.862772 |
+| Same-run GPU optimizer steps alone | 19.769086 |
+
+Cache speedup10.813x; full loop70.12% of same-run GPU rate. Mean loader wait and
+transfer10.105862ms. The692.502169s loop includes periodic checkpoint writes and
+logs but excludes initial source/cache verification and final backup. Parameter
+population differs from the historical baseline; same-run GPU ratio is reported
+separately. All577 train/validation caches retain10,420 exact1% checks with zero
+mismatches and1,154 payload SHA checks. Evidence: receipts/formal-20261008/
+t7-formal-throughput.json, t7-fit-complete.json and t7-fit-exit-backup.json.
+The4.435532ms repeated-feature CUDA p95 excludes the full runtime and emulator;
+it cannot pass the Mac gate.
+
+## Historical pre-formal cache and label work, 2026-10-08
+
+Final population preparation (16:06): **577 train/validation matches,1,019,054
+frames,1,154 payload hashes,10,420 exact checks,zero mismatches**. Matching final
+label audit:1,307,222 contradictions;544,623 generation disagreements resolved,
+72,684 parent/child hints,276,020 non-HP hints,413,895 masked. Same cleaner.
+28,123 accepted train/validation events mapped;zero unenclosed;empirical bracket
+p95 255.849433 ms is uncertified and is not model execution-error p95.
+Coordinator confirms collection stopped on coverage:641 receipts,64 heldout,
+1,520 opponent events. Poll schedule deleted. Genuine producer completion
+artifacts arrived in the coordinator pool mirror at16:44; formal admission
+now passes01/09/15. T6
+conversion completed577/577 with exit0 at16:36:25. Corpus relocation under the
+approved15 cache root passed, including1,154 internal aliases and19.733 GB
+projected use within20 GB. All failed attempts retained. Body scorer preparation
+passes45 synthetic checks; no real body threshold is selected. T6 formal fit15r2 completed24 epochs; its weights were SHA-verified on04.
+Validation failed before predictions on missing dill; exact dependency installed
+and validation-only continuation launched (19001/53392 frames at17:26). T7
+formal training is active on09 (4144/9600 updates at17:26). No completed formal selection,calibration,seal or heldout evaluation.
 
 15:45 preparation completion: **559 train/validation matches,986,361 frames,
 1,118 payload hashes,10,085 exact checks,zero mismatches**.03 retry exit0; all
@@ -49,11 +95,13 @@ not a full-population formal result. Cache 504 / exact checks 9,111 / mismatches
 labels/timing 496 unchanged. No additional Phase A poll after the 14:27 skip.
 All §5.1 formal/Mac/T5/T8 gates remain **BLOCKED**, with no heldout payload access.
 
-**Formal T6/T7 fits and heldout evaluation have not run.** Latest receipt-only
-poll **15:20:05 UTC**: 497 train, 62 validation, 62 heldout matches; **1,456 heldout
-opponent events**, 54,200.595 emulator-seconds (15.06 h). Producer remains phase-a,
-exit absent. Neither stop rule is met. Heldout payloads remain unopened; polling
-ends **2026-10-08 18:08:27 UTC**.
+**Formal T6/T7 fits and heldout evaluation have not run.** Final receipt-only
+verification **15:45:24 UTC**:513 train,64 validation,64 heldout matches;
+**1,520 heldout opponent events**,56,008.247 emulator-seconds (15.56 h).
+Coordinator confirms collection stopped on coverage. Coverage count passes;
+formal producer-artifact admission is still blocked because01's pipeline-state
+is stale and its completion report/exit receipt are absent. The Phase A polling
+schedule was deleted at15:45 UTC. Heldout payloads remain unopened.
 
 14:19 preparation: **504 cached train/validation matches / 891,013 frames /
 9,111 exact 1% checks / zero mismatches**, with 1,008 file hashes. Storage reservation
@@ -432,7 +480,7 @@ annotation audit. PREREG-AMENDMENT-01 records the prospective training rule.
 
 ## Pending formal work
 
-Phase A completion; complete-population fresh fitting; validation checkpoint,
+Validation checkpoint,
 threshold and isotonic selection with a source/checkpoint seal; a full v4 heldout
 scorer and T5/S3/T8 contract integration; authorized Mac CoreML conversion and
 emulator-on replay. Every §5.1 gate remains UNMEASURED/BLOCKED. RUNBOOK.md prepares

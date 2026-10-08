@@ -1,0 +1,176 @@
+{
+  "schema": "clasher.live-v4.latency-optimization.v1",
+  "host": "Mac.attlocal.net",
+  "matches": [
+    {
+      "seed": "1975100700",
+      "captured": 5655,
+      "perceived": 5652,
+      "processed": 5650,
+      "first_taps": 58,
+      "capture_dropped": 3,
+      "belief_skipped": 2,
+      "trace_sha256": "1f219cd9f64d8b01982f49ad7418544d707f97690d706987be5d70a13dc9260f"
+    }
+  ],
+  "source_sha256": {
+    "loading.py": "00412547da58f4251943500f3d4c28c5993eb37369cecb594b1a7312590d48e8",
+    "transport.py": "faa1f1315158e311e98775f95b42853ac78bf71c40e25e88a1e6ae80cb23a702",
+    "__init__.py": "17717238d47f49a055039dcc9a855d6d5ef23d4cc3770a49e534811d076f8ba6",
+    "decision.py": "eecd69a790f89ae24aa50119c900f1876d14a4b9fefb0b7c5190863db88f8393",
+    "belief.py": "e8687c77e9dcc30b6460ecce99bda5bf147208777032ca300f97a2dd8b93fdc4",
+    "runtime.py": "7720c8371ce96dc9804e3011bbf972d0ea9d673e856346a4f68fd757c2436956",
+    "capture.py": "1c05ad3b787cb8ae7b67b0fbef09ec59e24fa7caa69a80cc011445e48c6097db",
+    "timing.py": "4d3dffcf603a25f26c72f4ce270e98014dedaabcb3d622afc0659cf36c3df0f4",
+    "lattice.py": "1c929a2fb0c89e22d6bbe1f6430b5bf817323843d436c52250cef80c4a936cd5",
+    "contracts.py": "0731486cce727ace8545a39b63786d02a097b66cb8a50e5fb451be3cf544eb69",
+    "tracker.py": "e2690e28a0e1326264b894d4b4da46eb24fd96fe2166284aef99c2c51cea13a3",
+    "actuation.py": "3afd278f348f69b5d94831b6e0f15fe8c8ed09c61c0b53b0f044e8b36c9a5be2",
+    "perception.py": "6ebae776bf0b094e025c47e9f5803ae67e9a59e05d0cecb019da4bd73c44a461",
+    "__main__.py": "283abae78cd6eaf576a5919153652ac25a76ff19d530535699a8711cbbe670bc",
+    "lattice.rs": "fc35188e9ba5a8b909245f05a3099d9abd028cdfe08336672a32f9ba046c3c05",
+    "_lattice.dylib": "9aa1e9e07de4de56532c0e870339b89099b3ed9adbd492004bc21bf25b77b222"
+  },
+  "timing_ms": {
+    "capture": {
+      "count": 5655,
+      "p50": 17.464839620515704,
+      "p95": 41.26863640267402,
+      "p99": 54.41644874867052
+    },
+    "decode": {
+      "count": 5655,
+      "p50": 0.8471251931041479,
+      "p95": 2.4407748598605394,
+      "p99": 3.724358407780528
+    },
+    "capture_queue_age": {
+      "count": 5655,
+      "p50": 28.351937886327505,
+      "p95": 60.44795182533562,
+      "p99": 81.09803453553468
+    },
+    "actuator_hud": {
+      "count": 5439,
+      "p50": 1.3454998843371868,
+      "p95": 3.6225881427526474,
+      "p99": 4.652771963737905
+    },
+    "backbone_hud": {
+      "count": 5652,
+      "p50": 26.733416481874883,
+      "p95": 49.81077056145295,
+      "p99": 59.37777242856098
+    },
+    "temporal_fusion": {
+      "count": 5652,
+      "p50": 0.07656251545995474,
+      "p95": 0.18698278581723565,
+      "p99": 0.33892953768372475
+    },
+    "perception": {
+      "count": 5652,
+      "p50": 26.883666636422276,
+      "p95": 50.17369374400005,
+      "p99": 59.62122539523988
+    },
+    "perception_queue_age": {
+      "count": 5650,
+      "p50": 3.9545624749734998,
+      "p95": 8.58207062119618,
+      "p99": 9.347976818680763
+    },
+    "belief": {
+      "count": 5650,
+      "p50": 2.3931670002639294,
+      "p95": 7.370477518998087,
+      "p99": 12.810826154891434
+    },
+    "belief_queue_age": {
+      "count": 5593,
+      "p50": 5.026541883125901,
+      "p95": 10.771725233644238,
+      "p99": 28.07317509315906
+    },
+    "search": {
+      "count": 437,
+      "p50": 4.233832936733961,
+      "p95": 73.08360785245894,
+      "p99": 87.44353376328944
+    },
+    "search_active": {
+      "count": 183,
+      "p50": 56.60224985331297,
+      "p95": 79.36866253148764,
+      "p99": 101.48393046110881
+    },
+    "taps": {
+      "count": 72,
+      "p50": 41.0662085050717,
+      "p95": 160.1512266905047,
+      "p99": 169.6448776149191
+    },
+    "frame_to_tap": {
+      "count": 58,
+      "p50": 187.76122480630875,
+      "p95": 264.37722019618377,
+      "p99": 269.20210615266114
+    },
+    "projected_perception_20ms": {
+      "count": 58,
+      "p50": 175.75962327420712,
+      "p95": 259.5032147760503,
+      "p99": 269.56091434461996
+    },
+    "projected_perception_35ms": {
+      "count": 58,
+      "p50": 190.75962327420712,
+      "p95": 274.5032147760503,
+      "p99": 284.56091434461996
+    }
+  },
+  "counts": {
+    "ready": 1,
+    "capture": 5655,
+    "decode": 5655,
+    "captured": 5655,
+    "capture_queue_age": 5655,
+    "actuator_hud": 5439,
+    "backbone_hud": 5652,
+    "temporal_fusion": 5652,
+    "perception": 5652,
+    "perceived": 5652,
+    "perception_queue_age": 5650,
+    "belief": 5650,
+    "processed": 5650,
+    "belief_queue_age": 5593,
+    "search": 437,
+    "search_overruns": 0,
+    "command": 84,
+    "pending_blocked_frame": 2422,
+    "actuator_state": 156,
+    "ledger": 156,
+    "taps": 72,
+    "frame_to_tap": 58,
+    "dropped": 3,
+    "belief_frames_skipped": 5
+  },
+  "processed_fps": 19.98203136638963,
+  "perception_fps": 19.989105903959604,
+  "processed_fraction": 0.9991158267020336,
+  "perception_fraction": 0.9994694960212201,
+  "audit_errors": [],
+  "heldout_opened": false,
+  "actuator": "mock",
+  "device": "mps",
+  "sample_gate": false,
+  "budget_ms": {
+    "p50": 260,
+    "p99": 400
+  },
+  "median_budget_pass": true,
+  "tail_budget_pass": true,
+  "belief_p99_pass": false,
+  "production_qualified": false,
+  "projection": "Per first tap: measured latency minus source-frame body/HUD+temporal duration plus 20ms (DESIGN p50 stages) or 35ms (DESIGN p95 stages). Observed queueing and other stage costs retained; these are scenarios, not Mac measurements."
+}

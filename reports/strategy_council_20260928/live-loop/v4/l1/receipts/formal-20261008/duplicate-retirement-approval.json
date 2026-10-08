@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-08T16:51:33.185258+00:00",
+  "approval": "User: Approve verified duplicate retirement",
+  "matches": 349,
+  "source_host": "127x18",
+  "retained_host": "127x01",
+  "condition": "fresh full retained-copy verification and preserved checksum/equality evidence",
+  "executed": false,
+  "blocker": "T11 owns exclusive host workload lock",
+  "heldout_payloads_opened": false
+}

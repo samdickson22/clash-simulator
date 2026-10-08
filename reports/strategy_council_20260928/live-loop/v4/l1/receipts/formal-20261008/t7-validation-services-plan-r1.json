@@ -1,0 +1,26 @@
+{
+  "local": {
+    "kind": "local",
+    "cache": "/mpac/sdicks02/repos/clasher-lease/data/v4-cache",
+    "inventory": "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/preformal-cache-20261008/v4-cache-unique-20261008-16r4-plan.json",
+    "manifest": "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/preformal-cache-20261008/v4-cache-unique-20261008-16r4-manifest.json"
+  },
+  "remote": [
+    {
+      "host": "127x01",
+      "label": "v4-cache-transport-server-validation-20261008-01r1",
+      "inventory": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/preformal-cache-20261008/v4-cache-extend-20261008-18r10-stage.json",
+      "manifest": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/preformal-cache-20261008/v4-cache-gather-20261008-18r10-manifest.json",
+      "inventory_sha256": "7729f11cb2bc33ef679aab84a871e68c3d2c635501701d139eec0b21d683f1a3",
+      "manifest_sha256": "67b710014a12fb12ec363611c36b7f11bcdb97e08a01d94876efb9d6f06d8c14"
+    },
+    {
+      "host": "127x03",
+      "label": "v4-cache-transport-server-validation-20261008-03r1",
+      "inventory": "/mpac/sdicks02/jobs/clasher/v4-cache-final-20261008-03r8-plan.json",
+      "manifest": "/mpac/sdicks02/jobs/clasher/v4-cache-final-20261008-03r8-manifest.json",
+      "inventory_sha256": "9d59e0b4980eef1b025ae975e1897469f0cb0cadf87305e9c1a72e87fe5e5322",
+      "manifest_sha256": "5bbf5fd59ae55c4012666b00da6dcdd3823255d90bcee6be8891f7d637cb937a"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+    "-B",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/latency_suite.py",
+    "--data",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/runtime-data",
+    "--matches",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/runtime-data/matches",
+    "--device",
+    "mps",
+    "--minimum-matches",
+    "1",
+    "--minimum-taps",
+    "50",
+    "--maximum-matches",
+    "4",
+    "--output",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/latency-smoke"
+  ],
+  "pid": 14590,
+  "exit_code": 0,
+  "started": 1791483390.928133,
+  "ended": 1791483688.738446,
+  "wall_seconds": 297.8103141784668
+}

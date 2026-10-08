@@ -1,0 +1,25 @@
+{
+  "host": "127x15",
+  "label": "v4-t6-av-setup-20261008-15r1",
+  "started_utc": "2026-10-08T15:56:11.708733+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/tools/uv",
+    "pip",
+    "install",
+    "--python",
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "av==16.0.1"
+  ],
+  "supervisor_pid": 3653373,
+  "status": "fail",
+  "error": "[Errno 13] Permission denied: '/mpac/sdicks02/repos/clasher-lease/tools/uv'",
+  "exit_code": 1,
+  "finished_utc": "2026-10-08T15:56:11.718329+00:00",
+  "stop_reason": null,
+  "peak_processes": 0,
+  "peak_rss_bytes": 0,
+  "peak_sampled_pss_bytes": 0,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "effective_process_cap": null
+}

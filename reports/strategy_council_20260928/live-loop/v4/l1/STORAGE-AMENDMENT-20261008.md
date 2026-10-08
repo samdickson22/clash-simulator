@@ -24,7 +24,26 @@ least **200 GB free on /mpac**. The subsequent user response in this implementat
 thread additionally approves **up to 1 TB total cache across permitted hosts**.
 Both limits apply: 1 TB aggregate and 300 GB on any one host (decimal units).
 
-Current allocation at **15:23 UTC**: increase03 from110 to120 GB, within existing
+Current allocation at **16:10 UTC**: conservatively include the converted T6
+training corpus in15's cache reservation. **01=290,18=292,16=214,03=126,09=54,
+15=20 GB**, **996 GB total**;4 GB retained-legacy/headroom. On01, older converted
+T6 corpus is1,181,607,045 bytes and two JPEG caches total1,014,516,116 bytes;
+combined2,196,123,161 bytes fits that4 GB. Existing immutable roots all fit the
+reduced reservations; no deletion.03 future builder operating cap124 GB;16
+214 GB.15 conversion is provisionally charged to20 GB even while its active
+output remains in data/v4-final-preparation-20261008-15r1. After verified exit,
+move it atomically into data/v4-cache/ and retain the original path as an owned
+alias so internal absolute links and provenance remain valid. Do not move an
+active converter. T6 JPEG growth guard must include that relocated corpus.
+
+Historical final-population allocation at **15:46 UTC**:03 rises120→129 GB,
+operating127 GB; **01=291,18=293,16=215,03=129,09=60,15=10 GB**, **998 GB**.
+The remaining2 GB covers measured1.015 GB retained legacy caches. Final03 root
+123,542,915,705 bytes includes the retained0.760 GB failed attempt. All cache
+roots remain within reservation; no deletion. T6 JPEG cache now uses the approved
+15 data/v4-cache/t6-RUN root,with4096 MiB bound plus2 GB preflight reserve.
+
+Historical allocation at **15:23 UTC**: increase03 from110 to120 GB, within existing
 aggregate approval. **01=291,18=293,16=215,03=120,09=60,15=10 GB**, **989 GB**;
 11 GB remaining covers retained legacy caches (01 measured1,014,516,116 bytes)
 and headroom.03 operating limit118 GB, including all partial attempts. At15:38,
@@ -84,3 +103,12 @@ the coordinator's own SSH monitor was the earlier false positive.
 This changes storage operations only. Frozen PREREG/split, collection cap,
 training populations/initializations/hyperparameters, validation-only selection,
 heldout-opening restrictions and all evaluation thresholds are unchanged.
+
+2026-10-08 17:26 UTC: user explicitly approved retirement of the349 redundant
+base shards on18 after fresh retained01 payload verification and preservation of
+all checksum/equality evidence. The01 queue v4-duplicate-retirement-queue-20261008-01r1
+(wrapper3741187) is waiting for18's existing T11 lease workload lock. Its eventual
+18 worker uses the unchanged lease wrapper and exact349-shard proposal, deletes
+only verified duplicate raw.zst/pixels.zst files, and preserves original indices
+plus an fsynced evidence journal. No deletion has occurred. Reservations remain
+996 GB until a successful retirement receipt proves the reclaimed bytes.

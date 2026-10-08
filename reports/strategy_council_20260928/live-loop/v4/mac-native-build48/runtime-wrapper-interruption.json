@@ -1,0 +1,34 @@
+{
+  "reason": "Verification wrapper lacked __main__ guard for macOS multiprocessing spawn; no product source defect. Retry with guarded wrapper.",
+  "processes": {
+    "94995": [
+      94993,
+      "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python -B /Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py runtime"
+    ],
+    "94997": [
+      94995,
+      "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python -B -c from multiprocessing.resource_tracker import main;main(6)"
+    ],
+    "95513": [
+      94995,
+      "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=7, pipe_handle=183) --multiprocessing-fork"
+    ],
+    "95514": [
+      94995,
+      "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=7, pipe_handle=185) --multiprocessing-fork"
+    ],
+    "95515": [
+      94995,
+      "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=7, pipe_handle=187) --multiprocessing-fork"
+    ],
+    "95516": [
+      94995,
+      "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=7, pipe_handle=189) --multiprocessing-fork"
+    ],
+    "95517": [
+      94995,
+      "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=7, pipe_handle=191) --multiprocessing-fork"
+    ]
+  },
+  "time": 1791481810.9957051
+}

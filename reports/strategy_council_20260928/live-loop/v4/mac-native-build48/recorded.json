@@ -1,0 +1,303 @@
+{
+  "suite": "recorded",
+  "count": 8,
+  "provenance": {
+    "driver_sha256": "6023f0cc5005f5cd404ea448a8f5df46e7c883e6b143f308748effb9fb8ae143",
+    "gamedata": "/Users/sam/Desktop/code/clasher/gamedata.json",
+    "gamedata_sha256": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+    "data_sha256": "dbbe7e6bfb6833eea5041e2542810619ea260a6a9172a73bedf669e546a034c0",
+    "source": "/Users/sam/Desktop/code/clasher/src/clasher",
+    "source_sha256": "896111aa9640decdfcdae0ea5a7bb304bfb15a037926723e5343f9f80eac1165"
+  },
+  "results": {
+    "0": {
+      "recording": "reports/strategy_council_20260928/oracle-qualification/games/srp_xm_c256/srp_xm_c256__holdout__balanced__s70000019__g000.json",
+      "recording_sha256": "d174bbe1847e611d938ae054dee245efde7b4a4f6699d8902b072ab5b9b26bdf",
+      "spec": {
+        "game": 0,
+        "opponent": "balanced",
+        "player": {
+          "horizon": 160,
+          "kind": "srp",
+          "mask_public": true,
+          "name": "srp_xm_c256",
+          "opponent_model": "sb-balanced",
+          "plan_every": 2,
+          "rollout_interval": 10,
+          "samples": 16,
+          "script_top": 4,
+          "style": "balanced"
+        },
+        "role": "holdout",
+        "seed": 70000019
+      },
+      "expected": {
+        "outcome": "win",
+        "candidate_crowns": 0,
+        "opponent_crowns": 0,
+        "ticks": 6001,
+        "planner_calls": 126
+      },
+      "actual": {
+        "outcome": "win",
+        "candidate_crowns": 0,
+        "opponent_crowns": 0,
+        "ticks": 6001,
+        "planner_calls": 126
+      }
+    },
+    "1": {
+      "recording": "reports/strategy_council_20260928/oracle-qualification/games/srp_xm_c256/srp_xm_c256__holdout__balanced__s70000019__g001.json",
+      "recording_sha256": "7cb86af870be8648f7ec35e8b0d4572c871853b7def2ebd717997730cfa39c5d",
+      "spec": {
+        "game": 1,
+        "opponent": "balanced",
+        "player": {
+          "horizon": 160,
+          "kind": "srp",
+          "mask_public": true,
+          "name": "srp_xm_c256",
+          "opponent_model": "sb-balanced",
+          "plan_every": 2,
+          "rollout_interval": 10,
+          "samples": 16,
+          "script_top": 4,
+          "style": "balanced"
+        },
+        "role": "holdout",
+        "seed": 70000019
+      },
+      "expected": {
+        "outcome": "win",
+        "candidate_crowns": 1,
+        "opponent_crowns": 0,
+        "ticks": 4324,
+        "planner_calls": 79
+      },
+      "actual": {
+        "outcome": "win",
+        "candidate_crowns": 1,
+        "opponent_crowns": 0,
+        "ticks": 4324,
+        "planner_calls": 79
+      }
+    },
+    "2": {
+      "recording": "reports/strategy_council_20260928/oracle-qualification/games/srp_xm_c256/srp_xm_c256__holdout__defense__s72000025__g000.json",
+      "recording_sha256": "f0d33b3a7b3736db3386f730c75713ba1a6cf1d57243408a8c76ea68a4427138",
+      "spec": {
+        "game": 0,
+        "opponent": "defense",
+        "player": {
+          "horizon": 160,
+          "kind": "srp",
+          "mask_public": true,
+          "name": "srp_xm_c256",
+          "opponent_model": "sb-balanced",
+          "plan_every": 2,
+          "rollout_interval": 10,
+          "samples": 16,
+          "script_top": 4,
+          "style": "balanced"
+        },
+        "role": "holdout",
+        "seed": 72000025
+      },
+      "expected": {
+        "outcome": "win",
+        "candidate_crowns": 1,
+        "opponent_crowns": 0,
+        "ticks": 3601,
+        "planner_calls": 88
+      },
+      "actual": {
+        "outcome": "win",
+        "candidate_crowns": 1,
+        "opponent_crowns": 0,
+        "ticks": 3601,
+        "planner_calls": 88
+      }
+    },
+    "3": {
+      "recording": "reports/strategy_council_20260928/oracle-qualification/games/srp_xm_c256/srp_xm_c256__holdout__defense__s72000025__g001.json",
+      "recording_sha256": "62f832bc651802d56f0548192863caaa21ecc2af81d304e29d29588e4db39e0b",
+      "spec": {
+        "game": 1,
+        "opponent": "defense",
+        "player": {
+          "horizon": 160,
+          "kind": "srp",
+          "mask_public": true,
+          "name": "srp_xm_c256",
+          "opponent_model": "sb-balanced",
+          "plan_every": 2,
+          "rollout_interval": 10,
+          "samples": 16,
+          "script_top": 4,
+          "style": "balanced"
+        },
+        "role": "holdout",
+        "seed": 72000025
+      },
+      "expected": {
+        "outcome": "win",
+        "candidate_crowns": 0,
+        "opponent_crowns": 0,
+        "ticks": 6001,
+        "planner_calls": 120
+      },
+      "actual": {
+        "outcome": "win",
+        "candidate_crowns": 0,
+        "opponent_crowns": 0,
+        "ticks": 6001,
+        "planner_calls": 120
+      }
+    },
+    "4": {
+      "recording": "reports/strategy_council_20260928/oracle-qualification/games/srp_xm_c256/srp_xm_c256__holdout__pressure__s71000022__g000.json",
+      "recording_sha256": "b259f20e102c6bdbfd5df61c06d203cae18be51b4b2f8df2b271d89e81412833",
+      "spec": {
+        "game": 0,
+        "opponent": "pressure",
+        "player": {
+          "horizon": 160,
+          "kind": "srp",
+          "mask_public": true,
+          "name": "srp_xm_c256",
+          "opponent_model": "sb-balanced",
+          "plan_every": 2,
+          "rollout_interval": 10,
+          "samples": 16,
+          "script_top": 4,
+          "style": "balanced"
+        },
+        "role": "holdout",
+        "seed": 71000022
+      },
+      "expected": {
+        "outcome": "win",
+        "candidate_crowns": 1,
+        "opponent_crowns": 0,
+        "ticks": 3601,
+        "planner_calls": 49
+      },
+      "actual": {
+        "outcome": "win",
+        "candidate_crowns": 1,
+        "opponent_crowns": 0,
+        "ticks": 3601,
+        "planner_calls": 49
+      }
+    },
+    "5": {
+      "recording": "reports/strategy_council_20260928/oracle-qualification/games/srp_xm_c256/srp_xm_c256__holdout__pressure__s71000022__g001.json",
+      "recording_sha256": "7be479065199944d5bc1d2afe14108a90de30f79d05663d3a41f12ad1f825851",
+      "spec": {
+        "game": 1,
+        "opponent": "pressure",
+        "player": {
+          "horizon": 160,
+          "kind": "srp",
+          "mask_public": true,
+          "name": "srp_xm_c256",
+          "opponent_model": "sb-balanced",
+          "plan_every": 2,
+          "rollout_interval": 10,
+          "samples": 16,
+          "script_top": 4,
+          "style": "balanced"
+        },
+        "role": "holdout",
+        "seed": 71000022
+      },
+      "expected": {
+        "outcome": "win",
+        "candidate_crowns": 1,
+        "opponent_crowns": 0,
+        "ticks": 3601,
+        "planner_calls": 50
+      },
+      "actual": {
+        "outcome": "win",
+        "candidate_crowns": 1,
+        "opponent_crowns": 0,
+        "ticks": 3601,
+        "planner_calls": 50
+      }
+    },
+    "6": {
+      "recording": "reports/strategy_council_20260928/oracle-qualification/games/srp_xm_c256/srp_xm_c256__holdout__balanced__s70000019__g002.json",
+      "recording_sha256": "3f638b14072aac5abf575f75d6dfaba470499cf36d4e4be3b795f1605ffb9334",
+      "spec": {
+        "game": 2,
+        "opponent": "balanced",
+        "player": {
+          "horizon": 160,
+          "kind": "srp",
+          "mask_public": true,
+          "name": "srp_xm_c256",
+          "opponent_model": "sb-balanced",
+          "plan_every": 2,
+          "rollout_interval": 10,
+          "samples": 16,
+          "script_top": 4,
+          "style": "balanced"
+        },
+        "role": "holdout",
+        "seed": 70000019
+      },
+      "expected": {
+        "outcome": "win",
+        "candidate_crowns": 1,
+        "opponent_crowns": 0,
+        "ticks": 3601,
+        "planner_calls": 60
+      },
+      "actual": {
+        "outcome": "win",
+        "candidate_crowns": 1,
+        "opponent_crowns": 0,
+        "ticks": 3601,
+        "planner_calls": 60
+      }
+    },
+    "7": {
+      "recording": "reports/strategy_council_20260928/oracle-qualification/games/srp_xm_c256/srp_xm_c256__holdout__balanced__s70000019__g003.json",
+      "recording_sha256": "575868b93167dca83fd578779e705907074efefb962b07512ab0482b1c58209c",
+      "spec": {
+        "game": 3,
+        "opponent": "balanced",
+        "player": {
+          "horizon": 160,
+          "kind": "srp",
+          "mask_public": true,
+          "name": "srp_xm_c256",
+          "opponent_model": "sb-balanced",
+          "plan_every": 2,
+          "rollout_interval": 10,
+          "samples": 16,
+          "script_top": 4,
+          "style": "balanced"
+        },
+        "role": "holdout",
+        "seed": 70000019
+      },
+      "expected": {
+        "outcome": "win",
+        "candidate_crowns": 1,
+        "opponent_crowns": 0,
+        "ticks": 4676,
+        "planner_calls": 94
+      },
+      "actual": {
+        "outcome": "win",
+        "candidate_crowns": 1,
+        "opponent_crowns": 0,
+        "ticks": 4676,
+        "planner_calls": 94
+      }
+    }
+  },
+  "mismatches": []
+}

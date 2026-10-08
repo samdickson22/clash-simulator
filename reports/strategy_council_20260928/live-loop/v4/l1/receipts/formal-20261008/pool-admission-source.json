@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-08T16:52:12.011829+00:00",
+  "formal_guard_sha256": "76277f2bf140bc2db18a7b99afef4d49e5383a479024fb6d3b20637c13b18880",
+  "producer_mirror_sha256": "481d3e01e12c9df3cbb70769ba70c0e8fd495337fbecf89b94ed71e9d6d61fab",
+  "pool_guard_tests": 12,
+  "real_admission_hosts": [
+    "127x01",
+    "127x09",
+    "127x15"
+  ],
+  "heldout_payloads_opened": false
+}

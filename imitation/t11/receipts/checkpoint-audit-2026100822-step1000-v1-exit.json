@@ -1,0 +1,28 @@
+{
+  "host": "127x18",
+  "label": "t11-checkpoint-audit-2026100822-step1000-v1",
+  "started_utc": "2026-10-08T14:16:41.010768+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/operations/checkpoint_evidence.py",
+    "--checkpoint",
+    "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100822/step-00001000.pt",
+    "--freeze",
+    "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source/imitation/gate-a-v2/executable-manifest.json",
+    "--seed",
+    "2026100822",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/receipts/checkpoint-2026100822-step1000.json"
+  ],
+  "supervisor_pid": 1081741,
+  "status": "fail",
+  "error": "[Errno 11] Resource temporarily unavailable",
+  "exit_code": 1,
+  "finished_utc": "2026-10-08T14:16:41.010796+00:00",
+  "stop_reason": null,
+  "peak_processes": 0,
+  "peak_rss_bytes": 0,
+  "peak_pss_bytes": 0,
+  "memory_metric": "owned_tree_pss"
+}

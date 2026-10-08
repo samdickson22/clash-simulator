@@ -7,6 +7,7 @@ import random
 import time
 import signal
 import shutil
+import uuid
 from concurrent.futures import ThreadPoolExecutor
 from collections import deque
 
@@ -18,6 +19,29 @@ from data_v4 import Windows, batch, loss_fn, sha
 
 def save(path,payload):
     temporary=path.with_suffix('.tmp');torch.save(payload,temporary);temporary.replace(path)
+
+
+def resume_history(path,last_step):
+    """Keep an interrupted log intact, then continue at the saved update boundary."""
+    raw=path.read_bytes();lines=raw.splitlines(keepends=True)
+    rows=[];partial=False
+    for i,line in enumerate(lines):
+        try:rows.append(json.loads(line))
+        except json.JSONDecodeError:
+            if i!=len(lines)-1 or line.endswith(b'\n'):raise ValueError('Malformed interior training log')
+            partial=True
+    if type(last_step) is not int or last_step<0 or last_step>len(rows):
+        raise ValueError('Checkpoint/log boundary differs')
+    if [r['step'] for r in rows]!=list(range(1,len(rows)+1)):
+        raise ValueError('Training history is not a contiguous unique prefix')
+    if len(rows)==last_step and not partial:return None
+    suffix=uuid.uuid4().hex
+    backup=path.with_name('training-pre-resume-'+suffix+'.jsonl')
+    with backup.open('xb') as f:f.write(raw)
+    temporary=path.with_name('training-resume-'+suffix+'.tmp')
+    with temporary.open('xb') as f:f.write(b''.join(lines[:last_step]))
+    temporary.replace(path)
+    return backup
 
 
 def main():
@@ -86,6 +110,7 @@ def main():
     if a.resume:
         old=json.loads(mpath.read_text())
         if old!=manifest:raise ValueError('Resume configuration/source changed; use a new run')
+        resume_history(a.output/'training.jsonl',first)
     else:
         mpath.write_text(json.dumps(manifest,indent=2)+'\n')
         snapshot=a.output/'source';snapshot.mkdir()

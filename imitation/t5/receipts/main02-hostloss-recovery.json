@@ -1,0 +1,62 @@
+{
+  "at": "2026-10-08T14:58:28.223341+00:00",
+  "status": "RUNNING_SAME_SEED_TECHNICAL_RERUN",
+  "old_host": "127x11",
+  "old_output_excluded_even_if_host_returns": true,
+  "new_host": "127x01",
+  "trainer_pid": 3653414,
+  "supervisor_pid": 3653400,
+  "seed": 2026100802,
+  "launch_receipt": "main02-home01-launch-v2.json",
+  "scientific_manifest_sha256": "2854ce1f96fdd2fcc04dd0e6ef15dce3435758ec40369a80bba29b1a1e29db13",
+  "operational_freeze_sha256": "47d7187800211b6e16ba632a6426b03964025723c224acab86510b55d1dfb945",
+  "verified_step": 467,
+  "verified_rows": 3825664,
+  "cumulative_loader_inclusive_rows_per_second": 10263.028112072112,
+  "synthetic_full_checkpoint_replay_bitexact": true,
+  "pretraining_failure": {
+    "exit": 1,
+    "fitted_updates": 0,
+    "wall_seconds": 5.81,
+    "cpu_seconds": 5.74,
+    "reason": "provenance file made fresh output nonempty; corrected frozen v2 writes it beside output"
+  },
+  "backup_supervisor_pid": 2525895,
+  "backup_label": "t5-checkpoint-mirror-20261008-v3",
+  "backup_plan": "checkpoint-mirror-plan-v4.json",
+  "backup_validation": [
+    {
+      "run": "main-2026100801",
+      "published_epochs": 6,
+      "missing_epoch_backups": [],
+      "verified_checkpoint_files": 13
+    },
+    {
+      "run": "main-2026100802",
+      "published_epochs": 0,
+      "missing_epoch_backups": [],
+      "verified_checkpoint_files": 0
+    },
+    {
+      "run": "main-2026100803",
+      "published_epochs": 6,
+      "missing_epoch_backups": [],
+      "verified_checkpoint_files": 13
+    },
+    {
+      "run": "noD1-2026100801",
+      "published_epochs": 6,
+      "missing_epoch_backups": [],
+      "verified_checkpoint_files": 14
+    },
+    {
+      "run": "gru-2026100801",
+      "published_epochs": 0,
+      "missing_epoch_backups": [],
+      "verified_checkpoint_files": 2
+    }
+  ],
+  "main02_backup_awaiting_first_checkpoint": true,
+  "heldout_inference": false,
+  "next_poll_at": "2026-10-08T15:04:45.297Z"
+}

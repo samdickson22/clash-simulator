@@ -14,11 +14,17 @@
       "p99_ticks": 23.746357476571575,
       "tick_ms": 50,
       "ticks_semantics": "wall-latency equivalents at nominal 20 ticks/s; retained trials lack exact execution ticks",
-      "planner_total_delay_ticks": 28,
-      "planner_frame_to_submission_p50_ms": 246.39782181475312,
+      "planner_total_delay_ticks": 27,
+      "planner_frame_to_submission_p50_ms": 186.0601652879268,
       "planner_delay_calibration": {
-        "status": "provisional fleet initialization; replace with measured Mac median after suite",
-        "source": "RUNTIME-LATENCY-METRICS.json: 223 first attempts on 127x04",
+        "status": "measured Mac MPS replay; v3-body-hud-only fallback, mock input",
+        "source": "runtime-mac-latency.json",
+        "metrics_sha256": "11f33b963bd4fa779b1c0d7a594b3ec71c914b67d465aeab964a3ae05386fa57",
+        "samples": 228,
+        "matches": 14,
+        "host": "Mac.attlocal.net",
+        "device": "mps",
+        "measurement_planner_delay_ticks": 28,
         "formula": "round((planner_frame_to_submission_p50_ms + p50_ms) / tick_ms)",
         "measurement": "source-frame production to completed first-attempt mock two-tap submission, including 20 ms inter-tap interval"
       }

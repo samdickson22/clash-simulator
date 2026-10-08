@@ -8,9 +8,9 @@ MIN_FREE_BYTES = 200_000_000_000
 MAX_FLEET_BYTES = 1_000_000_000_000
 # Explicit reservations avoid independent hosts each spending the full fleet
 # allowance. Reassign reservations before adding a fourth cache host.
-HOST_RESERVATIONS = {'127x01': 291_000_000_000, '127x16': 215_000_000_000,
-                     '127x18': 293_000_000_000, '127x03': 129_000_000_000,
-                     '127x09': 60_000_000_000, '127x15': 10_000_000_000}
+HOST_RESERVATIONS = {'127x01': 290_000_000_000, '127x16': 214_000_000_000,
+                     '127x18': 292_000_000_000, '127x03': 126_000_000_000,
+                     '127x09': 54_000_000_000, '127x15': 20_000_000_000}
 HOME_HOSTS = {'127x01', '127x03', '127x04', '127x08'}
 LEASE_HOSTS = {'127x09', '127x11', '127x13', '127x14', '127x15', '127x16', '127x18'}
 

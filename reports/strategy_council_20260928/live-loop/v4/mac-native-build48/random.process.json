@@ -1,0 +1,11 @@
+{
+  "mode": "random",
+  "pid": 99092,
+  "started": 1791482087.739721,
+  "command": [
+    "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+    "-B",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+    "random"
+  ]
+}

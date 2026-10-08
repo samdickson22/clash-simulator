@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-08T16:16:34.896915+00:00",
+  "source_sha256": {
+    "train_v4.py": "f50bcdef359492e432a159048f925de365aa2e9f84ec8a94bc6f1769d16052e9",
+    "formal_train.sh": "7080cecfb920170d73050786032f87503b3e3bed427a9ea2a7fd749de08922bc",
+    "formal_union_v4.py": "4895dad5b3deefae89f76cd998a3aa3f64a008d452ec47283df00fa2f0fdc05d",
+    "formal_cache_client_v4.py": "6fba6d11a5a320dc928176833c4a948c22957e53ce9dbd2bd052c197773eda66",
+    "cache_server_home.sh": "1f5bd439e1104a467a7f81e69022bf22ffd8006c0b567d00b28b0dc665b544d4",
+    "lease_lifecycle_v4.py": "97de83a47c59173a8b03368241df7f1dba9eb5417fb5d00b6e0dcbee2f9b2669",
+    "cache_budget.py": "ee3242c4d4e1b5fd07a09ef78e10e6897140eada133012627fd9c92dd2c2694b",
+    "run_t6_shake.py": "304c9d080a69b86b29453eaea37a3a2d34e19a2bc3a3b3ae88d45f6025b49de3",
+    "prepare_final_15.py": "5cadc548d20b0abd6dd37e86f5b91dd9311ad736a0aed80dc233998d21086ae2",
+    "validation_admission_v4.py": "57c373fd8d75e1df5f37d62a35846ad02cfb1ac4dae7e9610631ceace6625c5e",
+    "validation_replay_v4.py": "f5927e75c219e402ab53ae549be28bf0dbcc56668a4df452663e46a7527813a2"
+  },
+  "tests": {
+    "client_configuration": 5,
+    "resume_log": 10
+  },
+  "formal_fitting_started": false,
+  "heldout_payloads_opened": false
+}

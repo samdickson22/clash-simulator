@@ -1,0 +1,16 @@
+{
+  "tracked_files_checked": 3850,
+  "tracked_content_changes": [],
+  "protected_metadata_entries_checked": 42508,
+  "protected_metadata_changes": [],
+  "live_native_sha256": "3ae315d98fafd01cf2c0651cde05b6e9f1b6105adbbf97c7f685565fca61aa7a",
+  "runtime_engine_is_symlink": false,
+  "runtime_engine_resolved": "/Users/sam/Desktop/code/clasher-runtime-v4/engine-rs",
+  "python_environment": "/Users/sam/Desktop/code/clasher/.venv",
+  "python_environment_used_read_only": true,
+  "python_engine_or_gamedata_edits": false,
+  "emulator_renderer_actions": false,
+  "apk_actions": false,
+  "data_deleted": false,
+  "git_commits": false
+}

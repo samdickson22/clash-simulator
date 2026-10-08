@@ -37,7 +37,7 @@ def main():
     if actual['receipt_sha256']!=inv['receipt_sha256']:raise ValueError('Staged source differs from pinned plan')
     with stage.open('xb') as f:f.write(staged)
     run('build_cache.py','--source',source,'--cache',cache,'--split',split,
-        '--inventory',plan,'--workers',8,'--budget-gb',127,'--receipt',str(prefix)+'-build.json')
+        '--inventory',plan,'--workers',8,'--budget-gb',124,'--receipt',str(prefix)+'-build.json')
     run('cache_manifest.py','--source',source,'--cache',cache,'--split',split,
         '--inventory',plan,'--output',str(prefix)+'-manifest.json')
 

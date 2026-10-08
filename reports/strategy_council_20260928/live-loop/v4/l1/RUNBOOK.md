@@ -1,5 +1,39 @@
 # T6/T7 fleet runbook
 
+Current17:46 state: both full formal fits are complete and SHA-backed up04.
+T6 validation scoring runs on15; T7 validation replay runs on09. See the newest
+PROGRESS entry for labels/PIDs; older pending/no-fit text below is historical.
+Body/event ordering is now documented in BODY-SELECTION.md and tested; actual
+full validation grids, calibration and selection seal remain pending.
+
+## Genuine pool completion admitted, 2026-10-08 16:52 UTC
+
+The coordinator's mirror authenticates the pool-mode completion. Use these
+literal producer arguments on09/15 (same relative paths on01):
+
+```text
+--phase-state /mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/t1-completion-mirror/pool-state.json
+--phase-exit /mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/t1-completion-mirror/T1-PHASE-A-COMPLETE.json
+```
+
+The second argument is the coordinator's mirror manifest, which pins the real
+pool exit0 and all five other producer/stopped-process files. It is not a
+manufactured pipeline exit. formal_guard verifies every pin, stop reason, empty
+claims, stopped processes, chronological completion and exact hub receipt totals.
+formal_train.sh documents these pool arguments and delegates the actual check
+to formal_guard.admit. Real admission passed01/09/15; both formal fits used it.
+12 synthetic rejection checks passed. The stale
+legacy pipeline state is not used. Frozen PREREG/split are unchanged.
+
+T6 first launch15r1 exited before fitting because registration sidecar files were
+missing; all original frozen .md/.sha256 files are now copied unchanged. Fresh
+15r2 uses the prepared577 corpus. T7 waits for bounded01/03 services to finish
+full-payload verification. Inspect progress/receipts for current PIDs and outputs.
+
+User approved retirement of349 duplicate18 shards after retained01 verification
+and evidence preservation. Current18 T11 exclusive workload lock still blocks
+execution; no deletion or reservation reduction is assumed until verified.
+
 ## Shared-host storage ownership, 2026-10-08 15:19 UTC
 
 Coordinator ownership notice, **2026-10-08 15:19 UTC**: roader is rebuilding
@@ -34,7 +68,7 @@ bash "$CLASHER_LEASE_ROOT/run.sh" t6-formal-UNIQUE \
   "$CLASHER_ROOT/reports/strategy_council_20260928/live-loop/v4/l1/lease_lifecycle_v4.py" \
   --arm t6 --phase-state REAL_T1_STATE --phase-exit REAL_T1_EXIT \
   --output "$CLASHER_LEASE_ROOT/data/t6-formal-UNIQUE" \
-  --journal "$CLASHER_LEASE_ROOT/jobs/t6-formal-UNIQUE-backups" --backup-host 127x01
+  --journal "$CLASHER_LEASE_ROOT/jobs/t6-formal-UNIQUE-backups" --backup-host 127x04
 ```
 
 T7's full-union admission/trainer/replay path is implemented and covered by
@@ -46,26 +80,38 @@ the full population. Runtime connections/private tokens stay off05; stable index
 snapshots live in model/cache-indices and are checkpoint-backed. Remote services
 must remain alive for the bounded job and be re-established for later replay
 batches; their current maximum lifetime is one hour. Actual full-union fitting,
-connection setup and final-population preparation still pending.09/15 now have559
+connection setup and final-population preparation still pending.09/15 now have577
 pinned source sets;09 retains71 verified cache shards,01 retains349,03 extension
-139 fully verified (559 total,10,085 exact checks,zero mismatches). Refresh on genuine T1 completion.
+157 fully verified (577 total,10,420 exact checks,zero mismatches). Refresh on genuine T1 completion.
+
+T6 preparation finished16:36 UTC: converter15r2 and cache-layout15r1 both
+exit0, all577 matches. Pass `--prepared-t6
+/mpac/sdicks02/repos/clasher-lease/data/v4-cache/t6-final-dataset-20261008`
+to the lifecycle supervisor. The original preparation path remains an owned
+alias; all1,154 internal links verified. Conservative corpus13.438 GB plus
+6.295 GB future cache/working reserve fits15's20 GB. No regeneration needed.
+
+Body-scoring preparation is documented in `BODY-SELECTION.md`:31 pure and14
+file-backed synthetic checks pass. Real body-grid replay/selection, consistent
+final event/body configuration, calibration and selection seal remain pending.
 
 T6 cache storage: formal wrapper passes --pixel-cache-directory under the approved
 lease data/v4-cache/t6-RUN root. Exclusive cache lock,4096 MiB maximum growth plus
 2 GB reserve and fresh-directory check apply before fitting. Historical default
 path, sampling and training behavior are unchanged.
 
-Lifecycle: immutable SHA-verified checkpoint snapshots to01 every30 minutes and
-on exit (04 optionally); start stopping at **2026-10-09 04:30 UTC**, exit before
+Lifecycle: immutable SHA-verified checkpoint snapshots to04 every30 minutes and
+on exit (coordinator instruction15:45;01 remains only an explicit fallback); start stopping at **2026-10-09 04:30 UTC**, exit before
 **05:00**, lease expires05:30. Failed transfer stops the run; no deletion of failed
 snapshots. T7 checkpoint includes optimizer/RNG; unchanged T6 saves epoch weights
 only and needs a fresh fit after interruption. 14 lifecycle checks and a real
 synthetic15→01 transfer passed. No real formal checkpoint exists yet.
 
-**Current reservations:**01=291,18=293,16=215,03=120,09=60,15=10 GB, total989 GB.
-03 operating cap118 GB;16 helper215 GB still reserves2 GB per allocation. Preserve
-≥200 GB free. Retiring the duplicate18 base is a documented proposal awaiting
-explicit approval; no copy may be deleted merely because this plan names it.
+**Current reservations:**01=290,18=292,16=214,03=126,09=54,15=20 GB, total996 GB.
+03 operating cap124 GB;16 helper214 GB still reserves2 GB per allocation. Preserve
+≥200 GB free. User approved retiring the349 duplicate18 base shards after fresh retained01
+verification and evidence preservation. Queue3741187 waits for18’s workload lock;
+no bytes have been reclaimed yet, so reservations remain unchanged.
 
 Home-host commands run from `/mpac/sdicks02/repos/clasher` on **127x01**. Use only
 `/mpac/sdicks02/envs/clasher-gpu/bin/python`; eager CUDA, no compile. Check `~/.local/bin/fleet-console-users`,
@@ -74,10 +120,13 @@ console user), leave >=12GiB GPU headroom. `fleet_run.sh` applies nice 10 and
 thread limits. Use distinct labels; inspect `.exit`, not just launch acceptance.
 Only copy owned source paths with `rsync -cR`; never sync the whole checkout.
 
-Formal commands are PREPARED, not running or automatically scheduled. T1 has not
-provided Phase A completion. Do not create completion receipts yourself. Once its
-authentic `pipeline-state.json` (`stage=complete`) and `phase-a-exit.json`
-(`code=0`) are mirrored, run the following sequentially through the fleet helper
+Formal commands are PREPARED, not running or automatically scheduled. The
+coordinator confirms T1 completion at15:43:11 UTC, but genuine producer artifacts
+have not reached01. Do not create completion receipts yourself. The current guard
+expects authentic `pipeline-state.json` (`stage=complete`) and `phase-a-exit.json`
+(`code=0`); if T1 supplies its actual pool completion format instead, authenticate
+that producer format in owned guard code rather than fabricating legacy receipts.
+The following historical templates illustrate the sequential fleet workflow
 (substitute real receipt paths and a fresh output path):
 
 ```bash
@@ -722,3 +771,41 @@ plan/manifest in place of r4; 84 reused +29 new. Total disjoint coverage is 533
 matches for the 14:47 receipt snapshot. Root 89.095 GB, 148 GB operating cap within
 150 GB reservation; 1.699 TB remains free. No active 03 writer/service. Do not
 expand from an old admission or bypass leased-host locks. No full formal union yet.
+
+## Terminal polling guard, 2026-10-08 16:41 UTC
+
+The Phase A schedule was deleted after coordinator-confirmed completion.
+`phase_watch.py --once` now respects terminal `stopped.json` records, preserving
+completion/timeout evidence and skipping queued stale triggers without SSH.
+A signal stop remains resumable; malformed or unknown stop receipts fail closed.
+22 synthetic checks passed on01. Do not clear the terminal record to resume polls.
+Missing genuine producer evidence is handled by the pending T1 mirror request,
+not by restarting count polling or manufacturing completion artifacts.
+
+## T6 validation-only continuation, 2026-10-08 17:16 UTC
+
+T6 fit15r2 completed24 epochs; canonical last.pt SHA is
+`a3860deb608483f05e43c14608cb307d8d807bb9fa39f5f672f3fd91657f4f40`.
+Validation failed before prediction because dill was missing. Installed the exact
+home01 dill0.4.0 within15's GPU environment. Preserve the completed fit.
+`continue_t6_validation.py` is the authenticated continuation entrypoint: pass
+--run (the existing formal root), --dataset (the prepared cache corpus), the
+real pool --phase-state/--phase-exit, and a fresh --journal under lease/jobs.
+Launch under15 run.sh. It verifies full completed fit/population/checkpoint,
+archives interrupted inference, and uses lifecycle backups04 plus the lease
+exit deadline. It cannot resume incomplete T6 training. Ten guard tests passed.
+
+## Validation batch continuation, 2026-10-08 17:34 UTC
+
+Both formal fits are complete; do not start another fit. T7's current cell uses
+`formal_cache_client_v4.py --completed-run data/t7-formal-20261008-09r2
+--replay-plan l1/receipts/formal-20261008/t7-validation-batch-r1.json` through
+wait_formal_services.py and the09 lease wrapper. Supply fresh output/control and
+fresh01/03 services via t7-validation-services-plan-r1.json. Active labels/PIDs
+are in PROGRESS; never duplicate a running batch. Runtime tokens stay09-private.
+validation_batch_v4.py authenticates the complete fit and runs one to nine exact
+registered cells through the existing validation driver, preserving every partial
+attempt. It backs the fitted model04 every30min and on exit, enforces45min service
+lifetime and04:30 lease stop lead, and refuses heldout/split options. Successful
+cells are full64-match replays; partial cells cannot enter selection. First cell
+is epoch1,event0.5,body0.1, with no outcome-based choice of population.

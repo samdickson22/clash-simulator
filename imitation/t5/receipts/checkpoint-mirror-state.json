@@ -1,0 +1,3302 @@
+{
+  "main-2026100801/epoch-000-step-00001880.pt": {
+    "at": "2026-10-08T14:51:36.200394+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/epoch-000-step-00001880.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/epoch-000-step-00001880.pt",
+    "sha256": "46b486934d69d0eaa1df6a2e601a34192f39719c79a61a9368cf584ff6cdd0ba",
+    "source_stat": {
+      "name": "epoch-000-step-00001880.pt",
+      "size": 36477148,
+      "mtime_ns": 1791459673370861480
+    },
+    "verified": true
+  },
+  "main-2026100801/epoch-001-step-00003759.pt": {
+    "at": "2026-10-08T14:51:37.206439+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/epoch-001-step-00003759.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/epoch-001-step-00003759.pt",
+    "sha256": "89ba68f1f7f62f02b61ef9903183e26b6fda0b0c42599e132f12b41ff6bb25ac",
+    "source_stat": {
+      "name": "epoch-001-step-00003759.pt",
+      "size": 36477148,
+      "mtime_ns": 1791461900110529565
+    },
+    "verified": true
+  },
+  "main-2026100801/epoch-003-step-00007518.pt": {
+    "at": "2026-10-08T14:51:38.218569+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/epoch-003-step-00007518.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/epoch-003-step-00007518.pt",
+    "sha256": "5bf651b037ab98a8fbfba7e70a9844ceea9272047118ede30599d12681756f40",
+    "source_stat": {
+      "name": "epoch-003-step-00007518.pt",
+      "size": 36478492,
+      "mtime_ns": 1791466629441358650
+    },
+    "verified": true
+  },
+  "main-2026100801/epoch-002-step-00005638.pt": {
+    "at": "2026-10-08T14:51:39.304530+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/epoch-002-step-00005638.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/epoch-002-step-00005638.pt",
+    "sha256": "d51c999186fb0d3c6e319f0d64c5327bd73e1806d2ca1aa51e62946d0d17858a",
+    "source_stat": {
+      "name": "epoch-002-step-00005638.pt",
+      "size": 36477148,
+      "mtime_ns": 1791464102416615098
+    },
+    "verified": true
+  },
+  "main-2026100801/epoch-004-step-00009398.pt": {
+    "at": "2026-10-08T14:51:40.309643+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/epoch-004-step-00009398.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/epoch-004-step-00009398.pt",
+    "sha256": "b364bcf77cbf596b02b5709baee78e4996196cb2fa9ac26cfda5e0a5627b7808",
+    "source_stat": {
+      "name": "epoch-004-step-00009398.pt",
+      "size": 36478492,
+      "mtime_ns": 1791468837446531977
+    },
+    "verified": true
+  },
+  "main-2026100801/epoch-005-step-00011278.pt": {
+    "at": "2026-10-08T14:51:41.361003+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/epoch-005-step-00011278.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/epoch-005-step-00011278.pt",
+    "sha256": "ffa496072bc20fe0859a20a1662f1ad32b971959fd104f21383d340de6a50dac",
+    "source_stat": {
+      "name": "epoch-005-step-00011278.pt",
+      "size": 36478492,
+      "mtime_ns": 1791471050214368711
+    },
+    "verified": true
+  },
+  "main-2026100801/best-dev-step-00005638.pt": {
+    "at": "2026-10-08T14:51:42.351313+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00005638.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/best-dev-step-00005638.pt",
+    "sha256": "81d64e5f3290b02ab6e508c086dd541b23d47ce04d0b7c837c25d55b3186c1f7",
+    "source_stat": {
+      "name": "best-dev-step-00005638.pt",
+      "size": 36476635,
+      "mtime_ns": 1791464102352613262
+    },
+    "verified": true
+  },
+  "main-2026100801/best-dev-step-00011278.pt": {
+    "at": "2026-10-08T14:51:43.404886+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00011278.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/best-dev-step-00011278.pt",
+    "sha256": "d7a06edd74806dc8d01ea1d0b6359febb4d312cb271f1eb1345bb068af56314f",
+    "source_stat": {
+      "name": "best-dev-step-00011278.pt",
+      "size": 36477979,
+      "mtime_ns": 1791471050146366913
+    },
+    "verified": true
+  },
+  "main-2026100801/best-dev-step-00007518.pt": {
+    "at": "2026-10-08T14:51:44.401387+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00007518.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/best-dev-step-00007518.pt",
+    "sha256": "8bacdec6dae21bb39b2488f17f7c5cc980394ec4e2891e8f6e7daa3ce16d1f0e",
+    "source_stat": {
+      "name": "best-dev-step-00007518.pt",
+      "size": 36477979,
+      "mtime_ns": 1791466629373357017
+    },
+    "verified": true
+  },
+  "main-2026100801/best-dev-step-00009398.pt": {
+    "at": "2026-10-08T14:51:45.403428+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00009398.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/best-dev-step-00009398.pt",
+    "sha256": "5e5d8d07119e69e2bde9a9fd9f96214aa61d1cccee13a8995f189417af260edc",
+    "source_stat": {
+      "name": "best-dev-step-00009398.pt",
+      "size": 36477979,
+      "mtime_ns": 1791468837378529834
+    },
+    "verified": true
+  },
+  "main-2026100801/best-dev-step-00003759.pt": {
+    "at": "2026-10-08T14:51:46.429535+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00003759.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/best-dev-step-00003759.pt",
+    "sha256": "e378ba94106f05df080ddba5e34d6bc59c68b050e5fd7a1a2b308ae53027f96d",
+    "source_stat": {
+      "name": "best-dev-step-00003759.pt",
+      "size": 36476635,
+      "mtime_ns": 1791461900042527536
+    },
+    "verified": true
+  },
+  "main-2026100801/best-dev-step-00001880.pt": {
+    "at": "2026-10-08T14:51:47.578183+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00001880.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/best-dev-step-00001880.pt",
+    "sha256": "182e257b1c976aa655bd64598587616b68f965f95cf91f1790748758b78cb558",
+    "source_stat": {
+      "name": "best-dev-step-00001880.pt",
+      "size": 36476635,
+      "mtime_ns": 1791459673306859615
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00011278.pt": {
+    "at": "2026-10-08T14:51:48.628289+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00011278.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00011278.pt",
+    "sha256": "e7a3eac36d156241625476bfc3ebf1da3f3810361d82712b2b18b2d0120f5374",
+    "source_stat": {
+      "name": "step-00011278.pt",
+      "size": 36473298,
+      "mtime_ns": 1791470962928074057
+    },
+    "verified": true
+  },
+  "main-2026100801/train.jsonl": {
+    "at": "2026-10-08T18:34:23.893494+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/train.jsonl",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/train.jsonl",
+    "sha256": "52fd899ce75896d7017b1eabb5ebf2dd76cdc413bb0b58b3dce36d2a307c5f00",
+    "source_stat": {
+      "name": "train.jsonl",
+      "size": 12289955,
+      "mtime_ns": 1791484430607486032
+    },
+    "verified": true
+  },
+  "main-2026100801/segments.jsonl": {
+    "at": "2026-10-08T18:34:24.657619+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/segments.jsonl",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/segments.jsonl",
+    "sha256": "cb754813ff96509d48f4562796911536fc2bce260f963ae03eb5d7556e6de214",
+    "source_stat": {
+      "name": "segments.jsonl",
+      "size": 1227,
+      "mtime_ns": 1791484430679488089
+    },
+    "verified": true
+  },
+  "main-2026100801/checkpoints.json": {
+    "at": "2026-10-08T18:34:25.427606+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/checkpoints.json",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/checkpoints.json",
+    "sha256": "b21ad7180f7a512a24fc69c11dc817a65b7d4a5ac7118657a669c389a9be124f",
+    "source_stat": {
+      "name": "checkpoints.json",
+      "size": 589,
+      "mtime_ns": 1791484430675487976
+    },
+    "verified": true
+  },
+  "main-2026100801/allocator-operations.jsonl": {
+    "at": "2026-10-08T14:51:51.873682+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/allocator-operations.jsonl",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/allocator-operations.jsonl",
+    "sha256": "eaeae7adaa9c7f20ee4f689b72381ea97786d7594e561f4c382252c0eeacbd93",
+    "source_stat": {
+      "name": "allocator-operations.jsonl",
+      "size": 419,
+      "mtime_ns": 1791464840017929898
+    },
+    "verified": true
+  },
+  "main-2026100802/train.jsonl": {
+    "at": "2026-10-08T18:29:58.382311+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/train.jsonl",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/train.jsonl",
+    "sha256": "a080fdbc06881eea453f57ac61fcf6ce55e59eede279af45fd937d224f70ab04",
+    "source_stat": {
+      "name": "train.jsonl",
+      "size": 9183095,
+      "mtime_ns": 1791484172381798883
+    },
+    "verified": true
+  },
+  "main-2026100803/epoch-004-step-00009398.pt": {
+    "at": "2026-10-08T14:51:54.478129+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-004-step-00009398.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/epoch-004-step-00009398.pt",
+    "sha256": "99f4e8dd623b46fb72465428a39ba827e7b1c07cd35704639aeef1025ee4d1ca",
+    "source_stat": {
+      "name": "epoch-004-step-00009398.pt",
+      "size": 36477084,
+      "mtime_ns": 1791467805281762467
+    },
+    "verified": true
+  },
+  "main-2026100803/epoch-000-step-00001880.pt": {
+    "at": "2026-10-08T14:51:55.517673+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-000-step-00001880.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/epoch-000-step-00001880.pt",
+    "sha256": "c6caf6b75c10080f6b900f1550ac038b2912f0916ecc138b5f54ba7dfba9a8b0",
+    "source_stat": {
+      "name": "epoch-000-step-00001880.pt",
+      "size": 36477084,
+      "mtime_ns": 1791459549573681106
+    },
+    "verified": true
+  },
+  "main-2026100803/epoch-002-step-00005638.pt": {
+    "at": "2026-10-08T14:51:56.521655+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-002-step-00005638.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/epoch-002-step-00005638.pt",
+    "sha256": "52bfb67d18edbb25f6565f115d080488358a511bca33d751cb4f94db9a76fc3e",
+    "source_stat": {
+      "name": "epoch-002-step-00005638.pt",
+      "size": 36477084,
+      "mtime_ns": 1791463691970625165
+    },
+    "verified": true
+  },
+  "main-2026100803/epoch-001-step-00003759.pt": {
+    "at": "2026-10-08T14:51:57.533609+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-001-step-00003759.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/epoch-001-step-00003759.pt",
+    "sha256": "5fe176d195ceece155a10e795c60c4b5fc33d6daa7178dd26eb40a661866c89f",
+    "source_stat": {
+      "name": "epoch-001-step-00003759.pt",
+      "size": 36477084,
+      "mtime_ns": 1791461621552489146
+    },
+    "verified": true
+  },
+  "main-2026100803/epoch-003-step-00007518.pt": {
+    "at": "2026-10-08T14:51:58.494835+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-003-step-00007518.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/epoch-003-step-00007518.pt",
+    "sha256": "e3752a24a675739e024b9ef0391216f419a72516498c5420c89b6dca591327a9",
+    "source_stat": {
+      "name": "epoch-003-step-00007518.pt",
+      "size": 36477084,
+      "mtime_ns": 1791465748918876719
+    },
+    "verified": true
+  },
+  "main-2026100803/epoch-005-step-00011278.pt": {
+    "at": "2026-10-08T14:51:59.530142+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-005-step-00011278.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/epoch-005-step-00011278.pt",
+    "sha256": "8613ac6da5d1f8a3857433faf89cfa884a4e0c73ab5f047a794039f0cf50e59d",
+    "source_stat": {
+      "name": "epoch-005-step-00011278.pt",
+      "size": 36477084,
+      "mtime_ns": 1791469863993171926
+    },
+    "verified": true
+  },
+  "main-2026100803/best-dev-step-00011278.pt": {
+    "at": "2026-10-08T14:52:00.571514+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/best-dev-step-00011278.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/best-dev-step-00011278.pt",
+    "sha256": "cbe49292a926f6c079dc067c90f55bb07444f699f945cb937dfb5a5e4fd5f110",
+    "source_stat": {
+      "name": "best-dev-step-00011278.pt",
+      "size": 36476571,
+      "mtime_ns": 1791469863925169954
+    },
+    "verified": true
+  },
+  "main-2026100803/best-dev-step-00009398.pt": {
+    "at": "2026-10-08T14:52:01.613021+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/best-dev-step-00009398.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/best-dev-step-00009398.pt",
+    "sha256": "ad88fc02d423391272327b7bc0845f9ac8869890a7683ad641967e68033ac17a",
+    "source_stat": {
+      "name": "best-dev-step-00009398.pt",
+      "size": 36476571,
+      "mtime_ns": 1791467805213760451
+    },
+    "verified": true
+  },
+  "main-2026100803/best-dev-step-00003759.pt": {
+    "at": "2026-10-08T14:52:02.606130+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/best-dev-step-00003759.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/best-dev-step-00003759.pt",
+    "sha256": "32f4bc209c45880582a9b2f5de6465494e114875c45829e14e675d7fd1b67ac8",
+    "source_stat": {
+      "name": "best-dev-step-00003759.pt",
+      "size": 36476571,
+      "mtime_ns": 1791461621488487255
+    },
+    "verified": true
+  },
+  "main-2026100803/best-dev-step-00005638.pt": {
+    "at": "2026-10-08T14:52:03.670685+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/best-dev-step-00005638.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/best-dev-step-00005638.pt",
+    "sha256": "30a7ea5e64f5da4b8477a0f52b6dffeebf527fc2d71fd3fa77b6ab9c168ec698",
+    "source_stat": {
+      "name": "best-dev-step-00005638.pt",
+      "size": 36476571,
+      "mtime_ns": 1791463691902623150
+    },
+    "verified": true
+  },
+  "main-2026100803/best-dev-step-00007518.pt": {
+    "at": "2026-10-08T14:52:04.715729+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/best-dev-step-00007518.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/best-dev-step-00007518.pt",
+    "sha256": "ec45d216316b7a881cedf090db6a4aa2fa28de7a0e55156e4ad74b57847a0387",
+    "source_stat": {
+      "name": "best-dev-step-00007518.pt",
+      "size": 36476571,
+      "mtime_ns": 1791465748854874924
+    },
+    "verified": true
+  },
+  "main-2026100803/best-dev-step-00001880.pt": {
+    "at": "2026-10-08T14:52:05.786241+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/best-dev-step-00001880.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/best-dev-step-00001880.pt",
+    "sha256": "26118b999ae8fd292708b7646e36b8e37c9fca00c2513c32ae999566b64a73b8",
+    "source_stat": {
+      "name": "best-dev-step-00001880.pt",
+      "size": 36476571,
+      "mtime_ns": 1791459549505679166
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00012000.pt": {
+    "at": "2026-10-08T14:52:06.740275+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00012000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00012000.pt",
+    "sha256": "50ca6172a6999d5435eb133096760df41ea30d7d5cf68c60297204d80ad14544",
+    "source_stat": {
+      "name": "step-00012000.pt",
+      "size": 36471890,
+      "mtime_ns": 1791470623114845570
+    },
+    "verified": true
+  },
+  "main-2026100803/train.jsonl": {
+    "at": "2026-10-08T18:07:00.005022+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/train.jsonl",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/train.jsonl",
+    "sha256": "65ebd3f6b99bb8c5e6a557e9adba98b9871864ee47d3acf885a92de6c087c249",
+    "source_stat": {
+      "name": "train.jsonl",
+      "size": 12261633,
+      "mtime_ns": 1791482790978750970
+    },
+    "verified": true
+  },
+  "main-2026100803/checkpoints.json": {
+    "at": "2026-10-08T18:07:00.821183+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/checkpoints.json",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/checkpoints.json",
+    "sha256": "2b5418b95cf88156284d672a0f55ca5e672595b3ffc217df500d86959ef975b5",
+    "source_stat": {
+      "name": "checkpoints.json",
+      "size": 557,
+      "mtime_ns": 1791482791050752406
+    },
+    "verified": true
+  },
+  "noD1-2026100801/epoch-004-step-00009398.pt": {
+    "at": "2026-10-08T14:52:10.366237+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/epoch-004-step-00009398.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/epoch-004-step-00009398.pt",
+    "sha256": "13b00751bdee08bb352c78665daf57ca3164481a759712dd689b6cfb6db1311b",
+    "source_stat": {
+      "name": "epoch-004-step-00009398.pt",
+      "size": 36478428,
+      "mtime_ns": 1791469225883008026
+    },
+    "verified": true
+  },
+  "noD1-2026100801/epoch-003-step-00007518.pt": {
+    "at": "2026-10-08T14:52:11.371887+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/epoch-003-step-00007518.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/epoch-003-step-00007518.pt",
+    "sha256": "2ac3dfe4fd04b15980da31dfdcf232ef5e85fc678d24acb451555255ac07890f",
+    "source_stat": {
+      "name": "epoch-003-step-00007518.pt",
+      "size": 36478428,
+      "mtime_ns": 1791467081262634911
+    },
+    "verified": true
+  },
+  "noD1-2026100801/epoch-000-step-00001880.pt": {
+    "at": "2026-10-08T14:52:12.369409+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/epoch-000-step-00001880.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/epoch-000-step-00001880.pt",
+    "sha256": "fde6396176530ac92c6325cbb7b3afee9b33bb66a50885dcb2fbbd870989dcb7",
+    "source_stat": {
+      "name": "epoch-000-step-00001880.pt",
+      "size": 36477148,
+      "mtime_ns": 1791459645944022156
+    },
+    "verified": true
+  },
+  "noD1-2026100801/epoch-002-step-00005638.pt": {
+    "at": "2026-10-08T14:52:13.372187+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/epoch-002-step-00005638.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/epoch-002-step-00005638.pt",
+    "sha256": "58a33a8e91e2661b0dce3e40fd8434e137331d18728394763f28a677d7f287b6",
+    "source_stat": {
+      "name": "epoch-002-step-00005638.pt",
+      "size": 36478428,
+      "mtime_ns": 1791464939965384384
+    },
+    "verified": true
+  },
+  "noD1-2026100801/epoch-001-step-00003759.pt": {
+    "at": "2026-10-08T14:52:14.372584+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/epoch-001-step-00003759.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/epoch-001-step-00003759.pt",
+    "sha256": "88f3f6c9e9913119293e5763a25dd800e20514377e470eeb9856ee3d98269db3",
+    "source_stat": {
+      "name": "epoch-001-step-00003759.pt",
+      "size": 36477148,
+      "mtime_ns": 1791461839983068121
+    },
+    "verified": true
+  },
+  "noD1-2026100801/best-dev-step-00007518.pt": {
+    "at": "2026-10-08T14:52:15.421546+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/best-dev-step-00007518.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00007518.pt",
+    "sha256": "f77a519ca5a9d1ccf5c479ae682d8b1e97c7e297f1d7b01fed584d3caef8fad1",
+    "source_stat": {
+      "name": "best-dev-step-00007518.pt",
+      "size": 36477979,
+      "mtime_ns": 1791467081190632723
+    },
+    "verified": true
+  },
+  "noD1-2026100801/best-dev-step-00001880.pt": {
+    "at": "2026-10-08T14:52:16.432759+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/best-dev-step-00001880.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00001880.pt",
+    "sha256": "2e0d10f6049383918532194fec0cca5d5b1f760fdf1ec871a578f43613172c78",
+    "source_stat": {
+      "name": "best-dev-step-00001880.pt",
+      "size": 36476635,
+      "mtime_ns": 1791459645872019871
+    },
+    "verified": true
+  },
+  "noD1-2026100801/best-dev-step-00009398.pt": {
+    "at": "2026-10-08T14:52:17.430666+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/best-dev-step-00009398.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00009398.pt",
+    "sha256": "eaad0ac326aeb0cd4408e835f59c7edd0af0f2fb81eda4b9af607eb5e5ef7394",
+    "source_stat": {
+      "name": "best-dev-step-00009398.pt",
+      "size": 36477979,
+      "mtime_ns": 1791469225811005729
+    },
+    "verified": true
+  },
+  "noD1-2026100801/best-dev-step-00005638.pt": {
+    "at": "2026-10-08T14:52:18.487006+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/best-dev-step-00005638.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00005638.pt",
+    "sha256": "bf886b240c75d44967cceb4c153dc61543334a183ed89652675a489f038985c2",
+    "source_stat": {
+      "name": "best-dev-step-00005638.pt",
+      "size": 36477979,
+      "mtime_ns": 1791464939897382255
+    },
+    "verified": true
+  },
+  "noD1-2026100801/best-dev-step-00003759.pt": {
+    "at": "2026-10-08T14:52:19.539270+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/best-dev-step-00003759.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00003759.pt",
+    "sha256": "75847b93acb4b016d50728d1fadf26ad24c45265eb810dcdf2f854a21754191c",
+    "source_stat": {
+      "name": "best-dev-step-00003759.pt",
+      "size": 36476635,
+      "mtime_ns": 1791461839911065825
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00011000.pt": {
+    "at": "2026-10-08T14:52:20.582247+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00011000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00011000.pt",
+    "sha256": "caf5131a56e5a7d38cb61cf85b305c416d28ff3b3fd650a02385b29209d3ab77",
+    "source_stat": {
+      "name": "step-00011000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791470967566298010
+    },
+    "verified": true
+  },
+  "noD1-2026100801/train.jsonl": {
+    "at": "2026-10-08T18:32:12.929688+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/train.jsonl",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/train.jsonl",
+    "sha256": "419be18193a66fa30e9ffaede49bf6863db066aa767e3e00b94d5390048d0f7e",
+    "source_stat": {
+      "name": "train.jsonl",
+      "size": 12293564,
+      "mtime_ns": 1791484272444616326
+    },
+    "verified": true
+  },
+  "noD1-2026100801/segments.jsonl": {
+    "at": "2026-10-08T18:32:13.332430+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/segments.jsonl",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/segments.jsonl",
+    "sha256": "1981b8954c87e31ddfb2e4e39d271fbbde5c50fbea2b37ccb0788f3fc46544fc",
+    "source_stat": {
+      "name": "segments.jsonl",
+      "size": 1268,
+      "mtime_ns": 1791484272520618730
+    },
+    "verified": true
+  },
+  "noD1-2026100801/checkpoints.json": {
+    "at": "2026-10-08T18:32:13.728040+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/checkpoints.json",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/checkpoints.json",
+    "sha256": "bacc93296de320bb5878039e52d5269273baf6a5938f0a698f47d650763c1cb5",
+    "source_stat": {
+      "name": "checkpoints.json",
+      "size": 590,
+      "mtime_ns": 1791484272516618604
+    },
+    "verified": true
+  },
+  "noD1-2026100801/allocator-operations.jsonl": {
+    "at": "2026-10-08T14:52:23.874970+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/allocator-operations.jsonl",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/allocator-operations.jsonl",
+    "sha256": "e92fbd01940f6e9a71f9a29eb4099288f130a248b9c56e11dd84d65eafefc6b3",
+    "source_stat": {
+      "name": "allocator-operations.jsonl",
+      "size": 435,
+      "mtime_ns": 1791464842934345409
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000400.pt": {
+    "at": "2026-10-08T14:52:25.770676+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000400.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000400.pt",
+    "sha256": "0fc20d1f6cfcd73c5428d6b1e67cffbfe355064f5dc3206b8727469cd9bab85d",
+    "source_stat": {
+      "name": "step-00000400.pt",
+      "size": 40034761,
+      "mtime_ns": 1791471014512633685
+    },
+    "verified": true
+  },
+  "gru-2026100801/train.jsonl": {
+    "at": "2026-10-08T18:34:27.444893+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/train.jsonl",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/train.jsonl",
+    "sha256": "340845f79ca207a4028a26926ca04cea53a27798571cd667ae3807f53ebfbada",
+    "source_stat": {
+      "name": "train.jsonl",
+      "size": 418224,
+      "mtime_ns": 1791484443456935156
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00011278.pt": {
+    "at": "2026-10-08T14:54:33.050091+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00011278.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00011278.pt",
+    "sha256": "faa30753b63b1d0ed977108cce64ca76a7747f61ab5ecf9d6ee5eb5b69560701",
+    "source_stat": {
+      "name": "step-00011278.pt",
+      "size": 36473234,
+      "mtime_ns": 1791471269299841654
+    },
+    "verified": true
+  },
+  "noD1-2026100801/epoch-005-step-00011278.pt": {
+    "at": "2026-10-08T14:56:52.719578+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/epoch-005-step-00011278.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/epoch-005-step-00011278.pt",
+    "sha256": "c8228034a3b931e1aed11fc6c173b4f51f6c49431a95e849a24ad5cf7576ce1c",
+    "source_stat": {
+      "name": "epoch-005-step-00011278.pt",
+      "size": 36478428,
+      "mtime_ns": 1791471357238618902
+    },
+    "verified": true
+  },
+  "noD1-2026100801/best-dev-step-00011278.pt": {
+    "at": "2026-10-08T14:56:53.683081+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/best-dev-step-00011278.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00011278.pt",
+    "sha256": "9c11bc1d779e0b96889f82f849e543b80b0b50c6a8b24de8f14d2d537549cc7b",
+    "source_stat": {
+      "name": "best-dev-step-00011278.pt",
+      "size": 36477979,
+      "mtime_ns": 1791471357166616628
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000410.pt": {
+    "at": "2026-10-08T14:56:56.050968+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000410.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000410.pt",
+    "sha256": "e87127f555cc8bb6a609e361107fca4616a41b4a0fcd517f07df0113fcbe3052",
+    "source_stat": {
+      "name": "step-00000410.pt",
+      "size": 40034761,
+      "mtime_ns": 1791471351749123954
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00013000.pt": {
+    "at": "2026-10-08T15:01:15.328234+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00013000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00013000.pt",
+    "sha256": "8f7da72424c72199c08825545628b73afc3fe93f0d3bd9fe578c7c87d26505b4",
+    "source_stat": {
+      "name": "step-00013000.pt",
+      "size": 36471890,
+      "mtime_ns": 1791471673860545067
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000420.pt": {
+    "at": "2026-10-08T15:02:23.209291+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000420.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000420.pt",
+    "sha256": "322de5e6eeb4a3aa7db0ee6b86e1a0abf87fe403f9c0f47704d996379f5ebcb9",
+    "source_stat": {
+      "name": "step-00000420.pt",
+      "size": 40034761,
+      "mtime_ns": 1791471689166357303
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00001000.pt": {
+    "at": "2026-10-08T15:04:32.180198+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00001000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00001000.pt",
+    "sha256": "ce887970802d14f0d679712ec957e8f2615b3ef0b57f84e44e17e276935724c6",
+    "source_stat": {
+      "name": "step-00001000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791471843888631315
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00013157.pt": {
+    "at": "2026-10-08T15:04:34.003756+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00013157.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00013157.pt",
+    "sha256": "f9372992307b6873cb32549ce53ebbc09b075957a5edb248585237c1141c5d57",
+    "source_stat": {
+      "name": "step-00013157.pt",
+      "size": 36471890,
+      "mtime_ns": 1791471838197259300
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00012000.pt": {
+    "at": "2026-10-08T15:05:37.845463+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00012000.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00012000.pt",
+    "sha256": "56edf0b31e4cbd635ae90c28c079f8f62f42dd1ac5c4a03e7ee7ae3dda8381fe",
+    "source_stat": {
+      "name": "step-00012000.pt",
+      "size": 36473298,
+      "mtime_ns": 1791471888273245827
+    },
+    "verified": true
+  },
+  "main-2026100803/epoch-006-step-00013157.pt": {
+    "at": "2026-10-08T15:05:40.955764+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-006-step-00013157.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/epoch-006-step-00013157.pt",
+    "sha256": "a9e4f330979b4112fbe04530de955fa78aea4b32b8bfcf3b044666b6d1caa790",
+    "source_stat": {
+      "name": "epoch-006-step-00013157.pt",
+      "size": 36477084,
+      "mtime_ns": 1791471925383763188
+    },
+    "verified": true
+  },
+  "main-2026100803/best-dev-step-00013157.pt": {
+    "at": "2026-10-08T15:05:41.971225+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/best-dev-step-00013157.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/best-dev-step-00013157.pt",
+    "sha256": "5a6abb6eadcfe93188436170989519231d11a0306fbcc9ec80839c939da38b3b",
+    "source_stat": {
+      "name": "best-dev-step-00013157.pt",
+      "size": 36476571,
+      "mtime_ns": 1791471925315761234
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000430.pt": {
+    "at": "2026-10-08T15:07:55.203276+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000430.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000430.pt",
+    "sha256": "a7d8e805ef0f75233e90d4a5d614e180b8ee68aaff29d0a07c661723dfc46c6b",
+    "source_stat": {
+      "name": "step-00000430.pt",
+      "size": 40034761,
+      "mtime_ns": 1791472027043985928
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00012000.pt": {
+    "at": "2026-10-08T15:10:06.020200+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00012000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00012000.pt",
+    "sha256": "fffabf0db3ebc16c7c9e217359507f76d82163790324130a258f9b7a93b817a3",
+    "source_stat": {
+      "name": "step-00012000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791472143987424288
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000440.pt": {
+    "at": "2026-10-08T15:13:22.850934+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000440.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000440.pt",
+    "sha256": "c33c58f92df243aba51dce66697f19dac5bbf2a52b7536db6205663f09cf4d5a",
+    "source_stat": {
+      "name": "step-00000440.pt",
+      "size": 40034761,
+      "mtime_ns": 1791472365445827777
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00001880.pt": {
+    "at": "2026-10-08T15:14:25.989043+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00001880.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00001880.pt",
+    "sha256": "81c54e9821f71fff037dd8ad6bf3492e498d14896180388b90de2661d9a47304",
+    "source_stat": {
+      "name": "step-00001880.pt",
+      "size": 36472018,
+      "mtime_ns": 1791472448180843178
+    },
+    "verified": true
+  },
+  "main-2026100802/epoch-000-step-00001880.pt": {
+    "at": "2026-10-08T15:16:37.471330+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/epoch-000-step-00001880.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/epoch-000-step-00001880.pt",
+    "sha256": "945d07ca1272a7e82d148235532e8e02f4e288f67298ef5f39a1fe7e099aad14",
+    "source_stat": {
+      "name": "epoch-000-step-00001880.pt",
+      "size": 36477212,
+      "mtime_ns": 1791472535940957247
+    },
+    "verified": true
+  },
+  "main-2026100802/best-dev-step-00001880.pt": {
+    "at": "2026-10-08T15:16:38.474662+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/best-dev-step-00001880.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/best-dev-step-00001880.pt",
+    "sha256": "5a1e090867f887cd50fd4bafd1a4b5eba5497ff55e75b37e3fbe7a930badc28e",
+    "source_stat": {
+      "name": "best-dev-step-00001880.pt",
+      "size": 36476763,
+      "mtime_ns": 1791472535876954245
+    },
+    "verified": true
+  },
+  "main-2026100802/checkpoints.json": {
+    "at": "2026-10-08T18:29:58.776246+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/checkpoints.json",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/checkpoints.json",
+    "sha256": "52eb5c6d7de043856712990a41eb2deba23c9588396d1c43ebed6a5d8c748a6f",
+    "source_stat": {
+      "name": "checkpoints.json",
+      "size": 489,
+      "mtime_ns": 1791484172449802251
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00002000.pt": {
+    "at": "2026-10-08T15:17:44.814209+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00002000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00002000.pt",
+    "sha256": "03087f08a7b46a55b01625f60c0ae3c2b93e153f49c813ddcbc46cce89fccb07",
+    "source_stat": {
+      "name": "step-00002000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791472634001560825
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000450.pt": {
+    "at": "2026-10-08T15:18:53.515113+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000450.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000450.pt",
+    "sha256": "cdad49bbdd23573390f1fc5531fe9be6e58268a38b4a362bab179970f657c0a7",
+    "source_stat": {
+      "name": "step-00000450.pt",
+      "size": 40034761,
+      "mtime_ns": 1791472703691767472
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00014000.pt": {
+    "at": "2026-10-08T15:21:03.737456+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00014000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00014000.pt",
+    "sha256": "e7b350859dc2c8c3635436b784089867d2dcce79c6464ac944b081177ed76fe6",
+    "source_stat": {
+      "name": "step-00014000.pt",
+      "size": 36471890,
+      "mtime_ns": 1791472817452928513
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00013000.pt": {
+    "at": "2026-10-08T15:24:17.581772+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00013000.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00013000.pt",
+    "sha256": "e789d7b0d9a274604925ff24715d9020d0d1f0cb43a46ecfd8aeb5388289f1cc",
+    "source_stat": {
+      "name": "step-00013000.pt",
+      "size": 36473298,
+      "mtime_ns": 1791473026786426997
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000460.pt": {
+    "at": "2026-10-08T15:24:22.646681+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000460.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000460.pt",
+    "sha256": "b7d116c97ee71d7bc8aad42e48dc075a8df493957343cde8733c754da5ed79c7",
+    "source_stat": {
+      "name": "step-00000460.pt",
+      "size": 40034761,
+      "mtime_ns": 1791473042522548845
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00013157.pt": {
+    "at": "2026-10-08T15:27:35.508556+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00013157.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00013157.pt",
+    "sha256": "b0a4c0a57c0fa3367a87ce66692c45727541923f8f6c8cc1057a4fdc01a51a5a",
+    "source_stat": {
+      "name": "step-00013157.pt",
+      "size": 36473298,
+      "mtime_ns": 1791473205243930946
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00013000.pt": {
+    "at": "2026-10-08T15:27:39.627903+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00013000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00013000.pt",
+    "sha256": "03e9918c99581f4c612cc096a2e3c3cfa893e9d003424d5733bc20e161e6f92c",
+    "source_stat": {
+      "name": "step-00013000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791473234954889852
+    },
+    "verified": true
+  },
+  "main-2026100801/epoch-006-step-00013157.pt": {
+    "at": "2026-10-08T15:28:42.541989+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/epoch-006-step-00013157.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/epoch-006-step-00013157.pt",
+    "sha256": "ba493692e725a630e036fdb2a9996128f8a0611aa620ccdbda349a45184042ed",
+    "source_stat": {
+      "name": "epoch-006-step-00013157.pt",
+      "size": 36478492,
+      "mtime_ns": 1791473292658583805
+    },
+    "verified": true
+  },
+  "main-2026100801/best-dev-step-00013157.pt": {
+    "at": "2026-10-08T15:28:43.598872+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00013157.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/best-dev-step-00013157.pt",
+    "sha256": "59fd682971896653d3c8c2615ef39346328e7c44952b80dd0598d66551463e1d",
+    "source_stat": {
+      "name": "best-dev-step-00013157.pt",
+      "size": 36477979,
+      "mtime_ns": 1791473292590581750
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00003000.pt": {
+    "at": "2026-10-08T15:28:46.681091+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00003000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00003000.pt",
+    "sha256": "904ad05ec728443cde31109c3ac2d322aaa7e0318f3b927ae8b88b993c6c3ec8",
+    "source_stat": {
+      "name": "step-00003000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791473314933643574
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000470.pt": {
+    "at": "2026-10-08T15:29:55.442433+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000470.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000470.pt",
+    "sha256": "bc9c4e836f2505635909c469806907e92c99ce383d731236f422910aab70f7ea",
+    "source_stat": {
+      "name": "step-00000470.pt",
+      "size": 40034761,
+      "mtime_ns": 1791473380209048984
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00013157.pt": {
+    "at": "2026-10-08T15:31:01.017182+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00013157.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00013157.pt",
+    "sha256": "5eef43abfa15ad80697824c99b2efe6227ff7ad6efd248b175e7659eeaaef647",
+    "source_stat": {
+      "name": "step-00013157.pt",
+      "size": 36473234,
+      "mtime_ns": 1791473406404034085
+    },
+    "verified": true
+  },
+  "noD1-2026100801/epoch-006-step-00013157.pt": {
+    "at": "2026-10-08T15:32:07.466683+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/epoch-006-step-00013157.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/epoch-006-step-00013157.pt",
+    "sha256": "e214b547bf86c6029ed84584fce7beaac13617d12b3d8de730a034b993629c4a",
+    "source_stat": {
+      "name": "epoch-006-step-00013157.pt",
+      "size": 36478428,
+      "mtime_ns": 1791473494298683281
+    },
+    "verified": true
+  },
+  "noD1-2026100801/best-dev-step-00013157.pt": {
+    "at": "2026-10-08T15:32:08.480685+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/best-dev-step-00013157.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00013157.pt",
+    "sha256": "1565a73b8143ce9d5c0cdebc4e6fed95acf5138ca8bdfdd3f8ad76c8295265eb",
+    "source_stat": {
+      "name": "best-dev-step-00013157.pt",
+      "size": 36477979,
+      "mtime_ns": 1791473494222680987
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000480.pt": {
+    "at": "2026-10-08T15:35:25.902070+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000480.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000480.pt",
+    "sha256": "b7c6535a183ae66299dcac4b6fffb23e2c85c95567c762c24ca9625a41c8ca9e",
+    "source_stat": {
+      "name": "step-00000480.pt",
+      "size": 40034761,
+      "mtime_ns": 1791473718495395261
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00003759.pt": {
+    "at": "2026-10-08T15:37:35.536934+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00003759.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00003759.pt",
+    "sha256": "66fc73cc4b43f7f1b5d2b4adf7339cf1ce89dac75870c9fd8e6120910dc8dcb7",
+    "source_stat": {
+      "name": "step-00003759.pt",
+      "size": 36472018,
+      "mtime_ns": 1791473833682146844
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00015036.pt": {
+    "at": "2026-10-08T15:48:33.595597+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00015036.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00015036.pt",
+    "sha256": "60db76929668f61cb19b6631cfdfd0e3a8a9576688e0f76cff78bf3e8b62b7ab",
+    "source_stat": {
+      "name": "step-00015036.pt",
+      "size": 36473234,
+      "mtime_ns": 1791474507372716920
+    },
+    "verified": true
+  },
+  "main-2026100802/epoch-001-step-00003759.pt": {
+    "at": "2026-10-08T15:39:47.200228+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/epoch-001-step-00003759.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/epoch-001-step-00003759.pt",
+    "sha256": "eea22299594cbb1d16a60ac2322bb2b53daf9f70d482a362cef5a6bcf7b7ae1f",
+    "source_stat": {
+      "name": "epoch-001-step-00003759.pt",
+      "size": 36477212,
+      "mtime_ns": 1791473921150280538
+    },
+    "verified": true
+  },
+  "main-2026100802/best-dev-step-00003759.pt": {
+    "at": "2026-10-08T15:39:48.158408+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/best-dev-step-00003759.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/best-dev-step-00003759.pt",
+    "sha256": "021535adc90d9fa86ee2b6c5c01a0a52fb656adc6909fc423219173cb1196c96",
+    "source_stat": {
+      "name": "best-dev-step-00003759.pt",
+      "size": 36476763,
+      "mtime_ns": 1791473921086277513
+    },
+    "verified": true
+  },
+  "main-2026100803/segments.jsonl": {
+    "at": "2026-10-08T18:07:00.409336+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/segments.jsonl",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/segments.jsonl",
+    "sha256": "aaaf3c2330f098cc8c4864dc145eed7bf7d8650700c3377da1ab3eed65137982",
+    "source_stat": {
+      "name": "segments.jsonl",
+      "size": 1272,
+      "mtime_ns": 1791482791054752485
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00004000.pt": {
+    "at": "2026-10-08T15:41:59.104231+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00004000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00004000.pt",
+    "sha256": "843df2f93472dd7973567de3f2f79d2434bd631a391d4de4bfbed40ecd987565",
+    "source_stat": {
+      "name": "step-00004000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791474111580100845
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000490.pt": {
+    "at": "2026-10-08T15:42:03.210067+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000490.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000490.pt",
+    "sha256": "c7b02b9bb70b0c03c0315bae582b2628ba09497db397dceed8eec809d9726412",
+    "source_stat": {
+      "name": "step-00000490.pt",
+      "size": 40034761,
+      "mtime_ns": 1791474055957627459
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00014000.pt": {
+    "at": "2026-10-08T15:45:14.000229+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00014000.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00014000.pt",
+    "sha256": "49c49abc88902ff1c79e6c30c0e24b4f80236ff179cbea2bb160a1ccdce43d92",
+    "source_stat": {
+      "name": "step-00014000.pt",
+      "size": 36473298,
+      "mtime_ns": 1791474257130926557
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00014000.pt": {
+    "at": "2026-10-08T15:47:26.938000+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00014000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00014000.pt",
+    "sha256": "992dd2ca1aa3ffd349fe20e7834ba345b53034c041ef986d5225f04e7beb1b71",
+    "source_stat": {
+      "name": "step-00014000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791474424491533271
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000500.pt": {
+    "at": "2026-10-08T15:47:29.353662+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000500.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000500.pt",
+    "sha256": "8a78422efeccd420dd9bd3d93e0a98f7514c88536a5846baaa849293b161ca4e",
+    "source_stat": {
+      "name": "step-00000500.pt",
+      "size": 40034761,
+      "mtime_ns": 1791474394043832602
+    },
+    "verified": true
+  },
+  "main-2026100803/allocator-operations.jsonl": {
+    "at": "2026-10-08T15:48:34.563700+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/allocator-operations.jsonl",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/allocator-operations.jsonl",
+    "sha256": "146e5a5d9da0d874fc6bea2e4a1ff7c46215570a368d50361e42336e2f226f07",
+    "source_stat": {
+      "name": "allocator-operations.jsonl",
+      "size": 473,
+      "mtime_ns": 1791474497416433238
+    },
+    "verified": true
+  },
+  "main-2026100803/epoch-007-step-00015036.pt": {
+    "at": "2026-10-08T15:50:44.513602+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-007-step-00015036.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/epoch-007-step-00015036.pt",
+    "sha256": "008c16c9ce6baca10cf454ea3c20495266906f88be4f57c2875b3b7f74f84b9f",
+    "source_stat": {
+      "name": "epoch-007-step-00015036.pt",
+      "size": 36478428,
+      "mtime_ns": 1791474593987190115
+    },
+    "verified": true
+  },
+  "main-2026100803/best-dev-step-00015036.pt": {
+    "at": "2026-10-08T15:50:45.526752+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/best-dev-step-00015036.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/best-dev-step-00015036.pt",
+    "sha256": "d19d9a458e7a4e908b7faf0b3ecbc6c42f955ce06e3a0922098e900a06d1ce51",
+    "source_stat": {
+      "name": "best-dev-step-00015036.pt",
+      "size": 36477915,
+      "mtime_ns": 1791474593919188173
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000510.pt": {
+    "at": "2026-10-08T15:52:59.870207+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000510.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000510.pt",
+    "sha256": "fbe1a69e4d712e1ae175647109df2fc4b9c8473735d4adaccf61aaafc8116095",
+    "source_stat": {
+      "name": "step-00000510.pt",
+      "size": 40034761,
+      "mtime_ns": 1791474732430023000
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00005000.pt": {
+    "at": "2026-10-08T15:54:03.088730+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00005000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00005000.pt",
+    "sha256": "876a7a9c762ced48a9e3eafca92ca348503737602eaa96f49282d7d4c9f9a4b0",
+    "source_stat": {
+      "name": "step-00005000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791474792271231852
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000520.pt": {
+    "at": "2026-10-08T15:58:28.320564+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000520.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000520.pt",
+    "sha256": "9fe621ce3eb8e0d2b296a5de20df761bc8bbb354ba3d4482a126c2b39677c9b7",
+    "source_stat": {
+      "name": "step-00000520.pt",
+      "size": 40034761,
+      "mtime_ns": 1791475070830452192
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00005638.pt": {
+    "at": "2026-10-08T16:00:36.632171+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00005638.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00005638.pt",
+    "sha256": "5eb78cafc3c2a1a092671ee3fd3cd7137422cef4f6a05881ab3c615da272667a",
+    "source_stat": {
+      "name": "step-00005638.pt",
+      "size": 36472018,
+      "mtime_ns": 1791475230508842655
+    },
+    "verified": true
+  },
+  "main-2026100802/epoch-002-step-00005638.pt": {
+    "at": "2026-10-08T16:02:47.549094+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/epoch-002-step-00005638.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/epoch-002-step-00005638.pt",
+    "sha256": "59d339309473a8bd396db2c2bb294d7c00e49bd2e8d9eb94bfb73ac86c4de776",
+    "source_stat": {
+      "name": "epoch-002-step-00005638.pt",
+      "size": 36477212,
+      "mtime_ns": 1791475317969115758
+    },
+    "verified": true
+  },
+  "main-2026100802/best-dev-step-00005638.pt": {
+    "at": "2026-10-08T16:02:48.554747+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/best-dev-step-00005638.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/best-dev-step-00005638.pt",
+    "sha256": "fc6941c9e8afa04e22c659e1c1aa03dc124c2a662fd4b093e473d81925c9cbf0",
+    "source_stat": {
+      "name": "best-dev-step-00005638.pt",
+      "size": 36476763,
+      "mtime_ns": 1791475317901112439
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00015036.pt": {
+    "at": "2026-10-08T16:03:53.728956+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00015036.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00015036.pt",
+    "sha256": "029b9b8480cf388c7a030bcfdef62f0611b4ead649156d07c2e0cb61e78c4174",
+    "source_stat": {
+      "name": "step-00015036.pt",
+      "size": 36473298,
+      "mtime_ns": 1791475427595385757
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000530.pt": {
+    "at": "2026-10-08T16:03:59.949266+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000530.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000530.pt",
+    "sha256": "87ce43bda264fb003164d15c8b33994ceb351b13b0f296266a6aa552bcef6eba",
+    "source_stat": {
+      "name": "step-00000530.pt",
+      "size": 40034761,
+      "mtime_ns": 1791475408283311663
+    },
+    "verified": true
+  },
+  "main-2026100801/epoch-007-step-00015036.pt": {
+    "at": "2026-10-08T16:06:06.081859+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/epoch-007-step-00015036.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/epoch-007-step-00015036.pt",
+    "sha256": "f58dc9ae8fef140a4d4f4fc46abeeec35e44526ec30512f0c0f75b1f6533745d",
+    "source_stat": {
+      "name": "epoch-007-step-00015036.pt",
+      "size": 36478492,
+      "mtime_ns": 1791475514933806426
+    },
+    "verified": true
+  },
+  "main-2026100801/best-dev-step-00015036.pt": {
+    "at": "2026-10-08T16:06:07.142218+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00015036.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/best-dev-step-00015036.pt",
+    "sha256": "2d33dae26c99f174b12a968728715ae8fc1027ccf3b75b4e6c10a51bc803f76e",
+    "source_stat": {
+      "name": "best-dev-step-00015036.pt",
+      "size": 36477979,
+      "mtime_ns": 1791475514865804538
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00015036.pt": {
+    "at": "2026-10-08T16:06:12.116269+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00015036.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00015036.pt",
+    "sha256": "77fcaf0cb5ce204f9832f6d2ff5de4bf5e1711467d6ef8dec7302546e218f4f9",
+    "source_stat": {
+      "name": "step-00015036.pt",
+      "size": 36473234,
+      "mtime_ns": 1791475560816857366
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00006000.pt": {
+    "at": "2026-10-08T16:07:16.340617+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00006000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00006000.pt",
+    "sha256": "28e45dac42bb3d7d9ce16d55e1d2b8e6209debdac617b3bba06e9647f84ce285",
+    "source_stat": {
+      "name": "step-00006000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791475607331198556
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00016000.pt": {
+    "at": "2026-10-08T16:07:18.237802+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00016000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00016000.pt",
+    "sha256": "67497ac2900fae6ee1a496c9725e1f175f83391b054c2be4f237e19b1e4873d2",
+    "source_stat": {
+      "name": "step-00016000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791475599231883525
+    },
+    "verified": true
+  },
+  "noD1-2026100801/epoch-007-step-00015036.pt": {
+    "at": "2026-10-08T16:08:24.882283+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/epoch-007-step-00015036.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/epoch-007-step-00015036.pt",
+    "sha256": "48f845c4971eeda0d41a7c8475fcd91fe601827939bbed948799cf4dda016aa3",
+    "source_stat": {
+      "name": "epoch-007-step-00015036.pt",
+      "size": 36478428,
+      "mtime_ns": 1791475648599633918
+    },
+    "verified": true
+  },
+  "noD1-2026100801/best-dev-step-00015036.pt": {
+    "at": "2026-10-08T16:08:25.901388+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/best-dev-step-00015036.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00015036.pt",
+    "sha256": "8d8eae400b8691b0cb62d9e2f843598115334ac722a3e57fa09bbf73ad27defb",
+    "source_stat": {
+      "name": "best-dev-step-00015036.pt",
+      "size": 36477979,
+      "mtime_ns": 1791475648527631643
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000540.pt": {
+    "at": "2026-10-08T16:09:34.450037+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000540.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000540.pt",
+    "sha256": "571a59d0ac9ef2a5a33fd33c14f04e3a54541454bf171297dc29166d2989609a",
+    "source_stat": {
+      "name": "step-00000540.pt",
+      "size": 40034761,
+      "mtime_ns": 1791475745952602223
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000550.pt": {
+    "at": "2026-10-08T16:15:02.238100+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000550.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000550.pt",
+    "sha256": "630237db30947f0ddebbadd5e673aea4be4d9d24fa11f9b097ff611c923fa1d5",
+    "source_stat": {
+      "name": "step-00000550.pt",
+      "size": 40034761,
+      "mtime_ns": 1791476084198129078
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00007000.pt": {
+    "at": "2026-10-08T16:18:15.732017+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00007000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00007000.pt",
+    "sha256": "b763e2277c62bd9e5ea351af49ca5085a7a87514de8102a4bb245643a79619c7",
+    "source_stat": {
+      "name": "step-00007000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791476288361241770
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000560.pt": {
+    "at": "2026-10-08T16:20:31.317156+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000560.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000560.pt",
+    "sha256": "b89bd24641d1807cb774285c686c4881d48b381a24121a022bb13dcb2262b2b3",
+    "source_stat": {
+      "name": "step-00000560.pt",
+      "size": 40034761,
+      "mtime_ns": 1791476422255764490
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00016915.pt": {
+    "at": "2026-10-08T16:22:40.664612+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00016915.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00016915.pt",
+    "sha256": "a9c3b97a4b0dc56be193cf6748cec57f7f16f3b4692f27d4b043a83a253dc8fd",
+    "source_stat": {
+      "name": "step-00016915.pt",
+      "size": 36473234,
+      "mtime_ns": 1791476556267188706
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00016000.pt": {
+    "at": "2026-10-08T16:24:49.123251+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00016000.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00016000.pt",
+    "sha256": "b82052e78c44f8f41cbda4b3d65a3f97d6b4970ad243408d2986e182dc7471dc",
+    "source_stat": {
+      "name": "step-00016000.pt",
+      "size": 36473298,
+      "mtime_ns": 1791476623660995289
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00007518.pt": {
+    "at": "2026-10-08T16:24:51.466066+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00007518.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00007518.pt",
+    "sha256": "56543699ff68ff2f49499041b52caae4f8842bf8a50dccdeb2b9c8f1c947457a",
+    "source_stat": {
+      "name": "step-00007518.pt",
+      "size": 36472018,
+      "mtime_ns": 1791476644319455995
+    },
+    "verified": true
+  },
+  "main-2026100803/epoch-008-step-00016915.pt": {
+    "at": "2026-10-08T16:24:53.401227+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-008-step-00016915.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/epoch-008-step-00016915.pt",
+    "sha256": "29b4bc9e195af7b73113951b95fa1fbc65a09c9c1fb11e2824d0d96b1f64db8c",
+    "source_stat": {
+      "name": "epoch-008-step-00016915.pt",
+      "size": 36478428,
+      "mtime_ns": 1791476643877931024
+    },
+    "verified": true
+  },
+  "main-2026100803/best-dev-step-00016915.pt": {
+    "at": "2026-10-08T16:24:54.418966+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/best-dev-step-00016915.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/best-dev-step-00016915.pt",
+    "sha256": "5073b0d217e045446eb248825da3ec3049e0a863c60a0b4f849ce88e135bbd8f",
+    "source_stat": {
+      "name": "best-dev-step-00016915.pt",
+      "size": 36477915,
+      "mtime_ns": 1791476643809928878
+    },
+    "verified": true
+  },
+  "main-2026100802/epoch-003-step-00007518.pt": {
+    "at": "2026-10-08T16:26:00.263963+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/epoch-003-step-00007518.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/epoch-003-step-00007518.pt",
+    "sha256": "2bdb47f79eaf4aac1b4e5a8a8367bd91a1d559949aeceec7c7580c8726dcb2bb",
+    "source_stat": {
+      "name": "epoch-003-step-00007518.pt",
+      "size": 36477212,
+      "mtime_ns": 1791476731835860603
+    },
+    "verified": true
+  },
+  "main-2026100802/best-dev-step-00007518.pt": {
+    "at": "2026-10-08T16:26:01.296961+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/best-dev-step-00007518.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/best-dev-step-00007518.pt",
+    "sha256": "1900c8d86140c53457ce4b76bbfd915c1c94b29327eadafa9ce4fbc7d84b261a",
+    "source_stat": {
+      "name": "best-dev-step-00007518.pt",
+      "size": 36476763,
+      "mtime_ns": 1791476731771857390
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00017000.pt": {
+    "at": "2026-10-08T16:26:03.652575+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00017000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00017000.pt",
+    "sha256": "b151391d75dfc7b1d1ca10736fc6d5d68c130af0fe295088cca51ad64e12ca26",
+    "source_stat": {
+      "name": "step-00017000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791476735452801218
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00016000.pt": {
+    "at": "2026-10-08T16:26:06.181521+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00016000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00016000.pt",
+    "sha256": "eb7ef307f0c401c076856ea1d06d50cea98685d6255f1b26bbd6f29406a89217",
+    "source_stat": {
+      "name": "step-00016000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791476714027950032
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000570.pt": {
+    "at": "2026-10-08T16:26:08.655715+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000570.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000570.pt",
+    "sha256": "f8ebf50dfec0112f99d3c1c6fef697a867d22f2444e2435ef5f8b2b189ec3d47",
+    "source_stat": {
+      "name": "step-00000570.pt",
+      "size": 40034761,
+      "mtime_ns": 1791476761997507057
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00008000.pt": {
+    "at": "2026-10-08T16:32:38.725629+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00008000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00008000.pt",
+    "sha256": "1d08071c7d53e8b86161e436ff5ecaf1283f671dd97e0b1cf50634b4fef309a3",
+    "source_stat": {
+      "name": "step-00008000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791477116026995967
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000580.pt": {
+    "at": "2026-10-08T16:32:42.662220+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000580.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000580.pt",
+    "sha256": "4a5c0ebd6c1651137eb6d007cf2687b0a55bf3ce1eadf1ed051a6c5344858937",
+    "source_stat": {
+      "name": "step-00000580.pt",
+      "size": 40034761,
+      "mtime_ns": 1791477100601003934
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000590.pt": {
+    "at": "2026-10-08T16:38:11.237678+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000590.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000590.pt",
+    "sha256": "ee1f08f4dce5201aa8da41cf9cb16901ea9d5efd16c4e7532b9d66a6005aec63",
+    "source_stat": {
+      "name": "step-00000590.pt",
+      "size": 40034761,
+      "mtime_ns": 1791477437892059123
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00016915.pt": {
+    "at": "2026-10-08T16:41:24.037814+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00016915.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00016915.pt",
+    "sha256": "0d9a5d4c31df733da9ca475d7606e2430905de730171b17c7b1555acea634c8f",
+    "source_stat": {
+      "name": "step-00016915.pt",
+      "size": 36473298,
+      "mtime_ns": 1791477662090193191
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00016915.pt": {
+    "at": "2026-10-08T16:42:33.054448+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00016915.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00016915.pt",
+    "sha256": "8408a1168d03211cd82249332b71bf1b9a911dd08c239ea36b9e1dbddff5f9a0",
+    "source_stat": {
+      "name": "step-00016915.pt",
+      "size": 36473234,
+      "mtime_ns": 1791477720786105880
+    },
+    "verified": true
+  },
+  "main-2026100801/epoch-008-step-00016915.pt": {
+    "at": "2026-10-08T16:43:36.442260+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/epoch-008-step-00016915.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/epoch-008-step-00016915.pt",
+    "sha256": "30b2757aa5f1672b8707509f54b18191b660bf281fe4b4f29f2922b59f38a1b1",
+    "source_stat": {
+      "name": "epoch-008-step-00016915.pt",
+      "size": 36478492,
+      "mtime_ns": 1791477749432658896
+    },
+    "verified": true
+  },
+  "main-2026100801/best-dev-step-00016915.pt": {
+    "at": "2026-10-08T16:43:37.461519+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00016915.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/best-dev-step-00016915.pt",
+    "sha256": "2665213880cf96e0c8024a9aa5e7684a1b49ebd0d59d34570e30743e2ab75321",
+    "source_stat": {
+      "name": "best-dev-step-00016915.pt",
+      "size": 36477979,
+      "mtime_ns": 1791477749364656976
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00009000.pt": {
+    "at": "2026-10-08T16:43:40.617531+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00009000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00009000.pt",
+    "sha256": "39368473c31c25c11573ecfb429eaceeabc0c2155cf085e6c684a059fb65a631",
+    "source_stat": {
+      "name": "step-00009000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791477798492580407
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00018000.pt": {
+    "at": "2026-10-08T16:43:42.636209+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00018000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00018000.pt",
+    "sha256": "e780a73493d5c1157131a6f80f176b795e9818f1cb8801286fb893c0f89f000b",
+    "source_stat": {
+      "name": "step-00018000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791477774515829336
+    },
+    "verified": true
+  },
+  "noD1-2026100801/epoch-008-step-00016915.pt": {
+    "at": "2026-10-08T16:43:44.708610+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/epoch-008-step-00016915.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/epoch-008-step-00016915.pt",
+    "sha256": "dc7c7180796adada912b4ed3858e29fff0bb031b5d986092f8cc1dc42262b799",
+    "source_stat": {
+      "name": "epoch-008-step-00016915.pt",
+      "size": 36478428,
+      "mtime_ns": 1791477808680789144
+    },
+    "verified": true
+  },
+  "noD1-2026100801/best-dev-step-00016915.pt": {
+    "at": "2026-10-08T16:43:45.732910+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/best-dev-step-00016915.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00016915.pt",
+    "sha256": "fa3cb4b1b655f1acba022d4cb44385fb1668180ce6ed3f7f5be6059e3c1cc8f8",
+    "source_stat": {
+      "name": "best-dev-step-00016915.pt",
+      "size": 36477979,
+      "mtime_ns": 1791477808608786944
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000600.pt": {
+    "at": "2026-10-08T16:43:48.161190+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000600.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000600.pt",
+    "sha256": "bc69346db869c1143a2b543f23698d69fefb8d078567a10e0b033ea00a1c9cf0",
+    "source_stat": {
+      "name": "step-00000600.pt",
+      "size": 40034761,
+      "mtime_ns": 1791477777510692126
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00017000.pt": {
+    "at": "2026-10-08T16:44:50.182772+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00017000.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00017000.pt",
+    "sha256": "656b61243ba19d533004c93348bb677d8487c0c6d913f3e94abe497cd98aff02",
+    "source_stat": {
+      "name": "step-00017000.pt",
+      "size": 36473298,
+      "mtime_ns": 1791477851339537235
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00017000.pt": {
+    "at": "2026-10-08T16:45:59.724796+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00017000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00017000.pt",
+    "sha256": "dbf6948c041f26e125beb06e271087120a57b5c876655993e494590f05b3a3e8",
+    "source_stat": {
+      "name": "step-00017000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791477906999794547
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00009398.pt": {
+    "at": "2026-10-08T16:48:09.303819+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00009398.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00009398.pt",
+    "sha256": "45e0eda9d05301b13e292c1b7b9a3f93cd2951efe19a6b99b18b30bd3b281e4c",
+    "source_stat": {
+      "name": "step-00009398.pt",
+      "size": 36472018,
+      "mtime_ns": 1791478073662060672
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000610.pt": {
+    "at": "2026-10-08T16:49:19.074383+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000610.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000610.pt",
+    "sha256": "5ae0501f1b418d520e632cfc69dcd9794a65d0b576dcfbe3690468f84fa7ecd4",
+    "source_stat": {
+      "name": "step-00000610.pt",
+      "size": 40034761,
+      "mtime_ns": 1791478116453046668
+    },
+    "verified": true
+  },
+  "main-2026100802/epoch-004-step-00009398.pt": {
+    "at": "2026-10-08T16:50:22.480335+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/epoch-004-step-00009398.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/epoch-004-step-00009398.pt",
+    "sha256": "3d9bbb2bf7bc18e11ab77479c57102001585dab9e646120bcec9555ca9c39baa",
+    "source_stat": {
+      "name": "epoch-004-step-00009398.pt",
+      "size": 36477212,
+      "mtime_ns": 1791478161222504485
+    },
+    "verified": true
+  },
+  "main-2026100802/best-dev-step-00009398.pt": {
+    "at": "2026-10-08T16:50:23.575552+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/best-dev-step-00009398.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/best-dev-step-00009398.pt",
+    "sha256": "66db8bff89529c387ee4c84d3df0aed342d36686f46c8e1b664c7997b8bd62a6",
+    "source_stat": {
+      "name": "best-dev-step-00009398.pt",
+      "size": 36476763,
+      "mtime_ns": 1791478161154500981
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000620.pt": {
+    "at": "2026-10-08T16:54:50.873475+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000620.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000620.pt",
+    "sha256": "64cb9638d29535ddd474e83b64308effedfea04d4d004bdb41ac1ecf710a8708",
+    "source_stat": {
+      "name": "step-00000620.pt",
+      "size": 40034761,
+      "mtime_ns": 1791478455023257605
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00010000.pt": {
+    "at": "2026-10-08T16:56:59.775229+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00010000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00010000.pt",
+    "sha256": "feb8dfee5069800395fe5b30b1940d2309c4611c952f103784a92f6fd6917525",
+    "source_stat": {
+      "name": "step-00010000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791478593800481462
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00018794.pt": {
+    "at": "2026-10-08T16:57:01.766716+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00018794.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00018794.pt",
+    "sha256": "eb507153b95877f4ca549e77d22a35a1bec44c1bde06e4072b0b9a44129da151",
+    "source_stat": {
+      "name": "step-00018794.pt",
+      "size": 36473234,
+      "mtime_ns": 1791478599627804616
+    },
+    "verified": true
+  },
+  "main-2026100803/epoch-009-step-00018794.pt": {
+    "at": "2026-10-08T16:59:12.905144+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-009-step-00018794.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/epoch-009-step-00018794.pt",
+    "sha256": "b62aa8e22b3d8ed686c6e28a086428c3d5a1e55c65acb2306b4ccc973d396cbc",
+    "source_stat": {
+      "name": "epoch-009-step-00018794.pt",
+      "size": 36478428,
+      "mtime_ns": 1791478687278522006
+    },
+    "verified": true
+  },
+  "main-2026100803/best-dev-step-00018794.pt": {
+    "at": "2026-10-08T16:59:13.922441+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/best-dev-step-00018794.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/best-dev-step-00018794.pt",
+    "sha256": "eed6a8f23f2acc5a109b18ba9a0afbf47801964a6b24095e9d2d05db2aab452a",
+    "source_stat": {
+      "name": "best-dev-step-00018794.pt",
+      "size": 36477915,
+      "mtime_ns": 1791478687206519748
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000630.pt": {
+    "at": "2026-10-08T17:00:23.820293+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000630.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000630.pt",
+    "sha256": "2b7ce183a05e08a18f8f7e2c767e0df009dde8282924ec10f1089a402635a641",
+    "source_stat": {
+      "name": "step-00000630.pt",
+      "size": 40034761,
+      "mtime_ns": 1791478792981382083
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00019000.pt": {
+    "at": "2026-10-08T17:02:33.460275+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00019000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00019000.pt",
+    "sha256": "b9a491f2b529515e8497b05b2ccb51ffea10777286585e7786293a87efc7ef8e",
+    "source_stat": {
+      "name": "step-00019000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791478904773254661
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00018000.pt": {
+    "at": "2026-10-08T17:03:37.478471+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00018000.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00018000.pt",
+    "sha256": "a5a6c3b0ac2006d2790c9c721592464cf2b3c5dc2b434b8d415c7cf4703e0401",
+    "source_stat": {
+      "name": "step-00018000.pt",
+      "size": 36473298,
+      "mtime_ns": 1791478985035566091
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00018000.pt": {
+    "at": "2026-10-08T17:03:41.847500+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00018000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00018000.pt",
+    "sha256": "aa55e96d542d0f6393dabe3612d859690961d9a2721d054e0ed22ddcd5632767",
+    "source_stat": {
+      "name": "step-00018000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791479005589619467
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000640.pt": {
+    "at": "2026-10-08T17:05:55.502149+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000640.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000640.pt",
+    "sha256": "b225a189007c8a5031b8c7ccf889c23e6c83c80ee2c4c91e01865b39b6c11e64",
+    "source_stat": {
+      "name": "step-00000640.pt",
+      "size": 40034761,
+      "mtime_ns": 1791479132059471332
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00011000.pt": {
+    "at": "2026-10-08T17:08:04.308571+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00011000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00011000.pt",
+    "sha256": "5e4870c26c778fdc8d87f9bccc1acc4ad62c4ba7cef88f1e29a87100c2b2bfa8",
+    "source_stat": {
+      "name": "step-00011000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791479276742520479
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00011278.pt": {
+    "at": "2026-10-08T17:11:22.621665+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00011278.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00011278.pt",
+    "sha256": "3bc3fb02797f0607700b04b644618621c1a6480dc8ba93f2d0c203816597e800",
+    "source_stat": {
+      "name": "step-00011278.pt",
+      "size": 36472018,
+      "mtime_ns": 1791479469456065152
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000650.pt": {
+    "at": "2026-10-08T17:11:26.722108+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000650.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000650.pt",
+    "sha256": "724f5134206d9baf8ddcdab7f0e37ec1b1845c57de1679c91263e9c3f5ce4f56",
+    "source_stat": {
+      "name": "step-00000650.pt",
+      "size": 40034761,
+      "mtime_ns": 1791479469977515821
+    },
+    "verified": true
+  },
+  "main-2026100802/epoch-005-step-00011278.pt": {
+    "at": "2026-10-08T17:13:34.891138+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/epoch-005-step-00011278.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/epoch-005-step-00011278.pt",
+    "sha256": "c36b00e97c46ce0fab40dcd1b369873241b7802cba49eb4167b07e7079ea8700",
+    "source_stat": {
+      "name": "epoch-005-step-00011278.pt",
+      "size": 36477212,
+      "mtime_ns": 1791479557276410276
+    },
+    "verified": true
+  },
+  "main-2026100802/best-dev-step-00011278.pt": {
+    "at": "2026-10-08T17:13:35.963770+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/best-dev-step-00011278.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/best-dev-step-00011278.pt",
+    "sha256": "2c797ceb9bd198273d39ce157a0ad73b0b1964a998cb1a8f375e31393d8f8968",
+    "source_stat": {
+      "name": "best-dev-step-00011278.pt",
+      "size": 36476763,
+      "mtime_ns": 1791479557188405922
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000660.pt": {
+    "at": "2026-10-08T17:16:58.196281+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000660.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000660.pt",
+    "sha256": "d4f3834ed63300e0451ebc577a3b2ef5963e18cb96d61913614f657e9ef349dd",
+    "source_stat": {
+      "name": "step-00000660.pt",
+      "size": 40034761,
+      "mtime_ns": 1791479808059567550
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00018794.pt": {
+    "at": "2026-10-08T17:18:03.550022+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00018794.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00018794.pt",
+    "sha256": "0aedf6fd051ccdd5edc81321e908659120322ed9d53fe736dde86592e731688a",
+    "source_stat": {
+      "name": "step-00018794.pt",
+      "size": 36473234,
+      "mtime_ns": 1791479876020446598
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00018794.pt": {
+    "at": "2026-10-08T17:19:06.587483+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00018794.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00018794.pt",
+    "sha256": "a60498cd2915026c0187ee0cdf23554d3917ea6867546c0b4ec7a5f350b4958f",
+    "source_stat": {
+      "name": "step-00018794.pt",
+      "size": 36473298,
+      "mtime_ns": 1791479883472846845
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00020000.pt": {
+    "at": "2026-10-08T17:19:09.986106+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00020000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00020000.pt",
+    "sha256": "40d35c0125427a1ac0d304c45e8119faae518da7e8110760dad537a50a64d83e",
+    "source_stat": {
+      "name": "step-00020000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791479946972325881
+    },
+    "verified": true
+  },
+  "main-2026100801/epoch-009-step-00018794.pt": {
+    "at": "2026-10-08T17:20:13.504581+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/epoch-009-step-00018794.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/epoch-009-step-00018794.pt",
+    "sha256": "b63075d1a4237db5549099c290d3eb3953691b319426ad18bdb98446778198e6",
+    "source_stat": {
+      "name": "epoch-009-step-00018794.pt",
+      "size": 36478492,
+      "mtime_ns": 1791479970867312810
+    },
+    "verified": true
+  },
+  "main-2026100801/best-dev-step-00018794.pt": {
+    "at": "2026-10-08T17:20:14.573457+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00018794.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/best-dev-step-00018794.pt",
+    "sha256": "6afd08be8ee528c0ac5dd122138fcced886306ad133c555ad49c54db35050e87",
+    "source_stat": {
+      "name": "best-dev-step-00018794.pt",
+      "size": 36477979,
+      "mtime_ns": 1791479970799310890
+    },
+    "verified": true
+  },
+  "noD1-2026100801/epoch-009-step-00018794.pt": {
+    "at": "2026-10-08T17:20:19.710271+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/epoch-009-step-00018794.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/epoch-009-step-00018794.pt",
+    "sha256": "e98509f7cb3a0cd808b9e0864ab9bc13c8d33f3777c41a8559f9727b0fdcf3c6",
+    "source_stat": {
+      "name": "epoch-009-step-00018794.pt",
+      "size": 36478428,
+      "mtime_ns": 1791479964095159432
+    },
+    "verified": true
+  },
+  "noD1-2026100801/best-dev-step-00018794.pt": {
+    "at": "2026-10-08T17:20:20.734449+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/best-dev-step-00018794.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00018794.pt",
+    "sha256": "85b8e04a01bc2d099bb50f94933b7b08b70f3f616db002cfc5e6c8ed10f1c106",
+    "source_stat": {
+      "name": "best-dev-step-00018794.pt",
+      "size": 36477979,
+      "mtime_ns": 1791479964019157091
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00012000.pt": {
+    "at": "2026-10-08T17:22:32.136802+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00012000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00012000.pt",
+    "sha256": "321bdb3a7b8fd2f3cb51c4db2f02f404558537cb080658dc22c62cce6f7acacf",
+    "source_stat": {
+      "name": "step-00012000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791480149385663950
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000670.pt": {
+    "at": "2026-10-08T17:22:36.206855+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000670.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000670.pt",
+    "sha256": "7c62b0b15759e18425b4f29e792a3673b262afc696d83307059ae3da76025453",
+    "source_stat": {
+      "name": "step-00000670.pt",
+      "size": 40034761,
+      "mtime_ns": 1791480147817670341
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00019000.pt": {
+    "at": "2026-10-08T17:23:38.258336+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00019000.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00019000.pt",
+    "sha256": "86b31ae1275a93e6d668ae4df68c1902a668f6af6c67df65b13542de795f7663",
+    "source_stat": {
+      "name": "step-00019000.pt",
+      "size": 36473298,
+      "mtime_ns": 1791480212846143182
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00019000.pt": {
+    "at": "2026-10-08T17:23:42.675948+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00019000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00019000.pt",
+    "sha256": "55e831fcee3caa6d35caf777c09a5890eadf31650e990780d7c16e9686c51f8a",
+    "source_stat": {
+      "name": "step-00019000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791480192802203348
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000680.pt": {
+    "at": "2026-10-08T17:28:07.420992+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000680.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000680.pt",
+    "sha256": "36b9cd450596b019162a268c3dfaf947e3b364dc7ecf516cfade048253fe47a5",
+    "source_stat": {
+      "name": "step-00000680.pt",
+      "size": 40034761,
+      "mtime_ns": 1791480486219733442
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00020673.pt": {
+    "at": "2026-10-08T17:31:23.055973+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00020673.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00020673.pt",
+    "sha256": "6c2f16a8b12235e646c2a2767e1be18a6dba643b19c905a3f7747504ef206ebd",
+    "source_stat": {
+      "name": "step-00020673.pt",
+      "size": 36473234,
+      "mtime_ns": 1791480648784900898
+    },
+    "verified": true
+  },
+  "main-2026100803/epoch-010-step-00020673.pt": {
+    "at": "2026-10-08T17:32:29.625717+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-010-step-00020673.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/epoch-010-step-00020673.pt",
+    "sha256": "50a88868e60782042b8306c3026d8b29b03fdd4543dd94bb124cd1e523a70ef6",
+    "source_stat": {
+      "name": "epoch-010-step-00020673.pt",
+      "size": 36478428,
+      "mtime_ns": 1791480736411464892
+    },
+    "verified": true
+  },
+  "main-2026100803/best-dev-step-00020673.pt": {
+    "at": "2026-10-08T17:32:30.652556+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/best-dev-step-00020673.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/best-dev-step-00020673.pt",
+    "sha256": "cd583a235a41248935ee6a9d5d49b8e4db6bfefb4a0bcfd2693fa266a235efda",
+    "source_stat": {
+      "name": "best-dev-step-00020673.pt",
+      "size": 36477915,
+      "mtime_ns": 1791480736343462903
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00013000.pt": {
+    "at": "2026-10-08T17:34:43.024118+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00013000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00013000.pt",
+    "sha256": "9ce6d86f58c6dcc6631aa8b55ceb687dfb47ec323ddd62cb2ef1aafb2b27f2c0",
+    "source_stat": {
+      "name": "step-00013000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791480835387249369
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000690.pt": {
+    "at": "2026-10-08T17:34:47.157818+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000690.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000690.pt",
+    "sha256": "ad2fcfe1449822b9b952f2e2902581a81f5df79582e9865de510be129674fb2e",
+    "source_stat": {
+      "name": "step-00000690.pt",
+      "size": 40034761,
+      "mtime_ns": 1791480824213784736
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00013157.pt": {
+    "at": "2026-10-08T17:35:50.571295+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00013157.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00013157.pt",
+    "sha256": "09a14d6a9c4d22ee030bd841ba97b21447bbf52e1a73a193304a75697e20405e",
+    "source_stat": {
+      "name": "step-00013157.pt",
+      "size": 36472018,
+      "mtime_ns": 1791480946792375148
+    },
+    "verified": true
+  },
+  "main-2026100802/epoch-006-step-00013157.pt": {
+    "at": "2026-10-08T17:38:02.060232+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/epoch-006-step-00013157.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/epoch-006-step-00013157.pt",
+    "sha256": "6b531933d58b01d9bdf4e581649d0e46819a40a3a7ee5c3afd1ff2af75ac4809",
+    "source_stat": {
+      "name": "epoch-006-step-00013157.pt",
+      "size": 36477212,
+      "mtime_ns": 1791481034568447475
+    },
+    "verified": true
+  },
+  "main-2026100802/best-dev-step-00013157.pt": {
+    "at": "2026-10-08T17:38:03.228744+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/best-dev-step-00013157.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/best-dev-step-00013157.pt",
+    "sha256": "fc7c6bed346dfb2ebc57eae6f8d45dbecdc05dd243e49c3afd93f8a73eb9f284",
+    "source_stat": {
+      "name": "best-dev-step-00013157.pt",
+      "size": 36476763,
+      "mtime_ns": 1791481034500444311
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00021000.pt": {
+    "at": "2026-10-08T17:38:05.660294+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00021000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00021000.pt",
+    "sha256": "c3ad1effea04771c4c2aaca1ed1a037fc8efd598e4e510e05f6076cc8eb40c88",
+    "source_stat": {
+      "name": "step-00021000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791481081309551904
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000700.pt": {
+    "at": "2026-10-08T17:40:20.762088+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000700.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000700.pt",
+    "sha256": "26b2ccc69b7d69f3b4e02e3f71f1f3c552352560c1847958bee52ae2b0b58328",
+    "source_stat": {
+      "name": "step-00000700.pt",
+      "size": 40034761,
+      "mtime_ns": 1791481161869453153
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00020000.pt": {
+    "at": "2026-10-08T17:42:32.313020+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00020000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00020000.pt",
+    "sha256": "60bc02fd4e4440f1fcf2e06bc5a57545f985716b58c237360f647e1bca4d3776",
+    "source_stat": {
+      "name": "step-00020000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791481292405503914
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00020000.pt": {
+    "at": "2026-10-08T17:43:35.445818+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00020000.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00020000.pt",
+    "sha256": "e4d1fda894af9c8b0428488e662c56f6846a8453ca2dae7edc0f3c91d05b6b18",
+    "source_stat": {
+      "name": "step-00020000.pt",
+      "size": 36473298,
+      "mtime_ns": 1791481348026920836
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000710.pt": {
+    "at": "2026-10-08T17:45:52.822668+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000710.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000710.pt",
+    "sha256": "e58ce99ca8a881cc2d8d5fa16da264aba5859c9c2d106dde5b214be663a11c19",
+    "source_stat": {
+      "name": "step-00000710.pt",
+      "size": 40034761,
+      "mtime_ns": 1791481501445412444
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00014000.pt": {
+    "at": "2026-10-08T17:50:13.398207+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00014000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00014000.pt",
+    "sha256": "9a85a72fc21d0e97fee9342aaf92d1ad616edcff7896e224a9210747772fdf86",
+    "source_stat": {
+      "name": "step-00014000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791481787860093723
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000720.pt": {
+    "at": "2026-10-08T17:51:22.977546+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000720.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000720.pt",
+    "sha256": "c29cccc57569a88611a2d195b228c0d24406b636a1440246b5aae80cae062e19",
+    "source_stat": {
+      "name": "step-00000720.pt",
+      "size": 40034761,
+      "mtime_ns": 1791481840374170472
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00020673.pt": {
+    "at": "2026-10-08T17:54:40.390550+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00020673.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00020673.pt",
+    "sha256": "4f850a0aff2871427fdc28c23897f87ac27904309eea60cab9708e74123763d2",
+    "source_stat": {
+      "name": "step-00020673.pt",
+      "size": 36473234,
+      "mtime_ns": 1791482039229051856
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00020673.pt": {
+    "at": "2026-10-08T17:55:43.822805+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00020673.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00020673.pt",
+    "sha256": "1f6b12f9b6170c43b71ce831f5918fcef2cc6113eca421943794caeb16dad383",
+    "source_stat": {
+      "name": "step-00020673.pt",
+      "size": 36473298,
+      "mtime_ns": 1791482112573050822
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00022000.pt": {
+    "at": "2026-10-08T17:55:47.205524+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00022000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00022000.pt",
+    "sha256": "caf8499933a11560f93cfa27f46b7d8543a733574f069c39f03a5306406576eb",
+    "source_stat": {
+      "name": "step-00022000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791482124244033282
+    },
+    "verified": true
+  },
+  "noD1-2026100801/epoch-010-step-00020673.pt": {
+    "at": "2026-10-08T17:55:49.306698+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/epoch-010-step-00020673.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/epoch-010-step-00020673.pt",
+    "sha256": "6552ef180c7b2f279a08531735fa709bbbea86392dcd5b8bc15003c037f4f755",
+    "source_stat": {
+      "name": "epoch-010-step-00020673.pt",
+      "size": 36478428,
+      "mtime_ns": 1791482127139810003
+    },
+    "verified": true
+  },
+  "noD1-2026100801/best-dev-step-00020673.pt": {
+    "at": "2026-10-08T17:55:50.331265+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/best-dev-step-00020673.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00020673.pt",
+    "sha256": "1e0957142e8ca9f634207b626a073488970bc12b2ae3dfdd112e0455df276a06",
+    "source_stat": {
+      "name": "best-dev-step-00020673.pt",
+      "size": 36477979,
+      "mtime_ns": 1791482127063807619
+    },
+    "verified": true
+  },
+  "main-2026100801/epoch-010-step-00020673.pt": {
+    "at": "2026-10-08T17:56:53.799900+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/epoch-010-step-00020673.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/epoch-010-step-00020673.pt",
+    "sha256": "d0684030ec1f42e1306066364be87f143c0acc85b1ed44069360a34349e66715",
+    "source_stat": {
+      "name": "epoch-010-step-00020673.pt",
+      "size": 36478492,
+      "mtime_ns": 1791482199923556160
+    },
+    "verified": true
+  },
+  "main-2026100801/best-dev-step-00020673.pt": {
+    "at": "2026-10-08T17:56:54.803927+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00020673.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/best-dev-step-00020673.pt",
+    "sha256": "2c455ed4844c385cc038f19d62ed635b95707440e328ca74062db1752d9a635b",
+    "source_stat": {
+      "name": "best-dev-step-00020673.pt",
+      "size": 36477979,
+      "mtime_ns": 1791482199855554211
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000730.pt": {
+    "at": "2026-10-08T17:57:01.152372+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000730.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000730.pt",
+    "sha256": "7fcfaa6fe7b73efcfc6386ec69a5225344fa45319f5b269c4ad52556cec7f81d",
+    "source_stat": {
+      "name": "step-00000730.pt",
+      "size": 40034761,
+      "mtime_ns": 1791482177503298038
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00015000.pt": {
+    "at": "2026-10-08T18:01:22.156733+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00015000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00015000.pt",
+    "sha256": "d4da5f7dc302d1445b3b2e425986ed238838087719487e44bbd24da221cfe242",
+    "source_stat": {
+      "name": "step-00015000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791482469655098895
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00015036.pt": {
+    "at": "2026-10-08T18:02:28.646624+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00015036.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00015036.pt",
+    "sha256": "f88728abb33a7630010c1dc9098c484597bb95d97a314392523c4d4a23a2410b",
+    "source_stat": {
+      "name": "step-00015036.pt",
+      "size": 36472018,
+      "mtime_ns": 1791482498840693913
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00021000.pt": {
+    "at": "2026-10-08T18:02:31.724179+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00021000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00021000.pt",
+    "sha256": "ecb6516a7e74714bbd2044f010965e5ca657da3bac36e4741dbb6ac77e761e74",
+    "source_stat": {
+      "name": "step-00021000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791482487767111279
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000740.pt": {
+    "at": "2026-10-08T18:02:33.806077+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000740.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000740.pt",
+    "sha256": "c1624d5d2de79a0c75dca8f1704b26f388d12add77f41a53ea1c7fb7380227e4",
+    "source_stat": {
+      "name": "step-00000740.pt",
+      "size": 40034761,
+      "mtime_ns": 1791482515764671562
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00021000.pt": {
+    "at": "2026-10-08T18:03:35.986199+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00021000.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00021000.pt",
+    "sha256": "b41cdcf6d7e32e184914476f14be771ec3893034cdd9f0f228b178f8dc549d7d",
+    "source_stat": {
+      "name": "step-00021000.pt",
+      "size": 36473298,
+      "mtime_ns": 1791482581938489382
+    },
+    "verified": true
+  },
+  "main-2026100802/epoch-007-step-00015036.pt": {
+    "at": "2026-10-08T18:03:38.472224+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/epoch-007-step-00015036.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/epoch-007-step-00015036.pt",
+    "sha256": "a9bc1593c79c7a3229c70527d239bd1d090f4cb96b0faeea7e103943f4c5b01e",
+    "source_stat": {
+      "name": "epoch-007-step-00015036.pt",
+      "size": 36477212,
+      "mtime_ns": 1791482586493434362
+    },
+    "verified": true
+  },
+  "main-2026100802/best-dev-step-00015036.pt": {
+    "at": "2026-10-08T18:03:39.513836+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/best-dev-step-00015036.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/best-dev-step-00015036.pt",
+    "sha256": "18528d815f75ea78d2ea2abc6ff72851ccc50b6250cf2b5d7896981ee7f449da",
+    "source_stat": {
+      "name": "best-dev-step-00015036.pt",
+      "size": 36476763,
+      "mtime_ns": 1791482586429430925
+    },
+    "verified": true
+  },
+  "main-2026100803/step-00022553.pt": {
+    "at": "2026-10-08T18:05:51.866270+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/step-00022553.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/step-00022553.pt",
+    "sha256": "edf53a3631ff1e9f7022b89164343e7dcae0212abccd0389b5c6c5c113510975",
+    "source_stat": {
+      "name": "step-00022553.pt",
+      "size": 36473234,
+      "mtime_ns": 1791482703488958617
+    },
+    "verified": true
+  },
+  "main-2026100803/epoch-011-step-00022553.pt": {
+    "at": "2026-10-08T18:06:59.322771+00:00",
+    "run": "main-2026100803",
+    "source_host": "127x13",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/main-2026100803/epoch-011-step-00022553.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x13/main-2026100803/epoch-011-step-00022553.pt",
+    "sha256": "0de730f0d99bcf4e759f954c595b5d4efb011714def9933baeba5d8b0bfdb21b",
+    "source_stat": {
+      "name": "epoch-011-step-00022553.pt",
+      "size": 36478428,
+      "mtime_ns": 1791482791046752326
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000750.pt": {
+    "at": "2026-10-08T18:08:08.108929+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000750.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000750.pt",
+    "sha256": "fe40cffac0bd0ed8fa1442a64972f7f3426696c22994400cac44912a90627f0a",
+    "source_stat": {
+      "name": "step-00000750.pt",
+      "size": 40034761,
+      "mtime_ns": 1791482853642145698
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000760.pt": {
+    "at": "2026-10-08T18:13:34.799252+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000760.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000760.pt",
+    "sha256": "a827b52b627a2d291e17df004abf46abcd70e00a22210c8b1f21eb394a0a3ad6",
+    "source_stat": {
+      "name": "step-00000760.pt",
+      "size": 40034761,
+      "mtime_ns": 1791483192438542555
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00016000.pt": {
+    "at": "2026-10-08T18:17:53.915605+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00016000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00016000.pt",
+    "sha256": "6083f6aa4e599fcf0a8f8facff4969a4a45c61dcea719937c6f9e9bdd68e9f23",
+    "source_stat": {
+      "name": "step-00016000.pt",
+      "size": 36472018,
+      "mtime_ns": 1791483454598080079
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000770.pt": {
+    "at": "2026-10-08T18:19:02.204569+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000770.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000770.pt",
+    "sha256": "76b4f49e9e139d5f543c78adf8a9c64279bd93646a9843391cc635bdb8ff0cfc",
+    "source_stat": {
+      "name": "step-00000770.pt",
+      "size": 40034761,
+      "mtime_ns": 1791483531031023739
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00022000.pt": {
+    "at": "2026-10-08T18:20:07.602464+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00022000.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00022000.pt",
+    "sha256": "e22f62c58ef432d7de11ffa657c5ae93c275811f35edd65c780949fa0d04b5d4",
+    "source_stat": {
+      "name": "step-00022000.pt",
+      "size": 36473234,
+      "mtime_ns": 1791483580154653384
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00022000.pt": {
+    "at": "2026-10-08T18:22:15.544782+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00022000.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00022000.pt",
+    "sha256": "1f3f218b8f9ba37139f023f762dba15a774683c47bf233e2c0b11c2f035fdc86",
+    "source_stat": {
+      "name": "step-00022000.pt",
+      "size": 36473298,
+      "mtime_ns": 1791483718079101442
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000780.pt": {
+    "at": "2026-10-08T18:24:31.236523+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000780.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000780.pt",
+    "sha256": "ed482c640561e8d10e202b835d918b1b4ac8da68a12f387ce1ce1100bf808fa9",
+    "source_stat": {
+      "name": "step-00000780.pt",
+      "size": 40034761,
+      "mtime_ns": 1791483869582506932
+    },
+    "verified": true
+  },
+  "main-2026100802/step-00016915.pt": {
+    "at": "2026-10-08T18:28:50.610543+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/step-00016915.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/step-00016915.pt",
+    "sha256": "2378b7f657b1fe4f6b0d1bc723a61becc52c305178b318ff5e45bf2fea89ec4a",
+    "source_stat": {
+      "name": "step-00016915.pt",
+      "size": 36472018,
+      "mtime_ns": 1791484084853462046
+    },
+    "verified": true
+  },
+  "main-2026100802/epoch-008-step-00016915.pt": {
+    "at": "2026-10-08T18:29:56.708489+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/epoch-008-step-00016915.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/epoch-008-step-00016915.pt",
+    "sha256": "f6b3164adb729dd1de48431e4eebabe61c4958bef19ab74a69155d49e776a584",
+    "source_stat": {
+      "name": "epoch-008-step-00016915.pt",
+      "size": 36477212,
+      "mtime_ns": 1791484172445802052
+    },
+    "verified": true
+  },
+  "main-2026100802/best-dev-step-00016915.pt": {
+    "at": "2026-10-08T18:29:57.744753+00:00",
+    "run": "main-2026100802",
+    "source_host": "127x01",
+    "source": "/mpac/sdicks02/tmp/t5-main02-hostloss-20261008/fresh-runs-v2/main-2026100802/best-dev-step-00016915.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x01/main-2026100802/best-dev-step-00016915.pt",
+    "sha256": "d2edd4573121af9d1df06b7962b58bdc44670c3d5e62cf3ad40d9513ffdde204",
+    "source_stat": {
+      "name": "best-dev-step-00016915.pt",
+      "size": 36476763,
+      "mtime_ns": 1791484172381798883
+    },
+    "verified": true
+  },
+  "noD1-2026100801/step-00022552.pt": {
+    "at": "2026-10-08T18:30:00.644518+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/step-00022552.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/step-00022552.pt",
+    "sha256": "14d689f28175837f95a25a957be8a58d8983b9dc34a5636e7ec7decd82a37a79",
+    "source_stat": {
+      "name": "step-00022552.pt",
+      "size": 36473234,
+      "mtime_ns": 1791484184753841167
+    },
+    "verified": true
+  },
+  "gru-2026100801/step-00000790.pt": {
+    "at": "2026-10-08T18:31:06.986352+00:00",
+    "run": "gru-2026100801",
+    "source_host": "127x08",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/gru-2026100801/step-00000790.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x08/gru-2026100801/step-00000790.pt",
+    "sha256": "b964a2270ab4e25dd47d91eedb2349c9d5ad913885b52801beb3087c50b24d56",
+    "source_stat": {
+      "name": "step-00000790.pt",
+      "size": 40034761,
+      "mtime_ns": 1791484206729431268
+    },
+    "verified": true
+  },
+  "noD1-2026100801/epoch-011-step-00022552.pt": {
+    "at": "2026-10-08T18:32:11.227248+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/epoch-011-step-00022552.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/epoch-011-step-00022552.pt",
+    "sha256": "115c4b7888abf7a317add1cccfee3e06480e6e6a624c4fb10a4025c0609fe5b8",
+    "source_stat": {
+      "name": "epoch-011-step-00022552.pt",
+      "size": 36478428,
+      "mtime_ns": 1791484272516618604
+    },
+    "verified": true
+  },
+  "noD1-2026100801/best-dev-step-00022552.pt": {
+    "at": "2026-10-08T18:32:12.247205+00:00",
+    "run": "noD1-2026100801",
+    "source_host": "127x14",
+    "source": "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/fresh-runs/noD1-2026100801/best-dev-step-00022552.pt",
+    "destination_host": "127x04",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00022552.pt",
+    "sha256": "f97ab6a9621027f142630736507604a5b79dc8a1601d1c4fa64e5791d5121430",
+    "source_stat": {
+      "name": "best-dev-step-00022552.pt",
+      "size": 36477979,
+      "mtime_ns": 1791484272444616326
+    },
+    "verified": true
+  },
+  "main-2026100801/step-00022552.pt": {
+    "at": "2026-10-08T18:33:16.124253+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/step-00022552.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/step-00022552.pt",
+    "sha256": "de2ffc1b792e454001e91a69f551fe411d1ea637e13389c242b9f2f03c978d33",
+    "source_stat": {
+      "name": "step-00022552.pt",
+      "size": 36473298,
+      "mtime_ns": 1791484343452994804
+    },
+    "verified": true
+  },
+  "main-2026100801/epoch-011-step-00022552.pt": {
+    "at": "2026-10-08T18:34:21.781704+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/epoch-011-step-00022552.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/epoch-011-step-00022552.pt",
+    "sha256": "00e9d5bf3aae6d964da1cbfd9e78a74fb0c377ad92e1d8d29864bfc20d845fa7",
+    "source_stat": {
+      "name": "epoch-011-step-00022552.pt",
+      "size": 36478492,
+      "mtime_ns": 1791484430671487862
+    },
+    "verified": true
+  },
+  "main-2026100801/best-dev-step-00022552.pt": {
+    "at": "2026-10-08T18:34:22.830623+00:00",
+    "run": "main-2026100801",
+    "source_host": "127x04",
+    "source": "/mpac/sdicks02/tmp/t5-20261008-r2/fresh-runs/main-2026100801/best-dev-step-00022552.pt",
+    "destination_host": "127x01",
+    "destination": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x04/main-2026100801/best-dev-step-00022552.pt",
+    "sha256": "2a055934be372fd31436441d402eb864913410911106f10319ba7095f44932c9",
+    "source_stat": {
+      "name": "best-dev-step-00022552.pt",
+      "size": 36477979,
+      "mtime_ns": 1791484430607486032
+    },
+    "verified": true
+  }
+}

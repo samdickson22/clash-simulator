@@ -1,0 +1,14 @@
+{
+  "mode": "recorded-6",
+  "pid": 99745,
+  "started": 1791482142.17709,
+  "command": [
+    "/Users/sam/Desktop/code/clasher-runtime-v4/.venv/bin/python",
+    "-B",
+    "/Users/sam/Desktop/code/clasher-runtime-v4/reports/strategy_council_20260928/live-loop/v4/mac-native-build48/verify_gate.py",
+    "recorded-6"
+  ],
+  "exit_code": 1,
+  "ended": 1791482143.2233868,
+  "wall_seconds": 1.0462968349456787
+}

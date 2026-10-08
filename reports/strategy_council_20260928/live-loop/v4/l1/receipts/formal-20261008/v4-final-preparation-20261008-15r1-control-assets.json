@@ -1,0 +1,6 @@
+{
+  "reports/strategy_council_20260928/live-loop/l1/v2/model/last.pt": "ac305303578214c75d6ca718ee9bb68c090e3e7b36860c0f4b72ca4cb6a09143",
+  "reports/strategy_council_20260928/live-loop/l1/v1/model/hud.npz": "d09682ebb8a1a209a0f6da49f43030dec68bdc0bf30eb7f67d01d34fdd0c6712",
+  "reports/strategy_council_20260928/live-loop/l1/v1/model/detector/weights/best.pt": "8b6fde6fc402e2b075cdd9e5a92a9486eb738b0428912b7c1975aa12491748a5",
+  "reports/strategy_council_20260928/live-loop/l1/calibration.json": "af06e029c50c3e2932f829a8891d6f6bdca654912d6beff512ab5864cc8c60d8"
+}

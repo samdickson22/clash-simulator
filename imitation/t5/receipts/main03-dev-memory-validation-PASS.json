@@ -1,0 +1,19 @@
+{
+  "synthetic_gpu_replay_all_payload_except_args_bitexact": true,
+  "two_dev_scores_bitexact": true,
+  "subsequent_training_bitexact": true,
+  "real_fitting": false,
+  "passed": true,
+  "dev": [
+    {
+      "event": "dev",
+      "step": 2,
+      "ema_joint_nll": 3.8969184793531895
+    },
+    {
+      "event": "dev",
+      "step": 4,
+      "ema_joint_nll": 3.8970340825617313
+    }
+  ]
+}

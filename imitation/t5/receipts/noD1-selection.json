@@ -1,0 +1,12 @@
+{
+  "run": "noD1-2026100801",
+  "variant": "noD1",
+  "seed": 2026100801,
+  "step": 22552,
+  "dev_joint_nll": 0.34885368464637384,
+  "checkpoint": "/mpac/sdicks02/tmp/t5-checkpoint-backups-20261008/127x14/noD1-2026100801/best-dev-step-00022552.pt",
+  "checkpoint_sha256": "f97ab6a9621027f142630736507604a5b79dc8a1601d1c4fa64e5791d5121430",
+  "manifest_sha256": "2854ce1f96fdd2fcc04dd0e6ef15dce3435758ec40369a80bba29b1a1e29db13",
+  "train_log_sha256": "419be18193a66fa30e9ffaede49bf6863db066aa767e3e00b94d5390048d0f7e",
+  "complete_sha256": "72d25a1eede183a6829f2b064f3d662ead7881a7f1f483d32eeb11fd280c7def"
+}

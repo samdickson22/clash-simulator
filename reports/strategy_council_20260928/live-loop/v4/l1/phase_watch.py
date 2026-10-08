@@ -30,10 +30,32 @@ print(json.dumps(result))
 '''
 
 
+def terminal_status(output):
+    """Queued triggers cannot restart a watcher that has completed or expired.
+
+    A prior signal stop is resumable under the existing authorization; completion
+    and timeout are terminal. Preserve the original stop evidence unchanged.
+    """
+    path=output/'stopped.json'
+    if not path.exists():return None
+    record=json.loads(path.read_text())
+    if not isinstance(record,dict) or not isinstance(record.get('status'),str):
+        raise ValueError('Malformed stop receipt; refuse to poll')
+    status=record['status']
+    if status in ('12-hour-timeout','schedule-deleted-coordinator-confirmed-completion'):
+        return status
+    if record.get('deleted') is True:return status
+    if status!='signal':raise ValueError('Unrecognized stop receipt; refuse to poll')
+    return None
+
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True)
     p.add_argument('--deadline',type=float,required=True);p.add_argument('--once',action='store_true');a=p.parse_args()
     a.output.mkdir(parents=True,exist_ok=True);stopping=False
+    terminal=terminal_status(a.output)
+    if terminal:
+        print('Receipt-only poll skipped: terminal stop already recorded ('+terminal+')',flush=True);return
     if time.time()>=a.deadline:
         (a.output/'stopped.json').write_text(json.dumps(dict(time=time.time(),status='12-hour-timeout',heldout_opened=False))+'\n')
         print('Polling deadline reached; no Phase A read',flush=True);return
@@ -46,6 +68,9 @@ def main():
     signal.signal(signal.SIGTERM,stop)
     next_poll=time.time()
     while not stopping and time.time()<a.deadline:
+        terminal=terminal_status(a.output)
+        if terminal:
+            print('Receipt-only poll skipped: terminal stop already recorded ('+terminal+')',flush=True);return
         if time.time()<next_poll:
             time.sleep(min(30,next_poll-time.time(),max(0,a.deadline-time.time())))
             continue

@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "audited_at": "2026-10-08T14:50:50.323320+00:00",
+  "host": "127x04",
+  "checkpoint": "/mpac/sdicks02/repos/clasher-checkpoints/v2/main-2026100821/ec321c9cd4894b0402bdc972d55996452045ae8d5d525e498a613eb759e2c4ea/step-00001000.pt",
+  "checkpoint_sha256": "ec321c9cd4894b0402bdc972d55996452045ae8d5d525e498a613eb759e2c4ea",
+  "bytes": 36471954,
+  "seed": 2026100821,
+  "state": {
+    "epoch": 0,
+    "cursor": 8192000,
+    "step": 1000,
+    "best_dev": null,
+    "bad_epochs": 0,
+    "rows": 8192000
+  },
+  "section_sha256": {
+    "model": "0b72103d406959ccaab4e3bd31bcbdca33ce42d733176b230d16be84895d0ab7",
+    "ema": "0ee04cb7c0ea81c2ba2f39559937733d2a4b2bf6a696eba1499894af584e152e",
+    "optimizer": "ff77d1a7f653e5d33734c005b2b3811db84204c08bb57376c5ad84190dedc14d",
+    "scheduler": "7c075d67610b5d658c3bea29dd592e16206bda97dee27e4609aa7d5d9d57a3c7",
+    "config": "3b033dc6cc7aeeef200412f936c27bd86ea15660501c38d93f409038a08c09ae",
+    "state": "2aef140a1920b7db492918af2587a78d0d173b369145fc471d5ff8bcfcafcdb9",
+    "hashes": "58684816cea6a811687eb0da4dfeec4439bea1cacef727afb78f39d6a12cd68c",
+    "provenance": "65ad7503fad24c7bfd948ef80b3c4df332d8efceda2825db0cb3b3ab105348df",
+    "args": "510990ec51cb756a072612a26daa943216f13649cabe3a14f41613ac9be0cf76",
+    "torch_rng": "e23ef8e60f8838cf074c0026fd29da5d9d37877ba2ebd2e2363706299e993dff",
+    "python_rng": "a3da6e440b8e108e5c9351ff5786229ff0275cf68d77c1360e81def98c2f2808",
+    "numpy_rng": "fa3c1691aa8e487a2e5074523ff925e159c4d3b8f48f07385a4d08e4504b38e5",
+    "cuda_rng": "e1f8e4d9f6606ae92e6355da40740fe6b26dcded877728441124b1f4356be1b2"
+  },
+  "frozen_hashes": {
+    "tokens": "35db1a7647c71a39b12b580cc31a39539c9ad973a8de635df0a95962b4ac8ee2",
+    "assets": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+    "roles": "1f45f1d147040e4502a18820ed9eec172b2d5f304589eaf96cbd87aa84f547e8",
+    "eval_spec": "d9f978f75191b5d5a474d127dbccd618b93dad5069dd851ab4f8b2a47fdaa7ae",
+    "sidecar_manifest": "eec22cd70c2dc8df37f5138a575fb91393eca752e216be9b156d458af1470eff",
+    "store_manifest": "7180964c1d470807a97ad7a990ac8eb145fb25d15f1c95edf165b3f87743d20f",
+    "role_manifest": "0546cfddcf79be12509953358fb499ac3be29493ba4a87893bfbfbbe0f179e68",
+    "T11_manifest": "a4801df32d4a546ed7df07faf070a138d4075cf4db6c193d38373f9194ff2e44",
+    "T11_prereg": "115ab2f62c999d96b908855ab6e45bade4d9573308a222659821f65a76e42749",
+    "T4_code": "301caa1003ab47eadc3f56973ec5398bed4d166dc1a0163d213e60a61854959d",
+    "T4_throughput": "5c7e83bacc92096a30520ccdaf002321b753542a7afc489e57183df865fc7229",
+    "T5_bounded_loader": "63a33eb93592de759256c10718a8c103918968a1ff5fb0e9eada49ec8f420115",
+    "T3_qualification": "0e14fefa47388dc0f8a436d2c6415224ac30af1cc3aed98a9092485deaf4b524"
+  },
+  "scheduler_last_epoch": 1000,
+  "optimizer_parameter_states": 99,
+  "evaluator_invoked": false,
+  "auditor_sha256": "69674c7a514a82451d5cdc5fcd2c0537b044c6b05d17384f7b6c9aa3a51481da",
+  "fingerprint_schema": "typed-recursive-tensor-bytes-v1"
+}

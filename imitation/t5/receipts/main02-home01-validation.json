@@ -1,0 +1,6 @@
+{
+  "synthetic_gpu_replay_all_payload_except_args_bitexact": true,
+  "real_fitting": false,
+  "real_tail_probes": [],
+  "passed": true
+}
