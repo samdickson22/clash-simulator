@@ -501,3 +501,11 @@ Also on the hub, but with copies elsewhere:
   - Kept 3 instances. Added an **hourly coordinator heartbeat** (T3 scheduled task bound to this thread): Mac disk/swap,
     fleet and lease reclaims, task blockers. It drops to 2 renderers if free disk < 17 GiB, swap > 14 GB or memory
     pressure turns critical.
+- **2026-10-08 05:44 UTC: leased hosts qualified; T3 stall found.** All 7 lent hosts are ready under
+  `/mpac/sdicks02/repos/clasher-lease/` (`fleet/LEASED-HOSTS.md`, receipts `jobs/clasher/lease-ready-<host>.json` on 127x01).
+  P16 identity 12/12 with 0 mismatches on 11/13/14/16/18; GPU check PASS on all 7 (eager; torch.compile fails as on our
+  hosts). The CPU extensions were rebuilt locally because the hub source pins had moved to build 48. Leases written per
+  FLEET-SHARING.md. **T3-PASS was blocked** by a deadlocked P16 baseline (`baselines.py p16`, PID 3449355: futex
+  wait, ~12 s CPU in 36 min, no I/O). Routed to the data worker to diagnose, kill only that PID, fix (thread caps / no
+  fork after torch init), rerun that step, publish T3-PASS, and copy the store to 04/08 + 11/13/14/16/18. The T5 worker
+  was told to run its 5 runs one per GPU on 04/08/11/13/14.
