@@ -477,3 +477,15 @@ Also on the hub, but with copies elsewhere:
   and perception runs. First: a self-contained clasher footprint per borrowed host under `/mpac/sdicks02/repos/clasher*`
   (own tools, uv Python and venvs; never the shared `/mpac/sdicks02/tools` or `env.sh`), qualified by the P16 identity
   smoke before use.
+- **2026-10-08 05:37 UTC: S3 robust tracker: strength tests FAIL; the hand/cycle component, not elixir, looks decisive.**
+  (`search-noise-s3/RESULTS.md`; 1,792 games, 42 core-h, 20 min on 04/08.) tracker_v2 meets calibration: N97/N90 coverage
+  89/90%, post-error coverage 85/90%, width 2.8 vs legacy 6.1–6.7. But its MAE barely improves (0.70 vs 0.73), and play does
+  not: T2-N90 − Full-N90 = +1.6 pp [−4.7, +7.8] FAIL; T2-N97 − Full-N97 = +0.2 [−6.4, +6.8] FAIL; R-derived − T2-N97 =
+  15.0 pp. Descriptive but telling, scores rank by **hand knowledge** (share of decisions with a ≥90%-mass hand, and that
+  hand's accuracy): R-derived 80.1% (16.2%, 100%) > ELT-N97 70.7% (9.6%, 68%) > T2 65.0% (1.3%, 17%) ≈ legacy 64.8%
+  (0.5%, 78%). T2's cycle mixture has poor hand inference; ELT's is better despite its worse elixir.
+  **Decision: S4.** (a) A pre-registered decomposition of the derived state on the Full-N97 configuration:
+  R-elixir (exact opponent elixir, legacy hand) and R-hand (exact hand/cycle/next, legacy elixir), with Full, ELT and
+  R-derived anchors, fresh seeds, 5 × 256 games. (b) In parallel, development of tracker v3, aimed at calibrated hand/cycle
+  inference that recovers after misses (T2's resource lattice + an ELT-style cycle model with resync), dev seeds only.
+  Its confirmation is pre-registered only if S4 shows R-hand is material. L2-v4 stays blocked.

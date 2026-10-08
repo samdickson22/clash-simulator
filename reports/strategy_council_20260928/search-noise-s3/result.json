@@ -1,0 +1,342 @@
+{
+  "manifest": "7f2a2f72c573828433808fc1b2153eb0fc74b30c6193319dfb897e0ad4d658d9",
+  "receipt_aggregate": "9a9b38ae9543770206b7d6c7d170d958ced5aa01d70c5912698d74d6ab26bdc3",
+  "games": 1792,
+  "bootstrap_seed": 9731100003,
+  "bootstrap_samples": 10000,
+  "scores": {
+    "T2-N97": {
+      "point": 0.650390625,
+      "ci95": [
+        0.578125,
+        0.720703125
+      ]
+    },
+    "T2-N90": {
+      "point": 0.64453125,
+      "ci95": [
+        0.5703125,
+        0.71484375
+      ]
+    },
+    "Full-N97": {
+      "point": 0.6484375,
+      "ci95": [
+        0.57421875,
+        0.71875
+      ]
+    },
+    "Full-N90": {
+      "point": 0.62890625,
+      "ci95": [
+        0.5546875,
+        0.69921875
+      ]
+    },
+    "ELT-N97": {
+      "point": 0.70703125,
+      "ci95": [
+        0.63671875,
+        0.7734375
+      ]
+    },
+    "R-derived": {
+      "point": 0.80078125,
+      "ci95": [
+        0.7421875,
+        0.85546875
+      ]
+    },
+    "T2-N64": {
+      "point": 0.56640625,
+      "ci95": [
+        0.48828125,
+        0.640625
+      ]
+    }
+  },
+  "contrasts": {
+    "primary": {
+      "point": 0.015625,
+      "ci95": [
+        -0.046875,
+        0.078125
+      ],
+      "pass": false
+    },
+    "secondary": {
+      "point": 0.001953125,
+      "ci95": [
+        -0.064453125,
+        0.068359375
+      ],
+      "pass": false
+    },
+    "ceiling_gap": {
+      "point": 0.150390625,
+      "ci95": [
+        0.087890625,
+        0.21484375
+      ]
+    }
+  },
+  "diagnostics": {
+    "T2-N97": {
+      "samples": 58805,
+      "coverage": 0.8912507439843551,
+      "width": 2.7795596224810817,
+      "mae": 0.7011678096296406,
+      "post_error_samples": 30628,
+      "post_error_coverage": 0.854479561185843,
+      "hand90_fraction": 0.01323016750276337,
+      "hand90_accuracy": 0.16709511568123395,
+      "unanimity_fraction": 0.0,
+      "hypothesis90_fraction": 0.01323016750276337,
+      "cpu_hours": 5.827024329568333,
+      "mean_decision_p50": 0.010463239727187101,
+      "rejected": 908,
+      "perception": {
+        "hp_observed": 2423165,
+        "matched_events": 15652,
+        "dropped_entities": 216354,
+        "position_hits": 7052206,
+        "hand_trials": 2358336,
+        "elixir_trials": 589584,
+        "phantom_entities": 544642,
+        "hp_trials": 3668491,
+        "placement_hits": 14145,
+        "non_tower_entities": 3668491,
+        "entities": 7281917,
+        "missed_events": 456,
+        "elixir_errors": 17202,
+        "truth_events": 16141,
+        "confused_events": 33,
+        "hp_abs_error": 120646.3512118163,
+        "hp_imputed": 1028972,
+        "hand_errors": 7260,
+        "spurious_events": 448
+      },
+      "calibration_pass": true,
+      "sharpness_pass": true
+    },
+    "T2-N90": {
+      "samples": 60369,
+      "coverage": 0.902433368119399,
+      "width": 2.756762079875433,
+      "mae": 0.741102969134164,
+      "post_error_samples": 52612,
+      "post_error_coverage": 0.8945107580019768,
+      "hand90_fraction": 0.0004472494160910401,
+      "hand90_accuracy": 0.0,
+      "unanimity_fraction": 0.0,
+      "hypothesis90_fraction": 0.0004472494160910401,
+      "cpu_hours": 6.132173927161666,
+      "mean_decision_p50": 0.010736931725432441,
+      "rejected": 889,
+      "perception": {
+        "hp_observed": 2524254,
+        "matched_events": 15123,
+        "dropped_entities": 225286,
+        "position_hits": 7310411,
+        "hand_trials": 2420892,
+        "elixir_trials": 605223,
+        "phantom_entities": 563664,
+        "hp_trials": 3821390,
+        "placement_hits": 13632,
+        "non_tower_entities": 3821390,
+        "entities": 7549314,
+        "missed_events": 1480,
+        "elixir_errors": 17650,
+        "truth_events": 16720,
+        "confused_events": 117,
+        "hp_abs_error": 125608.34986613129,
+        "hp_imputed": 1071850,
+        "hand_errors": 7471,
+        "spurious_events": 1564
+      },
+      "calibration_pass": true,
+      "sharpness_pass": true
+    },
+    "Full-N97": {
+      "samples": 59010,
+      "coverage": 0.9988137603795967,
+      "width": 6.128252520579557,
+      "mae": 0.7266560973982376,
+      "post_error_samples": 30689,
+      "post_error_coverage": 0.9984033367004465,
+      "hand90_fraction": 0.00523640061006609,
+      "hand90_accuracy": 0.7831715210355987,
+      "unanimity_fraction": 0.00523640061006609,
+      "hypothesis90_fraction": 0.0,
+      "cpu_hours": 5.5355765782925,
+      "mean_decision_p50": 0.00671755281609876,
+      "rejected": 901,
+      "perception": {
+        "hp_observed": 2422440,
+        "matched_events": 15749,
+        "dropped_entities": 215637,
+        "position_hits": 7078624,
+        "hand_trials": 2366444,
+        "elixir_trials": 591611,
+        "phantom_entities": 547035,
+        "hp_trials": 3667403,
+        "placement_hits": 14215,
+        "non_tower_entities": 3667403,
+        "entities": 7307428,
+        "missed_events": 463,
+        "elixir_errors": 17243,
+        "truth_events": 16243,
+        "confused_events": 31,
+        "hp_abs_error": 120588.64442977286,
+        "hp_imputed": 1029326,
+        "hand_errors": 7297,
+        "spurious_events": 458
+      }
+    },
+    "Full-N90": {
+      "samples": 61043,
+      "coverage": 0.9925953835820651,
+      "width": 6.675392617468562,
+      "mae": 0.7593191618794379,
+      "post_error_samples": 53344,
+      "post_error_coverage": 0.991620425914817,
+      "hand90_fraction": 0.0006880395786576676,
+      "hand90_accuracy": 0.5,
+      "unanimity_fraction": 0.0006880395786576676,
+      "hypothesis90_fraction": 0.0,
+      "cpu_hours": 5.799644140999444,
+      "mean_decision_p50": 0.006671359936717636,
+      "rejected": 956,
+      "perception": {
+        "hp_observed": 2550099,
+        "matched_events": 15467,
+        "dropped_entities": 227053,
+        "position_hits": 7385171,
+        "hand_trials": 2447840,
+        "elixir_trials": 611960,
+        "phantom_entities": 571206,
+        "hp_trials": 3860358,
+        "placement_hits": 13948,
+        "non_tower_entities": 3860358,
+        "entities": 7626206,
+        "missed_events": 1512,
+        "elixir_errors": 17835,
+        "truth_events": 17094,
+        "confused_events": 115,
+        "hp_abs_error": 127004.17198129994,
+        "hp_imputed": 1083206,
+        "hand_errors": 7538,
+        "spurious_events": 1615
+      }
+    },
+    "ELT-N97": {
+      "samples": 60481,
+      "coverage": 0.7107025346803129,
+      "width": 3.416945108381144,
+      "mae": 1.640929918357374,
+      "post_error_samples": 31854,
+      "post_error_coverage": 0.6115087587116218,
+      "hand90_fraction": 0.09616243117673319,
+      "hand90_accuracy": 0.6803645116918845,
+      "unanimity_fraction": 0.0,
+      "hypothesis90_fraction": 0.1585787272035846,
+      "cpu_hours": 7.921945795623611,
+      "mean_decision_p50": 0.0060380680006346665,
+      "rejected": 980,
+      "perception": {
+        "hp_observed": 2512560,
+        "matched_events": 16201,
+        "dropped_entities": 224511,
+        "position_hits": 7311440,
+        "hand_trials": 2425332,
+        "elixir_trials": 606333,
+        "phantom_entities": 564102,
+        "hp_trials": 3804334,
+        "placement_hits": 14607,
+        "non_tower_entities": 3804334,
+        "entities": 7549636,
+        "missed_events": 461,
+        "elixir_errors": 17660,
+        "truth_events": 16701,
+        "confused_events": 39,
+        "hp_abs_error": 125068.69630826311,
+        "hp_imputed": 1067263,
+        "hand_errors": 7445,
+        "spurious_events": 474
+      }
+    },
+    "R-derived": {
+      "samples": 56868,
+      "coverage": 1.0,
+      "width": 0.0,
+      "mae": 0.0,
+      "post_error_samples": 29101,
+      "post_error_coverage": 1.0,
+      "hand90_fraction": 0.16188366040655552,
+      "hand90_accuracy": 1.0,
+      "unanimity_fraction": 0.16188366040655552,
+      "hypothesis90_fraction": 1.0,
+      "cpu_hours": 4.8655217882680555,
+      "mean_decision_p50": 0.005828120533806214,
+      "rejected": 844,
+      "perception": {
+        "hp_observed": 2309086,
+        "matched_events": 14975,
+        "dropped_entities": 205389,
+        "position_hits": 6758130,
+        "hand_trials": 2280900,
+        "elixir_trials": 570225,
+        "phantom_entities": 521832,
+        "hp_trials": 3495441,
+        "placement_hits": 13484,
+        "non_tower_entities": 3495441,
+        "entities": 6976026,
+        "missed_events": 411,
+        "elixir_errors": 16570,
+        "truth_events": 15419,
+        "confused_events": 33,
+        "hp_abs_error": 114926.78205698475,
+        "hp_imputed": 980966,
+        "hand_errors": 7005,
+        "spurious_events": 442
+      }
+    },
+    "T2-N64": {
+      "samples": 59543,
+      "coverage": 0.9333254958601347,
+      "width": 4.229998095494013,
+      "mae": 0.8274411826240534,
+      "post_error_samples": 58986,
+      "post_error_coverage": 0.9327806598175838,
+      "hand90_fraction": 0.0,
+      "hand90_accuracy": null,
+      "unanimity_fraction": 0.0,
+      "hypothesis90_fraction": 0.0,
+      "cpu_hours": 5.888666498305555,
+      "mean_decision_p50": 0.010537808424942341,
+      "rejected": 923,
+      "perception": {
+        "hp_observed": 2454480,
+        "matched_events": 10561,
+        "dropped_entities": 218874,
+        "position_hits": 7158630,
+        "hand_trials": 2387680,
+        "elixir_trials": 596920,
+        "phantom_entities": 552191,
+        "hp_trials": 3714589,
+        "placement_hits": 9505,
+        "non_tower_entities": 3714589,
+        "entities": 7390830,
+        "missed_events": 5362,
+        "elixir_errors": 17400,
+        "truth_events": 16393,
+        "confused_events": 470,
+        "hp_abs_error": 122258.21793415776,
+        "hp_imputed": 1041235,
+        "hand_errors": 7364,
+        "spurious_events": 4876
+      }
+    }
+  },
+  "game_cpu_hours": 41.97055305821917
+}

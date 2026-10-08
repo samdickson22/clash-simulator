@@ -1,0 +1,43 @@
+{
+  "games": 1792,
+  "partitions": 152,
+  "supervisors": 2,
+  "manifest": "7f2a2f72c573828433808fc1b2153eb0fc74b30c6193319dfb897e0ad4d658d9",
+  "receipt_aggregate": "9a9b38ae9543770206b7d6c7d170d958ced5aa01d70c5912698d74d6ab26bdc3",
+  "hosts": {
+    "127x04": {
+      "games": 896,
+      "cpu_seconds": 76364.154925214
+    },
+    "127x08": {
+      "games": 896,
+      "cpu_seconds": 74729.83608437491
+    }
+  },
+  "game_elapsed_hours": 0.3357836692200767,
+  "postcompletion_recovery_descriptive": {
+    "T2-N97": {
+      "games": 256,
+      "error_games": 248,
+      "bad_after_first_error": 248,
+      "recovered_after_first_loss": 247,
+      "ends_uncovered": 75
+    },
+    "T2-N90": {
+      "games": 256,
+      "error_games": 256,
+      "bad_after_first_error": 256,
+      "recovered_after_first_loss": 256,
+      "ends_uncovered": 73
+    },
+    "T2-N64": {
+      "games": 256,
+      "error_games": 256,
+      "bad_after_first_error": 255,
+      "recovered_after_first_loss": 255,
+      "ends_uncovered": 43
+    }
+  },
+  "no_confirmation_reruns": true,
+  "utc": 1791437541.1479154
+}

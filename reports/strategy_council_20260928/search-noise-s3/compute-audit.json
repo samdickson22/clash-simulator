@@ -1,0 +1,165 @@
+{
+  "total_metered_cpu_hours": 46.02051388888889,
+  "game_cpu_hours": 41.97055305821917,
+  "confirmation_supervisors_and_workers_cpu_hours": 42.11517222222222,
+  "dev_and_preflight_cpu_hours": 3.9000833333333333,
+  "records": [
+    {
+      "host": "127x01",
+      "label": "s3-seed-audit-01-v1",
+      "cpu_seconds": 410.27000000000004
+    },
+    {
+      "host": "127x01",
+      "label": "s3-collect-r1",
+      "cpu_seconds": 0.16
+    },
+    {
+      "host": "127x04",
+      "label": "s3-seed-audit-04-v1",
+      "cpu_seconds": 172.49
+    },
+    {
+      "host": "127x04",
+      "label": "s3-inspect-v1",
+      "cpu_seconds": 24.54
+    },
+    {
+      "host": "127x04",
+      "label": "s3-tests-v1",
+      "cpu_seconds": 0.46
+    },
+    {
+      "host": "127x04",
+      "label": "s3-tests-v2",
+      "cpu_seconds": 0.49
+    },
+    {
+      "host": "127x04",
+      "label": "s3-tests-final",
+      "cpu_seconds": 0.45
+    },
+    {
+      "host": "127x04",
+      "label": "s3-equivalence-v1",
+      "cpu_seconds": 402.87
+    },
+    {
+      "host": "127x04",
+      "label": "s3-replays-0-v1",
+      "cpu_seconds": 108.81
+    },
+    {
+      "host": "127x04",
+      "label": "s3-replays-1-v1",
+      "cpu_seconds": 112.17
+    },
+    {
+      "host": "127x04",
+      "label": "s3-replays-2-v1",
+      "cpu_seconds": 95.03
+    },
+    {
+      "host": "127x04",
+      "label": "s3-pilot-0-final",
+      "cpu_seconds": 106.49
+    },
+    {
+      "host": "127x04",
+      "label": "s3-pilot-1-final",
+      "cpu_seconds": 84.21000000000001
+    },
+    {
+      "host": "127x04",
+      "label": "s3-pilot-2-final",
+      "cpu_seconds": 100.98
+    },
+    {
+      "host": "127x04",
+      "label": "s3-pilot-3-final",
+      "cpu_seconds": 101.39999999999999
+    },
+    {
+      "host": "127x04",
+      "label": "s3-pilot-4-final",
+      "cpu_seconds": 99.22
+    },
+    {
+      "host": "127x04",
+      "label": "s3-pilot-5-final",
+      "cpu_seconds": 101.42999999999999
+    },
+    {
+      "host": "127x04",
+      "label": "s3-pilot-6-final",
+      "cpu_seconds": 108.9
+    },
+    {
+      "host": "127x04",
+      "label": "s3-dev-generate-node04-v1",
+      "cpu_seconds": 58.5
+    },
+    {
+      "host": "127x04",
+      "label": "s3-dev-generate-node04-v2",
+      "cpu_seconds": 733.2299999999999
+    },
+    {
+      "host": "127x04",
+      "label": "s3-dev-replay-node04-v1",
+      "cpu_seconds": 1787.2099999999998
+    },
+    {
+      "host": "127x04",
+      "label": "s3-dev-replay-node04-v2",
+      "cpu_seconds": 1777.36
+    },
+    {
+      "host": "127x04",
+      "label": "s3-dev-replay-node04-v3",
+      "cpu_seconds": 1731.6699999999998
+    },
+    {
+      "host": "127x04",
+      "label": "s3-confirm-node-127x04-r1",
+      "cpu_seconds": 76625.1
+    },
+    {
+      "host": "127x08",
+      "label": "s3-dev-generate-node08-v1",
+      "cpu_seconds": 42.629999999999995
+    },
+    {
+      "host": "127x08",
+      "label": "s3-dev-generate-node08-v2",
+      "cpu_seconds": 728.88
+    },
+    {
+      "host": "127x08",
+      "label": "s3-dev-replay-node08-v1",
+      "cpu_seconds": 1737.75
+    },
+    {
+      "host": "127x08",
+      "label": "s3-dev-replay-node08-v2",
+      "cpu_seconds": 1715.44
+    },
+    {
+      "host": "127x08",
+      "label": "s3-dev-replay-node08-v3",
+      "cpu_seconds": 1697.42
+    },
+    {
+      "host": "127x08",
+      "label": "s3-confirm-node-127x08-r1",
+      "cpu_seconds": 74989.52
+    },
+    {
+      "host": "127x01",
+      "label": "s3-collect-r1b",
+      "cpu_seconds": 18.77
+    }
+  ],
+  "accounting": "Top-level /usr/bin/time totals include children. Game CPU is a subset, not additive. Small SSH/file-copy/hash/registration operations are unmetered.",
+  "supplement": "Added successful collector restart to the unchanged frozen accounting script output; original failed collector is also counted."
+}
