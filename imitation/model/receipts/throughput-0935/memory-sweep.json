@@ -1,0 +1,84 @@
+{
+  "candidates": [
+    {
+      "microbatch": 1024,
+      "rows_per_second_step": 5880.590520504277,
+      "peak_allocated_bytes": 5435516928,
+      "peak_reserved_bytes": 6660554752,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 44387139584,
+      "loss": 9.743459701538086,
+      "fits": true
+    },
+    {
+      "microbatch": 2048,
+      "rows_per_second_step": 12182.156538662368,
+      "peak_allocated_bytes": 10832341504,
+      "peak_reserved_bytes": 13293846528,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 37753847808,
+      "loss": 9.75495719909668,
+      "fits": true
+    },
+    {
+      "microbatch": 3072,
+      "rows_per_second_step": 11383.658861033478,
+      "peak_allocated_bytes": 12180982272,
+      "peak_reserved_bytes": 12530483200,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 38517211136,
+      "loss": 9.744300842285156,
+      "fits": true
+    },
+    {
+      "microbatch": 4096,
+      "rows_per_second_step": 10906.419140742586,
+      "peak_allocated_bytes": 21624378880,
+      "peak_reserved_bytes": 26715619328,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 24332075008,
+      "loss": 9.74180793762207,
+      "fits": true
+    },
+    {
+      "microbatch": 5120,
+      "rows_per_second_step": 10936.435697370554,
+      "peak_allocated_bytes": 20253819392,
+      "peak_reserved_bytes": 20797456384,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 30250237952,
+      "loss": 9.742863655090332,
+      "fits": true
+    },
+    {
+      "microbatch": 6144,
+      "rows_per_second_step": 11215.25574705911,
+      "peak_allocated_bytes": 24301844480,
+      "peak_reserved_bytes": 24937234432,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 26110459904,
+      "loss": 9.744715690612793,
+      "fits": true
+    },
+    {
+      "microbatch": 7168,
+      "rows_per_second_step": 11198.372739358001,
+      "peak_allocated_bytes": 28346342912,
+      "peak_reserved_bytes": 29070721024,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 21976973312,
+      "loss": 9.746386528015137,
+      "fits": true
+    },
+    {
+      "microbatch": 8192,
+      "rows_per_second_step": 7775.642927834001,
+      "peak_allocated_bytes": 43181999104,
+      "peak_reserved_bytes": 44264587264,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 6783107072,
+      "loss": 9.734874725341797,
+      "fits": false
+    }
+  ]
+}

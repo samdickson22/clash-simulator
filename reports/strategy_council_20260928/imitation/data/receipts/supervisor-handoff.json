@@ -1,0 +1,7 @@
+{
+  "old_supervisor": 3406704,
+  "action": "SIGTERM only to supervisor, never its process group or P16 child",
+  "reason": "Coordinator decoupled certificate and LAN copies from P16; prevent old in-memory supervisor duplicating copies/overwriting certificate",
+  "p16_pid": 3449355,
+  "utc": 1791441762.3932877
+}

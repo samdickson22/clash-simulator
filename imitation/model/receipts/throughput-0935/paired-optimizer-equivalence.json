@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "microbatches": [
+    64,
+    3072
+  ],
+  "relative_l2_parameter_update": 0.02297654002904892,
+  "relative_l2_clipped_gradient": 0.0010726081673055887,
+  "max_parameter_absolute": 0.0005947649478912354,
+  "p99_parameter_absolute": 2.430751919746399e-07,
+  "losses": [
+    9.758179167285562,
+    9.758220672607422
+  ],
+  "dropout": 0.0,
+  "tolerance": {
+    "relative_l2_parameter_update": 0.05,
+    "relative_l2_clipped_gradient": 0.02,
+    "max_parameter_absolute": 0.000601
+  }
+}

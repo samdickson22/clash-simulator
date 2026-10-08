@@ -1,10 +1,10 @@
 {
-  "checked_at": "2026-10-08T08:41:30.178298+00:00",
-  "status": "SHAKEDOWN_RUNNING",
+  "checked_at": "2026-10-08T09:41:49.220126+00:00",
+  "status": "COMPLETE",
   "receipt": "127x01:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/receipts/T3-PASS.json",
   "interval_seconds": 600,
   "deadline": "2026-10-09T14:30:00Z",
-  "next_scheduled_run": "2026-10-08T08:51:30.178298+00:00",
+  "next_scheduled_run": null,
   "scheduled_task_id": "scheduled-task:command:mcp:c588a151-27f6-471c-bafb-661cddc13f03:schedule-task:clasher-imitation-t4-t3-poll-20261008",
   "next_scheduled_run_is_estimate": true,
   "t3_published_utc": "2026-10-08T06:42:32.432848+00:00",
@@ -25,14 +25,14 @@
     "run_directory": "/mpac/sdicks02/tmp/t4-shakedown-20261008T0727Z/run",
     "log": "/mpac/sdicks02/jobs/clasher/t4-shakedown-20261008T0727Z.log",
     "exit_receipt": "/mpac/sdicks02/jobs/clasher/t4-shakedown-20261008T0727Z.exit",
-    "last_stage": "dev-evaluation",
+    "last_stage": "complete",
     "last_observed_step": 200,
     "last_observed_loss": 7.349667280912399,
     "rows_per_second_including_loader": 2291.0314152759083,
     "gpu_peak_allocated_mib": 471.2197265625,
     "gpu_peak_reserved_mib": 642.0
   },
-  "next_action": "Shakedown launched. Inspect this verified job receipt/log once; do not launch a duplicate. Wrapper runs subset, overfit, then full dev evaluator. On failure inspect and fix only own files; preserve artifacts. On completion collect metrics and disable schedule.",
+  "next_action": "Expanded T4 complete. T5 may consume throughput-pass.json on its recorded code hash with one run per A6000, effective8192, micro7168, workers4. No T4 jobs remain active.",
   "prior_failed_job": {
     "label": "t4-shakedown-20261008T0714Z",
     "exit": 1,
@@ -49,5 +49,25 @@
     "gpu_peak_allocated_mib": 402.7314453125,
     "gpu_peak_reserved_mib": 498.0
   },
-  "dev_evaluation_started_at": "2026-10-08T08:13:01.343720+00:00"
+  "dev_evaluation_started_at": "2026-10-08T08:13:01.343720+00:00",
+  "scope_updated_at": "2026-10-08T08:49:20.834989+00:00",
+  "throughput_pass": {
+    "status": "PASS",
+    "target_loader_inclusive_rows_per_second": 8000,
+    "effective_batch": 8192,
+    "candidate_microbatch_range": [
+      1024,
+      8192
+    ],
+    "gpu_headroom_gb": 8,
+    "receipt": "imitation/model/receipts/throughput-pass.json",
+    "single_and_two_concurrent_runs_required": true,
+    "lease_expiry": "2026-10-09T05:30:00Z",
+    "job": "t4-throughput-final-20261008T0935Z",
+    "source_directory": "/mpac/sdicks02/tmp/t4-throughput-20261008T0935Z/source",
+    "output": "/mpac/sdicks02/tmp/t4-throughput-20261008T0935Z",
+    "launcher_pid": 2448478
+  },
+  "shakedown_pass": "imitation/model/receipts/shakedown-20261008T0727Z/summary.json",
+  "schedule_enabled": false
 }

@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "rows": 512,
+  "row_metric_checks": {
+    "(1.0, 1.0, 1.0)": "all row metrics bit-exact from identical logits",
+    "(0.7, 1.2, 1.5)": "all row metrics bit-exact from identical logits"
+  },
+  "joint_nll_tolerance": {
+    "atol": 2e-05,
+    "rtol": 2e-05
+  },
+  "summary_ece_bootstrap": "atol=rtol=1e-12",
+  "reference": "/mpac/sdicks02/tmp/t4-shakedown-20261008T0727Z/source"
+}

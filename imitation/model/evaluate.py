@@ -53,8 +53,7 @@ def metric_rows(o, y, hand_ids, temperatures=(1., 1., 1.)):
     within = (matching_card & (delta <= 1) & legal_top).any(-1)
     exact = ((top == a[:, None]) & legal_top).any(-1)
     def values(t, mask):
-        x = _numpy(t); x[~mask.cpu().numpy()] = np.nan
-        return x
+        return t.float().masked_fill(~mask, float("nan"))
     result = {
         "play_wait_nll": values(binary_nll, when),
         "play_wait_brier": values((p_act-(a != 2304).float()).square(), when),
@@ -72,7 +71,7 @@ def metric_rows(o, y, hand_ids, temperatures=(1., 1., 1.)):
         "card_confidence": values(token_p.max(-1).values, play),
         "card_correct": values(card_rank[:, 0] == labelled_card, play),
         "p_act": values(p_act, when), "acted": values(a != 2304, when),
-        "label_card": np.where(play.cpu().numpy(), labelled_card.cpu().numpy(), -1),
+        "label_card": torch.where(play, labelled_card, -1),
     }
     intent_use = supervised & y["intent_valid"].bool()
     observed = y["intent_observed"].bool(); bins = y["intent_bin"].long()
@@ -84,6 +83,10 @@ def metric_rows(o, y, hand_ids, temperatures=(1., 1., 1.)):
         at_risk = intent_use & ((bins > k) | (observed & (bins == k)))
         result[f"hazard_p_{k}"] = values(o["hazard"][:, k].float().sigmoid(), at_risk)
         result[f"hazard_y_{k}"] = values(observed & (bins == k), at_risk)
+    # One device-to-host transfer for all O(rows) sufficient statistics.
+    packed = torch.stack([v.float() for v in result.values()], 1).cpu().numpy()
+    result = {key: packed[:, i] for i, key in enumerate(result)}
+    result["label_card"] = result["label_card"].astype(np.int64)
     return result
 
 
@@ -160,8 +163,65 @@ MEAN_METRICS = ("play_wait_nll", "play_wait_brier", "play_wait_nll_all", "play_w
                 "top8_recall", "top8_within1", "ability_nll", "intent_hazard_nll", "intent_card_nll")
 
 
+def summary_cluster_cis(rows, clusters, resamples, seed):
+    """Reuse identical perspective draws across all statistics in one summary.
+
+    Matches the original seeded multinomial stream (128 draws/chunk), cluster
+    universe, quantiles and even-median convention. No approximation/subsampling.
+    """
+    _, group = np.unique(clusters, return_inverse=True)
+    count = int(group.max())+1 if len(group) else 0
+    if not count or resamples <= 0:
+        return {}
+    names = [k for k in MEAN_METRICS if k in rows]
+    sums, nums = [], []
+    for name in names:
+        v=rows[name]; use=np.isfinite(v)
+        sums.append(np.bincount(group[use],v[use],minlength=count))
+        nums.append(np.bincount(group[use],minlength=count))
+    sums=np.stack(sums,1); nums=np.stack(nums,1)
+    ece={}
+    for name,p,y in (("gate_ece","p_act","acted"),("gate_multiclass_ece","gate_confidence","gate_correct"),("card_ece","card_confidence","card_correct")):
+        use=np.isfinite(rows[p]) & np.isfinite(rows[y]); bucket=np.minimum((rows[p][use]*10).astype(int),9)
+        number=np.zeros((count,10));delta=np.zeros_like(number)
+        np.add.at(number,(group[use],bucket),1)
+        np.add.at(delta,(group[use],bucket),rows[p][use]-rows[y][use])
+        ece[name]=(number,delta)
+    hist=None
+    if 'tile_error' in rows:
+        use=np.isfinite(rows['tile_error'])
+        if use.any():
+            levels,level=np.unique(rows['tile_error'][use],return_inverse=True)
+            hist=np.zeros((count,len(levels)))
+            np.add.at(hist,(group[use],level),1)
+    samples={k:[] for k in names+list(ece)+['tile_error']}
+    rng=np.random.default_rng(seed)
+    for start in range(0,resamples,128):
+        w=rng.multinomial(count,np.full(count,1/count),size=min(128,resamples-start))
+        den=w@nums
+        v=np.divide(w@sums,den,out=np.full(den.shape,np.nan),where=den>0)
+        for i,k in enumerate(names): samples[k].append(v[:,i])
+        for k,(number,delta) in ece.items():
+            den=(w@number).sum(-1)
+            samples[k].append(np.divide(np.abs(w@delta).sum(-1),den,out=np.full(len(w),np.nan),where=den>0))
+        if hist is not None:
+            h=w@hist; cumulative=h.cumsum(-1); total=h.sum(-1)
+            lo=((total-1)//2).clip(0); hi=(total//2).clip(0)
+            li=(cumulative<=lo[:,None]).sum(-1).clip(0,len(levels)-1)
+            ui=(cumulative<=hi[:,None]).sum(-1).clip(0,len(levels)-1)
+            v=(levels[li]+levels[ui])/2;v[total==0]=np.nan
+            samples['tile_error'].append(v)
+    result={}
+    for k,parts in samples.items():
+        values=np.concatenate(parts) if parts else np.array([])
+        values=values[np.isfinite(values)]
+        result[k]=np.quantile(values,[.025,.975]).tolist() if len(values) else None
+    return result
+
+
 def summarize(rows, clusters, resamples=10000, seed=1):
     report = {"rows": len(clusters), "perspectives": len(np.unique(clusters)), "metrics": {}}
+    intervals = summary_cluster_cis(rows, clusters, resamples, seed)
     for name in (*MEAN_METRICS, "tile_error"):
         if name not in rows:
             continue
@@ -169,14 +229,14 @@ def summarize(rows, clusters, resamples=10000, seed=1):
         label = "median_tile_error" if median else name
         report["metrics"][label] = {
             "n": int(use.sum()), "value": float(np.median(values[use]) if median else values[use].mean()) if use.any() else None,
-            "ci95": _cluster_ci(values, clusters, resamples, seed, median)}
+            "ci95": intervals.get(name)}
     for name, p, y, mass in (("gate_ece", "p_act", "acted", False),
                             ("gate_multiclass_ece", "gate_confidence", "gate_correct", False),
                             ("card_ece", "card_confidence", "card_correct", False),
                             ("timing_hazard_calibration", "p_act", "acted", True)):
         report[name] = calibration(rows[p], rows[y], equal_mass=mass)
         if not mass:
-            report[name]["ci95"] = calibration_ci(rows[p], rows[y], clusters, resamples, seed)
+            report[name]["ci95"] = intervals.get(name)
     report["intent_hazard_calibration"] = []
     for k in range(13):
         p, y = rows[f"hazard_p_{k}"], rows[f"hazard_y_{k}"]
@@ -301,7 +361,8 @@ def main():
     p.add_argument("--p16-rows", help="aligned upgraded P16 baseline metric directory")
     p.add_argument("--p16-summary", help="T3's already-scored dev-only p16-bc-dev.json; no legacy code is imported")
     p.add_argument("--card-scope", help="JSON list of token IDs; required for an A3 gate report")
-    p.add_argument("--bootstrap", type=int, default=10000); p.add_argument("--batch-size", type=int, default=64)
+    p.add_argument("--bootstrap", type=int, default=10000); p.add_argument("--batch-size", type=int, default=1024)
+    p.add_argument("--workers", type=int, default=2)
     p.add_argument("--calibrate", action="store_true"); p.add_argument("--calibration-rows", type=int, default=100000)
     args = p.parse_args()
     from .runner import evaluate_checkpoint

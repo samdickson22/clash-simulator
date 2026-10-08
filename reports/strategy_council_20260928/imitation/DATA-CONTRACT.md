@@ -51,5 +51,17 @@ P16 scores cover 648 dev and 705 eval perspectives; eval_ood has no P16 slice.
 CPU scoring uses two disjoint unit partitions (S122 reserves 78 hub workers), keeps whole recurrent
 perspectives intact, and merges raw statistics before computing calibration.
 
-This is an interface description, not a PASS receipt. Fitting waits on
-`data/receipts/T3-PASS.json`; S122 observer qualification waits on T1-PASS.
+Coordinator release decision 2026-10-08: `data/receipts/T3-PASS.json` certifies
+the verified store and frequency baselines independently of upgraded P16 BC.
+It was published at 06:42:32 UTC with `p16_baseline: "pending"`. P16 is only
+needed for gate (a) A2; its completed scores and timings were published at
+08:17:06 UTC separately in
+`data/receipts/T3-P16-BASELINE.json`. Baseline recipe and running scorer stay frozen.
+
+The release certificate is immutable and pins `store_manifest_sha256`. Its
+`copies_status: "pending"` describes publication time. Subsequent verified home
+copies are recorded in `data/receipts/T3-COPIES.json`, which pins the certificate
+SHA; leased copies use `T3-COPY-HOST.json` and hub `lease-ready-HOST.json` data
+fields. A training host must have its own completed, checksum-verified store.
+The source certificate alone does not establish destination copy completion.
+S122 observer qualification still waits on T1-PASS.

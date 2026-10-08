@@ -1,0 +1,12 @@
+{
+  "candidates": [
+    {
+      "microbatch": 4096,
+      "max_tokens": 128,
+      "peak_reserved_bytes": 26715619328,
+      "headroom_bytes": 24332075008,
+      "fits": true
+    }
+  ],
+  "microbatch": 4096
+}

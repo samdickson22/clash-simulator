@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "rows": 8192,
+  "microbatches": [
+    64,
+    7168
+  ],
+  "dropout": 0.0,
+  "training_dropout_unchanged": 0.1,
+  "tolerance": {
+    "relative_l2_parameter_update": 0.05,
+    "relative_l2_clipped_gradient": 0.02,
+    "max_parameter_absolute": 0.000601
+  },
+  "relative_l2_parameter_update": 0.025551963597536087,
+  "relative_l2_clipped_gradient": 0.004545513074845076,
+  "max_parameter_absolute": 0.0005979165434837341,
+  "p99_parameter_absolute": 2.4400651454925537e-07,
+  "losses": [
+    9.758179167285562,
+    9.758219718933105
+  ],
+  "weights_same_seed": 2903,
+  "reference_micro64_uses_original_network_and_optimizer": true
+}

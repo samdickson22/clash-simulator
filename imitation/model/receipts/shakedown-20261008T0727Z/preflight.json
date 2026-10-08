@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "assets": {
+    "token_sha256": "35db1a7647c71a39b12b580cc31a39539c9ad973a8de635df0a95962b4ac8ee2",
+    "asset_sha256": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+    "descriptor_width": 57
+  },
+  "roles": {
+    "train": {
+      "rows": 53989262,
+      "perspectives": 69380,
+      "maximum_entities": 74,
+      "rows_above_64_entities": 112,
+      "sampled_rows": 257,
+      "maximum_sample_tokens": 125,
+      "hashes": {
+        "tokens": "35db1a7647c71a39b12b580cc31a39539c9ad973a8de635df0a95962b4ac8ee2",
+        "assets": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+        "roles": "7e357f64ad6df13e232ec9b1c7c143bbcd734d12a9cdceec2cef999bbe74fcdc",
+        "eval_spec": "d9f978f75191b5d5a474d127dbccd618b93dad5069dd851ab4f8b2a47fdaa7ae",
+        "sidecar_manifest": "1a18b263bd0d2d44aee75491e82aa89e152c8a8474cca6d664128c0fc2790cb6",
+        "store_manifest": "1acf6b5875091e009c18e598a71714016b9833b6cc626032e0fa676ccdac5c2f",
+        "role_manifest": "2c4c7c4f94ece017ec11f048576ce96ed596620c1b7f1f3b30c046c11ab51e5e"
+      }
+    },
+    "dev": {
+      "rows": 2759722,
+      "perspectives": 3546,
+      "maximum_entities": 78,
+      "rows_above_64_entities": 10,
+      "sampled_rows": 257,
+      "maximum_sample_tokens": 130,
+      "hashes": {
+        "tokens": "35db1a7647c71a39b12b580cc31a39539c9ad973a8de635df0a95962b4ac8ee2",
+        "assets": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+        "roles": "7e357f64ad6df13e232ec9b1c7c143bbcd734d12a9cdceec2cef999bbe74fcdc",
+        "eval_spec": "d9f978f75191b5d5a474d127dbccd618b93dad5069dd851ab4f8b2a47fdaa7ae",
+        "sidecar_manifest": "1a18b263bd0d2d44aee75491e82aa89e152c8a8474cca6d664128c0fc2790cb6",
+        "store_manifest": "1acf6b5875091e009c18e598a71714016b9833b6cc626032e0fa676ccdac5c2f",
+        "role_manifest": "b416f9ddaf3c8619b9f5c08ebc6e23373ee5b49f79e6b485eb905de17987bdb0"
+      }
+    }
+  },
+  "qualification_sha256": "6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c",
+  "torch": "2.7.1+cu118",
+  "gpu": "NVIDIA RTX A6000",
+  "bf16": true
+}

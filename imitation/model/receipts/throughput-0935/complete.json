@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "groups": {
+    "single": {
+      "microbatch": 7168,
+      "runs": 1,
+      "minimum_device_free_mib": 17340,
+      "maximum_device_used_mib": 31342,
+      "sum_rows_per_second_including_loader": 12154.126053725888
+    },
+    "concurrent": {
+      "microbatch": 3072,
+      "runs": 2,
+      "minimum_device_free_mib": 20275,
+      "maximum_device_used_mib": 28407,
+      "sum_rows_per_second_including_loader": 11394.330461510104
+    }
+  }
+}

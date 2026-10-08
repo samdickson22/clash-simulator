@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "hosts": [
+    "127x11",
+    "127x13",
+    "127x14"
+  ],
+  "certificate_sha256": "6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c"
+}

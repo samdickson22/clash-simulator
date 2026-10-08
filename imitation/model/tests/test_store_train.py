@@ -108,3 +108,29 @@ def test_actual_t3_adapter_mask_time_history_and_intent(tmp_path):
         store.verify_qualification({**receipt,"roles":{"train":{"rows":7,"perspectives":0}}})
     with pytest.raises(ValueError, match="passed T3"):
         store.verify_qualification({**receipt,"passed":False})
+
+    from imitation.model.batching import build_batch
+    b,y=build_batch(store,np.arange(8))
+    old,oy=collate([store[i] for i in range(8)])
+    for key in b: torch.testing.assert_close(b[key],old[key],atol=0,rtol=0)
+    for key in y: torch.testing.assert_close(y[key],oy[key],atol=0,rtol=0,check_dtype=False)
+
+
+def test_batched_adapter_and_joint_match_scalar(tmp_path):
+    from imitation.model.batching import build_batch, batch_loader
+    from imitation.model.runner import joint_nll_rows
+    from imitation.model.evaluate import metric_rows
+    store=PackedStore(create(tmp_path/"dev", "dev", 17), "dev")
+    ix=np.array([16,0,3,7,2,1])
+    b,y=build_batch(store,ix)
+    old,oy=collate([store[int(i)] for i in ix])
+    for key in b: torch.testing.assert_close(b[key],old[key],atol=0,rtol=0)
+    for key in y: torch.testing.assert_close(y[key],oy[key],atol=0,rtol=0,check_dtype=False)
+    loaded=list(batch_loader(store,4,ix,workers=1))
+    assert torch.cat([v[1]["index"] for v in loaded]).tolist()==ix.tolist()
+    m=model(ModelConfig(dropout=0.)).eval()
+    with torch.inference_mode():
+        o=m(b,torch.empty(0,dtype=torch.long))
+        teacher=m(b,(y["action"].long()//576).clamp(0,3))
+        reference=metric_rows(o,y,b["ids"][:,:4])["joint_nll"]
+        np.testing.assert_allclose(joint_nll_rows(teacher,y).numpy(),reference,atol=1e-6,rtol=1e-6)

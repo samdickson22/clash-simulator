@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "rows": 512,
+  "equality": "bit-exact features and labels",
+  "max_entities": 78
+}

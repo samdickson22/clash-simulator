@@ -144,3 +144,22 @@ def test_proposal_legality_and_no_play():
     assert [r["probability"] for r in proposals] == sorted([r["probability"] for r in proposals], reverse=True)
     p["action_mask"][:2304] = False
     assert policy.propose(p,d) == []
+
+
+def test_sparse_tile_training_preserves_loss_and_gradients():
+    from imitation.model.losses import loss_parts, total_loss
+    from imitation.model.synthetic import model, batch
+    from imitation.model.network import ModelConfig
+    torch.manual_seed(4)
+    m=model(ModelConfig(dropout=0.))
+    b,y=batch(6,2)
+    teacher=(y["action"].long()//576).clamp(0,3)
+    full=total_loss(loss_parts(m(b,teacher),y))["loss"]
+    full.backward()
+    reference={k:p.grad.clone() for k,p in m.named_parameters()}
+    m.zero_grad(set_to_none=True)
+    use=(y["action"]<2304)&y["supervised"].bool();use[0]=True
+    sparse=total_loss(loss_parts(m(b,teacher,torch.nonzero(use).flatten()),y))["loss"]
+    sparse.backward()
+    torch.testing.assert_close(sparse,full,rtol=1e-6,atol=1e-6)
+    for k,p in m.named_parameters(): torch.testing.assert_close(p.grad,reference[k],rtol=2e-4,atol=2e-6)

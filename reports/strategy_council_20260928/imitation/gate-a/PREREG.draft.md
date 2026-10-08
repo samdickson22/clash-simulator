@@ -1,11 +1,69 @@
 # Gate (a), C56 v1: registration draft
 
 Prepared 2026-10-08 UTC by T5. **NOT FROZEN; NOT AUTHORIZATION TO SCORE.**
-T3 training release passed at 06:42 UTC; T4 shakedown and target store copies
-remain pending. Finalize this as PREREG.md
+T3 training release, all five target copies and T4 rerun shakedown have passed;
+the additional throughput qualification remains pending. Finalize this as PREREG.md
 with an immutable SHA256 receipt after qualification and executable-code review,
-before any T5 eval/eval_ood inference. Keep this draft as an earlier artifact.
+before any T5 training or eval/eval_ood inference. Keep this draft as an earlier artifact.
 No T5 fitting or held-out scoring has occurred.
+
+## Qualified-model correction to bind before T5 training
+
+Coordinator resumed T5 on 2026-10-08 after the first T4 shakedown failed on a
+dev row with more than 64 visible entities. The original 64-entity limit was
+a contract-cap bug. The corrected adapter preserves **all entities up to the
+full v5 cap of 128**, and adds a **192-token training bucket** for entities plus
+the fixed public/history tokens. No truncation or row exclusion is allowed.
+This is a technical contract correction, not held-out tuning.
+
+The qualifying rerun is `t4-shakedown-20261008T0727Z` on 04, launcher2398593.
+It must publish PASS before T5 proceeds; a second failure stops T5 again.
+Its actual command uses **tile width64**, the DESIGN's predeclared latency
+fallback (T4 reports d128 p99=17.45ms at78 entities). Trunk remains unchanged;
+2,254,938 parameters. Single-row inference omits training-bucket padding with
+tested equal logits. Preserve this qualified configuration in all five runs.
+
+Rerun source hashes independently read on04 at07:44:50 UTC, equal to05:
+- features.py: `4a1d2f79002ba704783d5138321b1c242ac04937b3cbfff3517b2ac541e02d3d`.
+- network.py: `39ad5ea8a5d2342c16724fd6c53daedb5d9ac211b9e28a5d2c57860ce1d65db6`.
+- train.py: `0d546c7fb6e534dd2c97729d0f58e9560bd52c972781892aed9c1cdeb07f3fab`.
+Full source manifest: `imitation/model/receipts/source-20261008T0727Z.json`.
+These identify the pending T4 rerun, **not a final T5 code freeze**. Before
+launching any T5 run, freeze PREREG.md plus commit and full per-file SHA256
+manifest of the actual staged T5 model/trainer/ablations/evaluator/assets.
+Verify remote code hashes against that manifest, record them in run receipts
+and checkpoints, and never rely on an earlier checkout hash alone.
+
+## Additional throughput start gate — coordinator update 2026-10-08
+
+T4 shakedown PASS alone does not release the five runs. Require the T4-owned
+`imitation/model/receipts/throughput-pass.json` as an additional hard gate.
+T4 is raising the microbatch from64 and vectorizing the loader/evaluator;
+target **at least8,000 loader-inclusive training rows/s**. Do not treat the
+old2.3k subset measurement, step-only throughput, or a filename without its
+verified contents as this qualification. T5 does not duplicate T4's optimization
+or benchmark work. Verify the actual receipt schema, PASS evidence, measured
+loader-inclusive throughput and source/configuration provenance.
+
+Start runs only on the code hash recorded in that receipt. In final PREREG.md
+record the receipt SHA256, qualifying code hash/full source manifest, measured
+rows/s and **exact qualified microbatch size** (pending; do not assume64).
+Verify deployed files against the qualifying hash before each launch/resume;
+keep effective batch8,192 and the fixed statistical/optimization recipe.
+Changes to receipt-covered model/trainer/loader/evaluator files invalidate
+that code qualification until a matching throughput receipt exists. Record
+all owned T5 ablation/scoring additions in the full executable manifest as
+well; do not silently substitute an unqualified trainer or copied old source.
+
+Plan wall time from actual throughput and measured dev/checkpoint overhead,
+not the design estimate. Leased jobs must finish or checkpoint and **exit by
+2026-10-09 05:00Z**, ahead of05:30Z expiry. Arrange the checkpoint/exit trigger
+early enough to finish by05:00Z; record the trigger and verified exit receipts.
+Use periodic resumable checkpoints and the lease wrapper for earlier reclaim.
+If unfinished, preserve the same seed/optimizer/scheduler/RNG/sampler cursor,
+transfer checkpoints directly over LAN to home GPUs01/04/08, verify hashes,
+and resume the same run there after resource checks (01 only if perception
+is not using it). No checkpoints/stores via05, no new trial, no deletion.
 
 ## Scope and prior exposure
 
@@ -152,8 +210,8 @@ fleet/fleet_run.sh. Leased jobs MUST instead source only the lease-local
 clasher-lease/env.sh and use clasher-lease/run.sh, its GPU env and footprint.
 Read /mpac/sdicks02/cc/FLEET-SHARING.md and fleet/LEASED-HOSTS.md; validate the
 live lease before work. Reclaim/refusal/expiry/missing lease blocks launch.
-Leases expire 2026-10-09 05:30Z; checkpoint and finish before expiry (initiate
-planned stop at least 30 minutes before), or on earlier reclaim. Wrapper polls
+Leases expire 2026-10-09 05:30Z; checkpoint and EXIT by05:00Z (trigger the
+planned stop early enough to finish), or on earlier reclaim. Wrapper polls
 every 60 seconds; checkpoint-and-exit must finish within 30 minutes, without
 running a full dev evaluation after the stop request. Preserve ≥8192 MiB free
 GPU memory everywhere borrowed and ≤64,000,000,000 bytes Clasher RSS on shared
@@ -170,3 +228,8 @@ on 05. A reclaim/lease-end resume migrates the same run, not a new seed/trial.
 Report per-run wall/CPU time, GPU-process hours, and unique occupied-GPU wall
 hours (avoid double-counting concurrent jobs) plus throughput probes, dev
 evaluation/calibration, held-out inference and bootstrap analysis separately.
+
+Shakedown qualification update09:15 UTC: rerun0727Z passed at09:05:52.560799Z,
+exit0. Summary SHA256 `5cda727dacb9743c922dc8f36aba13124d0fb30133b95f0cf75ab56f9d1f303f`
+at `imitation/model/receipts/shakedown-20261008T0727Z/summary.json`.
+Throughput receipt/code/microbatch remain pending; draft still not frozen.

@@ -1,0 +1,6 @@
+{
+  "stage": "complete",
+  "at": "2026-10-08T09:05:52.560799+00:00",
+  "passed": true,
+  "checkpoint": "/mpac/sdicks02/tmp/t4-shakedown-20261008T0727Z/run/subset/best-dev-step-00000008.pt"
+}

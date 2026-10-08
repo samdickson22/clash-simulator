@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "fixture_rows": 32,
+  "model_and_ema_resume": "bit-exact after next optimizer step",
+  "signal": "verified child SIGTERM: checkpoint, clean exit, no dev pass",
+  "root": "/mpac/sdicks02/tmp/t4-throughput-cli-0935"
+}

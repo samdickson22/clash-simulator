@@ -1,5 +1,10 @@
 # T4 model implementation
 
+**Current: expanded T4 COMPLETE / PASS (2026-10-08).** Shakedown and throughput
+receipts are below; the continuation schedule is disabled. T5 should use
+`imitation/model/receipts/throughput-pass.json`, one run per A6000.
+The chronological entries below preserve earlier pending/failure states.
+
 2026-10-08 UTC: active implementation on 127x05. No commits; no heldout scoring.
 
 - Read the entire design and frozen heldout spec (read-only from 127x01).
@@ -151,4 +156,103 @@ completed. The full metric evaluator started at **08:13:01Z**, using subset
 perspective bootstraps. Verified launcher PID 2398593 is active, nice 10;
 no exit receipt. No duplicate job launched.
 
-Latest scheduled receipt check: 2026-10-08T08:41:30.178298+00:00 — SHAKEDOWN_RUNNING; verified own launcher PID 2398593 active at nice 10, dev-evaluation stage, no exit receipt.
+
+
+08:49Z coordinator scope expansion: **T4 now includes a throughput pass before T5**.
+- Let current 0727Z shakedown finish and record PASS/FAIL first. Its dev evaluator
+  was still active at the latest inspection; no duplicate/optimization job launched.
+- Then raise microbatch to largest 1024–8192 fitting >=8 GB GPU headroom while
+  retaining effective batch 8192 and the recipe. Verify fixed-batch optimizer
+  equivalence against micro64 with documented bf16 tolerance and dropout control.
+- Vectorize batch features and evaluator, use bounded workers/pinning/prefetch;
+  verify dev-subset metrics against original evaluator within float tolerance.
+- Measure loader-inclusive rows/s for one and two concurrent A6000 runs, target
+  >=8k. Publish receipts/throughput-pass.json with final microbatch and full code
+  hash manifest only after measured qualification. T5 is waiting for this receipt.
+- Leases end 2026-10-09 05:30Z. Our work stays on permitted home hosts. The
+  existing 10-minute schedule now carries this expanded scope; do not disable it
+  merely because the original shakedown finishes. Next scheduled check 08:51:07Z.
+
+
+09:12Z shakedown **PASS**, exit0, completed09:05:52Z. Receipts copied to
+`imitation/model/receipts/shakedown-20261008T0727Z/` (small JSON/logs only).
+Subset loss 9.753533 → 9.600328; overfit 9.649827 → 7.349667. Full2,759,722-row dev
+evaluator, calibration,10,000-perspective bootstrap and TorchScript export
+completed. Throughput implementation starts now; no optimization job yet.
+
+Throughput qualification launched in fresh owned snapshot0921Z: label
+`t4-throughput-qualify-20261008T0921Z`, launcher2444705, source/run under
+`/mpac/sdicks02/tmp/t4-throughput-20261008T0921Z`. No users/other workers/GPU
+jobs before launch, nice10 fleet_run.sh. Explicit own-file rsync-c and hashes
+in source-throughput-20261008T0921Z.json. **16 CPU tests passed in4.01s**.
+Vectorized batch adapter, pinned/prefetched loader, one-transfer row metrics,
+teacher-forced dev joint NLL, and signal exit before dev validation implemented.
+Benchmark receipt is not yet published; qualification still running.
+
+First throughput qualification0921Z passed numerical tests: features exact;
+metric rows/ECE/bootstrap exact; micro4096 vs64 update relativeL2=.02919,
+gradient relativeL2=.003866,p99 parameterabs=2.98e-7. Micro8192 OOM;4096
+reserved35.59GB and step-only5494rows/s, belowtarget. No throughputPASS.
+Second snapshot0924Z now tests block-sparse numeric GEMM (GPU only) and
+tile head only on supervised plays, preserving exact objective and inference.
+17 CPU tests pass4.10s including sparse-tile loss/gradient equivalence and
+TorchScript export. Numerical GPU comparison now uses original shakedown
+network+optimizer at micro64, not only the optimized implementation.
+
+Throughput0930Z:1024-row-granularity memory sweep selected **micro7168**,
+8192 rejected (<8GiB headroom). Original micro64 vs7168: updateL2=.02555,
+gradientL2=.004546,p99 parameterabs=2.44e-7; qualified. Dev8192-row scoring
+4169→9926rows/s; exact discrete card/tile/top8, continuous bf16 differences
+(max jointNLL=.001466; mean=.00003354);3 gate-argmax ties changed.
+Single64-step measurement: **12,188.05rows/s loader-inclusive**, cold11,447.60;
+peakallocated28.373GB/reserved31.541GB. CPU p99 at78entities11.647ms.
+Final snapshot0935Z (source receipt recorded) now runs qualification then
+single+two-concurrent benchmarks with explicit driver free-memory monitoring.
+Label`t4-throughput-final-20261008T0935Z`, launcher2448478, nice10, no users
+or other workers at launch, planned<=18 processes. No throughputPASS yet.
+18 CPU tests passed4.15s. No full runs/heldout scoring.
+
+Final throughput qualification **PASS** (job exit0 at09:36:14Z):
+- Published `imitation/model/receipts/throughput-pass.json`. Receipt SHA256
+  `5c7e83bacc92096a30520ccdaf002321b753542a7afc489e57183df865fc7229`.
+- Qualified Python code SHA256
+  `301caa1003ab47eadc3f56973ec5398bed4d166dc1a0163d213e60a61854959d`,
+  verified identical on05 and04. Full20-file Python manifest plus immutable
+  staged-source manifest included. README subsequently records final results;
+  its separate current hash is included. No runtime code changed after the run.
+- **One run per GPU recommended**: effective8192, micro7168,4loader workers,
+  pinning and prefetch.64measured steps plus2warmups: **12,154.13rows/s**,
+  cold-loader/startup-inclusive11,415.55. Peak allocated28,372,961,280bytes;
+  reserved31,541,166,080bytes. Driver max31,342MiB used; minimum17,340MiB free.
+- Two concurrent runs: micro3072/workers4 each; **5,696.55 +5,697.78 =
+  11,394.33rows/s aggregate**. Each misses8k and aggregate is lower than single;
+  do not pack two expecting a speedup. Driver peak28,407MiB/min free20,275MiB.
+- Micro7168 was largest fitting candidate on1024-row grid; full8192 left only
+  6.78GB allocator headroom and was rejected. No cache generated/data changed.
+- Old network+optimizer micro64 vs new7168: update relativeL2=.02555 (tol.05),
+  clipped-gradient relativeL2=.004546 (tol.02), max parameterabs=.00059792
+  (tol.000601),p99abs=2.44e-7. Paired3072 also passes. Dropout disabled ONLY
+  for equivalence; production remains.1 and effectivebatch/recipe unchanged.
+-512realdev adapter rows including78entities match scalar features/labels
+  bit-exactly. All metric rows match original formulas on identical logits;
+  same seeded perspective bootstrap within1e-12.8192-row end-to-end bf16 dev
+  comparison: card/top3/tile-error/within1/top8 exact; max jointNLL difference
+  .001466,mean.00003354;3gate-argmax ties changed. Continuous row tolerance
+  .01 and metric-mean tolerance.001 are recorded, not a bit-exactness claim.
+  Scoring3,898.94→9,746.51rows/s on final code.
+- **18 CPU tests pass4.15s**, including new batch/scalar and sparse-tile
+  gradient equivalence and bootstrap identity. Separate CLI resume model+EMA
+  bit-exact; verified-child SIGTERM checkpoints/exits without dev. TorchScript
+  retains two-argument forward. CPU p50/p99ms (1000calls,core0):
+  10entities7.106/7.371;25entities7.942/8.309;64entities10.386/10.860;
+  78entities11.336/11.647. Parameters remain**2,254,938**.
+- Original shakedown: subsetloss9.753533→9.600328,2,291.03rows/s; overfit
+  9.649827→7.349667,2,536.27rows/s. Full2,759,722-row dev report, calibration,
+  10,000perspective bootstraps and TS export passed. This is pipeline sanity,
+  not an offline gate(a) quality claim. Initial64-entity failure preserved.
+- New files batching.py,throughput.py,throughput_runs.py; network/train/runner/
+  evaluate and tests updated; receipts+README+this progress current. GPU-only
+  typed numeric GEMM and supervised-play-only tile work preserve objective.
+  Predeclared tile64 latency fallback and entitycap128 remain documented.
+- No T5/fullv1, eval/eval_ood or Mac execution; no commits/deletions.
+  All T4 fleet jobs exited. Temporary10-minute schedule disabled on completion.

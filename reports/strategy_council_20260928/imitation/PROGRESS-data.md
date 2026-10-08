@@ -7,7 +7,8 @@ No commits. Frozen runtime, extractor, roles and evaluation recipe remain read-o
   are staged in the new `imitation/t0/` directory, without replacing fleet files.
 - T1: PASS. Deck-free public-event ledger and own cycle qualified against oracles.
 - T2: PASS. 82,231 perspectives, 64,140,802 rows; zero violations; copy on 04 verified.
-- T3: store and frequency baseline complete; P16 scoring running; copies to 04/08 pending.
+- T3: PASS published 06:42:32 UTC under coordinator's decoupled release decision.
+  COMPLETE: all requested copies verified; P16 receipt published 08:17:06 UTC; poll disabled.
 
 T1 PASS published on 127x01 and mirrored to 05. 319,077 exact elixir comparisons,
 2,015,370 known facts, zero conflicts. Includes 74,440 development (74,424 plus
@@ -190,8 +191,8 @@ On failure preserve logs/data and inspect before a fresh-label resume; never
 duplicate a live wrapper. No training is launched by this worker.
 
 Temporary data-worker continuation poll: every 10 minutes in this same T3 thread,
-first run 2026-10-08 03:36:34 UTC; disable after verified T3 PASS and the five
-authorized leased copies (report T3 publication immediately), or an unresolved
+first run 2026-10-08 03:36:34 UTC; disable after verified copies to 04/08 and
+11/13/14 plus separate P16 baseline receipt, or an unresolved
 external blocker (deadline 2026-10-09 03:30 UTC). Scheduler ID:
 `scheduled-task:command:mcp:b1656a57-211a-4456-ab5e-d0075b77ded5:schedule-task:clasher-imitation-data-finish-poll-20261008-v1`.
 No active fleet job was restarted. Header audit v4 is complete, with all 270
@@ -214,3 +215,158 @@ advanced another 600 CPU seconds. No failure receipt or completed P16 role yet.
 06:37 UTC resource recheck: console remains. 82 Clasher Python processes
 observed (11 running, 71 sleeping); other-worker outputs were not inspected.
 Our new eval pool has the same two-worker cap. No new manual workload launched.
+
+Coordinator decision 06:41 UTC supersedes the coupled completion path and prior
+console alarm: P16 is gate A2 only, not a training-store prerequisite. Our own
+fleet-monitor pts sessions were not console users. Use
+`~/.local/bin/fleet-console-users` from now on; count zero on 01/04/08 at launch.
+No other worker was changed. This closes the previously reported cap incident.
+Latest requested lease-copy targets are 11/13/14; 16/18 are no longer queued.
+
+T3-PASS published 2026-10-08T06:42:32.432848Z by `release_t3.py publish`, label
+`imitation-t3-release-v1`, launcher 3514669, exit 0, 6.99 s wall / 6.97 s CPU.
+Certificate SHA 6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c.
+Independent check re-read all plan identities against frozen roles, complete
+unit receipts with exactly 805 sampled perspectives, role manifests and
+frequency/prereg/count-file hashes. Rows/counts equal the previously reported
+store totals. Source/store/recipe remain unchanged. Certificate and updated
+contract mirrored to 05. It records `p16_baseline: pending`, original label/PID,
+estimated completion 08:30 UTC (not a deadline) and separate future
+`T3-P16-BASELINE.json`. Destination-copy receipts are separate and certificate
+SHA is stable; do not overwrite T3-PASS to add copies or P16 numbers.
+
+Handoff 06:42:42 UTC: verified old `finish_data.py` PID 3406704 received SIGTERM
+only to that PID, never the process group, to prevent its old in-memory path
+from recopying destinations and overwriting the new certificate. Original label
+`imitation-data-finish-v1` exit 143 is intentional, with logs preserved. The P16
+parent 3449355 (now PPID 1), eval workers 3510500/3510503 and their output/log
+remain running untouched. Evidence `data/operations/supervisor-handoff.json`.
+Do not resume the obsolete `finish_data.py` path.
+
+Replacement detached labels on 01, all with source env/.venv/fleet_run:
+- `imitation-t3-copies-v2`, launcher 3515177, `release_t3.py copies`: sequential
+  home copies 04 then 08, SHA verification, output `data/receipts/T3-COPIES.json`.
+  At 06:44, transferring to 04. Inspect exact PID/log/exit before fresh-label resume.
+- `imitation-t3-p16-receipt-v1`, launcher 3515185, `release_t3.py p16`: waits for
+  existing scorer completion then validates 648 dev/705 eval/0 OOD and publishes
+  `T3-P16-BASELINE.json`. No second scoring run. Deadline remains 03:30 UTC Oct 9.
+- `imitation-t3-leased-copies-v1`, launcher 3515754,
+  `finish_leased_copies.py`: sequential 11/13/14 via existing lease-local wrappers,
+  live lease/qualification/resource checks, checksums and readiness data-field
+  updates with originals backed up under `data/operations/`.
+  Host11 label `imitation-store-copy-127x11-v1`, launcher 894677, running transfer.
+  Status `data/operations/leased-copies-status.json`, failures
+  `leased-copies-blocked.json`. No duplicate launch if host label already exists.
+  Leased helper now pins the source certificate's manifest SHA; home-copy completion
+  is independent under the new coordinator decision. Total copy RSS is bounded;
+  existing lease wrapper enforces the 64 GB limit and reclaim termination.
+
+Resume commands (new label only after verifying the corresponding job stopped):
+`bash reports/strategy_council_20260928/fleet/fleet_run.sh NEW-LABEL .venv/bin/python -B reports/strategy_council_20260928/imitation/release_t3.py copies`
+`bash reports/strategy_council_20260928/fleet/fleet_run.sh NEW-LABEL .venv/bin/python -B reports/strategy_council_20260928/imitation/release_t3.py p16`
+`bash reports/strategy_council_20260928/fleet/fleet_run.sh NEW-LABEL .venv/bin/python -B reports/strategy_council_20260928/imitation/finish_leased_copies.py`
+All authoring on 05; only explicitly owned source/docs copied to 01.
+
+06:47 UTC checkpoint: T3 certificate SHA unchanged. Home transfer to 04 and
+leased transfer to 11 remain live; 08 and 13/14 queued in their respective
+supervisors. No failure receipts. P16 eval workers each 10m36 elapsed / 10m32
+CPU; no duplicate scoring or copies. Physical console count on hub is zero.
+
+06:57 UTC checkpoint: 04 transfer has reached checksum dry verification
+(rsync PID 3520064); observed destination 86,075,428,725 bytes. Host11 transfer
+has 81,692,210,905 destination bytes; wrapper reports five processes, 0.85 GB
+RSS, no stop reason. Home 08 and leased 13/14 remain queued. P16 eval workers
+each at 20m22 elapsed, 20m13/20m14 CPU. No failures; certificate SHA unchanged.
+
+07:07 UTC checkpoint: 04 copy PASS, 254 artifacts / 86,075,227,942 bytes,
+manifest SHA matches source 1acf6b58...; checksum dry run empty. Independently
+read destination manifest SHA and verifier receipt; mirrored small receipts to
+05 and copied immutable T3-PASS into the finished destination store. Home copy
+supervisor advanced to 08. Host11 now at SHA verification (200/254 progress),
+two processes / 1.45 GB RSS, no stop reason. Eval P16 workers at 30m25 elapsed
+and 30m13 CPU each. Certificate unchanged; no failures or restarts.
+
+07:17 UTC checkpoint: host11 copy PASS at 07:07:47 UTC, 254 artifacts /
+86,075,227,942 bytes; total 1,417.35 s wall, SHA check 99.53 s. Independently
+checked destination manifest/certificate hashes, empty checksum dry run and
+wrapper exit pass; hub readiness data_copied and training-ready are true.
+Small T3-COPY-127x11 receipt mirrored to 05. Leased supervisor advanced to
+13 (`imitation-store-copy-127x13-v1`, launcher 3430926); 14 queued. Home 08
+transfer continues. P16 eval workers each 40m23 elapsed / 40m07 CPU. No failures.
+
+07:27 UTC checkpoint: 08/13 copy jobs and original P16 scorer remain live,
+no exit/failure receipts. 04/11 are verified; 14 remains queued. P16 eval
+workers each at 50m23 elapsed / 50m03 CPU. Certificate hash unchanged and
+physical console count zero. No new jobs or restarts.
+
+07:37 UTC checkpoint: home copies both PASS; `imitation-t3-copies-v2` exited
+0 at 07:28:24 UTC, 45m18.64 wall / 2,565.16 s local process CPU. Both copies
+verify 254 artifacts / 86,075,227,942 bytes and matching manifest SHA. 08 SHA
+verification 69.39 s; independent receipt/hash and empty checksum dry-run checks
+pass. Certificate copied into finished 08 store; home copy receipts mirrored05.
+Host13 copy PASS 07:28:53 UTC, 1,257.44 s total wall, 56.39 s SHA verification;
+wrapper exit0, peak five processes / 1.47 GB RSS. Destination manifest and
+certificate SHA independently match; dry run empty, hub readiness true, receipt
+mirrored05. Host14 transfer started07:29:01 under label
+`imitation-store-copy-127x14-v1`, launcher3406643, child3406647; five processes
+/0.86 GB RSS, no stop reason. P16 eval at1h00m31 elapsed/1h00m06 CPU each.
+No failures or restarts; certificate immutable.
+
+07:47 UTC checkpoint: host14 has advanced to checksum dry verification,
+four processes /0.85 GB RSS, no stop reason. Home04/08 and leased11/13 remain
+verified. P16 eval workers at1h10m31 elapsed/1h10m01 and1h10m02 CPU. No failure
+receipts, no new jobs; certificate SHA unchanged, physical console count zero.
+
+07:57 UTC checkpoint: ALL requested copies verified (04/08/11/13/14). Host14
+finished 07:50:25 UTC, 1,283.59 s total wall, peak five processes /1.66 GB RSS;
+wrapper exit0. Independent manifest/certificate SHA and empty checksum dry run
+verified; all three leased hub readiness receipts show data_copied/training-ready.
+Home certificate hashes also independently match. Leased-copy supervisor exited
+0 at07:50:34, 1h06m27 wall /6.36 s local orchestration CPU (remote copy CPU not
+included). Aggregate and host14 receipt mirrored05. Only P16 remains: eval
+workers at1h20m28 elapsed/1h19m54 CPU each, healthy; no baseline receipt yet.
+Certificate unchanged. Poll continues solely for baseline completion and final
+report; no transfer should be restarted.
+
+08:07 UTC checkpoint: only P16 eval remains. Both workers progressed to
+1h30m25 elapsed /1h29m47 CPU, parent and receipt watcher live, no completion
+receipt yet. Both copy supervisors exited0; all copies already independently
+verified. Certificate SHA unchanged; no new jobs or restarts.
+
+FINAL 2026-10-08 08:18 UTC: T0/T1/T2/T3 complete, no remaining data work.
+P16 receipt published at08:17:06.358829 UTC; receipt watcher
+`imitation-t3-p16-receipt-v1` exited0, scorer/worker PIDs are gone. Recipe and
+upgrade-source hashes still equal preregistration; checkpoint SHA is pinned,
+learned tensors unchanged, and P16 supervised row counts match the frequency
+baseline slice exactly. 648 dev /705 eval /0 OOD perspectives; 505,669 dev and
+542,680 eval rows. OOD P16 metrics are null, not a scored zero.
+
+P16 dev/eval metrics respectively:
+- Joint NLL 0.4187397683 /0.4144627705.
+- Timing NLL (all supervised rows) 0.1789347266 /0.1782971218;
+  playable-row timing NLL 0.1846920516 /0.1847381754.
+- Card NLL 1.0333683455 /1.0098453448, top1 0.5372607110 /0.5484732009,
+  top3 0.9299604983 /0.9345149121.
+- Tile NLL 3.5724496296 /3.5514178798; median tile error 3 /3.
+- ECE 0.0086816557 /0.0091610227; playable ECE 0.0089609929 /0.0094919683.
+- Matched P16-slice frequency joint NLL 0.4743211278 /0.4715358467.
+P16 total 11,311.674 s wall (3h08m31.67) /22,120.438 s CPU (6h08m40.44).
+No rerun or recipe change. This is the descriptive baseline, not a model gate result.
+
+`data/receipts/T3-P16-BASELINE.json` SHA
+7c7019b3dbe530ca40dd77af71b5b49e876fbddc192775569cd70c3722cca4cf.
+Its per-role source hashes independently verified after mirroring small JSON05.
+T3-PASS remains byte-unchanged at SHA
+6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c.
+All five destination manifests/certificates, copy receipts and empty checksum
+dry runs were independently checked, with leased readiness updated. Home and
+leased-copy aggregate receipts also bind this same certificate SHA.
+Final audit summary: `data/receipts/T0-T3-FINAL.json`.
+
+Temporary schedule disabled successfully (enabled=false, nextRunAt=null).
+No data-worker jobs need resuming. All original logs and data remain. Incidents:
+pilot terminal-hook fix and checkpoint descriptor adaptation documented above;
+historical-header exception accepted; apparent P16 deadlock disproved; console
+alarm resolved as monitor sessions; old supervisor intentionally handed off
+with exit143 for coordinator-authorized release decoupling. No frozen source,
+role, eval spec, recipe, baseline scorer or original header was changed.

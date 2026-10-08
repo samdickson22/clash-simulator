@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "rows": 8192,
+  "microbatches": [
+    64,
+    4096
+  ],
+  "dropout": 0.0,
+  "training_dropout_unchanged": 0.1,
+  "tolerance": {
+    "relative_l2_parameter_update": 0.05,
+    "relative_l2_clipped_gradient": 0.02,
+    "max_parameter_absolute": 0.000601
+  },
+  "relative_l2_parameter_update": 0.02918616496026516,
+  "relative_l2_clipped_gradient": 0.0038662548176944256,
+  "max_parameter_absolute": 0.0005953575018793344,
+  "p99_parameter_absolute": 2.980232238769531e-07,
+  "losses": [
+    9.7581787109375,
+    9.758220672607422
+  ],
+  "weights_same_seed": 2903
+}

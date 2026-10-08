@@ -17,7 +17,7 @@ from verify_artifacts import sha, verify
 
 BASE = Path('/mpac/sdicks02/repos/clasher-lease')
 SOURCE = Path('/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data')
-HOSTS = {'127x11', '127x13', '127x14', '127x16', '127x18'}
+HOSTS = {'127x11', '127x13', '127x14'}
 COORDINATOR = '0523ae6f-baa3-4d4e-b233-b392671670db'
 active_child = None
 
@@ -73,8 +73,7 @@ def main():
     manifest = json.loads(manifest_text)
     digest = hashlib.sha256(manifest_text.encode()).hexdigest()
     assert manifest['passed'] and manifest['roles'] == cert['roles']
-    assert {c['host'] for c in cert['copies']} == {'127x04', '127x08'}
-    assert all(c['passed'] and c['manifest_sha256'] == digest for c in cert['copies'])
+    assert cert['store_manifest_sha256'] == digest
     files = ['manifest.json', 'plan.json', 'mask_table.npy']
     for role, expected in manifest['role_manifests'].items():
         assert role in {'train', 'dev', 'eval', 'eval_ood'}

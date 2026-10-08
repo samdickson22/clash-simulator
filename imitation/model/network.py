@@ -1,6 +1,6 @@
 """Set transformer; no hand-slot or entity-order positional embeddings."""
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Optional
 
 import torch
 from torch import Tensor, nn
@@ -98,7 +98,14 @@ class SetPolicy(nn.Module):
     def encode(self, b: Dict[str, Tensor]) -> Tensor:
         ids, types, numeric = b["ids"], b["types"], b["numeric"]
         # bmm of selected weights avoids a Python loop over token types.
-        numeric_embedding = torch.matmul(numeric.unsqueeze(-2), self.numeric_weight[types]).squeeze(-2)
+        if ids.is_cuda:
+            # Block-sparse input, dense tensor-core GEMM: avoids materializing
+            # [B,T,24,192] selected weights (14GiB at batch8192/token96).
+            typed = numeric.new_zeros((numeric.numel() // numeric.shape[-1], self.numeric_weight.shape[0], numeric.shape[-1]))
+            typed.scatter_(1, types.reshape(-1,1,1).expand(-1,1,numeric.shape[-1]), numeric.reshape(-1,1,numeric.shape[-1]))
+            numeric_embedding = torch.mm(typed.flatten(1), self.numeric_weight.flatten(0,1)).view(ids.shape[0], ids.shape[1], self.numeric_weight.shape[-1])
+        else:
+            numeric_embedding = torch.matmul(numeric.unsqueeze(-2), self.numeric_weight[types]).squeeze(-2)
         x = (self.card_embed(ids) + self.type_embed(types) + numeric_embedding
              + self.descriptor(self.descriptors[ids]))
         phase = numeric[:, :, :2, None] * self.frequencies
@@ -110,7 +117,7 @@ class SetPolicy(nn.Module):
             x = layer(x, valid)
         return self.norm(x)
 
-    def forward(self, b: Dict[str, Tensor], teacher: Tensor) -> Dict[str, Tensor]:
+    def forward(self, b: Dict[str, Tensor], teacher: Tensor, tile_rows: Optional[Tensor] = None) -> Dict[str, Tensor]:
         """teacher=[B] hand slots for training, or empty long tensor for all four."""
         x = self.encode(b)
         cls, hand = x[:, 0], x[:, 1:5]
@@ -119,17 +126,25 @@ class SetPolicy(nn.Module):
         card_mask = tile_mask.any(-1)
         gate_mask = torch.stack((b["action_mask"][:, 2304], card_mask.any(-1),
                                  b["action_mask"][:, 2305]), -1)
-        q = (self.tile_embed + self.tile_static(self.tile_features))[None].expand(x.shape[0], -1, -1)
         valid = torch.cat((torch.ones_like(b["valid"][:, :1]), b["valid"]), 1)
-        q = q + self.cross(self.tile_norm(q), x, valid)
+        context, tile_hand, tile_teacher = x, hand, teacher
+        if tile_rows is not None:
+            context = x.index_select(0, tile_rows)
+            tile_hand = hand.index_select(0, tile_rows)
+            tile_teacher = teacher.index_select(0, tile_rows)
+            valid = valid.index_select(0, tile_rows)
+        q = (self.tile_embed + self.tile_static(self.tile_features))[None].expand(context.shape[0], -1, -1)
+        q = q + self.cross(self.tile_norm(q), context, valid)
         q = q + self.tile_ffn(self.tile_ffn_norm(q))
         if teacher.numel() > 0:
-            selected = hand.gather(1, teacher[:, None, None].expand(-1, 1, hand.shape[-1]))
+            selected = tile_hand.gather(1, tile_teacher[:, None, None].expand(-1, 1, hand.shape[-1]))
             tile_mask = tile_mask.gather(1, teacher[:, None, None].expand(-1, 1, 576))
         else:
-            selected = hand
+            selected = tile_hand
         conditioned = q[:, None] * self.condition(selected)[:, :, None]
         tiles = self.tile_score(conditioned).squeeze(-1)
+        if tile_rows is not None:
+            tiles = tiles.new_zeros((x.shape[0], tiles.shape[1], 576)).index_copy(0, tile_rows, tiles)
         intent = self.intent(cls)
         return {"gate": self.gate(cls), "card": card_logits, "tile": tiles,
                 "gate_mask": gate_mask, "card_mask": card_mask, "tile_mask": tile_mask,
@@ -137,7 +152,7 @@ class SetPolicy(nn.Module):
 
     @torch.jit.export
     def log_policy(self, b: Dict[str, Tensor]) -> Dict[str, Tensor]:
-        o = self.forward(b, torch.empty(0, dtype=torch.long, device=b["ids"].device))
+        o = self.forward(b, torch.empty(0, dtype=torch.long, device=b["ids"].device), None)
         return {"gate": masked_log_softmax(o["gate"] / self.temperatures[0], o["gate_mask"]),
                 "card": masked_log_softmax(o["card"] / self.temperatures[1], o["card_mask"]),
                 "tile": masked_log_softmax(o["tile"] / self.temperatures[2], o["tile_mask"])}

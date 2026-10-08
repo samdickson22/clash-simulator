@@ -38,7 +38,7 @@ OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 10 /mpac/sdicks02/tmp/imitation-mode
   e.g. `/.../c56-store-v1/train`. T3 uses big-endian packed masks; fixture schema
   uses little-endian. It opens train/dev only and never reads audit files.
 - `train.py`: hash-by-row-and-epoch wait sampling, iid shuffling, local entity
-  count bucketing, effective batch 8192 via microbatches (default 64), AdamW
+  count bucketing, effective batch 8192 via microbatches (default 7168), AdamW
   3e-4/.05, cosine + 2000-step warmup, clip1, EMA.999; detached JSONL logs,
   atomic full checkpoints, SIGTERM/INT checkpointing and resumable epoch cursor.
 - `evaluate.py` / `runner.py`: all frozen metrics plus proposal top8 exact/within
@@ -96,12 +96,13 @@ when needed. A checkpoint is saved before dev validation so failures can resume.
 See `../PROGRESS-model.md` and `receipts/t3-wait.json` for the current rerun label.
 `shakedown.py` runs the fixed sequence below and writes stage receipts.
 The adapter validates column shapes/dtypes and binds qualification to the
-store manifest, role-file hash and train/dev counts. Results remain pending.
+store manifest, role-file hash and train/dev counts. The rerun passed; see
+`receipts/shakedown-20261008T0727Z/summary.json`.
 
 Do not start real fitting until the actual T3-PASS receipt exists. It is polled
 at 10-minute intervals by the same-thread scheduler recorded in PROGRESS-model.
-The actual packed adapter is tested against a synthetic replica, but real-store
-integration still must be checked against the PASS receipt and finalized schema.
+The actual packed adapter has now passed real-store integration against the
+qualified receipt and finalized schema; the initial polling history is retained.
 
 On 127x04 only after `who`, worker-budget and GPU occupancy checks, stage **only
 this task's files** with `rsync -c` into a fresh owned snapshot. Use the existing
@@ -178,7 +179,9 @@ is three epochs by default, recorded in config.
 
 See `../PROGRESS-model.md` and `receipts/`. CPU tests and latency are real
 measurements of synthetic inputs. They do **not** claim the GPU shakedown passed.
-T3 real-store loading, rows/s, loss curve and GPU memory remain pending its PASS.
+The qualified real shakedown passed at 2026-10-08 09:05:52Z: full dev metrics,
+calibration, perspective bootstrap and TorchScript export completed. Expanded
+T4 now requires a separate throughput receipt before T5 starts.
 
 For paired dev baseline diagnostics, pass `--frequency-counts` with T3's
 train-only histogram NPZ and `--card-scope` with the preregistered token-ID list.
@@ -188,3 +191,54 @@ already-scored **dev** P16 result after checking its supervised-play count.
 Alternatively, `--frequency-rows` / `--p16-rows` consume aligned metric arrays
 with exact row-ID verification. T4 neither executes the old BC code nor reads
 its checkpoint. The model and optimizer checkpoint replay test is bit-exact.
+
+## Throughput implementation
+
+`batching.py` vectorizes the scalar adapter over mmap columns, including ragged
+entity gathering, absent-history compaction, deck-class remapping, masks and
+censor bins. CPU serving continues through the scalar reference adapter.
+DataLoader uses batched index requests, pinned CUDA transfers, bounded workers
+and two prefetched batches per worker. No derived cache or source-data changes.
+
+CUDA numeric projection uses a zero-filled typed input and one dense GEMM,
+with the same parameters, instead of a large per-token selected-weight tensor.
+Training computes tile features only for supervised plays (and one placeholder
+row for an all-wait batch); all other rows have zero tile-loss gradient. Dropout
+remains .1 in production; masks differ with batching, as with accumulation.
+The equivalence experiment alone sets dropout=0 to isolate numeric reduction
+error and compares against the original shakedown network/optimizer.
+
+Metric rows transfer to CPU in one packed tensor. Epoch dev selection computes
+only teacher-forced natural joint NLL. Full reports reuse the same seeded
+multinomial perspective draws across statistics; no bootstrap approximation or
+change to eligibility, calibration, slices or median convention. A signal saves
+the training state and exits before dev validation, allowing fleet reclaim.
+
+`throughput.py` runs bounded qualification/measurement experiments on train/dev
+only. Microbatch memory tests, scalar/batch equality, old/new optimizer and
+evaluator comparisons, and single/concurrent loader-inclusive benchmarks are
+recorded separately. Only `receipts/throughput-pass.json` can release T5;
+intermediate selection/benchmark receipts are not a release.
+
+Qualified recipe: effective8192, `--microbatch 7168` (two accumulation chunks),
+`--workers 4` on an otherwise idle A6000; evaluator batch1024/workers2. Paired
+measurement uses micro3072/workers4 per run to preserve shared GPU headroom.
+Largest candidates are tested at1024-row increments; full8192 left less than
+8GiB headroom. Final measured receipt determines recommended packing.
+
+Bf16 equivalence tolerances: clipped-gradient relativeL2 <=.02, optimizer-update
+relativeL2 <=.05, and max absolute parameter error <=.000601 (2×lr plus rounding).
+Near-zero gradients can reverse Adam's first-step sign, so the absolute bound is
+accompanied by update/gradient norms and the99th percentile; large unchanged
+parameter magnitudes are not used to hide update error. Dropout disabled only
+for that comparison. Reported metric formulas on identical logits are bit-exact;
+bootstrap CIs agree within1e-12. Changed bf16 batch GEMMs can shift near-tied
+argmaxes; measured end-to-end differences are recorded, never called bit-exact.
+
+Final throughput PASS: `receipts/throughput-pass.json`, code SHA256
+`301caa1003ab47eadc3f56973ec5398bed4d166dc1a0163d213e60a61854959d`.
+Single run12,154rows/s; paired5,697+5,698=11,394rows/s aggregate. Recommend
+**one run per A6000**, micro7168, effective8192, workers4. Minimum measured
+GPU free memory16.93GiB single,19.80GiB paired. Full8192 fails the headroom
+requirement. Both modes preserve the same objective/recipe.18tests pass;
+CPU78-entity latency p50/p99=11.336/11.647ms. No T5/fullv1, heldout or Mac run.

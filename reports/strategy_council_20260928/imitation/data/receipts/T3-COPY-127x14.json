@@ -1,0 +1,35 @@
+{
+  "copy": {
+    "passed": true,
+    "host": "127x14",
+    "kind": "store",
+    "root": "/mpac/sdicks02/repos/clasher-lease/data/c56-store-v1",
+    "files": 254,
+    "bytes": 86075227942,
+    "manifest_sha256": "1acf6b5875091e009c18e598a71714016b9833b6cc626032e0fa676ccdac5c2f",
+    "wall_seconds": 57.459029857069254,
+    "certificate_sha256": "6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c",
+    "checksum_dry_run_equal": true,
+    "transferred_files": 255,
+    "total_wall_seconds": 1283.5916873551905,
+    "finished_utc": "2026-10-08T07:50:25.422206+00:00"
+  },
+  "execution": {
+    "host": "127x14",
+    "label": "imitation-store-copy-127x14-v1",
+    "started_utc": "2026-10-08T07:29:01.778735+00:00",
+    "command": [
+      "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+      "-B",
+      "/mpac/sdicks02/repos/clasher-lease/data/imitation-copy-v1/copy_leased_store.py"
+    ],
+    "supervisor_pid": 3406643,
+    "pid": 3406647,
+    "exit_code": 0,
+    "status": "pass",
+    "finished_utc": "2026-10-08T07:50:26.704092+00:00",
+    "stop_reason": null,
+    "peak_processes": 5,
+    "peak_rss_bytes": 1664299008
+  }
+}

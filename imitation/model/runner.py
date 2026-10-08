@@ -8,24 +8,39 @@ from torch.utils.data import DataLoader
 from .evaluate import metric_rows, fit_temperature, report_slices, offline_gates, frequency_output
 from .inference import load_policy
 from .store import PackedStore, collate
+from .batching import batch_loader
+from .network import masked_log_softmax
 
 
 def transfer(b, device):
     return {k: v.to(device, non_blocking=True) for k, v in b.items()}
 
 
+def joint_nll_rows(o, y):
+    """Natural joint NLL using teacher-forced tile logits, no top-k work."""
+    a = y["action"].long(); slot = (a//576).clamp(0,3)
+    gate = torch.where(a==2304,0,torch.where(a==2305,2,1))
+    gp = masked_log_softmax(o["gate"],o["gate_mask"])
+    cp = masked_log_softmax(o["card"],o["card_mask"])
+    tp = masked_log_softmax(o["tile"],o["tile_mask"])
+    if tp.shape[1] != 1:
+        tp = tp[torch.arange(len(a),device=a.device),slot][:,None]
+    v = -gp.gather(1,gate[:,None])[:,0]
+    conditional = -cp.gather(1,slot[:,None])[:,0]-tp[:,0].gather(1,(a%576)[:,None])[:,0]
+    return (v+torch.where(a<2304,conditional,0.)).masked_fill(~y["supervised"].bool(),float("nan"))
+
+
 @torch.inference_mode()
-def dev_joint_nll(model, ema, store, device, batch_size):
+def dev_joint_nll(model, ema, store, device, batch_size, workers=0):
     saved = {k: v.detach().clone() for k, v in model.state_dict().items()}
     model.load_state_dict(ema); model.eval()
     total, count = 0., 0
     try:
-        for b, y in DataLoader(store, batch_size=batch_size, collate_fn=collate):
+        for b, y in batch_loader(store, batch_size, workers=workers, pin_memory=device.type == "cuda"):
             b, y = transfer(b, device), transfer(y, device)
             with torch.autocast("cuda", dtype=torch.bfloat16) if device.type == "cuda" else nullcontext():
-                o = model(b, torch.empty(0, dtype=torch.long, device=device))
-            rows = metric_rows(o, y, b["ids"][:, :4])
-            values = rows["joint_nll"]
+                o = model(b, (y["action"].long()//576).clamp(0,3))
+            values = joint_nll_rows(o, y).cpu().numpy()
             total += np.nansum(values, dtype=np.float64); count += np.isfinite(values).sum()
     finally:
         model.load_state_dict(saved)
@@ -34,7 +49,7 @@ def dev_joint_nll(model, ema, store, device, batch_size):
     return float(total/count)
 
 
-def calibration_data(model, store, device, batch_size, cap=100000, seed=1):
+def calibration_data(model, store, device, batch_size, cap=100000, seed=1, workers=0):
     """Deterministic uniform row subset from dev, independent of labels/confidence."""
     from torch.utils.data import Subset
     rng = np.random.default_rng(seed)
@@ -42,7 +57,7 @@ def calibration_data(model, store, device, batch_size, cap=100000, seed=1):
     bins = {head: [[], [], []] for head in ("gate", "card", "tile")}
     model.eval()
     with torch.inference_mode():
-        for b, y in DataLoader(Subset(store, indices.tolist()), batch_size=batch_size, collate_fn=collate):
+        for b, y in batch_loader(store, batch_size, indices, workers=workers, pin_memory=device.type == "cuda"):
             b, y = transfer(b, device), transfer(y, device)
             a = y["action"].long(); slot = (a//576).clamp(0, 3)
             with torch.autocast("cuda", dtype=torch.bfloat16) if device.type == "cuda" else nullcontext():
@@ -62,7 +77,7 @@ def _slices(store, rows, role_file=None):
     a = store.arrays; n = len(store)
     result = {"card": rows["label_card"]}
     arenas = store.assets["arenas"]
-    result["arena"] = np.array([arenas[c] if c >= 0 else "" for c in rows["label_card"]])
+    result["arena"] = np.where(rows["label_card"] >= 0, arenas[rows["label_card"].clip(0).astype(np.int64)], "")
     if "submitted_ticks" in a:
         ticks = a["submitted_ticks"]
         result["phase"] = np.where(ticks < 2400, "single", np.where(ticks < 3600, "double", "overtime"))
@@ -131,7 +146,7 @@ def evaluate_checkpoint(args):
     device = torch.device(args.device); model = policy.model.to(device).eval()
     temps = model.temperatures.detach().cpu().tolist()
     if args.calibrate:
-        data = calibration_data(model, store, device, args.batch_size, args.calibration_rows)
+        data = calibration_data(model, store, device, args.batch_size, args.calibration_rows, workers=getattr(args,"workers",0))
         temps = [fit_temperature(*data[key]) for key in ("gate", "card", "tile")]
     (out/"temperatures.json").write_text(json.dumps({"role": "dev", "temperatures": temps,
                                                    "fit_row_cap": args.calibration_rows if args.calibrate else None}, indent=2)+"\n")
@@ -143,7 +158,7 @@ def evaluate_checkpoint(args):
             counts = {k: z[k] for k in ("gate", "cards", "tiles")}
         arrays["frequency"] = {}
     with torch.inference_mode():
-        for b, y in DataLoader(store, batch_size=args.batch_size, collate_fn=collate):
+        for b, y in batch_loader(store, args.batch_size, workers=getattr(args,"workers",0), pin_memory=device.type == "cuda"):
             b, y = transfer(b, device), transfer(y, device)
             with torch.autocast("cuda", dtype=torch.bfloat16) if device.type == "cuda" else nullcontext():
                 o = model(b, torch.empty(0, dtype=torch.long, device=device))

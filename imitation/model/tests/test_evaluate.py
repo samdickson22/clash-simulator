@@ -74,3 +74,20 @@ def test_frequency_counts_and_a1_a4_gates():
     assert gates['A3']['scoped_cards']==2
     assert gates['A3']['pass'] is False
     assert gates['A4']['pass'] is False
+
+
+def test_shared_bootstrap_matches_original_each_statistic():
+    from imitation.model.evaluate import summary_cluster_cis, _cluster_ci, calibration_ci, MEAN_METRICS
+    rng=np.random.default_rng(17)
+    clusters=np.repeat(np.arange(7),[4,2,8,2,5,1,4])
+    n=len(clusters)
+    rows={k:rng.normal(size=n).astype(np.float32) for k in MEAN_METRICS}
+    rows['tile_error']=np.sqrt(rng.integers(0,20,n)).astype(np.float32)
+    for k in rows: rows[k][rng.random(n)<.3]=np.nan
+    for p,y in [('p_act','acted'),('gate_confidence','gate_correct'),('card_confidence','card_correct')]:
+        rows[p]=rng.random(n).astype(np.float32);rows[y]=rng.integers(0,2,n).astype(np.float32)
+    result=summary_cluster_cis(rows,clusters,333,5)
+    for k in (*MEAN_METRICS,'tile_error'):
+        np.testing.assert_allclose(result[k],_cluster_ci(rows[k],clusters,333,5,k=='tile_error'),atol=1e-12,rtol=1e-12)
+    for k,p,y in [('gate_ece','p_act','acted'),('gate_multiclass_ece','gate_confidence','gate_correct'),('card_ece','card_confidence','card_correct')]:
+        np.testing.assert_allclose(result[k],calibration_ci(rows[p],rows[y],clusters,333,5),atol=1e-12,rtol=1e-12)

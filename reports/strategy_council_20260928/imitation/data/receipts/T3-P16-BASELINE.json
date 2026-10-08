@@ -1,0 +1,330 @@
+{
+  "passed": true,
+  "scores": {
+    "dev": {
+      "checkpoint_sha256": "49be14806a7e7e6ab26621e25230d3f6f7f0be4d84aabd480cbb8097de4ab482",
+      "device": "cpu",
+      "metrics": {
+        "ability_nll": 0.0,
+        "ability_nll_sum": 0.0,
+        "ability_rows": 0.0,
+        "card_nll": 1.033368345491128,
+        "card_nll_sum": 27206.52180009042,
+        "card_top1": 0.537260711030082,
+        "card_top1_count": 14145.0,
+        "card_top3": 0.9299604983287755,
+        "card_top3_count": 24484.0,
+        "ece": 0.008681655725119345,
+        "ece_playable": 0.008960992861621156,
+        "hazard_calibration": [
+          {
+            "observed": 0.0007712539798682936,
+            "predicted": 0.0005227372939569156,
+            "rows": 50567
+          },
+          {
+            "observed": 0.005794292720548975,
+            "predicted": 0.003712143721388245,
+            "rows": 50567
+          },
+          {
+            "observed": 0.011608361184171495,
+            "predicted": 0.007755440962892082,
+            "rows": 50567
+          },
+          {
+            "observed": 0.018747404433721596,
+            "predicted": 0.012962692212564663,
+            "rows": 50567
+          },
+          {
+            "observed": 0.027883797733699842,
+            "predicted": 0.019978390661074652,
+            "rows": 50567
+          },
+          {
+            "observed": 0.039472383174797794,
+            "predicted": 0.02949776494219251,
+            "rows": 50567
+          },
+          {
+            "observed": 0.05365159095853027,
+            "predicted": 0.04240613351826602,
+            "rows": 50567
+          },
+          {
+            "observed": 0.07643324697925524,
+            "predicted": 0.06107077756312285,
+            "rows": 50567
+          },
+          {
+            "observed": 0.10993335574584215,
+            "predicted": 0.09093699053137042,
+            "rows": 50567
+          },
+          {
+            "observed": 0.17636356445042123,
+            "predicted": 0.16499956965758686,
+            "rows": 50566
+          }
+        ],
+        "hazard_calibration_playable": [
+          {
+            "observed": 0.0019595435896389134,
+            "predicted": 0.001221356711944738,
+            "rows": 48991
+          },
+          {
+            "observed": 0.007327876548753853,
+            "predicted": 0.0047238359669346044,
+            "rows": 48991
+          },
+          {
+            "observed": 0.013043212018534017,
+            "predicted": 0.008837282330528832,
+            "rows": 48991
+          },
+          {
+            "observed": 0.020411912392072015,
+            "predicted": 0.014213406019458147,
+            "rows": 48991
+          },
+          {
+            "observed": 0.029842215917209283,
+            "predicted": 0.02140366224884538,
+            "rows": 48991
+          },
+          {
+            "observed": 0.04078300095935988,
+            "predicted": 0.03106988613585096,
+            "rows": 48991
+          },
+          {
+            "observed": 0.05660338844662176,
+            "predicted": 0.04408284037641816,
+            "rows": 48990
+          },
+          {
+            "observed": 0.07795468462951623,
+            "predicted": 0.06286201656616172,
+            "rows": 48990
+          },
+          {
+            "observed": 0.11175750153092467,
+            "predicted": 0.09274075253592731,
+            "rows": 48990
+          },
+          {
+            "observed": 0.17773014901000203,
+            "predicted": 0.16664807116519106,
+            "rows": 48990
+          }
+        ],
+        "joint_nll": 0.4187397682948585,
+        "joint_nll_sum": 211743.7198938928,
+        "median_tile_error": 3.0,
+        "play_rows": 26328.0,
+        "play_wait_brier": 0.04658980261574439,
+        "play_wait_brier_playable": 0.04808885561495645,
+        "play_wait_brier_playable_sum": 23559.018898900853,
+        "play_wait_brier_sum": 23559.018898900853,
+        "play_wait_nll": 0.17893472655520398,
+        "play_wait_nll_playable": 0.18469205162305308,
+        "play_wait_nll_playable_sum": 90481.74424244344,
+        "play_wait_nll_sum": 90481.74424244344,
+        "playable_rows": 489906.0,
+        "rows": 505669.0,
+        "tile_nll": 3.57244962960008,
+        "tile_nll_sum": 94055.4538481109
+      },
+      "perspectives": 648,
+      "role": "dev",
+      "upgrade": {
+        "changed_descriptor_tokens": [
+          "Goblins",
+          "IceSpirit",
+          "IceSpirits"
+        ],
+        "changed_descriptor_values": 5,
+        "learned_tensors_unchanged": true,
+        "preserved_source_descriptors": true,
+        "rule": "source vocabulary descriptor rows copied from checkpoint into builder copy; unchanged contract_v5 upgrader invoked",
+        "source_gamedata_sha256": "daa58b28cf4e45d753e83ca69a76794285b63704e62363ee58e617af3a30ecc3"
+      },
+      "workers": 2
+    },
+    "eval": {
+      "checkpoint_sha256": "49be14806a7e7e6ab26621e25230d3f6f7f0be4d84aabd480cbb8097de4ab482",
+      "device": "cpu",
+      "metrics": {
+        "ability_nll": 0.0,
+        "ability_nll_sum": 0.0,
+        "ability_rows": 0.0,
+        "card_nll": 1.0098453448034448,
+        "card_nll_sum": 28374.634498287192,
+        "card_top1": 0.5484732009395686,
+        "card_top1_count": 15411.0,
+        "card_top3": 0.9345149120933874,
+        "card_top3_count": 26258.0,
+        "ece": 0.009161022721796202,
+        "ece_playable": 0.00949196827293538,
+        "hazard_calibration": [
+          {
+            "observed": 0.000608093167244048,
+            "predicted": 0.00045334494849769114,
+            "rows": 54268
+          },
+          {
+            "observed": 0.005399130242500184,
+            "predicted": 0.0035279502449311454,
+            "rows": 54268
+          },
+          {
+            "observed": 0.011719613768703471,
+            "predicted": 0.007508516057133175,
+            "rows": 54268
+          },
+          {
+            "observed": 0.017837399572492075,
+            "predicted": 0.01253967971668265,
+            "rows": 54268
+          },
+          {
+            "observed": 0.02635070391390875,
+            "predicted": 0.0194333029855847,
+            "rows": 54268
+          },
+          {
+            "observed": 0.040152576103781236,
+            "predicted": 0.028734943906287454,
+            "rows": 54268
+          },
+          {
+            "observed": 0.055797154861059926,
+            "predicted": 0.04151999821690324,
+            "rows": 54268
+          },
+          {
+            "observed": 0.07739367583106066,
+            "predicted": 0.059767670617836666,
+            "rows": 54268
+          },
+          {
+            "observed": 0.10768777179921869,
+            "predicted": 0.08877485900504282,
+            "rows": 54268
+          },
+          {
+            "observed": 0.17481757204982679,
+            "predicted": 0.16389319839293426,
+            "rows": 54268
+          }
+        ],
+        "hazard_calibration_playable": [
+          {
+            "observed": 0.0018138078509240874,
+            "predicted": 0.0012083555125332688,
+            "rows": 52376
+          },
+          {
+            "observed": 0.007293416832136856,
+            "predicted": 0.004642318555654717,
+            "rows": 52376
+          },
+          {
+            "observed": 0.012773025813349626,
+            "predicted": 0.008675240872824135,
+            "rows": 52376
+          },
+          {
+            "observed": 0.019780051932182678,
+            "predicted": 0.013920898744720281,
+            "rows": 52376
+          },
+          {
+            "observed": 0.028581793187719567,
+            "predicted": 0.020998409883397705,
+            "rows": 52376
+          },
+          {
+            "observed": 0.042404918283183136,
+            "predicted": 0.0304605376145509,
+            "rows": 52376
+          },
+          {
+            "observed": 0.057889109515808765,
+            "predicted": 0.04338508168132106,
+            "rows": 52376
+          },
+          {
+            "observed": 0.07992210172598137,
+            "predicted": 0.061709972076358026,
+            "rows": 52376
+          },
+          {
+            "observed": 0.10949671605315411,
+            "predicted": 0.09075831278354085,
+            "rows": 52376
+          },
+          {
+            "observed": 0.17651551312649164,
+            "predicted": 0.1657916203458945,
+            "rows": 52375
+          }
+        ],
+        "joint_nll": 0.4144627704946027,
+        "joint_nll_sum": 224920.65629201097,
+        "median_tile_error": 3.0,
+        "play_rows": 28098.0,
+        "play_wait_brier": 0.04640294705122466,
+        "play_wait_brier_playable": 0.048079271775298575,
+        "play_wait_brier_playable_sum": 25181.95130575861,
+        "play_wait_brier_sum": 25181.9513057586,
+        "play_wait_nll": 0.17829712175446538,
+        "play_wait_nll_playable": 0.18473817544655705,
+        "play_wait_nll_playable_sum": 96758.28203371327,
+        "play_wait_nll_sum": 96758.28203371327,
+        "playable_rows": 523759.0,
+        "rows": 542680.0,
+        "tile_nll": 3.551417879752923,
+        "tile_nll_sum": 99787.73958529762
+      },
+      "perspectives": 705,
+      "role": "eval",
+      "upgrade": {
+        "changed_descriptor_tokens": [
+          "Goblins",
+          "IceSpirit",
+          "IceSpirits"
+        ],
+        "changed_descriptor_values": 5,
+        "learned_tensors_unchanged": true,
+        "preserved_source_descriptors": true,
+        "rule": "source vocabulary descriptor rows copied from checkpoint into builder copy; unchanged contract_v5 upgrader invoked",
+        "source_gamedata_sha256": "daa58b28cf4e45d753e83ca69a76794285b63704e62363ee58e617af3a30ecc3"
+      },
+      "workers": 2
+    },
+    "eval_ood": {
+      "checkpoint_sha256": null,
+      "device": "cpu",
+      "metrics": null,
+      "perspectives": 0,
+      "role": "eval_ood",
+      "upgrade": null,
+      "workers": 2
+    }
+  },
+  "timing": {
+    "cpu_seconds": 22120.437786383,
+    "passed": true,
+    "wall_seconds": 11311.674235555809
+  },
+  "published_utc": "2026-10-08T08:17:06.358829+00:00",
+  "files": {
+    "p16-bc-eval.json": "166451345e52b521861cc5418807aaf732bbb64b1231e25aa7b8c8b188c1f800",
+    "p16-bc-eval_ood.json": "07968cf52d1835b1142c5ce09b26413847278cc911e3ec0dd07400e0629515b4",
+    "p16-complete.json": "08cc039747dee0fc2a73f1a368587e48716b7e7731b5458650c5a5ffe6c3d650",
+    "p16-bc-dev.json": "7d3e0b6a11a606288c36b83db053c4726e34b969851957421c7e96dcfc7f5c09"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "host": "127x04",
+  "source_directory": "/mpac/sdicks02/tmp/t4-throughput-20261008T0924Z/source",
+  "files": {
+    "imitation/model/__init__.py": "98017d5739a04f658da7e4085068f050eacb78c4a57c8e1e57c1efd8b53a3065",
+    "imitation/model/assets.py": "738c4cd8928efb6cd4cba424fd223884c5f90fc024623bf02f3bcf5189853341",
+    "imitation/model/batching.py": "078fd982cb369ffe278424ac355b192131c2d1a045dbfe0d039354119c781658",
+    "imitation/model/benchmark.py": "628b34503c84848a4c87d688f5029e0ef8ef8e894b5a948ad8121cc3c55bb1e6",
+    "imitation/model/evaluate.py": "b097940035ee7020dfed1b8937b12fef49e20be75828e1ff4b83e75c87d90f40",
+    "imitation/model/features.py": "4a1d2f79002ba704783d5138321b1c242ac04937b3cbfff3517b2ac541e02d3d",
+    "imitation/model/inference.py": "d5d05d7c6aa91276d5f31db6e5a7e1c91b4ffca1e263f7e13496a3fd2a11cf52",
+    "imitation/model/losses.py": "8948f211aa1fdbbf49857407835af59e96336d55c385df2c3baa3cf13cfe4870",
+    "imitation/model/network.py": "f931960356532af0d5739579ff607b89340ce0a696c6ce1737c8d113993f3ead",
+    "imitation/model/runner.py": "391f175c88beaf321a44fb597b79e686fd0fd481d5c27b268399cdff73b4e838",
+    "imitation/model/shakedown.py": "646a4fbc2ed28bb119424781f7266028aa5df6109dd68a05eef996c99f69af5d",
+    "imitation/model/store.py": "e05634d34e346e400aede7dd0a3e0e6c82071c21fd6c20065897e08c84852dc8",
+    "imitation/model/synthetic.py": "1600895b23e698ed5bfb5af8eb50ea57713f73e2cf07c963b54a0d12fa4add66",
+    "imitation/model/synthetic_store.py": "46704c46c7a8880d78f7f6b65a9a588ba9af2e1ef4636c6b41913c485175abf2",
+    "imitation/model/throughput.py": "107efdffdbdb378fbae0fb73e474b29b85ce1cea93816f2559adb5aad6122baa",
+    "imitation/model/train.py": "1038fcfed4921029b9f3575a40117a110b95b4eb56421cbe2a5d6ece4cda3639",
+    "imitation/model/tests/test_evaluate.py": "f5ae32fa0b1dd253ebf29f96645e0dbfd2641faa93b6008c1d9dc0937d834267",
+    "imitation/model/tests/test_model.py": "cec57716e5ffa34ec3c650a5f3dacd4ecf105e06db34b5d5f5fe0ca12df70b71",
+    "imitation/model/tests/test_store_train.py": "9384678eb353a431faf5da282154e8ba7fa625868e575baac968d7b8baf201ed",
+    "imitation/model/README.md": "59c06ef0db4bbaf53c7e6ba1b0a77761d346a76290e815ba17bf628fad75c165",
+    "imitation/model/receipts/t3-qualified-release-snapshot.json": "6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c"
+  },
+  "code_sha256": "466ac078e9bf88d51470482a70e82e47542f26c724f874d136391b1999865cf0"
+}

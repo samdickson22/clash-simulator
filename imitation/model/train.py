@@ -15,6 +15,7 @@ import time
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, Subset
+from .batching import batch_loader
 from .inference import PROVENANCE
 from .features import BUCKETS
 from .losses import loss_parts, total_loss
@@ -44,7 +45,8 @@ def move(batch, device):
 def optimizer_step(model, optimizer, b, y, microbatch, device):
     den = move(denominators(b, y), device)
     optimizer.zero_grad(set_to_none=True)
-    totals = {name: 0. for name in ("loss", "gate", "card", "tile", "intent_card", "hazard")}
+    names = ("loss", "gate", "card", "tile", "intent_card", "hazard")
+    totals = torch.zeros(len(names), device=device)
     for begin in range(0, len(y["action"]), microbatch):
         bb = {k: v[begin:begin+microbatch] for k, v in b.items()}
         length = int(bb["valid"].sum(-1).max())+1
@@ -55,18 +57,21 @@ def optimizer_step(model, optimizer, b, y, microbatch, device):
         yy = move({k: v[begin:begin+microbatch] for k, v in y.items()}, device)
         teacher = (yy["action"].long()//576).clamp(0, 3)
         with torch.autocast("cuda", dtype=torch.bfloat16) if device.type == "cuda" else nullcontext():
-            output = model(bb, teacher)
+            # Tile loss only exists for supervised plays. Retain one extra row
+            # so an all-wait microbatch still has a valid zero-gradient graph.
+            play = (yy["action"] < 2304) & yy["supervised"].bool()
+            play[0] = True
+            tile_rows = torch.nonzero(play).flatten()
+            output = model(bb, teacher, tile_rows)
             parts = loss_parts(output, yy)
             terms = total_loss(parts, den)
-        if not torch.isfinite(terms["loss"]):
-            raise RuntimeError("nonfinite loss; checkpoint remains untouched")
         terms["loss"].backward()
-        for key in totals:
-            totals[key] += float(terms[key].detach())
+        totals += torch.stack([terms[key].detach() for key in names])
     grad = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0, error_if_nonfinite=True)
     optimizer.step()
-    totals["grad_norm"] = float(grad)
-    return totals
+    result = dict(zip(names, totals.cpu().tolist()))
+    result["grad_norm"] = float(grad)
+    return result
 
 
 def update_ema(ema, model):
@@ -100,7 +105,7 @@ def main():
     p.add_argument("--qualification", help="actual T3-PASS.json receipt; required for real fitting")
     p.add_argument("--device", default="cuda"); p.add_argument("--seed", type=int, default=2903)
     p.add_argument("--epochs", type=int, default=12); p.add_argument("--batch-size", type=int, default=8192)
-    p.add_argument("--microbatch", type=int, default=64); p.add_argument("--workers", type=int, default=2)
+    p.add_argument("--microbatch", type=int, default=7168); p.add_argument("--workers", type=int, default=2)
     p.add_argument("--tile-width", type=int, default=64); p.add_argument("--warmup", type=int, default=2000)
     p.add_argument("--max-steps", type=int); p.add_argument("--subset-fraction", type=float, default=1.)
     p.add_argument("--epoch-fraction", type=float, default=1.); p.add_argument("--overfit-rows", type=int, default=0)
@@ -184,9 +189,8 @@ def main():
         for begin in range(0, len(indices), args.batch_size):
             part = indices[begin:begin+args.batch_size]
             indices[begin:begin+len(part)] = part[np.argsort(counts[part], kind="stable")]
-        loader = DataLoader(Subset(train, indices[cursor:].tolist()), batch_size=args.batch_size,
-                            num_workers=args.workers, collate_fn=collate, pin_memory=device.type == "cuda",
-                            generator=torch.Generator().manual_seed(args.seed+epoch))
+        loader = batch_loader(train, args.batch_size, indices[cursor:], workers=args.workers,
+                              pin_memory=device.type == "cuda", seed=args.seed+epoch)
         model.train()
         for b, y in loader:
             step_start = time.monotonic()
@@ -212,7 +216,9 @@ def main():
         # Persist the completed training cursor before a potentially long dev pass.
         # A validation/data failure must not discard the epoch's optimizer state.
         save_checkpoint(out/f"step-{state['step']:08d}.pt", model, ema, optimizer, scheduler, config, state, hashes, args)
-        score = dev_joint_nll(model, ema, dev, device, args.microbatch)
+        if stopped[0]:
+            break  # A fleet reclaim must checkpoint and exit without a full dev pass.
+        score = dev_joint_nll(model, ema, dev, device, min(args.microbatch, 1024), workers=args.workers)
         improved = score < state["best_dev"]
         state["bad_epochs"] = 0 if improved else state["bad_epochs"]+1
         if improved:

@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "host": "127x08",
+  "kind": "store",
+  "root": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1",
+  "files": 254,
+  "bytes": 86075227942,
+  "manifest_sha256": "1acf6b5875091e009c18e598a71714016b9833b6cc626032e0fa676ccdac5c2f",
+  "wall_seconds": 69.39056746312417
+}

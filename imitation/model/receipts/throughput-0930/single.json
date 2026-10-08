@@ -1,0 +1,357 @@
+{
+  "passed": true,
+  "gpu": "NVIDIA RTX A6000",
+  "torch": "2.7.1+cu118",
+  "effective_batch": 8192,
+  "microbatch": 7168,
+  "workers": 4,
+  "measured_steps": 64,
+  "warmup_steps": 2,
+  "rows_per_second_including_loader": 12188.049340650328,
+  "cold_rows_per_second_including_loader": 11447.598521878615,
+  "wall_seconds": 47.23016787902452,
+  "peak_allocated_bytes": 28372961280,
+  "peak_reserved_bytes": 31541166080,
+  "gpu_total_bytes": 51047694336,
+  "steps": [
+    {
+      "step": 1,
+      "loss": 9.746386528015137,
+      "elapsed_seconds": 3.545750277931802
+    },
+    {
+      "step": 2,
+      "loss": 9.612981796264648,
+      "elapsed_seconds": 4.213604248012416
+    },
+    {
+      "step": 3,
+      "loss": 9.640254974365234,
+      "elapsed_seconds": 4.87849220901262
+    },
+    {
+      "step": 4,
+      "loss": 9.582594871520996,
+      "elapsed_seconds": 5.544030179968104
+    },
+    {
+      "step": 5,
+      "loss": 9.647537231445312,
+      "elapsed_seconds": 6.21132022398524
+    },
+    {
+      "step": 6,
+      "loss": 9.597146034240723,
+      "elapsed_seconds": 6.8777338960208
+    },
+    {
+      "step": 7,
+      "loss": 9.639932632446289,
+      "elapsed_seconds": 7.544447352993302
+    },
+    {
+      "step": 8,
+      "loss": 9.592880249023438,
+      "elapsed_seconds": 8.155768602970056
+    },
+    {
+      "step": 9,
+      "loss": 9.63303279876709,
+      "elapsed_seconds": 8.821242723963223
+    },
+    {
+      "step": 10,
+      "loss": 9.580947875976562,
+      "elapsed_seconds": 9.483340092003345
+    },
+    {
+      "step": 11,
+      "loss": 9.600765228271484,
+      "elapsed_seconds": 10.147059891023673
+    },
+    {
+      "step": 12,
+      "loss": 9.515369415283203,
+      "elapsed_seconds": 10.814495717990212
+    },
+    {
+      "step": 13,
+      "loss": 9.580310821533203,
+      "elapsed_seconds": 11.480497676995583
+    },
+    {
+      "step": 14,
+      "loss": 9.547309875488281,
+      "elapsed_seconds": 12.146713878959417
+    },
+    {
+      "step": 15,
+      "loss": 9.58501148223877,
+      "elapsed_seconds": 12.815431282971986
+    },
+    {
+      "step": 16,
+      "loss": 9.509821891784668,
+      "elapsed_seconds": 13.480611931998283
+    },
+    {
+      "step": 17,
+      "loss": 9.503522872924805,
+      "elapsed_seconds": 14.148961763014086
+    },
+    {
+      "step": 18,
+      "loss": 9.496246337890625,
+      "elapsed_seconds": 14.818252034951001
+    },
+    {
+      "step": 19,
+      "loss": 9.527935981750488,
+      "elapsed_seconds": 15.488962556933984
+    },
+    {
+      "step": 20,
+      "loss": 9.517106056213379,
+      "elapsed_seconds": 16.155764607945457
+    },
+    {
+      "step": 21,
+      "loss": 9.475119590759277,
+      "elapsed_seconds": 16.81920996599365
+    },
+    {
+      "step": 22,
+      "loss": 9.529393196105957,
+      "elapsed_seconds": 17.485631892923266
+    },
+    {
+      "step": 23,
+      "loss": 9.450483322143555,
+      "elapsed_seconds": 18.1505917100003
+    },
+    {
+      "step": 24,
+      "loss": 9.43823528289795,
+      "elapsed_seconds": 18.81544923700858
+    },
+    {
+      "step": 25,
+      "loss": 9.475357055664062,
+      "elapsed_seconds": 19.482926598982885
+    },
+    {
+      "step": 26,
+      "loss": 9.409464836120605,
+      "elapsed_seconds": 20.14923052501399
+    },
+    {
+      "step": 27,
+      "loss": 9.444828987121582,
+      "elapsed_seconds": 20.81782958097756
+    },
+    {
+      "step": 28,
+      "loss": 9.429686546325684,
+      "elapsed_seconds": 21.48380984296091
+    },
+    {
+      "step": 29,
+      "loss": 9.337984085083008,
+      "elapsed_seconds": 22.151642229990102
+    },
+    {
+      "step": 30,
+      "loss": 9.411022186279297,
+      "elapsed_seconds": 22.81867266597692
+    },
+    {
+      "step": 31,
+      "loss": 9.357213020324707,
+      "elapsed_seconds": 23.485700642922893
+    },
+    {
+      "step": 32,
+      "loss": 9.342784881591797,
+      "elapsed_seconds": 24.152653898927383
+    },
+    {
+      "step": 33,
+      "loss": 9.360275268554688,
+      "elapsed_seconds": 24.819081428926438
+    },
+    {
+      "step": 34,
+      "loss": 9.36587905883789,
+      "elapsed_seconds": 25.48459283693228
+    },
+    {
+      "step": 35,
+      "loss": 9.257797241210938,
+      "elapsed_seconds": 26.151113177998923
+    },
+    {
+      "step": 36,
+      "loss": 9.28012752532959,
+      "elapsed_seconds": 26.817223723977804
+    },
+    {
+      "step": 37,
+      "loss": 9.315256118774414,
+      "elapsed_seconds": 27.48405826999806
+    },
+    {
+      "step": 38,
+      "loss": 9.253334999084473,
+      "elapsed_seconds": 28.150403618928976
+    },
+    {
+      "step": 39,
+      "loss": 9.277191162109375,
+      "elapsed_seconds": 28.819151949952357
+    },
+    {
+      "step": 40,
+      "loss": 9.334514617919922,
+      "elapsed_seconds": 29.487303333939053
+    },
+    {
+      "step": 41,
+      "loss": 9.346672058105469,
+      "elapsed_seconds": 30.156653332989663
+    },
+    {
+      "step": 42,
+      "loss": 9.195958137512207,
+      "elapsed_seconds": 30.826634170953184
+    },
+    {
+      "step": 43,
+      "loss": 9.219223022460938,
+      "elapsed_seconds": 31.497206425992772
+    },
+    {
+      "step": 44,
+      "loss": 9.142258644104004,
+      "elapsed_seconds": 32.16763074998744
+    },
+    {
+      "step": 45,
+      "loss": 9.199129104614258,
+      "elapsed_seconds": 32.83881606499199
+    },
+    {
+      "step": 46,
+      "loss": 9.13540267944336,
+      "elapsed_seconds": 33.511239634943195
+    },
+    {
+      "step": 47,
+      "loss": 9.167853355407715,
+      "elapsed_seconds": 34.180108919972554
+    },
+    {
+      "step": 48,
+      "loss": 9.101466178894043,
+      "elapsed_seconds": 34.85265921195969
+    },
+    {
+      "step": 49,
+      "loss": 9.145275115966797,
+      "elapsed_seconds": 35.52375090599526
+    },
+    {
+      "step": 50,
+      "loss": 9.080769538879395,
+      "elapsed_seconds": 36.19467674696352
+    },
+    {
+      "step": 51,
+      "loss": 9.080392837524414,
+      "elapsed_seconds": 36.868181852973066
+    },
+    {
+      "step": 52,
+      "loss": 8.988801002502441,
+      "elapsed_seconds": 37.54305595695041
+    },
+    {
+      "step": 53,
+      "loss": 9.055408477783203,
+      "elapsed_seconds": 38.2163695510244
+    },
+    {
+      "step": 54,
+      "loss": 9.00879192352295,
+      "elapsed_seconds": 38.88985432602931
+    },
+    {
+      "step": 55,
+      "loss": 9.04577922821045,
+      "elapsed_seconds": 39.5619451450184
+    },
+    {
+      "step": 56,
+      "loss": 8.95199203491211,
+      "elapsed_seconds": 40.230345255928114
+    },
+    {
+      "step": 57,
+      "loss": 8.938704490661621,
+      "elapsed_seconds": 40.89886484795716
+    },
+    {
+      "step": 58,
+      "loss": 8.967241287231445,
+      "elapsed_seconds": 41.571507544023916
+    },
+    {
+      "step": 59,
+      "loss": 8.953571319580078,
+      "elapsed_seconds": 42.2466944239568
+    },
+    {
+      "step": 60,
+      "loss": 8.949397087097168,
+      "elapsed_seconds": 42.918280976009555
+    },
+    {
+      "step": 61,
+      "loss": 8.905878067016602,
+      "elapsed_seconds": 43.59044311696198
+    },
+    {
+      "step": 62,
+      "loss": 8.956747055053711,
+      "elapsed_seconds": 44.26266780903097
+    },
+    {
+      "step": 63,
+      "loss": 8.880302429199219,
+      "elapsed_seconds": 44.93481968995184
+    },
+    {
+      "step": 64,
+      "loss": 8.86990737915039,
+      "elapsed_seconds": 45.60659478593152
+    },
+    {
+      "step": 65,
+      "loss": 8.90746784210205,
+      "elapsed_seconds": 46.2830411529867
+    },
+    {
+      "step": 66,
+      "loss": 8.833288192749023,
+      "elapsed_seconds": 46.95658918295521
+    }
+  ],
+  "hashes": {
+    "tokens": "35db1a7647c71a39b12b580cc31a39539c9ad973a8de635df0a95962b4ac8ee2",
+    "assets": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+    "roles": "7e357f64ad6df13e232ec9b1c7c143bbcd734d12a9cdceec2cef999bbe74fcdc",
+    "eval_spec": "d9f978f75191b5d5a474d127dbccd618b93dad5069dd851ab4f8b2a47fdaa7ae",
+    "sidecar_manifest": "1a18b263bd0d2d44aee75491e82aa89e152c8a8474cca6d664128c0fc2790cb6",
+    "store_manifest": "1acf6b5875091e009c18e598a71714016b9833b6cc626032e0fa676ccdac5c2f",
+    "role_manifest": "2c4c7c4f94ece017ec11f048576ce96ed596620c1b7f1f3b30c046c11ab51e5e"
+  }
+}

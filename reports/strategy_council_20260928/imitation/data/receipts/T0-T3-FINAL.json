@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "completed_utc": "2026-10-08T08:19:20.345971+00:00",
+  "tasks": {
+    "T0": "PASS",
+    "T1": "PASS",
+    "T2": "PASS",
+    "T3": "PASS"
+  },
+  "store_roles": {
+    "dev": {
+      "entities": 31020026,
+      "perspectives": 3546,
+      "rows": 2759722
+    },
+    "eval": {
+      "entities": 33068263,
+      "perspectives": 3765,
+      "rows": 2943085
+    },
+    "eval_ood": {
+      "entities": 32794937,
+      "perspectives": 3771,
+      "rows": 2885746
+    },
+    "train": {
+      "entities": 607678487,
+      "perspectives": 69380,
+      "rows": 53989262
+    }
+  },
+  "roundtrip_exact": true,
+  "roundtrip_perspectives": 805,
+  "copies_verified": [
+    "127x04",
+    "127x08",
+    "127x11",
+    "127x13",
+    "127x14"
+  ],
+  "baseline_perspectives": {
+    "dev": 648,
+    "eval": 705,
+    "eval_ood": 0
+  },
+  "baseline_joint_nll": {
+    "dev": 0.4187397682948585,
+    "eval": 0.4144627704946027,
+    "eval_ood": null
+  },
+  "baseline_timing": {
+    "cpu_seconds": 22120.437786383,
+    "passed": true,
+    "wall_seconds": 11311.674235555809
+  },
+  "receipt_sha256": {
+    "T1-PASS.json": "b0dac31c7f5c15fe7fdc2418ddbc00cf61a502aaa5f991021797d1b6567498b3",
+    "T2-PASS.json": "053f0626b500434500d9f67fbc1474f73f54ce2f19126055a7a0f36d2f252c2d",
+    "T3-PASS.json": "6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c",
+    "T3-P16-BASELINE.json": "7c7019b3dbe530ca40dd77af71b5b49e876fbddc192775569cd70c3722cca4cf",
+    "T3-COPIES.json": "690e0714eb77980c4f82ce25ae895489bd5a6e45ff9b8462d7a87a034172c23d",
+    "T3-LEASED-COPIES.json": "ae9ba487eb5b94deb4246cd1cd63fd8982d90ea092734b9fa6518d20fe319f35",
+    "T3-COPY-127x11.json": "9c7d59717a7b85079ab763447255f5d9c0cb3ffaad445dbeec7151595173c9d8",
+    "T3-COPY-127x13.json": "125c4ed7ea1d44bcc523a20ee509c6c00f723f410a6ff813c0bd24248d335bf5",
+    "T3-COPY-127x14.json": "4d635fb27e8f68e3105788380ffdec88d57ed5442bd0551a03fe19e8f7cc2223",
+    "header-contract-audit.json": "fc4e6edae7fbee3dc63ea590d12b1eeb52da2bf7f0142289ea65242b07bf1d15"
+  },
+  "schedule_disabled": true,
+  "verification": "Identity/role/roundtrip receipts verified at release; every destination manifest/certificate hash and checksum-copy receipt independently inspected; P16 recipe/checkpoint/counts/source hashes checked; no extraction or baseline rerun."
+}

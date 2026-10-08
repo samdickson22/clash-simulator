@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "microbatch": 4096,
+  "candidates": [
+    {
+      "microbatch": 1024,
+      "rows_per_second_step": 4081.214972326822,
+      "peak_allocated_bytes": 6516871680,
+      "peak_reserved_bytes": 10731126784,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 40316567552,
+      "loss": 9.741806030273438,
+      "fits": true
+    },
+    {
+      "microbatch": 2048,
+      "rows_per_second_step": 6064.939018221679,
+      "peak_allocated_bytes": 12988330496,
+      "peak_reserved_bytes": 17792237568,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 33255456768,
+      "loss": 9.757791519165039,
+      "fits": true
+    },
+    {
+      "microbatch": 4096,
+      "rows_per_second_step": 5493.846753537377,
+      "peak_allocated_bytes": 25936900608,
+      "peak_reserved_bytes": 35586572288,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 15461122048,
+      "loss": 9.745840072631836,
+      "fits": true
+    },
+    {
+      "microbatch": 8192,
+      "fits": false,
+      "oom": true
+    }
+  ],
+  "note": "performance benchmarks still required"
+}

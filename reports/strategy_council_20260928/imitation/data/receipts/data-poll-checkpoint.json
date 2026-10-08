@@ -1,6 +1,6 @@
 {
-  "checked_utc": "2026-10-08T06:37:19Z",
-  "stage": "T3 P16 eval scoring",
+  "checked_utc": "2026-10-08T08:19:20.345418+00:00",
+  "stage": "complete",
   "units": 1767,
   "perspectives": 82231,
   "rows": 64140802,
@@ -39,7 +39,7 @@
   "continuation_running": true,
   "blocked": false,
   "t2_pass": true,
-  "t3_pass": false,
+  "t3_pass": true,
   "header_audit_historical_verified": 270,
   "header_audit_sha256": "fc4e6edae7fbee3dc63ea590d12b1eeb52da2bf7f0142289ea65242b07bf1d15",
   "baseline_cpu_workers": 2,
@@ -72,7 +72,7 @@
   },
   "store_role_counts_equal": true,
   "frequency_complete": true,
-  "p16_complete": false,
+  "p16_complete": true,
   "baseline_recipe_sha256": "45c14463ee57798cef59d5c9d33a5caeccedfc11353c41b35445f0769ea74a84",
   "baseline_source_unchanged": true,
   "p16_worker_pids": [
@@ -86,38 +86,57 @@
   ],
   "diagnosis_receipt": "p16-diagnosis.json",
   "deadlock_observed": false,
-  "p16_workers": [
-    3510500,
-    3510503
-  ],
-  "p16_parent": 3449355,
-  "supervisor": 3406704,
+  "p16_workers": [],
+  "p16_parent": null,
+  "supervisor": null,
   "diagnostic_utc": "2026-10-08T05:54:00Z",
   "leased_copy_targets": [
     "127x11",
     "127x13",
-    "127x14",
-    "127x16",
-    "127x18"
+    "127x14"
   ],
-  "leased_copy_status": "prepared; waiting for T3-PASS",
+  "leased_copy_status": "All requested copies verified",
   "production_exits": {
     "127x01": 0,
     "127x03": 0
   },
-  "worker_elapsed_seconds": 41,
+  "worker_elapsed_seconds": 5425,
   "worker_cpu_seconds": [
-    41,
-    41
+    5387,
+    5387
   ],
-  "console_users": [
-    "sdicks02 pts/0"
-  ],
+  "console_users": [],
   "baseline_sha256": "45c14463ee57798cef59d5c9d33a5caeccedfc11353c41b35445f0769ea74a84",
   "hub_clasher_python_processes": 82,
   "hub_running_clasher_python": 11,
-  "incident": "Hub console session persists; aggregate exceeds 16 cap. Own scoring uses 2 CPU workers; other jobs require coordinator adjustment.",
+  "incident": "Prior console alarm resolved: own monitor pts sessions; use fleet-console-users",
   "p16_dev_perspectives": 648,
   "p16_dev_rows": 505669,
-  "p16_dev_joint_nll": 0.4187397682948585
+  "p16_dev_joint_nll": 0.4187397682948585,
+  "physical_console_users": 0,
+  "old_supervisor_exit": 143,
+  "home_copy_label": "imitation-t3-copies-v2",
+  "leased_copy_label": "imitation-t3-leased-copies-v1",
+  "p16_receipt_label": "imitation-t3-p16-receipt-v1",
+  "certificate_sha256": "6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c",
+  "home_copy_status": "127x04 and127x08 verified; supervisor exit0",
+  "destination_observed_bytes": {
+    "127x04": 86075428725,
+    "127x11": 81692210905
+  },
+  "leased_copy_rss_bytes": 0,
+  "leased_copy_processes": 0,
+  "home_copies_verified": [
+    "127x04",
+    "127x08"
+  ],
+  "leased_copies_verified": [
+    "127x11",
+    "127x13",
+    "127x14"
+  ],
+  "leased_copy_host": null,
+  "leased_copy_launcher": null,
+  "schedule_enabled": false,
+  "baseline_receipt_sha256": "7c7019b3dbe530ca40dd77af71b5b49e876fbddc192775569cd70c3722cca4cf"
 }

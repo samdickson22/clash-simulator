@@ -1,6 +1,6 @@
 # T5 v1 training and gate (a)
 
-2026-10-08 07:45 UTC — **RESUMED: WAITING FOR T4 RERUN PASS.** No T5 GPU jobs,
+2026-10-08 09:15 UTC — **T4 SHAKEDOWN PASS; WAITING FOR THROUGHPUT PASS.** No T5 GPU jobs,
 training, calibration or eval/eval_ood scoring have been launched. No commits.
 
 ## Qualification
@@ -46,8 +46,9 @@ Packing and rows/s are **unmeasured**, not the design estimate.
 Training curves, selected hashes, A1–A4 numbers and compute are pending.
 T5 training/GPU compute used so far: zero.
 
-Next: verify T3-PASS, wait for T4 PASS at 10-minute intervals, finalize owned
-code and freeze PREREG, then use the updated five-GPU allocation below.
+Next: verify T3-PASS, wait for T4 rerun PASS AND throughput-pass.json at
+10-minute intervals, finalize qualifying code and freeze PREREG with its
+exact hash/microbatch, then use the updated five-GPU allocation below.
 
 Once launched, record host, label, launcher and trainer PIDs, source/config
 hashes, log/exit paths, run directory, checkpoint and exact resume command
@@ -72,7 +73,7 @@ Readiness receipt: `imitation/t5/receipts/prerequisite-wait.json`.
 Disable after the final report or if T4 fails/an upstream terminal blocker is
 reported. This does not replace or modify the separate data/T4 schedules.
 
-Latest scheduled check: 2026-10-08 08:34:38 UTC — qualifying T4 rerun0727Z PID2398593 live on04 at nice10, who empty, no exit receipt; final dev evaluation ongoing. T3/copies/P16 complete. Explicit T4 PASS absent; no T5 jobs; continuation remains active.
+Latest scheduled check: 2026-10-08 09:34:38 UTC — T4 shakedown PASS retained. throughput-pass.json absent; latest T4 progress still reports snapshot0924Z qualification underway. No terminal blocker or T5 jobs; continuation remains active.
 
 ## Coordinator lease update — 2026-10-08 05:45 UTC
 
@@ -102,7 +103,8 @@ T3-PASS still absent on this turn; no GPU jobs launched. Receipt SHA256:
 - 14: e9abe197e6a4cd5c65adb14e9c3444ee718defa8d6faf1d7a381ac4dcc48b2f2
 
 Lease expiry is **2026-10-09 05:30Z**. Validate live leases before every launch;
-stop before expiry, initiate planned checkpoint/exit by 05:00Z if still running.
+coordinator now requires checkpoint AND exit completed by05:00Z. Trigger early
+enough to meet that deadline, not merely initiate at05:00Z.
 Earlier reclaim requires checkpoint/exit within 30 min. Use only the existing
 lease wrapper, which polls every minute and verifies descendant PIDs. Validate
 the trainer's SIGTERM path exits after a checkpoint **without full dev scoring**
@@ -184,3 +186,31 @@ pending T4 hashes are not the final T5 freeze.
 Data-worker07:37 report:04/08/11/13 copies verified;14 copy running. T5 will
 check authoritative per-host receipts/live leases before launch. Data worker
 retains copy ownership. One run per04/08/11/13/14 remains the plan.
+
+## Additional start gate — coordinator update 2026-10-08 08:45 UTC
+
+Require `imitation/model/receipts/throughput-pass.json` **in addition to** T4
+rerun PASS. Receipt is currently absent. T4 owns the larger-microbatch and
+vectorized loader/evaluator work, targeting≥8k loader-inclusive rows/s.
+Do not launch any of the five runs on the old snapshot or microbatch64 simply
+because the shakedown passes. Read receipt contents/provenance, bind exact
+qualified code hash and microbatch in frozen PREREG, and verify remote source
+hashes. Receipt-covered source changes require matching requalification.
+T5 ablation/scoring extensions must also be in the executable manifest.
+
+The 05:00Z Oct9 leased-host deadline means checkpoint and EXIT by that time,
+before lease expiry05:30Z. Plan using measured train/dev/checkpoint timings;
+set the graceful-stop trigger with enough lead time and verify completed
+checkpoint/exit. Resume unfinished runs with unchanged recipe/state on
+home01/04/08 as capacity permits (01 only if perception not using its GPU).
+Direct LAN checkpoint transfer with hashes, never via05. Reclaim still
+requires checkpoint/exit within30min through existing lease-local wrapper.
+No T5 fitting, performance probes or held-out scoring has started.
+
+09:15 UTC qualification: T4 rerun `t4-shakedown-20261008T0727Z` PASS,
+completed09:05:52.560799Z, exit0. Verified local summary bound to immutable
+T3 certificate, SHA256 `5cda727dacb9743c922dc8f36aba13124d0fb30133b95f0cf75ab56f9d1f303f`.
+Status receipt SHA `d7fbbd99f3ea9d9cf3a644269587d1d1d9d7b2c3f85e2e2925734ccf9ed4414e`.
+T4 completed subset, overfit, full dev metrics/calibration/bootstrap/export.
+This satisfies shakedown only; throughput-pass.json still absent. Do not
+launch T5 or freeze old source/microbatch while T4 optimization is underway.

@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "microbatch": 4096,
+  "candidates": [
+    {
+      "microbatch": 1024,
+      "rows_per_second_step": 5892.494645942869,
+      "peak_allocated_bytes": 5435516928,
+      "peak_reserved_bytes": 6660554752,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 44387139584,
+      "loss": 9.743459701538086,
+      "fits": true
+    },
+    {
+      "microbatch": 2048,
+      "rows_per_second_step": 12218.20023174879,
+      "peak_allocated_bytes": 10832341504,
+      "peak_reserved_bytes": 13293846528,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 37753847808,
+      "loss": 9.75495719909668,
+      "fits": true
+    },
+    {
+      "microbatch": 4096,
+      "rows_per_second_step": 10950.609292078097,
+      "peak_allocated_bytes": 21624378880,
+      "peak_reserved_bytes": 26715619328,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 24332075008,
+      "loss": 9.74180793762207,
+      "fits": true
+    },
+    {
+      "microbatch": 8192,
+      "rows_per_second_step": 8531.976517242018,
+      "peak_allocated_bytes": 43181999104,
+      "peak_reserved_bytes": 44264587264,
+      "total_bytes": 51047694336,
+      "headroom_bytes": 6783107072,
+      "loss": 9.734874725341797,
+      "fits": false
+    }
+  ],
+  "note": "performance benchmarks still required"
+}
