@@ -532,3 +532,17 @@ Also on the hub, but with copies elsewhere:
   the joint repair is +18 pp; ELT (weaker on both) is already material. Cost ~20 min of games. **Implication for v4
   perception:** hand inference only works at ~97% event quality, so the v4 event gate should be judged against
   97/97, not just the provisional 95/95. That is decided after S5.
+- **2026-10-08 06:41 UTC: why the fleet was idle, and fixes.** fleetmon (live) showed all 13 GPUs at 0% and CPU at 0–11%.
+  Causes:
+  1. **False "console user" throttling.** The fleet-top tmux grid (ssh -t to every host) was left running detached on
+     127x05, so `who` showed `sdicks02 pts/0 (129.65.221.15)` everywhere. Launchers that read "who non-empty" as a
+     console user dropped to 16 workers, and the data worker flagged a cap violation. Fixes: killed the unattached
+     `fleet` session (0 clients); fleet-top now sets `destroy-unattached on`; new shared helper
+     `~/.local/bin/fleet-console-users` counts only physical-seat logins (ttyN or :N) and other users (01/04/08 → 0;
+     12/17 → 1). Workers are told to use it.
+  2. **T3-PASS gated on the slow upgraded-P16-BC baseline scoring** (2 CPU workers, ~1.5 h per split). My earlier
+     "deadlock" call was wrong: I checked threads, not child processes; the scorer is progressing. Decision: decouple.
+     T3-PASS is published on the store and frequency baselines; the P16 numbers come later (they only feed gate (a) bar A2).
+  3. **Mac pool at 1 renderer.** The pool's own guard scaled back at 22:54 PDT on critical memory pressure and again
+     after one 19.107 FPS match at 2 renderers. Decision: retry 2 once (controlled drain and restart, amendment
+     first); any further failure or critical pressure means 1 for the rest of Phase A.
