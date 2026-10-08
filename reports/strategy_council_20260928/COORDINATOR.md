@@ -842,3 +842,4 @@ Also on the hub, but with copies elsewhere:
     3. We allow only one outstanding command, which costs about 1.3 s of silence after every play.
     4. The official-client verifier window must come from its own measured distribution.
   - **Decision:** validate fixes 1–3 flag-guarded in the exploration lane (paired sim, Sol). They feed prospective L2-v4 PREREG amendments before L2 starts. The Mac Training Camp frame-count protocol is deferred until Sam OKs Mac use.
+- **~23:35 UTC: memory-rule clarification.** The 64 GB summed-PSS cap is for leased roader hosts only. Home hosts use a MemAvailable ≥24 GB floor with no OOM risk to co-located training. Perception's CPU grid and decoder gate move off 01 (T11 loaders reached 66 GB PSS there) to leased v2 CPU and 08. Gates (b)/(c): wide-seed (≥2^44) qualification and the RC-4 replay contract PASS; the worker is assembling the final hash commitment and delta r3.
