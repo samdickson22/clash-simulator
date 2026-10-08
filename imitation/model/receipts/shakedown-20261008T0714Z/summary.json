@@ -1,0 +1,13 @@
+{
+  "status": "failed_in_dev_after_subset_training",
+  "reason": "real dev rows exceed assumed 64-entity cap",
+  "steps": 8,
+  "rows": 65519,
+  "loss_first": 9.738538907840848,
+  "loss_last": 9.588638004846871,
+  "rows_per_second_including_loader": 2131.943481629938,
+  "gpu_peak_allocated_mib": 530.77587890625,
+  "gpu_peak_reserved_mib": 734.0,
+  "checkpoint_saved": false,
+  "technical_rerun_required": true
+}

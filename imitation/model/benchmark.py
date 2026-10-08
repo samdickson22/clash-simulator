@@ -27,8 +27,9 @@ def bench(policy, iterations=1000, entities=25):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--checkpoint"); p.add_argument("--tile-width", type=int, default=128)
+    p.add_argument("--checkpoint"); p.add_argument("--tile-width", type=int, default=64)
     p.add_argument("--iterations", type=int, default=1000); p.add_argument("--output", required=True)
+    p.add_argument("--entities", type=int, nargs="+", default=[10, 25, 64])
     args = p.parse_args()
     torch.set_num_threads(1); torch.set_num_interop_threads(1)
     if hasattr(os, "sched_setaffinity"):
@@ -39,7 +40,7 @@ def main():
               "cpu_affinity": sorted(os.sched_getaffinity(0)), "synthetic_inputs": True,
               "random_weights": not bool(args.checkpoint),
               "parameters": sum(p.numel() for p in policy.model.parameters()),
-              "measurements": [bench(policy, args.iterations, n) for n in (10, 25, 64)]}
+              "measurements": [bench(policy, args.iterations, n) for n in args.entities]}
     Path(args.output).write_text(json.dumps(result, indent=2)+"\n")
     print(json.dumps(result, indent=2))
 

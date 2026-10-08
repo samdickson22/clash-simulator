@@ -1,10 +1,15 @@
 # T4 all-card imitation implementation
 
-Fresh plain PyTorch, 2,399,898 trainable parameters. Four pre-LN d192, six-head,
-FFN768 blocks; tile cross-attention d128/4 heads and FFN256; gate/card/conditional
+Fresh plain PyTorch, 2,254,938 trainable parameters. Four pre-LN d192, six-head,
+FFN768 blocks; tile cross-attention d64/4 heads and FFN256; gate/card/conditional
 576-tile policy; eight-class intent and 13 discrete hazard logits. No old model,
 trainer, checkpoint, recurrence, or value head. CPU and eager CUDA supported;
 CUDA uses bf16 autocast. No compile path.
+
+Tile width 64 is the design's prescribed latency fallback. The initial d128
+model had 2,399,898 parameters; qualified dev rows reached 78 entities and its
+78-entity CPU p99 was 17.45 ms. Single-request inference now omits padding;
+its logits match the padded training path in a unit test. Training still buckets.
 
 ## Entry points
 
@@ -81,7 +86,17 @@ Its tensor dictionary comes from `build_row`/`collate_features`, which must be
 ported byte-for-byte by a non-Python Mac caller. The Python CPU API is complete;
 Mac runtime benchmarking and T6 train/serve equality are later tasks.
 
-## Qualified GPU shakedown (pending T3)
+## Qualified GPU shakedown
+
+Update 2026-10-08 07:21Z: the initial job `t4-shakedown-20261008T0714Z`
+exited 1 during dev loading after completing eight subset optimizer steps.
+The real store exceeds the design's assumed 64 entities (train max 74, dev 78).
+The adapter now retains up to the v5 packet cap of 128, using a 192-token bucket
+when needed. A checkpoint is saved before dev validation so failures can resume.
+See `../PROGRESS-model.md` and `receipts/t3-wait.json` for the current rerun label.
+`shakedown.py` runs the fixed sequence below and writes stage receipts.
+The adapter validates column shapes/dtypes and binds qualification to the
+store manifest, role-file hash and train/dev counts. Results remain pending.
 
 Do not start real fitting until the actual T3-PASS receipt exists. It is polled
 at 10-minute intervals by the same-thread scheduler recorded in PROGRESS-model.
@@ -131,9 +146,9 @@ is three epochs by default, recorded in config.
 
 ## Clarifications and deviations
 
-- Token counts can exceed 96: the explicitly requested 64 entities plus all
-  fixed/public history tokens require a fourth 128-token bucket. No entity
-  truncation or hidden selection. Absent history/seen slots are omitted;
+- Qualified data exceeds 64 entities in 112 train and 10 dev rows. Retain the
+  full v5 cap of 128 entities, with 128/192-token buckets beyond the design's
+  48/64/96. No entity truncation or hidden selection. Absent history/seen slots are omitted;
   unknown opponent-cycle facts remain explicit tokens.
 - Intent class order is canonical sorted own-deck token IDs. T3's original deck
   indices are remapped by token identity. This is necessary for the CLS MLP to
@@ -154,7 +169,8 @@ is three epochs by default, recorded in config.
   metrics and slices use every row. Set a larger cap explicitly for T5 if wanted.
 - Default early-stop patience (3), hazard lower boundary (.05s from T3), 10 ECE
   bins and eight ability history slots are explicit implementation choices where
-  the prose design did not pin those details. Model width remains as designed.
+  the prose design did not pin those details. Trunk width remains as designed;
+  tile width uses the predeclared latency fallback of 64.
 - The draft design's token SHA prefix is stale relative to the current checkout.
   Always use the actual frozen-runtime asset SHA, and record it in checkpoints.
 

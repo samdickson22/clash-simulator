@@ -1,7 +1,8 @@
 {
-  "timestamp": "2026-10-08T03:04:23.474447+00:00",
-  "tests": 13,
+  "timestamp": "2026-10-08T07:25:53.036892+00:00",
+  "tests": 15,
   "result": "passed",
   "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 10 /mpac/sdicks02/tmp/imitation-model-cpu/bin/python -m pytest imitation/model/tests -q",
-  "scope": "CPU synthetic unit and integration tests; no real fitting"
+  "scope": "CPU synthetic unit/integration tests including 128 entities and unpadded inference equality",
+  "seconds": 3.72
 }

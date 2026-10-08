@@ -101,7 +101,7 @@ def main():
     p.add_argument("--device", default="cuda"); p.add_argument("--seed", type=int, default=2903)
     p.add_argument("--epochs", type=int, default=12); p.add_argument("--batch-size", type=int, default=8192)
     p.add_argument("--microbatch", type=int, default=64); p.add_argument("--workers", type=int, default=2)
-    p.add_argument("--tile-width", type=int, default=128); p.add_argument("--warmup", type=int, default=2000)
+    p.add_argument("--tile-width", type=int, default=64); p.add_argument("--warmup", type=int, default=2000)
     p.add_argument("--max-steps", type=int); p.add_argument("--subset-fraction", type=float, default=1.)
     p.add_argument("--epoch-fraction", type=float, default=1.); p.add_argument("--overfit-rows", type=int, default=0)
     p.add_argument("--patience", type=int, default=3); p.add_argument("--checkpoint-every", type=int, default=1000)
@@ -127,8 +127,11 @@ def main():
     if args.synthetic_smoke and not (train.manifest.get("synthetic") and dev.manifest.get("synthetic")):
         raise ValueError("--synthetic-smoke cannot bypass qualification for real stores")
     if not args.synthetic_smoke:
-        if not args.qualification or not json.loads(Path(args.qualification).read_text()).get("passed"):
+        if not args.qualification:
             raise ValueError("real fitting requires the actual passed T3 qualification receipt")
+        qualification = json.loads(Path(args.qualification).read_text())
+        train.verify_qualification(qualification)
+        dev.verify_qualification(qualification)
         hashes["T3_qualification"] = sha256(args.qualification)
         for key in ("tokens", "roles", "eval_spec", "sidecar_manifest"):
             if key not in hashes or len(hashes[key]) != 64:
@@ -206,6 +209,9 @@ def main():
             if stopped[0] or (args.max_steps and state["step"] >= args.max_steps):
                 break
         from .runner import dev_joint_nll
+        # Persist the completed training cursor before a potentially long dev pass.
+        # A validation/data failure must not discard the epoch's optimizer state.
+        save_checkpoint(out/f"step-{state['step']:08d}.pt", model, ema, optimizer, scheduler, config, state, hashes, args)
         score = dev_joint_nll(model, ema, dev, device, args.microbatch)
         improved = score < state["best_dev"]
         state["bad_epochs"] = 0 if improved else state["bad_epochs"]+1

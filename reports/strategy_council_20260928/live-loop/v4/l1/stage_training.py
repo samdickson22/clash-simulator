@@ -7,6 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+import shutil
 
 HUB = '/mpac/sdicks02/repos/clasher-v4-data/matches'
 FILES = ('receipt.json', 'frames.jsonl', 'hud.jsonl', 'events.jsonl',
@@ -31,6 +32,7 @@ def main():
     p.add_argument('--labels-only', action='store_true')
     p.add_argument('--heldout-receipts-only', action='store_true',help='Copy receipt JSON only for formal count admission; never payloads')
     a = p.parse_args()
+    if not 0<=a.partition<a.partitions:raise ValueError('Invalid partition')
     if sha(a.split) != '3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258':
         raise ValueError('Frozen split mismatch')
     members = {r['seed']: r for r in json.loads(a.split.read_text())['matches']}
@@ -56,6 +58,8 @@ def main():
         rows.append(r)
     if a.limit: rows = rows[:a.limit]
     a.destination.mkdir(parents=True, exist_ok=True)
+    if shutil.disk_usage(a.destination).free<210_000_000_000:
+        raise RuntimeError('Need 200 GB free plus 10 GB staging headroom')
     for episode,raw in heldout_receipts:
         root=a.destination/episode;root.mkdir(exist_ok=True);q=root/'receipt.json'
         if q.exists():
@@ -64,7 +68,7 @@ def main():
             with q.open('x') as f:f.write(raw)
     files = [n for n in FILES if not (a.labels_only and n == 'video.mp4')]
     listing = ''.join(f'{r["episode"]}/{n}\n' for r in rows for n in files)
-    subprocess.run(['rsync', '-a', '--checksum', '--files-from=-',
+    subprocess.run(['rsync', '-a', '--checksum', '--rsync-path=nice -n 10 rsync', '--files-from=-',
                     f'127x01:{HUB}/', str(a.destination) + '/'], input=listing, text=True, check=True)
     for r in rows:
         root = a.destination / r['episode']

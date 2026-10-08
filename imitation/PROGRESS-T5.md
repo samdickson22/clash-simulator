@@ -1,6 +1,6 @@
 # T5 v1 training and gate (a)
 
-2026-10-08 06:43 UTC — **T3 TRAINING RELEASE PASS; WAITING FOR T4 AND COPIES.** No T5 GPU jobs,
+2026-10-08 07:23 UTC — **STOPPED: T4 SHAKEDOWN FAILED.** No T5 GPU jobs,
 training, calibration or eval/eval_ood scoring have been launched. No commits.
 
 ## Qualification
@@ -65,14 +65,14 @@ Never duplicate a live run. Use verified PIDs only; technical retries require
 recorded reasons and preserve old outputs. Never delete stores/checkpoints.
 Mirror only owned docs, receipts and results to 05 with rsync -c.
 
-Temporary same-thread continuation schedule created and enabled, every 10 min:
+Temporary same-thread continuation schedule (disabled at07:23 UTC after T4 failure):
 `scheduled-task:command:mcp:3edbde69-151b-4209-8cf7-c6c1eac260db:schedule-task:clasher-imitation-t5-continuation-20261008-v1`.
 First nextRunAt: `2026-10-08T05:32:37.789Z` (2026-10-07 22:32:37 PDT).
 Readiness receipt: `imitation/t5/receipts/prerequisite-wait.json`.
 Disable after the final report or if T4 fails/an upstream terminal blocker is
 reported. This does not replace or modify the separate data/T4 schedules.
 
-Latest scheduled check: 2026-10-08 06:42:52 UTC — actual T3-PASS now present on01, passed=true; who empty. T4 last checked at06:41:22 before publication, shakedown still pending. Verified target copies and P16 gate-A2 baseline are pending. No T5 jobs launched; 10-minute continuation remains active.
+Latest scheduled check: 2026-10-08 07:23:08 UTC — T4 shakedown exit1 verified on04, failed07:19:29 UTC. T5 continuation disabled per explicit hard-stop rule. T3 certificate unchanged. No T5 training or held-out scoring launched.
 
 ## Coordinator lease update — 2026-10-08 05:45 UTC
 
@@ -140,3 +140,26 @@ Require separate `T3-COPIES.json`/target checksum receipts before using a host;
 require `T3-P16-BASELINE.json` before claiming A2. Qualification alone does not
 prove a target store is ready. T4 owns the next shakedown; do not duplicate it.
 Earlier pending-T3 entries above are historical. No T5 code freeze or fitting.
+
+## Hard stop: T4 shakedown failure — 2026-10-08 07:23 UTC
+
+Verified04 label `t4-shakedown-20261008T0714Z`, launcher2393301, exited1
+at07:19:29 UTC. Eight subset-training steps completed65,519 sampled rows,
+then dev_joint_nll failed in features.build_row:
+`ValueError: more than 64 visible entities: outside v6 contract`.
+Overfit and final dev evaluator did not complete. This is not T4 PASS.
+
+Per user hard rule, T5 stopped and its temporary schedule is confirmed
+enabled=false, nextRunAt=null. T4 schedule/source/jobs were not changed,
+restarted or duplicated. T4 owns repair and requalification.
+Small log, numeric exit and status.json mirrored with rsync -c into
+`imitation/t5/receipts/t4-shakedown-failure-20261008T0714Z/`; evidence hashes
+recorded in prerequisite-wait.json. No checkpoints or stores copied to05.
+
+Observed T4 diagnostics (not T5 results or a passing shakedown): last measured
+loader-inclusive2,131.94 rows/s, step-only2,902.05 rows/s, GPU peak allocated
+530.78 MiB, reserved734 MiB; subset total loss9.73854→9.58864. Entire failed
+T4 wrapper wall299.82s, CPU318.72s. No full-run throughput conclusion.
+T5 GPU compute remains0; no selected checkpoints, frozen PREREG, heldout
+scores or gate verdict exist. Resume T5 only after the coordinator resumes it
+and T4 publishes a passing shakedown; preserve this failure evidence.

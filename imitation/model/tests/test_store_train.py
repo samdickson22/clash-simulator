@@ -83,7 +83,7 @@ def test_actual_t3_adapter_mask_time_history_and_intent(tmp_path):
     arrays.pop("intent_valid")
     for k,v in arrays.items(): np.save(root/f"{k}.npy",v)
     np.save(root.parent/"mask_table.npy",np.packbits(masks,axis=-1))
-    manifest={"role":"train","rows":8,"arrays":{k:{} for k in arrays},"perspectives":[]}
+    manifest={"role":"train","rows":8,"arrays":{k:{"shape":list(v.shape),"dtype":str(v.dtype)} for k,v in arrays.items()},"perspectives":[]}
     (root/"manifest.json").write_text(json.dumps(manifest))
     parent={"schema":"clasher.imitation.packed.v1","passed":True,
             "role_manifests":{"train":sha256(root/"manifest.json")},
@@ -98,3 +98,13 @@ def test_actual_t3_adapter_mask_time_history_and_intent(tmp_path):
     assert glob[16]==pytest.approx(.5) and glob[17]==pytest.approx(.5)
     assert y["intent_observed"] is False and y["intent_bin"]==1 # completed first interval
     assert store[1][1]["intent_bin"]==0 # event on boundary belongs to first interval
+    receipt={"passed":True,"store_manifest_sha256":store.hashes["store_manifest"],
+             "role_file_sha256":store.hashes["roles"],"roles":{"train":{"rows":8,"perspectives":0}}}
+    store.verify_qualification(receipt)
+    for key in ("store_manifest_sha256", "role_file_sha256"):
+        with pytest.raises(ValueError, match="mismatch"):
+            store.verify_qualification({**receipt,key:"f"*64})
+    with pytest.raises(ValueError, match="counts mismatch"):
+        store.verify_qualification({**receipt,"roles":{"train":{"rows":7,"perspectives":0}}})
+    with pytest.raises(ValueError, match="passed T3"):
+        store.verify_qualification({**receipt,"passed":False})

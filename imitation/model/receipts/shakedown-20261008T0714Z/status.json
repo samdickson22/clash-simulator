@@ -1,0 +1,6 @@
+{
+  "stage": "failed",
+  "at": "2026-10-08T07:19:29.205130+00:00",
+  "failed_stage": "subset",
+  "error": "CalledProcessError(1, ['/mpac/sdicks02/envs/clasher-gpu/bin/python', '-B', '-m', 'imitation.model.train', '--store', '/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/train', '--dev', '/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1/dev', '--assets', '/mpac/sdicks02/tmp/t4-shakedown-20261008T0714Z/run/assets.npz', '--qualification', '/mpac/sdicks02/tmp/t4-shakedown-20261008T0714Z/source/imitation/model/receipts/t3-qualified-release-snapshot.json', '--seed', '2903', '--device', 'cuda', '--workers', '2', '--output', '/mpac/sdicks02/tmp/t4-shakedown-20261008T0714Z/run/subset', '--epochs', '1', '--subset-fraction', '.02', '--epoch-fraction', '.2'])"
+}

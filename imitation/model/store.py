@@ -84,6 +84,10 @@ class PackedStore(Dataset):
         self.role = role
         self.arrays = {name: np.load(self.path(name+".npy"), mmap_mode="r", allow_pickle=False)
                        for name in self.manifest["arrays"]}
+        for name, info in self.manifest["arrays"].items():
+            value = self.arrays[name]
+            if list(value.shape) != info["shape"] or str(value.dtype) != info["dtype"]:
+                raise ValueError(f"T3 array schema mismatch: {name}")
         self.arrays["mask_table"] = np.load(parent/"mask_table.npy", mmap_mode="r", allow_pickle=False)
         self.mask_bitorder = "big"  # np.packbits/unpackbits default in the frozen corpus.
         self.assets_path = Path(assets).resolve()
@@ -102,6 +106,18 @@ class PackedStore(Dataset):
                        "sidecar_manifest": root_manifest["sidecar_manifest_sha256"],
                        "store_manifest": sha256(parent/"manifest.json"), "role_manifest": sha256(self.manifest_path)}
         self.perspectives = self.manifest["perspectives"]
+
+    def verify_qualification(self, receipt):
+        """Bind the actual release receipt to this role's immutable store."""
+        if not self.t3 or receipt.get("passed") is not True:
+            raise ValueError("real fitting requires the passed T3 packed-store receipt")
+        if receipt.get("store_manifest_sha256") != self.hashes["store_manifest"]:
+            raise ValueError("T3 qualification store manifest mismatch")
+        if receipt.get("role_file_sha256") != self.hashes["roles"]:
+            raise ValueError("T3 qualification role file mismatch")
+        released = receipt.get("roles", {}).get(self.role, {})
+        if released.get("rows") != len(self) or released.get("perspectives") != len(self.perspectives):
+            raise ValueError("T3 qualification role counts mismatch")
 
     def path(self, relative):
         p = (self.root / relative).resolve()

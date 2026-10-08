@@ -3,10 +3,17 @@ from dataclasses import asdict
 import json
 from pathlib import Path
 import torch
-from .features import build_row, collate_features
+from .features import build_row
 from .network import ModelConfig, SetPolicy
 
 PROVENANCE = "human-prior research artifact; not a Tier A admitted pilot arm"
+
+
+def single_features(public_packet, d1, costs):
+    # Training buckets group different row lengths. One CPU request needs no
+    # padding, and should not pay for a larger bucket at a rare length boundary.
+    return {k: torch.from_numpy(v).unsqueeze(0)
+            for k, v in build_row(public_packet, d1, costs).items()}
 
 
 class Policy:
@@ -24,7 +31,7 @@ class Policy:
         """
         if k < 0:
             raise ValueError("k must be nonnegative")
-        b = collate_features([build_row(public_packet, d1, self.costs)])
+        b = single_features(public_packet, d1, self.costs)
         count = min(k, int(b["action_mask"][0, :2304].sum()))
         if not count:
             return []
@@ -36,7 +43,7 @@ class Policy:
 
     @torch.inference_mode()
     def sample(self, public_packet, d1, generator=None):
-        b = collate_features([build_row(public_packet, d1, self.costs)])
+        b = single_features(public_packet, d1, self.costs)
         lp = self.model.log_policy(b)
         gate = int(torch.multinomial(lp["gate"][0].exp(), 1, generator=generator))
         if gate != 1:

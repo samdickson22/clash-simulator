@@ -1,13 +1,13 @@
 # T6/T7 progress
 
-Updated 2026-10-08 07:21Z. Latest Phase A evidence remains RUNNING; heldout payloads unopened.
+Updated 2026-10-08 07:40Z. Snapshot decode complete; cache copies RUNNING; heldout payloads unopened.
 Code/docs/compact receipts live on 127x05; new decode/audit/tests/training pilots
 run detached/nice on leased 16/18. No Mac/excluded host access, commits or deletion.
 
 ## Current continuation: cache and label cleaning
 
-Formal work is **not launched**. Latest receipt-only poll (07:04 UTC): 145 train,
-18 validation and 18 heldout matches; heldout 437 opponent events; 4.43 recorded
+Formal work is **not launched**. Latest receipt-only poll (07:32 UTC): 163 train,
+20 validation and 20 heldout matches; heldout 504 opponent events; 5.01 recorded
 emulator-hours. Producer state `phase-a`; phase-a exit receipt absent. Neither
 the ≥20/1,500 coverage stop nor the 36-hour cap is verified complete.
 
@@ -40,8 +40,9 @@ random 1% checks. Source pixels preserve JPEG-before-resize augmentation.
 Five-match pilot: **14,592 frames, 5,910,676,788 bytes, 149/149 equality checks**.
 16 has four completed matches; GPU host 18 has all five checksum-verified.
 Path on both: `/mpac/sdicks02/repos/clasher-lease/cache/v4-pixels-r2/`.
-All five are also on **01:/mpac/sdicks02/repos/clasher-v4-data/cache/**, with
-ten payload hashes and all five indices verified after transfer at 07:01 UTC.
+All five were copied to 01 at 07:01 UTC, with ten payload hashes and all five
+indices verified. The hub cache was subsequently renamed, preserving bytes, to
+**01:/mpac/sdicks02/repos/clasher-v4-cache/** at 07:31 UTC (migration exit 0).
 
 Throughput: old **1.282 windows/s** → cached single-thread 3.277 → six preparation
 threads **12.476 windows/s**, GPU-only 16.803, loading wait 9.95 ms. Four-train-
@@ -63,10 +64,54 @@ uses unique reachable payload + exact max HP, with coherent same-tick flags;
 ambiguous repeated same-tick snapshots remain masked. Original collector/split/
 payloads unchanged. See `l1/LABEL-AUDIT.md` and dated amendment 03.
 
-**Resource blockers:** the 40 GB total fleet footprint remains binding pending
-the unanswered storage-only increase request. Current pilot density projects
-~97 GB for the audited population before replication. Do not launch the full
-cache or substitute the pilot for formal data. Hub transfer initially waited
+**2026-10-08 07:22 UTC coordinator decision — storage APPROVED.** See
+[COORDINATOR.md](../../COORDINATOR.md), entry “v4 perception storage approved,”
+and the coordinator's explicit decision in this thread. The frozen acquisition
+cap remains 40 GB for hub raw collected matches. Derived, regenerable caches
+have a separate **300 GB per-host** allowance, with **at least 200 GB free** on
+`/mpac`. Approved homes: `clasher-v4-cache/` on 01/03/04/08; leased cache root:
+`clasher-lease/data/v4-cache/` on 11/13/14/16/18. Move retained pilot caches out
+of `clasher-v4-data/cache/` without deletion. Leased caches must move off or be
+deleted by 2026-10-10 05:30 UTC (within one day of the current lease end), earlier
+if a changed lease/reclaim requires it. Prefer moving/retaining evidence.
+Use `~/.local/bin/fleet-console-users`, which excludes our own SSH fleet monitor,
+for console-cap checks. The earlier 03 watcher stop remains historical evidence.
+Full admitted train/validation cache construction is now authorized; no heldout
+payload access or frozen registration change is authorized by this decision.
+
+Current pilot density projects ~97 GB for the audited population per copy.
+Per-host budget/free-space guards, frame-weighted match allocations, atomic
+checksum-verified fan-out and completed-match resume are implemented. Budget
+tests passed 20 checks on 16, wrapper 3446999 / child 3447001, exit 0.
+**Full-cache decode jobs**, both launched 07:32 UTC through lease wrappers:
+
+| Host / label | Supervisor / child | Work |
+|---|---|---|
+| 16 / v4-cache-full-20261008-16r1 | 3447257 / 3447259 | PASS / exit 0 at 07:36:02; partition 0/2 |
+| 18 / v4-cache-full-20261008-18r1 | 974710 / 974712 | PASS / exit 0 at 07:35:13; partition 1/2 |
+
+Both migrate retained pilots into `clasher-lease/data/v4-cache/`, reuse all five
+pilot checksums, and retain failed attempts inside that budgeted root. 18 stages
+the full admitted train/validation source; 16 stages partition media. Source
+stage receipts and final build receipts use each label under `clasher-lease/jobs/`.
+Together these cover the **183-match, 325,999-frame** staged snapshot. Each used
+24 decoders, peaked at 26 total processes and about 10.2 GB RSS. Each uses a 280 GB build ceiling, the approved
+300 GB host ceiling for copying, and a 200 GB free-space floor. SIGTERM stops new
+match submissions and lets current commits finish; completed matches resume with
+checksums under a fresh label. Aggregate equality and full-replica verification
+are pending the copy manifests.
+
+Active gather jobs: **01 / v4-cache-gather-20261008-01r1**, wrapper **3536190**,
+started 07:37:36, imports 16 then 18; **18 / v4-cache-gather-20261008-18r1**,
+supervisor **977063**, child **977066**, started 07:38:23, imports 16. These copy
+only complete immutable matches, checksum each destination, and then verify the
+entire 183-match snapshot manifest. Do not duplicate a gather or write its cache.
+18's follow-on label audit **r6** passed at 07:36:48 (976542 / 976544): 411,626
+contradictions / 2,918,547 rows in 163 train + 20 validation; no new cleaning-code
+change. See LABEL-AUDIT.md extension. Full-population GPU throughput remains pending.
+
+01 has 88 owned Python workers, so avoid
+adding bulk decode there while imitation occupies it. Hub transfer initially waited
 for its `who` session to clear, then passed the runbook's Python-worker check
 and completed via fleet_run (label `v4-cache-hub-copy-20261008-r1`, wrapper
 3521392, exit 0). Do not assume that headroom persists for the next job.
@@ -105,7 +150,7 @@ duplicate polls within 15 minutes. A briefly launched 03 watcher, label
 SIGTERM to the verified owned worker after noticing its interactive-session cap;
 exit 0, 06:26:58 UTC. No standalone fleet watcher remains.
 
-Remaining: approve/reconcile storage, extend/fan out the full cache as admitted
+Remaining: extend/fan out the approved full cache as admitted
 matches arrive, verify T1 completion, fresh T6/T7 24x400 fits, validation-only
 selection/calibration and seal, complete the v4 scorer, then the one authorized
 heldout opening. Mac/T5/T8 endpoints remain external dependencies. `l1/RESULTS.md`

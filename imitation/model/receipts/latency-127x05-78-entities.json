@@ -1,0 +1,21 @@
+{
+  "host": "127x05",
+  "torch": "2.7.1+cpu",
+  "threads": 1,
+  "cpu_affinity": [
+    0
+  ],
+  "synthetic_inputs": true,
+  "random_weights": true,
+  "parameters": 2399898,
+  "measurements": [
+    {
+      "entities": 78,
+      "iterations": 1000,
+      "p50_ms": 16.8452945,
+      "p99_ms": 17.45395841,
+      "max_ms": 18.495461,
+      "k": 8
+    }
+  ]
+}

@@ -1,11 +1,11 @@
-# T6/T7 results — preparation complete only for a bounded pilot
+# T6/T7 results — formal evaluation remains blocked
 
 ## Pre-formal cache and label work, 2026-10-08
 
-**Formal T6/T7 fits and heldout evaluation have not run.** At 07:04 UTC the
+**Formal T6/T7 fits and heldout evaluation have not run.** At 07:32 UTC the
 producer state is `phase-a`, with no phase-a exit receipt. Receipt-only counts:
-145 train, 18 validation, 18 heldout matches; **437 heldout opponent events**;
-15,961.24 recorded emulator-seconds (4.43 h). Neither stop rule is met. No
+163 train, 20 validation, 20 heldout matches; **504 heldout opponent events**;
+18,018.73 recorded emulator-seconds (5.01 h). Neither stop rule is met. No
 heldout payload has been opened. The bounded 15-minute check ends at 18:08 UTC.
 
 | Cache/loader measurement | Result |
@@ -48,13 +48,21 @@ disagreements resolved with a unique reachable payload and exact max HP;
 mismatches explained the contradictions. The label cleaner and conservative
 timing policy are documented in LABEL-AUDIT.md and amendment 03.
 
-**Full cache expansion is blocked by storage authorization.** At measured
-density the audited population alone needs about 97 GB before copies; the
-runbook's 40 GB total footprint has not been lifted. The accepted pilot is on
-16/18, with all five matches on GPU host 18 and the required hub cache path on
-01. Hub transfer completed at 07:01 UTC after its interactive session cleared
-and worker preflight passed; all ten payload hashes were verified on 01. No
-formal subset substitution is permitted.
+**Derived-cache storage was approved at 07:22 UTC:** 300 GB per permitted host,
+with >=200 GB free on /mpac. The 40 GB frozen acquisition cap remains unchanged.
+Both 24-worker decode partitions passed by 07:36 UTC, covering the staged
+**163 train + 20 validation matches, 325,999 frames**. Full-replica gathering and
+SHA256 verification are running on 01 and GPU host 18 in the new approved cache
+roots. Aggregate equality/size receipts and full-population GPU throughput are
+pending; the pilot performance numbers above are not promoted to full-population
+measurements. No formal subset substitution is permitted.
+
+The same label audit extended to this snapshot: 2,918,547 object rows and 411,626
+contradictions (169,501 catalog-generation disagreements resolved, 20,938 parent/
+child hints, 87,027 non-hitpoint hints, 134,160 unresolved/masked). Zero native-ID
+changes or same-tick raw-join mismatches; 86,475 coherent visible/nondeploying
+rows. No additional cleaning-code change. Synthetic scorer/selection primitives
+passed 135 checks; guarded replay, calibration and selection sealing remain pending.
 
 ## Formal configurations and §5.1 verdicts
 

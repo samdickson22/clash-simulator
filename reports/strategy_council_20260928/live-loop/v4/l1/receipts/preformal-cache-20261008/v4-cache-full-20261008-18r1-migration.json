@@ -1,0 +1,15 @@
+{
+  "moves": [
+    [
+      "/mpac/sdicks02/repos/clasher-lease/cache/v4-pixels-r2",
+      "/mpac/sdicks02/repos/clasher-lease/data/v4-cache"
+    ],
+    [
+      "/mpac/sdicks02/repos/clasher-lease/cache/v4-pixels",
+      "/mpac/sdicks02/repos/clasher-lease/data/v4-cache/retained-legacy-failed"
+    ]
+  ],
+  "cache": "/mpac/sdicks02/repos/clasher-lease/data/v4-cache",
+  "no_data_deleted": true,
+  "utc": "2026-10-08T07:32:17.308848+00:00"
+}

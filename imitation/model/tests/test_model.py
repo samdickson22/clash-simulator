@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import torch
 from imitation.model.features import build_row, collate_features, ENTITY_COLUMNS
-from imitation.model.inference import Policy, load_policy
+from imitation.model.inference import Policy, load_policy, single_features
 from imitation.model.losses import hazard_loss, intent_target, loss_parts, total_loss
 from imitation.model.network import masked_log_softmax
 from imitation.model.synthetic import batch, model, packet
@@ -71,6 +71,33 @@ def test_hidden_poisoning_and_missing_d1():
     del d["opp_elixir"]
     with pytest.raises(KeyError):
         build_row(p, d, costs)
+
+
+def test_full_packet_entity_cap_preserves_all_entities():
+    costs = np.full(360, 3.)
+    p, d = packet(128)
+    row = build_row(p, d, costs)
+    assert (row["types"] == 0).sum() == 128
+    b = collate_features([row])
+    assert b["ids"].shape[1] == 191
+    with torch.inference_mode():
+        values = model().eval().log_policy(b)
+    assert all(torch.isfinite(v).all() for v in values.values())
+    p, d = packet(129)
+    with pytest.raises(ValueError, match="128 visible"):
+        build_row(p, d, costs)
+
+
+def test_unpadded_single_inference_matches_training_bucket():
+    m = model().eval()
+    p, d = packet(78)
+    padded = collate_features([build_row(p, d, m.costs.numpy())])
+    single = single_features(p, d, m.costs.numpy())
+    assert single["ids"].shape[1] < padded["ids"].shape[1]
+    with torch.inference_mode():
+        a, b = m.log_policy(single), m.log_policy(padded)
+    for key in a:
+        torch.testing.assert_close(a[key], b[key], atol=2e-6, rtol=1e-6)
 
 
 def test_handbuilt_loss_censor_and_forced_wait():

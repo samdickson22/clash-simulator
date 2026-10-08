@@ -1,6 +1,37 @@
 # Phase A train/validation body-label audit
 
 2026-10-08, before formal training. Heldout media and labels remain unopened.
+
+## 07:36 UTC extension, unchanged cleaning rule
+
+After the coordinator approved derived-cache storage, the same auditor and
+cleaner were applied to all **163 train + 20 validation matches** in the 07:32
+snapshot. Lease 18 job `v4-label-audit-20261008-r6` passed (supervisor 976542,
+child 976544, exit 0; 18 processes, 849,616,896 bytes peak RSS). Full per-match
+evidence remains in that host's `clasher-lease/jobs/v4-label-audit-20261008-r6.json`;
+compact evidence and its SHA256 are in
+`receipts/preformal-cache-20261008/label-audit-r6-summary.json`.
+
+| Population | Object rows | Name/hint contradictions | Hitpoint-bearing contradictions |
+|---|---:|---:|---:|
+| Train | 2,599,498 | 366,706 | 288,115 |
+| Validation | 319,049 | 44,920 | 36,484 |
+| Total | 2,918,547 | 411,626 | 324,599 |
+
+Primary causes: 169,501 catalog-generation disagreements resolved by unique
+payload/HP, 20,938 legitimate parent/child hints, 87,027 non-hitpoint parent
+hints, and 134,160 unresolved/masked contradictions. There are 28,824 rich native
+IDs, **zero changing identities**, and **zero ID/field mismatches** among 25,949
+contradictory same-tick joins. Future metadata occurs in 2,339,470 rows; the
+cleaner still requires coherent same-tick visibility/deploy evidence. It retains
+86,475 visible/nondeploying rows (76,710 train, 9,765 validation).
+
+No additional label-generation change was needed. Amendment 03's same cleaner
+remains the downstream code for every split, including later authorized heldout.
+These weak-label checks do not certify a board-precision evaluation gate.
+
+## Original 06:38 UTC audit snapshot
+
 Audited snapshot: **121 training + 15 validation matches**, admitted against the
 unchanged frozen split. Eight CPU audit workers ran under the lease wrapper on
 127x16. Full evidence remains at

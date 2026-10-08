@@ -57,4 +57,77 @@ still PENDING. Scheduler verified enabled, last dispatch succeeded, next check
 T4 is not complete until the real 127x04 shakedown and dev evaluation are measured.
 No GPU files/jobs have been staged or launched yet, so no remote job to duplicate.
 
-Latest scheduled receipt check: 2026-10-08T06:41:22.298738+00:00 — T3_PENDING; no GPU job launched.
+
+06:51–06:57Z T3 release inspection:
+- T3 PASS published 06:42:32Z, releasing store/frequency baseline for training;
+  P16 baseline is pending and is not a training prerequisite per its coordinator decision.
+- Root store SHA256: `1acf6b5875091e009c18e598a71714016b9833b6cc626032e0fa676ccdac5c2f`.
+  Actual train/dev manifests match the implemented schema: 53,989,262 / 2,759,722
+  rows, 69,380 / 3,546 perspectives. Inspected manifests only; no heldout scoring.
+- Added exact array shape/dtype checks and bound the PASS receipt to store/role
+  hashes and role counts. Light suite remains **13 passed in 3.82s**.
+- 127x04: no logged-in users or GPU compute job; 77 existing search Python
+  processes plus 2 active store-copy rsync processes. Probe itself brought the
+  conservative worker count to 80. Train manifest and local T3 receipts absent.
+  Wait for the data owner’s copy/verification; do not launch or duplicate it.
+- No T4 source snapshot or GPU job has been staged/launched. Next scheduler
+  invocation should read PASS and its referenced T3-COPIES receipt, verify 04
+  copy availability, recheck budget, then continue the one-seed shakedown.
+
+
+07:14Z detached shakedown launched:
+- T3-COPIES now certifies **127x04 store passed**, 254 files / 86,075,227,942
+  bytes, matching the qualified manifest. Its overall status is still false
+  because other copies are pending; the required 04 store is verified.
+- 04 became idle: who empty, zero existing worker/GPU compute processes.
+  Staged only our explicit source-file list with rsync -c into the fresh
+  `/mpac/sdicks02/tmp/t4-shakedown-20261008T0714Z/source`. Source hashes are
+  in `imitation/model/receipts/source-20261008T0714Z.json`. Qualification is
+  our byte-exact captured receipt (SHA256 `6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c`).
+- New `imitation/model/shakedown.py` sequentially builds frozen-runtime assets,
+  validates 256 real rows per train/dev role, runs seed 2903 at .2 epoch of
+  2% train perspectives, overfits 1,000 train rows for 200 steps, and runs
+  full dev evaluation/calibration/10,000-cluster bootstrap/export. No heldout.
+- Light suite **13 passed in 3.83s** before staging.
+- Launched via fleet_run.sh at 07:14:29Z, label `t4-shakedown-20261008T0714Z`,
+  verified launcher PID **2393301**, nice 10. Own log/exit are under
+  `/mpac/sdicks02/jobs/clasher/`; run artifacts under the snapshot sibling
+  `run/`. First inspection: stage `preflight`, no exit receipt yet.
+- This is an active job, not a success claim. Next scheduled invocation must
+  inspect this job once and collect its measured results; **do not duplicate**.
+
+
+07:21Z first shakedown failure and technical rerun:
+- First job exited 1 in dev loading after **8 steps / 65,519 train rows**.
+  The real data contains >64 entities: train maximum 74 (112 rows above 64),
+  dev maximum 78 (10 rows above 64). Preflight samples had missed these rare rows.
+- Initial d128 subset loss 9.73854 → 9.58864, including-loader throughput
+  **2,131.94 rows/s**, peak GPU allocated/reserved **530.78 / 734 MiB**.
+  These are measured partial-run results; overfit and full dev did not run.
+  Original logs/receipts retained locally in receipts/shakedown-20261008T0714Z/.
+- Fix: retain up to the full v5 cap of 128 entities and add a 192-token bucket.
+  Preflight now checks the maximum-entity row too. Save a resumable checkpoint
+  before validation; the failed initial run had no checkpoint to recover.
+- Required latency fallback: the original d128 model measured 17.45 ms p99
+  at 78 entities. Tile width 64 alone measured 15.07 ms; unpadded single-row
+  inference removes unnecessary training-bucket padding with tested equivalent
+  logits. Final model **2,254,938 parameters**, trunk unchanged.
+- Final CPU p50/p99 ms (1000 calls each, core 0, feature build+top8):
+  10 entities **7.07/7.55**, 25 **7.83/8.15**, 64 **10.26/10.60**,
+  78 **11.26/11.56**. Receipt: latency-127x05-final.json.
+  **15 tests passed in 3.72s**, including 128-entity preservation and padded/
+  unpadded equality. This deviation is the design’s predeclared latency fallback.
+- Fresh owned source/run: `/mpac/sdicks02/tmp/t4-shakedown-20261008T0727Z`.
+  Launched via fleet_run.sh after who empty, zero other workers and empty GPU.
+  Label `t4-shakedown-20261008T0727Z`, verified launcher PID **2398593**, nice 10.
+  Same seed 2903/subset/overfit recipe; tile width 64 is explicit. This job is
+  active; inspect its own log/exit once next poll and do not launch a duplicate.
+
+
+07:31Z running-job inspection: verified PID 2398593 remains active, nice 10;
+no exit receipt. The d64 subset finished **8 steps / 65,519 rows**, last loss
+**9.60033**, measured **2,291.03 rows/s** including loader; GPU training peak
+allocated/reserved **471.22 / 642 MiB**. Wrapper remains in subset stage
+(the trainer performs full dev validation before overfit). No duplicate job.
+
+Latest scheduled receipt check: 2026-10-08T07:41:31.182191+00:00 — SHAKEDOWN_RUNNING; verified own launcher PID 2398593 remains active at nice 10, subset stage, no exit receipt.

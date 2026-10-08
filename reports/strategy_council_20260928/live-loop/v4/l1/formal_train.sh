@@ -26,7 +26,9 @@ else
 fi
 cap=96
 case $host in 127x09|127x15) cap=8 ;; 127x13|127x14) cap=64 ;; 127x16|127x18) cap=48 ;; esac
-[[ -z $(who) ]] || cap=16
+console_users=$("$HOME/.local/bin/fleet-console-users")
+[[ $console_users =~ ^[0-9]+$ ]] || { echo 'Invalid console-cap helper response' >&2; exit 2; }
+(( console_users == 0 )) || cap=16
 case $host in 127x09|127x15) cap=8 ;; esac
 (( workers + 4 <= cap )) || { echo "Host worker capacity exceeded: $workers + 4 > $cap" >&2; exit 75; }
 free=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits | head -1)

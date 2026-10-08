@@ -10,7 +10,7 @@ import torch
 
 ENTITY_COLUMNS = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 23, 24, 25, 26, 27, 28, 30)
 GLOBAL_COLUMNS = (0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 17, 14, 15)
-BUCKETS = (48, 64, 96, 128)
+BUCKETS = (48, 64, 96, 128, 192)
 
 
 def get(obj, name):
@@ -100,9 +100,10 @@ def build_row(public_packet, d1, costs):
     if ent.shape[1] == 32:
         ent = ent[:, ENTITY_COLUMNS]
     active = np.asarray(get(public_packet, "entity_mask"), bool)
-    if active.sum() > 64:
+    if active.sum() > 128:
         # No silent entity-order-dependent truncation.
-        raise ValueError("more than 64 visible entities: outside v6 contract")
+        # Qualified C56 has rare rows above the design's sampled estimate of 64.
+        raise ValueError("more than 128 visible entities: outside v5 packet cap")
     ent_ids = get(public_packet, "entity_ids")
     ent_levels = get(public_packet, "entity_levels")
     for i in np.flatnonzero(active):

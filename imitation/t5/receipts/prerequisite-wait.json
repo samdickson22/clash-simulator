@@ -1,20 +1,20 @@
 {
   "schema": "clasher.imitation.t5.wait.v1",
-  "checked_at": "2026-10-08T06:42:52Z",
-  "status": "WAITING_T4_AND_HOST_COPIES",
+  "checked_at": "2026-10-08T07:23:08Z",
+  "status": "STOPPED_T4_SHAKEDOWN_FAILED",
   "t3_receipt": "127x01:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/receipts/T3-PASS.json",
   "t3_pass_present": true,
-  "t4_shakedown": "pending; owned by T4 scheduled task",
+  "t4_shakedown": "failed",
   "t5_runs_launched": 0,
   "t5_gpu_seconds": 0,
   "prereg_frozen": false,
   "scheduled_task_id": "scheduled-task:command:mcp:3edbde69-151b-4209-8cf7-c6c1eac260db:schedule-task:clasher-imitation-t5-continuation-20261008-v1",
-  "next_run_at": "2026-10-08T06:52:52Z",
+  "next_run_at": null,
   "interval_ms": 600000,
   "bound_thread_id": "thread:delegated-task:command%3Amcp%3A969488d3-3434-4e6e-ac38-18b5cd0de300%3Adelegate-task%3Aclasher-imitation-T5-20261008-1",
-  "next_run_at_is_estimate": true,
-  "t4_last_checked_at": "2026-10-08T06:41:22.298738+00:00",
-  "upstream_status": "T3 training release passed: store/frequency qualified; P16 baseline and host copies explicitly pending. Await T4 shakedown and verified target copy.",
+  "next_run_at_is_estimate": false,
+  "t4_last_checked_at": "2026-10-08T07:01:22.053131+00:00",
+  "upstream_status": "T3 passed;T4 shakedown failed. Stop T5 per explicit hard rule. T4 worker retains repair ownership.",
   "console_users": [],
   "lease_update_utc": "2026-10-08T05:44:59Z",
   "lease_expiry_utc": "2026-10-09T05:30:00Z",
@@ -29,5 +29,19 @@
   "t3_receipt_sha256": "6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c",
   "t3_published_utc": "2026-10-08T06:42:32.432848+00:00",
   "p16_baseline_status": "pending",
-  "copies_status": "pending"
+  "copies_status": "04 passed;08 pending; aggregate T3-COPIES passed=false",
+  "copies_receipt_sha256": "6b321498b421116088e379f338d825320cfd2dfabad218073015496fdd5a08c6",
+  "verified_home_copy_hosts": [
+    "127x04"
+  ],
+  "t4_failure_utc": "2026-10-08T07:19:29.205130+00:00",
+  "t4_failed_label": "t4-shakedown-20261008T0714Z",
+  "t4_exit_code": 1,
+  "t4_failure": "ValueError: more than 64 visible entities: outside v6 contract; subset train completed8 steps then dev_joint_nll failed in features.build_row",
+  "schedule_enabled": false,
+  "evidence_sha256": {
+    "imitation/t5/receipts/t4-shakedown-failure-20261008T0714Z/status.json": "b6159d0827ad543657d3ecaaa34d9ace22acf3f26e5133aa3ef4ff67760d6f9f",
+    "imitation/t5/receipts/t4-shakedown-failure-20261008T0714Z/t4-shakedown-20261008T0714Z.exit": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "imitation/t5/receipts/t4-shakedown-failure-20261008T0714Z/t4-shakedown-20261008T0714Z.log": "da10a0382292dac2aa2b587f68e5f06ffa91b166cedcd22271de4c15810ad5dd"
+  }
 }

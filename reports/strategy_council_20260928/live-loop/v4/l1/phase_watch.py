@@ -34,6 +34,9 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True)
     p.add_argument('--deadline',type=float,required=True);p.add_argument('--once',action='store_true');a=p.parse_args()
     a.output.mkdir(parents=True,exist_ok=True);stopping=False
+    if time.time()>=a.deadline:
+        (a.output/'stopped.json').write_text(json.dumps(dict(time=time.time(),status='12-hour-timeout',heldout_opened=False))+'\n')
+        print('Polling deadline reached; no Phase A read',flush=True);return
     latest=a.output/'latest.json'
     if a.once and latest.exists() and time.time()-json.loads(latest.read_text())['time']<900:
         print('Receipt-only poll skipped: previous poll was less than 15 minutes ago',flush=True);return
@@ -42,7 +45,7 @@ def main():
         stopping=True
     signal.signal(signal.SIGTERM,stop)
     next_poll=time.time()
-    while not stopping and time.time()<=a.deadline:
+    while not stopping and time.time()<a.deadline:
         if time.time()<next_poll:
             time.sleep(min(30,next_poll-time.time(),max(0,a.deadline-time.time())))
             continue

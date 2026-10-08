@@ -576,3 +576,4 @@ Also on the hub, but with copies elsewhere:
   `clasher-lease/data/v4-cache/` (leased; cleared within a day of lease end). The worker also finished: label audit
   + labels_v4 (coherent rows only, ambiguous masked; amendment 03), cache pilot parity, resume tests, and scorer/selection
   primitives (135 checks). Phase A at 07:04Z: 145 train / 18 val / 18 heldout matches, 437 heldout opponent events.
+- **2026-10-08 07:44 UTC heartbeat:** Mac OK (23 GiB free, 35% memory free, pool at 2 renderers with retry_used). Answered the perception worker's pending storage question (allow ≤1 TB total cache; consistent with the 300 GB/host decision). T4 shakedown failed once (dev row >64 entities, v6 contract cap) → fixed to the 128 cap, rerunning; T5 hard-stopped correctly, then **resumed by the coordinator** to wait for the rerun PASS (T5 schedule re-enabled). S6 1,253/1,280 receipts. No reclaims; console users 0.

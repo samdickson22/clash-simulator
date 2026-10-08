@@ -1,0 +1,25 @@
+{
+  "source_directory": "/mpac/sdicks02/tmp/t4-shakedown-20261008T0714Z/source",
+  "host": "127x04",
+  "files": {
+    "imitation/model/__init__.py": "98017d5739a04f658da7e4085068f050eacb78c4a57c8e1e57c1efd8b53a3065",
+    "imitation/model/assets.py": "738c4cd8928efb6cd4cba424fd223884c5f90fc024623bf02f3bcf5189853341",
+    "imitation/model/benchmark.py": "14ba38a0f573574fa544fd6d8499c48b8415f6c308525ba7b72725771ca5509c",
+    "imitation/model/evaluate.py": "dd03a119f6f208fd7fabd149f2af4178a8140f79bcc6488b7519593f1a1d00ba",
+    "imitation/model/features.py": "33cb73cf6fe85c2eed832ad61d7b71ef1b45b2c92ee256e1d1e2430bba8c1843",
+    "imitation/model/inference.py": "3a6ec725e4173dc3bbaac1eece78430a592aa25d76d7be352defa8af3e7c371f",
+    "imitation/model/losses.py": "8948f211aa1fdbbf49857407835af59e96336d55c385df2c3baa3cf13cfe4870",
+    "imitation/model/network.py": "3d76d519fe025f486ec1f995d3d363047c04c076e48ab9d84c85778e1fc1ea2a",
+    "imitation/model/runner.py": "f78f9a75e74a6c53b385a5e08b021622088f0159c1e16d2f2a7de7ee1ebb9ecc",
+    "imitation/model/shakedown.py": "d894c212a9e39495e4e80d67a3394d850263da8955b982c3167f91299e4d633c",
+    "imitation/model/store.py": "e05634d34e346e400aede7dd0a3e0e6c82071c21fd6c20065897e08c84852dc8",
+    "imitation/model/synthetic.py": "1600895b23e698ed5bfb5af8eb50ea57713f73e2cf07c963b54a0d12fa4add66",
+    "imitation/model/synthetic_store.py": "46704c46c7a8880d78f7f6b65a9a588ba9af2e1ef4636c6b41913c485175abf2",
+    "imitation/model/train.py": "a503ac80f49230bff0c19bd83e71f7196cbd9eee1e1aa34708935a8196c5ba15",
+    "imitation/model/tests/test_evaluate.py": "f5ae32fa0b1dd253ebf29f96645e0dbfd2641faa93b6008c1d9dc0937d834267",
+    "imitation/model/tests/test_model.py": "c242e71f946118f091ac3694c87bcd336da80f00f666708f0255e74223080c50",
+    "imitation/model/tests/test_store_train.py": "13b6dc7647590fff97a8da9cd28198a45963412b0967457fe59c7e55e2b462cc",
+    "imitation/model/README.md": "c27eef34eac9350a86d940bb43e9379a1e0d541514ccda0c04e9d6d084436b60",
+    "imitation/model/receipts/t3-qualified-release-snapshot.json": "6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c"
+  }
+}

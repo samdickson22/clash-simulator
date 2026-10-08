@@ -1,0 +1,72 @@
+{
+  "matches": 183,
+  "counts": {
+    "rich_native_ids": 28824,
+    "rich_identity_changing_ids": 0,
+    "objects": 2918547,
+    "clean_identity_tower_anchor_hp": 1072877,
+    "clean_name_changed": 852155,
+    "clean_visible_nondeploying": 86475,
+    "contradictions": 411626,
+    "metadata_from_future": 2339470,
+    "clean_identity_unique_card_payload_hp": 1179467,
+    "contradictory_hitpoint_objects": 324599,
+    "contradictory_changing_ids": 0,
+    "contradictory_same_tick_rich": 25949,
+    "same_tick_id_differs": 0,
+    "same_tick_fields_differ": 0,
+    "clean_identity_unresolved_payload": 75840,
+    "clean_identity_non_hitpoint": 324734,
+    "clean_identity_ambiguous_payload": 265629
+  },
+  "causes": {
+    "catalog_generation_bug": 169501,
+    "unresolved_masked": 134160,
+    "non_body_parent_hint": 87027,
+    "legitimate_parent_child_hint": 20938
+  },
+  "heldout_opened": false,
+  "splits": {
+    "train": {
+      "rich_native_ids": 25793,
+      "rich_identity_changing_ids": 0,
+      "objects": 2599498,
+      "clean_identity_tower_anchor_hp": 948365,
+      "clean_name_changed": 745183,
+      "clean_visible_nondeploying": 76710,
+      "contradictions": 366706,
+      "metadata_from_future": 2080502,
+      "clean_identity_unique_card_payload_hp": 1059691,
+      "contradictory_hitpoint_objects": 288115,
+      "contradictory_changing_ids": 0,
+      "contradictory_same_tick_rich": 23184,
+      "same_tick_id_differs": 0,
+      "same_tick_fields_differ": 0,
+      "clean_identity_unresolved_payload": 64068,
+      "clean_identity_non_hitpoint": 292901,
+      "matches": 163,
+      "clean_identity_ambiguous_payload": 234473
+    },
+    "validation": {
+      "rich_native_ids": 3031,
+      "rich_identity_changing_ids": 0,
+      "objects": 319049,
+      "clean_identity_tower_anchor_hp": 124512,
+      "clean_name_changed": 106972,
+      "clean_visible_nondeploying": 9765,
+      "contradictions": 44920,
+      "metadata_from_future": 258968,
+      "clean_identity_unresolved_payload": 11772,
+      "clean_identity_unique_card_payload_hp": 119776,
+      "clean_identity_non_hitpoint": 31833,
+      "contradictory_hitpoint_objects": 36484,
+      "contradictory_changing_ids": 0,
+      "contradictory_same_tick_rich": 2765,
+      "same_tick_id_differs": 0,
+      "same_tick_fields_differ": 0,
+      "clean_identity_ambiguous_payload": 31156,
+      "matches": 20
+    }
+  },
+  "raw_receipt_sha256": "291b206e42697a1a12f8f4872ef087bb8e5182f3658bb8de79bfee4756e7aa6c"
+}

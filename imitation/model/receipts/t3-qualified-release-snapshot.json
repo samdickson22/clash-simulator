@@ -1,0 +1,748 @@
+{
+  "passed": true,
+  "published_utc": "2026-10-08T06:42:32.432848+00:00",
+  "decision": "Coordinator: store and frequency baselines release training; P16 is gate A2 only",
+  "store": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1",
+  "store_manifest_sha256": "1acf6b5875091e009c18e598a71714016b9833b6cc626032e0fa676ccdac5c2f",
+  "roles": {
+    "dev": {
+      "entities": 31020026,
+      "perspectives": 3546,
+      "rows": 2759722
+    },
+    "eval": {
+      "entities": 33068263,
+      "perspectives": 3765,
+      "rows": 2943085
+    },
+    "eval_ood": {
+      "entities": 32794937,
+      "perspectives": 3771,
+      "rows": 2885746
+    },
+    "train": {
+      "entities": 607678487,
+      "perspectives": 69380,
+      "rows": 53989262
+    }
+  },
+  "role_file_sha256": "7e357f64ad6df13e232ec9b1c7c143bbcd734d12a9cdceec2cef999bbe74fcdc",
+  "roundtrip_perspectives": 805,
+  "roundtrip_exact": true,
+  "role_counts_equal": true,
+  "baselines": {
+    "frequency-complete": {
+      "cpu_seconds": 45.872461358,
+      "passed": true,
+      "wall_seconds": 46.75454629585147
+    },
+    "prereg": {
+      "bucket": "floor(own_elixir), phase at 2400/3600",
+      "eval_spec": "d9f978f75191b5d5a474d127dbccd618b93dad5069dd851ab4f8b2a47fdaa7ae",
+      "frequency": "natural train counts; gate legal renormalization; global-train backoff for empty buckets; tile add-one; card uniform legal only if all train counts zero",
+      "p16": "upgraded natural seed2903; whole recurrent perspectives; natural supervised rows",
+      "recipe": "45c14463ee57798cef59d5c9d33a5caeccedfc11353c41b35445f0769ea74a84",
+      "store_manifest": "1acf6b5875091e009c18e598a71714016b9833b6cc626032e0fa676ccdac5c2f",
+      "timing": "play_wait_* uses all supervised rows per frozen JSON; *_playable additionally uses rows with a legal card play per DESIGN",
+      "upgrade_adapter": "efe66b4604979e0356821a12b8356018bb6bea469f9ed3340d13158b0a73100c"
+    },
+    "frequency-dev": {
+      "count_sha256": "37190e4398bd178d99501dd9572926590111db85ae924725d0dabaaab52f384b",
+      "metrics": {
+        "ability_nll": 7.172264341030468,
+        "ability_nll_sum": 14387.562268107118,
+        "ability_rows": 2006.0,
+        "card_nll": 1.4243370960018313,
+        "card_nll_sum": 183725.24201327623,
+        "card_top1": 0.3344910458175052,
+        "card_top1_count": 43146.0,
+        "card_top3": 0.8457554849213117,
+        "card_top3_count": 109094.0,
+        "ece": 0.001681647965912464,
+        "ece_playable": 0.001723138016754209,
+        "hazard_calibration": [
+          {
+            "observed": 0.014027663350597219,
+            "predicted": 0.009869295448624719,
+            "rows": 275527
+          },
+          {
+            "observed": 0.023340725228380522,
+            "predicted": 0.022621838249600366,
+            "rows": 275527
+          },
+          {
+            "observed": 0.023674630798433547,
+            "predicted": 0.02309471339234618,
+            "rows": 275527
+          },
+          {
+            "observed": 0.028251314753182082,
+            "predicted": 0.02754459096193227,
+            "rows": 275527
+          },
+          {
+            "observed": 0.02913326098712649,
+            "predicted": 0.029364033005526518,
+            "rows": 275527
+          },
+          {
+            "observed": 0.03659169518776744,
+            "predicted": 0.033843224125957916,
+            "rows": 275527
+          },
+          {
+            "observed": 0.054136451732322906,
+            "predicted": 0.052925298186369894,
+            "rows": 275526
+          },
+          {
+            "observed": 0.06467629189259816,
+            "predicted": 0.06306931890261187,
+            "rows": 275526
+          },
+          {
+            "observed": 0.08362913118907109,
+            "predicted": 0.08220974539945596,
+            "rows": 275526
+          },
+          {
+            "observed": 0.11797797667007832,
+            "predicted": 0.1145421450586576,
+            "rows": 275526
+          }
+        ],
+        "hazard_calibration_playable": [
+          {
+            "observed": 0.023899065874074973,
+            "predicted": 0.019331598321664294,
+            "rows": 263776
+          },
+          {
+            "observed": 0.022992994055562294,
+            "predicted": 0.022738443487301904,
+            "rows": 263776
+          },
+          {
+            "observed": 0.024577671964090744,
+            "predicted": 0.02369788490617753,
+            "rows": 263776
+          },
+          {
+            "observed": 0.02934687007157588,
+            "predicted": 0.028875348579970542,
+            "rows": 263776
+          },
+          {
+            "observed": 0.029259674875652068,
+            "predicted": 0.029435267570352083,
+            "rows": 263776
+          },
+          {
+            "observed": 0.04089075579279389,
+            "predicted": 0.037716769821384534,
+            "rows": 263776
+          },
+          {
+            "observed": 0.055046706296251365,
+            "predicted": 0.0538704697609724,
+            "rows": 263776
+          },
+          {
+            "observed": 0.06648065024869586,
+            "predicted": 0.06495845659893708,
+            "rows": 263776
+          },
+          {
+            "observed": 0.08453416737749976,
+            "predicted": 0.08304079797973325,
+            "rows": 263775
+          },
+          {
+            "observed": 0.11936309354563548,
+            "predicted": 0.11584641236877805,
+            "rows": 263775
+          }
+        ],
+        "joint_nll": 0.4381987803312218,
+        "joint_nll_sum": 1207354.2006880841,
+        "median_tile_error": 8.0,
+        "play_rows": 128990.0,
+        "play_wait_brier": 0.04423611403317115,
+        "play_wait_brier_playable": 0.04618405734316766,
+        "play_wait_brier_playable_sum": 121822.36672939925,
+        "play_wait_brier_sum": 121882.26096771935,
+        "play_wait_nll": 0.18050085643092045,
+        "play_wait_nll_playable": 0.18838051800284328,
+        "play_wait_nll_playable_sum": 496902.2184061439,
+        "play_wait_nll_sum": 497327.8726949965,
+        "playable_rows": 2637758.0,
+        "rows": 2755266.0,
+        "tile_nll": 4.017819889695658,
+        "tile_nll_sum": 518258.58757184295
+      },
+      "p16": {
+        "ability_nll": 0.0,
+        "ability_nll_sum": 0.0,
+        "ability_rows": 0.0,
+        "card_nll": 1.3137035326973485,
+        "card_nll_sum": 34587.186608855794,
+        "card_top1": 0.33101640838650864,
+        "card_top1_count": 8715.0,
+        "card_top3": 0.866378000607718,
+        "card_top3_count": 22810.0,
+        "ece": 0.006299412230701717,
+        "ece_playable": 0.006502099348215187,
+        "hazard_calibration": [
+          {
+            "observed": 0.019558209899736983,
+            "predicted": 0.012047437993830897,
+            "rows": 50567
+          },
+          {
+            "observed": 0.0266181501769929,
+            "predicted": 0.022632264363428908,
+            "rows": 50567
+          },
+          {
+            "observed": 0.025273399647991773,
+            "predicted": 0.023210546194006493,
+            "rows": 50567
+          },
+          {
+            "observed": 0.03146320723001167,
+            "predicted": 0.027778585643212853,
+            "rows": 50567
+          },
+          {
+            "observed": 0.03383629639883719,
+            "predicted": 0.029343921952313966,
+            "rows": 50567
+          },
+          {
+            "observed": 0.040164534182371904,
+            "predicted": 0.03347115682815881,
+            "rows": 50567
+          },
+          {
+            "observed": 0.05944588367907924,
+            "predicted": 0.052454740084482185,
+            "rows": 50567
+          },
+          {
+            "observed": 0.06959083987580833,
+            "predicted": 0.062344662191714244,
+            "rows": 50567
+          },
+          {
+            "observed": 0.09128483002748829,
+            "predicted": 0.08097722486872189,
+            "rows": 50567
+          },
+          {
+            "observed": 0.12342285330063679,
+            "predicted": 0.11340346842684443,
+            "rows": 50566
+          }
+        ],
+        "hazard_calibration_playable": [
+          {
+            "observed": 0.028209262925843522,
+            "predicted": 0.018982013295208915,
+            "rows": 48991
+          },
+          {
+            "observed": 0.026494662284909473,
+            "predicted": 0.022704028334017225,
+            "rows": 48991
+          },
+          {
+            "observed": 0.024820885468759567,
+            "predicted": 0.023649952643521464,
+            "rows": 48991
+          },
+          {
+            "observed": 0.03372047927170296,
+            "predicted": 0.028745728853364204,
+            "rows": 48991
+          },
+          {
+            "observed": 0.033822538833663325,
+            "predicted": 0.029396366861513788,
+            "rows": 48991
+          },
+          {
+            "observed": 0.042926251760527445,
+            "predicted": 0.03601499397334331,
+            "rows": 48991
+          },
+          {
+            "observed": 0.06046131863645642,
+            "predicted": 0.05336513570049265,
+            "rows": 48990
+          },
+          {
+            "observed": 0.06997346397223923,
+            "predicted": 0.06341800970025434,
+            "rows": 48990
+          },
+          {
+            "observed": 0.09277403551745254,
+            "predicted": 0.08180585332436634,
+            "rows": 48990
+          },
+          {
+            "observed": 0.12420902224943867,
+            "predicted": 0.11430867101118926,
+            "rows": 48990
+          }
+        ],
+        "joint_nll": 0.4743211277623283,
+        "joint_nll_sum": 239849.4903544488,
+        "median_tile_error": 7.211102550927978,
+        "play_rows": 26328.0,
+        "play_wait_brier": 0.048282788408718094,
+        "play_wait_brier_playable": 0.04983631417424582,
+        "play_wait_brier_playable_sum": 24415.10933184807,
+        "play_wait_brier_sum": 24415.10933184807,
+        "play_wait_nll": 0.19454356584020244,
+        "play_wait_nll_playable": 0.20080311405626652,
+        "play_wait_nll_playable_sum": 98374.6503948493,
+        "play_wait_nll_sum": 98374.65039484932,
+        "playable_rows": 489906.0,
+        "rows": 505669.0,
+        "tile_nll": 4.0598470582932045,
+        "tile_nll_sum": 106887.6533507435
+      },
+      "perspectives": 3546,
+      "role": "dev"
+    },
+    "frequency-eval": {
+      "count_sha256": "37190e4398bd178d99501dd9572926590111db85ae924725d0dabaaab52f384b",
+      "metrics": {
+        "ability_nll": 7.176339920898154,
+        "ability_nll_sum": 13656.574869469187,
+        "ability_rows": 1903.0,
+        "card_nll": 1.4043497994947718,
+        "card_nll_sum": 192539.16621033222,
+        "card_top1": 0.3424238887835334,
+        "card_top1_count": 46947.0,
+        "card_top3": 0.8506221645198465,
+        "card_top3_count": 116622.0,
+        "ece": 0.0011850690472798488,
+        "ece_playable": 0.0011950736958590384,
+        "hazard_calibration": [
+          {
+            "observed": 0.015050952682418772,
+            "predicted": 0.01023258942779704,
+            "rows": 293802
+          },
+          {
+            "observed": 0.0225900436348289,
+            "predicted": 0.02264547566864126,
+            "rows": 293802
+          },
+          {
+            "observed": 0.023655386961286853,
+            "predicted": 0.023151034936286112,
+            "rows": 293802
+          },
+          {
+            "observed": 0.028236703630336077,
+            "predicted": 0.027722358135673728,
+            "rows": 293802
+          },
+          {
+            "observed": 0.029022947427178848,
+            "predicted": 0.02937787327091816,
+            "rows": 293802
+          },
+          {
+            "observed": 0.03750485020524026,
+            "predicted": 0.0348547552457878,
+            "rows": 293802
+          },
+          {
+            "observed": 0.05388681454453865,
+            "predicted": 0.0533664866739821,
+            "rows": 293801
+          },
+          {
+            "observed": 0.06532653054278235,
+            "predicted": 0.06411380749170045,
+            "rows": 293801
+          },
+          {
+            "observed": 0.08226656818731046,
+            "predicted": 0.08288362612751086,
+            "rows": 293801
+          },
+          {
+            "observed": 0.11558503885282896,
+            "predicted": 0.1161881007698133,
+            "rows": 293801
+          }
+        ],
+        "hazard_calibration_playable": [
+          {
+            "observed": 0.02431113713383368,
+            "predicted": 0.01931106813126581,
+            "rows": 281805
+          },
+          {
+            "observed": 0.022820744841290964,
+            "predicted": 0.02274098272653869,
+            "rows": 281805
+          },
+          {
+            "observed": 0.023835631021451004,
+            "predicted": 0.02372982110685309,
+            "rows": 281805
+          },
+          {
+            "observed": 0.029555898582353045,
+            "predicted": 0.029001590846324043,
+            "rows": 281805
+          },
+          {
+            "observed": 0.029243625911534572,
+            "predicted": 0.02944653338183451,
+            "rows": 281805
+          },
+          {
+            "observed": 0.0413299976934405,
+            "predicted": 0.038721770314840344,
+            "rows": 281805
+          },
+          {
+            "observed": 0.054793208069409696,
+            "predicted": 0.05416598214205631,
+            "rows": 281805
+          },
+          {
+            "observed": 0.0674154113660155,
+            "predicted": 0.06602219013984152,
+            "rows": 281805
+          },
+          {
+            "observed": 0.08283032593460017,
+            "predicted": 0.08364765927545423,
+            "rows": 281805
+          },
+          {
+            "observed": 0.11694256666844094,
+            "predicted": 0.11750443951580275,
+            "rows": 281805
+          }
+        ],
+        "joint_nll": 0.43631872821678397,
+        "joint_nll_sum": 1281911.4046005628,
+        "median_tile_error": 8.06225774829855,
+        "play_rows": 137102.0,
+        "play_wait_brier": 0.04406558408626847,
+        "play_wait_brier_playable": 0.045922707562236535,
+        "play_wait_brier_playable_sum": 129412.48604576067,
+        "play_wait_brier_sum": 129465.39109480214,
+        "play_wait_nll": 0.18012726507018711,
+        "play_wait_nll_playable": 0.18766221318262888,
+        "play_wait_nll_playable_sum": 528841.4998593073,
+        "play_wait_nll_sum": 529216.7868124509,
+        "playable_rows": 2818050.0,
+        "rows": 2938016.0,
+        "tile_nll": 4.029418450064154,
+        "tile_nll_sum": 552441.3283406956
+      },
+      "p16": {
+        "ability_nll": 0.0,
+        "ability_nll_sum": 0.0,
+        "ability_rows": 0.0,
+        "card_nll": 1.2926675867607236,
+        "card_nll_sum": 36321.37385280281,
+        "card_top1": 0.34173250765179014,
+        "card_top1_count": 9602.0,
+        "card_top3": 0.8782475621040643,
+        "card_top3_count": 24677.0,
+        "ece": 0.006648712398851827,
+        "ece_playable": 0.006888899750856613,
+        "hazard_calibration": [
+          {
+            "observed": 0.018961450578609863,
+            "predicted": 0.01095733828517817,
+            "rows": 54268
+          },
+          {
+            "observed": 0.027124640672219355,
+            "predicted": 0.02241234496973774,
+            "rows": 54268
+          },
+          {
+            "observed": 0.026498120439301245,
+            "predicted": 0.023131585409146338,
+            "rows": 54268
+          },
+          {
+            "observed": 0.03101275152944645,
+            "predicted": 0.027434017370704385,
+            "rows": 54268
+          },
+          {
+            "observed": 0.03329770767303015,
+            "predicted": 0.029314163064599573,
+            "rows": 54268
+          },
+          {
+            "observed": 0.042290115721972436,
+            "predicted": 0.032307992408981585,
+            "rows": 54268
+          },
+          {
+            "observed": 0.05780570501953269,
+            "predicted": 0.0512309252963992,
+            "rows": 54268
+          },
+          {
+            "observed": 0.07234465983636766,
+            "predicted": 0.061085194782358784,
+            "rows": 54268
+          },
+          {
+            "observed": 0.09331466057345028,
+            "predicted": 0.08013417825837325,
+            "rows": 54268
+          },
+          {
+            "observed": 0.1151138792658657,
+            "predicted": 0.11326882747579854,
+            "rows": 54268
+          }
+        ],
+        "hazard_calibration_playable": [
+          {
+            "observed": 0.0284863296166183,
+            "predicted": 0.018499979167723057,
+            "rows": 52376
+          },
+          {
+            "observed": 0.027665342905147397,
+            "predicted": 0.022688804977302787,
+            "rows": 52376
+          },
+          {
+            "observed": 0.024877806628990376,
+            "predicted": 0.02362205687443628,
+            "rows": 52376
+          },
+          {
+            "observed": 0.03406140216893234,
+            "predicted": 0.028492638082959102,
+            "rows": 52376
+          },
+          {
+            "observed": 0.03396593859783107,
+            "predicted": 0.029386696671117277,
+            "rows": 52376
+          },
+          {
+            "observed": 0.043206812280433785,
+            "predicted": 0.03445840538774039,
+            "rows": 52376
+          },
+          {
+            "observed": 0.05983656636627463,
+            "predicted": 0.052871850912056886,
+            "rows": 52376
+          },
+          {
+            "observed": 0.07570261188330533,
+            "predicted": 0.062244770782650345,
+            "rows": 52376
+          },
+          {
+            "observed": 0.0927333129677715,
+            "predicted": 0.0810342299624126,
+            "rows": 52376
+          },
+          {
+            "observed": 0.11593317422434367,
+            "predicted": 0.11428096729536305,
+            "rows": 52375
+          }
+        ],
+        "joint_nll": 0.47153584667950305,
+        "joint_nll_sum": 255893.07327603272,
+        "median_tile_error": 7.280109889280518,
+        "play_rows": 28098.0,
+        "play_wait_brier": 0.04814716063725911,
+        "play_wait_brier_playable": 0.04988649576356258,
+        "play_wait_brier_playable_sum": 26128.50113462777,
+        "play_wait_brier_sum": 26128.50113462777,
+        "play_wait_nll": 0.194515314703019,
+        "play_wait_nll_playable": 0.20154225699803602,
+        "play_wait_nll_playable_sum": 105559.57098303434,
+        "play_wait_nll_sum": 105559.57098303435,
+        "playable_rows": 523759.0,
+        "rows": 542680.0,
+        "tile_nll": 4.0576599202859915,
+        "tile_nll_sum": 114012.12844019578
+      },
+      "perspectives": 3765,
+      "role": "eval"
+    },
+    "frequency-eval_ood": {
+      "count_sha256": "37190e4398bd178d99501dd9572926590111db85ae924725d0dabaaab52f384b",
+      "metrics": {
+        "ability_nll": 7.110449455613428,
+        "ability_nll_sum": 63.99404510052085,
+        "ability_rows": 9.0,
+        "card_nll": 1.59966576899056,
+        "card_nll_sum": 205457.87203760954,
+        "card_top1": 0.34584001619458415,
+        "card_top1_count": 44419.0,
+        "card_top3": 0.8350799607592768,
+        "card_top3_count": 107256.0,
+        "ece": 0.003922155390324811,
+        "ece_playable": 0.004065008017604757,
+        "hazard_calibration": [
+          {
+            "observed": 0.013245930341622027,
+            "predicted": 0.010485445101254659,
+            "rows": 287862
+          },
+          {
+            "observed": 0.02205925776676938,
+            "predicted": 0.022649070661748465,
+            "rows": 287861
+          },
+          {
+            "observed": 0.02345923900771553,
+            "predicted": 0.0232337823350762,
+            "rows": 287861
+          },
+          {
+            "observed": 0.027742556303215787,
+            "predicted": 0.027915990368581157,
+            "rows": 287861
+          },
+          {
+            "observed": 0.03011175532635543,
+            "predicted": 0.029352346369313782,
+            "rows": 287861
+          },
+          {
+            "observed": 0.03369334505195216,
+            "predicted": 0.03521675161703483,
+            "rows": 287861
+          },
+          {
+            "observed": 0.04933283772376251,
+            "predicted": 0.05379925201347122,
+            "rows": 287861
+          },
+          {
+            "observed": 0.05951483528508551,
+            "predicted": 0.06674077789562076,
+            "rows": 287861
+          },
+          {
+            "observed": 0.07912499435491435,
+            "predicted": 0.08460112489990433,
+            "rows": 287861
+          },
+          {
+            "observed": 0.10792708981070726,
+            "predicted": 0.12394815590877056,
+            "rows": 287861
+          }
+        ],
+        "hazard_calibration_playable": [
+          {
+            "observed": 0.02246893520096912,
+            "predicted": 0.019911820559334818,
+            "rows": 275714
+          },
+          {
+            "observed": 0.022215048927511843,
+            "predicted": 0.022748073588508423,
+            "rows": 275714
+          },
+          {
+            "observed": 0.02509484465787011,
+            "predicted": 0.023891200894705856,
+            "rows": 275714
+          },
+          {
+            "observed": 0.028340962011359598,
+            "predicted": 0.0291937223800696,
+            "rows": 275714
+          },
+          {
+            "observed": 0.0290337088432216,
+            "predicted": 0.029422283995177722,
+            "rows": 275714
+          },
+          {
+            "observed": 0.03737205945291135,
+            "predicted": 0.0392351091768383,
+            "rows": 275714
+          },
+          {
+            "observed": 0.05120523440956934,
+            "predicted": 0.05508254432489451,
+            "rows": 275714
+          },
+          {
+            "observed": 0.06122308342370508,
+            "predicted": 0.06913124914405233,
+            "rows": 275713
+          },
+          {
+            "observed": 0.08022109947662968,
+            "predicted": 0.08487383736805978,
+            "rows": 275713
+          },
+          {
+            "observed": 0.10869636179650578,
+            "predicted": 0.12551012244470308,
+            "rows": 275713
+          }
+        ],
+        "joint_nll": 0.4250703590635061,
+        "joint_nll_sum": 1223612.2113741583,
+        "median_tile_error": 7.810249675906654,
+        "play_rows": 128438.0,
+        "play_wait_brier": 0.041811832178010315,
+        "play_wait_brier_playable": 0.04365397872970625,
+        "play_wait_brier_playable_sum": 120359.99995288611,
+        "play_wait_brier_sum": 120360.00003777446,
+        "play_wait_nll": 0.17302773039004807,
+        "play_wait_nll_playable": 0.18065096194081814,
+        "play_wait_nll_playable_sum": 498079.4512526215,
+        "play_wait_nll_sum": 498079.52800582664,
+        "playable_rows": 2757137.0,
+        "rows": 2878611.0,
+        "tile_nll": 4.048950691751163,
+        "tile_nll_sum": 520039.1289471359
+      },
+      "p16": null,
+      "perspectives": 3771,
+      "role": "eval_ood"
+    }
+  },
+  "baseline_file_sha256": {
+    "prereg.json": "5f7100eb80dd042b157e9011ff4c61b391a89fbbaebad0e1bc6334ee5b63e23d",
+    "frequency-complete.json": "a2cc94464bb7d3c9015f6ea7a01dd82e01cdbad3de1c228be3a058158d3e08bd",
+    "frequency-counts.npz": "37190e4398bd178d99501dd9572926590111db85ae924725d0dabaaab52f384b",
+    "frequency-dev.json": "9958738b8e0cc3f71f72f02e8a13b706503bd4a3d7090a2c5f6180a8034717da",
+    "frequency-eval.json": "3837b6af5d484dedcfcff9c4289ee35d69df16b6597c378ddc684530ebe738e4",
+    "frequency-eval_ood.json": "425aaf8d470907dd8fa9c159ea80a3dedc94f493f64e8f2f63a34d40e87edaae"
+  },
+  "copies": [],
+  "copies_status": "pending",
+  "copies_receipt": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/receipts/T3-COPIES.json",
+  "p16_baseline": "pending",
+  "p16_label": "imitation-data-finish-v1",
+  "p16_pid": 3449355,
+  "p16_expected_completion_utc": "2026-10-08T08:30:00Z",
+  "p16_expected_completion_note": "Estimate from completed 648-perspective dev; eval has 705, OOD zero. Not a deadline.",
+  "p16_receipt": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/receipts/T3-P16-BASELINE.json"
+}

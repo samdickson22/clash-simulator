@@ -1,10 +1,43 @@
 {
-  "checked_at": "2026-10-08T06:41:22.298738+00:00",
-  "status": "T3_PENDING",
+  "checked_at": "2026-10-08T07:41:31.182191+00:00",
+  "status": "SHAKEDOWN_RUNNING",
   "receipt": "127x01:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/receipts/T3-PASS.json",
   "interval_seconds": 600,
   "deadline": "2026-10-09T14:30:00Z",
-  "next_scheduled_run": "2026-10-08T06:51:22.298738+00:00",
+  "next_scheduled_run": "2026-10-08T07:51:31.182191+00:00",
   "scheduled_task_id": "scheduled-task:command:mcp:c588a151-27f6-471c-bafb-661cddc13f03:schedule-task:clasher-imitation-t4-t3-poll-20261008",
-  "next_scheduled_run_is_estimate": true
+  "next_scheduled_run_is_estimate": true,
+  "t3_published_utc": "2026-10-08T06:42:32.432848+00:00",
+  "store": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1",
+  "store_manifest_sha256": "1acf6b5875091e009c18e598a71714016b9833b6cc626032e0fa676ccdac5c2f",
+  "copy_receipt": "127x01:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/receipts/T3-COPIES.json",
+  "fleet": {
+    "host": "127x04",
+    "who_empty": true,
+    "gpu_compute_processes": 0,
+    "other_python_processes": 0,
+    "rsync_processes": 0,
+    "train_manifest_present": true,
+    "qualification_receipt_present": true,
+    "own_gpu_job": "t4-shakedown-20261008T0727Z",
+    "own_source_snapshot": "/mpac/sdicks02/tmp/t4-shakedown-20261008T0727Z/source",
+    "launcher_pid": 2398593,
+    "run_directory": "/mpac/sdicks02/tmp/t4-shakedown-20261008T0727Z/run",
+    "log": "/mpac/sdicks02/jobs/clasher/t4-shakedown-20261008T0727Z.log",
+    "exit_receipt": "/mpac/sdicks02/jobs/clasher/t4-shakedown-20261008T0727Z.exit",
+    "last_stage": "subset",
+    "last_observed_step": 8,
+    "last_observed_loss": 9.600327745079994,
+    "rows_per_second_including_loader": 2291.0314152759083,
+    "gpu_peak_allocated_mib": 471.2197265625,
+    "gpu_peak_reserved_mib": 642.0
+  },
+  "next_action": "Shakedown launched. Inspect this verified job receipt/log once; do not launch a duplicate. Wrapper runs subset, overfit, then full dev evaluator. On failure inspect and fix only own files; preserve artifacts. On completion collect metrics and disable schedule.",
+  "prior_failed_job": {
+    "label": "t4-shakedown-20261008T0714Z",
+    "exit": 1,
+    "reason": "dev row exceeds sampled design assumption of 64 entities",
+    "subset_training_rows": 65519,
+    "checkpoint_saved": false
+  }
 }

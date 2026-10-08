@@ -15,7 +15,7 @@ class ModelConfig:
     heads: int = 6
     layers: int = 4
     ffn: int = 768
-    tile_width: int = 128
+    tile_width: int = 64
     dropout: float = 0.1
     numeric: int = 24
     types: int = 24

@@ -1,7 +1,7 @@
 # T6/T7 fleet runbook
 
 Home-host commands run from `/mpac/sdicks02/repos/clasher` on **127x01**. Use only
-`/mpac/sdicks02/envs/clasher-gpu/bin/python`; eager CUDA, no compile. Check `who`,
+`/mpac/sdicks02/envs/clasher-gpu/bin/python`; eager CUDA, no compile. Check `~/.local/bin/fleet-console-users`,
 Python worker count and `nvidia-smi` before each launch: total <=96 (<=16 with
 console user), leave >=12GiB GPU headroom. `fleet_run.sh` applies nice 10 and
 thread limits. Use distinct labels; inspect `.exit`, not just launch acceptance.
@@ -23,7 +23,7 @@ bash reports/strategy_council_20260928/fleet/fleet_run.sh t7-formal-UNIQUE \
   bash reports/strategy_council_20260928/live-loop/v4/l1/formal_train.sh \
   t7 /path/from/T1/pipeline-state.json /path/from/T1/phase-a-exit.json \
   /mpac/sdicks02/repos/clasher-v4-training/t7-formal-UNIQUE \
-  /mpac/sdicks02/repos/clasher-v4-data/cache
+  /mpac/sdicks02/repos/clasher-v4-cache
 ```
 
 T6: 24x400 steps, seed 6107, unchanged v2 warm start, 3-positive/1-negative
@@ -59,8 +59,14 @@ bash reports/strategy_council_20260928/fleet/fleet_run.sh t6-gap-UNIQUE \
 ```
 
 Retain all source/data/weights on 01; mirror only code, docs, JSON receipts and
-logs to 05. No media or model files to 05. Keep total v4 fleet footprint <=40GB;
-stop on space pressure instead of deleting data. Export plan: EXPORT.md.
+logs to 05. No media or model files to 05. The 40 GB frozen acquisition cap applies
+to hub raw collection. Coordinator approval (2026-10-08 07:22 UTC, COORDINATOR.md)
+permits a separate 300 GB derived-cache budget per allowed host, with >=200 GB
+free on /mpac. Approved cache roots are `clasher-v4-cache/` on home hosts and
+`clasher-lease/data/v4-cache/` on leased CPU/GPU hosts; no new cache in the
+acquisition tree. Leased caches must move off or be deleted within one day of
+lease end (currently by 2026-10-10 05:30 UTC). Preserve evidence by moving it.
+Stop on space pressure. Export plan: EXPORT.md.
 
 ## Predecoded cache and labels, 2026-10-08
 
@@ -82,10 +88,13 @@ are refused. Do not set a match limit/partition for the final full staging pass.
 blocks plus per-match indices/SHA256 and independent random 1% equality receipts.
 It refuses heldout, verifies source hashes, keeps incomplete attempts, commits
 each completed match atomically and verifies completed matches on restart.
-The current per-match space allocation is conservative; use bounded batches
-and explicit total cache budgets. No cache deletion is allowed.
+Frame-weighted per-match allocations bound concurrent growth, including retained
+partial attempts, with metadata/free-space reserves. Default build budget is
+280 GB, below the approved 300 GB ceiling. A cache-root writer lock prevents
+concurrent builders/copies. SIGTERM/SIGUSR1 stops new submissions and finishes
+only current match commits, then exits 75; resume with a fresh job/receipt label.
 
-The successful five-match pilot is under
+The original successful five-match pilot was under
 `127x16,127x18:/mpac/sdicks02/repos/clasher-lease/cache/v4-pixels-r2/`.
 18 has all five matches; 16 has four. The five-match pilot was also copied to
 `127x01:/mpac/sdicks02/repos/clasher-v4-data/cache/` at 07:01 UTC after `who`
@@ -97,9 +106,19 @@ Mirror only compact receipts/source/docs to 05.
 The cache is **5,910,676,788 bytes for 14,592 frames**, including raw pixels needed
 for identical JPEG-before-resize augmentation. At that measured density, even
 the 240,291-frame audited population needs about 97 GB for one complete cache.
-The existing **40 GB total fleet footprint remains binding**; a storage-only
-increase was requested but has not been approved. Do not silently decode a
-subset and call it formal, exceed the budget, or discard originals to make room.
+The derived-cache increase is now approved; frozen acquisition accounting is
+unchanged. `cache_batch.sh migrate LABEL` moves these historical roots into the
+approved locations without deleting data. On leased 18, the failed pilot moves
+into `data/v4-cache/retained-legacy-failed/` and counts against its budget.
+`cache_batch.sh build LABEL PARTITION PARTITIONS WORKERS` stages only admitted
+train/validation files, reuses checksum-verified pilot matches, and decodes its
+disjoint seed partition. Run through the appropriate fleet/lease wrapper.
+Initial plan: partitions 0/2 and 1/2 on 16/18 with 24 workers each. Host 18 stages
+all train/validation payloads for subsequent T7; 16 stages its media partition.
+`sync_pixel_cache.py` imports only completed matches through unique temporary
+directories, verifies SHA256/equality evidence, then atomically publishes them.
+It checks host budget/free space before each import and retains interrupted copies.
+Never substitute a cache subset for the formal population or discard originals.
 
 Use the live leased-host run.sh/env.sh from fleet/LEASED-HOSTS.md, never the home
 fleet_run.sh on a borrowed host. Check leases/caps/GPU/RSS before every launch.
