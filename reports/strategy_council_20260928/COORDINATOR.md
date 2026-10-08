@@ -426,3 +426,13 @@ Also on the hub, but with copies elsewhere:
     opponent units). It is cheap to iterate in simulation, the largest measured lever (up to ~15 pp), and it also
     lowers the event-quality bar that v4 perception must hit. Second priority for v4 perception: board precision
     (phantoms 7.5%, drops 3%; ~6 pp). HP and latency are lower priority. L2-v4 stays blocked until the S3 tracker passes.
+- **2026-10-08 05:14 UTC: T1 Phase A goes to 3 parallel renderers** (Sam: "this seems slow, can we parallelize").
+  One emulator plays at 1× real time (20 FPS capture), so it managed ~99 matches in 4.7 h. The fleet has no KVM, so
+  parallelism has to come from the Mac. It has room: 12 cores and 24 GB; our emulator uses ~0.75 core and 1.3 GB RSS, and
+  memory is 48% free. The UTM VM (~2.7 GB) is not ours and stays untouched.
+  Decision: up to 3 owned instances from the same read-only AVD and pinned attestation, with an atomic seed queue,
+  receipts tagged by instance, and every per-match endpoint unchanged. Global buffer cap and disk floor. The amendment
+  is recorded in PREREG before any new instance starts. Ramp-up admits each instance only after its first match passes
+  every endpoint; scale back if FPS or memory pressure degrades.
+  Expected: ~3× throughput, so the coverage stopping rule is reached in hours rather than ~10–14 h. Astra task
+  `clasher-t1-parallel-renderers-20261008-1`.
