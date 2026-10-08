@@ -791,3 +791,8 @@ Also on the hub, but with copies elsewhere:
     - Even 3 of 4,278 v1-legal human actions were engine-rejected.
     - Visibility of blockers in the official client is still to be verified at live qualification.
   - **Exploration lane created** (non-confirmatory, no prereg, never heldout). First task: a loss-review ledger vs human baselines (ClashAI lesson) on 01/08 CPU.
+- **~23:00 UTC: model routing changed (Sam).**
+  - "Go light on Astra; use 6.1 Sol where it fits." New grunt-work delegations default to **GPT-6.1-Sol (high)**. Astra is kept for hard debugging, security, costly-to-miss work, or after Sol fails. Opus stays on reviews, research and frontend.
+  - **No limit on subagent count.**
+  - Updated `frontier-models.md` (both copies), memory and the heartbeat prompt. Roader was told.
+  - The heartbeat no longer SSHes to the Mac mini (Sam stopped those calls twice).
