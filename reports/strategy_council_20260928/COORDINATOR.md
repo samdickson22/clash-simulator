@@ -548,3 +548,24 @@ Also on the hub, but with copies elsewhere:
      first); any further failure or critical pressure means 1 for the rest of Phase A.
 - **2026-10-08 06:45 UTC heartbeat:** T3-PASS published (P16 baseline decoupled). Next: T4 shakedown poll (06:51), then T5 one run per GPU. Mac OK (26 GiB free, swap 6.9/8 GB, pressure normal; pool retry at 2 in progress). S5 preflight 7/10. Fleet reachable, console users 0 on our hosts, no lease reclaims. GPUs idle until T5.
 - **2026-10-08 06:45 UTC:** roader raised our caps on 127x16/18 from 48 to 96 processes (its speedup job finished; it keeps ≤8 light processes). ≤64 GB RSS and ≥8 GB GPU headroom unchanged. Lease files and lease-ready receipts updated (old receipts kept as `.bak-cap48`). 127x13/14 stay at ≤64.
+- **2026-10-08 07:11 UTC: S5 PASS. Tracker v3 adopted; tracker block on L2-v4 lifted; event gate set.**
+  (`search-noise-s5/RESULTS.md`; 1,536 games, 37 core-h, 18 min on 04/08.)
+  - Primary T3-N97 − Full-N97 = **+8.2 pp [+2.3, +14.5] PASS**; T3-N90 − Full-N90 = **+8.6 [+3.1, +14.5] PASS**;
+    T3 − ELT-N97 = +0.4 [−5.5, +6.2] (no difference resolved); ceiling gap R-derived − T3-N97 = 7.0 [2.0, 12.1].
+  - Diagnostics: T3-N97 resolves the hand on 24.1% of samples at 90.8% accuracy, elixir coverage 89%, width 2.8.
+  - Coordinator recomputation from the 1,536 raw receipts reproduces all three contrasts.
+  - **Decisions:**
+    1. Tracker v3 (`search-noise-s4`, frozen) becomes the fair player's opponent-state tracker for every noisy or live
+       pipeline. ELT and legacy are retired from live use.
+    2. **v4 event gate = in-loop opponent-event recall and precision ≥90% at 500 ms (hard minimum), 97/97 target.**
+       T3's gain is confirmed at N90, but hand inference only becomes informative near 97.
+    3. The tracker no longer blocks L2-v4. Remaining L2-v4 prerequisites:
+       - (a) delay-aware planner + S-d validation (T2 amendment items 4–5);
+       - (b) the 5-process pipelined Mac runtime (DESIGN §2);
+       - (c) v4 perception formal runs and gates (after Phase A, ETA ~16:40Z);
+       - (d) the P4 verifier re-test with the v4 HUD head (≥300+300 trials, ledger-relative spend predicate);
+       - (e) the L2-v4 PREREG.
+
+       (a) and (b) start now.
+  - Remaining decision-side gap: ~7 pp to R-derived, plus ~6 pp from board noise (S2). Board precision stays the
+    v4 perception priority after events.

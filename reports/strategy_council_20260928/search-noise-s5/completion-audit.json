@@ -1,0 +1,21 @@
+{
+  "games": 1536,
+  "counts": {
+    "T3-N97": 256,
+    "ELT-N97": 256,
+    "Full-N97": 256,
+    "R-derived": 256,
+    "T3-N90": 256,
+    "Full-N90": 256
+  },
+  "manifest": "692e774a4a914e79b530a64730ff946c6e0dadacd7a2bf6a55803903bd187af9",
+  "receipt_aggregate": "4230dc824f132e798dbfdfd88017cf2e25888956903e49db30f9bde01aabccc6",
+  "independent_scores_and_all_bootstrap_intervals_match": true,
+  "all_nice_at_least_10": true,
+  "all_native_threads_one": true,
+  "game_cpu_hours_by_host": {
+    "127x04": 18.610185030003052,
+    "127x08": 18.34390758617611
+  },
+  "wall_span_minutes": 17.752921485900877
+}

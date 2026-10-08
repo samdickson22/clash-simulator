@@ -1,0 +1,309 @@
+{
+  "total_metered_cpu_hours": 37.98346666666667,
+  "game_cpu_hours": 36.95409261617916,
+  "confirmation_supervisors_and_workers_cpu_hours": 37.099358333333335,
+  "preflight_and_operations_cpu_hours": 0.8841083333333335,
+  "missing_timing": [],
+  "total_is_lower_bound": false,
+  "records": [
+    {
+      "host": "127x01",
+      "label": "s5-collect-127x01-r1",
+      "log_sha256": "2360d6a293129967365d5f7587bf593bb76b937af6e37fec298b1e6ab5d741a9",
+      "cpu_seconds": 17.580000000000002,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s5-integrity-127x01-pre-r1",
+      "log_sha256": "7657abad1c5a86d3407ea419aaf5838b21cf9b59153d987a6d6db1ba6f1e76fe",
+      "cpu_seconds": 0.18,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s5-register-127x01-r1",
+      "log_sha256": "1b22bfe50e38ac756c7bbdc132cdedb571f223f6ff9121785375181d6b813897",
+      "cpu_seconds": 1.9200000000000002,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s5-seed-audit-127x01-r1",
+      "log_sha256": "651820da0b08f83aad5e080c4f79b75f2437be51687702a8751145d5f317e4d8",
+      "cpu_seconds": 339.78,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s5-snapshot-127x01-r1",
+      "log_sha256": "fe48f318d45a7c2767c074ad1b2f422b14c4e149d11b4400d14110028b38010c",
+      "cpu_seconds": 0.2,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s5-start-confirmation-127x01-r1",
+      "log_sha256": "497a60643cba1595f270612ce776c028ae158ee456be781699fdb71c19e87b67",
+      "cpu_seconds": 1.47,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s5-start-preflight-127x01-r1",
+      "log_sha256": "51b609459c398e5f74ad18bd84e021d0f63c97356bbcebfb17952732dbf3b198",
+      "cpu_seconds": 0.45,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s5-confirm-node-127x04-r1",
+      "log_sha256": "99600011ae9d660f25f4ad5ae8908c5d9749e8d584e628432187c21200c288e8",
+      "cpu_seconds": 67260.24,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s5-integrity-127x01-pre-r1",
+      "log_sha256": "7657abad1c5a86d3407ea419aaf5838b21cf9b59153d987a6d6db1ba6f1e76fe",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "byte-identical copy"
+    },
+    {
+      "host": "127x04",
+      "label": "s5-integrity-127x04-pre-r1",
+      "log_sha256": "37543e89513136858a5518c78d100d990d1b9a4cc29c702573935ac452ca7db9",
+      "cpu_seconds": 0.12000000000000001,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s5-preflight-0-127x04-r1",
+      "log_sha256": "39f8df919a35e4252e0e2b8880bb09fea37d5a28f7c35102258d510a2b0939df",
+      "cpu_seconds": 657.41,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s5-preflight-2-127x04-r1",
+      "log_sha256": "df1d690164ea0b537b5759f39d6dc5508c96bc2de3eb17add33da5e38226695c",
+      "cpu_seconds": 584.19,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s5-preflight-4-127x04-r1",
+      "log_sha256": "6151bf28dff3f8af05994a2215cef214b54d7019df0dc8ec136b66b2ce8845df",
+      "cpu_seconds": 116.39,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s5-preflight-6-127x04-r1",
+      "log_sha256": "fa75bb2505406914e60a81b1e5dc15ecacde8e50ffbdb4c5fda3d20fd92a287e",
+      "cpu_seconds": 61.05,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s5-preflight-8-127x04-r1",
+      "log_sha256": "ddfb074d7ff5d9df11304c352b7130cea3e0a4110288b05721ef475dbc1530e0",
+      "cpu_seconds": 103.55000000000001,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s5-register-127x01-r1",
+      "log_sha256": "1b22bfe50e38ac756c7bbdc132cdedb571f223f6ff9121785375181d6b813897",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "byte-identical copy"
+    },
+    {
+      "host": "127x04",
+      "label": "s5-seed-audit-127x01-r1",
+      "log_sha256": "651820da0b08f83aad5e080c4f79b75f2437be51687702a8751145d5f317e4d8",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "byte-identical copy"
+    },
+    {
+      "host": "127x04",
+      "label": "s5-seed-audit-127x04-r1",
+      "log_sha256": "5045ae55a270187d777eb73397f184e4396bb158e1bf1bf6a92191703bfb4b36",
+      "cpu_seconds": 182.8,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s5-snapshot-127x01-r1",
+      "log_sha256": "fe48f318d45a7c2767c074ad1b2f422b14c4e149d11b4400d14110028b38010c",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "byte-identical copy"
+    },
+    {
+      "host": "127x04",
+      "label": "s5-snapshot-127x04-r1",
+      "log_sha256": "f09b230706aed5764950d01faf9718c4008d0eb37807a4af5283b239d4a0cfd6",
+      "cpu_seconds": 0.1,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s5-start-confirmation-127x01-r1",
+      "log_sha256": "7cd0ca3c023ce90c778e57772220723dfd36b90bc039d1123290e9931c5cdf2d",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "exact prefix of completed owner-host log"
+    },
+    {
+      "host": "127x04",
+      "label": "s5-start-preflight-127x01-r1",
+      "log_sha256": "51b609459c398e5f74ad18bd84e021d0f63c97356bbcebfb17952732dbf3b198",
+      "cpu_seconds": null,
+      "timing_missing": false,
+      "excluded_as_mirrored_log": true,
+      "owner_host": "127x01",
+      "reason": "byte-identical copy"
+    },
+    {
+      "host": "127x04",
+      "label": "s5-tests-127x04-r1",
+      "log_sha256": "3103b00f179ab21522bb9c2a1acba5f056f31240a37e0e6317c4e5b95164b347",
+      "cpu_seconds": 3.06,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s5-tests-127x04-r2",
+      "log_sha256": "070fae7cfac9f2ca7439d8dd29ad05111e2bfe2e79572853e38f575ed0e3efdb",
+      "cpu_seconds": 3.05,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s5-confirm-node-127x08-r1",
+      "log_sha256": "888accc55068c55cc1f891768e9d88f565da0721b09e11ff941c9a1ec08042df",
+      "cpu_seconds": 66297.45,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s5-integrity-127x08-pre-r1",
+      "log_sha256": "b8f2a43364d6c5d6dc3969839a24f3ce1bfbcebfd35d244a6becda5dc452e5e4",
+      "cpu_seconds": 0.11,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s5-preflight-1-127x08-r1",
+      "log_sha256": "460063a0c0c9577b7b17d4562953adb232fb2dad57fd98bd2dedf6a43257efc4",
+      "cpu_seconds": 606.39,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s5-preflight-3-127x08-r1",
+      "log_sha256": "5937a524679bca525248f73da7c32c10f05d4d728845a4cd9f55ebe334d0b9ab",
+      "cpu_seconds": 106.14,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s5-preflight-5-127x08-r1",
+      "log_sha256": "f63bccf0d4569cabd58d3c1d2a36ad98bc38e8a2c3f4a273104c6556329b1e07",
+      "cpu_seconds": 95.24000000000001,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s5-preflight-7-127x08-r1",
+      "log_sha256": "4ebb0f04a817c30ceed5f1a6a691887d3ce58cc383f32ec89aee0e551d55158c",
+      "cpu_seconds": 108.71000000000001,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s5-preflight-9-127x08-r1",
+      "log_sha256": "1847f4b9f0b588f5205e506608dc6b33950202c9b3a009a64ec3159baee8f0ca",
+      "cpu_seconds": 192.8,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s5-snapshot-127x08-r1",
+      "log_sha256": "2df586ba9bd9f4d2f8831b3edf651bf0a1d38e1e5a35df0602c33e91c4c26331",
+      "cpu_seconds": 0.1,
+      "timing_missing": false
+    }
+  ],
+  "accounting": "Host-specific detached labels. Six wrong-host log copies are excluded after byte-identity/prefix checks against the owning host. Original aggregate and log evidence are retained. GNU time includes reaped children; game CPU overlaps. Small copying/finalization and unidentified mirror-process CPU are unmetered.",
+  "mirrored_logs_excluded": [
+    {
+      "host": "127x04",
+      "label": "s5-integrity-127x01-pre-r1",
+      "owner_host": "127x01",
+      "reason": "byte-identical copy",
+      "copy_sha256": "7657abad1c5a86d3407ea419aaf5838b21cf9b59153d987a6d6db1ba6f1e76fe",
+      "owner_sha256": "7657abad1c5a86d3407ea419aaf5838b21cf9b59153d987a6d6db1ba6f1e76fe",
+      "previously_counted_cpu_seconds": 0.18
+    },
+    {
+      "host": "127x04",
+      "label": "s5-register-127x01-r1",
+      "owner_host": "127x01",
+      "reason": "byte-identical copy",
+      "copy_sha256": "1b22bfe50e38ac756c7bbdc132cdedb571f223f6ff9121785375181d6b813897",
+      "owner_sha256": "1b22bfe50e38ac756c7bbdc132cdedb571f223f6ff9121785375181d6b813897",
+      "previously_counted_cpu_seconds": 1.9200000000000002
+    },
+    {
+      "host": "127x04",
+      "label": "s5-seed-audit-127x01-r1",
+      "owner_host": "127x01",
+      "reason": "byte-identical copy",
+      "copy_sha256": "651820da0b08f83aad5e080c4f79b75f2437be51687702a8751145d5f317e4d8",
+      "owner_sha256": "651820da0b08f83aad5e080c4f79b75f2437be51687702a8751145d5f317e4d8",
+      "previously_counted_cpu_seconds": 339.78
+    },
+    {
+      "host": "127x04",
+      "label": "s5-snapshot-127x01-r1",
+      "owner_host": "127x01",
+      "reason": "byte-identical copy",
+      "copy_sha256": "fe48f318d45a7c2767c074ad1b2f422b14c4e149d11b4400d14110028b38010c",
+      "owner_sha256": "fe48f318d45a7c2767c074ad1b2f422b14c4e149d11b4400d14110028b38010c",
+      "previously_counted_cpu_seconds": 0.2
+    },
+    {
+      "host": "127x04",
+      "label": "s5-start-confirmation-127x01-r1",
+      "owner_host": "127x01",
+      "reason": "exact prefix of completed owner-host log",
+      "copy_sha256": "7cd0ca3c023ce90c778e57772220723dfd36b90bc039d1123290e9931c5cdf2d",
+      "owner_sha256": "497a60643cba1595f270612ce776c028ae158ee456be781699fdb71c19e87b67",
+      "previously_counted_cpu_seconds": null
+    },
+    {
+      "host": "127x04",
+      "label": "s5-start-preflight-127x01-r1",
+      "owner_host": "127x01",
+      "reason": "byte-identical copy",
+      "copy_sha256": "51b609459c398e5f74ad18bd84e021d0f63c97356bbcebfb17952732dbf3b198",
+      "owner_sha256": "51b609459c398e5f74ad18bd84e021d0f63c97356bbcebfb17952732dbf3b198",
+      "previously_counted_cpu_seconds": 0.45
+    }
+  ]
+}

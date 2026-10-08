@@ -1,0 +1,15 @@
+{
+  "utc": 1791443368.953888,
+  "receipts": 1536,
+  "total": 1536,
+  "partitions_complete": 152,
+  "partitions_total": 152,
+  "supervisors_complete": [
+    "127x04",
+    "127x08"
+  ],
+  "outcomes_inspected": true,
+  "analysis_complete": true,
+  "independent_audit_passed": true,
+  "frozen_file_audits_passed": true
+}
