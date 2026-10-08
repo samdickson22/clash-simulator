@@ -3,7 +3,8 @@
 Hub: **127x01**. Backup mirror: **127x04**. Recovery is in progress; measured
 results are in `HUB-127X01.md`. The readiness barrier is
 `/mpac/sdicks02/jobs/clasher/hub-ready.json`, written only after hub qualification,
-peer checksum verification and every peer P16 smoke pass.
+peer checksum verification, every peer P16 smoke pass, and a zero-difference
+Mac bulk-offload dry-run against both 01 and 04.
 
 127x02 went off LAN and tailnet around 23:25 UTC on 2026-10-07. Do not write to
 it or use it as a source if it returns; report its return for reconciliation.
@@ -94,8 +95,14 @@ Each scope is checksum-verified before smoke. Per-node labels are
 `recovery-copy-127xNN-20261008` and `recovery-smoke-127xNN-20261008`; receipts
 live in `/mpac/sdicks02/jobs/clasher/`. Copy exit alone does not certify smoke.
 
-`hub_mirror.sh` runs as `hub-mirror-127x04-20261008` every 30 minutes at nice 19,
+`hub_mirror.sh` runs as `hub-mirror-127x04-20261008-r2` every 30 minutes at nice 19,
 with a 50 MiB/s limit and no --delete. It mirrors v4-data, hub jobs, C56 recon,
 search-noise-v2 and engine-speed receipts under the same paths on 127x04.
 Inspect its log and `hub-mirror-heartbeat.json`. This is a copy-only backup,
 not bidirectional synchronization or automatic failover.
+
+Before authorizing Mac bulk cleanup, run `pilot/offload_mac_bulk.sh` on the Mac
+in its default **dry-run mode only**, through a detached hub job. Never pass
+`--delete`. Record its stamp, file count, bytes and both host difference counts
+in hub-ready.json and HUB-127X01.md. Untracked/ignored bulk directories are in
+the transfer scope; never delete their fleet copies or overwrite newer data.

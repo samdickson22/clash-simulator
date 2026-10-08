@@ -235,3 +235,21 @@ Also on the hub, but with copies elsewhere:
     98/98 exact-tick plays, three hub checksums verified on 127x01 (28.5 MB). Phase A driver (Mac PID 63610)
     waits for `hub-ready.json`. A pre-existing synthetic FPS unit test still fails (real-stream FPS passes); to be
     fixed or explained at the next v4 code change.
+- **2026-10-08 00:45 UTC: hub 127x01 qualified** (00:32:53Z). Fresh Linux build from the current Mac source (native
+  `13e908c5…`). Identity: P16 12/12, C56 7/7, random 24/24, recorded 8/8. Regressions: Stage 2 38, Stage 3/5/5b 10,
+  Stage 4 88. Full Stage 5 200-root replay 200/200 exact (the root 4 Electro Spirit defect is fixed in this source).
+  Native differential 0 mismatches, 37.8×. Cumulative Stage 6 66/66 incl. the BeamDash fixtures (informational).
+  LAN fan-out to 03/04/07/08 running. `hub-ready.json` follows the Mac offload dry run. The 127x02 watch expired at
+  00:33Z with the host still down; no further polling.
+- **Restart plan and host split** (from `hub-ready.json` on):
+  - **Stage 6 → fleet (127x01, ≤8 processes).** Freeze build 46 (Inferno Dragon dash-channel fix) on Linux and
+    rerun every final gate fresh. Independent verification grows from 6 recorded games to **48 unseen recorded +
+    24 unseen human games**, pre-registered before running: independent checks found all three late defects
+    (Fisherman, Electro Spirit, Inferno Dragon), and fleet CPU makes a bigger sample cheap.
+  - **C56 extraction → 127x01 (48 workers), 127x03 (64), 127x04 (32).** Base re-verified on the new hub against
+    `qa/fleet-v3b/mac-base.json` (the Mac base will be offloaded), then fresh equivalence, partition and extract.
+  - **S1 → 127x04 (48 workers, replaces 127x02), 127x07 (100), 127x08 (100); collector on 127x01.** Its sealed Linux
+    runtime existed only on 127x02. On the hub copy 8/465 manifest files are missing (incl. the native .so) and 32 differ. No
+    outcome was ever inspected, so S1 is **re-sealed as r2 on the qualified hub build**, with the PREREG design,
+    seeds, arms, analysis and worker→game partition unchanged and the full preflight rerun. Recorded as a deviation.
+    Any receipts left on 127x02 are archived unread and never merged.

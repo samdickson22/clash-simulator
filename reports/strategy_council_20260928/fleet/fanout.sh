@@ -17,7 +17,7 @@ copy_one() {
  ssh "$node" 'hostname; who; mkdir -p /mpac/sdicks02/repos /mpac/sdicks02/tools /mpac/sdicks02/jobs/clasher'
  rsync -az --compress-level=1 --partial --rsync-path="nice -n 10 rsync" "$base/env.sh" "$node:$base/"
  rsync -az --compress-level=1 --partial --rsync-path="nice -n 10 rsync" "$base/tools/" "$node:$base/tools/"
- rsync -az --compress-level=1 --partial --rsync-path="nice -n 10 rsync" --exclude=target/ --exclude=__pycache__/ --exclude='*.apk' --exclude='*.apks' --exclude='*.xapk' \
+ rsync -azu --compress-level=1 --partial-dir=.rsync-partial --rsync-path="nice -n 10 rsync" --exclude=.rsync-partial/ --exclude=target/ --exclude=__pycache__/ --exclude='*.apk' --exclude='*.apks' --exclude='*.xapk' \
    "$base/repos/clasher/" "$node:$base/repos/clasher/"
  rsync -az --compress-level=1 --partial --rsync-path="nice -n 10 rsync" "$base/repos/clasher-local-data/" "$node:$base/repos/clasher-local-data/"
  for scope in tools repos/clasher repos/clasher-local-data; do
