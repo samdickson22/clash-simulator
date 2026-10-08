@@ -1,0 +1,37 @@
+{
+  "host": "127x05",
+  "torch": "2.7.1+cpu",
+  "threads": 1,
+  "cpu_affinity": [
+    0
+  ],
+  "synthetic_inputs": true,
+  "random_weights": true,
+  "parameters": 2399898,
+  "measurements": [
+    {
+      "entities": 10,
+      "iterations": 1000,
+      "p50_ms": 10.201337500000001,
+      "p99_ms": 10.893488289999999,
+      "max_ms": 11.316796,
+      "k": 8
+    },
+    {
+      "entities": 25,
+      "iterations": 1000,
+      "p50_ms": 12.063541,
+      "p99_ms": 13.080183700000001,
+      "max_ms": 13.16008,
+      "k": 8
+    },
+    {
+      "entities": 64,
+      "iterations": 1000,
+      "p50_ms": 12.3115935,
+      "p99_ms": 12.59889349,
+      "max_ms": 12.812715,
+      "k": 8
+    }
+  ]
+}

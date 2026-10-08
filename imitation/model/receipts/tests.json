@@ -1,0 +1,7 @@
+{
+  "timestamp": "2026-10-08T03:04:23.474447+00:00",
+  "tests": 13,
+  "result": "passed",
+  "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 10 /mpac/sdicks02/tmp/imitation-model-cpu/bin/python -m pytest imitation/model/tests -q",
+  "scope": "CPU synthetic unit and integration tests; no real fitting"
+}

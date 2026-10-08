@@ -1,0 +1,9 @@
+{
+  "synthetic_only": true,
+  "checkpoint_resume_model_bit_equal": true,
+  "checkpoint_resume_ema_bit_equal": true,
+  "dev_rows": 32,
+  "artifacts": "/mpac/sdicks02/tmp/t4-integration-20261008",
+  "torchscript_exported": true,
+  "no_gpu_used": true
+}
