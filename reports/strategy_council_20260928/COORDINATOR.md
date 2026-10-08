@@ -867,3 +867,11 @@ Also on the hub, but with copies elsewhere:
   1. **Perception cross-match lockstep batching:** a parallel implementer (Sol, `clasher-perception-lockstep-batching-20261009-1`) builds `l1/lockstep_replay_v4.py` under the same bit-exact gate, targeting ≥100 frames/s per GPU. The owner keeps admission rights.
   2. **Codebase-wide speed audit:** a workflow of 5 Opus auditors (engine, search, imitation, perception/live, ops/harnesses) plus a synthesis, writing `reports/perf-audit/*.md` and `SUMMARY.md`. Code is read-only; only light profiling on 08.
   - **Gates:** the `GATES-03-RESERVED` marker path is confirmed, and the external baseline monitor is approved.
+- **~00:48 UTC 2026-10-09:**
+  - **01 cache serving stopped:** perception's validation cache is now served from 08 (56 matches) and 02 (8), so 01 no longer serves. **T11 seed 22's GPU on 01 rose from ~30% to 85%.**
+  - **Lockstep batching probe:**
+    - Batch >1 is bit-different at every stage (cuBLAS/cuDNN shape-dependent), even with deterministic algorithms.
+    - The unequal prefix reached only 24–42 fps.
+    - A 25 s GPU probe on 01 halved T11's rows/s (7,645 → 3,901) and was correctly stopped; no more 01 GPU co-tenancy.
+    - **Decision:** no tolerance relaxation for the formal v4 validation run; the exact vectorized path (~12 fps per process, packed) finishes it. At most ~1 h more on an exact-shape fallback (CUDA graphs/streams, CPU-side). Tolerance-qualified batching goes to future runs, with bounds pre-registered before the run.
+  - **Exploration:** both workers vacate 13/15 so perception's GPU relaunches fit under the 80 cap.
