@@ -592,3 +592,16 @@ Also on the hub, but with copies elsewhere:
     2. The L2-v4 sim arm S-d = clean d22 aware.
     3. The remaining noisy gap at d22 is 26 pp (60.2 vs 86.7), from board noise and residual derived-state error:
        still the decision- and perception-side agenda.
+- **2026-10-08 08:16 UTC: v4 runtime built; latency budget FAILS on the fleet replay.** (`live-loop/v4/RUNTIME.md`, `src/clasher/live/`,
+  27 tests.) S6 delay-aware planning is integrated (renderer gRPC p50 = 23 ticks; P4 is the sole reservation authority).
+  Fleet CPU replay, two train matches: frame→first-tap **312/386/406 ms** p50/p95/p99 vs budget 200/400. The bottleneck is a
+  combined P2 at 14 processed FPS (capture queue age 148/352 ms):
+  - v3 fallback perception on CPU: 44 ms (ANE budget 15/25);
+  - tracker v3 + ledger + roots: 22/48/157 ms (budget 3/10);
+  - search 74/121 ms is OK.
+
+  Decision: a latency job.
+  1. Split P2 into separate perception and belief processes, as DESIGN.
+  2. Make tracker v3 output-identical but fast: bit-exact on ≥20k recorded updates, ≤10 ms p99.
+  3. Re-measure with ≥200 taps.
+  4. Measure on the Mac with MPS perception after Phase A.

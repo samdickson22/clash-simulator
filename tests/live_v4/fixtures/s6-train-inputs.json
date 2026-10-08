@@ -1,0 +1,854 @@
+{
+  "split": "train",
+  "seed": 1975100700,
+  "episode": "v4-phase-a-1975100700",
+  "source": "runtime-results/s6-record-r2/latency.jsonl.gz",
+  "source_sha256": "baa2194dd86b3d4cf7d467a73e33091774af90372810118121386dca29fa3dee",
+  "provenance": {
+    "host": "127x04",
+    "cpu": "x86_64",
+    "nice": 10,
+    "packages": {
+      "torch": "2.7.1+cu118",
+      "numpy": "1.26.4",
+      "opencv-python": "4.10.0.84",
+      "ultralytics": "8.1.24"
+    },
+    "hashes": {
+      "/mpac/sdicks02/repos/clasher/src/clasher/live/capture.py": "94c1c313be4ec5bfada21092d68ba77fe31bc207d715162dfb6f958bce5bd9ae",
+      "/mpac/sdicks02/repos/clasher/src/clasher/live/belief.py": "003e331ccc722dfb5461eced3d98c12713b16f5e4df9d438dd69d3c354b173bb",
+      "/mpac/sdicks02/repos/clasher/src/clasher/live/transport.py": "b701c512be3976bf8f0ef6983b874b4d91c53d32c3a85905a1a0092c7c5d9b1f",
+      "/mpac/sdicks02/repos/clasher/src/clasher/live/actuation.py": "3afd278f348f69b5d94831b6e0f15fe8c8ed09c61c0b53b0f044e8b36c9a5be2",
+      "/mpac/sdicks02/repos/clasher/src/clasher/live/timing.py": "9090006a2f9173b0cf2e54ea9fef148cc17dcbbe6e35e1a7eada14b8a8f37eed",
+      "/mpac/sdicks02/repos/clasher/src/clasher/live/contracts.py": "b0b880603a9ec55d4634cc6fcd05a8b247a2941ba87663a011234205db16e093",
+      "/mpac/sdicks02/repos/clasher/src/clasher/live/__main__.py": "33bd166bc11fa9ee0eae91c95f0bf837a4cfad177aab0dc2619333409616dd07",
+      "/mpac/sdicks02/repos/clasher/src/clasher/live/perception.py": "2758f691bb6fb8783e810edc92abfb2eb3117b093a5e92480dccf66c94b7737c",
+      "/mpac/sdicks02/repos/clasher/src/clasher/live/loading.py": "00412547da58f4251943500f3d4c28c5993eb37369cecb594b1a7312590d48e8",
+      "/mpac/sdicks02/repos/clasher/src/clasher/live/__init__.py": "17717238d47f49a055039dcc9a855d6d5ef23d4cc3770a49e534811d076f8ba6",
+      "/mpac/sdicks02/repos/clasher/src/clasher/live/decision.py": "21a08e34203d68506368027a3e83ee7ba0f6c306ace30942ea1199b5d2173694",
+      "/mpac/sdicks02/repos/clasher/src/clasher/live/runtime.py": "60cb50d79ec8da39b0df420169f538b30ba38b1bbe8764a292887fee6c487f10",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/actuator.py": "9c5cc6ded2676e9d4d98f0a9ca4147a2a47a8288954bd33b2e0955d8deffad6b",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/input_channel.py": "ba65fdd8db669498e6a1fb8f7397eabd7693dcc87ce9b27b52db08b5265c2d22",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/actuation/backend-timing.json": "5c26f02d39031d4a478108a4e924b88dd1aafa3e07581328302264c67ef849ed",
+      "/mpac/sdicks02/repos/clasher/src/clasher/vision/l1_v4.py": "f8cc93be0e6b5c8fcc31d69c21c8ce2a895194e5863ca45b949a810c41ae9c3b",
+      "reports/strategy_council_20260928/search-noise-s4/runtime/support/human_deck_catalog.json": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/tracker_v3.py": "0e6a7c3610c114af3e700c603cf0aa0c9e3a3315286ae43d768289012ae1899f",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/tracker_v2.py": "a660e4a766570232e2d9acfeb881f5f4ec7e86500b0d9ca23d267ea51ee6201d",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/derived_d1.py": "92b72418c3a10e96cc6993b4cb3041fa90895f233315600031e9a18f1edcb90e",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/elt.py": "c9522794066155002ef20b60ac6644bd34ef2e0f5925cde3f0abf050842e8f58",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/noise-model.json": "e20fa476b4f3fb19f7caf4af7d04de99cb1096ff54da6d4b6be3a96ec22eab01",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/calibration.json": "d149d8e7a9da61f121338672e5ff1f942942f3b37d1e49ae63d81e8be6557b5c",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s6/delay.py": "96b0637cbc6245b4246eef06aa45e6a7b571226688777bd299b93b2c436721f2",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s6/own_state.py": "823cf5811ee4c7ff5014d1c3f6edd3f3f248d55d93023cbe3e080b185daa4407",
+      "/mpac/sdicks02/repos/clasher-runtime-data/weights/body.pt": "8b6fde6fc402e2b075cdd9e5a92a9486eb738b0428912b7c1975aa12491748a5",
+      "/mpac/sdicks02/repos/clasher-runtime-data/weights/hud.npz": "d09682ebb8a1a209a0f6da49f43030dec68bdc0bf30eb7f67d01d34fdd0c6712",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/l1/calibration.json": "af06e029c50c3e2932f829a8891d6f6bdca654912d6beff512ab5864cc8c60d8",
+      "/mpac/sdicks02/repos/clasher/engine-rs/clasher_core.abi3.so": "13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309"
+    },
+    "source_split": "train",
+    "captured_at_epoch": 1791446945.6605859,
+    "backend": "host",
+    "heldout_opened": false
+  },
+  "inputs": [
+    {
+      "sequence": 0,
+      "tick": 330,
+      "public": {
+        "episode_id": "v4-phase-a-1975100700",
+        "frame_id": "0",
+        "timestamp_ms": 0,
+        "visible_clock_seconds": 164.0,
+        "clock_confidence": 0.976596474647522,
+        "own_elixir": 10.0,
+        "own_elixir_confidence": 0.8,
+        "own_hand": [
+          "",
+          "",
+          "Fireball",
+          ""
+        ],
+        "own_hand_confidence": [
+          0.0,
+          0.0,
+          0.5296810865402222,
+          0.0
+        ],
+        "own_next_card": "Fireball",
+        "own_next_card_confidence": 0.9997801780700684,
+        "entities": [
+          {
+            "track_id": "v1-1",
+            "card": "Tower",
+            "kind": "building",
+            "player_id": 0,
+            "x_tiles": 9.00530160308643,
+            "y_tiles": 3.2001278529280217,
+            "confidence": 0.48542410135269165,
+            "hp_fraction": 0.12307692307692308,
+            "hp_confidence": 0.32112280701754387,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-2",
+            "card": "KingTower",
+            "kind": "building",
+            "player_id": 0,
+            "x_tiles": 9.013602530121037,
+            "y_tiles": 3.1008773719787524,
+            "confidence": 0.27288222312927246,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-3",
+            "card": "Cannon",
+            "kind": "building",
+            "player_id": 0,
+            "x_tiles": 14.600567957398235,
+            "y_tiles": 6.561106009146648,
+            "confidence": 0.2239997535943985,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          }
+        ],
+        "play_events": [],
+        "own_card_levels": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "own_card_level_confidence": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "own_last_play": null
+      },
+      "own": {
+        "hand": [
+          null,
+          null,
+          "Fireball",
+          null
+        ],
+        "cycle": [
+          "Zap",
+          "GoblinHut",
+          "HogRider",
+          "RoyalHogs"
+        ],
+        "refill": 0,
+        "elixir": 10.0,
+        "cycle_exact": false,
+        "unresolved_cycle": 4
+      },
+      "roots": [
+        {
+          "hand": [
+            "BlowdartGoblin",
+            "Cannon",
+            "IceSpirit",
+            "Wallbreakers"
+          ],
+          "cycle": [
+            "Valkyrie",
+            "SkeletonArmy",
+            "Princess",
+            "GoblinBarrel"
+          ],
+          "refill": 0,
+          "elixir": 7.5696
+        },
+        {
+          "hand": [
+            "Earthquake",
+            "Log",
+            "MightyMiner",
+            "Skeletons"
+          ],
+          "cycle": [
+            "ElectroSpirit",
+            "HogRider",
+            "Firecracker",
+            "Cannon"
+          ],
+          "refill": 0,
+          "elixir": 10.0
+        },
+        {
+          "hand": [
+            "GoblinBarrel",
+            "GoblinGang",
+            "IceSpirit",
+            "Princess"
+          ],
+          "cycle": [
+            "Rocket",
+            "Log",
+            "Cannon",
+            "Knight"
+          ],
+          "refill": 0,
+          "elixir": 10.0
+        },
+        {
+          "hand": [
+            "Fireball",
+            "HogRider",
+            "IceGolem",
+            "Musketeer"
+          ],
+          "cycle": [
+            "Cannon",
+            "IceSpirit",
+            "Skeletons",
+            "Log"
+          ],
+          "refill": 0,
+          "elixir": 10.0
+        }
+      ],
+      "opponent": {
+        "elixir_mean": 9.784409332641152,
+        "elixir_interval_90": [
+          7.4592,
+          10.0
+        ],
+        "elixir_q90": 10.0,
+        "hand": null,
+        "hand90": null,
+        "hand90_mass": 0.0,
+        "concentrated": false,
+        "hypotheses": 1,
+        "fallback_mass": 1.0,
+        "resource_support": 100001,
+        "best_hand": null,
+        "raw_hand_mass": 0.0
+      },
+      "revision": 0,
+      "pending": null
+    },
+    {
+      "sequence": 50,
+      "tick": 389,
+      "public": {
+        "episode_id": "v4-phase-a-1975100700",
+        "frame_id": "50",
+        "timestamp_ms": 2523,
+        "visible_clock_seconds": 161.0,
+        "clock_confidence": 0.9883708953857422,
+        "own_elixir": 5.1068,
+        "own_elixir_confidence": 0.8,
+        "own_hand": [
+          "",
+          "",
+          "Fireball",
+          ""
+        ],
+        "own_hand_confidence": [
+          0.0,
+          0.0,
+          0.9998943209648132,
+          0.0
+        ],
+        "own_next_card": "Archers",
+        "own_next_card_confidence": 0.354311466217041,
+        "entities": [
+          {
+            "track_id": "v1-1",
+            "card": "Tower",
+            "kind": "building",
+            "player_id": 0,
+            "x_tiles": 9.000266202695805,
+            "y_tiles": 3.190092378725012,
+            "confidence": 0.41973575949668884,
+            "hp_fraction": 0.12307692307692308,
+            "hp_confidence": 0.23859649122807022,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-19",
+            "card": "Musketeer",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 3.5277474883255646,
+            "y_tiles": 13.190650170738088,
+            "confidence": 0.3812505900859833,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-2",
+            "card": "KingTower",
+            "kind": "building",
+            "player_id": 0,
+            "x_tiles": 9.01010581338481,
+            "y_tiles": 3.0951931194699966,
+            "confidence": 0.32725539803504944,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-25",
+            "card": "Skeletons",
+            "kind": "troop",
+            "player_id": 1,
+            "x_tiles": 12.309662837131768,
+            "y_tiles": 26.1217583617162,
+            "confidence": 0.258271187543869,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-4",
+            "card": "Tower",
+            "kind": "building",
+            "player_id": 0,
+            "x_tiles": 14.525835025082724,
+            "y_tiles": 6.785951177308302,
+            "confidence": 0.22925402224063873,
+            "hp_fraction": 1.0,
+            "hp_confidence": 0.8,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-3",
+            "card": "Cannon",
+            "kind": "building",
+            "player_id": 0,
+            "x_tiles": 14.59536631395862,
+            "y_tiles": 6.563582880931531,
+            "confidence": 0.21691928803920746,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-18",
+            "card": "Musketeer",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 3.185023010156712,
+            "y_tiles": 12.845710932288466,
+            "confidence": 0.2144344300031662,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          }
+        ],
+        "play_events": [],
+        "own_card_levels": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "own_card_level_confidence": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "own_last_play": null
+      },
+      "own": {
+        "hand": [
+          null,
+          null,
+          "Fireball",
+          null
+        ],
+        "cycle": [
+          "Zap",
+          "GoblinHut",
+          "HogRider",
+          "RoyalHogs"
+        ],
+        "refill": 0,
+        "elixir": 5.1068,
+        "cycle_exact": false,
+        "unresolved_cycle": 4
+      },
+      "roots": [
+        {
+          "hand": [
+            "Fireball",
+            "IceGolem",
+            "Log",
+            "Skeletons"
+          ],
+          "cycle": [
+            "Musketeer",
+            "ElectroSpirit",
+            "HogRider",
+            "Cannon"
+          ],
+          "refill": 0,
+          "elixir": 2.691
+        },
+        {
+          "hand": [
+            "Berserker",
+            "Cannon",
+            "Fireball",
+            "Musketeer"
+          ],
+          "cycle": [
+            "Zap",
+            "IceGolem",
+            "ElectroSpirit",
+            "Balloon"
+          ],
+          "refill": 0,
+          "elixir": 6.1392
+        },
+        {
+          "hand": [
+            "GoblinBarrel",
+            "Goblins",
+            "Log",
+            "MightyMiner"
+          ],
+          "cycle": [
+            "IceSpirit",
+            "Princess",
+            "Rocket",
+            "Cannon"
+          ],
+          "refill": 0,
+          "elixir": 6.2104
+        },
+        {
+          "hand": [
+            "Cannon",
+            "HogRider",
+            "IceGolem",
+            "IceSpirit"
+          ],
+          "cycle": [
+            "Skeletons",
+            "Log",
+            "Fireball",
+            "Musketeer"
+          ],
+          "refill": 100,
+          "elixir": 10.0
+        }
+      ],
+      "opponent": {
+        "elixir_mean": 5.8320407560241465,
+        "elixir_interval_90": [
+          1.9575999999999998,
+          10.0
+        ],
+        "elixir_q90": 10.0,
+        "hand": null,
+        "hand90": null,
+        "hand90_mass": 0.0,
+        "concentrated": false,
+        "hypotheses": 64,
+        "fallback_mass": 0.011903038584167013,
+        "resource_support": 100001,
+        "best_hand": null,
+        "raw_hand_mass": 0.0
+      },
+      "revision": 2,
+      "pending": null
+    },
+    {
+      "sequence": 186,
+      "tick": 526,
+      "public": {
+        "episode_id": "v4-phase-a-1975100700",
+        "frame_id": "186",
+        "timestamp_ms": 9333,
+        "visible_clock_seconds": 154.0,
+        "clock_confidence": 0.9808738231658936,
+        "own_elixir": 2.5874,
+        "own_elixir_confidence": 0.8,
+        "own_hand": [
+          "Zap",
+          "",
+          "Zap",
+          ""
+        ],
+        "own_hand_confidence": [
+          0.8146934509277344,
+          0.0,
+          0.9997227191925049,
+          0.0
+        ],
+        "own_next_card": "HogRider",
+        "own_next_card_confidence": 0.9997106790542603,
+        "entities": [
+          {
+            "track_id": "v1-86",
+            "card": "Goblins",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 3.664588102109869,
+            "y_tiles": 14.923202780236565,
+            "confidence": 0.6253069639205933,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-39",
+            "card": "Goblins",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 3.719709967352019,
+            "y_tiles": 14.499312146817921,
+            "confidence": 0.562101423740387,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-1",
+            "card": "Tower",
+            "kind": "building",
+            "player_id": 0,
+            "x_tiles": 9.003220624984444,
+            "y_tiles": 3.1958245477981855,
+            "confidence": 0.45390453934669495,
+            "hp_fraction": 0.1076923076923077,
+            "hp_confidence": 0.37241379310344835,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-121",
+            "card": "Goblins",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 2.8174947750796147,
+            "y_tiles": 14.920540209239352,
+            "confidence": 0.41262951493263245,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-29",
+            "card": "Goblins",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 3.4654166349180153,
+            "y_tiles": 15.38387735802161,
+            "confidence": 0.3772937059402466,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-55",
+            "card": "Prince",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 3.5077047773227523,
+            "y_tiles": 10.869999341855106,
+            "confidence": 0.369480162858963,
+            "hp_fraction": 0.0,
+            "hp_confidence": 0.52,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-123",
+            "card": "Skeletons",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 4.341301146586228,
+            "y_tiles": 19.713454779263213,
+            "confidence": 0.3370988965034485,
+            "hp_fraction": 0.125,
+            "hp_confidence": 0.1333333333333333,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-82",
+            "card": "DarkPrince",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 3.508212326438559,
+            "y_tiles": 10.994083023071294,
+            "confidence": 0.2941306233406067,
+            "hp_fraction": 0.0,
+            "hp_confidence": 0.52,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-113",
+            "card": "Goblins",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 2.955929665049167,
+            "y_tiles": 15.45151199315766,
+            "confidence": 0.28457117080688477,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-126",
+            "card": "Goblins",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 3.228917322341041,
+            "y_tiles": 15.722656169822464,
+            "confidence": 0.2568654716014862,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-2",
+            "card": "KingTower",
+            "kind": "building",
+            "player_id": 0,
+            "x_tiles": 9.011548279197347,
+            "y_tiles": 3.09516415484636,
+            "confidence": 0.25028273463249207,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-96",
+            "card": "Cannon",
+            "kind": "building",
+            "player_id": 0,
+            "x_tiles": 14.583199567855539,
+            "y_tiles": 6.591990861563843,
+            "confidence": 0.24080334603786469,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-67",
+            "card": "Goblins",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 3.5206218889564447,
+            "y_tiles": 18.916761170936933,
+            "confidence": 0.2350849062204361,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-85",
+            "card": "Skeletons",
+            "kind": "troop",
+            "player_id": 1,
+            "x_tiles": 14.247179602361786,
+            "y_tiles": 13.06461406638861,
+            "confidence": 0.22276057302951813,
+            "hp_fraction": null,
+            "hp_confidence": 0.0,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          },
+          {
+            "track_id": "v1-93",
+            "card": "Goblins",
+            "kind": "troop",
+            "player_id": 0,
+            "x_tiles": 2.3155043109966664,
+            "y_tiles": 19.70051134231644,
+            "confidence": 0.2021244913339615,
+            "hp_fraction": 0.16666666666666666,
+            "hp_confidence": 0.8,
+            "statuses": [],
+            "level": null,
+            "level_confidence": 0.0
+          }
+        ],
+        "play_events": [],
+        "own_card_levels": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "own_card_level_confidence": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "own_last_play": null
+      },
+      "own": {
+        "hand": [
+          "Zap",
+          null,
+          "Zap",
+          null
+        ],
+        "cycle": [
+          "HogRider",
+          "Fireball",
+          "GoblinHut",
+          "RoyalHogs"
+        ],
+        "refill": 0,
+        "elixir": 2.5874,
+        "cycle_exact": false,
+        "unresolved_cycle": 2
+      },
+      "roots": [
+        {
+          "hand": [
+            "Fireball",
+            "IceSpirit",
+            "Log",
+            "Musketeer"
+          ],
+          "cycle": [
+            "IceGolem",
+            "Skeletons",
+            "HogRider",
+            "Cannon"
+          ],
+          "refill": 0,
+          "elixir": 0.178
+        },
+        {
+          "hand": [
+            "Fireball",
+            "HogRider",
+            "IceGolem",
+            "Skeletons"
+          ],
+          "cycle": [
+            "IceSpirit",
+            "Log",
+            "Musketeer",
+            "Cannon"
+          ],
+          "refill": 0,
+          "elixir": 0.178
+        },
+        {
+          "hand": [
+            "Fireball",
+            "HogRider",
+            "IceGolem",
+            "IceSpirit"
+          ],
+          "cycle": [
+            "Log",
+            "Musketeer",
+            "Cannon",
+            "Skeletons"
+          ],
+          "refill": 950,
+          "elixir": 0.4272
+        },
+        {
+          "hand": [
+            "Fireball",
+            "IceGolem",
+            "IceSpirit",
+            "Log"
+          ],
+          "cycle": [
+            "HogRider",
+            "Musketeer",
+            "Cannon",
+            "Skeletons"
+          ],
+          "refill": 550,
+          "elixir": 0.6764
+        }
+      ],
+      "opponent": {
+        "elixir_mean": 0.4013007229352117,
+        "elixir_interval_90": [
+          0.06759999999999972,
+          0.8402000000000003
+        ],
+        "elixir_q90": 0.7298,
+        "hand": null,
+        "hand90": null,
+        "hand90_mass": 0.022099488543833923,
+        "concentrated": false,
+        "hypotheses": 64,
+        "fallback_mass": 0.019877243573523124,
+        "resource_support": 100001,
+        "best_hand": [
+          "Fireball",
+          "HogRider",
+          "IceGolem",
+          "IceSpirit"
+        ],
+        "raw_hand_mass": 0.022315274668938595
+      },
+      "revision": 4,
+      "pending": null
+    }
+  ]
+}
