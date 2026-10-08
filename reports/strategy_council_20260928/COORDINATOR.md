@@ -800,3 +800,4 @@ Also on the hub, but with copies elsewhere:
   - **R19 restatement judged sound:** no staleness is possible, and there's one shared apply loop with an identical drop/no-op fallback.
   - **B-only rejection imbalance:** 4/8,781 commands, 1 streak episode, vs A 0/8,718; p≈1 by episodes. It's at or below the human rate on mask v1 (7e-4), and its expected gate impact is ≤0.01 on the primary vs an SE of ~0.015–0.020. It becomes a predeclared descriptive (RC-12) with the caveat that gate (b) measures B under mask v1.
   - **Next:** a sealed RC delta, plus the 02 seed inventory, then a final delta-only check, then freeze and launch (b on 03@16, c on 02@16).
+- **127x18 outage timing:** reachable at 21:09Z (T11 seed 22 at 44% GPU), unreachable by 21:39Z on 2026-10-08 (roader's estimate was 21:50–22:00Z). 07 dropped at 21:23Z. Both are still down at ~22:56Z; seed 22 resumes on 01 from its off-host backup.
