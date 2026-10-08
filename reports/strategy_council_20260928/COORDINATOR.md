@@ -346,3 +346,25 @@ Also on the hub, but with copies elsewhere:
   controller decks, and human replays that play it are cut at that play by the existing contradiction rule. A
   Three Musketeers data repair is backlog. It would change canonical gamedata (`892fbfa0`), so it needs real stats,
   a new canonical hash and a full identity re-baseline. Do it only if the imitation or live scope shows it matters.
+- **2026-10-08 03:15 UTC: all-card imitation design ACCEPTED** (Opus high; `imitation/DESIGN.md`, `OPEN-QUESTIONS.md`).
+  Plan:
+  - Sequence: train a C56 model (v1) now and extract S122 in parallel on CPU; the S122 generalist (v2) is the
+    live deliverable. The handoff's ≤6 GiB cap is dropped (it was a Mac-disk limit).
+  - Derived opponent state (exact elixir, known hand, next card, queue) comes from a **sidecar replay** of the frozen
+    extractor with an observer hook. Every existing array must reproduce, which proves alignment. A pure post-pass
+    misses champion abilities (~23% of opponent decks) and Collector grants (~6%).
+  - Tile-lattice placement head: all 36,710 sampled human placements are tile centres (Tesla on corners), so no
+    half-tile head.
+  - ~2.5M-parameter feed-forward set transformer: gate → card → tile, plus an auxiliary "next card and when" head.
+    No recurrence, ≤15 ms p99 proposer.
+  - Pre-registered gates: (a) offline vs the frequency baseline and the P16 BC; (b) proposer in the C56 fair player,
+    640 head-to-head games with matched candidate counts, pass score ≥0.53 with LB >0.50; (c) standalone vs s2902 1M
+    and the P16 BC.
+
+  Coordinator adjustments: hosts follow current availability. 127x02 and 127x07 are down; S1 holds 04/08 for some
+  hours. CPU replay passes go to 127x01/03 first; GPUs on 01/04/08, shared with live-loop v4 perception once Phase A
+  data is ready. **First wave (Astra high, parallel):**
+  - (A) data pipeline T0 → T1 → T2 → T3;
+  - (B) IL_Replay re-fetch and S122 payloads (T9), then the S122 extraction with the inline observer (T10) once T1
+    passes;
+  - (C) model, trainer, evaluator and inference API (T4), with a shakedown once the T3 store exists.
