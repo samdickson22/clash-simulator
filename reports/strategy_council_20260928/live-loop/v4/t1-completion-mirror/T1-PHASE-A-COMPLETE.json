@@ -1,0 +1,25 @@
+{
+  "schema": "clasher.t1.phase-a-completion.coordinator-mirror.v1",
+  "created_utc": "2026-10-08T16:44:58.888180Z",
+  "source": "macmini-fleet:/Users/sam/Desktop/code/clasher/reports/strategy_council_20260928/live-loop/v4 (authority)",
+  "stop_reason": "heldout count coverage reached",
+  "pool_exit": "0",
+  "mac_qemu_or_pool_processes_now": 0,
+  "matches": 641,
+  "hub_verified_matches": 641,
+  "heldout_matches": 64,
+  "heldout_opponent_events": 1520,
+  "emulator_hours": 15.557846377281628,
+  "fps_pass_matches": 638,
+  "coverage_rule": "heldout >=1500 opponent events and >=20 matches, or 36 emulator-hours (amendments/2026-10-07-t2-actuation-timing.md addendum)",
+  "coverage_met": true,
+  "note": "Pool-mode collection (PREREG pool amendment) records completion in pool-state.json stop_reason + pool exit; the legacy pipeline-mode phase-a-exit.json is not produced in pool mode.",
+  "sha256": {
+    "phase-a-results.json": "faf4d4dd59a901fc7afe5c9d9171a06c1baa4166f230db9566bf6c5a0baaa063",
+    "pool-state.json": "82520a8b8b9d07912a5079c72754f7f9f4fa490af18de791502b4b2a6991fd31",
+    "T1-PROGRESS.md": "f4758049a39bca97614b539334d1f640c83f156b179bb9afb01c1713271202e8",
+    "pool-phase-a-20261007-retry2-once.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "pool-events.jsonl": "5c742108faf07221f31c59831ae694b6be75e6478e8aa695ae0e2f8e22c1a63f",
+    "mac-processes-after-stop.txt": "4eff2db4bada317fd099671a040fa9fe488186f2b7729f52463202065730cd78"
+  }
+}
