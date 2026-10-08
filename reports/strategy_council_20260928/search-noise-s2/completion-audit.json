@@ -1,0 +1,133 @@
+{
+  "complete": true,
+  "receipt_count": 3584,
+  "receipt_aggregate_verified": true,
+  "duplicates": {
+    "Full = R-taps": {
+      "games": 256,
+      "action_sequences_equal": 256,
+      "mismatches": []
+    },
+    "R-derived = R-events": {
+      "games": 256,
+      "action_sequences_equal": 256,
+      "mismatches": []
+    }
+  },
+  "evidence_job16": {
+    "job": 16,
+    "variant": "A+derived",
+    "snapshots": [
+      {
+        "tick": 2968,
+        "elixir_mean": 4.660157769370995,
+        "truth_elixir": 2.9976,
+        "interval": [
+          2.9976,
+          7.9976
+        ],
+        "covered": true,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 2970,
+        "elixir_mean": 4.730599725350808,
+        "truth_elixir": 3.069,
+        "interval": [
+          3.069,
+          8.069
+        ],
+        "covered": true,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 2972,
+        "elixir_mean": 4.801016829249262,
+        "truth_elixir": 0.1404,
+        "interval": [
+          3.1404,
+          8.1404
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 2980,
+        "elixir_mean": 5.082106434919707,
+        "truth_elixir": 0.426,
+        "interval": [
+          3.426,
+          8.426
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 3000,
+        "elixir_mean": 5.782189887292109,
+        "truth_elixir": 1.14,
+        "interval": [
+          4.14,
+          9.14
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 5846,
+        "elixir_mean": 3.2238386684835874,
+        "truth_elixir": 0.5702,
+        "interval": [
+          1.309,
+          7.2148
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      }
+    ],
+    "events": [
+      {
+        "kind": "missed",
+        "truth_tick": 2970,
+        "arrival_tick": null,
+        "truth_name": "GoblinBarrel",
+        "seen_name": null,
+        "event_id": "26-miss"
+      }
+    ]
+  },
+  "hub_overhead": {
+    "s2-seed-audit-hub-v1": {
+      "cpu_seconds": 348.26,
+      "exit": "0"
+    },
+    "s2-collect-r1": {
+      "cpu_seconds": 0.16,
+      "exit": "1"
+    },
+    "s2-collect-r1b": {
+      "cpu_seconds": 46.54,
+      "exit": "0"
+    }
+  },
+  "manifest": "b2d65cb5eaadc081871d100f8f9127f4da10bc7ef7d0fcf0986f08733a5d301b",
+  "utc": 1791433939.9606423
+}

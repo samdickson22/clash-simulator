@@ -1,0 +1,11 @@
+{
+  "confirmation_supervisors_and_workers_cpu_hours": 77.56741666666667,
+  "preflight_cpu_hours": 0.5552166666666668,
+  "seed_audit_registration_collection_cpu_hours": 0.15666944444444444,
+  "total_metered_cpu_hours": 78.27930277777779,
+  "register_attempts_cpu_seconds": {
+    "s2-register-v1": 0.18,
+    "s2-register-v2": 168.87
+  },
+  "note": "Game CPU and successful worker CPU are subsets of supervisor+worker CPU; do not add them. Small snapshot/hash/postcompletion verification operations are additional, unmetered. Hub collection total includes complete-only analysis."
+}

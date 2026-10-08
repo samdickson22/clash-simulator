@@ -1,0 +1,251 @@
+{
+  "missed": {
+    "job": 16,
+    "first_corrupt_event": {
+      "kind": "missed",
+      "truth_tick": 2970,
+      "arrival_tick": null,
+      "truth_name": "GoblinBarrel",
+      "seen_name": null,
+      "event_id": "26-miss"
+    },
+    "preceding_error": {
+      "kind": "missed",
+      "truth_tick": 2970,
+      "arrival_tick": null,
+      "truth_name": "GoblinBarrel",
+      "seen_name": null,
+      "event_id": "26-miss"
+    },
+    "trajectory": {
+      "first_loss_tick": 2972,
+      "recovered": false,
+      "terminal_loss_tick": 2972,
+      "last_decision_tick": 5846
+    },
+    "snapshots": [
+      {
+        "tick": 2970,
+        "elixir_mean": 4.730599725350808,
+        "truth_elixir": 3.069,
+        "interval": [
+          3.069,
+          8.069
+        ],
+        "covered": true,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 2972,
+        "elixir_mean": 4.801016829249262,
+        "truth_elixir": 0.1404,
+        "interval": [
+          3.1404,
+          8.1404
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 2974,
+        "elixir_mean": 4.871405420669915,
+        "truth_elixir": 0.2118,
+        "interval": [
+          3.2118,
+          8.2118
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 5846,
+        "elixir_mean": 3.2238386684835874,
+        "truth_elixir": 0.5702,
+        "interval": [
+          1.309,
+          7.2148
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      }
+    ]
+  },
+  "spurious": {
+    "job": 101,
+    "first_corrupt_event": {
+      "kind": "missed",
+      "truth_tick": 2032,
+      "arrival_tick": null,
+      "truth_name": "Log",
+      "seen_name": null,
+      "event_id": "20-miss"
+    },
+    "preceding_error": {
+      "kind": "spurious",
+      "truth_tick": 4886,
+      "arrival_tick": 4889,
+      "truth_name": null,
+      "seen_name": "InfernoTower",
+      "event_id": "69-fp0"
+    },
+    "trajectory": {
+      "first_loss_tick": 2034,
+      "recovered": true,
+      "terminal_loss_tick": 5056,
+      "last_decision_tick": 5114
+    },
+    "snapshots": [
+      {
+        "tick": 5054,
+        "elixir_mean": 7.861935007046511,
+        "truth_elixir": 6.0398,
+        "interval": [
+          6.0398,
+          10.0
+        ],
+        "covered": true,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 5056,
+        "elixir_mean": 7.949922992873092,
+        "truth_elixir": 0.1472,
+        "interval": [
+          6.1472,
+          10.0
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 5058,
+        "elixir_mean": 8.036929429548165,
+        "truth_elixir": 0.2546,
+        "interval": [
+          6.2546,
+          10.0
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 5114,
+        "elixir_mean": 9.38751674199968,
+        "truth_elixir": 0.2618,
+        "interval": [
+          8.2618,
+          10.0
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      }
+    ]
+  },
+  "confused": {
+    "job": 885,
+    "first_corrupt_event": {
+      "kind": "missed",
+      "truth_tick": 1034,
+      "arrival_tick": null,
+      "truth_name": "Log",
+      "seen_name": null,
+      "event_id": "8-miss"
+    },
+    "preceding_error": {
+      "kind": "confused",
+      "truth_tick": 2744,
+      "arrival_tick": 2754,
+      "truth_name": "Skeletons",
+      "seen_name": "Firecracker",
+      "event_id": "24-det"
+    },
+    "trajectory": {
+      "first_loss_tick": 1034,
+      "recovered": true,
+      "terminal_loss_tick": 3000,
+      "last_decision_tick": 4712
+    },
+    "snapshots": [
+      {
+        "tick": 2998,
+        "elixir_mean": 5.200500180537684,
+        "truth_elixir": 4.0686,
+        "interval": [
+          3.939,
+          6.9222
+        ],
+        "covered": true,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 3000,
+        "elixir_mean": 5.269497543895897,
+        "truth_elixir": 0.14,
+        "interval": [
+          4.0104,
+          6.9936
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 3002,
+        "elixir_mean": 5.338356129830789,
+        "truth_elixir": 0.2114,
+        "interval": [
+          4.0818,
+          7.065
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      },
+      {
+        "tick": 4712,
+        "elixir_mean": 3.081429077607206,
+        "truth_elixir": 1.2584,
+        "interval": [
+          1.974,
+          3.99
+        ],
+        "covered": false,
+        "hand_concentrated": false,
+        "hand_correct": false,
+        "hypothesis_concentrated": false,
+        "hypotheses": 128
+      }
+    ]
+  }
+}

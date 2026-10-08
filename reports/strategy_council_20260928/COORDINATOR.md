@@ -409,3 +409,20 @@ Also on the hub, but with copies elsewhere:
   (4,090 Battle Healer and 1,950 Mirror flagged; 2,361 C56 perspectives with Three Musketeers opponents excluded in v2
   metadata, v1 roles unchanged; 0 leakage). QA 400 perspectives: 99.59% placement acceptance, 80.78% retention, 0 errors.
   Production is running on 01/03 (ETA 7–9 h).
+- **2026-10-08 04:41 UTC: S2 COMPLETE: the derived opponent state is the main loss; next is S3, a robust tracker.**
+  (`search-noise-s2/RESULTS.md`, `ELT-DIAGNOSIS.md`; 3,584 games, 77 core-h, 41 min on 04/08.) Clean A 94.1%, Full
+  (B at N97 + predecessor noise) 66.4%, A−Full +27.7 pp [+21.5, +34.0].
+  - **Repair gains:** derived state +15.2 [+9.8, +21.1] (identical to events→N100: with perfect events the tracker becomes
+    exact); latency +6.2 [0.0, 12.1]; board +5.1 [−0.8, 10.9]; HP +3.1 n.s.; own state and taps 0.
+  - **Add costs from clean:** derived −14.5 [−19.5, −9.8]; board −6.2 [−10.9, −2.0]; HP −3.9 n.s.; latency, own n.s.
+  - Coordinator recomputation from the raw receipts reproduces A−Full, R-derived−Full, A−A+derived and A−A+board.
+  - **Tracker diagnosis.** Missed opponent spends leave the elixir ledger confidently too high with no way back
+    (no missed-spend repair on that side, no resynchronisation, a finite 128-hypothesis beam). Example: a missed
+    Goblin Barrel left truth 0.14 vs interval [3.1, 8.1] for 144 s. Noisy ELT coverage is 68% (overconfident);
+    the legacy posterior covers 99.8% but is uselessly wide (6.2 elixir). The "hand concentrated" diagnostic needs
+    unanimity across all branches, so it is uninformative.
+  - **Decision.** The next investment is decision-side, not perception: **S3, a robust fair opponent-state tracker**
+    (calibrated and sharp, recovers from missed and spurious events, fuses public board evidence of unexplained new
+    opponent units). It is cheap to iterate in simulation, the largest measured lever (up to ~15 pp), and it also
+    lowers the event-quality bar that v4 perception must hit. Second priority for v4 perception: board precision
+    (phantoms 7.5%, drops 3%; ~6 pp). HP and latency are lower priority. L2-v4 stays blocked until the S3 tracker passes.
