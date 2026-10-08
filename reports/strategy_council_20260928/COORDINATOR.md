@@ -253,3 +253,15 @@ Also on the hub, but with copies elsewhere:
     outcome was ever inspected, so S1 is **re-sealed as r2 on the qualified hub build**, with the PREREG design,
     seeds, arms, analysis and worker→game partition unchanged and the full preflight rerun. Recorded as a deviation.
     Any receipts left on 127x02 are archived unread and never merged.
+- **2026-10-08 00:55 UTC: HUB READY** (`127x01:/mpac/sdicks02/jobs/clasher/hub-ready.json`, 00:54:44Z; coordinator
+  read it). Mac → 127x01 copy: 188,266 files / 52.0 GB, 0 checksum differences, plus local data (engine-speed 1,552
+  files, decoded-logic 340 files). Hub gates above all pass. LAN fan-out to 03/04/07/08: 220,656 repo files / 60.0 GB
+  each, 0 differences. P16 smoke 12/12 on every peer. The only content conflicts were `.git/index` caches and a stale
+  `qa/fleet-v3b/mac-base.json` from 127x02's interrupted fan-out (identical JSON, missing final newline): originals kept
+  in `jobs/clasher/recovery-conflicts/`, replaced with the hub bytes. Mac offload dry run (stamp 20261008T004942Z):
+  81,517 files / 35.76 GB, 0 differences on 127x01 and 127x04. **The Mac may now run
+  `pilot/offload_mac_bulk.sh --delete`.** It rechecks both copies first, and the data is also on 03/07/08.
+  Mirror to 127x04 every 30 min (`hub-mirror-127x04-20261008-r2`). Source manifest `e2e5a6bd…`, native `13e908c5…`.
+  Docs: `fleet/HUB-127X01.md`, `fleet/README.md`.
+- **T1 Phase A started** on the Mac (pipeline PID 63610, stage phase-a), shipping to 127x01. Stage 6, C56 and S1
+  workers are released by `hub-ready.json`.

@@ -1,7 +1,7 @@
 # Clasher fleet
 
-Hub: **127x01**. Backup mirror: **127x04**. Recovery is in progress; measured
-results are in `HUB-127X01.md`. The readiness barrier is
+Hub: **127x01**. Backup mirror: **127x04**. Recovery qualified on
+**2026-10-08 UTC**; measured results are in `HUB-127X01.md`. The readiness barrier is
 `/mpac/sdicks02/jobs/clasher/hub-ready.json`, written only after hub qualification,
 peer checksum verification, every peer P16 smoke pass, and a zero-difference
 Mac bulk-offload dry-run against both 01 and 04.
@@ -63,14 +63,16 @@ suites provide meaningful engine coverage.
 
 ```sh
 fleet=reports/strategy_council_20260928/fleet
+export CLASHER_FLEET_SOURCE_MANIFEST=/mpac/sdicks02/jobs/clasher/recovery-source-mac.json
+export CLASHER_FLEET_NATIVE_SHA256=$(cat /mpac/sdicks02/jobs/clasher/recovery-native.sha256)
 bash "$fleet/fleet_run.sh" recovery-bootstrap-20261008 bash "$fleet/bootstrap.sh"
 bash "$fleet/fleet_run.sh" recovery-gates-20261008 bash "$fleet/gate_sequence.sh"
 bash "$fleet/fleet_run.sh" recovery-recorded-20261008 bash "$fleet/recorded.sh"
 bash "$fleet/fleet_run.sh" recovery-stage6-info-20261008 bash "$fleet/regressions.sh" stage6
 ```
 
-`recovery_qualify.sh` is the detached continuation waiting for transfer
-verification; do not duplicate its jobs. The sequence uses the original
+`recovery_qualify.sh` implements the detached transfer-to-qualification
+continuation; the recovery run has completed. Do not duplicate its job labels. The sequence uses the original
 admitted P16/C56/random commands, then fast, Stage 2, Stage 4, Stage 3/5/5b,
 full 200-root Stage 5 replay and speed regressions. It stops on an identity
 failure. Recorded replay executes eight actual games in four shards, then
@@ -92,7 +94,7 @@ After hub gates pass, run `fanout.sh` through `fleet_run.sh`. It copies tools,
 repo including Linux venv/extension, and local-data from 01 over LAN to
 **03/04/07/08**. Exclude targets, bytecode and APKs; preserve existing files.
 Each scope is checksum-verified before smoke. Per-node labels are
-`recovery-copy-127xNN-20261008` and `recovery-smoke-127xNN-20261008`; receipts
+`recovery-copy-127xNN-20261008-r2` and `recovery-smoke-127xNN-20261008`; receipts
 live in `/mpac/sdicks02/jobs/clasher/`. Copy exit alone does not certify smoke.
 
 `hub_mirror.sh` runs as `hub-mirror-127x04-20261008-r2` every 30 minutes at nice 19,
@@ -106,3 +108,9 @@ in its default **dry-run mode only**, through a detached hub job. Never pass
 `--delete`. Record its stamp, file count, bytes and both host difference counts
 in hub-ready.json and HUB-127X01.md. Untracked/ignored bulk directories are in
 the transfer scope; never delete their fleet copies or overwrite newer data.
+
+The authorized newline-only `c56/data/qa/fleet-v3b/mac-base.json` conflict was
+resolved by archiving each peer original and copying exact hub bytes. See
+`HUB-127X01.md` for hashes and receipts. This is a single-file exception, not
+permission to replace other newer bulk data. Checksum comparison accepts
+timestamp-only drift and retains it in logs.

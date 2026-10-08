@@ -19,12 +19,19 @@ copy_one() {
  rsync -az --compress-level=1 --partial --rsync-path="nice -n 10 rsync" "$base/tools/" "$node:$base/tools/"
  rsync -azu --compress-level=1 --partial-dir=.rsync-partial --rsync-path="nice -n 10 rsync" --exclude=.rsync-partial/ --exclude=target/ --exclude=__pycache__/ --exclude='*.apk' --exclude='*.apks' --exclude='*.xapk' \
    "$base/repos/clasher/" "$node:$base/repos/clasher/"
+ # Git's stat cache may have a newer timestamp on a partial peer checkout.
+ # It is outside the protected bulk directories; restore authoritative metadata.
+ rsync -az --compress-level=1 --partial --rsync-path="nice -n 10 rsync" "$base/repos/clasher/.git/" "$node:$base/repos/clasher/.git/"
  rsync -az --compress-level=1 --partial --rsync-path="nice -n 10 rsync" "$base/repos/clasher-local-data/" "$node:$base/repos/clasher-local-data/"
  for scope in tools repos/clasher repos/clasher-local-data; do
    receipt="$jobs/recovery-verify-$node-${scope//\//_}.log"
    rsync -acni --stats --rsync-path="nice -n 10 rsync" --exclude=target/ --exclude=__pycache__/ --exclude='*.apk' --exclude='*.apks' --exclude='*.xapk' \
      "$base/$scope/" "$node:$base/$scope/" > "$receipt" 2>&1
-   if grep -E '^[<>ch.*][fdLDS]' "$receipt"; then echo "Checksum mismatch: $node $scope" >&2; return 1; fi
+   # Keep timestamp-only drift in the log; require identical contents and all
+   # other checked attributes. Never hide changed bytes behind --update.
+   if ! awk '/^[<>ch.*][fdLDS]/ { code=substr($0,1,11); if (substr(code,1,1)!=".") bad=1; else { flags=substr(code,3); gsub(/[.t]/,"",flags); if(length(flags)) bad=1 } } END {exit bad}' "$receipt"; then
+     cat "$receipt"; echo "Checksum mismatch: $node $scope" >&2; return 1
+   fi
  done
  rsync -a --rsync-path="nice -n 10 rsync" "$jobs/transfer-ready.json" "$jobs/recovery-source-mac.json" "$jobs/recovery-native.sha256" "$node:$jobs/"
  ssh "$node" "who; bash '$fleet/fleet_run.sh' recovery-smoke-$node-20261008 env CLASHER_FLEET_SOURCE_MANIFEST='$CLASHER_FLEET_SOURCE_MANIFEST' CLASHER_FLEET_NATIVE_SHA256='$CLASHER_FLEET_NATIVE_SHA256' bash '$fleet/smoke.sh'"
