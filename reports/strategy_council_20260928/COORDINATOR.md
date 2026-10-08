@@ -843,3 +843,9 @@ Also on the hub, but with copies elsewhere:
     4. The official-client verifier window must come from its own measured distribution.
   - **Decision:** validate fixes 1–3 flag-guarded in the exploration lane (paired sim, Sol). They feed prospective L2-v4 PREREG amendments before L2 starts. The Mac Training Camp frame-count protocol is deferred until Sam OKs Mac use.
 - **~23:35 UTC: memory-rule clarification.** The 64 GB summed-PSS cap is for leased roader hosts only. Home hosts use a MemAvailable ≥24 GB floor with no OOM risk to co-located training. Perception's CPU grid and decoder gate move off 01 (T11 loaders reached 66 GB PSS there) to leased v2 CPU and 08. Gates (b)/(c): wide-seed (≥2^44) qualification and the RC-4 replay contract PASS; the worker is assembling the final hash commitment and delta r3.
+- **~23:33 UTC: integrity incident, root-caused and fixed (coordinator-owned job).**
+  - **Cause:** `hub-mirror-127x04-20261008-r2` (01→04 backup loop, every 30 min since 2026-10-07) `rsync -au`'d 01's live `jobs/clasher`, `clasher-v4-data` and report trees into the **identical live paths on 04**. That overwrote older 04-local same-path files with 01's copies.
+  - **Confirmed damage:** two gates-bc seed-inventory overwrites on 04 (the historical-docs receipt; shards 00–06 and inventory.json). No seed information was lost: the byte-identical merged archive is preserved on 03.
+  - **Fix:** the loop was stopped by verified PIDs and relaunched as `hub-mirror-127x04-v2-20261008` (`hub_mirror_v2.sh`), which writes only to `04:/mpac/sdicks02/mirrors/hub01/<abs path>`.
+  - **Follow-ups:** the perception worker was asked to verify its 04 files against its SHA manifests. Gates: the 04 audit uses the preserved archive with disclosure, and H is recomputed pre-freeze.
+  - **Lesson:** a backup must never write into another host's live paths.
