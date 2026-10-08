@@ -1,0 +1,67 @@
+{
+  "utc": 1791439028.7010565,
+  "reason": "Development performance: repeated enumeration of ambiguous queue hands; no confirmation process is targeted.",
+  "supervisor": 2340895,
+  "children": [
+    {
+      "pid": 2340898,
+      "ppid": 2340895,
+      "cpu_seconds": 544.7
+    },
+    {
+      "pid": 2340899,
+      "ppid": 2340895,
+      "cpu_seconds": 544.73
+    },
+    {
+      "pid": 2340900,
+      "ppid": 2340895,
+      "cpu_seconds": 544.7
+    },
+    {
+      "pid": 2340901,
+      "ppid": 2340895,
+      "cpu_seconds": 544.71
+    },
+    {
+      "pid": 2340902,
+      "ppid": 2340895,
+      "cpu_seconds": 544.73
+    },
+    {
+      "pid": 2340903,
+      "ppid": 2340895,
+      "cpu_seconds": 544.72
+    },
+    {
+      "pid": 2340904,
+      "ppid": 2340895,
+      "cpu_seconds": 544.69
+    },
+    {
+      "pid": 2340905,
+      "ppid": 2340895,
+      "cpu_seconds": 544.78
+    },
+    {
+      "pid": 2340906,
+      "ppid": 2340895,
+      "cpu_seconds": 544.73
+    },
+    {
+      "pid": 2340907,
+      "ppid": 2340895,
+      "cpu_seconds": 544.75
+    },
+    {
+      "pid": 2340908,
+      "ppid": 2340895,
+      "cpu_seconds": 544.72
+    },
+    {
+      "pid": 2340909,
+      "ppid": 2340895,
+      "cpu_seconds": 544.69
+    }
+  ]
+}

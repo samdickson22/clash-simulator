@@ -1,0 +1,287 @@
+{
+  "total_metered_cpu_hours": 42.058711111111116,
+  "game_cpu_hours": 29.622947980936942,
+  "confirmation_supervisors_and_workers_cpu_hours": 29.738450000000004,
+  "dev_and_preflight_cpu_hours": 12.316761111111113,
+  "missing_timing": [],
+  "total_is_lower_bound": false,
+  "records": [
+    {
+      "host": "127x01",
+      "label": "s4-snapshot-r1",
+      "cpu_seconds": 0.23,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s4-seed-audit-r1",
+      "cpu_seconds": 466.01,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s4-register-r1",
+      "cpu_seconds": 3.56,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s4-start-r1",
+      "cpu_seconds": 0.49,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s4-collect-r1",
+      "cpu_seconds": 12.6,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s4-final-integrity-r1",
+      "cpu_seconds": 0.14,
+      "timing_missing": false
+    },
+    {
+      "host": "127x01",
+      "label": "s4-dev-finalize-r1",
+      "cpu_seconds": 0.6,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-snapshot-r1",
+      "cpu_seconds": 0.23,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-seed-audit-r1",
+      "cpu_seconds": 466.01,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-tests-r1",
+      "cpu_seconds": 0.22999999999999998,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-recovery-tests-r1",
+      "cpu_seconds": 1.24,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-recovery-tests-r2",
+      "cpu_seconds": 4.33,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-exact-1-r1",
+      "cpu_seconds": 115.11,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-preflight-0-r1",
+      "cpu_seconds": 247.43,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-preflight-2-r1",
+      "cpu_seconds": 302.57,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-preflight-4-r1",
+      "cpu_seconds": 100.74000000000001,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-preflight-6-r1",
+      "cpu_seconds": 95.34,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-generate-r1",
+      "cpu_seconds": 712.0600000000001,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-replay-v1",
+      "cpu_seconds": 6550.160000000001,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-confirm-node-127x04-r1",
+      "cpu_seconds": 54238.670000000006,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-profile-r1",
+      "cpu_seconds": 257.86,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-profile-r2",
+      "cpu_seconds": 81.66999999999999,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-replay-v2",
+      "cpu_seconds": 7001.16,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-replay-extra-v2",
+      "cpu_seconds": 6268.63,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-control-r1",
+      "cpu_seconds": 6.1,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-control-r2",
+      "cpu_seconds": 23.119999999999997,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-final-integrity-r1",
+      "cpu_seconds": 0.14,
+      "timing_missing": false
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-summary-v2",
+      "cpu_seconds": 1.01,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-snapshot-r1",
+      "cpu_seconds": 0.1,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-tracker-tests-r1",
+      "cpu_seconds": 0.46,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-exact-0-r1",
+      "cpu_seconds": 109.41,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-exact-2-r1",
+      "cpu_seconds": 95.78,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-preflight-1-r1",
+      "cpu_seconds": 235.02,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-preflight-3-r1",
+      "cpu_seconds": 101.42,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-preflight-5-r1",
+      "cpu_seconds": 99.22999999999999,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-preflight-7-r1",
+      "cpu_seconds": 120.30999999999999,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-dev-generate-r1",
+      "cpu_seconds": 736.41,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-dev-replay-v1",
+      "cpu_seconds": 6556.21,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-confirm-node-127x08-r1",
+      "cpu_seconds": 52819.75,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-tests-v2",
+      "cpu_seconds": 3.51,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-dev-replay-v2",
+      "cpu_seconds": 6955.11,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-dev-replay-extra-v2",
+      "cpu_seconds": 6584.67,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-tests-v2b",
+      "cpu_seconds": 6.539999999999999,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-dev-control-r1",
+      "cpu_seconds": 5.67,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-dev-control-r2",
+      "cpu_seconds": 24.169999999999998,
+      "timing_missing": false
+    },
+    {
+      "host": "127x08",
+      "label": "s4-final-integrity-r1",
+      "cpu_seconds": 0.15,
+      "timing_missing": false
+    }
+  ],
+  "accounting": "Top-level GNU time includes reaped children. Game CPU is a subset; do not add it to totals. Failed tests and interrupted development runs are included where GNU time survived. Missing timing is explicit; totals are lower bounds if any log lacks timing. Small SSH, copying and final summaries are unmetered."
+}

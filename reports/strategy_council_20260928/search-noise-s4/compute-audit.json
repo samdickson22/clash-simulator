@@ -1,0 +1,404 @@
+{
+  "total_metered_cpu_hours": 41.929161111111114,
+  "game_cpu_hours": 29.622947980936942,
+  "confirmation_supervisors_and_workers_cpu_hours": 29.738450000000004,
+  "dev_and_preflight_cpu_hours": 12.187211111111111,
+  "missing_timing": [
+    {
+      "host": "127x04",
+      "label": "s4-snapshot-r1",
+      "log_sha256": "e2dd795f32e2eb6db45a02efe767b0e304bb32cb037eacf29ac53ffe6b253aea",
+      "cpu_seconds": null,
+      "timing_missing": true,
+      "reason": "identical log bytes already attributed to 127x01/s4-snapshot-r1"
+    },
+    {
+      "host": "127x04",
+      "label": "s4-seed-audit-r1",
+      "log_sha256": "cc944f4a356d2d150a3952068f3b6f4873c65b202d505f6b9ec951113c861d3e",
+      "cpu_seconds": null,
+      "timing_missing": true,
+      "reason": "identical log bytes already attributed to 127x01/s4-seed-audit-r1"
+    },
+    {
+      "host": "127x04",
+      "label": "s4-final-integrity-r1",
+      "log_sha256": "23852a09979cde22a450c74ebe71dde882b4aba1abeceb9dbc7f2af1c39e072a",
+      "cpu_seconds": null,
+      "timing_missing": true,
+      "reason": "identical log bytes already attributed to 127x01/s4-final-integrity-r1"
+    }
+  ],
+  "total_is_lower_bound": true,
+  "records": [
+    {
+      "host": "127x01",
+      "label": "s4-snapshot-r1",
+      "log_sha256": "e2dd795f32e2eb6db45a02efe767b0e304bb32cb037eacf29ac53ffe6b253aea",
+      "cpu_seconds": 0.23,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x01",
+      "label": "s4-seed-audit-r1",
+      "log_sha256": "cc944f4a356d2d150a3952068f3b6f4873c65b202d505f6b9ec951113c861d3e",
+      "cpu_seconds": 466.01,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x01",
+      "label": "s4-register-r1",
+      "log_sha256": "f04762ff46418b3c084c14edf5e476fbd364576d12da2cd605c01282f1f9f775",
+      "cpu_seconds": 3.56,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x01",
+      "label": "s4-start-r1",
+      "log_sha256": "dc46a4a177922ebb74fa4c9885b1c1c966613361ae9d9f0db581e0b6f2fbf645",
+      "cpu_seconds": 0.49,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x01",
+      "label": "s4-collect-r1",
+      "log_sha256": "b712a8b1a589f62afd549ee3938bb3d93610a52901c6147dc5692b3b3478d2e1",
+      "cpu_seconds": 12.6,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x01",
+      "label": "s4-final-integrity-r1",
+      "log_sha256": "23852a09979cde22a450c74ebe71dde882b4aba1abeceb9dbc7f2af1c39e072a",
+      "cpu_seconds": 0.14,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x01",
+      "label": "s4-dev-finalize-r1",
+      "log_sha256": "16c626a640904762f9f96f953df296c33ad35e0b534c9430ddaa1746f19e7fe4",
+      "cpu_seconds": 0.6,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-snapshot-r1",
+      "log_sha256": "e2dd795f32e2eb6db45a02efe767b0e304bb32cb037eacf29ac53ffe6b253aea",
+      "cpu_seconds": null,
+      "timing_missing": true,
+      "reason": "identical log bytes already attributed to 127x01/s4-snapshot-r1"
+    },
+    {
+      "host": "127x04",
+      "label": "s4-seed-audit-r1",
+      "log_sha256": "cc944f4a356d2d150a3952068f3b6f4873c65b202d505f6b9ec951113c861d3e",
+      "cpu_seconds": null,
+      "timing_missing": true,
+      "reason": "identical log bytes already attributed to 127x01/s4-seed-audit-r1"
+    },
+    {
+      "host": "127x04",
+      "label": "s4-tests-r1",
+      "log_sha256": "1cb1652fb63bdb236523025006bd7efdf5f4465624625743ecbd136fb5caee3c",
+      "cpu_seconds": 0.22999999999999998,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-recovery-tests-r1",
+      "log_sha256": "7ea990c62f61a4fd3246cc58072ddc08138a9491e4fc4ba89011364dc6f0063f",
+      "cpu_seconds": 1.24,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-recovery-tests-r2",
+      "log_sha256": "ef2a3c83b48390441814f79cb88e355c5497a60e66e6ea6c39d3f9b0735178d9",
+      "cpu_seconds": 4.33,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-exact-1-r1",
+      "log_sha256": "51acb5dc96798480c4b7e5f57506319d757a60b0025d1070818fe5b7ed97ef63",
+      "cpu_seconds": 115.11,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-preflight-0-r1",
+      "log_sha256": "5a0ae7c6dc8478e4de120663a96ecb38632852b021fc9be6583e38d27440e6a4",
+      "cpu_seconds": 247.43,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-preflight-2-r1",
+      "log_sha256": "b564ca32ee53204fb3b6a0fa7fe90bdc2a57736d5ee6c0fbea42f0a1cc807564",
+      "cpu_seconds": 302.57,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-preflight-4-r1",
+      "log_sha256": "96a440af88bfd29f0874e5118c9fe59b20abd063fc9413ac975a77c438c3961c",
+      "cpu_seconds": 100.74000000000001,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-preflight-6-r1",
+      "log_sha256": "dee53d89cb4fa891c65e6398bdee39acefc81c98d42e8cb3ea169f32c7986361",
+      "cpu_seconds": 95.34,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-generate-r1",
+      "log_sha256": "838612356dd16d0983ffa18c160a7538e37b02a7f8b4cb68933f523f032fd3d3",
+      "cpu_seconds": 712.0600000000001,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-replay-v1",
+      "log_sha256": "a2d6caba276f3239f4aa415e533ae87f05e1fb70908833948b0591b71a28c1b6",
+      "cpu_seconds": 6550.160000000001,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-confirm-node-127x04-r1",
+      "log_sha256": "af48cf39f0af2e41893d4dcee0fc1f5795281855ef4c00b51bc8591f707879f8",
+      "cpu_seconds": 54238.670000000006,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-profile-r1",
+      "log_sha256": "40c8eedf46c969538b08dc143d54c1ab904703b914b2927f881fab6c01ef41c8",
+      "cpu_seconds": 257.86,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-profile-r2",
+      "log_sha256": "b922302ecbf1380be4be49c0f832760e2906b26d7b98612a3eba714829818631",
+      "cpu_seconds": 81.66999999999999,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-replay-v2",
+      "log_sha256": "75e011998f2c277f5fe76e3bbda9b2d34a7dd5ee9cbdf1bd9d8fbb5b410bcd04",
+      "cpu_seconds": 7001.16,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-replay-extra-v2",
+      "log_sha256": "d7967076bf0c2a64e241278f45aef3a0b984044dbeade5fa81905309bc4e3ce9",
+      "cpu_seconds": 6268.63,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-control-r1",
+      "log_sha256": "ebf33bc761a987deec520908863c495bb3d6b29754872bd936fae106f7ba0b2e",
+      "cpu_seconds": 6.1,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-control-r2",
+      "log_sha256": "8453da7a9d889ac385f2c55e8bf3c1b5b6a1ab929486e393533074579093fe5d",
+      "cpu_seconds": 23.119999999999997,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x04",
+      "label": "s4-final-integrity-r1",
+      "log_sha256": "23852a09979cde22a450c74ebe71dde882b4aba1abeceb9dbc7f2af1c39e072a",
+      "cpu_seconds": null,
+      "timing_missing": true,
+      "reason": "identical log bytes already attributed to 127x01/s4-final-integrity-r1"
+    },
+    {
+      "host": "127x04",
+      "label": "s4-dev-summary-v2",
+      "log_sha256": "bcdcde96c45b18555ef4ca66285d7c604f6e816c13745d80410dcd049c7b8f5f",
+      "cpu_seconds": 1.01,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-snapshot-r1",
+      "log_sha256": "02f9d0dca2debe99045cc8461eb3781c864314d97bc4e603f7c167fd311ba165",
+      "cpu_seconds": 0.1,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-tracker-tests-r1",
+      "log_sha256": "fda098d9706cd8c507506ee9b52ea58e8d5c84179d5e935b0a4bc839d6ed4441",
+      "cpu_seconds": 0.46,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-exact-0-r1",
+      "log_sha256": "796c67240dc989ed324a2218afc761d268978de335b58c3bbf967487dce4b94b",
+      "cpu_seconds": 109.41,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-exact-2-r1",
+      "log_sha256": "ba7e3bbde39713e2cb0a045efaf7bd0fc1a76b44528191af02c1c3fd29125bb1",
+      "cpu_seconds": 95.78,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-preflight-1-r1",
+      "log_sha256": "572f53c73d0457bc35ae85d9d1a36590a7f1395fdf2c753d1388919dae58a1c6",
+      "cpu_seconds": 235.02,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-preflight-3-r1",
+      "log_sha256": "35ecc2337d769a089ea443a059e0185daec6130b5ee19fd3e3228636da50b82a",
+      "cpu_seconds": 101.42,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-preflight-5-r1",
+      "log_sha256": "a7929cc8d84207b805590dcfeb14d5852d43d806f7bc8673ea2982235f8f2b29",
+      "cpu_seconds": 99.22999999999999,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-preflight-7-r1",
+      "log_sha256": "aca3f1a4a9e5574959bf11b21dd3f3e7a027e90ec5c18be8379f97f995fe46cb",
+      "cpu_seconds": 120.30999999999999,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-dev-generate-r1",
+      "log_sha256": "b2ff9d541dfcee84859acb22ffb67b528e3464da86f254ef6857827685190287",
+      "cpu_seconds": 736.41,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-dev-replay-v1",
+      "log_sha256": "b2208a73327e5dda5ccbfeb77ac496878da2ce7489a709cbac62e952f711b537",
+      "cpu_seconds": 6556.21,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-confirm-node-127x08-r1",
+      "log_sha256": "dff72f4fcb8289a4f62ecbbdf77a42288fb671e51eba609b1e75bc999c4c219e",
+      "cpu_seconds": 52819.75,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-tests-v2",
+      "log_sha256": "9964a0ec8d1fafc843d26dfc89821ccc8ef82c206c9eaf23d2bd0edc058a656c",
+      "cpu_seconds": 3.51,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-dev-replay-v2",
+      "log_sha256": "49411ed284801551e8d9e220f7d52d5ecde4866a6ddd1602b9d2aa636671933a",
+      "cpu_seconds": 6955.11,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-dev-replay-extra-v2",
+      "log_sha256": "050da568d22ae2b070a42a345eaeab7bc6588d560f2fc2002503963ffa248cb2",
+      "cpu_seconds": 6584.67,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-tests-v2b",
+      "log_sha256": "8c2b98228fa998c74ee3c96065b0724898110ee0ecff1c1cea9dbdd6faab87f8",
+      "cpu_seconds": 6.539999999999999,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-dev-control-r1",
+      "log_sha256": "a05ee44bfe9e31ea7103d0b5573a50c85287e9561913555900e38ce5074ff7af",
+      "cpu_seconds": 5.67,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-dev-control-r2",
+      "log_sha256": "7a423f680d54025a08c31d62cb6f4e30e56e19ba4d8de5a1245156b17acd31ca",
+      "cpu_seconds": 24.169999999999998,
+      "timing_missing": false,
+      "reason": null
+    },
+    {
+      "host": "127x08",
+      "label": "s4-final-integrity-r1",
+      "log_sha256": "af927a6431273a0671bf212100282be8896dcde04822abd7e30dccaf688cc662",
+      "cpu_seconds": 0.15,
+      "timing_missing": false,
+      "reason": null
+    }
+  ],
+  "accounting": "Top-level GNU time includes reaped children. Game CPU is a subset; do not add it to totals. Failed tests and interrupted development runs are included where GNU time survived. Missing timing is explicit; totals are lower bounds if any log lacks timing. Small SSH, copying and final summaries are unmetered."
+}

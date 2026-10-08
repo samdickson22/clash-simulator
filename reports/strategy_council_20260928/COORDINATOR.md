@@ -519,3 +519,16 @@ Also on the hub, but with copies elsewhere:
   - **No-KVM emulator on 127x04** (`fleet/NOKVM-EMULATOR.md`, Sol): boot 12.8 min, Settings at **0.154 FPS (130× below
     20)**, shell 0.8 s, 0/10 screenshots within 10 s. `-gpu host` fell back to SwiftShader; MTTCG was unstable. Rendering
     without KVM is infeasible; only a kvm group grant from CSL admins would change that.
+- **2026-10-08 06:25 UTC: S4: the gain needs elixir AND hand together; tracker v3 meets its dev target; S5 decided.**
+  (`search-noise-s4/RESULTS.md`, `TRACKER-V3.md`; 1,280 games, 30 core-h, 21 min on 04/08.) Full 66.4%; R-elixir +6.2 pp
+  [0.0, 12.5]; R-hand +5.9 [−0.4, 12.1]; neither is material under the strict LB>0 rule. R-derived +18.0 [11.7, 24.2]
+  material; ELT +6.4 [0.4, 12.5] material; interaction +5.9 [−2.3, 14.1].
+  Reading: each component alone is worth ~6 pp; the full gain needs both (simple additivity is not excluded).
+  **Tracker v3 (dev validation only, fresh traces):** N97 resolved-hand 20.6% at 91.5% accuracy (true state 21.4% /
+  100%; ELT 8.5% / 77%; T2 2.1% / 49%). Reliability is good across bins, slightly underconfident. Elixir = T2 lattice
+  (MAE 0.65, 90% coverage, width 2.6). At N90 its hand inference collapses (0.008% resolved).
+  **Decision (overriding my earlier "S5 only if R-hand is material" condition):** run **S5**, a confirmation of
+  tracker v3. It is the first tracker that is good on both components (calibrated elixir, near-reference hand at N97);
+  the joint repair is +18 pp; ELT (weaker on both) is already material. Cost ~20 min of games. **Implication for v4
+  perception:** hand inference only works at ~97% event quality, so the v4 event gate should be judged against
+  97/97, not just the provisional 95/95. That is decided after S5.

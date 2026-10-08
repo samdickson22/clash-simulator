@@ -1,0 +1,20 @@
+{
+  "games": 1280,
+  "counts": {
+    "Full": 256,
+    "R-elixir": 256,
+    "R-hand": 256,
+    "R-derived": 256,
+    "ELT": 256
+  },
+  "manifest": "cc70d857ac3a3a3a1068eb730e701e78bdac9277c828a50355b2af260cb520e8",
+  "receipt_aggregate": "95628321ee96c8d2d25486b40545c4cab36e77a0f60b6f49ffbd928f04114ed0",
+  "all_nice_at_least_10": true,
+  "all_native_threads_one": true,
+  "game_cpu_hours_by_host": {
+    "127x04": 15.00766132509444,
+    "127x08": 14.615286655842489
+  },
+  "wall_span_minutes": 20.52606420516968,
+  "outcome_barrier": "All receipts, 152 partition successes, both supervisor successes checked by frozen analyzer before scores."
+}

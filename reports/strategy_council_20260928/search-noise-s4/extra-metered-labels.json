@@ -1,0 +1,25 @@
+{
+  "127x04": [
+    "s4-profile-r1",
+    "s4-profile-r2",
+    "s4-dev-replay-v2",
+    "s4-dev-replay-extra-v2",
+    "s4-dev-control-r1",
+    "s4-dev-control-r2",
+    "s4-final-integrity-r1",
+    "s4-dev-summary-v2"
+  ],
+  "127x08": [
+    "s4-tests-v2",
+    "s4-dev-replay-v2",
+    "s4-dev-replay-extra-v2",
+    "s4-tests-v2b",
+    "s4-dev-control-r1",
+    "s4-dev-control-r2",
+    "s4-final-integrity-r1"
+  ],
+  "127x01": [
+    "s4-final-integrity-r1",
+    "s4-dev-finalize-r1"
+  ]
+}

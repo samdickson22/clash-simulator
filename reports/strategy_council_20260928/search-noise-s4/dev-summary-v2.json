@@ -1,0 +1,1633 @@
+{
+  "round": "v2",
+  "traces": 56,
+  "cpu_seconds": 26357.023104818,
+  "cells": {
+    "T2-N97": {
+      "calibration": {
+        "T3": {
+          "samples": 12102,
+          "resolved": 2584,
+          "resolved_rate": 0.21351842670632953,
+          "accuracy": 0.9075077399380805,
+          "mae": 0.6662523165519099,
+          "coverage": 0.9013386217154189,
+          "width": 2.620382837547513,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 826,
+              "claimed_mass": 0.09121354143527756,
+              "accuracy": 0.16343825665859565
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 1293,
+              "claimed_mass": 0.4006659053278563,
+              "accuracy": 0.5498839907192575
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 2432,
+              "claimed_mass": 0.6148165046227716,
+              "accuracy": 0.7216282894736842
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 1627,
+              "claimed_mass": 0.7543089798090604,
+              "accuracy": 0.7750460971112477
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 3340,
+              "claimed_mass": 0.8557459854170753,
+              "accuracy": 0.8730538922155688
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 2390,
+              "claimed_mass": 0.9229646547817505,
+              "accuracy": 0.902092050209205
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 194,
+              "claimed_mass": 0.9560026044361721,
+              "accuracy": 0.9742268041237113
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "T2": {
+          "samples": 12102,
+          "resolved": 143,
+          "resolved_rate": 0.011816228722525203,
+          "accuracy": 0.23776223776223776,
+          "mae": 0.6662523165519099,
+          "coverage": 0.9013386217154189,
+          "width": 2.620382837547513,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 7864,
+              "claimed_mass": 0.033152503088391745,
+              "accuracy": 0.0021617497456765007
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 2008,
+              "claimed_mass": 0.3669528603840227,
+              "accuracy": 0.05129482071713148
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 968,
+              "claimed_mass": 0.5925061702746146,
+              "accuracy": 0.1115702479338843
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 375,
+              "claimed_mass": 0.756322419813744,
+              "accuracy": 0.17066666666666666
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 744,
+              "claimed_mass": 0.8448574606106769,
+              "accuracy": 0.0846774193548387
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 139,
+              "claimed_mass": 0.9172014167062799,
+              "accuracy": 0.2158273381294964
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 4,
+              "claimed_mass": 0.958172954869838,
+              "accuracy": 1.0
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "ELT": {
+          "samples": 12102,
+          "resolved": 872,
+          "resolved_rate": 0.07205420591637746,
+          "accuracy": 0.6284403669724771,
+          "mae": 1.7020737721737669,
+          "coverage": 0.6764997521070898,
+          "width": 3.4914221533630805,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 8082,
+              "claimed_mass": 0.04554199035263793,
+              "accuracy": 0.039099232863152686
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 1808,
+              "claimed_mass": 0.3460061392596446,
+              "accuracy": 0.02654867256637168
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 494,
+              "claimed_mass": 0.5927959264754167,
+              "accuracy": 0.1659919028340081
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 260,
+              "claimed_mass": 0.7646967280914146,
+              "accuracy": 0.38461538461538464
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 586,
+              "claimed_mass": 0.8547662939505348,
+              "accuracy": 0.5648464163822525
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 311,
+              "claimed_mass": 0.9249014247340606,
+              "accuracy": 0.48231511254019294
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 561,
+              "claimed_mass": 0.9722369780418549,
+              "accuracy": 0.7094474153297683
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "R-derived": {
+          "samples": 12102,
+          "resolved": 1772,
+          "resolved_rate": 0.1464220789952074,
+          "accuracy": 1.0,
+          "mae": 0.0,
+          "coverage": 1.0,
+          "width": 0.0,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 10330,
+              "claimed_mass": 0.0,
+              "accuracy": 0.0
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 1772,
+              "claimed_mass": 1.0,
+              "accuracy": 1.0
+            }
+          ]
+        }
+      },
+      "validation": {
+        "T3": {
+          "samples": 12174,
+          "resolved": 2511,
+          "resolved_rate": 0.2062592410054214,
+          "accuracy": 0.9151732377538829,
+          "mae": 0.6488167958828327,
+          "coverage": 0.9000328569081649,
+          "width": 2.599713545260391,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 723,
+              "claimed_mass": 0.0877717368507053,
+              "accuracy": 0.2033195020746888
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 1758,
+              "claimed_mass": 0.3934299880095516,
+              "accuracy": 0.4254835039817975
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 1983,
+              "claimed_mass": 0.6173438636355285,
+              "accuracy": 0.6964195663136662
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 1542,
+              "claimed_mass": 0.7532618683772008,
+              "accuracy": 0.8501945525291829
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 3657,
+              "claimed_mass": 0.8540240161303412,
+              "accuracy": 0.9026524473612251
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 2325,
+              "claimed_mass": 0.922465348008549,
+              "accuracy": 0.9101075268817205
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 186,
+              "claimed_mass": 0.9561401814273924,
+              "accuracy": 0.978494623655914
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "T2": {
+          "samples": 12174,
+          "resolved": 251,
+          "resolved_rate": 0.020617709873500905,
+          "accuracy": 0.4940239043824701,
+          "mae": 0.6488167958828327,
+          "coverage": 0.9000328569081649,
+          "width": 2.599713545260391,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 8830,
+              "claimed_mass": 0.03349959462056342,
+              "accuracy": 0.011551528878822197
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 1344,
+              "claimed_mass": 0.37023835531538063,
+              "accuracy": 0.060267857142857144
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 753,
+              "claimed_mass": 0.5954127513781262,
+              "accuracy": 0.1553784860557769
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 346,
+              "claimed_mass": 0.7628427592523146,
+              "accuracy": 0.19653179190751446
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 650,
+              "claimed_mass": 0.8543521888622676,
+              "accuracy": 0.27384615384615385
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 246,
+              "claimed_mass": 0.919576013075188,
+              "accuracy": 0.4878048780487805
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 5,
+              "claimed_mass": 0.9563288935710934,
+              "accuracy": 0.8
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "ELT": {
+          "samples": 12174,
+          "resolved": 1030,
+          "resolved_rate": 0.08460653852472483,
+          "accuracy": 0.7699029126213592,
+          "mae": 1.509388838574458,
+          "coverage": 0.7304912107770659,
+          "width": 3.4284458928864794,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 7456,
+              "claimed_mass": 0.03538317345519691,
+              "accuracy": 0.032188841201716736
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 1698,
+              "claimed_mass": 0.34270807370000456,
+              "accuracy": 0.06007067137809187
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 443,
+              "claimed_mass": 0.6045984484212364,
+              "accuracy": 0.2054176072234763
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 605,
+              "claimed_mass": 0.7681004823143398,
+              "accuracy": 0.49421487603305786
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 942,
+              "claimed_mass": 0.8505538241098091,
+              "accuracy": 0.6443736730360934
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 382,
+              "claimed_mass": 0.9232100992356699,
+              "accuracy": 0.6675392670157068
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 644,
+              "claimed_mass": 0.9723734777115431,
+              "accuracy": 0.8291925465838509
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 4,
+              "claimed_mass": 0.9929838517289561,
+              "accuracy": 1.0
+            }
+          ]
+        },
+        "R-derived": {
+          "samples": 12174,
+          "resolved": 2600,
+          "resolved_rate": 0.21356990307212093,
+          "accuracy": 1.0,
+          "mae": 0.0,
+          "coverage": 1.0,
+          "width": 0.0,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 9574,
+              "claimed_mass": 0.0,
+              "accuracy": 0.0
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 2600,
+              "claimed_mass": 1.0,
+              "accuracy": 1.0
+            }
+          ]
+        }
+      }
+    },
+    "T2-N90": {
+      "calibration": {
+        "T3": {
+          "samples": 12102,
+          "resolved": 2,
+          "resolved_rate": 0.00016526194017517766,
+          "accuracy": 1.0,
+          "mae": 0.7704144242188559,
+          "coverage": 0.8821682366550984,
+          "width": 2.518366418773757,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 1864,
+              "claimed_mass": 0.13684051764734753,
+              "accuracy": 0.27360515021459225
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 4213,
+              "claimed_mass": 0.38062690054146076,
+              "accuracy": 0.45051032518395445
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 3784,
+              "claimed_mass": 0.6022300563286898,
+              "accuracy": 0.7621564482029598
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 1718,
+              "claimed_mass": 0.7465202549682368,
+              "accuracy": 0.8573923166472642
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 521,
+              "claimed_mass": 0.8276309297171857,
+              "accuracy": 0.9232245681381958
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 2,
+              "claimed_mass": 0.9122014502536655,
+              "accuracy": 1.0
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "T2": {
+          "samples": 12102,
+          "resolved": 0,
+          "resolved_rate": 0.0,
+          "accuracy": null,
+          "mae": 0.7704144242188559,
+          "coverage": 0.8821682366550984,
+          "width": 2.518366418773757,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 8894,
+              "claimed_mass": 0.060060124603579575,
+              "accuracy": 0.00944456937261075
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 2269,
+              "claimed_mass": 0.34550297251024165,
+              "accuracy": 0.026443367122080213
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 782,
+              "claimed_mass": 0.5773191268341685,
+              "accuracy": 0.0639386189258312
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 126,
+              "claimed_mass": 0.7386083829921531,
+              "accuracy": 0.1111111111111111
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 31,
+              "claimed_mass": 0.8237726870947587,
+              "accuracy": 0.12903225806451613
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "ELT": {
+          "samples": 12102,
+          "resolved": 158,
+          "resolved_rate": 0.013055693273839035,
+          "accuracy": 0.5506329113924051,
+          "mae": 4.011157036453878,
+          "coverage": 0.356304743017683,
+          "width": 5.038658527516112,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 7801,
+              "claimed_mass": 0.0625461537328575,
+              "accuracy": 0.02281758748878349
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 2230,
+              "claimed_mass": 0.367531154772889,
+              "accuracy": 0.13811659192825113
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 1101,
+              "claimed_mass": 0.588534599264866,
+              "accuracy": 0.3033605812897366
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 448,
+              "claimed_mass": 0.7490577442467056,
+              "accuracy": 0.37276785714285715
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 364,
+              "claimed_mass": 0.8531379274626404,
+              "accuracy": 0.45054945054945056
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 158,
+              "claimed_mass": 0.9175472918145503,
+              "accuracy": 0.5506329113924051
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "R-derived": {
+          "samples": 12102,
+          "resolved": 1772,
+          "resolved_rate": 0.1464220789952074,
+          "accuracy": 1.0,
+          "mae": 0.0,
+          "coverage": 1.0,
+          "width": 0.0,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 10330,
+              "claimed_mass": 0.0,
+              "accuracy": 0.0
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 1772,
+              "claimed_mass": 1.0,
+              "accuracy": 1.0
+            }
+          ]
+        }
+      },
+      "validation": {
+        "T3": {
+          "samples": 12174,
+          "resolved": 1,
+          "resolved_rate": 8.21422704123542e-05,
+          "accuracy": 1.0,
+          "mae": 0.7627148697265134,
+          "coverage": 0.8896007885657959,
+          "width": 2.677682717266306,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 1922,
+              "claimed_mass": 0.1423790941017045,
+              "accuracy": 0.22320499479708636
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 4286,
+              "claimed_mass": 0.3827295653928493,
+              "accuracy": 0.4601026598226785
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 3805,
+              "claimed_mass": 0.6010468866871306,
+              "accuracy": 0.7684625492772668
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 1653,
+              "claimed_mass": 0.7476285549074246,
+              "accuracy": 0.8463399879007865
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 507,
+              "claimed_mass": 0.8259196086663108,
+              "accuracy": 0.8658777120315582
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 1,
+              "claimed_mass": 0.9137083607922288,
+              "accuracy": 1.0
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "T2": {
+          "samples": 12174,
+          "resolved": 4,
+          "resolved_rate": 0.0003285690816494168,
+          "accuracy": 0.0,
+          "mae": 0.7627148697265134,
+          "coverage": 0.8896007885657959,
+          "width": 2.677682717266306,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 8884,
+              "claimed_mass": 0.052695580436569106,
+              "accuracy": 0.006190904997748762
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 2261,
+              "claimed_mass": 0.35985211317757376,
+              "accuracy": 0.03715170278637771
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 828,
+              "claimed_mass": 0.5923925143918638,
+              "accuracy": 0.07246376811594203
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 161,
+              "claimed_mass": 0.7546753676669613,
+              "accuracy": 0.2608695652173913
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 36,
+              "claimed_mass": 0.8319942280279035,
+              "accuracy": 0.0
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 4,
+              "claimed_mass": 0.9060714089034761,
+              "accuracy": 0.0
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "ELT": {
+          "samples": 12174,
+          "resolved": 192,
+          "resolved_rate": 0.015771315919172007,
+          "accuracy": 0.6145833333333334,
+          "mae": 4.126333684914896,
+          "coverage": 0.3440939707573517,
+          "width": 4.930294825036963,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 7447,
+              "claimed_mass": 0.06701483383803412,
+              "accuracy": 0.045521686585202094
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 2317,
+              "claimed_mass": 0.369148150128799,
+              "accuracy": 0.14372032801035822
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 1350,
+              "claimed_mass": 0.5888739503612695,
+              "accuracy": 0.32296296296296295
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 395,
+              "claimed_mass": 0.7469947912107745,
+              "accuracy": 0.40759493670886077
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 473,
+              "claimed_mass": 0.8521803305611475,
+              "accuracy": 0.4439746300211416
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 184,
+              "claimed_mass": 0.921931593090216,
+              "accuracy": 0.6086956521739131
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 8,
+              "claimed_mass": 0.9525664936995608,
+              "accuracy": 0.75
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "R-derived": {
+          "samples": 12174,
+          "resolved": 2600,
+          "resolved_rate": 0.21356990307212093,
+          "accuracy": 1.0,
+          "mae": 0.0,
+          "coverage": 1.0,
+          "width": 0.0,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 9574,
+              "claimed_mass": 0.0,
+              "accuracy": 0.0
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 2600,
+              "claimed_mass": 1.0,
+              "accuracy": 1.0
+            }
+          ]
+        }
+      }
+    },
+    "T2-N64": {
+      "calibration": {
+        "T3": {
+          "samples": 12102,
+          "resolved": 0,
+          "resolved_rate": 0.0,
+          "accuracy": null,
+          "mae": 0.9121231933461279,
+          "coverage": 0.8956370847793753,
+          "width": 4.039782193025945,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 8916,
+              "claimed_mass": 0.12460722272820286,
+              "accuracy": 0.3300807537012113
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 3039,
+              "claimed_mass": 0.32872855206062385,
+              "accuracy": 0.550180980585719
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 147,
+              "claimed_mass": 0.554427863770639,
+              "accuracy": 0.6802721088435374
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "T2": {
+          "samples": 12102,
+          "resolved": 0,
+          "resolved_rate": 0.0,
+          "accuracy": null,
+          "mae": 0.9121231933461279,
+          "coverage": 0.8956370847793753,
+          "width": 4.039782193025945,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 11959,
+              "claimed_mass": 0.03245371178688092,
+              "accuracy": 0.0034283802993561336
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 143,
+              "claimed_mass": 0.3004067586752691,
+              "accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "ELT": {
+          "samples": 12102,
+          "resolved": 0,
+          "resolved_rate": 0.0,
+          "accuracy": null,
+          "mae": 7.1322070620909175,
+          "coverage": 0.03247397124442241,
+          "width": 2.555655627169063,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 10292,
+              "claimed_mass": 0.07497117648689285,
+              "accuracy": 0.008550330353672756
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 1673,
+              "claimed_mass": 0.3287124271795094,
+              "accuracy": 0.031679617453676034
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 128,
+              "claimed_mass": 0.5762242729884162,
+              "accuracy": 0.0546875
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 9,
+              "claimed_mass": 0.7137046491026159,
+              "accuracy": 0.0
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "R-derived": {
+          "samples": 12102,
+          "resolved": 1772,
+          "resolved_rate": 0.1464220789952074,
+          "accuracy": 1.0,
+          "mae": 0.0,
+          "coverage": 1.0,
+          "width": 0.0,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 10330,
+              "claimed_mass": 0.0,
+              "accuracy": 0.0
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 1772,
+              "claimed_mass": 1.0,
+              "accuracy": 1.0
+            }
+          ]
+        }
+      },
+      "validation": {
+        "T3": {
+          "samples": 12174,
+          "resolved": 0,
+          "resolved_rate": 0.0,
+          "accuracy": null,
+          "mae": 0.9164086725089041,
+          "coverage": 0.9072613767044521,
+          "width": 4.1340514457039585,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 8849,
+              "claimed_mass": 0.12909379017544823,
+              "accuracy": 0.3029720872414962
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 3212,
+              "claimed_mass": 0.3266465953656199,
+              "accuracy": 0.5451432129514321
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 113,
+              "claimed_mass": 0.5525380674453045,
+              "accuracy": 0.7079646017699115
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "T2": {
+          "samples": 12174,
+          "resolved": 0,
+          "resolved_rate": 0.0,
+          "accuracy": null,
+          "mae": 0.9164086725089041,
+          "coverage": 0.9072613767044521,
+          "width": 4.1340514457039585,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 12088,
+              "claimed_mass": 0.030380924084294606,
+              "accuracy": 0.0033917935142289872
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 86,
+              "claimed_mass": 0.30339806117562385,
+              "accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "ELT": {
+          "samples": 12174,
+          "resolved": 0,
+          "resolved_rate": 0.0,
+          "accuracy": null,
+          "mae": 7.1860022020426095,
+          "coverage": 0.039181862986692954,
+          "width": 2.438925883029407,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 10069,
+              "claimed_mass": 0.08491408398198255,
+              "accuracy": 0.01320885887377098
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 2027,
+              "claimed_mass": 0.33301747145011046,
+              "accuracy": 0.06265416872224963
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 78,
+              "claimed_mass": 0.5605414087500807,
+              "accuracy": 0.21794871794871795
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            }
+          ]
+        },
+        "R-derived": {
+          "samples": 12174,
+          "resolved": 2600,
+          "resolved_rate": 0.21356990307212093,
+          "accuracy": 1.0,
+          "mae": 0.0,
+          "coverage": 1.0,
+          "width": 0.0,
+          "calibration_curve": [
+            {
+              "lower": 0,
+              "upper": 0.25,
+              "n": 9574,
+              "claimed_mass": 0.0,
+              "accuracy": 0.0
+            },
+            {
+              "lower": 0.25,
+              "upper": 0.5,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.7,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.9,
+              "upper": 0.95,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.95,
+              "upper": 0.99,
+              "n": 0,
+              "claimed_mass": null,
+              "accuracy": null
+            },
+            {
+              "lower": 0.99,
+              "upper": 1.0,
+              "n": 2600,
+              "claimed_mass": 1.0,
+              "accuracy": 1.0
+            }
+          ]
+        }
+      }
+    }
+  }
+}
