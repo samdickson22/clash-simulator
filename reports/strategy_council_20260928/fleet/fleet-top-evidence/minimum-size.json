@@ -1,0 +1,26 @@
+[
+  {
+    "width": 95,
+    "height": 28,
+    "renders": true,
+    "too_small": false
+  },
+  {
+    "width": 60,
+    "height": 27,
+    "renders": true,
+    "too_small": false
+  },
+  {
+    "width": 59,
+    "height": 27,
+    "renders": false,
+    "too_small": true
+  },
+  {
+    "width": 60,
+    "height": 26,
+    "renders": false,
+    "too_small": true
+  }
+]

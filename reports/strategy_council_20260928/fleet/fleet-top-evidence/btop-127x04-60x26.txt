@@ -1,0 +1,26 @@
+
+
+
+
+
+
+
+
+
+
+                  Terminal size too small:
+                    Width = 60 Height = 26
+
+                 Needed for current config:
+                   Width = 60 Height = 27
+
+
+
+
+
+
+
+
+
+
+

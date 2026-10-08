@@ -1,0 +1,92 @@
+[
+  {
+    "host": "127x01",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x03",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x04",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x05",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x08",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x09",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x10",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x11",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x12",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x13",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x14",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x15",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x16",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x17",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  },
+  {
+    "host": "127x18",
+    "status": 0,
+    "stdout": "btop version: \u001b[1m1.4.7+6e39144\u001b[0m\nCompiled with: /mpac/sdicks02/build/fleet-top/compiler/bin/x86_64-conda-linux-gnu-c++ (14.4.0)\nConfigured with: make STATIC=false GPU_SUPPORT=true RSMI_STATIC=false\ntmux 3.6a\nglibc 2.31\n",
+    "stderr": ""
+  }
+]

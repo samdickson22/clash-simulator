@@ -1,0 +1,30 @@
+127x02 — connecting (btop preset 1)
+ssh: connect to host 127x02 port 22: No route to host
+
+127x02 unreachable, retrying in 30s
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,146 @@
+[
+  {
+    "pane": "%1",
+    "host": "127x01",
+    "x": 0,
+    "y": 1,
+    "width": 95,
+    "height": 28,
+    "renders": true
+  },
+  {
+    "pane": "%2",
+    "host": "127x03",
+    "x": 96,
+    "y": 1,
+    "width": 95,
+    "height": 28,
+    "renders": true
+  },
+  {
+    "pane": "%3",
+    "host": "127x04",
+    "x": 192,
+    "y": 1,
+    "width": 95,
+    "height": 28,
+    "renders": true
+  },
+  {
+    "pane": "%4",
+    "host": "127x05",
+    "x": 288,
+    "y": 1,
+    "width": 96,
+    "height": 28,
+    "renders": true
+  },
+  {
+    "pane": "%5",
+    "host": "127x08",
+    "x": 0,
+    "y": 30,
+    "width": 95,
+    "height": 29,
+    "renders": true
+  },
+  {
+    "pane": "%6",
+    "host": "127x09",
+    "x": 96,
+    "y": 30,
+    "width": 95,
+    "height": 29,
+    "renders": true
+  },
+  {
+    "pane": "%7",
+    "host": "127x10",
+    "x": 192,
+    "y": 30,
+    "width": 95,
+    "height": 29,
+    "renders": true
+  },
+  {
+    "pane": "%8",
+    "host": "127x11",
+    "x": 288,
+    "y": 30,
+    "width": 96,
+    "height": 29,
+    "renders": true
+  },
+  {
+    "pane": "%9",
+    "host": "127x12",
+    "x": 0,
+    "y": 60,
+    "width": 95,
+    "height": 29,
+    "renders": true
+  },
+  {
+    "pane": "%10",
+    "host": "127x13",
+    "x": 96,
+    "y": 60,
+    "width": 95,
+    "height": 29,
+    "renders": true
+  },
+  {
+    "pane": "%11",
+    "host": "127x14",
+    "x": 192,
+    "y": 60,
+    "width": 95,
+    "height": 29,
+    "renders": true
+  },
+  {
+    "pane": "%12",
+    "host": "127x15",
+    "x": 288,
+    "y": 60,
+    "width": 96,
+    "height": 29,
+    "renders": true
+  },
+  {
+    "pane": "%13",
+    "host": "127x16",
+    "x": 0,
+    "y": 90,
+    "width": 95,
+    "height": 30,
+    "renders": true
+  },
+  {
+    "pane": "%14",
+    "host": "127x17",
+    "x": 96,
+    "y": 90,
+    "width": 95,
+    "height": 30,
+    "renders": true
+  },
+  {
+    "pane": "%15",
+    "host": "127x18",
+    "x": 192,
+    "y": 90,
+    "width": 95,
+    "height": 30,
+    "renders": true
+  },
+  {
+    "pane": "%16",
+    "host": "macmini-fleet",
+    "x": 288,
+    "y": 90,
+    "width": 96,
+    "height": 30,
+    "renders": true
+  }
+]

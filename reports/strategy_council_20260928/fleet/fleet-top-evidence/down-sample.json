@@ -1,0 +1,77 @@
+{
+  "totals": {
+    "up": 1,
+    "down": 1,
+    "threads": 128,
+    "busy": 0.11435557436404054,
+    "mem": 3934326784,
+    "mem_total": 134897373184,
+    "gpu_count": 1,
+    "gpu_avg": 0.0,
+    "gpu_sum": 0.0,
+    "gpu_mem": 16.0,
+    "gpu_total": 48682.0,
+    "clasher": 0,
+    "roader": 0,
+    "qemu": 0
+  },
+  "hosts": [
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 16.0,
+          "total": 48682.0,
+          "temp": 33.0,
+          "power": 5.9
+        }
+      ],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 0,
+      "roader": 0,
+      "ticks": [
+        10336781028,
+        10270980747
+      ],
+      "threads": 128,
+      "cpu": 0.08934029247190667,
+      "load": "0.10 4.24 21.14",
+      "mem_total": 134897373184,
+      "mem_used": 3934326784,
+      "poll_ms": 93,
+      "host": "127x04",
+      "up": true,
+      "seen": 1791440513.7360249,
+      "error": ""
+    },
+    {
+      "host": "127x02",
+      "up": false,
+      "seen": null,
+      "error": "ssh: connect to host 127x02 port 22: No route to host"
+    }
+  ],
+  "roles": {
+    "127x01": "clasher",
+    "127x02": "clasher",
+    "127x03": "clasher",
+    "127x04": "clasher",
+    "127x05": "command center",
+    "127x06": "clasher",
+    "127x07": "clasher",
+    "127x08": "clasher",
+    "127x09": "leased-to-clasher",
+    "127x10": "roader",
+    "127x11": "leased-to-clasher",
+    "127x12": "roader",
+    "127x13": "leased-to-clasher",
+    "127x14": "leased-to-clasher",
+    "127x15": "leased-to-clasher",
+    "127x16": "leased-to-clasher",
+    "127x17": "roader",
+    "127x18": "leased-to-clasher",
+    "macmini-fleet": "Mac / emulators"
+  }
+}

@@ -1,0 +1,161 @@
+# Fleet top — Sam's command center
+
+Installed and verified on 127x05, 2026-10-07/08. The `fleet` tmux session is running detached.
+
+## Run
+
+On 127x05:
+
+```bash
+fleet-top                 # overall dashboard + persistent btop grid
+fleetmon                  # dashboard alone; q exits
+```
+
+From Sam's laptop:
+
+```bash
+ssh -t 127x05 '~/.local/bin/fleet-top'
+ssh -t 127x05 '~/.local/bin/fleetmon'
+```
+
+Quote the remote path: the unquoted spelling `ssh -t 127x05 ~/.local/bin/fleet-top`
+(or `fleetmon`) expands `~` on the laptop, which can incorrectly send a `/Users/...`
+path. Both programs were tested through fresh SSH sessions from 127x03 to 127x05;
+no existing shell environment or SSH multiplexing was needed.
+
+- `Ctrl-b n` / `Ctrl-b p`: next / previous window (`overall`, `grid`).
+- `Ctrl-b` then an arrow: choose a pane. `Ctrl-b q` briefly labels pane numbers.
+- `Ctrl-b z`: zoom the selected pane to the client terminal; repeat to restore the grid.
+- `Ctrl-b d`: detach, leaving monitoring running. Run `fleet-top` again to attach.
+- Dashboard: `q` quit, `s` cycle name/CPU/GPU sort, `g` GPU-only view, `[` / `]` pages.
+  Resizing changes card columns and pagination. Running `fleet-top` restores an
+  `overall` window previously closed with `q`.
+
+## Grid size and presets
+
+The full grid has 16 panes on a fixed **384×120** virtual window. Use approximately
+384×121 terminal cells to see it all simultaneously (reduce the terminal font), or
+select a pane and zoom. A cropped grid on a smaller terminal is expected.
+Zoom uses normal `Ctrl-b z` with a fleet-specific wrapper that sizes the pane to
+its client, then restores the fixed grid when unzoomed. Other sessions retain
+normal tmux zoom behavior.
+
+The compact CPU + GPU0 + memory preset was tested on a **128-thread RTX A6000 host**:
+
+| Pane | Result |
+|---|---|
+| 95×28 | CPU, A6000 utilization / memory / temperature, system memory render |
+| **60×27** | Minimum rendering size; aggregate CPU still covers all 128 threads |
+| 59×27 | Correct “terminal too small” screen |
+| 60×26 | Correct “terminal too small” screen |
+
+Allow **60×29 terminal cells** for a zoomed GPU pane including tmux status and
+pane title; 120×42 is comfortable and was tested. Individual core entries are
+truncated to the space available; this is not a display of all 128 core rows.
+At the absolute minimum, some secondary memory rows are omitted.
+
+Upstream btop 1.4.7 needs 60×30 for these boxes. A small source patch lowers the
+memory-box minimum only when disks, memory graphs, and swap are all hidden.
+No GPU measurements are removed. The patch is `compact-memory.patch` in the tool directory.
+
+Shared config: `~/.config/btop/btop.conf`, 2000 ms refresh:
+
+- Preset 1: CPU + GPU0 + memory, compact tty graphs.
+- Preset 2: CPU + memory, used on 127x03 and 127x05 (no working GPU).
+- Preset 3: CPU + GPU0 + memory + processes.
+
+For a single GPU machine: `ssh -t 127x04 '~/.local/bin/btop -p 1'`.
+Config persistence and logging are disabled to prevent shared-config races and
+remote writes. The grid also sets `XDG_STATE_HOME=/dev/null`. The Mac runs its
+existing Homebrew btop with persistence disabled through an unusable XDG config
+path; it uses its stock preset 1 and does not receive files or installations.
+
+Optional two-host windows for smaller terminals, enabled when creating a session:
+
+```bash
+~/.local/bin/tmux kill-session -t fleet   # stops only this monitor session
+FLEET_PAIR_WINDOWS=1 fleet-top
+```
+
+## Hosts and measurements
+
+Edit `~/.config/fleet-top/hosts` (one SSH alias per line). Defaults are
+127x01, 03, 04, 05, 08, 09–18 and `macmini-fleet`. Offline 02/06/07 are commented
+out; uncomment them to display their outage and monitor their return. Their NFS
+binary is already available when they boot, but execution could not be tested
+while they were offline. Restart `fleet` after changing hosts; a standalone
+`fleetmon` reads the list on startup. `FLEET_HOSTS=/path/to/hosts fleet-top` and
+`fleetmon --hosts /path/to/hosts` select another list.
+
+Roles are read from `/mpac/sdicks02/cc/FLEET-SHARING.md` and refreshed every minute.
+Leased tags reflect that document, not a claim that a lease has been renewed.
+
+The dashboard uses only `/usr/bin/python3` 3.8 and its standard library. Each host
+has at most one poll in flight. SSH ControlMaster sockets are private in local
+`/tmp`, reused between polls, and closed when the dashboard exits. Linux samples
+use `/proc/stat` deltas (guest time is not double counted), load averages,
+MemTotal minus MemAvailable, login counts, `nvidia-smi` CSV including power, and
+process command lines. C/R counts match absolute command paths under
+`/mpac/sdicks02/repos/clasher*` / `roader*`; processes using only relative command
+paths are not attributed. Console counts exclude the grid's Linux SSH PTYs;
+login counts include them. The Mac uses `top`, `vm_stat`, `sysctl`, and `pgrep` for
+qemu. Its used-memory estimate excludes free/inactive/speculative pages; Apple
+GPU telemetry is not included in NVIDIA fleet totals.
+
+Header totals include every configured reachable host, even with the GPU-only
+filter active. GPU sum is in percentage points (100% = one fully busy GPU), while
+average is across GPUs with valid utilization. Down hosts retain their last-seen
+time and are excluded from resource totals. Linux CPU needs two samples after
+startup/reconnection. Both dashboard and grid back off 30 seconds after failures;
+SSH and NVIDIA queries have timeouts. No workloads are stopped or modified.
+
+Measured: 16/16 configured hosts up, 1932 CPU threads, 13 A6000s / 618.0 GiB VRAM,
+and two Mac emulators. Typical Linux SSH poll wall time was 86–141 ms; Mac about
+757 ms. One complete GPU-host collector measured **0.01 s user + 0.05 s system CPU**
+(0.07 s wall). Thus the requested `nvidia-smi` path costs tens of milliseconds,
+not literally a few milliseconds: about 3% of one core at the two-second interval.
+127x05 performs coordination and display only.
+
+## Installed files, builds, and verification
+
+- Shared executables: `~/.local/bin/{btop,btop-nogpu,tmux,fleet-top,fleetmon}`.
+- Shared configs/docs: `~/.config/btop/btop.conf`, `~/.config/fleet-top/{hosts,README.md}`.
+- Source scripts, original config backup, patch, build scripts, checksum manifests,
+  and evidence: `/mpac/sdicks02/cc/tools/fleet-top/` on 127x05.
+- Build/toolchain (local disk on **127x03**): `/mpac/sdicks02/build/fleet-top/`.
+  Builds ran at nice 15 with eight jobs; nothing was compiled on 127x05.
+- Report copy: `/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/FLEET-TOP.md`.
+- Text captures and receipts alongside it: `fleet-top-evidence/`.
+
+btop is **1.4.7 + compact-layout patch**, built with GCC 14.4.0 and conda-forge's
+glibc 2.17 sysroot. GPU_SUPPORT=true, STATIC=false, RSMI_STATIC=false, link flags
+`-static-libstdc++ -static-libgcc -pthread -ldl -lrt`. `ldd` lists only glibc
+components: libdl, librt, libm, libpthread, libc, and the ELF loader. NVML loads
+dynamically from the hosts' installed NVIDIA driver. The old musl binary is
+preserved byte-for-byte as `btop-nogpu`.
+
+tmux is **3.6a**, with libevent/tinfo linked statically and glibc dynamically.
+It has no toolchain/runtime-directory dependency. Both executables were run on
+all 15 reachable Linux hosts (glibc 2.31). The shared installed binaries match
+the build-host SHA-256 hashes. No system packages, root, cron, tailscale settings,
+or roader local files were changed. No git commits were made.
+
+Verified inputs:
+
+- [micromamba 2.9.0-0](https://github.com/mamba-org/micromamba-releases/releases/tag/2.9.0-0):
+  SHA-256 `366cd9cd8be14df1ab8ed50352a82111082a36686b2d389fdb79a92c3fafb3e3`.
+- Compiler/sysroot package archives were checked against conda-forge metadata;
+  all final package SHA-256 hashes are in `compiler-checksums.json`.
+- [btop v1.4.7](https://github.com/aristocratos/btop/releases/tag/v1.4.7): GitHub tag
+  resolved to `6e39144aaf5a6bc01b9f795010b0914431067183`; the checkout matched it
+  and `git fsck --full` verified downloaded Git object checksums before building.
+- [tmux 3.6a](https://github.com/tmux/tmux/releases/tag/3.6a): release asset SHA-256
+  `b6d8d9c76585db8ef5fa00d4931902fa4b8cbe8166f528f44fc403961a3f3759`.
+  The release includes generated parser C, used with `YACC=true` (no parser generator needed).
+
+Evidence includes full dashboard/grid text from `tmux capture-pane`, a 95×28 and
+60×27 A6000 proof, no-GPU panes for 03/05, a red unreachable dashboard and reconnect
+message for 02, successful fresh SSH launches, all-host version probes, dynamic
+library lists, ControlMaster reuse, and three passing parser/backoff/recovery tests.
+`grid.txt` combines all 16 pane captures at their tmux coordinates, including host
+titles. Run `fleetmon --once` for a fresh JSON sample (two CPU samples).

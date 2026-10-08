@@ -1,0 +1,58 @@
+FLEET MONITOR  23:31:15   UP 16 / DOWN 0   poll 2s  read-only
+CPU 150.0 / 1932 threads busy | RAM 184.0 / 1908.5 GiB | projects: clasher 172  roader 13  qemu 2
+GPU 13 | avg 0.1%  sum 1.0% (0.01 GPUs busy) | VRAM 1.1 / 618.0 GiB
+q quit | s sort: name | g GPU-only: off | [ ] pages | resize supported
+
+127x01 | clasher                                127x03 | clasher                                127x04 | clasher                                127x05 | command center
+CPU [######....]  58% / 128t                    CPU [#####.....]  49% / 128t                    CPU [..........]   1% / 128t                    CPU [..........]   0% / 128t
+load 74.61 62.39 61.19                          load 67.95 61.95 66.96                          load 0.98 1.04 11.69                            load 0.27 0.57 0.44
+RAM [#####.....]  45% 56.7G                     RAM [####......]  42% 52.8G                     RAM [..........]   3% 4.0G                      RAM [..........]   4% 5.1G
+GPU [..........]   0% 43C                       GPU -- (none / unavailable)                     GPU [..........]   0% 33C                       GPU -- (none / unavailable)
+VRAM [..........]   0% 0.1/47.5G                                                                VRAM [..........]   0% 0.0/47.5G
+power 25.27W                                                                                    power 5.32W
+console 0 / login 1 | C 85 / R 0                console 0 / login 2 | C 79 / R 0                console 0 / login 1 | C 3 / R 0                 console 0 / login 2 | C 3 / R 0
+seen 23:31:15 | poll 109ms                      seen 23:31:14 | poll 90ms                       seen 23:31:15 | poll 90ms                       seen 23:31:15 | poll 84ms
+
+127x08 | clasher                                127x09 | leased-to-clasher                      127x10 | roader                                 127x11 | leased-to-clasher
+CPU [..........]   0% / 128t                    CPU [..........]   1% / 128t                    CPU [..........]   1% / 128t                    CPU [..........]   0% / 128t
+load 0.25 0.67 10.87                            load 1.13 1.12 1.07                             load 1.08 1.37 1.34                             load 0.04 0.27 0.84
+RAM [..........]   3% 3.6G                      RAM [#.........]   6% 7.9G                      RAM [..........]   3% 4.0G                      RAM [..........]   3% 3.6G
+GPU [..........]   0% 34C                       GPU [..........]   1% 33C                       GPU [..........]   0% 31C                       GPU [..........]   0% 42C
+VRAM [..........]   0% 0.1/47.5G                VRAM [..........]   0% 0.0/47.5G                VRAM [..........]   0% 0.0/47.5G                VRAM [..........]   0% 0.0/47.5G
+power 9.42W                                     power 8.46W                                     power 5.29W                                     power 17.86W
+console 0 / login 1 | C 0 / R 0                 console 0 / login 1 | C 0 / R 5                 console 0 / login 1 | C 0 / R 1                 console 0 / login 1 | C 0 / R 0
+seen 23:31:15 | poll 95ms                       seen 23:31:15 | poll 96ms                       seen 23:31:15 | poll 97ms                       seen 23:31:15 | poll 92ms
+
+127x12 | roader                                 127x13 | leased-to-clasher                      127x14 | leased-to-clasher                      127x15 | leased-to-clasher
+CPU [..........]   0% / 128t                    CPU [..........]   0% / 128t                    CPU [..........]   0% / 128t                    CPU [..........]   0% / 128t
+load 0.02 0.10 0.08                             load 0.06 0.09 0.29                             load 0.02 0.05 0.16                             load 0.02 0.05 0.08
+RAM [..........]   4% 4.7G                      RAM [..........]   3% 3.4G                      RAM [..........]   3% 3.4G                      RAM [..........]   3% 3.4G
+GPU [..........]   0% 33C                       GPU [..........]   0% 33C                       GPU [..........]   0% 34C                       GPU [..........]   0% 35C
+VRAM [..........]   1% 0.3/47.5G                VRAM [..........]   0% 0.0/47.5G                VRAM [..........]   0% 0.0/47.5G                VRAM [..........]   0% 0.1/47.5G
+power 6.84W                                     power 6.82W                                     power 5.88W                                     power 14.01W
+console 1 / login 2 | C 0 / R 0                 console 0 / login 1 | C 0 / R 0                 console 0 / login 1 | C 0 / R 0                 console 0 / login 1 | C 0 / R 0
+seen 23:31:15 | poll 91ms                       seen 23:31:15 | poll 92ms                       seen 23:31:15 | poll 93ms                       seen 23:31:15 | poll 91ms
+
+127x16 | leased-to-clasher                      127x17 | roader                                 127x18 | leased-to-clasher                      macmini-fleet | Mac / emulators
+CPU [..........]   2% / 128t                    CPU [..........]   0% / 128t                    CPU [..........]   1% / 128t                    CPU [#####.....]  46% / 12t
+load 3.44 4.18 3.41                             load 0.09 0.12 0.06                             load 0.59 3.45 3.72                             load 4.92 4.64 4.81
+RAM [..........]   3% 4.3G                      RAM [..........]   3% 4.0G                      RAM [..........]   3% 3.5G                      RAM [########..]  81% 19.5G
+GPU [..........]   0% 33C                       GPU [..........]   0% 36C                       GPU [..........]   0% 36C                       GPU -- (none / unavailable)
+VRAM [..........]   0% 0.0/47.5G                VRAM [..........]   1% 0.3/47.5G                VRAM [..........]   0% 0.1/47.5G                Android qemu emulators: 2
+power 5.56W                                     power 6.74W                                     power 6.5W
+console 0 / login 1 | C 0 / R 7                 console 1 / login 2 | C 0 / R 0                 console 0 / login 1 | C 2 / R 0                 console 5 / login 5 | C 0 / R 0
+seen 23:31:15 | poll 96ms                       seen 23:31:15 | poll 93ms                       seen 23:31:15 | poll 94ms                       seen 23:31:15 | poll 823ms
+
+
+
+
+
+
+
+
+
+
+
+
+
+Page 1/1 | totals include all configured hosts; down hosts excluded from resource totals

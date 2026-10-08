@@ -1,0 +1,493 @@
+{
+  "totals": {
+    "up": 16,
+    "down": 0,
+    "threads": 1932,
+    "busy": 44.94950816496089,
+    "mem": 200936665088,
+    "mem_total": 2049230503936,
+    "gpu_count": 13,
+    "gpu_avg": 0.07692307692307693,
+    "gpu_sum": 1.0,
+    "gpu_mem": 1115.0,
+    "gpu_total": 632866.0,
+    "clasher": 193,
+    "roader": 10,
+    "qemu": 2
+  },
+  "hosts": [
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 111.0,
+          "total": 48682.0,
+          "temp": 43.0,
+          "power": 24.98
+        }
+      ],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 82,
+      "roader": 0,
+      "ticks": [
+        15758512679,
+        15534091282
+      ],
+      "threads": 128,
+      "cpu": 7.875424273002474,
+      "load": "13.44 39.56 52.71",
+      "mem_total": 134897418240,
+      "mem_used": 58365022208,
+      "poll_ms": 97,
+      "host": "127x01",
+      "up": true,
+      "seen": 1791441364.978607,
+      "error": ""
+    },
+    {
+      "gpus": [],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 79,
+      "roader": 0,
+      "ticks": [
+        15756919370,
+        15644192408
+      ],
+      "threads": 128,
+      "cpu": 11.075558806052022,
+      "load": "15.27 36.09 54.99",
+      "mem_total": 134897827840,
+      "mem_used": 54789664768,
+      "poll_ms": 84,
+      "host": "127x03",
+      "up": true,
+      "seen": 1791441364.9786332,
+      "error": ""
+    },
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 16.0,
+          "total": 48682.0,
+          "temp": 33.0,
+          "power": 7.3
+        }
+      ],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 15,
+      "roader": 0,
+      "ticks": [
+        10347674790,
+        10281819783
+      ],
+      "threads": 128,
+      "cpu": 4.068388309537663,
+      "load": "3.15 1.41 8.92",
+      "mem_total": 134897373184,
+      "mem_used": 7917027328,
+      "poll_ms": 94,
+      "host": "127x04",
+      "up": true,
+      "seen": 1791441364.9786434,
+      "error": ""
+    },
+    {
+      "gpus": [],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 2,
+      "roader": 0,
+      "ticks": [
+        15756976351,
+        15753725879
+      ],
+      "threads": 128,
+      "cpu": 0.32107096212451447,
+      "load": "0.26 0.41 0.41",
+      "mem_total": 134897827840,
+      "mem_used": 5374324736,
+      "poll_ms": 87,
+      "host": "127x05",
+      "up": true,
+      "seen": 1791441364.978656,
+      "error": ""
+    },
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 104.0,
+          "total": 48682.0,
+          "temp": 33.0,
+          "power": 6.46
+        }
+      ],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 15,
+      "roader": 0,
+      "ticks": [
+        15880155972,
+        15800569329
+      ],
+      "threads": 128,
+      "cpu": 3.9894919631328185,
+      "load": "2.99 1.14 8.26",
+      "mem_total": 134897418240,
+      "mem_used": 7798263808,
+      "poll_ms": 98,
+      "host": "127x08",
+      "up": true,
+      "seen": 1791441365.0290327,
+      "error": ""
+    },
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 16.0,
+          "total": 48682.0,
+          "temp": 32.0,
+          "power": 8.73
+        }
+      ],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 0,
+      "roader": 5,
+      "ticks": [
+        15756037085,
+        15752274891
+      ],
+      "threads": 128,
+      "cpu": 0.8890582333142771,
+      "load": "1.16 1.13 1.08",
+      "mem_total": 134897418240,
+      "mem_used": 9175994368,
+      "poll_ms": 90,
+      "host": "127x09",
+      "up": true,
+      "seen": 1791441364.9786685,
+      "error": ""
+    },
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 16.0,
+          "total": 48682.0,
+          "temp": 32.0,
+          "power": 5.64
+        }
+      ],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 0,
+      "roader": 1,
+      "ticks": [
+        15756958313,
+        15742518309
+      ],
+      "threads": 128,
+      "cpu": 0.8944416838219671,
+      "load": "1.12 1.18 1.26",
+      "mem_total": 134897397760,
+      "mem_used": 4365164544,
+      "poll_ms": 114,
+      "host": "127x10",
+      "up": true,
+      "seen": 1791441365.029054,
+      "error": ""
+    },
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 16.0,
+          "total": 48682.0,
+          "temp": 42.0,
+          "power": 16.35
+        }
+      ],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 0,
+      "roader": 0,
+      "ticks": [
+        23554310601,
+        23546286138
+      ],
+      "threads": 128,
+      "cpu": 0.10016903524697751,
+      "load": "0.52 0.38 0.71",
+      "mem_total": 134896115712,
+      "mem_used": 3840372736,
+      "poll_ms": 88,
+      "host": "127x11",
+      "up": true,
+      "seen": 1791441365.0291378,
+      "error": ""
+    },
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 259.0,
+          "total": 48682.0,
+          "temp": 33.0,
+          "power": 8.53
+        }
+      ],
+      "qemu": 0,
+      "users": 2,
+      "console": 1,
+      "clasher": 0,
+      "roader": 0,
+      "ticks": [
+        100015301948,
+        99995549716
+      ],
+      "threads": 128,
+      "cpu": 0.24127812194326692,
+      "load": "0.25 0.32 0.18",
+      "mem_total": 134897410048,
+      "mem_used": 5083959296,
+      "poll_ms": 92,
+      "host": "127x12",
+      "up": true,
+      "seen": 1791441365.0291495,
+      "error": ""
+    },
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 16.0,
+          "total": 48682.0,
+          "temp": 33.0,
+          "power": 6.49
+        }
+      ],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 0,
+      "roader": 0,
+      "ticks": [
+        15750461901,
+        15746638145
+      ],
+      "threads": 128,
+      "cpu": 0.12671735360810787,
+      "load": "0.11 0.20 0.28",
+      "mem_total": 134897414144,
+      "mem_used": 3682660352,
+      "poll_ms": 95,
+      "host": "127x13",
+      "up": true,
+      "seen": 1791441365.0290713,
+      "error": ""
+    },
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 16.0,
+          "total": 48682.0,
+          "temp": 34.0,
+          "power": 5.85
+        }
+      ],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 0,
+      "roader": 0,
+      "ticks": [
+        15752954954,
+        15749410922
+      ],
+      "threads": 128,
+      "cpu": 0.09676443906864174,
+      "load": "0.15 0.08 0.13",
+      "mem_total": 134897397760,
+      "mem_used": 3649040384,
+      "poll_ms": 102,
+      "host": "127x14",
+      "up": true,
+      "seen": 1791441365.0290852,
+      "error": ""
+    },
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 144.0,
+          "total": 48682.0,
+          "temp": 35.0,
+          "power": 14.06
+        }
+      ],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 0,
+      "roader": 0,
+      "ticks": [
+        15751288621,
+        15747749885
+      ],
+      "threads": 128,
+      "cpu": 0.13631406761177578,
+      "load": "0.02 0.03 0.06",
+      "mem_total": 134897438720,
+      "mem_used": 3657658368,
+      "poll_ms": 92,
+      "host": "127x15",
+      "up": true,
+      "seen": 1791441365.0290985,
+      "error": ""
+    },
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 16.0,
+          "total": 48682.0,
+          "temp": 33.0,
+          "power": 10.0
+        }
+      ],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 0,
+      "roader": 4,
+      "ticks": [
+        15756976623,
+        15752186030
+      ],
+      "threads": 128,
+      "cpu": 0.8634547375189427,
+      "load": "1.09 2.36 2.84",
+      "mem_total": 134897414144,
+      "mem_used": 4238577664,
+      "poll_ms": 93,
+      "host": "127x16",
+      "up": true,
+      "seen": 1791441365.0291107,
+      "error": ""
+    },
+    {
+      "gpus": [
+        {
+          "util": 0.0,
+          "used": 280.0,
+          "total": 48682.0,
+          "temp": 35.0,
+          "power": 6.11
+        }
+      ],
+      "qemu": 0,
+      "users": 2,
+      "console": 1,
+      "clasher": 0,
+      "roader": 0,
+      "ticks": [
+        29366155323,
+        29361399050
+      ],
+      "threads": 128,
+      "cpu": 0.23375105512628558,
+      "load": "0.06 0.11 0.07",
+      "mem_total": 134897401856,
+      "mem_used": 4304494592,
+      "poll_ms": 93,
+      "host": "127x17",
+      "up": true,
+      "seen": 1791441365.0291612,
+      "error": ""
+    },
+    {
+      "gpus": [
+        {
+          "util": 1.0,
+          "used": 105.0,
+          "total": 48682.0,
+          "temp": 36.0,
+          "power": 7.2
+        }
+      ],
+      "qemu": 0,
+      "users": 1,
+      "console": 0,
+      "clasher": 0,
+      "roader": 0,
+      "ticks": [
+        23846949538,
+        23840941569
+      ],
+      "threads": 128,
+      "cpu": 0.13617021276596253,
+      "load": "0.13 1.48 2.81",
+      "mem_total": 134897426432,
+      "mem_used": 3744448512,
+      "poll_ms": 91,
+      "host": "127x18",
+      "up": true,
+      "seen": 1791441365.0291233,
+      "error": ""
+    },
+    {
+      "gpus": [],
+      "qemu": 2,
+      "users": 5,
+      "console": 3,
+      "clasher": 0,
+      "roader": 0,
+      "cpu": 43.4,
+      "threads": 12,
+      "mem_total": 25769803776,
+      "load": "5.12 4.84 4.86",
+      "mem_used": 20949991424,
+      "poll_ms": 762,
+      "host": "macmini-fleet",
+      "up": true,
+      "seen": 1791441365.687687,
+      "error": ""
+    }
+  ],
+  "roles": {
+    "127x01": "clasher",
+    "127x02": "clasher",
+    "127x03": "clasher",
+    "127x04": "clasher",
+    "127x05": "command center",
+    "127x06": "clasher",
+    "127x07": "clasher",
+    "127x08": "clasher",
+    "127x09": "leased-to-clasher",
+    "127x10": "roader",
+    "127x11": "leased-to-clasher",
+    "127x12": "roader",
+    "127x13": "leased-to-clasher",
+    "127x14": "leased-to-clasher",
+    "127x15": "leased-to-clasher",
+    "127x16": "leased-to-clasher",
+    "127x17": "roader",
+    "127x18": "leased-to-clasher",
+    "macmini-fleet": "Mac / emulators"
+  }
+}

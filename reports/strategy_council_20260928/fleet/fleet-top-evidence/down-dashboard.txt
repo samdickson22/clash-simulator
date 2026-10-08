@@ -1,0 +1,35 @@
+FLEET MONITOR  23:31:15   UP 1 / DOWN 1   poll 2s  read-only
+CPU 1.2 / 128 threads busy | RAM 4.0 / 125.6 GiB | projects: clasher 3  roader 0  qemu 0
+GPU 1 | avg 0.0%  sum 0.0% (0.00 GPUs busy) | VRAM 0.0 / 47.5 GiB
+q quit | s sort: name | g GPU-only: off | [ ] pages | resize supported
+
+127x02 | clasher                               127x04 | clasher
+UNREACHABLE / ssh: connect to host 127x02 por  CPU [..........]   1% / 128t
+last seen: never                               load 0.98 1.04 11.69
+retry in 0s                                    RAM [..........]   3% 4.0G
+                                               GPU [..........]   0% 33C
+                                               VRAM [..........]   0% 0.0/47.5G
+                                               power 5.32W
+                                               console 0 / login 1 | C 3 / R 0
+                                               seen 23:31:14 | poll 90ms
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Page 1/1 | totals include all configured hosts; down hosts excluded from resource totals
