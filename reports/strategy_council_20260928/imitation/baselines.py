@@ -1,8 +1,11 @@
 """Frozen natural-row frequency and upgraded recurrent P16 BC baselines."""
 import argparse
 from collections import defaultdict
+from concurrent.futures import ProcessPoolExecutor
 import json
+import multiprocessing
 from pathlib import Path
+import resource
 import time
 import numpy as np
 from packed_store import PackedStore
@@ -127,7 +130,8 @@ def score_frequency(root,out,counts):
         print(json.dumps(dict(role=role,frequency=metrics.result())),flush=True)
 
 
-def p16_bc(root,out,device):
+def p16_partition(args):
+    root,role,device,partition,partitions=args
     import torch
     from clasher.rl.contract_v5 import ContractV5ObservationBuilder
     from p16_upgrade import upgrade_p16
@@ -141,35 +145,57 @@ def p16_bc(root,out,device):
     model=ClasherPolicy(PolicyConfig.from_dict(payload['model_config']),torch.as_tensor(builder.card_stat_features))
     model.load_state_dict(payload['model_state_dict']);model.to(device).eval()
     plan=json.loads((root/'plan.json').read_text())
+    metrics=Metrics();perspectives=[0]
+    def episodes():
+        for number,unit in enumerate(plan['units']):
+            if number%partitions!=partition:continue
+            selected=[p for p in unit['perspectives'] if p['role']==role and p['p16']]
+            if not selected:continue
+            shard=load_human_replay_shard_v5(DATA/'recon/engine-v3'/f"{unit['key']}.npz")
+            for p in selected:
+                perspectives[0]+=1
+                a=p['source_start'];yield p['summary'],shard.arrays(slice(a,a+p['rows']))
+    def step(output,batch,labels,weights):
+        valid=weights>0
+        joint=output.joint_logits.reshape(-1,2306)[valid].double().exp().cpu().numpy()
+        act=labels[valid].cpu().numpy();play=act<2304
+        mass=joint[:,:2304].reshape(-1,4,576)
+        gate=np.stack([joint[:,2304],mass.sum((1,2)),joint[:,2305]],axis=1)
+        marginal=mass[play].sum(2);cp=marginal/marginal.sum(1,keepdims=True)
+        slot=act[play]//576;tile=act[play]%576;ix=np.arange(play.sum())
+        chosen=mass[play][ix,slot];tp=chosen[ix,tile]/chosen.sum(1)
+        playable=batch['action_masks'][valid.cpu().numpy(),:2304].any(1)
+        metrics.add(act,gate,cp,tp,slot,tile,chosen.argmax(1),playable)
+    with torch.no_grad():
+        _run_streams(model,episodes(),streams=4,sequences_per_step=4,sequence_length=64,
+            device=torch.device(device),step=step,select_play_rows=False,
+            weights_for=lambda summary,arrays:arrays['expert_action_supervision_valid'].astype(np.float32))
+    return metrics,perspectives[0],sha(path),upgrade_receipt
+
+
+def p16_bc(root,out,device):
+    # Disjoint whole units: no episode is split and no recurrent state is reset
+    # at a worker boundary. Merge raw statistics before computing calibration.
+    plan=json.loads((root/'plan.json').read_text())
+    # S122 takes 78 CPU workers after T2 exits; retain its allocation and keep
+    # this host at the shared 80-worker ceiling. No statistical recipe changes.
+    workers=2 if device=='cpu' else 1
     for role in ('dev','eval','eval_ood'):
         if (out/f'p16-bc-{role}.json').exists():continue
-        metrics=Metrics();perspectives=[0]
-        def episodes():
-            for unit in plan['units']:
-                selected=[p for p in unit['perspectives'] if p['role']==role and p['p16']]
-                if not selected:continue
-                shard=load_human_replay_shard_v5(DATA/'recon/engine-v3'/f"{unit['key']}.npz")
-                for p in selected:
-                    perspectives[0]+=1
-                    a=p['source_start'];yield p['summary'],shard.arrays(slice(a,a+p['rows']))
-        def step(output,batch,labels,weights):
-            valid=weights>0
-            joint=output.joint_logits.reshape(-1,2306)[valid].double().exp().cpu().numpy()
-            act=labels[valid].cpu().numpy();play=act<2304
-            mass=joint[:,:2304].reshape(-1,4,576)
-            gate=np.stack([joint[:,2304],mass.sum((1,2)),joint[:,2305]],axis=1)
-            marginal=mass[play].sum(2);cp=marginal/marginal.sum(1,keepdims=True)
-            slot=act[play]//576;tile=act[play]%576;ix=np.arange(play.sum())
-            chosen=mass[play][ix,slot];tp=chosen[ix,tile]/chosen.sum(1)
-            playable=batch['action_masks'][valid.cpu().numpy(),:2304].any(1)
-            metrics.add(act,gate,cp,tp,slot,tile,chosen.argmax(1),playable)
-        with torch.no_grad():
-            _run_streams(model,episodes(),streams=4,sequences_per_step=4,sequence_length=64,
-                device=torch.device(device),step=step,select_play_rows=False,
-                weights_for=lambda summary,arrays:arrays['expert_action_supervision_valid'].astype(np.float32))
-        write(out/f'p16-bc-{role}.json',dict(role=role,perspectives=perspectives[0],metrics=metrics.result() if metrics.sums else None,
-              checkpoint_sha256=sha(path),upgrade=upgrade_receipt,device=device))
-        print(json.dumps(dict(role=role,p16_perspectives=perspectives[0])),flush=True)
+        expected=sum(p['role']==role and p['p16'] for u in plan['units'] for p in u['perspectives'])
+        metrics=Metrics();perspectives=0;checkpoint_sha=None;upgrade_receipt=None
+        if expected:
+            with ProcessPoolExecutor(workers,mp_context=multiprocessing.get_context('spawn')) as pool:
+                for partial,count,digest,upgrade in pool.map(p16_partition,[(root,role,device,k,workers) for k in range(workers)]):
+                    for key,value in partial.sums.items():metrics.sums[key]+=value
+                    for name in ('distances','prob','truth','playable'):getattr(metrics,name).extend(getattr(partial,name))
+                    perspectives+=count
+                    if checkpoint_sha is not None:assert checkpoint_sha==digest and upgrade_receipt==upgrade
+                    checkpoint_sha=digest;upgrade_receipt=upgrade
+        assert perspectives==expected,(role,perspectives,expected)
+        write(out/f'p16-bc-{role}.json',dict(role=role,perspectives=perspectives,metrics=metrics.result() if metrics.sums else None,
+              checkpoint_sha256=checkpoint_sha,upgrade=upgrade_receipt,device=device,workers=workers))
+        print(json.dumps(dict(role=role,p16_perspectives=perspectives)),flush=True)
 
 
 if __name__=='__main__':
@@ -187,11 +213,13 @@ if __name__=='__main__':
     path=args.out/'prereg.json'
     if path.exists():assert json.loads(path.read_text())==prereg
     else:write(path,prereg)
-    start=time.perf_counter();cpu=time.process_time()
+    start=time.perf_counter();cpu=time.process_time();children=resource.getrusage(resource.RUSAGE_CHILDREN)
     if args.mode=='frequency':
         if (args.out/'frequency-counts.npz').exists():
             with np.load(args.out/'frequency-counts.npz') as z:counts=tuple(z[n] for n in ('gate','cards','tiles'))
         else:counts=fit_frequency(args.store,args.out)
         score_frequency(args.store,args.out,counts)
     else:p16_bc(args.store,args.out,args.device)
-    write(args.out/f'{args.mode}-complete.json',dict(passed=True,wall_seconds=time.perf_counter()-start,cpu_seconds=time.process_time()-cpu))
+    end_children=resource.getrusage(resource.RUSAGE_CHILDREN)
+    write(args.out/f'{args.mode}-complete.json',dict(passed=True,wall_seconds=time.perf_counter()-start,
+          cpu_seconds=time.process_time()-cpu+end_children.ru_utime+end_children.ru_stime-children.ru_utime-children.ru_stime))

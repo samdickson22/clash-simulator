@@ -57,4 +57,4 @@ still PENDING. Scheduler verified enabled, last dispatch succeeded, next check
 T4 is not complete until the real 127x04 shakedown and dev evaluation are measured.
 No GPU files/jobs have been staged or launched yet, so no remote job to duplicate.
 
-Latest scheduled receipt check: 2026-10-08T05:41:17.123988+00:00 — T3_PENDING; no GPU job launched.
+Latest scheduled receipt check: 2026-10-08T06:41:22.298738+00:00 — T3_PENDING; no GPU job launched.

@@ -1,0 +1,9 @@
+{
+  "path": "//home/sdicks02/.local/bin/fleet-console-users",
+  "sha256": "2f4d162f1435c89134a62e74db462a2da8ff874bb75d76629e2832db4fb1307c",
+  "authority": "User/coordinator clarification before any confirmation game",
+  "preconfirmation_counts": {
+    "127x04": 0,
+    "127x08": 0
+  }
+}

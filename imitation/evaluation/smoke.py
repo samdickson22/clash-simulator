@@ -13,6 +13,7 @@ import time
 import numpy as np
 import torch
 from .paths import setup, COUNCIL
+from .snapshot import provenance
 setup()
 from fair_player import Resources, observe
 from deadline_player import DeadlinePublicPlanner
@@ -23,7 +24,7 @@ from clasher.rl.public_action_mask import PublicActionMaskInput
 from sidecar_observer import SidecarObserver
 from imitation.model import load_policy
 from imitation.model.features import build_row
-from .search import ImitationDeadlinePlayer
+from .search import ImitationDeadlinePlayer, MatchedDeadlinePlayer
 from .standalone import StandalonePlayer
 from .d1 import model_packet
 
@@ -47,9 +48,9 @@ def play(r, prior, policy, ep, seat, *, search=True, skew=False, arm="B", head_t
     order = list(own.hand)+list(own.cycle_queue)
     player = (ImitationDeadlinePlayer(r, prior, ep['seed']+100000+seat, policy, seat, order)
               if search else StandalonePlayer(policy, r.builder, r.costs, seat, order, ep['seed']+271828+seat))
-    baseline = DeadlinePublicPlanner(r, prior, ep['seed']+100000+(1-seat)) if head_to_head else None
+    baseline = MatchedDeadlinePlayer(r, prior, ep['seed']+100000+(1-seat)) if head_to_head else None
     if search and arm == 'A':
-        player = DeadlinePublicPlanner(r, prior, ep['seed']+100000+seat)
+        player = MatchedDeadlinePlayer(r, prior, ep['seed']+100000+seat)
     space = DiscreteTileActionSpace()
     times, proposal_times, actions = [], [], []
     baseline_times = []
@@ -130,6 +131,7 @@ def play(r, prior, policy, ep, seat, *, search=True, skew=False, arm="B", head_t
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--checkpoint', type=Path, required=True)
+    p.add_argument('--prior', type=Path, default=COUNCIL/'c56/engine/root-v3/human_deck_catalog.json')
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--games', type=int, default=20)
     p.add_argument('--worker', type=int, default=0)
@@ -138,12 +140,14 @@ def main():
     p.add_argument('--standalone', action='store_true')
     p.add_argument('--skew-games', type=int, default=8)
     args = p.parse_args()
+    source_pin=provenance()
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
     policy = load_policy(args.checkpoint)
     checkpoint_sha = hashlib.sha256(args.checkpoint.read_bytes()).hexdigest()
     r = Resources()
-    prior = json.loads((COUNCIL/'c56/engine/root-v3/human_deck_catalog.json').read_text())
+    prior = json.loads(args.prior.read_text())
+    source_pin['prior_sha256']=hashlib.sha256(args.prior.read_bytes()).hexdigest()
     if args.standalone:
         from decks import catalogs
         chosen = sorted(catalogs()['eval']['decks'], key=lambda d: -d['frequency'])
@@ -163,8 +167,11 @@ def main():
         ep = dict(seed=args.seed+i*1009, style=('balanced','pressure','defense')[i%3],
                   decks=[rng.permutation(chosen[i % len(chosen)]['cards']).tolist(),
                          rng.permutation(opponent_chosen[(i+3) % len(opponent_chosen)]['cards']).tolist()])
+        if args.standalone and i%2:
+            ep['decks'].reverse()  # Keep eval-role deck with the candidate in either seat.
         row = play(r, prior, policy, ep, i%2, search=not args.standalone, skew=i<args.skew_games)
         row['checkpoint_sha256'] = checkpoint_sha
+        row.update(source_pin)
         write_new(path, row)
         print(json.dumps({k: row[k] for k in ('seed','terminal','ticks','illegal','rejected','skew_checks')}), flush=True)
         gc.collect()

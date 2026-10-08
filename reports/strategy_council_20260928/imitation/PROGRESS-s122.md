@@ -166,3 +166,44 @@ checksum-copies to 04 and mirrors small receipts to 05. Production copy is pendi
 - 127x03, 2026-10-08T03:21:53.746886+00:00: 11 units; 528 perspectives; 393,937 rows; 55,481,097 bytes; retention 80.934182%; placement acceptance 99.680674%; 474.41 wall-s; 6191.79 live worker+driver CPU-s. Zero errors/illegal labels/audit violations.
 
 Total published: 1,056 perspectives, 780,177 rows, 109,361,351 bytes. Both partitions are stably running, collectors active. Final production QA/copy remains pending; no T10-PASS claim yet. Snapshot: data/receipts/T10-running.json. No commits made.
+
+## Fleet expansion preflight blocked (2026-10-08 05:20 UTC)
+
+Requested addition of 127x04/08 stopped under the explicit safe-repartition rule.
+No new partition receipt, production labels or PIDs were created. Evidence:
+`data/receipts/T10-fleet-expansion-blocked-20261008-r1.json` (hub and 05).
+
+The checksum-matched live driver (`s122/extract_s122.py`, SHA256
+`48b86d893836940393ff6dff374a863719e9512a25a6481edffb7cd56ab4eb63`)
+loads the full production plan once, slices `units[partition::partitions]`, and retains
+`todo=iter(units)` in memory. No unit ownership handoff, plan reload, or per-unit claim
+lock exists. Both 01/03 already own all 6,984 units between them; assigning their
+unstarted suffixes elsewhere would leave the originals scheduled and risk duplicate work.
+The driver and start script reject 04/08, and the driver is itself part of frozen QA pins.
+The live finalizer only collects 03 parity 0 and 01 parity 1. Safe expansion would require
+stopping/repartitioning the existing jobs or an orchestration change; neither is authorized.
+
+At 05:19:48 UTC neither S3 label (`s3-confirm-node-127x04-r1`,
+`s3-confirm-node-127x08-r1`) had an exit receipt. Both hosts had zero console users and
+1-minute loads about 76. Polling stopped at this independent preflight blocker;
+S3 jobs were untouched. 04/08 input/pin verification and transfers were not attempted.
+
+Existing verified jobs continue unchanged:
+- 01 `imitation-s122-production-20261008-r1`: launcher 3413029, driver 3413053,
+  partition 1/2; snapshot 488 completed units, 23,344 attempted perspectives,
+  16,272,527 rows, zero errors, 72 in flight.
+- 03 `imitation-s122-production-20261008-r3`: launcher 3405970, driver 3405983,
+  partition 0/2; snapshot 615 completed units, 29,424 attempted perspectives,
+  20,430,644 rows, zero errors, 77 in flight.
+- 01 collector `imitation-s122-finalize-20261008-r2`: launcher 3416606, still waiting
+  for partition 0. Its existing checksum validation and final copy to 04 remain active.
+
+Before-expansion throughput measured from published receipt mtimes over the preceding
+15 minutes: 01 152 units / 7,296 perspectives (29,184 perspectives/h),
+03 195 units / 9,309 perspectives (37,236 perspectives/h), total **66,420 perspectives/h**.
+No after-expansion measurement exists because no expansion launched.
+Per-host remaining-unit estimates account for the static partition imbalance:
+01 about 4.94 h remaining, 03 about 3.69 h. Updated extraction ETA approximately
+**2026-10-08 10:20 UTC**, assuming these rates and similar remaining unit costs;
+collector validation and checksum mirror take additional time. This is an estimate,
+not a final T10-PASS claim. No commits, deletions, process stops, or pinned source edits.

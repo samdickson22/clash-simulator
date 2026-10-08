@@ -546,3 +546,4 @@ Also on the hub, but with copies elsewhere:
   3. **Mac pool at 1 renderer.** The pool's own guard scaled back at 22:54 PDT on critical memory pressure and again
      after one 19.107 FPS match at 2 renderers. Decision: retry 2 once (controlled drain and restart, amendment
      first); any further failure or critical pressure means 1 for the rest of Phase A.
+- **2026-10-08 06:45 UTC heartbeat:** T3-PASS published (P16 baseline decoupled). Next: T4 shakedown poll (06:51), then T5 one run per GPU. Mac OK (26 GiB free, swap 6.9/8 GB, pressure normal; pool retry at 2 in progress). S5 preflight 7/10. Fleet reachable, console users 0 on our hosts, no lease reclaims. GPUs idle until T5.

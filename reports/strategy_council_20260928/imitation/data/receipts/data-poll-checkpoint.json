@@ -1,0 +1,123 @@
+{
+  "checked_utc": "2026-10-08T06:37:19Z",
+  "stage": "T3 P16 eval scoring",
+  "units": 1767,
+  "perspectives": 82231,
+  "rows": 64140802,
+  "completed_unit_cpu_seconds": 786942.551596205,
+  "violations": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "hosts": {
+    "127x01": {
+      "units": 1767,
+      "perspectives": 82231,
+      "rows": 64140802,
+      "launcher_pid": 3404410,
+      "exit": "0",
+      "replay_workers": 0,
+      "busy_clasher_processes": 78,
+      "console_users": 0
+    },
+    "127x03": {
+      "units": 883,
+      "perspectives": 41129,
+      "rows": 32059975,
+      "launcher_pid": 3398212,
+      "exit": "0",
+      "replay_workers": 0,
+      "busy_clasher_processes": 78,
+      "console_users": 0
+    }
+  },
+  "hub_contains_both_partitions": true,
+  "continuation_pid": 3406691,
+  "continuation_running": true,
+  "blocked": false,
+  "t2_pass": true,
+  "t3_pass": false,
+  "header_audit_historical_verified": 270,
+  "header_audit_sha256": "fc4e6edae7fbee3dc63ea590d12b1eeb52da2bf7f0142289ea65242b07bf1d15",
+  "baseline_cpu_workers": 2,
+  "restarted_jobs": [],
+  "store_units": 1767,
+  "roundtrip_checked": 805,
+  "baselines_started": true,
+  "store_manifest_passed": true,
+  "store_roles": {
+    "dev": {
+      "entities": 31020026,
+      "perspectives": 3546,
+      "rows": 2759722
+    },
+    "eval": {
+      "entities": 33068263,
+      "perspectives": 3765,
+      "rows": 2943085
+    },
+    "eval_ood": {
+      "entities": 32794937,
+      "perspectives": 3771,
+      "rows": 2885746
+    },
+    "train": {
+      "entities": 607678487,
+      "perspectives": 69380,
+      "rows": 53989262
+    }
+  },
+  "store_role_counts_equal": true,
+  "frequency_complete": true,
+  "p16_complete": false,
+  "baseline_recipe_sha256": "45c14463ee57798cef59d5c9d33a5caeccedfc11353c41b35445f0769ea74a84",
+  "baseline_source_unchanged": true,
+  "p16_worker_pids": [
+    3449692,
+    3449695
+  ],
+  "p16_worker_elapsed_seconds": 1727,
+  "p16_worker_cpu_seconds": [
+    1713,
+    1713
+  ],
+  "diagnosis_receipt": "p16-diagnosis.json",
+  "deadlock_observed": false,
+  "p16_workers": [
+    3510500,
+    3510503
+  ],
+  "p16_parent": 3449355,
+  "supervisor": 3406704,
+  "diagnostic_utc": "2026-10-08T05:54:00Z",
+  "leased_copy_targets": [
+    "127x11",
+    "127x13",
+    "127x14",
+    "127x16",
+    "127x18"
+  ],
+  "leased_copy_status": "prepared; waiting for T3-PASS",
+  "production_exits": {
+    "127x01": 0,
+    "127x03": 0
+  },
+  "worker_elapsed_seconds": 41,
+  "worker_cpu_seconds": [
+    41,
+    41
+  ],
+  "console_users": [
+    "sdicks02 pts/0"
+  ],
+  "baseline_sha256": "45c14463ee57798cef59d5c9d33a5caeccedfc11353c41b35445f0769ea74a84",
+  "hub_clasher_python_processes": 82,
+  "hub_running_clasher_python": 11,
+  "incident": "Hub console session persists; aggregate exceeds 16 cap. Own scoring uses 2 CPU workers; other jobs require coordinator adjustment.",
+  "p16_dev_perspectives": 648,
+  "p16_dev_rows": 505669,
+  "p16_dev_joint_nll": 0.4187397682948585
+}

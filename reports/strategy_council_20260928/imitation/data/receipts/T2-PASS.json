@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "perspectives": 82231,
+  "rows": 64140802,
+  "units": 1767,
+  "violations": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "cpu_seconds": 786942.551596205,
+  "backup": {
+    "passed": true,
+    "host": "127x04",
+    "kind": "sidecars",
+    "root": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-sidecars-v1",
+    "files": 7068,
+    "bytes": 9198923857,
+    "manifest_sha256": "1a18b263bd0d2d44aee75491e82aa89e152c8a8474cca6d664128c0fc2790cb6",
+    "wall_seconds": 5.7170417190063745
+  },
+  "manifest": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-sidecars-v1/manifest.json",
+  "coverage": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-sidecars-v1/coverage.json"
+}

@@ -1,0 +1,64 @@
+{
+  "complete": true,
+  "byte_exact": true,
+  "games": [
+    {
+      "game": "game-000.json",
+      "checks": 42,
+      "original_max_ms": 156.27651009708643,
+      "fast_max_ms": 47.48925194144249,
+      "byte_exact": true
+    },
+    {
+      "game": "game-001.json",
+      "checks": 36,
+      "original_max_ms": 139.06330289319158,
+      "fast_max_ms": 40.22590909153223,
+      "byte_exact": true
+    },
+    {
+      "game": "game-002.json",
+      "checks": 39,
+      "original_max_ms": 138.94768990576267,
+      "fast_max_ms": 40.28987092897296,
+      "byte_exact": true
+    },
+    {
+      "game": "game-003.json",
+      "checks": 45,
+      "original_max_ms": 133.60594399273396,
+      "fast_max_ms": 37.18577208928764,
+      "byte_exact": true
+    },
+    {
+      "game": "game-004.json",
+      "checks": 45,
+      "original_max_ms": 148.81594898179173,
+      "fast_max_ms": 46.327492920681834,
+      "byte_exact": true
+    },
+    {
+      "game": "game-005.json",
+      "checks": 40,
+      "original_max_ms": 178.62905212678015,
+      "fast_max_ms": 66.50397391058505,
+      "byte_exact": true
+    },
+    {
+      "game": "game-006.json",
+      "checks": 36,
+      "original_max_ms": 149.26213887520134,
+      "fast_max_ms": 46.220409916713834,
+      "byte_exact": true
+    },
+    {
+      "game": "game-007.json",
+      "checks": 45,
+      "original_max_ms": 149.37796094454825,
+      "fast_max_ms": 46.32206307724118,
+      "byte_exact": true
+    }
+  ],
+  "events": 328,
+  "source_sha256": "1d97cc1a531d65ca5ae29244ca6fe4a27cb6c88eace25fea871f32344b76c8d1"
+}

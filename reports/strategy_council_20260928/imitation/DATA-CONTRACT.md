@@ -22,7 +22,7 @@ labelled play, if present, at delay zero. Delay boundaries are twelve geometric
 values from 0.05 to 10 seconds, then the tail bin. Missing future play is
 right-censored at the cut tick. Intent values are targets, never inputs.
 
-Planned store: `imitation/data/c56-store-v1/{train,dev,eval,eval_ood}/`.
+Store: `imitation/data/c56-store-v1/{train,dev,eval,eval_ood}/`.
 Every named column is a `.npy` file loadable with `np.load(..., mmap_mode='r')`.
 Each role has `manifest.json` (array dtypes/shapes/hashes, row/entity counts,
 perspective boundaries). Root `manifest.json` pins roles, eval spec and sidecars.
@@ -42,6 +42,14 @@ is the minimum of their 1/sqrt(count) caps, c=1 (no tuning), so both group caps
 hold without multiplying redundant caps. `wait_ipw` is 4 on waits and 1 otherwise:
 multiply it only for epoch samples that keep 25% of waits. Evaluation uses
 all supervised rows with natural unit weights, as the frozen specification says.
+
+Baseline timing output preserves `play_wait_nll` / `play_wait_brier` over all
+supervised rows (frozen JSON definition). The additional `*_playable` metrics,
+`playable_rows`, `hazard_calibration_playable` and `ece_playable` use rows with
+at least one legal card play, matching the DESIGN/model timing denominator.
+P16 scores cover 648 dev and 705 eval perspectives; eval_ood has no P16 slice.
+CPU scoring uses two disjoint unit partitions (S122 reserves 78 hub workers), keeps whole recurrent
+perspectives intact, and merges raw statistics before computing calibration.
 
 This is an interface description, not a PASS receipt. Fitting waits on
 `data/receipts/T3-PASS.json`; S122 observer qualification waits on T1-PASS.

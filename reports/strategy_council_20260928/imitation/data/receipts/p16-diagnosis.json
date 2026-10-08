@@ -1,0 +1,29 @@
+{
+  "from_utc": "2026-10-08T05:46:56.493469+00:00",
+  "to_utc": "2026-10-08T05:48:30.394551+00:00",
+  "processes": {
+    "3449355": {
+      "cpu_seconds_delta": 0.0,
+      "rchar_delta": 0,
+      "syscr_delta": 0,
+      "rss_bytes": 1353367552,
+      "state": "S"
+    },
+    "3449692": {
+      "cpu_seconds_delta": 93.31,
+      "rchar_delta": 7108478,
+      "syscr_delta": 522,
+      "rss_bytes": 2419531776,
+      "state": "R"
+    },
+    "3449695": {
+      "cpu_seconds_delta": 93.27,
+      "rchar_delta": 10879765,
+      "syscr_delta": 816,
+      "rss_bytes": 2055434240,
+      "state": "R"
+    }
+  },
+  "diagnosis": "parent waits for two CPU-active spawn workers; no evidence of deadlock",
+  "stack_dump": "py-spy denied by ptrace policy; sudo -n requires password; no signals or restarts"
+}

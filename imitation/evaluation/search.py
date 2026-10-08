@@ -7,8 +7,17 @@ from deadline_player import DeadlinePublicPlanner
 
 
 from .candidates import replacement_candidates
+from .fast_prior import ExactFastPrior
 
-class ImitationDeadlinePlayer(DeadlinePublicPlanner):
+class MatchedDeadlinePlayer(DeadlinePublicPlanner):
+    """Stage 5b arm A with an exactly equivalent faster public-prior update."""
+    def __init__(self, resources, prior, seed, *, deadline_seconds=.2, threads=2):
+        super().__init__(resources, prior, seed, deadline_seconds=deadline_seconds, threads=threads)
+        # Same layout/initial state; switch only the tested array operations.
+        self.belief.__class__ = ExactFastPrior
+
+
+class ImitationDeadlinePlayer(MatchedDeadlinePlayer):
     def __init__(self, resources, prior, seed, policy, seat, own_order):
         super().__init__(resources, prior, seed, deadline_seconds=.2, threads=2)
         self.policy = policy

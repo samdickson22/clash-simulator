@@ -1,20 +1,20 @@
 {
   "schema": "clasher.imitation.t5.wait.v1",
-  "checked_at": "2026-10-08T05:42:49Z",
-  "status": "WAITING_T3_AND_T4",
+  "checked_at": "2026-10-08T06:42:52Z",
+  "status": "WAITING_T4_AND_HOST_COPIES",
   "t3_receipt": "127x01:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/receipts/T3-PASS.json",
-  "t3_pass_present": false,
+  "t3_pass_present": true,
   "t4_shakedown": "pending; owned by T4 scheduled task",
   "t5_runs_launched": 0,
   "t5_gpu_seconds": 0,
   "prereg_frozen": false,
   "scheduled_task_id": "scheduled-task:command:mcp:3edbde69-151b-4209-8cf7-c6c1eac260db:schedule-task:clasher-imitation-t5-continuation-20261008-v1",
-  "next_run_at": "2026-10-08T05:52:49Z",
+  "next_run_at": "2026-10-08T06:52:52Z",
   "interval_ms": 600000,
   "bound_thread_id": "thread:delegated-task:command%3Amcp%3A969488d3-3434-4e6e-ac38-18b5cd0de300%3Adelegate-task%3Aclasher-imitation-T5-20261008-1",
   "next_run_at_is_estimate": true,
-  "t4_last_checked_at": "2026-10-08T05:41:17.123988+00:00",
-  "upstream_status": "Coordinator reports deadlocked P16 baseline; data worker repairing, not terminal blocker",
+  "t4_last_checked_at": "2026-10-08T06:41:22.298738+00:00",
+  "upstream_status": "T3 training release passed: store/frequency qualified; P16 baseline and host copies explicitly pending. Await T4 shakedown and verified target copy.",
   "console_users": [],
   "lease_update_utc": "2026-10-08T05:44:59Z",
   "lease_expiry_utc": "2026-10-09T05:30:00Z",
@@ -25,5 +25,9 @@
     "v1-noD1-2026100801": "127x14",
     "v1-gru-2026100801": "127x08"
   },
-  "leased_store_copies_ready": false
+  "leased_store_copies_ready": false,
+  "t3_receipt_sha256": "6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c",
+  "t3_published_utc": "2026-10-08T06:42:32.432848+00:00",
+  "p16_baseline_status": "pending",
+  "copies_status": "pending"
 }

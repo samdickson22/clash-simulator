@@ -1,0 +1,198 @@
+{
+  "action": "Stopped expansion at preflight per explicit instruction; no partition or launch created.",
+  "commits_created": 0,
+  "existing_jobs": {
+    "127x01": {
+      "driver_pid": 3413053,
+      "label": "imitation-s122-production-20261008-r1",
+      "launcher_pid": 3413029,
+      "partition": "1/2"
+    },
+    "127x03": {
+      "driver_pid": 3405983,
+      "label": "imitation-s122-production-20261008-r3",
+      "launcher_pid": 3405970,
+      "partition": "0/2"
+    },
+    "collector_127x01": {
+      "label": "imitation-s122-finalize-20261008-r2",
+      "launcher_pid": 3416606
+    }
+  },
+  "new_labels_and_pids": {},
+  "new_partition_receipt": null,
+  "observed_at": "2026-10-08T05:20:37.606Z",
+  "reasons": [
+    "Both live drivers load the full production plan, slice it once by index parity, and retain todo=iter(units). They do not reload ownership or claim/release individual units; successful-unit reuse cannot prevent overlapping work already in flight.",
+    "extract_s122.py asserts host is 127x01 or 127x03; start_production.sh likewise only maps these hosts.",
+    "The production driver itself is pinned by T10-QA-PASS and live launch pins. Modifying it would change frozen pins.",
+    "Collector r2 expects only partition 0 on 127x03 and partition 1 on 127x01, with parity-based receipt collection."
+  ],
+  "s3_observation": {
+    "hosts": {
+      "127x04": {
+        "console_users": 0,
+        "exit_receipt_present": false,
+        "label": "s3-confirm-node-127x04-r1",
+        "load_1m": 76.42
+      },
+      "127x08": {
+        "console_users": 0,
+        "exit_receipt_present": false,
+        "label": "s3-confirm-node-127x08-r1",
+        "load_1m": 76.35
+      }
+    },
+    "observed_at": "2026-10-08T05:19:48Z",
+    "polling": "Stopped after initial check because independent partition preflight proved expansion unsafe; no S3 changes."
+  },
+  "snapshots": [
+    {
+      "host": "127x01",
+      "observed_unix": 1791436837.6069803,
+      "pins": {
+        "T1_receipt_sha256": "b0dac31c7f5c15fe7fdc2418ddbc00cf61a502aaa5f991021797d1b6567498b3",
+        "T9_receipt_sha256": "8c2570daeacdd8b5eb5bf533fe144b89a69d0f533dae05d035ff0a6495c8248c",
+        "code_sha256": {
+          "derived_d1.py": "92b72418c3a10e96cc6993b4cb3041fa90895f233315600031e9a18f1edcb90e",
+          "own_cycle.py": "18cf0aaa12e074cfa1f11f37efec69b8e000ac24b357bdc372f54164bf87f3e4",
+          "s122/extract_s122.py": "48b86d893836940393ff6dff374a863719e9512a25a6481edffb7cd56ab4eb63",
+          "sidecar_observer.py": "cdb2d830042189b6d9b3e03aede152d2bb441e6f47c3ce113e3dce96f79c22e5"
+        },
+        "extractor_sha256": "8e95786c1dede45e9fd8d02f8c85cd86331667d3dbc5c8a6713808f0520ac9c7",
+        "runtime": {
+          "files": 366,
+          "overlay": {
+            "contract_v5.py": "02e00388080bd94da2da2d58e64127ef9d9defc3e0139e26ec6e563bf38cbe86",
+            "contract_v5_tokens.json": "5e20ce085662869fb4f0b56fee7851007b4c146d32e56b97da05a3058cf1b4f0",
+            "human_replay_bc.py": "60f6de6970739a8946918eb5ba89ba6232b6a46b32d8ad9ad51af0100976a5fd",
+            "human_replay_demonstrations.py": "703f25c447c119bf1bd7d31b2ffc9980efee445a0a871c86e470be46a204af4b",
+            "human_replay_v5.py": "8d457b9975404f6503ce722fee98efa126c2a7f2337e095f621f10b3eac0e03a",
+            "model.py": "e513b0c661fab21e35ad6f2ffc64d6cfd01d7dc7b4fc480435e38e33a285d989",
+            "public_action_mask.py": "e6e94abae45b0988dbcc087970a11cc0b2f07fc1cc335decec75b5714798d107",
+            "structured_obs.py": "e74b97e5f5dc8f97442fee98a113dadc480126b51ed997868a11a318db5f127a"
+          },
+          "runtime": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/runtime-engine-v3b",
+          "sha256": "1ec2c60c254fd9cc5579b163ef994a0e233a942bd97acda864d31d91442d3493"
+        }
+      },
+      "recent_published_perspectives": 7296,
+      "recent_published_units": 152,
+      "recent_window_seconds": 900,
+      "status": {
+        "attempted": 23344,
+        "capacity": 72,
+        "completed": 488,
+        "errors": 0,
+        "host": "127x01",
+        "inflight": 72,
+        "max_workers": 78,
+        "pid": 3413053,
+        "reserved_c56": 0,
+        "rows": 16272527,
+        "stopping": false,
+        "units": 3492,
+        "wall_seconds": 7835.017409262015,
+        "worker_cpu_seconds_this_run": 195594.6949943627,
+        "workers": 76
+      },
+      "total_perspectives": 333934,
+      "total_units": 6984
+    },
+    {
+      "host": "127x03",
+      "observed_unix": 1791436837.6005857,
+      "pins": {
+        "T1_receipt_sha256": "b0dac31c7f5c15fe7fdc2418ddbc00cf61a502aaa5f991021797d1b6567498b3",
+        "T9_receipt_sha256": "8c2570daeacdd8b5eb5bf533fe144b89a69d0f533dae05d035ff0a6495c8248c",
+        "code_sha256": {
+          "derived_d1.py": "92b72418c3a10e96cc6993b4cb3041fa90895f233315600031e9a18f1edcb90e",
+          "own_cycle.py": "18cf0aaa12e074cfa1f11f37efec69b8e000ac24b357bdc372f54164bf87f3e4",
+          "s122/extract_s122.py": "48b86d893836940393ff6dff374a863719e9512a25a6481edffb7cd56ab4eb63",
+          "sidecar_observer.py": "cdb2d830042189b6d9b3e03aede152d2bb441e6f47c3ce113e3dce96f79c22e5"
+        },
+        "extractor_sha256": "8e95786c1dede45e9fd8d02f8c85cd86331667d3dbc5c8a6713808f0520ac9c7",
+        "runtime": {
+          "files": 366,
+          "overlay": {
+            "contract_v5.py": "02e00388080bd94da2da2d58e64127ef9d9defc3e0139e26ec6e563bf38cbe86",
+            "contract_v5_tokens.json": "5e20ce085662869fb4f0b56fee7851007b4c146d32e56b97da05a3058cf1b4f0",
+            "human_replay_bc.py": "60f6de6970739a8946918eb5ba89ba6232b6a46b32d8ad9ad51af0100976a5fd",
+            "human_replay_demonstrations.py": "703f25c447c119bf1bd7d31b2ffc9980efee445a0a871c86e470be46a204af4b",
+            "human_replay_v5.py": "8d457b9975404f6503ce722fee98efa126c2a7f2337e095f621f10b3eac0e03a",
+            "model.py": "e513b0c661fab21e35ad6f2ffc64d6cfd01d7dc7b4fc480435e38e33a285d989",
+            "public_action_mask.py": "e6e94abae45b0988dbcc087970a11cc0b2f07fc1cc335decec75b5714798d107",
+            "structured_obs.py": "e74b97e5f5dc8f97442fee98a113dadc480126b51ed997868a11a318db5f127a"
+          },
+          "runtime": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/c56/data/runtime-engine-v3b",
+          "sha256": "1ec2c60c254fd9cc5579b163ef994a0e233a942bd97acda864d31d91442d3493"
+        }
+      },
+      "recent_published_perspectives": 9309,
+      "recent_published_units": 195,
+      "recent_window_seconds": 900,
+      "status": {
+        "attempted": 29424,
+        "capacity": 78,
+        "completed": 615,
+        "errors": 0,
+        "host": "127x03",
+        "inflight": 77,
+        "max_workers": 78,
+        "pid": 3405983,
+        "reserved_c56": 0,
+        "rows": 20430644,
+        "stopping": false,
+        "units": 3492,
+        "wall_seconds": 7599.995386721101,
+        "worker_cpu_seconds_this_run": 223939.82818376378,
+        "workers": 78
+      },
+      "total_perspectives": 333934,
+      "total_units": 6984
+    }
+  ],
+  "sources_sha256": {
+    "s122/extract_s122.py": "48b86d893836940393ff6dff374a863719e9512a25a6481edffb7cd56ab4eb63",
+    "s122/finalize_s122.py": "821d018f18d9cdd1008945012e66c431a7d1f15bc908d731bf93b9e163659e3f",
+    "s122/start_production.sh": "57eb9ccb54ef2396418154205d1936226055f50f1bfbdbf736511e4286ff73b0"
+  },
+  "stages_not_performed": [
+    "04/08 input/pin verification or copying",
+    "repartitioning",
+    "launches",
+    "collector changes"
+  ],
+  "status": "BLOCKED_NO_SAFE_LIVE_REPARTITION",
+  "throughput": {
+    "after_note": "No expansion launched; no measured after sample.",
+    "after_perspectives_per_hour": null,
+    "before_perspectives_per_hour": 66420,
+    "extraction_eta_utc": "2026-10-08T10:17:04.449Z",
+    "limitations": "Assumes unchanged recent per-host rate and typical remaining unit cost; respects static partition imbalance. Final collection/hash verification/mirror is additional.",
+    "method": "Published unit receipt mtimes in preceding 900 seconds, perspective counts from production plan; observational, not a QA validation.",
+    "per_host": [
+      {
+        "eta_unix": 1791454624.4490855,
+        "host": "127x01",
+        "perspectives_per_hour": 29184,
+        "remaining_units": 3004,
+        "units_per_hour": 608
+      },
+      {
+        "eta_unix": 1791450116.0685189,
+        "host": "127x03",
+        "perspectives_per_hour": 37236,
+        "remaining_units": 2877,
+        "units_per_hour": 780
+      }
+    ]
+  },
+  "unchanged": [
+    "01/03 running jobs and partitions",
+    "S3 jobs",
+    "collector",
+    "frozen code/runtime/recipe/QA",
+    "all data"
+  ]
+}

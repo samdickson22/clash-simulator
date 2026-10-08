@@ -6,6 +6,10 @@ Freeze this document, checkpoint and comparator hashes, adapter/model/engine/
 gamedata/deck inputs, schedules and seed-audit receipts before any gate game.
 Random/synthetic checkpoints are plumbing only; no strength or outcome claims.
 
+Confirmation also pins the full model/evaluation snapshot tree SHA256. Re-snapshot
+and requalify if model code changes during T4/T5. Shared host model paths are
+never modified by evaluation.
+
 ## Policies and timing
 
 v1-main samples gate -> card -> tile stochastically at T=1 once every five

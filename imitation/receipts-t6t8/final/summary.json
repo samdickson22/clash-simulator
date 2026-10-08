@@ -1,0 +1,67 @@
+{
+  "plumbing_only": true,
+  "search": {
+    "games": 20,
+    "decisions": 15194,
+    "p50_ms": 5.026538507081568,
+    "p99_ms": 200.36242364672944,
+    "max_ms": 242.04096593894064,
+    "over_250_ms": 0,
+    "candidate_illegal": 0,
+    "script_illegal": 0,
+    "candidate_rejected": 0,
+    "script_rejected": 3,
+    "skew_rows": 5909,
+    "proposal_p99_ms": 16.90813586115837,
+    "snapshot_hashes": [
+      "e3c60ef30743427aa8b654d3327fe0a567791a78221c90468181c2ab70a6cc90"
+    ],
+    "checkpoint_hashes": [
+      "8c5be4ab918e3829789952cbc8b0337182fa133f52626d26f2fb5268498f2bad"
+    ]
+  },
+  "c56": {
+    "games": 4,
+    "decisions": 2944,
+    "p50_ms": 14.721361687406898,
+    "p99_ms": 19.84419310698286,
+    "max_ms": 22.713287035003304,
+    "over_250_ms": 0,
+    "candidate_illegal": 0,
+    "script_illegal": 0,
+    "candidate_rejected": 0,
+    "script_rejected": 2,
+    "skew_rows": 2944,
+    "proposal_p99_ms": null,
+    "snapshot_hashes": [
+      "e3c60ef30743427aa8b654d3327fe0a567791a78221c90468181c2ab70a6cc90"
+    ],
+    "checkpoint_hashes": [
+      "8c5be4ab918e3829789952cbc8b0337182fa133f52626d26f2fb5268498f2bad"
+    ]
+  },
+  "p16": {
+    "games": 4,
+    "terminal": 4,
+    "candidate_illegal": 0,
+    "candidate_rejected": 0,
+    "opponent_rejected": 0,
+    "decisions": 2729,
+    "pairing_exact": true,
+    "snapshot_hash": "e3c60ef30743427aa8b654d3327fe0a567791a78221c90468181c2ab70a6cc90",
+    "mask_asymmetry": "imitation v5 / comparator v4"
+  },
+  "h2h": {
+    "games": 4,
+    "terminal": 4,
+    "candidate_illegal": 0,
+    "candidate_rejected": 0,
+    "opponent_rejected": 0,
+    "decisions": 2285,
+    "pairing_exact": true,
+    "snapshot_hash": "e3c60ef30743427aa8b654d3327fe0a567791a78221c90468181c2ab70a6cc90",
+    "mask_asymmetry": "imitation v5 / comparator v4"
+  },
+  "snapshot_tree_sha256": "e3c60ef30743427aa8b654d3327fe0a567791a78221c90468181c2ab70a6cc90",
+  "qualification_passed": true
+}

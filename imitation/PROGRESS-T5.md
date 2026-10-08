@@ -1,6 +1,6 @@
 # T5 v1 training and gate (a)
 
-2026-10-08 05:20 UTC — **WAITING FOR START CONDITIONS.** No T5 GPU jobs,
+2026-10-08 06:43 UTC — **T3 TRAINING RELEASE PASS; WAITING FOR T4 AND COPIES.** No T5 GPU jobs,
 training, calibration or eval/eval_ood scoring have been launched. No commits.
 
 ## Qualification
@@ -72,7 +72,7 @@ Readiness receipt: `imitation/t5/receipts/prerequisite-wait.json`.
 Disable after the final report or if T4 fails/an upstream terminal blocker is
 reported. This does not replace or modify the separate data/T4 schedules.
 
-Latest scheduled check: 2026-10-08 05:42:49 UTC — T3-PASS absent on 01; who empty. T4 checked at 05:41:17 UTC and remains pending T3. Data worker reports active P16 scoring at 05:36:59 UTC, no terminal blocker. No T5 jobs launched; 10-minute continuation remains active.
+Latest scheduled check: 2026-10-08 06:42:52 UTC — actual T3-PASS now present on01, passed=true; who empty. T4 last checked at06:41:22 before publication, shakedown still pending. Verified target copies and P16 gate-A2 baseline are pending. No T5 jobs launched; 10-minute continuation remains active.
 
 ## Coordinator lease update — 2026-10-08 05:45 UTC
 
@@ -120,3 +120,23 @@ Reserve hosts 16/18 have cap48; GPU-only09/15 cap8 and one loader worker unless
 measured otherwise. No extra runs are authorized by extra capacity.
 No roader repo/jobs/caches or shared env/tool/home changes. No builds/tests/
 games/training/bulk transfer on05. Only owned small docs/results/receipts mirror.
+
+06:03 UTC upstream clarification: PROGRESS-data.md reports the 05:44–05:54
+investigation found no deadlock: both spawned P16 workers advanced CPU and I/O
+over 93.9 s. The idle parent waits for whole-partition results. No job was
+restarted. This evidence supersedes the earlier coordinator suspicion of a
+deadlock; await actual T3-PASS and do not intervene in data-worker processes.
+
+## T3 training release received — 2026-10-08 06:43 UTC
+
+Actual T3-PASS.json published06:42:32 UTC; passed=true. Mirrored with rsync -c
+to `imitation/t5/receipts/T3-PASS-training-release.json`, SHA256
+`6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c`.
+Store/role hashes match the draft;805 exact round-trip perspectives and role
+counts equality are true. Receipt records coordinator decision to release
+training from qualified store/frequency baselines; P16 baseline remains an
+A2 requirement. It explicitly has copies_status=pending and p16_baseline=pending.
+Require separate `T3-COPIES.json`/target checksum receipts before using a host;
+require `T3-P16-BASELINE.json` before claiming A2. Qualification alone does not
+prove a target store is ready. T4 owns the next shakedown; do not duplicate it.
+Earlier pending-T3 entries above are historical. No T5 code freeze or fitting.

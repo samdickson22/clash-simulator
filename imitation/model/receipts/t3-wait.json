@@ -1,10 +1,10 @@
 {
-  "checked_at": "2026-10-08T05:41:17.123988+00:00",
+  "checked_at": "2026-10-08T06:41:22.298738+00:00",
   "status": "T3_PENDING",
   "receipt": "127x01:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/receipts/T3-PASS.json",
   "interval_seconds": 600,
   "deadline": "2026-10-09T14:30:00Z",
-  "next_scheduled_run": "2026-10-08T05:51:17.123988+00:00",
+  "next_scheduled_run": "2026-10-08T06:51:22.298738+00:00",
   "scheduled_task_id": "scheduled-task:command:mcp:c588a151-27f6-471c-bafb-661cddc13f03:schedule-task:clasher-imitation-t4-t3-poll-20261008",
   "next_scheduled_run_is_estimate": true
 }

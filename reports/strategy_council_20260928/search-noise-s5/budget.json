@@ -1,0 +1,142 @@
+{
+  "candidate_style_rollouts": 63,
+  "samples": [
+    {
+      "tick": 90,
+      "candidates": 21,
+      "completed": 21,
+      "styles": 3
+    },
+    {
+      "tick": 120,
+      "candidates": 21,
+      "completed": 21,
+      "styles": 3
+    },
+    {
+      "tick": 150,
+      "candidates": 20,
+      "completed": 20,
+      "styles": 3
+    },
+    {
+      "tick": 180,
+      "candidates": 21,
+      "completed": 21,
+      "styles": 3
+    },
+    {
+      "tick": 240,
+      "candidates": 21,
+      "completed": 21,
+      "styles": 3
+    },
+    {
+      "tick": 360,
+      "candidates": 21,
+      "completed": 21,
+      "styles": 3
+    },
+    {
+      "tick": 510,
+      "candidates": 20,
+      "completed": 20,
+      "styles": 3
+    },
+    {
+      "tick": 570,
+      "candidates": 21,
+      "completed": 21,
+      "styles": 3
+    },
+    {
+      "tick": 630,
+      "candidates": 20,
+      "completed": 20,
+      "styles": 3
+    },
+    {
+      "tick": 660,
+      "candidates": 20,
+      "completed": 20,
+      "styles": 3
+    },
+    {
+      "tick": 690,
+      "candidates": 20,
+      "completed": 20,
+      "styles": 3
+    },
+    {
+      "tick": 720,
+      "candidates": 20,
+      "completed": 20,
+      "styles": 3
+    },
+    {
+      "tick": 750,
+      "candidates": 19,
+      "completed": 19,
+      "styles": 3
+    },
+    {
+      "tick": 780,
+      "candidates": 20,
+      "completed": 20,
+      "styles": 3
+    },
+    {
+      "tick": 810,
+      "candidates": 21,
+      "completed": 21,
+      "styles": 3
+    },
+    {
+      "tick": 870,
+      "candidates": 21,
+      "completed": 21,
+      "styles": 3
+    },
+    {
+      "tick": 960,
+      "candidates": 21,
+      "completed": 21,
+      "styles": 3
+    },
+    {
+      "tick": 1080,
+      "candidates": 20,
+      "completed": 20,
+      "styles": 3
+    },
+    {
+      "tick": 1110,
+      "candidates": 19,
+      "completed": 19,
+      "styles": 3
+    },
+    {
+      "tick": 1140,
+      "candidates": 21,
+      "completed": 21,
+      "styles": 3
+    },
+    {
+      "tick": 1200,
+      "candidates": 21,
+      "completed": 21,
+      "styles": 3
+    }
+  ],
+  "pilot_seeds": [
+    7610700001,
+    7610700002,
+    7610700003
+  ],
+  "native_threads": 1,
+  "seconds": 0.2,
+  "native_extension_sha256": "4ecdc5ea3e63c2ea09f292ad544dd4d22391e5bf603ef5fd19011589bf4c5b39",
+  "platform": "Mac M4 Pro arm64",
+  "quiet_core_isolation": false,
+  "runtime_source": "search-noise frozen runtime; Mac timing only"
+}

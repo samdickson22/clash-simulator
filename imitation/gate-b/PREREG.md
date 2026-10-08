@@ -26,6 +26,15 @@ B substitutes up to eight distinct legal imitation proposals at the front of
 those slots. When legal support is small, both arms exhaust the same count.
 This preserves A byte-for-byte; candidate-count equality is asserted per B root.
 
+Common CPU implementation qualification: both arms use the evaluation adapter's
+`ExactFastPrior`, whose column-wise posterior updates are state/weight/resource/
+derived-fact/RNG equivalent to the Stage 5 tracker. This is shared by A/B; it
+changes no engine/gamedata or search scoring. Eight recorded-stream parity
+checks precede its use. The original row-wise tracker exceeded 250 ms before
+inference on the fleet CPUs; those plumbing failures remain in the receipts.
+Confirmation freezes the final model/evaluation snapshot tree SHA256 in this
+registration. Re-snapshot and requalify if T5's model code differs.
+
 ## Schedule and fresh seeds
 
 Primary: 320 seeded worlds × two controller swaps = 640 games. Physical decks

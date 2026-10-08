@@ -3,12 +3,11 @@
 Started 2026-10-08 UTC. Code is authored on 127x05; all execution is on 127x01/03.
 No commits. Frozen runtime, extractor, roles and evaluation recipe remain read-only.
 
-- T0: starting. The hub lacks `fleet/gpu_env.sh` and `gpu_check.py`; exact copies
+- T0: PASS. The hub lacked `fleet/gpu_env.sh` and `gpu_check.py`; exact copies
   are staged in the new `imitation/t0/` directory, without replacing fleet files.
-- T1: implementing deck-free public-event ledger and own cycle; oracle suite pending.
-- T2: pending T1. Hosts 01/03, at most 64 workers each and 80 total/host
-  (16 with console users). Output only under fresh `imitation/data/` paths.
-- T3: pending T2; packed role stores and baseline scores, then LAN copies to 04/08.
+- T1: PASS. Deck-free public-event ledger and own cycle qualified against oracles.
+- T2: PASS. 82,231 perspectives, 64,140,802 rows; zero violations; copy on 04 verified.
+- T3: store and frequency baseline complete; P16 scoring running; copies to 04/08 pending.
 
 T1 PASS published on 127x01 and mirrored to 05. 319,077 exact elixir comparisons,
 2,015,370 known facts, zero conflicts. Includes 74,440 development (74,424 plus
@@ -30,15 +29,18 @@ unsupervised terminal context row: the frozen hook omits it. The adapter now
 captures the retained final battle after return; no frozen source changed.
 No data deleted. No fallback needed.
 
-T2 production running 64 workers each on 01/03 (128 total). This leaves at
-most 16 other Clasher workers per host under the shared total cap. Node03 has
+T2 production completed with 64 workers each on 01/03 (128 total). Node03 had
 only 1,248 original units, so a complete read-only comparison copy is staged
 under fresh `imitation/data/c56-input-v1/` on 03 from the hub; no C56 file on 03
 is overwritten. Production output is `data/c56-sidecars-v1/`.
 
 Production labels and launcher PIDs:
-- 01: `imitation-t2-production-01-v1`, PID 3404410, partition 0/2.
-- 03: `imitation-t2-production-03-v1`, PID 3398212, partition 1/2.
+- 01: `imitation-t2-production-01-v1`, PID 3404410, partition 0/2, exit 0
+  at 04:43:33 UTC: 884 units, 41,102 perspectives, 32,080,827 rows, zero
+  violations. 1h50m23s wall / 412,308.14 s process CPU (including setup).
+- 03: `imitation-t2-production-03-v1`, PID 3398212, partition 1/2, exit 0
+  at 04:34:40 UTC: 883 units, 41,129 perspectives, 32,059,975 rows, zero
+  violations. 1h40m31s wall / 375,568.63 s process CPU (including setup).
 - Input staging/checksum: `imitation-t2-stage-input-v1`, PID 3404417, exit 0.
 - 01 continuation: `imitation-data-finish-v1`, PID 3406691. Waits on the exact
   two production exit receipts, then collects 03 outputs, finalizes, checksum
@@ -80,7 +82,15 @@ pilot-store smoke round trip passes all 45 retained perspectives/34,545 rows;
 `imitation-t3-store-smoke-v3`, PID 3408585, exit 0. `passed=false` deliberately;
 only `smoke_passed=true`. Earlier smoke found/fixed a duplicate manifest key.
 Balance uses the minimum of the two frozen sqrt caps, not their product.
-Three loader/metric/phase tests pass; `imitation-t3-tests-v2`, PID 3410068.
+Four loader/metric/phase/timing-denominator tests pass;
+`imitation-t3-tests-v3`, PID 3420408, exit 0, 8.08 s wall / 7.43 s CPU.
+Baselines retain the frozen all-row timing metrics and add explicit playable-row
+timing/calibration metrics for comparison with the model's DESIGN denominator.
+P16 CPU scoring partitions whole units across two workers, preserving each
+perspective's recurrent state; CPU receipts include child process time.
+Scorer/spawn TRAIN smoke: `imitation-t3-p16-partition-smoke-v1`, PID 3421414.
+Passed: one train perspective, 587 supervised/playable rows, 17.42 s scorer
+wall. Receipt `data/receipts/t3-p16-partition-smoke.json` mirrored to 05.
 P16 upgrade/forward plumbing passes on one TRAIN perspective (589 rows, ten
 recurrent chunks), `imitation-t3-p16-smoke-v2`, PID 3412437, exit 0, 25.11 s wall /
 24.41 s CPU. Receipt `data/receipts/t3-p16-smoke.json` mirrored to 05.
@@ -90,13 +100,117 @@ daa58b28 and extraction gamedata 3d99987c. `p16_upgrade.py` copies checkpoint
 descriptor rows into a private builder copy and then calls the unchanged
 `contract_v5.upgrade_policy_payload_to_v5`. Every existing checkpoint tensor
 (including descriptor buffers) is asserted unchanged after remapping. No
-checkpoint or frozen runtime was modified; no held-out scoring yet.
+checkpoint or frozen runtime was modified; this smoke used train rows only.
 
-Latest combined T2 checkpoint (03:18 UTC): 374/1,767 units,
-17,468/82,231 perspectives, 13,913,748/64,140,802 rows, zero violations.
-Still running, not qualified.
+T2 PASS published at approximately 04:46:49 UTC. All 1,767 units / 82,231
+perspectives / 64,140,802 rows reproduce; all five truth-violation counts zero.
+Completed-unit CPU time: 786,942.55 s (218.60 h). Process CPU including setup:
+787,876.77 s. Replay wall 1h50m23s. Copy on 04 verifies 7,068 artifacts,
+9,198,923,857 bytes; manifest SHA 1a18b263bd0d2d44aee75491e82aa89e152c8a8474cca6d664128c0fc2790cb6.
+Coverage and T2 PASS receipts mirrored to 05. The original continuation PID
+3406691 has advanced to T3 store building; no restart or blocked receipt.
+At 04:48 UTC, S122 has expanded to 78 configured hub workers. Before baseline
+preregistration/fitting, P16 scoring was reduced from eight workers to two to
+respect the shared 80-worker cap. No metric or statistical recipe changed.
+T3 PASS remains absent. The accepted-header audit passed under fresh label
+`imitation-t2-header-audit-v4`, PID 3443852, exit 0 at 04:47:48 UTC: all 270
+historical units' completed replay receipts now verify. Updated audit copied
+with checksum equality to 04 and mirrored to 05.
 The 270-header provenance decision is accepted as recorded above.
 Other workers must still wait for the actual verified `data/receipts/T3-PASS.json`.
 
+T3 checkpoint 05:16:59 UTC: store manifest PASS, 1,767 units written, all 805
+sampled perspectives pass exact round trip. Independently checked role counts
+against the frozen role file: train 69,380 / dev 3,546 / eval 3,765 / eval_ood
+3,771 perspectives. Rows respectively 53,989,262 / 2,759,722 / 2,943,085 /
+2,885,746. Build 1,205.49 s wall / 781.14 s CPU; root manifest SHA
+1acf6b5875091e009c18e598a71714016b9833b6cc626032e0fa676ccdac5c2f.
+Frequency scoring complete: 46.75 s wall / 45.87 s CPU. Joint NLL dev/eval/OOD:
+0.438199 / 0.436319 / 0.425070; card NLL 1.424337 / 1.404350 / 1.599666;
+tile NLL 4.017820 / 4.029418 / 4.048951. Small baseline JSON and store manifest
+mirrored to 05 receipts. P16 scoring runs with two workers, original continuation
+PID 3406691 still live; no blocked receipt. Baseline source is now frozen by
+prereg.json (recipe SHA 45c14463ee57798cef59d5c9d33a5caeccedfc11353c41b35445f0769ea74a84).
+No console users; 78 busy Clasher processes on each host. No restarts.
+
+P16 checkpoint 06:37:19 UTC: dev scoring completed at 06:36:37 UTC,
+648/648 perspectives, 505,669 supervised rows and 26,328 plays. Joint NLL
+0.4187397683; when NLL 0.1789347266 (playable 0.1846920516); card NLL
+1.0333683455, top1 0.5372607110, top3 0.9299604983; tile NLL 3.5724496296,
+median tile error 3; ECE 0.0086816557. Receipt mirrored to 05 at
+`data/receipts/baselines-v1/p16-bc-dev.json`. Original dev workers exited;
+the same parent 3449355 automatically launched eval workers 3510500 / 3510503,
+each at 41 s elapsed / 41 s CPU. Eval target remains 705 perspectives.
+Supervisor 3406704 live; no blocked receipt, source SHA matches preregistration.
+Copies and T3 PASS remain pending. No manual restart or source change.
+
+Coordinator hang investigation 05:44–05:54 UTC: no deadlock observed. P16 parent
+3449355 waits in futex for two **spawned** workers, 3449692 and 3449695. Both
+are single-threaded and CPU-active. Over 93.9 s they consumed 93.31 / 93.27 s
+CPU, read 7,108,478 / 10,879,765 additional bytes and made 522 / 816 reads.
+At 05:52 each had 43m30 CPU over 43m50 elapsed. Parent CPU staying at 11 s is
+expected: ProcessPoolExecutor returns partition results only after each whole
+partition. There is no intermediate per-perspective heartbeat. Torch is already
+single-threaded and workers use spawn, not a post-Torch fork. py-spy stack dumps
+were denied by ptrace policy; noninteractive sudo requires a password. No signals,
+source changes to the preregistered baseline, restarts or lost work. Evidence on
+01: `data/diagnostics/p16-liveness-{a,b}.json`, `p16-diagnosis.json` (the latter
+mirrored as `data/receipts/p16-diagnosis.json`). Supervisor 3406704 remains live.
+
+The coordinator now explicitly authorizes certified store copies to leased
+127x11/13/14/16/18. Read `fleet/LEASED-HOSTS.md` and
+`/mpac/sdicks02/cc/FLEET-SHARING.md`; all five live leases validated at 05:54,
+no console users, at least 1.69 TB free, and lease-host SSH reads from 01 work.
+Only these five newly authorized targets are contacted. T3 certificate still
+absent: no leased store transfer launched. The unchanged original supervisor
+will first complete P16, copy/verify 04/08, then publish T3-PASS.
+
+Prepared `copy_leased_store.py`: receiver validates actual T3 certificate and
+its 04/08 manifest hashes, copies an explicit manifest-derived list with rsync -c,
+requires an empty checksum dry run, verifies every artifact SHA and retains the
+certificate. SIGTERM stops its verified active child and exits; wrapper enforces
+lease/resource caps. Only stdlib, bounded memory, one transfer at a time.
+Hub syntax check `imitation-lease-copy-syntax-v1`, launcher 3481955, exit 0,
+0.05 s wall / 0.04 s CPU. No bulk data or tests run on 05.
+
+Leased-copy continuation (after actual T3-PASS): re-read target lease and hub
+`/mpac/sdicks02/jobs/clasher/lease-ready-HOST.json`, inspect owned wrapper state
+and console users. Stage only owned `copy_leased_store.py` and
+`verify_artifacts.py` with rsync -c from 01 into a fresh/owned
+`/mpac/sdicks02/repos/clasher-lease/data/imitation-copy-v1/`. Launch each host
+sequentially, with fresh label `imitation-store-copy-HOST-v1`, using only:
+`source /mpac/sdicks02/repos/clasher-lease/env.sh; bash /mpac/sdicks02/repos/clasher-lease/run.sh LABEL /mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python -B /mpac/sdicks02/repos/clasher-lease/data/imitation-copy-v1/copy_leased_store.py`.
+Never source the shared env or use fleet_run on leased hosts. Check wrapper
+`.exit.json` status pass, helper `data/imitation-copy-v1/receipt.json`, checksum
+dry-run empty and certificate SHA against 01. Preserve each hub readiness
+receipt in our operations directory before updating ONLY its data fields with
+verified evidence (`data_copied`, `ready_for_gpu_training_on_c56_store`,
+`data_note`, store path and copy receipt). Mirror small copy receipts to 05.
+On failure preserve logs/data and inspect before a fresh-label resume; never
+duplicate a live wrapper. No training is launched by this worker.
+
+Temporary data-worker continuation poll: every 10 minutes in this same T3 thread,
+first run 2026-10-08 03:36:34 UTC; disable after verified T3 PASS and the five
+authorized leased copies (report T3 publication immediately), or an unresolved
+external blocker (deadline 2026-10-09 03:30 UTC). Scheduler ID:
+`scheduled-task:command:mcp:b1656a57-211a-4456-ab5e-d0075b77ded5:schedule-task:clasher-imitation-data-finish-poll-20261008-v1`.
+No active fleet job was restarted. Header audit v4 is complete, with all 270
+historical unit IDs and completed replay receipts verified; copies on 01/04/05.
+
 Jobs use `fleet/fleet_run.sh`; labels, PIDs and resume commands will be recorded
 here when launched. Logs and exit receipts: `/mpac/sdicks02/jobs/clasher/`.
+
+Resource incident 06:07 UTC: hub `who` now shows sdicks02 pts/0 from
+127.0.0.1. Read-only process metadata counts 82 Clasher Python processes,
+64 running; aggregate is above the 16-process console-user cap. Our P16
+uses two CPU workers. No new workload launched and no other worker touched.
+Coordinator adjustment of other hub workloads is required while this session
+remains. Original healthy P16/supervisor preserved; T3 PASS still pending.
+
+06:27 UTC resource recheck: console session persists, 81 Clasher Python
+processes (75 running). No new workload launched; the two P16 workers each
+advanced another 600 CPU seconds. No failure receipt or completed P16 role yet.
+
+06:37 UTC resource recheck: console remains. 82 Clasher Python processes
+observed (11 running, 71 sleeping); other-worker outputs were not inspected.
+Our new eval pool has the same two-worker cap. No new manual workload launched.

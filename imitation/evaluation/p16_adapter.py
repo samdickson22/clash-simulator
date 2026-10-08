@@ -15,7 +15,7 @@ from clasher.rl.contract_v5 import ContractV5ObservationBuilder
 
 
 @contextmanager
-def installed(checkpoint, reference, *, fixed_world=False):
+def installed(checkpoint, reference, *, fixed_world=False, audit_path=None):
     from clasher.rl import eval as ev
     from clasher.rl.selfplay_env import SelfPlayBattleEnv
     policy = load_policy(checkpoint)
@@ -31,6 +31,9 @@ def installed(checkpoint, reference, *, fixed_world=False):
         model=SimpleNamespace(config=legacy.model.config, initial_state=lambda *a, **k: (torch.zeros(1), torch.zeros(1))))
     from pathlib import Path
     expected = Path(checkpoint).resolve()
+    from clasher.rl.action_space import DiscreteTileActionSpace
+    original_apply=DiscreteTileActionSpace.apply_action
+    audits=[]
     with PublicRecorder(builder) as recorder:
         players = {}
         def reset(env, *a, **kw):
@@ -38,6 +41,9 @@ def installed(checkpoint, reference, *, fixed_world=False):
                 kw['ordered_decks'] = tuple(reversed(kw['ordered_decks']))
             result = original_reset(env, *a, **kw)
             recorder.bind(env.battle)
+            audits.append({'seed':kw['seed'],'candidate_seat':env.learner_player_id,
+                           'battle':env.battle,'illegal_candidate':0,'rejected':[0,0],
+                           'decisions':0,'imitation_mask':5,'comparator_mask':4})
             players.clear()
             for seat in (0, 1):
                 own = env.battle.players[seat]
@@ -55,11 +61,25 @@ def installed(checkpoint, reference, *, fixed_world=False):
                 raise ValueError('gate (c) requires 5 ticks')
             packet = builder.build_public(env.battle, player_id)
             action, mask = players[player_id].decide(env.battle.tick, packet, recorder.public_events)
+            audits[-1]['decisions']+=1
+            audits[-1]['illegal_candidate']+=int(not mask[action])
             return action, kw['state'], mask, None
+        def apply(space,battle,seat,action,*a,**kw):
+            result=original_apply(space,battle,seat,action,*a,**kw)
+            if battle is recorder.battle and action != 2304:
+                audits[-1]['rejected'][seat]+=int(not result)
+            return result
+        DiscreteTileActionSpace.apply_action=apply
         ev.load_policy_checkpoint, ev._policy_step, SelfPlayBattleEnv.reset = load, step, reset
         try:
             yield ev
         finally:
+            DiscreteTileActionSpace.apply_action=original_apply
+            if audit_path is not None:
+                import json
+                for row in audits:
+                    battle=row.pop('battle');row.update(terminal=battle.game_over,ticks=battle.tick)
+                with open(audit_path,'x') as f:json.dump(audits,f,indent=2)
             ev.load_policy_checkpoint, ev._policy_step, SelfPlayBattleEnv.reset = original_load, original_step, original_reset
 
 
@@ -71,7 +91,10 @@ def main():
     del sys.argv[index:index+2]
     fixed = '--fixed-world' in sys.argv
     if fixed: sys.argv.remove('--fixed-world')
-    with installed(checkpoint, reference, fixed_world=fixed) as ev:
+    audit=None
+    if '--adapter-audit-out' in sys.argv:
+        index=sys.argv.index('--adapter-audit-out');audit=sys.argv[index+1];del sys.argv[index:index+2]
+    with installed(checkpoint, reference, fixed_world=fixed, audit_path=audit) as ev:
         ev.main()
 
 

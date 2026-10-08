@@ -1,0 +1,19 @@
+{
+  "plumbing_only": true,
+  "qualification_complete": true,
+  "snapshot_tree_sha256": "e3c60ef30743427aa8b654d3327fe0a567791a78221c90468181c2ab70a6cc90",
+  "model_reference_commit": "43d895e069e5b6ce25229c2fefa140880869dce2",
+  "search_games": 20,
+  "standalone_games": {
+    "p16": 4,
+    "h2h": 4,
+    "c56": 4
+  },
+  "final_summary_sha256": "8522120ba099488ec54811992cbba2415bb88ac115441cf8c9edbc1a06beb591",
+  "known_opponent_rejections": {
+    "search": 3,
+    "c56": 2
+  },
+  "outcome_claims": false,
+  "confirmation_frozen": false
+}

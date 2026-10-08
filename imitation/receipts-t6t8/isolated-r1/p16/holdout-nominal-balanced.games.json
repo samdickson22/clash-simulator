@@ -1,0 +1,278 @@
+[
+  {
+    "candidate_card_levels": {
+      "Archers": 11,
+      "DarkPrince": 11,
+      "Fireball": 11,
+      "Giant": 11,
+      "Goblins": 11,
+      "Musketeer": 11,
+      "Prince": 11,
+      "Zap": 11
+    },
+    "candidate_crowns": 0,
+    "candidate_deck": [
+      "DarkPrince",
+      "Prince",
+      "Giant",
+      "Goblins",
+      "Archers",
+      "Musketeer",
+      "Fireball",
+      "Zap"
+    ],
+    "candidate_player": 0,
+    "candidate_tower_hp": [
+      3004.0,
+      0.0,
+      0.0
+    ],
+    "candidate_tower_level": 11,
+    "game": 0,
+    "level_mode": "nominal",
+    "matchup": 0,
+    "matchup_seed": 80375037,
+    "opponent_card_levels": {
+      "Archers": 11,
+      "Fireball": 11,
+      "Goblins": 11,
+      "HogRider": 11,
+      "IceSpirit": 11,
+      "Knight": 11,
+      "Tesla": 11,
+      "Zap": 11
+    },
+    "opponent_crowns": 3,
+    "opponent_deck": [
+      "IceSpirit",
+      "Zap",
+      "Goblins",
+      "Knight",
+      "Archers",
+      "HogRider",
+      "Tesla",
+      "Fireball"
+    ],
+    "opponent_tower_hp": [
+      2117.0,
+      1456.0,
+      4824.0
+    ],
+    "opponent_tower_level": 11,
+    "outcome": "loss",
+    "terminated": true,
+    "ticks": 3391,
+    "truncated": false,
+    "plumbing_only": true,
+    "imitation_mask": 5,
+    "comparator_mask": 4,
+    "fixed_world": false
+  },
+  {
+    "candidate_card_levels": {
+      "Archers": 11,
+      "DarkPrince": 11,
+      "Fireball": 11,
+      "Giant": 11,
+      "Goblins": 11,
+      "Musketeer": 11,
+      "Prince": 11,
+      "Zap": 11
+    },
+    "candidate_crowns": 0,
+    "candidate_deck": [
+      "DarkPrince",
+      "Prince",
+      "Giant",
+      "Goblins",
+      "Archers",
+      "Musketeer",
+      "Fireball",
+      "Zap"
+    ],
+    "candidate_player": 1,
+    "candidate_tower_hp": [
+      0.0,
+      811.0,
+      4459.0
+    ],
+    "candidate_tower_level": 11,
+    "game": 1,
+    "level_mode": "nominal",
+    "matchup": 0,
+    "matchup_seed": 80375037,
+    "opponent_card_levels": {
+      "Archers": 11,
+      "Fireball": 11,
+      "Goblins": 11,
+      "HogRider": 11,
+      "IceSpirit": 11,
+      "Knight": 11,
+      "Tesla": 11,
+      "Zap": 11
+    },
+    "opponent_crowns": 1,
+    "opponent_deck": [
+      "IceSpirit",
+      "Zap",
+      "Goblins",
+      "Knight",
+      "Archers",
+      "HogRider",
+      "Tesla",
+      "Fireball"
+    ],
+    "opponent_tower_hp": [
+      140.0,
+      3004.0,
+      4776.0
+    ],
+    "opponent_tower_level": 11,
+    "outcome": "loss",
+    "terminated": true,
+    "ticks": 3601,
+    "truncated": false,
+    "plumbing_only": true,
+    "imitation_mask": 5,
+    "comparator_mask": 4,
+    "fixed_world": false
+  },
+  {
+    "candidate_card_levels": {
+      "Archers": 11,
+      "DarkPrince": 11,
+      "Fireball": 11,
+      "Giant": 11,
+      "Musketeer": 11,
+      "Prince": 11,
+      "Skeletons": 11,
+      "Zap": 11
+    },
+    "candidate_crowns": 0,
+    "candidate_deck": [
+      "Musketeer",
+      "DarkPrince",
+      "Fireball",
+      "Prince",
+      "Giant",
+      "Skeletons",
+      "Archers",
+      "Zap"
+    ],
+    "candidate_player": 0,
+    "candidate_tower_hp": [
+      2332.0,
+      0.0,
+      0.0
+    ],
+    "candidate_tower_level": 11,
+    "game": 2,
+    "level_mode": "nominal",
+    "matchup": 1,
+    "matchup_seed": 80376046,
+    "opponent_card_levels": {
+      "Archers": 11,
+      "DarkPrince": 11,
+      "Knight": 11,
+      "Log": 11,
+      "Prince": 11,
+      "Skeletons": 11,
+      "Tesla": 11,
+      "Zap": 11
+    },
+    "opponent_crowns": 3,
+    "opponent_deck": [
+      "Archers",
+      "DarkPrince",
+      "Tesla",
+      "Skeletons",
+      "Log",
+      "Knight",
+      "Prince",
+      "Zap"
+    ],
+    "opponent_tower_hp": [
+      2716.0,
+      3052.0,
+      4824.0
+    ],
+    "opponent_tower_level": 11,
+    "outcome": "loss",
+    "terminated": true,
+    "ticks": 2934,
+    "truncated": false,
+    "plumbing_only": true,
+    "imitation_mask": 5,
+    "comparator_mask": 4,
+    "fixed_world": false
+  },
+  {
+    "candidate_card_levels": {
+      "Archers": 11,
+      "DarkPrince": 11,
+      "Fireball": 11,
+      "Giant": 11,
+      "Musketeer": 11,
+      "Prince": 11,
+      "Skeletons": 11,
+      "Zap": 11
+    },
+    "candidate_crowns": 0,
+    "candidate_deck": [
+      "Musketeer",
+      "DarkPrince",
+      "Fireball",
+      "Prince",
+      "Giant",
+      "Skeletons",
+      "Archers",
+      "Zap"
+    ],
+    "candidate_player": 1,
+    "candidate_tower_hp": [
+      0.0,
+      2152.0,
+      4824.0
+    ],
+    "candidate_tower_level": 11,
+    "game": 3,
+    "level_mode": "nominal",
+    "matchup": 1,
+    "matchup_seed": 80376046,
+    "opponent_card_levels": {
+      "Archers": 11,
+      "DarkPrince": 11,
+      "Knight": 11,
+      "Log": 11,
+      "Prince": 11,
+      "Skeletons": 11,
+      "Tesla": 11,
+      "Zap": 11
+    },
+    "opponent_crowns": 1,
+    "opponent_deck": [
+      "Archers",
+      "DarkPrince",
+      "Tesla",
+      "Skeletons",
+      "Log",
+      "Knight",
+      "Prince",
+      "Zap"
+    ],
+    "opponent_tower_hp": [
+      2956.0,
+      2940.0,
+      4556.0
+    ],
+    "opponent_tower_level": 11,
+    "outcome": "loss",
+    "terminated": true,
+    "ticks": 3706,
+    "truncated": false,
+    "plumbing_only": true,
+    "imitation_mask": 5,
+    "comparator_mask": 4,
+    "fixed_world": false
+  }
+]

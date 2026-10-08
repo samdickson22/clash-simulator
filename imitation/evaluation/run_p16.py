@@ -11,7 +11,8 @@ import os
 from pathlib import Path
 import subprocess
 import sys
-from .paths import COUNCIL, ROOT
+from .paths import COUNCIL, ROOT, SNAPSHOT_ROOT
+from .snapshot import provenance
 
 S2902 = COUNCIL/'pilot/v7r4h-launch/runs/s2902/seed-2902/scripted/policy_decisions_001000000.pt'
 NATURAL = COUNCIL/'human-prior-p16/checkpoints/human-bc-natural-seed2903.pt'
@@ -41,7 +42,8 @@ def main():
         command = [sys.executable, '-B', '-m',
                    'clasher.rl.eval' if args.legacy else 'imitation.evaluation.p16_adapter', *original[4:]]
         if not args.legacy:
-            command += ['--reference-checkpoint', str(args.reference_checkpoint)]
+            command += ['--reference-checkpoint', str(args.reference_checkpoint),
+                        '--adapter-audit-out',str(prefix)+'.legality.json']
         if args.head_to_head:
             at = command.index('--opponent'); command[at+1]='policy'
             at = command.index('--public-script-style'); del command[at:at+2]
@@ -56,10 +58,10 @@ def main():
             if saved['checkpoint_sha256'] != hashlib.sha256(args.checkpoint.read_bytes()).hexdigest():
                 raise ValueError('checkpoint changed')
             continue
-        env = dict(os.environ, PYTHONPATH=f'{ROOT}:{ROOT}/src:{ROOT}/engine-rs', CLASHER_ROOT=str(ROOT),
+        env = dict(os.environ, PYTHONPATH=f'{SNAPSHOT_ROOT}:{ROOT}/src:{ROOT}/engine-rs', CLASHER_ROOT=str(ROOT),
                    OMP_NUM_THREADS='1', MKL_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1')
         with open(str(prefix)+'.log', 'x') as log:
-            result=subprocess.run(command, env=env, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
+            result=subprocess.run(command, env=env, cwd=SNAPSHOT_ROOT, stdout=log, stderr=subprocess.STDOUT)
         # Normalize the adapter-owned receipts: infrastructure is v4, actor v5.
         if result.returncode == 0:
             summary_path=Path(str(prefix)+'.json')
@@ -80,7 +82,7 @@ def main():
                 game.update(plumbing_only=args.plumbing_only,imitation_mask=5 if not args.legacy else None,
                             comparator_mask=4, fixed_world=args.head_to_head)
             games_path.write_text(json.dumps(games,indent=2)+'\n')
-        value=dict(returncode=result.returncode, command=command, plumbing_only=args.plumbing_only,
+        value=dict(**provenance(), returncode=result.returncode, command=command, plumbing_only=args.plumbing_only,
                    checkpoint_sha256=hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),
                    imitation_mask=5 if not args.legacy else None, comparator_mask=4,
                    temperature=1., decision_interval_ticks=5, fixed_world=args.head_to_head,

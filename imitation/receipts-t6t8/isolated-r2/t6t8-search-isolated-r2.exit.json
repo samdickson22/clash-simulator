@@ -1,0 +1,17 @@
+{
+  "host": "127x11",
+  "label": "t6t8-search-isolated-r2",
+  "started_utc": "2026-10-08T05:57:24.268130+00:00",
+  "command": [
+    "bash",
+    "/mpac/sdicks02/repos/clasher-lease/eval-snapshots/search-lease-batch-r2.sh"
+  ],
+  "supervisor_pid": 864034,
+  "pid": 864036,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T06:00:34.928303+00:00",
+  "stop_reason": null,
+  "peak_processes": 6,
+  "peak_rss_bytes": 5012033536
+}

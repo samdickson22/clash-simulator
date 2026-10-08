@@ -8,7 +8,8 @@ import hashlib
 import json
 from pathlib import Path
 import random
-from .paths import setup, ROOT, COUNCIL
+from .paths import setup, ROOT, COUNCIL, SNAPSHOT_ROOT
+from .snapshot import provenance
 setup()
 
 
@@ -102,14 +103,17 @@ def main():
     ck=torch.load(args.checkpoint,map_location='cpu',weights_only=True)
     if ck.get('plumbing_only'):
         raise ValueError('synthetic checkpoint cannot freeze a gate')
-    prereg=ROOT/f'imitation/gate-{args.gate}/PREREG.md'
+    source_pin=provenance()
+    if not source_pin['snapshot_tree_sha256']: raise ValueError('freeze requires isolated pinned snapshot')
+    prereg=SNAPSHOT_ROOT/f'imitation/gate-{args.gate}/PREREG.md'
     text=prereg.read_text()
     frozen=args.output/'PREREG.frozen.md'
     if frozen.exists(): raise FileExistsError(frozen)
     text=text.replace('Checkpoint SHA256: **TBD**', 'Checkpoint SHA256: '+args.checkpoint_sha256)
     if args.checkpoint_sha256 not in text: raise ValueError('PREREG checkpoint hash differs')
+    text += '\nConfirmation snapshot SHA256: '+source_pin['snapshot_tree_sha256']+'\n'
     frozen.write_text(text.replace('— DRAFT', '— FROZEN'))
-    files=[*ROOT.joinpath('imitation/evaluation').glob('*.py'), *ROOT.joinpath('imitation/model').glob('*.py'),
+    files=[*SNAPSHOT_ROOT.joinpath('imitation/evaluation').glob('*.py'), *SNAPSHOT_ROOT.joinpath('imitation/model').glob('*.py'),
            *COUNCIL.joinpath('imitation').glob('*.py'), *ROOT.joinpath('src/clasher').rglob('*.py'),
            *ROOT.joinpath('engine-rs').glob('*.py'), *ROOT.joinpath('engine-rs').glob('*.so'),
            *COUNCIL.joinpath('engine-speed/stage5').glob('*.py'),
@@ -117,11 +121,11 @@ def main():
            COUNCIL/'c56/engine/root-v3/human_deck_catalog.json',
            COUNCIL/'c56/data/roles/c56_roles_v1.json',COUNCIL/'c56/data/index/perspectives.jsonl.gz',
            *COUNCIL.joinpath('m0/data/roles_v2').glob('*.json'), COUNCIL/'pilot/hog26-deployment.json',
-           prereg,frozen,args.audit,proposal,schedule_path,args.checkpoint]
+           SNAPSHOT_ROOT/'snapshot-manifest.json',prereg,frozen,args.audit,proposal,schedule_path,args.checkpoint]
     if args.gate=='c':
         from .run_p16 import S2902,NATURAL
         files += [S2902,NATURAL,COUNCIL/'human-prior-p16/scripts/run_eval.py']
-    manifest=dict(gate=args.gate,checkpoint=str(args.checkpoint.resolve()),checkpoint_sha256=args.checkpoint_sha256,
+    manifest=dict(**source_pin,gate=args.gate,checkpoint=str(args.checkpoint.resolve()),checkpoint_sha256=args.checkpoint_sha256,
                   files={str(p.resolve()):sha(p) for p in sorted(set(files))},schedule=str(schedule_path.resolve()),
                   seed_audit_sha256=sha(args.audit),plumbing_only=False)
     with open(args.output/'manifest.json','x') as f: json.dump(manifest,f,indent=2)

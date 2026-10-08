@@ -1,0 +1,8 @@
+{
+  "complete": true,
+  "games": 4,
+  "candidate_eval_role": true,
+  "opponent_train_role": true,
+  "roles_sha256": "7e357f64ad6df13e232ec9b1c7c143bbcd734d12a9cdceec2cef999bbe74fcdc",
+  "index_sha256": "f368af125b72e423d54826e16c5a75db113dae3cc4a8a2102adb68d0b362bb45"
+}

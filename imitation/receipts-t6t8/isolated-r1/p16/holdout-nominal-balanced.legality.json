@@ -1,0 +1,58 @@
+[
+  {
+    "seed": 80375037,
+    "candidate_seat": 0,
+    "illegal_candidate": 0,
+    "rejected": [
+      0,
+      0
+    ],
+    "decisions": 679,
+    "imitation_mask": 5,
+    "comparator_mask": 4,
+    "terminal": true,
+    "ticks": 3391
+  },
+  {
+    "seed": 80375037,
+    "candidate_seat": 1,
+    "illegal_candidate": 0,
+    "rejected": [
+      0,
+      0
+    ],
+    "decisions": 721,
+    "imitation_mask": 5,
+    "comparator_mask": 4,
+    "terminal": true,
+    "ticks": 3601
+  },
+  {
+    "seed": 80376046,
+    "candidate_seat": 0,
+    "illegal_candidate": 0,
+    "rejected": [
+      0,
+      0
+    ],
+    "decisions": 587,
+    "imitation_mask": 5,
+    "comparator_mask": 4,
+    "terminal": true,
+    "ticks": 2934
+  },
+  {
+    "seed": 80376046,
+    "candidate_seat": 1,
+    "illegal_candidate": 0,
+    "rejected": [
+      0,
+      0
+    ],
+    "decisions": 742,
+    "imitation_mask": 5,
+    "comparator_mask": 4,
+    "terminal": true,
+    "ticks": 3706
+  }
+]
