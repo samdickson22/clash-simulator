@@ -1,0 +1,14 @@
+{
+  "cross_version_matches": 63880,
+  "frozen_c56_v2_actor_ineligible_3m": 2361,
+  "new_exclusions_by_reason": {
+    "new_heldout_opposes_frozen_c56_train": 7352,
+    "new_train_opposes_nontrain": 38318
+  },
+  "new_perspectives": 333934,
+  "train_heldout_match_violations": 0,
+  "v1_assignments_unchanged": true,
+  "v1_perspectives": 82231,
+  "v1_sha256": "7e357f64ad6df13e232ec9b1c7c143bbcd734d12a9cdceec2cef999bbe74fcdc",
+  "full_receipt_sha256": "c0a3d4fb4255fbb8615f1b5b73076879e539d8f51295bb85c8713eaf46bfe230"
+}

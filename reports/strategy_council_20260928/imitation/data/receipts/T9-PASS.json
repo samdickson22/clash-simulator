@@ -1,0 +1,30 @@
+{
+  "c56_3m_actor_ineligible": 2361,
+  "leak_violations": 0,
+  "new_cards_covered": 65,
+  "new_leak_exclusions": 45670,
+  "new_ood_families": 29,
+  "new_ood_perspectives_before_leak_exclusion": 13420,
+  "new_role_counts": {
+    "dev": 13226,
+    "eval": 12369,
+    "eval_ood": 11281,
+    "excluded_leak": 45670,
+    "train": 251388
+  },
+  "perspectives": 333934,
+  "qa_sample_perspectives": 400,
+  "qa_sample_sha256": "718a17d96dd2984facc6304fc2446181cb2d24e349fe6e62ab98556777393b58",
+  "role_counts": {
+    "dev": 16772,
+    "eval": 16134,
+    "eval_ood": 15052,
+    "excluded_leak": 47439,
+    "train": 320768
+  },
+  "roles_total": 416165,
+  "roles_v2_sha256": "1f45f1d147040e4502a18820ed9eec172b2d5f304589eaf96cbd87aa84f547e8",
+  "status": "PASS",
+  "v1_assignments_unchanged": true,
+  "v1_sha256": "7e357f64ad6df13e232ec9b1c7c143bbcd734d12a9cdceec2cef999bbe74fcdc"
+}

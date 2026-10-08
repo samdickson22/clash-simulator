@@ -1,0 +1,171 @@
+{
+  "passed": true,
+  "tasks": [
+    "T1"
+  ],
+  "receipts": [
+    {
+      "passed": true,
+      "suite": "unit",
+      "worker": 0,
+      "games": 0,
+      "counts": {
+        "elixir_checks": 0,
+        "known_facts": 0,
+        "known_fact_conflicts": 0,
+        "collector": 0,
+        "ability": 0
+      },
+      "wall_seconds": 0.032548264134675264,
+      "cpu_seconds": 0.11857
+    },
+    {
+      "passed": true,
+      "suite": "full",
+      "worker": 0,
+      "games": 8,
+      "counts": {
+        "elixir_checks": 74440,
+        "known_facts": 483905,
+        "known_fact_conflicts": 0,
+        "collector": 0,
+        "ability": 9
+      },
+      "wall_seconds": 484.76620302093215,
+      "cpu_seconds": 484.57088600000003
+    },
+    {
+      "passed": true,
+      "suite": "collector",
+      "worker": 0,
+      "games": 1,
+      "counts": {
+        "elixir_checks": 12004,
+        "known_facts": 66026,
+        "known_fact_conflicts": 0,
+        "collector": 8,
+        "ability": 3
+      },
+      "wall_seconds": 9.344167748931795,
+      "cpu_seconds": 9.426269
+    },
+    {
+      "passed": true,
+      "suite": "confirmation",
+      "worker": 0,
+      "games": 64,
+      "counts": {
+        "elixir_checks": 53804,
+        "known_facts": 335049,
+        "known_fact_conflicts": 0,
+        "collector": 0,
+        "ability": 0
+      },
+      "wall_seconds": 37.46728484588675,
+      "cpu_seconds": 37.521353000000005
+    },
+    {
+      "passed": true,
+      "suite": "confirmation",
+      "worker": 1,
+      "games": 64,
+      "counts": {
+        "elixir_checks": 53213,
+        "known_facts": 336146,
+        "known_fact_conflicts": 0,
+        "collector": 0,
+        "ability": 0
+      },
+      "wall_seconds": 38.05258928495459,
+      "cpu_seconds": 38.102554999999995
+    },
+    {
+      "passed": true,
+      "suite": "confirmation",
+      "worker": 2,
+      "games": 64,
+      "counts": {
+        "elixir_checks": 50800,
+        "known_facts": 320192,
+        "known_fact_conflicts": 0,
+        "collector": 0,
+        "ability": 0
+      },
+      "wall_seconds": 35.99892164301127,
+      "cpu_seconds": 36.058966999999996
+    },
+    {
+      "passed": true,
+      "suite": "confirmation",
+      "worker": 3,
+      "games": 64,
+      "counts": {
+        "elixir_checks": 51758,
+        "known_facts": 325043,
+        "known_fact_conflicts": 0,
+        "collector": 0,
+        "ability": 0
+      },
+      "wall_seconds": 37.50761253293604,
+      "cpu_seconds": 37.549014
+    },
+    {
+      "passed": true,
+      "suite": "srp",
+      "worker": 0,
+      "games": 8,
+      "counts": {
+        "elixir_checks": 7750,
+        "known_facts": 49732,
+        "known_fact_conflicts": 0,
+        "collector": 0,
+        "ability": 0
+      },
+      "wall_seconds": 114.18277645297348,
+      "cpu_seconds": 114.13994000000001
+    },
+    {
+      "passed": true,
+      "suite": "srp",
+      "worker": 1,
+      "games": 8,
+      "counts": {
+        "elixir_checks": 8212,
+        "known_facts": 54180,
+        "known_fact_conflicts": 0,
+        "collector": 0,
+        "ability": 0
+      },
+      "wall_seconds": 118.28273126808926,
+      "cpu_seconds": 118.224435
+    },
+    {
+      "passed": true,
+      "suite": "srp",
+      "worker": 2,
+      "games": 8,
+      "counts": {
+        "elixir_checks": 7096,
+        "known_facts": 45097,
+        "known_fact_conflicts": 0,
+        "collector": 0,
+        "ability": 0
+      },
+      "wall_seconds": 99.53627839894034,
+      "cpu_seconds": 99.517274
+    }
+  ],
+  "counts": {
+    "elixir_checks": 319077,
+    "known_facts": 2015370,
+    "known_fact_conflicts": 0,
+    "collector": 8,
+    "ability": 12
+  },
+  "source_sha256": {
+    "derived_d1.py": "92b72418c3a10e96cc6993b4cb3041fa90895f233315600031e9a18f1edcb90e",
+    "own_cycle.py": "18cf0aaa12e074cfa1f11f37efec69b8e000ac24b357bdc372f54164bf87f3e4",
+    "test_derived_d1.py": "24a66625576039dbdfe08bea91d85132d765a56287432cd81f0a795da145147f",
+    "verify_d1_oracles.py": "1c6c79a88d42fda3ef9f72e35a72c99e0412d8730026952acf9df03ddc3c1dff"
+  }
+}

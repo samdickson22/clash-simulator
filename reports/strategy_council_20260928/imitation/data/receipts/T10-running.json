@@ -1,0 +1,241 @@
+{
+  "state": "production_stably_running",
+  "T9": "PASS",
+  "T10_QA": "PASS",
+  "T10_production": "RUNNING",
+  "hosts": {
+    "127x01": {
+      "utc": "2026-10-08T03:21:53.229114+00:00",
+      "host": "127x01",
+      "state": "running",
+      "status": {
+        "attempted": 528,
+        "capacity": 10,
+        "completed": 11,
+        "errors": 0,
+        "host": "127x01",
+        "inflight": 10,
+        "max_workers": 78,
+        "pid": 3413053,
+        "reserved_c56": 64,
+        "rows": 386240,
+        "stopping": false,
+        "units": 3492,
+        "wall_seconds": 712.7666536809411,
+        "worker_cpu_seconds_this_run": 5041.174641903,
+        "workers": 11
+      },
+      "published_units": 11,
+      "published_perspectives": 528,
+      "published_rows": 386240,
+      "published_bytes": 53880254,
+      "errors": 0,
+      "illegal_labels": 0,
+      "violations": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "retention": 0.8057543730559551,
+      "placement_acceptance": 0.9968048874688389,
+      "live_process_cpu_seconds": 7505.669999999999,
+      "processes": [
+        {
+          "pid": 3413053,
+          "cpu_seconds": 7.1,
+          "argv": ".venv/bin/python reports/strategy_council_20260928/imitation/s122/extract_s122.py production --workers 78 --partition 1 --partitions 2 "
+        },
+        {
+          "pid": 3414370,
+          "cpu_seconds": 0.06,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.resource_tracker import main;main(10) "
+        },
+        {
+          "pid": 3414373,
+          "cpu_seconds": 708.48,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=15) --multiprocessing-fork "
+        },
+        {
+          "pid": 3414376,
+          "cpu_seconds": 706.91,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=17) --multiprocessing-fork "
+        },
+        {
+          "pid": 3414377,
+          "cpu_seconds": 702.84,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=19) --multiprocessing-fork "
+        },
+        {
+          "pid": 3414378,
+          "cpu_seconds": 698.64,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=21) --multiprocessing-fork "
+        },
+        {
+          "pid": 3414379,
+          "cpu_seconds": 512.94,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=23) --multiprocessing-fork "
+        },
+        {
+          "pid": 3414380,
+          "cpu_seconds": 693.88,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=25) --multiprocessing-fork "
+        },
+        {
+          "pid": 3414381,
+          "cpu_seconds": 711.13,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=27) --multiprocessing-fork "
+        },
+        {
+          "pid": 3414382,
+          "cpu_seconds": 682.37,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=29) --multiprocessing-fork "
+        },
+        {
+          "pid": 3414383,
+          "cpu_seconds": 709.27,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=31) --multiprocessing-fork "
+        },
+        {
+          "pid": 3414384,
+          "cpu_seconds": 695.51,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=33) --multiprocessing-fork "
+        },
+        {
+          "pid": 3414385,
+          "cpu_seconds": 676.54,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=35) --multiprocessing-fork "
+        }
+      ],
+      "production_copy_127x04": "pending final collection and checksum verification"
+    },
+    "127x03": {
+      "utc": "2026-10-08T03:21:53.746886+00:00",
+      "host": "127x03",
+      "state": "running",
+      "status": {
+        "attempted": 528,
+        "capacity": 13,
+        "completed": 11,
+        "errors": 0,
+        "host": "127x03",
+        "inflight": 12,
+        "max_workers": 78,
+        "pid": 3405983,
+        "reserved_c56": 64,
+        "rows": 393937,
+        "stopping": false,
+        "units": 3492,
+        "wall_seconds": 474.4143564919941,
+        "worker_cpu_seconds_this_run": 4445.3300908930005,
+        "workers": 13
+      },
+      "published_units": 11,
+      "published_perspectives": 528,
+      "published_rows": 393937,
+      "published_bytes": 55481097,
+      "errors": 0,
+      "illegal_labels": 0,
+      "violations": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "retention": 0.8093418224048892,
+      "placement_acceptance": 0.9968067398172368,
+      "live_process_cpu_seconds": 6191.79,
+      "processes": [
+        {
+          "pid": 3405983,
+          "cpu_seconds": 3.72,
+          "argv": ".venv/bin/python reports/strategy_council_20260928/imitation/s122/extract_s122.py production --workers 78 --partition 0 --partitions 2 "
+        },
+        {
+          "pid": 3405990,
+          "cpu_seconds": 0.04,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.resource_tracker import main;main(10) "
+        },
+        {
+          "pid": 3405993,
+          "cpu_seconds": 476.03,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=15) --multiprocessing-fork "
+        },
+        {
+          "pid": 3405996,
+          "cpu_seconds": 476.0,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=17) --multiprocessing-fork "
+        },
+        {
+          "pid": 3405997,
+          "cpu_seconds": 475.77,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=19) --multiprocessing-fork "
+        },
+        {
+          "pid": 3405998,
+          "cpu_seconds": 476.05,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=21) --multiprocessing-fork "
+        },
+        {
+          "pid": 3405999,
+          "cpu_seconds": 476.03,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=23) --multiprocessing-fork "
+        },
+        {
+          "pid": 3406000,
+          "cpu_seconds": 476.02,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=25) --multiprocessing-fork "
+        },
+        {
+          "pid": 3406001,
+          "cpu_seconds": 475.94,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=27) --multiprocessing-fork "
+        },
+        {
+          "pid": 3406002,
+          "cpu_seconds": 476.05,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=29) --multiprocessing-fork "
+        },
+        {
+          "pid": 3406003,
+          "cpu_seconds": 476.06,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=31) --multiprocessing-fork "
+        },
+        {
+          "pid": 3406004,
+          "cpu_seconds": 476.01,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=33) --multiprocessing-fork "
+        },
+        {
+          "pid": 3406005,
+          "cpu_seconds": 476.02,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=35) --multiprocessing-fork "
+        },
+        {
+          "pid": 3406006,
+          "cpu_seconds": 475.99,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=37) --multiprocessing-fork "
+        },
+        {
+          "pid": 3406007,
+          "cpu_seconds": 476.06,
+          "argv": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=11, pipe_handle=39) --multiprocessing-fork "
+        }
+      ],
+      "production_copy_127x04": "pending final collection and checksum verification"
+    }
+  },
+  "published_perspectives": 1056,
+  "published_rows": 780177,
+  "published_bytes": 109361351,
+  "published_errors": 0,
+  "published_audit_violations": 0,
+  "production_copy_127x04": "pending; detached collector will verify and copy",
+  "estimated_remaining_hours": [
+    7,
+    9
+  ],
+  "estimate_condition": "C56 capacity reservation lifts in about 1\u20132 h; actual process limits remain enforced"
+}
