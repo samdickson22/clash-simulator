@@ -1,6 +1,6 @@
 # T5 v1 training and gate (a)
 
-2026-10-08 09:15 UTC — **T4 SHAKEDOWN PASS; WAITING FOR THROUGHPUT PASS.** No T5 GPU jobs,
+2026-10-08 10:02 UTC — **FIVE RUNS LAUNCHED; TECHNICAL RESOURCE RECOVERY.** No T5 GPU jobs,
 training, calibration or eval/eval_ood scoring have been launched. No commits.
 
 ## Qualification
@@ -214,3 +214,19 @@ Status receipt SHA `d7fbbd99f3ea9d9cf3a644269587d1d1d9d7b2c3f85e2e2925734ccf9ed4
 T4 completed subset, overfit, full dev metrics/calibration/bootstrap/export.
 This satisfies shakedown only; throughput-pass.json still absent. Do not
 launch T5 or freeze old source/microbatch while T4 optimization is underway.
+
+## T5 implementation after throughput release
+
+T4 throughput PASS at09:40:36 UTC; receipt SHA256 `5c7e83bacc92096a30520ccdaf002321b753542a7afc489e57183df865fc7229`. Canonical qualified source hash `301caa1003ab47eadc3f56973ec5398bed4d166dc1a0163d213e60a61854959d`; all20 files verified on05 and copied read-only from T4's immutable snapshot into the fresh04 T5 source. No T4 source changes. Qualified microbatch7168, effective8192, workers4; one/GPU12154.126 rows/s vs two/GPU11394.330 aggregate. No duplicate throughput benchmark.
+
+Owned extensions under imitation/t5: explicit injection around unchanged qualified trainer, noD1 removal, exact sliding32-row GRU contexts with differentiable activation checkpointing, frozen-role/content guards, dev calibration and once-only heldout claims/statistics, analysis from committed statistics only. Five synthetic behavior tests PASS on04 (0.645s); resume/signal integration and final registration are still pending. No real T5 fitting or heldout scoring yet. GRU recomputes history under current weights and retains iid endpoint sampling; its throughput is not the main's qualified throughput and will be measured from the declared run.
+
+Validation staging: 04:/mpac/sdicks02/tmp/t5-20261008-v1/source. No training PID, selected checkpoint, frozen PREREG, or results yet.
+
+## Runs launched / resource failures — 2026-10-08 10:36 UTC
+
+Frozen PREREG SHA71335325d383282bfe8effd6bf550ef322713520bb6119b8ed363e3869835cce; manifest934516a0ae3a2d950a676d6c35f0d310ead7ad951ec2c776967ccbd21a7e7f9f. All five launched10:25Z, one/GPU. Exact command/argv/source/output/launcher PID/resume template for each is in imitation/t5/receipts/launches.json.
+
+04 main01 and11 main02 remain active. 13 main03 and14 noD1 were automatically checkpointed/stopped by lease wrapper for64GB aggregate RSS excess (153.297/154.110GB peak counted across processes); exit0, own PIDs no longer exist. Main03 checkpointstep61; noD1 latest checkpoint pending audit. GRU08 completed2steps, then CUDA OOM in step3backward at10:26:46Z; exit1, no checkpoint yet. Original outputs retained. No model heldout inference.
+
+Technical amendment recorded before retry: gate-a/amendments/resource-r2.md. Developing RSS-bounded read-only mmap lifecycle with one loader and smaller GRU history-only1024chunks (primary7168/effective8192 unchanged); no T4 files edited. Validate old4worker -> new1worker exact state replay and unfitted full-batch GRU memory on08, then freeze revised source before any continuation. Healthy04/11 will be gracefully checkpointed for provenance-only migration to one coherent r2manifest; every training tensor/RNG/optimizer/sampler state verified unchanged. The GRU same-seed restart is solely due to its recorded technical OOM. Do NOT launch duplicate jobs or use historical no-T5-job notes above as current status.

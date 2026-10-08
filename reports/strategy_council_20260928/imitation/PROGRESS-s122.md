@@ -207,3 +207,5 @@ Per-host remaining-unit estimates account for the static partition imbalance:
 **2026-10-08 10:20 UTC**, assuming these rates and similar remaining unit costs;
 collector validation and checksum mirror take additional time. This is an estimate,
 not a final T10-PASS claim. No commits, deletions, process stops, or pinned source edits.
+
+T10 complete: 333934 perspectives, 233788896 rows, 0 isolated errors; zero illegal labels and zero sidecar audit violations. 127x04 copy checksum-verified. See data/receipts/T10-PASS.json.

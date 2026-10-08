@@ -1,0 +1,8 @@
+{
+  "schema": "clasher.imitation.t5-prereg-freeze.v1",
+  "frozen_at": "2026-10-08T10:21:37.817626+00:00",
+  "prereg_sha256": "71335325d383282bfe8effd6bf550ef322713520bb6119b8ed363e3869835cce",
+  "manifest_sha256": "934516a0ae3a2d950a676d6c35f0d310ead7ad951ec2c776967ccbd21a7e7f9f",
+  "training_started": false,
+  "heldout_model_inference_started": false
+}

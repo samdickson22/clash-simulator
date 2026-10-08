@@ -1,0 +1,19 @@
+{
+  "host": "127x13",
+  "label": "t5-v1-main-2026100803",
+  "started_utc": "2026-10-08T10:25:12.757506+00:00",
+  "command": [
+    "bash",
+    "-c",
+    "cd /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source && exec /mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python -B -m imitation.t5.train --variant main --freeze /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/reports/strategy_council_20260928/imitation/gate-a/executable-manifest.json --store /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/train --dev /mpac/sdicks02/repos/clasher-lease/data/c56-store-v1/dev --assets /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/inputs/assets.npz --qualification /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/imitation/t5/receipts/T3-PASS-training-release.json --output /mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/runs/main-2026100803 --seed 2026100803 --epochs 12 --batch-size 8192 --microbatch 7168 --workers 4 --tile-width 64 --warmup 2000 --patience 3 --checkpoint-every 1000 --device cuda --stop-at 2026-10-09T04:20:00Z"
+  ],
+  "supervisor_pid": 3483221,
+  "pid": 3483223,
+  "stop_requested_utc": "2026-10-08T10:26:13.524130+00:00",
+  "exit_code": 0,
+  "status": "stopped",
+  "finished_utc": "2026-10-08T10:26:19.801937+00:00",
+  "stop_reason": "64 GB resident cap exceeded",
+  "peak_processes": 6,
+  "peak_rss_bytes": 153296777216
+}

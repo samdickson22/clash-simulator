@@ -1,0 +1,40 @@
+{
+  "synthetic_only": true,
+  "resume": {
+    "main": "model/EMA/state bit-exact at step2 from step1",
+    "noD1": "model/EMA/state bit-exact at step2 from step1",
+    "gru": "model/EMA/state bit-exact at step2 from step1"
+  },
+  "dev_signal": "SIGTERM exits with pre-dev resumable checkpoint and no dev evaluation",
+  "cuda_bf16": {
+    "main": {
+      "loss": 9.479421615600586,
+      "gate": 1.2941981554031372,
+      "card": 1.2709543704986572,
+      "tile": 6.011741638183594,
+      "intent_card": 2.2721967697143555,
+      "hazard": 1.3379119634628296,
+      "grad_norm": 12.874700546264648
+    },
+    "noD1": {
+      "loss": 9.363980293273926,
+      "gate": 1.150224208831787,
+      "card": 1.3864870071411133,
+      "tile": 6.004607677459717,
+      "intent_card": 1.9199806451797485,
+      "hazard": 1.3706632852554321,
+      "grad_norm": 11.262126922607422
+    },
+    "gru": {
+      "loss": 9.374364852905273,
+      "gate": 1.1074776649475098,
+      "card": 1.3692638874053955,
+      "tile": 6.016668319702148,
+      "intent_card": 2.090158700942993,
+      "hazard": 1.433658242225647,
+      "grad_norm": 5.048310279846191
+    }
+  },
+  "passed": true,
+  "wall_seconds": 24.983872854034416
+}

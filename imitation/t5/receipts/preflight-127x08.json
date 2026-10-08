@@ -1,0 +1,26 @@
+{
+  "host": "127x08",
+  "at": "2026-10-08T10:23:06.848539+00:00",
+  "who": "",
+  "cap": 96,
+  "reserved_new_processes": 12,
+  "existing_clasher_processes": [
+    {
+      "pid": 3539738,
+      "rss_bytes": 3129344,
+      "command": "bash -c rsync -c 127x04:/mpac/sdicks02/tmp/t5-20261008-v1/inputs/assets.npz 127x04:/mpac/sdicks02/tmp/t5-20261008-v1/inputs/assets.npz.json /mpac/sdicks02/tmp/t5-20261008-v1/inputs/; cd /mpac/sdicks02/tmp/t5-20261008-v1/source; /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m imitation.t5.preflight --freeze reports/strategy_council_20260928/imitati"
+    },
+    {
+      "pid": 3539742,
+      "rss_bytes": 17145856,
+      "command": "/mpac/sdicks02/envs/clasher-gpu/bin/python -B -m imitation.t5.preflight --freeze reports/strategy_council_20260928/imitation/gate-a/executable-manifest.json --store /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/c56-store-v1 --assets /mpac/sdicks02/tmp/t5-20261008-v1/inputs/assets.npz "
+    }
+  ],
+  "gpu": "48578, 0",
+  "lease": null,
+  "T5_manifest": "934516a0ae3a2d950a676d6c35f0d310ead7ad951ec2c776967ccbd21a7e7f9f",
+  "T5_prereg": "71335325d383282bfe8effd6bf550ef322713520bb6119b8ed363e3869835cce",
+  "T4_throughput": "5c7e83bacc92096a30520ccdaf002321b753542a7afc489e57183df865fc7229",
+  "T4_code": "301caa1003ab47eadc3f56973ec5398bed4d166dc1a0163d213e60a61854959d",
+  "passed": true
+}

@@ -1,0 +1,57 @@
+{
+  "passed": true,
+  "reason": "recorded resource-r2 technical continuation",
+  "source_checkpoint_sha256": "49ce01f1d98fdaef40c909911d56c1b68b7a8c0ba7328b2d91e4312c779d49bc",
+  "output_checkpoint_sha256": "e9b22540f0cf1d92776a6eaac311a73b2e5f74a2d22f4b58252cc33824cad5e2",
+  "old_hashes": {
+    "tokens": "35db1a7647c71a39b12b580cc31a39539c9ad973a8de635df0a95962b4ac8ee2",
+    "assets": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+    "roles": "7e357f64ad6df13e232ec9b1c7c143bbcd734d12a9cdceec2cef999bbe74fcdc",
+    "eval_spec": "d9f978f75191b5d5a474d127dbccd618b93dad5069dd851ab4f8b2a47fdaa7ae",
+    "sidecar_manifest": "1a18b263bd0d2d44aee75491e82aa89e152c8a8474cca6d664128c0fc2790cb6",
+    "store_manifest": "1acf6b5875091e009c18e598a71714016b9833b6cc626032e0fa676ccdac5c2f",
+    "role_manifest": "2c4c7c4f94ece017ec11f048576ce96ed596620c1b7f1f3b30c046c11ab51e5e",
+    "T5_manifest": "934516a0ae3a2d950a676d6c35f0d310ead7ad951ec2c776967ccbd21a7e7f9f",
+    "T5_prereg": "71335325d383282bfe8effd6bf550ef322713520bb6119b8ed363e3869835cce",
+    "T4_throughput": "5c7e83bacc92096a30520ccdaf002321b753542a7afc489e57183df865fc7229",
+    "T4_code": "301caa1003ab47eadc3f56973ec5398bed4d166dc1a0163d213e60a61854959d",
+    "T5_variant": "main",
+    "T3_qualification": "6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c"
+  },
+  "new_hashes": {
+    "tokens": "35db1a7647c71a39b12b580cc31a39539c9ad973a8de635df0a95962b4ac8ee2",
+    "assets": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+    "roles": "7e357f64ad6df13e232ec9b1c7c143bbcd734d12a9cdceec2cef999bbe74fcdc",
+    "eval_spec": "d9f978f75191b5d5a474d127dbccd618b93dad5069dd851ab4f8b2a47fdaa7ae",
+    "sidecar_manifest": "1a18b263bd0d2d44aee75491e82aa89e152c8a8474cca6d664128c0fc2790cb6",
+    "store_manifest": "1acf6b5875091e009c18e598a71714016b9833b6cc626032e0fa676ccdac5c2f",
+    "role_manifest": "2c4c7c4f94ece017ec11f048576ce96ed596620c1b7f1f3b30c046c11ab51e5e",
+    "T5_manifest": "2854ce1f96fdd2fcc04dd0e6ef15dce3435758ec40369a80bba29b1a1e29db13",
+    "T5_prereg": "b5bace9160f97f12b880f3e01471642ea0780c8ae2280deed7fd49f5a10fee02",
+    "T4_throughput": "5c7e83bacc92096a30520ccdaf002321b753542a7afc489e57183df865fc7229",
+    "T4_code": "301caa1003ab47eadc3f56973ec5398bed4d166dc1a0163d213e60a61854959d",
+    "T5_variant": "main",
+    "T3_qualification": "6b335ec4470215922c1ff346da18535fe3f8e3eb9e88dfe109d16d1f86b9472c"
+  },
+  "bit_exact_fields": [
+    "model",
+    "ema",
+    "optimizer",
+    "scheduler",
+    "config",
+    "state",
+    "provenance",
+    "args",
+    "torch_rng",
+    "python_rng",
+    "numpy_rng",
+    "cuda_rng"
+  ],
+  "state": {
+    "epoch": 0,
+    "cursor": 499712,
+    "step": 61,
+    "bad_epochs": 0,
+    "rows": 499712
+  }
+}

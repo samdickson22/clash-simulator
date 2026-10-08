@@ -1,0 +1,29 @@
+{
+  "technical_reason": "observed shared RSS stops and GRU CUDA OOM",
+  "real_fitting": false,
+  "replay": {
+    "main": "bit-exact model/EMA/state across old workers4 -> r2 workers1, checkpoint step1 -> step2",
+    "noD1": "bit-exact model/EMA/state across old workers4 -> r2 workers1, checkpoint step1 -> step2",
+    "gru": "bit-exact model/EMA/state across old workers4 -> r2 workers1, checkpoint step1 -> step2"
+  },
+  "gru_memory": {
+    "rows": 8192,
+    "primary_microbatch": 7168,
+    "history_chunk": 1024,
+    "parameter_update": false,
+    "optimizer_state_created": false,
+    "loss": {
+      "loss": 9.789765357971191,
+      "gate": 0.737777590751648,
+      "card": 1.2938555479049683,
+      "tile": 5.477880477905273,
+      "intent_card": 2.08156681060791,
+      "hazard": 7.0394392013549805,
+      "grad_norm": 4.068974018096924
+    },
+    "peak_allocated_mib": 27555.244140625,
+    "peak_reserved_mib": 37484.0
+  },
+  "passed": true,
+  "wall_seconds": 75.71913410094567
+}

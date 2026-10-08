@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "role": "dev",
+  "model_inference": false,
+  "counts_sha256": "37190e4398bd178d99501dd9572926590111db85ae924725d0dabaaab52f384b",
+  "reference_sha256": "9958738b8e0cc3f71f72f02e8a13b706503bd4a3d7090a2c5f6180a8034717da",
+  "checks": {
+    "joint_nll": {
+      "value": 0.43819878033122,
+      "T3_value": 0.4381987803312218,
+      "rows": 2755266
+    },
+    "play_wait_nll": {
+      "value": 0.18838051800284292,
+      "T3_value": 0.18838051800284328,
+      "rows": 2637758
+    },
+    "card_nll": {
+      "value": 1.424337096001831,
+      "T3_value": 1.4243370960018313,
+      "rows": 128990
+    },
+    "tile_nll": {
+      "value": 4.017819889695657,
+      "T3_value": 4.017819889695658,
+      "rows": 128990
+    }
+  },
+  "wall_seconds": 2.6315391690004617
+}
