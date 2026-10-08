@@ -10,7 +10,7 @@ import time
 from common import HERE, append, sha, write
 
 DEST = '/mpac/sdicks02/repos/clasher-v4-data'
-HOST = '127x02'
+HOST = json.loads((HERE/'collection-config.json').read_text())['hub_host']
 BUFFER = Path.home()/'.cache/clasher-live-v4/buffer'
 CAP = 6_000_000_000
 FLOOR = 15*1024**3

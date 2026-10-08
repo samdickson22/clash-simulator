@@ -1,0 +1,18 @@
+{
+  "grpc": {
+    "n": 320,
+    "accepted": 320,
+    "tap_p95_ms": 26.90712675685063,
+    "pixel_600ms": 0,
+    "truth_latency_p50_ms": 1151.6914791427553,
+    "capture_fps_median": 59.133771608820666
+  },
+  "adb-spawn": {
+    "n": 320,
+    "accepted": 320,
+    "tap_p95_ms": 85.39297112729408,
+    "pixel_600ms": 0,
+    "truth_latency_p50_ms": 1190.6510624103248,
+    "capture_fps_median": 59.136040657476705
+  }
+}

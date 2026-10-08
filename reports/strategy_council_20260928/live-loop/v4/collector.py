@@ -23,7 +23,8 @@ from clasher.rl.c56_scripted import C56_ADDED_CARDS
 from clasher.rl.native_public_observation import PUBLIC_REFERENCE_CARDS
 from clasher.vision.l1_stream import GrpcScreenStream
 
-TARGET_HOURS=24
+COLLECTION_CONFIG=json.loads((HERE/'collection-config.json').read_text())
+TARGET_HOURS=COLLECTION_CONFIG['max_active_hours']
 RESERVE=400*1024**2
 CHAMPIONS={'ArcherQueen','Goblinstein','MightyMiner'}
 
@@ -78,6 +79,7 @@ def freeze():
     plan=prepare()
     # Include source actually imported by collection; content identity, not dirty git HEAD.
     paths=list((ROOT/'src/clasher').rglob('*.py'))+list(HERE.glob('*.py'))+[ROOT/'scripts/collect_l1_stream_v4.py',ROOT/'scripts/l1_native_capture_v3.py',ROOT/'scripts/smoke_reference_battle.py',HERE/'split.json',HERE/'base-config.json',HERE/'body-catalog.json',ROOT/'gamedata.json',HERE/'PREREG.md',PROTO/'emulator_controller_pb2.py']
+    paths += [HERE/'collection-config.json',HERE/'actuation/backend-timing.json']
     paths += [HERE.parent/'l2'/n for n in ('pixel_player.py','offline_loop.py','bootstrap.py')]
     prior=set();scanned=[]
     def seeds(value):
@@ -130,6 +132,18 @@ class Scripts:
         self.packets=[PacketBuilder(self.builder),PacketBuilder(self.builder)]
         self.project=native_frame;self.model=model_hypothesis
         from clasher.rl.card_semantics import _walk_payload
+        # Ordinary native objects retain the parent spell card ID after a
+        # spawn. The C56 body table already has the unique payload's stats.
+        # Bind only unambiguous single-body spell aliases; unknowns still fail.
+        for name in plan['cards']:
+            stats=self.loader.get_card(name)
+            if str(stats.card_type).lower()!='spell':continue
+            bodies={p['name'] for p in _walk_payload(stats._raw_entry) if p.get('hitpoints') and p.get('name')}
+            if len(bodies)!=1:continue
+            alias=self.builder.token_id(name,namespace='troop_body')
+            body=self.builder.token_id(bodies.pop(),namespace='troop_body')
+            for bot in self.bots.values():
+                if alias>1 and body in bot.bodies:bot.bodies.setdefault(alias,bot.bodies[body])
         self.abilities={}
         for card in CHAMPIONS:
             for item in _walk_payload(self.loader.get_card(card)._raw_entry):
@@ -399,6 +413,28 @@ def summary():
     return dict(phase_a=stats(phase),smoke=stats(smoke),buffer_bytes=buffer_bytes(),free_disk_bytes=shutil.disk_usage(BUFFER).free)
 
 
+def phase_stop_reason(phase):
+    if (phase['heldout_matches']>=COLLECTION_CONFIG['heldout_min_matches'] and
+        phase['heldout_opponent_events']>=COLLECTION_CONFIG['heldout_min_opponent_events']):
+        return 'heldout count coverage reached'
+    # Do not start a match that could exceed the active-time cap. The existing
+    # 380-second match guard bounds this prospective complete-match reserve.
+    if phase['emulator_hours']*3600+COLLECTION_CONFIG['full_match_reserve_seconds']>TARGET_HOURS*3600:
+        return 'active-hour cap (full-match reserve)'
+    return None
+
+
+def require_hub_ready():
+    from shipper import run,HOST
+    import shlex
+    result=run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10',HOST,
+                'cat '+shlex.quote(COLLECTION_CONFIG['hub_ready'])])
+    marker=json.loads(result.stdout)
+    smoke=summary()['smoke']
+    if smoke['hub_verified_matches']<1:raise RuntimeError('No smoke match verified on the new hub')
+    write(HERE/'hub-ready-observed.json',dict(host=HOST,observed_at=time.time(),marker=marker))
+
+
 def main():
     cv2.setNumThreads(1)
     ap=argparse.ArgumentParser();ap.add_argument('--prepare',action='store_true');ap.add_argument('--smoke',action='store_true');ap.add_argument('--status',action='store_true');a=ap.parse_args()
@@ -411,13 +447,16 @@ def main():
       if not a.smoke:
         admission=json.loads((HERE/'smoke-admission.json').read_text())
         if not admission['passed'] or admission['source_manifest_sha256']!=sha(HERE/'frozen-manifest.json'):raise RuntimeError('Smoke admission missing or stale')
+        require_hub_ready()
       r=Renderer(HERE/'emulator-host/complete.json');scripts=Scripts(plan)
       schedule=plan['smoke'] if a.smoke else plan['matches']
+      if a.smoke and COLLECTION_CONFIG.get('smoke_attempt_tag'):
+        schedule=[dict(e,episode=e['episode']+'-'+COLLECTION_CONFIG['smoke_attempt_tag']) for e in schedule]
       for leftover in sorted(BUFFER.glob('v4-*')):
         if (leftover/'receipt.json').exists() or (leftover/'sha256.json').exists():ship(leftover)
       for entry in schedule:
         if (HERE/'data'/(entry['episode']+'.json')).exists():continue
-        if not a.smoke and summary()['phase_a']['emulator_hours']>=TARGET_HOURS:break
+        if not a.smoke and phase_stop_reason(summary()['phase_a']):break
         # Ship finished matches left by interruption before opening another match.
         for out in sorted(BUFFER.glob('v4-*')):
           if (out/'receipt.json').exists() or (out/'sha256.json').exists():ship(out)
@@ -440,20 +479,21 @@ def main():
         write(HERE/'status.json',summary())
       status=summary();write(HERE/'status.json',status)
       if a.smoke:
-        smoke_receipts=[json.loads((HERE/'data'/(e['episode']+'.json')).read_text())['receipt'] for e in plan['smoke']]
+        smoke_receipts=[json.loads((HERE/'data'/(e['episode']+'.json')).read_text())['receipt'] for e in schedule]
         same_freeze=all(r['source_manifest_sha256']==sha(HERE/'frozen-manifest.json') for r in smoke_receipts)
         s=status['smoke'];passed=same_freeze and (HERE/'converter-smoke.json').exists() and s['matches']==3 and s['fps_pass_matches']==3 and s['exact_ticks']==s['deployments'] and s['deployments']>0
         write(HERE/'smoke-results.json',dict(passed=passed,**status))
         if passed:write(HERE/'smoke-admission.json',dict(passed=True,source_manifest_sha256=sha(HERE/'frozen-manifest.json')))
         else:raise RuntimeError('Smoke gates failed')
       else:
-        if status['phase_a']['emulator_hours']<TARGET_HOURS:raise RuntimeError('Frozen schedule exhausted before 24 emulator-hours')
-        progress('Phase A duration reached; final status recorded.')
+        reason=phase_stop_reason(status['phase_a'])
+        if reason is None:raise RuntimeError('Frozen schedule exhausted before count coverage or active-hour cap')
+        progress('Phase A stopped: '+reason+'; final status recorded.')
         phase=status['phase_a']
         gates=dict(capture=phase['fps_pass_matches']/phase['matches']>=.95,
           exact_ticks=phase['exact_ticks']==phase['deployments'],hub_checksums=phase['hub_verified_matches']==phase['matches'],
           heldout_matches=phase['heldout_matches']>=20,heldout_opponent_events=phase['heldout_opponent_events']>=1500,
           buffer=status['buffer_bytes']<=CAP,free_disk=status['free_disk_bytes']>=FLOOR)
         write(HERE/'phase-a-results.json',dict(status=status,gates=gates))
-        (HERE/'T1-RESULTS.md').write_text('# T1 results\n\nPhase A duration complete. Technical and coverage gates are listed below. No training or strength claim is made.\n\n```json\n'+json.dumps(dict(status=status,gates=gates),indent=2)+'\n```\n')
+        (HERE/'T1-RESULTS.md').write_text('# T1 results\n\nPhase A stopped under the preregistered count/cap rule. Technical and coverage gates are listed below. No training or strength claim is made.\n\n```json\n'+json.dumps(dict(status=status,gates=gates),indent=2)+'\n```\n')
 if __name__=='__main__':main()

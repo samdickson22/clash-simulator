@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "source_frames": 1218,
+  "converted_frames": 609,
+  "events_roundtripped": 20,
+  "source_sha256": "8837ee1996e682e10585a220d286e925a7100d5668fa705f3b5d44b289484825",
+  "output": "/Users/sam/.cache/clasher-live-v4/buffer/converter-1791417272062919000"
+}

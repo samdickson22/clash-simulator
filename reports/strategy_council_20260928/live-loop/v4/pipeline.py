@@ -1,4 +1,4 @@
-"""Detached, serial T2 -> T1 smoke -> Phase A driver, resumable from receipts."""
+"""Detached T1 smoke -> readiness -> Phase A driver, resumable from receipts."""
 import argparse
 import fcntl
 import os
@@ -19,22 +19,25 @@ def run(label, args):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--wait-bench-pid',type=int);a=p.parse_args()
+    p=argparse.ArgumentParser()
+    modes=p.add_mutually_exclusive_group()
+    modes.add_argument('--smoke-only',action='store_true')
+    modes.add_argument('--phase-a-only',action='store_true')
+    a=p.parse_args()
     with (HERE/'pipeline.lock').open('w') as lock:
       fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
-      if a.wait_bench_pid:
-        while True:
-          command=subprocess.run(['/bin/ps','-p',str(a.wait_bench_pid),'-o','command='],text=True,capture_output=True).stdout
-          if 'actuation/bench.py' not in command:break
-          write(HERE/'pipeline-state.json',dict(stage='waiting for existing T2 bench',pid=os.getpid(),bench_pid=a.wait_bench_pid,time=time.time()))
-          time.sleep(10)
-      run('bench-resume',[str(HERE/'actuation/bench.py')])
-      if not (HERE/'actuation/reproduction.json').exists():run('stale-reproduction',[str(HERE/'actuation/reproduce.py')])
-      run('t2-report',[str(HERE/'report_t2.py')])
-      # Freeze before the first smoke, then verify the same manifest at Phase A.
+      # T2 evidence is complete and retained; never restart its renderer bench.
       if not (HERE/'frozen-manifest.json').exists():run('freeze',['scripts/collect_l1_stream_v4.py','--prepare'])
-      run('smoke',['scripts/collect_l1_stream_v4.py','--smoke'])
-      run('phase-a',['scripts/collect_l1_stream_v4.py'])
-      write(HERE/'pipeline-state.json',dict(stage='complete',pid=os.getpid(),time=time.time()))
+      if not a.phase_a_only:run('smoke',['scripts/collect_l1_stream_v4.py','--smoke'])
+      if not a.smoke_only:
+        from collector import require_hub_ready
+        while True:
+          try:require_hub_ready();break
+          except Exception as error:
+            write(HERE/'pipeline-state.json',dict(stage='waiting for hub readiness and verified smoke',pid=os.getpid(),time=time.time(),error=str(error)))
+            print('Phase A admission waiting: '+str(error),flush=True)
+            time.sleep(30)
+        run('phase-a',['scripts/collect_l1_stream_v4.py'])
+      write(HERE/'pipeline-state.json',dict(stage='smoke complete' if a.smoke_only else 'complete',pid=os.getpid(),time=time.time()))
 
 if __name__=='__main__':main()

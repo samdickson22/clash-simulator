@@ -1,6 +1,6 @@
 # T1 progress
 
-Implementation started on 2026-10-07 on the Mac mini. No Phase A match has started yet. T2 holds the one owned emulator until its bench and stale-frame reproduction finish.
+Current status: all three bodyrepair1 smoke matches passed and were checksum-verified on 127x01. Phase A has not started: detached driver 63610 is waiting for the hub readiness marker. T2 evidence is complete, with a FAIL verdict at 98.75% pixel sensitivity; that verifier is not used by collection.
 
 The retained L2 launcher's historical base config had been removed with old artifacts. Launch reached the verified attestation, then failed reading that missing file. Recovered the same owned emulator using L2 pair 00's retained setup config, rechecked both UID firewall rules and the exact attestation, and wrote `base-config.json` and `emulator-host/complete.json`. No APK or hook changes were made. `launch.py` makes this repair repeatable without changing old L2 files.
 
@@ -12,24 +12,53 @@ The collector checks a 400 MiB new-match reserve against the 6 GB buffer cap and
 
 ## Resume
 
-First inspect `pipeline-state.json`, `pipeline.log`, the stage logs and process commands. Do not start a duplicate driver. The persistent driver uses a file lock and serially completes T2, reproduction, freeze, three smoke matches, and Phase A.
+The current detached driver is `pipeline.py --phase-a-only`: wrapper PID **63607**,
+pipeline PID **63610** (both started 2026-10-07, wrapper reparented to launchd).
+It holds `pipeline.lock` and waits for a readable
+`127x01:/mpac/sdicks02/jobs/clasher/hub-ready.json`, then rechecks smoke admission
+and the frozen source hashes before collecting. No Phase A match may precede that
+marker or the verified smoke receipt. Read `pipeline-state.json` and
+`pipeline-phase-a-20261007.log` first. Do not launch a duplicate driver.
+
+Owned renderer PID **28907**, dedicated adb server PID **28905** on **5042**,
+serial **emulator-5584**, gRPC **8558**, probe **26794**. Receipt:
+`emulator-host/relaunch-20261007/complete.json` (mirrored at `emulator-host/complete.json`).
+The AVD is read-only, host GPU, 2 cores / 3 GiB, app UID 10208; both UID REJECT
+rules and attestation SHA256 `864227bf7208aa9c06cd976db3fa0734a32277b0552f92e496ad283a917b4a93`
+passed. Verify receipt PID, process start and command before acting on any PID;
+never kill shared adb or other projects' VMs.
+
+If the driver has exited, inspect its exit file and stage log, preserve the failed
+match, and resume on the Mac with a fresh log name:
 
 ```sh
+cd /Users/sam/Desktop/code/clasher
+resume_stamp=$(date -u +%Y%m%dT%H%M%SZ)
 reports/strategy_council_20260928/pilot/detach.sh \
-  reports/strategy_council_20260928/live-loop/v4/pipeline.log \
-  reports/strategy_council_20260928/live-loop/v4/run.sh pipeline \
-  .venv/bin/python -u reports/strategy_council_20260928/live-loop/v4/pipeline.py
+  reports/strategy_council_20260928/live-loop/v4/resume-phase-a-$resume_stamp.log \
+  reports/strategy_council_20260928/live-loop/v4/run.sh phase-a-resume-$resume_stamp \
+  .venv/bin/python -u reports/strategy_council_20260928/live-loop/v4/pipeline.py --phase-a-only
 ```
 
-Read counts without touching the renderer:
+Read-only counts: `.venv/bin/python scripts/collect_l1_stream_v4.py --status`.
+The collector resumes from hub-verified receipts, ships complete buffered matches
+before starting another, and reruns incomplete matches with the same frozen seed.
+Never rerun the historical T2 bench from the old resume instructions.
 
-```sh
-.venv/bin/python scripts/collect_l1_stream_v4.py --status
-```
+If the owned emulator died, use the same detach/run wrapper with
+`launch.py NEW_RECEIPT_DIRECTORY`; if stopped during adbd root restart, add
+`--resume-owned PREVIOUS_LAUNCH_DIRECTORY`. It refuses to adopt a foreign serial.
+Do not refreeze or modify source after Phase A starts without a dated deviation.
 
-If the owned emulator died, use the same detach/run wrapper with `launch.py NEW_RECEIPT_DIRECTORY`. It refuses to adopt an existing foreign serial. It writes the new complete owner receipt to `emulator-host/complete.json`. If startup stopped during adbd root restart, use a fresh output directory and `--resume-owned PREVIOUS_LAUNCH_DIRECTORY`, matching L2's recovery protocol. Do not kill a shared adb server.
+Current source manifest SHA256:
+`460aabbd70b894da0750b0ef573ff06a8b7423ac77ada300254494819daab475` (407 hashes).
+Current registration: `127x01:/mpac/sdicks02/repos/clasher-v4-data/registration/v4-registration-460aabbd70b894da/`.
+Split SHA256 remains `3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258`.
+Runtime `collection-config.json` overrides the old split metadata's hub and duration:
+stop at heldout >=1,500 opponent events AND >=20 matches, or the 36 active-hour cap
+with the preregistered 380-second complete-match reserve. No outcomes or model
+outputs enter the rule. Buffer cap 6,000,000,000 bytes; free floor 15 GiB.
 
-If smoke fails, Phase A is not admitted. Fix the infrastructure defect, record the incident here, archive the old freeze and smoke evidence, and refreeze before Phase A. Once Phase A starts, source changes require a dated deviation and preserved old manifests. Neither a prepared runner nor a successful checksum rehearsal is an accepted smoke match.
 
 2026-10-07 15:32:11 -0700: Frozen 404 source/config hashes; split SHA256 3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258.
 
@@ -50,3 +79,79 @@ The converter accepts either one finalized match or the hub's `matches/` directo
 2026-10-07 16:20:38 -0700: Frozen 405 source/config hashes; split SHA256 3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258.
 
 Coverage note for the coordinator: 21,000 total deployments with roughly symmetric seats and a 10% heldout split implies about 1,050 heldout opponent events, below DESIGN's 1,500 minimum. Actual counts may be higher, so the runner measures and reports that gate. It preserves the frozen 80/10/10 split and stops at 24 active emulator-hours; it does not silently extend Phase A or alter heldout sampling. If coverage falls short, additional acquisition needs a prospective coordinator decision.
+
+
+## Pre-smoke amendment, 2026-10-07: hub recovery, timing and coverage
+
+Before any smoke or Phase A match, adopt the coordinator decision in
+`../../amendments/2026-10-07-t2-actuation-timing.md` (including its addendum).
+The destination is now `127x01:/mpac/sdicks02/repos/clasher-v4-data/matches/`.
+This is an operational destination change; acquisition labels and match schema are unchanged.
+Old registration bundles on 127x02 are unreachable. Re-register the preserved producer
+sources and the new content manifest under the new hub's `registration/` directory.
+Do not write to the hub's recovered source checkout.
+
+Phase A now stops when the frozen heldout split contains at least 1,500 accepted
+opponent events AND at least 20 matches, or at the 36 active emulator-hour cap.
+Only receipt counts are inspected; no label content, model output, or outcome enters
+the stopping rule. The frozen seed/deck memberships and 80/10/10 split are unchanged
+(split SHA256 3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258).
+The collector reserves its existing 380-second maximum match duration before starting
+another complete match, so it may stop at the cap up to 380 seconds early rather than
+exceed 36 hours. Coverage shortfall is reported; it does not authorize more collection.
+Historical split metadata still says 24 hours and 127x02; `collection-config.json`
+is the prospective operational override, avoiding a change to split identity.
+
+Phase A requires a readable JSON `127x01:/mpac/sdicks02/jobs/clasher/hub-ready.json`
+and at least one checksum-verified smoke match on 127x01, in addition to all existing
+three-smoke admission gates. The 15 GiB disk floor and 6 GB buffer cap are unchanged.
+
+Source deviation before smoke: the prior collector hard-coded its hub and duration,
+so minimal source edits were necessary to load the operational config, enforce the
+count/cap stop, and check hub readiness. The backend-relative actuator timing change
+also changes a hashed source file. Therefore archive the prior freeze locally and
+refreeze before smoke. No APK, hook, command age, attestation, collector label schema,
+threshold or frozen population is changed. T2 failure does not block T1's independent
+scheduled-receipt collector; it continues to block production actuator qualification.
+
+2026-10-07 pre-smoke validation incident: the existing 1-second synthetic codec test measured 18.80 and 18.73 FPS, including startup cost. Its synthetic capture fixture is extended to 6 seconds to assess steady timestamp sampling without lowering the 19.5 test assertion. Real smoke remains three frozen matches at >=19.8 FPS each; no acquisition endpoint was changed. The first failure occurred during T2; the second with the renderer paused. Both results are retained in the validation logs.
+
+2026-10-07 pre-smoke diagnostic outcome: the 6-second synthetic extension also failed (15.71 FPS, frame-gap p99 206 ms). Profiling showed time in paced sleeps/reads rather than codec encoding; the evidence does not support the initial startup-cost hypothesis. Restored the original 1-second fixture and original assertions. No production sampling code or endpoint was changed. Seven actuator tests and eight coverage/storage/converter checks passed; the existing synthetic lifecycle FPS assertion remains failing on this host. Real preregistered smoke is the next acquisition measurement and remains mandatory for Phase A. All diagnostic logs/profile are retained.
+
+2026-10-07 16:44:50 -0700: Frozen 407 source/config hashes; split SHA256 3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258.
+
+2026-10-07 16:46:17 -0700: v4-smoke-0: 1215 frames, 19.994 FPS, 21 plays, all exact ticks; hub verified 7860383 bytes.
+
+
+## Pre-Phase-A infrastructure amendment, 2026-10-07 23:51Z
+
+The first smoke attempt shipped `v4-smoke-0` (19.994 FPS, 21 exact-tick plays)
+to 127x01, then smoke seed 1975100001 failed at tick 2630 with `unsupported visible
+body identity`. Ordinary native objects keep the parent spell card ID: the spawned
+Barbarian was projected as BarbLog. This is an adapter failure, not a match outcome.
+The collector-only repair maps a spell with exactly one hitpoint-bearing payload
+to that payload's existing C56 body stats (BarbLog→Barbarian, GoblinBarrel→Goblin,
+RoyalDelivery→DeliveryRecruit). Unknown/ambiguous payloads still fail. No common
+engine, APK, hook, player, label schema, data thresholds or split membership changes.
+
+Preserve the successful old match on the hub and archive its local receipt and
+converter check under `data/smoke-attempts/pre-body-repair-20261007/`. Preserve the
+incomplete second match in the capped buffer. Archive the old source manifest and
+refreeze before rerunning all three original smoke seeds with `-bodyrepair1`
+attempt IDs. This ensures admission uses one producer freeze and overwrites no
+completed receipt. Phase A has collected no matches and remains gated on all three
+new smoke passes plus hub-ready.json. The coordinator's 23:50:59Z whole-repo
+checksum window has ended; this source repair is later than that hub source snapshot.
+Only the new producer registration bundle is sent to v4-data, never a hub source resync.
+
+Raw T2 truth preservation audit: the completion bench initially appended 17 gzip members to its evaluator-only truth file. Split those members into `~/.cache/clasher-live-v4/buffer/actuation/truth-before-completion-20261007.jsonl.gz`; the original 623-member compressed prefix is restored byte-for-byte (SHA256 d4a41a942cf10e7792b3ce322e9d6aa786b68bfb84418c6e172ea95dfbf16117). Both sets remain retained, and the completion bench now targets its separate truth file. Original factorial trial SHA256 remains b17fa82b5463be4be2c7727c809c502dd925ae4b1ac5939bd531b4dcade77cae.
+
+2026-10-07 16:53:08 -0700: Frozen 407 source/config hashes; split SHA256 3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258.
+
+2026-10-07 16:54:38 -0700: v4-smoke-0-bodyrepair1: 1218 frames, 19.999 FPS, 20 plays, all exact ticks; hub verified 8143379 bytes.
+
+2026-10-07 16:56:14 -0700: v4-smoke-1-bodyrepair1: 1214 frames, 19.995 FPS, 29 plays, all exact ticks; hub verified 8971873 bytes.
+
+2026-10-07 16:58:21 -0700: v4-smoke-2-bodyrepair1: 1195 frames, 19.999 FPS, 49 plays, all exact ticks; hub verified 11381698 bytes.
+
+2026-10-08T00:00:00.880269+00:00: Bodyrepair1 smoke admission PASS. Normal/double/triple: 1218/1214/1195 frames, 19.999/19.995/19.999 FPS, 20/29/49 accepted events; 98/98 exact ticks; all three hub checksums verified (28,496,950 bytes total). Converter passed with 609 selected frames and all 20 deployment labels from smoke 0. No champion ability event occurred in smoke; report Phase A coverage separately. Focused validation-bodyrepair1.log: 16/16 tests pass (including all seven actuator tests, body-alias regression, count/cap admission, storage negatives and real-codec converter). The earlier synthetic lifecycle FPS assertion remains an unresolved test limitation; its assertion and fixture are unchanged. Real smoke endpoints were not relaxed. Buffer 62,709,459 bytes and free disk 20,760,186,880 bytes at smoke admission. Driver is detached and waiting for hub readiness; no first Phase A match yet.

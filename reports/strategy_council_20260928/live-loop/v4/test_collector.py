@@ -74,4 +74,37 @@ class LifecycleTest(unittest.TestCase):
             self.assertEqual(terminal['events'],2)
             self.assertTrue(all(not e['accepted'] and e['exec_tick'] is None and e['negative_reason']=='match ended before execution' for e in events))
 
+class SummonAliasTest(unittest.TestCase):
+    def test_spell_children_use_existing_payload_stats(self):
+        scripts=collector.Scripts(collector.prepare())
+        for spell,body in [('BarbLog','Barbarian'),('GoblinBarrel','Goblin'),('RoyalDelivery','DeliveryRecruit')]:
+            alias=scripts.builder.token_id(spell,namespace='troop_body')
+            token=scripts.builder.token_id(body,namespace='troop_body')
+            for bot in scripts.bots.values():self.assertIs(bot.bodies[alias],bot.bodies[token])
+        log=scripts.builder.token_id('Log',namespace='troop_body')
+        self.assertNotIn(log,scripts.bots['balanced'].bodies)
+        initial=json.loads((HERE.parent/'l2/native/pair-00/setup-evaluation-only.json').read_text())['initial']
+        initial=copy.deepcopy(initial)
+        initial['objects'].append(dict(nativeObjectId=99999999,cardId=scripts.loader.get_card('BarbLog')._raw_entry['id'],hp=716,maxHp=716,x=10500,y=26000,owner=1))
+        for side in (0,1):
+            frame=scripts.project(initial,scripts.loader,scripts.names,side)
+            packet,_=scripts.packets[side].build(frame,initial['tick'],seat=side)
+            for bot in scripts.bots.values():bot.ranked_plays(scripts.model(packet))
+
+class CoverageTest(unittest.TestCase):
+    def test_count_only_stop_and_cap(self):
+        base=dict(heldout_matches=20,heldout_opponent_events=1499,emulator_hours=24)
+        self.assertIsNone(collector.phase_stop_reason(base))
+        self.assertIsNone(collector.phase_stop_reason(dict(base,heldout_matches=19,heldout_opponent_events=2000)))
+        self.assertEqual(collector.phase_stop_reason(dict(base,heldout_opponent_events=1500)),'heldout count coverage reached')
+        self.assertEqual(collector.phase_stop_reason(dict(base,emulator_hours=36-379/3600)),'active-hour cap (full-match reserve)')
+    def test_missing_hub_marker_blocks_phase_a(self):
+        import shipper
+        with patch.object(shipper,'run',side_effect=RuntimeError('marker absent')):
+            with self.assertRaisesRegex(RuntimeError,'marker absent'):collector.require_hub_ready()
+    def test_marker_without_verified_smoke_blocks_phase_a(self):
+        import shipper
+        with patch.object(shipper,'run',return_value=SimpleNamespace(stdout='{}')),patch.object(collector,'summary',return_value={'smoke':{'hub_verified_matches':0}}):
+            with self.assertRaisesRegex(RuntimeError,'No smoke'):collector.require_hub_ready()
+
 if __name__=='__main__':unittest.main()

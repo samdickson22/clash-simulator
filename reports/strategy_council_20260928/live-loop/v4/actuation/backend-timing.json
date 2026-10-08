@@ -1,0 +1,28 @@
+{
+  "schema": "clasher.backend-timing.v1",
+  "measurement": "submission to first observed native acceptance; polling upper bound",
+  "sources": {
+    "trials.jsonl": "b17fa82b5463be4be2c7727c809c502dd925ae4b1ac5939bd531b4dcade77cae",
+    "trials-completion-20261007.jsonl": "f0ccc6636783b0d0ea6e2cbab60c0de8b9dc6c97ba7e63fee12fb9b9c8d9d916"
+  },
+  "backends": {
+    "offline-renderer-grpc": {
+      "samples": 320,
+      "p50_ms": 1151.6914791427553,
+      "p99_ms": 1187.3178738285787,
+      "p50_ticks": 23.033829582855105,
+      "p99_ticks": 23.746357476571575,
+      "tick_ms": 50,
+      "ticks_semantics": "wall-latency equivalents at nominal 20 ticks/s; retained trials lack exact execution ticks"
+    },
+    "offline-renderer-adb-spawn": {
+      "samples": 320,
+      "p50_ms": 1190.6510624103248,
+      "p99_ms": 1335.1448639971204,
+      "p50_ticks": 23.813021248206496,
+      "p99_ticks": 26.70289727994241,
+      "tick_ms": 50,
+      "ticks_semantics": "wall-latency equivalents at nominal 20 ticks/s; retained trials lack exact execution ticks"
+    }
+  }
+}

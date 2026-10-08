@@ -1,9 +1,11 @@
 {
   "transport": "grpc",
+  "backend": "offline-renderer-grpc",
   "inter_tap_delay_ms": 20,
   "elixir_margin": 0.1,
-  "verification_ms": 600,
-  "ledger_timeout_ms": 800,
+  "timing_config": "backend-timing.json",
+  "verification_after_acceptance_ms": 600,
+  "rollback_after_deadline_ms": 200,
   "qualified": false,
-  "reason": "Pinned touch execution exceeds 600 ms; no production admission"
+  "reason": "Restated sensitivity 316/320 = 98.75% < 99%"
 }

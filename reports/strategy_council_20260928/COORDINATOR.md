@@ -210,3 +210,28 @@ Also on the hub, but with copies elsewhere:
   ultralytics needs `TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1`, for trusted local checkpoints only. The v3 trainer
   entry points need a CUDA device port (they target MPS). Coordinator re-check on 127x08: torch 2.7.1+cu118 sees the A6000; warm
   bf16 8192² matmul 113.7 TFLOPS. Separate from the repo's parity-pinned `.venv`.
+- **2026-10-08 00:35 UTC: T2 verdict FAIL (as reported); T1 smoke PASS; Phase A waits on the hub.** (Astra
+  `clasher-v4-t1t2-resume-20261007-1`; coordinator re-read `live-loop/v4/T2-RESULTS.md` and the hub shipments.)
+  - Full 640-trial matrix. gRPC: 320/320 accepted, two-tap p95 26.9 ms. Submission→acceptance D_b p50/p99
+    1,152/1,187 ms (hook nominal 22 ticks). Verify/rollback windows 1,787/1,987 ms from `actuation/backend-timing.json`.
+    Specificity 40/40. Stale re-tap reproduced (2 taps) and blocked by the ledger (1 tap).
+  - **Sensitivity 316/320 = 98.75%, below the 99% bar.** All four misses are Cannon plays at two native states
+    (ticks 739 and 1,020; two seeds each). The v1 HUD reader read baseline elixir 9 where native had 3.1, so the cost±1
+    predicate looked for ~6. Native acceptance was on time each time. No raw frames were retained, so "digit misread"
+    vs "stale image" is an inference.
+  - **Decision.** The FAIL stands; no re-scoring and no reader tuning on these trials. Accepted for development:
+    gRPC transport, the backend-relative timing contract and the ledger. P4 production qualification moves to a
+    **prospective re-test with the v4 HUD head (T7)** before L2-v4, under a pre-registered protocol written before
+    any trials:
+    (a) ≥300 positive and ≥300 negative trials, so a 99% bar means something (40/40 bounds specificity only at
+    ≈91%); report Clopper-Pearson bounds;
+    (b) raw frames retained for every miss;
+    (c) the spend predicate checks the observed elixir drop against the ledger's phase-locked own-elixir
+    prediction (DESIGN §2.5), not a single HUD baseline read, plus the slot-card change. One bad digit read can
+    no longer veto a real play.
+    Production risk meanwhile is low: a false miss never triggers a double play, because a retry requires the card
+    to still be in hand. It only mis-states the ledger until the next HUD anchor.
+  - **T1:** smoke PASS after a spawned-body adapter fix, a refreeze and same-seed reruns. 19.999/19.995/19.999 FPS,
+    98/98 exact-tick plays, three hub checksums verified on 127x01 (28.5 MB). Phase A driver (Mac PID 63610)
+    waits for `hub-ready.json`. A pre-existing synthetic FPS unit test still fails (real-stream FPS passes); to be
+    fixed or explained at the next v4 code change.

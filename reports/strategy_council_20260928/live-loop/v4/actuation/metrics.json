@@ -1,6 +1,6 @@
 {
-  "complete": false,
-  "trials": 447,
+  "complete": true,
+  "trials": 640,
   "cells": {
     "('grpc', 0.0, 3, 0.1)": 40,
     "('grpc', 0.0, 3, 1.0)": 40,
@@ -13,7 +13,11 @@
     "('adb-spawn', 0.0, 3, 0.1)": 40,
     "('adb-spawn', 0.0, 3, 1.0)": 40,
     "('adb-spawn', 0.0, 24, 0.1)": 40,
-    "('adb-spawn', 0.0, 24, 1.0)": 7
+    "('adb-spawn', 0.0, 24, 1.0)": 40,
+    "('adb-spawn', 0.02, 3, 0.1)": 40,
+    "('adb-spawn', 0.02, 3, 1.0)": 40,
+    "('adb-spawn', 0.02, 24, 0.1)": 40,
+    "('adb-spawn', 0.02, 24, 1.0)": 40
   },
   "methods": {
     "grpc": {
@@ -21,27 +25,150 @@
       "accepted": 320,
       "acceptance": 1.0,
       "two_tap_p95_ms": 26.90712675685063,
-      "pixel_600ms": 0,
-      "sensitivity_600ms": 0.0,
-      "truth_latency_p50_ms": 1151.6914791427553,
-      "pixel_latency_p95_ms": 1212.251697317697,
-      "detected_within_600ms_of_native_observation": 316,
-      "pixel_minus_native_p95_ms": 39.920374925713986,
-      "median_capture_fps": 59.133771608820666
+      "detected": 316,
+      "sensitivity": 0.9875,
+      "timing": {
+        "samples": 320,
+        "p50_ms": 1151.6914791427553,
+        "p99_ms": 1187.3178738285787,
+        "p50_ticks": 23.033829582855105,
+        "p99_ticks": 23.746357476571575,
+        "tick_ms": 50,
+        "ticks_semantics": "wall-latency equivalents at nominal 20 ticks/s; retained trials lack exact execution ticks"
+      },
+      "capture_fps_median": 59.133771608820666,
+      "pixel_minus_native_p95_ms": 39.920374925713986
     },
     "adb-spawn": {
-      "trials": 127,
-      "accepted": 127,
+      "trials": 320,
+      "accepted": 320,
       "acceptance": 1.0,
-      "two_tap_p95_ms": 59.79407937265931,
-      "pixel_600ms": 0,
-      "sensitivity_600ms": 0.0,
-      "truth_latency_p50_ms": 1186.0292919445783,
-      "pixel_latency_p95_ms": 1232.777239580173,
-      "detected_within_600ms_of_native_observation": 126,
-      "pixel_minus_native_p95_ms": 36.50915651815012,
-      "median_capture_fps": 59.14046011149772
+      "two_tap_p95_ms": 85.39297112729408,
+      "detected": 318,
+      "sensitivity": 0.99375,
+      "timing": {
+        "samples": 320,
+        "p50_ms": 1190.6510624103248,
+        "p99_ms": 1335.1448639971204,
+        "p50_ticks": 23.813021248206496,
+        "p99_ticks": 26.70289727994241,
+        "tick_ms": 50,
+        "ticks_semantics": "wall-latency equivalents at nominal 20 ticks/s; retained trials lack exact execution ticks"
+      },
+      "capture_fps_median": 59.136040657476705,
+      "pixel_minus_native_p95_ms": 38.864660856779665
     }
   },
-  "reproduction": null
+  "misses": [
+    {
+      "cell": [
+        "grpc",
+        0.0,
+        3,
+        0.1
+      ],
+      "trial": 30,
+      "seed": 1974100729,
+      "before_tick": 739,
+      "native_elixir": 3.1022,
+      "hud_elixir": 9.0,
+      "hud_clock": 144.0,
+      "native_acceptance_ms": 1137.8905831370503,
+      "capture_fps": 58.34302555490215,
+      "pixel_latency_ms": null,
+      "truth_before_sha256": "a34cae892da486e42aebc28e31736a79704d41d1c526eb476448bec672a9daa1",
+      "classification": "HUD baseline elixir error; likely reader miss. Native acceptance is timely. Raw frame/after-HUD trace was not retained, so short-lived stale pixels versus digit misread cannot be conclusively separated."
+    },
+    {
+      "cell": [
+        "grpc",
+        0.0,
+        24,
+        0.1
+      ],
+      "trial": 4,
+      "seed": 1974100903,
+      "before_tick": 739,
+      "native_elixir": 3.1022,
+      "hud_elixir": 9.0,
+      "hud_clock": 144.0,
+      "native_acceptance_ms": 1147.2080829553306,
+      "capture_fps": 58.8859109559585,
+      "pixel_latency_ms": null,
+      "truth_before_sha256": "e8a01d1dcd3c524b6dfd29011482fa191dc2446975a50ca0c155aa681ae438f1",
+      "classification": "HUD baseline elixir error; likely reader miss. Native acceptance is timely. Raw frame/after-HUD trace was not retained, so short-lived stale pixels versus digit misread cannot be conclusively separated."
+    },
+    {
+      "cell": [
+        "grpc",
+        0.0,
+        24,
+        0.1
+      ],
+      "trial": 29,
+      "seed": 1974100927,
+      "before_tick": 1020,
+      "native_elixir": 3.104,
+      "hud_elixir": 9.0,
+      "hud_clock": 130.0,
+      "native_acceptance_ms": 1135.0973329972476,
+      "capture_fps": 58.88526361908778,
+      "pixel_latency_ms": null,
+      "truth_before_sha256": "b35645f2a050a38823bf229d5c4e4c55bb65afd71aacdea20f0cb9f8812ae7c0",
+      "classification": "HUD baseline elixir error; likely reader miss. Native acceptance is timely. Raw frame/after-HUD trace was not retained, so short-lived stale pixels versus digit misread cannot be conclusively separated."
+    },
+    {
+      "cell": [
+        "grpc",
+        0.0,
+        24,
+        0.1
+      ],
+      "trial": 35,
+      "seed": 1974100933,
+      "before_tick": 1020,
+      "native_elixir": 3.104,
+      "hud_elixir": 9.0,
+      "hud_clock": 130.0,
+      "native_acceptance_ms": 1136.6890410427004,
+      "capture_fps": 58.88136430047921,
+      "pixel_latency_ms": null,
+      "truth_before_sha256": "ef3546f40e59c4f716833f0c749e4fb693b50e1ca4743679706706c4e7eed8cf",
+      "classification": "HUD baseline elixir error; likely reader miss. Native acceptance is timely. Raw frame/after-HUD trace was not retained, so short-lived stale pixels versus digit misread cannot be conclusively separated."
+    }
+  ],
+  "gates": {
+    "factorial": true,
+    "acceptance": true,
+    "two_tap": true,
+    "sensitivity": false,
+    "specificity": true,
+    "stale_fix": true
+  },
+  "passed": false,
+  "specificity": 1.0,
+  "negative_windows": 40,
+  "stale_reproduction": [
+    {
+      "mode": "stale-retap",
+      "attempted": 2,
+      "accepted": 1,
+      "second_command": {
+        "state": "tap",
+        "slot": 1
+      },
+      "measured_spend": 3.9999999999999996
+    },
+    {
+      "mode": "pending-ledger",
+      "attempted": 1,
+      "accepted": 1,
+      "second_command": {
+        "state": "blocked",
+        "reason": "pending"
+      },
+      "measured_spend": 3.999999999999999
+    }
+  ],
+  "native_ticks_per_second": 19.994542852471092
 }

@@ -1,5 +1,7 @@
 """Pixel-only actuation state machine. No probe or hidden-state dependencies."""
 from dataclasses import dataclass
+import json
+from pathlib import Path
 
 
 @dataclass(frozen=True)
@@ -30,9 +32,11 @@ class Actuator:
     never immediate resend. A confirmed spend remains fenced until a post-play
     HUD is incorporated. Expiry releases the reservation and holds the card.
     """
-    def __init__(self, margin=0.0, verify_seconds=.6):
+    def __init__(self, margin=0.0, verify_seconds=.6, backend='offline-renderer-grpc', timing_path=None):
         self.margin = margin
-        self.verify_seconds = verify_seconds
+        timing_path = Path(timing_path) if timing_path is not None else Path(__file__).parent / 'actuation/backend-timing.json'
+        timing = json.loads(timing_path.read_text())['backends'][backend]
+        self.verify_seconds = timing['p99_ms'] / 1000 + verify_seconds
         self.pending = None
         self.hold_until = {}
         self.confirmed = None
@@ -70,20 +74,20 @@ class Actuator:
             self.pending = None
             return {'state': 'accepted', 'card': p.card, 'attempts': p.attempts,
                     'latency_ms': (now-p.submitted_at)*1000}
-        age = now-p.submitted_at
-        # The 800 ms ledger timeout is measured after the most recent attempt.
+        # Each attempt reserves through its backend-relative deadline + 200 ms.
         last_attempt = p.submitted_at if p.attempts == 1 else p.retry_at
-        if p.attempts == 1 and age >= self.verify_seconds:
-            if p.retry_at is None: p.retry_at = now+.150
-            if now >= p.retry_at and fresh and p.card in hud.hand and hud.elixir >= p.cost+self.margin:
-                p.slot = hud.hand.index(p.card)
-                p.attempts = 2
-                p.retry_at = now
-                return {'state': 'tap', 'slot': p.slot, 'tile': p.tile, 'attempt': 2}
-        if now-last_attempt >= .8:
+        deadline = last_attempt + self.verify_seconds
+        if now >= deadline + .2:
             reason = ('insufficient elixir' if hud.elixir < p.cost+self.margin else
                       'card absent' if p.card not in hud.hand else 'unknown')
             self.pending = None
             self.hold_until[p.card] = now+1
             return {'state': 'failed', 'reason': reason, 'attempts': p.attempts}
+        if p.attempts == 1 and now > deadline:
+            if p.retry_at is None: p.retry_at = deadline+.150
+            if now >= p.retry_at and fresh and p.card in hud.hand and hud.elixir >= p.cost+self.margin:
+                p.slot = hud.hand.index(p.card)
+                p.attempts = 2
+                p.retry_at = now
+                return {'state': 'tap', 'slot': p.slot, 'tile': p.tile, 'attempt': 2}
         return {'state': 'pending'}

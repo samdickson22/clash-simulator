@@ -1,0 +1,9 @@
+{
+  "hub_host": "127x01",
+  "hub_ready": "/mpac/sdicks02/jobs/clasher/hub-ready.json",
+  "max_active_hours": 36,
+  "heldout_min_matches": 20,
+  "heldout_min_opponent_events": 1500,
+  "full_match_reserve_seconds": 380,
+  "smoke_attempt_tag": "bodyrepair1"
+}

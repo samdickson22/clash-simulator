@@ -31,3 +31,59 @@ Pre-smoke schedule audit, 2026-10-07: both side choices are computed before a sh
 Pre-smoke actuator unit audit, 2026-10-07: a cost-one play must still show a positive elixir drop. The cost ±1 tolerance does not make a zero-spend slot change an acceptance. A regression test covers this boundary. This actuator change does not affect collector inputs or labels; the complete source bundle is resealed before smoke.
 
 Pre-smoke terminal audit, 2026-10-07: commands still pending when the native match ends are recorded as negative examples with null `exec_tick` and an explicit terminal reason. They are not lost plays or infrastructure failures. Accepted commands must have reached their receipt's execution tick. A regression test ends a native-shaped fixture with both seats' commands pending and verifies two retained negatives and an atomic match receipt.
+
+
+## Pre-smoke amendment, 2026-10-07: hub recovery, timing and coverage
+
+Before any smoke or Phase A match, adopt the coordinator decision in
+`../../amendments/2026-10-07-t2-actuation-timing.md` (including its addendum).
+The destination is now `127x01:/mpac/sdicks02/repos/clasher-v4-data/matches/`.
+This is an operational destination change; acquisition labels and match schema are unchanged.
+Old registration bundles on 127x02 are unreachable. Re-register the preserved producer
+sources and the new content manifest under the new hub's `registration/` directory.
+Do not write to the hub's recovered source checkout.
+
+Phase A now stops when the frozen heldout split contains at least 1,500 accepted
+opponent events AND at least 20 matches, or at the 36 active emulator-hour cap.
+Only receipt counts are inspected; no label content, model output, or outcome enters
+the stopping rule. The frozen seed/deck memberships and 80/10/10 split are unchanged
+(split SHA256 3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258).
+The collector reserves its existing 380-second maximum match duration before starting
+another complete match, so it may stop at the cap up to 380 seconds early rather than
+exceed 36 hours. Coverage shortfall is reported; it does not authorize more collection.
+Historical split metadata still says 24 hours and 127x02; `collection-config.json`
+is the prospective operational override, avoiding a change to split identity.
+
+Phase A requires a readable JSON `127x01:/mpac/sdicks02/jobs/clasher/hub-ready.json`
+and at least one checksum-verified smoke match on 127x01, in addition to all existing
+three-smoke admission gates. The 15 GiB disk floor and 6 GB buffer cap are unchanged.
+
+Source deviation before smoke: the prior collector hard-coded its hub and duration,
+so minimal source edits were necessary to load the operational config, enforce the
+count/cap stop, and check hub readiness. The backend-relative actuator timing change
+also changes a hashed source file. Therefore archive the prior freeze locally and
+refreeze before smoke. No APK, hook, command age, attestation, collector label schema,
+threshold or frozen population is changed. T2 failure does not block T1's independent
+scheduled-receipt collector; it continues to block production actuator qualification.
+
+
+## Pre-Phase-A infrastructure amendment, 2026-10-07 23:51Z
+
+The first smoke attempt shipped `v4-smoke-0` (19.994 FPS, 21 exact-tick plays)
+to 127x01, then smoke seed 1975100001 failed at tick 2630 with `unsupported visible
+body identity`. Ordinary native objects keep the parent spell card ID: the spawned
+Barbarian was projected as BarbLog. This is an adapter failure, not a match outcome.
+The collector-only repair maps a spell with exactly one hitpoint-bearing payload
+to that payload's existing C56 body stats (BarbLog→Barbarian, GoblinBarrel→Goblin,
+RoyalDelivery→DeliveryRecruit). Unknown/ambiguous payloads still fail. No common
+engine, APK, hook, player, label schema, data thresholds or split membership changes.
+
+Preserve the successful old match on the hub and archive its local receipt and
+converter check under `data/smoke-attempts/pre-body-repair-20261007/`. Preserve the
+incomplete second match in the capped buffer. Archive the old source manifest and
+refreeze before rerunning all three original smoke seeds with `-bodyrepair1`
+attempt IDs. This ensures admission uses one producer freeze and overwrites no
+completed receipt. Phase A has collected no matches and remains gated on all three
+new smoke passes plus hub-ready.json. The coordinator's 23:50:59Z whole-repo
+checksum window has ended; this source repair is later than that hub source snapshot.
+Only the new producer registration bundle is sent to v4-data, never a hub source resync.
