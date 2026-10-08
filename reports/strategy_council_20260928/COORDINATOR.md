@@ -266,7 +266,7 @@ Also on the hub, but with copies elsewhere:
 - **T1 Phase A started** on the Mac (pipeline PID 63610, stage phase-a), shipping to 127x01. Stage 6, C56 and S1
   workers are released by `hub-ready.json`.
 - **2026-10-08 01:05 UTC:** hub task closed; its final report matches `fleet/HUB-127X01.md`. Coordinator's independent re-check on a fan-out peer: C56 identity on 127x07 gives 7/7 episodes, 2,900 digest boundaries, 0 mismatches, baseline `002a57a9…`.
-- **2026-10-08 01:15 UTC: C56 equivalence: decision to accept and proceed.** The worker stopped correctly at the
+- **2026-10-08 01:08 UTC: C56 equivalence: decision to accept and proceed.** The worker stopped correctly at the
   raw-byte gate: 0/3 archives identical. Cause (`c56/data/FLEET-RESULTS.md`, `strict-equivalence.json`): the Mac archives
   for s117/shard-011-part-04/05/06 reused 10/11/12 v2 episodes. Linux had no v2 archives for them and simulated every
   episode fresh. All non-header arrays match in dtype, shape and logical bytes (144 perspectives, 117,776 rows). The
@@ -277,7 +277,7 @@ Also on the hub, but with copies elsewhere:
   equal except reuse provenance). Production extraction of the remaining 956 units proceeds. The original
   extractor deletes reused v2 NPZs, so the 137 retained v2 archives are copied aside before any run that could reuse
   them.
-- **2026-10-08 01:30 UTC: S1 r2 sealed and running; 127x07 went offline (~01:14Z).**
+- **2026-10-08 01:22 UTC: S1 r2 sealed and running; 127x07 went offline (~01:14Z).**
   - r2 manifest `3ad63c0a…` (468 files, sealed 01:07:36Z). Full preflight passed again: 24 replays / 23,058 exact checks,
     14 tests, fork pilot, 18 timing pilots, optimized vs reference action-digest equality. Launched on 04/07/08 at
     48/100/100. At 01:19Z, 397/4,992 receipts (04: 149, 08: 248). No outcomes inspected.
@@ -295,7 +295,7 @@ Also on the hub, but with copies elsewhere:
     2. **Load cap:** new launches keep our total worker processes ≤80 per host (≤16 with a console user), leaving ~40%
        of threads free. It costs some wall time and lowers whatever risk sustained full load carries on shared lab
        boxes.
-- **2026-10-08 02:05 UTC: incident: a stale Mac push overwrote fleet files, and S1 r2 stopped.** At 01:39–01:44Z the
+- **2026-10-08 01:52 UTC: incident: a stale Mac push overwrote fleet files, and S1 r2 stopped.** At 01:39–01:44Z the
   old Mac thread re-ran `pilot/transfer_to_fleet.sh` to 127x01 and 127x04 (logs: "DONE 01:44:49Z").
   `rsync -a` without `--update` replaced ~3.5k files on 01 and ~4k on 04 with older Mac versions:
   - S1's sealed r2 files, now a mixed r1/r2 tree; the 41 files that differ include `launch_node.py`. All 48 S1
@@ -322,14 +322,14 @@ Also on the hub, but with copies elsewhere:
   - **What was deleted:** at 01:55Z, 81,517 untracked files (35.8 GB) were deleted from the Mac after an exact checksum match on both 127x01 and 127x04. That covers m0/readiness, checkpoints/, the untracked parts of datasets/, c56/data, human-prior-p16, reports/persistent_batch_v1, and pilot v7r1/v7r2/v7r2c. The file list is `pilot/logs/offload-mac-bulk-20261008T015508Z.files`.
   - **Copies:** 127x01 and 127x04 now hold the only copies of those paths. Files the incident restored there are newer than the deleted Mac versions, which is fine. Do not delete these paths on both nodes.
   - **Mac disk:** 54 GiB free.
-- **2026-10-08 02:30 UTC: C56 extraction v3b COMPLETE.** 1,767/1,767 units, 82,231 perspectives, 64,140,802 rows,
+- **2026-10-08 02:17 UTC: C56 extraction v3b COMPLETE.** 1,767/1,767 units, 82,231 perspectives, 64,140,802 rows,
   0 errors, 0 illegal labels. Retention 83.33%, placement acceptance 99.72%, 5.93 GB. The 956 new units ran on 01/03/04 in
   ~43–47 min wall (422/609/278 units per hour). All 137 v2 archives preserved. The 01:39Z push audit found unchanged inputs and base
   outputs, so no unit was invalidated. Copies: 127x01 and 127x04 complete with identical file lists
   (`qa/fleet-v3b/production-20261008/completion-summary.json`). Coordinator spot check: 3 random units load
   (32 arrays, 26–41k rows). NaN appears only in recorded/submitted world positions, exactly as in the Mac base units
   (no-position actions), so it is by design. **Next: the all-card imitation model** (HANDOFF_F35 §5.3), design first.
-- **2026-10-08 03:00 UTC: Stage 6 core QUALIFIED on Linux build 48** (Astra `clasher-stage6-b46-fleet-20261008-1`;
+- **2026-10-08 02:36 UTC: Stage 6 core QUALIFIED on Linux build 48** (Astra `clasher-stage6-b46-fleet-20261008-1`;
   `engine-speed/STAGE6.md`, `stage6/qualification-r48b-linux.json`, `completion-audit-r48b-linux.json`). Native `78bd9950…`,
   source `e83c8e1f…`. Builds 46→48 fixed the Inferno Dragon dash channel (BeamDash incl. saved tick 1895), the hook/ramp
   lock reset, hook cancellation after spirit conversion, and Valkyrie timing after death knockback. All fresh on build 48:
@@ -346,7 +346,7 @@ Also on the hub, but with copies elsewhere:
   controller decks, and human replays that play it are cut at that play by the existing contradiction rule. A
   Three Musketeers data repair is backlog. It would change canonical gamedata (`892fbfa0`), so it needs real stats,
   a new canonical hash and a full identity re-baseline. Do it only if the imitation or live scope shows it matters.
-- **2026-10-08 03:15 UTC: all-card imitation design ACCEPTED** (Opus high; `imitation/DESIGN.md`, `OPEN-QUESTIONS.md`).
+- **2026-10-08 02:37 UTC: all-card imitation design ACCEPTED** (Opus high; `imitation/DESIGN.md`, `OPEN-QUESTIONS.md`).
   Plan:
   - Sequence: train a C56 model (v1) now and extract S122 in parallel on CPU; the S122 generalist (v2) is the
     live deliverable. The handoff's ≤6 GiB cap is dropped (it was a Mac-disk limit).
@@ -368,7 +368,7 @@ Also on the hub, but with copies elsewhere:
   - (B) IL_Replay re-fetch and S122 payloads (T9), then the S122 extraction with the inline observer (T10) once T1
     passes;
   - (C) model, trainer, evaluator and inference API (T4), with a shakedown once the T3 store exists.
-- **2026-10-08 03:40 UTC: imitation data pipeline.** T0 PASS (GPU env on 127x01). T1 PASS: deck-free D1 module, 319,077 exact
+- **2026-10-08 03:13 UTC: imitation data pipeline.** T0 PASS (GPU env on 127x01). T1 PASS: deck-free D1 module, 319,077 exact
   elixir comparisons and 2,015,370 known-fact checks against the oracle trackers, 0 conflicts. T9 PASS (IL_Replay
   re-fetch and S122 payloads, leak check). T2 sidecar replay running on 01/03 (64 workers each; 12,143/82,231
   perspectives at the last checkpoint, 0 violations). T4 model code committed (`imitation/model/`, 2.40M params, 13 tests,
@@ -377,7 +377,7 @@ Also on the hub, but with copies elsewhere:
   executes v3b (`1ec2c60c…`). All non-header arrays are equal and every common header field matches. Accepted: the
   runtime SHA marker joins reuse provenance as an exempt provenance field. Original headers are kept; actual execution
   is recorded in the sidecar manifest. Any other header difference still fails.
-- **2026-10-08 04:10 UTC: S1 r2 COMPLETE. Primary FAIL; the event gate is not met at 90/90 or 97/97.**
+- **2026-10-08 03:19 UTC: S1 r2 COMPLETE. Primary FAIL; the event gate is not met at 90/90 or 97/97.**
   (`search-noise-v2/RESULTS.md`, `result.json`; 4,992/4,992 games, 191 core-h, 2.1 h wall on 04/08 after the recovery.)
   - Primary: E4 − B at N64 = −3.9 pp [−9.8, +2.0], so multi-root belief search does not beat single-root.
     Coordinator recomputation from the raw receipts on 127x01 reproduces −0.0391 [−0.0977, +0.0195] and the A/B/E4 cell
@@ -400,3 +400,12 @@ Also on the hub, but with copies elsewhere:
     (iii) offline trace analysis of how missed or spurious events break ELT concentration and coverage.
     Pre-registered, sim-only, fresh seeds. Its result decides whether v4's next investment is the tracker
     (resynchronising and robust to a missed event), board perception (phantoms/drops), or HP.
+- **2026-10-08 03:25 UTC: timestamp correction.** My entry times from 01:15 onward were estimates and ran 7–51 min late.
+  They are now set to the commit times: 01:15→01:08, 01:30→01:22, 02:05→01:52, 02:30→02:17, 03:00→02:36, 03:15→02:37,
+  03:40→03:13, 04:10→03:19. Worker briefs that cite the old labels ("03:00 UTC" Three Musketeers decision, "03:40 UTC" header decision,
+  "04:10 UTC" S1 diagnosis, "01:15" logical equivalence) refer to the corrected entries. From now on, entry times come from `date -u`.
+  Also: the Mac thread offloaded 35.8 GB of Mac bulk data at 02:00Z after its two-node checksum check, so 127x01/04
+  (+03/08 fan-out copies) hold the only copies. **S122 data (T9 PASS, T10 QA PASS):** 333,934 new perspectives
+  (4,090 Battle Healer and 1,950 Mirror flagged; 2,361 C56 perspectives with Three Musketeers opponents excluded in v2
+  metadata, v1 roles unchanged; 0 leakage). QA 400 perspectives: 99.59% placement acceptance, 80.78% retention, 0 errors.
+  Production is running on 01/03 (ETA 7–9 h).
