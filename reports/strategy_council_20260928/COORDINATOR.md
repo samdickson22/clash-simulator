@@ -860,3 +860,5 @@ Also on the hub, but with copies elsewhere:
   - **03 idle:** lent to the exploration A/B under a GATES-03-RESERVED handoff file.
   - **Perception:** the vectorized decoder runs at **~12 frames/s vs ~1 (12×)**. The full equality gate is pending. Conditional all-capture planning range 06:00–09:00Z.
   - **Health:** 06/07/18 down; no reclaims; roader reniced its jobs to 10.
+- **~23:50 UTC: gates RC3 clarification.** Affinity isolation on 03 applies to compute workloads. Enumerated low-CPU baseline services (systemd/dbus/gvfs, sshd, idle wrapper shells, tailscaled, which we never touch) are exempt under a measured bound: average ≤0.5 core, peak ≤2 cores, monitored with the load ceiling of 20. Delta r3: new H e730c9f1…, base 1359319908352; 4,356 seeds disjoint from 26,434 historical values/ranges; 94 raw errors resolved.
+- **~23:52 UTC: perception throughput step 2 authorized** (Sam: "a whole YOLO model could run faster than 12 fps"). After the vectorized full gate: cross-match lockstep batching (64 matches per GPU call) plus batched encoder and vectorized trackers, under the same bit-exact gate. Target ≥100 frames/s per GPU.
