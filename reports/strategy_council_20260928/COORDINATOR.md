@@ -721,3 +721,16 @@ Also on the hub, but with copies elsewhere:
   - **Backlog decision:** once v4 perception releases 02/07, qualify the T5 GRU ablation as 3-GPU elastic DDP on 08+02+07 and move it there under a dated amendment. GRU is descriptive and already decoupled from gate (a).
   - Qualification requirements: the same effective batch of 8192; equivalence within bf16 tolerance (not bit-exact); elastic torchrun with checkpoints every ≤10 min. The expected wall time is ~3 days instead of ~9.
   - Main/registered gate runs stay single-GPU.
+- **~21:15 UTC: multi-node DDP adopted (Sam: "do it, use the full capabilities of the network").**
+  - **Measured:** enp68s0 10 GbE gives **9.4 Gbit/s** host to host on a single stream (11→07). Ports open; NCCL 2.21.5. **127x02 is cabled to 1 GbE** (enp70s0, 0.94 Gbit/s): kept out of DDP groups, and I've asked Sam to move the cable.
+  - **Standard for all trainers:**
+    - torchrun elastic with c10d rendezvous (ports 29500–29599; roader told to use another range), NCCL over sockets: `NCCL_SOCKET_IFNAME=enp68s0 NCCL_IB_DISABLE=1 NCCL_SOCKET_NTHREADS=4 NCCL_NSOCKS_PERTHREAD=2`.
+    - Global batches identical to single-GPU (deterministic sharding plus accumulation); each rank reads a local store copy.
+    - Rank-0 checkpoints every ≤10 min, with exact resume across world-size changes.
+    - Qualification before switching: 50 steps single vs DDP within bf16 tolerance, kill/resume, scaling efficiency.
+    - Dated technical amendments, frozen before the switch.
+  - **Allocation:**
+    - v4 perception inference fan-out first (02/04/07/09/11/13/14/15).
+    - **T11:** seed 21 on 16+11+13, seed 22 on 18+14+15 until 04:20Z; after 05:00Z on 01+07 and 04+08.
+    - **T5 GRU:** 01+07+08 now; single-GPU on 02 from 05:00Z; grows back after T11 finishes.
+  - **Roader informed.**
