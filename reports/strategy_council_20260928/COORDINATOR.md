@@ -701,3 +701,7 @@ Also on the hub, but with copies elsewhere:
      - GRU continues under frozen rules, which are recorded in a prospective amendment before any heldout inference.
      - GRU later gets its own once-only heldout pass, reported in a labelled post-verdict addendum.
   3. **Post-lease home GPUs:** T11 seed 21 → 01 (after main02 exits), seed 22 → 04 (after the perception GPU work ends at 05:00Z), 08 → T5 GRU. Resume artefacts are pre-staged now.
+- **2026-10-08 20:06 UTC:**
+  - **v4 perception:** the cache budget is raised from 1.0 to up to 1.3 TB aggregate for lossless inference-output shards. Per-host limits are unchanged: ≤300 GB per host, ≥200 GB free. GPU inference may start without waiting for duplicate retirement.
+  - **T11:** seed 21 checkpointed at step 5735 and exited cleanly to qualify a multi-worker loader. The runs were loader-bound at ~2k rows/s against ~12k qualified.
+  - **Console check:** `fleet-console-users` is now lock/idle aware. The "console users" on 12/17 were stale locked seats in a locked room: a student logged in since Aug 24, and Sam's own login. Roader has been told.
