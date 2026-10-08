@@ -640,3 +640,15 @@ Also on the hub, but with copies elsewhere:
   4. Roader told (its backup mirror dirs were on 11). 11's lease is void until the host returns. Sam told.
   Mac OK (24 GiB, 422 matches this run).
 - **2026-10-08 14:46 UTC:** roader confirmed 127x11 is offline and its lease void (FLEET-SHARING.md updated). It is rebuilding its only backup as two mirrors on **127x09 and 127x15** (~30 GB each under `roader-mirror*`, `roader-code-127x05-mirror`, `roader-mirror-trash`): roader-owned paths, never touched by clasher. Our caps there are unchanged. Perception worker told (it will use 09/15).
+- **2026-10-08 15:45 UTC: T1 Phase A COMPLETE** (pool stopped "heldout count coverage reached" at 15:43:11Z; `live-loop/v4/phase-a-results.json`).
+  641 matches, all hub-verified (8.67 GB); 31,068 deployments, all exact-tick; FPS endpoint 638/641 (min 17.07, 3 failures
+  retained); 15.56 emulator-hours of the 36 h cap; **heldout 64 matches / 1,520 opponent events** (rule ≥1,500 and ≥20 met);
+  320 ability events. Actions:
+  1. Perception worker told to start the formal T6/T7 fits on 127x09/15 (+04/08 later): validation-only selection, seal,
+     then one heldout evaluation.
+  2. Delegated the Mac runtime latency measurement: quiet host (T1-owned emulators stopped, AVD kept), MPS perception,
+     ≥200 taps, revised budget p50 ≤260/p99 ≤400. It also sets `planner_total_delay_ticks` = round((median frame→submission +
+     D_b,p50)/50 ms), read by P3.
+  3. T5 main03 was stopped by the lease wrapper at 15:39Z for GPU free <8 GB (our own peak); told to resume from checkpoint
+     with an output-neutral eval-memory reduction.
+  Fleet: 02/07/11 still offline. No reclaims.
