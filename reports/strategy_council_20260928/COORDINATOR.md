@@ -755,3 +755,8 @@ Also on the hub, but with copies elsewhere:
     - Interleaved secondary order.
     - A statement that no gate (a) material is read on 01.
   - **Clock speeds:** 02/07 "low MHz" was an ondemand idle sample; all hosts average 2.2–2.3 GHz. 02's timing failure at 16 workers was co-tenant load.
+- **21:23 UTC: 127x07 offline again** (no route, no ping; probably powered off in the lab). Only non-gate work was affected: a gates qualification pilot (9/32), a seed scan, and staging for the GRU-DDP and perception fan-out.
+  - GRU DDP is replanned to world 2 on 01+08 (07 can rejoin elastically).
+  - The perception fan-out drops 07.
+  - Gates use 07's latest historical seed export plus a "no new jobs since" argument.
+  - 07 stays in the fleet hosts file, so fleetweb and the 30-min check retry it automatically.
