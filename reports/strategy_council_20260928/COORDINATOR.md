@@ -489,3 +489,15 @@ Also on the hub, but with copies elsewhere:
   R-derived anchors, fresh seeds, 5 × 256 games. (b) In parallel, development of tracker v3, aimed at calibrated hand/cycle
   inference that recovers after misses (T2's resource lattice + an ELT-style cycle model with resync), dev seeds only.
   Its confirmation is pre-registered only if S4 shows R-hand is material. L2-v4 stays blocked.
+- **2026-10-08 05:43 UTC: T1 Phase A at 3 renderers** (Astra `clasher-t1-parallel-renderers-20261008-1`; Mac `live-loop/v4/PREREG.md:92`
+  amendment, `T1-PROGRESS.md:461`, `pool-scale-report.json`).
+  - Throughput 26.6 → 75.8 matches/h (2.86×). Every pool match passes its endpoints; per-instance minimum FPS
+    19.967/19.980/19.991; no duplicated or skipped seeds. The old driver had stopped on its storage guard; its partial seed
+    1975100803 was rerun.
+  - 120 matches and 11 heldout / 295 opponent events at the switch; ETA to coverage ~6–8 h.
+  - **Mac pressure:** swap 12.9/14.3 GB (four new 1 GB swapfiles after the ramp-up); another project's Windows 11 UTM VM
+    (canvasdoc, 30 GB disk) shares RAM; T3 statev2.sqlite on the Mac is 40.7 GB; staged macOS update snapshots. Disk free
+    ~20 GiB vs the collector's 15 GiB floor.
+  - Kept 3 instances. Added an **hourly coordinator heartbeat** (T3 scheduled task bound to this thread): Mac disk/swap,
+    fleet and lease reclaims, task blockers. It drops to 2 renderers if free disk < 17 GiB, swap > 14 GB or memory
+    pressure turns critical.
