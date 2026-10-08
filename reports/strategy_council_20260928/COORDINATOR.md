@@ -716,3 +716,8 @@ Also on the hub, but with copies elsewhere:
   - **Caps:** roader now runs ≤32 processes on 09/12/13/14/15/17, so all clasher processes combined on 09/13/14/15 must stay ≤80 per host.
   - **Gates (b)/(c) worker:** authorized read-only, seed-only inventory scans on 01/08 (and 02/07), excluding gate (a) outcome payloads. An independent Opus PREREG review will run before any gate game.
 - **2026-10-08 21:02 UTC: outage cause (from Sam).** 127x02 (offline from 2026-10-07 ~23:25Z), 07 (from 10-08 ~01:14Z) and 11 (from ~14:10Z) were **physically powered off by someone in the lab**: not overload, heat or a crash from our jobs. Lab machines can be switched off at any time without warning. Leased and home jobs must therefore keep frequent off-host checkpoints (≤1 h of lost work) and resume from them, as T5 main02's 11→01 host-loss rerun did.
+- **2026-10-08 ~21:05 UTC: multi-GPU DDP is feasible on the fleet.**
+  - Checks: 10 GbE LAN; arbitrary TCP ports open between hosts (tested 02→07:29517); torch 2.7.1 with NCCL 2.21.5.
+  - **Backlog decision:** once v4 perception releases 02/07, qualify the T5 GRU ablation as 3-GPU elastic DDP on 08+02+07 and move it there under a dated amendment. GRU is descriptive and already decoupled from gate (a).
+  - Qualification requirements: the same effective batch of 8192; equivalence within bf16 tolerance (not bit-exact); elastic torchrun with checkpoints every ≤10 min. The expected wall time is ~3 days instead of ~9.
+  - Main/registered gate runs stay single-GPU.
