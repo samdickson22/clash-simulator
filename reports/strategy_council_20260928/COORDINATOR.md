@@ -684,3 +684,20 @@ Also on the hub, but with copies elsewhere:
     2. Two renderers only if both pass the loop gates concurrently after E4.
     3. The E1 tracker-row amendments (a)–(c) are approved: they replace ELT-era targets.
 - **2026-10-08 18:44 UTC heartbeat:** correction: the v4 formal T6/T7 fits are **complete** (24×400 steps each; checkpoints SHA-verified on 04; cache 1.28→13.86 windows/s; 10,420 equality checks, 0 mismatches; 544,623 label errors resolved, 413,895 unresolved rows masked). Validation jobs are active on 09 (T7 replay) and 15 (T6 scoring), mostly CPU, hence GPU 0%. Asked the worker for a bounded 20-min continuation schedule through selection, seal, the single heldout eval, `l1/RESULTS.md` and `l1/noise-measured.json` (the E9 input). T5: 04/13/14 runs finished (selection jobs running); main02 rerun on 01 and GRU on 08 continue; T11 v2 on 16/18. Mac idle (26 GiB, 55% free).
+- **2026-10-08 19:58 UTC: heartbeat, three coordinator decisions.**
+  - **State.**
+    - Mac: 27 Gi free, swap 5.5/7 G, memory 60% free.
+    - T5: main01, main03 and noD1 finished all 12 epochs (exit 0). main02 is in its final epoch on 01. GRU on 08 runs at 243 rows/s.
+    - T11 v2: both seeds are progressing on 16/18 (step ~5.5k/6.0k, timer 04:20Z).
+    - T7 validation: 2 of 432 grid cells done.
+    - No reclaims and no pending worker questions.
+  1. **T7 validation grid: inference split from thresholding.** At ~35 min/cell serial on 09 the grid would take about 250 h, while GPUs on 04/13/14/15 sat idle.
+     - Each of the 24 epoch checkpoints gets one inference pass over the 64 validation matches, with raw outputs stored under hashes. The passes run in parallel on 09/13/14/15/04.
+     - All 432 cells are then computed on CPU (01/03 plus leased CPU).
+     - This is an output-identical amendment: before use it must reproduce the completed cells bit-exactly.
+     - The 05:00Z deadline binds only the leased hosts. The continuation goes on, on home hosts, until RESULTS and noise-measured.json are final, and the worker edits its cleanup task accordingly.
+  2. **T5 gate (a) decoupled from the GRU ablation.** GRU is descriptive and can't change the verdict (PREREG), and at 243 rows/s it would hold gate (a) for up to ~9 days.
+     - Gate (a) is scored on main01/02/03 + noD1 once main02 completes.
+     - GRU continues under frozen rules, which are recorded in a prospective amendment before any heldout inference.
+     - GRU later gets its own once-only heldout pass, reported in a labelled post-verdict addendum.
+  3. **Post-lease home GPUs:** T11 seed 21 → 01 (after main02 exits), seed 22 → 04 (after the perception GPU work ends at 05:00Z), 08 → T5 GRU. Resume artefacts are pre-staged now.
