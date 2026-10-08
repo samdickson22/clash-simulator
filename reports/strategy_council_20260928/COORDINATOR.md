@@ -629,3 +629,13 @@ Also on the hub, but with copies elsewhere:
 - **2026-10-08 12:45 UTC heartbeat:** T5 r2 runs: main01 (04) epoch 2 best dev 0.381; main03 (13) epoch 2 best dev 0.383; **main02 (11) loader-starved** (epoch 0, 1,252 vs 8,371 rows/s step-only; host idle, no I/O). Sent to the T5 worker to diagnose and resume from checkpoint with identical math (11 has no 64 GB cap, so the 4-worker loader is allowed). Phase A 485 match dirs on the hub; Mac OK (25 GiB, 41% free). T11 store build on 01. No reclaims; console users 0.
 - **2026-10-08 12:53 UTC:** roader raised our caps on 127x13/14 from 64 to 96 processes (mesh fix done; roader keeps ≤16 light review processes). Every lent host is now ≤96, PSS ≤64 GB, ≥8 GB GPU free. Lease files and lease-ready receipts updated (old receipts kept as `.bak-cap64`).
 - **2026-10-08 13:44 UTC heartbeat:** 7 GPUs training: T5 v1 on 04/08/11/13/14 (main02 on 11 recovered to ~95% GPU) and T11 v2 on 16/18. Idle: 01/09/15 GPUs (reserved: 01 for the v4 perception formal runs after Phase A; 09/15 spare). Mac OK (26 GiB, 33% free, 369 matches this run). No pending worker questions; no reclaims; console users 0.
+- **2026-10-08 14:45 UTC: 127x11 (leased from roader) went offline at ~14:10Z**, taking T5 main02 and its local checkpoints. Third lab
+  host lost: 127x02 (CPU load, 23:25Z), 127x07 (CPU load, 01:14Z), 127x11 (GPU training at ~95%, CPU load ~5). No OOM or
+  thermal sign on the survivors; cause unknown, possibly physical (power-off/reboot by lab users). Not retrying; not touching tailscale.
+  **Decisions:**
+  1. main02 gets a pre-registered technical rerun from scratch (same seed 2026100802, same qualified code) on 127x01. Any
+     partial run from 11 is never merged.
+  2. All training runs (T5 v1, T11 v2, v4 perception) copy checkpoints off-host (to 127x04) at least every epoch or hourly.
+  3. The v4 perception formal runs move to 127x09/15 (and 04/08 once T5 frees them).
+  4. Roader told (its backup mirror dirs were on 11). 11's lease is void until the host returns. Sam told.
+  Mac OK (24 GiB, 422 matches this run).
