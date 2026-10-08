@@ -822,3 +822,10 @@ Also on the hub, but with copies elsewhere:
   - **Checks:** the engine and routes must accept the seeds, and the intersection against all inventories is re-run, before the reviewer delta check, freeze and launch.
   - RC-2b gate (c) cross-host exactness PASS.
 - **~23:15 UTC: command-delay research launched** (Opus). Sam doubts the 1.1 s backend delay. The research checks whether T2 "native acceptance" includes deploy time (possible double counting in d=27), where the 20-tick live-command age comes from, the official game's real latency, and how the model and planner should account for it.
+- **23:09 UTC heartbeat (utilization 8/11 usable GPUs busy):**
+  - **Busy:** 02 81%, 08 98%, 09/13/14/15 98%, 11 73%, 16 70%.
+  - **Problems:**
+    - **01 at 0%:** T11 seed 22's loaders were in D-state while the exploration A/B ran 80 sim workers on 01. The A/B is cut to ≤32 on 01 and moved to 04/08; T11 was told to fix the I/O (more loader workers, page-cache warm-up; target ≥70%).
+    - **04 at 0%:** the perception jobs there had ended, and the worker was told to relaunch packed passes.
+  - **Health:** 06/07/18 still down; no reclaims; no console users.
+- **~23:15 UTC: gates seed namespace.** The worker is implementing an offset namespace ≥2^44. NumPy's `np.random.seed` rejects >2^32−1, so there's a narrow full-width wrapper: below 2^32 the original call is used unchanged; above, `SeedSequence(full).generate_state(624)`, with no truncation. Models, masks and T=1 are unchanged. Plumbing for all routes and the 02↔03 exactness checks are re-running.
