@@ -1,0 +1,5573 @@
+{
+  "gate": "c",
+  "pairs": [
+    {
+      "pair": 0,
+      "mode": "scripts",
+      "seed": 3217600001,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "GoblinGang",
+          "Rocket",
+          "Knight",
+          "Princess",
+          "ElectroSpirit",
+          "GoblinBarrel",
+          "Tesla"
+        ],
+        [
+          "Princess",
+          "ElectroSpirit",
+          "Log",
+          "Rocket",
+          "Tesla",
+          "GoblinBarrel",
+          "Skeletons",
+          "Knight"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 1,
+      "mode": "scripts",
+      "seed": 3217601010,
+      "role": "eval",
+      "decks": [
+        [
+          "Poison",
+          "BarbLog",
+          "Cannon",
+          "Valkyrie",
+          "Skeletons",
+          "HogRider",
+          "IceSpirit",
+          "Firecracker"
+        ],
+        [
+          "Berserker",
+          "Archers",
+          "RoyalHogs",
+          "Skeletons",
+          "BombTower",
+          "Lightning",
+          "BarbLog",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 2,
+      "mode": "scripts",
+      "seed": 3217602019,
+      "role": "eval",
+      "decks": [
+        [
+          "Knight",
+          "Princess",
+          "Skeletons",
+          "Tesla",
+          "Rocket",
+          "GoblinBarrel",
+          "Log",
+          "ElectroSpirit"
+        ],
+        [
+          "Tesla",
+          "Log",
+          "ElectroSpirit",
+          "HogRider",
+          "Skeletons",
+          "Firecracker",
+          "Valkyrie",
+          "Earthquake"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 3,
+      "mode": "scripts",
+      "seed": 3217603028,
+      "role": "eval",
+      "decks": [
+        [
+          "IceSpirit",
+          "Miner",
+          "Tesla",
+          "Log",
+          "Berserker",
+          "RoyalDelivery",
+          "Skeletons",
+          "Rocket"
+        ],
+        [
+          "HogRider",
+          "BarbLog",
+          "MightyMiner",
+          "ElectroSpirit",
+          "Earthquake",
+          "Cannon",
+          "Firecracker",
+          "Skeletons"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 4,
+      "mode": "scripts",
+      "seed": 3217604037,
+      "role": "eval",
+      "decks": [
+        [
+          "Knight",
+          "Log",
+          "Skeletons",
+          "Princess",
+          "Tesla",
+          "Rocket",
+          "ElectroSpirit",
+          "GoblinBarrel"
+        ],
+        [
+          "Log",
+          "Archers",
+          "Xbow",
+          "Fireball",
+          "Skeletons",
+          "Tesla",
+          "Berserker",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 5,
+      "mode": "scripts",
+      "seed": 3217605046,
+      "role": "eval",
+      "decks": [
+        [
+          "IceSpirit",
+          "Earthquake",
+          "ArcherQueen",
+          "Log",
+          "HogRider",
+          "Valkyrie",
+          "Tesla",
+          "Skeletons"
+        ],
+        [
+          "GoblinBarrel",
+          "Wallbreakers",
+          "Valkyrie",
+          "BlowdartGoblin",
+          "IceSpirit",
+          "Cannon",
+          "SkeletonArmy",
+          "Princess"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 6,
+      "mode": "scripts",
+      "seed": 3217606055,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "Berserker",
+          "RoyalDelivery",
+          "Rocket",
+          "Log",
+          "Miner",
+          "IceSpirit",
+          "Tesla"
+        ],
+        [
+          "Log",
+          "MiniPekka",
+          "Princess",
+          "Bats",
+          "RoyalHogs",
+          "Fireball",
+          "IceGolem",
+          "GoblinGang"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 7,
+      "mode": "scripts",
+      "seed": 3217607064,
+      "role": "eval",
+      "decks": [
+        [
+          "Lightning",
+          "ElectroSpirit",
+          "Log",
+          "Skeletons",
+          "GoblinHut",
+          "RoyalHogs",
+          "FirespiritHut",
+          "Berserker"
+        ],
+        [
+          "InfernoTower",
+          "BlowdartGoblin",
+          "ElectroSpirit",
+          "Princess",
+          "SkeletonArmy",
+          "Knight",
+          "Log",
+          "GoblinBarrel"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 8,
+      "mode": "scripts",
+      "seed": 3217608073,
+      "role": "eval",
+      "decks": [
+        [
+          "IceGolem",
+          "Earthquake",
+          "Log",
+          "HogRider",
+          "Skeletons",
+          "Firecracker",
+          "AngryBarbarians",
+          "ElectroSpirit"
+        ],
+        [
+          "Fireball",
+          "HogRider",
+          "Cannon",
+          "IceSpirit",
+          "Log",
+          "IceGolem",
+          "Musketeer",
+          "Skeletons"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 9,
+      "mode": "scripts",
+      "seed": 3217609082,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "Fireball",
+          "MiniPekka",
+          "Log",
+          "Princess",
+          "GoblinGang",
+          "Bats",
+          "IceGolem"
+        ],
+        [
+          "SkeletonArmy",
+          "Valkyrie",
+          "Princess",
+          "Log",
+          "GoblinBarrel",
+          "Cannon",
+          "Rocket",
+          "BlowdartGoblin"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 10,
+      "mode": "scripts",
+      "seed": 3217610091,
+      "role": "eval",
+      "decks": [
+        [
+          "BarbLog",
+          "Firecracker",
+          "Skeletons",
+          "MightyMiner",
+          "Earthquake",
+          "ElectroSpirit",
+          "HogRider",
+          "Tesla"
+        ],
+        [
+          "IceSpirit",
+          "HogRider",
+          "Log",
+          "Fireball",
+          "Skeletons",
+          "Musketeer",
+          "Cannon",
+          "IceGolem"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 11,
+      "mode": "scripts",
+      "seed": 3217611100,
+      "role": "eval",
+      "decks": [
+        [
+          "SkeletonArmy",
+          "Log",
+          "InfernoTower",
+          "Princess",
+          "Knight",
+          "IceSpirit",
+          "GoblinBarrel",
+          "BlowdartGoblin"
+        ],
+        [
+          "IceGolem",
+          "Cannon",
+          "IceSpirit",
+          "HogRider",
+          "Fireball",
+          "Skeletons",
+          "Log",
+          "Musketeer"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 12,
+      "mode": "scripts",
+      "seed": 3217612109,
+      "role": "eval",
+      "decks": [
+        [
+          "IceSpirit",
+          "Earthquake",
+          "RoyalHogs",
+          "Cannon",
+          "Skeletons",
+          "Log",
+          "RoyalDelivery",
+          "ArcherQueen"
+        ],
+        [
+          "Cannon",
+          "ArcherQueen",
+          "IceSpirit",
+          "RoyalDelivery",
+          "Arrows",
+          "Skeletons",
+          "RoyalHogs",
+          "Earthquake"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 13,
+      "mode": "scripts",
+      "seed": 3217613118,
+      "role": "eval",
+      "decks": [
+        [
+          "HogRider",
+          "IceGolem",
+          "Skeletons",
+          "Cannon",
+          "Log",
+          "Fireball",
+          "Musketeer",
+          "ElectroSpirit"
+        ],
+        [
+          "BlowdartGoblin",
+          "Wallbreakers",
+          "InfernoTower",
+          "SkeletonArmy",
+          "MightyMiner",
+          "Log",
+          "ElectroSpirit",
+          "GoblinBarrel"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 14,
+      "mode": "scripts",
+      "seed": 3217614127,
+      "role": "eval",
+      "decks": [
+        [
+          "BarbLog",
+          "ElectroSpirit",
+          "Goblinstein",
+          "BabyDragon",
+          "Skeletons",
+          "BombTower",
+          "Lightning",
+          "RoyalHogs"
+        ],
+        [
+          "Cannon",
+          "Fireball",
+          "Musketeer",
+          "Skeletons",
+          "Log",
+          "IceGolem",
+          "HogRider",
+          "IceSpirit"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 15,
+      "mode": "scripts",
+      "seed": 3217615136,
+      "role": "eval",
+      "decks": [
+        [
+          "SkeletonArmy",
+          "Log",
+          "Princess",
+          "BlowdartGoblin",
+          "Knight",
+          "GoblinBarrel",
+          "InfernoTower",
+          "IceSpirit"
+        ],
+        [
+          "Skeletons",
+          "Cannon",
+          "Log",
+          "Fireball",
+          "Musketeer",
+          "HogRider",
+          "IceGolem",
+          "IceSpirit"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 16,
+      "mode": "scripts",
+      "seed": 3217616145,
+      "role": "eval",
+      "decks": [
+        [
+          "Berserker",
+          "Cannon",
+          "Skeletons",
+          "HogRider",
+          "Princess",
+          "Log",
+          "AngryBarbarians",
+          "Fireball"
+        ],
+        [
+          "InfernoTower",
+          "Princess",
+          "Log",
+          "Berserker",
+          "Bats",
+          "SkeletonArmy",
+          "Rocket",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 17,
+      "mode": "scripts",
+      "seed": 3217617154,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "IceGolem",
+          "IceSpirit",
+          "Skeletons",
+          "Musketeer",
+          "HogRider",
+          "Fireball",
+          "Cannon"
+        ],
+        [
+          "HogRider",
+          "Fireball",
+          "Cannon",
+          "Skeletons",
+          "Musketeer",
+          "Log",
+          "ElectroSpirit",
+          "IceGolem"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 18,
+      "mode": "scripts",
+      "seed": 3217618163,
+      "role": "eval",
+      "decks": [
+        [
+          "IceGolem",
+          "Log",
+          "Cannon",
+          "Skeletons",
+          "Musketeer",
+          "IceSpirit",
+          "HogRider",
+          "Fireball"
+        ],
+        [
+          "IceSpirit",
+          "Musketeer",
+          "Fireball",
+          "Log",
+          "Cannon",
+          "HogRider",
+          "Skeletons",
+          "IceGolem"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 19,
+      "mode": "scripts",
+      "seed": 3217619172,
+      "role": "eval",
+      "decks": [
+        [
+          "GoblinHut",
+          "Berserker",
+          "BarbLog",
+          "Fireball",
+          "ElectroSpirit",
+          "Ghost",
+          "RoyalHogs",
+          "FirespiritHut"
+        ],
+        [
+          "IceSpirit",
+          "Log",
+          "Cannon",
+          "Fireball",
+          "Skeletons",
+          "IceGolem",
+          "Musketeer",
+          "HogRider"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 20,
+      "mode": "scripts",
+      "seed": 3217620181,
+      "role": "eval",
+      "decks": [
+        [
+          "ElectroSpirit",
+          "Earthquake",
+          "MightyMiner",
+          "BarbLog",
+          "Firecracker",
+          "HogRider",
+          "Skeletons",
+          "Cannon"
+        ],
+        [
+          "Rocket",
+          "Princess",
+          "Log",
+          "MightyMiner",
+          "Goblins",
+          "IceSpirit",
+          "Cannon",
+          "GoblinBarrel"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 21,
+      "mode": "scripts",
+      "seed": 3217621190,
+      "role": "eval",
+      "decks": [
+        [
+          "Fireball",
+          "Xbow",
+          "Log",
+          "Berserker",
+          "Archers",
+          "Skeletons",
+          "ElectroSpirit",
+          "Tesla"
+        ],
+        [
+          "Fireball",
+          "ElectroSpirit",
+          "BarbLog",
+          "Ghost",
+          "Berserker",
+          "FirespiritHut",
+          "RoyalHogs",
+          "GoblinHut"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 22,
+      "mode": "scripts",
+      "seed": 3217622199,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "MightyMiner",
+          "Cannon",
+          "GoblinBarrel",
+          "Princess",
+          "IceSpirit",
+          "Rocket",
+          "Goblins"
+        ],
+        [
+          "Rocket",
+          "IceSpirit",
+          "GoblinBarrel",
+          "Goblins",
+          "Princess",
+          "Log",
+          "Cannon",
+          "MightyMiner"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 23,
+      "mode": "scripts",
+      "seed": 3217623208,
+      "role": "eval",
+      "decks": [
+        [
+          "Berserker",
+          "InfernoTower",
+          "GoblinBarrel",
+          "IceSpirit",
+          "Log",
+          "SkeletonArmy",
+          "Princess",
+          "Rocket"
+        ],
+        [
+          "MightyMiner",
+          "Cannon",
+          "Earthquake",
+          "HogRider",
+          "Firecracker",
+          "Log",
+          "ElectroSpirit",
+          "Skeletons"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 24,
+      "mode": "scripts",
+      "seed": 3217624217,
+      "role": "eval",
+      "decks": [
+        [
+          "IceSpirit",
+          "Fireball",
+          "Log",
+          "Skeletons",
+          "Musketeer",
+          "IceGolem",
+          "HogRider",
+          "Cannon"
+        ],
+        [
+          "Cannon",
+          "BarbLog",
+          "HogRider",
+          "Earthquake",
+          "Skeletons",
+          "ElectroSpirit",
+          "MightyMiner",
+          "Firecracker"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 25,
+      "mode": "scripts",
+      "seed": 3217625226,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "IceGolem",
+          "Musketeer",
+          "Log",
+          "Fireball",
+          "IceSpirit",
+          "HogRider",
+          "Cannon"
+        ],
+        [
+          "Firecracker",
+          "BarbLog",
+          "Lightning",
+          "IceSpirit",
+          "AngryBarbarians",
+          "Berserker",
+          "HogRider",
+          "Skeletons"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 26,
+      "mode": "scripts",
+      "seed": 3217626235,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "Lightning",
+          "BarbLog",
+          "Valkyrie",
+          "GoblinHut",
+          "Wizard",
+          "ElectroSpirit",
+          "Skeletons"
+        ],
+        [
+          "Valkyrie",
+          "Princess",
+          "Wallbreakers",
+          "GoblinBarrel",
+          "SkeletonArmy",
+          "BlowdartGoblin",
+          "IceSpirit",
+          "Cannon"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 27,
+      "mode": "scripts",
+      "seed": 3217627244,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "ElectroSpirit",
+          "Valkyrie",
+          "Lightning",
+          "GoblinHut",
+          "Wizard",
+          "Skeletons",
+          "BarbLog"
+        ],
+        [
+          "Log",
+          "IceSpirit",
+          "Fireball",
+          "Cannon",
+          "Musketeer",
+          "HogRider",
+          "Skeletons",
+          "IceGolem"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 28,
+      "mode": "scripts",
+      "seed": 3217628253,
+      "role": "eval",
+      "decks": [
+        [
+          "Cannon",
+          "IceGolem",
+          "Log",
+          "HogRider",
+          "Fireball",
+          "Skeletons",
+          "Musketeer",
+          "IceSpirit"
+        ],
+        [
+          "IceGolem",
+          "ElectroSpirit",
+          "Skeletons",
+          "Musketeer",
+          "Cannon",
+          "HogRider",
+          "Fireball",
+          "Log"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 29,
+      "mode": "scripts",
+      "seed": 3217629262,
+      "role": "eval",
+      "decks": [
+        [
+          "Berserker",
+          "Ghost",
+          "FirespiritHut",
+          "ElectroSpirit",
+          "GoblinHut",
+          "Lightning",
+          "BarbLog",
+          "RoyalHogs"
+        ],
+        [
+          "FirespiritHut",
+          "Fireball",
+          "GoblinHut",
+          "ElectroSpirit",
+          "Ghost",
+          "BarbLog",
+          "RoyalHogs",
+          "Berserker"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 30,
+      "mode": "scripts",
+      "seed": 3217630271,
+      "role": "eval",
+      "decks": [
+        [
+          "Earthquake",
+          "Firecracker",
+          "ElectroSpirit",
+          "Log",
+          "Skeletons",
+          "Cannon",
+          "MightyMiner",
+          "HogRider"
+        ],
+        [
+          "RoyalDelivery",
+          "Skeletons",
+          "Log",
+          "Berserker",
+          "Rocket",
+          "Princess",
+          "Cannon",
+          "IceSpirit"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 31,
+      "mode": "scripts",
+      "seed": 3217631280,
+      "role": "eval",
+      "decks": [
+        [
+          "Valkyrie",
+          "Wizard",
+          "BarbLog",
+          "Lightning",
+          "GoblinHut",
+          "RoyalHogs",
+          "Skeletons",
+          "ElectroSpirit"
+        ],
+        [
+          "Cannon",
+          "Fireball",
+          "Log",
+          "HogRider",
+          "IceSpirit",
+          "IceGolem",
+          "Musketeer",
+          "Skeletons"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 32,
+      "mode": "scripts",
+      "seed": 3217632289,
+      "role": "eval",
+      "decks": [
+        [
+          "Earthquake",
+          "Cannon",
+          "Firecracker",
+          "Skeletons",
+          "HogRider",
+          "MightyMiner",
+          "Log",
+          "ElectroSpirit"
+        ],
+        [
+          "Skeletons",
+          "Rocket",
+          "Knight",
+          "ElectroSpirit",
+          "Tesla",
+          "Log",
+          "Xbow",
+          "Archers"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 33,
+      "mode": "scripts",
+      "seed": 3217633298,
+      "role": "eval",
+      "decks": [
+        [
+          "Ghost",
+          "GoblinHut",
+          "RoyalHogs",
+          "Fireball",
+          "BarbLog",
+          "FirespiritHut",
+          "ElectroSpirit",
+          "Berserker"
+        ],
+        [
+          "GoblinBarrel",
+          "ElectroSpirit",
+          "SkeletonArmy",
+          "Valkyrie",
+          "BlowdartGoblin",
+          "Princess",
+          "Cannon",
+          "Wallbreakers"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 34,
+      "mode": "scripts",
+      "seed": 3217634307,
+      "role": "eval",
+      "decks": [
+        [
+          "Rocket",
+          "IceGolem",
+          "RoyalDelivery",
+          "DarkPrince",
+          "Tesla",
+          "Wallbreakers",
+          "Log",
+          "Miner"
+        ],
+        [
+          "Ghost",
+          "BarbLog",
+          "Berserker",
+          "FirespiritHut",
+          "Fireball",
+          "RoyalHogs",
+          "GoblinHut",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 35,
+      "mode": "scripts",
+      "seed": 3217635316,
+      "role": "eval",
+      "decks": [
+        [
+          "Musketeer",
+          "Skeletons",
+          "Fireball",
+          "ElectroSpirit",
+          "Log",
+          "Cannon",
+          "Knight",
+          "Xbow"
+        ],
+        [
+          "ElectroSpirit",
+          "Log",
+          "Archers",
+          "Xbow",
+          "Berserker",
+          "Tesla",
+          "Skeletons",
+          "Fireball"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 36,
+      "mode": "scripts",
+      "seed": 3217636325,
+      "role": "eval",
+      "decks": [
+        [
+          "Valkyrie",
+          "Wallbreakers",
+          "GoblinBarrel",
+          "SkeletonArmy",
+          "Princess",
+          "IceSpirit",
+          "BlowdartGoblin",
+          "Cannon"
+        ],
+        [
+          "ElectroSpirit",
+          "Cannon",
+          "Skeletons",
+          "Log",
+          "HogRider",
+          "MightyMiner",
+          "Firecracker",
+          "Earthquake"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 37,
+      "mode": "scripts",
+      "seed": 3217637334,
+      "role": "eval",
+      "decks": [
+        [
+          "Princess",
+          "GoblinGang",
+          "InfernoTower",
+          "Rocket",
+          "IceSpirit",
+          "GoblinBarrel",
+          "Log",
+          "Knight"
+        ],
+        [
+          "HogRider",
+          "MightyMiner",
+          "Skeletons",
+          "ElectroSpirit",
+          "Earthquake",
+          "Cannon",
+          "BarbLog",
+          "Firecracker"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 38,
+      "mode": "scripts",
+      "seed": 3217638343,
+      "role": "eval",
+      "decks": [
+        [
+          "Knight",
+          "IceSpirit",
+          "Log",
+          "BlowdartGoblin",
+          "SkeletonArmy",
+          "GoblinBarrel",
+          "InfernoTower",
+          "Princess"
+        ],
+        [
+          "Tesla",
+          "Earthquake",
+          "ElectroSpirit",
+          "Firecracker",
+          "Skeletons",
+          "HogRider",
+          "MightyMiner",
+          "BarbLog"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 39,
+      "mode": "scripts",
+      "seed": 3217639352,
+      "role": "eval",
+      "decks": [
+        [
+          "Goblins",
+          "Miner",
+          "Berserker",
+          "MinionHorde",
+          "InfernoTower",
+          "Log",
+          "Wallbreakers",
+          "Princess"
+        ],
+        [
+          "Cannon",
+          "GoblinBarrel",
+          "Wallbreakers",
+          "Valkyrie",
+          "BlowdartGoblin",
+          "Princess",
+          "SkeletonArmy",
+          "IceSpirit"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 40,
+      "mode": "scripts",
+      "seed": 3217640361,
+      "role": "eval",
+      "decks": [
+        [
+          "ElectroSpirit",
+          "GoblinGang",
+          "Princess",
+          "Berserker",
+          "Rocket",
+          "InfernoTower",
+          "GoblinBarrel",
+          "Log"
+        ],
+        [
+          "BarbLog",
+          "Lightning",
+          "BombTower",
+          "Archers",
+          "RoyalHogs",
+          "Skeletons",
+          "ElectroSpirit",
+          "Goblinstein"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 41,
+      "mode": "scripts",
+      "seed": 3217641370,
+      "role": "eval",
+      "decks": [
+        [
+          "Cannon",
+          "Musketeer",
+          "Skeletons",
+          "IceGolem",
+          "IceSpirit",
+          "HogRider",
+          "Log",
+          "Fireball"
+        ],
+        [
+          "Log",
+          "IceGolem",
+          "IceSpirit",
+          "Musketeer",
+          "HogRider",
+          "Fireball",
+          "Cannon",
+          "Skeletons"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 42,
+      "mode": "scripts",
+      "seed": 3217642379,
+      "role": "eval",
+      "decks": [
+        [
+          "ElectroSpirit",
+          "Tesla",
+          "Earthquake",
+          "Firecracker",
+          "Skeletons",
+          "MightyMiner",
+          "Log",
+          "HogRider"
+        ],
+        [
+          "Princess",
+          "Log",
+          "Tesla",
+          "Skeletons",
+          "Berserker",
+          "HogRider",
+          "IceSpirit",
+          "Lightning"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 43,
+      "mode": "scripts",
+      "seed": 3217643388,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "IceGolem",
+          "IceSpirit",
+          "Fireball",
+          "Cannon",
+          "Musketeer",
+          "HogRider",
+          "Skeletons"
+        ],
+        [
+          "Zap",
+          "AngryBarbarians",
+          "Fireball",
+          "Berserker",
+          "Minions",
+          "DarkPrince",
+          "HogRider",
+          "Musketeer"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 44,
+      "mode": "scripts",
+      "seed": 3217644397,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "ElectroSpirit",
+          "Tesla",
+          "Princess",
+          "Rocket",
+          "Log",
+          "Berserker",
+          "GoblinBarrel"
+        ],
+        [
+          "Goblinstein",
+          "RoyalHogs",
+          "Skeletons",
+          "Lightning",
+          "ElectroSpirit",
+          "BarbLog",
+          "Archers",
+          "BombTower"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 45,
+      "mode": "scripts",
+      "seed": 3217645406,
+      "role": "eval",
+      "decks": [
+        [
+          "Cannon",
+          "HogRider",
+          "IceGolem",
+          "Log",
+          "Skeletons",
+          "Fireball",
+          "Musketeer",
+          "IceSpirit"
+        ],
+        [
+          "SkeletonArmy",
+          "BlowdartGoblin",
+          "GoblinBarrel",
+          "Cannon",
+          "Wallbreakers",
+          "IceSpirit",
+          "Valkyrie",
+          "Princess"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 46,
+      "mode": "scripts",
+      "seed": 3217646415,
+      "role": "eval",
+      "decks": [
+        [
+          "IceSpirit",
+          "RoyalDelivery",
+          "Wallbreakers",
+          "BombTower",
+          "BlowdartGoblin",
+          "GoblinBarrel",
+          "Skeletons",
+          "Berserker"
+        ],
+        [
+          "Xbow",
+          "Tesla",
+          "ElectroSpirit",
+          "Log",
+          "Skeletons",
+          "Knight",
+          "Fireball",
+          "Archers"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 47,
+      "mode": "scripts",
+      "seed": 3217647424,
+      "role": "eval",
+      "decks": [
+        [
+          "Tesla",
+          "Log",
+          "Berserker",
+          "Firecracker",
+          "Lightning",
+          "Skeletons",
+          "HogRider",
+          "ElectroSpirit"
+        ],
+        [
+          "Xbow",
+          "ElectroSpirit",
+          "Fireball",
+          "Knight",
+          "Tesla",
+          "Skeletons",
+          "Log",
+          "Archers"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 48,
+      "mode": "scripts",
+      "seed": 3217648433,
+      "role": "eval",
+      "decks": [
+        [
+          "HogRider",
+          "Log",
+          "IceSpirit",
+          "Fireball",
+          "Musketeer",
+          "IceGolem",
+          "Cannon",
+          "Skeletons"
+        ],
+        [
+          "Firecracker",
+          "Earthquake",
+          "HogRider",
+          "Skeletons",
+          "ElectroSpirit",
+          "Log",
+          "MightyMiner",
+          "Cannon"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 49,
+      "mode": "scripts",
+      "seed": 3217649442,
+      "role": "eval",
+      "decks": [
+        [
+          "Wallbreakers",
+          "Princess",
+          "IceSpirit",
+          "Valkyrie",
+          "Cannon",
+          "GoblinBarrel",
+          "BlowdartGoblin",
+          "SkeletonArmy"
+        ],
+        [
+          "Log",
+          "IceGolem",
+          "Fireball",
+          "Cannon",
+          "IceSpirit",
+          "HogRider",
+          "Musketeer",
+          "Skeletons"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 50,
+      "mode": "scripts",
+      "seed": 3217650451,
+      "role": "eval",
+      "decks": [
+        [
+          "ElectroSpirit",
+          "FirespiritHut",
+          "BarbLog",
+          "RoyalHogs",
+          "GoblinHut",
+          "Berserker",
+          "Ghost",
+          "Lightning"
+        ],
+        [
+          "FirespiritHut",
+          "ElectroSpirit",
+          "GoblinHut",
+          "Berserker",
+          "RoyalHogs",
+          "Fireball",
+          "Ghost",
+          "BarbLog"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 51,
+      "mode": "scripts",
+      "seed": 3217651460,
+      "role": "eval",
+      "decks": [
+        [
+          "FirespiritHut",
+          "BarbLog",
+          "Ghost",
+          "Berserker",
+          "ElectroSpirit",
+          "RoyalHogs",
+          "Lightning",
+          "GoblinHut"
+        ],
+        [
+          "Lightning",
+          "Archers",
+          "Skeletons",
+          "ElectroSpirit",
+          "BarbLog",
+          "RoyalHogs",
+          "BombTower",
+          "Goblinstein"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 52,
+      "mode": "scripts",
+      "seed": 3217652469,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "Fireball",
+          "BarbLog",
+          "ElectroSpirit",
+          "Ghost",
+          "Berserker",
+          "FirespiritHut",
+          "GoblinHut"
+        ],
+        [
+          "Log",
+          "SkeletonArmy",
+          "ElectroSpirit",
+          "BlowdartGoblin",
+          "GoblinBarrel",
+          "InfernoTower",
+          "MightyMiner",
+          "Wallbreakers"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 53,
+      "mode": "scripts",
+      "seed": 3217653478,
+      "role": "eval",
+      "decks": [
+        [
+          "ElectroSpirit",
+          "Cannon",
+          "Log",
+          "Earthquake",
+          "Skeletons",
+          "MightyMiner",
+          "Firecracker",
+          "HogRider"
+        ],
+        [
+          "Rocket",
+          "Princess",
+          "Goblins",
+          "Cannon",
+          "IceSpirit",
+          "GoblinBarrel",
+          "Log",
+          "MightyMiner"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 54,
+      "mode": "scripts",
+      "seed": 3217654487,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "Skeletons",
+          "IceGolem",
+          "Musketeer",
+          "IceSpirit",
+          "Fireball",
+          "HogRider",
+          "Cannon"
+        ],
+        [
+          "IceGolem",
+          "Cannon",
+          "Skeletons",
+          "Log",
+          "Fireball",
+          "Berserker",
+          "Musketeer",
+          "HogRider"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 55,
+      "mode": "scripts",
+      "seed": 3217655496,
+      "role": "eval",
+      "decks": [
+        [
+          "Berserker",
+          "Ghost",
+          "BarbLog",
+          "GoblinHut",
+          "FirespiritHut",
+          "RoyalHogs",
+          "ElectroSpirit",
+          "Lightning"
+        ],
+        [
+          "BarbLog",
+          "Skeletons",
+          "Cannon",
+          "Earthquake",
+          "HogRider",
+          "ElectroSpirit",
+          "MightyMiner",
+          "Firecracker"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 56,
+      "mode": "scripts",
+      "seed": 3217656505,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "Fireball",
+          "GoblinHut",
+          "BarbLog",
+          "FirespiritHut",
+          "ElectroSpirit",
+          "Ghost",
+          "Berserker"
+        ],
+        [
+          "BarbLog",
+          "ElectroSpirit",
+          "Skeletons",
+          "Earthquake",
+          "MightyMiner",
+          "HogRider",
+          "Tesla",
+          "Firecracker"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 57,
+      "mode": "scripts",
+      "seed": 3217657514,
+      "role": "eval",
+      "decks": [
+        [
+          "Xbow",
+          "Tesla",
+          "Fireball",
+          "Archers",
+          "Knight",
+          "Skeletons",
+          "Log",
+          "ElectroSpirit"
+        ],
+        [
+          "Musketeer",
+          "ElectroSpirit",
+          "Skeletons",
+          "IceGolem",
+          "HogRider",
+          "Log",
+          "Fireball",
+          "Cannon"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 58,
+      "mode": "scripts",
+      "seed": 3217658523,
+      "role": "eval",
+      "decks": [
+        [
+          "BarbLog",
+          "Ghost",
+          "Berserker",
+          "Fireball",
+          "RoyalHogs",
+          "ElectroSpirit",
+          "FirespiritHut",
+          "GoblinHut"
+        ],
+        [
+          "RoyalHogs",
+          "GoblinGang",
+          "Firecracker",
+          "Knight",
+          "Minions",
+          "MiniPekka",
+          "Log",
+          "Fireball"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 59,
+      "mode": "scripts",
+      "seed": 3217659532,
+      "role": "eval",
+      "decks": [
+        [
+          "Fireball",
+          "Knight",
+          "Xbow",
+          "Log",
+          "Archers",
+          "Skeletons",
+          "Tesla",
+          "ElectroSpirit"
+        ],
+        [
+          "Musketeer",
+          "Cannon",
+          "Fireball",
+          "Skeletons",
+          "IceSpirit",
+          "IceGolem",
+          "HogRider",
+          "Log"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 60,
+      "mode": "scripts",
+      "seed": 3217660541,
+      "role": "eval",
+      "decks": [
+        [
+          "MightyMiner",
+          "Cannon",
+          "Earthquake",
+          "ElectroSpirit",
+          "BarbLog",
+          "Skeletons",
+          "Firecracker",
+          "HogRider"
+        ],
+        [
+          "Musketeer",
+          "Cannon",
+          "IceGolem",
+          "Log",
+          "Fireball",
+          "HogRider",
+          "Skeletons",
+          "IceSpirit"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 61,
+      "mode": "scripts",
+      "seed": 3217661550,
+      "role": "eval",
+      "decks": [
+        [
+          "InfernoTower",
+          "BlowdartGoblin",
+          "ElectroSpirit",
+          "GoblinBarrel",
+          "Princess",
+          "Log",
+          "Knight",
+          "SkeletonArmy"
+        ],
+        [
+          "Valkyrie",
+          "ArcherQueen",
+          "HogRider",
+          "IceSpirit",
+          "Skeletons",
+          "Archers",
+          "AngryBarbarians",
+          "Log"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 62,
+      "mode": "scripts",
+      "seed": 3217662559,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "FirespiritHut",
+          "GoblinHut",
+          "Ghost",
+          "BarbLog",
+          "Berserker",
+          "Lightning",
+          "ElectroSpirit"
+        ],
+        [
+          "GoblinHut",
+          "Skeletons",
+          "ElectroSpirit",
+          "Berserker",
+          "BarbLog",
+          "RoyalHogs",
+          "FirespiritHut",
+          "Lightning"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 63,
+      "mode": "scripts",
+      "seed": 3217663568,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "Archers",
+          "Tesla",
+          "Fireball",
+          "ElectroSpirit",
+          "Knight",
+          "Xbow",
+          "Skeletons"
+        ],
+        [
+          "Log",
+          "IceSpirit",
+          "Fireball",
+          "Skeletons",
+          "Musketeer",
+          "IceGolem",
+          "HogRider",
+          "Cannon"
+        ]
+      ],
+      "style": "balanced"
+    },
+    {
+      "pair": 64,
+      "mode": "scripts",
+      "seed": 3217664577,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "Musketeer",
+          "Cannon",
+          "IceGolem",
+          "Log",
+          "HogRider",
+          "Fireball",
+          "ElectroSpirit"
+        ],
+        [
+          "Cannon",
+          "Skeletons",
+          "IceSpirit",
+          "ArcherQueen",
+          "RoyalHogs",
+          "Earthquake",
+          "Log",
+          "RoyalDelivery"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 65,
+      "mode": "scripts",
+      "seed": 3217665586,
+      "role": "eval",
+      "decks": [
+        [
+          "Berserker",
+          "Ghost",
+          "BarbLog",
+          "GoblinHut",
+          "RoyalHogs",
+          "Fireball",
+          "FirespiritHut",
+          "ElectroSpirit"
+        ],
+        [
+          "HogRider",
+          "Cannon",
+          "Earthquake",
+          "Skeletons",
+          "Log",
+          "Goblinstein",
+          "Firecracker",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 66,
+      "mode": "scripts",
+      "seed": 3217666595,
+      "role": "eval",
+      "decks": [
+        [
+          "Earthquake",
+          "Firecracker",
+          "ElectroSpirit",
+          "Cannon",
+          "HogRider",
+          "Skeletons",
+          "MightyMiner",
+          "BarbLog"
+        ],
+        [
+          "MightyMiner",
+          "ElectroSpirit",
+          "Skeletons",
+          "Firecracker",
+          "Earthquake",
+          "Cannon",
+          "BarbLog",
+          "HogRider"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 67,
+      "mode": "scripts",
+      "seed": 3217667604,
+      "role": "eval",
+      "decks": [
+        [
+          "Cannon",
+          "RoyalHogs",
+          "Log",
+          "RoyalDelivery",
+          "IceSpirit",
+          "Skeletons",
+          "ArcherQueen",
+          "Earthquake"
+        ],
+        [
+          "ElectroSpirit",
+          "Berserker",
+          "Fireball",
+          "Ghost",
+          "BarbLog",
+          "FirespiritHut",
+          "GoblinHut",
+          "RoyalHogs"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 68,
+      "mode": "scripts",
+      "seed": 3217668613,
+      "role": "eval",
+      "decks": [
+        [
+          "BarbLog",
+          "RoyalHogs",
+          "FirespiritHut",
+          "Ghost",
+          "Berserker",
+          "GoblinHut",
+          "ElectroSpirit",
+          "Fireball"
+        ],
+        [
+          "Skeletons",
+          "Princess",
+          "Rocket",
+          "Log",
+          "Tesla",
+          "ElectroSpirit",
+          "Berserker",
+          "GoblinBarrel"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 69,
+      "mode": "scripts",
+      "seed": 3217669622,
+      "role": "eval",
+      "decks": [
+        [
+          "Earthquake",
+          "Firecracker",
+          "ElectroSpirit",
+          "Cannon",
+          "Skeletons",
+          "HogRider",
+          "BarbLog",
+          "MightyMiner"
+        ],
+        [
+          "ElectroSpirit",
+          "Princess",
+          "Knight",
+          "Rocket",
+          "Log",
+          "InfernoTower",
+          "GoblinBarrel",
+          "GoblinGang"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 70,
+      "mode": "scripts",
+      "seed": 3217670631,
+      "role": "eval",
+      "decks": [
+        [
+          "BarbLog",
+          "Fireball",
+          "Ghost",
+          "Berserker",
+          "GoblinHut",
+          "ElectroSpirit",
+          "FirespiritHut",
+          "RoyalHogs"
+        ],
+        [
+          "Musketeer",
+          "HogRider",
+          "Log",
+          "Skeletons",
+          "Fireball",
+          "Cannon",
+          "IceSpirit",
+          "IceGolem"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 71,
+      "mode": "scripts",
+      "seed": 3217671640,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalDelivery",
+          "Cannon",
+          "ElectroSpirit",
+          "ArcherQueen",
+          "Skeletons",
+          "Berserker",
+          "Earthquake",
+          "RoyalHogs"
+        ],
+        [
+          "BarbLog",
+          "Archers",
+          "Lightning",
+          "Skeletons",
+          "ElectroSpirit",
+          "BombTower",
+          "Goblinstein",
+          "RoyalHogs"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 72,
+      "mode": "scripts",
+      "seed": 3217672649,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "Berserker",
+          "GoblinHut",
+          "Lightning",
+          "Log",
+          "FirespiritHut",
+          "ElectroSpirit",
+          "Skeletons"
+        ],
+        [
+          "ElectroSpirit",
+          "MightyMiner",
+          "Earthquake",
+          "Cannon",
+          "HogRider",
+          "Skeletons",
+          "BarbLog",
+          "Firecracker"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 73,
+      "mode": "scripts",
+      "seed": 3217673658,
+      "role": "eval",
+      "decks": [
+        [
+          "Xbow",
+          "ElectroSpirit",
+          "Fireball",
+          "Log",
+          "Skeletons",
+          "Tesla",
+          "Archers",
+          "Berserker"
+        ],
+        [
+          "IceSpirit",
+          "Cannon",
+          "Berserker",
+          "GoblinBarrel",
+          "Skeletons",
+          "Rocket",
+          "Log",
+          "BlowdartGoblin"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 74,
+      "mode": "scripts",
+      "seed": 3217674667,
+      "role": "eval",
+      "decks": [
+        [
+          "Princess",
+          "Log",
+          "SkeletonArmy",
+          "InfernoTower",
+          "GoblinBarrel",
+          "BlowdartGoblin",
+          "Knight",
+          "IceSpirit"
+        ],
+        [
+          "BarbLog",
+          "Skeletons",
+          "ElectroSpirit",
+          "Fireball",
+          "RoyalHogs",
+          "GoblinHut",
+          "AngryBarbarians",
+          "Goblinstein"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 75,
+      "mode": "scripts",
+      "seed": 3217675676,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "Goblinstein",
+          "Archers",
+          "ElectroSpirit",
+          "BarbLog",
+          "BombTower",
+          "Lightning",
+          "RoyalHogs"
+        ],
+        [
+          "Skeletons",
+          "Lightning",
+          "Wizard",
+          "Berserker",
+          "RoyalHogs",
+          "BarbLog",
+          "ElectroSpirit",
+          "GoblinHut"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 76,
+      "mode": "scripts",
+      "seed": 3217676685,
+      "role": "eval",
+      "decks": [
+        [
+          "FireSpirits",
+          "Princess",
+          "BlowdartGoblin",
+          "GoblinBarrel",
+          "Knight",
+          "InfernoTower",
+          "SkeletonArmy",
+          "Log"
+        ],
+        [
+          "Fireball",
+          "ElectroSpirit",
+          "Knight",
+          "Log",
+          "Archers",
+          "Tesla",
+          "Xbow",
+          "Skeletons"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 77,
+      "mode": "scripts",
+      "seed": 3217677694,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "Log",
+          "GoblinBarrel",
+          "Princess",
+          "Tesla",
+          "Knight",
+          "Rocket",
+          "ElectroSpirit"
+        ],
+        [
+          "IceSpirit",
+          "SkeletonArmy",
+          "Wallbreakers",
+          "GoblinBarrel",
+          "Princess",
+          "BlowdartGoblin",
+          "Cannon",
+          "Valkyrie"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 78,
+      "mode": "scripts",
+      "seed": 3217678703,
+      "role": "eval",
+      "decks": [
+        [
+          "Valkyrie",
+          "IceSpirit",
+          "Log",
+          "GoblinBarrel",
+          "BlowdartGoblin",
+          "Princess",
+          "Cannon",
+          "SkeletonArmy"
+        ],
+        [
+          "Musketeer",
+          "Log",
+          "Skeletons",
+          "Cannon",
+          "HogRider",
+          "IceGolem",
+          "IceSpirit",
+          "Fireball"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 79,
+      "mode": "scripts",
+      "seed": 3217679712,
+      "role": "eval",
+      "decks": [
+        [
+          "Princess",
+          "Log",
+          "Goblins",
+          "MinionHorde",
+          "Berserker",
+          "InfernoTower",
+          "Wallbreakers",
+          "Miner"
+        ],
+        [
+          "ElectroSpirit",
+          "Berserker",
+          "Xbow",
+          "Fireball",
+          "Skeletons",
+          "Tesla",
+          "Log",
+          "Archers"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 80,
+      "mode": "scripts",
+      "seed": 3217680721,
+      "role": "eval",
+      "decks": [
+        [
+          "Berserker",
+          "BarbLog",
+          "RoyalHogs",
+          "GoblinHut",
+          "Ghost",
+          "Fireball",
+          "FirespiritHut",
+          "ElectroSpirit"
+        ],
+        [
+          "BarbLog",
+          "ElectroSpirit",
+          "Skeletons",
+          "Earthquake",
+          "Firecracker",
+          "Cannon",
+          "MightyMiner",
+          "HogRider"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 81,
+      "mode": "scripts",
+      "seed": 3217681730,
+      "role": "eval",
+      "decks": [
+        [
+          "Musketeer",
+          "Cannon",
+          "IceSpirit",
+          "Log",
+          "HogRider",
+          "IceGolem",
+          "Skeletons",
+          "Fireball"
+        ],
+        [
+          "MightyMiner",
+          "Earthquake",
+          "HogRider",
+          "Log",
+          "Cannon",
+          "Skeletons",
+          "Firecracker",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 82,
+      "mode": "scripts",
+      "seed": 3217682739,
+      "role": "eval",
+      "decks": [
+        [
+          "Archers",
+          "RoyalHogs",
+          "ElectroSpirit",
+          "Berserker",
+          "Skeletons",
+          "BarbLog",
+          "BombTower",
+          "Lightning"
+        ],
+        [
+          "Archers",
+          "ElectroSpirit",
+          "Fireball",
+          "BombTower",
+          "BarbLog",
+          "Berserker",
+          "RoyalHogs",
+          "Skeletons"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 83,
+      "mode": "scripts",
+      "seed": 3217683748,
+      "role": "eval",
+      "decks": [
+        [
+          "BarbLog",
+          "Skeletons",
+          "RoyalHogs",
+          "ElectroSpirit",
+          "GoblinHut",
+          "Wizard",
+          "Lightning",
+          "AngryBarbarians"
+        ],
+        [
+          "Goblinstein",
+          "Archers",
+          "RoyalHogs",
+          "Skeletons",
+          "ElectroSpirit",
+          "Lightning",
+          "BombTower",
+          "BarbLog"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 84,
+      "mode": "scripts",
+      "seed": 3217684757,
+      "role": "eval",
+      "decks": [
+        [
+          "SkeletonArmy",
+          "Valkyrie",
+          "BlowdartGoblin",
+          "Wallbreakers",
+          "Princess",
+          "Cannon",
+          "GoblinBarrel",
+          "IceSpirit"
+        ],
+        [
+          "RoyalHogs",
+          "FirespiritHut",
+          "Berserker",
+          "ElectroSpirit",
+          "Skeletons",
+          "GoblinHut",
+          "Log",
+          "Lightning"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 85,
+      "mode": "scripts",
+      "seed": 3217685766,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalDelivery",
+          "ArcherQueen",
+          "Skeletons",
+          "IceSpirit",
+          "Cannon",
+          "Earthquake",
+          "RoyalHogs",
+          "Log"
+        ],
+        [
+          "InfernoTower",
+          "Knight",
+          "BlowdartGoblin",
+          "SkeletonArmy",
+          "GoblinBarrel",
+          "IceSpirit",
+          "Princess",
+          "Log"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 86,
+      "mode": "scripts",
+      "seed": 3217686775,
+      "role": "eval",
+      "decks": [
+        [
+          "GoblinBarrel",
+          "Princess",
+          "Rascals",
+          "MightyMiner",
+          "InfernoTower",
+          "SkeletonArmy",
+          "Log",
+          "Wallbreakers"
+        ],
+        [
+          "InfernoTower",
+          "Princess",
+          "Knight",
+          "GoblinGang",
+          "GoblinBarrel",
+          "Log",
+          "IceSpirit",
+          "Rocket"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 87,
+      "mode": "scripts",
+      "seed": 3217687784,
+      "role": "eval",
+      "decks": [
+        [
+          "ElectroSpirit",
+          "GoblinHut",
+          "Berserker",
+          "Archers",
+          "RoyalHogs",
+          "Fireball",
+          "BarbLog",
+          "Ghost"
+        ],
+        [
+          "HogRider",
+          "IceSpirit",
+          "IceGolem",
+          "Skeletons",
+          "Fireball",
+          "Log",
+          "Cannon",
+          "Musketeer"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 88,
+      "mode": "scripts",
+      "seed": 3217688793,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "FirespiritHut",
+          "GoblinHut",
+          "Ghost",
+          "ElectroSpirit",
+          "Fireball",
+          "Berserker",
+          "BarbLog"
+        ],
+        [
+          "GoblinBarrel",
+          "Knight",
+          "SkeletonArmy",
+          "Princess",
+          "Log",
+          "ElectroSpirit",
+          "Cannon",
+          "BlowdartGoblin"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 89,
+      "mode": "scripts",
+      "seed": 3217689802,
+      "role": "eval",
+      "decks": [
+        [
+          "HogRider",
+          "Skeletons",
+          "Earthquake",
+          "Cannon",
+          "Firecracker",
+          "Log",
+          "MightyMiner",
+          "ElectroSpirit"
+        ],
+        [
+          "ElectroSpirit",
+          "Fireball",
+          "Log",
+          "Tesla",
+          "Archers",
+          "Xbow",
+          "Knight",
+          "Skeletons"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 90,
+      "mode": "scripts",
+      "seed": 3217690811,
+      "role": "eval",
+      "decks": [
+        [
+          "ElectroSpirit",
+          "Wizard",
+          "Valkyrie",
+          "GoblinHut",
+          "RoyalHogs",
+          "Skeletons",
+          "BarbLog",
+          "Lightning"
+        ],
+        [
+          "Skeletons",
+          "Earthquake",
+          "Princess",
+          "HogRider",
+          "Berserker",
+          "Tesla",
+          "Log",
+          "IceSpirit"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 91,
+      "mode": "scripts",
+      "seed": 3217691820,
+      "role": "eval",
+      "decks": [
+        [
+          "ElectroSpirit",
+          "Musketeer",
+          "HogRider",
+          "Fireball",
+          "Skeletons",
+          "IceGolem",
+          "Cannon",
+          "Log"
+        ],
+        [
+          "Wallbreakers",
+          "Princess",
+          "Valkyrie",
+          "Cannon",
+          "IceSpirit",
+          "GoblinBarrel",
+          "SkeletonArmy",
+          "BlowdartGoblin"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 92,
+      "mode": "scripts",
+      "seed": 3217692829,
+      "role": "eval",
+      "decks": [
+        [
+          "SkeletonArmy",
+          "Valkyrie",
+          "IceSpirit",
+          "BlowdartGoblin",
+          "GoblinBarrel",
+          "Log",
+          "Princess",
+          "Cannon"
+        ],
+        [
+          "GoblinBarrel",
+          "Tesla",
+          "Knight",
+          "Rocket",
+          "ElectroSpirit",
+          "Princess",
+          "Log",
+          "Skeletons"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 93,
+      "mode": "scripts",
+      "seed": 3217693838,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "Fireball",
+          "IceSpirit",
+          "Musketeer",
+          "Skeletons",
+          "Cannon",
+          "HogRider",
+          "IceGolem"
+        ],
+        [
+          "Tesla",
+          "Fireball",
+          "Xbow",
+          "Knight",
+          "Musketeer",
+          "Skeletons",
+          "Log",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 94,
+      "mode": "scripts",
+      "seed": 3217694847,
+      "role": "eval",
+      "decks": [
+        [
+          "Earthquake",
+          "HogRider",
+          "Cannon",
+          "Skeletons",
+          "MightyMiner",
+          "ElectroSpirit",
+          "Firecracker",
+          "Log"
+        ],
+        [
+          "IceGolem",
+          "Skeletons",
+          "Cannon",
+          "HogRider",
+          "Musketeer",
+          "Fireball",
+          "IceSpirit",
+          "Log"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 95,
+      "mode": "scripts",
+      "seed": 3217695856,
+      "role": "eval",
+      "decks": [
+        [
+          "IceGolem",
+          "HogRider",
+          "Skeletons",
+          "Log",
+          "Musketeer",
+          "Fireball",
+          "Cannon",
+          "ElectroSpirit"
+        ],
+        [
+          "FirespiritHut",
+          "ElectroSpirit",
+          "RoyalHogs",
+          "GoblinHut",
+          "Lightning",
+          "Log",
+          "Skeletons",
+          "Berserker"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 96,
+      "mode": "scripts",
+      "seed": 3217696865,
+      "role": "eval",
+      "decks": [
+        [
+          "FirespiritHut",
+          "RoyalDelivery",
+          "DarkPrince",
+          "ElectroSpirit",
+          "Fireball",
+          "Berserker",
+          "GoblinHut",
+          "RoyalHogs"
+        ],
+        [
+          "ElectroSpirit",
+          "Skeletons",
+          "GoblinBarrel",
+          "Knight",
+          "IceSpirit",
+          "BlowdartGoblin",
+          "Log",
+          "Cannon"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 97,
+      "mode": "scripts",
+      "seed": 3217697874,
+      "role": "eval",
+      "decks": [
+        [
+          "GoblinBarrel",
+          "Rocket",
+          "Log",
+          "Knight",
+          "ElectroSpirit",
+          "Princess",
+          "Tesla",
+          "Skeletons"
+        ],
+        [
+          "Skeletons",
+          "RoyalDelivery",
+          "RoyalHogs",
+          "Cannon",
+          "IceSpirit",
+          "ArcherQueen",
+          "Earthquake",
+          "Log"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 98,
+      "mode": "scripts",
+      "seed": 3217698883,
+      "role": "eval",
+      "decks": [
+        [
+          "GoblinBarrel",
+          "InfernoTower",
+          "SkeletonArmy",
+          "BlowdartGoblin",
+          "Log",
+          "IceSpirit",
+          "Knight",
+          "Princess"
+        ],
+        [
+          "RoyalHogs",
+          "Lightning",
+          "BarbLog",
+          "BombTower",
+          "ElectroSpirit",
+          "Archers",
+          "Goblinstein",
+          "Skeletons"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 99,
+      "mode": "scripts",
+      "seed": 3217699892,
+      "role": "eval",
+      "decks": [
+        [
+          "Fireball",
+          "Berserker",
+          "BabyDragon",
+          "AngryBarbarians",
+          "ElectroSpirit",
+          "Skeletons",
+          "BombTower",
+          "Log"
+        ],
+        [
+          "HogRider",
+          "Log",
+          "ElectroSpirit",
+          "IceGolem",
+          "Musketeer",
+          "Skeletons",
+          "Fireball",
+          "Cannon"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 100,
+      "mode": "scripts",
+      "seed": 3217700901,
+      "role": "eval",
+      "decks": [
+        [
+          "IceSpirit",
+          "Princess",
+          "BlowdartGoblin",
+          "Valkyrie",
+          "SkeletonArmy",
+          "Wallbreakers",
+          "GoblinBarrel",
+          "Cannon"
+        ],
+        [
+          "Skeletons",
+          "ElectroSpirit",
+          "Log",
+          "Earthquake",
+          "HogRider",
+          "Firecracker",
+          "Cannon",
+          "MightyMiner"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 101,
+      "mode": "scripts",
+      "seed": 3217701910,
+      "role": "eval",
+      "decks": [
+        [
+          "ElectroSpirit",
+          "Log",
+          "Firecracker",
+          "Earthquake",
+          "Skeletons",
+          "MightyMiner",
+          "HogRider",
+          "Cannon"
+        ],
+        [
+          "BombTower",
+          "Goblinstein",
+          "Lightning",
+          "RoyalHogs",
+          "BarbLog",
+          "ElectroSpirit",
+          "Skeletons",
+          "Archers"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 102,
+      "mode": "scripts",
+      "seed": 3217702919,
+      "role": "eval",
+      "decks": [
+        [
+          "Musketeer",
+          "HogRider",
+          "Lightning",
+          "Log",
+          "Cannon",
+          "Skeletons",
+          "IceSpirit",
+          "IceGolem"
+        ],
+        [
+          "Fireball",
+          "HogRider",
+          "IceGolem",
+          "Musketeer",
+          "IceSpirit",
+          "Cannon",
+          "Skeletons",
+          "Log"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 103,
+      "mode": "scripts",
+      "seed": 3217703928,
+      "role": "eval",
+      "decks": [
+        [
+          "HogRider",
+          "Firecracker",
+          "Skeletons",
+          "MightyMiner",
+          "ElectroSpirit",
+          "Log",
+          "Cannon",
+          "Earthquake"
+        ],
+        [
+          "IceSpirit",
+          "RoyalHogs",
+          "Skeletons",
+          "Cannon",
+          "ArcherQueen",
+          "Log",
+          "RoyalDelivery",
+          "Earthquake"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 104,
+      "mode": "scripts",
+      "seed": 3217704937,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "Musketeer",
+          "ElectroSpirit",
+          "IceGolem",
+          "Cannon",
+          "HogRider",
+          "Log",
+          "Fireball"
+        ],
+        [
+          "Cannon",
+          "Fireball",
+          "HogRider",
+          "IceSpirit",
+          "Musketeer",
+          "Log",
+          "Skeletons",
+          "IceGolem"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 105,
+      "mode": "scripts",
+      "seed": 3217705946,
+      "role": "eval",
+      "decks": [
+        [
+          "Cannon",
+          "Earthquake",
+          "ElectroSpirit",
+          "Skeletons",
+          "BarbLog",
+          "MightyMiner",
+          "HogRider",
+          "Firecracker"
+        ],
+        [
+          "Wallbreakers",
+          "Cannon",
+          "Valkyrie",
+          "Princess",
+          "IceSpirit",
+          "BlowdartGoblin",
+          "SkeletonArmy",
+          "GoblinBarrel"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 106,
+      "mode": "scripts",
+      "seed": 3217706955,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "FirespiritHut",
+          "Fireball",
+          "Ghost",
+          "BarbLog",
+          "ElectroSpirit",
+          "GoblinHut",
+          "Berserker"
+        ],
+        [
+          "Fireball",
+          "Log",
+          "Skeletons",
+          "ElectroSpirit",
+          "IceGolem",
+          "Musketeer",
+          "HogRider",
+          "Cannon"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 107,
+      "mode": "scripts",
+      "seed": 3217707964,
+      "role": "eval",
+      "decks": [
+        [
+          "SkeletonArmy",
+          "InfernoTower",
+          "GoblinBarrel",
+          "ElectroSpirit",
+          "BlowdartGoblin",
+          "Log",
+          "Princess",
+          "Knight"
+        ],
+        [
+          "Fireball",
+          "Skeletons",
+          "IceGolem",
+          "Musketeer",
+          "Log",
+          "Cannon",
+          "HogRider",
+          "IceSpirit"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 108,
+      "mode": "scripts",
+      "seed": 3217708973,
+      "role": "eval",
+      "decks": [
+        [
+          "BarbLog",
+          "RoyalHogs",
+          "Lightning",
+          "ElectroSpirit",
+          "FirespiritHut",
+          "Berserker",
+          "Skeletons",
+          "Tesla"
+        ],
+        [
+          "Log",
+          "ElectroSpirit",
+          "Knight",
+          "Princess",
+          "GoblinBarrel",
+          "Cannon",
+          "BlowdartGoblin",
+          "Skeletons"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 109,
+      "mode": "scripts",
+      "seed": 3217709982,
+      "role": "eval",
+      "decks": [
+        [
+          "Tesla",
+          "Archers",
+          "Fireball",
+          "Berserker",
+          "Xbow",
+          "ElectroSpirit",
+          "Skeletons",
+          "Log"
+        ],
+        [
+          "GoblinHut",
+          "Ghost",
+          "FirespiritHut",
+          "Berserker",
+          "BarbLog",
+          "RoyalHogs",
+          "ElectroSpirit",
+          "Fireball"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 110,
+      "mode": "scripts",
+      "seed": 3217710991,
+      "role": "eval",
+      "decks": [
+        [
+          "SkeletonArmy",
+          "Knight",
+          "IceSpirit",
+          "BlowdartGoblin",
+          "Princess",
+          "GoblinBarrel",
+          "Log",
+          "InfernoTower"
+        ],
+        [
+          "Berserker",
+          "ElectroSpirit",
+          "FirespiritHut",
+          "BarbLog",
+          "Ghost",
+          "Fireball",
+          "GoblinHut",
+          "RoyalHogs"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 111,
+      "mode": "scripts",
+      "seed": 3217712000,
+      "role": "eval",
+      "decks": [
+        [
+          "Musketeer",
+          "HogRider",
+          "Fireball",
+          "IceSpirit",
+          "Skeletons",
+          "Log",
+          "Cannon",
+          "IceGolem"
+        ],
+        [
+          "Lightning",
+          "Skeletons",
+          "HogRider",
+          "AngryBarbarians",
+          "Tesla",
+          "Musketeer",
+          "ElectroSpirit",
+          "Log"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 112,
+      "mode": "scripts",
+      "seed": 3217713009,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "Musketeer",
+          "Cannon",
+          "Log",
+          "Fireball",
+          "HogRider",
+          "IceGolem",
+          "IceSpirit"
+        ],
+        [
+          "Log",
+          "Firecracker",
+          "ElectroSpirit",
+          "MightyMiner",
+          "HogRider",
+          "Skeletons",
+          "Tesla",
+          "Earthquake"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 113,
+      "mode": "scripts",
+      "seed": 3217714018,
+      "role": "eval",
+      "decks": [
+        [
+          "Lightning",
+          "Berserker",
+          "FirespiritHut",
+          "Ghost",
+          "RoyalHogs",
+          "ElectroSpirit",
+          "BarbLog",
+          "GoblinHut"
+        ],
+        [
+          "MightyMiner",
+          "ElectroSpirit",
+          "BarbLog",
+          "HogRider",
+          "Skeletons",
+          "Cannon",
+          "Firecracker",
+          "Earthquake"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 114,
+      "mode": "scripts",
+      "seed": 3217715027,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "ElectroSpirit",
+          "Archers",
+          "Goblinstein",
+          "RoyalHogs",
+          "BarbLog",
+          "BombTower",
+          "Lightning"
+        ],
+        [
+          "HogRider",
+          "Cannon",
+          "Firecracker",
+          "Skeletons",
+          "Earthquake",
+          "MightyMiner",
+          "BarbLog",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 115,
+      "mode": "scripts",
+      "seed": 3217716036,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "HogRider",
+          "Musketeer",
+          "IceGolem",
+          "Fireball",
+          "Skeletons",
+          "IceSpirit",
+          "Cannon"
+        ],
+        [
+          "Bats",
+          "Poison",
+          "Log",
+          "Miner",
+          "Wallbreakers",
+          "Tesla",
+          "Goblins",
+          "Knight"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 116,
+      "mode": "scripts",
+      "seed": 3217717045,
+      "role": "eval",
+      "decks": [
+        [
+          "MightyMiner",
+          "Firecracker",
+          "Skeletons",
+          "Earthquake",
+          "Cannon",
+          "HogRider",
+          "Log",
+          "ElectroSpirit"
+        ],
+        [
+          "GoblinBarrel",
+          "Log",
+          "Rocket",
+          "Knight",
+          "Princess",
+          "IceSpirit",
+          "InfernoTower",
+          "SkeletonArmy"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 117,
+      "mode": "scripts",
+      "seed": 3217718054,
+      "role": "eval",
+      "decks": [
+        [
+          "HogRider",
+          "Skeletons",
+          "Log",
+          "Fireball",
+          "Musketeer",
+          "IceSpirit",
+          "IceGolem",
+          "Cannon"
+        ],
+        [
+          "Cannon",
+          "HogRider",
+          "Fireball",
+          "IceSpirit",
+          "IceGolem",
+          "Log",
+          "Skeletons",
+          "Musketeer"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 118,
+      "mode": "scripts",
+      "seed": 3217719063,
+      "role": "eval",
+      "decks": [
+        [
+          "Cannon",
+          "Firecracker",
+          "Earthquake",
+          "ElectroSpirit",
+          "Log",
+          "HogRider",
+          "MightyMiner",
+          "Skeletons"
+        ],
+        [
+          "RoyalHogs",
+          "Fireball",
+          "Log",
+          "Knight",
+          "Bats",
+          "Princess",
+          "GoblinGang",
+          "MiniPekka"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 119,
+      "mode": "scripts",
+      "seed": 3217720072,
+      "role": "eval",
+      "decks": [
+        [
+          "Earthquake",
+          "ElectroSpirit",
+          "HogRider",
+          "Log",
+          "MightyMiner",
+          "Firecracker",
+          "Tesla",
+          "Skeletons"
+        ],
+        [
+          "Archers",
+          "Knight",
+          "Skeletons",
+          "Tesla",
+          "Log",
+          "Fireball",
+          "ElectroSpirit",
+          "Xbow"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 120,
+      "mode": "scripts",
+      "seed": 3217721081,
+      "role": "eval",
+      "decks": [
+        [
+          "Earthquake",
+          "ElectroSpirit",
+          "Firecracker",
+          "HogRider",
+          "Log",
+          "Skeletons",
+          "AngryBarbarians",
+          "IceGolem"
+        ],
+        [
+          "Skeletons",
+          "Fireball",
+          "Log",
+          "IceSpirit",
+          "Musketeer",
+          "HogRider",
+          "Cannon",
+          "IceGolem"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 121,
+      "mode": "scripts",
+      "seed": 3217722090,
+      "role": "eval",
+      "decks": [
+        [
+          "Princess",
+          "Log",
+          "GoblinBarrel",
+          "Rocket",
+          "MightyMiner",
+          "Goblins",
+          "Cannon",
+          "IceSpirit"
+        ],
+        [
+          "ElectroSpirit",
+          "Log",
+          "HogRider",
+          "Fireball",
+          "Cannon",
+          "IceGolem",
+          "Musketeer",
+          "Skeletons"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 122,
+      "mode": "scripts",
+      "seed": 3217723099,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "Fireball",
+          "Skeletons",
+          "ElectroSpirit",
+          "Berserker",
+          "Archers",
+          "Tesla",
+          "Xbow"
+        ],
+        [
+          "Wallbreakers",
+          "Knight",
+          "GoblinBarrel",
+          "BlowdartGoblin",
+          "Log",
+          "Princess",
+          "Skeletons",
+          "InfernoTower"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 123,
+      "mode": "scripts",
+      "seed": 3217724108,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "Musketeer",
+          "IceSpirit",
+          "Fireball",
+          "HogRider",
+          "IceGolem",
+          "Skeletons",
+          "Cannon"
+        ],
+        [
+          "Log",
+          "Goblins",
+          "Xbow",
+          "Firecracker",
+          "IceSpirit",
+          "Knight",
+          "Fireball",
+          "Tesla"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 124,
+      "mode": "scripts",
+      "seed": 3217725117,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "HogRider",
+          "Cannon",
+          "IceGolem",
+          "Fireball",
+          "Log",
+          "Musketeer",
+          "IceSpirit"
+        ],
+        [
+          "Log",
+          "Musketeer",
+          "HogRider",
+          "IceSpirit",
+          "Cannon",
+          "Fireball",
+          "IceGolem",
+          "Skeletons"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 125,
+      "mode": "scripts",
+      "seed": 3217726126,
+      "role": "eval",
+      "decks": [
+        [
+          "Princess",
+          "Goblins",
+          "Log",
+          "MightyMiner",
+          "IceSpirit",
+          "GoblinBarrel",
+          "Cannon",
+          "Rocket"
+        ],
+        [
+          "FirespiritHut",
+          "Ghost",
+          "RoyalHogs",
+          "Fireball",
+          "BarbLog",
+          "ElectroSpirit",
+          "GoblinHut",
+          "Berserker"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 126,
+      "mode": "scripts",
+      "seed": 3217727135,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "Archers",
+          "BarbLog",
+          "ElectroSpirit",
+          "BombTower",
+          "Goblinstein",
+          "Lightning",
+          "Skeletons"
+        ],
+        [
+          "IceGolem",
+          "ElectroSpirit",
+          "Skeletons",
+          "Fireball",
+          "HogRider",
+          "Musketeer",
+          "Cannon",
+          "Log"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 127,
+      "mode": "scripts",
+      "seed": 3217728144,
+      "role": "eval",
+      "decks": [
+        [
+          "Xbow",
+          "Log",
+          "Tesla",
+          "Fireball",
+          "Archers",
+          "Skeletons",
+          "Berserker",
+          "ElectroSpirit"
+        ],
+        [
+          "ArcherQueen",
+          "Earthquake",
+          "RoyalDelivery",
+          "Log",
+          "Cannon",
+          "Skeletons",
+          "IceSpirit",
+          "RoyalHogs"
+        ]
+      ],
+      "style": "pressure"
+    },
+    {
+      "pair": 128,
+      "mode": "scripts",
+      "seed": 3217729153,
+      "role": "eval",
+      "decks": [
+        [
+          "BarbLog",
+          "HogRider",
+          "Earthquake",
+          "Skeletons",
+          "Firecracker",
+          "Cannon",
+          "ElectroSpirit",
+          "MightyMiner"
+        ],
+        [
+          "Ghost",
+          "RoyalHogs",
+          "BarbLog",
+          "GoblinHut",
+          "ElectroSpirit",
+          "Fireball",
+          "FirespiritHut",
+          "Berserker"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 129,
+      "mode": "scripts",
+      "seed": 3217730162,
+      "role": "eval",
+      "decks": [
+        [
+          "BarbLog",
+          "GoblinHut",
+          "FirespiritHut",
+          "RoyalHogs",
+          "Fireball",
+          "ElectroSpirit",
+          "Ghost",
+          "Berserker"
+        ],
+        [
+          "Skeletons",
+          "BombTower",
+          "ElectroSpirit",
+          "BarbLog",
+          "Goblinstein",
+          "RoyalHogs",
+          "Lightning",
+          "Archers"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 130,
+      "mode": "scripts",
+      "seed": 3217731171,
+      "role": "eval",
+      "decks": [
+        [
+          "IceSpirit",
+          "Cannon",
+          "Fireball",
+          "Skeletons",
+          "HogRider",
+          "Log",
+          "IceGolem",
+          "Musketeer"
+        ],
+        [
+          "HogRider",
+          "Log",
+          "ElectroSpirit",
+          "Cannon",
+          "Fireball",
+          "Musketeer",
+          "Skeletons",
+          "IceGolem"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 131,
+      "mode": "scripts",
+      "seed": 3217732180,
+      "role": "eval",
+      "decks": [
+        [
+          "Musketeer",
+          "IceSpirit",
+          "Log",
+          "Cannon",
+          "Fireball",
+          "HogRider",
+          "IceGolem",
+          "Skeletons"
+        ],
+        [
+          "InfernoTower",
+          "Princess",
+          "Knight",
+          "Log",
+          "IceSpirit",
+          "Rocket",
+          "GoblinBarrel",
+          "GoblinGang"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 132,
+      "mode": "scripts",
+      "seed": 3217733189,
+      "role": "eval",
+      "decks": [
+        [
+          "Musketeer",
+          "Fireball",
+          "Cannon",
+          "Skeletons",
+          "IceSpirit",
+          "HogRider",
+          "IceGolem",
+          "Log"
+        ],
+        [
+          "Tesla",
+          "Knight",
+          "GoblinBarrel",
+          "GoblinGang",
+          "Princess",
+          "ElectroSpirit",
+          "Log",
+          "Rocket"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 133,
+      "mode": "scripts",
+      "seed": 3217734198,
+      "role": "eval",
+      "decks": [
+        [
+          "Cannon",
+          "Skeletons",
+          "Log",
+          "Earthquake",
+          "ElectroSpirit",
+          "MightyMiner",
+          "Firecracker",
+          "HogRider"
+        ],
+        [
+          "Fireball",
+          "Log",
+          "IceGolem",
+          "HogRider",
+          "IceSpirit",
+          "Cannon",
+          "Musketeer",
+          "Skeletons"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 134,
+      "mode": "scripts",
+      "seed": 3217735207,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "Musketeer",
+          "IceSpirit",
+          "Skeletons",
+          "Fireball",
+          "Cannon",
+          "HogRider",
+          "IceGolem"
+        ],
+        [
+          "IceGolem",
+          "HogRider",
+          "Musketeer",
+          "Skeletons",
+          "Cannon",
+          "Fireball",
+          "IceSpirit",
+          "Log"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 135,
+      "mode": "scripts",
+      "seed": 3217736216,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "FirespiritHut",
+          "Skeletons",
+          "BarbLog",
+          "ElectroSpirit",
+          "Lightning",
+          "Tesla",
+          "Berserker"
+        ],
+        [
+          "ElectroSpirit",
+          "RoyalHogs",
+          "GoblinHut",
+          "FirespiritHut",
+          "Berserker",
+          "Fireball",
+          "Ghost",
+          "Log"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 136,
+      "mode": "scripts",
+      "seed": 3217737225,
+      "role": "eval",
+      "decks": [
+        [
+          "Musketeer",
+          "Cannon",
+          "IceSpirit",
+          "IceGolem",
+          "Log",
+          "Fireball",
+          "HogRider",
+          "Skeletons"
+        ],
+        [
+          "Cannon",
+          "Firecracker",
+          "ElectroSpirit",
+          "Earthquake",
+          "Log",
+          "Skeletons",
+          "MightyMiner",
+          "HogRider"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 137,
+      "mode": "scripts",
+      "seed": 3217738234,
+      "role": "eval",
+      "decks": [
+        [
+          "Fireball",
+          "FirespiritHut",
+          "ElectroSpirit",
+          "RoyalHogs",
+          "BarbLog",
+          "Ghost",
+          "Berserker",
+          "GoblinHut"
+        ],
+        [
+          "Rocket",
+          "Princess",
+          "GoblinBarrel",
+          "Skeletons",
+          "Knight",
+          "Tesla",
+          "Log",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 138,
+      "mode": "scripts",
+      "seed": 3217739243,
+      "role": "eval",
+      "decks": [
+        [
+          "IceGolem",
+          "IceSpirit",
+          "Skeletons",
+          "Cannon",
+          "Musketeer",
+          "HogRider",
+          "Log",
+          "Fireball"
+        ],
+        [
+          "Cannon",
+          "Firecracker",
+          "MightyMiner",
+          "IceSpirit",
+          "HogRider",
+          "Skeletons",
+          "Earthquake",
+          "BarbLog"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 139,
+      "mode": "scripts",
+      "seed": 3217740252,
+      "role": "eval",
+      "decks": [
+        [
+          "Fireball",
+          "HogRider",
+          "Skeletons",
+          "IceSpirit",
+          "Cannon",
+          "IceGolem",
+          "Log",
+          "Musketeer"
+        ],
+        [
+          "ElectroSpirit",
+          "HogRider",
+          "MightyMiner",
+          "Earthquake",
+          "Firecracker",
+          "Log",
+          "Skeletons",
+          "Tesla"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 140,
+      "mode": "scripts",
+      "seed": 3217741261,
+      "role": "eval",
+      "decks": [
+        [
+          "ElectroSpirit",
+          "Earthquake",
+          "RoyalHogs",
+          "Berserker",
+          "Cannon",
+          "ArcherQueen",
+          "RoyalDelivery",
+          "Skeletons"
+        ],
+        [
+          "Skeletons",
+          "Fireball",
+          "HogRider",
+          "Log",
+          "Musketeer",
+          "Cannon",
+          "IceSpirit",
+          "IceGolem"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 141,
+      "mode": "scripts",
+      "seed": 3217742270,
+      "role": "eval",
+      "decks": [
+        [
+          "IceGolem",
+          "Log",
+          "Musketeer",
+          "Cannon",
+          "Fireball",
+          "IceSpirit",
+          "HogRider",
+          "Skeletons"
+        ],
+        [
+          "BarbLog",
+          "Firecracker",
+          "ElectroSpirit",
+          "Cannon",
+          "Skeletons",
+          "HogRider",
+          "MightyMiner",
+          "Earthquake"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 142,
+      "mode": "scripts",
+      "seed": 3217743279,
+      "role": "eval",
+      "decks": [
+        [
+          "Musketeer",
+          "IceSpirit",
+          "Cannon",
+          "Skeletons",
+          "Log",
+          "IceGolem",
+          "HogRider",
+          "Fireball"
+        ],
+        [
+          "Cannon",
+          "MightyMiner",
+          "BarbLog",
+          "Skeletons",
+          "Earthquake",
+          "ElectroSpirit",
+          "Firecracker",
+          "HogRider"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 143,
+      "mode": "scripts",
+      "seed": 3217744288,
+      "role": "eval",
+      "decks": [
+        [
+          "Rocket",
+          "Log",
+          "InfernoTower",
+          "Princess",
+          "Knight",
+          "IceSpirit",
+          "GoblinBarrel",
+          "GoblinGang"
+        ],
+        [
+          "IceSpirit",
+          "HogRider",
+          "Skeletons",
+          "Musketeer",
+          "Log",
+          "IceGolem",
+          "Fireball",
+          "Cannon"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 144,
+      "mode": "scripts",
+      "seed": 3217745297,
+      "role": "eval",
+      "decks": [
+        [
+          "SkeletonArmy",
+          "Valkyrie",
+          "BlowdartGoblin",
+          "Wallbreakers",
+          "GoblinBarrel",
+          "Cannon",
+          "Princess",
+          "IceSpirit"
+        ],
+        [
+          "GoblinHut",
+          "RoyalHogs",
+          "AngryBarbarians",
+          "BarbLog",
+          "Berserker",
+          "FirespiritHut",
+          "Fireball",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 145,
+      "mode": "scripts",
+      "seed": 3217746306,
+      "role": "eval",
+      "decks": [
+        [
+          "Musketeer",
+          "IceSpirit",
+          "Skeletons",
+          "IceGolem",
+          "Log",
+          "Fireball",
+          "Cannon",
+          "HogRider"
+        ],
+        [
+          "IceGolem",
+          "Musketeer",
+          "Skeletons",
+          "ElectroSpirit",
+          "Cannon",
+          "Fireball",
+          "Log",
+          "HogRider"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 146,
+      "mode": "scripts",
+      "seed": 3217747315,
+      "role": "eval",
+      "decks": [
+        [
+          "Fireball",
+          "Archers",
+          "Xbow",
+          "Knight",
+          "ElectroSpirit",
+          "Skeletons",
+          "Tesla",
+          "Log"
+        ],
+        [
+          "Fireball",
+          "ElectroSpirit",
+          "FirespiritHut",
+          "RoyalHogs",
+          "Berserker",
+          "GoblinHut",
+          "BarbLog",
+          "Ghost"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 147,
+      "mode": "scripts",
+      "seed": 3217748324,
+      "role": "eval",
+      "decks": [
+        [
+          "FirespiritHut",
+          "Lightning",
+          "Ghost",
+          "RoyalHogs",
+          "Berserker",
+          "GoblinHut",
+          "ElectroSpirit",
+          "BarbLog"
+        ],
+        [
+          "FirespiritHut",
+          "Berserker",
+          "BarbLog",
+          "RoyalHogs",
+          "Fireball",
+          "GoblinHut",
+          "Ghost",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 148,
+      "mode": "scripts",
+      "seed": 3217749333,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "BarbLog",
+          "GoblinHut",
+          "Berserker",
+          "Fireball",
+          "FirespiritHut",
+          "Ghost",
+          "ElectroSpirit"
+        ],
+        [
+          "Rocket",
+          "InfernoTower",
+          "Log",
+          "GoblinGang",
+          "GoblinBarrel",
+          "IceSpirit",
+          "Knight",
+          "Princess"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 149,
+      "mode": "scripts",
+      "seed": 3217750342,
+      "role": "eval",
+      "decks": [
+        [
+          "BarbLog",
+          "Berserker",
+          "Lightning",
+          "FirespiritHut",
+          "ElectroSpirit",
+          "RoyalHogs",
+          "GoblinHut",
+          "Ghost"
+        ],
+        [
+          "Tesla",
+          "Skeletons",
+          "Earthquake",
+          "Log",
+          "ElectroSpirit",
+          "HogRider",
+          "FirespiritHut",
+          "Berserker"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 150,
+      "mode": "scripts",
+      "seed": 3217751351,
+      "role": "eval",
+      "decks": [
+        [
+          "Fireball",
+          "Ghost",
+          "BarbLog",
+          "GoblinHut",
+          "RoyalHogs",
+          "ElectroSpirit",
+          "FirespiritHut",
+          "Berserker"
+        ],
+        [
+          "Log",
+          "GoblinBarrel",
+          "Goblins",
+          "Cannon",
+          "Rocket",
+          "IceSpirit",
+          "Princess",
+          "MightyMiner"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 151,
+      "mode": "scripts",
+      "seed": 3217752360,
+      "role": "eval",
+      "decks": [
+        [
+          "GoblinHut",
+          "RoyalHogs",
+          "FirespiritHut",
+          "Ghost",
+          "Berserker",
+          "BarbLog",
+          "ElectroSpirit",
+          "Fireball"
+        ],
+        [
+          "BlowdartGoblin",
+          "Princess",
+          "Wallbreakers",
+          "SkeletonArmy",
+          "Valkyrie",
+          "Log",
+          "Cannon",
+          "GoblinBarrel"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 152,
+      "mode": "scripts",
+      "seed": 3217753369,
+      "role": "eval",
+      "decks": [
+        [
+          "Tesla",
+          "Fireball",
+          "Xbow",
+          "ElectroSpirit",
+          "Skeletons",
+          "Log",
+          "Knight",
+          "Archers"
+        ],
+        [
+          "MightyMiner",
+          "Cannon",
+          "Goblins",
+          "IceSpirit",
+          "GoblinBarrel",
+          "Rocket",
+          "Log",
+          "Princess"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 153,
+      "mode": "scripts",
+      "seed": 3217754378,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "BarbLog",
+          "ElectroSpirit",
+          "Archers",
+          "Lightning",
+          "BombTower",
+          "RoyalHogs",
+          "Goblinstein"
+        ],
+        [
+          "Lightning",
+          "BarbLog",
+          "ElectroSpirit",
+          "Berserker",
+          "Archers",
+          "BombTower",
+          "Skeletons",
+          "RoyalHogs"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 154,
+      "mode": "scripts",
+      "seed": 3217755387,
+      "role": "eval",
+      "decks": [
+        [
+          "Xbow",
+          "Archers",
+          "ElectroSpirit",
+          "Fireball",
+          "Berserker",
+          "Skeletons",
+          "Log",
+          "Tesla"
+        ],
+        [
+          "GoblinBarrel",
+          "Wallbreakers",
+          "Princess",
+          "Cannon",
+          "IceSpirit",
+          "SkeletonArmy",
+          "Valkyrie",
+          "BlowdartGoblin"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 155,
+      "mode": "scripts",
+      "seed": 3217756396,
+      "role": "eval",
+      "decks": [
+        [
+          "HogRider",
+          "Skeletons",
+          "Cannon",
+          "Musketeer",
+          "Log",
+          "Fireball",
+          "IceGolem",
+          "IceSpirit"
+        ],
+        [
+          "Fireball",
+          "Skeletons",
+          "Xbow",
+          "Tesla",
+          "Archers",
+          "Knight",
+          "ElectroSpirit",
+          "Log"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 156,
+      "mode": "scripts",
+      "seed": 3217757405,
+      "role": "eval",
+      "decks": [
+        [
+          "Cannon",
+          "IceSpirit",
+          "Musketeer",
+          "Fireball",
+          "Skeletons",
+          "HogRider",
+          "Log",
+          "IceGolem"
+        ],
+        [
+          "Log",
+          "Fireball",
+          "Musketeer",
+          "IceSpirit",
+          "HogRider",
+          "IceGolem",
+          "Skeletons",
+          "Cannon"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 157,
+      "mode": "scripts",
+      "seed": 3217758414,
+      "role": "eval",
+      "decks": [
+        [
+          "RoyalHogs",
+          "Bats",
+          "IceGolem",
+          "GoblinGang",
+          "Log",
+          "Princess",
+          "MiniPekka",
+          "Fireball"
+        ],
+        [
+          "MightyMiner",
+          "Goblins",
+          "Log",
+          "IceSpirit",
+          "Rocket",
+          "GoblinBarrel",
+          "Princess",
+          "Cannon"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 158,
+      "mode": "scripts",
+      "seed": 3217759423,
+      "role": "eval",
+      "decks": [
+        [
+          "GoblinHut",
+          "FirespiritHut",
+          "RoyalHogs",
+          "ElectroSpirit",
+          "Berserker",
+          "Ghost",
+          "BarbLog",
+          "Fireball"
+        ],
+        [
+          "Fireball",
+          "Musketeer",
+          "ElectroSpirit",
+          "Log",
+          "IceGolem",
+          "HogRider",
+          "Skeletons",
+          "Cannon"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 159,
+      "mode": "scripts",
+      "seed": 3217760432,
+      "role": "eval",
+      "decks": [
+        [
+          "Cannon",
+          "IceSpirit",
+          "GoblinBarrel",
+          "Goblins",
+          "MightyMiner",
+          "Rocket",
+          "Log",
+          "Princess"
+        ],
+        [
+          "Log",
+          "BlowdartGoblin",
+          "SkeletonArmy",
+          "Princess",
+          "IceSpirit",
+          "Knight",
+          "GoblinBarrel",
+          "InfernoTower"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 160,
+      "mode": "scripts",
+      "seed": 3217761441,
+      "role": "eval",
+      "decks": [
+        [
+          "Archers",
+          "Skeletons",
+          "Goblinstein",
+          "BombTower",
+          "Lightning",
+          "BarbLog",
+          "RoyalHogs",
+          "ElectroSpirit"
+        ],
+        [
+          "Cannon",
+          "Skeletons",
+          "Log",
+          "IceGolem",
+          "Fireball",
+          "Musketeer",
+          "HogRider",
+          "IceSpirit"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 161,
+      "mode": "scripts",
+      "seed": 3217762450,
+      "role": "eval",
+      "decks": [
+        [
+          "MightyMiner",
+          "Firecracker",
+          "Earthquake",
+          "Skeletons",
+          "HogRider",
+          "Cannon",
+          "Log",
+          "ElectroSpirit"
+        ],
+        [
+          "FirespiritHut",
+          "Fireball",
+          "ElectroSpirit",
+          "Berserker",
+          "GoblinHut",
+          "Ghost",
+          "BarbLog",
+          "RoyalHogs"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 162,
+      "mode": "scripts",
+      "seed": 3217763459,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "IceSpirit",
+          "HogRider",
+          "Musketeer",
+          "Log",
+          "Cannon",
+          "Fireball",
+          "IceGolem"
+        ],
+        [
+          "IceSpirit",
+          "HogRider",
+          "Fireball",
+          "Log",
+          "Musketeer",
+          "Cannon",
+          "Skeletons",
+          "IceGolem"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 163,
+      "mode": "scripts",
+      "seed": 3217764468,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "Earthquake",
+          "Skeletons",
+          "Firecracker",
+          "ElectroSpirit",
+          "HogRider",
+          "AngryBarbarians",
+          "IceGolem"
+        ],
+        [
+          "Cannon",
+          "Skeletons",
+          "Musketeer",
+          "Fireball",
+          "IceSpirit",
+          "Log",
+          "IceGolem",
+          "HogRider"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 164,
+      "mode": "scripts",
+      "seed": 3217765477,
+      "role": "eval",
+      "decks": [
+        [
+          "Rocket",
+          "Knight",
+          "Tesla",
+          "ElectroSpirit",
+          "Princess",
+          "Skeletons",
+          "GoblinBarrel",
+          "Log"
+        ],
+        [
+          "DarkPrince",
+          "RoyalDelivery",
+          "Miner",
+          "Skeletons",
+          "ElectroSpirit",
+          "Rocket",
+          "Tesla",
+          "Log"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 165,
+      "mode": "scripts",
+      "seed": 3217766486,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "Fireball",
+          "IceSpirit",
+          "IceGolem",
+          "Skeletons",
+          "HogRider",
+          "Cannon",
+          "Musketeer"
+        ],
+        [
+          "Cannon",
+          "Skeletons",
+          "IceSpirit",
+          "Log",
+          "Musketeer",
+          "IceGolem",
+          "HogRider",
+          "Fireball"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 166,
+      "mode": "scripts",
+      "seed": 3217767495,
+      "role": "eval",
+      "decks": [
+        [
+          "Archers",
+          "Tesla",
+          "Skeletons",
+          "ElectroSpirit",
+          "Fireball",
+          "Berserker",
+          "Xbow",
+          "Log"
+        ],
+        [
+          "Princess",
+          "Log",
+          "Skeletons",
+          "InfernoTower",
+          "GoblinBarrel",
+          "IceSpirit",
+          "Rocket",
+          "Knight"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 167,
+      "mode": "scripts",
+      "seed": 3217768504,
+      "role": "eval",
+      "decks": [
+        [
+          "Cannon",
+          "HogRider",
+          "IceGolem",
+          "Skeletons",
+          "Musketeer",
+          "Log",
+          "Fireball",
+          "IceSpirit"
+        ],
+        [
+          "GoblinGang",
+          "Princess",
+          "Log",
+          "Knight",
+          "ElectroSpirit",
+          "GoblinBarrel",
+          "Tesla",
+          "Rocket"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 168,
+      "mode": "scripts",
+      "seed": 3217769513,
+      "role": "eval",
+      "decks": [
+        [
+          "MightyMiner",
+          "Firecracker",
+          "Cannon",
+          "Skeletons",
+          "Earthquake",
+          "Log",
+          "ElectroSpirit",
+          "HogRider"
+        ],
+        [
+          "DarkPrince",
+          "InfernoTower",
+          "Rocket",
+          "Log",
+          "Princess",
+          "IceSpirit",
+          "GoblinGang",
+          "GoblinBarrel"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 169,
+      "mode": "scripts",
+      "seed": 3217770522,
+      "role": "eval",
+      "decks": [
+        [
+          "Fireball",
+          "Musketeer",
+          "Log",
+          "IceGolem",
+          "HogRider",
+          "Skeletons",
+          "Cannon",
+          "IceSpirit"
+        ],
+        [
+          "MightyMiner",
+          "HogRider",
+          "ElectroSpirit",
+          "Cannon",
+          "Log",
+          "Skeletons",
+          "Earthquake",
+          "Firecracker"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 170,
+      "mode": "scripts",
+      "seed": 3217771531,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "IceGolem",
+          "Log",
+          "HogRider",
+          "Cannon",
+          "Fireball",
+          "ElectroSpirit",
+          "Musketeer"
+        ],
+        [
+          "HogRider",
+          "IceSpirit",
+          "Musketeer",
+          "Log",
+          "Skeletons",
+          "Cannon",
+          "Fireball",
+          "IceGolem"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 171,
+      "mode": "scripts",
+      "seed": 3217772540,
+      "role": "eval",
+      "decks": [
+        [
+          "Berserker",
+          "Lightning",
+          "ElectroSpirit",
+          "BarbLog",
+          "RoyalHogs",
+          "Skeletons",
+          "FirespiritHut",
+          "Tesla"
+        ],
+        [
+          "Musketeer",
+          "Fireball",
+          "HogRider",
+          "IceSpirit",
+          "IceGolem",
+          "Skeletons",
+          "Cannon",
+          "Log"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 172,
+      "mode": "scripts",
+      "seed": 3217773549,
+      "role": "eval",
+      "decks": [
+        [
+          "Knight",
+          "Log",
+          "IceSpirit",
+          "Rocket",
+          "Princess",
+          "InfernoTower",
+          "GoblinGang",
+          "GoblinBarrel"
+        ],
+        [
+          "Knight",
+          "Log",
+          "Rocket",
+          "Skeletons",
+          "Tesla",
+          "ElectroSpirit",
+          "Xbow",
+          "Archers"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 173,
+      "mode": "scripts",
+      "seed": 3217774558,
+      "role": "eval",
+      "decks": [
+        [
+          "Skeletons",
+          "Berserker",
+          "IceSpirit",
+          "RoyalDelivery",
+          "BombTower",
+          "BlowdartGoblin",
+          "GoblinBarrel",
+          "Wallbreakers"
+        ],
+        [
+          "Musketeer",
+          "ElectroSpirit",
+          "Cannon",
+          "IceGolem",
+          "HogRider",
+          "Fireball",
+          "Skeletons",
+          "Log"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 174,
+      "mode": "scripts",
+      "seed": 3217775567,
+      "role": "eval",
+      "decks": [
+        [
+          "IceSpirit",
+          "Fireball",
+          "Log",
+          "Musketeer",
+          "HogRider",
+          "Cannon",
+          "IceGolem",
+          "Skeletons"
+        ],
+        [
+          "FirespiritHut",
+          "GoblinHut",
+          "BarbLog",
+          "ElectroSpirit",
+          "Ghost",
+          "Fireball",
+          "Berserker",
+          "RoyalHogs"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 175,
+      "mode": "scripts",
+      "seed": 3217776576,
+      "role": "eval",
+      "decks": [
+        [
+          "IceGolem",
+          "HogRider",
+          "Skeletons",
+          "IceSpirit",
+          "Cannon",
+          "Log",
+          "Fireball",
+          "Musketeer"
+        ],
+        [
+          "IceSpirit",
+          "Musketeer",
+          "Berserker",
+          "Log",
+          "HogRider",
+          "Skeletons",
+          "Fireball",
+          "Cannon"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 176,
+      "mode": "scripts",
+      "seed": 3217777585,
+      "role": "eval",
+      "decks": [
+        [
+          "FirespiritHut",
+          "Berserker",
+          "Ghost",
+          "ElectroSpirit",
+          "RoyalHogs",
+          "BarbLog",
+          "GoblinHut",
+          "Lightning"
+        ],
+        [
+          "BlowdartGoblin",
+          "InfernoTower",
+          "Log",
+          "Princess",
+          "SkeletonArmy",
+          "Knight",
+          "GoblinBarrel",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 177,
+      "mode": "scripts",
+      "seed": 3217778594,
+      "role": "eval",
+      "decks": [
+        [
+          "Musketeer",
+          "HogRider",
+          "Cannon",
+          "IceGolem",
+          "Log",
+          "Fireball",
+          "IceSpirit",
+          "Skeletons"
+        ],
+        [
+          "Fireball",
+          "Musketeer",
+          "IceGolem",
+          "HogRider",
+          "IceSpirit",
+          "Skeletons",
+          "Log",
+          "Cannon"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 178,
+      "mode": "scripts",
+      "seed": 3217779603,
+      "role": "eval",
+      "decks": [
+        [
+          "ElectroSpirit",
+          "Archers",
+          "Log",
+          "Skeletons",
+          "Xbow",
+          "Berserker",
+          "Tesla",
+          "Fireball"
+        ],
+        [
+          "Knight",
+          "GoblinBarrel",
+          "InfernoTower",
+          "Log",
+          "BlowdartGoblin",
+          "SkeletonArmy",
+          "Princess",
+          "IceSpirit"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 179,
+      "mode": "scripts",
+      "seed": 3217780612,
+      "role": "eval",
+      "decks": [
+        [
+          "BarbLog",
+          "FirespiritHut",
+          "Lightning",
+          "Berserker",
+          "RoyalHogs",
+          "ElectroSpirit",
+          "GoblinHut",
+          "Ghost"
+        ],
+        [
+          "IceGolem",
+          "Musketeer",
+          "Log",
+          "Skeletons",
+          "IceSpirit",
+          "Cannon",
+          "HogRider",
+          "Fireball"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 180,
+      "mode": "scripts",
+      "seed": 3217781621,
+      "role": "eval",
+      "decks": [
+        [
+          "Xbow",
+          "Log",
+          "Tesla",
+          "Skeletons",
+          "Fireball",
+          "Knight",
+          "ElectroSpirit",
+          "Archers"
+        ],
+        [
+          "IceSpirit",
+          "RoyalDelivery",
+          "RoyalHogs",
+          "Cannon",
+          "Musketeer",
+          "Skeletons",
+          "Log",
+          "Earthquake"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 181,
+      "mode": "scripts",
+      "seed": 3217782630,
+      "role": "eval",
+      "decks": [
+        [
+          "Princess",
+          "Cannon",
+          "BlowdartGoblin",
+          "IceSpirit",
+          "SkeletonArmy",
+          "Wallbreakers",
+          "GoblinBarrel",
+          "Valkyrie"
+        ],
+        [
+          "Log",
+          "ElectroSpirit",
+          "MightyMiner",
+          "HogRider",
+          "Cannon",
+          "Firecracker",
+          "Skeletons",
+          "Earthquake"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 182,
+      "mode": "scripts",
+      "seed": 3217783639,
+      "role": "eval",
+      "decks": [
+        [
+          "Ghost",
+          "Lightning",
+          "BarbLog",
+          "FirespiritHut",
+          "ElectroSpirit",
+          "Berserker",
+          "RoyalHogs",
+          "GoblinHut"
+        ],
+        [
+          "Log",
+          "Knight",
+          "Princess",
+          "GoblinBarrel",
+          "SkeletonArmy",
+          "BlowdartGoblin",
+          "InfernoTower",
+          "IceSpirit"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 183,
+      "mode": "scripts",
+      "seed": 3217784648,
+      "role": "eval",
+      "decks": [
+        [
+          "Cannon",
+          "Valkyrie",
+          "GoblinBarrel",
+          "SkeletonArmy",
+          "IceSpirit",
+          "Princess",
+          "BlowdartGoblin",
+          "Wallbreakers"
+        ],
+        [
+          "Fireball",
+          "HogRider",
+          "IceSpirit",
+          "Skeletons",
+          "Log",
+          "IceGolem",
+          "Musketeer",
+          "Cannon"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 184,
+      "mode": "scripts",
+      "seed": 3217785657,
+      "role": "eval",
+      "decks": [
+        [
+          "Archers",
+          "Berserker",
+          "Log",
+          "Skeletons",
+          "Tesla",
+          "ElectroSpirit",
+          "Xbow",
+          "Fireball"
+        ],
+        [
+          "GoblinGang",
+          "Rocket",
+          "Knight",
+          "Log",
+          "Princess",
+          "GoblinBarrel",
+          "Tesla",
+          "ElectroSpirit"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 185,
+      "mode": "scripts",
+      "seed": 3217786666,
+      "role": "eval",
+      "decks": [
+        [
+          "GoblinBarrel",
+          "IceSpirit",
+          "Princess",
+          "Log",
+          "MightyMiner",
+          "Cannon",
+          "Goblins",
+          "Rocket"
+        ],
+        [
+          "Wallbreakers",
+          "BlowdartGoblin",
+          "IceSpirit",
+          "Princess",
+          "Cannon",
+          "SkeletonArmy",
+          "GoblinBarrel",
+          "Valkyrie"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 186,
+      "mode": "scripts",
+      "seed": 3217787675,
+      "role": "eval",
+      "decks": [
+        [
+          "Log",
+          "ElectroSpirit",
+          "Lightning",
+          "MightyMiner",
+          "Wizard",
+          "Skeletons",
+          "RoyalHogs",
+          "Cannon"
+        ],
+        [
+          "Earthquake",
+          "Skeletons",
+          "BombTower",
+          "Bats",
+          "RoyalHogs",
+          "Log",
+          "Wizard",
+          "AngryBarbarians"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 187,
+      "mode": "scripts",
+      "seed": 3217788684,
+      "role": "eval",
+      "decks": [
+        [
+          "Fireball",
+          "HogRider",
+          "Log",
+          "Skeletons",
+          "Musketeer",
+          "Cannon",
+          "IceGolem",
+          "IceSpirit"
+        ],
+        [
+          "HogRider",
+          "IceSpirit",
+          "Cannon",
+          "Fireball",
+          "Log",
+          "Musketeer",
+          "Skeletons",
+          "IceGolem"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 188,
+      "mode": "scripts",
+      "seed": 3217789693,
+      "role": "eval",
+      "decks": [
+        [
+          "Fireball",
+          "Berserker",
+          "Archers",
+          "ElectroSpirit",
+          "Skeletons",
+          "Tesla",
+          "Log",
+          "Xbow"
+        ],
+        [
+          "Cannon",
+          "Earthquake",
+          "Skeletons",
+          "Log",
+          "MightyMiner",
+          "HogRider",
+          "ElectroSpirit",
+          "Firecracker"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 189,
+      "mode": "scripts",
+      "seed": 3217790702,
+      "role": "eval",
+      "decks": [
+        [
+          "FirespiritHut",
+          "RoyalHogs",
+          "GoblinHut",
+          "Berserker",
+          "ElectroSpirit",
+          "BarbLog",
+          "Lightning",
+          "Ghost"
+        ],
+        [
+          "Rocket",
+          "GoblinGang",
+          "Log",
+          "Valkyrie",
+          "GoblinBarrel",
+          "InfernoTower",
+          "Princess",
+          "Skeletons"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 190,
+      "mode": "scripts",
+      "seed": 3217791711,
+      "role": "eval",
+      "decks": [
+        [
+          "Goblinstein",
+          "Lightning",
+          "ElectroSpirit",
+          "BarbLog",
+          "BombTower",
+          "Archers",
+          "RoyalHogs",
+          "Skeletons"
+        ],
+        [
+          "IceGolem",
+          "Skeletons",
+          "Log",
+          "HogRider",
+          "Fireball",
+          "ElectroSpirit",
+          "Cannon",
+          "Musketeer"
+        ]
+      ],
+      "style": "defense"
+    },
+    {
+      "pair": 191,
+      "mode": "scripts",
+      "seed": 3217792720,
+      "role": "eval",
+      "decks": [
+        [
+          "IceSpirit",
+          "Log",
+          "Skeletons",
+          "IceGolem",
+          "HogRider",
+          "Fireball",
+          "Cannon",
+          "Musketeer"
+        ],
+        [
+          "Berserker",
+          "SkeletonArmy",
+          "ElectroSpirit",
+          "Log",
+          "BlowdartGoblin",
+          "InfernoTower",
+          "GoblinBarrel",
+          "Princess"
+        ]
+      ],
+      "style": "defense"
+    }
+  ]
+}

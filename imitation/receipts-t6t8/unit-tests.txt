@@ -1,0 +1,9 @@
+test_d1_bytes_against_independent_sidecar_layout_both_seats (imitation.evaluation.test_adapters.AdapterTests.test_d1_bytes_against_independent_sidecar_layout_both_seats) ... ok
+test_matched_count_dedup_and_fewer_legal (imitation.evaluation.test_adapters.AdapterTests.test_matched_count_dedup_and_fewer_legal) ... ok
+test_eval_dispatch_keeps_v4_protocol_and_v5_actor (imitation.evaluation.test_policy_edge.P16ShimTest.test_eval_dispatch_keeps_v4_protocol_and_v5_actor) ... ok
+test_two_seats_public_masks_and_event_updates (imitation.evaluation.test_policy_edge.PolicyEdgeTest.test_two_seats_public_masks_and_event_updates) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.136s
+
+OK

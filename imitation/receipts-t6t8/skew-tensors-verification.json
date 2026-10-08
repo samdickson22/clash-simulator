@@ -1,0 +1,49 @@
+{
+  "complete": true,
+  "games": [
+    {
+      "seed": 880200,
+      "rows": 703,
+      "tensor_sha256": "1779c64c66b81038344c0e5d89436806cef43a3387cba78e0468f00d8c9f8bc3"
+    },
+    {
+      "seed": 880201,
+      "rows": 1183,
+      "tensor_sha256": "24909d22d4ca59154fe3fb112733776c14beaa3d1b1891d29cab907163c4cd06"
+    },
+    {
+      "seed": 880202,
+      "rows": 1183,
+      "tensor_sha256": "1009c4ff674fa821e7f2669ee1b091c194b82c02c3a45afff4707712b30550c5"
+    },
+    {
+      "seed": 880203,
+      "rows": 703,
+      "tensor_sha256": "8bf28eda654df6e529f453820171ee7dcd3d38c9f306a6eff97550b2b7190250"
+    },
+    {
+      "seed": 880204,
+      "rows": 943,
+      "tensor_sha256": "f53b20b86e50786b51489017eaac6bb2a84d70bb0f44f166f2f2a4c8a5887bda"
+    },
+    {
+      "seed": 880205,
+      "rows": 703,
+      "tensor_sha256": "3b5f5697059f4ce03f0469bff23af1fed83d97eacd58d7c16abf4fae2e46b585"
+    },
+    {
+      "seed": 880206,
+      "rows": 1183,
+      "tensor_sha256": "c6ad330623c3fd08986119f030de80c49a9a9375e04fcaf449f38c93d9c1783e"
+    },
+    {
+      "seed": 880207,
+      "rows": 703,
+      "tensor_sha256": "6267123edd6b02c6a63d405bd72150f656c89ba8191c624f4bd518abc282b7ed"
+    }
+  ],
+  "rows": 7304,
+  "byte_equal": true,
+  "plumbing_only": true,
+  "feature_source_sha256": "33cb73cf6fe85c2eed832ad61d7b71ef1b45b2c92ee256e1d1e2430bba8c1843"
+}

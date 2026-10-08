@@ -1,0 +1,29 @@
+{
+  "schema": "clasher.imitation.t5.wait.v1",
+  "checked_at": "2026-10-08T05:42:49Z",
+  "status": "WAITING_T3_AND_T4",
+  "t3_receipt": "127x01:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/receipts/T3-PASS.json",
+  "t3_pass_present": false,
+  "t4_shakedown": "pending; owned by T4 scheduled task",
+  "t5_runs_launched": 0,
+  "t5_gpu_seconds": 0,
+  "prereg_frozen": false,
+  "scheduled_task_id": "scheduled-task:command:mcp:3edbde69-151b-4209-8cf7-c6c1eac260db:schedule-task:clasher-imitation-t5-continuation-20261008-v1",
+  "next_run_at": "2026-10-08T05:52:49Z",
+  "interval_ms": 600000,
+  "bound_thread_id": "thread:delegated-task:command%3Amcp%3A969488d3-3434-4e6e-ac38-18b5cd0de300%3Adelegate-task%3Aclasher-imitation-T5-20261008-1",
+  "next_run_at_is_estimate": true,
+  "t4_last_checked_at": "2026-10-08T05:41:17.123988+00:00",
+  "upstream_status": "Coordinator reports deadlocked P16 baseline; data worker repairing, not terminal blocker",
+  "console_users": [],
+  "lease_update_utc": "2026-10-08T05:44:59Z",
+  "lease_expiry_utc": "2026-10-09T05:30:00Z",
+  "planned_hosts": {
+    "v1-main-2026100801": "127x04",
+    "v1-main-2026100802": "127x11",
+    "v1-main-2026100803": "127x13",
+    "v1-noD1-2026100801": "127x14",
+    "v1-gru-2026100801": "127x08"
+  },
+  "leased_store_copies_ready": false
+}
