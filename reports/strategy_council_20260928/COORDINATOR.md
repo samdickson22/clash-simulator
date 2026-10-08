@@ -670,3 +670,16 @@ Also on the hub, but with copies elsewhere:
   .so loaded gives 7/7, 2,900 boundaries, 0 mismatches, baseline `002a57a9…`.
   **Next:** L2-v4 PREREG drafting delegated to Opus (arms P/O/S-d/S, entry criteria incl. perception gates and the P4 verifier
   re-test with the v4 HUD head, power and wall-time analysis).
+- **2026-10-08 18:38 UTC: L2-v4 PREREG frozen** (`live-loop/v4/L2-V4-PREREG.md`, sha256 `85c593df…`; Opus draft kept as `.draft.md`).
+  - **Arms:** P (pixels v4) / O (fair native truth, same P4 and renderer) / S-d (d=27, aware) / S (d=0).
+  - **Primary:** P − O, family-stratified paired-bootstrap LB > −0.10.
+  - **Pairs:** 144, with a blinded re-estimate at 54. DESIGN's 96-pair power claim was wrong: 43% power at a true 0.
+  - **Wall time:** ~29 renderer-hours on one renderer.
+  - **Entry:** E1–E10, incl. v4 perception gates with the S5 event row (≥90/90, LB ≥87), the P4 verifier re-test (324+324
+    trials, ≥99% sensitivity and specificity), an emulator-on T9 smoke with formal weights, Mac build48 identity, the frozen
+    tracker v3, quiet host and renderer receipts.
+  - **Coordinator decisions:**
+    1. The simulator go/no-go (E9) is binding, with go iff predicted (S-v4N − S-d) ≥ −0.05 (stricter than the drafted −0.10,
+       so we don't spend ~30 renderer-hours on a likely fail).
+    2. Two renderers only if both pass the loop gates concurrently after E4.
+    3. The E1 tracker-row amendments (a)–(c) are approved: they replace ELT-era targets.
