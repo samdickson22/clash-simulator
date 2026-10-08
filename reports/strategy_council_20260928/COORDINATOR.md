@@ -454,3 +454,9 @@ Also on the hub, but with copies elsewhere:
   3. **Critical-path code now.** Imitation T6 (search integration of the proposer) and T8 (gate (c) adapters), so
      gates (b) and (c) can start the moment the checkpoint exists.
   127x05 stays free of heavy jobs.
+- **2026-10-08 05:22 UTC: the S122 extraction stays on 01/03 (expansion blocked safely).** The running drivers hold their
+  assigned units in memory and the pinned driver rejects new hosts, so adding 04/08 would mean stopping and
+  repartitioning the live runs (the Sol worker stopped under the safe-repartition rule; receipt
+  `imitation/data/receipts/T10-fleet-expansion-blocked-20261008-r1.json`). Throughput 66,420 perspectives/h; ETA
+  ~10:20 UTC. Not worth a restart: S122 feeds v2, which comes after v1 training and gates (b)/(c), and 04/08 go to S3,
+  then T5 data loaders and gate games.
