@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "delay": 0,
+      "frames": 80,
+      "actions": 12,
+      "actions_unchanged": true,
+      "public_states_unchanged": true,
+      "queue_telemetry_complete": true
+    },
+    {
+      "delay": 27,
+      "frames": 80,
+      "actions": 11,
+      "actions_unchanged": true,
+      "public_states_unchanged": true,
+      "queue_telemetry_complete": true
+    }
+  ]
+}

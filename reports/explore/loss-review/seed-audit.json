@@ -1,0 +1,21 @@
+{
+  "purpose": "seed exclusion only; exploration",
+  "proposed_gate_and_helper_seeds": 4356,
+  "explicit_historical_values": 19294,
+  "candidate_count": 302,
+  "seed_base": 281474976710656,
+  "intersections": [],
+  "sources": [
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/seed-inventory/gates-bc-parallel-r4",
+      "sha256": "18a4f9ffff1ded797e4336ed113ece61716337e72024f84417cfdb74260f1e83",
+      "host": "127x08"
+    },
+    {
+      "path": "/mpac/sdicks02/jobs/clasher/seed-inventory/gates-bc-parallel-r4",
+      "sha256": "e9d1c6aa5b8e88b4ad2e3cb2aa05cd160ac9642ac8e31a2cd7de6aeac8ff7f6d",
+      "host": "127x01"
+    }
+  ],
+  "note": "Named audit-proposed-seeds.json absent on allowed hosts; read the same proposed list from home-host seed-only inventory receipts. No registration or eval data opened."
+}

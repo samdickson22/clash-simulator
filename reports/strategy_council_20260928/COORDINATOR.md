@@ -805,3 +805,10 @@ Also on the hub, but with copies elsewhere:
   - **Measured:** packing reached 70–99% GPU on 04/09/11/13/14/15, but dense late checkpoints run at only ~0.9–1.0 frames/s. The slowest epoch projects ~32 h. Profile: runtime 56%, record extraction 41%, dominated by per-candidate GPU scalar syncs and nine causal branch runs.
   - **Authorized: an exact-equivalent decoder optimization.** Vectorize candidates with no per-candidate GPU syncs, batch the nine branches, and vectorize record extraction. The equality gate must reproduce completed captures bit-exactly (≥3 epochs × ≥8 matches incl. e15–e24, plus the reference cells) before use. No approximations.
   - **Post-05:00Z priority: perception > T11 > GRU.** Perception gets 02 and 08 (plus 07 if it returns); T11 gets 01 and 04. The GRU checkpoints and pauses at 05:00Z and resumes on the next free GPU.
+- **~23:20 UTC: exploration lane result 1: loss-review ledger** (`reports/explore/loss-review/LEDGER.md`; 55,657 human train/dev perspectives vs 300 paired fair-search sim games; ~25 min on 01/08 CPU). These are hypotheses, not gate evidence.
+  1. **Delay costs games.** d=27 loses 14.7% vs 7.3% at d=0 (+7.3 pp [2.0, 13.3]).
+  2. **Reserves.** Our search player meets **91%** of enemy incursions with <4 elixir, vs humans 16–19%. It has no affordable defender in hand 65% vs 4%. This is the same failure ClashAI found.
+  3. **Expensive win conditions are starved.** X-Bow 0.12 vs 1.01 plays per deck-minute; Giant 0.06 vs 0.73.
+  4. **Expensive spells are starved.** Fireball 0.11 vs 0.84, Rocket 0 vs 0.66, while Log is overplayed (3.0 vs 1.5).
+  5. **Win-condition commits during threats:** 34% vs 24%.
+  - **Next (exploration):** a paired sim A/B on candidate coverage and reserve-aware leaf value.

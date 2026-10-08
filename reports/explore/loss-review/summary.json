@@ -1,0 +1,152 @@
+{
+  "lane": "exploration",
+  "not_gate_evidence": true,
+  "coverage": {
+    "human": {
+      "perspectives": 55657,
+      "frames": 37212701,
+      "seconds": 9289261.0,
+      "role:train": 52951,
+      "cut:sim_kill_of_tower_standing_in_real": 7370,
+      "cut:sim_game_over": 21386,
+      "cut:own_masked_tile": 4096,
+      "cut:opponent_placement_rejected": 718,
+      "cut:pocket_play_but_sim_tower_alive": 4620,
+      "cut:recorded_end": 15208,
+      "cut:own_insufficient_elixir": 1562,
+      "cut:own_placement_rejected": 469,
+      "cut:opponent_insufficient_elixir": 228,
+      "role:dev": 2706
+    },
+    "human_c56": {
+      "perspectives": 3529,
+      "frames": 2855239
+    },
+    "human_c56_base": {
+      "perspectives": 6,
+      "frames": 3391
+    },
+    "search_d0": {
+      "perspectives": 150,
+      "frames": 117393,
+      "seconds": 29310.75,
+      "role:exploration": 150,
+      "cut:terminal": 150
+    },
+    "search_d27": {
+      "perspectives": 150,
+      "frames": 121144,
+      "seconds": 30248.5,
+      "role:exploration": 150,
+      "cut:terminal": 150
+    }
+  },
+  "top_five": [
+    {
+      "rank": 1,
+      "mechanism": "delay_sensitive_commitment",
+      "estimated_impact": "high",
+      "metric": "game_loss_fraction",
+      "contrast": "search_d27-search_d0_paired",
+      "effect": {
+        "difference": 0.07333333333333333,
+        "ci95": [
+          0.020000000000000004,
+          0.1333333333333333
+        ],
+        "clusters": 150
+      },
+      "try_next": "Instrument pending-command exposure and delay-matched timing.",
+      "causal_loss_uplift_estimated": false
+    },
+    {
+      "rank": 2,
+      "mechanism": "defensive_resource_depletion",
+      "estimated_impact": "high_behavioral_unknown_causal",
+      "metric": "arrival_under4_fraction",
+      "contrast": "search_d27-human_c56",
+      "effect": {
+        "difference": 0.7242109102465043,
+        "ci95": [
+          0.7117546441079862,
+          0.7369225180276908
+        ]
+      },
+      "try_next": "Audit WAIT/root scores and imitation timing proposals; do not use threshold as reward.",
+      "causal_loss_uplift_estimated": false
+    },
+    {
+      "rank": 3,
+      "mechanism": "expensive_wincon_starvation",
+      "estimated_impact": "medium_high_hypothesis",
+      "metric": "card_per_deck_minute:Xbow",
+      "contrast": "search_d27-human_c56",
+      "effect": {
+        "difference": -0.8867773417960062,
+        "ci95": [
+          -0.9574384200298076,
+          -0.8110603584256411
+        ]
+      },
+      "try_next": "Audit card candidate coverage and long-horizon payoff.",
+      "causal_loss_uplift_estimated": false
+    },
+    {
+      "rank": 4,
+      "mechanism": "spell_selection_imbalance",
+      "estimated_impact": "medium_hypothesis",
+      "metric": "card_per_deck_minute:Fireball",
+      "contrast": "search_d27-human_c56",
+      "effect": {
+        "difference": -0.7240977364130398,
+        "ci95": [
+          -0.7691693816458922,
+          -0.6741546104069823
+        ]
+      },
+      "try_next": "Audit costly spell candidates; add actual damage attribution.",
+      "causal_loss_uplift_estimated": false
+    },
+    {
+      "rank": 5,
+      "mechanism": "wincon_into_active_threat",
+      "estimated_impact": "medium_low_hypothesis",
+      "metric": "wincon_into_active_threat_fraction",
+      "contrast": "search_d27-human_c56",
+      "effect": {
+        "difference": 0.10089089803001991,
+        "ci95": [
+          0.0626605362110849,
+          0.13996996193407715
+        ]
+      },
+      "try_next": "Compare public threat at submission and d27 execution; separate opposite-lane pressure.",
+      "causal_loss_uplift_estimated": false
+    }
+  ],
+  "loss_counts": {
+    "search_d0": 11,
+    "search_d27": 22,
+    "games_per_arm": 150
+  },
+  "crucial_contradiction": "d0 has more under-4 arrivals but fewer losses than d27; reserve depletion is not established as the loss cause.",
+  "unavailable": {
+    "actual_spell_hits": "no damage-source attribution in packed store",
+    "actual_spell_elixir_trade": "geometry is not realized damage or a trade",
+    "strategic_cycle_error": "no oracle optimal card/cycle labels; availability proxy only",
+    "identified_survivor_counterpush": "packed store has no persistent entity IDs; pressure conversion proxy",
+    "pro_baseline": "human corpus is not individually pro-qualified"
+  },
+  "null_or_contradicted": [
+    "large defensive commitments",
+    "max-elixir leakage",
+    "weak counterpush pressure conversion",
+    "lane bias",
+    "spell geometry quality",
+    "paired post-arrival response delay"
+  ],
+  "full_results": "results.json",
+  "report": "LEDGER.md",
+  "tests_passed": 12,
+  "telemetry_smoke_passed": true
+}
