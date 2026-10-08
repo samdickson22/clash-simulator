@@ -710,3 +710,8 @@ Also on the hub, but with copies elsewhere:
   - **Idle:** 04, 09, 13, 14 and 15. Perception GPU fan-out is gated on the full 64-match equality job, which was waiting on 01's cache checksum. I told the worker to use 03's verified cache and to pre-stage the fan-out.
   - **Decision: gates (b) and (c) start now** (delegated, Astra high, clasher-imitation-gates-bc-20261008-1). They depend only on the sealed dev-selected checkpoint, not on the gate (a) verdict. They run on idle CPU (03 primary, plus 04 and leased 13–15 CPU), with the PREREGs frozen with the checkpoint hash before any game. CPU on 03 is split with the perception threshold grid (≤64 processes each).
   - **Health:** Mac 27 Gi free, 48% memory free; no reclaims; no pending questions.
+- **2026-10-08 20:58 UTC: 127x02, 127x07 and 127x11 are back** (Sam powered them on; rebooted ~20:32Z, GPUs idle, console 0). 06 is still down. I hadn't noticed sooner because they were commented out of the fleet hosts file, which made them unmonitored. They're re-enabled now, and the 30-min check retries offline hosts.
+  - **02/07 (home):** go to the v4 per-epoch inference fan-out now, and stay with perception after 05:00Z. 02 needs the env copied and its old hub /mpac contents are untrusted.
+  - **11:** roader confirmed it's ours again from 21:10Z under the existing lease. Its roader dirs are a stale mirror; leave them untouched.
+  - **Caps:** roader now runs ≤32 processes on 09/12/13/14/15/17, so all clasher processes combined on 09/13/14/15 must stay ≤80 per host.
+  - **Gates (b)/(c) worker:** authorized read-only, seed-only inventory scans on 01/08 (and 02/07), excluding gate (a) outcome payloads. An independent Opus PREREG review will run before any gate game.
