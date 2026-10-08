@@ -1,0 +1,26 @@
+{
+  "host": "127x18",
+  "label": "v4-label-audit-20261008-r7",
+  "started_utc": "2026-10-08T08:29:25.984721+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/audit_labels.py",
+    "--source",
+    "/mpac/sdicks02/repos/clasher-lease/data/v4-matches",
+    "--split",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/split.json",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/v4-label-audit-20261008-r7.json",
+    "--workers",
+    "16"
+  ],
+  "supervisor_pid": 995832,
+  "status": "fail",
+  "error": "[Errno 11] Resource temporarily unavailable",
+  "exit_code": 1,
+  "finished_utc": "2026-10-08T08:29:25.984741+00:00",
+  "stop_reason": null,
+  "peak_processes": 0,
+  "peak_rss_bytes": 0
+}

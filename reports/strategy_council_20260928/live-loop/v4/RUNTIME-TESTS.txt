@@ -1,0 +1,51 @@
+2026-10-08T07:47:55Z
+command: /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m unittest discover -s tests/live_v4 -v
+test_ambiguous_transport_keeps_reservation (test_runtime.ActuationTests.test_ambiguous_transport_keeps_reservation) ... ok
+test_expired_and_revision_rejected (test_runtime.ActuationTests.test_expired_and_revision_rejected) ... ok
+test_no_stale_retap_after_stall_or_duplicate (test_runtime.ActuationTests.test_no_stale_retap_after_stall_or_duplicate) ... ok
+test_remap_and_delayed_acceptance (test_runtime.ActuationTests.test_remap_and_delayed_acceptance) ... ok
+test_frozen_tracker_import_has_no_bootstrap_side_effects (test_runtime.BeliefTests.test_frozen_tracker_import_has_no_bootstrap_side_effects) ... ok
+test_ledger_spends_once_and_ignores_old_feedback (test_runtime.BeliefTests.test_ledger_spends_once_and_ignores_old_feedback) ... ok
+test_backpressure_preserves_irregular_time (test_runtime.CaptureTests.test_backpressure_preserves_irregular_time) ... ok
+test_heldout_rejected_before_media_open (test_runtime.CaptureTests.test_heldout_rejected_before_media_open) ... ok
+test_ring_overflow_and_copy (test_runtime.CaptureTests.test_ring_overflow_and_copy) ... ok
+test_cadence_and_rate_limited_event_and_verification (test_runtime.DecisionTests.test_cadence_and_rate_limited_event_and_verification) ... ok
+test_belief_denied_reads_and_backdated_event (test_runtime.FairBoundaryTests.test_belief_denied_reads_and_backdated_event) ... ok
+test_replay_projects_only_public_fields (test_runtime.FairBoundaryTests.test_replay_projects_only_public_fields) ... ok
+test_sanitizer_ignores_opponent_hud (test_runtime.FairBoundaryTests.test_sanitizer_ignores_opponent_hud) ... ok
+test_rpc_sampling_timestamp_anchor_and_close_without_network (test_runtime.GrpcCaptureTests.test_rpc_sampling_timestamp_anchor_and_close_without_network) ... ok
+test_downscaled_allowlist_matches_original_sanitizer (test_runtime.PerceptionTests.test_downscaled_allowlist_matches_original_sanitizer) ... ok
+test_v3_fallback_retains_tracker_across_long_gap (test_runtime.PerceptionTests.test_v3_fallback_retains_tracker_across_long_gap) ... ok
+test_v4_adapter_canonical_unknowns_and_completion_timestamp (test_runtime.PerceptionTests.test_v4_adapter_canonical_unknowns_and_completion_timestamp) ... ok
+test_empty_latency_is_not_pass (test_runtime.SupervisorTests.test_empty_latency_is_not_pass) ... ok
+test_pipeline_and_stage_stall (test_runtime.SupervisorTests.test_pipeline_and_stage_stall) ... ok
+test_search_stall_discards_expired_command (test_runtime.SupervisorTests.test_search_stall_discards_expired_command) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 10.288s
+
+OK
+	Command being timed: "/mpac/sdicks02/envs/clasher-gpu/bin/python -B -m unittest discover -s tests/live_v4 -v"
+	User time (seconds): 8.00
+	System time (seconds): 2.23
+	Percent of CPU this job got: 95%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:10.68
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 527992
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 57801
+	Minor (reclaiming a frame) page faults: 389807
+	Voluntary context switches: 10179
+	Involuntary context switches: 2063
+	Swaps: 0
+	File system inputs: 488
+	File system outputs: 208
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+2026-10-08T07:48:06Z

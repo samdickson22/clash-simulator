@@ -22,6 +22,10 @@ def main():
     for host in ('127x05','127x02','127x07','127x09','127x10','127x12','127x15','127x17'):
         rejects(lambda:b.approved_root(host))
     rejects(lambda:b.validate_root('/mpac/sdicks02/repos/clasher-v4-data/cache'))
+    with patch.object(b.socket,'gethostname',return_value='127x04'):
+        rejects(lambda:b.validate_root('/mpac/sdicks02/repos/clasher-v4-cache'))
+    with patch.object(b,'HOST_RESERVATIONS',{h:300_000_000_000 for h in ('127x01','127x16','127x18','127x04')}):
+        rejects(lambda:b.validate_root(b.approved_root()))
     with patch.object(b,'used_bytes',return_value=290_000_000_000),patch.object(b.shutil,'disk_usage',return_value=SimpleNamespace(free=800_000_000_000)):
         b.require_growth('.',10_000_000_000)
         rejects(lambda:b.require_growth('.',10_000_000_001))
@@ -29,7 +33,7 @@ def main():
     with patch.object(b,'used_bytes',return_value=0),patch.object(b.shutil,'disk_usage',return_value=SimpleNamespace(free=210_000_000_000)):
         b.require_growth('.',10_000_000_000)
         rejects(lambda:b.require_growth('.',10_000_000_001))
-    print(json.dumps(dict(pass_=True,checks=20,heldout_opened=False)),flush=True)
+    print(json.dumps(dict(pass_=True,checks=22,heldout_opened=False)),flush=True)
 
 
 if __name__=='__main__':main()

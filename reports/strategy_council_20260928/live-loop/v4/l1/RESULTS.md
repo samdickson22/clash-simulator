@@ -2,10 +2,10 @@
 
 ## Pre-formal cache and label work, 2026-10-08
 
-**Formal T6/T7 fits and heldout evaluation have not run.** At 07:32 UTC the
+**Formal T6/T7 fits and heldout evaluation have not run.** At 08:23:55 UTC the
 producer state is `phase-a`, with no phase-a exit receipt. Receipt-only counts:
-163 train, 20 validation, 20 heldout matches; **504 heldout opponent events**;
-18,018.73 recorded emulator-seconds (5.01 h). Neither stop rule is met. No
+200 train, 25 validation, 24 heldout matches; **572 heldout opponent events**;
+22,186.14 recorded emulator-seconds (6.16 h). Neither stop rule is met. No
 heldout payload has been opened. The bounded 15-minute check ends at 18:08 UTC.
 
 | Cache/loader measurement | Result |
@@ -23,14 +23,28 @@ heldout payload has been opened. The bounded 15-minute check ends at 18:08 UTC.
 | Cache payload size (one copy) | 5,910,676,788 bytes |
 | CUDA peak allocated / reserved, 128-step pilot | 2,033.58 / 2,526 MiB |
 | Reclaim behavior test | SIGTERM at step 24; resume to 128, no skipped/duplicate steps |
+| Full staged training population, 163 matches / 5,112 candidate windows / 128 steps, six threads | **10.713 windows/s**; GPU loop **15.362 windows/s**, 245.80 encoded frames/s |
+| Same full-population run, mean loading wait / CUDA allocated / reserved | **16.818 ms** / 2,034.31 MiB / 2,534 MiB |
+| Eight-thread comparison, same population / seed / 128 steps | **10.501 windows/s**; GPU loop 15.729; mean loading wait 20.650 ms |
+| Full staged cache snapshot | **163 train + 20 validation; 325,999 frames; 149,926,468,048 payload bytes** |
+| Full-cache equality and destination integrity on 01 and 18 | **3,334/3,334 exact random-1% frames**, zero mismatches; **366 file hashes** verified on each destination |
+| Incremental snapshot verified on 18 at 08:16 and 01 at 08:23 UTC | **185 train + 23 validation; 373,198 frames; 171,139,010,394 payload bytes** |
+| Incremental equality and destination integrity on 01 and 18 | **3,817/3,817 exact random-1% frames**, zero mismatches; **416 file hashes** per destination |
 
 The 12.476 rate is 9.73 times the old end-to-end rate and exceeds the old
 176.32/16 = 11.02 GPU-bound windows/s estimate. It is 74% of the new measured
 GPU-only rate including prefetch startup, logging and frequent checkpoint I/O;
 mean GPU-plus-loading-wait time corresponds to about 14.40 windows/s. These are
 engineering pilots on different populations/hosts, not a controlled accuracy or
-identical-population speed comparison. Full-corpus throughput is not measured.
-The resumed four-match run provides an additional population check.
+identical-population speed comparison. The later full staged population measures
+10.713 windows/s: 8.36x the historical decode-limited rate, within 3% of the
+historical 11.02 windows/s GPU estimate, but only 69.7% of its own measured
+15.362 windows/s GPU loop rate. Loading wait, prefetch startup, logging and
+eight-step checkpoints remain overhead. Both full-population probes ran while
+the hub was copying from 18, so the copy load is a limitation. Eight preparation
+threads did not improve performance; retain six. These are engineering fits,
+not formal models or heldout accuracy measurements. One-time full payload
+verification/data initialization is outside the measured optimizer-loop wall time.
 
 The cache preserves JPEG-before-resize augmentation using a lossless source
 pixel stream alongside resized uint8 arena/HUD blocks. A failed first equality
@@ -49,20 +63,45 @@ mismatches explained the contradictions. The label cleaner and conservative
 timing policy are documented in LABEL-AUDIT.md and amendment 03.
 
 **Derived-cache storage was approved at 07:22 UTC:** 300 GB per permitted host,
-with >=200 GB free on /mpac. The 40 GB frozen acquisition cap remains unchanged.
+with >=200 GB free on /mpac, plus the subsequently approved 1 TB aggregate cap.
+The 40 GB frozen acquisition cap remains unchanged.
 Both 24-worker decode partitions passed by 07:36 UTC, covering the staged
 **163 train + 20 validation matches, 325,999 frames**. Full-replica gathering and
 SHA256 verification are running on 01 and GPU host 18 in the new approved cache
-roots. Aggregate equality/size receipts and full-population GPU throughput are
-pending; the pilot performance numbers above are not promoted to full-population
-measurements. No formal subset substitution is permitted.
+roots. Host 18's full snapshot manifest passed at 07:49 UTC; hub verification
+passed at 08:04 UTC. Full-population throughput is reported separately above. Incremental
+builds continue as admitted matches arrive. No formal subset substitution is permitted.
 
 The same label audit extended to this snapshot: 2,918,547 object rows and 411,626
 contradictions (169,501 catalog-generation disagreements resolved, 20,938 parent/
 child hints, 87,027 non-hitpoint hints, 134,160 unresolved/masked). Zero native-ID
 changes or same-tick raw-join mismatches; 86,475 coherent visible/nondeploying
 rows. No additional cleaning-code change. Synthetic scorer/selection primitives
-passed 135 checks; guarded replay, calibration and selection sealing remain pending.
+passed 135 checks. Validation calibration primitives passed 80 additional synthetic
+checks at 08:21 UTC on leased 16; real-data replay/calibration and selection sealing
+remain pending. No formal metric follows from these synthetic checks.
+
+The next **225-match / 404,396-frame** snapshot finished disjoint decoding on
+16/18 at 08:25/08:26 UTC. Full verification passed on 18 at **08:36:42**:
+**185,265,622,912 payload bytes; 450 hashes; 4,137/4,137 exact random-1% frames,
+zero mismatches**. Hub gather is still running. The r7 label audit was refused
+before child launch by the host-wide wrapper lock; the sequential r8 retry
+passed at **08:37:42**, covering **200 train + 25 validation**. It found **501,159
+contradictions / 3,635,665 rows**: 210,896 catalog disagreements resolved,
+24,419 parent/child hints, 105,669 non-hitpoint hints, 160,175 unresolved/masked.
+Zero changing rich IDs or same-tick ID/field mismatches. No cleaner change.
+
+Gap-source correction at 08:35 UTC: **amendment 02 explicitly specifies public
+frame logs**, superseding the base registration's decision-log path. The 08:27
+audit of 48 decision files / 23,546 intervals / 830.632 ms p95 was an incorrect
+source choice; its hashes and intervals are retained as diagnostic evidence.
+No formal model replay used it. The helper now uses public-frame timestamps as
+amended; the fresh audit passed at **08:36 UTC: 60,586 intervals, p95 exactly
+610 ms, range 7–2,075 ms**, reproducing the historical summary. **24 synthetic
+source/schedule checks passed.** The decision-source measurements remain incident
+evidence and are not formal gap inputs. No
+final-population schedule seal or gap replay metric exists. All formal gate
+verdicts remain unchanged.
 
 ## Formal configurations and §5.1 verdicts
 

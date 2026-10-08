@@ -130,4 +130,25 @@ no exit receipt. The d64 subset finished **8 steps / 65,519 rows**, last loss
 allocated/reserved **471.22 / 642 MiB**. Wrapper remains in subset stage
 (the trainer performs full dev validation before overfit). No duplicate job.
 
-Latest scheduled receipt check: 2026-10-08T07:41:31.182191+00:00 — SHAKEDOWN_RUNNING; verified own launcher PID 2398593 remains active at nice 10, subset stage, no exit receipt.
+
+07:51Z inspection: subset stage including full dev validation completed;
+wrapper entered the 1,000-row overfit at 07:51:04Z. Observed step 4 loss
+9.65022. Verified launcher PID 2398593 remains active, nice 10, no exit
+receipt. No new job launched. Full metric evaluator follows overfit.
+
+
+08:01Z inspection: overfit reached **200 steps / 200,000 row exposures**
+on the fixed 1,000 train rows. Loss decreased from 9.65022 at step 4 to
+**7.34967** at step 200. Measured **2,536.27 rows/s** including loader;
+GPU training peak allocated/reserved **402.73 / 498 MiB**. Full dev validation
+is still part of the overfit stage; launcher PID 2398593 active, no exit receipt.
+Full metric evaluator remains next. No duplicate job launched.
+
+
+08:21Z inspection: both training stages and their full dev validation have
+completed. The full metric evaluator started at **08:13:01Z**, using subset
+`best-dev-step-00000008.pt`, dev only, with calibration and default 10,000
+perspective bootstraps. Verified launcher PID 2398593 is active, nice 10;
+no exit receipt. No duplicate job launched.
+
+Latest scheduled receipt check: 2026-10-08T08:41:30.178298+00:00 — SHAKEDOWN_RUNNING; verified own launcher PID 2398593 active at nice 10, dev-evaluation stage, no exit receipt.

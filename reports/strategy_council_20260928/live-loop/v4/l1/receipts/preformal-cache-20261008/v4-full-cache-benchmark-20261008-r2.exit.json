@@ -1,0 +1,20 @@
+{
+  "host": "127x18",
+  "label": "v4-full-cache-benchmark-20261008-r2",
+  "started_utc": "2026-10-08T07:57:24.416905+00:00",
+  "command": [
+    "bash",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/benchmark_full_cache.sh",
+    "/mpac/sdicks02/repos/clasher-lease/jobs/v4-cache-gather-20261008-18r1-manifest.json",
+    "/mpac/sdicks02/repos/clasher-lease/data/v4-full-cache-benchmark-r2",
+    "8"
+  ],
+  "supervisor_pid": 986937,
+  "pid": 986954,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T08:01:10.347560+00:00",
+  "stop_reason": null,
+  "peak_processes": 2,
+  "peak_rss_bytes": 12494827520
+}

@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-08T08:06:15.191124+00:00",
+  "scope": "cache scale-up source and storage authorization; not a model-selection seal",
+  "sha256": {
+    "cache_budget.py": "38ab9a9f0d898a844d6b2bae9922fde63e6d83167ab6cc0e77fce55ee8779dcb",
+    "cache_batch.sh": "c852897a0ccfca05a6e13e09555fa3e7e9ee6cb68edb59f50c51e355b08f52b1",
+    "cache_collect.sh": "2a627333260b7f5ad1d7fe0113bb15a3a20a11962ca51f7b9190b0210a41a118",
+    "cache_manifest.py": "d91339459d7fdbb1a6538d50cc31d33c198f6dbab12073377addbd588573df1f",
+    "build_cache.py": "ea5169b2c116c3ba120b4eaefccf74b6c223f0aa1173a1dd29251d7c7ab62f0b",
+    "stage_training.py": "c703571e6f01a3d52f54d1ed738a7b33332c6ee999c8da9905884e3240321451",
+    "sync_pixel_cache.py": "ef1de64eddbeee03461ddc41de7fcfb4c66734ceb9eee9f5313a6f6daac15884",
+    "benchmark_full_cache.sh": "8e8e98a20b3266ca638f8bc47929659c7e085821e9694bb517f0c97b0e9e1930",
+    "test_cache_budget.py": "9da67a81f501e39c8c485022277e710100b742b0f500376b9455b083df28c598",
+    "phase_watch.py": "e05a19dbc82bd625a076a12cd3478e90058e5171e7705e21669de30a6f82bcd1",
+    "formal_train.sh": "c9e901623d924b0e350ef831d740ed8ebe137a38db97dbed8178a69b4bbfd412",
+    "STORAGE-AMENDMENT-20261008.md": "671fdfa7fa57b8135463a7458bc5bce17eba408deb00945620f33e756481de11"
+  }
+}

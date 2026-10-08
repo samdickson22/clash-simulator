@@ -2,6 +2,32 @@
 
 2026-10-08, before formal training. Heldout media and labels remain unopened.
 
+## 08:37 UTC extension, unchanged cleaning rule
+
+The same auditor/cleaner passed on **200 train + 25 validation matches** under
+lease 18 label `v4-label-audit-20261008-r8` (998522 / 998526, exit 0 at 08:37:42;
+18 processes, 850,276,352 bytes peak RSS). The preceding r7 launch was refused
+before any child started because the cache gather held the host-wide workload
+lock; both receipts are retained. Full evidence remains on 18 in the r8 job JSON;
+`receipts/preformal-cache-20261008/label-audit-r8-summary.json` pins its SHA256
+and each admitted match receipt.
+
+| Population | Object rows | Name/hint contradictions | Hitpoint-bearing contradictions |
+|---|---:|---:|---:|
+| Train | 3,229,363 | 446,933 | 353,170 |
+| Validation | 406,302 | 54,226 | 42,320 |
+| Total | 3,635,665 | 501,159 | 395,490 |
+
+Primary causes: **210,896** catalog-generation disagreements resolved by unique
+payload/HP, **24,419** legitimate parent/child hints, **105,669** non-hitpoint
+parent hints, and **160,175** unresolved/masked contradictions. Across 35,317
+rich native IDs there are zero identity changes; among 31,472 contradictory
+same-tick joins there are zero ID/field mismatches. Future metadata appears in
+2,923,410 rows and remains unusable for same-tick visibility. The cleaner retains
+107,612 coherent visible/nondeploying rows (95,442 train, 12,170 validation).
+No additional label-generation fix was needed. Amendment 03's downstream cleaner
+continues to apply to every split; this audit does not certify board precision.
+
 ## 07:36 UTC extension, unchanged cleaning rule
 
 After the coordinator approved derived-cache storage, the same auditor and

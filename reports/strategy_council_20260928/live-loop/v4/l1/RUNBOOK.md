@@ -62,7 +62,10 @@ Retain all source/data/weights on 01; mirror only code, docs, JSON receipts and
 logs to 05. No media or model files to 05. The 40 GB frozen acquisition cap applies
 to hub raw collection. Coordinator approval (2026-10-08 07:22 UTC, COORDINATOR.md)
 permits a separate 300 GB derived-cache budget per allowed host, with >=200 GB
-free on /mpac. Approved cache roots are `clasher-v4-cache/` on home hosts and
+free on /mpac. Subsequent user approval sets a 1 TB aggregate cache ceiling;
+current reservations are 300 GB each for 01/16/18, total 900 GB. Reassign within
+the aggregate cap before admitting another cache host. See STORAGE-AMENDMENT-20261008.md.
+Approved cache roots are `clasher-v4-cache/` on home hosts and
 `clasher-lease/data/v4-cache/` on leased CPU/GPU hosts; no new cache in the
 acquisition tree. Leased caches must move off or be deleted within one day of
 lease end (currently by 2026-10-10 05:30 UTC). Preserve evidence by moving it.
@@ -122,6 +125,9 @@ Never substitute a cache subset for the formal population or discard originals.
 
 Use the live leased-host run.sh/env.sh from fleet/LEASED-HOSTS.md, never the home
 fleet_run.sh on a borrowed host. Check leases/caps/GPU/RSS before every launch.
+The lease wrapper holds a **host-wide workload lock**: run one workload per
+leased host even when its process cap would allow more. Wait for its final exit
+receipt before launching another wrapper job. Never bypass that lock.
 `formal_train.sh` now accepts the allowed leased GPU hosts with these arguments:
 `ARM PHASE_STATE PHASE_EXIT FRESH_OUTPUT [PIXEL_CACHE] [PRECONVERTED_T6_DATASET]`.
 Leased source is `clasher-lease/data/v4-matches`; executable and all outputs stay
@@ -153,6 +159,42 @@ interval null. Threshold selection requires all nine registered grid points;
 epoch selection requires all 24 formal epochs. These primitives do not establish
 input provenance, calibrate models, create a selection seal, or certify gates.
 The guarded replay/selection driver remains to be connected and tested.
+
+`calibration_v4.py` fits the runtime isotonic knots from the selected model's
+final thresholded/suppressed validation card-play stream. One-to-one 500ms
+availability matches label positives; unmatched/duplicate predictions label
+negatives. Both native seats contribute. Per-card fits need 20 predictions;
+otherwise runtime uses the pooled `default` fit. Empty streams fail closed.
+Pass the complete validation episode list and frozen split membership mapping;
+the helper checks those declarations, but the eventual driver must authenticate
+their provenance. Champion abilities are separate and refused in this input.
+Synthetic checks passed 80 cases on leased 16 at 08:21 UTC, including an exhaustive
+isotonic least-squares oracle, support boundary, malformed scores and split
+rejection. No replay, real-data calibration, selection seal or gate measurement
+has been performed by these tests.
+
+Registered gap preparation uses `gap_schedule_v4.py` and
+`l2/native/pair-*/public-frames.jsonl.gz`, field `timestamp_ms`, as explicitly
+corrected by **PREREG-AMENDMENT-02.md**. That amendment supersedes the base
+registration's decisions.jsonl path. It fails closed on missing/nonfinite/
+nonchronological timestamps or duplicate frame identities. The 08:27 sparse
+decision-source audit (23,546 intervals; 830.632 ms p95) was based on an incorrect
+reading of the base registration alone; retain it as diagnostic evidence only.
+Do not use it for the formal gap cell. Amendment 02 and all gates stay unchanged.
+The schedule samples cumulative arrivals with seed 6109, then selects the first
+frame at/after each arrival without duplicating frames. Freeze shared arrival
+sequences before predictions and apply them to each arm's frame grid through
+`select_arrivals`. Original timestamps remain in the plan. The T6 validation
+adapter preserves its required integer-ms public contract with original times
+in `source_timestamp_ms`; it uses the amended public-frame sources.
+Schedule/source tests passed 24 synthetic cases on 16; the updated T6 adapter has only
+syntax validation, not end-to-end replay. Final-population schedule generation
+and sealing remain pending; this does not certify the gap recall gate. The
+amended source audit and expanded frame-source tests passed under
+`v4-gap-source-audit-20261008-r3` on 16 at 08:36 UTC: **60,586 intervals, p95 610 ms**,
+range 7–2,075 ms. Its `-source.json` receipt pins each gzip SHA256 and the exact
+interval vector. Use that amended-source receipt; r1's sparse-decision receipt
+is retained for incident evidence only.
 
 ## Bounded Phase A checks
 

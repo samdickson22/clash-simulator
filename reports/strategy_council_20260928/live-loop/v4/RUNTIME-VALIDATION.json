@@ -1,0 +1,60 @@
+{
+  "runtime_tests": {
+    "passed": 20,
+    "seconds": 10.288,
+    "log": "RUNTIME-TESTS.txt"
+  },
+  "unchanged_actuator_tests": {
+    "passed": 7,
+    "seconds": 0.002
+  },
+  "recorded_replay_integration": {
+    "schema": "clasher.live-v4.integration-audit.v1",
+    "matches": [
+      {
+        "match": "1975100700",
+        "all_recorded_frames_captured": true,
+        "all_frames_processed_or_dropped": true,
+        "train_only": true,
+        "duplicate_tap_attempts": [],
+        "overlapping_commands": [],
+        "taps_without_reservation": [],
+        "worker_failures": [],
+        "log_drops": 0,
+        "passed": true
+      },
+      {
+        "match": "1975100701",
+        "all_recorded_frames_captured": true,
+        "all_frames_processed_or_dropped": true,
+        "train_only": true,
+        "duplicate_tap_attempts": [],
+        "overlapping_commands": [],
+        "taps_without_reservation": [],
+        "worker_failures": [],
+        "log_drops": 0,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  "mac": {
+    "host": "macmini-fleet",
+    "observed_utc": "2026-10-08T07:29:02Z",
+    "load_average": [
+      4.6,
+      5.07,
+      5.28
+    ],
+    "kern.memorystatus_vm_pressure_level": 2,
+    "memory_pressure_free_percentage": 30,
+    "latency_test_run": false,
+    "reason": "Normal memory pressure was not established (kernel level 2); T1 Phase A still collecting. Defer CPU latency test rather than add load.",
+    "actions": [
+      "read-only uptime/sysctl/memory_pressure",
+      "read-only copy of existing v1 body/HUD checkpoint to fleet staging"
+    ],
+    "emulator_actions": false,
+    "renderer_actions": false
+  }
+}

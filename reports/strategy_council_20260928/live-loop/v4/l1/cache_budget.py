@@ -5,6 +5,10 @@ import socket
 
 MAX_BYTES = 300_000_000_000
 MIN_FREE_BYTES = 200_000_000_000
+MAX_FLEET_BYTES = 1_000_000_000_000
+# Explicit reservations avoid independent hosts each spending the full fleet
+# allowance. Reassign reservations before adding a fourth cache host.
+HOST_RESERVATIONS = {'127x01': MAX_BYTES, '127x16': MAX_BYTES, '127x18': MAX_BYTES}
 HOME_HOSTS = {'127x01', '127x03', '127x04', '127x08'}
 LEASE_HOSTS = {'127x11', '127x13', '127x14', '127x16', '127x18'}
 
@@ -19,6 +23,9 @@ def approved_root(host=None):
 
 
 def validate_root(path):
+    host=socket.gethostname().split('.')[0]
+    if host not in HOST_RESERVATIONS or sum(HOST_RESERVATIONS.values())>MAX_FLEET_BYTES:
+        raise ValueError('Derived-cache fleet reservation required')
     root = approved_root()
     if Path(path).resolve() != root:
         raise ValueError(f'Use approved derived-cache root: {root}')

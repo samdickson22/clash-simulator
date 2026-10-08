@@ -1,0 +1,159 @@
+{
+  "schema": "clasher.live-v4.fleet-summary.v1",
+  "host": "127x04",
+  "matches": [
+    {
+      "match": "1975100700",
+      "captured": 5655,
+      "processed": 3907,
+      "processed_fps": 13.816571874157885,
+      "failures": [],
+      "first_submissions": 51,
+      "log_drops": 0
+    },
+    {
+      "match": "1975100701",
+      "captured": 2416,
+      "processed": 1793,
+      "processed_fps": 14.807351959567919,
+      "failures": [],
+      "first_submissions": 0,
+      "log_drops": 0
+    }
+  ],
+  "perception": "v3-body-hud-only",
+  "device": "cpu",
+  "actuator": "mock",
+  "timing_ms": {
+    "capture": {
+      "count": 8071,
+      "p50": 9.31730808224529,
+      "p95": 10.834999731741846,
+      "p99": 32.46758788591251
+    },
+    "decode": {
+      "count": 8071,
+      "p50": 0.736889080144465,
+      "p95": 2.038617036305368,
+      "p99": 2.648239245172591
+    },
+    "capture_queue_age": {
+      "count": 8071,
+      "p50": 148.36276054847986,
+      "p95": 284.3938119476661,
+      "p99": 351.9182322430429
+    },
+    "actuator_hud": {
+      "count": 8071,
+      "p50": 4.069934017024934,
+      "p95": 4.6905275085009634,
+      "p99": 4.915262677241117
+    },
+    "backbone_hud": {
+      "count": 5700,
+      "p50": 44.474522466771305,
+      "p95": 48.31532997195609,
+      "p99": 51.001464414875954
+    },
+    "temporal_fusion": {
+      "count": 5700,
+      "p50": 0.08905603317543864,
+      "p95": 0.19704750739037993,
+      "p99": 0.25859234039671736
+    },
+    "perception": {
+      "count": 5700,
+      "p50": 44.74283801391721,
+      "p95": 48.66331046796404,
+      "p99": 51.30031800479629
+    },
+    "belief": {
+      "count": 5700,
+      "p50": 22.251024493016303,
+      "p95": 48.01829585339875,
+      "p99": 157.05130285932682
+    },
+    "belief_queue_age": {
+      "count": 5700,
+      "p50": 1.952451013494283,
+      "p95": 3.3592569234315306,
+      "p99": 15.330060396809156
+    },
+    "search": {
+      "count": 715,
+      "p50": 5.895679001696408,
+      "p95": 82.1614719927311,
+      "p99": 100.49863180611285
+    },
+    "search_active": {
+      "count": 183,
+      "p50": 73.91131005715579,
+      "p95": 94.31607609149069,
+      "p99": 121.44565167836855
+    },
+    "taps": {
+      "count": 65,
+      "p50": 20.07280709221959,
+      "p95": 20.079868799075484,
+      "p99": 20.08650690317154
+    },
+    "frame_to_tap": {
+      "count": 51,
+      "p50": 312.25619395263493,
+      "p95": 386.4710663910955,
+      "p99": 405.5680583114736
+    }
+  },
+  "counts": {
+    "ready": 2,
+    "capture": 8071,
+    "decode": 8071,
+    "captured": 8071,
+    "capture_queue_age": 8071,
+    "actuator_hud": 8071,
+    "backbone_hud": 5700,
+    "temporal_fusion": 5700,
+    "perception": 5700,
+    "belief": 5700,
+    "processed": 5700,
+    "history_resets": 0,
+    "dropped": 2371,
+    "dropped_frames": 2371,
+    "belief_queue_age": 5700,
+    "search": 715,
+    "search_overruns": 0,
+    "command": 71,
+    "pending_blocked_frame": 1396,
+    "actuator_state": 136,
+    "taps": 65,
+    "frame_to_tap": 51,
+    "ledger": 136,
+    "expired_decision": 14,
+    "stale_snapshot": 68
+  },
+  "processed_fraction": 0.7062321893197869,
+  "processed_fps": 14.113569023825047,
+  "search_overrun_fraction": 0.0,
+  "duplicate_tap_attempts": [],
+  "stage_budget_pass": {
+    "capture": false,
+    "decode": true,
+    "backbone_hud": false,
+    "temporal_fusion": true,
+    "belief": false,
+    "search": true,
+    "taps": true
+  },
+  "frame_to_tap_p50_pass": false,
+  "frame_to_tap_p99_pass": false,
+  "processed_fraction_pass": false,
+  "production_qualified": false,
+  "caveats": [
+    "Two train matches only; all 51 first submissions came from the first match.",
+    "Second match produced wait decisions with the limited fallback; no latency samples.",
+    "Search-active excludes wait-only/candidate-generation calls.",
+    "Mock transport sleeps 20 ms and cannot change recorded pixels.",
+    "Fleet CPU was shared (load 61.64/53.70/33.81 at suite launch, no console users).",
+    "No formal v4 weights, trained v3 event weights, Mac or ANE benchmark."
+  ]
+}

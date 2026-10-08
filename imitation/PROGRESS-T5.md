@@ -1,6 +1,6 @@
 # T5 v1 training and gate (a)
 
-2026-10-08 07:23 UTC — **STOPPED: T4 SHAKEDOWN FAILED.** No T5 GPU jobs,
+2026-10-08 07:45 UTC — **RESUMED: WAITING FOR T4 RERUN PASS.** No T5 GPU jobs,
 training, calibration or eval/eval_ood scoring have been launched. No commits.
 
 ## Qualification
@@ -65,14 +65,14 @@ Never duplicate a live run. Use verified PIDs only; technical retries require
 recorded reasons and preserve old outputs. Never delete stores/checkpoints.
 Mirror only owned docs, receipts and results to 05 with rsync -c.
 
-Temporary same-thread continuation schedule (disabled at07:23 UTC after T4 failure):
+Temporary same-thread continuation schedule (resumed by coordinator at07:44 UTC):
 `scheduled-task:command:mcp:3edbde69-151b-4209-8cf7-c6c1eac260db:schedule-task:clasher-imitation-t5-continuation-20261008-v1`.
 First nextRunAt: `2026-10-08T05:32:37.789Z` (2026-10-07 22:32:37 PDT).
 Readiness receipt: `imitation/t5/receipts/prerequisite-wait.json`.
 Disable after the final report or if T4 fails/an upstream terminal blocker is
 reported. This does not replace or modify the separate data/T4 schedules.
 
-Latest scheduled check: 2026-10-08 07:23:08 UTC — T4 shakedown exit1 verified on04, failed07:19:29 UTC. T5 continuation disabled per explicit hard-stop rule. T3 certificate unchanged. No T5 training or held-out scoring launched.
+Latest scheduled check: 2026-10-08 08:34:38 UTC — qualifying T4 rerun0727Z PID2398593 live on04 at nice10, who empty, no exit receipt; final dev evaluation ongoing. T3/copies/P16 complete. Explicit T4 PASS absent; no T5 jobs; continuation remains active.
 
 ## Coordinator lease update — 2026-10-08 05:45 UTC
 
@@ -163,3 +163,24 @@ T4 wrapper wall299.82s, CPU318.72s. No full-run throughput conclusion.
 T5 GPU compute remains0; no selected checkpoints, frozen PREREG, heldout
 scores or gate verdict exist. Resume T5 only after the coordinator resumes it
 and T4 publishes a passing shakedown; preserve this failure evidence.
+
+## Coordinator resume — 2026-10-08 07:45 UTC
+
+User explicitly resumed T5 and requested re-enabling continuation. The new
+gate is T4 rerun `t4-shakedown-20261008T0727Z`, launcher2398593 on04. PASS
+permits T5 preparation/freeze and the five planned runs; **a second failure
+must disable T5 continuation and stop again**. The first failure remains
+preserved history, not a reason to stop this resumed attempt.
+
+Read actual rerun status at07:44:50 UTC: verified PID2398593 live at nice10,
+stage subset (full dev validation), no exit receipt. No duplicate job launched.
+T4 fixed the cap to128 entities, added a192-token bucket and retains all rows.
+It also applied the predeclared tile-width64 latency fallback; rerun command
+confirms --tile-width64. Current model has2,254,938 parameters. PREREG draft
+records both technical changes and independently matched04/05 source hashes.
+Final frozen PREREG must bind the exact staged T5 code before T5 training;
+pending T4 hashes are not the final T5 freeze.
+
+Data-worker07:37 report:04/08/11/13 copies verified;14 copy running. T5 will
+check authoritative per-host receipts/live leases before launch. Data worker
+retains copy ownership. One run per04/08/11/13/14 remains the plan.

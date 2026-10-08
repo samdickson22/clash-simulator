@@ -6,7 +6,6 @@ import gzip
 import hashlib
 import json
 from pathlib import Path
-import random
 import sys
 import time
 sys.path.insert(0,str(Path(__file__).resolve().parents[5]/'scripts'))
@@ -20,6 +19,7 @@ from clasher.vision.l1_events_v3 import StreamEventDetector
 from clasher.vision.l1_hud_v3 import StreamHudReader
 from clasher.rl.live_inference_contract import parse_public_vision_frame
 from evaluate_l1_stream_v3 import replay,read,score_events
+from gap_schedule_v4 import audit_sources, make_schedules
 
 
 def main():
@@ -27,22 +27,28 @@ def main():
     p.add_argument('--l2',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     manifest=json.loads((a.dataset/'manifest.json').read_text())
     if any(e['split'] not in ('train','validation') for e in manifest['matches']):raise ValueError('Heldout forbidden')
-    a.output.mkdir(parents=True,exist_ok=False);gaps=[];hashes={}
-    for path in sorted(a.l2.glob('pair-*/public-frames.jsonl.gz')):
-        with gzip.open(path,'rt') as f:frames=[json.loads(l) for l in f]
-        gaps.extend(b['timestamp_ms']-x['timestamp_ms'] for x,b in zip(frames,frames[1:]))
-        hashes[str(path)]=hashlib.sha256(path.read_bytes()).hexdigest()
-    if not gaps or min(gaps)<=0:raise ValueError('Missing/noncausal historical frame intervals')
-    rng=random.Random(6109);selected=[]
+    a.output.mkdir(parents=True,exist_ok=False)
+    source=audit_sources(a.l2);gaps=source['intervals_ms']
+    (a.output/'gap-source.json').write_text(json.dumps(source,indent=2)+'\n')
+    inputs={}
     for e in manifest['matches']:
         if e['split']!='validation':continue
-        rows=read(a.dataset/'audit'/e['episode_id']/'inputs.jsonl');due=0
+        ep=e['episode_id']
+        if ep in inputs:raise ValueError('Duplicate validation episode')
+        inputs[ep]=read(a.dataset/'audit'/ep/'inputs.jsonl')
+    plan=make_schedules({ep:[r['timestamp_ms'] for r in rows] for ep,rows in inputs.items()},gaps)
+    # Preserve original times in the schedule; retain the existing v3 integer-ms
+    # boundary adapter required by its public-frame contract.
+    selected=[]
+    for ep,rows in plan['schedules'].items():
         for r in rows:
-            if r['timestamp_ms']>=due:
-                selected.append(dict(r,timestamp_ms=int(r['timestamp_ms'])));due=r['timestamp_ms']+rng.choice(gaps)
+            original=inputs[ep][r['frame_index']]
+            selected.append(dict(original,source_timestamp_ms=original['timestamp_ms'],
+                                 timestamp_ms=int(original['timestamp_ms'])))
     selection_path=a.output/'inputs.jsonl';selection_path.write_text(''.join(json.dumps(x)+'\n' for x in selected))
     (a.output/'schedule.json').write_text(json.dumps(dict(seed=6109,gaps=len(gaps),p95_ms=float(np.quantile(gaps,.95)),
-        source_hashes=hashes,selected=len(selected),inputs_sha256=hashlib.sha256(selection_path.read_bytes()).hexdigest()),indent=2)+'\n')
+        source_files=source['source_files'],source_field=source['source_field'],plan=plan,
+        selected=len(selected),inputs_sha256=hashlib.sha256(selection_path.read_bytes()).hexdigest()),indent=2)+'\n')
     offline_ml(a.output/'offline');cv2.setNumThreads(1);torch.set_num_threads(1)
     model=a.run/'model';body=Perception(REPORT/'v1/model/detector/weights/best.pt',model/'hud.npz',REPORT/'calibration.json',imgsz=640,device='cuda')
     body.hud=StreamHudReader(model/'hud.npz');detector=StreamEventDetector(model/'last.pt',body.geo,device='cuda')

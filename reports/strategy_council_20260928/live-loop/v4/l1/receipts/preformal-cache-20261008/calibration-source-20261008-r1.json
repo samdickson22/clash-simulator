@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-08T08:23:26.892036+00:00",
+  "scope": "synthetic validation calibration preparation; not selection seal",
+  "host": "127x16",
+  "label": "v4-calibration-tests-20261008-r1",
+  "checks": 80,
+  "source_sha256": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/calibration_v4.py": "96d06b2147134ed4413af3a60960f78d0e64626e108e78121befaca8dd7018e2",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_calibration_v4.py": "9233c1454b4fd0c7a7121a4619c8a30f84348de5702b2b24ca13359af354fc65",
+    "reports/strategy_council_20260928/live-loop/v4/l1/scoring_v4.py": "1a7f6d644948613058f7b476150fea234f27555c3bfc08569b73f6b0804e37fa",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_scoring_v4.py": "d51ae15d5bac1a0eed192edaa9e9655b73ad4a698c1a23fae94160e8d9ed4430",
+    "src/clasher/vision/l1_v4.py": "f8cc93be0e6b5c8fcc31d69c21c8ce2a895194e5863ca45b949a810c41ae9c3b"
+  },
+  "heldout_payloads_opened": false
+}

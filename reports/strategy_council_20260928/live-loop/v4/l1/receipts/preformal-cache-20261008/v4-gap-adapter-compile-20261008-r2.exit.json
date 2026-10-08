@@ -1,0 +1,20 @@
+{
+  "host": "127x16",
+  "label": "v4-gap-adapter-compile-20261008-r2",
+  "started_utc": "2026-10-08T08:30:54.196965+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "-m",
+    "py_compile",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/gap_t6.py"
+  ],
+  "supervisor_pid": 3475602,
+  "pid": 3475604,
+  "exit_code": 0,
+  "status": "stopped",
+  "finished_utc": "2026-10-08T08:30:55.349857+00:00",
+  "stop_reason": "job exited with descendants still running",
+  "peak_processes": 2,
+  "peak_rss_bytes": 29294592
+}

@@ -9,31 +9,39 @@ re-test, and the L2-v4 PREREG are still prerequisites.
 No emulator or renderer was launched, configured, queried, or tapped in this task.
 The recorded-media tests use a mock input channel. The two train recordings remain
 on 127x04 under `/mpac/sdicks02/repos/clasher-runtime-data/`; nothing was deleted.
-This implementation did not edit the tracker, collector, APK/hook, frozen split
-or perception PREREG, and made no git commits.
+The frozen research tracker, collector, APK/hook, frozen split and perception
+PREREG remain unchanged. The latency revision adds an exact runtime tracker adapter;
+no git commits were made.
 
 ## Processes and transport
 
-The task's naming combines DESIGN's perception and belief workers in P2, with P5
-as the parent supervisor: five application processes, plus Python's small spawn
-resource-tracker helper. All stages use host monotonic timestamps.
+Perception and belief now run in separate spawned processes, matching DESIGN §2.1:
+five workers plus the parent supervisor (six application processes), and Python's
+small spawn resource-tracker helper. All stages use host monotonic timestamps.
 
 | Process | Implementation | Responsibility |
 |---|---|---|
-| P1 | `capture.py`, `runtime.p1` | Direct authenticated loopback gRPC screenshot stream, or timestamp-paced H.264 replay; sanitize pixels; publish capture/decode timestamps. Live sampling targets 20 FPS from the faster screenshot RPC. |
-| P2 | `perception.py`, `belief.py`, `runtime.p2` | V4 streaming model or explicit v3 fallback; gap-preserving temporal events; frozen tracker v3; own ledger; four hypothesis-stratified roots; versioned belief snapshot. |
-| P3 | `decision.py`, `runtime.p3` | Rust fair search, horizon 160, interval 10, balanced/pressure/defense; four parallel single-thread roots, common 200 ms deadline. Only candidates completed at all four roots enter the mean. |
-| P4 | `actuation.py`, `runtime.p4` | Sole owner of existing `actuator.py`; freshest raw pixel HUD; remap by card; persistent gRPC or mock input; verification and one retry; reliable ledger feedback. |
-| P5 | `runtime.run` | Spawn/warmup barrier, heartbeat/stall detection, compressed logs, budget summaries, source hashes, owned-PID shutdown. |
+| P0 | `capture.py`, `runtime.p0` | Authenticated screenshot stream or timestamp-paced train replay; sanitize pixels; publish capture/decode timestamps. |
+| P1 | `perception.py`, `runtime.p1` | Per-frame body/HUD and gap-preserving temporal events; publish latest public observation and raw pixel HUD. |
+| P2 | `belief.py`, `tracker.py`, `runtime.p2` | Exact accelerated tracker v3, own ledger, four hypothesis-stratified roots, versioned belief snapshots. |
+| P3 | `decision.py`, `runtime.p3` | Unchanged adopted S6 delay-aware search: four roots, horizon 160, interval 10, three styles, common 200 ms deadline. |
+| P4 | `actuation.py`, `runtime.p4` | Sole actuator owner; fresh pixel HUD; mock input in these measurements; verification/retry and reliable ledger feedback. |
+| P5 | `runtime.run` | Warmup/start barrier, heartbeats, compressed logs, provenance, owned-PID shutdown. |
 
 The capture ring has 64 slots of 540×1140×3 uint8 pixels (~118 MB). A slot lock
 and sequence stamp prevent torn reads; the consumer copies before inference.
 The producer never waits: overwrite the oldest slot at wraparound, or drop an
 incoming frame if its slot is being copied. Loss counts are logged. At a queue
-age of 150 ms, P2 skips alternate sequence numbers, retaining real timestamps.
+age of 150 ms, P1 skips alternate sequence numbers, retaining real timestamps.
 At 400 ms it discards the frame. Neither adapter clears temporal history on a gap.
 
-Belief and HUD queues each hold two latest values. Older values are droppable.
+Perception, belief and HUD queues each hold two latest values. Older frame values
+are droppable. Perception IPC contains no pixel array. An acknowledgement watermark
+retains one-shot event candidates in successive observations until P2 consumes them;
+its 4,096-candidate bound fails closed. EOF retries a failed last publication and
+waits for P2 to consume the last published sequence before supervisor draining.
+P2 skips intermediate body/HUD frames, preserves actual timestamps, deduplicates
+events, and incorporates reliable actuator feedback independently of inference.
 The command queue holds one message; a shared outstanding-command token covers
 queued, transporting, verifying and retrying states. The eight-entry feedback
 queue is reliable: saturation terminates the run rather than discarding a spend
@@ -50,16 +58,17 @@ commands, and decisions based on frames preceding a terminal result. A decision
 expires 400 ms after its source frame. Transport errors remain ambiguous/pending.
 
 For the legacy fallback only, P4 runs its small standalone v3 HUD reader on the
-latest capture while P2 processes bodies/belief. This implements the latest-frame
+latest capture while P1 processes bodies. This implements the latest-frame
 pre-tap check and keeps raw HUD distinct from optimistically spent belief state.
-V4 uses the shared-backbone HUD published by P2; there is no hidden-state verifier.
+V4 uses the shared-backbone HUD published by P1; there is no hidden-state verifier.
 
 ## Belief and fair-information boundary
 
-The opponent tracker is **TrackerV3 from `search-noise-s4/`, imported unchanged**,
-per the S5 adoption in COORDINATOR.md. Its module dependencies are imported with
-an isolated bootstrap alias so they cannot replace the application's environment
-or source path. The live adapter uses the frozen public-event/body API. It offsets
+The opponent tracker uses `live/tracker.py:TrackerV3`, an output-identical
+acceleration of **frozen `search-noise-s4/TrackerV3`**, adopted unchanged by S5.
+The frozen files are not edited. `belief.frozen_tracker=True` retains the reference
+path for paired proof. Dependencies still load through isolated bootstrap aliases
+without replacing application imports. The live adapter uses the frozen public-event/body API. It offsets
 that API's built-in six-tick age correction so v4's execution-time estimate is
 applied once. The frozen tracker retains its S5 calibrated confusion/likelihood
 model; v4 top-three distributions, q and sigma remain available in the logged
@@ -263,13 +272,13 @@ additional measured harness work. Model/resource warmup precedes the start barri
 
 `python -B -m unittest discover -s tests/live_v4 -v` runs process, ring, ledger,
 trigger, adapter, fair-boundary, and supervisor tests. It includes bounded-ring
-overflow, a 650 ms P2 stall with alternate/expired drops, a stalled P3 result that
+overflow, a 650 ms P1 stall with alternate/expired drops, a stalled P3 result that
 cannot submit, duplicate command IDs, stale terminal fences, ambiguous transport,
 backend-relative acceptance, 1.2-second temporal gaps, V4 ABI canonicalization,
 and train-only admission before media opening. The gRPC test uses an in-memory
 fake RPC and never opens a socket. The unchanged T2 actuator tests are separate.
 
-## Measured latency
+## Historical measured latency (before the split/acceleration revision)
 
 **FAIL against the fleet diagnostic latency/throughput budget.** Two complete
 train recordings (1975100700 and 1975100701), 8,071 captured frames, 5,700 processed
@@ -322,7 +331,7 @@ established while T1 collection was active. Only read-only health queries and
 read-only checkpoint copies occurred. `runtime-results/mac-preflight.json`
 retains the evidence. Fleet CPU results are not Mac/ANE or emulator-on results.
 
-## S6 integration validation (2026-10-08)
+## Historical S6 integration validation (2026-10-08)
 
 **27 runtime unit/integration/fault/native-parity tests passed in 38.468 seconds
 on 127x04**, CPU only, nice 10. The three recorded frames (0, 50, 186) each had
@@ -364,6 +373,85 @@ Reviewable evidence: `RUNTIME-S6-TESTS.txt`, `RUNTIME-S6-VALIDATION.json`, and t
 train-only fixture in `tests/live_v4/fixtures/s6-train-inputs.json`. Raw replay
 logs/provenance are retained under `runtime-results/s6-record-r2/` locally and on
 127x04. No emulator/renderer or heldout data was used for this integration.
+
+## Latency revision: implementation and equality
+
+`tracker.py` keeps the frozen resource, event likelihood, cycle-mixture, pruning,
+calibration and sampling rules. It changes execution only:
+
+- Advance cloned hands by exact integer regeneration segments and refill-expiry
+  jumps, including the 2,400/4,800 tick boundaries. The first rounding and final
+  division match the frozen tick loop.
+- Cache repeated fixed-lag cycle updates using immutable cue contents, event-count
+  hazard and retained input identity; changed board corroboration invalidates the key.
+- Index compatible prior decks, preserving original deck and sum order; warm
+  prior-only presence tables for up to three reveals before the start barrier.
+- Skip provably empty unresolved-hand enumerations; avoid rejected-branch clones
+  and V2 hand-summary work that V3 immediately overwrites.
+- Compute one exact CDF per resource array and reuse it across summaries and four
+  root draws; cache hypothesis weights without changing any RNG draws.
+- Accumulate shifted resource slices without allocating zero-filled full-lattice
+  temporaries. Optional dependency-free `lattice.rs` fuses the elementwise work;
+  NumPy still supplies the original capped pairwise reductions. No fast-math,
+  reassociated sums, FMA, probability truncation or sparse approximation is used.
+
+The uniform contamination in frozen v3 makes all 100,001 lattice entries nonzero.
+Pruning this to sparse support would change the frozen distribution. The optimized
+runtime therefore retains dense probabilities and their exact reduction order.
+
+Build the optional kernel **on the target fleet/Mac host**, before launching:
+
+```bash
+# Fleet environment: source /mpac/sdicks02/env.sh
+bash reports/strategy_council_20260928/live-loop/v4/build_lattice.sh
+```
+
+The build uses plain `rustc`, no cargo dependencies, and produces `_lattice.so`
+(Linux) or `_lattice.dylib` (Mac). The loaded library and Rust source hashes enter
+runtime provenance. Without it, the exact optimized NumPy path remains available;
+`CLASHER_TRACKER_NUMPY=1` explicitly selects that fallback.
+
+Final equality and replay tables are being recorded under the revision receipts.
+The short development runs remain retained and are not pooled with the final
+constant-source replay suite.
+
+## Mac replay gate and exact deferred command
+
+No Mac work is authorized while T1 Phase A is collecting. The local
+`T1-PROGRESS.md` does not confirm collection has stopped; the time estimate alone
+is not an unlock. This revision has made **no Mac connection or measurement**.
+After T1 explicitly records collection stopped, run the following on the Mac.
+It stages only train replay inputs from 127x04, uses MPS and mock input, and never
+launches, queries or taps an emulator. Its 2,400-frame limit is about two minutes
+of recorded media plus warmup. Use a fresh timestamped directory.
+
+```bash
+cd /Users/sam/Desktop/code/clasher
+mac_run="$PWD/reports/strategy_council_20260928/live-loop/v4/runtime-results/mac-latency-$(date -u +%Y%m%dT%H%M%SZ)"
+mkdir -p "$mac_run/data/match" "$mac_run/data/weights"
+rsync -a --include='*.py' --include='*.rs' --exclude='*' \
+  127x04:/mpac/sdicks02/repos/clasher/src/clasher/live/ src/clasher/live/
+rsync -a 127x04:/mpac/sdicks02/repos/clasher-runtime-data/matches/v4-phase-a-1975100700/ \
+  "$mac_run/data/match/"
+rsync -a 127x04:/mpac/sdicks02/repos/clasher-runtime-data/weights/ "$mac_run/data/weights/"
+rsync -a 127x04:/mpac/sdicks02/repos/clasher-runtime-data/registration/split.json "$mac_run/data/split.json"
+rsync -a 127x04:/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/runtime/support/human_deck_catalog.json \
+  "$mac_run/data/prior.json"
+export PYTHONPATH="$PWD/src:$PWD/engine-rs"
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1
+nice -n 10 rustc --crate-type cdylib --edition=2021 -C opt-level=3 \
+  src/clasher/live/lattice.rs -o src/clasher/live/_lattice.dylib
+nice -n 10 .venv/bin/python -B -m clasher.live \
+  --replay "$mac_run/data/match" --split "$mac_run/data/split.json" \
+  --prior "$mac_run/data/prior.json" --body "$mac_run/data/weights/body.pt" \
+  --hud "$mac_run/data/weights/hud.npz" --device mps --mock-input --frames 2400 \
+  --output "$mac_run/run" > "$mac_run/console.log" 2>&1
+cat "$mac_run/run/metrics.json"
+```
+
+This tests the available body/HUD fallback on actual MPS. It does not qualify
+formal v4/ANE perception or emulator-on throughput. Actual Mac timing and ARM
+bit parity remain unmeasured until that gated run.
 
 ## Remaining L2-v4 prerequisites
 

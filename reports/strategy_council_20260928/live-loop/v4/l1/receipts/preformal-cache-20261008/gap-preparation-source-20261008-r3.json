@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-08T08:39:38.657230+00:00",
+  "scope": "Amendment 02 gap source/schedule preparation; not selection seal",
+  "supersedes": "gap-preparation-source-20261008-r2.json source interpretation",
+  "source_sha256": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/gap_schedule_v4.py": "c3db7a2b9c465470a20562b4e69972f976b0af16ffd8e7123f7aa9a5403d9d8b",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_gap_schedule_v4.py": "af8838fd0f1ae51e198498c5322ad222127300a9bd369ea037e6ee4346e90beb",
+    "reports/strategy_council_20260928/live-loop/v4/l1/audit_gap_sources.sh": "0e21634d9c75c7a74d51a10c765696394c79105545acb0ee3b7f92f7a932ef49",
+    "reports/strategy_council_20260928/live-loop/v4/l1/gap_t6.py": "1d004dfe5439a5630bb2e78b25067ec9f672e26bd357dc7e534ffbfbaaad41c1",
+    "reports/strategy_council_20260928/live-loop/v4/l1/PREREG-AMENDMENT-02.md": "df6bacd80b83b36af50f625008820a8e13f4f157182687e1ac525bc44b71096b"
+  },
+  "synthetic_checks": 24,
+  "source_audit": "v4-gap-source-audit-20261008-r3-source.json",
+  "source_audit_sha256": "689c06831b1241c6b8d96b5fb7e3faaa0e2e7d540c564942e525dee376d1d404",
+  "heldout_payloads_opened": false
+}

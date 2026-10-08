@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-08T08:34:33.281159+00:00",
+  "scope": "Gap source and schedule preparation; no formal model replay or selection seal",
+  "source_sha256": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/gap_schedule_v4.py": "bc8c5da8be0ffa6918a784b677a7fdb181edbf167fbf64e7ad95d499253f8143",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_gap_schedule_v4.py": "fe148ddcefe374d7c038e97149d7b0b38823eaec9ea39d9bcad3e76d2f15cb2e",
+    "reports/strategy_council_20260928/live-loop/v4/l1/audit_gap_sources.sh": "6e66542c3289062c67f28ce5fd107090c6986e5a57b4838e16b2f7d50b12c21d",
+    "reports/strategy_council_20260928/live-loop/v4/l1/gap_t6.py": "1d004dfe5439a5630bb2e78b25067ec9f672e26bd357dc7e534ffbfbaaad41c1"
+  },
+  "synthetic_checks": 19,
+  "source_audit": "v4-gap-source-audit-20261008-r1-source.json",
+  "source_audit_sha256": "b931c4279b9564dc81d210df9e50e4ba48a8a78d0c4f9d4ec86feb254ab0866e",
+  "heldout_payloads_opened": false
+}

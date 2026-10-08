@@ -1,0 +1,61 @@
+2026-10-08T08:12:13Z
+command: env YOLO_AUTOINSTALL=false PYTHONPATH=src:engine-rs:/mpac/sdicks02/repos/clasher-runtime-data/python-deps /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m unittest discover -s tests/live_v4 -v
+test_ambiguous_transport_keeps_reservation (test_runtime.ActuationTests.test_ambiguous_transport_keeps_reservation) ... ok
+test_expired_and_revision_rejected (test_runtime.ActuationTests.test_expired_and_revision_rejected) ... ok
+test_no_stale_retap_after_stall_or_duplicate (test_runtime.ActuationTests.test_no_stale_retap_after_stall_or_duplicate) ... ok
+test_remap_and_delayed_acceptance (test_runtime.ActuationTests.test_remap_and_delayed_acceptance) ... ok
+test_frozen_tracker_import_has_no_bootstrap_side_effects (test_runtime.BeliefTests.test_frozen_tracker_import_has_no_bootstrap_side_effects) ... ok
+test_ledger_spends_once_and_ignores_old_feedback (test_runtime.BeliefTests.test_ledger_spends_once_and_ignores_old_feedback) ... ok
+test_backpressure_preserves_irregular_time (test_runtime.CaptureTests.test_backpressure_preserves_irregular_time) ... ok
+test_heldout_rejected_before_media_open (test_runtime.CaptureTests.test_heldout_rejected_before_media_open) ... ok
+test_ring_overflow_and_copy (test_runtime.CaptureTests.test_ring_overflow_and_copy) ... ok
+test_backend_delay_and_verifier_share_selected_profile (test_runtime.DecisionTests.test_backend_delay_and_verifier_share_selected_profile) ... ok
+test_cadence_and_rate_limited_event_and_verification (test_runtime.DecisionTests.test_cadence_and_rate_limited_event_and_verification) ... ok
+test_pending_p4_reservation_blocks_s6_without_second_spend (test_runtime.DecisionTests.test_pending_p4_reservation_blocks_s6_without_second_spend) ... ok
+test_s6_deadline_discards_incomplete_candidate_and_restores_native (test_runtime.DecisionTests.test_s6_deadline_discards_incomplete_candidate_and_restores_native) ... ok
+test_belief_denied_reads_and_backdated_event (test_runtime.FairBoundaryTests.test_belief_denied_reads_and_backdated_event) ... ok
+test_replay_projects_only_public_fields (test_runtime.FairBoundaryTests.test_replay_projects_only_public_fields) ... ok
+test_sanitizer_ignores_opponent_hud (test_runtime.FairBoundaryTests.test_sanitizer_ignores_opponent_hud) ... ok
+test_rpc_sampling_timestamp_anchor_and_close_without_network (test_runtime.GrpcCaptureTests.test_rpc_sampling_timestamp_anchor_and_close_without_network) ... ok
+test_downscaled_allowlist_matches_original_sanitizer (test_runtime.PerceptionTests.test_downscaled_allowlist_matches_original_sanitizer) ... ok
+test_v3_fallback_retains_tracker_across_long_gap (test_runtime.PerceptionTests.test_v3_fallback_retains_tracker_across_long_gap) ... ok
+test_v4_adapter_canonical_unknowns_and_completion_timestamp (test_runtime.PerceptionTests.test_v4_adapter_canonical_unknowns_and_completion_timestamp) ... ok
+test_empty_latency_is_not_pass (test_runtime.SupervisorTests.test_empty_latency_is_not_pass) ... ok
+test_pipeline_and_stage_stall (test_runtime.SupervisorTests.test_pipeline_and_stage_stall) ... ok
+test_search_stall_discards_expired_command (test_runtime.SupervisorTests.test_search_stall_discards_expired_command) ... ok
+test_deadline_selects_only_complete_s6_candidates (test_s6_parity.S6RecordedParity.test_deadline_selects_only_complete_s6_candidates) ... S6_DEADLINE {"ms": 196.06319000013173, "completed": 2, "candidates": 20, "deadline_overrun": false}
+ok
+test_nonterminal_variant_matches_s6_and_changes_delay_scores (test_s6_parity.S6RecordedParity.test_nonterminal_variant_matches_s6_and_changes_delay_scores) ... S6_NONTERMINAL_PARITY {"action": 2304, "candidates": 20, "score_range": [0.0008394883983686572, 0.020203708701727996], "search_ms": 894.3037779536098}
+ok
+test_runtime_equals_s6_on_recorded_inputs (test_s6_parity.S6RecordedParity.test_runtime_equals_s6_on_recorded_inputs) ... S6_RECORDED_PARITY [{"sequence": 0, "action": 1550, "candidates": 21, "command_delay_ticks": 23, "search_ms": 133.3963720826432}, {"sequence": 50, "action": 1453, "candidates": 21, "command_delay_ticks": 23, "search_ms": 153.21156196296215}, {"sequence": 186, "action": 283, "candidates": 21, "command_delay_ticks": 23, "search_ms": 123.82983206771314}]
+ok
+test_zero_delay_equals_original_on_recorded_input (test_s6_parity.S6RecordedParity.test_zero_delay_equals_original_on_recorded_input) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 38.468s
+
+OK
+	Command being timed: "env YOLO_AUTOINSTALL=false PYTHONPATH=src:engine-rs:/mpac/sdicks02/repos/clasher-runtime-data/python-deps /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m unittest discover -s tests/live_v4 -v"
+	User time (seconds): 35.34
+	System time (seconds): 3.30
+	Percent of CPU this job got: 98%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:39.16
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 862860
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 57735
+	Minor (reclaiming a frame) page faults: 511335
+	Voluntary context switches: 22280
+	Involuntary context switches: 5688
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 280
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+2026-10-08T08:12:52Z

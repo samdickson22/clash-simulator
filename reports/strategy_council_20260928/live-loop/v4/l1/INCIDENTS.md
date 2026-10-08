@@ -34,6 +34,25 @@
   concurrent tensors and RNG states over 32 windows. The registered arithmetic
   remains bf16 eager; training accuracy is unmeasured.
 
+## 08:29 UTC preparation launch and diagnostic incidents
+
+- `v4-label-audit-20261008-r7` on 18 failed before child creation with EAGAIN
+  because the cache gather already held the lease wrapper's host-wide workload
+  lock. No label data was read by that attempt. Preserve the exit receipt; retry
+  under a fresh label only after the gather's final exit. Process headroom does
+  not authorize concurrent wrapper jobs on one host.
+- `v4-gap-adapter-compile-20261008-r1/r2` on 16 each compiled successfully
+  (child exit 0), but the wrapper marked them stopped for “job exited with
+  descendants still running.” Do not report wrapper PASS. The source audit
+  and 19-case schedule regression jobs did receive clean wrapper PASS receipts.
+- At 08:27–08:33, implementation incorrectly switched the T6 gap diagnostic to
+  decisions.jsonl based on the base PREREG alone. At 08:35, reading amendment 02
+  confirmed that it explicitly corrects that path to public-frames.jsonl.gz.
+  Restored the amended source in the new helper; no model replay used the wrong
+  distribution. Retain the sparse-decision audit (830.632 ms p95) as diagnostic
+  evidence only. The public-frame audit is rerunning under a fresh label. Frozen
+  registration/amendment files remain unchanged; no formal gap gate was passed.
+
 ## Earlier shakedowns
 
 - Initial remote launch used a relative path from the SSH home directory and did

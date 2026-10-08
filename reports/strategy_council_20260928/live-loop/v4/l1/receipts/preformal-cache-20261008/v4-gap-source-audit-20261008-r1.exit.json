@@ -1,0 +1,18 @@
+{
+  "host": "127x16",
+  "label": "v4-gap-source-audit-20261008-r1",
+  "started_utc": "2026-10-08T08:27:24.776031+00:00",
+  "command": [
+    "bash",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/audit_gap_sources.sh",
+    "v4-gap-source-audit-20261008-r1"
+  ],
+  "supervisor_pid": 3474269,
+  "pid": 3474272,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T08:27:26.930342+00:00",
+  "stop_reason": null,
+  "peak_processes": 2,
+  "peak_rss_bytes": 40644608
+}

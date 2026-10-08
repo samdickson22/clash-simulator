@@ -1,0 +1,248 @@
+{
+  "schema": "clasher.live-v4.s6-integration.v1",
+  "host": "127x04",
+  "cpu_only": true,
+  "nice": 10,
+  "tests": {
+    "count": 27,
+    "seconds": 38.468,
+    "passed": true,
+    "log": "RUNTIME-S6-TESTS.txt",
+    "recorded_parity": [
+      {
+        "sequence": 0,
+        "action": 1550,
+        "candidates": 21,
+        "command_delay_ticks": 23,
+        "search_ms": 133.3963720826432
+      },
+      {
+        "sequence": 50,
+        "action": 1453,
+        "candidates": 21,
+        "command_delay_ticks": 23,
+        "search_ms": 153.21156196296215
+      },
+      {
+        "sequence": 186,
+        "action": 283,
+        "candidates": 21,
+        "command_delay_ticks": 23,
+        "search_ms": 123.82983206771314
+      }
+    ],
+    "nonterminal_parity": {
+      "action": 2304,
+      "candidates": 20,
+      "score_range": [
+        0.0008394883983686572,
+        0.020203708701727996
+      ],
+      "search_ms": 894.3037779536098
+    },
+    "deadline": {
+      "ms": 196.06319000013173,
+      "completed": 2,
+      "candidates": 20,
+      "deadline_overrun": false
+    }
+  },
+  "replay": {
+    "source": "Phase A train seed 1975100700, first 200 frames",
+    "provenance": {
+      "host": "127x04",
+      "cpu": "x86_64",
+      "nice": 10,
+      "packages": {
+        "torch": "2.7.1+cu118",
+        "numpy": "1.26.4",
+        "opencv-python": "4.10.0.84",
+        "ultralytics": "8.1.24"
+      },
+      "hashes": {
+        "/mpac/sdicks02/repos/clasher/src/clasher/live/capture.py": "94c1c313be4ec5bfada21092d68ba77fe31bc207d715162dfb6f958bce5bd9ae",
+        "/mpac/sdicks02/repos/clasher/src/clasher/live/belief.py": "003e331ccc722dfb5461eced3d98c12713b16f5e4df9d438dd69d3c354b173bb",
+        "/mpac/sdicks02/repos/clasher/src/clasher/live/transport.py": "b701c512be3976bf8f0ef6983b874b4d91c53d32c3a85905a1a0092c7c5d9b1f",
+        "/mpac/sdicks02/repos/clasher/src/clasher/live/actuation.py": "3afd278f348f69b5d94831b6e0f15fe8c8ed09c61c0b53b0f044e8b36c9a5be2",
+        "/mpac/sdicks02/repos/clasher/src/clasher/live/timing.py": "9090006a2f9173b0cf2e54ea9fef148cc17dcbbe6e35e1a7eada14b8a8f37eed",
+        "/mpac/sdicks02/repos/clasher/src/clasher/live/contracts.py": "b0b880603a9ec55d4634cc6fcd05a8b247a2941ba87663a011234205db16e093",
+        "/mpac/sdicks02/repos/clasher/src/clasher/live/__main__.py": "33bd166bc11fa9ee0eae91c95f0bf837a4cfad177aab0dc2619333409616dd07",
+        "/mpac/sdicks02/repos/clasher/src/clasher/live/perception.py": "2758f691bb6fb8783e810edc92abfb2eb3117b093a5e92480dccf66c94b7737c",
+        "/mpac/sdicks02/repos/clasher/src/clasher/live/loading.py": "00412547da58f4251943500f3d4c28c5993eb37369cecb594b1a7312590d48e8",
+        "/mpac/sdicks02/repos/clasher/src/clasher/live/__init__.py": "17717238d47f49a055039dcc9a855d6d5ef23d4cc3770a49e534811d076f8ba6",
+        "/mpac/sdicks02/repos/clasher/src/clasher/live/decision.py": "21a08e34203d68506368027a3e83ee7ba0f6c306ace30942ea1199b5d2173694",
+        "/mpac/sdicks02/repos/clasher/src/clasher/live/runtime.py": "60cb50d79ec8da39b0df420169f538b30ba38b1bbe8764a292887fee6c487f10",
+        "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/actuator.py": "9c5cc6ded2676e9d4d98f0a9ca4147a2a47a8288954bd33b2e0955d8deffad6b",
+        "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/input_channel.py": "ba65fdd8db669498e6a1fb8f7397eabd7693dcc87ce9b27b52db08b5265c2d22",
+        "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/actuation/backend-timing.json": "5c26f02d39031d4a478108a4e924b88dd1aafa3e07581328302264c67ef849ed",
+        "/mpac/sdicks02/repos/clasher/src/clasher/vision/l1_v4.py": "f8cc93be0e6b5c8fcc31d69c21c8ce2a895194e5863ca45b949a810c41ae9c3b",
+        "reports/strategy_council_20260928/search-noise-s4/runtime/support/human_deck_catalog.json": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+        "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/tracker_v3.py": "0e6a7c3610c114af3e700c603cf0aa0c9e3a3315286ae43d768289012ae1899f",
+        "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/tracker_v2.py": "a660e4a766570232e2d9acfeb881f5f4ec7e86500b0d9ca23d267ea51ee6201d",
+        "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/derived_d1.py": "92b72418c3a10e96cc6993b4cb3041fa90895f233315600031e9a18f1edcb90e",
+        "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/elt.py": "c9522794066155002ef20b60ac6644bd34ef2e0f5925cde3f0abf050842e8f58",
+        "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/noise-model.json": "e20fa476b4f3fb19f7caf4af7d04de99cb1096ff54da6d4b6be3a96ec22eab01",
+        "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/calibration.json": "d149d8e7a9da61f121338672e5ff1f942942f3b37d1e49ae63d81e8be6557b5c",
+        "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s6/delay.py": "96b0637cbc6245b4246eef06aa45e6a7b571226688777bd299b93b2c436721f2",
+        "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s6/own_state.py": "823cf5811ee4c7ff5014d1c3f6edd3f3f248d55d93023cbe3e080b185daa4407",
+        "/mpac/sdicks02/repos/clasher-runtime-data/weights/body.pt": "8b6fde6fc402e2b075cdd9e5a92a9486eb738b0428912b7c1975aa12491748a5",
+        "/mpac/sdicks02/repos/clasher-runtime-data/weights/hud.npz": "d09682ebb8a1a209a0f6da49f43030dec68bdc0bf30eb7f67d01d34fdd0c6712",
+        "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/l1/calibration.json": "af06e029c50c3e2932f829a8891d6f6bdca654912d6beff512ab5864cc8c60d8",
+        "/mpac/sdicks02/repos/clasher/engine-rs/clasher_core.abi3.so": "13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309"
+      },
+      "source_split": "train",
+      "captured_at_epoch": 1791446945.6605859,
+      "backend": "host",
+      "heldout_opened": false
+    },
+    "metrics": {
+      "schema": "clasher.live-v4.runtime.v1",
+      "host": "127x04",
+      "source": "replay",
+      "perception": "v3",
+      "planner": "rust",
+      "actuator": "mock",
+      "perception_variant": "v3-body-hud-only",
+      "timing_ms": {
+        "capture": {
+          "count": 200,
+          "p50": 9.27093968493864,
+          "p95": 10.47518289997242,
+          "p99": 14.094169554300594
+        },
+        "decode": {
+          "count": 200,
+          "p50": 0.7061799406073987,
+          "p95": 0.7479704800061882,
+          "p99": 1.9886528560891694
+        },
+        "capture_queue_age": {
+          "count": 200,
+          "p50": 196.21396280126646,
+          "p95": 381.0193921148309,
+          "p99": 458.40734989847937
+        },
+        "actuator_hud": {
+          "count": 200,
+          "p50": 4.5151725062169135,
+          "p95": 4.629320953972638,
+          "p99": 4.669116531731561
+        },
+        "backbone_hud": {
+          "count": 115,
+          "p50": 45.76345102395862,
+          "p95": 48.83210464613512,
+          "p99": 50.40264292387292
+        },
+        "temporal_fusion": {
+          "count": 115,
+          "p50": 0.18109299708157778,
+          "p95": 0.29483600519597525,
+          "p99": 0.3298255428671837
+        },
+        "perception": {
+          "count": 115,
+          "p50": 46.163608902134,
+          "p95": 49.17171015404165,
+          "p99": 50.821441530715674
+        },
+        "belief": {
+          "count": 115,
+          "p50": 36.31085099186748,
+          "p95": 139.65530064888299,
+          "p99": 165.21678040968254
+        },
+        "belief_queue_age": {
+          "count": 111,
+          "p50": 2.3896449711173773,
+          "p95": 23.190569947473705,
+          "p99": 95.00013540964582
+        },
+        "search": {
+          "count": 14,
+          "p50": 144.22225498128682,
+          "p95": 196.46009278367274,
+          "p99": 196.82241368456744
+        },
+        "taps": {
+          "count": 3,
+          "p50": 20.07867908105254,
+          "p95": 20.08469100110233,
+          "p99": 20.085225393995643
+        },
+        "frame_to_tap": {
+          "count": 3,
+          "p50": 387.89141923189163,
+          "p95": 390.9193839528598,
+          "p99": 391.1885363725014
+        }
+      },
+      "counts": {
+        "ready": 1,
+        "capture": 200,
+        "decode": 200,
+        "captured": 200,
+        "capture_queue_age": 200,
+        "actuator_hud": 200,
+        "backbone_hud": 115,
+        "temporal_fusion": 115,
+        "perception": 115,
+        "belief": 115,
+        "processed": 115,
+        "dropped": 85,
+        "belief_queue_age": 111,
+        "search": 14,
+        "expired_decision": 5,
+        "command": 3,
+        "pending_blocked_frame": 50,
+        "actuator_state": 6,
+        "ledger": 6,
+        "taps": 3,
+        "frame_to_tap": 3,
+        "stale_snapshot": 9
+      },
+      "captured": 200,
+      "processed": 115,
+      "processed_fraction": 0.575,
+      "processed_fps": 11.435502015577708,
+      "dropped_frames": 85,
+      "history_resets": 0,
+      "search_overruns": 0,
+      "stage_budget_pass": {
+        "capture": false,
+        "decode": true,
+        "backbone_hud": false,
+        "temporal_fusion": true,
+        "belief": false,
+        "search": false,
+        "taps": true
+      },
+      "end_to_end_budget_pass": false,
+      "failures": [],
+      "log_drops": 0,
+      "production_qualified": false,
+      "limitations": [
+        "mock taps do not influence recorded video",
+        "T2 verifier sensitivity failed; v4 formal weights and runtime latency qualification pending"
+      ]
+    },
+    "audit": {
+      "passed": true,
+      "submissions": 3,
+      "duplicate_taps": 0,
+      "taps_without_reservation": 0,
+      "reservation_overlap": 0,
+      "all_searches_delay_aware": true,
+      "pending_at_end": false
+    }
+  },
+  "fixture": "tests/live_v4/fixtures/s6-train-inputs.json",
+  "fixture_sha256": "5667bd2a3464d05175b9e72d0327e1eb3cc5e5ab513595609e2a6df6a407b254",
+  "mac": "Not rerun; original task memory-pressure deferral remains.",
+  "limitations": [
+    "Three short-replay submission samples are diagnostic, not tail-latency qualification.",
+    "200 ms search can truncate the S6 fixed-budget experiment; parity applies to completed scores.",
+    "Original recorded perception produced terminal-looking tower states; nonterminal test is explicitly synthetic.",
+    "No emulator actions, no heldout input, no changes to frozen tracker or S6, no commits."
+  ]
+}

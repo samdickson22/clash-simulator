@@ -605,3 +605,4 @@ Also on the hub, but with copies elsewhere:
   2. Make tracker v3 output-identical but fast: bit-exact on ≥20k recorded updates, ≤10 ms p99.
   3. Re-measure with ≥200 taps.
   4. Measure on the Mac with MPS perception after Phase A.
+- **2026-10-08 08:44 UTC heartbeat:** Mac OK (23 GiB, 33% free, pool 2 renderers, 101 matches this run). T4 shakedown rerun still in dev evaluation after 72 min with the GPU at ~0%. Measured 2.1k rows/s vs the DESIGN's 8k plan (microbatch 64 → 128 accumulation steps/step), which would make each run ~24 h and overrun the lease window. **Decision:** a T4 throughput pass (largest microbatch with the equivalence proof, vectorized loader and evaluator, ≥8k rows/s target, receipt `throughput-pass.json`) before T5; T5 told to wait for it. No pending worker questions; no reclaims; console users 0.
