@@ -639,3 +639,4 @@ Also on the hub, but with copies elsewhere:
   3. The v4 perception formal runs move to 127x09/15 (and 04/08 once T5 frees them).
   4. Roader told (its backup mirror dirs were on 11). 11's lease is void until the host returns. Sam told.
   Mac OK (24 GiB, 422 matches this run).
+- **2026-10-08 14:46 UTC:** roader confirmed 127x11 is offline and its lease void (FLEET-SHARING.md updated). It is rebuilding its only backup as two mirrors on **127x09 and 127x15** (~30 GB each under `roader-mirror*`, `roader-code-127x05-mirror`, `roader-mirror-trash`): roader-owned paths, never touched by clasher. Our caps there are unchanged. Perception worker told (it will use 09/15).
