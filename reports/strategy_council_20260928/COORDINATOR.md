@@ -760,3 +760,15 @@ Also on the hub, but with copies elsewhere:
   - The perception fan-out drops 07.
   - Gates use 07's latest historical seed export plus a "no new jobs since" argument.
   - 07 stays in the fleet hosts file, so fleetweb and the 30-min check retry it automatically.
+- **~21:40 UTC: ClashAI deep dive** (`reports/clashai_deepdive_20261008.md`, Opus).
+  - **Correction to the 2026-10-04 note:** ClashAI's ~11k is the owner's human-built main account, already ~10k by 2026-09-18. Over ~1,136 logged ladder matches (09-25 to 10-08) the bot holds about 50–54%. Its own gain is at most +908 trophies, and the logged W/L supports only about +400. Nothing is externally verifiable.
+  - **Their methods we can't use:** a read-only game-memory reader as the state source, replays re-run in the real game binary, logged-in replay crawling, and botting a personal account. All conflict with our rules.
+  - **Lessons adopted into the backlog:**
+    1. Pre-registered live evaluation by trophies per match with interleaved A/B (about 400 matches per arm to see a 10 pp gap), not ladder win rate alone.
+    2. A standing loss-review ledger against human baselines (e.g. elixir on hand when meeting enemy pushes: theirs 70% under 4 elixir vs 24% for pros).
+    3. Delay compensation identical across training, search and live (ours: d=27 aware in both S-d and the runtime). The actuation bench measures card landing, not tap sent.
+    4. A search robustness gate against imitation-policy and replay opponents with a deliberately wrong opponent model. Their search was null or lost there.
+  - **Licensing:**
+    - ClashAI has no license (all rights reserved): learn and cite only.
+    - RoyaleSim is MIT.
+    - Our C56/S122 corpus derives from HF `VanguardX101/IL_Replay`, which has no declared license. **Decision:** no IL_Replay-derived datasets or model weights are published. The public repo keeps docs and small receipts only, as now; any future release needs a licensing check first.
