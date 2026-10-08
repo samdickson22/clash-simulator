@@ -796,3 +796,7 @@ Also on the hub, but with copies elsewhere:
   - **No limit on subagent count.**
   - Updated `frontier-models.md` (both copies), memory and the heartbeat prompt. Roader was told.
   - The heartbeat no longer SSHes to the Mac mini (Sam stopped those calls twice).
+- **~23:10 UTC: gates (b)/(c) review r2: APPROVE WITH REQUIRED CHANGES (RC-1…RC-12)** (`imitation/reviews/GATES-BC-PREREG-REVIEW-R2-20261008.md`).
+  - **R19 restatement judged sound:** no staleness is possible, and there's one shared apply loop with an identical drop/no-op fallback.
+  - **B-only rejection imbalance:** 4/8,781 commands, 1 streak episode, vs A 0/8,718; p≈1 by episodes. It's at or below the human rate on mask v1 (7e-4), and its expected gate impact is ≤0.01 on the primary vs an SE of ~0.015–0.020. It becomes a predeclared descriptive (RC-12) with the caveat that gate (b) measures B under mask v1.
+  - **Next:** a sealed RC delta, plus the 02 seed inventory, then a final delta-only check, then freeze and launch (b on 03@16, c on 02@16).
