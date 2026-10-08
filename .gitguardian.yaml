@@ -1,0 +1,5 @@
+version: 2
+secret:
+  ignored_matches:
+    - name: "contract_v5 token-vocabulary SHA-256 (hash of the public 360-name card/body list; stored as \"tokens\" in model receipts; not a secret)"
+      match: 35db1a7647c71a39b12b580cc31a39539c9ad973a8de635df0a95962b4ac8ee2
