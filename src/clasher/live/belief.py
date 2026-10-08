@@ -111,7 +111,9 @@ class Belief:
         self.own = OwnLedger(config['own_deck'])
         self.rng = np.random.default_rng(config.get('seed', 6108))
         self.costs = config['costs']
-        self.tracker = tracker_class()(json.loads(Path(config['prior']).read_text()), self.costs,
+        from .tracker import TrackerV3
+        cls = tracker_class() if config.get('frozen_tracker', False) else TrackerV3
+        self.tracker = cls(json.loads(Path(config['prior']).read_text()), self.costs,
                     recall=config.get('recall', .90), precision=config.get('precision', .90),
                     calibration=config.get('resource_calibration', 0.), body_cards=config.get('body_cards', {}))
         self.event_serial = 0

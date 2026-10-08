@@ -606,3 +606,18 @@ Also on the hub, but with copies elsewhere:
   3. Re-measure with ≥200 taps.
   4. Measure on the Mac with MPS perception after Phase A.
 - **2026-10-08 08:44 UTC heartbeat:** Mac OK (23 GiB, 33% free, pool 2 renderers, 101 matches this run). T4 shakedown rerun still in dev evaluation after 72 min with the GPU at ~0%. Measured 2.1k rows/s vs the DESIGN's 8k plan (microbatch 64 → 128 accumulation steps/step), which would make each run ~24 h and overrun the lease window. **Decision:** a T4 throughput pass (largest microbatch with the equivalence proof, vectorized loader and evaluator, ≥8k rows/s target, receipt `throughput-pass.json`) before T5; T5 told to wait for it. No pending worker questions; no reclaims; console users 0.
+- **2026-10-08 09:19 UTC: runtime latency revision. Accepted with a revised budget; the planner delay now includes decision latency.**
+  (`live-loop/v4/RUNTIME.md` §"Latency revision", 14 train matches, 223 first taps, 127x04 CPU.)
+  - P2 is split (perception → belief), so 19.975 processed FPS (99.96% of frames); capture queue age 18.6 ms p50 (was 148).
+  - Tracker v3 is output-identical: bit-exact on 32,837 updates (S4 dev + Phase A train), 6.75× median speedup; optional
+    rustc lattice kernel. In-pipeline belief is 6.2/16.8/23.9 ms (p99 target 10 missed).
+  - **Frame→first tap 246/318/340 ms** p50/p95/p99 (was 312/386/406): p99 ≤400 PASS, p50 ≤200 FAIL. Most of the median is the
+    anytime search (143 ms p50, up to its 200 ms deadline; zero overruns); v3 CPU perception is 45 ms (ANE budget 15–25).
+  - **Decisions:**
+    1. Accept the runtime for L2-v4 with a revised end-to-end budget: **p50 ≤260 ms and p99 ≤400 ms**, re-measured on the
+       Mac. The DESIGN's 200 ms median predates the 4-root, 200 ms-deadline search and the delay-aware planner. S2 showed
+       latency at these levels is not material (repair LB 0.0; add cost −1.6 [−5.5, +2.0]). Search strength is not traded
+       away for median latency.
+    2. **The planner delay d is the total delay:** median frame→submission plus D_b,p50, in ticks (≈ 5 + 23 = 28 on the
+       renderer), not D_b alone. The L2-v4 S-d arm uses the same total. The runtime reads both from measured config.
+    3. After Phase A, run the Mac MPS measurement (exact command in RUNTIME.md) as a prerequisite of the L2-v4 PREREG.

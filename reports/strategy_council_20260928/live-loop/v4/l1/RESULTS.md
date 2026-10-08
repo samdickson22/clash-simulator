@@ -2,10 +2,10 @@
 
 ## Pre-formal cache and label work, 2026-10-08
 
-**Formal T6/T7 fits and heldout evaluation have not run.** At 08:23:55 UTC the
+**Formal T6/T7 fits and heldout evaluation have not run.** At 08:57:54 UTC the
 producer state is `phase-a`, with no phase-a exit receipt. Receipt-only counts:
-200 train, 25 validation, 24 heldout matches; **572 heldout opponent events**;
-22,186.14 recorded emulator-seconds (6.16 h). Neither stop rule is met. No
+224 train, 27 validation, 27 heldout matches; **661 heldout opponent events**;
+24,867.16 recorded emulator-seconds (6.91 h). Neither stop rule is met. No
 heldout payload has been opened. The bounded 15-minute check ends at 18:08 UTC.
 
 | Cache/loader measurement | Result |
@@ -84,7 +84,8 @@ remain pending. No formal metric follows from these synthetic checks.
 The next **225-match / 404,396-frame** snapshot finished disjoint decoding on
 16/18 at 08:25/08:26 UTC. Full verification passed on 18 at **08:36:42**:
 **185,265,622,912 payload bytes; 450 hashes; 4,137/4,137 exact random-1% frames,
-zero mismatches**. Hub gather is still running. The r7 label audit was refused
+zero mismatches**. Hub gather also exited 0 and independently verified this
+225-match snapshot by 08:44 UTC. The r7 label audit was refused
 before child launch by the host-wide wrapper lock; the sequential r8 retry
 passed at **08:37:42**, covering **200 train + 25 validation**. It found **501,159
 contradictions / 3,635,665 rows**: 210,896 catalog disagreements resolved,
@@ -102,6 +103,28 @@ source/schedule checks passed.** The decision-source measurements remain inciden
 evidence and are not formal gap inputs. No
 final-population schedule seal or gap replay metric exists. All formal gate
 verdicts remain unchanged.
+
+At 08:43 UTC, the next **239-match / 427,062-frame** stage snapshot finished
+disjoint decoding; full-copy gathers on 01/18 are pending. Its label audit passed:
+**213 train + 26 validation; 538,227 contradictions / 3,856,644 rows**. Counts by
+cause: 227,653 catalog-generation disagreements resolved, 27,060 parent/child
+hints, 113,855 non-hitpoint hints, 169,659 unresolved/masked. No rich-ID changes
+or same-tick ID/field mismatches; cleaner unchanged. Selection evidence guard
+tests passed 23 synthetic checks with child exit 0, but the lease wrapper marked
+the short test stopped on its descendant-exit race. No formal fitting/replay or
+validation selection was performed.
+
+The **239-match / 427,062-frame** snapshot subsequently passed full verification
+on 18 at **08:53:29** and 01 at **09:00:14**: **196,055,910,677 payload bytes,
+478 hashes, 4,369/4,369 exact random-1% frames, zero mismatches** per copy.
+The next **253-match / 453,896-frame** snapshot has passed disjoint decode and
+label audit; its full-copy gathers are active. Its unchanged cleaner audited
+**225 train + 28 validation**: 576,358 contradictions / 4,107,659 rows;
+247,456 catalog-generation disagreements resolved, 30,548 parent/child hints,
+120,234 non-hitpoint hints, 178,120 unresolved/masked. No native-ID changes or
+same-tick ID/field mismatches. File-backed validation admission passed seven
+synthetic integrity checks with clean wrapper PASS at 09:01 UTC. It did not
+validate a real formal fit, run replay, select weights, or open heldout payloads.
 
 ## Formal configurations and §5.1 verdicts
 

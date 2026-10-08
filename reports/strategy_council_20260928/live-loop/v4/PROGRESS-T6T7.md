@@ -1,13 +1,13 @@
 # T6/T7 progress
 
-Updated 2026-10-08 08:39Z. 225-match snapshot verified/audited on 18; hub gather RUNNING; heldout unopened.
+Updated 2026-10-08 09:04Z. 239-match snapshot verified on 01/18; 253-match gathers RUNNING; heldout unopened.
 Code/docs/compact receipts live on 127x05; new decode/audit/tests/training pilots
 run detached/nice on leased 16/18. No Mac/excluded host access, commits or deletion.
 
 ## Current continuation: cache and label cleaning
 
-Formal work is **not launched**. Latest receipt-only poll (08:23:55 UTC): 200 train,
-25 validation and 24 heldout matches; heldout 572 opponent events; 6.16 recorded
+Formal work is **not launched**. Latest receipt-only poll (08:57:54 UTC): 224 train,
+27 validation and 27 heldout matches; heldout 661 opponent events; 6.91 recorded
 emulator-hours. Producer state `phase-a`; phase-a exit receipt absent. Neither
 the ≥20/1,500 coverage stop nor the 36-hour cap is verified complete.
 
@@ -189,14 +189,16 @@ against a full **225-match / 404,396-frame** stage inventory. Each peaked at
 1 TB aggregate budgets. Console helper returned zero and /mpac free space
 exceeded 1.4 TB on each involved host at launch.
 
-**Current active job:** gather **01 / v4-cache-gather-20261008-01r3**, wrapper
-**3552321**, live at 08:37 UTC. Gather **18 / v4-cache-gather-20261008-18r3**,
+Completed gather **01 / v4-cache-gather-20261008-01r3**, wrapper
+**3552321**, exit 0 observed at 08:44 UTC; full 225-match manifest verified.
+Gather **18 / v4-cache-gather-20261008-18r3**,
 supervisor **995614**, child **995616**, **PASS / exit 0 at 08:36:42 UTC**.
 Both target `v4-cache-extend-20261008-18r3-stage.json`, launched 08:28 UTC after
 builders exited. 18 verifies **200 train + 25 validation matches, 404,396 frames,
 185,265,622,912 payload bytes, 450 file hashes, 4,137/4,137 exact random-1% frames,
 zero mismatches**. Total cache-root size 187,659,839,436 bytes. Preserve the
-208-match receipts; the new hub full-replica verification remains pending.
+208-match receipts; the hub now independently verifies all 225 matches / 404,396
+frames / 450 hashes / 4,137 equality samples with zero mismatches.
 Attempted expanded label audit **18 / v4-label-audit-20261008-r7**, supervisor
 995832, was refused by the wrapper's host-wide workload lock before any child
 started (exit 1). **Resume under a fresh label only after gather exit.** Last
@@ -244,6 +246,90 @@ summary without changing the distribution. The mistaken decision-source receipts
 remain preserved in INCIDENTS; they are not formal schedule inputs.
 The 08:35 Phase A one-shot skipped the duplicate; latest actual receipt poll
 remains 08:23:55 UTC. No new receipt read or heldout access.
+
+08:40–08:46 UTC continuation: Phase A receipt poll updated counts above; producer
+still `phase-a`, no exit receipt, no authenticated stop. New disjoint cache jobs
+**16 / v4-cache-extend-20261008-16r5** (3479967 / 3479969) and **18 /
+v4-cache-extend-20261008-18r4** (999452 / 999454) **PASS / exit 0** at 08:42:04 and
+08:43:04. The stage snapshot includes one additional train match finalized after
+the poll: **213 train + 26 validation, 239 total / 427,062 frames**. 16 has 133
+even-partition matches, 18 built 106 odd-partition matches. Both peaked at 26
+processes and less than 7.3 GB RSS; cache roots before gathering were
+106,300,366,568 and 193,092,390,633 bytes respectively.
+
+Sequential audit **18 / v4-label-audit-20261008-r9**, supervisor **1000237**, child
+**1000239**, **PASS at 08:43:58**, 18 processes / 849,797,120 bytes peak RSS.
+239 matches: **538,227 contradictions / 3,856,644 rows**, 227,653 catalog-generation
+disagreements resolved, 27,060 parent/child hints, 113,855 non-hitpoint hints,
+169,659 unresolved/masked. Zero rich-ID changes and same-tick ID/field mismatches;
+no new cleaning-code change. Compact receipt and expanded LABEL-AUDIT preserved.
+
+Completed jobs: gather **01 / v4-cache-gather-20261008-01r4**, wrapper
+**3556768**; gather **18 / v4-cache-gather-20261008-18r4**, supervisor **1000668**.
+Both launched at 08:44 UTC after preceding jobs exited, against
+`v4-cache-extend-20261008-18r4-stage.json`. Both exited 0: 18 at **08:53:29**,
+01 manifest at **09:00:14**. Each verifies **239 matches / 427,062 frames /
+196,055,910,677 payload bytes / 478 hashes / 4,369 exact equality samples, zero
+mismatches**. Total roots: 01 196,060,974,495 bytes; 18 198,450,524,666 bytes.
+
+Independent selection preparation: `selection_guard_v4.py` rejects pilot/partial
+T7 configurations, inconsistent completion/source evidence, a changed frozen split,
+missing/duplicate/full-population receipt mismatches, incomplete cache/vocabulary
+provenance, nonfinite losses, non-contiguous 9,600-step logs, and missing/mismatched
+24 epoch checkpoint metadata. It has no I/O or heldout entry point; the future
+driver must authenticate the supplied evidence and recompute hashes. It cannot
+create a selection seal or authorize heldout. **23 synthetic checks passed**,
+16 / `v4-selection-guard-tests-20261008-r1` (3480771 / 3480773), child exit 0 at
+08:43:55; wrapper status **stopped**, same post-exit descendant race, not wrapper
+PASS. Source/log/exit evidence retained. Actual replay, selection and seal remain
+pending; all formal gates remain BLOCKED.
+
+08:47–08:48 UTC bounded continuations: the receipt-only one-shots correctly skipped
+another poll within 15 minutes of 08:40:07. No additional Phase A read.
+Both r4 gathers remain active: 01 wrapper 3556768; 18 supervisor 1000668 /
+child 1000670, latest wrapper state 08:47:45, three processes / 86,589,440 bytes
+RSS, no stop reason. No duplicate builder/copy or new training job was launched.
+Await final manifests before promoting the 239-match snapshot to verified full
+replicas. Latest heldout receipt count remains 26 matches / 626 opponent events;
+no authentic producer completion, no selection seal, no heldout payload access.
+
+08:57–09:04 UTC continuation: live app scheduler lists exactly one matching
+schedule, enabled at 900,000 ms; next trigger **09:12:28 UTC**. No schedule
+mutation or duplicate watcher. The actual Phase A poll updated counts above;
+producer remains running. Extensions **16 / v4-cache-extend-20261008-16r6**
+(3484764 / 3484766) and **18 / v4-cache-extend-20261008-18r5** (1004161 / 1004163)
+passed at **09:00:50 / 09:01:30**, each peak 26 processes and less than 7.4 GB
+RSS. Their staged snapshot is **225 train + 28 validation, 253 matches / 453,896
+frames** (two more admitted matches finalized after the poll). 16's 141-match
+even partition totals 113,753,009,128 cache-root bytes; 18's 112-match odd build
+left 204,201,534,492 bytes before gathering. Approved budgets/free-space floors
+remain enforced, no fourth cache host used.
+
+Label audit **18 / v4-label-audit-20261008-r10** (1004870 / 1004872) **PASS at
+09:02:21**, 18 processes / 848,883,712 bytes RSS: **576,358 contradictions /
+4,107,659 rows** in all 253 matches; no identity-change or same-tick ID/field
+mismatch, no cleaner change. See LABEL-AUDIT and compact r10 summary.
+
+**Current active jobs:** gather **01 / v4-cache-gather-20261008-01r5**, wrapper
+**3561465**, and **18 / v4-cache-gather-20261008-18r5**, supervisor **1005356**,
+both launched 09:03 UTC after their predecessors exited. Explicit snapshot:
+`v4-cache-extend-20261008-18r5-stage.json`. Await exit receipts/full manifests;
+do not duplicate these jobs or infer full-replica verification from build counts.
+
+Validation preparation now has a file-backed readiness command:
+`validation_admission_v4.py` repeats the real producer/registration/receipt
+admission **before reading checkpoints**, requires equality with saved formal
+admission, recomputes source/snapshot/cache-index/final-checkpoint hashes, reads
+all 24 epoch checkpoint metadata with weights-only CPU loading, and applies the
+full-fit evidence guard. It reads receipt metadata only for heldout; no media or
+heldout label code path. Output is readiness, never selection or heldout authority.
+**7 synthetic file-integrity checks PASS** under lease 16 label
+`v4-validation-admission-tests-20261008-r1` (3485400 / 3485402), exit 0 at
+09:01:43, two processes / 380,702,720 bytes RSS. The real running-producer guard
+was tested before artifact reads; positive fixtures mock only producer admission
+and use tiny synthetic checkpoints, not real formal output. Retained fixtures:
+`16:clasher-lease/data/v4-validation-admission-fixtures-r1`. Full validation
+replay/tick mapping, real selection/calibration and seal remain pending.
 
 Space planning: a full 183-match replica is 149.93 GB. Monitor actual growth;
 the final collection is not guaranteed to fit a 300 GB full-frame replica.

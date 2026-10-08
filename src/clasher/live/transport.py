@@ -3,6 +3,22 @@ from queue import Empty, Full
 import time
 
 
+class ObservationWindow:
+    """Latest public frame plus bounded, unacknowledged one-shot events."""
+    def __init__(self, capacity=4096):
+        self.capacity = capacity
+        self.pending = []
+
+    def message(self, observation, acknowledged):
+        from dataclasses import replace
+        self.pending = [(seq, event) for seq, event in self.pending if seq > acknowledged]
+        self.pending.extend((observation.frame.sequence, event) for event in observation.events)
+        if len(self.pending) > self.capacity:
+            raise RuntimeError('Unacknowledged perception events exceeded bound')
+        return replace(observation, frame=replace(observation.frame, pixels=None),
+                       events=tuple(event for _, event in self.pending))
+
+
 class FrameRing:
     """64 public frames. Writer never waits on the reader or a full queue.
 

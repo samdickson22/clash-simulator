@@ -2,6 +2,50 @@
 
 2026-10-08, before formal training. Heldout media and labels remain unopened.
 
+## 09:02 UTC extension, unchanged cleaning rule
+
+Lease 18 `v4-label-audit-20261008-r10` passed on **225 train + 28 validation**
+(1004870 / 1004872, exit 0 at 09:02:21; 18 processes, 848,883,712 bytes peak RSS).
+Full evidence remains in the host-local r10 JSON; compact counts, match receipt
+hashes and its SHA256 are in `receipts/preformal-cache-20261008/label-audit-r10-summary.json`.
+
+| Population | Object rows | Name/hint contradictions | Hitpoint-bearing contradictions |
+|---|---:|---:|---:|
+| Train | 3,669,873 | 515,143 | 407,689 |
+| Validation | 437,786 | 61,215 | 48,435 |
+| Total | 4,107,659 | 576,358 | 456,124 |
+
+Causes: 247,456 catalog-generation disagreements resolved, 30,548 legitimate
+parent/child hints, 120,234 non-hitpoint hints, 178,120 unresolved/masked.
+39,863 rich native IDs have zero identity changes; 35,879 contradictory same-tick
+joins have zero ID/field mismatches. Future metadata occurs in 3,297,086 rows and
+remains excluded from visibility decisions. Coherent visible/nondeploying rows:
+121,244 (108,068 train, 13,176 validation). No further label fix or amendment;
+board-quality certification remains separate and unmeasured.
+
+## 08:43 UTC extension, unchanged cleaning rule
+
+Lease 18 `v4-label-audit-20261008-r9` passed on **213 train + 26 validation**
+matches (1000237 / 1000239, exit 0 at 08:43:58, 18 processes, 849,797,120 bytes
+peak RSS). Full per-match evidence remains in the r9 job JSON; the compact
+`receipts/preformal-cache-20261008/label-audit-r9-summary.json` pins its SHA256
+and admitted receipt hashes. This snapshot includes one train match finalized
+after the 08:40 receipt poll.
+
+| Population | Object rows | Name/hint contradictions | Hitpoint-bearing contradictions |
+|---|---:|---:|---:|
+| Train | 3,443,348 | 482,973 | 381,116 |
+| Validation | 413,296 | 55,254 | 43,256 |
+| Total | 3,856,644 | 538,227 | 424,372 |
+
+Causes: 227,653 catalog-generation disagreements resolved, 27,060 legitimate
+parent/child hints, 113,855 non-hitpoint hints, 169,659 unresolved/masked.
+37,536 rich native IDs have zero identity changes; all 33,687 contradictory
+same-tick joins have zero ID/field mismatches. Future metadata appears in
+3,099,562 rows and remains excluded from visibility decisions. Coherent
+visible/nondeploying rows: 114,147 (101,661 train, 12,486 validation).
+No additional label-generation change or board-quality certification.
+
 ## 08:37 UTC extension, unchanged cleaning rule
 
 The same auditor/cleaner passed on **200 train + 25 validation matches** under

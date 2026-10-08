@@ -211,6 +211,19 @@ class ActuationTests(unittest.TestCase):
 
 
 class SupervisorTests(unittest.TestCase):
+    def test_belief_stall_does_not_stall_perception(self):
+        with tempfile.TemporaryDirectory() as folder:
+            c = config(folder)
+            c['fault'] = {'stage': 'P2', 'after': 10, 'seconds': .65}
+            result = run(c, Path(folder)/'run')
+            self.assertEqual(result['failures'], [])
+            self.assertEqual(result['counts']['perceived'], c['frames'])
+            self.assertLess(result['processed'], result['counts']['perceived'])
+            self.assertEqual(result['dropped_frames'], 0)
+            pids = json.loads((Path(folder)/'run/pids.json').read_text())
+            self.assertEqual(set(pids), {f'clasher-P{i}' for i in range(5)})
+            self.assertEqual(len(set(pids.values())), 5)
+
     def test_empty_latency_is_not_pass(self):
         c = {'source': {'kind': 'replay'}, 'perception': {'kind': 'v3'},
              'planner': {'kind': 'rust'}, 'actuator': {'kind': 'mock'}}
@@ -219,7 +232,7 @@ class SupervisorTests(unittest.TestCase):
     def test_pipeline_and_stage_stall(self):
         with tempfile.TemporaryDirectory() as folder:
             c = config(folder)
-            c['fault'] = {'stage': 'P2', 'after': 10, 'seconds': .65}
+            c['fault'] = {'stage': 'P1', 'after': 10, 'seconds': .65}
             result = run(c, Path(folder)/'run')
             self.assertEqual(result['failures'], [])
             self.assertGreater(result['processed'], 15)

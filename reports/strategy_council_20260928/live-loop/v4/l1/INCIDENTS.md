@@ -36,6 +36,11 @@
 
 ## 08:29 UTC preparation launch and diagnostic incidents
 
+- `v4-selection-guard-tests-20261008-r1` on 16 passed all 23 synthetic checks
+  and exited 0 at 08:43:55. The wrapper reported `stopped` for its post-exit
+  descendant check; preserve the distinction from a clean wrapper PASS. No
+  actual training run or heldout payload was opened for these synthetic tests.
+
 - `v4-label-audit-20261008-r7` on 18 failed before child creation with EAGAIN
   because the cache gather already held the lease wrapper's host-wide workload
   lock. No label data was read by that attempt. Preserve the exit receipt; retry

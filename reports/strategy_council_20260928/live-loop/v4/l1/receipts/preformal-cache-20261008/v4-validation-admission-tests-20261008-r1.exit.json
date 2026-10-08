@@ -1,0 +1,20 @@
+{
+  "host": "127x16",
+  "label": "v4-validation-admission-tests-20261008-r1",
+  "started_utc": "2026-10-08T09:01:40.156392+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/test_validation_admission_v4.py",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-lease/data/v4-validation-admission-fixtures-r1"
+  ],
+  "supervisor_pid": 3485400,
+  "pid": 3485402,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T09:01:43.358920+00:00",
+  "stop_reason": null,
+  "peak_processes": 2,
+  "peak_rss_bytes": 380702720
+}

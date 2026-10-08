@@ -1,4 +1,4 @@
-"""P1: recorded train pixels or a directly consumed emulator screenshot RPC."""
+"""P0: recorded train pixels or a directly consumed emulator screenshot RPC."""
 import hashlib
 import json
 from pathlib import Path

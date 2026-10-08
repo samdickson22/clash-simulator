@@ -1,4 +1,4 @@
-"""P2 pixel adapters. V4 uses its streaming ABI; fallback retains real gaps."""
+"""P1 pixel adapters. V4 uses its streaming ABI; fallback retains real gaps."""
 from collections import deque
 from dataclasses import replace
 from pathlib import Path

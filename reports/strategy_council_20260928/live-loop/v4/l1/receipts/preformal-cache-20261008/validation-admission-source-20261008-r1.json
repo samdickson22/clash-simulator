@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-08T09:05:33.257493+00:00",
+  "scope": "Synthetic validation file admission; no formal run or selection seal",
+  "source_sha256": {
+    "reports/strategy_council_20260928/live-loop/v4/l1/validation_admission_v4.py": "3fe59ccfade6fc12e04c3e51d4376b8e0f95144f3065363d3011dbd14365796a",
+    "reports/strategy_council_20260928/live-loop/v4/l1/test_validation_admission_v4.py": "59763398ddaf821ec2fde72b85b24e3749a064dbf262927df573fcfbc5aead91",
+    "reports/strategy_council_20260928/live-loop/v4/l1/selection_guard_v4.py": "626cf76ffd1476233d1c9a7faf66dfbca71fa8b61082db04ebad065d82aad0fd",
+    "reports/strategy_council_20260928/live-loop/v4/l1/formal_guard.py": "ddf0917bc463667697661b7e616ef92c535b6bf2a6aae50014288b9cfb5cc451"
+  },
+  "label": "v4-validation-admission-tests-20261008-r1",
+  "synthetic_checks": 7,
+  "child_exit_code": 0,
+  "wrapper_status": "pass",
+  "heldout_payloads_opened": false
+}

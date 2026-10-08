@@ -1,0 +1,20 @@
+{
+  "manifest": "reports/strategy_council_20260928/search-noise-s4/dev-code-freeze-v2.json",
+  "checks": {
+    "tracker_v3.py": true,
+    "tracker_v2.py": true,
+    "derived_d1.py": true,
+    "elt.py": true,
+    "noise-model.json": true,
+    "calibration.json": true
+  },
+  "hashes": {
+    "tracker_v3.py": "0e6a7c3610c114af3e700c603cf0aa0c9e3a3315286ae43d768289012ae1899f",
+    "tracker_v2.py": "a660e4a766570232e2d9acfeb881f5f4ec7e86500b0d9ca23d267ea51ee6201d",
+    "derived_d1.py": "92b72418c3a10e96cc6993b4cb3041fa90895f233315600031e9a18f1edcb90e",
+    "elt.py": "c9522794066155002ef20b60ac6644bd34ef2e0f5925cde3f0abf050842e8f58",
+    "noise-model.json": "e20fa476b4f3fb19f7caf4af7d04de99cb1096ff54da6d4b6be3a96ec22eab01",
+    "calibration.json": "d149d8e7a9da61f121338672e5ff1f942942f3b37d1e49ae63d81e8be6557b5c"
+  },
+  "s5_tracker_matches_s4": true
+}

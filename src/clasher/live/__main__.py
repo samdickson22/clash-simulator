@@ -57,7 +57,7 @@ def main():
     p.add_argument('--mock-input', action='store_true')
     p.add_argument('--qualification', type=Path, help='Post-T2/T7/S6 qualification receipt required for real taps')
     p.add_argument('--output', type=Path, required=True)
-    p.add_argument('--fault-stage', choices=('P2', 'P3'))
+    p.add_argument('--fault-stage', choices=('P1', 'P2', 'P3'))
     p.add_argument('--fault-seconds', type=float, default=.65)
     a = p.parse_args()
     if a.replay:

@@ -160,6 +160,30 @@ epoch selection requires all 24 formal epochs. These primitives do not establish
 input provenance, calibrate models, create a selection seal, or certify gates.
 The guarded replay/selection driver remains to be connected and tested.
 
+`selection_guard_v4.py` checks full T7 fit evidence before replay: registered
+24x400/seed-6108 options, the frozen split, exact admitted training receipt set,
+cache/source/vocabulary provenance, all 9,600 finite-loss steps in order and all
+24 epoch checkpoint metadata. The caller must independently authenticate admission
+and recompute checkpoint/source hashes; this pure helper has no I/O, does not
+authenticate caller declarations, and never authorizes heldout or seals selection.
+Do not substitute pilot weights or manually assembled metadata for formal output.
+Synthetic rejection checks passed 23 cases on 16 (child exit 0, wrapper `stopped`
+on its descendant-exit race; retained as such, not a clean wrapper PASS).
+
+`validation_admission_v4.py` connects this guard to actual formal run files.
+After authentic Phase A completion and formal T7 fitting, run through the fleet
+or lease wrapper with `--run FORMAL_OUTPUT --source MATCH_ROOT --split SPLIT
+--phase-state T1_STATE --phase-exit T1_EXIT --output FRESH_READINESS_JSON`.
+It re-runs `formal_guard.admit` first, requires the saved admission to match,
+checks source snapshots/current source bytes and cache indices, verifies the
+last checkpoint hash, and loads all 24 epoch checkpoint metadata using
+`torch.load(weights_only=True, map_location='cpu')`. The returned validation
+receipt population is full and fixed. Relocated/changed source paths or receipts
+must not be silently accepted. This command opens no heldout payload, selects
+no model, and creates no selection seal. Validation pixels/labels and exact timing
+still require guarded replay. Seven synthetic file-integrity checks passed on 16
+at 09:01 UTC with clean wrapper PASS; tiny fixture weights remain on 16 only.
+
 `calibration_v4.py` fits the runtime isotonic knots from the selected model's
 final thresholded/suppressed validation card-play stream. One-to-one 500ms
 availability matches label positives; unmatched/duplicate predictions label

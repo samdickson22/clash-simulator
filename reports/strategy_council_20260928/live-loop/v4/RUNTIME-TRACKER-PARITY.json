@@ -1,0 +1,137 @@
+{
+  "command": [
+    "reports/strategy_council_20260928/live-loop/v4/tracker_parity.py",
+    "--dev",
+    "reports/strategy_council_20260928/search-noise-s4/dev-traces/000.json.gz",
+    "reports/strategy_council_20260928/search-noise-s4/dev-traces/002.json.gz",
+    "--phase",
+    "/mpac/sdicks02/jobs/clasher/runtime-latency-replays-r1-results/1975100700/latency.jsonl.gz",
+    "/mpac/sdicks02/jobs/clasher/runtime-latency-replays-r1-results/1975100701/latency.jsonl.gz",
+    "/mpac/sdicks02/jobs/clasher/runtime-latency-replays-r1-results/1975100702/latency.jsonl.gz",
+    "--split",
+    "/mpac/sdicks02/repos/clasher-runtime-data/registration/split.json",
+    "--output",
+    "/mpac/sdicks02/jobs/clasher/runtime-latency-parity-final-r1.json"
+  ],
+  "native": true,
+  "source_sha256": {
+    "/mpac/sdicks02/repos/clasher/src/clasher/live/tracker.py": "e2690e28a0e1326264b894d4b4da46eb24fd96fe2166284aef99c2c51cea13a3",
+    "/mpac/sdicks02/repos/clasher/src/clasher/live/lattice.py": "1c929a2fb0c89e22d6bbe1f6430b5bf817323843d436c52250cef80c4a936cd5",
+    "/mpac/sdicks02/repos/clasher/src/clasher/live/lattice.rs": "fc35188e9ba5a8b909245f05a3099d9abd028cdfe08336672a32f9ba046c3c05",
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/tracker_v3.py": "0e6a7c3610c114af3e700c603cf0aa0c9e3a3315286ae43d768289012ae1899f",
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/search-noise-s4/tracker_v2.py": "a660e4a766570232e2d9acfeb881f5f4ec7e86500b0d9ca23d267ea51ee6201d",
+    "/mpac/sdicks02/repos/clasher/src/clasher/live/_lattice.so": "c8f93386e891e6e7fa9c976933aeba6a3e4cc92fda799c4b2d356ae08e7b981b"
+  },
+  "equal": true,
+  "updates": 32837,
+  "traces": [
+    {
+      "kind": "dev",
+      "path": "reports/strategy_council_20260928/search-noise-s4/dev-traces/000.json.gz",
+      "sha256": "163a2cd41722faa15a9563cfa29d0ea8e18a5f182555bfe777d3f3b684fe2612",
+      "updates": 12078,
+      "output_digest": "36f8f06427c981581afdaf559edc71f13891cf3601ca8a11e81ebfd83956de67",
+      "before_ms": {
+        "count": 12078,
+        "p50": 12.6028915,
+        "p95": 29.524465999999997,
+        "p99": 42.13502466
+      },
+      "after_ms": {
+        "count": 12078,
+        "p50": 2.079234,
+        "p95": 3.0163673499999994,
+        "p99": 8.03652349999999
+      }
+    },
+    {
+      "kind": "dev",
+      "path": "reports/strategy_council_20260928/search-noise-s4/dev-traces/002.json.gz",
+      "sha256": "a5fb37454e8609082fd46f7fe526f2d9a9789fc9264d98a1c39aac844c2c5cfd",
+      "updates": 10524,
+      "output_digest": "02aac83120fd862e59e3474183fe552bf23c9ae54a9f130f72da2a5626bc81d2",
+      "before_ms": {
+        "count": 10524,
+        "p50": 13.673606,
+        "p95": 29.29966535,
+        "p99": 43.01245075000012
+      },
+      "after_ms": {
+        "count": 10524,
+        "p50": 2.1509755,
+        "p95": 2.9254215,
+        "p99": 6.991105770000016
+      }
+    },
+    {
+      "kind": "phase-a-train",
+      "path": "/mpac/sdicks02/jobs/clasher/runtime-latency-replays-r1-results/1975100700/latency.jsonl.gz",
+      "sha256": "9f08c7b22ce9dae17a36396de5098d40e9006c610d08d8ee483299235e875005",
+      "updates": 5654,
+      "output_digest": "9f9c5ac2c0e7e30c008c7883711a437925a7d4651dbbdb08478a9bdd190bd72b",
+      "before_ms": {
+        "count": 5654,
+        "p50": 24.391816,
+        "p95": 56.89900299999999,
+        "p99": 235.13368321000024
+      },
+      "after_ms": {
+        "count": 5654,
+        "p50": 3.039197,
+        "p95": 9.701404349999985,
+        "p99": 13.481672570000015
+      }
+    },
+    {
+      "kind": "phase-a-train",
+      "path": "/mpac/sdicks02/jobs/clasher/runtime-latency-replays-r1-results/1975100701/latency.jsonl.gz",
+      "sha256": "a1e71519ee22f5b6dd137d31e3cb139da22ecd65a8d8f255dd876fe0f0c879be",
+      "updates": 2413,
+      "output_digest": "df9bfbf1b0b6a8393e79eb4c29f456b106f84ad53574f7717b83033a26fefbe3",
+      "before_ms": {
+        "count": 2413,
+        "p50": 22.86341,
+        "p95": 51.20457920000002,
+        "p99": 241.98996720000002
+      },
+      "after_ms": {
+        "count": 2413,
+        "p50": 2.809039,
+        "p95": 5.419014000000002,
+        "p99": 12.905063600000002
+      }
+    },
+    {
+      "kind": "phase-a-train",
+      "path": "/mpac/sdicks02/jobs/clasher/runtime-latency-replays-r1-results/1975100702/latency.jsonl.gz",
+      "sha256": "d225a3a6ebc21b1bc18712d3e6fa2e5ab2f1991615d68f4e224d5016191941f4",
+      "updates": 2168,
+      "output_digest": "bd33b10e2078aa68612230ea08a61e561515dbb7a2024baa199732d45a55f845",
+      "before_ms": {
+        "count": 2168,
+        "p50": 30.941004,
+        "p95": 61.28898950000001,
+        "p99": 260.31053914999995
+      },
+      "after_ms": {
+        "count": 2168,
+        "p50": 3.197645,
+        "p95": 10.392710500000007,
+        "p99": 20.203618099999943
+      }
+    }
+  ],
+  "evidence": "float64 bits; both full lattices; hand masses; cycles; four seeded roots; RNG state",
+  "before_ms": {
+    "count": 32837,
+    "p50": 14.96468,
+    "p95": 43.81821179999999,
+    "p99": 68.00789379999998
+  },
+  "after_ms": {
+    "count": 32837,
+    "p50": 2.217171,
+    "p95": 4.180534799999999,
+    "p99": 12.190058759999992
+  }
+}

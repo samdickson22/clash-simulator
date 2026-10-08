@@ -1,4 +1,4 @@
-"""P1 capture → P2 pixels/belief → P3 search → P4 input; parent is P5.
+"""P0 capture → P1 perception → P2 belief → P3 search → P4 input; parent is P5.
 
 All queues are bounded. Data queues overwrite oldest; control queue saturation
 fails closed. Spawn is used on Linux too, exercising the Mac process boundary.
@@ -12,7 +12,7 @@ from pathlib import Path
 from queue import Empty, Full
 import time
 import traceback
-from .transport import FrameRing, put_latest, drain_latest, should_drop
+from .transport import FrameRing, ObservationWindow, put_latest, drain_latest, should_drop
 
 BUDGETS = {'capture': (3, 10), 'decode': (4, 8), 'backbone_hud': (15, 25),
            'temporal_fusion': (5, 10), 'belief': (3, 10), 'search': (110, 200), 'taps': (45, 80)}
@@ -43,7 +43,7 @@ def limits():
         pass
 
 
-def p1(config, ipc, log):
+def p0(config, ipc, log):
     from .capture import replay_frames, grpc_frames
     import cv2
     cv2.setNumThreads(1)
@@ -100,15 +100,13 @@ def controls(ipc, belief, log):
     return terminal
 
 
-def p2(config, ipc, log):
+def p1(config, ipc, log):
     import torch
     torch.set_num_threads(1)
     from .loading import actuator_module
     from .perception import make_perception
-    from .belief import Belief
     api = actuator_module()  # also establishes HUD's pickle identity
     sensor = make_perception(config['perception'])
-    belief = Belief(config['belief'])
     import cv2
     cv2.setNumThreads(1)
     # Pre-capture model warmup; never include it in latency measurements/history.
@@ -124,22 +122,24 @@ def p2(config, ipc, log):
     if not await_start(ipc, 1):
         return
     last = -1
-    latest = None
+    event_window = ObservationWindow()
+    unpublished = None
     fault_done = False
     while not ipc['stop'].is_set():
         ipc['heartbeat'][1] = time.monotonic()
-        terminal = controls(ipc, belief, log)
-        if terminal:
-            # Release only after own-state revision is incorporated. P4 still
-            # checks the command's revision and production timestamp itself.
-            with ipc['busy'].get_lock():
-                ipc['busy'].value = False
         frame, last, missed = ipc['ring'].read(last, config['source']['episode'])
         if missed:
             log('dropped', count=missed, reason='ring overwrite/contention')
         if frame is None:
             if ipc['capture_done'].is_set() and last >= ipc['ring'].latest.value:
-                ipc['perception_done'].set()
+                # A feeder race can reject put_latest. Retry the final public
+                # message before marking EOF, preserving its unacknowledged cues.
+                if unpublished is not None:
+                    if put_latest(ipc['observations'], unpublished):
+                        ipc['perception_last'].value = unpublished.frame.sequence
+                        unpublished = None
+                if unpublished is None:
+                    ipc['perception_done'].set()
             ipc['stop'].wait(.002)
             continue
         age = time.monotonic()-frame.produced_at
@@ -148,7 +148,7 @@ def p2(config, ipc, log):
             log('dropped', count=1, sequence=frame.sequence, reason='age/alternate', age_ms=age*1000)
             continue
         fault = config.get('fault', {})
-        if fault.get('stage') == 'P2' and not fault_done and frame.sequence >= fault.get('after', 10):
+        if fault.get('stage') == 'P1' and not fault_done and frame.sequence >= fault.get('after', 10):
             fault_done = True
             log('injected_stall', seconds=fault['seconds'])
             ipc['stop'].wait(fault['seconds'])
@@ -166,16 +166,61 @@ def p2(config, ipc, log):
         # HUD bypasses the more expensive opponent belief update for the <=60ms
         # pre-tap check. Actuation sees RAW pixels-derived HUD, never optimistic HUD.
         put_latest(ipc['hud'], (frame.episode, frame.sequence, hud, time.monotonic()))
+        # Latest body/HUD values are droppable; one-shot event candidates stay
+        # in successive messages until P2 acknowledges consuming them.
+        message = event_window.message(observation, ipc['observation_ack'].value)
+        if put_latest(ipc['observations'], message):
+            ipc['perception_last'].value = frame.sequence
+            unpublished = None
+        else:
+            unpublished = message
+            log('observation_publish_dropped', sequence=frame.sequence)
+        log('perceived', sequence=frame.sequence, produced_at=frame.produced_at)
+
+
+def p2(config, ipc, log):
+    from .loading import actuator_module
+    from .belief import Belief
+    actuator_module()  # Feedback HUD pickle identity in this separate process.
+    belief = Belief(config['belief'])
+    ipc['ready'][2].set()
+    if not await_start(ipc, 2):
+        return
+    last = -1
+    fault_done = False
+    while not ipc['stop'].is_set():
+        ipc['heartbeat'][2] = time.monotonic()
         controls(ipc, belief, log)
+        observation = drain_latest(ipc['observations'])
+        if observation is None:
+            if ipc['perception_done'].is_set() and last >= ipc['perception_last'].value:
+                ipc['belief_done'].set()
+            ipc['stop'].wait(.002)
+            continue
+        frame = observation.frame
+        if frame.sequence <= last:
+            raise ValueError('Noncausal perception sequence')
+        log('perception_queue_age', (time.monotonic()-observation.completed_at)*1000,
+            sequence=frame.sequence)
+        fault = config.get('fault', {})
+        if fault.get('stage') == 'P2' and not fault_done and frame.sequence >= fault.get('after', 10):
+            fault_done = True
+            log('injected_stall', seconds=fault['seconds'])
+            ipc['stop'].wait(fault['seconds'])
         start = time.monotonic()
         latest = belief.update(observation)
         log('belief', (time.monotonic()-start)*1000, sequence=frame.sequence)
+        if last >= 0 and frame.sequence > last+1:
+            log('belief_frames_skipped', count=frame.sequence-last-1)
+        last = frame.sequence
+        ipc['observation_ack'].value = last
         put_latest(ipc['snapshots'], latest)
         log('processed', sequence=frame.sequence, produced_at=frame.produced_at,
             events=len(observation.events), history_resets=0,
             own_cycle_exact=latest.own['cycle_exact'], tick=latest.tick, public=asdict(latest.public),
             event_candidates=observation.events, own=latest.own, opponent=latest.opponent,
-            roots=latest.roots, revision=latest.revision, pending=latest.pending)
+            roots=latest.roots, revision=latest.revision, pending=latest.pending,
+            timestamp_ms=frame.timestamp_ms, phase=observation.phase)
 
 
 def p3(config, ipc, log):
@@ -184,8 +229,8 @@ def p3(config, ipc, log):
     from .decision import RustPlanner, SyntheticPlanner, Triggers, command_for
     planner = (SyntheticPlanner if config['planner']['kind'] == 'synthetic' else RustPlanner)(config['planner'])
     triggers = Triggers()
-    ipc['ready'][2].set()
-    if not await_start(ipc, 2):
+    ipc['ready'][3].set()
+    if not await_start(ipc, 3):
         planner.close()
         return
     sequence = -1
@@ -193,7 +238,7 @@ def p3(config, ipc, log):
     fault_done = False
     try:
         while not ipc['stop'].is_set():
-            ipc['heartbeat'][2] = time.monotonic()
+            ipc['heartbeat'][3] = time.monotonic()
             snapshot = drain_latest(ipc['snapshots'])
             if snapshot is None or snapshot.sequence <= sequence:
                 ipc['stop'].wait(.003)
@@ -251,16 +296,16 @@ def p4(config, ipc, log):
     hud_reader = None
     if config['perception']['kind'] == 'v3':
         # The legacy placeholder has a separate lightweight HUD reader. P4's
-        # pre-tap check reads the latest capture while P2 is busy with bodies
-        # and belief. V4 uses the shared-backbone HUD published by P2.
+        # pre-tap check reads the latest capture while P1 processes bodies.
+        # V4 uses the shared-backbone HUD published by P1.
         import cv2
         from clasher.vision.l1_hud_v3 import StreamHudReader
         cv2.setNumThreads(1)
         hud_reader = StreamHudReader(config['perception']['hud'])
     hud_sequence = -1
     direct_hud = None
-    ipc['ready'][3].set()
-    if not await_start(ipc, 3):
+    ipc['ready'][4].set()
+    if not await_start(ipc, 4):
         actor.channel.close()
         return
     latest = None
@@ -282,7 +327,7 @@ def p4(config, ipc, log):
                     submitted_at=completed, ambiguous=transport['ambiguous'])
     try:
         while not ipc['stop'].is_set():
-            ipc['heartbeat'][3] = time.monotonic()
+            ipc['heartbeat'][4] = time.monotonic()
             latest = drain_latest(ipc['hud'], latest)
             hud = latest[2] if latest else None
             if hud_reader and ipc['ring'].latest.value > hud_sequence:
@@ -328,10 +373,10 @@ def p4(config, ipc, log):
 
 def worker(index, config, ipc):
     limits()
-    stage = f'P{index+1}'
+    stage = f'P{index}'
     log = Reporter(ipc['logs'], ipc['log_drops'], stage)
     try:
-        (p1, p2, p3, p4)[index](config, ipc, log)
+        (p0, p1, p2, p3, p4)[index](config, ipc, log)
     except BaseException as error:
         log('fatal', error=f'{type(error).__name__}: {error}', traceback=traceback.format_exc())
         ipc['stop'].set()
@@ -390,6 +435,10 @@ def provenance(config):
     from .capture import sha256
     from .loading import COUNCIL, ROOT, V4
     files = list(Path(__file__).parent.glob('*.py'))
+    files += list(Path(__file__).parent.glob('*.rs'))
+    from .lattice import LIBRARY, _kernel
+    if _kernel is not None:
+        files.append(LIBRARY)
     files += [V4/'actuator.py', V4/'input_channel.py', V4/'actuation/backend-timing.json',
               ROOT/'src/clasher/vision/l1_v4.py', Path(config['belief']['prior'])]
     files += [COUNCIL/'search-noise-s4'/name for name in
@@ -441,16 +490,17 @@ def run(config, output):
     (output/'provenance.json').write_text(json.dumps(provenance(config), indent=2)+'\n')
     ctx = mp.get_context('spawn')
     ipc = dict(ring=FrameRing(ctx, config.get('ring_capacity', 64)),
-               snapshots=ctx.Queue(2), hud=ctx.Queue(2), commands=ctx.Queue(1), feedback=ctx.Queue(8),
+               observations=ctx.Queue(2), observation_ack=ctx.RawValue('q', -1),
+               perception_last=ctx.RawValue('q', -1), snapshots=ctx.Queue(2), hud=ctx.Queue(2), commands=ctx.Queue(1), feedback=ctx.Queue(8),
                logs=ctx.Queue(2048), log_drops=ctx.Value('q', 0), busy=ctx.Value('b', False), revision=ctx.Value('q', 0),
-               stop=ctx.Event(), start=ctx.Event(), capture_done=ctx.Event(), perception_done=ctx.Event(),
-               ready=[ctx.Event() for _ in range(4)], finished=[ctx.Event() for _ in range(4)],
-               heartbeat=ctx.RawArray('d', [time.monotonic()]*4))
+               stop=ctx.Event(), start=ctx.Event(), capture_done=ctx.Event(), perception_done=ctx.Event(), belief_done=ctx.Event(),
+               ready=[ctx.Event() for _ in range(5)], finished=[ctx.Event() for _ in range(5)],
+               heartbeat=ctx.RawArray('d', [time.monotonic()]*5))
     import signal
     previous_handlers = {sig: signal.getsignal(sig) for sig in (signal.SIGINT, signal.SIGTERM)}
     for sig in previous_handlers:
         signal.signal(sig, lambda signum, frame: ipc['stop'].set())
-    children = [ctx.Process(target=worker, args=(i, config, ipc), name=f'clasher-P{i+1}') for i in range(4)]
+    children = [ctx.Process(target=worker, args=(i, config, ipc), name=f'clasher-P{i}') for i in range(5)]
     rows, failures = [], []
     drain_start = None
     started = False
@@ -477,7 +527,7 @@ def run(config, output):
                     started = True
                     # The last initializer can set ready before its first idle
                     # heartbeat. Runtime stall clocks start at this barrier.
-                    for i in range(4):
+                    for i in range(5):
                         ipc['heartbeat'][i] = now
                     ipc['start'].set()
                     record(dict(stage='P5', metric='ready', emitted_at=now))
@@ -489,12 +539,12 @@ def run(config, output):
                     failures.extend(f'{p.name} exited {p.exitcode}' for p in bad)
                     break
                 if started:
-                    stalls = [f'P{i+1}' for i in range(4) if not ipc['finished'][i].is_set()
+                    stalls = [f'P{i}' for i in range(5) if not ipc['finished'][i].is_set()
                               and now-ipc['heartbeat'][i] > config.get('stall_timeout', 5.)]
                     if stalls:
                         failures.append('stage stall: '+', '.join(stalls))
                         break
-                if ipc['perception_done'].is_set():
+                if ipc['belief_done'].is_set():
                     drain_start = now if drain_start is None else drain_start
                     if (not ipc['busy'].value and now-drain_start > .5) or now-drain_start > 5:
                         break
@@ -521,7 +571,7 @@ def run(config, output):
                         p.kill()
                         p.join(timeout=2)
             drain()
-            for name in ('snapshots', 'hud', 'commands', 'feedback', 'logs'):
+            for name in ('observations', 'snapshots', 'hud', 'commands', 'feedback', 'logs'):
                 ipc[name].cancel_join_thread()
                 ipc[name].close()
     for sig, handler in previous_handlers.items():

@@ -7,7 +7,7 @@ unqualified: formal v4 weights, runtime latency qualification, the v4-HUD verifi
 re-test, and the L2-v4 PREREG are still prerequisites.
 
 No emulator or renderer was launched, configured, queried, or tapped in this task.
-The recorded-media tests use a mock input channel. The two train recordings remain
+The recorded-media tests use a mock input channel. The original two train recordings remain
 on 127x04 under `/mpac/sdicks02/repos/clasher-runtime-data/`; nothing was deleted.
 The frozen research tracker, collector, APK/hook, frozen split and perception
 PREREG remain unchanged. The latency revision adds an exact runtime tracker adapter;
@@ -411,11 +411,145 @@ The build uses plain `rustc`, no cargo dependencies, and produces `_lattice.so`
 runtime provenance. Without it, the exact optimized NumPy path remains available;
 `CLASHER_TRACKER_NUMPY=1` explicitly selects that fallback.
 
-Final equality and replay tables are being recorded under the revision receipts.
-The short development runs remain retained and are not pooled with the final
-constant-source replay suite.
+**Exact equality PASS: 32,837 recorded updates**, with no tolerances. All final
+accelerated timings below use the built Rust kernel, on one CPU thread for belief. The
+paired check compares the bytes of both complete 100,001-value resource arrays
+(committed and current), every float64 summary and hand mass, all cycle states,
+four stratified roots per update, and the NumPy generator state after sampling.
+Both objects share the same interpreter/hash environment and independent generators
+seeded 6108. This is equality to the frozen reference on the tested traces, not
+an assertion that the frozen tracker is calibrated for new perception weights.
+
+The inputs are all 22,602 updates in S4 development traces 000/002 (both seats,
+N97/N90/N64), plus 10,235 pixel-derived observations from replayed Phase A **train**
+seeds 1975100700/701/702. S5 adopts these same frozen S4 tracker bytes; there is no
+separate S5 development-trace corpus in the available checkout. No S5 confirmation
+or heldout trace was substituted. Phase replay membership is checked before its
+public log is opened. Tracker inputs contain public candidates and body positions;
+truth fields in archived development containers never enter either tracker.
+
+| Paired replay, ms/update | Updates | Frozen p50 / p95 / p99 | Accelerated p50 / p95 / p99 |
+|---|---:|---:|---:|
+| S4 dev 000 | 12,078 | 12.60 / 29.52 / 42.14 | 2.08 / 3.02 / 8.04 |
+| S4 dev 002 | 10,524 | 13.67 / 29.30 / 43.01 | 2.15 / 2.93 / 6.99 |
+| Phase A train 700 | 5,654 | 24.39 / 56.90 / 235.13 | 3.04 / 9.70 / 13.48 |
+| Phase A train 701 | 2,413 | 22.86 / 51.20 / 241.99 | 2.81 / 5.42 / 12.91 |
+| Phase A train 702 | 2,168 | 30.94 / 61.29 / 260.31 | 3.20 / 10.39 / 20.20 |
+| **All paired updates** | **32,837** | **14.96 / 43.82 / 68.01** | **2.22 / 4.18 / 12.19** |
+
+Median speedup is **6.75×** and p99 speedup **5.58×** on the pooled paired
+inputs. Development rows time tracker + distribution + four roots; Phase A rows
+also include the existing own-ledger update. These microbenchmarks exclude
+comparison/assertion time and startup warmup. They do not replace the full
+pipeline timing below. **The requested ≤10 ms p99 is still missed**: pooled
+12.19 ms, with Phase A trace tails of 13.48/12.91/20.20 ms.
+
+The frozen v3/v2, DerivedD1, ELT, noise model and calibration all match the original
+`dev-code-freeze-v2.json` hashes (`RUNTIME-FROZEN-INTEGRITY.json`).
+`RUNTIME-TRACKER-PARITY.json` records input hashes, output digests, source/library
+hashes, sample counts and before/after timings. `tracker_parity.py` reproduces the
+comparison. All 33 runtime/S6/optimization tests pass in 44.598 s on 127x04;
+the five focused optimization tests also pass with the Rust kernel disabled.
+`RUNTIME-LATENCY-TESTS.txt` retains the full test log.
+
+Profiling found 17.54/27.14 seconds in frozen tick-by-tick hand advancement on
+1,000 N90 updates. A final 5,654-observation tail attribution identifies cycle
+mixture updates as the remaining dominant burst: `_hands_event` p99 8.82 ms
+before the other update work. GC alone has p99 0.97 ms, resource transitions
+1.84 ms, resource evidence 1.73 ms, summary 1.47 ms, sampling 0.60 ms (stage
+quantiles are not additive). No pruning, weakened likelihood, fewer roots, or
+changed search semantics was used to force a pass.
+
+## Final fleet replay latency
+
+**Budget verdict: FAIL.** The final constant-source suite completed on 127x04
+with **14 train matches, 223 first-attempt submissions**, 263 total mock submissions
+(40 permitted retries), and 2,824 searches (479 active, zero deadline overruns).
+It captured 29,971 frames, perceived 29,968 and updated belief on 29,958:
+**99.957% processed at 19.975 FPS**. The 13 omitted belief frames are accounted for
+by three capture/perception drops and ten latest-observation replacements.
+All runs completed with zero worker failures, log loss, duplicate/unreserved taps,
+overlapping reservations or unresolved terminal reservations.
+
+The frozen-train sequence was 1975100700–707 and 1975100710–715. Seeds 708/709
+are not train and were skipped by registration membership before opening media.
+All 14 source/provenance hashes agree for the runtime and loaded lattice library.
+This includes the same original 700/701 recordings and twelve additional train
+matches; no match was excluded for producing wait decisions.
+
+| Final fleet stage, ms | Samples | p50 | p95 | p99 | DESIGN p50/p95 verdict |
+|---|---:|---:|---:|---:|---|
+| Capture production → receipt | 29,971 | 9.40 | 11.01 | 32.62 | FAIL 3/10 |
+| Decode + sanitize | 29,971 | 0.81 | 0.99 | 2.34 | PASS 4/8 |
+| Fallback body/HUD (CPU) | 29,968 | 44.80 | 51.00 | 52.63 | FAIL 15/25 |
+| Fallback temporal fusion | 29,968 | 0.10 | 0.21 | 0.30 | PASS timing only 5/10 |
+| Tracker + own ledger + four roots | 29,958 | 6.21 | 16.83 | 23.91 | FAIL 3/10; p99 also >10 |
+| Active S6 Rust search, four roots | 479 | 143.44 | 196.40 | 197.02 | FAIL p50; PASS p95 110/200 |
+| P4 latest-pixel HUD refresh | 29,971 | 3.97 | 4.72 | 5.06 | Additional fallback work |
+| Mock two-tap submission | 263 | 20.07 | 20.08 | 20.09 | PASS mock only 45/80 |
+
+| End-to-end scenario, ms; n=223 | p50 | p95 | p99 | p50≤200 / p99≤400 |
+|---|---:|---:|---:|---|
+| **Fleet measured** | 246.40 | 318.23 | 340.41 | FAIL / PASS |
+| **Projection only:** body/HUD 15 + temporal 5 ms | 220.83 | 291.86 | 315.15 | FAIL / PASS |
+| **Projection only:** body/HUD 25 + temporal 10 ms | 235.83 | 306.86 | 330.15 | FAIL / PASS |
+
+Each projection subtracts the **actual source-frame** body/HUD plus temporal
+service time from each measured first-attempt latency and adds the indicated
+DESIGN stage budgets. Quantiles are then recomputed over those paired samples.
+The 20 ms and 35 ms rows are separate budget scenarios, not inferred Mac p50/p95
+observations. Capture, decoding, measured queues, S6 search, latest-HUD wait and
+mock transport are retained. This is not a simulated reschedule or a confidence
+bound: faster perception may also change queues and decisions.
+
+Capture queue age is 18.64/44.64/60.34 ms p50/p95/p99 (historical median 148.36 ms).
+Perception→belief queue age is 1.55/2.51/2.81 ms; belief→decision is
+2.05/3.45/19.47 ms. Throughput and end-to-end p99 pass, but measured median latency,
+both projected medians and the **23.91 ms in-pipeline belief p99** fail. The
+isolated 12.19 ms paired p99 must not be substituted for this live-pipeline number.
+Active S6 search also exceeds its 110 ms median stage allowance; the historical
+74 ms search result used the earlier immediate scorer. The scorer, four roots,
+candidate completion rule and 200 ms deadline were not weakened.
+
+The CPU host was shared, all task processes were nice 10, Torch/BLAS/OpenCV used
+one CPU thread, and search used four native threads. No GPU computation was used.
+Launch preflights recorded zero console users; account Python counts were 1–14
+before adding the seven runtime/helper processes, below the 96-process ceiling.
+Observed launch loads were 1.72–5.23 (one-minute average). The exploratory suite
+and paired proof overlapped some final matches; the final matches ran after those
+jobs completed. This is not a quiet-Mac qualification.
+
+Reviewable receipts: `RUNTIME-LATENCY-METRICS.json`, `RUNTIME-TRACKER-PARITY.json`,
+`RUNTIME-FROZEN-INTEGRITY.json`, and `RUNTIME-LATENCY-TESTS.txt`. Reproduction tools:
+`latency_suite.py`, `latency_report.py`, `tracker_parity.py`, `build_lattice.sh`.
+The final raw logs, configs, hashes and PID receipts remain on 127x04 at
+`/mpac/sdicks02/jobs/clasher/runtime-latency-replays-r2-results/`.
+The mixed-version development suite `runtime-latency-replays-r1-results/`,
+failed smoke attempts and all profiles remain preserved and excluded from the
+final aggregate. Local compact logs are under `runtime-results/latency-revision/`.
+
+```bash
+# Run on 127x04 from /mpac/sdicks02/repos/clasher, using a fresh unique label.
+bash reports/strategy_council_20260928/fleet/fleet_run.sh runtime-latency-new-label \
+  /mpac/sdicks02/envs/clasher-gpu/bin/python -B \
+  reports/strategy_council_20260928/live-loop/v4/latency_suite.py \
+  --data /mpac/sdicks02/repos/clasher-runtime-data \
+  --matches /mpac/sdicks02/repos/clasher-v4-data/matches \
+  --output /mpac/sdicks02/jobs/clasher/runtime-latency-new-label-results
+```
+
+This retains the historical metric definition: `frame_to_tap` records completion
+of the mock two-tap submission for **attempt 1**, including the 20 ms inter-tap
+interval. It is not input acceptance latency or the instant of the first physical
+touch. Retries are excluded from the end-to-end sample set. The historical full
+baseline used immediate search; this revision preserves the adopted S6 scorer.
+The baseline host was also much busier. Thus the end-to-end comparison is not a
+controlled code-only speedup; the paired tracker experiment above is.
+
 
 ## Mac replay gate and exact deferred command
+
+**Deferred at 2026-10-08 09:13 UTC; no Mac measurement was run.**
 
 No Mac work is authorized while T1 Phase A is collecting. The local
 `T1-PROGRESS.md` does not confirm collection has stopped; the time estimate alone

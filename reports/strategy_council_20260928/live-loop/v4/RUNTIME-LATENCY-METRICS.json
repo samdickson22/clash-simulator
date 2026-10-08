@@ -1,0 +1,302 @@
+{
+  "schema": "clasher.live-v4.latency-optimization.v1",
+  "host": "127x04",
+  "matches": [
+    {
+      "seed": "1975100700",
+      "captured": 5655,
+      "perceived": 5654,
+      "processed": 5654,
+      "first_taps": 54,
+      "capture_dropped": 1,
+      "belief_skipped": 0,
+      "trace_sha256": "2ce03766f55e0b646690d1ba3ec0e47ebd72cf696c8c35f8f35242715428969e"
+    },
+    {
+      "seed": "1975100701",
+      "captured": 2416,
+      "perceived": 2415,
+      "processed": 2413,
+      "first_taps": 0,
+      "capture_dropped": 1,
+      "belief_skipped": 2,
+      "trace_sha256": "8323d9de3b54744ada9452e783d7cd7e8183c4cb4ffa152bbebb61e6e821d329"
+    },
+    {
+      "seed": "1975100702",
+      "captured": 2170,
+      "perceived": 2169,
+      "processed": 2168,
+      "first_taps": 18,
+      "capture_dropped": 1,
+      "belief_skipped": 1,
+      "trace_sha256": "e7956b9f1f995d9fae42b441ec97825167c819e060ae243986b2edc0b902cba4"
+    },
+    {
+      "seed": "1975100703",
+      "captured": 1935,
+      "perceived": 1935,
+      "processed": 1934,
+      "first_taps": 0,
+      "capture_dropped": 0,
+      "belief_skipped": 1,
+      "trace_sha256": "b7c2a0767e14d403c3e4b910d852232b3597e1a5298be7f6dc1e4e21c196ea7d"
+    },
+    {
+      "seed": "1975100704",
+      "captured": 686,
+      "perceived": 686,
+      "processed": 686,
+      "first_taps": 5,
+      "capture_dropped": 0,
+      "belief_skipped": 0,
+      "trace_sha256": "29e67a18dea67cc8fb2b43a16cb227def1f9930a8341e671afe0020affe55aa5"
+    },
+    {
+      "seed": "1975100705",
+      "captured": 561,
+      "perceived": 561,
+      "processed": 561,
+      "first_taps": 10,
+      "capture_dropped": 0,
+      "belief_skipped": 0,
+      "trace_sha256": "d872d9da834ecd67ec2a4020532c7c73d8909fe1c4b0ec7ccaed28a2c23d5917"
+    },
+    {
+      "seed": "1975100706",
+      "captured": 797,
+      "perceived": 797,
+      "processed": 797,
+      "first_taps": 11,
+      "capture_dropped": 0,
+      "belief_skipped": 0,
+      "trace_sha256": "d62fa30ebcefa20ba1b33a491bad7d5cfed0f92d705aa2e88a8d2015abbcd31c"
+    },
+    {
+      "seed": "1975100707",
+      "captured": 3018,
+      "perceived": 3018,
+      "processed": 3017,
+      "first_taps": 14,
+      "capture_dropped": 0,
+      "belief_skipped": 1,
+      "trace_sha256": "fd20a10a19aee249b2312025a988986841c34f35beb68921e4eef21ebf55a9a3"
+    },
+    {
+      "seed": "1975100710",
+      "captured": 305,
+      "perceived": 305,
+      "processed": 305,
+      "first_taps": 5,
+      "capture_dropped": 0,
+      "belief_skipped": 0,
+      "trace_sha256": "4bdc5044f028e692cef47de99cff7b30f5c0d20eb92cb358bd362cfd185a137e"
+    },
+    {
+      "seed": "1975100711",
+      "captured": 1796,
+      "perceived": 1796,
+      "processed": 1794,
+      "first_taps": 18,
+      "capture_dropped": 0,
+      "belief_skipped": 2,
+      "trace_sha256": "af7789f134cd062c33e9bb247560a30694b86f4f6644be67238a1090cd8c2c79"
+    },
+    {
+      "seed": "1975100712",
+      "captured": 1195,
+      "perceived": 1195,
+      "processed": 1195,
+      "first_taps": 15,
+      "capture_dropped": 0,
+      "belief_skipped": 0,
+      "trace_sha256": "90bda4304a9eabe5e33051ea6e018a87b1a62f91c9f4a06f16a6368502635369"
+    },
+    {
+      "seed": "1975100713",
+      "captured": 794,
+      "perceived": 794,
+      "processed": 794,
+      "first_taps": 15,
+      "capture_dropped": 0,
+      "belief_skipped": 0,
+      "trace_sha256": "f7a0c67e614bdf544bb9f0a54f2476c511a8e772c3f1d6f628d605ff29f52de2"
+    },
+    {
+      "seed": "1975100714",
+      "captured": 3846,
+      "perceived": 3846,
+      "processed": 3846,
+      "first_taps": 23,
+      "capture_dropped": 0,
+      "belief_skipped": 0,
+      "trace_sha256": "c7af1528f3b98babfeb42483f0eeeb75070be063583f0df03c5ccf3ba34ff765"
+    },
+    {
+      "seed": "1975100715",
+      "captured": 4797,
+      "perceived": 4797,
+      "processed": 4794,
+      "first_taps": 35,
+      "capture_dropped": 0,
+      "belief_skipped": 3,
+      "trace_sha256": "ef14819d7521e91746741ae2b7b6ad6cf3264863e5fb531ba401697f52af7061"
+    }
+  ],
+  "source_sha256": {
+    "capture.py": "1c05ad3b787cb8ae7b67b0fbef09ec59e24fa7caa69a80cc011445e48c6097db",
+    "belief.py": "e8687c77e9dcc30b6460ecce99bda5bf147208777032ca300f97a2dd8b93fdc4",
+    "transport.py": "faa1f1315158e311e98775f95b42853ac78bf71c40e25e88a1e6ae80cb23a702",
+    "actuation.py": "3afd278f348f69b5d94831b6e0f15fe8c8ed09c61c0b53b0f044e8b36c9a5be2",
+    "lattice.py": "1c929a2fb0c89e22d6bbe1f6430b5bf817323843d436c52250cef80c4a936cd5",
+    "tracker.py": "e2690e28a0e1326264b894d4b4da46eb24fd96fe2166284aef99c2c51cea13a3",
+    "timing.py": "9090006a2f9173b0cf2e54ea9fef148cc17dcbbe6e35e1a7eada14b8a8f37eed",
+    "contracts.py": "b0b880603a9ec55d4634cc6fcd05a8b247a2941ba87663a011234205db16e093",
+    "__main__.py": "283abae78cd6eaf576a5919153652ac25a76ff19d530535699a8711cbbe670bc",
+    "perception.py": "6ebae776bf0b094e025c47e9f5803ae67e9a59e05d0cecb019da4bd73c44a461",
+    "loading.py": "00412547da58f4251943500f3d4c28c5993eb37369cecb594b1a7312590d48e8",
+    "__init__.py": "17717238d47f49a055039dcc9a855d6d5ef23d4cc3770a49e534811d076f8ba6",
+    "decision.py": "21a08e34203d68506368027a3e83ee7ba0f6c306ace30942ea1199b5d2173694",
+    "runtime.py": "7720c8371ce96dc9804e3011bbf972d0ea9d673e856346a4f68fd757c2436956",
+    "lattice.rs": "fc35188e9ba5a8b909245f05a3099d9abd028cdfe08336672a32f9ba046c3c05",
+    "_lattice.so": "c8f93386e891e6e7fa9c976933aeba6a3e4cc92fda799c4b2d356ae08e7b981b"
+  },
+  "timing_ms": {
+    "capture": {
+      "count": 29971,
+      "p50": 9.400755167007446,
+      "p95": 11.0070044756867,
+      "p99": 32.623818458523566
+    },
+    "decode": {
+      "count": 29971,
+      "p50": 0.8075910154730082,
+      "p95": 0.992008950561285,
+      "p99": 2.341340051498264
+    },
+    "capture_queue_age": {
+      "count": 29971,
+      "p50": 18.644654424861073,
+      "p95": 44.641126005444676,
+      "p99": 60.33959230408058
+    },
+    "actuator_hud": {
+      "count": 29971,
+      "p50": 3.974996041506529,
+      "p95": 4.7196910018101335,
+      "p99": 5.064131796825677
+    },
+    "backbone_hud": {
+      "count": 29968,
+      "p50": 44.80005596997216,
+      "p95": 50.99917160696349,
+      "p99": 52.62781077763066
+    },
+    "temporal_fusion": {
+      "count": 29968,
+      "p50": 0.10396144352853298,
+      "p95": 0.21487500052899106,
+      "p99": 0.3005899663548916
+    },
+    "perception": {
+      "count": 29968,
+      "p50": 45.026779058389366,
+      "p95": 51.22592853149399,
+      "p99": 52.879389118170366
+    },
+    "perception_queue_age": {
+      "count": 29958,
+      "p50": 1.5527285286225379,
+      "p95": 2.5132259004749353,
+      "p99": 2.8102064272388816
+    },
+    "belief": {
+      "count": 29958,
+      "p50": 6.206695514265448,
+      "p95": 16.833084425888956,
+      "p99": 23.909290552837813
+    },
+    "belief_queue_age": {
+      "count": 29203,
+      "p50": 2.0497889490798116,
+      "p95": 3.4542439854703844,
+      "p99": 19.470628038980013
+    },
+    "search": {
+      "count": 2824,
+      "p50": 6.114369549322873,
+      "p95": 163.37914256728254,
+      "p99": 196.33106671157293
+    },
+    "search_active": {
+      "count": 479,
+      "p50": 143.44464393798262,
+      "p95": 196.40364464139566,
+      "p99": 197.0240766578354
+    },
+    "taps": {
+      "count": 263,
+      "p50": 20.073581021279097,
+      "p95": 20.08337607840076,
+      "p99": 20.09114760439843
+    },
+    "frame_to_tap": {
+      "count": 223,
+      "p50": 246.39782181475312,
+      "p95": 318.229754595086,
+      "p99": 340.41294186376035
+    },
+    "projected_perception_20ms": {
+      "count": 223,
+      "p50": 220.8264292962849,
+      "p95": 291.8581199762411,
+      "p99": 315.1464493595995
+    },
+    "projected_perception_35ms": {
+      "count": 223,
+      "p50": 235.8264292962849,
+      "p95": 306.8581199762411,
+      "p99": 330.1464493595995
+    }
+  },
+  "counts": {
+    "ready": 14,
+    "capture": 29971,
+    "decode": 29971,
+    "captured": 29971,
+    "capture_queue_age": 29971,
+    "actuator_hud": 29971,
+    "backbone_hud": 29968,
+    "temporal_fusion": 29968,
+    "perception": 29968,
+    "perceived": 29968,
+    "perception_queue_age": 29958,
+    "belief": 29958,
+    "processed": 29958,
+    "belief_queue_age": 29203,
+    "search": 2824,
+    "search_overruns": 0,
+    "command": 365,
+    "pending_blocked_frame": 8085,
+    "actuator_state": 628,
+    "ledger": 628,
+    "taps": 263,
+    "frame_to_tap": 223,
+    "dropped": 3,
+    "belief_frames_skipped": 13
+  },
+  "processed_fps": 19.974569192960086,
+  "perception_fps": 19.98123983455538,
+  "processed_fraction": 0.99956624737246,
+  "perception_fraction": 0.9998999032397985,
+  "audit_errors": [],
+  "heldout_opened": false,
+  "actuator": "mock",
+  "device": "cpu",
+  "sample_gate": true,
+  "median_budget_pass": false,
+  "tail_budget_pass": true,
+  "belief_p99_pass": false,
+  "production_qualified": false,
+  "projection": "Per first tap: measured latency minus source-frame body/HUD+temporal duration plus 20ms (DESIGN p50 stages) or 35ms (DESIGN p95 stages). Observed queueing and other stage costs retained; these are scenarios, not Mac measurements."
+}

@@ -1,0 +1,18 @@
+{
+  "host": "127x16",
+  "label": "v4-selection-guard-tests-20261008-r1",
+  "started_utc": "2026-10-08T08:43:54.311682+00:00",
+  "command": [
+    "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/live-loop/v4/l1/test_selection_guard_v4.py"
+  ],
+  "supervisor_pid": 3480771,
+  "pid": 3480773,
+  "exit_code": 0,
+  "status": "stopped",
+  "finished_utc": "2026-10-08T08:43:55.463797+00:00",
+  "stop_reason": "job exited with descendants still running",
+  "peak_processes": 2,
+  "peak_rss_bytes": 31092736
+}
