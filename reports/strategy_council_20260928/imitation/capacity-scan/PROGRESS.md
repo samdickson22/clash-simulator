@@ -332,3 +332,20 @@ staging and every 480 segment; actual final costs await completion.
 Evidence: `monitor-20261009T2312Z.json`. No source, config or data edits.
 480 micro1024/effective8192/cap0.78 stays fixed; failed artifacts retained.
 Continuation remains enabled; 16 stays released.
+
+2026-10-09 23:23Z: Width 288 completed its first epoch dev measurement and resumed training.
+At matched 63,441,640 rows / step7745: NLL288 0.27972973786549959,
+NLL192 0.28317389229603407, gain 0.003444154430534474.
+This is an epoch curve point, not the frozen quarter decision; no kill fired.
+Evidence: `width288-epoch1.json` (bounded own log tail).
+Width 288: step 8030, 65,776,360 rows, 5944 loader-inclusive rows/s.
+Width 384: step 6375, 52,224,000 rows, 4715 loader-inclusive rows/s.
+Width 480: step 5641, 46,211,072 rows, 4727 loader-inclusive rows/s.
+All guards and the sole controller remain healthy; six processes per arm;
+peak PSS 42.38 GB; sampled GPU free memory ≥27.1 GiB.
+No new OOM, stop, restart or recipe/data change. Wide quarter NLLs and kills
+remain pending at 95,144,680 rows; quarter control is 0.27726436294161033.
+Conservative cumulative pipeline cost 11.079 GPU-hours includes
+staging and all 480 segments; final actual costs await completion.
+Evidence: `monitor-20261009T2322Z.json`. 480 micro1024/effective8192/cap0.78 stays fixed;
+failure artifacts retained; continuation enabled; 16 remains released.
