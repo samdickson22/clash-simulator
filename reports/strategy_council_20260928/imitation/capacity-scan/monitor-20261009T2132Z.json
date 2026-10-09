@@ -1,0 +1,124 @@
+{
+  "schema": "clasher.capacity-scan.monitor.v1",
+  "at": "2026-10-09T21:32:47.945023+00:00",
+  "receipt_generated_at": "2026-10-09T21:33:03.229214+00:00",
+  "scientific_freeze_commit": "841c44b0",
+  "microbatch_amendment_commit": "f8dd81a6",
+  "controller_pid": 1702652,
+  "controller_live": true,
+  "stopping": false,
+  "all_exited": false,
+  "conservative_gpu_hours": 5.573904015277777,
+  "control_relayed": [
+    "127x13",
+    "127x14",
+    "127x15"
+  ],
+  "control_quarter": {
+    "width": 192,
+    "rows": 95144680,
+    "step": 11615,
+    "scheduled_rows": 380571633,
+    "ema_joint_nll": 0.27726436294161033,
+    "dev_rows": 11776480,
+    "dev_seconds": 385.4897930249572,
+    "at": "2026-10-09T20:19:19.015093+00:00",
+    "config_sha256": "a6963c7efe6668271e72bd49df24ba65e7fa2e649a7f399033ccac9977a2ec85"
+  },
+  "arms": {
+    "127x13": {
+      "width": 288,
+      "active_label": "width288-v1",
+      "supervisor_pid": 793922,
+      "trainer_pid": 794004,
+      "guard_at": "2026-10-09T21:32:46.957789+00:00",
+      "borrower_processes": 6,
+      "pss_bytes": 35916978176,
+      "peak_pss_bytes": 40205018112,
+      "gpu_free_mib": 27758,
+      "nice_min_enforced_by_guard": 10,
+      "latest_step": {
+        "step": 3413,
+        "rows": 27959296,
+        "rows_per_second_including_loader": 6264.970012793306,
+        "gpu_peak_allocated_mib": 22506.90966796875,
+        "gpu_peak_reserved_mib": 26968.0
+      },
+      "quarter_pending": true,
+      "kill_decision_pending": true,
+      "errors": [],
+      "guard_segments": [
+        {
+          "label": "width288-v1",
+          "started_at": "2026-10-09T19:49:07.245986+00:00"
+        }
+      ]
+    },
+    "127x14": {
+      "width": 384,
+      "active_label": "width384-v1",
+      "supervisor_pid": 543994,
+      "trainer_pid": 544056,
+      "guard_at": "2026-10-09T21:32:43.704992+00:00",
+      "borrower_processes": 6,
+      "pss_bytes": 37596465152,
+      "peak_pss_bytes": 41471397888,
+      "gpu_free_mib": 46368,
+      "nice_min_enforced_by_guard": 10,
+      "latest_step": {
+        "step": 2492,
+        "rows": 20414464,
+        "rows_per_second_including_loader": 4567.308317188518,
+        "gpu_peak_allocated_mib": 29531.81005859375,
+        "gpu_peak_reserved_mib": 35466.0
+      },
+      "quarter_pending": true,
+      "kill_decision_pending": true,
+      "errors": [],
+      "guard_segments": [
+        {
+          "label": "width384-v1",
+          "started_at": "2026-10-09T19:49:07.232083+00:00"
+        }
+      ]
+    },
+    "127x15": {
+      "width": 480,
+      "active_label": "width480-v3",
+      "supervisor_pid": 637497,
+      "trainer_pid": 637517,
+      "guard_at": "2026-10-09T21:32:46.457109+00:00",
+      "borrower_processes": 6,
+      "pss_bytes": 32893087744,
+      "peak_pss_bytes": 36192763904,
+      "gpu_free_mib": 34857,
+      "nice_min_enforced_by_guard": 10,
+      "latest_step": {
+        "step": 1821,
+        "rows": 14917632,
+        "rows_per_second_including_loader": 4703.526868024993,
+        "gpu_peak_allocated_mib": 18480.048828125,
+        "gpu_peak_reserved_mib": 23220.0
+      },
+      "quarter_pending": true,
+      "kill_decision_pending": true,
+      "errors": [],
+      "guard_segments": [
+        {
+          "label": "width480-v1",
+          "started_at": "2026-10-09T19:49:07.250116+00:00",
+          "ended_at": "2026-10-09T20:23:39.018970+00:00"
+        },
+        {
+          "label": "width480-v2",
+          "started_at": "2026-10-09T20:25:30.095659+00:00",
+          "ended_at": "2026-10-09T20:39:24.571215+00:00"
+        },
+        {
+          "label": "width480-v3",
+          "started_at": "2026-10-09T20:44:27.364360+00:00"
+        }
+      ]
+    }
+  }
+}
