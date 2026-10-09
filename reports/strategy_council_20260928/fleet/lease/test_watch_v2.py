@@ -466,6 +466,30 @@ time.sleep(3)
         pid = int((self.base / 'forked.pid').read_text())
         self.assertFalse(Path('/proc', str(pid)).exists())
 
+    def test_detached_parent_exit_adopts_escaped_descendant(self):
+        code = '''import os,time,json,signal
+from pathlib import Path
+r,wr=os.pipe()
+pid=os.fork()
+if pid:
+ os.close(wr);os.read(r,1);os._exit(7)
+os.close(r);os.setsid()
+signal.signal(signal.SIGTERM,signal.SIG_IGN)
+Path('jobs/detached-fork.ready.json').write_text(json.dumps({'pid':os.getpid()}))
+os.write(wr,b'x');os.close(wr)
+time.sleep(10)
+'''
+        proc = self.launch('detached-fork', code=code, processes=3, detached=True)
+        proc.communicate(timeout=3)
+        identity = self.wait_file('detached-fork.ready.json')
+        receipt = self.wait_file('detached-fork.exit.json')
+        self.assertEqual(receipt['exit_code'], 7)
+        self.assertEqual(receipt['status'], 'stopped')
+        self.assertIn('descendants', receipt['stop_reason'])
+        self.assertFalse(Path('/proc', str(identity['pid'])).exists())
+        time.sleep(.05)
+        self.assertNotIn('v2:detached-fork', json.loads((self.base/'jobs/aggregate-v2.json').read_text())['jobs'])
+
     def test_two_concurrent_fast_admissions_both_finish_cleanly(self):
         a = self.launch('fast-a', code='pass')
         b = self.launch('fast-b', code='pass')

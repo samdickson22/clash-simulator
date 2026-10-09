@@ -9,12 +9,12 @@ ssh 127x15 'bash /mpac/sdicks02/repos/clasher-lease/run_v2.sh \
   /mpac/sdicks02/repos/clasher-lease/repo/PATH_TO_JOB.py JOB_ARGUMENTS'
 ```
 
-The **2026-10-09 r2 hotfix** is selected by `run_v2.sh` and the explicit
-`run_v2_current.sh` symlink. Both point to `run_v2_hotfix_20261009_r2.sh`, which
-executes the immutable `lease_watch_v2_hotfix_20261009_r2.py`. Original and r1
+The **2026-10-09 r3 hotfix** is selected by `run_v2.sh` and the explicit
+`run_v2_current.sh` symlink. Both point to `run_v2_hotfix_20261009_r3.sh`, which
+executes the immutable `lease_watch_v2_hotfix_20261009_r3.py`. Original, r1 and r2
 supervisor/launcher files remain unchanged on the leased hosts. Existing
 supervisors retain their loaded code; only new launches receive the fixes.
-Receipts include `wrapper_revision: v2-hotfix-20261009-r2`.
+Receipts include `wrapper_revision: v2-hotfix-20261009-r3`.
 
 Declare the **whole job's maximum processes and summed PSS**, including its
 supervisor and every descendant. Allow at least two processes. PSS GB is decimal
@@ -63,7 +63,7 @@ that **saves and exits**. Linux subreaper adoption covers immediate parent exits
 and descendants that call `setsid`. Group signals require a live PID/start-tick
 anchor in the original child session; stale/reused identities are excluded.
 
-SIGTERM, SIGINT and SIGHUP to an r2 supervisor request normal cleanup rather than
+SIGTERM, SIGINT and SIGHUP to an r2/r3 supervisor request normal cleanup rather than
 exiting immediately. The requested signal is forwarded to the full child tree.
 Every stop path has a **120-second grace**, configurable with
 `--stop-grace-seconds SECONDS`; remaining children then receive SIGKILL. Checkpoint
@@ -120,7 +120,7 @@ Historical r1 evidence beside this guide:
 `wrapper-v2-hotfix-deployment-20261008-r1.json`, and
 `wrapper-v2-hotfix-smoke-127x09-20261008-r1.json`.
 
-## R2 validation and deployment
+## R2/r3 validation and deployment
 
 The identity-verified r1 SIGTERM reproduction ran on home host **127x01**:
 supervisor 826006/start 129687106 exited with -15, child 826008/start 129687120
@@ -150,28 +150,48 @@ Evidence: `wrapper-v2-hotfix-tests-20261009-r2.log`,
 `wrapper-v2-hotfix-r1-scheduled-20261009-r2.json`, and
 `wrapper-v2-hotfix-operator-tests-20261009-r2.log`.
 
+Final review added **r3** without replacing any running r2 code. Linux's
+[subreaper attribute is not inherited across fork](https://man7.org/linux/man-pages/man2/PR_SET_CHILD_SUBREAPER.2const.html);
+r3 re-enables it in the detached supervisor before launching its child. A new
+regression detaches the supervisor, immediately exits the direct child with 7,
+and leaves a stubborn descendant in a separate session. R3 adopts, kills and
+reaps that descendant, retains exit code 7, writes a stopped receipt, and removes
+its registry entry. **59 wrapper tests passed on 127x01** (21.177 seconds), plus
+**2 operator fixture tests**. Original/r1/r2 immutable files were verified
+unchanged while both launcher symlinks switched to r3 on all five hosts.
+See `wrapper-v2-hotfix-tests-20261009-r3.log`,
+`wrapper-v2-hotfix-operator-tests-20261009-r3.log`,
+`wrapper-v2-hotfix-deployment-20261009-r3.json` and
+`wrapper-v2-hotfix-smoke-127x09-20261009-r3.json`.
+The final r3 signal smoke on 09 passed at **01:04:18Z** with
+`signal:SIGTERM`, child status -9, no orphans and registry release. A second
+leased-host smoke passed at **01:05:29Z**: a detached job's direct child exited
+with 7 while its stubborn descendant escaped into a separate session. R3 adopted
+and killed the descendant, retained status 7 and released accounting. See
+`wrapper-v2-hotfix-smoke-detached-127x09-20261009-r3.json`.
+
 ## Coordinator procedure for running old wrappers, 2026-10-09
 
 **Do not signal an r1 or v1 supervisor.** Its default signal action exits without
 cleaning its child or writing an exit receipt. At 04:30Z, TERM its verified
 **child process group**, leaving the supervisor alive to reap and write receipts.
-The deployed `stop_wrapped_job_v2_hotfix_20261009_r2.py` helper does this for all
-captured old v2 jobs and wrapped T11 v1 jobs on each host. It verifies PID/start
+The deployed `stop_wrapped_job_v2_hotfix_20261009_r3.py` helper does this for all
+captured v2 jobs (including r1/r2/r3) and wrapped T11 v1 jobs on each host. It verifies PID/start
 ticks, child PGID/SID and host identity, also stops adopted descendants outside
 the group, sends TERM to all captured trees before waiting, and KILLs verified
 survivors after 120 seconds. Reused PIDs receive no signal. It does not edit the
 lease, aggregate registry, receipts or running wrapper code. Two operator tests
 also passed against immutable r1 on 127x01; read-only capture was verified on
 each deployed host. Repeatable fixture tests are in
-`test_operator_v2_hotfix_20261009_r2.py`.
+`test_operator_v2_hotfix_20261009_r3.py`.
 
 At **04:29Z**, capture fresh identities (labels and PIDs can change as shards
 finish; do not use the earlier inventory as a stop list):
 
 ```bash
-lease_operator=/mpac/sdicks02/repos/clasher-lease/stop_wrapped_job_v2_hotfix_20261009_r2.py
+lease_operator=/mpac/sdicks02/repos/clasher-lease/stop_wrapped_job_v2_hotfix_20261009_r3.py
 for h in 127x09 127x13 127x14 127x15 127x16; do
-  ssh "$h" "python3 -B $lease_operator --capture" > "/tmp/clasher-r1-stop-$h.json"
+  ssh "$h" "nice -n 10 python3 -B $lease_operator --capture" > "/tmp/clasher-r1-stop-$h.json"
 done
 ```
 
@@ -180,7 +200,7 @@ each signal to the captured child/supervisor PID and start tick:
 
 ```bash
 for h in 127x09 127x13 127x14 127x15 127x16; do
-  ssh "$h" "python3 -B $lease_operator --stop --grace-seconds 120" \
+  ssh "$h" "nice -n 10 python3 -B $lease_operator --stop --grace-seconds 120" \
     < "/tmp/clasher-r1-stop-$h.json" > "/tmp/clasher-r1-stop-$h.log" 2>&1 &
 done
 wait
@@ -200,7 +220,9 @@ used its direct child's isolated group. T11 on 16 was **v1**, label
 `t11-v2-main-2026100821-loader6-r3`, supervisor 4092116/start 129174844, child
 group 4092118/start 129174849. Its worker argv already specifies stop at **04:20Z**;
 the coordinator's 04:30Z group stop remains the backstop if it is still running.
-Current snapshots are retained in `wrapper-v2-hotfix-running-jobs-20261009-r2.json`.
+Historical snapshots are retained in `wrapper-v2-hotfix-running-jobs-20261009-r2.json`;
+the final helper's fresh read-only captures are in
+`wrapper-v2-hotfix-running-jobs-20261009-r3.json`.
 
 R1's internal scheduled path already kills tracked descendants correctly, but
 its initial 04:30Z signal reaches only the direct child. Source code sends TERM
@@ -212,3 +234,13 @@ TERM at 00:53:56.177Z, KILL/receipt at 00:53:56.642Z before the test's
 group procedure makes all leased child work stop at 04:30Z and gives ample
 cleanup time; r1's internal path provides another backstop. V1 has no fixed
 04:30Z/05:00Z schedule, so the coordinator must cover T11 explicitly.
+
+The r1 internal proof used a foreground supervisor. Detached r1/r2 supervisors
+do not inherit the launcher's subreaper flag and can miss an immediate orphan
+that escaped the original group before sampling. Thus the internal-stop evidence
+applies to **tracked** descendants; it is not proof for untracked daemons.
+The four current r1 perception supervisors are detached; their sampled children
+all share their verified child PGID/SID, which the operator backstop stops in
+full. Current r1 exploration supervisors are foreground. R3 fixes adoption for
+both modes. Capture at 04:29Z and inspect any missing receipt or surviving tree
+before the 05:00Z deadline.

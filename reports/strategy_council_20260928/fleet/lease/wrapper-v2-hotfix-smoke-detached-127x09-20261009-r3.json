@@ -1,0 +1,81 @@
+{
+  "receipt": {
+    "version": 2,
+    "wrapper_revision": "v2-hotfix-20261009-r3",
+    "host": "127x09",
+    "label": "lease-v2-hotfix-detached-20261009-09r3",
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "-c",
+      "import os,signal,time,json\nfrom pathlib import Path\nbase=Path('/mpac/sdicks02/repos/clasher-lease');label='lease-v2-hotfix-detached-20261009-09r3'\nr,wr=os.pipe()\nif os.fork():\n os.close(wr);os.read(r,1);os._exit(7)\nos.close(r);os.setsid();signal.signal(signal.SIGTERM,signal.SIG_IGN)\ntick=Path('/proc/self/stat').read_text().rsplit(')',1)[1].split()[19]\n(base/'jobs'/(label+'.ready.json')).write_text(json.dumps({'pid':os.getpid(),'start':tick,'sid':os.getsid(0)}))\nos.write(wr,b'x');os.close(wr)\ntime.sleep(20)\n"
+    ],
+    "started_utc": "2026-10-09T01:05:26.196925+00:00",
+    "declared_processes": 3,
+    "declared_pss_bytes": 100000000,
+    "gpu": false,
+    "admission_usage": {
+      "processes": 37,
+      "pss_bytes": 24000000000
+    },
+    "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+    "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+    "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+    "stop_at_utc": "2026-10-09T04:30:00+00:00",
+    "exit_by_utc": "2026-10-09T05:00:00+00:00",
+    "admission_aggregate": {
+      "processes": 27,
+      "pss_bytes": 13434963968
+    },
+    "admission_jobs": {
+      "v2:t7-epoch-offload-20261008-09r1": {
+        "kind": "v2",
+        "sequence": 10,
+        "supervisor_pid": 19112,
+        "processes": 10,
+        "pss_bytes": 7893153792,
+        "stop_reason": null
+      },
+      "v2:cpu-delay-fixes-p0655-127x09-throughput-v5": {
+        "kind": "v2",
+        "sequence": 33,
+        "supervisor_pid": 325265,
+        "processes": 17,
+        "pss_bytes": 5541810176,
+        "stop_reason": null
+      }
+    },
+    "supervisor_pid": 335516,
+    "supervisor_start": "129766653",
+    "stop_grace_seconds": 1.0,
+    "admission_sequence": 35,
+    "pid": 335519,
+    "child_start": "129766658",
+    "child_pgid": 335519,
+    "child_sid": 335519,
+    "stop_requested_utc": "2026-10-09T01:05:27.314606+00:00",
+    "exit_code": 7,
+    "status": "stopped",
+    "finished_utc": "2026-10-09T01:05:29.716720+00:00",
+    "stop_reason": "job exited with descendants still running",
+    "peak_processes": 2,
+    "peak_rss_bytes": 23113728,
+    "peak_sampled_pss_bytes": 13338624,
+    "memory_metric": "pss",
+    "console_users": 0,
+    "aggregate": {
+      "processes": 29,
+      "pss_bytes": 13448398848
+    },
+    "effective_process_cap": 80
+  },
+  "escaped_descendant": {
+    "pid": 335520,
+    "start": "129766660",
+    "sid": 335520
+  },
+  "no_orphans": true,
+  "registry_released": true,
+  "host": "127x09",
+  "launch_output": "pid=335516 log=/mpac/sdicks02/repos/clasher-lease/jobs/lease-v2-hotfix-detached-20261009-09r3.log\n"
+}

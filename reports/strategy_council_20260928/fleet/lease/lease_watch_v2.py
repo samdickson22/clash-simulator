@@ -42,7 +42,7 @@ CHECK_INTERVAL = 60
 POLL_INTERVAL = 1
 STOP_AT = dt.datetime(2026, 10, 9, 4, 30, tzinfo=dt.timezone.utc)
 EXIT_BY = dt.datetime(2026, 10, 9, 5, 0, tzinfo=dt.timezone.utc)
-REVISION = 'v2-hotfix-20261009-r2'
+REVISION = 'v2-hotfix-20261009-r3'
 # Leave time for the polling loop and bounded external-control queries/reaping.
 DEADLINE_CLEANUP_MARGIN = 60
 CLASHER_PATH = re.compile(
@@ -713,6 +713,9 @@ def run_main(args):
                     # normal return would race the child's registry update.
                     os._exit(0)
                 os.setsid()
+                # PR_SET_CHILD_SUBREAPER is not inherited across fork. The
+                # detached supervisor must enable it before creating its job.
+                enable_subreaper()
                 with (BASE / 'jobs' / (args.label + '.log')).open('x') as log, open(os.devnull) as devnull:
                     os.dup2(devnull.fileno(), 0)
                     os.dup2(log.fileno(), 1)
