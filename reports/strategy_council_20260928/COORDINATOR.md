@@ -1106,3 +1106,10 @@ Also on the hub, but with copies elsewhere:
   - Win/loss/draw is **unmeasured**: the training captures stop before the full result screen.
   - **Decision: tower work pauses here** (diminishing returns). The full outcome-screen fit will use the first live Mac sessions' post-match frames, which are fair public UI.
   - The one-line provenance patch (`public_score_templates.json`) went to the live-runtime worker. My own attempt was reverted because I had no matching test environment.
+- **02:57 UTC: capture migration in progress.**
+  - Perception deployed a capture-only wrapper (`224cd41b…`): stop Oct 11 04:30Z, ≤16 processes, PSS ≤48 GB. The lease files on 09/13/14/15 now end Oct 11 05:30Z, and the 05:00Z cleanup exempts capture.
+  - Qualification on 04 so far: one whole e7 match (444 frames × 9) is byte-exact. The dense e15 match is still running. The atomic queue passed 13 tests, including an 8-process claim race.
+  - **Decision: early drain of exploration** from the leased hosts. No new shards there. Remaining work moves to home CPU:
+    - 03: ≤40 delay / ≤50 tempo, ≤100 combined;
+    - 01: ≤24 SCHED_IDLE, guarded by T11 at ≥11k rows/s;
+    - 08: ≤12 until 04:55Z.
