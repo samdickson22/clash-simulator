@@ -115,6 +115,8 @@ def main():
         reporting08_amendment_sha256=digest(job/'student-reporting08-amendment.json'),
         reporting_rebalance_amendment_sha256=digest(job/'student-reporting-rebalance-amendment.json'),
         reporting_rebalance_transfer=read(job/'reporting-rebalance-transfer.json'),
+        reporting_pre_mix_validation=read(job/'student-reporting-pre-mix-validation.json'),
+        postprocessing_amendment_sha256=digest(job/'student-postprocessing-amendment.json'),
         reporting08_requeue=read(job/'reporting08-requeue.json') if (job/'reporting08-requeue.json').exists() else None,
         staged_reporting_amendment_sha256=digest(job/'student-staged-reporting-amendment.json'),
         staged_provenance=read(job/'staged-provenance.json'),
@@ -149,6 +151,9 @@ def main():
         'The frozen seed/deck/seat schedule and per-seed shared reference are unchanged. '
         'The03 manager paused new claims while its56 existing children completed untouched; '
         'phase costs include parent/reaped/unreaped child CPU with recorded tick precision. '
+        'After the complete-case gate, independent arm diagnostics run in parallel on '
+        'home03 cores58/59/60 at nice19/SCHED_IDLE, scientific Torchthreads1, '
+        'with unchanged per-arm calculations and bootstrap settings. '
         'No agreement metrics, CIs or kill decisions were computed before all final fits '
         'and all3232 reporting tasks completed. Immutable raw stage receipts retain their '
         'original input-freeze SHA; the final reducer view validates each stage input and '
@@ -283,6 +288,8 @@ def main():
          ['S-human allocator operational amendment',receipt['allocator_amendment_sha256']],
          ['S-human micro3584 operational amendment',receipt['human_micro_amendment_sha256']],
          ['Staged reporting operational amendment',receipt['staged_reporting_amendment_sha256']],
+         ['Reporting rebalance amendment',receipt['reporting_rebalance_amendment_sha256']],
+         ['Parallel postprocessing amendment',receipt['postprocessing_amendment_sha256']],
          ['Immutable raw case SHA manifest',receipt['staged_provenance']['raw_case_sha_manifest_sha256']],
          *[[stage+' reporting stage freeze',sha] for stage,sha in receipt['staged_provenance']['stage_freeze_sha256'].items()],
          ['Owned migration receipt',digest(job/'student-owned-migration.json')],

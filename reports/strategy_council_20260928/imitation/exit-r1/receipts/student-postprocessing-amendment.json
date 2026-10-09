@@ -1,0 +1,12 @@
+{
+  "schema": "clasher.exit-r1.postprocessing-operational-amendment.v1",
+  "utc": "2026-10-09T23:30:30.082807+00:00",
+  "scientific_changes": [],
+  "reporting_outcomes_observed": false,
+  "analysis_gate": "ALL3final4883fits and ALL3232reporting tasks before any diagnostics",
+  "controller_scheduler": "SCHED_IDLE, nice19, physical core63; descendants inherit",
+  "diagnostic_execution": "Three independent arms in parallel on home03 physical cores58,59,60, each scientific Torchthreads1; per-arm frozen agreement followed by unchanged supplemental CIs/validation; common reduction only after all arm children exit0.",
+  "numerical_changes": "None: per-arm inputs/finalEMA, row order, operations, bootstrap5000seed80991010 and denominators unchanged. Only inter-arm wall scheduling changes.",
+  "cost_accounting": "Before/after RUSAGE_CHILDREN around all waited diagnostic descendants; all CPU seconds retained, no GPU use.",
+  "home_mem_available_floor_bytes": 25769803776
+}

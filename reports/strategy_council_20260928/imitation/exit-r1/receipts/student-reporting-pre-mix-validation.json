@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-09T23:29:02.927913+00:00",
+  "terminal_case_count": 2312,
+  "counts_by_arm": {
+    "init": {
+      "fallback": 600
+    },
+    "S-human": {
+      "h2h": 256,
+      "fallback": 600
+    },
+    "S-teacher": {
+      "h2h": 256,
+      "fallback": 600
+    }
+  },
+  "heldout_terminal_games": 64,
+  "outcomes_analyzed": false,
+  "live_controller_pid": 1130948,
+  "host_raw_sha_manifests": {
+    "03": {
+      "sha256": "dcdfa1b39cddc0b8ba71fda2809f67a36629857b2dea4ccffd9fb1e6ad2abde2",
+      "case_count": 1418
+    },
+    "04": {
+      "sha256": "875ca14dc63ab3a0736de9cd81ae42bcef6c202fee338eb31752953aaacf6531",
+      "case_count": 447
+    },
+    "08": {
+      "sha256": "dfb50bf394fdedfffb1321dbf3390865c655a3c4230f325e119fdf89b4a5456f",
+      "case_count": 447
+    }
+  }
+}

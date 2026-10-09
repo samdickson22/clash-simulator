@@ -130,7 +130,7 @@ try:
         '--S-human',str(job/'fits/S-human/step-00004883.pt'),'--native',str(job/'reporting-native-v1/clasher_core.abi3.so'),
         '--output',str(job/'execution-freeze.json')])
     f=json.loads((job/'execution-freeze.json').read_text())
-    for path in (job/'inputs/assets.npz',job/'pre-fit-pin.json',job/'student-staged-reporting-amendment.json',job/'student-reporting-native-amendment.json',job/'student-reporting08-amendment.json',job/'student-reporting-rebalance-amendment.json',
+    for path in (job/'inputs/assets.npz',job/'pre-fit-pin.json',job/'student-staged-reporting-amendment.json',job/'student-reporting-native-amendment.json',job/'student-reporting08-amendment.json',job/'student-reporting-rebalance-amendment.json',job/'student-postprocessing-amendment.json',
                  report/'STUDENT-SCREEN-FREEZE-20261009.json'):f['files'][str(path)]=sha(path)
     (job/'execution-freeze.json').write_text(json.dumps(f,indent=2)+'\n');digest=sha(job/'execution-freeze.json')
     (job/'execution-freeze.sha256').write_text(digest+'\n')
@@ -174,13 +174,21 @@ try:
         (job/f'host-exits/{host}.json').write_text(json.dumps(combined,indent=2)+'\n')
     local([str(job/'ops/canonicalize_stages.py'),'--job',str(job)])
     local(['-m','imitation.exit_r1.pack','--roots',str(job/'heldout'),'--output',str(job/'heldout-corpus')])
-    diag={}
-    for arm in fit_hosts:
-        local(['-m','imitation.exit_r1.screen','--freeze',str(job/'execution-freeze.json'),'--freeze-sha256',digest,
-            '--mode','agreement','--arm',arm,'--teacher-store',str(job/'heldout-corpus'),
-            '--assets',str(job/'inputs/assets.npz'),'--output',str(job/'agreement'),'--stop',str(job/'REPORTING.STOP')])
-        diag[arm]=json.loads((job/'agreement'/f'{arm}.json').read_text())
-        local([str(job/'ops/supplement.py'),'--job',str(job),'--freeze-sha256',digest,'--arm',arm])
+    state('parallel frozen agreement diagnostics; all cases complete',freeze_sha256=digest)
+    before=resource.getrusage(resource.RUSAGE_CHILDREN);processes=[]
+    for arm,core in zip(fit_hosts,(58,59,60)):
+        command=[py,'-B',str(job/'ops/arm_diagnostics.py'),'--job',str(job),
+                 '--freeze-sha256',digest,'--arm',arm]
+        stream=(job/f'agreement-{arm}.log').open('a')
+        process=subprocess.Popen(['taskset','-c',str(core),*command],stdout=stream,stderr=subprocess.STDOUT,env=env,cwd=job/'source')
+        processes.append((arm,process,stream))
+    statuses=[]
+    for arm,process,stream in processes:
+        statuses.append((arm,process.wait()));stream.close()
+    after=resource.getrusage(resource.RUSAGE_CHILDREN)
+    local_cpu_seconds+=after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime
+    assert all(rc==0 for arm,rc in statuses),statuses
+    diag={arm:json.loads((job/'agreement'/f'{arm}.json').read_text()) for arm in fit_hosts}
     (job/'diagnostics.json').write_text(json.dumps(diag,indent=2)+'\n')
     local([str(job/'ops/supplement.py'),'--job',str(job),'--freeze-sha256',digest])
     state('complete',freeze_sha256=digest,aggregate_sha256=sha(job/'aggregate.json'))
