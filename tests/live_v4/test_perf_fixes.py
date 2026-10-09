@@ -11,7 +11,8 @@ import unittest
 from unittest.mock import patch
 
 from clasher.live.contracts import Frame
-from clasher.live.perception_adapter import selected_body_threshold, vectorized_runtime
+from clasher.live.perception_adapter import vectorized_runtime
+from clasher.live.selection import body_threshold
 from clasher.live.public_root import player_model
 from clasher.live.tower_model import PublicTowerModel, SLOTS
 from clasher.live.transport import FrameRing, drain_latest
@@ -70,26 +71,27 @@ class AdapterTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             calibration = Path(directory)/'unselected.json'
             calibration.write_text(json.dumps({'spells': ['Zap'], 'thresholds': {'default': .1},
-                                               'calibration': {}}))
+                                               'calibration': {}, 'body_threshold': .7}))
             for vectorized in (False, True):
                 with self.subTest(vectorized=vectorized), \
                      patch('torch.load', return_value={}), \
                      patch('clasher.vision.l1_v4.PerceptionV4') as model, \
                      patch('clasher.vision.l1_v4.PixelPerception') as sensor, \
                      patch('clasher.live.perception_adapter.vectorized_runtime') as adapter:
-                    with self.assertRaisesRegex(ValueError, 'sealed selected body_threshold'):
+                    with self.assertRaisesRegex(ValueError, 'separately authenticated final joint selection'):
                         V4Perception(dict(checkpoint='unused', calibration=str(calibration),
+                                          body_threshold=.7, authenticated_selection={'authenticated': True},
                                           vectorized_decoder=vectorized))
                     model.assert_not_called()
                     sensor.assert_not_called()
                     adapter.assert_not_called()
 
-    def test_threshold_has_no_default_and_rejects_disagreement(self):
-        for config, calibration in (({}, {}), ({'body_threshold': .4}, {'body_threshold': .7}),
-                                     ({'body_threshold': True}, {}), ({'body_threshold': .55}, {})):
+    def test_threshold_rejects_missing_bool_nonfinite_and_outside_registered_grid(self):
+        for value in (None, True, False, .55, .0, 1., float('nan'), float('inf'), '.7'):
             with self.assertRaises(ValueError):
-                selected_body_threshold(config, calibration)
-        self.assertEqual(selected_body_threshold({}, {'body_threshold': .7}), .7)
+                body_threshold(value)
+        for value in (.1, .7, .9):
+            self.assertEqual(body_threshold(value), value)
 
     def test_vectorized_adapter_is_isolated_and_nonclock_records_equal(self):
         import numpy as np

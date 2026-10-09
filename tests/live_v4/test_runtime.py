@@ -340,6 +340,8 @@ class PerceptionTests(unittest.TestCase):
                         execution_timestamp_ms=100., execution_sigma_ms=20., existence_q=.9,
                         card_distribution=(('Knight', 1.),))])
         with tempfile.TemporaryDirectory() as folder:
+            from selection_fixtures import selection_fixture
+            selection, checkpoint = selection_fixture(folder, cards=DECK)
             calibration = Path(folder)/'calibration.json'
             calibration.write_text(json.dumps(dict(spells=[], thresholds={'default': .5}, calibration={}, body_threshold=.7)))
             model = MagicMock()
@@ -347,8 +349,10 @@ class PerceptionTests(unittest.TestCase):
                  patch('clasher.vision.l1_v4.PerceptionV4', return_value=model), \
                  patch('clasher.vision.l1_v4.PixelPerception') as abi:
                 abi.return_value.step.return_value = row
-                sensor = V4Perception(dict(checkpoint='unused', calibration=str(calibration), device='cpu'))
+                sensor = V4Perception(dict(checkpoint=str(checkpoint), authenticated_selection=selection,
+                                          calibration=str(calibration), body_threshold=.4, device='cpu'))
                 self.assertEqual(abi.call_args.kwargs['body_threshold'], .7)
+                self.assertEqual(abi.call_args.args[3:6], (['Zap'], {'default': .1}, {}))
                 now = time.monotonic()
                 observed = sensor.step(Frame('v4', 1, now-.02, now-.01, 134.7,
                                              np.zeros((1140, 540, 3), np.uint8)))

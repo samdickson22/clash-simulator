@@ -19,7 +19,7 @@
     "src/clasher/live/decision.py": "951958dd445b59fa4d91bfb973e1c4f32fc10d4de58b7dd8414309aa29ddc62d",
     "src/clasher/live/capture.py": "1c05ad3b787cb8ae7b67b0fbef09ec59e24fa7caa69a80cc011445e48c6097db",
     "src/clasher/live/__main__.py": "cc4e928caad05b1c81f205c4630230351002b44c297080215764edfe403fb070",
-    "tests/live_v4/test_perf_fixes.py": "a0a931118afdfffbff5bbafad9d84affe037a426eb6736abf1a4559407d60bb7",
+    "tests/live_v4/test_perf_fixes.py": "be8d8e25716de8a98b68317933ce9ce2135faf8a4f7f2e7e1cfdc9b7daedeacc",
     "tests/live_v4/test_runtime.py": "b7ac947869dacc172995b38f054fcdd37e9c17df52b36b7d88aa667792495867",
     "reports/strategy_council_20260928/live-loop/v4/perf-fixes/extract_recorded.py": "21166a07025bcf9a3fce8a21146688fc031cd15c5ce942fb0c3c2ff249b96032",
     "reports/strategy_council_20260928/live-loop/v4/perf-fixes/bench_queues.py": "941827ea0487d3a30d2a3c1cdf47d5d9d4bd905154a41b1f997f0bfcac7b9dd9",
@@ -27,7 +27,9 @@
     "reports/strategy_council_20260928/live-loop/v4/perf-fixes/analyze_queues.py": "e4d8abfa1fcecb68b36e7e1389c3910c780ac9e1cb4024983428d4cade8a720f",
     "reports/strategy_council_20260928/live-loop/v4/perf-fixes/remeasure_mac.py": "612453d28bc9d221521ead7b44c8c25fac5bd41c5941602a945172244752e9b9",
     "reports/strategy_council_20260928/live-loop/v4/perf-fixes/qualify.py": "29c306eb43538f21e47fdc18d2b6c9d0ad82f0ae7c05a0c24a64baa7b378f5ed",
-    "reports/strategy_council_20260928/live-loop/v4/RUNTIME-PERF-FIXES.md": "57d1624d0271511f2cac313000be9d3d3cc2882f5b371c2deb2840bad5a76c99"
+    "reports/strategy_council_20260928/live-loop/v4/RUNTIME-PERF-FIXES.md": "e38f9d605a928642190c0bd6aa5144f75aed2115580c5dfb7e38702d1e5def42",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-threshold-20261009-08r1.log": "04e15c9ade6ddf318a6bc57eb6188628f9e2b92a50d72d8fbe0bd6a0c2a8bc0b",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-threshold-20261009-08r1.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
   },
   "receipts_sha256": {
     "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-queue-analysis-20261009-r1.json": "a45cd88bad46f715968f5382dc339a35ad7e47cc09c1eced3e5f54df41ec277c",

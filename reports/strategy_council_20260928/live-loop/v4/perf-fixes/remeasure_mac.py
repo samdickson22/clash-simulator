@@ -1,6 +1,6 @@
 """Prepared only: train MPS decoder parity followed by a guarded replay suite.
 
-Run later on the isolated Mac checkout with admitted selected weights/calibration.
+Run later with a final joint seal and the owner's trusted authenticator.
 Never launches a renderer or sends real taps. Uses new result directories only.
 """
 import argparse
@@ -18,6 +18,7 @@ from clasher.live.capture import admit_replay, replay_frames, sha256
 from clasher.live.loading import ROOT, COUNCIL, V4, module
 from clasher.live.perception import V4Perception
 from clasher.live.runtime import quantiles
+from clasher.live.selection import load_authenticated_selection
 
 
 def comparable(observation):
@@ -45,6 +46,7 @@ def main(a):
         raise ValueError('Prepared Mac remeasurement only; do not substitute CPU qualification for MPS')
     import torch
     torch.set_num_threads(1)
+    selection = load_authenticated_selection(a.selection, a.selection_authenticator)
     a.output.mkdir(parents=True, exist_ok=False)
     split = a.data/'registration/split.json'
     members = sorted((r for r in json.loads(split.read_text())['matches'] if r['split'] == 'train'),
@@ -59,9 +61,8 @@ def main(a):
             paths.append((member['seed'], path))
     if len(paths) < 2:
         raise ValueError('Two train recordings required for MPS exactness')
-    config = dict(checkpoint=str(a.checkpoint), calibration=str(a.calibration), device='mps')
-    if a.body_threshold is not None:
-        config['body_threshold'] = a.body_threshold
+    config = dict(checkpoint=str(a.checkpoint), authenticated_selection=selection, device='mps',
+                  decoder_diagnostic=True)
     original = V4Perception(config)
     optimized = V4Perception(dict(config, vectorized_decoder=True))
     record_model_outputs(original)
@@ -98,7 +99,7 @@ def main(a):
     parity = dict(frames=frames, train_matches=2, nonclock_mismatches=0,
                   sha256={key: value.hexdigest() for key, value in digests.items()},
                   perception_ms={key: quantiles(value[2:]) for key, value in samples.items()},
-                  checkpoint_sha256=sha256(a.checkpoint), calibration_sha256=sha256(a.calibration),
+                  checkpoint_sha256=sha256(a.checkpoint), selection_provenance=selection.provenance(),
                   selected_body_threshold=original.sensor.body_threshold, heldout_opened=False)
     (a.output/'mps-decoder-parity.json').write_text(json.dumps(parity, indent=2)+'\n')
     del original, optimized
@@ -109,11 +110,10 @@ def main(a):
     for seed, match in paths[:a.maximum_matches]:
         command = [sys.executable, '-B', '-m', 'clasher.live', '--replay', str(match), '--split', str(split),
             '--prior', str(COUNCIL/'search-noise-s4/runtime/support/human_deck_catalog.json'),
-            '--perception', 'v4', '--checkpoint', str(a.checkpoint), '--calibration', str(a.calibration),
+            '--perception', 'v4', '--checkpoint', str(a.checkpoint), '--selection', str(a.selection),
+            '--selection-authenticator', a.selection_authenticator, '--decoder-diagnostic',
             '--device', 'mps', '--mock-input', '--public-tower-model', '--perf-scorer',
             '--vectorized-decoder', '--blocking-queues', '--output', str(a.output/str(seed))]
-        if a.body_threshold is not None:
-            command += ['--body-threshold', str(a.body_threshold)]
         with (a.output/f'{seed}.log').open('x') as stream:
             subprocess.run(command, env=env, stdout=stream, stderr=subprocess.STDOUT, check=True)
         metrics = json.loads((a.output/str(seed)/'metrics.json').read_text())
@@ -131,9 +131,9 @@ def main(a):
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
-    for key in ('data', 'matches', 'checkpoint', 'calibration', 'output'):
+    for key in ('data', 'matches', 'checkpoint', 'selection', 'output'):
         p.add_argument('--'+key, type=Path, required=True)
-    p.add_argument('--body-threshold', type=float)
+    p.add_argument('--selection-authenticator', required=True)
     p.add_argument('--parity-frames', type=int, default=200)
     p.add_argument('--maximum-matches', type=int, default=20)
     main(p.parse_args())

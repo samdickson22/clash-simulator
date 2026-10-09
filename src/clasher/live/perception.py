@@ -8,24 +8,33 @@ from .contracts import Observation
 
 class V4Perception:
     def __init__(self, config):
+        from .selection import require_selection
+        selection = require_selection(config)
+        if (config.get('vectorized_decoder', False) and not selection.decoder_admitted
+                and not config.get('decoder_diagnostic', False)):
+            raise ValueError('DecoderAdapter is unadmitted; explicit mock-only diagnostic required')
+        import hashlib
+        import io
         import json
         import torch
         from clasher.vision.l1_v4 import PerceptionV4, PixelPerception
-        state = torch.load(config['checkpoint'], map_location='cpu', weights_only=True)
-        calibration = json.loads(Path(config['calibration']).read_text())
-        from .perception_adapter import selected_body_threshold, vectorized_runtime
-        body_threshold = selected_body_threshold(config, calibration)
-        # No silent use of random/shakedown parameters as formal weights.
-        self.qualification = calibration.get('qualification', 'unqualified')
+        checkpoint_bytes = Path(config['checkpoint']).read_bytes()
+        if hashlib.sha256(checkpoint_bytes).hexdigest() != selection.checkpoint_sha256:
+            raise ValueError('Authenticated selection checkpoint SHA mismatch')
+        state = torch.load(io.BytesIO(checkpoint_bytes), map_location='cpu', weights_only=True)
+        selection.bind_checkpoint(checkpoint_bytes, state)
+        from .perception_adapter import vectorized_runtime
+        self.qualification = 'authenticated-final-joint'
+        self.selection = selection
         model = PerceptionV4(len(state['cards']), len(state['bodies']))
         model.load_state_dict(state['model'])
         self.decoder_adapter = None
         if config.get('vectorized_decoder', False):
             runtime, self.decoder_adapter = vectorized_runtime()
             PixelPerception = runtime.PixelPerception
-        self.sensor = PixelPerception(model, state['cards'], state['bodies'], calibration['spells'],
-                                      calibration['thresholds'], calibration['calibration'], config.get('device', 'cpu'),
-                                      body_threshold=body_threshold)
+        self.sensor = PixelPerception(model, state['cards'], state['bodies'], list(selection.spells),
+                                      json.loads(selection.event_thresholds_json), json.loads(selection.calibration_json),
+                                      config.get('device', 'cpu'), body_threshold=selection.body_threshold)
         from .loading import ROOT
         data = json.loads((ROOT/'gamedata.json').read_text())['items']['spells']
         self.buildings = {'Tower', 'KingTower', 'TowerPrincess', 'TowerKing'}

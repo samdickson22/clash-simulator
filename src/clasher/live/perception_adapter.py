@@ -1,21 +1,6 @@
 """Load the existing exact decoder into an isolated copy of the sealed ABI."""
-import math
 import uuid
 from .loading import ROOT, V4, imports, module
-
-
-def selected_body_threshold(config, calibration):
-    # The selection owner supplies the sealed selected value in calibration or
-    # config. There is deliberately no default and no runtime threshold fitting.
-    values = [source['body_threshold'] for source in (config, calibration)
-              if 'body_threshold' in source]
-    if not values:
-        raise ValueError('V4 requires the sealed selected body_threshold')
-    value = values[0]
-    if (type(value) not in (int, float) or not math.isfinite(value) or
-            value not in [i/10 for i in range(1, 10)] or any(v != value for v in values)):
-        raise ValueError('Selected body_threshold must agree and use the registered 0.1..0.9 grid')
-    return value
 
 
 def vectorized_runtime():

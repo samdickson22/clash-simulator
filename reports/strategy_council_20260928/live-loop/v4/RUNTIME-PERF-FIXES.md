@@ -145,15 +145,36 @@ reference sensors and the formal perception process are not patched. Existing
 `vectorized_runtime_adapter_v4.py` are loaded unchanged. Runtime provenance now
 includes their hashes whenever the flag is enabled.
 
-**Q2/flag 2 is fixed independently of the speed flag.** `V4Perception` passes
-`body_threshold` from config or calibration explicitly to `PixelPerception`.
-It refuses missing values, values outside the registered 0.1..0.9 grid, and
-disagreement between config and calibration. There is no implicit 0.5 fallback.
-The formal owner must supply the selected sealed value and bind it to the
-selected checkpoint/calibration in the eventual qualification receipt; **no
-formal selected threshold existed when this implementation was prepared**.
-The missing-selection regression invokes the live constructor with both decoder
-flag values and asserts refusal before any model, sensor or adapter is created.
+**Q2/flag 2 is fixed independently of the speed flag.** Following the binding
+owner contract relayed at ~01:00Z, `V4Perception` requires a typed
+`AuthenticatedSelection` handoff produced by a separately trusted owner
+authenticator. It supplies that object's body threshold, event thresholds and
+calibration explicitly to `PixelPerception`; config and calibration files have
+no selection authority. It rejects unset or arbitrary JSON objects before model
+loading, and selected values must be numeric, not bool, on the registered
+0.1..0.9 grid. There is no implicit 0.5 or config fallback.
+
+The new `selection.py` defines an internal handoff, **not a final joint seal
+format or authentication algorithm**. The owner's trusted code-level verifier
+must establish final joint authority independently and return normalized
+`SelectionClaims`; the handoff checks selection/source SHA256 bindings, freezes
+the selected parameters, records the verifier's source hash, and verifies the
+exact checkpoint bytes and ordered card/body vocabulary before use. Workers
+receive the typed object across spawn; JSON receipts contain provenance only
+and cannot be reloaded as authority. No default verifier is installed, so the
+pending final seal means v4 startup refuses. The current T7-only
+`selection-freeze.json` (`core.body_threshold`, `core.event_thresholds`,
+`core.calibration`) is explicitly insufficient for live authority.
+
+`DecoderAdapter` remains unadmitted for formal use. Its formal gate additionally
+requires the owner-authenticated decoder admission, covering full non-clock
+equality and the new timing gate; MPS/live equality must be established later.
+An explicit `--decoder-diagnostic` permits measurement with mock input only,
+still requiring the authenticated final joint selection. The missing-selection
+regression invokes both decoder flag values and asserts refusal before any
+model, sensor or adapter is created. Additional tests reject JSON authority,
+T7-only claims, changed selection/source/checkpoint hashes, reordered vocabulary,
+and real input for unadmitted diagnostics.
 Synthetic checks of forwarding/isolation and scalar/vectorized non-clock output
 equality pass on CPU, including a 1.2-second gap and a selected threshold of 0.7.
 
@@ -212,7 +233,14 @@ All files below are under `perf-fixes/` beside this report:
 - `live-perf-tests-20261009-08r2.log` and `.exit`: 45 passing tests.
 - `live-perf-threshold-20261009-08r1.log` and `.exit`: subsequent three passing
   CPU adapter tests, including the added live-constructor missing-selection
-  regression in both flag modes; production source unchanged.
+  regression in both flag modes. This historical receipt predates the stronger
+  authenticated-selection handoff; the earlier config/calibration transport
+  is superseded and supplies no current selection authority.
+- `live-perf-selection-20261009-08r1.log` and `.exit`: 13 passing focused CPU
+  tests of the binding authenticated-selection contract, adapter equality and
+  live pixel ABI forwarding. Native/scorer code is unchanged by this follow-up;
+  the earlier full native exactness/timing receipts retain their original source
+  hashes and are not reinterpreted as formal selection or decoder admission.
 - `live-perf-smoke-20261009-r1.json` and its log/exit receipt: integrated guarded
   constructor, native scoring and four-root reduction.
 - `queue-benchmark.json` and `live-perf-queue-analysis-20261009-r1.json`: complete
@@ -244,22 +272,26 @@ bash /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_
 ```
 
 **Prepared for later; not run on the off-limits Mac.** First stage the changed
-live modules, unchanged decoder dependencies and the admitted selected v4
-checkpoint/calibration into the isolated Mac runtime root through the existing
-owner workflow. Use a fresh result directory and the sealed selected threshold,
-either in calibration or explicitly as `--body-threshold`:
+live modules, unchanged decoder dependencies, the admitted selected v4 checkpoint
+and final joint selection evidence into the isolated Mac runtime root through
+the existing owner workflow. The final seal format and owner authenticator are
+pending: **this command cannot yet run and accepts no calibration/config
+substitute**. Supply the owner's trusted authenticator and a fresh result
+directory after that authority exists:
 
 ```bash
 cd /Users/sam/Desktop/code/clasher-runtime-v4
 export PYTHONPATH="$PWD/src:$PWD/engine-rs:$PWD/runtime-data/python-deps"
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1
 : "${V4_CHECKPOINT:?admitted selected checkpoint}"
-: "${V4_CALIBRATION:?admitted calibration with selected body_threshold}"
+: "${V4_FINAL_SELECTION:?authenticated final joint seal; T7-only receipt insufficient}"
+: "${V4_SELECTION_AUTHENTICATOR:?trusted owner module:function; pending implementation}"
 nice -n 10 .venv/bin/python -B -m unittest discover -s tests/live_v4 -v
 nice -n 10 .venv/bin/python -B \
   reports/strategy_council_20260928/live-loop/v4/perf-fixes/remeasure_mac.py \
   --data "$PWD/runtime-data" --matches "$PWD/runtime-data/matches" \
-  --checkpoint "$V4_CHECKPOINT" --calibration "$V4_CALIBRATION" \
+  --checkpoint "$V4_CHECKPOINT" --selection "$V4_FINAL_SELECTION" \
+  --selection-authenticator "$V4_SELECTION_AUTHENTICATOR" \
   --parity-frames 200 --maximum-matches 20 --output "$PWD/mac-perf-fixes-NEW"
 nice -n 10 .venv/bin/python -B \
   reports/strategy_council_20260928/live-loop/v4/latency_report.py \
@@ -285,9 +317,12 @@ timing calibration. Mock replay does not establish emulator-on E4/P4 acceptance.
    reduction and partial-candidate discard semantics. Keep flags explicit in
    config rather than relying on opt-in defaults.
 3. Bind selected v4 checkpoint, vocabulary, event thresholds/calibration and
-   **body_threshold** to the actual authenticated selection seal. Forward the
+   **body_threshold** to the actual authenticated final joint selection seal,
+   including the owner verifier and selection/source hashes. T7-only receipts
+   and JSON/config/calibration declarations provide no authority. Forward the
    same body value on scalar/vectorized paths and all deployment/export arms.
-   Admit vectorized MPS only after the train-recording equality receipt passes.
+   Admit vectorized formal use only after full non-clock exactness and the new
+   timing gate, plus separate Mac train-recording MPS/live equality.
 4. Pin a fresh corrected nonterminal Mac latency/completion receipt and the
    resulting total-delay calibration formula/value. Preserve backend acceptance
    timing and the existing HUD freshness/verification bounds. Do not inherit

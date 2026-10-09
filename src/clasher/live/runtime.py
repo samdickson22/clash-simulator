@@ -479,6 +479,10 @@ def provenance(config):
     files += [Path(config['perception'][key]) for key in
               ('body', 'hud', 'events', 'selection', 'geometry', 'checkpoint', 'calibration')
               if config['perception'].get(key)]
+    selection = config['perception'].get('authenticated_selection')
+    if selection is not None:
+        files += [Path(selection.selection_path), Path(selection.verifier_path)]
+        files += [Path(path) for path, _ in selection.source_hashes]
     native = list((ROOT/'engine-rs').glob('clasher_core*.so'))
     files += native
     versions = {}
@@ -513,10 +517,21 @@ def configure_timing(config):
 def run(config, output):
     """P5 owns children, bounded logging, stall detection, and shutdown."""
     config = configure_timing(config)
+    if config['perception']['kind'] == 'v4':
+        from .selection import require_selection
+        require_selection(config['perception'])
+        if config['perception'].get('decoder_diagnostic') and config['actuator']['kind'] != 'mock':
+            raise ValueError('Unadmitted decoder diagnostics require mock input')
     limits()
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
-    (output/'config.json').write_text(json.dumps(config, indent=2)+'\n')
+    receipt_config = dict(config, perception=dict(config['perception']))
+    selection = receipt_config['perception'].pop('authenticated_selection', None)
+    if selection is not None:
+        # Receipt metadata is not reloadable authority. Workers receive the
+        # authenticated typed object through multiprocessing's spawn boundary.
+        receipt_config['perception']['selection_provenance'] = selection.provenance()
+    (output/'config.json').write_text(json.dumps(receipt_config, indent=2)+'\n')
     (output/'provenance.json').write_text(json.dumps(provenance(config), indent=2)+'\n')
     ctx = mp.get_context('spawn')
     ipc = dict(ring=FrameRing(ctx, config.get('ring_capacity', 64)),
