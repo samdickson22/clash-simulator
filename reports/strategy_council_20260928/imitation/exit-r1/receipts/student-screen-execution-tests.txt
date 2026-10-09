@@ -1,0 +1,15 @@
+test_ratio_zero_exact_loss_gradient_and_optimizer (imitation.exit_r1.test_student.StudentTests.test_ratio_zero_exact_loss_gradient_and_optimizer) ... /mpac/sdicks02/repos/clasher/.venv/lib/python3.12/site-packages/torch/autograd/graph.py:865: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 11040). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+ok
+test_sampler_and_kill_rules (imitation.exit_r1.test_student.StudentTests.test_sampler_and_kill_rules) ... ok
+test_timed_wait_probability_aggregation_and_soft_gradients (imitation.exit_r1.test_student.StudentTests.test_timed_wait_probability_aggregation_and_soft_gradients) ... ok
+test_value_and_microbatch_normalization (imitation.exit_r1.test_student.StudentTests.test_value_and_microbatch_normalization) ... ok
+test_all_wait_collapse_and_ci_kills (imitation.exit_r1.test_screen.ScreenTests.test_all_wait_collapse_and_ci_kills) ... ok
+test_real_v6_pack_preserves_batch_ragged_scores_and_boundaries (imitation.exit_r1.test_screen.ScreenTests.test_real_v6_pack_preserves_batch_ragged_scores_and_boundaries) ... ok
+test_reducer_requires_paired_seed_identity_and_common_freeze (imitation.exit_r1.test_screen.ScreenTests.test_reducer_requires_paired_seed_identity_and_common_freeze) ... ok
+test_reporting_requires_complete_audit_and_immutable_inputs (imitation.exit_r1.test_screen.ScreenTests.test_reporting_requires_complete_audit_and_immutable_inputs) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 2.728s
+
+OK

@@ -108,3 +108,21 @@ No reporting games or GPU fitting. Own new smoke+0/+1 only: terminal H2H at
 Foundation code and acceptance receipts committed/pushed **39b6adf6**.
 Before fitting, student adapter now writes input/recipe/source SHA evidence;
 resume checks source/input pins. No scientific loss or frozen T11 change.
+
+2026-10-09 19:49Z: Frozen student screen execution began under coordinator's
+STUDENT-SCREEN-FREEZE-20261009.json (787e4c6a...). All generators exited cleanly.
+The controller cutoff prefixes admit exactly49,577terminalgames,6,009,681roots
+and38,738,534rows;40stop-drain games are excluded. Every source-game SHA was
+verified by the frozen packer. Corpus manifest SHA
+`1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b`.
+Receipt `receipts/student-screen-pre-fit.json` was written19:48:54Z before any
+fitting, pinning all1413runtime source files, E1native, explicitv1step22552,
+width192, identical qualified human inputs and the unchanged recipe.
+Frozen8tests PASS, including real packed-game equality and seal tamper rejection.
+Data remains host-local under `/mpac/sdicks02/jobs/clasher/exit-r1-student-screen-20261009-r1/`.
+SHA-checked corpus copies are proceeding to01/04/09. Three GPU arms will overlap;
+reporting uses03/04/01 only and leaves08entirely free for perception.
+Task-localNumPy2.3.5 matches teacher serving; qualifiedcu118Torch2.7.1 is unchanged.
+Operational scripts and setup retries are documented under
+`operations/student-screen/` and `receipts/student-screen-ops.json`.
+No reporting outcomes or fitting were observed before these pins.

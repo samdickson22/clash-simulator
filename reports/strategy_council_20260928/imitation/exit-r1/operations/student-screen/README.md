@@ -1,0 +1,46 @@
+# Frozen student-screen execution
+
+These scripts execute the coordinator's 2026-10-09 freeze. They do not edit the
+plan, seeds, sampler, losses, optimizer or checkpoint selection. Runtime snapshots
+use the unchanged `imitation/exit_r1/` sources at `f98d8926`, with the generation
+snapshot's accepted engine and serving dependencies.
+
+All data, logs, checkpoints and task environments live at host-local
+`/mpac/sdicks02/jobs/clasher/exit-r1-student-screen-20261009-r1/`.
+Only small receipts and aggregate results belong in Git.
+
+`select_cutoff.py` admits exactly the completed-game prefixes in the frozen
+controller progress record: 13,169 / 17,980 / 18,428 games on 03 / 04 / 08.
+The 40 games sealed during stop drainage are excluded. `stage_pack.sh` stages
+these games on 03 and calls the frozen packer. The source-index and every source
+game seal are preserved. `verify_corpus.py` checks each copied packed file.
+
+`prepare_fit.sh`, `verify_human.py` and `check_ready.py` verify the human training
+store and the released v1 checkpoint (step 22,552, width 192). Task-local NumPy
+2.3.5 matches the accepted teacher feature arithmetic. The existing qualified
+CUDA 11.8 Torch 2.7.1 environment is exposed to each isolated task environment;
+shared environments are unchanged. `finish_prepare.py` completes checks after
+the detached initial copies.
+
+`run_fit.sh` passes the frozen recipe explicitly. `fit_runtime.py` wraps the
+unchanged trainer with synchronized timing and the existing T5 read-only mmap
+page-release helper. Batch tensors, sampling and loss normalization are unchanged.
+It requests checkpoint-and-exit at the memory/headroom floors. Leased training
+also uses the current lease-aware supervisor.
+
+`report_controller.py` waits for all three final-step EMA checkpoints, pins the
+execution freeze and starts `pool.py` on home CPUs only: 60 physical cores on
+03, 60 on 04 after GPU fitting, and 44 on 01. 08 stays unused. All four metric(b)
+cases for a seed run on the same host, interleaved in that host's queue. Pools
+retain complete cases and stop only their own child PIDs on failure or STOP.
+
+The held-out teacher games remain outside every training input. The frozen
+agreement/reducer code supplies the primary diagnostics and kill decisions.
+`supplement.py` adds the remaining required whole-game bootstrap intervals,
+play prevalence ratios and execution counters, checking primary-rate equality
+against the frozen implementation. All intervals use 5,000 resamples, seed
+80991010, percentile 95%, with complete game seeds as the unit.
+
+Owned stop files: `PACK.STOP`, `FIT.STOP`, `REPORTING.STOP`, `CONTROLLER.STOP`
+under the task job directory. A reporting-pool stop releases its own workers
+without touching caches or other owners' processes. No simulation runs on 09.
