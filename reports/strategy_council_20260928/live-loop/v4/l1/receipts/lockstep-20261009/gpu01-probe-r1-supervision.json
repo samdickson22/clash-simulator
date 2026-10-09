@@ -1,0 +1,140 @@
+{
+  "schema": "clasher.v4.lockstep-resource-supervision.v1",
+  "code": 0,
+  "reason": null,
+  "our_pid": 647478,
+  "seconds": 25.201130900066346,
+  "baseline_rows_per_second": 7645.419221665185,
+  "concurrent_t11_rows_per_second": 3900.7773258199772,
+  "ratio": 0.5102110443814722,
+  "samples": [
+    {
+      "at": "2026-10-08T23:57:08.855625+00:00",
+      "monotonic": 1293734.443588018,
+      "t11": {
+        "step": 11292,
+        "rows": 92501563,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7354.027181969195
+      },
+      "gpu": [
+        [
+          18233,
+          0
+        ]
+      ],
+      "mem_available_kib": 104037540,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:57:13.874772+00:00",
+      "monotonic": 1293739.462731342,
+      "t11": {
+        "step": 11293,
+        "rows": 92509755,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7325.538707774283
+      },
+      "gpu": [
+        [
+          17398,
+          2
+        ]
+      ],
+      "mem_available_kib": 102150764,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:57:18.922875+00:00",
+      "monotonic": 1293744.510832848,
+      "t11": {
+        "step": 11295,
+        "rows": 92526139,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7306.827945090806
+      },
+      "gpu": [
+        [
+          17338,
+          13
+        ]
+      ],
+      "mem_available_kib": 102191496,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:57:23.956579+00:00",
+      "monotonic": 1293749.544538523,
+      "t11": {
+        "step": 11300,
+        "rows": 92567099,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7309.335993700742
+      },
+      "gpu": [
+        [
+          16838,
+          1
+        ]
+      ],
+      "mem_available_kib": 101119112,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:57:28.991471+00:00",
+      "monotonic": 1293754.579429272,
+      "t11": {
+        "step": 11302,
+        "rows": 92583483,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7303.44539157692
+      },
+      "gpu": [
+        [
+          15658,
+          25
+        ]
+      ],
+      "mem_available_kib": 100312364,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:57:34.023313+00:00",
+      "monotonic": 1293759.611270242,
+      "t11": {
+        "step": 11304,
+        "rows": 92599867,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7289.213452126807
+      },
+      "gpu": [
+        [
+          18233,
+          100
+        ]
+      ],
+      "mem_available_kib": 103658952,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:57:34.056768+00:00",
+      "monotonic": 1293759.644718918,
+      "t11": {
+        "step": 11304,
+        "rows": 92599867,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7289.213452126807
+      },
+      "gpu": [
+        [
+          18233,
+          100
+        ]
+      ],
+      "mem_available_kib": 103655236,
+      "t11_alive": true
+    }
+  ],
+  "stopped_only_our_process_group": true,
+  "t11_untouched": true
+}

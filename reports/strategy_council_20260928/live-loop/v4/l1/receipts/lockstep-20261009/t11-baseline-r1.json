@@ -1,0 +1,172 @@
+{
+  "schema": "clasher.v4.lockstep-t11-baseline.v1",
+  "seconds": 300.01755737606436,
+  "rows_per_second": 7645.419221665185,
+  "mean_gpu_percent": 0.0,
+  "samples": [
+    {
+      "at": "2026-10-08T23:51:53.268795+00:00",
+      "monotonic": 1293418.85675388,
+      "t11": {
+        "step": 11000,
+        "rows": 90109499,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7284.795352203763
+      },
+      "gpu": [
+        [
+          18233,
+          0
+        ]
+      ],
+      "mem_available_kib": 103985632,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:51:53.786865+00:00",
+      "monotonic": 1293419.374822998,
+      "t11": {
+        "step": 11000,
+        "rows": 90109499,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7284.795352203763
+      },
+      "gpu": [
+        [
+          18233,
+          0
+        ]
+      ],
+      "mem_available_kib": 103981536,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:51:54.304223+00:00",
+      "monotonic": 1293419.892181463,
+      "t11": {
+        "step": 11000,
+        "rows": 90109499,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7284.795352203763
+      },
+      "gpu": [
+        [
+          18233,
+          0
+        ]
+      ],
+      "mem_available_kib": 103971824,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:51:54.822092+00:00",
+      "monotonic": 1293420.410049017,
+      "t11": {
+        "step": 11000,
+        "rows": 90109499,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7284.795352203763
+      },
+      "gpu": [
+        [
+          18233,
+          0
+        ]
+      ],
+      "mem_available_kib": 103975264,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:51:55.339903+00:00",
+      "monotonic": 1293420.927860209,
+      "t11": {
+        "step": 11000,
+        "rows": 90109499,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7284.795352203763
+      },
+      "gpu": [
+        [
+          18233,
+          0
+        ]
+      ],
+      "mem_available_kib": 103973036,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:51:55.857226+00:00",
+      "monotonic": 1293421.445183733,
+      "t11": {
+        "step": 11000,
+        "rows": 90109499,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7284.795352203763
+      },
+      "gpu": [
+        [
+          18233,
+          0
+        ]
+      ],
+      "mem_available_kib": 104022060,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:51:56.374493+00:00",
+      "monotonic": 1293421.962449915,
+      "t11": {
+        "step": 11000,
+        "rows": 90109499,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7284.795352203763
+      },
+      "gpu": [
+        [
+          18233,
+          0
+        ]
+      ],
+      "mem_available_kib": 103954904,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:51:56.891908+00:00",
+      "monotonic": 1293422.479865429,
+      "t11": {
+        "step": 11000,
+        "rows": 90109499,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7284.795352203763
+      },
+      "gpu": [
+        [
+          18233,
+          0
+        ]
+      ],
+      "mem_available_kib": 103907920,
+      "t11_alive": true
+    },
+    {
+      "at": "2026-10-08T23:56:53.286353+00:00",
+      "monotonic": 1293718.874311256,
+      "t11": {
+        "step": 11280,
+        "rows": 92403259,
+        "epoch": 1,
+        "rows_per_second_including_loader": 7339.592215155666
+      },
+      "gpu": [
+        [
+          18233,
+          99
+        ]
+      ],
+      "mem_available_kib": 104403776,
+      "t11_alive": true
+    }
+  ],
+  "t11_untouched": true,
+  "gpu_work_launched": false
+}

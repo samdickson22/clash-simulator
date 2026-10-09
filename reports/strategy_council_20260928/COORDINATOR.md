@@ -887,3 +887,7 @@ Also on the hub, but with copies elsewhere:
     - **127x11 offline again** (no route). Its perception passes and exploration shards were reassigned, and roader was told.
   - **Down:** 06/07/11/18. 03 is idle pending the gate (b) launch (freeze approved). No reclaims.
 - **00:15 UTC: agreed with roader. Hosts that dropped under load get CPU-only light work when they return** (11/18 leased, and our own 07): ≤32 processes, nice ≥10, no GPU jobs, until Sam has them checked physically. Drop-outs so far: 02, 07 ×2, 11 ×2, 18. We have no root, so no `nvidia-smi -pl` power cap is possible.
+- **00:20 UTC: lockstep handoff received and committed** (`l1/LOCKSTEP.md`, `lockstep_replay_v4.py` + probes/verifier/tests, `receipts/lockstep-20261009/`).
+  - **Bit-exact on CPU:** birth-map output reuse (tail calls 1,152→128–171, all batch-1). 384 frames × 9 branches exact; 1.83–1.93× on CPU, 7.0–7.3 fps.
+  - **Pending:** GPU/graph qualification and full-match / 3-reference-cell checks. 100 fps is not demonstrated.
+  - **Plan:** the coordinator pins a ≤300 s 08 window JSON after 05:00Z, once T5 GRU's exit is checked, before perception's 08 recovery. Formal v4 stays on the admitted exact path.

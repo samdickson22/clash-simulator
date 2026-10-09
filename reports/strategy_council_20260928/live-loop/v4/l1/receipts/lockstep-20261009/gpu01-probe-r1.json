@@ -1,0 +1,7512 @@
+{
+  "schema": "clasher.v4.lockstep-bounded-probe.v1",
+  "formal_admitted": false,
+  "epoch": 3,
+  "matches": 8,
+  "frames_per_match": 4,
+  "branches": 9,
+  "bundle_sha256": "2bf1bbb35e63abc2690809547ad04ac8b7a659c12394a4b921ea9c4342d314cf",
+  "checkpoint_sha256": "2a3c67d0b770e1b1438f0e501470212f471b2828e209ba9e7023fd441dbd4245",
+  "source_sha256": {
+    "probe_lockstep_v4.py": "f72d9b77fa6434cc7c24c571ca6b2cf8d8cca0f72a16631bb103775a8dd24e26",
+    "lockstep_replay_v4.py": "e68e1135556845f44b90f08eba5507e0a187cc43394d64a1bb934c8dac24c58c"
+  },
+  "fetch_seconds": 4.128373523941264,
+  "layer_probes": {
+    "False": {
+      "1": {
+        "encoder": {
+          "batch": 1,
+          "exact": true,
+          "mismatches": [],
+          "seconds": 0.2251778340432793
+        },
+        "prefix": {
+          "batch": 1,
+          "exact": true,
+          "mismatches": [],
+          "seconds": 0.03296867781318724
+        },
+        "tail": {
+          "batch": 1,
+          "exact": true,
+          "mismatches": [],
+          "seconds": 0.0763062599580735
+        }
+      },
+      "2": {
+        "encoder": {
+          "batch": 2,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            }
+          ],
+          "seconds": 0.20918142888695002
+        },
+        "prefix": {
+          "batch": 2,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "mixed"
+              ]
+            }
+          ],
+          "seconds": 0.014653721125796437
+        },
+        "tail": {
+          "batch": 2,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            }
+          ],
+          "seconds": 0.006743291160091758
+        }
+      },
+      "4": {
+        "encoder": {
+          "batch": 4,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            }
+          ],
+          "seconds": 0.03274986403994262
+        },
+        "prefix": {
+          "batch": 4,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "mixed"
+              ]
+            }
+          ],
+          "seconds": 0.018677243031561375
+        },
+        "tail": {
+          "batch": 4,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            }
+          ],
+          "seconds": 0.005889314925298095
+        }
+      },
+      "8": {
+        "encoder": {
+          "batch": 8,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            }
+          ],
+          "seconds": 0.023394367191940546
+        },
+        "prefix": {
+          "batch": 8,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "mixed"
+              ]
+            }
+          ],
+          "seconds": 0.01085822400636971
+        },
+        "tail": {
+          "batch": 8,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            }
+          ],
+          "seconds": 0.0059763058088719845
+        }
+      }
+    },
+    "True": {
+      "1": {
+        "encoder": {
+          "batch": 1,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible"
+              ]
+            }
+          ],
+          "seconds": 0.4129500009585172
+        },
+        "prefix": {
+          "batch": 1,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "mixed"
+              ]
+            }
+          ],
+          "seconds": 0.029951214091852307
+        },
+        "tail": {
+          "batch": 1,
+          "exact": true,
+          "mismatches": [],
+          "seconds": 0.00901819090358913
+        }
+      },
+      "2": {
+        "encoder": {
+          "batch": 2,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            }
+          ],
+          "seconds": 0.033410055097192526
+        },
+        "prefix": {
+          "batch": 2,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "mixed"
+              ]
+            }
+          ],
+          "seconds": 0.0160767559427768
+        },
+        "tail": {
+          "batch": 2,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            }
+          ],
+          "seconds": 0.00750363408587873
+        }
+      },
+      "4": {
+        "encoder": {
+          "batch": 4,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            }
+          ],
+          "seconds": 0.03200434101745486
+        },
+        "prefix": {
+          "batch": 4,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "mixed"
+              ]
+            }
+          ],
+          "seconds": 0.01584415207616985
+        },
+        "tail": {
+          "batch": 4,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            }
+          ],
+          "seconds": 0.006640388863161206
+        }
+      },
+      "8": {
+        "encoder": {
+          "batch": 8,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "body_heatmap",
+                "body_box",
+                "body_hp",
+                "body_hp_visible",
+                "hud_cards",
+                "elixir_digit",
+                "elixir_fraction",
+                "clock_seconds",
+                "phase",
+                "features"
+              ]
+            }
+          ],
+          "seconds": 0.0228041959926486
+        },
+        "prefix": {
+          "batch": 8,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "mixed"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "mixed"
+              ]
+            }
+          ],
+          "seconds": 0.012043264927342534
+        },
+        "tail": {
+          "batch": 8,
+          "exact": false,
+          "mismatches": [
+            {
+              "slot": 0,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 1,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 2,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 3,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 4,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 5,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 6,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            },
+            {
+              "slot": 7,
+              "fields": [
+                "event_heatmap",
+                "event_age_ms",
+                "event_sigma_ms",
+                "cast_origin"
+              ]
+            }
+          ],
+          "seconds": 0.005661631003022194
+        }
+      }
+    }
+  },
+  "replay_probes": [
+    {
+      "batch_size": 1,
+      "encoder_batch": 1,
+      "prefix_batch": 1,
+      "tail_batch": 1,
+      "frames": 4,
+      "seconds": 0.16761887702159584,
+      "frames_per_second_per_gpu": 23.86366065132774,
+      "measurement": "bounded replay prefix includes encoder/model/trackers/extraction/JSON; cache prefetch and disk excluded",
+      "full_replay_frames_per_second_per_gpu": null,
+      "record_mismatches": [
+        [
+          "v4-phase-a-1975100708",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          3
+        ]
+      ],
+      "nonclock_payload_mismatches": [
+        [
+          "v4-phase-a-1975100708",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          3
+        ]
+      ],
+      "exact_prefix": false,
+      "records_sha256": {
+        "v4-phase-a-1975100708/body-1": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-2": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-3": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-4": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-5": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-6": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-7": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-8": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-9": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c"
+      },
+      "original_records_sha256": {
+        "v4-phase-a-1975100708/body-1": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-2": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-3": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-4": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-5": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-6": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-7": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-8": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-9": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92"
+      },
+      "peak_allocated_mib": 716.4716796875,
+      "peak_reserved_mib": 1058.0
+    },
+    {
+      "batch_size": 2,
+      "encoder_batch": 1,
+      "prefix_batch": 1,
+      "tail_batch": 1,
+      "frames": 8,
+      "seconds": 0.23894608719274402,
+      "frames_per_second_per_gpu": 33.480355732072994,
+      "measurement": "bounded replay prefix includes encoder/model/trackers/extraction/JSON; cache prefetch and disk excluded",
+      "full_replay_frames_per_second_per_gpu": null,
+      "record_mismatches": [
+        [
+          "v4-phase-a-1975100708",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          3
+        ]
+      ],
+      "nonclock_payload_mismatches": [
+        [
+          "v4-phase-a-1975100708",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          3
+        ]
+      ],
+      "exact_prefix": false,
+      "records_sha256": {
+        "v4-phase-a-1975100708/body-1": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-2": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-3": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-4": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-5": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-6": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-7": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-8": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-9": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100718/body-1": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-2": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-3": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-4": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-5": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-6": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-7": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-8": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-9": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6"
+      },
+      "original_records_sha256": {
+        "v4-phase-a-1975100708/body-1": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-2": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-3": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-4": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-5": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-6": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-7": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-8": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-9": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100718/body-1": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-2": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-3": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-4": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-5": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-6": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-7": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-8": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-9": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c"
+      },
+      "peak_allocated_mib": 716.4716796875,
+      "peak_reserved_mib": 1058.0
+    },
+    {
+      "batch_size": 4,
+      "encoder_batch": 1,
+      "prefix_batch": 1,
+      "tail_batch": 1,
+      "frames": 16,
+      "seconds": 0.41224674601107836,
+      "frames_per_second_per_gpu": 38.81170719918801,
+      "measurement": "bounded replay prefix includes encoder/model/trackers/extraction/JSON; cache prefetch and disk excluded",
+      "full_replay_frames_per_second_per_gpu": null,
+      "record_mismatches": [
+        [
+          "v4-phase-a-1975100708",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          3
+        ]
+      ],
+      "nonclock_payload_mismatches": [
+        [
+          "v4-phase-a-1975100708",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          3
+        ]
+      ],
+      "exact_prefix": false,
+      "records_sha256": {
+        "v4-phase-a-1975100708/body-1": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-2": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-3": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-4": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-5": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-6": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-7": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-8": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-9": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100718/body-1": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-2": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-3": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-4": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-5": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-6": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-7": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-8": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-9": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100728/body-1": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-2": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-3": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-4": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-5": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-6": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-7": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-8": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-9": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100738/body-1": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-2": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-3": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-4": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-5": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-6": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-7": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-8": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-9": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3"
+      },
+      "original_records_sha256": {
+        "v4-phase-a-1975100708/body-1": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-2": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-3": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-4": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-5": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-6": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-7": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-8": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-9": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100718/body-1": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-2": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-3": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-4": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-5": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-6": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-7": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-8": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-9": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100728/body-1": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-2": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-3": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-4": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-5": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-6": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-7": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-8": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-9": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100738/body-1": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-2": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-3": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-4": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-5": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-6": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-7": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-8": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-9": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1"
+      },
+      "peak_allocated_mib": 716.4716796875,
+      "peak_reserved_mib": 1058.0
+    },
+    {
+      "batch_size": 8,
+      "encoder_batch": 1,
+      "prefix_batch": 1,
+      "tail_batch": 1,
+      "frames": 32,
+      "seconds": 0.759172298014164,
+      "frames_per_second_per_gpu": 42.15116921903672,
+      "measurement": "bounded replay prefix includes encoder/model/trackers/extraction/JSON; cache prefetch and disk excluded",
+      "full_replay_frames_per_second_per_gpu": null,
+      "record_mismatches": [
+        [
+          "v4-phase-a-1975100708",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          9,
+          3
+        ]
+      ],
+      "nonclock_payload_mismatches": [
+        [
+          "v4-phase-a-1975100708",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100748",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100758",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100768",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          1,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          2,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          3,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          4,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          5,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          6,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          7,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          8,
+          0
+        ],
+        [
+          "v4-phase-a-1975100778",
+          9,
+          0
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100748",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100758",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100768",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          1,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          2,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          3,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          4,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          5,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          6,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          7,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          8,
+          1
+        ],
+        [
+          "v4-phase-a-1975100778",
+          9,
+          1
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100748",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100758",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100768",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          1,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          2,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          3,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          4,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          5,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          6,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          7,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          8,
+          2
+        ],
+        [
+          "v4-phase-a-1975100778",
+          9,
+          2
+        ],
+        [
+          "v4-phase-a-1975100708",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100708",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100718",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100728",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100738",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100748",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100758",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100768",
+          9,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          1,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          2,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          3,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          4,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          5,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          6,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          7,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          8,
+          3
+        ],
+        [
+          "v4-phase-a-1975100778",
+          9,
+          3
+        ]
+      ],
+      "exact_prefix": false,
+      "records_sha256": {
+        "v4-phase-a-1975100708/body-1": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-2": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-3": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-4": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-5": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-6": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-7": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-8": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100708/body-9": "560ee22fc9a6f50edc221b06fe4d55631d93856daa12022aedea788bf8b2f23c",
+        "v4-phase-a-1975100718/body-1": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-2": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-3": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-4": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-5": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-6": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-7": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-8": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100718/body-9": "f54e1c81e61576bcd081088989c4967a9e98039bc3196f99cfd09ebf859924a6",
+        "v4-phase-a-1975100728/body-1": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-2": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-3": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-4": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-5": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-6": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-7": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-8": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100728/body-9": "df0a3e26e4b08f01c3d34022efe8521d7e8bbc81f00ef5b83200097bba2cc032",
+        "v4-phase-a-1975100738/body-1": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-2": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-3": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-4": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-5": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-6": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-7": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-8": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100738/body-9": "b4b1dd08fe90974740cffc55262c8db64ae149861b4a6caab1afc4debc3536f3",
+        "v4-phase-a-1975100748/body-1": "a20eab2f578d0de878911daa44939f417be67830aff9613984a28c8e532512e5",
+        "v4-phase-a-1975100748/body-2": "a20eab2f578d0de878911daa44939f417be67830aff9613984a28c8e532512e5",
+        "v4-phase-a-1975100748/body-3": "a20eab2f578d0de878911daa44939f417be67830aff9613984a28c8e532512e5",
+        "v4-phase-a-1975100748/body-4": "a20eab2f578d0de878911daa44939f417be67830aff9613984a28c8e532512e5",
+        "v4-phase-a-1975100748/body-5": "a20eab2f578d0de878911daa44939f417be67830aff9613984a28c8e532512e5",
+        "v4-phase-a-1975100748/body-6": "a20eab2f578d0de878911daa44939f417be67830aff9613984a28c8e532512e5",
+        "v4-phase-a-1975100748/body-7": "a20eab2f578d0de878911daa44939f417be67830aff9613984a28c8e532512e5",
+        "v4-phase-a-1975100748/body-8": "a20eab2f578d0de878911daa44939f417be67830aff9613984a28c8e532512e5",
+        "v4-phase-a-1975100748/body-9": "a20eab2f578d0de878911daa44939f417be67830aff9613984a28c8e532512e5",
+        "v4-phase-a-1975100758/body-1": "31ea035f6b74a5ecd83775c4170ed3a5fced4959b320a8fb8edb7251fc9723da",
+        "v4-phase-a-1975100758/body-2": "31ea035f6b74a5ecd83775c4170ed3a5fced4959b320a8fb8edb7251fc9723da",
+        "v4-phase-a-1975100758/body-3": "31ea035f6b74a5ecd83775c4170ed3a5fced4959b320a8fb8edb7251fc9723da",
+        "v4-phase-a-1975100758/body-4": "31ea035f6b74a5ecd83775c4170ed3a5fced4959b320a8fb8edb7251fc9723da",
+        "v4-phase-a-1975100758/body-5": "31ea035f6b74a5ecd83775c4170ed3a5fced4959b320a8fb8edb7251fc9723da",
+        "v4-phase-a-1975100758/body-6": "31ea035f6b74a5ecd83775c4170ed3a5fced4959b320a8fb8edb7251fc9723da",
+        "v4-phase-a-1975100758/body-7": "31ea035f6b74a5ecd83775c4170ed3a5fced4959b320a8fb8edb7251fc9723da",
+        "v4-phase-a-1975100758/body-8": "31ea035f6b74a5ecd83775c4170ed3a5fced4959b320a8fb8edb7251fc9723da",
+        "v4-phase-a-1975100758/body-9": "31ea035f6b74a5ecd83775c4170ed3a5fced4959b320a8fb8edb7251fc9723da",
+        "v4-phase-a-1975100768/body-1": "3b3692e51a44150faa6edc951aeb2b5197235589002a0bdc76eccd65665cbf9d",
+        "v4-phase-a-1975100768/body-2": "3b3692e51a44150faa6edc951aeb2b5197235589002a0bdc76eccd65665cbf9d",
+        "v4-phase-a-1975100768/body-3": "3b3692e51a44150faa6edc951aeb2b5197235589002a0bdc76eccd65665cbf9d",
+        "v4-phase-a-1975100768/body-4": "3b3692e51a44150faa6edc951aeb2b5197235589002a0bdc76eccd65665cbf9d",
+        "v4-phase-a-1975100768/body-5": "3b3692e51a44150faa6edc951aeb2b5197235589002a0bdc76eccd65665cbf9d",
+        "v4-phase-a-1975100768/body-6": "3b3692e51a44150faa6edc951aeb2b5197235589002a0bdc76eccd65665cbf9d",
+        "v4-phase-a-1975100768/body-7": "3b3692e51a44150faa6edc951aeb2b5197235589002a0bdc76eccd65665cbf9d",
+        "v4-phase-a-1975100768/body-8": "3b3692e51a44150faa6edc951aeb2b5197235589002a0bdc76eccd65665cbf9d",
+        "v4-phase-a-1975100768/body-9": "3b3692e51a44150faa6edc951aeb2b5197235589002a0bdc76eccd65665cbf9d",
+        "v4-phase-a-1975100778/body-1": "35b3d1b0b0bfa979047217b3e838daa1f6b04fbdbad0c4b8be1f8e57fbed7d38",
+        "v4-phase-a-1975100778/body-2": "35b3d1b0b0bfa979047217b3e838daa1f6b04fbdbad0c4b8be1f8e57fbed7d38",
+        "v4-phase-a-1975100778/body-3": "35b3d1b0b0bfa979047217b3e838daa1f6b04fbdbad0c4b8be1f8e57fbed7d38",
+        "v4-phase-a-1975100778/body-4": "35b3d1b0b0bfa979047217b3e838daa1f6b04fbdbad0c4b8be1f8e57fbed7d38",
+        "v4-phase-a-1975100778/body-5": "35b3d1b0b0bfa979047217b3e838daa1f6b04fbdbad0c4b8be1f8e57fbed7d38",
+        "v4-phase-a-1975100778/body-6": "35b3d1b0b0bfa979047217b3e838daa1f6b04fbdbad0c4b8be1f8e57fbed7d38",
+        "v4-phase-a-1975100778/body-7": "35b3d1b0b0bfa979047217b3e838daa1f6b04fbdbad0c4b8be1f8e57fbed7d38",
+        "v4-phase-a-1975100778/body-8": "35b3d1b0b0bfa979047217b3e838daa1f6b04fbdbad0c4b8be1f8e57fbed7d38",
+        "v4-phase-a-1975100778/body-9": "35b3d1b0b0bfa979047217b3e838daa1f6b04fbdbad0c4b8be1f8e57fbed7d38"
+      },
+      "original_records_sha256": {
+        "v4-phase-a-1975100708/body-1": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-2": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-3": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-4": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-5": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-6": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-7": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-8": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100708/body-9": "d216016faa632feb4f6d6b687b6ced8dceff7665b8ffdc2ccc7c4e5137d2fe92",
+        "v4-phase-a-1975100718/body-1": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-2": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-3": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-4": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-5": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-6": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-7": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-8": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100718/body-9": "b028276df6989e247be6a128af0374363b4b5101528778e39771ead5b6b1602c",
+        "v4-phase-a-1975100728/body-1": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-2": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-3": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-4": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-5": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-6": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-7": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-8": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100728/body-9": "c72a6c1436a1e0229956065e76980aa54bdcbd957c7ce19b16b9ddd54c6fc388",
+        "v4-phase-a-1975100738/body-1": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-2": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-3": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-4": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-5": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-6": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-7": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-8": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100738/body-9": "b18ba8d4e238da81125fc65d5d497f0a274b70cde9d796084d32bf52eb1ad4f1",
+        "v4-phase-a-1975100748/body-1": "1b9591709a4ffcea8e5d5e7335815d9f8feca8d172ef1e51517ca57595046e50",
+        "v4-phase-a-1975100748/body-2": "1b9591709a4ffcea8e5d5e7335815d9f8feca8d172ef1e51517ca57595046e50",
+        "v4-phase-a-1975100748/body-3": "1b9591709a4ffcea8e5d5e7335815d9f8feca8d172ef1e51517ca57595046e50",
+        "v4-phase-a-1975100748/body-4": "1b9591709a4ffcea8e5d5e7335815d9f8feca8d172ef1e51517ca57595046e50",
+        "v4-phase-a-1975100748/body-5": "1b9591709a4ffcea8e5d5e7335815d9f8feca8d172ef1e51517ca57595046e50",
+        "v4-phase-a-1975100748/body-6": "1b9591709a4ffcea8e5d5e7335815d9f8feca8d172ef1e51517ca57595046e50",
+        "v4-phase-a-1975100748/body-7": "1b9591709a4ffcea8e5d5e7335815d9f8feca8d172ef1e51517ca57595046e50",
+        "v4-phase-a-1975100748/body-8": "1b9591709a4ffcea8e5d5e7335815d9f8feca8d172ef1e51517ca57595046e50",
+        "v4-phase-a-1975100748/body-9": "1b9591709a4ffcea8e5d5e7335815d9f8feca8d172ef1e51517ca57595046e50",
+        "v4-phase-a-1975100758/body-1": "e3f3e4d31d335c8c6130474023681150b1bf306da0404b96b777790e2499bc93",
+        "v4-phase-a-1975100758/body-2": "e3f3e4d31d335c8c6130474023681150b1bf306da0404b96b777790e2499bc93",
+        "v4-phase-a-1975100758/body-3": "e3f3e4d31d335c8c6130474023681150b1bf306da0404b96b777790e2499bc93",
+        "v4-phase-a-1975100758/body-4": "e3f3e4d31d335c8c6130474023681150b1bf306da0404b96b777790e2499bc93",
+        "v4-phase-a-1975100758/body-5": "e3f3e4d31d335c8c6130474023681150b1bf306da0404b96b777790e2499bc93",
+        "v4-phase-a-1975100758/body-6": "e3f3e4d31d335c8c6130474023681150b1bf306da0404b96b777790e2499bc93",
+        "v4-phase-a-1975100758/body-7": "e3f3e4d31d335c8c6130474023681150b1bf306da0404b96b777790e2499bc93",
+        "v4-phase-a-1975100758/body-8": "e3f3e4d31d335c8c6130474023681150b1bf306da0404b96b777790e2499bc93",
+        "v4-phase-a-1975100758/body-9": "e3f3e4d31d335c8c6130474023681150b1bf306da0404b96b777790e2499bc93",
+        "v4-phase-a-1975100768/body-1": "57be522f0e60074b85bb74d8a6714ee3418e59972769a41e178d059ecdb14c6c",
+        "v4-phase-a-1975100768/body-2": "57be522f0e60074b85bb74d8a6714ee3418e59972769a41e178d059ecdb14c6c",
+        "v4-phase-a-1975100768/body-3": "57be522f0e60074b85bb74d8a6714ee3418e59972769a41e178d059ecdb14c6c",
+        "v4-phase-a-1975100768/body-4": "57be522f0e60074b85bb74d8a6714ee3418e59972769a41e178d059ecdb14c6c",
+        "v4-phase-a-1975100768/body-5": "57be522f0e60074b85bb74d8a6714ee3418e59972769a41e178d059ecdb14c6c",
+        "v4-phase-a-1975100768/body-6": "57be522f0e60074b85bb74d8a6714ee3418e59972769a41e178d059ecdb14c6c",
+        "v4-phase-a-1975100768/body-7": "57be522f0e60074b85bb74d8a6714ee3418e59972769a41e178d059ecdb14c6c",
+        "v4-phase-a-1975100768/body-8": "57be522f0e60074b85bb74d8a6714ee3418e59972769a41e178d059ecdb14c6c",
+        "v4-phase-a-1975100768/body-9": "57be522f0e60074b85bb74d8a6714ee3418e59972769a41e178d059ecdb14c6c",
+        "v4-phase-a-1975100778/body-1": "b37bd6ffb40c142b0159fedccd7f6e6bad6a05f7e83e808df735e5da0881e666",
+        "v4-phase-a-1975100778/body-2": "b37bd6ffb40c142b0159fedccd7f6e6bad6a05f7e83e808df735e5da0881e666",
+        "v4-phase-a-1975100778/body-3": "b37bd6ffb40c142b0159fedccd7f6e6bad6a05f7e83e808df735e5da0881e666",
+        "v4-phase-a-1975100778/body-4": "b37bd6ffb40c142b0159fedccd7f6e6bad6a05f7e83e808df735e5da0881e666",
+        "v4-phase-a-1975100778/body-5": "b37bd6ffb40c142b0159fedccd7f6e6bad6a05f7e83e808df735e5da0881e666",
+        "v4-phase-a-1975100778/body-6": "b37bd6ffb40c142b0159fedccd7f6e6bad6a05f7e83e808df735e5da0881e666",
+        "v4-phase-a-1975100778/body-7": "b37bd6ffb40c142b0159fedccd7f6e6bad6a05f7e83e808df735e5da0881e666",
+        "v4-phase-a-1975100778/body-8": "b37bd6ffb40c142b0159fedccd7f6e6bad6a05f7e83e808df735e5da0881e666",
+        "v4-phase-a-1975100778/body-9": "b37bd6ffb40c142b0159fedccd7f6e6bad6a05f7e83e808df735e5da0881e666"
+      },
+      "peak_allocated_mib": 716.4716796875,
+      "peak_reserved_mib": 1058.0
+    }
+  ],
+  "gpu_samples": [
+    [
+      {
+        "index": 0,
+        "free_mib": 16456,
+        "utilization_percent": 34
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "free_mib": 16373,
+        "utilization_percent": 19
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "free_mib": 16281,
+        "utilization_percent": 26
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "free_mib": 16088,
+        "utilization_percent": 18
+      }
+    ],
+    [
+      {
+        "index": 0,
+        "free_mib": 15775,
+        "utilization_percent": 37
+      }
+    ]
+  ],
+  "heldout_payloads_opened": false,
+  "full_equality_gate_passed": false,
+  "target100fps_verified": false,
+  "original_reference_seconds": 3.3039454750251025,
+  "original_vs_quarantine_mismatches": 0,
+  "largest_exact_layer_batch_original": {
+    "encoder": 1,
+    "prefix": 1,
+    "tail": 1
+  }
+}

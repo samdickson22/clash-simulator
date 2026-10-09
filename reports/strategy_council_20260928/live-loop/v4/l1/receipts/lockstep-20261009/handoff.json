@@ -1,0 +1,80 @@
+{
+  "schema": "clasher.v4.lockstep-handoff.v1",
+  "status": "CPU_PREFIX_QUALIFIED_GPU_NOT_ADMITTED",
+  "formal_admitted": false,
+  "full_equality_gate_passed": false,
+  "target100fps_verified": false,
+  "cpu_exact_frames": 384,
+  "cpu_exact_decoder_records": 3456,
+  "cpu_full_required_scope": false,
+  "cpu_speedup_range": [
+    1.8329008022394635,
+    1.9306582360313596
+  ],
+  "cpu_frames_per_second_by_epoch": {
+    "1": 7.128095216449551,
+    "3": 7.299962722700037,
+    "20": 7.018648005331543
+  },
+  "whole_layer_largest_observed_exact_GPU_tensor_batch": {
+    "encoder": 1,
+    "prefix": 1,
+    "tail": 1
+  },
+  "required_GPU_shards": {
+    "8": {
+      "full_replay_fps": null,
+      "admitted": false,
+      "unequal_prefix_fps": 42.15116921903672,
+      "status": "FAILED_EQUALITY"
+    },
+    "16": {
+      "full_replay_fps": null,
+      "admitted": false,
+      "unequal_prefix_fps": null,
+      "status": "NOT_MEASURED_NO_SAFE_WINDOW"
+    },
+    "32": {
+      "full_replay_fps": null,
+      "admitted": false,
+      "unequal_prefix_fps": null,
+      "status": "NOT_MEASURED_NO_SAFE_WINDOW"
+    },
+    "64": {
+      "full_replay_fps": null,
+      "admitted": false,
+      "unequal_prefix_fps": null,
+      "status": "NOT_MEASURED_NO_SAFE_WINDOW"
+    }
+  },
+  "t11_do_no_harm_passed": false,
+  "t11_baseline_rows_per_second": 7645.419221665185,
+  "t11_concurrent_rows_per_second": 3900.7773258199772,
+  "t11_ratio": 0.5102110443814722,
+  "gpu01_authorization_revoked": true,
+  "gpu02_excluded": true,
+  "next_GPU_probe": "Only coordinator-assigned08 window after05:00Z afterT5exit; atmost300s; noautomaticlaunch",
+  "source_sha256": {
+    "lockstep_replay_v4.py": "549e52e410adc4b0e33bce4b6e7b2ef9574acd73825596f0c5b0433e2c24a443",
+    "probe_lockstep_cpu_v4.py": "f0c181b25d43a2537132d02c2d4fabd2843349f1af4f61cbc07b4e9927df531a",
+    "probe_lockstep_v4.py": "f72d9b77fa6434cc7c24c571ca6b2cf8d8cca0f72a16631bb103775a8dd24e26",
+    "verify_lockstep_v4.py": "9f467c5f32d5e5698763c7b40280ab246afc2d4e2b9bd791ace1107545c93c6f",
+    "test_lockstep_replay_v4.py": "970d756deb0b1191018c3b78ebb76777588cb52ebaf4926daa1bf22372974d77",
+    "test_verify_lockstep_v4.py": "0702cc16d2b69695a63863860b9a34db64941a3353ac3ba76ca1b0e26167d193",
+    "lockstep_resources_v4.py": "11fe2c465b0c681222dbb716c82b70ea1cf3e3535fc1f627839453059c1f65bb"
+  },
+  "receipts_sha256": {
+    "cpu-real-prefix-r3.json": "b66fc529793ce7da3bb6d584afc889dce76bb4b47a83ddc44a46dc4d2cd62a02",
+    "verifier-tests-final.log": "a383ee48fe5a8caeb47415d2d5dbe2ca7b998f7037fd94bfa0abaffab0b4b5bb",
+    "t11-baseline-r1.json": "538aa876e711602eceeecbfef4ef177ff6e209f16141e95191874bcc0238ef34",
+    "cpu-real-prefix-r2.json": "3e69bf1f1eaac5271f512a3c51800853c6ebef7d77b0988c192cc951449d4984",
+    "cpu-real-prefix-r1.json": "95d449969fbde7f1990e89b7577112b0427dab7138cce5955f6dc8bfbf87b74c",
+    "cpu-tests-r3.log": "66b3f4facdccd9bc42582bec9924f83cdb2313cc8fa1bde849d69805ae05d51f",
+    "gpu01-probe-r1-supervision.json": "3bb54f6fa1b1d975a3cee68875b50eaf7654a21e8312e18cfd4fc3b6bcf37638",
+    "cpu-tests-r6.log": "a2829f2cb2c5c5c525e6a59c178c2129733e7d36f21a16a1111f7a96c9c99340",
+    "gpu01-probe-r1.json": "d0f98f104c011de24e1d1b5fe3f3b8ae4461078902b2f54da1f20106fe41d9ba"
+  },
+  "heldout_payloads_opened": false,
+  "owner_jobs_sources_outputs_receipts_untouched": true,
+  "no_git_commits": true
+}
