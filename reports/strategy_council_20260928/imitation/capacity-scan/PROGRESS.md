@@ -38,3 +38,10 @@ verifier briefly paused during the commit/deployment, then resumed. No fitting
 restart. Wide resumes require explicit checkpoint SHA and own output directory;
 quarter recovery preserves the exact boundary and saved NLL; scientific kills
 cannot resume. Small `collect.py` will gather final curves/costs/SHA pointers.
+
+2026-10-09T19:58Z:16completed all130train/dev/publicmask SHA checks and entered
+control replay successfully. Observedstep11016,32.9GBPSS,29.1GiBpeakGPUreserved;
+allguardcapsPASS. Earlyloader-inclusive2,226rows/s includes startup/sampling and
+is not the settled rate. Threewidecopiesremainactive with sixprocesses/<0.5GBPSS
+each. NoquarterNLL orkilldecisionyet. `first-fit-receipt.json` records this sample.
+The temporary continuation owns the remaining originaltask; results report pending.
