@@ -118,6 +118,8 @@ def main():
         reporting_pre_mix_validation=read(job/'student-reporting-pre-mix-validation.json'),
         postprocessing_amendment_sha256=digest(job/'student-postprocessing-amendment.json'),
         mix_dispatch_amendment_sha256=digest(job/'student-mix-dispatch-amendment.json'),
+        mix_pool_recovery=read(job/'student-mix-pool-recovery.json'),
+        mix_pool_recovery_sha256=digest(job/'student-mix-pool-recovery.json'),
         reporting08_requeue=read(job/'reporting08-requeue.json') if (job/'reporting08-requeue.json').exists() else None,
         staged_reporting_amendment_sha256=digest(job/'student-staged-reporting-amendment.json'),
         staged_provenance=read(job/'staged-provenance.json'),
@@ -162,7 +164,11 @@ def main():
         'provenance envelope, retaining original stage and raw-case SHAs.', '',
         'Reporting uses the qualified E1 native f387b2d2..., as required by the frozen plan. '
         'The first startup used the generation native and failed before creating any games; '
-        'its 1289.014866 CPU-seconds are included in reporting costs. Corpus and fit pins '
+        'its 1289.014866 CPU-seconds are included in reporting costs. '
+        'A later stale internal01 stop blocked the first mix pool; all interrupted '
+        'phase costs and completed human receipts were retained, and the exact '
+        'unfinished mix identities resumed in a new phase under the same freezes. '
+        'Corpus and fit pins '
         'remain unchanged. The dated reporting native amendment preceded all affected outcomes.', '',
         '## Arm decisions and metrics(a)/(b)', '']
     rows=[]

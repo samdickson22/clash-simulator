@@ -1,0 +1,65 @@
+{
+  "utc": "2026-10-09T23:45:34.788795+00:00",
+  "controller_pid": 1190455,
+  "controller_version": "staged_controller_v4.py",
+  "phase": "staged-r3",
+  "freeze_sha256": "ff4ae6ef20cda181f09ff3dcadaedb0a4435bf92c0ce388e3adc466c75f813fa",
+  "stage_sha256": "11b1c17215ed83f78402c33e3559901c6babe6462f45962f9914694f0449ab43",
+  "final_ema_sha256": "78928c0ead5e11d458b37e2f57a56e3f9b234e6acb83a9984c3cc1e206c19a59",
+  "fit_ended_at": "2026-10-09T23:39:40.880956+00:00",
+  "fit_all_attempt_rows_per_second": 3146.0995864401775,
+  "fit_all_attempt_gpu_hours": 3.531845535236385,
+  "fit_all_attempt_cpu_hours": 19.06744530777778,
+  "host_status": {
+    "01": {
+      "progress": {
+        "completed": 62,
+        "remaining": 108,
+        "active": 44,
+        "failures": [],
+        "utc": "2026-10-09T23:45:34.583222+00:00"
+      },
+      "manager_pid": 993206,
+      "nice": 10,
+      "scheduler": 5
+    },
+    "03": {
+      "progress": {
+        "completed": 63,
+        "remaining": 95,
+        "active": 56,
+        "failures": [],
+        "utc": "2026-10-09T23:45:34.557620+00:00"
+      },
+      "manager_pid": 1188143,
+      "nice": 10,
+      "scheduler": 5
+    },
+    "04": {
+      "progress": {
+        "completed": 61,
+        "remaining": 93,
+        "active": 60,
+        "failures": [],
+        "utc": "2026-10-09T23:45:35.522602+00:00"
+      },
+      "manager_pid": 3312582,
+      "nice": 10,
+      "scheduler": 5
+    },
+    "08": {
+      "progress": {
+        "completed": 64,
+        "remaining": 102,
+        "active": 48,
+        "failures": [],
+        "utc": "2026-10-09T23:45:35.614774+00:00"
+      },
+      "manager_pid": 2398674,
+      "nice": 19,
+      "scheduler": 5
+    }
+  },
+  "mix_identity_count": 856,
+  "scientific_outcomes_analyzed": false
+}
