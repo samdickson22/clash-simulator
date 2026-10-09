@@ -1502,3 +1502,4 @@ Also on the hub, but with copies elsewhere:
   - Ordered: A17 r3 = that guard plus 1 test; I do a diff-only check, then freeze.
   - §5 circularity resolved: after the r3 freeze and my mechanical checks, I issue a **conditional** APPROVE_EVIDENCE_REPLACEMENT, void unless the immediately following actual-file `verify_replacement_evidence` on 04 passes. A1 is barred until then.
   - The 08 GPU was released (`3707b2c1`).
+- **10:40 UTC heartbeat.** Only 01 (T11 s22) is on GPU. **04/08/09/13/14/15/16 GPUs are idle**: T11 s21 finished, and per the plan the GPU work waits for the B5/student builds (deliberate). E1 is frozen (`bfb9b107`), its smoke test is running on 03, and it's pinned to 03 cores 0–61 and 04 cores 0–29. ExIt is assigned 03 cores 62–127 and 04 cores 30–127, plus 08. 02/06/07/11/18 are down.
