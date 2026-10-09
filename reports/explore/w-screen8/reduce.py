@@ -127,7 +127,8 @@ def reduce(root,config,out,smoke=False):
                         both_channels_delay27_capacity1=True,rejected_commands_retained=True,
                         five_decks_25_matchups_balanced_seats=not smoke),
         limitations=['fixed-work simulation, public reconstruction and scripted rollout futures',
-                     'bootstrap CIs pointwise and unadjusted','loaded SCHED_IDLE wall timing is not live qualification'])
+                     'bootstrap CIs pointwise and unadjusted','loaded SCHED_IDLE wall timing is not live qualification',
+                     'screen8 reference adapter does not tally wait_counts; its empty tally is not zero WAITs'])
     result['pass_criterion_met']=contrasts['S8_minus_W']['game_loss_fraction']['ci95'][1] <= .03
     out.write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')
     print(json.dumps(dict(outcomes=outcomes,loss_contrasts={k:v['game_loss_fraction'] for k,v in contrasts.items()})),flush=True)

@@ -1,0 +1,2559 @@
+{
+  "paired_seeds": 600,
+  "seed_range": [
+    4503599677370496,
+    4503599677371095
+  ],
+  "arms": [
+    "0",
+    "W",
+    "S8"
+  ],
+  "config_sha256": "f044f822bc3d13912e19ce61b065d35d8995d94232cd91b94bd04782421ec126",
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 80981009,
+    "unit": "paired seed",
+    "confidence": 0.95
+  },
+  "outcomes": {
+    "0": {
+      "wins": 295,
+      "losses": 305,
+      "draws": 0,
+      "games": 600
+    },
+    "W": {
+      "wins": 483,
+      "losses": 117,
+      "draws": 0,
+      "games": 600
+    },
+    "S8": {
+      "wins": 484,
+      "losses": 116,
+      "draws": 0,
+      "games": 600
+    }
+  },
+  "estimates": {
+    "0": {
+      "game_loss_fraction": {
+        "value": 0.5083333333333333,
+        "ci95": [
+          0.4683333333333333,
+          0.5483333333333333
+        ],
+        "numerator": 305.0,
+        "denominator": 600.0
+      },
+      "game_win_fraction": {
+        "value": 0.49166666666666664,
+        "ci95": [
+          0.45166666666666666,
+          0.5316666666666666
+        ],
+        "numerator": 295.0,
+        "denominator": 600.0
+      },
+      "game_draw_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 600.0
+      },
+      "arrival_under4_fraction": {
+        "value": 0.9368716601757088,
+        "ci95": [
+          0.9318324733219535,
+          0.9420173890601228
+        ],
+        "numerator": 10344.0,
+        "denominator": 11041.0
+      },
+      "defender_not_in_hand_fraction": {
+        "value": 0.0009057150620414817,
+        "ci95": [
+          0.00036536353671903543,
+          0.0015254574959134455
+        ],
+        "numerator": 10.0,
+        "denominator": 11041.0
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "value": 0.6378045466896114,
+        "ci95": [
+          0.6259435226997527,
+          0.6500337327458808
+        ],
+        "numerator": 7042.0,
+        "denominator": 11041.0
+      },
+      "time_at_max_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 133921.25
+      },
+      "leaked_elixir_lower_bound_per_minute": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 133921.25
+      },
+      "rejected_play_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 34192.0
+      },
+      "response_latency_capped8_seconds": {
+        "value": 4.469957431392082,
+        "ci95": [
+          4.395072279525016,
+          4.5503533759566865
+        ],
+        "numerator": 49352.799999999974,
+        "denominator": 11041.0
+      },
+      "time_at_max_seconds_per_minute": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 133921.25
+      },
+      "card_per_deck_minute:Xbow": {
+        "value": 0.05267136482235605,
+        "ci95": [
+          0.03559565694916504,
+          0.0709302948079996
+        ],
+        "numerator": 27.0,
+        "denominator": 512.6125000000002
+      },
+      "card_per_deck_minute:Giant": {
+        "value": 0.02250117193603834,
+        "ci95": [
+          0.009584973444988869,
+          0.03715682132196196
+        ],
+        "numerator": 9.0,
+        "denominator": 399.9791666666666
+      },
+      "card_per_deck_minute:Rocket": {
+        "value": 0.002339181286549707,
+        "ci95": [
+          0.0,
+          0.0077538984507150525
+        ],
+        "numerator": 1.0,
+        "denominator": 427.50000000000006
+      },
+      "card_per_deck_minute:Fireball": {
+        "value": 0.0667810139251704,
+        "ci95": [
+          0.05230469378300808,
+          0.08199086007618477
+        ],
+        "numerator": 67.0,
+        "denominator": 1003.2791666666664
+      },
+      "card_per_deck_minute:Log": {
+        "value": 3.324062937734977,
+        "ci95": [
+          3.262420083528385,
+          3.3833273441467293
+        ],
+        "numerator": 4756.0,
+        "denominator": 1430.779166666666
+      },
+      "affordable_hand_fraction:Xbow": {
+        "value": 0.0018841945068483223,
+        "ci95": [
+          0.0015071767353185572,
+          0.0022785603284643198
+        ],
+        "numerator": 78.0,
+        "denominator": 41397.0
+      },
+      "affordable_hand_fraction:Giant": {
+        "value": 0.004043198382720647,
+        "ci95": [
+          0.003146383251640423,
+          0.005116887573653184
+        ],
+        "numerator": 152.0,
+        "denominator": 37594.0
+      },
+      "affordable_hand_fraction:Rocket": {
+        "value": 0.0028043549983503796,
+        "ci95": [
+          0.0022032388720110902,
+          0.003504692141290695
+        ],
+        "numerator": 102.0,
+        "denominator": 36372.0
+      },
+      "affordable_hand_fraction:Fireball": {
+        "value": 0.012691270245745751,
+        "ci95": [
+          0.011631470087278942,
+          0.013824110349751883
+        ],
+        "numerator": 1021.0,
+        "denominator": 80449.0
+      },
+      "affordable_hand_fraction:Log": {
+        "value": 0.38287306201550386,
+        "ci95": [
+          0.3747067193355092,
+          0.3908985950544497
+        ],
+        "numerator": 12644.0,
+        "denominator": 33024.0
+      },
+      "selected_given_offered_fraction:Xbow": {
+        "value": 0.35064935064935066,
+        "ci95": [
+          0.24285714285714285,
+          0.46774193548387094
+        ],
+        "numerator": 27.0,
+        "denominator": 77.0
+      },
+      "selected_given_offered_fraction:Giant": {
+        "value": 0.07894736842105263,
+        "ci95": [
+          0.040267492092879734,
+          0.12676319108681938
+        ],
+        "numerator": 12.0,
+        "denominator": 152.0
+      },
+      "selected_given_offered_fraction:Rocket": {
+        "value": 0.00980392156862745,
+        "ci95": [
+          0.0,
+          0.03333333333333333
+        ],
+        "numerator": 1.0,
+        "denominator": 102.0
+      },
+      "selected_given_offered_fraction:Fireball": {
+        "value": 0.06856023506366307,
+        "ci95": [
+          0.05355486429620211,
+          0.0839100870219155
+        ],
+        "numerator": 70.0,
+        "denominator": 1021.0
+      },
+      "selected_given_offered_fraction:Log": {
+        "value": 0.3786415452818239,
+        "ci95": [
+          0.35880927247496575,
+          0.39969118962297057
+        ],
+        "numerator": 4783.0,
+        "denominator": 12632.0
+      },
+      "mean_wall_decision_ms": {
+        "value": 73.94497633892082,
+        "ci95": [
+          72.14494873262166,
+          75.78565276629192
+        ],
+        "numerator": 14260510.521889897,
+        "denominator": 192853.0
+      },
+      "mean_cpu_decision_ms": {
+        "value": 73.90148943129728,
+        "ci95": [
+          72.10281760983494,
+          75.74069004844877
+        ],
+        "numerator": 14252123.941293973,
+        "denominator": 192853.0
+      },
+      "wall_over200_fraction": {
+        "value": 0.19512789533997396,
+        "ci95": [
+          0.18912773511331185,
+          0.20112521218342608
+        ],
+        "numerator": 37631.0,
+        "denominator": 192853.0
+      }
+    },
+    "W": {
+      "game_loss_fraction": {
+        "value": 0.195,
+        "ci95": [
+          0.16495833333333335,
+          0.22666666666666666
+        ],
+        "numerator": 117.0,
+        "denominator": 600.0
+      },
+      "game_win_fraction": {
+        "value": 0.805,
+        "ci95": [
+          0.7733333333333333,
+          0.835041666666666
+        ],
+        "numerator": 483.0,
+        "denominator": 600.0
+      },
+      "game_draw_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 600.0
+      },
+      "arrival_under4_fraction": {
+        "value": 0.612919180927886,
+        "ci95": [
+          0.5967660992052732,
+          0.629255963117749
+        ],
+        "numerator": 6196.0,
+        "denominator": 10109.0
+      },
+      "defender_not_in_hand_fraction": {
+        "value": 0.016816697991888417,
+        "ci95": [
+          0.012950754758176525,
+          0.021075521707290656
+        ],
+        "numerator": 170.0,
+        "denominator": 10109.0
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "value": 0.28608170936789,
+        "ci95": [
+          0.27246716389941045,
+          0.2996624703777846
+        ],
+        "numerator": 2892.0,
+        "denominator": 10109.0
+      },
+      "time_at_max_fraction": {
+        "value": 0.0017765388109275265,
+        "ci95": [
+          0.0013789256555834513,
+          0.002199545005774331
+        ],
+        "numerator": 220.5,
+        "denominator": 124117.75
+      },
+      "leaked_elixir_lower_bound_per_minute": {
+        "value": 0.06563138632467962,
+        "ci95": [
+          0.0491197456177542,
+          0.083713208592971
+        ],
+        "numerator": 8146.020000000003,
+        "denominator": 124117.75
+      },
+      "rejected_play_fraction": {
+        "value": 3.879728419010669e-05,
+        "ci95": [
+          0.0,
+          0.00011873699462937007
+        ],
+        "numerator": 1.0,
+        "denominator": 25775.0
+      },
+      "response_latency_capped8_seconds": {
+        "value": 4.967988920763675,
+        "ci95": [
+          4.9006750632757905,
+          5.0373190100612515
+        ],
+        "numerator": 50221.399999999994,
+        "denominator": 10109.0
+      },
+      "time_at_max_seconds_per_minute": {
+        "value": 0.10659232865565159,
+        "ci95": [
+          0.08273553933500707,
+          0.13197270034645983
+        ],
+        "numerator": 13230.0,
+        "denominator": 124117.75
+      },
+      "card_per_deck_minute:Xbow": {
+        "value": 0.6414742654170108,
+        "ci95": [
+          0.5806671414881834,
+          0.7026627032857073
+        ],
+        "numerator": 304.0,
+        "denominator": 473.9083333333335
+      },
+      "card_per_deck_minute:Giant": {
+        "value": 0.16005868818566812,
+        "ci95": [
+          0.11990952291106256,
+          0.2036607330415657
+        ],
+        "numerator": 60.0,
+        "denominator": 374.8624999999999
+      },
+      "card_per_deck_minute:Rocket": {
+        "value": 0.18035402827773037,
+        "ci95": [
+          0.14538879041700736,
+          0.2163751942438452
+        ],
+        "numerator": 81.0,
+        "denominator": 449.1166666666666
+      },
+      "card_per_deck_minute:Fireball": {
+        "value": 0.43677642098793307,
+        "ci95": [
+          0.3876158876895689,
+          0.48450851675485096
+        ],
+        "numerator": 379.0,
+        "denominator": 867.7208333333331
+      },
+      "card_per_deck_minute:Log": {
+        "value": 1.5954891928578896,
+        "ci95": [
+          1.5259212539934148,
+          1.6641923560975718
+        ],
+        "numerator": 2101.0,
+        "denominator": 1316.8374999999992
+      },
+      "affordable_hand_fraction:Xbow": {
+        "value": 0.14657144838105804,
+        "ci95": [
+          0.13035831703588002,
+          0.16224683246003885
+        ],
+        "numerator": 2114.0,
+        "denominator": 14423.0
+      },
+      "affordable_hand_fraction:Giant": {
+        "value": 0.09370424597364568,
+        "ci95": [
+          0.08542643174308626,
+          0.10176327370971845
+        ],
+        "numerator": 1216.0,
+        "denominator": 12977.0
+      },
+      "affordable_hand_fraction:Rocket": {
+        "value": 0.12896168031505909,
+        "ci95": [
+          0.11330712225489716,
+          0.145278690819486
+        ],
+        "numerator": 2063.0,
+        "denominator": 15997.0
+      },
+      "affordable_hand_fraction:Fireball": {
+        "value": 0.34348184252076613,
+        "ci95": [
+          0.3258289026790245,
+          0.3607553001641555
+        ],
+        "numerator": 10007.0,
+        "denominator": 29134.0
+      },
+      "affordable_hand_fraction:Log": {
+        "value": 0.8130827714818534,
+        "ci95": [
+          0.80444009488429,
+          0.8211854668761304
+        ],
+        "numerator": 22672.0,
+        "denominator": 27884.0
+      },
+      "selected_given_offered_fraction:Xbow": {
+        "value": 0.1617881852048962,
+        "ci95": [
+          0.14177990433960486,
+          0.18530226366108568
+        ],
+        "numerator": 304.0,
+        "denominator": 1879.0
+      },
+      "selected_given_offered_fraction:Giant": {
+        "value": 0.05087572977481234,
+        "ci95": [
+          0.03801548279108693,
+          0.0657769304099142
+        ],
+        "numerator": 61.0,
+        "denominator": 1199.0
+      },
+      "selected_given_offered_fraction:Rocket": {
+        "value": 0.03926320891904993,
+        "ci95": [
+          0.032162295893122216,
+          0.04694244277031699
+        ],
+        "numerator": 81.0,
+        "denominator": 2063.0
+      },
+      "selected_given_offered_fraction:Fireball": {
+        "value": 0.038476913851688985,
+        "ci95": [
+          0.034294381661472736,
+          0.04281454863545237
+        ],
+        "numerator": 385.0,
+        "denominator": 10006.0
+      },
+      "selected_given_offered_fraction:Log": {
+        "value": 0.09489990678680811,
+        "ci95": [
+          0.08797763649889151,
+          0.10205021703109766
+        ],
+        "numerator": 2138.0,
+        "denominator": 22529.0
+      },
+      "mean_wall_decision_ms": {
+        "value": 253.96520410758774,
+        "ci95": [
+          249.93982614976798,
+          257.9560694506882
+        ],
+        "numerator": 19675700.223031253,
+        "denominator": 77474.0
+      },
+      "mean_cpu_decision_ms": {
+        "value": 253.81319530003623,
+        "ci95": [
+          249.78866928282648,
+          257.8021821711913
+        ],
+        "numerator": 19663923.492675006,
+        "denominator": 77474.0
+      },
+      "wall_over200_fraction": {
+        "value": 0.690231561556135,
+        "ci95": [
+          0.6772443376164884,
+          0.7025093690181001
+        ],
+        "numerator": 53475.0,
+        "denominator": 77474.0
+      }
+    },
+    "S8": {
+      "game_loss_fraction": {
+        "value": 0.19333333333333333,
+        "ci95": [
+          0.16333333333333333,
+          0.225
+        ],
+        "numerator": 116.0,
+        "denominator": 600.0
+      },
+      "game_win_fraction": {
+        "value": 0.8066666666666666,
+        "ci95": [
+          0.775,
+          0.8366666666666667
+        ],
+        "numerator": 484.0,
+        "denominator": 600.0
+      },
+      "game_draw_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 600.0
+      },
+      "arrival_under4_fraction": {
+        "value": 0.6130693069306931,
+        "ci95": [
+          0.5969494565351541,
+          0.6290209257053361
+        ],
+        "numerator": 6192.0,
+        "denominator": 10100.0
+      },
+      "defender_not_in_hand_fraction": {
+        "value": 0.016633663366336635,
+        "ci95": [
+          0.012728499181964528,
+          0.020907772071090455
+        ],
+        "numerator": 168.0,
+        "denominator": 10100.0
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "value": 0.2859405940594059,
+        "ci95": [
+          0.2723111136955498,
+          0.29952751247636
+        ],
+        "numerator": 2888.0,
+        "denominator": 10100.0
+      },
+      "time_at_max_fraction": {
+        "value": 0.0017748101576224378,
+        "ci95": [
+          0.0013808954459349676,
+          0.0022007546292624235
+        ],
+        "numerator": 220.75,
+        "denominator": 124379.5
+      },
+      "leaked_elixir_lower_bound_per_minute": {
+        "value": 0.06610036219795065,
+        "ci95": [
+          0.04952691973102482,
+          0.08415928949393764
+        ],
+        "numerator": 8221.530000000002,
+        "denominator": 124379.5
+      },
+      "rejected_play_fraction": {
+        "value": 3.8648836670016234e-05,
+        "ci95": [
+          0.0,
+          0.00011829863056976769
+        ],
+        "numerator": 1.0,
+        "denominator": 25874.0
+      },
+      "response_latency_capped8_seconds": {
+        "value": 4.968435643564353,
+        "ci95": [
+          4.900104584648464,
+          5.038480423148652
+        ],
+        "numerator": 50181.19999999997,
+        "denominator": 10100.0
+      },
+      "time_at_max_seconds_per_minute": {
+        "value": 0.10648860945734627,
+        "ci95": [
+          0.08285372675609805,
+          0.1320452777557454
+        ],
+        "numerator": 13245.0,
+        "denominator": 124379.5
+      },
+      "card_per_deck_minute:Xbow": {
+        "value": 0.6370575988896597,
+        "ci95": [
+          0.5782638978916171,
+          0.6951402567348453
+        ],
+        "numerator": 306.0,
+        "denominator": 480.3333333333335
+      },
+      "card_per_deck_minute:Giant": {
+        "value": 0.16852054122734675,
+        "ci95": [
+          0.12811488407033653,
+          0.21322336272149042
+        ],
+        "numerator": 63.0,
+        "denominator": 373.8416666666665
+      },
+      "card_per_deck_minute:Rocket": {
+        "value": 0.17971711195340673,
+        "ci95": [
+          0.14495792860185483,
+          0.21474585952423123
+        ],
+        "numerator": 81.0,
+        "denominator": 450.7083333333332
+      },
+      "card_per_deck_minute:Fireball": {
+        "value": 0.4310258357573762,
+        "ci95": [
+          0.3826632925355911,
+          0.47826568263005265
+        ],
+        "numerator": 376.0,
+        "denominator": 872.3374999999996
+      },
+      "card_per_deck_minute:Log": {
+        "value": 1.5948049166853009,
+        "ci95": [
+          1.5250549713027421,
+          1.6638552845856418
+        ],
+        "numerator": 2110.0,
+        "denominator": 1323.0458333333327
+      },
+      "affordable_hand_fraction:Xbow": {
+        "value": 0.14633647155137128,
+        "ci95": [
+          0.13042548230714654,
+          0.1619874363567633
+        ],
+        "numerator": 2145.0,
+        "denominator": 14658.0
+      },
+      "affordable_hand_fraction:Giant": {
+        "value": 0.09398263027295285,
+        "ci95": [
+          0.08571521622115688,
+          0.10199324318081567
+        ],
+        "numerator": 1212.0,
+        "denominator": 12896.0
+      },
+      "affordable_hand_fraction:Rocket": {
+        "value": 0.12965156142866047,
+        "ci95": [
+          0.113935731263121,
+          0.14583592305716683
+        ],
+        "numerator": 2080.0,
+        "denominator": 16043.0
+      },
+      "affordable_hand_fraction:Fireball": {
+        "value": 0.34553635341036915,
+        "ci95": [
+          0.3277726077656431,
+          0.3632107248871084
+        ],
+        "numerator": 10137.0,
+        "denominator": 29337.0
+      },
+      "affordable_hand_fraction:Log": {
+        "value": 0.8139253135689852,
+        "ci95": [
+          0.8054592975598487,
+          0.8219987818042516
+        ],
+        "numerator": 22842.0,
+        "denominator": 28064.0
+      },
+      "selected_given_offered_fraction:Xbow": {
+        "value": 0.16107030430220357,
+        "ci95": [
+          0.1414042369982338,
+          0.18351528285616378
+        ],
+        "numerator": 307.0,
+        "denominator": 1906.0
+      },
+      "selected_given_offered_fraction:Giant": {
+        "value": 0.05351170568561873,
+        "ci95": [
+          0.04010436372160353,
+          0.0690257387420587
+        ],
+        "numerator": 64.0,
+        "denominator": 1196.0
+      },
+      "selected_given_offered_fraction:Rocket": {
+        "value": 0.03942307692307692,
+        "ci95": [
+          0.032085335796978025,
+          0.04738769876908447
+        ],
+        "numerator": 82.0,
+        "denominator": 2080.0
+      },
+      "selected_given_offered_fraction:Fireball": {
+        "value": 0.0377861089187056,
+        "ci95": [
+          0.03376708461734043,
+          0.04181128723068152
+        ],
+        "numerator": 383.0,
+        "denominator": 10136.0
+      },
+      "selected_given_offered_fraction:Log": {
+        "value": 0.09463388844832143,
+        "ci95": [
+          0.08772052946417934,
+          0.10162951907247172
+        ],
+        "numerator": 2148.0,
+        "denominator": 22698.0
+      },
+      "mean_wall_decision_ms": {
+        "value": 175.01594171990388,
+        "ci95": [
+          172.47410811973276,
+          177.57249758656198
+        ],
+        "numerator": 13585437.46006582,
+        "denominator": 77624.0
+      },
+      "mean_cpu_decision_ms": {
+        "value": 174.90822550484413,
+        "ci95": [
+          172.3701426208681,
+          177.4632762970384
+        ],
+        "numerator": 13577076.096588021,
+        "denominator": 77624.0
+      },
+      "wall_over200_fraction": {
+        "value": 0.3763140265897145,
+        "ci95": [
+          0.3639188217991772,
+          0.38910796012940646
+        ],
+        "numerator": 29211.0,
+        "denominator": 77624.0
+      }
+    }
+  },
+  "paired_contrasts": {
+    "W": {
+      "game_loss_fraction": {
+        "difference": -0.3133333333333333,
+        "ci95": [
+          -0.3566666666666667,
+          -0.2733333333333333
+        ]
+      },
+      "game_win_fraction": {
+        "difference": 0.3133333333333334,
+        "ci95": [
+          0.2733333333333333,
+          0.35666666666666663
+        ]
+      },
+      "game_draw_fraction": {
+        "difference": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "arrival_under4_fraction": {
+        "difference": -0.3239524792478228,
+        "ci95": [
+          -0.3397436496015987,
+          -0.3083384036670603
+        ]
+      },
+      "defender_not_in_hand_fraction": {
+        "difference": 0.015910982929846936,
+        "ci95": [
+          0.012137561805526838,
+          0.02013485273243572
+        ]
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "difference": -0.3517228373217214,
+        "ci95": [
+          -0.36628213179951963,
+          -0.3373237084978751
+        ]
+      },
+      "time_at_max_fraction": {
+        "difference": 0.0017765388109275265,
+        "ci95": [
+          0.0013789256555834513,
+          0.002199545005774331
+        ]
+      },
+      "leaked_elixir_lower_bound_per_minute": {
+        "difference": 0.06563138632467962,
+        "ci95": [
+          0.0491197456177542,
+          0.083713208592971
+        ]
+      },
+      "rejected_play_fraction": {
+        "difference": 3.879728419010669e-05,
+        "ci95": [
+          0.0,
+          0.00011873699462937007
+        ]
+      },
+      "response_latency_capped8_seconds": {
+        "difference": 0.49803148937159314,
+        "ci95": [
+          0.40765458066522725,
+          0.583533626028961
+        ]
+      },
+      "time_at_max_seconds_per_minute": {
+        "difference": 0.10659232865565159,
+        "ci95": [
+          0.08273553933500707,
+          0.13197270034645983
+        ]
+      },
+      "card_per_deck_minute:Xbow": {
+        "difference": 0.5888029005946548,
+        "ci95": [
+          0.5300947764848931,
+          0.6453007226054164
+        ]
+      },
+      "card_per_deck_minute:Giant": {
+        "difference": 0.13755751624962978,
+        "ci95": [
+          0.0977631130406407,
+          0.17945817988050836
+        ]
+      },
+      "card_per_deck_minute:Rocket": {
+        "difference": 0.17801484699118067,
+        "ci95": [
+          0.14280966205747447,
+          0.21427711855179693
+        ]
+      },
+      "card_per_deck_minute:Fireball": {
+        "difference": 0.3699954070627627,
+        "ci95": [
+          0.32158671830953117,
+          0.4183318583804694
+        ]
+      },
+      "card_per_deck_minute:Log": {
+        "difference": -1.7285737448770873,
+        "ci95": [
+          -1.818127479516186,
+          -1.6346546582010908
+        ]
+      },
+      "affordable_hand_fraction:Xbow": {
+        "difference": 0.14468725387420972,
+        "ci95": [
+          0.12847258473141182,
+          0.16051703110544802
+        ]
+      },
+      "affordable_hand_fraction:Giant": {
+        "difference": 0.08966104759092504,
+        "ci95": [
+          0.0813469016772374,
+          0.09770077067082067
+        ]
+      },
+      "affordable_hand_fraction:Rocket": {
+        "difference": 0.1261573253167087,
+        "ci95": [
+          0.11045799891000715,
+          0.14233651346496404
+        ]
+      },
+      "affordable_hand_fraction:Fireball": {
+        "difference": 0.3307905722750204,
+        "ci95": [
+          0.3130298568070264,
+          0.3480536249086026
+        ]
+      },
+      "affordable_hand_fraction:Log": {
+        "difference": 0.4302097094663495,
+        "ci95": [
+          0.41889687009883336,
+          0.4418845139903418
+        ]
+      },
+      "selected_given_offered_fraction:Xbow": {
+        "difference": -0.18886116544445444,
+        "ci95": [
+          -0.2994558408788378,
+          -0.08613333776224545
+        ]
+      },
+      "selected_given_offered_fraction:Giant": {
+        "difference": -0.028071638646240286,
+        "ci95": [
+          -0.0741282804855888,
+          0.010850475143708897
+        ]
+      },
+      "selected_given_offered_fraction:Rocket": {
+        "difference": 0.029459287350422476,
+        "ci95": [
+          0.00501112248870277,
+          0.044981101564957535
+        ]
+      },
+      "selected_given_offered_fraction:Fireball": {
+        "difference": -0.030083321211974087,
+        "ci95": [
+          -0.04522841548267767,
+          -0.01512781525054678
+        ]
+      },
+      "selected_given_offered_fraction:Log": {
+        "difference": -0.2837416384950158,
+        "ci95": [
+          -0.3031574101767264,
+          -0.2648604504357704
+        ]
+      },
+      "mean_wall_decision_ms": {
+        "difference": 180.02022776866693,
+        "ci95": [
+          176.4768776979202,
+          183.56952797429975
+        ]
+      },
+      "mean_cpu_decision_ms": {
+        "difference": 179.91170586873895,
+        "ci95": [
+          176.37281771007028,
+          183.45854830443673
+        ]
+      },
+      "wall_over200_fraction": {
+        "difference": 0.495103666216161,
+        "ci95": [
+          0.48538734127116273,
+          0.5045119768897919
+        ]
+      }
+    },
+    "S8": {
+      "game_loss_fraction": {
+        "difference": -0.31499999999999995,
+        "ci95": [
+          -0.3583333333333333,
+          -0.275
+        ]
+      },
+      "game_win_fraction": {
+        "difference": 0.315,
+        "ci95": [
+          0.275,
+          0.3583333333333333
+        ]
+      },
+      "game_draw_fraction": {
+        "difference": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "arrival_under4_fraction": {
+        "difference": -0.3238023532450157,
+        "ci95": [
+          -0.33963223014389055,
+          -0.30776997744669043
+        ]
+      },
+      "defender_not_in_hand_fraction": {
+        "difference": 0.015727948304295154,
+        "ci95": [
+          0.011964707377138093,
+          0.019870178840068146
+        ]
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "difference": -0.3518639526302055,
+        "ci95": [
+          -0.36654169273362025,
+          -0.33747964158810595
+        ]
+      },
+      "time_at_max_fraction": {
+        "difference": 0.0017748101576224378,
+        "ci95": [
+          0.0013808954459349676,
+          0.0022007546292624235
+        ]
+      },
+      "leaked_elixir_lower_bound_per_minute": {
+        "difference": 0.06610036219795065,
+        "ci95": [
+          0.04952691973102482,
+          0.08415928949393764
+        ]
+      },
+      "rejected_play_fraction": {
+        "difference": 3.8648836670016234e-05,
+        "ci95": [
+          0.0,
+          0.00011829863056976769
+        ]
+      },
+      "response_latency_capped8_seconds": {
+        "difference": 0.4984782121722713,
+        "ci95": [
+          0.40841343715444,
+          0.5833364787851264
+        ]
+      },
+      "time_at_max_seconds_per_minute": {
+        "difference": 0.10648860945734627,
+        "ci95": [
+          0.08285372675609805,
+          0.1320452777557454
+        ]
+      },
+      "card_per_deck_minute:Xbow": {
+        "difference": 0.5843862340673037,
+        "ci95": [
+          0.5291160248505129,
+          0.639784318794584
+        ]
+      },
+      "card_per_deck_minute:Giant": {
+        "difference": 0.1460193692913084,
+        "ci95": [
+          0.1055074156362624,
+          0.18962903121201338
+        ]
+      },
+      "card_per_deck_minute:Rocket": {
+        "difference": 0.17737793066685703,
+        "ci95": [
+          0.1416156522467743,
+          0.21339744996872595
+        ]
+      },
+      "card_per_deck_minute:Fireball": {
+        "difference": 0.3642448218322058,
+        "ci95": [
+          0.31833572014356515,
+          0.411783506395695
+        ]
+      },
+      "card_per_deck_minute:Log": {
+        "difference": -1.729258021049676,
+        "ci95": [
+          -1.8204085288596923,
+          -1.6349402292435011
+        ]
+      },
+      "affordable_hand_fraction:Xbow": {
+        "difference": 0.14445227704452296,
+        "ci95": [
+          0.1285417959039411,
+          0.1602368131492745
+        ]
+      },
+      "affordable_hand_fraction:Giant": {
+        "difference": 0.08993943189023221,
+        "ci95": [
+          0.08166178404959494,
+          0.09799049099607202
+        ]
+      },
+      "affordable_hand_fraction:Rocket": {
+        "difference": 0.12684720643031008,
+        "ci95": [
+          0.11112802241110314,
+          0.1431560816192926
+        ]
+      },
+      "affordable_hand_fraction:Fireball": {
+        "difference": 0.3328450831646234,
+        "ci95": [
+          0.31498725291887936,
+          0.3504451701337031
+        ]
+      },
+      "affordable_hand_fraction:Log": {
+        "difference": 0.43105225155348137,
+        "ci95": [
+          0.41979878642700386,
+          0.4427361610598561
+        ]
+      },
+      "selected_given_offered_fraction:Xbow": {
+        "difference": -0.1895790463471471,
+        "ci95": [
+          -0.3016551863219992,
+          -0.08701542169955204
+        ]
+      },
+      "selected_given_offered_fraction:Giant": {
+        "difference": -0.0254356627354339,
+        "ci95": [
+          -0.07189562964916027,
+          0.013234996308676647
+        ]
+      },
+      "selected_given_offered_fraction:Rocket": {
+        "difference": 0.02961915535444947,
+        "ci95": [
+          0.0046717187965985224,
+          0.045288293038263865
+        ]
+      },
+      "selected_given_offered_fraction:Fireball": {
+        "difference": -0.03077412614495747,
+        "ci95": [
+          -0.04601336501787643,
+          -0.01585955928627806
+        ]
+      },
+      "selected_given_offered_fraction:Log": {
+        "difference": -0.2840076568335025,
+        "ci95": [
+          -0.3034460839300817,
+          -0.2652010243930842
+        ]
+      },
+      "mean_wall_decision_ms": {
+        "difference": 101.07096538098305,
+        "ci95": [
+          98.72783203839242,
+          103.42576226108794
+        ]
+      },
+      "mean_cpu_decision_ms": {
+        "difference": 101.00673607354685,
+        "ci95": [
+          98.66354903834149,
+          103.36173953016592
+        ]
+      },
+      "wall_over200_fraction": {
+        "difference": 0.18118613124974056,
+        "ci95": [
+          0.16961097947862663,
+          0.192655582766755
+        ]
+      }
+    },
+    "S8_minus_W": {
+      "game_loss_fraction": {
+        "difference": -0.0016666666666666774,
+        "ci95": [
+          -0.010000000000000009,
+          0.006666666666666682
+        ]
+      },
+      "game_win_fraction": {
+        "difference": 0.0016666666666665941,
+        "ci95": [
+          -0.00666666666666671,
+          0.010000000000000009
+        ]
+      },
+      "game_draw_fraction": {
+        "difference": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "arrival_under4_fraction": {
+        "difference": 0.00015012600280706057,
+        "ci95": [
+          -0.002963978501545872,
+          0.003443047776796651
+        ]
+      },
+      "defender_not_in_hand_fraction": {
+        "difference": -0.00018303462555178257,
+        "ci95": [
+          -0.0014582302974271567,
+          0.0008424769657031391
+        ]
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "difference": -0.0001411153084840966,
+        "ci95": [
+          -0.002602419832903899,
+          0.002178031990970458
+        ]
+      },
+      "time_at_max_fraction": {
+        "difference": -1.7286533050887322e-06,
+        "ci95": [
+          -0.00012328275347853909,
+          0.00011101262335472576
+        ]
+      },
+      "leaked_elixir_lower_bound_per_minute": {
+        "difference": 0.0004689758732710353,
+        "ci95": [
+          -0.005066435446443994,
+          0.005556334347299237
+        ]
+      },
+      "rejected_play_fraction": {
+        "difference": -1.4844752009045606e-07,
+        "ci95": [
+          -8.057149886414384e-07,
+          1.1578816443719332e-07
+        ]
+      },
+      "response_latency_capped8_seconds": {
+        "difference": 0.0004467228006781454,
+        "ci95": [
+          -0.017557114527631333,
+          0.018820567225837262
+        ]
+      },
+      "time_at_max_seconds_per_minute": {
+        "difference": -0.00010371919830531873,
+        "ci95": [
+          -0.007396965208712344,
+          0.006660757401283555
+        ]
+      },
+      "card_per_deck_minute:Xbow": {
+        "difference": -0.004416666527351065,
+        "ci95": [
+          -0.028965721601574547,
+          0.024323698021696937
+        ]
+      },
+      "card_per_deck_minute:Giant": {
+        "difference": 0.008461853041678624,
+        "ci95": [
+          0.0,
+          0.023296799036515888
+        ]
+      },
+      "card_per_deck_minute:Rocket": {
+        "difference": -0.0006369163243236386,
+        "ci95": [
+          -0.009404716540472697,
+          0.007290767096728575
+        ]
+      },
+      "card_per_deck_minute:Fireball": {
+        "difference": -0.005750585230556882,
+        "ci95": [
+          -0.023548588514587205,
+          0.010073192458524094
+        ]
+      },
+      "card_per_deck_minute:Log": {
+        "difference": -0.0006842761725887048,
+        "ci95": [
+          -0.016278127129242044,
+          0.014708880791118473
+        ]
+      },
+      "affordable_hand_fraction:Xbow": {
+        "difference": -0.0002349768296867616,
+        "ci95": [
+          -0.003675617885415279,
+          0.002679603860297543
+        ]
+      },
+      "affordable_hand_fraction:Giant": {
+        "difference": 0.0002783842993071689,
+        "ci95": [
+          -0.00021604060355382045,
+          0.0009617297823321978
+        ]
+      },
+      "affordable_hand_fraction:Rocket": {
+        "difference": 0.0006898811136013816,
+        "ci95": [
+          -0.004205550592411384,
+          0.004789615298459364
+        ]
+      },
+      "affordable_hand_fraction:Fireball": {
+        "difference": 0.0020545108896030118,
+        "ci95": [
+          -0.0005005458077985191,
+          0.0049191163677348776
+        ]
+      },
+      "affordable_hand_fraction:Log": {
+        "difference": 0.000842542087131859,
+        "ci95": [
+          -0.0007827921391793946,
+          0.002470590917404659
+        ]
+      },
+      "selected_given_offered_fraction:Xbow": {
+        "difference": -0.0007178809026926469,
+        "ci95": [
+          -0.007970806972280387,
+          0.007132535011126897
+        ]
+      },
+      "selected_given_offered_fraction:Giant": {
+        "difference": 0.0026359759108063874,
+        "ci95": [
+          -0.0002497547077381002,
+          0.007490285026019141
+        ]
+      },
+      "selected_given_offered_fraction:Rocket": {
+        "difference": 0.00015986800402699453,
+        "ci95": [
+          -0.0022727036435530173,
+          0.002498134829699522
+        ]
+      },
+      "selected_given_offered_fraction:Fireball": {
+        "difference": -0.0006908049329833812,
+        "ci95": [
+          -0.0023960645674083623,
+          0.0007829989236200046
+        ]
+      },
+      "selected_given_offered_fraction:Log": {
+        "difference": -0.000266018338486676,
+        "ci95": [
+          -0.0015376839979296731,
+          0.0009576722883060797
+        ]
+      },
+      "mean_wall_decision_ms": {
+        "difference": -78.94926238768386,
+        "ci95": [
+          -80.54936505111881,
+          -77.37940154349505
+        ]
+      },
+      "mean_cpu_decision_ms": {
+        "difference": -78.9049697951921,
+        "ci95": [
+          -80.50163348348866,
+          -77.33732340662195
+        ]
+      },
+      "wall_over200_fraction": {
+        "difference": -0.31391753496642044,
+        "ci95": [
+          -0.32318837084718843,
+          -0.30453876738550134
+        ]
+      }
+    }
+  },
+  "latency": {
+    "0": {
+      "wall": {
+        "decisions": 192853,
+        "p50_ms": 5.22673805244267,
+        "p95_ms": 343.74828157015133,
+        "p99_ms": 482.3737046960742,
+        "over200_fraction": 0.19512789533997396
+      },
+      "cpu": {
+        "decisions": 192853,
+        "p50_ms": 5.223137000029965,
+        "p95_ms": 343.54735340011734,
+        "p99_ms": 482.1264994800689,
+        "over200_fraction": 0.19502937470508624
+      }
+    },
+    "W": {
+      "wall": {
+        "decisions": 77474,
+        "p50_ms": 258.54104559402913,
+        "p95_ms": 491.3705533603205,
+        "p99_ms": 696.0733790206734,
+        "over200_fraction": 0.690231561556135
+      },
+      "cpu": {
+        "decisions": 77474,
+        "p50_ms": 258.3964105000405,
+        "p95_ms": 491.0810824501594,
+        "p99_ms": 695.6899462899787,
+        "over200_fraction": 0.6899734104344684
+      }
+    },
+    "S8": {
+      "wall": {
+        "decisions": 77624,
+        "p50_ms": 176.8167323898524,
+        "p95_ms": 330.20182310137864,
+        "p99_ms": 460.0243520946244,
+        "over200_fraction": 0.3763140265897145
+      },
+      "cpu": {
+        "decisions": 77624,
+        "p50_ms": 176.71586749997914,
+        "p95_ms": 329.97765295003774,
+        "p99_ms": 459.7431434399978,
+        "over200_fraction": 0.3757600742038545
+      }
+    }
+  },
+  "attrition": {
+    "0": {
+      "Cannon": {
+        "in_hand": 47594,
+        "affordable": 5295,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 116,
+        "baseline_absent": 116,
+        "final_absent": 116,
+        "scored_opportunities": 5179,
+        "selected": 1955,
+        "unaffordable": 42299
+      },
+      "IceSpirit": {
+        "in_hand": 6174,
+        "affordable": 4024,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 12,
+        "baseline_absent": 12,
+        "final_absent": 12,
+        "scored_opportunities": 4012,
+        "selected": 2900,
+        "unaffordable": 2150
+      },
+      "IceGolem": {
+        "in_hand": 8786,
+        "affordable": 2339,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 2339,
+        "selected": 1833,
+        "unaffordable": 6447
+      },
+      "Skeletons": {
+        "in_hand": 9641,
+        "affordable": 6276,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 8,
+        "baseline_absent": 8,
+        "final_absent": 8,
+        "scored_opportunities": 6268,
+        "selected": 5108,
+        "unaffordable": 3365
+      },
+      "HogRider": {
+        "in_hand": 53316,
+        "affordable": 1689,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 10,
+        "baseline_absent": 10,
+        "final_absent": 10,
+        "scored_opportunities": 1679,
+        "selected": 921,
+        "unaffordable": 51627
+      },
+      "Musketeer": {
+        "in_hand": 36794,
+        "affordable": 577,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 14,
+        "baseline_absent": 14,
+        "final_absent": 14,
+        "scored_opportunities": 563,
+        "selected": 178,
+        "unaffordable": 36217
+      },
+      "Fireball": {
+        "in_hand": 80449,
+        "unaffordable": 79428,
+        "affordable": 1021,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 1021,
+        "selected": 70
+      },
+      "Log": {
+        "in_hand": 33024,
+        "unaffordable": 20380,
+        "affordable": 12644,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 12,
+        "baseline_absent": 12,
+        "final_absent": 12,
+        "scored_opportunities": 12632,
+        "selected": 4783
+      },
+      "Archers": {
+        "in_hand": 13965,
+        "affordable": 2057,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 2057,
+        "selected": 1785,
+        "unaffordable": 11908
+      },
+      "ElectroSpirit": {
+        "in_hand": 6065,
+        "affordable": 3902,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 5,
+        "baseline_absent": 5,
+        "final_absent": 5,
+        "scored_opportunities": 3897,
+        "selected": 3213,
+        "unaffordable": 2163
+      },
+      "Knight": {
+        "in_hand": 24078,
+        "affordable": 3545,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 3,
+        "baseline_absent": 3,
+        "final_absent": 3,
+        "scored_opportunities": 3542,
+        "selected": 2598,
+        "unaffordable": 20533
+      },
+      "Tesla": {
+        "in_hand": 74579,
+        "affordable": 801,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 9,
+        "baseline_absent": 9,
+        "final_absent": 9,
+        "scored_opportunities": 792,
+        "selected": 274,
+        "unaffordable": 73778
+      },
+      "Xbow": {
+        "in_hand": 41397,
+        "unaffordable": 41319,
+        "affordable": 78,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 1,
+        "baseline_absent": 1,
+        "final_absent": 1,
+        "scored_opportunities": 77,
+        "selected": 27
+      },
+      "FireSpirits": {
+        "in_hand": 1871,
+        "affordable": 1127,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 2,
+        "baseline_absent": 2,
+        "final_absent": 2,
+        "scored_opportunities": 1125,
+        "selected": 878,
+        "unaffordable": 744
+      },
+      "Arrows": {
+        "in_hand": 16674,
+        "affordable": 3553,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 3553,
+        "selected": 689,
+        "unaffordable": 13121
+      },
+      "Minions": {
+        "in_hand": 8228,
+        "affordable": 1103,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 1103,
+        "selected": 872,
+        "unaffordable": 7125
+      },
+      "Wizard": {
+        "in_hand": 35864,
+        "affordable": 120,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 2,
+        "baseline_absent": 2,
+        "final_absent": 2,
+        "scored_opportunities": 118,
+        "selected": 53,
+        "unaffordable": 35744
+      },
+      "Giant": {
+        "in_hand": 37594,
+        "unaffordable": 37442,
+        "affordable": 152,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 152,
+        "selected": 12
+      },
+      "Valkyrie": {
+        "in_hand": 61710,
+        "unaffordable": 60360,
+        "affordable": 1350,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 6,
+        "baseline_absent": 6,
+        "final_absent": 6,
+        "scored_opportunities": 1344,
+        "selected": 421
+      },
+      "GoblinBarrel": {
+        "in_hand": 16787,
+        "affordable": 2076,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 2076,
+        "selected": 739,
+        "unaffordable": 14711
+      },
+      "Princess": {
+        "in_hand": 21932,
+        "unaffordable": 19624,
+        "affordable": 2308,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 14,
+        "baseline_absent": 14,
+        "final_absent": 14,
+        "scored_opportunities": 2294,
+        "selected": 563
+      },
+      "Wallbreakers": {
+        "in_hand": 5746,
+        "unaffordable": 4555,
+        "affordable": 1191,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 1191,
+        "selected": 1074
+      },
+      "SkeletonArmy": {
+        "in_hand": 15299,
+        "unaffordable": 13646,
+        "affordable": 1653,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 4,
+        "baseline_absent": 4,
+        "final_absent": 4,
+        "scored_opportunities": 1649,
+        "selected": 807
+      },
+      "RoyalDelivery": {
+        "in_hand": 15456,
+        "affordable": 2621,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 2,
+        "baseline_absent": 2,
+        "final_absent": 2,
+        "scored_opportunities": 2619,
+        "selected": 1170,
+        "unaffordable": 12835
+      },
+      "DarkPrince": {
+        "in_hand": 32547,
+        "affordable": 340,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 4,
+        "baseline_absent": 4,
+        "final_absent": 4,
+        "scored_opportunities": 336,
+        "selected": 220,
+        "unaffordable": 32207
+      },
+      "Rocket": {
+        "in_hand": 36372,
+        "unaffordable": 36270,
+        "affordable": 102,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 102,
+        "selected": 1
+      },
+      "Miner": {
+        "in_hand": 12249,
+        "unaffordable": 10284,
+        "affordable": 1965,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 1965,
+        "selected": 1320
+      }
+    },
+    "W": {
+      "Cannon": {
+        "in_hand": 19914,
+        "affordable": 7807,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 343,
+        "baseline_absent": 343,
+        "final_absent": 343,
+        "scored_opportunities": 7464,
+        "selected": 873,
+        "unaffordable": 12107
+      },
+      "IceSpirit": {
+        "in_hand": 7775,
+        "affordable": 7225,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 32,
+        "baseline_absent": 32,
+        "final_absent": 32,
+        "scored_opportunities": 7193,
+        "selected": 1712,
+        "unaffordable": 550
+      },
+      "IceGolem": {
+        "in_hand": 6368,
+        "affordable": 4710,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 32,
+        "baseline_absent": 32,
+        "final_absent": 32,
+        "scored_opportunities": 4678,
+        "selected": 799,
+        "unaffordable": 1658
+      },
+      "Skeletons": {
+        "in_hand": 11429,
+        "affordable": 10939,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 47,
+        "baseline_absent": 47,
+        "final_absent": 47,
+        "scored_opportunities": 10892,
+        "selected": 3380,
+        "unaffordable": 490
+      },
+      "HogRider": {
+        "in_hand": 11140,
+        "affordable": 3613,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 32,
+        "baseline_absent": 32,
+        "final_absent": 32,
+        "scored_opportunities": 3581,
+        "selected": 1404,
+        "unaffordable": 7527
+      },
+      "Musketeer": {
+        "in_hand": 7683,
+        "affordable": 1966,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 47,
+        "baseline_absent": 47,
+        "final_absent": 47,
+        "scored_opportunities": 1919,
+        "selected": 632,
+        "unaffordable": 5717
+      },
+      "Fireball": {
+        "in_hand": 29134,
+        "unaffordable": 19127,
+        "affordable": 10007,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 1,
+        "baseline_absent": 1,
+        "final_absent": 1,
+        "scored_opportunities": 10006,
+        "selected": 385
+      },
+      "Log": {
+        "in_hand": 27884,
+        "unaffordable": 5212,
+        "affordable": 22672,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 143,
+        "baseline_absent": 143,
+        "final_absent": 143,
+        "scored_opportunities": 22529,
+        "selected": 2138
+      },
+      "Archers": {
+        "in_hand": 4285,
+        "affordable": 2606,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 8,
+        "baseline_absent": 8,
+        "final_absent": 8,
+        "scored_opportunities": 2598,
+        "selected": 1213,
+        "unaffordable": 1679
+      },
+      "ElectroSpirit": {
+        "in_hand": 8506,
+        "affordable": 8235,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 38,
+        "baseline_absent": 38,
+        "final_absent": 38,
+        "scored_opportunities": 8197,
+        "selected": 2373,
+        "unaffordable": 271
+      },
+      "Knight": {
+        "in_hand": 11450,
+        "affordable": 6471,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 24,
+        "baseline_absent": 24,
+        "final_absent": 24,
+        "scored_opportunities": 6447,
+        "selected": 1703,
+        "unaffordable": 4979
+      },
+      "Tesla": {
+        "in_hand": 21720,
+        "affordable": 7962,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 144,
+        "baseline_absent": 144,
+        "final_absent": 144,
+        "scored_opportunities": 7818,
+        "selected": 1308,
+        "unaffordable": 13758
+      },
+      "Xbow": {
+        "in_hand": 14423,
+        "unaffordable": 12309,
+        "affordable": 2114,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 235,
+        "baseline_absent": 235,
+        "final_absent": 235,
+        "scored_opportunities": 1879,
+        "selected": 304
+      },
+      "FireSpirits": {
+        "in_hand": 2396,
+        "affordable": 2198,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 9,
+        "baseline_absent": 9,
+        "final_absent": 9,
+        "scored_opportunities": 2189,
+        "selected": 698,
+        "unaffordable": 198
+      },
+      "Arrows": {
+        "in_hand": 9361,
+        "affordable": 4717,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 4717,
+        "selected": 336,
+        "unaffordable": 4644
+      },
+      "Minions": {
+        "in_hand": 3342,
+        "affordable": 1552,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 3,
+        "baseline_absent": 3,
+        "final_absent": 3,
+        "scored_opportunities": 1549,
+        "selected": 694,
+        "unaffordable": 1790
+      },
+      "Wizard": {
+        "in_hand": 9061,
+        "affordable": 831,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 13,
+        "baseline_absent": 13,
+        "final_absent": 13,
+        "scored_opportunities": 818,
+        "selected": 305,
+        "unaffordable": 8230
+      },
+      "Giant": {
+        "in_hand": 12977,
+        "unaffordable": 11761,
+        "affordable": 1216,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 17,
+        "baseline_absent": 17,
+        "final_absent": 17,
+        "scored_opportunities": 1199,
+        "selected": 61
+      },
+      "Valkyrie": {
+        "in_hand": 20626,
+        "unaffordable": 17014,
+        "affordable": 3612,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 38,
+        "baseline_absent": 38,
+        "final_absent": 38,
+        "scored_opportunities": 3574,
+        "selected": 526
+      },
+      "GoblinBarrel": {
+        "in_hand": 6255,
+        "affordable": 2744,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 2744,
+        "selected": 679,
+        "unaffordable": 3511
+      },
+      "Princess": {
+        "in_hand": 7680,
+        "unaffordable": 5065,
+        "affordable": 2615,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 17,
+        "baseline_absent": 17,
+        "final_absent": 17,
+        "scored_opportunities": 2598,
+        "selected": 519
+      },
+      "Wallbreakers": {
+        "in_hand": 3357,
+        "unaffordable": 1327,
+        "affordable": 2030,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 6,
+        "baseline_absent": 6,
+        "final_absent": 6,
+        "scored_opportunities": 2024,
+        "selected": 864
+      },
+      "SkeletonArmy": {
+        "in_hand": 5597,
+        "unaffordable": 3664,
+        "affordable": 1933,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 9,
+        "baseline_absent": 9,
+        "final_absent": 9,
+        "scored_opportunities": 1924,
+        "selected": 705
+      },
+      "RoyalDelivery": {
+        "in_hand": 11197,
+        "affordable": 7228,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 85,
+        "baseline_absent": 85,
+        "final_absent": 85,
+        "scored_opportunities": 7143,
+        "selected": 552,
+        "unaffordable": 3969
+      },
+      "DarkPrince": {
+        "in_hand": 5873,
+        "affordable": 2012,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 20,
+        "baseline_absent": 20,
+        "final_absent": 20,
+        "scored_opportunities": 1992,
+        "selected": 978,
+        "unaffordable": 3861
+      },
+      "Rocket": {
+        "in_hand": 15997,
+        "unaffordable": 13934,
+        "affordable": 2063,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 2063,
+        "selected": 81
+      },
+      "Miner": {
+        "in_hand": 8410,
+        "unaffordable": 2653,
+        "affordable": 5757,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 5757,
+        "selected": 836
+      }
+    },
+    "S8": {
+      "Cannon": {
+        "in_hand": 19873,
+        "affordable": 7819,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 353,
+        "baseline_absent": 353,
+        "final_absent": 353,
+        "scored_opportunities": 7466,
+        "selected": 868,
+        "unaffordable": 12054
+      },
+      "IceSpirit": {
+        "in_hand": 7670,
+        "affordable": 7124,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 31,
+        "baseline_absent": 31,
+        "final_absent": 31,
+        "scored_opportunities": 7093,
+        "selected": 1714,
+        "unaffordable": 546
+      },
+      "IceGolem": {
+        "in_hand": 6349,
+        "affordable": 4707,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 33,
+        "baseline_absent": 33,
+        "final_absent": 33,
+        "scored_opportunities": 4674,
+        "selected": 796,
+        "unaffordable": 1642
+      },
+      "Skeletons": {
+        "in_hand": 11483,
+        "affordable": 11000,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 50,
+        "baseline_absent": 50,
+        "final_absent": 50,
+        "scored_opportunities": 10950,
+        "selected": 3406,
+        "unaffordable": 483
+      },
+      "HogRider": {
+        "in_hand": 11123,
+        "affordable": 3620,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 34,
+        "baseline_absent": 34,
+        "final_absent": 34,
+        "scored_opportunities": 3586,
+        "selected": 1394,
+        "unaffordable": 7503
+      },
+      "Musketeer": {
+        "in_hand": 7691,
+        "affordable": 1969,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 50,
+        "baseline_absent": 50,
+        "final_absent": 50,
+        "scored_opportunities": 1919,
+        "selected": 625,
+        "unaffordable": 5722
+      },
+      "Fireball": {
+        "in_hand": 29337,
+        "unaffordable": 19200,
+        "affordable": 10137,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 1,
+        "baseline_absent": 1,
+        "final_absent": 1,
+        "scored_opportunities": 10136,
+        "selected": 383
+      },
+      "Log": {
+        "in_hand": 28064,
+        "unaffordable": 5222,
+        "affordable": 22842,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 144,
+        "baseline_absent": 144,
+        "final_absent": 144,
+        "scored_opportunities": 22698,
+        "selected": 2148
+      },
+      "Archers": {
+        "in_hand": 4327,
+        "affordable": 2664,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 10,
+        "baseline_absent": 10,
+        "final_absent": 10,
+        "scored_opportunities": 2654,
+        "selected": 1237,
+        "unaffordable": 1663
+      },
+      "ElectroSpirit": {
+        "in_hand": 8549,
+        "affordable": 8281,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 39,
+        "baseline_absent": 39,
+        "final_absent": 39,
+        "scored_opportunities": 8242,
+        "selected": 2406,
+        "unaffordable": 268
+      },
+      "Knight": {
+        "in_hand": 11455,
+        "affordable": 6480,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 24,
+        "baseline_absent": 24,
+        "final_absent": 24,
+        "scored_opportunities": 6456,
+        "selected": 1732,
+        "unaffordable": 4975
+      },
+      "Tesla": {
+        "in_hand": 21935,
+        "affordable": 8054,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 152,
+        "baseline_absent": 152,
+        "final_absent": 152,
+        "scored_opportunities": 7902,
+        "selected": 1316,
+        "unaffordable": 13881
+      },
+      "Xbow": {
+        "in_hand": 14658,
+        "unaffordable": 12513,
+        "affordable": 2145,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 239,
+        "baseline_absent": 239,
+        "final_absent": 239,
+        "scored_opportunities": 1906,
+        "selected": 307
+      },
+      "FireSpirits": {
+        "in_hand": 2399,
+        "affordable": 2201,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 9,
+        "baseline_absent": 9,
+        "final_absent": 9,
+        "scored_opportunities": 2192,
+        "selected": 694,
+        "unaffordable": 198
+      },
+      "Arrows": {
+        "in_hand": 9352,
+        "affordable": 4709,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 4709,
+        "selected": 332,
+        "unaffordable": 4643
+      },
+      "Minions": {
+        "in_hand": 3330,
+        "affordable": 1551,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 3,
+        "baseline_absent": 3,
+        "final_absent": 3,
+        "scored_opportunities": 1548,
+        "selected": 692,
+        "unaffordable": 1779
+      },
+      "Wizard": {
+        "in_hand": 9049,
+        "affordable": 828,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 14,
+        "baseline_absent": 14,
+        "final_absent": 14,
+        "scored_opportunities": 814,
+        "selected": 303,
+        "unaffordable": 8221
+      },
+      "Giant": {
+        "in_hand": 12896,
+        "unaffordable": 11684,
+        "affordable": 1212,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 16,
+        "baseline_absent": 16,
+        "final_absent": 16,
+        "scored_opportunities": 1196,
+        "selected": 64
+      },
+      "Valkyrie": {
+        "in_hand": 20579,
+        "unaffordable": 16975,
+        "affordable": 3604,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 39,
+        "baseline_absent": 39,
+        "final_absent": 39,
+        "scored_opportunities": 3565,
+        "selected": 523
+      },
+      "GoblinBarrel": {
+        "in_hand": 6237,
+        "affordable": 2725,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 2725,
+        "selected": 677,
+        "unaffordable": 3512
+      },
+      "Princess": {
+        "in_hand": 7658,
+        "unaffordable": 5053,
+        "affordable": 2605,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 18,
+        "baseline_absent": 18,
+        "final_absent": 18,
+        "scored_opportunities": 2587,
+        "selected": 515
+      },
+      "Wallbreakers": {
+        "in_hand": 3347,
+        "unaffordable": 1320,
+        "affordable": 2027,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 6,
+        "baseline_absent": 6,
+        "final_absent": 6,
+        "scored_opportunities": 2021,
+        "selected": 863
+      },
+      "SkeletonArmy": {
+        "in_hand": 5573,
+        "unaffordable": 3648,
+        "affordable": 1925,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 8,
+        "baseline_absent": 8,
+        "final_absent": 8,
+        "scored_opportunities": 1917,
+        "selected": 703
+      },
+      "RoyalDelivery": {
+        "in_hand": 11198,
+        "affordable": 7217,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 83,
+        "baseline_absent": 83,
+        "final_absent": 83,
+        "scored_opportunities": 7134,
+        "selected": 558,
+        "unaffordable": 3981
+      },
+      "DarkPrince": {
+        "in_hand": 5882,
+        "affordable": 2019,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 20,
+        "baseline_absent": 20,
+        "final_absent": 20,
+        "scored_opportunities": 1999,
+        "selected": 982,
+        "unaffordable": 3863
+      },
+      "Rocket": {
+        "in_hand": 16043,
+        "unaffordable": 13963,
+        "affordable": 2080,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 2080,
+        "selected": 82
+      },
+      "Miner": {
+        "in_hand": 8409,
+        "unaffordable": 2636,
+        "affordable": 5773,
+        "masked_all": 0,
+        "generation_dropped": 0,
+        "reduction_dropped": 0,
+        "baseline_absent": 0,
+        "final_absent": 0,
+        "scored_opportunities": 5773,
+        "selected": 842
+      }
+    }
+  },
+  "wait_counts": {
+    "0": {
+      "0": 35216,
+      "10": 13751
+    },
+    "W": {
+      "0": 26723,
+      "40": 35195,
+      "20": 7257,
+      "10": 8299
+    },
+    "S8": {}
+  },
+  "queue_diagnostics": {
+    "0": {
+      "channel": {
+        "submitted": 35216,
+        "executed": 34937,
+        "rejected": 0,
+        "blocked_polls": 70143,
+        "pending_at_end": 279
+      },
+      "opponent_channel": {
+        "submitted": 35237,
+        "executed": 34949,
+        "rejected": 1,
+        "blocked_polls": 70157,
+        "pending_at_end": 288
+      }
+    },
+    "W": {
+      "channel": {
+        "submitted": 26723,
+        "executed": 26436,
+        "rejected": 1,
+        "blocked_polls": 165911,
+        "pending_at_end": 287
+      },
+      "opponent_channel": {
+        "submitted": 30809,
+        "executed": 30526,
+        "rejected": 2,
+        "blocked_polls": 61325,
+        "pending_at_end": 283
+      }
+    },
+    "S8": {
+      "channel": {
+        "submitted": 26826,
+        "executed": 26535,
+        "rejected": 1,
+        "blocked_polls": 166286,
+        "pending_at_end": 291
+      },
+      "opponent_channel": {
+        "submitted": 30904,
+        "executed": 30615,
+        "rejected": 2,
+        "blocked_polls": 61511,
+        "pending_at_end": 289
+      }
+    }
+  },
+  "completed_game_cpu_seconds": 104593.40940756304,
+  "supplementary_WW": {
+    "paired_seeds": 0,
+    "descriptive": true
+  },
+  "validation": {
+    "all_terminal": true,
+    "matching_seed_seat_shuffled_decks": true,
+    "both_channels_delay27_capacity1": true,
+    "rejected_commands_retained": true,
+    "five_decks_25_matchups_balanced_seats": true
+  },
+  "limitations": [
+    "fixed-work simulation, public reconstruction and scripted rollout futures",
+    "bootstrap CIs pointwise and unadjusted",
+    "loaded SCHED_IDLE wall timing is not live qualification",
+    "screen8 reference adapter does not tally wait_counts; its empty tally is not zero WAITs"
+  ],
+  "pass_criterion_met": true
+}

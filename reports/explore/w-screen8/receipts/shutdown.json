@@ -1,0 +1,31 @@
+{
+  "time": 1791521538.316579,
+  "processes": [
+    {
+      "phase": "smoke",
+      "role": "supervisor",
+      "pid": 1273938,
+      "alive": false
+    },
+    {
+      "phase": "smoke",
+      "role": "child",
+      "pid": 1273941,
+      "alive": false
+    },
+    {
+      "phase": "reporting",
+      "role": "supervisor",
+      "pid": 1286689,
+      "alive": false
+    },
+    {
+      "phase": "reporting",
+      "role": "child",
+      "pid": 1286703,
+      "alive": false
+    }
+  ],
+  "leftover_simulation_workers": [],
+  "all_lane_jobs_exited": true
+}

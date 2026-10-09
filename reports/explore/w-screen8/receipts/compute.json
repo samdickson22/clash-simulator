@@ -1,0 +1,46 @@
+{
+  "host": "127x03",
+  "peak_combined": 58,
+  "peak_own": 54,
+  "census_samples": 156,
+  "all_sampled_own_workers_nice10_sched_idle": true,
+  "exits": {
+    "smoke": {
+      "returncode": 0,
+      "stopping": false,
+      "time": 1791519247.5814183
+    },
+    "reporting": {
+      "returncode": 0,
+      "stopping": false,
+      "time": 1791521427.7039235
+    }
+  },
+  "reporting_receipt": {
+    "games": 1800,
+    "fresh": 1800,
+    "cpu_seconds": 104593.409407563,
+    "wall_seconds": 2139.9581522380468,
+    "terminal": true
+  },
+  "smoke_receipt": {
+    "games": 6,
+    "fresh": 6,
+    "cpu_seconds": 430.5257767,
+    "wall_seconds": 163.26476838998497,
+    "terminal": true
+  },
+  "raw_root": "/mpac/sdicks02/jobs/clasher/w-screen8-20261009-r1",
+  "cache_root": "/mpac/sdicks02/jobs/clasher/w-screen8-20261009-r1/cache",
+  "setsid": true,
+  "no_leased_hosts": true,
+  "no_heavy_05": true,
+  "first_smoke_attempt": {
+    "games": 0,
+    "reason": "launcher shell classified as a worker; corrected"
+  },
+  "limitations": [
+    "15-second process census; transient setup/read helpers can occur between samples",
+    "completed-game CPU excludes startup, builds, qualification and technical attempts"
+  ]
+}
