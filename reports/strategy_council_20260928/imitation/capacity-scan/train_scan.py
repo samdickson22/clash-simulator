@@ -48,6 +48,7 @@ def main():
     p.add_argument('--inputs', required=True)
     p.add_argument('--output', required=True)
     p.add_argument('--resume')
+    p.add_argument('--resume-sha256')
     a = p.parse_args()
     freeze = json.loads(Path(a.freeze).read_text())
     c = json.loads(Path(a.config).read_text())
@@ -85,7 +86,10 @@ def main():
     sampling.qualified_loader = lambda s, *args, **kw: original_loader(s, *args, **{**kw, 'workers': c['loader_workers']})
     observed = {'rows': 0, 'step': 0}
     if a.resume:
-        assert c['width'] == 192 and sha(a.resume) == freeze['control_resume_sha256']
+        expected_resume = a.resume_sha256 or (freeze['control_resume_sha256'] if c['width']==192 else None)
+        assert expected_resume and sha(a.resume) == expected_resume
+        if c['width'] != 192:
+            assert Path(a.resume).resolve().parent == output.resolve(), 'resume only own arm checkpoint'
         resumed = torch.load(a.resume, map_location='cpu', weights_only=True)
         observed.update(rows=resumed['state']['rows'], step=resumed['state']['step'])
         del resumed
@@ -101,6 +105,9 @@ def main():
                              ('model', 'ema', 'optimizer', 'scheduler', 'config', 'state', 'hashes', 'args')})
         finally:
             del frame
+        if not done and captured['state']['rows'] >= target:
+            assert captured['state']['rows'] == freeze['first_batch_matched_rows']
+            measure_quarter()
         return original_step(*args, **kwargs)
 
     q.optimizer_step = step
@@ -111,54 +118,66 @@ def main():
         return original_save(path, model, ema, optimizer, scheduler, config, state, hashes, args)
 
     q.save_checkpoint = save
-    done = (output/'quarter.json').exists()
+    done = (output/'kill-decision.json').exists()
+    if done:
+        assert not json.loads((output/'kill-decision.json').read_text())['killed'], 'scientifically killed arms must not resume'
+    if c['width']==192 and (output/'quarter.json').exists():
+        raise ValueError('control quarter already complete; do not repeat')
+
+    def measure_quarter():
+        nonlocal done
+        assert captured and captured['state']['rows'] == observed['rows']
+        state = captured['state']
+        if (output/'quarter.json').exists():
+            quarter=json.loads((output/'quarter.json').read_text())
+            assert quarter['rows']==state['rows'] and quarter['config_sha256']==sha(a.config)
+            nll=quarter['ema_joint_nll']
+        else:
+            save(output/f"quarter-step-{state['step']:08d}.pt", **captured)
+            rng = (torch.get_rng_state(), torch.cuda.get_rng_state_all(),
+                   np.random.get_state(), random.getstate())
+            was_training = captured['model'].training
+            dev = ScanStore(store/'dev', 'dev', inputs/'assets.npz')
+            before = time.monotonic()
+            try:
+                nll = runner.dev_joint_nll(captured['model'], captured['ema'], dev,
+                                          torch.device('cuda'), 1024, workers=1)
+            finally:
+                captured['model'].train(was_training)
+                torch.set_rng_state(rng[0]); torch.cuda.set_rng_state_all(rng[1])
+                np.random.set_state(rng[2]); random.setstate(rng[3])
+            quarter = dict(width=c['width'], rows=state['rows'], step=state['step'],
+                           scheduled_rows=freeze['scheduled_rows'], ema_joint_nll=nll,
+                           dev_rows=len(dev), dev_seconds=time.monotonic()-before,
+                           at=datetime.now(timezone.utc).isoformat(), config_sha256=sha(a.config))
+            write(output/'quarter.json', quarter)
+        done = True
+        if c['width'] == 192:
+            write(output/'scan-exit.json', dict(status='control_replay_complete', **quarter))
+            raise ScanExit()
+        control_path = output.parent/'control-quarter.json'
+        while not control_path.exists():
+            if (output.parent.parent/'STOP').exists():
+                raise ScanExit('preempted_waiting_control')
+            time.sleep(5)
+        control = json.loads(control_path.read_text())
+        assert control['width'] == 192 and control['rows'] == quarter['rows']
+        gain = control['ema_joint_nll'] - nll
+        killed = gain < 0.005
+        write(output/'kill-decision.json', dict(killed=killed, gain=gain,
+              threshold=0.005, control=control, arm=quarter))
+        if killed:
+            write(output/'scan-exit.json', dict(status='killed_dev_gain', **quarter, gain=gain))
+            raise ScanExit()
 
     def loader(s, *args, **kwargs):
-        nonlocal done
         for b, y in sampling.train_loader(s, *args, **kwargs):
             yield b, y
             # qualified.main has updated optimizer, EMA, cursor and log here.
             observed['rows'] += len(y['action'])
             observed['step'] += 1
             if not done and observed['rows'] >= target:
-                assert captured and captured['state']['rows'] == observed['rows']
-                state = captured['state']
-                save(output/f"quarter-step-{state['step']:08d}.pt", **captured)
-                rng = (torch.get_rng_state(), torch.cuda.get_rng_state_all(),
-                       np.random.get_state(), random.getstate())
-                was_training = captured['model'].training
-                dev = ScanStore(store/'dev', 'dev', inputs/'assets.npz')
-                before = time.monotonic()
-                try:
-                    nll = runner.dev_joint_nll(captured['model'], captured['ema'], dev,
-                                              torch.device('cuda'), 1024, workers=1)
-                finally:
-                    captured['model'].train(was_training)
-                    torch.set_rng_state(rng[0]); torch.cuda.set_rng_state_all(rng[1])
-                    np.random.set_state(rng[2]); random.setstate(rng[3])
-                quarter = dict(width=c['width'], rows=state['rows'], step=state['step'],
-                               scheduled_rows=freeze['scheduled_rows'], ema_joint_nll=nll,
-                               dev_rows=len(dev), dev_seconds=time.monotonic()-before,
-                               at=datetime.now(timezone.utc).isoformat(), config_sha256=sha(a.config))
-                write(output/'quarter.json', quarter)
-                done = True
-                if c['width'] == 192:
-                    write(output/'scan-exit.json', dict(status='control_replay_complete', **quarter))
-                    raise ScanExit()
-                control_path = output.parent/'control-quarter.json'
-                while not control_path.exists():
-                    if (output.parent/'STOP').exists():
-                        raise ScanExit('preempted_waiting_control')
-                    time.sleep(5)
-                control = json.loads(control_path.read_text())
-                assert control['width'] == 192 and control['rows'] == quarter['rows']
-                gain = control['ema_joint_nll'] - nll
-                killed = gain < 0.005
-                write(output/'kill-decision.json', dict(killed=killed, gain=gain,
-                      threshold=0.005, control=control, arm=quarter))
-                if killed:
-                    write(output/'scan-exit.json', dict(status='killed_dev_gain', **quarter, gain=gain))
-                    raise ScanExit()
+                measure_quarter()
 
     q.batch_loader = loader
     argv = ['scan', '--store', str(store/'train'), '--dev', str(store/'dev'),

@@ -6,7 +6,7 @@
     "384": "1e24eae893b29731efeb5ae1dd30f401b889dbb24562329b923ff7115a6e0406",
     "480": "52a168b92d30e5850fe505b23227ce60207c8f003cdbeec0e3f83b8a497f4151"
   },
-  "adapter_sha256": "56d132b3633df6ea6fdbe063bfe832417fef39ddc445bf93aab680a2c15ae7bd",
+  "adapter_sha256": "e82ca22fe1eb5f3df3dd2ed1b2bfcac48182212d4cfdc417a8314795e7b0e174",
   "T11_manifest_sha256": "a4801df32d4a546ed7df07faf070a138d4075cf4db6c193d38373f9194ff2e44",
   "scheduled_rows": 380571633,
   "quarter_target_rows": 95142909,
@@ -23,5 +23,6 @@
   },
   "stop_at": "2026-10-11T03:30:00Z",
   "gpu_hours_cap": 40,
-  "kill_gain_below": 0.005
+  "kill_gain_below": 0.005,
+  "operational_resume_amendment": "AMENDMENT-resume-before-fit.md"
 }
