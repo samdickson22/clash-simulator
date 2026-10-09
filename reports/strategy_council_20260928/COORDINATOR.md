@@ -940,3 +940,8 @@ Also on the hub, but with copies elsewhere:
   - **CPU qualification:** 45 tests passed and scores are exact. A production-constructor smoke run gave 20/20 four-root non-flat decisions.
   - **The original 440 inputs:** all were one-tick terminal (296 losses, 144 draws).
   - **L2-v4 freeze must pin:** public_tower_model, perf-scorer, vectorized_decoder and blocking_queues flags; the authenticated selected body_threshold; source and native identity; **corrected non-terminal Mac latency**; and a **revalidated total delay**. MPS/E4/P4 qualification is still pending and needs the Mac.
+- **~01:25 UTC: v4 capture-clock options** (`l1/CLOCK-OPTIONS.md`).
+  - **Costs:** A (full standalone remeasurement) is ~192–198 GPU-hours for the body stage alone, which rules it out. B (prospective validation-selection amendment: modeled FIFO `available_hat = max(production, prev) + service_hat`, calibrated on 8 calibration + 8 test matches, 29.7k frames) is ~54 GPU-hours, with A as fallback.
+  - **Unchanged:** heldout availability stays **measured** in the selected runtime; the 95/95 and 90/90 gates are unchanged; no modeled clocks go into `noise-measured.json`.
+  - **Independent Opus review launched** (admissibility, model specification, minimum sample, fallback criterion). No fit or selection until the amendment is frozen.
+  - **GPUs after 05:00Z:** perception gets 02 and 08; lending 01/04 by pausing T11 will be decided after the review.
