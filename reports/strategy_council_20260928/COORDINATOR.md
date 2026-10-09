@@ -1561,3 +1561,4 @@ Also on the hub, but with copies elsewhere:
   - **Student fits are running:** S-mix on 01 and S-teacher on 04 (corpus `1c8e1f49`, init v1).
   - S-human was refused on 09 by the old wrapper's hard-coded Oct 9 deadline. Fix: a versioned wrapper with the Oct 11 deadline, or the fallback of 08 with a stop file.
   - The A1 dry run moved to r5, in-memory buffering after authenticated reads under the lock (orchestration only; byte-identical on a real 15.9 MB stream), because r4's stream locks serialized parsing.
+- **20:03 UTC: student fits loader-starved** (S-mix step 24, S-human 29, S-teacher 91 of 4,883 at ~20:02Z), from random mmap gathers on the 244 GB human store. **Decision:** apply T11's proven loader6 operational pattern with exact sample order preserved, at a safe point, under an operational amendment. Target ≥6k rows/s.
