@@ -1257,3 +1257,4 @@ Also on the hub, but with copies elsewhere:
   - The live RustPlanner stays default OFF, with a recommended ON profile and a Mac E4 measurement plan in RESULTS.md.
   - A read-only /proc audit across 01/02/03/04/05/08/09/13/14/15/16 found no running job mapping the checkout native library or planner config, so gate (c), T11 and capture are unaffected.
   - 08r2 and 09r2 capture lanes are now running.
+- **05:10 UTC heartbeat.** Sampled GPU averages: capture at **99% on 04/08/09/13/14/15** (08 joined after the GRU pause, and 09 recovered). T11: 01 74% and 16 39% sampled, both at ~12k rows/s step rate. 02 is at 0%, waiting for gate (c), ETA ~05:45Z. Home usage is 3.5 GB. 06/07/11/18 are down. Seven GPUs are productive, plus 02 pending.
