@@ -1199,3 +1199,9 @@ Also on the hub, but with copies elsewhere:
   - Next: A15, then the R13-3 audit.
 - **04:26 UTC:** the native engine baseline is committed (`f9d3b454`): the quick-wins GIL release and Resources cache, plus delay_commands. The fresh gil-v3 library is byte-identical to the w-confirm build48 reference (`71826488…`). 47 tests pass, and 1,000 games / 7,000 rollouts plus 1,000 d27 roots are exact. The W-screen8 native extension is building on top. The outcome check is at 483/1,800 games.
 - **04:29 UTC: 04:29Z exploration backstop ran.** Fresh manifests from 09/13/14/15/16 contained only capture-queue jobs (and nothing on 16). Nothing was stopped: no exploration processes remain. All clasher processes are at nice 10; counts are ≤16; clasher PSS is 13.5 GB on 09/13/14/15 and 29.6 GB on 16. Receipt: `fleet/lease/lease-stop-backstop-20261009.json`.
+- **04:32 UTC:** W-screen8 native implementation committed (`59454e1a`, on top of `f9d3b454`).
+  - The `wait_screen8` flag defaults OFF in the C56/S6 teacher path and in the live RustPlanner.
+  - OFF: 250 checks against the baseline on the 125 states (d0 and d27) are exact.
+  - ON: 125/125 choices and scores match the frozen screen8 corpus, and the expired-deadline fallback works. 51 tests pass.
+  - The library is `06d8e539…`. The outcome check is still running.
+  - The flag is adopted once the outcome check passes its +3 pp gate.
