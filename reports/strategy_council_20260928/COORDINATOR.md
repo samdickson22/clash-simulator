@@ -1140,3 +1140,8 @@ Also on the hub, but with copies elsewhere:
     - **Action:** asked roader for ≤60 GB on 16 for this job only.
     - Told the T11 owner to relaunch from step-00025591 under whichever cap comes first: 60 GB if approved, or a trimmed loader under 46 GB.
 - **03:10 UTC:** roader APPROVED PSS ≤60 GB on 16 for the T11 seed 21 job only. The T11 owner was told to relaunch exact-resume from step-00025591 with loader6 unchanged.
+- **03:15 UTC:** progress on capture and exploration.
+  - **Whole-match qualification PASS** (`whole-match-qualification-complete-r1.json` `c6367310…`): e7 full 444 frames and dense e15 full 796 frames, all 9 branches, 11,160 rows, byte-exact. 34 queue tests pass.
+  - The cutover to the match queue is under way, prioritizing e15/22/23. The packing sweep on 04 is next.
+  - **Decision:** when the GRU exits at 05:00Z, 08 joins the capture queue. The single-tenant deciding window opens only after 24/24 capture plus A1/A2/B.
+  - **Delay-fixes controls are complete:** 12,500 games, all shards exit 0. The final report is being reduced.
