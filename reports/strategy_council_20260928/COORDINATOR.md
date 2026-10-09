@@ -923,3 +923,7 @@ Also on the hub, but with copies elsewhere:
   - **Perception amendment 11:** capture-clock attribution (`l1/amendments/11-capture-clock-attribution-20261009.md`), with a clock-correctness HOLD in the continuation prompts. Old grids can't be authorized.
   - **Live selection contract:** `l1/LIVE-SELECTION-CONTRACT.md`. The live wrapper takes a separately authenticated selection object and refuses when it's missing.
   - **New wrapper-v2 defect:** a SIGTERM to a supervisor didn't stop its child. Hotfix r2 delegated (Sol): signal forwarding to the child process group, grace then kill, receipts, and verification of the 04:30Z/05:00Z stop path, plus an operator procedure for jobs already running under r1, before the lease cutoff.
+- **~01:10 UTC: Mac runtime suite is fully invalid as search evidence.** In a Linux CPU causal replay of all 440 recorded active-search inputs, the **original pixel-packet roots become terminal after one native tick in 440/440 cases**: 296 losses with the own King missing, the rest spurious draws/wins.
+  - So the 2026-10-08 runtime suite exercised **no** non-terminal search. Its timings remain only historical measurements of the fallback path, and E4 / pipeline latency must be re-measured after the fix.
+  - Opt-in public tower reconciliation cuts terminal roots to 3/440, all with explicit pixel HP=0 evidence.
+  - **Unaffected:** S5/S6 sim results (native state, not pixel packets) and Mac build48 identity.
