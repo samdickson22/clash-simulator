@@ -1285,3 +1285,9 @@ Also on the hub, but with copies elsewhere:
 - **06:10 UTC heartbeat.** Capture at 99% on 04/08/09/13/14/15. T11: 01 40% and 16 82% sampled; both were at ~12k rows/s earlier. 02 is at 0%. **Gate (c) is overrunning:** about 865/1,792 game files after 5h55m (estimate was 3–4 h); it's alive, with resources.jsonl updating at 06:09:56Z; projected finish ~12:30Z. Its frozen co-tenancy rule keeps 02's GPU idle until then. Accepted; not interrupting a frozen gate. No pending requests. 06/07/11/18 are down.
 - **06:10 UTC: decision.** Because gate (c) locks 02 until ~12:30Z, the vectorized A/B benchmark (≥15% gate) and the R13-3 full-load recapture move to **04**, at a controller-safe drain. That's about 30–40 min of one GPU and unblocks a possible speedup plus an A1 prerequisite. Queue at 06:10Z: 98 verified, 40 claimed, 815 pending. The R13-3 e1/708 reference copy is authenticated against the original.
 - **06:11 UTC: decision.** Frozen A15 requires R13-3 on 2 distinct leased hosts with 2 cells each; it rejects 04. **Keeping the original requirement, with no new amendment.** The audit runs on 13 and 14 through a controller-safe drain of 1–2 production lanes per host, which frees declared slots within 16. Those lanes are restored afterwards. 04 is draining (SIGUSR2 at 06:11:09Z) for the vectorized A/B benchmark only.
+- **06:34 UTC: risk to the critical path.** The validation-cache services on 02/08 hard-stop at **12:00Z**, and capture clients bind to them at supervisor startup.
+  - **Decision:**
+    - Authenticated replacement services on **03** (primary) and 08. No new process on 02 while gate (c) runs.
+    - Clients hand off only at controller-safe restarts (09r3, 15r4, 04 post-benchmark, then 13/14/08), at most 2 hosts draining at a time.
+    - **Every client is bound to a renewed service by 11:30Z.**
+  - Queue: 119 verified, 34 claimed, 799 pending.
