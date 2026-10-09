@@ -1513,3 +1513,8 @@ Also on the hub, but with copies elsewhere:
   - **§5 mechanical check** (`90728bde…`): items 1, 2, 5 and 7 PASS; item 3 is partial (worker and qualifier pinned); items 4 and 6 are covered by the real-file run.
   - **CONDITIONAL APPROVE_EVIDENCE_REPLACEMENT issued** (`64b1ebe4…`, copied to 04): void unless the real-file `verify_replacement_evidence` on 04 passes, and A1 is barred until I record the condition as satisfied.
   - **New:** all 61 retained-terminal matches (44 e06 + 17 e14) are 02-only. A decision follows.
+- **10:48 UTC: A1 coverage receipt** `4d86c27a`.
+  - Leased queue outputs: 587 relocated to 03 and 44 to 04.
+  - **404 retained-original matches on leased 09/13/14/15** still need owned archival; inventory-pinned copies to 03 are approved.
+  - The 61 02-only retained matches have no known mirror, so they're being recaptured.
+  - A18 scope: retained/audit/metadata routing, R16-1 enforcement, and the 61-match retirement plus recapture admission.
