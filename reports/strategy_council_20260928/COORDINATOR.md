@@ -927,3 +927,4 @@ Also on the hub, but with copies elsewhere:
   - So the 2026-10-08 runtime suite exercised **no** non-terminal search. Its timings remain only historical measurements of the fallback path, and E4 / pipeline latency must be re-measured after the fix.
   - Opt-in public tower reconciliation cuts terminal roots to 3/440, all with explicit pixel HP=0 evidence.
   - **Unaffected:** S5/S6 sim results (native state, not pixel packets) and Mac build48 identity.
+- **~01:15 UTC: a second latent live-runtime bug.** 19/440 logged own hands contain the literal HUD sentinel `'empty'`. Native scripts index card metadata by that string and would panic once a rollout reaches our own decision; the instant-terminal roots had hidden it. Fix in the guarded public-root wrapper: canonicalize known empty sentinels to None and reject other unsupported names before native scoring, keeping raw logs. Scorer config-cache: 1,000/1,000 payloads byte-equal.
