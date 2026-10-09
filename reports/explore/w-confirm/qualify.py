@@ -115,6 +115,7 @@ def verify(rows, out):
                     27,27,1,1,160,10,10,1.,True,False,True)
                 v, ev, ref = reference(root,seat,a,style,160)
                 assert value == v and events == ev and sim.digest() == ref.digest(), (row['id'], a, style)
+                assert sim.snapshot() == ref.snapshot(), ('full-state',row['id'],a,style)
                 checks.append(dict(id=row['id'], action=a, style=style, score=value, digest=sim.digest()))
         kw = dict(backend='native',seed=11,native=run.R.native,native_config=run.R.config,
                   config=C56SearchConfig(threads=1),command_delay=27,delay_aware=True,catalog=run.CAT)
@@ -131,6 +132,7 @@ def verify(rows, out):
         assert a == c and old.last['scores'] == optimized.last['scores'], ('native-original-W',row['id'])
         assert root.digest() == row['root_digest']
     (out/'qualification.json').write_text(json.dumps(dict(passed=True, native_wait_checks=len(checks),
+        complete_snapshot_equality=True,
         original_W_exact_states=len(selected), native_original_W_exact_states=len(selected), checks=checks), indent=2)+'\n')
     print(json.dumps(dict(passed=True, native_wait_checks=len(checks), original_W_exact_states=len(selected))),flush=True)
 

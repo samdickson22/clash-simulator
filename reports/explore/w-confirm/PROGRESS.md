@@ -33,3 +33,20 @@ The independent reference verifier's first attempt was stopped after freezing
 the corpus because serializing its entire 2 MB native state every tick was
 unnecessarily costly; the efficient rerun checks the same final states/events.
 No reporting work was interrupted or retuned.
+
+03:21Z: 123/1,900 reporting games complete. Peak observed census so far: 53 own /
+56 combined. Latency replay's first warmup exposed a mutable PyO3 root borrow in
+the four-thread original-W variant; fix gives concurrent opponent-selection calls
+private roots. Only that variant changed, and the latency replay restarted on the
+same frozen corpus; reporting's full native path and loaded worker modules were
+unaffected. Candidate/RNG/public-root replay checks passed for all 125 states.
+Smoke reduction validates paired identities, queue conservation, terminal games,
+zero command rejections and pooled metric bookkeeping. No reporting outcomes used
+for tuning. Supplementary WW CIs will use a separate descriptive 100-seed bootstrap.
+
+03:28Z: 431/1,900 games complete, confirmation unchanged. Stronger timed-WAIT
+qualification also passes equality of **complete final snapshots**, not just the
+engine digest, for all 156 checks. This closes the digest's limited-field coverage
+concern. The source snapshot matches every supplied quickwins build48 Rust source
+hash before the private WAIT extension. Updated qualification and exact public
+root/candidate replay receipts are committed separately from raw states.

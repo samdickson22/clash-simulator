@@ -91,6 +91,19 @@ def reduce(root,config,out,smoke=False):
                 k=ai*len(metrics)+mi;diff=boots[:,k]-boots[:,mi];good=diff[np.isfinite(diff)]
                 contrasts[arm][m]=dict(difference=float(point[k]-point[mi]) if np.isfinite(point[k]-point[mi]) else None,
                                       ci95=np.quantile(good,[.025,.975]).tolist() if len(good) else None)
+    ww_estimates={}
+    if rows['WW']:
+        ww_matrix=np.zeros((len(rows['WW']),len(metrics),2))
+        for si,seed in enumerate(sorted(rows['WW'])):
+            s=fill('WW',seed)
+            for mi,m in enumerate(metrics):ww_matrix[si,mi]=s.get(m,[0,0])
+        wp,wb,wt=bootstrap_matrix(ww_matrix,cfg['bootstrap']['seed'],cfg['bootstrap']['reps'])
+        for mi,m in enumerate(metrics):
+            good=wb[:,mi][np.isfinite(wb[:,mi])]
+            ww_estimates[m]=dict(value=float(wp[mi]) if np.isfinite(wp[mi]) else None,
+                ci95=np.quantile(good,[.025,.975]).tolist() if len(good) else None,
+                numerator=float(wt[mi,0]),denominator=float(wt[mi,1]))
+        estimates['WW']=ww_estimates
     result=dict(paired_seeds=count,seed_range=[seeds[0],seeds[-1]],arms=arms,
         config_sha256=hashlib.sha256(config.read_bytes()).hexdigest(),bootstrap=cfg['bootstrap'],
         outcomes=outcomes,estimates=estimates,paired_contrasts=contrasts,latency=latencies,

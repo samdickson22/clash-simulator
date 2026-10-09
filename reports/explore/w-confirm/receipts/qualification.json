@@ -1,6 +1,7 @@
 {
   "passed": true,
   "native_wait_checks": 156,
+  "complete_snapshot_equality": true,
   "original_W_exact_states": 10,
   "native_original_W_exact_states": 10,
   "checks": [
