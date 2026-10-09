@@ -1197,3 +1197,4 @@ Also on the hub, but with copies elsewhere:
   - Packing sweep at 2/4/6/8 lanes: 3.99/4.03/4.20/4.39 fps. The GPU is the bound; 8 lanes gain only +9% over 4, so the leased hosts stay at 4 lanes under the ≤16-process cap.
   - **Conditional capacity scenario: ~Oct 9 20:05Z with 7 GPUs** (`CAPTURE-CAPACITY-20261009-0355.md`). Not a committed ETA; e22/e23 density is unmeasured.
   - Next: A15, then the R13-3 audit.
+- **04:26 UTC:** the native engine baseline is committed (`f9d3b454`): the quick-wins GIL release and Resources cache, plus delay_commands. The fresh gil-v3 library is byte-identical to the w-confirm build48 reference (`71826488…`). 47 tests pass, and 1,000 games / 7,000 rollouts plus 1,000 d27 roots are exact. The W-screen8 native extension is building on top. The outcome check is at 483/1,800 games.
