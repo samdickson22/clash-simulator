@@ -1580,3 +1580,6 @@ Also on the hub, but with copies elsewhere:
   - GPU: 13 at 92% (288), 14 at 58% (384), 01 at 57% (S-mix), 04 at 69% (S-teacher), 08 at S-human load. **15 idle: the capacity 480 arm crashed at 20:39:15Z** (likely OOM under the 0.78 cap). Decision: resume with micro 1024 and accumulation to 8,192, disclosed, or kill the arm as infeasible.
   - 09 and 16 are idle, with no planned work.
   - The A1 fresh admissions are running. 02/06/07/11/18 are down.
+- **20:45 UTC:**
+  - **S-human on 08 reproduced the OOM** at step 239: a dense micro needs ~47 GB on a 48 GB card. Trying `expandable_segments` first, with a replay neutrality check. Pre-authorized next fallback: human micro 3584 with accumulation to 8,192, disclosed.
+  - **Capacity 480-v3** resumed at 20:44Z from step 175 with micro 1024 (amendment `f8dd81a6`). If it fails again, the arm is dropped.
