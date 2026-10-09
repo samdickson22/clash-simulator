@@ -1131,3 +1131,4 @@ Also on the hub, but with copies elsewhere:
   - **Caveats:** the scripted opponents are weak and have no command delay, so the result is optimistic.
   - **Decision:** W is the most promising search change so far. A confirmation run follows: W vs baseline against search opponents, with symmetric command delay, plus a W latency reduction.
 - **03:01 UTC:** the tower r3 provenance patch landed (`22055686`). `public_score_templates.json` is now in the runtime provenance hash; no other live artifact was missing. The full live suite passes 93/93 on 01.
+- **03:06 UTC:** the leased hosts are clear of exploration. The last delay-fixes shard (14/p1100) finished pass/0 at 03:06:04Z, and checks at 03:06:48Z show no exploration reservations or processes on 09/13/14/15/16. The delay-fixes controls continue on 08 (≤12 processes). Perception capture can now take the leased hosts.
