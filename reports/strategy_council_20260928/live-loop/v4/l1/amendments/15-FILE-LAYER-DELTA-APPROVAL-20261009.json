@@ -1,0 +1,15 @@
+{
+ "schema": "clasher.v4.a15-file-layer-delta-approval.v1",
+ "decision": "APPROVE_FILE_LAYER_DELTA",
+ "utc": "2026-10-09T06:02:34+00:00",
+ "decided_by": "coordinator (owner mode), on independent review",
+ "amendment": "amendments/15-epoch-assembly-file-admission-20261009-r2.md",
+ "amendment_sha256": "2d32c0b4aa0adac98cdfcbd935da7e8dd5c240853eecfe6d8bc90fc083cba001",
+ "delta": "amendments/15-file-layer-pin-delta-20261009-r2.json",
+ "delta_sha256": "fac7f864cc0abd3f18d57abc3db2698f03d20cb409f1c29551188a2894643a2c",
+ "independent_review": "reviews/AMENDMENT-15-R2-DELTA-REVIEW-20261009.md",
+ "independent_review_sha256": "d35ee0eaa5b16d2219572bd80222d6a81b64ebe2c840fa4550c0fa5b3e8ea93b",
+ "freeze_record_sha256": "33e3a071ecc26eb1e7f02642f33d3fe73335b9f6ce406663d6460a0fb1919903",
+ "frozen_a12_pins_sha256": "60f0cb4eddd6885218bd2de16d54f73547d6cf542d241c755c9181f7490968c5",
+ "scope": "File-layer admission/assembly delta only: scientific_semantics_changed=false, timing_admitted=false. This is not A1 approval; coordinator-approval-A1 is a separate later receipt that binds this receipt's SHA and all 24 complete assembly SHAs."
+}

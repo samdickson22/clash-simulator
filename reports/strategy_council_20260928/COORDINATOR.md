@@ -1273,3 +1273,4 @@ Also on the hub, but with copies elsewhere:
     - pinned copy receipts for R13-3 references;
     - keep leased metadata reachable through A2;
     - **A1/A2 run on 04 or 03 only**, after an admission-only dry run.
+- **06:02 UTC:** issued `l1/amendments/15-FILE-LAYER-DELTA-APPROVAL-20261009.json` (`5f67971b…`): decision=APPROVE_FILE_LAYER_DELTA, binding amendment `2d32c0b4`, delta `fac7f864` and the independent review `d35ee0ea`. This is the shape the orchestration code expects. It's separate from A1 and doesn't approve it. Perception installed the r2 execution tree on 04 (install receipt `b155b282…`); post-freeze tests 12/12, and 5/5 ledger/reuse mutants killed, including an epoch-mapping swap check.
