@@ -1,0 +1,4 @@
+{
+  "cpu-delay-fixes-p0200-primary-v1": "Coordinator requested cap15; same-schedule resume at15 also receives corrected guard.",
+  "cpu-delay-fixes-p0075-primary-v1": "Coordinator requested cap15; same-schedule resume at15 also receives corrected guard."
+}

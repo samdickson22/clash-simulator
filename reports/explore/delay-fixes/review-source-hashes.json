@@ -1,0 +1,21 @@
+{
+  "captured_utc": "2026-10-09T03:20:53.752226+00:00",
+  "note": "Shared checkout review sources; isolated compiled snapshot is source-hashes.json",
+  "files": {
+    "reports/explore/delay-fixes/summarize.py": "4d5e0009c48cec847c7df0421741afa80286a0c7fb602a73a3d989dc79fa786b",
+    "reports/explore/delay-fixes/audit_compute.py": "5e1e6d6121ed08b449e044b29837508405a1e66b8ef1ae1785f42f0270c4f6bd",
+    "reports/explore/delay-fixes/final_reduce.py": "b6be63c087e2162359e7ff2dcf976238997818efccdafe0966be07b90e35760a",
+    "reports/explore/delay-fixes/write_report.py": "3c7b3efae23857d229414113fa63c28ec143c596551a2773e044d53de7855dbb",
+    "reports/explore/delay-fixes/plot_results.py": "06068b6fa6b385bf35cbb8dd49219a62e04b3e343c1851535307919cff545033",
+    "reports/explore/delay-fixes/lag_controls_launch.py": "5cbc948b2ad87fe0da8faecb1236019b822ed6a2e3b3c95661a9a4091ffaa996",
+    "reports/explore/delay-fixes/paired-effects-template.html": "bff0b876d286426375785487d7fdc25e14d0017386063735d3d04b92fc1a9d50",
+    "src/clasher/analysis/loss_review/delay_fixes.py": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb",
+    "src/clasher/analysis/loss_review/delay_simulate.py": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a",
+    "src/clasher/analysis/loss_review/delay_runtime.py": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0",
+    "src/clasher/analysis/loss_review/throughput_guard.py": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4",
+    "tests/analysis/test_loss_review.py": "116d28a0fbf257ee9f9b035911604937021cbde39f74e7acdbeb4f8a10634a28",
+    "tests/analysis/test_delay_fixes.py": "745968094c1767079882e55bc0fb803c2b977ce1eee13cec49be4cd02d4c78be",
+    "tests/analysis/test_throughput_guard.py": "79a4c564b128d17c82e3ab3bf8e933ffd9b5c056084b33bdec127d6c8405c486",
+    "tests/analysis/test_delay_fixes_summary.py": "60dd12e17c89413b825add79eff73209d9a88d44448c2bcb845ab9d3382824d1"
+  }
+}

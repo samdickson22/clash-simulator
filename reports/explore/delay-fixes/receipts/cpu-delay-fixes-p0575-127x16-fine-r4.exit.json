@@ -1,0 +1,73 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261008-r1",
+  "host": "127x16",
+  "label": "cpu-delay-fixes-p0575-127x16-fine-r4",
+  "command": [
+    "env",
+    "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/src:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/engine-rs",
+    "RAYON_NUM_THREADS=1",
+    "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "-m",
+    "clasher.analysis.loss_review.delay_simulate",
+    "--out",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/shards/p0575",
+    "--pairs",
+    "5",
+    "--pair-offset",
+    "575",
+    "--workers",
+    "16",
+    "--checkpoint",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/inputs/main02.pt",
+    "--exclusions",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/loss-review/seeds.json",
+    "--gpu-guard",
+    "--resume"
+  ],
+  "started_utc": "2026-10-09T00:51:25.504934+00:00",
+  "declared_processes": 20,
+  "declared_pss_bytes": 12000000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 8,
+    "pss_bytes": 37195362304
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 8,
+    "pss_bytes": 37195362304
+  },
+  "admission_jobs": {
+    "v1:4092116:129174844": {
+      "kind": "v1",
+      "sequence": -1,
+      "supervisor_pid": 4092116,
+      "processes": 8,
+      "pss_bytes": 37195362304,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 177154,
+  "admission_sequence": 9,
+  "pid": 177317,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-09T00:54:29.764046+00:00",
+  "stop_reason": null,
+  "peak_processes": 18,
+  "peak_rss_bytes": 14274408448,
+  "peak_sampled_pss_bytes": 5483001856,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "aggregate": {
+    "processes": 26,
+    "pss_bytes": 46468973568
+  },
+  "effective_process_cap": 96
+}

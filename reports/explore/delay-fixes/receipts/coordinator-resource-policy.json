@@ -1,0 +1,15 @@
+{
+  "utc": 1791503966.977954,
+  "closed_until_coordinator_release": [
+    "127x13",
+    "127x15"
+  ],
+  "workers": {
+    "127x09": 15,
+    "127x14": 15,
+    "127x11": 26,
+    "127x16": 26,
+    "127x08": 26
+  },
+  "old_controller_stopped": 518108
+}

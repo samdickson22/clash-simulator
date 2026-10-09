@@ -1,0 +1,41 @@
+{
+  "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "exit_by": "2026-10-09T04:30:00Z",
+  "horizon": 160,
+  "hosts": [
+    "127x09",
+    "127x14",
+    "127x13",
+    "127x15",
+    "127x08"
+  ],
+  "implementation_change": false,
+  "max_outstanding": 1,
+  "native_path": "enabled DelayFixPlanner/rollout_commands",
+  "no_new_shards_after": "2026-10-09T04:15:00Z",
+  "opponent_capacity": 4,
+  "opponent_delay": 0,
+  "opponent_interval": 10,
+  "output": "lag-only/shards",
+  "own_delays": [
+    0,
+    27
+  ],
+  "paired_indices": [
+    0,
+    1249
+  ],
+  "purpose": "non-confirmatory matched-cadence controls",
+  "reason": "Legacy S6 opponent rollout cadence 3 versus enabled cadence 10; isolate lag without changing original eight arms",
+  "reported_arms": [
+    "R0",
+    "R27"
+  ],
+  "seed_expression": "2**48 + 50000 + i",
+  "shard_pairs": 25,
+  "source_arms": [
+    "S0",
+    "S27"
+  ],
+  "target_pairs": 1250
+}

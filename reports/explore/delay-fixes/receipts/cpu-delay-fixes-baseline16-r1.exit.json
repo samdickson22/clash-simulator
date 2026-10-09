@@ -1,0 +1,72 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261009-r2",
+  "host": "127x16",
+  "label": "cpu-delay-fixes-baseline16-r1",
+  "command": [
+    "chrt",
+    "--idle",
+    "0",
+    "env",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/src",
+    "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/measure_baseline.py",
+    "--pid",
+    "4092118",
+    "--log",
+    "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100821/train.jsonl",
+    "--out",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/guard-config.json",
+    "--receipt",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/receipts/throughput-baseline16.json"
+  ],
+  "started_utc": "2026-10-09T00:58:24.750374+00:00",
+  "declared_processes": 4,
+  "declared_pss_bytes": 1000000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 8,
+    "pss_bytes": 30864331776
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 8,
+    "pss_bytes": 30864331776
+  },
+  "admission_jobs": {
+    "v1:4092116:129174844": {
+      "kind": "v1",
+      "sequence": -1,
+      "supervisor_pid": 4092116,
+      "processes": 8,
+      "pss_bytes": 30864331776,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 201445,
+  "supervisor_start": "129732323",
+  "stop_grace_seconds": 120,
+  "admission_sequence": 13,
+  "pid": 201584,
+  "child_start": "129732581",
+  "child_pgid": 201584,
+  "child_sid": 201584,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-09T00:59:06.146971+00:00",
+  "stop_reason": null,
+  "peak_processes": 3,
+  "peak_rss_bytes": 38428672,
+  "peak_sampled_pss_bytes": 25110528,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "aggregate": {
+    "processes": 10,
+    "pss_bytes": 44500581376
+  },
+  "effective_process_cap": 96
+}

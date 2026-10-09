@@ -1,0 +1,36 @@
+{
+  "completed_utc": "2026-10-09T03:20:53.752226+00:00",
+  "purpose": "non-confirmatory dev exploration",
+  "games": 12500,
+  "original_pairs": 1250,
+  "control_pairs": {
+    "target_pairs": 1250,
+    "completed_by_arm": {
+      "R0": 1250,
+      "R27": 1250
+    },
+    "paired_common": 1250,
+    "status": "complete"
+  },
+  "tests": {
+    "passed": 24,
+    "receipt": "receipts/final-tests-r2.log",
+    "initial_reduction_tests": 21,
+    "note": "Initial home08 test copies were older; synchronized current tests then all24 passed. Runtime source hashes matched05/08."
+  },
+  "native_sha256": "605eb9576db713efdfd356dd44619bbc6df2f18c3ce62260249c6a12353c2200",
+  "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "checkpoint_mode": "0444",
+  "control_config_sha256": "9e0cf7befc10bd99f145148b2e72ff68997beed1c6de00ff21d67efc3fac44b6",
+  "defaults": {
+    "symmetric_opponent": false,
+    "max_outstanding": 1,
+    "forward_prior": false
+  },
+  "leased_clear_utc": "2026-10-09T03:06:50Z",
+  "home08_clear_utc": "2026-10-09T03:19:49Z",
+  "own_workers": 0,
+  "leased_registry_entries": 0,
+  "commits": 0,
+  "frozen_registration_edits": 0
+}

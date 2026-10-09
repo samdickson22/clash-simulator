@@ -1145,3 +1145,14 @@ Also on the hub, but with copies elsewhere:
   - The cutover to the match queue is under way, prioritizing e15/22/23. The packing sweep on 04 is next.
   - **Decision:** when the GRU exits at 05:00Z, 08 joins the capture queue. The single-tenant deciding window opens only after 24/24 capture plus A1/A2/B.
   - **Delay-fixes controls are complete:** 12,500 games, all shards exit 0. The final report is being reduced.
+- **03:21 UTC: delay-fixes exploration complete** (`reports/explore/delay-fixes/RESULTS.md`). 12,500 games, 1,250 paired seeds per arm, against scripted opponents.
+  - **Command delay costs about 5–6 pp of wins:**
+    - −5.92 pp [4.24, 7.68] against a cadence-matched instant opponent;
+    - −4.48 pp [2.96, 6.08] when the opponent is lagged too.
+  - **Symmetric opponent lag** at d=27: +1.84 pp [0.00, 3.68]. The effect survives the cadence control but isn't established as positive.
+  - 2 or 4 outstanding commands: no win benefit (−0.32 / −0.80 pp), and under-4-elixir arrivals got worse.
+  - Forward (t+d) imitation vs current-state imitation: 0.00 pp, with worse under-4 arrivals and twice the CPU.
+  - **Decision:**
+    - Adopt symmetric opponent lag as the **default evaluation protocol** from now on, since it's the fair simulation.
+    - Keep capacity 1 and current-state imitation as the defaults.
+    - The 5–6 pp latency cost is the real target. W (WAIT candidates) is being tested next under symmetric delay (`clasher-explore-w-confirm-20261009-1`).

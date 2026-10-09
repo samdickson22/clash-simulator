@@ -1,0 +1,102 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261009-r3",
+  "host": "127x13",
+  "label": "cpu-delay-fixes-p1245-127x13-throughput-v5",
+  "command": [
+    "env",
+    "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/src:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/engine-rs",
+    "RAYON_NUM_THREADS=1",
+    "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "-m",
+    "clasher.analysis.loss_review.delay_simulate",
+    "--out",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/shards/p1245",
+    "--pairs",
+    "5",
+    "--pair-offset",
+    "1245",
+    "--workers",
+    "10",
+    "--checkpoint",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/inputs/main02.pt",
+    "--exclusions",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/loss-review/seeds.json",
+    "--gpu-guard",
+    "--resume"
+  ],
+  "started_utc": "2026-10-09T02:24:58.395027+00:00",
+  "declared_processes": 14,
+  "declared_pss_bytes": 12000000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 51,
+    "pss_bytes": 32201187840
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 36,
+    "pss_bytes": 17386179584
+  },
+  "admission_jobs": {
+    "v2:t7-epoch-offload-20261008-13r2": {
+      "kind": "v2",
+      "sequence": 12,
+      "supervisor_pid": 94164,
+      "processes": 10,
+      "pss_bytes": 7790867456,
+      "stop_reason": null
+    },
+    "v2:tempo-perception-rate-v1": {
+      "kind": "v2",
+      "sequence": 34,
+      "supervisor_pid": 471472,
+      "processes": 2,
+      "pss_bytes": 16577536,
+      "stop_reason": null
+    },
+    "v2:tempo-reporting-p0550-127x13-r2": {
+      "kind": "v2",
+      "sequence": 52,
+      "supervisor_pid": 689423,
+      "processes": 23,
+      "pss_bytes": 9577546752,
+      "stop_reason": null
+    },
+    "external:700608:130199244": {
+      "kind": "external",
+      "sequence": -1,
+      "supervisor_pid": null,
+      "processes": 1,
+      "pss_bytes": 1187840,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 700704,
+  "supervisor_start": "130199292",
+  "stop_grace_seconds": 120,
+  "admission_sequence": 53,
+  "pid": 700795,
+  "child_start": "130199368",
+  "child_pgid": 700795,
+  "child_sid": 700795,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-09T02:27:54.346242+00:00",
+  "stop_reason": null,
+  "peak_processes": 12,
+  "peak_rss_bytes": 9151225856,
+  "peak_sampled_pss_bytes": 4796548096,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "aggregate": {
+    "processes": 24,
+    "pss_bytes": 12605453312
+  },
+  "effective_process_cap": 80
+}

@@ -1,0 +1,40 @@
+{
+  "superseded_probe_note": "Original substring process match counted its own probe; corrected NUL-delimited module check below. Registry checks were valid.",
+  "hosts": [
+    {
+      "checked_utc": "2026-10-09T03:06:50.724617+00:00",
+      "host": "127x09",
+      "own_registry_entries": {},
+      "own_sim_pids": [],
+      "process_match": "NUL-delimited python -m module, excludes probe argv"
+    },
+    {
+      "checked_utc": "2026-10-09T03:06:50.865179+00:00",
+      "host": "127x13",
+      "own_registry_entries": {},
+      "own_sim_pids": [],
+      "process_match": "NUL-delimited python -m module, excludes probe argv"
+    },
+    {
+      "checked_utc": "2026-10-09T03:06:50.712399+00:00",
+      "host": "127x14",
+      "own_registry_entries": {},
+      "own_sim_pids": [],
+      "process_match": "NUL-delimited python -m module, excludes probe argv"
+    },
+    {
+      "checked_utc": "2026-10-09T03:06:50.710908+00:00",
+      "host": "127x15",
+      "own_registry_entries": {},
+      "own_sim_pids": [],
+      "process_match": "NUL-delimited python -m module, excludes probe argv"
+    },
+    {
+      "checked_utc": "2026-10-09T03:06:50.728519+00:00",
+      "host": "127x16",
+      "own_registry_entries": {},
+      "own_sim_pids": [],
+      "process_match": "NUL-delimited python -m module, excludes probe argv"
+    }
+  ]
+}

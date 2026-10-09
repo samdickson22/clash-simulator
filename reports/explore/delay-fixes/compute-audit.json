@@ -1,0 +1,2090 @@
+{
+  "hosts": {
+    "127x09": {
+      "shards": 52,
+      "games": 2830,
+      "worker_cpu_seconds": 101025.64463179001,
+      "shard_wall_seconds": 10800.2588672305,
+      "max_workers": 22,
+      "worker_capacity_seconds": 172282.25153068337,
+      "stopped_attempts": 1,
+      "gpu_samples": 4583,
+      "below80_samples": 606,
+      "paused_worker_sample_seconds": 19054.125911951065,
+      "below80_unpaused_samples": 298,
+      "throughput_guard_samples": 2686,
+      "throughput_measured_samples": 0,
+      "throughput_below95_samples": 0,
+      "mean_active_cores_over_shard_wall": 9.354002146959273,
+      "pool_utilization_over_shard_wall": 0.5863961245816283,
+      "gpu_p10_p50_p90": [
+        75.0,
+        88.0,
+        91.0
+      ],
+      "throughput_ratio_p10_p50_p90": null,
+      "observed_below80_fraction": 0.1322277983853371
+    },
+    "127x13": {
+      "shards": 46,
+      "games": 2410,
+      "worker_cpu_seconds": 84037.04114687804,
+      "shard_wall_seconds": 11182.941924745683,
+      "max_workers": 22,
+      "worker_capacity_seconds": 129313.41375877708,
+      "stopped_attempts": 0,
+      "gpu_samples": 4870,
+      "below80_samples": 448,
+      "paused_worker_sample_seconds": 13735.223823070526,
+      "below80_unpaused_samples": 139,
+      "throughput_guard_samples": 3213,
+      "throughput_measured_samples": 0,
+      "throughput_below95_samples": 0,
+      "mean_active_cores_over_shard_wall": 7.514752532240228,
+      "pool_utilization_over_shard_wall": 0.6498710281026362,
+      "gpu_p10_p50_p90": [
+        85.0,
+        93.0,
+        99.0
+      ],
+      "throughput_ratio_p10_p50_p90": null,
+      "observed_below80_fraction": 0.0919917864476386
+    },
+    "127x14": {
+      "shards": 22,
+      "games": 1260,
+      "worker_cpu_seconds": 132844.46034622402,
+      "shard_wall_seconds": 12335.326772098197,
+      "max_workers": 22,
+      "worker_capacity_seconds": 195333.79616684397,
+      "stopped_attempts": 1,
+      "gpu_samples": 5519,
+      "below80_samples": 711,
+      "paused_worker_sample_seconds": 21359.552601337433,
+      "below80_unpaused_samples": 377,
+      "throughput_guard_samples": 3504,
+      "throughput_measured_samples": 0,
+      "throughput_below95_samples": 0,
+      "mean_active_cores_over_shard_wall": 10.769431795411418,
+      "pool_utilization_over_shard_wall": 0.6800894824813377,
+      "gpu_p10_p50_p90": [
+        77.0,
+        94.0,
+        98.0
+      ],
+      "throughput_ratio_p10_p50_p90": null,
+      "observed_below80_fraction": 0.1288276861750317
+    },
+    "127x15": {
+      "shards": 44,
+      "games": 2490,
+      "worker_cpu_seconds": 86323.878401636,
+      "shard_wall_seconds": 10122.280022679362,
+      "max_workers": 22,
+      "worker_capacity_seconds": 120118.95373400021,
+      "stopped_attempts": 0,
+      "gpu_samples": 4398,
+      "below80_samples": 165,
+      "paused_worker_sample_seconds": 7324.178181648254,
+      "below80_unpaused_samples": 2,
+      "throughput_guard_samples": 2730,
+      "throughput_measured_samples": 0,
+      "throughput_below95_samples": 0,
+      "mean_active_cores_over_shard_wall": 8.528106138955254,
+      "pool_utilization_over_shard_wall": 0.7186532659350132,
+      "gpu_p10_p50_p90": [
+        97.0,
+        99.0,
+        99.0
+      ],
+      "throughput_ratio_p10_p50_p90": null,
+      "observed_below80_fraction": 0.03751705320600273
+    },
+    "127x08": {
+      "shards": 42,
+      "games": 2310,
+      "worker_cpu_seconds": 73763.18016809302,
+      "shard_wall_seconds": 10024.124567463528,
+      "max_workers": 26,
+      "worker_capacity_seconds": 146131.02406023024,
+      "stopped_attempts": 0,
+      "gpu_samples": 4421,
+      "below80_samples": 2457,
+      "paused_worker_sample_seconds": 43823.61056518555,
+      "below80_unpaused_samples": 1438,
+      "throughput_guard_samples": 2584,
+      "throughput_measured_samples": 2584,
+      "throughput_below95_samples": 0,
+      "mean_active_cores_over_shard_wall": 7.3585657951134,
+      "pool_utilization_over_shard_wall": 0.5047742643457446,
+      "gpu_p10_p50_p90": [
+        23.0,
+        35.0,
+        100.0
+      ],
+      "throughput_ratio_p10_p50_p90": [
+        0.9898898106988272,
+        0.997412076429833,
+        1.006259980308766
+      ],
+      "observed_below80_fraction": 0.5557566161501922
+    },
+    "127x16": {
+      "shards": 26,
+      "games": 1200,
+      "worker_cpu_seconds": 42939.535924829,
+      "shard_wall_seconds": 5556.571944580181,
+      "max_workers": 26,
+      "worker_capacity_seconds": 126727.74570302526,
+      "stopped_attempts": 2,
+      "gpu_samples": 1804,
+      "below80_samples": 1043,
+      "paused_worker_sample_seconds": 14652.155498981476,
+      "below80_unpaused_samples": 639,
+      "throughput_guard_samples": 1107,
+      "throughput_measured_samples": 915,
+      "throughput_below95_samples": 6,
+      "mean_active_cores_over_shard_wall": 7.727702683074543,
+      "pool_utilization_over_shard_wall": 0.33883295001122976,
+      "gpu_p10_p50_p90": [
+        0.0,
+        63.0,
+        100.0
+      ],
+      "throughput_ratio_p10_p50_p90": [
+        0.9877262856109024,
+        0.9979219012905872,
+        1.0049736254328971
+      ],
+      "observed_below80_fraction": 0.5781596452328159
+    },
+    "127x11": {
+      "shards": 0,
+      "games": 0,
+      "worker_cpu_seconds": 205.03,
+      "shard_wall_seconds": 1603.6786484718323,
+      "max_workers": 26,
+      "worker_capacity_seconds": 41695.64486026764,
+      "stopped_attempts": 1,
+      "gpu_samples": 0,
+      "below80_samples": 0,
+      "paused_worker_sample_seconds": 0.0,
+      "below80_unpaused_samples": 0,
+      "throughput_guard_samples": 0,
+      "throughput_measured_samples": 0,
+      "throughput_below95_samples": 0,
+      "gpu": [],
+      "mean_active_cores_over_shard_wall": 0.12784980344745248,
+      "pool_utilization_over_shard_wall": 0.0049173001325943265,
+      "gpu_p10_p50_p90": null,
+      "throughput_ratio_p10_p50_p90": null,
+      "observed_below80_fraction": null
+    }
+  },
+  "shards": [
+    {
+      "shard": "shards/p0000",
+      "host": "127x09",
+      "games": 200,
+      "wall_seconds": 716.4900865638629,
+      "worker_cpu_seconds": 7692.715797619,
+      "workers": 22
+    },
+    {
+      "shard": "shards/p0025",
+      "host": "127x13",
+      "games": 200,
+      "wall_seconds": 738.4367167898454,
+      "worker_cpu_seconds": 6835.3213263279995,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0050",
+      "host": "127x13",
+      "games": 200,
+      "wall_seconds": 398.47893922100775,
+      "worker_cpu_seconds": 7543.418597371,
+      "workers": 22
+    },
+    {
+      "shard": "shards/p0075",
+      "host": "127x14",
+      "games": 200,
+      "wall_seconds": 1170.3004012990277,
+      "worker_cpu_seconds": 13767.007885994,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0100",
+      "host": "127x15",
+      "games": 200,
+      "wall_seconds": 457.379100079881,
+      "worker_cpu_seconds": 8747.683874297,
+      "workers": 22
+    },
+    {
+      "shard": "shards/p0125",
+      "host": "127x08",
+      "games": 200,
+      "wall_seconds": 1082.2432322569657,
+      "worker_cpu_seconds": 6772.195519873,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0150",
+      "host": "127x13",
+      "games": 200,
+      "wall_seconds": 1058.5206033890136,
+      "worker_cpu_seconds": 7975.271585865,
+      "workers": 22
+    },
+    {
+      "shard": "shards/p0175",
+      "host": "127x15",
+      "games": 200,
+      "wall_seconds": 443.45982776908204,
+      "worker_cpu_seconds": 8001.366582017,
+      "workers": 22
+    },
+    {
+      "shard": "shards/p0200",
+      "host": "127x09",
+      "games": 200,
+      "wall_seconds": 123.34822308504954,
+      "worker_cpu_seconds": 799.7776001990001,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0225",
+      "host": "127x15",
+      "games": 200,
+      "wall_seconds": 673.8405310849193,
+      "worker_cpu_seconds": 8348.851893048,
+      "workers": 22
+    },
+    {
+      "shard": "shards/p0250",
+      "host": "127x08",
+      "games": 200,
+      "wall_seconds": 763.580285647884,
+      "worker_cpu_seconds": 7093.413292988,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0275",
+      "host": "127x09",
+      "games": 200,
+      "wall_seconds": 640.2542408739682,
+      "worker_cpu_seconds": 7602.87388268,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0300",
+      "host": "127x15",
+      "games": 200,
+      "wall_seconds": 716.8508620290086,
+      "worker_cpu_seconds": 6626.688862883,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0325",
+      "host": "127x16",
+      "games": 200,
+      "wall_seconds": 605.6173660468776,
+      "worker_cpu_seconds": 3149.764245417,
+      "workers": 16
+    },
+    {
+      "shard": "shards/p0350",
+      "host": "127x08",
+      "games": 200,
+      "wall_seconds": 1292.9421837071422,
+      "worker_cpu_seconds": 6406.11540822,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p0375",
+      "host": "127x09",
+      "games": 200,
+      "wall_seconds": 648.085654695984,
+      "worker_cpu_seconds": 7584.155344465,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0400",
+      "host": "127x14",
+      "games": 200,
+      "wall_seconds": 1659.812548001064,
+      "worker_cpu_seconds": 21279.537350389,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0425",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 187.26628608698957,
+      "worker_cpu_seconds": 1569.058110809,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0430",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 192.41401803703047,
+      "worker_cpu_seconds": 1357.9263765849998,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0435",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 194.36210468388163,
+      "worker_cpu_seconds": 1335.463749045,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0440",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 194.38738139811903,
+      "worker_cpu_seconds": 1616.006629224,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0445",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 171.73463265481405,
+      "worker_cpu_seconds": 1182.653096157,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0450",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 226.1404415408615,
+      "worker_cpu_seconds": 1440.719727649,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0455",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 214.03029394010082,
+      "worker_cpu_seconds": 1441.3716675189999,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0460",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 210.26555645396002,
+      "worker_cpu_seconds": 1424.3947063189999,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0465",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 250.56604431988671,
+      "worker_cpu_seconds": 1626.17661931,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0470",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 199.26681682514027,
+      "worker_cpu_seconds": 1188.259145754,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0475",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 184.87504825601354,
+      "worker_cpu_seconds": 1552.91270616,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0480",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 314.8426949630957,
+      "worker_cpu_seconds": 1381.749657942,
+      "workers": 16
+    },
+    {
+      "shard": "shards/p0485",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 346.38591880793683,
+      "worker_cpu_seconds": 1208.302633894,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p0490",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 187.01222224603407,
+      "worker_cpu_seconds": 1337.620497685,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0495",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 195.05465473094955,
+      "worker_cpu_seconds": 1379.904776737,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0500",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 207.763536588056,
+      "worker_cpu_seconds": 1362.140478709,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0505",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 200.91268148296513,
+      "worker_cpu_seconds": 1411.440123524,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0510",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 372.527715123957,
+      "worker_cpu_seconds": 1248.304737194,
+      "workers": 16
+    },
+    {
+      "shard": "shards/p0515",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 369.9635234212037,
+      "worker_cpu_seconds": 1333.388310114,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p0520",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 158.42659052694216,
+      "worker_cpu_seconds": 1344.323874612,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0525",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 209.61809960496612,
+      "worker_cpu_seconds": 1297.718032251,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0530",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 187.6725642401725,
+      "worker_cpu_seconds": 1391.387194005,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0535",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 175.30531930015422,
+      "worker_cpu_seconds": 1366.95757333,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0540",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 194.40153344580904,
+      "worker_cpu_seconds": 1361.044272961,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0545",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 190.54788684286177,
+      "worker_cpu_seconds": 1298.108014598,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0550",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 163.08744224114344,
+      "worker_cpu_seconds": 1390.817912305,
+      "workers": 16
+    },
+    {
+      "shard": "shards/p0555",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 183.6127782270778,
+      "worker_cpu_seconds": 1522.063798574,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0560",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 172.48107525799423,
+      "worker_cpu_seconds": 1273.583498402,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0565",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 277.4891784230713,
+      "worker_cpu_seconds": 3002.214885899,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0570",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 165.91308415983804,
+      "worker_cpu_seconds": 1110.660927286,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0575",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 178.3022806888912,
+      "worker_cpu_seconds": 1559.321244023,
+      "workers": 16
+    },
+    {
+      "shard": "shards/p0580",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 191.51936568692327,
+      "worker_cpu_seconds": 1546.999749677,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0585",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 169.24387931195088,
+      "worker_cpu_seconds": 1177.687093228,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0590",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 195.2145674440544,
+      "worker_cpu_seconds": 1372.867955939,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0595",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 139.93498654197901,
+      "worker_cpu_seconds": 1287.942761621,
+      "workers": 16
+    },
+    {
+      "shard": "shards/p0600",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 320.9743681140244,
+      "worker_cpu_seconds": 3218.452675024,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0605",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 164.99729420710355,
+      "worker_cpu_seconds": 1472.397896968,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0610",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 228.54803982609883,
+      "worker_cpu_seconds": 1362.715277435,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0615",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 185.1804321978707,
+      "worker_cpu_seconds": 1319.7843758010001,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0620",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 146.08252875204198,
+      "worker_cpu_seconds": 1251.01025489,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0625",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 116.80015730205923,
+      "worker_cpu_seconds": 1456.474568136,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0630",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 148.43518271693029,
+      "worker_cpu_seconds": 1324.626779541,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0635",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 316.6755434188526,
+      "worker_cpu_seconds": 3412.7415617290003,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0640",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 182.1942547939252,
+      "worker_cpu_seconds": 1219.683083858,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0645",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 188.95687173004262,
+      "worker_cpu_seconds": 1299.90223135,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0650",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 121.53163903392851,
+      "worker_cpu_seconds": 1624.5213982989999,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0655",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 199.7711457030382,
+      "worker_cpu_seconds": 1636.63332301,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0660",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 180.6035733560566,
+      "worker_cpu_seconds": 1250.125988603,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0665",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 115.87846556399018,
+      "worker_cpu_seconds": 1472.263567062,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0670",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 177.9946171438787,
+      "worker_cpu_seconds": 1150.569128099,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0675",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 306.8604693999514,
+      "worker_cpu_seconds": 2870.39659903,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0680",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 153.59582433919422,
+      "worker_cpu_seconds": 1629.201563097,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0685",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 158.8656293519307,
+      "worker_cpu_seconds": 1433.846211992,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0690",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 221.95064462092705,
+      "worker_cpu_seconds": 1406.05845642,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0695",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 204.97892798413523,
+      "worker_cpu_seconds": 1226.079188831,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0700",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 107.34014112502337,
+      "worker_cpu_seconds": 1351.156982907,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0705",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 170.96527153695934,
+      "worker_cpu_seconds": 1316.907020308,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0710",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 109.00295549398288,
+      "worker_cpu_seconds": 1414.401082566,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0715",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 192.60180553095415,
+      "worker_cpu_seconds": 1396.380351446,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0720",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 182.62801601085812,
+      "worker_cpu_seconds": 1258.382216001,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0725",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 287.2080642110668,
+      "worker_cpu_seconds": 2794.676722861,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0730",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 157.7588644400239,
+      "worker_cpu_seconds": 1414.652368869,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0735",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 118.1815010078717,
+      "worker_cpu_seconds": 1458.039743608,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0740",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 237.22299571498297,
+      "worker_cpu_seconds": 1451.565711213,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0745",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 179.89803594793193,
+      "worker_cpu_seconds": 1209.9008585679999,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0750",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 176.07799539994448,
+      "worker_cpu_seconds": 1508.050722197,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0755",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 162.14410239597782,
+      "worker_cpu_seconds": 1749.641111273,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0760",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 266.3982332160231,
+      "worker_cpu_seconds": 2886.288907395,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0765",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 211.62406979198568,
+      "worker_cpu_seconds": 1495.9616657049999,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0770",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 113.9524549820926,
+      "worker_cpu_seconds": 1313.3572229650001,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0775",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 188.0281773880124,
+      "worker_cpu_seconds": 1512.53468286,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0780",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 192.29714621091262,
+      "worker_cpu_seconds": 1420.5922117549999,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0785",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 117.63678629603237,
+      "worker_cpu_seconds": 1377.831080694,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0790",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 318.6256455639377,
+      "worker_cpu_seconds": 3177.5560187779997,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0795",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 154.16166160302237,
+      "worker_cpu_seconds": 1187.785907089,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0800",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 225.14483195194043,
+      "worker_cpu_seconds": 1502.170544186,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0805",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 181.2942501520738,
+      "worker_cpu_seconds": 1334.420417098,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0810",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 128.46863003005274,
+      "worker_cpu_seconds": 1430.264343968,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0815",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 162.3846219489351,
+      "worker_cpu_seconds": 1489.921711775,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0820",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 115.17868478200398,
+      "worker_cpu_seconds": 1308.816524247,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0825",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 176.77348629501648,
+      "worker_cpu_seconds": 1415.610163853,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p0830",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 213.4447218880523,
+      "worker_cpu_seconds": 1314.652311814,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0835",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 217.70443580998108,
+      "worker_cpu_seconds": 1363.755190695,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0840",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 329.86967727006413,
+      "worker_cpu_seconds": 3415.197560729,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0845",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 106.84109403891489,
+      "worker_cpu_seconds": 1271.394800239,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0850",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 133.74778605811298,
+      "worker_cpu_seconds": 1166.845931729,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0855",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 150.2963674850762,
+      "worker_cpu_seconds": 1259.557940251,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p0860",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 118.49031493999064,
+      "worker_cpu_seconds": 1437.4797261439999,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0865",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 184.77991673815995,
+      "worker_cpu_seconds": 1353.144141274,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0870",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 170.91208953689784,
+      "worker_cpu_seconds": 1164.094079333,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0875",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 159.1727080801502,
+      "worker_cpu_seconds": 1450.6115436940001,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0880",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 207.78789101797156,
+      "worker_cpu_seconds": 1618.986197272,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p0885",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 122.75065343407914,
+      "worker_cpu_seconds": 1496.58269962,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0890",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 193.6230388560798,
+      "worker_cpu_seconds": 1389.025053972,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0895",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 151.38235095213167,
+      "worker_cpu_seconds": 1244.639682214,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0900",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 242.536560846027,
+      "worker_cpu_seconds": 1471.917070065,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0905",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 380.35723983100615,
+      "worker_cpu_seconds": 3743.533547259,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0910",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 122.51845099288039,
+      "worker_cpu_seconds": 1371.1203449289999,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0915",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 176.22701995982789,
+      "worker_cpu_seconds": 1399.466611923,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p0920",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 135.6971570539754,
+      "worker_cpu_seconds": 1189.506355815,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0925",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 114.06939249788411,
+      "worker_cpu_seconds": 1425.087647261,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0930",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 222.36844331491739,
+      "worker_cpu_seconds": 1416.416463914,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0935",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 181.88688480411656,
+      "worker_cpu_seconds": 1283.470406506,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0940",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 177.2624515478965,
+      "worker_cpu_seconds": 1382.179520406,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p0945",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 163.77748414990492,
+      "worker_cpu_seconds": 1262.643724223,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0950",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 147.97965309699066,
+      "worker_cpu_seconds": 1512.535436892,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0955",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 554.8867990379222,
+      "worker_cpu_seconds": 5769.754506566,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0960",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 188.25551755609922,
+      "worker_cpu_seconds": 1235.271203412,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0965",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 216.22714596614242,
+      "worker_cpu_seconds": 1449.603723404,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0970",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 130.28825465100817,
+      "worker_cpu_seconds": 1400.241927199,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0975",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 195.3773878540378,
+      "worker_cpu_seconds": 1653.9488465890001,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p0980",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 167.98506620898843,
+      "worker_cpu_seconds": 1378.314054792,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p0985",
+      "host": "127x16",
+      "games": 40,
+      "wall_seconds": 124.53018932091072,
+      "worker_cpu_seconds": 1524.2035952210001,
+      "workers": 26
+    },
+    {
+      "shard": "shards/p0990",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 197.89729816582985,
+      "worker_cpu_seconds": 1377.397580759,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p0995",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 178.9638322610408,
+      "worker_cpu_seconds": 1223.317187129,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1000",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 244.1171513099689,
+      "worker_cpu_seconds": 1578.639271903,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1005",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 172.77350438712165,
+      "worker_cpu_seconds": 1640.021388815,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1010",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 188.8261680470314,
+      "worker_cpu_seconds": 1315.16557317,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1015",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 185.0303746641148,
+      "worker_cpu_seconds": 1473.521195224,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1020",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 140.6338941399008,
+      "worker_cpu_seconds": 1243.013316594,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1025",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 245.29757308820263,
+      "worker_cpu_seconds": 1574.454717085,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1030",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 641.7415590698365,
+      "worker_cpu_seconds": 6899.980575851,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1035",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 149.70119308982976,
+      "worker_cpu_seconds": 1407.495816897,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1040",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 244.98159090289846,
+      "worker_cpu_seconds": 1521.40005528,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1045",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 144.51973546901718,
+      "worker_cpu_seconds": 1161.019665909,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1050",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 164.8297570659779,
+      "worker_cpu_seconds": 1418.4474989359999,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1055",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 186.05465459800325,
+      "worker_cpu_seconds": 1437.079688373,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1060",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 264.3537479219958,
+      "worker_cpu_seconds": 1731.109841931,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1065",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 182.11552558420226,
+      "worker_cpu_seconds": 1307.162837974,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1070",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 151.06670567719266,
+      "worker_cpu_seconds": 1348.223002384,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1075",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 159.22990091703832,
+      "worker_cpu_seconds": 1145.17955871,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1080",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 224.3538742249366,
+      "worker_cpu_seconds": 1485.222396802,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1085",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 175.77976396214217,
+      "worker_cpu_seconds": 1324.165648119,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1090",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 161.79397265403531,
+      "worker_cpu_seconds": 1409.156820756,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1095",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 177.39148097205907,
+      "worker_cpu_seconds": 1252.5233022520001,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1100",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 631.7439266459551,
+      "worker_cpu_seconds": 6612.909728564,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1105",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 196.0233478641603,
+      "worker_cpu_seconds": 1474.834815996,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1110",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 147.51263475604355,
+      "worker_cpu_seconds": 1349.781800458,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1115",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 208.00086251599714,
+      "worker_cpu_seconds": 1543.7994077179999,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1120",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 148.88383226119913,
+      "worker_cpu_seconds": 1194.250191714,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1125",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 196.71613726601936,
+      "worker_cpu_seconds": 1665.614407438,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1130",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 226.67220026510768,
+      "worker_cpu_seconds": 1547.340555317,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1135",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 148.23659921903163,
+      "worker_cpu_seconds": 1239.14498259,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1140",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 298.0741565988865,
+      "worker_cpu_seconds": 1968.593992144,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1145",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 163.62728760298342,
+      "worker_cpu_seconds": 1208.176998382,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1150",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 154.68409094307572,
+      "worker_cpu_seconds": 1375.461984093,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1155",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 177.32291950215586,
+      "worker_cpu_seconds": 1268.359718582,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1160",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 162.3497994299978,
+      "worker_cpu_seconds": 1335.673912293,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1165",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 158.70547149097547,
+      "worker_cpu_seconds": 1299.1711978639999,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1170",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 183.5442708679475,
+      "worker_cpu_seconds": 1225.280772753,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1175",
+      "host": "127x15",
+      "games": 40,
+      "wall_seconds": 198.12416865001433,
+      "worker_cpu_seconds": 1325.389383971,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1180",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 806.27647020109,
+      "worker_cpu_seconds": 7583.597681692,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1185",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 160.5745725960005,
+      "worker_cpu_seconds": 1349.109825991,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1190",
+      "host": "127x09",
+      "games": 40,
+      "wall_seconds": 161.93738078000024,
+      "worker_cpu_seconds": 1518.920801098,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1195",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 187.00872442801483,
+      "worker_cpu_seconds": 1192.750234008,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1200",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 162.61904499982484,
+      "worker_cpu_seconds": 1265.524971718,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1205",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 232.78180202585645,
+      "worker_cpu_seconds": 1522.804511944,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1210",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 153.31660598912276,
+      "worker_cpu_seconds": 1233.753899585,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1215",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 165.70771187683567,
+      "worker_cpu_seconds": 1280.75843034,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1220",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 182.8865922340192,
+      "worker_cpu_seconds": 1219.099437914,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1225",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 152.7189468711149,
+      "worker_cpu_seconds": 1273.626716452,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1230",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 250.00650233309716,
+      "worker_cpu_seconds": 1588.9626652489999,
+      "workers": 10
+    },
+    {
+      "shard": "shards/p1235",
+      "host": "127x14",
+      "games": 40,
+      "wall_seconds": 565.6311695170589,
+      "worker_cpu_seconds": 5254.602474225,
+      "workers": 15
+    },
+    {
+      "shard": "shards/p1240",
+      "host": "127x08",
+      "games": 40,
+      "wall_seconds": 160.45637727389112,
+      "worker_cpu_seconds": 1259.918639943,
+      "workers": 12
+    },
+    {
+      "shard": "shards/p1245",
+      "host": "127x13",
+      "games": 40,
+      "wall_seconds": 173.72379145491868,
+      "worker_cpu_seconds": 1246.206986114,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0000",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 156.68650353886187,
+      "worker_cpu_seconds": 1426.91182305,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p0025",
+      "host": "127x09",
+      "games": 50,
+      "wall_seconds": 158.17514234595,
+      "worker_cpu_seconds": 1555.388013766,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0050",
+      "host": "127x15",
+      "games": 50,
+      "wall_seconds": 197.85007929010317,
+      "worker_cpu_seconds": 1553.8154789920002,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0075",
+      "host": "127x13",
+      "games": 50,
+      "wall_seconds": 198.24583909008652,
+      "worker_cpu_seconds": 1533.896667559,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0100",
+      "host": "127x14",
+      "games": 50,
+      "wall_seconds": 468.325640887022,
+      "worker_cpu_seconds": 5427.5806822740005,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0125",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 171.02624796400778,
+      "worker_cpu_seconds": 1428.207551045,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p0150",
+      "host": "127x09",
+      "games": 50,
+      "wall_seconds": 161.718266997952,
+      "worker_cpu_seconds": 1679.100859145,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0175",
+      "host": "127x15",
+      "games": 50,
+      "wall_seconds": 190.4562380979769,
+      "worker_cpu_seconds": 1429.360057808,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0200",
+      "host": "127x13",
+      "games": 50,
+      "wall_seconds": 231.17634723801166,
+      "worker_cpu_seconds": 1802.784159195,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0225",
+      "host": "127x09",
+      "games": 50,
+      "wall_seconds": 182.8321655180771,
+      "worker_cpu_seconds": 1761.464212395,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0250",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 173.49908300698735,
+      "worker_cpu_seconds": 1522.0424831579999,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p0275",
+      "host": "127x15",
+      "games": 50,
+      "wall_seconds": 182.16864773095585,
+      "worker_cpu_seconds": 1403.088276153,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0300",
+      "host": "127x13",
+      "games": 50,
+      "wall_seconds": 224.3973842561245,
+      "worker_cpu_seconds": 1769.67197993,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0325",
+      "host": "127x14",
+      "games": 50,
+      "wall_seconds": 302.8006420501042,
+      "worker_cpu_seconds": 3598.169631537,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0350",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 170.93835586705245,
+      "worker_cpu_seconds": 1485.7234836530001,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p0375",
+      "host": "127x09",
+      "games": 50,
+      "wall_seconds": 166.11684601893649,
+      "worker_cpu_seconds": 1563.295551618,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0400",
+      "host": "127x15",
+      "games": 50,
+      "wall_seconds": 189.59559171111323,
+      "worker_cpu_seconds": 1422.557078881,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0425",
+      "host": "127x13",
+      "games": 50,
+      "wall_seconds": 199.6846249010414,
+      "worker_cpu_seconds": 1547.147570688,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0450",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 171.7242365379352,
+      "worker_cpu_seconds": 1544.34313894,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p0475",
+      "host": "127x09",
+      "games": 50,
+      "wall_seconds": 133.01699937903322,
+      "worker_cpu_seconds": 1427.840779334,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0500",
+      "host": "127x15",
+      "games": 50,
+      "wall_seconds": 185.2700027928222,
+      "worker_cpu_seconds": 1400.362014718,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0525",
+      "host": "127x14",
+      "games": 50,
+      "wall_seconds": 317.76650462299585,
+      "worker_cpu_seconds": 3629.668727175,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0550",
+      "host": "127x09",
+      "games": 50,
+      "wall_seconds": 146.01012800517492,
+      "worker_cpu_seconds": 1527.60607179,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0575",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 166.79714640392922,
+      "worker_cpu_seconds": 1397.889296194,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p0600",
+      "host": "127x13",
+      "games": 50,
+      "wall_seconds": 199.1883247490041,
+      "worker_cpu_seconds": 1540.008336597,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0625",
+      "host": "127x15",
+      "games": 50,
+      "wall_seconds": 188.93781894119456,
+      "worker_cpu_seconds": 1363.211364005,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0650",
+      "host": "127x09",
+      "games": 50,
+      "wall_seconds": 143.4878927320242,
+      "worker_cpu_seconds": 1528.962294835,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0675",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 170.5515736779198,
+      "worker_cpu_seconds": 1399.834350119,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p0700",
+      "host": "127x13",
+      "games": 50,
+      "wall_seconds": 198.08335271687247,
+      "worker_cpu_seconds": 1485.969313516,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0725",
+      "host": "127x14",
+      "games": 50,
+      "wall_seconds": 280.13732586591505,
+      "worker_cpu_seconds": 3404.772716251,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0750",
+      "host": "127x09",
+      "games": 50,
+      "wall_seconds": 153.0243055128958,
+      "worker_cpu_seconds": 1590.641917131,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0775",
+      "host": "127x15",
+      "games": 50,
+      "wall_seconds": 205.45064111193642,
+      "worker_cpu_seconds": 1529.324873438,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0800",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 166.26721271197312,
+      "worker_cpu_seconds": 1567.144668496,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p0825",
+      "host": "127x13",
+      "games": 50,
+      "wall_seconds": 206.46474653319456,
+      "worker_cpu_seconds": 1533.188010033,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0850",
+      "host": "127x09",
+      "games": 50,
+      "wall_seconds": 150.48049049894325,
+      "worker_cpu_seconds": 1449.897929301,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0875",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 173.99128656694666,
+      "worker_cpu_seconds": 1625.7911739810002,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p0900",
+      "host": "127x15",
+      "games": 50,
+      "wall_seconds": 184.7511868828442,
+      "worker_cpu_seconds": 1382.983697558,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p0925",
+      "host": "127x14",
+      "games": 50,
+      "wall_seconds": 310.369456481887,
+      "worker_cpu_seconds": 3735.2329693350002,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0950",
+      "host": "127x09",
+      "games": 50,
+      "wall_seconds": 157.09751559095457,
+      "worker_cpu_seconds": 1631.629687487,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p0975",
+      "host": "127x13",
+      "games": 50,
+      "wall_seconds": 199.30395306902938,
+      "worker_cpu_seconds": 1540.824972733,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p1000",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 172.9657815839164,
+      "worker_cpu_seconds": 1577.7273870200002,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p1025",
+      "host": "127x15",
+      "games": 50,
+      "wall_seconds": 211.75588561710902,
+      "worker_cpu_seconds": 1503.8647465239999,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p1050",
+      "host": "127x09",
+      "games": 50,
+      "wall_seconds": 156.87733760499395,
+      "worker_cpu_seconds": 1502.029051058,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p1075",
+      "host": "127x13",
+      "games": 50,
+      "wall_seconds": 209.42991947801784,
+      "worker_cpu_seconds": 1489.648002279,
+      "workers": 10
+    },
+    {
+      "shard": "lag-only/shards/p1100",
+      "host": "127x14",
+      "games": 50,
+      "wall_seconds": 349.0909682030324,
+      "worker_cpu_seconds": 4158.246937667,
+      "workers": 15
+    },
+    {
+      "shard": "lag-only/shards/p1125",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 162.95964018604718,
+      "worker_cpu_seconds": 1431.250537953,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p1150",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 156.6562633907888,
+      "worker_cpu_seconds": 1341.96551099,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p1175",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 171.56804347690195,
+      "worker_cpu_seconds": 1521.905251318,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p1200",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 162.3520876141265,
+      "worker_cpu_seconds": 1445.859430829,
+      "workers": 12
+    },
+    {
+      "shard": "lag-only/shards/p1225",
+      "host": "127x08",
+      "games": 50,
+      "wall_seconds": 158.65724951797165,
+      "worker_cpu_seconds": 1482.977975585,
+      "workers": 12
+    }
+  ],
+  "incomplete_shards": [],
+  "stopped_attempts": [
+    {
+      "label": "cpu-delay-fixes-p0325-adaptive-r3",
+      "host": "127x16",
+      "workers": 26,
+      "wall_seconds": 653.9601440429688,
+      "observed_process_cpu_seconds": 3760.18,
+      "timing": "wrapper receipt"
+    },
+    {
+      "label": "cpu-delay-fixes-p0075-primary-v1",
+      "host": "127x14",
+      "workers": 22,
+      "wall_seconds": 1471.9849407672882,
+      "observed_process_cpu_seconds": 13202.340000000002,
+      "timing": "wrapper receipt"
+    },
+    {
+      "label": "cpu-delay-fixes-p0200-primary-v1",
+      "host": "127x09",
+      "workers": 22,
+      "wall_seconds": 751.8482737541199,
+      "observed_process_cpu_seconds": 7577.27,
+      "timing": "wrapper receipt"
+    },
+    {
+      "label": "cpu-delay-fixes-extra1000-hotfix-v1",
+      "host": "127x16",
+      "workers": 26,
+      "wall_seconds": 661.1199696063995,
+      "observed_process_cpu_seconds": 136.83999999999997,
+      "timing": "wrapper receipt"
+    },
+    {
+      "label": "cpu-delay-fixes-p0025-primary-v1",
+      "host": "127x11",
+      "workers": 26,
+      "wall_seconds": 1603.6786484718323,
+      "observed_process_cpu_seconds": 205.03,
+      "timing": "initial six-host dispatch batch; own wrapper unavailable"
+    }
+  ],
+  "unknown_cpu_attempts": [
+    "cpu-delay-fixes-p0025-resource-r2: host11 down; CPU unavailable"
+  ],
+  "worker_cpu_seconds": 521138.7706194501,
+  "note": "Fresh game CPU plus verified stopped-attempt process CPU (includes stopped main initialization); successful main initialization/build/tests excluded. Down11 second-attempt CPU unavailable, so total is a lower bound. Utilization uses summed workers\u00d7attempt wall, retaining changed caps, startup/tails and GPU pauses. Pause counts are monitor-reported: brief verified idle-GPU drains on13/15 can overstate paused time; log gaps>=10s excluded. Below80 device samples include idle GPUs and baseline stalls while our workers pause. No continuous GPU>=80 claim."
+}

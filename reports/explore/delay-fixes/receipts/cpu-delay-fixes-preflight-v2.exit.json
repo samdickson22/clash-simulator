@@ -1,0 +1,65 @@
+{
+  "version": 2,
+  "host": "127x13",
+  "label": "cpu-delay-fixes-preflight-v2",
+  "command": [
+    "env",
+    "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/src:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/engine-rs",
+    "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/preflight.py",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/receipts/preflight.json",
+    "/mpac/sdicks02/repos/clasher-lease/eval-snapshots/inputs-bc-v1/main02.pt"
+  ],
+  "started_utc": "2026-10-08T23:28:19.455706+00:00",
+  "declared_processes": 4,
+  "declared_pss_bytes": 3000000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 54,
+    "pss_bytes": 35205924864
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 53,
+    "pss_bytes": 21350623232
+  },
+  "admission_jobs": {
+    "v1:4026076:128902606": {
+      "kind": "v1",
+      "sequence": -1,
+      "supervisor_pid": 4026076,
+      "processes": 14,
+      "pss_bytes": 11205924864,
+      "stop_reason": null
+    },
+    "v2:cpu-search-ab-p0875-r1": {
+      "kind": "v2",
+      "sequence": 2,
+      "supervisor_pid": 4149498,
+      "processes": 39,
+      "pss_bytes": 10144698368,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 4161958,
+  "admission_sequence": 4,
+  "pid": 4161959,
+  "status": "fail",
+  "error": "'v2:cpu-delay-fixes-preflight-v2'",
+  "exit_code": 1,
+  "stop_requested_utc": "2026-10-08T23:28:21.116221+00:00",
+  "finished_utc": "2026-10-08T23:28:21.220749+00:00",
+  "stop_reason": "supervision error: 'v2:cpu-delay-fixes-preflight-v2'",
+  "peak_processes": 2,
+  "peak_rss_bytes": 39854080,
+  "peak_sampled_pss_bytes": 0,
+  "memory_metric": "pss",
+  "console_users": null,
+  "aggregate": null,
+  "effective_process_cap": null
+}

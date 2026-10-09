@@ -1,0 +1,56 @@
+{
+  "version": 2,
+  "host": "127x13",
+  "label": "cpu-delay-fixes-build-v1",
+  "command": [
+    "/usr/bin/env",
+    "CARGO_TARGET_DIR=/mpac/sdicks02/repos/clasher-lease/build/delay-fixes-v1",
+    "PYO3_PYTHON=/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "/bin/bash",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/engine-rs/build.sh"
+  ],
+  "started_utc": "2026-10-08T23:24:36.640343+00:00",
+  "declared_processes": 8,
+  "declared_pss_bytes": 4000000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 14,
+    "pss_bytes": 11201153024
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 14,
+    "pss_bytes": 11201153024
+  },
+  "admission_jobs": {
+    "v1:4026076:128902606": {
+      "kind": "v1",
+      "sequence": -1,
+      "supervisor_pid": 4026076,
+      "processes": 14,
+      "pss_bytes": 11201153024,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 4146517,
+  "admission_sequence": 1,
+  "pid": 4146518,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T23:25:29.335977+00:00",
+  "stop_reason": null,
+  "peak_processes": 4,
+  "peak_rss_bytes": 796758016,
+  "peak_sampled_pss_bytes": 687160320,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "aggregate": {
+    "processes": 21,
+    "pss_bytes": 11934976000
+  },
+  "effective_process_cap": 80
+}

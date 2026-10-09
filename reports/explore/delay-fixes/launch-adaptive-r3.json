@@ -1,0 +1,113 @@
+{
+  "paired_seed_target": 1250,
+  "prior_manifest": "launch-recovery-r2.json",
+  "down_hosts": [
+    "127x11"
+  ],
+  "results": [
+    {
+      "host": "127x08",
+      "offset": 250,
+      "label": "cpu-delay-fixes-p0250-resource-r2",
+      "adopted": true,
+      "exit_code": 0,
+      "finished": 1791504931.941934
+    },
+    {
+      "host": "127x09",
+      "offset": 275,
+      "label": "cpu-delay-fixes-p0275-resource-r2",
+      "adopted": true,
+      "exit_code": 0,
+      "finished": 1791504932.9520948
+    },
+    {
+      "host": "127x14",
+      "offset": 75,
+      "label": "cpu-delay-fixes-p0075-resource-r2",
+      "adopted": true,
+      "exit_code": 0,
+      "finished": 1791505348.8669894
+    }
+  ],
+  "failed": [
+    {
+      "host": "127x16",
+      "offset": 325,
+      "label": "cpu-delay-fixes-p0325-adaptive-r3",
+      "workers": 26,
+      "started": 1791504808.6573927,
+      "finished": 1791505464.9517155,
+      "exit_code": 75,
+      "command": [
+        "bash",
+        "/mpac/sdicks02/repos/clasher-lease/run_v2.sh",
+        "--foreground",
+        "--max-processes",
+        "30",
+        "--expected-pss-gb",
+        "12",
+        "cpu-delay-fixes-p0325-adaptive-r3",
+        "--",
+        "env",
+        "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime",
+        "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/src:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/engine-rs",
+        "RAYON_NUM_THREADS=1",
+        "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+        "-m",
+        "clasher.analysis.loss_review.delay_simulate",
+        "--out",
+        "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/shards/p0325",
+        "--pairs",
+        "25",
+        "--pair-offset",
+        "325",
+        "--workers",
+        "26",
+        "--checkpoint",
+        "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/inputs/main02.pt",
+        "--exclusions",
+        "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/loss-review/seeds.json",
+        "--gpu-guard",
+        "--resume"
+      ]
+    }
+  ],
+  "held_unknown": [],
+  "unstarted_offsets": [
+    325,
+    425,
+    450,
+    475,
+    500,
+    525,
+    550,
+    575,
+    600,
+    625,
+    650,
+    675,
+    700,
+    725,
+    750,
+    775,
+    800,
+    825,
+    850,
+    875,
+    900,
+    925,
+    950,
+    975,
+    1000,
+    1025,
+    1050,
+    1075,
+    1100,
+    1125,
+    1150,
+    1175,
+    1200,
+    1225
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "label": "cpu-delay-fixes-p0025-primary-v1",
+  "utc": 1791504121.9142475,
+  "verified_main_pid": 312488,
+  "verified_descendant_count": 26,
+  "observed_process_cpu_seconds": 205.03,
+  "completed_game_cpu_seconds": 0,
+  "reason": "restart initial aliased GPU guard; host subsequently down",
+  "source": "captured tool stdout; original remote receipt inaccessible after host failure"
+}

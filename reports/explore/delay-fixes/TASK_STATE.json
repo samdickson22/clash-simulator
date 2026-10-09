@@ -1,0 +1,70 @@
+{
+  "status": "complete:12500games,1250pairs/each original/control arm;24tests; report+JSON+plots delivered; all own workers/reservations0",
+  "target_pairs": 1250,
+  "arms": [
+    "U0",
+    "U27",
+    "S0",
+    "S27",
+    "N2",
+    "N4",
+    "I0",
+    "IF"
+  ],
+  "current_controller": "lag_controls_launch.py",
+  "current_manifest": "launch-lag-controls.json",
+  "controller_pid_file": "receipts/controller-throughput-v5.pid",
+  "controller_pid": 1308456,
+  "resource_policy": {
+    "127x09": 0,
+    "127x14": 0,
+    "127x13": 0,
+    "127x15": 0,
+    "127x16": 0,
+    "127x08": 0
+  },
+  "home08": "A/B zero confirmed; released/resumed12 at01:24Z; configT5PID3548451 baseline237.66window3; coexistence237.66\u2192233.99rows/s -1.55% ratioCI[.9794,.9898] backgroundsyncdisclosed",
+  "tests": "24passed receipts/final-tests-r2.log; native preflight passed",
+  "gpu_policy": "sharedthroughput_guard.py +GPUWatch; SCHED_IDLE/dynamicGPUcores+SMT exclusions; only ownintervalthroughput<95%measuredbaseline; missing/stale/idle exemption; neverutiltrigger",
+  "baseline16": "receipts/throughput-baseline16.json:12147.398848rows/s,40freshsteps/38seconds,10-stepmedian,job4092118; config installedlease16reports/explore/delay-fixes/guard-config.json",
+  "latency": "futureactive-wall-v1+raw_wall+CPU; legacyrawunadjustable separatedbyupdatedsummarize.py",
+  "ab_owner": "thread:delegated-task:command%3Amcp%3A5372a68f-4187-4e3f-ba28-289c8fe60034%3Adelegate-task%3Aclasher-explore-search-ab-20261008-1; ownsCPUdeadline/simulate/search_ab/reportguards;33tests+4armforcedpause/LPTactionwinnerparitypassed",
+  "remaining": [],
+  "disclosure": "Inadvertentlyreadfirst65linesimitation/RESULTS-v1-offline.md includingsummarizedgate(a)heldout; norawheldout/eval read/loaded; notoutcomeblinded; disclosedREADME/report",
+  "paths": {
+    "lease_runtime": "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime",
+    "lease_python": "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "home_root": "/mpac/sdicks02/repos/clasher",
+    "home_native": "reports/explore/delay-fixes/native/clasher_core.abi3.so",
+    "data": "allfullgameJSON/home08shards; compactonly05"
+  },
+  "technical_stops": "audit_compute.py includes5stops, down11r2CPUunknownlowerbound, initialPSs13.09GBstop16resolveddecl18GB26pool",
+  "matched_cadence_controls": {
+    "arms": [
+      "R0",
+      "R27"
+    ],
+    "source_cohorts": [
+      "S0",
+      "S27"
+    ],
+    "opponent_delay": 0,
+    "opponent_interval": 10,
+    "pairs": 1250,
+    "reason": "code audit before outcome inspection: legacy model cadence3 vs enabled10",
+    "path": "lag-only/shards",
+    "pending": "wait original controller drain then run five lanes; at cutoffs allow partial controls",
+    "config_sha256": "9e0cf7befc10bd99f145148b2e72ff68997beed1c6de00ff21d67efc3fac44b6",
+    "actual_date_u_timestamp": "2026-10-09T02:02:09Z",
+    "controller_pid": 1308456,
+    "controller": "lag_controls_launch.py",
+    "manifest": "launch-lag-controls.json",
+    "status": "complete1250pairs per arm"
+  },
+  "refusals_0220": "09 and15 nice-min admissions accepted; no retry; 14/13/08 continue",
+  "nice_prechecks": "09/15 clear 02:24:10Z, explicit coordinator conditional re-admission; checks before every leased control admission",
+  "original_pairs_collected": 1250,
+  "leased_clear_receipt": "receipts/early-leases-clear.json",
+  "home08_exit_deadline": "2026-10-09T04:55:00Z",
+  "completed_utc": "2026-10-09T03:20:53.752226+00:00"
+}

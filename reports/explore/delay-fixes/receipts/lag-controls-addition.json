@@ -1,0 +1,7 @@
+{
+  "actual_date_u_timestamp": "2026-10-09T02:02:09Z",
+  "control_config_sha256": "9e0cf7befc10bd99f145148b2e72ff68997beed1c6de00ff21d67efc3fac44b6",
+  "config_path": "reports/explore/delay-fixes/lag-controls-config.json",
+  "outcomes_inspected_before_addition": false,
+  "reason": "Legacy S6 opponent rollout cadence 3 versus enabled cadence 10; isolate lag without changing original eight arms"
+}

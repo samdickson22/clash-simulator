@@ -1,0 +1,79 @@
+{
+  "version": 2,
+  "host": "127x14",
+  "label": "cpu-delay-fixes-smoke-v1",
+  "command": [
+    "env",
+    "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/src:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/engine-rs",
+    "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "-m",
+    "clasher.analysis.loss_review.delay_simulate",
+    "--out",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/smoke",
+    "--pairs",
+    "1",
+    "--pair-offset",
+    "9000",
+    "--workers",
+    "2",
+    "--checkpoint",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/inputs/main02.pt",
+    "--exclusions",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/loss-review/seeds.json",
+    "--trace",
+    "--gpu-guard"
+  ],
+  "started_utc": "2026-10-08T23:32:15.147028+00:00",
+  "declared_processes": 6,
+  "declared_pss_bytes": 4000000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 54,
+    "pss_bytes": 35183411200
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 53,
+    "pss_bytes": 26876774400
+  },
+  "admission_jobs": {
+    "v1:3951727:128923248": {
+      "kind": "v1",
+      "sequence": -1,
+      "supervisor_pid": 3951727,
+      "processes": 14,
+      "pss_bytes": 11183411200,
+      "stop_reason": null
+    },
+    "v2:cpu-search-ab-p1000-r1": {
+      "kind": "v2",
+      "sequence": 1,
+      "supervisor_pid": 4067074,
+      "processes": 39,
+      "pss_bytes": 15693363200,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 4092555,
+  "admission_sequence": 2,
+  "pid": 4092668,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T23:42:27.123183+00:00",
+  "stop_reason": null,
+  "peak_processes": 4,
+  "peak_rss_bytes": 3005333504,
+  "peak_sampled_pss_bytes": 1853922304,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "aggregate": {
+    "processes": 61,
+    "pss_bytes": 25080994816
+  },
+  "effective_process_cap": 80
+}

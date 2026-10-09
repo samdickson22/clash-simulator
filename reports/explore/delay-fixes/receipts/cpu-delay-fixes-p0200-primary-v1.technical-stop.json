@@ -1,0 +1,33 @@
+{
+  "completed_game_cpu_seconds": 7222.31702283,
+  "estimated_unfinished_and_initialization_cpu_seconds": 354.95297717000085,
+  "label": "cpu-delay-fixes-p0200-primary-v1",
+  "utc": 1791503990.9099429,
+  "verified_main_pid": 4167702,
+  "verified_descendants": [
+    4169742,
+    4169753,
+    4169761,
+    4169762,
+    4169765,
+    4169768,
+    4169769,
+    4169770,
+    4169771,
+    4169772,
+    4169786,
+    4169808,
+    4169820,
+    4169837,
+    4169847,
+    4169854,
+    4169869,
+    4169874,
+    4169876,
+    4169877,
+    4169878,
+    4169879
+  ],
+  "observed_process_cpu_seconds": 7577.27,
+  "reason": "restart stalled GPU guard with one qualifying resume sample; same schedule"
+}

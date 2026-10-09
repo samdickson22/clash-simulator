@@ -1,0 +1,258 @@
+{
+  "started_utc": 1791507507.4349258,
+  "finished_utc": 1791507545.5248106,
+  "pid": 4092118,
+  "job": {
+    "pid": 4092118,
+    "log_path": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100821/train.jsonl",
+    "event": "step",
+    "field": "rows_per_second_step",
+    "baseline": 12147.398848437071,
+    "baseline_samples": 40,
+    "window_steps": 10
+  },
+  "samples": [
+    {
+      "utc": 1791507507.9452612,
+      "rate": 12231.200625599551,
+      "step": 20209,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507508.8474932,
+      "rate": 12193.310299573252,
+      "step": 20210,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507509.3010578,
+      "rate": 12181.993153317218,
+      "step": 20211,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507510.2070036,
+      "rate": 11619.709095512515,
+      "step": 20212,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507512.4935532,
+      "rate": 11986.666893108162,
+      "step": 20213,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507513.40407,
+      "rate": 12295.005160441167,
+      "step": 20214,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507513.8595448,
+      "rate": 12112.804543556922,
+      "step": 20215,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507514.771995,
+      "rate": 12197.145508911566,
+      "step": 20216,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507515.694694,
+      "rate": 11828.21887698624,
+      "step": 20217,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507516.14238,
+      "rate": 12255.448062244091,
+      "step": 20218,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507518.4024699,
+      "rate": 11949.877918120523,
+      "step": 20219,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507518.8578393,
+      "rate": 12202.449918348495,
+      "step": 20220,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507519.7628102,
+      "rate": 12167.216707873231,
+      "step": 20221,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507520.2121315,
+      "rate": 12192.639641411552,
+      "step": 20222,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507521.1118956,
+      "rate": 11283.096100558008,
+      "step": 20223,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507522.0220401,
+      "rate": 12095.175082185337,
+      "step": 20224,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507524.2886684,
+      "rate": 12160.591375813488,
+      "step": 20225,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507524.7388172,
+      "rate": 12206.956400347486,
+      "step": 20226,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507525.6376538,
+      "rate": 12106.281954301328,
+      "step": 20227,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507526.5511923,
+      "rate": 12201.79595491652,
+      "step": 20228,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507527.0004625,
+      "rate": 10965.567756401915,
+      "step": 20229,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507527.9045506,
+      "rate": 12247.895273317938,
+      "step": 20230,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507530.164439,
+      "rate": 12198.445408140178,
+      "step": 20231,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507530.6141107,
+      "rate": 12161.621311981757,
+      "step": 20232,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507531.527193,
+      "rate": 12112.118103094785,
+      "step": 20233,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507531.9756658,
+      "rate": 12122.309937845866,
+      "step": 20234,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507532.8845649,
+      "rate": 12104.092290476412,
+      "step": 20235,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507533.3366258,
+      "rate": 12138.903353767435,
+      "step": 20236,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507535.6014984,
+      "rate": 12241.730113364129,
+      "step": 20237,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507536.0630586,
+      "rate": 12137.256327142006,
+      "step": 20238,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507536.9699514,
+      "rate": 12229.971118640498,
+      "step": 20239,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507537.8787107,
+      "rate": 12106.372768015168,
+      "step": 20240,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507538.3353376,
+      "rate": 11173.370600239097,
+      "step": 20241,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507539.2333682,
+      "rate": 10660.25756307621,
+      "step": 20242,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507541.493565,
+      "rate": 12186.113160707035,
+      "step": 20243,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507542.3991883,
+      "rate": 12143.338209805113,
+      "step": 20244,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507542.8548317,
+      "rate": 11561.189562544894,
+      "step": 20245,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507543.757887,
+      "rate": 12108.380648547887,
+      "step": 20246,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507544.214227,
+      "rate": 11810.522640707522,
+      "step": 20247,
+      "field": "rows_per_second_step"
+    },
+    {
+      "utc": 1791507545.1246688,
+      "rate": 11776.524556309034,
+      "step": 20248,
+      "field": "rows_per_second_step"
+    }
+  ],
+  "method": "median of consecutive10-step medians over40 fresh unique interval steps; own lane drained",
+  "own_delay_workers": 0
+}

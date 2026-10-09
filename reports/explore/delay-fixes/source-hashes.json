@@ -1,0 +1,17 @@
+{
+  "captured_utc": "2026-10-09T01:50Z",
+  "isolated_runtime_host": "127x13",
+  "isolated_runtime_root": "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime",
+  "sha256": {
+    "engine-rs/clasher_core.abi3.so": "605eb9576db713efdfd356dd44619bbc6df2f18c3ce62260249c6a12353c2200",
+    "engine-rs/src/lib.rs": "e071d8f53f27a3eb39ab701589596c2f7109aa14d89cb95a0bb5859e543dcb78",
+    "engine-rs/src/scripts.rs": "b5aa5319c6ba6251faf83b764cde9b9732f2d25aee33ef156bb06c096f5c5e31",
+    "engine-rs/src/delay_commands.rs": "29edf9884105ebdb242cd5659c8f6925b70d3c254628e6a7e9da46b7be7d0cb3",
+    "src/clasher/analysis/loss_review/delay_fixes.py": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb",
+    "src/clasher/analysis/loss_review/delay_simulate.py": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a",
+    "src/clasher/analysis/loss_review/delay_runtime.py": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0",
+    "src/clasher/analysis/loss_review/throughput_guard.py": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4",
+    "reports/explore/delay-fixes/inputs/main02.pt": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed"
+  },
+  "note": "The task native binary was built once and kept isolated throughout this study. These hashes describe that runtime snapshot; shared-checkout engine changes by other owners were not rebuilt into it."
+}

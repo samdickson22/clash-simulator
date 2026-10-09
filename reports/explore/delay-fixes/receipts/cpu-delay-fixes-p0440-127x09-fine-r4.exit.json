@@ -1,0 +1,89 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261008-r1",
+  "host": "127x09",
+  "label": "cpu-delay-fixes-p0440-127x09-fine-r4",
+  "command": [
+    "env",
+    "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/src:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/engine-rs",
+    "RAYON_NUM_THREADS=1",
+    "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "-m",
+    "clasher.analysis.loss_review.delay_simulate",
+    "--out",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/shards/p0440",
+    "--pairs",
+    "5",
+    "--pair-offset",
+    "440",
+    "--workers",
+    "15",
+    "--checkpoint",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/inputs/main02.pt",
+    "--exclusions",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/loss-review/seeds.json",
+    "--gpu-guard",
+    "--resume"
+  ],
+  "started_utc": "2026-10-09T00:29:50.293660+00:00",
+  "declared_processes": 19,
+  "declared_pss_bytes": 12000000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 50,
+    "pss_bytes": 32000000000
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 33,
+    "pss_bytes": 13487070208
+  },
+  "admission_jobs": {
+    "v2:t7-epoch-offload-20261008-09r1": {
+      "kind": "v2",
+      "sequence": 10,
+      "supervisor_pid": 19112,
+      "processes": 10,
+      "pss_bytes": 7853630464,
+      "stop_reason": null
+    },
+    "v2:v4-vector-fullgate-20261008-09r4": {
+      "kind": "v2",
+      "sequence": 11,
+      "supervisor_pid": 31579,
+      "processes": 2,
+      "pss_bytes": 288569344,
+      "stop_reason": null
+    },
+    "v2:cpu-search-ab-p0250-r1": {
+      "kind": "v2",
+      "sequence": 17,
+      "supervisor_pid": 127793,
+      "processes": 21,
+      "pss_bytes": 5344870400,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 177530,
+  "admission_sequence": 19,
+  "pid": 177610,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-09T00:33:06.703643+00:00",
+  "stop_reason": null,
+  "peak_processes": 17,
+  "peak_rss_bytes": 13383553024,
+  "peak_sampled_pss_bytes": 7532020736,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "aggregate": {
+    "processes": 50,
+    "pss_bytes": 20858618880
+  },
+  "effective_process_cap": 80
+}
