@@ -1132,3 +1132,10 @@ Also on the hub, but with copies elsewhere:
   - **Decision:** W is the most promising search change so far. A confirmation run follows: W vs baseline against search opponents, with symmetric command delay, plus a W latency reduction.
 - **03:01 UTC:** the tower r3 provenance patch landed (`22055686`). `public_score_templates.json` is now in the runtime provenance hash; no other live artifact was missing. The full live suite passes 93/93 on 01.
 - **03:06 UTC:** the leased hosts are clear of exploration. The last delay-fixes shard (14/p1100) finished pass/0 at 03:06:04Z, and checks at 03:06:48Z show no exploration reservations or processes on 09/13/14/15/16. The delay-fixes controls continue on 08 (≤12 processes). Perception capture can now take the leased hosts.
+- **03:10 UTC heartbeat.** Sampled GPU average over 8×0.5 s:
+  - Home: 01 71% (T11 s22), 02 64%, 04 99%, 08 30% (GRU, which pauses at 05:00Z).
+  - Leased: 09 88%, 13 90%, 14 98%, 15 99%, **16 0%**.
+  - Home usage is 3.5 GB of 5 GB. 06/07/11/18 are down.
+  - **Problem (a) on 16:** T11 seed 21's extended-v1 run self-stopped at 02:49:23Z at 48.5 GB PSS, over my extension proposal's 48 GB cap. Its old peak was 54 GB, and I hadn't checked it.
+    - **Action:** asked roader for ≤60 GB on 16 for this job only.
+    - Told the T11 owner to relaunch from step-00025591 under whichever cap comes first: 60 GB if approved, or a trimmed loader under 46 GB.
