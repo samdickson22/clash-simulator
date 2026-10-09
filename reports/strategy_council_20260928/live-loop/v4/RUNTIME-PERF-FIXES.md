@@ -152,11 +152,17 @@ disagreement between config and calibration. There is no implicit 0.5 fallback.
 The formal owner must supply the selected sealed value and bind it to the
 selected checkpoint/calibration in the eventual qualification receipt; **no
 formal selected threshold existed when this implementation was prepared**.
+The missing-selection regression invokes the live constructor with both decoder
+flag values and asserts refusal before any model, sensor or adapter is created.
 Synthetic checks of forwarding/isolation and scalar/vectorized non-clock output
 equality pass on CPU, including a 1.2-second gap and a selected threshold of 0.7.
 
 The audit's CUDA analog of approximately **22 ms/frame saved** remains an
 estimate for live MPS. No new MPS timing or train-recording parity is claimed.
+The perception owner's subsequently confirmed offline validation capture-clock
+bug delays formal selection. No validation-capture availability numbers enter
+this report's before/after timings or exactness claims. The 22 ms figure is the
+audit's decoder service-time analog, not validation availability evidence.
 The prepared Mac tool compares complete body/event decoder records as well as
 post-fusion public outputs across two train recordings, excluding availability
 clocks, before enabling the adapter in a fresh suite. Runtime wall availability
@@ -204,6 +210,9 @@ All files below are under `perf-fixes/` beside this report:
   1,000-root byte/RNG proof, parsed digest proof, full scorer pairs, timings,
   native hash and live source hashes.
 - `live-perf-tests-20261009-08r2.log` and `.exit`: 45 passing tests.
+- `live-perf-threshold-20261009-08r1.log` and `.exit`: subsequent three passing
+  CPU adapter tests, including the added live-constructor missing-selection
+  regression in both flag modes; production source unchanged.
 - `live-perf-smoke-20261009-r1.json` and its log/exit receipt: integrated guarded
   constructor, native scoring and four-root reduction.
 - `queue-benchmark.json` and `live-perf-queue-analysis-20261009-r1.json`: complete

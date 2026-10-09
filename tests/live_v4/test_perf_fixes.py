@@ -8,6 +8,7 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest.mock import patch
 
 from clasher.live.contracts import Frame
 from clasher.live.perception_adapter import selected_body_threshold, vectorized_runtime
@@ -64,6 +65,25 @@ class TowerTests(unittest.TestCase):
 
 
 class AdapterTests(unittest.TestCase):
+    def test_live_constructor_refuses_missing_selected_threshold_in_both_modes(self):
+        from clasher.live.perception import V4Perception
+        with tempfile.TemporaryDirectory() as directory:
+            calibration = Path(directory)/'unselected.json'
+            calibration.write_text(json.dumps({'spells': ['Zap'], 'thresholds': {'default': .1},
+                                               'calibration': {}}))
+            for vectorized in (False, True):
+                with self.subTest(vectorized=vectorized), \
+                     patch('torch.load', return_value={}), \
+                     patch('clasher.vision.l1_v4.PerceptionV4') as model, \
+                     patch('clasher.vision.l1_v4.PixelPerception') as sensor, \
+                     patch('clasher.live.perception_adapter.vectorized_runtime') as adapter:
+                    with self.assertRaisesRegex(ValueError, 'sealed selected body_threshold'):
+                        V4Perception(dict(checkpoint='unused', calibration=str(calibration),
+                                          vectorized_decoder=vectorized))
+                    model.assert_not_called()
+                    sensor.assert_not_called()
+                    adapter.assert_not_called()
+
     def test_threshold_has_no_default_and_rejects_disagreement(self):
         for config, calibration in (({}, {}), ({'body_threshold': .4}, {'body_threshold': .7}),
                                      ({'body_threshold': True}, {}), ({'body_threshold': .55}, {})):
