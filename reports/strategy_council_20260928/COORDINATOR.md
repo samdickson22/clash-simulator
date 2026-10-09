@@ -1406,3 +1406,10 @@ Also on the hub, but with copies elsewhere:
     - immediate vectorized restarts on 04/08/09/13/14 (+15);
     - then the R16-1 audits, and 04 to the GRU.
   - Follow-up for later: a host-unreachable error should quarantine that host, not suspend the whole queue.
+- **09:43 UTC:**
+  - The suspension's root cause was the audit read of 02 e20/908 (claim `5e850c0d`) at 09:37:46Z, a transport failure. The 03 cache is live.
+  - **72 verified outputs exist only on 02,** which had no archive retention because the service covered only leased hosts. **Decision:**
+    - adopt any checksum-verified mirror through the A15 relocation path;
+    - otherwise write retire-as-host-unreachable receipts and requeue for vectorized recapture (~10 min);
+    - 02 copies stay permanently inadmissible if 02 returns.
+  - Follow-up: the retention service must cover home hosts too.
