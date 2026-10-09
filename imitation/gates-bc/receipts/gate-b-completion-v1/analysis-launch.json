@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-09T01:25:21.534263+00:00",
+  "host": "127x03",
+  "argv": [
+    "bash",
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh",
+    "gates-bc-b-analysis-v1",
+    "taskset",
+    "-c",
+    "48-51",
+    "env",
+    "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1",
+    "CLASHER_EVAL_RUNTIME_ROOT=/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/src:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/engine-rs",
+    "CUDA_VISIBLE_DEVICES=",
+    "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-b/operations/analyze_gates.py",
+    "--gate",
+    "b",
+    "--games-root",
+    "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-b/games",
+    "--runtime",
+    "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-b/analysis/statistics.json",
+    "--replay-receipt",
+    "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-b/analysis/rejection-replay.json"
+  ],
+  "launch": "pid=800439 log=/mpac/sdicks02/jobs/clasher/gates-bc-b-analysis-v1.log\n"
+}

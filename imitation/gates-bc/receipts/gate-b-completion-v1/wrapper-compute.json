@@ -1,0 +1,52 @@
+[
+  {
+    "label": "imitation-gate-b-v1-r1",
+    "log": "/mpac/sdicks02/jobs/clasher/imitation-gate-b-v1-r1.log",
+    "exit": 0,
+    "user_seconds": "62180.55",
+    "system_seconds": "269.80",
+    "wall_time": "56:41.13",
+    "max_rss_kb": "1333124"
+  },
+  {
+    "label": "gates-bc-b-verification-v1",
+    "log": "/mpac/sdicks02/jobs/clasher/gates-bc-b-verification-v1.log",
+    "exit": 0,
+    "user_seconds": "736.71",
+    "system_seconds": "6.21",
+    "wall_time": "12:23.58",
+    "max_rss_kb": "691800"
+  },
+  {
+    "label": "gates-bc-b-spot-verification-v1",
+    "log": "/mpac/sdicks02/jobs/clasher/gates-bc-b-spot-verification-v1.log",
+    "exit": 1,
+    "user_seconds": "25.13",
+    "system_seconds": "0.74",
+    "wall_time": "0:25.93",
+    "max_rss_kb": "1347848"
+  },
+  {
+    "label": "gates-bc-b-spot-verification-v2",
+    "log": "/mpac/sdicks02/jobs/clasher/gates-bc-b-spot-verification-v2.log",
+    "exit": 0,
+    "user_seconds": "93.97",
+    "system_seconds": "0.86",
+    "wall_time": "1:13.90",
+    "max_rss_kb": "1324392"
+  },
+  {
+    "label": "gates-bc-b-analysis-v1",
+    "log": "/mpac/sdicks02/jobs/clasher/gates-bc-b-analysis-v1.log",
+    "exit": 0,
+    "user_seconds": "7.02",
+    "system_seconds": "0.64",
+    "wall_time": "0:07.69",
+    "max_rss_kb": "867224"
+  },
+  {
+    "label": "gates-bc-b-legality-explanation-v1",
+    "log": "/mpac/sdicks02/jobs/clasher/gates-bc-b-legality-explanation-v1.log",
+    "exit": null
+  }
+]

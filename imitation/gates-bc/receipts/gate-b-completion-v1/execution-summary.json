@@ -1,0 +1,48 @@
+{
+  "execution": {
+    "host": "127x03",
+    "started_utc": "2026-10-09T00:14:08.597769+00:00",
+    "ended_utc": "2026-10-09T01:10:47.857417+00:00",
+    "wall_seconds": 3399.259669780731,
+    "child_user_seconds": 62148.398462,
+    "child_system_seconds": 102.61255,
+    "peak_owned_processes": 65,
+    "peak_pss_bytes": 14259475456,
+    "stop_reason": null,
+    "returncodes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "completed": true
+  },
+  "resources": {
+    "samples": 642,
+    "max_load1": 21.3,
+    "above_ceiling20": 322
+  },
+  "baseline": {
+    "duration_seconds": 3400.6430151849054,
+    "average_cores": 0.004158037152638659,
+    "peak_5s_cores": 0.013956235528571097,
+    "passed": true,
+    "sampling": "5-second cumulative process CPU; exiting processes have unobserved final fractional interval; births counted in full when observed",
+    "gate_outcomes_read": false,
+    "service_affinity_changed": false
+  },
+  "baseline_sha256": "a6a096648ca53372dc0a0bc8c364bfdfa98452058d3b3c915d20e62bde8059a8",
+  "HALT_present": false
+}

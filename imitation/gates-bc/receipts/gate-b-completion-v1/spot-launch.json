@@ -1,0 +1,26 @@
+{
+  "utc": "2026-10-09T01:14:17.246080+00:00",
+  "argv": [
+    "bash",
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/fleet/fleet_run.sh",
+    "gates-bc-b-spot-verification-v1",
+    "taskset",
+    "-c",
+    "52-55",
+    "env",
+    "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1",
+    "CLASHER_EVAL_RUNTIME_ROOT=/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/src:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/engine-rs",
+    "CUDA_VISIBLE_DEVICES=",
+    "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-eval-snapshots/operations-bc-v1/spot_verify_b_prefix.py",
+    "--root",
+    "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-b/games",
+    "--checkpoint",
+    "/mpac/sdicks02/repos/clasher-eval-snapshots/inputs-bc-v1/main02.pt",
+    "--output",
+    "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-b/analysis/spot-replay.json"
+  ],
+  "launch": "pid=767751 log=/mpac/sdicks02/jobs/clasher/gates-bc-b-spot-verification-v1.log\n"
+}

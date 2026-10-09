@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "games": 1152,
+  "rejection_games": 24,
+  "actions_checked": 3508,
+  "all_action_replay_exact": true,
+  "rejects": 70,
+  "guards": {
+    "live-building footprint/air collision": 3,
+    "TimedExplosive.blocks_deployment": 67
+  },
+  "by_arm": {
+    "B": 10,
+    "A": 24,
+    "script": 36
+  },
+  "sha256": "6dccfa4fec21d999de13501e0effa7ca29565a5540f8d3c34bad139645995579"
+}

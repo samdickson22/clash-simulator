@@ -977,3 +977,7 @@ Also on the hub, but with copies elsewhere:
   - **Meaning:** the imitation model's top-8 proposals improve the fair search player at a matched candidate count.
 - **01:28 UTC: 127x03 released** by the gates worker (marker removed, all gate PIDs gone) and lent to the tempo/horizon exploration.
   - **Gate (b):** the 5 legality flags all reproduce. Each flagged command was legal before either seat's command and became mask-illegal only after seat 0's command, which is the sequential-apply effect. Acceptance histories match. No adjustment; PASS stands, and the final report is being rendered.
+- **~01:55 UTC: GATE (b) RESULTS FINAL: PASS** (`imitation/RESULTS-gate-b.md`, `bb1adf3f…`).
+  - B won 420/640: score 0.65625, paired CI [0.628, 0.684]; secondary +0.0508. All timing and integrity bars pass.
+  - The report discloses the R12 observability limit and the 5 sequential-application mask flags.
+  - **Gate (c):** healthy on 02 (165 two-seat worlds by 01:30Z); revised ETA ~5.5 h total, so about 05:45Z.

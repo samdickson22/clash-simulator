@@ -1,0 +1,6 @@
+{
+  "utc": "2026-10-09T01:17:18.653469+00:00",
+  "before_sha256": "281468c07fffd989e97f054e59672eeca82d158487a5d5f8608f490611d9f4b1",
+  "after_sha256": "2685b347d26b634cbada743a6460cd243c1db9d9ada966caa9bc2b339c6c8b13",
+  "reason": "Verification helper passed infinity, rejected by native search configuration validator. Use finite one-hour budget per original fully-completed prefix root. No gate games or pinned serving/analysis files changed. First failed helper retained; add explicit candidate-list hashes."
+}

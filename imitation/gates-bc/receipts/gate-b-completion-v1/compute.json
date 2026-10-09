@@ -1,0 +1,130 @@
+{
+  "host": "127x03",
+  "gpu_used": false,
+  "workers": 16,
+  "threads_per_game": 2,
+  "nice": 10,
+  "torch_blas_threads": 1,
+  "worker_cpus": "0-47 (three physical CPUs per worker)",
+  "reserved_smt": "64-111",
+  "headroom": "48-63,112-127",
+  "execution": {
+    "host": "127x03",
+    "started_utc": "2026-10-09T00:14:08.597769+00:00",
+    "ended_utc": "2026-10-09T01:10:47.857417+00:00",
+    "wall_seconds": 3399.259669780731,
+    "child_user_seconds": 62148.398462,
+    "child_system_seconds": 102.61255,
+    "peak_owned_processes": 65,
+    "peak_pss_bytes": 14259475456,
+    "stop_reason": null,
+    "returncodes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "completed": true
+  },
+  "game_child_cpu_hours": 17.291947503333333,
+  "execution_wrapper_cpu_hours": 17.347319444444445,
+  "post_gate_verification_analysis_cpu_hours": 0.2829277777777778,
+  "wrapper_cpu_hours_total": 17.630247222222227,
+  "peak_gate_pss_GiB": 13.280171394348145,
+  "resources": {
+    "samples": 642,
+    "max_load1": 21.3,
+    "above_ceiling20": 322
+  },
+  "baseline": {
+    "duration_seconds": 3400.6430151849054,
+    "average_cores": 0.004158037152638659,
+    "peak_5s_cores": 0.013956235528571097,
+    "passed": true,
+    "sampling": "5-second cumulative process CPU; exiting processes have unobserved final fractional interval; births counted in full when observed",
+    "gate_outcomes_read": false,
+    "service_affinity_changed": false
+  },
+  "wrapper_compute": [
+    {
+      "label": "imitation-gate-b-v1-r1",
+      "log": "/mpac/sdicks02/jobs/clasher/imitation-gate-b-v1-r1.log",
+      "exit": 0,
+      "wrapper_pid": 268887,
+      "wrapper_pid_present": false,
+      "user_seconds": "62180.55",
+      "system_seconds": "269.80",
+      "wall_time": "56:41.13",
+      "max_rss_kb": "1333124"
+    },
+    {
+      "label": "gates-bc-b-verification-v1",
+      "log": "/mpac/sdicks02/jobs/clasher/gates-bc-b-verification-v1.log",
+      "exit": 0,
+      "wrapper_pid": 762778,
+      "wrapper_pid_present": false,
+      "user_seconds": "736.71",
+      "system_seconds": "6.21",
+      "wall_time": "12:23.58",
+      "max_rss_kb": "691800"
+    },
+    {
+      "label": "gates-bc-b-spot-verification-v1",
+      "log": "/mpac/sdicks02/jobs/clasher/gates-bc-b-spot-verification-v1.log",
+      "exit": 1,
+      "wrapper_pid": 767751,
+      "wrapper_pid_present": false,
+      "user_seconds": "25.13",
+      "system_seconds": "0.74",
+      "wall_time": "0:25.93",
+      "max_rss_kb": "1347848"
+    },
+    {
+      "label": "gates-bc-b-spot-verification-v2",
+      "log": "/mpac/sdicks02/jobs/clasher/gates-bc-b-spot-verification-v2.log",
+      "exit": 0,
+      "wrapper_pid": 776591,
+      "wrapper_pid_present": false,
+      "user_seconds": "93.97",
+      "system_seconds": "0.86",
+      "wall_time": "1:13.90",
+      "max_rss_kb": "1324392"
+    },
+    {
+      "label": "gates-bc-b-analysis-v1",
+      "log": "/mpac/sdicks02/jobs/clasher/gates-bc-b-analysis-v1.log",
+      "exit": 0,
+      "wrapper_pid": 800439,
+      "wrapper_pid_present": false,
+      "user_seconds": "7.02",
+      "system_seconds": "0.64",
+      "wall_time": "0:07.69",
+      "max_rss_kb": "867224"
+    },
+    {
+      "label": "gates-bc-b-legality-explanation-v1",
+      "log": "/mpac/sdicks02/jobs/clasher/gates-bc-b-legality-explanation-v1.log",
+      "exit": 0,
+      "wrapper_pid": 803636,
+      "wrapper_pid_present": false,
+      "user_seconds": "144.94",
+      "system_seconds": "2.32",
+      "wall_time": "0:32.36",
+      "max_rss_kb": "515048"
+    }
+  ],
+  "release_utc": "2026-10-09T01:28:07.985887+00:00",
+  "scope": "Gate execution (including its manager/baseline wrapper) and post-gate verification/analysis. Historical qualification and shared inventory/freezing work are separate preflight costs, not included or attributed to this gate. Historical evidence remains indexed in the sealed registration; partial 03 preflight accounting is receipts/compute-03-preflight.json. Child CPU and enclosing wrapper CPU overlap and must not be added."
+}

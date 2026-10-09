@@ -1,0 +1,212 @@
+{
+  "passed": true,
+  "purpose": "Descriptive explanation of all five retained application-time mask flags. No score or decision-rule adjustment.",
+  "outcomes_read": false,
+  "results": [
+    {
+      "file": "pair-064-B-1.json",
+      "input_sha256": "56c2abf3d04999476f77664a61254c788c7a0c553c5d7040a0b2b55eaaca3ad6",
+      "arm": "B",
+      "candidate_seat": 1,
+      "original_illegal": [
+        0,
+        1
+      ],
+      "replayed_illegal": [
+        0,
+        1
+      ],
+      "flags": [
+        {
+          "tick": 2550,
+          "seat": 1,
+          "action": 2075,
+          "legal_before_either_command": true,
+          "legal_at_apply": false,
+          "recorded_accepted": false,
+          "commands_this_tick": [
+            [
+              2550,
+              0,
+              766,
+              true
+            ],
+            [
+              2550,
+              1,
+              2075,
+              false
+            ]
+          ]
+        }
+      ],
+      "actions_checked": 82,
+      "mismatches": [],
+      "passed": true
+    },
+    {
+      "file": "pair-225-B-1.json",
+      "input_sha256": "3a13f059fa49c7f9db1dc86c63ccfe58ba05959b41999af63e6aef8ab56e2fc7",
+      "arm": "B",
+      "candidate_seat": 1,
+      "original_illegal": [
+        0,
+        1
+      ],
+      "replayed_illegal": [
+        0,
+        1
+      ],
+      "flags": [
+        {
+          "tick": 1750,
+          "seat": 1,
+          "action": 189,
+          "legal_before_either_command": true,
+          "legal_at_apply": false,
+          "recorded_accepted": true,
+          "commands_this_tick": [
+            [
+              1750,
+              0,
+              908,
+              true
+            ],
+            [
+              1750,
+              1,
+              189,
+              true
+            ]
+          ]
+        }
+      ],
+      "actions_checked": 82,
+      "mismatches": [],
+      "passed": true
+    },
+    {
+      "file": "pair-364-A-0.json",
+      "input_sha256": "2a1bdaeac1a25f426c2313afb77949df8b2fb3f0e2bd4ed9ae9b6052ed8e11b9",
+      "arm": "A",
+      "candidate_seat": 0,
+      "original_illegal": [
+        0,
+        1
+      ],
+      "replayed_illegal": [
+        0,
+        1
+      ],
+      "flags": [
+        {
+          "tick": 2830,
+          "seat": 1,
+          "action": 1342,
+          "legal_before_either_command": true,
+          "legal_at_apply": false,
+          "recorded_accepted": false,
+          "commands_this_tick": [
+            [
+              2830,
+              0,
+              2075,
+              true
+            ],
+            [
+              2830,
+              1,
+              1342,
+              false
+            ]
+          ]
+        }
+      ],
+      "actions_checked": 83,
+      "mismatches": [],
+      "passed": true
+    },
+    {
+      "file": "pair-396-B-1.json",
+      "input_sha256": "14bf98ab25c82dbec99118f9d66390c63bc8fd2f6ab5db25994be946c3832a5f",
+      "arm": "B",
+      "candidate_seat": 1,
+      "original_illegal": [
+        0,
+        1
+      ],
+      "replayed_illegal": [
+        0,
+        1
+      ],
+      "flags": [
+        {
+          "tick": 2660,
+          "seat": 1,
+          "action": 925,
+          "legal_before_either_command": true,
+          "legal_at_apply": false,
+          "recorded_accepted": true,
+          "commands_this_tick": [
+            [
+              2660,
+              0,
+              187,
+              true
+            ],
+            [
+              2660,
+              1,
+              925,
+              true
+            ]
+          ]
+        }
+      ],
+      "actions_checked": 90,
+      "mismatches": [],
+      "passed": true
+    },
+    {
+      "file": "pair-423-B-0.json",
+      "input_sha256": "5c9bdebaeb74a8da565c189748db5ec1477cfe55147e4e9e143fe7b3e7a3a6d7",
+      "arm": "B",
+      "candidate_seat": 0,
+      "original_illegal": [
+        0,
+        1
+      ],
+      "replayed_illegal": [
+        0,
+        1
+      ],
+      "flags": [
+        {
+          "tick": 3390,
+          "seat": 1,
+          "action": 1915,
+          "legal_before_either_command": true,
+          "legal_at_apply": false,
+          "recorded_accepted": false,
+          "commands_this_tick": [
+            [
+              3390,
+              0,
+              926,
+              true
+            ],
+            [
+              3390,
+              1,
+              1915,
+              false
+            ]
+          ]
+        }
+      ],
+      "actions_checked": 79,
+      "mismatches": [],
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "original_candidate_list_equality_testable": false,
+  "distinct_prefixes": 4,
+  "independent_replays": 2,
+  "decisions_checked_per_replay": 1434,
+  "candidate_lists_per_replay": 111,
+  "original_B_candidate_count_roots_per_replay": 6,
+  "prefixes": [
+    {
+      "file": "pair-000-B-0.json",
+      "passed": true,
+      "cutoff": [
+        120,
+        0
+      ],
+      "decisions_checked": 12,
+      "candidate_lists": 5,
+      "initial_public_state_sha256": "dddf56733dc6527e361198d202761ab15873d144d566eece006f837c9735b1db"
+    },
+    {
+      "file": "pair-000-B-1.json",
+      "passed": true,
+      "cutoff": [
+        120,
+        0
+      ],
+      "decisions_checked": 12,
+      "candidate_lists": 5,
+      "initial_public_state_sha256": "dddf56733dc6527e361198d202761ab15873d144d566eece006f837c9735b1db"
+    },
+    {
+      "file": "pair-320-B-0.json",
+      "passed": true,
+      "cutoff": [
+        100,
+        0
+      ],
+      "decisions_checked": 4,
+      "candidate_lists": 1,
+      "initial_public_state_sha256": "36f258b3a74a9dbfe92a4812ee54a15a752b498079f8ddffd828f4a44ec0859f"
+    },
+    {
+      "file": "pair-320-A-0.json",
+      "passed": true,
+      "cutoff": [
+        3601,
+        0
+      ],
+      "decisions_checked": 1406,
+      "candidate_lists": 100,
+      "initial_public_state_sha256": "36f258b3a74a9dbfe92a4812ee54a15a752b498079f8ddffd828f4a44ec0859f"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "game_execution_failures": [],
+  "technical_restarts": [],
+  "completed_games_discarded": 0,
+  "score_adjustments": 0,
+  "load_pauses": {
+    "ceiling": 20,
+    "resource_sample_max_load1": 21.3,
+    "worker_wait_records": 1190,
+    "handling": "Pinned may_start loop paused new games above load1 20 in 5-second intervals. Running games completed unchanged; pauses overlap across workers and are not additive wall time.",
+    "receipt": "load-pauses.json"
+  },
+  "verification_helper_failures": [
+    {
+      "label": "gates-bc-b-spot-verification-v1",
+      "exit": 1,
+      "reason": "Native search rejects an infinite verification deadline",
+      "repair": "Use a finite one-hour budget only for originally completed prefix roots",
+      "preserved": "spot-helper-v1.py, spot-helper-repair.json and original wrapper log/exit",
+      "gate_bytes_changed": false
+    }
+  ],
+  "verification_limit": "Original full candidate-list hashes and initial-state hashes were not logged. Direct original equality cannot be asserted. Coordinator accepted deterministic duplicate prefix checks with no adjusted score or decision-rule change (actual ~01:18Z).",
+  "legality_flags": {
+    "count": 5,
+    "B": 3,
+    "A": 0,
+    "script": 2,
+    "all_seat1": true,
+    "decision_time_public_legal": true,
+    "changed_after_seat0_application": true,
+    "replayed_engine_rejections": 3,
+    "replayed_engine_acceptances": 2,
+    "passed": true,
+    "receipt": "legality-apply-order.json",
+    "interpretation": "Retained application-time audit flags. All commands were legal before either command was applied; seat0 applied first changes public mask for seat1. No score or decision-rule adjustment."
+  }
+}

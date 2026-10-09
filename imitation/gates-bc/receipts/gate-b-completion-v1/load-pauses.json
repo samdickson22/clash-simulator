@@ -1,0 +1,87 @@
+{
+  "rows": [
+    {
+      "worker": "worker-0",
+      "load_wait_records": 75,
+      "max_observed_load": 21.26
+    },
+    {
+      "worker": "worker-1",
+      "load_wait_records": 70,
+      "max_observed_load": 21.26
+    },
+    {
+      "worker": "worker-10",
+      "load_wait_records": 83,
+      "max_observed_load": 21.26
+    },
+    {
+      "worker": "worker-11",
+      "load_wait_records": 69,
+      "max_observed_load": 21.26
+    },
+    {
+      "worker": "worker-12",
+      "load_wait_records": 73,
+      "max_observed_load": 21.26
+    },
+    {
+      "worker": "worker-13",
+      "load_wait_records": 83,
+      "max_observed_load": 21.26
+    },
+    {
+      "worker": "worker-14",
+      "load_wait_records": 85,
+      "max_observed_load": 21.26
+    },
+    {
+      "worker": "worker-15",
+      "load_wait_records": 62,
+      "max_observed_load": 21.0
+    },
+    {
+      "worker": "worker-2",
+      "load_wait_records": 75,
+      "max_observed_load": 21.26
+    },
+    {
+      "worker": "worker-3",
+      "load_wait_records": 64,
+      "max_observed_load": 20.97
+    },
+    {
+      "worker": "worker-4",
+      "load_wait_records": 72,
+      "max_observed_load": 21.26
+    },
+    {
+      "worker": "worker-5",
+      "load_wait_records": 80,
+      "max_observed_load": 20.97
+    },
+    {
+      "worker": "worker-6",
+      "load_wait_records": 62,
+      "max_observed_load": 21.26
+    },
+    {
+      "worker": "worker-7",
+      "load_wait_records": 78,
+      "max_observed_load": 21.26
+    },
+    {
+      "worker": "worker-8",
+      "load_wait_records": 84,
+      "max_observed_load": 21.3
+    },
+    {
+      "worker": "worker-9",
+      "load_wait_records": 75,
+      "max_observed_load": 21.26
+    }
+  ],
+  "HALT_json_present": false,
+  "all_workers_done": 16,
+  "interpretation": "The pinned may_start loop checks load before each game and sleeps 5 seconds above 20; running games finish unchanged. Wait counts overlap across workers, so are not additive wall time."
+}
