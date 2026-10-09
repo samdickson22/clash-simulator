@@ -1,0 +1,154 @@
+{
+  "utc": "2026-10-09T21:01:17.008369+00:00",
+  "warmup_updates": 20,
+  "minimum_measurement_seconds": 300,
+  "arms": {
+    "S-mix": {
+      "host": "127x01",
+      "resume_cursor": 239,
+      "before": {
+        "start": {
+          "step": 35,
+          "optimizer_seconds": 1.4584484929218888,
+          "elapsed_seconds": 597.6583264837973,
+          "pss_bytes": 7586265088,
+          "mem_available_bytes": 118102724608,
+          "gpu_free_bytes": 13036683264
+        },
+        "end": {
+          "step": 71,
+          "optimizer_seconds": 1.4597089171875268,
+          "elapsed_seconds": 940.730279061012,
+          "pss_bytes": 7467558912,
+          "mem_available_bytes": 119862468608,
+          "gpu_free_bytes": 13036683264
+        },
+        "seconds": 343.0719525772147,
+        "rows_per_second": 859.6214228081633,
+        "seconds_per_step": 9.529776460478185
+      },
+      "after": {
+        "start": {
+          "step": 838,
+          "optimizer_seconds": 1.5413637501187623,
+          "elapsed_seconds": 1483.3082080590539,
+          "pss_bytes": 4978741248,
+          "mem_available_bytes": 116332425216,
+          "gpu_free_bytes": 3270246400
+        },
+        "end": {
+          "step": 972,
+          "optimizer_seconds": 1.5465879971161485,
+          "elapsed_seconds": 1783.5564194940962,
+          "pss_bytes": 5543224320,
+          "mem_available_bytes": 115831128064,
+          "gpu_free_bytes": 3270246400
+        },
+        "seconds": 300.2482114350423,
+        "rows_per_second": 3656.0684067138554,
+        "seconds_per_step": 2.2406582942913604,
+        "optimizer_seconds_per_step": 2.219711210662082,
+        "optimizer_fraction_of_elapsed": 0.9906513707678469
+      },
+      "eta_seconds": 8763.214588973511
+    },
+    "S-teacher": {
+      "host": "127x04",
+      "resume_cursor": 510,
+      "before": {
+        "start": {
+          "step": 118,
+          "optimizer_seconds": 1.6038605680223554,
+          "elapsed_seconds": 602.3462279409869,
+          "pss_bytes": 7567992832,
+          "mem_available_bytes": 119712698368,
+          "gpu_free_bytes": 48470294528
+        },
+        "end": {
+          "step": 206,
+          "optimizer_seconds": 1.568150326027535,
+          "elapsed_seconds": 937.8853390699951,
+          "pss_bytes": 7352576000,
+          "mem_available_bytes": 119921762304,
+          "gpu_free_bytes": 48470294528
+        },
+        "seconds": 335.53911112900823,
+        "rows_per_second": 2148.4708520993536,
+        "seconds_per_step": 3.8129444446478207
+      },
+      "after": {
+        "start": {
+          "step": 1197,
+          "optimizer_seconds": 1.798082349007018,
+          "elapsed_seconds": 1392.0587065650616,
+          "pss_bytes": 6958578688,
+          "mem_available_bytes": 113105350656,
+          "gpu_free_bytes": 48407379968
+        },
+        "end": {
+          "step": 1353,
+          "optimizer_seconds": 2.267622668063268,
+          "elapsed_seconds": 1693.8632231770316,
+          "pss_bytes": 6959806464,
+          "mem_available_bytes": 114279251968,
+          "gpu_free_bytes": 48407379968
+        },
+        "seconds": 301.80451661197003,
+        "rows_per_second": 4234.370029799993,
+        "seconds_per_step": 1.934644337256218,
+        "optimizer_seconds_per_step": 1.9313470066483251,
+        "optimizer_fraction_of_elapsed": 0.9982956399042475
+      },
+      "eta_seconds": 6829.29451051445
+    },
+    "S-human": {
+      "host": "127x08",
+      "resume_cursor": 232,
+      "before": {
+        "start": {
+          "step": 45,
+          "optimizer_seconds": 0.9617318008095026,
+          "elapsed_seconds": 563.6436401659157,
+          "pss_bytes": 7788816384,
+          "mem_available_bytes": 114493751296,
+          "gpu_free_bytes": 10969022464
+        },
+        "end": {
+          "step": 97,
+          "optimizer_seconds": 0.9392819460481405,
+          "elapsed_seconds": 898.4919247978833,
+          "pss_bytes": 7661501440,
+          "mem_available_bytes": 114508955648,
+          "gpu_free_bytes": 10969022464
+        },
+        "seconds": 334.84828463196754,
+        "rows_per_second": 1272.170172435555,
+        "seconds_per_step": 6.439390089076299
+      },
+      "after": {
+        "start": {
+          "step": 277,
+          "optimizer_seconds": 1.5459166548680514,
+          "elapsed_seconds": 83.42243374418467,
+          "pss_bytes": 6544415744,
+          "mem_available_bytes": 116010811392,
+          "gpu_free_bytes": 15924264960
+        },
+        "end": {
+          "step": 448,
+          "optimizer_seconds": 0.9668997700791806,
+          "elapsed_seconds": 384.3290567500517,
+          "pss_bytes": 6239130624,
+          "mem_available_bytes": 115800342528,
+          "gpu_free_bytes": 15924264960
+        },
+        "seconds": 300.906623005867,
+        "rows_per_second": 4655.371111498223,
+        "seconds_per_step": 1.7596878538354797,
+        "optimizer_seconds_per_step": 1.0524505352770246,
+        "optimizer_fraction_of_elapsed": 0.5980893332775271
+      },
+      "eta_seconds": 7804.215631760352
+    }
+  }
+}
