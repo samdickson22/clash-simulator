@@ -1,0 +1,42 @@
+{
+ "schema": "clasher.lease-explore-stop-backstop.v1",
+ "utc": "2026-10-09T04:29:36+00:00",
+ "captured_manifests": {
+  "127x09": [
+   "t7-match-queue-20261009-09r1"
+  ],
+  "127x13": [
+   "t7-match-queue-20261009-13r1"
+  ],
+  "127x14": [
+   "t7-match-queue-20261009-14r1"
+  ],
+  "127x15": [
+   "t7-match-queue-20261009-15r2"
+  ],
+  "127x16": []
+ },
+ "exploration_entries_stopped": 0,
+ "stop_commands_run": 0,
+ "unreachable": [],
+ "verification": {
+  "exploration_processes_remaining": 0,
+  "note": "no delay_simulate/loss_review.simulate/worker_runtime.py/search-ab processes for sdicks02 on 09/13/14/15/16 (earlier count of 2 per host was the pgrep self-match; confirmed by ps listing)",
+  "clasher_processes": {
+   "127x09": "~9 (capture queue)",
+   "127x13": "~11",
+   "127x14": "~9",
+   "127x15": "~10 clasher (remaining sdicks02 processes are roader RoadForge jobs)",
+   "127x16": "8 (T11 seed 21)"
+  },
+  "all_clasher_nice_ge_10": true,
+  "clasher_pss_gb": {
+   "127x09": 13.5,
+   "127x13": 13.5,
+   "127x14": 13.4,
+   "127x15": 13.5,
+   "127x16": 29.6
+  }
+ },
+ "kept_running": "v4 match-queue capture lanes (09/13/14/15), T11 seed 21 (16), per roader GPU extension to 2026-10-11T05:30Z"
+}
