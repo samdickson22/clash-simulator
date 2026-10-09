@@ -56,7 +56,8 @@ def step(*args, **kwargs):
     log.write(json.dumps(dict(step=cursor_start+steps, optimizer_seconds=time.monotonic()-begin,
         elapsed_seconds=time.monotonic()-started, pss_bytes=pss,
         mem_available_bytes=available, gpu_free_bytes=free))+'\n')
-    if available < 24*2**30 or free < 8*2**30 or pss > 46_000_000_000:
+    leased=socket.gethostname().split('.')[0] in ('127x09','127x13','127x14','127x15','127x16')
+    if available < 24*2**30 or leased and free < 8*2**30 or pss > 46_000_000_000:
         signal.raise_signal(signal.SIGTERM)
     if qualification_stop and steps>=qualification_stop:
         signal.raise_signal(signal.SIGTERM)

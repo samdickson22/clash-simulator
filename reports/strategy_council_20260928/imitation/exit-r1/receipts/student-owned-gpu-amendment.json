@@ -1,0 +1,44 @@
+{
+  "schema": "clasher.exit-r1.loader6-operational-amendment.v1",
+  "utc": "2026-10-09T20:29:13.874400+00:00",
+  "authority": "Coordinator2026-10-09: move S-human to08 checkpoint108; owned hosts have no leased8GiB GPU floor; parent118,119,126; loader120\u2013125; periodic checkpoint250. No reporting outcomes observed.",
+  "actual_loader_workers": 6,
+  "scientific_loader_workers": 1,
+  "prefetch_factor": 4,
+  "mmap_random_advice": false,
+  "loader_adapter_sha256": "d6d08afc5271d4827205d82da517fda4f9a5c243cfec006f294716477439cc82",
+  "fit_runtime_sha256": "f457618be78de51c566778e6ef9c8f08b2ec3c8d94a49bc1c4b2c37573eb2cb4",
+  "recipe_changed": false,
+  "seed": 2026100901,
+  "steps": 4883,
+  "batch_size": 8192,
+  "sample_order": "Each worker calls the unchanged mixed_indices with identical human/teacher sizes, batch, ratio, seed, absolute optimizer step; complete batch shapes/order unchanged. Parent rechecks both complete index vectors for every prefetched step. Private DataLoader generator avoids consuming parent RNG.",
+  "restart": "Exact continuation, previous loader6 bit-exact proof remains applicable: only CPU-device assertions, allocation placement, owned-host guard scope and checkpoint cadence change. No sampler or tensor arithmetic change.",
+  "limits": {
+    "processes_leased_max": 12,
+    "pss_tree_guard_bytes": 46000000000,
+    "pss_leased_max_bytes": 48000000000,
+    "mem_available_min_bytes": 25769803776,
+    "nice_min": 10,
+    "loader_cores": [
+      120,
+      121,
+      122,
+      123,
+      124,
+      125
+    ],
+    "trainer_cores": [
+      118,
+      119,
+      126
+    ]
+  },
+  "loader6_reference": "imitation/t11/loader_adapter.py; user selects prefetch4; qualified original bounded T5 eviction preserved.",
+  "amendment_parent_sha256": "44fb0ac7096d789c974377d5e9d8818db4e60b1884ed32a83e31b1f698d1765f",
+  "leased_gpu_floor_gib": 8,
+  "owned_gpu_floor_gib": 0,
+  "checkpoint_every": 250,
+  "prefetch_device": "CPU pinned only; recursive assertion before each GPU update; original move() constructs device micro tensors just in time.",
+  "allocator": "Unchanged; no expandable_segments unless08 still requires it."
+}

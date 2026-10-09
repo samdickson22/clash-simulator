@@ -9,7 +9,7 @@ import time
 import resource
 
 job=Path('/mpac/sdicks02/jobs/clasher/exit-r1-student-screen-20261009-r1')
-hosts={'S-mix':'01','S-teacher':'04','S-human':'09'}
+hosts={'S-mix':'01','S-teacher':'04','S-human':'08'}
 cpu_hosts=('03','04','01')  # 08 stays completely free for perception.
 def state(stage,**kw):
     p=job/'controller.json';t=p.with_suffix('.partial')
@@ -41,7 +41,12 @@ try:
             if response:
                 receipt=json.loads(response)
                 assert 0<=receipt['step']<=4883,(arm,receipt)
-                if receipt['step']==4883 and not receipt['stopped']:ready.append(arm)
+                if receipt['step']==4883 and not receipt['stopped']:
+                    s=ssh(host,f'test ! -f {job}/fits/{arm}/segment.json || cat {job}/fits/{arm}/segment.json')
+                    if s:
+                        segment=json.loads(s)
+                        if segment.get('cursor_start',0)+segment['optimizer_steps']==4883 and segment['status']=='returned':
+                            ready.append(arm)
         state('waiting for final EMA fits',finished=ready)
         if len(ready)==3:break
         if time.monotonic()>deadline:raise TimeoutError('fits did not finish within 36 hours')
@@ -50,6 +55,8 @@ try:
     for arm,host in hosts.items():
         (job/'fits'/arm).mkdir(parents=True,exist_ok=True)
         run(['rsync','-a','--quiet',f'127x{host}:{job}/fits/{arm}/',str(job/'fits'/arm)+'/'])
+        (job/'loader-qualification'/arm).mkdir(parents=True,exist_ok=True)
+        run(['scp','-q',f'127x{host}:{job}/loader-qualification/{arm}/PASS.json',str(job/'loader-qualification'/arm)+'/'])
     (job/'inputs').mkdir(exist_ok=True)
     run(['scp','-q',f'127x01:{job}/inputs/main02.pt',f'127x01:{job}/inputs/assets.npz',
          f'127x01:{job}/inputs/assets.npz.json',str(job/'inputs')+'/'])

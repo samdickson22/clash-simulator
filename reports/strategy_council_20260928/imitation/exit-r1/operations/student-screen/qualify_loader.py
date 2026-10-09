@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import time
 import torch
 
 def sha(p):
@@ -19,6 +20,7 @@ def main():
     p.add_argument('--job',required=True);p.add_argument('--arm',required=True)
     p.add_argument('--ratio',required=True);p.add_argument('--resume',required=True)
     a=p.parse_args();job=Path(a.job);out=job/'loader-qualification'/a.arm
+    started=time.monotonic()
     out.mkdir(parents=True,exist_ok=False)
     initial=torch.load(a.resume,map_location='cpu',weights_only=True)
     cursor=initial['state']['step'];del initial
@@ -52,6 +54,7 @@ def main():
         cursor=cursor,rows_per_step=8192,resume_sha256=sha(a.resume),
         parent_checkpoint_keys_bitexact=[k for k in reference if k!='args'],
         argument_exceptions=['output','stop'],actual_loader_workers=6,prefetch_factor=4,
-        mmap_random_advice=False,worker_complete_step_indices_checked=True,modes=results)
+        mmap_random_advice=False,worker_complete_step_indices_checked=True,modes=results,
+        wall_seconds=time.monotonic()-started)
     (out/'PASS.json').write_text(json.dumps(record,indent=2)+'\n');print(json.dumps(record))
 if __name__=='__main__':main()

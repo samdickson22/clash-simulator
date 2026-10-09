@@ -42,7 +42,16 @@ def main():
         root = job/'fits'/arm
         done = read(root/'complete.json')
         segment = read(root/'segment.json')
-        assert done['step'] == segment['optimizer_steps'] == 4883 and not done['stopped']
+        segments=[read(p) for p in sorted((root/'segments').glob('*.json'))]+[segment]
+        assert done['step'] == sum(s.get('effective_optimizer_steps',s['optimizer_steps']) for s in segments) == 4883 and not done['stopped']
+        cursor=0
+        for s in segments:
+            assert s.get('cursor_start',0)==cursor
+            cursor+=s.get('effective_optimizer_steps',s['optimizer_steps'])
+        qualification=read(job/'loader-qualification'/arm/'PASS.json')
+        assert qualification['passed']
+        fit_wall=sum(s['wall_seconds'] for s in segments)
+        fit_cpu=sum(s['cpu_seconds'] for s in segments)
         records = [json.loads(s) for s in (root/'train.jsonl').read_text().splitlines()]
         assert len(records) == 4883 and records[-1]['rows'] == 40001536
         assert [r['step'] for r in records] == list(range(1, 4884))
@@ -50,20 +59,29 @@ def main():
         assert len(timing) == 4883
         checkpoint = root/'step-00004883.pt'
         assert digest(checkpoint) == freeze['files'][str(checkpoint)]
-        fit[arm] = dict(segment=segment, checkpoint_sha256=digest(checkpoint),
+        allocation_wall=(datetime.datetime.fromisoformat(segments[-1]['ended_at'])-
+                         datetime.datetime.fromisoformat(segments[0]['started_at'])).total_seconds()
+        fit[arm] = dict(segment=segment,segments=segments,qualification=qualification,
+            checkpoint_sha256=digest(checkpoint),
             inputs=read(root/'inputs.json'), final=done,
-            training_rows=40001536, rows_per_second=40001536/segment['wall_seconds'],
-            gpu_hours=segment['wall_seconds']/3600,
+            training_rows=40001536, rows_per_second=40001536/fit_wall,
+            gpu_hours=fit_wall/3600,qualification_gpu_hours=qualification.get('wall_seconds',
+                sum(s['segment']['wall_seconds'] for s in qualification['modes']))/3600,
+            fitting_window_gpu_hours=allocation_wall/3600,
             optimizer_gpu_hours=sum(r['optimizer_seconds'] for r in timing)/3600,
-            cpu_hours=segment['cpu_seconds']/3600,
-            max_pss_bytes=max(r['pss_bytes'] for r in timing),
-            min_mem_available_bytes=min(r['mem_available_bytes'] for r in timing),
+            cpu_hours=fit_cpu/3600,
+            qualification_cpu_hours=sum(s['segment']['cpu_seconds'] for s in qualification['modes'])/3600,
+            max_pss_bytes=max(max(r['pss_bytes'] for r in timing),
+                              max(s.get('peak_loader_tree_pss_bytes',0) for s in segments)),
+            min_mem_available_bytes=min(min(r['mem_available_bytes'] for r in timing),
+                min(s.get('min_loader_mem_available_bytes') or 1<<62 for s in segments)),
             min_gpu_free_bytes=min(r['gpu_free_bytes'] for r in timing))
     exits = {h:read(job/f'host-exits/{h}.json') for h in ('03','04','01')}
     assert all(x['complete'] and x['own_workers_vacated'] and not x['failures'] for x in exits.values())
     heldout = [read(g/'receipt.json') for g in sorted((job/'heldout').glob('game-*'))]
     assert len(heldout) == 64
     teacher = {a:read(job/f'supplement/{a}.json') for a in ARMS}
+    performance=read(job/'loader-performance.json')
     receipt = dict(schema='clasher.exit-r1.student-screen-complete.v1',
         utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
         lane='exploration; no multiplicity adjustment', corpus_manifest_sha256=digest(job/'corpus/manifest.json'),
@@ -75,7 +93,8 @@ def main():
         reporting_cpu_hours=sum(x['children_cpu_seconds']+x['manager_cpu_seconds'] for x in exits.values())/3600,
         postprocessing_cpu_hours=controller['local_cpu_seconds']/3600,
         heldout_teacher_game_cpu_hours=sum(x['cpu_seconds'] for x in heldout)/3600,
-        bootstrap=aggregate['bootstrap'], results=aggregate['arms'],
+        bootstrap=aggregate['bootstrap'],loader_performance=performance,
+        loader_amendment_sha256=digest(job/'student-loader6-amendment.json'),results=aggregate['arms'],
         game_diagnostics=aggregate['game_diagnostics'], teacher_diagnostics=teacher,
         inputs={name:sha for name,sha in freeze['files'].items()
                 if name.endswith(('STUDENT-SCREEN-PLAN.md','student-seed-audit.json',
@@ -106,17 +125,44 @@ def main():
               'terminal fallback/proposer games. The common init-W reference completed 600/600. '
               'Each arm has the same 64 terminal held-out teacher games. No arm was omitted '
               'because a kill rule fired.', '', '## Fit throughput and resources', '']
-    table(lines,['Arm / host','Rows/s, full fit wall','GPU-hours, full fit wall','Optimizer GPU-hours',
+    table(lines,['Arm / host(s)','Rows/s, full fit wall','GPU-hours, full fit wall','Optimizer GPU-hours',
         'Fit CPU-hours','Peak PSS GiB','Minimum GPU free GiB','Minimum MemAvailable GiB'],
-        [[f"{arm} / {f['segment']['host']}",f"{f['rows_per_second']:.2f}",f"{f['gpu_hours']:.6f}",
+        [[f"{arm} / {' → '.join(dict.fromkeys(s['host'] for s in f['segments']))}",f"{f['rows_per_second']:.2f}",f"{f['gpu_hours']:.6f}",
           f"{f['optimizer_gpu_hours']:.6f}",f"{f['cpu_hours']:.6f}",f"{f['max_pss_bytes']/2**30:.3f}",
           f"{f['min_gpu_free_bytes']/2**30:.3f}",f"{f['min_mem_available_bytes']/2**30:.3f}"] for arm,f in fit.items()])
+    lines += ['The coordinator-directed loader6 operational amendment preserved all scientific '
+        'rows, mixing order, seeds, cursor, losses and optimizer state. All three arms '
+        'passed serial/parallel two-step train-only GPU replay with the model, EMA, '
+        'optimizer, scheduler and all RNG states bit for bit equal before resuming. '
+        'Complete human and teacher index vectors are rechecked at every prefetched '
+        'production step. Actual workers6, scientific loader1, prefetch4, no random '
+        'mmap advice; aggregate PSS guard46GB and MemAvailable floor24GiB. Parent '
+        'cores118/119/126, loader cores120–125; Torch scientific threads1. '
+        'Periodic checkpoints200–250 steps, with final-step EMA selection unchanged.', '']
+    table(lines,['Arm','Before rows/s, >5min','Before s/step','After rows/s, >5min',
+                 'After s/step','Remaining fit ETA hours at measurement'],
+        [[a,f"{performance['arms'][a]['before']['rows_per_second']:.2f}",
+          f"{performance['arms'][a]['before']['seconds_per_step']:.6f}",
+          f"{performance['arms'][a]['after']['rows_per_second']:.2f}",
+          f"{performance['arms'][a]['after']['seconds_per_step']:.6f}",
+          f"{performance['arms'][a]['eta_seconds']/3600:.3f}"] for a in ARMS])
     lines += ['GPU-hours use elapsed wall time while each GPU was allocated, including '
-              'store preparation and batch gathering. Optimizer time is synchronized step '
-              'wall time and is shown separately. Fits ran simultaneously on01/04/09, '
+        'store preparation and batch gathering across all exact-state fit segments. Optimizer time is synchronized step '
+        'wall time and is shown separately. Initial fits ran simultaneously on01/04/09, '
               'nice10, one GPU per arm. 09 used the versioned capture-extension supervisor '
               'with a live Oct11 lease, four declared processes and46GB PSS cap. '
-              'No CPU simulation ran on leased hosts; 08 remained unused.', '']
+        'S-human continued on owned08 from checkpoint108 after an attempted-step239 '
+        'CUDA OOM on09;130 completed unsaved updates were archived and replayed. '
+        'Their GPU/CPU cost is included in the segment totals. S-mix completed '
+        'step239 but stopped because the wrapper incorrectly applied the leased8GiB '
+        'reserve to owned01; it resumed exactly after that guard scope was corrected. '
+        'Owned GPUs have no leased8GiB reserve floor. No CPU simulation ran on leased '
+        'hosts, and no reporting CPU games ran on08.08 had an owned stop file and '
+        'a five-minute reclaim bound.', '']
+    table(lines,['Arm','Loader qualification GPU-hours','Qualification CPU-hours',
+                 'Whole fitting window GPU-hours (includes restart gaps)'],
+        [[a,f"{fit[a]['qualification_gpu_hours']:.6f}",f"{fit[a]['qualification_cpu_hours']:.6f}",
+          f"{fit[a]['fitting_window_gpu_hours']:.6f}"] for a in ARMS])
     table(lines,['Home host','Physical worker cores','Peak owned processes','Pool wall-hours',
         'Worker CPU-hours','Manager CPU-hours','Minimum MemAvailable GiB'],
         [[h,len(e['cores']),e['peak_owned_processes'],f"{e['elapsed_seconds']/3600:.6f}",
@@ -169,6 +215,7 @@ def main():
         [['Packed training corpus manifest',receipt['corpus_manifest_sha256']],
          ['Held-out teacher manifest',receipt['heldout_manifest_sha256']],
          ['Pre-fit pin receipt',receipt['pre_fit_pin_sha256']],
+         ['Loader6 operational amendment',receipt['loader_amendment_sha256']],
          ['Final reporting execution freeze',receipt['execution_freeze_sha256']],
          ['Aggregate metrics',receipt['aggregate_sha256']],
          *[[arm+' final step4883 EMA checkpoint',f['checkpoint_sha256']] for arm,f in fit.items()],

@@ -1,0 +1,24 @@
+{
+  "utc": "2026-10-09T20:25:29.773437+00:00",
+  "authority": "Coordinator approval2026-10-09: parent cores118,119,126; loaders120\u2013125; Torch scientific threads1. Before all reporting outcomes.",
+  "parent_cores": [
+    118,
+    119,
+    126
+  ],
+  "loader_cores": [
+    120,
+    121,
+    122,
+    123,
+    124,
+    125
+  ],
+  "scientific_torch_threads": 1,
+  "numerics_or_sample_order_changed": false,
+  "live_parent_pids": {
+    "127x01": 321745,
+    "127x04": 1850673
+  },
+  "S-human": "Stopped after OOM; future qualification and fit launch use approved parent mask."
+}

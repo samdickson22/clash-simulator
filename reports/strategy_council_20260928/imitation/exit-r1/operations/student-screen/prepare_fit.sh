@@ -8,7 +8,7 @@ export PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NU
 case $host in
   127x01) gpu=/mpac/sdicks02/envs/clasher-gpu/bin/python
     [[ -L "$job/human" ]] || ln -s /mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/imitation/data/v2-store-v1 "$job/human" ;;
-  127x04) gpu=/mpac/sdicks02/envs/clasher-gpu/bin/python
+  127x04|127x08) gpu=/mpac/sdicks02/envs/clasher-gpu/bin/python
     [[ -L "$job/human" ]] || ln -s /mpac/sdicks02/repos/clasher-t11-home-v1/data/v2-store-v1 "$job/human" ;;
   127x09) gpu=/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python
     mkdir -p "$job/human/train"

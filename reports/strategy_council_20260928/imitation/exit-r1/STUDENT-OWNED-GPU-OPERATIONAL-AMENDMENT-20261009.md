@@ -1,0 +1,7 @@
+# Frozen student screen: owned GPU operational amendment
+
+Dated 2026-10-09T20:29:13.874400+00:00 before any reporting outcomes, per coordinator directions.
+
+S-human resumes on08 from exact step108, after archiving130 discarded completed updates and the attempted step239 CUDA OOM on09. Six CPU loader workers, prefetch4, complete frozen sample order, and parent cores118/119/126 with Torch scientific threads1 are retained. Each human/teacher batch is recursively asserted CPU before its just-in-time GPU micro copy. No prefetched or pinned GPU buffers exist. No numerical, ordering, recipe or final EMA selection change. Owned01/04/08 are exempt from the leased8GiB-free guard; MemAvailable24GiB and loader-tree46GB guards remain. Periodic checkpoints become250 steps, still final EMA only for reporting. No expandable_segments change at this stage.
+
+The original qualified T11 main sorts each effective batch by entity count before micro slicing; frozen ExIt does not. A dense row can therefore widen the first7168 human micro and use much more memory. That ordering remains unchanged. Previous two-step bit-exact loader qualification applies to the unchanged tensor construction and arithmetic; this amendment only adds assertions and changes resource placement, guard scope and checkpoint cadence.08 has an owned FIT.STOP; coordinator reclaim checkpoints and vacates its owned tree within5minutes. Later exact continuation can use a freed owned01/04 GPU.

@@ -107,6 +107,13 @@ class Prefetch:
                 os.kill(os.getpid(),signal.SIGTERM)
                 return
     def step(self,*args,**kwargs):
+        def cpu_only(value):
+            if isinstance(value,torch.Tensor):assert value.device.type=='cpu','loader retained a GPU tensor'
+            elif isinstance(value,dict):
+                for v in value.values():cpu_only(v)
+            elif isinstance(value,(list,tuple)):
+                for v in value:cpu_only(v)
+        cpu_only(args[2]);cpu_only(args[3])
         if self.iterator is None:self.start()
         return self.original_step(*args,**kwargs)
     def close(self):
