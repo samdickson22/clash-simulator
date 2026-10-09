@@ -248,3 +248,16 @@ kill decisions remain pending at 95,144,680 rows; matched 192 control is
 includes staging and all 480 segments; final actual costs await completion.
 Evidence: `monitor-20261009T2212Z.json`. No source, config or data edits.
 Failure artifacts retained; continuation enabled; 16 remains released.
+
+2026-10-09 22:23Z: Controller, all three fits and all guards remain healthy.
+Width 288: step 5937, 48,635,904 rows, 6520 loader-inclusive rows/s.
+Width 384: step 4370, 35,799,040 rows, 4794 loader-inclusive rows/s.
+Width 480: step 3553, 29,106,176 rows, 4720 loader-inclusive rows/s.
+Six processes per arm; peak PSS 41.47 GB and sampled GPU free memory
+≥21.7 GiB. No new OOM, stop, restart or scientific change. Width 480
+retains authorized micro1024/effective8192/cap0.78. Wide quarter NLLs and
+kill decisions await 95,144,680 rows; matched 192 control remains sealed
+at 0.27726436294161033. Conservative cumulative pipeline cost 8.071 GPU-hours
+includes staging and every 480 segment; final actual costs await completion.
+Evidence: `monitor-20261009T2222Z.json`. No source, config or data edits.
+Failure artifacts retained; continuation enabled; 16 remains released.
