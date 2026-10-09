@@ -1437,3 +1437,4 @@ Also on the hub, but with copies elsewhere:
     - the R16 follow-up admission delta;
     - then the A1 checklist.
   - 08 is free now (B is later).
+- **10:17 UTC:** the T5 GRU resumed on 04 at 09:59:58Z, exactly, but only at **234 rows/s** (GPU 100%; Stage A/B speedups are unqualified). The T5 owner is a scheduled continuation and hasn't answered the planning questions. **Commissioned an Opus planning analysis** (`clasher-plan-next-compute-20261009-1`) for the freed GPUs/CPUs over the next 24–40 h: v2 with the W-screen8 teacher, T11, the GRU's value, reserve/tempo fixes, live-perception latency, DDP. Allocation follows within about 45 min. In the meantime, 08/13/14/15 hold for the R16 audits and B.
