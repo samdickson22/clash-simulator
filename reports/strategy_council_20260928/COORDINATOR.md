@@ -1605,3 +1605,7 @@ Also on the hub, but with copies elsewhere:
     - **Decision:** v1 remains the released human prior (the student screen already uses v1). v2 is kept as a candidate.
   - GPU: capacity 13/14/15 at 99–100%; students 01/04/08 at 31–65% (sample dips). 09 and 16 are idle.
   - A1 r4 seal is running.
+- **22:34 UTC:**
+  - **S-human final EMA** `bb257672` at 22:33:25Z; 08's GPU is free.
+  - Staged student reporting is running on 03 (56 workers, E1-qualified native `f387b2d2` after a reporting-only correction; the failed startup was archived). 08's CPU (≤48, nice 19, stop file) was added to reporting until B, which is ~12 h out behind the A1 serial seal.
+  - S-teacher and S-mix fits continue.
