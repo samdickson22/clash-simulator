@@ -116,3 +116,14 @@ Coordinator explicitly authorizes micro1024 with batch8192; dated amendment,
 new config/freeze and full failure receipt are being committed before any480dev
 outcome or relaunch. If that cannot fit,480is infeasible under lease limits.
 288/384continue healthy; controller and cumulative accounting remain active.
+
+2026-10-09 20:45Z: Micro1024 amendment committed/pushed **f8dd81a6** before
+width480-v3 launch20:44:27Z, supervisor637497/trainer637517. Resume is175 /
+1,433,600rows from originalSHA-pinnedcheckpoint. Runtime start confirms micro1024,
+effective8192batch and identical source/data hashes; first update176 /1,441,792rows
+proves saved cursor restoration. Observedstep199 with sixprocesses,36.0GBPSS and
+>34GiBGPUfree; no traceback or stop. All prior failure/allocator artifacts remain.
+The changed summation/dropout order is disclosed in the dated amendment.
+Controller r3 follows v3 and retains all guard segments. Existing ten-minute
+continuation updated with explicit infeasibility fallback; next20:52:19Z.
+No wide devNLL or scientific kill yet; control remains0.27726436294161033.

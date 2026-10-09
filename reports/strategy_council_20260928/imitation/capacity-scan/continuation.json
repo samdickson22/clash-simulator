@@ -1,8 +1,11 @@
 {
   "scheduledTaskId": "scheduled-task:command:mcp:6f385241-07a0-4920-b2e5-aaf1dc0a6773:schedule-task:clasher-capacity-scan-continuation-20261009-v1",
   "enabled": true,
-  "nextRunAt": "2026-10-09T20:02:12.126Z",
+  "nextRunAt": "2026-10-09T20:52:19.713Z",
   "interval_seconds": 600,
   "bound_to_current_worker": true,
-  "purpose": "Continue existing task, monitor/fix technical faults without duplicating jobs, commit terminal report, then disable."
+  "purpose": "Continue existing task, monitor/fix technical faults without duplicating jobs, commit terminal report, then disable.",
+  "prompt_updated_at": "2026-10-09T20:45:56.840521+00:00",
+  "width480_active_label": "width480-v3",
+  "width480_fallback": "infeasible if micro1024 cannot fit under cap0.78; no further recipe changes"
 }

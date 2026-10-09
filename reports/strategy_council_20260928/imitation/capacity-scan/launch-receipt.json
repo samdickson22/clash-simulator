@@ -13,12 +13,19 @@
     },
     "127x15": {
       "width": 480,
-      "supervisor_pid": 568625,
+      "supervisor_pid": 637497,
       "original_supervisor_pid": 434735,
-      "active_label": "width480-v2",
+      "active_label": "width480-v3",
       "resume_step": 175,
       "resume_rows": 1433600,
-      "resume_checkpoint_sha256": "91c66427e0c23ce7d2d2d519a7e2dcffc8a4b449d33219adf8f3e5b86f29ebba"
+      "resume_checkpoint_sha256": "91c66427e0c23ce7d2d2d519a7e2dcffc8a4b449d33219adf8f3e5b86f29ebba",
+      "trainer_pid": 637517,
+      "microbatch": 1024,
+      "effective_batch": 8192,
+      "prelaunch_microbatch_amendment_commit": "f8dd81a6",
+      "config": "configs/width-480-micro1024.json",
+      "freeze": "freeze-480-micro1024.json",
+      "previous_supervisor_pid": 568625
     },
     "127x16": {
       "width": 192,
