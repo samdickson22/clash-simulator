@@ -1,0 +1,24 @@
+{
+  "frozen_at_utc": "2026-10-09T02:47:48.167022+00:00",
+  "files_sha256": {
+    "src/clasher/live/tower_channel.py": "af9d218cd1ad6c8d46995a4096bec1e3cafa0cc536ba8be35679a9b647f0e43f",
+    "src/clasher/live/tower_channel_templates.json": "09850226b90293ba70d0dfa0d6e16588a2cf297106a7bfc71a067ce81b941668",
+    "src/clasher/live/crown_counter.py": "59be765970684aea61a9b25377b5da0c58afc91ca8704a3a859a3e9f29abb0b2",
+    "src/clasher/live/result_screen.py": "4df16325a74989113ddbd1828bb315d5dde5d0d3c1155a1f23dbc366e2b1142c",
+    "src/clasher/live/public_score_templates.json": "3dc37912484780227663c76754509abf450c4cc3ba40e9a7015619704dc8cf36",
+    "src/clasher/live/public_root.py": "60d3a9c5ce3fb501cc397600fa81e662ef30bfee7cf52e9c8217a29ae721ffce",
+    "src/clasher/live/perception_adapter.py": "5b61adae28c70625d1caf66f0e8f923e30e8ac885e1e0018d0879608c5224d3e",
+    "reports/strategy_council_20260928/live-loop/v4/tower-channel/evaluate_r3.py": "c2ad47208374b1638ef19b6acc92139e4b3ce9dbd65eb7e5a21d818e77535d9e",
+    "reports/strategy_council_20260928/live-loop/v4/tower-channel/fit_score_r3.py": "92dc6345e5a06a4320bf79668c7ac1513ab665e356825b491167d41a9b932adc",
+    "reports/strategy_council_20260928/live-loop/v4/tower-channel/round2-manifest.json": "6f74fdf6cf189c7f268dc9d1f73090eb7724c306d3cf68b858df2807d90bffae",
+    "reports/strategy_council_20260928/live-loop/v4/tower-channel/truth_r2.py": "bc22107f4ff2b66cedd250a1dcb67ce2ce13ceb2820893eb2363239604914d8a"
+  },
+  "dev_used_for_fit": false,
+  "crown_fit_matches": [
+    "v4-phase-a-1975101330"
+  ],
+  "dev_slice": "Unchanged round2-manifest.dev; round-2 dev pixels never inspected for round-3 reader fitting",
+  "no_post_dev_tuning": true,
+  "validation_payloads_opened": false,
+  "heldout_payloads_opened": false
+}

@@ -1,0 +1,119 @@
+{
+  "rubric": "Match Over white text is positive terminal. Scoring-name/crown banner without Match Over is a scoring animation and cannot independently end a match. Full win/loss/draw outcome screen absent from all 8 endpoints. This audit is post-freeze; no parameters were tuned.",
+  "labels": [
+    {
+      "episode": "v4-phase-a-1975101336",
+      "ordinal": "last captured frame",
+      "match_over_text": false,
+      "full_outcome_screen": false,
+      "legible_result_outcome": null,
+      "legible_result_crowns": [
+        null,
+        null
+      ],
+      "predicted_result": false
+    },
+    {
+      "episode": "v4-phase-a-1975101260",
+      "ordinal": "last captured frame",
+      "match_over_text": false,
+      "full_outcome_screen": false,
+      "legible_result_outcome": null,
+      "legible_result_crowns": [
+        null,
+        null
+      ],
+      "predicted_result": false
+    },
+    {
+      "episode": "v4-phase-a-1975101225",
+      "ordinal": "last captured frame",
+      "match_over_text": false,
+      "full_outcome_screen": false,
+      "legible_result_outcome": null,
+      "legible_result_crowns": [
+        null,
+        null
+      ],
+      "predicted_result": false
+    },
+    {
+      "episode": "v4-phase-a-1975101296",
+      "ordinal": "last captured frame",
+      "match_over_text": false,
+      "full_outcome_screen": false,
+      "legible_result_outcome": null,
+      "legible_result_crowns": [
+        null,
+        null
+      ],
+      "predicted_result": false
+    },
+    {
+      "episode": "v4-phase-a-1975101276",
+      "ordinal": "last captured frame",
+      "match_over_text": true,
+      "full_outcome_screen": false,
+      "legible_result_outcome": null,
+      "legible_result_crowns": [
+        null,
+        null
+      ],
+      "predicted_result": true
+    },
+    {
+      "episode": "v4-phase-a-1975101267",
+      "ordinal": "last captured frame",
+      "match_over_text": false,
+      "full_outcome_screen": false,
+      "legible_result_outcome": null,
+      "legible_result_crowns": [
+        null,
+        null
+      ],
+      "predicted_result": false
+    },
+    {
+      "episode": "v4-phase-a-1975101272",
+      "ordinal": "last captured frame",
+      "match_over_text": false,
+      "full_outcome_screen": false,
+      "legible_result_outcome": null,
+      "legible_result_crowns": [
+        null,
+        null
+      ],
+      "predicted_result": false
+    },
+    {
+      "episode": "v4-phase-a-1975101295",
+      "ordinal": "last captured frame",
+      "match_over_text": true,
+      "full_outcome_screen": false,
+      "legible_result_outcome": null,
+      "legible_result_crowns": [
+        null,
+        null
+      ],
+      "predicted_result": true
+    }
+  ],
+  "endpoint_terminal_text_accuracy": {
+    "exact": 8,
+    "total": 8,
+    "positive_exact": 2,
+    "positive_total": 2,
+    "negative_exact": 6,
+    "negative_total": 6
+  },
+  "terminal_match_coverage": {
+    "detected": 2,
+    "ended": 6
+  },
+  "outcome_accuracy": {
+    "exact": 0,
+    "total": 0,
+    "coverage": 0
+  },
+  "dev_used_for_fit": false
+}

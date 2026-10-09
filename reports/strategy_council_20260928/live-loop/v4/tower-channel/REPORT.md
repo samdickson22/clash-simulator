@@ -135,3 +135,62 @@ Ten new regressions cover interval truth, coherent duplicate handling, capture-s
 **Final regression: 85 tests passed, plus six subtests, in 28.73 seconds** on 127x03. This includes all 75 round-1 tests and ten new tests, using the same exclusions for the five unrelated native S6 parity tests. `round2-tests-receipt.json` records the isolated snapshot, tested file hashes and log digest.
 
 The staged diff passed `/mpac/sdicks02/cc/tools/bin/clasher-secret-scan` and `git diff --cached --check`. Shared live files were staged hunk-by-hunk; only tower code/tests and this report directory were otherwise staged. No raw pixels or extracted arrays are published.
+
+## Round 3
+
+The public crown reader cuts mean princess destruction confirmation from **2.629–2.786 s to 0.814–1.007 s**, on the **same eight round-2 training dev matches / 22,059 frames**. Median delay fell from **2.150–2.350 s to 0.700–0.850 s**. **The p50 <0.5 s target is not met.** All **7/7** continuing princess destruction events remain confirmed; six now use `crown_increment_slot`, one retains the rubble fallback. No reader, threshold or attribution rule changed after the round-3 freeze/dev replay.
+
+The new result producer recognizes positive **Match Over** text and routes it through `PublicTowerAdapter.observe` to the existing public terminal/three-crown consumer. An endpoint pixel audit gives **8/8 correct terminal-text classifications (2 positive, 6 negative)**. However, only **2/6 native-ended matches** expose that text before capture stops; the other four end during a scoring/collapse animation. **Win/loss/draw accuracy is unmeasured (0 legible full outcome screens)**. The typed observation and template matcher support those outcomes, but the deployed artifact has no fitted outcome-text templates and emits `outcome=None` for Match Over. This is a measured terminal producer and a latency improvement, **not completion of the full outcome-screen or sub-0.5-second goals**.
+
+### Training boundary and fitting
+
+`round3-freeze.json` pins the recognizer, adapter/root contract, deployed round-2 tower artifact, new score artifact, fitter, evaluator, truth source and unchanged `round2-manifest.json`. The split remains `../split.json`, SHA256 `3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258`. The canonical split is at v4 root; no alternative membership file was used. No formal validation, heldout/sealed payload, amendment, noise-measured file, or perception-owner data/code was opened or changed.
+
+The availability audit decoded only all **48 existing fit-match endpoints and their 20 continuing disappearance windows**, checking training membership and receipt/cache/timing hashes before payload access. Six independently inspected frames in **fit episode 1975101330** label HUD scores 0/1/2 and the earlier three-icon scoring banner; its final frame labels Match Over. Exact ordinals/labels are in `round3-fit-receipt.json`, and source hashes/end ticks in `round3-pixel-audit.json`. The new numerical artifact is **360,768 bytes**, SHA256 `3dc37912484780227663c76754509abf450c4cc3ba40e9a7015619704dc8cf36`. Images, JPEG audit sheets and decoded arrays remain private ignored `runtime/r3` outputs.
+
+Round-2 dev pixels never influenced this new fitting, crop selection, thresholds or attribution logic. Therefore the unchanged round-2 dev slice was eligible under the requested exception; no new dev carve was needed. Post-freeze dev endpoint inspection is recorded separately in `round3-result-audit.json`; it informed limitations only, never model/source tuning.
+
+### Public crown evidence and attribution
+
+`crown_counter.py` reads opponent/own scores from the public **right-edge arena HUD**, plus the **three-icon scoring banner**. Top HUD pixels remain masked. HUD counters can lag the early banner; simultaneous accepted reads use the larger count. Missing/unmatched crops abstain. The artifact supports HUD digits 0/1/2, own banner 1 and opponent banner 1/2; **three crowns and own banner 2/3 remain unsupported**, requiring fresh fit data before deployment. Fixed geometry is 540×1140 uint8 BGR. Numerical scores are template similarity, not calibrated probabilities.
+
+A score is neither slot identity nor match end. The tower channel requires two distinct consistent crown observations, a one-crown increment, a recent positive living witness, no current positive HP/bar, and **exactly one eligible princess on the losing side**. A positively witnessed living King and both princesses supply a public zero-score baseline; a capture starting with an absent princess cannot establish it. Missing crops alone, ambiguous left/right slots, count jumps, stale witnesses, duplicate/backwards time and episode changes fail closed. Crown pending evidence expires after one second. Late scores are credited to previously confirmed rubble, preventing the same increment from destroying the other princess. The persistent model consumes the new evidence through its existing typed six-slot channel; no tower-model changes were required.
+
+Against chronological native count labels derived from the unchanged offline princess truth, accepted crown readings are **745/821 exact (90.74%)**, with **0 counts ahead of witnessed destruction**. The 76 mismatches are lagging counts during scoring animation, not accepted overcounts; they remain in the denominator. No threshold was retuned to remove them. The reader accepted something in 447/22,059 frames; it is a transient-event aid, not a continuously complete scoreboard. Native labels are offline scoring inputs only.
+
+Per-event confirmation intervals, seconds:
+
+| Training dev episode / destroyed slot | Before | After | New evidence |
+|---|---:|---:|---|
+| 1975101260 / opponent right | 2.15–2.35 | 0.40–0.65 | crown increment + slot |
+| 1975101260 / own left | 2.20–2.35 | 0.70–0.80 | crown increment + slot |
+| 1975101276 / opponent left | 4.50–4.65 | 0.55–0.85 | crown increment + slot |
+| 1975101276 / opponent right | 2.00–2.20 | 2.00–2.20 | rubble fallback |
+| 1975101267 / opponent right | 3.45–3.55 | 0.70–0.85 | crown increment + slot |
+| 1975101267 / own left | 1.95–2.05 | 0.65–0.80 | crown increment + slot |
+| 1975101295 / own left | 2.15–2.35 | 0.70–0.90 | crown increment + slot |
+
+### False destruction and result-screen limits
+
+The persistent latch yields **0/74,179 false-destroyed living-princess observations**, with the unchanged one-sided 95% exact upper bound **0.00404% per observation**. Across all towers it remains **0/118,065**. Correlation matters: **0/8 affected matches** gives a **31.23%** match-level upper bound. These small-sample bounds are not a safety guarantee, and reusing the slice does not add independent matches to round 2.
+
+`result_screen.py` exposes `ResultScreenObservation(episode_id, timestamp_ms, outcome, crowns, confidence)`. Each crown may be unreadable (`None`); outcome is win/loss/draw only when explicitly matched, otherwise unknown. Positive terminal text needs two distinct frames no more than 600 ms apart. Equal crowns never establish a draw; scores may still animate when Match Over appears. Historical counts expire after 500 ms. Result observations persist only within their episode, and convert to the round-2 `PublicMatchResult`. A three-crown count can destroy only the opposing King; Match Over with unknown/partial scores ends planning without inventing King death. Both measured positive results had unreadable final counts and outcome.
+
+Frozen replay emitted **0 false terminal observations in 21,933 eligible preterminal frames** and **19/87 accepted terminal frames**. Those terminal-frame counts are correlated repetitions within just two matches. Of the six native-ended matches, four stop during a scoring banner, including the King-end example, and supply no positive Match Over text. The two remaining captures hit the requested collection end tick with `terminal.ended=False`. The eight-endpoint visual audit is terminal-text accuracy, **not win/loss/draw accuracy**. `round3-dev-result.json` contains exact per-match observations, tick brackets, event intervals and provenance.
+
+### Tests, compute, and runtime-worker handoff
+
+Eight new tests cover positive crown attribution, ambiguity/absence, capture-start masking, stale/jump/episode handling, delayed-score credit, reader arbitration, typed serialization, end-text debounce/persistence, unknown scores/outcomes, all outcome labels and terminal packet routing. The isolated accepted round-2 regression snapshot plus owned round-3 changes passed **93 tests and six subtests**. After the final timestamp-validation/outcome-abstention clarification, the focused tower/result/transport suite passed **44 tests**; the final full frozen-source regression is recorded in `round3-tests-receipt.json`. Concurrent runtime/perception edits were excluded from that snapshot.
+
+All audit/fitting/replay/test processes ran on **127x03**, CPU-only, detached with **setsid**, **nice 10**, single-thread OpenCV/BLAS/OMP, at most four replay workers plus their controller (and one test process). All caches stayed under `/mpac`. New crown + tower + result work averaged **3.499 ms/frame**, p95 **3.813 ms**, p99 **3.885 ms** over 21,931 measurements, excluding cache I/O. This includes the result reader and the deployed opponent-number-disabled channel. No heavy work ran on 127x05, and no other jobs were changed.
+
+`selection.py` and `runtime.py` were not edited. Existing perception calls already invoke the adapter, so **no runtime behavior patch is needed for the new producer**. The runtime worker must add the new default artifact to provenance hashing with this exact patch in `provenance(config)`:
+
+```diff
+     files.append(Path(__file__).with_name('tower_channel_templates.json'))
++    files.append(Path(__file__).with_name('public_score_templates.json'))
+```
+
+For complete outcome/three-crown coverage, the capture owner needs **training-only post-match frames through the full result screen**, with emulator/UI progression continuing after native ended; the existing collector calls pause at native end and captures only another 0.7 seconds. Simply prolonging a paused screenshot stream does not demonstrate that the UI will advance. Request examples with explicit win/loss/draw text and final 0–3 crowns. Additional early-transition fit data and an untouched SHA-ranked dev carve are needed for a further attempt at p50 <0.5 s; do not tune on these dev frames.
+
+Publication stages only owned hunks/new files, checks whitespace and the required staged secret scan, and pushes origin main. No raw frames, images or weights over 5 MB are included.

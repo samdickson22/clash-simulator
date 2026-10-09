@@ -1,0 +1,23 @@
+{
+  "host": "127x03",
+  "nice": 10,
+  "cpu_only": true,
+  "result": "93 passed, 6 subtests passed in 27.06s",
+  "added_tests": 8,
+  "command": "python -m pytest -q tests/live_v4 --ignore=tests/live_v4/test_s6_parity.py tests/test_rl_live_inference_contract.py",
+  "scope": "Accepted round-2 isolated snapshot plus owned frozen round-3 source; concurrent runtime/perception worker edits excluded",
+  "tested_source_sha256": {
+    "src/clasher/live/tower_channel.py": "af9d218cd1ad6c8d46995a4096bec1e3cafa0cc536ba8be35679a9b647f0e43f",
+    "src/clasher/live/tower_channel_templates.json": "09850226b90293ba70d0dfa0d6e16588a2cf297106a7bfc71a067ce81b941668",
+    "src/clasher/live/crown_counter.py": "59be765970684aea61a9b25377b5da0c58afc91ca8704a3a859a3e9f29abb0b2",
+    "src/clasher/live/result_screen.py": "4df16325a74989113ddbd1828bb315d5dde5d0d3c1155a1f23dbc366e2b1142c",
+    "src/clasher/live/public_score_templates.json": "3dc37912484780227663c76754509abf450c4cc3ba40e9a7015619704dc8cf36",
+    "src/clasher/live/public_root.py": "60d3a9c5ce3fb501cc397600fa81e662ef30bfee7cf52e9c8217a29ae721ffce",
+    "src/clasher/live/perception_adapter.py": "5b61adae28c70625d1caf66f0e8f923e30e8ac885e1e0018d0879608c5224d3e",
+    "tests/live_v4/test_tower_channel_r3.py": "a649a956da34f27cad9b4fd94c1867d22336f8da1843158262ba63c68b6f7fd2"
+  },
+  "log_sha256": "e96839008a121c6f55f2f18b50a8fec0128771627445231e5b268ba220f1cfc7",
+  "focused_final_result": "44 passed in 0.22s",
+  "validation_payloads_opened": false,
+  "heldout_payloads_opened": false
+}

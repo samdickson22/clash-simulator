@@ -33,15 +33,24 @@ class PublicMatchResult:
     """
     episode_id: str
     timestamp_ms: int
-    crowns: tuple[int, int]
+    crowns: tuple[int | None, int | None]
     confidence: float
+    outcome: str | None = None
 
     def __post_init__(self):
         import math
         if type(self.timestamp_ms) is not int or self.timestamp_ms < 0:
             raise ValueError('Invalid result timestamp')
-        if not isinstance(self.crowns, tuple) or len(self.crowns) != 2 or any(type(c) is not int or not 0 <= c <= 3 for c in self.crowns) or self.crowns == (3,3):
+        if not isinstance(self.crowns, tuple) or len(self.crowns) != 2 or any(c is not None and (type(c) is not int or not 0 <= c <= 3) for c in self.crowns) or self.crowns == (3,3):
             raise ValueError('Invalid public result crowns')
+        if self.outcome not in (None, 'win', 'loss', 'draw'):
+            raise ValueError('Invalid public match outcome')
+        if None not in self.crowns and self.outcome is not None:
+            expected = 'win' if self.crowns[1] > self.crowns[0] else ('loss' if self.crowns[0] > self.crowns[1] else 'draw')
+            if self.crowns[0] != self.crowns[1] and self.outcome != expected:
+                raise ValueError('Result outcome contradicts crowns')
+            if self.outcome == 'draw' and self.crowns[0] != self.crowns[1]:
+                raise ValueError('Draw contradicts crowns')
         if not math.isfinite(self.confidence) or not 0 < self.confidence <= 1:
             raise ValueError('Invalid public result confidence')
 

@@ -1,0 +1,83 @@
+{
+  "schema": "clasher.public-score-fit.r3",
+  "manifest_sha256": "6f74fdf6cf189c7f268dc9d1f73090eb7724c306d3cf68b858df2807d90bffae",
+  "episode": "v4-phase-a-1975101330",
+  "annotations": [
+    {
+      "ordinal": 642,
+      "hud": [
+        0,
+        0
+      ],
+      "banner": [
+        null,
+        1
+      ]
+    },
+    {
+      "ordinal": 656,
+      "hud": [
+        0,
+        0
+      ],
+      "banner": [
+        null,
+        1
+      ]
+    },
+    {
+      "ordinal": 697,
+      "hud": [
+        0,
+        1
+      ],
+      "banner": [
+        null,
+        1
+      ]
+    },
+    {
+      "ordinal": 1071,
+      "hud": [
+        1,
+        1
+      ],
+      "banner": [
+        1,
+        null
+      ]
+    },
+    {
+      "ordinal": 2670,
+      "hud": [
+        1,
+        1
+      ],
+      "banner": [
+        2,
+        null
+      ]
+    },
+    {
+      "ordinal": 2710,
+      "hud": [
+        2,
+        1
+      ],
+      "banner": [
+        null,
+        null
+      ]
+    }
+  ],
+  "terminal_text_ordinal": 3272,
+  "artifact_sha256": "3dc37912484780227663c76754509abf450c4cc3ba40e9a7015619704dc8cf36",
+  "dev_used_for_fit": false,
+  "unsupported": [
+    "HUD digit 3",
+    "own banner 2/3",
+    "opponent banner 3",
+    "win/loss/draw result text"
+  ],
+  "training_only": true
+}

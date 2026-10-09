@@ -1,0 +1,1292 @@
+{
+  "schema": "clasher.public-tower-dev.r3",
+  "freeze_sha256": "78cbfc98539c2f930fe2a13b54892d2f22b88562c07f01cf3caa03f6a8d50a64",
+  "manifest_sha256": "6f74fdf6cf189c7f268dc9d1f73090eb7724c306d3cf68b858df2807d90bffae",
+  "matches": [
+    {
+      "episode": "v4-phase-a-1975101336",
+      "counts": {
+        "preterminal_frames": 780,
+        "false_terminal_frames": 0,
+        "before_alive_towers": 4686,
+        "before_false_towers": 0,
+        "before_alive_princess": 3124,
+        "before_false_princess": 0,
+        "after_alive_towers": 4686,
+        "after_false_towers": 0,
+        "after_alive_princess": 3124,
+        "after_false_princess": 0
+      },
+      "events": [],
+      "false_slots": [],
+      "first_result": null,
+      "crown_examples": [],
+      "provenance": {
+        "receipt_sha256": "59c8de4efe0f09423cb115c4448e5009af3bd1261f5685add4a453da38f66257",
+        "cache_index_sha256": "e86e500f2d5d10922ce9f1ffcea7cda75e6f994cef9715625991aab2183a57c6",
+        "truth_sha256": {
+          "objects.jsonl.gz": "004bca6c45db6a02d5b3600f1b9ef1a1c3fec34053917913c21282d6021959a2",
+          "rich-objects.jsonl.gz": "6ed4dc7a41124ee2f41dd5efdb5de0f1ae83f806f7c56ad4aeee1e275889f564",
+          "frames.jsonl": "e66b729cc66c93386a10fe088f122cdaeaffe9dedbdf1c08bd759a5d67dcae6e"
+        },
+        "raw_sha256": "6d408262175ea9d704b3fadf4906f3a22362016142c5fa254a463637d9d17327"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101260",
+      "counts": {
+        "preterminal_frames": 3579,
+        "false_terminal_frames": 0,
+        "before_alive_towers": 15714,
+        "before_false_towers": 0,
+        "before_alive_princess": 8554,
+        "before_false_princess": 0,
+        "after_alive_towers": 15714,
+        "after_false_towers": 0,
+        "after_alive_princess": 8554,
+        "after_false_princess": 0,
+        "crown_read_frames": 124,
+        "crown_scored_counts": 242,
+        "crown_exact_counts": 230,
+        "crown_ahead_counts": 0,
+        "terminal_frames": 14,
+        "detected_terminal_frames": 0
+      },
+      "events": [
+        {
+          "slot": 2,
+          "last_positive_tick": 1141,
+          "destruction_tick": 1143,
+          "confirmed_absent_tick": 1144,
+          "last_hp": 69,
+          "native_id": 5000002,
+          "episode": "v4-phase-a-1975101260",
+          "before": {
+            "ordinal": 846,
+            "tick_lo": 1186,
+            "tick_hi": 1188,
+            "evidence": "rubble_template"
+          },
+          "before_lower_ms": 2150,
+          "before_upper_ms": 2350,
+          "after": {
+            "ordinal": 811,
+            "tick_lo": 1151,
+            "tick_hi": 1154,
+            "evidence": "crown_increment_slot"
+          },
+          "after_lower_ms": 400,
+          "after_upper_ms": 650
+        },
+        {
+          "slot": 4,
+          "last_positive_tick": 933,
+          "destruction_tick": 934,
+          "confirmed_absent_tick": 935,
+          "last_hp": 7,
+          "native_id": 5000004,
+          "episode": "v4-phase-a-1975101260",
+          "before": {
+            "ordinal": 639,
+            "tick_lo": 978,
+            "tick_hi": 980,
+            "evidence": "rubble_template"
+          },
+          "before_lower_ms": 2200,
+          "before_upper_ms": 2350,
+          "after": {
+            "ordinal": 609,
+            "tick_lo": 948,
+            "tick_hi": 949,
+            "evidence": "crown_increment_slot"
+          },
+          "after_lower_ms": 700,
+          "after_upper_ms": 800
+        }
+      ],
+      "false_slots": [],
+      "first_result": null,
+      "crown_examples": [
+        {
+          "ordinal": 598,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101260",
+            "timestamp_ms": 29913,
+            "crowns": [
+              null,
+              0
+            ],
+            "confidence": 0.9317173212766647
+          }
+        },
+        {
+          "ordinal": 599,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101260",
+            "timestamp_ms": 29963,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9747362658381462
+          }
+        },
+        {
+          "ordinal": 600,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101260",
+            "timestamp_ms": 30008,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.964758574962616
+          }
+        },
+        {
+          "ordinal": 601,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101260",
+            "timestamp_ms": 30058,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9683666899800301
+          }
+        },
+        {
+          "ordinal": 602,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101260",
+            "timestamp_ms": 30110,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9719788320362568
+          }
+        },
+        {
+          "ordinal": 603,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101260",
+            "timestamp_ms": 30175,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9770697429776192
+          }
+        },
+        {
+          "ordinal": 604,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101260",
+            "timestamp_ms": 30211,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9718381408601999
+          }
+        },
+        {
+          "ordinal": 605,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101260",
+            "timestamp_ms": 30275,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.973703496158123
+          }
+        }
+      ],
+      "provenance": {
+        "receipt_sha256": "7de816427c9d30f60b1d546cd09db741fef02962bf0dd88acfe2ec596a0a2ad0",
+        "cache_index_sha256": "74997ac01d590469fc2a55f730fa4f73249e564866bee8893d8468df489fac21",
+        "truth_sha256": {
+          "objects.jsonl.gz": "d135bd32b706720cea1601c5e284cdaa71ea69bcdcd4a553cc33d62460f648e4",
+          "rich-objects.jsonl.gz": "dabc07e94a99a430fcb12b0d651b89df87d8a0c04fed64239b93b689f95398fa",
+          "frames.jsonl": "9bb285afa2ffa280c0975d7c04cf0f1651476544d17e9fad6948e8107c4a6848"
+        },
+        "raw_sha256": "afdb4a791894fb94eb7b1f4d074c32fff99c6aa811fe1aebcf155f4e3f309b88"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101225",
+      "counts": {
+        "preterminal_frames": 4694,
+        "false_terminal_frames": 0,
+        "before_alive_towers": 28170,
+        "before_false_towers": 0,
+        "before_alive_princess": 18780,
+        "before_false_princess": 0,
+        "after_alive_towers": 28170,
+        "after_false_towers": 0,
+        "after_alive_princess": 18780,
+        "after_false_princess": 0,
+        "terminal_frames": 15,
+        "detected_terminal_frames": 0,
+        "crown_read_frames": 9
+      },
+      "events": [],
+      "false_slots": [],
+      "first_result": null,
+      "crown_examples": [
+        {
+          "ordinal": 4699,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101225",
+            "timestamp_ms": 234984,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9271073937416077
+          }
+        },
+        {
+          "ordinal": 4700,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101225",
+            "timestamp_ms": 235009,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9809861797839403
+          }
+        },
+        {
+          "ordinal": 4703,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101225",
+            "timestamp_ms": 235183,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9173692911863327
+          }
+        },
+        {
+          "ordinal": 4704,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101225",
+            "timestamp_ms": 235200,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9064750373363495
+          }
+        },
+        {
+          "ordinal": 4705,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101225",
+            "timestamp_ms": 235267,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9074565693736076
+          }
+        },
+        {
+          "ordinal": 4706,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101225",
+            "timestamp_ms": 235306,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9235237091779709
+          }
+        },
+        {
+          "ordinal": 4707,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101225",
+            "timestamp_ms": 235350,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9443992041051388
+          }
+        },
+        {
+          "ordinal": 4708,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101225",
+            "timestamp_ms": 235402,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9583460055291653
+          }
+        }
+      ],
+      "provenance": {
+        "receipt_sha256": "dfde7b77784004b2c82a656ba7ec577a5739bac00ac6fbd82335882b1af5ac77",
+        "cache_index_sha256": "18ba9cf7dcbd044a4e7924ef3be1fa5ef31a08dbb8747daac3f1032ffd5b5d1c",
+        "truth_sha256": {
+          "objects.jsonl.gz": "56a11d0867fd045adf13cd7fd83db369d4454dcfd874de44e451b0b3f664ad9a",
+          "rich-objects.jsonl.gz": "d99538f5879781a8c43194fa65e84ebc658128e254914d90470549e8ed920c75",
+          "frames.jsonl": "bbc15ef8a4528026f5970e1d645c3861a254368b2ad97ff6b56321d581314e85"
+        },
+        "raw_sha256": "1455e6d0f609fa2d2a44a4be6fa073d3ddae617c1241b5157e7eaf83508009d0"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101296",
+      "counts": {
+        "preterminal_frames": 3031,
+        "false_terminal_frames": 0,
+        "before_alive_towers": 18198,
+        "before_false_towers": 0,
+        "before_alive_princess": 12132,
+        "before_false_princess": 0,
+        "after_alive_towers": 18198,
+        "after_false_towers": 0,
+        "after_alive_princess": 12132,
+        "after_false_princess": 0,
+        "terminal_frames": 15,
+        "detected_terminal_frames": 0,
+        "crown_read_frames": 9
+      },
+      "events": [],
+      "false_slots": [],
+      "first_result": null,
+      "crown_examples": [
+        {
+          "ordinal": 3038,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101296",
+            "timestamp_ms": 152134,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9506307616829872
+          }
+        },
+        {
+          "ordinal": 3039,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101296",
+            "timestamp_ms": 152182,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9268053397536278
+          }
+        },
+        {
+          "ordinal": 3041,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101296",
+            "timestamp_ms": 152267,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9081368297338486
+          }
+        },
+        {
+          "ordinal": 3042,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101296",
+            "timestamp_ms": 152338,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.913011372089386
+          }
+        },
+        {
+          "ordinal": 3043,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101296",
+            "timestamp_ms": 152389,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9040458425879478
+          }
+        },
+        {
+          "ordinal": 3044,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101296",
+            "timestamp_ms": 152403,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9067643955349922
+          }
+        },
+        {
+          "ordinal": 3045,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101296",
+            "timestamp_ms": 152465,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.9343003258109093
+          }
+        },
+        {
+          "ordinal": 3046,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101296",
+            "timestamp_ms": 152522,
+            "crowns": [
+              null,
+              1
+            ],
+            "confidence": 0.958548728376627
+          }
+        }
+      ],
+      "provenance": {
+        "receipt_sha256": "6b9de55e7582cfb7d987e72721ede4f4e26940c90968fe92b4a37b16e8129030",
+        "cache_index_sha256": "6fa7a4470a2f641061a2a8eab68a5aff1ec6fb6d3e51b1bdc66f9bd4b1291b35",
+        "truth_sha256": {
+          "objects.jsonl.gz": "5ece34be20c78308e11d87c714b4a6c42b59632ec3d0dacc41934f1e1eb9edb0",
+          "rich-objects.jsonl.gz": "ddda05d53fda5f86422e1d6863422d6019649d5263ac0bebd488deeb9ac2c784",
+          "frames.jsonl": "059b97b0d8ee2a7ccf2086730092646fd94e548e815640a3968262c17aa32298"
+        },
+        "raw_sha256": "a599d0b7fcac8d4908c1775ab51a2726ac7f16ad014859c4ec0090d6ebccfb9c"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101276",
+      "counts": {
+        "preterminal_frames": 1199,
+        "false_terminal_frames": 0,
+        "before_alive_towers": 6330,
+        "before_false_towers": 0,
+        "before_alive_princess": 3930,
+        "before_false_princess": 0,
+        "after_alive_towers": 6330,
+        "after_false_towers": 0,
+        "after_alive_princess": 3930,
+        "after_false_princess": 0,
+        "crown_read_frames": 122,
+        "crown_scored_counts": 220,
+        "crown_exact_counts": 179,
+        "crown_ahead_counts": 0,
+        "terminal_frames": 14,
+        "detected_terminal_frames": 9
+      },
+      "events": [
+        {
+          "slot": 1,
+          "last_positive_tick": 3100,
+          "destruction_tick": 3102,
+          "confirmed_absent_tick": 3103,
+          "last_hp": 50,
+          "native_id": 5000001,
+          "episode": "v4-phase-a-1975101276",
+          "before": {
+            "ordinal": 793,
+            "tick_lo": 3192,
+            "tick_hi": 3193,
+            "evidence": "rubble_template"
+          },
+          "before_lower_ms": 4500,
+          "before_upper_ms": 4650,
+          "after": {
+            "ordinal": 716,
+            "tick_lo": 3113,
+            "tick_hi": 3117,
+            "evidence": "crown_increment_slot"
+          },
+          "after_lower_ms": 550,
+          "after_upper_ms": 850
+        },
+        {
+          "slot": 2,
+          "last_positive_tick": 3231,
+          "destruction_tick": 3233,
+          "confirmed_absent_tick": 3234,
+          "last_hp": 146,
+          "native_id": 5000002,
+          "episode": "v4-phase-a-1975101276",
+          "before": {
+            "ordinal": 872,
+            "tick_lo": 3273,
+            "tick_hi": 3275,
+            "evidence": "rubble_template"
+          },
+          "before_lower_ms": 2000,
+          "before_upper_ms": 2200,
+          "after": {
+            "ordinal": 872,
+            "tick_lo": 3273,
+            "tick_hi": 3275,
+            "evidence": "rubble_template"
+          },
+          "after_lower_ms": 2000,
+          "after_upper_ms": 2200
+        }
+      ],
+      "false_slots": [],
+      "first_result": {
+        "ordinal": 1205,
+        "tick_lo": 3601,
+        "tick_hi": 3601,
+        "observation": {
+          "episode_id": "v4-phase-a-1975101276",
+          "timestamp_ms": 60366,
+          "outcome": null,
+          "crowns": [
+            null,
+            null
+          ],
+          "confidence": 0.9622227996587753
+        }
+      },
+      "crown_examples": [
+        {
+          "ordinal": 707,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101276",
+            "timestamp_ms": 35365,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9572743214666843
+          }
+        },
+        {
+          "ordinal": 708,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101276",
+            "timestamp_ms": 35415,
+            "crowns": [
+              0,
+              1
+            ],
+            "confidence": 0.9664848372340202
+          }
+        },
+        {
+          "ordinal": 709,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101276",
+            "timestamp_ms": 35471,
+            "crowns": [
+              0,
+              1
+            ],
+            "confidence": 0.9276589751243591
+          }
+        },
+        {
+          "ordinal": 710,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101276",
+            "timestamp_ms": 35537,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9813468158245087
+          }
+        },
+        {
+          "ordinal": 711,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101276",
+            "timestamp_ms": 35559,
+            "crowns": [
+              0,
+              1
+            ],
+            "confidence": 0.9093865007162094
+          }
+        },
+        {
+          "ordinal": 712,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101276",
+            "timestamp_ms": 35600,
+            "crowns": [
+              0,
+              1
+            ],
+            "confidence": 0.9163109734654427
+          }
+        },
+        {
+          "ordinal": 713,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101276",
+            "timestamp_ms": 35668,
+            "crowns": [
+              0,
+              1
+            ],
+            "confidence": 0.9025662690401077
+          }
+        },
+        {
+          "ordinal": 714,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101276",
+            "timestamp_ms": 35715,
+            "crowns": [
+              0,
+              1
+            ],
+            "confidence": 0.9234778583049774
+          }
+        }
+      ],
+      "provenance": {
+        "receipt_sha256": "0dc9ffa50bc328e8f23c3a5880b093be87a01f2430a300f9374b625ba9135119",
+        "cache_index_sha256": "39429e77efe037c0c1242ca53cf76725e9853fd0127e5c9f3606b4f503cec2d0",
+        "truth_sha256": {
+          "objects.jsonl.gz": "5b48b87900abab4546e48e5d877ec2526fff3c74d4a5c313299d874589a400a4",
+          "rich-objects.jsonl.gz": "763a66a444bb84c2180e9c1ec2d1884c415062fc951563338e1a5c78df68482c",
+          "frames.jsonl": "65d253b2c7e8ee189983ef0635ef082c3ce4da9b36ed351ffac3e6818bb172f7"
+        },
+        "raw_sha256": "0b2d3874ab0d9067d93fc627e02f000033f88bab2dca2e22898ff25bdf4d3df6"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101267",
+      "counts": {
+        "preterminal_frames": 4211,
+        "false_terminal_frames": 0,
+        "before_alive_towers": 19024,
+        "before_false_towers": 0,
+        "before_alive_princess": 10600,
+        "before_false_princess": 0,
+        "after_alive_towers": 19024,
+        "after_false_towers": 0,
+        "after_alive_princess": 10600,
+        "after_false_princess": 0,
+        "crown_read_frames": 122,
+        "crown_scored_counts": 237,
+        "crown_exact_counts": 223,
+        "crown_ahead_counts": 0,
+        "terminal_frames": 14,
+        "detected_terminal_frames": 0
+      },
+      "events": [
+        {
+          "slot": 2,
+          "last_positive_tick": 1927,
+          "destruction_tick": 1928,
+          "confirmed_absent_tick": 1930,
+          "last_hp": 55,
+          "native_id": 5000002,
+          "episode": "v4-phase-a-1975101267",
+          "before": {
+            "ordinal": 1658,
+            "tick_lo": 1997,
+            "tick_hi": 1998,
+            "evidence": "rubble_template"
+          },
+          "before_lower_ms": 3450,
+          "before_upper_ms": 3550,
+          "after": {
+            "ordinal": 1602,
+            "tick_lo": 1942,
+            "tick_hi": 1944,
+            "evidence": "crown_increment_slot"
+          },
+          "after_lower_ms": 700,
+          "after_upper_ms": 850
+        },
+        {
+          "slot": 4,
+          "last_positive_tick": 929,
+          "destruction_tick": 930,
+          "confirmed_absent_tick": 933,
+          "last_hp": 36,
+          "native_id": 5000004,
+          "episode": "v4-phase-a-1975101267",
+          "before": {
+            "ordinal": 629,
+            "tick_lo": 969,
+            "tick_hi": 970,
+            "evidence": "rubble_template"
+          },
+          "before_lower_ms": 1950,
+          "before_upper_ms": 2050,
+          "after": {
+            "ordinal": 605,
+            "tick_lo": 943,
+            "tick_hi": 945,
+            "evidence": "crown_increment_slot"
+          },
+          "after_lower_ms": 650,
+          "after_upper_ms": 800
+        }
+      ],
+      "false_slots": [],
+      "first_result": null,
+      "crown_examples": [
+        {
+          "ordinal": 595,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101267",
+            "timestamp_ms": 29761,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.943845734000206
+          }
+        },
+        {
+          "ordinal": 596,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101267",
+            "timestamp_ms": 29848,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9438062980771065
+          }
+        },
+        {
+          "ordinal": 597,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101267",
+            "timestamp_ms": 29866,
+            "crowns": [
+              null,
+              0
+            ],
+            "confidence": 0.9801599085330963
+          }
+        },
+        {
+          "ordinal": 598,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101267",
+            "timestamp_ms": 29917,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9323941469192505
+          }
+        },
+        {
+          "ordinal": 599,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101267",
+            "timestamp_ms": 29952,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9362496733665466
+          }
+        },
+        {
+          "ordinal": 600,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101267",
+            "timestamp_ms": 30000,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9328523203730583
+          }
+        },
+        {
+          "ordinal": 601,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101267",
+            "timestamp_ms": 30074,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.940125584602356
+          }
+        },
+        {
+          "ordinal": 602,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101267",
+            "timestamp_ms": 30106,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9372158050537109
+          }
+        }
+      ],
+      "provenance": {
+        "receipt_sha256": "910f9c57cd09510d243bba520acea3f894f151195b71bdb9086b39a684a7f425",
+        "cache_index_sha256": "899d3acdfc6f983f265bc7b9e23953c2d0908684b3037af939eb14d70b2e0b65",
+        "truth_sha256": {
+          "objects.jsonl.gz": "e106f97cb316332b828ed233854dbcdd9b02db8641f10fd2cc5a1b7773e488bb",
+          "rich-objects.jsonl.gz": "9b9ebf57461062eb64cf9c6807b219823282139ba2000a010fd0a9d00378dccb",
+          "frames.jsonl": "b317cebaadb9941272e5d72c740cd05fb8caba8192103b15b6befb92dc76524f"
+        },
+        "raw_sha256": "9d8c00cb4f85cb22d0d3522eae2fc5729462af1331c4c90ad499d2f39c6477f3"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101272",
+      "counts": {
+        "preterminal_frames": 1179,
+        "false_terminal_frames": 0,
+        "before_alive_towers": 7086,
+        "before_false_towers": 0,
+        "before_alive_princess": 4724,
+        "before_false_princess": 0,
+        "after_alive_towers": 7086,
+        "after_false_towers": 0,
+        "after_alive_princess": 4724,
+        "after_false_princess": 0
+      },
+      "events": [],
+      "false_slots": [],
+      "first_result": null,
+      "crown_examples": [],
+      "provenance": {
+        "receipt_sha256": "f2e8fb53e9a9e73b2c19b2c1c34e217ae224bacde432904fb91a1c2423f477f7",
+        "cache_index_sha256": "2ce8d7cf8b80cf05e2d70500c652c5f42f2e24ef12f2de45e6ef715f36745e6b",
+        "truth_sha256": {
+          "objects.jsonl.gz": "310b9da8e80268c826576d3d3b207b9f102a2980824e2bea224666aced83906a",
+          "rich-objects.jsonl.gz": "6313b70937634f323596c4b436cf8bb6420e76b336b84afe2cb5df5b131cf03e",
+          "frames.jsonl": "49b1c38d6bac42075ef178baf2055db92e503e886f2e76e41a872ef68157fe20"
+        },
+        "raw_sha256": "c2064bec261cdcec67c9fc58919098f51a89b26133424483ae5521409643c4e7"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101295",
+      "counts": {
+        "preterminal_frames": 3260,
+        "false_terminal_frames": 0,
+        "before_alive_towers": 18857,
+        "before_false_towers": 0,
+        "before_alive_princess": 12335,
+        "before_false_princess": 0,
+        "after_alive_towers": 18857,
+        "after_false_towers": 0,
+        "after_alive_princess": 12335,
+        "after_false_princess": 0,
+        "crown_read_frames": 61,
+        "crown_scored_counts": 122,
+        "crown_exact_counts": 113,
+        "crown_ahead_counts": 0,
+        "terminal_frames": 15,
+        "detected_terminal_frames": 10
+      },
+      "events": [
+        {
+          "slot": 4,
+          "last_positive_tick": 2891,
+          "destruction_tick": 2893,
+          "confirmed_absent_tick": 2895,
+          "last_hp": 76,
+          "native_id": 5000004,
+          "episode": "v4-phase-a-1975101295",
+          "before": {
+            "ordinal": 2596,
+            "tick_lo": 2936,
+            "tick_hi": 2938,
+            "evidence": "rubble_template"
+          },
+          "before_lower_ms": 2150,
+          "before_upper_ms": 2350,
+          "after": {
+            "ordinal": 2568,
+            "tick_lo": 2907,
+            "tick_hi": 2909,
+            "evidence": "crown_increment_slot"
+          },
+          "after_lower_ms": 700,
+          "after_upper_ms": 900
+        }
+      ],
+      "false_slots": [],
+      "first_result": {
+        "ordinal": 3266,
+        "tick_lo": 3601,
+        "tick_hi": 3601,
+        "observation": {
+          "episode_id": "v4-phase-a-1975101295",
+          "timestamp_ms": 163300,
+          "outcome": null,
+          "crowns": [
+            null,
+            null
+          ],
+          "confidence": 0.9518387578427792
+        }
+      },
+      "crown_examples": [
+        {
+          "ordinal": 2558,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101295",
+            "timestamp_ms": 127902,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9497550316154957
+          }
+        },
+        {
+          "ordinal": 2559,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101295",
+            "timestamp_ms": 127958,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9612104631960392
+          }
+        },
+        {
+          "ordinal": 2560,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101295",
+            "timestamp_ms": 128000,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9661793485283852
+          }
+        },
+        {
+          "ordinal": 2561,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101295",
+            "timestamp_ms": 128051,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9697346519678831
+          }
+        },
+        {
+          "ordinal": 2562,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101295",
+            "timestamp_ms": 128119,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9715359266847372
+          }
+        },
+        {
+          "ordinal": 2563,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101295",
+            "timestamp_ms": 128161,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9755810368806124
+          }
+        },
+        {
+          "ordinal": 2564,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101295",
+            "timestamp_ms": 128221,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9743214249610901
+          }
+        },
+        {
+          "ordinal": 2565,
+          "observation": {
+            "episode_id": "v4-phase-a-1975101295",
+            "timestamp_ms": 128266,
+            "crowns": [
+              0,
+              0
+            ],
+            "confidence": 0.9768784251064062
+          }
+        }
+      ],
+      "provenance": {
+        "receipt_sha256": "136c0575c1c15bdbe3c7606d3c18834541550352cce0dbb338e4fd772a8409e7",
+        "cache_index_sha256": "9f317787aa5303506215e0f6dcddb4b7f18a3f16d6312b052259b705a83a06a8",
+        "truth_sha256": {
+          "objects.jsonl.gz": "8e774653dc42a140f598b5f85a9ef117e7624763ce407f30b69a8dedc806107a",
+          "rich-objects.jsonl.gz": "55993c627871d3ee352173e7918fb316279bb37330847347ad175c77ffd39c12",
+          "frames.jsonl": "9b5463af19081b47aa8d7a6e24a0edad203d53fa3b55b5c939e7267a5041e32d"
+        },
+        "raw_sha256": "b22b01f38ac448962c3d4e0514d60f56fd445d830c644c466838beec5f3dabf0"
+      }
+    }
+  ],
+  "counts": {
+    "preterminal_frames": 21933,
+    "false_terminal_frames": 0,
+    "before_alive_towers": 118065,
+    "before_false_towers": 0,
+    "before_alive_princess": 74179,
+    "before_false_princess": 0,
+    "after_alive_towers": 118065,
+    "after_false_towers": 0,
+    "after_alive_princess": 74179,
+    "after_false_princess": 0,
+    "crown_read_frames": 447,
+    "crown_scored_counts": 821,
+    "crown_exact_counts": 745,
+    "crown_ahead_counts": 0,
+    "terminal_frames": 87,
+    "detected_terminal_frames": 19
+  },
+  "events": [
+    {
+      "slot": 2,
+      "last_positive_tick": 1141,
+      "destruction_tick": 1143,
+      "confirmed_absent_tick": 1144,
+      "last_hp": 69,
+      "native_id": 5000002,
+      "episode": "v4-phase-a-1975101260",
+      "before": {
+        "ordinal": 846,
+        "tick_lo": 1186,
+        "tick_hi": 1188,
+        "evidence": "rubble_template"
+      },
+      "before_lower_ms": 2150,
+      "before_upper_ms": 2350,
+      "after": {
+        "ordinal": 811,
+        "tick_lo": 1151,
+        "tick_hi": 1154,
+        "evidence": "crown_increment_slot"
+      },
+      "after_lower_ms": 400,
+      "after_upper_ms": 650
+    },
+    {
+      "slot": 4,
+      "last_positive_tick": 933,
+      "destruction_tick": 934,
+      "confirmed_absent_tick": 935,
+      "last_hp": 7,
+      "native_id": 5000004,
+      "episode": "v4-phase-a-1975101260",
+      "before": {
+        "ordinal": 639,
+        "tick_lo": 978,
+        "tick_hi": 980,
+        "evidence": "rubble_template"
+      },
+      "before_lower_ms": 2200,
+      "before_upper_ms": 2350,
+      "after": {
+        "ordinal": 609,
+        "tick_lo": 948,
+        "tick_hi": 949,
+        "evidence": "crown_increment_slot"
+      },
+      "after_lower_ms": 700,
+      "after_upper_ms": 800
+    },
+    {
+      "slot": 1,
+      "last_positive_tick": 3100,
+      "destruction_tick": 3102,
+      "confirmed_absent_tick": 3103,
+      "last_hp": 50,
+      "native_id": 5000001,
+      "episode": "v4-phase-a-1975101276",
+      "before": {
+        "ordinal": 793,
+        "tick_lo": 3192,
+        "tick_hi": 3193,
+        "evidence": "rubble_template"
+      },
+      "before_lower_ms": 4500,
+      "before_upper_ms": 4650,
+      "after": {
+        "ordinal": 716,
+        "tick_lo": 3113,
+        "tick_hi": 3117,
+        "evidence": "crown_increment_slot"
+      },
+      "after_lower_ms": 550,
+      "after_upper_ms": 850
+    },
+    {
+      "slot": 2,
+      "last_positive_tick": 3231,
+      "destruction_tick": 3233,
+      "confirmed_absent_tick": 3234,
+      "last_hp": 146,
+      "native_id": 5000002,
+      "episode": "v4-phase-a-1975101276",
+      "before": {
+        "ordinal": 872,
+        "tick_lo": 3273,
+        "tick_hi": 3275,
+        "evidence": "rubble_template"
+      },
+      "before_lower_ms": 2000,
+      "before_upper_ms": 2200,
+      "after": {
+        "ordinal": 872,
+        "tick_lo": 3273,
+        "tick_hi": 3275,
+        "evidence": "rubble_template"
+      },
+      "after_lower_ms": 2000,
+      "after_upper_ms": 2200
+    },
+    {
+      "slot": 2,
+      "last_positive_tick": 1927,
+      "destruction_tick": 1928,
+      "confirmed_absent_tick": 1930,
+      "last_hp": 55,
+      "native_id": 5000002,
+      "episode": "v4-phase-a-1975101267",
+      "before": {
+        "ordinal": 1658,
+        "tick_lo": 1997,
+        "tick_hi": 1998,
+        "evidence": "rubble_template"
+      },
+      "before_lower_ms": 3450,
+      "before_upper_ms": 3550,
+      "after": {
+        "ordinal": 1602,
+        "tick_lo": 1942,
+        "tick_hi": 1944,
+        "evidence": "crown_increment_slot"
+      },
+      "after_lower_ms": 700,
+      "after_upper_ms": 850
+    },
+    {
+      "slot": 4,
+      "last_positive_tick": 929,
+      "destruction_tick": 930,
+      "confirmed_absent_tick": 933,
+      "last_hp": 36,
+      "native_id": 5000004,
+      "episode": "v4-phase-a-1975101267",
+      "before": {
+        "ordinal": 629,
+        "tick_lo": 969,
+        "tick_hi": 970,
+        "evidence": "rubble_template"
+      },
+      "before_lower_ms": 1950,
+      "before_upper_ms": 2050,
+      "after": {
+        "ordinal": 605,
+        "tick_lo": 943,
+        "tick_hi": 945,
+        "evidence": "crown_increment_slot"
+      },
+      "after_lower_ms": 650,
+      "after_upper_ms": 800
+    },
+    {
+      "slot": 4,
+      "last_positive_tick": 2891,
+      "destruction_tick": 2893,
+      "confirmed_absent_tick": 2895,
+      "last_hp": 76,
+      "native_id": 5000004,
+      "episode": "v4-phase-a-1975101295",
+      "before": {
+        "ordinal": 2596,
+        "tick_lo": 2936,
+        "tick_hi": 2938,
+        "evidence": "rubble_template"
+      },
+      "before_lower_ms": 2150,
+      "before_upper_ms": 2350,
+      "after": {
+        "ordinal": 2568,
+        "tick_lo": 2907,
+        "tick_hi": 2909,
+        "evidence": "crown_increment_slot"
+      },
+      "after_lower_ms": 700,
+      "after_upper_ms": 900
+    }
+  ],
+  "destruction_latency": {
+    "before": {
+      "confirmed": 7,
+      "total": 7,
+      "mean_lower_ms": 2628.5714285714284,
+      "mean_upper_ms": 2785.714285714286,
+      "p50_lower_ms": 2150.0,
+      "p50_upper_ms": 2350.0
+    },
+    "after": {
+      "confirmed": 7,
+      "total": 7,
+      "mean_lower_ms": 814.2857142857143,
+      "mean_upper_ms": 1007.1428571428571,
+      "p50_lower_ms": 700.0,
+      "p50_upper_ms": 850.0
+    }
+  },
+  "false_destroyed": {
+    "princess_false": 0,
+    "princess_alive": 74179,
+    "one_sided_95_princess_frame_upper": 4.038436461495376e-05,
+    "match_errors": 0,
+    "matches": 8,
+    "one_sided_95_match_upper": 0.31234397806636793
+  },
+  "compute_ms": {
+    "samples": 21931,
+    "mean": 3.499447727372213,
+    "p95": 3.8125780000000002,
+    "p99": 3.8849450000000005
+  },
+  "dev_used_for_fit": false,
+  "validation_payloads_opened": false,
+  "heldout_payloads_opened": false,
+  "workers": 4,
+  "host": "127x03",
+  "nice": 10,
+  "cpu_only": true
+}

@@ -1,0 +1,854 @@
+{
+  "fit_only": true,
+  "split_sha256": "3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258",
+  "episodes": [
+    {
+      "episode": "v4-phase-a-1975101180",
+      "frames": 930,
+      "terminal": {
+        "tick": 5115,
+        "ended": true,
+        "mono": 1895484.601659791
+      },
+      "last_tick_lo": 5115,
+      "last_tick_hi": 5115,
+      "selected_ordinals": [
+        929
+      ],
+      "receipt_sha256": "7439a4c0054c4721deafd014fa57f0fc33c86ac6b3dc633229948665bfb3519a",
+      "cache_index_sha256": "a4317d0e46ecb30dffad316fc31a6b044130d5e615bc22f8cb62882bcbfbf4d1"
+    },
+    {
+      "episode": "v4-phase-a-1975101182",
+      "frames": 794,
+      "terminal": {
+        "tick": 5980,
+        "ended": false,
+        "mono": 1895596.550847625
+      },
+      "last_tick_lo": 5980,
+      "last_tick_hi": 5980,
+      "selected_ordinals": [
+        793
+      ],
+      "receipt_sha256": "220a5df99749a0365a51f4a0fcc852aacd12a72ef0c051154be6dc27d73a5893",
+      "cache_index_sha256": "30073d95a55e5122411aecc8a5d9543de528c6ba547f7e224b357d248994e9d1"
+    },
+    {
+      "episode": "v4-phase-a-1975101312",
+      "frames": 514,
+      "terminal": {
+        "tick": 4101,
+        "ended": true,
+        "mono": 1904331.206553333
+      },
+      "last_tick_lo": 4101,
+      "last_tick_hi": 4101,
+      "selected_ordinals": [
+        513
+      ],
+      "receipt_sha256": "1257332d955bf14c1e19993c82cf13f507334548c5812fde987b27b2a4b8bba3",
+      "cache_index_sha256": "35975c249f4904bec472b61c3ed166ce680e5ef0ec6265901d918b83b128d4d3"
+    },
+    {
+      "episode": "v4-phase-a-1975101330",
+      "frames": 3273,
+      "terminal": {
+        "tick": 3601,
+        "ended": true,
+        "mono": 1905562.098288833
+      },
+      "last_tick_lo": 3601,
+      "last_tick_hi": 3601,
+      "selected_ordinals": [
+        638,
+        642,
+        656,
+        697,
+        1012,
+        1016,
+        1032,
+        1071,
+        2649,
+        2655,
+        2670,
+        2710,
+        3272
+      ],
+      "receipt_sha256": "7d95be49a74c4562905463baebb4b7920fdbea272b4ea44d4e5e59b2862564d8",
+      "cache_index_sha256": "ab897b4c013275c3639ef359bf98183418dacc4523a6c7024ca92efcd393d907"
+    },
+    {
+      "episode": "v4-phase-a-1975101294",
+      "frames": 795,
+      "terminal": {
+        "tick": 5980,
+        "ended": false,
+        "mono": 1903192.551261708
+      },
+      "last_tick_lo": 5980,
+      "last_tick_hi": 5980,
+      "selected_ordinals": [
+        794
+      ],
+      "receipt_sha256": "cad51825328786b723b3b25c20d8ff698f00fce2caf888449e0a1655edc07dca",
+      "cache_index_sha256": "1012fb35ed85038cd87e535348848873eb38f84c86281c91dd032e4bdfd4bc52"
+    },
+    {
+      "episode": "v4-phase-a-1975101250",
+      "frames": 594,
+      "terminal": {
+        "tick": 4778,
+        "ended": true,
+        "mono": 1900237.919415458
+      },
+      "last_tick_lo": 4778,
+      "last_tick_hi": 4778,
+      "selected_ordinals": [
+        593
+      ],
+      "receipt_sha256": "dc930610f6c9315f63c36bb3815fa431c49c4151a0dd1ef2058cfe3967a187ee",
+      "cache_index_sha256": "4063f5dc7ea35aa91348f36f65999d76a626a845c26e0a720a88e50b8dcdc8dc"
+    },
+    {
+      "episode": "v4-phase-a-1975101245",
+      "frames": 797,
+      "terminal": {
+        "tick": 5982,
+        "ended": false,
+        "mono": 1899900.783028333
+      },
+      "last_tick_lo": 5982,
+      "last_tick_hi": 5982,
+      "selected_ordinals": [
+        796
+      ],
+      "receipt_sha256": "b76188ed5c6593776bbe05ce6051d4557b6544bafa29bde2d8059cae41091359",
+      "cache_index_sha256": "99a3b514cc690edd5cb4d230cb1b7dad5de8be030b4aebaf2473810c34594b3e"
+    },
+    {
+      "episode": "v4-phase-a-1975101240",
+      "frames": 4789,
+      "terminal": {
+        "tick": 5980,
+        "ended": false,
+        "mono": 1899633.621411166
+      },
+      "last_tick_lo": 5980,
+      "last_tick_hi": 5980,
+      "selected_ordinals": [
+        376,
+        381,
+        396,
+        414,
+        419,
+        434,
+        436,
+        473,
+        4788
+      ],
+      "receipt_sha256": "5b9d849cd421e933d9b145926fc9beb71f7ba55d346b0c031d10bdab8242018b",
+      "cache_index_sha256": "805fbea0ce92f6d80a81243d1e874a4ec96bdc8aa2b2e37178317604612f33f9"
+    },
+    {
+      "episode": "v4-phase-a-1975101200",
+      "frames": 988,
+      "terminal": {
+        "tick": 4573,
+        "ended": true,
+        "mono": 1896894.013260625
+      },
+      "last_tick_lo": 4573,
+      "last_tick_hi": 4573,
+      "selected_ordinals": [
+        987
+      ],
+      "receipt_sha256": "eeccaf9514f613ccc34ad9db61499c31cf4b156e7ed20fcb916548f141304569",
+      "cache_index_sha256": "b64cdbb0554a413c6804b8aeeb733c179c25f353a884f21805baf705327e3857"
+    },
+    {
+      "episode": "v4-phase-a-1975101181",
+      "frames": 1195,
+      "terminal": {
+        "tick": 5980,
+        "ended": false,
+        "mono": 1895570.449641291
+      },
+      "last_tick_lo": 5980,
+      "last_tick_hi": 5980,
+      "selected_ordinals": [
+        1194
+      ],
+      "receipt_sha256": "80997a35dde1f9fb8b4d0ebf2152e2a732c656cdb6891fec54afc6f6f7c99cc6",
+      "cache_index_sha256": "44b85ccc42434c4266efa71a408d5c678ce87fd95260c381087149d7e0908581"
+    },
+    {
+      "episode": "v4-phase-a-1975101203",
+      "frames": 687,
+      "terminal": {
+        "tick": 5871,
+        "ended": true,
+        "mono": 1897066.636980041
+      },
+      "last_tick_lo": 5871,
+      "last_tick_hi": 5871,
+      "selected_ordinals": [
+        686
+      ],
+      "receipt_sha256": "a134a6b50f4c40825c8bdc146b5252653aa4784f79bf538062c9af50650a3b1c",
+      "cache_index_sha256": "9ee41a23618ea174d0b7496b05608cf26d1577eab6c8e8d82730b13e1c3bfe8b"
+    },
+    {
+      "episode": "v4-phase-a-1975101306",
+      "frames": 1795,
+      "terminal": {
+        "tick": 5981,
+        "ended": false,
+        "mono": 1904025.770456041
+      },
+      "last_tick_lo": 5981,
+      "last_tick_hi": 5981,
+      "selected_ordinals": [
+        1794
+      ],
+      "receipt_sha256": "7354e48cf450214f73a9c4d6d1e7d377f215a1e0a5df849baa42e068d35fe3f3",
+      "cache_index_sha256": "f6644c0af727d056646f448a865762dbd14c19acb75d0e08235bd6fab8a01053"
+    },
+    {
+      "episode": "v4-phase-a-1975101310",
+      "frames": 2619,
+      "terminal": {
+        "tick": 3807,
+        "ended": true,
+        "mono": 1904249.894477208
+      },
+      "last_tick_lo": 3807,
+      "last_tick_hi": 3807,
+      "selected_ordinals": [
+        2618
+      ],
+      "receipt_sha256": "d119e751843cb831265f79d175074c947075282ba70525602ddf21fc9011e260",
+      "cache_index_sha256": "5d3e9a9e84d13f4aa0cedd38ff40d048c5e6db57161d95e9ff3e5f0aaaefc99d"
+    },
+    {
+      "episode": "v4-phase-a-1975101304",
+      "frames": 1217,
+      "terminal": {
+        "tick": 3602,
+        "ended": true,
+        "mono": 1903889.827846333
+      },
+      "last_tick_lo": 3602,
+      "last_tick_hi": 3602,
+      "selected_ordinals": [
+        408,
+        413,
+        428,
+        468,
+        1216
+      ],
+      "receipt_sha256": "3cf3e6d47b7a5da38bdd13dfbb14bd3a85c2917c4b77d6ca1eb2bebd0bf2ca3a",
+      "cache_index_sha256": "3c18a1a5f019cbc9e2fdb34e0071878456af4ddc2542532c6d2473fde0a1f700"
+    },
+    {
+      "episode": "v4-phase-a-1975101177",
+      "frames": 3226,
+      "terminal": {
+        "tick": 4411,
+        "ended": true,
+        "mono": 1895365.747226541
+      },
+      "last_tick_lo": 4411,
+      "last_tick_hi": 4411,
+      "selected_ordinals": [
+        1307,
+        1311,
+        1326,
+        1366,
+        1792,
+        1797,
+        1813,
+        1852,
+        3225
+      ],
+      "receipt_sha256": "4324e305e0bfbbf55ec01aff177635e009a43f54c5ac2d5e55cb1a60985c13ae",
+      "cache_index_sha256": "e324afc639ab4954e28fb5d509a1eba2bb41522c6a323cd1bf73fb9d1098ea79"
+    },
+    {
+      "episode": "v4-phase-a-1975101332",
+      "frames": 1217,
+      "terminal": {
+        "tick": 3602,
+        "ended": true,
+        "mono": 1905665.641876166
+      },
+      "last_tick_lo": 3602,
+      "last_tick_hi": 3602,
+      "selected_ordinals": [
+        885,
+        889,
+        904,
+        944,
+        1216
+      ],
+      "receipt_sha256": "6a45838d1473d1402f50a6dd9d1049cfbcfc3047d683fe91c8910624c9aade71",
+      "cache_index_sha256": "838c5cf1eab3b893ae7ce6c3542f3b1374644484b6f8aa29b94cf258ae31aea3"
+    },
+    {
+      "episode": "v4-phase-a-1975101233",
+      "frames": 2415,
+      "terminal": {
+        "tick": 3602,
+        "ended": true,
+        "mono": 1899036.259624541
+      },
+      "last_tick_lo": 3602,
+      "last_tick_hi": 3602,
+      "selected_ordinals": [
+        1280,
+        1284,
+        1299,
+        1340,
+        2414
+      ],
+      "receipt_sha256": "fb72d5204b8ead1b438892c8cbe09c1861da0d8f6f93e5707e927a98a529df48",
+      "cache_index_sha256": "eae00a7f17522df5cba110556221b8b1cf5f3c1f5b859441ba8eecbd8386470a"
+    },
+    {
+      "episode": "v4-phase-a-1975101176",
+      "frames": 3275,
+      "terminal": {
+        "tick": 3601,
+        "ended": true,
+        "mono": 1895278.388982
+      },
+      "last_tick_lo": 3601,
+      "last_tick_hi": 3601,
+      "selected_ordinals": [
+        1084,
+        1089,
+        1105,
+        1145,
+        2249,
+        2254,
+        2270,
+        2308,
+        3070,
+        3073,
+        3088,
+        3128,
+        3274
+      ],
+      "receipt_sha256": "2ceb31b6b33ab7a2c65524e9464e94c4c55fdff086461e9a3a4743688fd508d2",
+      "cache_index_sha256": "bff28b63e606ad7a1b4784549d61150dc22cc78258357b5e764d08dfa078f041"
+    },
+    {
+      "episode": "v4-phase-a-1975101334",
+      "frames": 709,
+      "terminal": {
+        "tick": 4894,
+        "ended": true,
+        "mono": 1905760.659177916
+      },
+      "last_tick_lo": 4894,
+      "last_tick_hi": 4894,
+      "selected_ordinals": [
+        708
+      ],
+      "receipt_sha256": "924d21da35a43141769c95015fd83a27229bd8f396053673afe25808a0360976",
+      "cache_index_sha256": "5d9f2feaa253487da8ce36b2609d059383bd009ca318f6152613d167c5399e8c"
+    },
+    {
+      "episode": "v4-phase-a-1975101274",
+      "frames": 3277,
+      "terminal": {
+        "tick": 3602,
+        "ended": true,
+        "mono": 1901933.680933125
+      },
+      "last_tick_lo": 3602,
+      "last_tick_hi": 3602,
+      "selected_ordinals": [
+        1966,
+        1970,
+        1986,
+        2025,
+        3276
+      ],
+      "receipt_sha256": "b4ea33485dcdd1dd8cd8b30215f5aec5f6839a1ab2ec93252eb33fe59b61f777",
+      "cache_index_sha256": "8ab0136602b78b7323ee3cbec2cfc4ac423e1675ad86542c4601937aa1001afa"
+    },
+    {
+      "episode": "v4-phase-a-1975101184",
+      "frames": 2418,
+      "terminal": {
+        "tick": 3602,
+        "ended": true,
+        "mono": 1895738.965110708
+      },
+      "last_tick_lo": 3602,
+      "last_tick_hi": 3602,
+      "selected_ordinals": [
+        1428,
+        1432,
+        1448,
+        1486,
+        2417
+      ],
+      "receipt_sha256": "41f23a056824f8e8a69577226d27f010c5ee62313a976526dbae864ff4479c34",
+      "cache_index_sha256": "fcdbf1e13160d195e224790fc4c2ee785370833b9af0bc941a0fdbc9a65e7571"
+    },
+    {
+      "episode": "v4-phase-a-1975101266",
+      "frames": 793,
+      "terminal": {
+        "tick": 5981,
+        "ended": false,
+        "mono": 1901380.813700375
+      },
+      "last_tick_lo": 5981,
+      "last_tick_hi": 5981,
+      "selected_ordinals": [
+        792
+      ],
+      "receipt_sha256": "a12a4462bf1cd4a696fd750aa0361880eeb75d3c3c02db04492e7683f5d89f50",
+      "cache_index_sha256": "801713805248bbdb5a32668423d787c7a6df6b3383145ae51f5f9f7c4e0f4d48"
+    },
+    {
+      "episode": "v4-phase-a-1975101236",
+      "frames": 1795,
+      "terminal": {
+        "tick": 5980,
+        "ended": false,
+        "mono": 1899256.253158583
+      },
+      "last_tick_lo": 5980,
+      "last_tick_hi": 5980,
+      "selected_ordinals": [
+        1794
+      ],
+      "receipt_sha256": "099f2269521b794b70584c288eb91ebad38f3b4802566eac1659f673cf485b1f",
+      "cache_index_sha256": "a95d44d3adf805c5ad8c99108e41151a6776bd3e0887098ecc109079b749eadd"
+    },
+    {
+      "episode": "v4-phase-a-1975101275",
+      "frames": 2493,
+      "terminal": {
+        "tick": 3679,
+        "ended": true,
+        "mono": 1901967.981843875
+      },
+      "last_tick_lo": 3679,
+      "last_tick_hi": 3679,
+      "selected_ordinals": [
+        2492
+      ],
+      "receipt_sha256": "c14c296f7470992792645761e8900a4dbc906959d6928da8389bd92e24804f66",
+      "cache_index_sha256": "338cc81479fb30a6f80897ccface4e322eb387ed0d0ee763b12c0cf7a7f5ac4b"
+    },
+    {
+      "episode": "v4-phase-a-1975101211",
+      "frames": 3276,
+      "terminal": {
+        "tick": 3601,
+        "ended": true,
+        "mono": 1897608.091935875
+      },
+      "last_tick_lo": 3601,
+      "last_tick_hi": 3601,
+      "selected_ordinals": [
+        2954,
+        2957,
+        2974,
+        3014,
+        3275
+      ],
+      "receipt_sha256": "44f68c4d439a07825be612c22ebf3ba845608f20e89d50c0228a11a141a254da",
+      "cache_index_sha256": "9931ce58a9fe2cb6f7c7e9610d2e9fd408414d98c98517251d2fd2f1f4389d0f"
+    },
+    {
+      "episode": "v4-phase-a-1975101277",
+      "frames": 1271,
+      "terminal": {
+        "tick": 4856,
+        "ended": true,
+        "mono": 1902085.645559833
+      },
+      "last_tick_lo": 4856,
+      "last_tick_hi": 4856,
+      "selected_ordinals": [
+        1270
+      ],
+      "receipt_sha256": "66b198df5d70a03c59fe4793e78a62b7ed516cbfcc0586dfb82331d127847040",
+      "cache_index_sha256": "62c89c6852792e0c26171705779249907c1c1ac27f09d3a45059ba44c0284368"
+    },
+    {
+      "episode": "v4-phase-a-1975101217",
+      "frames": 761,
+      "terminal": {
+        "tick": 5946,
+        "ended": true,
+        "mono": 1897911.967374791
+      },
+      "last_tick_lo": 5946,
+      "last_tick_hi": 5946,
+      "selected_ordinals": [
+        760
+      ],
+      "receipt_sha256": "f6f0eacb009206d979b9e359b8a3696d53122c86bb088aa004816e73f40d69bd",
+      "cache_index_sha256": "9f6daaf6f76e735899478db9186b27dd8070a272b790660036dc07a0fff38466"
+    },
+    {
+      "episode": "v4-phase-a-1975101175",
+      "frames": 796,
+      "terminal": {
+        "tick": 5981,
+        "ended": false,
+        "mono": 1895181.715916041
+      },
+      "last_tick_lo": 5981,
+      "last_tick_hi": 5981,
+      "selected_ordinals": [
+        795
+      ],
+      "receipt_sha256": "f7f00c65642ecffe0c38bcce68633194217a7124ee0c68c5c97c0e83eabaae7b",
+      "cache_index_sha256": "088edef1bbf9290cff2b8bd543b4f797745e16bce2e6a5bd65f17a0bbbc299c7"
+    },
+    {
+      "episode": "v4-phase-a-1975101221",
+      "frames": 437,
+      "terminal": {
+        "tick": 4022,
+        "ended": true,
+        "mono": 1898132.702249416
+      },
+      "last_tick_lo": 4022,
+      "last_tick_hi": 4022,
+      "selected_ordinals": [
+        436
+      ],
+      "receipt_sha256": "52f136f1377f43e27c04abf8f7cda80b455e65a17af3e9189ef2d1a4623bd64c",
+      "cache_index_sha256": "06905fe0a828fa12712e4fb3f295d4008cfb9707956c891dd1f8e97fefaa88a5"
+    },
+    {
+      "episode": "v4-phase-a-1975101287",
+      "frames": 795,
+      "terminal": {
+        "tick": 5981,
+        "ended": false,
+        "mono": 1902699.303942583
+      },
+      "last_tick_lo": 5981,
+      "last_tick_hi": 5981,
+      "selected_ordinals": [
+        794
+      ],
+      "receipt_sha256": "02bed2815afb6f65f63820fe2caa77b6d57efc290392ff175f4916faa912a01c",
+      "cache_index_sha256": "884a0bdfcb43df5ee6f5fd29327d646cd4e8e9358feab00582d0cae74c8eab05"
+    },
+    {
+      "episode": "v4-phase-a-1975101223",
+      "frames": 1195,
+      "terminal": {
+        "tick": 5980,
+        "ended": false,
+        "mono": 1898315.168831833
+      },
+      "last_tick_lo": 5980,
+      "last_tick_hi": 5980,
+      "selected_ordinals": [
+        1194
+      ],
+      "receipt_sha256": "dd87de5b5f730fe27a492bc2e53afb9e7e16f67810e7cf42f3d6956cb06d200e",
+      "cache_index_sha256": "291ccf530be0be44705e8344b4dc0f18d8c7b8278b18e9b0f678a4432d74a3d6"
+    },
+    {
+      "episode": "v4-phase-a-1975101173",
+      "frames": 870,
+      "terminal": {
+        "tick": 5057,
+        "ended": true,
+        "mono": 1895068.267037708
+      },
+      "last_tick_lo": 5057,
+      "last_tick_hi": 5057,
+      "selected_ordinals": [
+        869
+      ],
+      "receipt_sha256": "83312bdbec9d6a6ca1b3b392d605a740462899cce3bfa6902bcc606fd87bc8f7",
+      "cache_index_sha256": "90e809c6155da04f0115c2dbae64fe7f84fc2fbcb41cced9b41b990bf778c7e3"
+    },
+    {
+      "episode": "v4-phase-a-1975101235",
+      "frames": 2026,
+      "terminal": {
+        "tick": 5611,
+        "ended": true,
+        "mono": 1899192.448996583
+      },
+      "last_tick_lo": 5611,
+      "last_tick_hi": 5611,
+      "selected_ordinals": [
+        2025
+      ],
+      "receipt_sha256": "230af3ba1f620056ccb6b16827370544dac379107f23aedd8f06ff1f9274499e",
+      "cache_index_sha256": "6592bed8e053eeef8f0e6421fa6398db2ea744a0d9bfda3d664a569ef013ae85"
+    },
+    {
+      "episode": "v4-phase-a-1975101261",
+      "frames": 2417,
+      "terminal": {
+        "tick": 3603,
+        "ended": true,
+        "mono": 1900971.560587208
+      },
+      "last_tick_lo": 3603,
+      "last_tick_hi": 3603,
+      "selected_ordinals": [
+        733,
+        737,
+        751,
+        792,
+        2416
+      ],
+      "receipt_sha256": "2fff0da9fa14ce70e4173edf59fec68c54fd54e360e66ee1d2b18ff552a84256",
+      "cache_index_sha256": "5e2ff628475b35a07c8ff5f1b868ec0ce9a3549a9869265804c9bf305e8dabb8"
+    },
+    {
+      "episode": "v4-phase-a-1975101201",
+      "frames": 773,
+      "terminal": {
+        "tick": 4958,
+        "ended": true,
+        "mono": 1896960.278459125
+      },
+      "last_tick_lo": 4958,
+      "last_tick_hi": 4958,
+      "selected_ordinals": [
+        772
+      ],
+      "receipt_sha256": "9dee2af49a03e0edfe4748590f8fe203775b8410ac4dd12141775fe544f45008",
+      "cache_index_sha256": "25ba3c5a330f4d5ad610b09297a9e768a189e2ceadd86e7da6e9ceba7ca5d202"
+    },
+    {
+      "episode": "v4-phase-a-1975101257",
+      "frames": 1794,
+      "terminal": {
+        "tick": 5980,
+        "ended": false,
+        "mono": 1900720.295676458
+      },
+      "last_tick_lo": 5980,
+      "last_tick_hi": 5980,
+      "selected_ordinals": [
+        1793
+      ],
+      "receipt_sha256": "10a7312fede1bcb35bfabe9b30689e9a07af2a51cd7b37e390dcffb7cb831b93",
+      "cache_index_sha256": "2a78936224197c53d01ed6a4c174ec14d5866f50de78fd5eae470f4e53796429"
+    },
+    {
+      "episode": "v4-phase-a-1975101292",
+      "frames": 1793,
+      "terminal": {
+        "tick": 5981,
+        "ended": false,
+        "mono": 1903076.773870083
+      },
+      "last_tick_lo": 5981,
+      "last_tick_hi": 5981,
+      "selected_ordinals": [
+        1792
+      ],
+      "receipt_sha256": "698d038940c6541a4113b64021b920d54dd7e2cf000e7cbb92c4d101c3524148",
+      "cache_index_sha256": "6e4840c563c6332a823cb220ec304635f4aae2cb74cd8c2d69c8ba3daec2a7a0"
+    },
+    {
+      "episode": "v4-phase-a-1975101335",
+      "frames": 1193,
+      "terminal": {
+        "tick": 5981,
+        "ended": false,
+        "mono": 1905838.230652875
+      },
+      "last_tick_lo": 5981,
+      "last_tick_hi": 5981,
+      "selected_ordinals": [
+        1192
+      ],
+      "receipt_sha256": "e5ba90256c6cbea351a52deb8fcf000a8c3cafc3ac3ff07124df5cef29ab5a4d",
+      "cache_index_sha256": "a896b5e4ea6bc6efcd77411b79661276dbfeb99cf89749767216b7c55523024c"
+    },
+    {
+      "episode": "v4-phase-a-1975101246",
+      "frames": 3274,
+      "terminal": {
+        "tick": 3602,
+        "ended": true,
+        "mono": 1900048.90868075
+      },
+      "last_tick_lo": 3602,
+      "last_tick_hi": 3602,
+      "selected_ordinals": [
+        1994,
+        2000,
+        2015,
+        2054,
+        3273
+      ],
+      "receipt_sha256": "3ae97f12568a411a1c1ec9ff579a6e0dc12f600c2626d4cdbdfd1f506270ec07",
+      "cache_index_sha256": "90e52f3443bbd75519e69822d75e14c9b2693e0b1d0d325a8b2cc51073070c1b"
+    },
+    {
+      "episode": "v4-phase-a-1975101185",
+      "frames": 2703,
+      "terminal": {
+        "tick": 5087,
+        "ended": true,
+        "mono": 1895914.449896708
+      },
+      "last_tick_lo": 5087,
+      "last_tick_hi": 5087,
+      "selected_ordinals": [
+        2702
+      ],
+      "receipt_sha256": "bcd680d815ba197fd0d955bd894982c81ec8502f740c93c1fc53a3da0a036543",
+      "cache_index_sha256": "2af172bb9d85d3877befec507ceaa7788f08a201228e2ba83127a234f288c2b1"
+    },
+    {
+      "episode": "v4-phase-a-1975101187",
+      "frames": 799,
+      "terminal": {
+        "tick": 4983,
+        "ended": true,
+        "mono": 1895959.503692541
+      },
+      "last_tick_lo": 4983,
+      "last_tick_hi": 4983,
+      "selected_ordinals": [
+        798
+      ],
+      "receipt_sha256": "e423cce1b9a23a131d76a9fa00f62965f00403aad9e8db0d2684c0ab724de3a1",
+      "cache_index_sha256": "f1f21c7dc1cb038b055bfef08407450b62d02ee5af71a264cec9b4ae69436871"
+    },
+    {
+      "episode": "v4-phase-a-1975101262",
+      "frames": 3593,
+      "terminal": {
+        "tick": 5980,
+        "ended": false,
+        "mono": 1901190.291435291
+      },
+      "last_tick_lo": 5980,
+      "last_tick_hi": 5980,
+      "selected_ordinals": [
+        3592
+      ],
+      "receipt_sha256": "9232c022476fbcfb89acbb511a257b2329243fb88468c7e91e657e9416b2aebb",
+      "cache_index_sha256": "6d3d7c4611fa09cff90c72d9e6beb80279cf23ec2764d4b636e4d873490100a2"
+    },
+    {
+      "episode": "v4-phase-a-1975101285",
+      "frames": 1253,
+      "terminal": {
+        "tick": 5438,
+        "ended": true,
+        "mono": 1902586.29083125
+      },
+      "last_tick_lo": 5438,
+      "last_tick_hi": 5438,
+      "selected_ordinals": [
+        1252
+      ],
+      "receipt_sha256": "cf9515223bd5d7141f05b8abe1629c77812a5d37f725c439ceff070051c57e0b",
+      "cache_index_sha256": "81ce3e02e46ab17e78f3c5a8bb2aea7be4b087ff9ba986da67375e52998ddd70"
+    },
+    {
+      "episode": "v4-phase-a-1975101197",
+      "frames": 3275,
+      "terminal": {
+        "tick": 3601,
+        "ended": true,
+        "mono": 1896790.265296666
+      },
+      "last_tick_lo": 3601,
+      "last_tick_hi": 3601,
+      "selected_ordinals": [
+        1778,
+        1783,
+        1798,
+        1839,
+        3274
+      ],
+      "receipt_sha256": "49c762efd05d747ac816efb59655671e74025bdb3d86d591975d360eef63ef33",
+      "cache_index_sha256": "d122341aa6c42384d4c15404ab6bfd05b330140380b5ebffcbed039b06893238"
+    },
+    {
+      "episode": "v4-phase-a-1975101232",
+      "frames": 3276,
+      "terminal": {
+        "tick": 3601,
+        "ended": true,
+        "mono": 1899003.891430708
+      },
+      "last_tick_lo": 3601,
+      "last_tick_hi": 3601,
+      "selected_ordinals": [
+        1569,
+        1574,
+        1588,
+        1628,
+        3275
+      ],
+      "receipt_sha256": "1026e376a4bcc9e92235263c3066cabc349a4878ac2a0d0cdc9b2d393c41cb3d",
+      "cache_index_sha256": "af392e9226079d32bd346de6e0260171e8103518f985e60de9ac6945717b6e59"
+    },
+    {
+      "episode": "v4-phase-a-1975101243",
+      "frames": 1795,
+      "terminal": {
+        "tick": 5980,
+        "ended": false,
+        "mono": 1899787.406102583
+      },
+      "last_tick_lo": 5980,
+      "last_tick_hi": 5980,
+      "selected_ordinals": [
+        1794
+      ],
+      "receipt_sha256": "9b7315bdeb2d99fe3c0d6752fd4d42f4cb264219dd8f0f1322057fbc87d589ad",
+      "cache_index_sha256": "491446bbf29b45920f558f2c557407e540707d6d8f21bcd4fa08c11654e15c04"
+    },
+    {
+      "episode": "v4-phase-a-1975101224",
+      "frames": 795,
+      "terminal": {
+        "tick": 5980,
+        "ended": false,
+        "mono": 1898386.840092875
+      },
+      "last_tick_lo": 5980,
+      "last_tick_hi": 5980,
+      "selected_ordinals": [
+        794
+      ],
+      "receipt_sha256": "0c77f9b750aab04d99eae0c236eafa83d1b10c25ad9ab434d08b2615995b57c5",
+      "cache_index_sha256": "0b16f8edbb66d3099210dc269786264020a588593abf240a12f2c4027874f0c3"
+    },
+    {
+      "episode": "v4-phase-a-1975101202",
+      "frames": 1196,
+      "terminal": {
+        "tick": 5980,
+        "ended": false,
+        "mono": 1897021.876230083
+      },
+      "last_tick_lo": 5980,
+      "last_tick_hi": 5980,
+      "selected_ordinals": [
+        1195
+      ],
+      "receipt_sha256": "0f02d3c9e5d6cde260a840202a8e6704d0a6ac39c9bc6b12fd2aee499a89df8d",
+      "cache_index_sha256": "2f66c661f74f154e0964d4c4f63ad5f723c6ac3ec078deb6675f9b1fbe5bda1a"
+    }
+  ]
+}

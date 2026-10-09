@@ -75,3 +75,27 @@ Remaining coverage question: training-only King rubble and active King HP exampl
 - Post-scoring corrected HP coverage denominators by recomputing family eligibility from frozen native labels: unread opponent-King observations are excluded from own-princess coverage. No predictions, model, thresholds or HP acceptance policy changed.
 - Coordinator instruction received: never edit selection.py/runtime.py; stage only owned hunks with `git add -p` in shared perception_adapter.py, decision.py and public_root.py. No changes to worker-owned files are needed. No checkout/stash or broad staging used.
 - All task compute has completed. REPORT and small reproducibility receipts are ready. Publication uses explicit tower/report files and owned shared hunks only. Staged secret scan and whitespace checks passed. Exact publication commit is available with `git log -- tower-channel/REPORT.md` from the v4 directory. Open issue: public result-screen producer must be supplied by the capture/runtime owner; opponent numbers remain disabled after failing the fresh-dev gate.
+
+## Round 3 — fit-only audit / implementation
+
+- Read accepted reports and tower/channel/model/root contracts. Shared worker changes remain intact; selection.py/runtime.py and perception-owner paths remain unedited.
+- Detached one-process pixel audit on 127x03, CPU/nice 10. All 48 round-2 fit endpoints and 20 disappearance windows checked; split/receipt membership checked before payload access. HUD score survives at arena right edge; early scoring banners also survive. Top HUD remains masked.
+- Pixel labels for six fit frames in 1975101330 supplied HUD counts 0/1/2 and opponent/own scoring-banner templates; one fit Match Over frame supplied terminal text. No round-2 dev pixels influenced this fitting. Round-2 dev slice remains eligible unchanged.
+- New typed crown reader and result_screen.py; adapter-only automatic producer routing. Match Over can end planning with unreadable counts/outcome. Explicit win/loss/draw text templates are supported but current stored captures lack those screens; no draw is inferred from tied crowns.
+- Crown attribution requires two distinct positive score reads, one-crown increment, recent living slot witness, absence of current positive HP/bar, unique side attribution. Score alone, missing crops, multi-crown jumps and capture-start absence cannot destroy a slot. Rubble path stays available; delayed scores are credited to previously confirmed rubble to avoid destroying a peer.
+- New score artifact is ~352 KiB. Isolated 03 regression snapshot includes only owned round-3 changes over accepted round-2 snapshot. Tests and freeze/dev scoring underway; no dev-based parameter adjustment authorized.
+
+## Round 3 — frozen dev and regression complete
+
+- All eight unchanged round-2 training dev matches replayed after the round-3 freeze; 22,059 frames, seven continuing princess destructions. No dev tuning occurred. Crown fitting used only fit episode 1975101330.
+- Mean confirmation 2.629–2.786s → 0.814–1.007s; median 2.150–2.350s → 0.700–0.850s. Six events use crown evidence, one rubble fallback. All seven confirmed. Target p50 <0.5s remains unmet and is explicit in REPORT.
+- Persistent false destruction 0/74,179 living-princess observations (one-sided 95% bound 0.00404%); 0/8 affected matches (bound 31.23%). No additional independent safety sample is claimed from reuse. Chronological crown counts 745/821 exact, zero ahead counts; animation lag remains in denominator.
+- Result endpoint audit: 8/8 terminal-text classifications correct (two Match Over positive, six negative). Native-ended match coverage is 2/6; four captures stop during scoring animation. No full win/loss/draw screens in dev endpoints; outcome accuracy unmeasured, not 100%. Both positive results carry unknown crowns/outcome. No false terminal flag in 21,933 preterminal frames.
+- Full final frozen-source regression: 93 passed, six subtests passed in 27.06s. Focused final tower/result/transport suite: 44 passed in 0.22s. Task jobs complete; raw outputs stay ignored on 03. New combined tower/crown/result compute mean 3.499ms, p95 3.813ms.
+- REPORT contains exact runtime.py provenance patch only: append public_score_templates.json to hashed files. Runtime behavior wiring already works through existing adapter calls; selection.py/runtime.py never edited. Capture owner needs training-only frames continuing UI progression through explicit win/loss/draw and final crowns; current collector pauses at native ended.
+- Further latency fitting needs early fit-only transition examples and a fresh untouched SHA-ranked dev slice excluding all prior fit/dev matches. No current dev-based parameter changes made.
+- Publication next: stage only owned hunks/new files using git add -p, run required staged credential scan and whitespace check, commit, push origin main. All unrelated dirty changes preserved.
+
+## Round 3 — publication / handoff
+
+Owned source and receipts passed frozen-hash verification, full regression, staged whitespace checks and the required credential scan. Publication uses only the 19 owned files/hunks, including the new small score artifact. The publication commit is identified by `git log --oneline -- src/clasher/live/result_screen.py`; its SHA and origin/main push receipt are returned in the worker handoff. No task compute remains active. Remaining work is the explicitly reported sub-0.5s target and full outcome-screen coverage; runtime-owner provenance patch and capture-data request are in REPORT.

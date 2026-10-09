@@ -14,7 +14,7 @@ ANCHORS = ((0, 9., 3.), (0, 3.5, 6.5), (0, 14.5, 6.5),
            (1, 9., 29.), (1, 3.5, 25.5), (1, 14.5, 25.5))
 MATRIX = ((28.54545454545454, 0., 12.09090909090933),
           (0., 22.89473684210524, 237.18421052631592))
-EVIDENCE = frozenset({'rubble_template', 'public_match_result'})
+EVIDENCE = frozenset({'rubble_template', 'crown_increment_slot', 'public_match_result'})
 
 
 @dataclass(frozen=True)
@@ -49,7 +49,7 @@ class TowerObservation:
             raise ValueError('Activation is a living King observation only')
         if self.state == 'destroyed':
             if (self.slot.endswith('king')) != (self.destruction_evidence == 'public_match_result'):
-                raise ValueError('King destruction requires a public three-crown result; princess destruction requires rubble')
+                raise ValueError('King destruction requires a public three-crown result; princess destruction requires positive public evidence')
             if self.destruction_evidence not in EVIDENCE or self.confidence <= 0 or self.last_observed_ms is None:
                 raise ValueError('Destroyed requires positive visual evidence')
             if self.hp not in (None, 0) or self.hp_fraction not in (None, 0.):
@@ -214,34 +214,101 @@ class TowerChannel:
             return None
         return ordered[0] == 'active'
 
-    def step(self, image, episode, timestamp_ms):
+    def step(self, image, episode, timestamp_ms, *, crowns=None):
         import numpy as np
         if image.shape != (1140,540,3) or image.dtype != np.uint8:
             raise ValueError('Expected sanitized 540x1140 uint8 BGR pixels')
         if not math.isfinite(timestamp_ms) or timestamp_ms < 0:
             raise ValueError('Invalid public timestamp')
         now = round(timestamp_ms)
+        if crowns is not None:
+            from .crown_counter import CrownObservation
+            if not isinstance(crowns,CrownObservation) or crowns.episode_id != episode or crowns.timestamp_ms != now:
+                raise ValueError('Noncausal public crowns')
         if episode != self.episode:
             self.episode, self.last_time = episode, None
             self.observed = [None]*6
             self.rubble_streak = [0]*6
+            self.last_alive = [None]*6
+            self.last_bar = [None]*6
+            self.dead = set()
+            self.credited = set()
+            self.scores = [None,None]
+            self.score_candidate = [None,None]
+            self.score_streak = [0,0]
+            self.pending = [None,None]
         if self.last_time is not None and now <= self.last_time:
             raise ValueError('Tower channel requires increasing timestamps')
         if self.last_time is not None and now-self.last_time > self.parameters['confirmation_gap_ms']:
             self.rubble_streak = [0]*6
+            self.score_streak = [0,0]
+            self.pending = [None,None]
         self.last_time = now
-        result = []
+        measured = []
+        sprites = []
+        bars = []
         for s,(x,y) in enumerate(self.centers):
             sprite = image[y-95:y+55,x-48:x+48]
             offset = (-130 if s%3 == 0 else -110) if s < 3 else (20 if s%3 == 0 else -25)
             panel = image[y+offset:y+offset+80,x-55:x+55]
-            state, confidence, hp, fraction = self.read_crop(sprite,panel,s)
+            sprites.append(sprite)
+            bars.append(bar_fraction(panel,s))
+            measured.append(self.read_crop(sprite,panel,s))
+        crown_hits = {}
+        for scorer in range(2):
+            victim = 1-scorer
+            slots = (victim*3+1,victim*3+2)
+            # Both positively living princesses establish a public zero-score
+            # baseline. A capture starting with a missing slot cannot do this.
+            if self.scores[scorer] is None and all(measured[s][0]=='alive' for s in (victim*3,*slots)):
+                self.scores[scorer] = 0
+            count = crowns.crowns[scorer] if crowns is not None else None
+            self.score_streak[scorer] = self.score_streak[scorer]+1 if count is not None and count == self.score_candidate[scorer] else (1 if count is not None else 0)
+            self.score_candidate[scorer] = count
+            if self.score_streak[scorer] >= 2 and count is not None:
+                old = self.scores[scorer]
+                if old is None:
+                    self.scores[scorer] = count
+                elif count > old:
+                    self.scores[scorer] = count
+                    uncredited = [s for s in slots if s in self.dead and s not in self.credited]
+                    if count-old == 1 and count <= 2:
+                        if uncredited:
+                            self.credited.add(uncredited[0])
+                        else:
+                            self.pending[scorer] = (now,crowns.confidence)
+                    else:
+                        self.pending[scorer] = None
+                        self.credited.update(uncredited)
+            pending = self.pending[scorer]
+            if pending is None: continue
+            if now-pending[0] > 1000:
+                self.pending[scorer] = None
+                continue
+            candidates = [s for s in slots if s not in self.dead and self.last_alive[s] is not None and now-self.last_alive[s] <= 4000 and
+                          measured[s][2] is None and bars[s] is None and
+                          (measured[s][0] != 'alive' or (self.last_bar[s] is not None and now-self.last_bar[s] <= 4000))]
+            if len(candidates) == 1:
+                s = candidates[0]
+                crown_hits[s] = pending[1]
+                self.credited.add(s)
+                self.pending[scorer] = None
+        result = []
+        for s,(x,y) in enumerate(self.centers):
+            sprite = sprites[s]
+            state, confidence, hp, fraction = measured[s]
+            if state == 'alive': self.last_alive[s] = now
+            if bars[s] is not None: self.last_bar[s] = now
             self.rubble_streak[s] = self.rubble_streak[s]+1 if state == 'destroyed' else 0
             if state == 'destroyed' and self.rubble_streak[s] < self.parameters['confirmation_frames']:
                 state, confidence = 'unknown', 0.
+            evidence = 'rubble_template' if state == 'destroyed' else None
+            if s in crown_hits:
+                state,confidence,hp,fraction,evidence = 'destroyed',crown_hits[s],None,None,'crown_increment_slot'
+            if state == 'destroyed': self.dead.add(s)
             if state != 'unknown':
                 self.observed[s] = now
             result.append(TowerObservation(SLOT_NAMES[s], state, hp is not None, hp,
-                         confidence, self.observed[s], 'rubble_template' if state == 'destroyed' else None, fraction,
+                         confidence, self.observed[s], evidence, fraction,
                          self.read_activation(sprite,s) if state == 'alive' and s%3 == 0 else None))
         return tuple(result)
