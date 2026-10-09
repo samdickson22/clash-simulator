@@ -1205,3 +1205,10 @@ Also on the hub, but with copies elsewhere:
   - ON: 125/125 choices and scores match the frozen screen8 corpus, and the expired-deadline fallback works. 51 tests pass.
   - The library is `06d8e539…`. The outcome check is still running.
   - The flag is adopted once the outcome check passes its +3 pp gate.
+- **04:35 UTC: Amendment 15 package is ready** (`amendment15-review-package-r1.json` `deead347…`; draft `4c7fd730…`; snapshot `833af178…`). 69 tests pass. A real e1 old-layout check passed: 64 matches and 106,744 frames. Scope is A1/A2 only.
+  - Sent to independent review: `clasher-v4-amendment15-review-20261009-1` (Opus, high).
+  - **Capture:**
+    - The R13-4 verifier has 34 outputs verified.
+    - The R13-3 extra audit was refused correctly: the reservations declare all 16 processes. It will be integrated at a safe controller transition.
+    - e22 has started.
+    - Non-clock gate r2 failed only on SSH E2BIG after all e1 comparisons matched. r3 has been active since 04:21Z.
