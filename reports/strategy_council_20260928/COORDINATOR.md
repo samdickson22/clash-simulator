@@ -886,3 +886,4 @@ Also on the hub, but with copies elsewhere:
     - **08 at 41%:** the GRU was starved by ~60 exploration sim workers; cut to ≤16 + ≤12.
     - **127x11 offline again** (no route). Its perception passes and exploration shards were reassigned, and roader was told.
   - **Down:** 06/07/11/18. 03 is idle pending the gate (b) launch (freeze approved). No reclaims.
+- **00:15 UTC: agreed with roader. Hosts that dropped under load get CPU-only light work when they return** (11/18 leased, and our own 07): ≤32 processes, nice ≥10, no GPU jobs, until Sam has them checked physically. Drop-outs so far: 02, 07 ×2, 11 ×2, 18. We have no root, so no `nvidia-smi -pl` power cap is possible.
