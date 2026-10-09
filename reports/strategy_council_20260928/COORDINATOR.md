@@ -1428,3 +1428,12 @@ Also on the hub, but with copies elsewhere:
 - **10:04 UTC:** A17 ordering. The replacement fixed e1/708 stress cell runs **now on 08** beside its 8 live vectorized lanes, preserving the precommitted ≥4-vector-lanes load condition, with the frozen 70e8deaf worker and a versioned driver. The 3 ordinary qualifications run after closure on 09/13.
 - **10:09 UTC heartbeat.** 04 at 100% (the T5 GRU resumed, 39 GB). Capture at 94–99% on 08/09/13/14/15. T11: 01 65%, 16 26% sampled. **02 is still offline**, as are 06/07/11/18. No pending requests.
 - **10:15 UTC:** the replacement fixed e1/708 stress **PASSED on 08** under live vector load (≥5 lanes, 9 streams byte-exact; complete `02eef314…`). **The A17 package** (`7e773ec2…`, draft `d9fa01eb…`, 55 tests, 8/8 mutants killed) went to independent review: `clasher-v4-amendment17-review-20261009-1` (Opus, high).
+- **10:16 UTC: V4 CAPTURE + INDEPENDENT VERIFICATION CLOSED** at 10:15:26Z: 953 verified_record_only and 61 retained terminal, nothing pending or claimed, unsuspended.
+  - The vectorized decoder cut ~10 h off the original-only path.
+  - Next:
+    - R16-1 hash-four original recaptures on 09/13/14/15, with the telemetry operationalization receipted before any ranking;
+    - the A17 qualifications on 09;
+    - A17 review → APPROVE_EVIDENCE_REPLACEMENT;
+    - the R16 follow-up admission delta;
+    - then the A1 checklist.
+  - 08 is free now (B is later).
