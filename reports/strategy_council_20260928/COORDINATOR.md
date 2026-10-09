@@ -1598,3 +1598,10 @@ Also on the hub, but with copies elsewhere:
   - A1 approved and the seal is in progress. 02/06/07/11/18 are down.
 - **21:16 UTC: A1 r1 attempt failed closed** before any score or seal. The deployment omitted the A12-pinned `BODY-SELECTION.md` (60977bf4). I verified execution plan r2 (`68e24722`) differs only by that one added pin and **issued `coordinator-approval-A1-r2.json`**, with the other 7 fields byte-identical. r1 is retained as superseded.
 - **21:32 UTC: A1 r3 failed closed** before the first body score: the runtime bundle lacked the validation truth payloads (objects/rich-objects). **Located:** all 64 validation episodes with objects, rich-objects, events and receipts in the owned store `127x04:/mpac/sdicks02/repos/clasher-v4-data/matches/` (also on 01). Authorized exact receipt-pinned copies for the validation 64 only, with strict heldout exclusion by explicit ID list. Fresh attempt to follow, same approval r2.
+- **21:41 UTC heartbeat.**
+  - **T11 v2 registered gate (a): FAIL on coverage, not quality** (`imitation/RESULTS-v2-offline.md` `1ee1d71f`).
+    - C56: A1/A2/A4 PASS. A3 FAIL: 52/56 cards assessed and passing, 4 unassessable, none significantly worse.
+    - S122: A1/A3/A4 PASS.
+    - **Decision:** v1 remains the released human prior (the student screen already uses v1). v2 is kept as a candidate.
+  - GPU: capacity 13/14/15 at 99–100%; students 01/04/08 at 31–65% (sample dips). 09 and 16 are idle.
+  - A1 r4 seal is running.
