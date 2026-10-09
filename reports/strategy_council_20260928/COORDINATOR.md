@@ -1474,3 +1474,8 @@ Also on the hub, but with copies elsewhere:
   - 08: ExIt ≤96 at nice 19 with a stop file.
   - 01: E1 ≤24 SCHED_IDLE.
 - **10:27 UTC:** E1 seeds and 4 arms approved. **Added arm 5: W + a reserve-floor intervention vs v1** (paired with W-v-v1), to establish whether under-4 arrivals causally drive losses. It's a fair-state candidate filter, flagged default OFF, frozen in PLAN before any game.
+- **10:31 UTC:**
+  - R16-1 original recaptures: **09 and 13 PASS**; 14 and 15 are running.
+  - A17 r2 implements owned 08/04-only qualifications, the 27-source plus exact qualifier `eba6349d` stress check, the direct 24-epoch approval SHA, and the reviewer's 7 tests verbatim. 116 tests pass. The 08 qualification is re-running as 08r2 with the exact unchanged qualifier; 08r1 is kept as corroboration.
+  - **Coverage gap:** the 03 archive copier covers queue outputs only, not audit evidence or producer metadata/bundles, and frozen A15 RelocatedIO only routes claim outputs. The R16 follow-up admission/relocation package must cover these explicitly. Perception reports full A1 reachability before requesting A1.
+  - My earlier 10:45Z label was ~15 min ahead.
