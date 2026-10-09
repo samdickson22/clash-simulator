@@ -140,3 +140,17 @@ at0.27726436294161033. Conservative cumulative pipeline cost3.561GPU-hours,
 including staging and both previous480segments; actual total cost remains
 pending completed trainersegments. Evidence: `monitor-20261009T2052Z.json`.
 Temporary continuation remains enabled;16 stays finished/released.
+
+2026-10-09 21:02Z: Width480-v3 successfully replayed the previously failing
+step599 /4,907,008rows with micro1024/effective8192/cap0.78. Independently
+verified through784; no new OOM, stop or restart. PeakGPUreserved23,142MiB.
+Width288: step2002, 16,400,384rows, 6098loader-inclusive rows/s.
+Width384: step1395, 11,427,840rows, 4239loader-inclusive rows/s.
+Width480: step798, 6,537,216rows, 4668loader-inclusive rows/s.
+Sole controller and all current guards healthy, sixprocesses/arm, peakPSS
+41.47GB, sampledGPUfree≥29.1GiB. Control stays sealed0.27726436294161033;
+wide quarter NLLs and every scientific kill decision remain pending.
+Conservative cumulative pipeline cost4.096GPU-hours includes staging
+and all480segments; final actualcost pending segmentcompletion. No config,
+data or trainer edits. Evidence: `monitor-20261009T2102Z.json`. Existing
+ten-minute continuation remains enabled and16 stays released.
