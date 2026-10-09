@@ -98,7 +98,7 @@ def planner_class(base):
             return super().simulate_commands(root, seat, action, style, horizon, trace=trace)
         def candidates(self, packet, policy_proposals=()):
             actions, mask = super().candidates(packet, policy_proposals)
-            filtered = filter_candidates(actions, packet, self.catalog, self.opponent_elixir, enabled=self.reserve_floor)
+            filtered = filter_candidates(actions, packet, self.catalog, self.opponent_elixir, enabled=self.reserve_floor, costs=self.costs)
             self.floor_removed += len(actions)-len(filtered)
             return filtered, mask
         def score_candidates(self, root, seat, candidates, *, trace=False, deadline=None, fallback=WAIT):

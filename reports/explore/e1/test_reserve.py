@@ -47,3 +47,11 @@ def test_defensive_building_is_not_a_crown_tower():
     cat={**CAT,'bodies':{'3':dict(name='building_body:InfernoTower',tower=True)}}
     actions=[4+18*14]+A[2:]
     assert filter_candidates(actions,p,cat,5,enabled=True)==actions[1:]
+
+
+def test_public_card_alias_uses_static_public_cost_only():
+    p=packet();cat={**CAT,'token_names':['pad','unknown','BlowdartGoblin']}
+    assert filter_candidates(A,p,cat,5,enabled=True,costs={'BlowdartGoblin':3})==A[2:]
+    p.observation.global_features[5]=.7
+    assert filter_candidates(A,p,cat,5,enabled=True,costs={'BlowdartGoblin':3})==A
+    assert filter_candidates(A,p,cat,5,costs={}) is A

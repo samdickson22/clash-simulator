@@ -5,7 +5,7 @@ WAIT = 2304
 THREAT_RADIUS = 6.
 
 
-def filter_candidates(candidates, packet, catalog, opponent_elixir, *, enabled=False):
+def filter_candidates(candidates, packet, catalog, opponent_elixir, *, enabled=False, costs=None):
     if not enabled:
         return candidates
     obs = packet.observation
@@ -28,14 +28,16 @@ def filter_candidates(candidates, packet, catalog, opponent_elixir, *, enabled=F
         if a >= WAIT:
             result.append(a); continue
         name = catalog['token_names'][int(obs.hand_ids[a//576])]
-        card = catalog['cards'][name]
+        card = catalog['cards'].get(name)
+        # Static public native card costs cover aliases absent from ledger catalog.
+        cost = card['cost'] if card is not None else costs[name]
         x,y = a%576%18+.5,a%576//18+.5
         # "Response" is a frozen geometry proxy: own-half same-lane placement
         # within six tiles of a visible qualifying hostile troop. Applies to
         # troops/buildings/spells equally, avoiding hidden target/path information.
         defensive = y <= 16 and any((x>=9)==(tx>=9) and
             math.hypot(x-tx,y-ty) <= THREAT_RADIUS for tx,ty in threats)
-        if defensive or balance-card['cost'] >= 4-1e-6:
+        if defensive or balance-cost >= 4-1e-6:
             result.append(a)
     assert WAIT in result
     return result
