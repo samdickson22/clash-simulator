@@ -1130,3 +1130,4 @@ Also on the hub, but with copies elsewhere:
   - W's cost is latency: p50 330 ms vs 7.7 ms, p95 766 ms; 71% of decisions exceed 200 ms.
   - **Caveats:** the scripted opponents are weak and have no command delay, so the result is optimistic.
   - **Decision:** W is the most promising search change so far. A confirmation run follows: W vs baseline against search opponents, with symmetric command delay, plus a W latency reduction.
+- **03:01 UTC:** the tower r3 provenance patch landed (`22055686`). `public_score_templates.json` is now in the runtime provenance hash; no other live artifact was missing. The full live suite passes 93/93 on 01.
