@@ -113,6 +113,8 @@ def main():
         human_micro_amendment=micro_amendment,
         human_micro_amendment_sha256=digest(job/'student-micro3584-amendment.json'),
         reporting08_amendment_sha256=digest(job/'student-reporting08-amendment.json'),
+        reporting_rebalance_amendment_sha256=digest(job/'student-reporting-rebalance-amendment.json'),
+        reporting_rebalance_transfer=read(job/'reporting-rebalance-transfer.json'),
         reporting08_requeue=read(job/'reporting08-requeue.json') if (job/'reporting08-requeue.json').exists() else None,
         staged_reporting_amendment_sha256=digest(job/'student-staged-reporting-amendment.json'),
         staged_provenance=read(job/'staged-provenance.json'),
@@ -142,8 +144,11 @@ def main():
         'recipe fingerprint remains7168; runtime/segment evidence records the actual3584.', '',
         'A coordinator-authorized staged reporting amendment began the common600 init-W '
         'reference cases and64 held-out teacher games on03 while fitting continued. '
-        'S-human cases ran on03, S-teacher on04/08 and S-mix on01 as their final EMAs sealed. '
+        'S-human cases began on03;38 unclaimed fallback identities moved to04/08. '
+        'S-teacher ran on04/08; S-mix was distributed across01/03/04/08 as its final EMA sealed. '
         'The frozen seed/deck/seat schedule and per-seed shared reference are unchanged. '
+        'The03 manager paused new claims while its56 existing children completed untouched; '
+        'phase costs include parent/reaped/unreaped child CPU with recorded tick precision. '
         'No agreement metrics, CIs or kill decisions were computed before all final fits '
         'and all3232 reporting tasks completed. Immutable raw stage receipts retain their '
         'original input-freeze SHA; the final reducer view validates each stage input and '

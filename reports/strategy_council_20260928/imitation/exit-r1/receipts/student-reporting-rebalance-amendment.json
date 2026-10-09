@@ -1,0 +1,23 @@
+{
+  "schema": "clasher.exit-r1.reporting-rebalance-operational-amendment.v1",
+  "utc": "2026-10-09T23:17:49.522490+00:00",
+  "authority": "Coordinator23:12Z directs move unclaimed03 init-reference/S-human cases to04/08 without disturbing active claims; spread final S-mix over01/04/08 and03oncefree.",
+  "scientific_changes": [],
+  "seed_deck_seat_pairing": "Exact frozen identities and original stage freezes preserved; raw receipts immutable.",
+  "claim_capture": "Pause only owned03 pool manager with SIGSTOP. Existing children continue untouched. Snapshot completed terminal receipts and active child command identities. Transfer only set difference of assigned minus completed minus active. Keep old manager paused until all its current children naturally exit, then retire manager and account parent/reaped/unreaped CPU from procstat with clock-tick resolution.",
+  "analysis": "Deferred until all final fits and all3232tasks complete.",
+  "home_only": true,
+  "host_limits": {
+    "03": 56,
+    "04": 60,
+    "08": 48,
+    "01": 44
+  },
+  "host08_nice": 19,
+  "host08_stop": "/mpac/sdicks02/jobs/clasher/exit-r1-student-screen-20261009-r1/REPORTING08.STOP",
+  "host08_reserved_cores": [
+    0,
+    1
+  ],
+  "reporting_outcomes_observed": false
+}
