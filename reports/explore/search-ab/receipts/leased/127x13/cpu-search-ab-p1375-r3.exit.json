@@ -1,0 +1,73 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261008-r1",
+  "host": "127x13",
+  "label": "cpu-search-ab-p1375-r3",
+  "command": [
+    "taskset",
+    "-c",
+    "0-35",
+    "env",
+    "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/search-ab-runtime",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/src:/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/engine-rs",
+    "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/reports/explore/search-ab/lease_worker.py",
+    "--offset",
+    "1375",
+    "--workers",
+    "36"
+  ],
+  "started_utc": "2026-10-08T23:47:10.628593+00:00",
+  "declared_processes": 40,
+  "declared_pss_bytes": 24000000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 40,
+    "pss_bytes": 23214878720
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 38,
+    "pss_bytes": 19725300736
+  },
+  "admission_jobs": {
+    "v1:4026076:128902606": {
+      "kind": "v1",
+      "sequence": -1,
+      "supervisor_pid": 4026076,
+      "processes": 14,
+      "pss_bytes": 11214878720,
+      "stop_reason": null
+    },
+    "v2:cpu-delay-fixes-p0150-primary-v1": {
+      "kind": "v2",
+      "sequence": 10,
+      "supervisor_pid": 23205,
+      "processes": 24,
+      "pss_bytes": 8510422016,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 42619,
+  "admission_sequence": 11,
+  "pid": 42622,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T23:57:28.895600+00:00",
+  "stop_reason": null,
+  "peak_processes": 39,
+  "peak_rss_bytes": 27443040256,
+  "peak_sampled_pss_bytes": 13552072704,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "aggregate": {
+    "processes": 63,
+    "pss_bytes": 21335449600
+  },
+  "effective_process_cap": 80
+}

@@ -1,0 +1,8 @@
+{
+  "cold_seconds": 28.899467220995575,
+  "warm_seconds": 25.79438194690738,
+  "ratio": 0.8925556222077222,
+  "bytecode_prefix": "/mpac/sdicks02/repos/clasher/reports/explore/search-ab/startup-cache-v2",
+  "source_sha256_unchanged": "9aa515c4383c39ab2cb48c8e7b739cc1dcfe4aeee3db525bbc9fb26133b457fc",
+  "scope": "simulate.initialize; Resources + torch + public reconstruction imports; one idle CPU"
+}

@@ -1,0 +1,69 @@
+{
+  "seed": 281474976800659,
+  "own_elixir": 10,
+  "candidates": [
+    1607,
+    2304,
+    1569,
+    1641,
+    1603,
+    1171,
+    1232,
+    1764,
+    203,
+    797,
+    1523,
+    1949,
+    1986,
+    1371,
+    1427,
+    1988,
+    1395,
+    1545,
+    814,
+    1313,
+    1736
+  ],
+  "hand": [
+    {
+      "slot": 0,
+      "public_name": "BlowdartGoblin",
+      "token": 38,
+      "token_name": "BlowdartGoblin",
+      "catalog_identified": false,
+      "cost": 3.0,
+      "legal_tiles": 222,
+      "represented": true
+    },
+    {
+      "slot": 1,
+      "public_name": "Cannon",
+      "token": 62,
+      "token_name": "Cannon",
+      "catalog_identified": true,
+      "cost": 3.0,
+      "legal_tiles": 120,
+      "represented": true
+    },
+    {
+      "slot": 2,
+      "public_name": "GoblinBarrel",
+      "token": 126,
+      "token_name": "GoblinBarrel",
+      "catalog_identified": true,
+      "cost": 3.0,
+      "legal_tiles": 548,
+      "represented": true
+    },
+    {
+      "slot": 3,
+      "public_name": "IceSpirit",
+      "token": 196,
+      "token_name": "IceSpirit",
+      "catalog_identified": true,
+      "cost": 1.0,
+      "legal_tiles": 222,
+      "represented": true
+    }
+  ]
+}

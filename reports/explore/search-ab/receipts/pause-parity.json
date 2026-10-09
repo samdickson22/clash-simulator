@@ -1,0 +1,68 @@
+{
+  "matched": true,
+  "games": 4,
+  "seed": 281474976780656,
+  "scope": "fixed-work; all four arms; accepted/rejected actions + winner; permuted LPT dispatch",
+  "runs": [
+    {
+      "paused": false,
+      "forced_pauses": 0,
+      "clock": {
+        "paused_total_seconds": 0.0,
+        "paused_since_monotonic": null
+      },
+      "games": {
+        "sim-0000-d27-CR.json.gz": {
+          "actions_sha256": "cec6afa25de6f27ac89dbb497f555df534a81b9731885c1b8ab0412874c73490",
+          "winner": 0,
+          "actions": 191
+        },
+        "sim-0000-d27-R.json.gz": {
+          "actions_sha256": "cec6afa25de6f27ac89dbb497f555df534a81b9731885c1b8ab0412874c73490",
+          "winner": 0,
+          "actions": 191
+        },
+        "sim-0000-d27-C.json.gz": {
+          "actions_sha256": "98ee3c932bce9a7f34cb129deb8815a4ef39fc149d470dc656da438dbecd0a6e",
+          "winner": 0,
+          "actions": 91
+        },
+        "sim-0000-d27-0.json.gz": {
+          "actions_sha256": "98ee3c932bce9a7f34cb129deb8815a4ef39fc149d470dc656da438dbecd0a6e",
+          "winner": 0,
+          "actions": 91
+        }
+      }
+    },
+    {
+      "paused": true,
+      "forced_pauses": 3,
+      "clock": {
+        "paused_total_seconds": 3.0011829199502245,
+        "paused_since_monotonic": null
+      },
+      "games": {
+        "sim-0000-d27-CR.json.gz": {
+          "actions_sha256": "cec6afa25de6f27ac89dbb497f555df534a81b9731885c1b8ab0412874c73490",
+          "winner": 0,
+          "actions": 191
+        },
+        "sim-0000-d27-R.json.gz": {
+          "actions_sha256": "cec6afa25de6f27ac89dbb497f555df534a81b9731885c1b8ab0412874c73490",
+          "winner": 0,
+          "actions": 191
+        },
+        "sim-0000-d27-C.json.gz": {
+          "actions_sha256": "98ee3c932bce9a7f34cb129deb8815a4ef39fc149d470dc656da438dbecd0a6e",
+          "winner": 0,
+          "actions": 91
+        },
+        "sim-0000-d27-0.json.gz": {
+          "actions_sha256": "98ee3c932bce9a7f34cb129deb8815a4ef39fc149d470dc656da438dbecd0a6e",
+          "winner": 0,
+          "actions": 91
+        }
+      }
+    }
+  ]
+}

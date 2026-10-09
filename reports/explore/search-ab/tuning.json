@@ -1,0 +1,48 @@
+{
+  "lane": "exploration",
+  "criterion": "minimum losses, tie lower weight",
+  "weights": [
+    {
+      "weight": 0,
+      "losses": 23.0,
+      "wins": 127,
+      "games": 150,
+      "source": "tune-w0w16",
+      "arm": "0"
+    },
+    {
+      "weight": 1,
+      "losses": 18.0,
+      "wins": 132,
+      "games": 150,
+      "source": "tune-w1",
+      "arm": "R"
+    },
+    {
+      "weight": 4,
+      "losses": 26.0,
+      "wins": 124,
+      "games": 150,
+      "source": "tune-w4",
+      "arm": "R"
+    },
+    {
+      "weight": 16,
+      "losses": 29.0,
+      "wins": 121,
+      "games": 150,
+      "source": "tune-w0w16",
+      "arm": "R"
+    },
+    {
+      "weight": 64,
+      "losses": 26.0,
+      "wins": 124,
+      "games": 150,
+      "source": "tune-w64",
+      "arm": "R"
+    }
+  ],
+  "selected_weight": 1,
+  "reporting_access_before_selection": false
+}

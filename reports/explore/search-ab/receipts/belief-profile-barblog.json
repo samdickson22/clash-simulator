@@ -1,0 +1,1 @@
+{"train_prior_states": 4914000, "states_after_event": 424200, "event": "BarbLog", "update_and_sample_seconds": 0.1603290409548208, "purpose": "latency diagnosis only; no reporting/tuning decisions or outcomes"}

@@ -1,0 +1,321 @@
+{
+  "receipt": {},
+  "summary": {
+    "0": {
+      "games": 37,
+      "losses": 3.0,
+      "metrics": {
+        "card_per_deck_minute:Log": 3.078599375959586,
+        "card_per_deck_minute:Rocket": 0.0,
+        "arrival_under4_fraction": 0.8893360160965795,
+        "no_affordable_defender_in_hand_fraction": 0.5975855130784709,
+        "card_per_deck_minute:Fireball": 0.1979381443298969,
+        "card_per_deck_minute:Xbow": 0.09914624070503994,
+        "card_per_deck_minute:Giant": 0.08500088542588986
+      },
+      "attrition": {
+        "Rocket": {
+          "in_hand": 1967,
+          "unaffordable": 1964,
+          "affordable": 3,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 3,
+          "selected": 0
+        },
+        "Fireball": {
+          "in_hand": 4862,
+          "affordable": 136,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 136,
+          "selected": 12,
+          "unaffordable": 4726
+        },
+        "Xbow": {
+          "in_hand": 2432,
+          "unaffordable": 2425,
+          "affordable": 7,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 7,
+          "selected": 3
+        },
+        "Giant": {
+          "in_hand": 2174,
+          "unaffordable": 2150,
+          "affordable": 24,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 24,
+          "selected": 4
+        }
+      },
+      "latency": {
+        "n": 11496,
+        "q": [
+          0.003440272994339466,
+          0.17269436849164777,
+          0.17296018917113543,
+          0.19623790204059333
+        ],
+        "over200": 0,
+        "cpu_q": [
+          0.0034231970000000445,
+          0.17257325999999917,
+          0.1727364495500005,
+          0.1960690370000009
+        ]
+      }
+    },
+    "R": {
+      "games": 37,
+      "losses": 4.0,
+      "metrics": {
+        "card_per_deck_minute:Rocket": 0.0,
+        "card_per_deck_minute:Log": 3.081312410841655,
+        "arrival_under4_fraction": 0.8950381679389313,
+        "no_affordable_defender_in_hand_fraction": 0.6278625954198473,
+        "card_per_deck_minute:Giant": 0.1716431253352405,
+        "card_per_deck_minute:Fireball": 0.11996572407883462,
+        "card_per_deck_minute:Xbow": 0.1072066706372841
+      },
+      "attrition": {
+        "Rocket": {
+          "in_hand": 2228,
+          "affordable": 5,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 5,
+          "selected": 0,
+          "unaffordable": 2223
+        },
+        "Giant": {
+          "in_hand": 2150,
+          "affordable": 14,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 14,
+          "selected": 5,
+          "unaffordable": 2136
+        },
+        "Fireball": {
+          "in_hand": 4735,
+          "unaffordable": 4631,
+          "affordable": 104,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 104,
+          "selected": 8
+        },
+        "Xbow": {
+          "in_hand": 2259,
+          "unaffordable": 2254,
+          "affordable": 5,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 5,
+          "selected": 3
+        }
+      },
+      "latency": {
+        "n": 11272,
+        "q": [
+          0.003382167487870902,
+          0.17270163270295597,
+          0.1729115983576048,
+          0.19183331890963018
+        ],
+        "over200": 0,
+        "cpu_q": [
+          0.003372492999996979,
+          0.1725881374999922,
+          0.1727737308900076,
+          0.1916649260000014
+        ]
+      }
+    },
+    "CR": {
+      "games": 36,
+      "losses": 5.0,
+      "metrics": {
+        "card_per_deck_minute:Giant": 0.1288705924467514,
+        "arrival_under4_fraction": 0.893970893970894,
+        "no_affordable_defender_in_hand_fraction": 0.5966735966735967,
+        "card_per_deck_minute:Log": 3.065762498028702,
+        "card_per_deck_minute:Fireball": 0.12069832602916877,
+        "card_per_deck_minute:Rocket": 0.0,
+        "card_per_deck_minute:Xbow": 0.10125158205596964
+      },
+      "attrition": {
+        "Giant": {
+          "in_hand": 2147,
+          "unaffordable": 2136,
+          "affordable": 11,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 11,
+          "selected": 5
+        },
+        "Fireball": {
+          "in_hand": 4716,
+          "affordable": 122,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 122,
+          "selected": 8,
+          "unaffordable": 4594
+        },
+        "Rocket": {
+          "in_hand": 1824,
+          "unaffordable": 1820,
+          "affordable": 4,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 4,
+          "selected": 0
+        },
+        "Xbow": {
+          "in_hand": 2375,
+          "unaffordable": 2370,
+          "affordable": 5,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 5,
+          "selected": 3
+        }
+      },
+      "latency": {
+        "n": 10856,
+        "q": [
+          0.0034118425101041794,
+          0.17270466379704885,
+          0.17304723513079806,
+          0.1943873300915584
+        ],
+        "over200": 0,
+        "cpu_q": [
+          0.0033908320000008985,
+          0.17257740574999936,
+          0.17277738905000958,
+          0.1942153269999949
+        ]
+      }
+    },
+    "C": {
+      "games": 36,
+      "losses": 5.0,
+      "metrics": {
+        "card_per_deck_minute:Giant": 0.20764838207302302,
+        "arrival_under4_fraction": 0.8927835051546392,
+        "no_affordable_defender_in_hand_fraction": 0.6164948453608248,
+        "card_per_deck_minute:Rocket": 0.0,
+        "card_per_deck_minute:Log": 3.079912060943811,
+        "card_per_deck_minute:Fireball": 0.10106681639528356,
+        "card_per_deck_minute:Xbow": 0.10344827586206896
+      },
+      "attrition": {
+        "Giant": {
+          "in_hand": 2192,
+          "unaffordable": 2170,
+          "affordable": 22,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 22,
+          "selected": 6
+        },
+        "Rocket": {
+          "in_hand": 1868,
+          "affordable": 3,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 3,
+          "selected": 0,
+          "unaffordable": 1865
+        },
+        "Fireball": {
+          "in_hand": 4808,
+          "affordable": 119,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 119,
+          "selected": 6,
+          "unaffordable": 4689
+        },
+        "Xbow": {
+          "in_hand": 2331,
+          "affordable": 7,
+          "masked_all": 0,
+          "generation_dropped": 0,
+          "reduction_dropped": 0,
+          "baseline_absent": 0,
+          "final_absent": 0,
+          "scored_opportunities": 7,
+          "selected": 3,
+          "unaffordable": 2324
+        }
+      },
+      "latency": {
+        "n": 11054,
+        "q": [
+          0.0034201930393464863,
+          0.17267964172642677,
+          0.1728577471943572,
+          0.19072915602009743
+        ],
+        "over200": 0,
+        "cpu_q": [
+          0.0034170824999968374,
+          0.17256809665000147,
+          0.17273922469999728,
+          0.19055625100000384
+        ]
+      }
+    }
+  }
+}

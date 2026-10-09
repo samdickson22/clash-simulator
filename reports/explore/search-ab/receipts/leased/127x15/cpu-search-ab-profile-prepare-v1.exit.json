@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261008-r1",
+  "host": "127x15",
+  "label": "cpu-search-ab-profile-prepare-v1",
+  "command": [
+    "taskset",
+    "-c",
+    "37",
+    "env",
+    "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/search-ab-runtime",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/src:/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/engine-rs",
+    "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/reports/explore/search-ab/profile_prepare.py"
+  ],
+  "started_utc": "2026-10-08T23:49:48.813115+00:00",
+  "declared_processes": 4,
+  "declared_pss_bytes": 2000000000,
+  "gpu": false,
+  "status": "fail",
+  "error": "admission exceeds aggregate processes cap: 80 + 4 > 80",
+  "exit_code": 1,
+  "finished_utc": "2026-10-08T23:49:49.931990+00:00"
+}

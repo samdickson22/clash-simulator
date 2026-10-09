@@ -964,3 +964,8 @@ Also on the hub, but with copies elsewhere:
   - **The `Resources` cache** is an opt-in subclass with an identical config and template hash.
   - A full decision is still over 200 ms, so the L2-v4 decision budget and d must come from re-measurement on the Mac.
   - Three older worker score vectors differ from fresh replay even on the unchanged binary (1975100700 seq 3275/4524/5086); that's noted, a pre-existing receipt issue.
+- **~01:40 UTC: exploration result 2, search A/B** (`reports/explore/search-ab/RESULTS.md`; 2,000 paired seeds per arm, 8,000 games, d=27).
+  - **Results:** candidate coverage C makes no difference (+0.00 pp [−0.20, +0.20]). The reserve leaf term R is worse (+2.0 pp [+0.85, +3.15]); CR is +1.9 pp.
+  - **Diagnosis:** expensive cards are *unaffordable* in ~99.7% of hand opportunities (e.g. X-Bow affordable only 295 of 119,587 times). They aren't starved by masking or generation; the player never banks elixir.
+  - So the weakness is the **spending/tempo objective and horizon**, not candidate generation. The next exploration should target leaf elixir valuation, horizon, and WAIT preference. Gate (b) (imitation proposals) bears on this too.
+  - **Latency:** the exact harness fails the 200 ms requirement (p95 ~410 ms incl. diagnostics). A 180 ms cooperative cutoff still had 51 overruns per 122k decisions, mainly in public conditioning (belief updates).

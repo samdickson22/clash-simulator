@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "candidate_mask_parity": true,
+  "flags_off_scores_and_traces_identical": true,
+  "budget_nontruncated_scores_and_traces_identical": true,
+  "root_unchanged": true,
+  "all_affordable_slots_covered": true,
+  "bounded_score_seconds": 0.048100687097758055,
+  "budget_counts": {
+    "decisions": 2,
+    "completed_candidates": 18,
+    "fallback_wait": 0
+  },
+  "seed": 281474976800656
+}

@@ -1,0 +1,36 @@
+{
+  "measured_utc": 1791506430.469225,
+  "method": "successful atomic JSON writes newer than current launcher UTC; rsync -a preserves reused mtimes",
+  "runs": [
+    {
+      "host": "127x09",
+      "label": "cpu-search-ab-p0250-r2",
+      "workers": 18,
+      "elapsed_seconds": 374.5718312263489,
+      "new_games": 70,
+      "reused_games": 289,
+      "fresh_games_per_second": 0.1868800431971082,
+      "normalized_96_worker_rate": 0.9966935637179103,
+      "command": [
+        "nice",
+        "-n",
+        "9",
+        "taskset",
+        "-c",
+        "64-81",
+        "env",
+        "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/search-ab-runtime",
+        "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/src:/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/engine-rs",
+        "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+        "-B",
+        "/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/reports/explore/search-ab/lease_worker.py",
+        "--offset",
+        "250",
+        "--workers",
+        "18"
+      ],
+      "declared_processes": 22,
+      "pss_bytes": 5285846016
+    }
+  ]
+}

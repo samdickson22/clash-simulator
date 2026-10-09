@@ -1,0 +1,12 @@
+{
+  "window_seconds": 600,
+  "workers": 16,
+  "fresh_games": 227,
+  "games_per_second": 0.37833333333333335,
+  "normalized_games_per_second_96": 2.27,
+  "paused_samples": 0,
+  "guard_samples": 269,
+  "treatment_start_utc": 1791507910.375483,
+  "host": "127x08",
+  "metric": "successful atomic game JSON creation; includes startup and all inter-batch gaps"
+}

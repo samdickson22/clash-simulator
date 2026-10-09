@@ -1,0 +1,1 @@
+{"utc": 1791504052.6270072, "train_prior_states": 4914000, "states_after_event": 1498560, "event": "Log", "update_and_sample_seconds": 0.41539284703321755, "purpose": "latency diagnosis only; no reporting/tuning decisions or outcomes"}

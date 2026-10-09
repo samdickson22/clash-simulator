@@ -1,0 +1,64 @@
+{
+  "version": 2,
+  "host": "127x15",
+  "label": "cpu-search-ab-p0750-r2",
+  "command": [
+    "taskset",
+    "-c",
+    "0-35",
+    "env",
+    "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/search-ab-runtime",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/src:/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/engine-rs",
+    "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/reports/explore/search-ab/lease_worker.py",
+    "--offset",
+    "750",
+    "--workers",
+    "36"
+  ],
+  "started_utc": "2026-10-08T23:34:16.531013+00:00",
+  "declared_processes": 40,
+  "declared_pss_bytes": 24000000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 14,
+    "pss_bytes": 11276667904
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 14,
+    "pss_bytes": 11276667904
+  },
+  "admission_jobs": {
+    "v1:4072416:128921618": {
+      "kind": "v1",
+      "sequence": -1,
+      "supervisor_pid": 4072416,
+      "processes": 14,
+      "pss_bytes": 11276667904,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 72657,
+  "admission_sequence": 4,
+  "pid": 72660,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-08T23:43:57.463153+00:00",
+  "stop_reason": null,
+  "peak_processes": 40,
+  "peak_rss_bytes": 28661223424,
+  "peak_sampled_pss_bytes": 12472377344,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "aggregate": {
+    "processes": 55,
+    "pss_bytes": 23795422208
+  },
+  "effective_process_cap": 80
+}

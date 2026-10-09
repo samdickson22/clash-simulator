@@ -1,0 +1,6 @@
+import hashlib,json,os,socket,sys
+from pathlib import Path
+root=Path(sys.argv[1]);names=['gamedata.json','engine-rs/clasher_core.abi3.so','engine-rs/c56_controller.py','engine-rs/differential.py','engine-rs/stage2_matches.py','reports/strategy_council_20260928/c56/engine/root-v3/human_deck_catalog.json','reports/strategy_council_20260928/search-noise-s6/delay.py','reports/strategy_council_20260928/search-noise-s6/own_state.py','reports/strategy_council_20260928/engine-speed/stage5/fair_player.py','reports/strategy_council_20260928/engine-speed/stage5/derived_public_state.py','src/clasher/rl/c56_rollout_planner.py','src/clasher/rl/c56_scripted.py','src/clasher/rl/public_action_mask.py','src/clasher/analysis/loss_review/search_ab.py','src/clasher/analysis/loss_review/simulate.py']
+files={n:hashlib.sha256((root/n).read_bytes()).hexdigest() for n in names}
+result=dict(host=socket.gethostname(),python=sys.version,files=files,source_manifest_sha256=hashlib.sha256(json.dumps(files,sort_keys=True).encode()).hexdigest())
+out=root/'reports/explore/search-ab/receipts/runtime-pin.json';out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(dict(host=result['host'],source_manifest_sha256=result['source_manifest_sha256'])))

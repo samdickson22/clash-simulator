@@ -1,0 +1,89 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261008-r1",
+  "host": "127x14",
+  "label": "cpu-search-ab-p1000-r4",
+  "command": [
+    "taskset",
+    "-c",
+    "0-17",
+    "env",
+    "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/search-ab-runtime",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/src:/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/engine-rs",
+    "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/search-ab-runtime/reports/explore/search-ab/lease_worker.py",
+    "--offset",
+    "1000",
+    "--workers",
+    "18"
+  ],
+  "started_utc": "2026-10-09T00:02:06.486657+00:00",
+  "declared_processes": 22,
+  "declared_pss_bytes": 12000000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 24,
+    "pss_bytes": 12000000000
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 13,
+    "pss_bytes": 9682213888
+  },
+  "admission_jobs": {
+    "v2:t7-epoch-offload-20261008-14r2": {
+      "kind": "v2",
+      "sequence": 7,
+      "supervisor_pid": 29251,
+      "processes": 13,
+      "pss_bytes": 9682213888,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 50964,
+  "admission_sequence": 8,
+  "pid": 50997,
+  "checked_utc": "2026-10-09T00:15:47.855504+00:00",
+  "processes": 21,
+  "rss_bytes": 14522732544,
+  "pss_bytes": 7098672128,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "effective_process_cap": 80,
+  "aggregate": {
+    "processes": 51,
+    "pss_bytes": 25899930624
+  },
+  "accounted_jobs": {
+    "v2:t7-epoch-offload-20261008-14r2": {
+      "kind": "v2",
+      "sequence": 7,
+      "supervisor_pid": 29251,
+      "processes": 13,
+      "pss_bytes": 11261690880,
+      "stop_reason": null
+    },
+    "v2:cpu-search-ab-p1000-r4": {
+      "kind": "v2",
+      "sequence": 8,
+      "supervisor_pid": 50964,
+      "processes": 21,
+      "pss_bytes": 7098672128,
+      "stop_reason": null
+    },
+    "v2:cpu-delay-fixes-p0075-resource-r2": {
+      "kind": "v2",
+      "sequence": 9,
+      "supervisor_pid": 54550,
+      "processes": 17,
+      "pss_bytes": 7539567616,
+      "stop_reason": null
+    }
+  },
+  "stop_reason": null
+}

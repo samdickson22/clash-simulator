@@ -1,0 +1,72 @@
+{
+  "gate_seed_count": 4356,
+  "historical_seed_count": 19294,
+  "exclusions_sha256": "2e5a1ade19b3ca716ffb96e6d9d71855da44e72fc6e60098c952cd3e02604bc3",
+  "sets": {
+    "ledger": {
+      "base": 281474976710656,
+      "pairs": 150,
+      "checked_count": 302,
+      "registered_intersections": []
+    },
+    "reporting": {
+      "base": 281474976720656,
+      "pairs": 2000,
+      "checked_count": 4002,
+      "registered_intersections": []
+    },
+    "tuning": {
+      "base": 281474976740656,
+      "pairs": 150,
+      "checked_count": 302,
+      "registered_intersections": []
+    },
+    "budget_check": {
+      "base": 281474976760656,
+      "pairs": 100,
+      "checked_count": 202,
+      "registered_intersections": []
+    },
+    "public_native_smoke": {
+      "base": 281474976800656,
+      "pairs": 11,
+      "checked_count": 24,
+      "registered_intersections": []
+    },
+    "coexistence": {
+      "base": 281474976770656,
+      "pairs": 1000,
+      "checked_count": 2002,
+      "registered_intersections": []
+    },
+    "pause_parity": {
+      "base": 281474976780656,
+      "pairs": 5,
+      "checked_count": 12,
+      "registered_intersections": []
+    }
+  },
+  "pairwise_intersections": {
+    "ledger-reporting": [],
+    "ledger-tuning": [],
+    "ledger-budget_check": [],
+    "ledger-public_native_smoke": [],
+    "ledger-coexistence": [],
+    "ledger-pause_parity": [],
+    "reporting-tuning": [],
+    "reporting-budget_check": [],
+    "reporting-public_native_smoke": [],
+    "reporting-coexistence": [],
+    "reporting-pause_parity": [],
+    "tuning-budget_check": [],
+    "tuning-public_native_smoke": [],
+    "tuning-coexistence": [],
+    "tuning-pause_parity": [],
+    "budget_check-public_native_smoke": [],
+    "budget_check-coexistence": [],
+    "budget_check-pause_parity": [],
+    "public_native_smoke-coexistence": [],
+    "public_native_smoke-pause_parity": [],
+    "coexistence-pause_parity": []
+  }
+}

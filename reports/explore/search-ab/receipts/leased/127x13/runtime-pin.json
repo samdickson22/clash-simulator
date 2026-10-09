@@ -1,0 +1,22 @@
+{
+  "host": "127x13",
+  "python": "3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]",
+  "files": {
+    "gamedata.json": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+    "engine-rs/clasher_core.abi3.so": "13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309",
+    "engine-rs/c56_controller.py": "ce36a410d25c6144aea5cfac5fbf424986ae93186ffcf2d3ed056ce41781ee6c",
+    "engine-rs/differential.py": "378d46047a68e8e6c95bd6379f96d7e05b3171d122b59df9385482fd5f3c0da2",
+    "engine-rs/stage2_matches.py": "18f679d752cbaed512125854c2f539e5d4a542ef234fc6c50bd4704f6ba05b7c",
+    "reports/strategy_council_20260928/c56/engine/root-v3/human_deck_catalog.json": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+    "reports/strategy_council_20260928/search-noise-s6/delay.py": "96b0637cbc6245b4246eef06aa45e6a7b571226688777bd299b93b2c436721f2",
+    "reports/strategy_council_20260928/search-noise-s6/own_state.py": "823cf5811ee4c7ff5014d1c3f6edd3f3f248d55d93023cbe3e080b185daa4407",
+    "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "6d2665d02da7a74083313b64693e87bf59d50b303904e614ae3136b7741f8c76",
+    "reports/strategy_council_20260928/engine-speed/stage5/derived_public_state.py": "18acd4520672148c7c2e6282c5f47c26f390f127eb6529a59c0c704cd2a6bf30",
+    "src/clasher/rl/c56_rollout_planner.py": "71111c8d8f3a8aeb43c8e76e9f516a77c348ca4dab6a81d812b02185aa169ece",
+    "src/clasher/rl/c56_scripted.py": "bf4cad2650db71525ba8e4df967129d597f83052f56df286b604ccf1cd571da1",
+    "src/clasher/rl/public_action_mask.py": "e6e94abae45b0988dbcc087970a11cc0b2f07fc1cc335decec75b5714798d107",
+    "src/clasher/analysis/loss_review/search_ab.py": "2eb183835b1a8b90d24a219935445663e3353f9055bb6096742315b277816708",
+    "src/clasher/analysis/loss_review/simulate.py": "43c2403e28a539d2344c88c48210f2f9b17b27abf94f52362b255543ff9b1585"
+  },
+  "source_manifest_sha256": "16a84b267f53b3c0ff921626d76367ae9e6b99dc6f96dc6a0a5cd4d9fe210b63"
+}
