@@ -1551,3 +1551,9 @@ Also on the hub, but with copies elsewhere:
   - **APPROVE_FILE_LAYER_DELTA** issued (`ff45e9ed…`, amendment `35edb8ca`, delta `b8070fde`).
   - Next: perception's admission-only dry run on 04, repinned to r2, then my A1 mechanical checks (§8 items 5, 9, 11), then `coordinator-approval-A1`.
 - **19:39 UTC:** the A1 admission-only dry run launched at 19:34Z on 04 (config `9e71f533`). Epoch 1 assembled (`8ccd70b4`) in ~4.7 min, so serial would take ~3–4 h. **Decision:** parallelize independent epochs across 03 and 04 at nice 19 (operational only, same frozen functions), and require the epoch-1 parallel rebuild SHA to match the serial one as a determinism check.
+- **19:41 UTC heartbeat.**
+  - All GPUs are at 0%.
+  - **T11 v2:** gate (a) model eval and OOD are complete; GPUs 01/16 released at 19:36Z, and the rest is P16 CPU work on 01.
+  - **Student screen:** corpus pack on 03 (single process, ~27 GB); fits on 01/04/09 follow.
+  - **Capacity scan (plan h) delegated** (`clasher-capacity-scan-20261009-1`): widths 288/384/512 vs 192 on leased 13/14/15/16, offline-only, kill rule dev-NLL gain <0.005 at 25%.
+  - A1 dry-run parallelization is in progress. 02/06/07/11/18 are down.
