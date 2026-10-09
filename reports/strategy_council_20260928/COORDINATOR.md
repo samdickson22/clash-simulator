@@ -1494,3 +1494,7 @@ Also on the hub, but with copies elsewhere:
     - the R16 follow-up admission/relocation package (audit and producer-metadata reachability) plus its review;
     - the full A1 checklist.
   - 13/14/15 GPUs are idle until the capacity-scan builds land (~13Z).
+- **10:37 UTC:**
+  - The T5 GRU PARKED at 10:25:44Z (`gru-park-B0-release-20261009.json`, step 1878, backed up). **04 is released** to ExIt (≤96 CPU) and E1 (≤32); its GPU is empty.
+  - The A17 owned-08r2 qualifications PASS (complete `380da25b…`; e7/738, e15/748, e1/708, 9 streams byte-exact). The §5 packet is being built.
+  - Capacity probe: width 192 p99 is 14.9 ms (passes ≤15 ms); 288/384 fail.
