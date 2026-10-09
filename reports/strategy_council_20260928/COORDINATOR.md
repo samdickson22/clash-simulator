@@ -1438,3 +1438,6 @@ Also on the hub, but with copies elsewhere:
     - then the A1 checklist.
   - 08 is free now (B is later).
 - **10:17 UTC:** the T5 GRU resumed on 04 at 09:59:58Z, exactly, but only at **234 rows/s** (GPU 100%; Stage A/B speedups are unqualified). The T5 owner is a scheduled continuation and hasn't answered the planning questions. **Commissioned an Opus planning analysis** (`clasher-plan-next-compute-20261009-1`) for the freed GPUs/CPUs over the next 24–40 h: v2 with the W-screen8 teacher, T11, the GRU's value, reserve/tempo fixes, live-perception latency, DDP. Allocation follows within about 45 min. In the meantime, 08/13/14/15 hold for the R16 audits and B.
+- **10:18 UTC: R16-1 selection-ordering incident, adjudicated ACCEPTED.**
+  - The hash-only sampling ran before the separate receipt existed. But the exact operational rule had been sent durably in-thread before computation (t6t7-capture-closure1015), and selection is hash-ranked on telemetry eligibility with no record values.
+  - Conditions: the receipt binds the message ID, timestamp and verbatim rule; a mechanical code-matches-rule check; confirmation that no candidate record values were inspected; disclosure in the A1 record. Then the 4 recaptures launch.
