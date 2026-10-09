@@ -29,3 +29,11 @@ references and three repeats; show every tested variant without win-rate claims.
 No reporting outcomes inspected; reporting workers' loaded implementation and
 workload are unchanged. Added branches serve only the latency consumers. Early exact
 comparisons show all 125 actions preserved by WAIT reuse and native full scoring.
+
+03:44Z reducer-only correction: a coverage/queue audit found one physical deployment
+rejection in each of two seed-95 games (0 and WW). Queue conservation/capacity still
+holds. The reducer's initial zero-rejection assumption was stronger than the actual
+delay-fixes protocol, which intentionally releases rejected commands without refund.
+Retain every game and count rejections; remove only that incorrect assertion and
+include `rejected_play_fraction` / both-channel totals. Replay the unchanged two
+cases for diagnostics; do not replace them or change the policy/config/seeds.

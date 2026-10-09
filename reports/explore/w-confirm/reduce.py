@@ -39,11 +39,10 @@ def reduce(root,config,out,smoke=False):
             for key in ('channel','opponent_channel'):
                 q=meta[key]
                 assert q['submitted']==q['executed']+q['pending_at_end'] and q['peak_pending']<=1
-                assert q['rejected']==0, (seed,arm,key,q)
     common=set().union(*(r['stats']['all'].keys() for r in rows['0'].values()))
     metrics=['game_loss_fraction','game_win_fraction','game_draw_fraction',
         'arrival_under4_fraction','defender_not_in_hand_fraction','no_affordable_defender_in_hand_fraction',
-        'time_at_max_fraction','leaked_elixir_lower_bound_per_minute']
+        'time_at_max_fraction','leaked_elixir_lower_bound_per_minute','rejected_play_fraction']
     metrics=[m for m in metrics if m.startswith('game_') or m in common]
     metrics+=sorted(m for m in common if ('cap' in m or 'time_at_max' in m) and m not in metrics)
     cards=['Xbow','Giant','Rocket','Fireball','Log']
@@ -51,7 +50,7 @@ def reduce(root,config,out,smoke=False):
     metrics+=['selected_given_offered_fraction:'+c for c in cards]
     metrics+=['mean_wall_decision_ms','mean_cpu_decision_ms','wall_over200_fraction']
     matrix=np.zeros((count,len(arms)*len(metrics),2))
-    latencies={};attrs={};outcomes={};waits={};cpu_total=0;rejections={}
+    latencies={};attrs={};outcomes={};waits={};cpu_total=0;queues={}
     def fill(arm,seed):
         r=rows[arm][seed];meta=r['metadata'];ab=r['search_ab'];s=dict(r['stats']['all'])
         loss=r['loss'];win=meta['winner']==meta['seat'];draw=meta['winner'] is None
@@ -66,16 +65,20 @@ def reduce(root,config,out,smoke=False):
         return s
     for ai,arm in enumerate(arms+(['WW'] if not smoke else [])):
         wall=[];cpu=[];attr=defaultdict(Counter);wait=Counter();win=loss=draw=0
+        queue_counts={k:Counter() for k in ('channel','opponent_channel')}
         for si,seed in enumerate(sorted(rows[arm])):
             r=rows[arm][seed];ab=r['search_ab'];meta=r['metadata']
             loss+=r['loss'];win+=meta['winner']==meta['seat'];draw+=meta['winner'] is None
             cpu_total+=r['cpu_seconds'];wall+=ab['latency_seconds'];cpu+=ab['cpu_latency_seconds'];wait.update(ab['wait_counts'])
+            for key,counts in queue_counts.items():
+                counts.update({k:v for k,v in meta[key].items() if k!='peak_pending'})
             for card,counts in ab['attrition'].items():attr[card].update(counts)
             if arm!='WW':
                 s=fill(arm,seed)
                 for mi,m in enumerate(metrics):matrix[si,ai*len(metrics)+mi]=s.get(m,[0,0])
         latencies[arm]=dict(wall=timing(wall),cpu=timing(cpu));attrs[arm]=dict(attr);waits[arm]=dict(wait)
         outcomes[arm]=dict(wins=int(win),losses=int(loss),draws=int(draw),games=len(rows[arm]))
+        queues[arm]={k:dict(v) for k,v in queue_counts.items()}
     point,boots,total=bootstrap_matrix(matrix,cfg['bootstrap']['seed'],cfg['bootstrap']['reps'])
     estimates={};contrasts={}
     for ai,arm in enumerate(arms):
@@ -107,10 +110,10 @@ def reduce(root,config,out,smoke=False):
     result=dict(paired_seeds=count,seed_range=[seeds[0],seeds[-1]],arms=arms,
         config_sha256=hashlib.sha256(config.read_bytes()).hexdigest(),bootstrap=cfg['bootstrap'],
         outcomes=outcomes,estimates=estimates,paired_contrasts=contrasts,latency=latencies,
-        attrition=attrs,wait_counts=waits,completed_game_cpu_seconds=cpu_total,
+        attrition=attrs,wait_counts=waits,queue_diagnostics=queues,completed_game_cpu_seconds=cpu_total,
         supplementary_WW=dict(paired_seeds=len(rows['WW']),descriptive=True),
         validation=dict(all_terminal=True,matching_seed_seat_shuffled_decks=True,
-                        both_channels_delay27_capacity1=True,no_rejected_commands=True),
+                        both_channels_delay27_capacity1=True,rejected_commands_retained=True),
         limitations=['fixed-work simulation, public reconstruction and scripted rollout futures',
                      'bootstrap CIs pointwise and unadjusted','loaded SCHED_IDLE wall timing is not live qualification'])
     out.write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')

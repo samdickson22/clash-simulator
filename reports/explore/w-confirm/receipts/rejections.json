@@ -1,0 +1,53 @@
+{
+  "replays_exact": true,
+  "events": [
+    {
+      "tick": 2857,
+      "actor": 1,
+      "card": "Cannon",
+      "elixir": 4.0349,
+      "hand": [
+        "Musketeer",
+        "Cannon",
+        "HogRider",
+        "Fireball"
+      ],
+      "refill": 0,
+      "x": 2.5,
+      "y": 16.5,
+      "physical_action_legal": false,
+      "tower_flags": [
+        false,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "tick": 4397,
+      "actor": 1,
+      "card": "Cannon",
+      "elixir": 7.0129,
+      "hand": [
+        "Cannon",
+        "Fireball",
+        "Log",
+        "Musketeer"
+      ],
+      "refill": 0,
+      "x": 9.5,
+      "y": 17.5,
+      "physical_action_legal": false,
+      "tower_flags": [
+        false,
+        true,
+        true,
+        true,
+        false,
+        true
+      ]
+    }
+  ]
+}

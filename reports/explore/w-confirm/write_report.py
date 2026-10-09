@@ -37,7 +37,8 @@ def main():
         '## Tempo loss-review metrics','',
         '| Metric | 0 vs 0 | W vs 0 | H16 vs 0 | W vs W |','|---|---:|---:|---:|---:|']
     for m in ('arrival_under4_fraction','no_affordable_defender_in_hand_fraction',
-              'defender_not_in_hand_fraction','time_at_max_fraction','leaked_elixir_lower_bound_per_minute'):
+              'defender_not_in_hand_fraction','time_at_max_fraction','leaked_elixir_lower_bound_per_minute',
+              'rejected_play_fraction'):
         if m not in e['0']:continue
         percent=not m.endswith('per_minute')
         lines.append('| '+m+' | '+' | '.join(interval(e[a][m],percent) for a in arms)+' |')
@@ -107,9 +108,11 @@ def main():
         'Appending timed WAIT candidates turns formerly single-WAIT decisions into full root reconstruction '
         'and nine extra style/candidate rollouts, even when no card is affordable. The original W adapter '
         'also runs each delayed rollout through Python/native calls at every cadence/execution boundary. '
-        'Deduplicating original WAIT and 10-tick WAIT removes three redundant rollouts; moving the command '
-        'loop into Rust removes this repeated Python orchestration while retaining complete candidate/style '
-        'coverage. These mechanisms explain the historical median jump; current fixed-state numbers use '
+        'Deduplicating original WAIT and 10-tick WAIT removes three redundant rollouts. The profile below '
+        'shows native combat stepping and opponent selection dominate the measured work; moving the '
+        'command loop into Rust alone gives little tail improvement. Dense immediate-play candidate '
+        'evaluation remains after WAIT-only reductions. These mechanisms explain the historical median jump; '
+        'current fixed-state numbers use '
         'a different state distribution, so they do not claim to reproduce the old 330 ms median.','',
         '| Full original-W profile function | Calls | Self profiled seconds | Cumulative seconds |',
         '|---|---:|---:|---:|']
@@ -127,8 +130,9 @@ def main():
     else:
         lines.append('This stronger comparison does not resolve W’s loss-rate advantage. Keep the result uncertain; do not promote it on the scripted-opponent result alone.')
     best=l['results']['original']['native-dedup']
-    lines.append(f"Prefer the complete native command loop plus exact WAIT deduplication before approximate reductions: "
-        f"original-W agreement is {best['agreement_count']}/{best['states']}, one-core p95 {best['wall']['p95_ms']:.1f} ms. "
+    lines.append(f"Exact WAIT deduplication is a modest safe saving on this corpus: "
+        f"native original-W agreement is {best['agreement_count']}/{best['states']}, one-core p95 {best['wall']['p95_ms']:.1f} ms. "
+        'The native loop alone is insufficient, and four-core timing must not be presented as a one-core solution. '
         'Repeat prospective live deadline and completed-candidate qualification; these games and prepared-state timings do not authorize a production change.')
     eligible=[(n,s) for n,s in extra['results']['original'].items() if s['wall']['p95_ms']<=200]
     if eligible:
@@ -157,7 +161,9 @@ def main():
         'or heavy 05 work. Raw game/state/profile/build artifacts and caches stay on 03 under '
         '`/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/`; no raw games are committed. '
         'The reducer validates full paired coverage, terminal games, identical seed/seat/shuffled decks, '
-        'capacity one, no rejected commands and queue conservation on both sides.']
+        'capacity one and queue conservation on both sides. Rare physical deployment rejections '
+        'remain in the outcomes and ledger metrics; no seed/game is dropped or replaced. '
+        'Aggregate counts are retained in results.json.']
     (DEST/'RESULTS.md').write_text('\n'.join(lines)+'\n')
 
 

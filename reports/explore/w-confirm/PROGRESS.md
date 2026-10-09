@@ -61,3 +61,30 @@ style counts for plays/all candidates and shorter horizons. Reporting outcomes
 remain uninspected and its loaded full-work policy is unchanged. Symmetric-model
 latency replay is nearing completion; the extension starts only after it exits,
 avoiding overlap on the timing core.
+
+03:42Z: 1,075/1,900 reporting games complete; original/symmetric frozen latency
+replays complete. Symmetric full-W one-core p95 320.8 ms; exact WAIT reuse 311.3 ms
+with all 125 actions/score vectors preserved. Four-core symmetric reuse reaches
+118.6 ms. Profile (eight serial original-W decisions): native step 1.783 s and
+native opponent selection 0.537 s out of 3.043 s total; native engine work dominates,
+so moving only the loop into Rust is not a sufficient latency fix. Adaptive
+one-core style/horizon checks started after the frozen replay exited. Confirmation
+continues at the frozen 600/arm target; its full outcomes are not reduced yet.
+
+03:45Z: 1,224/1,900 complete. Coverage audit finds all completed games terminal;
+both queues preserve cardinality/conservation. Two seed-95 focal Cannon executions
+(control and WW) were rejected; placement is physically masked off at execution,
+while the slot/card and 4.0349-elixir balance are valid. Diagnostic replay retains
+these games and checks exact telemetry reductions against originals. The reducer's
+zero-rejection assumption was incorrect and is removed; rejected commands remain
+counted in outcome and ledger reductions. No policy, seed or reporting game changes.
+
+03:49Z: 1,384/1,900 complete. Both diagnostic replays reproduce original metadata
+and every ledger statistic exactly; rejections occur at physically illegal Cannon
+placements with valid card slots/elixir. No reporting game is replaced. The extra
+original-model check reaches one-core p95 178.8 ms by using one style for plays,
+but exact action agreement falls to 112/125 (89.6%); play-versus-WAIT agreement is
+124/125. Shortening horizon to 80 ticks reaches 185.4 ms but preserves only 89/125
+choices. Two styles retain more choices but miss 200 ms. This is a measured
+accuracy/cost trade-off, not a win-rate claim or live admission. Symmetric-model
+extra checks are still running; all tested rows will be reported.

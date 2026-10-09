@@ -1,0 +1,1425 @@
+{
+  "state_count": 125,
+  "repeats": 3,
+  "results": {
+    "original": {
+      "full": {
+        "states": 125,
+        "exact_action_agreement": 1.0,
+        "agreement_count": 125,
+        "play_wait_agreement": 1.0,
+        "exact_score_vectors": 125,
+        "mean_reference_regret": 0.0,
+        "max_reference_regret": 0.0,
+        "wall": {
+          "p50_ms": 65.57094608433545,
+          "p95_ms": 358.6975375888869,
+          "p99_ms": 512.1388142928481,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 65.53848700002618,
+          "p95_ms": 358.50648309997837,
+          "p99_ms": 511.8277197000066,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.83190593495965,
+          "p95_ms": 42.26082703098655,
+          "p99_ms": 46.75218550488353,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 43.807876063510776,
+          "p95_ms": 316.9836866669357,
+          "p99_ms": 471.70264545828104,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "dedup": {
+        "states": 125,
+        "exact_action_agreement": 1.0,
+        "agreement_count": 125,
+        "play_wait_agreement": 1.0,
+        "exact_score_vectors": 125,
+        "mean_reference_regret": 0.0,
+        "max_reference_regret": 0.0,
+        "wall": {
+          "p50_ms": 54.39012683928013,
+          "p95_ms": 345.7872294122353,
+          "p99_ms": 495.3146673180163,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 54.3573000000066,
+          "p95_ms": 345.6037756999983,
+          "p99_ms": 495.0256214199766,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.83466497808695,
+          "p95_ms": 42.123667360283434,
+          "p99_ms": 46.541336993686855,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 32.76581107638776,
+          "p95_ms": 304.19345390982926,
+          "p99_ms": 454.8285164544359,
+          "over200_fraction": 0.304,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "wait1": {
+        "states": 125,
+        "exact_action_agreement": 0.928,
+        "agreement_count": 116,
+        "play_wait_agreement": 0.944,
+        "exact_score_vectors": 45,
+        "mean_reference_regret": 0.00038250912509652017,
+        "max_reference_regret": 0.014603931168794987,
+        "wall": {
+          "p50_ms": 43.414735002443194,
+          "p95_ms": 335.0379822542891,
+          "p99_ms": 478.06761659681797,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 43.393569999921056,
+          "p95_ms": 334.814573400007,
+          "p99_ms": 477.7831216799922,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.85070002451539,
+          "p95_ms": 42.315914551727474,
+          "p99_ms": 46.72532921191305,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 21.765147102996707,
+          "p95_ms": 293.61951341852546,
+          "p99_ms": 437.66453647520393,
+          "over200_fraction": 0.2773333333333333,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "wait2": {
+        "states": 125,
+        "exact_action_agreement": 0.984,
+        "agreement_count": 123,
+        "play_wait_agreement": 0.984,
+        "exact_score_vectors": 45,
+        "mean_reference_regret": 1.946991109691072e-05,
+        "max_reference_regret": 0.001906375157658029,
+        "wall": {
+          "p50_ms": 54.59540709853172,
+          "p95_ms": 346.9392151106149,
+          "p99_ms": 493.6187398573383,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 54.56674999993538,
+          "p95_ms": 346.7096784000148,
+          "p99_ms": 493.32893360000804,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.859950851649046,
+          "p95_ms": 42.147766845300794,
+          "p99_ms": 46.70750697143376,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 32.81759610399604,
+          "p95_ms": 305.10244416072965,
+          "p99_ms": 452.9778420366347,
+          "over200_fraction": 0.304,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "gate4": {
+        "states": 125,
+        "exact_action_agreement": 0.992,
+        "agreement_count": 124,
+        "play_wait_agreement": 0.992,
+        "exact_score_vectors": 99,
+        "mean_reference_regret": 1.5251001261264232e-05,
+        "max_reference_regret": 0.001906375157658029,
+        "wall": {
+          "p50_ms": 65.62077207490802,
+          "p95_ms": 324.7514814604074,
+          "p99_ms": 459.23691398929805,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 65.5079869999895,
+          "p95_ms": 324.57822900001077,
+          "p99_ms": 458.87625497999807,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.883661160245538,
+          "p95_ms": 42.26534201297909,
+          "p99_ms": 48.000842523761065,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 43.66713296622038,
+          "p95_ms": 282.59925672318786,
+          "p99_ms": 418.7142732227221,
+          "over200_fraction": 0.2986666666666667,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "gate6": {
+        "states": 125,
+        "exact_action_agreement": 0.992,
+        "agreement_count": 124,
+        "play_wait_agreement": 0.992,
+        "exact_score_vectors": 100,
+        "mean_reference_regret": 1.5251001261264232e-05,
+        "max_reference_regret": 0.001906375157658029,
+        "wall": {
+          "p50_ms": 65.50571112893522,
+          "p95_ms": 324.01561744045466,
+          "p99_ms": 459.7805240144953,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 65.47124800000859,
+          "p95_ms": 323.6218678,
+          "p99_ms": 459.5211851400222,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.818085107952356,
+          "p95_ms": 42.272536107338965,
+          "p99_ms": 46.787990001030266,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 43.63302094861865,
+          "p95_ms": 283.92653902992606,
+          "p99_ms": 419.2876871768385,
+          "over200_fraction": 0.2986666666666667,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "gate8": {
+        "states": 125,
+        "exact_action_agreement": 1.0,
+        "agreement_count": 125,
+        "play_wait_agreement": 1.0,
+        "exact_score_vectors": 125,
+        "mean_reference_regret": 0.0,
+        "max_reference_regret": 0.0,
+        "wall": {
+          "p50_ms": 65.95368101261556,
+          "p95_ms": 361.08248163945973,
+          "p99_ms": 512.7705812314525,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 65.91497600004459,
+          "p95_ms": 360.75916839998854,
+          "p99_ms": 512.4679145999914,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 23.588649928569794,
+          "p95_ms": 44.299820042215295,
+          "p99_ms": 49.82847529463469,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 43.62097010016441,
+          "p95_ms": 317.92313675396144,
+          "p99_ms": 471.19754917919636,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "threads4": {
+        "states": 125,
+        "exact_action_agreement": 1.0,
+        "agreement_count": 125,
+        "play_wait_agreement": 1.0,
+        "exact_score_vectors": 125,
+        "mean_reference_regret": 0.0,
+        "max_reference_regret": 0.0,
+        "wall": {
+          "p50_ms": 37.776565877720714,
+          "p95_ms": 139.9705997435376,
+          "p99_ms": 170.92424090486017,
+          "over200_fraction": 0.008,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 70.82254300001978,
+          "p95_ms": 375.73900810000396,
+          "p99_ms": 522.5854044599986,
+          "over200_fraction": 0.368,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.817856002599,
+          "p95_ms": 42.235873779281974,
+          "p99_ms": 46.7094360338524,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 16.095431987196207,
+          "p95_ms": 98.47941633779556,
+          "p99_ms": 127.7788158366456,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "budget": "four cores"
+      },
+      "native-full": {
+        "states": 125,
+        "exact_action_agreement": 1.0,
+        "agreement_count": 125,
+        "play_wait_agreement": 1.0,
+        "exact_score_vectors": 125,
+        "mean_reference_regret": 0.0,
+        "max_reference_regret": 0.0,
+        "wall": {
+          "p50_ms": 65.64885401166975,
+          "p95_ms": 349.526593927294,
+          "p99_ms": 503.6694736685604,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 65.61292800000729,
+          "p95_ms": 349.3051841999943,
+          "p99_ms": 503.37200698001084,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 23.49365991540253,
+          "p95_ms": 44.024527235887945,
+          "p99_ms": 48.72397700790315,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 43.233819073066115,
+          "p95_ms": 307.7118106652051,
+          "p99_ms": 463.50903352256864,
+          "over200_fraction": 0.304,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "native-dedup": {
+        "states": 125,
+        "exact_action_agreement": 1.0,
+        "agreement_count": 125,
+        "play_wait_agreement": 1.0,
+        "exact_score_vectors": 125,
+        "mean_reference_regret": 0.0,
+        "max_reference_regret": 0.0,
+        "wall": {
+          "p50_ms": 54.10268111154437,
+          "p95_ms": 336.72359669581056,
+          "p99_ms": 485.83101936616004,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 54.07459299999573,
+          "p95_ms": 336.52416720002805,
+          "p99_ms": 485.58530187997746,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.81655401363969,
+          "p95_ms": 42.228855937719345,
+          "p99_ms": 47.95871498528865,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 32.257925951853395,
+          "p95_ms": 295.23942845407873,
+          "p99_ms": 445.06744627375156,
+          "over200_fraction": 0.28,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "native-wait1": {
+        "states": 125,
+        "exact_action_agreement": 0.928,
+        "agreement_count": 116,
+        "play_wait_agreement": 0.944,
+        "exact_score_vectors": 45,
+        "mean_reference_regret": 0.00038250912509652017,
+        "max_reference_regret": 0.014603931168794987,
+        "wall": {
+          "p50_ms": 43.0864819791168,
+          "p95_ms": 325.25201626122,
+          "p99_ms": 470.76740284916013,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 43.06507299997975,
+          "p95_ms": 325.0612006000068,
+          "p99_ms": 470.23163399997713,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.846697898581624,
+          "p95_ms": 42.11183863226324,
+          "p99_ms": 46.53010283596814,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 21.56828180886805,
+          "p95_ms": 284.015986812301,
+          "p99_ms": 430.2164906915277,
+          "over200_fraction": 0.25866666666666666,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "native-wait2": {
+        "states": 125,
+        "exact_action_agreement": 0.984,
+        "agreement_count": 123,
+        "play_wait_agreement": 0.984,
+        "exact_score_vectors": 45,
+        "mean_reference_regret": 1.946991109691072e-05,
+        "max_reference_regret": 0.001906375157658029,
+        "wall": {
+          "p50_ms": 54.29074610583484,
+          "p95_ms": 337.81282347626984,
+          "p99_ms": 484.32108603417873,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 54.264161000006084,
+          "p95_ms": 337.64481849999584,
+          "p99_ms": 484.0214078599888,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.825977135449648,
+          "p95_ms": 42.143548117019236,
+          "p99_ms": 46.60103059373796,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 32.34479995444417,
+          "p95_ms": 296.1217219941318,
+          "p99_ms": 443.6669382080436,
+          "over200_fraction": 0.2853333333333333,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "native-gate4": {
+        "states": 125,
+        "exact_action_agreement": 0.992,
+        "agreement_count": 124,
+        "play_wait_agreement": 0.992,
+        "exact_score_vectors": 99,
+        "mean_reference_regret": 1.5251001261264232e-05,
+        "max_reference_regret": 0.001906375157658029,
+        "wall": {
+          "p50_ms": 64.76208404637873,
+          "p95_ms": 314.18080143630505,
+          "p99_ms": 451.05494409333915,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 64.72846399998389,
+          "p95_ms": 313.998494499981,
+          "p99_ms": 450.79727360001357,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.794125204905868,
+          "p95_ms": 42.31116967275739,
+          "p99_ms": 46.5754927881062,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 43.27747388742864,
+          "p95_ms": 273.7359898397699,
+          "p99_ms": 410.75126577634364,
+          "over200_fraction": 0.28,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "native-gate6": {
+        "states": 125,
+        "exact_action_agreement": 0.992,
+        "agreement_count": 124,
+        "play_wait_agreement": 0.992,
+        "exact_score_vectors": 100,
+        "mean_reference_regret": 1.5251001261264232e-05,
+        "max_reference_regret": 0.001906375157658029,
+        "wall": {
+          "p50_ms": 64.84171515330672,
+          "p95_ms": 316.0296913003549,
+          "p99_ms": 450.9459651261568,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 64.81267399999524,
+          "p95_ms": 315.7499545999997,
+          "p99_ms": 450.7097636600457,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.8349180649966,
+          "p95_ms": 42.19787928741425,
+          "p99_ms": 47.670625601895125,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 43.21565805003047,
+          "p95_ms": 274.05765363946557,
+          "p99_ms": 410.2403904031962,
+          "over200_fraction": 0.28,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "native-gate8": {
+        "states": 125,
+        "exact_action_agreement": 1.0,
+        "agreement_count": 125,
+        "play_wait_agreement": 1.0,
+        "exact_score_vectors": 125,
+        "mean_reference_regret": 0.0,
+        "max_reference_regret": 0.0,
+        "wall": {
+          "p50_ms": 66.16444885730743,
+          "p95_ms": 350.87533129844815,
+          "p99_ms": 503.53985157795245,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 66.12433300000475,
+          "p95_ms": 350.6888363999508,
+          "p99_ms": 503.2189925599925,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 22.80974993482232,
+          "p95_ms": 44.187742937356234,
+          "p99_ms": 47.42865070234983,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 43.249114882200956,
+          "p95_ms": 308.22132830508053,
+          "p99_ms": 462.607897487469,
+          "over200_fraction": 0.304,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "native-threads4": {
+        "states": 125,
+        "exact_action_agreement": 1.0,
+        "agreement_count": 125,
+        "play_wait_agreement": 1.0,
+        "exact_score_vectors": 125,
+        "mean_reference_regret": 0.0,
+        "max_reference_regret": 0.0,
+        "wall": {
+          "p50_ms": 37.31637797318399,
+          "p95_ms": 124.22201421577483,
+          "p99_ms": 175.31965021043976,
+          "over200_fraction": 0.010666666666666666,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 71.02730200006135,
+          "p95_ms": 353.9640587000655,
+          "p99_ms": 505.3691753200223,
+          "over200_fraction": 0.32266666666666666,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 23.769258987158537,
+          "p95_ms": 45.328303426504135,
+          "p99_ms": 52.447858699597404,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 12.901989044621587,
+          "p95_ms": 79.22180064488202,
+          "p99_ms": 131.23654144350397,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "budget": "four cores"
+      }
+    },
+    "symmetric": {
+      "full": {
+        "states": 125,
+        "exact_action_agreement": 1.0,
+        "agreement_count": 125,
+        "play_wait_agreement": 1.0,
+        "exact_score_vectors": 125,
+        "mean_reference_regret": 0.0,
+        "max_reference_regret": 0.0,
+        "wall": {
+          "p50_ms": 63.8479080516845,
+          "p95_ms": 320.8281651837751,
+          "p99_ms": 441.5690166456625,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 63.81258200008233,
+          "p95_ms": 320.62870370002656,
+          "p99_ms": 441.3371086999905,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.8960449565202,
+          "p95_ms": 42.19258353114128,
+          "p99_ms": 46.75551244057715,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 42.6515641156584,
+          "p95_ms": 280.4002637276426,
+          "p99_ms": 396.20452519506216,
+          "over200_fraction": 0.2853333333333333,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "dedup": {
+        "states": 125,
+        "exact_action_agreement": 1.0,
+        "agreement_count": 125,
+        "play_wait_agreement": 1.0,
+        "exact_score_vectors": 125,
+        "mean_reference_regret": 0.0,
+        "max_reference_regret": 0.0,
+        "wall": {
+          "p50_ms": 53.14397509209812,
+          "p95_ms": 311.25260777771473,
+          "p99_ms": 422.7171304542571,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 53.11387000006107,
+          "p95_ms": 310.9061670000074,
+          "p99_ms": 421.03288729996166,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.834133891388774,
+          "p95_ms": 42.25142155773938,
+          "p99_ms": 50.215701279230416,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 31.97022993117571,
+          "p95_ms": 269.7480230592191,
+          "p99_ms": 376.6749896388501,
+          "over200_fraction": 0.27466666666666667,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "wait1": {
+        "states": 125,
+        "exact_action_agreement": 0.968,
+        "agreement_count": 121,
+        "play_wait_agreement": 0.984,
+        "exact_score_vectors": 55,
+        "mean_reference_regret": 0.00020552706083243907,
+        "max_reference_regret": 0.013979243312017626,
+        "wall": {
+          "p50_ms": 43.143963906913996,
+          "p95_ms": 299.09669971093535,
+          "p99_ms": 403.9309710683301,
+          "over200_fraction": 0.31733333333333336,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 43.1242330000714,
+          "p95_ms": 298.9065759998539,
+          "p99_ms": 403.7288671600709,
+          "over200_fraction": 0.31733333333333336,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.85960393399,
+          "p95_ms": 42.24636184517294,
+          "p99_ms": 46.90097611397505,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 21.345167886465788,
+          "p95_ms": 258.1468419637531,
+          "p99_ms": 363.68088773451746,
+          "over200_fraction": 0.23466666666666666,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "wait2": {
+        "states": 125,
+        "exact_action_agreement": 0.984,
+        "agreement_count": 123,
+        "play_wait_agreement": 0.992,
+        "exact_score_vectors": 55,
+        "mean_reference_regret": 0.00014050253797323525,
+        "max_reference_regret": 0.012160521448504429,
+        "wall": {
+          "p50_ms": 53.69742191396654,
+          "p95_ms": 310.80555049702525,
+          "p99_ms": 421.13894443027675,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 53.58093699987876,
+          "p95_ms": 310.65522769996505,
+          "p99_ms": 420.9193862199436,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.84146293438971,
+          "p95_ms": 42.26287791971117,
+          "p99_ms": 46.83163474313915,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 32.13160298764706,
+          "p95_ms": 270.6361924763769,
+          "p99_ms": 375.93615274876356,
+          "over200_fraction": 0.26666666666666666,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "gate4": {
+        "states": 125,
+        "exact_action_agreement": 0.968,
+        "agreement_count": 121,
+        "play_wait_agreement": 0.984,
+        "exact_score_vectors": 99,
+        "mean_reference_regret": 8.957649837943933e-05,
+        "max_reference_regret": 0.006845860860973204,
+        "wall": {
+          "p50_ms": 64.02375502511859,
+          "p95_ms": 295.8444229327142,
+          "p99_ms": 387.91969911661,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 63.98702000001322,
+          "p95_ms": 295.6528184999456,
+          "p99_ms": 387.68618912010425,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.871734876185656,
+          "p95_ms": 42.29648155160248,
+          "p99_ms": 46.772087598219514,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 42.62356297113001,
+          "p95_ms": 255.38770637940618,
+          "p99_ms": 349.78887061588466,
+          "over200_fraction": 0.23733333333333334,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "gate6": {
+        "states": 125,
+        "exact_action_agreement": 0.968,
+        "agreement_count": 121,
+        "play_wait_agreement": 0.984,
+        "exact_score_vectors": 100,
+        "mean_reference_regret": 8.957649837943933e-05,
+        "max_reference_regret": 0.006845860860973204,
+        "wall": {
+          "p50_ms": 63.88660008087754,
+          "p95_ms": 296.2201794842258,
+          "p99_ms": 388.66127983201295,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 63.8499619999493,
+          "p95_ms": 296.061457600058,
+          "p99_ms": 388.469188660074,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 21.891594864428043,
+          "p95_ms": 42.16597096528858,
+          "p99_ms": 46.6746391588822,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 42.670032009482384,
+          "p95_ms": 255.2720367675647,
+          "p99_ms": 350.5723453266546,
+          "over200_fraction": 0.23733333333333334,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "gate8": {
+        "states": 125,
+        "exact_action_agreement": 1.0,
+        "agreement_count": 125,
+        "play_wait_agreement": 1.0,
+        "exact_score_vectors": 125,
+        "mean_reference_regret": 0.0,
+        "max_reference_regret": 0.0,
+        "wall": {
+          "p50_ms": 65.58243394829333,
+          "p95_ms": 321.48414123803377,
+          "p99_ms": 442.589116548188,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 65.54152700005034,
+          "p95_ms": 321.3154246999238,
+          "p99_ms": 442.32053832000474,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 22.876410046592355,
+          "p95_ms": 43.43864610418678,
+          "p99_ms": 48.63395053893327,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 42.785904835909605,
+          "p95_ms": 280.7564115850255,
+          "p99_ms": 396.55084325000644,
+          "over200_fraction": 0.2853333333333333,
+          "samples": 375
+        },
+        "budget": "one core"
+      },
+      "threads4": {
+        "states": 125,
+        "exact_action_agreement": 1.0,
+        "agreement_count": 125,
+        "play_wait_agreement": 1.0,
+        "exact_score_vectors": 125,
+        "mean_reference_regret": 0.0,
+        "max_reference_regret": 0.0,
+        "wall": {
+          "p50_ms": 36.70054883696139,
+          "p95_ms": 118.55287568178029,
+          "p99_ms": 149.78773758746678,
+          "over200_fraction": 0.008,
+          "samples": 375
+        },
+        "cpu": {
+          "p50_ms": 69.28386700008105,
+          "p95_ms": 326.2236883999549,
+          "p99_ms": 442.7908027400508,
+          "over200_fraction": 0.32,
+          "samples": 375
+        },
+        "prepare": {
+          "p50_ms": 23.28847604803741,
+          "p95_ms": 44.99243653845042,
+          "p99_ms": 49.93933147750794,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "scoring": {
+          "p50_ms": 13.073723064735532,
+          "p95_ms": 73.76830005086958,
+          "p99_ms": 118.08898556046184,
+          "over200_fraction": 0.0,
+          "samples": 375
+        },
+        "budget": "four cores"
+      }
+    }
+  },
+  "profiles": {
+    "original": [
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/explore/w-confirm/latency.py:60:decision",
+        "calls": 8,
+        "own_seconds": 0.000479762,
+        "cumulative_seconds": 3.043182265
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/explore/w-confirm/planner.py:26:score_candidates",
+        "calls": 8,
+        "own_seconds": 0.0031713260000000004,
+        "cumulative_seconds": 2.51076641
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/explore/w-confirm/planner.py:42:evaluate",
+        "calls": 576,
+        "own_seconds": 0.0008320840000000001,
+        "cumulative_seconds": 2.5051492570000002
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/explore/w-confirm/planner.py:85:simulate_commands",
+        "calls": 576,
+        "own_seconds": 0.001353789,
+        "cumulative_seconds": 2.504317173
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/analysis/loss_review/tempo.py:55:delayed_rollout",
+        "calls": 576,
+        "own_seconds": 0.0035340880000000003,
+        "cumulative_seconds": 2.3384788110000003
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/analysis/loss_review/search_ab.py:98:delayed_rollout",
+        "calls": 504,
+        "own_seconds": 0.000693165,
+        "cumulative_seconds": 2.044482405
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/strategy_council_20260928/search-noise-s6/delay.py:90:delayed_rollout",
+        "calls": 504,
+        "own_seconds": 0.019047151000000002,
+        "cumulative_seconds": 2.04378924
+      },
+      {
+        "function": "~:0:<method 'step' of 'clasher_core.BattleState' objects>",
+        "calls": 11227,
+        "own_seconds": 1.782771885,
+        "cumulative_seconds": 1.782771885
+      },
+      {
+        "function": "~:0:<method 'select_action' of 'clasher_core.NativeScripts' objects>",
+        "calls": 13591,
+        "own_seconds": 0.536953129,
+        "cumulative_seconds": 0.536953129
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/analysis/loss_review/tempo.py:43:candidates",
+        "calls": 8,
+        "own_seconds": 0.000384624,
+        "cumulative_seconds": 0.35114514900000005
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/analysis/loss_review/search_ab.py:61:candidates",
+        "calls": 8,
+        "own_seconds": 0.0007714260000000001,
+        "cumulative_seconds": 0.35076052500000005
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/contract_v5.py:581:build",
+        "calls": 32,
+        "own_seconds": 0.00010994200000000001,
+        "cumulative_seconds": 0.30074802700000003
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/public_action_mask.py:195:build",
+        "calls": 32,
+        "own_seconds": 0.032308093,
+        "cumulative_seconds": 0.300608125
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/public_scripted_opponent.py:205:_ranked_actions",
+        "calls": 24,
+        "own_seconds": 0.000191406,
+        "cumulative_seconds": 0.27157775900000003
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/c56_scripted.py:140:ranked_actions",
+        "calls": 24,
+        "own_seconds": 0.0045918800000000004,
+        "cumulative_seconds": 0.271355591
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/c56_rollout_planner.py:69:candidates",
+        "calls": 8,
+        "own_seconds": 0.000288134,
+        "cumulative_seconds": 0.253437743
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py:111:root",
+        "calls": 8,
+        "own_seconds": 0.035059752,
+        "cumulative_seconds": 0.15503635600000001
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/contract_v5.py:521:_building_blockers",
+        "calls": 3024,
+        "own_seconds": 0.007769572000000001,
+        "cumulative_seconds": 0.135075949
+      },
+      {
+        "function": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/copy.py:118:deepcopy",
+        "calls": 59256,
+        "own_seconds": 0.059031484,
+        "cumulative_seconds": 0.128936529
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/analysis/loss_review/tempo.py:49:candidate_root",
+        "calls": 576,
+        "own_seconds": 0.00115861,
+        "cumulative_seconds": 0.125379032
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/strategy_council_20260928/search-noise-s6/delay.py:84:candidate_root",
+        "calls": 576,
+        "own_seconds": 0.0023537320000000003,
+        "cumulative_seconds": 0.12382285700000001
+      },
+      {
+        "function": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/copy.py:217:_deepcopy_dict",
+        "calls": 2128,
+        "own_seconds": 0.013268720000000001,
+        "cumulative_seconds": 0.118032308
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/public_action_mask.py:129:_building_blockers",
+        "calls": 3024,
+        "own_seconds": 0.050196188,
+        "cumulative_seconds": 0.10691025900000001
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/strategy_council_20260928/search-noise-s6/delay.py:42:own_packet",
+        "calls": 576,
+        "own_seconds": 0.000323796,
+        "cumulative_seconds": 0.099997945
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/strategy_council_20260928/search-noise-s6/own_state.py:33:packet",
+        "calls": 480,
+        "own_seconds": 0.007973715000000001,
+        "cumulative_seconds": 0.099674149
+      },
+      {
+        "function": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/json/__init__.py:183:dumps",
+        "calls": 8,
+        "own_seconds": 1.1200000000000001e-05,
+        "cumulative_seconds": 0.095256458
+      },
+      {
+        "function": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/json/encoder.py:183:encode",
+        "calls": 8,
+        "own_seconds": 3.368e-05,
+        "cumulative_seconds": 0.095245258
+      },
+      {
+        "function": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/json/encoder.py:205:iterencode",
+        "calls": 8,
+        "own_seconds": 0.09520065800000001,
+        "cumulative_seconds": 0.09520065800000001
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/contract_v5.py:529:_placement_occupied",
+        "calls": 25744,
+        "own_seconds": 0.012800457000000001,
+        "cumulative_seconds": 0.089075729
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/public_scripted_opponent.py:365:decide",
+        "calls": 8,
+        "own_seconds": 1.2581e-05,
+        "cumulative_seconds": 0.08085754
+      }
+    ],
+    "symmetric": [
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/explore/w-confirm/latency.py:60:decision",
+        "calls": 8,
+        "own_seconds": 0.0005163580000000001,
+        "cumulative_seconds": 2.725986052
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/explore/w-confirm/planner.py:26:score_candidates",
+        "calls": 8,
+        "own_seconds": 0.0029282870000000003,
+        "cumulative_seconds": 2.18998009
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/explore/w-confirm/planner.py:42:evaluate",
+        "calls": 576,
+        "own_seconds": 0.000652201,
+        "cumulative_seconds": 2.184611657
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/analysis/loss_review/delay_fixes.py:133:simulate_commands",
+        "calls": 576,
+        "own_seconds": 0.000793232,
+        "cumulative_seconds": 2.183959456
+      },
+      {
+        "function": "~:0:<method 'rollout_commands' of 'clasher_core.NativeScripts' objects>",
+        "calls": 576,
+        "own_seconds": 2.1831662240000003,
+        "cumulative_seconds": 2.1831662240000003
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/explore/w-confirm/planner.py:20:candidates",
+        "calls": 8,
+        "own_seconds": 0.00040103700000000003,
+        "cumulative_seconds": 0.353090038
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/analysis/loss_review/search_ab.py:61:candidates",
+        "calls": 8,
+        "own_seconds": 0.0008004350000000001,
+        "cumulative_seconds": 0.352689001
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/contract_v5.py:581:build",
+        "calls": 32,
+        "own_seconds": 0.000111321,
+        "cumulative_seconds": 0.30223924
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/public_action_mask.py:195:build",
+        "calls": 32,
+        "own_seconds": 0.032730315,
+        "cumulative_seconds": 0.302095859
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/public_scripted_opponent.py:205:_ranked_actions",
+        "calls": 24,
+        "own_seconds": 0.00019468,
+        "cumulative_seconds": 0.27332264100000003
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/c56_scripted.py:140:ranked_actions",
+        "calls": 24,
+        "own_seconds": 0.004688842,
+        "cumulative_seconds": 0.273098121
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/c56_rollout_planner.py:69:candidates",
+        "calls": 8,
+        "own_seconds": 0.00030250400000000004,
+        "cumulative_seconds": 0.255045338
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/strategy_council_20260928/engine-speed/stage5/fair_player.py:111:root",
+        "calls": 8,
+        "own_seconds": 0.035316467000000004,
+        "cumulative_seconds": 0.155848135
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/contract_v5.py:521:_building_blockers",
+        "calls": 3024,
+        "own_seconds": 0.007801117000000001,
+        "cumulative_seconds": 0.13552561500000002
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/public_action_mask.py:129:_building_blockers",
+        "calls": 3024,
+        "own_seconds": 0.050563355000000004,
+        "cumulative_seconds": 0.10742075000000001
+      },
+      {
+        "function": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/json/__init__.py:183:dumps",
+        "calls": 8,
+        "own_seconds": 1.147e-05,
+        "cumulative_seconds": 0.096001503
+      },
+      {
+        "function": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/json/encoder.py:183:encode",
+        "calls": 8,
+        "own_seconds": 3.5980000000000004e-05,
+        "cumulative_seconds": 0.095990033
+      },
+      {
+        "function": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/json/encoder.py:205:iterencode",
+        "calls": 8,
+        "own_seconds": 0.095942443,
+        "cumulative_seconds": 0.095942443
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/contract_v5.py:529:_placement_occupied",
+        "calls": 25744,
+        "own_seconds": 0.0130226,
+        "cumulative_seconds": 0.08970667700000001
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/public_scripted_opponent.py:365:decide",
+        "calls": 8,
+        "own_seconds": 1.2410000000000001e-05,
+        "cumulative_seconds": 0.081220841
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/public_action_mask.py:190:_placement_occupied",
+        "calls": 25744,
+        "own_seconds": 0.007309399,
+        "cumulative_seconds": 0.076684077
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/public_action_mask.py:162:_occupied",
+        "calls": 28736,
+        "own_seconds": 0.060824906000000005,
+        "cumulative_seconds": 0.07273502200000001
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/contract_v5.py:515:_footprint_size",
+        "calls": 18152,
+        "own_seconds": 0.012131695000000001,
+        "cumulative_seconds": 0.032998707
+      },
+      {
+        "function": "~:0:<built-in method builtins.round>",
+        "calls": 54536,
+        "own_seconds": 0.032570296,
+        "cumulative_seconds": 0.032570296
+      },
+      {
+        "function": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/copy.py:118:deepcopy",
+        "calls": 17976,
+        "own_seconds": 0.013736736000000001,
+        "cumulative_seconds": 0.026322551000000003
+      },
+      {
+        "function": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/copy.py:217:_deepcopy_dict",
+        "calls": 208,
+        "own_seconds": 0.004120192,
+        "cumulative_seconds": 0.025936564000000002
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/src/clasher/rl/public_action_mask.py:83:_deploy_zone",
+        "calls": 32,
+        "own_seconds": 0.009985388000000001,
+        "cumulative_seconds": 0.025467296
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/explore/w-confirm/latency.py:47:core_for",
+        "calls": 8,
+        "own_seconds": 0.00020922400000000001,
+        "cumulative_seconds": 0.024254960000000002
+      },
+      {
+        "function": "~:0:<method 'extend' of 'list' objects>",
+        "calls": 64,
+        "own_seconds": 0.00163827,
+        "cumulative_seconds": 0.023300166
+      },
+      {
+        "function": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/repo/reports/explore/w-confirm/planner.py:14:__init__",
+        "calls": 8,
+        "own_seconds": 4.2050000000000006e-05,
+        "cumulative_seconds": 0.023222514000000003
+      }
+    ]
+  },
+  "scope": "candidate generation + public root reconstruction + complete scoring; prepared public input and sampled belief fixed",
+  "excluded": "sensor/image parsing, belief inference, actuator/network; warmup and profiling samples",
+  "native_sha256": "542ce0977b98251d04047560a4a30fd0e54ab1002dbd49800e5056445c81153c",
+  "ready_manifest": {
+    "count": 125,
+    "sha256": "8b188918b95cf6c79f0db0639beaff2e80526ce11c146cdfe0edb0bb8e6f3cce",
+    "original_sha256": "80e9318786e6c76d0e7635ea9de6fa5c4305fa3eeaab270f86adda6c3dcc81e2",
+    "state_ids": [
+      "0:90:0",
+      "0:300:0",
+      "0:600:0",
+      "0:1200:0",
+      "0:2400:0",
+      "1:90:1",
+      "1:300:1",
+      "1:600:1",
+      "1:1200:1",
+      "1:2400:1",
+      "2:90:0",
+      "2:300:0",
+      "2:600:0",
+      "2:1200:0",
+      "2:2400:0",
+      "3:90:1",
+      "3:300:1",
+      "3:600:1",
+      "3:1200:1",
+      "3:2400:1",
+      "4:90:0",
+      "4:300:0",
+      "4:600:0",
+      "4:1200:0",
+      "4:2400:0",
+      "5:90:1",
+      "5:300:1",
+      "5:600:1",
+      "5:1200:1",
+      "5:2400:1",
+      "6:90:0",
+      "6:300:0",
+      "6:600:0",
+      "6:1200:0",
+      "6:2400:0",
+      "7:90:1",
+      "7:300:1",
+      "7:600:1",
+      "7:1200:1",
+      "7:2400:1",
+      "8:90:0",
+      "8:300:0",
+      "8:600:0",
+      "8:1200:0",
+      "8:2400:0",
+      "9:90:1",
+      "9:300:1",
+      "9:600:1",
+      "9:1200:1",
+      "9:2400:1",
+      "10:90:0",
+      "10:300:0",
+      "10:600:0",
+      "10:1200:0",
+      "10:2400:0",
+      "11:90:1",
+      "11:300:1",
+      "11:600:1",
+      "11:1200:1",
+      "11:2400:1",
+      "12:90:0",
+      "12:300:0",
+      "12:600:0",
+      "12:1200:0",
+      "12:2400:0",
+      "13:90:1",
+      "13:300:1",
+      "13:600:1",
+      "13:1200:1",
+      "13:2400:1",
+      "14:90:0",
+      "14:300:0",
+      "14:600:0",
+      "14:1200:0",
+      "14:2400:0",
+      "15:90:1",
+      "15:300:1",
+      "15:600:1",
+      "15:1200:1",
+      "15:2400:1",
+      "16:90:0",
+      "16:300:0",
+      "16:600:0",
+      "16:1200:0",
+      "16:2400:0",
+      "17:90:1",
+      "17:300:1",
+      "17:600:1",
+      "17:1200:1",
+      "17:2400:1",
+      "18:90:0",
+      "18:300:0",
+      "18:600:0",
+      "18:1200:0",
+      "18:2400:0",
+      "19:90:1",
+      "19:300:1",
+      "19:600:1",
+      "19:1200:1",
+      "19:2400:1",
+      "20:90:0",
+      "20:300:0",
+      "20:600:0",
+      "20:1200:0",
+      "20:2400:0",
+      "21:90:1",
+      "21:300:1",
+      "21:600:1",
+      "21:1200:1",
+      "21:2400:1",
+      "22:90:0",
+      "22:300:0",
+      "22:600:0",
+      "22:1200:0",
+      "22:2400:0",
+      "23:90:1",
+      "23:300:1",
+      "23:600:1",
+      "23:1200:1",
+      "23:2400:1",
+      "24:90:0",
+      "24:300:0",
+      "24:600:0",
+      "24:1200:0",
+      "24:2400:0"
+    ],
+    "all_public_root_and_candidate_replays_exact": true
+  },
+  "win_rate_claims": false
+}
