@@ -469,6 +469,7 @@ def provenance(config):
     from .loading import COUNCIL, ROOT, V4
     files = list(Path(__file__).parent.glob('*.py'))
     files.append(Path(__file__).with_name('tower_channel_templates.json'))
+    files.append(Path(__file__).with_name('public_score_templates.json'))
     files += list(Path(__file__).parent.glob('*.rs'))
     from .lattice import LIBRARY, _kernel
     if _kernel is not None:
