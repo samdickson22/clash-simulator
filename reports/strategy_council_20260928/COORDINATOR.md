@@ -977,7 +977,19 @@ Also on the hub, but with copies elsewhere:
   - **Meaning:** the imitation model's top-8 proposals improve the fair search player at a matched candidate count.
 - **01:28 UTC: 127x03 released** by the gates worker (marker removed, all gate PIDs gone) and lent to the tempo/horizon exploration.
   - **Gate (b):** the 5 legality flags all reproduce. Each flagged command was legal before either seat's command and became mask-illegal only after seat 0's command, which is the sequential-apply effect. Acceptance histories match. No adjustment; PASS stands, and the final report is being rendered.
-- **~01:55 UTC: GATE (b) RESULTS FINAL: PASS** (`imitation/RESULTS-gate-b.md`, `bb1adf3f…`).
+- **~01:30 UTC (label corrected from 01:55): GATE (b) RESULTS FINAL: PASS** (`imitation/RESULTS-gate-b.md`, `bb1adf3f…`).
   - B won 420/640: score 0.65625, paired CI [0.628, 0.684]; secondary +0.0508. All timing and integrity bars pass.
   - The report discloses the R12 observability limit and the 5 sequential-application mask flags.
   - **Gate (c):** healthy on 02 (165 two-seat worlds by 01:30Z); revised ETA ~5.5 h total, so about 05:45Z.
+- **01:36 UTC: Amendment 12 delta review: APPROVE WITH REQUIRED CHANGES D1–D6, not frozen** (`l1/reviews/AMENDMENT-12-DELTA-REVIEW-20261009.md`; reviewed draft `9e575ba1…`, pins `2669f814…`).
+  - The method is sound. The bound is a valid ceiling: never-early availability, a maximal matching, and strict `<` on the full key.
+  - Required:
+    - D1: corrected disclosure sentence, naming the full key.
+    - D2: 30 cells is a checkpoint, not a stop.
+    - D3: Tier 2 stays disabled. If it's ever enabled, 1975100708 is excluded from fitting and testing and counts only by its bound.
+    - D4 (new): the file verifier must check the seal hash, require an exact multiset match of predictions plus a byte-identical truth list, and require available ≥ frame timestamp exactly.
+    - D5: adoption wording.
+    - D6: whitespace repair.
+  - **Process deviation:** perception rewrote the draft to `1bde5c55…` (pins `3e7f1504…`) at 01:32:51Z. That was 4 s after the review was written, and during my hold on the draft bytes. The `9e575ba1` bytes weren't preserved, so the review's whitespace-only freeze check can't run as written.
+  - **Decision:** perception applies D1–D6 plus N4 to the current draft, writes a changelog of every non-whitespace change since `9e575ba1`, and implements the D4 checks with tests plus N1/N2. Then a narrow confirmation review (D1–D5 verbatim, D6 whitespace-only, changelog items), then freeze.
+  - No real seal, bound or measurement before the freeze and the draft's blockers. The 08 deciding measurements are still planned for after 05:00Z.
