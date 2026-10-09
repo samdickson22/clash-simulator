@@ -117,6 +117,9 @@ def p1(config, ipc, log):
     from .perception import make_perception
     api = actuator_module()  # also establishes HUD's pickle identity
     sensor = make_perception(config['perception'])
+    if hasattr(sensor, 'qualification'):
+        log('perception_qualification', qualification=sensor.qualification,
+            decoder_provenance=getattr(sensor, 'decoder_provenance', None))
     import cv2
     cv2.setNumThreads(1)
     # Pre-capture model warmup; never include it in latency measurements/history.
@@ -442,7 +445,10 @@ def summarize(rows, config, failures, log_drops):
     return dict(schema='clasher.live-v4.runtime.v1', host=os.uname().nodename,
                 source=config['source']['kind'], perception=config['perception']['kind'],
                 planner=config['planner']['kind'], actuator=config['actuator']['kind'],
-                perception_variant=('v3-body-hud-only' if config['perception']['kind'] == 'v3' and not config['perception'].get('events') else config['perception']['kind']),
+                perception_variant=('v4-unadmitted-decoder-diagnostic-qualification'
+                    if config['perception'].get('vectorized_decoder') and config['perception'].get('decoder_diagnostic')
+                    else 'v3-body-hud-only' if config['perception']['kind'] == 'v3'
+                    and not config['perception'].get('events') else config['perception']['kind']),
                 timing_ms=timing, counts=dict(counts), captured=captured, processed=len(processed),
                 processed_fraction=len(processed)/max(1, captured),
                 processed_fps=(len(processed)-1)/elapsed if elapsed else 0.,
@@ -484,6 +490,7 @@ def provenance(config):
     if selection is not None:
         files += [Path(selection.selection_path), Path(selection.verifier_path)]
         files += [Path(path) for path, _ in selection.source_hashes]
+        files += [Path(path) for path, _ in selection.verifier_import_hashes]
     native = list((ROOT/'engine-rs').glob('clasher_core*.so'))
     files += native
     versions = {}

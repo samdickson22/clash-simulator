@@ -4,8 +4,10 @@
 on 127x05; all native replay, Torch inference, process tests and timing ran on
 127x08 CPU at nice 19 with CUDA disabled. At most eight Python processes from
 this work were active, including spawned pipeline workers/resource tracker.
-No Mac access, renderer commands, gate-host 02/03 work, commits, frozen
-registration edits, sealed-source edits or native binary replacement occurred.
+The initial implementation made no Mac access, renderer commands, gate-host
+02/03 work, commits, frozen-registration edits, sealed-source edits or native
+binary replacement. The later owner-review round below separately authorizes
+an isolated scoped commit and push after the required secret scan.
 Pre-existing working-tree changes in decision/contracts/timing/l1_v4 were
 preserved. The coordinator was notified immediately after the source/log
 diagnosis, after Linux causality, and after the additional empty-HUD finding.
@@ -337,6 +339,78 @@ will be relayed by the coordinator. Decoder formal admission, corrected timing
 qualification and separate live-device/MPS parity remain open. No validation
 capture timing is used here. No further implementation changes are planned
 until the final seal format lands; the prepared Mac command remains unrun.
+
+## Owner-review hardening: 2026-10-09 ~02:20Z
+
+The next authorized round implements all five requirements from the read-only
+[owner review](l1/reviews/LIVE-SELECTION-HANDOFF-OWNER-REVIEW-20261009.md), exact SHA
+`d402274b770d9faa7d31945dc27bc3c9c443b529deafb03114c45824d785ec77`.
+Its receipt and all seven original source pins matched before edits. The review
+is compatible with the handoff; no finding is disputed. `selection_sha256` can
+bind the whole final joint proof graph without flattening T6 or rerunning it.
+
+1. `event_thresholds` must contain an explicit `default`. Every key must be a
+   selected card or `default`, and every value must be finite, non-bool, on the
+   frozen nine-value grid. Empty maps and off-grid overrides refuse before model
+   loading; EventFusion's implicit 0.5 fallback cannot establish selection.
+2. Spell routing is the exact ordered spell subset under the sealed public
+   game-data source, using the same fixed card-ID namespace as frozen replay.
+   The selected runtime/routing sources and metadata bytes are hash-bound.
+   `CalibrationBinding` requires a bound measured proof and the registered
+   minimum per-card support of 20. Selected knots retain their values and must
+   have supported numeric [0,1] pairs, strictly increasing x and nondecreasing y,
+   with known card/default keys. Missing or empty pooled calibration refuses
+   unless the trusted verifier explicitly authenticates the measured raw-fallback
+   policy. This does not prohibit scientifically justified empty calibration and
+   does not refit, normalize or invent any calibration.
+3. `decoder_admitted=True` requires a `DecoderBinding`: exact implementation ID,
+   the eight-source closure and its canonical hash, bound equality and corrected
+   timing proof references, and explicit device/platform/backend/Torch-version
+   scopes. The actual closure and launch scope are checked before model startup
+   and after isolated adapter installation. CPU/CUDA scope does not cover MPS.
+4. `VerifierTrustPolicy` is supplied by independent deployment/launcher code,
+   outside selection/config/calibration. Its expected entrypoint, every declared
+   project import hash and package/namespace resolution are checked before
+   importing the verifier and before invoking it, then rechecked afterwards.
+   Executable package initializers are hashed; namespace packages have explicit
+   non-executable directory pins. The CLI entrypoint must match this policy.
+   The production policy and callback remain unset: arbitrary seal declarations
+   cannot nominate their own trust roots. The owner must supply the reviewed
+   complete closure and real evidence authenticator; the obsolete
+   `joint_selection_evidence_v4.py` is not wired or executed.
+5. Direct decoder diagnostics carry the explicit
+   `unadmitted-decoder-diagnostic-qualification` label and source/scope provenance
+   with `decoder_admitted=False`. P1 logs this qualification, and runtime summary
+   labels preserve it. The existing top-level mock-actuator restriction remains;
+   this is a labeling correction, not an allegation or repair of a live-tap bypass.
+
+The checkout was pulled and already current with origin, including tower-channel
+commit `138a3b57`. Its adapter and tests are preserved, as are concurrent round-2
+tower changes. This round edits neither `tower_channel.py` nor `tower_model.py`,
+nor the perception owner's files or held Amendment12 package. CPU tests run only
+on isolated 127x01 staging under nice 19 with CUDA disabled and one Torch/Rayon
+thread. No formal selection/startup, real decoder admission, Mac, heldout or
+validation-capture timing work occurs in this round.
+
+The first focused run exposed missing namespace-package handling in the new
+external trust policy; it is fixed by explicit namespace-origin checks. The
+first full-suite attempt had only two staging import errors (missing L2 packet
+builder and round-2 synthetic tower-truth helper). Both failed attempts are
+retained; no production or registration change was made to bypass a test.
+The next full attempt had one failure in the tower worker's in-progress round-2
+OCR test snapshot. That worker subsequently committed `52a9e102`, including an
+updated test and tower model; staging was refreshed to those committed files,
+without editing either tower source locally, before the final run.
+
+Final validation: **85/85 tests pass** (`live-selection-review-full-20261009-01r3`,
+65.791 seconds), including both tower-channel suites, native S6 parity/deadlines,
+process/fault handling and all new selection-review rejections. The preceding
+focused rerun passed 33 tests. Logs and exit receipts for every attempt are
+retained under `perf-fixes/`; `live-selection-review-environment-20261009-r1.json`
+records the exact staged live/test hashes, native binary, interpreter, Torch,
+CPU/device scope and priority. This is synthetic/recorded-train CPU regression
+evidence, not owner selection authentication or formal decoder admission.
+The deployment verifier policy and real callback remain absent and fail closed.
 
 ## What L2-v4 must pin before freezing
 

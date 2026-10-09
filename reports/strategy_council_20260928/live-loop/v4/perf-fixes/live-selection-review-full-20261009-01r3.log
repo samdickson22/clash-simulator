@@ -1,0 +1,120 @@
+2026-10-09T02:36:06Z
+command: env CLASHER_ROOT=/mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1 PYTHONPATH=/mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1/src:/mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1/engine-rs:/mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1/tests/live_v4 CUDA_VISIBLE_DEVICES= RAYON_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 19 /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m unittest discover -s /mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1/tests/live_v4 -v
+test_decoder_provenance_pins_executable_abi_and_existing_adapter_sources (test_perf_fixes.AdapterTests.test_decoder_provenance_pins_executable_abi_and_existing_adapter_sources) ... ok
+test_live_constructor_refuses_missing_selected_threshold_in_both_modes (test_perf_fixes.AdapterTests.test_live_constructor_refuses_missing_selected_threshold_in_both_modes) ... ok
+test_threshold_rejects_missing_bool_nonfinite_and_outside_registered_grid (test_perf_fixes.AdapterTests.test_threshold_rejects_missing_bool_nonfinite_and_outside_registered_grid) ... ok
+test_vectorized_adapter_is_isolated_and_nonclock_records_equal (test_perf_fixes.AdapterTests.test_vectorized_adapter_is_isolated_and_nonclock_records_equal) ... ok
+test_blocking_process_loop_and_fault_shutdown (test_perf_fixes.BlockingTests.test_blocking_process_loop_and_fault_shutdown) ... DECODER_PROVENANCE {"hashes": {"/mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1/src/clasher/vision/l1_v4.py": "cad13d4f958757dbb9f38732f19d73423149b9dffcc34e3c41bb7376f87e9fef", "/mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1/reports/strategy_council_20260928/live-loop/v4/l1/decoder_records_v4.py": "1912bf1228d1805768cc51b7555459e7ceb9f4e478938705db352eb4686e30d9", "/mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1/reports/strategy_council_20260928/live-loop/v4/l1/vectorized_decoder_v4.py": "4df61ab0d599774261087bb9c233edbb7fa0a64e27425c69970a0a9149c4ebef", "/mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1/reports/strategy_council_20260928/live-loop/v4/l1/vectorized_runtime_adapter_v4.py": "824531888487961211f0261786c9b4bc8339a5587bebe78b849bd082b250d220"}, "reference_untouched": true}
+ok
+test_queue_get_wakes_on_data_and_drains_latest (test_perf_fixes.BlockingTests.test_queue_get_wakes_on_data_and_drains_latest) ... ok
+test_ring_notification_does_not_lose_preexisting_write (test_perf_fixes.BlockingTests.test_ring_notification_does_not_lose_preexisting_write) ... ok
+test_absence_is_unknown_and_raw_predictions_are_preserved (test_perf_fixes.TowerTests.test_absence_is_unknown_and_raw_predictions_are_preserved) ... ok
+test_duplicate_identity_alias_and_public_zero_hp_persist (test_perf_fixes.TowerTests.test_duplicate_identity_alias_and_public_zero_hp_persist) ... ok
+test_empty_hud_sentinel_is_a_missing_slot_and_unknown_cards_fail_closed (test_perf_fixes.TowerTests.test_empty_hud_sentinel_is_a_missing_slot_and_unknown_cards_fail_closed) ... ok
+test_valid_six_towers_keep_positions_hp_and_owner (test_perf_fixes.TowerTests.test_valid_six_towers_keep_positions_hp_and_owner) ... ok
+test_ambiguous_transport_keeps_reservation (test_runtime.ActuationTests.test_ambiguous_transport_keeps_reservation) ... ok
+test_expired_and_revision_rejected (test_runtime.ActuationTests.test_expired_and_revision_rejected) ... ok
+test_no_stale_retap_after_stall_or_duplicate (test_runtime.ActuationTests.test_no_stale_retap_after_stall_or_duplicate) ... ok
+test_remap_and_delayed_acceptance (test_runtime.ActuationTests.test_remap_and_delayed_acceptance) ... ok
+test_frozen_tracker_import_has_no_bootstrap_side_effects (test_runtime.BeliefTests.test_frozen_tracker_import_has_no_bootstrap_side_effects) ... ok
+test_ledger_spends_once_and_ignores_old_feedback (test_runtime.BeliefTests.test_ledger_spends_once_and_ignores_old_feedback) ... ok
+test_backpressure_preserves_irregular_time (test_runtime.CaptureTests.test_backpressure_preserves_irregular_time) ... ok
+test_heldout_rejected_before_media_open (test_runtime.CaptureTests.test_heldout_rejected_before_media_open) ... ok
+test_ring_overflow_and_copy (test_runtime.CaptureTests.test_ring_overflow_and_copy) ... ok
+test_backend_delay_and_verifier_share_selected_profile (test_runtime.DecisionTests.test_backend_delay_and_verifier_share_selected_profile) ... ok
+test_cadence_and_rate_limited_event_and_verification (test_runtime.DecisionTests.test_cadence_and_rate_limited_event_and_verification) ... ok
+test_pending_p4_reservation_blocks_s6_without_second_spend (test_runtime.DecisionTests.test_pending_p4_reservation_blocks_s6_without_second_spend) ... ok
+test_s6_deadline_discards_incomplete_candidate_and_restores_native (test_runtime.DecisionTests.test_s6_deadline_discards_incomplete_candidate_and_restores_native) ... ok
+test_belief_denied_reads_and_backdated_event (test_runtime.FairBoundaryTests.test_belief_denied_reads_and_backdated_event) ... ok
+test_replay_projects_only_public_fields (test_runtime.FairBoundaryTests.test_replay_projects_only_public_fields) ... ok
+test_sanitizer_ignores_opponent_hud (test_runtime.FairBoundaryTests.test_sanitizer_ignores_opponent_hud) ... ok
+test_rpc_sampling_timestamp_anchor_and_close_without_network (test_runtime.GrpcCaptureTests.test_rpc_sampling_timestamp_anchor_and_close_without_network) ... ok
+test_downscaled_allowlist_matches_original_sanitizer (test_runtime.PerceptionTests.test_downscaled_allowlist_matches_original_sanitizer) ... ok
+test_v3_fallback_retains_tracker_across_long_gap (test_runtime.PerceptionTests.test_v3_fallback_retains_tracker_across_long_gap) ... ok
+test_v4_adapter_canonical_unknowns_and_completion_timestamp (test_runtime.PerceptionTests.test_v4_adapter_canonical_unknowns_and_completion_timestamp) ... ok
+test_belief_stall_does_not_stall_perception (test_runtime.SupervisorTests.test_belief_stall_does_not_stall_perception) ... ok
+test_empty_latency_is_not_pass (test_runtime.SupervisorTests.test_empty_latency_is_not_pass) ... ok
+test_pipeline_and_stage_stall (test_runtime.SupervisorTests.test_pipeline_and_stage_stall) ... ok
+test_search_stall_discards_expired_command (test_runtime.SupervisorTests.test_search_stall_discards_expired_command) ... ok
+test_constructor_uses_total_delay_for_all_four_roots (test_s6_parity.S6RecordedParity.test_constructor_uses_total_delay_for_all_four_roots) ... ok
+test_deadline_selects_only_complete_s6_candidates (test_s6_parity.S6RecordedParity.test_deadline_selects_only_complete_s6_candidates) ... S6_DEADLINE {"ms": 196.35679107159376, "completed": 2, "candidates": 20, "deadline_overrun": false}
+ok
+test_nonterminal_variant_matches_s6_and_changes_delay_scores (test_s6_parity.S6RecordedParity.test_nonterminal_variant_matches_s6_and_changes_delay_scores) ... S6_NONTERMINAL_PARITY {"action": 2304, "candidates": 20, "score_range": [0.0008394883983686572, 0.019590291592421743], "search_ms": 914.6669630426913}
+ok
+test_runtime_equals_s6_on_recorded_inputs (test_s6_parity.S6RecordedParity.test_runtime_equals_s6_on_recorded_inputs) ... S6_RECORDED_PARITY [{"sequence": 0, "action": 1550, "candidates": 21, "command_delay_ticks": 27, "search_ms": 134.84308402985334}, {"sequence": 50, "action": 1453, "candidates": 21, "command_delay_ticks": 27, "search_ms": 151.58681897446513}, {"sequence": 186, "action": 283, "candidates": 21, "command_delay_ticks": 27, "search_ms": 127.10520415566862}]
+ok
+test_zero_delay_equals_original_on_recorded_input (test_s6_parity.S6RecordedParity.test_zero_delay_equals_original_on_recorded_input) ... ok
+test_checkpoint_hash_checked_before_torch_deserialization (test_selection.SelectionTests.test_checkpoint_hash_checked_before_torch_deserialization) ... ok
+test_checkpoint_vocabulary_and_source_bindings_and_spawn_roundtrip (test_selection.SelectionTests.test_checkpoint_vocabulary_and_source_bindings_and_spawn_roundtrip) ... ok
+test_json_calibration_and_config_cannot_supply_authority (test_selection.SelectionTests.test_json_calibration_and_config_cannot_supply_authority) ... ok
+test_runtime_refuses_real_taps_for_unadmitted_diagnostic (test_selection.SelectionTests.test_runtime_refuses_real_taps_for_unadmitted_diagnostic) ... ok
+test_selection_content_change_is_rejected (test_selection.SelectionTests.test_selection_content_change_is_rejected) ... ok
+test_separate_verifier_required_and_t7_only_claims_refused (test_selection.SelectionTests.test_separate_verifier_required_and_t7_only_claims_refused) ... ok
+test_unadmitted_vectorized_formal_path_refuses_before_model_load (test_selection.SelectionTests.test_unadmitted_vectorized_formal_path_refuses_before_model_load) ... ok
+test_bare_boolean_and_wrong_source_identity_or_proof_refuse (test_selection_review.DecoderBindingTests.test_bare_boolean_and_wrong_source_identity_or_proof_refuse) ... ok
+test_diagnostic_label_and_closure_do_not_claim_admission (test_selection_review.DecoderBindingTests.test_diagnostic_label_and_closure_do_not_claim_admission) ... ok
+test_direct_pixel_wrapper_keeps_diagnostic_label (test_selection_review.DecoderBindingTests.test_direct_pixel_wrapper_keeps_diagnostic_label) ... ok
+test_scope_covers_only_exact_device_platform_backend_and_torch (test_selection_review.DecoderBindingTests.test_scope_covers_only_exact_device_platform_backend_and_torch) ... ok
+test_changed_import_closure_is_checked_before_verifier_module_executes (test_selection_review.ExternalTrustTests.test_changed_import_closure_is_checked_before_verifier_module_executes) ... ok
+test_loaded_namespace_redirection_is_rejected (test_selection_review.ExternalTrustTests.test_loaded_namespace_redirection_is_rejected) ... ok
+test_policy_rejects_different_entrypoint_before_import (test_selection_review.ExternalTrustTests.test_policy_rejects_different_entrypoint_before_import) ... ok
+test_unset_policy_and_changed_external_pin_refuse_before_callback (test_selection_review.ExternalTrustTests.test_unset_policy_and_changed_external_pin_refuse_before_callback) ... ok
+test_calibration_refuses_malformed_or_unjustified_raw_operation (test_selection_review.ReviewValidationTests.test_calibration_refuses_malformed_or_unjustified_raw_operation) ... ok
+test_empty_calibration_requires_explicit_bound_measured_fallback (test_selection_review.ReviewValidationTests.test_empty_calibration_requires_explicit_bound_measured_fallback) ... ok
+test_event_thresholds_refuse_default_key_and_grid_failures (test_selection_review.ReviewValidationTests.test_event_thresholds_refuse_default_key_and_grid_failures) ... ok
+test_selected_event_map_and_calibration_preserved_exactly (test_selection_review.ReviewValidationTests.test_selected_event_map_and_calibration_preserved_exactly) ... ok
+test_spell_subset_metadata_and_order_refuse_mismatch (test_selection_review.ReviewValidationTests.test_spell_subset_metadata_and_order_refuse_mismatch) ... ok
+test_default_total_delay_matches_measured_components (test_timing.TimingTests.test_default_total_delay_matches_measured_components) ... ok
+test_total_planner_delay_is_separate_from_backend_acceptance (test_timing.TimingTests.test_total_planner_delay_is_separate_from_backend_acceptance) ... ok
+test_adapter_preserves_raw_body_tracks_and_public_metadata (test_tower_channel.TowerChannelTests.test_adapter_preserves_raw_body_tracks_and_public_metadata) ... ok
+test_fixed_slot_identity_and_missing_observations (test_tower_channel.TowerChannelTests.test_fixed_slot_identity_and_missing_observations) ... ok
+test_input_rejects_uncalibrated_pixels_and_invalid_evidence (test_tower_channel.TowerChannelTests.test_input_rejects_uncalibrated_pixels_and_invalid_evidence) ... ok
+test_model_latches_only_public_destruction_and_ignores_conflicting_body_hp (test_tower_channel.TowerChannelTests.test_model_latches_only_public_destruction_and_ignores_conflicting_body_hp) ... ok
+test_packet_adapter_activates_from_channel_and_preserves_legacy_producers (test_tower_channel.TowerChannelTests.test_packet_adapter_activates_from_channel_and_preserves_legacy_producers) ... ok
+test_positive_rubble_requires_distinct_consecutive_frames_and_resets (test_tower_channel.TowerChannelTests.test_positive_rubble_requires_distinct_consecutive_frames_and_resets) ... ok
+test_serialized_channel_roundtrip_keeps_observation_fields (test_tower_channel.TowerChannelTests.test_serialized_channel_roundtrip_keeps_observation_fields) ... ok
+test_transport_rejects_unproven_death_future_time_and_duplicate_slots (test_tower_channel.TowerChannelTests.test_transport_rejects_unproven_death_future_time_and_duplicate_slots) ... ok
+test_activation_is_typed_visual_latched_public_state (test_tower_channel_r2.Round2PublicTests.test_activation_is_typed_visual_latched_public_state) ... ok
+test_king_death_comes_from_three_crown_public_result (test_tower_channel_r2.Round2PublicTests.test_king_death_comes_from_three_crown_public_result) ... ok
+test_new_fields_survive_serialized_transport (test_tower_channel_r2.Round2PublicTests.test_new_fields_survive_serialized_transport) ... ok
+test_new_number_families_have_separate_glyph_geometry_and_abstention_gate (test_tower_channel_r2.Round2PublicTests.test_new_number_families_have_separate_glyph_geometry_and_abstention_gate) ... ok
+test_planner_returns_wait_before_searching_a_public_terminal_packet (test_tower_channel_r2.Round2PublicTests.test_planner_returns_wait_before_searching_a_public_terminal_packet) ... ok
+test_result_bypasses_pixel_reads_and_sets_packet_terminal_even_two_crowns (test_tower_channel_r2.Round2PublicTests.test_result_bypasses_pixel_reads_and_sets_packet_terminal_even_two_crowns) ... ok
+test_capture_start_absence_terminal_teardown_and_unfenced_rows_masked (test_tower_channel_r2.Round2TruthTests.test_capture_start_absence_terminal_teardown_and_unfenced_rows_masked) ... ok
+test_duplicate_ticks_are_coalesced_only_when_towers_agree (test_tower_channel_r2.Round2TruthTests.test_duplicate_ticks_are_coalesced_only_when_towers_agree) ... ok
+test_permanent_disappearance_has_positive_witness_and_interval (test_tower_channel_r2.Round2TruthTests.test_permanent_disappearance_has_positive_witness_and_interval) ... ok
+test_transient_disappearance_and_missing_king_do_not_establish_death (test_tower_channel_r2.Round2TruthTests.test_transient_disappearance_and_missing_king_do_not_establish_death) ... ok
+test_event_overflow_fails_closed (test_tracker_fast.ExactAccelerationTests.test_event_overflow_fails_closed) ... ok
+test_jump_matches_tick_loop_at_rate_and_refill_boundaries (test_tracker_fast.ExactAccelerationTests.test_jump_matches_tick_loop_at_rate_and_refill_boundaries) ... ok
+test_latest_frame_retains_unacknowledged_events_without_pixels (test_tracker_fast.ExactAccelerationTests.test_latest_frame_retains_unacknowledged_events_without_pixels) ... ok
+test_mutated_pending_cue_invalidates_cycle_cache (test_tracker_fast.ExactAccelerationTests.test_mutated_pending_cue_invalidates_cycle_cache) ... ok
+test_shift_accumulation_matches_full_lattice_bits (test_tracker_fast.ExactAccelerationTests.test_shift_accumulation_matches_full_lattice_bits) ... ok
+
+----------------------------------------------------------------------
+Ran 85 tests in 65.791s
+
+OK
+	Command being timed: "env CLASHER_ROOT=/mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1 PYTHONPATH=/mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1/src:/mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1/engine-rs:/mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1/tests/live_v4 CUDA_VISIBLE_DEVICES= RAYON_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 19 /mpac/sdicks02/envs/clasher-gpu/bin/python -B -m unittest discover -s /mpac/sdicks02/jobs/clasher/live-selection-review-20261009-r1/tests/live_v4 -v"
+	User time (seconds): 54.35
+	System time (seconds): 8.93
+	Percent of CPU this job got: 94%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:07.14
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 877040
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 176914
+	Minor (reclaiming a frame) page faults: 1342012
+	Voluntary context switches: 48465
+	Involuntary context switches: 7396
+	Swaps: 0
+	File system inputs: 546432
+	File system outputs: 2232
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+2026-10-09T02:37:14Z

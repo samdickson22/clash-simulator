@@ -10,9 +10,8 @@ class V4Perception:
     def __init__(self, config):
         from .selection import require_selection
         selection = require_selection(config)
-        if (config.get('vectorized_decoder', False) and not selection.decoder_admitted
-                and not config.get('decoder_diagnostic', False)):
-            raise ValueError('DecoderAdapter is unadmitted; explicit mock-only diagnostic required')
+        from .decoder_binding import qualify
+        self.decoder_provenance = qualify(selection, config)
         import hashlib
         import io
         import json
@@ -24,13 +23,16 @@ class V4Perception:
         state = torch.load(io.BytesIO(checkpoint_bytes), map_location='cpu', weights_only=True)
         selection.bind_checkpoint(checkpoint_bytes, state)
         from .perception_adapter import vectorized_runtime
-        self.qualification = 'authenticated-final-joint'
+        self.qualification = self.decoder_provenance['scope']
         self.selection = selection
         model = PerceptionV4(len(state['cards']), len(state['bodies']))
         model.load_state_dict(state['model'])
         self.decoder_adapter = None
         if config.get('vectorized_decoder', False):
             runtime, self.decoder_adapter = vectorized_runtime()
+            # Recheck the closure after loading/installing the isolated copy.
+            if qualify(selection, config) != self.decoder_provenance:
+                raise ValueError('Decoder implementation changed during startup')
             PixelPerception = runtime.PixelPerception
         self.sensor = PixelPerception(model, state['cards'], state['bodies'], list(selection.spells),
                                       json.loads(selection.event_thresholds_json), json.loads(selection.calibration_json),

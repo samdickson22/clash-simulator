@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from clasher.live.selection import (AuthenticatedSelection, SelectionClaims, authenticate_selection,
                                     load_authenticated_selection, require_selection, sha256)
-from selection_fixtures import selection_fixture
+from selection_fixtures import selection_fixture, trust_policy_for
 
 
 class SelectionTests(unittest.TestCase):
@@ -31,11 +31,13 @@ class SelectionTests(unittest.TestCase):
             def t7_verifier(source):
                 return claims
             with self.assertRaisesRegex(ValueError, 'T7-only'):
-                authenticate_selection(selection.selection_path, t7_verifier)
+                authenticate_selection(selection.selection_path, t7_verifier,
+                                       trust_policy=trust_policy_for(t7_verifier))
             def json_verifier(source):
                 return {'authenticated': True, 'final_joint': True, 'body_threshold': .7}
             with self.assertRaises(ValueError):
-                authenticate_selection(selection.selection_path, json_verifier)
+                authenticate_selection(selection.selection_path, json_verifier,
+                                       trust_policy=trust_policy_for(json_verifier))
 
     def test_checkpoint_vocabulary_and_source_bindings_and_spawn_roundtrip(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -52,7 +54,8 @@ class SelectionTests(unittest.TestCase):
             receipt = json.loads(json.dumps(received.provenance()))
             with self.assertRaises(ValueError):
                 require_selection({'authenticated_selection': receipt})
-            Path(received.source_hashes[0][0]).write_text('changed')
+            # Only mutate the fixture evidence, never a bound production file.
+            Path(directory, 'synthetic-source.json').write_text('changed')
             with self.assertRaisesRegex(ValueError, 'source hash changed'):
                 require_selection({'authenticated_selection': received})
 

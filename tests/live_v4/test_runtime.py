@@ -352,7 +352,8 @@ class PerceptionTests(unittest.TestCase):
                 sensor = V4Perception(dict(checkpoint=str(checkpoint), authenticated_selection=selection,
                                           calibration=str(calibration), body_threshold=.4, device='cpu'))
                 self.assertEqual(abi.call_args.kwargs['body_threshold'], .7)
-                self.assertEqual(abi.call_args.args[3:6], (['Zap'], {'default': .1}, {}))
+                self.assertEqual(abi.call_args.args[3:6], (['Fireball', 'Zap'], {'default': .1},
+                                                         {'default': [[0., 0.], [1., 1.]]}))
                 now = time.monotonic()
                 observed = sensor.step(Frame('v4', 1, now-.02, now-.01, 134.7,
                                              np.zeros((1140, 540, 3), np.uint8)))
