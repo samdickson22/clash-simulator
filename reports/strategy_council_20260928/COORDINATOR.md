@@ -1265,3 +1265,11 @@ Also on the hub, but with copies elsewhere:
   - 08 is running 8 lanes at 99%. 09 recovered (8 lanes, 27.9 GB PSS).
   - A15 r2 is at 123 tests passing, with the mutation rerun in progress.
 - **05:35 UTC: A15 r2 package ready** (`c66fd6f4…`; draft `2d32c0b4…`). 186 tests pass, 31/31 non-equivalent mutants killed, and the final-pinned e1/e2/e3 layout proofs pass. It includes relocation to 03 and memoized per-epoch admission: one-match cost drops from 4.7 s to 0.4 s. Sent to delta review: `clasher-v4-amendment15-r2-delta-review-20261009-1` (Opus, high).
+- **05:54 UTC: AMENDMENT 15 r2 FROZEN** (`l1/amendments/15-FREEZE-RECORD-20261009.json`). Draft `2d32c0b4…`, package `c66fd6f4…`, delta review `d35ee0ea…`. Approved with no required changes. A12 bytes are unchanged.
+  - Disclosed: memoized reuse doesn't recheck the remote `.pt` copies or the equality artifact. Neither feeds a score or bound.
+  - **A1 checklist (16 steps):**
+    - install the r2 bytes;
+    - mechanically check every epoch-key mapping;
+    - pinned copy receipts for R13-3 references;
+    - keep leased metadata reachable through A2;
+    - **A1/A2 run on 04 or 03 only**, after an admission-only dry run.
