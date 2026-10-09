@@ -1468,3 +1468,8 @@ Also on the hub, but with copies elsewhere:
     - R17-4: adopt the reviewer's 7 tests (preserved: `a17-reviewer-artifacts/test_reviewer_a17.py` `985ad06b…`).
   - **Broader:** all A1-read evidence on leased hosts is relocated to owned 03 before A1.
   - R16-1 selection is materialized (`a0f70344…`): e17/1208 → 09, e8/1308 → 13, e16/878 → 14, e9/1218 → 15.
+- **10:25 UTC: CPU split E1 vs ExIt r1.** E1 has priority.
+  - 03: E1 ≤64, ExIt ≤48 (ExIt ≤96 after E1 finishes).
+  - 04 (after the GRU park): E1 ≤32, ExIt ≤96.
+  - 08: ExIt ≤96 at nice 19 with a stop file.
+  - 01: E1 ≤24 SCHED_IDLE.
