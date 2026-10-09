@@ -1069,3 +1069,8 @@ Also on the hub, but with copies elsewhere:
 - **02:25 UTC: NFS home hit its 5 GB quota.** The cause was the perf buildid cache `~/.debug` (1.7 GB) left by speed-audit profiling.
   - Moved it to `/mpac/sdicks02/cache/perf-debug-home-20261009` on 05, and `~/.perfconfig` now sends the buildid dir to /mpac.
   - fleetweb now honours quiet windows from `~/.config/fleet-top/quiet`: no ssh to a quiet host, and host detail returns 409. Tested. This is for the single-tenant 08 measurements.
+- **02:29 UTC: R-A4 ordering clarification for Amendment 12.** My earlier instruction to benchmark before approval A was wrong: the frozen text forbids any bound before the seal.
+  - **A1:** guards, tests, mutation rerun, immutable snapshot and all 24 capture SHAs are checked. Then I issue `coordinator-approval-A1.json`, then the real body seal.
+  - **A2:** after the seal verifies, the real verify_body + recompute_bounds run is timed. That timed run is the bound computation; there's no separate probe.
+  - **B:** bound SHA, per-step cost and the 11 preconditions come to me, then `coordinator-approval-B.json`, then the first 08 deciding run.
+  - Currently blocked at 3/24 captures. A capture-completion projection has been requested.
