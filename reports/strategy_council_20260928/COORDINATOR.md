@@ -1452,3 +1452,10 @@ Also on the hub, but with copies elsewhere:
   6. **Mac E4 combined package** prepared for when Sam authorizes.
   - No DDP. The reserve fix is gated on E1b.
   - Perception A1 → A2 → B on 08 keeps priority.
+- **10:24 UTC: plan execution.**
+  - GRU park ordered (T5).
+  - T11 told to finish both seeds, then run the registered v2 gate (a).
+  - Delegated (Sol high):
+    - **E1** (`clasher-e1-w-deadline-humanproxy-20261009-1`): deadline harness plus v1 human-proxy arms on 03/04/01-idle;
+    - **ExIt r1** (`clasher-exit-r1-teacher-student-20261009-1`): teacher-label emitter, student trainer adapter, latency probe, then generation on 03/04 and 08 with a stop file;
+    - **Mac E4 package** (`clasher-mac-e4-package-20261009-1`): prepare only, no Mac access.
