@@ -34,6 +34,11 @@ def planner_class(base):
             if variant in ('wait1', 'wait2'):
                 count = int(variant[-1])
                 pairs = [(s, a) for s, a in pairs if a not in TIMED_WAITS or s in STYLES[:count]]
+            if variant in ('plays1','plays2','all1','all2','plays2wait1'):
+                pairs = [(s,a) for s,a in pairs if s in STYLES[:(
+                    1 if variant == 'all1' or (a < WAIT and variant == 'plays1') or
+                         (a in TIMED_WAITS and variant == 'plays2wait1') else
+                    2 if variant == 'all2' or (a < WAIT and variant in ('plays2','plays2wait1')) else 3)]]
             # The original WAIT and 10-tick WAIT have identical continuations.
             # Reuse their exact score without changing original score addition order.
             dedup = variant in ('dedup', 'threads4')
@@ -41,8 +46,9 @@ def planner_class(base):
                 pairs = [(s, a) for s, a in pairs if a != 2400]
             def evaluate(pair):
                 style, action = pair
+                horizon = int(variant[7:]) if variant.startswith('horizon') else self.config.horizon
                 value, events, sim = self.simulate_commands(root, seat, action, style,
-                                                           self.config.horizon, trace=trace)
+                                                           horizon, trace=trace)
                 return style, action, value, events
             if variant == 'threads4':
                 with ThreadPoolExecutor(max_workers=4) as pool:

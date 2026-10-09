@@ -50,3 +50,14 @@ engine digest, for all 156 checks. This closes the digest's limited-field covera
 concern. The source snapshot matches every supplied quickwins build48 Rust source
 hash before the private WAIT extension. Updated qualification and exact public
 root/candidate replay receipts are committed separately from raw states.
+
+03:37Z: 843/1,900 games complete. Original latency comparison (125 states × 16
+variants × 3 repeats) finished. Exact native-full and WAIT reuse preserve every
+action and complete score vector. One-core original full W p95 is 358.7 ms,
+dedup 345.8 ms, native-dedup 336.7 ms. Four-core native-threads4 p95 is 124.2 ms;
+it exceeds the requested one-core budget. WAIT-only approximations do not reach
+200 ms. Added the latency-only tail trade-offs documented in AMENDMENTS: smaller
+style counts for plays/all candidates and shorter horizons. Reporting outcomes
+remain uninspected and its loaded full-work policy is unchanged. Symmetric-model
+latency replay is nearing completion; the extension starts only after it exits,
+avoiding overlap on the timing core.
