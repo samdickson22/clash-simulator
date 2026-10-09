@@ -96,3 +96,14 @@ supervisor**568625**, preserving all original artifacts. Observed resumed step19
 controller r3 reads active-label pointers and cumulative guard history to retain
 all original/continuation costs.288/384fits were never stopped. Ten-minute
 continuation remains enabled; final matched-wide NLL comparison still pending.
+
+2026-10-09 20:32Z: All three wide fits and the sole controller are healthy.
+Width288:4.56Mrows/5,547rows/s;384:3.39M/4,086;480:3.01M/4,301. Each has six
+processes; sampled PSS is31–36GB and peak PSS≤40.3GB. AllGPUheadroom checksPASS.
+Width480's hard allocator ceiling is holding: peak reserved37,756MiB, below its
+38,338MiB ceiling, with no OOM. Its resumed trajectory continues past step367.
+No additional stops/restarts or scientific changes. No wide dev/kill decisions
+are due before95,144,680rows. Control NLL0.27726436294161033 remains sealed.
+Conservative cumulative pipeline cost2.625hours includes staging and both480
+segments; actual final per-arm GPU wall costs remain pending completion.
+Compact evidence: `monitor-20261009T2032Z.json`. Monitoring continues.

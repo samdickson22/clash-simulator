@@ -1,0 +1,73 @@
+{
+  "at": "2026-10-09T20:33:39.972104+00:00",
+  "conservative_pipeline_gpu_hours": 2.7013691230555557,
+  "stopping": false,
+  "arms": {
+    "127x13": {
+      "width": 288,
+      "step": 631,
+      "rows": 5169152,
+      "loader_rows_per_second": 5648.238838828612,
+      "gpu_peak_reserved_mib": 26858.0,
+      "borrower_processes": 6,
+      "pss_bytes": 32673054720,
+      "peak_pss_bytes": 40205005824,
+      "gpu_free_mib": 33952,
+      "error": null,
+      "quarter": null,
+      "killed": null
+    },
+    "127x14": {
+      "width": 384,
+      "step": 463,
+      "rows": 3792896,
+      "loader_rows_per_second": 4109.983611056869,
+      "gpu_peak_reserved_mib": 35466.0,
+      "borrower_processes": 6,
+      "pss_bytes": 28483264512,
+      "peak_pss_bytes": 38285631488,
+      "gpu_free_mib": 28844,
+      "error": null,
+      "quarter": null,
+      "killed": null
+    },
+    "127x15": {
+      "width": 480,
+      "step": 416,
+      "rows": 3407872,
+      "loader_rows_per_second": 4328.520807318927,
+      "gpu_peak_reserved_mib": 37756.0,
+      "borrower_processes": 6,
+      "pss_bytes": 25347227648,
+      "peak_pss_bytes": 34997439488,
+      "gpu_free_mib": 26791,
+      "error": null,
+      "quarter": null,
+      "killed": null
+    },
+    "127x16": {
+      "width": 192,
+      "step": 11615,
+      "rows": 95144680,
+      "loader_rows_per_second": 5480.5558310412425,
+      "gpu_peak_reserved_mib": 29130.0,
+      "borrower_processes": 7,
+      "pss_bytes": 11936418816,
+      "peak_pss_bytes": 37488739328,
+      "gpu_free_mib": 45094,
+      "error": null,
+      "quarter": {
+        "width": 192,
+        "rows": 95144680,
+        "step": 11615,
+        "scheduled_rows": 380571633,
+        "ema_joint_nll": 0.27726436294161033,
+        "dev_rows": 11776480,
+        "dev_seconds": 385.4897930249572,
+        "at": "2026-10-09T20:19:19.015093+00:00",
+        "config_sha256": "a6963c7efe6668271e72bd49df24ba65e7fa2e649a7f399033ccac9977a2ec85"
+      },
+      "killed": null
+    }
+  }
+}
