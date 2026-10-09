@@ -1,0 +1,333 @@
+{
+  "at": "2026-10-09T20:52:32.257653+00:00",
+  "conservative_gpu_hours": 3.5608312069444445,
+  "control_relayed": [
+    "127x13",
+    "127x14",
+    "127x15"
+  ],
+  "stopping": false,
+  "all_exited": false,
+  "arms": {
+    "127x13": {
+      "width": 288,
+      "health": {
+        "at": "2026-10-09T20:52:24.829481+00:00",
+        "owned_pids": {
+          "793922": "136464178",
+          "794004": "136464197",
+          "925238": "136640816",
+          "925239": "136640826",
+          "925244": "136640836",
+          "925245": "136640846"
+        },
+        "borrower_processes": 6,
+        "pss_bytes": 36867717120,
+        "gpu_free_mib": 33952,
+        "console_users": 0,
+        "peaks": {
+          "processes": 6,
+          "pss_bytes": 40205018112
+        }
+      },
+      "latest_step": {
+        "event": "step",
+        "epoch": 0,
+        "cursor": 12263424,
+        "step": 1497,
+        "best_dev": null,
+        "bad_epochs": 0,
+        "rows": 12263424,
+        "loss": 5.913006782531738,
+        "gate": 0.12664499878883362,
+        "card": 1.1562399864196777,
+        "tile": 3.6331191062927246,
+        "intent_card": 2.0744783878326416,
+        "hazard": 1.9135318994522095,
+        "grad_norm": 3.80698299407959,
+        "lr": 0.0002247,
+        "rows_per_second_step": 7618.16260353022,
+        "rows_per_second_including_loader": 5990.526153412765,
+        "gpu_peak_allocated_mib": 22506.90966796875,
+        "gpu_peak_reserved_mib": 26858.0
+      },
+      "active_launch": {
+        "label": "width288-v1",
+        "supervisor_pid": 793922,
+        "pid": 794004,
+        "started_at": "2026-10-09T19:49:07.245986+00:00"
+      },
+      "guard_history": [
+        {
+          "label": "width288-v1",
+          "started_at": "2026-10-09T19:49:07.245986+00:00",
+          "supervisor_pid": 793922,
+          "pid": 794004
+        }
+      ]
+    },
+    "127x14": {
+      "width": 384,
+      "health": {
+        "at": "2026-10-09T20:52:27.569779+00:00",
+        "owned_pids": {
+          "543994": "136484734",
+          "544056": "136484752",
+          "669431": "136660651",
+          "669432": "136660660",
+          "669433": "136660668",
+          "669434": "136660677"
+        },
+        "borrower_processes": 6,
+        "pss_bytes": 26715052032,
+        "gpu_free_mib": 29758,
+        "console_users": 0,
+        "peaks": {
+          "processes": 6,
+          "pss_bytes": 41471397888
+        }
+      },
+      "latest_step": {
+        "event": "step",
+        "epoch": 0,
+        "cursor": 8626176,
+        "step": 1053,
+        "best_dev": null,
+        "bad_epochs": 0,
+        "rows": 8626176,
+        "loss": 6.28981351852417,
+        "gate": 0.13696417212486267,
+        "card": 1.2253515720367432,
+        "tile": 3.917771100997925,
+        "intent_card": 2.076847553253174,
+        "hazard": 1.9620585441589355,
+        "grad_norm": 3.164874315261841,
+        "lr": 0.0001581,
+        "rows_per_second_step": 6126.91936574394,
+        "rows_per_second_including_loader": 4198.74456597623,
+        "gpu_peak_allocated_mib": 29529.05615234375,
+        "gpu_peak_reserved_mib": 35466.0
+      },
+      "active_launch": {
+        "label": "width384-v1",
+        "supervisor_pid": 543994,
+        "pid": 544056,
+        "started_at": "2026-10-09T19:49:07.232083+00:00"
+      },
+      "guard_history": [
+        {
+          "label": "width384-v1",
+          "started_at": "2026-10-09T19:49:07.232083+00:00",
+          "supervisor_pid": 543994,
+          "pid": 544056
+        }
+      ]
+    },
+    "127x15": {
+      "width": 480,
+      "health": {
+        "at": "2026-10-09T20:52:23.813300+00:00",
+        "owned_pids": {
+          "637497": "136815029",
+          "637517": "136815048",
+          "639921": "136818962",
+          "639922": "136818972",
+          "639923": "136818981",
+          "639941": "136818991"
+        },
+        "borrower_processes": 6,
+        "pss_bytes": 23328845824,
+        "gpu_free_mib": 34855,
+        "console_users": 0,
+        "peaks": {
+          "processes": 6,
+          "pss_bytes": 36192763904
+        }
+      },
+      "segments": [
+        {
+          "started_at": "2026-10-09T20:17:18.244820+00:00",
+          "ended_at": "2026-10-09T20:23:36.207372+00:00",
+          "wall_seconds": 377.9625566918403,
+          "status": "complete",
+          "rows": 1425408,
+          "step": 174
+        },
+        {
+          "started_at": "2026-10-09T20:25:34.344532+00:00",
+          "ended_at": "2026-10-09T20:39:15.882725+00:00",
+          "wall_seconds": 821.5381971190218,
+          "status": "failed",
+          "rows": 4898816,
+          "step": 598
+        }
+      ],
+      "latest_step": {
+        "event": "step",
+        "epoch": 0,
+        "cursor": 3506176,
+        "step": 428,
+        "best_dev": null,
+        "bad_epochs": 0,
+        "rows": 3506176,
+        "loss": 6.567539691925049,
+        "gate": 0.13212892413139343,
+        "card": 1.1560453176498413,
+        "tile": 4.25601863861084,
+        "intent_card": 2.0800461769104004,
+        "hazard": 2.013338327407837,
+        "grad_norm": 4.784263610839844,
+        "lr": 6.434999999999999e-05,
+        "rows_per_second_step": 4787.963448793792,
+        "rows_per_second_including_loader": 4597.369958664363,
+        "gpu_peak_allocated_mib": 18476.7890625,
+        "gpu_peak_reserved_mib": 23142.0
+      },
+      "active_launch": {
+        "label": "width480-v3",
+        "supervisor_pid": 637497,
+        "pid": 637517,
+        "started_at": "2026-10-09T20:44:27.364360+00:00"
+      },
+      "guard_history": [
+        {
+          "label": "width480-v1",
+          "started_at": "2026-10-09T19:49:07.250116+00:00",
+          "ended_at": "2026-10-09T20:23:39.018970+00:00",
+          "supervisor_pid": 434735,
+          "pid": 434818
+        },
+        {
+          "label": "width480-v2",
+          "started_at": "2026-10-09T20:25:30.095659+00:00",
+          "ended_at": "2026-10-09T20:39:24.571215+00:00",
+          "supervisor_pid": 568625,
+          "pid": 568704
+        },
+        {
+          "label": "width480-v3",
+          "started_at": "2026-10-09T20:44:27.364360+00:00",
+          "supervisor_pid": 637497,
+          "pid": 637517
+        }
+      ]
+    },
+    "127x16": {
+      "width": 192,
+      "health": {
+        "at": "2026-10-09T20:19:17.306730+00:00",
+        "owned_pids": {
+          "4049421": "136516434",
+          "4049445": "136516450",
+          "4080257": "136567995",
+          "4080273": "136568008",
+          "4080286": "136568020",
+          "4080291": "136568033",
+          "4133329": "136659226"
+        },
+        "borrower_processes": 7,
+        "pss_bytes": 11936418816,
+        "gpu_free_mib": 45094,
+        "console_users": 0,
+        "peaks": {
+          "processes": 7,
+          "pss_bytes": 37488739328
+        }
+      },
+      "exit": {
+        "label": "width192-v1",
+        "host": "127x16",
+        "started_at": "2026-10-09T19:49:05.836115+00:00",
+        "supervisor_pid": 4049421,
+        "command": [
+          "bash",
+          "-c",
+          "\nset -e\nw=/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1\np=/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python\n\"$p\" -B \"$w/ops/stage.py\" --work \"$w\" --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1 --reuse\nexec \"$p\" -B \"$w/ops/gpu_entry.py\" --config \"$w/ops/configs/width-192.json\" --freeze \"$w/ops/freeze.json\" --source \"$w/source\" --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1 --inputs \"$w/inputs\" --output \"$w/runs/width192\" --resume /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100821/step-00011000.pt\n"
+        ],
+        "pid": 4049445,
+        "exit_code": 0,
+        "status": "complete",
+        "stop_reason": null,
+        "ended_at": "2026-10-09T20:19:23.653520+00:00",
+        "wall_seconds": 1817.817409154959,
+        "peaks": {
+          "processes": 7,
+          "pss_bytes": 37488739328
+        }
+      },
+      "quarter": {
+        "width": 192,
+        "rows": 95144680,
+        "step": 11615,
+        "scheduled_rows": 380571633,
+        "ema_joint_nll": 0.27726436294161033,
+        "dev_rows": 11776480,
+        "dev_seconds": 385.4897930249572,
+        "at": "2026-10-09T20:19:19.015093+00:00",
+        "config_sha256": "a6963c7efe6668271e72bd49df24ba65e7fa2e649a7f399033ccac9977a2ec85"
+      },
+      "scan_exit": {
+        "status": "control_replay_complete",
+        "width": 192,
+        "rows": 95144680,
+        "step": 11615,
+        "scheduled_rows": 380571633,
+        "ema_joint_nll": 0.27726436294161033,
+        "dev_rows": 11776480,
+        "dev_seconds": 385.4897930249572,
+        "at": "2026-10-09T20:19:19.015093+00:00",
+        "config_sha256": "a6963c7efe6668271e72bd49df24ba65e7fa2e649a7f399033ccac9977a2ec85"
+      },
+      "segments": [
+        {
+          "started_at": "2026-10-09T19:56:53.911092+00:00",
+          "ended_at": "2026-10-09T20:19:21.231012+00:00",
+          "wall_seconds": 1347.3199203999247,
+          "status": "control_replay_complete",
+          "rows": 95144680,
+          "step": 11615
+        }
+      ],
+      "latest_step": {
+        "event": "step",
+        "epoch": 1,
+        "cursor": 31703040,
+        "step": 11615,
+        "best_dev": 0.28317389229603407,
+        "bad_epochs": 0,
+        "rows": 95144680,
+        "loss": 5.1193461418151855,
+        "gate": 0.13309310376644135,
+        "card": 0.9730739593505859,
+        "tile": 3.158698081970215,
+        "intent_card": 1.708373785018921,
+        "hazard": 1.709550380706787,
+        "grad_norm": 2.7329001426696777,
+        "lr": 0.0002667062627519605,
+        "rows_per_second_step": 10358.78212205427,
+        "rows_per_second_including_loader": 5480.5558310412425,
+        "gpu_peak_allocated_mib": 27066.46435546875,
+        "gpu_peak_reserved_mib": 29130.0
+      },
+      "active_launch": {
+        "label": "width192-v1",
+        "supervisor_pid": 4049421,
+        "pid": 4049445,
+        "started_at": "2026-10-09T19:49:05.836115+00:00"
+      },
+      "guard_history": [
+        {
+          "label": "width192-v1",
+          "started_at": "2026-10-09T19:49:05.836115+00:00",
+          "ended_at": "2026-10-09T20:19:23.653520+00:00",
+          "supervisor_pid": 4049421,
+          "pid": 4049445
+        }
+      ]
+    }
+  },
+  "receipt_generated_at": "2026-10-09T20:52:59.386504+00:00",
+  "scientific_freeze_commit": "841c44b0",
+  "microbatch_amendment_commit": "f8dd81a6",
+  "wide_quarter_results_pending": true
+}

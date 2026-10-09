@@ -127,3 +127,16 @@ The changed summation/dropout order is disclosed in the dated amendment.
 Controller r3 follows v3 and retains all guard segments. Existing ten-minute
 continuation updated with explicit infeasibility fallback; next20:52:19Z.
 No wide devNLL or scientific kill yet; control remains0.27726436294161033.
+
+2026-10-09 20:52Z: Sole controller and all three current fits remain healthy.
+Width288: step1497, 12,263,424rows, 5991loader-inclusive rows/s.
+Width384: step1053, 8,626,176rows, 4199loader-inclusive rows/s.
+Width480: step428, 3,506,176rows, 4597loader-inclusive rows/s.
+Width480-v3 has not yet reached the previous failing batch599; no new OOM,
+stop or restart. Every arm uses sixprocesses, currentPSS<38GB, peakPSS≤41.5GB
+and ≥8GiBfree. Frozen configs and authorized480micro1024 remain unchanged.
+All wide quarter NLLs/kill decisions still pending95,144,680rows; control sealed
+at0.27726436294161033. Conservative cumulative pipeline cost3.561GPU-hours,
+including staging and both previous480segments; actual total cost remains
+pending completed trainersegments. Evidence: `monitor-20261009T2052Z.json`.
+Temporary continuation remains enabled;16 stays finished/released.
