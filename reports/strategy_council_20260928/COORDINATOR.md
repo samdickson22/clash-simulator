@@ -1156,3 +1156,8 @@ Also on the hub, but with copies elsewhere:
     - Adopt symmetric opponent lag as the **default evaluation protocol** from now on, since it's the fair simulation.
     - Keep capacity 1 and current-state imitation as the defaults.
     - The 5–6 pp latency cost is the real target. W (WAIT candidates) is being tested next under symmetric delay (`clasher-explore-w-confirm-20261009-1`).
+- **03:40 UTC heartbeat.** Sampled GPU average over 8×0.5 s:
+  - Home: 01 50% (T11 s22, ~12.1k rows/s), 02 **4%**, 04 99% (packing sweep), 08 100% (GRU).
+  - Leased: 09/13/14/15 99% (capture queue, 4 lanes each), 16 72%.
+  - **16 is resolved:** T11 seed 21 is back as `extended60-v1` at ~12k rows/s, PSS 36 GB.
+  - **Problem (a) on 02:** the GPU is idle apart from perception's leftover inventory job, while gate (c) runs CPU-only. I asked the gates worker whether 4 capture lanes on 02 would breach gate (c)'s frozen host conditions; any doubt means wait for the gate (c) exit.
