@@ -287,3 +287,16 @@ stays 0.27726436294161033. Conservative cumulative pipeline cost
 costs await completion. Evidence: `monitor-20261009T2242Z.json`. No source,
 config or data edits; 480 micro1024/effective8192/cap0.78 remains fixed.
 Failure artifacts retained; continuation enabled; 16 stays released.
+
+2026-10-09 22:53Z: All three fits and the sole controller remain healthy.
+Width 288: step 7259, 59,465,728 rows, 6419 loader-inclusive rows/s.
+Width 384: step 5400, 44,236,800 rows, 4772 loader-inclusive rows/s.
+Width 480: step 4596, 37,650,432 rows, 4723 loader-inclusive rows/s.
+Six processes per arm; peak PSS 41.47 GB and sampled GPU free memory
+≥32.7 GiB. No new OOM, stop, restart or scientific change. Wide quarter
+NLLs and kills remain pending at 95,144,680 rows; matched 192 control is
+0.27726436294161033. Conservative cumulative pipeline cost 9.575 GPU-hours
+includes staging and all 480 segments; final actual costs await completion.
+Evidence: `monitor-20261009T2252Z.json`. No source, config or data edits.
+480 micro1024/effective8192/cap0.78 stays fixed; all failed artifacts retained.
+Continuation remains enabled; 16 stays released.
