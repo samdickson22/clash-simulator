@@ -1,1 +1,2 @@
-NOT RUN: local05 project .venv is absent. Original12-test03receipt remains valid. Full13-test corrected suite pending a free authorized host slot. Focused standard-library crown fixture passed; see crown-fixture.json.
+.............                                                            [100%]
+13 passed in 0.46s

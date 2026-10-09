@@ -56,7 +56,7 @@ def main():
             halt=(a.job/'STOP').exists()
             if bad or halt:
                 os.killpg(child.pid,signal.SIGCONT);os.killpg(child.pid,signal.SIGTERM)
-                samples.append(dict(time=time.time(),reason='process/scheduler cap' if bad else 'STOP file'));break
+                samples.append(dict(time=time.time(),reason='process/scheduler cap' if bad else 'STOP file',rows=rows,memory=memory));break
             if memory<28*2**30 and not paused:
                 os.killpg(child.pid,signal.SIGSTOP);paused=True;samples.append(dict(time=time.time(),pause=True,memory=memory))
             elif memory>=32*2**30 and paused:

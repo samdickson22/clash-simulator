@@ -1,0 +1,1 @@
+{"returncode": -15, "host": "127x03", "wall_seconds": 1851.697464466095, "peak_owned_processes": 65, "min_memavailable_GiB": 84.09907531738281, "pauses_or_halts": [{"time": 1791544673.5895367, "reason": "process/scheduler cap"}]}
