@@ -1185,3 +1185,8 @@ Also on the hub, but with copies elsewhere:
   - **Decision:** adopt W + screen8 as the next search default. That's the biggest single improvement so far.
     - Delegated `clasher-w-screen8-adopt-20261009-1` (Sol high, 03 CPU): a frozen-plan 600-seed outcome check comparing screen8 to full W (pass if the CI upper bound is ≤ +3 pp), plus a native production implementation behind a default-off flag, with flag-off bit-parity.
     - It will also become the **search teacher** for imitation once adopted.
+- **04:09 UTC heartbeat.** Sampled GPU average over 8×0.5 s:
+  - Home: 01 67% (T11 s22, ~12k rows/s), 02 **0%**, 04 99% (sweep), 08 26% (GRU).
+  - Leased: 09/13/14/15 99% (capture queue), 16 46% (T11 s21 at 11–12k rows/s from its log, so it's fine alongside roader's probe).
+  - 06/07/11/18 are still down.
+  - **02 GPU idle is an accepted blocker.** The gates worker answered NO, citing the frozen gate (c) PREREG: "Co-tenant load cannot exceed the qualifying envelope". 02 joins the capture queue when gate (c) exits (~05:45Z).
