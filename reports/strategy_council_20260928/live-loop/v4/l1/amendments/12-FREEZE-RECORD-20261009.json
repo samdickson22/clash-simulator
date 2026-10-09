@@ -1,0 +1,17 @@
+{
+ "schema": "clasher.v4.amendment12-freeze.v1",
+ "utc": "2026-10-09T01:49:28+00:00",
+ "decision": "FROZEN",
+ "decided_by": "coordinator (owner mode)",
+ "amendment": "amendments/12-measured-dominance-20261009.md",
+ "amendment_sha256": "cc2357df357b889a306cfc3d472048aae7234374e3463c7137cdef231ace6bf2",
+ "pins": "amendments/12-measured-dominance-draft-pins.json",
+ "pins_sha256": "60f0cb4eddd6885218bd2de16d54f73547d6cf542d241c755c9181f7490968c5",
+ "delta_review_sha256": "5b8a9ed54c60ab5a4206982639f3521f6232646e346bc622a8bf5666b8ee97d4",
+ "confirmation_review": "reviews/AMENDMENT-12-CONFIRMATION-REVIEW-20261009.md",
+ "confirmation_review_sha256": "18f21d0e50e2b1a632e704001be8813860d845b06a2da9bb5c5ca9ad2cbc1c2c",
+ "changelog_sha256": "6d0f943f22bfc1fd651ba9c2ff3831e25fbb060ce543b3ac36cef5705f30ad83",
+ "reviewed_original_sha256": "9e575ba1bcd67e8069a022d952cf873b957ea80a410f30c1e1376422b608dc23",
+ "source_pin_mismatches_at_freeze": [],
+ "note": "The draft's internal 'DRAFT' status wording is intentionally left unchanged so its SHA stays fixed; this record is the freeze. Execution blockers remain in force: outer provenance, file-backed orchestration with D4 covering all 216 bound records, the selector reading suspension receipts, an fsynced suspension file, the two missing tests, the pinned controlled 127x08 launcher and telemetry, then the body seal before any bound. Measurements are not before 2026-10-09T05:00:00Z. Heldout stays unopened. Carry-forwards come from the confirmation review."
+}

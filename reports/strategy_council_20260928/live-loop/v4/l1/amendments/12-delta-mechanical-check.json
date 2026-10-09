@@ -1,0 +1,14 @@
+{
+  "schema": "clasher.v4.amendment12-delta-check.v1",
+  "reconstructed_sha256": "9e575ba1bcd67e8069a022d952cf873b957ea80a410f30c1e1376422b608dc23",
+  "current_start_sha256": "1bde5c55b297177cbc2b9990f2c18a921a534d38c8898698fa3aeae3702f2867",
+  "draft_sha256": "cc2357df357b889a306cfc3d472048aae7234374e3463c7137cdef231ace6bf2",
+  "pins_sha256": "60f0cb4eddd6885218bd2de16d54f73547d6cf542d241c755c9181f7490968c5",
+  "d1_d5_verbatim": true,
+  "raw_old_new_whitespace_normalized_equal": false,
+  "after_explicit_changelog_d1_d5_and_test_pin_changes_whitespace_normalized_equal": true,
+  "delta_review_sha256": "5b8a9ed54c60ab5a4206982639f3521f6232646e346bc622a8bf5666b8ee97d4",
+  "test_receipt_sha256": "662d4b7597559d68ee0ec0c6b1cc7a0544449e7c2764f2374a76f055052c1350",
+  "pythonpath_tree_sha256": "620142db6062f61a1a6274caa0fdb963311700e455bf6df02f6f7f18403d1449",
+  "frozen": false
+}

@@ -1009,3 +1009,16 @@ Also on the hub, but with copies elsewhere:
   - D1–D5 are verbatim. The whitespace-normalized comparison is TRUE once changelog (a), D1–D5 and the N1 pin update are applied.
   - D4 is implemented in the file layer; 20 tests PASS.
   - The 01:32 changelog (a) edits were never reviewed. I've sent them, with all of the above, to an independent confirmation review: `clasher-v4-amendment12-confirmation-review-20261009-1` (Opus, high). Freeze waits on that verdict.
+- **01:49 UTC: AMENDMENT 12 FROZEN** (`l1/amendments/12-FREEZE-RECORD-20261009.json`). Draft `cc2357df…`, pins `60f0cb4e…`.
+  - The confirmation review `18f21d0e…` recomputed every SHA and the whitespace-normalized rebuild. The changelog (a) items are a pin row plus softer wording, and weaken nothing.
+  - D4 is enforced in code: 30/30 tests on 127x01, and 8/10 deliberately broken versions caught; the 2 missed are backup checks.
+  - All 20 source pins matched at freeze. The draft keeps its "DRAFT" wording on purpose; the record is the freeze.
+  - **Execution blockers still in force:**
+    - D4(a) coverage for all 216 bound records;
+    - the selector reading suspension receipts;
+    - fsync of the suspension file;
+    - the two missing tests;
+    - outer provenance and the controller;
+    - the pinned 127x08 launcher and telemetry;
+    - then the body seal before any bound.
+  - Measurements not before 05:00Z.

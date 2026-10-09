@@ -1,0 +1,28 @@
+{
+  "schema": "clasher.v4.amendment12-preparation.v1",
+  "utc": "2026-10-09T01:32:51.396938+00:00",
+  "status": "DRAFT_AWAITING_DELTA_REVIEW_NOT_FROZEN",
+  "amendment_sha256": "1bde5c55b297177cbc2b9990f2c18a921a534d38c8898698fa3aeae3702f2867",
+  "pins_sha256": "3e7f150488507af257dade4aacbf841f96a6f91016be53a802a3ec3c624e9e2b",
+  "tests": {
+    "dominance-tests": {
+      "count": 10,
+      "exit_receipt_sha256": "fe53f8ea286c1a96672b2a222fa32a61d9aed301f6b98d82979989ef4b4fa1d2",
+      "log_sha256": "65ba69502e157997b4e7c94ae9a5922a0c7b7dda81241c144a8c594bf9f285a7"
+    },
+    "clock-free-tests": {
+      "count": 4,
+      "exit_receipt_sha256": "5f70ea33f12144a36f9fb1283100a76eab9e9771ef0d315969e8aaed2465ae10",
+      "log_sha256": "cab1356cbbe58e38558631b1fcfff469ce70ee2e031ec03662132f4764245bbb"
+    },
+    "record-admission-tests": {
+      "count": 6,
+      "exit_receipt_sha256": "414740c5f0ef7e267d2b7d55780eff2e16c468fa4049f2560ef0be00b4b3cf95",
+      "log_sha256": "1d7d8ab51a26cba2a5a61026a47497fa41a6470bea315203fba46f32e17de1e1"
+    }
+  },
+  "real_body_seal": false,
+  "real_bounds_computed": false,
+  "selection_seal": false,
+  "heldout_payloads_opened": false
+}

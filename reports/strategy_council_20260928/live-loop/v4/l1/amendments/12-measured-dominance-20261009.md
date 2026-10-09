@@ -1,0 +1,172 @@
+# Amendment 12 — measured-dominance validation selection (B′)
+
+Dated 2026-10-09, prepared 01:26 UTC. **DRAFT — awaiting coordinator delta review and freeze. No real bound, body-selection seal, deciding measurement or selection is authorized by this draft.** This changes the procedure for T7 validation selection, not the measured-completion definition or numeric gates. It supersedes the now-withdrawn CLOCK-OPTIONS B recommendation and body-clock cost estimates.
+
+## Governing evidence and freeze order
+
+The binding coordinator decision labeled actual~01:25Z adopts B′ from `reviews/CLOCK-AMENDMENT-REVIEW-20261009.md`, verdict APPROVE WITH REQUIRED CHANGES. Its source SHA and candidate tool pins are in `12-measured-dominance-draft-pins.json`. Existing PREREG, split, completed formal fits and source pins remain unchanged. Before any real computation: reviewer delta check; coordinator freezes this amendment, source pins, driver, host policy, lifecycle and 30-cell Tier 1 budget; then clock-free body scoring, then the complete intermediate 24-epoch body seal; only then 216 bounds. CPU-only preparation and synthetic tests may precede freeze. Full-population body evidence cannot be sealed until each epoch has all 64 admitted matches; compute completed epochs incrementally after freeze without substituting incomplete records.
+
+No model-free bound has been computed on real records. No production source or running output is changed. Record-only captures continue until no longer needed for the admitted body/non-clock population. The vectorized quarantine remains unadmitted; old original-path proof is non-clock evidence only.
+
+## Required review wording (RC1–RC8, retained verbatim)
+
+The quoted RC1–RC8 sentences are adopted as normative text of this amendment. RC7 is implemented by the section 'Controlled measurement host and lifecycle'. Where the base review and the delta review differ (the disclosure sentence, the 30-cell checkpoint, the Tier 2 test role), the delta review governs.
+
+## 8. Required changes, with wording
+
+**RC1.** Replace the recommendation paragraph of CLOCK-OPTIONS (Preliminary recommendation) for the amendment with:
+
+> "Amendment 12 adopts measured-dominance selection (B′). Body thresholds are selected clock-free. All 216 event cells receive a zero-service optimistic bound computed from admitted non-clock records; cells are measured standalone in bound order until every unmeasured cell is strictly dominated by the best measured cell. Modeled availability is never used to score, select, fit per-card thresholds or calibrate."
+
+**RC2.** Strike "available_hat … calibrated on a fixed stratified sample" as the selection metric. Retain it only as:
+
+> "Tier 2 elimination aid, invocable only after 30 measured cells without closure, under the frozen leave-one-cell-out test and margin Δ; never scores a finalist."
+
+**RC3.** Replace the 8 + 8 body-branch sample with:
+
+> "No pre-selection timing sample is required. Tier 2, if invoked, calibrates only on measured full cells spanning ≥3 epochs (≥2 in 15–24) and τ∈{0.1,0.5,0.9}."
+
+**RC4.** Add:
+
+> "Process lifecycle: one fresh CUDA process per cell; 64 matches in lexicographic order; per-match state reset; cold start retained on the first match. The heldout fleet replay uses the identical lifecycle, driver SHA and host policy."
+
+**RC5.** Add:
+
+> "A's body-stage clock cost is withdrawn: body selection is clock-free per BODY-SELECTION.md. The clock-relevant upper bound is 216 event cells (~197 GPU-h at the contended observed rate)."
+
+**RC6.** Add:
+
+> "C is not admissible for validation selection or any gate."
+
+**RC7.** Add the matched-condition and replication rule of §2c, and the void-but-retained rerun rule.
+
+**RC8.** Add:
+
+> "Tooling: new selector/verifier/seal fields per §5 with synthetic tests (equal-key bounds, premature prediction, tamper, termination) passing before any bound is computed on real data."
+
+
+## Concrete Tier 1 procedure and evidence
+
+Use source-frame body F1, precision, higher-body-threshold ties from BODY-SELECTION.md, separately for each of 24 epochs at fixed event 0.5. New clock_free_records_v4 body view accepts only decoded non-clock records and authentic source production times. It never opens completion journals or event metrics. Apply unchanged BodyTracker and unchanged body-scoring masks/cleaner; report micro/per-match TP/P/T, phantom/drop and coverage. The rank function is clock_free_body_ranking_v4.rank_body_cells, retaining the exact count/rational-F1/precision/higher-threshold rule of capture_ranking_v4 and changing only the explicit clock-free evidence schemas; both are pinned below. Fresh file-backed orchestration must authenticate the complete capture payloads, full formal readiness, all 64 validation receipts, epoch/checkpoint/source pins and recompute counts. Historical epoch 1/2 grid JSON is not input. Seal all 24 b*(e), body counts, input hashes and selector/cleaner/source hashes in `body-selection-clock-free-seal.json` before the first bound. This is intermediate validation evidence, never heldout authority.
+
+For each selected body/epoch and each actual event threshold 0.1..0.9, reconstruct an independent EventFusion/NMS history from admitted pre-NMS records. P and T count every emitted card-play prediction and every accepted truth, opponent native owner 0. Champion abilities are separate. Production comes from the source frame, not the predicted execution estimate. The superset edge is `stamp(p) <= exec(t)+500`, with matching episode/card/native-side/kind. There is deliberately **no lower endpoint**. Setting availability=production and using the ordinary two-sided scorer is NOT this bound and is invalid for premature predictions. Maximum-cardinality matching on this nested edge set is implemented by sorted prediction stamps and sorted truth deadlines, earliest feasible unmatched prediction first; synthetic exhaustive matching checks accompany it. It returns TP_ub and exact P/T, not a measured score.
+
+Rank with exact rational F1=2TP/(P+T), precision=TP/P (0 if P=0), then -epoch, then event threshold. Sort descending. Measure next not-yet-measured/not-strictly-dominated cell. No elimination on equality: compare the complete lexicographic key using strict `<`. Keep the highest measured key. The bound applies to every possible measured realization because availability>=production and actual edges are a subset. All 216 bound records, raw inputs and SHA values are mandatory. Report them as upper bounds, never validation F1 measurements.
+
+Tier 1 checkpoint. The 30-cell figure is a reporting checkpoint, never a closure, stopping or selection rule. It counts first valid scheduled selection measurements only; void-but-retained attempts, replication runs and selected-epoch/combined follow-up runs do not count. If the 30th counted measurement completes without closure, the controller, in the same step: (1) writes `tier1-checkpoint-030.json` and reports it to the coordinator, listing every measured cell with its measured counts and SHAs, the current incumbent labelled 'provisional incumbent — not a selection', the number of pending (not strictly dominated) cells with their bound keys, the measured mean and maximum 127x08 GPU-hours per cell, a cost re-estimate equal to pending cells × measured mean cell hours plus the 10 follow-up cells, and the host-telemetry/void summary; (2) makes no selection: no winner, epoch, per-card threshold, calibration, T7 seal, RESULTS validation-F1 claim or heldout step; (3) continues standalone measurement in the frozen bound order on the same host, driver and lifecycle without waiting for a decision. The same report is repeated after every further 30 counted measurements. No checkpoint may change the order, elimination rule, host, lifecycle, driver or population. A pause is permitted only for an infrastructure reason, is logged, and resumes the identical queue. Tier 2 remains disabled; measurement continues while any Tier 2 addendum is reviewed. Selection occurs only when `next_step` reports `closed=true` and the file verifier recomputes the certificate.
+
+At closure, authenticate the first-scheduled measured history, recompute every bound and actual measured score, and prove every unmeasured cell's upper rank strictly below the incumbent. The new pure selector/verifier primitives refuse missing/duplicate 216 cells, changed P/T, measured TP above its bound, reordered measurement history, tampering and false termination. They are not file admission by themselves. File adapters must independently authenticate producer/formal completion, records and clocks; JSON assertions are not authority.
+
+Bound-validity preconditions, enforced by the file verifier in addition to the pure checks: (a) every bound record embeds `body_seal_sha256` and the b*(e) recorded in that seal; a bound without the seal hash, or with a different body threshold, is rejected. (b) For every measured cell, the multiset of opponent card-play predictions keyed by (episode_id, source_seq, card, side) recomputed from the measured outputs equals the multiset recomputed from the admitted clock-free records for the same (epoch, τ, b*(e)); equal counts alone are insufficient. Bound and measured scoring consume one byte-identical truth row list (episode, card, side, kind, execution_timestamp_ms) from one pinned truth-mapping source, recorded by SHA. (c) Every measured prediction satisfies available_timestamp_ms ≥ its frame timestamp_ms exactly, with no tolerance, and each bound uses that same frame timestamp_ms as production_timestamp_ms. A failure of (a) or (c) voids and retains the affected record. A failure of (b) is a record-fidelity failure: elimination is suspended, no selection is made, the coordinator is notified, and the only admissible continuation is measuring every remaining cell without elimination.
+
+Then measure all 9 event thresholds of the selected epoch, including already measured cells by authenticated reuse only. Per-card >=10 truth support rule uses measured cells only. Replay the combined per-card setting over 64 validation matches; fit isotonic calibration from its measured TP/FP labels with the registered >=20 prediction/per-card or pooled fallback. Preserve the final configuration and measurement SHA. No mixed threshold clocks, no modeled labels.
+
+The final selection seal stores selection_method=`amendment12_measured_dominance_tier1`, amendment SHA, body seal SHA, all 216 cell statuses (`measured completion+FIFO` or `zero-service upper bound`), source/capture/clock/count/score SHAs, complete bound matrix, measured-order certificate, strict-dominance/termination proof, selected-epoch 9 cells, measured combined/per-card/calibration evidence, controlled host telemetry, retained attempt chain and replication outcomes. The verifier recomputes the chain; no changed predecessor hash or missing population is admitted. Existing T7-only seals do not become joint T6/T7 heldout authority.
+
+## Controlled measurement host and lifecycle (coordinator policy)
+
+Deciding measurements use **127x08 only**, beginning no earlier than 2026-10-09T05:00Z **and after actual GRU exit and release**. Read-only inventory: NVIDIA RTX A6000, driver 470.256.02, UUID GPU-6cb558a5-e557-239c-60ed-be7ddb4de59c. Reverify inventory/lease-free ownership at admission. The GPU model/driver/UUID and device/runtime/options belong in every attempt and final seal. No leased/contended timing probe decides any cell. No 01 GPU. 04 is not admitted as a second deciding host until explicitly released and paired/controlled qualification is recorded; same-host finalists are the initial policy.
+
+One fresh CUDA process per cell; all 64 validation matches in lexicographic episode order, per-match causal reset, cold start retained on the first match only. Use unchanged validation_replay_v4.replay_episode and frozen model/runtime/source/driver SHA, actual event threshold and selected body. Final heldout fleet replay has the identical lifecycle, driver and controlled host policy over its full registered match population. Do not remove first match 1975100708 from the formal 64-match validation population; it is excluded from **timing-model test roles**, because its clocks were inspected.
+
+Single-tenant means no co-located compute CPU **or** GPU work. Before admission record the GRU exit and process inventory. Record nvidia-smi GPU processes/model/driver/memory/utilization, load, own/foreign compute process inventory and MemAvailable every 30 s or more often, from admission through output flush/exit. An unaccounted compute process, foreign GPU work, memory available <24 GB, missing telemetry, changed hardware/source/input or control failure makes the attempt void-but-retained; same-cell identical seed/input retry under fresh valid conditions. OS services and the owned telemetry/controller are disclosed; the cache strategy must not introduce another uncontrolled compute tenant. Stage/verify inputs before admission; no concurrent bulk copy/CPU grid. A fresh data-access/telemetry launcher is still required and must be pinned before any deciding measurement.
+
+The first **valid scheduled** measurement is the selection measurement. After selection is fixed, replay the winner and measured runner-up once more under identical policy. If the order flips, disclose clock-noise sensitivity, never reselect. The runner-up is the highest-key nonwinner measured in the selection/follow-up set; if no second measured cell exists, measure the next bound-ordered nonwinner as a disclosed reproducibility-only reference, not reselection. All 9 winner-epoch cells ordinarily provide a measured runner-up. Retain failures and distinguish infrastructure voids from valid reproducibility runs.
+
+## Tier 2 reserved contract — disabled in this release
+
+The following review text is preserved normatively. No Tier 2 fit or score is permitted until its implementation, deterministic solver/tolerances and tie order are pinned by a prospective reviewed addendum. Tier 1 alone is the exact-equivalence method. Tier 2 would carry its explicitly weaker disclosure and cannot be claimed as an all-realization guarantee.
+
+### 2b. Tier 2 (optional; only if Tier 1 is not closed after a frozen budget)
+
+Freeze a Tier 1 budget of **30 measured cells**. If unmeasured, undominated cells remain after 30 measured cells, the owner may either:
+
+- (i) keep measuring, which is the default and always admissible; or
+- (ii) invoke Tier 2, which uses a modeled clock only to **eliminate** cells, never to select or score one.
+
+Under Tier 2:
+
+- Eliminate an unmeasured cell c only if `F1_hat(c) + Δ < F1_meas(incumbent)`, where Δ is the frozen error margin from §4.
+- Precision is used only as an exact-tie tiebreak among measured cells.
+- The winner and every non-eliminated cell remain measured.
+- The disclosure must then say "modeled pruning with tested margin Δ". That is weaker than Tier 1 and must be reported as such.
+
+If Tier 2 is ever invoked, the model must be specified and frozen exactly as follows **before** any Tier 2 fit.
+
+- **Unit and recursion.** Per frame i of each match, `available_hat[i] = max(stamp[i], available_hat[i-1]) + service_hat[i]`. Reset per match exactly as the driver does: `ready = times[0]`, and service of frame 0 includes the first block fetch.
+- **Process lifecycle.** The process-lifecycle policy of §2c applies: cold start falls on the first match of the cell's frozen order only.
+- **Additive terms.**
+  - **Cold term.** The cold first-frame cost is the median of measured process-first frames on the frozen host. It is applied only where the frozen lifecycle puts a process start.
+  - **Block-fetch term.** One coefficient for frames with `i % block_size == 0`.
+  - **Warm service.** Linear in per-frame counts taken from the non-clock records of *that* cell: body detections and tracks under b*, births, event candidates above τ (peaks decoded), emitted events after fusion/NMS, and publication payload bytes.
+  - No epoch, match, threshold or body dummies. Configuration enters only through these observable counts.
+  - No truth, correctness or label-derived feature. No heldout data.
+- **Fit.** Median (L1) regression on measured warm frames from the measured Tier 1 cells only, with a fixed solver, tolerance and deterministic tie order.
+- **Residual tails.** Residuals are reproduced by a moving-block bootstrap: block length 64 frames, R = 50 replicates, seed `clasher-v4-tier2-20261009`.
+- **Cell score.** For each replicate, run the FIFO recursion and score. F1_hat(c) is the **maximum** over replicates, which is optimistic and therefore conservative for elimination. A point-mean service is forbidden: E[max] ≥ max E, so mean service understates backlog.
+- **No trimming.** No winsorizing, dropping cold starts, dropping stalls, or tuning on test cells.
+
+## 4. Error test and fallback (Tier 2 only)
+
+The Tier 2 test is **leave-one-cell-out** over the measured Tier 1 cells, and must be frozen before any fit. For each held-out measured cell k, fit on the others and predict cell k on all 64 matches. Report:
+
+- signed and absolute per-frame availability error (median, p95, p99, max), split into cold-start, block-fetch and warm frames;
+- final per-match lag error;
+- the count of opponent truth events whose 500 ms matched status differs between measured and modeled scoring (flips), with direction;
+- |ΔTP_opponent|, |ΔF1_opponent| and |Δrecall_opponent|, with 10,000 match-cluster bootstrap intervals (seed 6110).
+
+**Acceptance** requires all of the following on every held-out cell:
+
+- (a) Opponent flips ≤ 0.5% of opponent truth events.
+- (b) Upper 95% match-cluster bound on |Δrecall_opponent| ≤ 0.5 pp, and the same for |ΔF1_opponent|.
+- (c) Across held-out cells, the modeled F1 is not lower than the measured F1 on more than one cell. The model must be optimistic or neutral, because it is used only for elimination.
+- (d) Zero modeled availabilities below the frame stamp, and the recursion is verified exactly.
+
+Then set **Δ = 2 × max over held-out cells of the upper 95% bound on |ΔF1_opponent|**, floored at 0.3 pp.
+
+**On failure,** Tier 2 is unavailable and Tier 1 measurement continues to closure, which is the clock-relevant part of A. A failed model may not be refitted, re-featured or re-tested on the same cells. A new model needs a new reviewed amendment.
+
+
+Tier 2 is disabled. It may be enabled only by a separately reviewed and frozen addendum that pins the implementation, solver, tolerances and tie order and adopts this resolution verbatim. Match v4-phase-a-1975100708 stays in every Tier 1 bound, measured cell and selection score over all 64 validation matches. In Tier 2 it has no fitting or testing role: (i) its frames are excluded from the service-model fit; (ii) all leave-one-cell-out statistics — per-frame availability errors, final-lag errors, flip counts, |ΔTP|, |ΔF1| and |Δrecall| with their 10,000-resample match-cluster bootstrap intervals (seed 6110) — are computed over the other 63 validation matches, whose opponent truth events are the denominators of acceptance (a) and (b), and acceptance (c) compares 63-match modeled and measured F1; (iii) in any Tier 2 elimination score this match contributes its zero-service optimistic bound, never a modeled count: F1_hat(c) = 2·(TP_hat_63(c) + TP_ub_1975100708(c)) / (P(c) + T), with P and T the full 64-match clock-independent counts; (iv) because the frozen lifecycle places the only process start on this match, the §2b cold term has no Tier 2 role and is not fitted, and cold-start frames are reported descriptively only; (v) Δ is computed from the 63-match intervals. The addendum must verify that 1975100708 is first in the frozen lexicographic order; if the order or lifecycle ever places a process start elsewhere, or any of (i)–(v) cannot be implemented exactly, Tier 2 stays disabled.
+
+## T6, final heldout, gates and noise
+
+T6 is unaffected by the shared nine-branch clock bug. Independent verifier 15r4 recomputed unchanged v3 selection/calibration on all 64 matches/53392 frames, exit 0 at 00:31:03; `receipts/t6-selection-verified-20261009/selection-verified.json` SHA `f527b1438648b0ab6c5fce0c0667beb2b346895bdd6bb7163ab403443004119e`. Its source chain cites unchanged evaluate_l1_stream_v3.py SHA 72fa8f0b65696b9cda4230260d009d3cd16cc53021bb91e7eefab28ef690bd78 and own standalone FIFO inputs, not shared/packed/vectorized capture clocks. No T6 refit/reselection is triggered by this amendment. Joint seal still required.
+
+Frozen L1 opponent R/P>=95/95%, bootstrap LB>=92%; separate S5/L2-v4 entry R/P>=90/90%, LB>=87%,97/97 only L2 target. Every other DESIGN 5.1 gate unchanged. Mac primary/emulator/Mac p95<=40 ms and other unmeasured T5/T8 gates stay BLOCKED. Fleet heldout is diagnostic; single heldout opening only after authenticated joint seal and full prerequisites. noise-measured.json contains genuine heldout measurements only, never bounds, modeled values or validation clocks. L2 entry evidence and live wrapper selected body cite amendment SHA+selection method; in-loop within 2 pp comparisons refer only to measured heldout.
+
+Forbidden: old misattributed completion fields, epoch 1/2 grid score claims, shared/packed/vectorized clocks, event 0.5 clock borrowing for another threshold, divided/averaged/copied clocks, inferred offsets, Mac clock distributions (C), heldout selection data, changed fits/splits/threshold grid/gates, or reconstructed arrival clocks presented as measured.
+
+## Required disclosure (corrected by delta review)
+
+> "T7 validation selection used Amendment 12 measured-dominance selection: N of 216 event cells were measured standalone with measured completion+FIFO; each of the remaining 216−N cells was excluded because its zero-service optimistic upper bound, which is at least any outcome that cell could have measured, ranked strictly below the measured winner's selection key (opponent F1 at 500 ms, then precision, then earlier epoch, then higher threshold). No modeled availability entered selection, per-card thresholds or calibration."
+
+The base review's sentence 'cannot exceed any measured outcome' was reversed and is superseded by this sentence, per delta review `AMENDMENT-12-DELTA-REVIEW-20261009.md`.
+
+## Candidate source pins and freeze blockers
+
+| Source | SHA256 |
+|---|---|
+| BODY-SELECTION.md | `60977bf4a2db694db7c290e5ce32e4a1054eb833424c81dbf7516364746fa5be` |
+| body_selection_v4.py | `71ef4ac6a5abceb06317d020713955315b597f7aa50e077b26d6d5698d86b705` |
+| body_scoring_v4.py | `81507e654ba13d96f78ecfa9c420086c9b7b415b5c29f20d9e7947c520b27c61` |
+| capture_ranking_v4.py | `011b307dc9ded4f020ca3d661191b124e23c3f70a4e77dee3a23271a0b8965af` |
+| clock_free_records_v4.py | `95224b096d110d270c2439d6ceac40aaf045dff6ee057269bd84e200a3fee870` |
+| measured_dominance_v4.py | `df273c953a127b7347c932d972327d9d6dcffe7b30a6aa761184a2914b7e9cde` |
+| test_measured_dominance_v4.py | `63e87b1535332a2f2fe6dd8d04a122f2991b230b75a0af6fdac05ffedf8c34ed` |
+| decoder_records_v4.py | `1912bf1228d1805768cc51b7555459e7ceb9f4e478938705db352eb4686e30d9` |
+| validation_replay_v4.py | `98982b6ada9eb3169f9745c779029390adb8bb431452e0d8e613f27c8b39fcd6` |
+| scoring_v4.py | `1a7f6d644948613058f7b476150fea234f27555c3bfc08569b73f6b0804e37fa` |
+| verify_t6_selection_v4.py | `16dbc4ed86e5927d6b77c129f081fb07291b8e3e5c999a85391bf134253c49f2` |
+| src/clasher/vision/l1_v4.py | `cad13d4f958757dbb9f38732f19d73423149b9dffcc34e3c41bb7376f87e9fef` |
+| review | `43ed20a05fd0f436d20cd75a2dcaa3f13225ee20dfcd617b34e3f4f4e0693dc4` |
+| record_capture_admission_v4.py | `9d64676344248d92ec9f614da5e565fe60adc6ded73079fbc66c610736eb3241` |
+| clock_free_body_score_v4.py | `475dcba9d17adc757fa5115cb5d6af83a9345fd390233aacdeb71e38575cc7ba` |
+| clock_free_body_ranking_v4.py | `3967be357835a6b0fbe5a2b9b7c301ba9594b2061aba124fc8ca9cdf704d374d` |
+| test_clock_free_records_v4.py | `9e8e996eb13b2f3e85f925c7b62f01209231330327e6aeee36a025a696ecaed9` |
+
+| test_record_capture_admission_v4.py | `65ef6c73b4e0476b468f8f5170d9a2ac5460c999613cab033fe47a97251426eb` |
+
+Ten new pure bound/selector/verifier synthetic tests PASS 15 (`v4-measured-dominance-tests-20261009-15r1`, exit 0): premature predictions, exhaustive maximum cardinality, measured edge-subset property, rejected clock fields, side/kind isolation, exact tie/earlier epoch, termination, 30-cell nonclosure, counts/bound tampering, missing/duplicate cells and reordered history. No real bound was computed. Separate record-only admission and body scorer modules are prepared; they skip completion files entirely and compute only source-frame body metrics. Six file-backed admission tests PASS 15 (record-admission-tests-15r1): completion journals deliberately absent; changed/missing decoder files, wrong completion pin, changed validation split and wrong epoch assignment are rejected. Four clock-free decoder-view tests also PASS 15. Total 20 new preparation tests pass. Full body-scoring/seal and bound/measurement orchestration still require integration verification before real execution.
+
+Draft freeze blockers: coordinator/reviewer delta approval including disclosure inequality and 30-cell operating interpretation; file-backed clock-free body/nonclock admission and persisted bound/selector/seal orchestration must be finalized, tested and appended to source pins before their execution; intermediate body seal does not yet exist; controlled 08 cell launcher/telemetry lifecycle must be implemented/tested/pinned before 05 measurement. The pure tools and this draft do not bypass those requirements. Tier 2 remains disabled and needs separate reviewed implementation and test-role resolution if ever considered. No deciding measurement, winner, final seal or heldout result exists.
