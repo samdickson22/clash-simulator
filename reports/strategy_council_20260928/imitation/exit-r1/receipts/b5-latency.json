@@ -1,0 +1,184 @@
+{
+  "host": "127x03",
+  "threads": 1,
+  "affinity": [
+    63
+  ],
+  "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "synthetic_inputs": true,
+  "torch": "2.10.0+cu128",
+  "models": [
+    {
+      "config": {
+        "vocab": 360,
+        "descriptors": 57,
+        "width": 192,
+        "heads": 6,
+        "layers": 4,
+        "ffn": 768,
+        "tile_width": 64,
+        "dropout": 0.1,
+        "numeric": 24,
+        "types": 24
+      },
+      "parameters": 2254938,
+      "random_weights": false,
+      "measurements": [
+        {
+          "entities": 10,
+          "iterations": 1000,
+          "p50_ms": 7.176761000000001,
+          "p99_ms": 10.6319894,
+          "max_ms": 10.822593,
+          "k": 8
+        },
+        {
+          "entities": 25,
+          "iterations": 1000,
+          "p50_ms": 7.955494,
+          "p99_ms": 8.115526299999999,
+          "max_ms": 8.184378,
+          "k": 8
+        },
+        {
+          "entities": 64,
+          "iterations": 1000,
+          "p50_ms": 10.5014665,
+          "p99_ms": 14.91645231,
+          "max_ms": 15.282407,
+          "k": 8
+        }
+      ],
+      "within_15ms": true
+    },
+    {
+      "config": {
+        "vocab": 360,
+        "descriptors": 57,
+        "width": 288,
+        "heads": 6,
+        "layers": 4,
+        "ffn": 1152,
+        "tile_width": 64,
+        "dropout": 0.1,
+        "numeric": 24,
+        "types": 24
+      },
+      "parameters": 4778202,
+      "random_weights": true,
+      "measurements": [
+        {
+          "entities": 10,
+          "iterations": 1000,
+          "p50_ms": 11.65921,
+          "p99_ms": 11.8947153,
+          "max_ms": 12.069862,
+          "k": 8
+        },
+        {
+          "entities": 25,
+          "iterations": 1000,
+          "p50_ms": 13.064628500000001,
+          "p99_ms": 13.317993710000001,
+          "max_ms": 13.423725,
+          "k": 8
+        },
+        {
+          "entities": 64,
+          "iterations": 1000,
+          "p50_ms": 17.580182999999998,
+          "p99_ms": 17.9789693,
+          "max_ms": 22.18841,
+          "k": 8
+        }
+      ],
+      "within_15ms": false
+    },
+    {
+      "config": {
+        "vocab": 360,
+        "descriptors": 57,
+        "width": 384,
+        "heads": 6,
+        "layers": 4,
+        "ffn": 1536,
+        "tile_width": 64,
+        "dropout": 0.1,
+        "numeric": 24,
+        "types": 24
+      },
+      "parameters": 8259930,
+      "random_weights": true,
+      "measurements": [
+        {
+          "entities": 10,
+          "iterations": 1000,
+          "p50_ms": 17.421834500000003,
+          "p99_ms": 17.682252599999998,
+          "max_ms": 18.063781,
+          "k": 8
+        },
+        {
+          "entities": 25,
+          "iterations": 1000,
+          "p50_ms": 19.7233865,
+          "p99_ms": 20.056845590000002,
+          "max_ms": 20.143124,
+          "k": 8
+        },
+        {
+          "entities": 64,
+          "iterations": 1000,
+          "p50_ms": 27.004714,
+          "p99_ms": 27.55183649,
+          "max_ms": 30.215107,
+          "k": 8
+        }
+      ],
+      "within_15ms": false
+    },
+    {
+      "config": {
+        "vocab": 360,
+        "descriptors": 57,
+        "width": 768,
+        "heads": 6,
+        "layers": 4,
+        "ffn": 3072,
+        "tile_width": 64,
+        "dropout": 0.1,
+        "numeric": 24,
+        "types": 24
+      },
+      "parameters": 31771482,
+      "random_weights": true,
+      "measurements": [
+        {
+          "entities": 10,
+          "iterations": 1000,
+          "p50_ms": 55.251337500000005,
+          "p99_ms": 59.86481909999994,
+          "max_ms": 72.127598,
+          "k": 8
+        },
+        {
+          "entities": 25,
+          "iterations": 1000,
+          "p50_ms": 63.1685825,
+          "p99_ms": 64.57123382,
+          "max_ms": 83.432215,
+          "k": 8
+        },
+        {
+          "entities": 64,
+          "iterations": 1000,
+          "p50_ms": 88.5889995,
+          "p99_ms": 90.29767943,
+          "max_ms": 115.924343,
+          "k": 8
+        }
+      ],
+      "within_15ms": false
+    }
+  ]
+}

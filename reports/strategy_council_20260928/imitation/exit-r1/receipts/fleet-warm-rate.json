@@ -1,0 +1,59 @@
+{
+  "at": "2026-10-09T10:53:42.310640+00:00",
+  "root_decisions": 182761,
+  "emitted_rows": 1179369,
+  "warm_window_seconds": 125.82552823703736,
+  "warm_roots_per_second": 346.51155938613516,
+  "eta_seconds": 28331.63493129001,
+  "target_roots": 10000000,
+  "hosts": {
+    "127x03": {
+      "games": 410,
+      "rows": 319070,
+      "root_decisions": 49451,
+      "cpu_seconds": 24613.52552339001,
+      "plays": 16779,
+      "host": "127x03",
+      "elapsed_seconds": 617.4385514538735,
+      "root_decisions_per_second": 80.0905610502591,
+      "emitted_rows_per_second": 516.7639747286439,
+      "roots_per_cpu_second": 2.00909861340291,
+      "eta_seconds": 49326.02479237121,
+      "active": 46,
+      "mem_available": 92069027840,
+      "stop": false
+    },
+    "127x04": {
+      "games": 689,
+      "rows": 533024,
+      "root_decisions": 82653,
+      "cpu_seconds": 51401.806030428044,
+      "plays": 28112,
+      "host": "127x04",
+      "elapsed_seconds": 647.9268864649348,
+      "root_decisions_per_second": 127.56531906084608,
+      "emitted_rows_per_second": 822.660721656666,
+      "roots_per_cpu_second": 1.6079785202697423,
+      "eta_seconds": 46386.80045300984,
+      "active": 94,
+      "mem_available": 76444516352,
+      "stop": false
+    },
+    "127x08": {
+      "games": 426,
+      "rows": 327275,
+      "root_decisions": 50657,
+      "cpu_seconds": 27151.59236904001,
+      "plays": 17160,
+      "host": "127x08",
+      "elapsed_seconds": 370.7835686870385,
+      "root_decisions_per_second": 136.62148023273724,
+      "emitted_rows_per_second": 882.6577756908044,
+      "roots_per_cpu_second": 1.865710095801319,
+      "eta_seconds": 28907.189361967245,
+      "active": 94,
+      "mem_available": 84367433728,
+      "stop": false
+    }
+  }
+}

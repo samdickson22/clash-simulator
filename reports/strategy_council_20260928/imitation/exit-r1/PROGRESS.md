@@ -1,0 +1,93 @@
+# ExIt round 1 B2/B3/B5
+
+2026-10-09 10:52Z: **B2/B3/B5 accepted; generation running on03/04/08.** Own paths:
+`imitation/exit_r1/` and this directory. Frozen T11 and model trainers untouched.
+
+B2: eight-deck/four-opponent full-game matrix:6373gate-c byte-equal rows,
+993scoredroots, exact submission-label -> d27queue -> physical game replays,
+public events and final outcomes. Final full-v6 schema check on another terminal
+game:826raw compact/public/D1/model-feature rows byte-equal, exact replay.
+Teacher mmap/scalar equality32sampled real rows plus actual optimizer step PASS.
+First measurement in<15min:4.59roots/core/s initialgame; mixed-deck matrix
+**3.0699roots/CPU-s,19.7025emitted5tick rows/CPU-s** (323.46CPU-s). Expanded waits
+are counted separately from roots. Acceptance receipts in `receipts/`.
+
+B3: four tests PASS: ratio0bit-equal qualifiedT11 loss, all gradients, optimizer
+result and updated parameters; soft gradients/WAIT probability aggregation;
+mixed sampler/kill rules; optional value gradient/effective-batch normalization.
+Explicit initial checkpoint parameter(v2selected or v1), teacher fraction,
+soft-score temperature, rare-play weighting, optional value loss, atomic resume.
+NumPy2teacher scalar rounding corrected in new adapter only. No GPU fitting.
+
+B5: core63, one thread,1000proposer calls each at10/25/64entities including
+feature building/top8. Worst p99 bywidth:192=14.916ms;288=17.979;384=27.552;
+768=90.298. Only192meets<=15ms. Wider capacity arms are offline-only candidates.
+Inputs synthetic;192uses released-v1 weights, others random architecture probes.
+Capacity matched-row dev gain<.005 at25% kills the arm; no capacity training.
+
+Generation: target **6Mroots combined**, ceilings03=4M,04=6M,08=4M. 04release
+receipt T5PARKED_EXACT_CHECKPOINT_BACKED_UP_04_RELEASED SHA
+f901710f... (full launch pins in receipts); explicit coordinator relay received.
+All output data/source/native/manifest under each generating host:
+`/mpac/sdicks02/jobs/clasher/exit-r1-20261009-r1/`. Completed games only are sealed,
+with per-column SHA256 and root replay/input/source/native manifests.
+
+- 03: supervisor2636618,46workers+spawntracker <=48,cores62–127,nice10/SCHED_IDLE.
+- 04: supervisor2603056,94workers+spawntracker <=96,cores30–127,nice10/SCHED_IDLE.
+- 08: supervisor3560459,94workers+spawntracker <=96,cores0–125,nice19/SCHED_IDLE.
+  Cores126/127free; renewed cache2095380kept running. STOP drill fully cleared
+  own supervisor/workers/tracker in1.409seconds; in-flight games expendable.
+
+**Exact08stop path:**
+`127x08:/mpac/sdicks02/jobs/clasher/exit-r1-20261009-r1/GENERATION.STOP`.
+03/04use the same absolute stop path on their respective hosts. Touch only the
+owned stop file; do not signal cache services or other workers. Exit evidence:
+`generation/exit.json`. MemAvailable24GiB floor polled each second; any worker
+failure stops its host. No leased CPU sims, no01jobs, no05heavy work, noMac.
+
+Warm fleet at10:52:08Z: **375.13roots/s over127.01s**,148654completedroots,
+960052pollrows, **historical10M ETA7.30h; superseded by6Mtarget**. This observed rate supersedes
+the720roots/s extrapolation. All234workers live;24GiB memory floors hold.
+Receipt `receipts/fleet-warm-rate.json` (later samples update the live controller).
+
+Light05stdio/network controller3501473,nice19/SCHED_IDLE, polls every30seconds,
+writes all three own STOPfiles at6M combined roots, verifies per-host exits.
+Control output `/mpac/sdicks02/jobs/clasher/exit-r1-fleet-control-20261009-r1/control/`;
+`progress.json`, `observations.jsonl`, eventual `exit.json`. It is stdlib-only;
+no simulations, Torch, data copying or heavy work on05. First launch failed an
+unneeded NumPy import immediately; corrected lightweight retry is the sole live
+controller. No simulation run restarted. 03/04pinned supervisors predate the
+08ops-only receipt/stop-reason refinements; launch manifests retain exact hashes.
+
+Code commit/push and final source SHAs pending below. Data never committed.
+
+Coordinator allocation: 03 <=48 processes while E1 runs, <=96 after E1;
+04 <=96 only after the coordinator relays T5 parked/release evidence. 08 optional,
+<=96 nice19, stop file and <=5 minute complete vacation. No 01 generation yet.
+All execution nice>=10/SCHED_IDLE/setsid; MemAvailable floor 24 GiB.
+
+Student screen: play recall below 50% of teacher kills the arm; fallback must
+beat v2 fallback. Human anchor and teacher rare-play weighting are explicit.
+Capacity scan: kill dev-NLL gain <0.005 at matched rows at 25% of schedule.
+
+2026-10-09 10:59Z: live fleet controller target6,000,000 verified, PID3501473.
+299845 roots /1932595 pollrows;120s warm371.04roots/s, ETA4.27h (~15:15Z).
+Latest steering adds B3/B4 student screen infrastructure, ready before6M;
+coordinator retains statistical-plan freeze. GPU destinations01(afterT11),09,
+13/14/15. No GPU job launched. Source assembly/packing will avoid per-game mmap
+FD exhaustion. Expansion after E1 is capped near64 physical-core workers/host.
+
+2026-10-09 11:35Z: B3/B4 infrastructure ready:8 tests PASS (5.036s on03,
+nice19/SCHED_IDLE), real v6 pack feature/target/ragged equality and SHA tamper
+rejection, all-WAIT/WAIT-ratio/CI kills, paired identity/execution-freeze guards.
+E1 native/student runtime initialization PASS. T11 EMA confirmed decay0.999;
+2000warmup/8192batch/AdamW3e-4 defaults fixed, final-step EMA. Dataset packing
+avoids thousands of per-game mmap descriptors. No GPU fitting or reporting games.
+Approved STUDENT-SCREEN-PLAN.md SHA
+`d98fdd74f2c59a23806aae1cfd85852016796d40f6d8d71e2ed6b3c9171b6138`
+remains byte-unchanged, waiting for coordinator joint plan/seed-audit freeze.
+Seed inventories zero overlaps on all reachable originals;03 archive supplement
+still finishing. 02/07/18 unreachable; coordinator explicitly accepts committed
+formula ranges plus03archive/04copies/01mirrors/gates-bc archival inventories.
+Full inventories under /mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1
+on inventoried hosts; no raw inventories or data enter git.

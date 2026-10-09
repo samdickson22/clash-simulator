@@ -1,0 +1,12 @@
+{
+  "pids": [
+    3552051,
+    3552251,
+    3552252,
+    3552253
+  ],
+  "stop_to_all_gone_seconds": 1.4090677141211927,
+  "fully_vacated": true,
+  "cache_service_running": true,
+  "stop_path": "/mpac/sdicks02/jobs/clasher/exit-r1-20261009-r1/PILOT.STOP"
+}

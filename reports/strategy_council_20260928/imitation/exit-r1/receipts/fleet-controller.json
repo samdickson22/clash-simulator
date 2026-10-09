@@ -1,0 +1,18 @@
+{
+  "pid": 3501473,
+  "host": "127x05",
+  "nice": 19,
+  "scheduler": "SCHED_IDLE",
+  "stdlib_only": true,
+  "source_sha256": "61ee6fe8e2eaf5bad00c4f7cd3ac95d3c88e9d9c5d35f8800928fd673dea8d47",
+  "target_roots": 6000000,
+  "output": "/mpac/sdicks02/jobs/clasher/exit-r1-fleet-control-20261009-r1/control",
+  "poll_seconds": 30,
+  "stop_paths": {
+    "127x03": "/mpac/sdicks02/jobs/clasher/exit-r1-20261009-r1/GENERATION.STOP",
+    "127x04": "/mpac/sdicks02/jobs/clasher/exit-r1-20261009-r1/GENERATION.STOP",
+    "127x08": "/mpac/sdicks02/jobs/clasher/exit-r1-20261009-r1/GENERATION.STOP"
+  },
+  "threshold_changed_at": "2026-10-09T10:56Z",
+  "argv_target_roots": 6000000
+}

@@ -1,0 +1,16 @@
+{
+  "seed": 4503599708370599,
+  "index": 5,
+  "seat": 1,
+  "opponent": "v1",
+  "rows": 826,
+  "root_decisions": 135,
+  "plays": 47,
+  "cpu_seconds": 40.319166222999996,
+  "wall_seconds": 40.3437413549982,
+  "byte_checks": 826,
+  "gate_c_byte_equal": true,
+  "replay_exact": true,
+  "outcome": 1.0,
+  "source_receipt_sha256": "89f0cb802571715d44aec2bb280f6b3b60ceec83af93eb495631c75bdff25ec9"
+}
