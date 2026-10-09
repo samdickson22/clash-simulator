@@ -9,7 +9,7 @@ Exploration lane; frozen plan before games, no PREREG. **2,400 terminal games**,
 | Baseline vs v1 | 351/249/0 | 41.50% [37.67, 45.34] |
 | W vs v1 | 476/124/0 | 20.67% [17.50, 23.83] |
 
-**E1a:** deadline W minus deadline baseline loss change **+25.00 [+20.17, +30.00] pp**.
+**E1a:** deadline W minus deadline baseline loss change **+25.00 [+20.17, +30.00] pp**. W loses more often under this budget. Its frozen balanced coarse scan must finish before a root can complete all three styles; the high fallback rate shows that this ordering usually supplies no complete root within the budget.
 **E1b:** W minus baseline against v1 loss change **-20.83 [-25.17, -16.67] pp**. W win rate against v1 **79.33% [76.17, 82.50]**; score **79.33% [76.17, 82.50]**.
 
 | Deadline arm | Search cutoff hits | v1 fallbacks | Actual wall >200 ms |
@@ -43,6 +43,17 @@ Every deadline decision includes public observation, cached v1 policy sample, be
 | Deadline W vs baseline | 20.97% [18.56, 23.41] | 11.79% [10.32, 13.27] | -4.92 [-8.06, -1.65] pp |
 | Baseline vs v1 | 95.59% [95.01, 96.16] | 69.60% [68.16, 71.06] | +8.40 [+1.92, +14.85] pp |
 | W vs v1 | 70.61% [69.13, 72.10] | 35.99% [34.36, 37.64] | +7.64 [+4.56, +10.62] pp |
+
+W-v-v1 under-4 arrivals among losses: **68.64% [65.46, 71.82]**; among nonlosses: **71.15% [69.51, 72.82]**. These loss-stratified ledger comparisons are observational.
+
+| Arm | Candidate plays filtered | Own/opponent command rejections | Own/opponent v1 polls |
+| --- | ---: | ---: | ---: |
+| a0 | 0 | 1/0 | 503,406/503,406 |
+| aW | 0 | 0/1 | 451,894/451,894 |
+| b0 | 0 | 0/1 | 457,053/457,053 |
+| bW | 0 | 0/2 | 442,193/442,193 |
+
+The reducer verifies exactly one poll per actor at every five-tick cadence point from tick90, including blocked channels and timed waits. Filtering counts candidate occurrences across decisions, not distinct plays.
 
 The fifth arm is frozen and runs last. No causal reserve conclusion is reported before it completes.
 

@@ -33,6 +33,9 @@ def main():
             assert r['metadata']['terminal'] and r['role']=='exploration'
             assert r['metadata']['delay_ticks']==r['metadata']['opponent_delay']==27
             assert len(r['search_ab']['worker_affinity'])==1
+            expected_polls=max(0,r['frames']-18)
+            assert set(r['search_ab']['policy_polls'])=={'0','1'}
+            assert all(v==expected_polls for v in r['search_ab']['policy_polls'].values()),(arm,seed,'policy cadence')
             assert r['metadata']['reserve_floor']==cfg['arms'][arm].get('reserve_floor',False)
             assert r['metadata']['deadline_seconds']==cfg['arms'][arm]['deadline_seconds']
             for k in ('channel','opponent_channel'):
@@ -68,6 +71,8 @@ def main():
                     count[prefix+metric]+=s[prefix+metric][0]
                 count[prefix+'deadline_decisions']+=len(ds)
             count['floor_removed']+=ab['floor_removed']
+            count['policy_polls_own']+=ab['policy_polls'][str(meta['seat'])]
+            count['policy_polls_opponent']+=ab['policy_polls'][str(1-meta['seat'])]
             for key in ('channel','opponent_channel'):
                 count[key+'_rejected']+=meta[key]['rejected'];count[key+'_submitted']+=meta[key]['submitted']
             pushes=r['pushes'];low=[p for p in pushes if p['elixir']<4];high=[p for p in pushes if p['elixir']>=4]
@@ -123,7 +128,7 @@ def main():
         latency=latencies,deadline_counts=counts,throughput=throughput,game_cpu_seconds=cpu_total,
         bootstrap=cfg['bootstrap'],causality_finding=causal,
         input_game_hash_union_sha256=hashlib.sha256(''.join(sorted(hashes)).encode()).hexdigest(),
-        smoke=a.smoke,full_schedule_and_single_core_audited=True)
+        smoke=a.smoke,full_schedule_and_single_core_audited=True,policy_cadence_audited=True)
     a.out.write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')
     print(json.dumps(dict(games=result['terminal_games'],outcomes=outcomes,causality=causal)),flush=True)
 

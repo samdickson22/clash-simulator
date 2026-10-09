@@ -2408,6 +2408,8 @@
       "opponent_wall_overrun": 772,
       "opponent_deadline_decisions": 187530,
       "floor_removed": 0,
+      "policy_polls_own": 503406,
+      "policy_polls_opponent": 503406,
       "channel_rejected": 1,
       "channel_submitted": 32335,
       "opponent_channel_rejected": 0,
@@ -2423,6 +2425,8 @@
       "opponent_wall_overrun": 842,
       "opponent_deadline_decisions": 172718,
       "floor_removed": 0,
+      "policy_polls_own": 451894,
+      "policy_polls_opponent": 451894,
       "channel_rejected": 0,
       "channel_submitted": 17210,
       "opponent_channel_rejected": 1,
@@ -2438,6 +2442,8 @@
       "opponent_wall_overrun": 0,
       "opponent_deadline_decisions": 0,
       "floor_removed": 0,
+      "policy_polls_own": 457053,
+      "policy_polls_opponent": 457053,
       "channel_rejected": 0,
       "channel_submitted": 28096,
       "opponent_channel_rejected": 1,
@@ -2453,6 +2459,8 @@
       "opponent_wall_overrun": 0,
       "opponent_deadline_decisions": 0,
       "floor_removed": 0,
+      "policy_polls_own": 442193,
+      "policy_polls_opponent": 442193,
       "channel_rejected": 0,
       "channel_submitted": 23201,
       "opponent_channel_rejected": 2,
@@ -2507,5 +2515,6 @@
   "causality_finding": "Pending reserve arm; no causal conclusion yet.",
   "input_game_hash_union_sha256": "49dceb2629bdbc8f79e967b2fa8cc0a0421d3384d261927cf902679b2642c177",
   "smoke": false,
-  "full_schedule_and_single_core_audited": true
+  "full_schedule_and_single_core_audited": true,
+  "policy_cadence_audited": true
 }

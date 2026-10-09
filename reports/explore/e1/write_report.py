@@ -23,7 +23,7 @@ def main():
         '| Arm | W/L/D | Loss rate, 95% CI |','| --- | ---: | ---: |']
     for arm in arms:
         o=r['outcomes'][arm];lines.append(f"| {labels[arm]} | {o['wins']}/{o['losses']}/{o['draws']} | {pct(est[arm]['loss'])} |")
-    lines+=['',f"**E1a:** deadline W minus deadline baseline loss change **{pp(con['aW_minus_a0']['loss'])}**.",
+    lines+=['',f"**E1a:** deadline W minus deadline baseline loss change **{pp(con['aW_minus_a0']['loss'])}**. W loses more often under this budget. Its frozen balanced coarse scan must finish before a root can complete all three styles; the high fallback rate shows that this ordering usually supplies no complete root within the budget.",
         f"**E1b:** W minus baseline against v1 loss change **{pp(con['bW_minus_b0']['loss'])}**. W win rate against v1 **{pct(est['bW']['win'])}**; score **{pct(est['bW']['score'])}**.",'',
         '| Deadline arm | Search cutoff hits | v1 fallbacks | Actual wall >200 ms |','| --- | ---: | ---: | ---: |']
     for arm in ('a0','aW'):
@@ -43,6 +43,12 @@ def main():
         '| Arm | Under-4 arrivals | No affordable defender in hand | Low-minus-high arrival subsequent damage risk |','| --- | ---: | ---: | ---: |']
     for arm in arms:
         lines.append(f"| {labels[arm]} | {pct(est[arm]['arrival_under4_fraction'])} | {pct(est[arm]['no_affordable_defender_in_hand_fraction'])} | {pp(r['associations'][arm]['low_minus_high_damage_risk'])} |")
+    lines+=['',f"W-v-v1 under-4 arrivals among losses: **{pct(est['bW']['arrival_under4_in_losses'])}**; among nonlosses: **{pct(est['bW']['arrival_under4_in_nonlosses'])}**. These loss-stratified ledger comparisons are observational.",'',
+        '| Arm | Candidate plays filtered | Own/opponent command rejections | Own/opponent v1 polls |','| --- | ---: | ---: | ---: |']
+    for arm in arms:
+        c=r['deadline_counts'][arm]
+        lines.append(f"| {arm} | {c['floor_removed']:,} | {c['channel_rejected']}/{c['opponent_channel_rejected']} | {c['policy_polls_own']:,}/{c['policy_polls_opponent']:,} |")
+    lines+=['','The reducer verifies exactly one poll per actor at every five-tick cadence point from tick90, including blocked channels and timed waits. Filtering counts candidate occurrences across decisions, not distinct plays.']
     if final:
         lines+=['',f"**Reserve intervention:** floor minus W loss change **{pp(con['bR_minus_bW']['loss'])}**; under-4 arrival change **{pp(con['bR_minus_bW']['arrival_under4_fraction'])}**.",
             '', '**Causal finding:** '+r['causality_finding'], '',
