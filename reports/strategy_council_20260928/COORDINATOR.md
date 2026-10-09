@@ -1161,3 +1161,4 @@ Also on the hub, but with copies elsewhere:
   - Leased: 09/13/14/15 99% (capture queue, 4 lanes each), 16 72%.
   - **16 is resolved:** T11 seed 21 is back as `extended60-v1` at ~12k rows/s, PSS 36 GB.
   - **Problem (a) on 02:** the GPU is idle apart from perception's leftover inventory job, while gate (c) runs CPU-only. I asked the gates worker whether 4 capture lanes on 02 would breach gate (c)'s frozen host conditions; any doubt means wait for the gate (c) exit.
+- **03:47 UTC:** amendments 13 (whole-match queue) and 14 (vectorized non-clock qualification, `460e84aa…`, prepared and not launched) went to an independent review before A1 relies on their outputs: `clasher-v4-amendments-13-14-review-20261009-1` (Opus, high). The packing sweep's 2-lane phase measured 3.99 fps on 04; the 4/6/8-lane phases are pending.
