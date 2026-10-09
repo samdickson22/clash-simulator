@@ -17,9 +17,16 @@ SNAPSHOT=r'''
 import json,sys
 from pathlib import Path
 w=Path(sys.argv[1]); width=int(sys.argv[2]); out=w/'runs'/('width'+str(width))
+labels=w/'ops/active-labels.json'
+label=json.loads(labels.read_text()).get(str(width),'width'+str(width)+'-v1') if labels.exists() else 'width'+str(width)+'-v1'
 result={'width':width}
-for name,path in [('launch',w/('width'+str(width)+'-v1-launch.json')),('health',w/('width'+str(width)+'-v1-health.json')),('exit',w/('width'+str(width)+'-v1-exit.json')),('quarter',out/'quarter.json'),('decision',out/'kill-decision.json'),('scan_exit',out/'scan-exit.json'),('complete',out/'complete.json')]:
+for name,path in [('launch',w/(label+'-launch.json')),('health',w/(label+'-health.json')),('exit',w/(label+'-exit.json')),('quarter',out/'quarter.json'),('decision',out/'kill-decision.json'),('scan_exit',out/'scan-exit.json'),('complete',out/'complete.json')]:
  if path.exists():result[name]=json.loads(path.read_text())
+result['guard_history']=[]
+for launch in sorted(w.glob('width'+str(width)+'-*-launch.json')):
+ r=json.loads(launch.read_text()); exitpath=launch.with_name(launch.name.replace('-launch.json','-exit.json'))
+ if exitpath.exists():r['ended_at']=json.loads(exitpath.read_text())['ended_at']
+ result['guard_history'].append(r)
 path=out/'scan-segments.jsonl'
 if path.exists():result['segments']=[json.loads(x) for x in path.read_text().splitlines()]
 log=out/'train.jsonl'
@@ -30,7 +37,7 @@ if log.exists():
   try:r=json.loads(x)
   except (ValueError,UnicodeError):continue
   if r.get('event')=='step':result['latest_step']=r;break
-log=w/('width'+str(width)+'-v1.log')
+log=w/(label+'.log')
 if log.exists():
  with log.open('rb') as f:
   f.seek(max(0,log.stat().st_size-4096));result['tail']=f.read().decode(errors='replace')[-3000:]
@@ -75,9 +82,10 @@ def main():
         cached=arms
         now=datetime.now(timezone.utc); hours=0
         for r in arms.values():
-            if 'launch' in r:
-                start=datetime.fromisoformat(r['launch']['started_at'])
-                end=datetime.fromisoformat(r['exit']['ended_at']) if 'exit' in r else now
+            history=r.get('guard_history') or ([{**r['launch'],**({'ended_at':r['exit']['ended_at']} if 'exit' in r else {})}] if 'launch' in r else [])
+            for g in history:
+                start=datetime.fromisoformat(g['started_at'])
+                end=datetime.fromisoformat(g['ended_at']) if 'ended_at' in g else now
                 hours+=(end-start).total_seconds()/3600
         control=arms['127x16'].get('quarter')
         if control:

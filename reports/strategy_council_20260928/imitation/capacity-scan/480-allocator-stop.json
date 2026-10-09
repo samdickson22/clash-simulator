@@ -1,0 +1,56 @@
+{
+  "width": 480,
+  "checkpoint": "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/runs/width480/step-00000175.pt",
+  "checkpoint_sha256": "91c66427e0c23ce7d2d2d519a7e2dcffc8a4b449d33219adf8f3e5b86f29ebba",
+  "state": {
+    "epoch": 0,
+    "cursor": 1433600,
+    "step": 175,
+    "best_dev": null,
+    "bad_epochs": 0,
+    "rows": 1433600
+  },
+  "config": {
+    "vocab": 360,
+    "descriptors": 57,
+    "width": 480,
+    "heads": 6,
+    "layers": 4,
+    "ffn": 1920,
+    "tile_width": 64,
+    "dropout": 0.1,
+    "numeric": 24,
+    "types": 24
+  },
+  "scheduler": {
+    "base_lrs": [
+      0.0003
+    ],
+    "last_epoch": 175,
+    "_step_count": 176,
+    "_get_lr_called_within_step": false,
+    "_last_lr": [
+      2.6399999999999995e-05
+    ],
+    "lr_lambdas": [
+      null
+    ]
+  },
+  "hashes": {
+    "tokens": "35db1a7647c71a39b12b580cc31a39539c9ad973a8de635df0a95962b4ac8ee2",
+    "assets": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+    "roles": "1f45f1d147040e4502a18820ed9eec172b2d5f304589eaf96cbd87aa84f547e8",
+    "eval_spec": "d9f978f75191b5d5a474d127dbccd618b93dad5069dd851ab4f8b2a47fdaa7ae",
+    "sidecar_manifest": "eec22cd70c2dc8df37f5138a575fb91393eca752e216be9b156d458af1470eff",
+    "store_manifest": "7180964c1d470807a97ad7a990ac8eb145fb25d15f1c95edf165b3f87743d20f",
+    "role_manifest": "0546cfddcf79be12509953358fb499ac3be29493ba4a87893bfbfbbe0f179e68",
+    "T11_manifest": "a4801df32d4a546ed7df07faf070a138d4075cf4db6c193d38373f9194ff2e44",
+    "T11_prereg": "115ab2f62c999d96b908855ab6e45bade4d9573308a222659821f65a76e42749",
+    "T4_code": "301caa1003ab47eadc3f56973ec5398bed4d166dc1a0163d213e60a61854959d",
+    "T4_throughput": "5c7e83bacc92096a30520ccdaf002321b753542a7afc489e57183df865fc7229",
+    "T5_bounded_loader": "63a33eb93592de759256c10718a8c103918968a1ff5fb0e9eada49ec8f420115",
+    "T3_qualification": "0e14fefa47388dc0f8a436d2c6415224ac30af1cc3aed98a9092485deaf4b524"
+  },
+  "has_all_rng_optimizer_sections": true,
+  "original_trainer_exited": true
+}

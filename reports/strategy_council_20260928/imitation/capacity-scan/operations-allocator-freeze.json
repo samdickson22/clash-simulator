@@ -1,0 +1,19 @@
+{
+  "before_any_wide_dev": true,
+  "science_freeze_commit": "841c44b0",
+  "changes": [
+    "width480 allocator hard ceiling0.78",
+    "active-label guard history for exactresume accounting",
+    "collector represents uninitialized best_dev Infinity as JSONnull"
+  ],
+  "files": {
+    "gpu_entry.py": "d1dc11aea1078d047239122962ec1ad4c8d885dbcaee2c8b18e01f7f6d75a8a2",
+    "control.py": "1b995505a6034b237eddda4097d6060923c9d9c801dd88730acdd32a5217f7fa",
+    "collect.py": "3e6d7751e576df313dae468feed1ffc9a72d1c29c34bca050a71c0ac477bde55"
+  },
+  "resume_checkpoint_sha256": "91c66427e0c23ce7d2d2d519a7e2dcffc8a4b449d33219adf8f3e5b86f29ebba",
+  "resume_rows": 1433600,
+  "resume_step": 175,
+  "microbatch_unchanged": 2048,
+  "new_label": "width480-v2"
+}

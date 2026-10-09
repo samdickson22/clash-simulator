@@ -1,5 +1,6 @@
 """Allocator hygiene only: preserve math/RNG while releasing unused CUDA pages."""
 import sys
+import json
 from pathlib import Path
 
 
@@ -8,6 +9,11 @@ def main():
     sys.path.insert(0, str(source))
     from imitation.model import train
     import torch
+    config = json.loads(Path(sys.argv[sys.argv.index('--config')+1]).read_text())
+    if config['width'] == 480:
+        # Hard allocator ceiling leaves >8 GiB including CUDA context. PyTorch
+        # reclaims unused cached blocks at the ceiling without changing math.
+        torch.cuda.set_per_process_memory_fraction(0.78)
     step = train.optimizer_step
     def bounded_step(*args, **kwargs):
         torch.cuda.empty_cache()

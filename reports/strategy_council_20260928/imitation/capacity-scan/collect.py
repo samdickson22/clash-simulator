@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 
 
@@ -17,10 +18,12 @@ def main():
     p.add_argument('--work',required=True)
     p.add_argument('--width',type=int,required=True)
     a=p.parse_args();w=Path(a.work);out=w/'runs'/f'width{a.width}'
+    labels=w/'ops/active-labels.json'
+    label=json.loads(labels.read_text()).get(str(a.width),f'width{a.width}-v1') if labels.exists() else f'width{a.width}-v1'
     result=dict(width=a.width,work=str(w),curve=[],quarters=None)
     for name,path in [('quarter',out/'quarter.json'),('decision',out/'kill-decision.json'),
                       ('scan_exit',out/'scan-exit.json'),('complete',out/'complete.json'),
-                      ('guard_exit',w/f'width{a.width}-v1-exit.json'),
+                      ('guard_exit',w/f'{label}-exit.json'),
                       ('store',w/'ops/store-verified.json')]:
         if path.exists():
             r=json.loads(path.read_text())
@@ -30,6 +33,7 @@ def main():
             result[name]=r
     segments=out/'scan-segments.jsonl'
     result['segments']=[json.loads(x) for x in segments.read_text().splitlines()] if segments.exists() else []
+    result['guard_history']=[json.loads(x.read_text()) for x in sorted(w.glob(f'width{a.width}-*-exit.json'))]
     result['gpu_hours']=sum(x['wall_seconds'] for x in result['segments'])/3600
     log=out/'train.jsonl';last=None;starts=[]
     if log.exists():
@@ -60,7 +64,12 @@ def main():
         result['status']='resource_censored' if result['guard_exit'].get('stop_reason') else 'technical_failure'
     else:
         result['status']='running'
-    print(json.dumps(result,indent=2,allow_nan=False))
+    def finite(value):
+        if isinstance(value,float) and not math.isfinite(value):return None
+        if isinstance(value,dict):return {k:finite(v) for k,v in value.items()}
+        if isinstance(value,list):return [finite(v) for v in value]
+        return value
+    print(json.dumps(finite(result),indent=2,allow_nan=False))
 
 
 if __name__=='__main__':main()
