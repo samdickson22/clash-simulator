@@ -1176,3 +1176,12 @@ Also on the hub, but with copies elsewhere:
   - A15 instead adds provenance-preserving per-epoch assembly admission and body-scorer adapters. The frozen files and scoring rules stay unchanged. It needs an independent delta review before A1; reviewable implementation in ~90 min.
   - R13-1 and R13-2 tests are running on 04. The 61 retained matches are actually 44 e06 + 17 e14.
   - The A14 mutation test was added, and the non-clock gate 04r2 has been active since 03:51Z with no mismatch so far.
+- **04:07 UTC: W CONFIRMED against search opponents** (`reports/explore/w-confirm/RESULTS.md`, `4e8ae6dd`). Symmetric d=27, 600 paired seeds:
+  - **W vs baseline search: loss 47.8% → 20.0%, −27.8 pp [−32.2, −23.7].**
+  - H16: no benefit (+1.3 pp).
+  - W vs W: 49/51.
+  - Under-4-elixir arrivals 94% → 61%. Humans are at 16–19%, so reserve play is still the main gap.
+  - Latency: full W p50/p95 is 258/492 ms in loaded sims. On the fixed-state corpus, **screen8** (coarse scan plus top-8 refinement) agrees with full W on 125/125 states at a one-core p95 of 177 ms.
+  - **Decision:** adopt W + screen8 as the next search default. That's the biggest single improvement so far.
+    - Delegated `clasher-w-screen8-adopt-20261009-1` (Sol high, 03 CPU): a frozen-plan 600-seed outcome check comparing screen8 to full W (pass if the CI upper bound is ≤ +3 pp), plus a native production implementation behind a default-off flag, with flag-off bit-parity.
+    - It will also become the **search teacher** for imitation once adopted.
