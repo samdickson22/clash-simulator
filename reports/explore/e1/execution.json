@@ -1,0 +1,485 @@
+{
+  "terminal_reporting_games": 3000,
+  "excluded_terminal_smoke_games": 10,
+  "game_cpu_hours": 73.89155128125901,
+  "interrupted_nonterminal_cpu": "additional; not measured by retained terminal-game receipts",
+  "host_caps": {
+    "127x03": 64,
+    "127x04": 32
+  },
+  "scheduler": "SCHED_IDLE",
+  "nice_at_least": 10,
+  "all_final_game_pools_exited": true,
+  "min_observed_memavailable_GiB": 68.07793807983398,
+  "process_cap_census_halts": 2,
+  "extra_nice19_process_owner": "unresolved",
+  "frozen_plan_commit": "bfb9b107",
+  "alias_fix_commit": "fb1d78c3",
+  "existing_completed_decisions_unchanged_by_alias_fix": true,
+  "attempts": [
+    {
+      "returncode": -15,
+      "host": "127x03",
+      "wall_seconds": 1851.697464466095,
+      "peak_owned_processes": 65,
+      "min_memavailable_GiB": 84.09907531738281,
+      "pauses_or_halts": [
+        {
+          "time": 1791544673.5895367,
+          "reason": "process/scheduler cap"
+        }
+      ],
+      "receipt": "receipts/main-03-attempt1-exit.json"
+    },
+    {
+      "returncode": 0,
+      "host": "127x03",
+      "wall_seconds": 565.3737990856171,
+      "peak_owned_processes": 63,
+      "min_memavailable_GiB": 82.21730422973633,
+      "pauses_or_halts": [],
+      "receipt": "receipts/main-03-resume1-exit.json"
+    },
+    {
+      "returncode": 0,
+      "host": "127x04",
+      "wall_seconds": 2770.459874868393,
+      "peak_owned_processes": 32,
+      "min_memavailable_GiB": 68.07793807983398,
+      "pauses_or_halts": [],
+      "receipt": "receipts/main-04-exit.json"
+    },
+    {
+      "returncode": -15,
+      "host": "127x03",
+      "wall_seconds": 131.01792645454407,
+      "peak_owned_processes": 65,
+      "min_memavailable_GiB": 87.16526412963867,
+      "pauses_or_halts": [
+        {
+          "time": 1791546041.4633756,
+          "reason": "process/scheduler cap",
+          "rows": [
+            {
+              "pid": 2925623,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2925654,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926789,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926790,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926791,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926792,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926793,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926794,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926795,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926796,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926797,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926798,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926799,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926806,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926816,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926821,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926826,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926829,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926832,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926833,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926834,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926835,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926839,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926840,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926841,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926842,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926843,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926844,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926845,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926846,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926847,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926848,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926849,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926850,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926851,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926852,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926853,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926854,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926855,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926856,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926857,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926858,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926859,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926860,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926861,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926862,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926863,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926864,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926865,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926866,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926867,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926868,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926869,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926870,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926871,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926872,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926873,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926874,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926875,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926876,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926877,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926885,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2926894,
+              "nice": 10,
+              "scheduler": 5
+            },
+            {
+              "pid": 2930044,
+              "nice": 19,
+              "scheduler": 5
+            },
+            {
+              "pid": 2933233,
+              "nice": 10,
+              "scheduler": 5
+            }
+          ],
+          "memory": 94968053760
+        }
+      ],
+      "receipt": "receipts/reserve-03-attempt1-exit.json"
+    },
+    {
+      "returncode": 1,
+      "host": "127x03",
+      "wall_seconds": 227.0045464038849,
+      "peak_owned_processes": 62,
+      "min_memavailable_GiB": 87.6506576538086,
+      "pauses_or_halts": [],
+      "receipt": "receipts/reserve-03-attempt2-exit.json"
+    },
+    {
+      "returncode": 0,
+      "host": "127x03",
+      "wall_seconds": 388.87596440315247,
+      "peak_owned_processes": 62,
+      "min_memavailable_GiB": 85.7045669555664,
+      "pauses_or_halts": [],
+      "receipt": "receipts/reserve-03-resume2-exit.json"
+    },
+    {
+      "returncode": 1,
+      "host": "127x04",
+      "wall_seconds": 370.58916759490967,
+      "peak_owned_processes": 31,
+      "min_memavailable_GiB": 69.15296936035156,
+      "pauses_or_halts": [],
+      "receipt": "receipts/reserve-04-attempt1-exit.json"
+    },
+    {
+      "returncode": 0,
+      "host": "127x04",
+      "wall_seconds": 479.8582682609558,
+      "peak_owned_processes": 30,
+      "min_memavailable_GiB": 68.58349227905273,
+      "pauses_or_halts": [],
+      "receipt": "receipts/reserve-04-resume1-exit.json"
+    }
+  ],
+  "final_shards": {
+    "03": {
+      "main": {
+        "completed": 1600,
+        "supervisor_present": false,
+        "manager_present": false,
+        "final_receipt": {
+          "games": 1600,
+          "fresh": 322,
+          "cpu_seconds": 27949.889824466,
+          "wall_seconds": 541.8561511121225,
+          "terminal": true
+        }
+      },
+      "reserve": {
+        "completed": 400,
+        "supervisor_present": false,
+        "manager_present": false,
+        "final_receipt": {
+          "games": 400,
+          "fresh": 229,
+          "cpu_seconds": 17776.736391478,
+          "wall_seconds": 365.0685177689884,
+          "terminal": true
+        }
+      }
+    },
+    "04": {
+      "main": {
+        "completed": 800,
+        "supervisor_present": false,
+        "manager_present": false,
+        "final_receipt": {
+          "games": 800,
+          "fresh": 800,
+          "cpu_seconds": 79777.344174745,
+          "wall_seconds": 2728.10467381496,
+          "terminal": true
+        }
+      },
+      "reserve": {
+        "completed": 200,
+        "supervisor_present": false,
+        "manager_present": false,
+        "final_receipt": {
+          "games": 200,
+          "fresh": 120,
+          "cpu_seconds": 10951.394885376,
+          "wall_seconds": 441.2500669310102,
+          "terminal": true
+        }
+      }
+    }
+  }
+}
