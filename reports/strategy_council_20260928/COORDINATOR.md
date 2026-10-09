@@ -1251,3 +1251,4 @@ Also on the hub, but with copies elsewhere:
   - Every host keeps ≥40% of /mpac free for other lab users.
   - Verified leased outputs are archived to 03 with checksum and fsync before any removal.
   - Note: my time labels in the 05:10Z and 05:25Z worker messages were ~25 min fast; the real times were ~04:45Z and ~04:55Z.
+- **05:00 UTC: 09 capture stopped** at 04:57:18Z. The cause was perception's own reservation-accounting mismatch: `du -sb` counts hardlinks once and gave 68.9 GB, while the logical guard counted 73.7 GB. Host stability was not involved. The wrapper again masked the stop as pass/0. The reservation is restored to 78 GB (within 2 TB), and recovery with the intent/status controller is under way; no completed capture is rerun. **08: the T5 GRU paused and verified** at 04:40:51Z, exit 0, with its checkpoint backup SHA recorded. 08 joins the capture queue with a 150 GB plan.
