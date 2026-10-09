@@ -1336,3 +1336,4 @@ Also on the hub, but with copies elsewhere:
   - **Vectorized qualification: all 3 PASS** (e7/738, e15/748, e1/708; 3,656 frames × 9 branches; proof `40828251…`). 02 is restored to original 8 lanes (02r4) on renewed services.
   - **A16 package** (`3f125d72…`, draft `411d147c…`) went to independent review `clasher-v4-amendment16-review-20261009-1` (Opus, high). 157 tests pass, 20/20 mutants killed, and real admission over 32,904 records passes.
   - Storage ledger is at 2,111.5/2,200 GB.
+- **08:08 UTC: cache handoff COMPLETE.** All 7 were independently authenticated at 08:06:53–08:06:58Z (`cache-handoff-all-seven-authenticated-20261009-r1.json` `cb999a6d…`), more than 3 h before the 11:30Z deadline. No 02-old bindings remain, and both renewed services hard-stop Oct 11 04:00Z. The 11:00Z check task is deleted as redundant. The natural-drain switch package (17 tests, `28a9815f…`) is held until A16 is frozen. 15 is still waiting on its R13 PASS.
