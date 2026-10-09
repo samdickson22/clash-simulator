@@ -1459,3 +1459,12 @@ Also on the hub, but with copies elsewhere:
     - **E1** (`clasher-e1-w-deadline-humanproxy-20261009-1`): deadline harness plus v1 human-proxy arms on 03/04/01-idle;
     - **ExIt r1** (`clasher-exit-r1-teacher-student-20261009-1`): teacher-label emitter, student trainer adapter, latency probe, then generation on 03/04 and 08 with a stop file;
     - **Mac E4 package** (`clasher-mac-e4-package-20261009-1`): prepare only, no Mac access.
+- **10:24 UTC: A17 review: REQUIRED CHANGES** (`0de18ebc…`).
+  - Confirmed: scope is closed, and the 08 stress was independently re-verified.
+  - Required:
+    - **R17-1:** don't put replacement evidence on leased hosts. **Decision:** run the 3 qualifications on owned **08** now (04 is the alternate); the 09 run is corroboration only.
+    - R17-2: the stress check verifies the source closure.
+    - R17-3: A1 binds the APPROVE_EVIDENCE_REPLACEMENT SHA directly.
+    - R17-4: adopt the reviewer's 7 tests (preserved: `a17-reviewer-artifacts/test_reviewer_a17.py` `985ad06b…`).
+  - **Broader:** all A1-read evidence on leased hosts is relocated to owned 03 before A1.
+  - R16-1 selection is materialized (`a0f70344…`): e17/1208 → 09, e8/1308 → 13, e16/878 → 14, e9/1218 → 15.
