@@ -1264,3 +1264,4 @@ Also on the hub, but with copies elsewhere:
   - The 03 archive service is active, with the first verified relocations done.
   - 08 is running 8 lanes at 99%. 09 recovered (8 lanes, 27.9 GB PSS).
   - A15 r2 is at 123 tests passing, with the mutation rerun in progress.
+- **05:35 UTC: A15 r2 package ready** (`c66fd6f4…`; draft `2d32c0b4…`). 186 tests pass, 31/31 non-equivalent mutants killed, and the final-pinned e1/e2/e3 layout proofs pass. It includes relocation to 03 and memoized per-epoch admission: one-match cost drops from 4.7 s to 0.4 s. Sent to delta review: `clasher-v4-amendment15-r2-delta-review-20261009-1` (Opus, high).
