@@ -1557,3 +1557,7 @@ Also on the hub, but with copies elsewhere:
   - **Student screen:** corpus pack on 03 (single process, ~27 GB); fits on 01/04/09 follow.
   - **Capacity scan (plan h) delegated** (`clasher-capacity-scan-20261009-1`): widths 288/384/512 vs 192 on leased 13/14/15/16, offline-only, kill rule dev-NLL gain <0.005 at 25%.
   - A1 dry-run parallelization is in progress. 02/06/07/11/18 are down.
+- **19:54 UTC:**
+  - **Student fits are running:** S-mix on 01 and S-teacher on 04 (corpus `1c8e1f49`, init v1).
+  - S-human was refused on 09 by the old wrapper's hard-coded Oct 9 deadline. Fix: a versioned wrapper with the Oct 11 deadline, or the fallback of 08 with a stop file.
+  - The A1 dry run moved to r5, in-memory buffering after authenticated reads under the lock (orchestration only; byte-identical on a real 15.9 MB stream), because r4's stream locks serialized parsing.
