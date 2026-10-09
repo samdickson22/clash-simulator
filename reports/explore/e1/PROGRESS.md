@@ -1,3 +1,5 @@
 # E1 progress
 
-2026-10-09 10:35Z — Building B1 in new E1 paths. No games started. Private tick-abort native build on03; snapshot and v1 adapter qualification pending. Coordinator allocation:03≤64,04≤32afterGRUpark,01≤24idlewithT11rateguard. Current run uses03only;05authors/readscompactreceipts. Four frozen matched arms planned (2,400 games). Plan/config commit pending seed audit; report is not complete.
+2026-10-09 10:40Z — Plan/config/seed audit frozen and pushed **bfb9b107**, before any game. Five arms,3,000reportinggames,600pairedseeds. Native deadlineOFF matches frozen250/250score/action/trace digest; E1floorOFF/deadlineOFF symmetric125/125, W125/125choices/scores, v1byte/action250/250, nativezero-budgetimmutability125/125;12injected-clock/filtertestsPASS. Receipts underreceipts/. Snapshot/frozenv1adapter/nativehashes pinned; no games started yet.
+
+Private tick-abort extension built nice10/idleon03. Earlier build/qualification import-path attempts failed before games; corrected private runtime to use committed W config and sealed gate adapter. No outcome data or game replacements.03allocation≤64E1processes (62workers);04≤32(30workers), releasedafterGRUpark10:25:44Z and emptyGPUverified. Reporting split03seeds0–399,04seeds400–599; arm5runslast. No01/08/leasedwork. Allcacheandrawgamereceiptsunder/mpac.05lightauthoring/compactreceipts only.

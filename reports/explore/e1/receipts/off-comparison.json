@@ -1,0 +1,7 @@
+{
+  "exact": true,
+  "checks": 250,
+  "baseline_digest": "425f1cb0891742996c8685ca21dc38bd41a0d136bf3528c7fcc1e86a89eccc46",
+  "candidate_digest": "425f1cb0891742996c8685ca21dc38bd41a0d136bf3528c7fcc1e86a89eccc46",
+  "native_sha256": "f387b2d288ed280de9eeae3164d38f465045685ee53819e279930c2ee10699a8"
+}
