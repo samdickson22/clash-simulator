@@ -1390,3 +1390,11 @@ Also on the hub, but with copies elsewhere:
   - Still blocking A1: the 4 hash-selected R16-1 recaptures after queue closure, and the A16 follow-up admission delta plus review.
   - **Post-capture GPU plan:** 08 stays reserved for B. The GRU resumes on a freed GPU (04 proposed). I've asked the imitation owner for a next-workload recommendation (v2 with W-screen8 teacher labels vs more seeds); allocation by ~10:00Z.
 - **09:36 UTC: allocation.** The R16-1 four original-worker recaptures run in parallel after queue closure on 02/13/14/15, one cell per host (09 is a substitute), then each host is released. **04 → T5 GRU resume.** 08 stays reserved for B.
+- **09:40 UTC: 127x02 OFFLINE** (no route; LAN ssh from 01 times out; ping 100% loss), most likely powered off.
+  - At 09:39, 04/08/09/13/14 were idle (queue nearly drained) and 15 was at 99%.
+  - **Decision:**
+    - host-lost receipts for 02's claims, then a requeue exactly once onto the idle vectorized hosts;
+    - 02 partial outputs are never admissible;
+    - if 02 returns, verify no survivors first, then retire its stale outputs; RC1 one-source blocks late admission;
+    - R16-1 audits move from 02 to 09.
+  - The 02 cache service (old, hard-stop 12Z) was already unused.
