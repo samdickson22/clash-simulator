@@ -1527,3 +1527,4 @@ Also on the hub, but with copies elsewhere:
   - The A18 package is targeted for ~11:40–11:55Z.
   - The student-screen plan draft content is approved. The worker runs the seed audit, and I freeze plan and audit together.
   - E1's reserve-floor crown-tower fix (`72e84a5f`) is pending qualification before arm 5.
+- **11:09 UTC:** student-screen packing tests 7/7 PASS. **Seed-audit scope decision (exploration lane):** the committed plan/config formula ranges, plus reachable host inventories, plus archives/mirrors for the unreachable 02/07/18, which are disclosed as not directly inventoried. The proposed ranges (≥4503601007370496) sit far above prior formula ranges.
