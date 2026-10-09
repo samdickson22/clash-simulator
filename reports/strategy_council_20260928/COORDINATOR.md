@@ -1498,3 +1498,7 @@ Also on the hub, but with copies elsewhere:
   - The T5 GRU PARKED at 10:25:44Z (`gru-park-B0-release-20261009.json`, step 1878, backed up). **04 is released** to ExIt (≤96 CPU) and E1 (≤32); its GPU is empty.
   - The A17 owned-08r2 qualifications PASS (complete `380da25b…`; e7/738, e15/748, e1/708, 9 streams byte-exact). The §5 packet is being built.
   - Capacity probe: width 192 p99 is 14.9 ms (passes ≤15 ms); 288/384 fail.
+- **10:39 UTC: A17 r2 delta review: REQUIRED CHANGES**, one guard (`87a66e39…`). The qualifier pin `eba6349d` is enforced only for stress, so the 08r1 (77c809) qualification receipt would be admitted.
+  - Ordered: A17 r3 = that guard plus 1 test; I do a diff-only check, then freeze.
+  - §5 circularity resolved: after the r3 freeze and my mechanical checks, I issue a **conditional** APPROVE_EVIDENCE_REPLACEMENT, void unless the immediately following actual-file `verify_replacement_evidence` on 04 passes. A1 is barred until then.
+  - The 08 GPU was released (`3707b2c1`).
