@@ -1421,3 +1421,7 @@ Also on the hub, but with copies elsewhere:
   - Follow-ups after closure: per-host transport quarantine, and archive coverage for home producers.
 - **09:56 UTC:** 04r3's guard stopped it at 09:54:26Z (GPU free 5.3 GB < 8 GB). The likely cause is a premature T5 GRU start on 04, from my 'as soon as a GPU frees' note; the GPU is empty now. 8 partials are preserved and the queue isn't suspended. **Decision:** 04 is released to T5 after the exits, backup and requeue are authenticated. The other 5 GPUs finish capture, and T5 waits for the explicit release.
 - **09:57 UTC:** 04 released at 09:56:27Z (receipt `59890022…`): exit authenticated, backup verified, 8 claims requeued. **T5 is told to resume the GRU on 04.**
+- **10:03 UTC: A1 dependency on 02 found.** Frozen A16 contract `3b3ebc8f` pins the 3 qualification outputs, their receipt and plan to host 02, and the R16 e1/708 stress output is 02-only. **Decision, in parallel:**
+  - a mirror search;
+  - a narrow prospective **Amendment 17**: re-run qualifications and the stress cell on reachable hosts with the frozen worker, re-pinning the evidence; the 02 originals stay retired;
+  - asking Sam whether 02 can be powered back on.
