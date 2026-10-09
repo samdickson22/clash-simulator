@@ -1,0 +1,30 @@
+test_all_configs_are_explicit_and_pinned (test_harness.ReceiptTests.test_all_configs_are_explicit_and_pinned) ... ok
+test_at_least_64_exact_thread_pairs_and_all_four_cells (test_harness.ReceiptTests.test_at_least_64_exact_thread_pairs_and_all_four_cells) ... ok
+test_duplicate_and_missing_pairs_rejected_or_failed (test_harness.ReceiptTests.test_duplicate_and_missing_pairs_rejected_or_failed) ... ok
+test_epsilon_tie_preserves_candidate_order (test_harness.ReceiptTests.test_epsilon_tie_preserves_candidate_order) ... ok
+test_exactness_detects_score_action_and_candidate_drift (test_harness.ReceiptTests.test_exactness_detects_score_action_and_candidate_drift) ... ok
+test_exactness_requires_full_completion (test_harness.ReceiptTests.test_exactness_requires_full_completion) ... ok
+test_finite_native_no_deadline_w_route (test_harness.ReceiptTests.test_finite_native_no_deadline_w_route) ... ok
+test_fresh_receipts_never_overwrite (test_harness.ReceiptTests.test_fresh_receipts_never_overwrite) ... ok
+test_hash_tamper_and_escape_rejected (test_harness.ReceiptTests.test_hash_tamper_and_escape_rejected) ... ok
+test_independent_launcher_sha_checked_before_import (test_harness.ReceiptTests.test_independent_launcher_sha_checked_before_import) ... ok
+test_invalid_admission_fails_gate (test_harness.ReceiptTests.test_invalid_admission_fails_gate) ... ok
+test_mac_commands_refuse_linux_before_any_inference (test_harness.ReceiptTests.test_mac_commands_refuse_linux_before_any_inference) ... ok
+test_missing_perception_samples_fail (test_harness.ReceiptTests.test_missing_perception_samples_fail) ... ok
+test_no_complete_root_is_wait (test_harness.ReceiptTests.test_no_complete_root_is_wait) ... ok
+test_nonfinite_negative_and_bool_rejected (test_harness.ReceiptTests.test_nonfinite_negative_and_bool_rejected) ... ok
+test_nonfinite_score_rejected (test_harness.ReceiptTests.test_nonfinite_score_rejected) ... ok
+test_one_and_four_threads_keep_four_real_roots (test_harness.ReceiptTests.test_one_and_four_threads_keep_four_real_roots) ... ok
+test_only_availability_clocks_excluded (test_harness.ReceiptTests.test_only_availability_clocks_excluded) ... ok
+test_partial_root_never_admitted (test_harness.ReceiptTests.test_partial_root_never_admitted) ... ok
+test_perception_cold_retained_but_warm_gate_separate (test_harness.ReceiptTests.test_perception_cold_retained_but_warm_gate_separate) ... ok
+test_quantile_interpolation_and_empty (test_harness.ReceiptTests.test_quantile_interpolation_and_empty) ... ok
+test_slow_real_search_fails_even_if_noop_samples_fast (test_harness.ReceiptTests.test_slow_real_search_fails_even_if_noop_samples_fast) ... ok
+test_terminal_and_skipped_searches_cannot_make_gate_pass (test_harness.ReceiptTests.test_terminal_and_skipped_searches_cannot_make_gate_pass) ... ok
+test_w_screened_candidates_are_not_deadline_truncations (test_harness.ReceiptTests.test_w_screened_candidates_are_not_deadline_truncations) ... ok
+test_wrong_root_count_or_shape_rejected (test_harness.ReceiptTests.test_wrong_root_count_or_shape_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 0.058s
+
+OK

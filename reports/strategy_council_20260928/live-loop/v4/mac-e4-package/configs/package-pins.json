@@ -1,0 +1,19 @@
+{
+  "files": {
+    "PROPOSED-PATCHES.md": "0c7520a4b140751d97953ac9753e11e9264f3fb7cd470ca026371a017f841f0f",
+    "RUNBOOK.md": "6a1a47417b5d181a9d38e96e4a1d2d4a96a3788113a59c730c9bb6b225c07ad6",
+    "configs/measurement.json": "32f21d673b8ea6fc06f29d2df8aae0c3f697f55c6572e62fb0cffe4635f3e4e3",
+    "configs/source-pins.json": "47ed6d1758c50b0b7dc8565e718e4cefc8cd0562e1382ce8e8f852d856fc71ea",
+    "configs/timing.json": "928275b066c39c77a9bf62775a740443c1881e850b404206e797d1126318f37c",
+    "configs/w0-t1.json": "6c260bdd4f31a35e6b38d1edaa3e26f2510b8c295abbd514e20bcca355c3322a",
+    "configs/w0-t4.json": "88c61c85b866c1244ba5e5ae3559ef04886e0ea580a885b4c2d434c88dce4371",
+    "configs/w1-t1.json": "71a445acddb566d844b7facf3a37052732f97fc398c67d746fd2c7dd165c56e7",
+    "configs/w1-t4.json": "b80d1c8373e246c93bdfe397d82e6646944d4c813daf0ba8b70d4f0fa30af1f5",
+    "dependencies/l1_v4.py": "cad13d4f958757dbb9f38732f19d73423149b9dffcc34e3c41bb7376f87e9fef",
+    "scripts/build_mac.sh": "67f6e9c79625821a81f9604681c52ca59d6b8ad225f790f16f6a475875bfa00b",
+    "scripts/measure_mac.py": "6a5ac68d38000e2530419646e169b6a0b3d2b5e740e5bedb1932b85e421903fe",
+    "scripts/receipt_logic.py": "f0b3c2d0a314ba02829e5b2b277f6eed85ec76ce24c647d0986ad15791965dea",
+    "tests/test_harness.py": "85135e32850fed1059340b8fead75a030f2f2441c5dd5526eacaee1303cda443"
+  },
+  "schema": "clasher.mac-e4.package-pins.v1"
+}

@@ -1,0 +1,40 @@
+{
+  "command": "env PYTHONDONTWRITEBYTECODE=1 CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 19 /mpac/sdicks02/repos/clasher/.venv/bin/python -B -m unittest discover -s mac-e4-package/tests -v",
+  "cpu_only": true,
+  "earlier_attempts": {
+    "r1": "Python 3.8 system interpreter: 21 passed, two errors; unsupported Path API",
+    "r2": "Old fleet environment path absent on 03; no tests ran, exit 127",
+    "r3": "Python 3.12.13: 23 passed",
+    "r4": "23 passed after input/source recheck",
+    "r5": "25 passed including W native no-deadline/screening corrections",
+    "r6": "26 passed including cold-child Linux refusal",
+    "r7": "27 passed including typed NumPy receipt serialization"
+  },
+  "elapsed_seconds": 0.051,
+  "environment": {
+    "cuda_visible_devices": "",
+    "executable": "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+    "host": "127x03",
+    "nice": 19,
+    "omp_num_threads": "1",
+    "openblas_num_threads": "1",
+    "python": "3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]"
+  },
+  "exit_code": 0,
+  "final_exit": "linux-r8.exit",
+  "final_log": "linux-r8.log",
+  "formal_E4_qualified": false,
+  "host": "127x03",
+  "log_sha256": "35f3a9d7daa55dc9dd7b4344ae6e28f5dbc04e64226afbb12ef88edf95e1afdf",
+  "mac_accessed": false,
+  "mac_measurement_run": false,
+  "native_build_run": false,
+  "nice": 19,
+  "package_manifest_sha256": "f7fbdff1ae9106349c24aff598c0094cd8fc86e5ee66573a4bb70fdee3a5e4d8",
+  "passed": true,
+  "schema": "clasher.mac-e4.linux-tests.v1",
+  "source_manifest_sha256": "47ed6d1758c50b0b7dc8565e718e4cefc8cd0562e1382ce8e8f852d856fc71ea",
+  "source_revision": "444661fadf2a68c48544c5fc573c4e21d4ad1263",
+  "tests": 27,
+  "utc": "2026-10-09T10:57:27.137170+00:00"
+}
