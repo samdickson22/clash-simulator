@@ -1,0 +1,116 @@
+{
+  "manifest_sha256": "6f74fdf6cf189c7f268dc9d1f73090eb7724c306d3cf68b858df2807d90bffae",
+  "model_sha256": "8946523c19befd95c627cfffd417311daddca059cb2f0c5173d344e7a141a003",
+  "fit_episodes": [
+    "v4-phase-a-1975101180",
+    "v4-phase-a-1975101182",
+    "v4-phase-a-1975101312",
+    "v4-phase-a-1975101330",
+    "v4-phase-a-1975101294",
+    "v4-phase-a-1975101250",
+    "v4-phase-a-1975101245",
+    "v4-phase-a-1975101240",
+    "v4-phase-a-1975101200",
+    "v4-phase-a-1975101181",
+    "v4-phase-a-1975101203",
+    "v4-phase-a-1975101306",
+    "v4-phase-a-1975101310",
+    "v4-phase-a-1975101304",
+    "v4-phase-a-1975101177",
+    "v4-phase-a-1975101332",
+    "v4-phase-a-1975101233",
+    "v4-phase-a-1975101176",
+    "v4-phase-a-1975101334",
+    "v4-phase-a-1975101274",
+    "v4-phase-a-1975101184",
+    "v4-phase-a-1975101266",
+    "v4-phase-a-1975101236",
+    "v4-phase-a-1975101275",
+    "v4-phase-a-1975101211",
+    "v4-phase-a-1975101277",
+    "v4-phase-a-1975101217",
+    "v4-phase-a-1975101175",
+    "v4-phase-a-1975101221",
+    "v4-phase-a-1975101287",
+    "v4-phase-a-1975101223",
+    "v4-phase-a-1975101173",
+    "v4-phase-a-1975101235",
+    "v4-phase-a-1975101261",
+    "v4-phase-a-1975101201",
+    "v4-phase-a-1975101257",
+    "v4-phase-a-1975101292",
+    "v4-phase-a-1975101335",
+    "v4-phase-a-1975101246",
+    "v4-phase-a-1975101185",
+    "v4-phase-a-1975101187",
+    "v4-phase-a-1975101262",
+    "v4-phase-a-1975101285",
+    "v4-phase-a-1975101197",
+    "v4-phase-a-1975101232",
+    "v4-phase-a-1975101243",
+    "v4-phase-a-1975101224",
+    "v4-phase-a-1975101202"
+  ],
+  "destruction_events": 20,
+  "samples": {
+    "activation_0_False": 3599,
+    "activation_3_False": 3298,
+    "activation_0_True": 942,
+    "destroyed_2": 711,
+    "activation_3_True": 1243,
+    "destroyed_4": 771,
+    "destroyed_5": 39,
+    "destroyed_1": 54
+  },
+  "glyph_samples": {
+    "opp_princess": {
+      "3": 466,
+      "0": 419,
+      "5": 463,
+      "2": 870,
+      "4": 356,
+      "9": 332,
+      "8": 264,
+      "6": 325,
+      "7": 327,
+      "1": 478
+    },
+    "own_king": {
+      "4": 490,
+      "8": 66,
+      "2": 79,
+      "7": 370,
+      "1": 110,
+      "0": 203,
+      "5": 96,
+      "3": 93,
+      "9": 210,
+      "6": 99
+    }
+  },
+  "fit_numbers": {
+    "own_princess": {
+      "eligible": 5794,
+      "accepted": 3278,
+      "exact": 3278
+    },
+    "opp_princess": {
+      "eligible": 3786,
+      "accepted": 1095,
+      "exact": 1092
+    },
+    "own_king": {
+      "eligible": 2038,
+      "accepted": 438,
+      "exact": 438
+    }
+  },
+  "number_enabled": {
+    "opp_princess": true,
+    "own_king": true
+  },
+  "dev_pixels_opened": false,
+  "dev_used_for_fit": false,
+  "validation_payloads_opened": false,
+  "heldout_payloads_opened": false
+}

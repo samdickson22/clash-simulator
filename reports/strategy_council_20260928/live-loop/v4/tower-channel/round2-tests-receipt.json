@@ -1,0 +1,23 @@
+{
+  "host": "127x03",
+  "nice": 10,
+  "cpu_only": true,
+  "result": "85 passed, 6 subtests passed in 28.73s",
+  "round1_tests": 75,
+  "added_tests": 10,
+  "command": "python -m pytest -q tests/live_v4 --ignore=tests/live_v4/test_s6_parity.py tests/test_rl_live_inference_contract.py",
+  "scope": "Round-1 isolated check-repo snapshot plus only owned round-2 changes; concurrent live-runtime/perception worker edits excluded",
+  "tested_source_sha256": {
+    "src/clasher/live/tower_channel.py": "6070598b1dd02549b8b1b987fd55192f51611bad1b72101e2ab7f0d10a642571",
+    "src/clasher/live/tower_channel_templates.json": "09850226b90293ba70d0dfa0d6e16588a2cf297106a7bfc71a067ce81b941668",
+    "src/clasher/live/tower_model.py": "a8887d639a2ac707f854ff4e724c12545d259ff1e5f6cb73230f7282cdc8840c",
+    "src/clasher/live/public_root.py": "5f0d7bb5eb3c3b9e740fde350895f24a81e8c54d60b00bd41b8e199f551cdbc6",
+    "src/clasher/live/decision.py": "99d9a824ecb53453c1bfdcea54768e758f51e4b5f46afc44c0dca0440964643b",
+    "src/clasher/live/perception_adapter.py": "7cfe955240249ceb13994b8bac5b106547f00419d49166fc80814ee9dfe43c24",
+    "tests/live_v4/test_tower_channel_r2.py": "eca0ca86c27bec5b5c1400ed883964b951fc3cfe544af4108f499680020154cb",
+    "reports/strategy_council_20260928/live-loop/v4/tower-channel/truth_r2.py": "bc22107f4ff2b66cedd250a1dcb67ce2ce13ceb2820893eb2363239604914d8a"
+  },
+  "log_sha256": "b4170d452e11ca9dbd0fe9295041028cc5327210066880c8a1fec8e2defd8330",
+  "validation_payloads_opened": false,
+  "heldout_payloads_opened": false
+}

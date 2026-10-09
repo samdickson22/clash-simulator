@@ -1,0 +1,13 @@
+{
+  "host": "127x03",
+  "nice": 10,
+  "workers": 1,
+  "cpu_only": true,
+  "model_sha256": "09850226b90293ba70d0dfa0d6e16588a2cf297106a7bfc71a067ce81b941668",
+  "source_sha256": "6070598b1dd02549b8b1b987fd55192f51611bad1b72101e2ab7f0d10a642571",
+  "scope": "Reconstructed six-slot canvases from first eight fit episodes; measures all crops/OCR/bars/activation/confirmation/observation construction, excludes canvas assembly and I/O",
+  "samples": 551,
+  "mean_ms": 1.47399744646098,
+  "p95_ms": 1.716224,
+  "p99_ms": 1.753395
+}

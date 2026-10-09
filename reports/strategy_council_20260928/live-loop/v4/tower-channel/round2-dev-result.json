@@ -1,0 +1,1333 @@
+{
+  "schema": "clasher.public-tower-dev.r2",
+  "manifest_sha256": "6f74fdf6cf189c7f268dc9d1f73090eb7724c306d3cf68b858df2807d90bffae",
+  "freeze_sha256": "a4ddd5d053048aec46c93d83f42a789979709cd1da129adaeca4c643ca8b40fa",
+  "matches": [
+    {
+      "episode": "v4-phase-a-1975101336",
+      "counts": {
+        "opp_king": {
+          "all_frames": 795,
+          "all_alive": 795,
+          "alive_truth": 781,
+          "alive_to_alive": 781,
+          "activation_eligible": 781,
+          "truth_sleeping": 781,
+          "activation_accepted": 752,
+          "activation_exact": 752,
+          "sleeping_to_False": 752
+        },
+        "own_princess": {
+          "hp_eligible": 84,
+          "number_accepted": 48,
+          "number_exact": 48
+        },
+        "opp_left": {
+          "all_frames": 795,
+          "all_alive": 792,
+          "alive_truth": 781,
+          "alive_to_alive": 778,
+          "number_accepted": 4,
+          "number_exact": 3,
+          "bar_accepted": 2,
+          "bar_within_5pct": 2,
+          "all_unknown": 3,
+          "alive_to_unknown": 3
+        },
+        "opp_princess": {
+          "hp_eligible": 56,
+          "number_accepted": 15,
+          "number_exact": 14
+        },
+        "opp_right": {
+          "all_frames": 795,
+          "all_alive": 772,
+          "alive_truth": 781,
+          "alive_to_alive": 758,
+          "number_accepted": 11,
+          "number_exact": 11,
+          "bar_accepted": 19,
+          "bar_within_5pct": 19,
+          "all_unknown": 23,
+          "alive_to_unknown": 23
+        },
+        "own_king": {
+          "all_frames": 795,
+          "all_alive": 795,
+          "alive_truth": 781,
+          "alive_to_alive": 781,
+          "hp_eligible": 28,
+          "activation_eligible": 781,
+          "truth_sleeping": 781,
+          "activation_accepted": 722,
+          "activation_exact": 722,
+          "sleeping_to_False": 722
+        },
+        "own_left": {
+          "all_frames": 795,
+          "all_alive": 794,
+          "alive_truth": 781,
+          "alive_to_alive": 780,
+          "number_accepted": 23,
+          "number_exact": 23,
+          "all_unknown": 1,
+          "alive_to_unknown": 1
+        },
+        "own_right": {
+          "all_frames": 795,
+          "all_alive": 788,
+          "alive_truth": 781,
+          "alive_to_alive": 774,
+          "number_accepted": 25,
+          "number_exact": 25,
+          "all_unknown": 7,
+          "alive_to_unknown": 7
+        }
+      },
+      "events": [],
+      "false_slots": [],
+      "number_errors": [
+        {
+          "ordinal": 519,
+          "observation": {
+            "slot": "opp_left",
+            "state": "alive",
+            "hp_known": true,
+            "hp": 290,
+            "confidence": 0.9278817027807236,
+            "last_observed_ms": 25964,
+            "destruction_evidence": null,
+            "hp_fraction": null,
+            "king_active": null,
+            "match_ended": false
+          },
+          "truth_hp": 2905
+        }
+      ],
+      "provenance": {
+        "receipt_sha256": "59c8de4efe0f09423cb115c4448e5009af3bd1261f5685add4a453da38f66257",
+        "cache_index_sha256": "e86e500f2d5d10922ce9f1ffcea7cda75e6f994cef9715625991aab2183a57c6",
+        "truth_sha256": {
+          "objects.jsonl.gz": "004bca6c45db6a02d5b3600f1b9ef1a1c3fec34053917913c21282d6021959a2",
+          "rich-objects.jsonl.gz": "6ed4dc7a41124ee2f41dd5efdb5de0f1ae83f806f7c56ad4aeee1e275889f564",
+          "frames.jsonl": "e66b729cc66c93386a10fe088f122cdaeaffe9dedbdf1c08bd759a5d67dcae6e"
+        },
+        "raw_sha256": "6d408262175ea9d704b3fadf4906f3a22362016142c5fa254a463637d9d17327"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101260",
+      "counts": {
+        "opp_king": {
+          "all_frames": 3594,
+          "all_alive": 3572,
+          "alive_truth": 3580,
+          "alive_to_alive": 3558,
+          "activation_eligible": 3580,
+          "truth_sleeping": 803,
+          "activation_accepted": 3345,
+          "activation_exact": 3345,
+          "sleeping_to_False": 765,
+          "truth_active": 2777,
+          "active_to_True": 2580,
+          "all_unknown": 22,
+          "alive_to_unknown": 22
+        },
+        "own_princess": {
+          "hp_eligible": 100,
+          "number_accepted": 36,
+          "number_exact": 36
+        },
+        "opp_left": {
+          "all_frames": 3594,
+          "all_alive": 3525,
+          "alive_truth": 3580,
+          "alive_to_alive": 3525,
+          "all_unknown": 69,
+          "alive_to_unknown": 55,
+          "number_accepted": 2,
+          "number_exact": 2,
+          "bar_accepted": 2,
+          "bar_within_5pct": 2
+        },
+        "opp_princess": {
+          "hp_eligible": 56,
+          "number_accepted": 4,
+          "number_exact": 4
+        },
+        "opp_right": {
+          "all_frames": 3594,
+          "all_alive": 605,
+          "alive_truth": 801,
+          "alive_to_alive": 603,
+          "bar_accepted": 10,
+          "bar_within_5pct": 10,
+          "number_accepted": 2,
+          "number_exact": 2,
+          "all_unknown": 929,
+          "alive_to_unknown": 198,
+          "destroyed_truth": 2777,
+          "destroyed_to_unknown": 728,
+          "all_destroyed": 2060,
+          "destroyed_to_destroyed": 2049
+        },
+        "own_king": {
+          "all_frames": 3594,
+          "all_alive": 3569,
+          "alive_truth": 3580,
+          "alive_to_alive": 3555,
+          "hp_eligible": 44,
+          "activation_eligible": 3580,
+          "truth_sleeping": 594,
+          "activation_accepted": 3140,
+          "activation_exact": 3140,
+          "sleeping_to_False": 576,
+          "truth_active": 2986,
+          "active_to_True": 2564,
+          "all_unknown": 25,
+          "alive_to_unknown": 25,
+          "number_accepted": 32,
+          "number_exact": 32
+        },
+        "own_left": {
+          "all_frames": 3594,
+          "all_alive": 594,
+          "alive_truth": 593,
+          "alive_to_alive": 593,
+          "number_accepted": 3,
+          "number_exact": 3,
+          "all_unknown": 1076,
+          "destroyed_truth": 2986,
+          "destroyed_to_unknown": 1073,
+          "all_destroyed": 1924,
+          "destroyed_to_destroyed": 1913
+        },
+        "own_right": {
+          "all_frames": 3594,
+          "all_unknown": 79,
+          "alive_truth": 3580,
+          "alive_to_unknown": 79,
+          "all_alive": 3515,
+          "alive_to_alive": 3501,
+          "number_accepted": 33,
+          "number_exact": 33
+        }
+      },
+      "events": [
+        {
+          "slot": 2,
+          "last_positive_tick": 1141,
+          "destruction_tick": 1143,
+          "confirmed_absent_tick": 1144,
+          "last_hp": 69,
+          "native_id": 5000002,
+          "episode": "v4-phase-a-1975101260",
+          "confirmed": {
+            "ordinal": 846,
+            "tick": 1187.0,
+            "tick_lo": 1186,
+            "tick_hi": 1188,
+            "timestamp_ms": 42326
+          },
+          "latency_lower_ms": 2150,
+          "latency_upper_ms": 2350,
+          "early": false
+        },
+        {
+          "slot": 4,
+          "last_positive_tick": 933,
+          "destruction_tick": 934,
+          "confirmed_absent_tick": 935,
+          "last_hp": 7,
+          "native_id": 5000004,
+          "episode": "v4-phase-a-1975101260",
+          "confirmed": {
+            "ordinal": 639,
+            "tick": 979.0,
+            "tick_lo": 978,
+            "tick_hi": 980,
+            "timestamp_ms": 31958
+          },
+          "latency_lower_ms": 2200,
+          "latency_upper_ms": 2350,
+          "early": false
+        }
+      ],
+      "false_slots": [],
+      "number_errors": [],
+      "provenance": {
+        "receipt_sha256": "7de816427c9d30f60b1d546cd09db741fef02962bf0dd88acfe2ec596a0a2ad0",
+        "cache_index_sha256": "74997ac01d590469fc2a55f730fa4f73249e564866bee8893d8468df489fac21",
+        "truth_sha256": {
+          "objects.jsonl.gz": "d135bd32b706720cea1601c5e284cdaa71ea69bcdcd4a553cc33d62460f648e4",
+          "rich-objects.jsonl.gz": "dabc07e94a99a430fcb12b0d651b89df87d8a0c04fed64239b93b689f95398fa",
+          "frames.jsonl": "9bb285afa2ffa280c0975d7c04cf0f1651476544d17e9fad6948e8107c4a6848"
+        },
+        "raw_sha256": "afdb4a791894fb94eb7b1f4d074c32fff99c6aa811fe1aebcf155f4e3f309b88"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101225",
+      "counts": {
+        "opp_king": {
+          "all_frames": 4710,
+          "all_alive": 4587,
+          "alive_truth": 4695,
+          "alive_to_alive": 4573,
+          "activation_eligible": 4695,
+          "truth_sleeping": 1314,
+          "activation_accepted": 4267,
+          "activation_exact": 4267,
+          "sleeping_to_False": 1265,
+          "all_unknown": 123,
+          "alive_to_unknown": 122,
+          "truth_active": 3381,
+          "active_to_True": 3002
+        },
+        "own_princess": {
+          "hp_eligible": 315,
+          "number_accepted": 186,
+          "number_exact": 186
+        },
+        "opp_left": {
+          "all_frames": 4710,
+          "all_alive": 4699,
+          "alive_truth": 4695,
+          "alive_to_alive": 4684,
+          "number_accepted": 5,
+          "number_exact": 5,
+          "bar_accepted": 3,
+          "bar_within_5pct": 3,
+          "all_unknown": 11,
+          "alive_to_unknown": 11
+        },
+        "opp_princess": {
+          "hp_eligible": 210,
+          "number_accepted": 85,
+          "number_exact": 83
+        },
+        "opp_right": {
+          "all_frames": 4710,
+          "all_alive": 4508,
+          "alive_truth": 4695,
+          "alive_to_alive": 4508,
+          "bar_accepted": 79,
+          "bar_within_5pct": 79,
+          "number_accepted": 80,
+          "number_exact": 78,
+          "all_unknown": 202,
+          "alive_to_unknown": 187
+        },
+        "own_king": {
+          "all_frames": 4710,
+          "all_alive": 4710,
+          "alive_truth": 4695,
+          "alive_to_alive": 4695,
+          "hp_eligible": 105,
+          "activation_eligible": 4695,
+          "truth_sleeping": 4695,
+          "activation_accepted": 4340,
+          "activation_exact": 4340,
+          "sleeping_to_False": 4340
+        },
+        "own_left": {
+          "all_frames": 4710,
+          "all_alive": 4707,
+          "alive_truth": 4695,
+          "alive_to_alive": 4692,
+          "number_accepted": 89,
+          "number_exact": 89,
+          "all_unknown": 3,
+          "alive_to_unknown": 3
+        },
+        "own_right": {
+          "all_frames": 4710,
+          "all_unknown": 33,
+          "alive_truth": 4695,
+          "alive_to_unknown": 33,
+          "all_alive": 4677,
+          "alive_to_alive": 4662,
+          "number_accepted": 97,
+          "number_exact": 97
+        }
+      },
+      "events": [],
+      "false_slots": [],
+      "number_errors": [
+        {
+          "ordinal": 4067,
+          "observation": {
+            "slot": "opp_right",
+            "state": "alive",
+            "hp_known": true,
+            "hp": 71,
+            "confidence": 0.9180754870176315,
+            "last_observed_ms": 203351,
+            "destruction_evidence": null,
+            "hp_fraction": null,
+            "king_active": null,
+            "match_ended": false
+          },
+          "truth_hp": 271
+        },
+        {
+          "ordinal": 4087,
+          "observation": {
+            "slot": "opp_right",
+            "state": "alive",
+            "hp_known": true,
+            "hp": 1,
+            "confidence": 0.9320786446332932,
+            "last_observed_ms": 204350,
+            "destruction_evidence": null,
+            "hp_fraction": null,
+            "king_active": null,
+            "match_ended": false
+          },
+          "truth_hp": 271
+        }
+      ],
+      "provenance": {
+        "receipt_sha256": "dfde7b77784004b2c82a656ba7ec577a5739bac00ac6fbd82335882b1af5ac77",
+        "cache_index_sha256": "18ba9cf7dcbd044a4e7924ef3be1fa5ef31a08dbb8747daac3f1032ffd5b5d1c",
+        "truth_sha256": {
+          "objects.jsonl.gz": "56a11d0867fd045adf13cd7fd83db369d4454dcfd874de44e451b0b3f664ad9a",
+          "rich-objects.jsonl.gz": "d99538f5879781a8c43194fa65e84ebc658128e254914d90470549e8ed920c75",
+          "frames.jsonl": "bbc15ef8a4528026f5970e1d645c3861a254368b2ad97ff6b56321d581314e85"
+        },
+        "raw_sha256": "1455e6d0f609fa2d2a44a4be6fa073d3ddae617c1241b5157e7eaf83508009d0"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101296",
+      "counts": {
+        "opp_king": {
+          "all_frames": 3048,
+          "all_alive": 3029,
+          "alive_truth": 3033,
+          "alive_to_alive": 3014,
+          "activation_eligible": 3033,
+          "truth_sleeping": 3033,
+          "activation_accepted": 2839,
+          "activation_exact": 2839,
+          "sleeping_to_False": 2839,
+          "all_unknown": 19,
+          "alive_to_unknown": 19
+        },
+        "own_princess": {
+          "hp_eligible": 180,
+          "number_accepted": 102,
+          "number_exact": 102
+        },
+        "opp_left": {
+          "all_frames": 3048,
+          "all_alive": 3041,
+          "alive_truth": 3033,
+          "alive_to_alive": 3026,
+          "number_accepted": 6,
+          "number_exact": 6,
+          "bar_accepted": 7,
+          "bar_within_5pct": 7,
+          "all_unknown": 7,
+          "alive_to_unknown": 7
+        },
+        "opp_princess": {
+          "hp_eligible": 120,
+          "number_accepted": 54,
+          "number_exact": 54
+        },
+        "opp_right": {
+          "all_frames": 3048,
+          "all_alive": 2976,
+          "alive_truth": 3033,
+          "alive_to_alive": 2976,
+          "bar_accepted": 54,
+          "bar_within_5pct": 54,
+          "number_accepted": 48,
+          "number_exact": 48,
+          "all_unknown": 72,
+          "alive_to_unknown": 57
+        },
+        "own_king": {
+          "all_frames": 3048,
+          "all_alive": 3038,
+          "alive_truth": 3033,
+          "alive_to_alive": 3023,
+          "hp_eligible": 60,
+          "activation_eligible": 3033,
+          "truth_sleeping": 745,
+          "activation_accepted": 2799,
+          "activation_exact": 2799,
+          "sleeping_to_False": 711,
+          "all_unknown": 10,
+          "alive_to_unknown": 10,
+          "truth_active": 2288,
+          "active_to_True": 2088,
+          "number_accepted": 42,
+          "number_exact": 42
+        },
+        "own_left": {
+          "all_frames": 3048,
+          "all_alive": 3037,
+          "alive_truth": 3033,
+          "alive_to_alive": 3022,
+          "number_accepted": 46,
+          "number_exact": 46,
+          "all_unknown": 11,
+          "alive_to_unknown": 11
+        },
+        "own_right": {
+          "all_frames": 3048,
+          "all_alive": 3031,
+          "alive_truth": 3033,
+          "alive_to_alive": 3016,
+          "number_accepted": 56,
+          "number_exact": 56,
+          "all_unknown": 17,
+          "alive_to_unknown": 17
+        }
+      },
+      "events": [],
+      "false_slots": [],
+      "number_errors": [],
+      "provenance": {
+        "receipt_sha256": "6b9de55e7582cfb7d987e72721ede4f4e26940c90968fe92b4a37b16e8129030",
+        "cache_index_sha256": "6fa7a4470a2f641061a2a8eab68a5aff1ec6fb6d3e51b1bdc66f9bd4b1291b35",
+        "truth_sha256": {
+          "objects.jsonl.gz": "5ece34be20c78308e11d87c714b4a6c42b59632ec3d0dacc41934f1e1eb9edb0",
+          "rich-objects.jsonl.gz": "ddda05d53fda5f86422e1d6863422d6019649d5263ac0bebd488deeb9ac2c784",
+          "frames.jsonl": "059b97b0d8ee2a7ccf2086730092646fd94e548e815640a3968262c17aa32298"
+        },
+        "raw_sha256": "a599d0b7fcac8d4908c1775ab51a2726ac7f16ad014859c4ec0090d6ebccfb9c"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101276",
+      "counts": {
+        "opp_king": {
+          "all_frames": 1214,
+          "all_alive": 1093,
+          "alive_truth": 1200,
+          "alive_to_alive": 1079,
+          "activation_eligible": 1200,
+          "truth_sleeping": 702,
+          "activation_accepted": 847,
+          "activation_exact": 846,
+          "sleeping_to_False": 647,
+          "all_unknown": 121,
+          "alive_to_unknown": 121,
+          "truth_active": 498,
+          "active_to_False": 1,
+          "active_to_True": 199
+        },
+        "own_princess": {
+          "hp_eligible": 78,
+          "number_accepted": 46,
+          "number_exact": 46
+        },
+        "opp_left": {
+          "all_frames": 1214,
+          "all_alive": 642,
+          "alive_truth": 701,
+          "alive_to_alive": 640,
+          "all_unknown": 431,
+          "alive_to_unknown": 61,
+          "destroyed_truth": 498,
+          "destroyed_to_alive": 1,
+          "destroyed_to_unknown": 356,
+          "all_destroyed": 141,
+          "destroyed_to_destroyed": 141
+        },
+        "opp_princess": {
+          "hp_eligible": 36,
+          "number_accepted": 6,
+          "number_exact": 6
+        },
+        "opp_right": {
+          "all_frames": 1214,
+          "all_alive": 599,
+          "alive_truth": 829,
+          "alive_to_alive": 596,
+          "bar_accepted": 13,
+          "bar_within_5pct": 13,
+          "all_unknown": 505,
+          "alive_to_unknown": 233,
+          "number_accepted": 6,
+          "number_exact": 6,
+          "destroyed_truth": 369,
+          "destroyed_to_alive": 1,
+          "destroyed_to_unknown": 272,
+          "all_destroyed": 110,
+          "destroyed_to_destroyed": 96
+        },
+        "own_king": {
+          "all_frames": 1214,
+          "all_alive": 1214,
+          "alive_truth": 1200,
+          "alive_to_alive": 1200,
+          "hp_eligible": 26,
+          "activation_eligible": 1200,
+          "truth_sleeping": 1200,
+          "activation_accepted": 1144,
+          "activation_exact": 1144,
+          "sleeping_to_False": 1144
+        },
+        "own_left": {
+          "all_frames": 1214,
+          "all_alive": 1155,
+          "alive_truth": 1200,
+          "alive_to_alive": 1141,
+          "number_accepted": 21,
+          "number_exact": 21,
+          "all_unknown": 59,
+          "alive_to_unknown": 59
+        },
+        "own_right": {
+          "all_frames": 1214,
+          "all_alive": 1154,
+          "alive_truth": 1200,
+          "alive_to_alive": 1140,
+          "number_accepted": 25,
+          "number_exact": 25,
+          "all_unknown": 60,
+          "alive_to_unknown": 60
+        }
+      },
+      "events": [
+        {
+          "slot": 1,
+          "last_positive_tick": 3100,
+          "destruction_tick": 3102,
+          "confirmed_absent_tick": 3103,
+          "last_hp": 50,
+          "native_id": 5000001,
+          "episode": "v4-phase-a-1975101276",
+          "confirmed": {
+            "ordinal": 793,
+            "tick": 3192.5,
+            "tick_lo": 3192,
+            "tick_hi": 3193,
+            "timestamp_ms": 39651
+          },
+          "latency_lower_ms": 4500,
+          "latency_upper_ms": 4650,
+          "early": false
+        },
+        {
+          "slot": 2,
+          "last_positive_tick": 3231,
+          "destruction_tick": 3233,
+          "confirmed_absent_tick": 3234,
+          "last_hp": 146,
+          "native_id": 5000002,
+          "episode": "v4-phase-a-1975101276",
+          "confirmed": {
+            "ordinal": 872,
+            "tick": 3274.0,
+            "tick_lo": 3273,
+            "tick_hi": 3275,
+            "timestamp_ms": 43719
+          },
+          "latency_lower_ms": 2000,
+          "latency_upper_ms": 2200,
+          "early": false
+        }
+      ],
+      "false_slots": [],
+      "number_errors": [
+        {
+          "ordinal": 831,
+          "observation": {
+            "slot": "opp_right",
+            "state": "alive",
+            "hp_known": true,
+            "hp": 146,
+            "confidence": 0.8839369267225266,
+            "last_observed_ms": 41664,
+            "destruction_evidence": null,
+            "hp_fraction": null,
+            "king_active": null,
+            "match_ended": false
+          },
+          "truth_hp": 0
+        }
+      ],
+      "provenance": {
+        "receipt_sha256": "0dc9ffa50bc328e8f23c3a5880b093be87a01f2430a300f9374b625ba9135119",
+        "cache_index_sha256": "39429e77efe037c0c1242ca53cf76725e9853fd0127e5c9f3606b4f503cec2d0",
+        "truth_sha256": {
+          "objects.jsonl.gz": "5b48b87900abab4546e48e5d877ec2526fff3c74d4a5c313299d874589a400a4",
+          "rich-objects.jsonl.gz": "763a66a444bb84c2180e9c1ec2d1884c415062fc951563338e1a5c78df68482c",
+          "frames.jsonl": "65d253b2c7e8ee189983ef0635ef082c3ce4da9b36ed351ffac3e6818bb172f7"
+        },
+        "raw_sha256": "0b2d3874ab0d9067d93fc627e02f000033f88bab2dca2e22898ff25bdf4d3df6"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101267",
+      "counts": {
+        "opp_king": {
+          "all_frames": 4226,
+          "all_alive": 4076,
+          "alive_truth": 4212,
+          "alive_to_alive": 4076,
+          "activation_eligible": 4212,
+          "truth_sleeping": 1589,
+          "activation_accepted": 3624,
+          "activation_exact": 3624,
+          "sleeping_to_False": 1537,
+          "all_unknown": 150,
+          "alive_to_unknown": 136,
+          "truth_active": 2623,
+          "active_to_True": 2087
+        },
+        "own_princess": {
+          "hp_eligible": 139,
+          "number_accepted": 58,
+          "number_exact": 58
+        },
+        "opp_left": {
+          "all_frames": 4226,
+          "all_alive": 4169,
+          "alive_truth": 4212,
+          "alive_to_alive": 4156,
+          "number_accepted": 3,
+          "number_exact": 3,
+          "bar_accepted": 2,
+          "bar_within_5pct": 2,
+          "all_unknown": 57,
+          "alive_to_unknown": 56
+        },
+        "opp_princess": {
+          "hp_eligible": 82,
+          "number_accepted": 10,
+          "number_exact": 10
+        },
+        "opp_right": {
+          "all_frames": 4226,
+          "all_alive": 1413,
+          "alive_truth": 1587,
+          "alive_to_alive": 1411,
+          "bar_accepted": 17,
+          "bar_within_5pct": 17,
+          "all_unknown": 1878,
+          "alive_to_unknown": 176,
+          "number_accepted": 7,
+          "number_exact": 7,
+          "destroyed_truth": 2623,
+          "destroyed_to_unknown": 1688,
+          "all_destroyed": 935,
+          "destroyed_to_destroyed": 935
+        },
+        "own_king": {
+          "all_frames": 4226,
+          "all_alive": 4181,
+          "alive_truth": 4212,
+          "alive_to_alive": 4168,
+          "hp_eligible": 63,
+          "activation_eligible": 4212,
+          "truth_sleeping": 591,
+          "activation_accepted": 3864,
+          "activation_exact": 3864,
+          "sleeping_to_False": 584,
+          "truth_active": 3621,
+          "active_to_True": 3280,
+          "number_accepted": 47,
+          "number_exact": 47,
+          "all_unknown": 45,
+          "alive_to_unknown": 44
+        },
+        "own_left": {
+          "all_frames": 4226,
+          "all_alive": 591,
+          "alive_truth": 589,
+          "alive_to_alive": 589,
+          "number_accepted": 5,
+          "number_exact": 5,
+          "all_unknown": 489,
+          "destroyed_truth": 3621,
+          "destroyed_to_unknown": 475,
+          "all_destroyed": 3146,
+          "destroyed_to_destroyed": 3146
+        },
+        "own_right": {
+          "all_frames": 4226,
+          "all_unknown": 99,
+          "alive_truth": 4212,
+          "alive_to_unknown": 98,
+          "all_alive": 4127,
+          "alive_to_alive": 4114,
+          "number_accepted": 53,
+          "number_exact": 53
+        }
+      },
+      "events": [
+        {
+          "slot": 2,
+          "last_positive_tick": 1927,
+          "destruction_tick": 1928,
+          "confirmed_absent_tick": 1930,
+          "last_hp": 55,
+          "native_id": 5000002,
+          "episode": "v4-phase-a-1975101267",
+          "confirmed": {
+            "ordinal": 1658,
+            "tick": 1997.5,
+            "tick_lo": 1997,
+            "tick_hi": 1998,
+            "timestamp_ms": 82900
+          },
+          "latency_lower_ms": 3450,
+          "latency_upper_ms": 3550,
+          "early": false
+        },
+        {
+          "slot": 4,
+          "last_positive_tick": 929,
+          "destruction_tick": 930,
+          "confirmed_absent_tick": 933,
+          "last_hp": 36,
+          "native_id": 5000004,
+          "episode": "v4-phase-a-1975101267",
+          "confirmed": {
+            "ordinal": 629,
+            "tick": 969.5,
+            "tick_lo": 969,
+            "tick_hi": 970,
+            "timestamp_ms": 31455
+          },
+          "latency_lower_ms": 1950,
+          "latency_upper_ms": 2050,
+          "early": false
+        }
+      ],
+      "false_slots": [],
+      "number_errors": [],
+      "provenance": {
+        "receipt_sha256": "910f9c57cd09510d243bba520acea3f894f151195b71bdb9086b39a684a7f425",
+        "cache_index_sha256": "899d3acdfc6f983f265bc7b9e23953c2d0908684b3037af939eb14d70b2e0b65",
+        "truth_sha256": {
+          "objects.jsonl.gz": "e106f97cb316332b828ed233854dbcdd9b02db8641f10fd2cc5a1b7773e488bb",
+          "rich-objects.jsonl.gz": "9b9ebf57461062eb64cf9c6807b219823282139ba2000a010fd0a9d00378dccb",
+          "frames.jsonl": "b317cebaadb9941272e5d72c740cd05fb8caba8192103b15b6befb92dc76524f"
+        },
+        "raw_sha256": "9d8c00cb4f85cb22d0d3522eae2fc5729462af1331c4c90ad499d2f39c6477f3"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101272",
+      "counts": {
+        "opp_king": {
+          "all_frames": 1196,
+          "all_alive": 1195,
+          "alive_truth": 1181,
+          "alive_to_alive": 1180,
+          "activation_eligible": 1181,
+          "truth_sleeping": 1181,
+          "activation_accepted": 1145,
+          "activation_exact": 1145,
+          "sleeping_to_False": 1145,
+          "all_unknown": 1,
+          "alive_to_unknown": 1
+        },
+        "own_princess": {
+          "hp_eligible": 168,
+          "number_accepted": 98,
+          "number_exact": 98
+        },
+        "opp_left": {
+          "all_frames": 1196,
+          "all_alive": 1195,
+          "alive_truth": 1181,
+          "alive_to_alive": 1180,
+          "all_unknown": 1,
+          "alive_to_unknown": 1
+        },
+        "opp_princess": {
+          "hp_eligible": 112,
+          "number_accepted": 27,
+          "number_exact": 27
+        },
+        "opp_right": {
+          "all_frames": 1196,
+          "all_alive": 1182,
+          "alive_truth": 1181,
+          "alive_to_alive": 1167,
+          "bar_accepted": 54,
+          "bar_within_5pct": 54,
+          "number_accepted": 27,
+          "number_exact": 27,
+          "all_unknown": 14,
+          "alive_to_unknown": 14
+        },
+        "own_king": {
+          "all_frames": 1196,
+          "all_alive": 1196,
+          "alive_truth": 1181,
+          "alive_to_alive": 1181,
+          "hp_eligible": 56,
+          "activation_eligible": 1181,
+          "truth_sleeping": 1181,
+          "activation_accepted": 1170,
+          "activation_exact": 1170,
+          "sleeping_to_False": 1170
+        },
+        "own_left": {
+          "all_frames": 1196,
+          "all_alive": 1190,
+          "alive_truth": 1181,
+          "alive_to_alive": 1175,
+          "number_accepted": 44,
+          "number_exact": 44,
+          "all_unknown": 6,
+          "alive_to_unknown": 6
+        },
+        "own_right": {
+          "all_frames": 1196,
+          "all_alive": 1194,
+          "alive_truth": 1181,
+          "alive_to_alive": 1179,
+          "number_accepted": 54,
+          "number_exact": 54,
+          "all_unknown": 2,
+          "alive_to_unknown": 2
+        }
+      },
+      "events": [],
+      "false_slots": [],
+      "number_errors": [],
+      "provenance": {
+        "receipt_sha256": "f2e8fb53e9a9e73b2c19b2c1c34e217ae224bacde432904fb91a1c2423f477f7",
+        "cache_index_sha256": "2ce8d7cf8b80cf05e2d70500c652c5f42f2e24ef12f2de45e6ef715f36745e6b",
+        "truth_sha256": {
+          "objects.jsonl.gz": "310b9da8e80268c826576d3d3b207b9f102a2980824e2bea224666aced83906a",
+          "rich-objects.jsonl.gz": "6313b70937634f323596c4b436cf8bb6420e76b336b84afe2cb5df5b131cf03e",
+          "frames.jsonl": "49b1c38d6bac42075ef178baf2055db92e503e886f2e76e41a872ef68157fe20"
+        },
+        "raw_sha256": "c2064bec261cdcec67c9fc58919098f51a89b26133424483ae5521409643c4e7"
+      }
+    },
+    {
+      "episode": "v4-phase-a-1975101295",
+      "counts": {
+        "opp_king": {
+          "all_frames": 3276,
+          "all_alive": 3264,
+          "alive_truth": 3261,
+          "alive_to_alive": 3249,
+          "activation_eligible": 3261,
+          "truth_sleeping": 3261,
+          "activation_accepted": 3229,
+          "activation_exact": 3229,
+          "sleeping_to_False": 3229,
+          "all_unknown": 12,
+          "alive_to_unknown": 12
+        },
+        "own_princess": {
+          "hp_eligible": 178,
+          "number_accepted": 99,
+          "number_exact": 99
+        },
+        "opp_left": {
+          "all_frames": 3276,
+          "all_alive": 3276,
+          "alive_truth": 3261,
+          "alive_to_alive": 3261,
+          "number_accepted": 1,
+          "number_exact": 1
+        },
+        "opp_princess": {
+          "hp_eligible": 130,
+          "number_accepted": 49,
+          "number_exact": 49
+        },
+        "opp_right": {
+          "all_frames": 3276,
+          "all_alive": 3260,
+          "alive_truth": 3261,
+          "alive_to_alive": 3245,
+          "bar_accepted": 61,
+          "bar_within_5pct": 61,
+          "number_accepted": 48,
+          "number_exact": 48,
+          "all_unknown": 16,
+          "alive_to_unknown": 16
+        },
+        "own_king": {
+          "all_frames": 3276,
+          "all_alive": 3270,
+          "alive_truth": 3261,
+          "alive_to_alive": 3255,
+          "hp_eligible": 65,
+          "activation_eligible": 3261,
+          "truth_sleeping": 2554,
+          "activation_accepted": 3166,
+          "activation_exact": 3166,
+          "sleeping_to_False": 2519,
+          "all_unknown": 6,
+          "alive_to_unknown": 6,
+          "truth_active": 707,
+          "active_to_True": 647,
+          "number_accepted": 15,
+          "number_exact": 15
+        },
+        "own_left": {
+          "all_frames": 3276,
+          "all_alive": 2537,
+          "alive_truth": 2552,
+          "alive_to_alive": 2535,
+          "number_accepted": 40,
+          "number_exact": 40,
+          "all_unknown": 98,
+          "alive_to_unknown": 17,
+          "destroyed_truth": 707,
+          "destroyed_to_unknown": 81,
+          "all_destroyed": 641,
+          "destroyed_to_destroyed": 626
+        },
+        "own_right": {
+          "all_frames": 3276,
+          "all_unknown": 56,
+          "alive_truth": 3261,
+          "alive_to_unknown": 56,
+          "all_alive": 3220,
+          "alive_to_alive": 3205,
+          "number_accepted": 59,
+          "number_exact": 59
+        }
+      },
+      "events": [
+        {
+          "slot": 4,
+          "last_positive_tick": 2891,
+          "destruction_tick": 2893,
+          "confirmed_absent_tick": 2895,
+          "last_hp": 76,
+          "native_id": 5000004,
+          "episode": "v4-phase-a-1975101295",
+          "confirmed": {
+            "ordinal": 2596,
+            "tick": 2937.0,
+            "tick_lo": 2936,
+            "tick_hi": 2938,
+            "timestamp_ms": 129820
+          },
+          "latency_lower_ms": 2150,
+          "latency_upper_ms": 2350,
+          "early": false
+        }
+      ],
+      "false_slots": [],
+      "number_errors": [],
+      "provenance": {
+        "receipt_sha256": "136c0575c1c15bdbe3c7606d3c18834541550352cce0dbb338e4fd772a8409e7",
+        "cache_index_sha256": "9f317787aa5303506215e0f6dcddb4b7f18a3f16d6312b052259b705a83a06a8",
+        "truth_sha256": {
+          "objects.jsonl.gz": "8e774653dc42a140f598b5f85a9ef117e7624763ce407f30b69a8dedc806107a",
+          "rich-objects.jsonl.gz": "55993c627871d3ee352173e7918fb316279bb37330847347ad175c77ffd39c12",
+          "frames.jsonl": "9b5463af19081b47aa8d7a6e24a0edad203d53fa3b55b5c939e7267a5041e32d"
+        },
+        "raw_sha256": "b22b01f38ac448962c3d4e0514d60f56fd445d830c644c466838beec5f3dabf0"
+      }
+    }
+  ],
+  "counts": {
+    "opp_king": {
+      "all_frames": 22059,
+      "all_alive": 21611,
+      "alive_truth": 21943,
+      "alive_to_alive": 21510,
+      "activation_eligible": 21943,
+      "truth_sleeping": 12664,
+      "activation_accepted": 20048,
+      "activation_exact": 20047,
+      "sleeping_to_False": 12179,
+      "truth_active": 9279,
+      "active_to_True": 7868,
+      "all_unknown": 448,
+      "alive_to_unknown": 433,
+      "active_to_False": 1,
+      "hp_eligible": 447
+    },
+    "own_princess": {
+      "hp_eligible": 795,
+      "number_accepted": 673,
+      "number_exact": 673
+    },
+    "opp_left": {
+      "all_frames": 22059,
+      "all_alive": 21339,
+      "alive_truth": 21444,
+      "alive_to_alive": 21250,
+      "number_accepted": 21,
+      "number_exact": 20,
+      "bar_accepted": 16,
+      "bar_within_5pct": 16,
+      "all_unknown": 579,
+      "alive_to_unknown": 194,
+      "destroyed_truth": 498,
+      "destroyed_to_alive": 1,
+      "destroyed_to_unknown": 356,
+      "all_destroyed": 141,
+      "destroyed_to_destroyed": 141
+    },
+    "opp_princess": {
+      "hp_eligible": 802,
+      "number_accepted": 250,
+      "number_exact": 247
+    },
+    "opp_right": {
+      "all_frames": 22059,
+      "all_alive": 15315,
+      "alive_truth": 16168,
+      "alive_to_alive": 15264,
+      "number_accepted": 229,
+      "number_exact": 227,
+      "bar_accepted": 307,
+      "bar_within_5pct": 307,
+      "all_unknown": 3639,
+      "alive_to_unknown": 904,
+      "destroyed_truth": 5769,
+      "destroyed_to_unknown": 2688,
+      "all_destroyed": 3105,
+      "destroyed_to_destroyed": 3080,
+      "destroyed_to_alive": 1
+    },
+    "own_king": {
+      "all_frames": 22059,
+      "all_alive": 21973,
+      "alive_truth": 21943,
+      "alive_to_alive": 21858,
+      "hp_eligible": 447,
+      "activation_eligible": 21943,
+      "truth_sleeping": 12341,
+      "activation_accepted": 20345,
+      "activation_exact": 20345,
+      "sleeping_to_False": 11766,
+      "truth_active": 9602,
+      "active_to_True": 8579,
+      "all_unknown": 86,
+      "alive_to_unknown": 85,
+      "number_accepted": 136,
+      "number_exact": 136
+    },
+    "own_left": {
+      "all_frames": 22059,
+      "all_alive": 14605,
+      "alive_truth": 14624,
+      "alive_to_alive": 14527,
+      "number_accepted": 271,
+      "number_exact": 271,
+      "all_unknown": 1743,
+      "alive_to_unknown": 97,
+      "destroyed_truth": 7314,
+      "destroyed_to_unknown": 1629,
+      "all_destroyed": 5711,
+      "destroyed_to_destroyed": 5685
+    },
+    "own_right": {
+      "all_frames": 22059,
+      "all_alive": 21706,
+      "alive_truth": 21943,
+      "alive_to_alive": 21591,
+      "number_accepted": 402,
+      "number_exact": 402,
+      "all_unknown": 353,
+      "alive_to_unknown": 352
+    }
+  },
+  "destruction_events": [
+    {
+      "slot": 2,
+      "last_positive_tick": 1141,
+      "destruction_tick": 1143,
+      "confirmed_absent_tick": 1144,
+      "last_hp": 69,
+      "native_id": 5000002,
+      "episode": "v4-phase-a-1975101260",
+      "confirmed": {
+        "ordinal": 846,
+        "tick": 1187.0,
+        "tick_lo": 1186,
+        "tick_hi": 1188,
+        "timestamp_ms": 42326
+      },
+      "latency_lower_ms": 2150,
+      "latency_upper_ms": 2350,
+      "early": false
+    },
+    {
+      "slot": 4,
+      "last_positive_tick": 933,
+      "destruction_tick": 934,
+      "confirmed_absent_tick": 935,
+      "last_hp": 7,
+      "native_id": 5000004,
+      "episode": "v4-phase-a-1975101260",
+      "confirmed": {
+        "ordinal": 639,
+        "tick": 979.0,
+        "tick_lo": 978,
+        "tick_hi": 980,
+        "timestamp_ms": 31958
+      },
+      "latency_lower_ms": 2200,
+      "latency_upper_ms": 2350,
+      "early": false
+    },
+    {
+      "slot": 1,
+      "last_positive_tick": 3100,
+      "destruction_tick": 3102,
+      "confirmed_absent_tick": 3103,
+      "last_hp": 50,
+      "native_id": 5000001,
+      "episode": "v4-phase-a-1975101276",
+      "confirmed": {
+        "ordinal": 793,
+        "tick": 3192.5,
+        "tick_lo": 3192,
+        "tick_hi": 3193,
+        "timestamp_ms": 39651
+      },
+      "latency_lower_ms": 4500,
+      "latency_upper_ms": 4650,
+      "early": false
+    },
+    {
+      "slot": 2,
+      "last_positive_tick": 3231,
+      "destruction_tick": 3233,
+      "confirmed_absent_tick": 3234,
+      "last_hp": 146,
+      "native_id": 5000002,
+      "episode": "v4-phase-a-1975101276",
+      "confirmed": {
+        "ordinal": 872,
+        "tick": 3274.0,
+        "tick_lo": 3273,
+        "tick_hi": 3275,
+        "timestamp_ms": 43719
+      },
+      "latency_lower_ms": 2000,
+      "latency_upper_ms": 2200,
+      "early": false
+    },
+    {
+      "slot": 2,
+      "last_positive_tick": 1927,
+      "destruction_tick": 1928,
+      "confirmed_absent_tick": 1930,
+      "last_hp": 55,
+      "native_id": 5000002,
+      "episode": "v4-phase-a-1975101267",
+      "confirmed": {
+        "ordinal": 1658,
+        "tick": 1997.5,
+        "tick_lo": 1997,
+        "tick_hi": 1998,
+        "timestamp_ms": 82900
+      },
+      "latency_lower_ms": 3450,
+      "latency_upper_ms": 3550,
+      "early": false
+    },
+    {
+      "slot": 4,
+      "last_positive_tick": 929,
+      "destruction_tick": 930,
+      "confirmed_absent_tick": 933,
+      "last_hp": 36,
+      "native_id": 5000004,
+      "episode": "v4-phase-a-1975101267",
+      "confirmed": {
+        "ordinal": 629,
+        "tick": 969.5,
+        "tick_lo": 969,
+        "tick_hi": 970,
+        "timestamp_ms": 31455
+      },
+      "latency_lower_ms": 1950,
+      "latency_upper_ms": 2050,
+      "early": false
+    },
+    {
+      "slot": 4,
+      "last_positive_tick": 2891,
+      "destruction_tick": 2893,
+      "confirmed_absent_tick": 2895,
+      "last_hp": 76,
+      "native_id": 5000004,
+      "episode": "v4-phase-a-1975101295",
+      "confirmed": {
+        "ordinal": 2596,
+        "tick": 2937.0,
+        "tick_lo": 2936,
+        "tick_hi": 2938,
+        "timestamp_ms": 129820
+      },
+      "latency_lower_ms": 2150,
+      "latency_upper_ms": 2350,
+      "early": false
+    }
+  ],
+  "princess_event_recall": {
+    "confirmed": 7,
+    "total": 7
+  },
+  "false_destroyed": {
+    "false": 0,
+    "alive": 118065,
+    "princess_false": 0,
+    "princess_alive": 74179,
+    "one_sided_95_frame_upper": 2.5373262758976445e-05,
+    "one_sided_95_princess_frame_upper": 4.038436461495376e-05,
+    "match_errors": 0,
+    "matches": 8,
+    "one_sided_95_match_upper": 0.31234397806636793
+  },
+  "confirmation_latency_ms": {
+    "interval_censored": true,
+    "mean_lower": 2628.5714285714284,
+    "mean_upper": 2785.714285714286
+  },
+  "number_acceptance_policy": {
+    "opp_princess": false,
+    "own_king": true
+  },
+  "latency_ms": {
+    "samples": 21931,
+    "mean": 2.2234662333226938,
+    "p95": 2.7889795,
+    "p99": 3.3168683000000043
+  },
+  "workers": 4,
+  "validation_payloads_opened": false,
+  "heldout_payloads_opened": false,
+  "dev_used_for_fit": false,
+  "persistent_princess": {
+    "alive_truth": 74179,
+    "destroyed_truth": 13581,
+    "destroyed_latched_destroyed": 13212
+  },
+  "native_king_terminal_audit": [
+    {
+      "episode": "v4-phase-a-1975101267",
+      "missing_king_slots": [
+        0
+      ],
+      "final_tick": 4554,
+      "terminal": {
+        "tick": 4554,
+        "ended": true,
+        "mono": 1901537.87753075
+      }
+    }
+  ],
+  "scoring_correction": "Recomputed HP eligibility per family from frozen native labels: opponent King has its own denominator and is excluded from own-princess coverage; predictions/acceptance policy unchanged",
+  "deployment_policy": {
+    "candidate_sha256": "8946523c19befd95c627cfffd417311daddca059cb2f0c5173d344e7a141a003",
+    "deployed_sha256": "09850226b90293ba70d0dfa0d6e16588a2cf297106a7bfc71a067ce81b941668",
+    "changes": "Only predeclared per-family >=99% acceptance gate; opponent numbers disabled; no source/template/threshold tuning"
+  }
+}

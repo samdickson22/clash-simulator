@@ -1,0 +1,14 @@
+{
+  "files_sha256": {
+    "/mpac/sdicks02/repos/clasher/src/clasher/live/tower_channel.py": "6070598b1dd02549b8b1b987fd55192f51611bad1b72101e2ab7f0d10a642571",
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/tower-channel/runtime/r2/round2-templates.json": "8946523c19befd95c627cfffd417311daddca059cb2f0c5173d344e7a141a003",
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/tower-channel/runtime/r2/manifest.json": "6f74fdf6cf189c7f268dc9d1f73090eb7724c306d3cf68b858df2807d90bffae",
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/tower-channel/evaluate_r2.py": "b553fd084093be4204bbae93f2a020fc6df1151dd92368a87c7959fdd63417ae",
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/tower-channel/truth_r2.py": "bc22107f4ff2b66cedd250a1dcb67ce2ce13ceb2820893eb2363239604914d8a"
+  },
+  "frozen_at_utc": "2026-10-09T02:22:02.084038Z",
+  "dev_pixels_opened": false,
+  "validation_payloads_opened": false,
+  "heldout_payloads_opened": false,
+  "post_dev_policy": "Disable each new HP family if accepted dev accuracy <99%; no template/threshold/source tuning"
+}

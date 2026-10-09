@@ -14,7 +14,7 @@ ANCHORS = ((0, 9., 3.), (0, 3.5, 6.5), (0, 14.5, 6.5),
            (1, 9., 29.), (1, 3.5, 25.5), (1, 14.5, 25.5))
 MATRIX = ((28.54545454545454, 0., 12.09090909090933),
           (0., 22.89473684210524, 237.18421052631592))
-EVIDENCE = frozenset({'rubble_template'})
+EVIDENCE = frozenset({'rubble_template', 'public_match_result'})
 
 
 @dataclass(frozen=True)
@@ -27,6 +27,8 @@ class TowerObservation:
     last_observed_ms: int | None = None
     destruction_evidence: str | None = None
     hp_fraction: float | None = None
+    king_active: bool | None = None
+    match_ended: bool = False
 
     def __post_init__(self):
         if self.slot not in SLOT_NAMES or self.state not in ('alive', 'unknown', 'destroyed'):
@@ -41,7 +43,13 @@ class TowerObservation:
             raise ValueError('Invalid tower observation time')
         if self.hp_fraction is not None and (not math.isfinite(self.hp_fraction) or not 0 <= self.hp_fraction <= 1):
             raise ValueError('Invalid public HP-bar fraction')
+        if type(self.match_ended) is not bool or (self.match_ended and (not self.slot.endswith('king') or self.state == 'alive' or self.confidence <= 0 or self.last_observed_ms is None)):
+            raise ValueError('Match end requires a positive public King/result observation')
+        if self.king_active is not None and (type(self.king_active) is not bool or not self.slot.endswith('king') or self.state != 'alive'):
+            raise ValueError('Activation is a living King observation only')
         if self.state == 'destroyed':
+            if (self.slot.endswith('king')) != (self.destruction_evidence == 'public_match_result'):
+                raise ValueError('King destruction requires a public three-crown result; princess destruction requires rubble')
             if self.destruction_evidence not in EVIDENCE or self.confidence <= 0 or self.last_observed_ms is None:
                 raise ValueError('Destroyed requires positive visual evidence')
             if self.hp not in (None, 0) or self.hp_fraction not in (None, 0.):
@@ -76,12 +84,13 @@ def glyphs(panel, slot):
     """Connected foreground glyphs in the fixed public HP-number line."""
     import cv2
     import numpy as np
-    # King HP is not consistently inside the sanitized public arena.
-    if slot%3 == 0:
+    # Opponent King numbers lie outside the sanitized public arena.
+    if slot == 0:
         return []
-    line = panel[18:38, 25:104] if slot < 3 else panel[16:38, 25:104]
+    line = panel[38:57, 25:104] if slot == 3 else (panel[18:38, 25:104] if slot < 3 else panel[16:38, 25:104])
     v = line.astype(np.int16)
-    mask = ((v.min(2) > 150) & (v.max(2)-v.min(2) < 100)).astype(np.uint8)
+    threshold, spread = (190, 60) if slot < 3 else (150, 100)
+    mask = ((v.min(2) > threshold) & (v.max(2)-v.min(2) < spread)).astype(np.uint8)
     n, labels, stats, _ = cv2.connectedComponentsWithStats(mask, 8)
     boxes = sorted((x,y,w,h) for x,y,w,h,area in stats[1:]
                    if 7 <= h <= 17 and 3 <= w <= 15 and area >= 12)
@@ -89,7 +98,8 @@ def glyphs(panel, slot):
         return []
     # HP uses a single baseline and a tightly spaced left-aligned number.
     # Reject floating troop levels and truncated fragments of a longer number.
-    if not 8 <= boxes[0][0] <= 18 or any(b[0]-(a[0]+a[2]) > 3 for a,b in zip(boxes,boxes[1:])):
+    first_range = {4:(2,12),3:(8,22),2:(15,32),1:(22,42)}[len(boxes)] if slot < 3 else (8,18)
+    if not first_range[0] <= boxes[0][0] <= first_range[1] or any(b[0]-(a[0]+a[2]) > 3 for a,b in zip(boxes,boxes[1:])):
         return []
     if max(y+h for x,y,w,h in boxes)-min(y+h for x,y,w,h in boxes) > 2:
         return []
@@ -119,6 +129,16 @@ def bar_fraction(panel, slot):
     return end/len(row)
 
 
+def activation_feature(sprite):
+    import cv2
+    import numpy as np
+    return cv2.resize(sprite[25:105, 24:72], (12,16), interpolation=cv2.INTER_AREA).astype(np.float32).ravel()/255
+
+
+def number_family(slot):
+    return 'opp_princess' if slot in (1,2) else ('own_king' if slot == 3 else 'own_princess')
+
+
 class TowerChannel:
     def __init__(self, artifact=None, matrix=MATRIX):
         import numpy as np
@@ -133,6 +153,12 @@ class TowerChannel:
         self.digits = [(int(d), np.asarray(t, np.float32)) for d,templates in data['digits'].items() for t in templates]
         self.digit_labels = np.array([d for d,_ in self.digits],np.intp)
         self.digit_templates = np.array([t for _,t in self.digits],np.float32)
+        self.number_readers = {}
+        for family, table in data.get('digits_by_family', {}).items():
+            pairs = [(int(d),t) for d,templates in table.items() for t in templates]
+            self.number_readers[family] = (np.array([d for d,t in pairs],np.intp), np.array([t for d,t in pairs],np.float32))
+        self.number_enabled = data.get('number_enabled', {})
+        self.activation_templates = {int(slot):{state:np.asarray(t,np.float32).reshape(-1,576) for state,t in table.items()} for slot,table in data.get('activation', {}).items()}
         self.matrix = np.asarray(matrix, np.float64)
         if self.matrix.shape != (2,3) or not np.isfinite(self.matrix).all():
             raise ValueError('Invalid capture geometry')
@@ -149,26 +175,44 @@ class TowerChannel:
                      for s,t in self.templates[slot].items()}
         alive, rubble = distances.get('alive',1.), distances.get('destroyed',1.)
         p = self.parameters
-        if rubble <= p['rubble_distance'] and alive-rubble >= p['rubble_margin']:
+        if slot%3 != 0 and rubble <= p['rubble_distance'] and alive-rubble >= p['rubble_margin']:
             return 'destroyed', 1-rubble, None, None
         if alive > p['alive_distance'] or rubble < alive:
             return 'unknown', 0., None, None
         hp = None
-        gs = glyphs(panel, slot)
-        if gs and self.digits:
+        family = number_family(slot)
+        labels, templates = self.number_readers.get(family,(self.digit_labels,self.digit_templates))
+        gs = glyphs(panel, slot) if self.number_enabled.get(family,True) else []
+        if gs and len(templates):
             number = ''
             for g in gs:
-                distances = np.mean((self.digit_templates-g)**2,axis=1)
+                distances = np.mean((templates-g)**2,axis=1)
                 errors = np.full(10,np.inf)
-                np.minimum.at(errors,self.digit_labels,distances)
+                np.minimum.at(errors,labels,distances)
                 ordered = np.argsort(errors)
-                if errors[ordered[0]] > p['digit_distance'] or errors[ordered[1]]-errors[ordered[0]] < p['digit_margin']:
+                limit = p.get(family+'_digit_distance', p['digit_distance'])
+                margin = p.get(family+'_digit_margin', p['digit_margin'])
+                if errors[ordered[0]] > limit or errors[ordered[1]]-errors[ordered[0]] < margin:
                     number = ''
                     break
                 number += str(ordered[0])
-            if number and number[0] != '0':
+            if number and number[0] != '0' and int(number) <= (4824 if slot%3 == 0 else 3052):
                 hp = int(number)
         return 'alive', 1-alive, hp, bar_fraction(panel,slot)
+
+    def read_activation(self, sprite, slot):
+        import numpy as np
+        table = self.activation_templates.get(slot)
+        if not table:
+            return None
+        f = activation_feature(sprite)
+        distances = {state:float(np.sqrt(np.mean((t-f)**2,axis=1)).min()) for state,t in table.items() if len(t)}
+        if len(distances) != 2:
+            return None
+        ordered = sorted(distances,key=distances.get)
+        if distances[ordered[0]] > self.parameters.get('activation_distance',.08) or distances[ordered[1]]-distances[ordered[0]] < self.parameters.get('activation_margin',.02):
+            return None
+        return ordered[0] == 'active'
 
     def step(self, image, episode, timestamp_ms):
         import numpy as np
@@ -198,5 +242,6 @@ class TowerChannel:
             if state != 'unknown':
                 self.observed[s] = now
             result.append(TowerObservation(SLOT_NAMES[s], state, hp is not None, hp,
-                         confidence, self.observed[s], 'rubble_template' if state == 'destroyed' else None, fraction))
+                         confidence, self.observed[s], 'rubble_template' if state == 'destroyed' else None, fraction,
+                         self.read_activation(sprite,s) if state == 'alive' and s%3 == 0 else None))
         return tuple(result)

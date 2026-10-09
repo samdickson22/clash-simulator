@@ -1,0 +1,2102 @@
+{
+  "fit": {
+    "manifest_sha256": "6f74fdf6cf189c7f268dc9d1f73090eb7724c306d3cf68b858df2807d90bffae",
+    "episodes": [
+      {
+        "episode": "v4-phase-a-1975101180",
+        "events": [],
+        "terminal": {
+          "tick": 5115,
+          "ended": true,
+          "mono": 1895484.601659791
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "7439a4c0054c4721deafd014fa57f0fc33c86ac6b3dc633229948665bfb3519a",
+          "cache_index_sha256": "a4317d0e46ecb30dffad316fc31a6b044130d5e615bc22f8cb62882bcbfbf4d1",
+          "truth_sha256": {
+            "objects.jsonl.gz": "3fbfca4883b1ef7deba61c10f7933e247736ca3d8db2fe0c07c0f66df664c408",
+            "rich-objects.jsonl.gz": "89d19b3cc35637739d64768ffb43a281c798851320cda3c2d2909904b36dfdfd",
+            "frames.jsonl": "29b77c90ed07850fa1068f463c50c042616475105bd77ed48b674ebb06b1be2a"
+          },
+          "raw_sha256": "a9ea52c52876d29ff02095bfaf571adff4a8985b0bcbfea2690507e9de5d4b7e"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101182",
+        "events": [],
+        "terminal": {
+          "tick": 5980,
+          "ended": false,
+          "mono": 1895596.550847625
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "220a5df99749a0365a51f4a0fcc852aacd12a72ef0c051154be6dc27d73a5893",
+          "cache_index_sha256": "30073d95a55e5122411aecc8a5d9543de528c6ba547f7e224b357d248994e9d1",
+          "truth_sha256": {
+            "objects.jsonl.gz": "e192ff9b84ead395470c0635596d622ed3515f3ce20080ff656e5e5cbf547c1e",
+            "rich-objects.jsonl.gz": "19e77d9aa78be3e9b79da2becc955ebd03416228b8245f73688e0a3990956e0f",
+            "frames.jsonl": "8838a9fd676d63414d5876d9e4692bcff2f2b68d55b63cf23ff2f4fb90db0335"
+          },
+          "raw_sha256": "cdda4f737ecad94f899d276066aa5483002ffa498bc873dcad1f320d138612a7"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101312",
+        "events": [],
+        "terminal": {
+          "tick": 4101,
+          "ended": true,
+          "mono": 1904331.206553333
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "1257332d955bf14c1e19993c82cf13f507334548c5812fde987b27b2a4b8bba3",
+          "cache_index_sha256": "35975c249f4904bec472b61c3ed166ce680e5ef0ec6265901d918b83b128d4d3",
+          "truth_sha256": {
+            "objects.jsonl.gz": "063aeb324419f288a32e8c0ab53626cc4978a5685f530d2aaaae0b4cc6032045",
+            "rich-objects.jsonl.gz": "3b87f55fff5507d8ec2971c8999b44e17a28cfddbf47f980ca9932d5877c0e45",
+            "frames.jsonl": "8e65230cdd6dbcd5a3279b2bca6b9fe00d9fac7261beba83a154b0a3ec2d42cd"
+          },
+          "raw_sha256": "9bd29165f602fa97a89c11295a3588455fa2e1df7191dd4b80da9e1494e3e542"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101330",
+        "events": [
+          {
+            "slot": 2,
+            "last_positive_tick": 975,
+            "destruction_tick": 977,
+            "confirmed_absent_tick": 978,
+            "last_hp": 16,
+            "native_id": 5000002
+          },
+          {
+            "slot": 4,
+            "last_positive_tick": 1348,
+            "destruction_tick": 1352,
+            "confirmed_absent_tick": 1353,
+            "last_hp": 141,
+            "native_id": 5000004
+          },
+          {
+            "slot": 5,
+            "last_positive_tick": 2988,
+            "destruction_tick": 2992,
+            "confirmed_absent_tick": 2993,
+            "last_hp": 285,
+            "native_id": 5000005
+          }
+        ],
+        "terminal": {
+          "tick": 3601,
+          "ended": true,
+          "mono": 1905562.098288833
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "7d95be49a74c4562905463baebb4b7920fdbea272b4ea44d4e5e59b2862564d8",
+          "cache_index_sha256": "ab897b4c013275c3639ef359bf98183418dacc4523a6c7024ca92efcd393d907",
+          "truth_sha256": {
+            "objects.jsonl.gz": "ea88bc615bb8bfc23e7fa6e03c5fa5fe55952cbe299152b35850baac8070271b",
+            "rich-objects.jsonl.gz": "d3ca06d090817b2cdfb096565bebb0afc4f053346953ca2e82402a5f318d99d3",
+            "frames.jsonl": "f20d94b4f5c5ebd52eef21fd7a2a5dd807101e49ce1c6ea4f54b8fd7559ed497"
+          },
+          "raw_sha256": "795ec1c60bf98147cd77ae9e3b0f660b46bbb1db5b8ca3c78c9f5b082945b6a5"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101294",
+        "events": [],
+        "terminal": {
+          "tick": 5980,
+          "ended": false,
+          "mono": 1903192.551261708
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "cad51825328786b723b3b25c20d8ff698f00fce2caf888449e0a1655edc07dca",
+          "cache_index_sha256": "1012fb35ed85038cd87e535348848873eb38f84c86281c91dd032e4bdfd4bc52",
+          "truth_sha256": {
+            "objects.jsonl.gz": "453759c54a6250e92e621c37dc634cfde064eeaf96ce92757e915c7c6c87a3ca",
+            "rich-objects.jsonl.gz": "65a8f60250867fff402397dcaca3835ca87820288eed6b98252597bdf5993c25",
+            "frames.jsonl": "c78c72aeec6f4a3c2e7da7b8319672d735c8ac066b8827deff94cdce5f649915"
+          },
+          "raw_sha256": "bdd3e016c6baa08f0b306069727997d5ef1c4167efb1cca845b4f67c1d086c18"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101250",
+        "events": [],
+        "terminal": {
+          "tick": 4778,
+          "ended": true,
+          "mono": 1900237.919415458
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "dc930610f6c9315f63c36bb3815fa431c49c4151a0dd1ef2058cfe3967a187ee",
+          "cache_index_sha256": "4063f5dc7ea35aa91348f36f65999d76a626a845c26e0a720a88e50b8dcdc8dc",
+          "truth_sha256": {
+            "objects.jsonl.gz": "63851b723486e7bd0a29109207ad775db2032b4b817813a67bf33fbe05f04585",
+            "rich-objects.jsonl.gz": "a291db6527b4e5c8a782b87b1c36b30cc83ec5bd7d78fcc429eae5e40247bdc8",
+            "frames.jsonl": "9c5e599609613e5672757f77925afce091db26ea11d830261e8b4fc32201e844"
+          },
+          "raw_sha256": "16c5f3f0868b001e371ebc235a73ee7d863f8abb8b447b327c70239cd4bcb507"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101245",
+        "events": [],
+        "terminal": {
+          "tick": 5982,
+          "ended": false,
+          "mono": 1899900.783028333
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "b76188ed5c6593776bbe05ce6051d4557b6544bafa29bde2d8059cae41091359",
+          "cache_index_sha256": "99a3b514cc690edd5cb4d230cb1b7dad5de8be030b4aebaf2473810c34594b3e",
+          "truth_sha256": {
+            "objects.jsonl.gz": "674e542d6e439cdeabb13a57c3d923fa37ac5fcc360a18d00948427250346af9",
+            "rich-objects.jsonl.gz": "e77e372d707b2b71d851ad3ed962ce4712ff9ff414ceb28b8de1772830b6403b",
+            "frames.jsonl": "302e04d928048aa14b4c3527d1ceb73a0d1e6e687748f2be3dd914f0c04c58a7"
+          },
+          "raw_sha256": "6a59c35a1108f0ffe2435273cd53a176b3d3d40b3e1f4579dd8fe81bd5c309ca"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101240",
+        "events": [
+          {
+            "slot": 2,
+            "last_positive_tick": 1573,
+            "destruction_tick": 1575,
+            "confirmed_absent_tick": 1578,
+            "last_hp": 200,
+            "native_id": 5000002
+          },
+          {
+            "slot": 4,
+            "last_positive_tick": 1612,
+            "destruction_tick": 1613,
+            "confirmed_absent_tick": 1615,
+            "last_hp": 53,
+            "native_id": 5000004
+          }
+        ],
+        "terminal": {
+          "tick": 5980,
+          "ended": false,
+          "mono": 1899633.621411166
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "5b9d849cd421e933d9b145926fc9beb71f7ba55d346b0c031d10bdab8242018b",
+          "cache_index_sha256": "805fbea0ce92f6d80a81243d1e874a4ec96bdc8aa2b2e37178317604612f33f9",
+          "truth_sha256": {
+            "objects.jsonl.gz": "a491669b4f230b8fa5e7b5010671330fe361462c89ee82cb59bea20d1626578a",
+            "rich-objects.jsonl.gz": "871ed8f71d2deecd0cf4c492244df8b26233ebec18ac9ecc3403631b4bc6b9d6",
+            "frames.jsonl": "36d40e734bcc9f5489fed6c570685ea9ab7508a8038910bf41ee7326e74d73f8"
+          },
+          "raw_sha256": "3c5eb786cddce68292d48961753b310ff7760b6b7b855600255196ce14de3e4f"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101200",
+        "events": [],
+        "terminal": {
+          "tick": 4573,
+          "ended": true,
+          "mono": 1896894.013260625
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "eeccaf9514f613ccc34ad9db61499c31cf4b156e7ed20fcb916548f141304569",
+          "cache_index_sha256": "b64cdbb0554a413c6804b8aeeb733c179c25f353a884f21805baf705327e3857",
+          "truth_sha256": {
+            "objects.jsonl.gz": "2beb3fa5d3ea396cef26af71ef060622c28e9a3804ba9783610b591aad9e35ad",
+            "rich-objects.jsonl.gz": "96d83886283ce9e02f1aba3e794ae8e489379bafff9c6e04be1a1016df95df80",
+            "frames.jsonl": "f9015199c316a51630574ca044fa50527b50b1c07de9b333ab534cdb89d81d27"
+          },
+          "raw_sha256": "8ba9e1eb03b587927f3e0e769efcdf5e1290e0ebecb1912577218168532c66b8"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101181",
+        "events": [],
+        "terminal": {
+          "tick": 5980,
+          "ended": false,
+          "mono": 1895570.449641291
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "80997a35dde1f9fb8b4d0ebf2152e2a732c656cdb6891fec54afc6f6f7c99cc6",
+          "cache_index_sha256": "44b85ccc42434c4266efa71a408d5c678ce87fd95260c381087149d7e0908581",
+          "truth_sha256": {
+            "objects.jsonl.gz": "aba94d05cf91e86f357547ee3251bff8cf145b5097b1ddf36e444d46fa7aae75",
+            "rich-objects.jsonl.gz": "6aaefbc2a942c1bae3bc5b3baf31494ef8c17777f31b831c3039bf0425f247a1",
+            "frames.jsonl": "7170223523717bfb8360d59bcdb2133345f17744cc6ff2e47453d739ad1fcf12"
+          },
+          "raw_sha256": "8030eb2aec3d2d9e1cef015c47fbe79e3995b98119a2b70f17a85485392436e4"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101203",
+        "events": [],
+        "terminal": {
+          "tick": 5871,
+          "ended": true,
+          "mono": 1897066.636980041
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "a134a6b50f4c40825c8bdc146b5252653aa4784f79bf538062c9af50650a3b1c",
+          "cache_index_sha256": "9ee41a23618ea174d0b7496b05608cf26d1577eab6c8e8d82730b13e1c3bfe8b",
+          "truth_sha256": {
+            "objects.jsonl.gz": "99bb81ea1502e9cbf6b6179be0b8d8c6a9c99a6fb160a518004a8e1d9614e17a",
+            "rich-objects.jsonl.gz": "fd7ee6dd0afe672a14c2fea70774cca43e030adc25939b37f20cf139452130e9",
+            "frames.jsonl": "4c7f43f9945978dbd292fbeb63dd529358ea8bb260bfebf9743fc600af3eb81a"
+          },
+          "raw_sha256": "a89cb124be76c312f458692be2e81b6363cbe94dfcea5c293cfb2b6257034cba"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101306",
+        "events": [],
+        "terminal": {
+          "tick": 5981,
+          "ended": false,
+          "mono": 1904025.770456041
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "7354e48cf450214f73a9c4d6d1e7d377f215a1e0a5df849baa42e068d35fe3f3",
+          "cache_index_sha256": "f6644c0af727d056646f448a865762dbd14c19acb75d0e08235bd6fab8a01053",
+          "truth_sha256": {
+            "objects.jsonl.gz": "75809bb6344d29c9981d9b87d4135fa5d1ef790147a4ac2ec966e8a5b48026cd",
+            "rich-objects.jsonl.gz": "baa9fb614ac80717017a650d4f6a47dfdbf785ba508e2cd637658a151c661d3d",
+            "frames.jsonl": "94b1ba9be429bd383d0d5ecd4ec0d6a658eb95a2011f0ecdf56c52a95fbc7ecc"
+          },
+          "raw_sha256": "6cc70bb8aee2fb5b82740309a1964d07bd60fb5c4c77e23212eabe41a43ede75"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101310",
+        "events": [],
+        "terminal": {
+          "tick": 3807,
+          "ended": true,
+          "mono": 1904249.894477208
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "d119e751843cb831265f79d175074c947075282ba70525602ddf21fc9011e260",
+          "cache_index_sha256": "5d3e9a9e84d13f4aa0cedd38ff40d048c5e6db57161d95e9ff3e5f0aaaefc99d",
+          "truth_sha256": {
+            "objects.jsonl.gz": "d239da1c0aaa00dd1752f8f9f962599c0cbd07f6bc11ffe453349ba8b19a9c2b",
+            "rich-objects.jsonl.gz": "64d05a1be9a3602387c775a17bdfec89664558d75733cd4027bae6f33bbb20e3",
+            "frames.jsonl": "998ea8b0a133f0bac71137f9cda7b047c76219b3e51e14ee5640daef945c000c"
+          },
+          "raw_sha256": "bcca0d56c659de70a5397e6fc5c562cdcecb68b78710ac598c7a8fbe7d6266e8"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101304",
+        "events": [
+          {
+            "slot": 4,
+            "last_positive_tick": 2805,
+            "destruction_tick": 2807,
+            "confirmed_absent_tick": 2809,
+            "last_hp": 252,
+            "native_id": 5000004
+          }
+        ],
+        "terminal": {
+          "tick": 3602,
+          "ended": true,
+          "mono": 1903889.827846333
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "3cf3e6d47b7a5da38bdd13dfbb14bd3a85c2917c4b77d6ca1eb2bebd0bf2ca3a",
+          "cache_index_sha256": "3c18a1a5f019cbc9e2fdb34e0071878456af4ddc2542532c6d2473fde0a1f700",
+          "truth_sha256": {
+            "objects.jsonl.gz": "7a31c67b4b17f94b7e25b3bbd3b0ff84b2ee605e9daa0fe8f29ea2e29911da4f",
+            "rich-objects.jsonl.gz": "061afc0533bc26a9ccb5bf5039431bce8ebd71dbc49afb3d6b3efba9907683f0",
+            "frames.jsonl": "6efede5d67030156d9315e3883dd6f2b15ccb0d71c3a0cdb3c94a22b716d25f7"
+          },
+          "raw_sha256": "0c642acae4d129957acfaeb57e560d242d0cb0ba38bf1d52492d7fb2e5baf505"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101177",
+        "events": [
+          {
+            "slot": 2,
+            "last_positive_tick": 2505,
+            "destruction_tick": 2506,
+            "confirmed_absent_tick": 2508,
+            "last_hp": 117,
+            "native_id": 5000002
+          },
+          {
+            "slot": 4,
+            "last_positive_tick": 2991,
+            "destruction_tick": 2992,
+            "confirmed_absent_tick": 2993,
+            "last_hp": 15,
+            "native_id": 5000004
+          }
+        ],
+        "terminal": {
+          "tick": 4411,
+          "ended": true,
+          "mono": 1895365.747226541
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "4324e305e0bfbbf55ec01aff177635e009a43f54c5ac2d5e55cb1a60985c13ae",
+          "cache_index_sha256": "e324afc639ab4954e28fb5d509a1eba2bb41522c6a323cd1bf73fb9d1098ea79",
+          "truth_sha256": {
+            "objects.jsonl.gz": "cf0390a4208b65369e97704236ed727ded75b51a257921c092e0661d63b10b5a",
+            "rich-objects.jsonl.gz": "5224af7bc98d32dd5295aee0d7718afa19e94f518d2018bdc9842b996ac840c6",
+            "frames.jsonl": "568851acccc9a006ce3c8d4afa02916dd31e3b4ecc38d81632d9247882e585e3"
+          },
+          "raw_sha256": "fb3a3a9d7976bce57f51c937553dfa3e94787da71c62d61b19e4a27719ff4634"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101332",
+        "events": [
+          {
+            "slot": 2,
+            "last_positive_tick": 3282,
+            "destruction_tick": 3284,
+            "confirmed_absent_tick": 3286,
+            "last_hp": 54,
+            "native_id": 5000002
+          }
+        ],
+        "terminal": {
+          "tick": 3602,
+          "ended": true,
+          "mono": 1905665.641876166
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "6a45838d1473d1402f50a6dd9d1049cfbcfc3047d683fe91c8910624c9aade71",
+          "cache_index_sha256": "838c5cf1eab3b893ae7ce6c3542f3b1374644484b6f8aa29b94cf258ae31aea3",
+          "truth_sha256": {
+            "objects.jsonl.gz": "b7e5c4672f70761800d145878aae79a596ed3681c5c6fa391e83a2e6ce24e373",
+            "rich-objects.jsonl.gz": "8805df6604b425486ab52eb02ddc7d58776dd15d587c677d6ab496f148f0db21",
+            "frames.jsonl": "d4dcd4c40d13d2107cc0cb4189433015ba98bfb6f67066fb651cf7ec2ef3e19e"
+          },
+          "raw_sha256": "a2c09165ed0ddf88e13c72c815aa27c99197cdde160a1e29d8d92feae0a0e892"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101233",
+        "events": [
+          {
+            "slot": 4,
+            "last_positive_tick": 2479,
+            "destruction_tick": 2481,
+            "confirmed_absent_tick": 2482,
+            "last_hp": 128,
+            "native_id": 5000004
+          }
+        ],
+        "terminal": {
+          "tick": 3602,
+          "ended": true,
+          "mono": 1899036.259624541
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "fb72d5204b8ead1b438892c8cbe09c1861da0d8f6f93e5707e927a98a529df48",
+          "cache_index_sha256": "eae00a7f17522df5cba110556221b8b1cf5f3c1f5b859441ba8eecbd8386470a",
+          "truth_sha256": {
+            "objects.jsonl.gz": "e3c3fea53c2aecd4aff0c872ac87bef1d512e49520368cd7b46f192c77cecbf9",
+            "rich-objects.jsonl.gz": "de29104fb8192b8bbded00b5859e4cd39a3d6ee369f6b9303a2dfaa53c11af6a",
+            "frames.jsonl": "3a5378f1a94b2760189db45cf5076bf34fd5e53a983ad5c7aecc2d5dec90b276"
+          },
+          "raw_sha256": "da3711759e147c086fa4bd28d8d424dec5169f3109c6f7e18d366ac787a8dee8"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101176",
+        "events": [
+          {
+            "slot": 1,
+            "last_positive_tick": 2586,
+            "destruction_tick": 2588,
+            "confirmed_absent_tick": 2590,
+            "last_hp": 34,
+            "native_id": 5000001
+          },
+          {
+            "slot": 4,
+            "last_positive_tick": 1422,
+            "destruction_tick": 1423,
+            "confirmed_absent_tick": 1424,
+            "last_hp": 107,
+            "native_id": 5000004
+          },
+          {
+            "slot": 5,
+            "last_positive_tick": 3409,
+            "destruction_tick": 3410,
+            "confirmed_absent_tick": 3412,
+            "last_hp": 66,
+            "native_id": 5000005
+          }
+        ],
+        "terminal": {
+          "tick": 3601,
+          "ended": true,
+          "mono": 1895278.388982
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "2ceb31b6b33ab7a2c65524e9464e94c4c55fdff086461e9a3a4743688fd508d2",
+          "cache_index_sha256": "bff28b63e606ad7a1b4784549d61150dc22cc78258357b5e764d08dfa078f041",
+          "truth_sha256": {
+            "objects.jsonl.gz": "1fc1af50ab23506a092893065da6733df03c3d280f573353dbd888037d0cde81",
+            "rich-objects.jsonl.gz": "1110835876c770ac7af7aff11c027812dc1e7e3701ff3dcfe8280800cbc759c7",
+            "frames.jsonl": "a440ee27404c236ec3ad83f4c84e184a1f4bfb37568f615c84d27a00b0cc0f2e"
+          },
+          "raw_sha256": "d2a5f3de4b9cc0a4aec2079018dceb0b330fe570f4e744802feb4025ca54ea7f"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101334",
+        "events": [],
+        "terminal": {
+          "tick": 4894,
+          "ended": true,
+          "mono": 1905760.659177916
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "924d21da35a43141769c95015fd83a27229bd8f396053673afe25808a0360976",
+          "cache_index_sha256": "5d9f2feaa253487da8ce36b2609d059383bd009ca318f6152613d167c5399e8c",
+          "truth_sha256": {
+            "objects.jsonl.gz": "cbb5be0c9e6c50f0774ed5b0722c2efb19e138b009ce05181cbe24b30623c36e",
+            "rich-objects.jsonl.gz": "8fc42b37e483d9ff5e11bd9bd8e84b548d43322a6717437d9c3a7d6479ac7139",
+            "frames.jsonl": "e11fc0b8f1acdd0b745346c4f1ebbe1acf5665335d3b7b1d6044ed8455e5f3b8"
+          },
+          "raw_sha256": "480a12fbee4b63c0a4ee8bfd5098195030f31f526c1b5d0fb63412735fa921a3"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101274",
+        "events": [
+          {
+            "slot": 4,
+            "last_positive_tick": 2303,
+            "destruction_tick": 2305,
+            "confirmed_absent_tick": 2307,
+            "last_hp": 13,
+            "native_id": 5000004
+          }
+        ],
+        "terminal": {
+          "tick": 3602,
+          "ended": true,
+          "mono": 1901933.680933125
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "b4ea33485dcdd1dd8cd8b30215f5aec5f6839a1ab2ec93252eb33fe59b61f777",
+          "cache_index_sha256": "8ab0136602b78b7323ee3cbec2cfc4ac423e1675ad86542c4601937aa1001afa",
+          "truth_sha256": {
+            "objects.jsonl.gz": "91a44e36d777e81e3690061c77eb6ff1b921b7c444b86efa6ae07439bb0778ed",
+            "rich-objects.jsonl.gz": "45a2ee1710034ea95f05a5247f2567c0ffda48aba3995eb0b91d2af0b7902e60",
+            "frames.jsonl": "5f62e14c4ed8385297548cb15b73c1e0c5bae34e2d8c91ae41fec22de1ebc46c"
+          },
+          "raw_sha256": "2201def67b901a225e9f2de25dec8b9de5e362a4e58463cb2298ab1da668873c"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101184",
+        "events": [
+          {
+            "slot": 2,
+            "last_positive_tick": 2626,
+            "destruction_tick": 2627,
+            "confirmed_absent_tick": 2629,
+            "last_hp": 73,
+            "native_id": 5000002
+          }
+        ],
+        "terminal": {
+          "tick": 3602,
+          "ended": true,
+          "mono": 1895738.965110708
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "41f23a056824f8e8a69577226d27f010c5ee62313a976526dbae864ff4479c34",
+          "cache_index_sha256": "fcdbf1e13160d195e224790fc4c2ee785370833b9af0bc941a0fdbc9a65e7571",
+          "truth_sha256": {
+            "objects.jsonl.gz": "d101089cfc528db0159648971202deb41525ddb6e80bceb669d20bbacbfedbd1",
+            "rich-objects.jsonl.gz": "817ecd90ea79eb733588a5cc2f301e33773604af9983150ba28c0f1ab41eeb3d",
+            "frames.jsonl": "c06b1b2822f17f9272e5741c4b08ead49a075abd847ec5278f663bb1bea1cef1"
+          },
+          "raw_sha256": "5daaf132a494ef352c8f99d35ca957fe145cb44d7fcf9bf8d8e48b2105b70500"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101266",
+        "events": [],
+        "terminal": {
+          "tick": 5981,
+          "ended": false,
+          "mono": 1901380.813700375
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "a12a4462bf1cd4a696fd750aa0361880eeb75d3c3c02db04492e7683f5d89f50",
+          "cache_index_sha256": "801713805248bbdb5a32668423d787c7a6df6b3383145ae51f5f9f7c4e0f4d48",
+          "truth_sha256": {
+            "objects.jsonl.gz": "b1154729d413eeac06aff69d93c4a3d52501cf22180030eb27131cd8a59c119c",
+            "rich-objects.jsonl.gz": "0d497a72ab927ecb1629f50223fe9c83efb1efbdb7dc1f11425c56e8aeb964c6",
+            "frames.jsonl": "e560443c936ceda7235535b6f8656943b27ef9347dee0e0ed32b92f61e698bb1"
+          },
+          "raw_sha256": "67442f2277e40bce0d9eb35014824a873ed5ce8d01a500c44fc308bb72925849"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101236",
+        "events": [],
+        "terminal": {
+          "tick": 5980,
+          "ended": false,
+          "mono": 1899256.253158583
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "099f2269521b794b70584c288eb91ebad38f3b4802566eac1659f673cf485b1f",
+          "cache_index_sha256": "a95d44d3adf805c5ad8c99108e41151a6776bd3e0887098ecc109079b749eadd",
+          "truth_sha256": {
+            "objects.jsonl.gz": "3701ec1636567c616bc9e436ae2540c97a26be1e70cf377757f0afeb7d7fe98d",
+            "rich-objects.jsonl.gz": "f968d7b6eb30f0ea4ed8001d4d0b57002bf0c8c55904f2831fb75935fbf35b41",
+            "frames.jsonl": "5d4fbd8efefbd2cf0fa5738f09cb3593b0a61c7df9249c4791d07795b3f89d06"
+          },
+          "raw_sha256": "98dacf2f3adede81c158c859367665c5c4af5503fbb9461075c19e34b6f14cc7"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101275",
+        "events": [],
+        "terminal": {
+          "tick": 3679,
+          "ended": true,
+          "mono": 1901967.981843875
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "c14c296f7470992792645761e8900a4dbc906959d6928da8389bd92e24804f66",
+          "cache_index_sha256": "338cc81479fb30a6f80897ccface4e322eb387ed0d0ee763b12c0cf7a7f5ac4b",
+          "truth_sha256": {
+            "objects.jsonl.gz": "bc1bdd56693536bdcad91d2b1181c8cd51571bdaf27de09b6afa27b189a84e36",
+            "rich-objects.jsonl.gz": "e38ad30286b5fba00805f835c9044857ccef4bf1d75204eeadfa1622a402c989",
+            "frames.jsonl": "0184c2d5fb9c4472894048787ebcb20d546d0af4517310ff210392fc1a19083e"
+          },
+          "raw_sha256": "52e0a67f965afb2743029f08175cb33155d4a2e835961cbe4cf87aa7eb477bd6"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101211",
+        "events": [
+          {
+            "slot": 4,
+            "last_positive_tick": 3292,
+            "destruction_tick": 3293,
+            "confirmed_absent_tick": 3297,
+            "last_hp": 37,
+            "native_id": 5000004
+          }
+        ],
+        "terminal": {
+          "tick": 3601,
+          "ended": true,
+          "mono": 1897608.091935875
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "44f68c4d439a07825be612c22ebf3ba845608f20e89d50c0228a11a141a254da",
+          "cache_index_sha256": "9931ce58a9fe2cb6f7c7e9610d2e9fd408414d98c98517251d2fd2f1f4389d0f",
+          "truth_sha256": {
+            "objects.jsonl.gz": "41fb240aa6ef1b5c75d00204a22fae530eb0e9b89a601234f3fcfaf88e494ed4",
+            "rich-objects.jsonl.gz": "5fb3e3306ce7c573a1ac8fd81ec614e6513a83e6bde1be31347e2dc94bb08f97",
+            "frames.jsonl": "3a8c27500f95864574083e5d0c5b149d4ead96cf5c8c3565b64f07e7bbe115a7"
+          },
+          "raw_sha256": "0b09a5d8da9d6736dd82beebbfdd926f2723b87e95216b53eb931ae03dffe538"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101277",
+        "events": [],
+        "terminal": {
+          "tick": 4856,
+          "ended": true,
+          "mono": 1902085.645559833
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "66b198df5d70a03c59fe4793e78a62b7ed516cbfcc0586dfb82331d127847040",
+          "cache_index_sha256": "62c89c6852792e0c26171705779249907c1c1ac27f09d3a45059ba44c0284368",
+          "truth_sha256": {
+            "objects.jsonl.gz": "9a2f950975404b1402ab116c1571c116ca753c5e69a560aabe66be3dce1ecb78",
+            "rich-objects.jsonl.gz": "05d27d832c1e9eaa34e4af6e40af4ebf9be9d5ccb07dac4d5c84ba712c4b6238",
+            "frames.jsonl": "eaad96326c601e7ca24252ce96a8034cbdd9b687258bd8f52fdd0c84453c6994"
+          },
+          "raw_sha256": "62fdb58eb58b04cbd7b550055e7d2fb68283f0addfb8f7985fff863b4b61efe0"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101217",
+        "events": [],
+        "terminal": {
+          "tick": 5946,
+          "ended": true,
+          "mono": 1897911.967374791
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "f6f0eacb009206d979b9e359b8a3696d53122c86bb088aa004816e73f40d69bd",
+          "cache_index_sha256": "9f6daaf6f76e735899478db9186b27dd8070a272b790660036dc07a0fff38466",
+          "truth_sha256": {
+            "objects.jsonl.gz": "d609846f01e8195f25851862a7494fd2c1880b65bf8c513885633cddee2321d7",
+            "rich-objects.jsonl.gz": "bc31c6f81fbc2709d27443d281bc3bc7cdfa6d7c5c40842f27b43316865103f3",
+            "frames.jsonl": "93aab20627655a49742574fd27b3ffa1d5a3bdd905d03a7904cc1500703d4747"
+          },
+          "raw_sha256": "70e5830c07f0f38324ca4075fe7f2970b4f683fb2304b8a915f2a94c4457a462"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101175",
+        "events": [],
+        "terminal": {
+          "tick": 5981,
+          "ended": false,
+          "mono": 1895181.715916041
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "f7f00c65642ecffe0c38bcce68633194217a7124ee0c68c5c97c0e83eabaae7b",
+          "cache_index_sha256": "088edef1bbf9290cff2b8bd543b4f797745e16bce2e6a5bd65f17a0bbbc299c7",
+          "truth_sha256": {
+            "objects.jsonl.gz": "377860882d1b40a1fdde9a7ba2c9ec7076fe8a46e521a75a4b475d51513160cc",
+            "rich-objects.jsonl.gz": "8209775492325917d79652d3dc92779bbc1bf19531fb8956ce09ce02fca8f35e",
+            "frames.jsonl": "22446bc8a7fab3b6bc01ccbdd3554edf794f061c03c7ced76f99086a915aa583"
+          },
+          "raw_sha256": "cee667b88b03e829d6ea13b33926a7fc2043d55086c5542197ddcde53dd8bdd4"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101221",
+        "events": [],
+        "terminal": {
+          "tick": 4022,
+          "ended": true,
+          "mono": 1898132.702249416
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "52f136f1377f43e27c04abf8f7cda80b455e65a17af3e9189ef2d1a4623bd64c",
+          "cache_index_sha256": "06905fe0a828fa12712e4fb3f295d4008cfb9707956c891dd1f8e97fefaa88a5",
+          "truth_sha256": {
+            "objects.jsonl.gz": "20954da3534859f220ea37798c4f4f24923ff38072118d664f6723fa10f78b1f",
+            "rich-objects.jsonl.gz": "f1b3d6bd1289c674232505eee8fc6d03cf8b75d0eab6cb5e4331368963adf269",
+            "frames.jsonl": "bb0f4c31b5ab4ee0f0a07d15336e435b78ff986443781f3b52c730c5d56efdb8"
+          },
+          "raw_sha256": "50bc1b87827fbe447cba08161659fdf16137e4872741d79eefe4bab32269b180"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101287",
+        "events": [],
+        "terminal": {
+          "tick": 5981,
+          "ended": false,
+          "mono": 1902699.303942583
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "02bed2815afb6f65f63820fe2caa77b6d57efc290392ff175f4916faa912a01c",
+          "cache_index_sha256": "884a0bdfcb43df5ee6f5fd29327d646cd4e8e9358feab00582d0cae74c8eab05",
+          "truth_sha256": {
+            "objects.jsonl.gz": "0169456f7759d0e9ddcdcb64ed4670eec26207f1d3ae9c3430bca39c7308d084",
+            "rich-objects.jsonl.gz": "6a9ef7af9969d0f6680b02f2e8f7220fe4094a290699c730965c520676a42289",
+            "frames.jsonl": "c720f87afeb594952ef6ab24d14e66ffec107632118082bdc45d5ee1cf1e2398"
+          },
+          "raw_sha256": "9f7ef3a2b6a2a6f7b3d9b59b5e5369dfa6e58cb89019f4649a93f194dc712575"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101223",
+        "events": [],
+        "terminal": {
+          "tick": 5980,
+          "ended": false,
+          "mono": 1898315.168831833
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "dd87de5b5f730fe27a492bc2e53afb9e7e16f67810e7cf42f3d6956cb06d200e",
+          "cache_index_sha256": "291ccf530be0be44705e8344b4dc0f18d8c7b8278b18e9b0f678a4432d74a3d6",
+          "truth_sha256": {
+            "objects.jsonl.gz": "5b470413988e57d08697dfed8ab1c9c6d5a2cadfcfbd38283587f0b72bc927d0",
+            "rich-objects.jsonl.gz": "9243d98f104914dbdf35e38619fc5371f734fbf3ce58d0475258c8d1c366d60b",
+            "frames.jsonl": "698192fb349dd859a49baa1813d094db714a630be3a840ae236bc191223d369f"
+          },
+          "raw_sha256": "0f3af0f0f1b399c4863619e4090fb295dc146ce27015e6b5642d81ff50059276"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101173",
+        "events": [],
+        "terminal": {
+          "tick": 5057,
+          "ended": true,
+          "mono": 1895068.267037708
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "83312bdbec9d6a6ca1b3b392d605a740462899cce3bfa6902bcc606fd87bc8f7",
+          "cache_index_sha256": "90e809c6155da04f0115c2dbae64fe7f84fc2fbcb41cced9b41b990bf778c7e3",
+          "truth_sha256": {
+            "objects.jsonl.gz": "866e5538a5e055e900dd77ad6bf877b428ebdde6111172b5ff8870bf96564f5f",
+            "rich-objects.jsonl.gz": "3435fc87a2e50f15d9d56658f6118b449228343e211a9ce5faa8b240ff137f91",
+            "frames.jsonl": "a573a16323483b5d04a43b1b37cacefc93101a0b7367582e2fd68c5dc933204b"
+          },
+          "raw_sha256": "166e39bf26475f253988978376d7db0a285b75cbd4f416c1b5bcba2e66226388"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101235",
+        "events": [],
+        "terminal": {
+          "tick": 5611,
+          "ended": true,
+          "mono": 1899192.448996583
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "230af3ba1f620056ccb6b16827370544dac379107f23aedd8f06ff1f9274499e",
+          "cache_index_sha256": "6592bed8e053eeef8f0e6421fa6398db2ea744a0d9bfda3d664a569ef013ae85",
+          "truth_sha256": {
+            "objects.jsonl.gz": "97fe8bb13a0e8888d721f6db32cff3ee21e7659a4995c6c469c2e74c23043eaa",
+            "rich-objects.jsonl.gz": "d1851d96e1fdccfe9757a181fcc666ba4a052d2b1073242ae8b0b3fdcf5acdb4",
+            "frames.jsonl": "437337e327e166bdae03caaaae973983d27bd3b8c95152d6de20055f2d3aa1c4"
+          },
+          "raw_sha256": "0f74f4cab93c898b0b38c37f1fcbb69845fb53da2a4e33aeab44b4f4afbacf7d"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101261",
+        "events": [
+          {
+            "slot": 2,
+            "last_positive_tick": 1931,
+            "destruction_tick": 1932,
+            "confirmed_absent_tick": 1934,
+            "last_hp": 118,
+            "native_id": 5000002
+          }
+        ],
+        "terminal": {
+          "tick": 3603,
+          "ended": true,
+          "mono": 1900971.560587208
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "2fff0da9fa14ce70e4173edf59fec68c54fd54e360e66ee1d2b18ff552a84256",
+          "cache_index_sha256": "5e2ff628475b35a07c8ff5f1b868ec0ce9a3549a9869265804c9bf305e8dabb8",
+          "truth_sha256": {
+            "objects.jsonl.gz": "bf3b419ca33af08b11bf53ade1f53773c92d08a7c075818ed77e22d5bf57f6b7",
+            "rich-objects.jsonl.gz": "a07fe8360fe46db1918b7d6a9af10e829803acce1db0d53565b29948451d626e",
+            "frames.jsonl": "f55468b9a750b2c42f687efd884a2b1d09c45679150d391ad09e10094c3b8e36"
+          },
+          "raw_sha256": "72cf18d5c08b66abf8e8ee5130184e03032fd899d8f15d3d24f37e21e328614e"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101201",
+        "events": [],
+        "terminal": {
+          "tick": 4958,
+          "ended": true,
+          "mono": 1896960.278459125
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "9dee2af49a03e0edfe4748590f8fe203775b8410ac4dd12141775fe544f45008",
+          "cache_index_sha256": "25ba3c5a330f4d5ad610b09297a9e768a189e2ceadd86e7da6e9ceba7ca5d202",
+          "truth_sha256": {
+            "objects.jsonl.gz": "78d62e032bf24bf620489dd2da439ad6c41a2c2a15a23f83566b18b37e62d929",
+            "rich-objects.jsonl.gz": "3bee374d59ff1b00358a013c4eae0b2973adaefef3ab566114b65687435cbb54",
+            "frames.jsonl": "0d1881c426cff37d229728caf50b1a14356a5a1762350c58e8f789d5eb683884"
+          },
+          "raw_sha256": "d0c8f91227117aa713ab762721ff637d501ae4fa6c522593bd539c6bb4fce2f3"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101257",
+        "events": [],
+        "terminal": {
+          "tick": 5980,
+          "ended": false,
+          "mono": 1900720.295676458
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "10a7312fede1bcb35bfabe9b30689e9a07af2a51cd7b37e390dcffb7cb831b93",
+          "cache_index_sha256": "2a78936224197c53d01ed6a4c174ec14d5866f50de78fd5eae470f4e53796429",
+          "truth_sha256": {
+            "objects.jsonl.gz": "166a9486a27f809d9d10b508046f7a5df60710fb21f9a64c26088c248a355317",
+            "rich-objects.jsonl.gz": "6c32f68574528f9c14d4e4a5a21269e2f6981b1e27b748fd1bc974679ca30c0b",
+            "frames.jsonl": "c35477d39d0e0e6d402e88c0a3494124575e497d2066756ff8ea893437af1099"
+          },
+          "raw_sha256": "be59dc51e71f8bf4932f408ad872487c6fa99952ee35f855dd813d3cfb5b1307"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101292",
+        "events": [],
+        "terminal": {
+          "tick": 5981,
+          "ended": false,
+          "mono": 1903076.773870083
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "698d038940c6541a4113b64021b920d54dd7e2cf000e7cbb92c4d101c3524148",
+          "cache_index_sha256": "6e4840c563c6332a823cb220ec304635f4aae2cb74cd8c2d69c8ba3daec2a7a0",
+          "truth_sha256": {
+            "objects.jsonl.gz": "28f67f44238de4b51dc45e316737f3f5c02e303ea2be519b2996ea22132ea73f",
+            "rich-objects.jsonl.gz": "37da77c8c28dee1f3694081d3dce30b0795da9ff619a064f94f113ac31b16905",
+            "frames.jsonl": "97bd7e0f3fbcaaf1a792cff4dafb03fa6b89ab3b39561a8f7241a5a74883df5a"
+          },
+          "raw_sha256": "1bd3dba70a1d3cdf1a40c436bcc2c891401de16490ad037ab721e4ed4953fc69"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101335",
+        "events": [],
+        "terminal": {
+          "tick": 5981,
+          "ended": false,
+          "mono": 1905838.230652875
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "e5ba90256c6cbea351a52deb8fcf000a8c3cafc3ac3ff07124df5cef29ab5a4d",
+          "cache_index_sha256": "a896b5e4ea6bc6efcd77411b79661276dbfeb99cf89749767216b7c55523024c",
+          "truth_sha256": {
+            "objects.jsonl.gz": "e420b1da9b104c153e47eb92359ab63c11b4cc73748ef43c7a4968c5b467cbdc",
+            "rich-objects.jsonl.gz": "33eb9e6e82acba08d015237c6163809e2d33ac57c33fa35cde97f035d50dd6ff",
+            "frames.jsonl": "68ab151d97166e5f8b6d92748693f02df424faa539faa366bd1b0c85c7f16b80"
+          },
+          "raw_sha256": "940bfd99202d91b1ed2d5ccf6fb5844bc616c3bcb19347b183d1eba1b96b248c"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101246",
+        "events": [
+          {
+            "slot": 2,
+            "last_positive_tick": 2335,
+            "destruction_tick": 2337,
+            "confirmed_absent_tick": 2340,
+            "last_hp": 206,
+            "native_id": 5000002
+          }
+        ],
+        "terminal": {
+          "tick": 3602,
+          "ended": true,
+          "mono": 1900048.90868075
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "3ae97f12568a411a1c1ec9ff579a6e0dc12f600c2626d4cdbdfd1f506270ec07",
+          "cache_index_sha256": "90e52f3443bbd75519e69822d75e14c9b2693e0b1d0d325a8b2cc51073070c1b",
+          "truth_sha256": {
+            "objects.jsonl.gz": "cf58db6cc2c84ab70e3cdd29945efcd4a658d37d1c49ff00f7b9acd708002fff",
+            "rich-objects.jsonl.gz": "e7cff861fe0833df27a9b02713d02c74a296e6ed509ea986fda6a164fc92d59d",
+            "frames.jsonl": "3d7fd92b3d32369ccc7dd5d13066735d3de0ee64d117f361bd9aacbfea26787e"
+          },
+          "raw_sha256": "db3705e7c47128e97e8bfd7410e3f54ebe0f20ace149729dfe90d32609603733"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101185",
+        "events": [],
+        "terminal": {
+          "tick": 5087,
+          "ended": true,
+          "mono": 1895914.449896708
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "bcd680d815ba197fd0d955bd894982c81ec8502f740c93c1fc53a3da0a036543",
+          "cache_index_sha256": "2af172bb9d85d3877befec507ceaa7788f08a201228e2ba83127a234f288c2b1",
+          "truth_sha256": {
+            "objects.jsonl.gz": "c376d8c4650254176cfee74cf9746bf54868a7d67849b1f411d801692645912b",
+            "rich-objects.jsonl.gz": "0a624fab768bb38a2fc0d0fbe221e97183b31deb4b9dcbcda5bedfaa1893a571",
+            "frames.jsonl": "f9b3da35568d464780f29df0c3a737f06503dcdeffb1060c8032321108d8944e"
+          },
+          "raw_sha256": "73259eac606883b21707ea33708957d0f383bc7d46ea7087e76b9b23b5586fb1"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101187",
+        "events": [],
+        "terminal": {
+          "tick": 4983,
+          "ended": true,
+          "mono": 1895959.503692541
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "e423cce1b9a23a131d76a9fa00f62965f00403aad9e8db0d2684c0ab724de3a1",
+          "cache_index_sha256": "f1f21c7dc1cb038b055bfef08407450b62d02ee5af71a264cec9b4ae69436871",
+          "truth_sha256": {
+            "objects.jsonl.gz": "fa1f0670f0549b5e6dbac48cdccbf63ec79a7de13d7cf04ff06e19718dca2327",
+            "rich-objects.jsonl.gz": "858dc605703edf43c614b9234a369af48e6c688c41f476390c1e910327156998",
+            "frames.jsonl": "7bee2168ccbd4f89cdc78fc0ebfdbf747386f1482d6e1c18e2aefe98b0ac10f8"
+          },
+          "raw_sha256": "274eda3962324b8fa4128d5e1c02c5ee638d8077d1494d8a6567a05e4adb8fad"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101262",
+        "events": [],
+        "terminal": {
+          "tick": 5980,
+          "ended": false,
+          "mono": 1901190.291435291
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "9232c022476fbcfb89acbb511a257b2329243fb88468c7e91e657e9416b2aebb",
+          "cache_index_sha256": "6d3d7c4611fa09cff90c72d9e6beb80279cf23ec2764d4b636e4d873490100a2",
+          "truth_sha256": {
+            "objects.jsonl.gz": "75c34fa5a0d03066159f9b44fe5768ae0a972c1d3d8f30226d04cb543eadba59",
+            "rich-objects.jsonl.gz": "345aefd9d8e2fcdd3cd4f8cae9919214156a2056e01d0df2cea7fc274c809377",
+            "frames.jsonl": "f8a86941dc28b822ebd3ac589e72639d5652c9d1c335553b4067e30591e4680e"
+          },
+          "raw_sha256": "75531e4983bc6c48d955bd996a1939f8c0b9612dc602347b42f7a6d1eeb91fc2"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101285",
+        "events": [],
+        "terminal": {
+          "tick": 5438,
+          "ended": true,
+          "mono": 1902586.29083125
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "cf9515223bd5d7141f05b8abe1629c77812a5d37f725c439ceff070051c57e0b",
+          "cache_index_sha256": "81ce3e02e46ab17e78f3c5a8bb2aea7be4b087ff9ba986da67375e52998ddd70",
+          "truth_sha256": {
+            "objects.jsonl.gz": "e2098f5fa8c729d3199e4b9abef3036bf279e22e08d91033f23a0c99e7783c0d",
+            "rich-objects.jsonl.gz": "925f5479678b08e93c38c94e87f0d86cfae7657670078866220d436cdeb66728",
+            "frames.jsonl": "ddab181626b525425bc631093fb2212820a506a2af2c8c23f7cb6a5adc6fc75a"
+          },
+          "raw_sha256": "20c6bb7f64a83587faa5f615308cd928f8bfe9c045083dfbb37545cf9a483174"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101197",
+        "events": [
+          {
+            "slot": 2,
+            "last_positive_tick": 2116,
+            "destruction_tick": 2118,
+            "confirmed_absent_tick": 2119,
+            "last_hp": 203,
+            "native_id": 5000002
+          }
+        ],
+        "terminal": {
+          "tick": 3601,
+          "ended": true,
+          "mono": 1896790.265296666
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "49c762efd05d747ac816efb59655671e74025bdb3d86d591975d360eef63ef33",
+          "cache_index_sha256": "d122341aa6c42384d4c15404ab6bfd05b330140380b5ebffcbed039b06893238",
+          "truth_sha256": {
+            "objects.jsonl.gz": "6b1d547df9c4678baa92a0fc6c36005c83e59426733d3e67729a4b033b5873c5",
+            "rich-objects.jsonl.gz": "abdd801dbb9d972063cb1a3645622b4d4525d2ba9b2df442ee62bbc8e706640c",
+            "frames.jsonl": "d965ea05fcbf067be73e10b19a360f8ca103baec2a868140c0236d041566583d"
+          },
+          "raw_sha256": "b84af80a9ccb8a1e5b1a3e1ab4f5849d544adbff34ce48da0032c8a7d051508c"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101232",
+        "events": [
+          {
+            "slot": 4,
+            "last_positive_tick": 1905,
+            "destruction_tick": 1907,
+            "confirmed_absent_tick": 1910,
+            "last_hp": 203,
+            "native_id": 5000004
+          }
+        ],
+        "terminal": {
+          "tick": 3601,
+          "ended": true,
+          "mono": 1899003.891430708
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "1026e376a4bcc9e92235263c3066cabc349a4878ac2a0d0cdc9b2d393c41cb3d",
+          "cache_index_sha256": "af392e9226079d32bd346de6e0260171e8103518f985e60de9ac6945717b6e59",
+          "truth_sha256": {
+            "objects.jsonl.gz": "354a92afec114dff88c4658dfe419e41c124f062b3ff03ed0df089dd0e6b1791",
+            "rich-objects.jsonl.gz": "997cf64937b111b05087c61279a944c42509d51640d227c0813d6fcba30924ec",
+            "frames.jsonl": "3bd572671fe7d0d9102afcb9922dbbda226a5e45dcf84dbb8eb45aacbe15829b"
+          },
+          "raw_sha256": "e7db47688037419fd8fddcdf4630142b25e369a91e8a950e9b8cdad839950562"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101243",
+        "events": [],
+        "terminal": {
+          "tick": 5980,
+          "ended": false,
+          "mono": 1899787.406102583
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "9b7315bdeb2d99fe3c0d6752fd4d42f4cb264219dd8f0f1322057fbc87d589ad",
+          "cache_index_sha256": "491446bbf29b45920f558f2c557407e540707d6d8f21bcd4fa08c11654e15c04",
+          "truth_sha256": {
+            "objects.jsonl.gz": "1b08d3376b4a4c84502fb297238ad98d193267daebd4cf9c09e448aa65de6d2f",
+            "rich-objects.jsonl.gz": "b63479af9efb56d828df3a7ac1e7f22c48a39e3185438287a73ea71dcfe21b53",
+            "frames.jsonl": "d1425bbe6dfd2af1259ebbe239a8cf451d233b9a5982ebb5d6046195a200b1cd"
+          },
+          "raw_sha256": "676ea537c8ce38598318f9a944fb23f44f0e7c43d2d2722d05318a202c2c2a5c"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101224",
+        "events": [],
+        "terminal": {
+          "tick": 5980,
+          "ended": false,
+          "mono": 1898386.840092875
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "0c77f9b750aab04d99eae0c236eafa83d1b10c25ad9ab434d08b2615995b57c5",
+          "cache_index_sha256": "0b16f8edbb66d3099210dc269786264020a588593abf240a12f2c4027874f0c3",
+          "truth_sha256": {
+            "objects.jsonl.gz": "c18f00bfc7e93b4c404c656e66807b48a36240da12c71217149ba0ac5d281339",
+            "rich-objects.jsonl.gz": "9fb63fd45a5f231bf9c7a8f81b470046fd4faa0bb77dfbf556596e9ded47857c",
+            "frames.jsonl": "7b02efb7699f0a81fd71ccd06ea89533da3af6681da3e710a8e30f99a7fed171"
+          },
+          "raw_sha256": "26d43d1c130a822d9bcd8f58edbd288ef9b7ad7016196a7fa56dc6fe58d1e378"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101202",
+        "events": [],
+        "terminal": {
+          "tick": 5980,
+          "ended": false,
+          "mono": 1897021.876230083
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "0f02d3c9e5d6cde260a840202a8e6704d0a6ac39c9bc6b12fd2aee499a89df8d",
+          "cache_index_sha256": "2f66c661f74f154e0964d4c4f63ad5f723c6ac3ec078deb6675f9b1fbe5bda1a",
+          "truth_sha256": {
+            "objects.jsonl.gz": "ddc9ed56d2e344754219b1023bfb65559859418bd0c3c1fea9244352e176ad9d",
+            "rich-objects.jsonl.gz": "aa9a21da103e31da2a8026ec30c8620ff1844b34a04186e4cb7723af060f89ac",
+            "frames.jsonl": "de13490cc1d488a4f499ee7827082e22df9e519f9c2304b9315405c8294014ef"
+          },
+          "raw_sha256": "be10ff2d98527aed1822afb5be21c7a2c89fa4e2650ed04fef4e5fc476354645"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      }
+    ],
+    "pixels_opened": true,
+    "workers": 8,
+    "host": "127x03",
+    "nice": 10
+  },
+  "dev": {
+    "manifest_sha256": "6f74fdf6cf189c7f268dc9d1f73090eb7724c306d3cf68b858df2807d90bffae",
+    "episodes": [
+      {
+        "episode": "v4-phase-a-1975101336",
+        "events": [],
+        "terminal": {
+          "tick": 5981,
+          "ended": false,
+          "mono": 1905873.366653166
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "59c8de4efe0f09423cb115c4448e5009af3bd1261f5685add4a453da38f66257",
+          "cache_index_sha256": "e86e500f2d5d10922ce9f1ffcea7cda75e6f994cef9715625991aab2183a57c6",
+          "truth_sha256": {
+            "objects.jsonl.gz": "004bca6c45db6a02d5b3600f1b9ef1a1c3fec34053917913c21282d6021959a2",
+            "rich-objects.jsonl.gz": "6ed4dc7a41124ee2f41dd5efdb5de0f1ae83f806f7c56ad4aeee1e275889f564",
+            "frames.jsonl": "e66b729cc66c93386a10fe088f122cdaeaffe9dedbdf1c08bd759a5d67dcae6e"
+          },
+          "raw_sha256": "6d408262175ea9d704b3fadf4906f3a22362016142c5fa254a463637d9d17327"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101260",
+        "events": [
+          {
+            "slot": 2,
+            "last_positive_tick": 1141,
+            "destruction_tick": 1143,
+            "confirmed_absent_tick": 1144,
+            "last_hp": 69,
+            "native_id": 5000002
+          },
+          {
+            "slot": 4,
+            "last_positive_tick": 933,
+            "destruction_tick": 934,
+            "confirmed_absent_tick": 935,
+            "last_hp": 7,
+            "native_id": 5000004
+          }
+        ],
+        "terminal": {
+          "tick": 3920,
+          "ended": true,
+          "mono": 1900978.115119958
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "7de816427c9d30f60b1d546cd09db741fef02962bf0dd88acfe2ec596a0a2ad0",
+          "cache_index_sha256": "74997ac01d590469fc2a55f730fa4f73249e564866bee8893d8468df489fac21",
+          "truth_sha256": {
+            "objects.jsonl.gz": "d135bd32b706720cea1601c5e284cdaa71ea69bcdcd4a553cc33d62460f648e4",
+            "rich-objects.jsonl.gz": "dabc07e94a99a430fcb12b0d651b89df87d8a0c04fed64239b93b689f95398fa",
+            "frames.jsonl": "9bb285afa2ffa280c0975d7c04cf0f1651476544d17e9fad6948e8107c4a6848"
+          },
+          "raw_sha256": "afdb4a791894fb94eb7b1f4d074c32fff99c6aa811fe1aebcf155f4e3f309b88"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101225",
+        "events": [],
+        "terminal": {
+          "tick": 5035,
+          "ended": true,
+          "mono": 1898564.239045583
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "dfde7b77784004b2c82a656ba7ec577a5739bac00ac6fbd82335882b1af5ac77",
+          "cache_index_sha256": "18ba9cf7dcbd044a4e7924ef3be1fa5ef31a08dbb8747daac3f1032ffd5b5d1c",
+          "truth_sha256": {
+            "objects.jsonl.gz": "56a11d0867fd045adf13cd7fd83db369d4454dcfd874de44e451b0b3f664ad9a",
+            "rich-objects.jsonl.gz": "d99538f5879781a8c43194fa65e84ebc658128e254914d90470549e8ed920c75",
+            "frames.jsonl": "bbc15ef8a4528026f5970e1d645c3861a254368b2ad97ff6b56321d581314e85"
+          },
+          "raw_sha256": "1455e6d0f609fa2d2a44a4be6fa073d3ddae617c1241b5157e7eaf83508009d0"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101296",
+        "events": [],
+        "terminal": {
+          "tick": 4238,
+          "ended": true,
+          "mono": 1903367.176361416
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "6b9de55e7582cfb7d987e72721ede4f4e26940c90968fe92b4a37b16e8129030",
+          "cache_index_sha256": "6fa7a4470a2f641061a2a8eab68a5aff1ec6fb6d3e51b1bdc66f9bd4b1291b35",
+          "truth_sha256": {
+            "objects.jsonl.gz": "5ece34be20c78308e11d87c714b4a6c42b59632ec3d0dacc41934f1e1eb9edb0",
+            "rich-objects.jsonl.gz": "ddda05d53fda5f86422e1d6863422d6019649d5263ac0bebd488deeb9ac2c784",
+            "frames.jsonl": "059b97b0d8ee2a7ccf2086730092646fd94e548e815640a3968262c17aa32298"
+          },
+          "raw_sha256": "a599d0b7fcac8d4908c1775ab51a2726ac7f16ad014859c4ec0090d6ebccfb9c"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101276",
+        "events": [
+          {
+            "slot": 1,
+            "last_positive_tick": 3100,
+            "destruction_tick": 3102,
+            "confirmed_absent_tick": 3103,
+            "last_hp": 50,
+            "native_id": 5000001
+          },
+          {
+            "slot": 2,
+            "last_positive_tick": 3231,
+            "destruction_tick": 3233,
+            "confirmed_absent_tick": 3234,
+            "last_hp": 146,
+            "native_id": 5000002
+          }
+        ],
+        "terminal": {
+          "tick": 3601,
+          "ended": true,
+          "mono": 1902035.35020225
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "0dc9ffa50bc328e8f23c3a5880b093be87a01f2430a300f9374b625ba9135119",
+          "cache_index_sha256": "39429e77efe037c0c1242ca53cf76725e9853fd0127e5c9f3606b4f503cec2d0",
+          "truth_sha256": {
+            "objects.jsonl.gz": "5b48b87900abab4546e48e5d877ec2526fff3c74d4a5c313299d874589a400a4",
+            "rich-objects.jsonl.gz": "763a66a444bb84c2180e9c1ec2d1884c415062fc951563338e1a5c78df68482c",
+            "frames.jsonl": "65d253b2c7e8ee189983ef0635ef082c3ce4da9b36ed351ffac3e6818bb172f7"
+          },
+          "raw_sha256": "0b2d3874ab0d9067d93fc627e02f000033f88bab2dca2e22898ff25bdf4d3df6"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101267",
+        "events": [
+          {
+            "slot": 2,
+            "last_positive_tick": 1927,
+            "destruction_tick": 1928,
+            "confirmed_absent_tick": 1930,
+            "last_hp": 55,
+            "native_id": 5000002
+          },
+          {
+            "slot": 4,
+            "last_positive_tick": 929,
+            "destruction_tick": 930,
+            "confirmed_absent_tick": 933,
+            "last_hp": 36,
+            "native_id": 5000004
+          }
+        ],
+        "terminal": {
+          "tick": 4554,
+          "ended": true,
+          "mono": 1901537.87753075
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "910f9c57cd09510d243bba520acea3f894f151195b71bdb9086b39a684a7f425",
+          "cache_index_sha256": "899d3acdfc6f983f265bc7b9e23953c2d0908684b3037af939eb14d70b2e0b65",
+          "truth_sha256": {
+            "objects.jsonl.gz": "e106f97cb316332b828ed233854dbcdd9b02db8641f10fd2cc5a1b7773e488bb",
+            "rich-objects.jsonl.gz": "9b9ebf57461062eb64cf9c6807b219823282139ba2000a010fd0a9d00378dccb",
+            "frames.jsonl": "b317cebaadb9941272e5d72c740cd05fb8caba8192103b15b6befb92dc76524f"
+          },
+          "raw_sha256": "9d8c00cb4f85cb22d0d3522eae2fc5729462af1331c4c90ad499d2f39c6477f3"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101272",
+        "events": [],
+        "terminal": {
+          "tick": 5981,
+          "ended": false,
+          "mono": 1901757.003440416
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "f2e8fb53e9a9e73b2c19b2c1c34e217ae224bacde432904fb91a1c2423f477f7",
+          "cache_index_sha256": "2ce8d7cf8b80cf05e2d70500c652c5f42f2e24ef12f2de45e6ef715f36745e6b",
+          "truth_sha256": {
+            "objects.jsonl.gz": "310b9da8e80268c826576d3d3b207b9f102a2980824e2bea224666aced83906a",
+            "rich-objects.jsonl.gz": "6313b70937634f323596c4b436cf8bb6420e76b336b84afe2cb5df5b131cf03e",
+            "frames.jsonl": "49b1c38d6bac42075ef178baf2055db92e503e886f2e76e41a872ef68157fe20"
+          },
+          "raw_sha256": "c2064bec261cdcec67c9fc58919098f51a89b26133424483ae5521409643c4e7"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      },
+      {
+        "episode": "v4-phase-a-1975101295",
+        "events": [
+          {
+            "slot": 4,
+            "last_positive_tick": 2891,
+            "destruction_tick": 2893,
+            "confirmed_absent_tick": 2895,
+            "last_hp": 76,
+            "native_id": 5000004
+          }
+        ],
+        "terminal": {
+          "tick": 3601,
+          "ended": true,
+          "mono": 1903255.898873208
+        },
+        "crown_score_fields": [],
+        "provenance": {
+          "receipt_sha256": "136c0575c1c15bdbe3c7606d3c18834541550352cce0dbb338e4fd772a8409e7",
+          "cache_index_sha256": "9f317787aa5303506215e0f6dcddb4b7f18a3f16d6312b052259b705a83a06a8",
+          "truth_sha256": {
+            "objects.jsonl.gz": "8e774653dc42a140f598b5f85a9ef117e7624763ce407f30b69a8dedc806107a",
+            "rich-objects.jsonl.gz": "55993c627871d3ee352173e7918fb316279bb37330847347ad175c77ffd39c12",
+            "frames.jsonl": "9b5463af19081b47aa8d7a6e24a0edad203d53fa3b55b5c939e7267a5041e32d"
+          },
+          "raw_sha256": "b22b01f38ac448962c3d4e0514d60f56fd445d830c644c466838beec5f3dabf0"
+        },
+        "schema_keys": {
+          "ordinary": [
+            "tick",
+            "observed_at",
+            "fence",
+            "objects"
+          ],
+          "rich": [
+            "tick",
+            "objects",
+            "players"
+          ]
+        }
+      }
+    ],
+    "pixels_opened": false,
+    "workers": 8,
+    "host": "127x03",
+    "nice": 10
+  }
+}

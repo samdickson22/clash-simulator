@@ -12,8 +12,11 @@ class PublicTowerAdapter:
         matrix = json.loads(Path(geometry).read_text())['tile_to_pixel'] if geometry else MATRIX
         self.channel = TowerChannel(artifact, matrix)
 
-    def observe(self, public, pixels):
+    def observe(self, public, pixels, *, result=None):
         from dataclasses import replace
+        if result is not None:
+            from .public_root import apply_match_result
+            return apply_match_result(public,result)
         return replace(public, tower_observations=self.channel.step(
             pixels, public.episode_id, public.timestamp_ms))
 

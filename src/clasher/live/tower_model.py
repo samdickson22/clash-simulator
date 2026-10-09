@@ -22,6 +22,7 @@ class PublicTowerModel:
         from clasher.tower_scaling import tower_stat
         self.episode = None
         self.hp = {}
+        self.king_active = {}
         self.destroyed = set()
         self.death_confidence = {}
         # PacketBuilder already declares tournament level 11. This is a public
@@ -32,6 +33,7 @@ class PublicTowerModel:
     def reconcile(self, public):
         if public.episode_id != self.episode:
             self.episode, self.hp = public.episode_id, {}
+            self.king_active = {}
             self.destroyed = set()
             self.death_confidence = {}
         from .tower_channel import SLOT_NAMES, parse_observations
@@ -44,6 +46,8 @@ class PublicTowerModel:
                 self.death_confidence[i] = observation.confidence
                 self.hp[i] = 0.
             elif i not in self.destroyed and observation.state == 'alive':
+                if observation.king_active is not None:
+                    self.king_active[i] = self.king_active.get(i,False) or observation.king_active
                 if observation.hp_known and 0 < observation.hp <= self.max_hp[i]:
                     self.hp[i] = observation.hp/self.max_hp[i]
                 elif observation.hp_fraction is not None:
@@ -101,7 +105,8 @@ class PublicTowerModel:
         return replace(public, entities=tuple(modeled+others)), dict(
             tower_model='public-geometry-prior-v1', tower_priors=priors,
             tower_identity_rejected=rejected, tower_duplicates=duplicates,
-            tower_channel_slots=len(channel), tower_destroyed=len(self.destroyed))
+            tower_channel_slots=len(channel), tower_destroyed=len(self.destroyed),
+            tower_king_active={SLOT_NAMES[i]:active for i,active in self.king_active.items()})
 
 
 def tower_packet_builder(base, *, only_channel=False):
@@ -109,8 +114,16 @@ def tower_packet_builder(base, *, only_channel=False):
         def __init__(self, builder):
             super().__init__(builder)
             self.towers = PublicTowerModel()
+            self.ended_episode = None
 
-        def build(self, frame, tick, seat=1, terminal=False):
+        def build(self, frame, tick, seat=1, terminal=False, *, result=None):
+            if result is not None:
+                from .public_root import apply_match_result
+                frame = apply_match_result(frame,result)
+                terminal = True
+            terminal = terminal or self.ended_episode == frame.episode_id or any(o.match_ended or (o.slot.endswith('king') and o.state == 'destroyed' and o.destruction_evidence == 'public_match_result') for o in frame.tower_observations)
+            if terminal:
+                self.ended_episode = frame.episode_id
             if only_channel and not frame.tower_observations and self.towers.episode != frame.episode_id:
                 return super().build(frame, tick, seat, terminal)
             if self.towers.episode != frame.episode_id:

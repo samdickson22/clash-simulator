@@ -143,6 +143,8 @@ class RustPlanner:
         if start >= deadline:
             return 2304, dict(base, completed=0, reason='deadline')
         packet, diagnostic = self.packets.build(snapshot.public, snapshot.tick)
+        if packet.observation.terminal:
+            return 2304, dict(diagnostic, **base, completed=0, reason='public_match_result')
         packet = self.model_hypothesis(packet)
         own = {k: snapshot.own[k] for k in ('hand', 'cycle', 'refill', 'elixir')}
         info = DecisionInfo(snapshot.tick, 1, packet, own)

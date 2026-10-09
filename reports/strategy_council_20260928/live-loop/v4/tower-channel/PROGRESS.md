@@ -49,3 +49,29 @@ Task owner: worker for coordinator 0523ae6f. Work began 2026-10-09 UTC.
 Implementation, REPORT and receipts are complete; all owned detached compute has exited. No further fitting or dev tuning is authorized by this study. Publication uses only this directory, the new test/channel/artifact and the necessary live integration/contract/package files; staged credential scan is required immediately before commit. The published commit can be located with `git log -- reports/strategy_council_20260928/live-loop/v4/tower-channel/REPORT.md` and compared with `origin/main`.
 
 Remaining coverage question: training-only King rubble and active King HP examples, and a larger independent princess destruction/occlusion audit. Current conservative channel is useful, but these gaps remain L2 blockers. No validation/heldout access, owner jobs, formal files or unrelated working changes were needed.
+
+## Round 2 — in progress
+
+- Round 1 and source read. Fresh membership will use the original SHA ranking, exclude all 32 round-1 matches from dev, take eight fresh dev matches and augment the original 24 fit with the next 24 fresh matches.
+- Native ordinary snapshots are complete fenced collections; rich snapshots are sparser. Derive permanent princess disappearance only after a positive witness and at least two continuing snapshots with both Kings alive; mask terminal teardown and capture-start absence. Death tick is interval-censored between the last positive and first absent snapshots.
+- Native HUD and rich player fields inspected on fit data have no crown/score fields. Collector receipt records an explicit native `terminal.ended` and tick; these are scoring-only inputs.
+- Public pixel runtime has no demonstrated result-screen producer; packet construction accepts a terminal flag. Checking how to connect that public flag while retaining King rubble abstention.
+- All extraction and fitting will run detached on 127x03, nice 10, eight CPU workers with single-thread libraries. Formal/perception-owner files remain read-only.
+
+## Round 2 — frozen dev completed
+
+- Pinned manifest SHA256 `6f74fdf6cf189c7f268dc9d1f73090eb7724c306d3cf68b858df2807d90bffae`: 48 fit, eight fresh dev. Eight-worker extraction complete. Twenty fit disappearance events supplied 1,575 stable rubble samples; no manual rubble labels needed.
+- Freeze at 2026-10-09T02:22:02Z pins recognizer `6070598b…`, candidate artifact `8946523c…`, manifest, truth and scoring source before any fresh-dev pixel decoding. Four-worker CPU replay completed 22,059 frames.
+- Seven of seven dev princess events confirmed; persistent destroyed recall 13,212/13,581 (97.28%); raw current-frame recall 8,906/13,581 (65.58%). Mean interval-censored confirmation 2.629–2.786s. False destruction 0/74,179 living princess frames and zero affected matches out of eight. One-sided 95% frame bound 0.00404%; match-level bound 31.23% acknowledges correlation/small match count.
+- New opponent numbers fail predeclared dev gate: 247/250 exact (98.8%); disabled with no source/template/threshold tuning. Own-King numbers pass: 136/136 exact, 30.43% eligible coverage. Opponent King numbers stay absent outside sanitized arena. Original own-princess reader: 673/673 exact.
+- King activation: 40,392/40,393 accepted exact (99.9975%), 92.04% coverage. Native wake-rule labels use princess fall or positive King HP loss. A dev King disappears exactly at native `terminal.ended=True` tick 4554; there is no continuing King-rubble truth and no stored crown count.
+- Added a typed public result input, connected adapter → packet terminal → planner no-op. Three crowns establish only the opposing King death; two-crown/time results end planning without inventing King death. Result terminal state persists through later frames and resets with episode. Existing live source has no result-screen producer: upstream public capture/runtime owner must supply that observation. No formal runtime/perception-owner source edits.
+- Regression tests in progress on the prior isolated round-1 snapshot plus owned source changes. Initial synthetic fixtures were corrected for crop padding and distinct OCR glyphs; no dev-informed recognizer tuning occurred. Candidate six-slot timing 2.223ms/frame; final opponent-disabled artifact timing still to measure.
+
+## Round 2 — verification complete / publication
+
+- Final regression: **85 tests passed, six subtests passed, 28.73s**, including all 75 round-1 tests plus ten new tests. Same five unrelated native S6 parity tests excluded. Isolated snapshot excludes concurrent runtime/perception worker edits.
+- Final deployed artifact (`09850226…`, 1.10 MiB) timing: 551 fit-only reconstructed six-slot frames, mean **1.474ms**, p95 **1.716ms**, p99 **1.753ms**. Candidate full-dev replay timing remains separately reported at 2.223ms.
+- Post-scoring corrected HP coverage denominators by recomputing family eligibility from frozen native labels: unread opponent-King observations are excluded from own-princess coverage. No predictions, model, thresholds or HP acceptance policy changed.
+- Coordinator instruction received: never edit selection.py/runtime.py; stage only owned hunks with `git add -p` in shared perception_adapter.py, decision.py and public_root.py. No changes to worker-owned files are needed. No checkout/stash or broad staging used.
+- All task compute has completed. REPORT and small reproducibility receipts are ready. Publication uses explicit tower/report files and owned shared hunks only. Staged secret scan and whitespace checks passed. Exact publication commit is available with `git log -- tower-channel/REPORT.md` from the v4 directory. Open issue: public result-screen producer must be supplied by the capture/runtime owner; opponent numbers remain disabled after failing the fresh-dev gate.
