@@ -30,7 +30,7 @@ also uses the current lease-aware supervisor.
 
 `report_controller.py` waits for all three final-step EMA checkpoints, pins the
 execution freeze and starts `pool.py` on home CPUs only: 60 physical cores on
-03, 60 on 04 after GPU fitting, and 44 on 01. 08 stays unused. All four metric(b)
+03, 60 on 04 after GPU fitting, and 44 on 01. 08 runs no reporting games. All four metric(b)
 cases for a seed run on the same host, interleaved in that host's queue. Pools
 retain complete cases and stop only their own child PIDs on failure or STOP.
 
@@ -45,4 +45,4 @@ Owned stop files: `PACK.STOP`, `FIT.STOP`, `REPORTING.STOP`, `CONTROLLER.STOP`
 under the task job directory. A reporting-pool stop releases its own workers
 without touching caches or other owners' processes. No simulation runs on 09.
 
-The coordinator-directed loader6 amendment uses `loader_prefetch.py` through `run_fit_loader6.sh`: six actual workers/prefetch4, no mmap_random_advice. Complete steps use the unchanged deterministic mixture sampler, and both complete index vectors are checked in the parent. `qualify_loader.py` compares two GPU updates from identical exact checkpoints, including every RNG and optimizer state. Qualification receipts record the bit-exact comparison. The six loader workers use distinct cores120–125; trainer126. Aggregate parent/loader PSS is guarded at46GB, MemAvailable at24GiB; 09 uses the versioned capture-extension supervisor with12 declared processes/48GB cap and Oct11 deadline. Initial fit segments and train-only qualification costs are retained. `collect_results.py` renders all arm CIs, decisions and resource totals only after the controller has complete final fits and reporting cases.
+The coordinator-directed loader6 amendment uses `loader_prefetch.py` through `run_fit_loader6.sh`: six actual workers/prefetch4, no mmap_random_advice. Complete steps use the unchanged deterministic mixture sampler, and both complete index vectors are checked in the parent. `qualify_loader.py` compares two GPU updates from identical exact checkpoints, including every RNG and optimizer state. Qualification receipts record the bit-exact comparison. The six loader workers use distinct cores120–125; parent cores118/119/126, Torch threads1. Aggregate parent/loader PSS is guarded at46GB, MemAvailable at24GiB; leased09 also uses the versioned capture-extension supervisor with12 declared processes/48GB cap and Oct11 deadline. The8GiB GPU reserve applies only to leased hosts. S-human resumes on owned08 from exact checkpoint108, nice19, checkpoints every200 steps, stop file and≤5-minute reclaim. Failed09 unsaved updates are archived and replayed, with costs retained. Other arms checkpoint every250 steps. Initial fit segments and train-only qualification costs are retained. `collect_results.py` renders all arm CIs, decisions and resource totals only after the controller has complete final fits and reporting cases.

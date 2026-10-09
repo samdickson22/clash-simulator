@@ -1,0 +1,108 @@
+{
+  "passed": true,
+  "qualification": "two train-only GPU steps from identical exact state",
+  "cursor": 200,
+  "rows_per_step": 8192,
+  "resume_sha256": "c395b0cb5f01375d62b7c7c0a0c2d19781d4835a5606988bebe88b006b5bb94f",
+  "parent_checkpoint_keys_bitexact": [
+    "model",
+    "ema",
+    "optimizer",
+    "scheduler",
+    "config",
+    "state",
+    "hashes",
+    "provenance",
+    "torch_rng",
+    "python_rng",
+    "numpy_rng",
+    "cuda_rng"
+  ],
+  "argument_exceptions": [
+    "output",
+    "stop"
+  ],
+  "actual_loader_workers": 6,
+  "prefetch_factor": 4,
+  "mmap_random_advice": false,
+  "worker_complete_step_indices_checked": true,
+  "modes": [
+    {
+      "mode": "native",
+      "checkpoint_sha256": "00286ec2430c33cbddfcaf4a69a11c1f07b9b9f7be400a23cad9450c7a9334d8",
+      "segment": {
+        "host": "127x08",
+        "pid": 1643362,
+        "started_at": "2026-10-09T20:45:40.907506+00:00",
+        "numpy": "2.3.5",
+        "torch": "2.7.1+cu118",
+        "python": "3.12.12 (main, Feb 12 2026, 00:42:14) [Clang 21.1.4 ]",
+        "cuda_allocator_config": null,
+        "nice": 19,
+        "affinity": [
+          118,
+          119,
+          126
+        ],
+        "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+        "actual_loader_workers": 6,
+        "scientific_loader_workers": 1,
+        "prefetch_factor": 4,
+        "mmap_random_advice": false,
+        "operational_amendment_sha256": "23e63c3c70e9eaa7c5ded4c1f79300ee9eb515fbbf98721e3a46c45d6e752abf",
+        "status": "returned",
+        "ended_at": "2026-10-09T20:46:24.688693+00:00",
+        "wall_seconds": 43.83128748484887,
+        "cpu_seconds": 82.607428,
+        "parent_cpu_seconds": 41.574121000000005,
+        "loader_cpu_seconds": 41.033307,
+        "optimizer_steps": 2,
+        "cursor_start": 200,
+        "peak_loader_tree_pss_bytes": 42019538944,
+        "min_loader_mem_available_bytes": 119208230912,
+        "resource_stop": null
+      }
+    },
+    {
+      "mode": "expandable",
+      "checkpoint_sha256": "cfdad47322c9d71c91a5ce0ed3398c282008aecd404fb85cde2a1d1625c168f0",
+      "segment": {
+        "host": "127x08",
+        "pid": 1649348,
+        "started_at": "2026-10-09T20:46:37.668607+00:00",
+        "numpy": "2.3.5",
+        "torch": "2.7.1+cu118",
+        "python": "3.12.12 (main, Feb 12 2026, 00:42:14) [Clang 21.1.4 ]",
+        "cuda_allocator_config": "expandable_segments:True",
+        "nice": 19,
+        "affinity": [
+          118,
+          119,
+          126
+        ],
+        "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+        "actual_loader_workers": 6,
+        "scientific_loader_workers": 1,
+        "prefetch_factor": 4,
+        "mmap_random_advice": false,
+        "operational_amendment_sha256": "23e63c3c70e9eaa7c5ded4c1f79300ee9eb515fbbf98721e3a46c45d6e752abf",
+        "status": "returned",
+        "ended_at": "2026-10-09T20:47:20.596217+00:00",
+        "wall_seconds": 42.98799913702533,
+        "cpu_seconds": 99.729209,
+        "parent_cpu_seconds": 43.383833,
+        "loader_cpu_seconds": 56.345375999999995,
+        "optimizer_steps": 2,
+        "cursor_start": 200,
+        "peak_loader_tree_pss_bytes": 34716051456,
+        "min_loader_mem_available_bytes": 117940445184,
+        "resource_stop": null
+      }
+    }
+  ],
+  "wall_seconds": 113.2108259620145,
+  "allocator_comparison": [
+    "default",
+    "expandable_segments:True"
+  ]
+}

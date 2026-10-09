@@ -57,6 +57,8 @@ try:
         run(['rsync','-a','--quiet',f'127x{host}:{job}/fits/{arm}/',str(job/'fits'/arm)+'/'])
         (job/'loader-qualification'/arm).mkdir(parents=True,exist_ok=True)
         run(['scp','-q',f'127x{host}:{job}/loader-qualification/{arm}/PASS.json',str(job/'loader-qualification'/arm)+'/'])
+    (job/'allocator-qualification/S-human').mkdir(parents=True,exist_ok=True)
+    run(['scp','-q',f'127x08:{job}/allocator-qualification/S-human/PASS.json',str(job/'allocator-qualification/S-human')+'/'])
     (job/'inputs').mkdir(exist_ok=True)
     run(['scp','-q',f'127x01:{job}/inputs/main02.pt',f'127x01:{job}/inputs/assets.npz',
          f'127x01:{job}/inputs/assets.npz.json',str(job/'inputs')+'/'])

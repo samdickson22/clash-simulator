@@ -1,0 +1,20 @@
+{
+  "schema": "clasher.exit-r1.operational-allocator-amendment.v1",
+  "utc": "2026-10-09T20:45:15.363119+00:00",
+  "authorization": "Coordinator authorized expandable_segments:True if needed, with two-step exact-state numeric proof; owned08 reproduced step239 OOM on default allocator.",
+  "arm": "S-human",
+  "host": "127x08",
+  "resume_step": 200,
+  "allocator": "expandable_segments:True",
+  "qualification": "Compare two steps from identical checkpoint200, default allocator versus expandable allocator, both loader6; require bit-exact model/EMA/optimizer/scheduler/all RNG/cursor and all scientific configuration before production.",
+  "scientific_changes": [],
+  "same_batch_order": true,
+  "same_microbatch": 7168,
+  "same_steps": 4883,
+  "same_batch_size": 8192,
+  "reporting_outcomes_observed": false,
+  "peak_cuda_allocated_gib": 41.7,
+  "peak_cuda_reserved_unallocated_gib": 4.38,
+  "unsaved_updates": 38,
+  "checkpoint_every": 200
+}

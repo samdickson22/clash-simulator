@@ -57,6 +57,8 @@ def main():
         assert [r['step'] for r in records] == list(range(1, 4884))
         timing = [json.loads(s) for s in (root/'timing.jsonl').read_text().splitlines()]
         assert len(timing) == 4883
+        discarded_timing = [json.loads(s) for p in sorted((root/'archived-attempts').glob('*/timing.jsonl'))
+                            for s in p.read_text().splitlines()]
         checkpoint = root/'step-00004883.pt'
         assert digest(checkpoint) == freeze['files'][str(checkpoint)]
         allocation_wall=(datetime.datetime.fromisoformat(segments[-1]['ended_at'])-
@@ -68,7 +70,8 @@ def main():
             gpu_hours=fit_wall/3600,qualification_gpu_hours=qualification.get('wall_seconds',
                 sum(s['segment']['wall_seconds'] for s in qualification['modes']))/3600,
             fitting_window_gpu_hours=allocation_wall/3600,
-            optimizer_gpu_hours=sum(r['optimizer_seconds'] for r in timing)/3600,
+            optimizer_gpu_hours=sum(r['optimizer_seconds'] for r in timing+discarded_timing)/3600,
+            discarded_updates=len(discarded_timing),
             cpu_hours=fit_cpu/3600,
             qualification_cpu_hours=sum(s['segment']['cpu_seconds'] for s in qualification['modes'])/3600,
             max_pss_bytes=max(max(r['pss_bytes'] for r in timing),
@@ -82,6 +85,8 @@ def main():
     assert len(heldout) == 64
     teacher = {a:read(job/f'supplement/{a}.json') for a in ARMS}
     performance=read(job/'loader-performance.json')
+    allocator_qualification=read(job/'allocator-qualification/S-human/PASS.json')
+    assert allocator_qualification['passed']
     receipt = dict(schema='clasher.exit-r1.student-screen-complete.v1',
         utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
         lane='exploration; no multiplicity adjustment', corpus_manifest_sha256=digest(job/'corpus/manifest.json'),
@@ -94,7 +99,14 @@ def main():
         postprocessing_cpu_hours=controller['local_cpu_seconds']/3600,
         heldout_teacher_game_cpu_hours=sum(x['cpu_seconds'] for x in heldout)/3600,
         bootstrap=aggregate['bootstrap'],loader_performance=performance,
-        loader_amendment_sha256=digest(job/'student-loader6-amendment.json'),results=aggregate['arms'],
+        loader_amendment_sha256=digest(job/'student-loader6-amendment.json'),
+        owned_gpu_amendment_sha256=digest(job/'student-owned-gpu-amendment-v2.json'),
+        parent_affinity_amendment_sha256=digest(job/'student-parent-affinity-amendment.json'),
+        allocator_amendment_sha256=digest(job/'student-allocator-amendment.json'),
+        allocator_qualification=allocator_qualification,
+        allocator_qualification_gpu_hours=allocator_qualification['wall_seconds']/3600,
+        allocator_qualification_cpu_hours=sum(x['segment']['cpu_seconds'] for x in allocator_qualification['modes'])/3600,
+        owned_migration=read(job/'student-owned-migration.json'),results=aggregate['arms'],
         game_diagnostics=aggregate['game_diagnostics'], teacher_diagnostics=teacher,
         inputs={name:sha for name,sha in freeze['files'].items()
                 if name.endswith(('STUDENT-SCREEN-PLAN.md','student-seed-audit.json',
@@ -153,6 +165,10 @@ def main():
               'with a live Oct11 lease, four declared processes and46GB PSS cap. '
         'S-human continued on owned08 from checkpoint108 after an attempted-step239 '
         'CUDA OOM on09;130 completed unsaved updates were archived and replayed. '
+        'Owned08 reproduced the same OOM; checkpoint200 preserved92 useful updates, '
+        'and38 additional unsaved updates were archived and replayed. '
+        'Expandable allocation was then enabled for S-human after a dated operational '
+        'amendment and a bit-exact two-step default/expandable replay from200. '
         'Their GPU/CPU cost is included in the segment totals. S-mix completed '
         'step239 but stopped because the wrapper incorrectly applied the leased8GiB '
         'reserve to owned01; it resumed exactly after that guard scope was corrected. '
@@ -163,6 +179,8 @@ def main():
                  'Whole fitting window GPU-hours (includes restart gaps)'],
         [[a,f"{fit[a]['qualification_gpu_hours']:.6f}",f"{fit[a]['qualification_cpu_hours']:.6f}",
           f"{fit[a]['fitting_window_gpu_hours']:.6f}"] for a in ARMS])
+    lines += [f"Separate allocator qualification: {receipt['allocator_qualification_gpu_hours']:.6f} "
+              f"GPU-hours and {receipt['allocator_qualification_cpu_hours']:.6f} CPU-hours.", '']
     table(lines,['Home host','Physical worker cores','Peak owned processes','Pool wall-hours',
         'Worker CPU-hours','Manager CPU-hours','Minimum MemAvailable GiB'],
         [[h,len(e['cores']),e['peak_owned_processes'],f"{e['elapsed_seconds']/3600:.6f}",
@@ -216,6 +234,10 @@ def main():
          ['Held-out teacher manifest',receipt['heldout_manifest_sha256']],
          ['Pre-fit pin receipt',receipt['pre_fit_pin_sha256']],
          ['Loader6 operational amendment',receipt['loader_amendment_sha256']],
+         ['Parent affinity operational amendment',receipt['parent_affinity_amendment_sha256']],
+         ['Owned GPU migration operational amendment',receipt['owned_gpu_amendment_sha256']],
+         ['S-human allocator operational amendment',receipt['allocator_amendment_sha256']],
+         ['Owned migration receipt',digest(job/'student-owned-migration.json')],
          ['Final reporting execution freeze',receipt['execution_freeze_sha256']],
          ['Aggregate metrics',receipt['aggregate_sha256']],
          *[[arm+' final step4883 EMA checkpoint',f['checkpoint_sha256']] for arm,f in fit.items()],
@@ -230,7 +252,7 @@ def main():
         'all training columns, the immutable runtime source files and init step/width. '
         'Qualified fitting runtime: NumPy2.3.5, Torch2.7.1+cu118. Frozen scientific code '
         'commits:39b6adf6 andf98d8926. Execution receipt commits: b6b39380, f48d865d, '
-        'ee6baaad and666dd205 (later operational completion commits are in repository history). '
+        'ee6baaad, 666dd205, b839f178 and620c79a2 (later completion commits are in repository history). '
         'Eight frozen tests passed, including real pack '
         'identity/tamper rejection and ratio0 equality to qualified T11.', '',
         'Technical setup retries occurred before fitting: self-SSH replaced by local '

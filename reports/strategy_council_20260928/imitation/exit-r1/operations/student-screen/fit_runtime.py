@@ -67,6 +67,7 @@ teacher_batch.combined_batch, train.step = teacher, step
 runtime = dict(host=socket.gethostname(), pid=os.getpid(),
     started_at=datetime.datetime.now(datetime.timezone.utc).isoformat(),
     numpy=np.__version__, torch=torch.__version__, python=sys.version,
+    cuda_allocator_config=os.environ.get('PYTORCH_CUDA_ALLOC_CONF'),
     nice=os.getpriority(os.PRIO_PROCESS,0), affinity=sorted(os.sched_getaffinity(0)),
     instrumentation='T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing')
 prefetch=None

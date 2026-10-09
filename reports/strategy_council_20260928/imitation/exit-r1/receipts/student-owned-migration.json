@@ -1,0 +1,62 @@
+{
+  "schema": "clasher.exit-r1.student-owned-migration.v1",
+  "utc": "2026-10-09T20:39:30.454628+00:00",
+  "arm": "S-human",
+  "from_host": "127x09",
+  "to_host": "127x08",
+  "resume_step": 108,
+  "checkpoint_sha256": "7a8d80ede64326d810b1e39ac33dc17d9df8f5b42446a941c569324d46ea1445",
+  "runtime": {
+    "host": "127x08",
+    "pid": 1602437,
+    "started_at": "2026-10-09T20:38:45.058480+00:00",
+    "numpy": "2.3.5",
+    "torch": "2.7.1+cu118",
+    "python": "3.12.12 (main, Feb 12 2026, 00:42:14) [Clang 21.1.4 ]",
+    "nice": 19,
+    "affinity": [
+      118,
+      119,
+      126
+    ],
+    "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+    "actual_loader_workers": 6,
+    "scientific_loader_workers": 1,
+    "prefetch_factor": 4,
+    "mmap_random_advice": false,
+    "operational_amendment_sha256": "23e63c3c70e9eaa7c5ded4c1f79300ee9eb515fbbf98721e3a46c45d6e752abf"
+  },
+  "human_inputs": {
+    "rows": 143740698,
+    "train_manifest_sha256": "0546cfddcf79be12509953358fb499ac3be29493ba4a87893bfbfbbe0f179e68",
+    "parent_manifest_sha256": "7180964c1d470807a97ad7a990ac8eb145fb25d15f1c95edf165b3f87743d20f",
+    "mask_sha256": "0287247280426d948865237ca9dedf98ed2de8db0e419e1a1952a6bf1209149a",
+    "assets_sha256": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+    "init_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "checked_columns": 63,
+    "training_roles_only": true,
+    "dev_manifest_sha256": "18a7d8e732080c3b6146b21a9d0f74683aba258b3e60f01d92037b9d7f0ccd4b",
+    "init_step": 22552,
+    "width": 192,
+    "static_buffers_equal": true
+  },
+  "corpus_copy": {
+    "corpus_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+    "rows": 38738534,
+    "checked_files": 71,
+    "bytes": 56461320989,
+    "passed": true
+  },
+  "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r1-student-screen-20261009-r1/FIT.STOP",
+  "vacate_seconds": 300,
+  "checkpoint_every": 200,
+  "allocator_config": null,
+  "failed_attempt": {
+    "attempted_step": 239,
+    "completed_unsaved_updates": 130,
+    "archived": true,
+    "effective_updates": 0,
+    "cost_accounting": "segments/0002.json"
+  },
+  "qualification": "same two-step exact-state bitwise PASS; CPU-only prefetch assertion, affinity, owned GPU reserve scope and checkpoint cadence do not change tensors or RNG"
+}
