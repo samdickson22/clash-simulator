@@ -28,6 +28,33 @@ def planner_class(base):
             work = list(candidates)
             elixir = float(self.info.packet.observation.global_features[5]) * 10
             variant = self.variant.removeprefix('native-')
+            if variant.startswith('screen'):
+                k=int(variant[6:])
+                plays=[a for a in work if a < WAIT]
+                waits=[a for a in work if a >= WAIT]
+                def value(a,s):return self.simulate_commands(root,seat,a,s,self.config.horizon,trace=trace)[0]
+                first={a:value(a,STYLES[0]) for a in plays}
+                chosen=set(sorted(plays,key=lambda a:(-first[a],work.index(a)))[:k])
+                work=[a for a in work if a >= WAIT or a in chosen]
+                scores={a:first[a]/3 for a in plays if a in chosen}
+                for a in work:
+                    if a >= WAIT:
+                        if a == 2400:continue
+                        scores[a]=sum(value(a,s)/3 for s in STYLES)
+                    else:
+                        for s in STYLES[1:]:scores[a]+=value(a,s)/3
+                if 2400 in work:scores[2400]=scores[WAIT]
+                if self.arm=='W':
+                    for a in waits:
+                        ticks=TIMED_WAITS.get(a,10 if a==WAIT else 0)
+                        if ticks and abs(scores[a])<2:
+                            scores[a]+=.01*math.sqrt(ticks/20)*max(0.,1-elixir/10)
+                best=work[0]
+                for a in work[1:]:
+                    if scores[a]>scores[best]+1e-9:best=a
+                self.last=dict(candidates=work,scores=[scores[a] for a in work],traces=[])
+                self.selected_wait_ticks=TIMED_WAITS.get(best,0)
+                return best
             if variant.startswith('gate') and elixir >= float(variant[4:]):
                 work = [a for a in work if a not in TIMED_WAITS]
             pairs = [(style, a) for style in STYLES for a in work]

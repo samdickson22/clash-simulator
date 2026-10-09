@@ -7,6 +7,8 @@ data=dict(outcomes=json.loads((root/'results.json').read_text()),
           latency=json.loads((root/'latency-results.json').read_text()))
 for mode,rows in json.loads((root/'latency-extra.json').read_text())['results'].items():
     data['latency']['results'][mode].update({'tail: '+k:v for k,v in rows.items()})
+for mode,rows in json.loads((root/'latency-screen.json').read_text())['results'].items():
+    data['latency']['results'][mode].update(rows)
 template='''<!doctype html><html><head><meta charset="utf-8"><style>
 body{font-family:var(--font-sans,system-ui);color:var(--foreground,#222);margin:0}
 h3{font-size:16px;margin:18px 0 10px}p{font-size:12px;color:var(--muted-foreground,#666);line-height:1.5}
@@ -24,7 +26,7 @@ table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}th,td{t
 <svg id="tradeoff" role="img" aria-label="Action agreement versus p95 latency"></svg>
 <div class="tip" id="tip">Select a point for its measurements.</div>
 <div class="legend">● Complete scoring / exact reuse &nbsp; ● Approximate reductions &nbsp; ◆ Four cores &nbsp; Dashed line: 200 ms</div>
-<table><thead><tr><th>Complete scorer</th><th class="num">Agreement</th><th class="num">p50 / p95 ms</th></tr></thead><tbody id="rows"></tbody></table>
+<table><thead><tr><th>Scorer</th><th class="num">Agreement</th><th class="num">p50 / p95 ms</th></tr></thead><tbody id="rows"></tbody></table>
 <p id="scope"></p>
 <script>
 const D=__DATA__,N='http://www.w3.org/2000/svg',C=['var(--chart-1,#3377aa)','var(--chart-2,#22aa77)','var(--chart-3,#bb8844)'];
@@ -38,8 +40,8 @@ const e=D.outcomes.paired_contrasts.W.game_loss_fraction;document.querySelector(
 function plot(){const mode=document.querySelector('#mode').value,four=document.querySelector('#four').checked,all=D.latency.results[mode],entries=Object.entries(all).filter(([n,r])=>four||r.budget==='one core');const s=document.querySelector('#tradeoff'),w=640;axes(s,w);let xmax=Math.max(210,...entries.map(([n,r])=>r.wall.p95_ms))*1.1,ymin=Math.min(.9,...entries.map(([n,r])=>r.exact_action_agreement))-.02;const x=v=>58+v/xmax*550,y=v=>195-(v-ymin)/(1-ymin)*160;
 for(let i=0;i<5;i++){let v=xmax*i/4;node(s,'line',{x1:x(v),x2:x(v),y1:27,y2:195,stroke:'var(--border,#ddd)'});node(s,'text',{x:x(v),y:217,'text-anchor':'middle','font-size':10,fill:'currentColor'},v.toFixed(0))}for(let i=0;i<4;i++){let v=ymin+(1-ymin)*i/3;node(s,'line',{x1:58,x2:610,y1:y(v),y2:y(v),stroke:'var(--border,#ddd)'});node(s,'text',{x:50,y:y(v)+3,'text-anchor':'end','font-size':10,fill:'currentColor'},pct(v))}
 node(s,'line',{x1:x(200),x2:x(200),y1:27,y2:195,stroke:'var(--warning,#cc9900)','stroke-dasharray':'5 4'});node(s,'text',{x:330,y:239,'text-anchor':'middle','font-size':11,fill:'currentColor'},'p95 milliseconds · candidate generation + public root + scoring');
-entries.forEach(([name,r])=>{let exact=!/wait[12]|gate|plays|all[12]|horizon/.test(name),color=exact?C[0]:C[2],xx=x(r.wall.p95_ms),yy=y(r.exact_action_agreement),e=r.budget==='four cores'?node(s,'polygon',{points:`${xx},${yy-6} ${xx+6},${yy} ${xx},${yy+6} ${xx-6},${yy}`,fill:color}):node(s,'circle',{cx:xx,cy:yy,r:5,fill:color});e.setAttribute('tabindex','0');e.style.cursor='pointer';const text=name+' · '+r.agreement_count+'/'+r.states+' exact actions · p50 '+r.wall.p50_ms.toFixed(1)+' / p95 '+r.wall.p95_ms.toFixed(1)+' ms · '+r.budget;node(e,'title',{},text);e.onclick=e.onfocus=()=>document.querySelector('#tip').textContent=text});
-const names=mode==='original'?['full','native-full','native-dedup']:['full','dedup'];document.querySelector('#rows').innerHTML=names.map(n=>{let r=all[n];return '<tr><td>'+n+'</td><td class="num">'+r.agreement_count+'/'+r.states+'</td><td class="num">'+r.wall.p50_ms.toFixed(1)+' / '+r.wall.p95_ms.toFixed(1)+'</td></tr>'}).join('');document.querySelector('#scope').textContent=D.latency.state_count+' fixed public states · three repeats · 3990X. Prepared sensor input and sampled beliefs; image parsing, belief inference and actuator/network excluded. No win-rate claim for reduced scorers; no live deadline guarantee.';}
+entries.forEach(([name,r])=>{let exact=!/wait[12]|gate|plays|all[12]|horizon|screen/.test(name),color=exact?C[0]:C[2],xx=x(r.wall.p95_ms),yy=y(r.exact_action_agreement),e=r.budget==='four cores'?node(s,'polygon',{points:`${xx},${yy-6} ${xx+6},${yy} ${xx},${yy+6} ${xx-6},${yy}`,fill:color}):node(s,'circle',{cx:xx,cy:yy,r:5,fill:color});e.setAttribute('tabindex','0');e.style.cursor='pointer';const text=name+' · '+r.agreement_count+'/'+r.states+' exact actions · p50 '+r.wall.p50_ms.toFixed(1)+' / p95 '+r.wall.p95_ms.toFixed(1)+' ms · '+r.budget;node(e,'title',{},text);e.onclick=e.onfocus=()=>document.querySelector('#tip').textContent=text});
+const names=mode==='original'?['full','native-dedup','screen3','screen5']:['full','dedup','screen3','screen5'];document.querySelector('#rows').innerHTML=names.map(n=>{let r=all[n];return '<tr><td>'+n+'</td><td class="num">'+r.agreement_count+'/'+r.states+'</td><td class="num">'+r.wall.p50_ms.toFixed(1)+' / '+r.wall.p95_ms.toFixed(1)+'</td></tr>'}).join('');document.querySelector('#scope').textContent=D.latency.state_count+' fixed public states · three repeats · 3990X. Prepared sensor input and sampled beliefs; image parsing, belief inference and actuator/network excluded. No win-rate claim for reduced scorers; no live deadline guarantee.';}
 document.querySelector('#mode').onchange=plot;document.querySelector('#four').onchange=plot;losses();plot();console.log('charts:',document.querySelectorAll('svg').length,'states:',D.latency.state_count);
 </script></body></html>'''
 (root/'summary.html').write_text(template.replace('__DATA__',json.dumps(data)))

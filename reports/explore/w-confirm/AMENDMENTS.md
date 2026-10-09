@@ -37,3 +37,11 @@ delay-fixes protocol, which intentionally releases rejected commands without ref
 Retain every game and count rejections; remove only that incorrect assertion and
 include `rejected_play_fraction` / both-channel totals. Replay the unchanged two
 cases for diagnostics; do not replace them or change the policy/config/seeds.
+
+03:52Z final latency-only addition: one-style play scoring reaches 200 ms but
+changes 13/125 original-W and 8/125 symmetric-W choices. Test a coarse-to-fine
+scan: score every play with balanced style; fully score only the top 3/5/8 plays
+with the remaining two styles, keeping every WAIT at full three-style scoring
+and reusing exact WAIT/10-tick scores. Final selection considers refined plays
+and all WAITs. Validate every retained final score against full W. Same states,
+three repeats, one core; no reporting policy changes or win-rate claims.

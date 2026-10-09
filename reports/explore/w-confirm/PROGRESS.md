@@ -88,3 +88,13 @@ but exact action agreement falls to 112/125 (89.6%); play-versus-WAIT agreement 
 choices. Two styles retain more choices but miss 200 ms. This is a measured
 accuracy/cost trade-off, not a win-rate claim or live admission. Symmetric-model
 extra checks are still running; all tested rows will be reported.
+
+03:54Z: 1,632/1,900 reporting games complete. All frozen and first adaptive latency
+comparisons finished. Final coarse-scan/full-refinement tests use the same corpus,
+full-score references, three repeats and one core. They scan all plays once, fully
+refine only 3/5/8 leading plays, keep every WAIT fully scored, and compare every
+retained score exactly against full W. No new native build or confirmation workload
+change. Rejection replay is exact for both cases. Peak actual lane processes so
+far is 54 (including the relative-path diagnostic process), combined 57; the
+supervisor's label-only own count did not include that diagnostic, which the final
+compute audit accounts for explicitly. All remain within the authorized ceilings.

@@ -16,6 +16,7 @@ def main():
     r=json.loads((DEST/'results.json').read_text())
     l=json.loads((DEST/'latency-results.json').read_text())
     extra=json.loads((DEST/'latency-extra.json').read_text())
+    screen=json.loads((DEST/'latency-screen.json').read_text())
     compute=json.loads((DEST/'receipts/compute.json').read_text())
     assert r['paired_seeds']==600 and all(r['validation'].values())
     arms=['0','W','H16','WW'];e=r['estimates']
@@ -96,6 +97,19 @@ def main():
         for name,s in table.items():
             lines.append(f"| {mode} / {name} | {s['agreement_count']}/{s['states']} ({pct(s['exact_action_agreement'])}) | {pct(s['play_wait_agreement'])} | {s['wall']['p50_ms']:.1f} / {s['wall']['p95_ms']:.1f} | {s['mean_reference_regret']:.4f} / {s['max_reference_regret']:.4f} |")
     lines+=['']
+    lines+=['### Coarse scan, full refinement','',
+        'Final latency-only check: every play gets a balanced-style scan, the top 3/5/8 plays '
+        'get the other two styles, and every WAIT receives full three-style scoring with '
+        'exact original-WAIT/10-tick reuse. Final selection considers those refined plays '
+        'and all WAITs in original tie order. Every retained final score matches full W '
+        'exactly; omitted contenders can still change the decision. Three repeats on the '
+        'same fixed states, one physical core. [latency-screen.json](latency-screen.json).','',
+        '| Model / refinement count | Exact action agreement | Play/WAIT agreement | One-core wall p50 / p95, ms | Mean / maximum full-score regret |',
+        '|---|---:|---:|---:|---:|']
+    for mode,table in screen['results'].items():
+        for name,s in table.items():
+            lines.append(f"| {mode} / {name} | {s['agreement_count']}/{s['states']} ({pct(s['exact_action_agreement'])}) | {pct(s['play_wait_agreement'])} | {s['wall']['p50_ms']:.1f} / {s['wall']['p95_ms']:.1f} | {s['mean_reference_regret']:.4f} / {s['max_reference_regret']:.4f} |")
+    lines+=['']
     lines+=['`dedup` reuses original WAIT’s rollout for the identical 10-tick WAIT, preserving score addition '
         'and tie order. This is exact shared work; general branching prefixes were not implemented because '
         'continuation must retain both queues, phase and RNG. `wait1/2` uses one/two styles only for the three '
@@ -134,7 +148,7 @@ def main():
         f"native original-W agreement is {best['agreement_count']}/{best['states']}, one-core p95 {best['wall']['p95_ms']:.1f} ms. "
         'The native loop alone is insufficient, and four-core timing must not be presented as a one-core solution. '
         'Repeat prospective live deadline and completed-candidate qualification; these games and prepared-state timings do not authorize a production change.')
-    eligible=[(n,s) for n,s in extra['results']['original'].items() if s['wall']['p95_ms']<=200]
+    eligible=[(n,s) for source in (extra,screen) for n,s in source['results']['original'].items() if s['wall']['p95_ms']<=200]
     if eligible:
         name,s=max(eligible,key=lambda item:(item[1]['exact_action_agreement'],-item[1]['wall']['p95_ms']))
         lines.append(f"Among tested one-core approximations meeting the empirical target, {name} preserves "
