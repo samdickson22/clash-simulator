@@ -1,0 +1,22 @@
+{
+ "schema": "clasher.v4.amendment17-freeze.v1",
+ "decision": "FROZEN",
+ "utc": "2026-10-09T10:47:54+00:00",
+ "decided_by": "coordinator (owner mode)",
+ "review_package": "receipts/amendment17-review-20261009-r3/review-package.json",
+ "review_package_sha256": "5e20d9cc95359f1f80e096d33d9f333630169e0094856174b4a0ccd296900440",
+ "draft_sha256": "b1a3e2492ec1f289d4c730cf4fec13e8310f27a32a0c36cba40607af43012270",
+ "delta_sha256": "de2b2877f53337cef4dba7e6b688801f8c6553be340483e14f18e0ffa2062ac1",
+ "snapshot_manifest_sha256": "ecb9359c8c3d596ed35e4b6da173e9587d64248975c0d88f77a1cd30fa437a16",
+ "test_receipt_sha256": "7c7fecfa665865520a80e1fc263107fe231c7d1ee4c3044bdd028c96fcdb9173",
+ "reviews": {
+  "r1": "0de18ebcf4c0bfe51b2125e39263560183770eeec7726d22291128be373efeb9",
+  "r2_delta": "87a66e3936017652b4683b6f94d149ba05431c7b3eb013863d8669fa4f1dc922"
+ },
+ "coordinator_diff_only_check": {
+  "r2_r3_diff_sha256": "fa5a3d9d76efa5c0f4dcece3984fc5c78f659edb2379664db9f4f3cccf25b4ef",
+  "result": "PASS: the only snapshot change between r2 (fb55483e, 333 files) and r3 (ecb9359c, 334 files) is evidence_recovery_a17_v4.py, which gains the replacement-plan-directory qualifier guard pinned to eba6349d, plus the new test_qualification_pin_a17_v4.py. The on-disk prepared/amendment17-review-r3 files match the manifest. This satisfies R17r2-1, as the r2 delta review allowed for a diff-only check."
+ },
+ "producer_contract_sha256": "3b3ebc8f3e4e3f0eedd0c30de67c853b66b3cdb3c5b85287e6fbd485dea1d431",
+ "scope": "Narrow evidence recovery: 3 named A14 qualification cells plus the fixed e1/708 stress cell, re-pinned to owned-host (08/04) evidence. No change to scientific, clock, contract, overlay or worker. timing_admitted=false."
+}

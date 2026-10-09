@@ -1,0 +1,15 @@
+{
+ "schema": "clasher.v4.a17-section5-mechanical-check.v1",
+ "utc": "2026-10-09T10:47:54+00:00",
+ "by": "coordinator",
+ "evidence_recovery_sha256": "1adf50de13504df27a3c135e9e73a9b6861c99954f5f6795f80c380f36a1e35c",
+ "items": {
+  "1_receipt_host": "PASS: host 127x08 is owned; receipt 380da25b != 40828251; plan 7429e5fe != 0f920ca0; output paths are new (a17-qualification-08r2); started_unix 1791541952.77 is after the host-loss check at 1791539113.77.",
+  "2_cells": "PASS: exactly e7/738/444, e15/748/796 and e1/708/2416, with each reference_origin identical to the retired 40828251 cells (04 epoch-capture paths, inventory e2d729d7, manifests 4e7acd8f/b9327580/28a8e544).",
+  "3_worker_sources": "PARTIAL here: the plan pins the worker 70e8deaf (whole_match_capture_vectorized_v4.py) and the plan-directory qualifier eba6349d. The 27 contract source pins and io.hashes are covered by item 6.",
+  "4_reference_copies": "Reference-copy receipts exist for e01/e07/e15 and the stress reference (0e0116a5, e64ef1ee, e24e3103, d5272f92). Their origin and record equality are verified in item 6.",
+  "5_recovery_record": "PASS: schema clasher.v4.evidence-recovery.a17-v1; policy corroboration_only_never_replacement; timing_admitted=false; scientific_semantics_changed=false; retired_stress 9f6b1ca4; retired_qualifications = 02r1 plan 0f920ca0 / 40828251; host-loss receipt af26c52e (127x02, ssh rc 255); replacement_stress report c273fc26 on 08.",
+  "6_actual_file_run": "PENDING: a17_section5_runner.py on 04, nice, using the conditional approval below.",
+  "7_durability": "PASS: evidence host 127x08 is owned."
+ }
+}

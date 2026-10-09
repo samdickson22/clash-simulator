@@ -1508,3 +1508,8 @@ Also on the hub, but with copies elsewhere:
   - Rate is ~3.07 roots/s/core.
   - Hosts: 04 (94 workers, cores 30–127, 6 M roots) and 03 (46 workers, cores 62–127, 4 M roots). **08 added** at nice 19 with a stop file (≈94 workers, about 4 M roots), so ~720 roots/s and ~4 h for the target.
   - Width probe p99: 192 = 14.9 ms (live candidate), 288 = 18 ms, 384 = 27.6 ms, 768 = 90.3 ms (offline only).
+- **10:48 UTC: AMENDMENT 17 r3 FROZEN** (`17-FREEZE-RECORD-20261009.json` `cdfc5573…`).
+  - My diff-only check passed: only the qualifier guard and its test changed between r2 and r3.
+  - **§5 mechanical check** (`90728bde…`): items 1, 2, 5 and 7 PASS; item 3 is partial (worker and qualifier pinned); items 4 and 6 are covered by the real-file run.
+  - **CONDITIONAL APPROVE_EVIDENCE_REPLACEMENT issued** (`64b1ebe4…`, copied to 04): void unless the real-file `verify_replacement_evidence` on 04 passes, and A1 is barred until I record the condition as satisfied.
+  - **New:** all 61 retained-terminal matches (44 e06 + 17 e14) are 02-only. A decision follows.

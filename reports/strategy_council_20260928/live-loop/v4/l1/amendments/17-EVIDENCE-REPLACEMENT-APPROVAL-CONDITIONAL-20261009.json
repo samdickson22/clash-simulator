@@ -1,0 +1,13 @@
+{
+ "schema": "clasher.v4.a17-evidence-replacement-approval.v1",
+ "decision": "APPROVE_EVIDENCE_REPLACEMENT",
+ "utc": "2026-10-09T10:47:54+00:00",
+ "decided_by": "coordinator (owner mode)",
+ "evidence_recovery_sha256": "1adf50de13504df27a3c135e9e73a9b6861c99954f5f6795f80c380f36a1e35c",
+ "producer_contract_sha256": "3b3ebc8f3e4e3f0eedd0c30de67c853b66b3cdb3c5b85287e6fbd485dea1d431",
+ "timing_admitted": false,
+ "a17_freeze_record_sha256": "cdfc5573386cb82a2804cbbc8d77bf52d99f4461c5709ebabfed22b052eac2d6",
+ "section5_mechanical_check_sha256": "90728bde31e14a40a036ca90e869d17d96b1b08f81b7bdaf5e78116e9cedbcc1",
+ "CONDITION": "CONDITIONAL. This approval is valid only if the immediately following actual-file verify_replacement_evidence run on 127x04 (a17_section5_runner.py, nice) exits 0 with actual_replacement_evidence_verified=true. A1 is barred until the coordinator records a condition-satisfied receipt. If the run fails, this approval is VOID.",
+ "scope": "Evidence only: 3 qualification cells plus 1 stress cell. Not epoch assembly, not A1."
+}
