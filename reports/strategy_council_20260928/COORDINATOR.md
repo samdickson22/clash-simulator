@@ -1550,3 +1550,4 @@ Also on the hub, but with copies elsewhere:
   - My diff-only check passed: only the R18-1 guard and test, the reviewer probes byte-identical (`e23fae36`), and the disclosures changed.
   - **APPROVE_FILE_LAYER_DELTA** issued (`ff45e9ed…`, amendment `35edb8ca`, delta `b8070fde`).
   - Next: perception's admission-only dry run on 04, repinned to r2, then my A1 mechanical checks (§8 items 5, 9, 11), then `coordinator-approval-A1`.
+- **19:39 UTC:** the A1 admission-only dry run launched at 19:34Z on 04 (config `9e71f533`). Epoch 1 assembled (`8ccd70b4`) in ~4.7 min, so serial would take ~3–4 h. **Decision:** parallelize independent epochs across 03 and 04 at nice 19 (operational only, same frozen functions), and require the epoch-1 parallel rebuild SHA to match the serial one as a determinism check.
