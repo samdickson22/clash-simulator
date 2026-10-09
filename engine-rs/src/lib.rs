@@ -3489,12 +3489,18 @@ impl BattleState {
         }
         Ok(s)
     }
-    #[pyo3(signature=(ticks=1))]
-    fn step(&mut self, ticks: usize) {
-        for _ in 0..ticks {
-            self.tick_once(false);
-        }
+    // PyO3 holds the mutable pyclass borrow for the whole detached call.
+    // The original Rust helpers remain GIL-independent for native rollouts.
+    #[pyo3(name = "step", signature=(ticks=1))]
+    fn step_detached(&mut self, py: Python<'_>, ticks: usize) {
+        native_call(py, || self.step(ticks))
     }
+    #[pyo3(name = "apply_action")]
+    fn apply_action_detached(&mut self, py: Python<'_>, player: usize, card: &str,
+        x: f64, y: f64) -> PyResult<bool> {
+        native_call(py, || self.apply_action(player, card, x, y))
+    }
+
     #[pyo3(name = "clone")]
     fn py_clone(&self) -> Self {
         Clone::clone(self)
@@ -3542,6 +3548,39 @@ impl BattleState {
     }
     fn activate_champion_ability(&mut self, player: usize) -> bool {
         self.champion_activate(player)
+    }
+
+}
+
+#[pyfunction]
+fn route(
+    costs: Vec<i64>,
+    start: (i32, i32),
+    goal: (i32, i32),
+) -> PyResult<Option<Vec<(i32, i32)>>> {
+    if costs.len() != 2304
+        || [start, goal]
+            .iter()
+            .any(|&(x, y)| !(0..36).contains(&x) || !(0..64).contains(&y))
+    {
+        return Err(PyValueError::new_err("invalid route input"));
+    }
+    Ok(astar::find(&costs, start, goal))
+}
+#[pymodule]
+fn clasher_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_class::<BattleState>()?;
+    m.add_class::<scripts::NativeScripts>()?;
+    m.add_function(wrap_pyfunction!(route, m)?)?;
+    Ok(())
+}
+
+// Pure Rust helpers: called by both bindings and native rollout workers.
+impl BattleState {
+    fn step(&mut self, ticks: usize) {
+        for _ in 0..ticks {
+            self.tick_once(false);
+        }
     }
     fn apply_action(&mut self, player: usize, card: &str, x: f64, y: f64) -> PyResult<bool> {
         let config = Arc::clone(&self.config);
@@ -3803,25 +3842,11 @@ impl BattleState {
     }
 }
 
-#[pyfunction]
-fn route(
-    costs: Vec<i64>,
-    start: (i32, i32),
-    goal: (i32, i32),
-) -> PyResult<Option<Vec<(i32, i32)>>> {
-    if costs.len() != 2304
-        || [start, goal]
-            .iter()
-            .any(|&(x, y)| !(0..36).contains(&x) || !(0..64).contains(&y))
-    {
-        return Err(PyValueError::new_err("invalid route input"));
-    }
-    Ok(astar::find(&costs, start, goal))
-}
-#[pymodule]
-fn clasher_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_class::<BattleState>()?;
-    m.add_class::<scripts::NativeScripts>()?;
-    m.add_function(wrap_pyfunction!(route, m)?)?;
-    Ok(())
+// Compile-time opt-in; the baseline binding retains the GIL.
+fn native_call<T, F>(py: Python<'_>, f: F) -> T
+where F: pyo3::marker::Ungil + FnOnce() -> T, T: pyo3::marker::Ungil {
+    #[cfg(feature = "gil-release")]
+    { py.allow_threads(f) }
+    #[cfg(not(feature = "gil-release"))]
+    { let _ = py; f() }
 }

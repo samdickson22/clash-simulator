@@ -9,6 +9,8 @@ crate-type = ["cdylib", "rlib"]
 
 [features]
 extension-module = ["pyo3/extension-module"]
+# Opt-in binary only: ordinary builds retain the frozen GIL-held bindings.
+gil-release = []
 
 [dependencies]
 pyo3 = { version = "=0.23.5", features = ["abi3-py312"] }

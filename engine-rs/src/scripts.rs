@@ -2,6 +2,8 @@
 use super::*;
 #[path = "c56_scripts.rs"]
 mod c56;
+#[path = "delay_commands.rs"]
+mod delay_commands;
 #[path = "public_mask_v2.rs"]
 mod public_mask_v2;
 
@@ -556,6 +558,46 @@ impl NativeScripts {
 
 #[pymethods]
 impl NativeScripts {
+    // No Python callbacks or Python-owned data are used by these helpers.
+    // PyO3 retains the battle borrow until the GIL is reacquired.
+    #[pyo3(name = "select_action")]
+    fn select_action_detached(&self, py: Python<'_>, battle: &mut BattleState,
+        seat: usize, style: &str) -> PyResult<usize> {
+        native_call(py, || self.select_action(battle, seat, style))
+    }
+    #[pyo3(name = "apply_discrete")]
+    fn apply_discrete_detached(&self, py: Python<'_>, battle: &mut BattleState,
+        seat: usize, action: usize) -> PyResult<bool> {
+        native_call(py, || self.apply_discrete(battle, seat, action))
+    }
+    #[pyo3(name = "evaluate")]
+    fn evaluate_detached(&self, py: Python<'_>, battle: &BattleState,
+        seat: usize, elixir_weight: f64) -> PyResult<f64> {
+        native_call(py, || self.evaluate(battle, seat, elixir_weight))
+    }
+    #[pyo3(name = "rollout", signature=(battle, seat, action, other_action, style, opponent, horizon, interval, elixir_weight, trace=false, full_rng=false))]
+    fn rollout_detached(&self, py: Python<'_>, battle: &BattleState, seat: usize,
+        action: usize, other_action: usize, style: &str, opponent: &str,
+        horizon: usize, interval: usize, elixir_weight: f64, trace: bool,
+        full_rng: bool) -> PyResult<RolloutResult> {
+        native_call(py, || self.rollout(battle, seat, action, other_action, style,
+            opponent, horizon, interval, elixir_weight, trace, full_rng))
+    }
+    #[pyo3(name = "rollout_commands")]
+    #[allow(clippy::too_many_arguments)]
+    fn rollout_commands_detached(&self, py: Python<'_>, battle: &BattleState,
+        seat: usize, action: usize, pending: Vec<delay_commands::CommandInput>,
+        opponent: &str, delay: i64, opponent_delay: i64, capacity: usize,
+        opponent_capacity: usize, horizon: usize, interval: usize,
+        opponent_interval: usize, elixir_weight: f64, continue_own: bool,
+        endpoint: bool, trace: bool,
+    ) -> PyResult<(f64, Vec<delay_commands::CommandEvent>, BattleState)> {
+        native_call(py, || self.rollout_commands(battle, seat, action, pending,
+            opponent, delay, opponent_delay, capacity, opponent_capacity,
+            horizon, interval, opponent_interval, elixir_weight, continue_own,
+            endpoint, trace))
+    }
+
     #[getter]
     fn mask_version(&self) -> u8 { self.meta.mask_version }
 
@@ -578,40 +620,11 @@ impl NativeScripts {
         }
         Ok(self.c56_ranked(battle, seat, style, true))
     }
-    fn evaluate(&self, battle: &BattleState, seat: usize, elixir_weight: f64) -> PyResult<f64> {
-        if seat > 1 {
-            return Err(PyValueError::new_err("invalid seat"));
-        }
-        Ok(self.phi(battle, seat, elixir_weight))
-    }
+
     fn evaluation_parts(&self, battle: &BattleState) -> Vec<f64> {
         self.leaf_parts(battle)
     }
-    #[pyo3(signature=(battle, seat, action, other_action, style, opponent, horizon, interval, elixir_weight, trace=false, full_rng=false))]
-    fn rollout(
-        &self,
-        battle: &BattleState,
-        seat: usize,
-        action: usize,
-        other_action: usize,
-        style: &str,
-        opponent: &str,
-        horizon: usize,
-        interval: usize,
-        elixir_weight: f64,
-        trace: bool,
-        full_rng: bool,
-    ) -> PyResult<(
-        f64,
-        usize,
-        usize,
-        usize,
-        Vec<(i64, usize, usize, String)>,
-        String,
-    )> {
-        Ok(self.rollout_until(battle, seat, action, other_action, style, opponent,
-            horizon, interval, elixir_weight, trace, full_rng, None)?.unwrap())
-    }
+
     /// Priority-ordered work queue; reduction always follows candidate index.
     /// Only candidates with all three rollouts completed before the cutoff count.
     #[pyo3(signature=(battle, seat, candidates, horizon, interval, elixir_weight, threads=2, remaining_seconds=None, trace=false))]
@@ -673,52 +686,8 @@ impl NativeScripts {
             })
         })
     }
-    fn select_action(&self, battle: &mut BattleState, seat: usize, style: &str) -> PyResult<usize> {
-        if seat > 1 {
-            return Err(PyValueError::new_err("invalid seat"));
-        }
-        if self.meta.c56 {
-            // Python's public champion HUD lookup refreshes ownership even
-            // when its controller masks the ability action.
-            battle.champion_can_activate(seat);
-        }
-        match style {
-            "balanced" | "pressure" | "defense" => Ok(if self.meta.c56 {
-                self.c56_choice(battle, seat, style)
-            } else {
-                self.public_choice(battle, seat, style)
-            }),
-            "sb-balanced" if !self.meta.c56 => Ok(self.balanced_choice(battle, seat)),
-            _ => Err(PyValueError::new_err("unsupported script style")),
-        }
-    }
-    fn apply_discrete(
-        &self,
-        battle: &mut BattleState,
-        seat: usize,
-        action: usize,
-    ) -> PyResult<bool> {
-        if seat > 1 || action > if self.meta.c56 { 2305 } else { 2304 } {
-            return Err(PyValueError::new_err("invalid action/seat"));
-        }
-        if action == 2304 {
-            return Ok(false);
-        }
-        if action == 2305 {
-            return Ok(battle.champion_activate(seat));
-        }
-        let Some(name) = battle.players[seat].hand[action / 576].clone() else {
-            return Ok(false);
-        };
-        let tile = action % 576;
-        let (x, y) = ((tile % 18) as f64 + 0.5, (tile / 18) as f64 + 0.5);
-        let (x, y) = if seat == 0 {
-            (x, y)
-        } else {
-            (18.0 - x, 32.0 - y)
-        };
-        battle.apply_action(seat, &name, x, y)
-    }
+
+
     fn public_view(&self, battle: &mut BattleState, seat: usize) -> PyResult<String> {
         if seat > 1 {
             return Err(PyValueError::new_err("invalid seat"));
@@ -829,5 +798,96 @@ impl NativeScripts {
                 String::new()
             },
         )))
+    }
+}
+
+// Pure Rust helpers: called by both bindings and native rollout workers.
+impl NativeScripts {
+    fn rollout_commands(&self, battle: &BattleState, seat: usize, action: usize,
+        pending: Vec<delay_commands::CommandInput>, opponent: &str, delay: i64,
+        opponent_delay: i64, capacity: usize, opponent_capacity: usize,
+        horizon: usize, interval: usize, opponent_interval: usize,
+        elixir_weight: f64, continue_own: bool, endpoint: bool, trace: bool,
+    ) -> PyResult<(f64, Vec<delay_commands::CommandEvent>, BattleState)> {
+        let (sim, events) = self.command_simulation(battle, seat, action, pending,
+            opponent, delay, opponent_delay, capacity, opponent_capacity,
+            horizon, interval, opponent_interval, continue_own, endpoint, trace)?;
+        Ok((self.phi(&sim, seat, elixir_weight), events, sim))
+    }
+    fn evaluate(&self, battle: &BattleState, seat: usize, elixir_weight: f64) -> PyResult<f64> {
+        if seat > 1 {
+            return Err(PyValueError::new_err("invalid seat"));
+        }
+        Ok(self.phi(battle, seat, elixir_weight))
+    }
+    fn rollout(
+        &self,
+        battle: &BattleState,
+        seat: usize,
+        action: usize,
+        other_action: usize,
+        style: &str,
+        opponent: &str,
+        horizon: usize,
+        interval: usize,
+        elixir_weight: f64,
+        trace: bool,
+        full_rng: bool,
+    ) -> PyResult<(
+        f64,
+        usize,
+        usize,
+        usize,
+        Vec<(i64, usize, usize, String)>,
+        String,
+    )> {
+        Ok(self.rollout_until(battle, seat, action, other_action, style, opponent,
+            horizon, interval, elixir_weight, trace, full_rng, None)?.unwrap())
+    }
+    fn select_action(&self, battle: &mut BattleState, seat: usize, style: &str) -> PyResult<usize> {
+        if seat > 1 {
+            return Err(PyValueError::new_err("invalid seat"));
+        }
+        if self.meta.c56 {
+            // Python's public champion HUD lookup refreshes ownership even
+            // when its controller masks the ability action.
+            battle.champion_can_activate(seat);
+        }
+        match style {
+            "balanced" | "pressure" | "defense" => Ok(if self.meta.c56 {
+                self.c56_choice(battle, seat, style)
+            } else {
+                self.public_choice(battle, seat, style)
+            }),
+            "sb-balanced" if !self.meta.c56 => Ok(self.balanced_choice(battle, seat)),
+            _ => Err(PyValueError::new_err("unsupported script style")),
+        }
+    }
+    fn apply_discrete(
+        &self,
+        battle: &mut BattleState,
+        seat: usize,
+        action: usize,
+    ) -> PyResult<bool> {
+        if seat > 1 || action > if self.meta.c56 { 2305 } else { 2304 } {
+            return Err(PyValueError::new_err("invalid action/seat"));
+        }
+        if action == 2304 {
+            return Ok(false);
+        }
+        if action == 2305 {
+            return Ok(battle.champion_activate(seat));
+        }
+        let Some(name) = battle.players[seat].hand[action / 576].clone() else {
+            return Ok(false);
+        };
+        let tile = action % 576;
+        let (x, y) = ((tile % 18) as f64 + 0.5, (tile / 18) as f64 + 0.5);
+        let (x, y) = if seat == 0 {
+            (x, y)
+        } else {
+            (18.0 - x, 32.0 - y)
+        };
+        battle.apply_action(seat, &name, x, y)
     }
 }
