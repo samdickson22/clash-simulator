@@ -1481,3 +1481,16 @@ Also on the hub, but with copies elsewhere:
   - My earlier 10:45Z label was ~15 min ahead.
 - **10:33 UTC:** **09 and 13 RELEASED** (receipts `735c6233…` and `f961e497…`). R16-1 e17/1208 and e8/1308 PASS, final backups verified, and 1,297 audit/control/payload files each copied to 03 with checksum and fsync. Per the plan, the 09/13 GPUs stay deliberately idle until the student/capacity-scan builds are ready (~13–17Z). 14/15 audits continue.
 - **10:33 UTC:** A17 r2 package (`cfa5d4be…`; 116 tests; 10 mutants rejected; R17-1/2/3/4 implemented) went to a short code-only delta review, `clasher-v4-amendment17-r2-delta-review-20261009-1` (Opus, high). The 08r2 exact-qualifier qualifications launched at 10:32:32Z.
+- **10:36 UTC: R16-1 production audit COMPLETE: 4/4 PASS**, each re-captured on the original worker, byte-exact on all 9 streams:
+  - e17/1208 on 09;
+  - e8/1308 on 13;
+  - e16/878 on 14 (`dd9cac14`);
+  - e9/1218 on 15 (`f06a0ee5`).
+
+  All four hosts released, with audit evidence copied to 03.
+  - The vectorized decoder's equivalence now rests on A14 (all 64 e1 matches), the 3 qualifications, 2 fixed stress cells and 4 random production audits.
+  - **Remaining before A1:**
+    - A17 r2 delta review, then the §5 check, then APPROVE_EVIDENCE_REPLACEMENT;
+    - the R16 follow-up admission/relocation package (audit and producer-metadata reachability) plus its review;
+    - the full A1 checklist.
+  - 13/14/15 GPUs are idle until the capacity-scan builds land (~13Z).
