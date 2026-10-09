@@ -82,11 +82,17 @@ class RustPlanner:
         self.hoist_opponent_moves = config.get('hoist_opponent_moves', False)
         self.model_hypothesis = packet.model_hypothesis
         self.backend, self.timing_path, self.timing, self.delay_ticks = planner_timing(config)
+        self.wait_screen8 = config.get('wait_screen8', False)
+        self.wait_until_tick = 0
+        self.wait_episode = None
         self.delay_aware = config.get('delay_aware', True)
+        if self.wait_screen8 and (not self.delay_aware or config.get('delay_hook')):
+            raise ValueError('W-screen8 requires delay-aware native scoring without a delay_hook')
         self.cores = [delay_module().DelayAwarePlanner(
                       resources.builder, resources.bots, backend='native',
                       native=resources.native, native_config=resources.config,
-                      config=C56SearchConfig(horizon=160, interval=10, threads=1),
+                      config=C56SearchConfig(horizon=160, interval=10, threads=1,
+                                             wait_screen8=self.wait_screen8),
                       command_delay=self.delay_ticks, delay_aware=self.delay_aware,
                       seed=config.get('seed', 6108)+i) for i in range(4)]
         self.rng = np.random.default_rng(config.get('seed', 6108))
@@ -98,6 +104,10 @@ class RustPlanner:
 
     def score(self, core, root, info, candidates, deadline):
         core.info, core.costs = info, self.resources.costs
+        if self.wait_screen8:
+            core.wait_own_elixir = float(info.packet.observation.global_features[5]) * 10
+            core.score_candidates(root, info.seat, candidates, deadline=deadline)
+            return core.last['scores']
         if not self.delay_aware or not self.delay_ticks:
             # S6's exact d=0 / flag-off delegation, including native deadline.
             core.score_candidates(root, info.seat, candidates, deadline=deadline)
@@ -142,6 +152,12 @@ class RustPlanner:
                               pending_command_id=snapshot.pending.get('command_id'))
         if start >= deadline:
             return 2304, dict(base, completed=0, reason='deadline')
+        if self.wait_screen8:
+            if snapshot.episode != self.wait_episode:
+                self.wait_episode, self.wait_until_tick = snapshot.episode, 0
+            if snapshot.tick < self.wait_until_tick:
+                return 2304, dict(base, completed=0, reason='timed_wait',
+                                  wait_until_tick=self.wait_until_tick)
         packet, diagnostic = self.packets.build(snapshot.public, snapshot.tick)
         if packet.observation.terminal:
             return 2304, dict(diagnostic, **base, completed=0, reason='public_match_result')
@@ -175,6 +191,11 @@ class RustPlanner:
             if best is None or value > best[0]+1e-9:
                 best = value, i
         action = candidates[best[1]] if best else 2304
+        if self.wait_screen8:
+            from clasher.rl.wait_screen8 import TIMED_WAITS
+            self.wait_until_tick = snapshot.tick + TIMED_WAITS.get(action, 0)
+            base.update(wait_screen8=True, selected_wait_ticks=TIMED_WAITS.get(action, 0),
+                        wait_until_tick=self.wait_until_tick)
         return int(action), dict(diagnostic, **base, completed=len(complete),
                     candidates=len(candidates), candidate_ids=candidates,
                     scores=[value for value, _ in complete],

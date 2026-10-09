@@ -119,6 +119,8 @@ class DelayAwarePlanner(C56RolloutPlanner):
         return self.native.evaluate(sim,seat,self.config.elixir_weight),events,sim
 
     def score_candidates(self,root,seat,candidates,*,trace=False,deadline=None):
+        if self.config.wait_screen8:
+            return super().score_candidates(root,seat,candidates,trace=trace,deadline=deadline)
         if not self.delay_aware or self.command_delay==0:
             return super().score_candidates(root,seat,candidates,trace=trace,deadline=deadline)
         if deadline is not None or self.config.deadline_seconds is not None or self.config.threads!=1:

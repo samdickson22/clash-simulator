@@ -1,0 +1,9 @@
+{
+  "engine-rs/Cargo.toml": "0c53d624a5544d37bd6aee255e218753be610846680cb9fb640e19b65c63c1ac",
+  "engine-rs/src/lib.rs": "38d0a605b5d00ee590956ad9877cca346fe74bd6ee3ec68f996c713d374b3de2",
+  "engine-rs/src/scripts.rs": "fd6f32fe2c7be3cfe905bc48dd7337dba365c0387dffa6a1c0d399f323888037",
+  "engine-rs/src/delay_commands.rs": "29edf9884105ebdb242cd5659c8f6925b70d3c254628e6a7e9da46b7be7d0cb3",
+  "engine-rs/build_quickwins.sh": "c35337ee020c5271bb91469c996a44d8cd4f854104a696f3c1d64d025236fc19",
+  "engine-rs/quickwin_resources.py": "7aca67fefd6e924d7b33ead473f52924b3323bb9715f917851943e31d6eb786d",
+  "engine-rs/stage_quickwins.py": "7e79259c0f9e2a71087445bdf16936b1f25782796a95a9f7bcdfae542d21c443"
+}

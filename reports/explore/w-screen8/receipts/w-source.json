@@ -1,0 +1,16 @@
+{
+  "baseline_commit": "f9d3b454",
+  "files": {
+    "engine-rs/src/scripts.rs": "df84904079c5ea95543dadef7a733b3af65b4e162906301063cb6d65aed2b5fa",
+    "engine-rs/src/wait_screen8.rs": "621c8dbf3da13fe019ed2784294aa4964e716f42c2524fbc384f81b1e6e80434",
+    "src/clasher/rl/c56_rollout_planner.py": "f48a7d3e680c65a0d242b9812d9d23602f4a9ec10164997a8275258a2c7cfcf0",
+    "src/clasher/rl/wait_screen8.py": "8bb232f52872295f76e3c91bcebaf080677534f637e597d85b008aeeeb1bc01c",
+    "src/clasher/live/decision.py": "34170dcdf22823d5bbfbd220a5de5886ef9a06234fc21fefe68c7d87d0f525b1",
+    "reports/strategy_council_20260928/search-noise-s6/delay.py": "fa3d32965e9153f3ef9aed4ad890796574c8e954c9b5f5656ebea7e58a82d67d"
+  },
+  "native_sha256": "06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10",
+  "native_path": "/mpac/sdicks02/jobs/clasher/w-screen8-20261009-r1/native-w-screen8-v1/clasher_core.abi3.so",
+  "features": "extension-module,gil-release",
+  "rustflags": "-C target-cpu=x86-64-v3",
+  "platform": "Linux x86_64-v3; separately qualified Mac build required"
+}

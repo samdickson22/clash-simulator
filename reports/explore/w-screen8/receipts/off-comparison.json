@@ -1,0 +1,8 @@
+{
+  "exact": true,
+  "states": 125,
+  "checks": 250,
+  "baseline_native_sha256": "71826488b2ca83cde6121af268408e556c0ae0a0191b739e7bcc4b2a513ab621",
+  "production_native_sha256": "06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10",
+  "digest": "425f1cb0891742996c8685ca21dc38bd41a0d136bf3528c7fcc1e86a89eccc46"
+}

@@ -4,6 +4,8 @@ use super::*;
 mod c56;
 #[path = "delay_commands.rs"]
 mod delay_commands;
+#[path = "wait_screen8.rs"]
+mod wait_screen8;
 #[path = "public_mask_v2.rs"]
 mod public_mask_v2;
 
@@ -596,6 +598,17 @@ impl NativeScripts {
             opponent, delay, opponent_delay, capacity, opponent_capacity,
             horizon, interval, opponent_interval, elixir_weight, continue_own,
             endpoint, trace))
+    }
+
+    #[pyo3(name = "score_wait_screen8", signature=(battle, seat, candidates, elixir, delay, opponent_delay, horizon, interval, elixir_weight, budget_seconds=None))]
+    #[allow(clippy::too_many_arguments)]
+    fn score_wait_screen8_detached(&self, py: Python<'_>, battle: &BattleState,
+        seat: usize, candidates: Vec<usize>, elixir: f64, delay: i64,
+        opponent_delay: i64, horizon: usize, interval: usize, elixir_weight: f64,
+        budget_seconds: Option<f64>,
+    ) -> PyResult<Vec<Option<f64>>> {
+        native_call(py, || self.wait_screen8_scores(battle, seat, candidates, elixir,
+            delay, opponent_delay, horizon, interval, elixir_weight, budget_seconds))
     }
 
     #[getter]

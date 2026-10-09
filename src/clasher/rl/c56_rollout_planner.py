@@ -33,8 +33,11 @@ class C56SearchConfig:
     # None/1 preserves the Stage 5 reference path. Live uses 0.2 seconds/2.
     deadline_seconds: float | None = None
     threads: int = 1
+    wait_screen8: bool = False
 
     def __post_init__(self):
+        if type(self.wait_screen8) is not bool:
+            raise ValueError('wait_screen8 must be an explicit boolean')
         if self.samples < 0 or self.script_top < 0 or self.horizon < 0 or self.interval <= 0:
             raise ValueError('invalid C56 search configuration')
         if (not 1 <= self.threads <= 64 or
@@ -78,6 +81,10 @@ class C56RolloutPlanner:
             proposals.append(2305)
         proposals += list(policy_proposals) + samples
         candidates = list(dict.fromkeys(int(a) for a in proposals if mask[int(a)]))
+        if self.config.wait_screen8:
+            from .wait_screen8 import TIMED_WAITS
+            self.wait_own_elixir = float(packet.observation.global_features[5]) * 10
+            candidates = [a for a in candidates if a != 2305] + list(TIMED_WAITS)
         return candidates, mask
 
     def import_root(self, battle):
@@ -122,6 +129,9 @@ class C56RolloutPlanner:
         return value, ticks, calls, 0, events, trace_digest(sim) if trace else ''
 
     def score_candidates(self, root, seat, candidates, *, trace=False, deadline=None):
+        if self.config.wait_screen8:
+            from .wait_screen8 import score_candidates
+            return score_candidates(self, root, seat, candidates, trace=trace, deadline=deadline)
         if deadline is None and self.config.deadline_seconds is not None:
             deadline = time.perf_counter() + self.config.deadline_seconds
         if deadline is not None or self.config.threads != 1:

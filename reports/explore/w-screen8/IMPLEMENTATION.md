@@ -1,0 +1,11 @@
+# Default-off native W-screen8
+
+`C56SearchConfig(wait_screen8=True)` enables the shared native teacher/search core. Live `RustPlanner` takes the equivalent explicit `wait_screen8: true` config field. Both defaults are false, and both OFF branches delegate existing S6 scoring unchanged. A W native library is required only when enabled; select its new directory before importing `clasher_core` and verify the manifest. Existing libraries are never overwritten.
+
+Candidate generation uses the original script proposals and single RNG draw, removes champion abilities (matching w-confirm), and appends IDs 2400/2401/2402 for 10/20/40 ticks. These are search-only tokens, not card deployment IDs or extra public mask entries. Callers that use teacher labels should retain `selected_wait_ticks` separately from the ordinary WAIT label. The live command encoder already treats these tokens as no card command; `decision.py` retains the selected absolute tick and suppresses new searches until that tick, with reset on episode change.
+
+The native `score_wait_screen8` method clones only caller-supplied public reconstructed roots. The caller supplies own public elixir; opponent hand/order/RNG come only from the existing independent hypothetical root reconstruction. The scorer uses symmetric own/opponent delay, capacity one, the configured horizon/interval, a complete balanced scan of every play, full scoring of the top eight plays and all WAITs, raw 10-tick WAIT score reuse, the original prior, and original candidate/epsilon tie order. Each style's contribution is added sequentially.
+
+The batch returns aligned scores; omitted, incomplete and late candidates have `None`. Live four-root reduction requires a complete score on every root. Deadlines are cooperative between native rollouts; a rollout can overrun, and no partial or late score is admitted. No-complete-candidate fallback is ordinary WAIT. This is not live deadline admission; prepared-state agreement and loaded game timings do not qualify an actuator or Mac-native build. ON rollout traces are unsupported; OFF tracing stays unchanged.
+
+No changes to selection.py, runtime.py, tower_channel.py, tower_model.py or live-loop/v4/l1 are required. No prohibited-file wiring patch is needed.

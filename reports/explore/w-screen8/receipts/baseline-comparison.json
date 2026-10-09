@@ -1,0 +1,18 @@
+{
+  "reference": "reference",
+  "reference_binary_sha256": "71826488b2ca83cde6121af268408e556c0ae0a0191b739e7bcc4b2a513ab621",
+  "games": 1000,
+  "traced_rollouts": 7000,
+  "games_sha256": "aea0b7bab565e912dfbc733f96fae43f59a121b09fcb1e86d2cdb2dd6e0394ce",
+  "rollouts_sha256": "f52cb3b114d024ddb556c94242ac81f786f2faf6647ab849ce9b7467b199caaa",
+  "d27_sha256": "428a7dac04ff84dc87fde74f72bbe770fce81cdb141645855a6f10c2ed50018d",
+  "d27_traced_rollouts": 3000,
+  "records_sha256": "c990d7f6b6fc7264b22300e4291902e35c19fa8da593987f850384e65d4deb09",
+  "rows": [
+    {
+      "label": "candidate",
+      "binary_sha256": "71826488b2ca83cde6121af268408e556c0ae0a0191b739e7bcc4b2a513ab621",
+      "exact": true
+    }
+  ]
+}
