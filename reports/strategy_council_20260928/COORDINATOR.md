@@ -1292,3 +1292,6 @@ Also on the hub, but with copies elsewhere:
     - **Every client is bound to a renewed service by 11:30Z.**
   - Queue: 119 verified, 34 claimed, 799 pending.
 - **06:37 UTC:** cache replacement plan `db085fde` approved: 03 serves 02's 8 matches, a fresh 08 serves 56, with a new hard stop of Oct 11 04:00Z. Pins are unchanged. **The legacy 13/14 drain-via-claim=None operator reply is approved** with conditions: tests on the exact legacy code, a pinned-owner identity check under `queue.lock`, a per-host operator receipt, a queue-conservation check, one host at a time, and a fallback (clean stop at 11:15Z) only after telling me.
+- **06:46 UTC:** the renewed cache services are READY and authenticated: 03r2 (8 matches) and 08r1 (56), hard stop Oct 11 04:00Z. The legacy-drain tests pass 3/3.
+  - Handoff timetable: 04/09 by 08:00, 15 by 09:00, 13 by 09:15, then **14 and 08 in parallel** by ~10:15. I relaxed my ≤2 concurrent-drain cap so the margin before the 11:30Z deadline grows from 15 to ~75 min.
+  - The 11:00Z check is scheduled.
