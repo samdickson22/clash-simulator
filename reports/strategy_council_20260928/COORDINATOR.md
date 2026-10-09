@@ -1066,3 +1066,6 @@ Also on the hub, but with copies elsewhere:
     - an allowlist dry run on 08 after the GRU exits.
   - **My action:** exclude 08 from fleetweb and heartbeat ssh probes during the measurement window.
   - Relayed to perception.
+- **02:25 UTC: NFS home hit its 5 GB quota.** The cause was the perf buildid cache `~/.debug` (1.7 GB) left by speed-audit profiling.
+  - Moved it to `/mpac/sdicks02/cache/perf-debug-home-20261009` on 05, and `~/.perfconfig` now sends the buildid dir to /mpac.
+  - fleetweb now honours quiet windows from `~/.config/fleet-top/quiet`: no ssh to a quiet host, and host detail returns 409. Tested. This is for the single-tenant 08 measurements.
