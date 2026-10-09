@@ -36,3 +36,14 @@ def test_enemy_not_across_bridge_no_defensive_exception():
 def test_four_elixir_boundary_kept():
     p=packet();p.observation.global_features[5]=.7
     assert filter_candidates(A,p,CAT,5,enabled=True)==A
+
+
+def test_defensive_building_is_not_a_crown_tower():
+    p=packet(18.)
+    tower=np.zeros((1,32),np.float32)
+    tower[0,[0,1,2,5,9]]=[4.5/18,13/32,1,1,1]
+    p.observation.entity_features=np.vstack([p.observation.entity_features,tower])
+    p.observation.entity_mask=np.array([True,True]);p.observation.entity_ids=np.array([2,3])
+    cat={**CAT,'bodies':{'3':dict(name='building_body:InfernoTower',tower=True)}}
+    actions=[4+18*14]+A[2:]
+    assert filter_candidates(actions,p,cat,5,enabled=True)==actions[1:]

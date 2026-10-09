@@ -80,6 +80,7 @@ def main():
         counts[arm]=dict(count)
         throughput[arm]=dict(warm_decisions=len(warmed_cpu),warm_decision_cpu_seconds=sum(warmed_cpu),
             decisions_per_core_second=len(warmed_cpu)/sum(warmed_cpu),game_cpu_seconds=elapsed,
+            end_to_end_own_decisions_per_game_cpu_second=len(wall)/elapsed,all_own_decisions=len(wall),
             scope='own observation+v1 sample+belief+candidates+root+scoring+submission CPU; per-game first decision excluded; intermediate5tick policy maintenance excluded')
     point,boots,total=bootstrap_matrix(matrix,cfg['bootstrap']['seed'],cfg['bootstrap']['reps'])
     def estimate(p,b,t=None):

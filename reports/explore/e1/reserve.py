@@ -16,7 +16,7 @@ def filter_candidates(candidates, packet, catalog, opponent_elixir, *, enabled=F
     bodies = obs.entity_features[obs.entity_mask]
     ids = obs.entity_ids[obs.entity_mask]
     towers = [(float(f[0])*18,float(f[1])*32) for f, token in zip(bodies, ids)
-              if f[2] > .5 and f[9] > 0 and catalog['bodies'].get(str(int(token)),{}).get('tower')]
+              if f[2] > .5 and f[9] > 0 and catalog['bodies'].get(str(int(token)),{}).get('name','').rsplit(':',1)[-1] in ('Tower','KingTower')]
     threats = []
     for f in bodies:
         x,y = float(f[0])*18,float(f[1])*32
