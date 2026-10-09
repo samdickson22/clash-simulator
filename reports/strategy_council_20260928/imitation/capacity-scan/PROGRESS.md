@@ -154,3 +154,19 @@ Conservative cumulative pipeline cost4.096GPU-hours includes staging
 and all480segments; final actualcost pending segmentcompletion. No config,
 data or trainer edits. Evidence: `monitor-20261009T2102Z.json`. Existing
 ten-minute continuation remains enabled and16 stays released.
+
+2026-10-09 21:13Z: All three fits and the sole controller remain healthy.
+Width 288: step 2472, 20,250,624 rows, 6136 loader-inclusive rows/s.
+Width 384: step 1763, 14,442,496 rows, 4366 loader-inclusive rows/s.
+Width 480: step 1151, 9,428,992 rows, 4688 loader-inclusive rows/s.
+Six processes per arm; peak PSS 41.47 GB and sampled GPU free memory
+at least 28.5 GiB. No OOM, stop, restart or recipe change. Width 480 has
+a new durable scheduled checkpoint at step 1,000 / 8,192,000 rows, SHA
+`0020fe54b538e55d2718884a8766f7119543aaa3b652c14500d1c9450e898bef`.
+Verified on 15; original step-175 checkpoint and failed artifacts retained.
+No weights copied to 05 or git. Receipt: `480-step1000-checkpoint.json`.
+Wide quarter NLLs/kill decisions remain pending; control stays sealed at
+0.27726436294161033. Conservative cumulative pipeline cost 4.606 GPU-hours
+includes staging and every 480 segment; final actual costs await completion.
+Monitoring evidence: `monitor-20261009T2112Z.json`. Temporary continuation
+remains enabled; 16 stays released.
