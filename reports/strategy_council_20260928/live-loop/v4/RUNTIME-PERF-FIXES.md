@@ -144,15 +144,21 @@ reference sensors and the formal perception process are not patched. Existing
 `decoder_records_v4.py`, `vectorized_decoder_v4.py` and
 `vectorized_runtime_adapter_v4.py` are loaded unchanged. Runtime provenance now
 includes their hashes whenever the flag is enabled.
+The executable copy loads that same unchanged `l1_v4.py` source path, whose
+hash is also included in runtime provenance; a focused regression records all
+four source hashes and confirms the reference decoder remains untouched.
 
 **Q2/flag 2 is fixed independently of the speed flag.** Following the binding
-owner contract relayed at ~01:00Z, `V4Perception` requires a typed
+owner contract relayed at ~01:00Z and recorded in
+[LIVE-SELECTION-CONTRACT.md](l1/LIVE-SELECTION-CONTRACT.md), `V4Perception` requires a typed
 `AuthenticatedSelection` handoff produced by a separately trusted owner
 authenticator. It supplies that object's body threshold, event thresholds and
 calibration explicitly to `PixelPerception`; config and calibration files have
 no selection authority. It rejects unset or arbitrary JSON objects before model
 loading, and selected values must be numeric, not bool, on the registered
 0.1..0.9 grid. There is no implicit 0.5 or config fallback.
+The selected value goes to tracker birth/admission through the unchanged
+constructor; the low 0.1 candidate extraction floor is unchanged.
 
 The new `selection.py` defines an internal handoff, **not a final joint seal
 format or authentication algorithm**. The owner's trusted code-level verifier
@@ -241,9 +247,13 @@ All files below are under `perf-fixes/` beside this report:
   live pixel ABI forwarding. Native/scorer code is unchanged by this follow-up;
   the earlier full native exactness/timing receipts retain their original source
   hashes and are not reinterpreted as formal selection or decoder admission.
-- `live-perf-selection-full-20261009-08r1.log` and `.exit`: all 53 current live
+- `live-perf-selection-full-20261009-08r1.log` and `.exit`: all 53 then-current live
   regressions pass on CPU, including the stronger selection handoff, process
   supervision/fault handling and unchanged recorded native S6 comparisons.
+- `live-perf-contract-20261009-08r1.log` and `.exit`: subsequent 11 passing CPU
+  selection/adapter tests, including the added source-provenance regression.
+  It records the exact executable `l1_v4.py` and three decoder dependency hashes
+  and verifies reference inference stays untouched; production sources unchanged.
 - `live-perf-smoke-20261009-r1.json` and its log/exit receipt: integrated guarded
   constructor, native scoring and four-root reduction.
 - `queue-benchmark.json` and `live-perf-queue-analysis-20261009-r1.json`: complete

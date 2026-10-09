@@ -118,6 +118,33 @@ class AdapterTests(unittest.TestCase):
         self.assertIs(reference.decode_bodies, original)
         adapter.restore()
 
+    def test_decoder_provenance_pins_executable_abi_and_existing_adapter_sources(self):
+        from clasher.live.capture import sha256
+        from clasher.live.loading import ROOT, V4
+        from clasher.live.runtime import provenance
+        from test_runtime import config
+        import clasher.vision.l1_v4 as reference
+        source = ROOT/'src/clasher/vision/l1_v4.py'
+        before = sha256(source)
+        original = reference.decode_bodies
+        runtime, adapter = vectorized_runtime()
+        try:
+            self.assertEqual(Path(runtime.__file__).resolve(), source.resolve())
+            with tempfile.TemporaryDirectory() as directory:
+                cfg = config(directory)
+                cfg['perception']['vectorized_decoder'] = True
+                record = provenance(cfg)
+            sources = [source, *(V4/'l1'/name for name in
+                ('decoder_records_v4.py', 'vectorized_decoder_v4.py', 'vectorized_runtime_adapter_v4.py'))]
+            hashes = {str(path): record['hashes'][str(path)] for path in sources}
+            for path in sources:
+                self.assertEqual(hashes[str(path)], sha256(path))
+            self.assertEqual(hashes[str(source)], before)
+            self.assertIs(reference.decode_bodies, original)
+            print('DECODER_PROVENANCE '+json.dumps({'hashes': hashes, 'reference_untouched': True}))
+        finally:
+            adapter.restore()
+
 
 class BlockingTests(unittest.TestCase):
     def test_queue_get_wakes_on_data_and_drains_latest(self):
