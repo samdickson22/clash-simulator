@@ -1371,3 +1371,6 @@ Also on the hub, but with copies elsewhere:
   - **Six hosts vectorized** (02/04/08/09/13/14). 15 stays original pending R13.
   - The fixed R16 stress recaptures are running: 02 e1/708, 04 e20/778.
   - The verification backlog was 69 at 09:02 (401 verified). **Decision:** scale the mixed verifier to 8–16 parallel CPU workers on 03/01 with atomic marking, as a new plan version with no source edits. Target: backlog under 10 within 30 min.
+- **09:09 UTC:** the pinned mixed verifier is a lifetime singleton (`verifier.lock`, pending[0]) with no partitioning. **Approved: a separate operational dispatcher** (new versioned orchestration source) with durable per-claim reservations and CPU audit workers on 03. It calls the unchanged pinned `audit()` and `publish()`.
+  - Tests required for: reservation atomicity, exactly-once crash reclaim, `publish()` as the sole writer of marks, and suspension parity.
+  - The 15 watcher dependency is migrated explicitly at handoff.
