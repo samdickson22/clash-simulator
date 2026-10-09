@@ -1366,3 +1366,4 @@ Also on the hub, but with copies elsewhere:
   - About 0.93–0.95 M frames remain. Once all safe switches are done, capture takes **~0.7–1.1 h** (excluding audits, verification and A1), against 3.4–8.6 h original-only.
   - Gap found: the 40% disk-floor monitor's argv check rejects vectorized controllers. Producer reservation guards are still active, and disks are currently over 40% free. A versioned vector-floor monitor is being built.
   - Receipt `233d2f6b`.
+- **08:53 UTC:** 09 is now vectorized. The vector disk-floor guard r3 is deployed (11 tests pass, minimum free 57.6%). The A16 reviewer's test artifacts were preserved in the repo at `l1/reviews/a16-reviewer-artifacts/`: `test_reviewer_a16.py` `fdc5d806…` and `rev_mutants.py` `70c5812e…`. They were at 127x04:/tmp/sdicks02-a16rev/l1/, not the path perception tried.
