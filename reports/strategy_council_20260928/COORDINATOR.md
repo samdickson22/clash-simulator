@@ -1568,3 +1568,7 @@ Also on the hub, but with copies elsewhere:
   - The capacity wide arms (13/14/15) are still copying the 244 GB human store.
   - 08 is reserved and idle. The A1 dry run r5 is building 23 epochs on 03/04 CPU (epoch 1 determinism PASS).
   - 02/06/07/11/18 are down. No pending requests.
+- **20:22 UTC:**
+  - The student fits passed the serial-vs-loader6 2-step exact-state replay (bit-for-bit) and resumed.
+  - **S-human on 09 hit a CUDA OOM** at step 239 (41.7 GiB allocated, vs T11's ~29 GiB at the same micro). Investigating, in order: GPU-resident prefetch, retained buffers, and `expandable_segments`, with the exact-replay neutrality proof. Fallback is 08 (owned, stop file). Recovery from checkpoint 108.
+  - Parent-thread core contention on 01/04: affinity fix approved.
