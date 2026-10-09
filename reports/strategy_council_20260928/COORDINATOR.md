@@ -1093,3 +1093,11 @@ Also on the hub, but with copies elsewhere:
   - The 04:29Z backstop was rewritten to stop exploration only. The heartbeat prompt was updated.
   - Perception was told to extend its wrappers and lease files and to exempt capture from its 05:00Z cleanup task.
   - A12 review-A response: 31 of 36 mutants killed, all A-targeted ones killed. A1 waits on 24/24 captures.
+- **02:41 UTC heartbeat.** Sampled GPU average over 8×0.5 s:
+  - Home: 01 53%, 02 64%, 04 99%, 08 26% (GRU; it was 90% over 15 s at 01:40Z).
+  - Leased: 09 88%, 13 92%, 14 96%, 15 98%, 16 71%.
+  - 06/07/11/18 are still down.
+  - **T11 seed 22 on 01 is fixed:** after the switch to loader6-r2 it runs a steady **12.1k rows/s**, up from 2.9–6.3k.
+  - **Live selection hardening landed** (`435cad32`). All 5 owner-review requirements are in: event/card/grid validation, spell subset, calibration proof, typed decoder binding, and verifier/import trust pinned outside the seal. 85/85 live tests pass.
+    - The owner callback and trusted owner policy are deliberately absent.
+    - An independent Opus review of this trust layer is queued for before formal startup; that's not needed until the capture and selection finish.
