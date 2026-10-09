@@ -1426,3 +1426,4 @@ Also on the hub, but with copies elsewhere:
   - a narrow prospective **Amendment 17**: re-run qualifications and the stress cell on reachable hosts with the frozen worker, re-pinning the evidence; the 02 originals stay retired;
   - asking Sam whether 02 can be powered back on.
 - **10:04 UTC:** A17 ordering. The replacement fixed e1/708 stress cell runs **now on 08** beside its 8 live vectorized lanes, preserving the precommitted ≥4-vector-lanes load condition, with the frozen 70e8deaf worker and a versioned driver. The 3 ordinary qualifications run after closure on 09/13.
+- **10:09 UTC heartbeat.** 04 at 100% (the T5 GRU resumed, 39 GB). Capture at 94–99% on 08/09/13/14/15. T11: 01 65%, 16 26% sampled. **02 is still offline**, as are 06/07/11/18. No pending requests.
