@@ -1609,3 +1609,8 @@ Also on the hub, but with copies elsewhere:
   - **S-human final EMA** `bb257672` at 22:33:25Z; 08's GPU is free.
   - Staged student reporting is running on 03 (56 workers, E1-qualified native `f387b2d2` after a reporting-only correction; the failed startup was archived). 08's CPU (≤48, nice 19, stop file) was added to reporting until B, which is ~12 h out behind the A1 serial seal.
   - S-teacher and S-mix fits continue.
+- **23:11 UTC heartbeat.**
+  - **Capacity:** 288 at 63.4 M rows, 384 at 49.1 M, 480 at 42.9 M (quarter mark at 95.1 M); GPUs 99–100%.
+  - **Students:** S-teacher final EMA `29d17153` (22:50Z). Its 04/08 reporting pools appear finished. **Rebalance ordered:** unclaimed 03 cases to 04/08; S-mix cases (seal ~23:35Z) spread over 01/04/08.
+  - **A1 seal:** 43/216 branches; ETA ~05:00Z.
+  - 09 and 16 are idle. 02/06/07/11/18 are down.
