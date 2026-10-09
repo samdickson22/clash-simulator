@@ -1101,3 +1101,8 @@ Also on the hub, but with copies elsewhere:
   - **Live selection hardening landed** (`435cad32`). All 5 owner-review requirements are in: event/card/grid validation, spell subset, calibration proof, typed decoder binding, and verifier/import trust pinned outside the seal. 85/85 live tests pass.
     - The owner callback and trusted owner policy are deliberately absent.
     - An independent Opus review of this trust layer is queued for before formal startup; that's not needed until the capture and selection finish.
+- **02:56 UTC: tower channel round 3 accepted** (`91be4af3`). The crown counter cut mean princess destruction confirmation from 2.6–2.8 s to **0.81–1.01 s** (p50 0.70–0.85 s; the <0.5 s target was missed). Still 7/7 events and 0/74,179 false-destroyed.
+  - A result producer now exists: 8/8 terminal-text classifications are correct.
+  - Win/loss/draw is **unmeasured**: the training captures stop before the full result screen.
+  - **Decision: tower work pauses here** (diminishing returns). The full outcome-screen fit will use the first live Mac sessions' post-match frames, which are fair public UI.
+  - The one-line provenance patch (`public_score_templates.json`) went to the live-runtime worker. My own attempt was reverted because I had no matching test environment.
