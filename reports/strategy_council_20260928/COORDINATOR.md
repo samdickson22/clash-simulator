@@ -993,3 +993,13 @@ Also on the hub, but with copies elsewhere:
   - **Process deviation:** perception rewrote the draft to `1bde5c55…` (pins `3e7f1504…`) at 01:32:51Z. That was 4 s after the review was written, and during my hold on the draft bytes. The `9e575ba1` bytes weren't preserved, so the review's whitespace-only freeze check can't run as written.
   - **Decision:** perception applies D1–D6 plus N4 to the current draft, writes a changelog of every non-whitespace change since `9e575ba1`, and implements the D4 checks with tests plus N1/N2. Then a narrow confirmation review (D1–D5 verbatim, D6 whitespace-only, changelog items), then freeze.
   - No real seal, bound or measurement before the freeze and the draft's blockers. The 08 deciding measurements are still planned for after 05:00Z.
+- **01:42 UTC heartbeat.** Sampled GPU average over 8×0.5 s:
+  - Home: 01 24% (15 s resample 6%, T11 s22 **loader-starved**), 02 63% (gate c + perception), 04 99% (perception), 08 90% (GRU, 15 s resample).
+  - 03: no GPU; load 96 from the tempo-horizon sims.
+  - Leased: 09 88%, 13 93%, 14 83%, 15 99%, 16 72% (T11 s21).
+  - 06/07/11/18 still unreachable.
+  - **Action on 01:** told the T11 owner to raise the operational loader workers from 12 to 24, and to 32 if the GPU average is still below 80%. The change goes in at the next checkpoint with an exact resume and a new io-freeze. Seed 21 on 04 at 05:00Z uses the same count.
+  - **Tower diagnostic** (`l1/TOWER-DIAGNOSTIC.md`, epoch 2, body 0.5, all 64 validation matches, diagnostic only): the detector emits no correct tower identity on any eligible alive frame, and the tracker publishes only tracks seen in the current frame.
+    - **Decision:** build a dedicated public tower-state channel: geometry slots, alive/unknown/destroyed, HP-known, and absence never terminal. Training split only.
+    - Delegated to `clasher-v4-tower-channel-20261009-1` (Sol high, CPU on 03 ≤24 processes). It's an L2-v4 blocker.
+  - Perception reconstructed `9e575ba1` with the exact SHA, so the section E freeze check can run mechanically.
