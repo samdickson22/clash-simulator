@@ -1539,3 +1539,10 @@ Also on the hub, but with copies elsewhere:
   - **T11 v2:** both seeds were complete by 11:41Z, but finalization was blocked by 04 process headroom (ExIt). 04 is idle now and T11 is told to finalize, select, and run the registered v2 gate (a).
   - **A18 r1** (`34e0c6b2`) sent to independent review: `clasher-v4-amendment18-review-20261009-1`.
   - Mac E4 package ready (`257adad9`), pending Sam's authorization.
+- **19:25 UTC: A18 review: REQUIRED CHANGES (minimal)** (`6468788f…`).
+  - **Design is sound:** each of the 1,536 matches has exactly one source; the 61 retired 02 sources are blocked by 6 guards; leased reads are refused; one-byte relocation changes are rejected; R16 is enforced. 402 tests pass.
+  - **Required:**
+    - **R18-1:** refuse duplicate route destinations (first-wins); no current data is affected.
+    - **R18-2:** adopt the reviewer's probe tests verbatim (`test_rev_a18.py` `e23fae36`, preserved in the repo; the current suite kills 1/7 code mutants, the probes 7/7), and move the mid-file `unittest.main()`.
+  - **Also required in r2:** disclose the control-root collision incident (9c88fb44), the superseded coverage receipt (0f06656e), and pin the coverage generator script.
+  - My diff-only check of r2 follows, then the freeze.
