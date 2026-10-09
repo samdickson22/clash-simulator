@@ -1,7 +1,15 @@
 # E1 progress
 
-2026-10-09 10:40Z — Plan/config/seed audit frozen and pushed **bfb9b107**, before any game. Five arms,3,000reportinggames,600pairedseeds. Native deadlineOFF matches frozen250/250score/action/trace digest; E1floorOFF/deadlineOFF symmetric125/125, W125/125choices/scores, v1byte/action250/250, nativezero-budgetimmutability125/125;12injected-clock/filtertestsPASS. Receipts underreceipts/. Snapshot/frozenv1adapter/nativehashes pinned; no games started yet.
+**Active: reporting arms 1–4 on03/04; reserve arm runs last.**
 
-Private tick-abort extension built nice10/idleon03. Earlier build/qualification import-path attempts failed before games; corrected private runtime to use committed W config and sealed gate adapter. No outcome data or game replacements.03allocation≤64E1processes (62workers);04≤32(30workers), releasedafterGRUpark10:25:44Z and emptyGPUverified. Reporting split03seeds0–399,04seeds400–599; arm5runslast. No01/08/leasedwork. Allcacheandrawgamereceiptsunder/mpac.05lightauthoring/compactreceipts only.
+Plan/config/seed audit were frozen and pushed at **bfb9b107**, before any game. Config SHA256: `633e21dbc97ad4dda2576c1cdd1bd1d24d4ed563ad5d5c1834765a61d82fd9b4`. B1 implementation: **47e97277**; reducer and smoke audit: **a4d23f8d**. Five arms, 3,000 reporting games, 600 paired seeds. No PREREG or reporting-seed tuning.
 
-2026-10-09 10:46Z — All10separatesmokegamesterminal; schedule/channel/single-coreauditandaggregate reducerpassed. Smoke supervisor exited0, peak4E1processes, minimum96.887GiBMemAvailable, no pauses. **Reporting arms1–4launched03**,400seeds×4arms,62workers+manager+supervisor≤64; PGID/pids under/mpac/sdicks02/jobs/clasher/e1-20261009-r1/main/.04same-corpusparityfinishingbeforeits200seedlaunch. Arm5willrunlast; smokeexcludedfromreport.
+2026-10-09 10:50Z: first four arms **109/2,400 terminal** (03:90/1,600;04:19/800).03 has62 workers + manager + supervisor (64 processes);04 has30 workers + manager + supervisor (32). Latest MemAvailable:86.87/74.16GiB. No memory pauses or serving failures.03 owns seeds0–399,04 seeds400–599, with identical matched arm schedules. Reserve arm is not started.
+
+Qualification: native OFF250/250 frozen score/action/trace digest; E1 floorOFF/deadlineOFF symmetric125/125; W125/125 frozen choices/scores; v1 byte/action250/250; native zero-budget immutable root125/125;12 injected-clock/filter tests PASS.03 and04 corpus/adapter receipts are identical. Adapter source is byte-identical to sealed gate(c), and checkpoint SHA is verified. Receipts under `receipts/`.
+
+All10 separate smoke games were terminal and passed schedule/channel/single-core/reducer audits. Smoke supervisor exited0, peak4 processes, minimum96.887GiB MemAvailable, no pauses. Smoke games are excluded from reporting. Provisional unlimited W-v-v1 smoke rate:4.880 decisions/sec/core, superseded by the reporting estimate after completion.
+
+04 was admitted only after the GRU park receipt at10:25:44Z and an empty GPU check. No01,08,leased-host or Mac work.05 performs light authoring and compact receipt reads only. All workloads use setsid, nice10, SCHED_IDLE, and one pinned core per game worker. Supervision pauses only its own process group below28GiB, resuming at32GiB to protect the24GiB floor.
+
+Runtime/raw receipts: `/mpac/sdicks02/jobs/clasher/e1-20261009-r1` on03/04. `main/pids.json` records task-owned identities; `progress.json` and `main/census.jsonl` track progress/resource checks. No raw game logs enter Git. Earlier private build/import-path qualification attempts failed before games and were corrected; no reporting outcome was omitted or replaced.

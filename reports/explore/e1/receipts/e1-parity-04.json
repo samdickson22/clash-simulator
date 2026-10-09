@@ -1,0 +1,15 @@
+{
+  "states": 125,
+  "symmetric_off_exact": 125,
+  "w_screen8_exact": 125,
+  "native_zero_budget_immutable": 125,
+  "v1_byte_action_equal": 250,
+  "symmetric_off_digest": "aa9f366616e271289c1324fc092d5c7cf6a31dffad9f5197bc73233af30f8420",
+  "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "reserve_floor_default": false,
+  "gate_adapter_sha256": {
+    "standalone.py": "238fad80f1ba0cac8c76ed76c13c62eacc61fd5da01c84ce6759cf2d900b21e0",
+    "d1.py": "e864b226baa819cf4fe5045119624c2ea04a2c8844f9c0a627ad430e16fe8076",
+    "events.py": "5951448104db710ceb899831cf2c1da951775eefb532e8c7f0e7209fa661e267"
+  }
+}
