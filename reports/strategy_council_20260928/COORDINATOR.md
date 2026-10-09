@@ -1383,3 +1383,9 @@ Also on the hub, but with copies elsewhere:
   - The parallel verifier is catching up: backlog 151 → 102 in 4.4 min (about 21 verified/min against about 10 completions/min); under 10 expected around 09:29Z.
   - **15's R13 audit PASSED** (`f5b09a6a…`). Both leased R13 audits now pass, which meets the A1 prerequisite.
   - 15 is naturally draining to vectorized, the last host.
+- **09:35 UTC:**
+  - **Verifier target met:** backlog 6 at 09:34:15Z, down from 151. 18.4 verified/min vs 10.6 completions/min (receipt `a8b67f9b…`).
+  - Queue: 799 verified, 53 claimed, 95 pending, so **capture finishes ~10:00Z**.
+  - Both fixed R16 stress recaptures PASS (02 e1/708, 04 e20/778).
+  - Still blocking A1: the 4 hash-selected R16-1 recaptures after queue closure, and the A16 follow-up admission delta plus review.
+  - **Post-capture GPU plan:** 08 stays reserved for B. The GRU resumes on a freed GPU (04 proposed). I've asked the imitation owner for a next-workload recommendation (v2 with W-screen8 teacher labels vs more seeds); allocation by ~10:00Z.
