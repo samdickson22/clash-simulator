@@ -1003,3 +1003,9 @@ Also on the hub, but with copies elsewhere:
     - **Decision:** build a dedicated public tower-state channel: geometry slots, alive/unknown/destroyed, HP-known, and absence never terminal. Training split only.
     - Delegated to `clasher-v4-tower-channel-20261009-1` (Sol high, CPU on 03 ≤24 processes). It's an L2-v4 blocker.
   - Perception reconstructed `9e575ba1` with the exact SHA, so the section E freeze check can run mechanically.
+- **01:44 UTC: Amendment 12 step-4 report received.**
+  - Draft `cc2357df…`, pins `60f0cb4e…`. Bytes are now held.
+  - The changelog is `12-CHANGELOG-since-9e575ba1.md`, and the original was reconstructed with an exact SHA.
+  - D1–D5 are verbatim. The whitespace-normalized comparison is TRUE once changelog (a), D1–D5 and the N1 pin update are applied.
+  - D4 is implemented in the file layer; 20 tests PASS.
+  - The 01:32 changelog (a) edits were never reviewed. I've sent them, with all of the above, to an independent confirmation review: `clasher-v4-amendment12-confirmation-review-20261009-1` (Opus, high). Freeze waits on that verdict.
