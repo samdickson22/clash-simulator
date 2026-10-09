@@ -1419,3 +1419,4 @@ Also on the hub, but with copies elsewhere:
   - Recovery: 81 lost-02 requeues (9 unresolved plus 72 permanent retirements) and 5 provenance voids, with no forged files. Dispatcher r4 is live and the 03 archive copier resumed.
   - About 304 k frames left; **capture closure ~10:10–10:25Z**, then the R16-1 audits on 09/13/14/15, and 04 goes to the GRU.
   - Follow-ups after closure: per-host transport quarantine, and archive coverage for home producers.
+- **09:56 UTC:** 04r3's guard stopped it at 09:54:26Z (GPU free 5.3 GB < 8 GB). The likely cause is a premature T5 GRU start on 04, from my 'as soon as a GPU frees' note; the GPU is empty now. 8 partials are preserved and the queue isn't suspended. **Decision:** 04 is released to T5 after the exits, backup and requeue are authenticated. The other 5 GPUs finish capture, and T5 waits for the explicit release.
