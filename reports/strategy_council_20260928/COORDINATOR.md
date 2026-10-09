@@ -1053,3 +1053,16 @@ Also on the hub, but with copies elsewhere:
   - **Fix ordered:** launch with `nice -n 10 chrt --idle 0` so the whole tree inherits it from exec.
   - Delay-fixes may re-admit on 09/15 once the check is clean.
   - Delay fixes: ≥1,200 original pairs done. The controls config was frozen before any inspection, at 02:02:09Z (`9e0cf7be…`).
+- **02:23 UTC: A12 orchestration review verdict** (`l1/reviews/A12-ORCHESTRATION-REVIEW-VERDICT-20261009.md` `7a032739…`).
+  - 59/59 tests pass, but only 22 of 36 mutants were killed (61%). D4 killed 5/5; the seal-before-bounds guard 1/4; measured admission 0/2.
+  - **(A) Body seal + CPU bounds are authorized on 4 conditions:** a JSON round-trip guard; tamper tests; running from the immutable snapshot with all 24 capture SHAs plus my approval receipt; a recomputation-cost benchmark. I write `coordinator-approval-A.json` after spot-checking.
+  - **(B) 11 preconditions before the first 08 deciding run:**
+    - one attempt directory per request, with a void path for crashes;
+    - a provenance mismatch halts the run, never retries;
+    - GPU memory and utilization telemetry;
+    - checkpoint content matching the frozen text;
+    - a controller CLI and a real notifier;
+    - a measure-everything path;
+    - an allowlist dry run on 08 after the GRU exits.
+  - **My action:** exclude 08 from fleetweb and heartbeat ssh probes during the measurement window.
+  - Relayed to perception.
