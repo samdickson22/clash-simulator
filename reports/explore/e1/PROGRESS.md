@@ -1,6 +1,6 @@
 # E1 progress
 
-**Active: reporting arms 1–4 on03/04; reserve arm runs last.**
+**Arms1–4 complete and audited; reporting reserve arm launching on03/04.**
 
 Plan/config/seed audit were frozen and pushed at **bfb9b107**, before any game. Config SHA256: `633e21dbc97ad4dda2576c1cdd1bd1d24d4ed563ad5d5c1834765a61d82fd9b4`. B1 implementation: **47e97277**; reducer and smoke audit: **a4d23f8d**. Five arms, 3,000 reporting games, 600 paired seeds. No PREREG or reporting-seed tuning.
 
@@ -21,3 +21,9 @@ Runtime/raw receipts: `/mpac/sdicks02/jobs/clasher/e1-20261009-r1` on03/04. `mai
 2026-10-09 11:27Z —03's first main attempt halted at11:17:53Z after its broad job-path Python census counted65 against cap64. The failing sample did not record process identities, and the extra process was gone before inspection, so its owner is unresolved. All1,275 terminal receipts were retained. After confirming the old group had exited, resumed only pending scheduled games with61 workers + manager + supervisor (63 processes), preserving the original qualified runtime/config/schedule. Initial exit receipt is under `receipts/main-03-attempt1-exit.json`; raw census is archived on03. Interrupted nonterminal attempts are retried for technical completion; no completed outcome is replaced.04 continues unchanged (690/800);03 resume was1,278/1,600 at11:27Z.
 
 The corrected13-test suite now PASS on03 in an isolated qualification directory (0.46s), including the public defensive-building/crown distinction and OFF identity. Actual receipt replaces the earlier failed-start placeholder. Reporting reserve games have not started; corrected source will be separately pinned before launch.
+
+2026-10-09 11:38Z — **Arms1–4 complete:2,400/2,400 terminal games**, all600paired seeds,50matchup/seat cells with12seeds each, capacity-one channel accounting and single-core affinity audited. Main03 resumed attempt exited0, peak63, minimum82.217GiB;04 exited0, peak32, minimum68.078GiB; no memory pauses.03 receipt confirms1,278completed games preserved and322pending games newly completed. Main CPU recorded in retained terminal games60.39hours; interrupted nonterminal CPU is additional and not measured by these per-game receipts.
+
+Deadline W losses73.17% versus baseline48.17%; paired+25.00pp[20.17,30.00]. W cutoff94.41%, fallback85.87%, actual wall-overrun0.83%. Unlimited W-v-v1 wins79.33%[76.17,82.50]; W-baseline paired loss−20.83pp[−25.17,−16.67]. W decision rate3.108/sec/core; end-to-end own labels over total game CPU1.422/sec/core. This supersedes the smoke rate. [Four-arm report](RESULTS-arms1-4.md) published before reserve starts.
+
+Corrected reserve source is pinned separately on03/04 (`receipts/runtime-pin-reserve-03.json`, `runtime-pin-reserve-04.json`).13tests PASS on both hosts.04 lacks the sealed source directory at the config path, so its new pin compares adapter SHA256 against the original sealed-reference pin and verifies native/checkpoint/config equality;03 verifies literal adapter bytes against the sealed source. An initial04pin command failed before games because that sealed path is absent, then the explicit reference-pin verification passed. Reserve uses61workers on03 and29on04 (63/31 persistent processes), same400/200seed partition, with corrected crown-only rule frozen inPLAN and no threshold/config tuning.

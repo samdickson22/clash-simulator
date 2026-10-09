@@ -51,6 +51,7 @@ def main():
              'deadline_hit','fallback','wall_overrun','opponent_deadline_hit','opponent_fallback','opponent_wall_overrun',
              'damage_risk_low','damage_risk_high','arrival_under4_in_losses','arrival_under4_in_nonlosses']
     matrix=np.zeros((n,len(arms)*len(metrics),2));mindex={m:i for i,m in enumerate(metrics)}
+    seat_matrix=np.zeros((n,2*len(arms)*len(metrics),2))
     outcomes={};latencies={};counts={};throughput={};cpu_total=0.
     for ai,arm in enumerate(arms):
         wall=[];cpu=[];opponent_wall=[];warmed_cpu=[];wld=Counter();count=Counter();elapsed=0.
@@ -74,7 +75,9 @@ def main():
             s['damage_risk_high']=[sum(p['tower_damage']>0 for p in high),len(high)]
             s['arrival_under4_in_losses']=[len(low),len(pushes)] if r['loss'] else [0,0]
             s['arrival_under4_in_nonlosses']=[len(low),len(pushes)] if not r['loss'] else [0,0]
-            for m,mi in mindex.items():matrix[si,ai*len(metrics)+mi]=s.get(m,[0,0])
+            for m,mi in mindex.items():
+                values=s.get(m,[0,0]);matrix[si,ai*len(metrics)+mi]=values
+                seat_matrix[si,(meta['seat']*len(arms)+ai)*len(metrics)+mi]=values
         outcomes[arm]={k:int(v) for k,v in wld.items()};outcomes[arm]['games']=n
         latencies[arm]=dict(wall=timing(wall),cpu=timing(cpu),opponent_wall=timing(opponent_wall))
         counts[arm]=dict(count)
@@ -88,6 +91,13 @@ def main():
         row=dict(value=float(p) if np.isfinite(p) else None,ci95=np.quantile(good,[.025,.975]).tolist() if len(good) else None)
         if t is not None:row.update(numerator=float(t[0]),denominator=float(t[1]))
         return row
+    seat_point,seat_boots,seat_total=bootstrap_matrix(seat_matrix,cfg['bootstrap']['seed'],cfg['bootstrap']['reps'])
+    estimates_by_seat={}
+    for seat in (0,1):
+        estimates_by_seat[str(seat)]={}
+        for ai,arm in enumerate(arms):
+            estimates_by_seat[str(seat)][arm]={m:estimate(seat_point[(seat*len(arms)+ai)*len(metrics)+mi],
+                seat_boots[:,(seat*len(arms)+ai)*len(metrics)+mi],seat_total[(seat*len(arms)+ai)*len(metrics)+mi]) for m,mi in mindex.items()}
     estimates={};contrasts={};associations={}
     for ai,arm in enumerate(arms):
         estimates[arm]={m:estimate(point[ai*len(metrics)+mi],boots[:,ai*len(metrics)+mi],total[ai*len(metrics)+mi]) for m,mi in mindex.items()}
@@ -109,7 +119,7 @@ def main():
             else:causal='The floor reduces under4 arrivals without a demonstrated loss reduction; the metric is not established as the causal winning lever.'
         else:causal='The floor does not demonstrate a reduction in under4 arrivals; this intervention does not establish depleted arrivals as a cause of losses.'
     result=dict(config_sha256=hashlib.sha256(a.config.read_bytes()).hexdigest(),freeze_commit='bfb9b107',paired_seeds=n,
-        arms=arms,terminal_games=n*len(arms),outcomes=outcomes,estimates=estimates,contrasts=contrasts,associations=associations,
+        arms=arms,terminal_games=n*len(arms),outcomes=outcomes,estimates=estimates,estimates_by_seat=estimates_by_seat,contrasts=contrasts,associations=associations,
         latency=latencies,deadline_counts=counts,throughput=throughput,game_cpu_seconds=cpu_total,
         bootstrap=cfg['bootstrap'],causality_finding=causal,
         input_game_hash_union_sha256=hashlib.sha256(''.join(sorted(hashes)).encode()).hexdigest(),

@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 
 job=Path(sys.argv[1]);repo=job/'repo'
+reference=json.loads(Path(sys.argv[2]).read_text()) if len(sys.argv)>2 else None
 files={str(p.relative_to(repo)):hashlib.sha256(p.read_bytes()).hexdigest()
        for p in sorted(repo.rglob('*')) if p.is_file() and p.suffix in ('.py','.json','.toml','.lock','.rs','.sh','.npz')
        and '__pycache__' not in p.parts and 'cache' not in p.parts}
@@ -17,10 +18,17 @@ assert digest==policy['checkpoint_sha256']
 adapters={}
 for f in ('standalone.py','d1.py','events.py','runtime_dependencies/derived_d1.py','runtime_dependencies/own_cycle.py','runtime_dependencies/sidecar_observer.py'):
     p=repo/'imitation/evaluation'/f;q=Path(policy['snapshot'])/'imitation/evaluation'/f
-    assert p.read_bytes()==q.read_bytes(),f
+    if reference is None:
+        assert p.read_bytes()==q.read_bytes(),f
+    else:
+        assert hashlib.sha256(p.read_bytes()).hexdigest()==reference['gate_adapter_exact'][f],f
     adapters[f]=hashlib.sha256(p.read_bytes()).hexdigest()
 result=dict(freeze_commit='bfb9b107',config_sha256=hashlib.sha256((repo/'reports/explore/e1/config.json').read_bytes()).hexdigest(),
             native_sha256=hashlib.sha256((job/'native-v2/clasher_core.abi3.so').read_bytes()).hexdigest(),
             checkpoint_sha256=digest,gate_adapter_exact=adapters,files=files,native_source=source)
+if reference is not None:
+    for k in ('freeze_commit','config_sha256','native_sha256','checkpoint_sha256'):
+        assert result[k]==reference[k],k
+    result['adapter_reference_pin_sha256']=hashlib.sha256(Path(sys.argv[2]).read_bytes()).hexdigest()
 (job/'runtime-pin.json').write_text(json.dumps(result,indent=2)+'\n')
 print(json.dumps({k:v for k,v in result.items() if k not in ('files','native_source')}))

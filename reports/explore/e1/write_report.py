@@ -29,6 +29,11 @@ def main():
     for arm in ('a0','aW'):
         lines.append(f"| {labels[arm]} | {pct(est[arm]['deadline_hit'])} | {pct(est[arm]['fallback'])} | {pct(est[arm]['wall_overrun'])} |")
         lines.append(f"| {labels[arm]}, opponent | {pct(est[arm]['opponent_deadline_hit'])} | {pct(est[arm]['opponent_fallback'])} | {pct(est[arm]['opponent_wall_overrun'])} |")
+    lines+=['','| Own deadline arm / seat | Search cutoff hits | v1 fallbacks | Actual wall >200 ms |','| --- | ---: | ---: | ---: |']
+    for seat in ('0','1'):
+        for arm in ('a0','aW'):
+            e=r['estimates_by_seat'][seat][arm]
+            lines.append(f"| {arm} / {seat} | {pct(e['deadline_hit'])} | {pct(e['fallback'])} | {pct(e['wall_overrun'])} |")
     lines+=['', 'Every deadline decision includes public observation, cached v1 policy sample, belief, candidates, root reconstruction, scoring and submission. Scoring reserves 8 ms for return. Native cancellation checks each physical tick; only complete roots finished before cutoff are eligible. The actual wall-overrun column exposes OS scheduling/return residuals under SCHED_IDLE; these runs are not hard-real-time OS qualification. Partial/late roots never count. Fallback actions use the sealed v1 player at T=1; search runs on one pinned core.', '',
         '| Arm | Full decision wall p50/p95/p99, ms | CPU p50/p95/p99, ms | Decisions/s/core |','| --- | ---: | ---: | ---: |']
     for arm in arms:
