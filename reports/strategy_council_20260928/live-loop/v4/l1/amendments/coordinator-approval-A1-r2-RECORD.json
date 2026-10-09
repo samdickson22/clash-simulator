@@ -1,0 +1,14 @@
+{
+ "schema": "clasher.v4.coordinator-approval-A1-record.v1",
+ "utc": "2026-10-09T21:16:19+00:00",
+ "approval_file": "amendments/coordinator-approval-A1-r2.json",
+ "approval_sha256": "19401ce4ccb70fced9d530234015861693328e4e0cebfa650dd78e9344374b88",
+ "supersedes": {
+  "file": "amendments/coordinator-approval-A1.json",
+  "sha256": "9b520de2ebb0fb2d8e0fd6d081b1f453d266d72faf475615e5d3c6f9da6a9626",
+  "status": "SUPERSEDED (retained) because the r1 deployment omitted the A12-pinned BODY-SELECTION.md; the r1 attempt failed closed before any scoring"
+ },
+ "change": "Only execution_plan_sha256: 1fcc54b9 \u2192 68e24722. The coordinator verified that the plan JSON diff is exactly one added key, source_files_sha256['BODY-SELECTION.md'] = 60977bf4\u2026, equal to the frozen file on 05 and to the A12 pin. The other seven fields are byte-identical.",
+ "deployment_correction_sha256": "f75cc24e12fe7f34975a1f527efc385c2a4bdddebdb9f2e3345fd09709ec3d9d",
+ "authorizes": "A1 real clock-free body seal only (frozen A12, verifier 002d6894). A2, B and heldout are NOT authorized."
+}

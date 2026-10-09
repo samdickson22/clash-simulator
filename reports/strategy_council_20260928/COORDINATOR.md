@@ -1596,3 +1596,4 @@ Also on the hub, but with copies elsewhere:
   - Students: 04 at 78%. 01 at 23% and 08 at 0% are sample-window dips; their measured step rates are 3.7k/4.7k rows/s.
   - 09 and 16 are idle (nothing planned).
   - A1 approved and the seal is in progress. 02/06/07/11/18 are down.
+- **21:16 UTC: A1 r1 attempt failed closed** before any score or seal. The deployment omitted the A12-pinned `BODY-SELECTION.md` (60977bf4). I verified execution plan r2 (`68e24722`) differs only by that one added pin and **issued `coordinator-approval-A1-r2.json`**, with the other 7 fields byte-identical. r1 is retained as superseded.
