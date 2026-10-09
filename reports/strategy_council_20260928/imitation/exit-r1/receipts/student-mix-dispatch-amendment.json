@@ -1,0 +1,34 @@
+{
+  "schema": "clasher.exit-r1.mix-dispatch-operational-amendment.v1",
+  "utc": "2026-10-09T23:38:52.520118+00:00",
+  "authority": "Coordinator23:12 home reporting rebalance and four-host S-mix distribution.",
+  "reporting_outcomes_observed": false,
+  "affected_S_mix_reporting_cases_started": 0,
+  "scientific_changes": [],
+  "normal_distribution": {
+    "01": {
+      "h2h": 64,
+      "fallback": 150,
+      "total": 214
+    },
+    "03": {
+      "h2h": 64,
+      "fallback": 150,
+      "total": 214
+    },
+    "04": {
+      "h2h": 64,
+      "fallback": 150,
+      "total": 214
+    },
+    "08": {
+      "h2h": 64,
+      "fallback": 150,
+      "total": 214
+    }
+  },
+  "implementation": "Split each mode independently round-robin over available home hosts; preserves exact mode/arm/index, seed/deck/seat schedule, stage freeze and shared reference. Inter-host and inter-mode execution order is operational only.",
+  "reclaim": "If08vacated, split futurecasesoverremaininghosts, and requeue onlyunfinished alreadyadmitted08 identities to03.",
+  "reason": "Flat interleaved queue splitting concentrated fallback games on03/04; per-mode split balances long fallback games across allfour hosts.",
+  "analysis_gate": "Unchanged: all3final4883fits and all3232tasks before any outcome analysis."
+}

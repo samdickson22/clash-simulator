@@ -96,7 +96,7 @@ try:
                 if i<256:tasks.append(['h2h',arm,i])
                 tasks.append(['fallback',arm,i])
             available_hosts=[h for h in ('01','04','08','03') if h not in reclaimed]
-            assignments={h:tasks[n::len(available_hosts)] for n,h in enumerate(available_hosts)} if arm=='S-mix' else {cpu:tasks}
+            assignments={h:[t for mode in ('h2h','fallback') for t in [x for x in tasks if x[0]==mode][n::len(available_hosts)]] for n,h in enumerate(available_hosts)} if arm=='S-mix' else {cpu:tasks}
             if arm=='S-teacher':
                 assignments={'08':[t for t in tasks if t[2]<(128 if t[0]=='h2h' else 300)],
                              '04':[t for t in tasks if t[2]>=(128 if t[0]=='h2h' else 300)]}
@@ -130,7 +130,7 @@ try:
         '--S-human',str(job/'fits/S-human/step-00004883.pt'),'--native',str(job/'reporting-native-v1/clasher_core.abi3.so'),
         '--output',str(job/'execution-freeze.json')])
     f=json.loads((job/'execution-freeze.json').read_text())
-    for path in (job/'inputs/assets.npz',job/'pre-fit-pin.json',job/'student-staged-reporting-amendment.json',job/'student-reporting-native-amendment.json',job/'student-reporting08-amendment.json',job/'student-reporting-rebalance-amendment.json',job/'student-postprocessing-amendment.json',
+    for path in (job/'inputs/assets.npz',job/'pre-fit-pin.json',job/'student-staged-reporting-amendment.json',job/'student-reporting-native-amendment.json',job/'student-reporting08-amendment.json',job/'student-reporting-rebalance-amendment.json',job/'student-postprocessing-amendment.json',job/'student-mix-dispatch-amendment.json',
                  report/'STUDENT-SCREEN-FREEZE-20261009.json'):f['files'][str(path)]=sha(path)
     (job/'execution-freeze.json').write_text(json.dumps(f,indent=2)+'\n');digest=sha(job/'execution-freeze.json')
     (job/'execution-freeze.sha256').write_text(digest+'\n')
