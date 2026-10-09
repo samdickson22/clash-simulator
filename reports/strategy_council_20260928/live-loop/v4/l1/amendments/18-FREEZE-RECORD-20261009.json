@@ -1,0 +1,19 @@
+{
+ "schema": "clasher.v4.amendment18-freeze.v1",
+ "decision": "FROZEN",
+ "utc": "2026-10-09T19:29:37+00:00",
+ "decided_by": "coordinator (owner mode)",
+ "amendment": "amendments/18-OWNED-EVIDENCE-RETAINED-RECOVERY-20261009-r2-DRAFT.md",
+ "amendment_sha256": "35edb8caf9272cbea2b0e453454317024371444ff5e2f1df5b9dd3a5cac97b67",
+ "delta": "amendments/18-file-layer-pin-delta-20261009-r2.json",
+ "delta_sha256": "b8070fde77bf738d9a742c0cb57113385422ec60cba2c3be4f53d49657309561",
+ "review_package_sha256": "f9f1b327fe27fb9873fd9d1e18f7e8f5dedcf6c4915b4de3e46679bbe0d62c57",
+ "snapshot_manifest_sha256": "181e02b74e37ede1995062a5ff8c61aa55f37e44bc784e9196df427c5da68b61",
+ "independent_review_sha256": "6468788f1896d9f48d441d392465a6ced881d5ef9a0c5be94296c6dff763e5fd",
+ "coordinator_diff_only_check": {
+  "source_diff_sha256": "0bd6e30b8ce8c3e365a7fdd123f548081b461e0e12ea0c62077a40f14ca01d3d",
+  "draft_diff_sha256": "7455e52d55d772002f8a3f8131de83f98e0ac760486902a1d33d889d548c2fb9",
+  "result": "PASS. The manifest goes from r1 (346 files) to r2 (347). The only changed members are evidence_transport_a18_v4.py (R18-1 duplicate-destination guard) and test_a18_file_layer.py (a collision test, with unittest.main moved to the end). The only added member is test_rev_a18.py, byte-identical to the reviewer's e23fae36 (R18-2). The draft adds the disclosures for 9c88fb44 and 0f06656e and the coverage generator pin d4b10ce9. No scientific or timing change."
+ },
+ "a1_checklist": "reviews/AMENDMENT-18-REVIEW-20261009.md \u00a78 (14 items). The coordinator mechanically verifies item 5 (identical A18 bindings across all 24 epochs: routes efff5b98, retirement e5d14103, R16 audits 2c9e5c00, A17 condition 05fa63c8, recovery state a334155a, activation 7ecdc1fb), item 9 (all 24 epoch-key and assembly SHAs) and item 11 (the evidence ledger has zero 02/leased/journal/heldout entries)."
+}

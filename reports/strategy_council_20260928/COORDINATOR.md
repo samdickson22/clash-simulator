@@ -1546,3 +1546,7 @@ Also on the hub, but with copies elsewhere:
     - **R18-2:** adopt the reviewer's probe tests verbatim (`test_rev_a18.py` `e23fae36`, preserved in the repo; the current suite kills 1/7 code mutants, the probes 7/7), and move the mid-file `unittest.main()`.
   - **Also required in r2:** disclose the control-root collision incident (9c88fb44), the superseded coverage receipt (0f06656e), and pin the coverage generator script.
   - My diff-only check of r2 follows, then the freeze.
+- **19:29 UTC: AMENDMENT 18 r2 FROZEN** (`18-FREEZE-RECORD-20261009.json` `04378714…`).
+  - My diff-only check passed: only the R18-1 guard and test, the reviewer probes byte-identical (`e23fae36`), and the disclosures changed.
+  - **APPROVE_FILE_LAYER_DELTA** issued (`ff45e9ed…`, amendment `35edb8ca`, delta `b8070fde`).
+  - Next: perception's admission-only dry run on 04, repinned to r2, then my A1 mechanical checks (§8 items 5, 9, 11), then `coordinator-approval-A1`.

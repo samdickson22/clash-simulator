@@ -1,0 +1,16 @@
+{
+ "schema": "clasher.v4.a18-file-layer-delta-approval.v1",
+ "decision": "APPROVE_FILE_LAYER_DELTA",
+ "utc": "2026-10-09T19:29:37+00:00",
+ "decided_by": "coordinator (owner mode), on independent review plus diff-only check",
+ "amendment": "amendments/18-OWNED-EVIDENCE-RETAINED-RECOVERY-20261009-r2-DRAFT.md",
+ "amendment_sha256": "35edb8caf9272cbea2b0e453454317024371444ff5e2f1df5b9dd3a5cac97b67",
+ "delta": "amendments/18-file-layer-pin-delta-20261009-r2.json",
+ "delta_sha256": "b8070fde77bf738d9a742c0cb57113385422ec60cba2c3be4f53d49657309561",
+ "scientific_semantics_changed": false,
+ "timing_admitted": false,
+ "frozen_a12_pins_sha256": "60f0cb4eddd6885218bd2de16d54f73547d6cf542d241c755c9181f7490968c5",
+ "independent_review_sha256": "6468788f1896d9f48d441d392465a6ced881d5ef9a0c5be94296c6dff763e5fd",
+ "freeze_record_sha256": "0437871496a21795ec38ec5b383a858bb4f29d2fc2207ed2a0803afaad4a8118",
+ "scope": "A18 file-layer delta only. NOT A1 approval."
+}
