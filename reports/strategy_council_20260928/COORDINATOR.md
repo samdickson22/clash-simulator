@@ -1190,3 +1190,10 @@ Also on the hub, but with copies elsewhere:
   - Leased: 09/13/14/15 99% (capture queue), 16 46% (T11 s21 at 11–12k rows/s from its log, so it's fine alongside roader's probe).
   - 06/07/11/18 are still down.
   - **02 GPU idle is an accepted blocker.** The gates worker answered NO, citing the frozen gate (c) PREREG: "Co-tenant load cannot exceed the qualifying envelope". 02 joins the capture queue when gate (c) exits (~05:45Z).
+- **04:12 UTC: capture update.**
+  - R13-1 is done: the 61 retained tasks are terminal (44 e6 + 17 e14), and 43 tests pass.
+  - The R13-4 independent verifier is active on 04, with first outputs marked verified_record_only.
+  - 04 home production started at 04:05Z with 8 lanes and the intent-safe controller.
+  - Packing sweep at 2/4/6/8 lanes: 3.99/4.03/4.20/4.39 fps. The GPU is the bound; 8 lanes gain only +9% over 4, so the leased hosts stay at 4 lanes under the ≤16-process cap.
+  - **Conditional capacity scenario: ~Oct 9 20:05Z with 7 GPUs** (`CAPTURE-CAPACITY-20261009-0355.md`). Not a committed ETA; e22/e23 density is unmeasured.
+  - Next: A15, then the R13-3 audit.
