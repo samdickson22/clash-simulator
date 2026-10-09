@@ -1074,3 +1074,9 @@ Also on the hub, but with copies elsewhere:
   - **A2:** after the seal verifies, the real verify_body + recompute_bounds run is timed. That timed run is the bound computation; there's no separate probe.
   - **B:** bound SHA, per-step cost and the 11 preconditions come to me, then `coordinator-approval-B.json`, then the first 08 deciding run.
   - Currently blocked at 3/24 captures. A capture-completion projection has been requested.
+- **02:35 UTC: tower channel round 2 accepted** (`52a9e102`). On 8 fresh training-dev matches:
+  - Princess destruction caught 7/7, with 0/74,179 false-destroyed frames.
+  - Confirming a destruction takes 2.6–2.8 s on average.
+  - King activation 99.998% accurate with 92% coverage. Own-King HP exact on 136/136. Opponent HP numbers are disabled at 98.8%.
+  - **Round 3 delegated** (`clasher-v4-tower-channel-r3-20261009-1`): a crown-counter HUD reader to bring confirmation latency under 0.5 s at p50, plus `result_screen.py` to provide the result-screen observation. Shared-tree hunk discipline; selection.py and runtime.py are off-limits.
+  - **Delay fixes:** the original 8 arms finished at 1,250 pairs each (10,000 files on 08), with no outcomes inspected. The controls started after the drain. Re-admission checks on 09/15 cleared at 02:24Z.
