@@ -72,3 +72,35 @@ def test_flag_off_does_not_enter_wait_suppression():
         action,meta=p.decide(snapshot(),time.monotonic()+10)
         assert action==0 and 'wait_until_tick' not in meta
     finally:p.close()
+
+
+def test_native_selection_preserves_paths_and_checks_already_loaded_library(monkeypatch,tmp_path):
+    import sys
+    from clasher.rl.wait_screen8 import load_native
+    native=SimpleNamespace(__file__=str(tmp_path/'clasher_core.abi3.so'),
+                           NativeScripts=SimpleNamespace(score_wait_screen8=object()))
+    monkeypatch.setitem(sys.modules,'clasher_core',native)
+    original=sys.path[:]
+    assert load_native(tmp_path) is native and sys.path==original
+    different=tmp_path/'other';different.mkdir()
+    with pytest.raises(ValueError,match='fresh process'):load_native(different)
+    assert sys.path==original
+
+
+def test_native_selection_rejects_a_library_without_the_extension(monkeypatch,tmp_path):
+    import sys
+    from clasher.rl.wait_screen8 import load_native
+    native=SimpleNamespace(__file__=str(tmp_path/'clasher_core.abi3.so'),NativeScripts=object())
+    monkeypatch.setitem(sys.modules,'clasher_core',native)
+    with pytest.raises(ValueError,match='separately built'):load_native(tmp_path)
+
+
+def test_live_opt_in_loads_native_before_resource_initialization(monkeypatch):
+    from clasher.rl import wait_screen8
+    class Selected(Exception):pass
+    def select(directory):
+        assert directory=='/versioned/native'
+        raise Selected
+    monkeypatch.setattr(wait_screen8,'load_native',select)
+    with pytest.raises(Selected):
+        RustPlanner(dict(wait_screen8=True,wait_screen8_native_dir='/versioned/native'))

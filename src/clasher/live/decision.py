@@ -58,6 +58,9 @@ class DeadlineNative:
 
 class RustPlanner:
     def __init__(self, config):
+        if config.get('wait_screen8', False):
+            from clasher.rl.wait_screen8 import load_native
+            load_native(config.get('wait_screen8_native_dir'))
         import numpy as np
         from clasher.rl.c56_rollout_planner import C56SearchConfig
         stage5 = COUNCIL/'engine-speed/stage5'

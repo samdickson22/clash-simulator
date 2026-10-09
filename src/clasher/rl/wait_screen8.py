@@ -31,3 +31,27 @@ def score_candidates(core, root, seat, candidates, *, trace=False, deadline=None
     core.deadline_stats = dict(completed=sum(v is not None for v in scores),
                               candidates=len(candidates), fallback_wait=best is None)
     return action
+
+
+def load_native(directory=None):
+    """Load the opt-in library before legacy resource imports prepend paths."""
+    import importlib
+    from pathlib import Path
+    import sys
+    requested = None if directory is None else Path(directory).resolve(strict=True)
+    loaded = sys.modules.get('clasher_core')
+    if loaded is not None and requested is not None:
+        if Path(loaded.__file__).resolve().parent != requested:
+            raise ValueError('clasher_core is already loaded from another path; use a fresh process')
+    old_path = sys.path[:]
+    try:
+        if requested is not None:
+            sys.path.insert(0, str(requested))
+        native = importlib.import_module('clasher_core')
+    finally:
+        sys.path[:] = old_path
+    if requested is not None and Path(native.__file__).resolve().parent != requested:
+        raise ValueError('W native library was not found in the configured versioned directory')
+    if not hasattr(native.NativeScripts, 'score_wait_screen8'):
+        raise ValueError('W-screen8 requires a separately built W native library')
+    return native

@@ -1,0 +1,9 @@
+{
+  "passed": 54,
+  "deselected": 1,
+  "deselected_reason": "unrelated historical tracker-hash fixture absent from private tree",
+  "fresh_process_versioned_native_selection": true,
+  "off_checks": 250,
+  "on_states": 125,
+  "on_retained_scores_exact": true
+}
