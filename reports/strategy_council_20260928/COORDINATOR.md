@@ -1398,3 +1398,11 @@ Also on the hub, but with copies elsewhere:
     - if 02 returns, verify no survivors first, then retire its stale outputs; RC1 one-source blocks late admission;
     - R16-1 audits move from 02 to 09.
   - The 02 cache service (old, hard-stop 12Z) was already unused.
+- **09:42 UTC: queue SUSPENDED** by a parallel-verifier transport failure (likely 02 loss); all controllers stopped and 6 GPUs are idle.
+  - Counts: 835 verified, 12 awaiting verification, 43 claimed (9 on 02), 63 pending.
+  - **Priority recovery:**
+    - host-lost receipts for the 9 02 claims and a requeue; the 1 unverified complete is inadmissible;
+    - scoped unsuspension with a receipt;
+    - immediate vectorized restarts on 04/08/09/13/14 (+15);
+    - then the R16-1 audits, and 04 to the GRU.
+  - Follow-up for later: a host-unreachable error should quarantine that host, not suspend the whole queue.
