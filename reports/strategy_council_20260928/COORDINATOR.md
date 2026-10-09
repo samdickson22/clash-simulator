@@ -1212,3 +1212,8 @@ Also on the hub, but with copies elsewhere:
     - The R13-3 extra audit was refused correctly: the reservations declare all 16 processes. It will be integrated at a safe controller transition.
     - e22 has started.
     - Non-clock gate r2 failed only on SSH E2BIG after all e1 comparisons matched. r3 has been active since 04:21Z.
+- **04:40 UTC heartbeat.** Sampled GPU average over 8×0.5 s:
+  - Home: 01 48% (T11 s22), 02 0% (waiting on gate (c)), 04 99%, 08 44% (GRU).
+  - Leased: 09/13/14 99%, **15 0%**, 16 80%.
+  - Home usage is 3.5 GB. 06/07/11/18 are down.
+  - **Problem (a) on 15:** capture controller `15r2` exited pass/0 at 04:34:17Z and nothing was relaunched. I pinged perception to relaunch, or to explain if it's a planned R13-2/R13-3 transition.
