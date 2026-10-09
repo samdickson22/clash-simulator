@@ -1233,3 +1233,15 @@ Also on the hub, but with copies elsewhere:
     - RC3: tests that kill the surviving mutants, plus an end-to-end check against the frozen scorer.
     - RC4: re-pin `queue_audit_io`, then rerun the e1–e3 proofs.
   - **Decision:** A15 r2 bundles these with pinned relocation receipts for retiring leased copies, and an A2 cost fix: a sealed per-epoch admission receipt instead of re-authenticating per cell, which the reviewer estimates would add about a day. One delta review follows.
+- **04:57 UTC: W-screen8 outcome check PASS** (`reports/explore/w-screen8/RESULTS.md`). 600 fresh paired seeds, 1,800 games, symmetric d=27.
+  - Loss rates: baseline **50.8%**, full W **19.5%**, screen8 **19.3%**.
+  - Screen8 − W: **−0.17 pp [−1.00, +0.67]**, which passes (gate: upper bound ≤ +3 pp). Screen8 vs baseline: **−31.5 pp [−35.8, −27.5]**.
+  - Loaded full-decision p95: 330 ms for screen8 vs 491 ms for W.
+  - Commits:
+    - native baseline `f9d3b454`;
+    - implementation `59454e1a`, startup fix `62044189`;
+    - report `d6f5c29f`;
+    - freeze `d0e9dc2f`.
+  - **Decision:**
+    - W-screen8 becomes **default ON for the offline search teacher and simulation path**, once a running-process path check confirms frozen snapshots aren't affected.
+    - **The live planner stays default OFF**, with a recommended ON profile, until it's measured on the Mac E4 path (real searches plus GIL threads; budget 200 ms). That needs Sam's Mac authorization.
