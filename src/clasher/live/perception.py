@@ -43,6 +43,9 @@ class V4Perception:
             if isinstance(body, dict) and body.get('source') == 'buildings':
                 self.buildings.update((card['name'], body['name']))
         self.parts = {}
+        from .perception_adapter import PublicTowerAdapter
+        self.tower_adapter = PublicTowerAdapter(config.get('tower_templates'),
+            Path(config['geometry']) if config.get('geometry') else None)
         # Instrument the two public model entry points without changing T7 code.
         for name, key in (('encode', 'backbone_hud'), ('temporal', 'temporal_fusion')):
             target = getattr(model, name)
@@ -72,8 +75,6 @@ class V4Perception:
         start = time.monotonic()
         row = self.sensor.step(frame.pixels, frame.episode, frame.timestamp_ms)
         finished = time.monotonic()
-        for event in row['event_candidates']:
-            event['available_timestamp_ms'] = frame.timestamp_ms+(finished-frame.produced_at)*1000
         entities = tuple(VisionEntity(str(t['track_id']), t['identity'],
                            'building' if t['identity'] in self.buildings else 'troop',
                            t['owner'], t['x'], t['y'], t['confidence'], t['hp_fraction'],
@@ -83,9 +84,15 @@ class V4Perception:
                     row['clock_seconds'], .8, row['own_elixir'], .8, tuple(c or '' for c in row['own_hand']),
                     tuple(q if c else 0. for c, q in zip(row['own_hand'], confidence[:4])),
                     row['next_card'], confidence[4] if row['next_card'] else 0., entities, ())
+        tower_start = time.monotonic()
+        public = self.tower_adapter.observe(public, frame.pixels)
+        finished = time.monotonic()
+        for event in row['event_candidates']:
+            event['available_timestamp_ms'] = frame.timestamp_ms+(finished-frame.produced_at)*1000
         parts = dict(self.parts)
+        parts['tower_channel'] = (finished-tower_start)*1000
         # Include host association, preparation and event decoding in fusion.
-        parts['temporal_fusion'] = max(0., (finished-start)*1000-parts.get('backbone_hud', 0.))
+        parts['temporal_fusion'] = max(0., (tower_start-start)*1000-parts.get('backbone_hud', 0.))
         return Observation(frame, public, tuple(row['event_candidates']),
                            'overtime' if row['phase'] == 3 else 'regulation', finished, parts)
 

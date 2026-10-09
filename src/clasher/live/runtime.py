@@ -462,6 +462,7 @@ def provenance(config):
     from .capture import sha256
     from .loading import COUNCIL, ROOT, V4
     files = list(Path(__file__).parent.glob('*.py'))
+    files.append(Path(__file__).with_name('tower_channel_templates.json'))
     files += list(Path(__file__).parent.glob('*.rs'))
     from .lattice import LIBRARY, _kernel
     if _kernel is not None:
@@ -477,7 +478,7 @@ def provenance(config):
         files += [V4/'l1'/name for name in ('decoder_records_v4.py', 'vectorized_decoder_v4.py',
                                           'vectorized_runtime_adapter_v4.py')]
     files += [Path(config['perception'][key]) for key in
-              ('body', 'hud', 'events', 'selection', 'geometry', 'checkpoint', 'calibration')
+              ('body', 'hud', 'events', 'selection', 'geometry', 'checkpoint', 'calibration', 'tower_templates')
               if config['perception'].get(key)]
     selection = config['perception'].get('authenticated_selection')
     if selection is not None:

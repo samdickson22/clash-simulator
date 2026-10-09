@@ -32,6 +32,9 @@ tv-replay = [
 [project.scripts]
 clasher = "clasher.cli:main"
 
+[tool.setuptools.package-data]
+"clasher.live" = ["tower_channel_templates.json"]
+
 [tool.mypy]
 python_version = "3.10"
 warn_return_any = true

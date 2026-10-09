@@ -75,9 +75,9 @@ class RustPlanner:
         packet = module('clasher_live_packet_builder', COUNCIL/'live-loop/l2/pixel_player.py')
         self.resources = resources
         packet_class = packet.PacketBuilder
-        if config.get('public_tower_model', False):
-            from .tower_model import tower_packet_builder
-            packet_class = tower_packet_builder(packet_class)
+        from .tower_model import tower_packet_builder
+        packet_class = tower_packet_builder(packet_class,
+            only_channel=not config.get('public_tower_model', False))
         self.packets = packet_class(resources.builder)
         self.hoist_opponent_moves = config.get('hoist_opponent_moves', False)
         self.model_hypothesis = packet.model_hypothesis

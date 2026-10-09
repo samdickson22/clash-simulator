@@ -3,6 +3,21 @@ import uuid
 from .loading import ROOT, V4, imports, module
 
 
+class PublicTowerAdapter:
+    """Attach fixed-slot public observations without changing decoder tracks."""
+    def __init__(self, artifact=None, geometry=None):
+        import json
+        from pathlib import Path
+        from .tower_channel import TowerChannel, MATRIX
+        matrix = json.loads(Path(geometry).read_text())['tile_to_pixel'] if geometry else MATRIX
+        self.channel = TowerChannel(artifact, matrix)
+
+    def observe(self, public, pixels):
+        from dataclasses import replace
+        return replace(public, tower_observations=self.channel.step(
+            pixels, public.episode_id, public.timestamp_ms))
+
+
 def vectorized_runtime():
     # DecoderAdapter.install replaces module globals. Give each live sensor its
     # own module so reference sensors and other runtimes remain independent.

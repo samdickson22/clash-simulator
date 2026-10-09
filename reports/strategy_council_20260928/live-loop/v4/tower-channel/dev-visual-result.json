@@ -1,0 +1,53 @@
+{
+  "schema": "clasher.public-tower-dev-visual.v1",
+  "samples": 48,
+  "confusion": {
+    "opp_king": {
+      "alive": {
+        "alive": 8
+      },
+      "destroyed": {},
+      "unknown": {}
+    },
+    "opp_left": {
+      "alive": {
+        "alive": 8
+      },
+      "destroyed": {},
+      "unknown": {}
+    },
+    "opp_right": {
+      "alive": {
+        "alive": 8
+      },
+      "destroyed": {},
+      "unknown": {}
+    },
+    "own_king": {
+      "alive": {
+        "alive": 8
+      },
+      "destroyed": {},
+      "unknown": {}
+    },
+    "own_left": {
+      "alive": {
+        "alive": 6
+      },
+      "destroyed": {
+        "destroyed": 1
+      },
+      "unknown": {
+        "unknown": 1
+      }
+    },
+    "own_right": {
+      "alive": {
+        "alive": 8
+      },
+      "destroyed": {},
+      "unknown": {}
+    }
+  },
+  "labels_used_for_fitting": false
+}

@@ -216,6 +216,8 @@ class PublicVisionFrame:
     own_card_levels: tuple[int | None, ...] = (None,) * 5
     own_card_level_confidence: tuple[float, ...] = (0.0,) * 5
     own_last_play: AcceptedOwnPlay | None = None
+    # Optional independent screen-anchor channel; older producers omit it.
+    tower_observations: tuple = ()
 
 
 @dataclass(frozen=True)
@@ -386,6 +388,7 @@ def parse_public_vision_frame(payload: object) -> PublicVisionFrame:
             "own_card_levels",
             "own_card_level_confidence",
             "own_last_play",
+            "tower_observations",
         },
         "input.public",
     )
@@ -465,6 +468,11 @@ def parse_public_vision_frame(payload: object) -> PublicVisionFrame:
     timestamp_ms = int(payload["timestamp_ms"])
     if timestamp_ms < 0:
         raise InferenceContractError("timestamp_ms must be non-negative")
+    from clasher.live.tower_channel import parse_observations
+    try:
+        towers = parse_observations(public.get("tower_observations", ()), timestamp_ms)
+    except (TypeError, ValueError) as exc:
+        raise InferenceContractError(str(exc)) from exc
     return PublicVisionFrame(
         episode_id=str(payload["episode_id"]),
         frame_id=str(payload["frame_id"]),
@@ -482,6 +490,7 @@ def parse_public_vision_frame(payload: object) -> PublicVisionFrame:
         own_card_levels=tuple(level for level, _ in observed_levels),
         own_card_level_confidence=tuple(confidence for _, confidence in observed_levels),
         own_last_play=own_last_play,
+        tower_observations=towers,
     )
 
 
@@ -509,6 +518,7 @@ def validate_public_vision_frame(frame: PublicVisionFrame) -> None:
             "own_card_levels": list(frame.own_card_levels),
             "own_card_level_confidence": list(frame.own_card_level_confidence),
             "own_last_play": None if frame.own_last_play is None else asdict(frame.own_last_play),
+            "tower_observations": [asdict(row) for row in frame.tower_observations],
         },
     }
     reparsed = parse_public_vision_frame(payload)

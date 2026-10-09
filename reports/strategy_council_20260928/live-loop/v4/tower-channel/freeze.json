@@ -1,0 +1,10 @@
+{
+  "files_sha256": {
+    "/mpac/sdicks02/repos/clasher/src/clasher/live/tower_channel.py": "84abdf95dd72e1f9b77f2849763026c973735243c96d9337930b8ef4cacb6410",
+    "/mpac/sdicks02/repos/clasher/src/clasher/live/tower_channel_templates.json": "9d7f21fb7ee3ab53774056208e352a59d3f5fa5bcb42ebfe2309449bd8d7f014",
+    "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/tower-channel/runtime/v2/manifest.json": "3a8841322eda08329d0ee8e956b74257f9f2af62ec9d6b9f5bd831c22ed0f174"
+  },
+  "dev_payloads_opened": false,
+  "validation_payloads_opened": false,
+  "heldout_payloads_opened": false
+}

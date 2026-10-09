@@ -1,0 +1,46 @@
+{
+  "split_sha256": "3edbd25bdae8e9b9efd6f0b4341e2caf5214854a74de56d250e81290653b5258",
+  "selection": "SHA256(tower-channel-v1:episode), first 32 available training caches",
+  "fit": [
+    "v4-phase-a-1975101180",
+    "v4-phase-a-1975101182",
+    "v4-phase-a-1975101312",
+    "v4-phase-a-1975101330",
+    "v4-phase-a-1975101294",
+    "v4-phase-a-1975101250",
+    "v4-phase-a-1975101245",
+    "v4-phase-a-1975101240",
+    "v4-phase-a-1975101200",
+    "v4-phase-a-1975101181",
+    "v4-phase-a-1975101203",
+    "v4-phase-a-1975101306",
+    "v4-phase-a-1975101310",
+    "v4-phase-a-1975101304",
+    "v4-phase-a-1975101177",
+    "v4-phase-a-1975101332",
+    "v4-phase-a-1975101233",
+    "v4-phase-a-1975101176",
+    "v4-phase-a-1975101334",
+    "v4-phase-a-1975101274",
+    "v4-phase-a-1975101184",
+    "v4-phase-a-1975101266",
+    "v4-phase-a-1975101236",
+    "v4-phase-a-1975101275"
+  ],
+  "dev": [
+    "v4-phase-a-1975101322",
+    "v4-phase-a-1975101192",
+    "v4-phase-a-1975101263",
+    "v4-phase-a-1975101317",
+    "v4-phase-a-1975101172",
+    "v4-phase-a-1975101283",
+    "v4-phase-a-1975101174",
+    "v4-phase-a-1975101195"
+  ],
+  "excluded_splits": [
+    "validation",
+    "heldout"
+  ],
+  "validation_payloads_opened": false,
+  "heldout_payloads_opened": false
+}

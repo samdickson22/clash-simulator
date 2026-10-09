@@ -1,0 +1,23 @@
+{
+  "schema": "clasher.public-tower-visual-audit.v1",
+  "scope": "Last extracted fixed ordinal in each of eight dev matches; 48 crops, labelled before opening inference output",
+  "default_state": "alive",
+  "rubric": "Alive requires visible upright crown tower structure. Destroyed requires collapsed stones and crossed broken timbers. Unknown means the local structure is obscured and neither upright nor rubble can be established from the crop.",
+  "samples": [
+    {"episode": "v4-phase-a-1975101322", "ordinal": 768},
+    {"episode": "v4-phase-a-1975101192", "ordinal": 1728},
+    {"episode": "v4-phase-a-1975101263", "ordinal": 1600},
+    {"episode": "v4-phase-a-1975101317", "ordinal": 2397},
+    {"episode": "v4-phase-a-1975101172", "ordinal": 355},
+    {"episode": "v4-phase-a-1975101283", "ordinal": 1664},
+    {"episode": "v4-phase-a-1975101174", "ordinal": 1152},
+    {"episode": "v4-phase-a-1975101195", "ordinal": 1152}
+  ],
+  "exceptions": [
+    {"episode": "v4-phase-a-1975101192", "slot": 4, "state": "unknown", "evidence": "Bright transition/crown animation obscures local tower structure; static rubble is not yet legible. Crown animation is not implemented as a destruction cue."},
+    {"episode": "v4-phase-a-1975101317", "slot": 4, "state": "destroyed", "evidence": "Collapsed stone walls and crossed broken timbers clearly visible"}
+  ],
+  "used_for_fitting": false,
+  "validation_payloads_opened": false,
+  "heldout_payloads_opened": false
+}

@@ -1,0 +1,9 @@
+{
+  "counts": {
+    "duplicate_ordinary_towers": 0,
+    "matches": 32
+  },
+  "diagnostic_tower_join_equivalent": true,
+  "validation_payloads_opened": false,
+  "heldout_payloads_opened": false
+}
