@@ -1,0 +1,94 @@
+{
+  "purpose": "frozen W-screen8 fresh paired outcome check; no tuning",
+  "paired_seeds": 600,
+  "arms": [
+    "0",
+    "W",
+    "S8"
+  ],
+  "ww_pairs": 0,
+  "max_ticks": 6001,
+  "own_delay": 27,
+  "opponent_delay": 27,
+  "command_capacity_both_sides": 1,
+  "decision_interval": 10,
+  "start_tick": 90,
+  "horizons": {
+    "0": 160,
+    "W": 160,
+    "H16": 320
+  },
+  "rollout_styles": [
+    "balanced",
+    "pressure",
+    "defense"
+  ],
+  "rollout_opponent_capacity": 1,
+  "samples": 16,
+  "wait_candidates": {
+    "2400": 10,
+    "2401": 20,
+    "2402": 40
+  },
+  "wait_prior": 0.01,
+  "seed_ranges": {
+    "reporting": {
+      "base": 4503599677370496,
+      "count": 600
+    },
+    "smoke": {
+      "base": 4503599687370496,
+      "count": 2
+    }
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 80981009,
+    "unit": "paired seed",
+    "confidence": 0.95
+  },
+  "latency": {
+    "states": 125,
+    "capture_ticks": [
+      90,
+      300,
+      600,
+      1200,
+      2400
+    ],
+    "repeats": 3,
+    "variants": [
+      "full",
+      "dedup",
+      "wait1",
+      "wait2",
+      "gate4",
+      "gate6",
+      "gate8",
+      "threads4"
+    ],
+    "budgets": [
+      "one physical core",
+      "four physical cores (separate, exceeds one-core budget)"
+    ],
+    "target_p95_ms": 200
+  },
+  "compute": {
+    "host": "127x03",
+    "workers": 50,
+    "own_process_cap": 56,
+    "combined_clasher_cap": 60,
+    "nice": 10,
+    "scheduler": "SCHED_IDLE",
+    "cache_root": "/mpac/sdicks02/jobs/clasher/w-screen8-20261009-r1/cache"
+  },
+  "pass_criterion": {
+    "contrast": "S8 minus W loss fraction",
+    "ci95_upper_max": 0.03
+  },
+  "variants": {
+    "0": "full",
+    "W": "full",
+    "S8": "screen8"
+  }
+}
