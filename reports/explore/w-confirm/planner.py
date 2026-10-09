@@ -1,0 +1,90 @@
+"""WAIT candidate adapter; all command timing uses the delay-fixes queue."""
+import math
+from concurrent.futures import ThreadPoolExecutor
+from clasher.analysis.loss_review.delay_fixes import planner_class as delay_class
+from clasher.analysis.loss_review.search_ab import planner_class as audit_class
+from clasher.analysis.loss_review.tempo import TIMED_WAITS, WAIT
+from clasher.analysis.loss_review.tempo import planner_class as tempo_class
+
+STYLES = ('balanced', 'pressure', 'defense')
+
+
+def planner_class(base):
+    class Planner(audit_class(delay_class(base))):
+        def __init__(self, *args, arm='0', variant='full', **kw):
+            super().__init__(*args, **kw)
+            self.arm, self.variant = arm, variant
+            self.selected_wait_ticks = 0
+            self.wait_counts = {}
+
+        def candidates(self, packet, policy_proposals=()):
+            actions, mask = super().candidates(packet, policy_proposals)
+            if self.arm == 'W':
+                actions += list(TIMED_WAITS)
+            return actions, mask
+
+        def score_candidates(self, root, seat, candidates, *, trace=False, deadline=None):
+            assert deadline is None
+            work = list(candidates)
+            elixir = float(self.info.packet.observation.global_features[5]) * 10
+            if self.variant.startswith('gate') and elixir >= float(self.variant[4:]):
+                work = [a for a in work if a not in TIMED_WAITS]
+            pairs = [(style, a) for style in STYLES for a in work]
+            if self.variant in ('wait1', 'wait2'):
+                count = int(self.variant[-1])
+                pairs = [(s, a) for s, a in pairs if a not in TIMED_WAITS or s in STYLES[:count]]
+            # The original WAIT and 10-tick WAIT have identical continuations.
+            # Reuse their exact score without changing original score addition order.
+            dedup = self.variant in ('dedup', 'threads4')
+            if dedup:
+                pairs = [(s, a) for s, a in pairs if a != 2400]
+            def evaluate(pair):
+                style, action = pair
+                value, events, sim = self.simulate_commands(root, seat, action, style,
+                                                           self.config.horizon, trace=trace)
+                return style, action, value, events
+            if self.variant == 'threads4':
+                with ThreadPoolExecutor(max_workers=4) as pool:
+                    values = list(pool.map(evaluate, pairs))
+            else:
+                values = list(map(evaluate, pairs))
+            scores = {a: 0. for a in work}
+            counts = {a: sum(a == aa for _, aa in pairs) for a in work}
+            for style, action, value, events in values:
+                scores[action] += value / counts[action]
+            if dedup and 2400 in work:
+                scores[2400] = scores[WAIT]
+            if self.arm == 'W':
+                for action in work:
+                    ticks = TIMED_WAITS.get(action, 10 if action == WAIT else 0)
+                    if ticks and abs(scores[action]) < 2:
+                        scores[action] += .01 * math.sqrt(ticks / 20) * max(0., 1 - elixir / 10)
+            best = work[0]
+            for action in work[1:]:
+                if scores[action] > scores[best] + 1e-9:
+                    best = action
+            self.last = dict(candidates=work, scores=[scores[a] for a in work],
+                             traces=[(s, a, ev) for s, a, v, ev in values] if trace else [])
+            self.selected_wait_ticks = TIMED_WAITS.get(best, 0)
+            key = str(self.selected_wait_ticks or (10 if best == WAIT else 0))
+            self.wait_counts[key] = self.wait_counts.get(key, 0) + 1
+            return best
+    return Planner
+
+
+def legacy_class(base):
+    """Same reduction experiments applied to the original tempo W reference."""
+    scorer = planner_class(base).score_candidates
+    class Legacy(tempo_class(audit_class(base))):
+        def __init__(self, *args, variant='full', **kw):
+            super().__init__(*args, timed_waits=True, wait_prior=.01, **kw)
+            self.arm, self.variant = 'W', variant
+            self.wait_counts = {}
+
+        def simulate_commands(self, root, seat, action, style, horizon, trace=False):
+            pending = self.candidate_root(root, action)
+            other = self.native.select_action(root, 1-seat, style)
+            return self.delayed_rollout(pending, seat, other, style, trace)
+
+        score_candidates = scorer
+    return Legacy

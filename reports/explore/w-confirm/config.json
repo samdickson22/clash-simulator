@@ -1,0 +1,34 @@
+{
+  "purpose": "frozen exploration confirmation, search opponents, no reporting-seed tuning",
+  "paired_seeds": 600,
+  "arms": ["0", "W", "H16"],
+  "ww_pairs": 100,
+  "max_ticks": 6001,
+  "own_delay": 27,
+  "opponent_delay": 27,
+  "command_capacity_both_sides": 1,
+  "decision_interval": 10,
+  "start_tick": 90,
+  "horizons": {"0": 160, "W": 160, "H16": 320},
+  "rollout_styles": ["balanced", "pressure", "defense"],
+  "rollout_opponent_capacity": 1,
+  "samples": 16,
+  "wait_candidates": {"2400": 10, "2401": 20, "2402": 40},
+  "wait_prior": 0.01,
+  "seed_ranges": {
+    "reporting": {"base": 4503599630370496, "count": 600},
+    "smoke": {"base": 4503599640370496, "count": 2},
+    "latency": {"base": 4503599650370496, "count": 25}
+  },
+  "bootstrap": {"reps": 5000, "seed": 80981008, "unit": "paired seed", "confidence": 0.95},
+  "latency": {
+    "states": 125,
+    "capture_ticks": [90, 300, 600, 1200, 2400],
+    "repeats": 3,
+    "variants": ["full", "dedup", "wait1", "wait2", "gate4", "gate6", "gate8", "threads4"],
+    "budgets": ["one physical core", "four physical cores (separate, exceeds one-core budget)"],
+    "target_p95_ms": 200
+  },
+  "compute": {"host": "127x03", "workers": 50, "own_process_cap": 56, "combined_clasher_cap": 100,
+    "nice": 10, "scheduler": "SCHED_IDLE", "cache_root": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/cache"}
+}
