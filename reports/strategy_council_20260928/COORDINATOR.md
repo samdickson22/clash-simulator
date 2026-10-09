@@ -1171,3 +1171,8 @@ Also on the hub, but with copies elsewhere:
   - A14: add a raw-record mutation test. If it passes, vectorized output is allowed for record-only capture only, through a new worker that first reproduces e7/738, e15/748 and e01/708. Deciding, D4(b), timing, heldout and T6 stay on the original path.
   - **A1 blocker found:** the frozen A12 admission and scoring files only read one directory per epoch in the old layout.
     - **Decision:** preferred fix is a verified per-epoch assembler into the old layout, so the frozen code runs unchanged. Fallback is Amendment 15 plus a review.
+- **04:03 UTC: A1 path is Amendment 15** (accepted).
+  - Why not the assembler: perception showed the frozen admission (`9d646763`) binds a real single-host epoch launch and completion, so an assembler copying the old layout would be dishonest.
+  - A15 instead adds provenance-preserving per-epoch assembly admission and body-scorer adapters. The frozen files and scoring rules stay unchanged. It needs an independent delta review before A1; reviewable implementation in ~90 min.
+  - R13-1 and R13-2 tests are running on 04. The 61 retained matches are actually 44 e06 + 17 e14.
+  - The A14 mutation test was added, and the non-clock gate 04r2 has been active since 03:51Z with no mismatch so far.
