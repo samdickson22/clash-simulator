@@ -1,0 +1,178 @@
+{
+  "schema": "clasher.exit-r1.student-fit-launch.v1",
+  "utc": "2026-10-09T19:55:02.724900+00:00",
+  "corpus_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "pre_fit_receipt_sha256": "511140704d571c09dfc3feed220a2ca8284b8ccc4be09e7affbf294922ae7c26",
+  "operations_commit": "f48d865d",
+  "arms": {
+    "S-mix": {
+      "host": "127x01",
+      "corpus_copy": {
+        "corpus_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+        "rows": 38738534,
+        "checked_files": 71,
+        "bytes": 56461320989,
+        "passed": true
+      },
+      "input_verification": {
+        "rows": 143740698,
+        "train_manifest_sha256": "0546cfddcf79be12509953358fb499ac3be29493ba4a87893bfbfbbe0f179e68",
+        "parent_manifest_sha256": "7180964c1d470807a97ad7a990ac8eb145fb25d15f1c95edf165b3f87743d20f",
+        "mask_sha256": "0287247280426d948865237ca9dedf98ed2de8db0e419e1a1952a6bf1209149a",
+        "assets_sha256": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+        "init_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+        "checked_columns": 63,
+        "training_roles_only": true,
+        "dev_manifest_sha256": "18a7d8e732080c3b6146b21a9d0f74683aba258b3e60f01d92037b9d7f0ccd4b",
+        "init_step": 22552,
+        "width": 192,
+        "static_buffers_equal": true
+      },
+      "pid": 240077
+    },
+    "S-teacher": {
+      "host": "127x04",
+      "corpus_copy": {
+        "corpus_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+        "rows": 38738534,
+        "checked_files": 71,
+        "bytes": 56461320989,
+        "passed": true
+      },
+      "input_verification": {
+        "rows": 143740698,
+        "train_manifest_sha256": "0546cfddcf79be12509953358fb499ac3be29493ba4a87893bfbfbbe0f179e68",
+        "parent_manifest_sha256": "7180964c1d470807a97ad7a990ac8eb145fb25d15f1c95edf165b3f87743d20f",
+        "mask_sha256": "0287247280426d948865237ca9dedf98ed2de8db0e419e1a1952a6bf1209149a",
+        "assets_sha256": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+        "init_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+        "checked_columns": 63,
+        "training_roles_only": true,
+        "dev_manifest_sha256": "18a7d8e732080c3b6146b21a9d0f74683aba258b3e60f01d92037b9d7f0ccd4b",
+        "init_step": 22552,
+        "width": 192,
+        "static_buffers_equal": true
+      },
+      "pid": 1639451
+    },
+    "S-human": {
+      "host": "127x09",
+      "corpus_copy": {
+        "corpus_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+        "rows": 38738534,
+        "checked_files": 71,
+        "bytes": 56461320989,
+        "passed": true
+      },
+      "input_verification": {
+        "rows": 143740698,
+        "train_manifest_sha256": "0546cfddcf79be12509953358fb499ac3be29493ba4a87893bfbfbbe0f179e68",
+        "parent_manifest_sha256": "7180964c1d470807a97ad7a990ac8eb145fb25d15f1c95edf165b3f87743d20f",
+        "mask_sha256": "0287247280426d948865237ca9dedf98ed2de8db0e419e1a1952a6bf1209149a",
+        "assets_sha256": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+        "init_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+        "checked_columns": 63,
+        "training_roles_only": true,
+        "dev_manifest_sha256": "18a7d8e732080c3b6146b21a9d0f74683aba258b3e60f01d92037b9d7f0ccd4b",
+        "init_step": 22552,
+        "width": 192,
+        "static_buffers_equal": true
+      },
+      "lease": {
+        "project": "clasher",
+        "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+        "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+        "start_utc": "2026-10-08T05:29:33.976698+00:00",
+        "expected_end_utc": "2026-10-11T05:30Z",
+        "max_workers": 16,
+        "gpu": true,
+        "shared": true,
+        "gpu_only": true,
+        "cpu": false,
+        "cap_raised_utc": "2026-10-08T11:13Z",
+        "cap_raised_by": "roader coordinator f552b138: builds done; shared CPU+GPU <=96, <=16 with console user",
+        "gpu_extension": {
+          "authority": "coordinator decision received2026-10-09T02:40Z, labeled03:12; FLEET-SHARING GPU-focused lease extension",
+          "max_processes": 16,
+          "max_pss_gb": 48,
+          "nice_min": 10,
+          "gpu_free_gb_min": 8,
+          "no_cpu_heavy_after_utc": "2026-10-09T04:30Z",
+          "reclaim_notice_minutes": 30
+        },
+        "extension_effective_utc": "2026-10-09T03:23Z"
+      },
+      "supervisor": {
+        "version": 2,
+        "wrapper_revision": "v2-capture-extension-20261009-r1",
+        "host": "127x09",
+        "label": "exit-r1-student-S-human-20261009-r2",
+        "command": [
+          "taskset",
+          "-c",
+          "126",
+          "bash",
+          "/mpac/sdicks02/jobs/clasher/exit-r1-student-screen-20261009-r1/ops/run_fit.sh",
+          "S-human",
+          "0.0"
+        ],
+        "started_utc": "2026-10-09T19:54:37.424408+00:00",
+        "declared_processes": 4,
+        "declared_pss_bytes": 46000000000,
+        "gpu": true,
+        "admission_usage": {
+          "processes": 0,
+          "pss_bytes": 0
+        },
+        "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+        "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+        "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+        "stop_at_utc": "2026-10-11T04:30:00+00:00",
+        "exit_by_utc": "2026-10-11T05:00:00+00:00",
+        "admission_aggregate": {
+          "processes": 0,
+          "pss_bytes": 0
+        },
+        "admission_jobs": {},
+        "supervisor_pid": 680857,
+        "supervisor_start": "136541745",
+        "stop_grace_seconds": 120,
+        "admission_sequence": 89,
+        "pid": 680861,
+        "child_start": "136541750",
+        "child_pgid": 680861,
+        "child_sid": 680861,
+        "checked_utc": "2026-10-09T19:54:37.889713+00:00",
+        "processes": 2,
+        "rss_bytes": 41766912,
+        "pss_bytes": 102163456,
+        "memory_metric": "pss",
+        "console_users": 0,
+        "effective_process_cap": 16,
+        "aggregate": {
+          "processes": 2,
+          "pss_bytes": 102163456
+        },
+        "accounted_jobs": {
+          "v2:exit-r1-student-S-human-20261009-r2": {
+            "kind": "v2",
+            "sequence": 89,
+            "supervisor_pid": 680857,
+            "processes": 2,
+            "pss_bytes": 102163456,
+            "stop_reason": null
+          }
+        },
+        "stop_reason": null
+      }
+    }
+  },
+  "reporting_controller": {
+    "host": "127x03",
+    "pid": 116632,
+    "nice": 19,
+    "scheduler": "SCHED_IDLE",
+    "core": 63
+  },
+  "technical_admission_retry": "09 old current wrapper refused at historical Oct9 deadline before workload admission; reused existing versioned capture-extension wrapper with live Oct11 lease, coordinator instruction 2026-10-09."
+}

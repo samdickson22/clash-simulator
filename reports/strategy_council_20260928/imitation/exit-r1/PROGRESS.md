@@ -126,3 +126,7 @@ Task-localNumPy2.3.5 matches teacher serving; qualifiedcu118Torch2.7.1 is unchan
 Operational scripts and setup retries are documented under
 `operations/student-screen/` and `receipts/student-screen-ops.json`.
 No reporting outcomes or fitting were observed before these pins.
+
+### 2026-10-09 19:56Z — frozen student fits launched
+
+Exact frozen-cutoff corpus SHA `1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b` verified across all 71 packed files on 01/04/09. Pre-fit pin published in `b6b39380`; operational compatibility/startup fixes in `f48d865d` change no frozen recipe or scientific source. S-mix on 01 and S-teacher on 04 launched at 19:54:01Z; S-human on 09 admitted at 19:54:37Z under existing versioned capture-extension supervisor (Oct11 04:30Z checkpoint deadline, declared four processes/46GB PSS). Old current supervisor refused before workload admission due to historical Oct9 deadline; coordinator authorized the extension wrapper. 08 remains unused. Home reporting controller on03 waits for all three step4883 final EMAs. Launch evidence: `receipts/student-fit-launch.json`.
