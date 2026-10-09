@@ -1572,3 +1572,6 @@ Also on the hub, but with copies elsewhere:
   - The student fits passed the serial-vs-loader6 2-step exact-state replay (bit-for-bit) and resumed.
   - **S-human on 09 hit a CUDA OOM** at step 239 (41.7 GiB allocated, vs T11's ~29 GiB at the same micro). Investigating, in order: GPU-resident prefetch, retained buffers, and `expandable_segments`, with the exact-replay neutrality proof. Fallback is 08 (owned, stop file). Recovery from checkpoint 108.
   - Parent-thread core contention on 01/04: affinity fix approved.
+- **20:26 UTC:**
+  - **S-human OOM root cause:** the frozen ExIt mixed_indices order doesn't apply T11's entity-count sort, so a rare dense first micro (7168) can need ~42 GiB. Re-sorting would break exact sample order. **Decision:** move S-human to owned 08 (no leased reserve rule), resume exactly from checkpoint 108, stop file with ≤5 min vacate for B.
+  - **Capacity scan:** control quarter NLL 0.27726 at 95.1 M rows (0.37 GPU-h). The 480 arm is capped at allocator fraction 0.78 after a transient 46 GB reserve peak.
