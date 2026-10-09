@@ -1351,3 +1351,8 @@ Also on the hub, but with copies elsewhere:
   - A16 file-layer approval `730c86e8…` (APPROVE_FILE_LAYER_DELTA, amendment `411d147c`, delta `eafa80ff`). It is not A1.
   - 04 recovery is complete: 8 tasks requeued once, and 625 backup files match. 04 goes straight to vectorized after the mixed verifier is in.
 - **08:27 UTC:** original verifier r12 exited 1 at 08:25:48Z and suspended the queue on an SSH exit-255 transport failure reading 02r4 e08/1048. It's not a mismatch, and it may be the same network blip as the 08:3x GitHub DNS failure. **Approved:** a full same-claim re-audit, then clear only that suspension under `queue.lock` with a receipt, then start the **mixed verifier (R16-3)** in place of the original, then the vectorized switch. The A16 receipts are committed (`5591158f`).
+- **08:35 UTC: FIRST VECTORIZED PRODUCTION.** 04 started at ~08:35Z: 8 lanes, plan `99cf9ec6`, 75 GB, renewed services.
+  - The mixed verifier (R16-3, plan `ea5b21aa`) runs first; the original verifier is stopped.
+  - The 02 transport suspension was cleared after a full audit PASS (`353069a1`).
+  - Three launcher-check failures are retained as receipts, and there was no duplicate capture. The post-admission quiet-window evidence is incomplete because the watcher dropped the lock before the first child; recorded honestly.
+  - The six-host natural-drain switch watcher is starting (17 tests pass). 15 waits for its R13 audit.
