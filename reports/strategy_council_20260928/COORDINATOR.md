@@ -1048,3 +1048,8 @@ Also on the hub, but with copies elsewhere:
     - verifier and import hashes pinned outside the seal.
   - Also: the mock-actuator guard gets a diagnostic label. Don't wire the pre-A12 `joint_selection_evidence_v4.py` in.
   - Relayed to the live-runtime worker `clasher-perf-live-runtime-20261009-1` (round 6), with a warning about the tower-channel edits.
+- **02:21 UTC: lease nice-policy incident (small).** Delay-fixes admission refused new shards on 09 and 15 because a Clasher process was below nice 10.
+  - **Cause:** the tempo-horizon lanes briefly spawn processes at nice 0 / SCHED_OTHER before switching to SCHED_IDLE. Seen on 13: pid 685229.
+  - **Fix ordered:** launch with `nice -n 10 chrt --idle 0` so the whole tree inherits it from exec.
+  - Delay-fixes may re-admit on 09/15 once the check is clean.
+  - Delay fixes: ≥1,200 original pairs done. The controls config was frozen before any inspection, at 02:02:09Z (`9e0cf7be…`).
