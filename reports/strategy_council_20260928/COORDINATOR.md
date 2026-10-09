@@ -1413,3 +1413,4 @@ Also on the hub, but with copies elsewhere:
     - otherwise write retire-as-host-unreachable receipts and requeue for vectorized recapture (~10 min);
     - 02 copies stay permanently inadmissible if 02 returns.
   - Follow-up: the retention service must cover home hosts too.
+- **09:49 UTC:** 81 lost-02 claims/outputs were retired or requeued, and the 02 authorization was revoked. **Authorized:** void and requeue 5 surviving-host attempts that have complete payloads but no controller `.outcome.json` (the controller aborted on suspension). Payloads are retained and inadmissible, and no provenance files are invented. Strict admission is unchanged. The 5-host vectorized restart follows.
