@@ -79,8 +79,9 @@ def main():
             min_mem_available_bytes=min(min(r['mem_available_bytes'] for r in timing),
                 min(s.get('min_loader_mem_available_bytes') or 1<<62 for s in segments)),
             min_gpu_free_bytes=min(r['gpu_free_bytes'] for r in timing))
-    exits = {h:read(job/f'host-exits/{h}.json') for h in ('03','04','01')}
-    assert all(x['complete'] and x['own_workers_vacated'] and not x['failures'] for x in exits.values())
+    exits = {h:read(job/f'host-exits/{h}.json') for h in ('03','04','01','08')}
+    assert all(x['own_workers_vacated'] and ((x['complete'] and not x['failures']) or
+        (h=='08' and (job/'reporting08-requeue.json').exists() and x['stop_requested'])) for h,x in exits.items())
     heldout = [read(g/'receipt.json') for g in sorted((job/'heldout').glob('game-*'))]
     assert len(heldout) == 64
     teacher = {a:read(job/f'supplement/{a}.json') for a in ARMS}
@@ -111,6 +112,8 @@ def main():
         allocator_qualification=allocator_qualification,
         human_micro_amendment=micro_amendment,
         human_micro_amendment_sha256=digest(job/'student-micro3584-amendment.json'),
+        reporting08_amendment_sha256=digest(job/'student-reporting08-amendment.json'),
+        reporting08_requeue=read(job/'reporting08-requeue.json') if (job/'reporting08-requeue.json').exists() else None,
         staged_reporting_amendment_sha256=digest(job/'student-staged-reporting-amendment.json'),
         staged_provenance=read(job/'staged-provenance.json'),
         allocator_qualification_gpu_hours=allocator_qualification['wall_seconds']/3600,
@@ -139,7 +142,7 @@ def main():
         'recipe fingerprint remains7168; runtime/segment evidence records the actual3584.', '',
         'A coordinator-authorized staged reporting amendment began the common600 init-W '
         'reference cases and64 held-out teacher games on03 while fitting continued. '
-        'S-human cases ran on03, S-teacher on04 and S-mix on01 as their final EMAs sealed. '
+        'S-human cases ran on03, S-teacher on04/08 and S-mix on01 as their final EMAs sealed. '
         'The frozen seed/deck/seat schedule and per-seed shared reference are unchanged. '
         'No agreement metrics, CIs or kill decisions were computed before all final fits '
         'and all3232 reporting tasks completed. Immutable raw stage receipts retain their '
@@ -207,7 +210,8 @@ def main():
         'step239 but stopped because the wrapper incorrectly applied the leased8GiB '
         'reserve to owned01; it resumed exactly after that guard scope was corrected. '
         'Owned GPUs have no leased8GiB reserve floor. No CPU simulation ran on leased '
-        'hosts, and no reporting CPU games ran on08.08 had an owned stop file and '
+        'hosts.08 joined reporting at nice19/SCHED_IDLE with48 physical workers, '
+        'cores0/1 reserved and the existing cache service untouched.08 had an owned stop file and '
         'a five-minute reclaim bound.', '']
     table(lines,['Arm','Loader qualification GPU-hours','Qualification CPU-hours',
                  'Whole fitting window GPU-hours (includes restart gaps)'],

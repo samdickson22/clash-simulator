@@ -18,6 +18,8 @@ def main():
         report/'receipts/student-seed-audit.json',checkpoints,
         job/'reporting-native-v1/clasher_core.abi3.so',dest)
     f=json.loads(dest.read_text())
+    extra08=job/'student-reporting08-amendment.json'
+    if extra08.exists():f['files'][str(extra08)]=sha(extra08)
     for extra in (job/'inputs/assets.npz',job/'pre-fit-pin.json',
                   job/'student-staged-reporting-amendment.json',job/'student-reporting-native-amendment.json',
                   report/'STUDENT-SCREEN-FREEZE-20261009.json'):

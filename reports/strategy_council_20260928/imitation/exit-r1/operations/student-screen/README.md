@@ -77,3 +77,14 @@ continuation is not claimed bit-identical. Both failed08 replays are archived
 and charged, alongside the failed09 attempt. S-mix/S-teacher remain unchanged.
 
 The coordinator-directed loader6 amendment uses `loader_prefetch.py` through `run_fit_loader6.sh`: six actual workers/prefetch4, no mmap_random_advice. Complete steps use the unchanged deterministic mixture sampler, and both complete index vectors are checked in the parent. `qualify_loader.py` compares two GPU updates from identical exact checkpoints, including every RNG and optimizer state. Qualification receipts record the bit-exact comparison. The six loader workers use distinct cores120–125; parent cores118/119/126, Torch threads1. Aggregate parent/loader PSS is guarded at46GB on leased hosts only, home MemAvailable at24GiB; leased09 also uses the versioned capture-extension supervisor with12 declared processes/48GB cap and Oct11 deadline. The8GiB GPU reserve applies only to leased hosts. S-human resumes on owned08 from exact checkpoint108, nice19, checkpoints every200 steps, stop file and≤5-minute reclaim. Failed09 unsaved updates are archived and replayed, with costs retained. Other arms checkpoint every250 steps. Initial fit segments and train-only qualification costs are retained. `collect_results.py` renders all arm CIs, decisions and resource totals only after the controller has complete final fits and reporting cases.
+
+At22:36Z the coordinator additionally admitted08 reporting CPU. Versioned
+`staged_controller_v2.py` restores the previous controller's admitted state,
+leaving the active03 pool untouched. After teacher's final seal, first128 h2h and
+first300 fallback identities run on08; the complement runs on04.08 uses48
+physical workers on cores2–49 at nice19/SCHED_IDLE, manager50, cores0/1 reserved,
+no GPU or cache-service changes. Owned `REPORTING08.STOP` vacates workers within
+five minutes. `requeue08.py` retains SHA/identity-checked terminal cases and
+requeues only unfinished exact identities onto03; two recovery tests PASS.
+03's pool remains open until08 finishes or its recovery queue is published.
+All08 attempt costs enter final totals, including an interrupted pool if reclaimed.
