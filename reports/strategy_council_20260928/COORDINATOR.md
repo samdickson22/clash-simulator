@@ -1329,3 +1329,6 @@ Also on the hub, but with copies elsewhere:
     - 15 waits until its R13 audit passes;
     - original matches with long tails (>20 min left) may be voided and requeued through the tested failure-recovery path, with receipts and a conservation check.
   - A16: 157 test executions pass; it's waiting on the qualification proof.
+- **07:51 UTC:**
+  - Storage budget raised to **2.2 TB**. The new vectorized 04 plan gets 75 GB, and new vectorized host plans may get up to 1.5× their current reservation. Active plans are unchanged, and the 40% floor holds. Why: 04 was at 29.4 of its 31 GB, and only 8 GB was unallocated.
+  - **Vectorized qualification:** e7/738 and e15/748 PASS on all records. e1/708 is running.
