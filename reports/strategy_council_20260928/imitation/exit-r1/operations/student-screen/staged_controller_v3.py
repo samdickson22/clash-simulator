@@ -21,7 +21,7 @@ env=dict(os.environ,PYTHONPATH=str(job/'source')+':'+str(job/'source/src'),CLASH
 py='/mpac/sdicks02/repos/clasher/.venv/bin/python';local_cpu_seconds=0.
 previous=json.loads((job/'controller.json').read_text())
 assert previous['stage']=='staged reporting games; awaiting remaining final EMAs'
-local_cpu_seconds=previous['local_cpu_seconds']
+local_cpu_seconds=previous['local_cpu_seconds'];reclaimed=set(previous.get('reclaimed_hosts',[]))
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def run(cmd):subprocess.run(cmd,check=True)
 def ssh(host,cmd):return subprocess.check_output(['bash','-c',cmd] if host=='03' else ['ssh','127x'+host,cmd],text=True)
@@ -64,6 +64,7 @@ def monitor_pools(started):
 try:
     admitted=list(previous['admitted']);started=set();
     for h in ('03','04','08'):
+        if h in reclaimed:started.add(h);continue
         alive=ssh(h,f'test ! -f {job}/staged-pool-r2-{h}.pid || test ! -e /proc/$(cat {job}/staged-pool-r2-{h}.pid) || cat /proc/$(cat {job}/staged-pool-r2-{h}.pid)/cmdline')
         if alive:assert 'staged_pool_v3.py' in alive
         else:start_pool(h)
@@ -94,7 +95,8 @@ try:
             for i in range(600):
                 if i<256:tasks.append(['h2h',arm,i])
                 tasks.append(['fallback',arm,i])
-            assignments={h:tasks[n::4] for n,h in enumerate(('01','04','08','03'))} if arm=='S-mix' else {cpu:tasks}
+            available_hosts=[h for h in ('01','04','08','03') if h not in reclaimed]
+            assignments={h:tasks[n::len(available_hosts)] for n,h in enumerate(available_hosts)} if arm=='S-mix' else {cpu:tasks}
             if arm=='S-teacher':
                 assignments={'08':[t for t in tasks if t[2]<(128 if t[0]=='h2h' else 300)],
                              '04':[t for t in tasks if t[2]>=(128 if t[0]=='h2h' else 300)]}
