@@ -27,15 +27,16 @@ def planner_class(base):
             assert deadline is None
             work = list(candidates)
             elixir = float(self.info.packet.observation.global_features[5]) * 10
-            if self.variant.startswith('gate') and elixir >= float(self.variant[4:]):
+            variant = self.variant.removeprefix('native-')
+            if variant.startswith('gate') and elixir >= float(variant[4:]):
                 work = [a for a in work if a not in TIMED_WAITS]
             pairs = [(style, a) for style in STYLES for a in work]
-            if self.variant in ('wait1', 'wait2'):
-                count = int(self.variant[-1])
+            if variant in ('wait1', 'wait2'):
+                count = int(variant[-1])
                 pairs = [(s, a) for s, a in pairs if a not in TIMED_WAITS or s in STYLES[:count]]
             # The original WAIT and 10-tick WAIT have identical continuations.
             # Reuse their exact score without changing original score addition order.
-            dedup = self.variant in ('dedup', 'threads4')
+            dedup = variant in ('dedup', 'threads4')
             if dedup:
                 pairs = [(s, a) for s, a in pairs if a != 2400]
             def evaluate(pair):
@@ -43,7 +44,7 @@ def planner_class(base):
                 value, events, sim = self.simulate_commands(root, seat, action, style,
                                                            self.config.horizon, trace=trace)
                 return style, action, value, events
-            if self.variant == 'threads4':
+            if variant == 'threads4':
                 with ThreadPoolExecutor(max_workers=4) as pool:
                     values = list(pool.map(evaluate, pairs))
             else:
@@ -82,6 +83,10 @@ def legacy_class(base):
             self.wait_counts = {}
 
         def simulate_commands(self, root, seat, action, style, horizon, trace=False):
+            if self.variant.startswith('native-'):
+                return self.native.rollout_commands(root,seat,action,[],style,
+                    self.command_delay,0,1,1,horizon,self.config.interval,
+                    self.config.interval,self.config.elixir_weight,True,False,trace)
             pending = self.candidate_root(root, action)
             other = self.native.select_action(root, 1-seat, style)
             return self.delayed_rollout(pending, seat, other, style, trace)

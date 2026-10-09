@@ -196,11 +196,18 @@ def main():
             assert r['metadata']['seed'] == c[1] and r['metadata']['terminal']
         else: pending.append(c)
     start = time.perf_counter()
-    with ProcessPoolExecutor(max_workers=a.workers, mp_context=multiprocessing.get_context('fork')) as pool:
+    with ProcessPoolExecutor(max_workers=a.workers, mp_context=multiprocessing.get_context('fork'),
+                             initializer=pin_worker) as pool:
         results = list(pool.map(run_game, pending, chunksize=1))
     (a.out/'receipt.json').write_text(json.dumps(dict(games=len(cases), fresh=len(results),
         cpu_seconds=sum(r['cpu'] for r in results), wall_seconds=time.perf_counter()-start,
         terminal=all(r['terminal'] for r in results)))+'\n')
+
+
+def pin_worker():
+    # One physical core per worker; reserve 59 for builds and 60–63 for profiling.
+    ident = multiprocessing.current_process()._identity[0]
+    os.sched_setaffinity(0, {(ident-1) % 50})
 
 
 if __name__ == '__main__': main()
