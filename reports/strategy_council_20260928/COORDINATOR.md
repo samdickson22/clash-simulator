@@ -1319,3 +1319,4 @@ Also on the hub, but with copies elsewhere:
     - The host-by-host switch happens only after the A16 freeze and the qualifications. No completed output is redone.
   - **Expected effect:** the remaining capture drops from ~15 h to ~1–2 h, moving A1 up by most of a day.
   - Status: 04 is restored to original 8 lanes (04r3, renewed services); 02r3 runs 8 lanes at 99%; 09 runs 6 normal lanes plus the R13 audits; 13 and 15 are draining for the handoff.
+- **07:21 UTC:** concurrency exception approved: 02 drains now, as a third concurrent drain with 13/15, for the three A14 vectorized qualification cells. 02 then goes back to the original 8 lanes on renewed services. A16 drafting is delegated by perception in parallel.
