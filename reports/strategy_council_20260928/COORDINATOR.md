@@ -1521,3 +1521,9 @@ Also on the hub, but with copies elsewhere:
 - **10:50 UTC: A17 §5 real-file run PASS** on 04 (exit 0, log `ec0d24bf…`). **The APPROVE_EVIDENCE_REPLACEMENT condition is SATISFIED** (receipt `17-EVIDENCE-REPLACEMENT-CONDITION-SATISFIED-20261009.json`), so approval `64b1ebe4` is now valid. A1 is still barred pending A18. Recapture of the 61 02-only matches is being prepared in a separate namespace with the closed queue untouched. The 404-match archive is ~32 GB to 03. The A18 package ETA is ~45–60 min after the recapture launch.
 - **10:54 UTC:** ExIt warm fleet rate is 375 roots/s, with 234 workers live (SMT oversubscription beside E1). **Decision: the round-1 target drops to 6 M roots** (about 39 M poll rows, enough for the ~1 GPU-h student arm), ETA ~15:10Z. The rest goes to DAgger round 2. The student screen pipeline is being built in parallel.
 - **10:58 UTC: Mac E4 combined package ready** (`257adad9` on main, from worker branch `446caa1c`). 27/27 Linux tests pass, and there was no Mac access. It's replay-only, 60–90 min: W-screen8 on/off × 1/4 GIL threads, original vs vectorized decoder, tower channel, fallback latency. **Needs Sam's authorization**, plus train recordings, the frozen prior, v1/v4 checkpoints, the final joint selection with its launcher/trust closure, and an arm64 Python/Rust environment (the native build happens on the Mac).
+- **11:06 UTC:**
+  - **The 61-match 02 recovery is nearly done:** 52 verified, 7 awaiting verification, 2 claimed, 0 pending.
+  - **The 404 retained-original archive is COMPLETE:** 7,284 files, 32.17 GB, checksum and fsync on 03.
+  - The A18 package is targeted for ~11:40–11:55Z.
+  - The student-screen plan draft content is approved. The worker runs the seed audit, and I freeze plan and audit together.
+  - E1's reserve-floor crown-tower fix (`72e84a5f`) is pending qualification before arm 5.
