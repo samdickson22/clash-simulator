@@ -1252,3 +1252,8 @@ Also on the hub, but with copies elsewhere:
   - Verified leased outputs are archived to 03 with checksum and fsync before any removal.
   - Note: my time labels in the 05:10Z and 05:25Z worker messages were ~25 min fast; the real times were ~04:45Z and ~04:55Z.
 - **05:00 UTC: 09 capture stopped** at 04:57:18Z. The cause was perception's own reservation-accounting mismatch: `du -sb` counts hardlinks once and gave 68.9 GB, while the logical guard counted 73.7 GB. Host stability was not involved. The wrapper again masked the stop as pass/0. The reservation is restored to 78 GB (within 2 TB), and recovery with the intent/status controller is under way; no completed capture is rerun. **08: the T5 GRU paused and verified** at 04:40:51Z, exit 0, with its checkpoint backup SHA recorded. 08 joins the capture queue with a 150 GB plan.
+- **05:05 UTC: W-screen8 ADOPTED as default for the offline search teacher and sims** (`701a983e`).
+  - Default construction matches explicit ON exactly on 125/125 states. Explicit OFF keeps baseline parity at 250/250.
+  - The live RustPlanner stays default OFF, with a recommended ON profile and a Mac E4 measurement plan in RESULTS.md.
+  - A read-only /proc audit across 01/02/03/04/05/08/09/13/14/15/16 found no running job mapping the checkout native library or planner config, so gate (c), T11 and capture are unaffected.
+  - 08r2 and 09r2 capture lanes are now running.
