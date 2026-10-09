@@ -919,3 +919,7 @@ Also on the hub, but with copies elsewhere:
      - **The total delay d≈26–27 ticks still stands** on independent grounds (the T2 20-tick lead and ClashAI's official-client distribution; `reports/research/command-delay-20261008.md`), but its pipeline component must be re-measured.
      - **L2-v4:** the PREREG text stays as frozen, but **L2-v4 entry is blocked** until the tower-reconciliation fix (opt-in public-geometry: towers persist until a *public* destruction signal; fair-information compliant), the perception tower-identity check, and a fresh E4 measurement. Any change to the player or entry criteria will be a dated prospective amendment before L2 starts.
   - **Live wiring contract** (perception owner → live-runtime worker): an explicit selected body_threshold, refusing while unset, with only an authenticated seal as authority.
+- **~01:05 UTC.**
+  - **Perception amendment 11:** capture-clock attribution (`l1/amendments/11-capture-clock-attribution-20261009.md`), with a clock-correctness HOLD in the continuation prompts. Old grids can't be authorized.
+  - **Live selection contract:** `l1/LIVE-SELECTION-CONTRACT.md`. The live wrapper takes a separately authenticated selection object and refuses when it's missing.
+  - **New wrapper-v2 defect:** a SIGTERM to a supervisor didn't stop its child. Hotfix r2 delegated (Sol): signal forwarding to the child process group, grace then kill, receipts, and verification of the 04:30Z/05:00Z stop path, plus an operator procedure for jobs already running under r1, before the lease cutoff.
