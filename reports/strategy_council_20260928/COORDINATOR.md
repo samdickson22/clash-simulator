@@ -1222,3 +1222,14 @@ Also on the hub, but with copies elsewhere:
   - Approved: move 3 GB of reservation 04 → 15, authenticate the failed attempts, requeue the incomplete ones, and launch 15r3 with the intent-safe controller.
   - Ordered: drain verified outputs from the leased hosts to the hub with checksums before freeing the leased copies, and fix the wrapper so a non-zero exit propagates on inner failures.
 - **04:46 UTC:** 15r3 has been running since 04:43:52Z: 8 lanes, intent-safe, all 8 intents present, 3.48 fps, 99% GPU. The 4 failed 15r2 attempts were authenticated and requeued. The status-propagation fix (`match_queue_controller_status_v4.py`) passes 3 tests and goes in at the next safe transition. Note: because A15 reopens the original leased paths, retiring verified leased outputs will need a separate pinned-relocation delta review before any leased copy is freed.
+- **04:47 UTC: A15 review: APPROVED WITH REQUIRED CHANGES** (`reviews/AMENDMENT-15-REVIEW-20261009.md`).
+  - Equivalence and clock isolation hold, and A12 is byte-unchanged.
+  - The tests are weak: 9 of 31 source mutants killed, and data mutants 15/17. The two that slipped through:
+    - **G1:** a queue entry is accepted alongside a retained copy of the same match (first-wins).
+    - **G2:** an R13-3 self-comparison passes.
+  - Required changes:
+    - RC1: one source per match.
+    - RC2: bind the R13-3 reference to the retained original.
+    - RC3: tests that kill the surviving mutants, plus an end-to-end check against the frozen scorer.
+    - RC4: re-pin `queue_audit_io`, then rerun the e1–e3 proofs.
+  - **Decision:** A15 r2 bundles these with pinned relocation receipts for retiring leased copies, and an A2 cost fix: a sealed per-epoch admission receipt instead of re-authenticating per cell, which the reviewer estimates would add about a day. One delta review follows.
