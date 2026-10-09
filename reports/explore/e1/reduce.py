@@ -70,8 +70,8 @@ def main():
             for key in ('channel','opponent_channel'):
                 count[key+'_rejected']+=meta[key]['rejected'];count[key+'_submitted']+=meta[key]['submitted']
             pushes=r['pushes'];low=[p for p in pushes if p['elixir']<4];high=[p for p in pushes if p['elixir']>=4]
-            s['damage_risk_low']=[sum(p['tower_damage']>1e-8 for p in low),len(low)]
-            s['damage_risk_high']=[sum(p['tower_damage']>1e-8 for p in high),len(high)]
+            s['damage_risk_low']=[sum(p['tower_damage']>0 for p in low),len(low)]
+            s['damage_risk_high']=[sum(p['tower_damage']>0 for p in high),len(high)]
             s['arrival_under4_in_losses']=[len(low),len(pushes)] if r['loss'] else [0,0]
             s['arrival_under4_in_nonlosses']=[len(low),len(pushes)] if not r['loss'] else [0,0]
             for m,mi in mindex.items():matrix[si,ai*len(metrics)+mi]=s.get(m,[0,0])

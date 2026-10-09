@@ -45,14 +45,14 @@ def main():
     else:lines+=['','The fifth arm is frozen and runs last. No causal reserve conclusion is reported before it completes.']
     lines+=['', 'Fair inputs: public board, own HUD, accepted public events and independent sampled hidden-model RNG. v1 uses the unmodified sealed gate(c) adapter at five-tick cadence through blocked polls; delayed capacity-one command execution stays outside it. Physical abilities are disabled. All completed games are retained; the separate two-seed smoke is excluded. Per-game telemetry and raw logs remain under `/mpac` on compute hosts.', '',
         'Validation: frozen OFF 250/250 score/action/trace parity; E1 OFF symmetric 125/125; W 125/125 frozen choices/scores; v1 same-state byte/action 250/250; zero-budget native root immutability 125/125; 12 injected-clock/filter tests passed. Library and sealed adapter hashes are pinned in [runtime receipts](receipts/runtime-pin.json).', '',
-        f"Freeze commit **`bfb9b107`**; implementation **`47e97277`**. Config SHA256 **`{r['config_sha256']}`**. [Counts, CIs, rate denominators and audits]({a.results.name}); [execution progress](PROGRESS.md). Child game CPU: **{r['game_cpu_seconds']/3600:.2f} hours**. E1 ran on03/04 at nice10/SCHED_IDLE, detached setsid, with process/memory supervision; final per-host execution receipts report measured peaks/floors."]
+        f"Freeze commit **`bfb9b107`**; implementation **`47e97277`**; crown-only reserve correction **`72e84a5f`** (before reporting reserve games). Config SHA256 **`{r['config_sha256']}`**. [Counts, CIs, rate denominators and audits]({a.results.name}); [execution progress](PROGRESS.md). Child game CPU: **{r['game_cpu_seconds']/3600:.2f} hours**. E1 ran on03/04 at nice10/SCHED_IDLE, detached setsid, with process/memory supervision; final per-host execution receipts report measured peaks/floors."]
     a.out.write_text('\n'.join(lines)+'\n')
     summary=[f"E1: {r['terminal_games']:,} terminal games /600 paired seeds (symmetric d=27).",
       f"Deadline W loss {pct(est['aW']['loss'])}; baseline {pct(est['a0']['loss'])}; paired change {pp(con['aW_minus_a0']['loss'])}.",
       f"W deadline hits {pct(est['aW']['deadline_hit'])}, v1 fallback {pct(est['aW']['fallback'])}; actual wall overruns {pct(est['aW']['wall_overrun'])}.",
       f"Against v1, W wins {pct(est['bW']['win'])}; W−baseline loss change {pp(con['bW_minus_b0']['loss'])}."]
     if final:summary +=[f"Reserve floor: loss change {pp(con['bR_minus_bW']['loss'])}; under4 change {pp(con['bR_minus_bW']['arrival_under4_fraction'])}.",r['causality_finding']]
-    summary +=[f"Unlimited W measured {r['throughput']['bW']['decisions_per_core_second']:.3f} decisions/sec/core. Freeze bfb9b107; implementation47e97277. 95% paired bootstrap CIs; exploration evidence."]
+    summary +=[f"Unlimited W measured {r['throughput']['bW']['decisions_per_core_second']:.3f} decisions/sec/core. Freeze bfb9b107; implementation47e97277; reserve correction72e84a5f. 95% paired bootstrap CIs; exploration evidence."]
     text='\n\n'.join(summary)+'\n';assert len(text.split())<200,len(text.split())
     (a.out.parent/('SUMMARY.md' if final else 'SUMMARY-arms1-4.md')).write_text(text)
 
