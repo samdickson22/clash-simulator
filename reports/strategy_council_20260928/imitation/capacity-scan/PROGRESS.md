@@ -30,3 +30,11 @@ NoNLLoutcomeyet; stagingandpreflightinprogress.
 Temporary ten-minute same-worker continuation enabled. First next run
 2026-10-09T20:02:12.126Z; exact schedule ID in `continuation.json`.
 Disable after terminal report. Scientific results still pending.
+
+Before any fitting, operational exact-resume repair committed/pushed **b80151fe**.
+Active adapter SHA `e82ca22fe1eb5f3df3dd2ed1b2bfcac48182212d4cfdc417a8314795e7b0e174`.
+Configs and scientific choices unchanged; see dated resume amendment.16's own
+verifier briefly paused during the commit/deployment, then resumed. No fitting
+restart. Wide resumes require explicit checkpoint SHA and own output directory;
+quarter recovery preserves the exact boundary and saved NLL; scientific kills
+cannot resume. Small `collect.py` will gather final curves/costs/SHA pointers.
