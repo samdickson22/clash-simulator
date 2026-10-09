@@ -1356,3 +1356,4 @@ Also on the hub, but with copies elsewhere:
   - The 02 transport suspension was cleared after a full audit PASS (`353069a1`).
   - Three launcher-check failures are retained as receipts, and there was no duplicate capture. The post-admission quiet-window evidence is incomplete because the watcher dropped the lock before the first child; recorded honestly.
   - The six-host natural-drain switch watcher is starting (17 tests pass). 15 waits for its R13 audit.
+- **08:39 UTC heartbeat.** 02 (relaunched), 04 (vectorized), 08, 09, 14 and 15 at 99%. **13 at 0%**: its natural drain finished and it's awaiting the vectorized relaunch by the switch watcher. I'll act if it's still idle after 20 min. T11: 01 63%, 16 32% sampled. 06/07/11/18 are down.
