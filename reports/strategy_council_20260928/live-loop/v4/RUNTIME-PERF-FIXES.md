@@ -316,6 +316,28 @@ guarded v4 train replay suite with mock input, targeting at least six matches
 and 200 first mock taps. It does not launch a renderer, send real taps or edit
 timing calibration. Mock replay does not establish emulator-on E4/P4 acceptance.
 
+## Completion follow-up: coordinator ~01:20Z
+
+The authorized CPU implementation and qualification work is complete. The full
+53-test live suite and the subsequent 11 focused selection/AdapterTests pass on
+127x08 CPU, with exit-0 receipts retained above. The focused follow-up includes
+the executable source provenance and reference-isolation check; production
+sources were unchanged after the full-suite pass.
+
+No authenticated selected value is available today: the final joint seal and
+its owner authenticator remain pending, further delayed by capture-clock
+remeasurement. The pluggable handoff accepts only the separately authenticated
+object bound to checkpoint bytes, ordered vocabulary, selection and source
+hashes. Config/calibration fields are provisional metadata and provide no
+authority or independent override; formal startup refuses without the object.
+The older config/calibration threshold transport is superseded, not admitted.
+
+The perception owner's review of AdapterTests equality remains pending and
+will be relayed by the coordinator. Decoder formal admission, corrected timing
+qualification and separate live-device/MPS parity remain open. No validation
+capture timing is used here. No further implementation changes are planned
+until the final seal format lands; the prepared Mac command remains unrun.
+
 ## What L2-v4 must pin before freezing
 
 1. Enable/pin the public reconstruction policy consistently for P/O/S/S-d:
