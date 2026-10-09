@@ -969,3 +969,9 @@ Also on the hub, but with copies elsewhere:
   - **Diagnosis:** expensive cards are *unaffordable* in ~99.7% of hand opportunities (e.g. X-Bow affordable only 295 of 119,587 times). They aren't starved by masking or generation; the player never banks elixir.
   - So the weakness is the **spending/tempo objective and horizon**, not candidate generation. The next exploration should target leaf elixir valuation, horizon, and WAIT preference. Gate (b) (imitation proposals) bears on this too.
   - **Latency:** the exact harness fails the 200 ms requirement (p95 ~410 ms incl. diagnostics). A 180 ms cooperative cutoff still had 51 overruns per 122k decisions, mainly in public conditioning (belief updates).
+- **~01:45 UTC: GATE (b) frozen analysis: all registered bars PASS.**
+  - **Primary:** B score 0.65625, paired 95% CI [0.628, 0.684]. **Secondary:** B − A = +0.051.
+  - **Timing:** B p99 200.29 ms vs A 200.24 ms, max 202.8 ms, 0 decisions over 250 ms.
+  - **R19 PASS:** all 70 rejections (B 10 / A 24 / scripts 36) reproduce exactly (67 payload-occupancy, 3 building guards). The four R12 prefixes PASS, with the observability limit disclosed.
+  - The worker is checking 5 post-selection mask-illegal audit flags (all seat 1, likely the sequential seat-0-apply / seat-1-audit effect) before finalizing the disclosure. Scores and decision are unchanged.
+  - **Meaning:** the imitation model's top-8 proposals improve the fair search player at a matched candidate count.
