@@ -1518,3 +1518,4 @@ Also on the hub, but with copies elsewhere:
   - **404 retained-original matches on leased 09/13/14/15** still need owned archival; inventory-pinned copies to 03 are approved.
   - The 61 02-only retained matches have no known mirror, so they're being recaptured.
   - A18 scope: retained/audit/metadata routing, R16-1 enforcement, and the 61-match retirement plus recapture admission.
+- **10:50 UTC: A17 §5 real-file run PASS** on 04 (exit 0, log `ec0d24bf…`). **The APPROVE_EVIDENCE_REPLACEMENT condition is SATISFIED** (receipt `17-EVIDENCE-REPLACEMENT-CONDITION-SATISFIED-20261009.json`), so approval `64b1ebe4` is now valid. A1 is still barred pending A18. Recapture of the 61 02-only matches is being prepared in a separate namespace with the closed queue untouched. The 404-match archive is ~32 GB to 03. The A18 package ETA is ~45–60 min after the recapture launch.

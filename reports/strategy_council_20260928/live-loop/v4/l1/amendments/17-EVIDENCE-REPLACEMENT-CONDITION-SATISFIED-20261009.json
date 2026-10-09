@@ -1,0 +1,25 @@
+{
+ "schema": "clasher.v4.a17-evidence-replacement-condition.v1",
+ "utc": "2026-10-09T10:50:05+00:00",
+ "decision": "CONDITION_SATISFIED",
+ "decided_by": "coordinator (owner mode)",
+ "conditional_approval": "amendments/17-EVIDENCE-REPLACEMENT-APPROVAL-CONDITIONAL-20261009.json",
+ "conditional_approval_sha256": "64b1ebe435aa0a5cca2c9189e500fc43e279532cfae4aa4a671e3534497b4f60",
+ "actual_file_run": {
+  "host": "127x04",
+  "runner": "a17_section5_runner.py",
+  "exit_code": 0,
+  "nice": 19,
+  "runtime": "frozen A17 r3",
+  "log_sha256": "ec0d24bf90aa7f9845bd4004351d8e7363a91e8aff0ea4358c149d6e7a6e957d",
+  "output": {
+   "actual_replacement_evidence_verified": true,
+   "evidence_recovery_sha256": "1adf50de13504df27a3c135e9e73a9b6861c99954f5f6795f80c380f36a1e35c",
+   "evidence_recovery_approval_sha256": "64b1ebe435aa0a5cca2c9189e500fc43e279532cfae4aa4a671e3534497b4f60",
+   "timing_admitted": false,
+   "A1_authorized": false
+  }
+ },
+ "section5_items": "Items 1, 2, 5 and 7 PASS (mechanical check 90728bde). Items 3, 4 and 6 PASS: the real-file verify_replacement_evidence re-hashed the 27 contract sources and io.hashes, verified the reference-copy origins and records, and re-compared all qualification and stress streams byte-exact.",
+ "effect": "APPROVE_EVIDENCE_REPLACEMENT 64b1ebe4 is now VALID. A1 is NOT authorized by this receipt. A1 still requires the A18 package (61-match recapture admission, retained/audit/metadata routing, R16-1 enforcement), its review and freeze, all 24 assembly SHAs, and coordinator-approval-A1."
+}
