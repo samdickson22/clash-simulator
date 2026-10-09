@@ -1282,3 +1282,4 @@ Also on the hub, but with copies elsewhere:
     - `execution_plan_sha256`;
     - `freeze_sha256`.
   - Queue at 06:02:53Z: 93 verified, 40 claimed, 819 pending, 61 retained terminal.
+- **06:10 UTC heartbeat.** Capture at 99% on 04/08/09/13/14/15. T11: 01 40% and 16 82% sampled; both were at ~12k rows/s earlier. 02 is at 0%. **Gate (c) is overrunning:** about 865/1,792 game files after 5h55m (estimate was 3–4 h); it's alive, with resources.jsonl updating at 06:09:56Z; projected finish ~12:30Z. Its frozen co-tenancy rule keeps 02's GPU idle until then. Accepted; not interrupting a frozen gate. No pending requests. 06/07/11/18 are down.
