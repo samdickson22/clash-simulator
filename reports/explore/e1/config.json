@@ -1,0 +1,102 @@
+{
+  "purpose": "E1 exploration; frozen before games; no PREREG or reporting-seed tuning",
+  "paired_seeds": 600,
+  "arms": {
+    "a0": {
+      "own": "baseline",
+      "opponent": "baseline",
+      "deadline_seconds": 0.2
+    },
+    "aW": {
+      "own": "W-screen8",
+      "opponent": "baseline",
+      "deadline_seconds": 0.2
+    },
+    "b0": {
+      "own": "baseline",
+      "opponent": "v1-policy",
+      "deadline_seconds": null
+    },
+    "bW": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": null
+    },
+    "bR": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": null,
+      "reserve_floor": true
+    }
+  },
+  "max_ticks": 6001,
+  "own_delay": 27,
+  "opponent_delay": 27,
+  "command_capacity_both_sides": 1,
+  "search_decision_interval": 10,
+  "policy_decision_interval": 5,
+  "start_tick": 90,
+  "horizon": 160,
+  "rollout_styles": [
+    "balanced",
+    "pressure",
+    "defense"
+  ],
+  "samples": 16,
+  "script_top": 4,
+  "wait_candidates": {
+    "2400": 10,
+    "2401": 20,
+    "2402": 40
+  },
+  "wait_prior": 0.01,
+  "screen_plays": 8,
+  "return_reserve_seconds": 0.008,
+  "seed_ranges": {
+    "reporting": {
+      "base": 4503599807370496,
+      "count": 600
+    },
+    "smoke": {
+      "base": 4503599817370496,
+      "count": 2
+    }
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 80991009,
+    "unit": "paired seed",
+    "confidence": 0.95
+  },
+  "policy": {
+    "snapshot": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+    "checkpoint": "/mpac/sdicks02/repos/clasher-eval-snapshots/inputs-bc-v1/main02.pt",
+    "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "temperature": 1,
+    "seed_offset": 271828
+  },
+  "compute": {
+    "hosts": {
+      "127x03": 64,
+      "127x04": 32,
+      "127x01": 24
+    },
+    "nice": 10,
+    "scheduler": "SCHED_IDLE",
+    "min_memavailable_GiB": 24,
+    "cache_root": "/mpac/sdicks02/jobs/clasher/e1-20261009-r1/cache"
+  },
+  "causality": {
+    "method": "paired fair-public reserve filter intervention bR minus bW; shared seed bootstrap",
+    "claim_limit": "Lower under4 arrivals AND lower losses support this floor rule as a causal lever against v1; association alone is insufficient. Geometry is a defensive-response proxy."
+  },
+  "reserve_floor": {
+    "default": false,
+    "own_floor": 4,
+    "opponent_public_estimate_min": 5,
+    "threat_tower_radius_tiles": 6,
+    "response_radius_tiles": 6,
+    "defensive": "placement in own half, same lane and within6tiles of a living visible enemy troop across the bridge or within6tiles of a living own crown tower",
+    "filter": "after original candidate generation, before frozen W scoring; WAIT/timed WAIT always kept"
+  }
+}
