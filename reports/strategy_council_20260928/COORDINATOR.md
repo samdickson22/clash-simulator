@@ -1389,3 +1389,4 @@ Also on the hub, but with copies elsewhere:
   - Both fixed R16 stress recaptures PASS (02 e1/708, 04 e20/778).
   - Still blocking A1: the 4 hash-selected R16-1 recaptures after queue closure, and the A16 follow-up admission delta plus review.
   - **Post-capture GPU plan:** 08 stays reserved for B. The GRU resumes on a freed GPU (04 proposed). I've asked the imitation owner for a next-workload recommendation (v2 with W-screen8 teacher labels vs more seeds); allocation by ~10:00Z.
+- **09:36 UTC: allocation.** The R16-1 four original-worker recaptures run in parallel after queue closure on 02/13/14/15, one cell per host (09 is a substitute), then each host is released. **04 → T5 GRU resume.** 08 stays reserved for B.
