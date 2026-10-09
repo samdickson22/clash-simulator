@@ -1379,3 +1379,7 @@ Also on the hub, but with copies elsewhere:
   - The serial verifier exited 0 after all 456 published proofs were checked.
   - The 15 watcher dependency was migrated.
   - **The backlog was 151 at handoff;** the rate window is being measured.
+- **09:20 UTC:**
+  - The parallel verifier is catching up: backlog 151 → 102 in 4.4 min (about 21 verified/min against about 10 completions/min); under 10 expected around 09:29Z.
+  - **15's R13 audit PASSED** (`f5b09a6a…`). Both leased R13 audits now pass, which meets the A1 prerequisite.
+  - 15 is naturally draining to vectorized, the last host.
