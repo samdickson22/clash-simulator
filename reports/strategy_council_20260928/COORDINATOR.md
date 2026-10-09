@@ -1031,3 +1031,12 @@ Also on the hub, but with copies elsewhere:
     - **Decision:** switch 01, and seed 21 on 04 at 05:00Z, to 16's exact loader6 config at the next checkpoint, and stop the io32 observer.
   - **Amendment 12 orchestration package** (`A12-ORCHESTRATION-REVIEW.md` `16ede4ad…`, 48 tests) went to an independent review, `clasher-v4-a12-orchestration-review-20261009-1` (Opus, high).
     - Verdict A covers the real body seal plus CPU bounds. Verdict B covers the preconditions for the first 08 measurement.
+- **02:11 UTC: tower channel round 1 landed** (`138a3b57`, `v4/tower-channel/REPORT.md`). It covers 8 training-split dev matches.
+  - Alive recall 98.32%, 0/1,844 false-destroyed, exact HP on 499/500 accepted princess reads, 1.38 ms/frame p50 (1.56 ms p95). 75 tests pass.
+  - It's integrated into perception_adapter and PublicTowerModel. Absence is never terminal.
+  - **Accepted** as the conservative L2-v4 tower component.
+  - Gaps: no destroyed truth (native snapshots drop dead towers), no King rubble, no King or opponent HP numbers.
+  - **Round 2 delegated** (`clasher-v4-tower-channel-r2-20261009-1`, Sol high, 03 CPU ≤24 processes):
+    - destruction labels derived from truth (tower vanishes while the match goes on), on a fresh untouched dev slice, reporting the false-destroyed upper bound;
+    - King destruction via the match-end path, plus King activation;
+    - an opponent HP number refit.
