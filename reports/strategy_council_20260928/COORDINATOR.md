@@ -1291,3 +1291,4 @@ Also on the hub, but with copies elsewhere:
     - Clients hand off only at controller-safe restarts (09r3, 15r4, 04 post-benchmark, then 13/14/08), at most 2 hosts draining at a time.
     - **Every client is bound to a renewed service by 11:30Z.**
   - Queue: 119 verified, 34 claimed, 799 pending.
+- **06:37 UTC:** cache replacement plan `db085fde` approved: 03 serves 02's 8 matches, a fresh 08 serves 56, with a new hard stop of Oct 11 04:00Z. Pins are unchanged. **The legacy 13/14 drain-via-claim=None operator reply is approved** with conditions: tests on the exact legacy code, a pinned-owner identity check under `queue.lock`, a per-host operator receipt, a queue-conservation check, one host at a time, and a fallback (clean stop at 11:15Z) only after telling me.
