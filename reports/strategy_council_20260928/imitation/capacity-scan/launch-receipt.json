@@ -13,7 +13,12 @@
     },
     "127x15": {
       "width": 480,
-      "supervisor_pid": 434735
+      "supervisor_pid": 568625,
+      "original_supervisor_pid": 434735,
+      "active_label": "width480-v2",
+      "resume_step": 175,
+      "resume_rows": 1433600,
+      "resume_checkpoint_sha256": "91c66427e0c23ce7d2d2d519a7e2dcffc8a4b449d33219adf8f3e5b86f29ebba"
     },
     "127x16": {
       "width": 192,
@@ -22,8 +27,10 @@
   },
   "remote_work": "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1",
   "control_state": "127x05:/mpac/sdicks02/jobs/clasher/capacity-scan-control-20261009-v1/state.json",
-  "controller_source_sha256": "660dc0f897db1a5d73ecdb2318f4a2ca36566ec88787eb324451fb680968ea8b",
+  "controller_source_sha256": "1b995505a6034b237eddda4097d6060923c9d9c801dd88730acdd32a5217f7fa",
   "control_accounting": "Conservative40GPU-h enforcement counts pipelinewall including staging; actual GPUwall reported separately from scan-segments. Stop at39.8h to allow checkpoint drain.",
   "validated": "Frozen source/T11seal/qualifiedT4receiptPASS on16; allfourmodelconstructorsPASS; perhostguardsPASS. No fitting before freezecommit.",
-  "weights_committed": false
+  "weights_committed": false,
+  "allocator_operations_commit": "e8b4473b",
+  "controller_version": "r3, active labels and cumulative guard history"
 }

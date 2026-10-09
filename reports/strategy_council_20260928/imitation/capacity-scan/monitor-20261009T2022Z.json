@@ -1,0 +1,236 @@
+{
+  "at": "2026-10-09T20:27:33.229900+00:00",
+  "conservative_pipeline_gpu_hours": 2.395750619722222,
+  "control_relayed": [
+    "127x13",
+    "127x14",
+    "127x15"
+  ],
+  "arms": {
+    "127x13": {
+      "width": 288,
+      "health": {
+        "at": "2026-10-09T20:27:29.962004+00:00",
+        "owned_pids": {
+          "793922": "136464178",
+          "794004": "136464197",
+          "925238": "136640816",
+          "925239": "136640826",
+          "925244": "136640836",
+          "925245": "136640846"
+        },
+        "borrower_processes": 6,
+        "pss_bytes": 26338355200,
+        "gpu_free_mib": 38928,
+        "console_users": 0,
+        "peaks": {
+          "processes": 6,
+          "pss_bytes": 40205005824
+        }
+      },
+      "latest_step": {
+        "event": "step",
+        "epoch": 0,
+        "cursor": 2826240,
+        "step": 345,
+        "best_dev": null,
+        "bad_epochs": 0,
+        "rows": 2826240,
+        "loss": 7.343393325805664,
+        "gate": 0.1340312957763672,
+        "card": 1.254645586013794,
+        "tile": 4.927809715270996,
+        "intent_card": 2.0787434577941895,
+        "hazard": 2.0288844108581543,
+        "grad_norm": 3.2196478843688965,
+        "lr": 5.1899999999999994e-05,
+        "rows_per_second_step": 7172.902672468671,
+        "rows_per_second_including_loader": 5151.146020993044,
+        "gpu_peak_allocated_mib": 22505.99169921875,
+        "gpu_peak_reserved_mib": 26858.0
+      }
+    },
+    "127x14": {
+      "width": 384,
+      "health": {
+        "at": "2026-10-09T20:27:25.418859+00:00",
+        "owned_pids": {
+          "543994": "136484734",
+          "544056": "136484752",
+          "669431": "136660651",
+          "669432": "136660660",
+          "669433": "136660668",
+          "669434": "136660677"
+        },
+        "borrower_processes": 6,
+        "pss_bytes": 22829969408,
+        "gpu_free_mib": 22312,
+        "console_users": 0,
+        "peaks": {
+          "processes": 6,
+          "pss_bytes": 38285631488
+        }
+      },
+      "latest_step": {
+        "event": "step",
+        "epoch": 0,
+        "cursor": 2203648,
+        "step": 269,
+        "best_dev": null,
+        "bad_epochs": 0,
+        "rows": 2203648,
+        "loss": 7.1932783126831055,
+        "gate": 0.1296321600675583,
+        "card": 1.1811497211456299,
+        "tile": 4.8451056480407715,
+        "intent_card": 2.081779956817627,
+        "hazard": 2.067781448364258,
+        "grad_norm": 3.344623565673828,
+        "lr": 4.05e-05,
+        "rows_per_second_step": 6367.753611498403,
+        "rows_per_second_including_loader": 3964.682011013304,
+        "gpu_peak_allocated_mib": 29528.59228515625,
+        "gpu_peak_reserved_mib": 35466.0
+      }
+    },
+    "127x15": {
+      "width": 480,
+      "health": {
+        "at": "2026-10-09T20:27:28.880058+00:00",
+        "owned_pids": {
+          "568625": "136701303",
+          "568704": "136701321",
+          "571088": "136705147",
+          "571089": "136705156",
+          "571090": "136705166",
+          "571091": "136705175"
+        },
+        "borrower_processes": 6,
+        "pss_bytes": 24509481984,
+        "gpu_free_mib": 15493,
+        "console_users": 0,
+        "peaks": {
+          "processes": 6,
+          "pss_bytes": 30230917120
+        }
+      },
+      "segments": [
+        {
+          "started_at": "2026-10-09T20:17:18.244820+00:00",
+          "ended_at": "2026-10-09T20:23:36.207372+00:00",
+          "wall_seconds": 377.9625566918403,
+          "status": "complete",
+          "rows": 1425408,
+          "step": 174
+        }
+      ],
+      "latest_step": {
+        "event": "step",
+        "epoch": 0,
+        "cursor": 1785856,
+        "step": 218,
+        "best_dev": null,
+        "bad_epochs": 0,
+        "rows": 1785856,
+        "loss": 7.59958553314209,
+        "gate": 0.1443740874528885,
+        "card": 1.2159000635147095,
+        "tile": 5.200361251831055,
+        "intent_card": 2.0809340476989746,
+        "hazard": 2.0748651027679443,
+        "grad_norm": 2.7270877361297607,
+        "lr": 3.285e-05,
+        "rows_per_second_step": 4583.119862059263,
+        "rows_per_second_including_loader": 3885.194552241909,
+        "gpu_peak_allocated_mib": 24523.873046875,
+        "gpu_peak_reserved_mib": 32844.0
+      }
+    },
+    "127x16": {
+      "width": 192,
+      "health": {
+        "at": "2026-10-09T20:19:17.306730+00:00",
+        "owned_pids": {
+          "4049421": "136516434",
+          "4049445": "136516450",
+          "4080257": "136567995",
+          "4080273": "136568008",
+          "4080286": "136568020",
+          "4080291": "136568033",
+          "4133329": "136659226"
+        },
+        "borrower_processes": 7,
+        "pss_bytes": 11936418816,
+        "gpu_free_mib": 45094,
+        "console_users": 0,
+        "peaks": {
+          "processes": 7,
+          "pss_bytes": 37488739328
+        }
+      },
+      "exit": {
+        "label": "width192-v1",
+        "host": "127x16",
+        "started_at": "2026-10-09T19:49:05.836115+00:00",
+        "supervisor_pid": 4049421,
+        "command": [
+          "bash",
+          "-c",
+          "\nset -e\nw=/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1\np=/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python\n\"$p\" -B \"$w/ops/stage.py\" --work \"$w\" --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1 --reuse\nexec \"$p\" -B \"$w/ops/gpu_entry.py\" --config \"$w/ops/configs/width-192.json\" --freeze \"$w/ops/freeze.json\" --source \"$w/source\" --store /mpac/sdicks02/repos/clasher-lease/data/v2-store-v1 --inputs \"$w/inputs\" --output \"$w/runs/width192\" --resume /mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/runs/main-2026100821/step-00011000.pt\n"
+        ],
+        "pid": 4049445,
+        "exit_code": 0,
+        "status": "complete",
+        "stop_reason": null,
+        "ended_at": "2026-10-09T20:19:23.653520+00:00",
+        "wall_seconds": 1817.817409154959,
+        "peaks": {
+          "processes": 7,
+          "pss_bytes": 37488739328
+        }
+      },
+      "quarter": {
+        "width": 192,
+        "rows": 95144680,
+        "step": 11615,
+        "scheduled_rows": 380571633,
+        "ema_joint_nll": 0.27726436294161033,
+        "dev_rows": 11776480,
+        "dev_seconds": 385.4897930249572,
+        "at": "2026-10-09T20:19:19.015093+00:00",
+        "config_sha256": "a6963c7efe6668271e72bd49df24ba65e7fa2e649a7f399033ccac9977a2ec85"
+      },
+      "segments": [
+        {
+          "started_at": "2026-10-09T19:56:53.911092+00:00",
+          "ended_at": "2026-10-09T20:19:21.231012+00:00",
+          "wall_seconds": 1347.3199203999247,
+          "status": "control_replay_complete",
+          "rows": 95144680,
+          "step": 11615
+        }
+      ],
+      "latest_step": {
+        "event": "step",
+        "epoch": 1,
+        "cursor": 31703040,
+        "step": 11615,
+        "best_dev": 0.28317389229603407,
+        "bad_epochs": 0,
+        "rows": 95144680,
+        "loss": 5.1193461418151855,
+        "gate": 0.13309310376644135,
+        "card": 0.9730739593505859,
+        "tile": 3.158698081970215,
+        "intent_card": 1.708373785018921,
+        "hazard": 1.709550380706787,
+        "grad_norm": 2.7329001426696777,
+        "lr": 0.0002667062627519605,
+        "rows_per_second_step": 10358.78212205427,
+        "rows_per_second_including_loader": 5480.5558310412425,
+        "gpu_peak_allocated_mib": 27066.46435546875,
+        "gpu_peak_reserved_mib": 29130.0
+      }
+    }
+  }
+}

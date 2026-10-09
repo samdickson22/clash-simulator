@@ -71,3 +71,28 @@ and every lease/resource guard remain healthy. Wide hosts use three processes
 and below 0.5 GB PSS during checks; control peak PSS remains below 37.5 GB.
 Conservative pipeline accounting was approximately 1.55 GPU-hours, including
 staging; final actual GPU wall cost remains pending trainer segment completion.
+
+2026-10-09 20:22Z: Control quarter full-dev NLL sealed at **0.27726436294161033**
+for exactly 95,144,680 rows (all 11,776,480 dev rows). Its sole segment used
+0.3742555 actual GPU-hours, including replay, initialization and dev. Last replay
+training rate was 5,481 loader-inclusive rows/s. Exit0; GPU16 compute-process
+list independently empty, released for coordinator reuse. Control NLL relayed to
+13/14/15. Complete evidence and checkpoint SHA are in `control-complete.json`.
+
+All three wide stores passed 130/130 SHA checks and their original fits started.
+Early rates:288=4,213,384=3,496,480=4,150 rows/s (startup still contributes).
+No wide dev outcome or scientific kill yet.
+
+Width480's cached peak46,082MiB briefly breached8GiB reserve between guard checks.
+Its own trainer434818 was checkpointed at175 /1,433,600rows and exited0; all old
+six PIDs verified gone. This is a technical pause, not a scientific kill. Exact
+checkpoint/RNG/model/optimizer/scheduler/config/hash audit PASS, SHA pointer in
+`480-allocator-stop.json`. Pre-wide-dev allocator amendment/operations freeze
+committed **e8b4473b**. Microbatch2048 and every scientific setting stay fixed.
+
+Width480 resumed with hard allocator fraction0.78 under label**width480-v2**,
+supervisor**568625**, preserving all original artifacts. Observed resumed step198,
+6 processes,26.6GBPSS,15.3GiBGPUfree; no OOM or further headroom breach. Sole
+controller r3 reads active-label pointers and cumulative guard history to retain
+all original/continuation costs.288/384fits were never stopped. Ten-minute
+continuation remains enabled; final matched-wide NLL comparison still pending.
