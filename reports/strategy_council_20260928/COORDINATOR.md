@@ -1162,3 +1162,12 @@ Also on the hub, but with copies elsewhere:
   - **16 is resolved:** T11 seed 21 is back as `extended60-v1` at ~12k rows/s, PSS 36 GB.
   - **Problem (a) on 02:** the GPU is idle apart from perception's leftover inventory job, while gate (c) runs CPU-only. I asked the gates worker whether 4 capture lanes on 02 would breach gate (c)'s frozen host conditions; any doubt means wait for the gate (c) exit.
 - **03:47 UTC:** amendments 13 (whole-match queue) and 14 (vectorized non-clock qualification, `460e84aa…`, prepared and not launched) went to an independent review before A1 relies on their outputs: `clasher-v4-amendments-13-14-review-20261009-1` (Opus, high). The packing sweep's 2-lane phase measured 3.99 fps on 04; the 4/6/8-lane phases are pending.
+- **03:55 UTC: A13/A14 review** (`reviews/AMENDMENTS-13-14-REVIEW-20261009.md` `c6eeb4e6…`): both APPROVED WITH REQUIRED CHANGES. Production continues.
+  - A13 requirements:
+    - R13-1: make the 61 retained e06 tasks terminal.
+    - R13-2: an intent record before spawn; suspend rather than requeue when an output directory already exists.
+    - R13-3: re-capture at least 4 retained matches under load, including e01/708, and byte-compare.
+    - R13-4: verify every queue output independently.
+  - A14: add a raw-record mutation test. If it passes, vectorized output is allowed for record-only capture only, through a new worker that first reproduces e7/738, e15/748 and e01/708. Deciding, D4(b), timing, heldout and T6 stay on the original path.
+  - **A1 blocker found:** the frozen A12 admission and scoring files only read one directory per epoch in the old layout.
+    - **Decision:** preferred fix is a verified per-epoch assembler into the old layout, so the frozen code runs unchanged. Fallback is Amendment 15 plus a review.
