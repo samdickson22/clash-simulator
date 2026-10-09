@@ -196,3 +196,16 @@ NLL stays 0.27726436294161033. Conservative cumulative pipeline cost is
 5.574 GPU-hours, including staging and all 480 segments; final actual
 costs await completion. Evidence: `monitor-20261009T2132Z.json`.
 Temporary continuation remains enabled; 16 stays released.
+
+2026-10-09 21:43Z: Controller and all three fits remain healthy.
+Width 288: step 3963, 32,464,896 rows, 6397 loader-inclusive rows/s.
+Width 384: step 2865, 23,470,080 rows, 4619 loader-inclusive rows/s.
+Width 480: step 2174, 17,809,408 rows, 4707 loader-inclusive rows/s.
+Six processes per arm, peak PSS 41.47 GB, sampled GPU free memory
+≥30.8 GiB. No new OOM, stop, restart or scientific change. Width 480
+keeps micro1024/effective8192/cap0.78; original and failed artifacts retained.
+Wide quarter NLLs and kill decisions remain pending at 95,144,680 rows.
+The matched 192 control stays 0.27726436294161033. Conservative cumulative
+pipeline cost 6.084 GPU-hours includes staging and every 480 segment;
+final actual costs await completion. Evidence: `monitor-20261009T2142Z.json`.
+No trainer, config or data edits. Continuation remains enabled; 16 stays released.
