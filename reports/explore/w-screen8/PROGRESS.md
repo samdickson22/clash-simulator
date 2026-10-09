@@ -8,4 +8,4 @@ Native baseline `f9d3b454`: 47 tests; exact 1,000 games / 7,000 rollouts plus 1,
 
 03 only; nice 10 / SCHED_IDLE, setsid; peak sampled combined processes 58, own 54. Reporting CPU 29.05 core-hours. Cache/raw artifacts under `/mpac/sdicks02/jobs/clasher/w-screen8-20261009-r1`; no raw game logs committed. Initial zero-game smoke launcher classification corrected; final smoke/reporting exits 0. All lane simulation jobs exited (shutdown receipt).
 
-Aggregate report commit pending.
+Aggregate report committed/pushed as `d6f5c29f`. All requested work complete; default OFF retained.
