@@ -1299,3 +1299,8 @@ Also on the hub, but with copies elsewhere:
   - **09r4 was refused before launch** at 06:59:01Z: 1 external process plus a declared 16 exceeded 16. The external PID was nice 19 with 0.59 MB PSS and wasn't coordinator tooling; it was likely perception's own probe.
   - **Fix requested:** new leased controllers declare 15 (one slot of probe headroom) and/or a probe quiet window around each admission. The 09r4 retry uses a new label with no bypass.
   - The handoff watcher halted correctly. 15/13/14/08 keep capturing on the old services.
+- **07:10 UTC heartbeat.**
+  - **Gate (c) finished:** exit 0 at 06:54:07Z. My 12:30Z projection was wrong because I counted files, not games. The gates worker reports the results.
+  - **Decision:** 02 joins the capture queue now, with an intent-safe controller on the renewed services and a 150 GB budget.
+  - Capture is at 99% on 08/13/14/15. 04 is at 80% (vectorized benchmark). **09 is at 0%** pending the 09r4 retry.
+  - T11 s21 on 16 is at 73%. 06/07/11/18 are down.
