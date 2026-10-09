@@ -1,0 +1,173 @@
+{
+  "schema": "clasher.v4.amendment15-review-package.v2",
+  "created_utc": "2026-10-09T05:34:11.126774+00:00",
+  "decision": "REQUEST_DELTA_REVIEW_NOT_APPROVED",
+  "r1_held": true,
+  "r1_package": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/amendment15-review-package-r1.json",
+    "sha256": "deead347e33acfa509e11644fa95950605681c30756f24606e3ca2451280323f"
+  },
+  "review_response_to": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/reviews/AMENDMENT-15-REVIEW-20261009.md",
+    "sha256": "716989daae1a6825aa67b9e2b61fdca334f7c1dc9e665265f4f36492c290ff43"
+  },
+  "amendment": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/amendments/15-epoch-assembly-file-admission-20261009-r2.md",
+    "sha256": "2d32c0b4aa0adac98cdfcbd935da7e8dd5c240853eecfe6d8bc90fc083cba001"
+  },
+  "pin_delta": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/amendments/15-file-layer-pin-delta-20261009-r2.json",
+    "sha256": "fac7f864cc0abd3f18d57abc3db2698f03d20cb409f1c29551188a2894643a2c"
+  },
+  "changelog": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/amendments/15-CHANGELOG-r1-r2-20261009.md",
+    "sha256": "d35189017778ed7deae0f9b9d0a0857ce851575f3a417266f9a2073d9a2717b9"
+  },
+  "mechanical_source_delta": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-mechanical-source-delta-r2.json",
+    "sha256": "743aaf98f63b0925c6ecf45993f75d67ed5ff0ff5e6b653a58dc808b36cba7f5"
+  },
+  "snapshot": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/prepared/amendment15-review-r2",
+    "manifest": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/amendment15-review-snapshot-r2.json",
+      "sha256": "ae9cf92bd78e03082c38ab675e17e25a67e0bb494e168402a11d79f75a4e7547"
+    },
+    "files": 293
+  },
+  "tests": {
+    "receipt": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-final-tests-r2.json",
+      "sha256": "5ebb2e83b7f9e1564875399260c510f739c4761b65f8318bba60079d57ad1064"
+    },
+    "log": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-final-tests-r2.log",
+      "sha256": "16290b924494e545349fa991d1933af40e76376d42ffcc94b533020bc899d4a7"
+    },
+    "passed_executions": 186,
+    "expanded_suite_executions": 141,
+    "prerequisite_executions": 45,
+    "pythonpath_files": 380,
+    "runtime_tree": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-qualification-runtime-tree-r2.json",
+      "sha256": "64a0462fe1ce0e8622947d2c44100ebbbad90b24fa48e79830bde96bc5d9e1df"
+    }
+  },
+  "mutations": {
+    "result": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-mutations-r2.json",
+      "sha256": "29b261078686c0d1776c0250ba8415248c85e40014d3808774382bf1bd3bdb44"
+    },
+    "log": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-mutations-r2.log",
+      "sha256": "f1fd2eba592af04ad221223053c01d63fb8cd5aad1fa8bff3d4284e04c68ae87"
+    },
+    "non_equivalent_killed": 31,
+    "non_equivalent_total": 31,
+    "equivalent_excluded": [
+      "M32"
+    ],
+    "all_RC3_required_targets_killed": true
+  },
+  "retained_layout": {
+    "1": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-retained-layout-e1-proof-r2.json",
+      "sha256": "40a4d5728a0522420f163d869ccfa05299e40534db7833d94a2fef39e6d07c61",
+      "plan": {
+        "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-retained-layout-e1-plan-r2.json",
+        "sha256": "348db406fcb1040b3cc9b4719fc081aec008be6b6be468a64efd40b23f0123c9"
+      },
+      "matches": 64,
+      "frames": 106744,
+      "streams": 576
+    },
+    "2": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-retained-layout-e2-proof-r2.json",
+      "sha256": "b6b896e03749da660b605a0f568721f7b57b69404c6c96fea06bf8fb8fb5821c",
+      "plan": {
+        "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-retained-layout-e2-plan-r2.json",
+        "sha256": "bceccd4a3fec14ec763b49b4f87810dfdf13009811e1a1a14d7dd07224b69ac1"
+      },
+      "matches": 64,
+      "frames": 106744,
+      "streams": 576
+    },
+    "3": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-retained-layout-e3-proof-r2.json",
+      "sha256": "4ecdc562f7d6225fbf1bad68cb81723d2a0beec4b9e85aeeeb9f657fb65c1d13",
+      "plan": {
+        "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-retained-layout-e3-plan-r2.json",
+        "sha256": "1ffff084b5dca170e675b937fb416917ff6d5da72b549c019a2b5ac6c328567d"
+      },
+      "matches": 64,
+      "frames": 106744,
+      "streams": 576
+    }
+  },
+  "real_scorer": {
+    "proof": {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-real-scorer-proof-r2.json",
+      "sha256": "c22036277cc3189e2d71b14160588670178d20a7895faf119b68d1dd4b9d21db"
+    },
+    "epoch": 3,
+    "episode": "v4-phase-a-1975100738",
+    "frames": 444,
+    "branches": 9,
+    "per_match_equal": true,
+    "micro_equal": true,
+    "limitation": "Single real validation match, all nine branches, authentic retained_source and truth; fit/all24 assembly authorization bypassed ONLY in isolated test adapters. Not formal body population, seal or bound."
+  },
+  "retained_source_dryruns": [
+    {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-retained-sources-proof-r2.json",
+      "sha256": "14c938c1a71f7fe64bf73f9c248a6c70561062acf151c2b4ec6b90b0ccc49187"
+    },
+    {
+      "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a15-retained-source02-proof-r2.json",
+      "sha256": "9006d9e69814ad44daff72f2b5c3bf73d574a3f340160390b489dce96c59e883"
+    }
+  ],
+  "cost": {
+    "compact_provenance_recheck_seconds": [
+      0.3922197479987517,
+      0.43466328899376094,
+      0.43845949799288064
+    ],
+    "full_reauth_seconds": [
+      4.826894419034943,
+      4.7156246670056134,
+      4.70145492895972
+    ],
+    "initial_full_seconds": 4.896919124061242,
+    "scope": "One retained real match, not full epoch/A2; record reads still required per score"
+  },
+  "relocation": {
+    "destinations": [
+      "127x03:/mpac/sdicks02/v4-archive/verified-capture-20261009-r1/",
+      "127x04:/mpac/sdicks02/repos/clasher-v4-cache/verified-match-retention-20261009-r1/"
+    ],
+    "explicit_pins_required": true,
+    "full_chain_recomputed": true,
+    "no_fallback": true
+  },
+  "frozen_a12_and_original_files": {
+    "amendments/12-measured-dominance-20261009.md": "cc2357df357b889a306cfc3d472048aae7234374e3463c7137cdef231ace6bf2",
+    "amendments/12-measured-dominance-draft-pins.json": "60f0cb4eddd6885218bd2de16d54f73547d6cf542d241c755c9181f7490968c5",
+    "amendments/12-FREEZE-RECORD-20261009.json": "bd5b76433bf7eda6908ffe77418af3ae5dee27d87362ebb47d86c5721b17e7bc",
+    "record_capture_admission_v4.py": "9d64676344248d92ec9f614da5e565fe60adc6ded73079fbc66c610736eb3241",
+    "clock_free_body_score_v4.py": "475dcba9d17adc757fa5115cb5d6af83a9345fd390233aacdeb71e38575cc7ba",
+    "dominance_orchestration_v4.py": "74f8faff31d20a05c1bfde8db77bf3a1c94ac717ee43e55ac947a96bf20e177a"
+  },
+  "execution_blockers": [
+    "Independent r2 delta review/approval and freeze, including non-weakening review of admission reuse",
+    "All 953 verified queue outputs plus61terminal retained tasks, unsuspended closed immutable queue",
+    "R13-3 four whole-match production-load audits with RC2 retained-original binding",
+    "All24 recomputed complete assembly pins and pinned repository-shaped execution snapshot",
+    "Coordinator A1 approval BEFORE real body seal; actual A2 cost only after seal",
+    "B separate eleven-precondition package/approval and file-access integration remain blocked"
+  ],
+  "body_seal_written": false,
+  "bounds_computed": false,
+  "selection_admitted": false,
+  "heldout_opened": false
+}

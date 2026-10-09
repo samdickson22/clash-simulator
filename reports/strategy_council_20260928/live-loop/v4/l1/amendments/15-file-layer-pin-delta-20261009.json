@@ -1,0 +1,29 @@
+{
+  "schema": "clasher.v4.amendment15-file-layer-pin-delta.v1",
+  "frozen_a12_pins_sha256": "60f0cb4eddd6885218bd2de16d54f73547d6cf542d241c755c9181f7490968c5",
+  "amendment_sha256": "4c7fd730bde8b3cd2c6efee8064e04538ebd5814d6e03577443fd60e367cb41a",
+  "scientific_semantics_changed": false,
+  "timing_admitted": false,
+  "new_files_sha256": {
+    "epoch_assembly_v4.py": "274e35a0963f86693dc85a5ddd6bd83549167395e0972f02dacf4acfe62ed949",
+    "epoch_assembly_admission_v4.py": "3cc7870a829f7079624182f854b5c8ae25bf23e855c878825663c1e99939defd",
+    "assemble_epoch_manifest_v4.py": "cea3a7dd82c75d57dc3ea625d5f7a502f1fdad5e1c4d423000af5d6eb2694582",
+    "clock_free_body_score_assembly_v4.py": "b007ed4837b6516581cf67cc521f09610f13452c69eb251c7131b747c664cb4b",
+    "dominance_orchestration_assembly_v4.py": "e0445d07f49be0d3b81144036e248d82848259520f2f674efd4923fab4012702",
+    "queue_output_audit_v4.py": "b8ff7eee93d950d593f3df7cf0cdbd7bdc48c61e04a216ee952e5c7ad1ec73bf",
+    "queue_audit_io_v4.py": "a88830161826502c5c7412c81d943d09b6a9ef1e71950d6e1a58429d7a4fdadb",
+    "verify_retained_layout_v4.py": "ac8383dc2968df0849f7564b4f45e76ea2554be6f29c2330eb51a93c6eb18232"
+  },
+  "unchanged_original_files_sha256": {
+    "record_capture_admission_v4.py": "9d64676344248d92ec9f614da5e565fe60adc6ded73079fbc66c610736eb3241",
+    "clock_free_body_score_v4.py": "475dcba9d17adc757fa5115cb5d6af83a9345fd390233aacdeb71e38575cc7ba",
+    "dominance_orchestration_v4.py": "74f8faff31d20a05c1bfde8db77bf3a1c94ac717ee43e55ac947a96bf20e177a"
+  },
+  "test_files_sha256": {
+    "test_epoch_assembly_v4.py": "7dfc91f3ffee283e8f8f854495257f38747161c91251770784f38862f2a5a275",
+    "test_queue_output_audit_v4.py": "ab74f0372226d5602fd9be269f639f5d93a6bb4089de6be97d0788d903c9711a",
+    "test_match_queue_intent_v4.py": "40a8e71d965d0c9c38b4ab514c75eea91f63bddf7173be4981f70b8eee73cc5f",
+    "test_match_queue_retained_v4.py": "ff921c6a545ea6814b2e441c6566e577bc923df26cb04d9eb5837c827fb2609e"
+  },
+  "scope": "New explicit per-epoch multi-producer provenance and file-access adapters for A1/A2 only. Original files remain unchanged; no deciding or heldout admission."
+}
