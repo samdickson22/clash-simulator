@@ -1,12 +1,12 @@
 {
   "schema": "clasher.exit-r1.student-screen-ops.v1",
-  "utc": "2026-10-09T19:41:10.511194+00:00",
+  "utc": "2026-10-09T19:53:09.244914+00:00",
   "frozen_student_code_commit": "f98d8926fe38c07710835fca1116d50be361b2c6",
   "ops_files": {
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/README.md": "221f5e9bbdc4b4b0f6a6114a7e16c4b444d633c2760f1f3683b86df276df0b9d",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/check_ready.py": "c2d2c5007a506f7096473b9a8fdd883aee016ba264ab2c6a90b993d356263790",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/finish_prepare.py": "c8ea6072240f34e0525c51d9f0e5f4c2f8431ad4101cc4a0fa32c556a52c5e5f",
-    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/fit_runtime.py": "83ddc121617b2f7784f7e525d1aec0b0fe128b2cfd797e46be02d7bf8a01b91a",
+    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/fit_runtime.py": "8227affb47ffa84a7d04dba6641f8043e38e9d871528d7d761d8e49cc4484184",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/pool.py": "3af553fba2d15d54556b6e7268d022e81b1c09427ec4ae80cbcf7ab137e55af0",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/prepare_fit.sh": "8c95b37624bea6865997a1718b840ccac08512a94c41ba76a3e62b58ce9aa829",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/report_controller.py": "d00b7f131ed2ef6257f4bb5790d0e4a7d988264f717049699f27a0db321bcd05",
@@ -15,7 +15,7 @@
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/stage_pack.sh": "c5d8e26fe7bfb40878f2444b9404da2aa4165e43e4abd8fd2300bdda16756066",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/supplement.py": "9d72bd86e9d49a79f22c9cb249e5494af06d4b02dff04e661feccdfcc905349d",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/transfer_corpus.py": "d514cc06bc1173a044718b630e41f7afa1847990c5e49b06eccf369677942d3d",
-    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/verify_corpus.py": "2339b8e58e34bfe9ffc922992059335fa7b7a2c12cc32150dd2d2aa03f487844",
+    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/verify_corpus.py": "408ae4eccdcec03ef019bc55e990a0f83012b2f175afc36783b699d851845ddd",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/verify_human.py": "3fc3c4f2439003ee83647394026f6bad598aac34c2d1a338742acc643d5e8d0a"
   },
   "tests": "Frozen 8 tests PASS on03, including real two-game pack and SHA rejection; no skips.",
@@ -40,6 +40,8 @@
   "technical_setup_retries": [
     "Self-SSH on01 replaced with local copy; no fit started.",
     "Generation source snapshot predates B4: overlaid the unchanged frozen student package before restarting pack.",
-    "Task venv exposes existing qualified GPU site-packages through task-local .pth; shared environments unchanged."
+    "Task venv exposes existing qualified GPU site-packages through task-local .pth; shared environments unchanged.",
+    "Packed-file verifier uses Path.relative_to for destination Python 3.8 compatibility; all destination hashes rerun before fitting.",
+    "Fit instrumentation creates its files only after the frozen trainer fresh-output check; corrected before any fit launch."
   ]
 }

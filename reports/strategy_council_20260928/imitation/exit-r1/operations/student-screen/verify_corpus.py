@@ -13,7 +13,7 @@ seal=json.loads((root/'manifest.json').read_text())
 assert seal['complete'] and seal['packed'] and seal['rows']==38738534
 total=0
 for name,digest in seal['files'].items():
-    p=(root/name).resolve();assert p.is_relative_to(root.resolve())
+    p=(root/name).resolve();p.relative_to(root.resolve())
     assert sha(p)==digest,name
     total+=p.stat().st_size
 receipt=dict(corpus_manifest_sha256=expected,rows=seal['rows'],

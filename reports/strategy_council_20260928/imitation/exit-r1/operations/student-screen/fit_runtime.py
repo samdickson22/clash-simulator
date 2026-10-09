@@ -15,12 +15,16 @@ from imitation.t5.resources import release_pages
 from imitation.exit_r1 import teacher_batch
 
 out = Path(sys.argv[sys.argv.index('--output')+1])
-out.mkdir(parents=True, exist_ok=True)
 started = time.monotonic()
-log = (out/'timing.jsonl').open('a', buffering=1)
+log = None
 original_eligible, original_human = train.eligible, train.human_batch
 original_teacher, original_step = teacher_batch.combined_batch, train.step
 def eligible(store, *args):
+    global log
+    if log is None:
+        # The frozen trainer first requires a fresh output directory.
+        log = (out/'timing.jsonl').open('a', buffering=1)
+        (out/'runtime.json').write_text(json.dumps(runtime, indent=2)+'\n')
     result = original_eligible(store, *args)
     release_pages(store)
     return result
@@ -57,12 +61,12 @@ runtime = dict(host=socket.gethostname(), pid=os.getpid(),
     numpy=np.__version__, torch=torch.__version__, python=sys.version,
     nice=os.getpriority(os.PRIO_PROCESS,0), affinity=sorted(os.sched_getaffinity(0)),
     instrumentation='T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing')
-(out/'runtime.json').write_text(json.dumps(runtime, indent=2)+'\n')
 status = 'failed'
 try:
     train.main()
     status = 'returned'
 finally:
+    out.mkdir(parents=True, exist_ok=True)
     usage = resource.getrusage(resource.RUSAGE_SELF)
     (out/'segment.json').write_text(json.dumps(dict(**runtime,status=status,
         ended_at=datetime.datetime.now(datetime.timezone.utc).isoformat(),
