@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-09T20:43:51.413146+00:00",
+  "before_any_480_dev": true,
+  "coordinator_authorized_at": "2026-10-09T20:42Z",
+  "original_scientific_freeze_commit": "841c44b0",
+  "width": 480,
+  "microbatch_before": 2048,
+  "microbatch_after": 1024,
+  "effective_batch": 8192,
+  "allocator_fraction": 0.78,
+  "new_config_sha256": "2782e7a92f6f97de910748b719d39b20aeecd05be800f5fb3c74a7046c39952b",
+  "new_freeze_sha256": "d0150e579a1c502d3ddb4f4fa817501b3864d6eb9f2b003cc95f05b81986a563",
+  "adapter_sha256": "e82ca22fe1eb5f3df3dd2ed1b2bfcac48182212d4cfdc417a8314795e7b0e174",
+  "gpu_entry_sha256": "d1dc11aea1078d047239122962ec1ad4c8d885dbcaee2c8b18e01f7f6d75a8a2",
+  "resume_step": 175,
+  "resume_rows": 1433600,
+  "resume_checkpoint_sha256": "91c66427e0c23ce7d2d2d519a7e2dcffc8a4b449d33219adf8f3e5b86f29ebba",
+  "new_label": "width480-v3",
+  "fallback": "infeasible under lease limits if micro1024 cannot fit; no further recipe changes"
+}

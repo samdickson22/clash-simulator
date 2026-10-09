@@ -107,3 +107,12 @@ are due before95,144,680rows. Control NLL0.27726436294161033 remains sealed.
 Conservative cumulative pipeline cost2.625hours includes staging and both480
 segments; actual final per-arm GPU wall costs remain pending completion.
 Compact evidence: `monitor-20261009T2032Z.json`. Monitoring continues.
+
+2026-10-09 20:43Z: Width480-v2 failed CUDA OOM after step598; full FFN-dropout
+traceback confirms a1.41GiB request exceeded allocator0.78 allowance despite
+9.68GiBphysicalfree. This is a technical failure, not a scientific kill. Latest
+durable checkpoint is175 /1,433,600rows; failed176–598work will be replayed.
+Coordinator explicitly authorizes micro1024 with batch8192; dated amendment,
+new config/freeze and full failure receipt are being committed before any480dev
+outcome or relaunch. If that cannot fit,480is infeasible under lease limits.
+288/384continue healthy; controller and cumulative accounting remain active.

@@ -1,0 +1,60 @@
+{
+  "at": "2026-10-09T20:43:21.539921+00:00",
+  "failure": {
+    "label": "width480-v2",
+    "host": "127x15",
+    "started_at": "2026-10-09T20:25:30.095659+00:00",
+    "supervisor_pid": 568625,
+    "command": [
+      "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+      "-B",
+      "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/ops/gpu_entry.py",
+      "--config",
+      "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/ops/configs/width-480.json",
+      "--freeze",
+      "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/ops/freeze.json",
+      "--source",
+      "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/source",
+      "--store",
+      "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/store",
+      "--inputs",
+      "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/inputs",
+      "--output",
+      "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/runs/width480",
+      "--resume",
+      "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/runs/width480/step-00000175.pt",
+      "--resume-sha256",
+      "91c66427e0c23ce7d2d2d519a7e2dcffc8a4b449d33219adf8f3e5b86f29ebba"
+    ],
+    "pid": 568704,
+    "exit_code": 1,
+    "status": "stopped",
+    "stop_reason": null,
+    "ended_at": "2026-10-09T20:39:24.571215+00:00",
+    "wall_seconds": 834.4755596208852,
+    "peaks": {
+      "processes": 6,
+      "pss_bytes": 34997439488
+    }
+  },
+  "full_traceback": "Traceback (most recent call last):\n  File \"/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/ops/gpu_entry.py\", line 29, in <module>\n    main()\n  File \"/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/ops/gpu_entry.py\", line 25, in main\n    scan()\n  File \"/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/ops/train_scan.py\", line 195, in main\n    q.main()\n  File \"/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/source/imitation/model/train.py\", line 200, in main\n    result = optimizer_step(model, optimizer, b, y, args.microbatch, device)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/ops/train_scan.py\", line 111, in step\n    return original_step(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/ops/gpu_entry.py\", line 20, in bounded_step\n    result = step(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/source/imitation/model/train.py\", line 65, in optimizer_step\n    output = model(bb, teacher, tile_rows)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1751, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1762, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/source/imitation/model/network.py\", line 122, in forward\n    x = self.encode(b)\n        ^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/source/imitation/model/network.py\", line 117, in encode\n    x = layer(x, valid)\n        ^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1751, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1762, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/source/imitation/model/network.py\", line 61, in forward\n    return x + self.drop(self.ffn(self.n2(x)))\n                         ^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1751, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1762, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/lib/python3.12/site-packages/torch/nn/modules/container.py\", line 240, in forward\n    input = module(input)\n            ^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1751, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/lib/python3.12/site-packages/torch/nn/modules/module.py\", line 1762, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/lib/python3.12/site-packages/torch/nn/modules/dropout.py\", line 70, in forward\n    return F.dropout(input, self.p, self.training, self.inplace)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/lib/python3.12/site-packages/torch/nn/functional.py\", line 1425, in dropout\n    _VF.dropout_(input, p, training) if inplace else _VF.dropout(input, p, training)\n                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntorch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.41 GiB. GPU 0 has a total capacity of 47.54 GiB of which 9.68 GiB is free. Including non-PyTorch memory, this process has 37.72 GiB memory in use. 37.08 GiB allowed; Of the allocated memory 34.35 GiB is allocated by PyTorch, and 2.15 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)\n",
+  "checkpoint_files": [
+    {
+      "path": "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/runs/width480/step-00000175.pt",
+      "bytes": 203595602,
+      "sha256": "91c66427e0c23ce7d2d2d519a7e2dcffc8a4b449d33219adf8f3e5b86f29ebba"
+    }
+  ],
+  "old_pid_live": {
+    "568625": false,
+    "568704": false,
+    "571088": false,
+    "571089": false,
+    "571090": false,
+    "571091": false
+  },
+  "gpu": "48682, 48538",
+  "gpu_compute_apps": "",
+  "quarter_exists": false,
+  "kill_exists": false
+}
