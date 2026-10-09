@@ -1,0 +1,14 @@
+{
+ "schema": "clasher.exit-r1.student-screen-freeze.v1",
+ "decision": "FROZEN",
+ "utc": "2026-10-09T19:11:59+00:00",
+ "decided_by": "coordinator (owner mode)",
+ "plan": "reports/strategy_council_20260928/imitation/exit-r1/STUDENT-SCREEN-PLAN.md",
+ "plan_sha256": "d98fdd74f2c59a23806aae1cfd85852016796d40f6d8d71e2ed6b3c9171b6138",
+ "seed_audit": "reports/strategy_council_20260928/imitation/exit-r1/receipts/student-seed-audit.json",
+ "seed_audit_sha256": "3e2764ad69a2a1c05ddc93dc27770261856517e231341eb1881e1b0a7e5c0986",
+ "init_choice": "EXPLICIT v1: released main-2026100802 step 22552, the sealed release that passed gates (b) and (c). v2 is not selected yet (T11 finalization was blocked), and the plan allows an explicit v1 init.",
+ "teacher_corpus": "round-1 W-screen8 teacher generation: 6,009,681 root decisions / 38,738,534 rows, stopped 2026-10-09T14:38:39Z per fleet controller progress.json. The packed corpus manifest SHA is to be pinned before fitting.",
+ "seed_audit_limitation": "02/07/18 not directly inventoried; covered by committed formula ranges and archive/mirror supplements, as disclosed in the receipt.",
+ "authorizes": "Fitting of S-mix / S-teacher / S-human and the frozen reporting games after the corpus manifest SHA is pinned. Exploration lane only; no live/proposer replacement."
+}
