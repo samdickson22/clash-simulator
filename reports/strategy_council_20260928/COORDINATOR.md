@@ -880,3 +880,9 @@ Also on the hub, but with copies elsewhere:
   - **Approved bytes:** gate-b PREREG `7524a4e1…`, gate-c PREREG `8d565be1…`, snapshot `016b42fa…` (hashes verified on 05).
   - **Registered steps:** F-1 launch-ledger delta disjoint from the seed range; F-2 review in evidence, plus approval.json with exact hashes; F-3 lapse if 07 returns or a pinned byte changes; L-1 fresh ≥300 s quiet-host capture on 03 before launch. The optional monitor extension is declined.
   - **Launch:** gate (b) on 03@16 (~1.8–2.5 h), gate (c) on 02@16.
+- **00:09 UTC 2026-10-09 heartbeat (actual time; my message labels since ~22:30Z ran up to ~1 h fast, so trust receipt times). Utilization: 9/10 reachable GPUs busy.**
+  - **GPU:** 01 87% (T11 seed 22, up from 30% after the cache offload), 02 95%, 04 99%, 09 85%, 13 98%, 14 87%, 15 99%, 16 84%.
+  - **Problems:**
+    - **08 at 41%:** the GRU was starved by ~60 exploration sim workers; cut to ≤16 + ≤12.
+    - **127x11 offline again** (no route). Its perception passes and exploration shards were reassigned, and roader was told.
+  - **Down:** 06/07/11/18. 03 is idle pending the gate (b) launch (freeze approved). No reclaims.
