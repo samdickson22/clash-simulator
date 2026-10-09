@@ -45,3 +45,16 @@ allguardcapsPASS. Earlyloader-inclusive2,226rows/s includes startup/sampling and
 is not the settled rate. Threewidecopiesremainactive with sixprocesses/<0.5GBPSS
 each. NoquarterNLL orkilldecisionyet. `first-fit-receipt.json` records this sample.
 The temporary continuation owns the remaining originaltask; results report pending.
+
+2026-10-09 20:02Z: All four original pipelines and the sole controller remain
+healthy. Width 192 reached step 11,157 / 91,392,744 rows at 4,624 loader-inclusive
+rows/s. Peak borrower PSS remains below 37.5 GB, with more than 19 GiB GPU free
+at the sample. Each wide receiver has approximately 124.3 GB present; copies
+remain active at the frozen rate limit, six processes and below 0.5 GB PSS.
+
+Control replay validation PASS: steps 11,001, 11,020, 11,050, 11,100 and 11,150
+are bit-identical to the original T11 log for rows, cursor, all six loss terms,
+gradient norm and learning rate. This directly validates the unchanged control
+trajectory despite allocator cleanup and loader parallelism. Evidence is in
+`control-replay-trajectory.json`. No capacity dev-NLL or kill decision yet.
+No jobs restarted; scientific freeze and active source pins unchanged.

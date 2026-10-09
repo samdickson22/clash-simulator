@@ -1,0 +1,86 @@
+{
+  "passed": true,
+  "comparison": "original versus replay: identical same-step rows/cursor, six loss terms, gradient norm and LR",
+  "steps": [
+    {
+      "step": 11001,
+      "exact": true,
+      "deltas": {
+        "rows": 0,
+        "cursor": 0,
+        "loss": 0.0,
+        "gate": 0.0,
+        "card": 0.0,
+        "tile": 0.0,
+        "intent_card": 0.0,
+        "hazard": 0.0,
+        "grad_norm": 0.0,
+        "lr": 0.0
+      }
+    },
+    {
+      "step": 11020,
+      "exact": true,
+      "deltas": {
+        "rows": 0,
+        "cursor": 0,
+        "loss": 0.0,
+        "gate": 0.0,
+        "card": 0.0,
+        "tile": 0.0,
+        "intent_card": 0.0,
+        "hazard": 0.0,
+        "grad_norm": 0.0,
+        "lr": 0.0
+      }
+    },
+    {
+      "step": 11050,
+      "exact": true,
+      "deltas": {
+        "rows": 0,
+        "cursor": 0,
+        "loss": 0.0,
+        "gate": 0.0,
+        "card": 0.0,
+        "tile": 0.0,
+        "intent_card": 0.0,
+        "hazard": 0.0,
+        "grad_norm": 0.0,
+        "lr": 0.0
+      }
+    },
+    {
+      "step": 11100,
+      "exact": true,
+      "deltas": {
+        "rows": 0,
+        "cursor": 0,
+        "loss": 0.0,
+        "gate": 0.0,
+        "card": 0.0,
+        "tile": 0.0,
+        "intent_card": 0.0,
+        "hazard": 0.0,
+        "grad_norm": 0.0,
+        "lr": 0.0
+      }
+    },
+    {
+      "step": 11150,
+      "exact": true,
+      "deltas": {
+        "rows": 0,
+        "cursor": 0,
+        "loss": 0.0,
+        "gate": 0.0,
+        "card": 0.0,
+        "tile": 0.0,
+        "intent_card": 0.0,
+        "hazard": 0.0,
+        "grad_norm": 0.0,
+        "lr": 0.0
+      }
+    }
+  ]
+}
