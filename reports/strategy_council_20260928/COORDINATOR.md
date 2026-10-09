@@ -1320,3 +1320,12 @@ Also on the hub, but with copies elsewhere:
   - **Expected effect:** the remaining capture drops from ~15 h to ~1–2 h, moving A1 up by most of a day.
   - Status: 04 is restored to original 8 lanes (04r3, renewed services); 02r3 runs 8 lanes at 99%; 09 runs 6 normal lanes plus the R13 audits; 13 and 15 are draining for the handoff.
 - **07:21 UTC:** concurrency exception approved: 02 drains now, as a third concurrent drain with 13/15, for the three A14 vectorized qualification cells. 02 then goes back to the original 8 lanes on renewed services. A16 drafting is delegated by perception in parallel.
+- **07:43 UTC:**
+  - Cache handoffs: 04, 09, 13 and 14 are renewed; 15 and 08 are still draining.
+  - **The 09 R13 audit PASSED** (`1942e126`).
+  - Queue: 192 verified, 38 claimed, 722 pending.
+  - **Decision for the vectorized switch**, once A16 is frozen, the qualifications pass and the handoffs are done:
+    - concurrent drains on all eligible hosts, with immediate vectorized replacement;
+    - 15 waits until its R13 audit passes;
+    - original matches with long tails (>20 min left) may be voided and requeued through the tested failure-recovery path, with receipts and a conservation check.
+  - A16: 157 test executions pass; it's waiting on the qualification proof.
