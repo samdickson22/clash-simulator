@@ -1,0 +1,15 @@
+{
+  "freeze_commit": "841c44b0",
+  "before_real_fitting": true,
+  "changes": "Operational guard, LAN staging and allocator cache release only; no source/config changes.",
+  "files": {
+    "stage.py": "3b1ec067d995961875906a5b890c677b14a16c80d101866a7d786e6c23809b7e",
+    "supervise.py": "5689c86767c1bfce0efe5ccc4042e34694c18b7d134f41dbaabfe62d7a6959f2",
+    "gpu_entry.py": "0263ea4d888be01cdb53e07f951f97de7799767054d725e4cba45649664aece5"
+  },
+  "copy_bwlimit_KiBps": 153600,
+  "copy_source_receipt": "127x04:/mpac/sdicks02/repos/clasher-t11-home-v1/operations/home-stage-127x04.json",
+  "student_worker_permission": "Read-only pulls from04maystartnow; stagger or rate-limit (message19:44:55Z).",
+  "allocator_hygiene": "empty_cache before/afteroptimizerstep; no math or RNG change; preserve8GiBGPUheadroom",
+  "resource_watch_seconds": 10
+}
