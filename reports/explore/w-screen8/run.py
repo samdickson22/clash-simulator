@@ -43,7 +43,8 @@ def make_player(seed, arm):
     p = PublicPlanner(R, PRIOR, seed)
     p.core = planner_class(DelayAwarePlanner)(R.builder, R.bots, backend='native',
         seed=seed+1, native=R.native, native_config=R.config, catalog=CAT,
-        config=C56SearchConfig(threads=1, horizon=320 if arm == 'H16' else 160),
+        config=C56SearchConfig(threads=1, horizon=320 if arm == 'H16' else 160,
+                              wait_screen8=False),  # Frozen wrapper adds W itself.
         command_delay=27, delay_aware=True, symmetric_opponent=True,
         opponent_delay=27, opponent_interval=10, opponent_capacity=1,
         max_outstanding=1, arm='W' if arm == 'S8' else arm, variant='screen8' if arm == 'S8' else 'full')

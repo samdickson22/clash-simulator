@@ -1,4 +1,4 @@
-"""Default-off W adapter shared by native S6 teachers and live public roots."""
+"""W adapter: native offline default ON; live public-root default OFF."""
 import time
 
 WAIT = 2304

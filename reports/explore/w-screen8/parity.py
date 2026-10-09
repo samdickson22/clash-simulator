@@ -16,7 +16,7 @@ import run
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--mode',choices=['off','on'],required=True)
+    p=argparse.ArgumentParser();p.add_argument('--mode',choices=['off','on','default'],required=True)
     p.add_argument('--corpus',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     a=p.parse_args();run.initialize();os.sched_setaffinity(0,{60})
     from delay import DelayAwarePlanner
@@ -29,10 +29,7 @@ def main():
     for row in rows:
         modes=('d0','d27') if a.mode=='off' else ('d27',)
         for mode in modes:
-            config=C56SearchConfig(threads=1)
-            if a.mode=='on':
-                from dataclasses import replace
-                config=replace(config,wait_screen8=True)
+            config=C56SearchConfig(threads=1,wait_screen8=a.mode!='off')
             cls=C56RolloutPlanner if mode=='d0' else DelayAwarePlanner
             kw=dict(backend='native',seed=row['seed']+100001,native=run.R.native,native_config=run.R.config,config=config)
             if mode=='d27':kw.update(command_delay=27,delay_aware=True)
@@ -41,18 +38,32 @@ def main():
             info=copy.deepcopy(row['info']);core.info=info;core.costs=run.R.costs
             t=time.perf_counter();cpu=time.process_time()
             candidates,mask=core.candidates(info.packet);candidates=[x for x in candidates if x!=2305]
-            expected=row['candidates'] if a.mode=='on' else [x for x in row['candidates'] if x<2400]
+            expected=row['candidates'] if a.mode!='off' else [x for x in row['candidates'] if x<2400]
             assert candidates==expected,(row['id'],candidates,expected)
             rng=np.random.default_rng();rng.bit_generator.state=copy.deepcopy(row['root_rng_state'])
             root=run.R.root(info,row['opponent'],rng)
             assert root.digest()==row['root_digest']
             choice=core.score_candidates(root,info.seat,candidates,trace=a.mode=='off')
             elapsed=(time.perf_counter()-t)*1000;cpu_ms=(time.process_time()-cpu)*1000
-            if a.mode=='on':
+            if a.mode!='off':
                 ref=refs[row['id']];kept=[(x,v) for x,v in zip(candidates,core.last['scores']) if v is not None]
                 assert choice==ref['action'],(row['id'],choice,ref['action'])
                 assert [x for x,v in kept]==ref['candidates'],row['id']
                 assert [v for x,v in kept]==ref['scores'],row['id']
+                if a.mode=='default':
+                    # Omit config entirely: exercise both inherited S6 and bare C56 defaults.
+                    implicit_kw={k:v for k,v in kw.items() if k!='config'}
+                    for default_cls in (cls,C56RolloutPlanner):
+                        constructor_kw=implicit_kw if default_cls is cls else {
+                            k:v for k,v in implicit_kw.items() if k not in ('command_delay','delay_aware')}
+                        implicit=default_cls(run.R.builder,run.R.bots,**constructor_kw)
+                        assert implicit.config.wait_screen8 is True
+                        implicit.rng.bit_generator.state=copy.deepcopy(row['candidate_rng_state'])
+                        implicit.info=copy.deepcopy(row['info']);implicit.costs=run.R.costs
+                        actual,_=implicit.candidates(implicit.info.packet)
+                        assert actual==candidates,row['id']
+                        assert implicit.score_candidates(root,info.seat,actual)==choice,row['id']
+                        assert implicit.last==core.last,row['id']
                 # Deadline zero admits no partial/late candidate and falls back to WAIT.
                 fallback=core.score_candidates(root,info.seat,candidates,deadline=time.monotonic()-1)
                 assert fallback==2304 and all(v is None for v in core.last['scores'])

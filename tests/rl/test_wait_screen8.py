@@ -30,8 +30,9 @@ def planner(enabled=True):
     return p
 
 
-def test_default_off_requires_explicit_boolean():
-    assert C56SearchConfig().wait_screen8 is False
+def test_offline_default_on_keeps_explicit_off_and_requires_boolean():
+    assert C56SearchConfig().wait_screen8 is True
+    assert C56SearchConfig(wait_screen8=False).wait_screen8 is False
     for invalid in ('yes',1,None):
         with pytest.raises(ValueError):C56SearchConfig(wait_screen8=invalid)
 
@@ -104,3 +105,36 @@ def test_live_opt_in_loads_native_before_resource_initialization(monkeypatch):
     monkeypatch.setattr(wait_screen8,'load_native',select)
     with pytest.raises(Selected):
         RustPlanner(dict(wait_screen8=True,wait_screen8_native_dir='/versioned/native'))
+
+
+def test_live_default_does_not_load_screen8_native(monkeypatch):
+    from clasher.rl import wait_screen8
+    from clasher.live import decision
+    class ResourcesReached(Exception):pass
+    monkeypatch.setattr(wait_screen8, 'load_native',
+                        lambda *args:pytest.fail('live default must remain OFF'))
+    def stop_at_resources(*args):raise ResourcesReached
+    monkeypatch.setattr(decision, 'module', stop_at_resources)
+    with pytest.raises(ResourcesReached):RustPlanner({})
+
+
+def test_live_default_passes_explicit_off_to_every_core(monkeypatch):
+    from clasher.live import decision, tower_model
+    resources=SimpleNamespace(builder=object(), bots={}, native=object(), config={})
+    packet=SimpleNamespace(PacketBuilder=lambda builder:object(),model_hypothesis=lambda p:p)
+    def module(name,path):
+        if name=='clasher_live_fair_player':return SimpleNamespace(Resources=lambda:resources)
+        if name=='clasher_live_packet_builder':return packet
+        return SimpleNamespace()
+    monkeypatch.setattr(decision,'module',module)
+    monkeypatch.setattr(tower_model,'tower_packet_builder',lambda cls,**kwargs:cls)
+    monkeypatch.setattr(decision,'planner_timing',lambda config:('native',None,{},27))
+    cores=[]
+    def core(*args,**kwargs):
+        cores.append(kwargs['config']);return SimpleNamespace()
+    monkeypatch.setattr(decision,'delay_module',lambda:SimpleNamespace(DelayAwarePlanner=core))
+    p=RustPlanner({})
+    try:
+        assert p.wait_screen8 is False and len(cores)==4
+        assert all(c.wait_screen8 is False for c in cores)
+    finally:p.close()

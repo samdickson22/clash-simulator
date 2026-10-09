@@ -1,0 +1,2019 @@
+{
+  "hosts": [
+    {
+      "host": "127x01",
+      "utc": "2026-10-09T05:00:38.334703+00:00",
+      "checkout_native_mappings": 0,
+      "process_groups": [
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "bash",
+          "config_paths": {},
+          "pids": [
+            516161,
+            1119909
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/usr/bin/time",
+          "config_paths": {},
+          "pids": [
+            516178,
+            1119921
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "bash",
+          "config_paths": {},
+          "pids": [
+            516179
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-t11-home-v1/source",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-t11-home-v1/source",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-t11-home-v1/operations/home2237-v1/loader_adapter_home2237.py",
+          "config_paths": {
+            "--operational-freeze": "/mpac/sdicks02/repos/clasher-t11-home-v1/operations/home2237-v1/freeze.json"
+          },
+          "pids": [
+            1119922,
+            1440892,
+            1440893,
+            1440917,
+            1440920,
+            1440925,
+            1440926
+          ]
+        }
+      ]
+    },
+    {
+      "host": "127x02",
+      "utc": "2026-10-09T04:59:32.129333+00:00",
+      "checkout_native_mappings": 0,
+      "process_groups": [
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation_cache_service_offload_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation-cache-offload-plan-r2.json"
+          },
+          "pids": [
+            422134
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation_cache_service_offload_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation-cache-offload-plan-r2.json"
+          },
+          "pids": [
+            422146
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation_cache_service_offload_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation-cache-offload-plan-r2.json"
+          },
+          "pids": [
+            422147
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/operations/run_host.py",
+          "config_paths": {
+            "--manifest": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/manifest.json",
+            "--snapshot": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+            "--runtime": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "pids": [
+            530957
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/operations/run_host.py",
+          "config_paths": {
+            "--manifest": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/manifest.json",
+            "--snapshot": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+            "--runtime": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "pids": [
+            530969
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/src:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/engine-rs",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/operations/run_host.py",
+          "config_paths": {
+            "--manifest": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/manifest.json",
+            "--snapshot": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+            "--runtime": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "pids": [
+            530970
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/src:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/engine-rs",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+          "config_paths": {
+            "--manifest": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/manifest.json"
+          },
+          "pids": [
+            531066,
+            531067,
+            531068,
+            531069,
+            531070,
+            531071,
+            531072,
+            531073,
+            531074,
+            531075,
+            531076,
+            531077,
+            531080,
+            531081,
+            531082,
+            531083
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/src:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/engine-rs",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+          "config_paths": {},
+          "pids": [
+            1503329,
+            1513892,
+            1518149,
+            1519684,
+            1520920,
+            1523541,
+            1532649,
+            1534407,
+            1536662,
+            1537785,
+            1540983,
+            1543280,
+            1543631,
+            1546919,
+            1547721
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/src:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/engine-rs",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+          "config_paths": {},
+          "pids": [
+            1503349,
+            1513930,
+            1518175,
+            1519708,
+            1520939,
+            1523598,
+            1532662,
+            1534453,
+            1536691,
+            1537820,
+            1541005,
+            1543285,
+            1543657,
+            1546948,
+            1547758
+          ]
+        }
+      ]
+    },
+    {
+      "host": "127x03",
+      "utc": "2026-10-09T04:59:30.957475+00:00",
+      "checkout_native_mappings": 0,
+      "process_groups": []
+    },
+    {
+      "host": "127x04",
+      "utc": "2026-10-09T05:00:38.270978+00:00",
+      "checkout_native_mappings": 0,
+      "process_groups": [
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-checkpoints/v2/backup_extended60_20261009.py",
+          "config_paths": {},
+          "pids": [
+            125221
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-checkpoints/v2/backup_extended60_20261009.py",
+          "config_paths": {},
+          "pids": [
+            125233
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-checkpoints/v2/backup_extended60_20261009.py",
+          "config_paths": {},
+          "pids": [
+            125234
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match-queue-host-plan-04-l8r2.json"
+          },
+          "pids": [
+            333118
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match-queue-host-plan-04-l8r2.json"
+          },
+          "pids": [
+            333145
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match-queue-host-plan-04-l8r2.json"
+          },
+          "pids": [
+            333146
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/fleet_cap_guard_match_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match-queue-host-plan-04-l8r2.json"
+          },
+          "pids": [
+            333368
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match_queue_controller_intent_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match-queue-host-plan-04-l8r2.json"
+          },
+          "pids": [
+            333422
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/whole_match_capture_v4.py",
+          "config_paths": {},
+          "pids": [
+            333460,
+            333464,
+            333498,
+            473051,
+            494318,
+            516062,
+            551892,
+            560037
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/fleet_cap_guard_match_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-nonclock-gate-plan-04r3.json"
+          },
+          "pids": [
+            401320
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/fleet_cap_guard_match_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-nonclock-gate-plan-04r3.json"
+          },
+          "pids": [
+            401332
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-v4-cache/inference-inputs-20261008-r1/src:/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/fleet_cap_guard_match_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-nonclock-gate-plan-04r3.json"
+          },
+          "pids": [
+            401333
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-v4-cache/inference-inputs-20261008-r1/src:/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/verify_vectorized_nonclock_v4_r3.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-nonclock-gate-plan-04r3.json"
+          },
+          "pids": [
+            401400
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-budget04-31-20261009-r1.py",
+          "config_paths": {},
+          "pids": [
+            565264
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-budget04-31-20261009-r1.py",
+          "config_paths": {},
+          "pids": [
+            565276
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-budget04-31-20261009-r1.py",
+          "config_paths": {},
+          "pids": [
+            565277
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-verified-retention-20261009-r1/verified_capture_retention_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-verified-retention-20261009-r1/verified-retention-plan-r2.json"
+          },
+          "pids": [
+            567673
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-verified-retention-20261009-r1/verified_capture_retention_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-verified-retention-20261009-r1/verified-retention-plan-r2.json"
+          },
+          "pids": [
+            567685
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-verified-retention-20261009-r1/verified_capture_retention_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-verified-retention-20261009-r1/verified-retention-plan-r2.json"
+          },
+          "pids": [
+            567686
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/tmp/t5-checkpoint-mirror-20261008/checkpoint_mirror_v3.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/tmp/t5-checkpoint-mirror-20261008/plan-v4.json"
+          },
+          "pids": [
+            2525895
+          ]
+        }
+      ]
+    },
+    {
+      "host": "127x05",
+      "utc": "2026-10-09T04:59:30.486404+00:00",
+      "excluded": "Two editor agents; no game, planner or capture process.",
+      "checkout_native_mappings": 0,
+      "process_groups": []
+    },
+    {
+      "host": "127x08",
+      "utc": "2026-10-09T05:00:38.263343+00:00",
+      "checkout_native_mappings": 0,
+      "process_groups": [
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation_cache_service_offload_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation-cache-offload-plan-r2.json"
+          },
+          "pids": [
+            130268
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation_cache_service_offload_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation-cache-offload-plan-r2.json"
+          },
+          "pids": [
+            130282
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation_cache_service_offload_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation-cache-offload-plan-r2.json"
+          },
+          "pids": [
+            130283
+          ]
+        },
+        {
+          "cwd": "/home/sdicks02",
+          "exe": "/usr/bin/mawk",
+          "paths": {},
+          "native": [],
+          "entrypoint": "awk",
+          "config_paths": {},
+          "pids": [
+            1666239
+          ]
+        }
+      ]
+    },
+    {
+      "host": "127x09",
+      "utc": "2026-10-09T05:00:38.219556+00:00",
+      "checkout_native_mappings": 0,
+      "process_groups": []
+    },
+    {
+      "host": "127x13",
+      "utc": "2026-10-09T05:00:38.307339+00:00",
+      "checkout_native_mappings": 0,
+      "process_groups": [
+        {
+          "cwd": "/home/sdicks02",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_capture_extension_20261009_r1.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match-queue-host-plan-13r1.json"
+          },
+          "pids": [
+            881010
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match-queue-host-plan-13r1.json"
+          },
+          "pids": [
+            881011
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match_queue_controller_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match-queue-host-plan-13r1.json"
+          },
+          "pids": [
+            881320
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/whole_match_capture_v4.py",
+          "config_paths": {},
+          "pids": [
+            1132381,
+            1234481,
+            1258764,
+            1262782
+          ]
+        }
+      ]
+    },
+    {
+      "host": "127x14",
+      "utc": "2026-10-09T05:00:38.272427+00:00",
+      "checkout_native_mappings": 0,
+      "process_groups": [
+        {
+          "cwd": "/home/sdicks02",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_capture_extension_20261009_r1.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match-queue-host-plan-14r1.json"
+          },
+          "pids": [
+            836200
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match-queue-host-plan-14r1.json"
+          },
+          "pids": [
+            836201
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match_queue_controller_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match-queue-host-plan-14r1.json"
+          },
+          "pids": [
+            836456
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/whole_match_capture_v4.py",
+          "config_paths": {},
+          "pids": [
+            1057623,
+            1087860,
+            1136184,
+            1165721
+          ]
+        }
+      ]
+    },
+    {
+      "host": "127x15",
+      "utc": "2026-10-09T05:00:38.279534+00:00",
+      "checkout_native_mappings": 0,
+      "process_groups": [
+        {
+          "cwd": "/home/sdicks02",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_capture_extension_20261009_r1.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-intent-code-r1/match-queue-host-plan-15r3.json"
+          },
+          "pids": [
+            1451777
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-intent-code-r1/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-intent-code-r1/match-queue-host-plan-15r3.json"
+          },
+          "pids": [
+            1451778
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-intent-code-r1/match_queue_controller_intent_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-intent-code-r1/match-queue-host-plan-15r3.json"
+          },
+          "pids": [
+            1452045
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-intent-code-r1/whole_match_capture_v4.py",
+          "config_paths": {},
+          "pids": [
+            1452112,
+            1452144,
+            1452181,
+            1452196,
+            1452240,
+            1452281,
+            1452312,
+            1452327
+          ]
+        }
+      ]
+    },
+    {
+      "host": "127x16",
+      "utc": "2026-10-09T05:00:38.337287+00:00",
+      "checkout_native_mappings": 0,
+      "process_groups": [
+        {
+          "cwd": "/home/sdicks02",
+          "exe": "/usr/bin/python3.8",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/operations/lease-extension60-v1/lease_watch_extended.py",
+          "config_paths": {},
+          "pids": [
+            571513
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/operations/lease-extension60-v1/loader6_extended.py",
+          "config_paths": {
+            "--operational-freeze": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/operations/lease-extension60-v1/freeze.json"
+          },
+          "pids": [
+            571515,
+            867145,
+            867146,
+            867170,
+            867175,
+            867180,
+            867208
+          ]
+        }
+      ]
+    }
+  ],
+  "checkout_native_mappings": 0,
+  "changed_processes": false,
+  "read_only": true,
+  "final_check": [
+    {
+      "host": "127x01",
+      "utc": "2026-10-09T05:04:06.027683+00:00",
+      "process_groups": [
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "bash",
+          "config_paths": {},
+          "pids": [
+            516161,
+            1119909
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/usr/bin/time",
+          "config_paths": {},
+          "pids": [
+            516178,
+            1119921
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "bash",
+          "config_paths": {},
+          "pids": [
+            516179
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-t11-home-v1/source",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-t11-home-v1/source",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-t11-home-v1/operations/home2237-v1/loader_adapter_home2237.py",
+          "config_paths": {
+            "--operational-freeze": "/mpac/sdicks02/repos/clasher-t11-home-v1/operations/home2237-v1/freeze.json"
+          },
+          "pids": [
+            1119922,
+            1440892,
+            1440893,
+            1440917,
+            1440920,
+            1440925,
+            1440926
+          ]
+        }
+      ],
+      "checkout_native_mappings": 0
+    },
+    {
+      "host": "127x02",
+      "utc": "2026-10-09T05:04:07.167642+00:00",
+      "process_groups": [
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation_cache_service_offload_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation-cache-offload-plan-r2.json"
+          },
+          "pids": [
+            422134
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation_cache_service_offload_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation-cache-offload-plan-r2.json"
+          },
+          "pids": [
+            422146
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation_cache_service_offload_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation-cache-offload-plan-r2.json"
+          },
+          "pids": [
+            422147
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/operations/run_host.py",
+          "config_paths": {
+            "--manifest": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/manifest.json",
+            "--snapshot": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+            "--runtime": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "pids": [
+            530957
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/operations/run_host.py",
+          "config_paths": {
+            "--manifest": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/manifest.json",
+            "--snapshot": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+            "--runtime": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "pids": [
+            530969
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/src:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/engine-rs",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/operations/run_host.py",
+          "config_paths": {
+            "--manifest": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/manifest.json",
+            "--snapshot": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+            "--runtime": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "pids": [
+            530970
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/src:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/engine-rs",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+          "config_paths": {
+            "--manifest": "/mpac/sdicks02/repos/clasher-eval-snapshots/confirmation-bc-v1/gate-c/manifest.json"
+          },
+          "pids": [
+            531066,
+            531067,
+            531068,
+            531069,
+            531070,
+            531071,
+            531072,
+            531073,
+            531074,
+            531075,
+            531076,
+            531077,
+            531080,
+            531081,
+            531082,
+            531083
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/src:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/engine-rs",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+          "config_paths": {},
+          "pids": [
+            1532649,
+            1534407,
+            1536662,
+            1537785,
+            1540983,
+            1543280,
+            1543631,
+            1546919,
+            1547721,
+            1547862,
+            1552288,
+            1553694,
+            1554386,
+            1556086,
+            1558243,
+            1558631
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/src:/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1/engine-rs",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-eval-snapshots/runtime-bc-v1"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+          "config_paths": {},
+          "pids": [
+            1532662,
+            1536691,
+            1537820,
+            1543285,
+            1543657,
+            1546948,
+            1547758,
+            1547897,
+            1552314,
+            1553698,
+            1554404,
+            1556135,
+            1558303,
+            1558667
+          ]
+        }
+      ],
+      "checkout_native_mappings": 0
+    },
+    {
+      "host": "127x03",
+      "utc": "2026-10-09T05:04:05.967167+00:00",
+      "process_groups": [],
+      "checkout_native_mappings": 0
+    },
+    {
+      "host": "127x04",
+      "utc": "2026-10-09T05:04:05.999613+00:00",
+      "process_groups": [
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-checkpoints/v2/backup_extended60_20261009.py",
+          "config_paths": {},
+          "pids": [
+            125221
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-checkpoints/v2/backup_extended60_20261009.py",
+          "config_paths": {},
+          "pids": [
+            125233
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-checkpoints/v2/backup_extended60_20261009.py",
+          "config_paths": {},
+          "pids": [
+            125234
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match-queue-host-plan-04-l8r2.json"
+          },
+          "pids": [
+            333118
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match-queue-host-plan-04-l8r2.json"
+          },
+          "pids": [
+            333145
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match-queue-host-plan-04-l8r2.json"
+          },
+          "pids": [
+            333146
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/fleet_cap_guard_match_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match-queue-host-plan-04-l8r2.json"
+          },
+          "pids": [
+            333368
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match_queue_controller_intent_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/match-queue-host-plan-04-l8r2.json"
+          },
+          "pids": [
+            333422
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-home-code-r3/whole_match_capture_v4.py",
+          "config_paths": {},
+          "pids": [
+            333460,
+            333464,
+            333498,
+            473051,
+            494318,
+            516062,
+            551892,
+            560037
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/fleet_cap_guard_match_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-nonclock-gate-plan-04r3.json"
+          },
+          "pids": [
+            401320
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/fleet_cap_guard_match_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-nonclock-gate-plan-04r3.json"
+          },
+          "pids": [
+            401332
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-v4-cache/inference-inputs-20261008-r1/src:/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/fleet_cap_guard_match_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-nonclock-gate-plan-04r3.json"
+          },
+          "pids": [
+            401333
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-v4-cache/inference-inputs-20261008-r1/src:/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/verify_vectorized_nonclock_v4_r3.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-vector-nonclock-gate-20261009-r3/repo/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-nonclock-gate-plan-04r3.json"
+          },
+          "pids": [
+            401400
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-budget04-31-20261009-r1.py",
+          "config_paths": {},
+          "pids": [
+            565264
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-budget04-31-20261009-r1.py",
+          "config_paths": {},
+          "pids": [
+            565276
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-budget04-31-20261009-r1.py",
+          "config_paths": {},
+          "pids": [
+            565277
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-verified-retention-20261009-r1/queue_independent_verifier_locked_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-verified-retention-20261009-r1/queue-independent-verifier-plan-r5.json"
+          },
+          "pids": [
+            584652
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-verified-retention-20261009-r1/queue_independent_verifier_locked_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-verified-retention-20261009-r1/queue-independent-verifier-plan-r5.json"
+          },
+          "pids": [
+            584668
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-verified-retention-20261009-r1/queue_independent_verifier_locked_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-verified-retention-20261009-r1/queue-independent-verifier-plan-r5.json"
+          },
+          "pids": [
+            584669
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-verified-retention03-20261009-r1/verified_capture_retention03_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-verified-retention03-20261009-r1/verified-retention03-plan-r1.json"
+          },
+          "pids": [
+            594790
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-verified-retention03-20261009-r1/verified_capture_retention03_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-verified-retention03-20261009-r1/verified-retention03-plan-r1.json"
+          },
+          "pids": [
+            594806
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-verified-retention03-20261009-r1/verified_capture_retention03_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-verified-retention03-20261009-r1/verified-retention03-plan-r1.json"
+          },
+          "pids": [
+            594807
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/tmp/t5-checkpoint-mirror-20261008/checkpoint_mirror_v3.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/tmp/t5-checkpoint-mirror-20261008/plan-v4.json"
+          },
+          "pids": [
+            2525895
+          ]
+        }
+      ],
+      "checkout_native_mappings": 0
+    },
+    {
+      "host": "127x08",
+      "utc": "2026-10-09T05:04:06.009709+00:00",
+      "process_groups": [
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation_cache_service_offload_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation-cache-offload-plan-r2.json"
+          },
+          "pids": [
+            130268
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation_cache_service_offload_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation-cache-offload-plan-r2.json"
+          },
+          "pids": [
+            130282
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation_cache_service_offload_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-cache-offload-service-r2/validation-cache-offload-plan-r2.json"
+          },
+          "pids": [
+            130283
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/bash",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-status-08r2/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-status-08r2/match-queue-host-plan-08r2.json"
+          },
+          "pids": [
+            1668726
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/usr/bin/time",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-status-08r2/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-status-08r2/match-queue-host-plan-08r2.json"
+          },
+          "pids": [
+            1668748
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-status-08r2/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-status-08r2/match-queue-host-plan-08r2.json"
+          },
+          "pids": [
+            1668749
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-status-08r2/fleet_cap_guard_match_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-status-08r2/match-queue-host-plan-08r2.json"
+          },
+          "pids": [
+            1668983
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-status-08r2/match_queue_controller_status_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/jobs/clasher/v4-match-queue-status-08r2/match-queue-host-plan-08r2.json"
+          },
+          "pids": [
+            1669015
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher",
+          "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher/engine-rs:/mpac/sdicks02/repos/clasher/src",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/jobs/clasher/v4-match-queue-status-08r2/whole_match_capture_v4.py",
+          "config_paths": {},
+          "pids": [
+            1669119,
+            1669146,
+            1669167,
+            1669209,
+            1669243,
+            1669267,
+            1669371,
+            1669421
+          ]
+        }
+      ],
+      "checkout_native_mappings": 0
+    },
+    {
+      "host": "127x09",
+      "utc": "2026-10-09T05:04:05.967426+00:00",
+      "process_groups": [
+        {
+          "cwd": "/home/sdicks02",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_capture_extension_20261009_r1.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-status-09r2/match-queue-host-plan-09r2.json"
+          },
+          "pids": [
+            1210682
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-status-09r2/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-status-09r2/match-queue-host-plan-09r2.json"
+          },
+          "pids": [
+            1210683
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-status-09r2/match_queue_controller_status_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-status-09r2/match-queue-host-plan-09r2.json"
+          },
+          "pids": [
+            1211052
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-status-09r2/whole_match_capture_v4.py",
+          "config_paths": {},
+          "pids": [
+            1211081,
+            1211111,
+            1211128,
+            1211144,
+            1211231,
+            1211318,
+            1211322,
+            1211360
+          ]
+        }
+      ],
+      "checkout_native_mappings": 0
+    },
+    {
+      "host": "127x13",
+      "utc": "2026-10-09T05:04:06.000532+00:00",
+      "process_groups": [
+        {
+          "cwd": "/home/sdicks02",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_capture_extension_20261009_r1.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match-queue-host-plan-13r1.json"
+          },
+          "pids": [
+            881010
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match-queue-host-plan-13r1.json"
+          },
+          "pids": [
+            881011
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match_queue_controller_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match-queue-host-plan-13r1.json"
+          },
+          "pids": [
+            881320
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/whole_match_capture_v4.py",
+          "config_paths": {},
+          "pids": [
+            1132381,
+            1234481,
+            1258764,
+            1262782
+          ]
+        }
+      ],
+      "checkout_native_mappings": 0
+    },
+    {
+      "host": "127x14",
+      "utc": "2026-10-09T05:04:06.519699+00:00",
+      "process_groups": [
+        {
+          "cwd": "/home/sdicks02",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_capture_extension_20261009_r1.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match-queue-host-plan-14r1.json"
+          },
+          "pids": [
+            836200
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match-queue-host-plan-14r1.json"
+          },
+          "pids": [
+            836201
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match_queue_controller_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/match-queue-host-plan-14r1.json"
+          },
+          "pids": [
+            836456
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-code-r1/whole_match_capture_v4.py",
+          "config_paths": {},
+          "pids": [
+            1057623,
+            1087860,
+            1136184,
+            1165721
+          ]
+        }
+      ],
+      "checkout_native_mappings": 0
+    },
+    {
+      "host": "127x15",
+      "utc": "2026-10-09T05:04:06.015353+00:00",
+      "process_groups": [
+        {
+          "cwd": "/home/sdicks02",
+          "exe": "/usr/bin/python3.8",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_capture_extension_20261009_r1.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-intent-code-r1/match-queue-host-plan-15r3.json"
+          },
+          "pids": [
+            1451777
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-intent-code-r1/match_queue_supervisor_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-intent-code-r1/match-queue-host-plan-15r3.json"
+          },
+          "pids": [
+            1451778
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-intent-code-r1/match_queue_controller_intent_v4.py",
+          "config_paths": {
+            "--plan": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-intent-code-r1/match-queue-host-plan-15r3.json"
+          },
+          "pids": [
+            1452045
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/repo",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/repo/src:/mpac/sdicks02/repos/clasher-lease/repo/engine-rs:/mpac/sdicks02/repos/clasher-lease/repo/scripts",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/jobs/v4-match-queue-intent-code-r1/whole_match_capture_v4.py",
+          "config_paths": {},
+          "pids": [
+            1452112,
+            1452144,
+            1452181,
+            1452196,
+            1452240,
+            1452281,
+            1452312,
+            1452327
+          ]
+        }
+      ],
+      "checkout_native_mappings": 0
+    },
+    {
+      "host": "127x16",
+      "utc": "2026-10-09T05:04:06.036290+00:00",
+      "process_groups": [
+        {
+          "cwd": "/home/sdicks02",
+          "exe": "/usr/bin/python3.8",
+          "paths": {},
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/operations/lease-extension60-v1/lease_watch_extended.py",
+          "config_paths": {},
+          "pids": [
+            571513
+          ]
+        },
+        {
+          "cwd": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source",
+          "exe": "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+          "paths": {
+            "PYTHONPATH": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/source",
+            "CLASHER_ROOT": "/mpac/sdicks02/repos/clasher-lease/repo"
+          },
+          "native": [],
+          "entrypoint": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/operations/lease-extension60-v1/loader6_extended.py",
+          "config_paths": {
+            "--operational-freeze": "/mpac/sdicks02/repos/clasher-lease/t11-20261008-v1/operations/lease-extension60-v1/freeze.json"
+          },
+          "pids": [
+            571515,
+            867145,
+            867146,
+            867170,
+            867175,
+            867180,
+            867208
+          ]
+        }
+      ],
+      "checkout_native_mappings": 0
+    },
+    {
+      "host": "127x05",
+      "utc": "2026-10-09T04:59:30.486404+00:00",
+      "excluded": "Two editor agents; no game, planner or capture process.",
+      "checkout_native_mappings": 0,
+      "process_groups": []
+    }
+  ]
+}

@@ -22,6 +22,14 @@ Full-decision timings include observation through submission under fleet load; n
 
 [Metrics/CPU latency](METRICS.md); [counts/CIs](results.json).
 
-Default OFF. Parity: OFF 250/250 score/action/trace; ON 125/125 choices/retained scores; 54 tests. Runtime patch: none.
+Parity: explicit OFF 250/250 score/action/trace; ON 125/125 frozen choices/retained scores. Runtime patch: none.
 
 Commits: freeze `d0e9dc2f`; baseline `f9d3b454`; implementation `59454e1a`/`62044189`; report SHA in PROGRESS.
+
+## Adoption
+
+Offline native search teacher, S6 and C56 simulation now default **ON**; explicit OFF preserves the baseline. Default C56/S6 construction equals explicit ON on all 125 frozen states; 47 tests passed ([receipt](adoption-parity.json)). [Process-path audit](process-paths.json): running evaluations/capture/trainers use private snapshots, unaffected by this change.
+
+Live RustPlanner remains default **OFF**. [W-screen8 ON profile](live-profile.json) is recommended, pending Mac E4 qualification: loaded p95 was 330.2 ms against a 200 ms live budget.
+
+Next step, after Mac access authorization: build a new versioned Mac W/GIL-release library; pin binary/config hashes; replay ≥1,000 paired E4 public packets through real four-root searches with perception/capture load. Compare OFF/ON and one/four threads, recording full-decision p50/p95/p99, root completion, overruns and fallback rates, including warm/cold starts. Require loaded p95 ≤200 ms, exact decisions without deadlines, and valid complete-root deadline admission before changing the live default.

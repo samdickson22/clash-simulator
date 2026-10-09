@@ -33,7 +33,8 @@ class C56SearchConfig:
     # None/1 preserves the Stage 5 reference path. Live uses 0.2 seconds/2.
     deadline_seconds: float | None = None
     threads: int = 1
-    wait_screen8: bool = False
+    # Offline teacher/simulation default; live RustPlanner passes its own flag.
+    wait_screen8: bool = True
 
     def __post_init__(self):
         if type(self.wait_screen8) is not bool:

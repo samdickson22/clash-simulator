@@ -1,0 +1,42 @@
+{
+  "explicit_off": {
+    "mode": "off",
+    "states": 125,
+    "checks": 250,
+    "native": "/mpac/sdicks02/jobs/clasher/w-screen8-20261009-r1/native-w-screen8-v1/clasher_core.abi3.so",
+    "native_sha256": "06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10",
+    "corpus_sha256": "8b188918b95cf6c79f0db0639beaff2e80526ce11c146cdfe0edb0bb8e6f3cce",
+    "digest": "425f1cb0891742996c8685ca21dc38bd41a0d136bf3528c7fcc1e86a89eccc46",
+    "exact": true
+  },
+  "default_on": {
+    "mode": "default",
+    "states": 125,
+    "checks": 125,
+    "native": "/mpac/sdicks02/jobs/clasher/w-screen8-20261009-r1/native-w-screen8-v1/clasher_core.abi3.so",
+    "native_sha256": "06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10",
+    "corpus_sha256": "8b188918b95cf6c79f0db0639beaff2e80526ce11c146cdfe0edb0bb8e6f3cce",
+    "exact": true
+  },
+  "baseline_comparison": {
+    "exact": true,
+    "states": 125,
+    "checks": 250,
+    "baseline_native_sha256": "71826488b2ca83cde6121af268408e556c0ae0a0191b739e7bcc4b2a513ab621",
+    "production_native_sha256": "06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10",
+    "digest": "425f1cb0891742996c8685ca21dc38bd41a0d136bf3528c7fcc1e86a89eccc46"
+  },
+  "default_vs_explicit_on": {
+    "S6": 125,
+    "C56": 125,
+    "frozen_screen8": 125,
+    "exact": true
+  },
+  "unit_tests": 47,
+  "source_sha256": {
+    "src/clasher/rl/c56_rollout_planner.py": "4fa6940fbaf8c13c64c4658286e42bdbfdd35dce9c69e1df675ac7c7427e2276",
+    "src/clasher/rl/wait_screen8.py": "e02f11a2c7474dfdf0ca1076102ae636ad5e9b5b0a74971006351c10f550b016",
+    "tests/rl/test_wait_screen8.py": "5b1aa7d65142233e69e28e0748f79cbf6b6794b31e6edb286db8bc0371ab8f97",
+    "reports/explore/w-screen8/parity.py": "783945e805e35e4b835c0ffdb4e099390175305bf5166195c712e281ef9774dc"
+  }
+}
