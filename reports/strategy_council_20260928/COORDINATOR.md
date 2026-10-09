@@ -1338,3 +1338,10 @@ Also on the hub, but with copies elsewhere:
   - Storage ledger is at 2,111.5/2,200 GB.
 - **08:08 UTC: cache handoff COMPLETE.** All 7 were independently authenticated at 08:06:53–08:06:58Z (`cache-handoff-all-seven-authenticated-20261009-r1.json` `cb999a6d…`), more than 3 h before the 11:30Z deadline. No 02-old bindings remain, and both renewed services hard-stop Oct 11 04:00Z. The 11:00Z check task is deleted as redundant. The natural-drain switch package (17 tests, `28a9815f…`) is held until A16 is frozen. 15 is still waiting on its R13 PASS.
 - **08:24 UTC: 04 original r3 stopped** at 08:15:40Z. The wrapper correctly propagated exit 1, with 8 attempts left for operator recovery. The likely cause is the old plan's 31 GB guard. **Decision:** after authentication and recovery, relaunch 04 on the ORIGINAL worker under a new plan with up to 75 GB (inside the 2.2 TB budget); don't wait for A16. If the cause isn't storage, perception reports before relaunching.
+- **08:25 UTC: AMENDMENT 16 FROZEN** for the record-only production release (`l1/amendments/16-FREEZE-RECORD-20261009.json`; draft `411d147c`; review `4e486c2c`).
+  - Required changes:
+    - **R16-3:** the mixed verifier replaces the original-only one BEFORE the first vectorized registration.
+    - **R16-1:** before A1, a production-load byte-exact audit. My addition: ≥4 matches across ≥3 epochs, picked by a pre-committed hash rule and re-captured on the original worker.
+    - **R16-2:** before A1, the reviewer's 6 tests.
+  - Disclosed: equivalence is sample-based. The evidence is A14 (all 64 e1 matches), 3 qualifications and R16-1.
+  - **The vectorized switch is RELEASED** once R16-3 is in place: concurrent drains, with the long-tail void option.

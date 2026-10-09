@@ -1,0 +1,35 @@
+{
+ "schema": "clasher.v4.amendment16-freeze.v1",
+ "utc": "2026-10-09T08:25:17+00:00",
+ "decision": "FROZEN",
+ "decided_by": "coordinator (owner mode), on independent review",
+ "scope": "RECORD-ONLY production release of vectorized-producer records, admitted alongside original-producer records into A15 assembly. No timing, clock, D4(b), deciding-measurement, heldout or T6 use.",
+ "amendment": "amendments/16-mixed-record-producer-admission-20261009-r1.md",
+ "amendment_sha256": "411d147c5ee3d142d863976d5d74104db16f35de3654ffe8dd0d624fd9f14a66",
+ "pin_delta": "amendments/16-file-layer-pin-delta-20261009-r1.json",
+ "pin_delta_sha256": "eafa80ff1e3690d6763cc0042055b31e48b03dc897fa3f702b76cacff230ce72",
+ "review_package_sha256": "3f125d72391573181de01ff93cfcff0a7585a0882fb4a89c8fb170d55766ce31",
+ "snapshot_manifest_sha256": "2ced1534aa2a0a03b8949f44c91f72392ea1c71c568d3cdd33f173ce139ba5e2",
+ "independent_review": "reviews/AMENDMENT-16-REVIEW-20261009.md",
+ "independent_review_sha256": "4e486c2c6b653a0c32e2d980ed6a3b5223a5e435409fac3936479d7d1a050895",
+ "bound_artifacts_per_review": {
+  "contract": "3b3ebc8f",
+  "overlay": "96519baf",
+  "vectorized_worker": "70e8deaf",
+  "a14_proof": "8f2d0e07",
+  "qualification_proof": "40828251"
+ },
+ "frozen_unchanged": {
+  "a12_draft": "cc2357df",
+  "a12_pins": "60f0cb4e",
+  "a15_r2_draft": "2d32c0b4",
+  "a15_snapshot": "ae9cf92b"
+ },
+ "required_changes": {
+  "R16-3": "Before the FIRST vectorized registration, replace the running original-only verifier with the mixed verifier. Otherwise the first vectorized output suspends the queue.",
+  "R16-1": "Before A1, run a production-load byte-exact audit of the vectorized worker, analogous to R13-3 and enforced in admission. Coordinator addition: at least 4 matches across at least 3 epochs, chosen from vectorized production outputs by a hash rule pre-committed before selection, each re-captured on the ORIGINAL worker and compared byte-exact on every record stream.",
+  "R16-2": "Before A1, adopt the reviewer's six discriminating tests."
+ },
+ "disclosed_limit": "Equivalence is sample-based: no match is individually checked against an original capture. The evidence is A14 (e1 all 64 matches, plus e3/e20 samples), 3 whole-match qualifications, and the R16-1 production audit. Scoring never reads the availability field.",
+ "a1_checklist_delta": "See reviews/AMENDMENT-16-REVIEW-20261009.md."
+}

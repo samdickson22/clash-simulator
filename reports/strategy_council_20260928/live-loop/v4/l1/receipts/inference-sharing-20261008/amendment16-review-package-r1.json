@@ -1,0 +1,85 @@
+{
+  "benchmark": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/decoder-packing-comparison-04r2-complete.json",
+    "sha256": "8aba8f8b19dbe0e92d99d92d0eff5c378814ee96aa09441b1daf321086e8f8cb"
+  },
+  "created_utc": "2026-10-09T07:53:30.398260+00:00",
+  "delta": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/amendments/16-file-layer-pin-delta-20261009-r1.json",
+    "sha256": "eafa80ff1e3690d6763cc0042055b31e48b03dc897fa3f702b76cacff230ce72"
+  },
+  "draft": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/amendments/16-mixed-record-producer-admission-20261009-r1.md",
+    "sha256": "411d147c5ee3d142d863976d5d74104db16f35de3654ffe8dd0d624fd9f14a66"
+  },
+  "heldout_opening_authorized": false,
+  "mutation_receipt": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a16-admission-mutation-receipt-r3.json",
+    "sha256": "fae636fc5b863867e67725c3d3cb4567f331cee23c6c7a38fdc7152b505296d4"
+  },
+  "mutations": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a16-admission-mutations-r3.json",
+    "sha256": "5cdc5fc4427f4e160cfb820f2bf6b51b5cb3987485e846cddead57087d17c70f"
+  },
+  "pending": [
+    "Independent A16 review and coordinator freeze",
+    "Explicit production release before vectorized claims",
+    "A1 full prerequisites including 24 captures, R13-3 and approval",
+    "A2 real post-seal bounds and B approval"
+  ],
+  "producer_contract": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a16-vectorized-producer-contract-r1.json",
+    "sha256": "3b3ebc8f3e4e3f0eedd0c30de67c853b66b3cdb3c5b85287e6fbd485dea1d431"
+  },
+  "qualification": {
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-whole-match-qualification-complete-02r1.json",
+    "sha256": "408282512b67c0d9a1d90374438331a75bf450264b36bc30000eb9821b73bc6a"
+  },
+  "qualification_plan": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-whole-match-qualification-plan-02r1.json",
+    "sha256": "0f920ca02dbe07e5e42d5693e03504ec9844dd192b923bb03bdefd84b5f8b836"
+  },
+  "queue_overlay": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-queue-overlay-r1.json",
+    "sha256": "96519baf3d20451c83a373ceb1cf118e8546f8aa3d948a16aaa921cd8078b56e"
+  },
+  "queue_tests": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/amendment16-review-r1/queue-review-evidence/test-receipt.json",
+    "sha256": "10f20a164e10407a2cc3b5e41aaad8741d1ac1f3adc7b653ed0cc87fd02a3c9b"
+  },
+  "real_qualification_admission": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a16-real-qualification-admission-check-r1.json",
+    "sha256": "08359464ed9abccbe0de2d91e1fd150568cb2460bf89ca4c4b224cdae88c4a8e"
+  },
+  "schema": "clasher.v4.amendment16-review-package.v1",
+  "scientific_semantics_changed": false,
+  "selection_admitted": false,
+  "snapshot_manifest": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a16-snapshot-manifest-r1.json",
+    "sha256": "2ced1534aa2a0a03b8949f44c91f72392ea1c71c568d3cdd33f173ce139ba5e2"
+  },
+  "snapshot_root": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/prepared/amendment16-review-r1",
+  "source_delta": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a16-mechanical-source-delta-r1.json",
+    "sha256": "a67553e869be0d1056b7140c8ed82ad9512c7c18cbb139205b819a093a5688c0"
+  },
+  "status": "PROPOSED_NOT_FROZEN",
+  "tests": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a16-final-tests-r1.json",
+    "sha256": "925eb755c4165803367eb77e58d0cee9bc35a9cc8dbfa5c701ad96bc872b7123"
+  },
+  "tests_log": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/a16-final-tests-r1.log",
+    "sha256": "b315569692805808aff46f3e2b31e272e5fb02ef04dfc2236e36a56643a8e15b"
+  },
+  "timing_admitted": false,
+  "unchanged_frozen_a15": true,
+  "worker_guard_tests": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-qualification-tests-addendum-02r1.json",
+    "sha256": "26b7174c3c0b6a07f076a0175ccb6b35110064f95a5b3962c4d5c26f9bc02b6d"
+  },
+  "worker_source_closure": {
+    "path": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/receipts/inference-sharing-20261008/vectorized-scientific-source-closure-r1.json",
+    "sha256": "1cdf6d98e09db0cdf104b8653ce1c19d8eecd51fcfb12cb7b331fe590cce8ee9"
+  }
+}
