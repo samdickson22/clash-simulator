@@ -364,3 +364,18 @@ staging and every 480 segment; actual final costs await completion.
 Evidence: `monitor-20261009T2332Z.json`. No source, config or data edits.
 480 micro1024/effective8192/cap0.78 stays fixed; all failed artifacts retained.
 Continuation remains enabled; 16 remains released.
+
+2026-10-09 23:43Z: All three fits, guards and the sole controller remain healthy.
+Width 288: step 8806, 72,133,352 rows, 5883 loader-inclusive rows/s.
+Width 384: step 7038, 57,655,296 rows, 4700 loader-inclusive rows/s.
+Width 480: step 6332, 51,871,744 rows, 4729 loader-inclusive rows/s.
+Six processes per arm; peak PSS 42.38 GB; sampled GPU free memory
+≥28.5 GiB. No new OOM, stop, restart or scientific change.
+Width 288 epoch-one NLL remains 0.2797297378654996 at 63,441,640 rows;
+its matched 192 gain is 0.003444154430534474. Quarter decisions remain pending
+at 95,144,680 rows against 192 NLL 0.27726436294161033; no kill has fired.
+Conservative cumulative pipeline cost 12.073 GPU-hours includes
+staging and every 480 segment; actual final costs await completion.
+Evidence: `monitor-20261009T2342Z.json`. No source, config or data edits.
+480 micro1024/effective8192/cap0.78 stays fixed; all failed artifacts retained.
+Continuation remains enabled; 16 remains released.
