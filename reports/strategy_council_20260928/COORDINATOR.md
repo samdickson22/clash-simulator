@@ -1295,3 +1295,7 @@ Also on the hub, but with copies elsewhere:
 - **06:46 UTC:** the renewed cache services are READY and authenticated: 03r2 (8 matches) and 08r1 (56), hard stop Oct 11 04:00Z. The legacy-drain tests pass 3/3.
   - Handoff timetable: 04/09 by 08:00, 15 by 09:00, 13 by 09:15, then **14 and 08 in parallel** by ~10:15. I relaxed my ≤2 concurrent-drain cap so the margin before the 11:30Z deadline grows from 15 to ~75 min.
   - The 11:00Z check is scheduled.
+- **07:08 UTC:** 04 drained cleanly, and **the vectorized benchmark 04r2 started at 06:56:49Z**.
+  - **09r4 was refused before launch** at 06:59:01Z: 1 external process plus a declared 16 exceeded 16. The external PID was nice 19 with 0.59 MB PSS and wasn't coordinator tooling; it was likely perception's own probe.
+  - **Fix requested:** new leased controllers declare 15 (one slot of probe headroom) and/or a probe quiet window around each admission. The 09r4 retry uses a new label with no bypass.
+  - The handoff watcher halted correctly. 15/13/14/08 keep capturing on the old services.
