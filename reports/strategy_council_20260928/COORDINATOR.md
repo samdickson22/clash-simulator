@@ -949,3 +949,12 @@ Also on the hub, but with copies elsewhere:
   - **Gate (b) `imitation-gate-b-v1-r1` exited 0 at 01:10:48Z** on 03 (~57 min; no outcome read). The worker runs the pre-registered verification and analysis, then releases 03.
   - **Utilization:** GPUs 04/09/13/14/15 at 88–99%, 02 59% (gate (c) plus perception), 08 44% (GRU, CPU-bound), 16 53% (T11 seed 21). 01 at 0% because T11 seed 22 is at an epoch-2 boundary with loaders restarting; transient.
   - **Health:** 06/07/11/18 still down; no reclaims.
+- **~01:25 UTC: clock-amendment review: APPROVE WITH REQUIRED CHANGES** (`l1/reviews/CLOCK-AMENDMENT-REVIEW-20261009.md`).
+  - **Decision: adopt B′, measured-dominance selection.**
+    1. The body-threshold stage is clock-free (body F1), so it runs now from record-only captures and is sealed first.
+    2. Zero-service F1 ceilings per event/epoch cell, computed on CPU from records.
+    3. Cells measured standalone in ceiling order, one process per cell, stopping once all unmeasured ceilings are below the best measured result (30-cell budget). This selects exactly what full remeasurement would, at an estimated ~9–15 GPU-hours instead of ~195.
+    4. Tier-2 models may only exclude cells.
+  - **Host policy:** deciding measurements run on single-tenant 127x08 after 05:00Z (plus 04 if needed, paired), since fleet clocks vary ~6× with contention.
+  - Option C is inadmissible; match 1975100708 is excluded; the gates and `noise-measured.json` are unchanged.
+  - **Next:** amendment 12 → reviewer delta check → freeze.
