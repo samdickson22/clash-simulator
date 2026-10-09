@@ -1441,3 +1441,14 @@ Also on the hub, but with copies elsewhere:
 - **10:18 UTC: R16-1 selection-ordering incident, adjudicated ACCEPTED.**
   - The hash-only sampling ran before the separate receipt existed. But the exact operational rule had been sent durably in-thread before computation (t6t7-capture-closure1015), and selection is hash-ranked on telemetry eligibility with no record values.
   - Conditions: the receipt binds the message ID, timestamp and verbatim rule; a mechanical code-matches-rule check; confirmation that no candidate record values were inspected; disclosure in the A1 record. Then the 4 recaptures launch.
+- **10:23 UTC: NEXT-COMPUTE PLAN ADOPTED** (`PLAN-NEXT-COMPUTE-20261009.md`). **CPU is the bottleneck, not GPU.**
+  1. **Distil W-screen8 into a fast student** (ExIt r1): teacher labels on 03/04/08 CPU, then v2 fine-tunes S-mix / S-teacher / S-human (~1 GPU-h each).
+  2. **E1 CPU checks first:**
+     - W under an enforced 200 ms deadline;
+     - W vs the v1 policy as a human proxy, plus under-4 causality.
+  3. **T11:** finish s21/s22, then the registered v2 gate (a). No extra seeds.
+  4. **Park the T5 GRU** (~120–200 GPU-h for a descriptive-only result).
+  5. **Opportunistic:** a preemptible capacity scan of the human prior on idle leased GPUs, with a kill rule.
+  6. **Mac E4 combined package** prepared for when Sam authorizes.
+  - No DDP. The reserve fix is gated on E1b.
+  - Perception A1 → A2 → B on 08 keeps priority.
