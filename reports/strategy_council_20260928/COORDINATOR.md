@@ -1022,3 +1022,12 @@ Also on the hub, but with copies elsewhere:
     - the pinned 127x08 launcher and telemetry;
     - then the body seal before any bound.
   - Measurements not before 05:00Z.
+- **02:11 UTC heartbeat.** Sampled GPU average, 8×0.5 s:
+  - Home: 01 11%, 02 62%, 04 99%, 08 72%.
+  - Leased: 09 90%, 13 89%, 14 95%, 15 99%, 16 38%.
+  - 16's sample looks like a momentary dip: its log shows a steady 12.0k rows/s.
+  - 03 is CPU-only, load 89. 06/07/11/18 are still unreachable. No pending worker requests.
+  - **01 T11 seed 22 is still starved after io32**, at 2.9k rows/s including loader. The cause is kernel-bound loaders (0.2% user, 14.9% sys, 0 iowait) with worker respawn, under the home io override's `mmap_random_advice`. 16 runs a steady 12k rows/s with plain loader6.
+    - **Decision:** switch 01, and seed 21 on 04 at 05:00Z, to 16's exact loader6 config at the next checkpoint, and stop the io32 observer.
+  - **Amendment 12 orchestration package** (`A12-ORCHESTRATION-REVIEW.md` `16ede4ad…`, 48 tests) went to an independent review, `clasher-v4-a12-orchestration-review-20261009-1` (Opus, high).
+    - Verdict A covers the real body seal plus CPU bounds. Verdict B covers the preconditions for the first 08 measurement.
