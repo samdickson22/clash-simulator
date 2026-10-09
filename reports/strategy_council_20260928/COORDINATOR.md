@@ -1245,3 +1245,9 @@ Also on the hub, but with copies elsewhere:
   - **Decision:**
     - W-screen8 becomes **default ON for the offline search teacher and simulation path**, once a running-process path check confirms frozen snapshots aren't affected.
     - **The live planner stays default OFF**, with a recommended ON profile, until it's measured on the Mac E4 path (real searches plus GIL threads; budget 200 ms). That needs Sam's Mac authorization.
+- **04:58 UTC: storage budget raised.** The v4 capture/archive reservation goes from 1.3 TB to **2.0 TB**.
+  - Reason: measured /mpac free space is 03 1.6 T, 02 1.5 T, 08 1.4 T, 04 1.1 T, 01 984 G, and the old budget was self-imposed.
+  - The primary archive destination is **03, ≤500 GB** under a dedicated prefix. 02 and 08 get ≤150 GB each.
+  - Every host keeps ≥40% of /mpac free for other lab users.
+  - Verified leased outputs are archived to 03 with checksum and fsync before any removal.
+  - Note: my time labels in the 05:10Z and 05:25Z worker messages were ~25 min fast; the real times were ~04:45Z and ~04:55Z.
