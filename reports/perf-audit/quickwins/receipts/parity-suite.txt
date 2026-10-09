@@ -1,0 +1,16 @@
+....................................................................F............................................................
+======================================================================
+FAIL: test_stun_resets_special_clock_but_preserves_frozen_target_observation (test_stage4_b2.B2Regressions.test_stun_resets_special_clock_but_preserves_frozen_target_observation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mpac/sdicks02/repos/clasher/engine-rs/test_stage4_b2.py", line 211, in test_stun_resets_special_clock_but_preserves_frozen_target_observation
+    self.assertEqual(
+AssertionError: '1dbabf23c495c7318339f6e524fee7c88960fbe78bf3cd3f93e20b10524944b2' != '58aaf0cd2d73f43d416a06005388ae42674dd262d12cdaed9eb13c3da0c8c3bb'
+- 1dbabf23c495c7318339f6e524fee7c88960fbe78bf3cd3f93e20b10524944b2
++ 58aaf0cd2d73f43d416a06005388ae42674dd262d12cdaed9eb13c3da0c8c3bb
+ : regenerate saved root after Python/data drift: src/clasher/battle.py
+
+----------------------------------------------------------------------
+Ran 129 tests in 368.425s
+
+FAILED (failures=1)

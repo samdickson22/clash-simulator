@@ -1,0 +1,50 @@
+{
+  "host": "127x04",
+  "nice": 19,
+  "cargo_jobs": 1,
+  "max_python_benchmark_workers": 8,
+  "artifacts": [
+    {
+      "variant": "baseline",
+      "binary_sha256": "ff0ccd0fd59b1603db49e04f8e1398bf8334e19bd6b45b85a44d04d9f3f46f72",
+      "manifest_sha256": "ffb2d6ef0996429762fbff2a6ff259c352a89bfd05aacbba2a31e51a04b5b16a"
+    },
+    {
+      "variant": "current-gil",
+      "binary_sha256": "936beb7df75c36fea3121ad4ca460e648c5069d75c9cb1a0ad5145dfb2cd79a2",
+      "manifest_sha256": "0ad2b9a09bd7743a7c5dfcac780608277e01448d0af54f529519df1c79b799c4"
+    },
+    {
+      "variant": "current-gil-v3",
+      "binary_sha256": "5df489b79310aca16722b9a2785baf39912dde6517981f05bc991c59f427dbcc",
+      "manifest_sha256": "24e4a35a913c4411c7364155c8f922b38b7c8e9cef034b800c1794a5f397b269"
+    },
+    {
+      "variant": "current-v3",
+      "binary_sha256": "531d2b3353c227b487f137d2cf310d0c73db7ff98246f71bfd4b0bb0ca3a125d",
+      "manifest_sha256": "e03dd4096702377831bee0f46c0b1887cbb62905df0ace8cae428c9fcdd34e98"
+    },
+    {
+      "variant": "gil",
+      "binary_sha256": "0a2cee24d9beedfee74a6c961ac3fae89b5e356f23a3a494802365d1db854c9a",
+      "manifest_sha256": "bb83c5bcf83b7eac40885afcb8454e72434ef4c55a32d0b832984c4dc1b389fa"
+    },
+    {
+      "variant": "gil-v3",
+      "binary_sha256": "71826488b2ca83cde6121af268408e556c0ae0a0191b739e7bcc4b2a513ab621",
+      "manifest_sha256": "bde11e2e8af36610f950a69edcb2d5b496f03c684924d14950256e1c53f4f97a"
+    },
+    {
+      "variant": "v3",
+      "binary_sha256": "73df6f1b8c96b976976ea5bed1928d6f48b48105692fc096276aa29c8c3b8f9a",
+      "manifest_sha256": "33e61f64b690f1e57388303be5cf80eaa0edc615272d0e28e5181bc3fc8a585a"
+    }
+  ],
+  "files": {
+    "engine-rs/build_quickwins.sh": "c35337ee020c5271bb91469c996a44d8cd4f854104a696f3c1d64d025236fc19",
+    "engine-rs/stage_quickwins.py": "7e79259c0f9e2a71087445bdf16936b1f25782796a95a9f7bcdfae542d21c443",
+    "engine-rs/quickwin_resources.py": "7aca67fefd6e924d7b33ead473f52924b3323bb9715f917851943e31d6eb786d",
+    "reports/perf-audit/quickwins/qualify.py": "4a3070f2e7108f270730ef6aff89b4943df69d1e15d6ed23878d5c347b24690d",
+    "reports/perf-audit/quickwins/test_resources.py": "e6b9c9d1eefdd6035330f73ee4df41f4260af40b5ca86799f28e1bec02130c95"
+  }
+}

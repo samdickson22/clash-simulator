@@ -1,0 +1,103 @@
+{
+  "label": "qualified",
+  "binary": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/build48-linux/clasher_core.abi3.so",
+  "roots": 24,
+  "rows": [
+    {
+      "mode": "per_call",
+      "threads": 1,
+      "jobs": 192,
+      "seconds": [
+        0.7664261820027605,
+        0.7650746250292286,
+        0.757297907024622
+      ],
+      "median_seconds": 0.7650746250292286,
+      "results_sha256": "ae8ed113b59964ec9aa44964550971574f06d96a49b013e4c51dca3f88b32c1d"
+    },
+    {
+      "mode": "per_call",
+      "threads": 2,
+      "jobs": 192,
+      "seconds": [
+        1.156834934023209,
+        1.1463851219741628,
+        1.1669031620258465
+      ],
+      "median_seconds": 1.156834934023209,
+      "results_sha256": "ae8ed113b59964ec9aa44964550971574f06d96a49b013e4c51dca3f88b32c1d"
+    },
+    {
+      "mode": "per_call",
+      "threads": 4,
+      "jobs": 192,
+      "seconds": [
+        1.4318765229545534,
+        1.3677892750129104,
+        1.3678203359013423
+      ],
+      "median_seconds": 1.3678203359013423,
+      "results_sha256": "ae8ed113b59964ec9aa44964550971574f06d96a49b013e4c51dca3f88b32c1d"
+    },
+    {
+      "mode": "per_call",
+      "threads": 8,
+      "jobs": 192,
+      "seconds": [
+        1.4215704739326611,
+        1.4669322359841317,
+        1.4066270060138777
+      ],
+      "median_seconds": 1.4215704739326611,
+      "results_sha256": "ae8ed113b59964ec9aa44964550971574f06d96a49b013e4c51dca3f88b32c1d"
+    },
+    {
+      "mode": "native",
+      "threads": 1,
+      "jobs": 192,
+      "seconds": [
+        0.765002046013251,
+        0.7787056990200654,
+        0.7892473520478234
+      ],
+      "median_seconds": 0.7787056990200654,
+      "results_sha256": "bf24ef4b179be161abd8d4bc6707c970468f90a173312833723a2180c0491f2b"
+    },
+    {
+      "mode": "native",
+      "threads": 2,
+      "jobs": 192,
+      "seconds": [
+        1.207599358051084,
+        1.1750982069643214,
+        1.2418720909627154
+      ],
+      "median_seconds": 1.207599358051084,
+      "results_sha256": "bf24ef4b179be161abd8d4bc6707c970468f90a173312833723a2180c0491f2b"
+    },
+    {
+      "mode": "native",
+      "threads": 4,
+      "jobs": 192,
+      "seconds": [
+        1.2796860170783475,
+        1.259332571993582,
+        1.2514437910867855
+      ],
+      "median_seconds": 1.259332571993582,
+      "results_sha256": "bf24ef4b179be161abd8d4bc6707c970468f90a173312833723a2180c0491f2b"
+    },
+    {
+      "mode": "native",
+      "threads": 8,
+      "jobs": 192,
+      "seconds": [
+        1.3332764939405024,
+        1.3147557410411537,
+        1.2152056749910116
+      ],
+      "median_seconds": 1.3147557410411537,
+      "results_sha256": "bf24ef4b179be161abd8d4bc6707c970468f90a173312833723a2180c0491f2b"
+    }
+  ]
+}

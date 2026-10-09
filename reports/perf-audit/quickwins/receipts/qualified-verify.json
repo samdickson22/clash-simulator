@@ -1,0 +1,11 @@
+{
+  "label": "qualified",
+  "binary": "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/engine-speed/stage6/build48-linux/clasher_core.abi3.so",
+  "binary_sha256": "78bd9950f1059bddbc2b2d2487158ff5dc51c722500c02969ec100efe1930689",
+  "games": 1000,
+  "traced_rollouts": 7000,
+  "games_sha256": "aea0b7bab565e912dfbc733f96fae43f59a121b09fcb1e86d2cdb2dd6e0394ce",
+  "rollouts_sha256": "f52cb3b114d024ddb556c94242ac81f786f2faf6647ab849ce9b7467b199caaa",
+  "elapsed_seconds": 169.63711184705608,
+  "records_sha256": "c990d7f6b6fc7264b22300e4291902e35c19fa8da593987f850384e65d4deb09"
+}

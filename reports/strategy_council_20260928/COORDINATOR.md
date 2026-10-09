@@ -958,3 +958,9 @@ Also on the hub, but with copies elsewhere:
   - **Host policy:** deciding measurements run on single-tenant 127x08 after 05:00Z (plus 04 if needed, paired), since fleet clocks vary ~6× with contention.
   - Option C is inadmissible; match 1975100708 is excluded; the gates and `noise-measured.json` are unchanged.
   - **Next:** amendment 12 → reviewer delta check → freeze.
+- **~01:35 UTC: engine quick wins delivered** (Sol; `reports/perf-audit/ENGINE-QUICKWINS.md`). New opt-in binaries live under `artifacts/native/` and are not committed; the deployed `.so` is untouched.
+  - **GIL release:** a corrected live full decision on 08 goes from serial p50 1,024 / p99 1,759 ms to **four-thread p50 308 / p99 491 ms (3.32×)**. Candidates, scores and actions are exactly equal (7,872 scores per binary).
+  - **x86-64-v3 builds** are qualified on 1,000 seeds and 7,000 rollouts, digest-equal.
+  - **The `Resources` cache** is an opt-in subclass with an identical config and template hash.
+  - A full decision is still over 200 ms, so the L2-v4 decision budget and d must come from re-measurement on the Mac.
+  - Three older worker score vectors differ from fresh replay even on the unchanged binary (1975100700 seq 3275/4524/5086); that's noted, a pre-existing receipt issue.

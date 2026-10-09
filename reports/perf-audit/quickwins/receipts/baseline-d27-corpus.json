@@ -1,0 +1,7 @@
+{
+  "label": "baseline",
+  "roots": 1000,
+  "traced_rollouts": 3000,
+  "d27_sha256": "428a7dac04ff84dc87fde74f72bbe770fce81cdb141645855a6f10c2ed50018d",
+  "elapsed_seconds": 21.473964827950113
+}

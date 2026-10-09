@@ -1,0 +1,103 @@
+{
+  "label": "baseline",
+  "binary": "/mpac/sdicks02/tmp/engine-quickwins-20261009-v1/artifacts/baseline/clasher_core.abi3.so",
+  "roots": 24,
+  "rows": [
+    {
+      "mode": "per_call",
+      "threads": 1,
+      "jobs": 192,
+      "seconds": [
+        0.7663065759697929,
+        0.7834054409759119,
+        0.7733103450154886
+      ],
+      "median_seconds": 0.7733103450154886,
+      "results_sha256": "ae8ed113b59964ec9aa44964550971574f06d96a49b013e4c51dca3f88b32c1d"
+    },
+    {
+      "mode": "per_call",
+      "threads": 2,
+      "jobs": 192,
+      "seconds": [
+        1.2380861550336704,
+        1.2258742719423026,
+        1.162902059033513
+      ],
+      "median_seconds": 1.2258742719423026,
+      "results_sha256": "ae8ed113b59964ec9aa44964550971574f06d96a49b013e4c51dca3f88b32c1d"
+    },
+    {
+      "mode": "per_call",
+      "threads": 4,
+      "jobs": 192,
+      "seconds": [
+        1.4549292869633064,
+        1.3979997499845922,
+        1.4037840539822355
+      ],
+      "median_seconds": 1.4037840539822355,
+      "results_sha256": "ae8ed113b59964ec9aa44964550971574f06d96a49b013e4c51dca3f88b32c1d"
+    },
+    {
+      "mode": "per_call",
+      "threads": 8,
+      "jobs": 192,
+      "seconds": [
+        1.5021660519996658,
+        1.4751766229746863,
+        1.4665229340316728
+      ],
+      "median_seconds": 1.4751766229746863,
+      "results_sha256": "ae8ed113b59964ec9aa44964550971574f06d96a49b013e4c51dca3f88b32c1d"
+    },
+    {
+      "mode": "native",
+      "threads": 1,
+      "jobs": 192,
+      "seconds": [
+        0.7715343240415677,
+        0.7819234649650753,
+        0.7811644059838727
+      ],
+      "median_seconds": 0.7811644059838727,
+      "results_sha256": "bf24ef4b179be161abd8d4bc6707c970468f90a173312833723a2180c0491f2b"
+    },
+    {
+      "mode": "native",
+      "threads": 2,
+      "jobs": 192,
+      "seconds": [
+        1.2706902190111578,
+        1.1985321620013565,
+        1.2607472249073908
+      ],
+      "median_seconds": 1.2607472249073908,
+      "results_sha256": "bf24ef4b179be161abd8d4bc6707c970468f90a173312833723a2180c0491f2b"
+    },
+    {
+      "mode": "native",
+      "threads": 4,
+      "jobs": 192,
+      "seconds": [
+        1.346634407993406,
+        1.3331972879823297,
+        1.2888873009942472
+      ],
+      "median_seconds": 1.3331972879823297,
+      "results_sha256": "bf24ef4b179be161abd8d4bc6707c970468f90a173312833723a2180c0491f2b"
+    },
+    {
+      "mode": "native",
+      "threads": 8,
+      "jobs": 192,
+      "seconds": [
+        1.3022440189961344,
+        1.3041943339630961,
+        1.3212529988959432
+      ],
+      "median_seconds": 1.3041943339630961,
+      "results_sha256": "bf24ef4b179be161abd8d4bc6707c970468f90a173312833723a2180c0491f2b"
+    }
+  ]
+}

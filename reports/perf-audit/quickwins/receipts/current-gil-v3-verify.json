@@ -1,0 +1,11 @@
+{
+  "label": "current-gil-v3",
+  "binary": "/mpac/sdicks02/tmp/engine-quickwins-20261009-v1/artifacts/current-gil-v3/clasher_core.abi3.so",
+  "binary_sha256": "5df489b79310aca16722b9a2785baf39912dde6517981f05bc991c59f427dbcc",
+  "games": 1000,
+  "traced_rollouts": 7000,
+  "games_sha256": "7868a665f110370b857478e26195f0a6293938513a1b79859d42f07f8869a2e8",
+  "rollouts_sha256": "f52cb3b114d024ddb556c94242ac81f786f2faf6647ab849ce9b7467b199caaa",
+  "elapsed_seconds": 144.5281619100133,
+  "records_sha256": "8649ef76e88ab724e4b749110814ac4beffbe52b401568b02fc43d1c823e8453"
+}
