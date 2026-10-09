@@ -1473,3 +1473,4 @@ Also on the hub, but with copies elsewhere:
   - 04 (after the GRU park): E1 ≤32, ExIt ≤96.
   - 08: ExIt ≤96 at nice 19 with a stop file.
   - 01: E1 ≤24 SCHED_IDLE.
+- **10:27 UTC:** E1 seeds and 4 arms approved. **Added arm 5: W + a reserve-floor intervention vs v1** (paired with W-v-v1), to establish whether under-4 arrivals causally drive losses. It's a fair-state candidate filter, flagged default OFF, frozen in PLAN before any game.
