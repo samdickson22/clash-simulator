@@ -99,11 +99,12 @@ class Prefetch:
         return total,available
     def monitor(self):
         import signal
+        leased=os.uname().nodename.split('.')[0] in ('127x09','127x13','127x14','127x15','127x16')
         while not self.stop.wait(.5):
             pss,available=self.usage()
             self.peak_pss=max(self.peak_pss,pss);self.minimum_available=min(self.minimum_available,available)
-            if pss>46_000_000_000 or available<24*2**30:
-                self.resource_stop='aggregate PSS exceeds46GB' if pss>46_000_000_000 else 'MemAvailable below24GiB'
+            if leased and pss>46_000_000_000 or available<24*2**30:
+                self.resource_stop='leased aggregate PSS exceeds46GB' if leased and pss>46_000_000_000 else 'MemAvailable below24GiB'
                 os.kill(os.getpid(),signal.SIGTERM)
                 return
     def step(self,*args,**kwargs):

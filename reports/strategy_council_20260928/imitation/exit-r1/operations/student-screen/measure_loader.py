@@ -14,7 +14,7 @@ def main():
     baseline=json.loads(Path(a.baseline).read_text())
     result=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 warmup_updates=20,minimum_measurement_seconds=300,arms={})
-    for arm,host,cursor in [('S-mix','01',239),('S-teacher','04',510),('S-human','08',200)]:
+    for arm,host,cursor in [('S-mix','01',239),('S-teacher','04',510),('S-human','08',232)]:
         text=subprocess.check_output(['ssh','127x'+host,'cat '+a.job+'/fits/'+arm+'/timing.jsonl'],text=True)
         rows=[json.loads(s) for s in text.splitlines()]
         rows=[r for r in rows if r['step']>=cursor+20]

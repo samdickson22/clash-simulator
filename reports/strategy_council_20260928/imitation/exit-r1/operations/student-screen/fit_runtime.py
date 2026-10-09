@@ -42,9 +42,23 @@ cursor_start=0
 if '--resume' in sys.argv:
     cursor_start=int(torch.load(sys.argv[sys.argv.index('--resume')+1],map_location='cpu',weights_only=True)['state']['step'])
 qualification_stop=int(os.environ.get('EXIT_QUALIFICATION_STOP_AFTER','0'))
+micro_override=int(os.environ.get('EXIT_HUMAN_MICRO_OVERRIDE','0'))
+if micro_override:
+    assert micro_override==3584
+    assert out.name=='S-human'
+    assert sys.argv[sys.argv.index('--teacher-ratio')+1]=='0.0'
+    assert '--resume' in sys.argv
+    micro_amendment=Path(os.environ['EXIT_HUMAN_MICRO_AMENDMENT'])
+    micro_spec=json.loads(micro_amendment.read_text())
+    assert micro_spec['effective_human_microbatch']==3584 and micro_spec['effective_batch_size']==8192
+    assert micro_spec['runtime_adapter_sha256']==hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 def step(*args, **kwargs):
     global steps
     begin = time.monotonic()
+    if micro_override:
+        args=list(args)
+        assert args[4]==0.0 and args[5]==7168
+        args[5]=micro_override
     result = original_step(*args, **kwargs)
     torch.cuda.synchronize()
     steps += 1
@@ -68,6 +82,8 @@ runtime = dict(host=socket.gethostname(), pid=os.getpid(),
     started_at=datetime.datetime.now(datetime.timezone.utc).isoformat(),
     numpy=np.__version__, torch=torch.__version__, python=sys.version,
     cuda_allocator_config=os.environ.get('PYTORCH_CUDA_ALLOC_CONF'),
+    effective_human_microbatch=micro_override or 7168,
+    human_micro_amendment_sha256=hashlib.sha256(micro_amendment.read_bytes()).hexdigest() if micro_override else None,
     nice=os.getpriority(os.PRIO_PROCESS,0), affinity=sorted(os.sched_getaffinity(0)),
     instrumentation='T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing')
 prefetch=None

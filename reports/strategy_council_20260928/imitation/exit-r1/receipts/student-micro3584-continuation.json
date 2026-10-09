@@ -1,0 +1,46 @@
+{
+  "schema": "clasher.exit-r1.owned-micro-continuation.v1",
+  "utc": "2026-10-09T20:56:35.401664+00:00",
+  "runtime": {
+    "host": "127x08",
+    "pid": 1698898,
+    "started_at": "2026-10-09T20:54:53.253983+00:00",
+    "numpy": "2.3.5",
+    "torch": "2.7.1+cu118",
+    "python": "3.12.12 (main, Feb 12 2026, 00:42:14) [Clang 21.1.4 ]",
+    "cuda_allocator_config": null,
+    "effective_human_microbatch": 3584,
+    "human_micro_amendment_sha256": "7e218adbcf764cb0d49bf403934e794a7d8eb2809b63bc43e6fa1eefcd37b992",
+    "nice": 19,
+    "affinity": [
+      118,
+      119,
+      126
+    ],
+    "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+    "actual_loader_workers": 6,
+    "scientific_loader_workers": 1,
+    "prefetch_factor": 4,
+    "mmap_random_advice": false,
+    "operational_amendment_sha256": "9c860c5528c8807cda8b92b20fd775d65d0766d2176a6a86f273a91dc8084610"
+  },
+  "exact_resume_step": 232,
+  "exact_resume_checkpoint_sha256": "911fb0ac1327acba29f3de7c218194149e602cd6f048e3c248b48d2f447b693d",
+  "dense_step_239": {
+    "step": 239,
+    "optimizer_seconds": 1.9162458558566868,
+    "elapsed_seconds": 40.0546067871619,
+    "pss_bytes": 6617555968,
+    "mem_available_bytes": 116534407168,
+    "gpu_free_bytes": 15924264960
+  },
+  "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r1-student-screen-20261009-r1/FIT.STOP",
+  "vacate_seconds": 300,
+  "checkpoint_every": 200,
+  "original_checkpoint_200_sha256": "c395b0cb5f01375d62b7c7c0a0c2d19781d4835a5606988bebe88b006b5bb94f",
+  "nominal_checkpoint_fingerprint_micro": 7168,
+  "actual_human_micro": 3584,
+  "numeric_equivalence": "Same mathematical update, different floating-point summation order; no bit-equivalence claim.",
+  "inherited_v3_runtime_hash": "V3 fit_runtime_sha256 records the historical pre-micro adapter. Actual amended runtime hash is pinned by student-micro3584-amendment.json runtime_adapter_sha256.",
+  "current_runtime_adapter_sha256": "f9f2c86af5137790aacad91be34d01a632ebd657f04d570cd146db5ecd11e118"
+}

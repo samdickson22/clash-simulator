@@ -87,6 +87,8 @@ def main():
     performance=read(job/'loader-performance.json')
     allocator_qualification=read(job/'allocator-qualification/S-human/PASS.json')
     assert allocator_qualification['passed']
+    micro_amendment=read(job/'student-micro3584-amendment.json')
+    assert fit['S-human']['segment']['effective_human_microbatch']==3584
     receipt = dict(schema='clasher.exit-r1.student-screen-complete.v1',
         utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
         lane='exploration; no multiplicity adjustment', corpus_manifest_sha256=digest(job/'corpus/manifest.json'),
@@ -101,12 +103,16 @@ def main():
         bootstrap=aggregate['bootstrap'],loader_performance=performance,
         loader_amendment_sha256=digest(job/'student-loader6-amendment.json'),
         owned_gpu_amendment_sha256=digest(job/'student-owned-gpu-amendment-v2.json'),
+        owned_pss_scope_amendment_sha256=digest(job/'student-owned-gpu-amendment-v3.json'),
         parent_affinity_amendment_sha256=digest(job/'student-parent-affinity-amendment.json'),
         allocator_amendment_sha256=digest(job/'student-allocator-amendment.json'),
         allocator_qualification=allocator_qualification,
+        human_micro_amendment=micro_amendment,
+        human_micro_amendment_sha256=digest(job/'student-micro3584-amendment.json'),
         allocator_qualification_gpu_hours=allocator_qualification['wall_seconds']/3600,
         allocator_qualification_cpu_hours=sum(x['segment']['cpu_seconds'] for x in allocator_qualification['modes'])/3600,
         owned_migration=read(job/'student-owned-migration.json'),results=aggregate['arms'],
+        owned_micro_continuation=read(job/'student-micro3584-continuation.json'),
         game_diagnostics=aggregate['game_diagnostics'], teacher_diagnostics=teacher,
         inputs={name:sha for name,sha in freeze['files'].items()
                 if name.endswith(('STUDENT-SCREEN-PLAN.md','student-seed-audit.json',
@@ -122,6 +128,11 @@ def main():
         '4,883 steps ×8,192 =40,001,536 rows, fixed T11 optimizer/schedule, final EMA only. '
         'Teacher fractions were 0.5/1.0/0.0, temperature0.1, rare-play weight4 and value loss0. '
         'No reporting seed was used for tuning or checkpoint selection.', '',
+        'S-human uses the coordinator-authorized operational micro3584 amendment from '
+        'checkpoint200. Effective batch8192, sampled rows/order and global loss denominators '
+        'are unchanged. Gradient accumulation changes floating-point summation order; '
+        'this continuation is not claimed bit-identical to micro7168. Its exact checkpoint '
+        'recipe fingerprint remains7168; runtime/segment evidence records the actual3584.', '',
         '## Arm decisions and metrics(a)/(b)', '']
     rows=[]
     for arm in ARMS:
@@ -148,7 +159,7 @@ def main():
         'optimizer, scheduler and all RNG states bit for bit equal before resuming. '
         'Complete human and teacher index vectors are rechecked at every prefetched '
         'production step. Actual workers6, scientific loader1, prefetch4, no random '
-        'mmap advice; aggregate PSS guard46GB and MemAvailable floor24GiB. Parent '
+        'mmap advice; leased aggregate PSS guard46GB and home MemAvailable floor24GiB. Parent '
         'cores118/119/126, loader cores120–125; Torch scientific threads1. '
         'Periodic checkpoints200–250 steps, with final-step EMA selection unchanged.', '']
     table(lines,['Arm','Before rows/s, >5min','Before s/step','After rows/s, >5min',
@@ -169,6 +180,12 @@ def main():
         'and38 additional unsaved updates were archived and replayed. '
         'Expandable allocation was then enabled for S-human after a dated operational '
         'amendment and a bit-exact two-step default/expandable replay from200. '
+        'It failed at the same dense step239 allocation with a CUDA driver invalid-argument '
+        'error; another38 updates were archived and replayed. S-human then resumed200 '
+        'with default allocation and the separately dated micro3584 runtime amendment. '
+        'An inherited46GB aggregate PSS guard then clean-saved232 on owned08 while '
+        'MemAvailable remained115.7GB. A dated amendment scoped that PSS cap to leased '
+        'hosts and retained the24GiB home memory floor; exact232 resumed without lost updates. '
         'Their GPU/CPU cost is included in the segment totals. S-mix completed '
         'step239 but stopped because the wrapper incorrectly applied the leased8GiB '
         'reserve to owned01; it resumed exactly after that guard scope was corrected. '
@@ -236,7 +253,9 @@ def main():
          ['Loader6 operational amendment',receipt['loader_amendment_sha256']],
          ['Parent affinity operational amendment',receipt['parent_affinity_amendment_sha256']],
          ['Owned GPU migration operational amendment',receipt['owned_gpu_amendment_sha256']],
+         ['Owned PSS guard scope operational amendment',receipt['owned_pss_scope_amendment_sha256']],
          ['S-human allocator operational amendment',receipt['allocator_amendment_sha256']],
+         ['S-human micro3584 operational amendment',receipt['human_micro_amendment_sha256']],
          ['Owned migration receipt',digest(job/'student-owned-migration.json')],
          ['Final reporting execution freeze',receipt['execution_freeze_sha256']],
          ['Aggregate metrics',receipt['aggregate_sha256']],
@@ -260,8 +279,11 @@ def main():
         'site-packages exposed, destination verifier made Python3.8 compatible, and '
         'instrumentation moved after the fresh-output check. The old09 supervisor '
         'refused before admission; the coordinator directed use of the existing '
-        'Oct11 capture-extension wrapper. No global wrapper was edited. No recipe, '
-        'reporting seed, scientific code or kill rule changed.', '',
+        'Oct11 capture-extension wrapper. No global wrapper was edited. No sampling, '
+        'optimizer/schedule, reporting seed, scientific source code or kill rule changed. The disclosed '
+        'micro3584 operational amendment changes floating-point accumulation order. '
+        'V3 retains a historical base runtime hash; the micro amendment and continuation '
+        'receipt pin the actual amended runtime adapter.', '',
         'Seed audit limitation from the coordinator freeze:02/07/18 were not directly '
         'inventoried; committed formula ranges and archive/mirror supplements cover '
         'them as disclosed in the seed-audit receipt. A surviving exploration arm '
