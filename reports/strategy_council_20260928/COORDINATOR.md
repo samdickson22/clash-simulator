@@ -1304,3 +1304,10 @@ Also on the hub, but with copies elsewhere:
   - **Decision:** 02 joins the capture queue now, with an intent-safe controller on the renewed services and a 150 GB budget.
   - Capture is at 99% on 08/13/14/15. 04 is at 80% (vectorized benchmark). **09 is at 0%** pending the 09r4 retry.
   - T11 s21 on 16 is at 73%. 06/07/11/18 are down.
+- **07:19 UTC: GATE (c) RESULTS: both frozen decisions PASS** (`imitation/RESULTS-gate-c.md` `a9610429…`).
+  - **P16:** v1 won 191/384 (49.7%) against the natural baseline's 66/384 (17.2%). Exact McNemar p = 5.8e-25.
+  - **H2H:** v1 won 170/256 against s2902, score 66.4%, paired CI [61.3, 71.5]. **Under the registered rule, v1 replaces s2902.**
+  - **C56** (descriptive): 319/384, 83.1%.
+  - All audits pass: all 25 rejections reproduce known occupancy guards, and all 10 action-stream spots are exact.
+  - Disclosed: the spot count wasn't specified in the PREREG and was fixed before analysis.
+  - With gate (b) PASS (0.656) as well, **the v1 all-card imitation model is confirmed as the human prior.** Next on that track: integrate it with the W-screen8 search teacher.
