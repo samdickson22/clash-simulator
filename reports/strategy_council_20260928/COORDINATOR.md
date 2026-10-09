@@ -931,3 +931,7 @@ Also on the hub, but with copies elsewhere:
 - **~01:20 UTC: live-runtime CPU qualification PASS** (45 tests; 1,000 byte-identical spliced payloads; 1,312 candidate/root scores exactly equal to the original runtime and sealed S6).
   - **Key finding: a real non-terminal live decision costs a full-budget four-root serial p50 ≈ 1,002 ms → 953 ms on Linux CPU with the fixes** (root serialization 11.1 → 1.7 ms). The earlier ~186 ms was terminal-root fallback.
   - **L2-v4 implication:** the decision budget/deadline and the pipeline part of d must be re-derived from real searches. Parallel roots via GIL release are now critical path (re-prioritized for the engine quick-wins worker), and Mac re-measurement is required for E4.
+- **~01:00 UTC: lease wrapper v2 hotfix r2 deployed** on 09/13/14/15/16 for new launches.
+  - **Fix:** TERM/INT/HUP now go to the child group and escaped descendants, with a 120 s grace, then KILL, a receipt and an accounting release. 58 tests plus a three-generation smoke test on 09 passed.
+  - **Old r1/v1 jobs:** never TERM their supervisors. The r1 internal stop already cleans tracked trees by ~04:55Z, but for a prompt stop the **operator helper** TERMs verified child groups.
+  - **Scheduled:** a one-shot backstop task at 04:29Z (21:29 PDT) runs capture then stop on 09/13/14/15/16, including T11's v1 job on 16, verifies everything, records a receipt and deletes itself.

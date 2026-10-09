@@ -1,0 +1,13 @@
+{
+  "host": "127x01",
+  "supervisor_pid": 826006,
+  "supervisor_start": "129687106",
+  "supervisor_exit": -15,
+  "child_pid": 826008,
+  "child_start": "129687120",
+  "child_alive_after_supervisor_term": true,
+  "exit_receipt_exists": false,
+  "fixture": "/tmp/lease-wrapper-v2-tests-2qpnsgpv/test_normal_completion_pss_and_nice",
+  "child_running_after_fixture_cleanup": false,
+  "r1_source_sha256": "94f9aef56cc84a91df5925b5d1a95b603f8838534bf9ac01e44873b0c3b6b7f6"
+}

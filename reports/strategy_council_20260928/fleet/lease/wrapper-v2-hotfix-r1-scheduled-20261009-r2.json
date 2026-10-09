@@ -1,0 +1,88 @@
+{
+  "host": "127x01",
+  "revision": "v2-hotfix-20261008-r1",
+  "scale": {
+    "STOP_AT": "2026-10-09T00:53:55.614275+00:00",
+    "EXIT_BY": "2026-10-09T00:53:57.614275+00:00",
+    "TERM_AFTER": 0.4,
+    "KILL_AFTER": 0.8
+  },
+  "identities": {
+    "parent": {
+      "pid": 843207,
+      "pgid": 843207,
+      "start": "129714033"
+    },
+    "child": {
+      "pid": 843222,
+      "pgid": 843207,
+      "start": "129714035"
+    },
+    "grandchild": {
+      "pid": 843223,
+      "pgid": 843207,
+      "start": "129714035"
+    }
+  },
+  "first_term": {
+    "parent": {
+      "at": "2026-10-09T00:53:55.721263+00:00"
+    },
+    "child": {
+      "at": "2026-10-09T00:53:56.177594+00:00"
+    },
+    "grandchild": {
+      "at": "2026-10-09T00:53:56.177592+00:00"
+    }
+  },
+  "receipt": {
+    "version": 2,
+    "wrapper_revision": "v2-hotfix-20261008-r1",
+    "host": "127x15",
+    "label": "r1-internal-stop",
+    "command": [
+      "/usr/bin/python3",
+      "-c",
+      "import os,signal,time,json,datetime as dt\nfrom pathlib import Path\nrole='parent'\nif os.fork()==0:\n role='child'\n if os.fork()==0:role='grandchild'\ndef handle(sig,frame):\n p=Path('jobs/'+role+'.signal.json')\n if not p.exists():p.write_text(json.dumps({'at':dt.datetime.now(dt.timezone.utc).isoformat()}))\nsignal.signal(signal.SIGTERM,handle)\nPath('jobs/'+role+'.ready.json').write_text(json.dumps({'pid':os.getpid(),'pgid':os.getpgrp(),'start':Path('/proc/self/stat').read_text().rsplit(')',1)[1].split()[19]}))\nwhile True:time.sleep(.02)\n"
+    ],
+    "started_utc": "2026-10-09T00:53:54.655910+00:00",
+    "declared_processes": 4,
+    "declared_pss_bytes": 100000000,
+    "gpu": false,
+    "admission_usage": {
+      "processes": 0,
+      "pss_bytes": 0
+    },
+    "policy_source": "/tmp/lease-wrapper-v2-tests-3uyrlnni/test_stop_and_exit_deadlines/policy.md",
+    "policy_controls_sha256": "c05ba1ac0fb374d06ea2e90471e0e5cf1218598046955e88d71e9bef113bc07b",
+    "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+    "stop_at_utc": "2026-10-09T00:53:55.614275+00:00",
+    "exit_by_utc": "2026-10-09T00:53:57.614275+00:00",
+    "admission_aggregate": {
+      "processes": 0,
+      "pss_bytes": 0
+    },
+    "admission_jobs": {},
+    "supervisor_pid": 843204,
+    "admission_sequence": 1,
+    "pid": 843207,
+    "stop_requested_utc": "2026-10-09T00:53:55.677624+00:00",
+    "exit_code": -9,
+    "status": "stopped",
+    "finished_utc": "2026-10-09T00:53:56.642143+00:00",
+    "stop_reason": "scheduled checkpoint deadline reached",
+    "peak_processes": 4,
+    "peak_rss_bytes": 45182976,
+    "peak_sampled_pss_bytes": 17924096,
+    "memory_metric": "pss",
+    "console_users": 0,
+    "aggregate": {
+      "processes": 1,
+      "pss_bytes": 8836096
+    },
+    "effective_process_cap": 80
+  },
+  "no_orphans": true,
+  "registry_empty": true,
+  "r1_source_sha256": "94f9aef56cc84a91df5925b5d1a95b603f8838534bf9ac01e44873b0c3b6b7f6"
+}

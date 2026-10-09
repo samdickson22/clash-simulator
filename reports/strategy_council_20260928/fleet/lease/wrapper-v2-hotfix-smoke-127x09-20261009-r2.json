@@ -1,0 +1,821 @@
+{
+  "receipt": {
+    "version": 2,
+    "wrapper_revision": "v2-hotfix-20261009-r2",
+    "host": "127x09",
+    "label": "lease-v2-hotfix-signal-20261009-09r2",
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "-c",
+      "import os,signal,time,json\nfrom pathlib import Path\nbase=Path('/mpac/sdicks02/repos/clasher-lease');label='lease-v2-hotfix-signal-20261009-09r2';role='parent'\nif os.fork()==0:\n role='child'\n if os.fork()==0:role='grandchild'\ndef handle(sig,frame):\n (base/'jobs'/(label+'.'+role+'.signal.json')).write_text(json.dumps({'signal':sig}))\nsignal.signal(signal.SIGTERM,handle)\ntick=Path('/proc/self/stat').read_text().rsplit(')',1)[1].split()[19]\n(base/'jobs'/(label+'.'+role+'.ready.json')).write_text(json.dumps({'pid':os.getpid(),'start':tick,'pgid':os.getpgrp()}))\nwhile True:time.sleep(.1)\n"
+    ],
+    "started_utc": "2026-10-09T00:57:28.029893+00:00",
+    "declared_processes": 4,
+    "declared_pss_bytes": 100000000,
+    "gpu": false,
+    "admission_usage": {
+      "processes": 37,
+      "pss_bytes": 24000000000
+    },
+    "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+    "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+    "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+    "stop_at_utc": "2026-10-09T04:30:00+00:00",
+    "exit_by_utc": "2026-10-09T05:00:00+00:00",
+    "admission_aggregate": {
+      "processes": 27,
+      "pss_bytes": 14440097792
+    },
+    "admission_jobs": {
+      "v2:t7-epoch-offload-20261008-09r1": {
+        "kind": "v2",
+        "sequence": 10,
+        "supervisor_pid": 19112,
+        "processes": 10,
+        "pss_bytes": 7890821120,
+        "stop_reason": null
+      },
+      "v2:cpu-delay-fixes-p0605-127x09-fine-r4": {
+        "kind": "v2",
+        "sequence": 29,
+        "supervisor_pid": 292439,
+        "processes": 17,
+        "pss_bytes": 6549276672,
+        "stop_reason": null
+      }
+    },
+    "supervisor_pid": 302309,
+    "supervisor_start": "129718839",
+    "stop_grace_seconds": 1.0,
+    "admission_sequence": 30,
+    "pid": 302314,
+    "child_start": "129718844",
+    "child_pgid": 302314,
+    "child_sid": 302314,
+    "stop_requested_utc": "2026-10-09T00:57:29.190512+00:00",
+    "exit_code": -9,
+    "status": "stopped",
+    "finished_utc": "2026-10-09T00:57:32.558825+00:00",
+    "stop_reason": "signal:SIGTERM",
+    "peak_processes": 4,
+    "peak_rss_bytes": 41578496,
+    "peak_sampled_pss_bytes": 8237056,
+    "memory_metric": "pss",
+    "console_users": 0,
+    "aggregate": {
+      "processes": 28,
+      "pss_bytes": 14448354304
+    },
+    "effective_process_cap": 80
+  },
+  "identities": [
+    {
+      "pid": 302314,
+      "start": "129718844",
+      "pgid": 302314
+    },
+    {
+      "pid": 302319,
+      "start": "129718847",
+      "pgid": 302314
+    },
+    {
+      "pid": 302320,
+      "start": "129718847",
+      "pgid": 302314
+    }
+  ],
+  "no_orphans": true,
+  "registry_released": true,
+  "elapsed_seconds": 3.5058617028407753,
+  "host": "127x09",
+  "label": "lease-v2-hotfix-signal-20261009-09r2",
+  "launch_output": "pid=302309 log=/mpac/sdicks02/repos/clasher-lease/jobs/lease-v2-hotfix-signal-20261009-09r2.log\n",
+  "before": {
+    "host": "127x09",
+    "captured_utc": "2026-10-09T00:57:27.654938+00:00",
+    "jobs": {
+      "v2:t7-epoch-offload-20261008-09r1": {
+        "kind": "v2",
+        "supervisor": {
+          "pid": 19112,
+          "ppid": 1,
+          "start": "129354635",
+          "state": "S",
+          "pgid": 19112,
+          "sid": 19112
+        },
+        "supervisor_argv": [
+          "/usr/bin/python3",
+          "-B",
+          "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_hotfix_20261008_r1.py",
+          "--max-processes",
+          "18",
+          "--expected-pss-gb",
+          "12",
+          "--gpu",
+          "t7-epoch-offload-20261008-09r1",
+          "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+          "-B",
+          "/mpac/sdicks02/repos/clasher-lease/jobs/v4-cache-client-offload-r1/inference_fanout_packed_v4.py",
+          "--plan",
+          "/mpac/sdicks02/repos/clasher-lease/jobs/v4-cache-client-offload-r1/epoch-fanout-plan-offload-r1.json",
+          "--plan-sha256",
+          "f0aeef47f4201c3cbb3f408f03ff80b4dd9e5b099ea60763c32709171de174c1",
+          "--equality",
+          "/mpac/sdicks02/repos/clasher-lease/jobs/v4-inference-code-r1/persisted-verified-r2.json",
+          "--equality-sha256",
+          "a32a16024899545b39b35b412a91e59af1d29c5366b2e5885fe29f2c20f8fd8f",
+          "--services",
+          "/mpac/sdicks02/repos/clasher-lease/jobs/v4-cache-client-offload-r1/validation-cache-offload-commands-r3.json",
+          "--services-sha256",
+          "0324612ac4a56df701e6162b87978dd2ea6788fb491e94928e4565e81d2522c4",
+          "--control",
+          "/mpac/sdicks02/repos/clasher-lease/jobs/t7-epoch-offload-20261008-09r1-control"
+        ],
+        "child": {
+          "pid": 19133,
+          "ppid": 19112,
+          "start": "129354640",
+          "state": "S",
+          "pgid": 19133,
+          "sid": 19133
+        },
+        "wrapper_revision": "v2-hotfix-20261008-r1",
+        "stop_at_utc": "2026-10-09T04:30:00+00:00",
+        "exit_by_utc": "2026-10-09T05:00:00+00:00",
+        "stop_reason": null,
+        "known": {
+          "19112": {
+            "pid": 19112,
+            "ppid": 1,
+            "start": "129354635",
+            "state": "S",
+            "pgid": 19112,
+            "sid": 19112
+          },
+          "19133": {
+            "pid": 19133,
+            "ppid": 19112,
+            "start": "129354640",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19221": {
+            "pid": 19221,
+            "ppid": 19133,
+            "start": "129354725",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19269": {
+            "pid": 19269,
+            "ppid": 19133,
+            "start": "129354819",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19565": {
+            "pid": 19565,
+            "ppid": 19133,
+            "start": "129355205",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19569": {
+            "pid": 19569,
+            "ppid": 19565,
+            "start": "129355214",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19638": {
+            "pid": 19638,
+            "ppid": 19569,
+            "start": "129355275",
+            "state": "R",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19815": {
+            "pid": 19815,
+            "ppid": 19133,
+            "start": "129355460",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19816": {
+            "pid": 19816,
+            "ppid": 19815,
+            "start": "129355469",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19882": {
+            "pid": 19882,
+            "ppid": 19816,
+            "start": "129355530",
+            "state": "R",
+            "pgid": 19133,
+            "sid": 19133
+          }
+        }
+      },
+      "v2:cpu-delay-fixes-p0605-127x09-fine-r4": {
+        "kind": "v2",
+        "supervisor": {
+          "pid": 292439,
+          "ppid": 292438,
+          "start": "129705053",
+          "state": "S",
+          "pgid": 292439,
+          "sid": 292439
+        },
+        "supervisor_argv": [
+          "/usr/bin/python3",
+          "-B",
+          "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_hotfix_20261008_r1.py",
+          "--foreground",
+          "--max-processes",
+          "19",
+          "--expected-pss-gb",
+          "12",
+          "cpu-delay-fixes-p0605-127x09-fine-r4",
+          "--",
+          "env",
+          "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime",
+          "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/src:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/engine-rs",
+          "RAYON_NUM_THREADS=1",
+          "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+          "-m",
+          "clasher.analysis.loss_review.delay_simulate",
+          "--out",
+          "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/shards/p0605",
+          "--pairs",
+          "5",
+          "--pair-offset",
+          "605",
+          "--workers",
+          "15",
+          "--checkpoint",
+          "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/inputs/main02.pt",
+          "--exclusions",
+          "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/loss-review/seeds.json",
+          "--gpu-guard",
+          "--resume"
+        ],
+        "child": {
+          "pid": 292491,
+          "ppid": 292439,
+          "start": "129705091",
+          "state": "S",
+          "pgid": 292491,
+          "sid": 292491
+        },
+        "wrapper_revision": "v2-hotfix-20261008-r1",
+        "stop_at_utc": "2026-10-09T04:30:00+00:00",
+        "exit_by_utc": "2026-10-09T05:00:00+00:00",
+        "stop_reason": null,
+        "known": {
+          "292439": {
+            "pid": 292439,
+            "ppid": 292438,
+            "start": "129705053",
+            "state": "S",
+            "pgid": 292439,
+            "sid": 292439
+          },
+          "292491": {
+            "pid": 292491,
+            "ppid": 292439,
+            "start": "129705091",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294489": {
+            "pid": 294489,
+            "ppid": 292491,
+            "start": "129707910",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294490": {
+            "pid": 294490,
+            "ppid": 292491,
+            "start": "129707912",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294491": {
+            "pid": 294491,
+            "ppid": 292491,
+            "start": "129707914",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294492": {
+            "pid": 294492,
+            "ppid": 292491,
+            "start": "129707916",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294493": {
+            "pid": 294493,
+            "ppid": 292491,
+            "start": "129707919",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294494": {
+            "pid": 294494,
+            "ppid": 292491,
+            "start": "129707921",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294495": {
+            "pid": 294495,
+            "ppid": 292491,
+            "start": "129707923",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294496": {
+            "pid": 294496,
+            "ppid": 292491,
+            "start": "129707925",
+            "state": "R",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294497": {
+            "pid": 294497,
+            "ppid": 292491,
+            "start": "129707928",
+            "state": "R",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294498": {
+            "pid": 294498,
+            "ppid": 292491,
+            "start": "129707930",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294499": {
+            "pid": 294499,
+            "ppid": 292491,
+            "start": "129707932",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294500": {
+            "pid": 294500,
+            "ppid": 292491,
+            "start": "129707935",
+            "state": "R",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294501": {
+            "pid": 294501,
+            "ppid": 292491,
+            "start": "129707937",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294502": {
+            "pid": 294502,
+            "ppid": 292491,
+            "start": "129707939",
+            "state": "R",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294503": {
+            "pid": 294503,
+            "ppid": 292491,
+            "start": "129707942",
+            "state": "R",
+            "pgid": 292491,
+            "sid": 292491
+          }
+        }
+      }
+    },
+    "files": {
+      "lease_watch_v2.py": {
+        "sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "target": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2.py"
+      },
+      "lease_watch_v2_hotfix_20261008_r1.py": {
+        "sha256": "94f9aef56cc84a91df5925b5d1a95b603f8838534bf9ac01e44873b0c3b6b7f6",
+        "target": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_hotfix_20261008_r1.py"
+      },
+      "lease_watch_v2_hotfix_20261009_r2.py": {
+        "sha256": "486bab62feba69f9be2eb6c0e05c731356d440698ad4a5bc6d77b23794b7062c",
+        "target": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_hotfix_20261009_r2.py"
+      },
+      "run_v2_hotfix_20261008_r1.sh": {
+        "sha256": "229f6bc535180b0a061f05ffbc41b25152b32d46e184900ee6856a18c416fdac",
+        "target": "/mpac/sdicks02/repos/clasher-lease/run_v2_hotfix_20261008_r1.sh"
+      },
+      "run_v2_hotfix_20261009_r2.sh": {
+        "sha256": "318b832764d510b24f8634c1c90d040ce3f6d41d504ef3d4583b48bdd1772e59",
+        "target": "/mpac/sdicks02/repos/clasher-lease/run_v2_hotfix_20261009_r2.sh"
+      },
+      "run_v2.sh": {
+        "sha256": "318b832764d510b24f8634c1c90d040ce3f6d41d504ef3d4583b48bdd1772e59",
+        "target": "/mpac/sdicks02/repos/clasher-lease/run_v2_hotfix_20261009_r2.sh"
+      },
+      "run_v2_current.sh": {
+        "sha256": "318b832764d510b24f8634c1c90d040ce3f6d41d504ef3d4583b48bdd1772e59",
+        "target": "/mpac/sdicks02/repos/clasher-lease/run_v2_hotfix_20261009_r2.sh"
+      }
+    }
+  },
+  "after": {
+    "host": "127x09",
+    "captured_utc": "2026-10-09T00:57:33.095155+00:00",
+    "jobs": {
+      "v2:t7-epoch-offload-20261008-09r1": {
+        "kind": "v2",
+        "supervisor": {
+          "pid": 19112,
+          "ppid": 1,
+          "start": "129354635",
+          "state": "S",
+          "pgid": 19112,
+          "sid": 19112
+        },
+        "supervisor_argv": [
+          "/usr/bin/python3",
+          "-B",
+          "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_hotfix_20261008_r1.py",
+          "--max-processes",
+          "18",
+          "--expected-pss-gb",
+          "12",
+          "--gpu",
+          "t7-epoch-offload-20261008-09r1",
+          "/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python",
+          "-B",
+          "/mpac/sdicks02/repos/clasher-lease/jobs/v4-cache-client-offload-r1/inference_fanout_packed_v4.py",
+          "--plan",
+          "/mpac/sdicks02/repos/clasher-lease/jobs/v4-cache-client-offload-r1/epoch-fanout-plan-offload-r1.json",
+          "--plan-sha256",
+          "f0aeef47f4201c3cbb3f408f03ff80b4dd9e5b099ea60763c32709171de174c1",
+          "--equality",
+          "/mpac/sdicks02/repos/clasher-lease/jobs/v4-inference-code-r1/persisted-verified-r2.json",
+          "--equality-sha256",
+          "a32a16024899545b39b35b412a91e59af1d29c5366b2e5885fe29f2c20f8fd8f",
+          "--services",
+          "/mpac/sdicks02/repos/clasher-lease/jobs/v4-cache-client-offload-r1/validation-cache-offload-commands-r3.json",
+          "--services-sha256",
+          "0324612ac4a56df701e6162b87978dd2ea6788fb491e94928e4565e81d2522c4",
+          "--control",
+          "/mpac/sdicks02/repos/clasher-lease/jobs/t7-epoch-offload-20261008-09r1-control"
+        ],
+        "child": {
+          "pid": 19133,
+          "ppid": 19112,
+          "start": "129354640",
+          "state": "S",
+          "pgid": 19133,
+          "sid": 19133
+        },
+        "wrapper_revision": "v2-hotfix-20261008-r1",
+        "stop_at_utc": "2026-10-09T04:30:00+00:00",
+        "exit_by_utc": "2026-10-09T05:00:00+00:00",
+        "stop_reason": null,
+        "known": {
+          "19112": {
+            "pid": 19112,
+            "ppid": 1,
+            "start": "129354635",
+            "state": "S",
+            "pgid": 19112,
+            "sid": 19112
+          },
+          "19133": {
+            "pid": 19133,
+            "ppid": 19112,
+            "start": "129354640",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19221": {
+            "pid": 19221,
+            "ppid": 19133,
+            "start": "129354725",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19269": {
+            "pid": 19269,
+            "ppid": 19133,
+            "start": "129354819",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19565": {
+            "pid": 19565,
+            "ppid": 19133,
+            "start": "129355205",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19569": {
+            "pid": 19569,
+            "ppid": 19565,
+            "start": "129355214",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19638": {
+            "pid": 19638,
+            "ppid": 19569,
+            "start": "129355275",
+            "state": "R",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19815": {
+            "pid": 19815,
+            "ppid": 19133,
+            "start": "129355460",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19816": {
+            "pid": 19816,
+            "ppid": 19815,
+            "start": "129355469",
+            "state": "S",
+            "pgid": 19133,
+            "sid": 19133
+          },
+          "19882": {
+            "pid": 19882,
+            "ppid": 19816,
+            "start": "129355530",
+            "state": "R",
+            "pgid": 19133,
+            "sid": 19133
+          }
+        }
+      },
+      "v2:cpu-delay-fixes-p0605-127x09-fine-r4": {
+        "kind": "v2",
+        "supervisor": {
+          "pid": 292439,
+          "ppid": 292438,
+          "start": "129705053",
+          "state": "S",
+          "pgid": 292439,
+          "sid": 292439
+        },
+        "supervisor_argv": [
+          "/usr/bin/python3",
+          "-B",
+          "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_hotfix_20261008_r1.py",
+          "--foreground",
+          "--max-processes",
+          "19",
+          "--expected-pss-gb",
+          "12",
+          "cpu-delay-fixes-p0605-127x09-fine-r4",
+          "--",
+          "env",
+          "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime",
+          "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/src:/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/engine-rs",
+          "RAYON_NUM_THREADS=1",
+          "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+          "-m",
+          "clasher.analysis.loss_review.delay_simulate",
+          "--out",
+          "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/shards/p0605",
+          "--pairs",
+          "5",
+          "--pair-offset",
+          "605",
+          "--workers",
+          "15",
+          "--checkpoint",
+          "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/delay-fixes/inputs/main02.pt",
+          "--exclusions",
+          "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime/reports/explore/loss-review/seeds.json",
+          "--gpu-guard",
+          "--resume"
+        ],
+        "child": {
+          "pid": 292491,
+          "ppid": 292439,
+          "start": "129705091",
+          "state": "S",
+          "pgid": 292491,
+          "sid": 292491
+        },
+        "wrapper_revision": "v2-hotfix-20261008-r1",
+        "stop_at_utc": "2026-10-09T04:30:00+00:00",
+        "exit_by_utc": "2026-10-09T05:00:00+00:00",
+        "stop_reason": null,
+        "known": {
+          "292439": {
+            "pid": 292439,
+            "ppid": 292438,
+            "start": "129705053",
+            "state": "S",
+            "pgid": 292439,
+            "sid": 292439
+          },
+          "292491": {
+            "pid": 292491,
+            "ppid": 292439,
+            "start": "129705091",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294489": {
+            "pid": 294489,
+            "ppid": 292491,
+            "start": "129707910",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294490": {
+            "pid": 294490,
+            "ppid": 292491,
+            "start": "129707912",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294491": {
+            "pid": 294491,
+            "ppid": 292491,
+            "start": "129707914",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294492": {
+            "pid": 294492,
+            "ppid": 292491,
+            "start": "129707916",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294493": {
+            "pid": 294493,
+            "ppid": 292491,
+            "start": "129707919",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294494": {
+            "pid": 294494,
+            "ppid": 292491,
+            "start": "129707921",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294495": {
+            "pid": 294495,
+            "ppid": 292491,
+            "start": "129707923",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294496": {
+            "pid": 294496,
+            "ppid": 292491,
+            "start": "129707925",
+            "state": "R",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294497": {
+            "pid": 294497,
+            "ppid": 292491,
+            "start": "129707928",
+            "state": "R",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294498": {
+            "pid": 294498,
+            "ppid": 292491,
+            "start": "129707930",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294499": {
+            "pid": 294499,
+            "ppid": 292491,
+            "start": "129707932",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294500": {
+            "pid": 294500,
+            "ppid": 292491,
+            "start": "129707935",
+            "state": "R",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294501": {
+            "pid": 294501,
+            "ppid": 292491,
+            "start": "129707937",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294502": {
+            "pid": 294502,
+            "ppid": 292491,
+            "start": "129707939",
+            "state": "S",
+            "pgid": 292491,
+            "sid": 292491
+          },
+          "294503": {
+            "pid": 294503,
+            "ppid": 292491,
+            "start": "129707942",
+            "state": "R",
+            "pgid": 292491,
+            "sid": 292491
+          }
+        }
+      }
+    },
+    "files": {
+      "lease_watch_v2.py": {
+        "sha256": "28e0e6073238e34eab4483a6bd32e4549fe2eee8b85035c9ea2c207f6c0f20d9",
+        "target": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2.py"
+      },
+      "lease_watch_v2_hotfix_20261008_r1.py": {
+        "sha256": "94f9aef56cc84a91df5925b5d1a95b603f8838534bf9ac01e44873b0c3b6b7f6",
+        "target": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_hotfix_20261008_r1.py"
+      },
+      "lease_watch_v2_hotfix_20261009_r2.py": {
+        "sha256": "486bab62feba69f9be2eb6c0e05c731356d440698ad4a5bc6d77b23794b7062c",
+        "target": "/mpac/sdicks02/repos/clasher-lease/lease_watch_v2_hotfix_20261009_r2.py"
+      },
+      "run_v2_hotfix_20261008_r1.sh": {
+        "sha256": "229f6bc535180b0a061f05ffbc41b25152b32d46e184900ee6856a18c416fdac",
+        "target": "/mpac/sdicks02/repos/clasher-lease/run_v2_hotfix_20261008_r1.sh"
+      },
+      "run_v2_hotfix_20261009_r2.sh": {
+        "sha256": "318b832764d510b24f8634c1c90d040ce3f6d41d504ef3d4583b48bdd1772e59",
+        "target": "/mpac/sdicks02/repos/clasher-lease/run_v2_hotfix_20261009_r2.sh"
+      },
+      "run_v2.sh": {
+        "sha256": "318b832764d510b24f8634c1c90d040ce3f6d41d504ef3d4583b48bdd1772e59",
+        "target": "/mpac/sdicks02/repos/clasher-lease/run_v2_hotfix_20261009_r2.sh"
+      },
+      "run_v2_current.sh": {
+        "sha256": "318b832764d510b24f8634c1c90d040ce3f6d41d504ef3d4583b48bdd1772e59",
+        "target": "/mpac/sdicks02/repos/clasher-lease/run_v2_hotfix_20261009_r2.sh"
+      }
+    }
+  }
+}

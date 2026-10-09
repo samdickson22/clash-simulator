@@ -12,6 +12,7 @@ import datetime as dt
 import fcntl
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -39,11 +40,11 @@ HOST_CAPS = {'127x09': 80, '127x11': 96, '127x13': 80,
 CONSOLE_HELPER = Path.home() / '.local/bin/fleet-console-users'
 CHECK_INTERVAL = 60
 POLL_INTERVAL = 1
-TERM_AFTER = 24 * 60
-KILL_AFTER = 25 * 60
 STOP_AT = dt.datetime(2026, 10, 9, 4, 30, tzinfo=dt.timezone.utc)
 EXIT_BY = dt.datetime(2026, 10, 9, 5, 0, tzinfo=dt.timezone.utc)
-REVISION = 'v2-hotfix-20261008-r1'
+REVISION = 'v2-hotfix-20261009-r2'
+# Leave time for the polling loop and bounded external-control queries/reaping.
+DEADLINE_CLEANUP_MARGIN = 60
 CLASHER_PATH = re.compile(
     rb'^/mpac/sdicks02/(?:repos/clasher(?:-[^/]+)?(?:/|$)|'
     rb'jobs/clasher(?:/|$)|envs/clasher-[^/]+(?:/|$)|'
@@ -184,7 +185,7 @@ def read_policy():
 
 
 def processes():
-    # pid -> (ppid, start ticks, rss bytes, state, nice). No owner paths inspected.
+    # pid -> (ppid, start ticks, rss bytes, state, nice, pgid, sid).
     rows = {}
     for p in Path('/proc').iterdir():
         if not p.name.isdigit():
@@ -193,7 +194,7 @@ def processes():
             parts = (p / 'stat').read_text().rsplit(')', 1)[1].split()
             rows[int(p.name)] = (int(parts[1]), parts[19],
                                 int(parts[21]) * os.sysconf('SC_PAGE_SIZE'),
-                                parts[0], int(parts[16]))
+                                parts[0], int(parts[16]), int(parts[2]), int(parts[3]))
         except (FileNotFoundError, ProcessLookupError):
             continue
     return rows
@@ -413,6 +414,44 @@ def send(known, sig):
                 pass
 
 
+def send_job(known, pgid, sig):
+    """Signal the isolated child group, plus verified descendants outside it.
+
+    A live PID/start-tick anchor in the original session prevents a stale pgid
+    from targeting a reused group. Never signal the supervisor's own group.
+    Adopted children that call setsid/setpgid are also covered individually.
+    """
+    rows = processes()
+    known = expand(rows, known)
+    anchors = [pid for pid, start in known.items()
+               if pid != os.getpid() and rows[pid][1] == start
+               and rows[pid][5:7] == (pgid, pgid)]
+    members = [pid for pid, row in rows.items() if row[5] == pgid and row[3] != 'Z']
+    grouped = set()
+    if anchors and pgid != os.getpgrp() and not any(
+            excluded_argv(process_argv(pid)) for pid in members):
+        try:
+            os.killpg(pgid, sig)
+            grouped = set(members)
+        except ProcessLookupError:
+            pass
+    send({pid: start for pid, start in known.items() if pid not in grouped}, sig)
+
+
+class StopRequest:
+    def __init__(self):
+        self.signum = None
+        self.when = None
+        self.requested_utc = None
+
+    def handle(self, signum, frame):
+        # No I/O, locks, exceptions or exits inside an asynchronous handler.
+        if self.signum is None:
+            self.signum = signum
+            self.when = time.monotonic()
+            self.requested_utc = stamp()
+
+
 def return_lease_if_idle(registry):
     """V1 return semantics, with the additional host-wide idle requirement."""
     refresh(registry, processes(), discover=True)
@@ -437,6 +476,18 @@ def supervise(args, child, receipt, known, key):
     users = None
     aggregate = None
     exit_by = timestamp(receipt['exit_by_utc'])
+    delivered = set()
+    phase = None
+    signal_seen = False
+    initial_signal = args.checkpoint_signal
+
+    def signal_tree(sig):
+        nonlocal phase, delivered
+        identities = set(known.items())
+        if phase != sig or identities - delivered:
+            send_job(known, child.pid, sig)
+            phase, delivered = sig, identities
+
     try:
         while True:
             rows = processes()
@@ -446,9 +497,24 @@ def supervise(args, child, receipt, known, key):
             rss = sum(rows[pid][2] for pid in known)
             peak_count, peak_rss = max(peak_count, count), max(peak_rss, rss)
             now = time.monotonic()
+            if utc() >= exit_by - dt.timedelta(seconds=DEADLINE_CLEANUP_MARGIN):
+                signal_tree(signal.SIGKILL)
             with accounting() as registry:
                 refresh(registry, rows)
                 own = registry['jobs'].get(key)
+                request = args.stop_request
+                if request.signum is not None and not signal_seen:
+                    signal_seen = True
+                    reason = 'signal:' + signal.Signals(request.signum).name
+                    initial_signal = request.signum
+                    stopping = min(stopping, request.when) if stopping is not None else request.when
+                    receipt['stop_requested_utc'] = request.requested_utc
+                    # Record an external signal even if another stop was pending.
+                    if own is not None:
+                        own.update(stop_reason=reason, stop_requested_utc=request.requested_utc,
+                                   stop_requested_epoch=time.time())
+                    print('STOP:', reason, flush=True)
+                    signal_tree(initial_signal)
                 if own is None:
                     # Mixed-version peers may remove an entry as the child exits.
                     # Finish through the normal reap/receipt path, retaining status.
@@ -484,8 +550,7 @@ def supervise(args, child, receipt, known, key):
                     stopping, reason = now - elapsed, own['stop_reason']
                     receipt['stop_requested_utc'] = own['stop_requested_utc']
                     print('STOP:', reason, flush=True)
-                    if child.poll() is None:
-                        send({child.pid: known.get(child.pid)}, args.checkpoint_signal)
+                    signal_tree(initial_signal)
                 checked = registry.get('checked_utc')
                 if checked != last_state or reason:
                     last_state = checked
@@ -510,15 +575,21 @@ def supervise(args, child, receipt, known, key):
             if child_exited and stopping is None:
                 stopping, reason = now, 'job exited with descendants still running'
                 receipt['stop_requested_utc'] = stamp()
-                send(known, signal.SIGTERM)
+                initial_signal = signal.SIGTERM
+                signal_tree(initial_signal)
                 with accounting() as registry:
                     own = registry['jobs'].get(key)
                     if own is not None:
                         mark_stop(own, reason)
-            if utc() >= exit_by or (stopping is not None and now - stopping >= KILL_AFTER):
-                send(known, signal.SIGKILL)
-            elif stopping is not None and now - stopping >= TERM_AFTER:
-                send(known, signal.SIGTERM)
+            force_at = exit_by - dt.timedelta(seconds=DEADLINE_CLEANUP_MARGIN)
+            if utc() >= force_at or (stopping is not None and now - stopping >= args.stop_grace_seconds):
+                signal_tree(signal.SIGKILL)
+            elif stopping is not None:
+                # Checkpoint handlers must exit. Give them half the grace before
+                # TERM; external TERM/INT/HUP retain their requested signal.
+                sig = (signal.SIGTERM if initial_signal in (signal.SIGUSR1, signal.SIGUSR2)
+                       and now - stopping >= args.stop_grace_seconds / 2 else initial_signal)
+                signal_tree(sig)
             time.sleep(POLL_INTERVAL)
         receipt.update(exit_code=child.returncode,
                        status='stopped' if reason else ('pass' if child.returncode == 0 else 'fail'))
@@ -526,21 +597,27 @@ def supervise(args, child, receipt, known, key):
         receipt.update(status='fail', error=str(exc), exit_code=1)
         # Unexpected accounting/measurement errors still take the v1 checkpoint
         # path; never release capacity while verified descendants remain alive.
+        request = args.stop_request
+        if request.signum is not None:
+            reason = 'signal:' + signal.Signals(request.signum).name
+            initial_signal = request.signum
         reason = reason or ('supervision error: ' + str(exc))
         receipt.setdefault('stop_requested_utc', stamp())
-        send(known, args.checkpoint_signal)
-        stopping = time.monotonic()
+        signal_tree(initial_signal)
+        stopping = request.when if request.signum is not None else time.monotonic()
         while True:
             known = expand(processes(), known)
             reap_descendants(child, processes())
             if child.poll() is not None and not [pid for pid in known if pid != os.getpid()]:
                 break
             elapsed = time.monotonic() - stopping
-            if elapsed >= KILL_AFTER or utc() >= exit_by:
-                send(known, signal.SIGKILL)
-            elif elapsed >= TERM_AFTER:
-                send(known, signal.SIGTERM)
+            if elapsed >= args.stop_grace_seconds or utc() >= exit_by - dt.timedelta(seconds=DEADLINE_CLEANUP_MARGIN):
+                signal_tree(signal.SIGKILL)
+            else:
+                signal_tree(initial_signal)
             time.sleep(POLL_INTERVAL)
+        child.wait()
+        receipt['exit_code'] = child.returncode
     finally:
         receipt.update(finished_utc=stamp(), stop_reason=reason, peak_processes=peak_count,
                        peak_rss_bytes=peak_rss, peak_sampled_pss_bytes=peak_pss,
@@ -567,6 +644,8 @@ def parse_args(argv):
     parser.add_argument('--expected-pss-gb', type=float, required=True, help='hard job PSS cap, decimal GB; includes supervisor')
     parser.add_argument('--gpu', action='store_true', help='enforce GPU permission and 8192 MiB free reserve')
     parser.add_argument('--foreground', action='store_true', help='stay attached (for diagnostics/tests)')
+    parser.add_argument('--stop-grace-seconds', type=float, default=120,
+                        help='maximum grace for every stop before whole-tree SIGKILL (default 120)')
     parser.add_argument('label')
     parser.add_argument('command', nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
@@ -576,6 +655,8 @@ def parse_args(argv):
         parser.error('provide a fresh safe label and a command after --')
     if args.max_processes < 2 or not 0 < args.expected_pss_gb <= 64:
         parser.error('declare at least 2 processes and 0 < PSS GB <= 64')
+    if not math.isfinite(args.stop_grace_seconds) or args.stop_grace_seconds < 0:
+        parser.error('stop grace must be finite and nonnegative')
     args.pss_bytes = int(args.expected_pss_gb * 1_000_000_000)
     args.checkpoint_signal = getattr(signal, os.environ.get('CLASHER_CHECKPOINT_SIGNAL', 'SIGTERM'))
     if args.checkpoint_signal not in (signal.SIGTERM, signal.SIGUSR1, signal.SIGUSR2, signal.SIGINT):
@@ -583,8 +664,7 @@ def parse_args(argv):
     return args
 
 
-def main(argv=None):
-    args = parse_args(sys.argv[1:] if argv is None else argv)
+def run_main(args):
     os.nice(max(0, 10 - os.getpriority(os.PRIO_PROCESS, 0)))
     (BASE / 'jobs').mkdir(exist_ok=True)
     receipt = {'version': 2, 'wrapper_revision': REVISION, 'host': HOST, 'label': args.label, 'command': args.command,
@@ -640,6 +720,8 @@ def main(argv=None):
             receipt['supervisor_pid'] = os.getpid()
             rows = processes()
             known = {os.getpid(): rows[os.getpid()][1]}
+            receipt.update(supervisor_start=rows[os.getpid()][1],
+                           stop_grace_seconds=args.stop_grace_seconds)
             registry['next_sequence'] += 1
             key = 'v2:' + args.label
             registry['jobs'][key] = {'kind': 'v2', 'sequence': registry['next_sequence'],
@@ -654,6 +736,8 @@ def main(argv=None):
             rows = processes()
             if child.pid in rows:
                 known[child.pid] = rows[child.pid][1]
+                receipt['child_start'] = rows[child.pid][1]
+            receipt.update(child_pgid=child.pid, child_sid=child.pid)
             registry['jobs'][key]['known'] = {str(pid): start for pid, start in known.items()}
             (BASE / 'jobs' / (args.label + '.launch.pid')).write_text(str(os.getpid()) + '\n')
             registry['last_check'] = 0
@@ -676,6 +760,19 @@ def main(argv=None):
                 registry['jobs'].pop(key, None)
         print('REFUSED:', str(exc), file=sys.stderr, flush=True)
         return 1
+
+
+def main(argv=None):
+    args = parse_args(sys.argv[1:] if argv is None else argv)
+    args.stop_request = StopRequest()
+    previous = {sig: signal.getsignal(sig) for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP)}
+    try:
+        for sig in previous:
+            signal.signal(sig, args.stop_request.handle)
+        return run_main(args)
+    finally:
+        for sig, handler in previous.items():
+            signal.signal(sig, handler)
 
 
 if __name__ == '__main__':

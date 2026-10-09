@@ -248,12 +248,38 @@ class AccountingTests(unittest.TestCase):
             w.send({12: 'old', 13: 'same', os.getpid(): 'self'}, signal.SIGTERM)
             kill.assert_called_once_with(13, signal.SIGTERM)
 
+    def test_group_signal_requires_verified_session_anchor(self):
+        for start, sid in (('reused', 101), ('same', 999)):
+            rows = {101: (0, start, 0, 'S', 10, 101, sid)}
+            with patch.object(w, 'processes', return_value=rows), \
+                    patch.object(w.os, 'killpg') as group, patch.object(w.os, 'kill'):
+                w.send_job({101: 'same'}, 101, signal.SIGTERM)
+                group.assert_not_called()
+
+    def test_group_signal_survives_leader_exit_and_covers_escaped_descendants(self):
+        rows = {102: (0, 'adopted', 0, 'S', 10, 101, 101),
+                103: (0, 'escaped', 0, 'S', 10, 103, 103)}
+        with patch.object(w, 'processes', return_value=rows), \
+                patch.object(w, 'process_argv', return_value=[]), \
+                patch.object(w.os, 'getpgrp', return_value=999), \
+                patch.object(w.os, 'killpg') as group, patch.object(w.os, 'kill') as kill:
+            w.send_job({102: 'adopted', 103: 'escaped'}, 101, signal.SIGKILL)
+            group.assert_called_once_with(101, signal.SIGKILL)
+            kill.assert_called_once_with(103, signal.SIGKILL)
+
+    def test_grace_validation(self):
+        for value in ('-1', 'nan', 'inf'):
+            with self.subTest(value=value), self.assertRaises(SystemExit):
+                w.parse_args(['--max-processes', '2', '--expected-pss-gb', '.1',
+                              '--stop-grace-seconds', value, 'bad', '--', '/usr/bin/true'])
+
 
 DRIVER = '''import importlib.util,json,sys,datetime as dt
 from pathlib import Path
 spec=importlib.util.spec_from_file_location('watch',sys.argv.pop(1)); w=importlib.util.module_from_spec(spec);spec.loader.exec_module(w)
 w.BASE=Path(sys.argv.pop(1));w.HOST='127x15';w.LEASE=w.BASE/'lease.json';w.POLICY=w.BASE/'policy.md';w.CONSOLE_HELPER=w.BASE/'console'
-w.CHECK_INTERVAL=.08;w.POLL_INTERVAL=.02;w.TERM_AFTER=.15;w.KILL_AFTER=.3
+w.CHECK_INTERVAL=.08;w.POLL_INTERVAL=.02
+w.DEADLINE_CLEANUP_MARGIN=.5
 w.STOP_AT=dt.datetime(2099,1,1,tzinfo=dt.timezone.utc);w.EXIT_BY=dt.datetime(2099,1,2,tzinfo=dt.timezone.utc)
 # Production argv classification has dedicated synthetic unit tests. Process
 # fixtures must not discover or measure unrelated live Clasher home-host jobs.
@@ -277,6 +303,13 @@ if json.loads((w.BASE/'options.json').read_text()).get('drop-own-entry'):
   original_refresh(registry,rows,discover)
   registry['jobs'].pop('v2:missing-entry',None)
  w.refresh=refresh
+if json.loads((w.BASE/'options.json').read_text()).get('signal-during-launch'):
+ original_popen=w.subprocess.Popen
+ def popen(*args,**kwargs):
+  child=original_popen(*args,**kwargs)
+  w.os.kill(w.os.getpid(),w.signal.SIGTERM)
+  return child
+ w.subprocess.Popen=popen
 sys.exit(w.main())
 '''
 
@@ -321,9 +354,10 @@ class ProcessTests(unittest.TestCase):
         path.write_text('#!/bin/sh\necho ' + str(count) + '\n')
         path.chmod(0o700)
 
-    def launch(self, label, code='import time; time.sleep(.25)', processes=2, pss=.1, detached=False, gpu=False):
+    def launch(self, label, code='import time; time.sleep(.25)', processes=2, pss=.1, detached=False, gpu=False, grace=.3):
         args = [sys.executable, '-B', str(self.driver), str(SOURCE), str(self.base),
-                '--max-processes', str(processes), '--expected-pss-gb', str(pss)]
+                '--max-processes', str(processes), '--expected-pss-gb', str(pss),
+                '--stop-grace-seconds', str(grace)]
         if not detached:
             args += ['--foreground']
         if gpu:
@@ -341,6 +375,41 @@ class ProcessTests(unittest.TestCase):
                 return json.loads(path.read_text())
             time.sleep(.02)
         self.fail('missing ' + str(path))
+
+    def tree(self, label, stubborn=False, escaped=False, grace=.3, detached=False):
+        # Three generations; all record readiness and received signals. The
+        # escaped grandchild also exercises subreaper tracking outside the group.
+        code = '''import os,signal,time,json
+from pathlib import Path
+label=LABEL;stubborn=STUBBORN;escaped=ESCAPED
+role='parent'
+if os.fork()==0:
+ role='child'
+ if os.fork()==0:
+  role='grandchild'
+  if escaped:os.setsid()
+def handle(sig,frame):
+ Path('jobs/'+label+'.'+role+'.signal.json').write_text(json.dumps({'signal':sig}))
+ if not stubborn or (stubborn=='descendants' and role=='parent'):
+  signal.signal(sig,signal.SIG_DFL);os.kill(os.getpid(),sig)
+for sig in (signal.SIGTERM,signal.SIGINT,signal.SIGHUP):signal.signal(sig,handle)
+tick=Path('/proc/self/stat').read_text().rsplit(')',1)[1].split()[19]
+Path('jobs/'+label+'.'+role+'.ready.json').write_text(json.dumps({'pid':os.getpid(),'start':tick,'pgid':os.getpgrp(),'sid':os.getsid(0)}))
+while True:time.sleep(.02)
+'''.replace('LABEL', repr(label)).replace('STUBBORN', repr(stubborn)).replace('ESCAPED', repr(escaped))
+        proc = self.launch(label, code=code, processes=4, grace=grace, detached=detached)
+        identities = [self.wait_file(label + '.' + role + '.ready.json')
+                      for role in ('parent', 'child', 'grandchild')]
+        state = self.wait_file(label + '.state.json')
+        self.assertEqual(identities[0]['pgid'], state['pid'])
+        self.assertEqual(identities[0]['sid'], state['pid'])
+        return proc, identities, state
+
+    def assert_tree_gone(self, label, identities):
+        for identity in identities:
+            self.assertFalse(Path('/proc', str(identity['pid'])).exists(), identity)
+        registry = json.loads((self.base / 'jobs/aggregate-v2.json').read_text())
+        self.assertNotIn('v2:' + label, registry['jobs'])
 
     def finish(self, proc, label, status='pass'):
         output, _ = proc.communicate(timeout=5)
@@ -533,11 +602,104 @@ with lock.open('a') as f:
             'STOP_AT': (now + dt.timedelta(seconds=.7)).isoformat(),
             'EXIT_BY': (now + dt.timedelta(seconds=2)).isoformat(),
             'TERM_AFTER': 8, 'KILL_AFTER': 10}))
-        receipt = self.finish(self.launch('deadline', code='import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); time.sleep(3)'),
+        receipt = self.finish(self.launch('deadline', code='import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); time.sleep(3)', grace=10),
                               'deadline', 'stopped')
         self.assertIn('deadline', receipt['stop_reason'])
         self.assertEqual(receipt['exit_code'], -signal.SIGKILL)
-        self.assertLess(w.timestamp(receipt['finished_utc']), now + dt.timedelta(seconds=3))
+        self.assertLess(w.timestamp(receipt['finished_utc']), now + dt.timedelta(seconds=2))
+
+    def test_term_int_hup_forwarded_to_full_tree_receipt_and_cleanup(self):
+        for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+            label = 'signal-' + signal.Signals(sig).name
+            proc, identities, state = self.tree(label)
+            os.kill(proc.pid, sig)
+            receipt = self.finish(proc, label, 'stopped')
+            self.assertEqual(receipt['stop_reason'], 'signal:' + signal.Signals(sig).name)
+            self.assertEqual(receipt['exit_code'], -sig)
+            self.assertEqual(proc.returncode, 75)
+            self.assertEqual(receipt['child_start'], identities[0]['start'])
+            for role in ('parent', 'child', 'grandchild'):
+                self.assertEqual(self.wait_file(label + '.' + role + '.signal.json')['signal'], sig)
+            self.assert_tree_gone(label, identities)
+
+    def test_signal_grace_then_kill_stubborn_full_tree(self):
+        proc, identities, state = self.tree('grace', stubborn=True, grace=.4)
+        started = time.monotonic()
+        os.kill(proc.pid, signal.SIGTERM)
+        time.sleep(.12)
+        self.assertTrue(all(Path('/proc', str(i['pid'])).exists() for i in identities))
+        # A second supervisor signal must not interrupt cleanup or reset grace.
+        os.kill(proc.pid, signal.SIGINT)
+        receipt = self.finish(proc, 'grace', 'stopped')
+        self.assertGreaterEqual(time.monotonic() - started, .4)
+        self.assertLess(time.monotonic() - started, 1.4)
+        self.assertEqual(receipt['exit_code'], -signal.SIGKILL)
+        self.assertEqual(receipt['stop_reason'], 'signal:SIGTERM')
+        self.assert_tree_gone('grace', identities)
+
+    def test_signal_reaches_descendant_in_separate_session(self):
+        proc, identities, state = self.tree('escaped', escaped=True)
+        self.assertNotEqual(identities[0]['sid'], identities[2]['sid'])
+        os.kill(proc.pid, signal.SIGTERM)
+        self.finish(proc, 'escaped', 'stopped')
+        self.assertEqual(self.wait_file('escaped.grandchild.signal.json')['signal'], signal.SIGTERM)
+        self.assert_tree_gone('escaped', identities)
+
+    def test_group_cleanup_after_leader_exits_preserves_child_status(self):
+        proc, identities, state = self.tree('leader-exit', stubborn='descendants')
+        os.kill(proc.pid, signal.SIGTERM)
+        receipt = self.finish(proc, 'leader-exit', 'stopped')
+        self.assertEqual(receipt['exit_code'], -signal.SIGTERM)
+        self.assert_tree_gone('leader-exit', identities)
+
+    def test_signal_during_child_launch_is_not_lost(self):
+        (self.base / 'options.json').write_text(json.dumps({'signal-during-launch': True}))
+        receipt = self.finish(self.launch('startup-signal', code='import time; time.sleep(5)'),
+                              'startup-signal', 'stopped')
+        self.assertEqual(receipt['stop_reason'], 'signal:SIGTERM')
+        self.assertEqual(receipt['exit_code'], -signal.SIGTERM)
+        self.assertEqual(json.loads((self.base / 'jobs/aggregate-v2.json').read_text())['jobs'], {})
+
+    def test_detached_supervisor_signal_cleanup(self):
+        proc, identities, state = self.tree('detached-signal', detached=True)
+        proc.communicate(timeout=3)
+        os.kill(state['supervisor_pid'], signal.SIGHUP)
+        receipt = self.wait_file('detached-signal.exit.json')
+        self.assertEqual(receipt['stop_reason'], 'signal:SIGHUP')
+        self.assertEqual(receipt['exit_code'], -signal.SIGHUP)
+        # Receipt is written just before registry release.
+        time.sleep(.05)
+        self.assert_tree_gone('detached-signal', identities)
+
+    def test_scheduled_stop_and_hard_deadline_clean_every_job_tree(self):
+        now = dt.datetime.now(dt.timezone.utc)
+        end = now + dt.timedelta(seconds=2.5)
+        (self.base / 'config.json').write_text(json.dumps({
+            'STOP_AT': (now + dt.timedelta(seconds=1)).isoformat(), 'EXIT_BY': end.isoformat()}))
+        jobs = [self.tree(label, stubborn=True, grace=10) for label in ('scheduled-a', 'scheduled-b')]
+        for label, (proc, identities, state) in zip(('scheduled-a', 'scheduled-b'), jobs):
+            receipt = self.finish(proc, label, 'stopped')
+            self.assertIn('scheduled checkpoint', receipt['stop_reason'])
+            self.assertEqual(receipt['exit_code'], -signal.SIGKILL)
+            self.assertLess(w.timestamp(receipt['finished_utc']), end)
+            self.assertGreaterEqual(w.timestamp(receipt['stop_requested_utc']), now + dt.timedelta(seconds=1))
+            for role in ('parent', 'child', 'grandchild'):
+                self.assertEqual(self.wait_file(label + '.' + role + '.signal.json')['signal'], signal.SIGTERM)
+            self.assert_tree_gone(label, identities)
+        self.assertEqual(json.loads((self.base / 'jobs/aggregate-v2.json').read_text())['jobs'], {})
+
+    def test_reclaim_stops_cooperative_and_stubborn_full_trees(self):
+        a = self.tree('reclaim-a')
+        b = self.tree('reclaim-b', stubborn=True)
+        self.current['reclaim'] = True
+        self.lease()
+        for label, (proc, identities, state), expected in (
+                ('reclaim-a', a, -signal.SIGTERM), ('reclaim-b', b, -signal.SIGKILL)):
+            receipt = self.finish(proc, label, 'stopped')
+            self.assertIn('reclaimed', receipt['stop_reason'])
+            self.assertEqual(receipt['exit_code'], expected)
+            self.assert_tree_gone(label, identities)
+        self.assertFalse((self.base / 'lease.json').exists())
 
 
 if __name__ == '__main__':
