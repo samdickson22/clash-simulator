@@ -1311,3 +1311,11 @@ Also on the hub, but with copies elsewhere:
   - All audits pass: all 25 rejections reproduce known occupancy guards, and all 10 action-stream spots are exact.
   - Disclosed: the spot count wasn't specified in the PREREG and was fixed before analysis.
   - With gate (b) PASS (0.656) as well, **the v1 all-card imitation model is confirmed as the human prior.** Next on that track: integrate it with the W-screen8 search teacher.
+- **07:19 UTC: VECTORIZED BENCHMARK, 9.87× faster** (`8aba8f8b…`, plan `2657285d`): on the fixed dense e15/748 128-frame prefix with 8 lanes on 04, original 4.39 fps vs vectorized **43.27 fps**.
+  - My GPU-bound assumption was wrong: 99% util meant many small kernels, not a full GPU.
+  - **Decision: the vectorized switch is top priority**, after the 11:30Z cache handoff.
+    - A14 whole-match qualifications run now (e7/738, e15/748, e1/708).
+    - Perception drafts **Amendment 16** (admit vectorized producers into A15 assembly), followed immediately by an independent review.
+    - The host-by-host switch happens only after the A16 freeze and the qualifications. No completed output is redone.
+  - **Expected effect:** the remaining capture drops from ~15 h to ~1–2 h, moving A1 up by most of a day.
+  - Status: 04 is restored to original 8 lanes (04r3, renewed services); 02r3 runs 8 lanes at 99%; 09 runs 6 normal lanes plus the R13 audits; 13 and 15 are draining for the handoff.
