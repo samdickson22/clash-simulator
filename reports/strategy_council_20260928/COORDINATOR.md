@@ -1414,3 +1414,8 @@ Also on the hub, but with copies elsewhere:
     - 02 copies stay permanently inadmissible if 02 returns.
   - Follow-up: the retention service must cover home hosts too.
 - **09:49 UTC:** 81 lost-02 claims/outputs were retired or requeued, and the 02 authorization was revoked. **Authorized:** void and requeue 5 surviving-host attempts that have complete payloads but no controller `.outcome.json` (the controller aborted on suspension). Payloads are retained and inadmissible, and no provenance files are invented. Strict admission is unchanged. The 5-host vectorized restart follows.
+- **09:54 UTC: capture RESTORED** at 09:54:11Z on 6 vectorized GPUs (04/08/09/13/14/15).
+  - Queue: 777 verified, 48 claimed, 127 pending, unsuspended.
+  - Recovery: 81 lost-02 requeues (9 unresolved plus 72 permanent retirements) and 5 provenance voids, with no forged files. Dispatcher r4 is live and the 03 archive copier resumed.
+  - About 304 k frames left; **capture closure ~10:10–10:25Z**, then the R16-1 audits on 09/13/14/15, and 04 goes to the GRU.
+  - Follow-ups after closure: per-host transport quarantine, and archive coverage for home producers.
