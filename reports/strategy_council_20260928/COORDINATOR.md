@@ -1080,3 +1080,16 @@ Also on the hub, but with copies elsewhere:
   - King activation 99.998% accurate with 92% coverage. Own-King HP exact on 136/136. Opponent HP numbers are disabled at 98.8%.
   - **Round 3 delegated** (`clasher-v4-tower-channel-r3-20261009-1`): a crown-counter HUD reader to bring confirmation latency under 0.5 s at p50, plus `result_screen.py` to provide the result-screen observation. Shared-tree hunk discipline; selection.py and runtime.py are off-limits.
   - **Delay fixes:** the original 8 arms finished at 1,250 pairs each (10,000 files on 08), with no outcomes inspected. The controls started after the drain. Re-admission checks on 09/15 cleared at 02:24Z.
+- **02:40 UTC: capture acceleration plus lease extension.**
+  - The capture projection (`l1/CAPTURE-PROJECTION-20261009-0235.md` `33102c37…`) put completion around Oct 10 16:00Z to Oct 11 08:00Z. Lanes run at 0.56–5.38 fps, limited by orchestration and scalar sync. The e15 epoch is the tail. About 100 GPU-hours remain.
+  - **Decisions:**
+    - **Whole-match work queue**, qualified as exact, to split the epoch tails. It goes first.
+    - A packing sweep of 2/4/6/8 processes per GPU.
+    - The vectorized non-clock gate comes second.
+  - **Roader APPROVED a GPU extension** on 09/13/14/15/16 until **Oct 11 05:30Z**. Per host: ≤16 processes, nice ≥10, PSS ≤48 GB, ≥8 GB GPU memory free, no exploration sims after 04:30Z, and their mirrors on 09/15 are untouchable.
+  - **Allocation:**
+    - Capture: 09, 13, 14, 15 and 04 now; 08 after 05:00Z; 02 after gate (c). That's 7 GPUs.
+    - T11 seed 21 stays on 16. Its 04:20Z stop is cancelled and it doesn't move to 04.
+  - The 04:29Z backstop was rewritten to stop exploration only. The heartbeat prompt was updated.
+  - Perception was told to extend its wrappers and lease files and to exempt capture from its 05:00Z cleanup task.
+  - A12 review-A response: 31 of 36 mutants killed, all A-targeted ones killed. A1 waits on 24/24 captures.
