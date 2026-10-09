@@ -45,3 +45,11 @@ with the remaining two styles, keeping every WAIT at full three-style scoring
 and reusing exact WAIT/10-tick scores. Final selection considers refined plays
 and all WAITs. Validate every retained final score against full W. Same states,
 three repeats, one core; no reporting policy changes or win-rate claims.
+
+04:00Z numerical verification correction: the screen's use of Python 3.12 `sum`
+compensated three WAIT contributions, differing from the reference's sequential
+addition by 2.17e-19 in one checked state. Keep sequential additions exactly and
+rerun the screening benchmark. Include a fresh paired full-W measurement at every
+state during this final run because the reporting workers are draining; all
+retained scores, not just decisions, must equal the full reference. This corrects
+only the new latency prototype; confirmation is unchanged.

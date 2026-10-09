@@ -40,7 +40,10 @@ def planner_class(base):
                 for a in work:
                     if a >= WAIT:
                         if a == 2400:continue
-                        scores[a]=sum(value(a,s)/3 for s in STYLES)
+                        # Python 3.12 sum uses compensated accumulation; retain
+                        # the reference scorer's sequential float additions.
+                        scores[a]=0.
+                        for s in STYLES:scores[a]+=value(a,s)/3
                     else:
                         for s in STYLES[1:]:scores[a]+=value(a,s)/3
                 if 2400 in work:scores[2400]=scores[WAIT]

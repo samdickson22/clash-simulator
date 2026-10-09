@@ -1,0 +1,104 @@
+{
+  "host": "127x03",
+  "peak_own": 54,
+  "peak_combined": 57,
+  "census_samples": 187,
+  "all_sampled_own_nice10_sched_idle": true,
+  "phases_elapsed_seconds": {
+    "smoke": 211.46643543243408,
+    "reporting": 2617.408892393112
+  },
+  "exits": {
+    "smoke": {
+      "returncode": 0,
+      "stopping": false,
+      "time": 1791515664.0115592
+    },
+    "reporting": {
+      "returncode": 0,
+      "stopping": false,
+      "time": 1791518434.4435513
+    }
+  },
+  "reporting_receipt": {
+    "games": 1900,
+    "fresh": 1900,
+    "cpu_seconds": 126249.537776319,
+    "wall_seconds": 2599.6297453939915,
+    "terminal": true
+  },
+  "smoke_receipt": {
+    "games": 6,
+    "fresh": 6,
+    "cpu_seconds": 444.250094794,
+    "wall_seconds": 186.19518827996217,
+    "terminal": true
+  },
+  "ordinary_parity": {
+    "passed": true,
+    "checks": 84,
+    "exact_scores_events_digests": true
+  },
+  "rejected_command_replay": {
+    "replays_exact": true,
+    "events": [
+      {
+        "tick": 2857,
+        "actor": 1,
+        "card": "Cannon",
+        "elixir": 4.0349,
+        "hand": [
+          "Musketeer",
+          "Cannon",
+          "HogRider",
+          "Fireball"
+        ],
+        "refill": 0,
+        "x": 2.5,
+        "y": 16.5,
+        "physical_action_legal": false,
+        "tower_flags": [
+          false,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "tick": 4397,
+        "actor": 1,
+        "card": "Cannon",
+        "elixir": 7.0129,
+        "hand": [
+          "Cannon",
+          "Fireball",
+          "Log",
+          "Musketeer"
+        ],
+        "refill": 0,
+        "x": 9.5,
+        "y": 17.5,
+        "physical_action_legal": false,
+        "tower_flags": [
+          false,
+          true,
+          true,
+          true,
+          false,
+          true
+        ]
+      }
+    ]
+  },
+  "native_build_seconds": 46.6,
+  "limitations": [
+    "15-second process census, transient setup/read helpers can occur between samples",
+    "completed-game CPU subtotal excludes startup/profile/technical-attempt CPU"
+  ],
+  "raw_root": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1",
+  "cache_root": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/cache",
+  "no_leased_hosts": true,
+  "no_heavy_05": true
+}

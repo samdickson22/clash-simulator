@@ -67,7 +67,8 @@ def main():
         'extension with full work; it does not use reduced styles, gating or deduplication.','',
         '## Fixed-state agreement versus latency','',
         f"Separate frozen corpus: **{l['state_count']} public decision states**, all 25 matchups, both seats, "
-        'ticks 90/300/600/1200/2400 on disjoint seeds. Three repeats/state; all candidate lists and public '
+        'ticks 90/300/600/1200/2400 on disjoint scripted-driver seeds. These synthetic trajectories '
+        'are not states selected by W during the confirmation games. Three repeats/state; all candidate lists and public '
         'roots regenerate exactly. Inputs and sampled public beliefs are fixed before timing. Warmup/profile '
         'samples are excluded, execution order alternates. Scores/actions below compare to the full W '
         'reference in the same opponent-delay model; no reduced variant has a win-rate claim.','',
@@ -103,7 +104,9 @@ def main():
         'exact original-WAIT/10-tick reuse. Final selection considers those refined plays '
         'and all WAITs in original tie order. Every retained final score matches full W '
         'exactly; omitted contenders can still change the decision. Three repeats on the '
-        'same fixed states, one physical core. [latency-screen.json](latency-screen.json).','',
+        'same fixed states, one physical core. `paired-full` is a fresh full-W baseline interleaved '
+        'in this final comparison, so fleet load changing as reporting finished cannot be mistaken '
+        'for a reduction benefit. [latency-screen.json](latency-screen.json).','',
         '| Model / refinement count | Exact action agreement | Play/WAIT agreement | One-core wall p50 / p95, ms | Mean / maximum full-score regret |',
         '|---|---:|---:|---:|---:|']
     for mode,table in screen['results'].items():
@@ -154,6 +157,10 @@ def main():
         lines.append(f"Among tested one-core approximations meeting the empirical target, {name} preserves "
             f"{s['agreement_count']}/{s['states']} choices at p95 {s['wall']['p95_ms']:.1f} ms. "
             'This is an agreement-versus-cost result only; any adoption needs a separate fresh outcome comparison.')
+        sym=screen['results']['symmetric']['screen8']
+        lines.append(f"Top-eight refinement in the confirmation model preserves {sym['agreement_count']}/{sym['states']} "
+            f"choices at one-core p95 {sym['wall']['p95_ms']:.1f} ms. It still omits contenders and remains "
+            'an approximation despite perfect agreement on this finite corpus. Prioritize it for that fresh outcome test.')
     else:
         lines.append('No tested one-core approximation meets the empirical p95 target on this corpus; the target remains unmet.')
     lines+=['','## Reproducibility, validation and compute','',
@@ -178,6 +185,7 @@ def main():
         'capacity one and queue conservation on both sides. Rare physical deployment rejections '
         'remain in the outcomes and ledger metrics; no seed/game is dropped or replaced. '
         'Aggregate counts are retained in results.json.']
+    lines+=['','All lane jobs exited after reporting and latency completed; see [shutdown receipt](receipts/shutdown.json).']
     (DEST/'RESULTS.md').write_text('\n'.join(lines)+'\n')
 
 

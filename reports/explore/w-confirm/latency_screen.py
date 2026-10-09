@@ -13,12 +13,15 @@ def main():
     run.initialize();rows=pickle.loads((a.out/'states-ready.pkl').read_bytes());raw=[];results={}
     for mode in ('original','symmetric'):
         reference={s['id']:s for s in json.loads((a.out/f'{mode}-samples.json').read_text()) if s['variant']=='full' and s['repeat']==0}
-        names=['screen3','screen5','screen8'];os.sched_setaffinity(0,{60})
-        for name in names:decision(mode,rows[0],'native-'+name if mode=='original' else name)
+        names=['paired-full','screen3','screen5','screen8'];os.sched_setaffinity(0,{60})
+        def variant(name):
+            name='full' if name=='paired-full' else name
+            return 'native-'+name if mode=='original' else name
+        for name in names:decision(mode,rows[0],variant(name))
         for repeat in range(3):
             for index,row in enumerate(rows):
                 for name in (names if (index+repeat)%2==0 else names[::-1]):
-                    s=decision(mode,row,'native-'+name if mode=='original' else name)
+                    s=decision(mode,row,variant(name))
                     s.update(mode=mode,variant=name,repeat=repeat,budget='one core');raw.append(s)
                 if index%25==0:print(json.dumps(dict(mode=mode,repeat=repeat,state=index,samples=len(raw))),flush=True)
         results[mode]={}

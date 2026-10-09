@@ -98,3 +98,34 @@ change. Rejection replay is exact for both cases. Peak actual lane processes so
 far is 54 (including the relative-path diagnostic process), combined 57; the
 supervisor's label-only own count did not include that diagnostic, which the final
 compute audit accounts for explicitly. All remain within the authorized ceilings.
+
+04:00Z: reporting is draining its final games. The screen's retained-score check
+found a 2.17e-19 WAIT discrepancy from Python 3.12's compensated `sum`; change the
+new screen to the reference's sequential additions. Selection was unchanged in
+the reproducer, but strict score equality is required. Restart the latency-only
+screen on identical states, and pair a fresh full-W baseline with every state so
+changing fleet load during the reporting drain cannot masquerade as a speedup.
+Confirmation's full scorer and 600/arm configuration remain untouched.
+
+04:01Z: all 1,900 reporting games finished cleanly; no replacement or restart.
+The paired reduction validates terminal games, identical seed/seat/shuffled decks,
+both d=27/capacity-one channels and queue conservation. Control lost 287/600
+(47.83%, 95% CI 43.83–51.83); W lost 120/600 (20.00%, 16.83–23.33), paired change
+−27.83 pp (−32.17 to −23.67). H16 lost 295/600 (49.17%), change +1.33 pp
+(−3.00 to +5.83). WW lost 51/100, descriptive. Under-4 arrivals fall from 93.93%
+to 61.40%, no-affordable-defender from 65.71% to 28.40%. Full W's confirmation
+wall p50/p95 is 258.4/491.9 ms. Completed-game CPU is 35.07 core-hours; audited
+peak lane processes 54, combined 57. Final latency screen remains isolated on one
+core; all outcomes are now reduced with no policy changes.
+
+04:06Z: all latency work finished; lane jobs exited. Coarse-scan/full-refinement
+retained scores match the full reference exactly for every retained candidate on
+all 125 states in both models. Top-eight refinement: original W 124/125 choices,
+100% play/WAIT agreement, p50/p95 43.8/192.9 ms; paired full native W 52.5/281.6 ms.
+Symmetric d=27 W: 125/125 choices, p50/p95 43.5/176.6 ms; paired full 51.6/258.6 ms.
+This meets the fixed-corpus one-core target with no reduced-scorer win-rate claim.
+Scripted-driver public states differ from W's confirmation trajectories, and the
+prepared-state scope excludes observation/belief inference/actuator/network work.
+Recommend W for further live qualification and top-eight refinement for a separate
+fresh paired outcome test. Raw artifacts retained on 03; small reductions, receipts,
+report and reproducible code are being committed and pushed.
