@@ -88,7 +88,9 @@ def legacy_class(base):
                     self.command_delay,0,1,1,horizon,self.config.interval,
                     self.config.interval,self.config.elixir_weight,True,False,trace)
             pending = self.candidate_root(root, action)
-            other = self.native.select_action(root, 1-seat, style)
+            # select_action takes a mutable PyO3 borrow for public champion HUD
+            # maintenance. Give each concurrent call a private root.
+            other = self.native.select_action(root.clone() if self.variant == 'threads4' else root, 1-seat, style)
             return self.delayed_rollout(pending, seat, other, style, trace)
 
         score_candidates = scorer

@@ -1,0 +1,1100 @@
+{
+  "passed": true,
+  "native_wait_checks": 156,
+  "original_W_exact_states": 10,
+  "native_original_W_exact_states": 10,
+  "checks": [
+    {
+      "id": "0:90:0",
+      "action": 2304,
+      "style": "balanced",
+      "score": -0.0020242584278489526,
+      "digest": "fd9bc5820d86f9f32fd376b10cc4bd0922990c546d38f5c6cc9846b0745fb0ae"
+    },
+    {
+      "id": "0:90:0",
+      "action": 2400,
+      "style": "balanced",
+      "score": -0.0020242584278489526,
+      "digest": "fd9bc5820d86f9f32fd376b10cc4bd0922990c546d38f5c6cc9846b0745fb0ae"
+    },
+    {
+      "id": "0:90:0",
+      "action": 2401,
+      "style": "balanced",
+      "score": -0.03690553158172025,
+      "digest": "a251bb78bc4985c97b4861dd06d6e529c33c8d0bd9a88f8d96507f38a102f9b5"
+    },
+    {
+      "id": "0:90:0",
+      "action": 2402,
+      "style": "balanced",
+      "score": -0.030620148506952993,
+      "digest": "3f29745b80b08aa2daecdd3c2534a60c5abdb3a3a84bfa5d27ee9dfacbeb0a8a"
+    },
+    {
+      "id": "0:90:0",
+      "action": 109,
+      "style": "balanced",
+      "score": -0.0024254023430202816,
+      "digest": "84418a4aa65cc08898034c359c350169e8d0850554b0ca11ab7f9e9c8de881fe"
+    },
+    {
+      "id": "0:90:0",
+      "action": 113,
+      "style": "balanced",
+      "score": -0.002247766158552352,
+      "digest": "c0aebfce621bf9339658132fc4b4a5462be480dcc3411627c6441ca478c4eeac"
+    },
+    {
+      "id": "0:90:0",
+      "action": 2304,
+      "style": "pressure",
+      "score": 0.016049736321506355,
+      "digest": "f4a9a46412f0f5f991915bb7f533aac4a5f789fda0ddb8c52830ff984cf6f548"
+    },
+    {
+      "id": "0:90:0",
+      "action": 2400,
+      "style": "pressure",
+      "score": 0.016049736321506355,
+      "digest": "f4a9a46412f0f5f991915bb7f533aac4a5f789fda0ddb8c52830ff984cf6f548"
+    },
+    {
+      "id": "0:90:0",
+      "action": 2401,
+      "style": "pressure",
+      "score": 0.009307776478549312,
+      "digest": "73cc5bde0e1b5bbcd80285b8354cffcfb538fbb0d048826b50d57688cd9f0995"
+    },
+    {
+      "id": "0:90:0",
+      "action": 2402,
+      "style": "pressure",
+      "score": -0.03357910628038814,
+      "digest": "0cb0f7f5970f12453dd98427f440970997f9b5e1c4fbf04dea541bd646be3e58"
+    },
+    {
+      "id": "0:90:0",
+      "action": 109,
+      "style": "pressure",
+      "score": 0.01585954386370255,
+      "digest": "33fa18216c87dd19f0e33af1303f2c902ab7ab01147739a816bcedbd6617cbb8"
+    },
+    {
+      "id": "0:90:0",
+      "action": 113,
+      "style": "pressure",
+      "score": 0.015908177036413118,
+      "digest": "734940bea6916fd24163962a1a1611ace2819ae647ab94fe27bf4994ba0bd3ad"
+    },
+    {
+      "id": "0:90:0",
+      "action": 2304,
+      "style": "defense",
+      "score": -0.018236313817377642,
+      "digest": "97d74a53eb44e659be584ff4a73faa5970390797ccab0b6ce41d3329ae84a9cf"
+    },
+    {
+      "id": "0:90:0",
+      "action": 2400,
+      "style": "defense",
+      "score": -0.018236313817377642,
+      "digest": "97d74a53eb44e659be584ff4a73faa5970390797ccab0b6ce41d3329ae84a9cf"
+    },
+    {
+      "id": "0:90:0",
+      "action": 2401,
+      "style": "defense",
+      "score": -0.01822087388719713,
+      "digest": "ff9f2995736084b370b51aea5537fee25b271f5fe730fac33880cbeea39eca43"
+    },
+    {
+      "id": "0:90:0",
+      "action": 2402,
+      "style": "defense",
+      "score": -0.016370257054381068,
+      "digest": "3da1eb03d53cc13f03e2418911850ece73850f51cf4de49025ad6560928740fd"
+    },
+    {
+      "id": "0:90:0",
+      "action": 109,
+      "style": "defense",
+      "score": -0.018850752469223492,
+      "digest": "c09326206ac57592687dc5db5da4327f44664521a2c011c546328da32aeadbad"
+    },
+    {
+      "id": "0:90:0",
+      "action": 113,
+      "style": "defense",
+      "score": -0.0155960236469482,
+      "digest": "69f000db47a1a772fed029565f2c714dbe63d5ad89d1bfeee8b5ccf8b95b06d8"
+    },
+    {
+      "id": "2:600:0",
+      "action": 2304,
+      "style": "balanced",
+      "score": -0.03985497262003865,
+      "digest": "16667396cb057caca520c836d1a09e036203fa338299d8e4cd77f73a32e9060c"
+    },
+    {
+      "id": "2:600:0",
+      "action": 2400,
+      "style": "balanced",
+      "score": -0.03985497262003865,
+      "digest": "16667396cb057caca520c836d1a09e036203fa338299d8e4cd77f73a32e9060c"
+    },
+    {
+      "id": "2:600:0",
+      "action": 2401,
+      "style": "balanced",
+      "score": -0.03985497262003865,
+      "digest": "16667396cb057caca520c836d1a09e036203fa338299d8e4cd77f73a32e9060c"
+    },
+    {
+      "id": "2:600:0",
+      "action": 2402,
+      "style": "balanced",
+      "score": -0.03985497262003865,
+      "digest": "16667396cb057caca520c836d1a09e036203fa338299d8e4cd77f73a32e9060c"
+    },
+    {
+      "id": "2:600:0",
+      "action": 685,
+      "style": "balanced",
+      "score": -0.030091915928070884,
+      "digest": "e1564caf2ae1bcd633c69513a4ba90c420bd1bc284ce46cfd48eebd6546ab7dc"
+    },
+    {
+      "id": "2:600:0",
+      "action": 689,
+      "style": "balanced",
+      "score": -0.030097937892223123,
+      "digest": "6b0e56be69cbcab7d1a971589214dc6120fe2efd50f7d6005e7b0c49213ea005"
+    },
+    {
+      "id": "2:600:0",
+      "action": 2304,
+      "style": "pressure",
+      "score": -0.03985497262003865,
+      "digest": "16667396cb057caca520c836d1a09e036203fa338299d8e4cd77f73a32e9060c"
+    },
+    {
+      "id": "2:600:0",
+      "action": 2400,
+      "style": "pressure",
+      "score": -0.03985497262003865,
+      "digest": "16667396cb057caca520c836d1a09e036203fa338299d8e4cd77f73a32e9060c"
+    },
+    {
+      "id": "2:600:0",
+      "action": 2401,
+      "style": "pressure",
+      "score": -0.03985497262003865,
+      "digest": "16667396cb057caca520c836d1a09e036203fa338299d8e4cd77f73a32e9060c"
+    },
+    {
+      "id": "2:600:0",
+      "action": 2402,
+      "style": "pressure",
+      "score": -0.03985497262003865,
+      "digest": "16667396cb057caca520c836d1a09e036203fa338299d8e4cd77f73a32e9060c"
+    },
+    {
+      "id": "2:600:0",
+      "action": 685,
+      "style": "pressure",
+      "score": -0.030091915928070884,
+      "digest": "e1564caf2ae1bcd633c69513a4ba90c420bd1bc284ce46cfd48eebd6546ab7dc"
+    },
+    {
+      "id": "2:600:0",
+      "action": 689,
+      "style": "pressure",
+      "score": -0.030097937892223123,
+      "digest": "6b0e56be69cbcab7d1a971589214dc6120fe2efd50f7d6005e7b0c49213ea005"
+    },
+    {
+      "id": "2:600:0",
+      "action": 2304,
+      "style": "defense",
+      "score": -0.03985497262003865,
+      "digest": "16667396cb057caca520c836d1a09e036203fa338299d8e4cd77f73a32e9060c"
+    },
+    {
+      "id": "2:600:0",
+      "action": 2400,
+      "style": "defense",
+      "score": -0.03985497262003865,
+      "digest": "16667396cb057caca520c836d1a09e036203fa338299d8e4cd77f73a32e9060c"
+    },
+    {
+      "id": "2:600:0",
+      "action": 2401,
+      "style": "defense",
+      "score": -0.03985497262003865,
+      "digest": "16667396cb057caca520c836d1a09e036203fa338299d8e4cd77f73a32e9060c"
+    },
+    {
+      "id": "2:600:0",
+      "action": 2402,
+      "style": "defense",
+      "score": -0.03985497262003865,
+      "digest": "16667396cb057caca520c836d1a09e036203fa338299d8e4cd77f73a32e9060c"
+    },
+    {
+      "id": "2:600:0",
+      "action": 685,
+      "style": "defense",
+      "score": -0.030091915928070884,
+      "digest": "e1564caf2ae1bcd633c69513a4ba90c420bd1bc284ce46cfd48eebd6546ab7dc"
+    },
+    {
+      "id": "2:600:0",
+      "action": 689,
+      "style": "defense",
+      "score": -0.030097937892223123,
+      "digest": "6b0e56be69cbcab7d1a971589214dc6120fe2efd50f7d6005e7b0c49213ea005"
+    },
+    {
+      "id": "4:2400:0",
+      "action": 2304,
+      "style": "balanced",
+      "score": -0.2711752802391451,
+      "digest": "b03ca26a9d3f826477730f18507505d8d81f7cfc7269ac62ebe10e668bd3479b"
+    },
+    {
+      "id": "4:2400:0",
+      "action": 2400,
+      "style": "balanced",
+      "score": -0.2711752802391451,
+      "digest": "b03ca26a9d3f826477730f18507505d8d81f7cfc7269ac62ebe10e668bd3479b"
+    },
+    {
+      "id": "4:2400:0",
+      "action": 2401,
+      "style": "balanced",
+      "score": -0.26865664781940396,
+      "digest": "36a035b0007ae82b7e535ac6a242f731ed38bd2789026233719a3cd15292ba05"
+    },
+    {
+      "id": "4:2400:0",
+      "action": 2402,
+      "style": "balanced",
+      "score": -0.2603495461368105,
+      "digest": "0d0fa2dc3cf5618539ff28852f47e6fe7ed9e2225de27a72fed5515787f57cb4"
+    },
+    {
+      "id": "4:2400:0",
+      "action": 2304,
+      "style": "pressure",
+      "score": -0.2468746890293934,
+      "digest": "a6e33be63856eee01ec50613ccf5cacb240e0d2fbd36bce0cd6b366bb9ad6cd2"
+    },
+    {
+      "id": "4:2400:0",
+      "action": 2400,
+      "style": "pressure",
+      "score": -0.2468746890293934,
+      "digest": "a6e33be63856eee01ec50613ccf5cacb240e0d2fbd36bce0cd6b366bb9ad6cd2"
+    },
+    {
+      "id": "4:2400:0",
+      "action": 2401,
+      "style": "pressure",
+      "score": -0.2404694775289628,
+      "digest": "1711a1a7904e54664bf409e47ec233954c7e187b56034f8868b184279043b33e"
+    },
+    {
+      "id": "4:2400:0",
+      "action": 2402,
+      "style": "pressure",
+      "score": -0.23845614067256474,
+      "digest": "60bcae48516e7a3135fc0d4dcae7b14f797850d0a165865c62b5cd54d01ea58d"
+    },
+    {
+      "id": "4:2400:0",
+      "action": 2304,
+      "style": "defense",
+      "score": -0.2711752802391451,
+      "digest": "b03ca26a9d3f826477730f18507505d8d81f7cfc7269ac62ebe10e668bd3479b"
+    },
+    {
+      "id": "4:2400:0",
+      "action": 2400,
+      "style": "defense",
+      "score": -0.2711752802391451,
+      "digest": "b03ca26a9d3f826477730f18507505d8d81f7cfc7269ac62ebe10e668bd3479b"
+    },
+    {
+      "id": "4:2400:0",
+      "action": 2401,
+      "style": "defense",
+      "score": -0.26865664781940396,
+      "digest": "36a035b0007ae82b7e535ac6a242f731ed38bd2789026233719a3cd15292ba05"
+    },
+    {
+      "id": "4:2400:0",
+      "action": 2402,
+      "style": "defense",
+      "score": -0.2603495461368105,
+      "digest": "0d0fa2dc3cf5618539ff28852f47e6fe7ed9e2225de27a72fed5515787f57cb4"
+    },
+    {
+      "id": "7:300:1",
+      "action": 2304,
+      "style": "balanced",
+      "score": 0.06206634699554505,
+      "digest": "03965ce8936f7100eb902e59cafcc68d8091a830e832c4668d2ebc74f8d14f68"
+    },
+    {
+      "id": "7:300:1",
+      "action": 2400,
+      "style": "balanced",
+      "score": 0.06206634699554505,
+      "digest": "03965ce8936f7100eb902e59cafcc68d8091a830e832c4668d2ebc74f8d14f68"
+    },
+    {
+      "id": "7:300:1",
+      "action": 2401,
+      "style": "balanced",
+      "score": 0.06206634699554505,
+      "digest": "03965ce8936f7100eb902e59cafcc68d8091a830e832c4668d2ebc74f8d14f68"
+    },
+    {
+      "id": "7:300:1",
+      "action": 2402,
+      "style": "balanced",
+      "score": 0.06206634699554505,
+      "digest": "03965ce8936f7100eb902e59cafcc68d8091a830e832c4668d2ebc74f8d14f68"
+    },
+    {
+      "id": "7:300:1",
+      "action": 6,
+      "style": "balanced",
+      "score": -0.0028080105889573687,
+      "digest": "f7fa2c319a3b9861ad29a31a694d8be381995339a7f094e6f5ffb6f5de805a94"
+    },
+    {
+      "id": "7:300:1",
+      "action": 7,
+      "style": "balanced",
+      "score": -0.0028080105889573687,
+      "digest": "f7fa2c319a3b9861ad29a31a694d8be381995339a7f094e6f5ffb6f5de805a94"
+    },
+    {
+      "id": "7:300:1",
+      "action": 2304,
+      "style": "pressure",
+      "score": 0.06206634699554505,
+      "digest": "03965ce8936f7100eb902e59cafcc68d8091a830e832c4668d2ebc74f8d14f68"
+    },
+    {
+      "id": "7:300:1",
+      "action": 2400,
+      "style": "pressure",
+      "score": 0.06206634699554505,
+      "digest": "03965ce8936f7100eb902e59cafcc68d8091a830e832c4668d2ebc74f8d14f68"
+    },
+    {
+      "id": "7:300:1",
+      "action": 2401,
+      "style": "pressure",
+      "score": 0.06206634699554505,
+      "digest": "03965ce8936f7100eb902e59cafcc68d8091a830e832c4668d2ebc74f8d14f68"
+    },
+    {
+      "id": "7:300:1",
+      "action": 2402,
+      "style": "pressure",
+      "score": 0.06206634699554505,
+      "digest": "03965ce8936f7100eb902e59cafcc68d8091a830e832c4668d2ebc74f8d14f68"
+    },
+    {
+      "id": "7:300:1",
+      "action": 6,
+      "style": "pressure",
+      "score": -0.0028080105889573687,
+      "digest": "f7fa2c319a3b9861ad29a31a694d8be381995339a7f094e6f5ffb6f5de805a94"
+    },
+    {
+      "id": "7:300:1",
+      "action": 7,
+      "style": "pressure",
+      "score": -0.0028080105889573687,
+      "digest": "f7fa2c319a3b9861ad29a31a694d8be381995339a7f094e6f5ffb6f5de805a94"
+    },
+    {
+      "id": "7:300:1",
+      "action": 2304,
+      "style": "defense",
+      "score": 0.06206634699554505,
+      "digest": "03965ce8936f7100eb902e59cafcc68d8091a830e832c4668d2ebc74f8d14f68"
+    },
+    {
+      "id": "7:300:1",
+      "action": 2400,
+      "style": "defense",
+      "score": 0.06206634699554505,
+      "digest": "03965ce8936f7100eb902e59cafcc68d8091a830e832c4668d2ebc74f8d14f68"
+    },
+    {
+      "id": "7:300:1",
+      "action": 2401,
+      "style": "defense",
+      "score": 0.06206634699554505,
+      "digest": "03965ce8936f7100eb902e59cafcc68d8091a830e832c4668d2ebc74f8d14f68"
+    },
+    {
+      "id": "7:300:1",
+      "action": 2402,
+      "style": "defense",
+      "score": 0.06206634699554505,
+      "digest": "03965ce8936f7100eb902e59cafcc68d8091a830e832c4668d2ebc74f8d14f68"
+    },
+    {
+      "id": "7:300:1",
+      "action": 6,
+      "style": "defense",
+      "score": -0.0028080105889573687,
+      "digest": "f7fa2c319a3b9861ad29a31a694d8be381995339a7f094e6f5ffb6f5de805a94"
+    },
+    {
+      "id": "7:300:1",
+      "action": 7,
+      "style": "defense",
+      "score": -0.0028080105889573687,
+      "digest": "f7fa2c319a3b9861ad29a31a694d8be381995339a7f094e6f5ffb6f5de805a94"
+    },
+    {
+      "id": "9:1200:1",
+      "action": 2304,
+      "style": "balanced",
+      "score": 0.03430987547171874,
+      "digest": "119a0c935e3a2c7784a3f9c50c2e590769f925fab3e7a436d9ec4f73000df3b7"
+    },
+    {
+      "id": "9:1200:1",
+      "action": 2400,
+      "style": "balanced",
+      "score": 0.03430987547171874,
+      "digest": "119a0c935e3a2c7784a3f9c50c2e590769f925fab3e7a436d9ec4f73000df3b7"
+    },
+    {
+      "id": "9:1200:1",
+      "action": 2401,
+      "style": "balanced",
+      "score": 0.03430987547171874,
+      "digest": "119a0c935e3a2c7784a3f9c50c2e590769f925fab3e7a436d9ec4f73000df3b7"
+    },
+    {
+      "id": "9:1200:1",
+      "action": 2402,
+      "style": "balanced",
+      "score": 0.03430987547171874,
+      "digest": "119a0c935e3a2c7784a3f9c50c2e590769f925fab3e7a436d9ec4f73000df3b7"
+    },
+    {
+      "id": "9:1200:1",
+      "action": 2304,
+      "style": "pressure",
+      "score": 0.03430987547171874,
+      "digest": "119a0c935e3a2c7784a3f9c50c2e590769f925fab3e7a436d9ec4f73000df3b7"
+    },
+    {
+      "id": "9:1200:1",
+      "action": 2400,
+      "style": "pressure",
+      "score": 0.03430987547171874,
+      "digest": "119a0c935e3a2c7784a3f9c50c2e590769f925fab3e7a436d9ec4f73000df3b7"
+    },
+    {
+      "id": "9:1200:1",
+      "action": 2401,
+      "style": "pressure",
+      "score": 0.03430987547171874,
+      "digest": "119a0c935e3a2c7784a3f9c50c2e590769f925fab3e7a436d9ec4f73000df3b7"
+    },
+    {
+      "id": "9:1200:1",
+      "action": 2402,
+      "style": "pressure",
+      "score": 0.03430987547171874,
+      "digest": "119a0c935e3a2c7784a3f9c50c2e590769f925fab3e7a436d9ec4f73000df3b7"
+    },
+    {
+      "id": "9:1200:1",
+      "action": 2304,
+      "style": "defense",
+      "score": 0.03430987547171874,
+      "digest": "119a0c935e3a2c7784a3f9c50c2e590769f925fab3e7a436d9ec4f73000df3b7"
+    },
+    {
+      "id": "9:1200:1",
+      "action": 2400,
+      "style": "defense",
+      "score": 0.03430987547171874,
+      "digest": "119a0c935e3a2c7784a3f9c50c2e590769f925fab3e7a436d9ec4f73000df3b7"
+    },
+    {
+      "id": "9:1200:1",
+      "action": 2401,
+      "style": "defense",
+      "score": 0.03430987547171874,
+      "digest": "119a0c935e3a2c7784a3f9c50c2e590769f925fab3e7a436d9ec4f73000df3b7"
+    },
+    {
+      "id": "9:1200:1",
+      "action": 2402,
+      "style": "defense",
+      "score": 0.03430987547171874,
+      "digest": "119a0c935e3a2c7784a3f9c50c2e590769f925fab3e7a436d9ec4f73000df3b7"
+    },
+    {
+      "id": "12:90:0",
+      "action": 2304,
+      "style": "balanced",
+      "score": 0.00727941381388683,
+      "digest": "c9f242f5a8fed32f142f91b9642400a7b500fca5456638a9f917f63985814a26"
+    },
+    {
+      "id": "12:90:0",
+      "action": 2400,
+      "style": "balanced",
+      "score": 0.00727941381388683,
+      "digest": "c9f242f5a8fed32f142f91b9642400a7b500fca5456638a9f917f63985814a26"
+    },
+    {
+      "id": "12:90:0",
+      "action": 2401,
+      "style": "balanced",
+      "score": 0.007927074628180483,
+      "digest": "7706a9da470b805c95aa878b02be305a7d1b0ee8b53a67cc5d5c6c0c8954006e"
+    },
+    {
+      "id": "12:90:0",
+      "action": 2402,
+      "style": "balanced",
+      "score": 0.007079013243756798,
+      "digest": "2284c907be0951ce65a30dc16a7a45f3fd3f4ab7b3e437bcd770edaad586bb92"
+    },
+    {
+      "id": "12:90:0",
+      "action": 1389,
+      "style": "balanced",
+      "score": 0.007563987387043693,
+      "digest": "cebde88574b060cb794079194d017b37fbfb8b05ad0c27a3f252c1825d4727a1"
+    },
+    {
+      "id": "12:90:0",
+      "action": 1400,
+      "style": "balanced",
+      "score": 0.01321520701790379,
+      "digest": "d83462b1fd756f15fda54e4defdc6aec8c34ad331f116b8e54752af81487affa"
+    },
+    {
+      "id": "12:90:0",
+      "action": 2304,
+      "style": "pressure",
+      "score": 0.004150833449209685,
+      "digest": "ec2dd707bb1305ab929b472f403ae5ceb3b295a2cac38cb3d7510ef785c47a09"
+    },
+    {
+      "id": "12:90:0",
+      "action": 2400,
+      "style": "pressure",
+      "score": 0.004150833449209685,
+      "digest": "ec2dd707bb1305ab929b472f403ae5ceb3b295a2cac38cb3d7510ef785c47a09"
+    },
+    {
+      "id": "12:90:0",
+      "action": 2401,
+      "style": "pressure",
+      "score": 0.003340900398507202,
+      "digest": "b8d8bc748d27a5e1fde1d84c773fc8ef345c2e436382a41527956c4f32618426"
+    },
+    {
+      "id": "12:90:0",
+      "action": 2402,
+      "style": "pressure",
+      "score": 0.0025526940402025855,
+      "digest": "c8272b16c8537432a9a2b6fea79bf5a733da18ab343a86fe59ed62f4ede7bbe5"
+    },
+    {
+      "id": "12:90:0",
+      "action": 1389,
+      "style": "pressure",
+      "score": 0.0044217958211070635,
+      "digest": "efaaa10b851c68794869dabb18f82f117fc86f80ac29be3e933573dae37980ac"
+    },
+    {
+      "id": "12:90:0",
+      "action": 1400,
+      "style": "pressure",
+      "score": -0.0022014235210391685,
+      "digest": "2f24513d21565bedeaf7b317a54a785781eafb87b447ee7af01dcc4bdd75a464"
+    },
+    {
+      "id": "12:90:0",
+      "action": 2304,
+      "style": "defense",
+      "score": 0.00954319807981496,
+      "digest": "4dd58dd0d677591efeedb310cc11d8a32512e98ae960a6fa32a0b34013faab6b"
+    },
+    {
+      "id": "12:90:0",
+      "action": 2400,
+      "style": "defense",
+      "score": 0.00954319807981496,
+      "digest": "4dd58dd0d677591efeedb310cc11d8a32512e98ae960a6fa32a0b34013faab6b"
+    },
+    {
+      "id": "12:90:0",
+      "action": 2401,
+      "style": "defense",
+      "score": 0.00856220524411742,
+      "digest": "42320eb932de2ae4dee54a16b9a560efddf8f9aa110c23e1ae42ec7ca4bd0f68"
+    },
+    {
+      "id": "12:90:0",
+      "action": 2402,
+      "style": "defense",
+      "score": 0.00754124891546328,
+      "digest": "d5895b17bf061361fb649dee6e7e09077d9290fc8557bc157243b35b18a66ff8"
+    },
+    {
+      "id": "12:90:0",
+      "action": 1389,
+      "style": "defense",
+      "score": 0.008832770234546839,
+      "digest": "8e414a07e47df86655c190ddf0eff75d758c112dbbef0554fcf84dd99ea66d04"
+    },
+    {
+      "id": "12:90:0",
+      "action": 1400,
+      "style": "defense",
+      "score": 0.01439625907013535,
+      "digest": "d4d962c5d2b953b11ed905f2739f128e9bea28f04a7de95ed88262d5f6889896"
+    },
+    {
+      "id": "14:600:0",
+      "action": 2304,
+      "style": "balanced",
+      "score": -0.13965931233305998,
+      "digest": "0e145de6ce345cb80819652827eb1fd8dfb70da1807fe8280f4e8ecfbafb7b41"
+    },
+    {
+      "id": "14:600:0",
+      "action": 2400,
+      "style": "balanced",
+      "score": -0.13965931233305998,
+      "digest": "0e145de6ce345cb80819652827eb1fd8dfb70da1807fe8280f4e8ecfbafb7b41"
+    },
+    {
+      "id": "14:600:0",
+      "action": 2401,
+      "style": "balanced",
+      "score": -0.13965931233305998,
+      "digest": "0e145de6ce345cb80819652827eb1fd8dfb70da1807fe8280f4e8ecfbafb7b41"
+    },
+    {
+      "id": "14:600:0",
+      "action": 2402,
+      "style": "balanced",
+      "score": -0.13898575477447037,
+      "digest": "5d75023f32ee7b4b1beedb154e9997b6d51c6ba56da3ef16f93b0e97a5622863"
+    },
+    {
+      "id": "14:600:0",
+      "action": 6,
+      "style": "balanced",
+      "score": -0.15704784361648844,
+      "digest": "207864254e50e8a8727623685b3a1daa5e547a395b3788c4850026f4009a659f"
+    },
+    {
+      "id": "14:600:0",
+      "action": 7,
+      "style": "balanced",
+      "score": -0.1570523057715688,
+      "digest": "279c24f21a78a64172b39a1f10569c2ff6dd532b6b55943bbf66950eb5535153"
+    },
+    {
+      "id": "14:600:0",
+      "action": 2304,
+      "style": "pressure",
+      "score": -0.13965931233305998,
+      "digest": "0e145de6ce345cb80819652827eb1fd8dfb70da1807fe8280f4e8ecfbafb7b41"
+    },
+    {
+      "id": "14:600:0",
+      "action": 2400,
+      "style": "pressure",
+      "score": -0.13965931233305998,
+      "digest": "0e145de6ce345cb80819652827eb1fd8dfb70da1807fe8280f4e8ecfbafb7b41"
+    },
+    {
+      "id": "14:600:0",
+      "action": 2401,
+      "style": "pressure",
+      "score": -0.13965931233305998,
+      "digest": "0e145de6ce345cb80819652827eb1fd8dfb70da1807fe8280f4e8ecfbafb7b41"
+    },
+    {
+      "id": "14:600:0",
+      "action": 2402,
+      "style": "pressure",
+      "score": -0.13898575477447037,
+      "digest": "5d75023f32ee7b4b1beedb154e9997b6d51c6ba56da3ef16f93b0e97a5622863"
+    },
+    {
+      "id": "14:600:0",
+      "action": 6,
+      "style": "pressure",
+      "score": -0.15704784361648844,
+      "digest": "207864254e50e8a8727623685b3a1daa5e547a395b3788c4850026f4009a659f"
+    },
+    {
+      "id": "14:600:0",
+      "action": 7,
+      "style": "pressure",
+      "score": -0.1570523057715688,
+      "digest": "279c24f21a78a64172b39a1f10569c2ff6dd532b6b55943bbf66950eb5535153"
+    },
+    {
+      "id": "14:600:0",
+      "action": 2304,
+      "style": "defense",
+      "score": -0.13965931233305998,
+      "digest": "0e145de6ce345cb80819652827eb1fd8dfb70da1807fe8280f4e8ecfbafb7b41"
+    },
+    {
+      "id": "14:600:0",
+      "action": 2400,
+      "style": "defense",
+      "score": -0.13965931233305998,
+      "digest": "0e145de6ce345cb80819652827eb1fd8dfb70da1807fe8280f4e8ecfbafb7b41"
+    },
+    {
+      "id": "14:600:0",
+      "action": 2401,
+      "style": "defense",
+      "score": -0.13965931233305998,
+      "digest": "0e145de6ce345cb80819652827eb1fd8dfb70da1807fe8280f4e8ecfbafb7b41"
+    },
+    {
+      "id": "14:600:0",
+      "action": 2402,
+      "style": "defense",
+      "score": -0.13898575477447037,
+      "digest": "5d75023f32ee7b4b1beedb154e9997b6d51c6ba56da3ef16f93b0e97a5622863"
+    },
+    {
+      "id": "14:600:0",
+      "action": 6,
+      "style": "defense",
+      "score": -0.15704784361648844,
+      "digest": "207864254e50e8a8727623685b3a1daa5e547a395b3788c4850026f4009a659f"
+    },
+    {
+      "id": "14:600:0",
+      "action": 7,
+      "style": "defense",
+      "score": -0.1570523057715688,
+      "digest": "279c24f21a78a64172b39a1f10569c2ff6dd532b6b55943bbf66950eb5535153"
+    },
+    {
+      "id": "16:2400:0",
+      "action": 2304,
+      "style": "balanced",
+      "score": 0.26057937382965435,
+      "digest": "eacab7cfa64040fd96eaa54bb2b07466f9cf29d85a051a59a9badce4077f8419"
+    },
+    {
+      "id": "16:2400:0",
+      "action": 2400,
+      "style": "balanced",
+      "score": 0.26057937382965435,
+      "digest": "eacab7cfa64040fd96eaa54bb2b07466f9cf29d85a051a59a9badce4077f8419"
+    },
+    {
+      "id": "16:2400:0",
+      "action": 2401,
+      "style": "balanced",
+      "score": 0.26057937382965435,
+      "digest": "eacab7cfa64040fd96eaa54bb2b07466f9cf29d85a051a59a9badce4077f8419"
+    },
+    {
+      "id": "16:2400:0",
+      "action": 2402,
+      "style": "balanced",
+      "score": 0.26057937382965435,
+      "digest": "eacab7cfa64040fd96eaa54bb2b07466f9cf29d85a051a59a9badce4077f8419"
+    },
+    {
+      "id": "16:2400:0",
+      "action": 2304,
+      "style": "pressure",
+      "score": 0.26057937382965435,
+      "digest": "eacab7cfa64040fd96eaa54bb2b07466f9cf29d85a051a59a9badce4077f8419"
+    },
+    {
+      "id": "16:2400:0",
+      "action": 2400,
+      "style": "pressure",
+      "score": 0.26057937382965435,
+      "digest": "eacab7cfa64040fd96eaa54bb2b07466f9cf29d85a051a59a9badce4077f8419"
+    },
+    {
+      "id": "16:2400:0",
+      "action": 2401,
+      "style": "pressure",
+      "score": 0.26057937382965435,
+      "digest": "eacab7cfa64040fd96eaa54bb2b07466f9cf29d85a051a59a9badce4077f8419"
+    },
+    {
+      "id": "16:2400:0",
+      "action": 2402,
+      "style": "pressure",
+      "score": 0.26057937382965435,
+      "digest": "eacab7cfa64040fd96eaa54bb2b07466f9cf29d85a051a59a9badce4077f8419"
+    },
+    {
+      "id": "16:2400:0",
+      "action": 2304,
+      "style": "defense",
+      "score": 0.26057937382965435,
+      "digest": "eacab7cfa64040fd96eaa54bb2b07466f9cf29d85a051a59a9badce4077f8419"
+    },
+    {
+      "id": "16:2400:0",
+      "action": 2400,
+      "style": "defense",
+      "score": 0.26057937382965435,
+      "digest": "eacab7cfa64040fd96eaa54bb2b07466f9cf29d85a051a59a9badce4077f8419"
+    },
+    {
+      "id": "16:2400:0",
+      "action": 2401,
+      "style": "defense",
+      "score": 0.26057937382965435,
+      "digest": "eacab7cfa64040fd96eaa54bb2b07466f9cf29d85a051a59a9badce4077f8419"
+    },
+    {
+      "id": "16:2400:0",
+      "action": 2402,
+      "style": "defense",
+      "score": 0.26057937382965435,
+      "digest": "eacab7cfa64040fd96eaa54bb2b07466f9cf29d85a051a59a9badce4077f8419"
+    },
+    {
+      "id": "19:300:1",
+      "action": 2304,
+      "style": "balanced",
+      "score": -0.13159624768432812,
+      "digest": "a2dc4cf44651c21a90d520848df296d288a646f6c21916dba1f57f4bdb6fb200"
+    },
+    {
+      "id": "19:300:1",
+      "action": 2400,
+      "style": "balanced",
+      "score": -0.13159624768432812,
+      "digest": "a2dc4cf44651c21a90d520848df296d288a646f6c21916dba1f57f4bdb6fb200"
+    },
+    {
+      "id": "19:300:1",
+      "action": 2401,
+      "style": "balanced",
+      "score": -0.13159624768432812,
+      "digest": "a2dc4cf44651c21a90d520848df296d288a646f6c21916dba1f57f4bdb6fb200"
+    },
+    {
+      "id": "19:300:1",
+      "action": 2402,
+      "style": "balanced",
+      "score": -0.13159624768432812,
+      "digest": "a2dc4cf44651c21a90d520848df296d288a646f6c21916dba1f57f4bdb6fb200"
+    },
+    {
+      "id": "19:300:1",
+      "action": 685,
+      "style": "balanced",
+      "score": -0.04508189517661748,
+      "digest": "d1fe7d982be56f2a26fdc6c340ddcda76c2c11e1b16822e2bc92895d38ae5855"
+    },
+    {
+      "id": "19:300:1",
+      "action": 689,
+      "style": "balanced",
+      "score": -0.045319906123478686,
+      "digest": "11a7ef80a67d93f9e7fd344c37610e2d03a04b7019cac2cdf56f27643a83baee"
+    },
+    {
+      "id": "19:300:1",
+      "action": 2304,
+      "style": "pressure",
+      "score": -0.13711826933367555,
+      "digest": "e1da46866daef690d6f431894250380181e9988bc35645cf9229314c534e5d96"
+    },
+    {
+      "id": "19:300:1",
+      "action": 2400,
+      "style": "pressure",
+      "score": -0.13711826933367555,
+      "digest": "e1da46866daef690d6f431894250380181e9988bc35645cf9229314c534e5d96"
+    },
+    {
+      "id": "19:300:1",
+      "action": 2401,
+      "style": "pressure",
+      "score": -0.13711826933367555,
+      "digest": "e1da46866daef690d6f431894250380181e9988bc35645cf9229314c534e5d96"
+    },
+    {
+      "id": "19:300:1",
+      "action": 2402,
+      "style": "pressure",
+      "score": -0.13711826933367555,
+      "digest": "e1da46866daef690d6f431894250380181e9988bc35645cf9229314c534e5d96"
+    },
+    {
+      "id": "19:300:1",
+      "action": 685,
+      "style": "pressure",
+      "score": -0.048489610227267964,
+      "digest": "f3d5d3384952876bafbd5b8b4ae97198d56d93953f1cf063c22d4b33e0fb67d8"
+    },
+    {
+      "id": "19:300:1",
+      "action": 689,
+      "style": "pressure",
+      "score": -0.048727621174129175,
+      "digest": "9b8ee570824467be54e746908b089a9d5897e96f1e3e301c8f1fa9a1902d59fb"
+    },
+    {
+      "id": "19:300:1",
+      "action": 2304,
+      "style": "defense",
+      "score": -0.13159624768432812,
+      "digest": "a2dc4cf44651c21a90d520848df296d288a646f6c21916dba1f57f4bdb6fb200"
+    },
+    {
+      "id": "19:300:1",
+      "action": 2400,
+      "style": "defense",
+      "score": -0.13159624768432812,
+      "digest": "a2dc4cf44651c21a90d520848df296d288a646f6c21916dba1f57f4bdb6fb200"
+    },
+    {
+      "id": "19:300:1",
+      "action": 2401,
+      "style": "defense",
+      "score": -0.13159624768432812,
+      "digest": "a2dc4cf44651c21a90d520848df296d288a646f6c21916dba1f57f4bdb6fb200"
+    },
+    {
+      "id": "19:300:1",
+      "action": 2402,
+      "style": "defense",
+      "score": -0.13159624768432812,
+      "digest": "a2dc4cf44651c21a90d520848df296d288a646f6c21916dba1f57f4bdb6fb200"
+    },
+    {
+      "id": "19:300:1",
+      "action": 685,
+      "style": "defense",
+      "score": -0.04508189517661748,
+      "digest": "d1fe7d982be56f2a26fdc6c340ddcda76c2c11e1b16822e2bc92895d38ae5855"
+    },
+    {
+      "id": "19:300:1",
+      "action": 689,
+      "style": "defense",
+      "score": -0.045319906123478686,
+      "digest": "11a7ef80a67d93f9e7fd344c37610e2d03a04b7019cac2cdf56f27643a83baee"
+    },
+    {
+      "id": "21:1200:1",
+      "action": 2304,
+      "style": "balanced",
+      "score": 0.10903009462056622,
+      "digest": "420434bcdb28d84806ca6b35053cfa95ab22f207a9421e27317fb623859707f3"
+    },
+    {
+      "id": "21:1200:1",
+      "action": 2400,
+      "style": "balanced",
+      "score": 0.10903009462056622,
+      "digest": "420434bcdb28d84806ca6b35053cfa95ab22f207a9421e27317fb623859707f3"
+    },
+    {
+      "id": "21:1200:1",
+      "action": 2401,
+      "style": "balanced",
+      "score": 0.10903009462056622,
+      "digest": "420434bcdb28d84806ca6b35053cfa95ab22f207a9421e27317fb623859707f3"
+    },
+    {
+      "id": "21:1200:1",
+      "action": 2402,
+      "style": "balanced",
+      "score": 0.10903009462056622,
+      "digest": "420434bcdb28d84806ca6b35053cfa95ab22f207a9421e27317fb623859707f3"
+    },
+    {
+      "id": "21:1200:1",
+      "action": 2304,
+      "style": "pressure",
+      "score": 0.10932940961852126,
+      "digest": "0556055a982af49a8e6efa209a26a36faa9339908fcf64804a7189a77b250bd1"
+    },
+    {
+      "id": "21:1200:1",
+      "action": 2400,
+      "style": "pressure",
+      "score": 0.10932940961852126,
+      "digest": "0556055a982af49a8e6efa209a26a36faa9339908fcf64804a7189a77b250bd1"
+    },
+    {
+      "id": "21:1200:1",
+      "action": 2401,
+      "style": "pressure",
+      "score": 0.10932940961852126,
+      "digest": "0556055a982af49a8e6efa209a26a36faa9339908fcf64804a7189a77b250bd1"
+    },
+    {
+      "id": "21:1200:1",
+      "action": 2402,
+      "style": "pressure",
+      "score": 0.10932940961852126,
+      "digest": "0556055a982af49a8e6efa209a26a36faa9339908fcf64804a7189a77b250bd1"
+    },
+    {
+      "id": "21:1200:1",
+      "action": 2304,
+      "style": "defense",
+      "score": 0.10903009462056622,
+      "digest": "420434bcdb28d84806ca6b35053cfa95ab22f207a9421e27317fb623859707f3"
+    },
+    {
+      "id": "21:1200:1",
+      "action": 2400,
+      "style": "defense",
+      "score": 0.10903009462056622,
+      "digest": "420434bcdb28d84806ca6b35053cfa95ab22f207a9421e27317fb623859707f3"
+    },
+    {
+      "id": "21:1200:1",
+      "action": 2401,
+      "style": "defense",
+      "score": 0.10903009462056622,
+      "digest": "420434bcdb28d84806ca6b35053cfa95ab22f207a9421e27317fb623859707f3"
+    },
+    {
+      "id": "21:1200:1",
+      "action": 2402,
+      "style": "defense",
+      "score": 0.10903009462056622,
+      "digest": "420434bcdb28d84806ca6b35053cfa95ab22f207a9421e27317fb623859707f3"
+    }
+  ]
+}

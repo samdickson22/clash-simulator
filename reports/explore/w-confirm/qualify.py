@@ -75,13 +75,14 @@ def reference(root, seat, action, style, horizon, trace=True):
     queues = {0:[],1:[]}; events = []
     def submit(actor, action, tick):
         if action == 2304: return
-        card = json.loads(sim.snapshot())['players'][actor]['hand'][action//576]
+        token = json.loads(run.R.native.public_view(sim, actor))['hand'][action//576]
+        card = run.R.builder.token_names[token]
         queues[actor].append((origin+tick+27, action, card))
         if trace: events.append(('submit', origin+tick, actor, action, True, card))
     submit(seat, action, 0)
     submit(1-seat, run.R.native.select_action(sim, 1-seat, style), 0)
     for tick in range(horizon):
-        if json.loads(sim.snapshot())['game_over']: break
+        if abs(run.R.native.evaluate(sim, seat, 1.)) >= 2: break
         if tick > 0 and tick % 10 == 0:
             for actor in (seat,1-seat):
                 if not queues[actor] and (actor != seat or tick >= wait):
