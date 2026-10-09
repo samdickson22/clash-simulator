@@ -1217,3 +1217,7 @@ Also on the hub, but with copies elsewhere:
   - Leased: 09/13/14 99%, **15 0%**, 16 80%.
   - Home usage is 3.5 GB. 06/07/11/18 are down.
   - **Problem (a) on 15:** capture controller `15r2` exited pass/0 at 04:34:17Z and nothing was relaunched. I pinged perception to relaunch, or to explain if it's a planned R13-2/R13-3 transition.
+- **04:42 UTC: 15 idle cause.**
+  - An inner storage refusal: e22/708 hit the 32 GB reservation minus 1 GB margin. The controller killed 3 sibling partials, and the wrapper masked it as pass/0.
+  - Approved: move 3 GB of reservation 04 → 15, authenticate the failed attempts, requeue the incomplete ones, and launch 15r3 with the intent-safe controller.
+  - Ordered: drain verified outputs from the leased hosts to the hub with checksums before freeing the leased copies, and fix the wrapper so a non-zero exit propagates on inner failures.
