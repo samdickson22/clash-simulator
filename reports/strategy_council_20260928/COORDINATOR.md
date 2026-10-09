@@ -1139,3 +1139,4 @@ Also on the hub, but with copies elsewhere:
   - **Problem (a) on 16:** T11 seed 21's extended-v1 run self-stopped at 02:49:23Z at 48.5 GB PSS, over my extension proposal's 48 GB cap. Its old peak was 54 GB, and I hadn't checked it.
     - **Action:** asked roader for ≤60 GB on 16 for this job only.
     - Told the T11 owner to relaunch from step-00025591 under whichever cap comes first: 60 GB if approved, or a trimmed loader under 46 GB.
+- **03:10 UTC:** roader APPROVED PSS ≤60 GB on 16 for the T11 seed 21 job only. The T11 owner was told to relaunch exact-resume from step-00025591 with loader6 unchanged.
