@@ -1,0 +1,139 @@
+{
+  "schema": "clasher.capacity-scan.monitor.v1",
+  "at": "2026-10-09T23:13:13.229672+00:00",
+  "receipt_generated_at": "2026-10-09T23:13:13.584158+00:00",
+  "scientific_freeze_commit": "841c44b0",
+  "microbatch_amendment_commit": "f8dd81a6",
+  "controller_pid": 1702652,
+  "controller_live": true,
+  "stopping": false,
+  "all_exited": false,
+  "conservative_gpu_hours": 10.594974556111111,
+  "control_relayed": [
+    "127x13",
+    "127x14",
+    "127x15"
+  ],
+  "control_quarter": {
+    "width": 192,
+    "rows": 95144680,
+    "step": 11615,
+    "scheduled_rows": 380571633,
+    "ema_joint_nll": 0.27726436294161033,
+    "dev_rows": 11776480,
+    "dev_seconds": 385.4897930249572,
+    "at": "2026-10-09T20:19:19.015093+00:00",
+    "config_sha256": "a6963c7efe6668271e72bd49df24ba65e7fa2e649a7f399033ccac9977a2ec85"
+  },
+  "arms": {
+    "127x13": {
+      "width": 288,
+      "active_label": "width288-v1",
+      "supervisor_pid": 793922,
+      "trainer_pid": 794004,
+      "guard_at": "2026-10-09T23:13:07.827209+00:00",
+      "borrower_processes": 3,
+      "pss_bytes": 10975919104,
+      "peak_pss_bytes": 41439766528,
+      "gpu_free_mib": 43574,
+      "nice_min_enforced_by_guard": 10,
+      "latest_step": {
+        "step": 7745,
+        "rows": 63441640,
+        "rows_per_second_including_loader": 6341.917907228181,
+        "gpu_peak_allocated_mib": 22507.609375,
+        "gpu_peak_reserved_mib": 26968.0
+      },
+      "quarter_pending": true,
+      "kill_decision_pending": true,
+      "errors": [],
+      "guard_segments": [
+        {
+          "label": "width288-v1",
+          "started_at": "2026-10-09T19:49:07.245986+00:00"
+        }
+      ]
+    },
+    "127x14": {
+      "width": 384,
+      "active_label": "width384-v1",
+      "supervisor_pid": 543994,
+      "trainer_pid": 544056,
+      "guard_at": "2026-10-09T23:13:12.108621+00:00",
+      "borrower_processes": 6,
+      "pss_bytes": 19491209216,
+      "peak_pss_bytes": 42381214720,
+      "gpu_free_mib": 40812,
+      "nice_min_enforced_by_guard": 10,
+      "latest_step": {
+        "step": 6066,
+        "rows": 49692672,
+        "rows_per_second_including_loader": 4736.373196714144,
+        "gpu_peak_allocated_mib": 29531.81005859375,
+        "gpu_peak_reserved_mib": 35564.0
+      },
+      "quarter_pending": true,
+      "kill_decision_pending": true,
+      "errors": [],
+      "guard_segments": [
+        {
+          "label": "width384-v1",
+          "started_at": "2026-10-09T19:49:07.232083+00:00"
+        }
+      ]
+    },
+    "127x15": {
+      "width": 480,
+      "active_label": "width480-v3",
+      "supervisor_pid": 637497,
+      "trainer_pid": 637517,
+      "guard_at": "2026-10-09T23:13:08.700695+00:00",
+      "borrower_processes": 6,
+      "pss_bytes": 28029827072,
+      "peak_pss_bytes": 37064665088,
+      "gpu_free_mib": 34857,
+      "nice_min_enforced_by_guard": 10,
+      "latest_step": {
+        "step": 5305,
+        "rows": 43458560,
+        "rows_per_second_including_loader": 4725.66679917416,
+        "gpu_peak_allocated_mib": 18480.150390625,
+        "gpu_peak_reserved_mib": 23220.0
+      },
+      "quarter_pending": true,
+      "kill_decision_pending": true,
+      "errors": [],
+      "guard_segments": [
+        {
+          "label": "width480-v1",
+          "started_at": "2026-10-09T19:49:07.250116+00:00",
+          "ended_at": "2026-10-09T20:23:39.018970+00:00"
+        },
+        {
+          "label": "width480-v2",
+          "started_at": "2026-10-09T20:25:30.095659+00:00",
+          "ended_at": "2026-10-09T20:39:24.571215+00:00"
+        },
+        {
+          "label": "width480-v3",
+          "started_at": "2026-10-09T20:44:27.364360+00:00"
+        }
+      ]
+    }
+  },
+  "first_epoch_boundary_observation": {
+    "width": 288,
+    "at": "2026-10-09T23:12:54.199138+00:00",
+    "step": 7745,
+    "rows": 63441640,
+    "gpu_utilization_percent": 99,
+    "gpu_free_mib": 43574,
+    "own_pids_nice": {
+      "793922": 10,
+      "794004": 10,
+      "1653870": 10
+    },
+    "dev_nll_logged": false,
+    "interpretation": "First epoch dev evaluation in progress; not the quarter decision."
+  }
+}
