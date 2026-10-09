@@ -70,7 +70,7 @@ class Feedback:
 
 @dataclass(frozen=True)
 class DelayContext:
-    """S6 hook: nominal delay is the selected backend's rounded p50_ticks."""
+    """S6 hook: nominal delay is the selected profile's total planner delay."""
     backend: str
     acceptance_p50_ms: float
     acceptance_p99_ms: float

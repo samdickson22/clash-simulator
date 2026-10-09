@@ -935,3 +935,8 @@ Also on the hub, but with copies elsewhere:
   - **Fix:** TERM/INT/HUP now go to the child group and escaped descendants, with a 120 s grace, then KILL, a receipt and an accounting release. 58 tests plus a three-generation smoke test on 09 passed.
   - **Old r1/v1 jobs:** never TERM their supervisors. The r1 internal stop already cleans tracked trees by ~04:55Z, but for a prompt stop the **operator helper** TERMs verified child groups.
   - **Scheduled:** a one-shot backstop task at 04:29Z (21:29 PDT) runs capture then stop on 09/13/14/15/16, including T11's v1 job on 16, verifies everything, records a receipt and deletes itself.
+- **~01:15 UTC: live-runtime fixes complete and committed** (`live-loop/v4/RUNTIME-PERF-FIXES.md`, `perf-fixes/`, `src/clasher/live/{public_root,tower_model,perception_adapter,perf_resources}.py` plus guarded changes). All behind flags, with the sealed files and native binary unchanged.
+  - **Fixes:** the public tower model; the empty-sentinel canonicalization; the scorer config reuse plus opponent-move hoist (~53 ms saved per decision); the vectorized DecoderAdapter wrapper; blocking queues; and the selected body_threshold, which fails closed.
+  - **CPU qualification:** 45 tests passed and scores are exact. A production-constructor smoke run gave 20/20 four-root non-flat decisions.
+  - **The original 440 inputs:** all were one-tick terminal (296 losses, 144 draws).
+  - **L2-v4 freeze must pin:** public_tower_model, perf-scorer, vectorized_decoder and blocking_queues flags; the authenticated selected body_threshold; source and native identity; **corrected non-terminal Mac latency**; and a **revalidated total delay**. MPS/E4/P4 qualification is still pending and needs the Mac.

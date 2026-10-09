@@ -36,6 +36,7 @@ class FrameRing:
         self.locks = [ctx.Lock() for _ in range(capacity)]
         self.latest = ctx.RawValue('q', -1)
         self.contention_drops = ctx.RawValue('q', 0)
+        self.available = ctx.Event()
 
     def write(self, frame):
         import numpy as np
@@ -46,6 +47,7 @@ class FrameRing:
         if not self.locks[slot].acquire(False):
             self.contention_drops.value += 1
             self.latest.value = seq
+            self.available.set()
             return False
         try:
             np.frombuffer(self.pixels, np.uint8).reshape(self.capacity, *self.shape)[slot] = frame.pixels
@@ -54,7 +56,15 @@ class FrameRing:
             self.latest.value = seq
         finally:
             self.locks[slot].release()
+        self.available.set()
         return True
+
+    def wait(self, after, timeout=.05):
+        # Clear before inspecting sequence: a write after this check sets the
+        # event, while a write before it is visible through latest.
+        self.available.clear()
+        if self.latest.value <= after:
+            self.available.wait(timeout)
 
     def read(self, after, episode):
         import numpy as np
@@ -92,7 +102,12 @@ def put_latest(queue, value):
     return False
 
 
-def drain_latest(queue, previous=None):
+def drain_latest(queue, previous=None, *, timeout=None):
+    if timeout is not None:
+        try:
+            previous = queue.get(timeout=timeout)
+        except Empty:
+            return previous
     while True:
         try:
             previous = queue.get_nowait()

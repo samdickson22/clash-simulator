@@ -1,0 +1,32 @@
+{
+  "schema": "clasher.live-perf.queue-analysis.v1",
+  "synthetic_only": true,
+  "steady_mock_tap_ms": {
+    "polling": {
+      "count": 3,
+      "p50": 11.472487123683095,
+      "p95": 11.939556524157524,
+      "p99": 11.981073804199696
+    },
+    "blocking": {
+      "count": 3,
+      "p50": 7.442445959895849,
+      "p95": 7.790784863755107,
+      "p99": 7.82174832187593
+    }
+  },
+  "original_benchmark_sha256": "b5696f8a2b3199af00a5435df2fbcbe70d44ae9e42ceeed3200166f656045c10",
+  "log_sha256": {
+    "/mpac/sdicks02/jobs/clasher/live-perf-queues-20261009-r1/0-blocking/latency.jsonl.gz": "fd5b5e8677125d3f98027369740743a9d1dc58fd1b349e06387b6204b8cec563",
+    "/mpac/sdicks02/jobs/clasher/live-perf-queues-20261009-r1/0-polling/latency.jsonl.gz": "dd97a5111342dc2a94b6aa08c60f35219c63b03a69e1abeb503c8624de4e8c9a",
+    "/mpac/sdicks02/jobs/clasher/live-perf-queues-20261009-r1/1-blocking/latency.jsonl.gz": "a06c56a6607d0122a7ef048b3dfaf10b0289506c58a7e5f94dab80d512162e20",
+    "/mpac/sdicks02/jobs/clasher/live-perf-queues-20261009-r1/1-polling/latency.jsonl.gz": "e552d1c0cfbff22608921ddb48c592159f10cdc121aa2fb9960d163e16fee80b",
+    "/mpac/sdicks02/jobs/clasher/live-perf-queues-20261009-r1/2-blocking/latency.jsonl.gz": "5f7d788d7c52a8591933bbe9b790910e9468a35fbc115f64ba54addbbfe80fb2",
+    "/mpac/sdicks02/jobs/clasher/live-perf-queues-20261009-r1/2-polling/latency.jsonl.gz": "71bb78d26da5e9177d94a6c9f581abd3500aedf56aabad3bf060bfd9530b01a5"
+  },
+  "limitations": [
+    "Only3 post-startup mock taps per arm; not an E4 latency measurement",
+    "First tap source can change between sequence0 and1 after cold belief initialization",
+    "Unfiltered median of run medians is13.26ms polling vs34.71ms blocking; retained in original receipt"
+  ]
+}

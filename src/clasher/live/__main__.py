@@ -54,6 +54,11 @@ def main():
     p.add_argument('--backend', default='offline-renderer-grpc', help='Timing profile for P3 and P4')
     p.add_argument('--backend-timing', type=Path, default=V4/'actuation/backend-timing.json')
     p.add_argument('--delay-hook', help='Experimental module:function override of the adopted S6 scorer')
+    p.add_argument('--public-tower-model', action='store_true', help='Public tower geometry and missing-body priors')
+    p.add_argument('--perf-scorer', action='store_true', help='Exact cached config and opponent first-move hoist')
+    p.add_argument('--vectorized-decoder', action='store_true', help='Exact isolated DecoderAdapter for v4')
+    p.add_argument('--body-threshold', type=float, help='Sealed selected body value; must match calibration if present')
+    p.add_argument('--blocking-queues', action='store_true', help='Wake runtime consumers on data/control arrival')
     p.add_argument('--mock-input', action='store_true')
     p.add_argument('--qualification', type=Path, help='Post-T2/T7/S6 qualification receipt required for real taps')
     p.add_argument('--output', type=Path, required=True)
@@ -88,12 +93,17 @@ def main():
         p.error('v4 requires --checkpoint and --calibration')
     costs, bodies = public_metadata(a.prior)
     config = dict(source=config_source, frames=a.frames, backend=a.backend, timing_path=str(a.backend_timing),
-                  perception=dict(kind=a.perception, device=a.device, imgsz=a.imgsz,
+                  blocking_queues=a.blocking_queues,
+                  perception=dict(kind=a.perception, device=a.device, imgsz=a.imgsz, vectorized_decoder=a.vectorized_decoder,
                       **{k: str(getattr(a, k)) if getattr(a, k) else None for k in
                          ('body', 'hud', 'events', 'selection', 'geometry', 'checkpoint', 'calibration')}),
                   belief=dict(own_deck=own_deck, prior=str(a.prior), costs=costs, body_cards=bodies,
                               recall=.90, precision=.90, resource_calibration=.11040000000000028),
-                  planner=dict(kind='rust', delay_aware=True, delay_hook=a.delay_hook), actuator=actuator)
+                  planner=dict(kind='rust', delay_aware=True, delay_hook=a.delay_hook,
+                               public_tower_model=a.public_tower_model, cache_root_config=a.perf_scorer,
+                               hoist_opponent_moves=a.perf_scorer), actuator=actuator)
+    if a.body_threshold is not None:
+        config['perception']['body_threshold'] = a.body_threshold
     if a.fault_stage:
         config['fault'] = dict(stage=a.fault_stage, seconds=a.fault_seconds, after=20)
     result = run(config, a.output)

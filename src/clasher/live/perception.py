@@ -13,12 +13,19 @@ class V4Perception:
         from clasher.vision.l1_v4 import PerceptionV4, PixelPerception
         state = torch.load(config['checkpoint'], map_location='cpu', weights_only=True)
         calibration = json.loads(Path(config['calibration']).read_text())
+        from .perception_adapter import selected_body_threshold, vectorized_runtime
+        body_threshold = selected_body_threshold(config, calibration)
         # No silent use of random/shakedown parameters as formal weights.
         self.qualification = calibration.get('qualification', 'unqualified')
         model = PerceptionV4(len(state['cards']), len(state['bodies']))
         model.load_state_dict(state['model'])
+        self.decoder_adapter = None
+        if config.get('vectorized_decoder', False):
+            runtime, self.decoder_adapter = vectorized_runtime()
+            PixelPerception = runtime.PixelPerception
         self.sensor = PixelPerception(model, state['cards'], state['bodies'], calibration['spells'],
-                                      calibration['thresholds'], calibration['calibration'], config.get('device', 'cpu'))
+                                      calibration['thresholds'], calibration['calibration'], config.get('device', 'cpu'),
+                                      body_threshold=body_threshold)
         from .loading import ROOT
         data = json.loads((ROOT/'gamedata.json').read_text())['items']['spells']
         self.buildings = {'Tower', 'KingTower', 'TowerPrincess', 'TowerKing'}

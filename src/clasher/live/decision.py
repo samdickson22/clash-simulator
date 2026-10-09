@@ -6,7 +6,7 @@ import time
 from dataclasses import dataclass
 from .contracts import Command, DelayContext
 from .loading import COUNCIL, ROOT, imports, module, delay_module
-from .timing import backend_timing
+from .timing import planner_timing
 
 
 class Triggers:
@@ -64,12 +64,24 @@ class RustPlanner:
         # Reconstruct hypothetical roots from public packets and static templates.
         derived = module('clasher_live_derived', stage5/'derived_public_state.py')
         with imports([ROOT/'engine-rs', stage5], {'derived_public_state': derived}):
-            resources = module('clasher_live_fair_player', stage5/'fair_player.py').Resources()
+            resource_class = module('clasher_live_fair_player', stage5/'fair_player.py').Resources
+            if config.get('cache_root_config', False):
+                from .perf_resources import cached_resources
+                resource_class = cached_resources(resource_class)
+            if config.get('public_tower_model', False):
+                from .public_root import public_resources
+                resource_class = public_resources(resource_class)
+            resources = resource_class()
         packet = module('clasher_live_packet_builder', COUNCIL/'live-loop/l2/pixel_player.py')
         self.resources = resources
-        self.packets = packet.PacketBuilder(resources.builder)
+        packet_class = packet.PacketBuilder
+        if config.get('public_tower_model', False):
+            from .tower_model import tower_packet_builder
+            packet_class = tower_packet_builder(packet_class)
+        self.packets = packet_class(resources.builder)
+        self.hoist_opponent_moves = config.get('hoist_opponent_moves', False)
         self.model_hypothesis = packet.model_hypothesis
-        self.backend, self.timing_path, self.timing, self.delay_ticks = backend_timing(config)
+        self.backend, self.timing_path, self.timing, self.delay_ticks = planner_timing(config)
         self.delay_aware = config.get('delay_aware', True)
         self.cores = [delay_module().DelayAwarePlanner(
                       resources.builder, resources.bots, backend='native',
@@ -94,13 +106,24 @@ class RustPlanner:
         native = core.native
         core.native = DeadlineNative(native, deadline)
         try:
+            styles = ('balanced', 'pressure', 'defense')
+            first = ([core.native.select_action(root, 1-info.seat, style) for style in styles]
+                     if self.hoist_opponent_moves else None)
             for i, candidate in enumerate(candidates):
                 # S6's candidate scores are independent. Finishing all three
                 # styles makes this candidate eligible for four-root reduction.
-                core.score_candidates(root, info.seat, [candidate])
+                if first is None:
+                    core.score_candidates(root, info.seat, [candidate])
+                    value = core.last['scores'][0]
+                else:
+                    pending = core.candidate_root(root, candidate)
+                    value = 0.
+                    for style, other in zip(styles, first):
+                        score, _, _ = core.delayed_rollout(pending, info.seat, other, style)
+                        value += score/3
                 if time.monotonic() >= deadline:
                     break
-                values[i] = core.last['scores'][0]
+                values[i] = value
         except DeadlineReached:
             pass  # The interrupted candidate contributes no partial score.
         finally:

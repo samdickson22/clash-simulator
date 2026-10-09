@@ -43,6 +43,8 @@ class S6RecordedParity(unittest.TestCase):
         import torch
         torch.set_num_threads(1)
         cls.planner = RustPlanner({'seed': 6108})
+        cls.constructed_delays = (cls.planner.delay_ticks,
+                                  [core.command_delay for core in cls.planner.cores])
         cls.fixture = json.loads(FIXTURE.read_text())
         if cls.fixture['split'] != 'train':
             raise ValueError('Recorded parity fixture must be train-only')
@@ -50,6 +52,11 @@ class S6RecordedParity(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.planner.close()
+
+    def test_constructor_uses_total_delay_for_all_four_roots(self):
+        from clasher.live.timing import planner_timing
+        delay = planner_timing({})[3]
+        self.assertEqual(self.constructed_delays, (delay, [delay]*4))
 
     def reset(self, delay=None, aware=True):
         import numpy as np
@@ -93,8 +100,8 @@ class S6RecordedParity(unittest.TestCase):
 
     def test_runtime_equals_s6_on_recorded_inputs(self):
         import numpy as np
-        from clasher.live.timing import backend_timing
-        delay = backend_timing({})[3]
+        from clasher.live.timing import planner_timing
+        delay = planner_timing({})[3]
         results = []
         for row in self.fixture['inputs']:
             with self.subTest(frame=row['sequence']):
@@ -129,9 +136,9 @@ class S6RecordedParity(unittest.TestCase):
 
     def test_nonterminal_variant_matches_s6_and_changes_delay_scores(self):
         import numpy as np
-        from clasher.live.timing import backend_timing
+        from clasher.live.timing import planner_timing
         s = nonterminal_variant(self.fixture['inputs'][-1])
-        delay = backend_timing({})[3]
+        delay = planner_timing({})[3]
         expected, candidates, scores = self.reference(s, delay)
         _, immediate_candidates, immediate_scores = self.reference(s, 0)
         self.assertEqual(candidates, immediate_candidates)
@@ -147,9 +154,9 @@ class S6RecordedParity(unittest.TestCase):
               search_ms=diagnostic['search_ms'])), flush=True)
 
     def test_deadline_selects_only_complete_s6_candidates(self):
-        from clasher.live.timing import backend_timing
+        from clasher.live.timing import planner_timing
         s = nonterminal_variant(self.fixture['inputs'][-1])
-        delay = backend_timing({})[3]
+        delay = planner_timing({})[3]
         _, candidates, scores = self.reference(s, delay)
         p = self.reset(delay)
         start = time.monotonic()

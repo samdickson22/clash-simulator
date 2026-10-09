@@ -136,6 +136,7 @@ class DecisionTests(unittest.TestCase):
         from types import SimpleNamespace
         planner = object.__new__(RustPlanner)
         planner.delay_aware, planner.delay_ticks = True, 23
+        planner.hoist_opponent_moves = False
         planner.resources = SimpleNamespace(costs={})
         native = SimpleNamespace(evaluate=lambda: 1.)
         core = SimpleNamespace(native=native)
@@ -340,13 +341,14 @@ class PerceptionTests(unittest.TestCase):
                         card_distribution=(('Knight', 1.),))])
         with tempfile.TemporaryDirectory() as folder:
             calibration = Path(folder)/'calibration.json'
-            calibration.write_text(json.dumps(dict(spells=[], thresholds={'default': .5}, calibration={})))
+            calibration.write_text(json.dumps(dict(spells=[], thresholds={'default': .5}, calibration={}, body_threshold=.7)))
             model = MagicMock()
             with patch('torch.load', return_value={'cards': DECK, 'bodies': ['Knight'], 'model': {}}), \
                  patch('clasher.vision.l1_v4.PerceptionV4', return_value=model), \
                  patch('clasher.vision.l1_v4.PixelPerception') as abi:
                 abi.return_value.step.return_value = row
                 sensor = V4Perception(dict(checkpoint='unused', calibration=str(calibration), device='cpu'))
+                self.assertEqual(abi.call_args.kwargs['body_threshold'], .7)
                 now = time.monotonic()
                 observed = sensor.step(Frame('v4', 1, now-.02, now-.01, 134.7,
                                              np.zeros((1140, 540, 3), np.uint8)))

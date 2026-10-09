@@ -10,12 +10,22 @@ import multiprocessing as mp
 import os
 from pathlib import Path
 from queue import Empty, Full
+from multiprocessing.connection import wait as wait_connections
 import time
 import traceback
 from .transport import FrameRing, ObservationWindow, put_latest, drain_latest, should_drop
 
 BUDGETS = {'capture': (3, 10), 'decode': (4, 8), 'backbone_hud': (15, 25),
            'temporal_fusion': (5, 10), 'belief': (3, 10), 'search': (110, 200), 'taps': (45, 80)}
+
+
+def wait_queues(queues, timeout=.05):
+    """Wait on multiprocessing queue readers, including control wakeups.
+
+    Queue's reader is the same pipe used by get(); waiting for readability
+    avoids producer/feeder notification races and consumes no messages.
+    """
+    return wait_connections([queue._reader for queue in queues], timeout)
 
 
 class Reporter:
@@ -140,7 +150,10 @@ def p1(config, ipc, log):
                         unpublished = None
                 if unpublished is None:
                     ipc['perception_done'].set()
-            ipc['stop'].wait(.002)
+            if config.get('blocking_queues', False):
+                ipc['ring'].wait(last)
+            else:
+                ipc['stop'].wait(.002)
             continue
         age = time.monotonic()-frame.produced_at
         log('capture_queue_age', age*1000, sequence=frame.sequence)
@@ -190,12 +203,15 @@ def p2(config, ipc, log):
     fault_done = False
     while not ipc['stop'].is_set():
         ipc['heartbeat'][2] = time.monotonic()
+        if config.get('blocking_queues', False):
+            wait_queues([ipc['observations'], ipc['feedback']])
         controls(ipc, belief, log)
         observation = drain_latest(ipc['observations'])
         if observation is None:
             if ipc['perception_done'].is_set() and last >= ipc['perception_last'].value:
                 ipc['belief_done'].set()
-            ipc['stop'].wait(.002)
+            if not config.get('blocking_queues', False):
+                ipc['stop'].wait(.002)
             continue
         frame = observation.frame
         if frame.sequence <= last:
@@ -239,9 +255,11 @@ def p3(config, ipc, log):
     try:
         while not ipc['stop'].is_set():
             ipc['heartbeat'][3] = time.monotonic()
-            snapshot = drain_latest(ipc['snapshots'])
+            snapshot = drain_latest(ipc['snapshots'],
+                                    timeout=.05 if config.get('blocking_queues', False) else None)
             if snapshot is None or snapshot.sequence <= sequence:
-                ipc['stop'].wait(.003)
+                if not config.get('blocking_queues', False):
+                    ipc['stop'].wait(.003)
                 continue
             sequence = snapshot.sequence
             now = time.monotonic()
@@ -364,7 +382,16 @@ def p4(config, ipc, log):
                         log('duplicate_blocked', command_id=waiting.command_id, detail=result)
                     execute(result)
                     waiting = None
-            ipc['stop'].wait(.002)
+            if config.get('blocking_queues', False):
+                # Active verification retains its bounded timer checks. Idle
+                # commands/HUD wake immediately on either queue's pipe.
+                # A direct v3 HUD reader also needs periodic ring refreshes.
+                timeout = .002 if actor.machine.pending or waiting is not None else .05
+                if hud_reader:
+                    timeout = min(timeout, .01)
+                wait_queues([ipc['hud'], ipc['commands']], timeout)
+            else:
+                ipc['stop'].wait(.002)
     finally:
         if actor.machine.pending:
             log('shutdown_pending', pending=actor.pending())
@@ -446,6 +473,9 @@ def provenance(config):
     files += [COUNCIL/'search-noise-s6'/name for name in ('delay.py', 'own_state.py')]
     if config['planner'].get('timing_path'):
         files.append(Path(config['planner']['timing_path']))
+    if config['perception'].get('vectorized_decoder'):
+        files += [V4/'l1'/name for name in ('decoder_records_v4.py', 'vectorized_decoder_v4.py',
+                                          'vectorized_runtime_adapter_v4.py')]
     files += [Path(config['perception'][key]) for key in
               ('body', 'hud', 'events', 'selection', 'geometry', 'checkpoint', 'calibration')
               if config['perception'].get(key)]

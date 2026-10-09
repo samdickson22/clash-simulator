@@ -14,3 +14,15 @@ def backend_timing(config):
         raise ValueError('Backend p50_ticks must be finite and nonnegative')
     # Measured wall-latency equivalents, rounded to the nearest engine tick.
     return backend, path, row, math.floor(ticks+.5)
+
+
+def planner_timing(config):
+    """Total source-frame→execution delay; P4 retains backend-only timing.
+
+    Do not silently fall back to D_b: missing calibration must be explicit.
+    """
+    backend, path, row, _ = backend_timing(config)
+    ticks = row.get('planner_total_delay_ticks')
+    if isinstance(ticks, bool) or not isinstance(ticks, int) or ticks < 0:
+        raise ValueError('planner_total_delay_ticks must be a calibrated nonnegative integer')
+    return backend, path, row, ticks

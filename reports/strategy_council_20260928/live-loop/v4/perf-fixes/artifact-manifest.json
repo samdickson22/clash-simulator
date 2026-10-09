@@ -1,0 +1,52 @@
+{
+  "schema": "clasher.live-perf.artifact-manifest.v1",
+  "sha256": {
+    "src/clasher/live/contracts.py": "0731486cce727ace8545a39b63786d02a097b66cb8a50e5fb451be3cf544eb69",
+    "src/clasher/live/loading.py": "00412547da58f4251943500f3d4c28c5993eb37369cecb594b1a7312590d48e8",
+    "src/clasher/live/tower_model.py": "8b611d577ceb4115608abd50d78e7fa9256ac2de8d257c7b28b715a6f7afe221",
+    "src/clasher/live/timing.py": "4d3dffcf603a25f26c72f4ce270e98014dedaabcb3d622afc0659cf36c3df0f4",
+    "src/clasher/live/perception_adapter.py": "7a1ce5c8b3c76b05a7ad04372b9ce368b7b10ca48a3baa3cdf4af1537b736d83",
+    "src/clasher/live/runtime.py": "a6dc035cf1d5d090f8c5d234f8ca91dd0c0de8247672b5cb70b74486259890bb",
+    "src/clasher/live/lattice.py": "1c929a2fb0c89e22d6bbe1f6430b5bf817323843d436c52250cef80c4a936cd5",
+    "src/clasher/live/public_root.py": "12b3c3e95e5fb65f5a5977a04ee4d123421f26b23d9afa858bb528f4c826bf89",
+    "src/clasher/live/actuation.py": "3afd278f348f69b5d94831b6e0f15fe8c8ed09c61c0b53b0f044e8b36c9a5be2",
+    "src/clasher/live/perception.py": "08bdefbe90794f3cb382dbe183f3961d706fa7c070bda1297fd5696a7260ede8",
+    "src/clasher/live/__init__.py": "17717238d47f49a055039dcc9a855d6d5ef23d4cc3770a49e534811d076f8ba6",
+    "src/clasher/live/perf_resources.py": "5b3591212b6093ff11f6ec0823a2ca3aeafcc71393680f2c39cc6b5f4e2b2301",
+    "src/clasher/live/belief.py": "e8687c77e9dcc30b6460ecce99bda5bf147208777032ca300f97a2dd8b93fdc4",
+    "src/clasher/live/transport.py": "2893f2988751d1f51dc4d6e12bdd29fb247b05afd918a97a0195085094a53ef2",
+    "src/clasher/live/tracker.py": "e2690e28a0e1326264b894d4b4da46eb24fd96fe2166284aef99c2c51cea13a3",
+    "src/clasher/live/decision.py": "951958dd445b59fa4d91bfb973e1c4f32fc10d4de58b7dd8414309aa29ddc62d",
+    "src/clasher/live/capture.py": "1c05ad3b787cb8ae7b67b0fbef09ec59e24fa7caa69a80cc011445e48c6097db",
+    "src/clasher/live/__main__.py": "cc4e928caad05b1c81f205c4630230351002b44c297080215764edfe403fb070",
+    "tests/live_v4/test_perf_fixes.py": "a0a931118afdfffbff5bbafad9d84affe037a426eb6736abf1a4559407d60bb7",
+    "tests/live_v4/test_runtime.py": "b7ac947869dacc172995b38f054fcdd37e9c17df52b36b7d88aa667792495867",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/extract_recorded.py": "21166a07025bcf9a3fce8a21146688fc031cd15c5ce942fb0c3c2ff249b96032",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/bench_queues.py": "941827ea0487d3a30d2a3c1cdf47d5d9d4bd905154a41b1f997f0bfcac7b9dd9",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/smoke_planner.py": "88527b3e1fc17f3905ada62c82668f9ce987bf116d960ee75c1dcdc6f95561eb",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/analyze_queues.py": "e4d8abfa1fcecb68b36e7e1389c3910c780ac9e1cb4024983428d4cade8a720f",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/remeasure_mac.py": "612453d28bc9d221521ead7b44c8c25fac5bd41c5941602a945172244752e9b9",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/qualify.py": "29c306eb43538f21e47fdc18d2b6c9d0ad82f0ae7c05a0c24a64baa7b378f5ed",
+    "reports/strategy_council_20260928/live-loop/v4/RUNTIME-PERF-FIXES.md": "57d1624d0271511f2cac313000be9d3d3cc2882f5b371c2deb2840bad5a76c99"
+  },
+  "receipts_sha256": {
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-queue-analysis-20261009-r1.json": "a45cd88bad46f715968f5382dc339a35ad7e47cc09c1eced3e5f54df41ec277c",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-queues-20261009-08r1.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-qualify-20261009-08r1.log": "fa54a6fd28816ebbf6e82567cd4d9eb9ab2b8953c4569701658067f69ff1958f",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-smoke-20261009-08r1.log": "327a2ba67acc1bada4826e5d2f64e1a5a83663a5146c5031c0f9e7c09e02472e",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-smoke-20261009-r1.json": "8b5dd00c9a6b9cea04006c8c37e906436d0f63b75a94e1f0157be3639deefc34",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/queue-benchmark.json": "b5696f8a2b3199af00a5435df2fbcbe70d44ae9e42ceeed3200166f656045c10",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-tests-20261009-08r2.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-qualify-20261009-08r2.log": "09d694030d01472d663ae36d53ea3e3487f7efc97cf534710e1c0c5e6d3ece8c",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-smoke-20261009-08r1.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-tests-20261009-08r1.log": "06fe33a8735e47b3cf7d01f7732e6b58e06204ff6350db9534ec0f190baf736c",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/mac-search-inputs.json.gz": "82b989c36355633fa61e4a01b3eb579fc38cdcb3c2218b34788afb85177c3c56",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-tests-20261009-08r2.log": "c17f70ce15b0604a0abd330f7bf5d2e3b8fb1bfb6ebf4e933c31d982c03075a0",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-qualification-20261009-r2.json": "52bf61e9898e05b1463b6990a578622ecb33b28a9fe54c52c92a0d0c8821dcf4",
+    "reports/strategy_council_20260928/live-loop/v4/perf-fixes/live-perf-qualify-20261009-08r2.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  "notes": [
+    "Only staged implementation sources and receipts; includes preserved pre-existing live edits",
+    "No git commits; no Mac access; all qualification on127x08 CPU"
+  ]
+}
