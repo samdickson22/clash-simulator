@@ -20,7 +20,8 @@ def recover(job):
     result=json.loads(subprocess.check_output(['ssh','127x08',f'cat {job}/reporting/staged-r1/exit.json'],text=True))
     assert result['own_workers_vacated'] and result['stop_requested']
     queue=json.loads((job/'stage-queues/08/100-S-teacher.json').read_text())
-    subprocess.run(['rsync','-a','--quiet',f'127x08:{job}/stage-cases/',str(job/'stage-cases')+'/'],check=True)
+    has_cases=subprocess.check_output(['ssh','127x08',f'test ! -d {job}/stage-cases || echo yes'],text=True).strip()
+    if has_cases:subprocess.run(['rsync','-a','--quiet',f'127x08:{job}/stage-cases/',str(job/'stage-cases')+'/'],check=True)
     # The04 raw receipts have not yet been copied, so this stage contains only08.
     records=[json.loads(p.read_text()) for p in sorted((job/'stage-cases/S-teacher').glob('*.json'))]
     freeze_path=Path(queue['freeze']);assert hashlib.sha256(freeze_path.read_bytes()).hexdigest()==queue['freeze_sha256']

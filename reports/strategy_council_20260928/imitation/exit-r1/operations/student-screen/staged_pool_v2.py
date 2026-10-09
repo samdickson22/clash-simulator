@@ -69,8 +69,9 @@ try:
         time.sleep(1)
 finally:
     for process,_,_ in active.values():process.terminate()
+    vacate_deadline=time.monotonic()+10
     for process,_,stream in active.values():
-        try:process.wait(timeout=10)
+        try:process.wait(timeout=max(.01,vacate_deadline-time.monotonic()))
         except subprocess.TimeoutExpired:process.kill();process.wait()
         stream.close()
     active.clear();own=resource.getrusage(resource.RUSAGE_SELF);children=resource.getrusage(resource.RUSAGE_CHILDREN)

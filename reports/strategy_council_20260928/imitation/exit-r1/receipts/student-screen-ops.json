@@ -1,6 +1,6 @@
 {
   "schema": "clasher.exit-r1.student-screen-ops.v1",
-  "utc": "2026-10-09T22:39:53.407254+00:00",
+  "utc": "2026-10-09T22:42:22.213761+00:00",
   "frozen_student_code_commit": "f98d8926fe38c07710835fca1116d50be361b2c6",
   "ops_files": {
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/README.md": "3dca860f9b7bbc299dd6f604538de5aa1a485e147447d9fa2bbea9093aa53986",
@@ -16,7 +16,7 @@
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/qualify_loader.py": "fb767df0e236d3777d3879cc3b5ed52a4206799df7a787398615c1354984ac6a",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/qualify_loader.sh": "5796840db9971efafee4d5d573a55c78787b1d713803297e55f2b68849082fcf",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/report_controller.py": "ed40be24e2b57e10f9b08eeefaddc18b3805eb157d88ada20848a6441047e000",
-    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/requeue08.py": "876bd31bf4e4218a87621277ca8d90a5f057c7549e769ca86a83282dcfc29f85",
+    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/requeue08.py": "83bb765ad386ebce6c7126f0ce3fce569db456db38490c0c62bcd130758ac7f9",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/run_fit.sh": "d8c65db01633792dbb9919f54d3a546655b970a99cd887a929d33438106254f3",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/run_fit_loader6.sh": "0d2e90e170c7b784a71299dbd23810e39e04eab74134936793b84a12dc436144",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/run_fit_loader6_expandable.sh": "f538856f5b08a844e2b0c1c4a68a6b2b8b17b0809535d8f3007a3ed152f04ecb",
@@ -28,7 +28,7 @@
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/staged_controller_v2.py": "c0376de5c5e7534ce9d233e1b15db32adbb277f191b72df4a8ffe227943390b2",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/staged_freeze.py": "c98e8d9b911af74c8e0db35735b96aba9fa9dd0061b77498570a59af864c49de",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/staged_pool.py": "6227b1df7e85436add216c8cf7c1cb6bfff18ab40e81015b8cce31029a72ea49",
-    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/staged_pool_v2.py": "6c3097b8c2a18a1641930a93c1c5a02ffa8cc30fc2326cbd828441996add6b6e",
+    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/staged_pool_v2.py": "4fff9412a4a459563b0625e7051b2eb110fd939e1a43192ada9941ccb32ca9b6",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/supplement.py": "9d72bd86e9d49a79f22c9cb249e5494af06d4b02dff04e661feccdfcc905349d",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/test_requeue08.py": "1f56e017cd65fbb807f5c0f5fa2984cc6a0d992abd8d06465b05fa997c99c776",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/test_staged_provenance.py": "9bb9e68d5c69930fab3e7c3cdae70339f7ec2676595f32bb669b842218f6aba8",
@@ -76,6 +76,6 @@
     "receipts/student-reporting-native-amendment.json",
     "receipts/student-reporting08-amendment.json"
   ],
-  "reporting_controller": "staged_controller_v2.py PID976037; live03pool959185 preserved",
+  "reporting_controller": "staged_controller_v2.py; actual PID recorded in job/staged-controller.pid; live03pool959185 preserved",
   "reporting_analysis_gate": "All final EMAs and all3232 reporting tasks complete"
 }
