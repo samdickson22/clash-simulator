@@ -1,0 +1,30 @@
+{
+  "width": 192,
+  "step": 11615,
+  "rows": 95144680,
+  "checkpoint": "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/runs/width192/quarter-step-00011615.pt",
+  "checkpoint_sha256": "adf708c004ab2c6469a519447eca9d3fa3db451ef45a6d0c01a1e7f51b38a7b3",
+  "checkpoint_bytes": 36477530,
+  "quarter_scoring_pending": true,
+  "trainer_step": {
+    "event": "step",
+    "epoch": 1,
+    "cursor": 31703040,
+    "step": 11615,
+    "best_dev": 0.28317389229603407,
+    "bad_epochs": 0,
+    "rows": 95144680,
+    "loss": 5.1193461418151855,
+    "gate": 0.13309310376644135,
+    "card": 0.9730739593505859,
+    "tile": 3.158698081970215,
+    "intent_card": 1.708373785018921,
+    "hazard": 1.709550380706787,
+    "grad_norm": 2.7329001426696777,
+    "lr": 0.0002667062627519605,
+    "rows_per_second_step": 10358.78212205427,
+    "rows_per_second_including_loader": 5480.5558310412425,
+    "gpu_peak_allocated_mib": 27066.46435546875,
+    "gpu_peak_reserved_mib": 29130.0
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "at": "2026-10-09T20:13:53.826846+00:00",
+  "conservative_pipeline_gpu_hours": 1.6521508566666667,
+  "arms": {
+    "127x13": {
+      "width": 288,
+      "health": {
+        "at": "2026-10-09T20:13:53.629838+00:00",
+        "owned_pids": {
+          "793922": "136464178",
+          "794004": "136464197",
+          "794005": "136464197"
+        },
+        "borrower_processes": 3,
+        "pss_bytes": 428030976,
+        "gpu_free_mib": 48666,
+        "console_users": 0,
+        "peaks": {
+          "processes": 6,
+          "pss_bytes": 1577653248
+        }
+      }
+    },
+    "127x14": {
+      "width": 384,
+      "health": {
+        "at": "2026-10-09T20:13:46.908261+00:00",
+        "owned_pids": {
+          "543994": "136484734",
+          "544056": "136484752",
+          "544057": "136484752"
+        },
+        "borrower_processes": 3,
+        "pss_bytes": 427842560,
+        "gpu_free_mib": 48666,
+        "console_users": 0,
+        "peaks": {
+          "processes": 6,
+          "pss_bytes": 1533928448
+        }
+      }
+    },
+    "127x15": {
+      "width": 480,
+      "health": {
+        "at": "2026-10-09T20:13:45.620663+00:00",
+        "owned_pids": {
+          "434735": "136483022",
+          "434818": "136483037",
+          "434819": "136483037"
+        },
+        "borrower_processes": 3,
+        "pss_bytes": 426308608,
+        "gpu_free_mib": 48538,
+        "console_users": 0,
+        "peaks": {
+          "processes": 6,
+          "pss_bytes": 1583593472
+        }
+      }
+    },
+    "127x16": {
+      "width": 192,
+      "health": {
+        "at": "2026-10-09T20:13:43.460918+00:00",
+        "owned_pids": {
+          "4049421": "136516434",
+          "4049445": "136516450",
+          "4080257": "136567995",
+          "4080273": "136568008",
+          "4080286": "136568020",
+          "4080291": "136568033",
+          "4133329": "136659226"
+        },
+        "borrower_processes": 7,
+        "pss_bytes": 11877969920,
+        "gpu_free_mib": 46030,
+        "console_users": 0,
+        "peaks": {
+          "processes": 7,
+          "pss_bytes": 37488739328
+        }
+      },
+      "latest_step": {
+        "event": "step",
+        "epoch": 1,
+        "cursor": 31703040,
+        "step": 11615,
+        "best_dev": 0.28317389229603407,
+        "bad_epochs": 0,
+        "rows": 95144680,
+        "loss": 5.1193461418151855,
+        "gate": 0.13309310376644135,
+        "card": 0.9730739593505859,
+        "tile": 3.158698081970215,
+        "intent_card": 1.708373785018921,
+        "hazard": 1.709550380706787,
+        "grad_norm": 2.7329001426696777,
+        "lr": 0.0002667062627519605,
+        "rows_per_second_step": 10358.78212205427,
+        "rows_per_second_including_loader": 5480.5558310412425,
+        "gpu_peak_allocated_mib": 27066.46435546875,
+        "gpu_peak_reserved_mib": 29130.0
+      }
+    }
+  },
+  "all_exited": false,
+  "stopping": false
+}

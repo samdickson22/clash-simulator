@@ -58,3 +58,16 @@ gradient norm and learning rate. This directly validates the unchanged control
 trajectory despite allocator cleanup and loader parallelism. Evidence is in
 `control-replay-trajectory.json`. No capacity dev-NLL or kill decision yet.
 No jobs restarted; scientific freeze and active source pins unchanged.
+
+2026-10-09 20:12Z: The control reached exactly step 11,615 / 95,144,680 rows,
+saved its quarter checkpoint, and entered the full 11,776,480-row dev pass.
+No extra optimizer step was taken. Training replay processed 5,038,080 new rows;
+last loader-inclusive rate was 5,481 rows/s. Checkpoint SHA and row evidence are
+in `control-boundary.json`. No quarter NLL has been published yet.
+
+All three wider LAN transfers completed and their original SHA verification
+phases are active. No duplicate launch or training restart. The sole controller
+and every lease/resource guard remain healthy. Wide hosts use three processes
+and below 0.5 GB PSS during checks; control peak PSS remains below 37.5 GB.
+Conservative pipeline accounting was approximately 1.55 GPU-hours, including
+staging; final actual GPU wall cost remains pending trainer segment completion.
