@@ -1,0 +1,16 @@
+{
+  "deadline_ms": 200,
+  "formal_defaults_changed": false,
+  "planner": {
+    "backend": "offline-renderer-grpc",
+    "cache_root_config": true,
+    "delay_aware": true,
+    "hoist_opponent_moves": true,
+    "public_tower_model": true,
+    "seed": 6108,
+    "wait_screen8": true
+  },
+  "root_count": 4,
+  "root_threads": 1,
+  "schema": "clasher.mac-e4.cell.v1"
+}

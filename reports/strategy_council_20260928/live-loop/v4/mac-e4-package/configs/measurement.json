@@ -1,0 +1,21 @@
+{
+  "decision_mode": "independent paired packets; timed WAIT cooldown reset only in harness",
+  "decision_p95_ms": 200,
+  "exact_packets_per_w": 32,
+  "fallback_proposal_k": 8,
+  "fallback_target_p99_ms": 15,
+  "formal_E4_qualified": false,
+  "formal_decoder_admitted": false,
+  "live_actions": false,
+  "paired_packets": 1000,
+  "perception_gate_scope": "engineering target; L2-V4-PREREG E1 descriptive",
+  "perception_p95_ms": 40,
+  "schema": "clasher.mac-e4.plan.v1",
+  "v1_checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "v1_temperature": [
+    1,
+    1,
+    1
+  ],
+  "warmup_frames_per_match": 16
+}

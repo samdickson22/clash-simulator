@@ -1,0 +1,48 @@
+test_all_configs_are_explicit_and_pinned (test_harness.ReceiptTests) ... ERROR
+test_at_least_64_exact_thread_pairs_and_all_four_cells (test_harness.ReceiptTests) ... ok
+test_duplicate_and_missing_pairs_rejected_or_failed (test_harness.ReceiptTests) ... ok
+test_epsilon_tie_preserves_candidate_order (test_harness.ReceiptTests) ... ok
+test_exactness_detects_score_action_and_candidate_drift (test_harness.ReceiptTests) ... ok
+test_exactness_requires_full_completion (test_harness.ReceiptTests) ... ok
+test_fresh_receipts_never_overwrite (test_harness.ReceiptTests) ... ok
+test_hash_tamper_and_escape_rejected (test_harness.ReceiptTests) ... ERROR
+test_independent_launcher_sha_checked_before_import (test_harness.ReceiptTests) ... ok
+test_invalid_admission_fails_gate (test_harness.ReceiptTests) ... ok
+test_mac_commands_refuse_linux_before_any_inference (test_harness.ReceiptTests) ... ok
+test_missing_perception_samples_fail (test_harness.ReceiptTests) ... ok
+test_no_complete_root_is_wait (test_harness.ReceiptTests) ... ok
+test_nonfinite_negative_and_bool_rejected (test_harness.ReceiptTests) ... ok
+test_nonfinite_score_rejected (test_harness.ReceiptTests) ... ok
+test_one_and_four_threads_keep_four_real_roots (test_harness.ReceiptTests) ... ok
+test_only_availability_clocks_excluded (test_harness.ReceiptTests) ... ok
+test_partial_root_never_admitted (test_harness.ReceiptTests) ... ok
+test_perception_cold_retained_but_warm_gate_separate (test_harness.ReceiptTests) ... ok
+test_quantile_interpolation_and_empty (test_harness.ReceiptTests) ... ok
+test_slow_real_search_fails_even_if_noop_samples_fast (test_harness.ReceiptTests) ... ok
+test_terminal_and_skipped_searches_cannot_make_gate_pass (test_harness.ReceiptTests) ... ok
+test_wrong_root_count_or_shape_rejected (test_harness.ReceiptTests) ... ok
+
+======================================================================
+ERROR: test_all_configs_are_explicit_and_pinned (test_harness.ReceiptTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/mac-e4-logic-20261009-r1/mac-e4-package/tests/test_harness.py", line 189, in test_all_configs_are_explicit_and_pinned
+    verify_pins(PACKAGE, files)
+  File "/mpac/sdicks02/jobs/clasher/mac-e4-logic-20261009-r1/mac-e4-package/scripts/receipt_logic.py", line 43, in verify_pins
+    if not path.is_relative_to(root) or sha(path) != expected:
+AttributeError: 'PosixPath' object has no attribute 'is_relative_to'
+
+======================================================================
+ERROR: test_hash_tamper_and_escape_rejected (test_harness.ReceiptTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/mac-e4-logic-20261009-r1/mac-e4-package/tests/test_harness.py", line 134, in test_hash_tamper_and_escape_rejected
+    verify_pins(root, pins)
+  File "/mpac/sdicks02/jobs/clasher/mac-e4-logic-20261009-r1/mac-e4-package/scripts/receipt_logic.py", line 43, in verify_pins
+    if not path.is_relative_to(root) or sha(path) != expected:
+AttributeError: 'PosixPath' object has no attribute 'is_relative_to'
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.028s
+
+FAILED (errors=2)

@@ -1,0 +1,42 @@
+{
+  "schema": "clasher.backend-timing.v1",
+  "measurement": "submission to first observed native acceptance; polling upper bound",
+  "sources": {
+    "trials.jsonl": "b17fa82b5463be4be2c7727c809c502dd925ae4b1ac5939bd531b4dcade77cae",
+    "trials-completion-20261007.jsonl": "f0ccc6636783b0d0ea6e2cbab60c0de8b9dc6c97ba7e63fee12fb9b9c8d9d916"
+  },
+  "backends": {
+    "offline-renderer-grpc": {
+      "samples": 320,
+      "p50_ms": 1151.6914791427553,
+      "p99_ms": 1187.3178738285787,
+      "p50_ticks": 23.033829582855105,
+      "p99_ticks": 23.746357476571575,
+      "tick_ms": 50,
+      "ticks_semantics": "wall-latency equivalents at nominal 20 ticks/s; retained trials lack exact execution ticks",
+      "planner_total_delay_ticks": 27,
+      "planner_frame_to_submission_p50_ms": 186.0601652879268,
+      "planner_delay_calibration": {
+        "status": "measured Mac MPS replay; v3-body-hud-only fallback, mock input",
+        "source": "runtime-mac-latency.json",
+        "metrics_sha256": "11f33b963bd4fa779b1c0d7a594b3ec71c914b67d465aeab964a3ae05386fa57",
+        "samples": 228,
+        "matches": 14,
+        "host": "Mac.attlocal.net",
+        "device": "mps",
+        "measurement_planner_delay_ticks": 28,
+        "formula": "round((planner_frame_to_submission_p50_ms + p50_ms) / tick_ms)",
+        "measurement": "source-frame production to completed first-attempt mock two-tap submission, including 20 ms inter-tap interval"
+      }
+    },
+    "offline-renderer-adb-spawn": {
+      "samples": 320,
+      "p50_ms": 1190.6510624103248,
+      "p99_ms": 1335.1448639971204,
+      "p50_ticks": 23.813021248206496,
+      "p99_ticks": 26.70289727994241,
+      "tick_ms": 50,
+      "ticks_semantics": "wall-latency equivalents at nominal 20 ticks/s; retained trials lack exact execution ticks"
+    }
+  }
+}
