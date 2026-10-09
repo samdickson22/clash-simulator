@@ -1332,3 +1332,7 @@ Also on the hub, but with copies elsewhere:
 - **07:51 UTC:**
   - Storage budget raised to **2.2 TB**. The new vectorized 04 plan gets 75 GB, and new vectorized host plans may get up to 1.5× their current reservation. Active plans are unchanged, and the 40% floor holds. Why: 04 was at 29.4 of its 31 GB, and only 8 GB was unallocated.
   - **Vectorized qualification:** e7/738 and e15/748 PASS on all records. e1/708 is running.
+- **07:58 UTC:**
+  - **Vectorized qualification: all 3 PASS** (e7/738, e15/748, e1/708; 3,656 frames × 9 branches; proof `40828251…`). 02 is restored to original 8 lanes (02r4) on renewed services.
+  - **A16 package** (`3f125d72…`, draft `411d147c…`) went to independent review `clasher-v4-amendment16-review-20261009-1` (Opus, high). 157 tests pass, 20/20 mutants killed, and real admission over 32,904 records passes.
+  - Storage ledger is at 2,111.5/2,200 GB.
