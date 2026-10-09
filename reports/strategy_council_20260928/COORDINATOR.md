@@ -1583,3 +1583,11 @@ Also on the hub, but with copies elsewhere:
 - **20:45 UTC:**
   - **S-human on 08 reproduced the OOM** at step 239: a dense micro needs ~47 GB on a 48 GB card. Trying `expandable_segments` first, with a replay neutrality check. Pre-authorized next fallback: human micro 3584 with accumulation to 8,192, disclosed.
   - **Capacity 480-v3** resumed at 20:44Z from step 175 with micro 1024 (amendment `f8dd81a6`). If it fails again, the arm is dropped.
+- **21:10 UTC: APPROVE_A1 ISSUED.**
+  - The admission-only dry run finished at 21:08:34Z: all 24 fresh admissions exit 0, and the epoch-1 repeat passed.
+  - **My mechanical §8 checks:**
+    - item 5 (A18 bindings) PASS;
+    - item 9 (24 assemblies) PASS;
+    - **item 11 PASS:** the full evidence ledger `a44a9617` has 51,089 entries, all on 03/04/08, with zero 02, leased, journal or heldout entries.
+  - All 8 required values were cross-checked.
+  - **`coordinator-approval-A1.json` `9b520de2…`**, plus the record `4e98cc68`, copied to 04. It authorizes the A1 real clock-free body seal only. A2 bounds follow after seal verification; B needs a separate approval.

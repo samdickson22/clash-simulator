@@ -1,0 +1,20 @@
+{
+ "schema": "clasher.v4.coordinator-approval-A1-record.v1",
+ "utc": "2026-10-09T21:10:45+00:00",
+ "approval_file": "amendments/coordinator-approval-A1.json",
+ "approval_sha256": "9b520de2ebb0fb2d8e0fd6d081b1f453d266d72faf475615e5d3c6f9da6a9626",
+ "mechanical_checks": {
+  "item5_a18_bindings": "PASS (coordinator-mechanical-check-items-5-9.json)",
+  "item9_assemblies": "PASS (same)",
+  "item11_ledger": "PASS: 51,089 entries in full-evidence-ledger a44a9617, all on hosts 127x03 (33,121), 127x04 (9,902) and 127x08 (8,066); zero host-02, leased-host, completion-journal or heldout-path entries.",
+  "required_values": "All 8 fields cross-checked: assembly map = items-9 authority; a18_bindings = items-5 bindings; execution plan 1fcc54b9 rehashed; A12 freeze bd5b7643 rehashed; A18 file-layer approval ff45e9ed rehashed; A17 evidence recovery 1adf50de and its approval 64b1ebe4 (condition satisfied 05fa63c8)."
+ },
+ "packet": {
+  "request": "ba54a36fda1b0fa703167a05fbeff0bc085326a13ea894bb8e197af04e696b2b",
+  "ledger": "a44a961719833e4c22e706e78bc7d8fe76a9456b535ee0d692b08082417399bd",
+  "bindings": "3010004a7c0e2907245166042f9befc4e3c5b4d3957bc056a33ee19786c68363",
+  "required_values": "67769fd6ac719687ad21c27c99675afc51ccd38ca98a9d40f32f1dce1ce41988"
+ },
+ "disclosures_carried": "R16-1 selection-ordering incident (accepted); control-root collision 9c88fb44; superseded coverage 0f06656e; original synthetic reporting-helper failure with both helper hashes.",
+ "authorizes": "A1 only: the real clock-free body seal per frozen A12 using the frozen verifier 002d6894. NOT A2 bounds (separate, after seal verification) and NOT B (coordinator-approval-B later). No heldout."
+}
