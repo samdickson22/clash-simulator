@@ -1357,3 +1357,12 @@ Also on the hub, but with copies elsewhere:
   - Three launcher-check failures are retained as receipts, and there was no duplicate capture. The post-admission quiet-window evidence is incomplete because the watcher dropped the lock before the first child; recorded honestly.
   - The six-host natural-drain switch watcher is starting (17 tests pass). 15 waits for its R13 audit.
 - **08:39 UTC heartbeat.** 02 (relaunched), 04 (vectorized), 08, 09, 14 and 15 at 99%. **13 at 0%**: its natural drain finished and it's awaiting the vectorized relaunch by the switch watcher. I'll act if it's still idle after 20 min. T11: 01 63%, 16 32% sampled. 06/07/11/18 are down.
+- **08:49 UTC: vectorized production rates:**
+  - 04: 54.7 fps over 429 s;
+  - 02: 33.2 fps over 103 s;
+  - 13: 53.6 fps over 42 s.
+
+  That's 8–12× the original worker's per-GPU rate.
+  - About 0.93–0.95 M frames remain. Once all safe switches are done, capture takes **~0.7–1.1 h** (excluding audits, verification and A1), against 3.4–8.6 h original-only.
+  - Gap found: the 40% disk-floor monitor's argv check rejects vectorized controllers. Producer reservation guards are still active, and disks are currently over 40% free. A versioned vector-floor monitor is being built.
+  - Receipt `233d2f6b`.
