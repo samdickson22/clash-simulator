@@ -241,6 +241,9 @@ All files below are under `perf-fixes/` beside this report:
   live pixel ABI forwarding. Native/scorer code is unchanged by this follow-up;
   the earlier full native exactness/timing receipts retain their original source
   hashes and are not reinterpreted as formal selection or decoder admission.
+- `live-perf-selection-full-20261009-08r1.log` and `.exit`: all 53 current live
+  regressions pass on CPU, including the stronger selection handoff, process
+  supervision/fault handling and unchanged recorded native S6 comparisons.
 - `live-perf-smoke-20261009-r1.json` and its log/exit receipt: integrated guarded
   constructor, native scoring and four-root reduction.
 - `queue-benchmark.json` and `live-perf-queue-analysis-20261009-r1.json`: complete

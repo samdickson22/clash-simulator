@@ -96,7 +96,8 @@ def main(a):
             if rows['scalar'] != rows['vectorized']:
                 raise ValueError(f'MPS non-clock output mismatch: {seed}/{frame.sequence}')
             frames += 1
-    parity = dict(frames=frames, train_matches=2, nonclock_mismatches=0,
+    parity = dict(scope='mock-train-MPS-diagnostic', formal_admitted=False,
+                  frames=frames, train_matches=2, nonclock_mismatches=0,
                   sha256={key: value.hexdigest() for key, value in digests.items()},
                   perception_ms={key: quantiles(value[2:]) for key, value in samples.items()},
                   checkpoint_sha256=sha256(a.checkpoint), selection_provenance=selection.provenance(),
