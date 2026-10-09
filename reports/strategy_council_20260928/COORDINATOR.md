@@ -1258,3 +1258,9 @@ Also on the hub, but with copies elsewhere:
   - A read-only /proc audit across 01/02/03/04/05/08/09/13/14/15/16 found no running job mapping the checkout native library or planner config, so gate (c), T11 and capture are unaffected.
   - 08r2 and 09r2 capture lanes are now running.
 - **05:10 UTC heartbeat.** Sampled GPU averages: capture at **99% on 04/08/09/13/14/15** (08 joined after the GRU pause, and 09 recovered). T11: 01 74% and 16 39% sampled, both at ~12k rows/s step rate. 02 is at 0%, waiting for gate (c), ETA ~05:45Z. Home usage is 3.5 GB. 06/07/11/18 are down. Seven GPUs are productive, plus 02 pending.
+- **05:12 UTC:**
+  - **A14 non-clock gate PASS** (proof `8f2d0e07…`: e1/e3/e20 raw captures plus 3 reference cells). It doesn't admit a production switch.
+  - **Decision:** switch the queue to the vectorized worker only if a 10-min A/B shows ≥15% better per-GPU fps. Capture is GPU-bound at 99%, so the decode speedup may not help end to end.
+  - The 03 archive service is active, with the first verified relocations done.
+  - 08 is running 8 lanes at 99%. 09 recovered (8 lanes, 27.9 GB PSS).
+  - A15 r2 is at 123 tests passing, with the mutation rerun in progress.
