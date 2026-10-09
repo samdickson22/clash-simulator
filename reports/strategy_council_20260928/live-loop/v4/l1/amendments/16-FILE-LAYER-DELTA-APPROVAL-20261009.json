@@ -1,0 +1,15 @@
+{
+ "schema": "clasher.v4.a16-file-layer-delta-approval.v1",
+ "decision": "APPROVE_FILE_LAYER_DELTA",
+ "utc": "2026-10-09T08:27:03+00:00",
+ "decided_by": "coordinator (owner mode), on independent review",
+ "amendment": "amendments/16-mixed-record-producer-admission-20261009-r1.md",
+ "amendment_sha256": "411d147c5ee3d142d863976d5d74104db16f35de3654ffe8dd0d624fd9f14a66",
+ "delta": "amendments/16-file-layer-pin-delta-20261009-r1.json",
+ "delta_sha256": "eafa80ff1e3690d6763cc0042055b31e48b03dc897fa3f702b76cacff230ce72",
+ "scientific_semantics_changed": false,
+ "timing_admitted": false,
+ "independent_review_sha256": "4e486c2c6b653a0c32e2d980ed6a3b5223a5e435409fac3936479d7d1a050895",
+ "frozen_a12_pins_sha256": "60f0cb4eddd6885218bd2de16d54f73547d6cf542d241c755c9181f7490968c5",
+ "scope": "A16 file-layer delta only. This is not A1 approval; A1 additionally requires R16-1 and R16-2."
+}

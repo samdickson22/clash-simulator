@@ -1,0 +1,19 @@
+{
+ "schema": "clasher.v4.vectorized-production-release.v1",
+ "decision": "RELEASE",
+ "utc": "2026-10-09T08:27:03+00:00",
+ "decided_by": "coordinator (owner mode)",
+ "queue_overlay_sha256": "96519baf3d20451c83a373ceb1cf118e8546f8aa3d948a16aaa921cd8078b56e",
+ "a16_contract_sha256": "3b3ebc8f3e4e3f0eedd0c30de67c853b66b3cdb3c5b85287e6fbd485dea1d431",
+ "freeze_record": {
+  "path": "amendments/16-FREEZE-RECORD-20261009-supplement-r1.json",
+  "sha256": "3e5c04b8741ccf4a90cf2bd151b29140d212878ee8879533bafa7deef70b3242"
+ },
+ "timing_admitted": false,
+ "conditions": [
+  "R16-3: the mixed verifier must replace the original-only verifier before the first vectorized registration",
+  "record-only; no timing, clock, D4(b), deciding, heldout or T6 use",
+  "R16-1 (production-load audit; at least 4 matches across at least 3 epochs by pre-committed hash rule, re-captured on the original worker, byte-exact) and R16-2 (reviewer's 6 tests) before A1",
+  "15 switches only after its R13 audit PASS"
+ ]
+}

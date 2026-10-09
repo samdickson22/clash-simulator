@@ -1,0 +1,16 @@
+{
+ "schema": "clasher.v4.amendment16-freeze.v1",
+ "decision": "FROZEN",
+ "utc": "2026-10-09T08:27:03+00:00",
+ "supplements": {
+  "path": "amendments/16-FREEZE-RECORD-20261009.json",
+  "sha256": "cae72ebd09eedbf1c01280589e4812b27041daa4ddf7e9460dacedf81255ae86"
+ },
+ "producer_contract_sha256": "3b3ebc8f3e4e3f0eedd0c30de67c853b66b3cdb3c5b85287e6fbd485dea1d431",
+ "queue_overlay_sha256": "96519baf3d20451c83a373ceb1cf118e8546f8aa3d948a16aaa921cd8078b56e",
+ "amendment_sha256": "411d147c5ee3d142d863976d5d74104db16f35de3654ffe8dd0d624fd9f14a66",
+ "pin_delta_sha256": "eafa80ff1e3690d6763cc0042055b31e48b03dc897fa3f702b76cacff230ce72",
+ "independent_review_sha256": "4e486c2c6b653a0c32e2d980ed6a3b5223a5e435409fac3936479d7d1a050895",
+ "scope": "record-only production release; timing_admitted=false",
+ "note": "Supplementary, correctly shaped freeze receipt. The original freeze record bytes are retained unchanged; its required_changes R16-1/R16-2/R16-3 and disclosed limit remain binding."
+}

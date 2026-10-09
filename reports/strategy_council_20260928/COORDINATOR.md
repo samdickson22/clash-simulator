@@ -1345,3 +1345,8 @@ Also on the hub, but with copies elsewhere:
     - **R16-2:** before A1, the reviewer's 6 tests.
   - Disclosed: equivalence is sample-based. The evidence is A14 (all 64 e1 matches), 3 qualifications and R16-1.
   - **The vectorized switch is RELEASED** once R16-3 is in place: concurrent drains, with the long-tail void option.
+- **08:27 UTC:** issued the A16 receipts in the shapes the code expects. The original freeze bytes are retained.
+  - Supplementary freeze `3e5c04b8…`, with the full `producer_contract_sha256`.
+  - **Vectorized production release** `0dd2f265…` (schema `vectorized-production-release.v1`, overlay `96519baf`, contract `3b3ebc8f`, timing_admitted=false).
+  - A16 file-layer approval `730c86e8…` (APPROVE_FILE_LAYER_DELTA, amendment `411d147c`, delta `eafa80ff`). It is not A1.
+  - 04 recovery is complete: 8 tasks requeued once, and 625 backup files match. 04 goes straight to vectorized after the mixed verifier is in.
