@@ -1040,3 +1040,11 @@ Also on the hub, but with copies elsewhere:
     - destruction labels derived from truth (tower vanishes while the match goes on), on a fresh untouched dev slice, reporting the false-destroyed upper bound;
     - King destruction via the match-end path, plus King activation;
     - an opponent HP number refit.
+- **02:16 UTC: SelectionClaims owner review in** (`l1/reviews/LIVE-SELECTION-HANDOFF-OWNER-REVIEW-20261009.md` `d402274b…`). The handoff is compatible with the joint seal.
+  - **Required before formal startup:**
+    - explicit `event_thresholds` validation (today `{}` falls through to 0.5);
+    - spell routing and calibration structure checks;
+    - `decoder_admitted` bound to the implementation, source closure, proof and device;
+    - verifier and import hashes pinned outside the seal.
+  - Also: the mock-actuator guard gets a diagnostic label. Don't wire the pre-A12 `joint_selection_evidence_v4.py` in.
+  - Relayed to the live-runtime worker `clasher-perf-live-runtime-20261009-1` (round 6), with a warning about the tower-channel edits.

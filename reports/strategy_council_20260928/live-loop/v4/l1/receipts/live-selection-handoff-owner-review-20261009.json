@@ -1,0 +1,19 @@
+{
+  "schema": "clasher.v4.live-selection-owner-review.v1",
+  "utc": "2026-10-09T02:15:53.252002+00:00",
+  "verdict": "COMPATIBLE_WITH_REQUIRED_BINDING_AND_VALIDATION_CHANGES",
+  "source_sha256": {
+    "src/clasher/live/selection.py": "e7eaf2131c88b65b5fbf8c16354ad61d90d9b2f9b71981f459aa57edf3a096af",
+    "src/clasher/live/perception.py": "222f36d4827cf54056345ee66fdc3609a76be66f3c38081c17b10f125ee93af1",
+    "src/clasher/live/perception_adapter.py": "bab221e9fe5b7b3ba53de7cdd485122c2e139f2f3efa13ee1c706ca11d27ecb8",
+    "src/clasher/live/runtime.py": "161dda9de571a8556c79d1885f1a0b87ba0eae7fb3b8fa2e99faf29246c181ab",
+    "src/clasher/live/__main__.py": "0a195edd22d23b80590307edcc58dd74a804d5a4cd83a61a2d541ebcf7e14ec0",
+    "tests/live_v4/test_selection.py": "6d17cafba59369391f6eff5726f8879e6c01ed4e40fda63c12ce2e79ce5359bd",
+    "src/clasher/vision/l1_v4.py": "cad13d4f958757dbb9f38732f19d73423149b9dffcc34e3c41bb7376f87e9fef"
+  },
+  "review_sha256": "d402274b770d9faa7d31945dc27bc3c9c443b529deafb03114c45824d785ec77",
+  "read_only": true,
+  "production_verifier_available": false,
+  "formal_startup_authorized": false,
+  "heldout_opened": false
+}
