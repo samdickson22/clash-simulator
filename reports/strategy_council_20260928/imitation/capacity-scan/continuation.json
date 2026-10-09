@@ -1,0 +1,8 @@
+{
+  "scheduledTaskId": "scheduled-task:command:mcp:6f385241-07a0-4920-b2e5-aaf1dc0a6773:schedule-task:clasher-capacity-scan-continuation-20261009-v1",
+  "enabled": true,
+  "nextRunAt": "2026-10-09T20:02:12.126Z",
+  "interval_seconds": 600,
+  "bound_to_current_worker": true,
+  "purpose": "Continue existing task, monitor/fix technical faults without duplicating jobs, commit terminal report, then disable."
+}

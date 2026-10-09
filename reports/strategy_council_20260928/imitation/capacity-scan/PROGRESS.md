@@ -26,3 +26,7 @@ Scientificquartertarget95,142,909rows; firsteffectivebatch95,144,680/step11615.
 NLLgain<0.005kills. Widerarms areoffline-only. Fullcurvesrequiredforsurvivors,
 resourcecensoringexplicitif40GPU-hour/leasedeadlinepreventscompletion.
 NoNLLoutcomeyet; stagingandpreflightinprogress.
+
+Temporary ten-minute same-worker continuation enabled. First next run
+2026-10-09T20:02:12.126Z; exact schedule ID in `continuation.json`.
+Disable after terminal report. Scientific results still pending.
