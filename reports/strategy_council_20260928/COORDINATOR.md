@@ -975,3 +975,5 @@ Also on the hub, but with copies elsewhere:
   - **R19 PASS:** all 70 rejections (B 10 / A 24 / scripts 36) reproduce exactly (67 payload-occupancy, 3 building guards). The four R12 prefixes PASS, with the observability limit disclosed.
   - The worker is checking 5 post-selection mask-illegal audit flags (all seat 1, likely the sequential seat-0-apply / seat-1-audit effect) before finalizing the disclosure. Scores and decision are unchanged.
   - **Meaning:** the imitation model's top-8 proposals improve the fair search player at a matched candidate count.
+- **01:28 UTC: 127x03 released** by the gates worker (marker removed, all gate PIDs gone) and lent to the tempo/horizon exploration.
+  - **Gate (b):** the 5 legality flags all reproduce. Each flagged command was legal before either seat's command and became mask-illegal only after seat 0's command, which is the sequential-apply effect. Acceptance histories match. No adjustment; PASS stands, and the final report is being rendered.
