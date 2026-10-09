@@ -1591,3 +1591,8 @@ Also on the hub, but with copies elsewhere:
     - **item 11 PASS:** the full evidence ledger `a44a9617` has 51,089 entries, all on 03/04/08, with zero 02, leased, journal or heldout entries.
   - All 8 required values were cross-checked.
   - **`coordinator-approval-A1.json` `9b520de2…`**, plus the record `4e98cc68`, copied to 04. It authorizes the A1 real clock-free body seal only. A2 bounds follow after seal verification; B needs a separate approval.
+- **21:11 UTC heartbeat.**
+  - Capacity 13/14/15 at 99%.
+  - Students: 04 at 78%. 01 at 23% and 08 at 0% are sample-window dips; their measured step rates are 3.7k/4.7k rows/s.
+  - 09 and 16 are idle (nothing planned).
+  - A1 approved and the seal is in progress. 02/06/07/11/18 are down.
