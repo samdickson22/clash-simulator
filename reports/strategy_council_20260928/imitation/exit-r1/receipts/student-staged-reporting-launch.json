@@ -1,0 +1,36 @@
+{
+  "schema": "clasher.exit-r1.staged-reporting-launch.v1",
+  "utc": "2026-10-09T22:34:39.087372+00:00",
+  "controller_pid": 959187,
+  "pool03_pid": 959185,
+  "workers": {
+    "03": 56,
+    "04": 60,
+    "01": 44
+  },
+  "startup_qualification": "E1 initialize, init policy and W planner PASS; no smoke/reporting game executed during check",
+  "provenance_tests": "4 PASS",
+  "freeze_sha256": {
+    "S-human": "86c3a266bb196bdf04444c5ca7afaf851056be1d2aeea76114c56d00343145e7",
+    "init-reference": "d3d9258a3b957285be68c0333fa6686f408a26d4608109cd666b5c8e58978c06"
+  },
+  "queue_sha256": {
+    "100-S-human.json": "efbc2933a506bc73877fb9d85a76a7ddaa6a270d7de33865889cea830b8fdae6",
+    "000-init-reference.json": "1f86eac6fd492c98943e144926edd61a6f0bd8ce29b8054f92c1de7992e5b8ad"
+  },
+  "failed_startup": {
+    "cpu_seconds": 1289.0148660000002,
+    "completed": 0,
+    "wall_seconds": 23.37425460596569,
+    "exit_sha256": "38d80f987b7160afaac3152ffcb54d7bcd01424841bb9b691c973df5a51784b8",
+    "raw_path": "/mpac/sdicks02/jobs/clasher/exit-r1-student-screen-20261009-r1/reporting-failed-native-20261009"
+  },
+  "reporting_native_sha256": "f387b2d288ed280de9eeae3164d38f465045685ee53819e279930c2ee10699a8",
+  "human_final": {
+    "step": 4883,
+    "checkpoint_sha256": "bb257672d47465b20611c29f714cc4e077e5f1aeedc504fc6a8f7d1566fe4bf5",
+    "completed_utc": "2026-10-09T22:33:25.751205+00:00",
+    "fit08_vacated": true
+  },
+  "analysis_performed": false
+}

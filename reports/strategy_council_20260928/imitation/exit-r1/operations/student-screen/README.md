@@ -28,11 +28,32 @@ page-release helper. Batch tensors, sampling and loss normalization are unchange
 It requests checkpoint-and-exit at the memory/headroom floors. Leased training
 also uses the current lease-aware supervisor.
 
-`report_controller.py` waits for all three final-step EMA checkpoints, pins the
-execution freeze and starts `pool.py` on home CPUs only: 60 physical cores on
-03, 60 on 04 after GPU fitting, and 44 on 01. 08 runs no reporting games. All four metric(b)
-cases for a seed run on the same host, interleaved in that host's queue. Pools
-retain complete cases and stop only their own child PIDs on failure or STOP.
+`staged_controller.py` replaces the original all-final `report_controller.py` under
+coordinator authorization at22:19Z. The frozen plan requires common per-seed
+pairing, with no simultaneous/interleaved execution requirement. A single
+`staged_pool.py` consumes immutable stage queues per home host:56 physical workers
+on03 now,60 on04 and44 on01 after their GPU trainers exit.08 runs no reporting
+CPU games. The600 common init-W reference and64 held-out teacher games begin
+first; each student's256 head-to-head and600 fallback games follow its final4883
+EMA seal. S-human runs on03, S-teacher on04, S-mix on01.
+
+`staged_freeze.py` calls the unchanged B4 freeze API with only available genuine
+checkpoints, pins every input and retains each stage SHA. Private seat-specific
+policy generators keep action RNG independent of other loaded checkpoints.
+`canonicalize_stages.py` runs only after every fit and every reporting task is
+complete. It validates stage inputs/checkpoints against the final freeze and the
+exact3168 case identities/seeds/seats/terminal flags. New reducer-view copies
+change only the provenance envelope; immutable raw receipts retain their original
+freeze SHA and receive a SHA manifest. Four meaningful provenance tests pass,
+including changed-runtime/checkpoint/seed rejection. No metrics or kills run
+before all stages complete; every pair uses the same common init reference.
+
+Reporting uses the previously qualified E1 native SHA f387b2d2..., restored under
+a dated reporting-only amendment after the generation native rejected startup.
+No game was created in that failed launch; its1289.014866 CPU-seconds are retained
+in final costs. Missing E1 support files are copied byte-for-byte from its sealed
+runtime into the reporting source snapshot before the first game, and pinned.
+Corpus/fit inputs and the frozen student package remain unchanged.
 
 The held-out teacher games remain outside every training input. The frozen
 agreement/reducer code supplies the primary diagnostics and kill decisions.
@@ -55,4 +76,4 @@ remain unchanged. Floating-point accumulation order changes, so this micro
 continuation is not claimed bit-identical. Both failed08 replays are archived
 and charged, alongside the failed09 attempt. S-mix/S-teacher remain unchanged.
 
-The coordinator-directed loader6 amendment uses `loader_prefetch.py` through `run_fit_loader6.sh`: six actual workers/prefetch4, no mmap_random_advice. Complete steps use the unchanged deterministic mixture sampler, and both complete index vectors are checked in the parent. `qualify_loader.py` compares two GPU updates from identical exact checkpoints, including every RNG and optimizer state. Qualification receipts record the bit-exact comparison. The six loader workers use distinct cores120–125; parent cores118/119/126, Torch threads1. Aggregate parent/loader PSS is guarded at46GB, MemAvailable at24GiB; leased09 also uses the versioned capture-extension supervisor with12 declared processes/48GB cap and Oct11 deadline. The8GiB GPU reserve applies only to leased hosts. S-human resumes on owned08 from exact checkpoint108, nice19, checkpoints every200 steps, stop file and≤5-minute reclaim. Failed09 unsaved updates are archived and replayed, with costs retained. Other arms checkpoint every250 steps. Initial fit segments and train-only qualification costs are retained. `collect_results.py` renders all arm CIs, decisions and resource totals only after the controller has complete final fits and reporting cases.
+The coordinator-directed loader6 amendment uses `loader_prefetch.py` through `run_fit_loader6.sh`: six actual workers/prefetch4, no mmap_random_advice. Complete steps use the unchanged deterministic mixture sampler, and both complete index vectors are checked in the parent. `qualify_loader.py` compares two GPU updates from identical exact checkpoints, including every RNG and optimizer state. Qualification receipts record the bit-exact comparison. The six loader workers use distinct cores120–125; parent cores118/119/126, Torch threads1. Aggregate parent/loader PSS is guarded at46GB on leased hosts only, home MemAvailable at24GiB; leased09 also uses the versioned capture-extension supervisor with12 declared processes/48GB cap and Oct11 deadline. The8GiB GPU reserve applies only to leased hosts. S-human resumes on owned08 from exact checkpoint108, nice19, checkpoints every200 steps, stop file and≤5-minute reclaim. Failed09 unsaved updates are archived and replayed, with costs retained. Other arms checkpoint every250 steps. Initial fit segments and train-only qualification costs are retained. `collect_results.py` renders all arm CIs, decisions and resource totals only after the controller has complete final fits and reporting cases.

@@ -97,7 +97,9 @@ def main():
         heldout_manifest_sha256=digest(job/'heldout-corpus/manifest.json'),
         pre_fit_pin_sha256=digest(job/'pre-fit-pin.json'), human_inputs=prefit['human_inputs'],
         runtime_source_files=prefit['source_files'], fits=fit, reporting_hosts=exits,
-        reporting_cpu_hours=sum(x['children_cpu_seconds']+x['manager_cpu_seconds'] for x in exits.values())/3600,
+        reporting_cpu_hours=(sum(x['children_cpu_seconds']+x['manager_cpu_seconds'] for x in exits.values())+read(job/'reporting-failed-startup.json')['cpu_seconds'])/3600,
+        failed_reporting_startup=read(job/'reporting-failed-startup.json'),
+        reporting_native_amendment_sha256=digest(job/'student-reporting-native-amendment.json'),
         postprocessing_cpu_hours=controller['local_cpu_seconds']/3600,
         heldout_teacher_game_cpu_hours=sum(x['cpu_seconds'] for x in heldout)/3600,
         bootstrap=aggregate['bootstrap'],loader_performance=performance,
@@ -109,6 +111,8 @@ def main():
         allocator_qualification=allocator_qualification,
         human_micro_amendment=micro_amendment,
         human_micro_amendment_sha256=digest(job/'student-micro3584-amendment.json'),
+        staged_reporting_amendment_sha256=digest(job/'student-staged-reporting-amendment.json'),
+        staged_provenance=read(job/'staged-provenance.json'),
         allocator_qualification_gpu_hours=allocator_qualification['wall_seconds']/3600,
         allocator_qualification_cpu_hours=sum(x['segment']['cpu_seconds'] for x in allocator_qualification['modes'])/3600,
         owned_migration=read(job/'student-owned-migration.json'),results=aggregate['arms'],
@@ -133,6 +137,19 @@ def main():
         'are unchanged. Gradient accumulation changes floating-point summation order; '
         'this continuation is not claimed bit-identical to micro7168. Its exact checkpoint '
         'recipe fingerprint remains7168; runtime/segment evidence records the actual3584.', '',
+        'A coordinator-authorized staged reporting amendment began the common600 init-W '
+        'reference cases and64 held-out teacher games on03 while fitting continued. '
+        'S-human cases ran on03, S-teacher on04 and S-mix on01 as their final EMAs sealed. '
+        'The frozen seed/deck/seat schedule and per-seed shared reference are unchanged. '
+        'No agreement metrics, CIs or kill decisions were computed before all final fits '
+        'and all3232 reporting tasks completed. Immutable raw stage receipts retain their '
+        'original input-freeze SHA; the final reducer view validates each stage input and '
+        'checkpoint as a matching subset of the common final freeze and changes only the '
+        'provenance envelope, retaining original stage and raw-case SHAs.', '',
+        'Reporting uses the qualified E1 native f387b2d2..., as required by the frozen plan. '
+        'The first startup used the generation native and failed before creating any games; '
+        'its 1289.014866 CPU-seconds are included in reporting costs. Corpus and fit pins '
+        'remain unchanged. The dated reporting native amendment preceded all affected outcomes.', '',
         '## Arm decisions and metrics(a)/(b)', '']
     rows=[]
     for arm in ARMS:
@@ -256,6 +273,9 @@ def main():
          ['Owned PSS guard scope operational amendment',receipt['owned_pss_scope_amendment_sha256']],
          ['S-human allocator operational amendment',receipt['allocator_amendment_sha256']],
          ['S-human micro3584 operational amendment',receipt['human_micro_amendment_sha256']],
+         ['Staged reporting operational amendment',receipt['staged_reporting_amendment_sha256']],
+         ['Immutable raw case SHA manifest',receipt['staged_provenance']['raw_case_sha_manifest_sha256']],
+         *[[stage+' reporting stage freeze',sha] for stage,sha in receipt['staged_provenance']['stage_freeze_sha256'].items()],
          ['Owned migration receipt',digest(job/'student-owned-migration.json')],
          ['Final reporting execution freeze',receipt['execution_freeze_sha256']],
          ['Aggregate metrics',receipt['aggregate_sha256']],

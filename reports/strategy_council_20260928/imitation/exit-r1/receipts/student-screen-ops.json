@@ -1,11 +1,12 @@
 {
   "schema": "clasher.exit-r1.student-screen-ops.v1",
-  "utc": "2026-10-09T21:02:16.916464+00:00",
+  "utc": "2026-10-09T22:34:39.520342+00:00",
   "frozen_student_code_commit": "f98d8926fe38c07710835fca1116d50be361b2c6",
   "ops_files": {
-    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/README.md": "957bd906a1dd5105b5344d3d6784300a5f0008d74f3c43e8457ff1af2c614e41",
+    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/README.md": "f48b0bff84734d3c154539798cae666950d1f0dacbbefdfd377c543940f7ba01",
+    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/canonicalize_stages.py": "4168059270e65f1aa31fce3c71555f4e6c6d6357822a67b81e66ed5e835ba542",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/check_ready.py": "c2d2c5007a506f7096473b9a8fdd883aee016ba264ab2c6a90b993d356263790",
-    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/collect_results.py": "10c742cab2ef7da142e2cc0c49320fda5ab4eb621d095fec5b7aea4d579f54aa",
+    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/collect_results.py": "43800c568de203d80f8a904cd2f16c9d5e6e644fca612da718ff1dba6345d233",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/finish_prepare.py": "c8ea6072240f34e0525c51d9f0e5f4c2f8431ad4101cc4a0fa32c556a52c5e5f",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/fit_runtime.py": "f9f2c86af5137790aacad91be34d01a632ebd657f04d570cd146db5ecd11e118",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/loader_prefetch.py": "7b26fc1de339d72767b0e8c46e219b5b7d2e6eb8d9cef906caa66b33ab8d323a",
@@ -22,12 +23,16 @@
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/run_fit_loader6_owned_v3.sh": "a06f640169de6218bbbf3aeb7711e8c63903591b05b945a5ccb8ce3e3f83891a",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/select_cutoff.py": "6bad6d9b12853bf5ddf0173fb147bae303062ff2a74891f6bffcda3099f9e6ff",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/stage_pack.sh": "c5d8e26fe7bfb40878f2444b9404da2aa4165e43e4abd8fd2300bdda16756066",
+    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/staged_controller.py": "7e17f7a26ddc60d184e565eb7f0f51c82bac2f304ada69448a3723d4077ab581",
+    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/staged_freeze.py": "91fe8a1a9ae099bbd3cc84b1b7eabad2c9c4a98b953319e02313a38bbef63166",
+    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/staged_pool.py": "6227b1df7e85436add216c8cf7c1cb6bfff18ab40e81015b8cce31029a72ea49",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/supplement.py": "9d72bd86e9d49a79f22c9cb249e5494af06d4b02dff04e661feccdfcc905349d",
+    "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/test_staged_provenance.py": "9bb9e68d5c69930fab3e7c3cdae70339f7ec2676595f32bb669b842218f6aba8",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/transfer_corpus.py": "d514cc06bc1173a044718b630e41f7afa1847990c5e49b06eccf369677942d3d",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/verify_corpus.py": "408ae4eccdcec03ef019bc55e990a0f83012b2f175afc36783b699d851845ddd",
     "reports/strategy_council_20260928/imitation/exit-r1/operations/student-screen/verify_human.py": "3fc3c4f2439003ee83647394026f6bad598aac34c2d1a338742acc643d5e8d0a"
   },
-  "tests": "Frozen 8 tests PASS on03, including real two-game pack and SHA rejection; no skips.",
+  "tests": "Frozen 8 tests PASS on03, including real two-game pack and SHA rejection; no skips. Four staged provenance tests PASS; E1 native/support startup and W planner initialization PASS.",
   "recipe_changed": false,
   "runtime": {
     "torch": "2.7.1+cu118",
@@ -40,7 +45,7 @@
     "S-human": "127x09 \u2192127x08, coordinator-owned migration from exact step108"
   },
   "cpu_workers": {
-    "127x03": 60,
+    "127x03": 56,
     "127x04": 60,
     "127x01": 44
   },
@@ -61,6 +66,10 @@
     "STUDENT-LOADER6-OPERATIONAL-AMENDMENT-20261009.md",
     "STUDENT-OWNED-GPU-OPERATIONAL-AMENDMENT-20261009.md",
     "receipts/student-parent-affinity-amendment.json",
-    "receipts/student-owned-gpu-amendment-v2.json"
-  ]
+    "receipts/student-owned-gpu-amendment-v2.json",
+    "receipts/student-staged-reporting-amendment.json",
+    "receipts/student-reporting-native-amendment.json"
+  ],
+  "reporting_controller": "staged_controller.py; original report_controller.py retired before any game",
+  "reporting_analysis_gate": "All final EMAs and all3232 reporting tasks complete"
 }
