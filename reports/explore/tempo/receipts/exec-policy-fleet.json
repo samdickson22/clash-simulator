@@ -1,0 +1,130 @@
+{
+  "utc": 1791512838.9440684,
+  "hosts": [
+    {
+      "host": "127x09",
+      "count": 5,
+      "rows": [
+        {
+          "pid": 444237,
+          "nice": 10,
+          "scheduler": 0
+        },
+        {
+          "pid": 444256,
+          "nice": 10,
+          "scheduler": 0
+        },
+        {
+          "pid": 678033,
+          "nice": 19,
+          "scheduler": 5
+        },
+        {
+          "pid": 678034,
+          "nice": 19,
+          "scheduler": 5
+        },
+        {
+          "pid": 679069,
+          "nice": 10,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "host": "127x13",
+      "count": 3,
+      "rows": [
+        {
+          "pid": 471472,
+          "nice": 10,
+          "scheduler": 0
+        },
+        {
+          "pid": 471474,
+          "nice": 10,
+          "scheduler": 0
+        },
+        {
+          "pid": 705090,
+          "nice": 10,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "host": "127x14",
+      "count": 5,
+      "rows": [
+        {
+          "pid": 436010,
+          "nice": 10,
+          "scheduler": 0
+        },
+        {
+          "pid": 436015,
+          "nice": 10,
+          "scheduler": 0
+        },
+        {
+          "pid": 677771,
+          "nice": 19,
+          "scheduler": 5
+        },
+        {
+          "pid": 677772,
+          "nice": 19,
+          "scheduler": 5
+        },
+        {
+          "pid": 679226,
+          "nice": 10,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "host": "127x15",
+      "count": 5,
+      "rows": [
+        {
+          "pid": 650558,
+          "nice": 10,
+          "scheduler": 0
+        },
+        {
+          "pid": 650578,
+          "nice": 10,
+          "scheduler": 0
+        },
+        {
+          "pid": 920951,
+          "nice": 19,
+          "scheduler": 5
+        },
+        {
+          "pid": 920962,
+          "nice": 19,
+          "scheduler": 5
+        },
+        {
+          "pid": 922423,
+          "nice": 10,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "host": "127x16",
+      "count": 1,
+      "rows": [
+        {
+          "pid": 482682,
+          "nice": 10,
+          "scheduler": 5
+        }
+      ]
+    }
+  ]
+}

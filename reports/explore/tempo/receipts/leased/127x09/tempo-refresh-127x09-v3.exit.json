@@ -1,0 +1,84 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261009-r3",
+  "host": "127x09",
+  "label": "tempo-refresh-127x09-v3",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "chrt",
+    "--idle",
+    "0",
+    "/usr/bin/python3",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/recalibrate_idle.py",
+    "--seconds",
+    "180"
+  ],
+  "started_utc": "2026-10-09T02:26:27.074345+00:00",
+  "declared_processes": 2,
+  "declared_pss_bytes": 200000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 21,
+    "pss_bytes": 12201366016
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 13,
+    "pss_bytes": 7927723008
+  },
+  "admission_jobs": {
+    "v2:t7-epoch-offload-20261008-09r1": {
+      "kind": "v2",
+      "sequence": 10,
+      "supervisor_pid": 19112,
+      "processes": 10,
+      "pss_bytes": 7909638144,
+      "stop_reason": null
+    },
+    "v2:tempo-perception-rate-v1": {
+      "kind": "v2",
+      "sequence": 46,
+      "supervisor_pid": 444237,
+      "processes": 2,
+      "pss_bytes": 16718848,
+      "stop_reason": null
+    },
+    "external:675899:130243774": {
+      "kind": "external",
+      "sequence": -1,
+      "supervisor_pid": null,
+      "processes": 1,
+      "pss_bytes": 1366016,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 678033,
+  "supervisor_start": "130252723",
+  "stop_grace_seconds": 120,
+  "admission_sequence": 65,
+  "pid": 678034,
+  "child_start": "130252728",
+  "child_pgid": 678034,
+  "child_sid": 678034,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-09T02:29:29.590453+00:00",
+  "stop_reason": null,
+  "peak_processes": 2,
+  "peak_rss_bytes": 26955776,
+  "peak_sampled_pss_bytes": 15505408,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "aggregate": {
+    "processes": 13,
+    "pss_bytes": 7932983296
+  },
+  "effective_process_cap": 80
+}

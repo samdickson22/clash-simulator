@@ -1113,3 +1113,20 @@ Also on the hub, but with copies elsewhere:
     - 03: ≤40 delay / ≤50 tempo, ≤100 combined;
     - 01: ≤24 SCHED_IDLE, guarded by T11 at ≥11k rows/s;
     - 08: ≤12 until 04:55Z.
+- **03:00 UTC: tempo/horizon exploration complete** (`reports/explore/tempo/RESULTS.md`).
+  - Setup: 1,000 paired seeds per arm, against scripted opponents, d=27. Exploratory, not adjusted for the arm search.
+  - Loss rate by arm:
+
+    | Arm | Loss rate |
+    |---|---|
+    | Baseline | 10.9% |
+    | E (elixir option value) | 12.4% (n.s.) |
+    | H12 | 7.1% |
+    | H16 | 6.3% |
+    | **W (explicit WAIT candidates + elixir-scaled prior)** | **0.7%** |
+    | EW | 1.7% |
+
+  - W also cut under-4-elixir arrivals from 90% to 61% (humans: 16–19%).
+  - W's cost is latency: p50 330 ms vs 7.7 ms, p95 766 ms; 71% of decisions exceed 200 ms.
+  - **Caveats:** the scripted opponents are weak and have no command delay, so the result is optimistic.
+  - **Decision:** W is the most promising search change so far. A confirmation run follows: W vs baseline against search opponents, with symmetric command delay, plus a W latency reduction.

@@ -1,0 +1,212 @@
+{
+  "utc": 1791512762.5197055,
+  "host": "127x13",
+  "new_exec_policy": [
+    {
+      "kind": "first Python instruction",
+      "pid": 702676,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "kind": "exec child",
+      "pid": 702677,
+      "nice": 19,
+      "scheduler": 5
+    },
+    {
+      "kind": "exec child",
+      "pid": 702679,
+      "nice": 19,
+      "scheduler": 5
+    },
+    {
+      "kind": "exec child",
+      "pid": 702680,
+      "nice": 19,
+      "scheduler": 5
+    },
+    {
+      "kind": "exec child",
+      "pid": 702681,
+      "nice": 19,
+      "scheduler": 5
+    },
+    {
+      "kind": "exec child",
+      "pid": 702682,
+      "nice": 19,
+      "scheduler": 5
+    },
+    {
+      "kind": "exec child",
+      "pid": 702683,
+      "nice": 19,
+      "scheduler": 5
+    },
+    {
+      "kind": "exec child",
+      "pid": 702684,
+      "nice": 19,
+      "scheduler": 5
+    },
+    {
+      "kind": "exec child",
+      "pid": 702685,
+      "nice": 19,
+      "scheduler": 5
+    },
+    {
+      "kind": "fork worker",
+      "pid": 702686,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "kind": "fork worker",
+      "pid": 702687,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "kind": "fork worker",
+      "pid": 702686,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "kind": "fork worker",
+      "pid": 702686,
+      "nice": 10,
+      "scheduler": 5
+    }
+  ],
+  "existing": [
+    {
+      "pid": 471472,
+      "nice": 10,
+      "scheduler": 0
+    },
+    {
+      "pid": 471474,
+      "nice": 10,
+      "scheduler": 0
+    },
+    {
+      "pid": 689423,
+      "nice": 10,
+      "scheduler": 0
+    },
+    {
+      "pid": 689424,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 689450,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691615,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691616,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691617,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691618,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691619,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691620,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691621,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691622,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691624,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691637,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691642,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691647,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691653,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691659,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691660,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691661,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691662,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691663,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691668,
+      "nice": 10,
+      "scheduler": 5
+    },
+    {
+      "pid": 691669,
+      "nice": 10,
+      "scheduler": 5
+    }
+  ],
+  "pass_": true
+}

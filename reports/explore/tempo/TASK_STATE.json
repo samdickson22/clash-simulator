@@ -1,0 +1,53 @@
+{
+  "lane": "exploration; no preregistration/eval/heldout",
+  "root_local": "/mpac/sdicks02/repos/clasher",
+  "controller_host": "127x04",
+  "controller_label": "tempo-pipeline-v11 (exited0)",
+  "controller": "reports/explore/tempo/pipeline.py",
+  "phase": "complete",
+  "selected_parameters": {
+    "E": 0.005,
+    "W": 0.01,
+    "H": 320
+  },
+  "reporting_seed_range": "2**48 + 70010 through +71009, 1000 seeds/arm",
+  "tuning_seed_range": "2**48 +80000..80149; 1050 games done on03",
+  "combination_seed_range": "2**48 +85000..85149; EH/EW/HW/EHW vs0",
+  "home03_runtime": "/mpac/sdicks02/repos/clasher-tempo-runtime",
+  "leased_runtime": "/mpac/sdicks02/repos/clasher-lease/tempo-runtime",
+  "report_root_on04": "/mpac/sdicks02/repos/clasher/reports/explore/tempo",
+  "tests": "28 passed; tests/analysis/test_tempo*.py plus original A/B/guard tests",
+  "parity": "2 seeds matched action/winner, receipts/parity.json on04",
+  "caps": {
+    "04": 40,
+    "03": 96,
+    "09": 20,
+    "13": 20,
+    "14": 20,
+    "15": 20,
+    "16": 28
+  },
+  "03_marker": "gone and checked before tune and each shard",
+  "lease_limits": "no new leased shards after04:15Z; runtime hard stop04:29Z; task exits04:30Z",
+  "guard": "reused search-ab/gpu_guard.py: own GPU completion-count interval fps;16 T11 own rows_per_second_step; SCHED_IDLE + dynamic observed GPU/SMT exclusion",
+  "early16": "40-worker admission refused PSS; other CPU job drained, 28-worker v2 admitted",
+  "early15": "stopped with SIGINT cleanup after continuous own-sim pause control; refreshed baseline62.699; combination active",
+  "early13": "drained own GPU-paused runner; refreshed baseline44.712 recovered from verified118s control",
+  "early14": "drained only while actually GPU-paused; original baseline remains",
+  "receipt_locations": "04 reports/explore/tempo/receipts/*-scheduler.json; leased jobs/tempo*.state/exit.json; home jobs/clasher/tempo*.exit/log",
+  "remaining": "none; coordinator may review and commit",
+  "notes": "No commits. All source/runtime changes remain reviewable; native/public/script baseline hashes unchanged. Final home shard completed normally04; attempted SIGINT migration had no effect. Future runtime installs explicit cleanup signal handlers.",
+  "combination": "EW; corrected HW tuning1/150, EW/EHW0/150",
+  "reporting_shards": "50 paired seeds each; 20 shards, 6000 total terminal games",
+  "launch_policy": "nice -n10 chrt --idle0 before all shard/helper exec; controller v8 resumed active identities",
+  "reporting": "6000 terminal games; 1000 identical paired seeds/arm; final paired reduction verified",
+  "leased_exit": "all owned wrapped jobs/runtimes/monitors verified gone by02:45Z",
+  "compute": "7808 valid unique games +150 superseded HW instances; 114.84 valid completed core-hours lower bound",
+  "deliverables": [
+    "RESULTS.md",
+    "results.json",
+    "comparison.html",
+    "compute-audit.json"
+  ],
+  "completed_utc": "2026-10-09T02:57:26Z"
+}

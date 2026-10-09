@@ -1,0 +1,5 @@
+import json,shlex,subprocess
+from pathlib import Path
+root=Path('/mpac/sdicks02/repos/clasher');report=root/'reports/explore/tempo';baseline=json.loads((report/'receipts/perception-rate.baseline.json').read_text())
+cmd=['bash',str(root/'reports/strategy_council_20260928/fleet/fleet_run.sh'),'tempo-smoke-v1','nice','-n','10','chrt','--idle','0','taskset','-c','0-47,64-111','env','RAYON_NUM_THREADS=1',str(root/'.venv/bin/python'),'-B',str(report/'worker_runtime.py'),'--offset','0','--pairs','2','--seed-offset','87000','--workers','6','--arms','0','E','W','BEST','--out',str(report/'smoke'),'--max-seconds','840','--gpu-guard','--throughput-log',baseline['log_path'],'--throughput-field',baseline['field'],'--baseline-rate',str(baseline['baseline']),'--trace']
+result=subprocess.run(cmd,text=True,capture_output=True);(report/'receipts/smoke-launch.json').write_text(json.dumps(dict(command=cmd,status=result.returncode,stdout=result.stdout,stderr=result.stderr))+'\n');print(result.stdout,result.stderr)

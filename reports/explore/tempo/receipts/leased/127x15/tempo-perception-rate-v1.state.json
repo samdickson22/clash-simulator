@@ -1,0 +1,95 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261009-r3",
+  "host": "127x15",
+  "label": "tempo-perception-rate-v1",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/perception_rate.py",
+    "--auto",
+    "--out",
+    "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/receipts/perception-rate.jsonl"
+  ],
+  "started_utc": "2026-10-09T01:32:27.734454+00:00",
+  "declared_processes": 2,
+  "declared_pss_bytes": 200000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 38,
+    "pss_bytes": 28000000000
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 25,
+    "pss_bytes": 16065778688
+  },
+  "admission_jobs": {
+    "v2:t7-epoch-offload-20261008-15r2": {
+      "kind": "v2",
+      "sequence": 10,
+      "supervisor_pid": 199955,
+      "processes": 13,
+      "pss_bytes": 11306249216,
+      "stop_reason": null
+    },
+    "v2:cpu-delay-fixes-p0890-127x15-throughput-v5": {
+      "kind": "v2",
+      "sequence": 45,
+      "supervisor_pid": 643939,
+      "processes": 12,
+      "pss_bytes": 4759529472,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 650558,
+  "supervisor_start": "129903130",
+  "stop_grace_seconds": 120,
+  "admission_sequence": 47,
+  "pid": 650578,
+  "child_start": "129903135",
+  "child_pgid": 650578,
+  "child_sid": 650578,
+  "checked_utc": "2026-10-09T02:43:34.480076+00:00",
+  "processes": 2,
+  "rss_bytes": 28053504,
+  "pss_bytes": 16795648,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "effective_process_cap": 80,
+  "aggregate": {
+    "processes": 27,
+    "pss_bytes": 16272535552
+  },
+  "accounted_jobs": {
+    "v2:t7-epoch-offload-20261008-15r2": {
+      "kind": "v2",
+      "sequence": 10,
+      "supervisor_pid": 199955,
+      "processes": 13,
+      "pss_bytes": 11313209344,
+      "stop_reason": null
+    },
+    "v2:tempo-perception-rate-v1": {
+      "kind": "v2",
+      "sequence": 47,
+      "supervisor_pid": 650558,
+      "processes": 2,
+      "pss_bytes": 16795648,
+      "stop_reason": null
+    },
+    "v2:cpu-delay-fixes-lag0-p0400-127x15-r1": {
+      "kind": "v2",
+      "sequence": 80,
+      "supervisor_pid": 949629,
+      "processes": 12,
+      "pss_bytes": 4942530560,
+      "stop_reason": null
+    }
+  },
+  "stop_reason": null
+}

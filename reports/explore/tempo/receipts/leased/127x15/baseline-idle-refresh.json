@@ -1,0 +1,134 @@
+{
+  "old": {
+    "baseline": 70.39935162357581,
+    "seconds": 120.67981301411055,
+    "completed_records": 9459,
+    "source": "own GPU job completion journal counts; no payload decoding",
+    "roots": [
+      "/mpac/sdicks02/repos/clasher-lease/data/v4-cache/epoch-capture-offload-r1/epoch-05",
+      "/mpac/sdicks02/repos/clasher-lease/data/v4-cache/epoch-capture-offload-r1/epoch-13",
+      "/mpac/sdicks02/repos/clasher-lease/data/v4-cache/epoch-capture-offload-r1/epoch-21"
+    ],
+    "field": "frames_per_second_step",
+    "log_path": "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/receipts/perception-rate.jsonl",
+    "recalibration": "GPU capture rate remains below initial baseline with own simulations continuously stopped; measured phase drift, remeasure unloaded current rate",
+    "recalibration_utc": 1791510246.8403058,
+    "control_seconds": 180.70185041427612,
+    "refresh_utc": 1791512061.404663,
+    "refresh_receipt": "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/receipts/baseline-idle-refresh.json"
+  },
+  "new_baseline": 69.60577778994261,
+  "seconds": 181.38579177856445,
+  "rate_samples": [
+    {
+      "step": 323,
+      "frames_per_second_step": 58.940297478521494,
+      "completed_records": 593,
+      "utc": 1791512797.3343983
+    },
+    {
+      "step": 324,
+      "frames_per_second_step": 65.50220740628752,
+      "completed_records": 659,
+      "utc": 1791512807.3948796
+    },
+    {
+      "step": 325,
+      "frames_per_second_step": 70.57298763076292,
+      "completed_records": 710,
+      "utc": 1791512817.455243
+    },
+    {
+      "step": 326,
+      "frames_per_second_step": 74.45076829998727,
+      "completed_records": 749,
+      "utc": 1791512827.5155315
+    },
+    {
+      "step": 327,
+      "frames_per_second_step": 93.43690303488492,
+      "completed_records": 940,
+      "utc": 1791512837.5764742
+    },
+    {
+      "step": 328,
+      "frames_per_second_step": 78.02414809762212,
+      "completed_records": 785,
+      "utc": 1791512847.637443
+    },
+    {
+      "step": 329,
+      "frames_per_second_step": 63.21471399921283,
+      "completed_records": 636,
+      "utc": 1791512857.6984136
+    },
+    {
+      "step": 330,
+      "frames_per_second_step": 67.2897929094782,
+      "completed_records": 677,
+      "utc": 1791512867.759009
+    },
+    {
+      "step": 331,
+      "frames_per_second_step": 75.34467720679145,
+      "completed_records": 757,
+      "utc": 1791512877.806619
+    },
+    {
+      "step": 332,
+      "frames_per_second_step": 68.1836569066161,
+      "completed_records": 686,
+      "utc": 1791512887.8668494
+    },
+    {
+      "step": 333,
+      "frames_per_second_step": 65.70456856541786,
+      "completed_records": 661,
+      "utc": 1791512897.9269881
+    },
+    {
+      "step": 334,
+      "frames_per_second_step": 80.70907075065006,
+      "completed_records": 812,
+      "utc": 1791512907.9886389
+    },
+    {
+      "step": 335,
+      "frames_per_second_step": 57.35013240324158,
+      "completed_records": 577,
+      "utc": 1791512918.0495365
+    },
+    {
+      "step": 336,
+      "frames_per_second_step": 63.824630884501964,
+      "completed_records": 642,
+      "utc": 1791512928.1084783
+    },
+    {
+      "step": 337,
+      "frames_per_second_step": 67.9851501946841,
+      "completed_records": 684,
+      "utc": 1791512938.1694605
+    },
+    {
+      "step": 338,
+      "frames_per_second_step": 63.910364811180564,
+      "completed_records": 643,
+      "utc": 1791512948.2303135
+    },
+    {
+      "step": 339,
+      "frames_per_second_step": 59.83584187861124,
+      "completed_records": 602,
+      "utc": 1791512958.2908442
+    },
+    {
+      "step": 340,
+      "frames_per_second_step": 78.62408776051488,
+      "completed_records": 791,
+      "utc": 1791512968.351475
+    }
+  ],
+  "control": "own tempo simulation runtimes absent at every10s check",
+  "utc": 1791512968.8935845
+}

@@ -1,0 +1,142 @@
+{
+  "lane": "exploration",
+  "sources": [
+    {
+      "path": "reports/explore/loss-review/seeds.json",
+      "sha256": "2e5a1ade19b3ca716ffb96e6d9d71855da44e72fc6e60098c952cd3e02604bc3",
+      "count": 23653
+    },
+    {
+      "path": "imitation/gates-bc/receipts/prospective/combined-seeds.json",
+      "sha256": "be64ed484ec3bd52f4dd29f915482170004cb9e23ff5d228b841061f3e47809c",
+      "count": 4356
+    },
+    {
+      "path": "imitation/gates-bc/receipts/prospective/gate-b/proposed-seeds.json",
+      "sha256": "299f81c8e1917f01d0768ce976749c0019d03eb36951b36ca59b53b1f0234615",
+      "count": 1794
+    },
+    {
+      "path": "imitation/gates-bc/receipts/prospective/gate-c/proposed-seeds.json",
+      "sha256": "a78f7e9b92eb635600144963489543daaeec8a7e768cdb216f4ff3825baf10c3",
+      "count": 2562
+    },
+    {
+      "path": "imitation/gates-bc/receipts/prospective-wide-r3/combined-seeds.json",
+      "sha256": "a8515f508a5369006f66631074a7c22d06d176dd6fdf8cdd4873b50237527832",
+      "count": 4356
+    },
+    {
+      "path": "imitation/gates-bc/receipts/prospective-wide-r3/gate-b/proposed-seeds.json",
+      "sha256": "53fa1c96c1d804f0e864e4fe8f4d0b091a96717cd78f503217a2bcd67049c99f",
+      "count": 1794
+    },
+    {
+      "path": "imitation/gates-bc/receipts/prospective-wide-r3/gate-c/proposed-seeds.json",
+      "sha256": "e278d5eb53c536ba3cc88b1251d681e52fb48bcf7377aadc50a644a6cf32290b",
+      "count": 2562
+    },
+    {
+      "path": "imitation/gates-bc/receipts/prospective-wide-r3-final/combined-seeds.json",
+      "sha256": "d37ddc8fd0c05d1f782825b81a019bb3d43e07b921fcb12ab6cc6ff5693a2b4e",
+      "count": 4356
+    },
+    {
+      "path": "imitation/gates-bc/receipts/prospective-wide-r3-final/gate-b/proposed-seeds.json",
+      "sha256": "7635dd18eeda76251cbf6974e4f16e37cf7a73d3121f6ad5381fc9e561cb59b7",
+      "count": 1794
+    },
+    {
+      "path": "imitation/gates-bc/receipts/prospective-wide-r3-final/gate-c/proposed-seeds.json",
+      "sha256": "5c182a036f97c7b18a335c6be1a07f5783976bf5abe3f4fa262fb2b9ce667c89",
+      "count": 2562
+    },
+    {
+      "path": "imitation/gate-b/v1/proposed-seeds.json",
+      "sha256": "299f81c8e1917f01d0768ce976749c0019d03eb36951b36ca59b53b1f0234615",
+      "count": 1794
+    },
+    {
+      "path": "imitation/gate-c/v1/proposed-seeds.json",
+      "sha256": "a78f7e9b92eb635600144963489543daaeec8a7e768cdb216f4ff3825baf10c3",
+      "count": 2562
+    }
+  ],
+  "denied_count": 39210,
+  "prior_search_sets": {
+    "ledger": {
+      "base": 281474976710656,
+      "pairs": 150,
+      "checked_count": 302,
+      "registered_intersections": []
+    },
+    "reporting": {
+      "base": 281474976720656,
+      "pairs": 2000,
+      "checked_count": 4002,
+      "registered_intersections": []
+    },
+    "tuning": {
+      "base": 281474976740656,
+      "pairs": 150,
+      "checked_count": 302,
+      "registered_intersections": []
+    },
+    "budget_check": {
+      "base": 281474976760656,
+      "pairs": 100,
+      "checked_count": 202,
+      "registered_intersections": []
+    },
+    "public_native_smoke": {
+      "base": 281474976800656,
+      "pairs": 11,
+      "checked_count": 24,
+      "registered_intersections": []
+    },
+    "coexistence": {
+      "base": 281474976770656,
+      "pairs": 1000,
+      "checked_count": 2002,
+      "registered_intersections": []
+    },
+    "pause_parity": {
+      "base": 281474976780656,
+      "pairs": 5,
+      "checked_count": 12,
+      "registered_intersections": []
+    }
+  },
+  "sets": {
+    "reporting": {
+      "base": 281474976780666,
+      "pairs": 1000
+    },
+    "tuning": {
+      "base": 281474976790656,
+      "pairs": 150
+    },
+    "combination": {
+      "base": 281474976795656,
+      "pairs": 150
+    },
+    "smoke": {
+      "base": 281474976797656,
+      "pairs": 2
+    }
+  },
+  "intersections": [],
+  "skipped_reporting_offsets": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "reason": "prior pause-parity registered seed set"
+}

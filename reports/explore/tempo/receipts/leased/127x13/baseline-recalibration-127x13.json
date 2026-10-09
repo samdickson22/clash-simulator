@@ -1,0 +1,100 @@
+{
+  "host": "127x13",
+  "old": {
+    "baseline": 50.75508970051418,
+    "seconds": 120.63814754597843,
+    "completed_records": 6123,
+    "source": "own GPU job completion journal counts; no payload decoding",
+    "roots": [
+      "/mpac/sdicks02/repos/clasher-lease/data/v4-cache/epoch-capture-offload-r1/epoch-11",
+      "/mpac/sdicks02/repos/clasher-lease/data/v4-cache/epoch-capture-offload-r1/epoch-19"
+    ],
+    "field": "frames_per_second_step",
+    "log_path": "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/receipts/perception-rate.jsonl"
+  },
+  "new_baseline": 44.71288619601725,
+  "control_seconds": 118.0493893623352,
+  "control_samples": 56,
+  "own_stopped_sim_pids": [
+    502284
+  ],
+  "stopped_sim_cpu_seconds": 10.75,
+  "rate_samples": [
+    {
+      "step": 56,
+      "frames_per_second_step": 42.669645733317395,
+      "completed_records": 429,
+      "utc": 1791510107.3702416
+    },
+    {
+      "step": 57,
+      "frames_per_second_step": 51.921448846419864,
+      "completed_records": 522,
+      "utc": 1791510117.423918
+    },
+    {
+      "step": 58,
+      "frames_per_second_step": 43.365399666627034,
+      "completed_records": 436,
+      "utc": 1791510127.4780114
+    },
+    {
+      "step": 59,
+      "frames_per_second_step": 43.472060332886265,
+      "completed_records": 437,
+      "utc": 1791510137.5308082
+    },
+    {
+      "step": 60,
+      "frames_per_second_step": 43.26604628858434,
+      "completed_records": 435,
+      "utc": 1791510147.5844984
+    },
+    {
+      "step": 61,
+      "frames_per_second_step": 55.32371552195403,
+      "completed_records": 556,
+      "utc": 1791510157.6344285
+    },
+    {
+      "step": 62,
+      "frames_per_second_step": 45.157809298634895,
+      "completed_records": 454,
+      "utc": 1791510167.6880739
+    },
+    {
+      "step": 63,
+      "frames_per_second_step": 36.018657398501276,
+      "completed_records": 362,
+      "utc": 1791510177.7369971
+    },
+    {
+      "step": 64,
+      "frames_per_second_step": 41.28443634575853,
+      "completed_records": 415,
+      "utc": 1791510187.791
+    },
+    {
+      "step": 65,
+      "frames_per_second_step": 41.276996633824474,
+      "completed_records": 415,
+      "utc": 1791510197.8450801
+    },
+    {
+      "step": 66,
+      "frames_per_second_step": 43.66387580229458,
+      "completed_records": 439,
+      "utc": 1791510207.8991067
+    },
+    {
+      "step": 67,
+      "frames_per_second_step": 49.134542483404424,
+      "completed_records": 494,
+      "utc": 1791510217.9532008
+    }
+  ],
+  "reason": "GPU capture rate remains below initial baseline with own simulations continuously stopped; measured phase drift, remeasure unloaded current rate",
+  "utc": 1791510222.282214,
+  "actual_refresh_recovered": true,
+  "note": "Initial refresh passed unloaded validation and was written, then runtime-PID assertion refused cleanup. Old runtime retained original comparator; next shard read this validated baseline. No GPU process changed."
+}

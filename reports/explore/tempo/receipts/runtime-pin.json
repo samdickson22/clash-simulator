@@ -1,0 +1,27 @@
+{
+  "host": "127x04",
+  "python": "3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]",
+  "files": {
+    "gamedata.json": "892fbfa01e2ef9c3e4bd2293939dc336550fa626fa7ffb4ef9f91553cafd2f65",
+    "engine-rs/clasher_core.abi3.so": "13e908c5cb235a3d81cd585b12caf6c2e5fa624888ed3a3cc0ede14933a5f309",
+    "engine-rs/c56_controller.py": "ce36a410d25c6144aea5cfac5fbf424986ae93186ffcf2d3ed056ce41781ee6c",
+    "engine-rs/differential.py": "378d46047a68e8e6c95bd6379f96d7e05b3171d122b59df9385482fd5f3c0da2",
+    "engine-rs/stage2_matches.py": "18f679d752cbaed512125854c2f539e5d4a542ef234fc6c50bd4704f6ba05b7c",
+    "reports/strategy_council_20260928/c56/engine/root-v3/human_deck_catalog.json": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+    "reports/strategy_council_20260928/search-noise-s6/delay.py": "96b0637cbc6245b4246eef06aa45e6a7b571226688777bd299b93b2c436721f2",
+    "reports/strategy_council_20260928/search-noise-s6/own_state.py": "823cf5811ee4c7ff5014d1c3f6edd3f3f248d55d93023cbe3e080b185daa4407",
+    "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": "6d2665d02da7a74083313b64693e87bf59d50b303904e614ae3136b7741f8c76",
+    "reports/strategy_council_20260928/engine-speed/stage5/derived_public_state.py": "18acd4520672148c7c2e6282c5f47c26f390f127eb6529a59c0c704cd2a6bf30",
+    "src/clasher/rl/c56_rollout_planner.py": "71111c8d8f3a8aeb43c8e76e9f516a77c348ca4dab6a81d812b02185aa169ece",
+    "src/clasher/rl/c56_scripted.py": "bf4cad2650db71525ba8e4df967129d597f83052f56df286b604ccf1cd571da1",
+    "src/clasher/rl/public_action_mask.py": "e6e94abae45b0988dbcc087970a11cc0b2f07fc1cc335decec75b5714798d107",
+    "src/clasher/analysis/loss_review/search_ab.py": "2ce4b1d1e77a232ef537f4a3222e498d80340c132ba8a3a494ee72ffa7ca85ae",
+    "src/clasher/analysis/loss_review/simulate.py": "e106119be8c3b9cac9b74b4848f8fa8a1b67ea7689d59532b122ef933c3c15d1",
+    "src/clasher/analysis/loss_review/tempo.py": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a",
+    "src/clasher/analysis/loss_review/metrics.py": "f1a593db9e915289f804c6ebbfd0c49b14bd6a02393cb98b30b3b182c1fbea12",
+    "reports/explore/search-ab/gpu_guard.py": "b88ab4bfdf5384382c42a5a71761598badf7080fc201b7b70cb937511ada1f33",
+    "src/clasher/analysis/loss_review/throughput_guard.py": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4",
+    "reports/explore/tempo/worker_runtime.py": "e554b8e6ad1ce2bc3eda1276a03bc16dce698554232401e19a7a2d4317e32856"
+  },
+  "sha256": "c5259d5e2345dbad59ced666ff616984b03f57bd7127b5767adeb7bfe7bd441c"
+}

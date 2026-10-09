@@ -1,0 +1,76 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261009-r3",
+  "host": "127x15",
+  "label": "tempo-refresh-127x15-v3",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "chrt",
+    "--idle",
+    "0",
+    "/usr/bin/python3",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/recalibrate_idle.py",
+    "--seconds",
+    "180"
+  ],
+  "started_utc": "2026-10-09T02:26:27.076328+00:00",
+  "declared_processes": 2,
+  "declared_pss_bytes": 200000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 26,
+    "pss_bytes": 16200000000
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 15,
+    "pss_bytes": 11322198016
+  },
+  "admission_jobs": {
+    "v2:t7-epoch-offload-20261008-15r2": {
+      "kind": "v2",
+      "sequence": 10,
+      "supervisor_pid": 199955,
+      "processes": 13,
+      "pss_bytes": 11305394176,
+      "stop_reason": null
+    },
+    "v2:tempo-perception-rate-v1": {
+      "kind": "v2",
+      "sequence": 47,
+      "supervisor_pid": 650558,
+      "processes": 2,
+      "pss_bytes": 16803840,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 920951,
+  "supervisor_start": "130227043",
+  "stop_grace_seconds": 120,
+  "admission_sequence": 72,
+  "pid": 920962,
+  "child_start": "130227048",
+  "child_pgid": 920962,
+  "child_sid": 920962,
+  "exit_code": 0,
+  "status": "pass",
+  "finished_utc": "2026-10-09T02:29:29.729819+00:00",
+  "stop_reason": null,
+  "peak_processes": 2,
+  "peak_rss_bytes": 26193920,
+  "peak_sampled_pss_bytes": 15134720,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "aggregate": {
+    "processes": 20,
+    "pss_bytes": 11396192256
+  },
+  "effective_process_cap": 80
+}

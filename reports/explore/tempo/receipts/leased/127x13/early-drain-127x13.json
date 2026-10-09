@@ -1,0 +1,45 @@
+{
+  "pid": 499869,
+  "host": "127x13",
+  "sample": {
+    "utc": 1791510537.2417407,
+    "event": "sample",
+    "paused": true,
+    "gpu_job_present": true,
+    "throughput": 44.255987423702884,
+    "baseline": 50.75508970051418,
+    "affinity": [
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83
+    ],
+    "excluded_cpus": [
+      8,
+      25,
+      57,
+      61,
+      72,
+      89,
+      121,
+      125
+    ]
+  },
+  "utc": 1791510538.082843,
+  "reason": "already-paused shard drains; original outputs preserved, no change to GPU processes"
+}

@@ -1,0 +1,132 @@
+{
+  "old": {
+    "baseline": 43.26892634955354,
+    "seconds": 120.71066682203673,
+    "completed_records": 6953,
+    "source": "own GPU job completion journal counts; no payload decoding",
+    "roots": [
+      "/mpac/sdicks02/repos/clasher-lease/data/v4-cache/epoch-capture-offload-r2/epoch-04",
+      "/mpac/sdicks02/repos/clasher-lease/data/v4-cache/epoch-capture-offload-r2/epoch-12",
+      "/mpac/sdicks02/repos/clasher-lease/data/v4-cache/epoch-capture-offload-r2/epoch-20"
+    ],
+    "field": "frames_per_second_step",
+    "log_path": "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/receipts/perception-rate.jsonl",
+    "refresh_utc": 1791512062.7727838,
+    "control_seconds": 182.64580631256104,
+    "refresh_receipt": "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/receipts/baseline-idle-refresh.json"
+  },
+  "new_baseline": 56.89302238006313,
+  "seconds": 182.65649318695068,
+  "rate_samples": [
+    {
+      "step": 322,
+      "frames_per_second_step": 47.87234630886446,
+      "completed_records": 482,
+      "utc": 1791512790.7573729
+    },
+    {
+      "step": 323,
+      "frames_per_second_step": 49.86091781693132,
+      "completed_records": 502,
+      "utc": 1791512800.8383002
+    },
+    {
+      "step": 324,
+      "frames_per_second_step": 75.96247836049184,
+      "completed_records": 766,
+      "utc": 1791512810.9089825
+    },
+    {
+      "step": 325,
+      "frames_per_second_step": 68.61544747344948,
+      "completed_records": 691,
+      "utc": 1791512820.9804988
+    },
+    {
+      "step": 326,
+      "frames_per_second_step": 40.319838544923186,
+      "completed_records": 406,
+      "utc": 1791512831.0714836
+    },
+    {
+      "step": 327,
+      "frames_per_second_step": 48.05787720872404,
+      "completed_records": 485,
+      "utc": 1791512841.155176
+    },
+    {
+      "step": 328,
+      "frames_per_second_step": 58.30584282289751,
+      "completed_records": 588,
+      "utc": 1791512851.230667
+    },
+    {
+      "step": 329,
+      "frames_per_second_step": 55.681065805863966,
+      "completed_records": 561,
+      "utc": 1791512861.311688
+    },
+    {
+      "step": 330,
+      "frames_per_second_step": 58.02840103809602,
+      "completed_records": 585,
+      "utc": 1791512871.3890724
+    },
+    {
+      "step": 331,
+      "frames_per_second_step": 57.455599735800234,
+      "completed_records": 579,
+      "utc": 1791512881.4627604
+    },
+    {
+      "step": 332,
+      "frames_per_second_step": 56.582829345852645,
+      "completed_records": 570,
+      "utc": 1791512891.534716
+    },
+    {
+      "step": 333,
+      "frames_per_second_step": 56.99168978065106,
+      "completed_records": 574,
+      "utc": 1791512901.6124895
+    },
+    {
+      "step": 334,
+      "frames_per_second_step": 62.722996852967306,
+      "completed_records": 632,
+      "utc": 1791512911.682609
+    },
+    {
+      "step": 335,
+      "frames_per_second_step": 61.45692444050072,
+      "completed_records": 619,
+      "utc": 1791512921.7559168
+    },
+    {
+      "step": 336,
+      "frames_per_second_step": 62.83922519818669,
+      "completed_records": 633,
+      "utc": 1791512931.8244138
+    },
+    {
+      "step": 337,
+      "frames_per_second_step": 52.14301137692541,
+      "completed_records": 525,
+      "utc": 1791512941.8906155
+    },
+    {
+      "step": 338,
+      "frames_per_second_step": 51.757478875132314,
+      "completed_records": 521,
+      "utc": 1791512951.954823
+    },
+    {
+      "step": 339,
+      "frames_per_second_step": 59.42043185487808,
+      "completed_records": 598,
+      "utc": 1791512962.0194976
+    }
+  ],
+  "control": "own tempo simulation runtimes absent at every10s check",
+  "utc": 1791512971.714836
+}

@@ -1,0 +1,116 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261009-r3",
+  "host": "127x14",
+  "label": "tempo-refresh-127x14-v3",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "chrt",
+    "--idle",
+    "0",
+    "/usr/bin/python3",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/recalibrate_idle.py",
+    "--seconds",
+    "180"
+  ],
+  "started_utc": "2026-10-09T02:26:27.364861+00:00",
+  "declared_processes": 2,
+  "declared_pss_bytes": 200000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 45,
+    "pss_bytes": 24200000000
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 32,
+    "pss_bytes": 16634259456
+  },
+  "admission_jobs": {
+    "v2:t7-epoch-offload-20261008-14r2": {
+      "kind": "v2",
+      "sequence": 7,
+      "supervisor_pid": 29251,
+      "processes": 13,
+      "pss_bytes": 11281007616,
+      "stop_reason": null
+    },
+    "v2:tempo-perception-rate-v1": {
+      "kind": "v2",
+      "sequence": 22,
+      "supervisor_pid": 436010,
+      "processes": 2,
+      "pss_bytes": 16164864,
+      "stop_reason": null
+    },
+    "v2:cpu-delay-fixes-p1235-127x14-throughput-v5": {
+      "kind": "v2",
+      "sequence": 30,
+      "supervisor_pid": 666743,
+      "processes": 17,
+      "pss_bytes": 5337086976,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 677771,
+  "supervisor_start": "130228897",
+  "stop_grace_seconds": 120,
+  "admission_sequence": 31,
+  "pid": 677772,
+  "child_start": "130228912",
+  "child_pgid": 677772,
+  "child_sid": 677772,
+  "checked_utc": "2026-10-09T02:29:31.131702+00:00",
+  "processes": 2,
+  "rss_bytes": 26378240,
+  "pss_bytes": 15276032,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "effective_process_cap": 80,
+  "aggregate": {
+    "processes": 34,
+    "pss_bytes": 17095903232
+  },
+  "accounted_jobs": {
+    "v2:t7-epoch-offload-20261008-14r2": {
+      "kind": "v2",
+      "sequence": 7,
+      "supervisor_pid": 29251,
+      "processes": 13,
+      "pss_bytes": 11284736000,
+      "stop_reason": null
+    },
+    "v2:tempo-perception-rate-v1": {
+      "kind": "v2",
+      "sequence": 22,
+      "supervisor_pid": 436010,
+      "processes": 2,
+      "pss_bytes": 15940608,
+      "stop_reason": null
+    },
+    "v2:cpu-delay-fixes-p1235-127x14-throughput-v5": {
+      "kind": "v2",
+      "sequence": 30,
+      "supervisor_pid": 666743,
+      "processes": 17,
+      "pss_bytes": 5779950592,
+      "stop_reason": null
+    },
+    "v2:tempo-refresh-127x14-v3": {
+      "kind": "v2",
+      "sequence": 31,
+      "supervisor_pid": 677771,
+      "processes": 2,
+      "pss_bytes": 15276032,
+      "stop_reason": null
+    }
+  },
+  "stop_reason": null
+}

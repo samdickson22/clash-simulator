@@ -1,0 +1,15 @@
+{
+  "utc": 1791514467.1844747,
+  "changes": {
+    "src/clasher/analysis/loss_review/tempo.py": {
+      "initial": "0c725ddc9347171d2ae4b72e23401d6721d57eed686e77272b69f29743d44976",
+      "final": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a"
+    },
+    "reports/explore/tempo/worker_runtime.py": {
+      "initial": "218ffdd7234b6e47d11bab1c1e669fa74b83545c521f85dddf4f0d6a4ccf17ac",
+      "final": "e554b8e6ad1ce2bc3eda1276a03bc16dce698554232401e19a7a2d4317e32856"
+    }
+  },
+  "all_baseline_native_public_and_script_hashes_unchanged": true,
+  "reason": "HW excludes E; explicit exec priority and explicit signal cleanup handlers in runner; reporting definitions unaffected"
+}

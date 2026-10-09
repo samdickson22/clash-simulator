@@ -1,0 +1,12 @@
+{
+  "elapsed_seconds": 406.33998942375183,
+  "completed_games": 256,
+  "games_per_second": 0.6300142901589494,
+  "first10_minutes_games": 256,
+  "first10_minutes_games_per_second": 0.6300142901589494,
+  "completed_worker_cpu_seconds": 9862.964856657003,
+  "guard_samples": 177,
+  "measured_guard_samples": 177,
+  "pause_samples": 18,
+  "rate_ratio_min": 0.9206452022287446
+}

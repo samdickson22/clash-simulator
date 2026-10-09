@@ -1,0 +1,13 @@
+{
+  "matched": true,
+  "source": "search-ab/receipts/runtime-primary-pin.json",
+  "files": {
+    "engine-rs/clasher_core.abi3.so": true,
+    "gamedata.json": true,
+    "reports/strategy_council_20260928/search-noise-s6/delay.py": true,
+    "reports/strategy_council_20260928/engine-speed/stage5/fair_player.py": true,
+    "src/clasher/rl/c56_rollout_planner.py": true,
+    "src/clasher/rl/c56_scripted.py": true,
+    "src/clasher/rl/public_action_mask.py": true
+  }
+}

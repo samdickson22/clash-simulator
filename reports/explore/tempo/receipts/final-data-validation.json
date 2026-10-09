@@ -1,0 +1,26 @@
+{
+  "utc": 1791514754.6753814,
+  "arm_games": {
+    "H16": 1000,
+    "H12": 1000,
+    "EW": 1000,
+    "E": 1000,
+    "W": 1000,
+    "0": 1000
+  },
+  "own_decks": 5,
+  "opponent_decks": 5,
+  "matchups": 25,
+  "styles": {
+    "defense": 325,
+    "balanced": 350,
+    "pressure": 325
+  },
+  "seats": {
+    "1": 500,
+    "0": 500
+  },
+  "all_terminal_d27": true,
+  "all_flag_configurations_match": true,
+  "deck_identity": "sorted card membership; metadata lists preserve seed-dependent initial shuffle order"
+}

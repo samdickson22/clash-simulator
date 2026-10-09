@@ -1,0 +1,30 @@
+[
+  {
+    "host": "127x09",
+    "pid": 444256,
+    "signal": "SIGTERM",
+    "utc": 1791513872.6079059,
+    "reason": "leased simulations complete; intentional own monitor stop"
+  },
+  {
+    "host": "127x13",
+    "pid": 471474,
+    "signal": "SIGTERM",
+    "utc": 1791513872.6104524,
+    "reason": "leased simulations complete; intentional own monitor stop"
+  },
+  {
+    "host": "127x14",
+    "pid": 436015,
+    "signal": "SIGTERM",
+    "utc": 1791513872.6749103,
+    "reason": "leased simulations complete; intentional own monitor stop"
+  },
+  {
+    "host": "127x15",
+    "pid": 650578,
+    "signal": "SIGTERM",
+    "utc": 1791513872.6200542,
+    "reason": "leased simulations complete; intentional own monitor stop"
+  }
+]

@@ -1,0 +1,143 @@
+{
+  "version": 2,
+  "wrapper_revision": "v2-hotfix-20261009-r3",
+  "host": "127x09",
+  "label": "tempo-hw-corrected-v1",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "chrt",
+    "--idle",
+    "0",
+    "taskset",
+    "-c",
+    "64-83",
+    "env",
+    "CLASHER_ROOT=/mpac/sdicks02/repos/clasher-lease/tempo-runtime",
+    "PYTHONPATH=/mpac/sdicks02/repos/clasher-lease/tempo-runtime/src:/mpac/sdicks02/repos/clasher-lease/tempo-runtime/engine-rs",
+    "OMP_NUM_THREADS=1",
+    "OPENBLAS_NUM_THREADS=1",
+    "MKL_NUM_THREADS=1",
+    "RAYON_NUM_THREADS=1",
+    "/mpac/sdicks02/repos/clasher-lease/repo/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/worker_runtime.py",
+    "--offset",
+    "0",
+    "--pairs",
+    "150",
+    "--seed-offset",
+    "85000",
+    "--workers",
+    "20",
+    "--arms",
+    "HW",
+    "--elixir-weight",
+    ".005",
+    "--wait-prior",
+    ".01",
+    "--combo-horizon",
+    "320",
+    "--out",
+    "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/hw-corrected",
+    "--max-seconds",
+    "840",
+    "--gpu-guard",
+    "--throughput-log",
+    "/mpac/sdicks02/repos/clasher-lease/tempo-runtime/reports/explore/tempo/receipts/perception-rate.jsonl",
+    "--throughput-field",
+    "frames_per_second_step",
+    "--baseline-rate",
+    "74.50763850285045"
+  ],
+  "started_utc": "2026-10-09T02:30:10.980451+00:00",
+  "declared_processes": 24,
+  "declared_pss_bytes": 16000000000,
+  "gpu": false,
+  "admission_usage": {
+    "processes": 20,
+    "pss_bytes": 12200000000
+  },
+  "policy_source": "bundled FLEET-SHARING.md limits snapshot (2026-10-08)",
+  "policy_controls_sha256": "be6b938ffca05dfbbac30189ae967d8aba274ccb102244b0127198b37fcc468e",
+  "bundled_policy_original_sha256": "d6b20afa8aecc0c8c69bcdf094adc6e930fff6ffc1e34342a72f56a67aa8fd0b",
+  "stop_at_utc": "2026-10-09T04:30:00+00:00",
+  "exit_by_utc": "2026-10-09T05:00:00+00:00",
+  "admission_aggregate": {
+    "processes": 12,
+    "pss_bytes": 7913148416
+  },
+  "admission_jobs": {
+    "v2:t7-epoch-offload-20261008-09r1": {
+      "kind": "v2",
+      "sequence": 10,
+      "supervisor_pid": 19112,
+      "processes": 10,
+      "pss_bytes": 7896419328,
+      "stop_reason": null
+    },
+    "v2:tempo-perception-rate-v1": {
+      "kind": "v2",
+      "sequence": 46,
+      "supervisor_pid": 444237,
+      "processes": 2,
+      "pss_bytes": 16729088,
+      "stop_reason": null
+    }
+  },
+  "supervisor_pid": 683003,
+  "supervisor_start": "130275115",
+  "stop_grace_seconds": 120,
+  "admission_sequence": 66,
+  "pid": 683004,
+  "child_start": "130275120",
+  "child_pgid": 683004,
+  "child_sid": 683004,
+  "checked_utc": "2026-10-09T02:41:28.444637+00:00",
+  "processes": 3,
+  "rss_bytes": 1086005248,
+  "pss_bytes": 19830784,
+  "memory_metric": "pss",
+  "console_users": 0,
+  "effective_process_cap": 80,
+  "aggregate": {
+    "processes": 32,
+    "pss_bytes": 13459916800
+  },
+  "accounted_jobs": {
+    "v2:t7-epoch-offload-20261008-09r1": {
+      "kind": "v2",
+      "sequence": 10,
+      "supervisor_pid": 19112,
+      "processes": 10,
+      "pss_bytes": 7897842688,
+      "stop_reason": null
+    },
+    "v2:tempo-perception-rate-v1": {
+      "kind": "v2",
+      "sequence": 46,
+      "supervisor_pid": 444237,
+      "processes": 2,
+      "pss_bytes": 16536576,
+      "stop_reason": null
+    },
+    "v2:tempo-hw-corrected-v1": {
+      "kind": "v2",
+      "sequence": 66,
+      "supervisor_pid": 683003,
+      "processes": 3,
+      "pss_bytes": 19830784,
+      "stop_reason": null
+    },
+    "v2:cpu-delay-fixes-lag0-p0375-127x09-r1": {
+      "kind": "v2",
+      "sequence": 70,
+      "supervisor_pid": 699751,
+      "processes": 17,
+      "pss_bytes": 5525706752,
+      "stop_reason": null
+    }
+  },
+  "stop_reason": null
+}

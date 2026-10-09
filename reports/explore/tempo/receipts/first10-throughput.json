@@ -1,0 +1,28 @@
+{
+  "host03": {
+    "elapsed_seconds": 651.2662236690521,
+    "completed_games": 826,
+    "games_per_second": 1.2682985390314678,
+    "first10_minutes_games": 748,
+    "first10_minutes_games_per_second": 1.2466666666666666,
+    "completed_worker_cpu_seconds": 53171.408392741025,
+    "guard_samples": 273,
+    "measured_guard_samples": 0,
+    "pause_samples": 0,
+    "rate_ratio_min": null
+  },
+  "host04": {
+    "elapsed_seconds": 406.33998942375183,
+    "completed_games": 256,
+    "games_per_second": 0.6300142901589494,
+    "first10_minutes_games": 256,
+    "first10_minutes_games_per_second": 0.6300142901589494,
+    "completed_worker_cpu_seconds": 9862.964856657003,
+    "guard_samples": 177,
+    "measured_guard_samples": 177,
+    "pause_samples": 18,
+    "rate_ratio_min": 0.9206452022287446
+  },
+  "scope": "First10 minute qualification, 03 full600s;04 preliminary within first10 minutes",
+  "bottleneck_fix": "reuse warm external bytecode; horizon-aware LPT case costs and short resumable shards; own-GPU drift verified unloaded, controlled recalibration; stalled paused lanes drain and resume elsewhere"
+}
