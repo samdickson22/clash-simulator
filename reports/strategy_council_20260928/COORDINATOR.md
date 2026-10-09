@@ -1575,3 +1575,4 @@ Also on the hub, but with copies elsewhere:
 - **20:26 UTC:**
   - **S-human OOM root cause:** the frozen ExIt mixed_indices order doesn't apply T11's entity-count sort, so a rare dense first micro (7168) can need ~42 GiB. Re-sorting would break exact sample order. **Decision:** move S-human to owned 08 (no leased reserve rule), resume exactly from checkpoint 108, stop file with ≤5 min vacate for B.
   - **Capacity scan:** control quarter NLL 0.27726 at 95.1 M rows (0.37 GPU-h). The 480 arm is capped at allocator fraction 0.78 after a transient 46 GB reserve peak.
+- **20:32 UTC: A1 dry run.** All 24 assemblies exited 0 at 20:30:50Z, and epoch 1 matches the serial build. **My §8 mechanical checks: item 5 (identical, correct A18 bindings across 24) PASS; item 9 (24 epoch keys and assembly SHAs vs authority) PASS.** Item 11 (evidence ledger) is pending the fresh admissions, which are running.

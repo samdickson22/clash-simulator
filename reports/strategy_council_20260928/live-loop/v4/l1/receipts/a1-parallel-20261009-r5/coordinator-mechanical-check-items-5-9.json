@@ -1,0 +1,14 @@
+{
+ "schema": "clasher.v4.a1-coordinator-mechanical-check.v1",
+ "utc": "2026-10-09T20:32:57+00:00",
+ "by": "coordinator",
+ "inputs": {
+  "assembly_verification_receipt_sha256": "22c84725c6eae9c4e099ff1c0a3de13da99cc898d3e10fcc98972bf82a15925f",
+  "authority_24_sha256": "86d796dc77c5feb921da3943e728dba29345183c7ceefdffb3ffa9b82898269d",
+  "build_result_sha256": "8523b73babc9b6289fa1cee65e4888fc49cbecd3d55a761a02bf2d882e6b4f42"
+ },
+ "item5_a18_bindings": "PASS: all 24 per-epoch A18 bindings are identical and equal to routes efff5b98, retirement e5d14103, r16_audits 2c9e5c00, a17_condition 05fa63c8, recovery_state a334155a and activation 7ecdc1fb (full SHAs in the receipt).",
+ "item9_assemblies": "PASS: epochs 1\u201324 present; each epoch-NN.json declares epoch NN; the recomputed file SHA equals authority-24.assemblies[NN] and the receipt's assembly_sha256 for all 24; epoch 1 = 8ccd70b4\u2026 equals the serial build.",
+ "item11_ledger": "PENDING: awaiting the fresh-admission evidence ledger (zero 02/leased/journal/heldout entries).",
+ "A1_authorized": false
+}
