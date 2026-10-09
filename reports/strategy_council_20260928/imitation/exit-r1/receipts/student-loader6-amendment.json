@@ -1,0 +1,34 @@
+{
+  "schema": "clasher.exit-r1.loader6-operational-amendment.v1",
+  "utc": "2026-10-09T20:09:24.994949+00:00",
+  "authority": "Coordinator instruction 2026-10-09 about20:05Z, loader starvation repair; no reporting outcomes observed.",
+  "actual_loader_workers": 6,
+  "scientific_loader_workers": 1,
+  "prefetch_factor": 4,
+  "mmap_random_advice": false,
+  "loader_adapter_sha256": "de014cc3f7d08092d65cb9bfee495cb3162d75f34cb85abe09cf0da16ee40501",
+  "fit_runtime_sha256": "73c4f284b8fd131341fb1453e59d7d8e95d6e3f2e73920702f7f1b4fd45214df",
+  "recipe_changed": false,
+  "seed": 2026100901,
+  "steps": 4883,
+  "batch_size": 8192,
+  "sample_order": "Each worker calls the unchanged mixed_indices with identical human/teacher sizes, batch, ratio, seed, absolute optimizer step; complete batch shapes/order unchanged. Parent rechecks both complete index vectors for every prefetched step. Private DataLoader generator avoids consuming parent RNG.",
+  "restart": "Checkpoint and exit; serial versus loader6 two-step train-only exact-state replay must match all checkpoint keys except destination/stop arguments before production resume. No checkpoint/parameter choice uses reporting seeds.",
+  "limits": {
+    "processes_leased_max": 12,
+    "pss_tree_guard_bytes": 46000000000,
+    "pss_leased_max_bytes": 48000000000,
+    "mem_available_min_bytes": 25769803776,
+    "nice_min": 10,
+    "loader_cores": [
+      120,
+      121,
+      122,
+      123,
+      124,
+      125
+    ],
+    "trainer_core": 126
+  },
+  "loader6_reference": "imitation/t11/loader_adapter.py; user selects prefetch4; qualified original bounded T5 eviction preserved."
+}

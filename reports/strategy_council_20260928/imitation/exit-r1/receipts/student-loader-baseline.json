@@ -1,0 +1,68 @@
+{
+  "utc": "2026-10-09T20:09:42.866Z",
+  "arms": {
+    "S-mix": {
+      "start": {
+        "step": 35,
+        "optimizer_seconds": 1.4584484929218888,
+        "elapsed_seconds": 597.6583264837973,
+        "pss_bytes": 7586265088,
+        "mem_available_bytes": 118102724608,
+        "gpu_free_bytes": 13036683264
+      },
+      "end": {
+        "step": 71,
+        "optimizer_seconds": 1.4597089171875268,
+        "elapsed_seconds": 940.730279061012,
+        "pss_bytes": 7467558912,
+        "mem_available_bytes": 119862468608,
+        "gpu_free_bytes": 13036683264
+      },
+      "seconds": 343.0719525772147,
+      "rows_per_second": 859.6214228081633,
+      "seconds_per_step": 9.529776460478185
+    },
+    "S-teacher": {
+      "start": {
+        "step": 118,
+        "optimizer_seconds": 1.6038605680223554,
+        "elapsed_seconds": 602.3462279409869,
+        "pss_bytes": 7567992832,
+        "mem_available_bytes": 119712698368,
+        "gpu_free_bytes": 48470294528
+      },
+      "end": {
+        "step": 206,
+        "optimizer_seconds": 1.568150326027535,
+        "elapsed_seconds": 937.8853390699951,
+        "pss_bytes": 7352576000,
+        "mem_available_bytes": 119921762304,
+        "gpu_free_bytes": 48470294528
+      },
+      "seconds": 335.53911112900823,
+      "rows_per_second": 2148.4708520993536,
+      "seconds_per_step": 3.8129444446478207
+    },
+    "S-human": {
+      "start": {
+        "step": 45,
+        "optimizer_seconds": 0.9617318008095026,
+        "elapsed_seconds": 563.6436401659157,
+        "pss_bytes": 7788816384,
+        "mem_available_bytes": 114493751296,
+        "gpu_free_bytes": 10969022464
+      },
+      "end": {
+        "step": 97,
+        "optimizer_seconds": 0.9392819460481405,
+        "elapsed_seconds": 898.4919247978833,
+        "pss_bytes": 7661501440,
+        "mem_available_bytes": 114508955648,
+        "gpu_free_bytes": 10969022464
+      },
+      "seconds": 334.84828463196754,
+      "rows_per_second": 1272.170172435555,
+      "seconds_per_step": 6.439390089076299
+    }
+  }
+}

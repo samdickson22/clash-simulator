@@ -40,8 +40,8 @@ try:
             response=ssh(host,f'test ! -f {job}/fits/{arm}/complete.json || cat {job}/fits/{arm}/complete.json')
             if response:
                 receipt=json.loads(response)
-                assert receipt['step']==4883 and not receipt['stopped'],(arm,receipt)
-                ready.append(arm)
+                assert 0<=receipt['step']<=4883,(arm,receipt)
+                if receipt['step']==4883 and not receipt['stopped']:ready.append(arm)
         state('waiting for final EMA fits',finished=ready)
         if len(ready)==3:break
         if time.monotonic()>deadline:raise TimeoutError('fits did not finish within 36 hours')
@@ -137,4 +137,4 @@ except Exception as e:
         for host in ('01','04'):
             try:ssh(host,f'touch {job}/REPORTING.STOP')
             except Exception:pass
-    state('failed',error=repr(e));raise
+    state('failed',error=repr(e),previous_stage=previous.get('stage'),local_cpu_seconds=local_cpu_seconds);raise

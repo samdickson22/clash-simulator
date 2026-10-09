@@ -36,6 +36,7 @@ def main():
     freeze = read(job/'execution-freeze.json')
     assert digest(job/'execution-freeze.json') == aggregate['freeze_sha256']
     corpus = read(job/'corpus/manifest.json')
+    prefit = read(job/'pre-fit-pin.json')
     fit = {}
     for arm in ARMS:
         root = job/'fits'/arm
@@ -66,10 +67,11 @@ def main():
     receipt = dict(schema='clasher.exit-r1.student-screen-complete.v1',
         utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
         lane='exploration; no multiplicity adjustment', corpus_manifest_sha256=digest(job/'corpus/manifest.json'),
-        corpus_rows=corpus['rows'], source_games=49577,
+        corpus_rows=corpus['rows'], corpus_root_decisions=6009681, source_games=49577,
         execution_freeze_sha256=aggregate['freeze_sha256'], aggregate_sha256=digest(job/'aggregate.json'),
         heldout_manifest_sha256=digest(job/'heldout-corpus/manifest.json'),
-        pre_fit_pin_sha256=digest(job/'pre-fit-pin.json'), fits=fit, reporting_hosts=exits,
+        pre_fit_pin_sha256=digest(job/'pre-fit-pin.json'), human_inputs=prefit['human_inputs'],
+        runtime_source_files=prefit['source_files'], fits=fit, reporting_hosts=exits,
         reporting_cpu_hours=sum(x['children_cpu_seconds']+x['manager_cpu_seconds'] for x in exits.values())/3600,
         postprocessing_cpu_hours=controller['local_cpu_seconds']/3600,
         heldout_teacher_game_cpu_hours=sum(x['cpu_seconds'] for x in heldout)/3600,
@@ -173,11 +175,16 @@ def main():
          *[[Path(name).name,sha] for name,sha in receipt['inputs'].items()]])
     human=fit['S-mix']['inputs']['pins']
     table(lines,['Fit input','SHA256'],[['Human train manifest',human['human_manifest']],
+          ['Human parent manifest',prefit['human_inputs']['01']['parent_manifest_sha256']],
+          ['Human dev manifest',prefit['human_inputs']['01']['dev_manifest_sha256']],
+          ['Public mask',prefit['human_inputs']['01']['mask_sha256']],
           ['Public assets',human['assets']],['Common init checkpoint',human['init_checkpoint']]])
     lines += ['The pre-fit receipt also pins the human parent/dev manifests, publicmask, '
         'all training columns, the immutable runtime source files and init step/width. '
         'Qualified fitting runtime: NumPy2.3.5, Torch2.7.1+cu118. Frozen scientific code '
-        'commits:39b6adf6 andf98d8926. Eight frozen tests passed, including real pack '
+        'commits:39b6adf6 andf98d8926. Execution receipt commits: b6b39380, f48d865d, '
+        'ee6baaad and666dd205 (later operational completion commits are in repository history). '
+        'Eight frozen tests passed, including real pack '
         'identity/tamper rejection and ratio0 equality to qualified T11.', '',
         'Technical setup retries occurred before fitting: self-SSH replaced by local '
         'copy, B4 modules overlaid from the unchanged frozen source, task-local GPU '
