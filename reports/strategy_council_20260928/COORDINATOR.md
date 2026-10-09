@@ -1374,3 +1374,8 @@ Also on the hub, but with copies elsewhere:
 - **09:09 UTC:** the pinned mixed verifier is a lifetime singleton (`verifier.lock`, pending[0]) with no partitioning. **Approved: a separate operational dispatcher** (new versioned orchestration source) with durable per-claim reservations and CPU audit workers on 03. It calls the unchanged pinned `audit()` and `publish()`.
   - Tests required for: reservation atomicity, exactly-once crash reclaim, `publish()` as the sole writer of marks, and suspension parity.
   - The 15 watcher dependency is migrated explicitly at handoff.
+- **09:16 UTC: parallel verifier dispatcher active** (04 PID 1945646, source `983b31e8…`, plan `61dec0ab…`). 8 audit slots on 03, effective ≤7 because of the per-host I/O locks.
+  - 9/9 tests pass: 100 concurrent reservations → 1, crash release consumed once, reserved ≠ verified, only the pinned `publish()` writes, suspension parity.
+  - The serial verifier exited 0 after all 456 published proofs were checked.
+  - The 15 watcher dependency was migrated.
+  - **The backlog was 151 at handoff;** the rate window is being measured.
