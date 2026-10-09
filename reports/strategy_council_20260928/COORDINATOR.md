@@ -891,3 +891,9 @@ Also on the hub, but with copies elsewhere:
   - **Bit-exact on CPU:** birth-map output reuse (tail calls 1,152→128–171, all batch-1). 384 frames × 9 branches exact; 1.83–1.93× on CPU, 7.0–7.3 fps.
   - **Pending:** GPU/graph qualification and full-match / 3-reference-cell checks. 100 fps is not demonstrated.
   - **Plan:** the coordinator pins a ≤300 s 08 window JSON after 05:00Z, once T5 GRU's exit is checked, before perception's 08 recovery. Formal v4 stays on the admitted exact path.
+- **00:14:07 UTC 2026-10-09: gates (b)/(c) FROZEN AND LAUNCHED.**
+  - **Gate (b):** 127x03 at 16 workers, label `imitation-gate-b-v1-r1`, budget 2–2.5 h.
+  - **Gate (c):** 127x02 at 16 workers, label `imitation-gate-c-v1-r1`, budget 3–4 h, alongside the qualified v4 GPU co-tenancy.
+  - **Freeze checks:** F-1 initial and closing PASS (54 known job entries, 0 unknown or intersecting; 07 has no route). F-2: final review `f199e096` plus per-gate approvals pinned. L-1: fresh 302 s quiet-host capture PASS (average 0.0048 core; non-baseline empty; console 0; marker present; cache pin OK).
+  - **Frozen registrations:** b `50823cd3…` / manifest `18f08db2…`; c `aed4478b…` / manifest `99ab97a8…`. The H round-trip is unchanged, and both freezes exited 0 before any game.
+  - Receipts are in `imitation/gates-bc/receipts/freeze-launch-v1/`. The worker monitors liveness only and reads no outcomes until completion.
