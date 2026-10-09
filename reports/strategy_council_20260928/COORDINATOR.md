@@ -909,3 +909,13 @@ Also on the hub, but with copies elsewhere:
   - **Taken:** the fullgate waiter was SIGTERMed (identity-verified); epoch 1/2 grids are quarantined; captures are retained; no seal or heldout exists.
   - **Next:** decide between offline recovery from the journals (preferred) and a per-branch-clock driver plus amendment. Q2 (V4Perception body threshold defaulting to 0.5) is also confirmed.
   - **Split:** the live-runtime worker wires the adapter and threshold in new live wrappers, failing closed while unset; the perception owner owns the contract.
+- **~00:58–01:00 UTC: two correctness findings, now with evidence.**
+  1. **v4 capture clock, empirically confirmed.** Same e1/body0.1 frames: shared median lag 29.6 ms vs single-branch 5.3 ms. Offline exact correction is **not identifiable**: the journals lack absolute per-branch start/end times and shared-stage attribution.
+     - **Decision:** a new timing driver/schema plus remeasurement (~2–3 h to implement and qualify); existing non-clock record streams are retained.
+     - Epoch 1/2 grids are inadmissible for selection. Captures continue in record-only mode.
+     - The vectorized DecoderAdapter stays unadmitted until non-clock exactness plus the new timing gate pass.
+  2. **Mac runtime suite: 296/440 (67%) of scored searches had every candidate at −2.0.** Pixel packets carry only *detected* towers, so a missing own King was read by the native cleanup as a destroyed King, giving a terminal loss at the leaf. There are also phantom duplicate Tower/KingTower identities near (9,3).
+     - **Consequence: the 2026-10-08 Mac runtime-latency PASS (p50 ~186 ms) and its frame→submission component of d are NOT valid evidence for non-terminal search.** E4 must be re-measured after the fix.
+     - **The total delay d≈26–27 ticks still stands** on independent grounds (the T2 20-tick lead and ClashAI's official-client distribution; `reports/research/command-delay-20261008.md`), but its pipeline component must be re-measured.
+     - **L2-v4:** the PREREG text stays as frozen, but **L2-v4 entry is blocked** until the tower-reconciliation fix (opt-in public-geometry: towers persist until a *public* destruction signal; fair-information compliant), the perception tower-identity check, and a fresh E4 measurement. Any change to the player or entry criteria will be a dated prospective amendment before L2 starts.
+  - **Live wiring contract** (perception owner → live-runtime worker): an explicit selected body_threshold, refusing while unset, with only an authenticated seal as authority.
