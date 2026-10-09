@@ -6,6 +6,7 @@ from pathlib import Path
 import shlex
 import subprocess
 import time
+import resource
 
 job=Path('/mpac/sdicks02/jobs/clasher/exit-r1-student-screen-20261009-r1')
 hosts={'S-mix':'01','S-teacher':'04','S-human':'09'}
@@ -21,9 +22,17 @@ env=dict(os.environ,PYTHONPATH=str(job/'source')+':'+str(job/'source/src'),
     OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1',RAYON_NUM_THREADS='1',
     XDG_CACHE_HOME=str(job/'cache'))
 py='/mpac/sdicks02/repos/clasher/.venv/bin/python'
-def local(args):subprocess.run([py,'-B',*args],check=True,env=env,cwd=job/'source')
+local_cpu_seconds=0.
+def local(args):
+    global local_cpu_seconds
+    before=resource.getrusage(resource.RUSAGE_CHILDREN)
+    subprocess.run([py,'-B',*args],check=True,env=env,cwd=job/'source')
+    after=resource.getrusage(resource.RUSAGE_CHILDREN)
+    local_cpu_seconds += after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime
 try:
-    deadline=time.monotonic()+12*3600
+    # Admission and fitting remain guarded by each host's live lease/resource rules.
+    # Slow cold mmap gathering must not cause the reporting waiter to abandon a fit.
+    deadline=time.monotonic()+36*3600
     while True:
         if (job/'CONTROLLER.STOP').exists():raise InterruptedError('owned controller STOP')
         ready=[]
@@ -35,7 +44,7 @@ try:
                 ready.append(arm)
         state('waiting for final EMA fits',finished=ready)
         if len(ready)==3:break
-        if time.monotonic()>deadline:raise TimeoutError('fits did not finish within 12 hours')
+        if time.monotonic()>deadline:raise TimeoutError('fits did not finish within 36 hours')
         time.sleep(30)
     state('collecting final checkpoints')
     for arm,host in hosts.items():
@@ -118,7 +127,9 @@ try:
         local([str(job/'ops/supplement.py'),'--job',str(job),'--freeze-sha256',digest,'--arm',arm])
     (job/'diagnostics.json').write_text(json.dumps(diag,indent=2)+'\n')
     local([str(job/'ops/supplement.py'),'--job',str(job),'--freeze-sha256',digest])
-    state('complete',freeze_sha256=digest,aggregate_sha256=hashlib.sha256((job/'aggregate.json').read_bytes()).hexdigest())
+    state('complete',freeze_sha256=digest,aggregate_sha256=hashlib.sha256((job/'aggregate.json').read_bytes()).hexdigest(),
+          local_cpu_seconds=local_cpu_seconds)
+    local([str(job/'ops/collect_results.py'),'--job',str(job)])
 except Exception as e:
     previous=json.loads((job/'controller.json').read_text()) if (job/'controller.json').exists() else {}
     if 'reporting' in previous.get('stage',''):
