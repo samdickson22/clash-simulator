@@ -1,0 +1,1497 @@
+{
+  "config_sha256": "633e21dbc97ad4dda2576c1cdd1bd1d24d4ed563ad5d5c1834765a61d82fd9b4",
+  "freeze_commit": "bfb9b107",
+  "paired_seeds": 2,
+  "arms": [
+    "a0",
+    "aW",
+    "b0",
+    "bW",
+    "bR"
+  ],
+  "terminal_games": 10,
+  "outcomes": {
+    "a0": {
+      "wins": 1,
+      "draws": 0,
+      "losses": 1,
+      "games": 2
+    },
+    "aW": {
+      "wins": 2,
+      "draws": 0,
+      "losses": 0,
+      "games": 2
+    },
+    "b0": {
+      "wins": 1,
+      "draws": 0,
+      "losses": 1,
+      "games": 2
+    },
+    "bW": {
+      "wins": 1,
+      "draws": 0,
+      "losses": 1,
+      "games": 2
+    },
+    "bR": {
+      "wins": 2,
+      "draws": 0,
+      "losses": 0,
+      "games": 2
+    }
+  },
+  "estimates": {
+    "a0": {
+      "loss": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ],
+        "numerator": 1.0,
+        "denominator": 2.0
+      },
+      "win": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ],
+        "numerator": 1.0,
+        "denominator": 2.0
+      },
+      "draw": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 2.0
+      },
+      "score": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ],
+        "numerator": 1.0,
+        "denominator": 2.0
+      },
+      "arrival_under4_fraction": {
+        "value": 0.94,
+        "ci95": [
+          0.8888888888888888,
+          1.0
+        ],
+        "numerator": 47.0,
+        "denominator": 50.0
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "value": 0.36,
+        "ci95": [
+          0.18518518518518517,
+          0.5652173913043478
+        ],
+        "numerator": 18.0,
+        "denominator": 50.0
+      },
+      "defender_not_in_hand_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 50.0
+      },
+      "time_at_max_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 600.0
+      },
+      "rejected_play_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 201.0
+      },
+      "deadline_hit": {
+        "value": 0.2608695652173913,
+        "ci95": [
+          0.225,
+          0.29842931937172773
+        ],
+        "numerator": 204.0,
+        "denominator": 782.0
+      },
+      "fallback": {
+        "value": 0.0025575447570332483,
+        "ci95": [
+          0.0025,
+          0.002617801047120419
+        ],
+        "numerator": 2.0,
+        "denominator": 782.0
+      },
+      "wall_overrun": {
+        "value": 0.0025575447570332483,
+        "ci95": [
+          0.0025,
+          0.002617801047120419
+        ],
+        "numerator": 2.0,
+        "denominator": 782.0
+      },
+      "opponent_deadline_hit": {
+        "value": 0.2817824377457405,
+        "ci95": [
+          0.2741514360313316,
+          0.2894736842105263
+        ],
+        "numerator": 215.0,
+        "denominator": 763.0
+      },
+      "opponent_fallback": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 763.0
+      },
+      "opponent_wall_overrun": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 763.0
+      },
+      "damage_risk_low": {
+        "value": 0.1702127659574468,
+        "ci95": [
+          0.125,
+          0.21739130434782608
+        ],
+        "numerator": 8.0,
+        "denominator": 47.0
+      },
+      "damage_risk_high": {
+        "value": 0.3333333333333333,
+        "ci95": [
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "numerator": 1.0,
+        "denominator": 3.0
+      },
+      "arrival_under4_in_losses": {
+        "value": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "numerator": 23.0,
+        "denominator": 23.0
+      },
+      "arrival_under4_in_nonlosses": {
+        "value": 0.8888888888888888,
+        "ci95": [
+          0.8888888888888888,
+          0.8888888888888888
+        ],
+        "numerator": 24.0,
+        "denominator": 27.0
+      }
+    },
+    "aW": {
+      "loss": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 2.0
+      },
+      "win": {
+        "value": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "numerator": 2.0,
+        "denominator": 2.0
+      },
+      "draw": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 2.0
+      },
+      "score": {
+        "value": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "numerator": 2.0,
+        "denominator": 2.0
+      },
+      "arrival_under4_fraction": {
+        "value": 0.5882352941176471,
+        "ci95": [
+          0.55,
+          0.6428571428571429
+        ],
+        "numerator": 20.0,
+        "denominator": 34.0
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "value": 0.20588235294117646,
+        "ci95": [
+          0.2,
+          0.21428571428571427
+        ],
+        "numerator": 7.0,
+        "denominator": 34.0
+      },
+      "defender_not_in_hand_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 34.0
+      },
+      "time_at_max_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 426.5
+      },
+      "rejected_play_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 93.0
+      },
+      "deadline_hit": {
+        "value": 0.259927797833935,
+        "ci95": [
+          0.13513513513513514,
+          0.3433734939759036
+        ],
+        "numerator": 72.0,
+        "denominator": 277.0
+      },
+      "fallback": {
+        "value": 0.039711191335740074,
+        "ci95": [
+          0.009009009009009009,
+          0.060240963855421686
+        ],
+        "numerator": 11.0,
+        "denominator": 277.0
+      },
+      "wall_overrun": {
+        "value": 0.007220216606498195,
+        "ci95": [
+          0.006024096385542169,
+          0.009009009009009009
+        ],
+        "numerator": 2.0,
+        "denominator": 277.0
+      },
+      "opponent_deadline_hit": {
+        "value": 0.18505942275042445,
+        "ci95": [
+          0.14960629921259844,
+          0.21194029850746268
+        ],
+        "numerator": 109.0,
+        "denominator": 589.0
+      },
+      "opponent_fallback": {
+        "value": 0.001697792869269949,
+        "ci95": [
+          0.0,
+          0.0029850746268656717
+        ],
+        "numerator": 1.0,
+        "denominator": 589.0
+      },
+      "opponent_wall_overrun": {
+        "value": 0.001697792869269949,
+        "ci95": [
+          0.0,
+          0.0029850746268656717
+        ],
+        "numerator": 1.0,
+        "denominator": 589.0
+      },
+      "damage_risk_low": {
+        "value": 0.2,
+        "ci95": [
+          0.18181818181818182,
+          0.2222222222222222
+        ],
+        "numerator": 4.0,
+        "denominator": 20.0
+      },
+      "damage_risk_high": {
+        "value": 0.21428571428571427,
+        "ci95": [
+          0.2,
+          0.2222222222222222
+        ],
+        "numerator": 3.0,
+        "denominator": 14.0
+      },
+      "arrival_under4_in_losses": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "arrival_under4_in_nonlosses": {
+        "value": 0.5882352941176471,
+        "ci95": [
+          0.55,
+          0.6428571428571429
+        ],
+        "numerator": 20.0,
+        "denominator": 34.0
+      }
+    },
+    "b0": {
+      "loss": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ],
+        "numerator": 1.0,
+        "denominator": 2.0
+      },
+      "win": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ],
+        "numerator": 1.0,
+        "denominator": 2.0
+      },
+      "draw": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 2.0
+      },
+      "score": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ],
+        "numerator": 1.0,
+        "denominator": 2.0
+      },
+      "arrival_under4_fraction": {
+        "value": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "numerator": 14.0,
+        "denominator": 14.0
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "value": 0.6428571428571429,
+        "ci95": [
+          0.5,
+          0.7
+        ],
+        "numerator": 9.0,
+        "denominator": 14.0
+      },
+      "defender_not_in_hand_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 14.0
+      },
+      "time_at_max_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 356.75
+      },
+      "rejected_play_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 89.0
+      },
+      "deadline_hit": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "fallback": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "wall_overrun": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "opponent_deadline_hit": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "opponent_fallback": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "opponent_wall_overrun": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "damage_risk_low": {
+        "value": 0.5714285714285714,
+        "ci95": [
+          0.5,
+          0.75
+        ],
+        "numerator": 8.0,
+        "denominator": 14.0
+      },
+      "damage_risk_high": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "arrival_under4_in_losses": {
+        "value": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "numerator": 10.0,
+        "denominator": 10.0
+      },
+      "arrival_under4_in_nonlosses": {
+        "value": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "numerator": 4.0,
+        "denominator": 4.0
+      }
+    },
+    "bW": {
+      "loss": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ],
+        "numerator": 1.0,
+        "denominator": 2.0
+      },
+      "win": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ],
+        "numerator": 1.0,
+        "denominator": 2.0
+      },
+      "draw": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 2.0
+      },
+      "score": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ],
+        "numerator": 1.0,
+        "denominator": 2.0
+      },
+      "arrival_under4_fraction": {
+        "value": 0.8333333333333334,
+        "ci95": [
+          0.75,
+          0.9
+        ],
+        "numerator": 15.0,
+        "denominator": 18.0
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "value": 0.3333333333333333,
+        "ci95": [
+          0.2,
+          0.5
+        ],
+        "numerator": 6.0,
+        "denominator": 18.0
+      },
+      "defender_not_in_hand_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 18.0
+      },
+      "time_at_max_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 360.0
+      },
+      "rejected_play_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 77.0
+      },
+      "deadline_hit": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "fallback": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "wall_overrun": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "opponent_deadline_hit": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "opponent_fallback": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "opponent_wall_overrun": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "damage_risk_low": {
+        "value": 0.3333333333333333,
+        "ci95": [
+          0.2222222222222222,
+          0.5
+        ],
+        "numerator": 5.0,
+        "denominator": 15.0
+      },
+      "damage_risk_high": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 3.0
+      },
+      "arrival_under4_in_losses": {
+        "value": 0.9,
+        "ci95": [
+          0.9,
+          0.9
+        ],
+        "numerator": 9.0,
+        "denominator": 10.0
+      },
+      "arrival_under4_in_nonlosses": {
+        "value": 0.75,
+        "ci95": [
+          0.75,
+          0.75
+        ],
+        "numerator": 6.0,
+        "denominator": 8.0
+      }
+    },
+    "bR": {
+      "loss": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 2.0
+      },
+      "win": {
+        "value": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "numerator": 2.0,
+        "denominator": 2.0
+      },
+      "draw": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 2.0
+      },
+      "score": {
+        "value": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "numerator": 2.0,
+        "denominator": 2.0
+      },
+      "arrival_under4_fraction": {
+        "value": 0.15789473684210525,
+        "ci95": [
+          0.1111111111111111,
+          0.2
+        ],
+        "numerator": 3.0,
+        "denominator": 19.0
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 19.0
+      },
+      "defender_not_in_hand_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 19.0
+      },
+      "time_at_max_fraction": {
+        "value": 0.004377736085053158,
+        "ci95": [
+          0.002369668246445498,
+          0.006622516556291391
+        ],
+        "numerator": 1.75,
+        "denominator": 399.75
+      },
+      "rejected_play_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 85.0
+      },
+      "deadline_hit": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "fallback": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "wall_overrun": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "opponent_deadline_hit": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "opponent_fallback": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "opponent_wall_overrun": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "damage_risk_low": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "numerator": 0.0,
+        "denominator": 3.0
+      },
+      "damage_risk_high": {
+        "value": 0.25,
+        "ci95": [
+          0.25,
+          0.25
+        ],
+        "numerator": 4.0,
+        "denominator": 16.0
+      },
+      "arrival_under4_in_losses": {
+        "value": null,
+        "ci95": null,
+        "numerator": 0.0,
+        "denominator": 0.0
+      },
+      "arrival_under4_in_nonlosses": {
+        "value": 0.15789473684210525,
+        "ci95": [
+          0.1111111111111111,
+          0.2
+        ],
+        "numerator": 3.0,
+        "denominator": 19.0
+      }
+    }
+  },
+  "contrasts": {
+    "aW_minus_a0": {
+      "loss": {
+        "value": -0.5,
+        "ci95": [
+          -1.0,
+          0.0
+        ]
+      },
+      "win": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ]
+      },
+      "draw": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "score": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ]
+      },
+      "arrival_under4_fraction": {
+        "value": -0.35176470588235287,
+        "ci95": [
+          -0.44999999999999996,
+          -0.24603174603174593
+        ]
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "value": -0.15411764705882353,
+        "ci95": [
+          -0.36521739130434777,
+          0.0291005291005291
+        ]
+      },
+      "defender_not_in_hand_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "time_at_max_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "rejected_play_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "deadline_hit": {
+        "value": -0.0009417673834563045,
+        "ci95": [
+          -0.1632941842365926,
+          0.1183734939759036
+        ]
+      },
+      "fallback": {
+        "value": 0.037153646578706824,
+        "ci95": [
+          0.00639120796188859,
+          0.057740963855421684
+        ]
+      },
+      "wall_overrun": {
+        "value": 0.0046626718494649465,
+        "ci95": [
+          0.003524096385542169,
+          0.00639120796188859
+        ]
+      },
+      "opponent_deadline_hit": {
+        "value": -0.09672301499531608,
+        "ci95": [
+          -0.12454513681873314,
+          -0.07753338570306365
+        ]
+      },
+      "opponent_fallback": {
+        "value": 0.001697792869269949,
+        "ci95": [
+          0.0,
+          0.0029850746268656717
+        ]
+      },
+      "opponent_wall_overrun": {
+        "value": 0.001697792869269949,
+        "ci95": [
+          0.0,
+          0.0029850746268656717
+        ]
+      },
+      "damage_risk_low": {
+        "value": 0.029787234042553207,
+        "ci95": [
+          -0.03557312252964426,
+          0.09722222222222221
+        ]
+      },
+      "damage_risk_high": {
+        "value": -0.11904761904761904,
+        "ci95": [
+          -0.1333333333333333,
+          -0.11904761904761904
+        ]
+      },
+      "arrival_under4_in_losses": {
+        "value": null,
+        "ci95": null
+      },
+      "arrival_under4_in_nonlosses": {
+        "value": -0.30065359477124176,
+        "ci95": [
+          -0.30065359477124176,
+          -0.24603174603174593
+        ]
+      }
+    },
+    "bW_minus_b0": {
+      "loss": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "win": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "draw": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "score": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "arrival_under4_fraction": {
+        "value": -0.16666666666666663,
+        "ci95": [
+          -0.25,
+          -0.09999999999999998
+        ]
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "value": -0.3095238095238096,
+        "ci95": [
+          -0.49999999999999994,
+          0.0
+        ]
+      },
+      "defender_not_in_hand_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "time_at_max_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "rejected_play_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "deadline_hit": {
+        "value": null,
+        "ci95": null
+      },
+      "fallback": {
+        "value": null,
+        "ci95": null
+      },
+      "wall_overrun": {
+        "value": null,
+        "ci95": null
+      },
+      "opponent_deadline_hit": {
+        "value": null,
+        "ci95": null
+      },
+      "opponent_fallback": {
+        "value": null,
+        "ci95": null
+      },
+      "opponent_wall_overrun": {
+        "value": null,
+        "ci95": null
+      },
+      "damage_risk_low": {
+        "value": -0.23809523809523808,
+        "ci95": [
+          -0.2777777777777778,
+          -0.23809523809523808
+        ]
+      },
+      "damage_risk_high": {
+        "value": null,
+        "ci95": null
+      },
+      "arrival_under4_in_losses": {
+        "value": -0.09999999999999998,
+        "ci95": [
+          -0.09999999999999998,
+          -0.09999999999999998
+        ]
+      },
+      "arrival_under4_in_nonlosses": {
+        "value": -0.25,
+        "ci95": [
+          -0.25,
+          -0.25
+        ]
+      }
+    },
+    "bR_minus_bW": {
+      "loss": {
+        "value": -0.5,
+        "ci95": [
+          -1.0,
+          0.0
+        ]
+      },
+      "win": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ]
+      },
+      "draw": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "score": {
+        "value": 0.5,
+        "ci95": [
+          0.0,
+          1.0
+        ]
+      },
+      "arrival_under4_fraction": {
+        "value": -0.6754385964912282,
+        "ci95": [
+          -0.7,
+          -0.6388888888888888
+        ]
+      },
+      "no_affordable_defender_in_hand_fraction": {
+        "value": -0.3333333333333333,
+        "ci95": [
+          -0.5,
+          -0.2
+        ]
+      },
+      "defender_not_in_hand_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "time_at_max_fraction": {
+        "value": 0.004377736085053158,
+        "ci95": [
+          0.002369668246445498,
+          0.006622516556291391
+        ]
+      },
+      "rejected_play_fraction": {
+        "value": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ]
+      },
+      "deadline_hit": {
+        "value": null,
+        "ci95": null
+      },
+      "fallback": {
+        "value": null,
+        "ci95": null
+      },
+      "wall_overrun": {
+        "value": null,
+        "ci95": null
+      },
+      "opponent_deadline_hit": {
+        "value": null,
+        "ci95": null
+      },
+      "opponent_fallback": {
+        "value": null,
+        "ci95": null
+      },
+      "opponent_wall_overrun": {
+        "value": null,
+        "ci95": null
+      },
+      "damage_risk_low": {
+        "value": -0.3333333333333333,
+        "ci95": [
+          -0.5,
+          -0.2222222222222222
+        ]
+      },
+      "damage_risk_high": {
+        "value": 0.25,
+        "ci95": [
+          0.25,
+          0.25
+        ]
+      },
+      "arrival_under4_in_losses": {
+        "value": null,
+        "ci95": null
+      },
+      "arrival_under4_in_nonlosses": {
+        "value": -0.5921052631578947,
+        "ci95": [
+          -0.6388888888888888,
+          -0.5921052631578947
+        ]
+      }
+    }
+  },
+  "associations": {
+    "a0": {
+      "low_minus_high_damage_risk": {
+        "value": -0.1631205673758865,
+        "ci95": [
+          -0.20833333333333331,
+          -0.1631205673758865
+        ]
+      }
+    },
+    "aW": {
+      "low_minus_high_damage_risk": {
+        "value": -0.014285714285714263,
+        "ci95": [
+          -0.04040404040404039,
+          0.0222222222222222
+        ]
+      }
+    },
+    "b0": {
+      "low_minus_high_damage_risk": {
+        "value": null,
+        "ci95": null
+      }
+    },
+    "bW": {
+      "low_minus_high_damage_risk": {
+        "value": 0.3333333333333333,
+        "ci95": [
+          0.2222222222222222,
+          0.5
+        ]
+      }
+    },
+    "bR": {
+      "low_minus_high_damage_risk": {
+        "value": -0.25,
+        "ci95": [
+          -0.25,
+          -0.25
+        ]
+      }
+    }
+  },
+  "latency": {
+    "a0": {
+      "wall": {
+        "decisions": 782,
+        "p50_ms": 13.164240517653525,
+        "p95_ms": 192.53251753980294,
+        "p99_ms": 192.68873191904277,
+        "over200_fraction": 0.0025575447570332483
+      },
+      "cpu": {
+        "decisions": 782,
+        "p50_ms": 13.146285999994234,
+        "p95_ms": 192.41531099999847,
+        "p99_ms": 192.46163568999918,
+        "over200_fraction": 0.0025575447570332483
+      },
+      "opponent_wall": {
+        "decisions": 763,
+        "p50_ms": 13.224557042121887,
+        "p95_ms": 192.52138079609722,
+        "p99_ms": 192.60546362493187,
+        "over200_fraction": 0.0
+      }
+    },
+    "aW": {
+      "wall": {
+        "decisions": 277,
+        "p50_ms": 158.7294628843665,
+        "p95_ms": 192.65115726739168,
+        "p99_ms": 193.45138996839526,
+        "over200_fraction": 0.007220216606498195
+      },
+      "cpu": {
+        "decisions": 277,
+        "p50_ms": 156.984451999989,
+        "p95_ms": 192.41918620000433,
+        "p99_ms": 192.62291751998532,
+        "over200_fraction": 0.007220216606498195
+      },
+      "opponent_wall": {
+        "decisions": 589,
+        "p50_ms": 12.787138810381293,
+        "p95_ms": 192.53183738328516,
+        "p99_ms": 192.7789236512035,
+        "over200_fraction": 0.001697792869269949
+      }
+    },
+    "b0": {
+      "wall": {
+        "decisions": 519,
+        "p50_ms": 21.403251914307475,
+        "p95_ms": 437.85205562598986,
+        "p99_ms": 598.0622136872263,
+        "over200_fraction": 0.18497109826589594
+      },
+      "cpu": {
+        "decisions": 519,
+        "p50_ms": 21.38265400000705,
+        "p95_ms": 425.4411635999957,
+        "p99_ms": 586.3541125800175,
+        "over200_fraction": 0.1811175337186898
+      },
+      "opponent_wall": {
+        "decisions": 1109,
+        "p50_ms": 17.727674916386604,
+        "p95_ms": 27.039860328659415,
+        "p99_ms": 28.841893766075383,
+        "over200_fraction": 0.0
+      }
+    },
+    "bW": {
+      "wall": {
+        "decisions": 218,
+        "p50_ms": 178.4966003615409,
+        "p95_ms": 381.90868223318824,
+        "p99_ms": 422.7517286478541,
+        "over200_fraction": 0.40825688073394495
+      },
+      "cpu": {
+        "decisions": 218,
+        "p50_ms": 178.36357300001282,
+        "p95_ms": 381.54104214999046,
+        "p99_ms": 422.3704291900068,
+        "over200_fraction": 0.4036697247706422
+      },
+      "opponent_wall": {
+        "decisions": 1105,
+        "p50_ms": 17.26988679729402,
+        "p95_ms": 23.289595963433385,
+        "p99_ms": 29.65051869861782,
+        "over200_fraction": 0.0
+      }
+    },
+    "bR": {
+      "wall": {
+        "decisions": 299,
+        "p50_ms": 153.96624593995512,
+        "p95_ms": 351.1077240575104,
+        "p99_ms": 474.8137262836098,
+        "over200_fraction": 0.3076923076923077
+      },
+      "cpu": {
+        "decisions": 299,
+        "p50_ms": 153.02562499999794,
+        "p95_ms": 350.7530493000089,
+        "p99_ms": 474.27610925997885,
+        "over200_fraction": 0.2976588628762542
+      },
+      "opponent_wall": {
+        "decisions": 1245,
+        "p50_ms": 18.165010027587414,
+        "p95_ms": 26.347862975671887,
+        "p99_ms": 27.344358144327998,
+        "over200_fraction": 0.0
+      }
+    }
+  },
+  "deadline_counts": {
+    "a0": {
+      "deadline_hit": 204,
+      "fallback": 2,
+      "wall_overrun": 2,
+      "deadline_decisions": 782,
+      "opponent_deadline_hit": 215,
+      "opponent_fallback": 0,
+      "opponent_wall_overrun": 0,
+      "opponent_deadline_decisions": 763,
+      "floor_removed": 0,
+      "channel_rejected": 0,
+      "channel_submitted": 202,
+      "opponent_channel_rejected": 0,
+      "opponent_channel_submitted": 211
+    },
+    "aW": {
+      "deadline_hit": 72,
+      "fallback": 11,
+      "wall_overrun": 2,
+      "deadline_decisions": 277,
+      "opponent_deadline_hit": 109,
+      "opponent_fallback": 1,
+      "opponent_wall_overrun": 1,
+      "opponent_deadline_decisions": 589,
+      "floor_removed": 0,
+      "channel_rejected": 0,
+      "channel_submitted": 95,
+      "opponent_channel_rejected": 0,
+      "opponent_channel_submitted": 124
+    },
+    "b0": {
+      "deadline_hit": 0,
+      "fallback": 0,
+      "wall_overrun": 0,
+      "deadline_decisions": 0,
+      "opponent_deadline_hit": 0,
+      "opponent_fallback": 0,
+      "opponent_wall_overrun": 0,
+      "opponent_deadline_decisions": 0,
+      "floor_removed": 0,
+      "channel_rejected": 0,
+      "channel_submitted": 89,
+      "opponent_channel_rejected": 0,
+      "opponent_channel_submitted": 57
+    },
+    "bW": {
+      "deadline_hit": 0,
+      "fallback": 0,
+      "wall_overrun": 0,
+      "deadline_decisions": 0,
+      "opponent_deadline_hit": 0,
+      "opponent_fallback": 0,
+      "opponent_wall_overrun": 0,
+      "opponent_deadline_decisions": 0,
+      "floor_removed": 0,
+      "channel_rejected": 0,
+      "channel_submitted": 77,
+      "opponent_channel_rejected": 0,
+      "opponent_channel_submitted": 61
+    },
+    "bR": {
+      "deadline_hit": 0,
+      "fallback": 0,
+      "wall_overrun": 0,
+      "deadline_decisions": 0,
+      "opponent_deadline_hit": 0,
+      "opponent_fallback": 0,
+      "opponent_wall_overrun": 0,
+      "opponent_deadline_decisions": 0,
+      "floor_removed": 3810,
+      "channel_rejected": 0,
+      "channel_submitted": 86,
+      "opponent_channel_rejected": 0,
+      "opponent_channel_submitted": 65
+    }
+  },
+  "throughput": {
+    "a0": {
+      "warm_decisions": 780,
+      "warm_decision_cpu_seconds": 55.291870945999875,
+      "decisions_per_core_second": 14.106956170135343,
+      "game_cpu_seconds": 172.46727851799997,
+      "scope": "own observation+v1 sample+belief+candidates+root+scoring+submission CPU; per-game first decision excluded; intermediate5tick policy maintenance excluded"
+    },
+    "aW": {
+      "warm_decisions": 275,
+      "warm_decision_cpu_seconds": 40.25393522099995,
+      "decisions_per_core_second": 6.831630211809356,
+      "game_cpu_seconds": 121.00771370199999,
+      "scope": "own observation+v1 sample+belief+candidates+root+scoring+submission CPU; per-game first decision excluded; intermediate5tick policy maintenance excluded"
+    },
+    "b0": {
+      "warm_decisions": 517,
+      "warm_decision_cpu_seconds": 46.55876702400011,
+      "decisions_per_core_second": 11.104245946493748,
+      "game_cpu_seconds": 97.91031480200002,
+      "scope": "own observation+v1 sample+belief+candidates+root+scoring+submission CPU; per-game first decision excluded; intermediate5tick policy maintenance excluded"
+    },
+    "bW": {
+      "warm_decisions": 216,
+      "warm_decision_cpu_seconds": 44.26469272699998,
+      "decisions_per_core_second": 4.879735669513576,
+      "game_cpu_seconds": 98.95320787999998,
+      "scope": "own observation+v1 sample+belief+candidates+root+scoring+submission CPU; per-game first decision excluded; intermediate5tick policy maintenance excluded"
+    },
+    "bR": {
+      "warm_decisions": 297,
+      "warm_decision_cpu_seconds": 50.56572934000032,
+      "decisions_per_core_second": 5.8735432846818725,
+      "game_cpu_seconds": 113.31193076800001,
+      "scope": "own observation+v1 sample+belief+candidates+root+scoring+submission CPU; per-game first decision excluded; intermediate5tick policy maintenance excluded"
+    }
+  },
+  "game_cpu_seconds": 603.65044567,
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 80991009,
+    "unit": "paired seed",
+    "confidence": 0.95
+  },
+  "causality_finding": "The floor reduces under4 arrivals without a demonstrated loss reduction; the metric is not established as the causal winning lever.",
+  "input_game_hash_union_sha256": "d831b23426d089ae7070daa6290ad72131c85644f3f1ddbb2064674dd641c480",
+  "smoke": true,
+  "full_schedule_and_single_core_audited": true
+}
