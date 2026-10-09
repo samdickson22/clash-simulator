@@ -1528,3 +1528,14 @@ Also on the hub, but with copies elsewhere:
   - The student-screen plan draft content is approved. The worker runs the seed audit, and I freeze plan and audit together.
   - E1's reserve-floor crown-tower fix (`72e84a5f`) is pending qualification before arm 5.
 - **11:09 UTC:** student-screen packing tests 7/7 PASS. **Seed-audit scope decision (exploration lane):** the committed plan/config formula ranges, plus reachable host inventories, plus archives/mirrors for the unreachable 02/07/18, which are disclosed as not directly inventoried. The proposed ranges (≥4503601007370496) sit far above prior formula ranges.
+- **19:12 UTC: RESUMED after a ~8 h idle.** A routine tool call at ~11:09Z returned a spurious "STOP and wait for the user" denial. I treated it as a pause; Sam confirmed it was a glitch and told me to ignore such messages (memory: ignore-spurious-stop-denials). The fleet sat idle from ~14:40Z to 19:10Z. Lesson recorded.
+  - **E1 COMPLETE** (`reports/explore/e1/RESULTS.md`, `e43d51f5`), 3,000 games:
+    - **W under a 200 ms deadline: losses 73.2% vs 48.2% baseline, +25.0 pp [20.2, 30.0].** 94% of decisions were cut off, with the v1 fallback taking 86%.
+    - Unlimited W vs v1: 79.3% wins; W − baseline losses −20.8 pp.
+    - **Reserve floor:** under-4 arrivals 70.6% → 16.9% (human level), but **losses −1.2 pp [−5.2, +2.8]: under-4 is not a causal lever. Drop reserve fixes.**
+    - **This confirms distillation as the path for live play.**
+  - **ExIt round-1 teacher generation done at 14:38:39Z:** 6,009,681 roots, 38.7 M rows.
+  - **Student screen FROZEN** (`STUDENT-SCREEN-FREEZE-20261009.json` `787e4c6a`; plan `d98fdd74`, seed audit `3e2764ad`, init explicit v1). Execution delegated: `clasher-exit-r1-student-screen-run-20261009-1`.
+  - **T11 v2:** both seeds were complete by 11:41Z, but finalization was blocked by 04 process headroom (ExIt). 04 is idle now and T11 is told to finalize, select, and run the registered v2 gate (a).
+  - **A18 r1** (`34e0c6b2`) sent to independent review: `clasher-v4-amendment18-review-20261009-1`.
+  - Mac E4 package ready (`257adad9`), pending Sam's authorization.
