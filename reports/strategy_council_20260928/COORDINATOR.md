@@ -1350,3 +1350,4 @@ Also on the hub, but with copies elsewhere:
   - **Vectorized production release** `0dd2f265…` (schema `vectorized-production-release.v1`, overlay `96519baf`, contract `3b3ebc8f`, timing_admitted=false).
   - A16 file-layer approval `730c86e8…` (APPROVE_FILE_LAYER_DELTA, amendment `411d147c`, delta `eafa80ff`). It is not A1.
   - 04 recovery is complete: 8 tasks requeued once, and 625 backup files match. 04 goes straight to vectorized after the mixed verifier is in.
+- **08:27 UTC:** original verifier r12 exited 1 at 08:25:48Z and suspended the queue on an SSH exit-255 transport failure reading 02r4 e08/1048. It's not a mismatch, and it may be the same network blip as the 08:3x GitHub DNS failure. **Approved:** a full same-claim re-audit, then clear only that suspension under `queue.lock` with a receipt, then start the **mixed verifier (R16-3)** in place of the original, then the vectorized switch. The A16 receipts are committed (`5591158f`).
