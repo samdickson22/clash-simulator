@@ -1,0 +1,3 @@
+initialized
+{'terminal': True, 'ticks': 4365, 'cpu_seconds': 48.710275797, 'wall_seconds': 48.78189542889595}
+deadline/proposer first-decision smoke PASS

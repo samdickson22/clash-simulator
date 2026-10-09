@@ -117,6 +117,16 @@ def main():
     ends=np.cumsum([len(s) for s in shards]); nteacher=int(ends[-1]) if shards else 0
     pins=dict(init_checkpoint=sha(a.init_checkpoint),assets=sha(a.assets),human_manifest=sha(Path(a.human_store)/'manifest.json'),
               teacher_manifests=[sha(s.root.parent/'manifest.json') for s in shards])
+    code_paths=[p for directory in (Path(__file__).parent,Path(human_trainer.__file__).parent)
+                for p in directory.glob('*.py')]
+    pins['source_files']={str(p.resolve()):sha(p) for p in sorted(code_paths)}
+    # Immutable pre-fit evidence exists even if the first optimizer step fails.
+    inputs=dict(pins=pins,config=asdict(c),recipe={k:v for k,v in vars(a).items() if k!='resume'})
+    input_path=out/'inputs.json'
+    if a.resume:
+        previous=json.loads(input_path.read_text())
+        if previous['pins']!=pins:raise ValueError('resume source/input pins changed')
+    else:write_json(input_path,inputs)
     opt=torch.optim.AdamW(model.parameters(),lr=3e-4,weight_decay=.05)
     sched=torch.optim.lr_scheduler.LambdaLR(opt,lambda s:human_trainer.lr_factor(s,a.steps,a.warmup))
     ema={k:v.detach().clone() for k,v in model.state_dict().items()}

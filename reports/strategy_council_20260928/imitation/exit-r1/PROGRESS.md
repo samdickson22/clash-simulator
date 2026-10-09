@@ -91,3 +91,20 @@ still finishing. 02/07/18 unreachable; coordinator explicitly accepts committed
 formula ranges plus03archive/04copies/01mirrors/gates-bc archival inventories.
 Full inventories under /mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1
 on inventoried hosts; no raw inventories or data enter git.
+
+2026-10-09 11:45Z: **Seed audit PASS and B4 joint-freeze inputs delivered.**
+680352 files inventoried on ten reachable hosts plus archive/mirror supplements;
+2872 reporting/smoke/helper integers, zero overlaps and unresolved errors.
+02/07/18 not directly inventoried (No route to host); coordinator-approved
+exploration coverage is committed formula ranges +03archive/04copies/01mirrors/
+gates-bc inventories. Full raw inventories stay off git, with SHA pointers in
+receipts/student-seed-audit.json. Audit SHA
+`3e2764ad69a2a1c05ddc93dc27770261856517e231341eb1881e1b0a7e5c0986`.
+Plan SHA remainsd98fdd74...; EMA decay0.999. Reviewed3045committed seed files,
+248base/count declarations and407seed/base assignments. Conservative prior
+upper4503600127370496 leaves880000000to first screen reporting seed.
+No reporting games or GPU fitting. Own new smoke+0/+1 only: terminal H2H at
+4365ticks,48.710CPU-s; E1deadline/proposer first-decision integration PASS.
+Foundation code and acceptance receipts committed/pushed **39b6adf6**.
+Before fitting, student adapter now writes input/recipe/source SHA evidence;
+resume checks source/input pins. No scientific loss or frozen T11 change.

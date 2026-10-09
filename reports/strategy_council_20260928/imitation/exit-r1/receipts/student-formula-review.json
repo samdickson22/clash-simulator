@@ -1,0 +1,247 @@
+{
+  "schema": "clasher.exit-r1.formula-range-review.v1",
+  "complete": true,
+  "no_overlap": true,
+  "git_head": "aed86eec656321a342a6675305634b058de5a595",
+  "committed_files": 3045,
+  "structured_declarations": 248,
+  "seed_base_assignments": 407,
+  "inputs_sha256": "f12946a066dbd10a4bceb94f540b04c88b4440bd865fb9386a9a4af72fe58df4",
+  "formulas": [
+    {
+      "base": 497,
+      "count": null,
+      "example_paths": [
+        "reports/current_client_youtube_stable_vocabulary_v1.json/counts/variant_membership_counts"
+      ]
+    },
+    {
+      "base": 1974100700,
+      "count": null,
+      "example_paths": [
+        "reports/strategy_council_20260928/live-loop/v4/actuation/plan-completion-20261007.json",
+        "reports/strategy_council_20260928/live-loop/v4/actuation/plan.json"
+      ]
+    },
+    {
+      "base": 1359319908352,
+      "count": null,
+      "example_paths": [
+        "imitation/gates-bc/receipts/gate-b-completion-v1/provenance.json"
+      ]
+    },
+    {
+      "base": 281474976710656,
+      "count": 150,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:ledger",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/search-ab/seed-audit.json:ledger"
+      ]
+    },
+    {
+      "base": 281474976710656,
+      "count": null,
+      "example_paths": [
+        "reports/explore/loss-review/seed-audit.json",
+        "reports/explore/loss-review/seeds.json/provenance"
+      ]
+    },
+    {
+      "base": 281474976720656,
+      "count": 2000,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:reporting",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/search-ab/seed-audit.json:reporting"
+      ]
+    },
+    {
+      "base": 281474976740656,
+      "count": 150,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:tuning",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/search-ab/seed-audit.json:tuning"
+      ]
+    },
+    {
+      "base": 281474976760656,
+      "count": 1000,
+      "example_paths": [
+        "reports/explore/delay-fixes/launch.json"
+      ]
+    },
+    {
+      "base": 281474976760656,
+      "count": 100,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:budget_check",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/search-ab/seed-audit.json:budget_check"
+      ]
+    },
+    {
+      "base": 281474976760656,
+      "count": 1250,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-confirm/seed-audit.json:prior_ranges:delay-fixes-main-and-lag-controls",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-screen8/seed-audit.json:prior_ranges:reports/explore/w-confirm/seed-audit.json:prior_ranges:delay-fixes-main-and-lag-controls"
+      ]
+    },
+    {
+      "base": 281474976769656,
+      "count": 4,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-confirm/seed-audit.json:prior_ranges:delay-fixes-preflight",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-screen8/seed-audit.json:prior_ranges:reports/explore/w-confirm/seed-audit.json:prior_ranges:delay-fixes-preflight"
+      ]
+    },
+    {
+      "base": 281474976770656,
+      "count": 1000,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:coexistence",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/search-ab/seed-audit.json:coexistence"
+      ]
+    },
+    {
+      "base": 281474976780656,
+      "count": 5,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:pause_parity",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/search-ab/seed-audit.json:pause_parity"
+      ]
+    },
+    {
+      "base": 281474976780666,
+      "count": 1000,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:sets:reporting",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-screen8/seed-audit.json:prior_ranges:reports/explore/tempo/seed-audit.json:sets:reporting"
+      ]
+    },
+    {
+      "base": 281474976790656,
+      "count": 150,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:sets:tuning",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-screen8/seed-audit.json:prior_ranges:reports/explore/tempo/seed-audit.json:sets:tuning"
+      ]
+    },
+    {
+      "base": 281474976795656,
+      "count": 150,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:combination",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:sets:combination"
+      ]
+    },
+    {
+      "base": 281474976797656,
+      "count": 2,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:smoke",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:sets:smoke"
+      ]
+    },
+    {
+      "base": 281474976800656,
+      "count": 11,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/tempo/seed-audit.json:public_native_smoke",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/search-ab/seed-audit.json:public_native_smoke"
+      ]
+    },
+    {
+      "base": 4503599630370496,
+      "count": 600,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-confirm/seed-audit.json:proposed_ranges:reporting",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-screen8/seed-audit.json:prior_ranges:reports/explore/w-confirm/seed-audit.json:proposed_ranges:reporting"
+      ]
+    },
+    {
+      "base": 4503599640370496,
+      "count": 2,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-confirm/seed-audit.json:proposed_ranges:smoke",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-screen8/seed-audit.json:prior_ranges:reports/explore/w-confirm/seed-audit.json:proposed_ranges:smoke"
+      ]
+    },
+    {
+      "base": 4503599650370496,
+      "count": 25,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-confirm/seed-audit.json:proposed_ranges:latency",
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-screen8/seed-audit.json:prior_ranges:reports/explore/w-confirm/seed-audit.json:proposed_ranges:latency"
+      ]
+    },
+    {
+      "base": 4503599677370496,
+      "count": 600,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-screen8/seed-audit.json:proposed_ranges:reporting",
+        "reports/explore/w-screen8/config.json/seed_ranges/reporting"
+      ]
+    },
+    {
+      "base": 4503599687370496,
+      "count": 2,
+      "example_paths": [
+        "reports/explore/e1/seed-audit.json/prior_ranges/reports/explore/w-screen8/seed-audit.json:proposed_ranges:smoke",
+        "reports/explore/w-screen8/config.json/seed_ranges/smoke"
+      ]
+    },
+    {
+      "base": 4503599807370496,
+      "count": 600,
+      "example_paths": [
+        "reports/explore/e1/config.json/seed_ranges/reporting",
+        "reports/explore/e1/seed-audit.json/proposed_ranges/reporting"
+      ]
+    },
+    {
+      "base": 4503599817370496,
+      "count": 2,
+      "example_paths": [
+        "reports/explore/e1/config.json/seed_ranges/smoke",
+        "reports/explore/e1/seed-audit.json/proposed_ranges/smoke"
+      ]
+    }
+  ],
+  "largest_committed_helper_seed": 4503599817642326,
+  "b2_banks": {
+    "base": 4503599727370496,
+    "offsets": [
+      0,
+      100000000,
+      200000000,
+      300000000
+    ],
+    "ceilings": [
+      4000000,
+      6000000,
+      4000000,
+      2
+    ],
+    "acceptance_base": 4503599708370496,
+    "helper_offsets": [
+      0,
+      100000,
+      100001,
+      100002,
+      100003,
+      271828,
+      271829
+    ]
+  },
+  "conservative_prior_game_helper_upper": 4503600127370496,
+  "first_proposed": 4503601007370496,
+  "gap": 880000000,
+  "review_notes": [
+    "All3045 committed seed-bearing text files are SHA-indexed. All committed plan/config declarations were reviewed; JSON base/count specifications and407seed/base assignments are retained in the full input catalog.",
+    "Legacy gates use <=2**44+3900000001 helper namespaces; old loss-review/search-ab/delay-fixes/tempo uses2**48 offsets. Engine qualification uses2**50+7000000+i,1000cases. W-confirm/W-screen8/E1 ranges are explicit in the catalog.",
+    "Low scalar seeds, bounded31/32bit random helpers, C56 affine1009*i schedules and pilot32bit namespaces are below the conservative envelope. Generic CLI parameters are not new reserved ranges; actual frozen configs and launches supply their bounds.",
+    "2**255+123 occurs only in tests/test_hog26_scalar_openings.py as an input-validator fixture, not a simulator reporting range. Exact inventories additionally compare all proposed literals including helper aliases.",
+    "B2 banks include the300M-offset vacation drill, allper-host ceilings and helper offsets. Ceiling decisions bound game indices conservatively since every sealed game contains a root. The combined6M target only shrinks this envelope.",
+    "Scientific e+notation in per-game JSON makes the old formula regex produce false positives; these are data literals, not seed formulas. Source generators/configs are reviewed independently. Full inventories pin every flagged path and source digest.",
+    "02/07/18 could not be directly read (SSH No route to host). Coordinator-approved exploration coverage uses committed formulas plus03archives,04copies,01mirrors and gates-bc retained inventories. This is not a fresh direct inventory of those hosts."
+  ]
+}
