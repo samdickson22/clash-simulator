@@ -1274,3 +1274,11 @@ Also on the hub, but with copies elsewhere:
     - keep leased metadata reachable through A2;
     - **A1/A2 run on 04 or 03 only**, after an admission-only dry run.
 - **06:02 UTC:** issued `l1/amendments/15-FILE-LAYER-DELTA-APPROVAL-20261009.json` (`5f67971b…`): decision=APPROVE_FILE_LAYER_DELTA, binding amendment `2d32c0b4`, delta `fac7f864` and the independent review `d35ee0ea`. This is the shape the orchestration code expects. It's separate from A1 and doesn't approve it. Perception installed the r2 execution tree on 04 (install receipt `b155b282…`); post-freeze tests 12/12, and 5/5 ledger/reuse mutants killed, including an epoch-mapping swap check.
+- **06:04 UTC:** perception's dry-run check accepts the A15 file-layer approval (`5f67971b`), and a missing A1 binding is rejected. Receipt: `a15-file-layer-approval-check-0604.json` (`54884ebc…`).
+  - **Fields coordinator-approval-A1 must carry:**
+    - `decision=APPROVE_A1`;
+    - `file_layer_review_sha256=5f67971bef48c706bbddd4c4f9aca02fb780831ed5a6fff32ff5762035d99a29`;
+    - `assembly_sha256={"1":…,"24":…}`, the actual complete assembly SHAs;
+    - `execution_plan_sha256`;
+    - `freeze_sha256`.
+  - Queue at 06:02:53Z: 93 verified, 40 claimed, 819 pending, 61 retained terminal.
