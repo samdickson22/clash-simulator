@@ -945,3 +945,7 @@ Also on the hub, but with copies elsewhere:
   - **Unchanged:** heldout availability stays **measured** in the selected runtime; the 95/95 and 90/90 gates are unchanged; no modeled clocks go into `noise-measured.json`.
   - **Independent Opus review launched** (admissibility, model specification, minimum sample, fallback criterion). No fit or selection until the amendment is frozen.
   - **GPUs after 05:00Z:** perception gets 02 and 08; lending 01/04 by pausing T11 will be decided after the review.
+- **01:10 UTC heartbeat.**
+  - **Gate (b) `imitation-gate-b-v1-r1` exited 0 at 01:10:48Z** on 03 (~57 min; no outcome read). The worker runs the pre-registered verification and analysis, then releases 03.
+  - **Utilization:** GPUs 04/09/13/14/15 at 88–99%, 02 59% (gate (c) plus perception), 08 44% (GRU, CPU-bound), 16 53% (T11 seed 21). 01 at 0% because T11 seed 22 is at an epoch-2 boundary with loaders restarting; transient.
+  - **Health:** 06/07/11/18 still down; no reclaims.
