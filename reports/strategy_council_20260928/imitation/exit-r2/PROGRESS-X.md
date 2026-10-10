@@ -138,3 +138,14 @@ corrected kindK1-vs-v1. V2 reporting also requires stage2 survival and passed
 SHA-matched stage3-wrapper-qualification-v2.json. New smoke indices2/3 each
 arm+control (four games), distinct output exit-r2-stage3-smoke-v2-20261010-r1.
 Continuation prompt updated, next01:11:17.880Z; do not duplicate pending jobs.
+
+2026-10-10T01:04:39Z. Correction27b07796 secret-scanned/committed/pushed before
+v2 smoke launches01:04:16-18Z, home03 nice19/SCHED_IDLE:
+index2/control core60 PID=PGID1449373; index2/student core61 PID=PGID1449476;
+index3/control core62 PID=PGID1449567; index3/student core63 PID=PGID1449656.
+V2 smoke job `/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-v2-20261010-r1`;
+logs qualify-init-2.log / qualify-smoke-student-2.log / qualify-init-3.log /
+qualify-smoke-student-3.log; expected qualification-ARM-INDEX.json and
+qualification-meter-ARM-INDEX.json. Own outputs never overlap reporting.
+Corrected reporting harness installed only home03; original worker fails
+closed. Old smoke receipt/inputs preserved. Fit-host frozen snapshots intact.
