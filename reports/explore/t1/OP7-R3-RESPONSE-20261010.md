@@ -43,3 +43,10 @@ loop cadence; retain console/foreign stop evidence and disclose limits of
 non-atomic scan/drop observation.
 Do not claim timing conformance from the 05 unit tests. Then reviewed blind
 inventory of newly stopped r1 phases and committed balanced remainder dispatch.
+
+
+Correction after independent r3 review: the claimed no-renewal guarantee above
+was incomplete on b6bec369. FIFO payments and forwarding expired credit could
+renew debt. The authorized mechanical response is recorded in
+OP7-R3-MECHANICAL-RESPONSE-20261010.md; it also supersedes the host-sample
+pre-start charging disclosure. No historical candidate was admitted.

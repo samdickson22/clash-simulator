@@ -47,7 +47,7 @@ def main():
  out=j/(a.phase+'-'+a.attempt if a.attempt else a.phase);out.mkdir(exist_ok=True);claim=out/'launch-claim';claim.mkdir() # No automatic re-launch, even after a crash.
  slots=cfg['compute']['console_slots'] if r['console']['positive'] else cfg['compute']['slots'];active={};done=[];failures=[];idx=0;reason=None;interrupted=False;overload=0.;before=processes();last=time.monotonic();t=last
  sample_born=int(time.clock_gettime(time.CLOCK_BOOTTIME)*os.sysconf('SC_CLK_TCK'))
- ssh_accounting=Accounting(before,sample_born,'ssh_budget');apt_accounting=Accounting(before,sample_born,'apt_budget')
+ ssh_accounting=Accounting(before,sample_born,'ssh_budget',baseline_all=True);apt_accounting=Accounting(before,sample_born,'apt_budget',baseline_all=True)
  def caught(sig,frame):
   nonlocal interrupted
   interrupted=True;stop_children(active)

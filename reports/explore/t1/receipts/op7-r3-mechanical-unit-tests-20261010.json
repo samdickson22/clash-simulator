@@ -1,0 +1,82 @@
+{
+  "utc": "2026-10-10T23:06:12Z",
+  "health_only": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "purpose": "synthetic-only OP7 authorized round3 mechanical delta; NOT admission",
+  "base_commit": "aeeb3003d2a877bd7ff538a1977cbbc37adb404f",
+  "r2_candidate": "1c34584b3264e46be6cda09d8d2f5c0a78cb838e",
+  "r2_review_sha256": "c6cbfb1b27d58248f925337109fefd3f2faf5cfde1d385583312becd0c19861a",
+  "authority_commit": "588f9169",
+  "host": "127x05",
+  "nice": 19,
+  "scheduler": 0,
+  "physical_cores": [
+    63
+  ],
+  "python": "/mpac/sdicks02/venvs/t1-verifier/bin/python",
+  "python_resolved": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+  "python_version": "3.12.12",
+  "python_executable_sha256": "cc8522e13ca1c114e1fd116948b2e6b43b031f85ca42f1b25dee62807e553ee1",
+  "pytest_module": "/mpac/sdicks02/venvs/t1-verifier/lib/python3.12/site-packages/pytest/__init__.py",
+  "pytest_version": "9.1.1",
+  "passed": 213,
+  "failed": 0,
+  "pytest_seconds": 7.95,
+  "modules": [
+    "test_op7.py",
+    "test_op6.py",
+    "test_op4.py",
+    "test_op1.py",
+    "test_op2.py",
+    "test_op3.py",
+    "test_op5.py",
+    "test_op5_08.py",
+    "test_reduce.py",
+    "test_replace.py"
+  ],
+  "basetemp": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/cache/op7-mechanical-pytest",
+  "pycache_prefix": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/cache/op7-mechanical-unit",
+  "file_sha256": {
+    "reports/explore/t1/apt_budget.py": "c15785357a95baf870b7959de23f7b6cfd84579b78c5722931b7687affbf8618",
+    "reports/explore/t1/cpu_accounting.py": "5ecae99d9097c72cc1a6cbf0014c590470115f9a4ae7ff3a197ebb4c6a0dc06f",
+    "reports/explore/t1/host_audit.py": "f25ef20436d39bf51c7541a38c1c6d33fdf04b31978780d38392915d17bfce09",
+    "reports/explore/t1/supervise.py": "36063cd87b84ca60c71bb2c64c545bf93697e99009ae841c9da5a29efc3b438a",
+    "reports/explore/t1/qualify.sh": "090611376b73cba3ca0c5bf7ae4d41b42330f8f562d1c9a43d13bdd643b3ead2",
+    "reports/explore/t1/ssh_budget.py": "0ef24fac5ff6c47fb93e0e8b189402c4144d1a202b8cd2c123847188f8b34100",
+    "reports/explore/t1/ssh_sensitivity.py": "bb124cc4716d1b902de936866bf28eec9a057128e3f04392f6234650d3a3a0e5",
+    "reports/explore/t1/reduce.py": "aebb2017d1ee646df72c22d0357c09856753e8fadcb63e6a361505b3543efe79",
+    "reports/explore/t1/test_op7.py": "b1f24517ad58a94bf5b97b48d274970eca0aad455daee3ccfdf491e04e5fa68a",
+    "reports/explore/t1/test_op6.py": "b87ab5e09c445f3b8a3c0c9260fe24f1ec507ef753e0529d5f27484a677b2f03",
+    "reports/explore/t1/OP7-T1.md": "bcd75634ed38cc93b9b77bb3787005715a87d9b0ab44f98358418ac7909de0a3",
+    "reports/explore/t1/OP7-R3-RESPONSE-20261010.md": "8efec73f0619e245f18eb2284230bedcd829c1e0ed61987697825223e8ba83bb",
+    "reports/explore/t1/PLAN.md": "bfc810f0e26baa5f0d1a236fe9c263774c43188df5cbb3e44ae5dd4e587e4841",
+    "reports/explore/t1/RELEASE-PRODUCTION-CHECKS-20261010.md": "9b0704e2e8c5c8094523fd881396592951ad5fdae987f3475ffc5ed513d6337a",
+    "reports/explore/t1/OP7-R3-MECHANICAL-RESPONSE-20261010.md": "7a13083be1b649fb5db2f56eb526ddfcb9059fcea219d92ce5646613ce3bad91"
+  },
+  "test_data": "synthetic outcome rows only; no reporting game files opened",
+  "cpu_accounting_rule": "OP-7-observed-child-credit-v2",
+  "credit_expiry_scans": 3,
+  "block_baseline_all_rows": true,
+  "remaining_conditions": [
+    "coordinator mechanical delta confirmation",
+    "C2 FROZEN/hash-bound admission",
+    "C3 fresh two-host qualification/smoke/census timing and real _apt all-four UID evidence"
+  ],
+  "r3_candidate": "b6bec3694073fd15068885fe04cde06259d4ea5d",
+  "r3_review_sha256": "f7826322caf3c6b7d1c1e0b62b7a409224492de0e21e925be8138e380019fefd",
+  "host_sample_baseline_all_rows": true,
+  "new_phase_rule_acceptance": "v2 only",
+  "exact_reviewer_probes": {
+    "fifo_renewal": {
+      "true_ticks": 7700,
+      "ssh_charged": 7700,
+      "apt_charged": 7700
+    },
+    "auto_reap_forwarding": {
+      "true_ticks": 200,
+      "ssh_charged": 200,
+      "apt_charged": 200
+    }
+  }
+}

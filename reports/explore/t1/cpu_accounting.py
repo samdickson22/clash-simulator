@@ -35,6 +35,9 @@ class Accounting:
         # Each credit lot expires independently. Fresh exits cannot renew an
         # older orphan credit and mask unrelated short-lived child CPU forever.
         for key,lots in list(self.debt_lots.items()):
+            expired = sum(amount for amount,end in lots if end<=self.scan)
+            if expired and key in self.credit:
+                self.credit[key] -= expired
             self.debt_lots[key]=[(amount,end) for amount,end in lots if end>self.scan]
             self.debt[key]=sum(amount for amount,end in self.debt_lots[key])
         current = snapshot(rows)
@@ -79,10 +82,11 @@ class Accounting:
                 own = reaped = 0
             discount = min(reaped, self.debt.get(key, 0))
             remaining=discount;lots=[]
-            for amount,end in self.debt_lots.get(key, []):
+            # Pay fresh reaps first; unmatched old lots retain their expiry.
+            for amount,end in reversed(self.debt_lots.get(key, [])):
                 paid=min(amount,remaining);remaining-=paid
                 if amount>paid:lots.append((amount-paid,end))
-            self.debt_lots[key]=lots
+            self.debt_lots[key]=lots[::-1]
             self.debt[key] = self.debt.get(key, 0) - discount
             delta = own + reaped - discount
             deltas[key] = delta

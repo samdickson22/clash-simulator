@@ -4,6 +4,7 @@ from fractions import Fraction
 from pathlib import Path
 from common import read,write,sha,utc
 from ssh_budget import lan_connection
+from cpu_accounting import RULE
 
 def flagged(interference):
  meter=interference.get('ssh_family',{})
@@ -24,10 +25,9 @@ def flagged(interference):
 def apt_flagged(interference):
  meter=interference.get('ubuntu_apt',{})
  new_rule=interference.get('ssh_family',{}).get('cpu_accounting_rule')
- if new_rule in ('OP-7-observed-child-credit-v1','OP-7-observed-child-credit-v2'):
-  assert meter and meter.get('cpu_accounting_rule')==new_rule,'new phase requires matching apt and SSH meters'
- if meter.get('cpu_accounting_rule') in ('OP-7-observed-child-credit-v1','OP-7-observed-child-credit-v2'):
-  assert new_rule==meter['cpu_accounting_rule'],'new phase requires matching apt and SSH meters'
+ apt_rule=meter.get('cpu_accounting_rule')
+ if new_rule is not None or apt_rule is not None:
+  assert meter and new_rule==apt_rule==RULE,'new phase requires matching apt and SSH v2 meters'
  if not meter:
   assert not interference.get('apt_flagged',False),'apt flag lacks meter proof'
   return False

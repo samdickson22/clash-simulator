@@ -3,7 +3,7 @@
 Authority: coordinator commit 33d0fc06bd8f42dd2e34db4b99b57027b3c551b9,
 label 21:24Z; r1 correction rulings a3b7d82b/c1c9a38d (actual21:46Z),
 EACCES argv0 authorization 7c581dc5 (actual22:03Z), and r3 rulings088f7fc4
-(actual22:27Z). Candidate base is the exact reporting freeze
+(actual22:27Z), plus mechanical r3 rulings588f9169 (actual22:58Z). Candidate base is the exact reporting freeze
 aeeb3003d2a877bd7ff538a1977cbbc37adb404f. NOT ADMITTED: independent Claude
 Opus high review and fresh source qualification/smoke precede any new phase.
 08 continues on unchanged OP-6 bytes; 01 stopped at21:03:53Z. Outcomes SEALED.
@@ -32,7 +32,7 @@ proof because non-dumpable user processes can appear root-owned. Read and rechec
 all four UIDs from `/proc/<pid>/status`, within the generation recheck.
 The base guard's directory-owner rule outside this exception remains unchanged.
 
-Resolve `_apt` from `/etc/passwd` (no hard-coded UID); both all four UIDs
+Resolve `_apt` from `/etc/passwd` (no hard-coded UID); all four UIDs
 must match. Methods require the same exact cgroup and an observed approved root.
 Their resolved kernel executable must be a direct child of `/usr/lib/apt/methods/`.
 Only EACCES permits the narrowly authorized fallback: raw captured argv0 must be
@@ -53,10 +53,12 @@ from deepest to shallowest for nested simultaneous exits, persist across a
 scan-before-wait race, and are clamped against actual child-counter increments.
 Unobserved short-lived child CPU remains counted; PID reuse gets a fresh baseline.
 Each unmatched debt lot expires independently after three scans; fresh exits
-cannot renew older stale debt. Block meters seed credit for every process alive
-at block start, including raw rows not yet allowlisted, excluding pre-block CPU
+cannot renew older stale debt: newest lots are paid first, and expired amounts
+are removed from transferable credit as well as debt. Block and persistent host
+sample meters seed credit for every process alive
+at their respective block/supervisor start, including raw rows not yet allowlisted, excluding pre-start CPU
 when it is later reaped. Both block and persistent host sample meters use the
-correction; the host sample retains its original supervisor-start baseline. Flag strictly >0.5% of one core averaged
+correction, with all-row credit at each respective starting baseline. Flag strictly >0.5% of one core averaged
 over a block; count and disclose the block. Stop strictly >10% average after
 elapsed>=60s or strictly >150% in one census sample. Integer ticks and rational
 denominators govern inclusive boundaries. OP-6 SSH thresholds are unchanged and evaluated independently; its meter uses
@@ -64,11 +66,16 @@ the same correction only in the new OP-7 phase, never in the running r1 phase. E
 cmd SHA and command, protected cgroup/root generation, self/reaped ticks and
 readable child commands. Complete/interference proofs carry apt_flagged and SHA.
 
-Residuals: auto-reaped/orphaned CPU may escape. For up to three scans, unmatched
-orphan credit can absorb later CPU of unrelated unobserved children; expiry
-bounds that suppression and then errs toward over-counting. Delayed waits after
-expiry can charge observed CPU again. Starting block credits exclude pre-block
-CPU; the persistent host sample can still charge pre-supervisor child CPU. A process scan is not atomic: credit settlement can cross
+Residuals: auto-reaped/orphaned CPU may escape. For up to three scans (roughly
+3–4 seconds), unmatched orphan credit can absorb later CPU of unrelated
+unobserved children reaped by that ancestor. The absorbed amount can include
+the entire pre-start lifetime CPU of processes alive at the baseline and is
+not bounded by CPU charged inside the block. LIFO settlement and expiry of
+transferable credit bound that suppression to three scans. Zombies remain in
+snapshots until reaped; only the scan-order race normally separates their
+disappearance from the parent's updated child counter. Credit that expires
+before that counter advances can cause a permanent conservative over-count.
+Starting credits exclude pre-block/pre-supervisor CPU at normal reaping. A process scan is not atomic: credit settlement can cross
 samples, and unobserved residual CPU can arrive in a single sample. There is no
 promise of exact real-time attribution for children that vanish between scans.
 New proofs declare cpu_accounting_rule=OP-7-observed-child-credit-v2; preserved
@@ -86,7 +93,8 @@ apt, with the same fresh seed and occupied-cell treatment, never altering the
 primary or separate SSH/apt analyses. Disclose both-flag and either-flag counts
 by population and cell. The standalone health ledger carries all three flags and verifies exact meter/proof bindings.
 Legacy OP-5/OP-6 proofs have no apt flag. Missing flags fail closed. New-phase proofs require both SSH and apt meters
-with the same accounting rule, even if both flags are false. PC4 must check all three flags, both/union counts and
+with exactly the admitted v2 accounting rule, even if both flags are false.
+Unadmitted v1 or unknown rule tags fail closed. PC4 must check all three flags, both/union counts and
 counts of complete proofs with apt/SSH stop=True (completion-edge disclosure) before either
 release route; reducer semantic checks precede outcome output. Amendment1 and
 PC1–PC3 remain mandatory. No actual outcomes are used by candidate tests.
@@ -95,8 +103,12 @@ The persistent host sample dates newly observed generations from supervisor
 start, not the previous interval. A generation missing from a scan and later
 reappearing can therefore charge its full lifetime CPU in one sample. This is a
 fail-closed change from OP-6, recorded per phase; scan drops/reappearances can
-produce conservative stops. Fresh qualification and all-host smoke must verify
-the census cadence on exact reviewed bytes before admission (r2 C3).
+produce conservative stops. A begin-row dropped by the generation/UID/PPID
+recheck loses its starting exclusion; when it reappears, later reaping can
+conservatively charge its pre-start lifetime CPU. Fresh qualification and all-host smoke must verify
+the census cadence on exact reviewed bytes before admission (r2 C3). C3 must
+also confirm all four real/effective/saved/filesystem status UIDs on observed
+real `_apt` methods on 01 and 08; synthetic fixtures alone are insufficient.
 
 ## Reviewed recovery mechanics
 

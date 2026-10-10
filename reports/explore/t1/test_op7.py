@@ -405,3 +405,68 @@ def test_new_phase_proof_requires_both_matching_meters(case):
     else:proof['ubuntu_apt']['cpu_accounting_rule']='OP-7-observed-child-credit-v1'
     with pytest.raises(AssertionError,match='matching apt and SSH'):S.apt_flagged(proof)
     assert not S.apt_flagged({})  # preserved genuinely legacy proof
+
+
+@pytest.mark.parametrize('module,budget_key',[(A,'apt_budget'),(B,'ssh_budget')])
+def test_fresh_reaps_cannot_renew_stale_orphan_debt(module,budget_key):
+    g=root();p=child(g);c=child(p,pid=g['pid']+2)
+    for r in (g,p,c):r[budget_key]={'source':'129.65.221.14 123 129.65.221.18 22'}
+    meter=module.begin([g,p,c],hz=100)
+    module.update(meter,[g,p,dict(c,cpu_ticks=100)])
+    module.update(meter,[g])  # 100 orphan ticks never reach G.cutime
+    for i in range(50):
+        fresh=child(g,pid=g['pid']+10+i,start_ticks=meter['born_since_ticks']+i+1,cpu_ticks=150)
+        fresh[budget_key]={'source':'129.65.221.14 123 129.65.221.18 22'}
+        module.update(meter,[g,fresh])
+        g=dict(g,child_cpu_ticks=g['child_cpu_ticks']+150)
+        module.update(meter,[g])
+    module.update(meter,[dict(g,child_cpu_ticks=g['child_cpu_ticks']+100)])
+    assert module.finish(meter,60)['cpu_ticks']==7700
+
+@pytest.mark.parametrize('module,budget_key',[(A,'apt_budget'),(B,'ssh_budget')])
+def test_expired_auto_reap_credit_cannot_forward_as_fresh_debt(module,budget_key):
+    g=root();p=child(g);c=child(p,pid=g['pid']+2)
+    for r in (g,p,c):r[budget_key]={'source':'129.65.221.14 123 129.65.221.18 22'}
+    meter=module.begin([g,p,c],hz=100)
+    module.update(meter,[g,p,dict(c,cpu_ticks=100)])
+    module.update(meter,[g,p])  # P auto-reaps; cutime never advances
+    for _ in range(13):module.update(meter,[g,p])
+    assert meter['accounting'].credit.get((p['pid'],p['start_ticks']),0)==0
+    module.update(meter,[g])
+    module.update(meter,[dict(g,child_cpu_ticks=100)])
+    assert module.finish(meter,60)['cpu_ticks']==200
+
+@pytest.mark.parametrize('module,budget_key',[(A,'apt_budget'),(B,'ssh_budget')])
+def test_persistent_host_sample_excludes_pre_supervisor_reap(module,budget_key):
+    import ast, supervise
+    from cpu_accounting import Accounting
+    tree=ast.parse(Path(supervise.__file__).read_text())
+    calls=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id=='Accounting']
+    assert len(calls)==2
+    assert all(any(k.arg=='baseline_all' and isinstance(k.value,ast.Constant) and k.value.value is True for k in n.keywords) for n in calls)
+    p=root();c=child(p,cpu_ticks=12000)
+    accounting=Accounting([p,c],145613425,budget_key,baseline_all=True)
+    p[budget_key]={'source':'129.65.221.14 123 129.65.221.18 22'}
+    sample=module.sample([p,c],[dict(p,child_cpu_ticks=12000)],1,hz=100,accounting=accounting)
+    assert sample['cpu_ticks']==0 and not sample['stop']
+
+@pytest.mark.parametrize('tag',['OP-7-observed-child-credit-v1','unknown-rule'])
+def test_unadmitted_or_unknown_paired_accounting_rule_is_denied(tag):
+    proof=paired_apt(A.begin([],hz=100))
+    for meter in proof.values():meter['cpu_accounting_rule']=tag
+    with pytest.raises(AssertionError,match='matching apt and SSH v2'):S.apt_flagged(proof)
+
+@pytest.mark.parametrize('ancestor',[str(p) for p in (A.METHODS,*A.METHODS.parents)])
+@pytest.mark.parametrize('mode',[0o775,0o757])
+def test_every_writable_methods_ancestor_denies_both_helper_paths(monkeypatch,ancestor,mode):
+    import errno
+    original=Path.stat
+    def stat_override(path,*args,**kwargs):
+        value=original(path,*args,**kwargs)
+        if str(path)==ancestor:
+            fields=list(value);fields[0]=0o040000|mode
+            return os.stat_result(fields)
+        return value
+    monkeypatch.setattr(Path,'stat',stat_override)
+    assert A.helper_exe('/usr/lib/apt/methods/http',None,'/usr/lib/apt/methods/http') is None
+    assert A.helper_exe(None,errno.EACCES,'/usr/lib/apt/methods/http') is None
