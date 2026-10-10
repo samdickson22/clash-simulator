@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-10T08:51:43Z",
+  "pid": 3339648,
+  "pgid": 3339648,
+  "command": [
+    "bash",
+    "/mpac/sdicks02/jobs/clasher/s1-20261010-r1/repo/reports/explore/s1/qualify.sh"
+  ],
+  "returncode": 1,
+  "whole_tree_cpu_seconds": 52.430668000000004,
+  "wall_seconds": 53.28301827702671,
+  "accounting": "non-nested auxiliary tree once; no sum of child diagnostics"
+}

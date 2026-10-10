@@ -24,7 +24,7 @@ def main():
     rows=pickle.loads((a.corpus/'states-ready.pkl').read_bytes())
     refs={r['id']:r for r in json.loads((a.corpus/'symmetric-screen-samples.json').read_text()) if r['variant']=='screen8' and r['repeat']==0}
     counts=dict(coarse_frozen=0,anchor_frozen=0,v1_cache_action_rng=0,v1_cache_proposals=0,student_cache_equal=0,proposal_augmented_frozen=0,root_immutable=0,student_charged_inside_timer=0)
-    records=[]
+    records=[];openings={}
     for row in rows:
         rng=np.random.default_rng();rng.bit_generator.state=copy.deepcopy(row['root_rng_state'])
         root=run.R.root(copy.deepcopy(row['info']),row['opponent'],rng)
@@ -39,7 +39,9 @@ def main():
             ref=refs[row['id']]
             assert action==ref['action'] and c.last['candidates']==ref['candidates'] and c.last['scores']==ref['scores'],(row['id'],label)
             counts[label+'_frozen']+=1
-        info=row['info'];order=list(info.own['hand'])+list(info.own['cycle'])
+        info=row['info']
+        if row['seed'] not in openings:openings[row['seed']]=list(info.own['hand'])+list(info.own['cycle'])
+        order=openings[row['seed']]
         original=StandalonePlayer(run.POLICY,run.R.builder,run.R.costs,info.seat,order,row['seed']+271828+info.seat)
         cached=CachedPolicy(run.POLICY);single=StandalonePlayer(cached,run.R.builder,run.R.costs,info.seat,order,row['seed']+271828+info.seat)
         for tick in (info.tick,info.tick+5):

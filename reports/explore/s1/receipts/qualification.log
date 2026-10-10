@@ -1,0 +1,13 @@
+{"utc": "2026-10-10T08:52:23Z", "host": "127x01", "who": "", "memavailable_GiB": 121.60969924926758, "foreign_compute_count": 0, "foreign_active_count": 0, "own_compute_count": 1, "final": false, "evidence_sha256": "6569581ba301576d0b9c574173ce1edddfb40d73991a7b240267bc2d9c6ab2d7"}
+.....................................                                    [100%]
+37 passed in 0.32s
+{"coarse_frozen": 25, "anchor_frozen": 25, "v1_cache_action_rng": 25, "v1_cache_proposals": 25, "student_cache_equal": 25, "proposal_augmented_frozen": 25, "root_immutable": 25, "student_charged_inside_timer": 25}
+{"coarse_frozen": 50, "anchor_frozen": 50, "v1_cache_action_rng": 50, "v1_cache_proposals": 50, "student_cache_equal": 50, "proposal_augmented_frozen": 50, "root_immutable": 50, "student_charged_inside_timer": 50}
+{"coarse_frozen": 75, "anchor_frozen": 75, "v1_cache_action_rng": 75, "v1_cache_proposals": 75, "student_cache_equal": 75, "proposal_augmented_frozen": 75, "root_immutable": 75, "student_charged_inside_timer": 75}
+{"coarse_frozen": 100, "anchor_frozen": 100, "v1_cache_action_rng": 100, "v1_cache_proposals": 100, "student_cache_equal": 100, "proposal_augmented_frozen": 100, "root_immutable": 100, "student_charged_inside_timer": 100}
+{"coarse_frozen": 125, "anchor_frozen": 125, "v1_cache_action_rng": 125, "v1_cache_proposals": 125, "student_cache_equal": 125, "proposal_augmented_frozen": 125, "root_immutable": 125, "student_charged_inside_timer": 125}
+{"histories": 25, "variants": 50}
+{"histories": 50, "variants": 100}
+{"histories": 75, "variants": 150}
+{"histories": 100, "variants": 200}
+{"histories": 125, "variants": 250}

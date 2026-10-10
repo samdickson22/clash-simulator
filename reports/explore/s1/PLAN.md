@@ -1,4 +1,4 @@
-# S1 exploration plan — draft pending qualification
+# S1 frozen exploration plan
 
 Question: how strong is one-core coarse-first W with the R3a student proposer
 and cutoff fallback on the same honest-lateness/plain-v1 opponent scale as
@@ -44,7 +44,7 @@ investigation before any scientific retry. STOP and24GiB memory floor polled.
 Caches below/mpac. Never03/04/08/05/leasedhosts for scientific computation;
 05 serves only repository/metadata authoring. No Mac access.
 
-Qualification before finalfreeze:125-state frozen no-deadline action,
+Qualification completed before finalfreeze:125-state frozen no-deadline action,
 candidate, score and root equality for coarse-first and K2; proposal-augmented
 coarse-first vs frozen W equality; single-cached vs double-inference v1 actions,
 proposals and RNG equality; student cached vs original TimedPolicy equality;

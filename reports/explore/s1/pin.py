@@ -14,6 +14,8 @@ def main():
     assert sha(j/'native/clasher_core.abi3.so')==cfg['source_reference']['native_sha256']==inherited['native_sha256']
     for tag in ('policy','student'):assert sha(Path(cfg[tag]['checkpoint']))==cfg[tag]['checkpoint_sha256']
     assert sha(j/'inputs/R3a-calibration.json')==cfg['student']['calibration_sha256']
+    student=json.loads((j/'student-source-verified.json').read_text())
+    for name,h in student['files'].items():assert sha(repo/name)==h,name
     files={name:sha(repo/name) for name in inherited['files']}
     files.update({str(p.relative_to(repo)):sha(p) for p in sorted(dest.glob('*.py'))})
     files.update({str(p.relative_to(repo)):sha(p) for p in sorted(dest.glob('*.sh'))})

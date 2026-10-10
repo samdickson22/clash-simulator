@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-10T08:54:05Z",
+  "R3_freeze_sha256": "f7e1439c5e81f648e005a66bf5f27cbe2de3e537a7f86940b0eaf2ee71126409",
+  "files": {
+    "student-source/exit_r3/train.py": "947f8147e44c4c4a3d039cd054a22932b163486fcbcbeb3ec9d03b7ad54a6ee8",
+    "student-source/exit_r3/rows.py": "835a4104fbd46731998ca033223692813bd4c4fdf015b7a15317a0ffb780ab53",
+    "student-source/exit_r3/test_round2.py": "fc7c5785e643da9718a7e7cfdbda5db12e146c04e214141924cb5a63ca93b106",
+    "student-source/exit_r3/test_r3.py": "58641244e3c9e53d98809e5a5fd0de3a29e503325b9c89c1a12ada10ae84c96e",
+    "student-source/exit_r3/teacher_batch.py": "6237a96ab5e29df4a3a1cfdc1fbd505d80af84f8faa4b3b3b99dfac1419e6dc4",
+    "student-source/exit_r3/network.py": "5f5c7e6c6fd23310bb874cc91fb2cd5fe771e8a40f31a0aea0909f1045df3d1b",
+    "student-source/exit_r3/student.py": "dd59fa136230eaf46bee31c53555c6843376032f093d1d633e801f21cf520d67",
+    "student-source/exit_r3/__init__.py": "441385ea7a0f4f57764dd579bc19b3b0f59b3806b88cf5cf0e28d7154e288087"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-10T08:47:57Z",
+  "pid": 3330269,
+  "pgid": 3330269,
+  "command": [
+    "/mpac/sdicks02/repos/clasher/.venv/bin/python",
+    "-B",
+    "/mpac/sdicks02/jobs/clasher/s1-20261010-r1/overlay/stage_snapshot.py",
+    "--job",
+    "/mpac/sdicks02/jobs/clasher/s1-20261010-r1",
+    "--overlay",
+    "/mpac/sdicks02/jobs/clasher/s1-20261010-r1/overlay"
+  ],
+  "returncode": 1,
+  "whole_tree_cpu_seconds": 0.22042099999999998,
+  "wall_seconds": 0.17393707484006882,
+  "accounting": "non-nested auxiliary tree once; no sum of child diagnostics"
+}

@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-10T08:56:28Z",
+  "qualification_sha256": "afe2c119e1d69a28aac08dd5537c5d22971b5d667ce5c7d3491e6ea344b6b13f",
+  "plan_semantics_sha256": "62fa028e3490590ebda599220cdc6746d5e0217c64b90399a28698bf30393311",
+  "qualified_source_files": {
+    "reports/explore/s1/anchor.py": "75a1b7d7fb7f144bfa62cdfcd3ddfdfe7cad7dc31e8e97dc4d4f4c7ede196888",
+    "reports/explore/s1/belief.py": "5e6f07fc3d7f71cf380d8f68a9c47021355a48b85026df2b1878c236556a0f56",
+    "reports/explore/s1/cached_policy.py": "559ad75c0d9c971518fbcbab560c9d149f231045e79741da6394d49e403415fe",
+    "reports/explore/s1/gc_window.py": "0c743f3d1e9c617a89625c694df216a93c4da15249b9c1398162ac1b73815146",
+    "reports/explore/s1/latency.py": "70b733cb9f16d329f310cfb23dc0dedec961cdd97ee73d598b5b6e779e9f09b2",
+    "reports/explore/s1/planner.py": "20893b4f8f3364e5f735ad14b7d38f9fd30a31d1d8301a593ece631f295a7784",
+    "reports/explore/s1/proposals.py": "be0c23188251f7ac2181dafd6bd01b2f90f47699f70c3671b91815e7fe990190",
+    "reports/explore/s1/qualify.py": "92f05bbfae276b2721491cd344ed2f2f130db133876599dbba71f3548d205ee4",
+    "reports/explore/s1/qualify_belief.py": "b6d86ed9fa3cd20ed83a86d75314295f055e92110212b904986b193a43451213",
+    "reports/explore/s1/reference_timed_policy.py": "1e5ba412228cbd3bc51f40528163e8d0e72bd2291e76ba19cc84087c813418ab",
+    "reports/explore/s1/run.py": "bdc226c6bfae7b9dd90fbbb060587b3930be8ba636e053d896884825abb3c68a"
+  },
+  "qualification_attempt": "qualification-attempt2",
+  "original_study_kill_unchanged": true
+}

@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-10T08:49:47Z",
+  "base": "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1",
+  "student_source": "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2",
+  "files": {
+    "native/clasher_core.abi3.so": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+    "inputs/R3a.pt": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+    "inputs/main02.pt": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "inputs/R3a-calibration.json": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414"
+  }
+}

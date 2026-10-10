@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-10T08:48:50Z",
+  "authorization": "Coordinator08:48Z narrow03 read-only file-transfer exception",
+  "source_host": "127x03",
+  "source_prefix": "/mpac/sdicks02/jobs/clasher/w-confirm-20261009-r1/latency",
+  "destination_host": "127x01",
+  "destination_prefix": "/mpac/sdicks02/jobs/clasher/s1-20261010-r1/corpus",
+  "method": "rsync -a --bwlimit=20000 --rsync-path=nice -n 19 rsync; receiver nice19",
+  "bandwidth_kib_per_second": 20000,
+  "reporting_compute_on03": false,
+  "files": {
+    "states-ready.pkl": "8b188918b95cf6c79f0db0639beaff2e80526ce11c146cdfe0edb0bb8e6f3cce",
+    "symmetric-screen-samples.json": "86ecbb600b712d0fab05c2022e8d95d1dfb47a9be531ed4b8722a1acdcfd2b7d"
+  },
+  "receiver_sha_verification": true,
+  "transfer_command_exit": 0,
+  "no_detached_processes_on03": true
+}

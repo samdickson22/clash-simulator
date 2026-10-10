@@ -158,7 +158,7 @@
     "workers": 13,
     "release_gate": "R3 explicit final 01 release; independent drain and no other CPU jobs"
   },
-  "frozen_at_utc": null,
+  "frozen_at_utc": "2026-10-10T08:58:01Z",
   "decision_rules": {
     "viable": "upper95CI(S-200 minus K0c-200)<=-10 pp AND upper95CI(S-200 minus K2-200)<=+5 pp",
     "otherwise": "descriptive only",

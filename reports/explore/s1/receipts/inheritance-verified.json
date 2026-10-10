@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-10T08:50:35Z",
+  "source_files": 1511,
+  "native_source_files": 77,
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "gate_adapter_exact": {
+    "standalone.py": "238fad80f1ba0cac8c76ed76c13c62eacc61fd5da01c84ce6759cf2d900b21e0",
+    "d1.py": "e864b226baa819cf4fe5045119624c2ea04a2c8844f9c0a627ad430e16fe8076",
+    "events.py": "5951448104db710ceb899831cf2c1da951775eefb532e8c7f0e7209fa661e267",
+    "runtime_dependencies/derived_d1.py": "92b72418c3a10e96cc6993b4cb3041fa90895f233315600031e9a18f1edcb90e",
+    "runtime_dependencies/own_cycle.py": "18cf0aaa12e074cfa1f11f37efec69b8e000ac24b357bdc372f54164bf87f3e4",
+    "runtime_dependencies/sidecar_observer.py": "cdb2d830042189b6d9b3e03aede152d2bb441e6f47c3ce113e3dce96f79c22e5"
+  }
+}

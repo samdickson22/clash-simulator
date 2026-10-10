@@ -32,9 +32,18 @@ def foreign_compute(job,rows):
     forbidden=[]
     for r in rows:
         if not r['cmd']:continue
+        # Recognize the host's idle boot services by exact root-owned command.
+        if r['uid']==0 and r['cmd'] in (
+            '/usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers',
+            '/opt/anaconda3/bin/python /opt/anaconda3/bin/jupyterhub -f /etc/jupyterhub/jupyterhub_config.py',
+            '/usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal',
+            'python /etc/jupyterhub/cull_idle_servers.py --timeout=3600',
+            '/bin/node_exporter --collector.systemd',
+            'node /opt/anaconda3/bin/configurable-http-proxy --ip  --port 8000 --api-ip 127.0.0.1 --api-port 8001 --error-target http://127.0.0.1:8081/hub/error --ssl-key /etc/ssl/private/key.key --ssl-cert /etc/ssl/private/cert.cer'):
+            continue
         first=Path(r['cmd'].split()[0]).name.lower()
         if str(job) in r['cmd']:continue
-        if any(x in first for x in ('python','raylet','cargo','rustc','gcc','clang','node','java','ffmpeg')):
+        if first.startswith('python') or first in ('raylet','cargo','rustc','gcc','clang','node','java','ffmpeg'):
             forbidden.append(r)
     return forbidden
 
@@ -53,5 +62,5 @@ def main():
     assert not foreign and not active,(foreign,active)
     assert memory()>=24*2**30
     if a.final:assert not own,own
-    print(json.dumps({k:v for k,v in result.items() if k!='processes'}))
+    print(json.dumps(dict(utc=result['utc'],host=result['host'],who=result['who'],memavailable_GiB=result['memavailable_GiB'],foreign_compute_count=len(foreign),foreign_active_count=len(active),own_compute_count=len(own),final=a.final,evidence_sha256=release['evidence_sha256'])))
 if __name__=='__main__':main()
