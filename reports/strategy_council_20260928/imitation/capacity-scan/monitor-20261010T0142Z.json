@@ -1,0 +1,237 @@
+{
+  "schema": "clasher.capacity-scan.monitor.v1",
+  "at": "2026-10-10T01:43:00.152693+00:00",
+  "receipt_generated_at": "2026-10-10T01:43:28.399922+00:00",
+  "scientific_freeze_commit": "841c44b0",
+  "microbatch_amendment_commit": "f8dd81a6",
+  "controller_pid": 1702652,
+  "controller_live": true,
+  "stopping": false,
+  "all_exited": false,
+  "conservative_gpu_hours": 17.40010242416667,
+  "control_relayed": [
+    "127x13",
+    "127x14",
+    "127x15"
+  ],
+  "control_quarter": {
+    "width": 192,
+    "rows": 95144680,
+    "step": 11615,
+    "scheduled_rows": 380571633,
+    "ema_joint_nll": 0.27726436294161033,
+    "dev_rows": 11776480,
+    "dev_seconds": 385.4897930249572,
+    "at": "2026-10-09T20:19:19.015093+00:00",
+    "config_sha256": "a6963c7efe6668271e72bd49df24ba65e7fa2e649a7f399033ccac9977a2ec85"
+  },
+  "arms": {
+    "127x13": {
+      "width": 288,
+      "active_label": "width288-v1",
+      "supervisor_pid": 793922,
+      "trainer_pid": 794004,
+      "guard_at": "2026-10-10T01:01:53.610006+00:00",
+      "borrower_processes": 7,
+      "pss_bytes": 13751738368,
+      "peak_pss_bytes": 43248839680,
+      "gpu_free_mib": 43572,
+      "nice_min_enforced_by_guard": 10,
+      "latest_step": {
+        "step": 11615,
+        "rows": 95144680,
+        "rows_per_second_including_loader": 5768.0788328119515,
+        "gpu_peak_allocated_mib": 22507.609375,
+        "gpu_peak_reserved_mib": 26968.0
+      },
+      "quarter_pending": false,
+      "kill_decision_pending": false,
+      "errors": [],
+      "guard_segments": [
+        {
+          "label": "width288-v1",
+          "started_at": "2026-10-09T19:49:07.245986+00:00",
+          "ended_at": "2026-10-10T01:01:57.843955+00:00"
+        }
+      ],
+      "status": "killed_dev_gain",
+      "quarter": {
+        "width": 288,
+        "rows": 95144680,
+        "step": 11615,
+        "scheduled_rows": 380571633,
+        "ema_joint_nll": 0.27418144592079313,
+        "dev_rows": 11776480,
+        "dev_seconds": 511.447314593941,
+        "at": "2026-10-10T01:01:52.951705+00:00",
+        "config_sha256": "ad20c4cb9e76d23067b0866bdeba44b907c116b06feeee77c7825212935e66a2"
+      },
+      "decision": {
+        "killed": true,
+        "gain": 0.0030829170208171996,
+        "threshold": 0.005,
+        "control": {
+          "width": 192,
+          "rows": 95144680,
+          "step": 11615,
+          "scheduled_rows": 380571633,
+          "ema_joint_nll": 0.27726436294161033,
+          "dev_rows": 11776480,
+          "dev_seconds": 385.4897930249572,
+          "at": "2026-10-09T20:19:19.015093+00:00",
+          "config_sha256": "a6963c7efe6668271e72bd49df24ba65e7fa2e649a7f399033ccac9977a2ec85"
+        },
+        "arm": {
+          "width": 288,
+          "rows": 95144680,
+          "step": 11615,
+          "scheduled_rows": 380571633,
+          "ema_joint_nll": 0.27418144592079313,
+          "dev_rows": 11776480,
+          "dev_seconds": 511.447314593941,
+          "at": "2026-10-10T01:01:52.951705+00:00",
+          "config_sha256": "ad20c4cb9e76d23067b0866bdeba44b907c116b06feeee77c7825212935e66a2"
+        }
+      },
+      "guard_exit": {
+        "label": "width288-v1",
+        "host": "127x13",
+        "started_at": "2026-10-09T19:49:07.245986+00:00",
+        "supervisor_pid": 793922,
+        "command": [
+          "bash",
+          "-c",
+          "\nset -e\nw=/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1\np=/mpac/sdicks02/repos/clasher-lease/envs/clasher-gpu/bin/python\n\"$p\" -B \"$w/ops/stage.py\" --work \"$w\" --store \"$w/store\"\nexec \"$p\" -B \"$w/ops/gpu_entry.py\" --config \"$w/ops/configs/width-288.json\" --freeze \"$w/ops/freeze.json\" --source \"$w/source\" --store \"$w/store\" --inputs \"$w/inputs\" --output \"$w/runs/width288\"\n"
+        ],
+        "pid": 794004,
+        "exit_code": 0,
+        "status": "complete",
+        "stop_reason": null,
+        "ended_at": "2026-10-10T01:01:57.843955+00:00",
+        "wall_seconds": 18770.59797362215,
+        "peaks": {
+          "processes": 7,
+          "pss_bytes": 43248839680
+        }
+      },
+      "actual_gpu_hours": 4.734969255115009,
+      "checkpoints": [
+        {
+          "path": "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/runs/width288/quarter-step-00011615.pt",
+          "sha256": "0325bef0627e82f4bf46a5abbe2255036aaa387a7a4acedd326c564ad37632f8",
+          "bytes": 76849050
+        }
+      ],
+      "final_result_receipt": "width288-result.json",
+      "guard_sample_is_pre_exit": true,
+      "release_verification": {
+        "at": "2026-10-10T01:03:22.214358+00:00",
+        "checked_owned_pids": [
+          793922,
+          794004,
+          1693682,
+          1693683,
+          1693688,
+          1693689,
+          2130398
+        ],
+        "still_present": [],
+        "gpu_compute_apps": [],
+        "gpu_free_mib": 48666,
+        "released": true
+      }
+    },
+    "127x14": {
+      "width": 384,
+      "active_label": "width384-v1",
+      "supervisor_pid": 543994,
+      "trainer_pid": 544056,
+      "guard_at": "2026-10-10T01:42:54.334340+00:00",
+      "borrower_processes": 6,
+      "pss_bytes": 35314777088,
+      "peak_pss_bytes": 42978351104,
+      "gpu_free_mib": 46180,
+      "nice_min_enforced_by_guard": 10,
+      "latest_step": {
+        "step": 10399,
+        "rows": 85183208,
+        "rows_per_second_including_loader": 4372.523061269451,
+        "gpu_peak_allocated_mib": 29531.81005859375,
+        "gpu_peak_reserved_mib": 35564.0
+      },
+      "quarter_pending": true,
+      "kill_decision_pending": true,
+      "errors": [],
+      "guard_segments": [
+        {
+          "label": "width384-v1",
+          "started_at": "2026-10-09T19:49:07.232083+00:00"
+        }
+      ]
+    },
+    "127x15": {
+      "width": 480,
+      "active_label": "width480-v3",
+      "supervisor_pid": 637497,
+      "trainer_pid": 637517,
+      "guard_at": "2026-10-10T01:42:55.209603+00:00",
+      "borrower_processes": 6,
+      "pss_bytes": 41047198720,
+      "peak_pss_bytes": 43344284672,
+      "gpu_free_mib": 37535,
+      "nice_min_enforced_by_guard": 10,
+      "latest_step": {
+        "step": 9815,
+        "rows": 80399080,
+        "rows_per_second_including_loader": 4416.814778497876,
+        "gpu_peak_allocated_mib": 18480.150390625,
+        "gpu_peak_reserved_mib": 23220.0
+      },
+      "quarter_pending": true,
+      "kill_decision_pending": true,
+      "errors": [],
+      "guard_segments": [
+        {
+          "label": "width480-v1",
+          "started_at": "2026-10-09T19:49:07.250116+00:00",
+          "ended_at": "2026-10-09T20:23:39.018970+00:00"
+        },
+        {
+          "label": "width480-v2",
+          "started_at": "2026-10-09T20:25:30.095659+00:00",
+          "ended_at": "2026-10-09T20:39:24.571215+00:00"
+        },
+        {
+          "label": "width480-v3",
+          "started_at": "2026-10-09T20:44:27.364360+00:00"
+        }
+      ]
+    }
+  },
+  "epoch_points": [
+    {
+      "width": 288,
+      "rows": 63441640,
+      "step": 7745,
+      "ema_joint_nll": 0.2797297378654996,
+      "gain": 0.003444154430534474,
+      "kill_rule_evaluated": false
+    },
+    {
+      "width": 384,
+      "rows": 63441640,
+      "step": 7745,
+      "ema_joint_nll": 0.2783980349863188,
+      "gain": 0.004775857309715248,
+      "kill_rule_evaluated": false
+    },
+    {
+      "width": 480,
+      "rows": 63441640,
+      "step": 7745,
+      "ema_joint_nll": 0.27781619329307483,
+      "gain": 0.0053576990029592375,
+      "kill_rule_evaluated": false
+    }
+  ]
+}
