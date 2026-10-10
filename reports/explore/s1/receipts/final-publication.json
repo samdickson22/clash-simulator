@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-10T12:55:44Z",
+  "results_publication_commit": "c288e6f2149d764ad5ba155697a40069c4dd72c2",
+  "previous_manifest": "publication.json",
+  "final_cpu_release_path": "127x01:/mpac/sdicks02/jobs/clasher/s1-20261010-r1/S1-CPU-RELEASE.json",
+  "released_at_utc": "2026-10-10T12:55:14Z",
+  "no_further_s1_cpu_calls_on01": true,
+  "files": {
+    "RESULTS.md": "ecda5ffdc8696ed7ac713bcff2547119a838d3b6aea8c7e8be5633cf20714712",
+    "MAC-TIER.md": "af087a551e401f31f1d7dee6061353c45126545ce3e2bfd9e51b05083706b9d4",
+    "results.json": "c237d1562a11be316193b50da25c42ac3b944ca320a16877e722ad4708819dae",
+    "gc-maintenance.json": "a258d3ea673dcd88e0a54fbac068bbba9b417bf4ef37a607877c237d66b8ed2c",
+    "execution.json": "4817d23ff2be841530db5cfdcc410da07cc5a2c9d6bf796c7718cf2701dae2ab",
+    "results.html": "cbd748e86a80213006d5e961cf955db4c0d2403a83dec3e21d7e447d320a8949",
+    "PROGRESS-S1.md": "7e0ffd17fa1d2ce51288c0688b2fd14dd14cf7f6e9fc4f0cd4f1602065c9c763",
+    "final_release.py": "6fede9cd4bf13a655d5b67fbfecd8c8d04f1cedffccf9368c355911bddee28b6",
+    "receipts/S1-CPU-RELEASE.json": "602ad4a661b99306a76682dbc070c4954ae629405ade6b2d175c4442884a5df7"
+  },
+  "complete": true
+}

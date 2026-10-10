@@ -201,3 +201,15 @@ all failed prep/qualification/invalid-reporting costs once. Final12:44:34Z
 vacancy whoempty/noforeign/noownCPU/121.6GiB passed. RESULTS/Macnote generated;
 next review/publish explicitownfiles/secret-scan/push, then independently
 confirm finalCPU drain and issue atomic S1 final01release. No furthergames.
+
+2026-10-10T12:55:44Z — FINAL publication and CPU release. Results/Mac note and sealed
+statistics/cost/protocol receipts pushed c288e6f2 after owned-file secret scan.
+Independent SSH vacancy checks 12:54:53Z and 12:55:14Z found who empty, no
+foreign or owned compute, all 13 recorded S1 PGIDs/PIDs absent; second session
+verified inventory/source/results hashes and first observer absence. Atomic
+01 S1-CPU-RELEASE.json published 12:55:14Z, SHA
+602ad4a661b99306a76682dbc070c4954ae629405ade6b2d175c4442884a5df7.
+Historical claims and invalid attempts remain intact. No further S1 CPU calls
+on 01. All scientific, reporting and host obligations complete. R3a remains
+NEVER-ADOPTABLE; no Mac or live admission. Final release receipt/helper now
+commit/scan/push; coordinator receives final release and <150-word milestone.
