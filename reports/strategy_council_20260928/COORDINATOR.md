@@ -1830,3 +1830,10 @@ Also on the hub, but with copies elsewhere:
   - E4-V3 addendum: one replay-only sub-session of ~1.5–2 h.
   - DECISION-MAC-TIERS memo for Sam.
   - **Next:** independent PREREG review, and the measure_tiers.py implementation plus review.
+- **13:09 UTC: A2 readiness package d9e4b8ee** (A21 C1/C2/O7/O10 satisfied; fresh 12-file deploy).
+  - A2 is **sequential**: build-bounds then verified-bounds, each a fresh 24-epoch verify. Provisional 7–14 h after A1.
+  - **Decisions:**
+    - accepted the O10 exit_code=null evidence limitation;
+    - **authorized the validation-64 events.jsonl copy into the 04 mirror** (heldout excluded);
+    - the A2 allocation will be valid until **2026-10-12T12:00Z**;
+    - issuance follows the genuine serial A1 completion (~19–20Z).
