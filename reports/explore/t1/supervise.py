@@ -4,6 +4,7 @@ from pathlib import Path
 from collections import Counter
 import system_bus
 import ssh_budget
+import apt_budget
 from common import utc,read,write,sha,plan
 from host_audit import admission,processes,census,console,memory
 from pin import verify
@@ -45,20 +46,22 @@ def main():
  launch=dict(utc=utc(),host=host,phase=a.phase,slots=slots,who=r['console']['who'],runtime_pin_sha256=sha(j/'runtime-pin.json'),dispatch_sha256=sha(a.dispatch),supervisor_pid=os.getpid(),supervisor_pgid=os.getpgrp())
  write(out/'launch.json',launch)
  while idx<len(rows) or active:
-  now=time.monotonic();after,foreign,foreign_active,foreign_cpu=census(j,before,block_ids=[r['descriptor']['id'] for r in active.values()]);sample_now=time.monotonic();dt=max(sample_now-last,.001);last=sample_now;ssh_sample=ssh_budget.sample(before,after,dt);before=after
+  now=time.monotonic();after,foreign,foreign_active,foreign_cpu=census(j,before,block_ids=[r['descriptor']['id'] for r in active.values()]);sample_now=time.monotonic();dt=max(sample_now-last,.001);last=sample_now;ssh_sample=ssh_budget.sample(before,after,dt);apt_sample=apt_budget.sample(before,after,dt);before=after
   for live in active.values():
    idle_update(live['idle_meter'],after);system_bus.update(live['system_bus_meter'],after)
    ssh_budget.update(live['ssh_meter'],after)
+   apt_budget.update(live['apt_meter'],after)
    live['allowlist_counts'].update(r['allowlist_kind'] for r in after if r.get('allowlist_kind'))
   c=console();overload=overload+dt if c['positive'] and foreign_cpu/dt>1 else 0.
   # Console activity below the registered one-core threshold is recorded. Other jobs are disallowed immediately.
   foreign_jobs=[x for x in foreign if not (c['positive'] and x.get('tty',0))]
   foreign_jobs_active=[x for x in foreign_active if not (c['positive'] and x.get('tty',0))]
   budget_reason=ssh_budget.stop_reason(c,foreign_jobs,foreign_jobs_active,ssh_sample,[ssh_budget.finish(r['ssh_meter'],time.monotonic()-r['started']) for r in active.values()])
+  budget_reason=budget_reason or apt_budget.stop_reason(apt_sample,[apt_budget.finish(r['apt_meter'],time.monotonic()-r['started']) for r in active.values()])
   reason=('signal' if interrupted else 'owned_STOP' if (j/'STOP').exists() or (j/f'STOP-{host}').exists() else 'memory_floor' if memory()<24*2**30 else budget_reason)
   unacked=[x for pattern in ('reporting/*/complete.json','replacement-r*/*/complete.json') for x in j.glob(pattern) if host!='127x01' and not (x.parent/'hub-ack.json').exists() and time.time()-x.stat().st_mtime>1800]
   if unacked:reason='offhost_copy_over_30min'
-  if reason:write(out/'stop-reason.json',dict(utc=utc(),reason=reason,foreign=foreign,foreign_active=foreign_active,console=c,ssh_family_sample=ssh_sample));stop_children(active)
+  if reason:write(out/'stop-reason.json',dict(utc=utc(),reason=reason,foreign=foreign,foreign_active=foreign_active,console=c,ssh_family_sample=ssh_sample,ubuntu_apt_sample=apt_sample));stop_children(active)
   for slot,row in list(active.items()):
    child=row['process'];rc=child.poll()
    if rc is None:continue
@@ -67,6 +70,9 @@ def main():
    interference['ssh_family']=ssh_budget.finish(row['ssh_meter'],elapsed)
    interference['ssh_flagged']=interference['ssh_family']['ssh_flagged']
    interference['interfered']|=interference['ssh_family']['interfered']
+   interference['ubuntu_apt']=apt_budget.finish(row['apt_meter'],elapsed)
+   interference['apt_flagged']=interference['ubuntu_apt']['apt_flagged']
+   interference['interfered']|=interference['apt_flagged']
    interference['system_dbus']=system_bus.finish(row['system_bus_meter'],elapsed)
    interference['interfered']|=interference['system_dbus']['interfered']
    interference['allowlist_observations']=dict(row['allowlist_counts'])
@@ -90,7 +96,7 @@ def main():
     log=(out/f"{desc['id']}.log").open('x');child=subprocess.Popen(cmd,stdout=log,stderr=log,start_new_session=True)
     add_worker(j,child.pid)
     ssh_rows=processes();ssh_meter=ssh_budget.begin(ssh_rows)
-    active[slot]=dict(ssh_meter=ssh_meter,process=child,descriptor=desc,log=log,idle_meter=idle_begin(j,processes()),system_bus_meter=system_bus.begin(j,processes()),allowlist_counts=Counter(),started=time.monotonic())
+    active[slot]=dict(ssh_meter=ssh_meter,apt_meter=apt_budget.begin(ssh_rows),process=child,descriptor=desc,log=log,idle_meter=idle_begin(j,processes()),system_bus_meter=system_bus.begin(j,processes()),allowlist_counts=Counter(),started=time.monotonic())
     write(out/'pids'/f"{desc['id']}.json",dict(utc=utc(),pid=child.pid,pgid=child.pid,command=cmd,cores=cores,descriptor=desc))
   progress=dict(utc=utc(),host=host,phase=a.phase,complete_local_blocks=len(done),complete_local_games=(1 if a.phase=='corpus' else 8)*len(done),failed_blocks=len(failures),queued=len(rows)-idx,inflight=len(active),console=c,console_over_one_core_seconds=overload,memavailable_GiB=memory()/2**30,reason=reason,sealed=True)
   write(j/'progress.json',progress)

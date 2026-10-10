@@ -1,0 +1,42 @@
+{
+  "utc": "2026-10-10T21:35:37Z",
+  "health_only": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "purpose": "synthetic-only OP-7 guard/reducer tests; NOT runtime admission",
+  "base_commit": "aeeb3003d2a877bd7ff538a1977cbbc37adb404f",
+  "authority_commit": "33d0fc06bd8f42dd2e34db4b99b57027b3c551b9",
+  "host": "127x05",
+  "nice": 19,
+  "scheduler": "SCHED_OTHER",
+  "physical_core": 63,
+  "python": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+  "passed": 159,
+  "failed": 0,
+  "modules": [
+    "test_op7.py",
+    "test_op6.py",
+    "test_op4.py",
+    "test_op1.py",
+    "test_op2.py",
+    "test_op3.py",
+    "test_op5.py",
+    "test_op5_08.py",
+    "test_reduce.py",
+    "test_replace.py"
+  ],
+  "file_sha256": {
+    "reports/explore/t1/apt_budget.py": "d160f1f37db98a4919676ed08d4b68e427b9aee2572b9dab8ea7170c7717c505",
+    "reports/explore/t1/host_audit.py": "16a3a367013390bc64f1f60eee643a0dc0ac8d66230a198f9e9837df13be375c",
+    "reports/explore/t1/supervise.py": "0d062a9898f0c8671a2d6127ab083b1db4ec0d557a7cb124f44b2624e8751b56",
+    "reports/explore/t1/qualify.sh": "090611376b73cba3ca0c5bf7ae4d41b42330f8f562d1c9a43d13bdd643b3ead2",
+    "reports/explore/t1/ssh_sensitivity.py": "311d814f422b009fbd80da37ab04ca2dc04802c841e96d6a0b3972bafddcfefa",
+    "reports/explore/t1/reduce.py": "ae4ab542452597720f3a79f612fed8219c4e957e5f66503316230d9bee5f16a0",
+    "reports/explore/t1/test_op7.py": "bc198bf4db203c7be32e888433b98e011d8b4ba21a2bdbf493bd6b6d5ebb78f8",
+    "reports/explore/t1/OP7-T1.md": "3447e9cab66f006c48e564824144f17ca4ebde5142d3f5b2bbf03bc006f3a351",
+    "reports/explore/t1/PLAN.md": "13deaaf92ed0a9495f05f929151a0df34acf5c9326945ea5102c67046fd479fb",
+    "reports/explore/t1/RELEASE-PRODUCTION-CHECKS-20261010.md": "709728fcccc98ef43df00426732c085a7c03a98e21673ac211817439911677b6"
+  },
+  "test_data": "synthetic outcome rows only; no reporting game files opened",
+  "prior_fixture_failure_preserved": true
+}

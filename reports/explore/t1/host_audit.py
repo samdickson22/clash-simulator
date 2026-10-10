@@ -41,6 +41,8 @@ def processes():
             uid=d.stat().st_uid
             stat=(d/'stat').read_text().rsplit(')',1)[1].split()
             raw_cmd=(d/'cmdline').read_bytes()
+            from apt_budget import capture_cgroup
+            apt_cgroup=capture_cgroup(d)
             cmd=raw_cmd.replace(b'\0',b' ').decode(errors='replace').strip()
             # OP-2: retain connection evidence while this child still exists.
             # Only SSH_CONNECTION is retained, never the remaining environment.
@@ -64,6 +66,7 @@ def processes():
             if uid==103 and cmd.split()[:1]==['/usr/bin/dbus-daemon'] and exe is None:
                 exe=Path(cmd.split()[0]).resolve().as_posix();exe_evidence='argv0 (proc/exe unreadable, unprivileged)'
             rows.append(dict(ssh_family_parent_snapshot=family_parent,copier_identity_snapshot=copier,ssh_parent_snapshot=parent_identity,snapshot_monotonic=captured,ssh_connection_snapshot=connection,exe=exe,exe_evidence=exe_evidence,cmdline_sha256=hashlib.sha256(raw_cmd).hexdigest(),pid=int(d.name),ppid=int(stat[1]),pgid=int(stat[2]),start_ticks=int(stat[19]),cpu_ticks=int(stat[11])+int(stat[12]),child_cpu_ticks=int(stat[13])+int(stat[14]),tty=int(stat[4]),uid=uid,cmd=cmd,affinity=affinity))
+            rows[-1]['apt_cgroup_snapshot']=apt_cgroup
         except (FileNotFoundError,ProcessLookupError,PermissionError):pass
     return rows
 
@@ -84,6 +87,8 @@ def foreign_compute(job,rows):
         first=Path(r['cmd'].split()[0]).name.lower()
         if r.get('op2_denied'):forbidden.append(r);continue
         if r.get('allowlist_kind'):continue
+        from apt_budget import apt_command
+        if apt_command(r):forbidden.append(r);continue
         if first=='dbus-daemon' and (r['uid']==103 or '--system' in r['cmd'].split()):forbidden.append(r);continue
         from ssh_transport import sshd_title,authenticated
         if sshd_title(r) and '@' in r['cmd'] and any(c['ppid']==r['pid'] for c in rows):forbidden.append(r);continue
@@ -165,6 +170,8 @@ def census(j,before=None,block_ids=()):
  after.extend(r for r in identity_rows if (r['pid'],r['start_ticks']) not in known)
  FAMILIES.apply(after,j)
  record_ssh(j,after,block_ids)
+ from apt_budget import apply as apply_apt,record as record_apt
+ apply_apt(after);record_apt(j,after,block_ids)
  for r in after:
   if not r.get('op2_denied') and approved_parent(r,after,lambda child:child.get('allowlist_kind') in ('perception_reader','idle_cache','owned_copier_child')):
    r['allowlist_kind']='approved_sshd_transport'
