@@ -1,0 +1,105 @@
+{
+  "schema": "clasher.exit-g.host-vacate.v1",
+  "utc": "2026-10-10T09:57:33Z",
+  "host": "127x04",
+  "authorization": "Coordinator 07:45Z bounded one-time utilization release; pre-drain 09:55Z, hard stop 10:15Z.",
+  "pgid": 1712867,
+  "group_members": [],
+  "full_pgid_vacate_confirmed": true,
+  "reason": "deadline_drain",
+  "generation_terminal_utc": "2026-10-10T09:56:21Z",
+  "packing_complete_utc": "2026-10-10T09:56:44Z",
+  "all_game_workers_exit_zero": true,
+  "counts": {
+    "games": 6210,
+    "rows": 4971673,
+    "root_decisions": 772403,
+    "candidate_scores": 14576602
+  },
+  "remaining_unpacked_roots": 0,
+  "memavailable_bytes": 129613320192,
+  "memory_floor_gib": 90,
+  "memory_floor_met": true,
+  "pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=430041120\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=428783707\n",
+  "protected": [
+    {
+      "pid": 2499718,
+      "start": 94874743,
+      "cmd_sha256": "8c9719018012ec40dda23960d9d62e38ced022be98123f090b5ac84c3d07912f"
+    },
+    {
+      "pid": 2499719,
+      "start": 94874747,
+      "cmd_sha256": "87ecfb60bb85d99f6b0f6fc47c85dc2d4f9d75828ca34f5235759d02611ca57b"
+    }
+  ],
+  "protected_identities_unchanged": true,
+  "metadata_shas": {
+    "generation/launch.json": "ce46d58ba2c6ace516b6c1b9786de9868d2f661d8b05ae764cc324a0c0f65959",
+    "generation/progress.json": "469d5c354003525e8fa530f1a369f26960b32366e4e2acf08d53dba955c1267d",
+    "generation/exit.json": "bd396b0d322c710dea49fc57449f4e6d4241959f52b430c004ca6cf36b262cd2",
+    "packing-progress.json": "77a3f48222dc2af8b17f6ff8e43d4c92559347665980d8a4f3057985f6f8cede",
+    "concat-manifest.json": "afd387104d804047fc07df1110b81aeabe010c4ac06774fb8a6bfb558e998447",
+    "INTERNAL.STOP": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "shards": [
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+      "manifest_sha256": "9b5ef9bea86fe8eb7ab53d4dfef500325a7bfae6c1f487b3132298259c652c81",
+      "games": 1262,
+      "rows": 1010705,
+      "root_decisions": 156869,
+      "candidate_scores": 2958515
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+      "manifest_sha256": "7e2840b81e5ae0e614874b5f947822ae18069f114c7e81bbe2093e90d93091fe",
+      "games": 77,
+      "rows": 64097,
+      "root_decisions": 10015,
+      "candidate_scores": 195027
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00002",
+      "manifest_sha256": "e83ea95261be29fdf07235cdc91cb33645af4eef2a21118f27129ac36bdf85bc",
+      "games": 83,
+      "rows": 66427,
+      "root_decisions": 10339,
+      "candidate_scores": 194584
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00003",
+      "manifest_sha256": "84bed1b1d59bee9a26f6f3aefbe1017b6221728fd87b0d1b6c50fdc4e4bda9c0",
+      "games": 2048,
+      "rows": 1640157,
+      "root_decisions": 254883,
+      "candidate_scores": 4813326
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00004",
+      "manifest_sha256": "0843aa5000866c9e3b0da431e47b1144216241fa11d700ab024bdad5c937d3b7",
+      "games": 2048,
+      "rows": 1637607,
+      "root_decisions": 254349,
+      "candidate_scores": 4792087
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00005",
+      "manifest_sha256": "ad6bfa0a94f654c353ed6576ee958953dfad1ac0ec235e21772f6c08a88f5fd6",
+      "games": 692,
+      "rows": 552680,
+      "root_decisions": 85948,
+      "candidate_scores": 1623063
+    }
+  ],
+  "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "admission_state": "04 stopped. Release consumed; do not clear or resume without NEW explicit coordinator release.",
+  "other_hosts": "03 and08 continue;01 stopped.",
+  "further_remote_cpu_calls": "None on04 after this completed vacate receipt; controller caches its fully exited metadata."
+}
