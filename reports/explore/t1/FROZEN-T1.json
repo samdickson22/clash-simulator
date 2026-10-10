@@ -138,12 +138,13 @@
     "reports/explore/t1/receipts/op5-08join-qualification-summary.json": "28ba59cac2523a2c367007df3fdbccde9e36414bdaf21470af757a1d3fa7d7db",
     "reports/explore/t1/receipts/op5-08join-smoke-r6-launch.json": "7ea6f5a556b15c0acfa67918f4fd835c03fb6ba9876534259fbb7f826ba82cfe",
     "reports/explore/t1/receipts/smoke-r6-health-admission.json": "d2a519b64860e2a914d54b70deef1cde26014f2cc865ea3c1d7aaea958596285",
-    "reports/explore/t1/PROGRESS-T1.md": "62e9096a7a55a0d5d0b42697c661bcde12643d07a8b3557edcb04c993b6205c8",
+    "reports/explore/t1/PROGRESS-T1.md": "8a140b0c1593d857aa2954b96347f80ce330a119a1e6667cc8b9217f66e8fc39",
     "reports/explore/t1/receipts/reporting-launch-receipt-0108.json": "100584090ea8fac3950a2bcd762bfb3c6b8f1c37c0ee02ed23aa33602f065f6a",
     "reports/explore/t1/receipts/reporting-authorization-0108.json": "3eb770c9b900a13beac8ef85453856296e2bb3c47f1b60310f4ab3c15556771a",
     "reports/explore/t1/receipts/reporting-launch-127x01.json": "6259e1edc64f737dd3d8026cfcfcfbe3aea770acb8e1ef3adebdaafcfc303080",
     "reports/explore/t1/receipts/reporting-launch-127x08.json": "847f07fb631df0928df3d7548d7ce280e9636face7316f355d1c35901f4f57c6",
-    "reports/explore/t1/receipts/reporting-manifest-0108.json": "a7ebba648c50817aff0174db0d0443dfe70a978c33eb3fe7a8aa8fd09e2f6474"
+    "reports/explore/t1/receipts/reporting-manifest-0108.json": "a7ebba648c50817aff0174db0d0443dfe70a978c33eb3fe7a8aa8fd09e2f6474",
+    "reports/explore/t1/CORPUS-CONTRACT-AUTHORITY-20261010.md": "1047149255651ac700581b1e55d70e19d84474de3fb1c6449996ae77cbda9465"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -370,5 +371,6 @@
     "commit": "fa8a1e2df423cde7a4ce5e143251d2d0b415a5db",
     "running_job_bytes_unchanged": true
   },
-  "reporting_launch_utc": "2026-10-10T18:03:20Z"
+  "reporting_launch_utc": "2026-10-10T18:03:20Z",
+  "corpus_contract_authority_note": "reports/explore/t1/CORPUS-CONTRACT-AUTHORITY-20261010.md"
 }
