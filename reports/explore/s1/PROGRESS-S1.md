@@ -105,3 +105,14 @@ no usercompute/noowncompute/121.6GiB vacancy; runtimepin passed. New supervisor
 PID/PGID3422967, childPID/PGID3422984;13slots physical0–38,
 main39 nice10/SCHED_OTHER. Monitor OWNprogress metadata only, then bounded
 advance after clean3000terminalgames/600blocks. No automatic retry/partialreuse.
+
+2026-10-10T09:45:31Z — R2 healthy414/3000terminalgames,
+78/600completeblocks, child3422984/supervisor3422967;
+13slots0–38/main39 nice10,~118GiBfree. No newSTOP/foreigncompute, no outcomes
+opened/reduced; monitor metadata only. Coordinator milestone sent. R3worker
+confirms allround2c/d/e permanentlykilled, noStage2/01reservation; release
+08:45:23Z final and R3a NEVER-ADOPTABLE unchanged. No additional01calls byR3.
+Resumption: phaseexit must rc0/reasonnull, noownedgroups; then boundedadvance
+for frozenreduction/GC/cost. execution_audit includes attempts/reporting-r1
+18.317127CPU s and originalsmoke provenance. Scientificfreeze dfefec9f,
+no scientificsource changes since qualification. FinalMacnote/result pending.
