@@ -133,3 +133,12 @@ zero foreigncompute/active,15ownPython/~118GiBfree. Rawcensusretainedown01path,
 SHA/compactsummary committed. No newSTOP/partialreuse/outcomeinspection;
 unchangedscientificfreeze dfefec9f. Supervisor3422967/child3422984,13slots
 physical0–38/main39 nice10. Continue600completeblocks before frozenreducer.
+
+2026-10-10T11:15:47Z — R2 reporting healthy: 1765/3,000 games and
+349/600 complete paired blocks. Fresh independent host audit:
+who empty, no foreign compute or active process, 15 owned Python processes,
+~118 GiB available. Full census retained on 01; compact receipt pins its SHA.
+Source inspection confirms run.py closes all player scoring pools before
+extraction/writing, as in K2; no source edits or additional tests needed.
+No outcomes opened/reduced. Resume metadata monitoring, then bounded advance
+only after clean full completion. Scientific freeze remains dfefec9f.
