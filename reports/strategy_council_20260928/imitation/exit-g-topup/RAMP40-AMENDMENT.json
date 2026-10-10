@@ -1,0 +1,163 @@
+{
+  "schema": "clasher.exit-g.ramp40-amendment.v1",
+  "utc": "2026-10-10T01:56:45Z",
+  "authorization": "Coordinator01:52Z releases04 pressure latch only; at most4 new games per30s untilsteady;40workers physical0\u201339;40\u201347idle; unchangedPSIguard;01/03remainstopped.",
+  "scientific_change": "None. B2 source/emitter/native/checkpoint/decks/opponent/seat schedule unchanged; same G04 seed interval and sealed raw games.",
+  "worker_cores": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+  ],
+  "supervisor_packer_fleet_core": 39,
+  "owned_idle_cores": [
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "nice": 19,
+  "scheduler": "SCHED_IDLE",
+  "ramp": "Spawn/initialize at most4 workers per30s. A global flock-protected rolling30s admission ledger allows at most4 starts. Each slot receives its first ticket once; later games wait until all40 slots were first admitted plus30s finalcooldown. Then steady state with40workers. Atomic ledger writes; no CPU cores40\u201347 used.",
+  "pressure_guard": "Unchanged fullavg10>20percent continuous60s threshold; same latched pause and report. Alert now records ramp/steady phase. Any new steady-state trip stays paused and reported; no retry. Ramp trip also remains latched unless coordinator releases.",
+  "resume_accounting": "Archive old workers directory after entire oldPGID exits. Scan all sealed rawgame receipts once as immutable baseline; new worker counters exclude every skipped sealed game. Supervisor baseline+new counters counts each preserved game exactly once across N47->N40 repartition. Existing packs verified and retained.",
+  "seed_indices": [
+    64,
+    1000000
+  ],
+  "base": 4503601607370496,
+  "old_pgid": 4086402,
+  "old_pgid_vacated": true,
+  "baseline": {
+    "games": 1339,
+    "rows": 1074802,
+    "root_decisions": 166884,
+    "cpu_seconds": 67838.80389749,
+    "plays": 57514
+  },
+  "verified_shards": [
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+      "manifest_sha256": "9b5ef9bea86fe8eb7ab53d4dfef500325a7bfae6c1f487b3132298259c652c81",
+      "games": 1262,
+      "rows": 1010705,
+      "root_decisions": 156869,
+      "candidate_scores": 2958515
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+      "manifest_sha256": "7e2840b81e5ae0e614874b5f947822ae18069f114c7e81bbe2093e90d93091fe",
+      "games": 77,
+      "rows": 64097,
+      "root_decisions": 10015,
+      "candidate_scores": 195027
+    }
+  ],
+  "stopped_hosts": {
+    "host01": {
+      "pgid": 1356583,
+      "roots": 10152,
+      "stop": "STOP"
+    },
+    "host03": {
+      "pgid": 1575208,
+      "roots": 25167,
+      "stop": "STOP-03",
+      "reclaim": "K-v2"
+    }
+  },
+  "operations_sha256": {
+    "admission.py": "35589cabd2a2d221b556cc0b09a33dc1a1629eb1525832514f60d0b045a07063",
+    "detach.sh": "59da108ff57ea7f9adfe56174cea663b19e99afa3ce163d97665984ce5bb6a7f",
+    "driver.py": "9e7bfbc1afeb7163252b96d8022c2ef5251680b4419c4188a90a4b5b8ba40584",
+    "env.sh": "7b770de1ea1d9ec1b37c3391989ed69be5ee822736cdd903f211a1e885b1bd3d",
+    "finalize.py": "b9a24be7d5619efde4f65a7cbfd31dcf01ffb4d5c3cb1b0623066c13f20ead6d",
+    "fleet.py": "eb47ef13b078f932065727507c19280dee97220db767a5e860baea53f643973c",
+    "host_audit.py": "33230335ec0c35b3bddffefe6838c5831746f099ada6e4f9654d357f11634170",
+    "pack_loader.py": "68d1399f2d03a9d63f261ef6b3e565b06b7f98fec3c3048375b1bd2d52aef04f",
+    "pack_r1_frozen.py": "5442af29f9bcea94f3ddebbd8de7ef18d041b53eb3d1e2456fa36edb75fc5d80",
+    "pressure_guard.py": "4aaa2309b41fe0c56a845250e1eba9a7f0d827a190063cf6525f87e52a692d99",
+    "qualify_ramp.py": "984a3d8d2f9d85e3906dc823178aa7cb76cc8cc906b2f1e6ff0c185f434f40b3"
+  },
+  "qualification": {
+    "passed": true,
+    "real_games": 0,
+    "tests": [
+      "four per rolling30s; boundary29.999/30",
+      "each40slot firstgame before steady; 30sfinalcooldown",
+      "eight concurrent claimers limited tofour",
+      "actualworker skipsealed64 and emit104 under40stripes",
+      "newcounter excludes sealed baseline"
+    ],
+    "ramp_seconds_minimum": 300,
+    "workers_cap": 40
+  },
+  "psi_qualification": {
+    "passed": true,
+    "real_games": 0,
+    "tests": [
+      "strict >20 threshold",
+      "continuous60s reset by20-or-less",
+      "pause at60s",
+      "latched until coordinatorrelease",
+      "actualworker admission blocked",
+      "PSIreadfailure failclosed"
+    ]
+  },
+  "fleet_qualification": {
+    "passed": true,
+    "tests": [
+      "stale terminal generation rejected",
+      "matching exit without live PGID rejected",
+      "live group with stale metadata rejected",
+      "matching live new generation accepted"
+    ],
+    "real_games": 0
+  },
+  "fleet_startup_fix": "Fleet-r4 exited after reading preceding terminal generation before resumed launch/progress appeared. New sole fleet requires expected generation PGID and matching live snapshot before admission. Target remained far below6M; no final completion claim or duplicate launches.",
+  "qualification_failure": "Initial mock qualification found a typo in atomic ledger save; repaired before any real launch. Repeated ramp/resume and concurrent-claim tests pass.",
+  "clear_stop_rule": "04 pressure latch renamed only after authorized release and operational INTERNAL.STOP established, allowing existing packing to finish without admittinggames. After fullvacate and this freeze push, clear only INTERNAL.STOP reason ramp40_guard_upgrade; neverexternal/target/deadline stop.",
+  "deadline_utc": "2026-10-11T03:00:00Z"
+}

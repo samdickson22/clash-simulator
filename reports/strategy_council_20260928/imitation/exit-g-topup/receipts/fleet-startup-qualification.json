@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "tests": [
+    "stale terminal generation rejected",
+    "matching exit without live PGID rejected",
+    "live group with stale metadata rejected",
+    "matching live new generation accepted"
+  ],
+  "real_games": 0
+}

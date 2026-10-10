@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-10T01:53:22Z",
+  "reason": "ramp40_guard_upgrade",
+  "authorization": "Coordinator01:52Z04only40cores/stagger4newgames30s; clear04pressurelatch for this qualified restart;01/03remainstopped",
+  "old_generation_pgid": 4086402,
+  "old_fleet_pgid": 4086409,
+  "fleet_already_exited": true,
+  "fleet_issue": "Fleet-r4 sampled the preceding terminal generation before the resumed supervisor published its new launch/progress. Require explicit expected generation PGID in future fleet admission.",
+  "prior_pressure_alert": {
+    "utc": "2026-10-10T01:49:16Z",
+    "reason": "sustained_memory_full_psi",
+    "full_avg10": 62.53,
+    "threshold_percent": 20,
+    "continuous_seconds": 60,
+    "action": "Admission paused; in-flight games finish. Await coordinator release before clearing pause.",
+    "reported": false
+  }
+}
