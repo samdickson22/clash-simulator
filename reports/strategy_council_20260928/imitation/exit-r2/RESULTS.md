@@ -11,10 +11,10 @@ A separate fresh-seed S-default study is being prepared: **exploration; never ad
 | X1 | T=.003 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
 | X2 | T=.0001 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
 | X3 | root z-score τ=.5 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
-| X4 | T=.003 /.75 /2026101001 | running 127x01, step4024/4883 at2026-10-10T03:50:37Z | pending | SKIP: coordinator infeasible-gate ruling |
-| X5 | X1 double steps /1 /2026101001 | running 127x04, step5350/9766 at2026-10-10T03:50:37Z | pending | SKIP: coordinator infeasible-gate ruling |
+| X4 | T=.003 /.75 /2026101001 | running 127x01, step4695/4883 at2026-10-10T04:19:27Z | pending | SKIP: coordinator infeasible-gate ruling |
+| X5 | X1 double steps /1 /2026101001 | running 127x04, step6276/9766 at2026-10-10T04:19:27Z | pending | SKIP: coordinator infeasible-gate ruling |
 | X6 | T=.0001 /.75 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
-| X7 | X1 replicate /1 /2026101007 | running 127x14, step1338/4883 at2026-10-10T03:50:37Z | pending | SKIP: coordinator infeasible-gate ruling |
+| X7 | X1 replicate /1 /2026101007 | running 127x14, step2263/4883 at2026-10-10T04:19:27Z | pending | SKIP: coordinator infeasible-gate ruling |
 
 Stage1 on the unchanged sealed r1 heldout64:8088 eligible root rows,2798 teacher plays and5290 teacher WAITs. The all-poll supplement has37950 eligible rows. Below are point estimates and paired whole-game percentile95% bootstrap CIs (5000 resamples,PCG64 seed80991010). Display rounded; linked receipts retain full precision, denominators, all-poll metrics and pinned final EMA.
 
@@ -33,7 +33,7 @@ The operational GPU scoring/routing amendmenta7b5acd1 was secret-scanned/committ
 
 Proposed X8 (X2 replicate, trainseed2026101008,host15) was cancelled by coordinator before freeze, staging, audit, host access or fit. Zero fit/game compute; seed unused. This is a cancelled proposal, not a scientific kill. X7 continues; seven arms remain. [Cancellation receipt](receipts/x8-cancellation.json).
 
-Stage1 starts on each arm’s own fit host after sealed finalEMA/clean fit exit/ownedgroups absent/GPUidle/currentlease and floor checks. Stage2 uses the earliest admitted01(afterX4 clean exit,physical0–23 within0–39) or03(after explicitK release,physical0–31),with G full drain/home24GiB/load≤100,nice19/SCHED_IDLE/Torch1 and physical-core affinity. S-default stage3 remains K-release-gated with same-seed interleaving and no control pre-run.
+Stage1 continues on each arm’s own fit host after sealed finalEMA/clean fit exit/ownedgroups absent/GPUidle/currentlease and floor checks. The original stage2 and d0264ec9 stage3 route is now disabled and its seeds unconsumed. The separate descriptive S-default study uses only01 physical0–39, nice10/SCHED_OTHER/Torch1 after X4 clean exit and G full drain/home24GiB/load≤100, with every same-seed case interleaved and no control pre-run.
 
 X3 finished fit03:30:36Z and offline03:30:50Z. All own08 fit/scoring PGIDs are absent; GPU has no compute process and48578MiB free at03:32:05Z.08 vacated well before05:30Z; no migration or X6/X7 priority yield required.
 
@@ -46,9 +46,11 @@ X6 finished fit cleanly03:49:20Z; one heldout GPU attempt launched03:49:29Z and 
 | X3 | 2.629250317 | 7.795465627 | 0.003155318 | 0.002952663 |
 | X6 | 2.443525074 | 9.508914612 | 0.004235091 | 0.003630126 |
 
-Current seven-fit total at03:50:37Z: 16.733385911 allocatedGPU-wall h /56.693974591 wholeCPU h ([snapshot](receipts/monitor-20261010T0350Z.json)). ClosedX1/X2/X3/X6 final exit meters replace their live snapshots; remaining three are provisional. This replaces all prior live totals, never sums snapshots. Offline total is separately0.013579491GPU-wall h/0.012299343CPU h. Child scoring result CPU is nested inside the whole supervisor meter and is not added again. GPU guard resource peaks are sampled, not continuous maxima.
+Current seven-fit total at2026-10-10T04:20:00Z: 18.175829505 allocatedGPU-wall h /62.133563480 wholeCPU h ([snapshot](receipts/monitor-20261010T0419Z.json)). ClosedX1/X2/X3/X6 final exit meters replace their live snapshots; remaining three are provisional. This replaces all prior live totals, never sums snapshots. Offline total is separately0.013579491GPU-wall h/0.012299343CPU h. Child scoring result CPU is nested inside the whole supervisor meter and is not added again. GPU guard resource peaks are sampled, not continuous maxima.
 
-New preparation: GPU synthetic qualification10.238241CPU s/10.278003GPU-wall s;12 metadata tests.344673CPU s; all7 heldout staging6.196271CPU s. Source sender/bootstrap/native-copy CPU is unmetered and disclosed. Prior failed fits/audits/staging/controllers/smokes remain separately retained in receipts and history. Retired seven-armcontroller1870636 cleanexit11.910174CPU s charged once; currentcontroller1940296 remote jobs are separately metered, controller’s SSH/local children only counted in its own final meter.
+Post-kill study frozen/pushed e8c82b10 before any game: [plan](POSTKILL-SDEFAULT-PLAN.md), [addendum](receipts/postkill-sdefault-addendum.json), [fresh audit](receipts/postkill-seed-audit.json). Fresh239590-file scan zero collisions/errors,217.087355CPU s;2560 expanded interval comparisons .554847CPU s. Three post-kill code qualification attempts total8.728720CPU s; offline-only six-test qualification1.335640CPU s. Metadata staging verification on01 passed source/native/policy pins and correctly kept games closed while X4 fit remains active. Sender/bootstrap/copy/direct metadata-shell CPU unmetered and disclosed; no new game attempt yet.
+
+New preparation: GPU synthetic qualification10.238241CPU s/10.278003GPU-wall s;12 metadata tests.344673CPU s; all7 heldout staging6.196271CPU s. Source sender/bootstrap/native-copy CPU is unmetered and disclosed. Prior failed fits/audits/staging/controllers/smokes remain separately retained in receipts and history. Retired seven-armcontroller1870636 cleanexit11.910174CPU s charged once; retiredcontroller1940296 exited cleanly (19.744972CPU s once); currentcontroller2071651 remote jobs are separately metered, controller’s SSH/local children only counted in its own final meter.
 
 Earlier operational records below are historical; current state, protocol and costs above supersede stale “pending/current controller” snapshots.
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,

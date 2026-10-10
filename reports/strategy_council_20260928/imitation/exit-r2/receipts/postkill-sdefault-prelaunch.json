@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-10T04:17:55Z",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "commit": "e8c82b10",
+  "pushed": true,
+  "addendum_sha256": "ee43172dfb50dbf288b50c314f1abfddbc942fd90d192846ec6e8aaca6a51865",
+  "games_at_push": 0
+}

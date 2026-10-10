@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "utc": "2026-10-10T04:22:20Z",
+  "context": {
+    "host": "127x01",
+    "affinity": [
+      63
+    ],
+    "scheduler": "SCHED_OTHER",
+    "nice": 10,
+    "torch_threads": 1
+  },
+  "x4_exited": false,
+  "g_processes": [],
+  "load": {
+    "utc": "2026-10-10T04:22:20Z",
+    "mem_available_bytes": 113278160896,
+    "load1": 8.05,
+    "lane": "exploration; never adoptable",
+    "never_adoptable": true,
+    "adoption_eligible": false
+  },
+  "source_files": 8,
+  "harness_sha256": "ee43172dfb50dbf288b50c314f1abfddbc942fd90d192846ec6e8aaca6a51865",
+  "no_games": true,
+  "wall_seconds": 0.12969396403059363,
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "sampled_parent_cpu_seconds": 1.511317,
+  "cpu_accounting": "Parent CPU sample before final admission metadata receipt; final shell/SSH/helper overhead unmetered, disclosed. No fit/game attempt."
+}
