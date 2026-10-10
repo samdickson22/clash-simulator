@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-10T02:16:11Z",
+  "passed": true,
+  "all_owned_generation_fleet_pack_pgids_gone": [
+    4150219,
+    4151857,
+    65468
+  ],
+  "manifest_sha256": "4e8faf7edc7164a6676f76e4f7a7d6ea237d4eba88d19252a0921c40cf409ef8",
+  "host_manifest_pointers_verified": true,
+  "shard_manifest_pointers_verified": true,
+  "memory_available": 115291308032,
+  "pressure": "some avg10=0.00 avg60=0.02 avg300=3.36 total=430011638\nfull avg10=0.00 avg60=0.02 avg300=3.36 total=428754309\n",
+  "admission_paused": true,
+  "generation_target_complete": false
+}

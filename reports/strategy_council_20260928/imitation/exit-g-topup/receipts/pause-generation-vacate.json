@@ -1,0 +1,241 @@
+{
+  "utc": "2026-10-10T02:13:06Z",
+  "passed": true,
+  "generation_pgid": 4150219,
+  "generation_group_members": [],
+  "fleet_pgid": 4151857,
+  "fleet_group_members": [],
+  "worker_exit04": {
+    "utc": "2026-10-10T02:07:45Z",
+    "identity": {
+      "pid": 4150219,
+      "pgid": 4150219,
+      "nice": 19,
+      "scheduler": 5,
+      "cores": [
+        39
+      ]
+    },
+    "reason": "packing_failure",
+    "totals": {
+      "games": 1422,
+      "rows": 1141229,
+      "root_decisions": 177223,
+      "cpu_seconds": 71467.34956735402,
+      "plays": 61057
+    },
+    "fully_vacated": true,
+    "children": [
+      {
+        "pid": 4150617,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4150619,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4150620,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4150624,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4153970,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4153972,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4153973,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4153974,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4157348,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4157349,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4157350,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4157351,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4160649,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4160650,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4160651,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4160652,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4163980,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4163981,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4163986,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4163991,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4167431,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4167432,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4167433,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4167437,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4170761,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4170762,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4170763,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4170764,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4174073,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4174074,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4174079,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4174084,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4177478,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4177481,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4177484,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4177487,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4180851,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4180852,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4180853,
+        "pgid": 4150219,
+        "returncode": 0
+      },
+      {
+        "pid": 4180854,
+        "pgid": 4150219,
+        "returncode": 0
+      }
+    ],
+    "child_cpu_seconds": 9541.218455,
+    "elapsed_seconds": 634.4017349620117
+  },
+  "packer_exit": "Expected idle-packer SIGTERM143; data is retained and repacked here.",
+  "pack_only_identity": {
+    "pid": 65468,
+    "pgid": 65468,
+    "core": 39,
+    "nice": 19,
+    "scheduler": "SCHED_IDLE"
+  }
+}

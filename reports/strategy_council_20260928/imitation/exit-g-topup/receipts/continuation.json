@@ -2,23 +2,23 @@
   "utc": "2026-10-10T01:21:24Z",
   "scheduledTaskId": "scheduled-task:command:mcp:f5f23f78-993a-4502-b375-2958f9dfba3f:schedule-task:g-topup-continuation-20261010-1",
   "enabled": true,
-  "interval_ms": 300000,
-  "nextRunAt": "2026-10-10T02:05:00.026Z",
+  "interval_ms": 1800000,
+  "nextRunAt": "2026-10-10T02:37:26.592Z",
   "bindToCurrentThread": true,
   "disable": "update_scheduled_task({scheduledTaskId: recorded ID, enabled:false}) after actual final completion/deadline cleanup or explicit full task cancellation.",
-  "updated_utc": "2026-10-10T02:06:00Z",
+  "updated_utc": "2026-10-10T02:18:23Z",
   "hosts": [
     "127x04",
     "127x01",
     "127x03"
   ],
-  "fleet_controller_pid": 4151857,
-  "fleet_controller_pgid": 4151857,
+  "fleet_controller_pid": null,
+  "fleet_controller_pgid": null,
   "host01_preemption": "X evaluation -> owned STOP -> current game drain/full PGID vacate; final01 metadata is cached, then no more remote01 calls.",
   "host03_preemption": "STOP-03 from K-v2 at01:44Z; full PGID gone. No resume until explicitrelease; futureXevalpriority.",
-  "host04_pressure": "Steady-state PSI trip02:03:38Z after coordinator-authorized40-worker ramp. Admissionlatchedpaused;explicitNO RETRY. Prior01:52release consumed. Newinstructionrequired.",
-  "host04_generation_pid": 4150219,
-  "host04_generation_pgid": 4150219,
+  "host04_pressure": "Steady-state trip; coordinator02:05Zkeepspaused. FullPGID4150219andfleet4151857gone;pack65468complete. Latch remains; noretry.",
+  "host04_generation_pid": null,
+  "host04_generation_pgid": null,
   "host04_cores": [
     0,
     1,
@@ -61,5 +61,11 @@
     38,
     39
   ],
-  "host04_manager_core": 39
+  "host04_manager_core": 39,
+  "all_hosts_paused": true,
+  "no_new_admission_until_explicit_release": true,
+  "completed_pause_manifest_sha256": "4e8faf7edc7164a6676f76e4f7a7d6ea237d4eba88d19252a0921c40cf409ef8",
+  "completed_pause_roots": 212542,
+  "remaining_unpacked_roots": 0,
+  "generation_target_complete": false
 }

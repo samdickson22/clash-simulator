@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-10T02:13:34Z",
+  "identity": {
+    "pid": 65468,
+    "pgid": 65468,
+    "core": 39,
+    "nice": 19,
+    "scheduler": "SCHED_IDLE"
+  },
+  "passed": true,
+  "manifest_sha256": "4e8faf7edc7164a6676f76e4f7a7d6ea237d4eba88d19252a0921c40cf409ef8",
+  "totals": {
+    "games": 1707,
+    "root_decisions": 212542,
+    "rows": 1368197
+  },
+  "generation_target_complete": false,
+  "admission_paused": true
+}

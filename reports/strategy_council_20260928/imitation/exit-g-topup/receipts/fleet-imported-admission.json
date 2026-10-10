@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-10T02:18:23Z",
+  "operation": "Future fleet consumption of completed imported paused-host corpora",
+  "fleet_source_sha256": "3b48e8758b23bdef29227f48e27c8007f76b21a7a52ec3333e34c306ef0dd02c",
+  "qualification_sha256": "5a1c4f807081c23c22f78e08af000eed29d1dfe669849ef91bd7e3bf86c6cce5",
+  "admission_change": "None. No fleet or generator launched.",
+  "behavior": "Only substitute imported manifest when source host is stopped, fully vacated with zero PGID members, and root/game counts exactly match. Verify pinned host manifest SHA in pause concat. Preserve path/storage_host so final pointers remain valid. Live or new-count source hosts never substituted.",
+  "data_change": "None; existing verified packs retained."
+}

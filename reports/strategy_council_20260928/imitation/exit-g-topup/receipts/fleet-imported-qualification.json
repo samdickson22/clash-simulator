@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "real_games": 0,
+  "tests": [
+    "SHA-pinned stopped full-vacate baseline substitutes importedmanifest",
+    "active/resumed host notsubstituted",
+    "new source totals notsubstituted; replace old logicalcorpus",
+    "live PGID notsubstituted"
+  ]
+}
