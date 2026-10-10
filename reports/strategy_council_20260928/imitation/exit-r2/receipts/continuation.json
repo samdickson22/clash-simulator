@@ -17,7 +17,7 @@
   "latest_operational_amendment_commit": "a7b5acd1",
   "stage1_2_admission": "Stage1 sealed fit-hostGPU, NOT K-gated; stage2 earliest01 afterX4 cleanexit/Gdrain or03 afterK explicitrelease/Gdrain. No games08/04/leases.",
   "fit_collection_prelaunch_commit": "77cbea40b36b59192a5ae4e51d906f0c2c0486f9",
-  "last_verified_utc": "2026-10-10T03:53:32Z",
+  "last_verified_utc": "2026-10-10T03:54:39Z",
   "current_controller": "controller_gpu_gates.py",
   "x7_supervisor_pid": 2423139,
   "x7_trainer_pid": 2423269,

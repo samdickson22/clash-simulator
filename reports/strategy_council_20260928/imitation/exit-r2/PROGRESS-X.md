@@ -775,3 +775,11 @@ adding duplicate live costs. Analyst noise-ceiling draft was read only;
 it explicitly changes no frozen gate or recipe, and no newallocation is
 authorized. Its untracked file is not owned/staged by X. X8cancelled/15unused,
 remaining3fits/gates continue. Nextcontinuation04:01:40.851Z enabled.
+
+2026-10-10T03:54:39Z. Queued03:32 snapshot reconciled with X6's closedkill,
+without repeating any score. X4/X5/X7 at4131/5481/1469, originalownedgroups/
+eightnice10processes/guardfloors unchanged;14leasevalid. Current1940296
+healthyfourclosedofflinekills/noactive/stage2{}/failures[]. Scheduler live
+enabled/currentpromptincludesX6closed,next04:01:40.851Z. No newjob/gate/
+allocation/stop; unchanged0350meter receipt retained, no duplicate live
+cost added. Remaining3fits/gates continue, X8cancelled/15unused.
