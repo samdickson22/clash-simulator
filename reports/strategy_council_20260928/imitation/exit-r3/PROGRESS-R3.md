@@ -572,3 +572,17 @@ clarifies this for descriptive and future Stage2; no scientificcode change.
 MainRESULTS footer now reports completeddescriptive−28.667ppCI andunchanged
 NEVERADOPTABLE status; wholeextensionstillpending. Timerprompt refreshed to
 completed600pairs/reducer/01phase-drain, sameID next08:32:36.516Z.
+
+2026-10-10T08:34:58Z — S1 requested canonicalR3a weights/calibration and01handoff.
+Remote01 metadata/SHA verified finalEMA fits/R3a/step-00002500.pt,36143486bytes,
+SHA37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85.
+Calibrationoffline/R3a-calibration.json SHAe300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414,
+threshold.5005528330802917. Originalcanonical09J1 andverified01J2copy paths
+senttoS1.01priorityretained; S1willnotlaunchuntilourexplicitfinalrelease.
+NotifyS1 thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-s1-student-proposer-20261010-1
+afterc/ecompleteStage1survivorstatus and allfinal01groups/locksdrain.
+IndependentAUDIT-R3A-DESCRIPTIVE-20261010.md confirms resultWITHCAVEATS;
+auditor files are read-only dependencies, DO NOTstage/commit them.
+
+2026-10-10T08:41:03Z — S1 handoff and audit interpretation retained. C4433/E3813 activehealthy8processes; Dfinal2500/offlineclosed/binarykilled.01descriptorfullyclosed/allownruntimeabsent,03idle; no final01release whilec/e+regret+survivorStage2pending. S1thread thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-s1-student-proposer-20261010-1 has verifiedR3a EMA/calibration paths and willnotlaunch01 timing untilour EXPLICIT finalrelease. NotifyS1 aftercompletec/eStage1survivor/admissionstatus and final01atomicvacancy/independentallPGIDs+locksdrain; keeppriorityuntilthen. Canonical09J1/fits/R3a/step-00002500.pt SHA37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85, verified01J2samepath; threshold.5005528330802917/calibrationSHAe300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414.
+IndependentAUDIT-R3A-DESCRIPTIVE-20261010.md confirmedWITHCAVEATS. Metadatareport label fullyscoredcandidates corrects misleading rawcompleted_roots field; frozenrawdiag/reducer unchanged. Botharmsopponentv1+W/K0mirror50%reference, latewalloverrunsloggedbutnottickscharged; absoluteK2/K4lossesnotcomparablescale. Proposercallbackcachelatency excludesforwardalreadytimedinfallback. Gate/calibration/cachingeffectsnotisolated, strictreturn/generalizationunqualified. Auditorfiles/artifactsREADONLY/neverstagecommit. Allsciencefreezesunchanged.

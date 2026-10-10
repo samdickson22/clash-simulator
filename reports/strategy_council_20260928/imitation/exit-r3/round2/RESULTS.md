@@ -2,7 +2,7 @@
 
 Exploration, outcome-informed extension; no multiplicity adjustment. Original R3a/b remain killed. R3a descriptive is ALWAYS NEVER-ADOPTABLE. No live replacement is authorized.
 
-Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T08:28:44Z.
+Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T08:41:28Z.
 
 | Arm | Host | Final steps | Temperature | Seed | Final EMA sealed |
 |---|---|---:|---:|---:|---|
@@ -19,14 +19,18 @@ R3a descriptive — NEVER ADOPTABLE.
 | K0 | 52.833 [48.833, 56.833] | — | control |
 | R3a | 24.167 [20.833, 27.667] | -28.667 [-33.667, -23.333] | NEVER-ADOPTABLE |
 
-600fresh complete same-core rotated paired blocks, coarse-first deadline W at1core/200ms/8ms reserve. Student supplies calibrated cutoff fallback+top8; K0 is common init-W v1 fallback/proposer. Report deadline/fallback/completed-root/overrun/proposer diagnostics in the sealed decision receipt. Draw loss0; paired95CI upper>=0 kills; descriptive R3a never adopts.
+600fresh complete same-core rotated paired blocks, coarse-first deadline W at1core/200ms/8ms reserve. Student supplies calibrated cutoff fallback+top8; K0 is common init-W v1 fallback/proposer. Report deadline/fallback/fully-scored-candidate/overrun/proposer diagnostics in the sealed decision receipt. Draw loss0; paired95CI upper>=0 kills; descriptive R3a never adopts.
 
-| Arm | Wins / draws | Deadline hits / calls | Fallback uses | Completed roots | Positive wall overruns | Proposer median / p95 ms |
+| Arm | Wins / draws | Deadline hits / calls | Fallback uses | Fully scored candidates | Positive wall overruns | Proposer median / p95 ms |
 |---|---|---|---:|---:|---:|---|
 | K0 | 283.0 / 0 | 109966 / 134238 | 73846 | 336718 | 573 | 9.454 / 10.318 |
 | R3a | 455.0 / 0 | 49612 / 89094 | 13576 | 460337 | 539 | 0.084 / 0.099 |
 
 The student proposal callback reuses ranks computed by the fallback on the same packet. Its reported latency covers cache access and proposal conversion; the model forward pass runs during the earlier timed fallback callback. The full decision timer includes both callbacks. The comparison includes the frozen policy, calibration, proposal and timing behavior.
+
+The frozen diagnostic field `completed_roots` counts fully scored candidates, not distinct decision roots. Both arms face v1+W; the K0 control is a v1+W mirror, with a 50% reference loss. Positive wall overruns are logged but do not advance game ticks in r1(b). These opponent and lateness rules differ from the K-v2/K2 studies, so their absolute losses are not directly comparable.
+
+[Independent descriptive audit](../AUDIT-R3A-DESCRIPTIVE-20261010.md) confirms the paired result with caveats: it combines learned policy, calibrated gate and inference caching effects; strict return timing and generalization beyond the five archetypes remain unqualified.
 
 Round2 Stage2 survivors.
 Pending complete600 paired terminal blocks; no partial reporting reduction.
