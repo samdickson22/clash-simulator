@@ -1,0 +1,71 @@
+{
+  "utc": "2026-10-10T01:19:37Z",
+  "passed": true,
+  "games": [
+    {
+      "index": 0,
+      "seed": 4503601607370496,
+      "rows": 721,
+      "root_decisions": 111,
+      "manifest_sha256": "c7dbe4d5d34ec8dbe22c09306d259221d6b1aa7f7ad59db4d0073dba5707d46c"
+    },
+    {
+      "index": 1,
+      "seed": 4503601607370497,
+      "rows": 721,
+      "root_decisions": 110,
+      "manifest_sha256": "79e2827ef0d65f0cc72bb03583b4b9e6af24bbbf3b24ad7791f2894b2ebc651d"
+    },
+    {
+      "index": 2,
+      "seed": 4503601607370498,
+      "rows": 721,
+      "root_decisions": 111,
+      "manifest_sha256": "d09ac900ac92ce878b473dd109b2ac147a049d12147cb33235a0a78dfee297bb"
+    },
+    {
+      "index": 3,
+      "seed": 4503601607370499,
+      "rows": 721,
+      "root_decisions": 110,
+      "manifest_sha256": "2449eef107788676ec4095b4e06f23e61cb51316475538e3c38ac4dff562a8d7"
+    },
+    {
+      "index": 4,
+      "seed": 4503601607370500,
+      "rows": 721,
+      "root_decisions": 108,
+      "manifest_sha256": "ced2973d7db075ec60da79d88f438df101052a590f15fd6b538d74cc40eb37de"
+    },
+    {
+      "index": 5,
+      "seed": 4503601607370501,
+      "rows": 721,
+      "root_decisions": 122,
+      "manifest_sha256": "d28ae782fc2183a02c3cc3fc732ef42a9de157cc2441c50f36ed5cabee6b0924"
+    },
+    {
+      "index": 6,
+      "seed": 4503601607370502,
+      "rows": 973,
+      "root_decisions": 151,
+      "manifest_sha256": "6c3fb7668b2fe8c208bc10831b5510385cd33f959526bc66a9f33e746167132f"
+    },
+    {
+      "index": 7,
+      "seed": 4503601607370503,
+      "rows": 721,
+      "root_decisions": 107,
+      "manifest_sha256": "c9df8de034e56e7626875f3ac4d029ac05f1319a049e77e5aab31b77450866d7"
+    }
+  ],
+  "reference_manifest_path": "/mpac/sdicks02/jobs/clasher/exit-r1-20261009-r1/generation/game-100019859/manifest.json",
+  "reference_manifest_sha256": "36bf3274864413581618d0f7b418c348e7244ce03e3b4b9388e24b925935ace5",
+  "columns": 68,
+  "dtype_shape_order_equal": true,
+  "gate_c_all_rows_byte_equal": true,
+  "replay_all_games_exact": true,
+  "all_game_file_shas_verified": true,
+  "packed_manifest_sha256": "c097d240bb412b86738bf501fc60e9dcb7436e6f66d30ea241178ee441154984",
+  "packed_row_bytes_equal": true
+}

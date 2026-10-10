@@ -1,0 +1,30 @@
+{
+  "schema": "clasher.exit-g.operations-admission.v1",
+  "utc": "2026-10-10T01:20:46Z",
+  "passed": true,
+  "smoke_compatible_sha256": "d35bdabaeb1266a9cdb7ea5a14c168d8d89bb1b671ed3f8b05d2f47c5bfb3fd2",
+  "smoke_roots": 930,
+  "smoke_rows": 6020,
+  "ops_checks_sha256": "cfebeaed7b10aa477cbb4f6d5be3b70b01f89d12b29181124d0b3d6c1f7a5d1c",
+  "operations_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops",
+  "operations_sha256": {
+    "audit.py": "8ca283376e76f3f60f191d3f4c638ecc6f699c07319b864dffce5cc5fc8633ca",
+    "compatible.py": "34762046b8a4529a1498d3563199e29b7a6956cba6f6d383fc19589c7a502208",
+    "detach.sh": "61bc934d00c620cbe45f63de3a93195a3fd75c5ef11a05b509e2dee6d2f1a5ae",
+    "driver.py": "f051b721597ee478627ca71b65cda6fd299be4829ddb948eda08102a4b2d774a",
+    "env.sh": "7b770de1ea1d9ec1b37c3391989ed69be5ee822736cdd903f211a1e885b1bd3d",
+    "finalize.py": "f9bed851418565b9bb56c5ba357cf2a5fb5ca5fa0fcc3b67fa4486be464149cd",
+    "host_audit.py": "c9ad8916b9bdcab707b5108db735cf06114f3de4d4f4940570b3216c81b3aa4d",
+    "pack_loader.py": "68d1399f2d03a9d63f261ef6b3e565b06b7f98fec3c3048375b1bd2d52aef04f",
+    "pack_r1_frozen.py": "5442af29f9bcea94f3ddebbd8de7ef18d041b53eb3d1e2456fa36edb75fc5d80",
+    "qualify_ops.py": "646bc986abb88ae7862e6ed4c375b3ad42f6af2111e66afb480cb43bbc7a6b1a",
+    "seed_audit_original.py": "4e41d0f9ccfd020e68295a2886bdd0f7567ce539c96edab8f40ddfd178bd19f9"
+  },
+  "notes": [
+    "No B2 emitter, rows, native, checkpoint or scientific source changed.",
+    "Original B2 source snapshot predates r1 packer; exact r1 student packer5442af29 is imported from own ops via package-context loader.",
+    "Packing batches2048completed games, SHA-verifies input/output, preserves resume quarantines and publishes concat manifest.",
+    "Outer supervisor adds target, external STOP, memory26/28GiB and deadline controls; hard deadline terminates only still-live PIDs it created after the five-minute drain reserve.",
+    "01 remains unallocated; all operations stay on04 physical0\u201347 nice19/SCHED_IDLE."
+  ]
+}
