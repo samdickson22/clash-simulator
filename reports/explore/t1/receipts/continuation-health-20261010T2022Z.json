@@ -1,0 +1,230 @@
+{
+  "schema": "clasher.t1.continuation-health.v1",
+  "utc": "2026-10-10T20:22:09Z",
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "phase": "replacement-r1",
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1",
+  "immutable_manifest_sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+  "counts": {
+    "127x01": {
+      "durable_blocks": 207,
+      "guard_durable_blocks": 42,
+      "original_preserved_blocks": 124,
+      "total_flagged_blocks": 0,
+      "ssh_flagged_blocks": 0,
+      "dbus_flagged_blocks": 0,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 83,
+      "primary_durable_blocks": 165
+    },
+    "127x08": {
+      "verified_offhost_ACKs": 120,
+      "durable_blocks": 120,
+      "guard_durable_blocks": 23,
+      "original_preserved_blocks": 33,
+      "total_flagged_blocks": 120,
+      "ssh_flagged_blocks": 59,
+      "dbus_flagged_blocks": 120,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 87,
+      "primary_durable_blocks": 97
+    }
+  },
+  "total_durable_blocks": 327,
+  "progress": {
+    "127x01": {
+      "utc": "2026-10-10T20:22:00Z",
+      "host": "127x01",
+      "phase": "replacement",
+      "complete_local_blocks": 83,
+      "failed_blocks": 0,
+      "queued": 1363,
+      "inflight": 11,
+      "reason": null,
+      "sealed": true,
+      "age_seconds": 9.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": false
+    },
+    "127x08": {
+      "utc": "2026-10-10T20:21:56Z",
+      "host": "127x08",
+      "phase": "replacement",
+      "complete_local_blocks": 87,
+      "failed_blocks": 0,
+      "queued": 1360,
+      "inflight": 11,
+      "reason": null,
+      "sealed": true,
+      "age_seconds": 13.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": false
+    }
+  },
+  "proof_errors": [],
+  "latest_08_durable_ack_utc": "2026-10-10T20:21:31Z",
+  "corpus_durability": "VERIFIED_READ_ONLY",
+  "END": "WAIT_COORDINATOR_CLEAN_WINDOW",
+  "checkpoint_utc": "2026-10-10T20:22:09Z",
+  "identity_verification": [
+    {
+      "utc": "2026-10-10T20:21:44Z",
+      "host": "127x01",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": true,
+          "identity": {
+            "pid": 433021,
+            "start_ticks": 145043064,
+            "pgid": 433021,
+            "uid": 3822945,
+            "cmdline_sha256": "2e9f8790a927894fca6643e6362b3ae9461925f0d1917d777837a0353748c06c",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 10,
+          "affinity": [
+            61
+          ]
+        },
+        {
+          "role": "copier",
+          "alive": true,
+          "identity": {
+            "pid": 432837,
+            "start_ticks": 145042108,
+            "pgid": 432837,
+            "uid": 3822945,
+            "cmdline_sha256": "6ed13ec3885f058ba25509410268b4797f87051911d96229c28122d1691f725e",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 19,
+          "affinity": [
+            62
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": null
+    },
+    {
+      "utc": "2026-10-10T20:21:44Z",
+      "host": "127x08",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": true,
+          "identity": {
+            "pid": 1876811,
+            "start_ticks": 145993083,
+            "pgid": 1876811,
+            "uid": 3822945,
+            "cmdline_sha256": "2e9f8790a927894fca6643e6362b3ae9461925f0d1917d777837a0353748c06c",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 10,
+          "affinity": [
+            61
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08"
+    }
+  ],
+  "corpus_copy_health": {
+    "utc": "2026-10-10T20:21:44Z",
+    "host": "127x03",
+    "receipt": {
+      "utc": "2026-10-10T20:08:51Z",
+      "host": "127x03",
+      "nice": 19,
+      "bandwidth_KiB_s": 8192,
+      "bundle_sha256": "282b08770d9a16b8e39b354551d62f934e7103dec769a00c511fb0b96260351e",
+      "states": 1200,
+      "outcomes_read": false,
+      "read_only": true
+    },
+    "receipt_sha256": "72ac548b1c79ee58958aed1350cdf07b8364ec199fd4fb864b455bb011d2f19f",
+    "read_only_permissions_verified": true,
+    "temporary_files": [],
+    "files": [
+      {
+        "name": "corpora.json",
+        "bytes": 202182,
+        "writable_bits": 0
+      },
+      {
+        "name": "capture-source.json",
+        "bytes": 1053,
+        "writable_bits": 0
+      },
+      {
+        "name": "e4-contract-staging.json",
+        "bytes": 424,
+        "writable_bits": 0
+      },
+      {
+        "name": "states.pkl",
+        "bytes": 11404739755,
+        "writable_bits": 0
+      },
+      {
+        "name": "DURABLE-COPY.json",
+        "bytes": 249,
+        "writable_bits": 0
+      },
+      {
+        "name": "K4-states.pkl",
+        "bytes": 2829766847,
+        "writable_bits": 0
+      },
+      {
+        "name": "K0c-states.pkl",
+        "bytes": 2321561974,
+        "writable_bits": 0
+      },
+      {
+        "name": "corpus-launch.json",
+        "bytes": 1885,
+        "writable_bits": 0
+      },
+      {
+        "name": "CORPUS-BUILT.json",
+        "bytes": 383,
+        "writable_bits": 0
+      },
+      {
+        "name": "K2-states.pkl",
+        "bytes": 3447383785,
+        "writable_bits": 0
+      },
+      {
+        "name": "S-states.pkl",
+        "bytes": 2805877531,
+        "writable_bits": 0
+      }
+    ]
+  },
+  "replacements_required": false,
+  "reporting_complete": false,
+  "release_performed": false,
+  "continuation_helper_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/continuation-health.py",
+  "continuation_helper_sha256": "cd56458e5d7cac489cb43ed7ee752dddb4d46e4e5e087aadbf6eaa1601156adb"
+}

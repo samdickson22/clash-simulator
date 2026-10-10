@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-10T20:08:51Z",
+  "host": "127x03",
+  "nice": 19,
+  "bandwidth_KiB_s": 8192,
+  "bundle_sha256": "282b08770d9a16b8e39b354551d62f934e7103dec769a00c511fb0b96260351e",
+  "states": 1200,
+  "outcomes_read": false,
+  "read_only": true
+}
