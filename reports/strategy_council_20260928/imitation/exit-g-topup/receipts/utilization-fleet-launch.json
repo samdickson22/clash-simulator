@@ -1,0 +1,21 @@
+{
+  "utc": "2026-10-10T08:02:50Z",
+  "passed": true,
+  "pid": 656370,
+  "pgid": 656370,
+  "start": 140899560,
+  "command_sha256": "e82541a7be10571b2a5038a31f9dae4692b13b1e6156ea454177daf53f2b7453",
+  "nice": 19,
+  "scheduler": 5,
+  "cores": [
+    0
+  ],
+  "frozen_commit": "d45882c68bc26af828fad28579f9122d5e1fc2ef",
+  "host_expected_pgids": {
+    "03": 2711936,
+    "04": 1712867,
+    "08": 16288
+  },
+  "polling": "Counts at most once/minute; caches stopped/full-vacate hosts; no01remote calls; own G target stop files only",
+  "next_full_steady_audits": "04after~08:05:33Z;08after~08:07:28Z; no warmed-rate claim before audits"
+}

@@ -1,0 +1,21 @@
+{
+  "utc": "2026-10-10T08:00:29Z",
+  "release_utc": "2026-10-10T07:45:00Z",
+  "one_time_consumed": true,
+  "markers": {
+    "INTERNAL.STOP": {
+      "inode": 56266061,
+      "mtime_ns": 1791598064284291318,
+      "ctime_ns": 1791598064284291318,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "PRESSURE.ADMISSION.PAUSE": {
+      "inode": 56266030,
+      "mtime_ns": 1791597818396438769,
+      "ctime_ns": 1791597818396438769,
+      "sha256": "0ca5878211695e55b3530051fa44e4939d61b36bed667868527b6db2958a1dc9"
+    }
+  },
+  "archive": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/resume-archives/utilization04-20261010",
+  "freeze_commit": "d45882c68bc26af828fad28579f9122d5e1fc2ef"
+}
