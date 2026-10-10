@@ -1670,3 +1670,9 @@ Also on the hub, but with copies elsewhere:
   - **Capacity width 384 KILLED** (gain 0.00446 < 0.005 at 95.1 M; `ffad9503`). 480's quarter decision is imminent.
   - 14 freed → **X7** = X1 seed replicate (seed-noise estimate for the 2×2 arms).
   - Perception: verify_body recomputes all 216 branches serially after the seal (+~12 h). Asked the owner to draft a parallel fresh-process verify amendment for review.
+- **02:42 UTC heartbeat:**
+  - GPUs: X on 01/04/08/09/13/16 at 59–74%, capacity 480 on 15. **14 idle**, waiting for X7 (queued to X).
+  - **A19 r1 draft** (parallel fresh-process verify_body, 12-way on 04) received. The owner found that A2's build_bounds and verified_bounds each re-run serial verify_body as well (≈12.7 h each).
+  - **Asked for a consolidated A19 r2** covering all verify_body calls (A1+A2), plus launcher, handoff and adversarial tests, ready by ~07Z for one independent review. Potential saving is ~30 h on the perception path.
+  - R2 implementation notes recorded by X (70b31da9).
+  - Spurious STOP denial on pending_request_list ignored.
