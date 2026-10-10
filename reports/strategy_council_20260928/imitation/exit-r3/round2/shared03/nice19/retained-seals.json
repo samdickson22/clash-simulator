@@ -1,0 +1,42 @@
+{
+  "regret/games/0000.json": {
+    "seal_sha256": "4e96d5c1d463b62361ec552c51d00e6c2c79075acd7017e319ed3fe26b101b9d",
+    "jsonl_sha256": "920f072bd4ca80b4694c340f9fde96bbb3e2ce91d8ff0863371b1708117937dd",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0001.json": {
+    "seal_sha256": "e07e0a8100759a6ffd35e0e2f58b1def6cbe6d91b55c974541bb85080725b4c1",
+    "jsonl_sha256": "35afaa2471aff4d22ede8753440771397c44b90fea9085316f1b5d1963672102",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0002.json": {
+    "seal_sha256": "338eaa062f304e3548ab7c9e118829421a4ade89a8ada16ccb4040b46ac56674",
+    "jsonl_sha256": "9ad611323546a170cc65a24b97642192b4ca0b4b858951262cd52644eea61166",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0003.json": {
+    "seal_sha256": "4700ec89fd2cf716bf4acb19005872497bbf48e69e724b94b39ece90015c5dd8",
+    "jsonl_sha256": "63c9a48e7d9c4c0c868867314e8d16c4c4c718d5c6422b7c728c472891a400cb",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0004.json": {
+    "seal_sha256": "647588f264e268bb80b5fa029ff215b4f5dec799ddf80988a2f8596644eeddfe",
+    "jsonl_sha256": "e00db83c30792b874492e804241121f6e5fc57ee65c96fd38ca1377630388eb9",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0005.json": {
+    "seal_sha256": "6acf6d1b4e0e7bd4de13e243eb55d1dc14d1f1877ab4dc712a325d363eb46e9f",
+    "jsonl_sha256": "7c6892d9d28e8a749f3a20c22915826690bc42e77dce63f129b97393a669750e",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0007.json": {
+    "seal_sha256": "adea64b933f5698f43092d2a94cd213720e6dca6c66a51243ce2848fc3b115c1",
+    "jsonl_sha256": "e9e47fcdba50a361cb974894f862ea07257c923ddcdb31e4b2b6a719885a8bd7",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0008.json": {
+    "seal_sha256": "d8531e525e55839e748172dfdcd0bf95979fb8b03fa6afdd70898c5b2c503429",
+    "jsonl_sha256": "15060a795ef8d0594afe0f2df3414c5db6eca1b356b883b7d448d5a242755d28",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  }
+}

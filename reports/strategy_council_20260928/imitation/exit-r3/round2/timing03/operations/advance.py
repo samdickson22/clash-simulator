@@ -29,7 +29,7 @@ def launch(state,host,label,cmd):
     identity=json.loads(remote(host,'bash '+J+'/metadata/detach.sh '+J+'/'+label+'.log '+cmd));state['actions'].append(dict(host=host,label=label,identity=identity));return True
 def env(host,scorer=False):
     root=J+('/scorer-source' if scorer else '/eval-source' if host=='127x01' else '/source')
-    return 'env PYTHONPATH='+root+':'+root+'/src:'+J+'/student-source:'+J+'/eval-ops:'+J+'/ops CLASHER_ROOT='+root+' CLASHER_EVAL_RUNTIME_ROOT='+root+' CLASHER_DELAY_NATIVE_DIR='+J+('/scorer-native' if scorer else '/reporting-native')+' PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 RAYON_NUM_THREADS=1 XDG_CACHE_HOME='+J+'/cache TORCH_HOME='+J+'/cache/torch TMPDIR='+J+'/tmp '+('CUDA_VISIBLE_DEVICES= ' if host in ('127x01','127x03') else '')+'nice -n 10 taskset -c '+('39' if host=='127x01' else '59' if host=='127x03' else '126')+' '+B+'/venv/bin/python -B '
+    return 'env PYTHONPATH='+root+':'+root+'/src:'+J+'/student-source:'+J+'/eval-ops:'+J+'/ops CLASHER_ROOT='+root+' CLASHER_EVAL_RUNTIME_ROOT='+root+' CLASHER_DELAY_NATIVE_DIR='+J+('/scorer-native' if scorer else '/reporting-native')+' PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 RAYON_NUM_THREADS=1 XDG_CACHE_HOME='+J+'/cache TORCH_HOME='+J+'/cache/torch TMPDIR='+J+'/tmp '+('CUDA_VISIBLE_DEVICES= ' if host in ('127x01','127x03') else '')+'nice -n '+('19' if host=='127x03' else '10')+' taskset -c '+('39' if host=='127x01' else '59' if host=='127x03' else '126')+' '+B+'/venv/bin/python -B '
 def lane(state,lane):
     host='127x01'
     if read(host,('descriptive-results.json' if lane=='descriptive' else 'stage2-results.json')):return True
@@ -63,8 +63,8 @@ def advance(descriptive=False,round2=False):
             if not read('127x03','REGRET-PROPOSALS-STAGING.json'):
                 launch(state,'127x03','regret-proposals-staging-attempt2',env('127x03',True)+J+'/eval-ops/stage_proposals.py --job '+J);return state
             if not read('127x03','regret/POOL-DONE.json'):
-                launch(state,'127x03','regret-pool-attempt1',env('127x03',True)+J+'/eval-ops/pool_regret.py --job '+J);return state
-            state['round2_waiting']='Shared03 replay manager must seal Stage1 in-process; closed attempts require review';state['needs_review']=phase('127x03','regret-pool-attempt1')=='closed';return state
+                launch(state,'127x03','regret-pool-attempt2',env('127x03',True)+J+'/eval-ops/pool_regret.py --job '+J);return state
+            state['round2_waiting']='Shared03 replay manager must seal Stage1 in-process; closed attempts require review';state['needs_review']=phase('127x03','regret-pool-attempt2')=='closed';return state
         if not any(v['survives'] for v in stage1.values()):state['stage2_skipped']='all round2 arms killed at complete Stage1';state['round2_complete']=True;return state
         state['round2_waiting']='Survivors require coordinator G STOP/full drain and separately frozen timing03 admission; no further01 launches'
         state['stage2_survivors']=[a for a,v in stage1.items() if v['survives']]
