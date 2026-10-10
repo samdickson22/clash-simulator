@@ -185,3 +185,18 @@ K2 at04:58:29Z remains behind K-v2 release (2312/2400 terminal, originalPGIDs
 live); no K2 release or03 admission.01 still awaits explicit X study release.
 Temporary continuation enabled at10-minute cadence; retain until finalRESULTS
 or lease expiry/vacancy, and do not duplicate fit/offline/replay attempts.
+
+2026-10-10T05:14:03Z — Healthy fits R3a1876/R3b1843 at05:12:20/21Z, both1750
+checkpoints saved. Eight processes each, PSS19.17/27.68GB, GPUfree48.41/48.30GB;
+no stop reason. Final2500 complete/segment/exit receipts are absent. Bounded
+stage.py waits without launching; no heldout outcome or replay has run.
+K2 remains unlaunched awaiting K-v2 explicit release despite2400 terminal files;
+R3 still awaits K2 final release.01 remains queued behind X descriptive release.
+
+A19 latest05:10:06Z remains HELD pending actual operator gates/approval;
+original CPU52 seal continues.04 remains idle with stale admission; refresh
+only after both final GPU offline files and fresh no-launch/process audit.
+Metadata-only renderer now prints every input/native SHA and final effective
+rows/s using all retained fit-attempt wall time, plus em dash for absent anchor
+contrasts. Pending render and diff checks passed on05; no scientific entrypoint,
+freeze, thresholds or seed changes. Whole-tree costs remain pending final exits.
