@@ -1,6 +1,6 @@
 # G teacher-generation top-up
 
-Updated 2026-10-10T01:35:47Z. Coordinator: 0523ae6f. Running on 04 and 01. Combined target: 6,000,000 roots; deadline: 2026-10-11 03:00Z. Final packs and manifest remain pending.
+Updated 2026-10-10T01:35:47Z. Coordinator: 0523ae6f. 04 running;01 draining external STOP;03 admission pending. Combined target: 6,000,000 roots; deadline: 2026-10-11 03:00Z. Final packs and manifest remain pending.
 
 Freeze `cb784cd3` was committed, secret-scanned and pushed before any game. The fresh 04 provenance audit passed 144,265 files and 53,506 formula contexts with zero overlaps or errors. All 1,402 original B2 runtime source pins, the native binary and the explicit v1 checkpoint were verified. Audit PID/PGID 3865071 exited successfully on core 47 under nice 19/SCHED_IDLE. Full pins and the disjoint r1/K/X interval review are in [FREEZE.json](FREEZE.json).
 
@@ -12,7 +12,7 @@ Four operational checks passed without real games: finish current game before ST
 
 Production launch receipt was sealed at 2026-10-10T01:21:15Z. Supervisor PID/PGID: 3908611. Packer PID: 3908895, PGID: 3908611. The 47 workers share PGID 3908611; each has one distinct physical core from 0 through 46. Supervisor and packer use core 47. [Exact worker PIDs and cores](receipts/launch-04.json).
 
-The 01:21:24Z host audit passed all 49 owned processes and their threads: nice 19/SCHED_IDLE, affinity within physical cores 0–47, MemAvailable 96,963,969,024 bytes. G does not use SMT siblings 64–111, A1 cores 52/116 or X5 CPUs 118–126. Host 01 was initially withheld until K released it at 01:19Z; no G simulations run on 03, 08, leased hosts or 05. [Host audit](receipts/host-audit-04.json).
+The 01:21:24Z host audit passed all 49 owned processes and their threads: nice 19/SCHED_IDLE, affinity within physical cores 0–47, MemAvailable 96,963,969,024 bytes. G does not use SMT siblings 64–111, A1 cores 52/116 or X5 CPUs 118–126. Host 01 was initially withheld until K released it at 01:19Z; At that launch no G simulations ran on03. Coordinator01:37Z later authorized03;08, leased hosts and05 remain excluded. [Host audit](receipts/host-audit-04.json).
 
 The 2026-10-10T01:23:46Z live snapshot had 59 terminal production games, 6,829 roots and 44,003 rows; all 47 workers were active, with no pause or failure. MemAvailable was 92,413,001,728 bytes. Initial loading and incomplete games are excluded from these counts; a warm rate remains pending. [Startup snapshot](receipts/startup-progress-04.json).
 
@@ -50,3 +50,7 @@ At 2026-10-10T01:35:01Z, combined progress was 691 terminal games, 85,752 roots 
 STOP on 04 reclaims the remaining G fleet and retires the controller after game drain. The final combined pack receipt is `04:$job/fleet-concat-manifest.json`; it binds both host manifests to r1 `1c8e1f49` and counts pending unpacked roots. Interrupted 01 raw games are retained; pack them after an allowed release, or stage them into the own 04 prefix for packing there. Never claim the full concatenation deliverable while pending roots remain.
 
 The existing 30-minute continuation now covers both hosts, combined target and 01 preemption. Next run remains 01:51:09.288Z; no second timer was created. Final roots/packs/manifest remain in progress.
+
+2026-10-10T01:41:02Z — coordinator released03physical0–59 after K finished. Host03 amendment freezes fresh indices[4000000,5000000), disjoint from04/01/r1/K/X including helpers. SHA-verified historical03 inventory covers239,590files; fresh K/X scan covers6,187files and3,635formula contexts with zero collisions/errors. All1,402 B2 source pins, native and checkpoint verified. Five mock operational checks pass STOP-03/current-game drain/resume/low-memory/X detection. Initial audit wrapper used a relative script path and exited before scanning; corrected fresh audit03-r2 PID/PGID1570940 exited0, no games. [Pre-launch freeze](HOST03-AMENDMENT.json).
+
+01 STOP was externally created01:37:55Z and is honored without restart. It retains pending raw games; current games are draining. 03 will use59workers0–58 and supervisor/packer59, nice19/SCHED_IDLE, never60–63 or SMT. Both STOP and STOP-03 close03 admission; supervisor sets PACK.STOP for packer interruption. No cache or X controller signal/affinity change. Sole fleet replacement will include allthree totals and cache01/03 only after entire PGIDs vacate. No simulations on03 before this freeze is pushed.

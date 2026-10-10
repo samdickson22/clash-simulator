@@ -1,0 +1,220 @@
+{
+  "schema": "clasher.exit-g.host03-amendment.v1",
+  "utc": "2026-10-10T01:41:02Z",
+  "authorization": "Coordinator01:37Z releases03physical0\u201359 after K complete; never60\u201363/cache PIDs; per-host STOP-03; yield immediately for X stage1/2.",
+  "source_commit": "39b6adf6",
+  "emitter_source_sha256": "dab616517ea6b33ae1de6a34909526cf5409ec4ad71c180188d95d9716cfecc1",
+  "rows_source_sha256": "835a4104fbd46731998ca033223692813bd4c4fdf015b7a15317a0ffb780ab53",
+  "native_sha256": "06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10",
+  "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "full_b2_launch_sha256": "68018fc17998753374cbe6d68f9767133a6c0656caea575ee46debc871778ce9",
+  "scientific_change": "Only seeds; unchanged B2 source/decks/opponent/seat formulas. Index shift4000000 is divisible by64.",
+  "base": 4503601607370496,
+  "host03_reserved_indices": [
+    4000000,
+    5000000
+  ],
+  "host03_seed_interval": [
+    4503601611370496,
+    4503601612370496
+  ],
+  "other_G_indices": {
+    "host04": [
+      64,
+      1000000
+    ],
+    "host01": [
+      2000000,
+      3000000
+    ]
+  },
+  "seed_ranges_disjoint_including_helpers": true,
+  "prior_seed_ledger": [
+    {
+      "name": "r1 historical conservative bound",
+      "start": 0,
+      "stop_exclusive": 4503600127370497
+    },
+    {
+      "name": "r1 screen h2h",
+      "start": 4503601007370496,
+      "stop_exclusive": 4503601007370752
+    },
+    {
+      "name": "r1 screen paired",
+      "start": 4503601107370496,
+      "stop_exclusive": 4503601107371096
+    },
+    {
+      "name": "r1 heldout",
+      "start": 4503601207370496,
+      "stop_exclusive": 4503601207370560
+    },
+    {
+      "name": "r1 smoke conservative helper bound",
+      "start": 4503601307370496,
+      "stop_exclusive": 4503601307642357
+    },
+    {
+      "name": "K reporting",
+      "start": 4503601407370496,
+      "stop_exclusive": 4503601407371096
+    },
+    {
+      "name": "K smoke",
+      "start": 4503601417370496,
+      "stop_exclusive": 4503601417370504
+    },
+    {
+      "name": "X h2h",
+      "start": 4503601507370496,
+      "stop_exclusive": 4503601507370752
+    },
+    {
+      "name": "X paired",
+      "start": 4503601517370496,
+      "stop_exclusive": 4503601517371096
+    },
+    {
+      "name": "X smoke",
+      "start": 4503601527370496,
+      "stop_exclusive": 4503601527370528
+    },
+    {
+      "name": "X dagger",
+      "start": 4503601707370496,
+      "stop_exclusive": 4503601707403264
+    }
+  ],
+  "prior_freeze_sha256": "37ddbe1db4abe13f08a941c2037eb037e2d9f4193808af41d612c4c8dfd2dc85",
+  "plan_seed_list_sha256": "92204e4bfbdca5aca038de8cca2904b5a15e65e7996502c394bc00c60c53e51d",
+  "seed_audit": {
+    "utc": "2026-10-10T01:40:13Z",
+    "passed": true,
+    "files": 6187,
+    "inventory_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/seed-inventory-03.json",
+    "inventory_sha256": "2113807770a2b2381cab72ec6ca27ecf18190df1d8ddb6aca0b3e2bab9a9cfdb",
+    "formula_contexts": 3635,
+    "declarations": 9025,
+    "overlap": [],
+    "errors": [],
+    "full_b2_source_files": 1402,
+    "full_b2_launch_sha256": "68018fc17998753374cbe6d68f9767133a6c0656caea575ee46debc871778ce9",
+    "source_pins_verified": true,
+    "native_pins_verified": true,
+    "checkpoint_pins_verified": true,
+    "cpu_seconds": 4.356758,
+    "wall_seconds": 3.8004798740148544,
+    "sealed_historical_inventory": {
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r2-seed-audit-20261010-r1/inventory.json",
+      "sha256": "abdf49ff7053685d145bffa7bb59791084ea60ac2f4deccd4e70e5fb38d11296",
+      "utc": "2026-10-10T00:49:28Z",
+      "files": 239590,
+      "all_literals_outside_G03": true
+    },
+    "coverage": "Sealed historical r1/provenance inventory plus fresh current K/X job trees. Historical formula bounds retained from original G freeze; G04 and G01 reserved blocks explicitly disjoint."
+  },
+  "smoke_passed": true,
+  "smoke_receipt_sha256": "d35bdabaeb1266a9cdb7ea5a14c168d8d89bb1b671ed3f8b05d2f47c5bfb3fd2",
+  "host": "127x03",
+  "worker_cores": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58
+  ],
+  "supervisor_and_packer_core": 59,
+  "avoid_cores": [
+    60,
+    61,
+    62,
+    63
+  ],
+  "nice": 19,
+  "scheduler": "SCHED_IDLE",
+  "memory_floor_bytes": 25769803776,
+  "initial_admission_available_bytes": 68719476736,
+  "stop_files": [
+    "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/STOP",
+    "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/STOP-03"
+  ],
+  "preemption": "One-second X offline/game_pool/game_worker detection sets STOP-03 and PACK.STOP; current games finish; stop files never automatically cleared. Cache1655741/PGID1655728 and X controller1502885/core63 never signaled or changed.",
+  "K_pids_confirmed_absent": [
+    1331806,
+    1393695
+  ],
+  "K_progress_sha256": "bf1ee36f8830c424b17b7f503837c5dd058e89813163c07f9d3e25bd43c51f0b",
+  "X_progress_sha256": "3478f56daea04290cd7fdce5bbbe7e101f20674de9a77b440a2f8f1d39bc5551",
+  "operations03_sha256": {
+    "audit.py": "28c31fa1f6d71444917b5aa6bfefa9f9af1cae1de72aba6736b078fcdee62cb2",
+    "check_first.py": "548618d6263f28010bc536891f103e2cf895a8e3395c1ee3c96758feae927aa9",
+    "detach.sh": "6bad203eb118d167cd8146824e39ea0a45430e0c93d59d8860ae6917c1d10a4b",
+    "driver.py": "d896370adfcdfe7488b430ecf6d8a4d3fd8eb39bdde71353d0e4aea0eb548b16",
+    "env.sh": "7b770de1ea1d9ec1b37c3391989ed69be5ee822736cdd903f211a1e885b1bd3d",
+    "finalize.py": "aaecbf14df98246914303e0f84bacb4269f7ed50e6c3b76879abcf30982f076c",
+    "fleet_remote.py": "c595b2e46341e046595985a0cd387543c68ca6b4f44b88ee2aa187059e7dede1",
+    "host_audit.py": "57176d4ff3a3cddb2356c260e56f89549dc5d32cd99e12f9a5d83ef1dcead84a",
+    "pack_loader.py": "68d1399f2d03a9d63f261ef6b3e565b06b7f98fec3c3048375b1bd2d52aef04f",
+    "pack_r1_frozen.py": "5442af29f9bcea94f3ddebbd8de7ef18d041b53eb3d1e2456fa36edb75fc5d80",
+    "qualify_ops.py": "7ab4f792a1edf163ed73844ccb41e4cab1e330ce93bf5eae78d17d081bf5fd10",
+    "seed_audit_original.py": "4e41d0f9ccfd020e68295a2886bdd0f7567ce539c96edab8f40ddfd178bd19f9"
+  },
+  "fleet_sha256": "c5b15b92110b97bab8c29dda604f8f20cda3cbf3be099d2bb7a107568290e5f8",
+  "qualification_sha256": "8be02609da6e0aedd1408d6d76da67e09ef3e62c9e7097a04ce06528e30b8cc6",
+  "fleet": "Sole04/core47 metadata controller sums all three hosts for6M target;01/03 preemption snapshots cached only once full generation PGIDs vacate. No subsequent CPU calls to preempted hosts. 04 STOP stops fleet. Deadline drain02:55Z Oct11/hard03:00Z."
+}

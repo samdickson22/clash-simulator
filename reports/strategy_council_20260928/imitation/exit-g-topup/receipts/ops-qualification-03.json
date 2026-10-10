@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "tests": [
+    "finish current game then STOP",
+    "STOP before first game",
+    "resume skips sealed exact seed/index",
+    "low-memory admission interrupted by STOP",
+    "X offline/pool detection; fit and own G excluded"
+  ],
+  "real_games": 0
+}

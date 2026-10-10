@@ -1,0 +1,26 @@
+{
+  "utc": "2026-10-10T01:40:13Z",
+  "passed": true,
+  "files": 6187,
+  "inventory_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/seed-inventory-03.json",
+  "inventory_sha256": "2113807770a2b2381cab72ec6ca27ecf18190df1d8ddb6aca0b3e2bab9a9cfdb",
+  "formula_contexts": 3635,
+  "declarations": 9025,
+  "overlap": [],
+  "errors": [],
+  "full_b2_source_files": 1402,
+  "full_b2_launch_sha256": "68018fc17998753374cbe6d68f9767133a6c0656caea575ee46debc871778ce9",
+  "source_pins_verified": true,
+  "native_pins_verified": true,
+  "checkpoint_pins_verified": true,
+  "cpu_seconds": 4.356758,
+  "wall_seconds": 3.8004798740148544,
+  "sealed_historical_inventory": {
+    "path": "/mpac/sdicks02/jobs/clasher/exit-r2-seed-audit-20261010-r1/inventory.json",
+    "sha256": "abdf49ff7053685d145bffa7bb59791084ea60ac2f4deccd4e70e5fb38d11296",
+    "utc": "2026-10-10T00:49:28Z",
+    "files": 239590,
+    "all_literals_outside_G03": true
+  },
+  "coverage": "Sealed historical r1/provenance inventory plus fresh current K/X job trees. Historical formula bounds retained from original G freeze; G04 and G01 reserved blocks explicitly disjoint."
+}
