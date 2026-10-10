@@ -1,0 +1,25 @@
+{
+  "relative": "regret/pool-meter-3419146.json",
+  "sha256": "1a8f9127d035cf18d1c22c16dc4c646ac240bd6f224be09f3d9d8102cf53feb6",
+  "raw": "{\n  \"status\": \"complete\",\n  \"pid\": 3419146,\n  \"pgid\": 3419146,\n  \"completed\": 64,\n  \"failures\": [],\n  \"stage1_reduced_in_manager\": true,\n  \"worker_cores\": [\n    56,\n    57,\n    58\n  ],\n  \"manager_core\": 58,\n  \"parent_cpu_seconds\": 4.566508000000001,\n  \"children_cpu_seconds\": 1996.162908,\n  \"wall_seconds\": 726.1164699050132,\n  \"min_available_bytes\": 128541048832,\n  \"utc\": \"2026-10-10T11:19:34Z\",\n  \"accounting\": \"Whole replay pool tree INCLUDING in-process Stage1 reduction once; nested game/row/reduction diagnostics never added\"\n}\n",
+  "value": {
+    "status": "complete",
+    "pid": 3419146,
+    "pgid": 3419146,
+    "completed": 64,
+    "failures": [],
+    "stage1_reduced_in_manager": true,
+    "worker_cores": [
+      56,
+      57,
+      58
+    ],
+    "manager_core": 58,
+    "parent_cpu_seconds": 4.566508000000001,
+    "children_cpu_seconds": 1996.162908,
+    "wall_seconds": 726.1164699050132,
+    "min_available_bytes": 128541048832,
+    "utc": "2026-10-10T11:19:34Z",
+    "accounting": "Whole replay pool tree INCLUDING in-process Stage1 reduction once; nested game/row/reduction diagnostics never added"
+  }
+}

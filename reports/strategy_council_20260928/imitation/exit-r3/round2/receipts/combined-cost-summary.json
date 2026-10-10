@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-10T11:09:31Z",
-  "final": false,
-  "cpu_seconds": 245371.08079699997,
+  "utc": "2026-10-10T11:20:04Z",
+  "final": true,
+  "cpu_seconds": 247371.81021299996,
   "gpu_wall_seconds": 34052.7115964524,
   "meters": [
     {
@@ -615,6 +615,16 @@
       "cpu_seconds": 0.21764,
       "gpu_wall_seconds": 0,
       "status": "closed",
+      "host": "127x03",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "whole CPU pool",
+      "sha256": "1a8f9127d035cf18d1c22c16dc4c646ac240bd6f224be09f3d9d8102cf53feb6",
+      "path": "receipts/evaluation-snapshots/127x03/history/regret--pool-meter-3419146-1a8f9127d035cf18d1c22c16dc4c646ac240bd6f224be09f3d9d8102cf53feb6.json",
+      "cpu_seconds": 2000.7294160000001,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
       "host": "127x03",
       "experiment": "round2/descriptive"
     }

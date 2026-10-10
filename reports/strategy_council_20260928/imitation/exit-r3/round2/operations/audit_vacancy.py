@@ -193,7 +193,10 @@ for p in Path('/proc').iterdir():
   assert cmd.startswith(('ssh ','sshd:','rsync ')) or str(j)+'/' not in cmd,'Owned runtime present'
  except (FileNotFoundError,ProcessLookupError,PermissionError):pass
 v.update(utc=subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip(),observer_independently_absent=True,global_decisions=COMPLETE,all_recorded_groups_absent=True)
+if v['host']=='127x03':v.update(released=True,reporting_complete=True,regret_complete=True,physical_cores=[56,57,58],no_further_R3_work_on03=True)
 tmp=j/'EVAL-VACATED.json.tmp';tmp.write_text(json.dumps(v,indent=2)+'\\n');tmp.replace(j/'EVAL-VACATED.json')
+if v['host']=='127x03':
+ tmp=j/'R3-CPU-RELEASE.json.tmp';tmp.write_text(json.dumps(v,indent=2)+'\\n');tmp.replace(j/'R3-CPU-RELEASE.json')
 print(json.dumps(v))
 '''.replace('JOB', repr(J)).replace('RESULT', repr(result)).replace('COMPLETE', repr(global_complete))
         result = remote(host, code)

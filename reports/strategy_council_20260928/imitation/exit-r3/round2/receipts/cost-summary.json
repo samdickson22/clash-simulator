@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-10T11:09:31Z",
-  "final": false,
-  "cpu_seconds": 206722.12207899996,
+  "utc": "2026-10-10T11:20:04Z",
+  "final": true,
+  "cpu_seconds": 208722.85149499995,
   "gpu_wall_seconds": 23366.550588296494,
   "meters": [
     {
@@ -392,11 +392,20 @@
       "gpu_wall_seconds": 0,
       "status": "closed",
       "host": "127x03"
+    },
+    {
+      "category": "whole CPU pool",
+      "sha256": "1a8f9127d035cf18d1c22c16dc4c646ac240bd6f224be09f3d9d8102cf53feb6",
+      "path": "receipts/evaluation-snapshots/127x03/history/regret--pool-meter-3419146-1a8f9127d035cf18d1c22c16dc4c646ac240bd6f224be09f3d9d8102cf53feb6.json",
+      "cpu_seconds": 2000.7294160000001,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "host": "127x03"
     }
   ],
   "active_fit_costs_pending": false,
   "accounting": "Original R3a/b cost ledger separate. Each whole process/tree once; prep and void startup meters retained. Initial synthetic test and small metadata/copy overhead unmetered.",
   "unmetered_overhead": "Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted. Failed proposal staging attempt1 preflight stopped before its meter; its CPU cannot be recovered and is disclosed as small unmetered failed-preflight overhead (no fabricated zero). Two predeployment Python3.8 AST comparisons had only a Constant kind=None representation mismatch; unsuccessful small metadata/test CPU unmetered, original failed candidate retained. Guard draft corrected by inspection before any deployment. Metadata snapshot deployment attempt1 failed at read-only path preflight before any mutation; its small preflight CPU is unmetered, with original code/stdout/stderr retained.",
-  "scientific_complete": false,
-  "vacancy_complete": false
+  "scientific_complete": true,
+  "vacancy_complete": true
 }

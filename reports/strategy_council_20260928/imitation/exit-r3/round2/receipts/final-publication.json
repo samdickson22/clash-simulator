@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-10T11:20:05Z",
+  "scientific_complete": true,
+  "vacancy_complete": true,
+  "live_adoption": false,
+  "root_results_sha256": "646db0a6b77ce89d42dda26fbb77d2349bf185e8c065d90557c8a9ce3576b146",
+  "extended_results_sha256": "65b745bfaf6a0fcf76fe179ed63238dc8f1476981d43f9a01ccf28b683b713e5",
+  "combined_cost_sha256": "226c050f466860a776be5e2012b27a2c502955ad28ac6084be1ed1c527ae78b4",
+  "cpu_seconds": 247371.81021299996,
+  "gpu_wall_seconds": 34052.7115964524,
+  "coordinator_notification_pending": true,
+  "continuation_deletion_pending": true
+}

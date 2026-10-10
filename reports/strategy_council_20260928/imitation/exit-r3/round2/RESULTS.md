@@ -1,8 +1,8 @@
-# R3 extended results — pending
+# R3 extended results — complete
 
 Exploration, outcome-informed extension; no multiplicity adjustment. Original R3a/b remain killed. R3a descriptive is ALWAYS NEVER-ADOPTABLE. No live replacement is authorized.
 
-Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T11:09:31Z.
+Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T11:20:04Z.
 
 | Arm | Host | Final steps | Temperature | Seed | Final EMA sealed |
 |---|---|---:|---:|---:|---|
@@ -12,21 +12,33 @@ Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/dep
 
 [Host reallocation](STAGE2-HOST03-ADDENDUM.md):01 released to S1 at08:45:23Z after all611 R3 groups drained. Any complete Stage1 survivors require separately admitted03 cores0–55 after coordinator-arranged G stop/full drain. Regret-only03 now uses cores56–58 with manager58 sharing a worker, nice19 and the PSI guard.
 
+No adoption: C/D/E all miss both frozen binary point gates. Doubling steps raises recall by0.465pp versus original R3a, the new-seed replicate differs by−0.036pp, and T=.01 lowers recall by1.001pp versus same-seed5000/T=.003. These outcome-informed comparisons are exploratory; intervals crossing gate values do not override the predeclared point decisions. R3a descriptive remains ineligible regardless of its paired benefit.
+
 | Arm | Effective training rows | Rows/s, all retained fit attempts | Charged fit GPUh | Fit CPUh |
 |---|---:|---:|---:|---:|
 | R3c | 40,960,000 | 4670.65 | 2.436018 | 6.484337 |
 | R3d | 20,480,000 | 4561.50 | 1.247154 | 3.445003 |
 | R3e | 40,960,000 | 4072.78 | 2.793615 | 8.441899 |
 
-Final-EMA GPU offline is complete for all arms. The required64 common frozen-W replay is pending; no intermediate checkpoint selection.
+| Arm | Play recall %, game95CI | Binary agreement %, game95CI | Mean positive W regret, game95CI | Stage1 |
+|---|---|---|---|---|
+| R3c | 63.438 [60.882, 66.033] | 74.703 [73.385, 76.132] | 0.008871 [0.006671, 0.011475] | KILLED: calibrated play recall <.6375; binary play/WAIT agreement <allWAIT+.10 |
+| R3d | 62.938 [60.479, 65.333] | 74.357 [72.872, 75.902] | 0.008409 [0.006580, 0.010490] | KILLED: calibrated play recall <.6375; binary play/WAIT agreement <allWAIT+.10 |
+| R3e | 62.437 [59.688, 65.023] | 74.011 [72.654, 75.479] | 0.009713 [0.007466, 0.012198] | KILLED: calibrated play recall <.6375; binary play/WAIT agreement <allWAIT+.10 |
 
-All three arms fail both binary gates permanently. Stage2 is skipped with zero smoke/control/reporting games; no G stop or timing admission is requested. Regret still must be completed and reported.
+All64 common command-exact replay games /8088 unique scored roots required; point gates .6375/allWAIT+.10/.010, calibrated34.6%. Bootstrap5000/game/80991013; calibration slice reuse is exploratory.
 
-| Arm | Play recall %, game95CI | Binary agreement %, game95CI | Teacher-play top8 exact action recall %, game95CI |
-|---|---|---|---|
-| R3c | 63.438 [60.882, 66.033] | 74.703 [73.385, 76.132] | 31.701 [30.040, 33.483] |
-| R3d | 62.938 [60.479, 65.333] | 74.357 [72.872, 75.902] | 30.558 [28.867, 32.382] |
-| R3e | 62.437 [59.688, 65.023] | 74.011 [72.654, 75.479] | 31.165 [29.397, 33.073] |
+| Arm | Gate threshold | Calibrated plays / roots | Teacher-play top8 exact action recall %, game95CI | Signed W regret, game95CI | Play-root positive W regret, game95CI |
+|---|---:|---|---|---|---|
+| R3c | 0.548408895731 | 2798 / 8088 | 31.701 [30.040, 33.483] | 0.005081 [0.002447, 0.007955] | 0.011867 [0.006530, 0.018509] |
+| R3d | 0.499014124274 | 2798 / 8088 | 30.558 [28.867, 32.382] | 0.004842 [0.002475, 0.007329] | 0.010360 [0.006265, 0.015483] |
+| R3e | 0.629314929247 | 2798 / 8088 | 31.165 [29.397, 33.073] | 0.005558 [0.002544, 0.008619] | 0.013957 [0.008045, 0.020866] |
+
+R3c positive regret median/p90/p95/p99/max: 0.003352, 0.010336, 0.015671, 0.032708, 4.000000.
+
+R3d positive regret median/p90/p95/p99/max: 0.003809, 0.010932, 0.016481, 0.034714, 4.000000.
+
+R3e positive regret median/p90/p95/p99/max: 0.004042, 0.011416, 0.017140, 0.035076, 4.000000.
 
 R3a descriptive — NEVER ADOPTABLE.
 
@@ -51,9 +63,9 @@ The frozen diagnostic field `completed_roots` counts fully scored candidates, no
 Round2 Stage2 survivors.
 Skipped: all round2 arms binary-killed; zero qualification/control/reporting games.
 
-Known round2/descriptive metered costs: **57.422812 CPUh**, **6.490708 GPU reservation-wallh**. Open process costs pending; these are lower bounds.
+Known round2/descriptive metered costs: **57.978570 CPUh**, **6.490708 GPU reservation-wallh**. Complete process meters collected.
 
-[Once-only cost ledger](receipts/cost-summary.json) deduplicates exact original meter SHAs across histories and03→01 copies. Whole fit/pool trees include failed/void/replayed work; nested game/case/block/segment diagnostics are never added again. Original R3a/b10.735822CPUh/2.968378GPUh are reported separately until the final combined audit.
+[Once-only cost ledger](receipts/cost-summary.json) deduplicates exact original meter SHAs across histories and03→01 copies. Whole fit/pool trees include failed/void/replayed work; nested game/case/block/segment diagnostics are never added again. Original R3a/b10.735822CPUh/2.968378GPUh remain separately identifiable in the combined audit.
 
 Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted. Failed proposal staging attempt1 preflight stopped before its meter; its CPU cannot be recovered and is disclosed as small unmetered failed-preflight overhead (no fabricated zero). Two predeployment Python3.8 AST comparisons had only a Constant kind=None representation mismatch; unsuccessful small metadata/test CPU unmetered, original failed candidate retained. Guard draft corrected by inspection before any deployment. Metadata snapshot deployment attempt1 failed at read-only path preflight before any mutation; its small preflight CPU is unmetered, with original code/stdout/stderr retained.
 
@@ -67,15 +79,18 @@ Full source/input/native/checkpoint/seed SHA bindings: training and evaluation f
 | Heldout manifest | 0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f |
 | Shared03 admission-repair freeze | 4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7 |
 | Shared03 regret-only operational freeze | b6acb31432eeea1f5a410bb63e5c7dbafd2ec9d445ce296b512395d9cb0f597b |
-
-[Priority and PSI amendment](shared03/nice19/ADDENDUM.md): nice19/SCHED_OTHER and full memory PSI avg10 >10% stop. The first replay pool was drained after the explicit coordinator priority instruction arrived; eight complete seals and their streams are SHA-pinned for reuse, unsealed games replay fully, and every attempt whole-tree meter is charged. Score arithmetic/seeds/gates stay unchanged.
-
-Historical nice19 amendment freeze SHA: 86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d.
 | inputs/main02.pt | d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed |
 | inputs/assets.npz | 3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737 |
 | eval-source/imitation/exit_r1/screen.py | 17d1b4086585840f5073285c9345355b4187c8342963963360213c3a9cff176e |
 | reporting-native/clasher_core.abi3.so | f387b2d288ed280de9eeae3164d38f465045685ee53819e279930c2ee10699a8 |
 | scorer-native/clasher_core.abi3.so | 06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10 |
+| R3c final EMA | 9d21e505e247889d1f337d00bb2d8840d2377a0db11fc691f9ebd5675cd0deb7 |
+| R3d final EMA | 23becbd8aa09885514e2504d003822fdb107439ff308e9303c5812064fbf0b58 |
+| R3e final EMA | 61081f122c47a5db2f43ad2f4f66d638e50bf1004c5cea5429357ecb6bcfbdfa |
+
+[Priority and PSI amendment](shared03/nice19/ADDENDUM.md): nice19/SCHED_OTHER and full memory PSI avg10 >10% stop. The first replay pool was drained after the explicit coordinator priority instruction arrived; eight complete seals and their streams are SHA-pinned for reuse, unsealed games replay fully, and every attempt whole-tree meter is charged. Score arithmetic/seeds/gates stay unchanged.
+
+Historical nice19 amendment freeze SHA: 86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d.
 
 [Admission receipt repair](shared03/repair/ADDENDUM.md) was pushed before the first round2 regret replay: the dynamic admission binds the current freeze/grant/evidence and exact lane. Proposal staging attempt1 failed on a stale static receipt pin before copying/scoring; its preflight CPU was not metered and is disclosed as small unrecoverable overhead. The failed log, original receipt and reviewed version2 retry are retained.
 
@@ -93,7 +108,9 @@ Guard-diagnostics operational freeze SHA: 2f69ea84029c6704bc3608cb27ac433317f421
 
 Final regret-only operational freeze SHA: 993dfb1133346e1bcb8ba14edb5f3c00e5d514601cdca1e2db89b9fb18a48809.
 
-Combined original + extension known costs: **68.158634 CPUh / 9.459087 GPU reservation-wallh**. Lower bounds while fits/pools or audits remain pending.
+Shared-host incident: R3 diagnostic qualification helper3375515 triggered G priority STOP at10:52:33Z. G drained all54 workers and packer by10:53:58Z; its177,196 pending raw roots were preserved. Coordinator serialized the final R3 replay and G return, and forbade further03 helper tests. Final attempt5 therefore starts after full G vacancy. G work is a separate experiment and is not added to R3 whole-tree meters. If attempt5 stops for any reason, the authorized closeout is partial with no further retry.
+
+Combined original + extension known costs: **68.714392 CPUh / 9.459087 GPU reservation-wallh**. Final whole-tree costs.
 
 [Combined globally deduplicated ledger](receipts/combined-cost-summary.json).
 
