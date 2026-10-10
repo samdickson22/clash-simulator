@@ -1,6 +1,6 @@
 # ExIt r2 X screen — interim results
 
-Updated 2026-10-10T04:46:15Z. Exploration; no multiplicity adjustment. X1, X2, X3, X4 and X6 are killed at the frozen offline64 gate. X5 and X7 continue fitting. Original h2h256 and d0264ec9 stage3 banks remain unconsumed; R2 is ineligible. The separate never-adoptable descriptive study is reporting on01; results remain pending until all600paired blocks close. The experiment is active.
+Updated 2026-10-10T04:50:04Z. Exploration; no multiplicity adjustment. X1, X2, X3, X4 and X6 are killed at the frozen offline64 gate. X5 and X7 continue fitting. Original h2h256 and d0264ec9 stage3 banks remain unconsumed; R2 is ineligible. The separate never-adoptable descriptive study is reporting on01; results remain pending until all600paired blocks close. The experiment is active.
 
 Coordinator 03:58 judged the frozen stage1 gate design **infeasible**: fresh-W self-agreement top8 is0.314 [0.283,0.348] against0.50, while root agreement0.706 [0.686,0.725] barely reaches0.704. Frozen kills are retained for the record and **do not establish student quality**. [Committed noise-ceiling analysis](ANALYSIS-NOISE-CEILING-20261010.md),136a1285. Remaining fits and offline scoring finish unchanged. Original stage2 and d0264ec9 stage3 banks remain unconsumed; R2 cannot trigger.
 
@@ -12,9 +12,9 @@ A separate fresh-seed S-default study is frozen and pushed at e8c82b10: **explor
 | X2 | T=.0001 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
 | X3 | root z-score τ=.5 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
 | X4 | T=.003 /.75 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: coordinator infeasible-gate ruling |
-| X5 | X1 double steps /1 /2026101001 | running 127x04, step7081/9766 at2026-10-10T04:44:57Z | pending | SKIP: coordinator infeasible-gate ruling |
+| X5 | X1 double steps /1 /2026101001 | running 127x04, step7242/9766 at2026-10-10T04:50:04Z | pending | SKIP: coordinator infeasible-gate ruling |
 | X6 | T=.0001 /.75 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
-| X7 | X1 replicate /1 /2026101007 | running 127x14, step3077/4883 at2026-10-10T04:44:57Z | pending | SKIP: coordinator infeasible-gate ruling |
+| X7 | X1 replicate /1 /2026101007 | running 127x14, step3239/4883 at2026-10-10T04:50:04Z | pending | SKIP: coordinator infeasible-gate ruling |
 
 Stage1 on the unchanged sealed r1 heldout64:8088 eligible root rows,2798 teacher plays and5290 teacher WAITs. The all-poll supplement has37950 eligible rows. Below are point estimates and paired whole-game percentile95% bootstrap CIs (5000 resamples,PCG64 seed80991010). Display rounded; linked receipts retain full precision, denominators, all-poll metrics and pinned final EMA.
 
@@ -60,7 +60,7 @@ Descriptive selection amended/frozen/pushed693bc3b1 before any reporting game: [
 
 Fresh201 smoke indices4/5: six terminal mechanics games, both complete same-core interleaved blocks; [wrapper qualification PASS](receipts/postkill-wrapper-qualification.json), inference inside Kwall0/both v1 polling actors/legal defaults/proposals/raw metadata. Smoke losses excluded and never read as reporting outcomes. Whole smoke pool524.551305CPU s/267.878277wall s; nested case/block CPU not added. Frozen-output reduction separately1.111888CPU s; transfer/bootstrap/direct metadata-shell overhead unmetered and disclosed. Original global G STOP remains; authorized host STOP-01 written04:28:15 and G fully drained before admission.
 
-Reporting started04:42:48Z on01, poolPID=PGID2035131/logpostkill-reporting-attempt1.log, managercore63 and40physical cores0–39/nice10/SCHED_OTHER/Torch1. Preflight and startup passed all source/native/policy/checkpoint pins, clean old-group exit, no existing pool/bank, G drain and memory/load floors. First completed case metadata from each of the five arms passes amendment/nonadoption/thread/horizon/scheduler checks; no reporting loss or CI inspected. At04:44:56,40active blocks/560pending/0complete/no failures, available109575536640bytes/load40.29. Whole live poolCPU2193.46s at04:43:46 is provisional and replaced by final whole-pool meter; never add nested block/caseCPU. [Startup](receipts/postkill-reporting-startup-qualified.json). Reporting and remaining X5/X7 record are still pending; schedule stays enabled.
+Reporting started04:42:48Z on01, poolPID=PGID2035131/logpostkill-reporting-attempt1.log, managercore63 and40physical cores0–39/nice10/SCHED_OTHER/Torch1. Preflight and startup passed all source/native/policy/checkpoint pins, clean old-group exit, no existing pool/bank, G drain and memory/load floors. First completed case metadata from each of the five arms passes amendment/nonadoption/thread/horizon/scheduler checks; no reporting loss or CI inspected. At04:44:56,40active blocks/560pending/0complete/no failures, available109575536640bytes/load40.29. Whole live poolCPU2193.46s at04:43:46 is provisional and replaced by final whole-pool meter; never add nested block/caseCPU. [Startup](receipts/postkill-reporting-startup-qualified.json). Current health04:50:04:20/600 complete paired blocks,540pending/40active, no failures, available109831950336bytes/load47.76. No reporting outcomes inspected. Reporting and remaining X5/X7 record are still pending; schedule stays enabled.
 
 Earlier operational records below are historical; current state, protocol and costs above supersede stale “pending/current controller” snapshots.
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,

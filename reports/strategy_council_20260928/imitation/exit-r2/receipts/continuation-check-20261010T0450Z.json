@@ -1,0 +1,186 @@
+{
+  "utc": "2026-10-10T04:50:04Z",
+  "kind": "continuation-health; no reporting outcomes read",
+  "historical_handoff_superseded_by": "coordinator04:35 selection addendum693bc3b1; active report pool2035131",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "pool": {
+    "utc": "2026-10-10T04:50:04Z",
+    "pid": 2035131,
+    "alive": true,
+    "completed": 20,
+    "pending": 540,
+    "active": 40,
+    "admitted": true,
+    "failures": [],
+    "load1": 47.76,
+    "mem_available": 109831950336
+  },
+  "controller": {
+    "alive": true,
+    "active": null,
+    "offline_active": [],
+    "closed": [
+      "X1",
+      "X2",
+      "X3",
+      "X4",
+      "X6"
+    ],
+    "stage2": {},
+    "failures": []
+  },
+  "fits": {
+    "X5": {
+      "utc": "2026-10-10T04:50:04Z",
+      "arm": "X5",
+      "host": "127x04",
+      "supervisor_pid": 3727388,
+      "supervisor_pgid": 3727388,
+      "trainer_pid": 3727520,
+      "trainer_pgid": 3727520,
+      "own_processes": [
+        {
+          "pid": 3727388,
+          "pgid": 3727388,
+          "nice": 10
+        },
+        {
+          "pid": 3727520,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736754,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736778,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736797,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736810,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736811,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736816,
+          "pgid": 3727520,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T04:50:03Z",
+        "pid": 3727520,
+        "pss": 19438314496,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 14231.627670833957
+      },
+      "step": 7242,
+      "rows": 59326464,
+      "provisional_tree_cpu_seconds": 39094.41,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00007000.pt",
+      "exit": null,
+      "lease": null,
+      "loader_workers": 6,
+      "human_micro": 7168
+    },
+    "X7": {
+      "utc": "2026-10-10T04:50:04Z",
+      "arm": "X7",
+      "host": "127x14",
+      "supervisor_pid": 2423139,
+      "supervisor_pgid": 2423139,
+      "trainer_pid": 2423269,
+      "trainer_pgid": 2423269,
+      "own_processes": [
+        {
+          "pid": 2423139,
+          "pgid": 2423139,
+          "nice": 10
+        },
+        {
+          "pid": 2423269,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429694,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429695,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429723,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429724,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429729,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429730,
+          "pgid": 2423269,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T04:50:00Z",
+        "pid": 2423269,
+        "pss": 20235702272,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 6137.52011655597
+      },
+      "step": 3239,
+      "rows": 26533888,
+      "provisional_tree_cpu_seconds": 17195.47,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00003000.pt",
+      "exit": null,
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "loader_workers": 6,
+      "human_micro": 7168
+    }
+  },
+  "schedule": {
+    "enabled": true,
+    "nextRunAt": "2026-10-10T04:51:48.334Z"
+  },
+  "actions": "read-only health; no launch, stop, score, outcome inspection or allocation",
+  "accounting": "Live fit tree CPU in this receipt is nonadditive monitoring; final whole-exit meters supersede. Existing0445 fit total retained; this receipt does not add costs."
+}

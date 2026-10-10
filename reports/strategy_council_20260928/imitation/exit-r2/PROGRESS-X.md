@@ -1,5 +1,19 @@
 # X worker progress
 
+2026-10-10T04:50:04Z. Queued03:58/04:05 handoff reconciled against later04:35
+selection amendment693bc3b1 and current reporting pool2035131; no duplicate
+fit/controller/score/pool launched. Current01 pool alive/admitted,20/600
+complete paired blocks/540pending/40active/no failures,mem109831950336bytes/
+load47.76. No reporting losses/CIs/outcomes read. Current offline-only2071651
+alive/five closed results/noactive/stage2{}/failures[]. X5/X7 originalgroups
+unchanged at7242/9766 and3239/4883,all8nice10processes/no guardreason,
+14lease/PSS/GPU floorsPASS. Health receiptcontinuation-check0450 contains
+nonadditive live tree CPU; prior0445total retained without adding snapshots.
+Original150/151 banks unconsumed/R2ineligible/X8cancelled/15unused. R3's01
+fallback remains queued; release only after descriptive completion/allown
+gamegroups absent, no G restart. Tenminscheduleenabled,next04:51:48Z;
+remainingfits/offline and600-block reduction/reporting pending.
+
 2026-10-10 00:24:41Z. Preparation; no fit launched and no r2 reporting game played.
 Spec: PLAN-NEXT-20261010.md at63b2d6d7. Read r1 screen plan/results/freeze,
 loader6/micro3584/resource runbooks and trainer. X3 default-off target flag added;
