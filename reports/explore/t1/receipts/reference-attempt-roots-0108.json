@@ -1,0 +1,11 @@
+{
+  "schema": "clasher.t1.reference-attempt-roots.v1",
+  "utc": "2026-10-10T18:47:28Z",
+  "hosts": {
+    "127x01": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x01",
+    "127x08": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/fleet-end-attempts-0108/127x08"
+  },
+  "phase": "END only; reporting completion and reviewed E4 sources required before launch",
+  "outcomes_sealed": true,
+  "preservation": "Every passing or failed END reference attempt is a distinct immediate directory under its original measuring-host root. No deletion, omission, file archives, or symlink relocation; preserve full roots at release-side paths.Independent original-host listings and detached launches cross-check descriptor at packet review."
+}
