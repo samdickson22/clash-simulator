@@ -20,6 +20,8 @@ def stop_children(active):
 def main():
  p=argparse.ArgumentParser();p.add_argument('--job',type=Path,required=True);p.add_argument('--dispatch',type=Path,required=True);p.add_argument('--attempt');p.add_argument('--phase',choices=['smoke','reporting','replacement','corpus'],required=True);a=p.parse_args();j=a.job;cfg=plan();host=socket.gethostname();hc=cfg['compute']['hosts'][host]
  assert os.sched_getaffinity(0)=={hc['supervisor_cpu']};assert os.getpriority(os.PRIO_PROCESS,0)==10 and os.sched_getscheduler(0)==os.SCHED_OTHER
+ from owned_supervisor import pin as pin_supervisor,add_worker
+ pin_supervisor(j,processes(),a.phase)
  r=admission(j);write(j/f'host-admission-{a.phase}.json',r);assert r['admitted']
  for tag in ('TESTS-PASS','QUALIFIED','BELIEF-QUALIFIED'):assert (j/tag).exists(),tag
  if a.phase not in ('smoke','corpus'):
@@ -80,6 +82,7 @@ def main():
     cores=hc['physical_cpus'][5*slot:5*slot+5];cmd=['taskset','-c',','.join(map(str,cores)),'bash',str(j/'repo/reports/explore/t1/runtime.sh'),'reports/explore/t1/corpus_game.py' if a.phase=='corpus' else 'reports/explore/t1/run.py','--block',str(descfile),'--out',str(folder),'--cores',','.join(map(str,cores))]
     if a.phase=='smoke':cmd.append('--smoke')
     log=(out/f"{desc['id']}.log").open('x');child=subprocess.Popen(cmd,stdout=log,stderr=log,start_new_session=True)
+    add_worker(j,child.pid)
     active[slot]=dict(process=child,descriptor=desc,log=log,idle_meter=idle_begin(j,processes()),system_bus_meter=system_bus.begin(j,processes()),allowlist_counts=Counter(),started=time.monotonic())
     write(out/'pids'/f"{desc['id']}.json",dict(utc=utc(),pid=child.pid,pgid=child.pid,command=cmd,cores=cores,descriptor=desc))
   progress=dict(utc=utc(),host=host,phase=a.phase,complete_local_blocks=len(done),complete_local_games=(1 if a.phase=='corpus' else 8)*len(done),failed_blocks=len(failures),queued=len(rows)-idx,inflight=len(active),console=c,console_over_one_core_seconds=overload,memavailable_GiB=memory()/2**30,reason=reason,sealed=True)

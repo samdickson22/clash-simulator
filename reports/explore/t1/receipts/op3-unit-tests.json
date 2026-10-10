@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-10T15:58:38Z",
+  "host": "127x03",
+  "physical_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "nice": 10,
+  "scheduler": "SCHED_OTHER",
+  "tests": 26,
+  "passed": 26,
+  "op3_tests": 7,
+  "reviewed_op1_op2_tests": 19,
+  "elapsed_pytest_seconds": 0.13,
+  "source_sha256": {
+    "host_audit.py": "a7de6c3bcda10ac6d5094bbf7f9e62d766945bf9e1766cd03e3ca400d1d3ceb6",
+    "owned_supervisor.py": "fcd7aac922281e33ae315fcd91dd2ffd0cea7ca8bdf1d93716a09cd77e782249",
+    "supervise.py": "f1da50792ec8ca2caa3495a7033e3a72f065dccfbae56a4980aed0c12f432bbc",
+    "qualify.sh": "7406bbe856d821f1a33aa9d604c7d83e2da8a38c1f88c5f7a6fffe4211663160",
+    "test_op3.py": "27a6d3513d1c4773cd2fe7a755fa9447159b4a9a168c26de191abb384d0cda5f",
+    "perception_confirmation.py": "6e2fb8d31f48b47cc76bc8fea98bd191fb7e7c51af4bada01dfbf37fc3365680",
+    "test_op2.py": "b996bb45d4559785e99979452e64d8543d6f979914dd89f6db1644e5bbbc154a",
+    "test_op1.py": "cedd1da28579eb8ff4905fb9f36dd02c226a3c88496b8fe6e319eeb5a42a03e7"
+  },
+  "candidate_not_admitted": true,
+  "reporting_games": 0,
+  "sealed": true
+}

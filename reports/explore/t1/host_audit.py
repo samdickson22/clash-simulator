@@ -76,9 +76,12 @@ def foreign_compute(job,rows):
     return forbidden
 
 def own_process(j,r):
- try:cwd=(Path('/proc')/str(r['pid'])/'cwd').resolve()
+ from owned_supervisor import member as supervisor_member
+ matches_job=str(j) in r['cmd']
+ if matches_job and supervisor_member(j,r):return True
+ try:cwd=(Path('/proc')/str(r['pid'])/'cwd').resolve(strict=True)
  except OSError:return False
- return str(j) in r['cmd'] or (cwd==j/'repo' and ('reports/explore/t1/' in r['cmd'] or 'pytest' in r['cmd']))
+ return matches_job or (cwd==j/'repo' and ('reports/explore/t1/' in r['cmd'] or 'pytest' in r['cmd']))
 
 def physical_cpus():
  rows=subprocess.check_output(['lscpu','-p=CPU,CORE,SOCKET,ONLINE'],text=True)

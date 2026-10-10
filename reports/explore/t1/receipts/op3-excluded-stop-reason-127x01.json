@@ -1,0 +1,50 @@
+{
+  "utc": "2026-10-10T15:20:25Z",
+  "reason": "foreign_compute",
+  "foreign": [
+    {
+      "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+      "exe_evidence": "proc/exe",
+      "cmdline_sha256": "b9ba80018a3ea83b78245786a235d824084da513293f0c4de8e0dfef43cbcb47",
+      "pid": 293675,
+      "ppid": 293613,
+      "pgid": 293675,
+      "start_ticks": 143518357,
+      "cpu_ticks": 39083,
+      "tty": 0,
+      "uid": 3822945,
+      "cmd": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/t1/run.py --block /mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-freeze-r3/smoke/descriptors/smoke-0006.json --out /mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-freeze-r3/smoke/smoke-0006 --cores 10,11,12,13,14 --smoke",
+      "affinity": [
+        10,
+        11,
+        12
+      ]
+    }
+  ],
+  "foreign_active": [
+    {
+      "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12",
+      "exe_evidence": "proc/exe",
+      "cmdline_sha256": "b9ba80018a3ea83b78245786a235d824084da513293f0c4de8e0dfef43cbcb47",
+      "pid": 293675,
+      "ppid": 293613,
+      "pgid": 293675,
+      "start_ticks": 143518357,
+      "cpu_ticks": 39083,
+      "tty": 0,
+      "uid": 3822945,
+      "cmd": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/t1/run.py --block /mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-freeze-r3/smoke/descriptors/smoke-0006.json --out /mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-freeze-r3/smoke/smoke-0006 --cores 10,11,12,13,14 --smoke",
+      "affinity": [
+        10,
+        11,
+        12
+      ],
+      "cpu_seconds": 1.8
+    }
+  ],
+  "console": {
+    "who": "",
+    "console_count": 0,
+    "positive": false
+  }
+}
