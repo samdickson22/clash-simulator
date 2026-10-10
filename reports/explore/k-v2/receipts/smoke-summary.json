@@ -1,0 +1,291 @@
+{
+  "utc": "2026-10-10T01:54:59Z",
+  "smoke_excluded": true,
+  "plan_sha256": "1efc563b8b07852c57dfbd4aed28a971e94ef49749bdfd79f5ef09bc57134d95",
+  "paired_seeds": 8,
+  "checks": {
+    "decisions": 5850,
+    "overruns": 25,
+    "games": 32
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101002,
+    "unit": "paired seed",
+    "confidence": 0.95
+  },
+  "arms": {
+    "V200": {
+      "wins": 7,
+      "losses": 1,
+      "draws": 0,
+      "loss_pct": 12.5,
+      "loss_ci_pct": [
+        0.0,
+        37.5
+      ],
+      "loss_change_pp": -25.0,
+      "loss_change_ci_pp": [
+        -62.5,
+        25.0
+      ],
+      "cutoff_pct": 1.080550098231827,
+      "cutoff_ci_pct": [
+        0.7590132827324478,
+        1.48975791433892
+      ],
+      "decisions": 1018,
+      "overrun_count": 3,
+      "overrun_pct": 0.29469548133595286,
+      "overrun_ci_pct": [
+        0.08539709649871904,
+        0.5701308470372987
+      ],
+      "positive_overrun_ms": {
+        "p50": 25.396594032645215,
+        "p95": 34.129707957617924,
+        "p99": 34.90598475094883,
+        "max": 35.10005394928156
+      },
+      "wall_ms": {
+        "p50": 118.94538206979632,
+        "p95": 159.02470181463286,
+        "p99": 192.1556031354703,
+        "max": 235.10005394928157
+      },
+      "cut_wall_ms": {
+        "p50": 192.85846990533173,
+        "p95": 230.2483239909634,
+        "p99": 234.12970795761794,
+        "max": 235.10005394928157
+      },
+      "cut_past_deadline_count": 3,
+      "cut_past_deadline_plus_reserve_count": 2,
+      "overrun_ticks_hist": {
+        "1": 3
+      },
+      "game_cpu_hours": 0.11717492889916666,
+      "worker_masks": {
+        "0,1,2,3,4": 3,
+        "20,21,22,23,24": 1,
+        "40,41,42,43,44": 1,
+        "25,26,27,28,29": 2,
+        "10,11,12,13,14": 1
+      }
+    },
+    "V160": {
+      "wins": 8,
+      "losses": 0,
+      "draws": 0,
+      "loss_pct": 0.0,
+      "loss_ci_pct": [
+        0.0,
+        0.0
+      ],
+      "loss_change_pp": -37.5,
+      "loss_change_ci_pp": [
+        -75.0,
+        -12.5
+      ],
+      "cutoff_pct": 7.984031936127744,
+      "cutoff_ci_pct": [
+        4.87346214636316,
+        11.604155435759203
+      ],
+      "decisions": 1002,
+      "overrun_count": 8,
+      "overrun_pct": 0.7984031936127745,
+      "overrun_ci_pct": [
+        0.5192107995846313,
+        1.0256410256410255
+      ],
+      "positive_overrun_ms": {
+        "p50": 10.572810922749337,
+        "p95": 81.36967681115492,
+        "p99": 88.38886485202238,
+        "max": 90.14366186223924
+      },
+      "wall_ms": {
+        "p50": 115.25214358698577,
+        "p95": 152.77781824115664,
+        "p99": 152.96155370073393,
+        "max": 250.14366186223924
+      },
+      "cut_wall_ms": {
+        "p50": 152.8181900503114,
+        "p95": 169.04762588674203,
+        "p99": 230.33952417550591,
+        "max": 250.14366186223924
+      },
+      "cut_past_deadline_count": 8,
+      "cut_past_deadline_plus_reserve_count": 6,
+      "overrun_ticks_hist": {
+        "1": 6,
+        "2": 2
+      },
+      "game_cpu_hours": 0.1100816826725,
+      "worker_masks": {
+        "5,6,7,8,9": 1,
+        "25,26,27,28,29": 1,
+        "40,41,42,43,44": 1,
+        "20,21,22,23,24": 1,
+        "15,16,17,18,19": 2,
+        "10,11,12,13,14": 1,
+        "35,36,37,38,39": 1
+      }
+    },
+    "V120": {
+      "wins": 0,
+      "losses": 8,
+      "draws": 0,
+      "loss_pct": 100.0,
+      "loss_ci_pct": [
+        100.0,
+        100.0
+      ],
+      "loss_change_pp": 62.5,
+      "loss_change_ci_pp": [
+        25.0,
+        87.5
+      ],
+      "cutoff_pct": 89.79430379746836,
+      "cutoff_ci_pct": [
+        81.20362737015664,
+        95.56962025316456
+      ],
+      "decisions": 1264,
+      "overrun_count": 13,
+      "overrun_pct": 1.0284810126582278,
+      "overrun_ci_pct": [
+        0.7558436264737517,
+        1.305708653747383
+      ],
+      "positive_overrun_ms": {
+        "p50": 49.386652996763594,
+        "p95": 133.81399523466825,
+        "p99": 137.06287421286106,
+        "max": 137.87509395740926
+      },
+      "wall_ms": {
+        "p50": 112.71130049135536,
+        "p95": 112.87929604295641,
+        "p99": 118.97924690740008,
+        "max": 257.87509395740926
+      },
+      "cut_wall_ms": {
+        "p50": 112.7360740210861,
+        "p95": 112.88364061620086,
+        "p99": 129.91338398773235,
+        "max": 257.87509395740926
+      },
+      "cut_past_deadline_count": 13,
+      "cut_past_deadline_plus_reserve_count": 13,
+      "overrun_ticks_hist": {
+        "2": 3,
+        "1": 7,
+        "3": 3
+      },
+      "game_cpu_hours": 0.11433438869611111,
+      "worker_masks": {
+        "10,11,12,13,14": 1,
+        "30,31,32,33,34": 2,
+        "5,6,7,8,9": 3,
+        "40,41,42,43,44": 1,
+        "20,21,22,23,24": 1
+      }
+    },
+    "K0-200": {
+      "wins": 5,
+      "losses": 3,
+      "draws": 0,
+      "loss_pct": 37.5,
+      "loss_ci_pct": [
+        12.5,
+        75.0
+      ],
+      "loss_change_pp": 0.0,
+      "loss_change_ci_pp": [
+        0.0,
+        0.0
+      ],
+      "cutoff_pct": 24.824629773967263,
+      "cutoff_ci_pct": [
+        19.193311018775237,
+        31.118521488525836
+      ],
+      "decisions": 2566,
+      "overrun_count": 1,
+      "overrun_pct": 0.03897116134060795,
+      "overrun_ci_pct": [
+        0.0,
+        0.11325349316774648
+      ],
+      "positive_overrun_ms": {
+        "p50": 27.061782032251347,
+        "p95": 27.061782032251347,
+        "p99": 27.061782032251347,
+        "max": 27.061782032251347
+      },
+      "wall_ms": {
+        "p50": 12.900960398837924,
+        "p95": 192.5207314779982,
+        "p99": 192.6312127849087,
+        "max": 227.06178203225136
+      },
+      "cut_wall_ms": {
+        "p50": 192.48136598616838,
+        "p95": 192.61307627893984,
+        "p99": 192.68522045575082,
+        "max": 199.4402129203081
+      },
+      "cut_past_deadline_count": 0,
+      "cut_past_deadline_plus_reserve_count": 0,
+      "overrun_ticks_hist": {
+        "1": 1
+      },
+      "game_cpu_hours": 0.09606545504944444,
+      "worker_masks": {
+        "15,16,17,18,19": 1,
+        "35,36,37,38,39": 2,
+        "10,11,12,13,14": 1,
+        "20,21,22,23,24": 1,
+        "30,31,32,33,34": 2,
+        "40,41,42,43,44": 1
+      }
+    }
+  },
+  "file_shas": {
+    "sim-0000-d27-K0-200.json": "071f9c645a393a3ffdef0038f7ea8c2d68e94818a1888ffe20c17e56f6fa3531",
+    "sim-0000-d27-V120.json": "3bce282fc0bb305f1187bf9e85ae4f745f6e02c8fdf1884b1bbf7cbfbc50cf68",
+    "sim-0000-d27-V160.json": "9f29ec8c2cd545e6caa5720b3b92ab79b2d0187a815c10def5000b07d0ddc30e",
+    "sim-0000-d27-V200.json": "e67fddb563feca7a24da5b0b93f08c9bcbe0cca1fd6a284f1c79875fe9b0bcfe",
+    "sim-0001-d27-K0-200.json": "d0a91c9fbb26fceb1899f286653e605517be3319e6ac7f2dfe07081f401d8ff3",
+    "sim-0001-d27-V120.json": "bf5aa07690e0d450addee418f0f51613a556fda3b2a14b376e5ec795a61144e9",
+    "sim-0001-d27-V160.json": "1f6e5f3f35b5caa917232df3f32c147c3239d60daac538da8bafb59601ed8171",
+    "sim-0001-d27-V200.json": "b928a48128660e0611dfaaa4dce5425488198512aed304824d13e45d28fad8a9",
+    "sim-0002-d27-K0-200.json": "1edd4a66fecbe2ae12ca5da6b645a2b1948c0fe9286e5e1511dbbb02eee875f2",
+    "sim-0002-d27-V120.json": "42195d95e2653ca0a922636b9d36b75bbcfda074cb7ba8350e4dcee341609763",
+    "sim-0002-d27-V160.json": "9c5a51c41a213bb6de680b4cc6e6a753a5053d29f06b49b31a22aebc02e943b3",
+    "sim-0002-d27-V200.json": "549616ed4d0d023c463e1029777e995f75b63a28680565b37088066a67efaeb7",
+    "sim-0003-d27-K0-200.json": "76217709c1026889daf85f3485371ed0f594bfeae5b45b06ae61a5652f4f6512",
+    "sim-0003-d27-V120.json": "b1caf29d5bca0200d0d5198ca9df36214985eebee09ba635034203e97ac22143",
+    "sim-0003-d27-V160.json": "89b3fd236c503c2c1fb617f3ec53c7acf183e9f5f67dfcc939aed60206127ab0",
+    "sim-0003-d27-V200.json": "511f53002accb4e14e32ef0c47a0b17dbf2abefc5a40eac005da7678d0fe5349",
+    "sim-0004-d27-K0-200.json": "9320e8f9b179a7294e7d0e94000c484a15136cb7c8658606a9b700ee3042c98d",
+    "sim-0004-d27-V120.json": "e7e4651b5a5ea5b059004a0fec8568513dfd32c96d258f789474639416229682",
+    "sim-0004-d27-V160.json": "a37b181714d67218eb66827bf00e526d317f994ac326486a93debad1a52f75cf",
+    "sim-0004-d27-V200.json": "4a58b22798963376102ab934c898cff4f85038ec8b552c40035244a8541af5a9",
+    "sim-0005-d27-K0-200.json": "6ceae0059f1022ebdcf78938e688f6842cbc81ba4b61542529042de322a4f0bc",
+    "sim-0005-d27-V120.json": "cd8936c1fec8951536edada1e55f08700530bb10463bb756204da83ba369e378",
+    "sim-0005-d27-V160.json": "4b1240e96024bf8297c61c46fe6a7ea837f9c403047325dbdcd9bde8d2fef762",
+    "sim-0005-d27-V200.json": "1b33d68a0d70221db52f752f3aae47c8ddc5351f1bf34faa43c6dc40df4ac476",
+    "sim-0006-d27-K0-200.json": "0ddbabf4244f262715b34de5cd96d0d5e62d675d105ae94184b7975adbaba1ab",
+    "sim-0006-d27-V120.json": "118c3644df41ef72d203ecfd8f6aab97829dcca22ae86cb8fe0e642394fb0388",
+    "sim-0006-d27-V160.json": "4a818f8781af5916c12f3e400827a163c232390775edd4c7083b06975789d57b",
+    "sim-0006-d27-V200.json": "64ad48cf14a910ccc805dfed99d02487690eefa67a753977c763111f4dc2156d",
+    "sim-0007-d27-K0-200.json": "eb0d40315c0701977379078df148c21d15f02510ee9c0a8cece3b833ebdc133d",
+    "sim-0007-d27-V120.json": "531cca4c0c32376bbed824ded6a8169f9c25dd5257c1627ad3b7e62c9661a1b6",
+    "sim-0007-d27-V160.json": "7430d676b7c394fb8f2eef8184625b4fa8df3b38af7e56639305d14c984f7807",
+    "sim-0007-d27-V200.json": "662cdc95c98712537f707bc835e6e5268654e7b5f6c88f7e328ae93e41697ed7"
+  }
+}

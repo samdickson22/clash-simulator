@@ -1,0 +1,11 @@
+{
+  "width": 728,
+  "contentHeight": 975,
+  "capturedHeight": 975,
+  "consoleMessages": [
+    {
+      "level": "log",
+      "text": "Rendered contrast 600 paired seeds per arm"
+    }
+  ]
+}

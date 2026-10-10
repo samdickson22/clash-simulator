@@ -1,0 +1,250 @@
+{
+  "utc": "2026-10-10T05:06:44Z",
+  "host": "127x03",
+  "who": "",
+  "fully_vacated_pgids": [
+    1575208,
+    1718083,
+    1718091
+  ],
+  "remaining_owned_processes": [],
+  "topology": {
+    "0": {
+      "physical_package_id": "0",
+      "core_id": "0",
+      "thread_siblings_list": "0,64"
+    },
+    "1": {
+      "physical_package_id": "0",
+      "core_id": "1",
+      "thread_siblings_list": "1,65"
+    },
+    "2": {
+      "physical_package_id": "0",
+      "core_id": "2",
+      "thread_siblings_list": "2,66"
+    },
+    "3": {
+      "physical_package_id": "0",
+      "core_id": "3",
+      "thread_siblings_list": "3,67"
+    },
+    "4": {
+      "physical_package_id": "0",
+      "core_id": "4",
+      "thread_siblings_list": "4,68"
+    },
+    "5": {
+      "physical_package_id": "0",
+      "core_id": "5",
+      "thread_siblings_list": "5,69"
+    },
+    "6": {
+      "physical_package_id": "0",
+      "core_id": "6",
+      "thread_siblings_list": "6,70"
+    },
+    "7": {
+      "physical_package_id": "0",
+      "core_id": "7",
+      "thread_siblings_list": "7,71"
+    },
+    "8": {
+      "physical_package_id": "0",
+      "core_id": "8",
+      "thread_siblings_list": "8,72"
+    },
+    "9": {
+      "physical_package_id": "0",
+      "core_id": "9",
+      "thread_siblings_list": "9,73"
+    },
+    "10": {
+      "physical_package_id": "0",
+      "core_id": "10",
+      "thread_siblings_list": "10,74"
+    },
+    "11": {
+      "physical_package_id": "0",
+      "core_id": "11",
+      "thread_siblings_list": "11,75"
+    },
+    "12": {
+      "physical_package_id": "0",
+      "core_id": "12",
+      "thread_siblings_list": "12,76"
+    },
+    "13": {
+      "physical_package_id": "0",
+      "core_id": "13",
+      "thread_siblings_list": "13,77"
+    },
+    "14": {
+      "physical_package_id": "0",
+      "core_id": "14",
+      "thread_siblings_list": "14,78"
+    },
+    "15": {
+      "physical_package_id": "0",
+      "core_id": "15",
+      "thread_siblings_list": "15,79"
+    },
+    "16": {
+      "physical_package_id": "0",
+      "core_id": "16",
+      "thread_siblings_list": "16,80"
+    },
+    "17": {
+      "physical_package_id": "0",
+      "core_id": "17",
+      "thread_siblings_list": "17,81"
+    },
+    "18": {
+      "physical_package_id": "0",
+      "core_id": "18",
+      "thread_siblings_list": "18,82"
+    },
+    "19": {
+      "physical_package_id": "0",
+      "core_id": "19",
+      "thread_siblings_list": "19,83"
+    },
+    "20": {
+      "physical_package_id": "0",
+      "core_id": "20",
+      "thread_siblings_list": "20,84"
+    },
+    "21": {
+      "physical_package_id": "0",
+      "core_id": "21",
+      "thread_siblings_list": "21,85"
+    },
+    "22": {
+      "physical_package_id": "0",
+      "core_id": "22",
+      "thread_siblings_list": "22,86"
+    },
+    "23": {
+      "physical_package_id": "0",
+      "core_id": "23",
+      "thread_siblings_list": "23,87"
+    },
+    "24": {
+      "physical_package_id": "0",
+      "core_id": "24",
+      "thread_siblings_list": "24,88"
+    },
+    "25": {
+      "physical_package_id": "0",
+      "core_id": "25",
+      "thread_siblings_list": "25,89"
+    },
+    "26": {
+      "physical_package_id": "0",
+      "core_id": "26",
+      "thread_siblings_list": "26,90"
+    },
+    "27": {
+      "physical_package_id": "0",
+      "core_id": "27",
+      "thread_siblings_list": "27,91"
+    },
+    "28": {
+      "physical_package_id": "0",
+      "core_id": "28",
+      "thread_siblings_list": "28,92"
+    },
+    "29": {
+      "physical_package_id": "0",
+      "core_id": "29",
+      "thread_siblings_list": "29,93"
+    },
+    "30": {
+      "physical_package_id": "0",
+      "core_id": "30",
+      "thread_siblings_list": "30,94"
+    },
+    "31": {
+      "physical_package_id": "0",
+      "core_id": "31",
+      "thread_siblings_list": "31,95"
+    },
+    "32": {
+      "physical_package_id": "0",
+      "core_id": "32",
+      "thread_siblings_list": "32,96"
+    },
+    "33": {
+      "physical_package_id": "0",
+      "core_id": "33",
+      "thread_siblings_list": "33,97"
+    },
+    "34": {
+      "physical_package_id": "0",
+      "core_id": "34",
+      "thread_siblings_list": "34,98"
+    },
+    "35": {
+      "physical_package_id": "0",
+      "core_id": "35",
+      "thread_siblings_list": "35,99"
+    },
+    "36": {
+      "physical_package_id": "0",
+      "core_id": "36",
+      "thread_siblings_list": "36,100"
+    },
+    "37": {
+      "physical_package_id": "0",
+      "core_id": "37",
+      "thread_siblings_list": "37,101"
+    },
+    "38": {
+      "physical_package_id": "0",
+      "core_id": "38",
+      "thread_siblings_list": "38,102"
+    },
+    "39": {
+      "physical_package_id": "0",
+      "core_id": "39",
+      "thread_siblings_list": "39,103"
+    },
+    "40": {
+      "physical_package_id": "0",
+      "core_id": "40",
+      "thread_siblings_list": "40,104"
+    },
+    "41": {
+      "physical_package_id": "0",
+      "core_id": "41",
+      "thread_siblings_list": "41,105"
+    },
+    "42": {
+      "physical_package_id": "0",
+      "core_id": "42",
+      "thread_siblings_list": "42,106"
+    },
+    "43": {
+      "physical_package_id": "0",
+      "core_id": "43",
+      "thread_siblings_list": "43,107"
+    },
+    "44": {
+      "physical_package_id": "0",
+      "core_id": "44",
+      "thread_siblings_list": "44,108"
+    },
+    "45": {
+      "physical_package_id": "0",
+      "core_id": "45",
+      "thread_siblings_list": "45,109"
+    }
+  },
+  "G_STOP03_retained": true,
+  "former_cache_pid": 1655741,
+  "former_cache_pgid": 1655728,
+  "former_cache_pid_present": false,
+  "original_final_host_audit": "Failed its cache-PID persistence assertion; recorded PID absent. Start/warm audits passed. No K-v2 cache/controller signaling or affinity change was issued; external exit timing/reason unknown.",
+  "cache_affinity": null,
+  "memavailable_bytes": 130444251136
+}
