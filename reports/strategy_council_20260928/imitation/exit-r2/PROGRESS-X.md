@@ -496,3 +496,28 @@ Real02:26 K receipt observes livePGID1718091 (pool plus9workers), no completion
 marker, admissionfalse. K's files/processes untouched. New operational amendment
 and source qualification must commit/push before oldcontrollerSTOP/exit/new
 setsid launch. Retain old whole parent+childCPU meter once.
+
+2026-10-10T02:33:18Z. K-v2 admission amendment e782cc77 secret-scanned/committed/pushed
+BEFORE replacement. Qualified source/currentactive=null checks passed; own
+CONTROLLER.STOP requested clean old1596239 exit. Old group absent02:29:45Z,
+no active gate/failures; meter controller-g-yield-meter.json retains18.384221
+CPU seconds (parent2.142988+children16.241233) once. All own controller launch
+receipts/PIDs deduplicated before clearing only X CONTROLLER.STOP. Never clear
+G STOP. New controller_k_yield.py launched via owned setsid-f02:30:20Z,
+PID=PGID1746462, log$job/controller-k-yield.log and identity receipts. Own
+stop remains$job/CONTROLLER.STOP. Startupqualified02:32:06Z: sourcepins match
+amendment, nice19/SCHED_IDLE/affinity63, old1596239 absent, offline={},stage2={},
+active=null,failures=[],X3priorityfalse. Real K status livePGID1718091 and no
+completion marker; gate denies03 evaluation until release, then G full drain.
+Eight metadata-only tests PASS, no scoring/games or K/G process interference.
+Original controller_g_yield/Ghelper/X6/S-default bytes unchanged. Scientific
+freeze8a1d638a and S-default addendum7f62b4e4 unchanged in startupreceipt.
+New prompt/currentPID1746462/K-v2 stage1/2 prohibition persisted, ten-minute
+continuation enabled; disable only terminal experiment/deadlinecleanup.
+All six original fit groups checked02:32:07Z: steps3258/3195/3023/2131/2874/
+2275,8ownnice10processes each, noexit/stop. Leased09/16/13 PSS13.70/21.71/
+24.96GB,GPUfree48.41/48.41/29.97GB,leases valid.08 quiet empty,X3checkpoint
+3000;guard05:15Z/vacate05:30Z unchanged,X6 priority-yield intact. Monitor0232
+replaces live totals GPUh9.414802861/wholeCPUh
+31.424363889; never add prior snapshots/child CPU.
+No stage metric/kill/survivor selection/R2 admission and no151 seed consumed.

@@ -13,12 +13,12 @@ The committed plan/seed audit must precede fitting; use final EMA only.
 
 | Arm | Target / fraction | Fit | Stage1 | Stage2 | Stage3 | Decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| X1 | T=.003 /1.0 | running09, step2778/4883 | pending | conditional | held | pending |
-| X2 | T=.0001 /1.0 | running16, step2714/4883 | pending | conditional | held | pending |
-| X3 | z-score τ=.5 /1.0 | running08, step2570/4883 | pending | conditional | held | pending |
-| X4 | T=.003 /.75 | running01, step1754/4883, micro3584 | pending | conditional | held | pending |
-| X5 | X1 double steps /1.0 | running04, step2425/9766 | pending | conditional | held | pending |
-| X6 | T=.0001 /.75 | running13, step1780/4883, micro3584 | pending | conditional | held | pending |
+| X1 | T=.003 /1.0 | running09, step3258/4883 | pending | conditional | held | pending |
+| X2 | T=.0001 /1.0 | running16, step3195/4883 | pending | conditional | held | pending |
+| X3 | z-score τ=.5 /1.0 | running08, step3023/4883 | pending | conditional | held | pending |
+| X4 | T=.003 /.75 | running01, step2131/4883, micro3584 | pending | conditional | held | pending |
+| X5 | X1 double steps /1.0 | running04, step2874/9766 | pending | conditional | held | pending |
+| X6 | T=.0001 /.75 | running13, step2275/4883, micro3584 | pending | conditional | held | pending |
 
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
 seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
@@ -61,24 +61,25 @@ nice10 processes,21.36GB PSS,31.79GB GPU free, no stop reason. No scientific
 X6 outcome claimed. Original controller replacement meter is
 9.379653CPU seconds (parent+children once); superseded six-arm controller
 1502885 adds11.933346CPU seconds (parent1.784861+metadata children10.148485),
-with no evaluation active on exit. Current G-admission controller/gate meter pending.
-Current-attempt snapshot at2026-10-10 02:17:42Z: 7.978887268 allocated
-GPU-wall hours and26.527244444 provisional whole-tree CPU-hours
-across six fits. Original five are attempt2; X6 is attempt1. These live totals
-replace prior snapshots and later final exit meters replace them. Closed
-failed/preparation/controller/qualification work stays separate.
+with no evaluation active on exit. Superseded G-admission controller1596239 adds18.384221CPU seconds once;
+current K-admission controller/gate meter pending.
+Current-attempt snapshot at2026-10-10 02:32:07Z: 9.414802861
+allocated GPU-wall hours and31.424363889 provisional
+whole-tree CPU-hours across six fits. Original five are attempt2; X6 is
+attempt1. These replace prior live totals; final exit meters supersede them.
+Closed failed/preparation/controller/qualification work stays separate.
 
 | Arm | Live fit GPU-wall h | Provisional live fit CPU h |
 | --- | --- | --- |
-| X1 | 1.412455 | 3.682467 |
-| X2 | 1.414116 | 3.809397 |
-| X3 | 1.414154 | 4.174178 |
-| X4 | 1.411341 | 7.287017 |
-| X5 | 1.413446 | 4.067175 |
-| X6 | 0.913375 | 3.507011 |
+| X1 | 1.651894 | 4.313186 |
+| X2 | 1.652198 | 4.464289 |
+| X3 | 1.654403 | 4.891242 |
+| X4 | 1.651341 | 8.597739 |
+| X5 | 1.651799 | 4.706803 |
+| X6 | 1.153169 | 4.451106 |
 
 Own supervisor/trainer/loaders are counted once; segment diagnostics are not
-added again. Receipt: `receipts/monitor-20261010T0217Z.json`. All six have eight
+added again. Receipt: `receipts/monitor-20261010T0232Z.json`. All six have eight
 owned processes, nice10, no stop reason. Leased09/16/13 remain below46GB PSS
 and above8GiB GPU free. 08 quiet entries are empty after stripping comments.
 Capacity released13 at01:03Z; independent GPU-idle check01:12:24Z confirms
@@ -180,3 +181,13 @@ PGID, then waits G drain. Home01 requires completed X4/no fit PIDs first.
 Eight metadata admission checks pass; all three qualification attempts CPU
 8.473321s (0.002353700h), separate preparation with no scientific games.
 Training/science/S-default hashes and staged thresholds are unchanged.
+
+02:32Z controller replacement complete: prelaunch amendment e782cc77 pushed
+before controller_k_yield.py launched02:30:20Z PID=PGID1746462, nice19/
+SCHED_IDLE/core63. Source/qualification/startup checks pass. Superseded G-only
+controller1596239 cleanly exited, no evaluation active; its parent2.142988+
+children16.241233=18.384221CPU seconds retained once in controller-g-yield-meter.
+Current controller has no active task, offline/stage2 outcomes or failures.
+K timing PGID1718091 remains active; no stage1/2 starts on03 before release.
+All six original GPU groups remain healthy,08 quiet empty/resource floors pass.
+No reporting/S-default smoke/R2 generation admitted.

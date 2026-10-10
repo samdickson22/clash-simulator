@@ -1,0 +1,98 @@
+{
+  "utc": "2026-10-10T02:32:06Z",
+  "passed": true,
+  "pid": 1746462,
+  "pgid": 1746462,
+  "nice": 19,
+  "scheduler": "SCHED_IDLE",
+  "affinity": [
+    63
+  ],
+  "controller": {
+    "utc": "2026-10-10T02:31:34Z",
+    "stage": "waiting for fits / stage1 / conditional stage2",
+    "offline": {},
+    "stage2": {},
+    "active": null,
+    "failures": [],
+    "x3_priority_requested": false,
+    "wall_seconds": 72.94249186012894
+  },
+  "source_files": {
+    "ops/evaluation_k_yield.py": "f26a5b7636f3e97db0f6a082a5cd826a1973481a25dce34c1f883e48606408f7",
+    "ops/controller_k_yield.py": "d8f36aa3c368585d2295668f10f177c0a8a532ce492566819e35e495d6bc31e3",
+    "ops/test_evaluation_k_yield.py": "ad5ec181bcd90505f3b2dbcda1a77dfd8d6fd13890cf93e4e6a0ac6767f893a0",
+    "ops/qualify_evaluation_k_yield.py": "ef17593c49fff1f4cc7e88910abcc13539679ff0587c40ffe3add2bf35732e62"
+  },
+  "amendment_commit": "e782cc77aea594c152ac7c8abcd6d4f4c86ec1e5",
+  "old_controller_pid": 1596239,
+  "old_controller_absent": true,
+  "old_controller_meter": {
+    "parent_cpu_seconds": 2.142988,
+    "child_cpu_seconds": 16.241233,
+    "wall_seconds": 2572.211774225114,
+    "failures": []
+  },
+  "k_status": {
+    "live_timing_processes": [
+      {
+        "pid": 1718091,
+        "pgid": 1718091,
+        "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+      },
+      {
+        "pid": 1718944,
+        "pgid": 1718091,
+        "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+      },
+      {
+        "pid": 1718945,
+        "pgid": 1718091,
+        "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+      },
+      {
+        "pid": 1718946,
+        "pgid": 1718091,
+        "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+      },
+      {
+        "pid": 1718947,
+        "pgid": 1718091,
+        "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+      },
+      {
+        "pid": 1718948,
+        "pgid": 1718091,
+        "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+      },
+      {
+        "pid": 1718949,
+        "pgid": 1718091,
+        "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+      },
+      {
+        "pid": 1718950,
+        "pgid": 1718091,
+        "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+      },
+      {
+        "pid": 1718951,
+        "pgid": 1718091,
+        "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+      },
+      {
+        "pid": 1718953,
+        "pgid": 1718091,
+        "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+      }
+    ],
+    "live_pgids": [
+      1718091
+    ],
+    "release_markers": [],
+    "released": false
+  },
+  "log": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/controller-k-yield.log",
+  "base_freeze_sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+  "sdefault_addendum_sha256": "7f62b4e4ac4dccbef4f555f1ca8b10b4a77d0412d02607f26c6a873c1272d1a7"
+}
