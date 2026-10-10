@@ -26,6 +26,8 @@ X1/X7 gap: stage1 waits X7’s sealed result; stage2 gap is not estimable becaus
 
 The operational GPU scoring/routing amendmenta7b5acd1 was secret-scanned/committed/pushed before all three offline attempts. Float32 CUDA/TF32 disabled/no autocast preserves the original batch64, metric formulas,CPU reductions,bootstrap and point gates. Synthetic128-row qualification matched hard actions/top8 exactly, score max difference7.629e-6, metric/CI differences<1e-6;12 metadata admission tests passed. These are qualification data, not heldout outcomes.
 
+Proposed X8 (X2 replicate, trainseed2026101008,host15) was cancelled by coordinator before freeze, staging, audit, host access or fit. Zero fit/game compute; seed unused. This is a cancelled proposal, not a scientific kill. X7 continues; seven arms remain. [Cancellation receipt](receipts/x8-cancellation.json).
+
 Stage1 starts on each arm’s own fit host after sealed finalEMA/clean fit exit/ownedgroups absent/GPUidle/currentlease and floor checks. Stage2 uses the earliest admitted01(afterX4 clean exit,physical0–23 within0–39) or03(after explicitK release,physical0–31),with G full drain/home24GiB/load≤100,nice19/SCHED_IDLE/Torch1 and physical-core affinity. S-default stage3 remains K-release-gated with same-seed interleaving and no control pre-run.
 
 X3 finished fit03:30:36Z and offline03:30:50Z. All own08 fit/scoring PGIDs are absent; GPU has no compute process and48578MiB free at03:32:05Z.08 vacated well before05:30Z; no migration or X6/X7 priority yield required.

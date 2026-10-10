@@ -707,3 +707,13 @@ Snapshotcontinuation-check0339 finalclosed3+live4 total16.003758580GPUh/
 retained, no nested child CPU counted twice. X3 remains vacated; four fits
 and exact conditional gates remain pending. Tenminschedule enabled,
 next2026-10-10T03:41:38.044Z; experiment not complete.
+
+2026-10-10T03:41:08Z. Coordinator cancellation labeled03:42Z supersedes
+X8 utilization decision labeled03:03Z. No X8 frozen/staged/audited/fit/game
+attempt; only existing local X7 implementation/audit read. Host15 never
+accessed or allocated, trainseed2026101008 unused. Receiptx8-cancellation.json
+records zero fit/game cost and ordinary unmetered shell inspection. Seven
+arms remain; X7 and1940296 controller unchanged. No15 allocation pending
+explicit coordinator noise-ceiling decision;04:45ETA does not authorize work.
+Coordinator notified under150words. No schedule/pipeline stop; four fits
+and conditional gates continue.

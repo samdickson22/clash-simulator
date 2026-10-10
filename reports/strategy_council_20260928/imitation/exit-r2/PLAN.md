@@ -1,5 +1,11 @@
 # X: ExIt r2 target fix and conditional R2 DAgger
 
+Coordinator cancellation labeled03:42Z, received at realUTC2026-10-10T03:41:08Z:
+the proposed X8 replicate of X2 on15 (trainseed2026101008) is cancelled before
+freeze/staging/audit/host access/fit. Seven arms remain; X7 continues under its
+existing family rule.15 stays unused pending explicit allocation. See
+`receipts/x8-cancellation.json`; original scientific freezes remain unchanged.
+
 Authority: coordinator 0523ae6f; §2 X and R2 in `PLAN-NEXT-20261010.md`
 at commit `63b2d6d7`. Exploration lane; no multiplicity adjustment. This plan,
 seed audit, target code and operational recipe are committed and pushed before

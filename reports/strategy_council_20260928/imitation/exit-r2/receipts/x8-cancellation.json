@@ -1,0 +1,35 @@
+{
+  "schema": "clasher.exit-r2.x8-cancellation.v1",
+  "utc": "2026-10-10T03:41:08Z",
+  "authority": "Coordinator cancellation labeled03:42Z supersedes utilization decision labeled03:03Z",
+  "cancelled": true,
+  "reason": "X2 decisively killed at stage1; coordinator cancelled seed replicate before work beyond read-only local inspection",
+  "proposed_arm": {
+    "arm": "X8",
+    "replicate_of": "X2",
+    "host": "127x15",
+    "temperature": 0.0001,
+    "teacher_fraction": 1,
+    "train_seed": 2026101008
+  },
+  "state_at_cancellation": {
+    "addendum_frozen": false,
+    "seed_audit_run": false,
+    "staging_started": false,
+    "host15_accessed": false,
+    "fit_launched": false,
+    "controller_changed": false,
+    "game_launched": false,
+    "train_seed_used": false,
+    "active_arm_count": 7,
+    "current_controller_pid": 1940296,
+    "current_controller_pgid": 1940296
+  },
+  "meter": {
+    "fit_gpu_wall_seconds": 0,
+    "fit_cpu_seconds": 0,
+    "game_cpu_seconds": 0,
+    "note": "Only read existing local X7 records and listed own paths; no X8 compute attempt. Routine shell inspection overhead unmetered."
+  },
+  "remaining_rules": "X7 continues unchanged, X1/X7 family cap remains. No15 allocation pending explicit coordinator noise-ceiling decision; ETA is not authorization."
+}
