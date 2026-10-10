@@ -1,0 +1,65 @@
+{
+  "utc": "2026-10-10T01:03:46Z",
+  "acknowledged_error": "Original adapter forced both players into W/K1; this did not match the intended stage3 contrast.",
+  "corrected_before_reporting": true,
+  "reporting_games_consumed": 0,
+  "authority": "Coordinator stage3 design correction",
+  "training_freeze_sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+  "training_recipe_and_source_unchanged": true,
+  "original_adapter_sha256": "799d62a766776cc1630e76967b0d3a79eb05348cd849c210853e51d60860d6b7",
+  "corrected_adapter_sha256": "a1d57b2855ff34afca29116db650892b4e9546c9aa2f02ab35c9ff662a993606",
+  "corrected_harness_sha256": "29aa59e42a6ddb0feb2d3aaaa5e9fdd683ff88ac6e5c8013d489c7398bde84b3",
+  "paired_metric": "loss(student-hooked K1 versus v1) minus loss(plain K1 versus v1)",
+  "kill_rule": "upper95% paired CI >=0",
+  "controls": "Own600 exact matching1517370496+[0,600) controls; no K-bank reuse",
+  "old_mechanics_smokes": [
+    {
+      "passed": true,
+      "index": 0,
+      "arm": "init",
+      "seed": 4503601527370496,
+      "terminal": true,
+      "case_sha256": "e9d1fbd1cab9514046fe27ffd3839a0d49186c2ac74baf84c549630cad7cf78a",
+      "adapter_sha256": "799d62a766776cc1630e76967b0d3a79eb05348cd849c210853e51d60860d6b7",
+      "checks": {
+        "fallback_calls": 1438,
+        "proposal_calls": 0,
+        "legal_proposals": 0,
+        "min_inference_offset_seconds": 0.0016099719796329737,
+        "max_proposal_seconds": 0.0
+      },
+      "cpu_seconds": 85.030456,
+      "wall_seconds": 84.03271742910147,
+      "interpretation": "Wrapper qualification only; v1 stands in for a future final-EMA survivor. No reporting result."
+    },
+    {
+      "passed": true,
+      "index": 1,
+      "arm": "smoke-student",
+      "seed": 4503601527370497,
+      "terminal": true,
+      "case_sha256": "47d00f13417348a0d2504f17e12459867d09020ae04b22ad43a2b3d7ff024400",
+      "adapter_sha256": "799d62a766776cc1630e76967b0d3a79eb05348cd849c210853e51d60860d6b7",
+      "checks": {
+        "fallback_calls": 1406,
+        "proposal_calls": 352,
+        "legal_proposals": 306616,
+        "min_inference_offset_seconds": 0.001481910003349185,
+        "max_proposal_seconds": 0.01046358305029571
+      },
+      "cpu_seconds": 85.747876,
+      "wall_seconds": 84.73542816005647,
+      "interpretation": "Wrapper qualification only; v1 stands in for a future final-EMA survivor. No reporting result."
+    }
+  ],
+  "old_mechanics_cpu_hours": 0.04743842555555556,
+  "old_outputs": "/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-20261010-r1",
+  "old_smokes_ineligible_for_control_or_reporting": true,
+  "reporting_entrypoints": [
+    "ops/game_pool_v2.py",
+    "ops/game_worker_v2.py",
+    "ops/k_stage3_v2.py",
+    "ops/reduce_stage3_v2.py"
+  ],
+  "old_entrypoint_fail_closed": "Corrected home03 stage3-harness.json kindK1-vs-v1 makes original game_worker.py reject stage3. Fits keep original snapshot/pins."
+}

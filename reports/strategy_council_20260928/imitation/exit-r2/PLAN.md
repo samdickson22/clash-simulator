@@ -73,10 +73,16 @@ disabled, stochastic gate(c) T1 each5ticks. Whole-game bootstrap as above.
 
 Stage3: at most3 stage2 survivors, selected by lowest stage2 point loss;
 ties: highest stage1 hard agreement, then X1→X5 order. Each orders K1's anytime
-coarse scan and adds top8 legal proposals, vs K1 with v1, with200ms wall deadline
+coarse scan and adds top8 legal proposals, playing against the unchanged v1
+policy. Control is plain K1 with empty hooks against that same v1 policy;
+arm/control share seed, decks and seat. Both actors retain K's v1 fallback
+polling; only own search hooks use the student. Use own600 control games,
+because K's original reporting seeds differ. With200ms wall deadline
 and8ms reserve, on600 paired seeds4503601517370496+[0,600). Common init reference,
 same deck/seat schedule, whole paired bootstrap. **Kill if loss-change upper
-CI≥0.** K's harness at `reports/explore/k-anytime/` is the primary harness;
+CI≥0.** Explicit contrast is loss(arm)−loss(control); opponent is v1 in both.
+Coordinator clarified this before any reporting games; use versioned v2 X
+evaluation entrypoints and passed v2 wrapper qualification. K's harness at `reports/explore/k-anytime/` is the primary harness;
 if it is unready at2026-10-10 06:00Z, freeze the already-declared fallback to
 r1(b) E1 deadline W-screen8. Record that decision before affected games.
 

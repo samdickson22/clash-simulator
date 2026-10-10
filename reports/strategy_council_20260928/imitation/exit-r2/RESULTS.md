@@ -27,7 +27,11 @@ top8 recall on teacher plays, hard agreement and expected WAIT. Kill boundaries:
 recall<.60, top8<.50, hard agreement<.704, or WAIT>1.5×teacher.
 Stage2 survivor h2h256 seeds4503601507370496+, kill upper loss CI≥.50.
 Stage3 up to3 survivors,600 paired seeds4503601517370496+, kill upper loss-change
-CI≥0. K1 qualified before06Z; its primary harness is pinned, fallback unused.
+CI≥0. Arm and empty-hook K1 control both face v1 on identical seeds/decks/seat.
+K1 qualified before06Z; its primary harness is pinned, fallback unused.
+The initial own wrapper used a K1 opponent in two mechanics-only smokes.
+That design was corrected before any reporting game; v2 qualification gates
+reporting. Those two smokes cost0.047438426CPUh and are ineligible controls.
 Intervals:5000 whole-game percentile95% bootstraps, seed80991010.
 
 R2 DAgger is conditional on a stage2 survivor. No R2 generation is admitted yet.

@@ -123,3 +123,18 @@ PID=PGID1430280. Job `/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-20261010-
 logs qualify-0.log / qualify-1.log; expected results qualification-0.json /
 qualification-1.json. Both nice19/SCHED_IDLE, CPU only, own outputs separate
 from stage3 reporting. Do not duplicate pending smoke workers on continuation.
+
+2026-10-10T01:03:46Z. Coordinator corrected stage3 comparator before reporting.
+Original wrapper incorrectly made both seatsK1. Original two smoke games
+completed mechanics checks only (both terminal), archived and charged
+0.04743842555555556CPUh; no reporting/control results consumed.
+Corrected versioned X k_stage3_v2.py has opponent=v1-policy, exactly one own
+K1 core, unchanged v1 fallback/polling on both actors, student hooks only.
+Arm and plain-K1 control share seed/decks/seat; metric arm-minus-control loss,
+kill upperCI>=0. Own600 controls required: K originalbank140 != X151.
+Training freeze and old source bytes unchanged. Corrected reporting ONLY via
+game_pool_v2.py/game_worker_v2.py/reduce_stage3_v2.py; original worker rejects
+corrected kindK1-vs-v1. V2 reporting also requires stage2 survival and passed
+SHA-matched stage3-wrapper-qualification-v2.json. New smoke indices2/3 each
+arm+control (four games), distinct output exit-r2-stage3-smoke-v2-20261010-r1.
+Continuation prompt updated, next01:11:17.880Z; do not duplicate pending jobs.

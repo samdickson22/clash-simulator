@@ -1,0 +1,41 @@
+{
+  "utc": "2026-10-10T01:03:46Z",
+  "purpose": "Qualify X-owned stage3 wrapper on the qualified immutable K runner; no reporting outcomes",
+  "interface_commit": "7ad9dcd7",
+  "interface_sha256": "29292a4f43f368641175a9fa945df2a18ef2eef9b1c14da4eabd9fe473750198",
+  "adapter_sha256": "a1d57b2855ff34afca29116db650892b4e9546c9aa2f02ab35c9ff662a993606",
+  "qualifier_sha256": "9cbe6d424015cc08bb5df1bd8506d7b1d20e2beee7b7bc685c17372373dbdc41",
+  "harness_receipt_sha256": "29aa59e42a6ddb0feb2d3aaaa5e9fdd683ff88ac6e5c8013d489c7398bde84b3",
+  "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "seed_base": 4503601527370496,
+  "indices": [
+    2,
+    3
+  ],
+  "reference_index": null,
+  "student_stand_in_index": null,
+  "student_stand_in": "released v1; checks hooks without selecting any intermediate fit",
+  "job": "/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-v2-20261010-r1",
+  "host": "127x03",
+  "cores": [
+    60,
+    61,
+    62,
+    63
+  ],
+  "nice": 19,
+  "scheduler": "SCHED_IDLE",
+  "checks": [
+    "Exactly one own K1 search player, no opponent search core",
+    "both policies use unchanged released v1 for fallback and opponent",
+    "empty reference hooks and unique legal student proposals",
+    "student inference after actual wall0; immutable192ms scoring cutoff",
+    "two complete arm/control pairs with equal seed, shuffled decks and seat"
+  ],
+  "reporting_admission": "Only final-EMA stage2 survivors may enter600-pair reporting; this smoke cannot admit an arm.",
+  "arms": [
+    "init",
+    "smoke-student"
+  ],
+  "comparison": "student-hooked K1 versus v1 minus empty-hook K1 versus v1"
+}
