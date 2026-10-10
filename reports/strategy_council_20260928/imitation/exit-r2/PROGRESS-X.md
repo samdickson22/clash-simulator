@@ -1,5 +1,19 @@
 # X worker progress
 
+2026-10-10T06:02:09Z. Existing01 reporting pool2035131 admitted/alive,
+419/600 complete/40active/141pending/no failures, mem109567774720/load47.01.
+Fresh06:02:52 process contextPASS: manager63/blocks-gamesphysical0-39,
+niceEXACT10/SCHED_OTHER, 41 owned PGIDs. No reporting outcomes read.
+Current03 offline-only2071651 healthy/sixclosed/noactive/failures/stage2{}.
+ONLY X5 original04 fit3727388/3727520 at9482/9766, eightnice10,
+PSS14.080802816GB/GPUfree48.414851072GB/guardsPASS/noexit.
+Monitor0602 closed6final+liveX5 21.449378275GPUh/71.699541456CPUh
+REPLACES prior fit lives. Separate reportingwholeliveCPU190834.24s06:02:52
+REPLACES older provisional samples; finalwholeexit supersedes, neveraddchildren.
+Closedoffline separate. No launch/recovery/repeat/01release; original150/151
+unconsumed/R2ineligible/14 stays vacated. Tenminenabled,next2026-10-10T06:11:59.526Z;
+prompt refreshed. Pending X5 final/onceoffline and600study/reduction/report/release.
+
 2026-10-10T05:52:26Z. Existing01 reporting pool2035131 alive/admitted,
 366/600 complete/40active/194pending/failures[], mem109643137024/load47.1.
 No reporting losses/CIs/outcomes read; no launch, score repeat or recovery.
