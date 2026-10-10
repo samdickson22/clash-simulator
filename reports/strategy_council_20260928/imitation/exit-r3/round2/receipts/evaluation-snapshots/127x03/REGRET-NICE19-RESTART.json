@@ -1,0 +1,23 @@
+{
+  "relative": "REGRET-NICE19-RESTART.json",
+  "sha256": "d3cdeda1d7dccf158d728e77bc3d5bd081e8a6b75ed8393e26afaa17c5249841",
+  "raw": "{\n  \"passed\": true,\n  \"reviewed_manual_restart\": true,\n  \"qualified_receipt_commit\": \"2a5624865424157a08fcf08fbfd50a8ca1413660\",\n  \"nice\": 19,\n  \"manager_core\": 59,\n  \"worker_cores\": [\n    56,\n    57,\n    58\n  ],\n  \"retained_sealed_games\": 8,\n  \"previous_pool_pid\": 3111108,\n  \"previous_whole_tree_CPU_seconds\": 1200.908737,\n  \"utc\": \"2026-10-10T09:45:29Z\",\n  \"evaluation_freeze_sha256\": \"86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d\",\n  \"admitted_sha256\": \"cb51bb65a1793be6cc1b55776305a8b30cc83721854cc74b63ee344bfb6f640d\"\n}\n",
+  "value": {
+    "passed": true,
+    "reviewed_manual_restart": true,
+    "qualified_receipt_commit": "2a5624865424157a08fcf08fbfd50a8ca1413660",
+    "nice": 19,
+    "manager_core": 59,
+    "worker_cores": [
+      56,
+      57,
+      58
+    ],
+    "retained_sealed_games": 8,
+    "previous_pool_pid": 3111108,
+    "previous_whole_tree_CPU_seconds": 1200.908737,
+    "utc": "2026-10-10T09:45:29Z",
+    "evaluation_freeze_sha256": "86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d",
+    "admitted_sha256": "cb51bb65a1793be6cc1b55776305a8b30cc83721854cc74b63ee344bfb6f640d"
+  }
+}
