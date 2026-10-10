@@ -188,6 +188,9 @@ def admission(j):
  expected=cfg['compute']['hosts'][host]
  physical=physical_cpus();assert set(expected['physical_cpus'])|{expected['supervisor_cpu'],expected['copy_cpu'],expected['census_cpu']}<=set(physical)
  c=console();before=processes()
+ from parent_source_seed import admit as seed_sources
+ from ssh_budget import FAMILIES
+ if not c['positive']:seed_sources(j,before,FAMILIES)
  from system_bus import pin as pin_system_bus
  pin_system_bus(j,before)
  time.sleep(1);after,foreign,active,load=census(j,before)

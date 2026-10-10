@@ -20,7 +20,7 @@
     "reports/explore/t1/gc_window.py": "0c743f3d1e9c617a89625c694df216a93c4da15249b9c1398162ac1b73815146",
     "reports/explore/t1/guard-decks.json": "6d51628bb1262f53258e88ef6247cfb41f2762f9f13323387fcd36ad126c48ef",
     "reports/explore/t1/health.py": "f39c08b7b2700bcb5c245dd2d184e79ac9163c8a89ba23dc0e02657d19e22315",
-    "reports/explore/t1/host_audit.py": "ee35ac08beb879a1803abb1fdfe1a79f19bcccf880ec3a1aabc1bc03e5220a03",
+    "reports/explore/t1/host_audit.py": "5717d01cc2a83adc19a4cf2846f9a95952f2ca73810b879807c5941cdddc0dd7",
     "reports/explore/t1/idle_services.py": "911c18aee5af1d61cf66b7e5187af4cb6b3fb58d3143152a3ab385b4a76816b2",
     "reports/explore/t1/inherited/k2/belief.py": "5e6f07fc3d7f71cf380d8f68a9c47021355a48b85026df2b1878c236556a0f56",
     "reports/explore/t1/inherited/k2/gc_window.py": "0c743f3d1e9c617a89625c694df216a93c4da15249b9c1398162ac1b73815146",
@@ -56,7 +56,7 @@
     "reports/explore/t1/provenance.json": "bffbe861ce33bbac7a49e47eda7e7a121bc36cf4542338ec1764cd64c3c774ef",
     "reports/explore/t1/qualification_binding.py": "1061b706b48add2a0a0721dce3cae9e96d253e8e9193290e5a1bf85c0a8e6818",
     "reports/explore/t1/qualify.py": "ef7162e4e2e503b6eeb9f4627f5f58a882632d48e61b8b6f087a5d812b430377",
-    "reports/explore/t1/qualify.sh": "3ca4eade0925f901297723927d0c1b4f9b39810d9dcb830b2874e57100b8447e",
+    "reports/explore/t1/qualify.sh": "da7cf24513b746f3a8a28f961bd090f0d251b51b55e5700cde05be4b38736155",
     "reports/explore/t1/qualify_belief.py": "b6d86ed9fa3cd20ed83a86d75314295f055e92110212b904986b193a43451213",
     "reports/explore/t1/receipts/excluded-smoke-attempt.json": "982c65b4e513be5c318cfed0324cc355b73876b9e6d8824e29e90b183c5020fc",
     "reports/explore/t1/receipts/idle-services-admission-127x03.json": "5364ceeb52564fce0e9cd9adbeec2d3ede7df2b5694da9b6b780bc7a4bbd6cd7",
@@ -114,7 +114,13 @@
     "reports/explore/t1/OP4-T1.md": "c2006db727ddb0d155375b2130bdbd44abc9bc3c920159b44443342444f21100",
     "reports/explore/t1/receipts/op4-unit-tests.json": "80e4f3b168bc6ba975d504ef08c23da854ecb56ad0348cb92931febfe5a37925",
     "reports/explore/t1/REVIEW-T1-OP4-CONFIRM-20261010T1642Z.md": "2b4e977e66dba80d5d5bfeec2d04bf76c5a31ad5e219978b55d311ed1312fffb",
-    "reports/explore/t1/REVIEW-T1-OP4-RECONFIRM-20261010T1653Z.md": "1bc4b248d5ad46b83494a4b8de5421c67528ae8b56d53ffd9c90954bb7eaa362"
+    "reports/explore/t1/REVIEW-T1-OP4-RECONFIRM-20261010T1653Z.md": "1bc4b248d5ad46b83494a4b8de5421c67528ae8b56d53ffd9c90954bb7eaa362",
+    "reports/explore/t1/receipts/op5-parent-source-127x03.json": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838",
+    "reports/explore/t1/parent_source_seed.py": "2c8ba282daad04297060631b616fb0b45356f95840a791b0f1308849a0ab7354",
+    "reports/explore/t1/test_op5.py": "5dcd9b92f23adfc038254ebcb3338e8a993c0df943cd1e9aed5540025bae2ebf",
+    "reports/explore/t1/OP5-T1.md": "6a7b4ca18fb300c40c410f3a492156e0c51fbe39f23f01432fb5fd8698c7ad0c",
+    "reports/explore/t1/receipts/op5-unit-tests.json": "fb3d2c71cb1bf1321dd852a325c321b9735c3ccb72ff11d3d36660251496833c",
+    "reports/explore/t1/receipts/excluded-smoke-op4-r5.json": "e63699aba4d5db524768564daa3acf2a1448d8e57438de90a7b33a3b9ad6e263"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -147,8 +153,9 @@
   "reporting_games_started": false,
   "reference_schedule": "END reporting window; separate corpus/E4 approval; pinned reporting load profile",
   "pending": [
-    "final reviewed-source qualification01/03/08",
-    "fresh all-host smoke health",
+    "OP5 fast confirmation",
+    "final-source fresh qualification",
+    "fresh all-host smoke-r6 health",
     "manifest-bound reporting authorization after smoke"
   ],
   "qualification_summary": "reports/explore/t1/receipts/qualification-freeze-summary.json",
@@ -235,5 +242,18 @@
     "review_commit": "c68661b0ecac41859fa864aaf091d5e966c8dfa6",
     "review_path": "reports/explore/t1/REVIEW-T1-OP4-RECONFIRM-20261010T1653Z.md",
     "coordinator_confirmation": "Coordinator17:10Z GO: admit, fresh qualification, fresh all-host smoke, then reporting01/03/08 if healthy."
+  },
+  "parent_source_seeds": [
+    {
+      "path": "reports/explore/t1/receipts/op5-parent-source-127x03.json",
+      "commit": "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
+      "sha256": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838"
+    }
+  ],
+  "operational_delta_op5": {
+    "verdict": "AWAITING_CONFIRMATION",
+    "authorization": "Coordinator17:20Z OP5 exact pinned parent-generation source seed only;OP4 budgets unchanged",
+    "guard_tests": 58,
+    "seed_commit": "b2f9e25e1002d43cc910a4bb476716cc4cd32623"
   }
 }

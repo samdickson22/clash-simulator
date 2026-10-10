@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-10T17:09:22Z",
+  "status": "PASS; independent confirmation pending",
+  "tests_passed": 58,
+  "op5_tests": 12,
+  "reporting_outcomes_read": false,
+  "source_sha256": {
+    "reports/explore/t1/parent_source_seed.py": "2c8ba282daad04297060631b616fb0b45356f95840a791b0f1308849a0ab7354",
+    "reports/explore/t1/test_op5.py": "5dcd9b92f23adfc038254ebcb3338e8a993c0df943cd1e9aed5540025bae2ebf",
+    "reports/explore/t1/host_audit.py": "5717d01cc2a83adc19a4cf2846f9a95952f2ca73810b879807c5941cdddc0dd7",
+    "reports/explore/t1/qualify.sh": "da7cf24513b746f3a8a28f961bd090f0d251b51b55e5700cde05be4b38736155"
+  }
+}

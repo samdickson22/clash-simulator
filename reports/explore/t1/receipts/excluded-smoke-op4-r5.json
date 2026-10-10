@@ -1,0 +1,29 @@
+{
+  "utc": "2026-10-10T17:09:22Z",
+  "excluded": true,
+  "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op4-r5",
+  "reporting_games": 0,
+  "outcomes_sealed": true,
+  "complete_blocks": 0,
+  "failed_blocks": {
+    "127x01": 3,
+    "127x03": 3,
+    "127x08": 2
+  },
+  "reason": "03 unknown-source childless SSH parent776414; OP4 identity fallback foreign_active;01/08 ownedSTOP",
+  "supervisor_pgids": {
+    "127x01": 324004,
+    "127x03": 27344,
+    "127x08": 1623797
+  },
+  "copier_pgid": 323814,
+  "all_owned_groups_drained": true,
+  "evidence": {
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op4-r5/diagnosis/supervisor-exit-127x03.json": "f4531722dc061616b178303cadf1ce80b88fc72b68e16439fc8dd58c1244da8d",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op4-r5/diagnosis/stop-reason-127x01.json": "d917a867d1be5a47f94613cafab8316d55179ac325e68a56304b14e86349804f",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op4-r5/diagnosis/supervisor-exit-127x08.json": "d3a76eae609cdae6696abb9a9ede3771ad976776a281193d2c5c7bebdf057fd4",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op4-r5/diagnosis/stop-reason-127x08.json": "07eb74968528a4995e2c968eda5f085f31cfc6deb9456d9a752e77ba7a126148",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op4-r5/diagnosis/supervisor-exit-127x01.json": "aa42450f7083094f5f6078a85794dfe1e21c16b3de8325acee0b92d9e7f1e9d2",
+    "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op4-r5/diagnosis/stop-reason-127x03.json": "8a402885c84e4d13f3009bbf254ec7ad3a1d792b6ec145fc3582d34adbff3f4d"
+  }
+}
