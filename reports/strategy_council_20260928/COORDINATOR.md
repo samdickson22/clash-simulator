@@ -1894,3 +1894,15 @@ Also on the hub, but with copies elsewhere:
   5. it descends from an observed approved apt root.
 
   Any other exe-read error, or any condition failing, fails closed (stop). Record the evidence source (exe or argv0) per observation; add tests for the EACCES fallback, a non-EACCES error, a relative argv0 or one escaping via `..`, and a writable target.
+- **22:27 UTC: OP-7 review r2 (Claude Opus high) = APPROVE_WITH_CONDITIONS** on 1c34584b (`review/op7-r2-1c34584b/REVIEW-OPUS-r2.md`). 183/183 tests and 174 manifest hashes reproduced; F1–F6 and F8–F11 resolved; isolation intact. **Rulings:**
+  - **Small code fixes before admission:**
+    - N1: expire unmatched child credit after 3 scans, with a test.
+    - N2: give each block meter starting credit for every process alive at block start (ssh and apt), with a test. 01 lost its slot to apt once, and a reaped-child overcharge could re-stop it.
+    - N4: all three hardenings. argv0 must sit directly in `/usr/lib/apt/methods/`; the methods directory must be root-owned and not group/other-writable; all four `Uid:` fields must equal `_apt`.
+    - N5: a new-phase proof missing the `ubuntu_apt` meter fails closed.
+  - **Documentation only:**
+    - N6: OP-6 "new process" dating; errs toward stopping.
+    - N7: mark the round-1 "only UID0" text superseded.
+  - **Next:** a focused r3 delta-only review by Claude Opus high.
+  - **At admission:** C2 (FROZEN, re-hash, bind to the new manifest SHA) and C3 (fresh two-host qualification and smoke on the exact bytes must confirm census-loop timing with the +78% scan cost).
+  - **Then Option B.**
