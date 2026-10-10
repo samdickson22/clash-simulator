@@ -1,0 +1,50 @@
+{
+  "schema": "clasher.exit-g.priority-alert-report.v1",
+  "utc": "2026-10-10T10:58:10Z",
+  "event_utc": "2026-10-10T10:52:33Z",
+  "host": "127x03",
+  "event": {
+    "utc": "2026-10-10T10:52:33Z",
+    "identity": {
+      "pid": 2711936,
+      "pgid": 2711936,
+      "nice": 19,
+      "scheduler": 5,
+      "cores": [
+        54
+      ]
+    },
+    "priority": [
+      {
+        "pid": 3375515,
+        "pgid": 3375515,
+        "start": 141931498,
+        "cmd_sha256": "56ec7e01a8ba5e97c5f46c9dd34ea26bfb7c15aef7b818263992eff68234fe67",
+        "reason": "R3 game/timing or unclassified R3 process has priority",
+        "program": "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/tmp/metadata-helper-candidate-1/qualify.py"
+      }
+    ]
+  },
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "reported_once_message_id": "message:mcp:f5f23f78-993a-4502-b375-2958f9dfba3f:thread-send:g-priority03-20261010-105233",
+  "stop_state": "STOP-03 and PACK.STOP retained; no clear, restart or retry without NEW explicit release.",
+  "full_pgid_vacate_confirmed": true,
+  "vacate_evidence": "Authoritative controller matching launch/progress/exit and fullgroup census cached after terminal exit. No further03 CPU calls.",
+  "controller_snapshot_utc": "2026-10-10T10:57:32Z",
+  "group_members": [],
+  "terminal_utc": "2026-10-10T10:53:58Z",
+  "all54_gameworkers_exit_zero": true,
+  "totals": {
+    "games": 13740,
+    "rows": 10758395,
+    "root_decisions": 1669513,
+    "cpu_seconds": 650693.2504630479,
+    "plays": 569276
+  },
+  "packed_root_decisions": 1492317,
+  "remaining_unpacked_roots": 177196,
+  "concat_manifest_sha256": "2898c0b29df1aacdc43483123b8a984cbbe1199ce00c9b2e90276bd4b613bbcf",
+  "trigger_threadcores": "Not included in guard event; no new remote census after confirmed fullvacate.",
+  "headroom": "Fresh post-vacate headroom unavailable in cached exit. Prior10:51 healthy03 MemAvailable102912036864B/PSI0; not a post-vacate measurement.",
+  "other_hosts": "08 continues;01/04 stopped."
+}
