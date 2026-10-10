@@ -2,7 +2,7 @@
 
 Exploration, outcome-informed extension; no multiplicity adjustment. Original R3a/b remain killed. R3a descriptive is ALWAYS NEVER-ADOPTABLE. No live replacement is authorized.
 
-Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T10:36:17Z.
+Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T10:39:35Z.
 
 | Arm | Host | Final steps | Temperature | Seed | Final EMA sealed |
 |---|---|---:|---:|---:|---|
@@ -51,7 +51,7 @@ The frozen diagnostic field `completed_roots` counts fully scored candidates, no
 Round2 Stage2 survivors.
 Skipped: all round2 arms binary-killed; zero qualification/control/reporting games.
 
-Known round2/descriptive metered costs: **57.207715 CPUh**, **6.490708 GPU reservation-wallh**. Open process costs pending; these are lower bounds.
+Known round2/descriptive metered costs: **57.207877 CPUh**, **6.490708 GPU reservation-wallh**. Open process costs pending; these are lower bounds.
 
 [Once-only cost ledger](receipts/cost-summary.json) deduplicates exact original meter SHAs across histories and03→01 copies. Whole fit/pool trees include failed/void/replayed work; nested game/case/block/segment diagnostics are never added again. Original R3a/b10.735822CPUh/2.968378GPUh are reported separately until the final combined audit.
 
@@ -89,6 +89,6 @@ Current core58 regret freeze SHA: 3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae
 
 Guard-diagnostics operational freeze SHA: 2f69ea84029c6704bc3608cb27ac433317f421c09d208ca774f77e1b1b29dcd3.
 
-Combined original + extension known costs: **67.943537 CPUh / 9.459087 GPU reservation-wallh**. Lower bounds while fits/pools or audits remain pending.
+Combined original + extension known costs: **67.943699 CPUh / 9.459087 GPU reservation-wallh**. Lower bounds while fits/pools or audits remain pending.
 
 [Combined globally deduplicated ledger](receipts/combined-cost-summary.json).

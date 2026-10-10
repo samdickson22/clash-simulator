@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "pid": 3326442,
+  "pgid": 3326442,
+  "utc": "2026-10-10T10:37:41Z",
+  "commit": "f5015f123ef686117ad02f207541afa762a609d7",
+  "evaluation_freeze_sha256": "2f69ea84029c6704bc3608cb27ac433317f421c09d208ca774f77e1b1b29dcd3",
+  "authority_sha256": "a15da61aacbb1d2cd5e564a0e58af8c2f764988fb6121df56f3aa44e3a4a1521",
+  "admitted_sha256": "856eb050873f85f0f1386b85534c25ed9447c88fccd5a4327d4852203b44d4f9",
+  "pins": 1529,
+  "checks": 27,
+  "old_groups_absent": true,
+  "scientific_data_read": false,
+  "retained_complete_seals": 41,
+  "physical_cores": [
+    56,
+    57,
+    58
+  ],
+  "manager_core": 58,
+  "nice": 19,
+  "scheduler": "SCHED_OTHER",
+  "PSI_full_avg10": 0.0,
+  "G_untouched": true,
+  "cpu_seconds": 0.5821649999999999,
+  "wall_seconds": 0.6237282019574195
+}
