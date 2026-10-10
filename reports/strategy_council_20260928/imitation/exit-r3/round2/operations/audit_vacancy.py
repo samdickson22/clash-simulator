@@ -14,6 +14,13 @@ ROOT = Path(__file__).resolve().parents[1]
 HOSTS = ('127x09', '127x16', '127x13', '127x01', '127x03')
 
 
+def classify_gpu_pids(raw, owned_pids):
+    """Audit our compute processes without claiming other owners' GPUs idle."""
+    compute = sorted({int(line.strip()) for line in raw.splitlines() if line.strip()})
+    owned = sorted(set(compute).intersection(owned_pids))
+    return compute, owned
+
+
 def remote(host, code):
     core = 39 if host == '127x01' else 59 if host == '127x03' else 126
     interpreter = '/usr/bin/python3' if host == '127x03' else B+'/venv/bin/python'
@@ -107,17 +114,19 @@ if HOST in ('127x09','127x16','127x13'):
  ex=load(arm+'-exit.json');launch=load(arm+'-launch.json');c=load('fits/'+arm+'/complete.json');s=load('fits/'+arm+'/segment.json');off=load('offline/'+arm+'.json')
  fit_clean=bool(ex and launch and ex['utc']>=launch['utc'] and ex['exit_code']==0 and ex['reason'] is None and c and c['step']==(2500 if arm=='R3d' else 5000) and not c['stopped'] and s and s['status']=='returned' and off)
  gpu=subprocess.check_output(['nvidia-smi','--query-compute-apps=pid','--format=csv,noheader,nounits'],text=True).strip()
-else:gpu=None
+else:gpu=''
+gpu_compute_pids,gpu_owned_pids=classify_gpu_pids(gpu,pids|{x['pid'] for x in live+group_members})
 u=resource.getrusage(resource.RUSAGE_SELF);v=resource.getrusage(resource.RUSAGE_CHILDREN)
-result=dict(host=HOST,utc=subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip(),pid=self_pid,pgid=os.getpgrp(),source_sha256=sources,recorded_pids=sorted(pids),recorded_pgids=sorted(groups),live_owned=live,recorded_group_members=group_members,recorded_pid_members=pid_members,locks=locks,fit_and_offline_clean=fit_clean,gpu_compute_pids=gpu,parent_cpu_seconds=u.ru_utime+u.ru_stime,children_cpu_seconds=v.ru_utime+v.ru_stime,wall_seconds=time.monotonic()-started)
-result['all_recorded_groups_absent']=bool(not live and not group_members and not pid_members and all(x['free'] for x in locks) and fit_clean is not False and not gpu)
+result=dict(host=HOST,utc=subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip(),pid=self_pid,pgid=os.getpgrp(),source_sha256=sources,recorded_pids=sorted(pids),recorded_pgids=sorted(groups),live_owned=live,recorded_group_members=group_members,recorded_pid_members=pid_members,locks=locks,fit_and_offline_clean=fit_clean,gpu_compute_pids=gpu_compute_pids,gpu_owned_pids=gpu_owned_pids,parent_cpu_seconds=u.ru_utime+u.ru_stime,children_cpu_seconds=v.ru_utime+v.ru_stime,wall_seconds=time.monotonic()-started)
+result['all_recorded_groups_absent']=bool(not live and not group_members and not pid_members and all(x['free'] for x in locks) and fit_clean is not False and not gpu_owned_pids)
 print(json.dumps(result))
 '''
 
 
 def audit(host, publish=False):
     global_complete = decisions_complete() if publish else None
-    result = remote(host, OBSERVE.replace('JOB', repr(J)).replace('HOST', repr(host)))
+    import inspect
+    result = remote(host, inspect.getsource(classify_gpu_pids)+'\n'+OBSERVE.replace('JOB', repr(J)).replace('HOST', repr(host)))
     utc = result['utc'].replace(':', '').replace('-', '')
     target = ROOT/'receipts/vacancy-audits'/host
     target.mkdir(parents=True, exist_ok=True)

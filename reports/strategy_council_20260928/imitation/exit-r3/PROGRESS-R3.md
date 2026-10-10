@@ -514,3 +514,18 @@ ledgers; open c/e fits/report pools remain uncharged until exit. Combined
 final results and all-five independentvacancy audits remain pending. Existing
 10min continuation is retained for wholeextension completion, not deleted
 after originalstudy completion. No scorer/gate/seed/model/source changes.
+
+2026-10-10T08:07:21Z — Metadata-only final publication prepared while c/e continue.
+Six synthetic ownership/publication-barrier tests pass on05 (stdlibJSON only,
+small unmeteredtest overhead). audit_vacancy.py now distinguishes R3 GPU PIDs
+from other owners after16 RETURN; it retains all computePID observations and
+refuses any recorded/liveowned PID/PGID, owned GPU, heldlock or incompletefit.
+Independent16 audit08:06:28 confirmsallseven recordedgroupsabsent; no new
+scientific16 jobs. finalize_metadata.py writes rootRESULTS only after final
+scientific+vacancy costs, all64 Stage1 proofs,600descriptiveblocks and any
+survivor600Stage2 blocks; rejects liveadoption/duplicatedmeters/missingobserver
+confirmation. Relative extension evidence links become round2 links. Run it
+AFTER finalcollect/render, before explicitcommit/push/coordinator/timerdelete.
+Currentpending rootRESULTS write was refused and bytes unchanged. These are
+05 metadata helpers only; all training/game/scorer/evaluationfreeze bytes remain
+unchanged. Added continuation instructions preservewholeextension scope.

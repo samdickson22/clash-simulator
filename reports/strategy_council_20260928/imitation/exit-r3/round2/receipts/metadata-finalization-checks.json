@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-10T08:07:21Z",
+  "passed": true,
+  "tests": 6,
+  "scope": "05 metadata only; synthetic ownership/final publication barriers",
+  "pending_root_publication_refused": true,
+  "scientific_source_changed": false,
+  "unmetered_overhead": true,
+  "source_sha256": {
+    "audit_vacancy.py": "9190925eef78b2ad8747517d2e51487f342d0ab29a2fc2b2236c76fc95089e0f",
+    "finalize_metadata.py": "8411114c9de986f430b7ca56e7ab9fb7e6b7e36edfdc6d3535301b8b63163a57",
+    "test_metadata.py": "d1013c992022ffb9527d3a1def2add78b6199c24f0786815d96fd63fcaf05c5f"
+  }
+}
