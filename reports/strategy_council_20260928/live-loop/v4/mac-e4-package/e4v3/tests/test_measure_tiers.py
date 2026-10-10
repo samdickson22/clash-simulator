@@ -19,7 +19,7 @@ from telemetry import idle_delta, validate_topology
 from classify_failure import classify
 from tier_backend import dry_opening_orders
 from fleet_reference import validate_row, REQUIRED_ROW
-from replay_load import LinuxBackground
+from replay_load import LinuxBackground, admit_background
 
 
 class ReceiptTests(unittest.TestCase):
@@ -279,6 +279,14 @@ class AdmissionTests(unittest.TestCase):
         self.assertEqual(dry_opening_orders(rows)[1],list("ABCDEFGH"))
         with self.assertRaises(ValueError):
             dry_opening_orders(rows[1:])
+    def test_background_admission_distinguishes_t1_reference_from_dry_run(self):
+        admit_background("Linux","127x05",19,False)
+        admit_background("Linux","127x03",10,True)
+        admit_background("Linux","127x01",10,True)
+        admit_background("Linux","127x08",10,True)
+        for params in (("Linux","127x01",19,False),("Linux","127x04",10,True),("Linux","127x05",10,True)):
+            with self.assertRaises(ValueError):admit_background(*params)
+
     def test_platform_and_host_guards(self):
         admit_platform(True,False,"Linux","x86_64","127x03",19)
         admit_platform(True,False,"Linux","x86_64","127x05",19)

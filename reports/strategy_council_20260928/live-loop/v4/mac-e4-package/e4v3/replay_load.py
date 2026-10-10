@@ -94,10 +94,9 @@ def corpus_load_worker(bundle, root, native, ready, stop, cpus):
     import os
     import platform
     from tier_backend import TierBackend
-    if platform.system() != "Linux" or platform.node() not in ("127x03", "127x05"):
-        raise ValueError("Background corpus calibration is Linux05/03 only")
-    if os.getpriority(os.PRIO_PROCESS, 0) != 19:
-        raise ValueError("Linux background corpus must inherit nice 19")
+    manifest = validate_bundle(bundle,root,dry_run=True,require_references=False)
+    fleet = manifest["profile"] == "fleet-reference"
+    admit_background(platform.system(),platform.node(),os.getpriority(os.PRIO_PROCESS,0),fleet)
     os.sched_setaffinity(0, set(cpus))
     backend = TierBackend(bundle, root, native)
     try:
@@ -109,6 +108,12 @@ def corpus_load_worker(bundle, root, native, ready, stop, cpus):
                 ready.set()
     finally:
         backend.close()
+
+
+def admit_background(system, host, nice, fleet):
+    hosts, priority = (("127x01","127x03","127x08"),10) if fleet else (("127x03","127x05"),19)
+    if system != "Linux" or host not in hosts or nice != priority:
+        raise ValueError("Wrong background corpus host/priority for the pinned measurement profile")
 
 
 class LinuxBackground:
