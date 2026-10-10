@@ -6,16 +6,16 @@ def utc():return subprocess.check_output(['date','-u','+%Y-%m-%dT%H:%M:%SZ'],tex
 def memory():return int(next(x.split()[1] for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')))*1024
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--job',type=Path,required=True);ap.add_argument('--phase',choices=['smoke','reporting','smoke-r2','reporting-r2'],required=True);a=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--job',type=Path,required=True);ap.add_argument('--phase',choices=['smoke','reporting','smoke-r2','smoke-r3','reporting-r2'],required=True);a=ap.parse_args()
     assert socket.gethostname()=='127x03'
     assert os.getpriority(os.PRIO_PROCESS,0)==10 and os.sched_getscheduler(0)==os.SCHED_OTHER
     assert os.sched_getaffinity(0)=={45} and memory()>28*2**30
     assert (a.job/'QUALIFIED').exists()
     kind=a.phase.split('-')[0]
-    if a.phase.endswith('-r2'):
+    if a.phase.endswith(('-r2','-r3')):
         assert (a.job/'BELIEF-QUALIFIED').exists()
     if kind=='reporting':
-        assert (a.job/('SMOKE-R2-PASS' if a.phase.endswith('-r2') else 'SMOKE-PASS')).exists()
+        assert (a.job/('SMOKE-R3-PASS' if a.phase.endswith('-r2') else 'SMOKE-PASS')).exists()
     console=subprocess.check_output(['who'],text=True)
     workers=6 if console.strip() else 9;cpus=workers*5
     g=Path('/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010')

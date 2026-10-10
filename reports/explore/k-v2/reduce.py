@@ -24,6 +24,7 @@ def main():
         assert m['channel']['peak_pending']<=1 and m['opponent_channel']['peak_pending']<=1
         affinity=s['worker_affinity'];assert len(affinity)==5 and set(affinity)<=set(range(45))
         assert s['nice']==10 and s['scheduler']==0 and s['host']=='127x03'
+        assert all(not e['during_decision'] for e in s.get('gc_maintenance',[]))
         lat=s['latency_seconds'];stats=s['deadline_stats'];assert len(lat)==len(stats)
         for wall,d in zip(lat,stats):
             expected=max(0.,wall-spec['deadline_seconds']);assert d['wall_seconds']==wall
@@ -32,6 +33,8 @@ def main():
             checks['decisions']+=1;checks['overruns']+=expected>0
         rows[arm][seed]=r;checks['games']+=1;file_shas[p.name]=hashlib.sha256(p.read_bytes()).hexdigest()
     seeds=list(range(base,base+count));assert all(sorted(rows[arm])==seeds for arm in ARMS)
+    if not a.smoke:
+        assert Counter((rows['V200'][seed]['metadata']['seat'],(seed-base)%5,((seed-base)//5)%5) for seed in seeds)==Counter({(seat,own,other):12 for seat in (0,1) for own in range(5) for other in range(5)})
     for seed in seeds:
         metas=[rows[arm][seed]['metadata'] for arm in ARMS]
         assert all((m['own_deck'],m['opponent_deck'],m['seat'])==(metas[0]['own_deck'],metas[0]['opponent_deck'],metas[0]['seat']) for m in metas)
@@ -42,8 +45,9 @@ def main():
         rs=[rows[arm][seed] for seed in seeds];ds=[r['search_ab']['deadline_stats'] for r in rs];walls=[x for r in rs for x in r['search_ab']['latency_seconds']];over=[d['overrun_seconds'] for game in ds for d in game if d['wall_overrun']];cutwalls=[d['wall_seconds'] for game in ds for d in game if d['hit']]
         ns=np.array([len(g) for g in ds]);cut=np.array([sum(d['hit'] for d in g) for g in ds]);late=np.array([sum(d['wall_overrun'] for d in g) for g in ds])
         cutoff=100*cut[idx].sum(1)/ns[idx].sum(1);overrun=100*late[idx].sum(1)/ns[idx].sum(1)
+        gc_pauses=[e['seconds'] for r in rs for e in r['search_ab'].get('gc_maintenance',[])]
         deadline=cfg['arms'][arm]['deadline_seconds']
-        out['arms'][arm]=dict(wins=sum(r['metadata']['winner']==r['metadata']['seat'] for r in rs),losses=int(losses[arm].sum()),draws=sum(r['metadata']['winner'] is None for r in rs),loss_pct=100*losses[arm].mean(),loss_ci_pct=ci(100*resamples[arm]),loss_change_pp=100*(losses[arm]-anchor).mean(),loss_change_ci_pp=ci(100*(resamples[arm]-resamples['K0-200'])),cutoff_pct=100*cut.sum()/ns.sum(),cutoff_ci_pct=ci(cutoff),decisions=int(ns.sum()),overrun_count=len(over),overrun_pct=100*late.sum()/ns.sum(),overrun_ci_pct=ci(overrun),positive_overrun_ms=quant(np.array(over)*1000),wall_ms=quant(np.array(walls)*1000),cut_wall_ms=quant(np.array(cutwalls)*1000),cut_past_deadline_count=sum(w>deadline for w in cutwalls),cut_past_deadline_plus_reserve_count=sum(w>deadline+.008 for w in cutwalls),overrun_ticks_hist=dict(Counter(str(d['delayed_ticks']) for game in ds for d in game if d['wall_overrun'])),game_cpu_hours=sum(r['cpu_seconds'] for r in rs)/3600,worker_masks=dict(Counter(','.join(map(str,r['search_ab']['worker_affinity'])) for r in rs)))
+        out['arms'][arm]=dict(wins=sum(r['metadata']['winner']==r['metadata']['seat'] for r in rs),losses=int(losses[arm].sum()),draws=sum(r['metadata']['winner'] is None for r in rs),loss_pct=100*losses[arm].mean(),loss_ci_pct=ci(100*resamples[arm]),loss_change_pp=100*(losses[arm]-anchor).mean(),loss_change_ci_pp=ci(100*(resamples[arm]-resamples['K0-200'])),cutoff_pct=100*cut.sum()/ns.sum(),cutoff_ci_pct=ci(cutoff),decisions=int(ns.sum()),overrun_count=len(over),overrun_pct=100*late.sum()/ns.sum(),overrun_ci_pct=ci(overrun),positive_overrun_ms=quant(np.array(over)*1000),wall_ms=quant(np.array(walls)*1000),cut_wall_ms=quant(np.array(cutwalls)*1000),cut_past_deadline_count=sum(w>deadline for w in cutwalls),cut_past_deadline_plus_reserve_count=sum(w>deadline+.008 for w in cutwalls),gc_maintenance_seconds=sum(gc_pauses),gc_maintenance_ms=quant(np.array(gc_pauses)*1000),gc_maintenance_count=len(gc_pauses),preparation_cutoffs=dict(Counter(d.get('preparation_cutoff','scoring_or_none') for game in ds for d in game)),overrun_ticks_hist=dict(Counter(str(d['delayed_ticks']) for game in ds for d in game if d['wall_overrun'])),game_cpu_hours=sum(r['cpu_seconds'] for r in rs)/3600,worker_masks=dict(Counter(','.join(map(str,r['search_ab']['worker_affinity'])) for r in rs)))
     if not a.smoke:
         slopes={}
         for high,low in [('V200','V160'),('V160','V120')]:

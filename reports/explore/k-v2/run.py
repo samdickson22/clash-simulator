@@ -1,6 +1,7 @@
 """Paired search opponents using existing fair roots and delay-fixes channels."""
 import argparse
 from latency import apply_lateness
+from gc_window import WINDOW
 from concurrent.futures import ProcessPoolExecutor
 import hashlib
 import json
@@ -73,6 +74,7 @@ def run_game(case):
     from clasher.analysis.loss_review.human import write
     from clasher.rl.public_observation import REAL_PLAY_ENTITY_FEATURE_INDICES
     pair, seed, arm, own, other = case
+    WINDOW.events.clear()
     seat = pair % 2
     start, cpu = time.perf_counter(), time.process_time()
     rng = random.Random(seed)
@@ -134,73 +136,74 @@ def run_game(case):
             # Frozen gate(c) policy cadence, even while delayed channel is blocked.
             for actor in (0, 1):
                 ch = channels[actor]
-                wall0, cpu0 = time.monotonic(), time.process_time()
-                info = observe(b, R.builder, actor, public_events[actor])
-                reserved = ch.own_packet(info, R.builder)
-                fallback = int(policies[actor].poll(b.tick,reserved.packet,recorder.public_events))
-                if not ch.available or b.tick < waits[actor] or b.tick < available_at[actor]:
-                    if actor not in players or b.tick % 10 == 0: ch.blocked += 1
-                    continue
-                if actor not in players:
-                    if fallback < 2304: ch.submit(info, fallback, R.costs, R.builder)
-                    latencies[actor].append(time.monotonic()-wall0)
-                    cpu_latencies[actor].append(time.process_time()-cpu0)
-                    continue
-                if b.tick % 10:
-                    continue
-                p = players[actor]
-                cutoff = None if deadline_seconds is None else wall0+deadline_seconds-OPTIONS['return_reserve_seconds']
-                try:
-                    p.belief.update(info.tick, info.events, deadline=cutoff)
-                except TimeoutError:
-                    preparation_hit = True
-                else:
-                    preparation_hit = False
-                if preparation_hit:
-                    action = fallback if fallback < 2305 else 2304
-                    p.core.selected_wait_ticks = 0
-                    p.core.deadline_stats = dict(hit=True,fallback=True,completed=0,candidates=0,preparation_cutoff='belief')
-                    if action < 2304: ch.submit(info, int(action), R.costs, R.builder)
-                else:
-                    p.core.info, p.core.costs, p.core.pending = info, R.costs, tuple(ch.pending)
-                    p.core.opponent_elixir = policies[actor].opponent_elixir
-                    candidates, mask = p.core.candidates(reserved.packet)
-                    candidates = [a for a in candidates if a != 2305]
-                    action = 2304
-                    if len(candidates) > 1:
-                        if cutoff is not None and time.monotonic() >= cutoff:
-                            action = fallback if fallback < 2305 else 2304
-                            p.core.selected_wait_ticks = 0
-                            p.core.deadline_stats = dict(hit=True,fallback=True,completed=0,candidates=len(candidates))
-                        else:
-                            try:
-                                opponent = p.belief.sample(p.rng, deadline=cutoff)
-                            except TimeoutError:
-                                action = fallback if fallback < 2305 else 2304
-                                p.core.selected_wait_ticks = 0
-                                p.core.deadline_stats = dict(hit=True,fallback=True,completed=0,candidates=len(candidates),preparation_cutoff='sample')
-                            else:
-                                root = R.root(info, opponent, p.rng)
-                                action = p.core.score_candidates(root, actor, candidates, deadline=cutoff,
-                                    fallback=fallback if fallback < 2305 else 2304)
-                        if p.core.selected_wait_ticks:
-                            waits[actor] = b.tick + p.core.selected_wait_ticks
-                        for name in p.core.attrition:
-                            slots = np.flatnonzero(info.packet.observation.hand_ids[:4] == CAT['cards'][name]['token'])
-                            if any(a < 2304 and a//576 in slots for a in candidates):
-                                p.core.attrition[name]['scored_opportunities'] += 1
-                                p.core.attrition[name]['selected'] += action < 2304 and action//576 in slots
+                with WINDOW:
+                    wall0, cpu0 = time.monotonic(), time.process_time()
+                    info = observe(b, R.builder, actor, public_events[actor])
+                    reserved = ch.own_packet(info, R.builder)
+                    fallback = int(policies[actor].poll(b.tick,reserved.packet,recorder.public_events))
+                    if not ch.available or b.tick < waits[actor] or b.tick < available_at[actor]:
+                        if actor not in players or b.tick % 10 == 0: ch.blocked += 1
+                        continue
+                    if actor not in players:
+                        if fallback < 2304: ch.submit(info, fallback, R.costs, R.builder)
+                        latencies[actor].append(time.monotonic()-wall0)
+                        cpu_latencies[actor].append(time.process_time()-cpu0)
+                        continue
+                    if b.tick % 10:
+                        continue
+                    p = players[actor]
+                    cutoff = None if deadline_seconds is None else wall0+deadline_seconds-OPTIONS['return_reserve_seconds']
+                    try:
+                        p.belief.update(info.tick, info.events, deadline=cutoff)
+                    except TimeoutError:
+                        preparation_hit = True
+                    else:
+                        preparation_hit = False
+                    if preparation_hit:
+                        action = fallback if fallback < 2305 else 2304
+                        p.core.selected_wait_ticks = 0
+                        p.core.deadline_stats = dict(hit=True,fallback=True,completed=0,candidates=0,preparation_cutoff='belief')
                         if action < 2304: ch.submit(info, int(action), R.costs, R.builder)
                     else:
-                        p.core.deadline_stats = dict(hit=False,fallback=False,completed=0,candidates=1) if deadline_seconds is not None else None
-                elapsed = time.monotonic()-wall0
-                latencies[actor].append(elapsed)
-                cpu_latencies[actor].append(time.process_time()-cpu0)
-                if deadline_seconds is not None:
-                    stats=dict(p.core.deadline_stats)
-                    overrun, delayed_ticks = apply_lateness(ch, waits, available_at, actor, b.tick, elapsed, deadline_seconds)
-                    stats.update(wall_overrun=overrun > 0, overrun_seconds=overrun, delayed_ticks=delayed_ticks, decision_tick=b.tick, action=int(action), wall_seconds=elapsed)
-                    deadline_stats[actor].append(stats)
+                        p.core.info, p.core.costs, p.core.pending = info, R.costs, tuple(ch.pending)
+                        p.core.opponent_elixir = policies[actor].opponent_elixir
+                        candidates, mask = p.core.candidates(reserved.packet)
+                        candidates = [a for a in candidates if a != 2305]
+                        action = 2304
+                        if len(candidates) > 1:
+                            if cutoff is not None and time.monotonic() >= cutoff:
+                                action = fallback if fallback < 2305 else 2304
+                                p.core.selected_wait_ticks = 0
+                                p.core.deadline_stats = dict(hit=True,fallback=True,completed=0,candidates=len(candidates))
+                            else:
+                                try:
+                                    opponent = p.belief.sample(p.rng, deadline=cutoff)
+                                except TimeoutError:
+                                    action = fallback if fallback < 2305 else 2304
+                                    p.core.selected_wait_ticks = 0
+                                    p.core.deadline_stats = dict(hit=True,fallback=True,completed=0,candidates=len(candidates),preparation_cutoff='sample')
+                                else:
+                                    root = R.root(info, opponent, p.rng)
+                                    action = p.core.score_candidates(root, actor, candidates, deadline=cutoff,
+                                        fallback=fallback if fallback < 2305 else 2304)
+                            if p.core.selected_wait_ticks:
+                                waits[actor] = b.tick + p.core.selected_wait_ticks
+                            for name in p.core.attrition:
+                                slots = np.flatnonzero(info.packet.observation.hand_ids[:4] == CAT['cards'][name]['token'])
+                                if any(a < 2304 and a//576 in slots for a in candidates):
+                                    p.core.attrition[name]['scored_opportunities'] += 1
+                                    p.core.attrition[name]['selected'] += action < 2304 and action//576 in slots
+                            if action < 2304: ch.submit(info, int(action), R.costs, R.builder)
+                        else:
+                            p.core.deadline_stats = dict(hit=False,fallback=False,completed=0,candidates=1) if deadline_seconds is not None else None
+                    elapsed = time.monotonic()-wall0
+                    latencies[actor].append(elapsed)
+                    cpu_latencies[actor].append(time.process_time()-cpu0)
+                    if deadline_seconds is not None:
+                        stats=dict(p.core.deadline_stats)
+                        overrun, delayed_ticks = apply_lateness(ch, waits, available_at, actor, b.tick, elapsed, deadline_seconds)
+                        stats.update(wall_overrun=overrun > 0, overrun_seconds=overrun, delayed_ticks=delayed_ticks, decision_tick=b.tick, action=int(action), wall_seconds=elapsed)
+                        deadline_stats[actor].append(stats)
         b.step()
     for player in players.values(): player.core.close()
     recorder.__exit__(None,None,None)
@@ -213,14 +216,14 @@ def run_game(case):
         dict(seed=seed, seat=seat, style='baseline-search', terminal=terminal, winner=b.winner,
              delay_ticks=27, opponent_delay=27, own_deck=own, opponent_deck=other,
              channel=channels[seat].diagnostics(), opponent_channel=channels[1-seat].diagnostics(),
-             threads=spec['threads'], coarse_horizon=spec['coarse_horizon'], default_source='v1-if-no-complete-score', ticks_per_second=20, honest_lateness=True, belief_preparation='exact transactional4096-row cancellation',
+             threads=spec['threads'], coarse_horizon=spec['coarse_horizon'], default_source='v1-if-no-complete-score', ticks_per_second=20, honest_lateness=True, belief_preparation='exact resumable4096-row cancellation', cyclic_gc='automatic collection deferred during decisions; maintenance metered',
              arm=arm, abilities='disabled both sides', opponent=spec['opponent'], deadline_seconds=deadline_seconds, reserve_floor=spec.get('reserve_floor',False),
              fair_information='public observation + own HUD + accepted enemy events; independent sampled hidden states/RNG'),
         np.asarray(queues))
     result = extract(game, CAT)
     core = players[seat].core
     result.update(cohort=arm, wall_seconds=time.perf_counter()-start, cpu_seconds=time.process_time()-cpu)
-    result['search_ab'] = dict(latency_seconds=latencies[seat], raw_wall_latency_seconds=latencies[seat],
+    result['search_ab'] = dict(gc_maintenance=[dict(seconds=duration,generation=generation,during_decision=active) for duration,generation,active in WINDOW.events],latency_seconds=latencies[seat], raw_wall_latency_seconds=latencies[seat],
         cpu_latency_seconds=cpu_latencies[seat], attrition={k: dict(v) for k, v in core.attrition.items()},
         wait_counts=core.wait_counts, opponent_latency_seconds=latencies[1-seat],
         decision_scope='public observation + v1 fallback + belief + candidates + public root + complete-root scoring + submission',
@@ -228,6 +231,8 @@ def run_game(case):
         floor_removed=core.floor_removed, policy_polls={a:policies[a].polls for a in (0,1)},
         command_sha256=command_hash.hexdigest(),
         worker_affinity=sorted(os.sched_getaffinity(0)), host=socket.gethostname(), worker_pid=os.getpid(), worker_pgid=os.getpgrp(), nice=os.getpriority(os.PRIO_PROCESS,0), scheduler=os.sched_getscheduler(0))
+    result['wall_seconds']=time.perf_counter()-start
+    result['cpu_seconds']=time.process_time()-cpu
     write(Path(OPTIONS['out'])/'games'/f'{ident}.json', result)
     print(json.dumps(dict(game=ident, terminal=terminal, loss=loss, ticks=b.tick,
                           cpu=result['cpu_seconds'], wall=result['wall_seconds'])), flush=True)
