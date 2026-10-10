@@ -1,0 +1,119 @@
+{
+  "utc": "2026-10-10T11:30:27Z",
+  "passed": true,
+  "kind": "initial",
+  "pgid": 3483893,
+  "owned": [
+    {
+      "pid": 3483893,
+      "pgid": 3483893,
+      "start": 142152238,
+      "command_sha256": "6b9abf14ed3ff85c53607b9c74d8fe739131f06bd51ec25142c5b05f4b79f0e2",
+      "role": "manager",
+      "core": 58,
+      "threads": [
+        {
+          "tid": 3483893,
+          "core": 58,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3484242,
+      "pgid": 3483893,
+      "start": 142152901,
+      "command_sha256": "a97c1cf03fb051c6cd3eaacebeb3ecfde357e7371fa6a842ab534acb37464ee0",
+      "role": "packer",
+      "core": 59,
+      "threads": [
+        {
+          "tid": 3484242,
+          "core": 59,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3486748,
+      "pgid": 3483893,
+      "start": 142157363,
+      "command_sha256": "cb94031c0f033d28271b056e887438bc3e881e0fb7189e0f7f546112af542586",
+      "role": "game",
+      "core": 0,
+      "threads": [
+        {
+          "tid": 3486748,
+          "core": 0,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3486749,
+      "pgid": 3483893,
+      "start": 142157364,
+      "command_sha256": "f403cc5dda58ee4cf96e80aca2707360430675fd6cc7e4f45581e700c849afdb",
+      "role": "game",
+      "core": 1,
+      "threads": [
+        {
+          "tid": 3486749,
+          "core": 1,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3486750,
+      "pgid": 3483893,
+      "start": 142157364,
+      "command_sha256": "5d76e99db6ae65e14662794338fd1203d054a252036ee70b46303ff9caf69cc5",
+      "role": "game",
+      "core": 2,
+      "threads": [
+        {
+          "tid": 3486750,
+          "core": 2,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3486751,
+      "pgid": 3483893,
+      "start": 142157366,
+      "command_sha256": "11491a29346db5c887cf81bfbd489fbcb6150a8cdd51d8c9884a490a7f90cb61",
+      "role": "game",
+      "core": 3,
+      "threads": [
+        {
+          "tid": 3486751,
+          "core": 3,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    }
+  ],
+  "persistent_processes": 6,
+  "configured_workers": 58,
+  "active_workers": 4,
+  "ramp": {
+    "phase": "ramp",
+    "first_slots": [],
+    "tickets": [],
+    "last_ticket": null,
+    "workers": 58
+  },
+  "memory_available": 128451575808,
+  "pressure": "some avg10=0.00 avg60=0.11 avg300=1.88 total=138051605\nfull avg10=0.00 avg60=0.11 avg300=1.87 total=136109123\n",
+  "protected_cache_unchanged": true,
+  "retained_pack_complete": true,
+  "maximum_persistent_processes": 60
+}

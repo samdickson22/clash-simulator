@@ -1,0 +1,38 @@
+{
+  "utc": "2026-10-10T11:29:20Z",
+  "release_ordinal": 3,
+  "authorization": "Coordinator THIRD one-time03 release; cores0-59; R3 full CPU release11:20:04Z",
+  "one_time_consumed": true,
+  "freeze_commit": "bc6be426600e9d31fa1a23921d0ef33c2729a4f7",
+  "amendment_sha256": "8b3390b7313f35b4590027cb51b3883a7ba0324bedc642d80f2522996ee21b00",
+  "archived": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/resume-archives/2711936-core59-r3-20261010",
+  "released_markers": {
+    "STOP-03": {
+      "inode": 123901131,
+      "mtime_ns": 1791629553683872240,
+      "ctime_ns": 1791629553683872240,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "PACK.STOP": {
+      "inode": 123901132,
+      "mtime_ns": 1791629637057790782,
+      "ctime_ns": 1791629637057790782,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "priority-alert.json": {
+      "inode": 123901129,
+      "mtime_ns": 1791629553683872240,
+      "ctime_ns": 1791629553683872240,
+      "sha256": "996adc61bbf44d302e6d3c3b3202a22850e4b31908920e38302abee34cbb013e"
+    }
+  },
+  "pressure_pause_cleared": false,
+  "other_host_stops_untouched": true,
+  "baseline": {
+    "games": 13740,
+    "rows": 10758395,
+    "root_decisions": 1669513
+  },
+  "retained_pending_roots": 177196,
+  "retained_pack_before_admission": true
+}
