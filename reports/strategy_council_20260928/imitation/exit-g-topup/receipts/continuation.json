@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-10T01:21:24Z",
+  "scheduledTaskId": "scheduled-task:command:mcp:f5f23f78-993a-4502-b375-2958f9dfba3f:schedule-task:g-topup-continuation-20261010-1",
+  "enabled": true,
+  "interval_ms": 1800000,
+  "nextRunAt": "2026-10-10T01:51:09.288Z",
+  "bindToCurrentThread": true,
+  "disable": "update_scheduled_task({scheduledTaskId: recorded ID, enabled:false}) after final publication or explicit coordinator stop"
+}
