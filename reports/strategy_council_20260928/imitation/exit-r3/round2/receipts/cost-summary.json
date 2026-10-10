@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-10T08:11:04Z",
+  "utc": "2026-10-10T08:28:44Z",
   "final": false,
-  "cpu_seconds": 12859.194255,
+  "cpu_seconds": 145955.281008,
   "gpu_wall_seconds": 4586.374589010142,
   "meters": [
     {
@@ -203,6 +203,24 @@
       "gpu_wall_seconds": 0,
       "status": "closed",
       "host": "127x03"
+    },
+    {
+      "category": "whole CPU pool",
+      "sha256": "24bdee18bb8a7cd9faf78a09d0ac0ba15a40381eeb184986085d5812294494f4",
+      "path": "receipts/evaluation-snapshots/127x01/history/k0-descriptive--pool-meter-3049569-24bdee18bb8a7cd9faf78a09d0ac0ba15a40381eeb184986085d5812294494f4.json",
+      "cpu_seconds": 133093.35611899997,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "host": "127x01"
+    },
+    {
+      "category": "reduction",
+      "sha256": "f8036c435162ec1961e241ee02ab6c98626dce63f11415fa8d5a3c33dcf02208",
+      "path": "receipts/evaluation-snapshots/127x01/history/reduce-descriptive-0-meter-3250165-f8036c435162ec1961e241ee02ab6c98626dce63f11415fa8d5a3c33dcf02208.json",
+      "cpu_seconds": 2.7306340000000002,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "host": "127x01"
     }
   ],
   "active_fit_costs_pending": true,

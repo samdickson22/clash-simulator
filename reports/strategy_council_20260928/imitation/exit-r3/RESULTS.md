@@ -82,4 +82,6 @@ Coordinator-authorized round2 and never-adoptable R3a study are pending under [t
 
 <!-- R3-EXTENSION-STATUS -->
 
-Original R3a/b results above are final. The outcome-informed C/D/E extension and R3a NEVER-ADOPTABLE r1(b) descriptive run remain active; [extended results](round2/RESULTS.md) and [combined cost ledger](round2/receipts/combined-cost-summary.json) remain pending final meters/decisions/vacancy. The later06:50 fallback amendment supersedes the queued05:48 S-default request.
+Original R3a/b results above are final. The outcome-informed C/D/E extension continues; [extended results](round2/RESULTS.md) and [combined cost ledger](round2/receipts/combined-cost-summary.json) await all remaining decisions, meters and vacancy audits.
+
+The R3a NEVER-ADOPTABLE r1(b) descriptive run is complete over 600 fresh paired seeds. Its loss was 24.167%, compared with 52.833% for K0; the paired change was −28.667 pp [−33.667, −23.333]95CI. Its original Stage1 kill and adoption ineligibility stand. Proposal latency differs between arms; full deadline/search diagnostics and costs are in the extended results. The later 06:50 fallback amendment supersedes the queued 05:48 S-default request.

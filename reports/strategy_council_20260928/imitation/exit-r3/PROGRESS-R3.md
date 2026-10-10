@@ -543,3 +543,32 @@ dclosed/killed.01descriptive515/600pairedblocks,no failures.03idle/shared
 grant unchanged; no04restart. Boundedadvance noactions/reviewneeded; do not
 reducepartialblocks or launchretainedattempts again. Capturedrawmetadata
 histories beforeanyresume. Wholeextension completion/timerdeletion pending.
+
+2026-10-10T08:24:15Z — NEVER-ADOPTABLE R3a r1(b) descriptive COMPLETE.
+All600fresh same-core rotatedpairs/1200terminalgames, nofailures/replays,
+pool3049569complete08:20:28Z. Frozenreducer3250165launch08:21:30/completed
+08:21:32Z, source/freeze/native/600blockSHAchecks passed. LossR3a.241666667
+CI[.208333333,.276666667],K0.528333333CI[.488333333,.568333333];pairedchange
+−.286666667CI[−.336666667,−.233333333]. Pairedpointgatepass, butsurvives=false/
+adoptioneligible=false/NEVERADOPTABLE: originalStage1kill unchanged.
+Proposer median/p95R3a.0841/.0985ms,K09.4535/10.3177ms; this changes available
+searchtime, so observedgain includes proposal-speed/search-depth effects.
+Completedroots460337/336718;fallbackuses13576/73846;positivewalloverruns539/573,
+no strictreturnqualification. WholepoolCPU133093.356119s/wall3593.352436s
+chargedONCE; excludedqualification315.567216CPU s, finalreducer2.730634CPU s.
+VerifieddecisionSHA retained under round2/receipts/evaluation-snapshots/127x01.
+Independent01 audit08:22:32 all611recordedgroupsabsent/noownruntime/locksfree;
+this is phase drain, NOT finalhome RETURN whilec/eStage2maystillbeeligible.
+C3795/E3234healthyactive8processes at08:22:06,Dclosed/binarykilled.03replay
+awaitsbothfinalc/e GPUoffline; no killedarm Stage2games. Wholeextensionfinal/
+all-five independentvacancy/combinedcost/timerdelete stillpending.
+
+2026-10-10T08:30:36Z — Reporting note: frozen TimedPolicy.sample computes model ranks
+inside the timed fallback callback; TimedPolicy.propose reuses same-packet
+ranks (identity+mask assertions). The .0841ms descriptive proposer median
+is cache access/conversion, not total model-forward latency. Both callbacks
+remain inside the unchanged full200ms deadline. Updated metadata renderer
+clarifies this for descriptive and future Stage2; no scientificcode change.
+MainRESULTS footer now reports completeddescriptive−28.667ppCI andunchanged
+NEVERADOPTABLE status; wholeextensionstillpending. Timerprompt refreshed to
+completed600pairs/reducer/01phase-drain, sameID next08:32:36.516Z.

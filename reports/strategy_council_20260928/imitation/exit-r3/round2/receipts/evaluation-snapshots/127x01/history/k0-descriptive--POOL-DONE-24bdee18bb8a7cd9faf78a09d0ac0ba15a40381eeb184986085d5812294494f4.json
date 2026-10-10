@@ -1,0 +1,24 @@
+{
+  "relative": "k0-descriptive/POOL-DONE.json",
+  "sha256": "24bdee18bb8a7cd9faf78a09d0ac0ba15a40381eeb184986085d5812294494f4",
+  "raw": "{\n  \"lane\": \"descriptive\",\n  \"smoke\": false,\n  \"arms\": [\n    \"K0\",\n    \"R3a\"\n  ],\n  \"pid\": 3049569,\n  \"pgid\": 3049569,\n  \"status\": \"complete\",\n  \"completed\": 600,\n  \"failures\": [],\n  \"parent_cpu_seconds\": 29.555359000000003,\n  \"children_cpu_seconds\": 133063.80075999998,\n  \"wall_seconds\": 3593.3524358889554,\n  \"min_available_bytes\": 102055129088,\n  \"utc\": \"2026-10-10T08:20:28Z\",\n  \"accounting\": \"Whole pool tree once including interpreter startup, source verification and failed/replayed cases; nested case meters never added\"\n}\n",
+  "value": {
+    "lane": "descriptive",
+    "smoke": false,
+    "arms": [
+      "K0",
+      "R3a"
+    ],
+    "pid": 3049569,
+    "pgid": 3049569,
+    "status": "complete",
+    "completed": 600,
+    "failures": [],
+    "parent_cpu_seconds": 29.555359000000003,
+    "children_cpu_seconds": 133063.80075999998,
+    "wall_seconds": 3593.3524358889554,
+    "min_available_bytes": 102055129088,
+    "utc": "2026-10-10T08:20:28Z",
+    "accounting": "Whole pool tree once including interpreter startup, source verification and failed/replayed cases; nested case meters never added"
+  }
+}

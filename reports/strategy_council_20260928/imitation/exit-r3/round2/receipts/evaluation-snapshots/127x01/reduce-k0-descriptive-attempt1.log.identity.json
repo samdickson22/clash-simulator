@@ -1,0 +1,10 @@
+{
+  "relative": "reduce-k0-descriptive-attempt1.log.identity.json",
+  "sha256": "66160750cf62750f6401195b761be94b34de19dd8b24acecd67c97bf92f1175e",
+  "raw": "{\"pid\":3250165,\"pgid\":3250165,\"utc\":\"2026-10-10T08:21:30Z\"}\n",
+  "value": {
+    "pid": 3250165,
+    "pgid": 3250165,
+    "utc": "2026-10-10T08:21:30Z"
+  }
+}
