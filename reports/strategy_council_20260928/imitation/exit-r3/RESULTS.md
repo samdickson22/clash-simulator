@@ -21,7 +21,7 @@ Preparation costs recorded so far: G verification5.242464CPU s;
 G receiving+checksum13.885933CPU s on09 and13.580354CPU s on16 (remote sender
 unmetered), final focused test receipt and seed interval audit separately.
 Initial unmetered focused test pass and small metadata/source copy overhead
-are disclosed; no fit or game compute charged yet. Full final meters pending.
+are disclosed. Fit costs are accruing; no game compute yet. Full final meters pending.
 
 Both fits launched after scientific freeze bc542da8 was pushed: R3a09
 04:07:41Z and R3b16 04:07:42Z. At04:26:21Z they reached542/500 with finite

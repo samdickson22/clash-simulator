@@ -89,3 +89,14 @@ tree CPU/GPU costs including failed attempts, and adoption status. Commit
 only explicit own paths; secret-scan before each push. Notify coordinator
 0523ae6f with milestones under150words. Remove any continuation timer at final
 completion or expiry, and record its ID/last state here.
+
+2026-10-10T04:32:40Z — Evaluation freeze33cff003 pushed and deployed on09/16;
+all mapped file SHAs and pushed prelaunch freeze SHA verified independently
+on each host. Own heldout-corpus staged. Fit latest step708/671 at04:32:11Z.
+No offline/evaluation game launched. K2 still behind K-v2 release, no CPU claim.
+
+Temporary same-thread continuation every10minutes; nextRunAt
+2026-10-10T04:41:59.626Z. scheduledTaskId:
+`scheduled-task:command:mcp:41973a00-3443-411b-88ab-c1f2788161a1:schedule-task:r3-continuation-20261010-r1`
+Read current state before any action and never duplicate active attempts.
+Delete timer after full RESULTS completion or expiry/vacancy.

@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "utc": "2026-10-10T04:32:40Z",
+  "hosts": [
+    "127x09",
+    "127x16"
+  ],
+  "evaluation_commit": "33cff003cc7262f0d946c8e5509af9d36b90b5db",
+  "all_evaluation_mapped_file_hashes_verified": true,
+  "prelaunch_push_and_freeze_hash_verified": true,
+  "heldout_corpus_staged": true,
+  "fit_latest_steps": {
+    "R3a": 708,
+    "R3b": 671
+  },
+  "offline_started": false,
+  "home_cpu_claimed": false
+}
