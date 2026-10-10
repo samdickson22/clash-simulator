@@ -1,0 +1,181 @@
+{
+  "arm": "X4",
+  "stage": 1,
+  "checkpoint_sha256": "a1b4aaae2173b17a68256796585ab18fb737204307a3dbde3b8d1ad48223c5b9",
+  "heldout_manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+  "freeze_sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+  "teacher": {
+    "games": 64,
+    "rows": 8088,
+    "scope": "teacher roots",
+    "metrics": {
+      "teacher_play_rate": {
+        "value": 0.345944609297725,
+        "ci95": [
+          0.33178154635792134,
+          0.3589305977132068
+        ],
+        "numerator": 2798.0,
+        "denominator": 8088.0
+      },
+      "teacher_wait_rate": {
+        "value": 0.654055390702275,
+        "ci95": [
+          0.6410694022867932,
+          0.6682184536420785
+        ],
+        "numerator": 5290.0,
+        "denominator": 8088.0
+      },
+      "student_play_rate": {
+        "value": 0.17163139069717723,
+        "ci95": [
+          0.15751163512124747,
+          0.1850447577306591
+        ],
+        "numerator": 1388.1546879587695,
+        "denominator": 8088.0
+      },
+      "student_wait_rate": {
+        "value": 0.8283686084298806,
+        "ci95": [
+          0.8149552410631571,
+          0.8424883639875695
+        ],
+        "numerator": 6699.845304980874,
+        "denominator": 8088.0
+      },
+      "play_recall": {
+        "value": 0.2557513421154072,
+        "ci95": [
+          0.24277048970108467,
+          0.2677491380787476
+        ],
+        "numerator": 715.5922552389093,
+        "denominator": 2798.0
+      },
+      "play_prevalence_ratio": {
+        "value": 0.4961239056321549,
+        "ci95": [
+          0.47055211168159694,
+          0.5196385701697047
+        ],
+        "numerator": 1388.1546879587695,
+        "denominator": 2798.0
+      },
+      "top8_action_recall": {
+        "value": 0.2916368834882059,
+        "ci95": [
+          0.274493847126714,
+          0.3099055000831234
+        ],
+        "numerator": 816.0,
+        "denominator": 2798.0
+      },
+      "hard_action_agreement": {
+        "value": 0.6008902077151336,
+        "ci95": [
+          0.5807237391991689,
+          0.6222144132907982
+        ],
+        "numerator": 4860.0,
+        "denominator": 8088.0
+      }
+    },
+    "teacher_self_recall": 1.0
+  },
+  "all_poll_rows": {
+    "games": 64,
+    "rows": 37950,
+    "scope": "eligible poll rows",
+    "metrics": {
+      "teacher_play_rate": {
+        "value": 0.07372859025032938,
+        "ci95": [
+          0.06950030776290574,
+          0.07774303279729446
+        ],
+        "numerator": 2798.0,
+        "denominator": 37950.0
+      },
+      "teacher_wait_rate": {
+        "value": 0.9262714097496706,
+        "ci95": [
+          0.9222569672027054,
+          0.9304996922370943
+        ],
+        "numerator": 35152.0,
+        "denominator": 37950.0
+      },
+      "student_play_rate": {
+        "value": 0.08331732557975219,
+        "ci95": [
+          0.0779018940474762,
+          0.08852736220031038
+        ],
+        "numerator": 3161.8925057515953,
+        "denominator": 37950.0
+      },
+      "student_wait_rate": {
+        "value": 0.9166826741281549,
+        "ci95": [
+          0.9114726375052236,
+          0.922098105659084
+        ],
+        "numerator": 34788.107483163476,
+        "denominator": 37950.0
+      },
+      "play_recall": {
+        "value": 0.25575134274050504,
+        "ci95": [
+          0.24277049026256517,
+          0.2677491382764479
+        ],
+        "numerator": 715.5922569879331,
+        "denominator": 2798.0
+      },
+      "play_prevalence_ratio": {
+        "value": 1.1300545052721926,
+        "ci95": [
+          1.0934252284267982,
+          1.1664010316007853
+        ],
+        "numerator": 3161.8925057515953,
+        "denominator": 2798.0
+      },
+      "top8_action_recall": {
+        "value": 0.2916368834882059,
+        "ci95": [
+          0.274493847126714,
+          0.3099055000831234
+        ],
+        "numerator": 816.0,
+        "denominator": 2798.0
+      },
+      "hard_action_agreement": {
+        "value": 0.9149143610013175,
+        "ci95": [
+          0.9090716477199374,
+          0.9208820937512152
+        ],
+        "numerator": 34721.0,
+        "denominator": 37950.0
+      }
+    },
+    "teacher_self_recall": 1.0
+  },
+  "all_WAIT_hard_agreement": 0.654055390702275,
+  "survives": false,
+  "kill_reasons": [
+    "play recall <0.60",
+    "top-8 recall <0.50",
+    "root hard agreement <0.704"
+  ],
+  "cpu_seconds": 10.398428000000001,
+  "wall_seconds": 10.678910122951493,
+  "lane": "exploration; no multiplicity adjustment",
+  "device": "cuda",
+  "precision": "float32; TF32 disabled; no autocast",
+  "host": "127x01",
+  "stage1_amendment_sha256": "48513b781a37d53f116445f7b2783023de5edbb553fe054c54a77f39fe8598ba"
+}

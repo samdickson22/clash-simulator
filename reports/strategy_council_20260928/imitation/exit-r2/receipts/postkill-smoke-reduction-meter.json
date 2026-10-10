@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-10T04:38:08Z",
+  "status": "passed",
+  "parent_cpu_seconds": 1.063255,
+  "children_cpu_seconds": 0.048632999999999996,
+  "wall_seconds": 0.017334009055048227,
+  "accounting": "Separate frozen-output qualification reduction; no game/replay, smoke losses excluded",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false
+}

@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "utc": "2026-10-10T04:37:41Z",
+  "selected": [
+    "X1",
+    "X2",
+    "X4"
+  ],
+  "checkpoint_sha256": {
+    "X1": "b42b64cacfc43baa284fd1ba7b5f95f9c9daa3f6d29e722224a03666260b5526",
+    "X2": "6aeeb06fb74712e2b8e9f12a10003c94d9d26651cbabf7ec81fb35d65fb83ce3",
+    "X4": "a1b4aaae2173b17a68256796585ab18fb737204307a3dbde3b8d1ad48223c5b9"
+  },
+  "context": {
+    "host": "127x01",
+    "affinity": [
+      63
+    ],
+    "scheduler": "SCHED_OTHER",
+    "nice": 10,
+    "torch_threads": 1
+  },
+  "original_e8_files_unchanged": true,
+  "selected_source_and_receipts_match": true,
+  "no_reporting_games": true,
+  "selection_amendment_sha256": "490bd8e19a8e393d8faa25961d8ec81717c71b2d2e97fc860b926abc7574c2d3",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false
+}

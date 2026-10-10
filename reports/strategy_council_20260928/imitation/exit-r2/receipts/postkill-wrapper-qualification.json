@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "states": 125,
+  "smoke_games": 6,
+  "smoke_indices": [
+    4,
+    5
+  ],
+  "all_terminal": true,
+  "interleaved": true,
+  "inference_inside_K_wall0": true,
+  "v1_polling_both_actors": true,
+  "legal_default_and_proposals": true,
+  "harness_sha256": "ee43172dfb50dbf288b50c314f1abfddbc942fd90d192846ec6e8aaca6a51865",
+  "adapter_sha256": "e29d0f61d3affd97e4c9e14915a7cb093a24f4accbe1e5eceec20b6538d3aae7",
+  "synthetic_qualification_sha256": "6f4fd21b45b34b8314a213b17575c1ea02df6c1f9d8364b730f42f5034c38fdc",
+  "indices_excluded_from_reporting": true,
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false
+}

@@ -1,0 +1,114 @@
+{
+  "passed": true,
+  "utc": "2026-10-10T04:32:16Z",
+  "identity": {
+    "pid": 1995988,
+    "pgid": 1995988,
+    "utc": "2026-10-10T04:31:33Z",
+    "lane": "exploration; never adoptable",
+    "never_adoptable": true,
+    "adoption_eligible": false
+  },
+  "processes": [
+    {
+      "pid": 1995988,
+      "ppid": 1,
+      "pgid": 1995988,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        63
+      ],
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_pool_postkill.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --smoke --cores 0 1"
+    },
+    {
+      "pid": 1996124,
+      "ppid": 1995988,
+      "pgid": 1996124,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        0
+      ],
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 4 --arms C-v1 S-standin K0 --smoke"
+    },
+    {
+      "pid": 1996125,
+      "ppid": 1995988,
+      "pgid": 1996125,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        1
+      ],
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 5 --arms C-v1 S-standin K0 --smoke"
+    },
+    {
+      "pid": 1996199,
+      "ppid": 1996124,
+      "pgid": 1996124,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        0
+      ],
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm S-standin --index 4 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault-smoke/blocks/0004-attempt-1996124.json --smoke"
+    },
+    {
+      "pid": 1996205,
+      "ppid": 1996125,
+      "pgid": 1996125,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        1
+      ],
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm K0 --index 5 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault-smoke/blocks/0005-attempt-1996125.json --smoke"
+    }
+  ],
+  "progress": {
+    "completed": 0,
+    "pending": 0,
+    "active": {
+      "0": {
+        "pid": 1996124,
+        "index": 4
+      },
+      "1": {
+        "pid": 1996125,
+        "index": 5
+      }
+    },
+    "arms": [
+      "C-v1",
+      "S-standin",
+      "K0"
+    ],
+    "admitted": true,
+    "load": {
+      "utc": "2026-10-10T04:32:15Z",
+      "mem_available_bytes": 129600835584,
+      "load1": 3.29,
+      "lane": "exploration; never adoptable",
+      "never_adoptable": true,
+      "adoption_eligible": false
+    },
+    "failures": [],
+    "lane": "exploration; never adoptable",
+    "never_adoptable": true,
+    "adoption_eligible": false
+  },
+  "harness_sha256": "ee43172dfb50dbf288b50c314f1abfddbc942fd90d192846ec6e8aaca6a51865",
+  "prelaunch_commit": "e8c82b10",
+  "fresh_qualification_indices": [
+    4,
+    5
+  ],
+  "qualification_base": 4503602017370496,
+  "reporting_bank_unconsumed": true,
+  "original_game_banks_unconsumed": true,
+  "meter_rule": "Only whole pool parent plus descendants added; nested case/block CPU retained but not added.",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false
+}

@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "utc": "2026-10-10T04:31:33Z",
+  "context": {
+    "host": "127x01",
+    "affinity": [
+      63
+    ],
+    "scheduler": "SCHED_OTHER",
+    "nice": 10,
+    "torch_threads": 1
+  },
+  "dedup_01_no_pool": true,
+  "dedup_03_no_pool_utc": "2026-10-10T04:31:20Z",
+  "fit_and_score_closed": true,
+  "no_existing_blocks": true,
+  "harness_freeze": "e8c82b10",
+  "smoke_only": true,
+  "reporting_seeds_consumed": 0,
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false
+}

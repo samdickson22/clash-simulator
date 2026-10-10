@@ -1,20 +1,20 @@
 # ExIt r2 X screen — interim results
 
-Updated 2026-10-10T04:06:34Z. Exploration; no multiplicity adjustment. X1, X2, X3 and X6 are killed at the frozen offline64 gate. X4, X5 and X7 continue fitting. No h2h256 or stage3 reporting game has run; R2 is not eligible. The experiment is active.
+Updated 2026-10-10T04:39:34Z. Exploration; no multiplicity adjustment. X1, X2, X3, X4 and X6 are killed at the frozen offline64 gate. X5 and X7 continue fitting. Original h2h256 and d0264ec9 stage3 banks remain unconsumed; R2 is ineligible. The separate never-adoptable descriptive study is qualified and selected, awaiting reporting launch. The experiment is active.
 
 Coordinator 03:58 judged the frozen stage1 gate design **infeasible**: fresh-W self-agreement top8 is0.314 [0.283,0.348] against0.50, while root agreement0.706 [0.686,0.725] barely reaches0.704. Frozen kills are retained for the record and **do not establish student quality**. [Committed noise-ceiling analysis](ANALYSIS-NOISE-CEILING-20261010.md),136a1285. Remaining fits and offline scoring finish unchanged. Original stage2 and d0264ec9 stage3 banks remain unconsumed; R2 cannot trigger.
 
-A separate fresh-seed S-default study is being prepared: **exploration; never adoptable**, X1/X2/best X3–X7 by final stage1 play recall, shared C-v1/K0 anchors,600 paired seeds on01/nice10/SCHED_OTHER after X4 exit. Reporting4503602007370496+,qualification4503602017370496+, fully interleaved same-seed cases. Selection waits every fit/score; no new study game has run. Optional h2h omitted. Provisional180 bank was withdrawn unused after K-v2 collision. Separate freeze/audit precedes games.
+A separate fresh-seed S-default study is frozen and pushed at e8c82b10: **exploration; never adoptable**, X1/X2/X4 under coordinator04:35 selection amendment693bc3b1, shared C-v1/K0 anchors,600 paired seeds on01/nice10/SCHED_OTHER after X4 exit. Reporting4503602007370496+,qualification4503602017370496+, fully interleaved same-seed cases. X4 is highest play recall among the completed X3/X4/X6 recipes; X5/X7 are excluded as X1-family variants but finish fitting/scoring for the record. Optional h2h omitted. Provisional180 bank was withdrawn unused after K-v2 collision. The passed fresh audit and prelaunch receipt precede all study games.
 
 | Arm | Target / teacher fraction / seed | Fit | Stage1 | Stage2 / Stage3 |
 | --- | --- | --- | --- | --- |
 | X1 | T=.003 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
 | X2 | T=.0001 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
 | X3 | root z-score τ=.5 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
-| X4 | T=.003 /.75 /2026101001 | running 127x01, step4695/4883 at2026-10-10T04:19:27Z | pending | SKIP: coordinator infeasible-gate ruling |
-| X5 | X1 double steps /1 /2026101001 | running 127x04, step6276/9766 at2026-10-10T04:19:27Z | pending | SKIP: coordinator infeasible-gate ruling |
+| X4 | T=.003 /.75 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: coordinator infeasible-gate ruling |
+| X5 | X1 double steps /1 /2026101001 | running 127x04, step6707/9766 at2026-10-10T04:32:51Z | pending | SKIP: coordinator infeasible-gate ruling |
 | X6 | T=.0001 /.75 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
-| X7 | X1 replicate /1 /2026101007 | running 127x14, step2263/4883 at2026-10-10T04:19:27Z | pending | SKIP: coordinator infeasible-gate ruling |
+| X7 | X1 replicate /1 /2026101007 | running 127x14, step2692/4883 at2026-10-10T04:32:52Z | pending | SKIP: coordinator infeasible-gate ruling |
 
 Stage1 on the unchanged sealed r1 heldout64:8088 eligible root rows,2798 teacher plays and5290 teacher WAITs. The all-poll supplement has37950 eligible rows. Below are point estimates and paired whole-game percentile95% bootstrap CIs (5000 resamples,PCG64 seed80991010). Display rounded; linked receipts retain full precision, denominators, all-poll metrics and pinned final EMA.
 
@@ -23,13 +23,14 @@ Stage1 on the unchanged sealed r1 heldout64:8088 eligible root rows,2798 teacher
 | [X1](receipts/stage1-X1.json) | 0.259019 [0.247870,0.269634] | 0.305933 [0.288135,0.324391] | 0.612760 [0.594250,0.632325] | 0.829245 [0.816916,0.842311] | 1.267852 |
 | [X2](receipts/stage1-X2.json) | 0.235215 [0.223984,0.245770] | 0.303431 [0.285266,0.322416] | 0.629822 [0.612412,0.648093] | 0.849532 [0.838083,0.861410] | 1.298868 |
 | [X3](receipts/stage1-X3.json) | 0.252151 [0.241149,0.262688] | 0.310222 [0.292146,0.329165] | 0.624505 [0.606383,0.643139] | 0.835594 [0.823661,0.848178] | 1.277558 |
+| [X4](receipts/stage1-X4.json) | 0.255751 [0.242770,0.267749] | 0.291637 [0.274494,0.309906] | 0.600890 [0.580724,0.622214] | 0.828369 [0.814955,0.842488] | 1.266511 |
 | [X6](receipts/stage1-X6.json) | 0.226257 [0.214442,0.237495] | 0.287706 [0.269442,0.306828] | 0.625247 [0.607801,0.643641] | 0.853604 [0.841990,0.865746] | 1.305094 |
 
-All four kill on play recall<.60,top8 recall<.50 and root hard agreement<.704. Teacher WAIT is.654055391 [95% CI .641069402,.668218454]; all four student WAIT rates pass the fourth rule (kill only if>1.5×teacher). No stage2/3 CI or loss is estimated for a killed arm. Final EMA/source/corpus/seed recipe remains unchanged.
+All five kill on play recall<.60,top8 recall<.50 and root hard agreement<.704. Teacher WAIT is.654055391 [95% CI .641069402,.668218454]; all five student WAIT rates pass the fourth rule (kill only if>1.5×teacher). No stage2/3 CI or loss is estimated for a killed arm. Final EMA/source/corpus/seed recipe remains unchanged.
 
-X1/X7 gap: stage1 waits X7’s sealed result; stage2 gap is not estimable because X1 was killed before h2h; stage3 gap is not estimable under the one-member family cap. Original family cap remains sealed but original stage3 is unconsumed. The separately authorized descriptive study selects X1/X2/best X3–X7 and may include X7 alongside X1.
+X1/X7 gap: stage1 waits X7’s sealed result; stage2 gap is not estimable because X1 was killed before h2h; stage3 gap is not estimable under the one-member family cap. Original family cap remains sealed but original stage3 is unconsumed. The separately authorized descriptive study now selects X1/X2/X4 under693bc3b1; X7 is excluded as an X1-family variant, so its descriptive-game gap is not estimable. Its offline gap will be reported after the unchanged fit and score finish.
 
-The operational GPU scoring/routing amendmenta7b5acd1 was secret-scanned/committed/pushed before all four offline attempts. Float32 CUDA/TF32 disabled/no autocast preserves the original batch64, metric formulas,CPU reductions,bootstrap and point gates. Synthetic128-row qualification matched hard actions/top8 exactly, score max difference7.629e-6, metric/CI differences<1e-6;12 metadata admission tests passed. These are qualification data, not heldout outcomes.
+The operational GPU scoring/routing amendmenta7b5acd1 was secret-scanned/committed/pushed before all five offline attempts. Float32 CUDA/TF32 disabled/no autocast preserves the original batch64, metric formulas,CPU reductions,bootstrap and point gates. Synthetic128-row qualification matched hard actions/top8 exactly, score max difference7.629e-6, metric/CI differences<1e-6;12 metadata admission tests passed. These are qualification data, not heldout outcomes.
 
 Proposed X8 (X2 replicate, trainseed2026101008,host15) was cancelled by coordinator before freeze, staging, audit, host access or fit. Zero fit/game compute; seed unused. This is a cancelled proposal, not a scientific kill. X7 continues; seven arms remain. [Cancellation receipt](receipts/x8-cancellation.json).
 
@@ -44,13 +45,20 @@ X6 finished fit cleanly03:49:20Z; one heldout GPU attempt launched03:49:29Z and 
 | X1 | 2.504213012 | 6.513343099 | 0.003094961 | 0.002847458 |
 | X2 | 2.520438362 | 6.790320697 | 0.003094121 | 0.002869096 |
 | X3 | 2.629250317 | 7.795465627 | 0.003155318 | 0.002952663 |
+| X4 | 3.632502419 | 19.850079163 | 0.003676310 | 0.003114785 |
 | X6 | 2.443525074 | 9.508914612 | 0.004235091 | 0.003630126 |
 
-Current seven-fit total at2026-10-10T04:20:00Z: 18.175829505 allocatedGPU-wall h /62.133563480 wholeCPU h ([snapshot](receipts/monitor-20261010T0419Z.json)). ClosedX1/X2/X3/X6 final exit meters replace their live snapshots; remaining three are provisional. This replaces all prior live totals, never sums snapshots. Offline total is separately0.013579491GPU-wall h/0.012299343CPU h. Child scoring result CPU is nested inside the whole supervisor meter and is not added again. GPU guard resource peaks are sampled, not continuous maxima.
+Current seven-fit total at2026-10-10T04:38:32Z: 18.812176834 allocatedGPU-wall h /64.527425976 wholeCPU h ([snapshot](receipts/monitor-20261010T0433Z.json)). ClosedX1/X2/X3/X4/X6 final exit meters replace their live snapshots; remaining two are provisional. This replaces all prior live totals, never sums snapshots. Offline total is separately0.017255801GPU-wall h/0.015414127CPU h. Child scoring result CPU is nested inside the whole supervisor meter and is not added again. GPU guard resource peaks are sampled, not continuous maxima.
 
 Post-kill study frozen/pushed e8c82b10 before any game: [plan](POSTKILL-SDEFAULT-PLAN.md), [addendum](receipts/postkill-sdefault-addendum.json), [fresh audit](receipts/postkill-seed-audit.json). Fresh239590-file scan zero collisions/errors,217.087355CPU s;2560 expanded interval comparisons .554847CPU s. Three post-kill code qualification attempts total8.728720CPU s; offline-only six-test qualification1.335640CPU s. Metadata staging verification on01 passed source/native/policy pins and correctly kept games closed while X4 fit remains active. Sender/bootstrap/copy/direct metadata-shell CPU unmetered and disclosed; no new game attempt yet.
 
 New preparation: GPU synthetic qualification10.238241CPU s/10.278003GPU-wall s;12 metadata tests.344673CPU s; all7 heldout staging6.196271CPU s. Source sender/bootstrap/native-copy CPU is unmetered and disclosed. Prior failed fits/audits/staging/controllers/smokes remain separately retained in receipts and history. Retired seven-armcontroller1870636 cleanexit11.910174CPU s charged once; retiredcontroller1940296 exited cleanly (19.744972CPU s once); currentcontroller2071651 remote jobs are separately metered, controller’s SSH/local children only counted in its own final meter.
+
+X4 clean fit exit04:30:48 and single GPU score exit04:31:03; all original fit/scoring groups absent. FinalEMA a1b4aaae2173b17a68256796585ab18fb737204307a3dbde3b8d1ad48223c5b9. [Completion](receipts/X4-completion.json). The disclosed608.730407s slowdown remains inside the whole fit meter.
+
+Descriptive selection amended/frozen/pushed693bc3b1 before any reporting game: [selection addendum](POSTKILL-SELECTION-ADDENDUM.md), [sealed X1/X2/X4 selection](receipts/postkill-selection.json). Original e8c82b10 bytes and search/default/timer semantics preserved. Six metadata-only routing/selection tests pass,2.869253CPU s. Selected final checkpoints transferred directly09/16→01 and SHA verified. Reporting still uses600 fresh200-bank seed blocks and five fully interleaved cases per seed; X5/X7 fit/offline continue independently.
+
+Fresh201 smoke indices4/5: six terminal mechanics games, both complete same-core interleaved blocks; [wrapper qualification PASS](receipts/postkill-wrapper-qualification.json), inference inside Kwall0/both v1 polling actors/legal defaults/proposals/raw metadata. Smoke losses excluded and never read as reporting outcomes. Whole smoke pool524.551305CPU s/267.878277wall s; nested case/block CPU not added. Frozen-output reduction separately metered; transfer/bootstrap/direct metadata-shell overhead unmetered and disclosed. Original global G STOP remains; authorized host STOP-01 written04:28:15 and G fully drained before admission.
 
 Earlier operational records below are historical; current state, protocol and costs above supersede stale “pending/current controller” snapshots.
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,

@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-10T04:31:03Z",
+  "arm": "X4",
+  "exit_code": 0,
+  "reason": null,
+  "parent_cpu_seconds": 0.101945,
+  "children_cpu_seconds": 11.111279999999999,
+  "gpu_wall_seconds": 13.234717357205227,
+  "peak_pss_bytes": 3255069696,
+  "min_gpu_free_bytes": 49422532608,
+  "note": "Whole parent+child CPU once; child result CPU is nested, never add separately. Failed/reaped attempts retained."
+}

@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-10T04:28:15Z",
+  "authority": "Coordinator G handoff explicitly authorizes STOP-01 before X evaluation; descriptive study requires no G.",
+  "before": {
+    "global_STOP": true,
+    "host_STOP_01": false
+  },
+  "global_STOP_preserved": true,
+  "host_STOP_01_present": true,
+  "signals_sent": false,
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false
+}
