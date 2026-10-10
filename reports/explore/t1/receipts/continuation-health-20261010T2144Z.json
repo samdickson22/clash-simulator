@@ -1,0 +1,177 @@
+{
+  "schema": "clasher.t1.continuation-health.v1",
+  "utc": "2026-10-10T21:44:13Z",
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "phase": "replacement-r1",
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1",
+  "immutable_manifest_sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+  "counts": {
+    "127x01": {
+      "durable_blocks": 279,
+      "guard_durable_blocks": 57,
+      "original_preserved_blocks": 124,
+      "total_flagged_blocks": 0,
+      "ssh_flagged_blocks": 0,
+      "dbus_flagged_blocks": 0,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 155,
+      "primary_durable_blocks": 222
+    },
+    "127x08": {
+      "verified_offhost_ACKs": 258,
+      "durable_blocks": 258,
+      "guard_durable_blocks": 50,
+      "original_preserved_blocks": 33,
+      "total_flagged_blocks": 258,
+      "ssh_flagged_blocks": 183,
+      "dbus_flagged_blocks": 258,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 225,
+      "primary_durable_blocks": 208
+    }
+  },
+  "total_durable_blocks": 537,
+  "progress": {
+    "127x01": {
+      "utc": "2026-10-10T21:03:51Z",
+      "host": "127x01",
+      "phase": "replacement",
+      "complete_local_blocks": 155,
+      "failed_blocks": 0,
+      "queued": 1291,
+      "inflight": 11,
+      "reason": "foreign_compute",
+      "sealed": true,
+      "age_seconds": 2422.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": true,
+      "supervisor-exit_receipt_present": true
+    },
+    "127x08": {
+      "utc": "2026-10-10T21:44:06Z",
+      "host": "127x08",
+      "phase": "replacement",
+      "complete_local_blocks": 225,
+      "failed_blocks": 0,
+      "queued": 1222,
+      "inflight": 11,
+      "reason": null,
+      "sealed": true,
+      "age_seconds": 7.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": false
+    }
+  },
+  "phase_exits": {
+    "127x01": {
+      "utc": "2026-10-10T21:03:53Z",
+      "host": "127x01",
+      "reason": "foreign_compute",
+      "completed_blocks": 155,
+      "failed_blocks": 11,
+      "unstarted_blocks": 1291,
+      "receipt_sha256": "aea0f4a58b30c273c054f15944d4f57abd990b0f26179793452d243dfa412c26"
+    }
+  },
+  "proof_errors": [],
+  "latest_08_durable_ack_utc": "2026-10-10T21:43:36Z",
+  "corpus_durability": "VERIFIED_READ_ONLY_20261010T202144Z",
+  "END": "WAIT_COORDINATOR_CLEAN_WINDOW",
+  "op7_candidate": {
+    "candidate_commit": "7925fbf1507b7221a813edda5ff221aff3f43115",
+    "branch": "worker/t1-op7-apt-20261010",
+    "worktree": "/mpac/sdicks02/jobs/clasher/t1-op7-worktree-20261010",
+    "status": "AWAITING_INDEPENDENT_CLAUDE_OPUS_HIGH_REVIEW",
+    "authority_commit": "33d0fc06bd8f42dd2e34db4b99b57027b3c551b9",
+    "unit_tests_passed": 159,
+    "manifest_hashes": 171,
+    "all_hashes_match": true,
+    "diff_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/review/op7-7925fbf1/candidate.diff",
+    "diff_sha256": "f3123ad64022a2499e2b93c514a4635f365f51177a3acae15678b861aebe316b",
+    "live_runtime_changed": false,
+    "review_requested_message_id": "message:mcp:1d318750-510c-4298-9fd7-13c1eae507ce:thread-send:t1-op7-candidate-7925fbf1-20261010-r1"
+  },
+  "repair_status": "AWAIT_OP7_CONFIRMATION_THEN_COORDINATED_OPTION_B",
+  "replacement_dispatch_generated": false,
+  "replacements_required": true,
+  "reporting_complete": false,
+  "root_checkout_sync_note": "Root main remains614186d7 because coordinator-owned local COORDINATOR.md edits block fast-forward. They are untouched. Health commit integrated/pushed via isolated worktree2e1102b3; subsequent receipts also use that clean worktree.",
+  "process_audits": [
+    {
+      "utc": "2026-10-10T21:44:20Z",
+      "host": "127x01",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": false,
+          "pid": 433021
+        },
+        {
+          "role": "copier",
+          "alive": true,
+          "identity": {
+            "pid": 432837,
+            "start_ticks": 145042108,
+            "pgid": 432837,
+            "uid": 3822945,
+            "cmdline_sha256": "6ed13ec3885f058ba25509410268b4797f87051911d96229c28122d1691f725e",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 19,
+          "affinity": [
+            62
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": null
+    },
+    {
+      "utc": "2026-10-10T21:44:20Z",
+      "host": "127x08",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": true,
+          "identity": {
+            "pid": 1876811,
+            "start_ticks": 145993083,
+            "pgid": 1876811,
+            "uid": 3822945,
+            "cmdline_sha256": "2e9f8790a927894fca6643e6362b3ae9461925f0d1917d777837a0353748c06c",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 10,
+          "affinity": [
+            61
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08"
+    }
+  ],
+  "current_phase_guard_stop_counts": {
+    "127x01": 1,
+    "127x08": 0
+  },
+  "current_phase_final_failed_blocks": {
+    "127x01": 11,
+    "127x08": 0
+  },
+  "stopped_progress_policy": "01 final exit governs; stale progress failure/inflight counters are superseded",
+  "checkpoint_utc": "2026-10-10T21:44:45Z"
+}
