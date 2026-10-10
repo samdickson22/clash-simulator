@@ -41,7 +41,8 @@ def main():
         assert exited['returncode']==0 and exited['reason'] is None
         assert receipt['games']==count and receipt['terminal']
         pgids.update((launch['supervisor_pgid'],launch['child_pgid']))
-    for path in job.glob('*-pid.json'):
+    identities=list(job.glob('*-pid.json'))+list(job.glob('smoke-prelaunch-failed-*/*-pid.json'))
+    for path in identities:
         identity=json.loads(path.read_text())
         if 'pgid' in identity:pgids.add(identity['pgid'])
     assert set(audit['fully_vacated_pgids'])<=pgids
