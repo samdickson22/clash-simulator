@@ -1,6 +1,7 @@
 {
   "relative": "R3c-launch.json",
   "sha256": "0382b5a798fc1009a73de919776f40b08c661c75ef3ef32bd2e9a3c7e9cfe624",
+  "raw": "{\n  \"utc\": \"2026-10-10T06:31:41Z\",\n  \"host\": \"127x09\",\n  \"supervisor_pid\": 3169080,\n  \"supervisor_pgid\": 3169080,\n  \"trainer_pid\": 3169090,\n  \"trainer_pgid\": 3169090,\n  \"command\": [\n    \"taskset\",\n    \"-c\",\n    \"118,119,126\",\n    \"bash\",\n    \"/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/run_fit.sh\",\n    \"R3c\"\n  ],\n  \"stop_file\": \"/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/FIT.STOP\",\n  \"checkpoint_stop_deadline\": \"2026-10-11T05:15:00Z\"\n}\n",
   "value": {
     "utc": "2026-10-10T06:31:41Z",
     "host": "127x09",

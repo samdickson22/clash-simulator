@@ -1,0 +1,14 @@
+{
+  "relative": "R3e-health.json",
+  "sha256": "dc1778d4dd042b61e98e031cc4612b4eb62384017408e9dcac2b90e1e7482e23",
+  "raw": "{\n  \"utc\": \"2026-10-10T07:43:53Z\",\n  \"pid\": 3431416,\n  \"pss\": 24865029120,\n  \"processes\": 8,\n  \"gpu_free_bytes\": 48414851072,\n  \"reason\": null,\n  \"wall_seconds\": 4331.720024148002\n}\n",
+  "value": {
+    "utc": "2026-10-10T07:43:53Z",
+    "pid": 3431416,
+    "pss": 24865029120,
+    "processes": 8,
+    "gpu_free_bytes": 48414851072,
+    "reason": null,
+    "wall_seconds": 4331.720024148002
+  }
+}

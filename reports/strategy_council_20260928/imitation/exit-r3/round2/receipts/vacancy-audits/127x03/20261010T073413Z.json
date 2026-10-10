@@ -1,0 +1,34 @@
+{
+  "host": "127x03",
+  "utc": "2026-10-10T07:34:13Z",
+  "pid": 2737518,
+  "pgid": 2737518,
+  "source_sha256": {
+    "CODE-QUALIFICATION.json": "bddff9b5e426fe2f32974ac2ddefcb968724a2d61a672b726ed99cc76885c89f",
+    "REGRET-BASE-STAGING.json": "d9ba11169c0cb6891edbaf71aca7b1e7e42abb27f039183fcfe5b9839275d21c",
+    "admit03-attempt1.log.identity.json": "c2c8f779d4ae88f9762445f94a59b71921fbfc01ecd62260ede5e76de4806bc5",
+    "regret-base-staging-attempt1.log.identity.json": "d9f5b54d77338e5aff14063616737a3a15bb2337bf9eee697f1bd6edd69c0400",
+    "admit03-attempt1.log.pid": "32938c8e68f0866dffa9b250cf501ec3c3c73fb00a02930c57a683d729c92870",
+    "regret-base-staging-attempt1.log.pid": "f9e8fe7dfa73fefa7f189ee90d6da103f20891f2ccbd08e5c29aefa57b0946aa"
+  },
+  "recorded_pids": [
+    2653091,
+    2654264,
+    2993359
+  ],
+  "recorded_pgids": [
+    2653091,
+    2654264,
+    2993359
+  ],
+  "live_owned": [],
+  "recorded_group_members": [],
+  "recorded_pid_members": [],
+  "locks": [],
+  "fit_and_offline_clean": null,
+  "gpu_compute_pids": null,
+  "parent_cpu_seconds": 0.074165,
+  "children_cpu_seconds": 0.0,
+  "wall_seconds": 0.035019982839003205,
+  "all_recorded_groups_absent": true
+}

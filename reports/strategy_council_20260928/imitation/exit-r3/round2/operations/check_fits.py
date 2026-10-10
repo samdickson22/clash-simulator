@@ -1,5 +1,5 @@
 """05 command-center JSON/process metadata only; no model or scientific imports."""
-import argparse,concurrent.futures,json,subprocess
+import argparse,concurrent.futures,hashlib,json,subprocess
 from pathlib import Path
 J='/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2'
 B='/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1'
@@ -14,7 +14,7 @@ names=[arm+'-'+n+'.json' for n in ('launch','health','exit')]+['fits/'+arm+'/'+n
 for n in names:
  p=j/n
  if p.exists():
-  raw=p.read_bytes();v=json.loads(raw);files.append(dict(relative=n,sha256=hashlib.sha256(raw).hexdigest(),value=v));values[n]=v
+  raw=p.read_bytes();v=json.loads(raw);files.append(dict(relative=n,sha256=hashlib.sha256(raw).hexdigest(),raw=raw.decode(),value=v));values[n]=v
 launch=values.get(arm+'-launch.json');active=bool(launch and Path('/proc/'+str(launch['supervisor_pid'])).exists())
 step=0;p=j/'fits'/arm/'train.jsonl'
 if p.exists():
@@ -28,6 +28,7 @@ print(json.dumps(dict(arm=arm,host=HOST,active=active,step=step,utc=subprocess.c
     p=subprocess.run(['ssh','-o','ConnectTimeout=10',host,'nice -n 10 taskset -c 126 '+B+'/venv/bin/python -B -'],input=code,capture_output=True,text=True,check=True,timeout=30)
     bundle=json.loads(p.stdout);target=ROOT/'receipts/process-snapshots'/host;target.mkdir(parents=True,exist_ok=True);history=target/'history';history.mkdir(exist_ok=True)
     for item in bundle.pop('files'):
+        assert hashlib.sha256(item['raw'].encode()).hexdigest()==item['sha256'] and json.loads(item['raw'])==item['value']
         n=item['relative'].replace('/','--');raw=json.dumps(item,indent=2)+'\n';(target/n).write_text(raw);p=history/(n[:-5]+'-'+item['sha256']+'.json')
         if not p.exists():p.write_text(raw)
     return bundle

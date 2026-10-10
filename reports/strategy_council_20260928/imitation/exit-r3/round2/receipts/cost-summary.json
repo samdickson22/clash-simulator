@@ -1,8 +1,8 @@
 {
-  "utc": "2026-10-10T07:24:22Z",
+  "utc": "2026-10-10T07:47:41Z",
   "final": false,
-  "cpu_seconds": 467.99919800000004,
-  "gpu_wall_seconds": 121.29678681003861,
+  "cpu_seconds": 12856.644171,
+  "gpu_wall_seconds": 4586.374589010142,
   "meters": [
     {
       "category": "staging",
@@ -168,6 +168,32 @@
       "gpu_wall_seconds": 0,
       "status": "complete",
       "host": "127x01"
+    },
+    {
+      "category": "fit",
+      "sha256": "f836abba095df9dd753aa9295b4715ab90fbda9164ab6ebd209129b388939203",
+      "path": "receipts/process-snapshots/127x16/R3d-exit.json",
+      "cpu_seconds": 12371.995628,
+      "gpu_wall_seconds": 4449.3410954691935,
+      "status": "complete",
+      "host": "127x16"
+    },
+    {
+      "category": "offline",
+      "sha256": "995520e3471bde13c0c3223d9491ebe14d6db2f4b5176ad75e454382243b89ea",
+      "path": "receipts/evaluation-snapshots/127x16/history/offline--R3d-attempt-meter-2290174-995520e3471bde13c0c3223d9491ebe14d6db2f4b5176ad75e454382243b89ea.json",
+      "cpu_seconds": 16.609493,
+      "gpu_wall_seconds": 15.736706730909646,
+      "status": "complete",
+      "host": "127x16"
+    },
+    {
+      "category": "shared03 operational qualification",
+      "sha256": "460f8d138882a9e0477d47d80b470c892d1fbb7748a42e1d0225eb1ccfb8ea06",
+      "path": "shared03/receipts/tests.json",
+      "cpu_seconds": 0.039852,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
     }
   ],
   "active_fit_costs_pending": true,

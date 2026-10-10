@@ -1,0 +1,13 @@
+{
+  "relative": "offline/R3d-attempt-meter-2290174.json",
+  "sha256": "995520e3471bde13c0c3223d9491ebe14d6db2f4b5176ad75e454382243b89ea",
+  "raw": "{\n  \"status\": \"complete\",\n  \"pid\": 2290174,\n  \"wall_seconds\": 15.736706730909646,\n  \"cpu_seconds\": 16.609493,\n  \"utc\": \"2026-10-10T07:46:32Z\",\n  \"accounting\": \"Whole inference process once; result CPU/wall nested and not added again.\"\n}\n",
+  "value": {
+    "status": "complete",
+    "pid": 2290174,
+    "wall_seconds": 15.736706730909646,
+    "cpu_seconds": 16.609493,
+    "utc": "2026-10-10T07:46:32Z",
+    "accounting": "Whole inference process once; result CPU/wall nested and not added again."
+  }
+}

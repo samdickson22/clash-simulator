@@ -1,0 +1,1841 @@
+{
+  "host": "127x01",
+  "utc": "2026-10-10T07:34:13Z",
+  "pid": 3094233,
+  "pgid": 3094233,
+  "source_sha256": {
+    "CODE-QUALIFICATION.json": "bddff9b5e426fe2f32974ac2ddefcb968724a2d61a672b726ed99cc76885c89f",
+    "EVAL-PGIDS.json": "8432f899c4854fac72b0ca3ea51672a53d2f61df9ea3fa2c49b82014674a688e",
+    "HOME-STAGING-attempt1.json": "379cae09cd0eb68f82f015ad5ecae6221b43b373d897082eaa41642604c87534",
+    "HOME-STAGING-attempt2.json": "6baad0178db595ffd5508f0513ed2e610f172a56dbc95b493297d1fa55ff7537",
+    "HOME-STAGING.json": "d5ae569dd8e628be058e84012cca21ff22e6af2f9c43608ac091acf7c44434db",
+    "admit01-attempt1.log.identity.json": "57e91fe4c0b4a683968fe97365db9fb3da2a0802f429410e5eeb34ac9d9ba943",
+    "code-qualification-attempt1.log.identity.json": "4b263aa95a5ec9fb6a5d84cd488ec54fe79e60f5de65233d64d0dcad4f60f955",
+    "home-staging-attempt1.log.identity.json": "45080bd9c023f54a14ff1ee4edb92ee8b6b43c770e6a4591d90929fab2f99eb8",
+    "home-staging-attempt2.log.identity.json": "05c8f5d62d0f8338023c9119a7dc29b765f4a291678626822a30e01169c50b9f",
+    "home-staging-attempt3.log.identity.json": "b2f18241c364ab02bc1e24af8c348183b9214db298fc3eded251ac9fb26dac2a",
+    "k0-descriptive-pool-attempt1.log.identity.json": "51ff04c8bccb73c124be4ec461f0a536bd3cda6906652226ed9893fb74ef5c0d",
+    "k0-descriptive-smoke/pool-meter-3032946.json": "9fdb7c0c3ec160495619a7bfd49eab41d0b54643f86cf15733a5f11603ffe491",
+    "k0-descriptive-smoke-pool-attempt1.log.identity.json": "f19860cece1593921e379575cc1d592cc08bb3e9adbc49cb1b0a5378a1f6eb56",
+    "reduce-k0-descriptive-smoke-attempt1.log.identity.json": "8d0cfec22da0316964a2279e76f7219fcefcc72b6801c950f9db399f966db717",
+    "k0-descriptive-pool-attempt1.log.pid": "dc532236e3f8186b620f5571c3aa32b46abb82010e7083d218704430905a730a",
+    "home-staging-attempt2.log.pid": "aa8124b8aad0d5d895309023352cc595d2d8fbe280897c8c87048298cd79fe81",
+    "reduce-k0-descriptive-smoke-attempt1.log.pid": "5d12259bcd49fa02cce81ee4b53394ee98dd0ec001be6f84e8da6c4e41523263",
+    "k0-descriptive-smoke-pool-attempt1.log.pid": "d02b271669c8eead8e9d34a8e9b6cf7b36ad54b44ed13de4f36da6e8345722f4",
+    "code-qualification-attempt1.log.pid": "4f49e5839f1af13e44a20db5cbf07e75ca88bf20c1ab61eb92d0a6014cd1c0b1",
+    "home-staging-attempt3.log.pid": "5e50ea21ffb4d65908ff2d5a0b829d72363915d8cec5a741a2ea0754c8e30942",
+    "home-staging-attempt1.log.pid": "a43fc3b65434a6b28ef774f579a65a6281684e38fdf3625ff2c908d97cf955c4",
+    "admit01-attempt1.log.pid": "25b1229b133db8952ec6f23ce1e5093168243a94eccf22baa44f5ec236348e99"
+  },
+  "recorded_pids": [
+    2968135,
+    2968755,
+    2973701,
+    2982268,
+    2993359,
+    3032946,
+    3033018,
+    3033019,
+    3033057,
+    3033059,
+    3036741,
+    3038273,
+    3046425,
+    3049569,
+    3049661,
+    3049662,
+    3049663,
+    3049664,
+    3049665,
+    3049666,
+    3049667,
+    3049668,
+    3049669,
+    3049670,
+    3049671,
+    3049672,
+    3049673,
+    3049674,
+    3049675,
+    3049676,
+    3049677,
+    3049678,
+    3049679,
+    3049680,
+    3049681,
+    3049682,
+    3049683,
+    3049684,
+    3049685,
+    3049686,
+    3049687,
+    3049688,
+    3049689,
+    3049690,
+    3049691,
+    3049692,
+    3049693,
+    3049694,
+    3049695,
+    3049696,
+    3049697,
+    3049698,
+    3049699,
+    3049764,
+    3049765,
+    3049768,
+    3049770,
+    3049772,
+    3049773,
+    3049776,
+    3049778,
+    3049780,
+    3049781,
+    3049784,
+    3049786,
+    3049788,
+    3049789,
+    3049792,
+    3049793,
+    3049796,
+    3049798,
+    3049800,
+    3049802,
+    3049804,
+    3049806,
+    3049808,
+    3049810,
+    3049812,
+    3049814,
+    3049816,
+    3049818,
+    3049820,
+    3049822,
+    3049824,
+    3049826,
+    3049828,
+    3049830,
+    3049832,
+    3049834,
+    3049836,
+    3049838,
+    3049839,
+    3053571,
+    3053776,
+    3053777,
+    3053778,
+    3054005,
+    3054191,
+    3054192,
+    3054193,
+    3054194,
+    3054195,
+    3054293,
+    3054305,
+    3054438,
+    3054439,
+    3054440,
+    3054531,
+    3054532,
+    3054533,
+    3054534,
+    3054628,
+    3054629,
+    3054744,
+    3054749,
+    3055016,
+    3055366,
+    3055455,
+    3055546,
+    3055571,
+    3055694,
+    3056187,
+    3056392,
+    3056481,
+    3056711,
+    3056800,
+    3057093,
+    3057500,
+    3057707,
+    3057799,
+    3057975,
+    3058034,
+    3058096,
+    3058185,
+    3058245,
+    3058358,
+    3058423,
+    3058511,
+    3058717,
+    3058777,
+    3058779,
+    3058868,
+    3058869,
+    3059104,
+    3059105,
+    3059106,
+    3059107,
+    3059180,
+    3059185,
+    3059186,
+    3059192,
+    3059265,
+    3059328,
+    3059414,
+    3059501,
+    3059736,
+    3059737,
+    3059797,
+    3059799,
+    3060059,
+    3060060,
+    3060120,
+    3060122,
+    3060212,
+    3060272,
+    3060649,
+    3060675,
+    3060740,
+    3061120,
+    3061208,
+    3061268,
+    3061353,
+    3061418,
+    3061419,
+    3061494,
+    3061504,
+    3061603,
+    3061663,
+    3061781,
+    3062189,
+    3062190,
+    3062245,
+    3062276,
+    3062278,
+    3062369,
+    3062429,
+    3062665,
+    3062666,
+    3062726,
+    3062728,
+    3062846,
+    3062906,
+    3062995,
+    3063055,
+    3063073,
+    3063143,
+    3063206,
+    3063265,
+    3063292,
+    3063385,
+    3063464,
+    3063504,
+    3063535,
+    3063597,
+    3063685,
+    3063746,
+    3063858,
+    3063923,
+    3064333,
+    3064509,
+    3064539,
+    3064687,
+    3064776,
+    3065297,
+    3065302,
+    3065361,
+    3065362,
+    3065446,
+    3065827,
+    3065863,
+    3065894,
+    3066186,
+    3066216,
+    3066276,
+    3066292,
+    3066657,
+    3067037,
+    3067038,
+    3067098,
+    3067211,
+    3067253,
+    3067276,
+    3067600,
+    3067670,
+    3067806,
+    3067953,
+    3067979,
+    3068043,
+    3068282,
+    3068341,
+    3068372,
+    3068432,
+    3068492,
+    3068669,
+    3068757,
+    3069313,
+    3069485,
+    3069574,
+    3069634,
+    3070040,
+    3070100,
+    3070218,
+    3070277,
+    3070333,
+    3070398,
+    3070500,
+    3070577,
+    3070644,
+    3070730,
+    3070790,
+    3070875,
+    3070968,
+    3071116,
+    3071117,
+    3071118,
+    3071178,
+    3071180,
+    3071182,
+    3071591,
+    3071592,
+    3071593,
+    3071594,
+    3071656,
+    3071657,
+    3072040,
+    3072041,
+    3072129,
+    3072131,
+    3072221,
+    3072281,
+    3072447,
+    3072448,
+    3072451,
+    3072577,
+    3072578,
+    3072580,
+    3072667,
+    3072731,
+    3072836,
+    3072839,
+    3072879,
+    3072910,
+    3072912,
+    3073119,
+    3073206,
+    3073587,
+    3073660,
+    3074055,
+    3074115,
+    3074379,
+    3074439,
+    3074528,
+    3074589,
+    3075118,
+    3075265,
+    3075266,
+    3075351,
+    3075357,
+    3075387,
+    3075595,
+    3075820,
+    3075821,
+    3075947,
+    3075964,
+    3075972,
+    3075981,
+    3076007,
+    3076075,
+    3076076,
+    3076139,
+    3076140,
+    3076230,
+    3076290,
+    3076379,
+    3076380,
+    3076381,
+    3076382,
+    3076442,
+    3076445,
+    3076447,
+    3076448,
+    3076772,
+    3076948,
+    3077095,
+    3077096,
+    3077123,
+    3077215,
+    3077274,
+    3077364,
+    3077453,
+    3077834,
+    3078352,
+    3078447,
+    3078591,
+    3078741,
+    3079062,
+    3079609,
+    3079610,
+    3079674,
+    3079676,
+    3079706,
+    3079885,
+    3080379,
+    3080438,
+    3080463,
+    3080470,
+    3080677,
+    3080678,
+    3080723,
+    3080739,
+    3080741,
+    3080832,
+    3080919,
+    3081153,
+    3081154,
+    3081214,
+    3081273,
+    3081335,
+    3081365,
+    3081481,
+    3081482,
+    3081542,
+    3081544,
+    3081574,
+    3081635,
+    3081666,
+    3081696,
+    3081698,
+    3081930,
+    3081931,
+    3081932,
+    3081933,
+    3082024,
+    3082027,
+    3082029,
+    3082030,
+    3082106,
+    3082182,
+    3082271,
+    3082565,
+    3082729,
+    3082917,
+    3082995,
+    3083386,
+    3083446,
+    3083680,
+    3083681,
+    3083767,
+    3083858,
+    3084005,
+    3084006,
+    3084066,
+    3084068,
+    3085481,
+    3085629,
+    3085630,
+    3085737,
+    3085741,
+    3085957,
+    3086004,
+    3086018,
+    3086154,
+    3086284,
+    3086431,
+    3086548,
+    3086867,
+    3086868,
+    3086956,
+    3086958,
+    3087017,
+    3087049,
+    3087110,
+    3087140,
+    3087197,
+    3087265,
+    3087338,
+    3087414,
+    3087503,
+    3087592,
+    3087652,
+    3087737,
+    3087801,
+    3087802,
+    3087832,
+    3087882,
+    3087886,
+    3088132,
+    3088338,
+    3088488,
+    3088689,
+    3088894,
+    3088954,
+    3089100,
+    3089159,
+    3089219,
+    3089267,
+    3089310,
+    3089364,
+    3089401,
+    3089432,
+    3089782,
+    3089812,
+    3089904,
+    3089942,
+    3090012,
+    3090285,
+    3090490,
+    3090695,
+    3091101,
+    3091195,
+    3091284,
+    3091373,
+    3091374,
+    3091434,
+    3091436,
+    3091526,
+    3091586,
+    3091932,
+    3092112,
+    3092113,
+    3092172,
+    3092205,
+    3092206,
+    3092356,
+    3092590,
+    3093019,
+    3093257,
+    3093571,
+    3093751,
+    3093752,
+    3093811,
+    3093873,
+    3093958,
+    3094053
+  ],
+  "recorded_pgids": [
+    2968135,
+    2968755,
+    2973701,
+    2982268,
+    2993359,
+    3032946,
+    3033018,
+    3033019,
+    3046425,
+    3049569,
+    3049661,
+    3049662,
+    3049663,
+    3049664,
+    3049665,
+    3049666,
+    3049667,
+    3049668,
+    3049669,
+    3049670,
+    3049671,
+    3049672,
+    3049673,
+    3049674,
+    3049675,
+    3049676,
+    3049677,
+    3049678,
+    3049679,
+    3049680,
+    3049681,
+    3049682,
+    3049683,
+    3049684,
+    3049685,
+    3049686,
+    3049687,
+    3049688,
+    3049689,
+    3049690,
+    3049691,
+    3049692,
+    3049693,
+    3049694,
+    3049695,
+    3049696,
+    3049697,
+    3049698,
+    3049699,
+    3057707,
+    3058034,
+    3058185,
+    3058358,
+    3058511,
+    3058777,
+    3058779,
+    3059104,
+    3059105,
+    3059106,
+    3059107,
+    3059265,
+    3059414,
+    3059736,
+    3059737,
+    3060059,
+    3060060,
+    3060212,
+    3060675,
+    3061120,
+    3061268,
+    3061418,
+    3061419,
+    3061603,
+    3062189,
+    3062190,
+    3062369,
+    3062665,
+    3062666,
+    3062846,
+    3062995,
+    3063143,
+    3063292,
+    3063464,
+    3063597,
+    3063746,
+    3065361,
+    3065827,
+    3067038,
+    3067979,
+    3068282,
+    3069574,
+    3070040,
+    3070333,
+    3070500,
+    3070644,
+    3070790,
+    3071116,
+    3071117,
+    3071118,
+    3071593,
+    3071594,
+    3072040,
+    3072041,
+    3072221,
+    3072447,
+    3072448,
+    3072451,
+    3072667,
+    3072836,
+    3072839,
+    3073119,
+    3073587,
+    3074055,
+    3074379,
+    3074528,
+    3075265,
+    3075266,
+    3075820,
+    3075821,
+    3076075,
+    3076076,
+    3076230,
+    3076379,
+    3076380,
+    3076381,
+    3076382,
+    3079609,
+    3079610,
+    3080379,
+    3080677,
+    3080678,
+    3080832,
+    3081154,
+    3081481,
+    3081482,
+    3081635,
+    3081930,
+    3081931,
+    3081932,
+    3081933,
+    3082106,
+    3082565,
+    3082917,
+    3083386,
+    3083680,
+    3084005,
+    3084006,
+    3085629,
+    3085630,
+    3085957,
+    3086431,
+    3086867,
+    3086868,
+    3087049,
+    3087197,
+    3087338,
+    3087503,
+    3087652,
+    3087801,
+    3087802,
+    3088894,
+    3089364,
+    3089812,
+    3091195,
+    3091373,
+    3091374,
+    3091526,
+    3092112,
+    3092113,
+    3093811,
+    3093958
+  ],
+  "live_owned": [
+    {
+      "pid": 3049569,
+      "pgid": 3049569,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/pool.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --cores 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 "
+    },
+    {
+      "pid": 3076382,
+      "pgid": 3076382,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 115 "
+    },
+    {
+      "pid": 3079609,
+      "pgid": 3079609,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 116 "
+    },
+    {
+      "pid": 3080379,
+      "pgid": 3080379,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 118 "
+    },
+    {
+      "pid": 3080677,
+      "pgid": 3080677,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 119 "
+    },
+    {
+      "pid": 3081481,
+      "pgid": 3081481,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 123 "
+    },
+    {
+      "pid": 3081482,
+      "pgid": 3081482,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 124 "
+    },
+    {
+      "pid": 3081635,
+      "pgid": 3081635,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 125 "
+    },
+    {
+      "pid": 3081930,
+      "pgid": 3081930,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 126 "
+    },
+    {
+      "pid": 3081932,
+      "pgid": 3081932,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 128 "
+    },
+    {
+      "pid": 3082106,
+      "pgid": 3082106,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 130 "
+    },
+    {
+      "pid": 3082565,
+      "pgid": 3082565,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 131 "
+    },
+    {
+      "pid": 3083386,
+      "pgid": 3083386,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 133 "
+    },
+    {
+      "pid": 3083680,
+      "pgid": 3083680,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 134 "
+    },
+    {
+      "pid": 3084006,
+      "pgid": 3084006,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 136 "
+    },
+    {
+      "pid": 3085629,
+      "pgid": 3085629,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 137 "
+    },
+    {
+      "pid": 3085630,
+      "pgid": 3085630,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 138 "
+    },
+    {
+      "pid": 3085957,
+      "pgid": 3085957,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 139 "
+    },
+    {
+      "pid": 3086154,
+      "pgid": 3080677,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 119 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0119-attempt-3080677.json "
+    },
+    {
+      "pid": 3086431,
+      "pgid": 3086431,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 140 "
+    },
+    {
+      "pid": 3086548,
+      "pgid": 3086431,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 140 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0140-attempt-3086431.json "
+    },
+    {
+      "pid": 3086867,
+      "pgid": 3086867,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 141 "
+    },
+    {
+      "pid": 3086868,
+      "pgid": 3086868,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 142 "
+    },
+    {
+      "pid": 3087049,
+      "pgid": 3087049,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 143 "
+    },
+    {
+      "pid": 3087140,
+      "pgid": 3081635,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 125 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0125-attempt-3081635.json "
+    },
+    {
+      "pid": 3087197,
+      "pgid": 3087197,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 144 "
+    },
+    {
+      "pid": 3087338,
+      "pgid": 3087338,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 145 "
+    },
+    {
+      "pid": 3087503,
+      "pgid": 3087503,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 146 "
+    },
+    {
+      "pid": 3087652,
+      "pgid": 3087652,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 147 "
+    },
+    {
+      "pid": 3087801,
+      "pgid": 3087801,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 148 "
+    },
+    {
+      "pid": 3087802,
+      "pgid": 3087802,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 149 "
+    },
+    {
+      "pid": 3087832,
+      "pgid": 3076382,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 115 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0115-attempt-3076382.json "
+    },
+    {
+      "pid": 3088132,
+      "pgid": 3081481,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 123 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0123-attempt-3081481.json "
+    },
+    {
+      "pid": 3088488,
+      "pgid": 3083386,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 133 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0133-attempt-3083386.json "
+    },
+    {
+      "pid": 3088894,
+      "pgid": 3088894,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 150 "
+    },
+    {
+      "pid": 3089219,
+      "pgid": 3080379,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 118 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0118-attempt-3080379.json "
+    },
+    {
+      "pid": 3089310,
+      "pgid": 3081930,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 126 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0126-attempt-3081930.json "
+    },
+    {
+      "pid": 3089364,
+      "pgid": 3089364,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 151 "
+    },
+    {
+      "pid": 3089432,
+      "pgid": 3089364,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 151 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0151-attempt-3089364.json "
+    },
+    {
+      "pid": 3089782,
+      "pgid": 3082106,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 130 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0130-attempt-3082106.json "
+    },
+    {
+      "pid": 3089812,
+      "pgid": 3089812,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 152 "
+    },
+    {
+      "pid": 3089904,
+      "pgid": 3089812,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 152 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0152-attempt-3089812.json "
+    },
+    {
+      "pid": 3089942,
+      "pgid": 3079609,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 116 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0116-attempt-3079609.json "
+    },
+    {
+      "pid": 3090012,
+      "pgid": 3083680,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 134 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0134-attempt-3083680.json "
+    },
+    {
+      "pid": 3090285,
+      "pgid": 3085629,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 137 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0137-attempt-3085629.json "
+    },
+    {
+      "pid": 3090490,
+      "pgid": 3085957,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 139 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0139-attempt-3085957.json "
+    },
+    {
+      "pid": 3090695,
+      "pgid": 3081932,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 128 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0128-attempt-3081932.json "
+    },
+    {
+      "pid": 3091101,
+      "pgid": 3085630,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 138 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0138-attempt-3085630.json "
+    },
+    {
+      "pid": 3091195,
+      "pgid": 3091195,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 153 "
+    },
+    {
+      "pid": 3091284,
+      "pgid": 3091195,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 153 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0153-attempt-3091195.json "
+    },
+    {
+      "pid": 3091373,
+      "pgid": 3091373,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 154 "
+    },
+    {
+      "pid": 3091374,
+      "pgid": 3091374,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 155 "
+    },
+    {
+      "pid": 3091434,
+      "pgid": 3091373,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 154 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0154-attempt-3091373.json "
+    },
+    {
+      "pid": 3091436,
+      "pgid": 3091374,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 155 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0155-attempt-3091374.json "
+    },
+    {
+      "pid": 3091526,
+      "pgid": 3091526,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 156 "
+    },
+    {
+      "pid": 3091586,
+      "pgid": 3091526,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 156 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0156-attempt-3091526.json "
+    },
+    {
+      "pid": 3091932,
+      "pgid": 3087652,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 147 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0147-attempt-3087652.json "
+    },
+    {
+      "pid": 3092112,
+      "pgid": 3092112,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 157 "
+    },
+    {
+      "pid": 3092113,
+      "pgid": 3092113,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 158 "
+    },
+    {
+      "pid": 3092172,
+      "pgid": 3086867,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 141 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0141-attempt-3086867.json "
+    },
+    {
+      "pid": 3092205,
+      "pgid": 3092112,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 157 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0157-attempt-3092112.json "
+    },
+    {
+      "pid": 3092206,
+      "pgid": 3092113,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 158 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0158-attempt-3092113.json "
+    },
+    {
+      "pid": 3092356,
+      "pgid": 3087338,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 145 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0145-attempt-3087338.json "
+    },
+    {
+      "pid": 3092590,
+      "pgid": 3087802,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 149 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0149-attempt-3087802.json "
+    },
+    {
+      "pid": 3093019,
+      "pgid": 3086868,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 142 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0142-attempt-3086868.json "
+    },
+    {
+      "pid": 3093257,
+      "pgid": 3087049,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 143 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0143-attempt-3087049.json "
+    },
+    {
+      "pid": 3093571,
+      "pgid": 3087503,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 146 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0146-attempt-3087503.json "
+    },
+    {
+      "pid": 3093751,
+      "pgid": 3087801,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 148 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0148-attempt-3087801.json "
+    },
+    {
+      "pid": 3093752,
+      "pgid": 3087197,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 144 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0144-attempt-3087197.json "
+    },
+    {
+      "pid": 3093811,
+      "pgid": 3093811,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 159 "
+    },
+    {
+      "pid": 3093873,
+      "pgid": 3093811,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 159 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0159-attempt-3093811.json "
+    },
+    {
+      "pid": 3093958,
+      "pgid": 3093958,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 160 "
+    },
+    {
+      "pid": 3094053,
+      "pgid": 3093958,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 160 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0160-attempt-3093958.json "
+    },
+    {
+      "pid": 3094138,
+      "pgid": 3094138,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 161 "
+    },
+    {
+      "pid": 3094139,
+      "pgid": 3088894,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 150 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0150-attempt-3088894.json "
+    },
+    {
+      "pid": 3094184,
+      "pgid": 3084006,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 136 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0136-attempt-3084006.json "
+    }
+  ],
+  "recorded_group_members": [
+    {
+      "pid": 3049569,
+      "pgid": 3049569,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/pool.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --cores 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 "
+    },
+    {
+      "pid": 3076382,
+      "pgid": 3076382,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 115 "
+    },
+    {
+      "pid": 3079609,
+      "pgid": 3079609,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 116 "
+    },
+    {
+      "pid": 3080379,
+      "pgid": 3080379,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 118 "
+    },
+    {
+      "pid": 3080677,
+      "pgid": 3080677,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 119 "
+    },
+    {
+      "pid": 3081481,
+      "pgid": 3081481,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 123 "
+    },
+    {
+      "pid": 3081482,
+      "pgid": 3081482,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 124 "
+    },
+    {
+      "pid": 3081635,
+      "pgid": 3081635,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 125 "
+    },
+    {
+      "pid": 3081930,
+      "pgid": 3081930,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 126 "
+    },
+    {
+      "pid": 3081932,
+      "pgid": 3081932,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 128 "
+    },
+    {
+      "pid": 3082106,
+      "pgid": 3082106,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 130 "
+    },
+    {
+      "pid": 3082565,
+      "pgid": 3082565,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 131 "
+    },
+    {
+      "pid": 3083386,
+      "pgid": 3083386,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 133 "
+    },
+    {
+      "pid": 3083680,
+      "pgid": 3083680,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 134 "
+    },
+    {
+      "pid": 3084006,
+      "pgid": 3084006,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 136 "
+    },
+    {
+      "pid": 3085629,
+      "pgid": 3085629,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 137 "
+    },
+    {
+      "pid": 3085630,
+      "pgid": 3085630,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 138 "
+    },
+    {
+      "pid": 3085957,
+      "pgid": 3085957,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 139 "
+    },
+    {
+      "pid": 3086154,
+      "pgid": 3080677,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 119 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0119-attempt-3080677.json "
+    },
+    {
+      "pid": 3086431,
+      "pgid": 3086431,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 140 "
+    },
+    {
+      "pid": 3086548,
+      "pgid": 3086431,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 140 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0140-attempt-3086431.json "
+    },
+    {
+      "pid": 3086867,
+      "pgid": 3086867,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 141 "
+    },
+    {
+      "pid": 3086868,
+      "pgid": 3086868,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 142 "
+    },
+    {
+      "pid": 3087049,
+      "pgid": 3087049,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 143 "
+    },
+    {
+      "pid": 3087140,
+      "pgid": 3081635,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 125 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0125-attempt-3081635.json "
+    },
+    {
+      "pid": 3087197,
+      "pgid": 3087197,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 144 "
+    },
+    {
+      "pid": 3087338,
+      "pgid": 3087338,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 145 "
+    },
+    {
+      "pid": 3087503,
+      "pgid": 3087503,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 146 "
+    },
+    {
+      "pid": 3087652,
+      "pgid": 3087652,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 147 "
+    },
+    {
+      "pid": 3087801,
+      "pgid": 3087801,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 148 "
+    },
+    {
+      "pid": 3087802,
+      "pgid": 3087802,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 149 "
+    },
+    {
+      "pid": 3087832,
+      "pgid": 3076382,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 115 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0115-attempt-3076382.json "
+    },
+    {
+      "pid": 3088132,
+      "pgid": 3081481,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 123 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0123-attempt-3081481.json "
+    },
+    {
+      "pid": 3088488,
+      "pgid": 3083386,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 133 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0133-attempt-3083386.json "
+    },
+    {
+      "pid": 3088894,
+      "pgid": 3088894,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 150 "
+    },
+    {
+      "pid": 3089219,
+      "pgid": 3080379,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 118 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0118-attempt-3080379.json "
+    },
+    {
+      "pid": 3089267,
+      "pgid": 3081482,
+      "command": ""
+    },
+    {
+      "pid": 3089310,
+      "pgid": 3081930,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 126 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0126-attempt-3081930.json "
+    },
+    {
+      "pid": 3089364,
+      "pgid": 3089364,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 151 "
+    },
+    {
+      "pid": 3089432,
+      "pgid": 3089364,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 151 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0151-attempt-3089364.json "
+    },
+    {
+      "pid": 3089782,
+      "pgid": 3082106,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 130 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0130-attempt-3082106.json "
+    },
+    {
+      "pid": 3089812,
+      "pgid": 3089812,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 152 "
+    },
+    {
+      "pid": 3089904,
+      "pgid": 3089812,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 152 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0152-attempt-3089812.json "
+    },
+    {
+      "pid": 3089942,
+      "pgid": 3079609,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 116 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0116-attempt-3079609.json "
+    },
+    {
+      "pid": 3090012,
+      "pgid": 3083680,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 134 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0134-attempt-3083680.json "
+    },
+    {
+      "pid": 3090285,
+      "pgid": 3085629,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 137 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0137-attempt-3085629.json "
+    },
+    {
+      "pid": 3090490,
+      "pgid": 3085957,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 139 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0139-attempt-3085957.json "
+    },
+    {
+      "pid": 3090695,
+      "pgid": 3081932,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 128 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0128-attempt-3081932.json "
+    },
+    {
+      "pid": 3091101,
+      "pgid": 3085630,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 138 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0138-attempt-3085630.json "
+    },
+    {
+      "pid": 3091195,
+      "pgid": 3091195,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 153 "
+    },
+    {
+      "pid": 3091284,
+      "pgid": 3091195,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 153 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0153-attempt-3091195.json "
+    },
+    {
+      "pid": 3091373,
+      "pgid": 3091373,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 154 "
+    },
+    {
+      "pid": 3091374,
+      "pgid": 3091374,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 155 "
+    },
+    {
+      "pid": 3091434,
+      "pgid": 3091373,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 154 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0154-attempt-3091373.json "
+    },
+    {
+      "pid": 3091436,
+      "pgid": 3091374,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 155 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0155-attempt-3091374.json "
+    },
+    {
+      "pid": 3091526,
+      "pgid": 3091526,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 156 "
+    },
+    {
+      "pid": 3091586,
+      "pgid": 3091526,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 156 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0156-attempt-3091526.json "
+    },
+    {
+      "pid": 3091932,
+      "pgid": 3087652,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 147 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0147-attempt-3087652.json "
+    },
+    {
+      "pid": 3092112,
+      "pgid": 3092112,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 157 "
+    },
+    {
+      "pid": 3092113,
+      "pgid": 3092113,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 158 "
+    },
+    {
+      "pid": 3092172,
+      "pgid": 3086867,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 141 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0141-attempt-3086867.json "
+    },
+    {
+      "pid": 3092205,
+      "pgid": 3092112,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 157 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0157-attempt-3092112.json "
+    },
+    {
+      "pid": 3092206,
+      "pgid": 3092113,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 158 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0158-attempt-3092113.json "
+    },
+    {
+      "pid": 3092356,
+      "pgid": 3087338,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 145 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0145-attempt-3087338.json "
+    },
+    {
+      "pid": 3092590,
+      "pgid": 3087802,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 149 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0149-attempt-3087802.json "
+    },
+    {
+      "pid": 3093019,
+      "pgid": 3086868,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 142 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0142-attempt-3086868.json "
+    },
+    {
+      "pid": 3093257,
+      "pgid": 3087049,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 143 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0143-attempt-3087049.json "
+    },
+    {
+      "pid": 3093571,
+      "pgid": 3087503,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 146 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0146-attempt-3087503.json "
+    },
+    {
+      "pid": 3093751,
+      "pgid": 3087801,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 148 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0148-attempt-3087801.json "
+    },
+    {
+      "pid": 3093752,
+      "pgid": 3087197,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 144 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0144-attempt-3087197.json "
+    },
+    {
+      "pid": 3093811,
+      "pgid": 3093811,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 159 "
+    },
+    {
+      "pid": 3093873,
+      "pgid": 3093811,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 159 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0159-attempt-3093811.json "
+    },
+    {
+      "pid": 3093958,
+      "pgid": 3093958,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 160 "
+    },
+    {
+      "pid": 3094053,
+      "pgid": 3093958,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 160 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0160-attempt-3093958.json "
+    },
+    {
+      "pid": 3094139,
+      "pgid": 3088894,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 150 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0150-attempt-3088894.json "
+    },
+    {
+      "pid": 3094184,
+      "pgid": 3084006,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 136 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0136-attempt-3084006.json "
+    }
+  ],
+  "recorded_pid_members": [
+    {
+      "pid": 3049569,
+      "pgid": 3049569,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/pool.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --cores 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 "
+    },
+    {
+      "pid": 3076382,
+      "pgid": 3076382,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 115 "
+    },
+    {
+      "pid": 3079609,
+      "pgid": 3079609,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 116 "
+    },
+    {
+      "pid": 3080379,
+      "pgid": 3080379,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 118 "
+    },
+    {
+      "pid": 3080677,
+      "pgid": 3080677,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 119 "
+    },
+    {
+      "pid": 3081481,
+      "pgid": 3081481,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 123 "
+    },
+    {
+      "pid": 3081482,
+      "pgid": 3081482,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 124 "
+    },
+    {
+      "pid": 3081635,
+      "pgid": 3081635,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 125 "
+    },
+    {
+      "pid": 3081930,
+      "pgid": 3081930,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 126 "
+    },
+    {
+      "pid": 3081932,
+      "pgid": 3081932,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 128 "
+    },
+    {
+      "pid": 3082106,
+      "pgid": 3082106,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 130 "
+    },
+    {
+      "pid": 3082565,
+      "pgid": 3082565,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 131 "
+    },
+    {
+      "pid": 3083386,
+      "pgid": 3083386,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 133 "
+    },
+    {
+      "pid": 3083680,
+      "pgid": 3083680,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 134 "
+    },
+    {
+      "pid": 3084006,
+      "pgid": 3084006,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 136 "
+    },
+    {
+      "pid": 3085629,
+      "pgid": 3085629,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 137 "
+    },
+    {
+      "pid": 3085630,
+      "pgid": 3085630,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 138 "
+    },
+    {
+      "pid": 3085957,
+      "pgid": 3085957,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 139 "
+    },
+    {
+      "pid": 3086154,
+      "pgid": 3080677,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 119 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0119-attempt-3080677.json "
+    },
+    {
+      "pid": 3086431,
+      "pgid": 3086431,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 140 "
+    },
+    {
+      "pid": 3086548,
+      "pgid": 3086431,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 140 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0140-attempt-3086431.json "
+    },
+    {
+      "pid": 3086867,
+      "pgid": 3086867,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 141 "
+    },
+    {
+      "pid": 3086868,
+      "pgid": 3086868,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 142 "
+    },
+    {
+      "pid": 3087049,
+      "pgid": 3087049,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 143 "
+    },
+    {
+      "pid": 3087140,
+      "pgid": 3081635,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 125 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0125-attempt-3081635.json "
+    },
+    {
+      "pid": 3087197,
+      "pgid": 3087197,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 144 "
+    },
+    {
+      "pid": 3087338,
+      "pgid": 3087338,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 145 "
+    },
+    {
+      "pid": 3087503,
+      "pgid": 3087503,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 146 "
+    },
+    {
+      "pid": 3087652,
+      "pgid": 3087652,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 147 "
+    },
+    {
+      "pid": 3087801,
+      "pgid": 3087801,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 148 "
+    },
+    {
+      "pid": 3087802,
+      "pgid": 3087802,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 149 "
+    },
+    {
+      "pid": 3087832,
+      "pgid": 3076382,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 115 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0115-attempt-3076382.json "
+    },
+    {
+      "pid": 3088132,
+      "pgid": 3081481,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 123 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0123-attempt-3081481.json "
+    },
+    {
+      "pid": 3088488,
+      "pgid": 3083386,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 133 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0133-attempt-3083386.json "
+    },
+    {
+      "pid": 3088894,
+      "pgid": 3088894,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 150 "
+    },
+    {
+      "pid": 3089219,
+      "pgid": 3080379,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 118 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0118-attempt-3080379.json "
+    },
+    {
+      "pid": 3089267,
+      "pgid": 3081482,
+      "command": ""
+    },
+    {
+      "pid": 3089310,
+      "pgid": 3081930,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 126 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0126-attempt-3081930.json "
+    },
+    {
+      "pid": 3089364,
+      "pgid": 3089364,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 151 "
+    },
+    {
+      "pid": 3089432,
+      "pgid": 3089364,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 151 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0151-attempt-3089364.json "
+    },
+    {
+      "pid": 3089782,
+      "pgid": 3082106,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 130 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0130-attempt-3082106.json "
+    },
+    {
+      "pid": 3089812,
+      "pgid": 3089812,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 152 "
+    },
+    {
+      "pid": 3089904,
+      "pgid": 3089812,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 152 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0152-attempt-3089812.json "
+    },
+    {
+      "pid": 3089942,
+      "pgid": 3079609,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 116 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0116-attempt-3079609.json "
+    },
+    {
+      "pid": 3090012,
+      "pgid": 3083680,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 134 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0134-attempt-3083680.json "
+    },
+    {
+      "pid": 3090285,
+      "pgid": 3085629,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 137 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0137-attempt-3085629.json "
+    },
+    {
+      "pid": 3090490,
+      "pgid": 3085957,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 139 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0139-attempt-3085957.json "
+    },
+    {
+      "pid": 3090695,
+      "pgid": 3081932,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 128 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0128-attempt-3081932.json "
+    },
+    {
+      "pid": 3091101,
+      "pgid": 3085630,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 138 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0138-attempt-3085630.json "
+    },
+    {
+      "pid": 3091195,
+      "pgid": 3091195,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 153 "
+    },
+    {
+      "pid": 3091284,
+      "pgid": 3091195,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 153 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0153-attempt-3091195.json "
+    },
+    {
+      "pid": 3091373,
+      "pgid": 3091373,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 154 "
+    },
+    {
+      "pid": 3091374,
+      "pgid": 3091374,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 155 "
+    },
+    {
+      "pid": 3091434,
+      "pgid": 3091373,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 154 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0154-attempt-3091373.json "
+    },
+    {
+      "pid": 3091436,
+      "pgid": 3091374,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 155 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0155-attempt-3091374.json "
+    },
+    {
+      "pid": 3091526,
+      "pgid": 3091526,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 156 "
+    },
+    {
+      "pid": 3091586,
+      "pgid": 3091526,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 156 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0156-attempt-3091526.json "
+    },
+    {
+      "pid": 3091932,
+      "pgid": 3087652,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 147 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0147-attempt-3087652.json "
+    },
+    {
+      "pid": 3092112,
+      "pgid": 3092112,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 157 "
+    },
+    {
+      "pid": 3092113,
+      "pgid": 3092113,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 158 "
+    },
+    {
+      "pid": 3092172,
+      "pgid": 3086867,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 141 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0141-attempt-3086867.json "
+    },
+    {
+      "pid": 3092205,
+      "pgid": 3092112,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 157 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0157-attempt-3092112.json "
+    },
+    {
+      "pid": 3092206,
+      "pgid": 3092113,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 158 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0158-attempt-3092113.json "
+    },
+    {
+      "pid": 3092356,
+      "pgid": 3087338,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 145 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0145-attempt-3087338.json "
+    },
+    {
+      "pid": 3092590,
+      "pgid": 3087802,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 149 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0149-attempt-3087802.json "
+    },
+    {
+      "pid": 3093019,
+      "pgid": 3086868,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 142 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0142-attempt-3086868.json "
+    },
+    {
+      "pid": 3093257,
+      "pgid": 3087049,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 143 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0143-attempt-3087049.json "
+    },
+    {
+      "pid": 3093571,
+      "pgid": 3087503,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 146 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0146-attempt-3087503.json "
+    },
+    {
+      "pid": 3093751,
+      "pgid": 3087801,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 148 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0148-attempt-3087801.json "
+    },
+    {
+      "pid": 3093752,
+      "pgid": 3087197,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 144 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0144-attempt-3087197.json "
+    },
+    {
+      "pid": 3093811,
+      "pgid": 3093811,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 159 "
+    },
+    {
+      "pid": 3093873,
+      "pgid": 3093811,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm R3a --index 159 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0159-attempt-3093811.json "
+    },
+    {
+      "pid": 3093958,
+      "pgid": 3093958,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/block.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --index 160 "
+    },
+    {
+      "pid": 3094053,
+      "pgid": 3093958,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/game.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --lane descriptive --arm K0 --index 160 --block /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/k0-descriptive/blocks/0160-attempt-3093958.json "
+    }
+  ],
+  "locks": [
+    {
+      "path": "k0-descriptive-smoke/POOL.lock",
+      "free": true
+    },
+    {
+      "path": "k0-descriptive/POOL.lock",
+      "free": false
+    }
+  ],
+  "fit_and_offline_clean": null,
+  "gpu_compute_pids": null,
+  "parent_cpu_seconds": 0.07344200000000001,
+  "children_cpu_seconds": 0.0,
+  "wall_seconds": 0.037625745171681046,
+  "all_recorded_groups_absent": false
+}

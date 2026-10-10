@@ -1,6 +1,7 @@
 {
   "relative": "BASE-STAGING.json",
   "sha256": "ab102b5e144fb90643c181396d3015e549584810152ae076131e5aaf946efe47",
+  "raw": "{\n  \"passed\": true,\n  \"host\": \"127x16\",\n  \"pid\": 2004310,\n  \"pgid\": 2004310,\n  \"g_shards\": 5,\n  \"g_files\": 355,\n  \"r1_roots\": 6009681,\n  \"g_roots\": 212542,\n  \"corpus_manifest_sha256\": \"1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b\",\n  \"init_sha256\": \"d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed\",\n  \"assets_sha256\": \"3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737\",\n  \"utc\": \"2026-10-10T06:21:21Z\",\n  \"cpu_seconds\": 1.4324,\n  \"wall_seconds\": 1.7324251378886402,\n  \"accounting\": \"whole receiver process/child tree once; remote read-only sender CPU unmetered\"\n}\n",
   "value": {
     "passed": true,
     "host": "127x16",

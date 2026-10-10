@@ -1,0 +1,143 @@
+{
+  "host": "127x16",
+  "utc": "2026-10-10T07:34:12Z",
+  "pid": 2248984,
+  "pgid": 2248984,
+  "source_sha256": {
+    "BASE-STAGING-attempt1.json": "073f8e4685205fcc02e8294e281dfa3a1fae1ab85518865f0049f6fbecfeb434",
+    "BASE-STAGING-failed-attempt1.json": "073f8e4685205fcc02e8294e281dfa3a1fae1ab85518865f0049f6fbecfeb434",
+    "BASE-STAGING.json": "ab102b5e144fb90643c181396d3015e549584810152ae076131e5aaf946efe47",
+    "CODE-QUALIFICATION.json": "bddff9b5e426fe2f32974ac2ddefcb968724a2d61a672b726ed99cc76885c89f",
+    "R3d-exit.json": "d4c7e5da5ce33e6210e4491dba5202c4edd94360f217b38ee628bf535b64c74a",
+    "R3d-launch.json": "c22e43a09ba37ea4018c1f4ec0a14cf741f2e76db847a8921fb607ea0f41285c",
+    "VOID-ATTEMPT1-VACATED.json": "17cc6c042a2a689918fb00b9b10a12cb3b8d3415a4f21ba261c76e67b84b6144",
+    "base-staging-attempt1.log.identity.json": "8d8c319a99ece5ae5da61c673b07efa9c0ca224e1a841b9a8f4d9d46e8519db6",
+    "base-staging-attempt2.log.identity.json": "5126189afd0248625b77ea1fe04fedf1e6bda317ce01974aad685f9695bd27ad",
+    "fit-R3d-attempt1.log.identity.json": "527621c38232fe058e2f49c0a1cfeb9f461d409c440bb30bdd49e866c3df06a0",
+    "fit-R3d-attempt2.log.identity.json": "20e2be15b44944d9f6478485b8c793b8fe20b1d0562990e6dbe659df628fe3eb",
+    "fit-R3d-attempt2.log.pid": "04de404fbc6a1c6c2f8f9d1f4b9498670e642343fbfc894816a3b47339c8704a",
+    "base-staging-attempt2.log.pid": "14b060fe4dc7e43999d68364aa40cfbad65a64b78086b71b1b3b16ece7ca0f02",
+    "base-staging-attempt1.log.pid": "c1bcaa50376390c20c137d4582fcbb633ca02cff9bf34ae6d08bc5f71cddf85f",
+    "fit-R3d-attempt1.log.pid": "187f708c01803f1d66a24864ed5807439ecaa7860a7372ba725139d996a55862"
+  },
+  "recorded_pids": [
+    2000236,
+    2004310,
+    2026437,
+    2038249,
+    2038284,
+    2993359
+  ],
+  "recorded_pgids": [
+    2000236,
+    2004310,
+    2026437,
+    2026455,
+    2038249,
+    2038284,
+    2993359
+  ],
+  "live_owned": [
+    {
+      "pid": 2038249,
+      "pgid": 2038249,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/supervise.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --arm R3d "
+    },
+    {
+      "pid": 2038284,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    },
+    {
+      "pid": 2041910,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    },
+    {
+      "pid": 2041911,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    },
+    {
+      "pid": 2041912,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    },
+    {
+      "pid": 2041932,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    },
+    {
+      "pid": 2041941,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    },
+    {
+      "pid": 2041946,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    }
+  ],
+  "recorded_group_members": [
+    {
+      "pid": 2038249,
+      "pgid": 2038249,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/supervise.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --arm R3d "
+    },
+    {
+      "pid": 2038284,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    },
+    {
+      "pid": 2041910,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    },
+    {
+      "pid": 2041911,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    },
+    {
+      "pid": 2041912,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    },
+    {
+      "pid": 2041932,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    },
+    {
+      "pid": 2041941,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    },
+    {
+      "pid": 2041946,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    }
+  ],
+  "recorded_pid_members": [
+    {
+      "pid": 2038249,
+      "pgid": 2038249,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/supervise.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --arm R3d "
+    },
+    {
+      "pid": 2038284,
+      "pgid": 2038284,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs"
+    }
+  ],
+  "locks": [],
+  "fit_and_offline_clean": false,
+  "gpu_compute_pids": "2038284",
+  "parent_cpu_seconds": 0.055757,
+  "children_cpu_seconds": 0.007382,
+  "wall_seconds": 0.05173114803619683,
+  "all_recorded_groups_absent": false
+}

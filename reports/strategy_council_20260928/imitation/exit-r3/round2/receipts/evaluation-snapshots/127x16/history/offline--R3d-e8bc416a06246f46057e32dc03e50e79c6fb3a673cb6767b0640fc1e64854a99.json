@@ -1,0 +1,91 @@
+{
+  "relative": "offline/R3d.json",
+  "sha256": "e8bc416a06246f46057e32dc03e50e79c6fb3a673cb6767b0640fc1e64854a99",
+  "raw": "{\n  \"arm\": \"R3d\",\n  \"checkpoint_sha256\": \"23becbd8aa09885514e2504d003822fdb107439ff308e9303c5812064fbf0b58\",\n  \"metrics\": {\n    \"play_recall\": {\n      \"value\": 0.6293781272337384,\n      \"ci95\": [\n        0.6047898436115082,\n        0.6533339382940109\n      ],\n      \"numerator\": 1761.0,\n      \"denominator\": 2798.0\n    },\n    \"timing_agreement\": {\n      \"value\": 0.743570722057369,\n      \"ci95\": [\n        0.7287230858893741,\n        0.7590156930483384\n      ],\n      \"numerator\": 6014.0,\n      \"denominator\": 8088.0\n    },\n    \"all_WAIT_agreement\": {\n      \"value\": 0.654055390702275,\n      \"ci95\": [\n        0.6403428813340647,\n        0.6684527284548015\n      ],\n      \"numerator\": 5290.0,\n      \"denominator\": 8088.0\n    },\n    \"student_play_rate\": {\n      \"value\": 0.345944609297725,\n      \"ci95\": [\n        0.32337854516709125,\n        0.3678151953950343\n      ],\n      \"numerator\": 2798.0,\n      \"denominator\": 8088.0\n    },\n    \"uncalibrated_probability_play_recall\": {\n      \"value\": 0.5469433392775515,\n      \"ci95\": [\n        0.5369424899992308,\n        0.5574228375342116\n      ],\n      \"numerator\": 1530.347463298589,\n      \"denominator\": 2798.0\n    },\n    \"top8_exact_action_recall\": {\n      \"value\": 0.3055754110078628,\n      \"ci95\": [\n        0.2886670027330807,\n        0.32381993283040594\n      ],\n      \"numerator\": 855.0,\n      \"denominator\": 2798.0\n    }\n  },\n  \"calibration\": {\n    \"arm\": \"R3d\",\n    \"threshold\": 0.49901412427425385,\n    \"target_play_rate\": 0.346,\n    \"actual_play_rate\": 0.345944609297725,\n    \"checkpoint_sha256\": \"23becbd8aa09885514e2504d003822fdb107439ff308e9303c5812064fbf0b58\",\n    \"heldout_manifest_sha256\": \"0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f\",\n    \"rows\": 8088,\n    \"teacher_play_count\": 2798,\n    \"labels_not_used_for_threshold\": true,\n    \"exploratory_calibration_reuse\": true\n  },\n  \"timing_pass\": false,\n  \"kill_reasons\": [\n    \"calibrated play recall <.6375\",\n    \"binary play/WAIT agreement <allWAIT+.10\"\n  ],\n  \"stage1_complete\": false,\n  \"regret\": \"pending home CPU frozen-scorer replay\",\n  \"survives\": false,\n  \"cpu_seconds\": 16.562393999999998,\n  \"gpu_wall_seconds\": 15.724938749102876,\n  \"utc\": \"2026-10-10T07:46:32Z\",\n  \"device\": \"CUDAfloat32/TF32off\",\n  \"lane\": \"exploration; no multiplicity adjustment\",\n  \"freeze_sha256\": \"7c91632956601f3ff623d2a7c2baed8bcaadea51f8bc3cd389eaf36ae7b4ef54\"\n}\n",
+  "value": {
+    "arm": "R3d",
+    "checkpoint_sha256": "23becbd8aa09885514e2504d003822fdb107439ff308e9303c5812064fbf0b58",
+    "metrics": {
+      "play_recall": {
+        "value": 0.6293781272337384,
+        "ci95": [
+          0.6047898436115082,
+          0.6533339382940109
+        ],
+        "numerator": 1761.0,
+        "denominator": 2798.0
+      },
+      "timing_agreement": {
+        "value": 0.743570722057369,
+        "ci95": [
+          0.7287230858893741,
+          0.7590156930483384
+        ],
+        "numerator": 6014.0,
+        "denominator": 8088.0
+      },
+      "all_WAIT_agreement": {
+        "value": 0.654055390702275,
+        "ci95": [
+          0.6403428813340647,
+          0.6684527284548015
+        ],
+        "numerator": 5290.0,
+        "denominator": 8088.0
+      },
+      "student_play_rate": {
+        "value": 0.345944609297725,
+        "ci95": [
+          0.32337854516709125,
+          0.3678151953950343
+        ],
+        "numerator": 2798.0,
+        "denominator": 8088.0
+      },
+      "uncalibrated_probability_play_recall": {
+        "value": 0.5469433392775515,
+        "ci95": [
+          0.5369424899992308,
+          0.5574228375342116
+        ],
+        "numerator": 1530.347463298589,
+        "denominator": 2798.0
+      },
+      "top8_exact_action_recall": {
+        "value": 0.3055754110078628,
+        "ci95": [
+          0.2886670027330807,
+          0.32381993283040594
+        ],
+        "numerator": 855.0,
+        "denominator": 2798.0
+      }
+    },
+    "calibration": {
+      "arm": "R3d",
+      "threshold": 0.49901412427425385,
+      "target_play_rate": 0.346,
+      "actual_play_rate": 0.345944609297725,
+      "checkpoint_sha256": "23becbd8aa09885514e2504d003822fdb107439ff308e9303c5812064fbf0b58",
+      "heldout_manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+      "rows": 8088,
+      "teacher_play_count": 2798,
+      "labels_not_used_for_threshold": true,
+      "exploratory_calibration_reuse": true
+    },
+    "timing_pass": false,
+    "kill_reasons": [
+      "calibrated play recall <.6375",
+      "binary play/WAIT agreement <allWAIT+.10"
+    ],
+    "stage1_complete": false,
+    "regret": "pending home CPU frozen-scorer replay",
+    "survives": false,
+    "cpu_seconds": 16.562393999999998,
+    "gpu_wall_seconds": 15.724938749102876,
+    "utc": "2026-10-10T07:46:32Z",
+    "device": "CUDAfloat32/TF32off",
+    "lane": "exploration; no multiplicity adjustment",
+    "freeze_sha256": "7c91632956601f3ff623d2a7c2baed8bcaadea51f8bc3cd389eaf36ae7b4ef54"
+  }
+}

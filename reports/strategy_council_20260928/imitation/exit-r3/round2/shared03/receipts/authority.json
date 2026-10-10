@@ -1,0 +1,49 @@
+{
+  "schema": "clasher.exit-r3.shared03-authority.v1",
+  "utc": "2026-10-10T07:43:58Z",
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "coordinator_positions": [
+    5464,
+    5487,
+    5493
+  ],
+  "authorization": "G persistent processes cores0-55; R3 light regret cores56-59, manager59+three scoring workers56-58; no timing games; no G signals/STOP changes",
+  "k2_release_sha256": "5eaf18f351a2a15edaf8c8cf9babacd666f78c19315b9164a67659419af1a3c7",
+  "g_freeze_commit": "32878161cecf0d6c55f730cbdc5d9af6abb4d4ab",
+  "g_amendment_sha256": "c2a2d7573e49fe253cd2a5be8ab1e836de280f0a628be6b068a8b69746c19124",
+  "g_operations_sha256": {
+    "admission.py": "6ef90957b8e16f268661c096d16b47bd03569bbfe9d51ac123c320fbe7ca8ecf",
+    "detach.sh": "d4ab6459a977a551e09f665971cf688faf2714723ac559d82e500eed9aecb492",
+    "driver.py": "6c0ff5ef2aafebcdcbf5ebd5e5b2b83bf319b64ff68282fb51492b5c1857b5a5",
+    "env.sh": "7b770de1ea1d9ec1b37c3391989ed69be5ee822736cdd903f211a1e885b1bd3d",
+    "finalize.py": "dace47fc783018f39417c6a8d76c224c2dd299ca1468cde4975113403e2c906a",
+    "launch_guard.py": "8ecf9487da00ea0fafe6077c7a607d61678081d0c5495f46acf1b30aad6a6691",
+    "pack_loader.py": "68d1399f2d03a9d63f261ef6b3e565b06b7f98fec3c3048375b1bd2d52aef04f",
+    "pack_r1_frozen.py": "5442af29f9bcea94f3ddebbd8de7ef18d041b53eb3d1e2456fa36edb75fc5d80",
+    "prerequisite.py": "5a39e42d1647b916f4d2be67bec0f75c00f7ba7c58b96c456c8b3e0faf75fc0f",
+    "pressure_guard.py": "4aaa2309b41fe0c56a845250e1eba9a7f0d827a190063cf6525f87e52a692d99",
+    "qualify_combined.py": "3e232afe7d1d30e4236ff2f21596f554eca9c7d718ae05ea4e20a3c2891ceb65",
+    "qualify_deadline.py": "5957fc4e493589354bc00b7c5ff849d91a670fb0bb710e1bacc6238231fa99f2",
+    "qualify_pressure.py": "9871a88f26bf4f78016699240ae2ad9fe62fc4a250aac7fe185e82f011738011",
+    "qualify_priority.py": "ce433b377fc8f0527cdec0a15121a1acabe56abc851890acadbf42b0c3e998fd",
+    "qualify_ramp.py": "45c74bfd78c9f29d86652e40aa017616595e15c4a161c75f2b1044c9157919f3"
+  },
+  "g_pgid": 2711936,
+  "own_physical_cores": [
+    56,
+    57,
+    58,
+    59
+  ],
+  "maximum_persistent_scientific_processes": 4,
+  "scientific_changes": false,
+  "lease_stop_utc": "2026-10-11T05:15:00Z",
+  "home_memavailable_floor_bytes": 25769803776,
+  "g_identity": {
+    "pid": 2711936,
+    "pgid": 2711936,
+    "start_ticks": 140691635,
+    "command_sha256": "023489cfd1ff2a26e91377d6eea8e8c046f8b0715b4153ce4f2829b270165796",
+    "utc": "2026-10-10T07:43:58Z"
+  }
+}

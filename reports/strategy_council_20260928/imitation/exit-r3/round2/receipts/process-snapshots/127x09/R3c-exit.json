@@ -1,6 +1,7 @@
 {
   "relative": "R3c-exit.json",
   "sha256": "8a813836e35f6dcd8a442c7ffd00099b10c0f468ba5d5d1a817484b8c241008d",
+  "raw": "{\n  \"utc\": \"2026-10-10T06:28:50Z\",\n  \"exit_code\": -15,\n  \"reason\": \"owned FIT.STOP\",\n  \"supervisor_cpu_seconds\": 0.482684,\n  \"trainer_tree_cpu_seconds\": 28.862612000000002,\n  \"wall_seconds\": 40.40560300811194,\n  \"peak_pss_bytes\": 8748715008,\n  \"max_processes\": 2,\n  \"min_gpu_free_bytes\": 50105155584\n}\n",
   "value": {
     "utc": "2026-10-10T06:28:50Z",
     "exit_code": -15,

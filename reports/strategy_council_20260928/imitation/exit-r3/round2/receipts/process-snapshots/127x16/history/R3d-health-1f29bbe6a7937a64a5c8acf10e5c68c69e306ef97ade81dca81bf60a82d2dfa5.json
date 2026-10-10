@@ -1,0 +1,14 @@
+{
+  "relative": "R3d-health.json",
+  "sha256": "1f29bbe6a7937a64a5c8acf10e5c68c69e306ef97ade81dca81bf60a82d2dfa5",
+  "raw": "{\n  \"utc\": \"2026-10-10T07:40:17Z\",\n  \"pid\": 2038284,\n  \"pss\": 16330312704,\n  \"processes\": 8,\n  \"gpu_free_bytes\": 48414851072,\n  \"reason\": null,\n  \"wall_seconds\": 4115.964395971037\n}\n",
+  "value": {
+    "utc": "2026-10-10T07:40:17Z",
+    "pid": 2038284,
+    "pss": 16330312704,
+    "processes": 8,
+    "gpu_free_bytes": 48414851072,
+    "reason": null,
+    "wall_seconds": 4115.964395971037
+  }
+}

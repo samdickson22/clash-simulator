@@ -1,0 +1,10 @@
+{
+  "relative": "offline-R3d-attempt1.log.identity.json",
+  "sha256": "9d5eb1e60999711faf9eb60d186f3aae0181e17af3b8cdd8f7b7a08c1a9e378b",
+  "raw": "{\"pid\":2290174,\"pgid\":2290174,\"utc\":\"2026-10-10T07:46:15Z\"}\n",
+  "value": {
+    "pid": 2290174,
+    "pgid": 2290174,
+    "utc": "2026-10-10T07:46:15Z"
+  }
+}

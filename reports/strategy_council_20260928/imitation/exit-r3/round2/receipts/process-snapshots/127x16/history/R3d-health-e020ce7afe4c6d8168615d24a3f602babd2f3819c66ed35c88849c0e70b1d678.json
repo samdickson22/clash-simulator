@@ -1,0 +1,13 @@
+{
+  "relative": "R3d-health.json",
+  "sha256": "e020ce7afe4c6d8168615d24a3f602babd2f3819c66ed35c88849c0e70b1d678",
+  "value": {
+    "utc": "2026-10-10T07:31:10Z",
+    "pid": 2038284,
+    "pss": 21093102592,
+    "processes": 8,
+    "gpu_free_bytes": 48414851072,
+    "reason": null,
+    "wall_seconds": 3569.085845522117
+  }
+}

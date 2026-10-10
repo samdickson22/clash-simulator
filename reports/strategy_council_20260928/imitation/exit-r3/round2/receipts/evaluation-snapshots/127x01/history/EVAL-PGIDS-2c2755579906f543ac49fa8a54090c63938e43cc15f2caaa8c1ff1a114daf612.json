@@ -1,0 +1,3822 @@
+{
+  "relative": "EVAL-PGIDS.json",
+  "sha256": "2c2755579906f543ac49fa8a54090c63938e43cc15f2caaa8c1ff1a114daf612",
+  "raw": "[\n  {\n    \"pid\": 3032946,\n    \"pgid\": 3032946,\n    \"role\": \"pool\",\n    \"utc\": \"2026-10-10T07:15:30Z\",\n    \"lane\": \"descriptive\",\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3033018,\n    \"pgid\": 3033018,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:15:31Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 0,\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3033019,\n    \"pgid\": 3033019,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:15:31Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 1,\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3033057,\n    \"pgid\": 3033018,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:15:32Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 0,\n    \"arm\": \"K0\",\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3033059,\n    \"pgid\": 3033019,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:15:32Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 1,\n    \"arm\": \"R3a\",\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3036741,\n    \"pgid\": 3033018,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:16:41Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 0,\n    \"arm\": \"R3a\",\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3038273,\n    \"pgid\": 3033019,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:17:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 1,\n    \"arm\": \"K0\",\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3046425,\n    \"pgid\": 3046425,\n    \"role\": \"reducer\",\n    \"utc\": \"2026-10-10T07:19:41Z\",\n    \"lane\": \"descriptive\",\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3049569,\n    \"pgid\": 3049569,\n    \"role\": \"pool\",\n    \"utc\": \"2026-10-10T07:20:35Z\",\n    \"lane\": \"descriptive\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049663,\n    \"pgid\": 3049663,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 2,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049662,\n    \"pgid\": 3049662,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 1,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049666,\n    \"pgid\": 3049666,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 5,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049667,\n    \"pgid\": 3049667,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 6,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049665,\n    \"pgid\": 3049665,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 4,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049668,\n    \"pgid\": 3049668,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 7,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049672,\n    \"pgid\": 3049672,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 11,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049671,\n    \"pgid\": 3049671,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 10,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049669,\n    \"pgid\": 3049669,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 8,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049670,\n    \"pgid\": 3049670,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 9,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049674,\n    \"pgid\": 3049674,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 13,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049673,\n    \"pgid\": 3049673,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 12,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049676,\n    \"pgid\": 3049676,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 15,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049675,\n    \"pgid\": 3049675,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 14,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049664,\n    \"pgid\": 3049664,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 3,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049661,\n    \"pgid\": 3049661,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 0,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049699,\n    \"pgid\": 3049699,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 38,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049697,\n    \"pgid\": 3049697,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 36,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049698,\n    \"pgid\": 3049698,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 37,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049681,\n    \"pgid\": 3049681,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 20,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049682,\n    \"pgid\": 3049682,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 21,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049677,\n    \"pgid\": 3049677,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 16,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049679,\n    \"pgid\": 3049679,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 18,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049678,\n    \"pgid\": 3049678,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 17,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049680,\n    \"pgid\": 3049680,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 19,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049683,\n    \"pgid\": 3049683,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 22,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049684,\n    \"pgid\": 3049684,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 23,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049687,\n    \"pgid\": 3049687,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 26,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049686,\n    \"pgid\": 3049686,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 25,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049688,\n    \"pgid\": 3049688,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 27,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049685,\n    \"pgid\": 3049685,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 24,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049696,\n    \"pgid\": 3049696,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 35,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049695,\n    \"pgid\": 3049695,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 34,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049694,\n    \"pgid\": 3049694,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 33,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049692,\n    \"pgid\": 3049692,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 31,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049691,\n    \"pgid\": 3049691,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 30,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049690,\n    \"pgid\": 3049690,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 29,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049693,\n    \"pgid\": 3049693,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 32,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049689,\n    \"pgid\": 3049689,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:20:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 28,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049765,\n    \"pgid\": 3049662,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 1,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049764,\n    \"pgid\": 3049663,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 2,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049768,\n    \"pgid\": 3049666,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 5,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049770,\n    \"pgid\": 3049667,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 6,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049780,\n    \"pgid\": 3049669,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 8,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049772,\n    \"pgid\": 3049665,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 4,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049773,\n    \"pgid\": 3049668,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 7,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049800,\n    \"pgid\": 3049698,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 37,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049798,\n    \"pgid\": 3049697,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 36,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049796,\n    \"pgid\": 3049699,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 38,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049788,\n    \"pgid\": 3049676,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 15,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049789,\n    \"pgid\": 3049675,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 14,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049784,\n    \"pgid\": 3049674,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 13,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049778,\n    \"pgid\": 3049671,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 10,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049781,\n    \"pgid\": 3049670,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 9,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049776,\n    \"pgid\": 3049672,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 11,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049792,\n    \"pgid\": 3049664,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 3,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049793,\n    \"pgid\": 3049661,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 0,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049808,\n    \"pgid\": 3049679,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 18,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049806,\n    \"pgid\": 3049677,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 16,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049812,\n    \"pgid\": 3049680,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 19,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049810,\n    \"pgid\": 3049678,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 17,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049802,\n    \"pgid\": 3049681,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 20,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049804,\n    \"pgid\": 3049682,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 21,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049816,\n    \"pgid\": 3049684,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 23,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049814,\n    \"pgid\": 3049683,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 22,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049836,\n    \"pgid\": 3049690,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 29,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049786,\n    \"pgid\": 3049673,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 12,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049822,\n    \"pgid\": 3049688,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 27,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049820,\n    \"pgid\": 3049686,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 25,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049818,\n    \"pgid\": 3049687,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 26,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049824,\n    \"pgid\": 3049685,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 24,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049828,\n    \"pgid\": 3049695,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 34,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049826,\n    \"pgid\": 3049696,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 35,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049830,\n    \"pgid\": 3049694,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 33,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049832,\n    \"pgid\": 3049692,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 31,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049839,\n    \"pgid\": 3049689,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 28,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049838,\n    \"pgid\": 3049693,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 32,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3049834,\n    \"pgid\": 3049691,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:20:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 30,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3053571,\n    \"pgid\": 3049683,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:21:49Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 22,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3053776,\n    \"pgid\": 3049698,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:21:53Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 37,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3053777,\n    \"pgid\": 3049673,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:21:53Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 12,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3053778,\n    \"pgid\": 3049696,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:21:53Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 35,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054005,\n    \"pgid\": 3049686,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:21:57Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 25,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054191,\n    \"pgid\": 3049666,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:01Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 5,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054193,\n    \"pgid\": 3049699,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:01Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 38,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054192,\n    \"pgid\": 3049672,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:01Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 11,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054194,\n    \"pgid\": 3049674,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:01Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 13,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054195,\n    \"pgid\": 3049690,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:01Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 29,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054305,\n    \"pgid\": 3049694,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:03Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 33,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054293,\n    \"pgid\": 3049682,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:03Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 21,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054438,\n    \"pgid\": 3049670,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:05Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 9,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054439,\n    \"pgid\": 3049685,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:05Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 24,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054440,\n    \"pgid\": 3049675,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:05Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 14,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054532,\n    \"pgid\": 3049663,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 2,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054531,\n    \"pgid\": 3049662,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 1,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054533,\n    \"pgid\": 3049688,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 27,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054534,\n    \"pgid\": 3049684,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 23,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054628,\n    \"pgid\": 3049665,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:09Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 4,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054629,\n    \"pgid\": 3049681,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:09Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 20,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054744,\n    \"pgid\": 3049697,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:11Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 36,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3054749,\n    \"pgid\": 3049678,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:11Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 17,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3055016,\n    \"pgid\": 3049661,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:15Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 0,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3055366,\n    \"pgid\": 3049695,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:19Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 34,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3055455,\n    \"pgid\": 3049693,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:21Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 32,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3055546,\n    \"pgid\": 3049676,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:23Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 15,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3055571,\n    \"pgid\": 3049692,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:23Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 31,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3055694,\n    \"pgid\": 3049680,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:25Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 19,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3056187,\n    \"pgid\": 3049664,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 3,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3056392,\n    \"pgid\": 3049668,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:40Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 7,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3056481,\n    \"pgid\": 3049677,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:42Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 16,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3056711,\n    \"pgid\": 3049671,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:46Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 10,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3056800,\n    \"pgid\": 3049689,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:48Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 28,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3057093,\n    \"pgid\": 3049691,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:22:54Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 30,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3057500,\n    \"pgid\": 3049687,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:02Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 26,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3057707,\n    \"pgid\": 3057707,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:05Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 39,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3057799,\n    \"pgid\": 3057707,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:06Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 39,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3057975,\n    \"pgid\": 3049667,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:10Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 6,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3058034,\n    \"pgid\": 3058034,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:11Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 40,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3058096,\n    \"pgid\": 3058034,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:12Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 40,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3058185,\n    \"pgid\": 3058185,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:14Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 41,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3058245,\n    \"pgid\": 3058185,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:15Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 41,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3058358,\n    \"pgid\": 3058358,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:17Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 42,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3058423,\n    \"pgid\": 3058358,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:18Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 42,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3058511,\n    \"pgid\": 3058511,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:20Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 43,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3058717,\n    \"pgid\": 3058511,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:21Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 43,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3058779,\n    \"pgid\": 3058779,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:23Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 45,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3058777,\n    \"pgid\": 3058777,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:23Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 44,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3058868,\n    \"pgid\": 3058779,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:24Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 45,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3058869,\n    \"pgid\": 3058777,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:24Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 44,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059105,\n    \"pgid\": 3059105,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:29Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 47,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059107,\n    \"pgid\": 3059107,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:29Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 49,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059104,\n    \"pgid\": 3059104,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:29Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 46,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059106,\n    \"pgid\": 3059106,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:29Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 48,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059186,\n    \"pgid\": 3059104,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:30Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 46,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059180,\n    \"pgid\": 3059105,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:30Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 47,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059185,\n    \"pgid\": 3059107,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:30Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 49,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059192,\n    \"pgid\": 3059106,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:30Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 48,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059265,\n    \"pgid\": 3059265,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:32Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 50,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059328,\n    \"pgid\": 3059265,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:33Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 50,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059414,\n    \"pgid\": 3059414,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:35Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 51,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059501,\n    \"pgid\": 3059414,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 51,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059736,\n    \"pgid\": 3059736,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:41Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 52,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059737,\n    \"pgid\": 3059737,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:41Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 53,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059799,\n    \"pgid\": 3059737,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:42Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 53,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3059797,\n    \"pgid\": 3059736,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:42Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 52,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3060060,\n    \"pgid\": 3060060,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:47Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 55,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3060059,\n    \"pgid\": 3060059,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:47Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 54,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3060120,\n    \"pgid\": 3060060,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:48Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 55,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3060122,\n    \"pgid\": 3060059,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:48Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 54,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3060212,\n    \"pgid\": 3060212,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:50Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 56,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3060272,\n    \"pgid\": 3060212,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:52Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 56,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3060649,\n    \"pgid\": 3049669,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:23:59Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 8,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3060675,\n    \"pgid\": 3060675,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:23:59Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 57,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3060740,\n    \"pgid\": 3060675,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:01Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 57,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3061120,\n    \"pgid\": 3061120,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:08Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 58,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3061208,\n    \"pgid\": 3061120,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:10Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 58,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3061268,\n    \"pgid\": 3061268,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:11Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 59,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3061353,\n    \"pgid\": 3061268,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:13Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 59,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3061419,\n    \"pgid\": 3061419,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:14Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 61,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3061418,\n    \"pgid\": 3061418,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:14Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 60,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3061494,\n    \"pgid\": 3061419,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:16Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 61,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3061504,\n    \"pgid\": 3061418,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:16Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 60,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3061603,\n    \"pgid\": 3061603,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:17Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 62,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3061663,\n    \"pgid\": 3061603,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:19Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 62,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3061781,\n    \"pgid\": 3049679,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:21Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 18,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062190,\n    \"pgid\": 3062190,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:26Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 64,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062189,\n    \"pgid\": 3062189,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:26Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 63,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062245,\n    \"pgid\": 3057707,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:27Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 39,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062276,\n    \"pgid\": 3062190,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:28Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 64,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062278,\n    \"pgid\": 3062189,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:28Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 63,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062369,\n    \"pgid\": 3062369,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:29Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 65,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062429,\n    \"pgid\": 3062369,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:31Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 65,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062666,\n    \"pgid\": 3062666,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:35Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 67,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062665,\n    \"pgid\": 3062665,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:35Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 66,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062726,\n    \"pgid\": 3062666,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 67,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062728,\n    \"pgid\": 3062665,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 66,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062846,\n    \"pgid\": 3062846,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 68,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062906,\n    \"pgid\": 3062846,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:40Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 68,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3062995,\n    \"pgid\": 3062995,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:41Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 69,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063055,\n    \"pgid\": 3062995,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:43Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 69,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063073,\n    \"pgid\": 3059105,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:43Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 47,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063143,\n    \"pgid\": 3063143,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:45Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 70,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063206,\n    \"pgid\": 3063143,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:46Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 70,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063265,\n    \"pgid\": 3059107,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:47Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 49,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063292,\n    \"pgid\": 3063292,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:48Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 71,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063385,\n    \"pgid\": 3063292,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:49Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 71,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063464,\n    \"pgid\": 3063464,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:51Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 72,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063504,\n    \"pgid\": 3058779,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:52Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 45,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063535,\n    \"pgid\": 3063464,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:52Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 72,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063597,\n    \"pgid\": 3063597,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:54Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 73,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063685,\n    \"pgid\": 3063597,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:55Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 73,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063746,\n    \"pgid\": 3063746,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:24:57Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 74,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063858,\n    \"pgid\": 3063746,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:24:58Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 74,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3063923,\n    \"pgid\": 3058358,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:00Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 42,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3064333,\n    \"pgid\": 3059265,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 50,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3064509,\n    \"pgid\": 3058777,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:10Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 44,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3064539,\n    \"pgid\": 3058511,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:11Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 43,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3064687,\n    \"pgid\": 3059414,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:14Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 51,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3064776,\n    \"pgid\": 3060060,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:16Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 55,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3065297,\n    \"pgid\": 3061603,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:26Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 62,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3065302,\n    \"pgid\": 3059737,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:26Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 53,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3065361,\n    \"pgid\": 3065361,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:25:27Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 75,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3065362,\n    \"pgid\": 3058185,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:27Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 41,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3065446,\n    \"pgid\": 3065361,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:28Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 75,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3065827,\n    \"pgid\": 3065827,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:25:33Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 76,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3065863,\n    \"pgid\": 3060675,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:34Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 57,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3065894,\n    \"pgid\": 3065827,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:34Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 76,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3066186,\n    \"pgid\": 3058034,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:40Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 40,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3066216,\n    \"pgid\": 3062190,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:41Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 64,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3066276,\n    \"pgid\": 3061268,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:42Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 59,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3066292,\n    \"pgid\": 3059104,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:42Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 46,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3066657,\n    \"pgid\": 3061418,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:49Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 60,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3067038,\n    \"pgid\": 3067038,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:25:57Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 77,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3067037,\n    \"pgid\": 3061419,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:57Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 61,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3067098,\n    \"pgid\": 3067038,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:25:59Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 77,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3067211,\n    \"pgid\": 3062666,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:00Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 67,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3067253,\n    \"pgid\": 3062189,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:01Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 63,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3067276,\n    \"pgid\": 3060212,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:01Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 56,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3067600,\n    \"pgid\": 3059736,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:09Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 52,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3067670,\n    \"pgid\": 3061120,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:09Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 58,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3067806,\n    \"pgid\": 3062995,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:12Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 69,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3067979,\n    \"pgid\": 3067979,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:26:15Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 78,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3067953,\n    \"pgid\": 3063143,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:15Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 70,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3068043,\n    \"pgid\": 3067979,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:17Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 78,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3068282,\n    \"pgid\": 3068282,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:26:21Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 79,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3068341,\n    \"pgid\": 3063292,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:22Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 71,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3068372,\n    \"pgid\": 3068282,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:23Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 79,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3068432,\n    \"pgid\": 3063597,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:24Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 73,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3068492,\n    \"pgid\": 3063464,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:25Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 72,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3068669,\n    \"pgid\": 3059106,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:29Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 48,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3068757,\n    \"pgid\": 3062369,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:31Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 65,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3069313,\n    \"pgid\": 3063746,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 74,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3069485,\n    \"pgid\": 3060059,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:41Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 54,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3069574,\n    \"pgid\": 3069574,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:26:42Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 80,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3069634,\n    \"pgid\": 3069574,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:44Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 80,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070040,\n    \"pgid\": 3070040,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:26:52Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 81,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070100,\n    \"pgid\": 3070040,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:53Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 81,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070218,\n    \"pgid\": 3065361,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:56Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 75,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070277,\n    \"pgid\": 3062665,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:57Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 66,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070333,\n    \"pgid\": 3070333,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:26:58Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 82,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070398,\n    \"pgid\": 3070333,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:26:59Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 82,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070500,\n    \"pgid\": 3070500,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:01Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 83,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070577,\n    \"pgid\": 3070500,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:02Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 83,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070644,\n    \"pgid\": 3070644,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:04Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 84,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070730,\n    \"pgid\": 3070644,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:05Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 84,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070790,\n    \"pgid\": 3070790,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 85,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070875,\n    \"pgid\": 3070790,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:08Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 85,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3070968,\n    \"pgid\": 3062846,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:10Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 68,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3071116,\n    \"pgid\": 3071116,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:13Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 86,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3071118,\n    \"pgid\": 3071118,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:13Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 88,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3071117,\n    \"pgid\": 3071117,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:13Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 87,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3071178,\n    \"pgid\": 3071116,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:14Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 86,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3071180,\n    \"pgid\": 3071118,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:14Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 88,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3071182,\n    \"pgid\": 3071117,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:14Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 87,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3071591,\n    \"pgid\": 3067038,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:22Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 77,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3071594,\n    \"pgid\": 3071594,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:22Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 90,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3071593,\n    \"pgid\": 3071593,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:22Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 89,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3071592,\n    \"pgid\": 3065827,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:22Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 76,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3071656,\n    \"pgid\": 3071594,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:23Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 90,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3071657,\n    \"pgid\": 3071593,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:23Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 89,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072041,\n    \"pgid\": 3072041,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:31Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 92,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072040,\n    \"pgid\": 3072040,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:31Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 91,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072129,\n    \"pgid\": 3072041,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:32Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 92,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072131,\n    \"pgid\": 3072040,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:32Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 91,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072221,\n    \"pgid\": 3072221,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:34Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 93,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072281,\n    \"pgid\": 3072221,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:35Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 93,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072451,\n    \"pgid\": 3072451,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 96,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072447,\n    \"pgid\": 3072447,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 94,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072448,\n    \"pgid\": 3072448,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 95,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072578,\n    \"pgid\": 3072447,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 94,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072577,\n    \"pgid\": 3072451,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 96,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072580,\n    \"pgid\": 3072448,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 95,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072667,\n    \"pgid\": 3072667,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:40Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 97,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072731,\n    \"pgid\": 3072667,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:42Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 97,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072836,\n    \"pgid\": 3072836,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:43Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 98,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072839,\n    \"pgid\": 3072839,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:43Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 99,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072879,\n    \"pgid\": 3068282,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:44Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 79,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072912,\n    \"pgid\": 3072839,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:44Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 99,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3072910,\n    \"pgid\": 3072836,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:44Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 98,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3073119,\n    \"pgid\": 3073119,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:49Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 100,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3073206,\n    \"pgid\": 3073119,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:27:51Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 100,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3073587,\n    \"pgid\": 3073587,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:27:58Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 101,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3073660,\n    \"pgid\": 3073587,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:00Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 101,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3074055,\n    \"pgid\": 3074055,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 102,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3074115,\n    \"pgid\": 3074055,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:09Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 102,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3074379,\n    \"pgid\": 3074379,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:13Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 103,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3074439,\n    \"pgid\": 3074379,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:15Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 103,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3074528,\n    \"pgid\": 3074528,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:16Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 104,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3074589,\n    \"pgid\": 3074528,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:18Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 104,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075118,\n    \"pgid\": 3070040,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:28Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 81,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075265,\n    \"pgid\": 3075265,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:31Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 105,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075266,\n    \"pgid\": 3075266,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:31Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 106,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075351,\n    \"pgid\": 3075265,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:33Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 105,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075357,\n    \"pgid\": 3075266,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:33Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 106,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075387,\n    \"pgid\": 3071117,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:33Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 87,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075595,\n    \"pgid\": 3069574,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 80,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075820,\n    \"pgid\": 3075820,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:40Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 107,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075821,\n    \"pgid\": 3075821,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:41Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 108,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075947,\n    \"pgid\": 3070790,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:42Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 85,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075964,\n    \"pgid\": 3075820,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:42Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 107,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075972,\n    \"pgid\": 3075821,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:42Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 108,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3075981,\n    \"pgid\": 3070644,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:43Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 84,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076007,\n    \"pgid\": 3070333,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:43Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 82,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076076,\n    \"pgid\": 3076076,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:43Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 110,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076075,\n    \"pgid\": 3076075,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:43Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 109,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076140,\n    \"pgid\": 3076075,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:45Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 109,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076139,\n    \"pgid\": 3076076,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:45Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 110,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076230,\n    \"pgid\": 3076230,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:47Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 111,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076290,\n    \"pgid\": 3076230,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:48Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 111,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076382,\n    \"pgid\": 3076382,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:50Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 115,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076380,\n    \"pgid\": 3076380,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:50Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 113,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076381,\n    \"pgid\": 3076381,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:50Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 114,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076379,\n    \"pgid\": 3076379,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:28:50Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 112,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076442,\n    \"pgid\": 3076382,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:51Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 115,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076445,\n    \"pgid\": 3076380,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:51Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 113,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076448,\n    \"pgid\": 3076379,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:51Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 112,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076447,\n    \"pgid\": 3076381,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:51Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 114,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076772,\n    \"pgid\": 3067979,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:28:57Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 78,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3076948,\n    \"pgid\": 3072667,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:01Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 97,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3077095,\n    \"pgid\": 3072839,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:04Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 99,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3077096,\n    \"pgid\": 3072448,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:04Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 95,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3077123,\n    \"pgid\": 3071116,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:04Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 86,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3077215,\n    \"pgid\": 3072041,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:06Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 92,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3077274,\n    \"pgid\": 3071594,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 90,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3077364,\n    \"pgid\": 3072221,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:09Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 93,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3077453,\n    \"pgid\": 3071593,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:11Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 89,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3077834,\n    \"pgid\": 3072040,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:18Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 91,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3078352,\n    \"pgid\": 3071118,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:28Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 88,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3078447,\n    \"pgid\": 3072451,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:30Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 96,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3078591,\n    \"pgid\": 3073587,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:33Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 101,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3078741,\n    \"pgid\": 3074055,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:36Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 102,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3079062,\n    \"pgid\": 3070500,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:42Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 83,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3079610,\n    \"pgid\": 3079610,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:29:50Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 117,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3079609,\n    \"pgid\": 3079609,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:29:50Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 116,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3079674,\n    \"pgid\": 3079610,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:52Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 117,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3079676,\n    \"pgid\": 3079609,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:52Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 116,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3079706,\n    \"pgid\": 3074379,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:52Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 103,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3079885,\n    \"pgid\": 3074528,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:29:55Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 104,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3080379,\n    \"pgid\": 3080379,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:05Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 118,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3080438,\n    \"pgid\": 3075265,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:06Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 105,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3080463,\n    \"pgid\": 3080379,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 118,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3080470,\n    \"pgid\": 3075820,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 107,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3080678,\n    \"pgid\": 3080678,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:11Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 120,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3080677,\n    \"pgid\": 3080677,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:11Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 119,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3080723,\n    \"pgid\": 3076076,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:12Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 110,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3080739,\n    \"pgid\": 3080678,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:13Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 120,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3080741,\n    \"pgid\": 3080677,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:13Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 119,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3080832,\n    \"pgid\": 3080832,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:14Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 121,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3080919,\n    \"pgid\": 3080832,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:16Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 121,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081154,\n    \"pgid\": 3081154,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:20Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 122,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081153,\n    \"pgid\": 3076075,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:20Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 109,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081214,\n    \"pgid\": 3081154,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:22Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 122,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081273,\n    \"pgid\": 3072836,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:23Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 98,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081335,\n    \"pgid\": 3076380,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:24Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 113,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081365,\n    \"pgid\": 3073119,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:25Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 100,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081482,\n    \"pgid\": 3081482,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:26Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 124,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081481,\n    \"pgid\": 3081481,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:26Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 123,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081544,\n    \"pgid\": 3081481,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:28Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 123,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081542,\n    \"pgid\": 3081482,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:28Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 124,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081574,\n    \"pgid\": 3076381,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:28Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 114,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081635,\n    \"pgid\": 3081635,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:29Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 125,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081666,\n    \"pgid\": 3076379,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:30Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 112,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081696,\n    \"pgid\": 3072447,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:31Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 94,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081698,\n    \"pgid\": 3081635,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:31Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 125,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081931,\n    \"pgid\": 3081931,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:35Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 127,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081932,\n    \"pgid\": 3081932,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:35Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 128,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081930,\n    \"pgid\": 3081930,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:35Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 126,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3081933,\n    \"pgid\": 3081933,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:35Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 129,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3082029,\n    \"pgid\": 3081930,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 126,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3082027,\n    \"pgid\": 3081932,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 128,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3082024,\n    \"pgid\": 3081931,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 127,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3082030,\n    \"pgid\": 3081933,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:37Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 129,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3082106,\n    \"pgid\": 3082106,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:38Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 130,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3082182,\n    \"pgid\": 3082106,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:40Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 130,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3082271,\n    \"pgid\": 3075821,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:42Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 108,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3082565,\n    \"pgid\": 3082565,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:48Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 131,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3082729,\n    \"pgid\": 3082565,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:49Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 131,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3082917,\n    \"pgid\": 3082917,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:30:51Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 132,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3082995,\n    \"pgid\": 3082917,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:30:52Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 132,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3083386,\n    \"pgid\": 3083386,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:31:00Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 133,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3083446,\n    \"pgid\": 3083386,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:31:01Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 133,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3083680,\n    \"pgid\": 3083680,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:31:06Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 134,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3083681,\n    \"pgid\": 3076230,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:31:06Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 111,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3083767,\n    \"pgid\": 3083680,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:31:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 134,\n    \"arm\": \"K0\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3083858,\n    \"pgid\": 3075266,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:31:09Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 106,\n    \"arm\": \"R3a\",\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3084006,\n    \"pgid\": 3084006,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:31:12Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 136,\n    \"smoke\": false\n  },\n  {\n    \"pid\": 3084005,\n    \"pgid\": 3084005,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:31:12Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 135,\n    \"smoke\": false\n  }\n]\n",
+  "value": [
+    {
+      "pid": 3032946,
+      "pgid": 3032946,
+      "role": "pool",
+      "utc": "2026-10-10T07:15:30Z",
+      "lane": "descriptive",
+      "smoke": true
+    },
+    {
+      "pid": 3033018,
+      "pgid": 3033018,
+      "role": "block",
+      "utc": "2026-10-10T07:15:31Z",
+      "lane": "descriptive",
+      "index": 0,
+      "smoke": true
+    },
+    {
+      "pid": 3033019,
+      "pgid": 3033019,
+      "role": "block",
+      "utc": "2026-10-10T07:15:31Z",
+      "lane": "descriptive",
+      "index": 1,
+      "smoke": true
+    },
+    {
+      "pid": 3033057,
+      "pgid": 3033018,
+      "role": "game",
+      "utc": "2026-10-10T07:15:32Z",
+      "lane": "descriptive",
+      "index": 0,
+      "arm": "K0",
+      "smoke": true
+    },
+    {
+      "pid": 3033059,
+      "pgid": 3033019,
+      "role": "game",
+      "utc": "2026-10-10T07:15:32Z",
+      "lane": "descriptive",
+      "index": 1,
+      "arm": "R3a",
+      "smoke": true
+    },
+    {
+      "pid": 3036741,
+      "pgid": 3033018,
+      "role": "game",
+      "utc": "2026-10-10T07:16:41Z",
+      "lane": "descriptive",
+      "index": 0,
+      "arm": "R3a",
+      "smoke": true
+    },
+    {
+      "pid": 3038273,
+      "pgid": 3033019,
+      "role": "game",
+      "utc": "2026-10-10T07:17:07Z",
+      "lane": "descriptive",
+      "index": 1,
+      "arm": "K0",
+      "smoke": true
+    },
+    {
+      "pid": 3046425,
+      "pgid": 3046425,
+      "role": "reducer",
+      "utc": "2026-10-10T07:19:41Z",
+      "lane": "descriptive",
+      "smoke": true
+    },
+    {
+      "pid": 3049569,
+      "pgid": 3049569,
+      "role": "pool",
+      "utc": "2026-10-10T07:20:35Z",
+      "lane": "descriptive",
+      "smoke": false
+    },
+    {
+      "pid": 3049663,
+      "pgid": 3049663,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 2,
+      "smoke": false
+    },
+    {
+      "pid": 3049662,
+      "pgid": 3049662,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 1,
+      "smoke": false
+    },
+    {
+      "pid": 3049666,
+      "pgid": 3049666,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 5,
+      "smoke": false
+    },
+    {
+      "pid": 3049667,
+      "pgid": 3049667,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 6,
+      "smoke": false
+    },
+    {
+      "pid": 3049665,
+      "pgid": 3049665,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 4,
+      "smoke": false
+    },
+    {
+      "pid": 3049668,
+      "pgid": 3049668,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 7,
+      "smoke": false
+    },
+    {
+      "pid": 3049672,
+      "pgid": 3049672,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 11,
+      "smoke": false
+    },
+    {
+      "pid": 3049671,
+      "pgid": 3049671,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 10,
+      "smoke": false
+    },
+    {
+      "pid": 3049669,
+      "pgid": 3049669,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 8,
+      "smoke": false
+    },
+    {
+      "pid": 3049670,
+      "pgid": 3049670,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 9,
+      "smoke": false
+    },
+    {
+      "pid": 3049674,
+      "pgid": 3049674,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 13,
+      "smoke": false
+    },
+    {
+      "pid": 3049673,
+      "pgid": 3049673,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 12,
+      "smoke": false
+    },
+    {
+      "pid": 3049676,
+      "pgid": 3049676,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 15,
+      "smoke": false
+    },
+    {
+      "pid": 3049675,
+      "pgid": 3049675,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 14,
+      "smoke": false
+    },
+    {
+      "pid": 3049664,
+      "pgid": 3049664,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 3,
+      "smoke": false
+    },
+    {
+      "pid": 3049661,
+      "pgid": 3049661,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 0,
+      "smoke": false
+    },
+    {
+      "pid": 3049699,
+      "pgid": 3049699,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 38,
+      "smoke": false
+    },
+    {
+      "pid": 3049697,
+      "pgid": 3049697,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 36,
+      "smoke": false
+    },
+    {
+      "pid": 3049698,
+      "pgid": 3049698,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 37,
+      "smoke": false
+    },
+    {
+      "pid": 3049681,
+      "pgid": 3049681,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 20,
+      "smoke": false
+    },
+    {
+      "pid": 3049682,
+      "pgid": 3049682,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 21,
+      "smoke": false
+    },
+    {
+      "pid": 3049677,
+      "pgid": 3049677,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 16,
+      "smoke": false
+    },
+    {
+      "pid": 3049679,
+      "pgid": 3049679,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 18,
+      "smoke": false
+    },
+    {
+      "pid": 3049678,
+      "pgid": 3049678,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 17,
+      "smoke": false
+    },
+    {
+      "pid": 3049680,
+      "pgid": 3049680,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 19,
+      "smoke": false
+    },
+    {
+      "pid": 3049683,
+      "pgid": 3049683,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 22,
+      "smoke": false
+    },
+    {
+      "pid": 3049684,
+      "pgid": 3049684,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 23,
+      "smoke": false
+    },
+    {
+      "pid": 3049687,
+      "pgid": 3049687,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 26,
+      "smoke": false
+    },
+    {
+      "pid": 3049686,
+      "pgid": 3049686,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 25,
+      "smoke": false
+    },
+    {
+      "pid": 3049688,
+      "pgid": 3049688,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 27,
+      "smoke": false
+    },
+    {
+      "pid": 3049685,
+      "pgid": 3049685,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 24,
+      "smoke": false
+    },
+    {
+      "pid": 3049696,
+      "pgid": 3049696,
+      "role": "block",
+      "utc": "2026-10-10T07:20:36Z",
+      "lane": "descriptive",
+      "index": 35,
+      "smoke": false
+    },
+    {
+      "pid": 3049695,
+      "pgid": 3049695,
+      "role": "block",
+      "utc": "2026-10-10T07:20:37Z",
+      "lane": "descriptive",
+      "index": 34,
+      "smoke": false
+    },
+    {
+      "pid": 3049694,
+      "pgid": 3049694,
+      "role": "block",
+      "utc": "2026-10-10T07:20:37Z",
+      "lane": "descriptive",
+      "index": 33,
+      "smoke": false
+    },
+    {
+      "pid": 3049692,
+      "pgid": 3049692,
+      "role": "block",
+      "utc": "2026-10-10T07:20:37Z",
+      "lane": "descriptive",
+      "index": 31,
+      "smoke": false
+    },
+    {
+      "pid": 3049691,
+      "pgid": 3049691,
+      "role": "block",
+      "utc": "2026-10-10T07:20:37Z",
+      "lane": "descriptive",
+      "index": 30,
+      "smoke": false
+    },
+    {
+      "pid": 3049690,
+      "pgid": 3049690,
+      "role": "block",
+      "utc": "2026-10-10T07:20:37Z",
+      "lane": "descriptive",
+      "index": 29,
+      "smoke": false
+    },
+    {
+      "pid": 3049693,
+      "pgid": 3049693,
+      "role": "block",
+      "utc": "2026-10-10T07:20:37Z",
+      "lane": "descriptive",
+      "index": 32,
+      "smoke": false
+    },
+    {
+      "pid": 3049689,
+      "pgid": 3049689,
+      "role": "block",
+      "utc": "2026-10-10T07:20:37Z",
+      "lane": "descriptive",
+      "index": 28,
+      "smoke": false
+    },
+    {
+      "pid": 3049765,
+      "pgid": 3049662,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 1,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049764,
+      "pgid": 3049663,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 2,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049768,
+      "pgid": 3049666,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 5,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049770,
+      "pgid": 3049667,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 6,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049780,
+      "pgid": 3049669,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 8,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049772,
+      "pgid": 3049665,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 4,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049773,
+      "pgid": 3049668,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 7,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049800,
+      "pgid": 3049698,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 37,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049798,
+      "pgid": 3049697,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 36,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049796,
+      "pgid": 3049699,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 38,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049788,
+      "pgid": 3049676,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 15,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049789,
+      "pgid": 3049675,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 14,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049784,
+      "pgid": 3049674,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 13,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049778,
+      "pgid": 3049671,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 10,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049781,
+      "pgid": 3049670,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 9,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049776,
+      "pgid": 3049672,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 11,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049792,
+      "pgid": 3049664,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 3,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049793,
+      "pgid": 3049661,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 0,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049808,
+      "pgid": 3049679,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 18,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049806,
+      "pgid": 3049677,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 16,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049812,
+      "pgid": 3049680,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 19,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049810,
+      "pgid": 3049678,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 17,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049802,
+      "pgid": 3049681,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 20,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049804,
+      "pgid": 3049682,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 21,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049816,
+      "pgid": 3049684,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 23,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049814,
+      "pgid": 3049683,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 22,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049836,
+      "pgid": 3049690,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 29,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049786,
+      "pgid": 3049673,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 12,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049822,
+      "pgid": 3049688,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 27,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049820,
+      "pgid": 3049686,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 25,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049818,
+      "pgid": 3049687,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 26,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049824,
+      "pgid": 3049685,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 24,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049828,
+      "pgid": 3049695,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 34,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049826,
+      "pgid": 3049696,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 35,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049830,
+      "pgid": 3049694,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 33,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049832,
+      "pgid": 3049692,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 31,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3049839,
+      "pgid": 3049689,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 28,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049838,
+      "pgid": 3049693,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 32,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3049834,
+      "pgid": 3049691,
+      "role": "game",
+      "utc": "2026-10-10T07:20:38Z",
+      "lane": "descriptive",
+      "index": 30,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3053571,
+      "pgid": 3049683,
+      "role": "game",
+      "utc": "2026-10-10T07:21:49Z",
+      "lane": "descriptive",
+      "index": 22,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3053776,
+      "pgid": 3049698,
+      "role": "game",
+      "utc": "2026-10-10T07:21:53Z",
+      "lane": "descriptive",
+      "index": 37,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3053777,
+      "pgid": 3049673,
+      "role": "game",
+      "utc": "2026-10-10T07:21:53Z",
+      "lane": "descriptive",
+      "index": 12,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3053778,
+      "pgid": 3049696,
+      "role": "game",
+      "utc": "2026-10-10T07:21:53Z",
+      "lane": "descriptive",
+      "index": 35,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3054005,
+      "pgid": 3049686,
+      "role": "game",
+      "utc": "2026-10-10T07:21:57Z",
+      "lane": "descriptive",
+      "index": 25,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3054191,
+      "pgid": 3049666,
+      "role": "game",
+      "utc": "2026-10-10T07:22:01Z",
+      "lane": "descriptive",
+      "index": 5,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3054193,
+      "pgid": 3049699,
+      "role": "game",
+      "utc": "2026-10-10T07:22:01Z",
+      "lane": "descriptive",
+      "index": 38,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3054192,
+      "pgid": 3049672,
+      "role": "game",
+      "utc": "2026-10-10T07:22:01Z",
+      "lane": "descriptive",
+      "index": 11,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3054194,
+      "pgid": 3049674,
+      "role": "game",
+      "utc": "2026-10-10T07:22:01Z",
+      "lane": "descriptive",
+      "index": 13,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3054195,
+      "pgid": 3049690,
+      "role": "game",
+      "utc": "2026-10-10T07:22:01Z",
+      "lane": "descriptive",
+      "index": 29,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3054305,
+      "pgid": 3049694,
+      "role": "game",
+      "utc": "2026-10-10T07:22:03Z",
+      "lane": "descriptive",
+      "index": 33,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3054293,
+      "pgid": 3049682,
+      "role": "game",
+      "utc": "2026-10-10T07:22:03Z",
+      "lane": "descriptive",
+      "index": 21,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3054438,
+      "pgid": 3049670,
+      "role": "game",
+      "utc": "2026-10-10T07:22:05Z",
+      "lane": "descriptive",
+      "index": 9,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3054439,
+      "pgid": 3049685,
+      "role": "game",
+      "utc": "2026-10-10T07:22:05Z",
+      "lane": "descriptive",
+      "index": 24,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3054440,
+      "pgid": 3049675,
+      "role": "game",
+      "utc": "2026-10-10T07:22:05Z",
+      "lane": "descriptive",
+      "index": 14,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3054532,
+      "pgid": 3049663,
+      "role": "game",
+      "utc": "2026-10-10T07:22:07Z",
+      "lane": "descriptive",
+      "index": 2,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3054531,
+      "pgid": 3049662,
+      "role": "game",
+      "utc": "2026-10-10T07:22:07Z",
+      "lane": "descriptive",
+      "index": 1,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3054533,
+      "pgid": 3049688,
+      "role": "game",
+      "utc": "2026-10-10T07:22:07Z",
+      "lane": "descriptive",
+      "index": 27,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3054534,
+      "pgid": 3049684,
+      "role": "game",
+      "utc": "2026-10-10T07:22:07Z",
+      "lane": "descriptive",
+      "index": 23,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3054628,
+      "pgid": 3049665,
+      "role": "game",
+      "utc": "2026-10-10T07:22:09Z",
+      "lane": "descriptive",
+      "index": 4,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3054629,
+      "pgid": 3049681,
+      "role": "game",
+      "utc": "2026-10-10T07:22:09Z",
+      "lane": "descriptive",
+      "index": 20,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3054744,
+      "pgid": 3049697,
+      "role": "game",
+      "utc": "2026-10-10T07:22:11Z",
+      "lane": "descriptive",
+      "index": 36,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3054749,
+      "pgid": 3049678,
+      "role": "game",
+      "utc": "2026-10-10T07:22:11Z",
+      "lane": "descriptive",
+      "index": 17,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3055016,
+      "pgid": 3049661,
+      "role": "game",
+      "utc": "2026-10-10T07:22:15Z",
+      "lane": "descriptive",
+      "index": 0,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3055366,
+      "pgid": 3049695,
+      "role": "game",
+      "utc": "2026-10-10T07:22:19Z",
+      "lane": "descriptive",
+      "index": 34,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3055455,
+      "pgid": 3049693,
+      "role": "game",
+      "utc": "2026-10-10T07:22:21Z",
+      "lane": "descriptive",
+      "index": 32,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3055546,
+      "pgid": 3049676,
+      "role": "game",
+      "utc": "2026-10-10T07:22:23Z",
+      "lane": "descriptive",
+      "index": 15,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3055571,
+      "pgid": 3049692,
+      "role": "game",
+      "utc": "2026-10-10T07:22:23Z",
+      "lane": "descriptive",
+      "index": 31,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3055694,
+      "pgid": 3049680,
+      "role": "game",
+      "utc": "2026-10-10T07:22:25Z",
+      "lane": "descriptive",
+      "index": 19,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3056187,
+      "pgid": 3049664,
+      "role": "game",
+      "utc": "2026-10-10T07:22:36Z",
+      "lane": "descriptive",
+      "index": 3,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3056392,
+      "pgid": 3049668,
+      "role": "game",
+      "utc": "2026-10-10T07:22:40Z",
+      "lane": "descriptive",
+      "index": 7,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3056481,
+      "pgid": 3049677,
+      "role": "game",
+      "utc": "2026-10-10T07:22:42Z",
+      "lane": "descriptive",
+      "index": 16,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3056711,
+      "pgid": 3049671,
+      "role": "game",
+      "utc": "2026-10-10T07:22:46Z",
+      "lane": "descriptive",
+      "index": 10,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3056800,
+      "pgid": 3049689,
+      "role": "game",
+      "utc": "2026-10-10T07:22:48Z",
+      "lane": "descriptive",
+      "index": 28,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3057093,
+      "pgid": 3049691,
+      "role": "game",
+      "utc": "2026-10-10T07:22:54Z",
+      "lane": "descriptive",
+      "index": 30,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3057500,
+      "pgid": 3049687,
+      "role": "game",
+      "utc": "2026-10-10T07:23:02Z",
+      "lane": "descriptive",
+      "index": 26,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3057707,
+      "pgid": 3057707,
+      "role": "block",
+      "utc": "2026-10-10T07:23:05Z",
+      "lane": "descriptive",
+      "index": 39,
+      "smoke": false
+    },
+    {
+      "pid": 3057799,
+      "pgid": 3057707,
+      "role": "game",
+      "utc": "2026-10-10T07:23:06Z",
+      "lane": "descriptive",
+      "index": 39,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3057975,
+      "pgid": 3049667,
+      "role": "game",
+      "utc": "2026-10-10T07:23:10Z",
+      "lane": "descriptive",
+      "index": 6,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3058034,
+      "pgid": 3058034,
+      "role": "block",
+      "utc": "2026-10-10T07:23:11Z",
+      "lane": "descriptive",
+      "index": 40,
+      "smoke": false
+    },
+    {
+      "pid": 3058096,
+      "pgid": 3058034,
+      "role": "game",
+      "utc": "2026-10-10T07:23:12Z",
+      "lane": "descriptive",
+      "index": 40,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3058185,
+      "pgid": 3058185,
+      "role": "block",
+      "utc": "2026-10-10T07:23:14Z",
+      "lane": "descriptive",
+      "index": 41,
+      "smoke": false
+    },
+    {
+      "pid": 3058245,
+      "pgid": 3058185,
+      "role": "game",
+      "utc": "2026-10-10T07:23:15Z",
+      "lane": "descriptive",
+      "index": 41,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3058358,
+      "pgid": 3058358,
+      "role": "block",
+      "utc": "2026-10-10T07:23:17Z",
+      "lane": "descriptive",
+      "index": 42,
+      "smoke": false
+    },
+    {
+      "pid": 3058423,
+      "pgid": 3058358,
+      "role": "game",
+      "utc": "2026-10-10T07:23:18Z",
+      "lane": "descriptive",
+      "index": 42,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3058511,
+      "pgid": 3058511,
+      "role": "block",
+      "utc": "2026-10-10T07:23:20Z",
+      "lane": "descriptive",
+      "index": 43,
+      "smoke": false
+    },
+    {
+      "pid": 3058717,
+      "pgid": 3058511,
+      "role": "game",
+      "utc": "2026-10-10T07:23:21Z",
+      "lane": "descriptive",
+      "index": 43,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3058779,
+      "pgid": 3058779,
+      "role": "block",
+      "utc": "2026-10-10T07:23:23Z",
+      "lane": "descriptive",
+      "index": 45,
+      "smoke": false
+    },
+    {
+      "pid": 3058777,
+      "pgid": 3058777,
+      "role": "block",
+      "utc": "2026-10-10T07:23:23Z",
+      "lane": "descriptive",
+      "index": 44,
+      "smoke": false
+    },
+    {
+      "pid": 3058868,
+      "pgid": 3058779,
+      "role": "game",
+      "utc": "2026-10-10T07:23:24Z",
+      "lane": "descriptive",
+      "index": 45,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3058869,
+      "pgid": 3058777,
+      "role": "game",
+      "utc": "2026-10-10T07:23:24Z",
+      "lane": "descriptive",
+      "index": 44,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3059105,
+      "pgid": 3059105,
+      "role": "block",
+      "utc": "2026-10-10T07:23:29Z",
+      "lane": "descriptive",
+      "index": 47,
+      "smoke": false
+    },
+    {
+      "pid": 3059107,
+      "pgid": 3059107,
+      "role": "block",
+      "utc": "2026-10-10T07:23:29Z",
+      "lane": "descriptive",
+      "index": 49,
+      "smoke": false
+    },
+    {
+      "pid": 3059104,
+      "pgid": 3059104,
+      "role": "block",
+      "utc": "2026-10-10T07:23:29Z",
+      "lane": "descriptive",
+      "index": 46,
+      "smoke": false
+    },
+    {
+      "pid": 3059106,
+      "pgid": 3059106,
+      "role": "block",
+      "utc": "2026-10-10T07:23:29Z",
+      "lane": "descriptive",
+      "index": 48,
+      "smoke": false
+    },
+    {
+      "pid": 3059186,
+      "pgid": 3059104,
+      "role": "game",
+      "utc": "2026-10-10T07:23:30Z",
+      "lane": "descriptive",
+      "index": 46,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3059180,
+      "pgid": 3059105,
+      "role": "game",
+      "utc": "2026-10-10T07:23:30Z",
+      "lane": "descriptive",
+      "index": 47,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3059185,
+      "pgid": 3059107,
+      "role": "game",
+      "utc": "2026-10-10T07:23:30Z",
+      "lane": "descriptive",
+      "index": 49,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3059192,
+      "pgid": 3059106,
+      "role": "game",
+      "utc": "2026-10-10T07:23:30Z",
+      "lane": "descriptive",
+      "index": 48,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3059265,
+      "pgid": 3059265,
+      "role": "block",
+      "utc": "2026-10-10T07:23:32Z",
+      "lane": "descriptive",
+      "index": 50,
+      "smoke": false
+    },
+    {
+      "pid": 3059328,
+      "pgid": 3059265,
+      "role": "game",
+      "utc": "2026-10-10T07:23:33Z",
+      "lane": "descriptive",
+      "index": 50,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3059414,
+      "pgid": 3059414,
+      "role": "block",
+      "utc": "2026-10-10T07:23:35Z",
+      "lane": "descriptive",
+      "index": 51,
+      "smoke": false
+    },
+    {
+      "pid": 3059501,
+      "pgid": 3059414,
+      "role": "game",
+      "utc": "2026-10-10T07:23:36Z",
+      "lane": "descriptive",
+      "index": 51,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3059736,
+      "pgid": 3059736,
+      "role": "block",
+      "utc": "2026-10-10T07:23:41Z",
+      "lane": "descriptive",
+      "index": 52,
+      "smoke": false
+    },
+    {
+      "pid": 3059737,
+      "pgid": 3059737,
+      "role": "block",
+      "utc": "2026-10-10T07:23:41Z",
+      "lane": "descriptive",
+      "index": 53,
+      "smoke": false
+    },
+    {
+      "pid": 3059799,
+      "pgid": 3059737,
+      "role": "game",
+      "utc": "2026-10-10T07:23:42Z",
+      "lane": "descriptive",
+      "index": 53,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3059797,
+      "pgid": 3059736,
+      "role": "game",
+      "utc": "2026-10-10T07:23:42Z",
+      "lane": "descriptive",
+      "index": 52,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3060060,
+      "pgid": 3060060,
+      "role": "block",
+      "utc": "2026-10-10T07:23:47Z",
+      "lane": "descriptive",
+      "index": 55,
+      "smoke": false
+    },
+    {
+      "pid": 3060059,
+      "pgid": 3060059,
+      "role": "block",
+      "utc": "2026-10-10T07:23:47Z",
+      "lane": "descriptive",
+      "index": 54,
+      "smoke": false
+    },
+    {
+      "pid": 3060120,
+      "pgid": 3060060,
+      "role": "game",
+      "utc": "2026-10-10T07:23:48Z",
+      "lane": "descriptive",
+      "index": 55,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3060122,
+      "pgid": 3060059,
+      "role": "game",
+      "utc": "2026-10-10T07:23:48Z",
+      "lane": "descriptive",
+      "index": 54,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3060212,
+      "pgid": 3060212,
+      "role": "block",
+      "utc": "2026-10-10T07:23:50Z",
+      "lane": "descriptive",
+      "index": 56,
+      "smoke": false
+    },
+    {
+      "pid": 3060272,
+      "pgid": 3060212,
+      "role": "game",
+      "utc": "2026-10-10T07:23:52Z",
+      "lane": "descriptive",
+      "index": 56,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3060649,
+      "pgid": 3049669,
+      "role": "game",
+      "utc": "2026-10-10T07:23:59Z",
+      "lane": "descriptive",
+      "index": 8,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3060675,
+      "pgid": 3060675,
+      "role": "block",
+      "utc": "2026-10-10T07:23:59Z",
+      "lane": "descriptive",
+      "index": 57,
+      "smoke": false
+    },
+    {
+      "pid": 3060740,
+      "pgid": 3060675,
+      "role": "game",
+      "utc": "2026-10-10T07:24:01Z",
+      "lane": "descriptive",
+      "index": 57,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3061120,
+      "pgid": 3061120,
+      "role": "block",
+      "utc": "2026-10-10T07:24:08Z",
+      "lane": "descriptive",
+      "index": 58,
+      "smoke": false
+    },
+    {
+      "pid": 3061208,
+      "pgid": 3061120,
+      "role": "game",
+      "utc": "2026-10-10T07:24:10Z",
+      "lane": "descriptive",
+      "index": 58,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3061268,
+      "pgid": 3061268,
+      "role": "block",
+      "utc": "2026-10-10T07:24:11Z",
+      "lane": "descriptive",
+      "index": 59,
+      "smoke": false
+    },
+    {
+      "pid": 3061353,
+      "pgid": 3061268,
+      "role": "game",
+      "utc": "2026-10-10T07:24:13Z",
+      "lane": "descriptive",
+      "index": 59,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3061419,
+      "pgid": 3061419,
+      "role": "block",
+      "utc": "2026-10-10T07:24:14Z",
+      "lane": "descriptive",
+      "index": 61,
+      "smoke": false
+    },
+    {
+      "pid": 3061418,
+      "pgid": 3061418,
+      "role": "block",
+      "utc": "2026-10-10T07:24:14Z",
+      "lane": "descriptive",
+      "index": 60,
+      "smoke": false
+    },
+    {
+      "pid": 3061494,
+      "pgid": 3061419,
+      "role": "game",
+      "utc": "2026-10-10T07:24:16Z",
+      "lane": "descriptive",
+      "index": 61,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3061504,
+      "pgid": 3061418,
+      "role": "game",
+      "utc": "2026-10-10T07:24:16Z",
+      "lane": "descriptive",
+      "index": 60,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3061603,
+      "pgid": 3061603,
+      "role": "block",
+      "utc": "2026-10-10T07:24:17Z",
+      "lane": "descriptive",
+      "index": 62,
+      "smoke": false
+    },
+    {
+      "pid": 3061663,
+      "pgid": 3061603,
+      "role": "game",
+      "utc": "2026-10-10T07:24:19Z",
+      "lane": "descriptive",
+      "index": 62,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3061781,
+      "pgid": 3049679,
+      "role": "game",
+      "utc": "2026-10-10T07:24:21Z",
+      "lane": "descriptive",
+      "index": 18,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3062190,
+      "pgid": 3062190,
+      "role": "block",
+      "utc": "2026-10-10T07:24:26Z",
+      "lane": "descriptive",
+      "index": 64,
+      "smoke": false
+    },
+    {
+      "pid": 3062189,
+      "pgid": 3062189,
+      "role": "block",
+      "utc": "2026-10-10T07:24:26Z",
+      "lane": "descriptive",
+      "index": 63,
+      "smoke": false
+    },
+    {
+      "pid": 3062245,
+      "pgid": 3057707,
+      "role": "game",
+      "utc": "2026-10-10T07:24:27Z",
+      "lane": "descriptive",
+      "index": 39,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3062276,
+      "pgid": 3062190,
+      "role": "game",
+      "utc": "2026-10-10T07:24:28Z",
+      "lane": "descriptive",
+      "index": 64,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3062278,
+      "pgid": 3062189,
+      "role": "game",
+      "utc": "2026-10-10T07:24:28Z",
+      "lane": "descriptive",
+      "index": 63,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3062369,
+      "pgid": 3062369,
+      "role": "block",
+      "utc": "2026-10-10T07:24:29Z",
+      "lane": "descriptive",
+      "index": 65,
+      "smoke": false
+    },
+    {
+      "pid": 3062429,
+      "pgid": 3062369,
+      "role": "game",
+      "utc": "2026-10-10T07:24:31Z",
+      "lane": "descriptive",
+      "index": 65,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3062666,
+      "pgid": 3062666,
+      "role": "block",
+      "utc": "2026-10-10T07:24:35Z",
+      "lane": "descriptive",
+      "index": 67,
+      "smoke": false
+    },
+    {
+      "pid": 3062665,
+      "pgid": 3062665,
+      "role": "block",
+      "utc": "2026-10-10T07:24:35Z",
+      "lane": "descriptive",
+      "index": 66,
+      "smoke": false
+    },
+    {
+      "pid": 3062726,
+      "pgid": 3062666,
+      "role": "game",
+      "utc": "2026-10-10T07:24:37Z",
+      "lane": "descriptive",
+      "index": 67,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3062728,
+      "pgid": 3062665,
+      "role": "game",
+      "utc": "2026-10-10T07:24:37Z",
+      "lane": "descriptive",
+      "index": 66,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3062846,
+      "pgid": 3062846,
+      "role": "block",
+      "utc": "2026-10-10T07:24:38Z",
+      "lane": "descriptive",
+      "index": 68,
+      "smoke": false
+    },
+    {
+      "pid": 3062906,
+      "pgid": 3062846,
+      "role": "game",
+      "utc": "2026-10-10T07:24:40Z",
+      "lane": "descriptive",
+      "index": 68,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3062995,
+      "pgid": 3062995,
+      "role": "block",
+      "utc": "2026-10-10T07:24:41Z",
+      "lane": "descriptive",
+      "index": 69,
+      "smoke": false
+    },
+    {
+      "pid": 3063055,
+      "pgid": 3062995,
+      "role": "game",
+      "utc": "2026-10-10T07:24:43Z",
+      "lane": "descriptive",
+      "index": 69,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3063073,
+      "pgid": 3059105,
+      "role": "game",
+      "utc": "2026-10-10T07:24:43Z",
+      "lane": "descriptive",
+      "index": 47,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3063143,
+      "pgid": 3063143,
+      "role": "block",
+      "utc": "2026-10-10T07:24:45Z",
+      "lane": "descriptive",
+      "index": 70,
+      "smoke": false
+    },
+    {
+      "pid": 3063206,
+      "pgid": 3063143,
+      "role": "game",
+      "utc": "2026-10-10T07:24:46Z",
+      "lane": "descriptive",
+      "index": 70,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3063265,
+      "pgid": 3059107,
+      "role": "game",
+      "utc": "2026-10-10T07:24:47Z",
+      "lane": "descriptive",
+      "index": 49,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3063292,
+      "pgid": 3063292,
+      "role": "block",
+      "utc": "2026-10-10T07:24:48Z",
+      "lane": "descriptive",
+      "index": 71,
+      "smoke": false
+    },
+    {
+      "pid": 3063385,
+      "pgid": 3063292,
+      "role": "game",
+      "utc": "2026-10-10T07:24:49Z",
+      "lane": "descriptive",
+      "index": 71,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3063464,
+      "pgid": 3063464,
+      "role": "block",
+      "utc": "2026-10-10T07:24:51Z",
+      "lane": "descriptive",
+      "index": 72,
+      "smoke": false
+    },
+    {
+      "pid": 3063504,
+      "pgid": 3058779,
+      "role": "game",
+      "utc": "2026-10-10T07:24:52Z",
+      "lane": "descriptive",
+      "index": 45,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3063535,
+      "pgid": 3063464,
+      "role": "game",
+      "utc": "2026-10-10T07:24:52Z",
+      "lane": "descriptive",
+      "index": 72,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3063597,
+      "pgid": 3063597,
+      "role": "block",
+      "utc": "2026-10-10T07:24:54Z",
+      "lane": "descriptive",
+      "index": 73,
+      "smoke": false
+    },
+    {
+      "pid": 3063685,
+      "pgid": 3063597,
+      "role": "game",
+      "utc": "2026-10-10T07:24:55Z",
+      "lane": "descriptive",
+      "index": 73,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3063746,
+      "pgid": 3063746,
+      "role": "block",
+      "utc": "2026-10-10T07:24:57Z",
+      "lane": "descriptive",
+      "index": 74,
+      "smoke": false
+    },
+    {
+      "pid": 3063858,
+      "pgid": 3063746,
+      "role": "game",
+      "utc": "2026-10-10T07:24:58Z",
+      "lane": "descriptive",
+      "index": 74,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3063923,
+      "pgid": 3058358,
+      "role": "game",
+      "utc": "2026-10-10T07:25:00Z",
+      "lane": "descriptive",
+      "index": 42,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3064333,
+      "pgid": 3059265,
+      "role": "game",
+      "utc": "2026-10-10T07:25:07Z",
+      "lane": "descriptive",
+      "index": 50,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3064509,
+      "pgid": 3058777,
+      "role": "game",
+      "utc": "2026-10-10T07:25:10Z",
+      "lane": "descriptive",
+      "index": 44,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3064539,
+      "pgid": 3058511,
+      "role": "game",
+      "utc": "2026-10-10T07:25:11Z",
+      "lane": "descriptive",
+      "index": 43,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3064687,
+      "pgid": 3059414,
+      "role": "game",
+      "utc": "2026-10-10T07:25:14Z",
+      "lane": "descriptive",
+      "index": 51,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3064776,
+      "pgid": 3060060,
+      "role": "game",
+      "utc": "2026-10-10T07:25:16Z",
+      "lane": "descriptive",
+      "index": 55,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3065297,
+      "pgid": 3061603,
+      "role": "game",
+      "utc": "2026-10-10T07:25:26Z",
+      "lane": "descriptive",
+      "index": 62,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3065302,
+      "pgid": 3059737,
+      "role": "game",
+      "utc": "2026-10-10T07:25:26Z",
+      "lane": "descriptive",
+      "index": 53,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3065361,
+      "pgid": 3065361,
+      "role": "block",
+      "utc": "2026-10-10T07:25:27Z",
+      "lane": "descriptive",
+      "index": 75,
+      "smoke": false
+    },
+    {
+      "pid": 3065362,
+      "pgid": 3058185,
+      "role": "game",
+      "utc": "2026-10-10T07:25:27Z",
+      "lane": "descriptive",
+      "index": 41,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3065446,
+      "pgid": 3065361,
+      "role": "game",
+      "utc": "2026-10-10T07:25:28Z",
+      "lane": "descriptive",
+      "index": 75,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3065827,
+      "pgid": 3065827,
+      "role": "block",
+      "utc": "2026-10-10T07:25:33Z",
+      "lane": "descriptive",
+      "index": 76,
+      "smoke": false
+    },
+    {
+      "pid": 3065863,
+      "pgid": 3060675,
+      "role": "game",
+      "utc": "2026-10-10T07:25:34Z",
+      "lane": "descriptive",
+      "index": 57,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3065894,
+      "pgid": 3065827,
+      "role": "game",
+      "utc": "2026-10-10T07:25:34Z",
+      "lane": "descriptive",
+      "index": 76,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3066186,
+      "pgid": 3058034,
+      "role": "game",
+      "utc": "2026-10-10T07:25:40Z",
+      "lane": "descriptive",
+      "index": 40,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3066216,
+      "pgid": 3062190,
+      "role": "game",
+      "utc": "2026-10-10T07:25:41Z",
+      "lane": "descriptive",
+      "index": 64,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3066276,
+      "pgid": 3061268,
+      "role": "game",
+      "utc": "2026-10-10T07:25:42Z",
+      "lane": "descriptive",
+      "index": 59,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3066292,
+      "pgid": 3059104,
+      "role": "game",
+      "utc": "2026-10-10T07:25:42Z",
+      "lane": "descriptive",
+      "index": 46,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3066657,
+      "pgid": 3061418,
+      "role": "game",
+      "utc": "2026-10-10T07:25:49Z",
+      "lane": "descriptive",
+      "index": 60,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3067038,
+      "pgid": 3067038,
+      "role": "block",
+      "utc": "2026-10-10T07:25:57Z",
+      "lane": "descriptive",
+      "index": 77,
+      "smoke": false
+    },
+    {
+      "pid": 3067037,
+      "pgid": 3061419,
+      "role": "game",
+      "utc": "2026-10-10T07:25:57Z",
+      "lane": "descriptive",
+      "index": 61,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3067098,
+      "pgid": 3067038,
+      "role": "game",
+      "utc": "2026-10-10T07:25:59Z",
+      "lane": "descriptive",
+      "index": 77,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3067211,
+      "pgid": 3062666,
+      "role": "game",
+      "utc": "2026-10-10T07:26:00Z",
+      "lane": "descriptive",
+      "index": 67,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3067253,
+      "pgid": 3062189,
+      "role": "game",
+      "utc": "2026-10-10T07:26:01Z",
+      "lane": "descriptive",
+      "index": 63,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3067276,
+      "pgid": 3060212,
+      "role": "game",
+      "utc": "2026-10-10T07:26:01Z",
+      "lane": "descriptive",
+      "index": 56,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3067600,
+      "pgid": 3059736,
+      "role": "game",
+      "utc": "2026-10-10T07:26:09Z",
+      "lane": "descriptive",
+      "index": 52,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3067670,
+      "pgid": 3061120,
+      "role": "game",
+      "utc": "2026-10-10T07:26:09Z",
+      "lane": "descriptive",
+      "index": 58,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3067806,
+      "pgid": 3062995,
+      "role": "game",
+      "utc": "2026-10-10T07:26:12Z",
+      "lane": "descriptive",
+      "index": 69,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3067979,
+      "pgid": 3067979,
+      "role": "block",
+      "utc": "2026-10-10T07:26:15Z",
+      "lane": "descriptive",
+      "index": 78,
+      "smoke": false
+    },
+    {
+      "pid": 3067953,
+      "pgid": 3063143,
+      "role": "game",
+      "utc": "2026-10-10T07:26:15Z",
+      "lane": "descriptive",
+      "index": 70,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3068043,
+      "pgid": 3067979,
+      "role": "game",
+      "utc": "2026-10-10T07:26:17Z",
+      "lane": "descriptive",
+      "index": 78,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3068282,
+      "pgid": 3068282,
+      "role": "block",
+      "utc": "2026-10-10T07:26:21Z",
+      "lane": "descriptive",
+      "index": 79,
+      "smoke": false
+    },
+    {
+      "pid": 3068341,
+      "pgid": 3063292,
+      "role": "game",
+      "utc": "2026-10-10T07:26:22Z",
+      "lane": "descriptive",
+      "index": 71,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3068372,
+      "pgid": 3068282,
+      "role": "game",
+      "utc": "2026-10-10T07:26:23Z",
+      "lane": "descriptive",
+      "index": 79,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3068432,
+      "pgid": 3063597,
+      "role": "game",
+      "utc": "2026-10-10T07:26:24Z",
+      "lane": "descriptive",
+      "index": 73,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3068492,
+      "pgid": 3063464,
+      "role": "game",
+      "utc": "2026-10-10T07:26:25Z",
+      "lane": "descriptive",
+      "index": 72,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3068669,
+      "pgid": 3059106,
+      "role": "game",
+      "utc": "2026-10-10T07:26:29Z",
+      "lane": "descriptive",
+      "index": 48,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3068757,
+      "pgid": 3062369,
+      "role": "game",
+      "utc": "2026-10-10T07:26:31Z",
+      "lane": "descriptive",
+      "index": 65,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3069313,
+      "pgid": 3063746,
+      "role": "game",
+      "utc": "2026-10-10T07:26:38Z",
+      "lane": "descriptive",
+      "index": 74,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3069485,
+      "pgid": 3060059,
+      "role": "game",
+      "utc": "2026-10-10T07:26:41Z",
+      "lane": "descriptive",
+      "index": 54,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3069574,
+      "pgid": 3069574,
+      "role": "block",
+      "utc": "2026-10-10T07:26:42Z",
+      "lane": "descriptive",
+      "index": 80,
+      "smoke": false
+    },
+    {
+      "pid": 3069634,
+      "pgid": 3069574,
+      "role": "game",
+      "utc": "2026-10-10T07:26:44Z",
+      "lane": "descriptive",
+      "index": 80,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3070040,
+      "pgid": 3070040,
+      "role": "block",
+      "utc": "2026-10-10T07:26:52Z",
+      "lane": "descriptive",
+      "index": 81,
+      "smoke": false
+    },
+    {
+      "pid": 3070100,
+      "pgid": 3070040,
+      "role": "game",
+      "utc": "2026-10-10T07:26:53Z",
+      "lane": "descriptive",
+      "index": 81,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3070218,
+      "pgid": 3065361,
+      "role": "game",
+      "utc": "2026-10-10T07:26:56Z",
+      "lane": "descriptive",
+      "index": 75,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3070277,
+      "pgid": 3062665,
+      "role": "game",
+      "utc": "2026-10-10T07:26:57Z",
+      "lane": "descriptive",
+      "index": 66,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3070333,
+      "pgid": 3070333,
+      "role": "block",
+      "utc": "2026-10-10T07:26:58Z",
+      "lane": "descriptive",
+      "index": 82,
+      "smoke": false
+    },
+    {
+      "pid": 3070398,
+      "pgid": 3070333,
+      "role": "game",
+      "utc": "2026-10-10T07:26:59Z",
+      "lane": "descriptive",
+      "index": 82,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3070500,
+      "pgid": 3070500,
+      "role": "block",
+      "utc": "2026-10-10T07:27:01Z",
+      "lane": "descriptive",
+      "index": 83,
+      "smoke": false
+    },
+    {
+      "pid": 3070577,
+      "pgid": 3070500,
+      "role": "game",
+      "utc": "2026-10-10T07:27:02Z",
+      "lane": "descriptive",
+      "index": 83,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3070644,
+      "pgid": 3070644,
+      "role": "block",
+      "utc": "2026-10-10T07:27:04Z",
+      "lane": "descriptive",
+      "index": 84,
+      "smoke": false
+    },
+    {
+      "pid": 3070730,
+      "pgid": 3070644,
+      "role": "game",
+      "utc": "2026-10-10T07:27:05Z",
+      "lane": "descriptive",
+      "index": 84,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3070790,
+      "pgid": 3070790,
+      "role": "block",
+      "utc": "2026-10-10T07:27:07Z",
+      "lane": "descriptive",
+      "index": 85,
+      "smoke": false
+    },
+    {
+      "pid": 3070875,
+      "pgid": 3070790,
+      "role": "game",
+      "utc": "2026-10-10T07:27:08Z",
+      "lane": "descriptive",
+      "index": 85,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3070968,
+      "pgid": 3062846,
+      "role": "game",
+      "utc": "2026-10-10T07:27:10Z",
+      "lane": "descriptive",
+      "index": 68,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3071116,
+      "pgid": 3071116,
+      "role": "block",
+      "utc": "2026-10-10T07:27:13Z",
+      "lane": "descriptive",
+      "index": 86,
+      "smoke": false
+    },
+    {
+      "pid": 3071118,
+      "pgid": 3071118,
+      "role": "block",
+      "utc": "2026-10-10T07:27:13Z",
+      "lane": "descriptive",
+      "index": 88,
+      "smoke": false
+    },
+    {
+      "pid": 3071117,
+      "pgid": 3071117,
+      "role": "block",
+      "utc": "2026-10-10T07:27:13Z",
+      "lane": "descriptive",
+      "index": 87,
+      "smoke": false
+    },
+    {
+      "pid": 3071178,
+      "pgid": 3071116,
+      "role": "game",
+      "utc": "2026-10-10T07:27:14Z",
+      "lane": "descriptive",
+      "index": 86,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3071180,
+      "pgid": 3071118,
+      "role": "game",
+      "utc": "2026-10-10T07:27:14Z",
+      "lane": "descriptive",
+      "index": 88,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3071182,
+      "pgid": 3071117,
+      "role": "game",
+      "utc": "2026-10-10T07:27:14Z",
+      "lane": "descriptive",
+      "index": 87,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3071591,
+      "pgid": 3067038,
+      "role": "game",
+      "utc": "2026-10-10T07:27:22Z",
+      "lane": "descriptive",
+      "index": 77,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3071594,
+      "pgid": 3071594,
+      "role": "block",
+      "utc": "2026-10-10T07:27:22Z",
+      "lane": "descriptive",
+      "index": 90,
+      "smoke": false
+    },
+    {
+      "pid": 3071593,
+      "pgid": 3071593,
+      "role": "block",
+      "utc": "2026-10-10T07:27:22Z",
+      "lane": "descriptive",
+      "index": 89,
+      "smoke": false
+    },
+    {
+      "pid": 3071592,
+      "pgid": 3065827,
+      "role": "game",
+      "utc": "2026-10-10T07:27:22Z",
+      "lane": "descriptive",
+      "index": 76,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3071656,
+      "pgid": 3071594,
+      "role": "game",
+      "utc": "2026-10-10T07:27:23Z",
+      "lane": "descriptive",
+      "index": 90,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3071657,
+      "pgid": 3071593,
+      "role": "game",
+      "utc": "2026-10-10T07:27:23Z",
+      "lane": "descriptive",
+      "index": 89,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3072041,
+      "pgid": 3072041,
+      "role": "block",
+      "utc": "2026-10-10T07:27:31Z",
+      "lane": "descriptive",
+      "index": 92,
+      "smoke": false
+    },
+    {
+      "pid": 3072040,
+      "pgid": 3072040,
+      "role": "block",
+      "utc": "2026-10-10T07:27:31Z",
+      "lane": "descriptive",
+      "index": 91,
+      "smoke": false
+    },
+    {
+      "pid": 3072129,
+      "pgid": 3072041,
+      "role": "game",
+      "utc": "2026-10-10T07:27:32Z",
+      "lane": "descriptive",
+      "index": 92,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3072131,
+      "pgid": 3072040,
+      "role": "game",
+      "utc": "2026-10-10T07:27:32Z",
+      "lane": "descriptive",
+      "index": 91,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3072221,
+      "pgid": 3072221,
+      "role": "block",
+      "utc": "2026-10-10T07:27:34Z",
+      "lane": "descriptive",
+      "index": 93,
+      "smoke": false
+    },
+    {
+      "pid": 3072281,
+      "pgid": 3072221,
+      "role": "game",
+      "utc": "2026-10-10T07:27:35Z",
+      "lane": "descriptive",
+      "index": 93,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3072451,
+      "pgid": 3072451,
+      "role": "block",
+      "utc": "2026-10-10T07:27:37Z",
+      "lane": "descriptive",
+      "index": 96,
+      "smoke": false
+    },
+    {
+      "pid": 3072447,
+      "pgid": 3072447,
+      "role": "block",
+      "utc": "2026-10-10T07:27:37Z",
+      "lane": "descriptive",
+      "index": 94,
+      "smoke": false
+    },
+    {
+      "pid": 3072448,
+      "pgid": 3072448,
+      "role": "block",
+      "utc": "2026-10-10T07:27:37Z",
+      "lane": "descriptive",
+      "index": 95,
+      "smoke": false
+    },
+    {
+      "pid": 3072578,
+      "pgid": 3072447,
+      "role": "game",
+      "utc": "2026-10-10T07:27:38Z",
+      "lane": "descriptive",
+      "index": 94,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3072577,
+      "pgid": 3072451,
+      "role": "game",
+      "utc": "2026-10-10T07:27:38Z",
+      "lane": "descriptive",
+      "index": 96,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3072580,
+      "pgid": 3072448,
+      "role": "game",
+      "utc": "2026-10-10T07:27:38Z",
+      "lane": "descriptive",
+      "index": 95,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3072667,
+      "pgid": 3072667,
+      "role": "block",
+      "utc": "2026-10-10T07:27:40Z",
+      "lane": "descriptive",
+      "index": 97,
+      "smoke": false
+    },
+    {
+      "pid": 3072731,
+      "pgid": 3072667,
+      "role": "game",
+      "utc": "2026-10-10T07:27:42Z",
+      "lane": "descriptive",
+      "index": 97,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3072836,
+      "pgid": 3072836,
+      "role": "block",
+      "utc": "2026-10-10T07:27:43Z",
+      "lane": "descriptive",
+      "index": 98,
+      "smoke": false
+    },
+    {
+      "pid": 3072839,
+      "pgid": 3072839,
+      "role": "block",
+      "utc": "2026-10-10T07:27:43Z",
+      "lane": "descriptive",
+      "index": 99,
+      "smoke": false
+    },
+    {
+      "pid": 3072879,
+      "pgid": 3068282,
+      "role": "game",
+      "utc": "2026-10-10T07:27:44Z",
+      "lane": "descriptive",
+      "index": 79,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3072912,
+      "pgid": 3072839,
+      "role": "game",
+      "utc": "2026-10-10T07:27:44Z",
+      "lane": "descriptive",
+      "index": 99,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3072910,
+      "pgid": 3072836,
+      "role": "game",
+      "utc": "2026-10-10T07:27:44Z",
+      "lane": "descriptive",
+      "index": 98,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3073119,
+      "pgid": 3073119,
+      "role": "block",
+      "utc": "2026-10-10T07:27:49Z",
+      "lane": "descriptive",
+      "index": 100,
+      "smoke": false
+    },
+    {
+      "pid": 3073206,
+      "pgid": 3073119,
+      "role": "game",
+      "utc": "2026-10-10T07:27:51Z",
+      "lane": "descriptive",
+      "index": 100,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3073587,
+      "pgid": 3073587,
+      "role": "block",
+      "utc": "2026-10-10T07:27:58Z",
+      "lane": "descriptive",
+      "index": 101,
+      "smoke": false
+    },
+    {
+      "pid": 3073660,
+      "pgid": 3073587,
+      "role": "game",
+      "utc": "2026-10-10T07:28:00Z",
+      "lane": "descriptive",
+      "index": 101,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3074055,
+      "pgid": 3074055,
+      "role": "block",
+      "utc": "2026-10-10T07:28:07Z",
+      "lane": "descriptive",
+      "index": 102,
+      "smoke": false
+    },
+    {
+      "pid": 3074115,
+      "pgid": 3074055,
+      "role": "game",
+      "utc": "2026-10-10T07:28:09Z",
+      "lane": "descriptive",
+      "index": 102,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3074379,
+      "pgid": 3074379,
+      "role": "block",
+      "utc": "2026-10-10T07:28:13Z",
+      "lane": "descriptive",
+      "index": 103,
+      "smoke": false
+    },
+    {
+      "pid": 3074439,
+      "pgid": 3074379,
+      "role": "game",
+      "utc": "2026-10-10T07:28:15Z",
+      "lane": "descriptive",
+      "index": 103,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3074528,
+      "pgid": 3074528,
+      "role": "block",
+      "utc": "2026-10-10T07:28:16Z",
+      "lane": "descriptive",
+      "index": 104,
+      "smoke": false
+    },
+    {
+      "pid": 3074589,
+      "pgid": 3074528,
+      "role": "game",
+      "utc": "2026-10-10T07:28:18Z",
+      "lane": "descriptive",
+      "index": 104,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3075118,
+      "pgid": 3070040,
+      "role": "game",
+      "utc": "2026-10-10T07:28:28Z",
+      "lane": "descriptive",
+      "index": 81,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3075265,
+      "pgid": 3075265,
+      "role": "block",
+      "utc": "2026-10-10T07:28:31Z",
+      "lane": "descriptive",
+      "index": 105,
+      "smoke": false
+    },
+    {
+      "pid": 3075266,
+      "pgid": 3075266,
+      "role": "block",
+      "utc": "2026-10-10T07:28:31Z",
+      "lane": "descriptive",
+      "index": 106,
+      "smoke": false
+    },
+    {
+      "pid": 3075351,
+      "pgid": 3075265,
+      "role": "game",
+      "utc": "2026-10-10T07:28:33Z",
+      "lane": "descriptive",
+      "index": 105,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3075357,
+      "pgid": 3075266,
+      "role": "game",
+      "utc": "2026-10-10T07:28:33Z",
+      "lane": "descriptive",
+      "index": 106,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3075387,
+      "pgid": 3071117,
+      "role": "game",
+      "utc": "2026-10-10T07:28:33Z",
+      "lane": "descriptive",
+      "index": 87,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3075595,
+      "pgid": 3069574,
+      "role": "game",
+      "utc": "2026-10-10T07:28:38Z",
+      "lane": "descriptive",
+      "index": 80,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3075820,
+      "pgid": 3075820,
+      "role": "block",
+      "utc": "2026-10-10T07:28:40Z",
+      "lane": "descriptive",
+      "index": 107,
+      "smoke": false
+    },
+    {
+      "pid": 3075821,
+      "pgid": 3075821,
+      "role": "block",
+      "utc": "2026-10-10T07:28:41Z",
+      "lane": "descriptive",
+      "index": 108,
+      "smoke": false
+    },
+    {
+      "pid": 3075947,
+      "pgid": 3070790,
+      "role": "game",
+      "utc": "2026-10-10T07:28:42Z",
+      "lane": "descriptive",
+      "index": 85,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3075964,
+      "pgid": 3075820,
+      "role": "game",
+      "utc": "2026-10-10T07:28:42Z",
+      "lane": "descriptive",
+      "index": 107,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3075972,
+      "pgid": 3075821,
+      "role": "game",
+      "utc": "2026-10-10T07:28:42Z",
+      "lane": "descriptive",
+      "index": 108,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3075981,
+      "pgid": 3070644,
+      "role": "game",
+      "utc": "2026-10-10T07:28:43Z",
+      "lane": "descriptive",
+      "index": 84,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3076007,
+      "pgid": 3070333,
+      "role": "game",
+      "utc": "2026-10-10T07:28:43Z",
+      "lane": "descriptive",
+      "index": 82,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3076076,
+      "pgid": 3076076,
+      "role": "block",
+      "utc": "2026-10-10T07:28:43Z",
+      "lane": "descriptive",
+      "index": 110,
+      "smoke": false
+    },
+    {
+      "pid": 3076075,
+      "pgid": 3076075,
+      "role": "block",
+      "utc": "2026-10-10T07:28:43Z",
+      "lane": "descriptive",
+      "index": 109,
+      "smoke": false
+    },
+    {
+      "pid": 3076140,
+      "pgid": 3076075,
+      "role": "game",
+      "utc": "2026-10-10T07:28:45Z",
+      "lane": "descriptive",
+      "index": 109,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3076139,
+      "pgid": 3076076,
+      "role": "game",
+      "utc": "2026-10-10T07:28:45Z",
+      "lane": "descriptive",
+      "index": 110,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3076230,
+      "pgid": 3076230,
+      "role": "block",
+      "utc": "2026-10-10T07:28:47Z",
+      "lane": "descriptive",
+      "index": 111,
+      "smoke": false
+    },
+    {
+      "pid": 3076290,
+      "pgid": 3076230,
+      "role": "game",
+      "utc": "2026-10-10T07:28:48Z",
+      "lane": "descriptive",
+      "index": 111,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3076382,
+      "pgid": 3076382,
+      "role": "block",
+      "utc": "2026-10-10T07:28:50Z",
+      "lane": "descriptive",
+      "index": 115,
+      "smoke": false
+    },
+    {
+      "pid": 3076380,
+      "pgid": 3076380,
+      "role": "block",
+      "utc": "2026-10-10T07:28:50Z",
+      "lane": "descriptive",
+      "index": 113,
+      "smoke": false
+    },
+    {
+      "pid": 3076381,
+      "pgid": 3076381,
+      "role": "block",
+      "utc": "2026-10-10T07:28:50Z",
+      "lane": "descriptive",
+      "index": 114,
+      "smoke": false
+    },
+    {
+      "pid": 3076379,
+      "pgid": 3076379,
+      "role": "block",
+      "utc": "2026-10-10T07:28:50Z",
+      "lane": "descriptive",
+      "index": 112,
+      "smoke": false
+    },
+    {
+      "pid": 3076442,
+      "pgid": 3076382,
+      "role": "game",
+      "utc": "2026-10-10T07:28:51Z",
+      "lane": "descriptive",
+      "index": 115,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3076445,
+      "pgid": 3076380,
+      "role": "game",
+      "utc": "2026-10-10T07:28:51Z",
+      "lane": "descriptive",
+      "index": 113,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3076448,
+      "pgid": 3076379,
+      "role": "game",
+      "utc": "2026-10-10T07:28:51Z",
+      "lane": "descriptive",
+      "index": 112,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3076447,
+      "pgid": 3076381,
+      "role": "game",
+      "utc": "2026-10-10T07:28:51Z",
+      "lane": "descriptive",
+      "index": 114,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3076772,
+      "pgid": 3067979,
+      "role": "game",
+      "utc": "2026-10-10T07:28:57Z",
+      "lane": "descriptive",
+      "index": 78,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3076948,
+      "pgid": 3072667,
+      "role": "game",
+      "utc": "2026-10-10T07:29:01Z",
+      "lane": "descriptive",
+      "index": 97,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3077095,
+      "pgid": 3072839,
+      "role": "game",
+      "utc": "2026-10-10T07:29:04Z",
+      "lane": "descriptive",
+      "index": 99,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3077096,
+      "pgid": 3072448,
+      "role": "game",
+      "utc": "2026-10-10T07:29:04Z",
+      "lane": "descriptive",
+      "index": 95,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3077123,
+      "pgid": 3071116,
+      "role": "game",
+      "utc": "2026-10-10T07:29:04Z",
+      "lane": "descriptive",
+      "index": 86,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3077215,
+      "pgid": 3072041,
+      "role": "game",
+      "utc": "2026-10-10T07:29:06Z",
+      "lane": "descriptive",
+      "index": 92,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3077274,
+      "pgid": 3071594,
+      "role": "game",
+      "utc": "2026-10-10T07:29:07Z",
+      "lane": "descriptive",
+      "index": 90,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3077364,
+      "pgid": 3072221,
+      "role": "game",
+      "utc": "2026-10-10T07:29:09Z",
+      "lane": "descriptive",
+      "index": 93,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3077453,
+      "pgid": 3071593,
+      "role": "game",
+      "utc": "2026-10-10T07:29:11Z",
+      "lane": "descriptive",
+      "index": 89,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3077834,
+      "pgid": 3072040,
+      "role": "game",
+      "utc": "2026-10-10T07:29:18Z",
+      "lane": "descriptive",
+      "index": 91,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3078352,
+      "pgid": 3071118,
+      "role": "game",
+      "utc": "2026-10-10T07:29:28Z",
+      "lane": "descriptive",
+      "index": 88,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3078447,
+      "pgid": 3072451,
+      "role": "game",
+      "utc": "2026-10-10T07:29:30Z",
+      "lane": "descriptive",
+      "index": 96,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3078591,
+      "pgid": 3073587,
+      "role": "game",
+      "utc": "2026-10-10T07:29:33Z",
+      "lane": "descriptive",
+      "index": 101,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3078741,
+      "pgid": 3074055,
+      "role": "game",
+      "utc": "2026-10-10T07:29:36Z",
+      "lane": "descriptive",
+      "index": 102,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3079062,
+      "pgid": 3070500,
+      "role": "game",
+      "utc": "2026-10-10T07:29:42Z",
+      "lane": "descriptive",
+      "index": 83,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3079610,
+      "pgid": 3079610,
+      "role": "block",
+      "utc": "2026-10-10T07:29:50Z",
+      "lane": "descriptive",
+      "index": 117,
+      "smoke": false
+    },
+    {
+      "pid": 3079609,
+      "pgid": 3079609,
+      "role": "block",
+      "utc": "2026-10-10T07:29:50Z",
+      "lane": "descriptive",
+      "index": 116,
+      "smoke": false
+    },
+    {
+      "pid": 3079674,
+      "pgid": 3079610,
+      "role": "game",
+      "utc": "2026-10-10T07:29:52Z",
+      "lane": "descriptive",
+      "index": 117,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3079676,
+      "pgid": 3079609,
+      "role": "game",
+      "utc": "2026-10-10T07:29:52Z",
+      "lane": "descriptive",
+      "index": 116,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3079706,
+      "pgid": 3074379,
+      "role": "game",
+      "utc": "2026-10-10T07:29:52Z",
+      "lane": "descriptive",
+      "index": 103,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3079885,
+      "pgid": 3074528,
+      "role": "game",
+      "utc": "2026-10-10T07:29:55Z",
+      "lane": "descriptive",
+      "index": 104,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3080379,
+      "pgid": 3080379,
+      "role": "block",
+      "utc": "2026-10-10T07:30:05Z",
+      "lane": "descriptive",
+      "index": 118,
+      "smoke": false
+    },
+    {
+      "pid": 3080438,
+      "pgid": 3075265,
+      "role": "game",
+      "utc": "2026-10-10T07:30:06Z",
+      "lane": "descriptive",
+      "index": 105,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3080463,
+      "pgid": 3080379,
+      "role": "game",
+      "utc": "2026-10-10T07:30:07Z",
+      "lane": "descriptive",
+      "index": 118,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3080470,
+      "pgid": 3075820,
+      "role": "game",
+      "utc": "2026-10-10T07:30:07Z",
+      "lane": "descriptive",
+      "index": 107,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3080678,
+      "pgid": 3080678,
+      "role": "block",
+      "utc": "2026-10-10T07:30:11Z",
+      "lane": "descriptive",
+      "index": 120,
+      "smoke": false
+    },
+    {
+      "pid": 3080677,
+      "pgid": 3080677,
+      "role": "block",
+      "utc": "2026-10-10T07:30:11Z",
+      "lane": "descriptive",
+      "index": 119,
+      "smoke": false
+    },
+    {
+      "pid": 3080723,
+      "pgid": 3076076,
+      "role": "game",
+      "utc": "2026-10-10T07:30:12Z",
+      "lane": "descriptive",
+      "index": 110,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3080739,
+      "pgid": 3080678,
+      "role": "game",
+      "utc": "2026-10-10T07:30:13Z",
+      "lane": "descriptive",
+      "index": 120,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3080741,
+      "pgid": 3080677,
+      "role": "game",
+      "utc": "2026-10-10T07:30:13Z",
+      "lane": "descriptive",
+      "index": 119,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3080832,
+      "pgid": 3080832,
+      "role": "block",
+      "utc": "2026-10-10T07:30:14Z",
+      "lane": "descriptive",
+      "index": 121,
+      "smoke": false
+    },
+    {
+      "pid": 3080919,
+      "pgid": 3080832,
+      "role": "game",
+      "utc": "2026-10-10T07:30:16Z",
+      "lane": "descriptive",
+      "index": 121,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3081154,
+      "pgid": 3081154,
+      "role": "block",
+      "utc": "2026-10-10T07:30:20Z",
+      "lane": "descriptive",
+      "index": 122,
+      "smoke": false
+    },
+    {
+      "pid": 3081153,
+      "pgid": 3076075,
+      "role": "game",
+      "utc": "2026-10-10T07:30:20Z",
+      "lane": "descriptive",
+      "index": 109,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3081214,
+      "pgid": 3081154,
+      "role": "game",
+      "utc": "2026-10-10T07:30:22Z",
+      "lane": "descriptive",
+      "index": 122,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3081273,
+      "pgid": 3072836,
+      "role": "game",
+      "utc": "2026-10-10T07:30:23Z",
+      "lane": "descriptive",
+      "index": 98,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3081335,
+      "pgid": 3076380,
+      "role": "game",
+      "utc": "2026-10-10T07:30:24Z",
+      "lane": "descriptive",
+      "index": 113,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3081365,
+      "pgid": 3073119,
+      "role": "game",
+      "utc": "2026-10-10T07:30:25Z",
+      "lane": "descriptive",
+      "index": 100,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3081482,
+      "pgid": 3081482,
+      "role": "block",
+      "utc": "2026-10-10T07:30:26Z",
+      "lane": "descriptive",
+      "index": 124,
+      "smoke": false
+    },
+    {
+      "pid": 3081481,
+      "pgid": 3081481,
+      "role": "block",
+      "utc": "2026-10-10T07:30:26Z",
+      "lane": "descriptive",
+      "index": 123,
+      "smoke": false
+    },
+    {
+      "pid": 3081544,
+      "pgid": 3081481,
+      "role": "game",
+      "utc": "2026-10-10T07:30:28Z",
+      "lane": "descriptive",
+      "index": 123,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3081542,
+      "pgid": 3081482,
+      "role": "game",
+      "utc": "2026-10-10T07:30:28Z",
+      "lane": "descriptive",
+      "index": 124,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3081574,
+      "pgid": 3076381,
+      "role": "game",
+      "utc": "2026-10-10T07:30:28Z",
+      "lane": "descriptive",
+      "index": 114,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3081635,
+      "pgid": 3081635,
+      "role": "block",
+      "utc": "2026-10-10T07:30:29Z",
+      "lane": "descriptive",
+      "index": 125,
+      "smoke": false
+    },
+    {
+      "pid": 3081666,
+      "pgid": 3076379,
+      "role": "game",
+      "utc": "2026-10-10T07:30:30Z",
+      "lane": "descriptive",
+      "index": 112,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3081696,
+      "pgid": 3072447,
+      "role": "game",
+      "utc": "2026-10-10T07:30:31Z",
+      "lane": "descriptive",
+      "index": 94,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3081698,
+      "pgid": 3081635,
+      "role": "game",
+      "utc": "2026-10-10T07:30:31Z",
+      "lane": "descriptive",
+      "index": 125,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3081931,
+      "pgid": 3081931,
+      "role": "block",
+      "utc": "2026-10-10T07:30:35Z",
+      "lane": "descriptive",
+      "index": 127,
+      "smoke": false
+    },
+    {
+      "pid": 3081932,
+      "pgid": 3081932,
+      "role": "block",
+      "utc": "2026-10-10T07:30:35Z",
+      "lane": "descriptive",
+      "index": 128,
+      "smoke": false
+    },
+    {
+      "pid": 3081930,
+      "pgid": 3081930,
+      "role": "block",
+      "utc": "2026-10-10T07:30:35Z",
+      "lane": "descriptive",
+      "index": 126,
+      "smoke": false
+    },
+    {
+      "pid": 3081933,
+      "pgid": 3081933,
+      "role": "block",
+      "utc": "2026-10-10T07:30:35Z",
+      "lane": "descriptive",
+      "index": 129,
+      "smoke": false
+    },
+    {
+      "pid": 3082029,
+      "pgid": 3081930,
+      "role": "game",
+      "utc": "2026-10-10T07:30:37Z",
+      "lane": "descriptive",
+      "index": 126,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3082027,
+      "pgid": 3081932,
+      "role": "game",
+      "utc": "2026-10-10T07:30:37Z",
+      "lane": "descriptive",
+      "index": 128,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3082024,
+      "pgid": 3081931,
+      "role": "game",
+      "utc": "2026-10-10T07:30:37Z",
+      "lane": "descriptive",
+      "index": 127,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3082030,
+      "pgid": 3081933,
+      "role": "game",
+      "utc": "2026-10-10T07:30:37Z",
+      "lane": "descriptive",
+      "index": 129,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3082106,
+      "pgid": 3082106,
+      "role": "block",
+      "utc": "2026-10-10T07:30:38Z",
+      "lane": "descriptive",
+      "index": 130,
+      "smoke": false
+    },
+    {
+      "pid": 3082182,
+      "pgid": 3082106,
+      "role": "game",
+      "utc": "2026-10-10T07:30:40Z",
+      "lane": "descriptive",
+      "index": 130,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3082271,
+      "pgid": 3075821,
+      "role": "game",
+      "utc": "2026-10-10T07:30:42Z",
+      "lane": "descriptive",
+      "index": 108,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3082565,
+      "pgid": 3082565,
+      "role": "block",
+      "utc": "2026-10-10T07:30:48Z",
+      "lane": "descriptive",
+      "index": 131,
+      "smoke": false
+    },
+    {
+      "pid": 3082729,
+      "pgid": 3082565,
+      "role": "game",
+      "utc": "2026-10-10T07:30:49Z",
+      "lane": "descriptive",
+      "index": 131,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3082917,
+      "pgid": 3082917,
+      "role": "block",
+      "utc": "2026-10-10T07:30:51Z",
+      "lane": "descriptive",
+      "index": 132,
+      "smoke": false
+    },
+    {
+      "pid": 3082995,
+      "pgid": 3082917,
+      "role": "game",
+      "utc": "2026-10-10T07:30:52Z",
+      "lane": "descriptive",
+      "index": 132,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3083386,
+      "pgid": 3083386,
+      "role": "block",
+      "utc": "2026-10-10T07:31:00Z",
+      "lane": "descriptive",
+      "index": 133,
+      "smoke": false
+    },
+    {
+      "pid": 3083446,
+      "pgid": 3083386,
+      "role": "game",
+      "utc": "2026-10-10T07:31:01Z",
+      "lane": "descriptive",
+      "index": 133,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3083680,
+      "pgid": 3083680,
+      "role": "block",
+      "utc": "2026-10-10T07:31:06Z",
+      "lane": "descriptive",
+      "index": 134,
+      "smoke": false
+    },
+    {
+      "pid": 3083681,
+      "pgid": 3076230,
+      "role": "game",
+      "utc": "2026-10-10T07:31:06Z",
+      "lane": "descriptive",
+      "index": 111,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3083767,
+      "pgid": 3083680,
+      "role": "game",
+      "utc": "2026-10-10T07:31:07Z",
+      "lane": "descriptive",
+      "index": 134,
+      "arm": "K0",
+      "smoke": false
+    },
+    {
+      "pid": 3083858,
+      "pgid": 3075266,
+      "role": "game",
+      "utc": "2026-10-10T07:31:09Z",
+      "lane": "descriptive",
+      "index": 106,
+      "arm": "R3a",
+      "smoke": false
+    },
+    {
+      "pid": 3084006,
+      "pgid": 3084006,
+      "role": "block",
+      "utc": "2026-10-10T07:31:12Z",
+      "lane": "descriptive",
+      "index": 136,
+      "smoke": false
+    },
+    {
+      "pid": 3084005,
+      "pgid": 3084005,
+      "role": "block",
+      "utc": "2026-10-10T07:31:12Z",
+      "lane": "descriptive",
+      "index": 135,
+      "smoke": false
+    }
+  ]
+}

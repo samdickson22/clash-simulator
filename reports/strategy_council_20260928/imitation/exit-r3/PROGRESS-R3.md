@@ -438,3 +438,27 @@ only; do not useoriginalJ1 collectors forJ2. Currentknownmeteredround2CPU
 467.999198s/GPUreservationwall121.296787s; openfit/report costs pending.
 Timer stillenabled10min(next07:32:26.778Z), updatedfor r1(b)/admitted01+03,
 identityunchanged; deleteonly ENTIREextensioncomplete/expiryvacancy.
+
+2026-10-10T07:47:03Z — Round2 metadata: D16 final2500 clean fit exit now captured; C09/E13 continue.
+Bounded original advance --descriptive remains authorized for final GPU offline
+and active01 descriptive; it does NOT launch old eight-worker03 replay.
+Latest01 reporting 259/600 complete paired blocks, no partial outcome reduction.
+New coordinator03 split found through thread position5496: G persistent0–55,
+R3 light56–59. Draft shared03/PLAN.md plus03-only operational freeze changes
+manager59/threeworkers56–58 and performs unchanged Stage1 reduction inside
+replay manager AFTER all64 scoring children reap, charged once in pool tree.
+Active01 and GPU original a0beb995 freezes remain immutable. New guard binds
+G32878161,actualPGID2711936/start140691635/commandSHA and operational hashes,
+allGthreadsIdle19/0–55,allR3threadsOther10/56–59,home24GiB/ownedSTOP/deadline.
+Ten pure injected/AST checks passed03 07:45:19Z CPU.039852; observer2773043
+independently absent. Commit/push/actualgitblob deployment + fresh shared03
+admission MUST precede any03 scientific work; no scoring outcomes yet.
+
+Metadata-only audit_vacancy.py observes groups/locks/clean final fits and
+refuses publication before all extension decisions. Dryrun correctly shows
+active16/01 and idle03; copied01 CODE-QUALIFICATION/03 replay meters are not
+misattributed to other hosts. check_fits now stores exactJSONraw+SHA. Renderer
+fixes supervisor+trainer CPU accounting, adds diagnostics/provenance and
+combined-cost-summary.json with global exact-meter SHA dedup; originalprep
+sum independently matches originalledger. Smallmetadata/audit overhead
+remains disclosed. No frozen model/scorer/gate/seed/protocol changes.

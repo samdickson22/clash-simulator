@@ -1,6 +1,7 @@
 {
   "relative": "R3d-launch.json",
   "sha256": "c22e43a09ba37ea4018c1f4ec0a14cf741f2e76db847a8921fb607ea0f41285c",
+  "raw": "{\n  \"utc\": \"2026-10-10T06:31:41Z\",\n  \"host\": \"127x16\",\n  \"supervisor_pid\": 2038249,\n  \"supervisor_pgid\": 2038249,\n  \"trainer_pid\": 2038284,\n  \"trainer_pgid\": 2038284,\n  \"command\": [\n    \"taskset\",\n    \"-c\",\n    \"118,119,126\",\n    \"bash\",\n    \"/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/run_fit.sh\",\n    \"R3d\"\n  ],\n  \"stop_file\": \"/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/FIT.STOP\",\n  \"checkpoint_stop_deadline\": \"2026-10-11T05:15:00Z\"\n}\n",
   "value": {
     "utc": "2026-10-10T06:31:41Z",
     "host": "127x16",

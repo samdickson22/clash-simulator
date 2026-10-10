@@ -1,0 +1,404 @@
+{
+  "utc": "2026-10-10T07:47:41Z",
+  "final": false,
+  "cpu_seconds": 51505.60288900001,
+  "gpu_wall_seconds": 15272.535597166047,
+  "meters": [
+    {
+      "category": "final metadata audits",
+      "sha256": "4246ed0bd8a1a4b12440dcf30a93e93ca60180e5e091bb2faa6e1926aa615123",
+      "path": "../receipts/process-snapshots/127x04/history/REGRET04-INDEPENDENT-VACATED-4246ed0bd8a1a4b12440dcf30a93e93ca60180e5e091bb2faa6e1926aa615123.json",
+      "cpu_seconds": 0.11119,
+      "gpu_wall_seconds": 0.0,
+      "status": null,
+      "reason": null,
+      "experiment": "original"
+    },
+    {
+      "category": "final metadata audits",
+      "sha256": "ef900725e1347aa91ef94ca254ec77b91d0eca8f2e3f526b9130ede68a9cacf9",
+      "path": "../receipts/process-snapshots/127x04/history/REGRET04-REDUCTION-IDENTITY-ef900725e1347aa91ef94ca254ec77b91d0eca8f2e3f526b9130ede68a9cacf9.json",
+      "cpu_seconds": 3.282016,
+      "gpu_wall_seconds": 0.0,
+      "status": null,
+      "reason": null,
+      "experiment": "original"
+    },
+    {
+      "category": "reduction",
+      "sha256": "7cd8469b8aa8e3105ba4cad50e283c6f8962ca3c0cb06fde881751ed12a6e5a2",
+      "path": "../receipts/process-snapshots/127x04/history/reduce-regret-meter-7cd8469b8aa8e3105ba4cad50e283c6f8962ca3c0cb06fde881751ed12a6e5a2.json",
+      "cpu_seconds": 1.1779410000000001,
+      "gpu_wall_seconds": 0.0,
+      "status": null,
+      "reason": null,
+      "experiment": "original"
+    },
+    {
+      "category": "CPU replay/games",
+      "sha256": "a7c1527075a020722604ed6ce8ce42f44ebe5799f124feb5a97b0e24411534c9",
+      "path": "../receipts/process-snapshots/127x04/history/regret--pool-meter-1129930-a7c1527075a020722604ed6ce8ce42f44ebe5799f124feb5a97b0e24411534c9.json",
+      "cpu_seconds": 7455.435436,
+      "gpu_wall_seconds": 0.0,
+      "status": "complete",
+      "reason": null,
+      "experiment": "original"
+    },
+    {
+      "category": "CPU staging",
+      "sha256": "eb4900c9d4d03db673ecb1f43e0f42720c6d51de260f73d82fb6b507aa368929",
+      "path": "../receipts/process-snapshots/127x04/history/regret04-staging-meter-1126275-eb4900c9d4d03db673ecb1f43e0f42720c6d51de260f73d82fb6b507aa368929.json",
+      "cpu_seconds": 2.096929,
+      "gpu_wall_seconds": 0.0,
+      "status": null,
+      "reason": null,
+      "experiment": "original"
+    },
+    {
+      "category": "CPU staging",
+      "sha256": "5fbc4a6ca0cd2eba8de559361efb10b11bd2a165faa65917ffc4ef83639d497d",
+      "path": "../receipts/process-snapshots/127x04/history/regret04-staging-meter-865011-5fbc4a6ca0cd2eba8de559361efb10b11bd2a165faa65917ffc4ef83639d497d.json",
+      "cpu_seconds": 16.468018999999998,
+      "gpu_wall_seconds": 0.0,
+      "status": null,
+      "reason": null,
+      "experiment": "original"
+    },
+    {
+      "category": "fits",
+      "sha256": "cd5c23d511b65c3b2a5b651c858241397968169e46155be0b5c7a16447bc6199",
+      "path": "../receipts/process-snapshots/127x09/history/R3a-exit-cd5c23d511b65c3b2a5b651c858241397968169e46155be0b5c7a16447bc6199.json",
+      "cpu_seconds": 16077.308860000001,
+      "gpu_wall_seconds": 5336.313263178803,
+      "status": null,
+      "reason": null,
+      "experiment": "original"
+    },
+    {
+      "category": "GPU offline",
+      "sha256": "987f5b0f5b330abd119be58ffd17edc8a934405c7b5ef502705fed281d7d64b8",
+      "path": "../receipts/process-snapshots/127x09/history/offline--R3a-attempt-meter-2974693-987f5b0f5b330abd119be58ffd17edc8a934405c7b5ef502705fed281d7d64b8.json",
+      "cpu_seconds": 17.173684,
+      "gpu_wall_seconds": 16.214333286043257,
+      "status": "complete",
+      "reason": null,
+      "experiment": "original"
+    },
+    {
+      "category": "fits",
+      "sha256": "6613a1c4c02f9d21979e76f9547cce8ff78ff2d0a2a431457bf4b82b23bf6bfa",
+      "path": "../receipts/process-snapshots/127x16/history/R3b-exit-6613a1c4c02f9d21979e76f9547cce8ff78ff2d0a2a431457bf4b82b23bf6bfa.json",
+      "cpu_seconds": 15019.517736,
+      "gpu_wall_seconds": 5317.54560787091,
+      "status": null,
+      "reason": null,
+      "experiment": "original"
+    },
+    {
+      "category": "GPU offline",
+      "sha256": "acb23c1bdca641d80a546ef074df64538d06e8bcd89f878402a1dde6232761a7",
+      "path": "../receipts/process-snapshots/127x16/history/offline--R3b-attempt-meter-1863347-acb23c1bdca641d80a546ef074df64538d06e8bcd89f878402a1dde6232761a7.json",
+      "cpu_seconds": 17.058716,
+      "gpu_wall_seconds": 16.08780382014811,
+      "status": "complete",
+      "reason": null,
+      "experiment": "original"
+    },
+    {
+      "category": "original preparation/qualification",
+      "sha256": "289e576f632d8e0683966878b18a16fa57000965f3249acb642659dee49f562c",
+      "path": "../receipts/G-verification.json",
+      "cpu_seconds": 5.242464,
+      "gpu_wall_seconds": 0,
+      "experiment": "original"
+    },
+    {
+      "category": "original preparation/qualification",
+      "sha256": "17cfb91b490f0d62e4e140322e01ccf5367d18dc3223a3140076d75a6965b2f7",
+      "path": "../receipts/G-staging-09.json",
+      "cpu_seconds": 13.885933000000001,
+      "gpu_wall_seconds": 0,
+      "experiment": "original"
+    },
+    {
+      "category": "original preparation/qualification",
+      "sha256": "2779f21a3c94b7eddd9ce9d0732b8f4eba4efc47179e428e22cf79be1b9c3bbb",
+      "path": "../receipts/G-staging-16.json",
+      "cpu_seconds": 13.580354,
+      "gpu_wall_seconds": 0,
+      "experiment": "original"
+    },
+    {
+      "category": "original preparation/qualification",
+      "sha256": "48a671ebd6173768b251360604dfe2f7563c4aa7b424720a9c5e6e36ea4c965b",
+      "path": "../receipts/tests.json",
+      "cpu_seconds": 3.77257,
+      "gpu_wall_seconds": 0,
+      "experiment": "original"
+    },
+    {
+      "category": "original preparation/qualification",
+      "sha256": "20769cf2f7997541537017b351ae80ae2af966ccb2ebaf0a0dd02684a6b2b7c2",
+      "path": "../receipts/seed-audit.json",
+      "cpu_seconds": 0.06375,
+      "gpu_wall_seconds": 0,
+      "experiment": "original"
+    },
+    {
+      "category": "original preparation/qualification",
+      "sha256": "1e41fafc0b8f6ccbbf8e7f20a0905bf6898cf5fc476ca2948fd783c0b0de5721",
+      "path": "../receipts/evaluation-tests-first.json",
+      "cpu_seconds": 1.2578310000000001,
+      "gpu_wall_seconds": 0,
+      "experiment": "original"
+    },
+    {
+      "category": "original preparation/qualification",
+      "sha256": "0e8e3b0996bcf53474b57563e294b1407d51673880d0c36bd852ebcc0fd14326",
+      "path": "../receipts/evaluation-tests.json",
+      "cpu_seconds": 1.2501440000000001,
+      "gpu_wall_seconds": 0,
+      "experiment": "original"
+    },
+    {
+      "category": "original preparation/qualification",
+      "sha256": "2dea339b10df2b2ff7534590dc5d8a531a4ff512823f87ad154399ebe6e8b591",
+      "path": "../receipts/regret04-tests.json",
+      "cpu_seconds": 0.08710599999999999,
+      "gpu_wall_seconds": 0,
+      "experiment": "original"
+    },
+    {
+      "category": "original preparation/qualification",
+      "sha256": "25d841ab41ece85026988b014c6e2c7acae597da774e584d502eb7a5faa36b22",
+      "path": "../receipts/regret04-tests-clarification.json",
+      "cpu_seconds": 0.09265699999999999,
+      "gpu_wall_seconds": 0,
+      "experiment": "original"
+    },
+    {
+      "category": "original preparation/qualification",
+      "sha256": "53b5d3aaeae1332816746ea1cc2e18677ba242a24c2a5f1ecbb4082fbca05e7d",
+      "path": "../receipts/regret04-tests-vacancy-lead.json",
+      "cpu_seconds": 0.095382,
+      "gpu_wall_seconds": 0,
+      "experiment": "original"
+    },
+    {
+      "category": "staging",
+      "sha256": "5c4264772e791351cc87a643990073ecb502c3f60aca2d469a9b0233bd777054",
+      "path": "receipts/base-staging-09.json",
+      "cpu_seconds": 10.85271,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "staging",
+      "sha256": "6e6b7a487917bbbacd1ee284dd5056210f106460e7b799c22c2292cd4aa2a13f",
+      "path": "receipts/base-staging-13.json",
+      "cpu_seconds": 15.024329,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "staging",
+      "sha256": "073f8e4685205fcc02e8294e281dfa3a1fae1ab85518865f0049f6fbecfeb434",
+      "path": "receipts/base-staging-16-attempt1.json",
+      "cpu_seconds": 9.129108,
+      "gpu_wall_seconds": 0,
+      "status": "failed",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "staging",
+      "sha256": "ab102b5e144fb90643c181396d3015e549584810152ae076131e5aaf946efe47",
+      "path": "receipts/base-staging-16.json",
+      "cpu_seconds": 1.4324,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "seed audit",
+      "path": "receipts/seed-audit.json",
+      "cpu_seconds": 0.186902,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "sha256": "190883b029bcf052ede9e53526b47ca6f2915477910d1f182d606d4905696c75",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "void prepublication startup",
+      "path": "receipts/R3c-invalid-prelaunch-attempt1-exit.json",
+      "cpu_seconds": 29.345296,
+      "gpu_wall_seconds": 40.40560300811194,
+      "status": "void",
+      "reason": "owned FIT.STOP",
+      "sha256": "8a813836e35f6dcd8a442c7ffd00099b10c0f468ba5d5d1a817484b8c241008d",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "void prepublication startup",
+      "path": "receipts/R3d-invalid-prelaunch-attempt1-exit.json",
+      "cpu_seconds": 30.015090999999998,
+      "gpu_wall_seconds": 40.414993988815695,
+      "status": "void",
+      "reason": "owned FIT.STOP",
+      "sha256": "d4c7e5da5ce33e6210e4491dba5202c4edd94360f217b38ee628bf535b64c74a",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "void prepublication startup",
+      "path": "receipts/R3e-invalid-prelaunch-attempt1-exit.json",
+      "cpu_seconds": 30.817172999999997,
+      "gpu_wall_seconds": 40.47618981311098,
+      "status": "void",
+      "reason": "owned FIT.STOP",
+      "sha256": "d68616319c42a3c252603e11a5e800fd899d47d8cd3b321da3f2f722d2ee9a05",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "home staging failed1",
+      "sha256": "379cae09cd0eb68f82f015ad5ecae6221b43b373d897082eaa41642604c87534",
+      "path": "receipts/HOME-STAGING-attempt1.json",
+      "cpu_seconds": 0.11757,
+      "gpu_wall_seconds": 0,
+      "status": "failed",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "home staging incomplete2",
+      "sha256": "6baad0178db595ffd5508f0513ed2e610f172a56dbc95b493297d1fa55ff7537",
+      "path": "receipts/HOME-STAGING-attempt2.json",
+      "cpu_seconds": 1.3680179999999997,
+      "gpu_wall_seconds": 0,
+      "status": "failed",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "home staging final3",
+      "sha256": "d5ae569dd8e628be058e84012cca21ff22e6af2f9c43608ac091acf7c44434db",
+      "path": "receipts/HOME-STAGING.json",
+      "cpu_seconds": 0.299573,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "evaluation code qualification",
+      "sha256": "bddff9b5e426fe2f32974ac2ddefcb968724a2d61a672b726ed99cc76885c89f",
+      "path": "receipts/CODE-QUALIFICATION.json",
+      "cpu_seconds": 16.445698,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "regret base staging",
+      "sha256": "d9ba11169c0cb6891edbaf71aca7b1e7e42abb27f039183fcfe5b9839275d21c",
+      "path": "receipts/REGRET-BASE-STAGING.json",
+      "cpu_seconds": 2.6684339999999995,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "evaluation pin verification",
+      "sha256": "f51403f2e8a5ab0dcd8f6ae643943d1c38e8c4ad5be648cfe04307b85cfa662b",
+      "path": "receipts/evaluation-deployment-127x01.json",
+      "cpu_seconds": 1.260443,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "evaluation pin verification",
+      "sha256": "49cdf57c17ae330d011a77b016693c2500b85200255466584c354d02d7b6fe05",
+      "path": "receipts/evaluation-deployment-127x03.json",
+      "cpu_seconds": 2.078966,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "evaluation pin verification",
+      "sha256": "b6494b4cf2367d2d71e146af361117f1d2bffd4685c7562710d08d97a8959063",
+      "path": "receipts/evaluation-deployment-127x09.json",
+      "cpu_seconds": 0.052412,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "evaluation pin verification",
+      "sha256": "c3effd36827f5e366c742233c8d48f5f693f36d4f7d0c49c8e6070155a1f18c3",
+      "path": "receipts/evaluation-deployment-127x16.json",
+      "cpu_seconds": 0.048635,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "evaluation pin verification",
+      "sha256": "3c5972870268f07f59849fe005b795ac8ca8d0e0a1f9cf4c904b72e0706f5878",
+      "path": "receipts/evaluation-deployment-127x13.json",
+      "cpu_seconds": 0.061496999999999996,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "whole CPU pool",
+      "sha256": "9fdb7c0c3ec160495619a7bfd49eab41d0b54643f86cf15733a5f11603ffe491",
+      "path": "receipts/evaluation-snapshots/127x01/history/k0-descriptive-smoke--pool-meter-3032946-9fdb7c0c3ec160495619a7bfd49eab41d0b54643f86cf15733a5f11603ffe491.json",
+      "cpu_seconds": 315.56721600000003,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "host": "127x01",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "reduction",
+      "sha256": "f0c8fe810d0173bb3c3cfa8c1f519e3b6049bfb4e3f326725519b5c3d46ab18b",
+      "path": "receipts/evaluation-snapshots/127x01/history/reduce-descriptive-1-meter-3046425-f0c8fe810d0173bb3c3cfa8c1f519e3b6049bfb4e3f326725519b5c3d46ab18b.json",
+      "cpu_seconds": 1.227727,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "host": "127x01",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "fit",
+      "sha256": "f836abba095df9dd753aa9295b4715ab90fbda9164ab6ebd209129b388939203",
+      "path": "receipts/process-snapshots/127x16/R3d-exit.json",
+      "cpu_seconds": 12371.995628,
+      "gpu_wall_seconds": 4449.3410954691935,
+      "status": "complete",
+      "host": "127x16",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "offline",
+      "sha256": "995520e3471bde13c0c3223d9491ebe14d6db2f4b5176ad75e454382243b89ea",
+      "path": "receipts/evaluation-snapshots/127x16/history/offline--R3d-attempt-meter-2290174-995520e3471bde13c0c3223d9491ebe14d6db2f4b5176ad75e454382243b89ea.json",
+      "cpu_seconds": 16.609493,
+      "gpu_wall_seconds": 15.736706730909646,
+      "status": "complete",
+      "host": "127x16",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "shared03 operational qualification",
+      "sha256": "460f8d138882a9e0477d47d80b470c892d1fbb7748a42e1d0225eb1ccfb8ea06",
+      "path": "shared03/receipts/tests.json",
+      "cpu_seconds": 0.039852,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "experiment": "round2/descriptive"
+    }
+  ],
+  "accounting": "Exact original meter SHA globally once, original plus extension; no nested scientific diagnostics; open process costs pending until exits",
+  "unmetered_overhead": "Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted."
+}

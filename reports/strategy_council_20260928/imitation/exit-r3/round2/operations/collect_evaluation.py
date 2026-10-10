@@ -28,7 +28,8 @@ for p in Path('/proc').iterdir():
 print(json.dumps(dict(host=HOST,utc=subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip(),records=records,live=live)))
 '''.replace('JOB',repr(J)).replace('HOST',repr(host))
     core=39 if host=='127x01' else 59 if host=='127x03' else 126
-    p=subprocess.run(['ssh','-o','ConnectTimeout=10',host,'nice -n 10 taskset -c '+str(core)+' '+B+'/venv/bin/python -B -'],input=code,text=True,capture_output=True,check=True,timeout=45)
+    interpreter='/usr/bin/python3' if host=='127x03' else B+'/venv/bin/python'
+    p=subprocess.run(['ssh','-o','ConnectTimeout=10',host,'nice -n 10 taskset -c '+str(core)+' '+interpreter+' -B -'],input=code,text=True,capture_output=True,check=True,timeout=45)
     bundle=json.loads(p.stdout);target=ROOT/'receipts/evaluation-snapshots'/host;target.mkdir(parents=True,exist_ok=True);history=target/'history';history.mkdir(exist_ok=True)
     for item in bundle.pop('records'):
         assert hashlib.sha256(item['raw'].encode()).hexdigest()==item['sha256'] and json.loads(item['raw'])==item['value']

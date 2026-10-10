@@ -1,46 +1,5 @@
 {
   "host": "127x16",
-  "utc": "2026-10-10T07:23:01Z",
-  "live": [
-    {
-      "pid": 2038249,
-      "pgid": 2038249,
-      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/supervise.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2 --arm R3d "
-    },
-    {
-      "pid": 2038284,
-      "pgid": 2038284,
-      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus --teacher-ratio 1 --extra-teacher-root /mpac/sdicks02/jobs/clash"
-    },
-    {
-      "pid": 2041910,
-      "pgid": 2038284,
-      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus --teacher-ratio 1 --extra-teacher-root /mpac/sdicks02/jobs/clash"
-    },
-    {
-      "pid": 2041911,
-      "pgid": 2038284,
-      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus --teacher-ratio 1 --extra-teacher-root /mpac/sdicks02/jobs/clash"
-    },
-    {
-      "pid": 2041912,
-      "pgid": 2038284,
-      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus --teacher-ratio 1 --extra-teacher-root /mpac/sdicks02/jobs/clash"
-    },
-    {
-      "pid": 2041932,
-      "pgid": 2038284,
-      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus --teacher-ratio 1 --extra-teacher-root /mpac/sdicks02/jobs/clash"
-    },
-    {
-      "pid": 2041941,
-      "pgid": 2038284,
-      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus --teacher-ratio 1 --extra-teacher-root /mpac/sdicks02/jobs/clash"
-    },
-    {
-      "pid": 2041946,
-      "pgid": 2038284,
-      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/fit_runtime.py --init-checkpoint /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt --human-store /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train --assets /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz --teacher-root /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus --teacher-ratio 1 --extra-teacher-root /mpac/sdicks02/jobs/clash"
-    }
-  ]
+  "utc": "2026-10-10T07:47:03Z",
+  "live": []
 }

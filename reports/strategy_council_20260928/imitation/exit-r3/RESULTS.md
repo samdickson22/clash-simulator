@@ -82,9 +82,4 @@ Coordinator-authorized round2 and never-adoptable R3a study are pending under [t
 
 <!-- R3-EXTENSION-STATUS -->
 
-The authorized extension is in progress. [Round2 results](round2/RESULTS.md) and
-[r1(b) evaluation amendment](round2/K0-FALLBACK-ADDENDUM.md) record the fresh
-C/D/E fits and R3a NEVER-ADOPTABLE descriptive run. The amendment was pushed
-before every new game. R3a/K0 qualification passed4terminalgames;600fresh
-paired reporting began01 at07:20:34Z. New results and costs remain pending.
-Original R3a/b kills and the completed cost ledger above are unchanged.
+Original R3a/b results above are final. The outcome-informed C/D/E extension and R3a NEVER-ADOPTABLE r1(b) descriptive run remain active; [extended results](round2/RESULTS.md) and [combined cost ledger](round2/receipts/combined-cost-summary.json) remain pending final meters/decisions/vacancy. The later06:50 fallback amendment supersedes the queued05:48 S-default request.
