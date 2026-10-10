@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-10T13:09:03Z",
+  "freeze_commit": "f76d6b5451975b1d07bd80f91ceb6ff4426a7ce9",
+  "frozen_amendment_sha256": "c4044a2dd6cfc6ac2b5bd50e496d6c440d7a8ce2fa0bffa546df427904fe1b0d",
+  "field": "scientific_change",
+  "copied_description": "None. Original B2 source39b6adf6, 1402source/native/checkpoint/emitter/rows/decks/opponents/seat schedule unchanged. Only establishedG03seed reservation.",
+  "correct_description": "None. Original B2 source39b6adf6 and all1402 source/native/checkpoint/emitter/rows/decks/opponents/seat pins unchanged. Established G01 seed reservation [2000000,3000000), BASE4503601607370496; smoke0-7 excluded.",
+  "scope": "Prose-only correction to copied G03 label. Frozen seed_indices, operational worker bounds, raw seals and qualification were already G01 and are unchanged. Consumed prelaunch freeze retained byte-for-byte."
+}
