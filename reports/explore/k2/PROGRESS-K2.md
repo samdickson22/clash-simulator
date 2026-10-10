@@ -1,0 +1,9 @@
+# K2 progress
+
+Coordinator0523ae6f-baa3-4d4e-b233-b392671670db. Own runtime03:/mpac/sdicks02/jobs/clasher/k2-20261010-r1. No timing until explicit K-v2 release/PGID absence; G STOP-03 remains retained. R3 waits for K2 release before stage2.
+
+2026-10-10T04:03:06Z — Prepared independent K2 from K-v2 e546e181/75e2513d/dd692ef9. Light core60 qualification passed125/125 for1/2/4 threads against frozen screen8; exact one/two/four scores/actions, native immutable125/125. Belief replay/tests pending. Reserved reporting4503602307370496+[0,600), smoke4503602317370496+[0,8). Audit includes K/K-v2/X/G/R3/noise-ceiling and13/helper offsets. Timing plan: paired K2/K0/K4-200 vs v1,d27; K2=3cores, K0=1,K4=5;11 disjoint slots0–54, supervisor59,nice10/SCHED_OTHER, who guard. No reporting outcomes read. K-v2 still owns03; do not launch or duplicate a PID/PGID.
+
+Resume: check qualification.json/belief-qualification.json/tests.txt and recorded PID/PGIDs. Finish freeze/audit/commit/push before reporting. Only once K-v2 PROGRESS has explicit release and all K-v2 PGIDs absent, create K-V2-RELEASE-ADMITTED.json, pin runtime, launch excluded smoke, reduce/audit it, mark SMOKE-PASS, then launch1800-game reporting. Read progress counts only until final terminal receipt and full process exit. Reduce, GC supplement, execution/source/host audits, write RESULTS.md, commit explicit own files/secret-scan/push. Release03 in this file and notify coordinator/R3. Never clear G STOP-03.
+
+2026-10-10T04:07:10Z — Final qualification complete: screen8/equality/root immutability125/125; beliefON/OFF125/125 with exact arrays/ledger/samples/RNG;29 tests pass. R3 published seed audit and PLAN bound by SHA;36 evidence files/2954 prior intervals,16 helper checks,zero intersections;peer echoes explicitly identified. QualificationPGIDs2047870/2056439 fully exited. Preparing commit/push and own runtime pin; no timing/reporting outcomes. K-v2 still owns03.

@@ -1,0 +1,7 @@
+# K2 owned interface
+
+`planner.py:planner_class(base)` accepts `search_threads=1|2|4`. All scorer behavior is the K-v2 dd692ef9 implementation; search-thread validation is the only scoring change. `anytime(...)` bounds phase submission and persistent executor size to the requested count. `deadline=None` preserves frozen screen8 outputs; a deadline is the absolute scoring cutoff, not the full submission deadline. Empty student hooks and original action/score reduction remain intact.
+
+`run.py` retains K-v2 exact belief preparation, honest command/wait lateness, GC decision windows, immutable v1 adapter and full pipeline timer. Each pool worker owns a five-core slot, then narrows its affinity per game: K2 three, K0 one, K4 five cores. This keeps mixed paired arms on nonoverlapping physical cores. Every raw game records threads, deadline, source, actual affinity, nice/scheduler, own/opponent channels, decision traces, overrun delay ticks, GC events and command sequence digest.
+
+Runtime `/mpac/sdicks02/jobs/clasher/k2-20261010-r1` on03. Launch only after explicit K-v2 release receipt/PGID absence, qualification, smoke and commit/push freeze. `launch.sh smoke|reporting` uses owned detached sessions; duplicate claims are refused. `STOP` affects only owned pool children. G STOP-03 is retained. Core59 owns supervision/reduction. Core60 is permitted for light qualification only. No other simulation host or Mac/live admission.

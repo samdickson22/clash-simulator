@@ -1,0 +1,194 @@
+{
+  "purpose": "K2 2-thread 200ms retention against paired K4; frozen exploration only",
+  "paired_seeds": 600,
+  "arms": {
+    "K2-200": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 2,
+      "coarse_horizon": 160
+    },
+    "K0-200": {
+      "own": "baseline",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 1,
+      "coarse_horizon": 160
+    },
+    "K4-200": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 4,
+      "coarse_horizon": 160
+    }
+  },
+  "max_ticks": 6001,
+  "own_delay": 27,
+  "opponent_delay": 27,
+  "command_capacity_both_sides": 1,
+  "search_decision_interval": 10,
+  "policy_decision_interval": 5,
+  "start_tick": 90,
+  "horizon": 160,
+  "rollout_styles": [
+    "balanced",
+    "pressure",
+    "defense"
+  ],
+  "samples": 16,
+  "script_top": 4,
+  "wait_candidates": {
+    "2400": 10,
+    "2401": 20,
+    "2402": 40
+  },
+  "wait_prior": 0.01,
+  "screen_plays": 8,
+  "return_reserve_seconds": 0.008,
+  "seed_ranges": {
+    "reporting": {
+      "base": 4503602307370496,
+      "count": 600
+    },
+    "smoke": {
+      "base": 4503602317370496,
+      "count": 8
+    }
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101003,
+    "unit": "paired seed",
+    "confidence": 0.95
+  },
+  "policy": {
+    "snapshot": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+    "checkpoint": "/mpac/sdicks02/repos/clasher-eval-snapshots/inputs-bc-v1/main02.pt",
+    "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "temperature": 1,
+    "seed_offset": 271828
+  },
+  "compute": {
+    "hosts": {
+      "127x03": {
+        "physical_cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54
+        ],
+        "supervisor_cpu": 59
+      }
+    },
+    "nice": 10,
+    "scheduler": "SCHED_OTHER",
+    "min_memavailable_GiB": 24,
+    "cache_root": "/mpac/sdicks02/jobs/clasher/k2-20261010-r1/cache",
+    "game_physical_cores": {
+      "K2-200": 3,
+      "K0-200": 1,
+      "K4-200": 5
+    },
+    "allocation": "11 five-core worker slots, each game narrowed to arm-specific width; 8 slots if who nonempty",
+    "smt": false,
+    "workers": 11,
+    "light_qualification_cpu": 60,
+    "release_gate": "K-v2 explicit release note plus all PGIDs absent; retain G STOP-03"
+  },
+  "frozen_at_utc": "2026-10-10T04:00:07Z",
+  "decision_rules": {
+    "retention": "(loss K0-200 minus loss K2-200)/(loss K0-200 minus loss K4-200)",
+    "target": 0.8,
+    "ci": "shared paired-seed percentile bootstrap; denominator<=0 replicas counted and omitted from ratio CI; no claim if point denominator<=0",
+    "conclusion": "point>=0.8 meets exploratory target; lower95%>=0.8 supports confident retention; upper95%<0.8 rejects target; otherwise uncertainty disclosed"
+  },
+  "qualification": {
+    "K1_K2_K4_frozen_screen8_exact": 125,
+    "one_two_four_thread_scores_identical": true,
+    "injected_clock_tests": true
+  },
+  "ordering": {
+    "phase_order": [
+      "complete WAIT, alias WAIT10",
+      "complete WAIT20 and WAIT40",
+      "balanced coarse scan all plays",
+      "refine top8"
+    ],
+    "reduction_order": "original candidate order; improve only >1e-9",
+    "complete_score": "3 styles at horizon160; no partial or late root eligible",
+    "K4h": "h80 used only for ranking; all 3 styles recomputed at160 for refinement",
+    "deadline": "full pipeline starts before observation; scoring cutoff = start + deadline - 8ms; no drain, 8ms reserve; OS scheduling residuals measured honestly",
+    "threading": "one/two/four persistent private-root GIL-release workers; frozen K-v2 bounded non-draining collector, per-rollout tick cancellation, queued-future cancellation"
+  },
+  "source_reference": {
+    "K_freeze": "0f2a9ec8",
+    "K_implementation": "8237f993",
+    "K_review": "c296d98f",
+    "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+    "K_v2_plan": "e546e181",
+    "K_v2_preparation": "75e2513d",
+    "K_v2_final": "dd692ef9"
+  },
+  "lateness": {
+    "ticks_per_second": 20,
+    "rounding": "ceil positive overrun / 50ms",
+    "play": "reserve at decision tick, command due=decision tick+27+overrun_ticks",
+    "wait": "wait interval starts at decision tick+overrun_ticks; own poll channel unavailable until then",
+    "all_overruns_recorded": true,
+    "opponent": "v1 has no search deadline; unchanged cadence",
+    "emulation": "deadline sweep preserves 8ms reserve and real-time delay ticks; budget equivalence only, not hardware underclocking"
+  }
+}
