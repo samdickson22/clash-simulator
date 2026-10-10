@@ -274,3 +274,16 @@ No reporting game/kill/R2 admission yet. QualifiedKadapterv2 remains unchanged;
 current six-arm reporting admission wrappersv3 per frozenX6addendum. Plan
 wording now names these versions consistently. Ten-minute continuation active;
 last known next2026-10-10T01:31:20.583Z; disable only terminal experiment/cleanup.
+
+2026-10-10T01:30:27Z. Six existing groups remain healthy; no duplicate launch
+or migration. StepsX1–X6=1202/1167/1126/819/1132/180; X4 now has checkpoint750,
+teacher-only arms checkpoint1000, X6 first periodic250 still pending. All eight
+own processes/arm nice10,loader6;09/16/13 leases valid/no reclaim and sampled
+PSS21.60/20.75/25.14GB, GPU-free48.41/48.41/31.79GB. 08 quiet entries empty,
+no X3 stop;13 X6 remains available to checkpoint/yield if requested.
+03controller1502885 alive,offline={},stage2={},active=null,failures=[],priority
+false. No scientific outcome yet; finalEMA collection/gates remain automatic.
+Compact receipt monitor-20261010T0130Z.json carries all current identities,
+steps/resource floors/checkpoints and provisional non-additive meters. Current
+six-fit GPUh=3.252965018,CPUh=10.164486111 replace previous live snapshots;
+closed failure/preparation/game costs remain separate. Continuation enabled.
