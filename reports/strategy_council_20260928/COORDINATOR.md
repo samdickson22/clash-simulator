@@ -1702,3 +1702,12 @@ Also on the hub, but with copies elsewhere:
   - GPUs busy: X4 on 01, X5 on 04, X6 on 13, X7 on 14. **Idle: 08, 09, 15, 16**, held deliberately pending the noise-ceiling analysis (ETA ~04:45Z); X8 cancelled.
   - A19 r3 arrived without C2/C3 (handoff and A2 binding identical to r2). **Asked for r4 = r3 + C2 + C3**, with softer PSI semantics (pause admission at full ≥10%; hard stop only at ≥30% for 120 s); a single delta review after that.
   - Spurious STOP denial ignored.
+- **03:57 UTC: Noise-ceiling analysis** (Opus, `ANALYSIS-NOISE-CEILING-20261010.md`).
+  - **The r2 stage-1 gates are unreachable.** W against itself, with fresh seeds, scores play recall 0.85, **top-8 recall 0.31 (gate 0.50)** and agreement 0.706 (gate 0.704). Every r2 arm is killed whatever its quality, and R2 can't trigger.
+  - **Cause of the WAIT rate:** 79% of training rows are continuation-wait labels; only 21% are root decisions.
+  - **Decisions:**
+    1. X4/X5/X7 run to completion for the descriptive record only.
+    2. **Descriptive post-kill S-default games** (X1, X2, best of the rest; fresh seeds; never adoptable) to calibrate offline metrics against deployment value.
+    3. **R3:** root-only student ± a per-candidate advantage head, with ceiling-relative gates, on idle 09/16 (~4 GPU-h).
+    4. **K2:** 2-thread anytime W at 200 ms, on 03 after K-v2 (~20 CPU-h). If K2 retains ≥80% of K4, distillation becomes a contingency.
+    5. Future emitters record sparse would-be root decisions.
