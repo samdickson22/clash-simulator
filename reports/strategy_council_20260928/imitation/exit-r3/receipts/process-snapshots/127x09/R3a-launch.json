@@ -1,0 +1,22 @@
+{
+  "relative": "R3a-launch.json",
+  "sha256": "0244ce4108d7fc96f3928debfb3fd955e91e88fdca53972327bbe721c83faad4",
+  "value": {
+    "utc": "2026-10-10T04:07:41Z",
+    "host": "127x09",
+    "supervisor_pid": 2651869,
+    "supervisor_pgid": 2651869,
+    "trainer_pid": 2651879,
+    "trainer_pgid": 2651879,
+    "command": [
+      "taskset",
+      "-c",
+      "118,119,126",
+      "bash",
+      "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r1/ops/run_fit.sh",
+      "R3a"
+    ],
+    "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r1/FIT.STOP",
+    "checkpoint_stop_deadline": "2026-10-11T05:15:00Z"
+  }
+}

@@ -147,3 +147,27 @@ Cv1/X1/X2/X4/K0 on physical0–39/nice10/SCHED_OTHER. Qualification201+4/5 passe
 6 terminal games, reserved seed banks/offsets unchanged. X5/X7 finish original
 fit/offline independently.01 fallback remains QUEUED until explicit X release
 and all owned game groups vacated. No original150/151/R2 reporting.
+
+2026-10-10T04:55:05Z — Bounded continuation: fits healthy1145/1126 at04:47:42Z,
+checkpoint1000 present onboth;8Clasher processes each, no stop reason.
+Stage advance did not launch offline because neither2500 clean exit exists.
+K2 still behind K-v2 finalrelease; X descriptive01 remains active.04 base
+staging remains vacated. A19 RUNBOOK/PROGRESS bytes changed after the stored
+clear snapshot, so that stale admission cannot launch replay. Fresh manual
+A19-held/no-launch/no-recognized-process review required after finalproposals.
+
+Metadata-only result collector added (no scientific source/recipe changes):
+`python3 reports/strategy_council_20260928/imitation/exit-r3/operations/collect_results.py`
+Default09/16; optional --hosts127x04/03/01 only when allowed/read-only. Saves
+SHA-labelled immutable process meters and decisions under receipts/process-snapshots.
+Run BEFORE any exact-checkpoint resume or replay so overwritten exit/decision
+paths cannot lose earlier attempt costs. Copies metadata only, no arrays,
+checkpoint bytes, games, native/Torch imports or host claims.
+
+`python3 reports/strategy_council_20260928/imitation/exit-r3/operations/render_results.py --stage1-host HOST --stage2-host HOST`
+Use appropriate collectedCPU hosts, omitpendingflags. Renders verifiedJSON
+decisions and whole-tree cost receipts only; no bootstrap/recomputed outcome.
+Current RESULTS clearly pending; prep55.608171CPU s (including16.468019s04base),
+fit/offline/game costs pending their exitmeters. Nested diagnostic meters
+never added; copied same-SHA meters counted once acrosshosts. Finalreport
+requires both final2500 EMAs and all prescribed stage1/2 gatesresolved.

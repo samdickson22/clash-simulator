@@ -1,41 +1,31 @@
-# R3 results — fits active
+# R3 results — evaluation pending
 
-Exploration; no adoption or multiplicity adjustment. Two arms frozen before fit:
-R3a root-only and R3b root-only+advantage, releasedv1 width192,2500×8192,
-T=.003/play1/finalEMA. R1+verifiedG=6,222,223 roots. No reporting outcomes yet.
+Updated real UTC 2026-10-10T04:55:05Z. Exploration lane; no multiplicity adjustment and no production adoption.
 
-Five focused tests passed: off-loss/gradient/AdamW and network equality to R2,
-root-only filtering, advantage WAIT baseline/unscored masks, head shape/loading,
-whole-batch/microbatch regression denominators. [Receipt](receipts/tests.json).
-G355 packed-file SHAs and all manifest/schema/root checks passed; all five
-212,542-root shards INCLUDED before freeze. Own09/16 copies SHA-verified.
+R3a uses teacher roots only; R3b adds a shared-encoder advantage head with Huber regression to score−WAIT. Both initialize releasedv1 step22552 at width192 and use2500×8192 root rows, T=.003, playweight1, final EMA only. R1 has6,009,681 eligible roots; all five verifiedG shards add212,542, total6,222,223. Continuation kinds1/2, pending3, unsupervised and unscored rows are excluded.
 
-Stage1: calibrated root-play34.6%, recall≥.6375, binary agreement≥allWAIT+.10,
-mean positive frozen-W score regret≤.01. Every64 heldout game remains excluded
-from training; same slice calibration/evaluation is exploratory reuse.
-Stage2 survivor600 paired fresh seeds190, vs C-v1 plusK0, same-seed interleaved
-on admitted home CPU. Kill upper paired loss-change95%CI≥0. No games on leased
-hosts. Stage1 scoring/calibration runs on own fit-host GPU after clean fit exit.
+Scientific plan/seed audit were pushed in bc542da8 before either fit. Evaluation/source/native pins and coordinator04 addendum are retained in [evaluation freeze](receipts/evaluation-freeze.json). Five trainer/head tests verify exact R2 equivalence with the head off, root filtering, regression baselines and batch denominators. Five proposal/admission tests and seven unchanged X timer tests pass; the04 guard mutation test also passes.
 
-Preparation costs recorded so far: G verification5.242464CPU s;
-G receiving+checksum13.885933CPU s on09 and13.580354CPU s on16 (remote sender
-unmetered), final focused test receipt and seed interval audit separately.
-Initial unmetered focused test pass and small metadata/source copy overhead
-are disclosed. Fit costs are accruing; no game compute yet. Full final meters pending.
+| Arm | Final EMA step | Final checkpoint SHA |
+|---|---:|---|
+| R3a | pending | pending |
+| R3b | pending | pending |
 
-Both fits launched after scientific freeze bc542da8 was pushed: R3a09
-04:07:41Z and R3b16 04:07:42Z. At04:26:21Z they reached542/500 with finite
-losses. Fit meters are still accruing; no evaluated outcomes or games exist.
-Evaluation wrapper adds5 passing tests and7 unchanged X injected-clock tests;
-successful qualification CPU1.257831s and1.250144s retained separately.
-Missing-dependency test attempts and small source-copy overhead are unmetered
-and consumed no game seeds. CPU admission waits for explicit K2 or X release.
+Stage1 uses all8088 eligible roots in the64 frozen R1 heldout games. The deterministic gate threshold is calibrated to nearest34.6% play prevalence without action labels; calibration and diagnostics reuse this slice and are exploratory. Gates: play recall≥.6375; binary agreement≥all-WAIT+.10; mean positive frozen-W score regret≤.010. Intervals are game-cluster95% bootstrap5000/80991013.
 
-Coordinator granted regret-only04 cores12–19/nice19/≤8processes. Operational
-addendum fa6c3982 preserves all scientific gates/seeds/scorer. Own manager19
-and3workers12–14, PSI fullavg10>10 immediate stop, A19 progress-change/A19-launch
-vacancy guard, hard08Z cutoff. Base staging SHA checks passed04:42:36Z and
-process865011 exited; cost16.468019CPU s, remote sender unmetered. No replay yet.
-One guard test passes all pressure/core/nice/heartbeat/deadline/conflict/stop
-mutations, metered0.087106CPU s; initial dry run unmetered. Stage2 remains
-behind explicit03/01 release.
+| Arm | Threshold / play rate | Play recall | Play/WAIT agreement | All-WAIT agreement | Mean positive W regret | Stage1 |
+|---|---|---|---|---|---|---|
+| R3a | pending | pending | pending | pending | pending | pending |
+| R3b | pending | pending | pending | pending | pending | pending |
+
+Stage2 uses frozen X S-default behavior: full student inference inside200ms/8ms reserve, one physical core, paired fresh seeds4503601907370496+[0,600), releasedv1 opponent, C-v1 control and K0 descriptive anchor. Rotated complete same-seed blocks run back-to-back on one host/core at nice10/SCHED_OTHER. Smoke191+0/1 is excluded. Kill upper paired95%CI(lossR3−lossC-v1)≥0; shared5000 bootstrap resamples80991013.
+
+Stage2 is pending. No eligibility or adoption conclusion is drawn from incomplete phases.
+
+| Meter category | CPU hours | Charged GPU wall hours | Completed/stopped meter receipts |
+|---|---:|---:|---:|
+| preparation/qualification | 0.015447 | 0.000000 | 9 |
+
+Whole supervisor/pool/process trees are charged once, including failed/replayed attempts and helpers. Segment/game/block diagnostics are nested and never added again. Fit/GPU-offline wall charges include process initialization. Preparation read-only remote sender CPU, initial unmetered test passes, missing-dependency qualification attempts and small command-center metadata/source-copy overhead are disclosed as unmetered. Active fit/pool costs remain accruing until exit meters arrive.
+
+No production adoption is authorized. Experiment remains pending; no completed adoption gate.

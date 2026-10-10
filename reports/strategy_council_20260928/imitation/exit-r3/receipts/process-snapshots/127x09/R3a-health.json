@@ -1,0 +1,13 @@
+{
+  "relative": "R3a-health.json",
+  "sha256": "6e229867a6dc2efe8bd810ec118c1593b83c40eede49ecb0583faeded66e4a77",
+  "value": {
+    "utc": "2026-10-10T04:52:40Z",
+    "pid": 2651879,
+    "pss": 14927208448,
+    "processes": 8,
+    "gpu_free_bytes": 48414851072,
+    "reason": null,
+    "wall_seconds": 2698.945658670971
+  }
+}

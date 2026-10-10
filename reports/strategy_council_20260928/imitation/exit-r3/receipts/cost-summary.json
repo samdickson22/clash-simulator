@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-10T04:55:05Z",
+  "final": false,
+  "totals": {
+    "preparation/qualification": {
+      "cpu_seconds": 55.608171,
+      "gpu_wall_seconds": 0.0,
+      "meters": 9
+    }
+  },
+  "charged_process_meters": [],
+  "preparation_receipts": [
+    "G-verification.json",
+    "G-staging-09.json",
+    "G-staging-16.json",
+    "tests.json",
+    "seed-audit.json",
+    "evaluation-tests-first.json",
+    "evaluation-tests.json",
+    "regret04-tests.json",
+    "regret04-base-staging.json"
+  ]
+}
