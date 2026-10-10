@@ -93,3 +93,15 @@ notified to stop checkpoint scans during exclusive S1 timing. No automatic
 retry. Prepare versioned seed-only amendment and new disjoint600seed bank;
 qualified scientificsource/arms/threshold/statistics unchanged, originalfreeze
 immutable. Commit/scan/push amendment before any new reporting game.
+
+2026-10-10T09:16:59Z — Coordinator09:16Z confirms obsolete T11 poller retired09:14:04Z
+through ownerbackup-stop-request; no periodic01job remains. Fresh-bank restart
+authorized and R2freeze dfefec9f PUSHED before games; manifestSHA6b83c4b42cca072f.
+Scientificsource/arms/threshold/stats equal originalqualified bytes. Reporting
+base4503602707370496+[0,600), disjoint all auditedbanks/helpers incl entireold
+S1bank; originalsmoke valid/excluded. Whole invalidattempt preserved at OWNjob/
+attempts/reporting-r1, priorpin/freeze/claims retained. Fresh09:16:54Z whoempty/
+no usercompute/noowncompute/121.6GiB vacancy; runtimepin passed. New supervisor
+PID/PGID3422967, childPID/PGID3422984;13slots physical0–38,
+main39 nice10/SCHED_OTHER. Monitor OWNprogress metadata only, then bounded
+advance after clean3000terminalgames/600blocks. No automatic retry/partialreuse.
