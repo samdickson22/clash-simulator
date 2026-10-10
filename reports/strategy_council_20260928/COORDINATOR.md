@@ -1711,3 +1711,9 @@ Also on the hub, but with copies elsewhere:
     3. **R3:** root-only student ± a per-candidate advantage head, with ceiling-relative gates, on idle 09/16 (~4 GPU-h).
     4. **K2:** 2-thread anytime W at 200 ms, on 03 after K-v2 (~20 CPU-h). If K2 retains ≥80% of K4, distillation becomes a contingency.
     5. Future emitters record sparse would-be root decisions.
+- **04:19 UTC: A19 r4 delta review: REJECT the bytes (narrow), APPROVE the design.**
+  - **F1:** a STOP race in the production runner; the runner's own STOP-check exit is treated as failure.
+  - **F2:** guard() still runs after STOP.
+  - **Fix:** r5 = D1–D4, the last being a per-epoch admission inventory. Operational conditions O1–O6 (X5 supervisor exit; ≥80 GiB MemAvailable at launch; R3 has vacated).
+  - **Throughput:** 04's local io.lock is held 53% of the time (decompress/parse inside the lock), so parallel verification caps at ~1.9×; A19 on A1 would likely not beat serial.
+  - **Decisions:** r5, plus a separate **A20 lock-scope narrowing** amendment (operational). At seal exit: A19 on A1 only if r5 and A20 are approved; otherwise serial A1, with A19 reserved for A2. Asked the owner what the 2026-10-11T04:00Z cap is.
