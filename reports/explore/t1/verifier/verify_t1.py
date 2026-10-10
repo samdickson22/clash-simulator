@@ -13,7 +13,8 @@ What it does:
      is an error.
   4. Stratified paired bootstrap: 10,000 resamples, numpy.default_rng(2026101040), one index set shared by all
      contrasts. It draws primary cells 0..49 and then guard cells 0..17, each
-     integers(0, n_c, size=(R, n_c)) over that cell's seeds sorted by seed index. T1's own index matrices can
+     integers(0, n_c, size=(R, n_c)) over that cell's blocks sorted by LOGICAL original index (a replacement
+     occupies its lost block's position, as in T1 reduce.py r2). T1's own index matrices can
      be supplied instead (--t1-indices) for a bit-exact comparison.
   5. Percentile intervals, both float (numpy linear) and exact (Fraction). Gates are V1, V2, G1, G2 and NI over
      every cell combination, plus the K0c@200 validity window and the §6.5 selection from a Mac cell map.
@@ -329,7 +330,8 @@ def read_games(by_pop, decks, rep):
             prev = triples[pop].setdefault(d['cell'], meta0)
             if prev != meta0:
                 rep.error('CELL_NOT_CONSTANT_MATCHUP', population=pop, cell=d['cell'], block=d['id'])
-            cells[d['cell']].append((d['index'], losses))
+            logical = int(str(d['replaces']).rsplit('-', 1)[1]) if d.get('replaces') else d['index']
+            cells[d['cell']].append((logical, losses))
         for c in cells:
             cells[c].sort(key=lambda x: x[0])
         data[pop] = dict(cells)
@@ -440,7 +442,7 @@ def reduce_all(data, tallies, boots, rep):
             entry = dict(t, loss_pct=float(Fraction(100 * t['losses'], n)) if n else None)
             if pop in boots:
                 entry['intervals'] = {}
-                for k, L in LEVELS.items():
+                for k, L in list(LEVELS.items()) + [('v_rounded_0.9833', V_ROUNDED)]:
                     e, f = interval(boots[pop][a], n, L)
                     entry['intervals'][k] = dict(exact=[str(x) for x in e], pp=[float(x) for x in e], float_pp=f)
             out['arms'][pop][a] = entry
@@ -459,9 +461,8 @@ def reduce_all(data, tallies, boots, rep):
                 for k, L in LEVELS.items():
                     e, f = interval(diff, n, L)
                     c['intervals'][k] = dict(exact=[str(x) for x in e], pp=[float(x) for x in e], float_pp=f)
-                if pop == 'primary':
-                    e, f = interval(diff, n, V_ROUNDED)
-                    c['intervals']['v_rounded_0.9833'] = dict(exact=[str(x) for x in e], pp=[float(x) for x in e])
+                e, f = interval(diff, n, V_ROUNDED)
+                c['intervals']['v_rounded_0.9833'] = dict(exact=[str(x) for x in e], pp=[float(x) for x in e], float_pp=f)
                 out['contrasts'][pop][f'{left} minus {right}'] = c
     # Gate table over every cell combination (§1; §6.5 re-application needs all of them).
     g = out['gates']
@@ -537,7 +538,65 @@ def select(cells, gates):
 
 # ---------------------------------------------------------------- comparison with T1
 
+T1_LEVEL_KEYS = {'ci95_pp': 'g', 'ci975_pp': 'ni', 'ci9833_pp': 'v_rounded_0.9833',
+                 'ci95_pct': 'g', 'ci9833_pct': 'v_rounded_0.9833'}
+GATE_SPEC = {  # gate -> (population, T1 interval key, exact PREREG level key, threshold, strict)
+    'V1': ('primary', 'ci9833_pp', 'v', Fraction(-10), False),
+    'V2': ('primary', 'ci9833_pct', 'v', Fraction(40), False),
+    'NI': ('primary', 'ci975_pp', 'ni', Fraction(5), False),
+    'G1': ('guard', 'ci95_pp', 'g', Fraction(0), True),
+    'G2': ('guard', 'ci95_pp', 'g', Fraction(10), False),
+}
+
+
+def from_t1_reduce(t1):
+    """Convert T1 reduce.py output ({'populations': {pop: {n, arms, contrasts}}}) to the generic schema."""
+    arms, contrasts = [], []
+    for pop, ps in t1['populations'].items():
+        for arm, a in ps['arms'].items():
+            arms.append(dict(population=pop, arm=arm, n=ps['n'], wins=a['wins'], losses=a['losses'],
+                             draws=a['draws'], intervals={T1_LEVEL_KEYS[k]: v for k, v in a.items()
+                                                          if k in T1_LEVEL_KEYS}))
+        for key, c in ps['contrasts'].items():
+            left, right = key.split(' minus ')
+            contrasts.append(dict(population=pop, left=left, right=right, point_pp=c['mean_pp'],
+                                  intervals={T1_LEVEL_KEYS[k]: v for k, v in c.items() if k in T1_LEVEL_KEYS}))
+    out = dict(arms=arms, contrasts=contrasts, raw=t1)
+    sel = t1.get('selection', {})
+    if 'selected' in sel:
+        out['selection'] = sel['selected']
+    return out
+
+
+def t1_gate_decisions(t1raw, mine, rep):
+    """Re-evaluate every gate from T1's own reported bounds; flag any decision that differs from the exact
+    PREREG decision (wrong level, float rounding at an inclusive threshold, or wrong strictness)."""
+    checked = 0
+    for key, g in mine['gates'].items():
+        name = key.split('|')[0]
+        if name not in GATE_SPEC:
+            continue
+        pop, t1key, _, thr, strict = GATE_SPEC[name]
+        ps = t1raw['populations'].get(pop)
+        if ps is None:
+            continue
+        if name == 'V2':
+            ub = ps['arms'][g['arm']][t1key][1]
+        else:
+            ub = ps['contrasts'][f"{g['left']} minus {g['right']}"][t1key][1]
+        t1_pass = ub < float(thr) if strict else ub <= float(thr)
+        checked += 1
+        if t1_pass != g['passed']:
+            rep.error('T1_GATE_DECISION_DIFFERS', gate=key, t1_upper=ub, t1_pass=t1_pass,
+                      exact_upper=g['upper_exact'], exact_pass=g['passed'])
+    rep.note('T1_GATE_DECISIONS_CHECKED', count=checked)
+
+
 def compare_t1(mine, t1, rep, tol):
+    if 'populations' in t1:
+        raw = t1
+        t1 = from_t1_reduce(t1)
+        t1_gate_decisions(raw, mine, rep)
     """T1 schema (review §4.8): arms=[{population,arm,n,wins,losses,draws}],
     contrasts=[{population,left,right,point_count_diff,intervals:{v|ni|g:[lo,hi]}}], optional selection."""
     for a in t1.get('arms', []):
@@ -548,6 +607,11 @@ def compare_t1(mine, t1, rep, tol):
         for k in ('n', 'wins', 'losses', 'draws'):
             if int(a[k]) != m[k]:
                 rep.error('MISMATCH_COUNT', population=a['population'], arm=a['arm'], field=k, t1=a[k], verifier=m[k])
+        for lvl, bounds in a.get('intervals', {}).items():
+            mv = m.get('intervals', {}).get(lvl)
+            if mv is not None and max(abs(float(x) - y) for x, y in zip(bounds, mv['pp'])) > tol:
+                rep.error('MISMATCH_ARM_INTERVAL', population=a['population'], arm=a['arm'], level=lvl,
+                          t1=bounds, verifier=mv['pp'])
     seen = 0
     max_diff = 0.
     for c in t1.get('contrasts', []):
@@ -557,9 +621,13 @@ def compare_t1(mine, t1, rep, tol):
             rep.error('T1_UNKNOWN_CONTRAST', population=c['population'], contrast=key)
             continue
         seen += 1
-        if int(c['point_count_diff']) != m['point_count_diff']:
+        if 'point_count_diff' in c:
+            if int(c['point_count_diff']) != m['point_count_diff']:
+                rep.error('MISMATCH_POINT', population=c['population'], contrast=key,
+                          t1=c['point_count_diff'], verifier=m['point_count_diff'])
+        elif abs(float(c['point_pp']) - m['point_pp']) > tol:
             rep.error('MISMATCH_POINT', population=c['population'], contrast=key,
-                      t1=c['point_count_diff'], verifier=m['point_count_diff'])
+                      t1=c['point_pp'], verifier=m['point_pp'])
         for lvl, bounds in c.get('intervals', {}).items():
             mv = m['intervals'].get(lvl)
             if mv is None:
@@ -620,7 +688,7 @@ def run(args):
     out.update(mode=mode, status=['CLEAN', 'EDGE_FLAGS', 'ERRORS'][status], errors=rep.errors, edges=rep.edges,
                notes=rep.notes, verifier_sha256=sha(__file__), numpy=np.__version__,
                bootstrap=dict(reps=REPS, seed=BOOT_SEED, indices='t1-supplied' if t1_idx else 'verifier-canonical',
-                              order='primary cells 0..49 then guard 0..17; integers(0,n_c,(R,n_c)); seeds by index'),
+                              order='primary cells 0..49 then guard 0..17; integers(0,n_c,(R,n_c)); rows by logical original index'),
                levels={k: str(v) for k, v in LEVELS.items()})
     if args.out:
         Path(args.out).write_text(json.dumps(out, indent=1) + '\n')

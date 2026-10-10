@@ -383,3 +383,42 @@ def test_selection_rule():
     # Nothing admissible -> F0; missing K0c cell means 200 ms control.
     r = V.select(dict(K0c=None, S=None, K2=None, K4=None), gates_with({}))
     assert r['selection'] == 'F0' and r['control'] == 'K0c-200'
+
+
+# ------------------------------------------------------------ cross-check against T1's actual reducer (read-only)
+
+def test_cross_check_against_t1_reduce_on_synthetic(full):
+    """Runs T1 reduce.population_stats (imported read-only, no bytecode written) on the same synthetic
+    outcomes and requires bit-compatible counts, intervals and gate decisions (except where T1's 0.9833
+    level or float path legitimately differs, which must then be FLAGGED, not silently passed)."""
+    t1dir = Path(__file__).resolve().parents[1]
+    if not (t1dir / 'reduce.py').exists():
+        pytest.skip('T1 reducer not present')
+    sys.dont_write_bytecode = True
+    sys.path.insert(0, str(t1dir))
+    try:
+        import reduce as T1
+    finally:
+        sys.path.remove(str(t1dir))
+    root, truth, out, _, decks = full
+    rows = {}
+    for pop in ('primary', 'guard'):
+        logical = {}
+        for p in sorted(root.glob(f'{pop}-*/complete.json')):
+            d = json.loads((p.parent / 'descriptor.json').read_text())
+            lid = d['replaces'] or d['id']
+            o = truth[(pop, d['index'])]
+            logical[lid] = dict(id=lid, seed=d['seed'], cell=d['cell'],
+                                loss={a: float(o[a] == 'L') for a in V.ARMS},
+                                draw={a: o[a] == 'D' for a in V.ARMS}, win={a: o[a] == 'W' for a in V.ARMS})
+        rows[pop] = [v for _, v in sorted(logical.items())]
+    rng = np.random.default_rng(V.BOOT_SEED)
+    t1 = dict(populations={p: T1.population_stats(r, rng, V.REPS) for p, r in rows.items()})
+    rep = V.Report()
+    V.compare_t1(out, t1, rep, 1e-9)
+    codes = {e['code'] for e in rep.errors}
+    # Counts, points and every interval agree to 1e-9: identical draws (same logical ordering).
+    assert not codes - {'T1_GATE_DECISION_DIFFERS'}, rep.errors[:5]
+    # Any gate-decision difference must be explained by the 0.9833 level (V1/V2) or a float boundary.
+    for e in rep.errors:
+        assert e['gate'].split('|')[0] in ('V1', 'V2', 'NI', 'G1', 'G2')
