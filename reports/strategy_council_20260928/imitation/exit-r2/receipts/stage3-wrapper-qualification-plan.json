@@ -1,0 +1,35 @@
+{
+  "utc": "2026-10-10T00:58:37Z",
+  "purpose": "Qualify X-owned stage3 wrapper on the qualified immutable K runner; no reporting outcomes",
+  "interface_commit": "7ad9dcd7",
+  "interface_sha256": "29292a4f43f368641175a9fa945df2a18ef2eef9b1c14da4eabd9fe473750198",
+  "adapter_sha256": "799d62a766776cc1630e76967b0d3a79eb05348cd849c210853e51d60860d6b7",
+  "qualifier_sha256": "efa75afbd965d64e30a01a5a426ab72846bfdaaa763238dc09429c887b5228a9",
+  "harness_receipt_sha256": "4bf3037ce29cf7873418366cda2270ac5b5c15a9718c67ffdd1e1cd509a32d16",
+  "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "seed_base": 4503601527370496,
+  "indices": [
+    0,
+    1
+  ],
+  "reference_index": 0,
+  "student_stand_in_index": 1,
+  "student_stand_in": "released v1; checks hooks without selecting any intermediate fit",
+  "job": "/mpac/sdicks02/jobs/clasher/exit-r2-stage3-smoke-20261010-r1",
+  "host": "127x03",
+  "cores": [
+    60,
+    61
+  ],
+  "nice": 19,
+  "scheduler": "SCHED_IDLE",
+  "checks": [
+    "runtime run_game wall0 exists before all inference",
+    "positive elapsed from wall0; K192ms cutoff retains immutable absolute start",
+    "both seats W/K1 search_threads1 coarse_horizon160",
+    "reference/opponent hooks empty",
+    "ordered proposals unique legal immediate plays",
+    "complete terminal game identity and pinned E1 output"
+  ],
+  "reporting_admission": "Only final-EMA stage2 survivors may enter600-pair reporting; this smoke cannot admit an arm."
+}

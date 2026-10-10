@@ -105,3 +105,13 @@ steps. Recipe/runtime checks passed; loader6/prefetch4, nice10, parent affinity
 No guard stop; leased09/16 have8 processes, below46GB PSS and above8GiB
 GPU-free floors. 08 quiet/deadline guard active. Scientific stage metrics
 remain pending; next continuation01:01:15.355Z.
+
+2026-10-10T00:58:37Z. Coordinator confirmed qualified K interface7ad9dcd7.
+Existing X-owned k_stage3.py calls run.run_game with both seats forcedK1
+threads1/horizon160, ownstudent poll inside K wall0 scope, ordered legal
+coarse plays and top8 candidate/refinement union. K sources remain immutable.
+New own qualifier plans two terminal smoke games on disjoint seeds1527370496
++[0,2), v1 stand-in, own output exit-r2-stage3-smoke-20261010-r1, home03
+cores60/61 nice19/SCHED_IDLE. Runtime assertions bind inference to actual
+K run_game wall0 and verify both K1 cores, legal proposals and empty references.
+No scientific stage3 games/decisions are admitted by this smoke.
