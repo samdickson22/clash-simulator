@@ -47,3 +47,5 @@ After reporting finishes, copy local gc_summary.py to NEW $job/gc_summary.py (do
 2026-10-10T04:14:58Z — Completion check:1666/2400 terminal; nine workers,118.53GiB available, no pause. Original supervisor/pool1718083/1718091 remain live in their recorded PGIDs at nice10/SCHED_OTHER. Final receipt/exit absent; outcomes unopened, runtime unchanged, no duplicate launch. No03 release yet; next check04:24:44.022Z.
 
 2026-10-10T04:24:52Z — Three-quarter milestone:1812/2400 terminal; nine workers,118.88GiB available, no pause. Original supervisor/pool1718083/1718091 remain live in their recorded PGIDs at nice10/SCHED_OTHER. Final receipt/exit absent; outcomes unopened, runtime unchanged, no duplicate launch. No03 release yet; next check04:34:45.337Z. Coordinator notified; K2 handoff remains gated.
+
+2026-10-10T04:34:54Z — Completion check:1968/2400 terminal; nine workers,118.92GiB available, no pause. Original supervisor/pool1718083/1718091 remain live in their recorded PGIDs at nice10/SCHED_OTHER. Final receipt/exit absent; outcomes unopened, runtime unchanged, no duplicate launch. No03 release yet; next check04:44:46.676Z.
