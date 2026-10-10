@@ -1,0 +1,60 @@
+{
+  "utc": "2026-10-10T04:31:58Z",
+  "purpose": "R3 freeze provenance supplement; original K2 plan/audit/runtime remain unchanged",
+  "R3_scientific_freeze": "bc542da8",
+  "R3_evaluation_freeze": "33cff003",
+  "R3_ranges": {
+    "reporting": {
+      "base": 4503601907370496,
+      "count": 600
+    },
+    "smoke": {
+      "base": 4503601917370496,
+      "count": 8
+    },
+    "regret_helpers": {
+      "base": 4503601927370496,
+      "count": 65536
+    }
+  },
+  "helper_offsets": [
+    0,
+    13,
+    100000,
+    100001,
+    100002,
+    100003,
+    271828,
+    271829
+  ],
+  "pairwise_interval_checks": 384,
+  "intersections": [],
+  "source_files": {
+    "reports/strategy_council_20260928/imitation/exit-r3/PLAN.md": {
+      "commit": "bc542da8",
+      "sha256": "6e9e98bc161b0a8461b3a8d6f1be7f8719f25748a897a0b2ef9cb40c2e8b67f4",
+      "committed_bytes_match": true
+    },
+    "reports/strategy_council_20260928/imitation/exit-r3/receipts/freeze.json": {
+      "commit": "bc542da8",
+      "sha256": "2802b0290e96a2249e3212bfe994639271a4cca72aa79d27759cdaf042f0f49f",
+      "committed_bytes_match": true
+    },
+    "reports/strategy_council_20260928/imitation/exit-r3/receipts/seed-audit.json": {
+      "commit": "bc542da8",
+      "sha256": "20769cf2f7997541537017b351ae80ae2af966ccb2ebaf0a0dd02684a6b2b7c2",
+      "committed_bytes_match": true
+    },
+    "reports/strategy_council_20260928/imitation/exit-r3/EVALUATION.md": {
+      "commit": "33cff003",
+      "sha256": "3e38ea4c674046807c060e35f635f2e15b28d71618fe2b5e2ee0f8bcacbcc6e2",
+      "committed_bytes_match": true
+    },
+    "reports/strategy_council_20260928/imitation/exit-r3/receipts/evaluation-freeze.json": {
+      "commit": "33cff003",
+      "sha256": "8a44f3f19bc0e64c4e7d03a500e97022070b3f7836f1f4f3d505b74e08b69066",
+      "committed_bytes_match": true
+    }
+  },
+  "copy_to_pinned_runtime": false
+}
