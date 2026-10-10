@@ -498,3 +498,19 @@ Timer updated to shared03 route and currentDresult, sameID/enabled10min; next
 08:02:31.575Z. Full extension finalrequired before deletion. Prelaunch759b
 actualblobSHA deployed03; freshgrant and qualification/cost receipts retained.
 Resume via shared03/operations/advance.py; preserve all01/GPU oldfreezes.
+
+2026-10-10T08:02:14Z — Continuation checked current immutable original completion; no04 restart.
+Original a/b kills,64/8088 regret,10.735822CPUh/2.968378GPUh and04 vacancy
+remain final. Authorized extension continues via shared03 advance;07:56:48
+bounded advance made no duplicate launches and waits final c/e EMAs. Latest
+08:01:25 c3086/5000,e2634/5000 activeeight processes each; healthreasonnull,
+PSS23.4/22.0GB,GPUfree48.4GB. d2500/offline complete andbinarykilled.
+01 descriptive408/600 complete pairedblocks,nofailures; no partial outcome
+reduction.03own scientific idle; shared56–59 grant/pins remain frozen.
+Coordinator/roader explicitly returned16at07:52Z; no new scientific16 jobs.
+Retained final16 JSON/EMA/proposals await direct own-prefix copy only.
+Metadata collectors retained raw JSON/SHA histories and refreshed once-only
+ledgers; open c/e fits/report pools remain uncharged until exit. Combined
+final results and all-five independentvacancy audits remain pending. Existing
+10min continuation is retained for wholeextension completion, not deleted
+after originalstudy completion. No scorer/gate/seed/model/source changes.
