@@ -1793,3 +1793,8 @@ Also on the hub, but with copies elsewhere:
   - **Retired via its own backup-stop-request.json** (clean exit 09:14:04Z; T11 terminal backups were already audited at 2026-10-09 19:12Z). S1 is authorized to restart on a fresh bank with an amendment. The perception owner has been told (04 inventory −3).
   - Heartbeat: G on 03/04/08; R3e on 13; 01 idle pending the S1 restart. A spurious STOP denial was ignored.
 - **09:23 UTC:** R3e KILLED (recall 0.624 / agreement 0.740). **All R3 round-2 arms are killed; no stage 2.** **13 returned to roader; the whole lease has ended early** (09/13/14/15/16 all returned and acknowledged by roader). Remaining R3 work is the common-root regret on 03 cores 56–59.
+- **11:21 UTC: R3 extension COMPLETE** (`d97e443b`).
+  - Regret: C 0.0089, D 0.0084, E 0.0097 (all below the 0.010 point gate), but every arm is binary-killed on recall/agreement. Stage 2 zero; no adoption.
+  - R3a descriptive −28.7 pp (never adoptable; S1 is the confirmatory study).
+  - Cost 68.7 CPU-h / 9.5 GPU-h (deduplicated).
+  - R3 released 03 at 11:20Z; **G re-released onto 03 cores 0–59** (third one-time release).
