@@ -58,8 +58,8 @@ def main():
             else:dens=np.array([v['deadline_decisions'] for v in vals])
             bootnum=nums[idx].sum(axis=1);bootdens=dens[idx].sum(axis=1)
             target[arm]=dict(**estimate(nums.sum()/dens.sum(),bootnum/bootdens),numerator=int(nums.sum()),denominator=int(dens.sum()))
-    advance=[arm for arm in cfg['decision_rules']['advance_arms'] if contrasts[arm]['ci95'][1]<=-.10]
-    lo,hi=contrasts['K4']['ci95'];kill=lo<=0<=hi
+    advance=[] if a.smoke else [arm for arm in cfg['decision_rules']['advance_arms'] if contrasts[arm]['ci95'][1]<=-.10]
+    lo,hi=contrasts['K4']['ci95'];kill=None if a.smoke else lo<=0<=hi
     result=dict(reduced_at_utc=subprocess.check_output(['date','-u','+%Y-%m-%dT%H:%M:%SZ'],text=True).strip(),freeze_commit='0f2a9ec8',plan_sha256=hashlib.sha256(a.config.read_bytes()).hexdigest(),paired_seeds=n,terminal_games=n*len(arms),smoke=a.smoke,outcomes=outcomes,loss_change_vs_K0=contrasts,retention=retention,fallback=fallback,cutoff=cutoffs,latency=latency,advance_arms=advance,kill_anytime_W=kill,bootstrap=cfg['bootstrap'],game_cpu_seconds=gamecpu,host_arm_counts=dict(host_counts),min_memavailable_GiB=minimum,raw_game_hash_union_sha256=hashlib.sha256(''.join(sorted(hashes)).encode()).hexdigest(),audits=dict(terminal=True,paired_decks_seats=True,policy_cadence=True,affinity=True,capacity_one=True,balanced_25matchups=not a.smoke,paired_same_host=not a.smoke))
     a.out.write_text(json.dumps(result,indent=2,allow_nan=False)+'\n');print(json.dumps(dict(terminal_games=result['terminal_games'],outcomes=outcomes,advance=advance,kill_anytime_W=kill)))
 if __name__=='__main__':main()

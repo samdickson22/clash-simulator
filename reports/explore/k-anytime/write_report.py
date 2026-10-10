@@ -3,7 +3,9 @@ import argparse,json
 from pathlib import Path
 
 def pct(x):return f'{100*x:.2f}'
-def ci(row):return f"{pct(row['value'])} [{pct(row['ci95'][0])}, {pct(row['ci95'][1])}]"
+def ci(row):
+    if row['value'] is None or row['ci95'] is None:return 'undefined'
+    return f"{pct(row['value'])} [{pct(row['ci95'][0])}, {pct(row['ci95'][1])}]"
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--results',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);a=ap.parse_args();r=json.loads(a.results.read_text())
     assert r['terminal_games']==3000 and r['paired_seeds']==600 and not r['smoke']

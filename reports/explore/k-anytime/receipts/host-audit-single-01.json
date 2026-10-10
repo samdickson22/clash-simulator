@@ -1,0 +1,480 @@
+{
+  "at_utc": "2026-10-10T00:31:11Z",
+  "host": "127x01",
+  "load": [
+    28.03,
+    8.99,
+    4.93
+  ],
+  "physical_unique": true,
+  "physical_cpu_count": 40,
+  "owned_python_processes": [
+    {
+      "pid": 1137848,
+      "pgid": 1137848,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+      ]
+    },
+    {
+      "pid": 1137886,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+      ]
+    },
+    {
+      "pid": 1139285,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        0
+      ]
+    },
+    {
+      "pid": 1139286,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        1
+      ]
+    },
+    {
+      "pid": 1139288,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        2
+      ]
+    },
+    {
+      "pid": 1139289,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        3
+      ]
+    },
+    {
+      "pid": 1139302,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        4
+      ]
+    },
+    {
+      "pid": 1139305,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        5
+      ]
+    },
+    {
+      "pid": 1139308,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        6
+      ]
+    },
+    {
+      "pid": 1139313,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        7
+      ]
+    },
+    {
+      "pid": 1139316,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        8
+      ]
+    },
+    {
+      "pid": 1139321,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        9
+      ]
+    },
+    {
+      "pid": 1139324,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        10
+      ]
+    },
+    {
+      "pid": 1139325,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        11
+      ]
+    },
+    {
+      "pid": 1139326,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        12
+      ]
+    },
+    {
+      "pid": 1139327,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        13
+      ]
+    },
+    {
+      "pid": 1139328,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        14
+      ]
+    },
+    {
+      "pid": 1139333,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        15
+      ]
+    },
+    {
+      "pid": 1139334,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        16
+      ]
+    },
+    {
+      "pid": 1139335,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        17
+      ]
+    },
+    {
+      "pid": 1139336,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        18
+      ]
+    },
+    {
+      "pid": 1139337,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        19
+      ]
+    },
+    {
+      "pid": 1139338,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        20
+      ]
+    },
+    {
+      "pid": 1139339,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        21
+      ]
+    },
+    {
+      "pid": 1139340,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        22
+      ]
+    },
+    {
+      "pid": 1139341,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        23
+      ]
+    },
+    {
+      "pid": 1139342,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        24
+      ]
+    },
+    {
+      "pid": 1139343,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        25
+      ]
+    },
+    {
+      "pid": 1139344,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        26
+      ]
+    },
+    {
+      "pid": 1139345,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        27
+      ]
+    },
+    {
+      "pid": 1139346,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        28
+      ]
+    },
+    {
+      "pid": 1139347,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        29
+      ]
+    },
+    {
+      "pid": 1139348,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        30
+      ]
+    },
+    {
+      "pid": 1139349,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        31
+      ]
+    },
+    {
+      "pid": 1139350,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        32
+      ]
+    },
+    {
+      "pid": 1139351,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        33
+      ]
+    },
+    {
+      "pid": 1139352,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        34
+      ]
+    },
+    {
+      "pid": 1139353,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        35
+      ]
+    },
+    {
+      "pid": 1139354,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        36
+      ]
+    },
+    {
+      "pid": 1139355,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        37
+      ]
+    },
+    {
+      "pid": 1139356,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        38
+      ]
+    },
+    {
+      "pid": 1139357,
+      "pgid": 1137886,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        39
+      ]
+    },
+    {
+      "pid": 1143391,
+      "pgid": 1143390,
+      "nice": 10,
+      "scheduler": 5,
+      "affinity": [
+        0
+      ]
+    }
+  ],
+  "cache_services": [],
+  "who": ""
+}

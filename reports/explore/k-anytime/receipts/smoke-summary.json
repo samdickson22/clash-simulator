@@ -1,5 +1,5 @@
 {
-  "reduced_at_utc": "2026-10-10T00:29:29Z",
+  "reduced_at_utc": "2026-10-10T00:34:04Z",
   "freeze_commit": "0f2a9ec8",
   "plan_sha256": "b2a21a905bc3250f972fdec318e59a0a8b6890d303dbaf8bca4872f75a7a2695",
   "paired_seeds": 8,
@@ -342,10 +342,8 @@
       }
     }
   },
-  "advance_arms": [
-    "K4h"
-  ],
-  "kill_anytime_W": true,
+  "advance_arms": [],
+  "kill_anytime_W": null,
   "bootstrap": {
     "reps": 5000,
     "seed": 2026101002,
