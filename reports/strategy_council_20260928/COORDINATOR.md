@@ -1787,3 +1787,4 @@ Also on the hub, but with copies elsewhere:
   - G on 03/04/08; R3c/R3e on 09/13. 01 is idle, so it's **reassigned to S1 now**; any R3 stage-2 survivor moves to 03 (G stopped there first).
   - Seal ~180+/216, ETA ~11Z.
   - Spurious STOP denial on pending_request_list ignored.
+- **09:00 UTC:** R3c (2× steps) KILLED: recall 0.634 / agreement 0.747, gates 0.6375 / 0.754; only marginal gains over R3a. **09 returned to roader**; 13 is kept until R3e (~09:20Z).
