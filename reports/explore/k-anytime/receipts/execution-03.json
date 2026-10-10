@@ -1,0 +1,112 @@
+{
+  "audited_at_utc": "2026-10-10T01:31:40Z",
+  "host": "127x03",
+  "reporting_games": 2000,
+  "stages": {
+    "single": {
+      "receipt": {
+        "games": 1200,
+        "fresh": 1200,
+        "cpu_seconds": 61787.904830374,
+        "wall_seconds": 1081.046677508857,
+        "terminal": true
+      },
+      "exit": {
+        "at_utc": "2026-10-10T00:48:09Z",
+        "returncode": 0,
+        "min_memavailable_GiB": 105.74669647216797
+      },
+      "schedule_sha256": "09edf006a7b172aeabcbe2006fca9cdef11013935d17d17f33b53b1c680fb092",
+      "launch": {
+        "at_utc": "2026-10-10T00:29:47Z",
+        "supervisor_pid": 1331806,
+        "child_pid": 1331813,
+        "child_pgid": 1331813,
+        "host": "127x03",
+        "command": [
+          "bash",
+          "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/repo/reports/explore/k-anytime/runtime.sh",
+          "reports/explore/k-anytime/run.py",
+          "--config",
+          "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/repo/reports/explore/k-anytime/plan.json",
+          "--out",
+          "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/reporting/single",
+          "--workers",
+          "60",
+          "--pairs",
+          "400",
+          "--offset",
+          "0",
+          "--arms",
+          "K0",
+          "K1",
+          "KU"
+        ]
+      },
+      "census_samples": 110,
+      "paused_samples": 0
+    },
+    "threaded": {
+      "receipt": {
+        "games": 800,
+        "fresh": 800,
+        "cpu_seconds": 40390.33073849,
+        "wall_seconds": 2507.454118437832,
+        "terminal": true
+      },
+      "exit": {
+        "at_utc": "2026-10-10T01:30:20Z",
+        "returncode": 0,
+        "min_memavailable_GiB": 115.74378204345703
+      },
+      "schedule_sha256": "3eb5a10610911eba90accb02635c507bbc59414aaa1ad7cfc7cd6bb942293544",
+      "launch": {
+        "at_utc": "2026-10-10T00:48:09Z",
+        "supervisor_pid": 1331806,
+        "child_pid": 1393695,
+        "child_pgid": 1393695,
+        "host": "127x03",
+        "command": [
+          "bash",
+          "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/repo/reports/explore/k-anytime/runtime.sh",
+          "reports/explore/k-anytime/run.py",
+          "--config",
+          "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/repo/reports/explore/k-anytime/plan.json",
+          "--out",
+          "/mpac/sdicks02/jobs/clasher/k-anytime-20261010-r1/reporting/threaded",
+          "--workers",
+          "12",
+          "--pairs",
+          "400",
+          "--offset",
+          "0",
+          "--arms",
+          "K4",
+          "K4h"
+        ]
+      },
+      "census_samples": 253,
+      "paused_samples": 0
+    }
+  },
+  "paused_samples": 0,
+  "scientific_files_verified": 775,
+  "explicit_prelaunch_pin_corrections": [
+    {
+      "recorded_at_utc": "2026-10-10T01:31:11Z",
+      "source_file": "reports/explore/k-anytime/supervise.py",
+      "old_sha256": "353df222143d61ea892d3dae2fd2a922b606afbbbdc453b6e26dcdd3a7ac8867",
+      "qualified_prelaunch_sha256": "0a11d57c8075522a30c7d4a6dfd2d47449770ae9cdc2746bf58cf35f0c0c896b",
+      "prelaunch_implementation_commit": "8237f993",
+      "independent_prelaunch_pin_01_at_utc": "2026-10-10T00:25:36Z",
+      "independent_pin_01_sha256": "fb2e7ce706ca45d73d000d6c13bf326dc8a279ece9f8f2d8ba1fb8b6cd56eed2",
+      "reason": "03 pin captured supervisor before syntax fix from invalid dict(127x03=60,127x01=40) to string-key host limits. Fixed and committed8237f993 before smoke/reporting; scorer/game/plan/native unchanged. Original03 pin retained. Final03 audit uses only this explicit prelaunch supervisor hash correction."
+    }
+  ],
+  "native_source_files_unchanged": 77,
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "plan_sha256": "b2a21a905bc3250f972fdec318e59a0a8b6890d303dbaf8bca4872f75a7a2695",
+  "remaining_owned_python_processes": [],
+  "all_reporting_terminal": true,
+  "reporting_done_at_utc": "2026-10-10T01:30:20Z"
+}

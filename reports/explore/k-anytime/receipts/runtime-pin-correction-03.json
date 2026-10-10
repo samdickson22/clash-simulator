@@ -1,0 +1,10 @@
+{
+  "recorded_at_utc": "2026-10-10T01:31:11Z",
+  "source_file": "reports/explore/k-anytime/supervise.py",
+  "old_sha256": "353df222143d61ea892d3dae2fd2a922b606afbbbdc453b6e26dcdd3a7ac8867",
+  "qualified_prelaunch_sha256": "0a11d57c8075522a30c7d4a6dfd2d47449770ae9cdc2746bf58cf35f0c0c896b",
+  "prelaunch_implementation_commit": "8237f993",
+  "independent_prelaunch_pin_01_at_utc": "2026-10-10T00:25:36Z",
+  "independent_pin_01_sha256": "fb2e7ce706ca45d73d000d6c13bf326dc8a279ece9f8f2d8ba1fb8b6cd56eed2",
+  "reason": "03 pin captured supervisor before syntax fix from invalid dict(127x03=60,127x01=40) to string-key host limits. Fixed and committed8237f993 before smoke/reporting; scorer/game/plan/native unchanged. Original03 pin retained. Final03 audit uses only this explicit prelaunch supervisor hash correction."
+}

@@ -1,0 +1,55 @@
+{
+  "at_utc": "2026-10-10T01:32:40Z",
+  "arms": {
+    "K0": {
+      "deadline_decisions": 172860,
+      "fallback_decisions": 276,
+      "no_complete_play_eligible": null,
+      "complete_play_eligible": null,
+      "no_complete_play_fraction": null,
+      "cutoff_with_legal_plays_but_no_complete_play": null,
+      "cutoff_with_legal_plays_but_no_complete_play_fraction": null,
+      "scope": "K W phase order completes four WAIT IDs including WAIT10 alias before any play score; completed\u22644 therefore excludes complete play eligibility. This diagnoses admission, not chosen-action agreement; KU has no deadline telemetry."
+    },
+    "K1": {
+      "deadline_decisions": 97547,
+      "fallback_decisions": 828,
+      "no_complete_play_eligible": 85037,
+      "complete_play_eligible": 11682,
+      "no_complete_play_fraction": 0.8717541287789475,
+      "cutoff_with_legal_plays_but_no_complete_play": 83698,
+      "cutoff_with_legal_plays_but_no_complete_play_fraction": 0.8580274124268301,
+      "scope": "K W phase order completes four WAIT IDs including WAIT10 alias before any play score; completed\u22644 therefore excludes complete play eligibility. This diagnoses admission, not chosen-action agreement; KU has no deadline telemetry."
+    },
+    "K4": {
+      "deadline_decisions": 70224,
+      "fallback_decisions": 529,
+      "no_complete_play_eligible": 20684,
+      "complete_play_eligible": 49011,
+      "no_complete_play_fraction": 0.2945431761221235,
+      "cutoff_with_legal_plays_but_no_complete_play": 1252,
+      "cutoff_with_legal_plays_but_no_complete_play_fraction": 0.01782866256550467,
+      "scope": "K W phase order completes four WAIT IDs including WAIT10 alias before any play score; completed\u22644 therefore excludes complete play eligibility. This diagnoses admission, not chosen-action agreement; KU has no deadline telemetry."
+    },
+    "K4h": {
+      "deadline_decisions": 73146,
+      "fallback_decisions": 527,
+      "no_complete_play_eligible": 16790,
+      "complete_play_eligible": 55829,
+      "no_complete_play_fraction": 0.22954091816367264,
+      "cutoff_with_legal_plays_but_no_complete_play": 733,
+      "cutoff_with_legal_plays_but_no_complete_play_fraction": 0.010021053782845268,
+      "scope": "K W phase order completes four WAIT IDs including WAIT10 alias before any play score; completed\u22644 therefore excludes complete play eligibility. This diagnoses admission, not chosen-action agreement; KU has no deadline telemetry."
+    },
+    "KU": {
+      "deadline_decisions": 0,
+      "fallback_decisions": 0,
+      "no_complete_play_eligible": 0,
+      "complete_play_eligible": 0,
+      "no_complete_play_fraction": null,
+      "cutoff_with_legal_plays_but_no_complete_play": 0,
+      "cutoff_with_legal_plays_but_no_complete_play_fraction": null,
+      "scope": "K W phase order completes four WAIT IDs including WAIT10 alias before any play score; completed\u22644 therefore excludes complete play eligibility. This diagnoses admission, not chosen-action agreement; KU has no deadline telemetry."
+    }
+  }
+}
