@@ -1854,3 +1854,7 @@ Also on the hub, but with copies elsewhere:
   - Corpus builder REJECT: missing d1/strata; root-reached filter drops slow-tail states.
   - E4 fleet mode REJECT: host/nice hardcoded; load is not the full slot layout; no ±5% pooling; no row allowlist.
   - **Decoupled:** T1 reporting is gated only on the runner+reducer fixes plus a round-3 delta check. Corpus and fleet reference are fixed in parallel; the fleet reference runs at the END of T1's window.
+- **14:26 UTC: T1 round-3 review = APPROVE_WITH_CONDITIONS** (c0813ed4). B2–B6 and R1–R4 fixed; verifier 31/31.
+  - C1: seal the per-game wall/CPU print. C2: regenerate guard-decks with the frozen selector.
+  - **After a T1 freeze commit differing only by C1/C2, reporting may start** (sealed); I'll confirm from the diff.
+  - E4 Linux smoke: native exact 125/125 for all tiers; belief/RNG exact; ratios ≈1.0. E4 is fixing the fleet-mode F2–F4 issues for later review.
