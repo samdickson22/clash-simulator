@@ -1,0 +1,433 @@
+{
+  "utc": "2026-10-10T13:34:41Z",
+  "passed": true,
+  "host": "127x08",
+  "expected_pgid": 16288,
+  "generation_terminal_utc": "2026-10-10T13:31:19Z",
+  "packing_complete_utc": "2026-10-10T13:32:15Z",
+  "whole_group_members": [],
+  "whole_group_absence_confirmed_snapshot_utc": "2026-10-10T13:32:52Z",
+  "confirmation_source": "Sole qualified05 controller matching launch/exit and whole live-PGID census, then cached with no further host calls; zombie entries are excluded by the frozen census.",
+  "generation": {
+    "utc": "2026-10-10T13:31:19Z",
+    "identity": {
+      "pid": 16288,
+      "pgid": 16288,
+      "nice": 19,
+      "scheduler": 5,
+      "cores": [
+        54
+      ]
+    },
+    "reason": "target",
+    "totals": {
+      "games": 21843,
+      "rows": 17055461,
+      "root_decisions": 2645689,
+      "cpu_seconds": 1032331.2905994159,
+      "plays": 900707
+    },
+    "fully_vacated": true,
+    "children": [
+      {
+        "pid": 16556,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 16564,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 16571,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 16573,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 18448,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 18449,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 18450,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 18451,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 20254,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 20257,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 20262,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 20265,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 22183,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 22184,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 22185,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 22186,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 24029,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 24030,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 24031,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 24032,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 25940,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 25941,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 25943,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 25954,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 27819,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 27820,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 27821,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 27822,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 29605,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 29606,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 29607,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 29608,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 31507,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 31508,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 31511,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 31514,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 33293,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 33294,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 33295,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 33296,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 35156,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 35159,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 35162,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 35163,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 36951,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 36952,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 36953,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 36954,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 38794,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 38795,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 38796,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 38797,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 40663,
+        "pgid": 16288,
+        "returncode": 0
+      },
+      {
+        "pid": 40664,
+        "pgid": 16288,
+        "returncode": 0
+      }
+    ],
+    "child_cpu_seconds": 1046457.12766,
+    "elapsed_seconds": 19851.00650523603
+  },
+  "concat_manifest": {
+    "schema": "clasher.exit-g.concat-manifest.v1",
+    "utc": "2026-10-10T13:32:15Z",
+    "complete": true,
+    "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+    "freeze_sha256": "37ddbe1db4abe13f08a941c2037eb037e2d9f4193808af41d612c4c8dfd2dc85",
+    "shards": [
+      {
+        "host": "127x08",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+        "manifest_sha256": "bde4d9df909df845c88ff1a428fbc424e8ad9ad9af88e194e47624734438a60a",
+        "games": 2048,
+        "rows": 1600488,
+        "root_decisions": 248152,
+        "candidate_scores": 4619642
+      },
+      {
+        "host": "127x08",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+        "manifest_sha256": "7d751a602adb3622fb12a4837ededdef155531e811087bb8a265be4fbf660d10",
+        "games": 2048,
+        "rows": 1592841,
+        "root_decisions": 247022,
+        "candidate_scores": 4588222
+      },
+      {
+        "host": "127x08",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00002",
+        "manifest_sha256": "871413a6f44c917516493226690343ed0a55b1f28a65b0bb5a61452fe9d9ce20",
+        "games": 2048,
+        "rows": 1604907,
+        "root_decisions": 249019,
+        "candidate_scores": 4644841
+      },
+      {
+        "host": "127x08",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00003",
+        "manifest_sha256": "2cbc63e490307c81e9c5ddbf31b808649fb00616394a6a679a22e5ca058fe29a",
+        "games": 2048,
+        "rows": 1608156,
+        "root_decisions": 249668,
+        "candidate_scores": 4653234
+      },
+      {
+        "host": "127x08",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00004",
+        "manifest_sha256": "a5b95fbd5ff557915b0ccb063d02d8e49c9466b7766d50a63ad777b7b3b90784",
+        "games": 2048,
+        "rows": 1599338,
+        "root_decisions": 248074,
+        "candidate_scores": 4624245
+      },
+      {
+        "host": "127x08",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00005",
+        "manifest_sha256": "54a6b08dac189610f0d7a6fb0f4b9f07bc973b147446d49cc3b3ee2091c3262b",
+        "games": 2048,
+        "rows": 1598474,
+        "root_decisions": 248059,
+        "candidate_scores": 4618143
+      },
+      {
+        "host": "127x08",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00006",
+        "manifest_sha256": "2e1b2fefaef6e96d1b3ef408b3a3b3e5b89593d612c00d8080fbda0022194b00",
+        "games": 2048,
+        "rows": 1600034,
+        "root_decisions": 248123,
+        "candidate_scores": 4605911
+      },
+      {
+        "host": "127x08",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00007",
+        "manifest_sha256": "cb6f28110fb5e62ba1620359f1d8bc0e83031414386f4f76d5c9e6614283c1bc",
+        "games": 2048,
+        "rows": 1596892,
+        "root_decisions": 247600,
+        "candidate_scores": 4612822
+      },
+      {
+        "host": "127x08",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00008",
+        "manifest_sha256": "41eab91e5410334943f86116366da0becadac2b1a452fce8b2f7f728eecb2d96",
+        "games": 2048,
+        "rows": 1590154,
+        "root_decisions": 246533,
+        "candidate_scores": 4582958
+      },
+      {
+        "host": "127x08",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00009",
+        "manifest_sha256": "8755467cee78ad96750f2ab2ba459e70d80d99193433c854cdd3a6779b61cc66",
+        "games": 2048,
+        "rows": 1596478,
+        "root_decisions": 247824,
+        "candidate_scores": 4612862
+      },
+      {
+        "host": "127x08",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00010",
+        "manifest_sha256": "dd72db163d8bc59c7975c5cff87a26e116012818412dba0e83dd39b688c53ee9",
+        "games": 1363,
+        "rows": 1067699,
+        "root_decisions": 165615,
+        "candidate_scores": 3082695
+      }
+    ],
+    "games": 21843,
+    "rows": 17055461,
+    "root_decisions": 2645689,
+    "candidate_scores": 49245575,
+    "smoke_excluded": true,
+    "loader": "Instantiate one TeacherStore(path, assets) for r1 and each G packed shard; use the existing teacher_batch.combined_batch over cumulative row ends. Packed roots retain root_scores/root_valid; offsets stay local to each shard.",
+    "generation_exit_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/exit.json"
+  },
+  "concat_sha256": "6c3cce17f8c7b9311a4e114da58abe8723cd3dba7244a385a70c21972976e5b4",
+  "pending_roots": 0,
+  "packer_sha_verification": "Frozen packer re-read every packed file SHA before shard publication; final equality with terminal raw game/root totals required.",
+  "headroom": {
+    "utc": "2026-10-10T13:31:12Z",
+    "memory_available_bytes": 129654841344,
+    "psi_full_avg10": 0.0,
+    "scope": "Last observed PRE-EXIT metadata only; no post-vacate host probe."
+  },
+  "no_remote_cpu_calls_after_confirmed_vacate": true,
+  "stop_retained": true,
+  "no_restart": true
+}

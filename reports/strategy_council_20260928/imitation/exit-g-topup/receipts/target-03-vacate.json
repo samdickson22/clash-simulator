@@ -1,0 +1,462 @@
+{
+  "utc": "2026-10-10T13:34:41Z",
+  "passed": true,
+  "host": "127x03",
+  "expected_pgid": 3671794,
+  "generation_terminal_utc": "2026-10-10T13:31:01Z",
+  "packing_complete_utc": "2026-10-10T13:31:35Z",
+  "whole_group_members": [],
+  "whole_group_absence_confirmed_snapshot_utc": "2026-10-10T13:32:52Z",
+  "confirmation_source": "Sole qualified05 controller matching launch/exit and whole live-PGID census, then cached with no further host calls; zombie entries are excluded by the frozen census.",
+  "generation": {
+    "utc": "2026-10-10T13:31:01Z",
+    "identity": {
+      "pid": 3671794,
+      "pgid": 3671794,
+      "nice": 19,
+      "scheduler": 5,
+      "cores": [
+        58
+      ]
+    },
+    "reason": "complete",
+    "totals": {
+      "games": 20421,
+      "rows": 15973413,
+      "root_decisions": 2478527,
+      "cpu_seconds": 968950.6657979899,
+      "plays": 844810
+    },
+    "fully_vacated": true,
+    "children": [
+      {
+        "pid": 3674090,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3674091,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3674092,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3674093,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3675887,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3675888,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3675889,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3675891,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3677725,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3677726,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3677727,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3677728,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3679494,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3679495,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3679496,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3679497,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3681253,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3681256,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3681260,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3681266,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3682950,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3682951,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3682952,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3682953,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3684806,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3684807,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3684808,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3684810,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3686496,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3686497,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3686498,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3686499,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3688252,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3688253,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3688254,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3688255,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3689991,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3689992,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3689993,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3689994,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3691788,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3691789,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3691790,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3691791,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3693506,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3693507,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3693510,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3693512,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3695318,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3695319,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3695327,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3695337,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3697028,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3697029,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3697030,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3697031,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3698856,
+        "pgid": 3671794,
+        "returncode": 0
+      },
+      {
+        "pid": 3698857,
+        "pgid": 3671794,
+        "returncode": 0
+      }
+    ],
+    "child_cpu_seconds": 199215.706004,
+    "elapsed_seconds": 3937.5201093088835
+  },
+  "concat_manifest": {
+    "schema": "clasher.exit-g.concat-manifest.v1",
+    "utc": "2026-10-10T13:31:35Z",
+    "complete": true,
+    "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+    "freeze_sha256": "78770f0755f83ce55b3ae91f4e441fbc06cda5c35a8a3295dae023cd7718b081",
+    "shards": [
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+        "manifest_sha256": "d1cfb556363bb58fd9e4764b3961027594b31e728af6633cb5601acac0676119",
+        "games": 2048,
+        "rows": 1601501,
+        "root_decisions": 248421,
+        "candidate_scores": 4625837
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+        "manifest_sha256": "507a9f9831c2a2cb081d083dff2d7513476c6061bd54865bdf1694b905d6b2c2",
+        "games": 2048,
+        "rows": 1606855,
+        "root_decisions": 249343,
+        "candidate_scores": 4647819
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00002",
+        "manifest_sha256": "7e886977f1a3fb1694a2758d2484fdd7c177ae19aee3f604d4f330384a71c764",
+        "games": 2048,
+        "rows": 1599363,
+        "root_decisions": 247934,
+        "candidate_scores": 4613709
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00003",
+        "manifest_sha256": "3f166e8529c374924f908cddba3f104916b63bcc593ab10719b2aef3d3bf8bea",
+        "games": 2048,
+        "rows": 1599163,
+        "root_decisions": 248303,
+        "candidate_scores": 4621922
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00004",
+        "manifest_sha256": "218dfb29b236f06b088774e25987336908d7548e348eaa79d5cfb302028f33ee",
+        "games": 2048,
+        "rows": 1605663,
+        "root_decisions": 249434,
+        "candidate_scores": 4649139
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00005",
+        "manifest_sha256": "e4c16bc34f6d2da1b4ed5f2cb502e1448ef6c8c406d5feadf242564fae8478c2",
+        "games": 2048,
+        "rows": 1604198,
+        "root_decisions": 248882,
+        "candidate_scores": 4637333
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00006",
+        "manifest_sha256": "8561d0ab9bfc5a006e99105ff1b779fe0e99ed780722a1a5f18ac977c30a9cf9",
+        "games": 1452,
+        "rows": 1141652,
+        "root_decisions": 177196,
+        "candidate_scores": 3308075
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00007",
+        "manifest_sha256": "bc4cd9ef6c4a290f473e57a9e146ee12bd104542bb4ff0f1294bf247650d11f8",
+        "games": 2048,
+        "rows": 1595862,
+        "root_decisions": 247304,
+        "candidate_scores": 4604337
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00008",
+        "manifest_sha256": "1f48392f6e23555323e0317610a9cdf3be18c31c65ee57d2f6171fab8e9943d4",
+        "games": 528,
+        "rows": 417327,
+        "root_decisions": 64819,
+        "candidate_scores": 1205938
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00009",
+        "manifest_sha256": "0283a8f134ec8faeff5b62e34829883329a40bf8f94c9020061e753bd5fd39b3",
+        "games": 2048,
+        "rows": 1599915,
+        "root_decisions": 248260,
+        "candidate_scores": 4620321
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00010",
+        "manifest_sha256": "274b71d6ced7140354d025c7aed015aadc12c2462b4943147ac981ca045d7311",
+        "games": 2048,
+        "rows": 1594750,
+        "root_decisions": 247519,
+        "candidate_scores": 4616080
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00011",
+        "manifest_sha256": "c532dc130bad56a1fdab8fbfb797a0c548a863d370aaaf775dfed2e4edf4ac6a",
+        "games": 9,
+        "rows": 7164,
+        "root_decisions": 1112,
+        "candidate_scores": 21397
+      }
+    ],
+    "games": 20421,
+    "rows": 15973413,
+    "root_decisions": 2478527,
+    "candidate_scores": 46171907,
+    "smoke_excluded": true,
+    "loader": "Instantiate one TeacherStore(path, assets) for r1 and each G packed shard; use the existing teacher_batch.combined_batch over cumulative row ends. Packed roots retain root_scores/root_valid; offsets stay local to each shard.",
+    "generation_exit_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/exit.json"
+  },
+  "concat_sha256": "e5bc30db03996e5701187278ac4abe945878c373c3ce4b16fe46921fdda6b8d7",
+  "pending_roots": 0,
+  "packer_sha_verification": "Frozen packer re-read every packed file SHA before shard publication; final equality with terminal raw game/root totals required.",
+  "headroom": {
+    "utc": "2026-10-10T13:26:42Z",
+    "memory_available_bytes": 100903972864,
+    "psi_full_avg10": 0.0,
+    "scope": "Last observed PRE-EXIT metadata only; no post-vacate host probe."
+  },
+  "no_remote_cpu_calls_after_confirmed_vacate": true,
+  "stop_retained": true,
+  "no_restart": true
+}

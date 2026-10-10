@@ -1,0 +1,74 @@
+{
+  "utc": "2026-10-10T13:34:41Z",
+  "passed": true,
+  "goal_complete": true,
+  "completed_snapshot_utc": "2026-10-10T13:32:52Z",
+  "target_root_decisions": 6000000,
+  "root_decisions": 6046004,
+  "packed_root_decisions": 6046004,
+  "pending_roots": 0,
+  "whole_game_admission_poll_drain_overshoot": 46004,
+  "games": 49703,
+  "rows": 38962880,
+  "candidate_scores": 112784333,
+  "candidate_scores_are_separate_from_root_decisions": true,
+  "verified_shards": 31,
+  "concat_manifest_sha256": "7e21f90a14f96fbd462dc29f0e109e80775eded5cf27bdc91417714a4e8268d2",
+  "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "host_manifest_shas": {
+    "01": "719d02788838724e3a98b2fe8c333fd8d580633c01b50a1985ac390c9ac51501",
+    "03": "e5bc30db03996e5701187278ac4abe945878c373c3ce4b16fe46921fdda6b8d7",
+    "04": "afd387104d804047fc07df1110b81aeabe010c4ac06774fb8a6bfb558e998447",
+    "08": "6c3cce17f8c7b9311a4e114da58abe8723cd3dba7244a385a70c21972976e5b4"
+  },
+  "hosts": {
+    "01": {
+      "pgid": 4124581,
+      "group_members": [],
+      "root_decisions": 149385,
+      "packed_root_decisions": 149385,
+      "pending_roots": 0,
+      "complete": true
+    },
+    "03": {
+      "pgid": 3671794,
+      "group_members": [],
+      "root_decisions": 2478527,
+      "packed_root_decisions": 2478527,
+      "pending_roots": 0,
+      "complete": true
+    },
+    "04": {
+      "pgid": 1712867,
+      "group_members": [],
+      "root_decisions": 772403,
+      "packed_root_decisions": 772403,
+      "pending_roots": 0,
+      "complete": true
+    },
+    "08": {
+      "pgid": 16288,
+      "group_members": [],
+      "root_decisions": 2645689,
+      "packed_root_decisions": 2645689,
+      "pending_roots": 0,
+      "complete": true
+    }
+  },
+  "accounting": "Each full01/full03/full04/full08 corpus once; old imported/static baselines replaced wholesale; smoke excluded.",
+  "controller": {
+    "pid": 2129051,
+    "pgid": 2129051,
+    "start": 142734130,
+    "command_sha256": "3ce1799ec81dcc602e7c80be5d99d78d7408b0baf058ddee8bb5d1adccf66c44",
+    "whole_group_members": [],
+    "whole_group_absence_checked_utc": "2026-10-10T13:34:41Z"
+  },
+  "no_remote_calls_to": [
+    "01",
+    "03",
+    "04",
+    "08"
+  ],
+  "no_restart": true
+}
