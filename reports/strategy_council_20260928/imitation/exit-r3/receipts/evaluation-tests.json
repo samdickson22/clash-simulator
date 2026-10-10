@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "unit_tests": 5,
+  "frozen_clock_tests": [
+    "test_ability_default_is_wait",
+    "test_complete_play_keeps_best_wait_too",
+    "test_complete_refined_play_keeps_frozen_best_score",
+    "test_control_pre_scan_uses_v1_poll",
+    "test_no_deadline_and_no_cutoff_do_not_override",
+    "test_pre_scan_complete_wait_uses_declared_default",
+    "test_student_inference_precedes_v1_and_consumes_absolute_cutoff"
+  ],
+  "ast_files": [
+    "regret_game.py",
+    "source_manifest.py",
+    "offline.py",
+    "reduce.py",
+    "loader_prefetch.py",
+    "test_proposals.py",
+    "fit_runtime.py",
+    "qualify_evaluation.py",
+    "game.py",
+    "verify_g.py",
+    "test_runner.py",
+    "supervise.py",
+    "stage_g.py",
+    "admission.py",
+    "audit_ranges.py",
+    "proposals.py",
+    "stage_cpu.py",
+    "pool.py",
+    "block.py",
+    "test_admission.py",
+    "stage.py",
+    "test_sdefault.py",
+    "k_stage3_sdefault.py",
+    "sdefault.py"
+  ],
+  "cpu_seconds": 1.2501440000000001,
+  "wall_seconds": 1.223988096928224,
+  "utc": "2026-10-10T04:29:32Z",
+  "host": "127x09",
+  "nice": 10,
+  "affinity": [
+    126
+  ],
+  "accounting": "Whole qualification process once; earlier unmetered five-test dry runs disclosed separately."
+}

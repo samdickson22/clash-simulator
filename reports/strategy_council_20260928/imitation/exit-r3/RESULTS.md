@@ -1,4 +1,4 @@
-# R3 results — pending fits
+# R3 results — fits active
 
 Exploration; no adoption or multiplicity adjustment. Two arms frozen before fit:
 R3a root-only and R3b root-only+advantage, releasedv1 width192,2500×8192,
@@ -22,3 +22,11 @@ G receiving+checksum13.885933CPU s on09 and13.580354CPU s on16 (remote sender
 unmetered), final focused test receipt and seed interval audit separately.
 Initial unmetered focused test pass and small metadata/source copy overhead
 are disclosed; no fit or game compute charged yet. Full final meters pending.
+
+Both fits launched after scientific freeze bc542da8 was pushed: R3a09
+04:07:41Z and R3b16 04:07:42Z. At04:26:21Z they reached542/500 with finite
+losses. Fit meters are still accruing; no evaluated outcomes or games exist.
+Evaluation wrapper adds5 passing tests and7 unchanged X injected-clock tests;
+successful qualification CPU1.257831s and1.250144s retained separately.
+Missing-dependency test attempts and small source-copy overhead are unmetered
+and consumed no game seeds. CPU admission waits for explicit K2 or X release.

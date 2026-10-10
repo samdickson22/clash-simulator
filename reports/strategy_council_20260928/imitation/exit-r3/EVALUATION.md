@@ -1,0 +1,64 @@
+# R3 evaluation implementation freeze
+
+Scientific plan remains [PLAN.md](PLAN.md), frozen/pushed bc542da8 before both
+fits. This supplement pins operational evaluation entrypoints before any
+calibration, W-regret root scoring, smoke, or reporting games. Training code,
+roots, hyperparameters, seeds, thresholds, and final-EMA selection are unchanged.
+
+Fit-host offline runs only after final step2500 and clean trainer/supervisor
+exit. It uses float32 CUDA/TF32off on09/16, one encoder pass per minibatch, and
+the 8088 eligible roots from the frozen 64-game R1 heldout slice. The threshold
+nearest34.6% deterministic root plays is selected without action labels; ties
+choose the smaller threshold and equal probabilities stay together. R3a ranks
+legal conditional play probabilities; R3b ranks legal predicted advantages.
+Top8 are offered even on gate-WAIT roots. The gate selects WAIT or the highest
+ranked legal play as the S-default action.
+
+The home CPU regret phase replays all64 original command streams to terminal.
+For each heldout root, it reconstructs a fresh frozen R1 W belief/scoring root
+with regret RNG4503601927370496+global corpus row index. Both students' legal
+top8, the recorded W candidate set, WAIT, and WAIT10 are fully scored on that
+common root. Groups contain at most8 plays so screening does not leave any
+proposal unscored; repeated WAIT scores must match exactly between groups.
+The comparator is W's best completed score among its recorded candidates;
+the proposal best includes the always-available WAIT/WAIT10 fallbacks. The
+mean positive regret gate is .010, as declared before fitting. Signed regret,
+teacher-play-only regret, and percentiles remain descriptive. Every root and
+all command replay hashes are sealed. Heldout-game bootstrap5000/80991013.
+
+Survivors qualify on excluded smoke indices0/1 from the reserved191 bank.
+Then600 fresh reporting seeds from190 run rotating complete same-seed blocks
+[C-v1, survivingR3a/R3b in arm order, K0]. Each block runs back-to-back on one
+physical core and one host at nice10/SCHED_OTHER, Torch/BLAS1. No controls are
+pre-run. An incomplete block is archived and replayed in full; all attempts
+remain charged. Smoke outcomes cannot select arms or thresholds.
+
+The byte-frozen X S-default adapter, clock tests, K source and native pins are
+retained. Own changes only load the calibrated R3 policy and supply its
+default/proposal ranking, plus provenance and coordinator's actual scheduler
+class. Both actors poll releasedv1. Student inference remains inside the
+frozen200ms full-decision timer with8ms return reserve; complete refined play
+uses X's unchanged best-complete-score rule. There is no eligibility filter.
+
+03 admission requires K2's explicit notification/PROGRESS RELEASE, the atomic
+`/mpac/sdicks02/jobs/clasher/k2-20261010-r1/K2-CPU-RELEASE.json`, terminal
+reporting_complete/released flags and host03, and independent absence of every
+recorded PGID plus no K-v2/K2/G timing processes. Own admitted receipt embeds
+the exact release evidence SHA. Merely reaching07Z or seeing an idle core does
+not admit work. Fallback01 similarly requires explicit X descriptive release
+and full X/G drain. Own continuous guards require≥24GiB MemAvailable, allowed
+physical cores0–59 on03/0–39 on01, no conflicting owner, own stop flags, and
+Oct11 05:15Z deadline. Pools use8 regret workers,2 smoke workers, and at most46
+reporting workers to stay below96 processes including per-block child games.
+
+Final reduction checks every raw/case/block SHA, source/native/adapter/student
+pins, paired decks/seat/seed, timer configuration, host/core/class and rotated
+case order. It uses shared paired5000 bootstrap resamples80991013. The Stage2
+kill rule remains upper95%CI(lossR3-lossC-v1)≥0; K0 is descriptive.
+
+Metering charges each complete fit supervisor tree, each offline process, and
+each home pool tree once. Nested game/block/replay diagnostics are never added
+again. Every failed or replayed attempt stays retained. Qualification receipt
+records five own unit tests and seven unchanged injected-clock tests. Earlier
+dry runs and missing-dependency qualification attempts consumed no games and
+have unmetered small test/copy overhead, disclosed separately.

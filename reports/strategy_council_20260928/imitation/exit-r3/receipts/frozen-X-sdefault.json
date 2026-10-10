@@ -1,0 +1,70 @@
+{
+  "schema": "clasher.exit-r2.sdefault-addendum.v1",
+  "kind": "S-default-K1",
+  "utc": "2026-10-10T02:15:23Z",
+  "authority": "Coordinator 01:50 replacement /01:56 same-load interleaving /02:01 default-layer equivalence ruling; REVIEW-K-20261010.md section5 c296d98f",
+  "review_sha256": "c167a33ce4961d71ce9c6558844d3428a82b57bf6a2b903216c4085a83a62f8b",
+  "committed_before_games": true,
+  "base_freeze_sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+  "training_recipe_source_and_hashes_unchanged": true,
+  "qualification_sha256": "6f4fd21b45b34b8314a213b17575c1ea02df6c1f9d8364b730f42f5034c38fdc",
+  "blocks_qualification_sha256": "a4c621cae3a73073c3eba99b76a8778c9502452ece4e4ab50cc03c90e27e6e02",
+  "seed_audit_sha256": "34dc923c76d415c06300db663f114b8487a475a22294e0f8f26140e2a3d61bcc",
+  "files": {
+    "ops/sdefault.py": "b34fe0d85e080b9cd048f52a36a3253d9980714f4dafad1dd8c3d3e798e63803",
+    "ops/k_stage3_sdefault.py": "6a086a8416ed156f0c658be36e6b2ed521a53de1f87f8d94f4a4082262efffcd",
+    "ops/test_sdefault.py": "bfafe5a9494083e6dad5a1c8bbf26133a3c773ec8ddd215608373b126ca27a98",
+    "ops/qualify_sdefault.py": "c6358390f760f23f26733ca565aa04310e97aac063ce5190fdf3b71d7f0935a3",
+    "ops/stage3_sdefault_admission.py": "a81243640b27671d74c5ad3a6e334d829505d31c47755e3f6270a5a3f6129214",
+    "ops/game_worker_sdefault.py": "454202e2659863645f650844e6a47c6cd77f39ebafc899977af4274528cd3886",
+    "ops/stage3_block_worker.py": "5d95f9686672a94b9d30dc4e29443ea6586a00f4532ae9b4be3dba020f551824",
+    "ops/game_pool_sdefault.py": "fd76ca6694320f43b2dbcf18598f73a0ce143e8f46f3ba26e791da3912ebde95",
+    "ops/reduce_stage3_sdefault.py": "2d997722f4151062fb3f74980bf0814163d286b323d9a588fc48d7a6a088a382",
+    "ops/test_sdefault_blocks.py": "46c650939a6e4ee132cbb1e677a0a0e90ad103184f8288c34de107125ef7a7af",
+    "ops/qualify_sdefault_blocks.py": "2c48eb3cc1bb7365654a83a107804d456ca734253aa440f848e54c5a54af5378"
+  },
+  "source_files": {
+    "reports/explore/k-anytime/run.py": "d17f3ab0db0be065d702a671db44a730576235dd7b8da6c726475dd96ab14014",
+    "reports/explore/k-anytime/planner.py": "a3a01195d08c8134d4c411462963bbae50f638f30213f24502bfa14ed3eff677",
+    "reports/explore/k-anytime/plan.json": "b2a21a905bc3250f972fdec318e59a0a8b6890d303dbaf8bca4872f75a7a2695",
+    "reports/explore/e1/planner.py": "4f608829289acfb4130f8f2022fd1f0d61755209e20230d1432595eec4c08bd6",
+    "reports/explore/e1/policy.py": "1a16390ccc8ef093e6de5a98a0d730de5b643d67b06c37056eea382a3a0211d7"
+  },
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "policy_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "arms": {
+    "C-v1": "Empty-hook K1; cutoff without complete refined play returns released v1 polled action.",
+    "S-n": "Full final-EMA student package: joint argmax over legal plays plus canonical WAIT, first inside timer; all-play coarse ordering and top8 candidate/refinement union. Cutoff without complete refined play returns student default.",
+    "K0": "Paired descriptive frozen E1 baseline-search arm0 at same200ms/8msreserve versus v1."
+  },
+  "complete_score_rule": "If any refined play completed, keep frozen best-complete-score rule, including a best WAIT. No eligibility restriction; no deadline default substitution.",
+  "contrast": "loss(S-n)-loss(C-v1); full student package, does not separate hook effect from default effect.",
+  "descriptive_contrast": "loss(S-n)-loss(K0); never a replacement gate",
+  "kill_rule": "Upper paired95% CI >=0",
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 80991010,
+    "shared_resamples": true,
+    "unit": "same-seed complete block"
+  },
+  "reporting": {
+    "base": 4503601517370496,
+    "count": 600,
+    "opponent": "released v1",
+    "decks": "five frozen train archetypes: own i%5, opponent(i//5)%5, seat i%2",
+    "max_survivors": 3
+  },
+  "threads": 1,
+  "coarse_horizon": 160,
+  "deadline_seconds": 0.2,
+  "return_reserve_seconds": 0.008,
+  "interleaving": "C-v1, all selected S-n, K0 for each seed run back-to-back on SAME03 host, SAME single physical core, nice19/SCHED_IDLE/Torch1. Fixed arm list [C-v1, ranked survivors, K0], rotate by index modulo arm count. Controls never pre-run.",
+  "admission": "All six stage1/2 gates resolved; max3 frozen ranked survivors; own wrapper smoke qualification passed; K-v2 REPORTING*-DONE plus zero active K-v2 run.py processes; G STOP/full drain; home>=24GiB/load1<=100. No timing games overlap.",
+  "replay": "Incomplete block archived with raw/case receipts; replay ALL arms of that seed together. Never combine controls from an earlier load interval. Every replay remains charged.",
+  "qualification": "C-v1 empty-hook K1 and S-v1-standin same-hooks/same-candidate K1 each125/125 actions and scores; seven injected-clock tests. Short synthetic HUD filled with known distinct tokens from fixed first train-archetype deck, fixture only. Standin hook diagnostic11/125=8.8%; initial44/50 retained. Seven admission/argmax/stop-reap tests. No synthetic/heldout outcome drives training.",
+  "wrapper_smoke": "After this addendum commit/push and K-v2 release, interleaved six terminal mechanics games at disjoint smoke indices4/5, both controls and v1 student standin. Actual K wall0, v1 polling both seats, legal proposals, configuration and raw/case metadata asserted; smoke losses excluded.",
+  "metering": "Pool parent+all descendant CPU once. Case/block child diagnostics nested, not added. Failed/replayed blocks retained. GPUfits unchanged.",
+  "prior_design": "Old K1-vs-v1 harness/v2 qualification retained historically. STAGE3.HOLD continues to prohibit its reporting. Only new S-default entrypoints/addendum/prelaunch receipt can admit replacement games.",
+  "prior_stage3_addendum_sha256": "b774e1b52a07db0fdbb83cc01302cc7ff64a30aff2573256758af898d0eecf53",
+  "operational_phase_release_amendment": "K-v2 now repairs smoke-r3: recognize REPORTING*-DONE successful reporting completion markers, still require zero active K-v2 timing run.py processes. Scientific target/default/hook/contrast/seed/recipe unchanged."
+}
