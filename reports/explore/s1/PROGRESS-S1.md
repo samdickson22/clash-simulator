@@ -70,3 +70,15 @@ taskset-c39 bash OWN runtime.sh reports/explore/s1/advance.py --job OWNjob
 (defaultnice0 driver; childrennice10). Never retry closedclaim or reusepartial
 block. After complete smoke audit, same boundedadvance launches600reporting.
 No partial reporting outcomes; retain STOP/failedmeters.
+
+2026-10-10T09:07:52Z — Excluded smoke COMPLETE09:05:54Z:40terminalgames/eight complete
+rotatedpairedblocks;7488decisions audited,6positiveoverruns charged, no GC
+inside decisions, cacheforward==fallback polls, exact core/seed/deck/slot proofs
+allpass. WholepoolCPU2018.873088s/wall302.235396s; sourcepins unchanged.
+Frozenreducer smoke PASS09:07:02Z; outcome estimates excluded from reporting.
+600fresh reporting blocks (3000games) launched09:07:02Z supervisorPID/PGID
+3392665, childPID/PGID3392678;13three-core slots0–38/main39, nice10.
+Scientificfreeze stays5ae7d16e. Do not reduce outcomes before all600complete
+blocks and clean source/exit audit. Reporting progress is ownprogress.json;
+STOP preserves all work, no autoretry/partialreuse. Next monitor metadata only,
+then frozenreduction/GC/execution/finalvacancy, RESULTS/Macnote and push.

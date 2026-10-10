@@ -1,0 +1,500 @@
+{
+  "utc": "2026-10-10T09:07:02Z",
+  "smoke_excluded": true,
+  "plan_sha256": "db6703a5ca53bfe79e409b999ab446a0673dc83cd2a430005f45a61d5f5ae2cb",
+  "paired_seeds": 8,
+  "checks": {
+    "decisions": 7488,
+    "overruns": 6,
+    "games": 40
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101026,
+    "unit": "paired seed",
+    "confidence": 0.95
+  },
+  "arms": {
+    "K0c-200": {
+      "wins": 6,
+      "losses": 2,
+      "draws": 0,
+      "loss_pct": 25.0,
+      "loss_ci_pct": [
+        0.0,
+        50.0
+      ],
+      "loss_change_pp": 0.0,
+      "loss_change_ci_pp": [
+        0.0,
+        0.0
+      ],
+      "fallback_pct": 37.396694214876035,
+      "fallback_ci_pct": [
+        17.116244893822476,
+        56.03014380530971
+      ],
+      "fallback_count": 543,
+      "cutoff_pct": 74.93112947658402,
+      "cutoff_ci_pct": [
+        66.23235396681048,
+        82.71648335624712
+      ],
+      "decisions": 1452,
+      "overrun_count": 0,
+      "overrun_pct": 0.0,
+      "overrun_ci_pct": [
+        0.0,
+        0.0
+      ],
+      "positive_overrun_ms": {
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+      },
+      "wall_ms": {
+        "p50": 192.5214574439451,
+        "p95": 192.70666408119723,
+        "p99": 193.1165946694091,
+        "max": 198.4093498904258
+      },
+      "cut_wall_ms": {
+        "p50": 192.57976149674505,
+        "p95": 192.72463206434622,
+        "p99": 193.42113122111186,
+        "max": 198.4093498904258
+      },
+      "cut_past_deadline_count": 0,
+      "cut_past_deadline_plus_reserve_count": 0,
+      "gc_maintenance_seconds": 0.3629208917263895,
+      "gc_maintenance_ms": {
+        "p50": 0.08741184137761593,
+        "p95": 0.534035894088447,
+        "p99": 0.9339271625503894,
+        "max": 142.61270896531641
+      },
+      "gc_maintenance_count": 563,
+      "preparation_cutoffs": {
+        "scoring_or_none": 1448,
+        "sample": 2,
+        "belief": 2
+      },
+      "overrun_ticks_hist": {},
+      "game_cpu_hours": 0.11194274022055556,
+      "worker_masks": {
+        "0": 1,
+        "3": 1,
+        "6": 1,
+        "9": 1,
+        "12": 1,
+        "15": 1,
+        "18": 1,
+        "21": 1
+      }
+    },
+    "S-200": {
+      "wins": 6,
+      "losses": 2,
+      "draws": 0,
+      "loss_pct": 25.0,
+      "loss_ci_pct": [
+        0.0,
+        50.0
+      ],
+      "loss_change_pp": 0.0,
+      "loss_change_ci_pp": [
+        -37.5,
+        37.5
+      ],
+      "fallback_pct": 10.711225364181663,
+      "fallback_ci_pct": [
+        6.933333333333334,
+        14.762301918265221
+      ],
+      "fallback_count": 125,
+      "cutoff_pct": 60.58269065981148,
+      "cutoff_ci_pct": [
+        55.94541910331384,
+        64.26230172436698
+      ],
+      "decisions": 1167,
+      "overrun_count": 0,
+      "overrun_pct": 0.0,
+      "overrun_ci_pct": [
+        0.0,
+        0.0
+      ],
+      "positive_overrun_ms": {
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+      },
+      "wall_ms": {
+        "p50": 192.52059306018054,
+        "p95": 192.66719846054912,
+        "p99": 192.75930155068636,
+        "max": 194.6346948388964
+      },
+      "cut_wall_ms": {
+        "p50": 192.58331996388733,
+        "p95": 192.70247789099813,
+        "p99": 192.77777986135334,
+        "max": 194.6346948388964
+      },
+      "cut_past_deadline_count": 0,
+      "cut_past_deadline_plus_reserve_count": 0,
+      "gc_maintenance_seconds": 0.22347831283695996,
+      "gc_maintenance_ms": {
+        "p50": 0.08269213140010834,
+        "p95": 0.47562073450535536,
+        "p99": 1.0117073194123778,
+        "max": 142.60908914729953
+      },
+      "gc_maintenance_count": 586,
+      "preparation_cutoffs": {
+        "scoring_or_none": 1164,
+        "belief": 3
+      },
+      "overrun_ticks_hist": {},
+      "game_cpu_hours": 0.09445752974694445,
+      "worker_masks": {
+        "0": 1,
+        "3": 1,
+        "6": 1,
+        "9": 1,
+        "12": 1,
+        "15": 1,
+        "18": 1,
+        "21": 1
+      }
+    },
+    "K0c-160": {
+      "wins": 2,
+      "losses": 6,
+      "draws": 0,
+      "loss_pct": 75.0,
+      "loss_ci_pct": [
+        37.5,
+        100.0
+      ],
+      "loss_change_pp": 50.0,
+      "loss_change_ci_pp": [
+        12.5,
+        87.5
+      ],
+      "fallback_pct": 91.3779830638953,
+      "fallback_ci_pct": [
+        86.3919219570003,
+        95.34227240649258
+      ],
+      "fallback_count": 2374,
+      "cutoff_pct": 97.38260200153965,
+      "cutoff_ci_pct": [
+        94.95683780099955,
+        98.99305555555556
+      ],
+      "decisions": 2598,
+      "overrun_count": 2,
+      "overrun_pct": 0.07698229407236336,
+      "overrun_ci_pct": [
+        0.0,
+        0.17381186611985222
+      ],
+      "positive_overrun_ms": {
+        "p50": 7.598088621161875,
+        "p95": 7.626423749607053,
+        "p99": 7.628942427691069,
+        "max": 7.629572097212073
+      },
+      "wall_ms": {
+        "p50": 152.5029339827597,
+        "p95": 152.66848972532898,
+        "p99": 152.82696757931262,
+        "max": 167.62957209721208
+      },
+      "cut_wall_ms": {
+        "p50": 152.50536403618753,
+        "p95": 152.6704773772508,
+        "p99": 152.82877089921385,
+        "max": 167.62957209721208
+      },
+      "cut_past_deadline_count": 2,
+      "cut_past_deadline_plus_reserve_count": 0,
+      "gc_maintenance_seconds": 0.22233718540519476,
+      "gc_maintenance_ms": {
+        "p50": 0.1080165384337306,
+        "p95": 0.5548016633838415,
+        "p99": 1.2563263997435559,
+        "max": 143.18333892151713
+      },
+      "gc_maintenance_count": 456,
+      "preparation_cutoffs": {
+        "scoring_or_none": 2592,
+        "belief": 6
+      },
+      "overrun_ticks_hist": {
+        "1": 2
+      },
+      "game_cpu_hours": 0.15413923003138888,
+      "worker_masks": {
+        "0": 1,
+        "3": 1,
+        "6": 1,
+        "9": 1,
+        "12": 1,
+        "15": 1,
+        "18": 1,
+        "21": 1
+      }
+    },
+    "S-160": {
+      "wins": 5,
+      "losses": 3,
+      "draws": 0,
+      "loss_pct": 37.5,
+      "loss_ci_pct": [
+        12.5,
+        75.0
+      ],
+      "loss_change_pp": 12.5,
+      "loss_change_ci_pp": [
+        0.0,
+        37.5
+      ],
+      "fallback_pct": 39.798850574712645,
+      "fallback_ci_pct": [
+        32.59005145797599,
+        45.20022113022113
+      ],
+      "fallback_count": 554,
+      "cutoff_pct": 73.27586206896552,
+      "cutoff_ci_pct": [
+        63.18816762530813,
+        80.1340645947593
+      ],
+      "decisions": 1392,
+      "overrun_count": 2,
+      "overrun_pct": 0.14367816091954022,
+      "overrun_ci_pct": [
+        0.0,
+        0.3147314392651403
+      ],
+      "positive_overrun_ms": {
+        "p50": 8.399182613939043,
+        "p95": 8.618596740998324,
+        "p99": 8.63810021895915,
+        "max": 8.642976088449355
+      },
+      "wall_ms": {
+        "p50": 152.5444930884987,
+        "p95": 152.67513600410894,
+        "p99": 152.77512522879988,
+        "max": 168.64297608844936
+      },
+      "cut_wall_ms": {
+        "p50": 152.57675806060433,
+        "p95": 152.6874379022047,
+        "p99": 152.80131940729916,
+        "max": 168.64297608844936
+      },
+      "cut_past_deadline_count": 2,
+      "cut_past_deadline_plus_reserve_count": 2,
+      "gc_maintenance_seconds": 0.37054484453983605,
+      "gc_maintenance_ms": {
+        "p50": 0.08317653555423021,
+        "p95": 0.44371363474056125,
+        "p99": 0.9404085529968161,
+        "max": 142.05779903568327
+      },
+      "gc_maintenance_count": 680,
+      "preparation_cutoffs": {
+        "scoring_or_none": 1386,
+        "belief": 6
+      },
+      "overrun_ticks_hist": {
+        "1": 2
+      },
+      "game_cpu_hours": 0.09677612821777777,
+      "worker_masks": {
+        "0": 1,
+        "3": 1,
+        "6": 1,
+        "9": 1,
+        "12": 1,
+        "15": 1,
+        "18": 1,
+        "21": 1
+      }
+    },
+    "K2-200": {
+      "wins": 7,
+      "losses": 1,
+      "draws": 0,
+      "loss_pct": 12.5,
+      "loss_ci_pct": [
+        0.0,
+        37.5
+      ],
+      "loss_change_pp": -12.5,
+      "loss_change_ci_pp": [
+        -50.0,
+        25.0
+      ],
+      "fallback_pct": 0.9101251422070534,
+      "fallback_ci_pct": [
+        0.8830022075055187,
+        0.9467455621301775
+      ],
+      "fallback_count": 8,
+      "cutoff_pct": 14.675767918088738,
+      "cutoff_ci_pct": [
+        9.006873679717172,
+        19.88950276243094
+      ],
+      "decisions": 879,
+      "overrun_count": 2,
+      "overrun_pct": 0.22753128555176336,
+      "overrun_ci_pct": [
+        0.0,
+        0.5500550055005501
+      ],
+      "positive_overrun_ms": {
+        "p50": 11.952306563034643,
+        "p95": 12.509763473644842,
+        "p99": 12.559315199032415,
+        "max": 12.571703130379309
+      },
+      "wall_ms": {
+        "p50": 149.62601708248258,
+        "p95": 192.8358822595328,
+        "p99": 193.03340322338045,
+        "max": 212.57170313037932
+      },
+      "cut_wall_ms": {
+        "p50": 192.78343301266432,
+        "p95": 193.04057522676885,
+        "p99": 206.42710953019557,
+        "max": 212.57170313037932
+      },
+      "cut_past_deadline_count": 2,
+      "cut_past_deadline_plus_reserve_count": 2,
+      "gc_maintenance_seconds": 0.3975353285204619,
+      "gc_maintenance_ms": {
+        "p50": 0.10353652760386467,
+        "p95": 0.5772264441475272,
+        "p99": 0.9383167582564057,
+        "max": 147.44516415521502
+      },
+      "gc_maintenance_count": 628,
+      "preparation_cutoffs": {
+        "scoring_or_none": 875,
+        "belief": 3,
+        "sample": 1
+      },
+      "overrun_ticks_hist": {
+        "1": 2
+      },
+      "game_cpu_hours": 0.09756188080944443,
+      "worker_masks": {
+        "0,1,2": 1,
+        "3,4,5": 1,
+        "6,7,8": 1,
+        "9,10,11": 1,
+        "12,13,14": 1,
+        "15,16,17": 1,
+        "18,19,20": 1,
+        "21,22,23": 1
+      }
+    }
+  },
+  "file_shas": {
+    "sim-0000-d27-K0c-160.json": "ad0a36b3cdadfd6ddb28cd82eb478e200a8be74357ff6d983e32b92069e3c76a",
+    "sim-0000-d27-K0c-200.json": "a277b7cdce19035a938bf29b9c7617a9b3a42399a6a8ceaefefcf24c93c65959",
+    "sim-0000-d27-K2-200.json": "d0116e02c3b47f5bba714fbc9a2e745cd181560d629fd30dfda4bdbc7a3f6178",
+    "sim-0000-d27-S-160.json": "7756216ad53d6ed870dcc92618b790b83b3b7409fd14555f833f05a38032d394",
+    "sim-0000-d27-S-200.json": "a225e423f36c9ab3c593834062f3168b1de8c0b0c3ecd322a4a865423a8afe2f",
+    "sim-0001-d27-K0c-160.json": "7a94d29dc3b8d7530797c7d8e4412a463b705c30c4e34b501bb50d82ecbc7299",
+    "sim-0001-d27-K0c-200.json": "ae141bc4bf2eef75a987e5b21ffe628b24788f1eb23dfcc8cdecc44c0562db64",
+    "sim-0001-d27-K2-200.json": "8da1776f4284bbe71fdb3d920748d3019b7d0b57c8afd2f40e7e017377045372",
+    "sim-0001-d27-S-160.json": "60584597301d76ddcdced33491f30c787add542fc8dfb5de78c81356168a704a",
+    "sim-0001-d27-S-200.json": "41697af8c622919bd4dbf47de2583e011a095bb0fd6a0e7cf25f052e9924829c",
+    "sim-0002-d27-K0c-160.json": "6b71016e8b2b38680357c6bd18235c2e7fda1d3029f019f7ce4217d7767429e6",
+    "sim-0002-d27-K0c-200.json": "db78f8f70c9241dabdfb6d24eca0f9aacfddd1a72a1f0438f6f22797f2016da8",
+    "sim-0002-d27-K2-200.json": "f668c07f559f8c55d5876dbf4b8436960ea7b806b2bcbb1bde79d0fac86282e8",
+    "sim-0002-d27-S-160.json": "e38c32b1d753aa76fe8ee50514b9dc6872c816fbd0ef6eac8bf493026aceb38a",
+    "sim-0002-d27-S-200.json": "67b19ff13962c7c4ae18c9ad3371ca863897d7a648cbac491367bf813f635421",
+    "sim-0003-d27-K0c-160.json": "e4eee408382f2388dec4ac73b3720ec70fb24e37f5e831f49301fc7c2c6f79b1",
+    "sim-0003-d27-K0c-200.json": "70c9e933a38116d4b26ce4411201f16e53315c54546d9171d78b6a032f2ac1ea",
+    "sim-0003-d27-K2-200.json": "01033e4b9ceda457c915688a81ddad297543a72e46eb933151cef9b530dd440f",
+    "sim-0003-d27-S-160.json": "efc2d51b824ef0a8ba149d7b1ba89a8aa827ca3d6b319f458ab73bbb05ba07da",
+    "sim-0003-d27-S-200.json": "3c34346aa92be57b1462d12e6995111d70ce2dfd8e9ae75fefabce692a66f763",
+    "sim-0004-d27-K0c-160.json": "5fa9a2fee224bc1778f2ae640c52cc40e7cc844bc27410fd1b471d1a58679956",
+    "sim-0004-d27-K0c-200.json": "489fa9cf7c83a00214cf3d888c06bc8ce8db65079022acd0732b2f983fc8fb7f",
+    "sim-0004-d27-K2-200.json": "01486046ecc4bc148897b91cd0e86dc08a30cddd557b7aee6152c2b183dd3fc0",
+    "sim-0004-d27-S-160.json": "13cfcd48921d564ce91909673a83556103abf54ae993d16924a6fbeb6562075c",
+    "sim-0004-d27-S-200.json": "d16a88681a39fc3d3d8170ca818b7f89ba960afb8357fb328989d1552ba2f6d7",
+    "sim-0005-d27-K0c-160.json": "7983334189e075780c5c446c876ff1fb889021a3005eeff07660388bbc1465b6",
+    "sim-0005-d27-K0c-200.json": "c5b6da9e8d916e97dc07753a52badeee2a9949c7a2e3f6ca33aa911f34dae7dc",
+    "sim-0005-d27-K2-200.json": "8d9141af3aa6f84897f520f12acb6ef234ceab958f4c28124ba2c8ed7b7b9127",
+    "sim-0005-d27-S-160.json": "44a615015fbbc04d85eda18b23ab21dc8c39d58095f2841bb6edde03b0c15d6f",
+    "sim-0005-d27-S-200.json": "59d4ba68f5cbda66f8d8cff5a862c7dda95b98edd9b9cd38c9f88675dc0e3fe2",
+    "sim-0006-d27-K0c-160.json": "6223233f52a1c653695b1e71e1e235fb961df231a5ed78250e670ac6cc8e8268",
+    "sim-0006-d27-K0c-200.json": "e646e59dffe37307fbba224dba75b8c2431e14a8d13d912df339f531808093b6",
+    "sim-0006-d27-K2-200.json": "c88f48655bc20ca033d2a8280288bd166dcf40e9c7182879c3f11b82be9f47f1",
+    "sim-0006-d27-S-160.json": "e28b420e3b2056cc2acd8d8d0947a7fb294592b46e04ac38c530418bc0f586c7",
+    "sim-0006-d27-S-200.json": "5ca74c40c7e58e3946400fb27fcc6b4a6f7df0d0dc25a7d519ca9e5f85d4ba63",
+    "sim-0007-d27-K0c-160.json": "dea450d875468d2e74926312df220e266e53d1a0ab3ba1e29ede9596de15e024",
+    "sim-0007-d27-K0c-200.json": "b38aaecf510c69390514ad941af65e4c114d6fe21b846099f777f6d4224f0281",
+    "sim-0007-d27-K2-200.json": "0aa4510a106c43d65b8e3f750c22ca8a93d4a5d3f27d363768c7f88df587b5c7",
+    "sim-0007-d27-S-160.json": "98a6343d73fceef7d1ce32638ffc8124234dc48d9f1bfd8796731330a1b9d37d",
+    "sim-0007-d27-S-200.json": "9a8ef7156666a3a1b421e00cda524101be543b2e794e3d38487424deef9574cb"
+  },
+  "contrasts": {
+    "S-200 minus K0c-200": {
+      "loss_change_pp": 0.0,
+      "ci95_pp": [
+        -37.5,
+        37.5
+      ]
+    },
+    "S-160 minus K0c-160": {
+      "loss_change_pp": -37.5,
+      "ci95_pp": [
+        -75.0,
+        -12.5
+      ]
+    },
+    "S-200 minus K2-200": {
+      "loss_change_pp": 12.5,
+      "ci95_pp": [
+        -25.0,
+        50.0
+      ]
+    },
+    "S-160 minus S-200": {
+      "loss_change_pp": 12.5,
+      "ci95_pp": [
+        -25.0,
+        50.0
+      ]
+    },
+    "K0c-160 minus K0c-200": {
+      "loss_change_pp": 50.0,
+      "ci95_pp": [
+        12.5,
+        87.5
+      ]
+    }
+  },
+  "decision": {
+    "rule": "upper95CI(S-200 minus K0c-200)<=-10 pp AND upper95CI(S-200 minus K2-200)<=+5 pp",
+    "component_passes": [
+      false,
+      false
+    ],
+    "viable": null,
+    "conclusion": "excluded smoke only"
+  }
+}

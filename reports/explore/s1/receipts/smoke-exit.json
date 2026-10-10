@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-10T09:05:54Z",
+  "returncode": 0,
+  "reason": null,
+  "min_memavailable_GiB": 119.50263977050781,
+  "wall_seconds": 302.2353956808802,
+  "children_cpu_seconds": 2016.253898,
+  "parent_cpu_seconds": 2.61919,
+  "whole_tree_cpu_seconds": 2018.873088,
+  "accounting": "whole phase tree once; nested game CPU not added"
+}
