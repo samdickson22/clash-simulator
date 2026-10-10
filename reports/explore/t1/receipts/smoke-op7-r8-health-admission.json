@@ -1,0 +1,39 @@
+{
+  "utc": "2026-10-10T23:39:33Z",
+  "passed": true,
+  "complete_blocks": 8,
+  "games": 64,
+  "health_errors": [],
+  "hosts": {
+    "127x08": {
+      "blocks": 4,
+      "ssh": 4,
+      "apt": 0,
+      "dbus": 4,
+      "idle": 0,
+      "total": 4
+    },
+    "127x01": {
+      "blocks": 4,
+      "ssh": 0,
+      "apt": 0,
+      "dbus": 0,
+      "idle": 0,
+      "total": 0
+    }
+  },
+  "complete_proof_sha256": {
+    "smoke-0006": "27004aa8403db529d7e6f0df79aa87bb3ab79be16d9be68dfb2889aa1f7409f6",
+    "smoke-0004": "e382c02c95e5c4e685d11df07cd0147e6ba9726ef1ab8a2c2bfe9a4f7a8a9d29",
+    "smoke-0007": "2007ef82d3463e50bfba167266bed70b0de7fb068496f046d3681eb2cf72895e",
+    "smoke-0000": "cfa40eed77f53f8630dc30bb8031bafc977abe510abc94771a04a109e90671a2",
+    "smoke-0005": "0c666d058a8e4732f37d30c63c76fa412c81873b486f16f3ab30025de7834459",
+    "smoke-0002": "9dfe598132f1417d848f4751ed3543dbad852613ea9a3a40f13810dbf4330c8f",
+    "smoke-0003": "fc9dc83cb36e55161094f01b6d1d7107f723a3c3ecf826fd11fe40934cc78e77",
+    "smoke-0001": "81c681adba2d4ed96c62ff596e93ca6c9583d8951a124ba25904d5e359a79a6d"
+  },
+  "sealed_health_receipt_sha256": "123789b8dfd91883741ce676e62f24e6bb0138b9ec45a02442d5bf4f0718f506",
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "health_only": true
+}

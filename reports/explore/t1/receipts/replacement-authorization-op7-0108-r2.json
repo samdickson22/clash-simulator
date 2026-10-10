@@ -1,0 +1,20 @@
+{
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "authorization_message_id": "message:provider:claudeAgent:native-item:54dc8351-918f-4a30-87ee-b8f606d1c363",
+  "authorized_at_utc": "2026-10-10T23:08:19.217Z",
+  "r3_explicitly_frozen": true,
+  "freeze_commit": "ef4c073a4c69e85aea0b6f9af9c1118ca8888a59",
+  "manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+  "OP7_confirmation_commit": "1947830b",
+  "C3_static_authority": "df4ad132",
+  "C3_passed": true,
+  "balanced_dispatch_approved_position": 6991,
+  "host_set": [
+    "127x01",
+    "127x08"
+  ],
+  "outcomes_sealed": true,
+  "health_only": true,
+  "authorization_time_evidence": "coordinator message updatedAt",
+  "recorded_at_utc": "2026-10-10T23:40:55Z"
+}

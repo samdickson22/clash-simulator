@@ -1,0 +1,226 @@
+{
+  "schema": "clasher.t1.replacement-launch.v2",
+  "utc": "2026-10-10T23:43:52Z",
+  "reporting_launched": true,
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "authorization_message_id": "message:provider:claudeAgent:native-item:54dc8351-918f-4a30-87ee-b8f606d1c363",
+  "dispatch_approved_position": 6991,
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2",
+  "phase": "replacement-r2",
+  "actual_detached_launch_utc": "2026-10-10T23:41:21Z",
+  "freeze_commit": "ef4c073a4c69e85aea0b6f9af9c1118ca8888a59",
+  "reviewed_source_commit": "d8cc4ff7595857fda4b563bee503af69b892f547",
+  "confirmation_commit": "1947830b",
+  "C3_static_authority": "df4ad132",
+  "immutable_manifest_path": "reports/explore/t1/receipts/replacement-manifest-op7-0108-r2.json",
+  "manifest_sha256": "488f6c8daccc81bc13a0f388bb254fa994020806b9245b2e315c5ba237dcb12e",
+  "manifest_hashes": 196,
+  "manifest_status": "FROZEN",
+  "authorization_path": "reports/explore/t1/receipts/replacement-authorization-op7-0108-r2.json",
+  "authorization_sha256": "f30afc16259cdb11d8245d2a426011907b6bf185c885eb612d7ea782870abb28",
+  "dispatch_path": "reports/explore/t1/receipts/dispatch-option-b-op7-r2.json",
+  "dispatch_sha256": "30487ebf5b9b3da07a1dcce78b0f6d7dccd842158edb5ead52ec99eb79dc3e39",
+  "blind_inventory_path": "reports/explore/t1/receipts/blind-reinventory-option-b-op7-r2.json",
+  "blind_ledger_path": "reports/explore/t1/receipts/blind-ledger-option-b-op7-r2.json",
+  "blind_ledger_sha256": "1271d99fbef0ce92d486ab202a19793814666570899062d690f53d45afe0c57b",
+  "host_set": [
+    "127x01",
+    "127x08"
+  ],
+  "blocks_dispatched": 2361,
+  "games_planned": 18888,
+  "completed_preserved_blocks": 711,
+  "original_preserved": 157,
+  "prior_r1_preserved": 554,
+  "completed_deduplicated": true,
+  "new_replacement_losses": 22,
+  "all_ledger_losses": 44,
+  "unstarted_seeds_retained": 2339,
+  "host_block_counts": {
+    "127x01": 1181,
+    "127x08": 1180
+  },
+  "hosts": {
+    "127x01": {
+      "launch": {
+        "utc": "2026-10-10T23:41:28Z",
+        "host": "127x01",
+        "phase": "replacement",
+        "slots": 11,
+        "who": "",
+        "runtime_pin_sha256": "847d54bee0a842493e24a44195820c53523808708a243b9435c56ce7a9f528f1",
+        "dispatch_sha256": "30487ebf5b9b3da07a1dcce78b0f6d7dccd842158edb5ead52ec99eb79dc3e39",
+        "supervisor_pid": 590908,
+        "supervisor_pgid": 590908
+      },
+      "launch_sha256": "4c663dc703be792e63414fd9e6334cd6766c6da356ee7b866f4bbd5b45d9993a",
+      "admission_sha256": "e50dc388094c5477e540e04096a2ed7015812b5956a085c3f425df8f34a57e30",
+      "admitted": true,
+      "foreign_compute_count": 0,
+      "foreign_active_count": 0,
+      "console_count": 0,
+      "initial_health": {
+        "utc": "2026-10-10T23:43:46Z",
+        "host": "127x01",
+        "complete_local_blocks": 0,
+        "failed_blocks": 0,
+        "queued": 1170,
+        "inflight": 11,
+        "reason": null
+      },
+      "observed_from_owned_copier": true
+    },
+    "127x08": {
+      "launch": {
+        "utc": "2026-10-10T23:41:29Z",
+        "host": "127x08",
+        "phase": "replacement",
+        "slots": 11,
+        "who": "",
+        "runtime_pin_sha256": "8993b60935309457532c3c8df1a7dea7b58bc87f6725601ee9b675e06608e92c",
+        "dispatch_sha256": "30487ebf5b9b3da07a1dcce78b0f6d7dccd842158edb5ead52ec99eb79dc3e39",
+        "supervisor_pid": 2676200,
+        "supervisor_pgid": 2676200
+      },
+      "launch_sha256": "1dc0f2eff38cffd822a5d6c685de65f1086bac4e506facd05c0509e9e7bc123f",
+      "admission_sha256": "2097f4be39f188fd82ce59ff988876526fa14e41ddd584f029933205f1af1d58",
+      "admitted": true,
+      "foreign_compute_count": 0,
+      "foreign_active_count": 0,
+      "console_count": 0,
+      "initial_health": {
+        "utc": "2026-10-10T23:43:42Z",
+        "host": "127x08",
+        "complete_local_blocks": 0,
+        "failed_blocks": 0,
+        "queued": 1169,
+        "inflight": 11,
+        "reason": null
+      },
+      "observed_from_owned_copier": true
+    }
+  },
+  "owned_copier": {
+    "utc": "2026-10-10T23:41:18Z",
+    "host": "127x01",
+    "source_ip": "127.0.1.1",
+    "identity": {
+      "pid": 590814,
+      "pgid": 590814,
+      "start_ticks": 146558310,
+      "cmdline_sha256": "315f78f8294df792802247ecb10542f1d12ed5d4bbb977a3d8b3b6a5f5a0fe75",
+      "uid": 3822945,
+      "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+    },
+    "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2",
+    "phase": "replacement-r2",
+    "active": true
+  },
+  "identity_audits": [
+    {
+      "utc": "2026-10-10T23:42:27Z",
+      "host": "127x01",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": true,
+          "identity": {
+            "pid": 590908,
+            "start_ticks": 146558724,
+            "pgid": 590908,
+            "uid": 3822945,
+            "cmdline_sha256": "d9885fbd564fb6ef5ffeb6cee13b1c10472d0d767b06e7e2559737381dc6142d",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 10,
+          "affinity": [
+            61
+          ]
+        },
+        {
+          "role": "copier",
+          "alive": true,
+          "identity": {
+            "pid": 590814,
+            "start_ticks": 146558310,
+            "pgid": 590814,
+            "uid": 3822945,
+            "cmdline_sha256": "315f78f8294df792802247ecb10542f1d12ed5d4bbb977a3d8b3b6a5f5a0fe75",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 19,
+          "affinity": [
+            62
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08"
+    },
+    {
+      "utc": "2026-10-10T23:42:28Z",
+      "host": "127x08",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": true,
+          "identity": {
+            "pid": 2676200,
+            "start_ticks": 147508701,
+            "pgid": 2676200,
+            "uid": 3822945,
+            "cmdline_sha256": "d9885fbd564fb6ef5ffeb6cee13b1c10472d0d767b06e7e2559737381dc6142d",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 10,
+          "affinity": [
+            61
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08"
+    }
+  ],
+  "qualification_tests_per_host": 265,
+  "qualified_code_plan_files": 63,
+  "native_exact_states": 125,
+  "belief_histories": 125,
+  "belief_variants": 250,
+  "source_files_byte_identical": true,
+  "external_untracked_modules_pinned_unchanged": true,
+  "smoke_receipt": "reports/explore/t1/receipts/smoke-op7-r8-health-admission.json",
+  "smoke_passed": true,
+  "smoke_blocks": 8,
+  "smoke_games": 64,
+  "smoke_health_errors": 0,
+  "mixed_preserved_OP5_OP6_and_new_OP7_v2_regimes_disclosed": true,
+  "B_STOP_link_authoritative": true,
+  "expected_remaining_hours": [
+    12,
+    13
+  ],
+  "estimated_reporting_finish_UTC": "2026-10-11T11:45Z through 12:45Z; subject to B preemption and replacements",
+  "END": "WAIT_COORDINATOR_CLEAN_WINDOW",
+  "release_conditions": "PC1-PC4 before either release route; no outcome release",
+  "observer_startup_error": "05 destination parent absent; metadata rsync code11 retained; mkdir23:43:17Z; same owned copier recovered",
+  "prior_milestone_timestamp_correction": {
+    "message_label": "2026-10-10T23:34:21Z",
+    "actual_record_utc": "2026-10-10T23:34:43Z"
+  }
+}
