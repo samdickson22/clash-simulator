@@ -231,3 +231,10 @@ reap all owned children before HARD07:30Z. Guard boundary/pressure/cores/nice/
 heartbeat/A19/STOP test passes04core19/nice19 at05:20:02Z, PID/PGID1040730,
 CPU0.095382s. Prior2023ebff no-lead freeze retained; new pins push/deploy before
 any offline/replay. No scientific change and no workload retry occurred.
+
+2026-10-10T05:20:54Z — Latest operational freeze60fd2864 pushed; every25 mapped file
+SHA/AST, scientific freeze SHA and pushed prelaunch verified09/16/04; new
+07:29:50 lead guard deployed before any offline/replay. Guardtest1040730
+independently absent04. Stage1 thresholds/seeds/scorer unchanged. No fit
+source/fit-ops touched; final proposals still pending. Grant receipt SHA is
+current, but04 admission remains deliberately stale until final proposals.

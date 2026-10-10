@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "hosts": [
+    {
+      "host": "127x09",
+      "passed": true,
+      "files": 25,
+      "prelaunch_commit": "60fd28647045ff539ec6042b240619d90d437981",
+      "evaluation_freeze_sha256": "ecac92a3fce879c965bf465ab31d05cffffe9662d5b21bb22482035a1a4e1b77",
+      "utc": "2026-10-10T05:20:52Z"
+    },
+    {
+      "host": "127x16",
+      "passed": true,
+      "files": 25,
+      "prelaunch_commit": "60fd28647045ff539ec6042b240619d90d437981",
+      "evaluation_freeze_sha256": "ecac92a3fce879c965bf465ab31d05cffffe9662d5b21bb22482035a1a4e1b77",
+      "utc": "2026-10-10T05:20:53Z"
+    },
+    {
+      "host": "127x04",
+      "passed": true,
+      "files": 25,
+      "prelaunch_commit": "60fd28647045ff539ec6042b240619d90d437981",
+      "evaluation_freeze_sha256": "ecac92a3fce879c965bf465ab31d05cffffe9662d5b21bb22482035a1a4e1b77",
+      "utc": "2026-10-10T05:20:54Z"
+    }
+  ],
+  "scientific_plan_unchanged": true,
+  "no_offline_or_replay_yet": true
+}
