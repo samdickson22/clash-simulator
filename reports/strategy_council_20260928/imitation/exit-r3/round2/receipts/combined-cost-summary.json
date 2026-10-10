@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-10T09:35:55Z",
+  "utc": "2026-10-10T09:44:36Z",
   "final": false,
-  "cpu_seconds": 238318.203103,
+  "cpu_seconds": 239519.544222,
   "gpu_wall_seconds": 34052.7115964524,
   "meters": [
     {
@@ -486,6 +486,26 @@
       "gpu_wall_seconds": 17.28433835785836,
       "status": "complete",
       "host": "127x13",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "shared03 operational pin verification",
+      "sha256": "cedec4aa82da0cc4395035f433564c3f60f10edf278877665dc70f195796396f",
+      "path": "receipts/evaluation-snapshots/127x03/SHARED03-NICE19-DEPLOYMENT.json",
+      "cpu_seconds": 0.432382,
+      "gpu_wall_seconds": 0,
+      "status": "closed",
+      "host": "127x03",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "whole CPU pool",
+      "sha256": "5080b301e6413d5d6d80e16df7b6736b22399b38d746df98a206603d893891ec",
+      "path": "receipts/evaluation-snapshots/127x03/history/regret--pool-meter-3111108-5080b301e6413d5d6d80e16df7b6736b22399b38d746df98a206603d893891ec.json",
+      "cpu_seconds": 1200.908737,
+      "gpu_wall_seconds": 0,
+      "status": "stopped_or_failed",
+      "host": "127x03",
       "experiment": "round2/descriptive"
     }
   ],

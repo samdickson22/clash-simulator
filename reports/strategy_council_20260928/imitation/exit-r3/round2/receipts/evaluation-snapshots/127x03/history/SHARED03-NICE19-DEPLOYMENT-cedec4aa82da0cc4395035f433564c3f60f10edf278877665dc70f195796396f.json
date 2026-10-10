@@ -1,0 +1,27 @@
+{
+  "relative": "SHARED03-NICE19-DEPLOYMENT.json",
+  "sha256": "cedec4aa82da0cc4395035f433564c3f60f10edf278877665dc70f195796396f",
+  "raw": "{\n  \"passed\": true,\n  \"pid\": 3148776,\n  \"pgid\": 3148776,\n  \"utc\": \"2026-10-10T09:43:58Z\",\n  \"evaluation_freeze_sha256\": \"86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d\",\n  \"authority_sha256\": \"63b8a2ae1530688f7517cefbcde3bed5935d6830deed281f4d8b3cbd51410cd0\",\n  \"admitted_sha256\": \"cb51bb65a1793be6cc1b55776305a8b30cc83721854cc74b63ee344bfb6f640d\",\n  \"pins\": 1461,\n  \"checks\": 23,\n  \"scientific_data_read\": false,\n  \"old_groups_absent\": true,\n  \"retained_complete_seals\": 8,\n  \"nice\": 19,\n  \"scheduler\": \"SCHED_OTHER\",\n  \"PSI_full_avg10\": 0.0,\n  \"PSI_stop_percent\": 10,\n  \"cpu_seconds\": 0.432382,\n  \"wall_seconds\": 0.41919463500380516,\n  \"owned_STOP_archived\": \"/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/metadata/shared03-prior-nice19/REGRET.STOP\",\n  \"G_untouched\": true\n}\n",
+  "value": {
+    "passed": true,
+    "pid": 3148776,
+    "pgid": 3148776,
+    "utc": "2026-10-10T09:43:58Z",
+    "evaluation_freeze_sha256": "86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d",
+    "authority_sha256": "63b8a2ae1530688f7517cefbcde3bed5935d6830deed281f4d8b3cbd51410cd0",
+    "admitted_sha256": "cb51bb65a1793be6cc1b55776305a8b30cc83721854cc74b63ee344bfb6f640d",
+    "pins": 1461,
+    "checks": 23,
+    "scientific_data_read": false,
+    "old_groups_absent": true,
+    "retained_complete_seals": 8,
+    "nice": 19,
+    "scheduler": "SCHED_OTHER",
+    "PSI_full_avg10": 0.0,
+    "PSI_stop_percent": 10,
+    "cpu_seconds": 0.432382,
+    "wall_seconds": 0.41919463500380516,
+    "owned_STOP_archived": "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/metadata/shared03-prior-nice19/REGRET.STOP",
+    "G_untouched": true
+  }
+}

@@ -33,7 +33,7 @@ def main():
             elif re.fullmatch(r'(k0-[^/]+|regret)/pool-meter-\d+\.json',metered_name):category='whole CPU pool'
             elif re.fullmatch(r'(reduce-.*-meter-\d+|stage1-reduction-meter-\d+)\.json',metered_name):category='reduction'
             elif metered_name in ('REGRET-PROPOSALS-STAGING.json','STAGE2-ARMS-STAGING.json','TIMING03-STAGING.json','CODE-QUALIFICATION.json'):category='staging/qualification'
-            elif name in ('SHARED03-DEPLOYMENT.json','SHARED03-REPAIR-DEPLOYMENT.json'):category='shared03 operational pin verification'
+            elif name in ('SHARED03-DEPLOYMENT.json','SHARED03-REPAIR-DEPLOYMENT.json','SHARED03-NICE19-DEPLOYMENT.json'):category='shared03 operational pin verification'
             if category:
                 cpu=whole_cpu(v)
                 meters[key]=dict(category=category,sha256=key,path=str(path.relative_to(ROOT)),cpu_seconds=cpu,gpu_wall_seconds=gpu,status=v.get('status','complete' if v.get('exit_code')==0 else 'closed'),host=host)
@@ -95,6 +95,8 @@ def main():
     repair=ROOT/'shared03/repair/evaluation-freeze.json'
     if repair.exists():lines.append(f"| Shared03 admission-repair freeze | {hashlib.sha256(repair.read_bytes()).hexdigest()} |")
     if shared.exists():lines.append(f"| Shared03 regret-only operational freeze | {hashlib.sha256(shared.read_bytes()).hexdigest()} |")
+    nice19=ROOT/'shared03/nice19/evaluation-freeze.json'
+    if nice19.exists():lines+=['', '[Priority and PSI amendment](shared03/nice19/ADDENDUM.md): nice19/SCHED_OTHER and full memory PSI avg10 >10% stop. The first replay pool was drained after the explicit coordinator priority instruction arrived; eight complete seals and their streams are SHA-pinned for reuse, unsealed games replay fully, and every attempt whole-tree meter is charged. Score arithmetic/seeds/gates stay unchanged.',f"\nCurrent regret operational freeze SHA: {hashlib.sha256(nice19.read_bytes()).hexdigest()}."]
     for name in ('inputs/main02.pt','inputs/assets.npz'):
         lines.append(f"| {name} | {freeze['files'][name]} |")
     for name in ('eval-source/imitation/exit_r1/screen.py','reporting-native/clasher_core.abi3.so','scorer-native/clasher_core.abi3.so'):
