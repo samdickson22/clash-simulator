@@ -218,3 +218,39 @@ reduce_stage3_v2.py for corrected stage3. Qualified k_stage3_v2.py unchanged;
 base freeze remains immutable and is retained in game/diagnostic identities.
 Original controller1403380 will exit viaCONTROLLER.STOP before its replacement;
 never run two gate controllers. Conditional R2 ranking includes all six arms.
+
+2026-10-10T01:19:34Z. X6 freeze/addendum/audit/source c99491bc secret-scanned,
+committed/pushed before any X6 fit. Old03 controller1403380 exited cleanly
+at01:19:07Z via ownSTOP, with no active child/gate and no failures; meter
+parent1.428261s+children7.951392s, retain once in orchestration CPU costs.
+New six-arm03 controller PID=PGID1502885, log`$job/controller-x6.log`,
+nice19/SCHED_IDLE/core63, sameSTOP`$job/CONTROLLER.STOP`. Original old log/
+meter preserved. X1–X5 fits untouched. X6 staging2218971 pending before
+fit admission. Continuation prompt now includes all six/current entrypoints
+and X3 priority. Coordinator notified of pre-launch freeze and audit PASS.
+
+2026-10-10T01:22:54Z. X6 corpus staging completed01:22:16Z,71/71 filesSHA
+verified plus corpus/init/assets/sidecar/human-manifest pins. Local preparation
+CPU493.808473s,wall421.7195083s; remote read-only senderCPU not included in
+that preparation meter (not a fit/game attempt). Receipt x6-staging.json.
+Pre-launch13 check01:22:42Z: no compute apps,48,666MiB free; no ownX6 stop/
+priority/duplicate identity. X6 attempt1 launched01:22:43Z after c99491bc push.
+Supervisor PID=PGID2251934;trainer PID=PGID2252096, log`$job/fit-X6-attempt1.log`.
+Initial health01:22:54Z: PSS4.01GB,two processes,nice10,no reason; input
+construction pending first optimizer step. StopX6.STOP checkpoints X6 only;
+X3.RESUME.REQUEST checkpoints/vetoes X6 for X3 priority. All original five
+fits continue untouched;03 six-arm controller1502885 healthy/no failures.
+
+2026-10-10T01:25:33Z. X6 startup qualification PASS, step18/147,456 rows,
+teacher fraction.75,actual loader6/prefetch4,micro3584,Torch2.7.1+cu118,
+parent118/119/126. All eight own processes nice10 and original trainer group
+2252096; leased aggregate count10 includes short metadata probes. PSS21.36GB,
+GPU-free31.79GB,no stop reason; X6.STOP/X3.RESUME.REQUEST absent. Receipt
+x6-startup-qualified.json carries launch/runtime/health and provisional live
+CPU273.27s,wall169.1512479s; final exit meters replace these snapshots.
+Controller03 1502885 still waiting finalEMA/offline={},stage2={},failures=[],
+x3_priority_requested=false. Future continuation must check six fits including
+X6 on13 and current controller1502885; never re-launch these active groups.
+Stage3 reporting command after gates:
+`game_pool_v3.py --job "$job" --stage 3 --arm Xn --cores 60 61 62 63`;
+run with `--arm init` for common control; unchanged reduce_stage3_v2.py.

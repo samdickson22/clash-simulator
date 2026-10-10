@@ -1,9 +1,10 @@
 # ExIt r2 X screen — results pending
 
 Exploration lane; no multiplicity adjustment. Preparation at2026-10-10 00:36Z.
-All first fit attempts failed during input construction before any optimizer step.
+Original X1–X5 first fit attempts failed during input construction before any optimizer step.
 The omitted r1 assets sidecar is restored; correction35cacd00 was pushed
-before attempt2 launched00:52:49-51Z. All five fits passed input admission and have optimizer updates.
+before attempt2 launched00:52:49-51Z. All six fits now passed input admission
+and have optimizer updates; X6 attempt1 began01:22:43Z after its own freeze.
 Scientific stage metrics remain pending.
 No reporting game played. This is a status record, not a verdict.
 The committed plan/seed audit must precede fitting; use final EMA only.
@@ -15,14 +16,14 @@ The committed plan/seed audit must precede fitting; use final EMA only.
 | X3 | z-score τ=.5 /1.0 | running08, step551/4883 | pending | conditional | conditional | pending |
 | X4 | T=.003 /.75 | running01, step406/4883, micro3584 | pending | conditional | conditional | pending |
 | X5 | X1 double steps /1.0 | running04, step585/9766 | pending | conditional | conditional | pending |
-| X6 | T=.0001 /.75 | preparation13, micro3584 | pending | conditional | conditional | pending |
+| X6 | T=.0001 /.75 | running13, step18/4883, micro3584 | pending | conditional | conditional | pending |
 
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
 seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
 X5:9766steps; X6:4883steps. Loader6/prefetch4, r1 parent and loader core layout.
 Coordinator added X6 at01:05Z to complete the temperature×anchor2×2.
 It yields13 to X3 exact resume; all six arms share the same staged rules and
-at most three stage3 survivors total. X6 has no training/gate outcome yet.
+at most three stage3 survivors total. X6 has no gate outcome yet.
 X3's flag-off targets/loss/gradients/AdamW update match r1; all seven student and
 target tests passed on01/16/03. No evaluation outcomes used for choices.
 
@@ -50,7 +51,13 @@ Metered failed-attempt fit GPU-wall hours:0.036806672;
 fit CPU-hours:0.029492098; heldout/reporting CPU-hours:0; mechanics costs reported above.
 Preparation audit CPU-hours:0.861178583, including retired scan attempts and
 X6's fresh13 audit59.074613CPU seconds. X6 corpus staging/SHA preparation meter
-remains pending; no X6 fit/game attempt has begun at01:18Z.
+is493.808473 local CPU seconds (0.137169020h), excluding remote senderCPU.
+All71 corpus-file SHAs passed01:22:16Z; fit attempt1 launched01:22:43Z after
+addendum c99491bc push. Startup qualified01:25:33Z at step18, eight own
+nice10 processes,21.36GB PSS,31.79GB GPU free, no stop reason. X6 live fit
+wall169.1512479s and provisional whole-treeCPU273.27s are snapshots replaced
+by final exit meters; no scientific X6 outcome claimed. Original controller replacement meter is
+9.379653CPU seconds (parent+children once); new controller/gate meter pending.
 Attempt2 live snapshots at2026-10-10 01:11:52–58Z:1.591526915 allocated
 GPU-wall hours and4.701041667 provisional whole-tree CPU-hours across five fits.
 These running totals replace earlier snapshots and will be replaced by final

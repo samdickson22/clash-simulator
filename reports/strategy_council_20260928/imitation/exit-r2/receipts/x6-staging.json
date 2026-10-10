@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "verified_corpus_files": 71,
+  "corpus_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "human_manifest_sha256": "0546cfddcf79be12509953358fb499ac3be29493ba4a87893bfbfbbe0f179e68",
+  "utc": "2026-10-10T01:22:16Z",
+  "wall_seconds": 421.7195083000697,
+  "local_cpu_seconds": 493.80847300000005,
+  "note": "Preparation only; read-only remote sender CPU not included in local meter; no fit or game attempt."
+}
