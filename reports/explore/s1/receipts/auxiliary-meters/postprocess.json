@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-10T12:43:28Z",
+  "pid": 4058693,
+  "pgid": 4058693,
+  "command": [
+    "bash",
+    "/mpac/sdicks02/jobs/clasher/s1-20261010-r1/repo/reports/explore/s1/runtime.sh",
+    "reports/explore/s1/postprocess_final.py",
+    "--job",
+    "/mpac/sdicks02/jobs/clasher/s1-20261010-r1",
+    "--verifier-sha256",
+    "bb08af1172210c187b70faef2eb79944d0535c2ebd1a0495b4a5aca1707c9b43"
+  ],
+  "returncode": 0,
+  "whole_tree_cpu_seconds": 12.057291999999999,
+  "wall_seconds": 11.934003113070503,
+  "accounting": "non-nested auxiliary tree once; no sum of child diagnostics"
+}

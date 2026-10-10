@@ -1,0 +1,28 @@
+{
+  "utc": "2026-10-10T12:53:15Z",
+  "reporting_complete": true,
+  "terminal_games": 3000,
+  "paired_blocks": 600,
+  "freeze_commit": "dfefec9f74b8e9af6709051c218680a527f573bb",
+  "raw_prefix": "127x01:/mpac/sdicks02/jobs/clasher/s1-20261010-r1/",
+  "files": {
+    "RESULTS.md": "ecda5ffdc8696ed7ac713bcff2547119a838d3b6aea8c7e8be5633cf20714712",
+    "MAC-TIER.md": "af087a551e401f31f1d7dee6061353c45126545ce3e2bfd9e51b05083706b9d4",
+    "results.json": "c237d1562a11be316193b50da25c42ac3b944ca320a16877e722ad4708819dae",
+    "gc-maintenance.json": "a258d3ea673dcd88e0a54fbac068bbba9b417bf4ef37a607877c237d66b8ed2c",
+    "execution.json": "4817d23ff2be841530db5cfdcc410da07cc5a2c9d6bf796c7718cf2701dae2ab",
+    "results.html": "cbd748e86a80213006d5e961cf955db4c0d2403a83dec3e21d7e447d320a8949",
+    "receipts/analysis-barrier.json": "95383aed56c5b391a11407a79a84fc706938fc744a86b9205e7c3a11a44ec6ee",
+    "receipts/statistics-verification.json": "0ae87ede1fbd3940af643e863fcbb9aea8bdddf9911d9de919b9e979d8a7477a",
+    "receipts/execution.json": "4817d23ff2be841530db5cfdcc410da07cc5a2c9d6bf796c7718cf2701dae2ab",
+    "receipts/host-audit-final.json": "983ede7e18c7a823185cf30b91d043087b7f5ae4718402463c7d2d5be00427ab",
+    "receipts/reporting-exit-r2.json": "4b6561286ad3b3781ce9c47cf4fc5135eb4f175a800fb181cd8fe4aacd47f94a",
+    "receipts/reporting-receipt-r2.json": "62ac8a3615ed1f8c2f47b82e912c14b8f30b1079a56e2c31fb6a3f8067dca565",
+    "receipts/auxiliary-meters/postprocess.json": "a287857e424655d7b68290e7c73a0a5db74263d0d6193479c9ee90aae8c0a0ce",
+    "receipts/postprocess-launch1-failure.json": "9817d7c9d666bf2513b8c21886bd15acd265fa237745ef6331ce66eac9c9d176"
+  },
+  "statistical_checks_passed": true,
+  "decision": "1-core student tier viable",
+  "r3a_original_status": "NEVER-ADOPTABLE",
+  "cpu_release": "Pending independent fresh drain and atomic release; no further games."
+}

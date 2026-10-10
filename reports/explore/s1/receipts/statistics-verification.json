@@ -1,0 +1,89 @@
+{
+  "utc": "2026-10-10T12:43:28Z",
+  "results_sha256": "c237d1562a11be316193b50da25c42ac3b944ca320a16877e722ad4708819dae",
+  "verifier_sha256": "bb08af1172210c187b70faef2eb79944d0535c2ebd1a0495b4a5aca1707c9b43",
+  "method": "Integer paired loss counts; same frozen 5000 resamples/seed/percentiles; scale only after percentile",
+  "tolerance_pp": 1e-09,
+  "max_difference_pp": 1.4210854715202004e-14,
+  "arms": {
+    "K0c-200": {
+      "loss_pct": 44.166666666666664,
+      "ci95_pct": [
+        40.166666666666664,
+        48.166666666666664
+      ]
+    },
+    "S-200": {
+      "loss_pct": 28.166666666666668,
+      "ci95_pct": [
+        24.666666666666668,
+        31.666666666666668
+      ]
+    },
+    "K0c-160": {
+      "loss_pct": 79.0,
+      "ci95_pct": [
+        75.66666666666667,
+        82.33333333333333
+      ]
+    },
+    "S-160": {
+      "loss_pct": 32.166666666666664,
+      "ci95_pct": [
+        28.5,
+        36.0
+      ]
+    },
+    "K2-200": {
+      "loss_pct": 29.0,
+      "ci95_pct": [
+        25.333333333333332,
+        32.666666666666664
+      ]
+    }
+  },
+  "contrasts": {
+    "S-200 minus K0c-200": {
+      "loss_change_pp": -16.0,
+      "ci95_pp": [
+        -21.0,
+        -11.166666666666666
+      ]
+    },
+    "S-160 minus K0c-160": {
+      "loss_change_pp": -46.833333333333336,
+      "ci95_pp": [
+        -51.333333333333336,
+        -42.333333333333336
+      ]
+    },
+    "S-200 minus K2-200": {
+      "loss_change_pp": -0.8333333333333334,
+      "ci95_pp": [
+        -5.333333333333333,
+        3.5
+      ]
+    },
+    "S-160 minus S-200": {
+      "loss_change_pp": 4.0,
+      "ci95_pp": [
+        -0.16666666666666666,
+        8.333333333333334
+      ]
+    },
+    "K0c-160 minus K0c-200": {
+      "loss_change_pp": 34.833333333333336,
+      "ci95_pp": [
+        30.166666666666668,
+        39.666666666666664
+      ]
+    }
+  },
+  "mathematical_component_passes": [
+    true,
+    true
+  ],
+  "decision_consistent": true,
+  "frozen_results_unchanged": true,
+  "all_games_sha_verified": true
+}

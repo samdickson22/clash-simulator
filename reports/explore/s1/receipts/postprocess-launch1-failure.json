@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-10T12:43:16Z",
+  "reason": "taskset -c39 syntax error before Python/meter/reducer start",
+  "groups_absent": true,
+  "outcomes_opened": false,
+  "pgid": 4055560,
+  "cpu_seconds": null,
+  "cpu_accounting": "unmetered failed launcher overhead; not treated as zero",
+  "source_unchanged": true
+}

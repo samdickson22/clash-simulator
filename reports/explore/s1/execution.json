@@ -1,0 +1,56 @@
+{
+  "utc": "2026-10-10T12:44:33Z",
+  "freeze_commit": "dfefec9f74b8e9af6709051c218680a527f573bb",
+  "runtime_pin_sha256": "f81f36558179458ba74edd3a57f44ad3395f4452a93c64d3102c4f4d5048a80d",
+  "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+  "source_files_verified": 1557,
+  "pgids": [
+    3372782,
+    3372820,
+    3422967,
+    3422984
+  ],
+  "all_reporting_groups_absent": true,
+  "phase_cost_cpu_seconds": {
+    "smoke": 2018.873088,
+    "reporting": 162366.406658
+  },
+  "phase_exit_sha256": {
+    "smoke": "2774d5aef6b0ce3bb05f7f54f4e343ef6cfce0bd489a59ef1eb0188f8ec9e011",
+    "reporting": "4b6561286ad3b3781ce9c47cf4fc5135eb4f175a800fb181cd8fe4aacd47f94a"
+  },
+  "auxiliary_cost_cpu_seconds": {
+    "attempts/reporting-r1/supervisor-exit.json": {
+      "cpu_seconds": 18.317127,
+      "returncode": -15,
+      "excluded": true,
+      "sha256": "73f0736386c75e516921338b61ddfc308be1cdea244a7cc16225ffbfacf74a20"
+    },
+    "qualification-attempt2.json": {
+      "cpu_seconds": 290.74950900000005,
+      "returncode": 0
+    },
+    "qualification-attempt1.json": {
+      "cpu_seconds": 52.430668000000004,
+      "returncode": 1
+    },
+    "postprocess.json": {
+      "cpu_seconds": 12.057291999999999,
+      "returncode": 0
+    },
+    "staging-attempt2.json": {
+      "cpu_seconds": 0.22015,
+      "returncode": 1
+    },
+    "staging-attempt3.json": {
+      "cpu_seconds": 0.7915850000000001,
+      "returncode": 0
+    },
+    "staging.json": {
+      "cpu_seconds": 0.22042099999999998,
+      "returncode": 1
+    }
+  },
+  "whole_tree_cpu_hours": 45.76668513833334,
+  "accounting": "phase whole-tree meters plus non-nested auxiliary meters once; per-game numbers diagnostic only"
+}

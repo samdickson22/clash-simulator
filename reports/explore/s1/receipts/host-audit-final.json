@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-10T12:44:34Z",
+  "host": "127x01",
+  "who": "",
+  "memavailable_GiB": 121.61149215698242,
+  "foreign_compute": [],
+  "foreign_active": [],
+  "own_compute": [],
+  "final": true,
+  "full_census_path": "/mpac/sdicks02/jobs/clasher/s1-20261010-r1/host-audit-final.json",
+  "full_census_sha256": "0390173226d0453be68fc49d6b1ceb2faf525e36b3b65e8af7d904309172a723",
+  "r3_release_evidence_sha256": "6569581ba301576d0b9c574173ce1edddfb40d73991a7b240267bc2d9c6ab2d7",
+  "recorded_r3_pgids": 611,
+  "all_recorded_r3_groups_absent": true
+}

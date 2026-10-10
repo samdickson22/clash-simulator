@@ -184,3 +184,20 @@ verifier SHAs and no outcome access. Deploy these new analysis-only files after
 reporting ends; do not overwrite any pinned timing/reducer module. Use own
 detach wrapper, distinct postprocess claim, preserve any failure; execution
 cost audit runs only after that meter group exits and then includes its cost.
+
+2026-10-10T12:47:23Z — COMPLETE reporting12:41:32Z: 3,000 fresh terminal games/600
+paired blocks; 591,934 decisions,444 positive overruns (all1tick), no GC inside
+decisions. Source/native/model/cache/seed/slot/order/metadata audits pass.
+Both frozen viability margins pass: S200−K0c200 −16.00pp [−21.00,−11.17];
+S200−K2 −0.83pp [−5.33,+3.50]. S160−S200 +4.00pp [−0.17,+8.33];
+K0c160−K0c200 +34.83pp [30.17,39.67]. Student losses28.17/32.17%;
+cached-v1 losses44.17/79.00%; K2 loss29.00%. Never reclassify R3a adoption.
+Initial analysis launcher4055560 failed beforePython(taskset -c39 syntax);
+receipts/group absence preserved, CPU unknown/unmetered. Manual corrected
+launch4058693 at12:43:16Z exited0 at12:43:28Z,12.057292CPU s. Frozen
+reduction/GC + independent integer verifier passed(maxdifference1.43e−14pp).
+Execution audited1,557sourcefiles; metered whole-tree45.766685CPUhours includes
+all failed prep/qualification/invalid-reporting costs once. Final12:44:34Z
+vacancy whoempty/noforeign/noownCPU/121.6GiB passed. RESULTS/Macnote generated;
+next review/publish explicitownfiles/secret-scan/push, then independently
+confirm finalCPU drain and issue atomic S1 final01release. No furthergames.
