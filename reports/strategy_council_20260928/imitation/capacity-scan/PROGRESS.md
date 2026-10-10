@@ -637,3 +637,21 @@ staging and every 480 segment; remaining actual final costs await completion.
 Evidence: `monitor-20261010T0212Z.json`. No source, config or data edits.
 480 micro1024/effective8192/cap0.78 stays fixed; all failure artifacts retained.
 Continuation remains enabled; GPUs13 and16 remain released.
+
+2026-10-10 02:23Z: Width 384 reached the exact quarter boundary, step 11615 /
+95,144,680 rows. Full-dev scoring receipt and kill decision are still pending;
+no scientific disposition inferred before scoring. Last loader-inclusive rate
+4347 rows/s. Width 480 remains healthy at step 11200 /
+91,745,000 rows, 4450 loader-inclusive rows/s; quarter pending.
+Width 288 remains scientifically killed: NLL 0.27418144592079313 versus
+192 NLL 0.27726436294161033, gain 0.0030829170208171996 < 0.005 at matched rows.
+Its final curve, actual 4.734969255 GPU-hours and checkpoint SHA are archived;
+GPUs13 and16 remain released and are not relaunched.
+The sole controller and both active guards are healthy; peak PSS
+44.53 GB, active processes 6/6, sampled GPU free memory
+≥34.0 GiB. No new error, OOM, stop or restart.
+Conservative cumulative pipeline cost 18.741 GPU-hours includes staging
+and every 480 segment; remaining actual final costs await completion.
+Evidence: `monitor-20261010T0222Z.json`. Scientific recipe, source and data remain unchanged;
+480 uses authorized micro1024/effective8192/cap0.78. All failed artifacts retained.
+Continuation remains enabled pending outcomes and survivor curves.
