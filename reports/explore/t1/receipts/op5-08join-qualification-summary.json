@@ -1,0 +1,35 @@
+{
+  "utc": "2026-10-10T17:49:44Z",
+  "admitted_commit": "8c43dff939345d42ab3571127ad45d2c4a5440e2",
+  "reviewed_guard_commit": "c32015b16f41b0e8dae7b9502c00c9074b0b3be9",
+  "hosts": {
+    "127x01": {
+      "binding_path": "reports/explore/t1/receipts/op5-08join-qualification-source-binding-127x01.json",
+      "binding_sha256": "125d2793fb9658ff7a559db8da42b1c912f090eb73c3a2129d578f35467813a5",
+      "completed_at_utc": "2026-10-10T17:44:14Z",
+      "source_files": 58,
+      "source_stable": true,
+      "tests": 147,
+      "frozen_exactness_states": 125,
+      "belief_histories": 125,
+      "belief_variants": 250
+    },
+    "127x08": {
+      "binding_path": "reports/explore/t1/receipts/op5-08join-qualification-source-binding-127x08.json",
+      "binding_sha256": "20a71c586966d699ca948d990c51eb98181eb9c292849364745affac13066800",
+      "completed_at_utc": "2026-10-10T17:44:13Z",
+      "source_files": 58,
+      "source_stable": true,
+      "tests": 147,
+      "frozen_exactness_states": 125,
+      "belief_histories": 125,
+      "belief_variants": 250
+    }
+  },
+  "source_inputs_identical_across_hosts": true,
+  "guard_decks": 3,
+  "supported_cards": 17,
+  "unsupported_skips": 0,
+  "external_seven_modules_sha_pinned": true,
+  "outcomes_read": false
+}

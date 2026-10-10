@@ -132,7 +132,11 @@
     "reports/explore/t1/receipts/op5-08-unit-tests.json": "6ed0ca3493573e3ff99a9cee96704602608343891737b91c3beea4b33824a2c5",
     "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961",
     "reports/explore/t1/receipts/external-runtime-provenance-0108.json": "b3b0a89cd9ab0aae31a43c1e51a5999432ee951d50c2ff4a7d77f34a4ba750b7",
-    "reports/explore/t1/REVIEW-T1-OP5-08-CONFIRM-20261010T1734Z.md": "cb4892b2205b48a8ecceeab49b960900db36aabfc1eee71a2b3889f858b84c61"
+    "reports/explore/t1/REVIEW-T1-OP5-08-CONFIRM-20261010T1734Z.md": "cb4892b2205b48a8ecceeab49b960900db36aabfc1eee71a2b3889f858b84c61",
+    "reports/explore/t1/receipts/op5-08join-qualification-source-binding-127x01.json": "125d2793fb9658ff7a559db8da42b1c912f090eb73c3a2129d578f35467813a5",
+    "reports/explore/t1/receipts/op5-08join-qualification-source-binding-127x08.json": "20a71c586966d699ca948d990c51eb98181eb9c292849364745affac13066800",
+    "reports/explore/t1/receipts/op5-08join-qualification-summary.json": "28ba59cac2523a2c367007df3fdbccde9e36414bdaf21470af757a1d3fa7d7db",
+    "reports/explore/t1/receipts/op5-08join-smoke-r6-launch.json": "7ea6f5a556b15c0acfa67918f4fd835c03fb6ba9876534259fbb7f826ba82cfe"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -164,11 +168,10 @@
   "reporting_games_started": false,
   "reference_schedule": "END reporting window; separate corpus/E4 approval; pinned reporting load profile",
   "pending": [
-    "final-source fresh qualification01/08",
     "fresh01/08 smoke-r6 health",
     "manifest-bound reporting authorization after smoke"
   ],
-  "qualification_summary": "reports/explore/t1/receipts/qualification-freeze-summary.json",
+  "qualification_summary": "reports/explore/t1/receipts/op5-08join-qualification-summary.json",
   "freeze_disclosure": "reports/explore/t1/FREEZE-T1.md",
   "reference_slot": 0,
   "amendment_1": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-AMENDMENT-1-20261010.md",
@@ -317,5 +320,19 @@
     "already_runtime_sha_pinned": true,
     "byte_identical_on_01_and_08": true,
     "source_modules_modified": false
+  },
+  "final_source_qualification": {
+    "passed": true,
+    "hosts": [
+      "127x01",
+      "127x08"
+    ],
+    "reviewed_guard_commit": "c32015b16f41b0e8dae7b9502c00c9074b0b3be9",
+    "source_files": 58,
+    "tests": 147,
+    "source_bindings": {
+      "127x01": "reports/explore/t1/receipts/op5-08join-qualification-source-binding-127x01.json",
+      "127x08": "reports/explore/t1/receipts/op5-08join-qualification-source-binding-127x08.json"
+    }
   }
 }

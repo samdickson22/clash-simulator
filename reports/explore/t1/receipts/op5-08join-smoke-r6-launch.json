@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-10T17:49:44Z",
+  "phase": "smoke",
+  "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op5-r6",
+  "qualification_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op5-08join-r2",
+  "admitted_commit": "8c43dff939345d42ab3571127ad45d2c4a5440e2",
+  "hosts": [
+    "127x01",
+    "127x08"
+  ],
+  "dispatch_sha256": "8e27dbadc532e96ab53be312906f1e400623cd2cf48e3031d1f7d4f3cf9aa82d",
+  "blocks": 8,
+  "games": 64,
+  "copier_pid": 335935,
+  "copier_pgid": 335935,
+  "supervisors": {
+    "127x01": {
+      "pid": 336079,
+      "pgid": 336079,
+      "detached_at_utc": "2026-10-10T17:45:25Z"
+    },
+    "127x08": {
+      "pid": 1649321,
+      "pgid": 1649321,
+      "detached_at_utc": "2026-10-10T17:45:26Z"
+    }
+  },
+  "reporting_games_started": false,
+  "outcomes_sealed": true,
+  "stop_127x08_binding": true
+}
