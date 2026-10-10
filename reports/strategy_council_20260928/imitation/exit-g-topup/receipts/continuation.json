@@ -6,7 +6,7 @@
   "nextRunAt": "2026-10-10T07:31:12.294Z",
   "bindToCurrentThread": true,
   "disable": "update_scheduled_task({scheduledTaskId: recorded ID, enabled:false}) after actual final completion/deadline cleanup or explicit full task cancellation.",
-  "updated_utc": "2026-10-10T07:28:17Z",
+  "updated_utc": "2026-10-10T07:38:00Z",
   "hosts": [
     "127x04",
     "127x01",
@@ -66,7 +66,7 @@
   "no_new_admission_until_explicit_release": "03runningunderSECOND07:18Zone-time release;01/04/08remainstopped; noautomaticrestart",
   "completed_pause_manifest_sha256": "4e8faf7edc7164a6676f76e4f7a7d6ea237d4eba88d19252a0921c40cf409ef8",
   "completed_pause_roots": 212542,
-  "remaining_unpacked_roots": 1912,
+  "remaining_unpacked_roots": 34801,
   "generation_target_complete": false,
   "host03_generation_pid": 2711936,
   "host03_generation_pgid": 2711936,
@@ -128,5 +128,9 @@
   ],
   "host03_manager_core": 54,
   "host03_packer_core": 55,
-  "host03_maximum_persistent_processes": 56
+  "host03_maximum_persistent_processes": 56,
+  "host03_full_steady_audit_passed": true,
+  "host03_steady_utc": "2026-10-10T07:33:23Z",
+  "host03_full_audit_utc": "2026-10-10T07:37:05Z",
+  "latest_combined_roots": 247343
 }

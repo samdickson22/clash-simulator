@@ -1,0 +1,981 @@
+{
+  "utc": "2026-10-10T07:37:05Z",
+  "passed": true,
+  "boot_id": "2adb80b1-75ef-4c04-b8d4-36804c8adf4b",
+  "supervisor_pid": 2711936,
+  "pgid": 2711936,
+  "owned": [
+    {
+      "pid": 2711936,
+      "pgid": 2711936,
+      "start": 140691635,
+      "cmd_sha256": "023489cfd1ff2a26e91377d6eea8e8c046f8b0715b4153ce4f2829b270165796",
+      "threads": [
+        {
+          "tid": 2711936,
+          "cores": [
+            54
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2712052,
+      "pgid": 2711936,
+      "start": 140691893,
+      "cmd_sha256": "66981bdc1f81ebacaa594240bb2c15c7ff91b3dc0d674a6ca1b040f2066f29a4",
+      "threads": [
+        {
+          "tid": 2712052,
+          "cores": [
+            55
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2712053,
+      "pgid": 2711936,
+      "start": 140691893,
+      "cmd_sha256": "a2b9bbb0edf828917aa70afb9eda8e90bc2fde7d138325b8631a9500d131d5bc",
+      "threads": [
+        {
+          "tid": 2712053,
+          "cores": [
+            0
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2712054,
+      "pgid": 2711936,
+      "start": 140691894,
+      "cmd_sha256": "bd75678e3132c7a780ca098a01b6c8e7fbf602fd0ddf193f4ae3eaceffcc89fc",
+      "threads": [
+        {
+          "tid": 2712054,
+          "cores": [
+            1
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2712055,
+      "pgid": 2711936,
+      "start": 140691896,
+      "cmd_sha256": "d8e8eb24a69bdda7a28f21dad3d66f391ddd6a81c006f4b4dbd25281c45a74d4",
+      "threads": [
+        {
+          "tid": 2712055,
+          "cores": [
+            2
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2712056,
+      "pgid": 2711936,
+      "start": 140691897,
+      "cmd_sha256": "498daab6547e2bcb92fd6b13e347855ffb1533c39e32725e2ceff87d4c2c2a6f",
+      "threads": [
+        {
+          "tid": 2712056,
+          "cores": [
+            3
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2713580,
+      "pgid": 2711936,
+      "start": 140694949,
+      "cmd_sha256": "2063b61939121a8d8da00e35963cb5ab5112efccf2e45da58cbdaecb923d9e6f",
+      "threads": [
+        {
+          "tid": 2713580,
+          "cores": [
+            4
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2713581,
+      "pgid": 2711936,
+      "start": 140694949,
+      "cmd_sha256": "aa3292bce8d3eb60a588e605154e1c470e65b7dad9cc125c34365a71cfa85188",
+      "threads": [
+        {
+          "tid": 2713581,
+          "cores": [
+            5
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2713582,
+      "pgid": 2711936,
+      "start": 140694950,
+      "cmd_sha256": "607f5b167b958d40f651f55d189bcab4ccb1ae0004a9d2308818ee07e471dffb",
+      "threads": [
+        {
+          "tid": 2713582,
+          "cores": [
+            6
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2713583,
+      "pgid": 2711936,
+      "start": 140694952,
+      "cmd_sha256": "ea69e76261e395eb16df373c55813236468aace43fda8720dc6041dc92827788",
+      "threads": [
+        {
+          "tid": 2713583,
+          "cores": [
+            7
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2715217,
+      "pgid": 2711936,
+      "start": 140697998,
+      "cmd_sha256": "0484e80ed8d70851d64c7c7dcae92b44b5a911c6b1ba8a1b942ae6cab82fc6ae",
+      "threads": [
+        {
+          "tid": 2715217,
+          "cores": [
+            8
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2715219,
+      "pgid": 2711936,
+      "start": 140697999,
+      "cmd_sha256": "42da17d837926496c07a907367ebd16fd8a229fc81eecf10f3b3c340deeec21b",
+      "threads": [
+        {
+          "tid": 2715219,
+          "cores": [
+            9
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2715222,
+      "pgid": 2711936,
+      "start": 140698000,
+      "cmd_sha256": "841e23e609afdd4008cc4b3d852c179d5f712cbbf3c86ed7556cad9ecfe8881d",
+      "threads": [
+        {
+          "tid": 2715222,
+          "cores": [
+            10
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2715223,
+      "pgid": 2711936,
+      "start": 140698001,
+      "cmd_sha256": "ae2737ac26dcdc3e04e78b23ce81cdb06c3612526710a779b3942e6caa472af6",
+      "threads": [
+        {
+          "tid": 2715223,
+          "cores": [
+            11
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2716712,
+      "pgid": 2711936,
+      "start": 140701050,
+      "cmd_sha256": "7780b51b4c6fee9e30c5efef7de2451a569fe3fc15261e4f6e13e6fcda72614c",
+      "threads": [
+        {
+          "tid": 2716712,
+          "cores": [
+            12
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2716713,
+      "pgid": 2711936,
+      "start": 140701050,
+      "cmd_sha256": "6418488d81d04e714f288d4730b9f01191d4f9e0d6588de82e2d0f505820868a",
+      "threads": [
+        {
+          "tid": 2716713,
+          "cores": [
+            13
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2716714,
+      "pgid": 2711936,
+      "start": 140701052,
+      "cmd_sha256": "e05f9a34029a2bfdd7cfc45a5085a7ad453c81983896a51c7a7f32cab0e3cff0",
+      "threads": [
+        {
+          "tid": 2716714,
+          "cores": [
+            14
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2716715,
+      "pgid": 2711936,
+      "start": 140701053,
+      "cmd_sha256": "5f1d6d58041bb7bacb80f2dddaa5449d1ddd079f61cefb99cb853ad2f177915b",
+      "threads": [
+        {
+          "tid": 2716715,
+          "cores": [
+            15
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2718473,
+      "pgid": 2711936,
+      "start": 140704103,
+      "cmd_sha256": "f39eebfbc0de89df59e38243b740011646f13e99eb018dc287bb8f47b9462c33",
+      "threads": [
+        {
+          "tid": 2718473,
+          "cores": [
+            16
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2718474,
+      "pgid": 2711936,
+      "start": 140704104,
+      "cmd_sha256": "8ce28b663b9a82132e4f3dea49026b58bbc4875dbd5e581f051b70d4d11ce14e",
+      "threads": [
+        {
+          "tid": 2718474,
+          "cores": [
+            17
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2718475,
+      "pgid": 2711936,
+      "start": 140704105,
+      "cmd_sha256": "f70944a86d558c86c29e8a3e2612b87f9cf475eec38f8625c88a15cd0d8317c7",
+      "threads": [
+        {
+          "tid": 2718475,
+          "cores": [
+            18
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2718476,
+      "pgid": 2711936,
+      "start": 140704106,
+      "cmd_sha256": "502f0d1b897a56ace78fd8b9be85d8d4bc57413b42eb84af080abd1e778768c6",
+      "threads": [
+        {
+          "tid": 2718476,
+          "cores": [
+            19
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2719996,
+      "pgid": 2711936,
+      "start": 140707159,
+      "cmd_sha256": "1407db2915b1e6bbee11545909cb718904d6c77aeb2b1cbed7754a3b8fc0dc3e",
+      "threads": [
+        {
+          "tid": 2719996,
+          "cores": [
+            20
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2719997,
+      "pgid": 2711936,
+      "start": 140707160,
+      "cmd_sha256": "a59abe6860b38016a7b4b53a16ab66b6cd5a32330ee0523800c128ec332dbbb3",
+      "threads": [
+        {
+          "tid": 2719997,
+          "cores": [
+            21
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2719998,
+      "pgid": 2711936,
+      "start": 140707161,
+      "cmd_sha256": "429c9ba1edf0b58f4af95c6fd11d1ef37eb406c3185aaedbd861b4bbb00d5f92",
+      "threads": [
+        {
+          "tid": 2719998,
+          "cores": [
+            22
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2719999,
+      "pgid": 2711936,
+      "start": 140707162,
+      "cmd_sha256": "f6c2c8e7db8fbc779eb4d5091d2c4c7ba34853650c44948cd56ff711ab82cdc7",
+      "threads": [
+        {
+          "tid": 2719999,
+          "cores": [
+            23
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2721628,
+      "pgid": 2711936,
+      "start": 140710216,
+      "cmd_sha256": "3e359e427ae884e8fb4eb09ed721c6dcc4e45f38ef96e73fafb5fc66ec61f6f0",
+      "threads": [
+        {
+          "tid": 2721628,
+          "cores": [
+            24
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2721629,
+      "pgid": 2711936,
+      "start": 140710217,
+      "cmd_sha256": "37ae06c1eabc662b003da6631426c299a759984e0029057ec0417c13289fa3ee",
+      "threads": [
+        {
+          "tid": 2721629,
+          "cores": [
+            25
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2721630,
+      "pgid": 2711936,
+      "start": 140710218,
+      "cmd_sha256": "c063c9805855dc42a8c9bee2020ff160e495ea92a2fd109e7846cb0d44084baa",
+      "threads": [
+        {
+          "tid": 2721630,
+          "cores": [
+            26
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2721631,
+      "pgid": 2711936,
+      "start": 140710219,
+      "cmd_sha256": "62e76f1c48a147b96613490f52fede701201f3ae821e0ec383773837299ee269",
+      "threads": [
+        {
+          "tid": 2721631,
+          "cores": [
+            27
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2723207,
+      "pgid": 2711936,
+      "start": 140713274,
+      "cmd_sha256": "812d0de3edb8f0a9e060fcbea5a74027d6f529140d35f62e619cc48243af3eb1",
+      "threads": [
+        {
+          "tid": 2723207,
+          "cores": [
+            28
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2723208,
+      "pgid": 2711936,
+      "start": 140713275,
+      "cmd_sha256": "87c25c4fd3bf775418915064c90a536af78bb426e89ffc7e21f8565d3ee93fbc",
+      "threads": [
+        {
+          "tid": 2723208,
+          "cores": [
+            29
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2723209,
+      "pgid": 2711936,
+      "start": 140713276,
+      "cmd_sha256": "6af869870e482f0e3a4c5f38478ee49da20103ef8f0657d1faf84f0cd1d645e5",
+      "threads": [
+        {
+          "tid": 2723209,
+          "cores": [
+            30
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2723210,
+      "pgid": 2711936,
+      "start": 140713277,
+      "cmd_sha256": "e69feb4d100d8c8b993edfdefd7cf659580b324a291191c4be8040c1d8dfe199",
+      "threads": [
+        {
+          "tid": 2723210,
+          "cores": [
+            31
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2724762,
+      "pgid": 2711936,
+      "start": 140716333,
+      "cmd_sha256": "396e62c67120fdbe4d11f4a546c6a7515fe66743b6315eb010b8c4ce94c28147",
+      "threads": [
+        {
+          "tid": 2724762,
+          "cores": [
+            32
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2724763,
+      "pgid": 2711936,
+      "start": 140716334,
+      "cmd_sha256": "42390cfa831eb38985aacf3cbad7a2e03bbc203fcab14628c3fe7b0bed0ca434",
+      "threads": [
+        {
+          "tid": 2724763,
+          "cores": [
+            33
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2724764,
+      "pgid": 2711936,
+      "start": 140716335,
+      "cmd_sha256": "aeeccb7e2cea9d29f3dd57bb495726c5301a16cba38e68a0bead07e38eb6c460",
+      "threads": [
+        {
+          "tid": 2724764,
+          "cores": [
+            34
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2724766,
+      "pgid": 2711936,
+      "start": 140716336,
+      "cmd_sha256": "7fbde77b658f2aada2011ab8e8b01704e303bb1b4d61139003c47145b87f383e",
+      "threads": [
+        {
+          "tid": 2724766,
+          "cores": [
+            35
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2726341,
+      "pgid": 2711936,
+      "start": 140719392,
+      "cmd_sha256": "32afe54882519d90c314d42f832a43c3b5fdaf382fe10766839f5a8b4fe16b05",
+      "threads": [
+        {
+          "tid": 2726341,
+          "cores": [
+            36
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2726342,
+      "pgid": 2711936,
+      "start": 140719392,
+      "cmd_sha256": "240835257a649df48ef6492bee5416739af70dec086006a29945e4a2d043f71f",
+      "threads": [
+        {
+          "tid": 2726342,
+          "cores": [
+            37
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2726343,
+      "pgid": 2711936,
+      "start": 140719394,
+      "cmd_sha256": "252cd6c93857451ba8569c032b38feff305b0f5700b0d9f8cc7d8bf05b13a6ef",
+      "threads": [
+        {
+          "tid": 2726343,
+          "cores": [
+            38
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2726344,
+      "pgid": 2711936,
+      "start": 140719395,
+      "cmd_sha256": "21c5f27c2927a27686c4b2be90eb43ee1c904b4cab3383e8c0680e3b13f913bf",
+      "threads": [
+        {
+          "tid": 2726344,
+          "cores": [
+            39
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2727933,
+      "pgid": 2711936,
+      "start": 140722452,
+      "cmd_sha256": "e5ee40668de0ac02caee744b569357174cd6b48b4f3a70d9669304db28ae393c",
+      "threads": [
+        {
+          "tid": 2727933,
+          "cores": [
+            40
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2727934,
+      "pgid": 2711936,
+      "start": 140722452,
+      "cmd_sha256": "07ab441a5b9a2a2fd4eeccbc2b15ef2a4541bbd52c85599cdce25b50b2d24585",
+      "threads": [
+        {
+          "tid": 2727934,
+          "cores": [
+            41
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2727935,
+      "pgid": 2711936,
+      "start": 140722453,
+      "cmd_sha256": "711ec940d16657ce5d3133ca97a81e2403fd019cbdb5047d8e353e448a74e912",
+      "threads": [
+        {
+          "tid": 2727935,
+          "cores": [
+            42
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2727936,
+      "pgid": 2711936,
+      "start": 140722454,
+      "cmd_sha256": "28647e519d6a6caf06f87074b936e0475fc18683a6da9aba5eee19f3d13f88da",
+      "threads": [
+        {
+          "tid": 2727936,
+          "cores": [
+            43
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2729511,
+      "pgid": 2711936,
+      "start": 140725513,
+      "cmd_sha256": "678dbe6c84e8ca15a37a3bbef3b0e0e732e46fe09c79244ba36301adf23a864e",
+      "threads": [
+        {
+          "tid": 2729511,
+          "cores": [
+            44
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2729512,
+      "pgid": 2711936,
+      "start": 140725513,
+      "cmd_sha256": "396157452bed99b99e49967786f007068576f91cf895015624451cf43de9882a",
+      "threads": [
+        {
+          "tid": 2729512,
+          "cores": [
+            45
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2729513,
+      "pgid": 2711936,
+      "start": 140725514,
+      "cmd_sha256": "5e317314de7bc6aa78fed0436d59ca7f1e000523c4ff1d903b17443c98800db9",
+      "threads": [
+        {
+          "tid": 2729513,
+          "cores": [
+            46
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2729514,
+      "pgid": 2711936,
+      "start": 140725515,
+      "cmd_sha256": "8d9845152a42df6df1ed494a88e3203619401b1f0875047542ff0233e3a3ebc0",
+      "threads": [
+        {
+          "tid": 2729514,
+          "cores": [
+            47
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2731089,
+      "pgid": 2711936,
+      "start": 140728575,
+      "cmd_sha256": "d0506a0aa7db11d5c119ee9b9d7d529703725c0a5272ab951dd8d6d0bc6b4cd1",
+      "threads": [
+        {
+          "tid": 2731089,
+          "cores": [
+            48
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2731090,
+      "pgid": 2711936,
+      "start": 140728575,
+      "cmd_sha256": "4bd47c120d2ee453a076bf00affa6f5d94f0e188ad86ddf703c3eeeab34c758a",
+      "threads": [
+        {
+          "tid": 2731090,
+          "cores": [
+            49
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2731091,
+      "pgid": 2711936,
+      "start": 140728576,
+      "cmd_sha256": "8643dc82b796de4bd05b80a2f08d3f0f7c52e6060bee46f296d09e7d8c5f26eb",
+      "threads": [
+        {
+          "tid": 2731091,
+          "cores": [
+            50
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2731092,
+      "pgid": 2711936,
+      "start": 140728577,
+      "cmd_sha256": "3c3203a0aed79d0ce64ce9f67439ba70630518862226f8aded350a5fd1930d2e",
+      "threads": [
+        {
+          "tid": 2731092,
+          "cores": [
+            51
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2732609,
+      "pgid": 2711936,
+      "start": 140731640,
+      "cmd_sha256": "7ad513141720a2066149c9f96de02fbee4e611026d2042bd18fc5e3693a7d2f9",
+      "threads": [
+        {
+          "tid": 2732609,
+          "cores": [
+            52
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2732610,
+      "pgid": 2711936,
+      "start": 140731640,
+      "cmd_sha256": "a4b4ba8c30267e05d97a63eb7661956d37ad07b39ceddf7b866bf813aadd8c4b",
+      "threads": [
+        {
+          "tid": 2732610,
+          "cores": [
+            53
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    }
+  ],
+  "configured_workers": 54,
+  "spawned_workers": 54,
+  "ramp": {
+    "phase": "steady",
+    "first_slots": [
+      0,
+      2,
+      1,
+      3,
+      5,
+      6,
+      7,
+      4,
+      10,
+      9,
+      11,
+      8,
+      12,
+      15,
+      13,
+      14,
+      19,
+      18,
+      17,
+      16,
+      21,
+      20,
+      23,
+      22,
+      27,
+      24,
+      25,
+      26,
+      28,
+      31,
+      29,
+      30,
+      35,
+      33,
+      34,
+      32,
+      36,
+      37,
+      39,
+      38,
+      42,
+      43,
+      40,
+      41,
+      45,
+      44,
+      47,
+      46,
+      50,
+      49,
+      48,
+      51,
+      53,
+      52
+    ],
+    "tickets": [
+      1791617573.2790344,
+      1791617573.3051097
+    ],
+    "last_ticket": 1791617573.3051097,
+    "workers": 54,
+    "steady_utc": "2026-10-10T07:33:23Z"
+  },
+  "memory_available": 103148216320,
+  "pressure": "some avg10=0.00 avg60=0.12 avg300=0.65 total=117575983\nfull avg10=0.00 avg60=0.11 avg300=0.63 total=115702428\n",
+  "protected_cache_unchanged": true,
+  "combined_root_decisions": 247343,
+  "remaining_unpacked_roots": 34801,
+  "fleet_manifest_sha256": "372f6b0c2e5d92c1e3c59f45a6f120b3262635afd1b6fd985c87ee077ddb5008",
+  "stop03_cleared_once": true,
+  "pressure_pause": false
+}
