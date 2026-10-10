@@ -1633,3 +1633,4 @@ Also on the hub, but with copies elsewhere:
   - Deferred: G teacher top-up (filler on 04 non-seal cores only; not on 08). 08 stays reserved for B.
   - Stop list per §4. Exploration lane; any live change needs Mac E4, PREREG and an L2 amendment.
 - **00:43 UTC heartbeat:** K is running on 03/01. Capacity scan on 13/14/15 at 92/100/71% GPU. GPUs 01/04/09/16 are idle, waiting on X's freeze (minutes away). **08's GPU goes to X3 until 05:30Z at the latest** (B is gated by the A1 seal, ETA ~06:30Z). X3 must vacate by then, with a checkpoint and resume on 13/14. Heartbeat prompt refreshed.
+- **01:04 UTC: Capacity width 288 KILLED** under the frozen quarter rule: gain 0.00308 < 0.005 at 95.1 M rows (`d4d070b2`). 13 released. 384/480 continue (offline-only). **13 → new X arm X6** (T=1e-4, teacher 0.75), completing a 2×2 of temperature × human anchor with X1/X2/X4. Addendum freeze before launch; X3's resume has priority on 13.
