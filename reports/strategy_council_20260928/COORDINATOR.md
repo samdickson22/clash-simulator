@@ -1655,3 +1655,9 @@ Also on the hub, but with copies elsewhere:
     1. X stage 3 → the reviewer's **S-default K1** design (on cutoff the student is the default vs v1 as default; K0 anchor). Freeze before any stage-3 game.
     2. Commission **K-v2**: fix the cancellation return path, use honest lateness in the sim, run at normal priority, then K4 at 200/160/120 ms deadlines to emulate 1.0/0.8/0.6× core speed.
     3. Mac E4 v2 must measure per-core speed under perception load.
+- **01:45 UTC heartbeat:**
+  - All GPUs are busy: X1–X6 on 09/16/01/04/08/13, capacity 384/480 on 14/15. 01 (X4) samples ~20% GPU.
+  - The 01 memory PSI persists at ~50–60% without G, so X4's own human-row loader (micro3584) drives it.
+  - X4 runs at ~70% of X1's step rate, ETA ~04:30Z. Accepted: frozen recipe, no restart.
+  - G is fully off 01 (81 sealed games kept). STOP-03 is from K-v2 (timing games). 04 is briefly drained to deploy G's PSI guard.
+  - A spurious STOP denial on pending_request_list was ignored per Sam's rule.
