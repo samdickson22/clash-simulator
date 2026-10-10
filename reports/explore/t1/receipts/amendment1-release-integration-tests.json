@@ -1,0 +1,27 @@
+{
+  "utc": "2026-10-10T18:52:37Z",
+  "schema": "clasher.t1.release-integration-tests.v1",
+  "candidate": "11dcb03466340ef2ba342282ebfd9d0711b02229",
+  "integration_main_base": "3c811584",
+  "review_commit": "977c4dfb5b042384385b9ca8cc26a3f3b23dbb1c",
+  "E4_END_ancestor": "24bfa017e86124cf07fcad7323c3dffd6d77e9dd",
+  "E4_source_override_used": false,
+  "test_interpreter": "/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python",
+  "python": "3.12",
+  "nice": 19,
+  "tests_passed": 49,
+  "tests_failed": 0,
+  "elapsed_seconds": 121.17,
+  "reporting_games_read": 0,
+  "production_pool_or_release": false,
+  "source_shas": {
+    "barrier.py": "346d3c053157ef2fea2f8aa5b629dbeb53a5c365036033cd37aea4af85a9b00b",
+    "release_reference.py": "f8b61c603a2680fe40c312019fcd92e6da377ed16decb57778aba40ef8f13555",
+    "check_reference.py": "c848baa2f674801776543bbd9e0cd9c312c1de66fe017a5c8a583f79d5e64d43",
+    "test_barrier.py": "626bf1d99ce45812ad2f82a1dbacac7d8ca137dc45b505b1394e631c82e0eefc",
+    "test_release_reference.py": "e9c77aa78f62510ae0f5df2ca18bc74fcc8205cb309501563061761a6beac767",
+    "test_reference_packet.py": "81ebd96b87a69c32228a6b8b7f7252d1b03250afe71ce9628660713218d1f69d"
+  },
+  "basetemp": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/release-integration-tests-r1",
+  "status": "ISOLATED_BRANCH_NOT_ADMITTED_TO_REPORTING_RUNTIME"
+}
