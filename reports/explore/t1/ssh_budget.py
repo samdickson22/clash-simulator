@@ -2,7 +2,7 @@
 import ipaddress,json,os,time,math
 from fractions import Fraction
 from common import utc
-from cpu_accounting import Accounting
+from cpu_accounting import Accounting,RULE
 from ssh_transport import authenticated
 from idle_services import member as idle_member
 UID=3822945
@@ -75,7 +75,7 @@ def sample(before,after,elapsed,hz=None,accounting=None):
 
 def begin(rows,clock=time.monotonic,hz=None):
  hz=hz or os.sysconf('SC_CLK_TCK');born=math.floor(time.clock_gettime(time.CLOCK_BOOTTIME)*hz)
- return dict(started=clock(),hz=hz,born_since_ticks=born,last={generation(r):total_ticks(r) for r in rows},accounting=Accounting(rows,born,'ssh_budget'),cpu_ticks=0,source_proven_cpu_ticks=0,idle_cpu_ticks=0,processes={})
+ return dict(started=clock(),hz=hz,born_since_ticks=born,last={generation(r):total_ticks(r) for r in rows},accounting=Accounting(rows,born,'ssh_budget',baseline_all=True),cpu_ticks=0,source_proven_cpu_ticks=0,idle_cpu_ticks=0,processes={})
 
 def update(meter,rows):
  deltas=meter['accounting'].update(rows)
@@ -100,7 +100,7 @@ def finish(meter,elapsed):
  # Older serialized meters have no split: retain their original tighter caps.
  proven_ticks=meter.get('source_proven_cpu_ticks',0);idle_ticks=meter.get('idle_cpu_ticks',ticks)
  assert proven_ticks+idle_ticks==ticks
- return dict(cpu_ticks=ticks,cpu_seconds=ticks/hz,clock_ticks_per_second=hz,block_seconds=elapsed,core_fraction=ticks/hz/max(elapsed,.001),source_proven_cpu_ticks=proven_ticks,idle_cpu_ticks=idle_ticks,ssh_flagged=Fraction(proven_ticks)*200>denom,interfered=Fraction(ticks)*200>denom,stop=elapsed>=AVERAGE_STOP_MIN_SECONDS and (Fraction(proven_ticks)*10>denom or Fraction(idle_ticks)*50>denom),average_stop_min_seconds=AVERAGE_STOP_MIN_SECONDS,operational_rule='OP-6',cpu_accounting_rule='OP-7-observed-child-credit-v1',processes=records)
+ return dict(cpu_ticks=ticks,cpu_seconds=ticks/hz,clock_ticks_per_second=hz,block_seconds=elapsed,core_fraction=ticks/hz/max(elapsed,.001),source_proven_cpu_ticks=proven_ticks,idle_cpu_ticks=idle_ticks,ssh_flagged=Fraction(proven_ticks)*200>denom,interfered=Fraction(ticks)*200>denom,stop=elapsed>=AVERAGE_STOP_MIN_SECONDS and (Fraction(proven_ticks)*10>denom or Fraction(idle_ticks)*50>denom),average_stop_min_seconds=AVERAGE_STOP_MIN_SECONDS,operational_rule='OP-6',cpu_accounting_rule=RULE,processes=records)
 
 def stop_reason(console,foreign,foreign_active,sample_result,block_results):
  if console['positive']:return 'console_user'

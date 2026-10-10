@@ -9,10 +9,14 @@ import host_audit as H
 from common import write, sha
 from reduce import population_stats
 from schedule import ARMS
+import ssh_budget as B
+
+def paired_apt(meter,elapsed=60):
+    return {'ubuntu_apt':A.finish(meter,elapsed),'ssh_family':B.finish(B.begin([],hz=100),elapsed)}
 
 def root(**overrides):
     row=dict(pid=542173,ppid=541277,pgid=541271,start_ticks=145613425,
-             uid=0,apt_uid_snapshot=(0,0),apt_helper_uid_snapshot=105,cmd='/usr/bin/python3 /usr/bin/unattended-upgrade --download-only',
+             uid=0,apt_uid_snapshot=(0,0,0,0),apt_helper_uid_snapshot=105,cmd='/usr/bin/python3 /usr/bin/unattended-upgrade --download-only',
              cmdline_sha256='apt-cmd',cpu_ticks=0,child_cpu_ticks=0,
              apt_cgroup_snapshot='/system.slice/apt-daily.service')
     row.update(overrides)
@@ -87,7 +91,7 @@ def test_descendants_require_same_uid_cgroup_and_observed_root(tmp_path):
 def test_exact_average_and_flag_boundaries(ticks,flag,stop):
     _,_,meter=measured(ticks);result=A.finish(meter,60)
     assert result['apt_flagged'] is flag and result['stop'] is stop
-    assert S.apt_flagged({'ubuntu_apt':result,'apt_flagged':flag}) is flag
+    assert S.apt_flagged({**paired_apt(meter),'apt_flagged':flag}) is flag
 
 @pytest.mark.parametrize('ticks,stop',[(25,False),(150,False),(151,True)])
 def test_exact_sample_caps(ticks,stop):
@@ -133,7 +137,7 @@ def test_meter_flags_and_occurrences_are_bound_to_block(tmp_path):
     _,rows,meter=measured(31);A.record(tmp_path,rows,['primary-0000'])
     text=(tmp_path/'ubuntu-apt-occurrences.jsonl').read_text()
     assert 'primary-0000' in text and 'apt-daily.service' in text and 'root_identity' in text
-    health={'ubuntu_apt':A.finish(meter,60),'apt_flagged':True}
+    health={**paired_apt(meter),'apt_flagged':True}
     folder=tmp_path/'hub'/'primary-0000';write(folder/'interference.json',health)
     write(folder/'complete.json',dict(host='127x01',descriptor=dict(id='primary-0000',population='primary',cell=0,replaces=None),interference=health,interference_sha256=sha(folder/'interference.json'),games={'unreadable.json':'sealed'}))
     ledger=S.health_ledger(folder.parent,[],'blind-sha');assert ledger['blocks'][0]['apt_flagged']
@@ -144,7 +148,7 @@ def test_meter_flags_and_occurrences_are_bound_to_block(tmp_path):
 
 def test_apt_sensitivity_is_separate_and_primary_rng_unchanged():
     _,_,meter=measured(31)
-    rows={'primary':[dict(id='a',cell=0,complete_sha256='a',interference={'ubuntu_apt':A.finish(meter,60)},loss={a:1 for a in ARMS},draw={a:False for a in ARMS},win={a:False for a in ARMS}),dict(id='b',cell=1,complete_sha256='b',interference={},loss={a:0 for a in ARMS},draw={a:False for a in ARMS},win={a:True for a in ARMS})]}
+    rows={'primary':[dict(id='a',cell=0,complete_sha256='a',interference=paired_apt(meter),loss={a:1 for a in ARMS},draw={a:False for a in ARMS},win={a:False for a in ARMS}),dict(id='b',cell=1,complete_sha256='b',interference={},loss={a:0 for a in ARMS},draw={a:False for a in ARMS},win={a:True for a in ARMS})]}
     original=copy.deepcopy(rows);ledger={'blocks':[dict(id=r['id'],complete_sha256=r['complete_sha256'],ssh_flagged=False,apt_flagged=S.apt_flagged(r['interference'])) for r in rows['primary']]}
     rng=np.random.default_rng(2026101040);primary=population_stats(rows['primary'],rng,100);state=copy.deepcopy(rng.bit_generator.state)
     apt=S.analyze_apt(rows,ledger,100,2026101040,population_stats,np.random.default_rng)
@@ -197,13 +201,13 @@ def test_simultaneous_nested_reaping_and_delayed_wait_credit(module,budget_key):
     assert module.finish(meter,60)['cpu_ticks']==200
 
 @pytest.mark.parametrize('module,budget_key',[(A,'apt_budget'),(__import__('ssh_budget'),'ssh_budget')])
-def test_reaped_preblock_cpu_is_charged_without_recharging_observed_delta(module,budget_key):
+def test_reaped_preblock_cpu_is_excluded_and_observed_delta_charged_once(module,budget_key):
     p=root();c=child(p,cpu_ticks=500)
     for r in (p,c):r[budget_key]={'source':'129.65.221.14 123 129.65.221.18 22'}
     meter=module.begin([p,c],hz=100)
     module.update(meter,[p,dict(c,cpu_ticks=600)])
     module.update(meter,[dict(p,child_cpu_ticks=600)])
-    assert module.finish(meter,60)['cpu_ticks']==600
+    assert module.finish(meter,60)['cpu_ticks']==100
 
 
 def test_full_hybrid_cgroup_and_uid_status_evidence(tmp_path):
@@ -211,9 +215,9 @@ def test_full_hybrid_cgroup_and_uid_status_evidence(tmp_path):
     (tmp_path/'cgroup').write_text('\n'.join(lines)+'\n')
     assert A.capture_cgroup(tmp_path)=='/system.slice/apt-daily.service'
     (tmp_path/'status').write_text('Name: http\nUid:\t105\t105\t105\t105\n')
-    assert A.capture_uids(tmp_path)==(105,105)
+    assert A.capture_uids(tmp_path)==(105,105,105,105)
     (tmp_path/'status').write_text('Uid: 105 0 0 0\n')
-    assert A.capture_uids(tmp_path)==(105,0)
+    assert A.capture_uids(tmp_path)==(105,0,0,0)
     (tmp_path/'passwd').write_text('_apt:x:105:65534::/nonexistent:/usr/sbin/nologin\n')
     assert A.apt_uid(tmp_path/'passwd')==105
     (tmp_path/'passwd').write_text('_apt:x:0:65534::/:/bin/sh\n')
@@ -221,14 +225,14 @@ def test_full_hybrid_cgroup_and_uid_status_evidence(tmp_path):
 
 
 def method(parent,**changes):
-    return child(parent,uid=105,apt_uid_snapshot=(105,105),cmd='/usr/lib/apt/methods/http',exe='/usr/lib/apt/methods/http',exe_evidence='proc/exe',apt_helper_exe_snapshot={'path':'/usr/lib/apt/methods/http','evidence':'proc/exe'},**changes)
+    return child(parent,uid=105,apt_uid_snapshot=(105,105,105,105),cmd='/usr/lib/apt/methods/http',exe='/usr/lib/apt/methods/http',exe_evidence='proc/exe',apt_helper_exe_snapshot={'path':'/usr/lib/apt/methods/http','evidence':'proc/exe','directories':[dict(path=str(path),uid=0,mode=0o755) for path in (A.METHODS,*A.METHODS.parents)]},**changes)
 
 
 def test_apt_method_requires_real_effective_uid_exe_cgroup_and_root(tmp_path):
     parent=root();m=method(parent);rows=A.apply([parent,m]);assert rows[1]['apt_budget']['member_kind']=='_apt_method'
     assert not H.foreign_compute(tmp_path,rows)
     meter=A.begin(rows,hz=100);A.update(meter,A.apply([root(),dict(m,cpu_ticks=31)]))
-    assert S.apt_flagged({'ubuntu_apt':A.finish(meter,60)})
+    assert S.apt_flagged(paired_apt(meter))
     for fields in [dict(apt_helper_uid_snapshot=None),dict(apt_uid_snapshot=(105,0)),dict(apt_uid_snapshot=None),dict(apt_helper_exe_snapshot={'path':'/tmp/http','evidence':'proc/exe'}),dict(apt_helper_exe_snapshot=None),dict(apt_helper_exe_snapshot={'path':'/usr/lib/apt/methods/http','evidence':'argv0'}),dict(apt_cgroup_snapshot='/other'),dict(ppid=1)]:
         denied=A.apply([root(),dict(m,**fields)])[-1]
         assert not denied.get('apt_budget') and H.foreign_compute(tmp_path,[denied])
@@ -249,9 +253,9 @@ def test_missing_sensitivity_flag_fails_closed():
 
 
 def test_union_sensitivity_and_both_flag_counts_never_change_primary_rng():
-    _,_,m=measured(31);apt={'ubuntu_apt':A.finish(m,60)}
-    ssh={'ssh_family':dict(source_proven_cpu_ticks=31,block_seconds=60,clock_ticks_per_second=100,processes=[dict(source_proven_cpu_ticks=31)],ssh_flagged=True)}
-    interference=[{},apt,ssh,{**apt,**ssh}]
+    _,_,m=measured(31);apt=paired_apt(m)
+    ssh={'ssh_family':dict(source_proven_cpu_ticks=31,block_seconds=60,clock_ticks_per_second=100,processes=[dict(source_proven_cpu_ticks=31)],ssh_flagged=True,cpu_accounting_rule=__import__('cpu_accounting').RULE),'ubuntu_apt':A.finish(A.begin([],hz=100),60)}
+    interference=[{},apt,ssh,{'ubuntu_apt':apt['ubuntu_apt'],'ssh_family':ssh['ssh_family']}]
     rows={'primary':[dict(id=str(i),cell=i%2,complete_sha256=str(i),interference=proof,loss={a:i%2 for a in ARMS},draw={a:False for a in ARMS},win={a:i%2==0 for a in ARMS}) for i,proof in enumerate(interference)]}
     ledger={'blocks':[dict(id=r['id'],complete_sha256=r['complete_sha256'],population='primary',cell=r['cell'],ssh_flagged=S.flagged(r['interference']),apt_flagged=S.apt_flagged(r['interference']),ssh_or_apt_flagged=S.union_flagged(r['interference']),apt_meter_stop=False,ssh_meter_stop=False) for r in rows['primary']]}
     original=copy.deepcopy(rows);rng=np.random.default_rng(2026101040)
@@ -310,8 +314,10 @@ def test_helper_eacces_root_owned_nonwritable_file_only(monkeypatch,tmp_path):
     original=Path.stat
     def stat_override(path,*args,**kwargs):
         value=original(path,*args,**kwargs)
-        if path==file:
-            values=list(value);values[4]=0;return os.stat_result(values)
+        if path==file or path in (methods,*methods.parents):
+            values=list(value);values[4]=0
+            if path!=file and path!=methods:values[0]=0o040755
+            return os.stat_result(values)
         return value
     monkeypatch.setattr(Path,'stat',stat_override)
     proof=A.helper_exe(None,errno.EACCES,str(file))
@@ -320,6 +326,9 @@ def test_helper_eacces_root_owned_nonwritable_file_only(monkeypatch,tmp_path):
     assert A.apply([root(),r])[-1].get('apt_budget')
     for mode in (0o775,0o757):
         file.chmod(mode);assert A.helper_exe(None,errno.EACCES,str(file)) is None
+    file.chmod(0o755);methods.chmod(0o775)
+    assert A.helper_exe(None,errno.EACCES,str(file)) is None
+    methods.chmod(0o755)
     file.chmod(0o755);monkeypatch.setattr(Path,'stat',original)
     assert A.helper_exe(None,errno.EACCES,str(file)) is None  # not root-owned
 
@@ -345,7 +354,54 @@ def test_process_collector_captures_status_cgroup_and_raw_argv0_before_identity_
     monkeypatch.setattr(H.os,'sched_getaffinity',lambda _:set())
     # Missing exe is ENOENT, so no argv0 fallback despite the helper-shaped name.
     rows=H.processes();assert len(rows)==1
-    row=rows[0];assert row['apt_uid_snapshot']==(105,105) and row['apt_helper_uid_snapshot']==105
+    row=rows[0];assert row['apt_uid_snapshot']==(105,105,105,105) and row['apt_helper_uid_snapshot']==105
     assert row['apt_cgroup_snapshot']=='/system.slice/apt-daily.service'
     assert row['apt_helper_exe_snapshot'] is None and row['exe_evidence']=='unavailable'
     assert A.apply(rows)[0].get('apt_budget') is None
+
+
+@pytest.mark.parametrize('module,budget_key',[(A,'apt_budget'),(B,'ssh_budget')])
+def test_unmatched_orphan_credit_expires_after_three_scans(module,budget_key):
+    g=root();p=child(g);c=child(p,pid=g['pid']+2)
+    for r in (g,p,c):r[budget_key]={'source':'129.65.221.14 123 129.65.221.18 22'}
+    meter=module.begin([g,p,c],hz=100)
+    module.update(meter,[g,p,dict(c,cpu_ticks=100)])
+    # P never waits for C; both vanish, so none of C's CPU reaches G.cutime.
+    module.update(meter,[g])
+    assert module.finish(meter,60)['cpu_ticks']==100
+    for _ in range(3):module.update(meter,[g])
+    assert meter['accounting'].debt.get((g['pid'],g['start_ticks']),0)==0
+    module.update(meter,[dict(g,child_cpu_ticks=100)])  # unrelated unseen child
+    assert module.finish(meter,60)['cpu_ticks']==200
+
+@pytest.mark.parametrize('module,budget_key',[(A,'apt_budget'),(B,'ssh_budget')])
+def test_block_baseline_credit_includes_raw_untagged_process_rows(module,budget_key):
+    p=root();c=child(p,cpu_ticks=500)
+    # Production begin() receives raw H.processes() without census allowlists.
+    meter=module.begin([p,c],hz=100)
+    for r in (p,c):r[budget_key]={'source':'129.65.221.14 123 129.65.221.18 22'}
+    module.update(meter,[p,dict(c,cpu_ticks=600)])
+    module.update(meter,[dict(p,child_cpu_ticks=600)])
+    assert module.finish(meter,60)['cpu_ticks']==100
+
+@pytest.mark.parametrize('uids',[(105,105,0,105),(105,105,105,0),(105,0,105,105),(0,0,105,0)])
+def test_saved_and_filesystem_uid_changes_get_no_exception(uids,tmp_path):
+    row=method(root());row['apt_uid_snapshot']=uids
+    assert not A.apply([root(),row])[-1].get('apt_budget')
+    assert H.foreign_compute(tmp_path,[row])
+
+
+def test_lexical_outside_symlink_to_method_is_denied(tmp_path):
+    import errno
+    link=tmp_path/'outside';link.symlink_to('/usr/lib/apt/methods/http')
+    assert A.helper_exe(None,errno.EACCES,str(link)) is None
+
+@pytest.mark.parametrize('case',['missing_apt','mismatched_rule','missing_ssh'])
+def test_new_phase_proof_requires_both_matching_meters(case):
+    from cpu_accounting import RULE
+    proof=paired_apt(A.begin([],hz=100))
+    if case=='missing_apt':proof.pop('ubuntu_apt')
+    elif case=='missing_ssh':proof.pop('ssh_family')
+    else:proof['ubuntu_apt']['cpu_accounting_rule']='OP-7-observed-child-credit-v1'
+    with pytest.raises(AssertionError,match='matching apt and SSH'):S.apt_flagged(proof)
+    assert not S.apt_flagged({})  # preserved genuinely legacy proof

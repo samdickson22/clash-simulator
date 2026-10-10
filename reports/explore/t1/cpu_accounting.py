@@ -5,6 +5,8 @@ then follows wait/reaping up the observed parent tree, reducing later cutime
 increments. Unobserved short-lived child CPU remains chargeable.
 """
 
+RULE='OP-7-observed-child-credit-v2'
+
 def generation(row):
     return row['pid'], row['start_ticks']
 
@@ -14,19 +16,27 @@ def snapshot(rows):
             for row in rows}
 
 class Accounting:
-    def __init__(self, rows, born_since_ticks, budget_key, sample_baseline=False):
+    def __init__(self, rows, born_since_ticks, budget_key, sample_baseline=False, baseline_all=False):
         self.last = snapshot(rows)
         self.born = born_since_ticks
         self.key = budget_key
         self.credit = {}
         self.debt = {}
+        self.debt_lots = {}
+        self.scan = 0
         # A standalone one-sample comparison discounts all already-observed
         # budgeted child CPU. Production samples use a persistent tracker.
-        if sample_baseline:
+        if sample_baseline or baseline_all:
             self.credit = {generation(r): r['cpu_ticks'] + r.get('child_cpu_ticks', 0)
-                           for r in rows if r.get(budget_key)}
+                           for r in rows if baseline_all or r.get(budget_key)}
 
     def update(self, rows):
+        self.scan += 1
+        # Each credit lot expires independently. Fresh exits cannot renew an
+        # older orphan credit and mask unrelated short-lived child CPU forever.
+        for key,lots in list(self.debt_lots.items()):
+            self.debt_lots[key]=[(amount,end) for amount,end in lots if end>self.scan]
+            self.debt[key]=sum(amount for amount,end in self.debt_lots[key])
         current = snapshot(rows)
         bypid = {r['pid']: key for key, r in self.last.items()}
         gone = set(self.last) - set(current)
@@ -47,8 +57,10 @@ class Accounting:
         for key in sorted(gone, key=depth, reverse=True):
             amount = self.credit.pop(key, 0)
             self.debt.pop(key, None)
+            self.debt_lots.pop(key, None)
             p = parent(key)
             if p is not None and amount:
+                self.debt_lots.setdefault(p, []).append((amount,self.scan+3))
                 self.debt[p] = self.debt.get(p, 0) + amount
                 self.credit[p] = self.credit.get(p, 0) + amount
 
@@ -66,6 +78,11 @@ class Accounting:
             else:
                 own = reaped = 0
             discount = min(reaped, self.debt.get(key, 0))
+            remaining=discount;lots=[]
+            for amount,end in self.debt_lots.get(key, []):
+                paid=min(amount,remaining);remaining-=paid
+                if amount>paid:lots.append((amount-paid,end))
+            self.debt_lots[key]=lots
             self.debt[key] = self.debt.get(key, 0) - discount
             delta = own + reaped - discount
             deltas[key] = delta

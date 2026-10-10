@@ -63,7 +63,7 @@ def processes():
             if uid==103 and cmd.split()[:1]==['/usr/bin/dbus-daemon'] and exe is None:
                 exe=Path(cmd.split()[0]).resolve().as_posix();exe_evidence='argv0 (proc/exe unreadable, unprivileged)'
             argv0=raw_cmd.split(b'\0',1)[0].decode(errors='replace')
-            apt_helper_exe=helper_exe(exe,exe_errno,argv0) if helper_uid is not None and apt_uids==(helper_uid,helper_uid) else None
+            apt_helper_exe=helper_exe(exe,exe_errno,argv0) if helper_uid is not None and apt_uids==(helper_uid,helper_uid,helper_uid,helper_uid) else None
             try:
                 check=(d/'stat').read_text().rsplit(')',1)[1].split()
                 if check[19]!=stat[19] or check[1]!=stat[1] or d.stat().st_uid!=uid or capture_uids(d)!=apt_uids:continue

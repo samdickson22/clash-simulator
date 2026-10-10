@@ -63,7 +63,7 @@ def test_legacy_completed_blocks_replay_source_bound_flag():
 
 def test_ledger_carries_only_health_and_deduplicates_lost_phase(tmp_path):
  root=tmp_path/'hub';events=[dict(lost={'id':'primary-0000'},replacement={'id':'replacement-primary-0000','replaces':'primary-0000'})]
- _,_,m=measured(tmp_path,31);health={'ssh_family':B.finish(m,60)}
+ _,_,m=measured(tmp_path,31);health={'ssh_family':B.finish(m,60),'ubuntu_apt':__import__('apt_budget').finish(__import__('apt_budget').begin([],hz=100),60)}
  for identity,replaces in [('primary-0000',None),('replacement-primary-0000','primary-0000')]:
   folder=root/identity;write(folder/'interference.json',health)
   descriptor=dict(id=identity,population='primary',cell=0,replaces=replaces)

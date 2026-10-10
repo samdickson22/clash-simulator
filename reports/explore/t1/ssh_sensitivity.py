@@ -23,28 +23,33 @@ def flagged(interference):
 
 def apt_flagged(interference):
  meter=interference.get('ubuntu_apt',{})
+ new_rule=interference.get('ssh_family',{}).get('cpu_accounting_rule')
+ if new_rule in ('OP-7-observed-child-credit-v1','OP-7-observed-child-credit-v2'):
+  assert meter and meter.get('cpu_accounting_rule')==new_rule,'new phase requires matching apt and SSH meters'
+ if meter.get('cpu_accounting_rule') in ('OP-7-observed-child-credit-v1','OP-7-observed-child-credit-v2'):
+  assert new_rule==meter['cpu_accounting_rule'],'new phase requires matching apt and SSH meters'
  if not meter:
   assert not interference.get('apt_flagged',False),'apt flag lacks meter proof'
   return False
  ticks=meter['cpu_ticks'];records=meter['processes']
  assert ticks==sum(r['cpu_ticks'] for r in records)
- from apt_budget import CGROUPS,METHODS
+ from apt_budget import CGROUPS,METHODS,directories_valid
  for r in records:
   source=r['source'];root=source['root_identity']
-  assert source['cgroup'] in CGROUPS and root['real_uid']==root['effective_uid']==0
-  assert root['uid_evidence']=='proc/status Uid real/effective'
-  assert source['uid_evidence']=='proc/status Uid real/effective'
-  if source['member_kind']=='root':assert source['real_uid']==source['effective_uid']==0
+  assert source['cgroup'] in CGROUPS and root['real_uid']==root['effective_uid']==root['saved_uid']==root['filesystem_uid']==0
+  assert root['uid_evidence']=='proc/status Uid real/effective/saved/filesystem'
+  assert source['uid_evidence']=='proc/status Uid real/effective/saved/filesystem'
+  if source['member_kind']=='root':assert source['real_uid']==source['effective_uid']==source['saved_uid']==source['filesystem_uid']==0
   else:
    assert source['member_kind']=='_apt_method' and source['helper_uid'] is not None
-   assert source['real_uid']==source['effective_uid']==source['helper_uid']
+   assert source['real_uid']==source['effective_uid']==source['saved_uid']==source['filesystem_uid']==source['helper_uid']
    assert Path(source['exe_path']).parent==METHODS
-   evidence=source['helper_exe_proof'];assert evidence['path']==source['exe_path'] and evidence['evidence']==source['exe_evidence']
+   evidence=source['helper_exe_proof'];assert directories_valid(evidence);assert evidence['path']==source['exe_path'] and evidence['evidence']==source['exe_evidence']
    if evidence['evidence']!='proc/exe':
     import errno
     assert evidence['evidence']=='argv0 (proc/exe EACCES, unprivileged)' and evidence['exe_errno']==errno.EACCES
     assert evidence['file_uid']==0 and not evidence['file_mode']&0o022
-    assert Path(evidence['argv0']).is_absolute() and '..' not in Path(evidence['argv0']).parts
+    assert Path(evidence['argv0']).is_absolute() and Path(evidence['argv0']).parent==METHODS and '..' not in Path(evidence['argv0']).parts
  hz=meter['clock_ticks_per_second']
  value=Fraction(ticks)*200>hz*Fraction(str(max(meter['block_seconds'],.001)))
  assert meter['apt_flagged']==value and interference.get('apt_flagged',value)==value

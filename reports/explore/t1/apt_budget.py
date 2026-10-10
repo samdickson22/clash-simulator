@@ -4,7 +4,7 @@ from fractions import Fraction
 from pathlib import Path
 from common import utc
 from ssh_budget import generation, total_ticks
-from cpu_accounting import Accounting
+from cpu_accounting import Accounting,RULE
 
 CGROUPS = {'/system.slice/apt-daily.service', '/system.slice/apt-daily-upgrade.service'}
 DIRECT = {'/usr/lib/apt/apt.systemd.daily', '/usr/bin/unattended-upgrade',
@@ -24,37 +24,56 @@ def capture_uids(proc):
     try:
         fields=[line.split()[1:] for line in (Path(proc)/'status').read_text().splitlines() if line.startswith('Uid:')]
         values=tuple(map(int,fields[0])) if len(fields)==1 else ()
-        return values[:2] if len(values)==4 else None
+        return values if len(values)==4 else None
     except (OSError,ValueError):
         return None
 
 def root_uid(row):
-    return row.get('apt_uid_snapshot') in ((0,0),[0,0])
+    return row.get('apt_uid_snapshot') in ((0,0,0,0),[0,0,0,0])
+
+def directory_evidence():
+    try:
+        out=[]
+        for path in (METHODS,*METHODS.parents):
+            value=path.stat()
+            if not stat.S_ISDIR(value.st_mode) or value.st_uid!=0 or value.st_mode&0o022:
+                return None
+            out.append(dict(path=str(path),uid=value.st_uid,mode=stat.S_IMODE(value.st_mode),device=value.st_dev,inode=value.st_ino))
+        return out
+    except OSError:
+        return None
+
+def directories_valid(proof):
+    entries=proof.get('directories',[])
+    return ([r['path'] for r in entries]==[str(path) for path in (METHODS,*METHODS.parents)]
+            and all(r['uid']==0 and not r['mode']&0o022 for r in entries))
 
 def helper_exe(exe, error, argv0):
+    dirs=directory_evidence()
+    if dirs is None:return None
     if exe:
         path=Path(exe)
-        return dict(path=exe,evidence='proc/exe') if path.is_absolute() and path.parent==METHODS and '..' not in path.parts else None
+        return dict(path=exe,evidence='proc/exe',directories=dirs) if path.is_absolute() and path.parent==METHODS and '..' not in path.parts else None
     if error!=errno.EACCES or not argv0:
         return None
     path=Path(argv0)
-    if not path.is_absolute() or '..' in path.parts:
+    if not path.is_absolute() or path.parent!=METHODS or '..' in path.parts:
         return None
     try:
         target=path.resolve(strict=True)
         file=target.stat()
         if target.parent!=METHODS or file.st_uid!=0 or file.st_mode&0o022 or not stat.S_ISREG(file.st_mode):
             return None
-        return dict(path=str(target),evidence='argv0 (proc/exe EACCES, unprivileged)',argv0=argv0,file_uid=file.st_uid,file_mode=stat.S_IMODE(file.st_mode),file_device=file.st_dev,file_inode=file.st_ino,exe_errno=error)
+        return dict(path=str(target),evidence='argv0 (proc/exe EACCES, unprivileged)',argv0=argv0,file_uid=file.st_uid,file_mode=stat.S_IMODE(file.st_mode),file_device=file.st_dev,file_inode=file.st_ino,exe_errno=error,directories=dirs)
     except OSError:
         return None
 
 def helper(row):
     uid=row.get('apt_helper_uid_snapshot')
-    if uid is None or row.get('apt_uid_snapshot') not in ((uid,uid),[uid,uid]):
+    if uid is None or row.get('apt_uid_snapshot') not in ((uid,uid,uid,uid),[uid,uid,uid,uid]):
         return False
     proof=row.get('apt_helper_exe_snapshot')
-    if not proof or Path(proof.get('path','')).parent!=METHODS:
+    if not proof or Path(proof.get('path','')).parent!=METHODS or not directories_valid(proof):
         return False
     if proof.get('evidence')=='proc/exe':
         return True
@@ -108,7 +127,7 @@ def source(row, rows):
         return None
     cgroup = row['apt_cgroup_snapshot']
     exe_proof=row.get('apt_helper_exe_snapshot') if not root_uid(row) else None
-    member=dict(real_uid=row['apt_uid_snapshot'][0],effective_uid=row['apt_uid_snapshot'][1],uid_evidence='proc/status Uid real/effective',member_kind='root' if root_uid(row) else '_apt_method',helper_uid=row.get('apt_helper_uid_snapshot'),exe_path=exe_proof['path'] if exe_proof else row.get('exe'),exe_evidence=exe_proof['evidence'] if exe_proof else row.get('exe_evidence'),helper_exe_proof=exe_proof)
+    member=dict(real_uid=row['apt_uid_snapshot'][0],effective_uid=row['apt_uid_snapshot'][1],saved_uid=row['apt_uid_snapshot'][2],filesystem_uid=row['apt_uid_snapshot'][3],uid_evidence='proc/status Uid real/effective/saved/filesystem',member_kind='root' if root_uid(row) else '_apt_method',helper_uid=row.get('apt_helper_uid_snapshot'),exe_path=exe_proof['path'] if exe_proof else row.get('exe'),exe_evidence=exe_proof['evidence'] if exe_proof else row.get('exe_evidence'),helper_exe_proof=exe_proof)
     bypid = {r['pid']: r for r in rows}
     seen = set()
     for _ in range(64):
@@ -117,7 +136,7 @@ def source(row, rows):
         seen.add(row['pid'])
         if root_command(row):
             return dict(cgroup=cgroup, **member, root_identity=dict(**{k: row[k] for k in
-                        ('pid', 'ppid', 'pgid', 'start_ticks', 'uid', 'cmdline_sha256')},real_uid=0,effective_uid=0,uid_evidence='proc/status Uid real/effective'))
+                        ('pid', 'ppid', 'pgid', 'start_ticks', 'uid', 'cmdline_sha256')},real_uid=0,effective_uid=0,saved_uid=0,filesystem_uid=0,uid_evidence='proc/status Uid real/effective/saved/filesystem'))
         row = bypid.get(row['ppid'])
         if row is None:
             return None
@@ -151,7 +170,7 @@ def begin(rows, clock=time.monotonic, hz=None):
     return dict(started=clock(), hz=hz,
                 born_since_ticks=born,
                 last={generation(row): total_ticks(row) for row in rows},
-                accounting=Accounting(rows, born, 'apt_budget'),
+                accounting=Accounting(rows, born, 'apt_budget', baseline_all=True),
                 cpu_ticks=0, processes={})
 
 def update(meter, rows):
@@ -186,7 +205,7 @@ def finish(meter, elapsed):
                 apt_flagged=flagged, interfered=flagged,
                 stop=elapsed >= 60 and Fraction(ticks) * 10 > denominator,
                 average_stop_min_seconds=60, operational_rule='OP-7',
-                cpu_accounting_rule='OP-7-observed-child-credit-v1',
+                cpu_accounting_rule=RULE,
                 processes=list(meter['processes'].values()))
 
 def stop_reason(sample_result, block_results):
