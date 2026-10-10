@@ -1,0 +1,63 @@
+{
+  "schema": "clasher.exit-r1.student-final-result-verification.v1",
+  "utc": "2026-10-10T00:09:45.682264+00:00",
+  "passed": true,
+  "aggregate_sha256": "9a333c93eddb1a8f14d4738ee93ac0c46bc2772014c6b841a1129a6be3d6dcf9",
+  "source_completion_receipt_sha256": "87e97cd927c4a0484946bc061197377def83a66135de0dbc23fab3489a96be62",
+  "source_report_sha256": "39a6513f69edd28cc0706b4475e156569770ffb8e22e08cd98fe0824858c3df7",
+  "bootstrap_exact_replay": true,
+  "all_kill_rules_exact": true,
+  "all_fits_final_4883": true,
+  "all_failed_reporting_phase_cpu_included": true,
+  "human_discarded_updates_accounted": 206,
+  "arms": {
+    "S-mix": {
+      "final_step": 4883,
+      "training_rows": 40001536,
+      "checkpoint_sha256": "78928c0ead5e11d458b37e2f57a56e3f9b234e6acb83a9984c3cc1e206c19a59",
+      "paired_ci95_exact_replay": [
+        -0.07,
+        0.03333333333333333
+      ],
+      "kill_reasons": [
+        "teacher play recall below 50%",
+        "paired loss-change CI upper bound is nonnegative"
+      ],
+      "survives": false
+    },
+    "S-teacher": {
+      "final_step": 4883,
+      "training_rows": 40001536,
+      "checkpoint_sha256": "29d17153570025b924707e50e2b35c43919b77b1b5429f5a93232044d3b53f5e",
+      "paired_ci95_exact_replay": [
+        -0.12666666666666668,
+        -0.021666666666666667
+      ],
+      "kill_reasons": [
+        "teacher play recall below 50%"
+      ],
+      "survives": false
+    },
+    "S-human": {
+      "final_step": 4883,
+      "training_rows": 40001536,
+      "checkpoint_sha256": "bb257672d47465b20611c29f714cc4e077e5f1aeedc504fc6a8f7d1566fe4bf5",
+      "paired_ci95_exact_replay": [
+        -0.07166666666666667,
+        0.025
+      ],
+      "kill_reasons": [
+        "teacher play recall below 50%",
+        "WAIT rate exceeds 1.5 times teacher",
+        "paired loss-change CI upper bound is nonnegative"
+      ],
+      "survives": false
+    }
+  },
+  "metadata_verification_sha256": "effc793c5ebf20d8f87a1380701911a3dc7539ff051011989f9b974ca00e4baa",
+  "published_report_sha256": "88e171ea0fa7accc4f9d7c37dc8cb95729c6f2d5b9817499e6b02725b2df7d65",
+  "published_completion_receipt_sha256": "87e97cd927c4a0484946bc061197377def83a66135de0dbc23fab3489a96be62",
+  "publication_edits": "Summary, exploration captions, summed metered resources, accounting scope and verification links only; all scientific values unchanged.",
+  "metered_total_gpu_hours": 8.601633429368086,
+  "metered_total_cpu_hours": 122.16462150138888
+}

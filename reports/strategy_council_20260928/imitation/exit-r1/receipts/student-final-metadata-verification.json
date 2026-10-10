@@ -1,0 +1,36 @@
+{
+  "schema": "clasher.exit-r1.student-final-metadata-verification.v1",
+  "utc": "2026-10-10T00:04:00.754904+00:00",
+  "passed": true,
+  "execution_freeze_sha256": "ff4ae6ef20cda181f09ff3dcadaedb0a4435bf92c0ce388e3adc466c75f813fa",
+  "raw_case_sha_manifest_sha256": "322b559f9828599583ed5d0555d6ecbbad5cbce79ba5e790796191509502379c",
+  "raw_cases_verified": 3168,
+  "pre_mix_cases_still_byte_exact": 2312,
+  "scientific_fields_unchanged": true,
+  "case_counts": {
+    "S-human": {
+      "fallback": 600,
+      "h2h": 256
+    },
+    "S-mix": {
+      "fallback": 600,
+      "h2h": 256
+    },
+    "S-teacher": {
+      "fallback": 600,
+      "h2h": 256
+    },
+    "init": {
+      "fallback": 600
+    }
+  },
+  "heldout_terminal_games": 64,
+  "heldout_sealed_files_verified": 4608,
+  "host_tasks": {
+    "01": 214,
+    "03": 1696,
+    "04": 661,
+    "08": 661
+  },
+  "all_reporting_workers_vacated": true
+}
