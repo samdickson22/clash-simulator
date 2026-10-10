@@ -1,0 +1,15 @@
+{
+  "status": "complete",
+  "pid": 2982268,
+  "pgid": 2982268,
+  "passed": true,
+  "pins": 635,
+  "runtime_source_pins_sha256": "550d3956c18c715c25ebeae5a5e864b1464ee7f0eb2d60bcb819837814d23af8",
+  "r1_stage_freeze_sha256": "11b1c17215ed83f78402c33e3559901c6babe6462f45962f9914694f0449ab43",
+  "r3a_original_kill_preserved": true,
+  "utc": "2026-10-10T07:00:16Z",
+  "parent_cpu_seconds": 0.160405,
+  "children_cpu_seconds": 0.139168,
+  "wall_seconds": 1.4967438369058073,
+  "accounting": "Whole local staging tree once; remote sender CPU unmetered and disclosed"
+}

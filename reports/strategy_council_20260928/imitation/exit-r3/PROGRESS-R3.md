@@ -383,3 +383,31 @@ No source/recipe/gate changes or new evaluation outcomes. Snapshot histories
 retain all current/void JSON meters. Extension continuation updated10min,
 next06:52:20.493Z; identity inround2/receipts/continuation.json. Original04
 remains returned, originalarms final.01descriptive still waits Xexplicitrelease.
+
+2026-10-10T07:10:26Z — Coordinator06:50 supersedes S-default for BOTH new game protocols.
+Own round2/K0-FALLBACK-ADDENDUM.md binds frozen r1(b) coarse-first W-screen8,
+1core/200ms/8ms reserve, student calibrated cutoff fallback+top8 versus common
+init-W v1 fallback/proposer control labelledK0. Same24/241/242 and25/251 banks,
+interleaved complete rotated pairs, killupperCI>=0; R3a alwaysNEVERADOPTABLE.
+Original training PLAN/source/fits remain immutable; originala/b finalkills stay.
+No new games/outcomes yet. Fresh independent01 admission06:55:44 after Xrelease,
+all recorded groups absent, locksfree/Gstopsretained. Base stageattempt1 failed
+path-type before copy CPU.117570; reviewedattempt2 copied/passedsource but raw09
+metrics were unmerged CPU1.368018. Both meters/source/logs retained/groupsabsent.
+Reviewedattempt3 uses SHA-exact original04 finalR3a decision, preserves kills,
+complete07:00:16 PID/PGID2982268 absent; CPU.299573.635runtimepins allpass.
+Codequalification PID/PGID2993359 passed07:03:22:10synthetic+6inheritedclocktests,
+qualifiedE1nativef387b2d2 startup, no games; CPU16.445698.
+
+K2 explicit03 release07:00:38/PROGRESS07:01:18 received; independent drainaudit
+07:06:29 allsevenPGIDsabsent/noK2/K-v2/X/G. Regret-only03 fresh ownadmission,
+manager59+8workers0–7 nice10/SCHED_OTHER/home24GiB. Basestage PID/PGID2654264
+complete07:06:52,1412scorer/native/inputpins passed,64sources present, CPU2.668434.
+03 reserved only for later common-root regret; both timing protocols stay01.
+Original04 remains returned and never reused. New evaluation-freeze separates
+common implementation/home01/scorer03 pins; push and verify before any games.
+Latest fits07:06:49Z C1185/D1169/E1052 healthy; no offline yet.
+Future boundedadvance command round2/operations/advance.py --output ownstate
+ --descriptive --round2 launches finalEMA offline only after current cleanexit/
+expectedsteps, then excluded smoke/report, later64regret and survivor-onlyStage2.
+Every phase uses an attempt1 identity and refuses automatic closed-attempt retry.

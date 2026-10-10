@@ -1,0 +1,9 @@
+{"status": "failed", "pid": 2968755, "pgid": 2968755, "utc": "2026-10-10T06:55:53Z", "parent_cpu_seconds": 0.071782, "children_cpu_seconds": 0.045787999999999995, "wall_seconds": 0.0021512340754270554, "accounting": "Whole local staging tree once; remote sender CPU unmetered and disclosed"}
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/metadata/stage_home.py", line 51, in <module>
+    if __name__=='__main__':main()
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/metadata/stage_home.py", line 24, in main
+    copy(str(S/'source')+'/',str(J/'eval-source')+'/')
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/metadata/stage_home.py", line 14, in copy
+    assert allowed(J);dst.parent.mkdir(parents=True,exist_ok=True)
+AttributeError: 'str' object has no attribute 'parent'

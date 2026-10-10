@@ -1,0 +1,10 @@
+{
+  "status": "failed",
+  "pid": 2973701,
+  "pgid": 2973701,
+  "utc": "2026-10-10T06:57:32Z",
+  "parent_cpu_seconds": 0.15970299999999998,
+  "children_cpu_seconds": 1.2083149999999998,
+  "wall_seconds": 2.663454632041976,
+  "accounting": "Whole local staging tree once; remote sender CPU unmetered and disclosed"
+}

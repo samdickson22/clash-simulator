@@ -15,3 +15,11 @@ Snapshot real UTC 2026-10-10T06:45:20Z. All final-EMA offline/regret/adoption ga
 Known preparation/void startup cost: 0.035223 CPU hours, 0.033694 GPU reservation wall hours. Active valid fit costs accrue until exit; no final throughput yet. [Whole-tree receipts](receipts/cost-summary.json).
 
 Three06:28 startup attempts were voided after publication-check failure, stopped06:28:35/exited06:28:50 before train logs/checkpoints; all costs retained. Source/seed/gates unchanged by this incident. Staging16 attempt1 failed on missing provenance; reviewed attempt2 succeeded, both charged. Six synthetic tests passed; first test CPU and small metadata/copy overhead are disclosed as unmetered.
+
+Coordinator06:50Z switched both future game protocols to frozen r1(b) coarse-first
+W-screen8,1core/200ms,student cutoff fallback+top8 versus K0 common init-W v1
+fallback/proposer. R3a descriptive remains NEVER-ADOPTABLE; c/d/e require unchanged
+Stage1 and upper paired95%CI<0. New implementation freeze precedes every new
+game/offline outcome; see K0-FALLBACK-ADDENDUM.md.01 independently admitted
+after X explicitrelease;03 admitted regret-only after K2 explicitrelease.
+No new games or round2 offline metrics yet.

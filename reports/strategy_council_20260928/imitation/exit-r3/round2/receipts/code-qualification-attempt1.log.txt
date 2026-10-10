@@ -1,0 +1,18 @@
+test_calibrated_legal_choice_and_cached_top8 (test_hook.HookTest.test_calibrated_legal_choice_and_cached_top8) ... ok
+test_v1_sampler_and_proposer_unchanged (test_hook.HookTest.test_v1_sampler_and_proposer_unchanged) ... ok
+test_calibration_prevalence_and_ties (test_proposals.Tests.test_calibration_prevalence_and_ties) ... ok
+test_legal_rank_and_deterministic_ties (test_proposals.Tests.test_legal_rank_and_deterministic_ties) ... ok
+test_one_pass_and_advantage_ranking (test_proposals.Tests.test_one_pass_and_advantage_ranking) ... ok
+test_complete_rotation (test_protocol.ProtocolTest.test_complete_rotation) ... ok
+test_descriptive_never_adopt_even_clear_win (test_protocol.ProtocolTest.test_descriptive_never_adopt_even_clear_win) ... ok
+test_no_killed_round2_arms (test_protocol.ProtocolTest.test_no_killed_round2_arms) ... ok
+test_reserved_reporting_and_smoke (test_protocol.ProtocolTest.test_reserved_reporting_and_smoke) ... ok
+test_stage2_boundary_kills (test_protocol.ProtocolTest.test_stage2_boundary_kills) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.022s
+
+OK
+......                                                                   [100%]
+6 passed in 0.07s
+{"passed": true, "pid": 2993359, "pgid": 2993359, "native_startup": true, "synthetic_hook_tests": 2, "protocol_tests": 5, "proposal_tests": 3, "deadline_clock_tests": 6, "no_games": true, "parent_cpu_seconds": 14.66849, "children_cpu_seconds": 1.777208, "wall_seconds": 16.43783032288775, "utc": "2026-10-10T07:03:22Z", "accounting": "Whole code qualification process/tree once; no simulations"}
