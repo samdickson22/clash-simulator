@@ -20,7 +20,7 @@
     "reports/explore/t1/gc_window.py": "0c743f3d1e9c617a89625c694df216a93c4da15249b9c1398162ac1b73815146",
     "reports/explore/t1/guard-decks.json": "6d51628bb1262f53258e88ef6247cfb41f2762f9f13323387fcd36ad126c48ef",
     "reports/explore/t1/health.py": "3908a43dd025fed2d23411c77bed84483ebe24ecde98744aae7a64f096018dc8",
-    "reports/explore/t1/host_audit.py": "e9ca6c37dffe8ac263e2985a3c62926c1cd97f69de5448cf70d54e10f7b2b414",
+    "reports/explore/t1/host_audit.py": "a7de6c3bcda10ac6d5094bbf7f9e62d766945bf9e1766cd03e3ca400d1d3ceb6",
     "reports/explore/t1/idle_services.py": "911c18aee5af1d61cf66b7e5187af4cb6b3fb58d3143152a3ab385b4a76816b2",
     "reports/explore/t1/inherited/k2/belief.py": "5e6f07fc3d7f71cf380d8f68a9c47021355a48b85026df2b1878c236556a0f56",
     "reports/explore/t1/inherited/k2/gc_window.py": "0c743f3d1e9c617a89625c694df216a93c4da15249b9c1398162ac1b73815146",
@@ -56,7 +56,7 @@
     "reports/explore/t1/provenance.json": "bffbe861ce33bbac7a49e47eda7e7a121bc36cf4542338ec1764cd64c3c774ef",
     "reports/explore/t1/qualification_binding.py": "1061b706b48add2a0a0721dce3cae9e96d253e8e9193290e5a1bf85c0a8e6818",
     "reports/explore/t1/qualify.py": "ef7162e4e2e503b6eeb9f4627f5f58a882632d48e61b8b6f087a5d812b430377",
-    "reports/explore/t1/qualify.sh": "83eb2e12816c51db4569d04c7d5c1ee5a5a3805430991c7a61979e073fb17f2a",
+    "reports/explore/t1/qualify.sh": "7406bbe856d821f1a33aa9d604c7d83e2da8a38c1f88c5f7a6fffe4211663160",
     "reports/explore/t1/qualify_belief.py": "b6d86ed9fa3cd20ed83a86d75314295f055e92110212b904986b193a43451213",
     "reports/explore/t1/receipts/excluded-smoke-attempt.json": "982c65b4e513be5c318cfed0324cc355b73876b9e6d8824e29e90b183c5020fc",
     "reports/explore/t1/receipts/idle-services-admission-127x03.json": "5364ceeb52564fce0e9cd9adbeec2d3ede7df2b5694da9b6b780bc7a4bbd6cd7",
@@ -79,7 +79,7 @@
     "reports/explore/t1/smoke_pass.py": "eeef4ecffa76550623781cdc25bee361fc8e18fc72db6d82169ca5df03c05665",
     "reports/explore/t1/ssh_transport.py": "5fc29125f61a2be7cd912d07ec9d2b260c37125e0c7647ea99845ba194010c88",
     "reports/explore/t1/stage.py": "7a2a753d0a60c9a4089077926b06a74208a107245a3ea01925db4b3c5ce81987",
-    "reports/explore/t1/supervise.py": "c89c48c2b50ff91c8f59ea06920967b2d40698148c18235be3c1301caaf693c2",
+    "reports/explore/t1/supervise.py": "f1da50792ec8ca2caa3495a7033e3a72f065dccfbae56a4980aed0c12f432bbc",
     "reports/explore/t1/system_bus.py": "785eb2c5fbf6bc35c7d4c5c614b97bf5796b4f516aa0aeeacecbd386b9a04e11",
     "reports/explore/t1/test_anchor.py": "2d15209c739ae6cf2a092aca8bb5cee0be8f7bf8dfb4a295a9fcd9adde4f6553",
     "reports/explore/t1/test_barrier.py": "ae4e88534b7f3f2e00b5c536af9598070a948137c17b50b44a9a3b5edb062520",
@@ -103,7 +103,12 @@
     "reports/explore/t1/receipts/op2-unit-tests.json": "8bf9b31eb2909596de15d8101ecc61e4460ccc99709fe7e3fdf545d4abe90fbd",
     "reports/explore/t1/receipts/op2-census-failure-child-evidence.json": "a8a68b74e727cc9ea31f46fd26153aacd55d226754f440d39a697ebe9b2bf09e",
     "reports/explore/t1/receipts/op2-foreign-ssh-776414-children.json": "12ccd7d08246675eebcdeded24dbd5efe039a3b557c06cf72242e09edd18d539",
-    "reports/explore/t1/REVIEW-T1-OP2-CONFIRM-20261010T1541Z.md": "c4e986c9c2355077e7d20d584b86a1e01655878edaa06bfce5eea5bc75703619"
+    "reports/explore/t1/REVIEW-T1-OP2-CONFIRM-20261010T1541Z.md": "c4e986c9c2355077e7d20d584b86a1e01655878edaa06bfce5eea5bc75703619",
+    "reports/explore/t1/owned_supervisor.py": "fcd7aac922281e33ae315fcd91dd2ffd0cea7ca8bdf1d93716a09cd77e782249",
+    "reports/explore/t1/test_op3.py": "27a6d3513d1c4773cd2fe7a755fa9447159b4a9a168c26de191abb384d0cda5f",
+    "reports/explore/t1/OP3-T1.md": "d8768cb90847f6b9affbf876e5e9eef082194fd83180f5d94932e0abf7026ebc",
+    "reports/explore/t1/REVIEW-T1-OP3-CONFIRM-20261010T1602Z.md": "fba3c74a5b066853a1e6f19fe0f0d3b233f7816e6ead8941f9329be5f8037143",
+    "reports/explore/t1/receipts/op3-unit-tests.json": "fbdbd47ed4d4e6f4d392a54eb6ff207c4a19396a084b50d147013bb5f3073ff5"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -136,9 +141,9 @@
   "reporting_games_started": false,
   "reference_schedule": "END reporting window; separate corpus/E4 approval; pinned reporting load profile",
   "pending": [
-    "fresh exact78c9bd5b source-bound qualification on01/03/08",
+    "final-source9cd qualification on01/03/08",
     "fresh all-host smoke health",
-    "manifest-bound coordinator15:45Z reporting authorization after smoke"
+    "manifest-bound coordinator16:08Z reporting authorization after smoke"
   ],
   "qualification_summary": "reports/explore/t1/receipts/qualification-freeze-summary.json",
   "freeze_disclosure": "reports/explore/t1/FREEZE-T1.md",
@@ -179,5 +184,26 @@
       "Reviewer N2 inherited OP1 title/UID and environmental-source trust model; approved child set remains frozen readers only.",
       "Reviewer N3 shell/zombie observations can fail closed; sequential per-parent confirmation up to2s."
     ]
+  },
+  "operational_delta_op3": {
+    "reviewed_commit": "9cd518d3426fb47ce9b61dacabd5dce1ee94e284",
+    "review_commit": "85c4eb30",
+    "review_path": "reports/explore/t1/REVIEW-T1-OP3-CONFIRM-20261010T1602Z.md",
+    "verdict": "CONFIRM",
+    "guard_tests": 26,
+    "reviewer_probes": 13,
+    "live_process_test_passed": true,
+    "B1_resolution": "Distinct immutable job directories for smoke, reporting and each replacement attempt; never delete or refresh supervisor admission.",
+    "nonblocking_disclosures": [
+      "N2 unchanged live/readable-cwd CMD predicate; authenticated tree required for exited or uncwd-able processes.",
+      "N3 receipts trusted under same-UID filesystem threat model.",
+      "N4 grandchildren after a group leader exits may fail closed."
+    ]
+  },
+  "launch_namespaces": {
+    "qualification": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op3-9cd-r1",
+    "smoke": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op3-r4",
+    "reporting": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-op3-r1",
+    "replacement_rule": "fresh replacement-frozen-op3-rN directory for each attempt; preserve prior jobs"
   }
 }
