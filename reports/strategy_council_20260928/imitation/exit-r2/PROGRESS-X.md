@@ -77,3 +77,24 @@ Controller03 PID=PGID1403380 launched00:50:57Z, nice19/SCHED_IDLE/core63;
 waits final EMA then runs offline/core60 and conditional h2h/cores60-63.
 Temporary continuation interval10min, next01:01:15.355Z; ID/disable instructions
 in receipts/continuation.json. Disable when complete or deadline cleanup done.
+
+2026-10-10T00:53:27Z. Correction35cacd00 pushed, retry launches00:52:49-51Z.
+Log per host `$job/fit-X*-attempt2.log`; supervisor and trainer PID=PGID:
+
+| Arm | Host | Supervisor | Trainer |
+| --- | --- | --- | --- |
+| X1 | 127x09 | 1870123 | 1870189 |
+| X2 | 127x16 | 871318 | 871463 |
+| X3 | 127x08 | 2651962 | 2652063 |
+| X4 | 127x01 | 1217465 | 1217609 |
+| X5 | 127x04 | 3727388 | 3727520 |
+
+Stop each owned fit by touching `$job/FIT.STOP` on its host; graceful
+checkpoint then owned-group cleanup. X3 guardstop Oct10 05:15Z, mandatory
+vacate05:30Z, immediate quiet/coordinator reclaim. Never use broad process
+matching. Per-host health and launch receipts at `$job/X*-health.json` and
+`$job/X*-launch.json`. No game or optimizer outcome claimed at launch.
+If X3 resumes elsewhere, preserve the identical absolute job/source paths
+so trainer source/input pins compare exactly, copy existing fit inputs/checkpoint,
+use full optimizer/scheduler/RNG state and frozen recipe; version/commit an
+operational host amendment and controller host pointer before resuming.

@@ -1,0 +1,107 @@
+{
+  "utc": "2026-10-10T00:53:27Z",
+  "freeze_commit": "10831e2b",
+  "staging_correction_commit": "35cacd00",
+  "attempt": 2,
+  "recipe_unchanged": true,
+  "launches": {
+    "X1": {
+      "utc": "2026-10-10T00:52:50Z",
+      "host": "127x09",
+      "supervisor_pid": 1870123,
+      "supervisor_pgid": 1870123,
+      "trainer_pid": 1870189,
+      "trainer_pgid": 1870189,
+      "command": [
+        "taskset",
+        "-c",
+        "118,119,126",
+        "bash",
+        "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/run_fit.sh",
+        "X1"
+      ],
+      "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP",
+      "checkpoint_stop_deadline": "2026-10-11T05:15:00Z"
+    },
+    "X2": {
+      "utc": "2026-10-10T00:52:50Z",
+      "host": "127x16",
+      "supervisor_pid": 871318,
+      "supervisor_pgid": 871318,
+      "trainer_pid": 871463,
+      "trainer_pgid": 871463,
+      "command": [
+        "taskset",
+        "-c",
+        "118,119,126",
+        "bash",
+        "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/run_fit.sh",
+        "X2"
+      ],
+      "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP",
+      "checkpoint_stop_deadline": "2026-10-11T05:15:00Z"
+    },
+    "X3": {
+      "utc": "2026-10-10T00:52:51Z",
+      "host": "127x08",
+      "supervisor_pid": 2651962,
+      "supervisor_pgid": 2651962,
+      "trainer_pid": 2652063,
+      "trainer_pgid": 2652063,
+      "command": [
+        "taskset",
+        "-c",
+        "118,119,126",
+        "bash",
+        "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/run_fit.sh",
+        "X3"
+      ],
+      "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP",
+      "checkpoint_stop_deadline": "2026-10-10T05:15:00Z"
+    },
+    "X4": {
+      "utc": "2026-10-10T00:52:51Z",
+      "host": "127x01",
+      "supervisor_pid": 1217465,
+      "supervisor_pgid": 1217465,
+      "trainer_pid": 1217609,
+      "trainer_pgid": 1217609,
+      "command": [
+        "taskset",
+        "-c",
+        "118,119,126",
+        "bash",
+        "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/run_fit.sh",
+        "X4"
+      ],
+      "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP",
+      "checkpoint_stop_deadline": "2026-10-11T05:15:00Z"
+    },
+    "X5": {
+      "utc": "2026-10-10T00:52:52Z",
+      "host": "127x04",
+      "supervisor_pid": 3727388,
+      "supervisor_pgid": 3727388,
+      "trainer_pid": 3727520,
+      "trainer_pgid": 3727520,
+      "command": [
+        "taskset",
+        "-c",
+        "118,119,126",
+        "bash",
+        "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/run_fit.sh",
+        "X5"
+      ],
+      "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP",
+      "checkpoint_stop_deadline": "2026-10-11T05:15:00Z"
+    }
+  },
+  "controller": {
+    "host": "127x03",
+    "pid": 1403380,
+    "pgid": 1403380,
+    "log": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/controller.log",
+    "stop": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/CONTROLLER.STOP"
+  },
+  "no_stage_metrics_yet": true
+}
