@@ -1,0 +1,460 @@
+{
+  "ancestry_assessment": {
+    "association_evidence": [
+      "Live serial PID 2537585 is a child of supervisor 2499718; exact process identities and cmdlines are embedded.",
+      "Supervisor source sets CLASHER_SSH_SLOT=a1-body-seal-r4 and prepends the r5 SSH wrapper directory.",
+      "Live serial environment independently confirms this slot and wrapper directory.",
+      "Read-only wrapper source expands the slot to the exact 08 ControlPath in the observed mux title.",
+      "The same mux PID/start/cmdline SHA was recorded in the historical launch inventory; its cwd matches the serial execution cwd."
+    ],
+    "current_mux_parent_pid": 1,
+    "direct_live_ancestry_to_serial_proven": false,
+    "limitation": "The mux is currently parented by PID 1, consistent with a persistent daemonized SSH master. Current /proc cannot recover the original launching parent. This receipt establishes socket ownership and serial-r4 slot/configuration association, not an unavailable historical parent chain.",
+    "serial_parent_chain": [
+      2537585,
+      2499718,
+      1
+    ],
+    "unix_socket_note": "The kernel /proc/net/unix record retains a suffixed socket creation name; the canonical ControlPath separately exists as a socket. Filesystem inode and kernel socket inode are distinct namespaces."
+  },
+  "client_pid": 2508732,
+  "client_starttime": 94882802,
+  "client_uid": 3822945,
+  "control_path": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a1-body-seal-r4",
+  "created_utc": "2026-10-10T17:23:59.256745+00:00",
+  "exact_cmdline_argv": [
+    "ssh: /mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a1-body-seal-r4 [mux]"
+  ],
+  "historical_binding": {
+    "identity_entries": [
+      {
+        "command_sha256": "c15e293c41e7ed39c580b543db59b7fb44d33de5302e137c6110371a6241b971",
+        "executable": "sdicks02@127x08-22-a1-body-seal-r4 [mux]",
+        "nice": 19,
+        "pgid": 2508732,
+        "pid": 2508732,
+        "starttime": "94882802",
+        "tags": []
+      }
+    ],
+    "inventory_entries": [
+      {
+        "affinity": [
+          52
+        ],
+        "clasher": true,
+        "counted": false,
+        "denied": [],
+        "memory_basis": "PSS",
+        "own": false,
+        "parent": 1,
+        "pid": 2508732,
+        "pss_upper_bytes": 20306944,
+        "starttime": "94882802",
+        "state": "R",
+        "training": false,
+        "unknown": false
+      }
+    ],
+    "path": "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a19-a20-launch-20261010/O1-O3-inventory.json",
+    "sha256": "b684771dd2ec4d31449fb19cdfe25c2bc9d4079f7375a49f0c7fa4f37e79d148",
+    "utc": "2026-10-10T11:34:55.994896+00:00"
+  },
+  "observation": {
+    "boot_id": "bd010cb6-41a6-4832-af28-14e902d3cb7c",
+    "connections_opened_by_observer": [
+      "127x05-to127x04"
+    ],
+    "host": "127x04",
+    "no_new_connection_to08": true,
+    "no_process_changes": true,
+    "observed_end_utc": "2026-10-10T17:20:47.478647+00:00",
+    "observed_start_utc": "2026-10-10T17:20:47.457668+00:00",
+    "owners": [
+      {
+        "current_ancestry": [
+          {
+            "affinity": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127
+            ],
+            "cmdline_argv": [
+              "/sbin/init",
+              "splash"
+            ],
+            "cmdline_hex": "2f7362696e2f696e69740073706c61736800",
+            "cmdline_sha256": "131f8003886359d760d414031b851af916797df721c29ade3105dcb391a82b57",
+            "comm": "systemd",
+            "cwd": {
+              "unavailable": "PermissionError"
+            },
+            "exe": {
+              "unavailable": "PermissionError"
+            },
+            "nice": 0,
+            "pgid": 1,
+            "pid": 1,
+            "ppid": 0,
+            "sid": 1,
+            "starttime": 6,
+            "uid_fields": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "identity": {
+          "affinity": [
+            52
+          ],
+          "cmdline_argv": [
+            "ssh: /mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a1-body-seal-r4 [mux]"
+          ],
+          "cmdline_hex": "7373683a202f6d7061632f736469636b7330322f6a6f62732f636c61736865722f76342d61312d706172616c6c656c2d72322f736f636b6574732f736469636b733032403132377830382d32322d61312d626f64792d7365616c2d7234205b6d75785d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "cmdline_sha256": "c15e293c41e7ed39c580b543db59b7fb44d33de5302e137c6110371a6241b971",
+          "comm": "ssh",
+          "cwd": "/mpac/sdicks02/jobs/clasher/v4-a1-dryrun-preparation-r2/execution",
+          "exe": "/usr/bin/ssh",
+          "nice": 19,
+          "pgid": 2508732,
+          "pid": 2508732,
+          "ppid": 1,
+          "sid": 2508732,
+          "starttime": 94882802,
+          "uid_fields": [
+            3822945,
+            3822945,
+            3822945,
+            3822945
+          ]
+        },
+        "identity_recheck": {
+          "affinity": [
+            52
+          ],
+          "cmdline_argv": [
+            "ssh: /mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a1-body-seal-r4 [mux]"
+          ],
+          "cmdline_hex": "7373683a202f6d7061632f736469636b7330322f6a6f62732f636c61736865722f76342d61312d706172616c6c656c2d72322f736f636b6574732f736469636b733032403132377830382d32322d61312d626f64792d7365616c2d7234205b6d75785d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "cmdline_sha256": "c15e293c41e7ed39c580b543db59b7fb44d33de5302e137c6110371a6241b971",
+          "comm": "ssh",
+          "cwd": "/mpac/sdicks02/jobs/clasher/v4-a1-dryrun-preparation-r2/execution",
+          "exe": "/usr/bin/ssh",
+          "nice": 19,
+          "pgid": 2508732,
+          "pid": 2508732,
+          "ppid": 1,
+          "sid": 2508732,
+          "starttime": 94882802,
+          "uid_fields": [
+            3822945,
+            3822945,
+            3822945,
+            3822945
+          ]
+        },
+        "socket_fds": [
+          {
+            "fd": 4,
+            "inode": 69931223
+          },
+          {
+            "fd": 5,
+            "inode": 69931234
+          }
+        ],
+        "unix_sockets": [
+          {
+            "inode": 69931234,
+            "path": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a1-body-seal-r4.3eWYO32UF1oOzXpf",
+            "raw_line": "0000000000000000: 00000002 00000000 00010000 0001 01 69931234 /mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a1-body-seal-r4.3eWYO32UF1oOzXpf"
+          }
+        ]
+      }
+    ],
+    "probe_retry_note": "First attempt compared entire tcp row including changing queue/timer fields and rejected it; this retry authenticates stable endpoint/state/UID/inode and owning FD/process identity.",
+    "read_only": true,
+    "remote08_identity_reported_by_coordinator_not_observed_here": {
+      "pid": 1896254,
+      "starttime": 138108616
+    },
+    "scan_limits": {
+      "permission": 1260,
+      "races": 1
+    },
+    "schema": "clasher-08-transport-identity-raw-v1",
+    "serial_processes": [
+      {
+        "affinity": [
+          52
+        ],
+        "cmdline_argv": [
+          "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+          "-B",
+          "/mpac/sdicks02/jobs/clasher/v4-a1-body-seal-20261009-r4/supervise.py"
+        ],
+        "cmdline_hex": "2f6d7061632f736469636b7330322f656e76732f636c61736865722d6770752f62696e2f707974686f6e002d42002f6d7061632f736469636b7330322f6a6f62732f636c61736865722f76342d61312d626f64792d7365616c2d32303236313030392d72342f7375706572766973652e707900",
+        "cmdline_sha256": "8c9719018012ec40dda23960d9d62e38ced022be98123f090b5ac84c3d07912f",
+        "comm": "python",
+        "cwd": "/home/sdicks02",
+        "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+        "nice": 19,
+        "pgid": 2499718,
+        "pid": 2499718,
+        "ppid": 1,
+        "sid": 2499718,
+        "starttime": 94874743,
+        "uid_fields": [
+          3822945,
+          3822945,
+          3822945,
+          3822945
+        ]
+      },
+      {
+        "affinity": [
+          52
+        ],
+        "cmdline_argv": [
+          "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+          "-B",
+          "/mpac/sdicks02/jobs/clasher/v4-a1-body-seal-20261009-r4/run_stage.py",
+          "verify"
+        ],
+        "cmdline_hex": "2f6d7061632f736469636b7330322f656e76732f636c61736865722d6770752f62696e2f707974686f6e002d42002f6d7061632f736469636b7330322f6a6f62732f636c61736865722f76342d61312d626f64792d7365616c2d32303236313030392d72342f72756e5f73746167652e70790076657269667900",
+        "cmdline_sha256": "463d05cc888fdd05350c42dbd21f96e0ca98af8acb902838545a92cab7c394ba",
+        "comm": "python",
+        "cwd": "/mpac/sdicks02/jobs/clasher/v4-a1-dryrun-preparation-r2/execution",
+        "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+        "nice": 19,
+        "pgid": 2537585,
+        "pid": 2537585,
+        "ppid": 2499718,
+        "sid": 2537585,
+        "starttime": 99915184,
+        "uid_fields": [
+          3822945,
+          3822945,
+          3822945,
+          3822945
+        ]
+      }
+    ],
+    "socket_fd_owners": [
+      {
+        "fd": 4,
+        "link": "socket:[69931223]",
+        "pid": 2508732
+      }
+    ],
+    "tcp_match": [
+      {
+        "inode": 69931223,
+        "local": {
+          "ip": "129.65.221.14",
+          "port": 55838
+        },
+        "remote": {
+          "ip": "129.65.221.18",
+          "port": 22
+        },
+        "state_hex": "01",
+        "uid": 3822945
+      }
+    ]
+  },
+  "observed_utc": "2026-10-10T17:20:47.457668+00:00",
+  "purpose": "04-side provenance for the existing serial-r4 SSH evidence transport to 08; no authority or transport changes",
+  "remote_join_limitation": "08 sshd PID 1896254/start 138108616 and its reverse peer tuple were supplied by the coordinator; no new SSH or observation on 08 was performed. Join against the independent 08 receipt using the reversed TCP tuple.",
+  "result": "ESTABLISHED_SOCKET_OWNER_AND_SERIAL_SLOT_BINDING_CONFIRMED",
+  "runtime_binding": {
+    "canonical_control_path_stat": {
+      "exists": true,
+      "filesystem_inode": 54932848,
+      "is_socket": true,
+      "mode": 49536,
+      "path": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a1-body-seal-r4",
+      "uid": 3822945
+    },
+    "source_files": [
+      {
+        "path": "/mpac/sdicks02/jobs/clasher/v4-a1-body-seal-20261009-r4/run_stage.py",
+        "sha256": "8c3c0523883b53baa7bdb9109ff49c82288984797d8f81300f54e132bd39b9a4",
+        "text": "\"\"\"Operational CPU/I/O wrapper: unchanged frozen A1 seal and verification calls.\"\"\"\nimport contextlib, fcntl, hashlib, json, os, sys, uuid\nfrom pathlib import Path\n\nROOT = Path('/mpac/sdicks02/jobs/clasher/v4-a1-body-seal-20261009-r4')\nPACKET = Path('/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r5')\nBASE = Path('/mpac/sdicks02/jobs/clasher/v4-a1-dryrun-preparation-r2')\nCODE = BASE / 'execution/reports/strategy_council_20260928/live-loop/v4/l1'\nPLAN_SHA = '68e2472255ba5d1b79ec9f45217aa14208a31b6c44ccec890af332909efe8bc8'\nAPPROVAL_SHA = '19401ce4ccb70fced9d530234015861693328e4e0cebfa650dd78e9344374b88'\nVERIFIER_SHA = '002d68943ca3f57799480c7afa240ce66283bcf6e049fe13ccf4259b7972610a'\nsha = lambda p: hashlib.sha256(Path(p).read_bytes()).hexdigest()\nassert sys.argv[1] in ('seal', 'verify') and __debug__\nassert os.getpriority(os.PRIO_PROCESS, 0) >= 19\nassert sha(CODE / 'dominance_orchestration_assembly_a18_v4.py') == VERIFIER_SHA\nos.sched_setaffinity(0, {52})\nos.chdir(BASE / 'execution')\nsys.path.insert(0, str(CODE))\nimport dominance_orchestration_assembly_a18_v4 as frozen\nfrom epoch_admission_session_v4 import admission_session\nfrom dominance_state_v4 import durable_json\nimport queue_audit_io_v4 as io\n\nheld = set()\n@contextlib.contextmanager\ndef lock(host):\n    if host in held:\n        yield\n        return\n    if (ROOT / 'STOP').exists():\n        raise RuntimeError('Operational stop requested')\n    mem = next(int(x.split()[1]) * 1024 for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:'))\n    disk = os.statvfs('/mpac')\n    if mem < 28 * 1024**3 or disk.f_bavail / disk.f_blocks < .4:\n        raise RuntimeError('Resource floor')\n    path = Path('/mpac/sdicks02/jobs/clasher/v4-queue-independent-verifier-20261009-r1/proofs') / (host + '.io.lock')\n    with path.open('a') as stream:\n        fcntl.flock(stream, fcntl.LOCK_EX)\n        held.add(host)\n        try:\n            yield\n        finally:\n            held.remove(host)\n\noriginal_read, original_hashes, original_records = io.read, io.hashes, io.records\ndef read(host, *args, **kwargs):\n    with lock(host):\n        return original_read(host, *args, **kwargs)\ndef hashes(host, *args, **kwargs):\n    with lock(host):\n        return original_hashes(host, *args, **kwargs)\n@contextlib.contextmanager\ndef records(host, *args, **kwargs):\n    with lock(host):\n        with original_records(host, *args, **kwargs) as stream:\n            yield stream\nio.read, io.hashes, io.records = read, hashes, records\n\nplan = frozen.authenticate_plan(PACKET / 'execution-plan-a1-deployment-r2.json', PLAN_SHA,\n                                PACKET / 'coordinator-approval-A1-r2.json', APPROVAL_SHA)\nprint(json.dumps({'stage': sys.argv[1], 'authentication': 'PASS', 'approval_sha256': APPROVAL_SHA}), flush=True)\nstate = ROOT / 'state'\nwith admission_session(ROOT / 'admission-sessions' / (sys.argv[1] + '-' + uuid.uuid4().hex)):\n    if sys.argv[1] == 'seal':\n        frozen.seal_body(plan, state, PLAN_SHA)\n    else:\n        value = frozen.verify_body(plan, state, PLAN_SHA)\n        assert set(value['epochs']) == {str(e) for e in range(1, 25)}\n        assert not (state / 'bounds').exists()\n        durable_json(ROOT / 'seal-verification.json', dict(\n            schema='clasher.v4.a1-body-seal-verification.v1', verified=True,\n            verification='frozen verify_body full file recomputation in a fresh process',\n            body_seal_sha256=sha(state / 'body-seal.json'),\n            execution_plan_sha256=PLAN_SHA, approval_sha256=APPROVAL_SHA,\n            verifier_sha256=VERIFIER_SHA, wrapper_sha256=sha(__file__),\n            A2_authorized=False, heldout_opening_authorized=False))\nprint(json.dumps({'stage': sys.argv[1], 'result': 'PASS', 'body_seal_sha256': sha(state / 'body-seal.json')}), flush=True)\n"
+      },
+      {
+        "path": "/mpac/sdicks02/jobs/clasher/v4-a1-body-seal-20261009-r4/supervise.py",
+        "sha256": "884f0304c64c9369eccf7feb4df84616035a08ef5da5351d9c0567581ec46cd8",
+        "text": "\"\"\"Singleton A1-only supervisor with durable identity, exit and resource receipts.\"\"\"\nimport datetime, fcntl, hashlib, json, os, signal, subprocess, time\nfrom pathlib import Path\nROOT = Path('/mpac/sdicks02/jobs/clasher/v4-a1-body-seal-20261009-r4')\nBASE = Path('/mpac/sdicks02/jobs/clasher/v4-a1-dryrun-preparation-r2')\ndef stamp(): return datetime.datetime.now(datetime.timezone.utc).isoformat()\ndef sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()\ndef write(name, value):\n    with (ROOT / name).open('x') as f:\n        json.dump(value, f, sort_keys=True, indent=2); f.write('\\n'); f.flush(); os.fsync(f.fileno())\n    fd = os.open(ROOT, os.O_RDONLY); os.fsync(fd); os.close(fd)\ndef identity(pid):\n    return dict(pid=pid, starttime=Path('/proc/%s/stat' % pid).read_text().split()[21],\n                boot_id=Path('/proc/sys/kernel/random/boot_id').read_text().strip())\ndef floors():\n    mem = next(int(x.split()[1])*1024 for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:'))\n    d = os.statvfs('/mpac')\n    return dict(mem_available_bytes=mem, disk_free_fraction=d.f_bavail/d.f_blocks,\n                pass_floor=mem >= 28*1024**3 and d.f_bavail/d.f_blocks >= .4)\nwith (ROOT / 'supervisor.lock').open('a') as lock:\n    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)\n    assert not (ROOT / 'launch.json').exists() and floors()['pass_floor']\n    (ROOT / 'state' / 'incidents').mkdir(parents=True, exist_ok=False)\n    truth = json.loads((ROOT / 'truth-copy-preflight.json').read_text())\n    assert truth['preflight_pass'] and len(truth['validation_episodes']) == 64\n    env = os.environ.copy()\n    env.update(PYTHONPATH=str(BASE/'execution/src'), PYTHONDONTWRITEBYTECODE='1',\n               PYTHONUNBUFFERED='1', CUDA_VISIBLE_DEVICES='', OMP_NUM_THREADS='1',\n               MKL_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1', CLASHER_SSH_SLOT='a1-body-seal-r4')\n    env['PATH'] = '/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r5/bin:' + env['PATH']\n    write('launch.json', dict(utc=stamp(), host='127x04', supervisor=identity(os.getpid()),\n          supervisor_sha256=sha(__file__), runner_sha256=sha(ROOT/'run_stage.py'),\n          approval_sha256='19401ce4ccb70fced9d530234015861693328e4e0cebfa650dd78e9344374b88',\n          stages=['seal','verify'], cpu=[52], nice=19, resources=floors(),\n          A2_authorized=False, B_authorized=False, heldout_opening_authorized=False))\n    for stage in ('seal','verify'):\n        command=['/mpac/sdicks02/envs/clasher-gpu/bin/python','-B',str(ROOT/'run_stage.py'),stage]\n        with (ROOT/(stage+'.log')).open('xb') as log:\n            p=subprocess.Popen(command, cwd=BASE/'execution', env=env, stdout=log,\n                               stderr=subprocess.STDOUT, start_new_session=True)\n            child=identity(p.pid)\n            write(stage+'-identity.json',dict(utc=stamp(),command=command,**child))\n            reason=None\n            while p.poll() is None:\n                if (ROOT/'STOP').exists() or not floors()['pass_floor']:\n                    reason='Operational STOP or resource floor'\n                    # This process group was created by this supervisor for this exact child.\n                    if identity(p.pid)==child: os.killpg(p.pid, signal.SIGTERM)\n                    p.wait(timeout=60)\n                    break\n                time.sleep(5)\n            code=p.wait();log.flush();os.fsync(log.fileno())\n        write(stage+'-exit.json',dict(utc=stamp(),exit_code=code,reason=reason,\n              log_sha256=sha(ROOT/(stage+'.log')),identity=child))\n        if code or reason:\n            write('failure.json',dict(utc=stamp(),stage=stage,exit_code=code,reason=reason));raise SystemExit(1)\n    write('complete.json',dict(utc=stamp(),exit_code=0,\n          body_seal_sha256=sha(ROOT/'state/body-seal.json'),\n          verification_sha256=sha(ROOT/'seal-verification.json'), A2_authorized=False))\n"
+      }
+    ],
+    "ssh_wrapper_and_selected_live_serial_environment": {
+      "actual_utc": "2026-10-10T17:23:23.766829+00:00",
+      "resolved_path": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r5/bin/ssh",
+      "serial_environment": {
+        "CLASHER_SSH_SLOT": "a1-body-seal-r4",
+        "PATH": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r5/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+      },
+      "sha256": "623d2587053773494c27cc63ea01bd17ef2233b5cacc968c6a434c24fc1e74a6",
+      "text": "#!/bin/bash\nexec /usr/bin/ssh -o ControlMaster=auto -o ControlPath=/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/%r@%h-%p-${CLASHER_SSH_SLOT:-controller} -o ControlPersist=600 \"$@\"\n",
+      "wrapper_path": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r5/bin/ssh"
+    }
+  },
+  "schema": "clasher.v4.serial-r4.08-transport-identity.v1",
+  "scope": {
+    "new_ssh_to_01_03_08": false,
+    "observed_host": "127x04",
+    "receipt_destination": "127x05 repository",
+    "runtime_process_changes": false,
+    "scientific_payloads_read_or_copied": false,
+    "transport_closed_or_signalled": false
+  },
+  "socket_fd_owners": [
+    {
+      "fd": 4,
+      "link": "socket:[69931223]",
+      "pid": 2508732
+    }
+  ],
+  "socket_identity": {
+    "inode": 69931223,
+    "local": {
+      "ip": "129.65.221.14",
+      "port": 55838
+    },
+    "remote": {
+      "ip": "129.65.221.18",
+      "port": 22
+    },
+    "state_hex": "01",
+    "uid": 3822945
+  }
+}
