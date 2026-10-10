@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-10T07:59:11Z",
+  "authorization": "Coordinator timeline5546 approved one small05metadata monitor reading03/04/08 counts at most once/minute; only remote mutation is own G stop files when6M reached; no game/data work. Owner approval check from05 read-only.",
+  "ops_sha256": {
+    "utilization-fleet.py": "e95d754fed7f5218ba90b1243a4dbef62d1216c877419b0056d932d6e163e115",
+    "utilization-remote.py": "636b92df035a7d0546766d6af1df702f088a11a1dc498427f68b6769be72434d",
+    "a19-owner-check.py": "811857e29f6bff61046dfea1e0e037906db04d299f16df22284e59a704d9c8b7",
+    "a19-owner-baseline.json": "d5f01c72f8310cb9f580925e55e75926804c9142eb0edd6ffb84a8525aea3737"
+  },
+  "controller_cadence_seconds": 60,
+  "nice": 19,
+  "scheduler": "SCHED_IDLE",
+  "existing_continuation": "one5min unchanged; no new timer/thread",
+  "target": 6000000,
+  "hard_deadline": "2026-10-11T03:00:00Z",
+  "qualification": "receipts/utilization-fleet-qualification.json",
+  "publication": "Own05utilization-concat-manifest.json; live03localmanifest continues old static view and is NOT authoritative after04/08release. Own05manifest has SHA host pins/pending raw. Frozenpause remains immutable."
+}

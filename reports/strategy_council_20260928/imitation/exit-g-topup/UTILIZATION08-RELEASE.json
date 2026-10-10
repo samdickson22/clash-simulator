@@ -1,0 +1,70 @@
+{
+  "schema": "clasher.exit-g.utilization-release.v1",
+  "utc": "2026-10-10T07:59:11Z",
+  "authorization": "Coordinator user07:45Z one-time 08 release; hard stop and early host-owner preemption mandatory. Stop requires a NEW explicit release.",
+  "scientific_change": "None; originalB2source39b6adf6 all1402 source/native/checkpoint pins verified; emitter,rows,decks,seat,opponents unchanged; only seeds.",
+  "config": {
+    "host": "127x08",
+    "workers": 54,
+    "worker_core_offset": 0,
+    "manager_core": 54,
+    "packer_core": 55,
+    "first_index": 6000000,
+    "last_index": 7000000,
+    "hard_stop_utc": "2026-10-10T15:00:00Z",
+    "pre_drain_utc": "2026-10-10T14:40:00Z",
+    "memory_floor_gib": 24,
+    "maximum_persistent_processes": 56,
+    "own_ops": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops08-utilization"
+  },
+  "baseline": {
+    "games": 0,
+    "rows": 0,
+    "root_decisions": 0
+  },
+  "protected": [
+    {
+      "pid": 3550672,
+      "pgid": 3550672,
+      "start": 140655826,
+      "cmd_sha256": "855c8118682292c86a2f56cc863ebaef84af665a42fd74336bfe4fffa90b31ff"
+    },
+    {
+      "pid": 3550684,
+      "pgid": 3550672,
+      "start": 140655829,
+      "cmd_sha256": "9d97843d7222655326b417af251567ef2144fa3237b5d2ffccf7ad4ea36001ee"
+    },
+    {
+      "pid": 3550685,
+      "pgid": 3550672,
+      "start": 140655829,
+      "cmd_sha256": "eb8586651db403e9bdf35f3e52a359b3504faf89d9eb987baad3347e1fff1e4a"
+    }
+  ],
+  "released_markers": {},
+  "operations_sha256": {
+    "admission.py": "6ef90957b8e16f268661c096d16b47bd03569bbfe9d51ac123c320fbe7ca8ecf",
+    "config.json": "cdf368e304958de0d67c79c8f22b187016e7472d051defa0b23e97a3bcd22870",
+    "detach.sh": "6387810bc9632ee46a81da4cf337bd0f778ae5d6f950565ac3ad05a3a4946cd6",
+    "driver.py": "884fb5a281b472455b1aa0e9fc36648a1a44958fcb2137534b1d6e42e8149786",
+    "env.sh": "7b770de1ea1d9ec1b37c3391989ed69be5ee822736cdd903f211a1e885b1bd3d",
+    "finalize.py": "d9cf01820260d68236acfec04f5da40c5151cc22a083c761991962da5f04c0ac",
+    "host_guard.py": "fe177bc01907fbfb74cec9ee5c45c04d4a026d788bb4adbf844d7578c5ff6d07",
+    "launch.py": "d3ebbe20be3340046b154d46c8ad8fce02f45bdf9472ede9e681ee1f0a565a1c",
+    "metadata.py": "636b92df035a7d0546766d6af1df702f088a11a1dc498427f68b6769be72434d",
+    "pack_loader.py": "68d1399f2d03a9d63f261ef6b3e565b06b7f98fec3c3048375b1bd2d52aef04f",
+    "pack_r1_frozen.py": "5442af29f9bcea94f3ddebbd8de7ef18d041b53eb3d1e2456fa36edb75fc5d80",
+    "preflight.py": "a1ed8911a4274554c33ca0b3df4841ef8a97785b81e5aea9c0f704d764621067",
+    "pressure_guard.py": "4aaa2309b41fe0c56a845250e1eba9a7f0d827a190063cf6525f87e52a692d99"
+  },
+  "pressure_guard": "strict fullavg10>20 continuously60s; latched/noauto retry; current games finish, new games/packs pause; report new event once",
+  "ramp": "<=4 initializations/30s and <=4 game admissions/rolling30s until all unique first slots+30s cooldown; process cap includes manager+packer",
+  "stop_clear": "Fresh08ownprefix; no stop/latch may be cleared. Any new marker aborts.",
+  "early_stop": "Any non-comment08 listing in ~/.config/fleet-top/quiet stops admission; cache trio identity untouched",
+  "hard_bound": "Pre-drain frozen time closes admission; owned child TERM at hardstop-5s, SIGCONT paused children first, KILL survivors at hardstop-2s, leaving supervisor exit headroom before hardstop; memory SIGSTOP disabled in harddrain; supervisor must exit. No other worker signals.",
+  "target": "Combined6M includes01static10152 plus full03/04/08 host totals, original logical host corpora replaced wholesale. Approved light05controller polls counts once/minute; manager15s reads shared snapshot; whole drain overshoot disclosed.",
+  "parent_r1_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "seed_audit": "receipts/utilization08-seed-audit.json",
+  "other_hosts": "03 stays running2711936 unchanged;01 stays stopped. No other hosts released."
+}

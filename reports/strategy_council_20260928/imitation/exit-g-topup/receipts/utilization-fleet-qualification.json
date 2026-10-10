@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "real_games": 0,
+  "tests": [
+    "static01+04 plus live03 exactly once before releases",
+    "live04/08 and full03 replace original logical host corpora",
+    "no duplicated03/04baseline shard IDs",
+    "combined6Mboundary includes allhosts",
+    "once-minute count cadence",
+    "failed or stale identity refuses target decision",
+    "cached stopped hosts receive no further remote calls"
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "schema": "clasher.exit-g.utilization-release.v1",
+  "utc": "2026-10-10T07:59:11Z",
+  "authorization": "Coordinator user07:45Z one-time 04 release; hard stop and early host-owner preemption mandatory. Stop requires a NEW explicit release.",
+  "scientific_change": "None; originalB2source39b6adf6 all1402 source/native/checkpoint pins verified; emitter,rows,decks,seat,opponents unchanged; only seeds.",
+  "config": {
+    "host": "127x04",
+    "workers": 33,
+    "worker_core_offset": 12,
+    "manager_core": 45,
+    "packer_core": 46,
+    "first_index": 64,
+    "last_index": 1000000,
+    "hard_stop_utc": "2026-10-10T10:15:00Z",
+    "pre_drain_utc": "2026-10-10T09:55:00Z",
+    "memory_floor_gib": 90,
+    "maximum_persistent_processes": 35,
+    "own_ops": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops04-utilization"
+  },
+  "baseline": {
+    "games": 1422,
+    "rows": 1141229,
+    "root_decisions": 177223
+  },
+  "protected": [
+    {
+      "pid": 2499718,
+      "pgid": 2499718,
+      "start": 94874743,
+      "cmd_sha256": "8c9719018012ec40dda23960d9d62e38ced022be98123f090b5ac84c3d07912f"
+    },
+    {
+      "pid": 2499719,
+      "pgid": 2499719,
+      "start": 94874747,
+      "cmd_sha256": "87ecfb60bb85d99f6b0f6fc47c85dc2d4f9d75828ca34f5235759d02611ca57b"
+    }
+  ],
+  "released_markers": {
+    "INTERNAL.STOP": {
+      "inode": 56266061,
+      "mtime_ns": 1791598064284291318,
+      "ctime_ns": 1791598064284291318,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "PRESSURE.ADMISSION.PAUSE": {
+      "inode": 56266030,
+      "mtime_ns": 1791597818396438769,
+      "ctime_ns": 1791597818396438769,
+      "sha256": "0ca5878211695e55b3530051fa44e4939d61b36bed667868527b6db2958a1dc9"
+    }
+  },
+  "operations_sha256": {
+    "admission.py": "ad0b96b3f0a3f6c5a5c6bfa8a462d8bcf3e498900e5478d0e632acd965951d69",
+    "config.json": "a8b912b6f564a02c64b9659cebda605baac6b608c0935553e58411e3af12eb34",
+    "detach.sh": "5204fdb9855ce052e0d27a79d008f07024d11c77970c572f880d73cb93d07771",
+    "driver.py": "bba3e8970567a6c039fa1f4e67da15781bd0c83f713cdc51a383d64828ff3490",
+    "env.sh": "7b770de1ea1d9ec1b37c3391989ed69be5ee822736cdd903f211a1e885b1bd3d",
+    "finalize.py": "bec6290bc6824baeeef1545151816b6e912feee9c21518babdcbb7e9b9ee5862",
+    "host_guard.py": "fe177bc01907fbfb74cec9ee5c45c04d4a026d788bb4adbf844d7578c5ff6d07",
+    "launch.py": "d3ebbe20be3340046b154d46c8ad8fce02f45bdf9472ede9e681ee1f0a565a1c",
+    "metadata.py": "636b92df035a7d0546766d6af1df702f088a11a1dc498427f68b6769be72434d",
+    "pack_loader.py": "68d1399f2d03a9d63f261ef6b3e565b06b7f98fec3c3048375b1bd2d52aef04f",
+    "pack_r1_frozen.py": "5442af29f9bcea94f3ddebbd8de7ef18d041b53eb3d1e2456fa36edb75fc5d80",
+    "preflight.py": "a1ed8911a4274554c33ca0b3df4841ef8a97785b81e5aea9c0f704d764621067",
+    "pressure_guard.py": "4aaa2309b41fe0c56a845250e1eba9a7f0d827a190063cf6525f87e52a692d99"
+  },
+  "pressure_guard": "strict fullavg10>20 continuously60s; latched/noauto retry; current games finish, new games/packs pause; report new event once",
+  "ramp": "<=4 initializations/30s and <=4 game admissions/rolling30s until all unique first slots+30s cooldown; process cap includes manager+packer",
+  "stop_clear": "04 previous coordinator-pause INTERNAL.STOP and02:03 steady-pressure latch atomically archive once by exact frozen inode/mtime/ctime/SHA; no global/external/target/deadline STOP cleared",
+  "early_stop": "New perception-owner A19 launch-approval request detected by bounded15s read-only05 check, unavailable/history rewrite failsclosed; seal processes/files untouched",
+  "hard_bound": "Pre-drain frozen time closes admission; owned child TERM at hardstop-5s, SIGCONT paused children first, KILL survivors at hardstop-2s, leaving supervisor exit headroom before hardstop; memory SIGSTOP disabled in harddrain; supervisor must exit. No other worker signals.",
+  "target": "Combined6M includes01static10152 plus full03/04/08 host totals, original logical host corpora replaced wholesale. Approved light05controller polls counts once/minute; manager15s reads shared snapshot; whole drain overshoot disclosed.",
+  "parent_r1_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "seed_audit": "Original G04 range unchanged; original and resume foreign audits disjoint; frozen smoke excluded.",
+  "other_hosts": "03 stays running2711936 unchanged;01 stays stopped. No other hosts released."
+}

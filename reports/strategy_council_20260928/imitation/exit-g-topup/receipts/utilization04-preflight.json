@@ -1,0 +1,45 @@
+{
+  "utc": "2026-10-10T07:55:34Z",
+  "passed": true,
+  "host": "127x04",
+  "baseline": {
+    "games": 1422,
+    "rows": 1141229,
+    "root_decisions": 177223
+  },
+  "protected": [
+    {
+      "pid": 2499718,
+      "pgid": 2499718,
+      "start": 94874743,
+      "cmd_sha256": "8c9719018012ec40dda23960d9d62e38ced022be98123f090b5ac84c3d07912f"
+    },
+    {
+      "pid": 2499719,
+      "pgid": 2499719,
+      "start": 94874747,
+      "cmd_sha256": "87ecfb60bb85d99f6b0f6fc47c85dc2d4f9d75828ca34f5235759d02611ca57b"
+    }
+  ],
+  "boot_id": "bd010cb6-41a6-4832-af28-14e902d3cb7c",
+  "source_files_verified": 1402,
+  "native_files_verified": 1,
+  "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "memory_available": 129574289408,
+  "pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=430041120\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=428783707\n",
+  "released_markers": {
+    "INTERNAL.STOP": {
+      "inode": 56266061,
+      "mtime_ns": 1791598064284291318,
+      "ctime_ns": 1791598064284291318,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "PRESSURE.ADMISSION.PAUSE": {
+      "inode": 56266030,
+      "mtime_ns": 1791597818396438769,
+      "ctime_ns": 1791597818396438769,
+      "sha256": "0ca5878211695e55b3530051fa44e4939d61b36bed667868527b6db2958a1dc9"
+    }
+  },
+  "priority_processes": []
+}

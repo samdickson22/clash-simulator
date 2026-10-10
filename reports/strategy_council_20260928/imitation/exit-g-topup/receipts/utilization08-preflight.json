@@ -1,0 +1,38 @@
+{
+  "utc": "2026-10-10T07:55:28Z",
+  "passed": true,
+  "host": "127x08",
+  "baseline": {
+    "games": 0,
+    "rows": 0,
+    "root_decisions": 0
+  },
+  "protected": [
+    {
+      "pid": 3550672,
+      "pgid": 3550672,
+      "start": 140655826,
+      "cmd_sha256": "855c8118682292c86a2f56cc863ebaef84af665a42fd74336bfe4fffa90b31ff"
+    },
+    {
+      "pid": 3550684,
+      "pgid": 3550672,
+      "start": 140655829,
+      "cmd_sha256": "9d97843d7222655326b417af251567ef2144fa3237b5d2ffccf7ad4ea36001ee"
+    },
+    {
+      "pid": 3550685,
+      "pgid": 3550672,
+      "start": 140655829,
+      "cmd_sha256": "eb8586651db403e9bdf35f3e52a359b3504faf89d9eb987baad3347e1fff1e4a"
+    }
+  ],
+  "boot_id": "8965a752-e095-4700-b4fd-c6b90daddfca",
+  "source_files_verified": 1402,
+  "native_files_verified": 1,
+  "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "memory_available": 130804813824,
+  "pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1672736124\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1639344416\n",
+  "released_markers": {},
+  "priority_processes": []
+}

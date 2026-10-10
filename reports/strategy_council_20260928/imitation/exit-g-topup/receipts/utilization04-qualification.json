@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "real_games": 0,
+  "tests": [
+    "four rolling30s starts, all unique slots plus30s cooldown",
+    "continuous PSI >20 for60s, latched when healthy",
+    "strict20 threshold does not trip",
+    "hard bound only owned live children, including paused child and packer",
+    "actual stripe worker skips old seal, counts only new game, frozen opponent/seat input and no mid-game abort",
+    "memory headroom and exact pre-drain/hard-stop paths qualified",
+    "non-overlapping physical core map and persistent process cap",
+    "new A19 launch request detected; negative/held text ignored"
+  ],
+  "host": "127x04",
+  "config": {
+    "host": "127x04",
+    "workers": 33,
+    "worker_core_offset": 12,
+    "manager_core": 45,
+    "packer_core": 46,
+    "first_index": 64,
+    "last_index": 1000000,
+    "hard_stop_utc": "2026-10-10T10:15:00Z",
+    "pre_drain_utc": "2026-10-10T09:55:00Z",
+    "memory_floor_gib": 90,
+    "maximum_persistent_processes": 35,
+    "own_ops": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops04-utilization"
+  }
+}
