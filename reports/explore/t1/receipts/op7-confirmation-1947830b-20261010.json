@@ -1,0 +1,26 @@
+{
+  "utc": "2026-10-10T23:22:59Z",
+  "source_candidate": "d8cc4ff7595857fda4b563bee503af69b892f547",
+  "coordinator_confirmation_commit": "1947830b0e5deaabbf0e3816d42107c3ae699c1b",
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "coordinator_message_position": 6970,
+  "review_sha256": {
+    "reports/explore/t1/REVIEW-T1-OP7-r1-20261010.md": "1f073ab8a4fa23003c25901972d6f4e9803823a911fc2ae5d115d7e581526a80",
+    "reports/explore/t1/REVIEW-T1-OP7-r2-20261010.md": "c6cbfb1b27d58248f925337109fefd3f2faf5cfde1d385583312becd0c19861a",
+    "reports/explore/t1/REVIEW-T1-OP7-r3-20261010.md": "f7826322caf3c6b7d1c1e0b62b7a409224492de0e21e925be8138e380019fefd"
+  },
+  "authority_source_sha256": {
+    "33d0fc06bd8f42dd2e34db4b99b57027b3c551b9": "8f1cd6a22bfa6b160144e34c2c0e87c9081186fea85ec84e764c1e4707056323",
+    "a3b7d82b16c0da9cf4ae4cedd0711aaa99ace36f": "ae0bb9298dc56721640c7e256a7b21e7398c81c44cfa73f4382e82980398bd3a",
+    "c1c9a38dfa82f9b881f8067b6a055888c8689170": "0b4596289ff50c77d892d8af61b7ea8fe63462fd4dba3ea4a1d91390d7626b41",
+    "7c581dc54f8dc3553a02d489c2f357977d666874": "df252d1a7bdc930380942f47a711ac10a22ee350fdddf354087678bb11ceb9bb",
+    "088f7fc4857867d0e03e108319f515692fee9fef": "3bced0f21b6874018f01863e3c816a91593723be8a84464d279e311a5877561a",
+    "588f91691f9229435d2da620878eedbb9e0ddf5d": "271ccfe932cff922a24703f7109db3cccd80b97a4f4cfa8c1cf59265d947a9a8",
+    "1947830b0e5deaabbf0e3816d42107c3ae699c1b": "62af941f180c481af9835950c19eb9f17f935d05538ce880b4ad4d8fc8aa844a"
+  },
+  "verdict": "CONFIRMED",
+  "tests": 213,
+  "health_only": true,
+  "outcomes_sealed": true,
+  "C3_pending": true
+}

@@ -1,6 +1,6 @@
 {
-  "status": "AWAITING_OP7_REVIEW",
-  "utc": "2026-10-10T23:06:12Z",
+  "status": "FROZEN",
+  "utc": "2026-10-10T23:22:59Z",
   "code_candidate_commit": "afa3f10e394d14cb3870e56842a3971ca839b328",
   "files": {
     "reports/explore/t1/FREEZE-T1.md": "661c2c3ca30a8e286b0a0a2b9bb934f434829d5845bac45eddb3cfeb0a01331a",
@@ -180,7 +180,11 @@
     "reports/explore/t1/OP7-R3-RESPONSE-20261010.md": "8efec73f0619e245f18eb2284230bedcd829c1e0ed61987697825223e8ba83bb",
     "reports/explore/t1/receipts/op7-r3-unit-tests-20261010.json": "a747e81af46f90db7b7fabffa66934153f1f872c74f19b1baa3a3e744e4953e1",
     "reports/explore/t1/OP7-R3-MECHANICAL-RESPONSE-20261010.md": "7a13083be1b649fb5db2f56eb526ddfcb9059fcea219d92ce5646613ce3bad91",
-    "reports/explore/t1/receipts/op7-r3-mechanical-unit-tests-20261010.json": "85ee72e000ff3baae0e63650942b5b261ab2afd1da0d69aa7eb1fa43b5938302"
+    "reports/explore/t1/receipts/op7-r3-mechanical-unit-tests-20261010.json": "85ee72e000ff3baae0e63650942b5b261ab2afd1da0d69aa7eb1fa43b5938302",
+    "reports/explore/t1/REVIEW-T1-OP7-r1-20261010.md": "1f073ab8a4fa23003c25901972d6f4e9803823a911fc2ae5d115d7e581526a80",
+    "reports/explore/t1/REVIEW-T1-OP7-r2-20261010.md": "c6cbfb1b27d58248f925337109fefd3f2faf5cfde1d385583312becd0c19861a",
+    "reports/explore/t1/REVIEW-T1-OP7-r3-20261010.md": "f7826322caf3c6b7d1c1e0b62b7a409224492de0e21e925be8138e380019fefd",
+    "reports/explore/t1/receipts/op7-confirmation-1947830b-20261010.json": "0c99826bd992f687566a6a465556918eb9c9280516269cbdf125fe07c9200fc3"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -475,7 +479,7 @@
   "prior_reporting_launch_utc": "2026-10-10T18:03:20Z",
   "prior_reporting_launch_receipt": "reports/explore/t1/receipts/reporting-launch-receipt-0108.json",
   "operational_delta_op7": {
-    "status": "NOT_ADMITTED",
+    "status": "CONFIRMED_PENDING_C3",
     "base_reporting_freeze": "aeeb3003d2a877bd7ff538a1977cbbc37adb404f",
     "authority_commit": "33d0fc06bd8f42dd2e34db4b99b57027b3c551b9",
     "source": "reports/explore/t1/apt_budget.py",
@@ -489,7 +493,7 @@
     "sensitivity": "separate apt and SSH OR apt DESCRIPTIVE_ONLY exclusions; fresh RNG2026101040; primary/SSH RNG unchanged",
     "release_condition": "PC4 strict flags, both/union counts, stop=True completion proofs and mixed meter regimes before both routes",
     "reporting_runtime_changed": false,
-    "awaiting": "coordinator mechanical delta confirmation; C2 FROZEN/hash binding; C3 fresh two-host qualification/smoke/census timing/all-four helper UID evidence",
+    "awaiting": "C3 exact-source two-host qualification/smoke/cadence/real helper UID evidence; reviewed Option B",
     "round": 3,
     "r1_candidate": "7925fbf1507b7221a813edda5ff221aff3f43115",
     "r1_review_sha256": "1f073ab8a4fa23003c25901972d6f4e9803823a911fc2ae5d115d7e581526a80",
@@ -517,6 +521,23 @@
     "debt_settlement": "newest-first; expired debt removed from transferable credit",
     "host_sample_baseline_all_rows": true,
     "new_phase_rule_acceptance": "v2 only",
-    "real_apt_method_all_four_uid_confirmation_required": true
+    "real_apt_method_all_four_uid_confirmation_required": true,
+    "confirmation": "reports/explore/t1/receipts/op7-confirmation-1947830b-20261010.json",
+    "confirmation_sha256": "0c99826bd992f687566a6a465556918eb9c9280516269cbdf125fe07c9200fc3",
+    "authority_source_sha256": {
+      "33d0fc06bd8f42dd2e34db4b99b57027b3c551b9": "8f1cd6a22bfa6b160144e34c2c0e87c9081186fea85ec84e764c1e4707056323",
+      "a3b7d82b16c0da9cf4ae4cedd0711aaa99ace36f": "ae0bb9298dc56721640c7e256a7b21e7398c81c44cfa73f4382e82980398bd3a",
+      "c1c9a38dfa82f9b881f8067b6a055888c8689170": "0b4596289ff50c77d892d8af61b7ea8fe63462fd4dba3ea4a1d91390d7626b41",
+      "7c581dc54f8dc3553a02d489c2f357977d666874": "df252d1a7bdc930380942f47a711ac10a22ee350fdddf354087678bb11ceb9bb",
+      "088f7fc4857867d0e03e108319f515692fee9fef": "3bced0f21b6874018f01863e3c816a91593723be8a84464d279e311a5877561a",
+      "588f91691f9229435d2da620878eedbb9e0ddf5d": "271ccfe932cff922a24703f7109db3cccd80b97a4f4cfa8c1cf59265d947a9a8",
+      "1947830b0e5deaabbf0e3816d42107c3ae699c1b": "62af941f180c481af9835950c19eb9f17f935d05538ce880b4ad4d8fc8aa844a"
+    },
+    "review_sha256": {
+      "reports/explore/t1/REVIEW-T1-OP7-r1-20261010.md": "1f073ab8a4fa23003c25901972d6f4e9803823a911fc2ae5d115d7e581526a80",
+      "reports/explore/t1/REVIEW-T1-OP7-r2-20261010.md": "c6cbfb1b27d58248f925337109fefd3f2faf5cfde1d385583312becd0c19861a",
+      "reports/explore/t1/REVIEW-T1-OP7-r3-20261010.md": "f7826322caf3c6b7d1c1e0b62b7a409224492de0e21e925be8138e380019fefd"
+    },
+    "source_candidate": "d8cc4ff7595857fda4b563bee503af69b892f547"
   }
 }
