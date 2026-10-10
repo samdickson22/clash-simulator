@@ -14,17 +14,17 @@ def child(p,**kw):
 def meter(ticks):return dict(hz=100,cpu_ticks=ticks,processes={})
 def test_below_budget_and_inclusive_boundaries_pass():
  assert not B.finish(meter(5),10)['interfered']
- assert not B.finish(meter(20),10)['stop']
+ assert not B.finish(meter(120),60)['stop']
  assert not B.sample([parent()],[dict(parent(),cpu_ticks=125,ssh_budget={'source':'LAN'})],1,hz=100)['stop']
 
 def test_average_flags_above_half_percent_but_below_two_percent():
  r=B.finish(meter(6),10);assert r['interfered'] and not r['stop']
 
 def test_average_and_single_sample_stop():
- assert B.finish(meter(21),10)['stop']
+ assert B.finish(meter(121),60)['stop']
  r=parent();a=dict(r,cpu_ticks=126,ssh_budget={'source':'LAN'})
  assert B.sample([r],[a],1,hz=100)['stop']
- assert B.stop_reason({'positive':False},[],[],{'stop':False},[B.finish(meter(21),10)])=='ssh_family_average_budget'
+ assert B.stop_reason({'positive':False},[],[],{'stop':False},[B.finish(meter(121),60)])=='ssh_family_average_budget'
  assert B.stop_reason({'positive':False},[],[],{'stop':True},[])=='ssh_family_sample_budget'
 
 def test_proven_lan_family_includes_arbitrary_descendants_and_childless_gap(tmp_path):
@@ -126,3 +126,68 @@ def test_conflicting_source_cannot_be_restored_with_later_lan_child(tmp_path):
  assert not fresh.get('ssh_budget')
  newer=dict(parent(),start_ticks=3);f.apply([newer,child(newer)],tmp_path)
  assert newer.get('ssh_budget')
+
+
+def test_reaped_short_children_trigger_sample_cap_with_constant_parent_self_cpu(tmp_path,monkeypatch):
+ # Reviewer probe: ~47ms children all exit between one-second censuses.
+ # Their CPU is visible only in the persistent shell's cutime+cstime.
+ p=parent();shell=child(p,child_cpu_ticks=100)
+ before=B.Families().apply([p,shell],tmp_path)
+ m=B.begin(before,hz=100)
+ after=B.Families().apply([parent(),dict(shell,child_cpu_ticks=146)],tmp_path)
+ B.update(m,after)
+ assert B.finish(m,1)['cpu_ticks']==46
+ assert B.finish(m,1)['interfered'] and not B.finish(m,1)['stop']
+ assert B.sample(before,after,1,hz=100)['cpu_ticks']==46
+ assert B.sample(before,after,1,hz=100)['stop']
+ assert any(r['observed_reaped_child_cpu_ticks']==146 for r in B.finish(m,1)['processes'])
+
+
+def test_reaped_cpu_of_authenticated_parent_and_every_budgeted_descendant(tmp_path):
+ p=parent(child_cpu_ticks=10);c=child(p,child_cpu_ticks=20)
+ before=B.Families().apply([p,c],tmp_path);m=B.begin(before,hz=100)
+ after=B.Families().apply([dict(p,child_cpu_ticks=13),dict(c,child_cpu_ticks=25)],tmp_path)
+ B.update(m,after)
+ assert B.finish(m,60)['cpu_ticks']==8
+ assert B.sample(before,after,1,hz=100)['cpu_ticks']==8
+ # A second identical census never charges the same reaped delta again.
+ B.update(m,after);assert B.finish(m,60)['cpu_ticks']==8
+
+
+def test_early_block_uses_sample_cap_then_average_stop_at_sixty_seconds():
+ assert not B.finish(meter(121),59.999)['stop']
+ assert B.finish(meter(121),60)['stop']
+ assert not B.finish(meter(120),60)['stop'] # exactly2% remains inclusive
+ before=[parent()];after=[dict(parent(),cpu_ticks=126,ssh_budget={'source':'LAN'})]
+ assert B.sample(before,after,1,hz=100)['stop'] # never delayed by the block floor
+
+
+def test_live_proc_reaped_children_are_measured(tmp_path):
+ import signal,subprocess,time
+ # Real /proc probe with a synthetic authenticated root; no SSH/network activity.
+ core=min(set(H.physical_cpus()) & os.sched_getaffinity(0))
+ loop="while :; do sh -c 'i=0; while [ $i -lt 30000 ]; do i=$((i+1)); done'; done"
+ process=subprocess.Popen(['nice','-n','19','taskset','-c',str(core),'bash','-c',loop],start_new_session=True)
+ fake=dict(parent(),pid=10**8,pgid=10**8,cpu_ticks=0,child_cpu_ticks=0)
+ families=B.Families()
+ def capture():
+  allrows=H.processes();selected={process.pid}
+  for _ in range(8):
+   selected.update(r['pid'] for r in allrows if r['ppid'] in selected)
+  rows=[r for r in allrows if r['pid'] in selected]
+  shell=next(r for r in rows if r['pid']==process.pid)
+  shell['ppid']=fake['pid'];shell['ssh_connection_snapshot']='129.65.221.11 12345 129.65.221.15 22'
+  shell['ssh_family_parent_snapshot']=list(B.identity(fake))
+  rows.append(dict(fake));families.apply(rows,tmp_path)
+  return rows,shell
+ try:
+  before,shell=capture();baseline=shell['child_cpu_ticks'];m=B.begin(before)
+  for _ in range(4):
+   time.sleep(.5);after,shell=capture();B.update(m,after)
+  reaped=shell['child_cpu_ticks']-baseline
+  assert reaped>0,'Probe must actually reap busy children'
+  assert m['cpu_ticks']>=reaped,'All reaped CPU must be included even when no child is sampled'
+ finally:
+  try:os.killpg(process.pid,signal.SIGTERM)
+  except ProcessLookupError:pass
+  process.wait(timeout=5)

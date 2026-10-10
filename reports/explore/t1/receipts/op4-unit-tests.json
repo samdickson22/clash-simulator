@@ -1,18 +1,32 @@
 {
-  "utc": "2026-10-10T16:32:35Z",
-  "status": "PASS; independent confirmation pending",
+  "utc": "2026-10-10T16:47:01Z",
+  "status": "PASS; independent re-confirmation pending",
   "base_commit": "9cd518d3426fb47ce9b61dacabd5dce1ee94e284",
-  "tests_passed": 42,
-  "op4_tests": 16,
+  "tests_passed": 46,
+  "op4_tests": 20,
   "source_hashes": {
-    "reports/explore/t1/host_audit.py": "4d81f20364e6241736229065830fb809667024dc690ccf426adc0e02c31d53f1",
+    "reports/explore/t1/host_audit.py": "ee35ac08beb879a1803abb1fdfe1a79f19bcccf880ec3a1aabc1bc03e5220a03",
     "reports/explore/t1/ssh_transport.py": "16a211a5fe68b35248d40c303bdd0dfa1e4e900542478edd7e9c51ea5994925f",
     "reports/explore/t1/supervise.py": "243acde2281f3fd1338f0191683e15c5667712d818f28fedbec617986a1ec554",
     "reports/explore/t1/health.py": "f39c08b7b2700bcb5c245dd2d184e79ac9163c8a89ba23dc0e02657d19e22315",
     "reports/explore/t1/qualify.sh": "3ca4eade0925f901297723927d0c1b4f9b39810d9dcb830b2874e57100b8447e",
-    "reports/explore/t1/ssh_budget.py": "9635b0f5972644264dcae930166b7711f44a31f279a553682e5f1f6d191781db",
-    "reports/explore/t1/test_op4.py": "0cf4e580f2a00ba834422788281fd710c8b2c8bb80e46fbcc1756880fcf8ad3f"
+    "reports/explore/t1/ssh_budget.py": "23bcb884e2ad27a4d55a8db776438692f4570ae8133a88579737e40edb7f293f",
+    "reports/explore/t1/test_op4.py": "b1ffe550a75f9b70c02dfc546c43d4a085f80668900040672ddbac72f7b2f8c9"
   },
   "outcomes_read": false,
-  "execution": "05 authoring only, stdlib guard tests; no game or decision timing; uv caches under /mpac"
+  "execution": "05 authoring only; stdlib guard tests plus real/proc reaped-child probe nice19/one physical core, no SSH/game/decision timing; caches /mpac",
+  "verdict": "PASS",
+  "review_status": "AWAITING_RECONFIRMATION",
+  "reaped_child_cpu_included": true,
+  "average_stop_min_seconds": 60,
+  "live_proc_short_child_probe_passed": true,
+  "prior_candidate_source_hashes": {
+    "reports/explore/t1/host_audit.py": "ee35ac08beb879a1803abb1fdfe1a79f19bcccf880ec3a1aabc1bc03e5220a03",
+    "reports/explore/t1/ssh_transport.py": "16a211a5fe68b35248d40c303bdd0dfa1e4e900542478edd7e9c51ea5994925f",
+    "reports/explore/t1/supervise.py": "243acde2281f3fd1338f0191683e15c5667712d818f28fedbec617986a1ec554",
+    "reports/explore/t1/health.py": "f39c08b7b2700bcb5c245dd2d184e79ac9163c8a89ba23dc0e02657d19e22315",
+    "reports/explore/t1/qualify.sh": "3ca4eade0925f901297723927d0c1b4f9b39810d9dcb830b2874e57100b8447e",
+    "reports/explore/t1/ssh_budget.py": "23bcb884e2ad27a4d55a8db776438692f4570ae8133a88579737e40edb7f293f",
+    "reports/explore/t1/test_op4.py": "b1ffe550a75f9b70c02dfc546c43d4a085f80668900040672ddbac72f7b2f8c9"
+  }
 }

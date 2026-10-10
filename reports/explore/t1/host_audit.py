@@ -63,7 +63,7 @@ def processes():
             exe_evidence='proc/exe' if exe else 'unavailable'
             if uid==103 and cmd.split()[:1]==['/usr/bin/dbus-daemon'] and exe is None:
                 exe=Path(cmd.split()[0]).resolve().as_posix();exe_evidence='argv0 (proc/exe unreadable, unprivileged)'
-            rows.append(dict(ssh_family_parent_snapshot=family_parent,copier_identity_snapshot=copier,ssh_parent_snapshot=parent_identity,snapshot_monotonic=captured,ssh_connection_snapshot=connection,exe=exe,exe_evidence=exe_evidence,cmdline_sha256=hashlib.sha256(raw_cmd).hexdigest(),pid=int(d.name),ppid=int(stat[1]),pgid=int(stat[2]),start_ticks=int(stat[19]),cpu_ticks=int(stat[11])+int(stat[12]),tty=int(stat[4]),uid=uid,cmd=cmd,affinity=affinity))
+            rows.append(dict(ssh_family_parent_snapshot=family_parent,copier_identity_snapshot=copier,ssh_parent_snapshot=parent_identity,snapshot_monotonic=captured,ssh_connection_snapshot=connection,exe=exe,exe_evidence=exe_evidence,cmdline_sha256=hashlib.sha256(raw_cmd).hexdigest(),pid=int(d.name),ppid=int(stat[1]),pgid=int(stat[2]),start_ticks=int(stat[19]),cpu_ticks=int(stat[11])+int(stat[12]),child_cpu_ticks=int(stat[13])+int(stat[14]),tty=int(stat[4]),uid=uid,cmd=cmd,affinity=affinity))
         except (FileNotFoundError,ProcessLookupError,PermissionError):pass
     return rows
 

@@ -2,8 +2,8 @@
 
 Coordinator 16:25Z authorizes this delta on reviewed OP-3 `9cd518d3`.
 Reporting remains zero/SEALED until independent confirmation, final-source
-qualification and a fresh healthy all-host smoke. This candidate does not refresh
-FROZEN-T1.json or admit itself.
+qualification and a fresh healthy all-host smoke. The follow-up candidate re-pins FROZEN-T1.json but remains explicitly
+AWAITING_RECONFIRMATION; it does not admit itself.
 
 ## Source and scope
 
@@ -36,12 +36,16 @@ parent identity and readable child commands. LAN-budget classification is explic
 Per-block receipts retain each budgeted process/command identity, attributed CPU
 ticks and seconds, and child commands. These records contain no game outcomes.
 
-CPU ticks are self user+system ticks, not child-inclusive counters, so descendants
-are not counted twice. Existing processes start from the block's baseline;
-newly observed processes born within the block count CPU since birth. Generation
-keys prevent PID reuse from subtracting a predecessor's ticks. Disappeared
-processes retain their last observed CPU; work entirely between one-second
-censuses cannot be recovered from /proc and is not claimed as measured.
+CPU accounting includes self user+system ticks plus cutime+cstime for every
+budgeted authenticated parent and descendant. Reaped short-lived children are
+therefore charged even when no census observed them alive. A child observed alive
+and subsequently reaped may be charged again at its parent (and through reaping
+ancestors); this conservatively overcounts exposure. Existing processes start
+from combined-counter baselines; newly observed processes born within the block
+count combined CPU since birth. Generation keys prevent PID reuse from subtracting
+a predecessor's ticks. Receipts disclose self and reaped-child counters separately.
+Unreaped children that disappear with their parent between censuses remain a
+measurement limit; they cannot be reconstructed once the entire lineage vanishes.
 
 The host's aggregate budget is applied to every concurrent block, because it is
 host exposure shared by those slots. At completed block average:
@@ -50,9 +54,9 @@ host exposure shared by those slots. At completed block average:
 - At most 2% is within the stop threshold; greater than 2% stops the host run.
 - A single census average greater than 25% of one core stops the host run.
 
-The 2% stop is checked against cumulative elapsed block time during execution;
-a short early burst can therefore stop conservatively before a completed-block
-average is available. Comparisons use integer ticks and exact rational forms of
+The 2% stop applies only once a block has elapsed at least60 seconds. Before
+that floor, the25% sample cap remains active. The0.5% interference flag is always
+computed against actual elapsed time. This is the coordinator-authorized N2 fix. Comparisons use integer ticks and exact rational forms of
 the captured elapsed seconds, with inclusive thresholds. Final health reports
 both all interfered blocks and SSH-family interfered blocks.
 
@@ -71,12 +75,20 @@ fails that predicate; proven LAN descendants separately remain budgeted by OP-4.
 
 ## Tests and failed smoke
 
-42/42 guard tests pass: existing OP-1/2/3 26 plus OP-4 16. OP-4 covers below-budget
+46/46 guard tests pass: existing OP-1/2/3 26 plus OP-4 20. OP-4 covers below-budget
 pass, exact thresholds, flag, average/sample stop, LAN descendants and childless
 gap, reused parent, unknown/non-LAN fallback, invalid parent binding, non-SSH
 foreign stop, console admission/run stop, newborn/exited CPU accounting, source
 revocation, approved idle budget, exited copier attribution and integrated census
-receipts. Independent fast confirmation is pending.
+receipts. The original candidatecb1b9f12 was NOT_CONFIRMED in9ea3138b. Follow-up tests
+cover constant-parent self CPU with rising reaped-child counters, each metered
+ancestor/descendant, no repeated charge for unchanged counters, the60-second
+inclusive average-stop floor, and a real /proc short-child probe on05 (nice19,
+one physical core, synthetic authenticated root, no SSH). Fast re-confirmation
+is pending. N1 remains conservative identity fallback, N3 the first-sample birth
+window can undercount while block totals retain their earlier birth baseline,
+N4 unknown childless sessions retain identity rules, N6 same-UID copier evidence
+trust remains disclosed. N5 hashes are re-pinned with pending review status.
 
 Fresh OP-3 qualification passed on 01/03/08: 81 tests,125 frozen states,125 belief
 histories/250 ON/OFF variants and53 stable source files. Smoke-r4 failed its guards

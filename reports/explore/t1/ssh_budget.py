@@ -5,6 +5,7 @@ from common import utc
 from ssh_transport import authenticated
 from idle_services import member as idle_member
 UID=3822945
+AVERAGE_STOP_MIN_SECONDS=60
 LAN=ipaddress.ip_network('129.65.221.0/24')
 
 def identity(r):return tuple(r[k] for k in ('pid','start_ticks','uid','cmdline_sha256'))
@@ -56,13 +57,15 @@ class Families:
 
 FAMILIES=Families()
 
+def total_ticks(r):return r['cpu_ticks']+r.get('child_cpu_ticks',0)
+
 def increment(r,previous,born_since_ticks):
- old=previous.get(generation(r))
- if old is not None:return max(0,r['cpu_ticks']-old)
- return r['cpu_ticks'] if r['start_ticks']>=born_since_ticks else 0
+ old=previous.get(generation(r));total=total_ticks(r)
+ if old is not None:return max(0,total-old)
+ return total if r['start_ticks']>=born_since_ticks else 0
 
 def sample(before,after,elapsed,hz=None):
- hz=hz or os.sysconf('SC_CLK_TCK');old={generation(r):r['cpu_ticks'] for r in before}
+ hz=hz or os.sysconf('SC_CLK_TCK');old={generation(r):total_ticks(r) for r in before}
  now=time.clock_gettime(time.CLOCK_BOOTTIME)
  born=math.floor((now-elapsed)*hz)
  ticks=sum(increment(r,old,born) for r in after if r.get('ssh_budget'))
@@ -70,7 +73,7 @@ def sample(before,after,elapsed,hz=None):
 
 def begin(rows,clock=time.monotonic,hz=None):
  hz=hz or os.sysconf('SC_CLK_TCK')
- return dict(started=clock(),hz=hz,born_since_ticks=math.floor(time.clock_gettime(time.CLOCK_BOOTTIME)*hz),last={generation(r):r['cpu_ticks'] for r in rows},cpu_ticks=0,processes={})
+ return dict(started=clock(),hz=hz,born_since_ticks=math.floor(time.clock_gettime(time.CLOCK_BOOTTIME)*hz),last={generation(r):total_ticks(r) for r in rows},cpu_ticks=0,processes={})
 
 def update(meter,rows):
  children={}
@@ -80,15 +83,16 @@ def update(meter,rows):
   delta=increment(r,meter['last'],meter['born_since_ticks']);meter['cpu_ticks']+=delta
   key=identity(r);record=meter['processes'].setdefault(key,dict(pid=r['pid'],start_ticks=r['start_ticks'],uid=r['uid'],cmdline_sha256=r['cmdline_sha256'],cmd=r['cmd'],cpu_ticks=0,source=r['ssh_budget'],child_commands=[]))
   record['cpu_ticks']+=delta
+  record['observed_self_cpu_ticks']=r['cpu_ticks'];record['observed_reaped_child_cpu_ticks']=r.get('child_cpu_ticks',0)
   for child in children.get(r['pid'],[]):
    value=dict(pid=child['pid'],start_ticks=child['start_ticks'],cmdline_sha256=child['cmdline_sha256'],cmd=child['cmd'])
    if value not in record['child_commands']:record['child_commands'].append(value)
- meter['last']={generation(r):r['cpu_ticks'] for r in rows}
+ meter['last']={generation(r):total_ticks(r) for r in rows}
 
 def finish(meter,elapsed):
  ticks=meter['cpu_ticks'];hz=meter['hz'];denom=hz*Fraction(str(max(elapsed,.001)))
  records=[dict(r,cpu_seconds=r['cpu_ticks']/hz) for r in meter['processes'].values()]
- return dict(cpu_ticks=ticks,cpu_seconds=ticks/hz,block_seconds=elapsed,core_fraction=ticks/hz/max(elapsed,.001),interfered=Fraction(ticks)*200>denom,stop=Fraction(ticks)*50>denom,processes=records)
+ return dict(cpu_ticks=ticks,cpu_seconds=ticks/hz,block_seconds=elapsed,core_fraction=ticks/hz/max(elapsed,.001),interfered=Fraction(ticks)*200>denom,stop=elapsed>=AVERAGE_STOP_MIN_SECONDS and Fraction(ticks)*50>denom,average_stop_min_seconds=AVERAGE_STOP_MIN_SECONDS,processes=records)
 
 def stop_reason(console,foreign,foreign_active,sample_result,block_results):
  if console['positive']:return 'console_user'
@@ -101,5 +105,5 @@ def stop_reason(console,foreign,foreign_active,sample_result,block_results):
 def record(j,rows,block_ids):
  family=[r for r in rows if r.get('ssh_budget') or ancestor(r,rows) is not None or idle_member(r,rows,j)]
  if not family:return
- receipt=dict(utc=utc(),block_ids=list(block_ids),processes=[dict(pid=r['pid'],start_ticks=r['start_ticks'],cmdline_sha256=r['cmdline_sha256'],cmd=r['cmd'],cpu_ticks=r['cpu_ticks'],budgeted=bool(r.get('ssh_budget')),captured_source=r.get('ssh_connection_snapshot'),parent_identity=list(identity(ancestor(r,rows))) if ancestor(r,rows) else None,source=r.get('ssh_budget'),child_commands=[dict(pid=c['pid'],start_ticks=c['start_ticks'],cmdline_sha256=c['cmdline_sha256'],cmd=c['cmd']) for c in rows if c['ppid']==r['pid']]) for r in family])
+ receipt=dict(utc=utc(),block_ids=list(block_ids),processes=[dict(pid=r['pid'],start_ticks=r['start_ticks'],cmdline_sha256=r['cmdline_sha256'],cmd=r['cmd'],cpu_ticks=r['cpu_ticks'],reaped_child_cpu_ticks=r.get('child_cpu_ticks',0),budgeted=bool(r.get('ssh_budget')),captured_source=r.get('ssh_connection_snapshot'),parent_identity=list(identity(ancestor(r,rows))) if ancestor(r,rows) else None,source=r.get('ssh_budget'),child_commands=[dict(pid=c['pid'],start_ticks=c['start_ticks'],cmdline_sha256=c['cmdline_sha256'],cmd=c['cmd']) for c in rows if c['ppid']==r['pid']]) for r in family])
  with (j/'ssh-family-occurrences.jsonl').open('a') as f:f.write(json.dumps(receipt)+'\n')
