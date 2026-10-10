@@ -1,0 +1,22 @@
+{
+  "schema": "clasher.exit-g.reducer-allowlist-decision.v1",
+  "utc": "2026-10-10T07:43:41Z",
+  "status": "withdrawn_not_activated",
+  "request": "Coordinator message labelled07:45Z: add reduce_stage1.py if safe reload; else natural boundary",
+  "withdrawal": "Coordinator timeline5515 at2026-10-10T07:41:40Z: request withdrawn; R3 timeline5513 runs byte-unchanged reduction function in authenticated pool_regret manager59 after64 scoring children reaped",
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "running_pid": 2711936,
+  "running_pgid": 2711936,
+  "running_guard_sha256": "5a39e42d1647b916f4d2be67bec0f75c00f7ba7c58b96c456c8b3e0faf75fc0f",
+  "guard_reload_supported": false,
+  "live_guard_modified": false,
+  "pool_stopped_or_restarted": false,
+  "stop_or_pressure_marker_cleared": false,
+  "candidate_sha256": "dd9d356b87d2fac1487846fa70d5ea258338a0863bb1ffcac911b059e5f37d0e",
+  "candidate_location": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/pending-operations/r3-reducer-20261010",
+  "candidate_status": "DO NOT INSTALL; withdrawn. Retained diagnostic only",
+  "tests": "Seven synthetic reducer authentication and import-cache checks passed; no real game. Initial copy failed missing owned parent directory, then corrected before qualification; no affected launch.",
+  "separate_reduce_stage1_process_allowed": false,
+  "r3_routing": "Existing pool_regret.py script must match exact03pushed freeze+prelaunch SHA and everythread56-59. In-process reducer adds no process; source/scorer/gates unchanged. Await R3 exact03 operational freeze before shared scoring.",
+  "generation_constraints": "54games0-53+manager54+packer55, allIdle19;01/04/08stopped;target/deadline/guards unchanged"
+}
