@@ -1684,3 +1684,8 @@ Also on the hub, but with copies elsewhere:
   - **A19 r2** (parallel fresh-process verify for A1 + both A2 verify_body calls, ~38 h serial → ~4.5–9 h) is under independent Opus review (`clasher-a19-review-20261010-1`).
   - **42 obsolete capture-era floor monitors** (14 groups) retired one at a time by authenticated single SIGTERM; wrapper exit 143 each; seal healthy throughout (117/216). A post-signal /proc race on group 1 was diagnosed and the helper corrected.
   - **Policy:** the inherited all-Clasher ≤16 cap is replaced, in **A19 r3**, by an A19-owned ≤16 cap plus host guards (MemAvailable ≥28 GiB, PSI, no live fit loader, never CPU 52/116) and conservative inventory (PermissionError fix). Launch only after X5's fit exits.
+- **03:30 UTC: X1 and X2 KILLED at stage 1.**
+  - Play recall 0.26 / 0.24; agreement 0.613 / 0.630, below the all-WAIT 0.654; WAIT 0.83–0.85 vs teacher 0.654.
+  - Sharpening made the students *more* passive than r1. The PLAN-NEXT target diagnosis looks incomplete.
+  - **Commissioned an Opus noise-ceiling analysis** (`clasher-exit-noise-ceiling-20261010-1`): teacher self-agreement given the 0.003 median top-2 gap, whether the gates are reachable, whether the gates predict strength, and the next design for the 1-core fallback role.
+  - 09/16 GPUs are idle pending that design (~75 min); X8 is still queued for 15.
