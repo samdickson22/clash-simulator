@@ -1,0 +1,35 @@
+{
+  "utc": "2026-10-10T17:03:27Z",
+  "status": "SMOKE_RUNNING; reporting0/SEALED",
+  "admitted_commit": "a6f145ac7e93c7889de0a4eacb9c3cf50f3e54ec",
+  "reviewed_guard_commit": "26151cc69ac7d85448e421d51d82d2542d87e153",
+  "qualification": {
+    "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op4-261-r1",
+    "tests": 101,
+    "frozen_exactness_states": 125,
+    "belief_histories": 125,
+    "belief_variants": 250,
+    "source_files": 55,
+    "bindings": {
+      "reports/explore/t1/receipts/op4-qualification-source-binding-127x01.json": "b9f87b7ff56eb5442925e34b645dab53073b4d35caf60395529745132be9ab7e",
+      "reports/explore/t1/receipts/op4-qualification-source-binding-127x03.json": "8eb6646977581456bf29f98065f026c865e51c0dd991c7a6c62667a8520574e7",
+      "reports/explore/t1/receipts/op4-qualification-source-binding-127x08.json": "1fd05754143b64f36df18f441a45605956dd41bdf89c83f11d74a5622d40bda2"
+    }
+  },
+  "smoke": {
+    "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op4-r5",
+    "copier_host": "127x01",
+    "copier_pgid": 323814,
+    "supervisor_pgids": {
+      "127x01": 324004,
+      "127x03": 27344,
+      "127x08": 1623797
+    },
+    "detached_launch_utc": "2026-10-10T17:02:33Z",
+    "blocks": 8,
+    "games": 64,
+    "health_pending": true
+  },
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-op4-r1",
+  "stop_127x08": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08"
+}
