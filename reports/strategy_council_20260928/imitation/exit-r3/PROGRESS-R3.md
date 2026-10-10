@@ -462,3 +462,39 @@ fixes supervisor+trainer CPU accounting, adds diagnostics/provenance and
 combined-cost-summary.json with global exact-meter SHA dedup; originalprep
 sum independently matches originalledger. Smallmetadata/audit overhead
 remains disclosed. No frozen model/scorer/gate/seed/protocol changes.
+
+2026-10-10T07:52:17Z — Shared03 operational freeze759b27f8 PUSHED before all scoring; SHA
+b6acb31432eeea1f5a410bb63e5c7dbafd2ec9d445ce296b512395d9cb0f597b.
+Actual committed bytes verified; deployedONLY03,1446SHA/AST pins and fresh
+shared admission passed07:49:13Z, CPU2.550084; observer2785984 needs final
+independent absence audit. Prior03 a0be operational files/receipt archived
+metadata/shared03-prior-a0beb995;01/GPU original freezes remain immutable.
+Use NEW bounded round2/shared03/operations/advance.py --descriptive --round2
+ --output /mpac/sdicks02/jobs/clasher/exit-r3-round2-evaluation-state.json.
+The pool now seals Stage1 in-process; no standalone reducer/G allowlist change.
+Old03 noG/eightworker guard MUST NOT be used.03 still no scientific processes,
+all64 common-root regret awaits C/E final proposals; G untouched/healthy.
+
+D16 final2500 clean exit+returned segment captured before GPU offline once
+07:46:15Z PID/PGID2290174; completed07:46:32Z/groupabsent. FinalEMA SHA
+23becbd8aa09885514e2504d003822fdb107439ff308e9303c5812064fbf0b58.
+Calibratedrecall1761/2798=.6293781272, CI[.60478984,.65333394];agreement
+6014/8088=.7435707221, CI[.72872309,.75901569]. Both frozen binary gates FAIL,
+top8recall855/2798=.3055754110; playrate2798/8088=.3459446093, threshold
+.49901412427425385. Regret pending, Stage1 not yetcomplete/survivesfalse;
+no Stage2 qualification/reporting for D. C/E continue, no interim selection.
+01 descriptive286/600 complete at07:49:47; outcomes unopened until600terminal
+pairedblocks. Costs remain lowerbounds until everyfit/pool exits; allfailed
+andvoidwork retained. Shared qualification .039852 and deployment2.550084CPU s
+charged once. Combined original+extension ledger independently matches original
+prep/process totals and deduplicates identical copied whole-tree meters.
+
+2026-10-10T07:54:43Z — Final metadata vacancy observation07:53:15Z:03ownallfour recorded
+groups2773043/2785984/admit/base absent;16allseven fit/offline/staging groups
+absent, GPUempty. These are observations, not finalhost-return receipts; whole
+extension decisions/costs/vacancy stillpending. C09/E13 active2771/2426 at
+07:52:17Z, eight processes each;01descriptive315/600 no failures atsamepoll.
+Timer updated to shared03 route and currentDresult, sameID/enabled10min; next
+08:02:31.575Z. Full extension finalrequired before deletion. Prelaunch759b
+actualblobSHA deployed03; freshgrant and qualification/cost receipts retained.
+Resume via shared03/operations/advance.py; preserve all01/GPU oldfreezes.

@@ -61,6 +61,7 @@ paths=set(j.glob('*.log.identity.json'))|set(j.glob('R3*-launch.json'))|set(j.gl
 for pattern in ('*STAGING*.json','VOID-ATTEMPT1-VACATED.json','EVAL-PGIDS.json'):
  paths.update(j.glob(pattern))
 if HOST=='127x01':paths.add(j/'CODE-QUALIFICATION.json')
+if HOST=='127x03':paths.update((j/'SHARED03-DEPLOYMENT.json',j/'SHARED03-TESTS.json'))
 folders=('regret',) if HOST=='127x03' else ('k0-descriptive-smoke','k0-descriptive','k0-stage2-smoke','k0-stage2') if HOST=='127x01' else ('offline',)
 for folder in folders:
  paths.update((j/folder).glob('*meter*.json'))

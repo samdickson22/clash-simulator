@@ -30,6 +30,7 @@ def main():
             elif re.fullmatch(r'(k0-[^/]+|regret)/pool-meter-\d+\.json',name):category='whole CPU pool'
             elif re.fullmatch(r'(reduce-.*-meter-\d+|stage1-reduction-meter-\d+)\.json',name):category='reduction'
             elif name in ('REGRET-PROPOSALS-STAGING.json','STAGE2-ARMS-STAGING.json'):category='staging'
+            elif name=='SHARED03-DEPLOYMENT.json':category='shared03 operational pin verification'
             if category:
                 cpu=whole_cpu(v)
                 meters[key]=dict(category=category,sha256=key,path=str(path.relative_to(ROOT)),cpu_seconds=cpu,gpu_wall_seconds=gpu,status=v.get('status','complete' if v.get('exit_code')==0 else 'closed'),host=host)
@@ -77,12 +78,15 @@ def main():
     lines+=['',f"Known round2/descriptive metered costs: **{cost['cpu_seconds']/3600:.6f} CPUh**, **{cost['gpu_wall_seconds']/3600:.6f} GPU reservation-wallh**. {'Complete process meters collected.' if scientific_complete else 'Open process costs pending; these are lower bounds.'}",'','[Once-only cost ledger](receipts/cost-summary.json) deduplicates exact original meter SHAs across histories and03→01 copies. Whole fit/pool trees include failed/void/replayed work; nested game/case/block/segment diagnostics are never added again. Original R3a/b10.735822CPUh/2.968378GPUh are reported separately until the final combined audit.','',cost.get('unmetered_overhead','Small metadata/test/remote sender overhead unmetered.'),'','Full source/input/native/checkpoint/seed SHA bindings: training and evaluation freezes, retained exact JSON process snapshots, final decisions and command/game/block proofs. Final experiment completion additionally requires independent all-owned-PGID absence, CPU/GPU vacancy, coordinator notification and continuation deletion.']
     freeze=read(receipt/'freeze.json');evaluation=read(receipt/'evaluation-freeze.json');pins={**evaluation['files'],**evaluation['home_files'],**evaluation['regret_files']}
     lines+=['','| Provenance | SHA256 |','|---|---|',f"| Training freeze | {hashlib.sha256((receipt/'freeze.json').read_bytes()).hexdigest()} |",f"| Evaluation freeze | {hashlib.sha256((receipt/'evaluation-freeze.json').read_bytes()).hexdigest()} |",f"| R1 corpus manifest | {freeze['corpus_manifest_sha256']} |",f"| Heldout manifest | {freeze['heldout_manifest_sha256']} |"]
+    shared=ROOT/'shared03/receipts/evaluation-freeze.json'
+    if shared.exists():lines.append(f"| Shared03 regret-only operational freeze | {hashlib.sha256(shared.read_bytes()).hexdigest()} |")
     for name in ('inputs/main02.pt','inputs/assets.npz'):
         lines.append(f"| {name} | {freeze['files'][name]} |")
     for name in ('eval-source/imitation/exit_r1/screen.py','reporting-native/clasher_core.abi3.so','scorer-native/clasher_core.abi3.so'):
         lines.append(f"| {name} | {pins[name]} |")
     if stage1:
         for a,v in stage1.items():lines.append(f"| {a} final EMA | {v['checkpoint_sha256']} |")
+    if shared.exists():lines+=['','[Shared03 operational amendment](shared03/PLAN.md): manager59 and three workers56–58 coexist with authenticated G on0–55. Regret seals bind the03-only amended evaluation SHA; all GPU offline and paired01 game seals retain the original a0beb995 SHA. The byte-unchanged Stage1 reducer runs in the replay manager after all64 children finish; its CPU is included in the whole replay pool once.']
     # The original ledger's listed preparation receipts are separate from its
     # process/tree meters. Globally deduplicate all of them by actual meter SHA.
     original=read(ROOT.parent/'receipts/cost-summary.json');combined={}

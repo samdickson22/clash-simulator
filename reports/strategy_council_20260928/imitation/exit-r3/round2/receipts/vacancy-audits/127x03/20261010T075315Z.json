@@ -1,0 +1,37 @@
+{
+  "host": "127x03",
+  "utc": "2026-10-10T07:53:15Z",
+  "pid": 2798601,
+  "pgid": 2798601,
+  "source_sha256": {
+    "REGRET-BASE-STAGING.json": "d9ba11169c0cb6891edbaf71aca7b1e7e42abb27f039183fcfe5b9839275d21c",
+    "SHARED03-DEPLOYMENT.json": "798931b82fb3907e095927177ceb7331b35bf4b2959a31595064f8d131fb329a",
+    "SHARED03-TESTS.json": "460f8d138882a9e0477d47d80b470c892d1fbb7748a42e1d0225eb1ccfb8ea06",
+    "admit03-attempt1.log.identity.json": "c2c8f779d4ae88f9762445f94a59b71921fbfc01ecd62260ede5e76de4806bc5",
+    "regret-base-staging-attempt1.log.identity.json": "d9f5b54d77338e5aff14063616737a3a15bb2337bf9eee697f1bd6edd69c0400",
+    "admit03-attempt1.log.pid": "32938c8e68f0866dffa9b250cf501ec3c3c73fb00a02930c57a683d729c92870",
+    "regret-base-staging-attempt1.log.pid": "f9e8fe7dfa73fefa7f189ee90d6da103f20891f2ccbd08e5c29aefa57b0946aa"
+  },
+  "recorded_pids": [
+    2653091,
+    2654264,
+    2773043,
+    2785984
+  ],
+  "recorded_pgids": [
+    2653091,
+    2654264,
+    2773043,
+    2785984
+  ],
+  "live_owned": [],
+  "recorded_group_members": [],
+  "recorded_pid_members": [],
+  "locks": [],
+  "fit_and_offline_clean": null,
+  "gpu_compute_pids": null,
+  "parent_cpu_seconds": 0.06398,
+  "children_cpu_seconds": 0.0,
+  "wall_seconds": 0.032566969050094485,
+  "all_recorded_groups_absent": true
+}

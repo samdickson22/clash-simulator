@@ -7,7 +7,7 @@ def collect(host):
     code='''import hashlib,json,os,subprocess
 from pathlib import Path
 j=Path(JOB);paths=set(j.glob('*meter*.json'))|set(j.glob('*STAGING*.json'))|set(j.glob('*.log.identity.json'))
-for name in ('EVAL-PGIDS.json','CPU-RELEASE-EVIDENCE.json','CPU-RELEASE-ADMITTED.json','REGRET-CPU-EVIDENCE.json','REGRET-CPU-ADMITTED.json','EVALUATION-DEPLOYMENT.json','CODE-QUALIFICATION.json','evaluation-prelaunch.json','qualification-descriptive.json','qualification-stage2.json','descriptive-results.json','stage1-results.json','stage2-results.json','EVAL-VACATED.json'):
+for name in ('EVAL-PGIDS.json','CPU-RELEASE-EVIDENCE.json','CPU-RELEASE-ADMITTED.json','REGRET-CPU-EVIDENCE.json','REGRET-CPU-ADMITTED.json','REGRET-SHARED-AUTHORITY.json','SHARED03-DEPLOYMENT.json','SHARED03-TESTS.json','EVALUATION-DEPLOYMENT.json','CODE-QUALIFICATION.json','evaluation-freeze.json','evaluation-prelaunch.json','qualification-descriptive.json','qualification-stage2.json','descriptive-results.json','stage1-results.json','stage2-results.json','EVAL-VACATED.json'):
  paths.add(j/name)
 for folder in ('offline','k0-descriptive-smoke','k0-descriptive','k0-stage2-smoke','k0-stage2','regret'):
  p=j/folder

@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "pins": 1446,
+  "host": "127x03",
+  "pid": 2785984,
+  "pgid": 2785984,
+  "utc": "2026-10-10T07:49:13Z",
+  "evaluation_freeze_sha256": "b6acb31432eeea1f5a410bb63e5c7dbafd2ec9d445ce296b512395d9cb0f597b",
+  "authority_sha256": "63b8a2ae1530688f7517cefbcde3bed5935d6830deed281f4d8b3cbd51410cd0",
+  "admitted_sha256": "7fc96f4e12329c6929f32f6983955692d7b24047cff91f8f6d0bbc8520573553",
+  "cpu_seconds": 2.550084,
+  "wall_seconds": 2.5447003291919827,
+  "all_shared_G_and_R3_threads_pass": true
+}
