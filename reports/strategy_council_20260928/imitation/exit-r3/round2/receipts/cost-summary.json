@@ -1,8 +1,8 @@
 {
-  "utc": "2026-10-10T08:51:32Z",
+  "utc": "2026-10-10T09:01:46Z",
   "final": false,
-  "cpu_seconds": 145955.281008,
-  "gpu_wall_seconds": 4586.374589010142,
+  "cpu_seconds": 169287.597247,
+  "gpu_wall_seconds": 13332.72988456674,
   "meters": [
     {
       "category": "staging",
@@ -221,6 +221,24 @@
       "gpu_wall_seconds": 0,
       "status": "complete",
       "host": "127x01"
+    },
+    {
+      "category": "fit",
+      "sha256": "366dd811366553554481ebc5125c87592cf5c932df3949894e311428e64b7391",
+      "path": "receipts/process-snapshots/127x09/R3c-exit.json",
+      "cpu_seconds": 23314.267257999996,
+      "gpu_wall_seconds": 8729.257534641773,
+      "status": "complete",
+      "host": "127x09"
+    },
+    {
+      "category": "offline",
+      "sha256": "f57edba8c5dc7379817f4911a8fafb4a2fdce811dae5c3897315336e822f5a5d",
+      "path": "receipts/evaluation-snapshots/127x09/history/offline--R3c-attempt-meter-3811455-f57edba8c5dc7379817f4911a8fafb4a2fdce811dae5c3897315336e822f5a5d.json",
+      "cpu_seconds": 18.048980999999998,
+      "gpu_wall_seconds": 17.097760914824903,
+      "status": "complete",
+      "host": "127x09"
     }
   ],
   "active_fit_costs_pending": true,

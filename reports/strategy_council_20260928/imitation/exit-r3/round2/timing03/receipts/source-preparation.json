@@ -1,0 +1,30 @@
+{
+  "utc": "2026-10-10T09:01:46Z",
+  "metadata_only": true,
+  "ast_passed": true,
+  "unchanged_science_files": 8,
+  "wrong_host_core_nice_scheduler_rejected": true,
+  "unadmitted_rejected": true,
+  "source_sha256": {
+    "admission.py": "6bff3123c94c7c74806129cd0279d7495efa647548bfdee68ae0a05a22bfd0ca",
+    "block.py": "14e263dd046e87184626e0e143a85907ca85bbdd2b3fda4f6c956b0989257b3a",
+    "game.py": "95baa6a72593c4418ea657e8201f8e42fbb1473e41b9af82e79dcdec96e05824",
+    "journal.py": "731effebb38d9ed9175f89b2ca44b64412be392dea6c10739aca27373886c104",
+    "pool.py": "a15fa9caeaf9b999f3934be0dd622da65fce57e83df46a0606c9014b57a89e32",
+    "proposals.py": "be0c23188251f7ac2181dafd6bd01b2f90f47699f70c3671b91815e7fe990190",
+    "protocol.py": "1b72e1a8587f58cbb5b0e8cf7e159d4f2f57ebf67ffc49550f9760331527bf49",
+    "reduce_games.py": "724237dc4a29f667af8814cc2f22bbeb4a71cb13ae89adef699f2f77677a8097",
+    "run_pool.sh": "30bdc61d2821e32f80bc714c040476f88a9ce94a3f0a97439dc0855726d409f9",
+    "stage_survivors.py": "860d10da60646bbaa90376bd846bdc7bc0132b6313de264f330b039b6fd88271",
+    "test_hook.py": "69aad4da72ed0bf33526b001f4464e7680409a190288258ceb6f6c7842b08c61",
+    "test_proposals.py": "5a06550ee1bd270731f126b63e3260c6adc8d260fdd68999a1e8fe3ded6e5ff2",
+    "test_protocol.py": "e3abe6f2199c641f750fe1af2556383d3e404a6d9792caf96ddf5389d043224a"
+  },
+  "host_admission_pending": true,
+  "scientific_qualification_pending": true,
+  "stage2_freeze_pending": true,
+  "no_remote_staging": true,
+  "no_games": true,
+  "note": "Local preparation only; no scientific qualification, freeze, host staging or games",
+  "survivor_checkpoint_copy_only": true
+}

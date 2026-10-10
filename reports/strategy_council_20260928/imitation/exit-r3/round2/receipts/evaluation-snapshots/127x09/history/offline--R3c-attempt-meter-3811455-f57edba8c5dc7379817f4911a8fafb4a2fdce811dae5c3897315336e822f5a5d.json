@@ -1,0 +1,13 @@
+{
+  "relative": "offline/R3c-attempt-meter-3811455.json",
+  "sha256": "f57edba8c5dc7379817f4911a8fafb4a2fdce811dae5c3897315336e822f5a5d",
+  "raw": "{\n  \"status\": \"complete\",\n  \"pid\": 3811455,\n  \"wall_seconds\": 17.097760914824903,\n  \"cpu_seconds\": 18.048980999999998,\n  \"utc\": \"2026-10-10T08:57:53Z\",\n  \"accounting\": \"Whole inference process once; result CPU/wall nested and not added again.\"\n}\n",
+  "value": {
+    "status": "complete",
+    "pid": 3811455,
+    "wall_seconds": 17.097760914824903,
+    "cpu_seconds": 18.048980999999998,
+    "utc": "2026-10-10T08:57:53Z",
+    "accounting": "Whole inference process once; result CPU/wall nested and not added again."
+  }
+}
