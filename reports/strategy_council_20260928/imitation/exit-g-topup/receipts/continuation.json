@@ -5,5 +5,13 @@
   "interval_ms": 1800000,
   "nextRunAt": "2026-10-10T01:51:09.288Z",
   "bindToCurrentThread": true,
-  "disable": "update_scheduled_task({scheduledTaskId: recorded ID, enabled:false}) after final publication or explicit coordinator stop"
+  "disable": "update_scheduled_task({scheduledTaskId: recorded ID, enabled:false}) after final publication or explicit coordinator stop",
+  "updated_utc": "2026-10-10T01:35:47Z",
+  "hosts": [
+    "127x04",
+    "127x01"
+  ],
+  "fleet_controller_pid": 3985130,
+  "fleet_controller_pgid": 3985130,
+  "host01_preemption": "X evaluation -> owned STOP -> current game drain/full PGID vacate; final01 metadata is cached, then no more remote01 calls."
 }

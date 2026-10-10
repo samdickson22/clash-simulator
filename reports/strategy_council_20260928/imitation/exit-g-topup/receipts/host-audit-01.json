@@ -1,0 +1,462 @@
+{
+  "utc": "2026-10-10T01:35:00Z",
+  "passed": true,
+  "phase": "generation",
+  "pgid": 1356583,
+  "processes": [
+    {
+      "pid": 1356583,
+      "pgid": 1356583,
+      "cores": [
+        39
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py generation ",
+      "threads": 1
+    },
+    {
+      "pid": 1356885,
+      "pgid": 1356583,
+      "cores": [
+        39
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/finalize.py ",
+      "threads": 1
+    },
+    {
+      "pid": 1356886,
+      "pgid": 1356583,
+      "cores": [
+        0
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 0 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356889,
+      "pgid": 1356583,
+      "cores": [
+        1
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 1 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356892,
+      "pgid": 1356583,
+      "cores": [
+        2
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 2 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356893,
+      "pgid": 1356583,
+      "cores": [
+        3
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 3 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356894,
+      "pgid": 1356583,
+      "cores": [
+        4
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 4 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356899,
+      "pgid": 1356583,
+      "cores": [
+        5
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 5 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356900,
+      "pgid": 1356583,
+      "cores": [
+        6
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 6 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356901,
+      "pgid": 1356583,
+      "cores": [
+        7
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 7 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356902,
+      "pgid": 1356583,
+      "cores": [
+        8
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 8 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356903,
+      "pgid": 1356583,
+      "cores": [
+        9
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 9 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356904,
+      "pgid": 1356583,
+      "cores": [
+        10
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 10 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356905,
+      "pgid": 1356583,
+      "cores": [
+        11
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 11 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356906,
+      "pgid": 1356583,
+      "cores": [
+        12
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 12 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356907,
+      "pgid": 1356583,
+      "cores": [
+        13
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 13 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356908,
+      "pgid": 1356583,
+      "cores": [
+        14
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 14 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356909,
+      "pgid": 1356583,
+      "cores": [
+        15
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 15 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356910,
+      "pgid": 1356583,
+      "cores": [
+        16
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 16 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356911,
+      "pgid": 1356583,
+      "cores": [
+        17
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 17 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356933,
+      "pgid": 1356583,
+      "cores": [
+        18
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 18 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356940,
+      "pgid": 1356583,
+      "cores": [
+        19
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 19 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356945,
+      "pgid": 1356583,
+      "cores": [
+        20
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 20 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356946,
+      "pgid": 1356583,
+      "cores": [
+        21
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 21 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356947,
+      "pgid": 1356583,
+      "cores": [
+        22
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 22 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356950,
+      "pgid": 1356583,
+      "cores": [
+        23
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 23 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356951,
+      "pgid": 1356583,
+      "cores": [
+        24
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 24 ",
+      "threads": 1
+    },
+    {
+      "pid": 1356972,
+      "pgid": 1356583,
+      "cores": [
+        25
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 25 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357007,
+      "pgid": 1356583,
+      "cores": [
+        26
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 26 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357039,
+      "pgid": 1356583,
+      "cores": [
+        27
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 27 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357044,
+      "pgid": 1356583,
+      "cores": [
+        28
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 28 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357045,
+      "pgid": 1356583,
+      "cores": [
+        29
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 29 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357046,
+      "pgid": 1356583,
+      "cores": [
+        30
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 30 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357047,
+      "pgid": 1356583,
+      "cores": [
+        31
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 31 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357048,
+      "pgid": 1356583,
+      "cores": [
+        32
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 32 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357078,
+      "pgid": 1356583,
+      "cores": [
+        33
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 33 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357083,
+      "pgid": 1356583,
+      "cores": [
+        34
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 34 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357085,
+      "pgid": 1356583,
+      "cores": [
+        35
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 35 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357086,
+      "pgid": 1356583,
+      "cores": [
+        36
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 36 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357087,
+      "pgid": 1356583,
+      "cores": [
+        37
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 37 ",
+      "threads": 1
+    },
+    {
+      "pid": 1357116,
+      "pgid": 1356583,
+      "cores": [
+        38
+      ],
+      "nice": 19,
+      "scheduler": 5,
+      "cmdline": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/driver.py worker generation 38 ",
+      "threads": 1
+    }
+  ],
+  "memory_available": 88945213440,
+  "all_threads_physical0_39": true,
+  "siblings_and_reserved_cores_unused": true
+}
