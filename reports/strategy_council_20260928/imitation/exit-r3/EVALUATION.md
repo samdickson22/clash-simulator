@@ -62,3 +62,25 @@ again. Every failed or replayed attempt stays retained. Qualification receipt
 records five own unit tests and seven unchanged injected-clock tests. Earlier
 dry runs and missing-dependency qualification attempts consumed no games and
 have unmetered small test/copy overhead, disclosed separately.
+
+Coordinator04:33Z granted a separate regret-only offline CPU slot on04,
+physical12–19/nice19/at most8 processes. This supersedes the earlier need to
+wait for03/01 only for Stage1 W-regret, and does not admit paired timing games.
+Own guard_regret04.py and pool_regret04.py use manager19 and three scoring
+workers12–14, keeping the manager, workers and simultaneous timestamp/SSH
+helpers within8. No CPU52/116, X5 CPUs118–126, A19 cores0–11/47, GPU, or writes
+outside the owned job prefix. Each scoring game still scores both arms on the
+same frozen common roots and retains the scientific seed/gate definitions.
+
+The04 manager continuously checks memory PSI fullavg10 and immediately stops
+its own process groups if it exceeds10, checks recognized A19 launches, and
+fails closed on any change to RUNBOOK.md/PROGRESS-T6T7.md SHA from the clear
+admission snapshot or unavailable checks. Worker heartbeat expires after6s.
+Vacate before any A19 launch; coordinator notification is requested before
+launch. Absolute cutoff is Oct10 08:00Z. Any authority change requires explicit
+review/re-admission; no automatic replay or stale authority reuse. Owned
+REGRET04.STOP, recorded PID/PGIDs, reaped children and REGRET04-VACATED.json
+are durable. Three workers leave spare room for short-lived helper processes.
+After04 reduction, transfer the Stage1 results/offline merged metrics and
+64-game proofs to the finally admitted03/01 job; do not repeat the regret
+phase there or overwrite merged Stage1 metrics with raw GPU diagnostics.

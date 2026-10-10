@@ -7,7 +7,10 @@ NATIVE_SHA='06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10'
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--job',required=True);ap.add_argument('--index',type=int,required=True);a=ap.parse_args();j=Path(a.job)
-    from admission import allowed
+    if os.environ.get('R3_REGRET04')=='1':
+        from guard_regret04 import allowed
+    else:
+        from admission import allowed
     assert allowed(j) and len(os.sched_getaffinity(0))==1
     from imitation.exit_r1.rows import sha,write_json
     from imitation.exit_r1 import emitter as E

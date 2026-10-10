@@ -1,6 +1,6 @@
 {
   "schema": "clasher.exit-r3.evaluation-freeze.v1",
-  "utc": "2026-10-10T04:39:31Z",
+  "utc": "2026-10-10T04:30:00Z",
   "scientific_freeze_commit": "bc542da83e4e6fea16ee53e9ff4b8d10eb14efed",
   "scientific_freeze_sha256": "2802b0290e96a2249e3212bfe994639271a4cca72aa79d27759cdaf042f0f49f",
   "scientific_plan_unchanged": true,
@@ -14,7 +14,7 @@
     "eval-ops/pool.py": "87123995d2df8a3d1f8c7fc5414619d6ccd7f10e6d78aeb82fb0df487f68d305",
     "eval-ops/proposals.py": "be0c23188251f7ac2181dafd6bd01b2f90f47699f70c3671b91815e7fe990190",
     "eval-ops/reduce.py": "086f06b2de788c933c2149197c971ceefb530c48a428d1e3c3069c93849ce6b2",
-    "eval-ops/regret_game.py": "a7ff74e80a7a316aec135638c09b2d6e1b683adc42005443c5e57a95f65112e6",
+    "eval-ops/regret_game.py": "ec48d71bd4443c8fc5b1bde21b22e415764368095ee6af94fdee7da450ba7a16",
     "eval-ops/run_pool.sh": "8cf050302f642351c6a7de3f056a694f370ba87e8100a31c757e9fb33c51e85b",
     "eval-ops/source_manifest.py": "81a6c2ec5c888e226942e07c14c2db4b9d5ba930b75ee1c1783c16edd348a055",
     "eval-ops/stage.py": "d66478dcb51e8b3906832642b614aa5552691b31f2a19c232c1c7dba41f7adce",
@@ -26,21 +26,11 @@
     "frozen-x/k_stage3_sdefault.py": "6a086a8416ed156f0c658be36e6b2ed521a53de1f87f8d94f4a4082262efffcd",
     "frozen-x/test_sdefault.py": "bfafe5a9494083e6dad5a1c8bbf26133a3c773ec8ddd215608373b126ca27a98",
     "stage3-sdefault-addendum.json": "7f62b4e4ac4dccbef4f555f1ca8b10b4a77d0412d02607f26c6a873c1272d1a7",
-    "source-manifests.json": "b058317f1eff8ec2930b21ba2de5d262af23f665218fe9d87b4507ff2baf1c2e",
-    "eval-ops/advance_regret04.py": "1a15146c1ac8922498832ed4d2172c54214f03e191847192ed4a1f036c6a3f0e",
-    "eval-ops/guard_regret04.py": "5ebe145f2512bc50be01b75ab27db9d12a53eab45ed9ebb00d703e517f0a7114",
-    "eval-ops/pool_regret04.py": "19810c1b812e858b751c474bd578af4a48c69b0ad722da14a29f7c60f737ff52",
-    "eval-ops/stage_regret04.py": "d1e509f52c007e80787a79cf08d30235b991c76b2f3235877eb2dd3a72e45447",
-    "eval-ops/test_guard_regret04.py": "bd9216c1c88da6f4e69c616bc3b4c31e71169878b659067a18af641cc931b73a"
+    "source-manifests.json": "b058317f1eff8ec2930b21ba2de5d262af23f665218fe9d87b4507ff2baf1c2e"
   },
   "release_contract_commit": "7404506e",
   "cpu_owner_release_required": true,
   "stage1_regret_threshold": 0.01,
   "stage2_upper_ci_must_be_below": 0,
-  "implementation_supplement_sha256": "2fa511aa41508ef97bdf9040c636073ba77d7c8df5a74c67b2bd322b52b9aab8",
-  "prior_evaluation_freeze_commit": "33cff003cc7262f0d946c8e5509af9d36b90b5db",
-  "prior_evaluation_freeze_sha256": "8a44f3f19bc0e64c4e7d03a500e97022070b3f7836f1f4f3d505b74e08b69066",
-  "regret04_only_operational_amendment": true,
-  "regret04_tests_sha256": "2dea339b10df2b2ff7534590dc5d8a531a4ff512823f87ad154399ebe6e8b591",
-  "regret04_authority_sha256": "ebd4b159bbe577554b175a84dd9cad718cb9335a97e8765a13095243a52414ce"
+  "implementation_supplement_sha256": "3e38ea4c674046807c060e35f635f2e15b28d71618fe2b5e2ee0f8bcacbcc6e2"
 }

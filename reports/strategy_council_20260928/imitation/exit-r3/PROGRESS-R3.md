@@ -100,3 +100,29 @@ Temporary same-thread continuation every10minutes; nextRunAt
 `scheduled-task:command:mcp:41973a00-3443-411b-88ab-c1f2788161a1:schedule-task:r3-continuation-20261010-r1`
 Read current state before any action and never duplicate active attempts.
 Delete timer after full RESULTS completion or expiry/vacancy.
+
+2026-10-10T04:39:31Z — Coordinator grants regret-only04 physical12–19/nice19/≤8processes.
+Manager19 + three workers12–14. Immediate owned stop if PSI memory fullavg10>10;
+vacate before any A19 launch and by Oct10 08:00Z. New guard/pool/staging/advance
+entrypoints freeze before replay; scientific plan/seeds/gates unchanged.
+No paired games on04. Watch current RUNBOOK.md and PROGRESS-T6T7.md SHA; any
+authority change or unavailable check halts/reaps children, requires review.
+Guard test passes pressure/cores/nice/heartbeat/deadline/A19/stop mutations.
+
+Continuation after GPU offline: refresh own04 admission only if latest A19
+progress still clearly held/no launch and no recognized A19 process. Copy exact
+coordinator grant to REGRET04-AUTHORITY.json, write REGRET04-ADMITTED.json with
+regret_only:true,host:127x04,authority_sha256,a19_progress_sha256 mapping actual
+command-center RUNBOOK and PROGRESS-T6T7 absolute paths, realUTC. Then guarded
+stage_regret04.py --offline on04 nice19/core19. Earlier base-only staging may
+prepare scorer/heldout while fits run; REGRET04-STAGING.passed staysfalse until
+final GPU proposals copied. Use advance_regret04.py --output own metadata JSON
+from05 to launch owned setsid-f regret pool once and reduce64 completegames.
+Regret worker uses R3_REGRET04=1; no other mode can claim04. Own REGRET04.STOP
+and REGRET04-VACATED.json durable; record every pool/worker PID/PGID.
+
+After04 stage1 reduction, transfer stage1-results.json and merged offline
+R3a/R3b metrics plus all regret64 seals/meters to finally admitted03/01 after
+home stage_cpu.py. This overwrites RAW GPU offline metrics only with the
+validated04 merged Stage1 metrics; do not repeat regret on03/01. Then normal
+stage.py --cpu-host advances survivor smoke/reporting or both-killed skip.

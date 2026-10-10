@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "tests": 1,
+  "cpu_seconds": 0.08710599999999999,
+  "wall_seconds": 0.07236530492082238,
+  "utc": "2026-10-10T04:38:43Z",
+  "host": "127x09",
+  "nice": 10,
+  "core": 126,
+  "checks": [
+    "receipt",
+    "heartbeat freshness",
+    "PSI fullavg10>10 immediate refusal",
+    "cores12-19 only",
+    "nice19",
+    "08Z deadline",
+    "A19 conflict",
+    "owned stop"
+  ],
+  "prior_unmetered_dry_run": true
+}
