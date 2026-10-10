@@ -1689,3 +1689,12 @@ Also on the hub, but with copies elsewhere:
   - Sharpening made the students *more* passive than r1. The PLAN-NEXT target diagnosis looks incomplete.
   - **Commissioned an Opus noise-ceiling analysis** (`clasher-exit-noise-ceiling-20261010-1`): teacher self-agreement given the 0.003 median top-2 gap, whether the gates are reachable, whether the gates predict strength, and the next design for the 1-core fallback role.
   - 09/16 GPUs are idle pending that design (~75 min); X8 is still queued for 15.
+- **03:41 UTC: A19 r2 review = APPROVE_WITH_CONDITIONS** (Opus, c2a092da).
+  - **Code, for the r3 delta:**
+    - C1: conservative inventory (PermissionError);
+    - C2: no irreversible serial-verify STOP without admitted parallel capacity (verify-then-retire preferred);
+    - C3: the A2 parallel prerequisite must come from a completed attempt.
+  - **Operational:**
+    - C4: co-tenancy and headroom (no launch while X5 is alive; G never on 04 cores 0–11/47 while A19 is pending or running);
+    - C5: exact bindings per §9.
+  - The monitor retirement doesn't affect the evidence chain. Next: r3 delta review, then the A19 freeze plus a revised A1 approval.
