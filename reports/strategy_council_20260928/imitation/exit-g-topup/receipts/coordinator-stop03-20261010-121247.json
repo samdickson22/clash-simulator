@@ -1,0 +1,155 @@
+{
+  "schema": "clasher.exit-g.coordinator-stop-host-vacate.v1",
+  "utc": "2026-10-10T12:15:15Z",
+  "event_utc": "2026-10-10T12:12:47Z",
+  "host": "127x03",
+  "reason": "Coordinator STOP-03: A19 perception 03 I/O-lock contention test; packing deferred until NEW explicit release.",
+  "pgid": 3483893,
+  "full_pgid_vacate_confirmed": true,
+  "full_group_observed_utc": "2026-10-10T12:14:37.421637+00:00",
+  "group_members": [],
+  "generation_terminal_utc": "2026-10-10T12:14:01Z",
+  "all58_gameworkers_exit_zero": true,
+  "totals": {
+    "games": 16316,
+    "rows": 12771584,
+    "root_decisions": 1981636,
+    "cpu_seconds": 773386.3493813643,
+    "plays": 675589
+  },
+  "packed": {
+    "schema": "clasher.exit-g.concat-manifest.v1",
+    "utc": "2026-10-10T12:12:53Z",
+    "complete": false,
+    "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+    "freeze_sha256": "78770f0755f83ce55b3ae91f4e441fbc06cda5c35a8a3295dae023cd7718b081",
+    "shards": [
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+        "manifest_sha256": "d1cfb556363bb58fd9e4764b3961027594b31e728af6633cb5601acac0676119",
+        "games": 2048,
+        "rows": 1601501,
+        "root_decisions": 248421,
+        "candidate_scores": 4625837
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+        "manifest_sha256": "507a9f9831c2a2cb081d083dff2d7513476c6061bd54865bdf1694b905d6b2c2",
+        "games": 2048,
+        "rows": 1606855,
+        "root_decisions": 249343,
+        "candidate_scores": 4647819
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00002",
+        "manifest_sha256": "7e886977f1a3fb1694a2758d2484fdd7c177ae19aee3f604d4f330384a71c764",
+        "games": 2048,
+        "rows": 1599363,
+        "root_decisions": 247934,
+        "candidate_scores": 4613709
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00003",
+        "manifest_sha256": "3f166e8529c374924f908cddba3f104916b63bcc593ab10719b2aef3d3bf8bea",
+        "games": 2048,
+        "rows": 1599163,
+        "root_decisions": 248303,
+        "candidate_scores": 4621922
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00004",
+        "manifest_sha256": "218dfb29b236f06b088774e25987336908d7548e348eaa79d5cfb302028f33ee",
+        "games": 2048,
+        "rows": 1605663,
+        "root_decisions": 249434,
+        "candidate_scores": 4649139
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00005",
+        "manifest_sha256": "e4c16bc34f6d2da1b4ed5f2cb502e1448ef6c8c406d5feadf242564fae8478c2",
+        "games": 2048,
+        "rows": 1604198,
+        "root_decisions": 248882,
+        "candidate_scores": 4637333
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00006",
+        "manifest_sha256": "8561d0ab9bfc5a006e99105ff1b779fe0e99ed780722a1a5f18ac977c30a9cf9",
+        "games": 1452,
+        "rows": 1141652,
+        "root_decisions": 177196,
+        "candidate_scores": 3308075
+      },
+      {
+        "host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00007",
+        "manifest_sha256": "bc4cd9ef6c4a290f473e57a9e146ee12bd104542bb4ff0f1294bf247650d11f8",
+        "games": 2048,
+        "rows": 1595862,
+        "root_decisions": 247304,
+        "candidate_scores": 4604337
+      }
+    ],
+    "games": 15788,
+    "rows": 12354257,
+    "root_decisions": 1916817,
+    "candidate_scores": 35708171,
+    "smoke_excluded": true,
+    "loader": "Instantiate one TeacherStore(path, assets) for r1 and each G packed shard; use the existing teacher_batch.combined_batch over cumulative row ends. Packed roots retain root_scores/root_valid; offsets stay local to each shard.",
+    "generation_exit_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/exit.json"
+  },
+  "packed_root_decisions": 1916817,
+  "remaining_unpacked_roots": 64819,
+  "pending_games": 528,
+  "packing_deferred": true,
+  "packer_last_metadata_utc": "2026-10-10T12:12:53Z",
+  "packer_absent_at_first_probe_utc": "2026-10-10T12:13:27Z",
+  "no_new_packer_started": true,
+  "markers": {
+    "STOP-03": {
+      "size": 172,
+      "inode": 123901165,
+      "mtime_ns": 1791634367377815259,
+      "sha256": "efb32c95a0ea50ce1044e0c08337547f361f31cb04aa622eb02d18b548b97b19",
+      "text": "coordinator 0523ae6f 2026-10-10T12:12:47Z: pause G on 03 to relieve 03 I/O-lock contention for A19 parallel A1 verification (first-wave 79.7% open-without-held on 03 lock)\n"
+    },
+    "PACK.STOP": {
+      "size": 0,
+      "inode": 123901167,
+      "mtime_ns": 1791634440855483454,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    }
+  },
+  "raw_and_packs_retained": true,
+  "controller_pid": 1689855,
+  "controller_snapshot_utc": "2026-10-10T12:14:21Z",
+  "controller_cached_matching_exit": true,
+  "concat_manifest_sha256": "3aa5ccade752506829ca5a3572e46ef4bae2dc94525fd8bb2214d551cc292dea",
+  "headroom": {
+    "measurement_utc": "2026-10-10T12:13:52Z",
+    "memory_available": 129681879040,
+    "pressure": {
+      "full_avg10": 0.0,
+      "above_seconds": 0,
+      "admission_paused": false
+    },
+    "note": "Final pre-exit progress reading; no fresh post-vacate headroom or protected-cache audit. No03 CPU calls after confirmed group absence."
+  },
+  "probe_sha256": "070e578c3e604c529213ab38ef63bb6e74b752ecbc7974681e094926ffbf1f0c",
+  "global_counts": {
+    "utc": "2026-10-10T12:14:21Z",
+    "roots": 4784450,
+    "packed": 4685089,
+    "pending": 99361,
+    "target_complete": false
+  },
+  "other_hosts": "08 active unchanged;01/04 stopped. ExistingONE5min continuation remainsenabled; no03/04/01 CPU calls. New03release needs qualified controller restart/freshregistry cache invalidation."
+}
