@@ -1,0 +1,430 @@
+{
+  "utc": "2026-10-10T13:43:27Z",
+  "catalogue_sha256": "80de4afb5b63c7dbdcb0ab285a715f9a93f4d6eeacffdfbe9f8c300ea7fecd8a",
+  "catalogue_decks": 2925,
+  "selector_sha256": "32002f7d82cbcc82ea415567300160d2740a188e8366fb0ea6206cb8c3a6c8da",
+  "primary": [
+    [
+      "Cannon",
+      "Fireball",
+      "HogRider",
+      "IceGolem",
+      "IceSpirit",
+      "Log",
+      "Musketeer",
+      "Skeletons"
+    ],
+    [
+      "Archers",
+      "ElectroSpirit",
+      "Fireball",
+      "Knight",
+      "Log",
+      "Skeletons",
+      "Tesla",
+      "Xbow"
+    ],
+    [
+      "Arrows",
+      "FireSpirits",
+      "Giant",
+      "HogRider",
+      "Knight",
+      "Minions",
+      "Valkyrie",
+      "Wizard"
+    ],
+    [
+      "BlowdartGoblin",
+      "Cannon",
+      "GoblinBarrel",
+      "IceSpirit",
+      "Princess",
+      "SkeletonArmy",
+      "Valkyrie",
+      "Wallbreakers"
+    ],
+    [
+      "DarkPrince",
+      "ElectroSpirit",
+      "Log",
+      "Miner",
+      "Rocket",
+      "RoyalDelivery",
+      "Skeletons",
+      "Tesla"
+    ]
+  ],
+  "l2": [
+    [
+      "HogRider",
+      "Musketeer",
+      "Cannon",
+      "Fireball",
+      "Log",
+      "IceGolem",
+      "IceSpirit",
+      "Skeletons"
+    ],
+    [
+      "Xbow",
+      "Tesla",
+      "Knight",
+      "Archers",
+      "Fireball",
+      "Log",
+      "Skeletons",
+      "ElectroSpirit"
+    ],
+    [
+      "RoyalHogs",
+      "FirespiritHut",
+      "GoblinHut",
+      "Berserker",
+      "Ghost",
+      "Fireball",
+      "Log",
+      "ElectroSpirit"
+    ]
+  ],
+  "r1_training_deck_slots": [
+    [
+      "Cannon",
+      "Fireball",
+      "HogRider",
+      "IceGolem",
+      "IceSpirit",
+      "Log",
+      "Musketeer",
+      "Skeletons"
+    ],
+    [
+      "Archers",
+      "ElectroSpirit",
+      "Fireball",
+      "Knight",
+      "Log",
+      "Skeletons",
+      "Tesla",
+      "Xbow"
+    ],
+    [
+      "Arrows",
+      "FireSpirits",
+      "Giant",
+      "HogRider",
+      "Knight",
+      "Minions",
+      "Valkyrie",
+      "Wizard"
+    ],
+    [
+      "BlowdartGoblin",
+      "Cannon",
+      "GoblinBarrel",
+      "IceSpirit",
+      "Princess",
+      "SkeletonArmy",
+      "Valkyrie",
+      "Wallbreakers"
+    ],
+    [
+      "DarkPrince",
+      "ElectroSpirit",
+      "Log",
+      "Miner",
+      "Rocket",
+      "RoyalDelivery",
+      "Skeletons",
+      "Tesla"
+    ],
+    [
+      "HogRider",
+      "Musketeer",
+      "Cannon",
+      "Fireball",
+      "Log",
+      "IceGolem",
+      "IceSpirit",
+      "Skeletons"
+    ],
+    [
+      "Xbow",
+      "Tesla",
+      "Knight",
+      "Archers",
+      "Fireball",
+      "Log",
+      "Skeletons",
+      "ElectroSpirit"
+    ],
+    [
+      "RoyalHogs",
+      "FirespiritHut",
+      "GoblinHut",
+      "Berserker",
+      "Ghost",
+      "Fireball",
+      "Log",
+      "ElectroSpirit"
+    ]
+  ],
+  "distinct_training_decks": 6,
+  "guard": [
+    {
+      "cards": [
+        "Cannon",
+        "Earthquake",
+        "ElectroSpirit",
+        "Firecracker",
+        "HogRider",
+        "Log",
+        "MightyMiner",
+        "Skeletons"
+      ],
+      "frequency": 4650,
+      "r1_max_shared": 4,
+      "earlier_guard_max_shared": 0
+    },
+    {
+      "cards": [
+        "Archers",
+        "BarbLog",
+        "BombTower",
+        "ElectroSpirit",
+        "Goblinstein",
+        "Lightning",
+        "RoyalHogs",
+        "Skeletons"
+      ],
+      "frequency": 2398,
+      "r1_max_shared": 3,
+      "earlier_guard_max_shared": 2
+    },
+    {
+      "cards": [
+        "ArcherQueen",
+        "Cannon",
+        "Earthquake",
+        "IceSpirit",
+        "Log",
+        "RoyalDelivery",
+        "RoyalHogs",
+        "Skeletons"
+      ],
+      "frequency": 1848,
+      "r1_max_shared": 4,
+      "earlier_guard_max_shared": 4
+    }
+  ],
+  "skipped_unsupported": [],
+  "support": {
+    "Cannon": {
+      "token": 62,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "Earthquake": {
+      "token": 81,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "ElectroSpirit": {
+      "token": 85,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "Firecracker": {
+      "token": 102,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "HogRider": {
+      "token": 191,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "Log": {
+      "token": 218,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "MightyMiner": {
+      "token": 228,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "Skeletons": {
+      "token": 310,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "Archers": {
+      "token": 9,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "BarbLog": {
+      "token": 20,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "BombTower": {
+      "token": 42,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "Goblinstein": {
+      "token": 164,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "Lightning": {
+      "token": 214,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "RoyalHogs": {
+      "token": 293,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "ArcherQueen": {
+      "token": 6,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "IceSpirit": {
+      "token": 196,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    },
+    "RoyalDelivery": {
+      "token": 286,
+      "native": true,
+      "v1_vocab": true,
+      "R3a_vocab": true,
+      "supported": true
+    }
+  },
+  "native_execution": [
+    {
+      "card": "ArcherQueen",
+      "token": 6,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "Archers",
+      "token": 9,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "BarbLog",
+      "token": 20,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "BombTower",
+      "token": 42,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "Cannon",
+      "token": 62,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "Earthquake",
+      "token": 81,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "ElectroSpirit",
+      "token": 85,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "Firecracker",
+      "token": 102,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "Goblinstein",
+      "token": 164,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "HogRider",
+      "token": 191,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "IceSpirit",
+      "token": 196,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "Lightning",
+      "token": 214,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "Log",
+      "token": 218,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "MightyMiner",
+      "token": 228,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "RoyalDelivery",
+      "token": 286,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "RoyalHogs",
+      "token": 293,
+      "public_native_rollout_pass": true
+    },
+    {
+      "card": "Skeletons",
+      "token": 310,
+      "public_native_rollout_pass": true
+    }
+  ],
+  "support_pass": true
+}

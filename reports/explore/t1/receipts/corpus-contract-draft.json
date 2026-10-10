@@ -1,0 +1,55 @@
+{
+  "status": "AWAITING-INDEPENDENT-REVIEW",
+  "selection": {
+    "eligible": "Own-tier excluded qualification-class corpus-bank200ms games; all public search opportunities with >1 candidate, regardless of live cutoff/root construction. Reconstruct eligibility/posterior/sample/root after timer on independent copies.",
+    "states_per_tier": 300,
+    "elixir_bins": [
+      3,
+      6
+    ],
+    "legal_play_count_bins": [
+      1,
+      128
+    ],
+    "sampling": "proportional occupied-stratum allocation, >=1 each; largest remainders; SHA256 priority of tier/seed/tick; ties by ID",
+    "reservoir_per_stratum": 300,
+    "initial_games_per_tier": 8,
+    "max_games_per_tier": 64,
+    "excluded_indices": [
+      0,
+      1,
+      2
+    ],
+    "belief_snapshot": "Committed public pre-update posterior; discard private suspended transaction, as complete no-deadline update does. Presence recorded per state; identical work on fleet and Mac."
+  },
+  "game_class": "qualification",
+  "row_fields": [
+    "id",
+    "tier",
+    "seed",
+    "info",
+    "reserved_packet",
+    "pending",
+    "opponent_elixir",
+    "d1_before",
+    "d1_events",
+    "d1",
+    "policy_rng_state",
+    "candidate_rng_state",
+    "belief_before",
+    "belief_had_suspended_transaction",
+    "belief_rng_state",
+    "opponent",
+    "root_rng_state",
+    "root",
+    "root_digest",
+    "strata"
+  ],
+  "health_fields": [
+    "eligible_search_opportunities",
+    "deadline_cut",
+    "suspended_transaction"
+  ],
+  "root_construction": "No-deadline independent copy after live timer; retain slow-tail decisions before root; captured RNGs; live game untouched",
+  "belief_resume_disabled": true
+}
