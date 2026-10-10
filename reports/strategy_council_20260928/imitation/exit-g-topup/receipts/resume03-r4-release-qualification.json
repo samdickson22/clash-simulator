@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "real_games": 0,
+  "tests": [
+    "packer actual ionice assertion accepts idle/rejects best-effort; executable launch uses idle class",
+    "58 workers0-57; manager58/packer59; maximum60persistent",
+    "retained64819roots packed before first new initialization/admission",
+    "all frozen retained identities required before ramp unlock",
+    "all future R3 scripts priority; no56-59 coexistence exception",
+    "K/X/future named timing studies retain priority",
+    "fresh controller seeds cached04 only; reload03 and08",
+    "same03fullcorpus replaces old baseline wholesale without duplication",
+    "combined accounting includes static01 and all hosts"
+  ],
+  "utc": "2026-10-10T12:21:45Z",
+  "checks_passed": 26,
+  "ramp_checks": 5,
+  "psi_checks": 6,
+  "deadline_checks": 6,
+  "release_checks": 9,
+  "io_class_actual_assertion_injected": true,
+  "rows_metadata_function_test_environment": "05numpy unavailable; extracted originalSHA/write_jsonAST only. Scientificemitter replaced onlyinside syntheticworkerqualification;noactualgames. Earlierenvironmentimportfailures hadnooperationalactivation.",
+  "operations_sha256": {
+    "admission.py": "2a6a3bebee120932f068e75d195b81ced2597badaddbe5fb1fcbcfa7566136e9",
+    "detach.sh": "18bf5da91aae65d7b0ed7df788775e92fd59eda880e3b1fd38d9a8904e8ee23d",
+    "driver.py": "f1ba73ddf0db8d6c17c279bd091a0d234e82c84c36e2b271aef1a3b2c64bdb96",
+    "env.sh": "7b770de1ea1d9ec1b37c3391989ed69be5ee822736cdd903f211a1e885b1bd3d",
+    "finalize.py": "3aebbaf2347e952afac86ef8453e7a77675d9e77dbca5bcc102eab9b29a7d9df",
+    "launch_guard.py": "f1ebf6b1148d46ebc66c414585814388ad6676ef99c776d92e1d4d32efa1cde9",
+    "pack_loader.py": "68d1399f2d03a9d63f261ef6b3e565b06b7f98fec3c3048375b1bd2d52aef04f",
+    "pack_r1_frozen.py": "5442af29f9bcea94f3ddebbd8de7ef18d041b53eb3d1e2456fa36edb75fc5d80",
+    "preflight.py": "8d8f71922455e18b5c3a3df569ef726c1c95097f41561ab88ffa7d095e08f7f8",
+    "prerequisite.py": "61e40b6e96ac7423782dde5c5bb2349573eaca53aea5c999eb47254cfaea869b",
+    "pressure_guard.py": "4aaa2309b41fe0c56a845250e1eba9a7f0d827a190063cf6525f87e52a692d99",
+    "qualify_deadline.py": "d49713ad0dfc46d8d0be334dde99b6386ec37cb653e77e25171760c7d576afc6",
+    "qualify_pressure.py": "9871a88f26bf4f78016699240ae2ad9fe62fc4a250aac7fe185e82f011738011",
+    "qualify_ramp.py": "6bf706e074af0d621ac7387719fe143817586c711119d9c7bfca722986b111e6",
+    "qualify_release.py": "b6485382caf0ef1b39716eaa155495d193e5f2d1a9da1b2e48c90d15eb12131a"
+  }
+}
