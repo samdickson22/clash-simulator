@@ -1,0 +1,605 @@
+{
+  "schema": "clasher.exit-r2.monitor.v1",
+  "utc": "2026-10-10T01:11:58Z",
+  "job_root": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1",
+  "arms": [
+    {
+      "utc": "2026-10-10T01:11:59Z",
+      "host": "127x09",
+      "arm": "X1",
+      "health": {
+        "utc": "2026-10-10T01:11:52Z",
+        "pid": 1870189,
+        "pss": 18591650816,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 1142.10475979303
+      },
+      "launch": {
+        "utc": "2026-10-10T00:52:50Z",
+        "host": "127x09",
+        "supervisor_pid": 1870123,
+        "supervisor_pgid": 1870123,
+        "trainer_pid": 1870189,
+        "trainer_pgid": 1870189,
+        "command": [
+          "taskset",
+          "-c",
+          "118,119,126",
+          "bash",
+          "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/run_fit.sh",
+          "X1"
+        ],
+        "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP",
+        "checkpoint_stop_deadline": "2026-10-11T05:15:00Z"
+      },
+      "exit": null,
+      "runtime": {
+        "host": "127x09",
+        "pid": 1870189,
+        "started_at": "2026-10-10T00:52:51.285957+00:00",
+        "numpy": "2.3.5",
+        "torch": "2.7.1+cu118",
+        "python": "3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]",
+        "cuda_allocator_config": null,
+        "effective_human_microbatch": 7168,
+        "nice": 10,
+        "affinity": [
+          118,
+          119,
+          126
+        ],
+        "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+        "actual_loader_workers": 6,
+        "scientific_loader_workers": 1,
+        "prefetch_factor": 4,
+        "mmap_random_advice": false,
+        "operational_amendment_sha256": "a1237439208ee3779b79506e8c1018e42370134739b258f365819cf94f83ee83"
+      },
+      "own_processes": [
+        {
+          "pid": 1870123,
+          "state": "S",
+          "pgid": 1870123,
+          "nice": 10
+        },
+        {
+          "pid": 1870189,
+          "state": "R",
+          "pgid": 1870189,
+          "nice": 10
+        },
+        {
+          "pid": 1876583,
+          "state": "S",
+          "pgid": 1870189,
+          "nice": 10
+        },
+        {
+          "pid": 1876588,
+          "state": "S",
+          "pgid": 1870189,
+          "nice": 10
+        },
+        {
+          "pid": 1876589,
+          "state": "S",
+          "pgid": 1870189,
+          "nice": 10
+        },
+        {
+          "pid": 1876590,
+          "state": "R",
+          "pgid": 1870189,
+          "nice": 10
+        },
+        {
+          "pid": 1876618,
+          "state": "S",
+          "pgid": 1870189,
+          "nice": 10
+        },
+        {
+          "pid": 1876623,
+          "state": "S",
+          "pgid": 1870189,
+          "nice": 10
+        }
+      ],
+      "provisional_tree_cpu_seconds": 2919.85,
+      "provisional_cpu_note": "Sum alive own tree self CPU and reaped child CPU. Final exit meter authoritative; do not add this snapshot or segment meters to exit totals.",
+      "quiet_noncomment_entries": [],
+      "lease": {
+        "project": "clasher",
+        "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+        "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+        "start_utc": "2026-10-08T05:29:33.976698+00:00",
+        "expected_end_utc": "2026-10-11T05:30Z",
+        "max_workers": 16,
+        "gpu": true,
+        "shared": true,
+        "gpu_only": true,
+        "cpu": false,
+        "cap_raised_utc": "2026-10-08T11:13Z",
+        "cap_raised_by": "roader coordinator f552b138: builds done; shared CPU+GPU <=96, <=16 with console user",
+        "gpu_extension": {
+          "authority": "coordinator decision received2026-10-09T02:40Z, labeled03:12; FLEET-SHARING GPU-focused lease extension",
+          "max_processes": 16,
+          "max_pss_gb": 48,
+          "nice_min": 10,
+          "gpu_free_gb_min": 8,
+          "no_cpu_heavy_after_utc": "2026-10-09T04:30Z",
+          "reclaim_notice_minutes": 30
+        },
+        "extension_effective_utc": "2026-10-09T03:23Z"
+      },
+      "log_tail": "{\"step\": 585, \"rows\": 4792320, \"teacher_ratio\": 1.0, \"loss\": 5.564216732978821, \"grad_norm\": 0.8503983020782471}\n{\"step\": 586, \"rows\": 4800512, \"teacher_ratio\": 1.0, \"loss\": 5.644938910380006, \"grad_norm\": 1.168810486793518}\n"
+    },
+    {
+      "utc": "2026-10-10T01:11:59Z",
+      "host": "127x16",
+      "arm": "X2",
+      "health": {
+        "utc": "2026-10-10T01:11:58Z",
+        "pid": 871463,
+        "pss": 15959581696,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 1147.8936788418796
+      },
+      "launch": {
+        "utc": "2026-10-10T00:52:50Z",
+        "host": "127x16",
+        "supervisor_pid": 871318,
+        "supervisor_pgid": 871318,
+        "trainer_pid": 871463,
+        "trainer_pgid": 871463,
+        "command": [
+          "taskset",
+          "-c",
+          "118,119,126",
+          "bash",
+          "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/run_fit.sh",
+          "X2"
+        ],
+        "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP",
+        "checkpoint_stop_deadline": "2026-10-11T05:15:00Z"
+      },
+      "exit": null,
+      "runtime": {
+        "host": "127x16",
+        "pid": 871463,
+        "started_at": "2026-10-10T00:52:51.898756+00:00",
+        "numpy": "1.26.4",
+        "torch": "2.7.1+cu118",
+        "python": "3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]",
+        "cuda_allocator_config": null,
+        "effective_human_microbatch": 7168,
+        "nice": 10,
+        "affinity": [
+          118,
+          119,
+          126
+        ],
+        "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+        "actual_loader_workers": 6,
+        "scientific_loader_workers": 1,
+        "prefetch_factor": 4,
+        "mmap_random_advice": false,
+        "operational_amendment_sha256": "a1237439208ee3779b79506e8c1018e42370134739b258f365819cf94f83ee83"
+      },
+      "own_processes": [
+        {
+          "pid": 871318,
+          "state": "S",
+          "pgid": 871318,
+          "nice": 10
+        },
+        {
+          "pid": 871463,
+          "state": "R",
+          "pgid": 871463,
+          "nice": 10
+        },
+        {
+          "pid": 878633,
+          "state": "S",
+          "pgid": 871463,
+          "nice": 10
+        },
+        {
+          "pid": 878634,
+          "state": "S",
+          "pgid": 871463,
+          "nice": 10
+        },
+        {
+          "pid": 878639,
+          "state": "S",
+          "pgid": 871463,
+          "nice": 10
+        },
+        {
+          "pid": 878640,
+          "state": "S",
+          "pgid": 871463,
+          "nice": 10
+        },
+        {
+          "pid": 878641,
+          "state": "S",
+          "pgid": 871463,
+          "nice": 10
+        },
+        {
+          "pid": 878673,
+          "state": "R",
+          "pgid": 871463,
+          "nice": 10
+        }
+      ],
+      "provisional_tree_cpu_seconds": 3006.8199999999993,
+      "provisional_cpu_note": "Sum alive own tree self CPU and reaped child CPU. Final exit meter authoritative; do not add this snapshot or segment meters to exit totals.",
+      "quiet_noncomment_entries": [],
+      "lease": {
+        "project": "clasher",
+        "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+        "purpose": "Isolated Clasher CPU P16 and GPU qualification; certified imitation store staging; subsequent worker jobs",
+        "start_utc": "2026-10-08T05:29:33.955779+00:00",
+        "expected_end_utc": "2026-10-11T05:30Z",
+        "max_workers": 16,
+        "gpu": true,
+        "shared": true,
+        "cap_raised_utc": "2026-10-08T06:50Z",
+        "cap_raised_by": "roader coordinator f552b138 (speedup job finished; roader keeps <=8 light procs)",
+        "pss_cap_bytes": 60000000000,
+        "extension_authority": "Coordinator message approximately2026-10-09T03:13Z; roader approval in FLEET-SHARING",
+        "updated_at": "2026-10-09T03:11:59.416001+00:00",
+        "pss_exception_job": "T11 seed2026100821 only",
+        "pss_exception_authority": "Coordinator forwarded roader approval~2026-10-09T03:15Z"
+      },
+      "log_tail": "{\"step\": 563, \"rows\": 4612096, \"teacher_ratio\": 1.0, \"loss\": 5.633595613762736, \"grad_norm\": 1.3221385478973389}\n{\"step\": 564, \"rows\": 4620288, \"teacher_ratio\": 1.0, \"loss\": 5.4648302756249905, \"grad_norm\": 1.3626598119735718}\n"
+    },
+    {
+      "utc": "2026-10-10T01:11:59Z",
+      "host": "127x08",
+      "arm": "X3",
+      "health": {
+        "utc": "2026-10-10T01:11:57Z",
+        "pid": 2652063,
+        "pss": 22649877504,
+        "processes": 8,
+        "gpu_free_bytes": 48323624960,
+        "reason": null,
+        "wall_seconds": 1146.5866745950188
+      },
+      "launch": {
+        "utc": "2026-10-10T00:52:51Z",
+        "host": "127x08",
+        "supervisor_pid": 2651962,
+        "supervisor_pgid": 2651962,
+        "trainer_pid": 2652063,
+        "trainer_pgid": 2652063,
+        "command": [
+          "taskset",
+          "-c",
+          "118,119,126",
+          "bash",
+          "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/run_fit.sh",
+          "X3"
+        ],
+        "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP",
+        "checkpoint_stop_deadline": "2026-10-10T05:15:00Z"
+      },
+      "exit": null,
+      "runtime": {
+        "host": "127x08",
+        "pid": 2652063,
+        "started_at": "2026-10-10T00:52:52.259703+00:00",
+        "numpy": "2.3.5",
+        "torch": "2.7.1+cu118",
+        "python": "3.12.12 (main, Feb 12 2026, 00:42:14) [Clang 21.1.4 ]",
+        "cuda_allocator_config": null,
+        "effective_human_microbatch": 7168,
+        "nice": 10,
+        "affinity": [
+          118,
+          119,
+          126
+        ],
+        "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+        "actual_loader_workers": 6,
+        "scientific_loader_workers": 1,
+        "prefetch_factor": 4,
+        "mmap_random_advice": false,
+        "operational_amendment_sha256": "a1237439208ee3779b79506e8c1018e42370134739b258f365819cf94f83ee83"
+      },
+      "own_processes": [
+        {
+          "pid": 2651962,
+          "state": "R",
+          "pgid": 2651962,
+          "nice": 10
+        },
+        {
+          "pid": 2652063,
+          "state": "S",
+          "pgid": 2652063,
+          "nice": 10
+        },
+        {
+          "pid": 2660780,
+          "state": "S",
+          "pgid": 2652063,
+          "nice": 10
+        },
+        {
+          "pid": 2660782,
+          "state": "S",
+          "pgid": 2652063,
+          "nice": 10
+        },
+        {
+          "pid": 2660809,
+          "state": "S",
+          "pgid": 2652063,
+          "nice": 10
+        },
+        {
+          "pid": 2660811,
+          "state": "R",
+          "pgid": 2652063,
+          "nice": 10
+        },
+        {
+          "pid": 2660816,
+          "state": "R",
+          "pgid": 2652063,
+          "nice": 10
+        },
+        {
+          "pid": 2660817,
+          "state": "S",
+          "pgid": 2652063,
+          "nice": 10
+        }
+      ],
+      "provisional_tree_cpu_seconds": 3324.0899999999997,
+      "provisional_cpu_note": "Sum alive own tree self CPU and reaped child CPU. Final exit meter authoritative; do not add this snapshot or segment meters to exit totals.",
+      "quiet_noncomment_entries": [],
+      "lease": null,
+      "log_tail": "{\"step\": 550, \"rows\": 4505600, \"teacher_ratio\": 1.0, \"loss\": 5.5909230429679155, \"grad_norm\": 0.9470261335372925}\n{\"step\": 551, \"rows\": 4513792, \"teacher_ratio\": 1.0, \"loss\": 5.753922164440155, \"grad_norm\": 0.8077062368392944}\n"
+    },
+    {
+      "utc": "2026-10-10T01:11:59Z",
+      "host": "127x01",
+      "arm": "X4",
+      "health": {
+        "utc": "2026-10-10T01:11:58Z",
+        "pid": 1217609,
+        "pss": 26054797312,
+        "processes": 8,
+        "gpu_free_bytes": 31691112448,
+        "reason": null,
+        "wall_seconds": 1146.9806922581047
+      },
+      "launch": {
+        "utc": "2026-10-10T00:52:51Z",
+        "host": "127x01",
+        "supervisor_pid": 1217465,
+        "supervisor_pgid": 1217465,
+        "trainer_pid": 1217609,
+        "trainer_pgid": 1217609,
+        "command": [
+          "taskset",
+          "-c",
+          "118,119,126",
+          "bash",
+          "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/run_fit.sh",
+          "X4"
+        ],
+        "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP",
+        "checkpoint_stop_deadline": "2026-10-11T05:15:00Z"
+      },
+      "exit": null,
+      "runtime": {
+        "host": "127x01",
+        "pid": 1217609,
+        "started_at": "2026-10-10T00:52:52.897978+00:00",
+        "numpy": "2.3.5",
+        "torch": "2.7.1+cu118",
+        "python": "3.12.12 (main, Feb 12 2026, 00:42:14) [Clang 21.1.4 ]",
+        "cuda_allocator_config": null,
+        "effective_human_microbatch": 3584,
+        "nice": 10,
+        "affinity": [
+          118,
+          119,
+          126
+        ],
+        "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+        "actual_loader_workers": 6,
+        "scientific_loader_workers": 1,
+        "prefetch_factor": 4,
+        "mmap_random_advice": false,
+        "operational_amendment_sha256": "a1237439208ee3779b79506e8c1018e42370134739b258f365819cf94f83ee83"
+      },
+      "own_processes": [
+        {
+          "pid": 1217465,
+          "state": "S",
+          "pgid": 1217465,
+          "nice": 10
+        },
+        {
+          "pid": 1217609,
+          "state": "R",
+          "pgid": 1217609,
+          "nice": 10
+        },
+        {
+          "pid": 1225774,
+          "state": "S",
+          "pgid": 1217609,
+          "nice": 10
+        },
+        {
+          "pid": 1225775,
+          "state": "S",
+          "pgid": 1217609,
+          "nice": 10
+        },
+        {
+          "pid": 1225803,
+          "state": "R",
+          "pgid": 1217609,
+          "nice": 10
+        },
+        {
+          "pid": 1225804,
+          "state": "D",
+          "pgid": 1217609,
+          "nice": 10
+        },
+        {
+          "pid": 1225809,
+          "state": "S",
+          "pgid": 1217609,
+          "nice": 10
+        },
+        {
+          "pid": 1225810,
+          "state": "S",
+          "pgid": 1217609,
+          "nice": 10
+        }
+      ],
+      "provisional_tree_cpu_seconds": 4669.98,
+      "provisional_cpu_note": "Sum alive own tree self CPU and reaped child CPU. Final exit meter authoritative; do not add this snapshot or segment meters to exit totals.",
+      "quiet_noncomment_entries": [],
+      "lease": null,
+      "log_tail": "{\"step\": 405, \"rows\": 3317760, \"teacher_ratio\": 0.75, \"loss\": 5.689599219709635, \"grad_norm\": 1.6344482898712158}\n{\"step\": 406, \"rows\": 3325952, \"teacher_ratio\": 0.75, \"loss\": 5.908538280054927, \"grad_norm\": 2.095100164413452}\n"
+    },
+    {
+      "utc": "2026-10-10T01:11:59Z",
+      "host": "127x04",
+      "arm": "X5",
+      "health": {
+        "utc": "2026-10-10T01:11:58Z",
+        "pid": 3727520,
+        "pss": 14492753920,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 1145.9310877369717
+      },
+      "launch": {
+        "utc": "2026-10-10T00:52:52Z",
+        "host": "127x04",
+        "supervisor_pid": 3727388,
+        "supervisor_pgid": 3727388,
+        "trainer_pid": 3727520,
+        "trainer_pgid": 3727520,
+        "command": [
+          "taskset",
+          "-c",
+          "118,119,126",
+          "bash",
+          "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/run_fit.sh",
+          "X5"
+        ],
+        "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP",
+        "checkpoint_stop_deadline": "2026-10-11T05:15:00Z"
+      },
+      "exit": null,
+      "runtime": {
+        "host": "127x04",
+        "pid": 3727520,
+        "started_at": "2026-10-10T00:52:53.196001+00:00",
+        "numpy": "2.3.5",
+        "torch": "2.7.1+cu118",
+        "python": "3.12.12 (main, Feb 12 2026, 00:42:14) [Clang 21.1.4 ]",
+        "cuda_allocator_config": null,
+        "effective_human_microbatch": 7168,
+        "nice": 10,
+        "affinity": [
+          118,
+          119,
+          126
+        ],
+        "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+        "actual_loader_workers": 6,
+        "scientific_loader_workers": 1,
+        "prefetch_factor": 4,
+        "mmap_random_advice": false,
+        "operational_amendment_sha256": "a1237439208ee3779b79506e8c1018e42370134739b258f365819cf94f83ee83"
+      },
+      "own_processes": [
+        {
+          "pid": 3727388,
+          "state": "S",
+          "pgid": 3727388,
+          "nice": 10
+        },
+        {
+          "pid": 3727520,
+          "state": "R",
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736754,
+          "state": "S",
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736778,
+          "state": "S",
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736797,
+          "state": "R",
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736810,
+          "state": "S",
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736811,
+          "state": "S",
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736816,
+          "state": "S",
+          "pgid": 3727520,
+          "nice": 10
+        }
+      ],
+      "provisional_tree_cpu_seconds": 3003.01,
+      "provisional_cpu_note": "Sum alive own tree self CPU and reaped child CPU. Final exit meter authoritative; do not add this snapshot or segment meters to exit totals.",
+      "quiet_noncomment_entries": [],
+      "lease": null,
+      "log_tail": "{\"step\": 584, \"rows\": 4784128, \"teacher_ratio\": 1.0, \"loss\": 5.674082599580288, \"grad_norm\": 0.8223909139633179}\n{\"step\": 585, \"rows\": 4792320, \"teacher_ratio\": 1.0, \"loss\": 5.564216732978821, \"grad_norm\": 0.8503983020782471}\n"
+    }
+  ],
+  "controller_output": "{\n  \"utc\": \"2026-10-10T01:11:50Z\",\n  \"stage\": \"waiting for fits / stage1 / conditional stage2\",\n  \"offline\": {},\n  \"stage2\": {},\n  \"active\": null,\n  \"failures\": [],\n  \"wall_seconds\": 1252.3893119071145\n}\n1403380 1403380   - SNs  00:00:01\n",
+  "schedule": {
+    "scheduledTaskId": "scheduled-task:command:mcp:86d0d4b4-0eba-41c7-b1f6-d29fd2bc317f:schedule-task:clasher-exit-r2-x-continuation-20261010-r1",
+    "enabled": true,
+    "nextRunAt": "2026-10-10T01:21:19.664Z"
+  },
+  "provisional_fit_gpu_wall_hours": 1.5915269147847235,
+  "provisional_fit_cpu_hours": 4.701041666666667,
+  "accounting": "These running-attempt2 snapshots are non-additive across monitors; final supervisor exit meters replace them. Includes own alive self plus reaped child CPU once; excludes failed-attempt1 already separately charged. Segment/child/game subprocess meters are explanatory breakdowns, not additive to their parent's whole-tree meter."
+}

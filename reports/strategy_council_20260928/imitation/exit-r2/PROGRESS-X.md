@@ -163,3 +163,25 @@ Stage3 invocation after gates: `game_pool_v2.py --job "$job" --stage 3
 --arm Xn --cores 60 61 62 63`; run the same command with `--arm init` for
 control. Reduce only600 complete genuinepairs via reduce_stage3_v2.py.
 K originals untouched, fit-host original freezes/source snapshots intact.
+
+2026-10-10T01:12:24Z. Continuation deduplicated all own launch identities:
+the five attempt2 supervisor/trainer groups above remain active, eight own
+processes each, all nice10. Latest completed steps X1=586,X2=564,X3=551,
+X4=406,X5=585; no final EMA or gate decision yet. No duplicate fit launched.
+09/16 leases still valid through Oct11 05:30Z; sampled PSS18.59/15.96GB,
+GPU-free48.41GB; X3 PSS22.65GB, GPU-free48.32GB; X4 PSS26.05GB,
+GPU-free31.69GB; X5 PSS14.49GB, GPU-free48.41GB. No guard stop.
+08 noncomment quiet entries empty; guardstop05:15Z/vacate05:30Z remains.
+03 controller1403380/PGID1403380 alive, SCHED_IDLE/core63;01:11:50Z receipt
+offline={},stage2={},active=null,failures=[]; waiting final checkpoints only.
+Capacity PROGRESS at01:03Z explicitly releases13 after its scientific kill;
+independent01:12:24Z nvidia-smi lists no compute apps and48,666MiB free.
+13 is available overflow, with fresh capacity/lease/GPU checks still required
+before exact-state migration; no X work was launched there.
+Live metering receipt monitor-20261010T0112Z.json: attempt2 cumulative snapshots
+1.591526915GPU-wall hours,4.701041667provisional CPU-hours. These snapshots
+are non-additive across continuations and exclude prior failed/preparation work;
+final exit whole-tree meters replace them. Never add segment/child CPU again.
+Ten-minute continuation remains enabled; next2026-10-10T01:21:19.664Z.
+Next: final EMA collection/offline gates automatically, conditional h2h256;
+only admitted survivors can trigger corrected v2 paired stage3 and R2.

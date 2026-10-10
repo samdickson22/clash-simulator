@@ -10,11 +10,11 @@ The committed plan/seed audit must precede fitting; use final EMA only.
 
 | Arm | Target / fraction | Fit | Stage1 | Stage2 | Stage3 | Decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| X1 | T=.003 /1.0 | running09 | pending | conditional | conditional | pending |
-| X2 | T=.0001 /1.0 | running16 | pending | conditional | conditional | pending |
-| X3 | z-score τ=.5 /1.0 | running08; resume13/14 if needed | pending | conditional | conditional | pending |
-| X4 | T=.003 /.75 | running01, micro3584 | pending | conditional | conditional | pending |
-| X5 | X1 double steps /1.0 | running04 | pending | conditional | conditional | pending |
+| X1 | T=.003 /1.0 | running09, step586/4883 | pending | conditional | conditional | pending |
+| X2 | T=.0001 /1.0 | running16, step564/4883 | pending | conditional | conditional | pending |
+| X3 | z-score τ=.5 /1.0 | running08, step551/4883 | pending | conditional | conditional | pending |
+| X4 | T=.003 /.75 | running01, step406/4883, micro3584 | pending | conditional | conditional | pending |
+| X5 | X1 double steps /1.0 | running04, step585/9766 | pending | conditional | conditional | pending |
 
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
 seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
@@ -45,6 +45,16 @@ PSS/headroom/nice guards and return before2026-10-11 05:30Z.
 Metered failed-attempt fit GPU-wall hours:0.036806672;
 fit CPU-hours:0.029492098; heldout/reporting CPU-hours:0; mechanics costs reported above.
 Preparation audit CPU-hours:0.844768969, including retired scan attempts.
+Attempt2 live snapshots at2026-10-10 01:11:52–58Z:1.591526915 allocated
+GPU-wall hours and4.701041667 provisional whole-tree CPU-hours across five fits.
+These running totals replace earlier snapshots and will be replaced by final
+supervisor exit meters; they exclude failed attempt1 and preparation costs above.
+Own supervisor/trainer/loaders are counted once; segment diagnostics are not
+added again. Receipt: `receipts/monitor-20261010T0112Z.json`. All five have eight
+owned processes, nice10, no stop reason. Leased09/16 remain below46GB PSS
+and above8GiB GPU free. 08 quiet entries are empty after stripping comments.
+Capacity released13 at01:03Z; independent GPU-idle check01:12:24Z confirms
+overflow availability, subject to a fresh admission check before any resume.
 Preparation audit CPU costs and failed/retired scan attempts are retained under
 the audit job and PROGRESS-X.md; final totals will include every fit and game
 attempt, startup/loader CPU, and scientific postprocessing. Full per-arm metrics,
