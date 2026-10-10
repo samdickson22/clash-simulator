@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-10T06:48:50Z",
+  "scheduler": {
+    "scheduledTaskId": "scheduled-task:command:mcp:86d0d4b4-0eba-41c7-b1f6-d29fd2bc317f:schedule-task:clasher-exit-r2-x-continuation-20261010-r1",
+    "title": "Finish Clasher ExIt r2 X experiments",
+    "prompt": "COMPLETE 2026-10-10T06:47:05Z: All7 original fits/frozenoffline64 closed exactlyonce; descriptive600/3000 games/frozenselectedreduction passed, raw/cases/logs/meters SHA-mirrored DIRECT01->03 with originalsretained. ALLown game/pool/reducer/copy groupsabsent; explicit01physical0\u201339release receipt POSTKILL-CPU-RELEASE.json, coordinator andR3notified, RESULTS/receipts pushed47f410ec. EXPLORATION NEVER ADOPTABLE X1/X2/X4 study; original150/151unconsumed/R2ineligible/gatesinfeasible. No further launches, inference, games, controller restart or G restart. THIS continuation disabled after completion.",
+    "enabled": false,
+    "projectId": "afd175e2-15e5-4540-b4fd-aa5edcab45c8",
+    "boundThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-x-exit-r2-20261010-1",
+    "schedule": {
+      "type": "interval",
+      "everyMs": 600000
+    },
+    "nextRunAt": null,
+    "lastRunStatus": "succeeded"
+  },
+  "release_notifications": [
+    {
+      "threadId": "0523ae6f-baa3-4d4e-b233-b392671670db",
+      "messageId": "message:mcp:86d0d4b4-0eba-41c7-b1f6-d29fd2bc317f:thread-send:clasher-x-final-release-47f410ec-20261010",
+      "runId": "run:thread:0523ae6f-baa3-4d4e-b233-b392671670db:ordinal:713",
+      "status": "starting",
+      "delivery": "started"
+    },
+    {
+      "threadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-exit-r3-20261010-1",
+      "messageId": "message:mcp:86d0d4b4-0eba-41c7-b1f6-d29fd2bc317f:thread-send:clasher-x-r3-host01-release-47f410ec-20261010",
+      "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A53609d4a-a2de-484a-834d-8566c6339c9f%253Adelegate-task%253Aclasher-exit-r3-20261010-1:ordinal:10",
+      "status": "running",
+      "delivery": "steered"
+    }
+  ],
+  "complete": true
+}

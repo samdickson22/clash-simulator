@@ -1,12 +1,12 @@
 {
   "scheduledTaskId": "scheduled-task:command:mcp:86d0d4b4-0eba-41c7-b1f6-d29fd2bc317f:schedule-task:clasher-exit-r2-x-continuation-20261010-r1",
   "boundThreadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-x-exit-r2-20261010-1",
-  "enabled": true,
+  "enabled": false,
   "schedule": {
     "type": "interval",
     "everyMs": 600000
   },
-  "nextRunAt": "2026-10-10T06:32:07.577Z",
+  "nextRunAt": null,
   "stop_rule": "Disable after completed experiment or final deadline cleanup 2026-10-11T05:30Z",
   "last_prompt_revision_utc": "2026-10-10T06:23:34Z",
   "current_controller_pid": 2071651,
@@ -17,7 +17,7 @@
   "latest_operational_amendment_commit": "9a2797bb",
   "stage1_2_admission": "Offline fit-hostGPU record ONLY; original stage2/stage3 prohibited by infeasible-gate ruling; R2 cannot trigger.",
   "fit_collection_prelaunch_commit": "77cbea40b36b59192a5ae4e51d906f0c2c0486f9",
-  "last_verified_utc": "2026-10-10T06:47:05Z",
+  "last_verified_utc": "2026-10-10T06:48:50Z",
   "current_controller": "controller_offline_record.py",
   "x7_supervisor_pid": 2423139,
   "x7_trainer_pid": 2423269,
@@ -72,7 +72,7 @@
   "active_fit_arms": [],
   "x5_latest_step": 9766,
   "latest_fit_snapshot": "monitor-20261010T0613Z.json",
-  "postkill_reporting_latest_context": "postkill-reporting-context-20261010T0602Z.json",
+  "postkill_reporting_latest_context": "POSTKILL-CPU-RELEASE.json",
   "x5_completed": true,
   "x5_once_offline_completed": true,
   "x5_closed_group_receipt": "X5-completion.json",
@@ -80,7 +80,7 @@
   "current_controller_alive": false,
   "current_controller_closed": true,
   "controller_final_meter_receipt": "controller-offline-record-final-meter.json",
-  "postkill_reporting_latest_health": "postkill-reporting-health-20261010T0622Z.json",
+  "postkill_reporting_latest_health": "postkill-reporting-completion.json",
   "postkill_reporting_closed": true,
   "postkill_reduction_pid": 2914307,
   "postkill_reduction_passed": true,
@@ -91,5 +91,10 @@
   "host01_release_receipt": "POSTKILL-CPU-RELEASE.json",
   "postkill_reporting_pool_final_meter": "postkill-reporting-pool-final-meter.json",
   "original_all_records_complete": true,
-  "current_work_pending": "Final publication/release notifications/schedule disable"
+  "current_work_pending": null,
+  "completed": true,
+  "completion_commit": "47f410ec",
+  "completion_utc": "2026-10-10T06:48:50Z",
+  "host01_release_notifications_delivered": true,
+  "scheduler_disable_receipt": "continuation-disabled.json"
 }
