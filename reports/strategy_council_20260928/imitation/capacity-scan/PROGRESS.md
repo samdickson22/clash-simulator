@@ -675,3 +675,21 @@ No new error, OOM or restart. Conservative cumulative pipeline cost
 Evidence: `monitor-20261010T0232Z.json`, `width384-result.json`, `width384-release.json`.
 No source, recipe or data changes. Authorized 480 micro1024 amendment disclosed;
 all failed artifacts retained. Continuation stays enabled pending 480 outcome and any survivor curve.
+
+2026-10-10 02:43Z: Width 480 reached the exact quarter boundary, step11615 /
+95,144,680 rows. Full-dev NLL receipt and kill decision remain pending;
+no scientific disposition inferred before scoring. Last loader-inclusive rate
+4460 rows/s. Saved quarter checkpoint, 203,601,114 bytes, SHA
+becef382c87e7ca262f009ea9aa21b6c91e2b2bd0a52ec6c5c376fa28df1e546
+independently verified on15; weights remain outside git.
+Sole controller and remaining guard healthy: seven owned processes, independently
+nice19, peak PSS 43.80 GB and sampled GPU free 40.5 GiB.
+No new error, OOM, stop or restart. Conservative cumulative pipeline cost
+19.260 GPU-hours includes staging and every 480 segment; actual final 480 cost pending.
+Width 288 remains scientifically killed (gain 0.0030829170208171996);
+width 384 remains scientifically killed (gain 0.004456449396346762).
+Both full measured curves, actual costs and checkpoint pointers are archived.
+GPUs13/14/16 remain released; no relaunch. Control NLL 0.27726436294161033.
+Evidence: `monitor-20261010T0242Z.json`. Scientific recipe/source/data unchanged; 480 retains
+pre-dev authorized micro1024/effective8192/cap0.78 amendment; failed artifacts retained.
+Continuation remains enabled pending 480 scoring and any survivor curve.
