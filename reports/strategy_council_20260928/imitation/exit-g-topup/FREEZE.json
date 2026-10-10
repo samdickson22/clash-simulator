@@ -1,0 +1,212 @@
+{
+  "schema": "clasher.exit-g.freeze.v1",
+  "utc": "2026-10-10T01:17:32Z",
+  "exploration": true,
+  "source_commit": "39b6adf6",
+  "emitter_source_sha256": "dab616517ea6b33ae1de6a34909526cf5409ec4ad71c180188d95d9716cfecc1",
+  "rows_source_sha256": "835a4104fbd46731998ca033223692813bd4c4fdf015b7a15317a0ffb780ab53",
+  "native_sha256": "06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10",
+  "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "full_b2_launch_sha256": "68018fc17998753374cbe6d68f9767133a6c0656caea575ee46debc871778ce9",
+  "runtime_source_files": 1402,
+  "deck_schedule": "Unchanged emitter.decks(): five highest-frequency train archetypes plus Hog2.6, Xbow cycle, RoyalHogs spawners; own=index%8, other=(index//8)%8; seat=index%2",
+  "opponent_schedule": [
+    "W",
+    "v1",
+    "baseline",
+    "script"
+  ],
+  "opponent_selector": "index%4",
+  "reserved_seeds": {
+    "base": 4503601607370496,
+    "count": 1000000,
+    "stop_exclusive": 4503601608370496,
+    "smoke_indices": [
+      0,
+      8
+    ],
+    "production_indices": [
+      64,
+      1000000
+    ],
+    "unused_indices": [
+      8,
+      64
+    ],
+    "helper_offset_ceiling": 271829
+  },
+  "seed_audit": {
+    "utc": "2026-10-10T01:16:26Z",
+    "passed": true,
+    "files": 144265,
+    "inventory_sha256": "af4d8b1661d67a54bd2c6c43040348fa892f1d582e1a413a4b02fc93c287cd49",
+    "inventory_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/seed-inventory.json",
+    "formula_contexts": 53506,
+    "declarations": 15743,
+    "overlap": [],
+    "errors": [],
+    "full_b2_source_files": 1402,
+    "full_b2_launch_sha256": "68018fc17998753374cbe6d68f9767133a6c0656caea575ee46debc871778ce9",
+    "source_pins_verified": true,
+    "native_pins_verified": true,
+    "checkpoint_pins_verified": true,
+    "cpu_seconds": 96.65751300000001,
+    "wall_seconds": 111.48189841001295
+  },
+  "prior_seed_ledger": [
+    {
+      "name": "r1 historical conservative bound",
+      "start": 0,
+      "stop_exclusive": 4503600127370497
+    },
+    {
+      "name": "r1 screen h2h",
+      "start": 4503601007370496,
+      "stop_exclusive": 4503601007370752
+    },
+    {
+      "name": "r1 screen paired",
+      "start": 4503601107370496,
+      "stop_exclusive": 4503601107371096
+    },
+    {
+      "name": "r1 heldout",
+      "start": 4503601207370496,
+      "stop_exclusive": 4503601207370560
+    },
+    {
+      "name": "r1 smoke conservative helper bound",
+      "start": 4503601307370496,
+      "stop_exclusive": 4503601307642357
+    },
+    {
+      "name": "K reporting",
+      "start": 4503601407370496,
+      "stop_exclusive": 4503601407371096
+    },
+    {
+      "name": "K smoke",
+      "start": 4503601417370496,
+      "stop_exclusive": 4503601417370504
+    },
+    {
+      "name": "X h2h",
+      "start": 4503601507370496,
+      "stop_exclusive": 4503601507370752
+    },
+    {
+      "name": "X paired",
+      "start": 4503601517370496,
+      "stop_exclusive": 4503601517371096
+    },
+    {
+      "name": "X smoke",
+      "start": 4503601527370496,
+      "stop_exclusive": 4503601527370528
+    },
+    {
+      "name": "X dagger",
+      "start": 4503601707370496,
+      "stop_exclusive": 4503601707403264
+    }
+  ],
+  "provenance": [
+    {
+      "path": "reports/strategy_council_20260928/imitation/exit-r1/receipts/student-seed-audit.json",
+      "sha256": "3e2764ad69a2a1c05ddc93dc27770261856517e231341eb1881e1b0a7e5c0986"
+    },
+    {
+      "path": "reports/explore/k-anytime/seed-audit.json",
+      "sha256": "498bcfc40dd22f6c0963dc82770bd59fd832d71cc356173ded85ad2b9568cd80"
+    },
+    {
+      "path": "reports/explore/k-anytime/plan.json",
+      "sha256": "b2a21a905bc3250f972fdec318e59a0a8b6890d303dbaf8bca4872f75a7a2695"
+    },
+    {
+      "path": "reports/strategy_council_20260928/imitation/exit-r2/receipts/seed-audit.json",
+      "sha256": "50ca2e54a19f44b7c17150a0cd07f663c9c87c811fb3959128278fdaafa5c209"
+    },
+    {
+      "path": "reports/strategy_council_20260928/imitation/exit-r2/receipts/formula-range-review.json",
+      "sha256": "ba46ef01a8460da8955f53217c6f02fccd8faa1a9baac7b0ec53e668346d0d9e"
+    },
+    {
+      "path": "reports/strategy_council_20260928/PLAN-NEXT-20261010.md",
+      "sha256": "92204e4bfbdca5aca038de8cca2904b5a15e65e7996502c394bc00c60c53e51d"
+    }
+  ],
+  "target_root_decisions": 6000000,
+  "deadline_utc": "2026-10-11T03:00:00Z",
+  "job_prefix": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010",
+  "host": "127x04",
+  "worker_cores": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "supervisor_and_packer_core": 47,
+  "nice": 19,
+  "scheduler": "SCHED_IDLE",
+  "memory_floor_bytes": 25769803776,
+  "memory_pause_bytes": 27917287424,
+  "memory_resume_bytes": 30064771072,
+  "stop_file": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/STOP",
+  "stop_behavior": "Workers check before new games and pass stop=None to frozen emitter, finishing current games. Drain admission closes five minutes before deadline. STOP remains coordinator-owned and is never automatically removed.",
+  "other_hosts": "No generation on01 unless separately documented after K exits and before X evaluation. No work on08/03/leased/05.",
+  "packing": "Frozen packer on core47, verified SHA-sealed batches; smoke excluded; concat-manifest.json lists r1 parent SHA and all G shards. Target detection can include only completed-game drain overshoot, separately reported.",
+  "operations_location": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops",
+  "operations_sha256": {
+    "audit.py": "8ca283376e76f3f60f191d3f4c638ecc6f699c07319b864dffce5cc5fc8633ca",
+    "compatible.py": "43caa697607b85681303cae1ac4ffc9e42d30254836ae4b1a941caec0df58e5b",
+    "detach.sh": "61bc934d00c620cbe45f63de3a93195a3fd75c5ef11a05b509e2dee6d2f1a5ae",
+    "driver.py": "662f173d6a5fe9be13352fd54285f611ea18711a6f33979cf807cfc9e381cef0",
+    "env.sh": "7b770de1ea1d9ec1b37c3391989ed69be5ee822736cdd903f211a1e885b1bd3d",
+    "finalize.py": "ab1cc1fa0afa7d7a6ba1818f857a0ffbe89284f1dd7aa01c5795678889aa3a4e",
+    "seed_audit_original.py": "4e41d0f9ccfd020e68295a2886bdd0f7567ce539c96edab8f40ddfd178bd19f9"
+  }
+}
