@@ -1,0 +1,248 @@
+{
+  "released": true,
+  "host": "127x01",
+  "physical_cores": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+  ],
+  "study": "post-kill descriptive S-default",
+  "reporting_complete": true,
+  "paired_blocks": 600,
+  "terminal_games": 3000,
+  "pool_pid": 2035131,
+  "reducer_pid": 2914307,
+  "artifact_mirror_pids": [
+    2927428,
+    2939163
+  ],
+  "all_known_pool_block_groups_absent": true,
+  "known_pool_block_groups": 601,
+  "source_pins_verified_both_homes": true,
+  "locks_free_both_homes": true,
+  "probe01": {
+    "utc": "2026-10-10T06:46:44Z",
+    "host": "127x01",
+    "own_processes": [],
+    "locks": {
+      "POOL.lock": "free",
+      "REDUCE.lock": "free"
+    },
+    "progress": {
+      "completed": 600,
+      "pending": 0,
+      "active": {},
+      "arms": [
+        "C-v1",
+        "X1",
+        "X2",
+        "X4",
+        "K0"
+      ],
+      "admitted": true,
+      "failures": []
+    },
+    "source_pin_checks": {
+      "ops/postkill_admission.py": true,
+      "ops/k_postkill_sdefault.py": true,
+      "ops/game_worker_postkill.py": true,
+      "ops/postkill_block_worker.py": true,
+      "ops/game_pool_postkill.py": true,
+      "ops/reduce_postkill.py": true,
+      "ops/seed_audit_postkill.py": true,
+      "ops/test_postkill.py": true,
+      "ops/qualify_postkill.py": true,
+      "ops/sdefault.py": true,
+      "ops/audit_intervals_postkill.py": true,
+      "ops/postkill_selected.py": true,
+      "ops/k_postkill_selected.py": true,
+      "ops/game_worker_postkill_selected.py": true,
+      "ops/postkill_block_worker_selected.py": true,
+      "ops/game_pool_postkill_selected.py": true,
+      "ops/reduce_postkill_selected.py": true,
+      "ops/test_postkill_selected.py": true,
+      "ops/qualify_postkill_selected.py": true
+    },
+    "source_pins_pass": true,
+    "complete_block_filenames": 600,
+    "case_file_count": 3000,
+    "raw_file_count": 3000,
+    "reporting_result_files": [
+      "postkill-sdefault/X1.json",
+      "postkill-sdefault/X2.json",
+      "postkill-sdefault/X4.json"
+    ],
+    "reduction_logs": [
+      "postkill-reporting-reduction-attempt1.log",
+      "postkill-reporting-reduction-attempt1.log.pid",
+      "postkill-reporting-reduction-attempt1.log.identity.json"
+    ],
+    "reduction_meter_files": [
+      "postkill-reduction-meter-2914307.json"
+    ],
+    "outcomes_inspected": false
+  },
+  "probe03": {
+    "utc": "2026-10-10T06:46:44Z",
+    "host": "127x03",
+    "own_processes": [],
+    "locks": {
+      "POOL.lock": "free",
+      "REDUCE.lock": "free"
+    },
+    "progress": {
+      "completed": 600,
+      "pending": 0,
+      "active": {},
+      "arms": [
+        "C-v1",
+        "X1",
+        "X2",
+        "X4",
+        "K0"
+      ],
+      "admitted": true,
+      "failures": []
+    },
+    "source_pin_checks": {
+      "ops/postkill_admission.py": true,
+      "ops/k_postkill_sdefault.py": true,
+      "ops/game_worker_postkill.py": true,
+      "ops/postkill_block_worker.py": true,
+      "ops/game_pool_postkill.py": true,
+      "ops/reduce_postkill.py": true,
+      "ops/seed_audit_postkill.py": true,
+      "ops/test_postkill.py": true,
+      "ops/qualify_postkill.py": true,
+      "ops/sdefault.py": true,
+      "ops/audit_intervals_postkill.py": true,
+      "ops/postkill_selected.py": true,
+      "ops/k_postkill_selected.py": true,
+      "ops/game_worker_postkill_selected.py": true,
+      "ops/postkill_block_worker_selected.py": true,
+      "ops/game_pool_postkill_selected.py": true,
+      "ops/reduce_postkill_selected.py": true,
+      "ops/test_postkill_selected.py": true,
+      "ops/qualify_postkill_selected.py": true
+    },
+    "source_pins_pass": true,
+    "complete_block_filenames": 600,
+    "case_file_count": 3000,
+    "raw_file_count": 3000,
+    "reporting_result_files": [
+      "postkill-sdefault/X1.json",
+      "postkill-sdefault/X2.json",
+      "postkill-sdefault/X4.json"
+    ],
+    "reduction_logs": [
+      "postkill-reporting-reduction-attempt1.log.pid",
+      "postkill-reporting-reduction-attempt1.log",
+      "postkill-reporting-reduction-attempt1.log.identity.json"
+    ],
+    "reduction_meter_files": [
+      "postkill-reduction-meter-2914307.json"
+    ],
+    "outcomes_inspected": false
+  },
+  "artifact_mirror": {
+    "utc": "2026-10-10T06:45:38Z",
+    "pid": 2927428,
+    "pgid": 2927428,
+    "status": "passed",
+    "files": 14408,
+    "bytes": 761040502,
+    "parent_cpu_seconds": 1.428719,
+    "children_cpu_seconds": 7.02722,
+    "wall_seconds": 185.4771002298221,
+    "receiver_verification": {
+      "utc": "2026-10-10T06:45:38Z",
+      "host": "127x03",
+      "verified_files": 14408,
+      "bad": [],
+      "passed": true,
+      "bytes": 761040502,
+      "cpu_seconds": 0.760868,
+      "wall_seconds": 0.7340254599694163,
+      "lane": "exploration; never adoptable",
+      "never_adoptable": true,
+      "adoption_eligible": false
+    },
+    "accounting": "Whole sender+rsync+ssh CPU once; remote checksum CPU separately; receiver rsync CPU unmetered and disclosed; no simulations",
+    "source": "127x01",
+    "destination": "127x03",
+    "lane": "exploration; never adoptable",
+    "never_adoptable": true,
+    "adoption_eligible": false
+  },
+  "auxiliary_archive": {
+    "utc": "2026-10-10T06:46:13Z",
+    "pid": 2939163,
+    "pgid": 2939163,
+    "source": "127x01",
+    "destination": "127x03",
+    "status": "passed",
+    "files": 79,
+    "parent_cpu_seconds": 0.042362,
+    "children_cpu_seconds": 0.05168,
+    "wall_seconds": 1.0622408268973231,
+    "remote_verification": {
+      "verified_files": 79,
+      "bad": [],
+      "passed": true,
+      "cpu_seconds": 0.033546,
+      "wall_seconds": 0.002739920048043132
+    },
+    "accounting": "Whole sender+rsync+ssh once; remote checksum CPU separately; remote rsync CPU unmetered/disclosed",
+    "lane": "exploration; never adoptable",
+    "never_adoptable": true,
+    "adoption_eligible": false
+  },
+  "G_stops_preserved": {
+    "STOP": true,
+    "STOP-01": true
+  },
+  "original_fits_offline_closed": true,
+  "original_150_151_unconsumed": true,
+  "R2_ineligible": true,
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "utc": "2026-10-10T06:47:05Z"
+}

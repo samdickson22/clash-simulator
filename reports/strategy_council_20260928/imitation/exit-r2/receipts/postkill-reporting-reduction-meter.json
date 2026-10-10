@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-10T06:38:19Z",
+  "pid": 2914307,
+  "pgid": 2914307,
+  "status": "passed",
+  "parent_cpu_seconds": 7.424492000000001,
+  "children_cpu_seconds": 0.047188999999999995,
+  "wall_seconds": 7.419298278167844,
+  "accounting": "Separate frozen-output reporting reduction; excludes previously metered game pool",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false
+}

@@ -1,0 +1,111 @@
+{
+  "pid": 2914307,
+  "pgid": 2914307,
+  "utc": "2026-10-10T06:38:11Z",
+  "host": "127x01",
+  "entrypoint": "reduce_postkill_selected.py",
+  "context": {
+    "nice": 10,
+    "scheduler": "SCHED_OTHER",
+    "cores": [
+      63
+    ],
+    "threads": 1
+  },
+  "preflight01": {
+    "utc": "2026-10-10T06:37:45Z",
+    "host": "127x01",
+    "own_processes": [],
+    "locks": {
+      "POOL.lock": "free",
+      "REDUCE.lock": "absent"
+    },
+    "progress": {
+      "completed": 600,
+      "pending": 0,
+      "active": {},
+      "arms": [
+        "C-v1",
+        "X1",
+        "X2",
+        "X4",
+        "K0"
+      ],
+      "admitted": true,
+      "failures": []
+    },
+    "source_pin_checks": {
+      "ops/postkill_admission.py": true,
+      "ops/k_postkill_sdefault.py": true,
+      "ops/game_worker_postkill.py": true,
+      "ops/postkill_block_worker.py": true,
+      "ops/game_pool_postkill.py": true,
+      "ops/reduce_postkill.py": true,
+      "ops/seed_audit_postkill.py": true,
+      "ops/test_postkill.py": true,
+      "ops/qualify_postkill.py": true,
+      "ops/sdefault.py": true,
+      "ops/audit_intervals_postkill.py": true,
+      "ops/postkill_selected.py": true,
+      "ops/k_postkill_selected.py": true,
+      "ops/game_worker_postkill_selected.py": true,
+      "ops/postkill_block_worker_selected.py": true,
+      "ops/game_pool_postkill_selected.py": true,
+      "ops/reduce_postkill_selected.py": true,
+      "ops/test_postkill_selected.py": true,
+      "ops/qualify_postkill_selected.py": true
+    },
+    "source_pins_pass": true,
+    "complete_block_filenames": 600,
+    "case_file_count": 3000,
+    "raw_file_count": 3000,
+    "reporting_result_files": [],
+    "reduction_logs": [],
+    "reduction_meter_files": [],
+    "outcomes_inspected": false
+  },
+  "preflight03": {
+    "utc": "2026-10-10T06:37:45Z",
+    "host": "127x03",
+    "own_processes": [],
+    "locks": {
+      "POOL.lock": "absent",
+      "REDUCE.lock": "absent"
+    },
+    "progress": null,
+    "source_pin_checks": {
+      "ops/postkill_admission.py": true,
+      "ops/k_postkill_sdefault.py": true,
+      "ops/game_worker_postkill.py": true,
+      "ops/postkill_block_worker.py": true,
+      "ops/game_pool_postkill.py": true,
+      "ops/reduce_postkill.py": true,
+      "ops/seed_audit_postkill.py": true,
+      "ops/test_postkill.py": true,
+      "ops/qualify_postkill.py": true,
+      "ops/sdefault.py": true,
+      "ops/audit_intervals_postkill.py": true,
+      "ops/postkill_selected.py": true,
+      "ops/k_postkill_selected.py": true,
+      "ops/game_worker_postkill_selected.py": true,
+      "ops/postkill_block_worker_selected.py": true,
+      "ops/game_pool_postkill_selected.py": true,
+      "ops/reduce_postkill_selected.py": true,
+      "ops/test_postkill_selected.py": true,
+      "ops/qualify_postkill_selected.py": true
+    },
+    "source_pins_pass": true,
+    "complete_block_filenames": 0,
+    "case_file_count": 0,
+    "raw_file_count": 0,
+    "reporting_result_files": [],
+    "reduction_logs": [],
+    "reduction_meter_files": [],
+    "outcomes_inspected": false
+  },
+  "operational_wrapper": "import fcntl,json,os,resource,runpy,sys,time\nfrom pathlib import Path\nj=Path(\"/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1\");stage=j/\"postkill-sdefault\"\nstarted=time.monotonic();status=\"failed\"\ntry:\n with (stage/\"REDUCE.lock\").open(\"a\") as reduction_lock,(stage/\"POOL.lock\").open(\"r\") as pool_lock:\n  fcntl.flock(reduction_lock,fcntl.LOCK_EX|fcntl.LOCK_NB)\n  fcntl.flock(pool_lock,fcntl.LOCK_EX|fcntl.LOCK_NB)\n  p=json.loads((stage/\"progress.json\").read_text())\n  assert p[\"completed\"]==600 and p[\"pending\"]==0 and not p[\"active\"] and not p[\"failures\"]\n  meter=json.loads((stage/\"pool-meter-2035131.json\").read_text())\n  assert meter[\"completed\"]==600 and not meter[\"failures\"] and not Path(\"/proc/2035131\").exists()\n  assert os.getpriority(os.PRIO_PROCESS,0)==10 and os.sched_getscheduler(0)==os.SCHED_OTHER and os.sched_getaffinity(0)=={63}\n  assert not any((stage/(a+\".json\")).exists() for a in (\"X1\",\"X2\",\"X4\")), \"Existing reporting reduction; adopt rather than duplicate\"\n  sys.argv=[str(j/\"ops/reduce_postkill_selected.py\"),\"--job\",str(j)]\n  runpy.run_path(sys.argv[0],run_name=\"__main__\");status=\"passed\"\nfinally:\n u=resource.getrusage(resource.RUSAGE_SELF);v=resource.getrusage(resource.RUSAGE_CHILDREN)\n r=dict(utc=time.strftime(\"%Y-%m-%dT%H:%M:%SZ\",time.gmtime()),pid=os.getpid(),pgid=os.getpgrp(),status=status,parent_cpu_seconds=u.ru_utime+u.ru_stime,children_cpu_seconds=v.ru_utime+v.ru_stime,wall_seconds=time.monotonic()-started,accounting=\"Separate frozen-output reporting reduction; excludes previously metered game pool\",lane=\"exploration; never adoptable\",never_adoptable=True,adoption_eligible=False)\n (j/(\"postkill-reduction-meter-%s.json\"%os.getpid())).write_text(json.dumps(r,indent=2)+\"\\n\")\n",
+  "source_changes": false,
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false
+}

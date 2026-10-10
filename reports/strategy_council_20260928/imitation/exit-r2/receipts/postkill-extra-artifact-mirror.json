@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-10T06:46:13Z",
+  "pid": 2939163,
+  "pgid": 2939163,
+  "source": "127x01",
+  "destination": "127x03",
+  "status": "passed",
+  "files": 79,
+  "parent_cpu_seconds": 0.042362,
+  "children_cpu_seconds": 0.05168,
+  "wall_seconds": 1.0622408268973231,
+  "remote_verification": {
+    "verified_files": 79,
+    "bad": [],
+    "passed": true,
+    "cpu_seconds": 0.033546,
+    "wall_seconds": 0.002739920048043132
+  },
+  "accounting": "Whole sender+rsync+ssh once; remote checksum CPU separately; remote rsync CPU unmetered/disclosed",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false
+}

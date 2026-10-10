@@ -1,0 +1,21 @@
+{
+  "host": "127x01",
+  "arms": [
+    "C-v1",
+    "X1",
+    "X2",
+    "X4",
+    "K0"
+  ],
+  "completed": 600,
+  "failures": [],
+  "parent_cpu_seconds": 139.373629,
+  "children_cpu_seconds": 258884.68432899998,
+  "wall_seconds": 6769.966246532975,
+  "min_available_bytes": 103899762688,
+  "accounting": "Whole pool tree includes blocks and games, including replay/failed attempts. Do not add nested meters.",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "selection_amendment_sha256": "490bd8e19a8e393d8faa25961d8ec81717c71b2d2e97fc860b926abc7574c2d3"
+}

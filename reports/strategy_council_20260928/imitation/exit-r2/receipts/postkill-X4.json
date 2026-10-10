@@ -1,0 +1,84 @@
+{
+  "arm": "X4",
+  "study": "post-kill descriptive S-default",
+  "games": 600,
+  "paired": {
+    "loss_change": 0.325,
+    "ci95": [
+      0.28829166666666667,
+      0.365
+    ],
+    "pairs": 600,
+    "reps": 5000,
+    "seed": 80991010
+  },
+  "descriptive_K0": {
+    "loss_change": 0.565,
+    "ci95": [
+      0.5266666666666666,
+      0.605
+    ],
+    "pairs": 600,
+    "reps": 5000,
+    "seed": 80991010
+  },
+  "absolute_losses": {
+    "C-v1": {
+      "loss_change": 0.6683333333333333,
+      "ci95": [
+        0.6283333333333333,
+        0.7066666666666667
+      ],
+      "pairs": 600,
+      "reps": 5000,
+      "seed": 80991010
+    },
+    "X1": {
+      "loss_change": 0.995,
+      "ci95": [
+        0.9883333333333333,
+        1
+      ],
+      "pairs": 600,
+      "reps": 5000,
+      "seed": 80991010
+    },
+    "X2": {
+      "loss_change": 0.9966666666666667,
+      "ci95": [
+        0.9916666666666667,
+        1
+      ],
+      "pairs": 600,
+      "reps": 5000,
+      "seed": 80991010
+    },
+    "X4": {
+      "loss_change": 0.9933333333333333,
+      "ci95": [
+        0.9866666666666667,
+        0.9983333333333333
+      ],
+      "pairs": 600,
+      "reps": 5000,
+      "seed": 80991010
+    },
+    "K0": {
+      "loss_change": 0.42833333333333334,
+      "ci95": [
+        0.3883333333333333,
+        0.4666666666666667
+      ],
+      "pairs": 600,
+      "reps": 5000,
+      "seed": 80991010
+    }
+  },
+  "comparison": "Full student package (hooks plus default) vs C-v1; does not separate hook/default effects.",
+  "interleaving": "All arms of each seed, same host/core/class, back-to-back deterministic rotated block",
+  "lane": "exploration; never adoptable",
+  "harness_sha256": "ee43172dfb50dbf288b50c314f1abfddbc942fd90d192846ec6e8aaca6a51865",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "selection_amendment_sha256": "490bd8e19a8e393d8faa25961d8ec81717c71b2d2e97fc860b926abc7574c2d3"
+}

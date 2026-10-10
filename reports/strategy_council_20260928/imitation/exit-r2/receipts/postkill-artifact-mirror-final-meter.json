@@ -1,0 +1,30 @@
+{
+  "utc": "2026-10-10T06:45:38Z",
+  "pid": 2927428,
+  "pgid": 2927428,
+  "status": "passed",
+  "files": 14408,
+  "bytes": 761040502,
+  "parent_cpu_seconds": 1.428719,
+  "children_cpu_seconds": 7.02722,
+  "wall_seconds": 185.4771002298221,
+  "receiver_verification": {
+    "utc": "2026-10-10T06:45:38Z",
+    "host": "127x03",
+    "verified_files": 14408,
+    "bad": [],
+    "passed": true,
+    "bytes": 761040502,
+    "cpu_seconds": 0.760868,
+    "wall_seconds": 0.7340254599694163,
+    "lane": "exploration; never adoptable",
+    "never_adoptable": true,
+    "adoption_eligible": false
+  },
+  "accounting": "Whole sender+rsync+ssh CPU once; remote checksum CPU separately; receiver rsync CPU unmetered and disclosed; no simulations",
+  "source": "127x01",
+  "destination": "127x03",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false
+}
