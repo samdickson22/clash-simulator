@@ -1614,3 +1614,8 @@ Also on the hub, but with copies elsewhere:
   - **Students:** S-teacher final EMA `29d17153` (22:50Z). Its 04/08 reporting pools appear finished. **Rebalance ordered:** unclaimed 03 cases to 04/08; S-mix cases (seal ~23:35Z) spread over 01/04/08.
   - **A1 seal:** 43/216 branches; ETA ~05:00Z.
   - 09 and 16 are idle. 02/06/07/11/18 are down.
+- **00:11 UTC heartbeat.**
+  - **Capacity:** 288 at 80.9 M rows, 384 at 63.4 M (end-of-epoch dev eval, so GPU dips), 480 at 60.0 M; quarter mark at 95.1 M.
+  - **Student screen:** all 3,232 tasks complete; final diagnostics and reduction running on 03.
+  - **GPUs 01/04/08/09/16 idle:** nothing queued until the student-screen verdict, which decides DAgger round 2 vs other work. 08 is held for B, which is behind the A1 seal (64/216 branches, ETA ~05:00Z).
+  - 02/06/07/11/18 are down.
