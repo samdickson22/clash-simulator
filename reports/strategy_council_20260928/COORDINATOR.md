@@ -1646,3 +1646,12 @@ Also on the hub, but with copies elsewhere:
   - **Before adoption:** an independent Opus review (`clasher-k-review-20261010-1`) checks why K4, K4h and KU are exactly identical, the latency headroom on a slower Mac core, and a stage-3 redesign.
   - X stage 3 is ON HOLD: its K1 comparator is degenerate.
   - This strengthens the case for Sam's Mac E4 authorization: the live question is now whether 4 free cores exist next to perception.
+- **01:43 UTC: K review = CONFIRM_WITH_CAVEATS** (Opus, `REVIEW-K-20261010.md`).
+  - The 116/600 three-way tie is chance (K4 and KU outcomes differ on 140 seeds, split 70/70). K4h did run h80. CIs reproduce.
+  - **Caveats:**
+    - 10.5% of K4 cut decisions return after 200 ms; the worst took 0.5–22 s, on 01 under SCHED_IDLE. The sim applies late actions without penalty, a small optimistic bias.
+    - **K4 holds only at ≥0.9× fleet per-core speed** (projected cutoffs: 14% at 0.8×, 49% at 0.6×).
+  - **Decisions:**
+    1. X stage 3 → the reviewer's **S-default K1** design (on cutoff the student is the default vs v1 as default; K0 anchor). Freeze before any stage-3 game.
+    2. Commission **K-v2**: fix the cancellation return path, use honest lateness in the sim, run at normal priority, then K4 at 200/160/120 ms deadlines to emulate 1.0/0.8/0.6× core speed.
+    3. Mac E4 v2 must measure per-core speed under perception load.
