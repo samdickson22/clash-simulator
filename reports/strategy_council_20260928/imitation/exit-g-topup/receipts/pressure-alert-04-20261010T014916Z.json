@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-10T01:49:16Z",
+  "reason": "sustained_memory_full_psi",
+  "full_avg10": 62.53,
+  "threshold_percent": 20,
+  "continuous_seconds": 60,
+  "action": "Admission paused; in-flight games finish. Await coordinator release before clearing pause.",
+  "reported": false
+}

@@ -2,16 +2,19 @@
   "utc": "2026-10-10T01:21:24Z",
   "scheduledTaskId": "scheduled-task:command:mcp:f5f23f78-993a-4502-b375-2958f9dfba3f:schedule-task:g-topup-continuation-20261010-1",
   "enabled": true,
-  "interval_ms": 1800000,
-  "nextRunAt": "2026-10-10T01:51:09.288Z",
+  "interval_ms": 300000,
+  "nextRunAt": "2026-10-10T01:49:57.906Z",
   "bindToCurrentThread": true,
-  "disable": "update_scheduled_task({scheduledTaskId: recorded ID, enabled:false}) after final publication or explicit coordinator stop",
-  "updated_utc": "2026-10-10T01:35:47Z",
+  "disable": "update_scheduled_task({scheduledTaskId: recorded ID, enabled:false}) after actual final completion/deadline cleanup or explicit full task cancellation.",
+  "updated_utc": "2026-10-10T01:50:49Z",
   "hosts": [
     "127x04",
-    "127x01"
+    "127x01",
+    "127x03"
   ],
-  "fleet_controller_pid": 3985130,
-  "fleet_controller_pgid": 3985130,
-  "host01_preemption": "X evaluation -> owned STOP -> current game drain/full PGID vacate; final01 metadata is cached, then no more remote01 calls."
+  "fleet_controller_pid": 4086409,
+  "fleet_controller_pgid": 4086409,
+  "host01_preemption": "X evaluation -> owned STOP -> current game drain/full PGID vacate; final01 metadata is cached, then no more remote01 calls.",
+  "host03_preemption": "STOP-03 from K-v2 at01:44Z; full PGID gone. No resume until explicitrelease; futureXevalpriority.",
+  "host04_pressure": "Latched PRESSURE.ADMISSION.PAUSE01:49:16Z; coordinator alerted, noautomaticclear. Guardqualified04/03."
 }

@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-10T01:49:16Z",
+  "reason": "sustained_memory_full_psi",
+  "full_avg10": 62.53,
+  "threshold_percent": 20,
+  "continuous_seconds": 60,
+  "action": "Admission paused; in-flight games finish. Await coordinator release before clearing pause.",
+  "reported": true,
+  "reported_utc": "2026-10-10T01:49:44Z",
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "message_key": "g-pressure-alert-04-20261010T014916Z"
+}

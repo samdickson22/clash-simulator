@@ -1,0 +1,25 @@
+{
+  "utc": "2026-10-10T01:47:38Z",
+  "guard_freeze_commit": "cc564282",
+  "old_pgid": 3908611,
+  "fully_vacated": true,
+  "clear_only_operational_internal_stop": true,
+  "prior_totals": {
+    "games": 1262,
+    "rows": 1010705,
+    "root_decisions": 156869,
+    "cpu_seconds": 63967.98899119299,
+    "plays": 53981
+  },
+  "prior_shards": [
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+      "manifest_sha256": "9b5ef9bea86fe8eb7ab53d4dfef500325a7bfae6c1f487b3132298259c652c81",
+      "games": 1262,
+      "rows": 1010705,
+      "root_decisions": 156869,
+      "candidate_scores": 2958515
+    }
+  ]
+}
