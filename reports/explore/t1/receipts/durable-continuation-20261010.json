@@ -1,0 +1,31 @@
+{
+  "schema": "clasher.t1.durable-continuation.v1",
+  "utc": "2026-10-10T19:42:20Z",
+  "scheduled_task_id": "scheduled-task:command:mcp:1d318750-510c-4298-9fd7-13c1eae507ce:schedule-task:clasher-t1-sealed-reporting-continuation-20261010-r1",
+  "bound_thread_id": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-t1-confirmatory-runner-20261010-1",
+  "enabled": true,
+  "schedule": {
+    "type": "interval",
+    "everyMs": 1200000
+  },
+  "next_run_at": "2026-10-10T20:01:04.711Z",
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "authorization": "Coordinator actual-label19:50Z: bound continuation every20min",
+  "active_reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1",
+  "launch_receipt": "reports/explore/t1/receipts/replacement-launch-receipt-op6-0108-r1.json",
+  "launch_commit": "7e0a172c",
+  "runtime_freeze": "aeeb3003",
+  "health_only": true,
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "checks": [
+    "counts/failures/guard stops/SSH+DBus+idle flag counts per host",
+    "reviewed blind replacements only; dead supervisors/final durable copies, no duplicate original inventory, two-host admission",
+    "B STOP-127x08 drain and host release; never clear stop or touch perception",
+    "commit reporting completion and notify coordinator",
+    "END waits for explicit clean window: E4 A6 smoke,review,pooled reference",
+    "PC1-PC4 before either release route",
+    "disk-only corpus durability03 check"
+  ],
+  "disable_rule": "Disable this schedule after committed reporting completion and coordinator notification; END needs separate clean-window declaration."
+}
