@@ -1,0 +1,2 @@
+
+2026-10-10T10:59:20Z — Snapshot exceptiondeployattempt1 failed BEFOREmutation at first freezeSHA preflight: metadata-only copied deployer selected prior diagnostics directory. Originaldeployer/logs preserved; small read-only preflightCPUunmetered. Path-only correction under metadata-helper/deploy.py; guard/scorer/freeze993.../34qualification unchanged. No scientificattempt5 yet; marker gate absent. Publish correctedmetadatahelper before revieweddeploy2, thenqualifiedreceiptpush beforemanualscoring.

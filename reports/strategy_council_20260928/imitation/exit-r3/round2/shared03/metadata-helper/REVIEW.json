@@ -12,5 +12,6 @@
   "recorded_pgids": 73,
   "automatic_retry": false,
   "scientific_changes": false,
-  "scope": "exact snapshot helper source/argv SHA only; unknown/target commands and changed source denied; all thread/core/priority/memory/PSI/scientificGgroup constraints retained"
+  "scope": "exact snapshot helper source/argv SHA only; unknown/target commands and changed source denied; all thread/core/priority/memory/PSI/scientificGgroup constraints retained",
+  "failed_deployment_attempt1": "Read-only preflight failed at first expected-freeze SHA assertion: copied metadata deployer still selected prior diagnostics directory. No source/authority/freeze/admission mutation; logs/original deployer retained. Small preflight CPU unmetered. Reviewed path-only correction; guard/scorer/freeze993dfb11 unchanged."
 }

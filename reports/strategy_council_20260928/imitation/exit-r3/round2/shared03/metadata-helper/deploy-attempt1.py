@@ -14,7 +14,7 @@ def main(commit):
     for source,target in maps:subprocess.run(['scp','-q',str(ROOT/source),'127x03:'+J+'/metadata/metadata-helper/'+target],check=True)
     code='''import hashlib,importlib.util,json,os,resource,shutil,subprocess,sys,time
 from pathlib import Path
-j=Path(JOB);meta=j/'metadata/metadata-helper';started=time.monotonic();sys.path.insert(0,str(j/'eval-ops'))
+j=Path(JOB);meta=j/'metadata/diagnostics';started=time.monotonic();sys.path.insert(0,str(j/'eval-ops'))
 assert hashlib.sha256((meta/'new-freeze.json').read_bytes()).hexdigest()==DIGEST
 f=json.loads((meta/'new-freeze.json').read_text());pre=json.loads((meta/'new-prelaunch.json').read_text())
 assert pre['pushed'] and pre['secret_scan_passed'] and pre['commit']==COMMIT and pre['evaluation_freeze_sha256']==DIGEST
