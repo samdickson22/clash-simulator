@@ -98,3 +98,10 @@ If X3 resumes elsewhere, preserve the identical absolute job/source paths
 so trainer source/input pins compare exactly, copy existing fit inputs/checkpoint,
 use full optimizer/scheduler/RNG state and frozen recipe; version/commit an
 operational host amendment and controller host pointer before resuming.
+
+2026-10-10T00:55:40Z. All five attempt2 fits passed input admission and completed optimizer
+steps. Recipe/runtime checks passed; loader6/prefetch4, nice10, parent affinity
+118/119/126; X4 micro3584. Snapshot in receipts/startup-qualified.json.
+No guard stop; leased09/16 have8 processes, below46GB PSS and above8GiB
+GPU-free floors. 08 quiet/deadline guard active. Scientific stage metrics
+remain pending; next continuation01:01:15.355Z.

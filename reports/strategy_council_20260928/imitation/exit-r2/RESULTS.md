@@ -3,7 +3,8 @@
 Exploration lane; no multiplicity adjustment. Preparation at2026-10-10 00:36Z.
 All first fit attempts failed during input construction before any optimizer step.
 The omitted r1 assets sidecar is restored; correction35cacd00 was pushed
-before attempt2 launched00:52:49-51Z. Fits are in startup; no metrics yet.
+before attempt2 launched00:52:49-51Z. All five fits passed input admission and have optimizer updates.
+Scientific stage metrics remain pending.
 No reporting game played. This is a status record, not a verdict.
 The committed plan/seed audit must precede fitting; use final EMA only.
 

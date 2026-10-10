@@ -1,0 +1,283 @@
+{
+  "utc": "2026-10-10T00:55:40Z",
+  "all_five_running": true,
+  "checks": "Input admission/source freeze, optimizer step, recipe, loader/nice/affinity, resource guards",
+  "arms": {
+    "X1": {
+      "health": {
+        "utc": "2026-10-10T00:55:40Z",
+        "pid": 1870189,
+        "pss": 13809943552,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 169.8181402881164
+      },
+      "runtime": {
+        "host": "127x09",
+        "pid": 1870189,
+        "started_at": "2026-10-10T00:52:51.285957+00:00",
+        "numpy": "2.3.5",
+        "torch": "2.7.1+cu118",
+        "python": "3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]",
+        "cuda_allocator_config": null,
+        "effective_human_microbatch": 7168,
+        "nice": 10,
+        "affinity": [
+          118,
+          119,
+          126
+        ],
+        "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+        "actual_loader_workers": 6,
+        "scientific_loader_workers": 1,
+        "prefetch_factor": 4,
+        "mmap_random_advice": false,
+        "operational_amendment_sha256": "a1237439208ee3779b79506e8c1018e42370134739b258f365819cf94f83ee83"
+      },
+      "completed_optimizer_steps_at_snapshot": 44,
+      "inputs_sha256": "2e3ffce59b50d1763754232891ef9738067829addc0503dce2f1bcc273397170",
+      "recipe": {
+        "init_checkpoint": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/inputs/main02.pt",
+        "human_store": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train",
+        "assets": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/inputs/assets.npz",
+        "teacher_root": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus",
+        "teacher_ratio": 1.0,
+        "value_weight": 0.0,
+        "temperature": 0.003,
+        "play_weight": 1.0,
+        "score_zscore": false,
+        "steps": 4883,
+        "batch_size": 8192,
+        "warmup": 2000,
+        "microbatch": 7168,
+        "seed": 2026101001,
+        "device": "cuda",
+        "output": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/fits/X1",
+        "checkpoint_every": 250,
+        "stop": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP"
+      }
+    },
+    "X2": {
+      "health": {
+        "utc": "2026-10-10T00:55:39Z",
+        "pid": 871463,
+        "pss": 16252436480,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 168.41195061197504
+      },
+      "runtime": {
+        "host": "127x16",
+        "pid": 871463,
+        "started_at": "2026-10-10T00:52:51.898756+00:00",
+        "numpy": "1.26.4",
+        "torch": "2.7.1+cu118",
+        "python": "3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]",
+        "cuda_allocator_config": null,
+        "effective_human_microbatch": 7168,
+        "nice": 10,
+        "affinity": [
+          118,
+          119,
+          126
+        ],
+        "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+        "actual_loader_workers": 6,
+        "scientific_loader_workers": 1,
+        "prefetch_factor": 4,
+        "mmap_random_advice": false,
+        "operational_amendment_sha256": "a1237439208ee3779b79506e8c1018e42370134739b258f365819cf94f83ee83"
+      },
+      "completed_optimizer_steps_at_snapshot": 33,
+      "inputs_sha256": "8c4773bbfd0fab5959312e7f2583e889cd2079592fb828220632455c936d7aaf",
+      "recipe": {
+        "init_checkpoint": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/inputs/main02.pt",
+        "human_store": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train",
+        "assets": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/inputs/assets.npz",
+        "teacher_root": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus",
+        "teacher_ratio": 1.0,
+        "value_weight": 0.0,
+        "temperature": 0.0001,
+        "play_weight": 1.0,
+        "score_zscore": false,
+        "steps": 4883,
+        "batch_size": 8192,
+        "warmup": 2000,
+        "microbatch": 7168,
+        "seed": 2026101001,
+        "device": "cuda",
+        "output": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/fits/X2",
+        "checkpoint_every": 250,
+        "stop": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP"
+      }
+    },
+    "X3": {
+      "health": {
+        "utc": "2026-10-10T00:55:41Z",
+        "pid": 2652063,
+        "pss": 20230403072,
+        "processes": 8,
+        "gpu_free_bytes": 48323624960,
+        "reason": null,
+        "wall_seconds": 170.71150385891087
+      },
+      "runtime": {
+        "host": "127x08",
+        "pid": 2652063,
+        "started_at": "2026-10-10T00:52:52.259703+00:00",
+        "numpy": "2.3.5",
+        "torch": "2.7.1+cu118",
+        "python": "3.12.12 (main, Feb 12 2026, 00:42:14) [Clang 21.1.4 ]",
+        "cuda_allocator_config": null,
+        "effective_human_microbatch": 7168,
+        "nice": 10,
+        "affinity": [
+          118,
+          119,
+          126
+        ],
+        "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+        "actual_loader_workers": 6,
+        "scientific_loader_workers": 1,
+        "prefetch_factor": 4,
+        "mmap_random_advice": false,
+        "operational_amendment_sha256": "a1237439208ee3779b79506e8c1018e42370134739b258f365819cf94f83ee83"
+      },
+      "completed_optimizer_steps_at_snapshot": 19,
+      "inputs_sha256": "36e69d60c5ce0a1dfacaebb0282e319c6484aada80a36b05daccf0ec9c7f66f5",
+      "recipe": {
+        "init_checkpoint": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/inputs/main02.pt",
+        "human_store": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train",
+        "assets": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/inputs/assets.npz",
+        "teacher_root": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus",
+        "teacher_ratio": 1.0,
+        "value_weight": 0.0,
+        "temperature": 0.5,
+        "play_weight": 1.0,
+        "score_zscore": true,
+        "steps": 4883,
+        "batch_size": 8192,
+        "warmup": 2000,
+        "microbatch": 7168,
+        "seed": 2026101001,
+        "device": "cuda",
+        "output": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/fits/X3",
+        "checkpoint_every": 250,
+        "stop": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP"
+      }
+    },
+    "X4": {
+      "health": {
+        "utc": "2026-10-10T00:55:38Z",
+        "pid": 1217609,
+        "pss": 12583576576,
+        "processes": 8,
+        "gpu_free_bytes": 31699501056,
+        "reason": null,
+        "wall_seconds": 167.0697156751994
+      },
+      "runtime": {
+        "host": "127x01",
+        "pid": 1217609,
+        "started_at": "2026-10-10T00:52:52.897978+00:00",
+        "numpy": "2.3.5",
+        "torch": "2.7.1+cu118",
+        "python": "3.12.12 (main, Feb 12 2026, 00:42:14) [Clang 21.1.4 ]",
+        "cuda_allocator_config": null,
+        "effective_human_microbatch": 3584,
+        "nice": 10,
+        "affinity": [
+          118,
+          119,
+          126
+        ],
+        "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+        "actual_loader_workers": 6,
+        "scientific_loader_workers": 1,
+        "prefetch_factor": 4,
+        "mmap_random_advice": false,
+        "operational_amendment_sha256": "a1237439208ee3779b79506e8c1018e42370134739b258f365819cf94f83ee83"
+      },
+      "completed_optimizer_steps_at_snapshot": 22,
+      "inputs_sha256": "11595b9bef241320973c85809afe3d087c20c9bf2944a619054d894072971b40",
+      "recipe": {
+        "init_checkpoint": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/inputs/main02.pt",
+        "human_store": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train",
+        "assets": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/inputs/assets.npz",
+        "teacher_root": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus",
+        "teacher_ratio": 0.75,
+        "value_weight": 0.0,
+        "temperature": 0.003,
+        "play_weight": 1.0,
+        "score_zscore": false,
+        "steps": 4883,
+        "batch_size": 8192,
+        "warmup": 2000,
+        "microbatch": 3584,
+        "seed": 2026101001,
+        "device": "cuda",
+        "output": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/fits/X4",
+        "checkpoint_every": 250,
+        "stop": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP"
+      }
+    },
+    "X5": {
+      "health": {
+        "utc": "2026-10-10T00:55:40Z",
+        "pid": 3727520,
+        "pss": 21164904448,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 168.01449478499126
+      },
+      "runtime": {
+        "host": "127x04",
+        "pid": 3727520,
+        "started_at": "2026-10-10T00:52:53.196001+00:00",
+        "numpy": "2.3.5",
+        "torch": "2.7.1+cu118",
+        "python": "3.12.12 (main, Feb 12 2026, 00:42:14) [Clang 21.1.4 ]",
+        "cuda_allocator_config": null,
+        "effective_human_microbatch": 7168,
+        "nice": 10,
+        "affinity": [
+          118,
+          119,
+          126
+        ],
+        "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+        "actual_loader_workers": 6,
+        "scientific_loader_workers": 1,
+        "prefetch_factor": 4,
+        "mmap_random_advice": false,
+        "operational_amendment_sha256": "a1237439208ee3779b79506e8c1018e42370134739b258f365819cf94f83ee83"
+      },
+      "completed_optimizer_steps_at_snapshot": 45,
+      "inputs_sha256": "29da8b2a92e77dcfa62bfe241377165d850fe6c4790675b6740c7b2c27ac3055",
+      "recipe": {
+        "init_checkpoint": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/inputs/main02.pt",
+        "human_store": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train",
+        "assets": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/inputs/assets.npz",
+        "teacher_root": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus",
+        "teacher_ratio": 1.0,
+        "value_weight": 0.0,
+        "temperature": 0.003,
+        "play_weight": 1.0,
+        "score_zscore": false,
+        "steps": 9766,
+        "batch_size": 8192,
+        "warmup": 2000,
+        "microbatch": 7168,
+        "seed": 2026101001,
+        "device": "cuda",
+        "output": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/fits/X5",
+        "checkpoint_every": 250,
+        "stop": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP"
+      }
+    }
+  },
+  "stage_metrics_pending": true
+}
