@@ -1,0 +1,116 @@
+{
+  "utc": "2026-10-10T09:17:25Z",
+  "root_decisions": 2031576,
+  "packed_root_decisions": 1683130,
+  "remaining_unpacked_roots": 348446,
+  "shards": [
+    {
+      "host": "127x04",
+      "source_host": "127x01",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed-imported/host01",
+      "manifest_sha256": "f721bd6bcdfd0440e4d7c779c47cfc9992eb09907f58532e63b8a738f46e030d",
+      "games": 81,
+      "rows": 65337,
+      "root_decisions": 10152,
+      "candidate_scores": 192734
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+      "manifest_sha256": "d1cfb556363bb58fd9e4764b3961027594b31e728af6633cb5601acac0676119",
+      "games": 2048,
+      "rows": 1601501,
+      "root_decisions": 248421,
+      "candidate_scores": 4625837,
+      "source_host": "127x03"
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+      "manifest_sha256": "507a9f9831c2a2cb081d083dff2d7513476c6061bd54865bdf1694b905d6b2c2",
+      "games": 2048,
+      "rows": 1606855,
+      "root_decisions": 249343,
+      "candidate_scores": 4647819,
+      "source_host": "127x03"
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00002",
+      "manifest_sha256": "7e886977f1a3fb1694a2758d2484fdd7c177ae19aee3f604d4f330384a71c764",
+      "games": 2048,
+      "rows": 1599363,
+      "root_decisions": 247934,
+      "candidate_scores": 4613709,
+      "source_host": "127x03"
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+      "manifest_sha256": "9b5ef9bea86fe8eb7ab53d4dfef500325a7bfae6c1f487b3132298259c652c81",
+      "games": 1262,
+      "rows": 1010705,
+      "root_decisions": 156869,
+      "candidate_scores": 2958515,
+      "source_host": "127x04"
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+      "manifest_sha256": "7e2840b81e5ae0e614874b5f947822ae18069f114c7e81bbe2093e90d93091fe",
+      "games": 77,
+      "rows": 64097,
+      "root_decisions": 10015,
+      "candidate_scores": 195027,
+      "source_host": "127x04"
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00002",
+      "manifest_sha256": "e83ea95261be29fdf07235cdc91cb33645af4eef2a21118f27129ac36bdf85bc",
+      "games": 83,
+      "rows": 66427,
+      "root_decisions": 10339,
+      "candidate_scores": 194584,
+      "source_host": "127x04"
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00003",
+      "manifest_sha256": "84bed1b1d59bee9a26f6f3aefbe1017b6221728fd87b0d1b6c50fdc4e4bda9c0",
+      "games": 2048,
+      "rows": 1640157,
+      "root_decisions": 254883,
+      "candidate_scores": 4813326,
+      "source_host": "127x04"
+    },
+    {
+      "host": "127x08",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+      "manifest_sha256": "bde4d9df909df845c88ff1a428fbc424e8ad9ad9af88e194e47624734438a60a",
+      "games": 2048,
+      "rows": 1600488,
+      "root_decisions": 248152,
+      "candidate_scores": 4619642,
+      "source_host": "127x08"
+    },
+    {
+      "host": "127x08",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+      "manifest_sha256": "7d751a602adb3622fb12a4837ededdef155531e811087bb8a265be4fbf660d10",
+      "games": 2048,
+      "rows": 1592841,
+      "root_decisions": 247022,
+      "candidate_scores": 4588222,
+      "source_host": "127x08"
+    }
+  ],
+  "host_manifest_shas": {
+    "03": "a114da817ac4b93654494d3873381df2c3723270e418f384568bc6fc1fa9bbfa",
+    "04": "fddfccd35c6206d9db37bc88794f70a654d2bfd5fba5d9d7b643cf8b0545d0f3",
+    "08": "12571db56801388d43f0dd2a51bbe0a5a52288416b6d8f2f7d889d2140bf1b03"
+  },
+  "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "complete": false,
+  "errors": {}
+}
