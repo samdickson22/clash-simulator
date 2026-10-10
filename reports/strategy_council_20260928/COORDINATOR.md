@@ -1767,3 +1767,7 @@ Also on the hub, but with copies elsewhere:
   - Loss K2 / K0 / K4 = **25.0% / 45.7% / 16.5%**. K2 vs K0: −20.7 pp [−25.8, −15.8]. **Retention 71% [58, 83]**, below the 80% target. K2−K4 = +8.5 pp.
   - **Mac deployment tiers:** 4 free cores ≈ 16–18% loss; 2 cores ≈ 25%; 1 core (K0) ≈ 43–46%; all vs v1. Strict return bound unqualified.
   - 03 released; **G released onto 03 (cores 0–59, nice 19, PSI guard, ≤56 workers)**.
+- **07:43 UTC heartbeat:**
+  - R3 round 2 on 09/13/16; R3a descriptive (K0-fallback) on 01; G steady on 03 (54 workers).
+  - **Released G onto 04 cores 12–46 until a 10:15Z HARD stop** (pre-A19 headroom ≥90 GiB) **and 08 cores 0–55 until a 15:00Z HARD stop** (before any B window); each a one-time release.
+  - Seal ~168/216 at 07:30Z, ETA ~11Z.
