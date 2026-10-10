@@ -15,10 +15,14 @@ The committed plan/seed audit must precede fitting; use final EMA only.
 | X3 | z-score τ=.5 /1.0 | running08, step551/4883 | pending | conditional | conditional | pending |
 | X4 | T=.003 /.75 | running01, step406/4883, micro3584 | pending | conditional | conditional | pending |
 | X5 | X1 double steps /1.0 | running04, step585/9766 | pending | conditional | conditional | pending |
+| X6 | T=.0001 /.75 | preparation13, micro3584 | pending | conditional | conditional | pending |
 
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
 seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
-X5:9766steps. Loader6/prefetch4, r1 parent and loader core layout.
+X5:9766steps; X6:4883steps. Loader6/prefetch4, r1 parent and loader core layout.
+Coordinator added X6 at01:05Z to complete the temperature×anchor2×2.
+It yields13 to X3 exact resume; all six arms share the same staged rules and
+at most three stage3 survivors total. X6 has no training/gate outcome yet.
 X3's flag-off targets/loss/gradients/AdamW update match r1; all seven student and
 target tests passed on01/16/03. No evaluation outcomes used for choices.
 
@@ -44,7 +48,9 @@ PSS/headroom/nice guards and return before2026-10-11 05:30Z.
 
 Metered failed-attempt fit GPU-wall hours:0.036806672;
 fit CPU-hours:0.029492098; heldout/reporting CPU-hours:0; mechanics costs reported above.
-Preparation audit CPU-hours:0.844768969, including retired scan attempts.
+Preparation audit CPU-hours:0.861178583, including retired scan attempts and
+X6's fresh13 audit59.074613CPU seconds. X6 corpus staging/SHA preparation meter
+remains pending; no X6 fit/game attempt has begun at01:18Z.
 Attempt2 live snapshots at2026-10-10 01:11:52–58Z:1.591526915 allocated
 GPU-wall hours and4.701041667 provisional whole-tree CPU-hours across five fits.
 These running totals replace earlier snapshots and will be replaced by final

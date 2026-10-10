@@ -185,3 +185,36 @@ final exit whole-tree meters replace them. Never add segment/child CPU again.
 Ten-minute continuation remains enabled; next2026-10-10T01:21:19.664Z.
 Next: final EMA collection/offline gates automatically, conditional h2h256;
 only admitted survivors can trigger corrected v2 paired stage3 and R2.
+
+2026-10-10T01:15:15Z. Coordinator01:05Z utilization addendum adds X6 on13:
+T=.0001,teacher ratio.75,micro3584,4883×8192,seed2026101001,loader6,
+common unchanged trainer/finalEMA and gates. Original five fits continue.
+No X6 fit launched before its own addendum/audit commit and push.
+13 own job root now `$job`; existing qualified human store read-only symlink
+manifest0546cfdd, source/inputs copied read-only from01, nice10/rate153600KiB/s.
+Own detached preparation identities PID=PGID:
+corpus staging/SHA2218971, log`$job/X6-staging.log`;
+fresh13 seed audit2219049, log`$job/X6-seed-audit.log`,raw`x6-inventory.json`.
+Both started01:15:14–15Z; preparation only, no games or GPU fit.
+X6 stop`$job/X6.STOP`; priority`$job/X3.RESUME.REQUEST` vetoes launch and
+checkpoints active X6. New six-arm controller will relay stopped08 health
+to13 within its polling cycle, then exact X3 migration requires normal
+checkpoint/old-PID/lease/GPU admission. X3 remains08 initially; no preemption.
+Stage3 remains at most3 total, rank X1→X6 for final tie; R2 still conditional.
+
+2026-10-10T01:18:17Z. X6 fresh13 audit finished01:16:31Z:49,713 files,
+zero overlaps/errors, maximum literal4503601307642356; CPU59.074613s.
+Raw inventory SHA5d6c26cc, inherited eight-host r2/formula and14 r1 inventories
+explicitly pinned in receipts/x6-seed-audit.json. Reporting ranges deliberately
+shared across arms; original heldout and disjoint smoke/generation unchanged.
+Nine new modules parse and X6 shell syntax passes onhome03; real composition
+guard preserves original five recipes and rejects a tampered audit. X6 target
+matchesX2; human fraction/micro/steps matchX4. Original fit source untouched.
+X6 addendum/source/audit now prepared for pre-launch commit/push. Staging13
+PID2218971 still active; supervisor refuses fit until X6-staging.json passes.
+Evaluation versions: controller_x6.py,offline_x6.py,game_pool_x6.py/
+game_worker_x6.py for stages1/2; game_pool_v3.py/game_worker_v3.py then unchanged
+reduce_stage3_v2.py for corrected stage3. Qualified k_stage3_v2.py unchanged;
+base freeze remains immutable and is retained in game/diagnostic identities.
+Original controller1403380 will exit viaCONTROLLER.STOP before its replacement;
+never run two gate controllers. Conditional R2 ranking includes all six arms.

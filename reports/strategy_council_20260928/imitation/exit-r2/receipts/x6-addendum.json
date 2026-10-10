@@ -1,0 +1,74 @@
+{
+  "schema": "clasher.exit-r2.x6-addendum.v1",
+  "utc": "2026-10-10T01:17:57Z",
+  "authority": "Coordinator utilization decision labeled2026-10-10 01:05Z; received01:13Z",
+  "committed_before_launch": true,
+  "admission": "Commit and push this addendum and own seed audit before launching X6; staging only precedes commit.",
+  "base_freeze_sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+  "base_freeze_commit": "10831e2b76e832bc2031fef46c01b5995047c905",
+  "seed_audit_sha256": "cee346cb8cbee6efbacfaac06dababa1cc7c13dae06bac48cd283fa9fe93c534",
+  "arm": {
+    "host": "127x13",
+    "temperature": 0.0001,
+    "teacher_fraction": 0.75,
+    "steps": 4883,
+    "microbatch": 3584,
+    "score_zscore": false
+  },
+  "files": {
+    "ops/experiment_x6.py": "8cbc56292e65704d98e62b4e4f798a7b4fb3eaa0e4d651c3301d3542a852a9fe",
+    "ops/controller_x6.py": "edb7cd4084eafcdaf79bf3b2e8838efac68a57363ebefc14e4492d3344e958ef",
+    "ops/offline_x6.py": "63e1317489b9f357768a54ae19ae934a589207e300d0c076ae20398df4ad4622",
+    "ops/game_worker_x6.py": "7f17e4bf49ad763c4057e43b8a02f32dc531cd9ba2674527673925925a8d785d",
+    "ops/game_pool_x6.py": "482bdbd22fa34bc5aaec7364f9beb8c8ccb8ca48a57a140300763e35198b7f0e",
+    "ops/game_worker_v3.py": "0a86f8c021b6a70d5b7a46a6262e55c1e8fce57705cacde15f54024b378f68b1",
+    "ops/game_pool_v3.py": "c4fb600df3ecc1c5a7387d66385f2a529326602b4b877c66bb24c31e4b12c60a",
+    "ops/supervise_x6.py": "10f434686d158407546266e90a6b662fdb2c69d8cbe9b06032f1ef6c3a7f7976",
+    "ops/run_fit_x6.sh": "77cf8bc96ddcc2378e308aa88cf92df0603916b092d43f0a2cb6eeed8aca67a0",
+    "ops/stage_x6.py": "ed9c586698f2dcd29212cc48a4e60039ec081a44d6cccbf866d4fd3eb0e501ee"
+  },
+  "common_recipe": "All original freeze scientific inputs/source hashes, width192, play1/value0, batch8192, seed2026101001, finalEMA, loader6/prefetch4 and r1 parent118/119/126/loaders120-125 are unchanged.",
+  "priority": {
+    "x3_remains": "127x08",
+    "x6_stop": "X6.STOP",
+    "x3_request": "X3.RESUME.REQUEST",
+    "behavior": "X3 request vetoes X6 launch and checkpoints active X6. Controller relays stopped08 health to13. X6 is paused, never scientifically killed by yielding. X3 resume only after X6 exit and GPU idle, exact original checkpoint/source/optimizer/RNG preserved."
+  },
+  "reporting": {
+    "arms": [
+      "X1",
+      "X2",
+      "X3",
+      "X4",
+      "X5",
+      "X6"
+    ],
+    "stage3_max_survivors": 3,
+    "tie_order": [
+      "X1",
+      "X2",
+      "X3",
+      "X4",
+      "X5",
+      "X6"
+    ],
+    "stage1": "Original exact heldout64 thresholds",
+    "stage2": "h2h256 vs v1; kill upperCI>=.50",
+    "stage3": "Qualified immutable k_stage3_v2.py; studentK1 and plainK1 each vs v1,600 paired seeds; kill upperCI>=0",
+    "stage3_entrypoints": [
+      "game_pool_v3.py",
+      "game_worker_v3.py",
+      "reduce_stage3_v2.py"
+    ],
+    "base_freeze_hash_in_cases": "Original immutable freeze hash retained; this addendum pins six-arm admission/source separately."
+  },
+  "capacity_release": "Capacity PROGRESS01:03Z documents width288 scientific kill and exit; independent13 GPU idle at01:12:24Z and01:13:38Z; recheck immediately before launch.",
+  "resource_limits": {
+    "nice_min": 10,
+    "processes_max": 16,
+    "pss_guard_bytes": 46000000000,
+    "pss_limit_bytes": 48000000000,
+    "gpu_free_min_bytes": 8589934592
+  },
+  "checks": "Nine modules ast.parse and shell bash-n passed home03 core63 nice19 SCHED_IDLE; scientific target behavior already qualified off-equals-r1/tie/micro tests. Real input/helper composition guard is checked before launch."
+}

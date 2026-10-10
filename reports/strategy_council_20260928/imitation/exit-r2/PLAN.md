@@ -24,11 +24,12 @@ Neither that slice nor evaluation games enter training.
 | X3 | per-root population z-score; softmax τ=.5 | 1.0 | 127x08, then released13/14 if needed | 4883 | 7168 (no human rows) |
 | X4 | raw-score softmax T=.003 | .75 | 127x01 | 4883 | 3584 |
 | X5 | X1, twice the optimizer steps | 1.0 | 127x04 | 9766 | 7168 (no human rows) |
+| X6 | raw-score softmax T=.0001, exact ties split | .75 | 127x13, yields to X3 resume | 4883 | 3584 |
 
 Every effective batch is8192. Train seed2026101001, **play weight1**, value
 weight0; unchanged r1 AdamW lr3e-4, weight decay.05, 2000-step warmup and
 qualified cosine schedule with the arm's total steps, clip1, EMA.999.
-X1–4 process40,001,536 rows; X5 processes80,003,072. Teacher micro≤128.
+X1–4 and X6 process40,001,536 rows; X5 processes80,003,072. Teacher micro≤128.
 Human thinning/IPW and source-conditional denominators remain r1. Z-score uses
 only valid completed candidates, population variance, std floor1e-12; equal
 scores and one-candidate roots yield uniform targets over valid candidates.
@@ -56,6 +57,17 @@ checkpoint continuation on13/14 only after their capacity workers vacate.
 05 remains a command center with no builds/tests/training/simulations.
 Any13/14 continuation needs capacity PROGRESS release plus an independent empty
 nvidia-smi compute-process check. Never preempt capacity;13 is overflow/R2.
+Coordinator utilization addendum received2026-10-10 01:13Z, labeled01:05Z,
+adds X6 on released13. X1/X2/X4/X6 form the temperature×human-anchor2×2;
+same train seed and inputs preserve paired recipe comparisons. Original
+X1–X5 freeze/source hashes remain unchanged; X6 has its own seed audit and
+SHA-pinned addendum committed/pushed before launch. Read-only corpus staging
+is throttled153600KiB/s and every manifest-listed file SHA checked. X6 uses
+owned `X6.STOP`; `X3.RESUME.REQUEST` on13 vetoes launch and requests an
+immediate checkpoint stop of an active X6. The six-arm home03 controller sends
+that request when08's X3 health reports a stop reason. It does not resume X3
+automatically. Verify X6's checkpoint/exit and GPU idle before migrating X3;
+X3 always takes priority. X6 yield is operational censoring/pause, not a kill.
 
 Stage1: reuse the frozen r1 held-out64 whole games, seeds
 4503601207370496+[0,64). Root-only gate probability recall at stochastic T1,
@@ -72,7 +84,8 @@ disabled, stochastic gate(c) T1 each5ticks. Whole-game bootstrap as above.
 **Kill if loss upper95% CI≥.50.** Missing/nonterminal cases cannot pass.
 
 Stage3: at most3 stage2 survivors, selected by lowest stage2 point loss;
-ties: highest stage1 hard agreement, then X1→X5 order. Each orders K1's anytime
+ties: highest stage1 hard agreement, then X1→X6 order. The cap remains three
+survivors total across all six arms. Each orders K1's anytime
 coarse scan and adds top8 legal proposals, playing against the unchanged v1
 policy. Control is plain K1 with empty hooks against that same v1 policy;
 arm/control share seed, decks and seat. Both actors retain K's v1 fallback

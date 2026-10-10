@@ -1,0 +1,61 @@
+{
+  "schema": "clasher.exit-r2.x6-seed-audit.v1",
+  "utc": "2026-10-10T01:17:22Z",
+  "passed": true,
+  "authority": "Coordinator utilization addendum labeled2026-10-10 01:05Z, received01:13Z",
+  "base_seed_audit_sha256": "50ca2e54a19f44b7c17150a0cd07f663c9c87c811fb3959128278fdaafa5c209",
+  "fresh13": {
+    "utc": "2026-10-10T01:16:31Z",
+    "host": "127x13",
+    "roots": [
+      "/mpac/sdicks02/repos/clasher-lease",
+      "/mpac/sdicks02/jobs/clasher"
+    ],
+    "excluded": [
+      "/mpac/sdicks02/jobs/clasher/exit-r2-seed-audit-20261010-r1",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1"
+    ],
+    "ranges": {
+      "h2h": [
+        4503601507370496,
+        256
+      ],
+      "paired": [
+        4503601517370496,
+        600
+      ],
+      "smoke": [
+        4503601527370496,
+        32
+      ],
+      "dagger": [
+        4503601707370496,
+        32768
+      ]
+    },
+    "helper_offsets": [
+      0,
+      13,
+      100000,
+      100001,
+      100002,
+      100003,
+      271828,
+      271829
+    ],
+    "overlap": [],
+    "errors": [],
+    "exact_scan_passed": true,
+    "cpu_seconds": 59.074613,
+    "wall_seconds": 75.98299141903408,
+    "inventory_sha256": "5d6c26cc3be31cf582c3ad1edec27f8f73f529ff5429a1f6ed5040e24ed2bd13",
+    "file_count": 49713,
+    "maximum_literal": 4503601307642356,
+    "formula_count": 10080
+  },
+  "formula_review": "Inherits the sealed eight-host r2 formula/helper-offset review and fourteen historical r1 inventories. Fresh13 maximum literal remains4503601307642356, below all reporting/generated ranges, and all expanded-bank literal scans pass. X6 changes target temperature and human fraction only; game/helper formulas and native harnesses are unchanged.",
+  "range_reuse": "X6 deliberately shares heldout64, h2h256 and paired600 seeds/decks/seat with the original arms. This is a new exploration arm, not a claim of independent seeds. Its common train seed2026101001 is fixed by the coordinator recipe. No reporting game has run in any X arm.",
+  "known_smoke_use": "Only home03 mechanics consumed4503601527370496+[0,4), including arm/control repeats. The smoke bank is disjoint from scientific reporting/R2; no new smoke game is required for the unchanged qualified K adapter.",
+  "inventory_path": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/x6-inventory.json",
+  "cpu_seconds": 59.074613
+}
