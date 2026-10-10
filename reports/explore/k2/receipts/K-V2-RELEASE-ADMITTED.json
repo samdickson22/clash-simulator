@@ -1,0 +1,17 @@
+{
+  "release_commit": "bf41ebc5",
+  "source_path": "reports/explore/k-v2/PROGRESS.md",
+  "source_sha256": "1f177c213feca2cb4ee1720087ac4699a1106d650fb8c700be23f96273e8a759",
+  "explicit_release_note": "2026-10-10T05:09:20Z \u2014 EXPLICIT03 RELEASE: K-v2 releases its03 timing reservation. All2400 reporting games terminal; supervisor exited0 at05:04:16Z. Source/vacate audit verifies1536 runtime files and77 native-source files unchanged, reporting PGIDs1718083/1718091 absent; final host census05:06:44Z finds no remaining owned Python process and G PGID1575208 absent. Physical0\u201345 used by K-v2 are vacated; K2 may proceed after its independent absence check. G STOP-03 retained; G never restarted. No cache/controller/core60 process or affinity was changed by K-v2. Former cache PID1655741 is absent at final census; original host audit\u2019s persistence assertion failed, so the final receipt explicitly records this external observation rather than claiming a pass. Timing/reason of that exit unknown.",
+  "pgids": [
+    1718083,
+    1718091
+  ],
+  "owner_release_utc": "2026-10-10T05:09:20Z",
+  "utc": "2026-10-10T05:11:26Z",
+  "fully_vacated": true,
+  "K_v2_python_jobs": [],
+  "G_STOP03_retained": true,
+  "G_pgid_absent": 1575208,
+  "who": ""
+}

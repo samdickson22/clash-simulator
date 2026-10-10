@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-10T05:12:02Z",
+  "identity": {
+    "launched_at_utc": "2026-10-10T05:11:26Z",
+    "pid": 2289281,
+    "pgid": 2289281
+  },
+  "remaining_processes": [],
+  "games_launched": 0,
+  "failure": "stage nice10 inherited plus frozen launch nice-n10 produced nice19; supervisor assertion before pool launch",
+  "operational_recovery": "preserve failed claim/log/identity; invoke frozen launch.sh from nice0 so supervisor receives nice10; no runtime changes"
+}
