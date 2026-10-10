@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-10T18:26:12Z",
+  "commit": "11dcb03466340ef2ba342282ebfd9d0711b02229",
+  "base": "64608f6f90ba4f7f60ef493760a703b96051ebbb",
+  "branch": "worker/t1-amendment1-release-20261010",
+  "worktree": "/mpac/sdicks02/jobs/clasher/t1-amendment1-release-worktree-20261010",
+  "tests": 49,
+  "test_receipt_path": "reports/explore/t1/receipts/amendment1-release-c14-tests.json",
+  "test_receipt_sha256": "2fa1b1e33bf9790f71aafc86391a6cbd29584ed9f3b93489eaa73a5f5b5c04cc",
+  "re_review_requested": true,
+  "admitted": false,
+  "reporting_runtime_unchanged": true,
+  "production_outcomes_read": false
+}
