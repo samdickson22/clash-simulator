@@ -192,3 +192,11 @@ Current controller has no active task, offline/stage2 outcomes or failures.
 K timing PGID1718091 remains active; no stage1/2 starts on03 before release.
 All six original GPU groups remain healthy,08 quiet empty/resource floors pass.
 No reporting/S-default smoke/R2 generation admitted.
+
+Final-fit handoff operational fix qualified02:46:37Z:10 metadata-only tests
+PASS,CPU1.331412s; real unfinished-X1 readiness refusal CPU1.085578s on03,
+remote tiny metadata probe CPU unmetered/disclosed. Complete.json is written
+before loader cleanup/segment file, so collection now additionally waits final
+artifacts, coherent metadata and clean owned fit exit. No training changes,
+game outcomes or source/recipe/seed/gate changes. Costs are separate preparation.
+Replacement controller must be frozen/committed/pushed before launch.

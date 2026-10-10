@@ -1,0 +1,34 @@
+{
+  "schema": "clasher.exit-r2.fit-collection-amendment.v1",
+  "utc": "2026-10-10T02:47:15Z",
+  "authority": "Authorized X experiment operational fix; original scientific recipes/source bytes and stage rules unchanged.",
+  "reason": "Trainer writes complete.json before fit_runtime finally joins loaders and writes segment.json; controller previously could rsync a segment that did not yet exist. Require final artifacts, coherent metadata, clean supervisor exit and absent owned fit groups before collection.",
+  "committed_before_controller_launch": true,
+  "base_freeze_sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+  "sdefault_addendum_sha256": "7f62b4e4ac4dccbef4f555f1ca8b10b4a77d0412d02607f26c6a873c1272d1a7",
+  "retained_k_admission_sha256": "f26a5b7636f3e97db0f6a082a5cd826a1973481a25dce34c1f883e48606408f7",
+  "files": {
+    "ops/fit_collection_ready.py": "84b4a8d8925aa53a953ed706c0ede98090194e051113641f0dd1b5b83dd8874e",
+    "ops/controller_ready_yield.py": "67f0012498f684aea5c3c2d806acd2028ac793926cf275e8799aec90b6885550",
+    "ops/test_fit_collection_ready.py": "f38dc3daddaea5318eaea20f7ae788049a40bc1516d8c8e604c225206af39058",
+    "ops/qualify_fit_collection_ready.py": "869880b2c6b449f31a940ee1718b208e732117ce9db59f8ada93767035c1c1ac"
+  },
+  "old_controller": {
+    "pid": 1746462,
+    "pgid": 1746462,
+    "module": "controller_k_yield.py",
+    "active": null
+  },
+  "replacement": "controller_ready_yield.py adds metadata collection_ready before unchanged K/G admission/rsync/SHA/final-EMA/offline/stage2 flow",
+  "readiness": "All final files nonempty, complete final step not stopped, segment returned and cursor_start+optimizer_steps==arm total, complete/input pins equal, supervisor exit0/reasonnull and both owned PGIDs absent. Incomplete/partial metadata queues rather than collects or scientifically kills.",
+  "source_transport": "Frozen helper exports only stdlib metadata probe via safely shell-quoted SSH python3 -c; no new file/source bytes staged on fit hosts.",
+  "qualification": "10 metadata tests PASS core63 nice19/SCHED_IDLE. Real X1 probe correctly refused pending final checkpoint/complete/segment/exit. No game/scoring/policy or checkpoint loads from tests.",
+  "qualification_pid": 1799994,
+  "qualification_cpu_seconds": 1.3314119999999998,
+  "observation_cpu_seconds": 1.085578,
+  "observation_remote_metadata_cpu_unmetered": true,
+  "science_seeds_recipes_gates_native_finalEMA_unchanged": true,
+  "controller_handoff": "After explicit-path commit+secret scan+push, request only own CONTROLLER.STOP; verify old active=null and groups gone, retain parent+children CPU once; clear only X stop and setsid-f launch new core63/nice19/IDL controller. G stops unchanged.",
+  "k_timing_constraint": "No03 evaluation until successful REPORTING*-DONE plus zero K timing processes; original K/G admission bytes unchanged.",
+  "stage3": "Original training and qualified S-default science/source bytes unchanged. No replacement games or reporting seeds admitted."
+}

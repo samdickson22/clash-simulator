@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-10T02:47:15Z",
+  "passed": true,
+  "state": {
+    "arm": "X1",
+    "step": 4883,
+    "ready": false,
+    "reason": "final artifacts not yet closed",
+    "missing": [
+      "checkpoint",
+      "complete",
+      "segment",
+      "exit"
+    ],
+    "host": "127x09",
+    "utc": "2026-10-10T02:47:15Z"
+  },
+  "parent_cpu_seconds": 1.070676,
+  "children_cpu_seconds": 0.014901999999999999,
+  "wall_seconds": 1.4119592329952866,
+  "no_games": true,
+  "remote_metadata_cpu_unmetered": true
+}

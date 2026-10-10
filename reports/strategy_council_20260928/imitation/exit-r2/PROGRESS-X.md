@@ -581,3 +581,20 @@ Compact continuation-check0242 replaces live total10.464743377GPU-wallh and
 added. No scientific gate/kill/survivor/R2 outcome. Current scheduled prompt
 already names1746462/S-default,enabled,next02:51:31.806Z; older queued turns
 do not alter current operational identities or qualified source/science pins.
+
+2026-10-10T02:47:15Z. Collection review found genuine final-artifact race:
+train writescomplete.json, then fit_runtime finally closes loaders/writes
+segment.json; existing controller could rsync segment before creation.
+New immutable-version controller_ready_yield.py/fit_collection_ready.py
+requires all artifacts, coherent final-step/segment/input metadata, clean
+supervisor exit and no owned PGIDs before unchanged K/G admission/collection.
+No fit-host code staged or scientific recipe/source/seed/threshold changes.
+Qualifier1799994=PGID1799994 exited02:46:37Z:10metadata-only testsPASS on03
+core63 nice19/SCHED_IDLE,CPU1.331412s. Real02:47:15 probe correctly refuses
+X1 pending finalcheckpoint/complete/segment/exit,CPU1.085578s on03; remote
+tiny metadata probe CPU unmetered/disclosed. No scoring/games/GSTOP/K changes.
+Current1746462 active=null/offline={}/stage2={}/failures=[]02:46:14Z; allsix
+fits originalgroups healthy02:44:24Z,08 quietempty,leasedguardsPASS. New
+operationalamendment/sourcequalification must commit/push before ownSTOP,
+old clean exit/meter once and replacementsetsid-f. No controller replacement
+yet in this record; no stageoutcome/survivor/R2 admission/reportingseeds.

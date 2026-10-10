@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-10T02:46:37Z",
+  "passed": true,
+  "tests": 10,
+  "exit_code": 0,
+  "files": {
+    "fit_collection_ready.py": "84b4a8d8925aa53a953ed706c0ede98090194e051113641f0dd1b5b83dd8874e",
+    "controller_ready_yield.py": "67f0012498f684aea5c3c2d806acd2028ac793926cf275e8799aec90b6885550",
+    "test_fit_collection_ready.py": "f38dc3daddaea5318eaea20f7ae788049a40bc1516d8c8e604c225206af39058",
+    "qualify_fit_collection_ready.py": "869880b2c6b449f31a940ee1718b208e732117ce9db59f8ada93767035c1c1ac"
+  },
+  "parent_cpu_seconds": 1.0575569999999999,
+  "children_cpu_seconds": 0.27385499999999996,
+  "wall_seconds": 0.23368436098098755,
+  "no_games": true,
+  "no_policy_or_checkpoint_load": true,
+  "scope": "Core63 metadata-only, fake fit artifacts; no scoring/evaluation or K/G intervention"
+}

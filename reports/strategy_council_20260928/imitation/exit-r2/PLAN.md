@@ -197,3 +197,16 @@ controller/Ghelper/X6/S-default source hashes remain unchanged. Operational
 amendment/qualification source pins must be committed/pushed before replacing
 controller1596239; stop via ownedCONTROLLER.STOP, cleanly collect meter once,
 then detach replacement with new PID/PGID/log recorded.
+
+Operational final-fit collection amendment2026-10-10T02:47:15Z: trainer writes
+complete.json before loader cleanup/segment.json, so that marker alone is
+insufficient admission for collection. Versioned controller_ready_yield.py
+adds a metadata-only readiness probe before unchanged K/G admission and
+rsync/SHA/offline/stage2 flow. Require nonempty final artifacts, final step
+not stopped, returned segment with exact resumed cursor total, matching
+complete/input pins, supervisor exit0/no guard reason, and absence of both
+owned fit groups. Partial metadata queues; resource pause is never a kill.
+No file/source changes on fit hosts. Ten fake-metadata tests pass core63,
+and real X1 readiness correctly refuses unfinished artifacts. Freeze/commit/
+push before idle controller1746462 clean stop/meter/new setsid-f launch.
+Original recipes/source/science/seeds/finalEMA and K/G/S-default pins remain.
