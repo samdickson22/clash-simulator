@@ -1,0 +1,159 @@
+{
+  "utc": "2026-10-10T05:42:38Z",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "pool": {
+    "utc": "2026-10-10T05:42:05Z",
+    "pool_pid": 2035131,
+    "pgid": 2035131,
+    "alive": true,
+    "complete": 307,
+    "active": 40,
+    "pending": 253,
+    "admitted": true,
+    "failures": [],
+    "mem_available": 110226137088,
+    "load1": 47.52
+  },
+  "controller": {
+    "alive": true,
+    "active": null,
+    "offline_active": [],
+    "closed": [
+      "X1",
+      "X2",
+      "X3",
+      "X4",
+      "X6",
+      "X7"
+    ],
+    "stage2": {},
+    "failures": []
+  },
+  "fits": {
+    "X5": {
+      "utc": "2026-10-10T05:42:05Z",
+      "arm": "X5",
+      "host": "127x04",
+      "supervisor_pid": 3727388,
+      "supervisor_pgid": 3727388,
+      "trainer_pid": 3727520,
+      "trainer_pgid": 3727520,
+      "own_processes": [
+        {
+          "pid": 3727388,
+          "pgid": 3727388,
+          "nice": 10
+        },
+        {
+          "pid": 3727520,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736754,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736778,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736797,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736810,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736811,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736816,
+          "pgid": 3727520,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T05:42:04Z",
+        "pid": 3727520,
+        "pss": 17176946688,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 17352.62734311493
+      },
+      "step": 8859,
+      "rows": 72572928,
+      "provisional_tree_cpu_seconds": 47366.98,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00008750.pt",
+      "exit": null,
+      "lease": null,
+      "loader_workers": 6,
+      "human_micro": 7168
+    },
+    "X7": {
+      "utc": "2026-10-10T05:42:05Z",
+      "arm": "X7",
+      "host": "127x14",
+      "supervisor_pid": 2423139,
+      "supervisor_pgid": 2423139,
+      "trainer_pid": 2423269,
+      "trainer_pgid": 2423269,
+      "own_processes": [],
+      "health": {
+        "utc": "2026-10-10T05:41:35Z",
+        "pid": 2423269,
+        "pss": 12273740800,
+        "processes": 2,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 9231.812481379835
+      },
+      "step": 4883,
+      "rows": 40001536,
+      "provisional_tree_cpu_seconds": 0,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00004750.pt",
+      "exit": {
+        "utc": "2026-10-10T05:41:45Z",
+        "exit_code": 0,
+        "reason": null,
+        "supervisor_cpu_seconds": 955.22616,
+        "trainer_tree_cpu_seconds": 24920.689571000003,
+        "wall_seconds": 9241.814627931919,
+        "peak_pss_bytes": 22334476288,
+        "max_processes": 9,
+        "min_gpu_free_bytes": 48414851072
+      },
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "loader_workers": 6,
+      "human_micro": 7168,
+      "closure": {
+        "own_fit_and_score_groups": [],
+        "gpu_processes": "",
+        "gpu_free_mib": "48666"
+      }
+    }
+  },
+  "schedule": {
+    "enabled": true,
+    "nextRunAt": "2026-10-10T05:51:56.989Z"
+  },
+  "note": "Reporting metadata only; no losses/CIs read. X7 closed scientific record collected without repeated inference; separate final-artifact checksum CPU833.881ms retained."
+}

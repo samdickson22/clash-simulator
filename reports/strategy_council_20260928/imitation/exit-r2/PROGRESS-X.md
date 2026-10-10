@@ -1,5 +1,23 @@
 # X worker progress
 
+2026-10-10T05:42:38Z. X7 final4883EMA/fitexit0 05:41:45Z; single frozenGPUscore14
+3048428/3048438 closed05:42:06Z. Originalfit2423139/2423269 andscoregroups
+ALLABSENT/GPUempty48666MiB; finalEMAafb6775fe49a8fd5dee7dfcbfc0b7130e48909fa8bd204217007b6250ad98bbd.
+Allsource/input/loader/fitruntime/finalcheckpointSHAchecksPASS; separate
+lightprepCPU.833881s. Root64recall.258470372/top8.308077198/hard.613625124/
+WAIT.829674232, first3frozenkills/WAITpass/infeasible-gate interpretation.
+FullCIsstage1-X7.json; X7-X1 pointgaprecall-.000548497/top8+.002144389/
+hard+.000865480/WAIT+.000428758, no gapCI; X7excludedpre-report693bc3b1.
+FitGPU9241.814628s/CPU25875.915731s, scorewholeGPU14.243433s/CPU13.147951s;
+nestedresultCPU neveradded. Current2071651 sixclosed/noactive/failures.
+ONLYX5fit activeoriginal3727388/3727520 at8859/9766/eightnice10/floorsPASS.
+Reporting2035131 healthy307/600/40active/253pending/no failures,mem110226137088/
+load47.52; no reportingloss/CI read. Fitmonitor0542 closed6+liveX5
+21.117274177GPUh/70.803372012CPUh REPLACEprior; offline60.021212310GPUh/0.019066336CPUh separate.
+Original150/151unconsumed/R2ineligible/01notreleased. No new job/score/recovery.
+PromptupdatedX7closed/ONLYX5active; tenminenabled,next05:51:56Z;
+experiment pendingX5record+600study/reduction/report/release.
+
 2026-10-10T05:32:05Z. Active01reportingpool2035131 admitted/healthy,
 252/600complete/308pending/40active/no failures,available109585592320bytes/
 load46.46. No reporting losses/CIs/outcomes read; no new job/score/recovery.

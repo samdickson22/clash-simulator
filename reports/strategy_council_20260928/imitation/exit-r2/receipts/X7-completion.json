@@ -1,0 +1,55 @@
+{
+  "utc": "2026-10-10T05:42:38Z",
+  "arm": "X7",
+  "host": "127x14",
+  "fit_final_step": 4883,
+  "fit_final_ema_sha256": "afb6775fe49a8fd5dee7dfcbfc0b7130e48909fa8bd204217007b6250ad98bbd",
+  "fit_exit": {
+    "utc": "2026-10-10T05:41:45Z",
+    "exit_code": 0,
+    "reason": null,
+    "supervisor_cpu_seconds": 955.22616,
+    "trainer_tree_cpu_seconds": 24920.689571000003,
+    "wall_seconds": 9241.814627931919,
+    "peak_pss_bytes": 22334476288,
+    "max_processes": 9,
+    "min_gpu_free_bytes": 48414851072
+  },
+  "stage1_launch": {
+    "utc": "2026-10-10T05:41:52Z",
+    "supervisor_pid": 3048428,
+    "supervisor_pgid": 3048428,
+    "worker_pid": 3048438,
+    "worker_pgid": 3048438,
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/fits/X7/step-00004883.pt"
+  },
+  "stage1_meter": {
+    "utc": "2026-10-10T05:42:06Z",
+    "arm": "X7",
+    "exit_code": 0,
+    "reason": null,
+    "parent_cpu_seconds": 0.112201,
+    "children_cpu_seconds": 13.03575,
+    "gpu_wall_seconds": 14.243432925082743,
+    "peak_pss_bytes": 3248372736,
+    "min_gpu_free_bytes": 49517953024,
+    "note": "Whole parent+child CPU once; child result CPU is nested, never add separately. Failed/reaped attempts retained."
+  },
+  "stage1_survives": false,
+  "kill_reasons": [
+    "play recall <0.60",
+    "top-8 recall <0.50",
+    "root hard agreement <0.704"
+  ],
+  "stage2": "SKIP: coordinator infeasible-gate ruling; original bank unconsumed",
+  "stage3": "SKIP: coordinator infeasible-gate ruling; originald026 bank unconsumed",
+  "R2": "Ineligible under coordinator03:58 ruling",
+  "interpretation": "Frozen kills retained for record; infeasible gates do not establish student quality.",
+  "closure": {
+    "own_fit_and_score_groups": [],
+    "gpu_processes": "",
+    "gpu_free_mib": "48666"
+  },
+  "original_scientific_pins_unchanged": true,
+  "descriptive_study": "Excluded by pre-report selection amendment693bc3b1; original seed replicate for offline gap only"
+}

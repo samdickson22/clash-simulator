@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-10T05:42:38Z",
+  "comparison": "X7 minus X1; same recipe, different training seed",
+  "scope": "Frozen heldout64 teacher-root metrics",
+  "kind": "Descriptive point differences; no paired gap CI estimated",
+  "X1_checkpoint_sha256": "b42b64cacfc43baa284fd1ba7b5f95f9c9daa3f6d29e722224a03666260b5526",
+  "X7_checkpoint_sha256": "afb6775fe49a8fd5dee7dfcbfc0b7130e48909fa8bd204217007b6250ad98bbd",
+  "gaps": {
+    "play_recall": -0.000548497488951194,
+    "top8_action_recall": 0.0021443888491780028,
+    "hard_action_agreement": 0.0008654797230465139,
+    "student_wait_rate": 0.0004287583967181874
+  },
+  "stage2": "Not estimable: original bank unconsumed under infeasible-gate ruling",
+  "stage3": "Not estimable: original bank unconsumed",
+  "postkill": "Not estimable: X7 excluded by pre-report selection amendment693bc3b1",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false
+}

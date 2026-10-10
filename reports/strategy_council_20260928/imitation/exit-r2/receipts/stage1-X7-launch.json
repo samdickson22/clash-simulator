@@ -1,0 +1,8 @@
+{
+  "utc": "2026-10-10T05:41:52Z",
+  "supervisor_pid": 3048428,
+  "supervisor_pgid": 3048428,
+  "worker_pid": 3048438,
+  "worker_pgid": 3048438,
+  "checkpoint": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/fits/X7/step-00004883.pt"
+}
