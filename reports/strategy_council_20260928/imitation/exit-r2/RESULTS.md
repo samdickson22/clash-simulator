@@ -5,7 +5,8 @@ Original X1–X5 first fit attempts failed during input construction before any 
 The omitted r1 assets sidecar is restored; correction35cacd00 was pushed
 before attempt2 launched00:52:49-51Z. All six fits now passed input admission
 and have optimizer updates; X6 attempt1 began01:22:43Z after its own freeze.
-Scientific stage metrics remain pending.
+Scientific stage metrics remain pending. Stage3 reporting is ON HOLD by
+coordinator decision labeled01:35Z, received01:42Z; no stage3 seeds consumed.
 No reporting game played. This is a status record, not a verdict.
 The committed plan/seed audit must precede fitting; use final EMA only.
 
@@ -102,3 +103,11 @@ present; full vacate was not claimed. X trainerPID1217609, source, recipe and
 checkpoint lineage unchanged; slow interval remains charged within attempt2.
 Recovery supports shared-load interference but does not establish its precise
 cause. Coordinator informed; receipt x4-throughput-recovery-20261010T0141Z.json.
+
+2026-10-10 01:42Z comparator hold: no stage3 reporting processes or case files
+on01/03, verified with remote process/case audit. Prior disjoint qualification
+smokes stay excluded from reporting. RuntimeSTAGE3.HOLD and the updated
+continuation prompt suspend all stage3 arm/control games pending explicit
+coordinator comparator revision; independent review ETA02:30Z is not a
+release. Fits and stages1/2 continue unchanged, conditional R2 still requires
+a stage2 survivor. No comparator substitution or scientific kill assigned.

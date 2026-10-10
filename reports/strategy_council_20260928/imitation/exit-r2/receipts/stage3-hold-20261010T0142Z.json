@@ -1,0 +1,27 @@
+{
+  "schema": "clasher.exit-r2.stage3-hold.v1",
+  "received_utc": "2026-10-10T01:42:18Z",
+  "recorded_utc": "2026-10-10T01:43Z",
+  "coordinator_decision_label_utc": "2026-10-10T01:35Z",
+  "status": "held_pending_explicit_revised_comparator",
+  "reason": "Coordinator reports K1 96.5% loss and 96.5% cutoffs; independent review pending.",
+  "review_eta_utc": "2026-10-10T02:30Z",
+  "eta_lifts_hold": false,
+  "reporting_seed_range": {
+    "base": 4503601517370496,
+    "count": 600
+  },
+  "reporting_seeds_consumed": 0,
+  "stage3_active_processes": [],
+  "audited_hosts": [
+    "127x01",
+    "127x03"
+  ],
+  "audit_utc": "2026-10-10T01:42:38Z",
+  "runtime_marker": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/STAGE3.HOLD",
+  "scope": "Stage3 reporting arm and control, including eventual R2 stage3 re-screen. Fits/stages1-2 and conditional R2 admission unchanged.",
+  "enforcement": "Operator/admission hold in PLAN, PROGRESS and scheduled continuation prompt plus runtime markers. Existing controller only launches stages1/2; no stage3 controller active. Frozen stage3 code/qualification is unchanged.",
+  "lift_requirements": "Explicit coordinator comparator decision; record/freeze/commit/push amendment and required qualification before stage3 reporting. Do not choose fallback or comparator independently.",
+  "qualified_smokes": "Prior disjoint corrected qualification remains historical mechanics evidence, never reporting/control.",
+  "scientific_freeze_changed": false
+}

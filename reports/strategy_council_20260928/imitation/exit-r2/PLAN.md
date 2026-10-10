@@ -83,6 +83,16 @@ deck=i%5, opponent=floor(i/5)%5, seat=i%2, symmetric d27/capacity1, abilities
 disabled, stochastic gate(c) T1 each5ticks. Whole-game bootstrap as above.
 **Kill if loss upper95% CI≥.50.** Missing/nonterminal cases cannot pass.
 
+**Coordinator hold received2026-10-10 01:42Z, decision labeled01:35Z:**
+Stage3 reporting is ON HOLD pending an explicit revised comparator after the
+independent K review (ETA02:30Z; ETA does not lift the hold). Consume no stage3
+seeds, including controls or eventual R2 stage3 re-screen. Fits and stages1/2
+continue unchanged. The stage3 specification below is retained as the prior
+frozen design, suspended for reporting. Resume only after a coordinator-issued
+comparator amendment is frozen/committed/pushed and appropriately qualified.
+RuntimeSTAGE3.HOLD markers on01/03 and the continuation prompt record the hold;
+receipt stage3-hold-20261010T0142Z.json. Current controller launches only1/2.
+
 Stage3: at most3 stage2 survivors, selected by lowest stage2 point loss;
 ties: highest stage1 hard agreement, then X1→X6 order. The cap remains three
 survivors total across all six arms. Each orders K1's anytime
