@@ -12,7 +12,7 @@ import torch
 from imitation.model import train as human_trainer
 from imitation.model.store import PackedStore
 from imitation.model.batching import build_batch
-from .student import TeacherStore, initialize, mixed_indices, teacher_loss
+from .student import TeacherStore, initialize, mixed_indices, teacher_loss, teacher_targets
 from .rows import sha, write_json
 
 
@@ -41,7 +41,7 @@ def eligible(store,epoch,seed):
     return result
 
 
-def step(model,opt,human,teacher,ratio,microbatch,device,temperature,play_weight,value_weight):
+def step(model,opt,human,teacher,ratio,microbatch,device,temperature,play_weight,value_weight,score_zscore=False):
     if ratio==0:
         return human_trainer.optimizer_step(model,opt,*human,microbatch,device)
     opt.zero_grad(set_to_none=True)
@@ -61,7 +61,7 @@ def step(model,opt,human,teacher,ratio,microbatch,device,temperature,play_weight
             loss.backward();total+=float(loss.detach())
     b,y=teacher
     w=y['weight'].float()*y['supervised'].float()*torch.where(y['action']<2304,play_weight,1.)
-    q=torch.softmax((y['root_scores'].double()/temperature).masked_fill(~y['root_valid'],-torch.inf),-1).float()
+    q=teacher_targets(y,temperature,score_zscore)
     gate_den=float(w.sum());play_den=float((w*(q*(y['root_actions']<2304)).sum(-1)).sum())
     # Teacher all-card tiles need a smaller microbatch than hard human forcing.
     for start in range(0,len(y['action']),min(microbatch,128)):
@@ -71,7 +71,7 @@ def step(model,opt,human,teacher,ratio,microbatch,device,temperature,play_weight
         with torch.autocast('cuda',dtype=torch.bfloat16) if device.type=='cuda' else nullcontext():
             o=model(bb,torch.empty(0,dtype=torch.long,device=device))
             loss=ratio*teacher_loss(o,yy,temperature,play_weight,value_weight,
-                                    denominators=(gate_den,play_den))
+                                    denominators=(gate_den,play_den),score_zscore=score_zscore)
         loss.backward();total+=float(loss.detach())
     grad=torch.nn.utils.clip_grad_norm_(model.parameters(),1.,error_if_nonfinite=True)
     opt.step()
@@ -85,6 +85,7 @@ def main():
     p.add_argument('--teacher-root');p.add_argument('--teacher-ratio',type=float,default=.5)
     p.add_argument('--value-weight',type=float,default=0.)
     p.add_argument('--temperature',type=float,default=.1);p.add_argument('--play-weight',type=float,default=4.)
+    p.add_argument('--score-zscore',action='store_true',help='Population z-score completed candidates per root before temperature')
     p.add_argument('--steps',type=int,default=4883);p.add_argument('--batch-size',type=int,default=8192)
     p.add_argument('--warmup',type=int,default=2000)
     p.add_argument('--microbatch',type=int,default=7168);p.add_argument('--seed',type=int,default=2026100901)
@@ -136,6 +137,7 @@ def main():
         if ck['hashes']!=pins or ck['config']!=asdict(c):raise ValueError('resume inputs changed')
         for k in ('teacher_ratio','value_weight','temperature','play_weight','steps','batch_size','microbatch','seed','warmup'):
             if ck['args'][k]!=vars(a)[k]:raise ValueError('resume recipe changed: '+k)
+        if ck['args'].get('score_zscore',False)!=a.score_zscore:raise ValueError('resume recipe changed: score_zscore')
         model.load_state_dict(ck['model']);ema=ck['ema'];opt.load_state_dict(ck['optimizer']);sched.load_state_dict(ck['scheduler'])
         cursor=ck['state']['step'];torch.set_rng_state(ck['torch_rng'].cpu())
         random.setstate(ck['python_rng'])
@@ -155,7 +157,7 @@ def main():
                 # with ragged score padding across shards.
                 from .teacher_batch import combined_batch
                 tb=combined_batch(shards,ends,ti)
-            result=step(model,opt,hb,tb,a.teacher_ratio,a.microbatch,device,a.temperature,a.play_weight,a.value_weight)
+            result=step(model,opt,hb,tb,a.teacher_ratio,a.microbatch,device,a.temperature,a.play_weight,a.value_weight,a.score_zscore)
             sched.step();human_trainer.update_ema(ema,model);cursor=s+1
             record=dict(step=cursor,rows=cursor*a.batch_size,teacher_ratio=a.teacher_ratio,**result)
             log.write(json.dumps(record)+'\n');print(json.dumps(record),flush=True)

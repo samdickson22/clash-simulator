@@ -1,0 +1,168 @@
+{
+  "complete": true,
+  "no_overlap": true,
+  "prior_r1_audit_path": "reports/strategy_council_20260928/imitation/exit-r1/receipts/student-seed-audit.json",
+  "prior_r1_audit_sha256": "3e2764ad69a2a1c05ddc93dc27770261856517e231341eb1881e1b0a7e5c0986",
+  "prior_r1_inventories": [
+    {
+      "host": "127x01",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-01.json",
+      "sha256": "202a927b701fc251929eb17eb363721eae07ec702559b33916d00c44ceab96fb",
+      "files": 143882,
+      "formula_files": 4183,
+      "passed": true
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-03.json",
+      "sha256": "00b1c9c14570d39e55da38b6dfed4df979397f11956d030b0bdc63f9eab238c1",
+      "files": 81685,
+      "formula_files": 10870,
+      "passed": true
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-04.json",
+      "sha256": "d23fe05d13246eb16dc97b902158f7e34129470843f23e6897f490c328ba1767",
+      "files": 150918,
+      "formula_files": 22284,
+      "passed": true
+    },
+    {
+      "host": "127x05",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-05.json",
+      "sha256": "e624f1279e24788360da732e27733b5bfa1dba66c2c4c652a2081f604a8878c5",
+      "files": 2853,
+      "formula_files": 361,
+      "passed": true
+    },
+    {
+      "host": "127x08",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-08.json",
+      "sha256": "4bc0fe13a03bcae8fb16c738273ec9f19ecec9dd6e725f8df37d69456bb82c9c",
+      "files": 67820,
+      "formula_files": 16597,
+      "passed": true
+    },
+    {
+      "host": "127x09",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-09.json",
+      "sha256": "1cfff83a12d7544c6efe0a5dd96f2fad0652046b11855b89815eb6aa02d7d0eb",
+      "files": 50997,
+      "formula_files": 4645,
+      "passed": true
+    },
+    {
+      "host": "127x13",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-13.json",
+      "sha256": "5a31b532b49aa85bf214be152b41155aedd663cc36636ad2b24893c00d15ff9b",
+      "files": 43949,
+      "formula_files": 4230,
+      "passed": true
+    },
+    {
+      "host": "127x14",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-14.json",
+      "sha256": "4764b8d3d0dc45bf892529b2515f1ad1c919d8138932e221e3b721473c69c18d",
+      "files": 47438,
+      "formula_files": 1711,
+      "passed": true
+    },
+    {
+      "host": "127x15",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-15.json",
+      "sha256": "a32d1d08baf4af4619ea58318807452765d7122fc4f982ca50d4329627da3e31",
+      "files": 49415,
+      "formula_files": 5138,
+      "passed": true
+    },
+    {
+      "host": "127x16",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-16.json",
+      "sha256": "a1bbc8e247324414432ed5344950480966b33f494df8fc9e1b2a011d895bec62",
+      "files": 4336,
+      "formula_files": 2169,
+      "passed": true
+    },
+    {
+      "host": "127x01",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-extra-01.json",
+      "sha256": "e5e63c592263af200115836fbe8bd47186571813ed74b0294a88d5990eb1a32e",
+      "files": 917,
+      "formula_files": 53,
+      "passed": true
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-extra-03.json",
+      "sha256": "b51952b41df0a744fc86a6ec12e75fb1de076e1652bf0e9f8c8483faaa07852d",
+      "files": 34767,
+      "formula_files": 286,
+      "passed": true
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-extra-04.json",
+      "sha256": "6edf33c5598dcacb0d430cc4a61bfef71594f1856c33abf808b588f0fbb2e871",
+      "files": 1375,
+      "formula_files": 119,
+      "passed": true
+    },
+    {
+      "host": "127x08",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1/inventory-extra-08.json",
+      "sha256": "59db552ea31eaca8cc645cf38dce994616bf85da7e718f963070f4bbf6b66285",
+      "files": 0,
+      "formula_files": 0,
+      "passed": true
+    }
+  ],
+  "prior_r1_game_helper_literal_ceiling": 4503601307642356,
+  "range_review": "The prior r1 exact inventories and frozen formula review bind historical generation/reporting banks below the proposed X ranges; the completed r1 reporting ranges and their helper offsets are included in this round's review. Fresh literal inventories retain unchanged and newly written provenance; every observed large seed stays within r1 bounds. Training RNG seeds2026101001 use a distinct small integer namespace. K reporting4503601407370496+600 and smoke4503601417370496+8, with <=271829 helper offsets, are below X h2h. G4503601607370496+ and R2 generation4503601707370496+ are separate reserved banks. No game seed uses unbounded cross-bank arithmetic. The 64-game r1 heldout reuse is deliberate; later R2 screens reuse X test ranges as adaptive exploration.",
+  "K_plan_path": "reports/explore/k-anytime/plan.json",
+  "K_plan_sha256": "b2a21a905bc3250f972fdec318e59a0a8b6890d303dbaf8bca4872f75a7a2695",
+  "K_declared_seed_ranges": {
+    "reporting": {
+      "base": 4503601407370496,
+      "count": 600
+    },
+    "smoke": {
+      "base": 4503601417370496,
+      "count": 8
+    }
+  },
+  "ranges": {
+    "h2h": {
+      "base": 4503601507370496,
+      "count": 256
+    },
+    "paired": {
+      "base": 4503601517370496,
+      "count": 600
+    },
+    "smoke": {
+      "base": 4503601527370496,
+      "count": 32
+    },
+    "dagger": {
+      "base": 4503601707370496,
+      "count": 32768
+    }
+  },
+  "helper_offsets": [
+    0,
+    13,
+    100000,
+    100001,
+    100002,
+    100003,
+    271828,
+    271829
+  ],
+  "heldout_reused": {
+    "base": 4503601207370496,
+    "count": 64
+  },
+  "08_and05": "05 is command center only. 08 permits X3 GPU fit/light loader only under the 00:43Z operational amendment; no game generation/reporting there. Prior sealed r1 exact inventories and unchanged historical bank bounds retained; fresh03 staging provenance also includes08 historical generation.",
+  "utc": "2026-10-10T00:47:10Z"
+}

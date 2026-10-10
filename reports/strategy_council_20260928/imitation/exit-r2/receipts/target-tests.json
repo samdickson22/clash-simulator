@@ -1,0 +1,21 @@
+{
+  "utc": "2026-10-10T00:34:58Z",
+  "tests": 7,
+  "passed": true,
+  "commands": {
+    "01": "nice -n10 taskset -c118 venv/bin/python -B -m unittest imitation.exit_r1.test_targets_r2 imitation.exit_r1.test_student",
+    "16": "nice -n10 taskset -c118 venv/bin/python -B -m unittest imitation.exit_r1.test_targets_r2 imitation.exit_r1.test_student",
+    "03": "nice -n10 taskset -c60 venv/bin/python -B -m unittest imitation.exit_r1.test_targets_r2 imitation.exit_r1.test_student"
+  },
+  "checks": [
+    "default-off targets, loss, gradients, AdamW update equal r1 formula",
+    "population zscore ignores padding and is positive-scale/shift invariant",
+    "one-candidate/equal roots finite uniform valid mass",
+    "sharp raw score ties split",
+    "zscore global effective batch denominators match micro accumulation",
+    "unchanged r1 student suite"
+  ],
+  "work_on05": "no tests, training, builds or simulations",
+  "serial_loader6_proof": "r1 qualified complete-step index checks and private loader generator, unchanged loader SHA7b26fc1d",
+  "sum_order": "X4 micro3584 mathematical denominators unchanged; no bit-identical claim to micro7168"
+}

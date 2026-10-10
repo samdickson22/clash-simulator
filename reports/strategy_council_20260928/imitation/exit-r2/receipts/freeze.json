@@ -1,0 +1,89 @@
+{
+  "schema": "clasher.exit-r2.freeze.v1",
+  "utc": "2026-10-10T00:50:21Z",
+  "authority_commit": "63b2d6d7",
+  "seed_audit_passed": true,
+  "committed_before_launch": true,
+  "admission": "Guarded fits deploy this freeze only after its explicit-path commit and push; git receipt records actual commit.",
+  "arms": {
+    "X1": {
+      "host": "127x09",
+      "temperature": 0.003,
+      "teacher_fraction": 1.0,
+      "steps": 4883,
+      "microbatch": 7168,
+      "score_zscore": false
+    },
+    "X2": {
+      "host": "127x16",
+      "temperature": 0.0001,
+      "teacher_fraction": 1.0,
+      "steps": 4883,
+      "microbatch": 7168,
+      "score_zscore": false
+    },
+    "X3": {
+      "host": "127x08",
+      "temperature": 0.5,
+      "teacher_fraction": 1.0,
+      "steps": 4883,
+      "microbatch": 7168,
+      "score_zscore": true
+    },
+    "X4": {
+      "host": "127x01",
+      "temperature": 0.003,
+      "teacher_fraction": 0.75,
+      "steps": 4883,
+      "microbatch": 3584,
+      "score_zscore": false
+    },
+    "X5": {
+      "host": "127x04",
+      "temperature": 0.003,
+      "teacher_fraction": 1.0,
+      "steps": 9766,
+      "microbatch": 7168,
+      "score_zscore": false
+    }
+  },
+  "files": {
+    "source/imitation/exit_r1/student.py": "923448f153c9b4128b6e3d0076ed8a50d92507ed1d36709103396c0de07d2b95",
+    "source/imitation/exit_r1/train.py": "cbe3f77b969d0e5f5994b37286c62a6b580b87d86446c4deb0a184829bd45887",
+    "source/imitation/exit_r1/test_targets_r2.py": "4af7b276d9a52569e42b414e3346dbb958ad12b134832c5f2ddf692e9551bbc7",
+    "ops/controller.py": "4fdee9fc7a624d17b34886a430072168b71d375cb1dee9868cb7d774de0a874e",
+    "ops/fit_runtime.py": "f097ea9f2146f01e004864504a5ee31b94509e279494f674d48b5c44abaa4002",
+    "ops/game_pool.py": "24aeb770eb60d9f5d2da0b7119628d3e6f86b6e9215376e6e45c0b621a881246",
+    "ops/game_worker.py": "478b889d228d8795e7bea9ded64db6399e4c3f54ea8aa0ad50d8a3369bc02c03",
+    "ops/k_stage3.py": "799d62a766776cc1630e76967b0d3a79eb05348cd849c210853e51d60860d6b7",
+    "ops/loader_prefetch.py": "7b26fc1de339d72767b0e8c46e219b5b7d2e6eb8d9cef906caa66b33ab8d323a",
+    "ops/offline.py": "d6e67c02c0f8f9cd322e6b0cb9c62fffb8d6439c52b5b5c54cb35f4bb31452ae",
+    "ops/reduce_stage3.py": "6efbaedbb0a04bca06718b050ed6e208f5b1541650febd465a85f3a15dcc693d",
+    "ops/run_fit.sh": "32f5d7a31de1901fd9ca66d2ba00335f9bc4314b692c6a1bf216257980a3da95",
+    "ops/seed_audit.py": "4e41d0f9ccfd020e68295a2886bdd0f7567ce539c96edab8f40ddfd178bd19f9",
+    "ops/supervise.py": "a2afad21b2a5d44c54434baefc3b96b3794091a8f25fa6a9859b89ca82103cbc",
+    "ops/supplement.py": "9d72bd86e9d49a79f22c9cb249e5494af06d4b02dff04e661feccdfcc905349d",
+    "pilot/detach.sh": "74efab89acdbffd547e5eacdc07863d2496277ad43712daea19818bf03294b78",
+    "loader6.json": "a1237439208ee3779b79506e8c1018e42370134739b258f365819cf94f83ee83",
+    "seed-audit.json": "50ca2e54a19f44b7c17150a0cd07f663c9c87c811fb3959128278fdaafa5c209",
+    "PLAN.md": "110aefdb0953d72808a41c8820d24df03fd2004313df127b9638fff117e5d039",
+    "stage3-harness.json": "4bf3037ce29cf7873418366cda2270ac5b5c15a9718c67ffdd1e1cd509a32d16",
+    "host08-amendment.json": "3bed239b6782b0d97b58bc9885325f484b2e3fa5d6d8a2b1809666808932fc5d",
+    "inputs/main02.pt": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "inputs/assets.npz": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+    "corpus/manifest.json": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+    "human/train/manifest.json": "0546cfddcf79be12509953358fb499ac3be29493ba4a87893bfbfbbe0f179e68"
+  },
+  "assets_sha256": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+  "heldout_manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+  "init_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "r1_h2h_native_sha256": "f387b2d288ed280de9eeae3164d38f465045685ee53819e279930c2ee10699a8",
+  "width": 192,
+  "seed": 2026101001,
+  "batch_size": 8192,
+  "play_weight": 1,
+  "value_weight": 0,
+  "selection": "final EMA",
+  "r1_loader_sha256": "7b26fc1de339d72767b0e8c46e219b5b7d2e6eb8d9cef906caa66b33ab8d323a",
+  "host08_amendment_sha256": "3bed239b6782b0d97b58bc9885325f484b2e3fa5d6d8a2b1809666808932fc5d"
+}

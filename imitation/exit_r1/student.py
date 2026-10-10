@@ -72,7 +72,22 @@ def mixed_indices(human_size, teacher_size, batch_size, ratio, seed, step):
             rng.integers(teacher_size,size=nteacher) if nteacher else np.empty(0,np.int64))
 
 
-def teacher_loss(o,y,temperature=.1,play_weight=4.,value_weight=0.,denominators=None):
+def teacher_targets(y, temperature, score_zscore=False):
+    """Softmax over completed scores; optional per-root population z-score."""
+    scores=y['root_scores'].double()
+    valid=y['root_valid'].bool()
+    if temperature<=0 or not valid.any(-1).all():
+        raise ValueError('positive temperature and completed root scores required')
+    if score_zscore:
+        count=valid.sum(-1,keepdim=True)
+        mean=scores.masked_fill(~valid,0).sum(-1,keepdim=True)/count
+        centered=(scores-mean).masked_fill(~valid,0)
+        std=(centered.square().sum(-1,keepdim=True)/count).sqrt()
+        scores=centered/std.clamp_min(1e-12)
+    return torch.softmax((scores/temperature).masked_fill(~valid,-torch.inf),-1).float()
+
+
+def teacher_loss(o,y,temperature=.1,play_weight=4.,value_weight=0.,denominators=None,score_zscore=False):
     if temperature<=0 or play_weight<1 or value_weight<0:
         raise ValueError('invalid teacher loss controls')
     a=y['root_actions'].long()
@@ -80,8 +95,7 @@ def teacher_loss(o,y,temperature=.1,play_weight=4.,value_weight=0.,denominators=
     if ((a<0)|(a>2305)).any(): raise ValueError('invalid root action')
     valid=y['root_valid'].bool()
     if not valid.any(-1).all(): raise ValueError('root has no completed scores')
-    scores=y['root_scores'].double()/temperature
-    q=torch.softmax(scores.masked_fill(~valid,-torch.inf),-1).float()
+    q=teacher_targets(y,temperature,score_zscore)
     rows=torch.arange(len(a),device=a.device)[:,None]
     slot=(a//576).clamp(0,3);tile=a%576
     gate=torch.where(a==2304,0,torch.where(a==2305,2,1))

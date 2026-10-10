@@ -1,0 +1,39 @@
+# ExIt r2 X screen — results pending
+
+Exploration lane; no multiplicity adjustment. Preparation at2026-10-10 00:36Z.
+No fit or reporting game has launched. This is a status record, not a verdict.
+The committed plan/seed audit must precede fitting; use final EMA only.
+
+| Arm | Target / fraction | Fit | Stage1 | Stage2 | Stage3 | Decision |
+| --- | --- | --- | --- | --- | --- | --- |
+| X1 | T=.003 /1.0 | pending09 | pending | conditional | conditional | pending |
+| X2 | T=.0001 /1.0 | pending16 | pending | conditional | conditional | pending |
+| X3 | z-score τ=.5 /1.0 | pending08; resume13/14 if needed | pending | conditional | conditional | pending |
+| X4 | T=.003 /.75 | pending01, micro3584 | pending | conditional | conditional | pending |
+| X5 | X1 double steps /1.0 | pending04 | pending | conditional | conditional | pending |
+
+Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
+seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
+X5:9766steps. Loader6/prefetch4, r1 parent and loader core layout.
+X3's flag-off targets/loss/gradients/AdamW update match r1; all seven student and
+target tests passed on01/16/03. No evaluation outcomes used for choices.
+
+Stage1 uses the sealed r1 held-out64 whole games, root probability play recall,
+top8 recall on teacher plays, hard agreement and expected WAIT. Kill boundaries:
+recall<.60, top8<.50, hard agreement<.704, or WAIT>1.5×teacher.
+Stage2 survivor h2h256 seeds4503601507370496+, kill upper loss CI≥.50.
+Stage3 up to3 survivors,600 paired seeds4503601517370496+, kill upper loss-change
+CI≥0. K1 qualified before06Z; its primary harness is pinned, fallback unused.
+Intervals:5000 whole-game percentile95% bootstraps, seed80991010.
+
+R2 DAgger is conditional on a stage2 survivor. No R2 generation is admitted yet.
+All games are home01/03 only;04 CPU seal/core52 protected;08 GPU temporarily authorized until Oct10 05:30Z.13 has not
+been preempted. Leased GPU jobs require current leases and strict process,
+PSS/headroom/nice guards and return before2026-10-11 05:30Z.
+
+Metered fit GPU-hours:0; fit/evaluation CPU-hours:0 at this preparation stage.
+Preparation audit CPU costs and failed/retired scan attempts are retained under
+the audit job and PROGRESS-X.md; final totals will include every fit and game
+attempt, startup/loader CPU, and scientific postprocessing. Full per-arm metrics,
+case counts, checkpoint pins and metered totals replace this pending record as
+the staged decisions become available.

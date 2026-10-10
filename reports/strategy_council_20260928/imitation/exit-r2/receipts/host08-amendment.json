@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-10T00:47:10Z",
+  "authorized_by": "Coordinator utilization decision 2026-10-10 00:43Z",
+  "arm": "X3",
+  "initial_host": "127x08",
+  "overflow_hosts": [
+    "127x13",
+    "127x14"
+  ],
+  "operational_only": true,
+  "recipe_unchanged": true,
+  "stop_request_utc": "2026-10-10T05:15:00Z",
+  "vacate_no_later_than": "2026-10-10T05:30:00Z",
+  "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/FIT.STOP",
+  "quiet_file": "~/.config/fleet-top/quiet",
+  "quiet_check_seconds": 1,
+  "nice_min": 10,
+  "simulations": false,
+  "capacity_scan_preemption": false
+}
