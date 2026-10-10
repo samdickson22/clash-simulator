@@ -1913,3 +1913,12 @@ Also on the hub, but with copies elsewhere:
   - **R3-7:** fix the typo; extend the writable check to every ancestor of `/usr/lib/apt/methods/`; C3 confirms real `_apt` methods carry all four UIDs.
   - **R3-2:** document the enlarged orphan residual.
   - **Then:** I (coordinator, Opus) do the mechanical delta check, per the reviewer; no full round 4. Then C2 and C3, then Option B.
+- **23:08 UTC: OP-7 mechanical confirmation PASS** on d8cc4ff7. Delta SHA-256 97edf3ba… equals `git diff b6bec369 d8cc4ff7`. Code reviewed:
+  - R3-1: expired debt removed from credit; settlement newest-first with lot order kept. It can only raise charges.
+  - R3-3: `baseline_all=True` on both supervisor trackers.
+  - R3-6: the rule must be v2 for both meters whenever either is present; legacy (none) still passes.
+  - R3-7: tests for every writable ancestor.
+
+  **Verification on 05** (an exact git-archive export, nice 19, CPU 63, t1-verifier Python 3.12): 213/213 pass in 7.7 s. Every manifest hash I could resolve matches (175, 0 mismatches).
+
+  **GO:** C2 (FROZEN, re-hash, bind the r1–r3 reviews, this confirmation and the authority to the new manifest SHA), then C3 (a fresh two-host qualification and smoke on the exact bytes: census timing with the extra scan cost, real `_apt` methods carry all four UIDs), then the reviewed Option B coordinated 08 stop and balanced remainder. Report C3 before dispatch only if it fails.
