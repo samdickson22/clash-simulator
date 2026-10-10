@@ -1,0 +1,12 @@
+{"workers": 6, "r": 1.0, "serial_present": true, "serial_rate": 0.664, "a19_aggregate_rate": 1.173, "per_worker": 0.196}
+{"workers": 12, "r": 1.0, "serial_present": true, "serial_rate": 0.675, "a19_aggregate_rate": 1.203, "per_worker": 0.1}
+{"workers": 6, "r": 0.02, "serial_present": true, "serial_rate": 0.944, "a19_aggregate_rate": 4.143, "per_worker": 0.691}
+{"workers": 12, "r": 0.02, "serial_present": true, "serial_rate": 0.928, "a19_aggregate_rate": 6.809, "per_worker": 0.567}
+{"workers": 6, "r": 0.05, "serial_present": true, "serial_rate": 0.94, "a19_aggregate_rate": 3.896, "per_worker": 0.649}
+{"workers": 12, "r": 0.05, "serial_present": true, "serial_rate": 0.902, "a19_aggregate_rate": 6.537, "per_worker": 0.545}
+{"workers": 6, "r": 1.0, "serial_present": false, "serial_rate": null, "a19_aggregate_rate": 1.796, "per_worker": 0.299}
+{"workers": 12, "r": 1.0, "serial_present": false, "serial_rate": null, "a19_aggregate_rate": 1.772, "per_worker": 0.148}
+{"workers": 6, "r": 0.02, "serial_present": false, "serial_rate": null, "a19_aggregate_rate": 5.476, "per_worker": 0.913}
+{"workers": 12, "r": 0.02, "serial_present": false, "serial_rate": null, "a19_aggregate_rate": 8.595, "per_worker": 0.716}
+{"workers": 6, "r": 0.05, "serial_present": false, "serial_rate": null, "a19_aggregate_rate": 5.505, "per_worker": 0.918}
+{"workers": 12, "r": 0.05, "serial_present": false, "serial_rate": null, "a19_aggregate_rate": 8.543, "per_worker": 0.712}

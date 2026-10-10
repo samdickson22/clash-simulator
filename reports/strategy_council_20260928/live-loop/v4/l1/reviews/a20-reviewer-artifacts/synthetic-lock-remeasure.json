@@ -1,0 +1,111 @@
+{
+  "compressed_bytes": 11293286,
+  "compressed_sha256": "5a4a50499a7238b0332ded59e1fea6150ac4da1a11614f4e50eacff98081719c",
+  "host": "127x05",
+  "median": {
+    "a20": {
+      "lock_hold_fraction": 0.01119098402642532,
+      "lock_hold_seconds": 0.010985897039063275,
+      "wall_seconds": 0.9816758870147169
+    },
+    "original": {
+      "lock_hold_fraction": 0.9997273007174255,
+      "lock_hold_seconds": 0.9762330108787864,
+      "wall_seconds": 0.9764742085244507
+    }
+  },
+  "nice": 19,
+  "payload_bytes": 23979676,
+  "rows": [
+    {
+      "acquisitions": 1,
+      "arm": "original",
+      "cpu_seconds": 0.978374195,
+      "lock_hold_fraction": 0.9995861124396799,
+      "lock_hold_seconds": 0.9785929869394749,
+      "repeat": 0,
+      "result_sha256": "3dd41f839babece2e5ee9568890c1c633cc5780ef39d86b785c3418ade348bac",
+      "rows": 16000,
+      "wall_seconds": 0.9789981821086258
+    },
+    {
+      "acquisitions": 1,
+      "arm": "a20",
+      "cpu_seconds": 0.98451315,
+      "lock_hold_fraction": 0.011768452043911876,
+      "lock_hold_seconds": 0.01159349805675447,
+      "repeat": 0,
+      "result_sha256": "3dd41f839babece2e5ee9568890c1c633cc5780ef39d86b785c3418ade348bac",
+      "rows": 16000,
+      "wall_seconds": 0.9851336448919028
+    },
+    {
+      "acquisitions": 1,
+      "arm": "a20",
+      "cpu_seconds": 0.9818839130000003,
+      "lock_hold_fraction": 0.011164523937878945,
+      "lock_hold_seconds": 0.010969282127916813,
+      "repeat": 1,
+      "result_sha256": "3dd41f839babece2e5ee9568890c1c633cc5780ef39d86b785c3418ade348bac",
+      "rows": 16000,
+      "wall_seconds": 0.9825123031623662
+    },
+    {
+      "acquisitions": 1,
+      "arm": "original",
+      "cpu_seconds": 0.9725909489999998,
+      "lock_hold_fraction": 0.9997303685806379,
+      "lock_hold_seconds": 0.9728925570379943,
+      "repeat": 1,
+      "result_sha256": "3dd41f839babece2e5ee9568890c1c633cc5780ef39d86b785c3418ade348bac",
+      "rows": 16000,
+      "wall_seconds": 0.9731549501884729
+    },
+    {
+      "acquisitions": 1,
+      "arm": "original",
+      "cpu_seconds": 0.977134049,
+      "lock_hold_fraction": 0.9997816736811885,
+      "lock_hold_seconds": 0.9775530828628689,
+      "repeat": 2,
+      "result_sha256": "3dd41f839babece2e5ee9568890c1c633cc5780ef39d86b785c3418ade348bac",
+      "rows": 16000,
+      "wall_seconds": 0.9777665550354868
+    },
+    {
+      "acquisitions": 1,
+      "arm": "a20",
+      "cpu_seconds": 0.9801378010000006,
+      "lock_hold_fraction": 0.011217444114971694,
+      "lock_hold_seconds": 0.011002511950209737,
+      "repeat": 2,
+      "result_sha256": "3dd41f839babece2e5ee9568890c1c633cc5780ef39d86b785c3418ade348bac",
+      "rows": 16000,
+      "wall_seconds": 0.9808394708670676
+    },
+    {
+      "acquisitions": 1,
+      "arm": "a20",
+      "cpu_seconds": 0.978894403,
+      "lock_hold_fraction": 0.011127563293536426,
+      "lock_hold_seconds": 0.010899939807131886,
+      "repeat": 3,
+      "result_sha256": "3dd41f839babece2e5ee9568890c1c633cc5780ef39d86b785c3418ade348bac",
+      "rows": 16000,
+      "wall_seconds": 0.9795441750902683
+    },
+    {
+      "acquisitions": 1,
+      "arm": "original",
+      "cpu_seconds": 0.9745107899999992,
+      "lock_hold_fraction": 0.9997242328542132,
+      "lock_hold_seconds": 0.974912938894704,
+      "repeat": 3,
+      "result_sha256": "3dd41f839babece2e5ee9568890c1c633cc5780ef39d86b785c3418ade348bac",
+      "rows": 16000,
+      "wall_seconds": 0.9751818620134145
+    }
+  ],
+  "schema": "clasher.v4.a20-synthetic-lock-scope.v1",
+  "scope": "05 synthetic gzip JSON workload, single process, paired order, not production throughput or A2 bounds"
+}

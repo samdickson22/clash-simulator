@@ -1,0 +1,20 @@
+{
+ "cur.gz": {
+  "compressed_bytes": 16119406,
+  "lines": 2415,
+  "locked_s": 0.01623,
+  "locked_share_of_frozen_block_upper_bound": 0.01983,
+  "outside_s": 0.80206,
+  "sha256": "9d5940c26217ece78c33c5058cd00d2364c27efee4c04339ee9bc51cb41fc7c2"
+ },
+ "max.gz": {
+  "compressed_bytes": 31302377,
+  "lines": 3939,
+  "locked_s": 0.03036,
+  "locked_share_of_frozen_block_upper_bound": 0.019,
+  "outside_s": 1.56804,
+  "sha256": "5588bb65517f08edef0e4f3cb8ab35196c1ceb01dedda41ef838a89a4de7e241"
+ },
+ "peak_rss_kib": 78960,
+ "python": "3.12.12"
+}

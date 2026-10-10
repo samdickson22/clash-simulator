@@ -1724,3 +1724,11 @@ Also on the hub, but with copies elsewhere:
   - E3: fix OPERATOR's deploy count (23);
   - O1–O6 carry over.
   - Cache services renewed to Oct 13 (04:41Z); B uses a local PixelCache, and the 08 HTTP service is to be retired before the B window.
+- **04:52 UTC: A20 review = APPROVE_WITH_CONDITIONS** (c1e50fa4).
+  - **Identity:** exact on real 04 records and every adversarial case; no TOCTOU. The 04 lock is reader-only (no writer/retention use). Worst-case memory ≈23 GB.
+  - **Modelled A1 with A19+A20 ≈ 2–2.5 h vs ≈13.7 h serial** (6.8×; the 03 lock becomes the limit).
+  - **Blocking:**
+    - C1: the composed full suite (7/208 fail: authority fixtures lack the A20 records);
+    - C3: a new deploy directory.
+  - Plus the Oct 13 cap constant and the APPROVE_LOCAL_IO_LOCK_SCOPE decision string.
+  - **Next:** the author builds the final combined package (A19 r5 E1–E3 + A20 conditions), then a quick final check, then the freeze and approvals before seal exit.
