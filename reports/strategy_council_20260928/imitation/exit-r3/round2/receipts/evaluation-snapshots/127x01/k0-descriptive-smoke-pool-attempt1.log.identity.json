@@ -1,0 +1,10 @@
+{
+  "relative": "k0-descriptive-smoke-pool-attempt1.log.identity.json",
+  "sha256": "f19860cece1593921e379575cc1d592cc08bb3e9adbc49cb1b0a5378a1f6eb56",
+  "raw": "{\"pid\":3032946,\"pgid\":3032946,\"utc\":\"2026-10-10T07:15:29Z\"}\n",
+  "value": {
+    "pid": 3032946,
+    "pgid": 3032946,
+    "utc": "2026-10-10T07:15:29Z"
+  }
+}

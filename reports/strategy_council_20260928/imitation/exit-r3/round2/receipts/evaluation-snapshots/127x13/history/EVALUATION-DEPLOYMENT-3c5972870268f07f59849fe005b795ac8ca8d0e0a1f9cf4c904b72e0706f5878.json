@@ -1,0 +1,16 @@
+{
+  "relative": "EVALUATION-DEPLOYMENT.json",
+  "sha256": "3c5972870268f07f59849fe005b795ac8ca8d0e0a1f9cf4c904b72e0706f5878",
+  "raw": "{\"passed\": true, \"host\": \"127x13\", \"pid\": 3595429, \"pgid\": 3595429, \"checked\": 26, \"cpu_seconds\": 0.061496999999999996, \"evaluation_freeze_sha256\": \"f7e1439c5e81f648e005a66bf5f27cbe2de3e537a7f86940b0eaf2ee71126409\", \"commit\": \"a0beb995cc60e75bfa5a4476f1b2c156ce56241b\", \"utc\": \"2026-10-10T07:14:14Z\"}\n",
+  "value": {
+    "passed": true,
+    "host": "127x13",
+    "pid": 3595429,
+    "pgid": 3595429,
+    "checked": 26,
+    "cpu_seconds": 0.061496999999999996,
+    "evaluation_freeze_sha256": "f7e1439c5e81f648e005a66bf5f27cbe2de3e537a7f86940b0eaf2ee71126409",
+    "commit": "a0beb995cc60e75bfa5a4476f1b2c156ce56241b",
+    "utc": "2026-10-10T07:14:14Z"
+  }
+}

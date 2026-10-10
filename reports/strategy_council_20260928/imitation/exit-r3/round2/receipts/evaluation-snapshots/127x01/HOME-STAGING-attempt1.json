@@ -1,0 +1,15 @@
+{
+  "relative": "HOME-STAGING-attempt1.json",
+  "sha256": "379cae09cd0eb68f82f015ad5ecae6221b43b373d897082eaa41642604c87534",
+  "raw": "{\n  \"status\": \"failed\",\n  \"pid\": 2968755,\n  \"pgid\": 2968755,\n  \"utc\": \"2026-10-10T06:55:53Z\",\n  \"parent_cpu_seconds\": 0.071782,\n  \"children_cpu_seconds\": 0.045787999999999995,\n  \"wall_seconds\": 0.0021512340754270554,\n  \"accounting\": \"Whole local staging tree once; remote sender CPU unmetered and disclosed\"\n}\n",
+  "value": {
+    "status": "failed",
+    "pid": 2968755,
+    "pgid": 2968755,
+    "utc": "2026-10-10T06:55:53Z",
+    "parent_cpu_seconds": 0.071782,
+    "children_cpu_seconds": 0.045787999999999995,
+    "wall_seconds": 0.0021512340754270554,
+    "accounting": "Whole local staging tree once; remote sender CPU unmetered and disclosed"
+  }
+}

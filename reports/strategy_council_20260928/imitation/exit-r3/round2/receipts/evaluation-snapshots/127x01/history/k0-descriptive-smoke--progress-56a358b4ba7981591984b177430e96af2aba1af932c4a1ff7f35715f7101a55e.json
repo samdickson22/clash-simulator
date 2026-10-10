@@ -1,0 +1,39 @@
+{
+  "relative": "k0-descriptive-smoke/progress.json",
+  "sha256": "56a358b4ba7981591984b177430e96af2aba1af932c4a1ff7f35715f7101a55e",
+  "raw": "{\n  \"lane\": \"descriptive\",\n  \"smoke\": true,\n  \"arms\": [\n    \"K0\",\n    \"R3a\"\n  ],\n  \"pool_pid\": 3032946,\n  \"pool_pgid\": 3032946,\n  \"context\": {\n    \"host\": \"127x01\",\n    \"affinity\": [\n      39\n    ],\n    \"nice\": 10,\n    \"scheduler\": 0\n  },\n  \"completed\": 0,\n  \"pending\": 0,\n  \"active\": {\n    \"0\": {\n      \"index\": 0,\n      \"pid\": 3033018,\n      \"pgid\": 3033018\n    },\n    \"1\": {\n      \"index\": 1,\n      \"pid\": 3033019,\n      \"pgid\": 3033019\n    }\n  },\n  \"failures\": [],\n  \"stopping\": false\n}\n",
+  "value": {
+    "lane": "descriptive",
+    "smoke": true,
+    "arms": [
+      "K0",
+      "R3a"
+    ],
+    "pool_pid": 3032946,
+    "pool_pgid": 3032946,
+    "context": {
+      "host": "127x01",
+      "affinity": [
+        39
+      ],
+      "nice": 10,
+      "scheduler": 0
+    },
+    "completed": 0,
+    "pending": 0,
+    "active": {
+      "0": {
+        "index": 0,
+        "pid": 3033018,
+        "pgid": 3033018
+      },
+      "1": {
+        "index": 1,
+        "pid": 3033019,
+        "pgid": 3033019
+      }
+    },
+    "failures": [],
+    "stopping": false
+  }
+}

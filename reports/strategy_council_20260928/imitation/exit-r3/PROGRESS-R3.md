@@ -421,3 +421,20 @@ verifier passed. No scientific code/data change or retry. Prelaunch/deployment
 receipts bind actualfreezecommit. Next own boundedadvance --descriptive --round2
 starts excluded R3a/K0 indices251+0/1 on01cores0/1 manager39, originalkills remain.
 03scorer idle until ALL final C/D/E proposals exist; source/fitops never altered.
+
+2026-10-10T07:24:22Z — R3a r1(b) excludedqualification complete07:18:25Z:4terminalgames/2paired
+rotatedblocks,no failures/replays. Wholepool3032946 CPU315.567216s/wall175.107569s;
+minimumhomefree129015115776bytes. Frozenqualificationreducer3046425 PASS and
+independentlyabsent before reporting.600fresh250+ paired R3a/K0 reporting
+launched07:20:34Z poolPID/PGID3049569,workers0–38 manager39 nice10/SCHED_OTHER.
+Outcome reduction staysclosed until600completeblocks. OriginalR3a remainskilled
+and NEVERADOPTABLE. EVAL-PGIDS recordsallblock/game processes; completepairs
+rotate[K0,R3a] and[R3a,K0] on SAMEphysicalcore; no controlpreruns/partialreuse.
+Latestfit snapshot07:19:27 C1628/D1601/E1445 activehealthy.03idle,allbasegroups
+absent after independentK2release;64commonroot replayawaits ALLfinalproposals.
+New05metadatahelpers collect_evaluation.py preserveEXACTJSONraw+SHA/history
+(noarrays/models/native) and render_metadata.py emitsverifieddecisions/costs
+only; do not useoriginalJ1 collectors forJ2. Currentknownmeteredround2CPU
+467.999198s/GPUreservationwall121.296787s; openfit/report costs pending.
+Timer stillenabled10min(next07:32:26.778Z), updatedfor r1(b)/admitted01+03,
+identityunchanged; deleteonly ENTIREextensioncomplete/expiryvacancy.

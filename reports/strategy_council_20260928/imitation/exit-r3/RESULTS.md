@@ -79,3 +79,12 @@ R3b resource receipt: exit0, reason None; peak PSS30.090GB, max processes9, mini
 No production adoption is authorized. Both arms killed at Stage1.
 
 Coordinator-authorized round2 and never-adoptable R3a study are pending under [the new addendum](round2/PLAN.md). The completed metrics and costs above cover original R3a/b only.
+
+<!-- R3-EXTENSION-STATUS -->
+
+The authorized extension is in progress. [Round2 results](round2/RESULTS.md) and
+[r1(b) evaluation amendment](round2/K0-FALLBACK-ADDENDUM.md) record the fresh
+C/D/E fits and R3a NEVER-ADOPTABLE descriptive run. The amendment was pushed
+before every new game. R3a/K0 qualification passed4terminalgames;600fresh
+paired reporting began01 at07:20:34Z. New results and costs remain pending.
+Original R3a/b kills and the completed cost ledger above are unchanged.

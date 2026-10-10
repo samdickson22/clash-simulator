@@ -1,0 +1,41 @@
+{
+  "relative": "qualification-descriptive.json",
+  "sha256": "c65824867fbbc217341d4e94ae1b42fc62e5f8856e82dd903b2e27ff669ffab8",
+  "raw": "{\n  \"passed\": true,\n  \"lane\": \"descriptive\",\n  \"excluded_smoke\": true,\n  \"blocks\": [\n    {\n      \"index\": 0,\n      \"block_sha256\": \"14fa2298297193588ff427ce8a3ab7d58e7bc66c72fd10b778187754f4f3a1c8\",\n      \"cases\": [\n        {\n          \"arm\": \"K0\",\n          \"sha256\": \"35fb27dd43fe53b1e45e179eb37e14347204b76e7418bb8130bbff37db291580\"\n        },\n        {\n          \"arm\": \"R3a\",\n          \"sha256\": \"47c7056b10b517ed968d14465a0b2f0d2c079141f8a02827c9dff4980ce7e3fd\"\n        }\n      ]\n    },\n    {\n      \"index\": 1,\n      \"block_sha256\": \"b0313e3519d81b3cf6fd49e91f15854722ce5d5df839b5d6061f03dde5306611\",\n      \"cases\": [\n        {\n          \"arm\": \"R3a\",\n          \"sha256\": \"306cb48c26f4a20b3c07110fd8e33bb0d96d31b77af3845434cca1affa11a026\"\n        },\n        {\n          \"arm\": \"K0\",\n          \"sha256\": \"cd96eed0131b8c816a16251efd3a902525c1cf7088333643d2cf081966468770\"\n        }\n      ]\n    }\n  ],\n  \"evaluation_freeze_sha256\": \"f7e1439c5e81f648e005a66bf5f27cbe2de3e537a7f86940b0eaf2ee71126409\"\n}\n",
+  "value": {
+    "passed": true,
+    "lane": "descriptive",
+    "excluded_smoke": true,
+    "blocks": [
+      {
+        "index": 0,
+        "block_sha256": "14fa2298297193588ff427ce8a3ab7d58e7bc66c72fd10b778187754f4f3a1c8",
+        "cases": [
+          {
+            "arm": "K0",
+            "sha256": "35fb27dd43fe53b1e45e179eb37e14347204b76e7418bb8130bbff37db291580"
+          },
+          {
+            "arm": "R3a",
+            "sha256": "47c7056b10b517ed968d14465a0b2f0d2c079141f8a02827c9dff4980ce7e3fd"
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "block_sha256": "b0313e3519d81b3cf6fd49e91f15854722ce5d5df839b5d6061f03dde5306611",
+        "cases": [
+          {
+            "arm": "R3a",
+            "sha256": "306cb48c26f4a20b3c07110fd8e33bb0d96d31b77af3845434cca1affa11a026"
+          },
+          {
+            "arm": "K0",
+            "sha256": "cd96eed0131b8c816a16251efd3a902525c1cf7088333643d2cf081966468770"
+          }
+        ]
+      }
+    ],
+    "evaluation_freeze_sha256": "f7e1439c5e81f648e005a66bf5f27cbe2de3e537a7f86940b0eaf2ee71126409"
+  }
+}

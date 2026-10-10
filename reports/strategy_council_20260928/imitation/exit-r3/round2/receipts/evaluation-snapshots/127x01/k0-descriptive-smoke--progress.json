@@ -1,0 +1,28 @@
+{
+  "relative": "k0-descriptive-smoke/progress.json",
+  "sha256": "e16de7ab90032252049662724b5d56db61b8c4fa18b81095d6a75903fcf33b4a",
+  "raw": "{\n  \"lane\": \"descriptive\",\n  \"smoke\": true,\n  \"arms\": [\n    \"K0\",\n    \"R3a\"\n  ],\n  \"pool_pid\": 3032946,\n  \"pool_pgid\": 3032946,\n  \"context\": {\n    \"host\": \"127x01\",\n    \"affinity\": [\n      39\n    ],\n    \"nice\": 10,\n    \"scheduler\": 0\n  },\n  \"completed\": 2,\n  \"pending\": 0,\n  \"active\": {},\n  \"failures\": [],\n  \"stopping\": false\n}\n",
+  "value": {
+    "lane": "descriptive",
+    "smoke": true,
+    "arms": [
+      "K0",
+      "R3a"
+    ],
+    "pool_pid": 3032946,
+    "pool_pgid": 3032946,
+    "context": {
+      "host": "127x01",
+      "affinity": [
+        39
+      ],
+      "nice": 10,
+      "scheduler": 0
+    },
+    "completed": 2,
+    "pending": 0,
+    "active": {},
+    "failures": [],
+    "stopping": false
+  }
+}

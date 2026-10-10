@@ -1,0 +1,10 @@
+{
+  "relative": "fit-R3d-attempt2.log.identity.json",
+  "sha256": "20e2be15b44944d9f6478485b8c793b8fe20b1d0562990e6dbe659df628fe3eb",
+  "raw": "{\"pid\":2038249,\"pgid\":2038249,\"utc\":\"2026-10-10T06:31:41Z\"}\n",
+  "value": {
+    "pid": 2038249,
+    "pgid": 2038249,
+    "utc": "2026-10-10T06:31:41Z"
+  }
+}

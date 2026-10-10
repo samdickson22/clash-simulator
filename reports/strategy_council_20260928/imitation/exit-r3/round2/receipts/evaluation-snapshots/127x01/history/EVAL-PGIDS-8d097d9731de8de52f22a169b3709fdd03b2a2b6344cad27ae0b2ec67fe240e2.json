@@ -1,0 +1,73 @@
+{
+  "relative": "EVAL-PGIDS.json",
+  "sha256": "8d097d9731de8de52f22a169b3709fdd03b2a2b6344cad27ae0b2ec67fe240e2",
+  "raw": "[\n  {\n    \"pid\": 3032946,\n    \"pgid\": 3032946,\n    \"role\": \"pool\",\n    \"utc\": \"2026-10-10T07:15:30Z\",\n    \"lane\": \"descriptive\",\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3033018,\n    \"pgid\": 3033018,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:15:31Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 0,\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3033019,\n    \"pgid\": 3033019,\n    \"role\": \"block\",\n    \"utc\": \"2026-10-10T07:15:31Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 1,\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3033057,\n    \"pgid\": 3033018,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:15:32Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 0,\n    \"arm\": \"K0\",\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3033059,\n    \"pgid\": 3033019,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:15:32Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 1,\n    \"arm\": \"R3a\",\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3036741,\n    \"pgid\": 3033018,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:16:41Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 0,\n    \"arm\": \"R3a\",\n    \"smoke\": true\n  },\n  {\n    \"pid\": 3038273,\n    \"pgid\": 3033019,\n    \"role\": \"game\",\n    \"utc\": \"2026-10-10T07:17:07Z\",\n    \"lane\": \"descriptive\",\n    \"index\": 1,\n    \"arm\": \"K0\",\n    \"smoke\": true\n  }\n]\n",
+  "value": [
+    {
+      "pid": 3032946,
+      "pgid": 3032946,
+      "role": "pool",
+      "utc": "2026-10-10T07:15:30Z",
+      "lane": "descriptive",
+      "smoke": true
+    },
+    {
+      "pid": 3033018,
+      "pgid": 3033018,
+      "role": "block",
+      "utc": "2026-10-10T07:15:31Z",
+      "lane": "descriptive",
+      "index": 0,
+      "smoke": true
+    },
+    {
+      "pid": 3033019,
+      "pgid": 3033019,
+      "role": "block",
+      "utc": "2026-10-10T07:15:31Z",
+      "lane": "descriptive",
+      "index": 1,
+      "smoke": true
+    },
+    {
+      "pid": 3033057,
+      "pgid": 3033018,
+      "role": "game",
+      "utc": "2026-10-10T07:15:32Z",
+      "lane": "descriptive",
+      "index": 0,
+      "arm": "K0",
+      "smoke": true
+    },
+    {
+      "pid": 3033059,
+      "pgid": 3033019,
+      "role": "game",
+      "utc": "2026-10-10T07:15:32Z",
+      "lane": "descriptive",
+      "index": 1,
+      "arm": "R3a",
+      "smoke": true
+    },
+    {
+      "pid": 3036741,
+      "pgid": 3033018,
+      "role": "game",
+      "utc": "2026-10-10T07:16:41Z",
+      "lane": "descriptive",
+      "index": 0,
+      "arm": "R3a",
+      "smoke": true
+    },
+    {
+      "pid": 3038273,
+      "pgid": 3033019,
+      "role": "game",
+      "utc": "2026-10-10T07:17:07Z",
+      "lane": "descriptive",
+      "index": 1,
+      "arm": "K0",
+      "smoke": true
+    }
+  ]
+}

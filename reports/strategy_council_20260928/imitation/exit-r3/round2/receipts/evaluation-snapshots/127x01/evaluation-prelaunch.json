@@ -1,0 +1,14 @@
+{
+  "relative": "evaluation-prelaunch.json",
+  "sha256": "93de43c2844b46cf454c88f4bf9d77f444fad4025a8215b905cd42fcaa8e480f",
+  "raw": "{\n  \"pushed\": true,\n  \"commit\": \"a0beb995cc60e75bfa5a4476f1b2c156ce56241b\",\n  \"verified_remote\": \"refs/heads/main\",\n  \"evaluation_freeze_sha256\": \"f7e1439c5e81f648e005a66bf5f27cbe2de3e537a7f86940b0eaf2ee71126409\",\n  \"secret_scan_passed\": true,\n  \"no_new_games_or_round2_offline_before_push\": true,\n  \"utc\": \"2026-10-10T07:12:09Z\"\n}\n",
+  "value": {
+    "pushed": true,
+    "commit": "a0beb995cc60e75bfa5a4476f1b2c156ce56241b",
+    "verified_remote": "refs/heads/main",
+    "evaluation_freeze_sha256": "f7e1439c5e81f648e005a66bf5f27cbe2de3e537a7f86940b0eaf2ee71126409",
+    "secret_scan_passed": true,
+    "no_new_games_or_round2_offline_before_push": true,
+    "utc": "2026-10-10T07:12:09Z"
+  }
+}

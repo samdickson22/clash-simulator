@@ -1,0 +1,67 @@
+"""Render verified decisions and once-only process costs; no scientific imports."""
+import hashlib,json,re,subprocess
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+def read(path):return json.loads(path.read_text())
+def verified(path):
+    d=read(path)
+    if 'relative' not in d:return None
+    if 'raw' in d:
+        assert hashlib.sha256(d['raw'].encode()).hexdigest()==d['sha256'] and json.loads(d['raw'])==d['value']
+    return d
+def pct(metric):return f"{100*metric['value']:.3f} [{100*metric['ci95'][0]:.3f}, {100*metric['ci95'][1]:.3f}]"
+def main():
+    receipt=ROOT/'receipts';cost=read(receipt/'cost-summary.json');meters={m['sha256']:m for m in cost['meters']};states={}
+    for directory in ('process-snapshots','evaluation-snapshots'):
+        for path in sorted((receipt/directory).rglob('*.json')):
+            d=verified(path)
+            if not d:continue
+            v=d['value'];name=d['relative'];host=path.relative_to(receipt/directory).parts[0]
+            if 'history' not in path.parts:states[(host,name)]=v
+            key=d['sha256']
+            if key in meters:continue
+            category=None;gpu=0
+            if re.fullmatch(r'R3[cde]-exit\.json',name):category='fit';gpu=v['wall_seconds']
+            elif 'offline/' in name and '-attempt-meter-' in name:category='offline';gpu=v['wall_seconds']
+            elif re.fullmatch(r'(k0-[^/]+|regret)/pool-meter-\d+\.json',name):category='whole CPU pool'
+            elif re.fullmatch(r'(reduce-.*-meter-\d+|stage1-reduction-meter-\d+)\.json',name):category='reduction'
+            elif name in ('REGRET-PROPOSALS-STAGING.json','STAGE2-ARMS-STAGING.json'):category='staging'
+            if category:
+                cpu=v.get('cpu_seconds',v.get('parent_cpu_seconds',0)+v.get('children_cpu_seconds',0))
+                meters[key]=dict(category=category,sha256=key,path=str(path.relative_to(ROOT)),cpu_seconds=cpu,gpu_wall_seconds=gpu,status=v.get('status','complete' if v.get('exit_code')==0 else 'closed'),host=host)
+    stage1=states.get(('127x03','stage1-results.json'));stage2=states.get(('127x01','stage2-results.json'));desc=states.get(('127x01','descriptive-results.json'))
+    fitting={a:states.get((h,f'fits/{a}/complete.json')) for a,h in [('R3c','127x09'),('R3d','127x16'),('R3e','127x13')]}
+    hosts={'R3c':'127x09','R3d':'127x16','R3e':'127x13'}
+    def clean(a,v):
+        h=hosts[a];ex=states.get((h,a+'-exit.json'));launch=states.get((h,a+'-launch.json'));seg=states.get((h,f'fits/{a}/segment.json'))
+        return bool(v and not v['stopped'] and v['step']==(2500 if a=='R3d' else 5000) and ex and launch and ex['utc']>=launch['utc'] and ex['exit_code']==0 and ex['reason'] is None and seg and seg['status']=='returned')
+    closed=all(clean(a,v) for a,v in fitting.items())
+    scientific_complete=bool(closed and stage1 and desc and (stage2 or not any(v['survives'] for v in stage1.values())))
+    vacated=all(states.get((host,'EVAL-VACATED.json'),{}).get('all_recorded_groups_absent') for host in ('127x01','127x03','127x09','127x16','127x13'))
+    cost.update(utc=subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip(),final=scientific_complete and vacated,scientific_complete=scientific_complete,vacancy_complete=vacated,meters=list(meters.values()),cpu_seconds=sum(m['cpu_seconds'] for m in meters.values()),gpu_wall_seconds=sum(m['gpu_wall_seconds'] for m in meters.values()),active_fit_costs_pending=not closed)
+    (receipt/'cost-summary.json').write_text(json.dumps(cost,indent=2)+'\n')
+    arms=read(ROOT/'arms.json');lines=['# R3 extended results — '+('scientific results complete; vacancy audit pending' if scientific_complete else 'pending'),'','Exploration, outcome-informed extension; no multiplicity adjustment. Original R3a/b remain killed. R3a descriptive is ALWAYS NEVER-ADOPTABLE. No live replacement is authorized.','',f"Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot {cost['utc']}.",'','| Arm | Host | Final steps | Temperature | Seed | Final EMA sealed |','|---|---|---:|---:|---:|---|']
+    for a,v in arms.items():lines.append(f"| {a} | {v['host']} | {v['steps']} | {v['temperature']} | {v['seed']} | {'yes' if fitting[a] and not fitting[a]['stopped'] else 'pending'} |")
+    if closed:
+        lines+=['','| Arm | Effective training rows | Rows/s, all retained fit attempts | Charged fit GPUh | Fit CPUh |','|---|---:|---:|---:|---:|']
+        for a,v in arms.items():
+            relevant=[m for m in meters.values() if m['category'] in ('fit','void prepublication startup') and a in m['path']];wall=sum(m['gpu_wall_seconds'] for m in relevant);cpu=sum(m['cpu_seconds'] for m in relevant);rows=v['steps']*8192
+            assert wall>0;lines.append(f"| {a} | {rows:,} | {rows/wall:.2f} | {wall/3600:.6f} | {cpu/3600:.6f} |")
+    if stage1:
+        lines+=['','| Arm | Play recall %, game95CI | Binary agreement %, game95CI | Mean positive W regret, game95CI | Stage1 |','|---|---|---|---|---|']
+        for a,v in stage1.items():
+            m=v['regret']['mean_positive'];lines.append(f"| {a} | {pct(v['metrics']['play_recall'])} | {pct(v['metrics']['timing_agreement'])} | {m['value']:.6f} [{m['ci95'][0]:.6f}, {m['ci95'][1]:.6f}] | {'PASS' if v['survives'] else 'KILLED: '+ '; '.join(v['kill_reasons'])} |")
+        lines+=['','All64 common command-exact replay games /8088 unique scored roots required; point gates .6375/allWAIT+.10/.010, calibrated34.6%. Bootstrap5000/game/80991013; calibration slice reuse is exploratory.']
+    else:lines+=['','Stage1 final-EMA calibration and64 common frozen-W replay gates pending. No intermediate checkpoint selection.']
+    for label,data in [('R3a descriptive — NEVER ADOPTABLE',desc),('Round2 Stage2 survivors',stage2)]:
+        lines+=['',label+'.']
+        if not data:
+            lines+=['Skipped: all round2 arms killed at complete Stage1.' if label.startswith('Round2') and stage1 and not any(v['survives'] for v in stage1.values()) else 'Pending complete600 paired terminal blocks; no partial reporting reduction.'];continue
+        lines+=['','| Arm | Loss %, seed95CI | Student−K0 loss pp, paired95CI | Result |','|---|---|---|---|']
+        for a,v in data['arms'].items():
+            paired=v.get('paired_loss_change_vs_K0');result='control' if a=='K0' else 'NEVER-ADOPTABLE' if data['never_adoptable'] else 'PASS exploration screen' if v['survives'] else 'KILLED'
+            lines.append(f"| {a} | {pct(v['loss'])} | {pct(paired) if paired else '—'} | {result} |")
+        lines+=['','600fresh complete same-core rotated paired blocks, coarse-first deadline W at1core/200ms/8ms reserve. Student supplies calibrated cutoff fallback+top8; K0 is common init-W v1 fallback/proposer. Report deadline/fallback/completed-root/overrun/proposer diagnostics in the sealed decision receipt. Draw loss0; paired95CI upper>=0 kills; descriptive R3a never adopts.']
+    lines+=['',f"Known round2/descriptive metered costs: **{cost['cpu_seconds']/3600:.6f} CPUh**, **{cost['gpu_wall_seconds']/3600:.6f} GPU reservation-wallh**. {'Complete process meters collected.' if scientific_complete else 'Open process costs pending; these are lower bounds.'}",'','[Once-only cost ledger](receipts/cost-summary.json) deduplicates exact original meter SHAs across histories and03→01 copies. Whole fit/pool trees include failed/void/replayed work; nested game/case/block/segment diagnostics are never added again. Original R3a/b10.735822CPUh/2.968378GPUh are reported separately until the final combined audit.','',cost.get('unmetered_overhead','Small metadata/test/remote sender overhead unmetered.'),'','Full source/input/native/checkpoint/seed SHA bindings: training and evaluation freezes, retained exact JSON process snapshots, final decisions and command/game/block proofs. Final experiment completion additionally requires independent all-owned-PGID absence, CPU/GPU vacancy, coordinator notification and continuation deletion.']
+    (ROOT/'RESULTS.md').write_text('\n'.join(lines)+'\n');print(json.dumps(dict(scientific_complete=scientific_complete,cpu_seconds=cost['cpu_seconds'],gpu_wall_seconds=cost['gpu_wall_seconds'])))
+if __name__=='__main__':main()

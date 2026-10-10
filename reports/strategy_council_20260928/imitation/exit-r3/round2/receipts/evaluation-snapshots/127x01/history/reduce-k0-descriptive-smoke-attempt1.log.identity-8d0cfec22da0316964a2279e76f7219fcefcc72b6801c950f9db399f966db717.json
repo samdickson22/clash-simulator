@@ -1,0 +1,10 @@
+{
+  "relative": "reduce-k0-descriptive-smoke-attempt1.log.identity.json",
+  "sha256": "8d0cfec22da0316964a2279e76f7219fcefcc72b6801c950f9db399f966db717",
+  "raw": "{\"pid\":3046425,\"pgid\":3046425,\"utc\":\"2026-10-10T07:19:40Z\"}\n",
+  "value": {
+    "pid": 3046425,
+    "pgid": 3046425,
+    "utc": "2026-10-10T07:19:40Z"
+  }
+}

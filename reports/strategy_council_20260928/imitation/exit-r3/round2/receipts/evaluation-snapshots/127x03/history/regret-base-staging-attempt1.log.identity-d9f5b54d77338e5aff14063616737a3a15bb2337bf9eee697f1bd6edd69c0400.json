@@ -1,0 +1,10 @@
+{
+  "relative": "regret-base-staging-attempt1.log.identity.json",
+  "sha256": "d9f5b54d77338e5aff14063616737a3a15bb2337bf9eee697f1bd6edd69c0400",
+  "raw": "{\"pid\":2654264,\"pgid\":2654264,\"utc\":\"2026-10-10T07:06:48Z\"}\n",
+  "value": {
+    "pid": 2654264,
+    "pgid": 2654264,
+    "utc": "2026-10-10T07:06:48Z"
+  }
+}

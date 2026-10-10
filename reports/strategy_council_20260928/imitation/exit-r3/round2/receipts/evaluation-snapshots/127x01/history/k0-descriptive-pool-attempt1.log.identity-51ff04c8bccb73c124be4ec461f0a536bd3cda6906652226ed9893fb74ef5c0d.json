@@ -1,0 +1,10 @@
+{
+  "relative": "k0-descriptive-pool-attempt1.log.identity.json",
+  "sha256": "51ff04c8bccb73c124be4ec461f0a536bd3cda6906652226ed9893fb74ef5c0d",
+  "raw": "{\"pid\":3049569,\"pgid\":3049569,\"utc\":\"2026-10-10T07:20:34Z\"}\n",
+  "value": {
+    "pid": 3049569,
+    "pgid": 3049569,
+    "utc": "2026-10-10T07:20:34Z"
+  }
+}

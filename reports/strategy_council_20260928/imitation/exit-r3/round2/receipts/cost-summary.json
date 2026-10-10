@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-10T07:15:04Z",
+  "utc": "2026-10-10T07:24:22Z",
   "final": false,
-  "cpu_seconds": 151.20425500000002,
+  "cpu_seconds": 467.99919800000004,
   "gpu_wall_seconds": 121.29678681003861,
   "meters": [
     {
@@ -150,9 +150,29 @@
       "cpu_seconds": 0.061496999999999996,
       "gpu_wall_seconds": 0,
       "status": "complete"
+    },
+    {
+      "category": "whole CPU pool",
+      "sha256": "9fdb7c0c3ec160495619a7bfd49eab41d0b54643f86cf15733a5f11603ffe491",
+      "path": "receipts/evaluation-snapshots/127x01/history/k0-descriptive-smoke--pool-meter-3032946-9fdb7c0c3ec160495619a7bfd49eab41d0b54643f86cf15733a5f11603ffe491.json",
+      "cpu_seconds": 315.56721600000003,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "host": "127x01"
+    },
+    {
+      "category": "reduction",
+      "sha256": "f0c8fe810d0173bb3c3cfa8c1f519e3b6049bfb4e3f326725519b5c3d46ab18b",
+      "path": "receipts/evaluation-snapshots/127x01/history/reduce-descriptive-1-meter-3046425-f0c8fe810d0173bb3c3cfa8c1f519e3b6049bfb4e3f326725519b5c3d46ab18b.json",
+      "cpu_seconds": 1.227727,
+      "gpu_wall_seconds": 0,
+      "status": "complete",
+      "host": "127x01"
     }
   ],
   "active_fit_costs_pending": true,
   "accounting": "Original R3a/b cost ledger separate. Each whole process/tree once; prep and void startup meters retained. Initial synthetic test and small metadata/copy overhead unmetered.",
-  "unmetered_overhead": "Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted."
+  "unmetered_overhead": "Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted.",
+  "scientific_complete": false,
+  "vacancy_complete": false
 }

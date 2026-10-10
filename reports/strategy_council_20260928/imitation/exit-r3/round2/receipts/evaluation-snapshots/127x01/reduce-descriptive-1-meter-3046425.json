@@ -1,0 +1,14 @@
+{
+  "relative": "reduce-descriptive-1-meter-3046425.json",
+  "sha256": "f0c8fe810d0173bb3c3cfa8c1f519e3b6049bfb4e3f326725519b5c3d46ab18b",
+  "raw": "{\n  \"status\": \"complete\",\n  \"pid\": 3046425,\n  \"pgid\": 3046425,\n  \"parent_cpu_seconds\": 1.181872,\n  \"children_cpu_seconds\": 0.045855,\n  \"wall_seconds\": 0.14507315400987864,\n  \"utc\": \"2026-10-10T07:19:41Z\"\n}\n",
+  "value": {
+    "status": "complete",
+    "pid": 3046425,
+    "pgid": 3046425,
+    "parent_cpu_seconds": 1.181872,
+    "children_cpu_seconds": 0.045855,
+    "wall_seconds": 0.14507315400987864,
+    "utc": "2026-10-10T07:19:41Z"
+  }
+}

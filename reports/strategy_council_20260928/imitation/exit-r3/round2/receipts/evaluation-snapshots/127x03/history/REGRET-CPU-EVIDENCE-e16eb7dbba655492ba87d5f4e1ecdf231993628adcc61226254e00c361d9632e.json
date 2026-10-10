@@ -1,0 +1,34 @@
+{
+  "relative": "REGRET-CPU-EVIDENCE.json",
+  "sha256": "e16eb7dbba655492ba87d5f4e1ecdf231993628adcc61226254e00c361d9632e",
+  "raw": "{\n  \"passed\": true,\n  \"host\": \"127x03\",\n  \"explicit_notification\": \"K2 user release07:00:38Z/PROGRESS07:01:18Z\",\n  \"release_sha256\": \"5eaf18f351a2a15edaf8c8cf9babacd666f78c19315b9164a67659419af1a3c7\",\n  \"release\": {\n    \"released\": true,\n    \"host\": \"127x03\",\n    \"utc\": \"2026-10-10T07:00:38Z\",\n    \"pgids\": [\n      2047870,\n      2056439,\n      2289281,\n      2291277,\n      2291285,\n      2300919,\n      2300943\n    ],\n    \"reporting_complete\": true,\n    \"reporting_games\": 1800,\n    \"remaining_timing_processes\": [],\n    \"execution_audit_sha256\": \"d72c5c75c272e392462edc859f9f479b06fb476f88b4fb39ee1ccc267969f674\",\n    \"G_STOP03_retained\": true,\n    \"R3_must_independently_verify_no_K2_G_X_timing\": true\n  },\n  \"conflicts\": [],\n  \"mem_available_bytes\": 130808401920,\n  \"utc\": \"2026-10-10T07:06:29Z\"\n}\n",
+  "value": {
+    "passed": true,
+    "host": "127x03",
+    "explicit_notification": "K2 user release07:00:38Z/PROGRESS07:01:18Z",
+    "release_sha256": "5eaf18f351a2a15edaf8c8cf9babacd666f78c19315b9164a67659419af1a3c7",
+    "release": {
+      "released": true,
+      "host": "127x03",
+      "utc": "2026-10-10T07:00:38Z",
+      "pgids": [
+        2047870,
+        2056439,
+        2289281,
+        2291277,
+        2291285,
+        2300919,
+        2300943
+      ],
+      "reporting_complete": true,
+      "reporting_games": 1800,
+      "remaining_timing_processes": [],
+      "execution_audit_sha256": "d72c5c75c272e392462edc859f9f479b06fb476f88b4fb39ee1ccc267969f674",
+      "G_STOP03_retained": true,
+      "R3_must_independently_verify_no_K2_G_X_timing": true
+    },
+    "conflicts": [],
+    "mem_available_bytes": 130808401920,
+    "utc": "2026-10-10T07:06:29Z"
+  }
+}

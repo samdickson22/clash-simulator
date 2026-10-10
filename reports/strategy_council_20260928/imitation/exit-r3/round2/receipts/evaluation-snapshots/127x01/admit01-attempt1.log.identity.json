@@ -1,0 +1,10 @@
+{
+  "relative": "admit01-attempt1.log.identity.json",
+  "sha256": "57e91fe4c0b4a683968fe97365db9fb3da2a0802f429410e5eeb34ac9d9ba943",
+  "raw": "{\"pid\":2968135,\"pgid\":2968135,\"utc\":\"2026-10-10T06:55:44Z\"}\n",
+  "value": {
+    "pid": 2968135,
+    "pgid": 2968135,
+    "utc": "2026-10-10T06:55:44Z"
+  }
+}

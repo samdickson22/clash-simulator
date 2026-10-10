@@ -1,0 +1,18 @@
+{
+  "relative": "REGRET-BASE-STAGING.json",
+  "sha256": "d9ba11169c0cb6891edbaf71aca7b1e7e42abb27f039183fcfe5b9839275d21c",
+  "raw": "{\n  \"passed\": true,\n  \"pid\": 2654264,\n  \"pgid\": 2654264,\n  \"pins\": 1412,\n  \"regret_runtime_pins_sha256\": \"c0bf71abbf843860b7558e15b3d98b1f424a6d1b082c62781a16b64772cee4ca\",\n  \"heldout_games\": 64,\n  \"utc\": \"2026-10-10T07:06:52Z\",\n  \"parent_cpu_seconds\": 0.233948,\n  \"children_cpu_seconds\": 2.4344859999999997,\n  \"wall_seconds\": 3.508899916196242,\n  \"accounting\": \"Whole base staging tree once; remote read-only sender CPU unmetered/disclosed\"\n}\n",
+  "value": {
+    "passed": true,
+    "pid": 2654264,
+    "pgid": 2654264,
+    "pins": 1412,
+    "regret_runtime_pins_sha256": "c0bf71abbf843860b7558e15b3d98b1f424a6d1b082c62781a16b64772cee4ca",
+    "heldout_games": 64,
+    "utc": "2026-10-10T07:06:52Z",
+    "parent_cpu_seconds": 0.233948,
+    "children_cpu_seconds": 2.4344859999999997,
+    "wall_seconds": 3.508899916196242,
+    "accounting": "Whole base staging tree once; remote read-only sender CPU unmetered/disclosed"
+  }
+}

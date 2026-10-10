@@ -1,0 +1,10 @@
+{
+  "relative": "home-staging-attempt2.log.identity.json",
+  "sha256": "05c8f5d62d0f8338023c9119a7dc29b765f4a291678626822a30e01169c50b9f",
+  "raw": "{\"pid\":2973701,\"pgid\":2973701,\"utc\":\"2026-10-10T06:57:29Z\"}\n",
+  "value": {
+    "pid": 2973701,
+    "pgid": 2973701,
+    "utc": "2026-10-10T06:57:29Z"
+  }
+}

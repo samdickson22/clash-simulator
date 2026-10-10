@@ -1,0 +1,10 @@
+{
+  "relative": "base-staging-attempt1.log.identity.json",
+  "sha256": "44306dc5cdf807a191fddeeb902a12e15f993a0dc15f0309e33311f8ecdb3da4",
+  "raw": "{\"pid\":3122636,\"pgid\":3122636,\"utc\":\"2026-10-10T06:20:08Z\"}\n",
+  "value": {
+    "pid": 3122636,
+    "pgid": 3122636,
+    "utc": "2026-10-10T06:20:08Z"
+  }
+}

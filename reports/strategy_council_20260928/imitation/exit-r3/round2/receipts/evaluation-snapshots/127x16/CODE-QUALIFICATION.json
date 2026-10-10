@@ -1,0 +1,21 @@
+{
+  "relative": "CODE-QUALIFICATION.json",
+  "sha256": "bddff9b5e426fe2f32974ac2ddefcb968724a2d61a672b726ed99cc76885c89f",
+  "raw": "{\n  \"passed\": true,\n  \"pid\": 2993359,\n  \"pgid\": 2993359,\n  \"native_startup\": true,\n  \"synthetic_hook_tests\": 2,\n  \"protocol_tests\": 5,\n  \"proposal_tests\": 3,\n  \"deadline_clock_tests\": 6,\n  \"no_games\": true,\n  \"parent_cpu_seconds\": 14.66849,\n  \"children_cpu_seconds\": 1.777208,\n  \"wall_seconds\": 16.43783032288775,\n  \"utc\": \"2026-10-10T07:03:22Z\",\n  \"accounting\": \"Whole code qualification process/tree once; no simulations\"\n}\n",
+  "value": {
+    "passed": true,
+    "pid": 2993359,
+    "pgid": 2993359,
+    "native_startup": true,
+    "synthetic_hook_tests": 2,
+    "protocol_tests": 5,
+    "proposal_tests": 3,
+    "deadline_clock_tests": 6,
+    "no_games": true,
+    "parent_cpu_seconds": 14.66849,
+    "children_cpu_seconds": 1.777208,
+    "wall_seconds": 16.43783032288775,
+    "utc": "2026-10-10T07:03:22Z",
+    "accounting": "Whole code qualification process/tree once; no simulations"
+  }
+}
