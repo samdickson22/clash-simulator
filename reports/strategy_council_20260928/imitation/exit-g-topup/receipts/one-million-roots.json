@@ -1,0 +1,48 @@
+{
+  "schema": "clasher.exit-g.milestone.v1",
+  "utc": "2026-10-10T08:32:27Z",
+  "milestone_root_decisions": 1000000,
+  "snapshot_utc": "2026-10-10T08:32:13Z",
+  "root_decisions": 1048649,
+  "packed_root_decisions": 685139,
+  "remaining_unpacked_roots": 363510,
+  "packed_candidate_scores": 12814516,
+  "candidate_scores_scope": "Only verified packed shards; candidate scores are not root decisions.",
+  "combined_manifest_sha256": "f5205cd22154da6f84254f10a9fd3842e04f0d79dd76a689a2d34a334495cbef",
+  "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "active_pgids": {
+    "03": 2711936,
+    "04": 1712867,
+    "08": 16288
+  },
+  "hosts": {
+    "03": {
+      "root_decisions": 513625,
+      "active": 54,
+      "memory_available": 102883315712,
+      "full_avg10": 0.0
+    },
+    "04": {
+      "root_decisions": 322781,
+      "active": 33,
+      "memory_available": 112358768640,
+      "full_avg10": 0.0
+    },
+    "08": {
+      "root_decisions": 202091,
+      "active": 54,
+      "memory_available": 102933561344,
+      "full_avg10": 0.0
+    }
+  },
+  "new_alerts": [],
+  "old04_alert_already_acknowledged": "2026-10-10T02:03:38Z",
+  "a19_approval_request": false,
+  "complete": false,
+  "target_root_decisions": 6000000,
+  "operational_changes": "None. No stop clears, restart, repeated steady audit or new timer.",
+  "host04_pre_drain": "2026-10-10T09:55:00Z",
+  "host04_hard_stop": "2026-10-10T10:15:00Z",
+  "host08_pre_drain": "2026-10-10T14:40:00Z",
+  "host08_hard_stop": "2026-10-10T15:00:00Z"
+}
