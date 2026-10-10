@@ -1,5 +1,16 @@
 # X worker progress
 
+2026-10-10T05:32:05Z. Active01reportingpool2035131 admitted/healthy,
+252/600complete/308pending/40active/no failures,available109585592320bytes/
+load46.46. No reporting losses/CIs/outcomes read; no new job/score/recovery.
+Offline-only2071651 healthy/fiveclosed/noactive/failures/stage2{}.
+X5/X7 originalgroups/eightnice10 unchanged at8558/9766 and4585/4883,
+guard/14lease/PSS/GPU floorsPASS. Fitmonitor0532 replaces earlier lives:
+20.787901399GPUh/69.932450976CPUh, closedfivefinal+livetwo.
+ReportingCPU retains05:02sample until finalwholeexit, neveraddchildren.
+Original150/151unconsumed/R2ineligible;01notreleased/X8cancelled/15unused.
+Tenmincontinuationenabled,next2026-10-10T05:41:55.132Z; record+study pending.
+
 2026-10-10T05:22:08Z. Existing01reportingpool2035131 healthy/admitted,
 199/600complete/361pending/40active/no failures,mem109404102656/load47.48.
 No reporting losses/CIs/outcomes read, no launch/stop/recovery/score.

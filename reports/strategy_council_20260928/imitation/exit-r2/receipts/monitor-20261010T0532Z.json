@@ -1,0 +1,396 @@
+{
+  "utc": "2026-10-10T05:32:05Z",
+  "arms": {
+    "X1": {
+      "utc": "2026-10-10T03:30:52Z",
+      "arm": "X1",
+      "host": "127x09",
+      "supervisor_pid": 1870123,
+      "supervisor_pgid": 1870123,
+      "trainer_pid": 1870189,
+      "trainer_pgid": 1870189,
+      "own_processes": [],
+      "health": {
+        "utc": "2026-10-10T03:22:55Z",
+        "pid": 1870189,
+        "pss": 12611496960,
+        "processes": 2,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 9005.16334736417
+      },
+      "step": 4883,
+      "rows": 40001536,
+      "provisional_tree_cpu_seconds": 0,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00004750.pt",
+      "exit": {
+        "utc": "2026-10-10T03:23:05Z",
+        "exit_code": 0,
+        "reason": null,
+        "supervisor_cpu_seconds": 821.279177,
+        "trainer_tree_cpu_seconds": 22626.755981,
+        "wall_seconds": 9015.166844069026,
+        "peak_pss_bytes": 22631932928,
+        "max_processes": 8,
+        "min_gpu_free_bytes": 48414851072
+      },
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "loader_workers": 6,
+      "human_micro": 7168
+    },
+    "X2": {
+      "utc": "2026-10-10T03:30:52Z",
+      "arm": "X2",
+      "host": "127x16",
+      "supervisor_pid": 871318,
+      "supervisor_pgid": 871318,
+      "trainer_pid": 871463,
+      "trainer_pgid": 871463,
+      "own_processes": [],
+      "health": {
+        "utc": "2026-10-10T03:23:54Z",
+        "pid": 871463,
+        "pss": 8390169600,
+        "processes": 1,
+        "gpu_free_bytes": 51029999616,
+        "reason": null,
+        "wall_seconds": 9063.574996328913
+      },
+      "step": 4883,
+      "rows": 40001536,
+      "provisional_tree_cpu_seconds": 0,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00004750.pt",
+      "exit": {
+        "utc": "2026-10-10T03:24:04Z",
+        "exit_code": 0,
+        "reason": null,
+        "supervisor_cpu_seconds": 885.596915,
+        "trainer_tree_cpu_seconds": 23559.557593999998,
+        "wall_seconds": 9073.578104509972,
+        "peak_pss_bytes": 22782702592,
+        "max_processes": 9,
+        "min_gpu_free_bytes": 48414851072
+      },
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "loader_workers": 6,
+      "human_micro": 7168
+    },
+    "X3": {
+      "utc": "2026-10-10T03:30:52Z",
+      "arm": "X3",
+      "host": "127x08",
+      "supervisor_pid": 2651962,
+      "supervisor_pgid": 2651962,
+      "trainer_pid": 2652063,
+      "trainer_pgid": 2652063,
+      "own_processes": [],
+      "health": {
+        "utc": "2026-10-10T03:30:35Z",
+        "pid": 2652063,
+        "pss": 14950400,
+        "processes": 2,
+        "gpu_free_bytes": 48334110720,
+        "reason": null,
+        "wall_seconds": 9464.298741905019
+      },
+      "step": 4883,
+      "rows": 40001536,
+      "provisional_tree_cpu_seconds": 0,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00004750.pt",
+      "exit": {
+        "utc": "2026-10-10T03:30:36Z",
+        "exit_code": 0,
+        "reason": null,
+        "supervisor_cpu_seconds": 4693.423142,
+        "trainer_tree_cpu_seconds": 23370.253114,
+        "wall_seconds": 9465.30114225694,
+        "peak_pss_bytes": 30948524032,
+        "max_processes": 8,
+        "min_gpu_free_bytes": 48323624960
+      },
+      "lease": null,
+      "loader_workers": 6,
+      "human_micro": 7168
+    },
+    "X4": {
+      "utc": "2026-10-10T04:32:37Z",
+      "arm": "X4",
+      "host": "127x01",
+      "supervisor_pid": 1217465,
+      "supervisor_pgid": 1217465,
+      "trainer_pid": 1217609,
+      "trainer_pgid": 1217609,
+      "own_processes": [],
+      "health": {
+        "utc": "2026-10-10T04:19:17Z",
+        "pid": 1217609,
+        "pss": 24887638016,
+        "processes": 8,
+        "gpu_free_bytes": 29879173120,
+        "reason": null,
+        "wall_seconds": 12386.21259418712
+      },
+      "step": 4883,
+      "rows": 40001536,
+      "provisional_tree_cpu_seconds": 0,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00004500.pt",
+      "exit": {
+        "utc": "2026-10-10T04:30:48Z",
+        "exit_code": 0,
+        "reason": null,
+        "supervisor_cpu_seconds": 2262.901468,
+        "trainer_tree_cpu_seconds": 69197.38351700001,
+        "wall_seconds": 13077.0087094591,
+        "peak_pss_bytes": 35110687744,
+        "max_processes": 8,
+        "min_gpu_free_bytes": 28825354240
+      },
+      "lease": null,
+      "loader_workers": 6,
+      "human_micro": 3584,
+      "closure": {
+        "own_fit_and_score_groups": [],
+        "gpu_processes": "",
+        "gpu_free_mib": "48575"
+      }
+    },
+    "X5": {
+      "utc": "2026-10-10T05:32:05Z",
+      "arm": "X5",
+      "host": "127x04",
+      "supervisor_pid": 3727388,
+      "supervisor_pgid": 3727388,
+      "trainer_pid": 3727520,
+      "trainer_pgid": 3727520,
+      "own_processes": [
+        {
+          "pid": 3727388,
+          "pgid": 3727388,
+          "nice": 10
+        },
+        {
+          "pid": 3727520,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736754,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736778,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736797,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736810,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736811,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736816,
+          "pgid": 3727520,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T05:32:02Z",
+        "pid": 3727520,
+        "pss": 16927202304,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 16750.427436282975
+      },
+      "step": 8558,
+      "rows": 70107136,
+      "provisional_tree_cpu_seconds": 45790.020000000004,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00008500.pt",
+      "exit": null,
+      "lease": null,
+      "loader_workers": 6,
+      "human_micro": 7168
+    },
+    "X6": {
+      "utc": "2026-10-10T03:50:38Z",
+      "arm": "X6",
+      "host": "127x13",
+      "supervisor_pid": 2251934,
+      "supervisor_pgid": 2251934,
+      "trainer_pid": 2252096,
+      "trainer_pgid": 2252096,
+      "own_processes": [],
+      "health": {
+        "utc": "2026-10-10T03:49:10Z",
+        "pid": 2252096,
+        "pss": 12821350400,
+        "processes": 2,
+        "gpu_free_bytes": 29974593536,
+        "reason": null,
+        "wall_seconds": 8786.687997574918
+      },
+      "step": 4883,
+      "rows": 40001536,
+      "provisional_tree_cpu_seconds": 0,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00004750.pt",
+      "exit": {
+        "utc": "2026-10-10T03:49:20Z",
+        "exit_code": 0,
+        "reason": null,
+        "supervisor_cpu_seconds": 1397.577028,
+        "trainer_tree_cpu_seconds": 32834.515576,
+        "wall_seconds": 8796.690267581027,
+        "peak_pss_bytes": 31623763968,
+        "max_processes": 10,
+        "min_gpu_free_bytes": 29974593536
+      },
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "loader_workers": 6,
+      "human_micro": 3584,
+      "closure": {
+        "utc": "2026-10-10T03:50:38Z",
+        "own_fit_and_score_groups": [],
+        "gpu_processes": "",
+        "gpu_free_mib": "48666"
+      }
+    },
+    "X7": {
+      "utc": "2026-10-10T05:32:05Z",
+      "arm": "X7",
+      "host": "127x14",
+      "supervisor_pid": 2423139,
+      "supervisor_pgid": 2423139,
+      "trainer_pid": 2423269,
+      "trainer_pgid": 2423269,
+      "own_processes": [
+        {
+          "pid": 2423139,
+          "pgid": 2423139,
+          "nice": 10
+        },
+        {
+          "pid": 2423269,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429694,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429695,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429723,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429724,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429729,
+          "pgid": 2423269,
+          "nice": 10
+        },
+        {
+          "pid": 2429730,
+          "pgid": 2423269,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T05:32:01Z",
+        "pid": 2423269,
+        "pss": 20994032640,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 8658.272531017894
+      },
+      "step": 4585,
+      "rows": 37560320,
+      "provisional_tree_cpu_seconds": 24317.559999999998,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00004500.pt",
+      "exit": null,
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "loader_workers": 6,
+      "human_micro": 7168
+    }
+  },
+  "allocated_gpu_hours": 20.78790139866026,
+  "whole_cpu_hours": 69.93245097555557,
+  "closed_arms": [
+    "X1",
+    "X2",
+    "X3",
+    "X4",
+    "X6"
+  ],
+  "note": "Nonadditive closed five final exit meters plus two current live trees; REPLACES earlier fit snapshots. Remote game/score/preparation CPU retained separately, no child double counting.",
+  "controller": {
+    "pid": 2071651,
+    "pgid": 2071651,
+    "module": "controller_offline_record.py",
+    "original_games_unconsumed": true
+  },
+  "reporting": {
+    "host": "127x01",
+    "pool_pid": 2035131,
+    "pool_pgid": 2035131,
+    "live_tree_cpu_seconds": 46461.919999999984,
+    "live_tree_cpu_sample_utc": "2026-10-10T05:02:20Z",
+    "completed_blocks": 252,
+    "active_blocks": 40,
+    "pending_blocks": 308,
+    "note": "Separate reporting meter; provisional/nonadditive, final whole pool CPU supersedes. Never add nested cases/blocks.",
+    "metadata_sample_utc": "2026-10-10T05:32:05Z"
+  }
+}
