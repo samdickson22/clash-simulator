@@ -133,3 +133,17 @@ remote sender CPU unmetered. Base ready, overall staging passed:false until
 final GPU offline proposals arrive. No replay or timing game launched.
 Durable every-worker REGRET04-PGIDS.json added before replay, copied into final
 REGRET04-VACATED.json; independent all-PGID absence check still required.
+
+2026-10-10T04:46:13Z — Operational PID-journal/guard pin revision732a9382 pushed;
+current evaluation-prelaunch.json points to732a9382 and matches updated freeze.
+Every mapped file SHA/AST/pushed prelaunch verified09/16/04. Independent04
+all-PGID865011 vacancy audit passed04:45:05Z, PSI fullavg10=0.00. Base job
+is idle; no replay started. Latest healthy fits04:45:04Z step1068/1047,
+8processes each, PSS19.88/23.35GB, GPUfree48.41/48.30GB; no stop reason.
+
+X descriptive update: selection addendum693bc3b1 to e8c82b10 pushed;600fresh
+reporting200 active01 since04:42:48Z pool2035131, same-seed interleaved
+Cv1/X1/X2/X4/K0 on physical0–39/nice10/SCHED_OTHER. Qualification201+4/5 passed
+6 terminal games, reserved seed banks/offsets unchanged. X5/X7 finish original
+fit/offline independently.01 fallback remains QUEUED until explicit X release
+and all owned game groups vacated. No original150/151/R2 reporting.

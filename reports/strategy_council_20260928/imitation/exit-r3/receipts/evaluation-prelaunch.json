@@ -1,10 +1,10 @@
 {
   "pushed": true,
-  "commit": "fa6c39822dcba1001bce93cc745a738f5f4cdec4",
+  "commit": "732a938270c681211a1ecf188e6658044eeec582",
   "verified_remote": "refs/heads/main",
-  "evaluation_freeze_sha256": "f7e289206c3bb7e75c49ade1a9f807c810b34832e76d5469c7f9a25904fba2b5",
-  "utc": "2026-10-10T04:40:29Z",
+  "evaluation_freeze_sha256": "d977caa6bde916845543a445fa38cc8bc9efa7570bf512253186b04ba4f0ad62",
+  "utc": "2026-10-10T04:44:24Z",
   "secret_scan_passed": true,
   "no_evaluation_started_before_push": true,
-  "regret04_operational_amendment": true
+  "regret04_operational_revision": true
 }

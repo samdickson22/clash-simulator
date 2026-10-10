@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "utc": "2026-10-10T04:46:13Z",
+  "evaluation_commit": "732a938270c681211a1ecf188e6658044eeec582",
+  "hosts": [
+    "127x09",
+    "127x16",
+    "127x04"
+  ],
+  "all_mapped_sha256_verified": true,
+  "all_eval_python_ast_parsed": true,
+  "prelaunch_verified": true,
+  "fit_steps": {
+    "R3a": 1068,
+    "R3b": 1047
+  },
+  "regret04_base_staging_vacated": true,
+  "regret04_scoring_started": false,
+  "stage2_started": false
+}
