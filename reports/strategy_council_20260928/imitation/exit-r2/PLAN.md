@@ -181,3 +181,19 @@ Operational stage3 amendment: K-v2 may use later repair phase names (r3 etc).
 A successful REPORTING*-DONE marker is required together with zero active
 K-v2 timing processes, checked during blocks. Earlier literal-R2 guard is
 archived in the original d0264ec9 stage3 freeze. Scientific design unchanged.
+
+Coordinator03 timing admission constraint labeled01:50Z, received02:24Z:
+K-v2 timing games occupy03 cores0–45 approximately02:00–03:30Z. No X stage1/2
+evaluation starts03 until K-v2 explicitly releases (ETA alone is insufficient).
+New controller_k_yield.py/evaluation_k_yield.py checks live K timing PGIDs plus
+successful reporting completion marker before checkpoint transfer/offline
+scoring or stage2 launch; then retains G drain/24GiB admission. Queue early
+final EMAs while blocked. Home01 physical0–39 can be used after X4 finishes
+with final4883 checkpoint/exit and no fit PIDs, plus full G drain. No01 eval
+pool launched by this amendment. Light offline scoring on a fit's host is
+permitted by coordinator; the current controller chooses the queued route.
+Eight metadata-only checks passed on03 core63, no scoring/games. Original
+controller/Ghelper/X6/S-default source hashes remain unchanged. Operational
+amendment/qualification source pins must be committed/pushed before replacing
+controller1596239; stop via ownedCONTROLLER.STOP, cleanly collect meter once,
+then detach replacement with new PID/PGID/log recorded.

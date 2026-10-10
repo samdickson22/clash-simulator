@@ -171,3 +171,12 @@ a successful REPORTING*-DONE marker still requires zero active timing processes.
 Original stage3 freeze archived, default/hook/contrast/seed design unchanged.
 All seven block tests re-pass. K timing release remains false02:16:55Z, so no
 wrapper-smoke or replacement reporting process launched.
+
+03 timing constraint received02:24Z: no stage1/2 evaluation overlaps K-v2
+latency-sensitive work on03. Real observedK PGID1718091/releasefalse; current
+controller has no active gate or outcome. A qualified versioned controller
+queues final EMAs until successful K reporting release and no live timing
+PGID, then waits G drain. Home01 requires completed X4/no fit PIDs first.
+Eight metadata admission checks pass; all three qualification attempts CPU
+8.473321s (0.002353700h), separate preparation with no scientific games.
+Training/science/S-default hashes and staged thresholds are unchanged.

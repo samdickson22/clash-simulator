@@ -1,0 +1,65 @@
+{
+  "utc": "2026-10-10T02:27:04Z",
+  "host": "127x03",
+  "task": [
+    "metadata admission qualification"
+  ],
+  "live_timing_processes": [
+    {
+      "pid": 1718091,
+      "pgid": 1718091,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+    },
+    {
+      "pid": 1718944,
+      "pgid": 1718091,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+    },
+    {
+      "pid": 1718945,
+      "pgid": 1718091,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+    },
+    {
+      "pid": 1718946,
+      "pgid": 1718091,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+    },
+    {
+      "pid": 1718947,
+      "pgid": 1718091,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+    },
+    {
+      "pid": 1718948,
+      "pgid": 1718091,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+    },
+    {
+      "pid": 1718949,
+      "pgid": 1718091,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+    },
+    {
+      "pid": 1718950,
+      "pgid": 1718091,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+    },
+    {
+      "pid": 1718951,
+      "pgid": 1718091,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+    },
+    {
+      "pid": 1718953,
+      "pgid": 1718091,
+      "command": "/mpac/sdicks02/repos/clasher/.venv/bin/python -B reports/explore/k-v2/run.py --config /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/repo/reports/explore/k-v2/plan.json --out /mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/reporting-r2 --workers 9 --pairs 600 --arms V200 V160 V120 K0-200"
+    }
+  ],
+  "live_pgids": [
+    1718091
+  ],
+  "release_markers": [],
+  "released": false,
+  "rule": "No03 stage1/2 evaluation before successful K-v2 reporting release and zero live timing PGIDs; ETA alone never admits."
+}

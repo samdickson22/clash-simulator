@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "tests": 8,
+  "exit_code": 0,
+  "utc": "2026-10-10T02:27:37Z",
+  "files": {
+    "evaluation_k_yield.py": "f26a5b7636f3e97db0f6a082a5cd826a1973481a25dce34c1f883e48606408f7",
+    "controller_k_yield.py": "d8f36aa3c368585d2295668f10f177c0a8a532ce492566819e35e495d6bc31e3",
+    "test_evaluation_k_yield.py": "ad5ec181bcd90505f3b2dbcda1a77dfd8d6fd13890cf93e4e6a0ac6767f893a0",
+    "qualify_evaluation_k_yield.py": "ef17593c49fff1f4cc7e88910abcc13539679ff0587c40ffe3add2bf35732e62"
+  },
+  "parent_cpu_seconds": 1.0534919999999999,
+  "children_cpu_seconds": 1.7787909999999998,
+  "wall_seconds": 1.8102338030003011,
+  "no_games": true,
+  "no_real_G_stop": true,
+  "scope": "Core63 metadata-only controller tests; fake K/G files/processes. No stage1/2 scoring or game evaluation."
+}

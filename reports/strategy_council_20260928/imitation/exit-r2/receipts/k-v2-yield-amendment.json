@@ -1,0 +1,39 @@
+{
+  "schema": "clasher.exit-r2.k-v2-admission-amendment.v1",
+  "utc": "2026-10-10T02:28:50Z",
+  "authority": "Coordinator new03constraint labeled01:50Z, received02:24Z: no stage1/2 evaluation on03 during K-v2 latency-sensitive timing games.",
+  "committed_before_controller_launch": true,
+  "base_freeze_sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+  "x6_addendum_sha256": "ce59c1f1789fd82c957261d43e88e859315d0a7e268936db426ecfc4d70b8e78",
+  "prior_g_admission_sha256": "fb9e6bbf074f385d2231fd60a6c93ad7b85bc2303e06daeb46664e034fffb7d8",
+  "qualification_sha256": "c6fc9ff76fab53ba540844676746a86068e2d4a56bcdcf92ab6a9d2a545bcff8",
+  "files": {
+    "ops/evaluation_k_yield.py": "f26a5b7636f3e97db0f6a082a5cd826a1973481a25dce34c1f883e48606408f7",
+    "ops/controller_k_yield.py": "d8f36aa3c368585d2295668f10f177c0a8a532ce492566819e35e495d6bc31e3",
+    "ops/test_evaluation_k_yield.py": "ad5ec181bcd90505f3b2dbcda1a77dfd8d6fd13890cf93e4e6a0ac6767f893a0",
+    "ops/qualify_evaluation_k_yield.py": "ef17593c49fff1f4cc7e88910abcc13539679ff0587c40ffe3add2bf35732e62"
+  },
+  "old_controller": {
+    "pid": 1596239,
+    "pgid": 1596239,
+    "module": "controller_g_yield.py",
+    "active_gate": null
+  },
+  "replacement": "controller_k_yield.py imports evaluation_k_yield.py; original controller/G helper/X6 source bytes stay unchanged",
+  "gate03": "Before checkpoint transfer/scoring/stage2: no live K-v2 timing PGIDs AND successful REPORTING*-DONE release marker. Quiet phase gaps or03:30ETA do not release; then unchanged G full drain/24GiB gate.",
+  "observed_K_timing_pgids": [
+    1718091
+  ],
+  "current_release_markers": [],
+  "current_admitted": false,
+  "early_fit_route": "Queue03 gates until K-v2 releases. Home01 physical0-39 alternative only after X4 final4883 complete/exit and fit PIDs absent, plus G full drain. No automatic01 pool is launched.",
+  "offline_fit_host_option": "Coordinator permits light offline scoring on fit hosts; current operational choice queues sealed offline computation rather than adding a new host adapter.",
+  "no_scientific_changes": true,
+  "training_recipe_source_hashes_finalEMA_and_gates_unchanged": true,
+  "stages1_2_reporting_started": 0,
+  "new_seeds": false,
+  "seed_audit_sha256": "50ca2e54a19f44b7c17150a0cd07f663c9c87c811fb3959128278fdaafa5c209",
+  "controller_stop": "Own CONTROLLER.STOP; old controller must cleanly exit with active=null, retain its parent+children CPU once; only then new setsid-f launch/core63/nice19/SCHED_IDLE.",
+  "stage3": "Qualified S-default addendum/source bytes unchanged; already waits K-v2 release.",
+  "qualification": "Eight core63 metadata-only tests PASS; fake K/G records, no evaluation/simulation. Real k_status observes livePGID1718091 and releasefalse; admissionfalse, no newGSTOP."
+}

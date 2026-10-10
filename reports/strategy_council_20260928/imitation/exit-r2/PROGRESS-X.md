@@ -477,3 +477,22 @@ Coordinator milestones sent for125/125 equivalence, scientific freeze d0264ec9
 and operational amendment/currenthealthy six-fit snapshot. Full package effect
 and diagnostic11/125 hook-induced changes disclosed; fixture-only repair
 recorded. Every scientific metric/kill/selection/R2 still pending gate outcomes.
+
+2026-10-10T02:28:50Z. Coordinator new03 constraint labeled01:50Z received02:24Z: K-v2
+latency-sensitive timing games on03 cores0–45 until explicit release (about
+03:30Z is ETA, never automatic admission). Current1596239 controller
+active=null/offline={}/stage2={}/failures=[]02:24:17Z, so replacement can be
+clean. New immutable-version controller_k_yield.py/evaluation_k_yield.py
+queues stage1/2 on03 until no liveK timingPGID and successful REPORTING*-DONE
+release marker; checks before checkpoint transfers/scoring/games, then retains
+original G drain/twoempty scans/24GiB floor. Quiet phase gap is refused.
+Home01 alternative enforces X4final4883 completion/exit and absence of own fit
+PIDs before G admission; physical0–39 only. No01 eval launched. Light offline
+onfit host allowed, but current controller queues earlyfits on03. No science
+changes, no seed change, originalcontroller/Ghelper/X6/S-default pins intact.
+Eight fake-metadata tests PASS core63 nice19/SCHED_IDLE; all three attempts
+retained and CPU8.473321s. No real scoring/games/GSTOP from qualification.
+Real02:26 K receipt observes livePGID1718091 (pool plus9workers), no completion
+marker, admissionfalse. K's files/processes untouched. New operational amendment
+and source qualification must commit/push before oldcontrollerSTOP/exit/new
+setsid launch. Retain old whole parent+childCPU meter once.
