@@ -14,7 +14,7 @@ def conflicts():
         try:
             cmd=(p/'cmdline').read_bytes().replace(b'\x00',b' ').decode(errors='replace')
             if cmd.startswith(('ssh ','sshd:','rsync ')):continue
-            if any(v in cmd.lower() for v in ('amendment19','parallel_body_verification','body_verification_pool','a19-')):
+            if any(v in cmd.lower() for v in ('amendment19','parallel_body','body_verification_pool','body_verification_launcher','run_body_epoch_v4','a19-')):
                 found.append(int(p.name))
         except (FileNotFoundError,ProcessLookupError,PermissionError):pass
     return found

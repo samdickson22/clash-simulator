@@ -126,3 +126,10 @@ R3a/R3b metrics plus all regret64 seals/meters to finally admitted03/01 after
 home stage_cpu.py. This overwrites RAW GPU offline metrics only with the
 validated04 merged Stage1 metrics; do not repeat regret on03/01. Then normal
 stage.py --cpu-host advances survivor smoke/reporting or both-killed skip.
+
+2026-10-10T04:42:36Z base-only04 staging COMPLETE: PID/PGID865011 exited;
+all scorer/source/native/heldout SHAs verified. Own CPU16.468019s, wall87.184854s;
+remote sender CPU unmetered. Base ready, overall staging passed:false until
+final GPU offline proposals arrive. No replay or timing game launched.
+Durable every-worker REGRET04-PGIDS.json added before replay, copied into final
+REGRET04-VACATED.json; independent all-PGID absence check still required.

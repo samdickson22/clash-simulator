@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "base_passed": true,
+  "utc": "2026-10-10T04:42:36Z",
+  "wall_seconds": 87.18485419393983,
+  "cpu_seconds": 16.468018999999998,
+  "host": "127x04",
+  "nice": 19,
+  "affinity": [
+    19
+  ],
+  "note": "Whole local staging process tree once; remote sender CPU unmetered"
+}

@@ -21,6 +21,10 @@ def main():
             r=json.loads(path.read_text());assert r['complete'] and sha(path.with_suffix('.jsonl'))==r['jsonl_sha256'];complete.append(i)
         else:pending.append(i)
     active={};failures=[];reason=None;started=time.monotonic();peak=0.
+    journal=j/'REGRET04-PGIDS.json'
+    identities=json.loads(journal.read_text()) if journal.exists() else []
+    identities.append(dict(role='pool',pid=os.getpid(),pgid=os.getpgrp(),core=19,nice=19,started_epoch=time.time()))
+    write_json(journal,identities)
     def stop(cause):
         nonlocal reason
         if reason is None:reason=cause;(j/'REGRET04.STOP').write_text(cause+'\n')
@@ -52,6 +56,8 @@ def main():
                     env=os.environ.copy();s=j/'scorer-source';env.update(R3_REGRET04='1',CLASHER_ROOT=str(s),CLASHER_EVAL_RUNTIME_ROOT=str(s),CLASHER_DELAY_NATIVE_DIR=str(j/'scorer-native'),PYTHONPATH=str(s)+':'+str(s/'src')+':'+str(j/'eval-ops'))
                     command=['taskset','-c',str(core),sys.executable,'-B',str(j/'eval-ops/regret_game.py'),'--job',str(j),'--index',str(i)]
                     child=subprocess.Popen(command,stdout=log,stderr=subprocess.STDOUT,env=env,start_new_session=True);active[core]=(child,i,log)
+                    identities.append(dict(role='scoring_game',index=i,pid=child.pid,pgid=child.pid,core=core,nice=19,started_epoch=time.time()))
+                    write_json(journal,identities)
             write_json(stage/'progress.json',dict(mode='regret04',pool_pid=os.getpid(),pool_pgid=os.getpgrp(),host='127x04',nice=19,cores=[12,13,14],manager_core=19,completed=len(complete),pending=len(pending),active={c:dict(index=i,pid=p.pid,pgid=p.pid) for c,(p,i,l) in active.items()},failures=failures,reason=reason,checked_epoch=time.time()))
             if reason is not None:
                 for child,i,log in active.values():
@@ -69,7 +75,7 @@ def main():
         u=resource.getrusage(resource.RUSAGE_SELF);v=resource.getrusage(resource.RUSAGE_CHILDREN)
         meter=dict(mode='regret04',status='complete' if reason is None and len(complete)==64 else 'stopped_or_failed',host='127x04',pool_pid=os.getpid(),pool_pgid=os.getpgrp(),completed=len(complete),reason=reason,failures=failures,parent_cpu_seconds=u.ru_utime+u.ru_stime,children_cpu_seconds=v.ru_utime+v.ru_stime,wall_seconds=time.monotonic()-started,peak_full_avg10=peak,utc=subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip(),accounting='Whole pool tree once; all scoring/helper/failed/replayed CPU included. Nested worker meters never added.')
         write_json(stage/f'pool-meter-{os.getpid()}.json',meter)
-        write_json(j/'REGRET04-VACATED.json',dict(**meter,children_reaped=True))
+        write_json(j/'REGRET04-VACATED.json',dict(**meter,children_reaped=True,recorded_identities_sha256=sha(journal),pgids=[v['pgid'] for v in identities]))
     assert meter['status']=='complete'
     write_json(stage/'POOL-DONE.json',meter)
 if __name__=='__main__':main()

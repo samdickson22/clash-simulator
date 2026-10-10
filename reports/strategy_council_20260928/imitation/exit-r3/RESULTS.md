@@ -30,3 +30,12 @@ Evaluation wrapper adds5 passing tests and7 unchanged X injected-clock tests;
 successful qualification CPU1.257831s and1.250144s retained separately.
 Missing-dependency test attempts and small source-copy overhead are unmetered
 and consumed no game seeds. CPU admission waits for explicit K2 or X release.
+
+Coordinator granted regret-only04 cores12–19/nice19/≤8processes. Operational
+addendum fa6c3982 preserves all scientific gates/seeds/scorer. Own manager19
+and3workers12–14, PSI fullavg10>10 immediate stop, A19 progress-change/A19-launch
+vacancy guard, hard08Z cutoff. Base staging SHA checks passed04:42:36Z and
+process865011 exited; cost16.468019CPU s, remote sender unmetered. No replay yet.
+One guard test passes all pressure/core/nice/heartbeat/deadline/conflict/stop
+mutations, metered0.087106CPU s; initial dry run unmetered. Stage2 remains
+behind explicit03/01 release.
