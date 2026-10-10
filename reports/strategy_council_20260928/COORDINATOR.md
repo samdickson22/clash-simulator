@@ -1752,3 +1752,7 @@ Also on the hub, but with copies elsewhere:
   - All GPUs are momentarily idle: X5 has finished training on 04, and R3 round 2 hadn't started (my queued 05:48 decision was stuck behind continuations, so I nudged it). 14/15 are unassigned.
   - 01: X descriptive study (40 workers). 03: K2.
   - Seal ~153/216 at 06:10Z, ETA ~11Z.
+- **06:43 UTC heartbeat:**
+  - R3 round 2 is on 09/13/16 (73–81%). K2 is at 1457/1800 on 03 (~07:00Z). X's descriptive study finished on 01; 01 is idle pending X's release, then the R3a descriptive run.
+  - **Returned leased 127x14 and 127x15 to roader early**: no clasher GPU work is queued for them.
+  - Seal ETA ~11Z; O2 is satisfied, O4 is pending.
