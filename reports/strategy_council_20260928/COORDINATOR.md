@@ -1837,3 +1837,11 @@ Also on the hub, but with copies elsewhere:
     - **authorized the validation-64 events.jsonl copy into the 04 mirror** (heldout excluded);
     - the A2 allocation will be valid until **2026-10-12T12:00Z**;
     - issuance follows the genuine serial A1 completion (~19–20Z).
+- **13:17 UTC: PREREG-SEARCH-TIERS review = APPROVE_WITH_CONDITIONS** (14 edits C1–C14).
+  - **Blocking:**
+    - R3a already trained on the L2 decks, so the transfer guard must use held-out human opponent decks;
+    - keep the name R3a, with an explicit, disclosed override of its never-adoptable clause; S1 is for power only;
+    - the selection rule becomes the cheapest tier within 5 pp of *every* costlier admissible tier, at 97.5% CI;
+    - the Mac speed ratio must use the full pipeline, a loaded fleet reference and a direct 200 ms deadline-mode check.
+  - **Also:** any exactness mismatch drops all tiers; arm64 belief/RNG exactness; cost ≈1,500 core-h; a lost-host plan; fleet outcomes sealed until the Mac summary; a Mac selection stays provisional until emulator-on E4.
+  - Revision commissioned.
