@@ -1,0 +1,19 @@
+{
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "r3_explicitly_frozen": true,
+  "authorization_message_id": "message:mcp:53609d4a-a2de-484a-834d-8566c6339c9f:thread-send:coord-t1-op5-08-confirmed-go-20261010-1",
+  "authorized_at_utc": "2026-10-10T17:36:02.599Z",
+  "coordinator_nominal_label": "18:20Z",
+  "freeze_commit": "fa8a1e2df423cde7a4ce5e143251d2d0b415a5db",
+  "manifest_sha256": "a7ebba648c50817aff0174db0d0443dfe70a978c33eb3fe7a8aa8fd09e2f6474",
+  "hosts": [
+    "127x01",
+    "127x08"
+  ],
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1",
+  "outcomes_sealed": true,
+  "smoke_health_receipt_path": "reports/explore/t1/receipts/smoke-r6-health-admission.json",
+  "smoke_health_receipt_sha256": "d2a519b64860e2a914d54b70deef1cde26014f2cc865ea3c1d7aaea958596285",
+  "reviewed_source_commit": "c32015b16f41b0e8dae7b9502c00c9074b0b3be9",
+  "dispatch_sha256": "a4c16936c333efa4287e0d69d67d5fe10cba88c659849b82c35db802d73bca0f"
+}

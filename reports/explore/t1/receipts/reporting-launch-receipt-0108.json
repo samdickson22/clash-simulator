@@ -1,0 +1,156 @@
+{
+  "utc": "2026-10-10T18:04:57Z",
+  "reporting_launched": true,
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "authorization_message_id": "message:mcp:53609d4a-a2de-484a-834d-8566c6339c9f:thread-send:coord-t1-op5-08-confirmed-go-20261010-1",
+  "authorization_path": "reports/explore/t1/receipts/reporting-authorization-0108.json",
+  "authorization_sha256": "3eb770c9b900a13beac8ef85453856296e2bb3c47f1b60310f4ab3c15556771a",
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1",
+  "reporting_job_distinct_from_every_smoke_and_qualification": true,
+  "freeze_commit": "fa8a1e2df423cde7a4ce5e143251d2d0b415a5db",
+  "immutable_manifest_path": "reports/explore/t1/receipts/reporting-manifest-0108.json",
+  "manifest_sha256": "a7ebba648c50817aff0174db0d0443dfe70a978c33eb3fe7a8aa8fd09e2f6474",
+  "reviewed_source_commit": "c32015b16f41b0e8dae7b9502c00c9074b0b3be9",
+  "independent_confirmation_commit": "bcd964d091cbf338e9fb0d6050c0fbc5341bc2d3",
+  "dispatch_path": "reports/explore/t1/receipts/reporting-dispatch-0108.json",
+  "dispatch_sha256": "a4c16936c333efa4287e0d69d67d5fe10cba88c659849b82c35db802d73bca0f",
+  "host_set": [
+    "127x01",
+    "127x08"
+  ],
+  "blocks_dispatched": 3072,
+  "planned_games": 24576,
+  "host_block_counts": {
+    "127x01": 1535,
+    "127x08": 1537
+  },
+  "hosts": {
+    "127x01": {
+      "launch_path": "reports/explore/t1/receipts/reporting-launch-127x01.json",
+      "launch_sha256": "6259e1edc64f737dd3d8026cfcfcfbe3aea770acb8e1ef3adebdaafcfc303080",
+      "launch": {
+        "utc": "2026-10-10T18:03:20Z",
+        "host": "127x01",
+        "phase": "reporting",
+        "slots": 11,
+        "who": "",
+        "runtime_pin_sha256": "706e03a0cc6ccc103904976e3d0a8f565aa0653264a83bc1eb0b6ca7e75f28a4",
+        "dispatch_sha256": "a4c16936c333efa4287e0d69d67d5fe10cba88c659849b82c35db802d73bca0f",
+        "supervisor_pid": 344857,
+        "supervisor_pgid": 344857
+      },
+      "host_admission_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/host-admission-reporting.json",
+      "host_admission_sha256": "9580670f904197e640600029355575e382377378b67cf98202fd637f10d32dd8",
+      "admitted": true,
+      "who": "",
+      "console_count": 0,
+      "foreign_compute": [],
+      "foreign_active": [],
+      "initial_progress": {
+        "utc": "2026-10-10T18:04:50Z",
+        "host": "127x01",
+        "phase": "reporting",
+        "complete_local_blocks": 0,
+        "complete_local_games": 0,
+        "failed_blocks": 0,
+        "queued": 1524,
+        "inflight": 11,
+        "console": {
+          "who": "",
+          "console_count": 0,
+          "positive": false
+        },
+        "console_over_one_core_seconds": 0.0,
+        "memavailable_GiB": 116.62708282470703,
+        "reason": null,
+        "sealed": true
+      },
+      "initial_progress_sha256": "d49c9df0e3ba82f53f47eee2f129478f97e1b4d49b19c2e3a150744ec1ed6f63",
+      "observed_from_owned_copier": true
+    },
+    "127x08": {
+      "launch_path": "reports/explore/t1/receipts/reporting-launch-127x08.json",
+      "launch_sha256": "847f07fb631df0928df3d7548d7ce280e9636face7316f355d1c35901f4f57c6",
+      "launch": {
+        "utc": "2026-10-10T18:03:20Z",
+        "host": "127x08",
+        "phase": "reporting",
+        "slots": 11,
+        "who": "",
+        "runtime_pin_sha256": "caaf6ca4609855b6934d09dc9eaded75f189ca0f82e5e664fea24324c329ac8b",
+        "dispatch_sha256": "a4c16936c333efa4287e0d69d67d5fe10cba88c659849b82c35db802d73bca0f",
+        "supervisor_pid": 1669659,
+        "supervisor_pgid": 1669659
+      },
+      "host_admission_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/host-admission-reporting.json",
+      "host_admission_sha256": "fea794f9ee605cd6dd8536ca59013f826e9f0d3614b651c1689865ae7f94e8da",
+      "admitted": true,
+      "who": "",
+      "console_count": 0,
+      "foreign_compute": [],
+      "foreign_active": [],
+      "initial_progress": {
+        "utc": "2026-10-10T18:04:47Z",
+        "host": "127x08",
+        "phase": "reporting",
+        "complete_local_blocks": 0,
+        "complete_local_games": 0,
+        "failed_blocks": 0,
+        "queued": 1526,
+        "inflight": 11,
+        "console": {
+          "who": "",
+          "console_count": 0,
+          "positive": false
+        },
+        "console_over_one_core_seconds": 0.0,
+        "memavailable_GiB": 116.9595832824707,
+        "reason": null,
+        "sealed": true
+      },
+      "initial_progress_sha256": "454ccf83140aacd26d9e21e52db3d249e30dc518d7d6685d0ce6f28b6424c9e2",
+      "observed_from_owned_copier": true
+    }
+  },
+  "qualification_path": "reports/explore/t1/receipts/op5-08join-qualification-summary.json",
+  "qualification_sha256": "28ba59cac2523a2c367007df3fdbccde9e36414bdaf21470af757a1d3fa7d7db",
+  "smoke_health_path": "reports/explore/t1/receipts/smoke-r6-health-admission.json",
+  "smoke_health_sha256": "d2a519b64860e2a914d54b70deef1cde26014f2cc865ea3c1d7aaea958596285",
+  "external_runtime_provenance_path": "reports/explore/t1/receipts/external-runtime-provenance-0108.json",
+  "external_runtime_provenance_sha256": "b3b0a89cd9ab0aae31a43c1e51a5999432ee951d50c2ff4a7d77f34a4ba750b7",
+  "copier": {
+    "launched_at_utc": "2026-10-10T18:03:07Z",
+    "pid": 344677,
+    "pgid": 344677
+  },
+  "copier_wrapper_sha256": "cb0dd4118d3d9b391023df231a22a20420c0561f058513c8bcdc4f9d9cfef2df",
+  "stop_127x08": {
+    "path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1/STOP-127x08",
+    "target": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08",
+    "never_clear_without_coordinator_release": true
+  },
+  "runtime_estimate_hours": [
+    15,
+    16
+  ],
+  "estimated_end_utc_interval": [
+    "2026-10-11T09:03:20Z",
+    "2026-10-11T10:03:20Z"
+  ],
+  "estimate_excludes_replacements_end_references_and_host_loss": true,
+  "disclosures": [
+    "08parent/socket association rests on elimination, not kernel fd proof; future joins require code-level uniqueness check.",
+    "OP4 residual auto-reaped/orphan CPU can escape; reaped pre-block CPU charged; conservative live/reaped double charges.",
+    "Pinned UID103 dbus uses argv0 (proc/exe unreadable, unprivileged); >1% flags, not stops.",
+    "Smoke4/8blocks dbus-interfered;onealsoSSHflag; retained. Tiny SSH CPU is paired exposure within rotated blocks.",
+    "03notinreportinghostset; idle-services and prior04readallowlists remain frozen but strict OP4 budgets govern."
+  ],
+  "release_pending": [
+    "Amendment1 release-barrier conditions",
+    "reviewed real qualification/smoke-only 300states/tier corpora",
+    "reviewed END fleet reference, pool and registration committed and checked; no outcome route including14dayescape before these"
+  ]
+}
