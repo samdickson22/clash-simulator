@@ -11,12 +11,12 @@ The committed plan/seed audit must precede fitting; use final EMA only.
 
 | Arm | Target / fraction | Fit | Stage1 | Stage2 | Stage3 | Decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| X1 | T=.003 /1.0 | running09, step586/4883 | pending | conditional | conditional | pending |
-| X2 | T=.0001 /1.0 | running16, step564/4883 | pending | conditional | conditional | pending |
-| X3 | z-score τ=.5 /1.0 | running08, step551/4883 | pending | conditional | conditional | pending |
-| X4 | T=.003 /.75 | running01, step406/4883, micro3584 | pending | conditional | conditional | pending |
-| X5 | X1 double steps /1.0 | running04, step585/9766 | pending | conditional | conditional | pending |
-| X6 | T=.0001 /.75 | running13, step18/4883, micro3584 | pending | conditional | conditional | pending |
+| X1 | T=.003 /1.0 | running09, step1110/4883 | pending | conditional | conditional | pending |
+| X2 | T=.0001 /1.0 | running16, step1078/4883 | pending | conditional | conditional | pending |
+| X3 | z-score τ=.5 /1.0 | running08, step1046/4883 | pending | conditional | conditional | pending |
+| X4 | T=.003 /.75 | running01, step741/4883, micro3584 | pending | conditional | conditional | pending |
+| X5 | X1 double steps /1.0 | running04, step1053/9766 | pending | conditional | conditional | pending |
+| X6 | T=.0001 /.75 | running13, step91/4883, micro3584 | pending | conditional | conditional | pending |
 
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
 seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
@@ -54,20 +54,31 @@ X6's fresh13 audit59.074613CPU seconds. X6 corpus staging/SHA preparation meter
 is493.808473 local CPU seconds (0.137169020h), excluding remote senderCPU.
 All71 corpus-file SHAs passed01:22:16Z; fit attempt1 launched01:22:43Z after
 addendum c99491bc push. Startup qualified01:25:33Z at step18, eight own
-nice10 processes,21.36GB PSS,31.79GB GPU free, no stop reason. X6 live fit
-wall169.1512479s and provisional whole-treeCPU273.27s are snapshots replaced
-by final exit meters; no scientific X6 outcome claimed. Original controller replacement meter is
+nice10 processes,21.36GB PSS,31.79GB GPU free, no stop reason. No scientific
+X6 outcome claimed. Original controller replacement meter is
 9.379653CPU seconds (parent+children once); new controller/gate meter pending.
-Attempt2 live snapshots at2026-10-10 01:11:52–58Z:1.591526915 allocated
-GPU-wall hours and4.701041667 provisional whole-tree CPU-hours across five fits.
-These running totals replace earlier snapshots and will be replaced by final
-supervisor exit meters; they exclude failed attempt1 and preparation costs above.
+Current-attempt snapshots at2026-10-10 01:27:33–43Z:2.981422023 allocated
+GPU-wall hours and9.243183333 provisional whole-tree CPU-hours across six fits.
+Original five are attempt2; X6 is attempt1. These running totals replace earlier
+snapshots and will be replaced by final supervisor exit meters; they exclude
+failed attempts and preparation costs above.
+
+| Arm | Live fit GPU-wall h | Provisional live fit CPU h |
+| --- | --- | --- |
+| X1 | 0.580936 | 1.496936 |
+| X2 | 0.578512 | 1.548522 |
+| X3 | 0.581063 | 1.704511 |
+| X4 | 0.579195 | 2.681100 |
+| X5 | 0.578916 | 1.580994 |
+| X6 | 0.082800 | 0.231119 |
+
 Own supervisor/trainer/loaders are counted once; segment diagnostics are not
-added again. Receipt: `receipts/monitor-20261010T0112Z.json`. All five have eight
-owned processes, nice10, no stop reason. Leased09/16 remain below46GB PSS
+added again. Receipt: `receipts/monitor-20261010T0127Z.json`. All six have eight
+owned processes, nice10, no stop reason. Leased09/16/13 remain below46GB PSS
 and above8GiB GPU free. 08 quiet entries are empty after stripping comments.
 Capacity released13 at01:03Z; independent GPU-idle check01:12:24Z confirms
-overflow availability, subject to a fresh admission check before any resume.
+release provenance. X6 now occupies13 and will checkpoint/yield for X3;
+fresh lease/GPU-idle admission checks remain mandatory before any X3 resume.
 Preparation audit CPU costs and failed/retired scan attempts are retained under
 the audit job and PROGRESS-X.md; final totals will include every fit and game
 attempt, startup/loader CPU, and scientific postprocessing. Full per-arm metrics,

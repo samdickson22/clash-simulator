@@ -254,3 +254,23 @@ X6 on13 and current controller1502885; never re-launch these active groups.
 Stage3 reporting command after gates:
 `game_pool_v3.py --job "$job" --stage 3 --arm Xn --cores 60 61 62 63`;
 run with `--arm init` for common control; unchanged reduce_stage3_v2.py.
+
+2026-10-10T01:27:43Z. Continuation read current plan/base freeze/X6 addendum
+and deduplicated all six supervisor/trainer groups. X1/X2/X3/X4/X5/X6 at
+steps1110/1078/1046/741/1053/91. All own trees eight processes,nice10;
+no exit/guard/stop/priority request. X1/X2/X3/X5 have durable checkpoint1000;
+X4 checkpoint500; X6 first periodic checkpoint pending. Input freeze and
+train.py/student.py SHAs match exactly on all six hosts; finalEMA selection
+unchanged. 09/16/13 leases valid toOct11 05:30Z; respective PSS16.62/16.12/
+31.62GB andGPU-free48.41/48.41/31.79GB. 08 quiet noncomment entries empty,
+X3 step1046/no reason; guard05:15Z/vacate05:30Z remains. X6 occupies13 and
+will yield onX3.RESUME.REQUEST; no migration or duplicate fit launched.
+03 controller1502885/PGID1502885 alive/SCHED_IDLE/core63,offline={},stage2={},
+active=null,failures=[],x3_priority_requested=false; waitsfinalEMA.
+Receipt monitor-20261010T0127Z.json: live current-attempt2.981422023GPUh,
+9.243183333provisional whole-treeCPUh, replacing prior snapshots. Original
+fiveattempt2+X6attempt1; failed fits/preparation/smokes remain separate.
+No reporting game/kill/R2 admission yet. QualifiedKadapterv2 remains unchanged;
+current six-arm reporting admission wrappersv3 per frozenX6addendum. Plan
+wording now names these versions consistently. Ten-minute continuation active;
+last known next2026-10-10T01:31:20.583Z; disable only terminal experiment/cleanup.

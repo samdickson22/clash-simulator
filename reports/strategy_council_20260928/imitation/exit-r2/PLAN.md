@@ -94,8 +94,9 @@ because K's original reporting seeds differ. With200ms wall deadline
 and8ms reserve, on600 paired seeds4503601517370496+[0,600). Common init reference,
 same deck/seat schedule, whole paired bootstrap. **Kill if loss-change upper
 CI≥0.** Explicit contrast is loss(arm)−loss(control); opponent is v1 in both.
-Coordinator clarified this before any reporting games; use versioned v2 X
-evaluation entrypoints and passed v2 wrapper qualification. K's harness at `reports/explore/k-anytime/` is the primary harness;
+Coordinator clarified this before any reporting games; use the qualified v2 K
+adapter with the X6 addendum's v3 six-arm admission wrappers and passed v2
+wrapper qualification. K's harness at `reports/explore/k-anytime/` is the primary harness;
 if it is unready at2026-10-10 06:00Z, freeze the already-declared fallback to
 r1(b) E1 deadline W-screen8. Record that decision before affected games.
 
