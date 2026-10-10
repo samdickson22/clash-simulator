@@ -1806,3 +1806,8 @@ Also on the hub, but with copies elsewhere:
   - Epoch 1 took 15.5 min; 1/24 done at 32 min; constant-rate projection ≈ Oct 11 00:31Z, about serial speed.
   - The 04 lock is fixed (0.25% held), but **the 03 lock is now the bottleneck** (79.7% of worker samples open-without-held).
   - **Paused G on 03** (STOP-03 at 12:12:47Z) to test whether G's load contributes. Asked the owner for a before/after rate and, if there's no gain, an analysis of the next lever: 03 lock-scope narrowing, or pre-staging 03 evidence onto 04.
+- **12:17 UTC: A19 bottleneck diagnosed** (owner's source analysis e5b51d65).
+  - The '03 lock' is a flock **on 04** keyed 127x03. Remote-read records hold it across SSH transfer, gzip, JSON parse and validation, and A20 narrowed only the local-04 reads. G's 03 load is not the cause, so **G was re-released onto 03** (fourth one-time release).
+  - Current A19 rate ≈1.7–1.9 epochs/h, ≈ serial speed.
+  - **Commissioned A21:** narrow the remote-read lock scope (03/08) to transfer+SHA only; target review-ready ~14:30Z.
+  - If approved, a possible fresh A1 parallel attempt with A21 (serial untouched); otherwise A21 serves the A2 stages.
