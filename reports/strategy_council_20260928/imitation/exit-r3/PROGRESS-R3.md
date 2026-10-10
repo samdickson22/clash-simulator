@@ -200,3 +200,19 @@ Metadata-only renderer now prints every input/native SHA and final effective
 rows/s using all retained fit-attempt wall time, plus em dash for absent anchor
 contrasts. Pending render and diff checks passed on05; no scientific entrypoint,
 freeze, thresholds or seed changes. Whole-tree costs remain pending final exits.
+
+2026-10-10T05:16:40Z — Coordinator clarification (message headed05:16Z) grants04
+regret admission as soon as both final proposals exist. A19 cannot launch
+before A1 seal exit; coordinator will notify before launch approval. New HARD
+vacancy07:30Z supersedes08:00Z. Review/approval bookkeeping progress SHA changes
+no longer revoke the slot; observed hashes remain recorded and unavailable
+checks fail closed. Actual A19 process/ownedSTOP/PSI>10/nice19/cores12–19/≤8
+guards remain. Fresh grant SHA/no-launch/PSI admission still required.
+Operational guard/pool/staging/advance pins updated BEFORE any offline/replay;
+scientific plan, thresholds, seeds, and scorer unchanged. Focused04 guardtest
+passed core19/nice19 at05:16:15Z (PID/PGID1023059, whole CPU0.092657s).
+
+K2 notification: owns03 reporting since05:14:51Z after explicit K-v2 release,
+timingPGIDs2300919/2300943, cores0–54/manager59/nice10/SCHED_OTHER;24 smoke
+games qualified. No final K2-CPU-RELEASE.json yet.03 remains unclaimed byR3
+until K2's atomic release, explicit notification/PROGRESS, and full drain.

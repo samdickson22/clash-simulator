@@ -11,7 +11,11 @@ def advance():
     stage=read(host,J+'/REGRET04-STAGING.json')
     if not stage or not stage['passed']:r['waiting']='explicit04 authority refreshed and guarded --offline staging';return r
     admission=read(host,J+'/REGRET04-ADMITTED.json')
-    if not admission or any(hashlib.sha256(Path(name).read_bytes()).hexdigest()!=want for name,want in admission['a19_progress_sha256'].items()):r['waiting']='A19 authority changed; review before re-admission';return r
+    authority=read(host,J+'/REGRET04-AUTHORITY.json')
+    if not admission or not authority or not authority.get('progress_sha_changes_are_bookkeeping') or authority.get('absolute_vacate_utc')!='2026-10-10T07:30:00Z':r['waiting']='coordinator clarification and fresh04 admission required';return r
+    # Reading current progress still fails closed if unavailable. SHA changes
+    # from review bookkeeping no longer revoke the clarified slot grant.
+    r['a19_observed_progress_sha256']={name:hashlib.sha256(Path(name).read_bytes()).hexdigest() for name in admission['a19_progress_sha256']}
     if remote(host,'if [ -e '+J+'/REGRET04.STOP ]; then printf stopped; else printf clear; fi').strip()!='clear':r['waiting']='owned04 stop; inspect vacancy before any re-admission';return r
     if read(host,J+'/regret/POOL-DONE.json'):
         command='env PYTHONPATH='+J+'/source:'+J+'/source/src:'+J+'/eval-ops OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 nice -n 19 taskset -c 19 '+B+'/venv/bin/python -B '+J+'/eval-ops/reduce.py --job '+J+' --mode regret'

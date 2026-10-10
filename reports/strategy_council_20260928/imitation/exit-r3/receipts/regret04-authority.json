@@ -16,7 +16,7 @@
   "scheduler": "SCHED_OTHER",
   "pressure_full_avg10_stop_above": 10,
   "vacate_before_A19": true,
-  "absolute_vacate_utc": "2026-10-10T08:00:00Z",
+  "absolute_vacate_utc": "2026-10-10T07:30:00Z",
   "forbidden_cpus": [
     0,
     1,
@@ -45,5 +45,11 @@
   ],
   "received_utc": "2026-10-10T04:39:31Z",
   "authority": "Explicit coordinator message in current R3 thread; small offline CPU slot only, no Stage2 games",
-  "write_prefix": "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r1"
+  "write_prefix": "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r1",
+  "clarification_received_utc": "2026-10-10T05:15:45Z",
+  "progress_sha_changes_are_bookkeeping": true,
+  "admit_after_both_final_proposals": true,
+  "coordinator_will_notify_before_launch_approval": true,
+  "a19_launch_requires_a1_seal_exit": true,
+  "clarification": "Coordinator message headed 05:16Z: A19 cannot launch before A1 seal exit; review/approval progress-file changes are bookkeeping. Regret replay may admit as soon as both final proposals exist; hard vacancy07:30Z. Nice19, <=8 processes, PSI guard and halt-on-launch unchanged."
 }

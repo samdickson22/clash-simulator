@@ -1,0 +1,13 @@
+{
+  "relative": "REGRET04-BASE-VACATED.json",
+  "sha256": "fa7c161a4623179ce8a130d0d347026a0f99dd4843a1ac447c2b72670828f56a",
+  "value": {
+    "staging_pid": 865011,
+    "staging_pgid": 865011,
+    "pgid_members": [],
+    "vacated": true,
+    "utc": "2026-10-10T04:45:05Z",
+    "replay_started": false,
+    "pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=430041120\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=428783707\n"
+  }
+}

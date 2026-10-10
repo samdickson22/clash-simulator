@@ -84,3 +84,15 @@ are durable. Three workers leave spare room for short-lived helper processes.
 After04 reduction, transfer the Stage1 results/offline merged metrics and
 64-game proofs to the finally admitted03/01 job; do not repeat the regret
 phase there or overwrite merged Stage1 metrics with raw GPU diagnostics.
+
+Coordinator clarification headed05:16Z supersedes the earlier08:00Z deadline
+and progress-SHA revocation rule. Hard vacancy is now Oct10 07:30Z. A19 cannot
+launch before the existing A1 seal exits and its launch approval has not been
+issued; the coordinator will notify R3 before issuing that approval. Admit
+regret replay as soon as both final proposals exist, after fresh grant/PSI/no
+A19-process checks. Review and approval bookkeeping may change progress SHAs
+without revoking this grant. Continue recording observed hashes and fail closed
+on unavailable progress checks. Actual A19 process detection, owned STOP,
+PSI fullavg10>10, nice19/cores12–19 and at most8 processes remain enforced.
+Manager19 and scoring workers12–14 are unchanged. No scientific gate, seed,
+scorer, training recipe, or Stage2 CPU contract changes.

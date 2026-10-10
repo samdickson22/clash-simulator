@@ -1,6 +1,6 @@
 # R3 results — evaluation pending
 
-Updated real UTC 2026-10-10T05:14:03Z. Exploration lane; no multiplicity adjustment and no production adoption.
+Updated real UTC 2026-10-10T05:16:40Z. Exploration lane; no multiplicity adjustment and no production adoption.
 
 R3a uses teacher roots only; R3b adds a shared-encoder advantage head with Huber regression to score−WAIT. Both initialize releasedv1 step22552 at width192 and use2500×8192 root rows, T=.003, playweight1, final EMA only. R1 has6,009,681 eligible roots; all five verifiedG shards add212,542, total6,222,223. Continuation kinds1/2, pending3, unsupervised and unscored rows are excluded.
 
@@ -41,7 +41,8 @@ Stage2 is pending. No eligibility or adoption conclusion is drawn from incomplet
 
 | Meter category | CPU hours | Charged GPU wall hours | Completed/stopped meter receipts |
 |---|---:|---:|---:|
-| preparation/qualification | 0.015447 | 0.000000 | 9 |
+| CPU staging | 0.004574 | 0.000000 | 1 |
+| preparation/qualification | 0.010898 | 0.000000 | 9 |
 
 | Arm | Completed effective rows | Charged fit wall seconds | Effective rows / second |
 |---|---:|---:|---:|

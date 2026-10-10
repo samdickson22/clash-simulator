@@ -9,10 +9,16 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--offline',action='store_true');a=p.parse_args();start=time.monotonic();result=dict(passed=False,base_passed=False);child=None
     assert allowed(J,manager=True)
     receipt=json.loads((J/'REGRET04-ADMITTED.json').read_text())
+    authority=json.loads((J/'REGRET04-AUTHORITY.json').read_text())
+    freeze=json.loads((J/'evaluation-freeze.json').read_text())
+    assert sha(J/'REGRET04-AUTHORITY.json')==freeze['regret04_authority_sha256']
+    assert authority['progress_sha_changes_are_bookkeeping'] and authority['absolute_vacate_utc']=='2026-10-10T07:30:00Z'
     def live():
         assert allowed(J,manager=True),'04 PSI/A19/deadline/stop admission changed'
         r=subprocess.run(['ssh','-o','ConnectTimeout=2','127x05','sha256sum '+' '.join(receipt['a19_progress_sha256'])],capture_output=True,text=True,check=True,timeout=3)
-        assert {l.split()[1]:l.split()[0] for l in r.stdout.splitlines()}==receipt['a19_progress_sha256'],'A19 authority changed; stop staging'
+        actual={l.split()[1]:l.split()[0] for l in r.stdout.splitlines()}
+        assert set(actual)==set(receipt['a19_progress_sha256']),'A19 progress availability check incomplete'
+        result['a19_observed_progress_sha256']=actual
     def run(command):
         nonlocal child
         live();child=subprocess.Popen(command,start_new_session=True)

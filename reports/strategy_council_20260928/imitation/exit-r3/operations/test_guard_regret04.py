@@ -1,10 +1,12 @@
 import hashlib,json,os,tempfile,time,unittest
+from datetime import datetime,timezone
 from pathlib import Path
 from unittest.mock import patch
 import guard_regret04 as g
 
 class Tests(unittest.TestCase):
     def test_receipt_pressure_and_slot(self):
+        self.assertEqual(g.DEADLINE,int(datetime(2026,10,10,7,30,tzinfo=timezone.utc).timestamp()))
         with tempfile.TemporaryDirectory(dir='/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r1/tmp') as d:
             j=Path(d);a=j/'REGRET04-AUTHORITY.json';a.write_text('{}')
             (j/'REGRET04-ADMITTED.json').write_text(json.dumps(dict(host='127x04',regret_only=True,authority_sha256=hashlib.sha256(a.read_bytes()).hexdigest())))
@@ -18,6 +20,7 @@ class Tests(unittest.TestCase):
                 with patch.object(g.os,'getpriority',return_value=10):self.assertFalse(g.allowed(j,manager=True))
                 h.write_text(json.dumps(dict(allowed=True,checked_epoch=time.time()-7)));self.assertFalse(g.allowed(j))
                 with patch.object(g.time,'time',return_value=g.DEADLINE):self.assertFalse(g.allowed(j,manager=True))
+                with patch.object(g.time,'time',return_value=g.DEADLINE-1):self.assertTrue(g.allowed(j,manager=True))
                 with patch.object(g,'conflicts',return_value=[123]):self.assertFalse(g.allowed(j,manager=True))
                 (j/'REGRET04.STOP').touch();self.assertFalse(g.allowed(j,manager=True))
 if __name__=='__main__':unittest.main()

@@ -82,7 +82,7 @@ def main():
         if category is not None:
             seen.add(key);totals.setdefault(category,[0.,0.,0]);totals[category][0]+=cpu;totals[category][1]+=gpu;totals[category][2]+=1
             meters.append(dict(category=category,sha256=key,path=str(path.relative_to(REPO)),cpu_seconds=cpu,gpu_wall_seconds=gpu,status=v.get('status'),reason=v.get('reason')))
-    preparation_names=['G-verification.json','G-staging-09.json','G-staging-16.json','tests.json','seed-audit.json','evaluation-tests-first.json','evaluation-tests.json','regret04-tests.json']
+    preparation_names=['G-verification.json','G-staging-09.json','G-staging-16.json','tests.json','seed-audit.json','evaluation-tests-first.json','evaluation-tests.json','regret04-tests.json','regret04-tests-clarification.json']
     prep=sum(load(REPO/'receipts'/n)['cpu_seconds'] for n in preparation_names)
     # If the base04 process has not been collected, charge its retained local
     # receipt, but never again once its identical whole-tree meter is present.

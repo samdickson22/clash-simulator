@@ -1,7 +1,7 @@
 """Regret-only coordinator slot; no timing-game admission on04."""
 import hashlib,json,os,socket,time
 from pathlib import Path
-DEADLINE=1791619200 # 2026-10-10T08:00:00Z
+DEADLINE=1791617400 # 2026-10-10T07:30:00Z; coordinator clarification
 
 def full_pressure():
     line=next(l for l in Path('/proc/pressure/memory').read_text().splitlines() if l.startswith('full '))

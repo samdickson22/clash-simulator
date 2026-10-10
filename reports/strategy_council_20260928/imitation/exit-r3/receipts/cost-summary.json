@@ -1,14 +1,29 @@
 {
-  "utc": "2026-10-10T05:14:03Z",
+  "utc": "2026-10-10T05:16:40Z",
   "final": false,
   "totals": {
+    "CPU staging": {
+      "cpu_seconds": 16.468018999999998,
+      "gpu_wall_seconds": 0.0,
+      "meters": 1
+    },
     "preparation/qualification": {
-      "cpu_seconds": 55.608171,
+      "cpu_seconds": 39.232809,
       "gpu_wall_seconds": 0.0,
       "meters": 9
     }
   },
-  "charged_process_meters": [],
+  "charged_process_meters": [
+    {
+      "category": "CPU staging",
+      "sha256": "5fbc4a6ca0cd2eba8de559361efb10b11bd2a165faa65917ffc4ef83639d497d",
+      "path": "receipts/process-snapshots/127x04/history/regret04-staging-meter-865011-5fbc4a6ca0cd2eba8de559361efb10b11bd2a165faa65917ffc4ef83639d497d.json",
+      "cpu_seconds": 16.468018999999998,
+      "gpu_wall_seconds": 0.0,
+      "status": null,
+      "reason": null
+    }
+  ],
   "preparation_receipts": [
     "G-verification.json",
     "G-staging-09.json",
@@ -18,6 +33,6 @@
     "evaluation-tests-first.json",
     "evaluation-tests.json",
     "regret04-tests.json",
-    "regret04-base-staging.json"
+    "regret04-tests-clarification.json"
   ]
 }

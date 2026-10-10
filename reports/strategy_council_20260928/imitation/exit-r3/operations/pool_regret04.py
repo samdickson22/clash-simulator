@@ -14,6 +14,9 @@ def main():
     stage=j/'regret';stage.mkdir(exist_ok=True);(stage/'logs').mkdir(exist_ok=True)
     lock=(stage/'POOL.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     admission=json.loads((j/'REGRET04-ADMITTED.json').read_text());progress_paths=admission['a19_progress_sha256']
+    authority=json.loads((j/'REGRET04-AUTHORITY.json').read_text())
+    assert sha(j/'REGRET04-AUTHORITY.json')==freeze['regret04_authority_sha256']
+    assert authority['progress_sha_changes_are_bookkeeping'] and authority['absolute_vacate_utc']=='2026-10-10T07:30:00Z'
     complete=[];pending=[]
     for i in range(64):
         path=stage/'games'/f'{i:04d}.json'
@@ -41,9 +44,13 @@ def main():
                 try:
                     check=subprocess.run(['ssh','-o','ConnectTimeout=2','127x05',command],capture_output=True,text=True,timeout=3,check=True)
                     actual={line.split()[1]:line.split()[0] for line in check.stdout.splitlines()}
-                    if actual!=progress_paths:stop('A19 progress authority changed; vacate before reviewing/re-admission')
+                    assert set(actual)==set(progress_paths),'incomplete A19 progress availability check'
+                    # Coordinator clarified that review/approval bookkeeping
+                    # changes these files without admitting a launch. Preserve
+                    # the observed hashes; actual launch/STOP/07:30 guards stay.
+                    progress_paths=actual
                 except Exception:stop('A19 progress check unavailable; vacate')
-            write_json(j/'REGRET04-HEARTBEAT.json',dict(allowed=reason is None,checked_epoch=time.time(),manager_pid=os.getpid(),manager_pgid=os.getpgrp()))
+            write_json(j/'REGRET04-HEARTBEAT.json',dict(allowed=reason is None,checked_epoch=time.time(),manager_pid=os.getpid(),manager_pgid=os.getpgrp(),a19_observed_progress_sha256=progress_paths))
             for core,(child,i,log) in list(active.items()):
                 if child.poll() is not None:
                     code=child.wait();log.close();del active[core]
