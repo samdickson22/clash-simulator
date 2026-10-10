@@ -2,8 +2,8 @@
 
 Coordinator 16:25Z authorizes this delta on reviewed OP-3 `9cd518d3`.
 Reporting remains zero/SEALED until independent confirmation, final-source
-qualification and a fresh healthy all-host smoke. The follow-up candidate re-pins FROZEN-T1.json but remains explicitly
-AWAITING_RECONFIRMATION; it does not admit itself.
+qualification and a fresh healthy all-host smoke. Coordinator17:10Z confirms26151cc6 in independent reviewc68661b0.
+The manifest now admits those reviewed bytes; fresh qualification and smoke remain required.
 
 ## Source and scope
 
@@ -101,3 +101,12 @@ blocks. Copier312275 and supervisor312425 on01 have drained.
 post-failure reproduction of an own01→08 rsync metadata copy observed no child
 under1896254; this does not establish that the original child was the copier.
 Full metadata evidence remains in the owned smoke-r4 diagnosis directory.
+
+## Admission disclosure
+
+Independent reviewer c68661b0 confirms26151cc6 (46/46 tests,111 manifest hashes).
+Auto-reaped or orphaned children can escape accounting when their complete
+lineage is absent between censuses. Reaped children's pre-block CPU may be
+charged when their parent reaps them during the block. Combined counters also
+conservatively charge observed live children again on reaping, including through
+ancestors. These are disclosed limits; no accuracy claim exceeds those counters.

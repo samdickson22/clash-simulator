@@ -29,3 +29,17 @@ No Mac access; no04/05 timing; scientific work nice10/SCHED_OTHER on physical co
 Coordinator-signed Amendment 1, commit a149a4741695562b1ae1856b9626d248f682a85c, is pinned by this manifest. The reference host set must equal all hosts with counted reporting/replacement blocks. An outlier, unavailable host or failed repeated MHz gate fails closed pending an outcome-blind amendment or the PREREG fallback. The END marker is the committed reporting-completion receipt. Reference slot 0 is fixed on every host; only full-occupancy reporting census/MHz rows enter the comparison. Disclose the signed reference/reporting ratio and allow one mechanically classified technical repeat. Fleet exactness is bit-exact. Apply reporting exclusivity including OP-1 and the required real fleet-mode smoke before references.
 
 No outcome release, including the fourteen-day escape, is authorized before the pooled reference and registration packet are committed. The coordinator must bind their commit and SHAs in any release receipt; this procedural precondition is added by Amendment 1. barrier.py and reduce.py remain byte-identical to afa3f10e in this C1/C2/OP-1 freeze, so a separately reviewed amendment implementation must enforce the new pooled-reference condition before release. No automatic or summaryless reduction is permitted. END placement forfeits the preference for a Mac session before reporting ends. Full committed-posterior replay gives no suspended-progress credit and is conservative for speed on both platforms.
+
+## OP-4 admission, 2026-10-10T16:55:06Z
+
+Coordinator17:10Z and independent c68661b0 confirm26151cc6. Proven fleet-LAN
+SSH families and approved idle services share the measured host CPU budget:
+flag>0.5%, stop>2% average after60s, stop>25% per sample immediately; thresholds
+are inclusive. Console users still stop, other foreign compute still stops, and
+unknown/non-LAN sources retain OP1/2/3. Both self and reaped-child counters are
+retained per observed process/block; flag counts are disclosed by health only.
+All same-slot rotated arms share exposure. Auto-reaped/orphaned children can
+escape census accounting; pre-block CPU charged on later reaping and possible
+ancestor/live-child double-count conservatively inflate exposure. Fresh reviewed
+qualification and all-host smoke are required. Reporting uses a distinct unused
+reporting-frozen-op4-r1 directory;08 B STOP remains linked to the original file.

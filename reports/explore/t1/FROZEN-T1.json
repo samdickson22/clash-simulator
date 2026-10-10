@@ -3,7 +3,7 @@
   "utc": "2026-10-10T14:54:58Z",
   "code_candidate_commit": "afa3f10e394d14cb3870e56842a3971ca839b328",
   "files": {
-    "reports/explore/t1/FREEZE-T1.md": "1995a0ccf0616188f84fe5c3c574a8b28b10feeccdea5921abc93a626e7c9061",
+    "reports/explore/t1/FREEZE-T1.md": "e017f78dd7c696261478df615dc3db4a7fc3811ea1514b517e87b76d6af11963",
     "reports/explore/t1/PLAN.md": "10ad08ba3eb0e09b2c05244b0f85786933b0380ceed241d9038918581d7b9750",
     "reports/explore/t1/REVIEW-T1-FREEZE-CONFIRM-20261010T1500Z.md": "70b0e831ac0e7e5c1e50164e79552a0b910f5acb3fe7f0fee3fcb7e73e42c7fe",
     "reports/explore/t1/REVIEW-T1-ROUND3-20261010T1425Z.md": "88637c359428d92826e8ea7f57c8abdbe36059b8268feb75f681b73bbb449c69",
@@ -111,9 +111,10 @@
     "reports/explore/t1/receipts/op3-unit-tests.json": "fbdbd47ed4d4e6f4d392a54eb6ff207c4a19396a084b50d147013bb5f3073ff5",
     "reports/explore/t1/ssh_budget.py": "23bcb884e2ad27a4d55a8db776438692f4570ae8133a88579737e40edb7f293f",
     "reports/explore/t1/test_op4.py": "b1ffe550a75f9b70c02dfc546c43d4a085f80668900040672ddbac72f7b2f8c9",
-    "reports/explore/t1/OP4-T1.md": "2e8bef3be20ef711f76f5551ee3359b61cf8afa35e53bc87444a721d1e916325",
+    "reports/explore/t1/OP4-T1.md": "c2006db727ddb0d155375b2130bdbd44abc9bc3c920159b44443342444f21100",
     "reports/explore/t1/receipts/op4-unit-tests.json": "80e4f3b168bc6ba975d504ef08c23da854ecb56ad0348cb92931febfe5a37925",
-    "reports/explore/t1/REVIEW-T1-OP4-CONFIRM-20261010T1642Z.md": "2b4e977e66dba80d5d5bfeec2d04bf76c5a31ad5e219978b55d311ed1312fffb"
+    "reports/explore/t1/REVIEW-T1-OP4-CONFIRM-20261010T1642Z.md": "2b4e977e66dba80d5d5bfeec2d04bf76c5a31ad5e219978b55d311ed1312fffb",
+    "reports/explore/t1/REVIEW-T1-OP4-RECONFIRM-20261010T1653Z.md": "1bc4b248d5ad46b83494a4b8de5421c67528ae8b56d53ffd9c90954bb7eaa362"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -146,7 +147,6 @@
   "reporting_games_started": false,
   "reference_schedule": "END reporting window; separate corpus/E4 approval; pinned reporting load profile",
   "pending": [
-    "OP4 follow-up independent re-confirmation",
     "final reviewed-source qualification01/03/08",
     "fresh all-host smoke health",
     "manifest-bound reporting authorization after smoke"
@@ -207,13 +207,13 @@
     ]
   },
   "launch_namespaces": {
-    "qualification": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op3-9cd-r1",
-    "smoke": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op3-r4",
-    "reporting": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-op3-r1",
-    "replacement_rule": "fresh replacement-frozen-op3-rN directory for each attempt; preserve prior jobs"
+    "qualification": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op4-261-r1",
+    "smoke": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op4-r5",
+    "reporting": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-op4-r1",
+    "replacement_rule": "fresh replacement-frozen-op4-rN directory for each attempt; preserve prior jobs"
   },
   "operational_delta_op4": {
-    "verdict": "AWAITING_RECONFIRMATION",
+    "verdict": "CONFIRM",
     "prior_candidate": "cb1b9f128d0dc9aeda2f357c425e71ba9c0e7980",
     "prior_review_commit": "9ea3138b",
     "prior_review_path": "reports/explore/t1/REVIEW-T1-OP4-CONFIRM-20261010T1642Z.md",
@@ -227,7 +227,13 @@
       "N1 conservative source-conflict census",
       "N3 first-sample birth window",
       "N4 unknown childless SSH fallback",
-      "N6 same-UID copier evidence"
-    ]
+      "N6 same-UID copier evidence",
+      "CPU of auto-reaped/orphaned children can escape census accounting.",
+      "Pre-block child CPU may be charged at post-block-start reaping; conservative live-child/ancestor double-count."
+    ],
+    "reviewed_commit": "26151cc69ac7d85448e421d51d82d2542d87e153",
+    "review_commit": "c68661b0ecac41859fa864aaf091d5e966c8dfa6",
+    "review_path": "reports/explore/t1/REVIEW-T1-OP4-RECONFIRM-20261010T1653Z.md",
+    "coordinator_confirmation": "Coordinator17:10Z GO: admit, fresh qualification, fresh all-host smoke, then reporting01/03/08 if healthy."
   }
 }
