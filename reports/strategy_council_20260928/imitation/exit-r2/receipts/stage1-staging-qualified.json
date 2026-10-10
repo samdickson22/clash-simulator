@@ -1,0 +1,92 @@
+{
+  "utc": "2026-10-10T03:27Z",
+  "arms": {
+    "X1": {
+      "passed": true,
+      "manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+      "verified_files": 71,
+      "rows": 51846,
+      "utc": "2026-10-10T03:24:23Z",
+      "host": "127x09",
+      "arm": "X1",
+      "wall_seconds": 1.5862754029221833,
+      "local_cpu_seconds": 0.805334,
+      "note": "Preparation only; whole receiver process+child CPU once. Nice19/core63/IDL read-only03 sender CPU remains unmetered/disclosed. No model inference or simulation."
+    },
+    "X2": {
+      "passed": true,
+      "manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+      "verified_files": 71,
+      "rows": 51846,
+      "utc": "2026-10-10T03:24:23Z",
+      "host": "127x16",
+      "arm": "X2",
+      "wall_seconds": 1.5982489930465817,
+      "local_cpu_seconds": 0.837454,
+      "note": "Preparation only; whole receiver process+child CPU once. Nice19/core63/IDL read-only03 sender CPU remains unmetered/disclosed. No model inference or simulation."
+    },
+    "X3": {
+      "passed": true,
+      "manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+      "verified_files": 71,
+      "rows": 51846,
+      "utc": "2026-10-10T03:24:23Z",
+      "host": "127x08",
+      "arm": "X3",
+      "wall_seconds": 1.5989800090901554,
+      "local_cpu_seconds": 0.8530260000000001,
+      "note": "Preparation only; whole receiver process+child CPU once. Nice19/core63/IDL read-only03 sender CPU remains unmetered/disclosed. No model inference or simulation."
+    },
+    "X4": {
+      "passed": true,
+      "manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+      "verified_files": 71,
+      "rows": 51846,
+      "utc": "2026-10-10T03:24:23Z",
+      "host": "127x01",
+      "arm": "X4",
+      "wall_seconds": 1.5287366341799498,
+      "local_cpu_seconds": 0.8746639999999999,
+      "note": "Preparation only; whole receiver process+child CPU once. Nice19/core63/IDL read-only03 sender CPU remains unmetered/disclosed. No model inference or simulation."
+    },
+    "X5": {
+      "passed": true,
+      "manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+      "verified_files": 71,
+      "rows": 51846,
+      "utc": "2026-10-10T03:24:23Z",
+      "host": "127x04",
+      "arm": "X5",
+      "wall_seconds": 1.5826052899938077,
+      "local_cpu_seconds": 0.916196,
+      "note": "Preparation only; whole receiver process+child CPU once. Nice19/core63/IDL read-only03 sender CPU remains unmetered/disclosed. No model inference or simulation."
+    },
+    "X6": {
+      "passed": true,
+      "manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+      "verified_files": 71,
+      "rows": 51846,
+      "utc": "2026-10-10T03:24:23Z",
+      "host": "127x13",
+      "arm": "X6",
+      "wall_seconds": 1.5426837231498212,
+      "local_cpu_seconds": 0.9161219999999999,
+      "note": "Preparation only; whole receiver process+child CPU once. Nice19/core63/IDL read-only03 sender CPU remains unmetered/disclosed. No model inference or simulation."
+    },
+    "X7": {
+      "passed": true,
+      "manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+      "verified_files": 71,
+      "rows": 51846,
+      "utc": "2026-10-10T03:24:23Z",
+      "host": "127x14",
+      "arm": "X7",
+      "wall_seconds": 1.5726772870402783,
+      "local_cpu_seconds": 0.9934749999999999,
+      "note": "Preparation only; whole receiver process+child CPU once. Nice19/core63/IDL read-only03 sender CPU remains unmetered/disclosed. No model inference or simulation."
+    }
+  },
+  "passed": true,
+  "cpu_seconds": 6.196271,
+  "note": "Whole receiver CPU once per arm. Remote source03 nice19/IDL/core63 sender and small bootstrap/native-copy CPU unmetered and disclosed; no scientific scoring/games."
+}

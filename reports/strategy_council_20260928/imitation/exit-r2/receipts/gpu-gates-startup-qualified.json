@@ -1,0 +1,52 @@
+{
+  "utc": "2026-10-10T03:29:30Z",
+  "pid": 1940296,
+  "pgid": 1940296,
+  "nice": 19,
+  "scheduler": 5,
+  "affinity": [
+    63
+  ],
+  "old_absent": true,
+  "offline": {
+    "X1": {
+      "survives": false,
+      "kill_reasons": [
+        "play recall <0.60",
+        "top-8 recall <0.50",
+        "root hard agreement <0.704"
+      ],
+      "metrics": {
+        "teacher_play_rate": 0.345944609297725,
+        "teacher_wait_rate": 0.654055390702275,
+        "student_play_rate": 0.17075452520767676,
+        "student_wait_rate": 0.8292454738063051,
+        "play_recall": 0.2590188694895818,
+        "play_prevalence_ratio": 0.49358920653312705,
+        "top8_action_recall": 0.3059328091493924,
+        "hard_action_agreement": 0.612759643916914
+      }
+    },
+    "X2": {
+      "survives": false,
+      "kill_reasons": [
+        "play recall <0.60",
+        "top-8 recall <0.50",
+        "root hard agreement <0.704"
+      ],
+      "metrics": {
+        "teacher_play_rate": 0.345944609297725,
+        "teacher_wait_rate": 0.654055390702275,
+        "student_play_rate": 0.1504684176602752,
+        "student_wait_rate": 0.8495315810339387,
+        "play_recall": 0.23521461615212771,
+        "play_prevalence_ratio": 0.4349494503346339,
+        "top8_action_recall": 0.3034310221586848,
+        "hard_action_agreement": 0.6298219584569733
+      }
+    }
+  },
+  "failures": [],
+  "active": null,
+  "passed": true
+}

@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-10T03:24:04Z",
+  "exit_code": 0,
+  "reason": null,
+  "supervisor_cpu_seconds": 885.596915,
+  "trainer_tree_cpu_seconds": 23559.557593999998,
+  "wall_seconds": 9073.578104509972,
+  "peak_pss_bytes": 22782702592,
+  "max_processes": 9,
+  "min_gpu_free_bytes": 48414851072
+}

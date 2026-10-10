@@ -6,19 +6,31 @@
     "type": "interval",
     "everyMs": 600000
   },
-  "nextRunAt": "2026-10-10T03:21:35.683Z",
+  "nextRunAt": "2026-10-10T03:41:38.044Z",
   "stop_rule": "Disable after completed experiment or final deadline cleanup 2026-10-11T05:30Z",
-  "last_prompt_revision_utc": "2026-10-10T03:10:47Z",
-  "current_controller_pid": 1870636,
+  "last_prompt_revision_utc": "2026-10-10T03:35:22Z",
+  "current_controller_pid": 1940296,
   "stage3_protocol": "S-default-K1; new owned entrypoints, all same-seed arms interleaved; K-v2 successful reporting completion and no timing processes before games",
   "prelaunch_commit": "0c8c91148b194827feb76c6e1a6cb4028b0e3cf4",
-  "current_controller_pgid": 1870636,
-  "current_controller_module": "controller_x7.py",
-  "latest_operational_amendment_commit": "1d898084",
-  "stage1_2_admission": "Clean final fit artifacts/metadata/exit and absent owned groups before collection;03 blocked until K-v2 reporting release and zero timing PGIDs, then G full drain;01 only after X4 completes",
+  "current_controller_pgid": 1940296,
+  "current_controller_module": "controller_gpu_gates.py",
+  "latest_operational_amendment_commit": "a7b5acd1",
+  "stage1_2_admission": "Stage1 sealed fit-hostGPU, NOT K-gated; stage2 earliest01 afterX4 cleanexit/Gdrain or03 afterK explicitrelease/Gdrain. No games08/04/leases.",
   "fit_collection_prelaunch_commit": "77cbea40b36b59192a5ae4e51d906f0c2c0486f9",
-  "last_verified_utc": "2026-10-10T03:11:53Z",
-  "current_controller": "controller_x7.py",
+  "last_verified_utc": "2026-10-10T03:35:22Z",
+  "current_controller": "controller_gpu_gates.py",
   "x7_supervisor_pid": 2423139,
-  "x7_trainer_pid": 2423269
+  "x7_trainer_pid": 2423269,
+  "stage1_prelaunch_commit": "a7b5acd1",
+  "closed_fit_arms": [
+    "X1",
+    "X2",
+    "X3"
+  ],
+  "stage1_killed_arms": [
+    "X1",
+    "X2",
+    "X3"
+  ],
+  "x3_host08_vacated": true
 }

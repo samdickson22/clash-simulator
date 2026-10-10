@@ -1,0 +1,13 @@
+{
+  "host": "127x09",
+  "utc": "2026-10-10T03:28:30Z",
+  "arm": "X1",
+  "exit_code": 0,
+  "reason": null,
+  "parent_cpu_seconds": 0.048976,
+  "children_cpu_seconds": 10.201871,
+  "gpu_wall_seconds": 11.141858918825164,
+  "peak_pss_bytes": 17571840,
+  "min_gpu_free_bytes": 49517953024,
+  "note": "Whole parent+child CPU once; child result CPU is nested, never add separately. Failed/reaped attempts retained."
+}

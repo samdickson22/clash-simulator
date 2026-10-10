@@ -1,25 +1,46 @@
-# ExIt r2 X screen — results pending
+# ExIt r2 X screen — interim results
 
-Exploration lane; no multiplicity adjustment. Preparation at2026-10-10 00:36Z.
-Original X1–X5 first fit attempts failed during input construction before any optimizer step.
-The omitted r1 assets sidecar is restored; correction35cacd00 was pushed
-before attempt2 launched00:52:49-51Z. All six fits now passed input admission
-and have optimizer updates; X6 attempt1 began01:22:43Z after its own freeze.
-Scientific stage metrics remain pending. Coordinator replaced stage3 with
-S-default K1; replacement reporting waits gates, freeze/push, K-v2 release and
-wrapper smokes. The old comparator remains suspended; no stage3 seeds consumed.
-No reporting game played. This is a status record, not a verdict.
-The committed plan/seed audit must precede fitting; use final EMA only.
+Updated 2026-10-10T03:33:51Z. Exploration; no multiplicity adjustment. X1, X2 and X3 are killed at the frozen offline64 gate. The other four fits continue. No h2h256 or stage3 reporting game has run; R2 is not eligible. The experiment is active.
 
-| Arm | Target / fraction | Fit | Stage1 | Stage2 | Stage3 | Decision |
-| --- | --- | --- | --- | --- | --- | --- |
-| X1 | T=.003 /1.0 | running09, step3907/4883 | pending | conditional | conditional S-default | pending |
-| X2 | T=.0001 /1.0 | running16, step3865/4883 | pending | conditional | conditional S-default | pending |
-| X3 | z-score τ=.5 /1.0 | running08, step3638/4883 | pending | conditional | conditional S-default | pending |
-| X4 | T=.003 /.75 | running01, step2655/4883, micro3584 | pending | conditional | conditional S-default | pending |
-| X5 | X1 double steps /1.0 | running04, step3513/9766 | pending | conditional | conditional S-default | pending |
-| X6 | T=.0001 /.75 | running13, step2975/4883, micro3584 | pending | conditional | conditional S-default | pending |
+| Arm | Target / teacher fraction / seed | Fit | Stage1 | Stage2 / Stage3 |
+| --- | --- | --- | --- | --- |
+| X1 | T=.003 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
+| X2 | T=.0001 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
+| X3 | root z-score τ=.5 /1 /2026101001 | sealed final EMA 4883 | KILL: recall, top8, hard agreement | SKIP: stage1 killed |
+| X4 | T=.003 /.75 /2026101001 | running 127x01, step3638/4883 at2026-10-10T03:30:52Z | pending | conditional |
+| X5 | X1 double steps /1 /2026101001 | running 127x04, step4736/9766 at2026-10-10T03:30:52Z | pending | conditional |
+| X6 | T=.0001 /.75 /2026101001 | running 127x13, step4286/4883 at2026-10-10T03:30:52Z | pending | conditional |
+| X7 | X1 replicate /1 /2026101007 | running 127x14, step703/4883 at2026-10-10T03:30:52Z | pending | conditional |
 
+Stage1 on the unchanged sealed r1 heldout64:8088 eligible root rows,2798 teacher plays and5290 teacher WAITs. The all-poll supplement has37950 eligible rows. Below are point estimates and paired whole-game percentile95% bootstrap CIs (5000 resamples,PCG64 seed80991010). Display rounded; linked receipts retain full precision, denominators, all-poll metrics and pinned final EMA.
+
+| Arm | Play recall [95% CI] | Top8 recall [95% CI] | Root hard agreement [95% CI] | Student WAIT [95% CI] | WAIT / teacher |
+| --- | --- | --- | --- | --- | --- |
+| [X1](receipts/stage1-X1.json) | 0.259019 [0.247870,0.269634] | 0.305933 [0.288135,0.324391] | 0.612760 [0.594250,0.632325] | 0.829245 [0.816916,0.842311] | 1.267852 |
+| [X2](receipts/stage1-X2.json) | 0.235215 [0.223984,0.245770] | 0.303431 [0.285266,0.322416] | 0.629822 [0.612412,0.648093] | 0.849532 [0.838083,0.861410] | 1.298868 |
+| [X3](receipts/stage1-X3.json) | 0.252151 [0.241149,0.262688] | 0.310222 [0.292146,0.329165] | 0.624505 [0.606383,0.643139] | 0.835594 [0.823661,0.848178] | 1.277558 |
+
+All three kill on play recall<.60,top8 recall<.50 and root hard agreement<.704. Teacher WAIT is.654055391 [95% CI .641069402,.668218454]; all three student WAIT rates pass the fourth rule (kill only if>1.5×teacher). No stage2/3 CI or loss is estimated for a killed arm. Final EMA/source/corpus/seed recipe remains unchanged.
+
+X1/X7 gap: stage1 waits X7’s sealed result; stage2 gap is not estimable because X1 was killed before h2h; stage3 gap is not estimable under the one-member family cap. Only the better frozen-ranked X1/X7 survivor can compete equally with the other arms for3 total stage3 slots. No duplicate-family reporting game will be run.
+
+The operational GPU scoring/routing amendmenta7b5acd1 was secret-scanned/committed/pushed before all three offline attempts. Float32 CUDA/TF32 disabled/no autocast preserves the original batch64, metric formulas,CPU reductions,bootstrap and point gates. Synthetic128-row qualification matched hard actions/top8 exactly, score max difference7.629e-6, metric/CI differences<1e-6;12 metadata admission tests passed. These are qualification data, not heldout outcomes.
+
+Stage1 starts on each arm’s own fit host after sealed finalEMA/clean fit exit/ownedgroups absent/GPUidle/currentlease and floor checks. Stage2 uses the earliest admitted01(afterX4 clean exit,physical0–23 within0–39) or03(after explicitK release,physical0–31),with G full drain/home24GiB/load≤100,nice19/SCHED_IDLE/Torch1 and physical-core affinity. S-default stage3 remains K-release-gated with same-seed interleaving and no control pre-run.
+
+X3 finished fit03:30:36Z and offline03:30:50Z. All own08 fit/scoring PGIDs are absent; GPU has no compute process and48578MiB free at03:32:05Z.08 vacated well before05:30Z; no migration or X6/X7 priority yield required.
+
+| Closed arm | Fit GPU-wall h | Fit whole CPU h | Offline GPU-wall h | Offline whole CPU h |
+| --- | --- | --- | --- | --- |
+| X1 | 2.504213012 | 6.513343099 | 0.003094961 | 0.002847458 |
+| X2 | 2.520438362 | 6.790320697 | 0.003094121 | 0.002869096 |
+| X3 | 2.629250317 | 7.795465627 | 0.003155318 | 0.002952663 |
+
+Current seven-fit total at03:30:36Z: 15.435942753 allocatedGPU-wall h /51.651209979 wholeCPU h. ClosedX1/X2/X3 final exit meters replace their live snapshots; remaining four are provisional. This replaces all prior live totals, never sums snapshots. Offline total is separately0.009344400GPU-wall h/0.008669217CPU h. Child scoring result CPU is nested inside the whole supervisor meter and is not added again. GPU guard resource peaks are sampled, not continuous maxima.
+
+New preparation: GPU synthetic qualification10.238241CPU s/10.278003GPU-wall s;12 metadata tests.344673CPU s; all7 heldout staging6.196271CPU s. Source sender/bootstrap/native-copy CPU is unmetered and disclosed. Prior failed fits/audits/staging/controllers/smokes remain separately retained in receipts and history. Retired seven-armcontroller1870636 cleanexit11.910174CPU s charged once; currentcontroller1940296 remote jobs are separately metered, controller’s SSH/local children only counted in its own final meter.
+
+Earlier operational records below are historical; current state, protocol and costs above supersede stale “pending/current controller” snapshots.
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
 seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
 X5:9766steps; X6:4883steps. Loader6/prefetch4, r1 parent and loader core layout.

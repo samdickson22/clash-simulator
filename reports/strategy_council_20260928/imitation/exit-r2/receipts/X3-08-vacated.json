@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-10T03:32:05Z",
+  "own_pgids": [
+    2651962,
+    2652063,
+    3319677,
+    3319713
+  ],
+  "own_live_pgids": [],
+  "gpu_compute_pids": [],
+  "gpu_free_MiB": 48578,
+  "vacated": true,
+  "fit_final_step": 4883,
+  "stage1_complete": true
+}

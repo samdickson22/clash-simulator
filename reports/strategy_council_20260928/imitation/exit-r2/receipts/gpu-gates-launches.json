@@ -1,0 +1,35 @@
+{
+  "offline": {
+    "X1": {
+      "host": "127x09",
+      "status": "launched",
+      "pid": 2521634,
+      "pgid": 2521634,
+      "utc": "2026-10-10T03:28:19Z",
+      "log": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/stage1-X1-attempt1.log",
+      "stage": 1,
+      "arm": "X1"
+    },
+    "X2": {
+      "host": "127x16",
+      "status": "launched",
+      "pid": 1434632,
+      "pgid": 1434632,
+      "utc": "2026-10-10T03:28:20Z",
+      "log": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/stage1-X2-attempt1.log",
+      "stage": 1,
+      "arm": "X2"
+    },
+    "X3": {
+      "host": "127x08",
+      "status": "launched",
+      "pid": 3319677,
+      "pgid": 3319677,
+      "utc": "2026-10-10T03:30:39Z",
+      "log": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/stage1-X3-attempt1.log",
+      "stage": 1,
+      "arm": "X3"
+    }
+  },
+  "stage2": {}
+}
