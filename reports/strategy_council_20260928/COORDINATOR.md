@@ -1929,3 +1929,4 @@ Also on the hub, but with copies elsewhere:
   - the `_apt` UID resolves from /etc/passwd.
 
   apt drops privileges with `setuid()` as root, which sets real, effective, saved and filesystem UIDs together. A real helper with mismatched UIDs fails closed (stop), so a wrong assumption costs availability, not validity. Record the first live `_apt` observation's four UIDs in the ledger when it occurs. **Proceed** to admission and Option B dispatch once the qualification and smoke pass.
+- **23:44 UTC: T1 OP-7 replacement-r2 LAUNCHED** at 23:41:21Z on 01/08 (dd17aa7b; freeze ef4c073a; manifest 488f6c8d; dispatch 30487ebf). Smoke r8 passed. 711 preserved, 2,361 balanced remainder (1,181/1,180). Sealed. 01 was down 21:03–23:41Z. Estimated finish ~12–13Z Oct 11, then the END clean window. Perception serial 198/216 at 23:33Z.
