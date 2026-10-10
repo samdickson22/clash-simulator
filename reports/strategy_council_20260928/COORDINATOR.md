@@ -1845,3 +1845,6 @@ Also on the hub, but with copies elsewhere:
     - the Mac speed ratio must use the full pipeline, a loaded fleet reference and a direct 200 ms deadline-mode check.
   - **Also:** any exactness mismatch drops all tiers; arm64 belief/RNG exactness; cost ≈1,500 core-h; a lost-host plan; fleet outcomes sealed until the Mac summary; a Mac selection stays provisional until emulator-on E4.
   - Revision commissioned.
+- **13:35 UTC: G COMPLETE: 6,046,004 teacher roots**, all SHA-verified and packed (49,703 games, 31 shards, concatenable with r1 1c8e1f49; `f0634e7b`). 01/03/08 are now free.
+  - **Next use:** the search-tier confirmatory fleet runs (PREREG r3 freeze pending), on exclusive timing hosts 01/03 plus 08 until the B window.
+  - Commissioning the confirmatory harness worker now; no games before the freeze.
