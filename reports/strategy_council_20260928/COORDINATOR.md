@@ -1906,3 +1906,10 @@ Also on the hub, but with copies elsewhere:
   - **Next:** a focused r3 delta-only review by Claude Opus high.
   - **At admission:** C2 (FROZEN, re-hash, bind to the new manifest SHA) and C3 (fresh two-host qualification and smoke on the exact bytes must confirm census-loop timing with the +78% scan cost).
   - **Then Option B.**
+- **22:58 UTC: OP-7 review r3 (Claude Opus high) = APPROVE_WITH_CONDITIONS** on b6bec369 (`review/op7-r3-b6bec369/REVIEW-OPUS-r3.md`). 195/195 tests and 176 hashes reproduced; N2/N4/N5/N6/N7 are correct; the round-2 probes are now exact; isolation and v2 tagging intact. **Rulings, all of which can only increase charges or stop more:**
+  - **R3-1 (blocks admission):** pay debt newest-first and subtract expired amounts from credit too. Add both reviewer probes as tests (7700 true must charge 7700; 200 true must charge 200).
+  - **R3-3:** give host sample trackers starting credit (`baseline_all=True`, supervise.py:50), with a test.
+  - **R3-6:** new-phase sensitivity accepts only the v2 tag (fail closed).
+  - **R3-7:** fix the typo; extend the writable check to every ancestor of `/usr/lib/apt/methods/`; C3 confirms real `_apt` methods carry all four UIDs.
+  - **R3-2:** document the enlarged orphan residual.
+  - **Then:** I (coordinator, Opus) do the mechanical delta check, per the reviewer; no full round 4. Then C2 and C3, then Option B.
