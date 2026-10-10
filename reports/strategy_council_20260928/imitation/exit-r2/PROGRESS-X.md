@@ -671,3 +671,15 @@ consumed. Tenmincontinuationpromptupdated to newPID/X7versions/familyrule,
 next03:11:33.949Z, remainsenabled. WrappermechanicssmokewaitsKrelease.
 
 2026-10-10T03:11:19Z. X7 startup fullyPASS03:10:10Z step30/245760rows; inputs exactseed1007/T.003/ratio1/micro7168/4883/batch8192/width192/play1/value0,loader6/prefetch4,parent118/119/126,workers120-125,8nice10ownprocesses,guardfloorsPASS. Identity2423139/2423269 unchanged. Current03controller1870636 healthy03:10:46 active=null/failures[]/allgatespending. K has no successful reporting release marker; admissionclosed regardless quietgap. Zero replacement smoke/reportingcases. Latest seven-fit live snapshotmonitor0309 13.034709717GPUh/43.602094444whole-treeCPUh REPLACESearlier,finalexitmeterssupersede; closed/preparationcosts separate. Tenmincontinuation enabled,next2026-10-10T03:11:33.949Z; experiment remains active.
+
+2026-10-10T03:11:53Z. Queued older six-arm prompt reconciled current seven-arm
+controller1870636/X7 freeze rather than superseded1746462. All7 current
+fitgroups deduplicated,8nice10processes each,steps4531/4497/4276/3167/4141/
+3648/86;no exits/stops/guardreason,leased09/16/13/14 floors/leasesPASS.08
+quietempty, X3guard/priority13+14 intact. Current03controller nice19/IDL/63
+active=null/offline={}/stage2={}/failures=[],alloldcontrollersabsent.
+K1718091 stillactive/noREPORTING-DONE; no evaluation/replacementsmoke/game
+admitted. No joblaunched/stopped/migrated, no scientifickill/survivor/R2.
+Latestcontinuation-check0311 liveGPU13.464315358h/CPU44.996383333h replaces
+priorlive totals; finalwholeexitmeters supersede, nestedchild/priorlive costs
+never added. Tenmincontinuation currentseven-armpromptenabled,next2026-10-10T03:21:35.683Z.
