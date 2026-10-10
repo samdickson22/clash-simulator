@@ -1,5 +1,20 @@
 # X worker progress
 
+2026-10-10T05:02:20Z. Existing reportingpool2035131 alive/admitted,
+86/600complete/474pending/40active/no failures,available109453479936bytes/
+load47.69. All87sampled pool/block/game/helper processes nice10/OTHER;
+no reporting outcomes/losses/CIs read. Whole live pooltreeCPU46461.92s
+provisional/nonadditive, finalwholeexitmeter supersedes; nestedgame/block
+CPU notadded. Currentoffline-only2071651 alive/fiveclosed/noactive/failures,
+stage2{}. X5/X7 originalownedgroups/eightnice10processes unchanged,
+7629/9766 and3634/4883; guards/14lease/floorsPASS/no stop. Monitor0502
+closed5finalmeters+live2 totals19.795699302GPUh/67.215612087CPUh REPLACE
+priorfit snapshots. Original150/151unconsumed/R2ineligible/X8cancelled/
+15unused/08vacated. No launch/score/recovery/allocation, no01release yet.
+Separate selectedreducer/wholeCPU wrapper prepared but NOTexecuted;
+requires600completeblocks/cleanpoolandallownedgamegroupsclosed/dedup first.
+Persistent10minscheduleenabled,next05:11:50Z; experiment remainsactive.
+
 2026-10-10T04:50:04Z. Queued03:58/04:05 handoff reconciled against later04:35
 selection amendment693bc3b1 and current reporting pool2035131; no duplicate
 fit/controller/score/pool launched. Current01 pool alive/admitted,20/600
