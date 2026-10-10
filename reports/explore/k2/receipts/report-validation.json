@@ -1,0 +1,35 @@
+{
+  "utc": "2026-10-10T07:00:36Z",
+  "terminal_games": 1800,
+  "paired_seeds": 600,
+  "raw_hash_count": 1800,
+  "retention_formula_verified": true,
+  "retention": {
+    "formula": "(K0-K2)/(K0-K4)",
+    "point": 0.7085714285714285,
+    "ci95": [
+      0.5809919411802479,
+      0.8333333333333334
+    ],
+    "numerator_loss_pp": 20.666666666666668,
+    "denominator_loss_pp": 29.166666666666668,
+    "valid_bootstrap_replicas": 5000,
+    "nonpositive_denominator_replicas": 0,
+    "target": 0.8,
+    "point_target_met": false,
+    "lower_ci_target_met": false,
+    "upper_ci_below_target": false,
+    "target_contrast_pp": -2.66666666666667,
+    "target_contrast_ci_pp": [
+      -6.333333333333332,
+      0.9666666666666686
+    ]
+  },
+  "bootstrap_review": "Frozen reducer uses one shared 5000x600 paired-seed resampling index for all three arm loss arrays, then computes numerator/denominator ratios and percentile bounds. No denominator replicas excluded.",
+  "source_runtime_unchanged": true,
+  "gc_results_hash_verified": true,
+  "overruns": 203,
+  "strict_return_bound_qualified": false,
+  "former_cache_persistence_qualified": false,
+  "results_sha256": "e814a3f2fd15cb326ee790d1971a2d397c3f8fb0eaf16d09bb82bc0135f5a57d"
+}

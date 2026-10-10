@@ -1,0 +1,20 @@
+{
+  "released": true,
+  "host": "127x03",
+  "utc": "2026-10-10T07:00:38Z",
+  "pgids": [
+    2047870,
+    2056439,
+    2289281,
+    2291277,
+    2291285,
+    2300919,
+    2300943
+  ],
+  "reporting_complete": true,
+  "reporting_games": 1800,
+  "remaining_timing_processes": [],
+  "execution_audit_sha256": "d72c5c75c272e392462edc859f9f479b06fb476f88b4fb39ee1ccc267969f674",
+  "G_STOP03_retained": true,
+  "R3_must_independently_verify_no_K2_G_X_timing": true
+}

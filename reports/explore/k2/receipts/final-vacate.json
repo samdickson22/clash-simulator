@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-10T07:01:18Z",
+  "host": "127x03",
+  "checked_pgids": [
+    1575208,
+    1718083,
+    1718091,
+    2047870,
+    2056439,
+    2289281,
+    2291277,
+    2291285,
+    2300919,
+    2300943
+  ],
+  "remaining_pgids": [],
+  "other_K2_Kv2_python": [],
+  "release_helper_exited": true,
+  "G_STOP03_retained": true
+}

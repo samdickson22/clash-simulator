@@ -1,0 +1,92 @@
+{
+  "utc": "2026-10-10T06:59:45Z",
+  "results_sha256": "e814a3f2fd15cb326ee790d1971a2d397c3f8fb0eaf16d09bb82bc0135f5a57d",
+  "worker_log_sha256": "4842401df47a05a4ab22f9cef3bb59bc5d29340035db4602ab275c392d957dd8",
+  "source": "Frozen raw GC duration/generation/during_decision plus terminal ticks from worker.log",
+  "scope": "Recorded collections from game setup through the post-extraction snapshot; file writing and inter-game gaps are excluded. Timestamps and finer phase are unavailable.",
+  "overlap_status": "Live decision-opportunity overlap unknown: no pause start/end timestamps, poll deadlines, or opportunity/channel state were recorded. Zero during_decision is not evidence of zero delayed polls.",
+  "live_caveat": "The sim includes GC in whole-game wall/CPU but does not advance game ticks or charge decision lateness for maintenance. Live maintenance can delay the next poll; results do not quantify that loss penalty.",
+  "arms": {
+    "K2-200": {
+      "games": 600,
+      "count": 17167,
+      "generation_counts": {
+        "0": 15617,
+        "1": 1427,
+        "2": 123
+      },
+      "pause_ms": {
+        "p50": 0.3850359935313463,
+        "p95": 3.4528933232650134,
+        "p99": 8.594008232466884,
+        "max": 150.5550630390644
+      },
+      "total_pause_seconds": 28.110771709121764,
+      "game_minutes": 1903.665,
+      "count_per_game_minute": 9.017868164829421,
+      "pause_ms_per_game_minute": 14.766658896981225,
+      "count_above_ms": {
+        "50": 123,
+        "250": 0,
+        "500": 0
+      },
+      "during_decision_window_count": 0,
+      "overlapping_live_decision_opportunity_count": null,
+      "overlap_status": "unknown; frozen instrumentation has no timestamps/opportunity trace"
+    },
+    "K0-200": {
+      "games": 600,
+      "count": 17015,
+      "generation_counts": {
+        "0": 15515,
+        "1": 1406,
+        "2": 94
+      },
+      "pause_ms": {
+        "p50": 0.255984952673316,
+        "p95": 3.088673995807763,
+        "p99": 7.160307508893329,
+        "max": 144.21324688009918
+      },
+      "total_pause_seconds": 22.514662083005533,
+      "game_minutes": 1926.2816666666668,
+      "count_per_game_minute": 8.83307996667154,
+      "pause_ms_per_game_minute": 11.688146376830767,
+      "count_above_ms": {
+        "50": 94,
+        "250": 0,
+        "500": 0
+      },
+      "during_decision_window_count": 0,
+      "overlapping_live_decision_opportunity_count": null,
+      "overlap_status": "unknown; frozen instrumentation has no timestamps/opportunity trace"
+    },
+    "K4-200": {
+      "games": 600,
+      "count": 16074,
+      "generation_counts": {
+        "0": 14632,
+        "1": 1332,
+        "2": 110
+      },
+      "pause_ms": {
+        "p50": 0.2878536470234394,
+        "p95": 3.1836860696785125,
+        "p99": 7.620377561543151,
+        "max": 154.62263417430222
+      },
+      "total_pause_seconds": 24.049262413056567,
+      "game_minutes": 1889.75,
+      "count_per_game_minute": 8.50588702209287,
+      "pause_ms_per_game_minute": 12.72616082183176,
+      "count_above_ms": {
+        "50": 110,
+        "250": 0,
+        "500": 0
+      },
+      "during_decision_window_count": 0,
+      "overlapping_live_decision_opportunity_count": null,
+      "overlap_status": "unknown; frozen instrumentation has no timestamps/opportunity trace"
+    }
+  }
+}
