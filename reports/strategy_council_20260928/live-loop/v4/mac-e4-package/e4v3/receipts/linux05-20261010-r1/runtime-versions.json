@@ -1,0 +1,1 @@
+{"environment":{"MKL_NUM_THREADS":"1","OMP_NUM_THREADS":"1","OPENBLAS_NUM_THREADS":"1"},"numpy":"2.2.6","scope":"LINUX-DRY-RUN:PROVISIONAL-LOAD","torch":"2.10.0+cpu","torch_interop_threads":1,"torch_threads":1}
