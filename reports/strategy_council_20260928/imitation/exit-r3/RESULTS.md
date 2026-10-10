@@ -1,6 +1,6 @@
 # R3 results — evaluation pending
 
-Updated real UTC 2026-10-10T05:43:49Z. Exploration lane; no multiplicity adjustment and no production adoption.
+Updated real UTC 2026-10-10T06:01:04Z. Exploration lane; no multiplicity adjustment and no production adoption.
 
 R3a uses teacher roots only; R3b adds a shared-encoder advantage head with Huber regression to score−WAIT. Both initialize releasedv1 step22552 at width192 and use2500×8192 root rows, T=.003, playweight1, final EMA only. R1 has6,009,681 eligible roots; all five verifiedG shards add212,542, total6,222,223. Continuation kinds1/2, pending3, unsupervised and unscored rows are excluded.
 
@@ -31,6 +31,8 @@ All source/scorer file pins remain in [source manifests](receipts/source-manifes
 
 Stage1 uses all8088 eligible roots in the64 frozen R1 heldout games. The deterministic gate threshold is calibrated to nearest34.6% play prevalence without action labels; calibration and diagnostics reuse this slice and are exploratory. Gates: play recall≥.6375; binary agreement≥all-WAIT+.10; mean positive frozen-W score regret≤.010. Intervals are game-cluster95% bootstrap5000/80991013.
 
+Eligibility uses the predeclared point estimates; descriptive intervals do not override a failed gate.
+
 | Arm | Threshold / play rate | Play recall | Play/WAIT agreement | All-WAIT agreement | Mean positive W regret | Stage1 |
 |---|---|---|---|---|---|---|
 | R3a | 0.5005528 / 0.3459 | 0.6297 [0.6043, 0.6543] | 0.7438 [0.7289, 0.7595] | 0.6541 [0.6403, 0.6685] | pending | KILL; regret pending |
@@ -46,6 +48,7 @@ Both arms failed the frozen binary gates, so Stage2 will be skipped; zero smoke/
 | fits | 8.638007 | 2.959405 | 2 |
 | GPU offline | 0.009509 | 0.008973 | 2 |
 | preparation/qualification | 0.010924 | 0.000000 | 10 |
+| Total | 8.663015 | 2.968378 | 15 |
 
 | Arm | Completed effective rows | Charged fit wall seconds | Effective rows / second |
 |---|---:|---:|---:|
@@ -54,7 +57,7 @@ Both arms failed the frozen binary gates, so Stage2 will be skipped; zero smoke/
 
 Throughput divides final effective rows by the summed wall time of every retained fit attempt, including initialization, failed work, and exact-checkpoint resumes. Active fits have no final throughput estimate.
 
-Whole supervisor/pool/process trees are charged once, including failed/replayed attempts and helpers. Segment/game/block diagnostics are nested and never added again. Fit/GPU-offline wall charges include process initialization. Preparation read-only remote sender CPU, initial unmetered test passes, missing-dependency qualification attempts and small command-center metadata/source-copy overhead are disclosed as unmetered. Active fit/pool costs remain accruing until exit meters arrive.
+Whole supervisor/pool/process trees are charged once, including failed/replayed attempts and helpers. Segment/game/block diagnostics are nested and never added again. Fit wall includes supervisor launch and initialization; GPU-offline wall starts after module imports and includes CUDA initialization and evaluation. Offline CPU includes import startup. Preparation read-only remote sender CPU, initial unmetered test passes, missing-dependency qualification attempts and small command-center metadata/source-copy overhead are disclosed as unmetered. Active fit/pool costs remain accruing until exit meters arrive.
 
 R3a resource receipt: exit0, reason None; peak PSS32.869GB, max processes10, minimum GPU free45.090GiB. All retained attempt statuses/reasons remain in [cost receipts](receipts/cost-summary.json).
 

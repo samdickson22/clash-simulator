@@ -284,3 +284,18 @@ collect04 metadata including64 per-game JSON seals (no rawjsonl/arrays on05),
 render_results --stage1-host127x04, all-PGIDvacancy/cost receipts, final RESULTS
 commit/push/coordinator milestone and delete continuation. Bothbinarykills
 mean Stage2 skipped; no K2/X host release is needed to finish R3 now.
+
+2026-10-10T06:01:32Z — Regret04 pool1129930 healthy32/64, three scoring workers12–14,
+manager19/nice19; heartbeat allowed, no failed/retried/stopped scientific attempt.
+Fresh A19 bookkeeping05:52 confirms originalA1seal active/no issued parallel
+launch; observed SHA changes remain permitted. Both binary kills unchanged,
+no Stage2 CPU admission. Metadata-only final_vacancy.py prepares a bounded
+reducer PID/PGID observer and independent every-PGID drain audit; pinned
+scorer/reducer/evaluation files unchanged. AST checks pass; pending renderer
+valid. Collector retains these separate audit receipts, renderer charges their
+CPU once, totals categories, and distinguishes offline post-import GPU wall
+from whole-process CPU. Two tiny command-center invocation/formatting failures
+(python alias absent; Python3.8 dict-union unsupported) added no scientific
+retry and are within disclosed unmetered metadata overhead. Continue all64,
+observe pinned reducer while advancing once, independently vacate04, collect/
+render final results, push, notify coordinator and delete continuation.

@@ -48,6 +48,7 @@ def main():
     for name,digest in pins.items():lines.append(f'| {name} | {digest} |')
     lines += ['', 'All source/scorer file pins remain in [source manifests](receipts/source-manifests.json); adapter, runner, and evaluation pins remain in [evaluation freeze](receipts/evaluation-freeze.json).']
     lines += ['', 'Stage1 uses all8088 eligible roots in the64 frozen R1 heldout games. The deterministic gate threshold is calibrated to nearest34.6% play prevalence without action labels; calibration and diagnostics reuse this slice and are exploratory. Gates: play recall≥.6375; binary agreement≥all-WAIT+.10; mean positive frozen-W score regret≤.010. Intervals are game-cluster95% bootstrap5000/80991013.', '',
+        'Eligibility uses the predeclared point estimates; descriptive intervals do not override a failed gate.', '',
         '| Arm | Threshold / play rate | Play recall | Play/WAIT agreement | All-WAIT agreement | Mean positive W regret | Stage1 |','|---|---|---|---|---|---|---|']
     for arm in ('R3a','R3b'):
         off=stage1.get(arm) if stage1 else result('127x09' if arm=='R3a' else '127x16','offline--'+arm+'.json')
@@ -84,6 +85,7 @@ def main():
             category='CPU replay/games';cpu=v['parent_cpu_seconds']+v['children_cpu_seconds']
         elif name.startswith('regret04-staging-meter-') or name=='CPU-STAGING.json':category='CPU staging';cpu=v['cpu_seconds']
         elif name.startswith('reduce-') and name.endswith('-meter.json'):category='reduction';cpu=v['cpu_seconds']
+        elif name in ('REGRET04-REDUCTION-IDENTITY.json','REGRET04-INDEPENDENT-VACATED.json'):category='final metadata audits';cpu=v['cpu_seconds']
         if category is not None:
             seen.add(key);totals.setdefault(category,[0.,0.,0]);totals[category][0]+=cpu;totals[category][1]+=gpu;totals[category][2]+=1
             meters.append(dict(category=category,sha256=key,path=str(path.relative_to(REPO)),cpu_seconds=cpu,gpu_wall_seconds=gpu,status=v.get('status'),reason=v.get('reason')))
@@ -97,19 +99,25 @@ def main():
     totals['preparation/qualification']=[prep,0.,len(preparation_names)]
     lines += ['', '| Meter category | CPU hours | Charged GPU wall hours | Completed/stopped meter receipts |','|---|---:|---:|---:|']
     for name,(cpu,gpu,n) in totals.items():lines.append(f'| {name} | {cpu/3600:.6f} | {gpu/3600:.6f} | {n} |')
+    lines.append(f"| Total | {sum(v[0] for v in totals.values())/3600:.6f} | {sum(v[1] for v in totals.values())/3600:.6f} | {sum(v[2] for v in totals.values())} |")
     lines += ['', '| Arm | Completed effective rows | Charged fit wall seconds | Effective rows / second |', '|---|---:|---:|---:|']
     for arm in ('R3a','R3b'):
         wall=sum(m['gpu_wall_seconds'] for m in meters if m['category']=='fits' and Path(m['path']).name.startswith(arm+'-exit-'))
         rows=fits[arm]['step']*freeze['batch_size'] if fits[arm] else None
         lines.append(f"| {arm} | {rows if rows is not None else 'pending'} | {f'{wall:.3f}' if wall else 'pending'} | {f'{rows/wall:.2f}' if rows is not None and wall else 'pending'} |")
     lines += ['', 'Throughput divides final effective rows by the summed wall time of every retained fit attempt, including initialization, failed work, and exact-checkpoint resumes. Active fits have no final throughput estimate.']
-    lines += ['', 'Whole supervisor/pool/process trees are charged once, including failed/replayed attempts and helpers. Segment/game/block diagnostics are nested and never added again. Fit/GPU-offline wall charges include process initialization. Preparation read-only remote sender CPU, initial unmetered test passes, missing-dependency qualification attempts and small command-center metadata/source-copy overhead are disclosed as unmetered. Active fit/pool costs remain accruing until exit meters arrive.']
+    lines += ['', 'Whole supervisor/pool/process trees are charged once, including failed/replayed attempts and helpers. Segment/game/block diagnostics are nested and never added again. Fit wall includes supervisor launch and initialization; GPU-offline wall starts after module imports and includes CUDA initialization and evaluation. Offline CPU includes import startup. Preparation read-only remote sender CPU, initial unmetered test passes, missing-dependency qualification attempts and small command-center metadata/source-copy overhead are disclosed as unmetered. Active fit/pool costs remain accruing until exit meters arrive.']
     if stage2:
         passed=[arm for arm,r in stage2['arms'].items() if r.get('survives')]
         conclusion='Stage2 survivors: '+(', '.join(passed) if passed else 'none; all tested R3 arms killed')+'.'
     elif stage1 and not any(v['survives'] for v in stage1.values()):conclusion='Both arms killed at Stage1.'
     elif binary_killed:conclusion='Both arms failed the binary gates; final W-regret diagnostics remain pending.'
     else:conclusion='Experiment remains pending; no completed adoption gate.'
+    if complete and a.stage1_host=='127x04':
+        gpu=load(REPO/'receipts/gpu-vacated.json');vacancy=result(a.stage1_host,'REGRET04-INDEPENDENT-VACATED.json')
+        assert gpu['passed'] and vacancy and vacancy['passed'] and vacancy['all_absent'],'final results require independent process vacancy'
+        lines += ['', f"Compute vacated: GPU hosts09/16 at {gpu['hosts'][0]['utc']}; regret host04 at {vacancy['utc']}, all{len(vacancy['recorded_pgids'])} recorded process groups independently absent. [GPU vacancy](receipts/gpu-vacated.json) and [04 vacancy](receipts/process-snapshots/127x04/REGRET04-INDEPENDENT-VACATED.json) retain the audits."]
+        if stage2 is None:lines += ['', 'No Stage2 CPU host was admitted.']
     for arm,host in (('R3a','127x09'),('R3b','127x16')):
         ex=result(host,arm+'-exit.json')
         if ex:lines += ['',f"{arm} resource receipt: exit{ex['exit_code']}, reason {ex['reason']}; peak PSS{ex['peak_pss_bytes']/1e9:.3f}GB, max processes{ex['max_processes']}, minimum GPU free{ex['min_gpu_free_bytes']/2**30:.3f}GiB. All retained attempt statuses/reasons remain in [cost receipts](receipts/cost-summary.json)."]
