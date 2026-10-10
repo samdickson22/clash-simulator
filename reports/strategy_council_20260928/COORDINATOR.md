@@ -1634,3 +1634,7 @@ Also on the hub, but with copies elsewhere:
   - Stop list per §4. Exploration lane; any live change needs Mac E4, PREREG and an L2 amendment.
 - **00:43 UTC heartbeat:** K is running on 03/01. Capacity scan on 13/14/15 at 92/100/71% GPU. GPUs 01/04/09/16 are idle, waiting on X's freeze (minutes away). **08's GPU goes to X3 until 05:30Z at the latest** (B is gated by the A1 seal, ETA ~06:30Z). X3 must vacate by then, with a checkpoint and resume on 13/14. Heartbeat prompt refreshed.
 - **01:04 UTC: Capacity width 288 KILLED** under the frozen quarter rule: gain 0.00308 < 0.005 at 95.1 M rows (`d4d070b2`). 13 released. 384/480 continue (offline-only). **13 → new X arm X6** (T=1e-4, teacher 0.75), completing a 2×2 of temperature × human anchor with X1/X2/X4. Addendum freeze before launch; X3's resume has priority on 13.
+- **01:12 UTC heartbeat:**
+  - X1–X5 are training: 09/16/01/04/08 at 66–74% GPU. Capacity 384/480 on 14/15. 13 is idle, waiting for X6 (queued to X). K is finishing on 03/01.
+  - A1 is at 82/216; its ETA slips to ~08:30–10:00Z.
+  - **Launched G** (teacher top-up, Sol worker `clasher-g-topup-20261010-1`) as preemptible filler: 04 physical cores 0–47 at nice 19 (the seal's CPU52 and X5's loader untouched), plus 01 cores 0–39 after K exits; it yields to X evaluation. Stop file; ends by 2026-10-11 03:00Z.
