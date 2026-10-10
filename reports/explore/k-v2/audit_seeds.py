@@ -1,7 +1,7 @@
 """Seed-only interval audit of the coordinator plan and K/X/G freeze records."""
 import hashlib,json,re,subprocess
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[3]; DEST=Path(__file__).parent
+ROOT=Path(__file__).resolve().parents[3]; DEST=Path(__file__).resolve().parent
 OFFSETS=(0,100000,100001,100002,100003,271828,271829)
 def main():
     paths=[ROOT/'reports/strategy_council_20260928/PLAN-NEXT-20261010.md']
@@ -9,6 +9,8 @@ def main():
     paths+=sorted((ROOT/'reports/strategy_council_20260928/imitation/exit-g-topup').glob('*.json'))
     paths+=sorted((ROOT/'reports/strategy_council_20260928/imitation').glob('**/*FREEZE*.json'))
     paths+=sorted((ROOT/'reports/strategy_council_20260928/imitation').glob('**/*freeze*.json'))
+    paths+=sorted((ROOT/'reports/strategy_council_20260928/imitation').glob('**/*seed-audit.json'))
+    paths.append(ROOT/'reports/strategy_council_20260928/imitation/exit-r2/receipts/formula-range-review.json')
     ranges=[('K reporting',4503601407370496,600),('K smoke',4503601417370496,8),('X h2h',4503601507370496,256),('X paired',4503601517370496,600),('X smoke',4503601527370496,32),('G 04 entire reservation',4503601607370496,1000000),('G 01 entire reservation',4503601609370496,1000000),('G 03 entire reservation',4503601611370496,1000000),('X dagger conservative full block',4503601707370496,10000000)]
     sources=[]
     def walk(x,label):
@@ -20,7 +22,7 @@ def main():
         elif isinstance(x,list):
             for i,v in enumerate(x):walk(v,label+':'+str(i))
     for path in sorted(set(paths)):
-        if path.parent==DEST:continue
+        if path==DEST or DEST in path.parents:continue
         raw=path.read_bytes();label=str(path.relative_to(ROOT))
         sources.append(dict(path=label,sha256=hashlib.sha256(raw).hexdigest()))
         if path.suffix=='.json':walk(json.loads(raw),label)

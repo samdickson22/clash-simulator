@@ -1,5 +1,5 @@
 {
-  "utc": "2026-10-10T01:53:59Z",
+  "utc": "2026-10-10T01:45:25Z",
   "sources": [
     {
       "path": "reports/explore/e1/seed-audit.json",
@@ -66,32 +66,12 @@
       "sha256": "78770f0755f83ce55b3ae91f4e441fbc06cda5c35a8a3295dae023cd7718b081"
     },
     {
-      "path": "reports/strategy_council_20260928/imitation/exit-g-topup/PRESSURE-GUARD-AMENDMENT.json",
-      "sha256": "8cdd5562b74e55491cc3927a818653600fe64d7ff0e120673974f02c92f31379"
-    },
-    {
       "path": "reports/strategy_council_20260928/imitation/exit-r1/STUDENT-SCREEN-FREEZE-20261009.json",
       "sha256": "787e4c6a0aac6f5c860520782e7479c75d8a2aaa22b957d11a13a5647ad462c4"
     },
     {
-      "path": "reports/strategy_council_20260928/imitation/exit-r1/receipts/student-seed-audit.json",
-      "sha256": "3e2764ad69a2a1c05ddc93dc27770261856517e231341eb1881e1b0a7e5c0986"
-    },
-    {
-      "path": "reports/strategy_council_20260928/imitation/exit-r2/receipts/formula-range-review.json",
-      "sha256": "ba46ef01a8460da8955f53217c6f02fccd8faa1a9baac7b0ec53e668346d0d9e"
-    },
-    {
       "path": "reports/strategy_council_20260928/imitation/exit-r2/receipts/freeze.json",
       "sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24"
-    },
-    {
-      "path": "reports/strategy_council_20260928/imitation/exit-r2/receipts/seed-audit.json",
-      "sha256": "50ca2e54a19f44b7c17150a0cd07f663c9c87c811fb3959128278fdaafa5c209"
-    },
-    {
-      "path": "reports/strategy_council_20260928/imitation/exit-r2/receipts/x6-seed-audit.json",
-      "sha256": "cee346cb8cbee6efbacfaac06dababa1cc7c13dae06bac48cd283fa9fe93c534"
     },
     {
       "path": "reports/strategy_council_20260928/imitation/gate-a/freeze.json",
@@ -2412,81 +2392,6 @@
       "name": "reports/strategy_council_20260928/imitation/exit-g-topup/FREEZE.json:reserved_seeds",
       "base": 4503601607370496,
       "count": 1000000
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r1/receipts/student-seed-audit.json:game_ranges:h2h",
-      "base": 4503601007370496,
-      "count": 256
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r1/receipts/student-seed-audit.json:game_ranges:fallback",
-      "base": 4503601107370496,
-      "count": 600
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r1/receipts/student-seed-audit.json:game_ranges:heldout_teacher",
-      "base": 4503601207370496,
-      "count": 64
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r1/receipts/student-seed-audit.json:game_ranges:smoke",
-      "base": 4503601307370496,
-      "count": 32
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r2/receipts/formula-range-review.json:K_declared_seed_ranges:reporting",
-      "base": 4503601407370496,
-      "count": 600
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r2/receipts/formula-range-review.json:K_declared_seed_ranges:smoke",
-      "base": 4503601417370496,
-      "count": 8
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r2/receipts/formula-range-review.json:ranges:h2h",
-      "base": 4503601507370496,
-      "count": 256
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r2/receipts/formula-range-review.json:ranges:paired",
-      "base": 4503601517370496,
-      "count": 600
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r2/receipts/formula-range-review.json:ranges:smoke",
-      "base": 4503601527370496,
-      "count": 32
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r2/receipts/formula-range-review.json:ranges:dagger",
-      "base": 4503601707370496,
-      "count": 32768
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r2/receipts/formula-range-review.json:heldout_reused",
-      "base": 4503601207370496,
-      "count": 64
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r2/receipts/seed-audit.json:ranges:h2h",
-      "base": 4503601507370496,
-      "count": 256
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r2/receipts/seed-audit.json:ranges:paired",
-      "base": 4503601517370496,
-      "count": 600
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r2/receipts/seed-audit.json:ranges:smoke",
-      "base": 4503601527370496,
-      "count": 32
-    },
-    {
-      "name": "reports/strategy_council_20260928/imitation/exit-r2/receipts/seed-audit.json:ranges:dagger",
-      "base": 4503601707370496,
-      "count": 32768
     }
   ],
   "proposed_ranges": {
