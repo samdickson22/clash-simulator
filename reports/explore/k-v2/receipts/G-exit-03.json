@@ -1,0 +1,320 @@
+{
+  "utc": "2026-10-10T01:45:59Z",
+  "identity": {
+    "pid": 1575208,
+    "pgid": 1575208,
+    "nice": 19,
+    "scheduler": 5,
+    "cores": [
+      59
+    ]
+  },
+  "reason": "external_stop",
+  "totals": {
+    "games": 204,
+    "rows": 161631,
+    "root_decisions": 25167,
+    "cpu_seconds": 10089.721002397999,
+    "plays": 8629
+  },
+  "fully_vacated": true,
+  "children": [
+    {
+      "pid": 1575393,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575394,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575395,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575397,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575398,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575407,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575419,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575426,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575429,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575433,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575434,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575435,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575436,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575437,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575438,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575439,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575440,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575441,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575442,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575467,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575495,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575500,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575501,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575502,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575503,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575504,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575505,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575506,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575534,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575538,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575539,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575540,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575541,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575542,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575570,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575574,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575575,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575576,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575577,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575599,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575609,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575610,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575611,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575612,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575640,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575644,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575645,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575647,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575650,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575681,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575735,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575741,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575742,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575766,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575777,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575778,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575780,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575783,
+      "pgid": 1575208,
+      "returncode": 0
+    },
+    {
+      "pid": 1575850,
+      "pgid": 1575208,
+      "returncode": 0
+    }
+  ],
+  "child_cpu_seconds": 11541.355760999999,
+  "elapsed_seconds": 270.554268833017
+}
