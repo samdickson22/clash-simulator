@@ -38,7 +38,11 @@ slot from the pinned plan and uses no fleet perception worker. Mechanical
 and pools deadline counts. Amendment 1 binds END placement and conservative
 committed-posterior replay. The END pool requires every counted reporting host
 and fails on an outlier rather than dropping counted hosts. The same frozen T1
-guard applies during references, including OP-1, console and memory rules.
+guard applies during references, including all eight final frozen dependencies,
+OP-1/OP-2/OP-3/OP-4, immediate console stops and memory rules. Raw stopped END
+phases retain valid counted blocks through the committed blind ledger and
+counted inventory. Fixed 50-state work-block SSH budgets cannot be hidden in a
+whole-run average; >0.5% flagged blocks fail reference qualification.
 A6's real fleet-mode smoke is assigned to127x01 at T1 END (projected Oct11
 02–06Z), awaiting T1's actual opening and reviewed300 bundle. The offline
 stager and [A6-END-RUNBOOK.md](A6-END-RUNBOOK.md) are prepared. END references
@@ -204,7 +208,7 @@ not reporting-corpus or Mac feasibility evidence. The earlier
 [receipt](receipts/linux05-20261010-r1/handoff.json) identifies its older source.
 
 `python3 -B -m unittest discover -s reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests -q`
-passes 59 tests, including committed END evidence, full-occupancy clocks,
+passes 64 tests, including committed stopped-phase END evidence, full-occupancy clocks,
 ordered technical attempts, END outlier refusal, sealed CLI pooling, strict row
 admission and global native-score failure even with an allowed policy exception.
 [Review response](REVIEW-RESPONSE.md) maps the T1 findings. Amendment 1 code and

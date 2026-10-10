@@ -162,7 +162,7 @@ class Census:
         return result
 
 
-def monitor_worker(stop, phase, owned_pids, clusters, output, observer=None):
+def monitor_worker(stop, phase, owned_pids, clusters, output, observer=None, control=None):
     """Independent 1 Hz sampling continues while Python decision glue is busy."""
     from pathlib import Path
     from receipts import canonical
@@ -173,7 +173,12 @@ def monitor_worker(stop, phase, owned_pids, clusters, output, observer=None):
     try:
         with Path(output).open("x") as stream:
             index = 1
-            while not stop.wait(max(0., origin+index-time.monotonic())):
+            while not stop.is_set():
+                if control is not None:control()
+                remaining=max(0.,origin+index-time.monotonic())
+                if remaining:
+                    if stop.wait(min(remaining,.05) if control is not None else remaining):break
+                    if control is not None:continue
                 now = time.monotonic()
                 after = cpu_counters()
                 owned = {p for p in owned_pids if p > 0} | {os.getpid()}

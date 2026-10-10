@@ -87,7 +87,7 @@ def run(args,store):
     if request["schema"] != "clasher.e4v3.fleet-pool.v2" or not request["hosts"]:
         raise ValueError("Unsupported pooling input")
     from fleet_end import pool_context,host_reporting
-    from fleet_validity import classify_attempt,validate_census
+    from fleet_validity import classify_attempt,validate_census,validate_blocks,validate_admission
     from fleet_profile import compare_mhz
     bundle,context,plan,end=pool_context(request)
     selected=[];attempt_inventory={}
@@ -158,6 +158,8 @@ def run(args,store):
         assert_exact(identity["background_masks"],background,"all reporting slot masks")
         census=read_lines(directory/"capacity.jsonl")
         validate_census(census)
+        validate_admission(json.loads((directory/"guard-admission.json").read_text()))
+        validate_blocks(read_lines(directory/"guard-blocks.jsonl"))
         warm=json.loads((directory/"reference-warmup.json").read_text())
         if warm["seconds"] < profile["warmup_seconds"] or warm["all_slots_active"] is not True or warm["all_background_slots"] != len(background) or set(warm["reference_slot_work"]) != set(TIERS) or any(type(v) is not int or v < 1 for v in warm["reference_slot_work"].values()):
             raise ValueError("Reference slot and every background slot must warm under real decision work")

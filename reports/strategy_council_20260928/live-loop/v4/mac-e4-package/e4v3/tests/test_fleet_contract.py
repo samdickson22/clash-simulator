@@ -17,6 +17,17 @@ from tier_backend import NATIVE_SHA,V1_SHA,STUDENT_SHA,CALIBRATION_SHA,THRESHOLD
 from receipts import TIERS,ReceiptStore,sha,verify_files
 from measure_tiers import main
 from fleet_end import evidence,host_reporting
+from fleet_validity import GUARD_RULES
+
+
+def guard_rows():
+    ssh=dict(cpu_ticks=0,cpu_seconds=0.,core_fraction=0.,interfered=False,stop=False,processes=[])
+    guard=dict(passes=True,rules=GUARD_RULES,ssh_family_sample=dict(stop=False,core_fraction=0.))
+    identities=["warm-0-K0c-0"]
+    identities.extend(f"speed-{repeat}-{tier}-{offset}" for repeat in range(3) for tier in TIERS for offset in range(0,300,50))
+    identities.extend(f"deadline-{repeat}-{tier}-{cell}-{offset}" for repeat in range(3) for tier in TIERS for cell in ("1.0","0.8") for offset in range(0,300,50))
+    return [dict(id=identity,event=event,reporting_guard=dict(guard,**({"completed_block":dict(id=identity,seconds=10.,ssh_family=ssh)} if event=="end" else {})))
+            for identity in identities for event in ("begin","end")]
 
 
 def end_fixture(base, hosts=("a","b")):
@@ -28,10 +39,16 @@ def end_fixture(base, hosts=("a","b")):
     (bundle/"plan.json").write_text(json.dumps(plan))
     completion=dict(reporting_complete=True,outcomes_sealed=True,counted_primary_blocks=2400,counted_guard_blocks=600,
         completed_at_utc="2026-10-10T01:00:00Z",counted_host_phases={h:["reporting"] for h in hosts})
-    sources={"completion.json":completion};phases=[]
+    counted=[]
+    for pop,count in (("primary",2400),("guard",600)):
+        for i in range(count):
+            host=hosts[i%len(hosts)]
+            counted.append(dict(host=host,phase="reporting",descriptor=dict(id=f"{pop}-{i:04d}",population=pop,host=host)))
+    sources={"blind-ledger.json":dict(sealed=True,events=[]),
+        "counted-inventory.json":dict(schema="clasher.t1.counted-blocks.v1",outcomes_sealed=True,blocks=counted)};phases=[]
     for host in hosts:
         values=dict(launch=dict(host=host,phase="reporting",slots=2),
-            supervisor_exit=dict(host=host,reason=None,failed=[],unstarted=[],utc="2026-10-10T00:59:00Z"),
+            supervisor_exit=dict(host=host,reason=None,completed=[r["descriptor"] for r in counted if r["host"]==host],failed=[],unstarted=[],utc="2026-10-10T00:59:00Z"),
             mhz=[dict(utc=str(i),slots=2,physical_core_mhz=[dict(cpu=c,mhz=2000.) for c in range(10)]) for i in range(2)],
             census=[dict(host=host,utc=str(i),inflight=2,reason=None) for i in range(2)])
         phase=dict(host=host,phase="reporting")
@@ -39,6 +56,9 @@ def end_fixture(base, hosts=("a","b")):
             name=host+"-"+key+(".jsonl" if isinstance(value,list) else ".json")
             sources[name]=value;phase[key]=dict(path=name,repository_path=name)
         phases.append(phase)
+    completion.update(blind_ledger_sha256=__import__("hashlib").sha256(json.dumps(sources["blind-ledger.json"]).encode()).hexdigest(),
+        counted_inventory_sha256=__import__("hashlib").sha256(json.dumps(sources["counted-inventory.json"]).encode()).hexdigest())
+    sources["completion.json"]=completion
     for name,value in sources.items():
         raw=("\n".join(json.dumps(v) for v in value)+"\n") if isinstance(value,list) else json.dumps(value)
         (repo/name).write_text(raw);(bundle/name).write_text(raw)
@@ -51,7 +71,9 @@ def end_fixture(base, hosts=("a","b")):
         for key in ("launch","supervisor_exit","mhz","census"):
             phase[key].update(commit=commit,sha256=sha(bundle/phase[key]["path"]))
     inv=dict(schema="clasher.e4v3.end-evidence.v1",kind="counted-reporting",repository=str(repo),
-        completion=dict(path="completion.json",repository_path="completion.json",commit=commit,sha256=sha(bundle/"completion.json")),phases=phases)
+        completion=dict(path="completion.json",repository_path="completion.json",commit=commit,sha256=sha(bundle/"completion.json")),phases=phases,
+        blind_ledger=dict(path="blind-ledger.json",repository_path="blind-ledger.json",commit=commit,sha256=sha(bundle/"blind-ledger.json")),
+        counted_inventory=dict(path="counted-inventory.json",repository_path="counted-inventory.json",commit=commit,sha256=sha(bundle/"counted-inventory.json")))
     (bundle/"end.json").write_text(json.dumps(inv))
     folder=Path(__file__).resolve().parents[1]
     amendment=folder.parent.parent/"PREREG-SEARCH-TIERS-AMENDMENT-1-20261010.md"
@@ -220,8 +242,11 @@ class FleetPoolTests(unittest.TestCase):
                 store.write("reference-warmup.json",dict(seconds=300.,all_slots_active=True,all_background_slots=1,reference_slot_work={t:300 for t in TIERS}))
                 store.write("exactness-tiers.json",dict(passes=True,states=125,records=[dict(id=str(i),workers_equal=True,zero_budget_immutable=True,max_relative_difference={t:0. for t in ("K0c","K1","K2","K4")}) for i in range(125)]))
                 store.write("belief-exactness.json",dict(passes=True,histories=125,posterior_weights_cumulative_ledger_samples_rng_exact=True,records=[dict(id=str(i),deadline_on=on,exact=True,max_relative_difference=0.) for i in range(125) for on in (False,True)]))
-                census=[dict(phase="reference-speed",cpu_clock_mhz_by_processor={str(c):2000. for c in range(10)},per_cpu_idle={str(c):.1 for c in range(10)},reporting_guard=dict(passes=True)) for _ in range(2)]
+                census=[dict(phase="reference-speed",cpu_clock_mhz_by_processor={str(c):2000. for c in range(10)},per_cpu_idle={str(c):.1 for c in range(10)},reporting_guard=dict(passes=True,rules=GUARD_RULES,ssh_family_sample=dict(stop=False))) for _ in range(2)]
                 for row in census:store.append("capacity.jsonl",row)
+                store.write("guard-admission.json",dict(reporting_guard=dict(passes=True,rules=GUARD_RULES,
+                    console=dict(positive=False),memavailable_bytes=30*2**30,foreign_compute=[],foreign_active=[],ssh_family_sample=dict(stop=False))))
+                for row in guard_rows():store.append("guard-blocks.jsonl",row)
                 store.write("reporting-mhz-comparison.json",compare_mhz(host_reporting(end,dict(context["reference_load_profile"],host=name),plan),census,list(range(10)),2))
                 drift=1e-7 if name=="b" else 0.
                 forwards={"S":dict(gate=.6+drift,legal=[1],ranks={"1":1.+drift}),

@@ -34,13 +34,21 @@ perception. Each reference warms all slots for >=300 seconds, measures exactly
 200 and 160 ms deadline loop three times with the frozen 8 ms reserve.
 
 Signed Amendment 1 governs END placement. The additional committed completion,
-phase, OP-1 guard and ordered-attempt inputs are defined in
+phase, blind ledger/counted inventory, final OP-1 through OP-4 guard and ordered-attempt inputs are defined in
 [FLEET-END-CONTRACT.md](FLEET-END-CONTRACT.md). References require committed T1
-completion and every counted reporting/replacement phase. Only full-occupancy
+completion and every counted reporting/replacement phase. Stopped phases retain
+verbatim exits and valid counted blocks; failed/unstarted work does not reject
+the phase. Completion SHA-binds T1's committed blind ledger and health-only
+counted inventory. Only full-occupancy
 reporting census/MHz joins enter the <=5% signed mean-clock gate. All counted
-hosts must remain in the END pool; an outlier fails the pool for an outcome-blind
+hosts must remain in the END pool, whose host list equals the pinned reporting
+host set; an outlier fails the pool for an outcome-blind
 amendment. The runner reads only timing/census data. Raw independent 1Hz reporting
 and reference clocks remain SHA-bound. A6 real fleet smoke is still pending.
+All eight final frozen guard modules are required, including perception
+confirmation, owned-supervisor identities and SSH-family budgets. Any console
+user stops the reference. Independent 1 Hz sample budgets and fixed 50-state
+work-block budgets are retained; a >0.5% SSH-family block flag cannot qualify.
 
 `tiers-pins.json` schema is `clasher.e4v3.inputs.v1`:
 
@@ -141,9 +149,11 @@ candidates, sample/root, native scoring and reduction. Checks and agreement
 formatting occur after the timer. MPS uses the explicitly synchronized adapter.
 
 Each host produces SHA-sealed `speed-reference-raw.jsonl`,
-`deadline-reference-raw.jsonl`, `capacity.jsonl`, timestamped `gc-events.json`
+`deadline-reference-raw.jsonl`, `capacity.jsonl`, `guard-admission.json`,
+`guard-blocks.jsonl`, timestamped `gc-events.json`
 with actual 200/160ms decision deadlines, native/belief exactness receipts,
-source plan/MHz/END/corpus receipts and completion receipt. Host summary JSONs have
+source plan/MHz/END/ledger/counting/corpus receipts, raw guard occurrence files
+and completion receipt. Host summary JSONs have
 a `scope` key in addition to tier keys.
 
 Pool host receipts with the same runner:
@@ -170,7 +180,8 @@ OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
 
 Pooling verifies every complete host's seal, code/specification/policy pins,
 native125/belief125×ON/OFF qualification, matching corpus/runtime/plan, exactly
-three raw repeats per state and both deadline budgets. **Initial per-state walls
+three raw repeats per state and both deadline budgets, and unflagged budgets
+for every fixed work block. **Initial per-state walls
 are medians of all raw hosts × repeats.** Each host's geometric mean speed ratio
 (pooled state wall / host state median) must lie within ±5%; a counted host
 outside the band fails the entire END pool. No counted host is excluded.

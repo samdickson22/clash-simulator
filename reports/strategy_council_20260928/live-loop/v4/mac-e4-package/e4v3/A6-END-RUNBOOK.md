@@ -3,7 +3,7 @@
 Coordinator assignment, 2026-10-10 15:35Z: **127x01**, in the T1-owned window
 after reporting completes, projected **2026-10-11 02–06Z**. T1 will provide the
 actual opening, reviewed own-tier300 bundle path/`tiers-pins.json` SHA, pinned
-launcher, Python/runtime/native locations and OP-1 admission artifacts. The
+launcher, Python/runtime/native locations and final frozen guard/admission artifacts. The
 projection is not permission to connect before T1 opens the window. Nothing in
 this package polls, accesses, launches or reserves a timing host meanwhile.
 
@@ -79,5 +79,11 @@ SHA-sealed result with explicit paths, scan before push, and return its commit
 and manifest SHA for independent review. A6 does not qualify the production
 clock profile, fleet ratios, Mac or outcomes by itself.
 
-Current evidence: 59 local unit/integration tests; no A6 measurement exists.
+Current evidence: 64 local unit/integration tests; no A6 measurement exists.
+The END source now also requires SHA-bound committed blind ledger and counted
+inventory, accepting stopped phases verbatim. Stage all eight final frozen guard
+modules, including OP-2/OP-3/OP-4 dependencies; an OP-1-only freeze is refused.
+The smoke preserves original production sources and discloses its separate
+synthetic, unpoolable host01 counting inventory. Inspect sample and work-block
+SSH budgets and any console stops with the A6 result before reference approval.
 The existing Linux05 receipts are separate reduced-count smoke evidence.

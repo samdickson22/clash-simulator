@@ -9,15 +9,74 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import MagicMock,patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from fleet_end import evidence,host_reporting,pool_context
-from fleet_validity import ReportingGuard,owned_tree,validity_reason,classify_attempt,validate_census,FleetTechnicalError
+from fleet_end import evidence,host_reporting,pool_context,counting
+from fleet_validity import ReportingGuard,owned_tree,validity_reason,classify_attempt,validate_census,validate_blocks,FleetTechnicalError,GUARD_MODULES
 from fleet_profile import compare_mhz
 from receipts import ReceiptStore,sha,verify_files
 from measure_tiers import Session
-from test_fleet_contract import end_fixture
+from test_fleet_contract import end_fixture,guard_rows
 
 
 class FleetEndTests(unittest.TestCase):
+    def test_stopped_counted_phase_raw_exits_and_blind_redispatch_remain_bound(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            bundle,manifest,plan,end=end_fixture(Path(tmp),hosts=("127x01","127x03","127x08"))
+            inv=copy.deepcopy(end["inventory"]);completion=copy.deepcopy(end["completion"])
+            phase=end["phases"][("127x08","reporting")]
+            exit_=phase["supervisor_exit"]
+            lost=exit_["completed"].pop(0);lost["cell"]=2
+            queued=exit_["completed"].pop(0)
+            exit_.update(reason="owned_STOP",failed=[lost],unstarted=[queued])
+            phase["census"][-1]["reason"]="owned_STOP"
+            replacement=dict(lost,id="primary-2402",replaces=lost["id"])
+            ledger=dict(sealed=True,events=[dict(lost=lost,replacement={k:v for k,v in replacement.items() if k!="host"},evidence_sha256="pending")])
+            counted=copy.deepcopy(end["counted_inventory"])
+            for row in counted["blocks"]:
+                if row["descriptor"]["id"] in (lost["id"],queued["id"]):
+                    row.update(phase="replacement-r1")
+                    if row["descriptor"]["id"]==lost["id"]:row["descriptor"]=replacement
+            fresh=dict(host="127x08",phase="replacement-r1")
+            values=dict(launch=dict(host="127x08",phase="replacement",slots=2),
+                supervisor_exit=dict(host="127x08",reason=None,completed=[replacement,queued],failed=[],unstarted=[],utc="2026-10-10T00:59:30Z"),
+                mhz=copy.deepcopy(phase["mhz"]),census=[dict(r,reason=None) for r in phase["census"]])
+            inv["phases"].append(fresh);completion["counted_host_phases"]["127x08"].append("replacement-r1")
+            repo=Path(inv["repository"])
+            def write(name,value,lines=False):
+                raw="\n".join(json.dumps(r) for r in value)+"\n" if lines else json.dumps(value)
+                (bundle/name).write_text(raw);(repo/name).write_text(raw);manifest["files"][name]=sha(bundle/name)
+            for entry in inv["phases"]:
+                source=values if entry is fresh else end["phases"][(entry["host"],entry["phase"])]
+                for field in ("launch","supervisor_exit","mhz","census"):
+                    if entry is fresh:
+                        name="08-replacement-"+field+(".jsonl" if field in ("mhz","census") else ".json")
+                        entry[field]=dict(path=name,repository_path=name)
+                    write(entry[field]["path"],source[field],field in ("mhz","census"))
+            ledger["events"][0]["evidence_sha256"]=sha(bundle/"127x08-supervisor_exit.json")
+            for field,value in (("blind_ledger",ledger),("counted_inventory",counted)):
+                write(inv[field]["path"],value);completion[field+"_sha256"]=sha(bundle/inv[field]["path"])
+            write("completion.json",completion)
+            paths=[x["path"] for entry in inv["phases"] for x in (entry[f] for f in ("launch","supervisor_exit","mhz","census"))]
+            paths.extend(inv[f]["path"] for f in ("completion","blind_ledger","counted_inventory"))
+            subprocess.run(["git","-C",str(repo),"add","--",*paths],check=True,stdout=subprocess.DEVNULL)
+            subprocess.run(["git","-C",str(repo),"-c","user.name=E4 unit fixture","-c","user.email=e4-fixture@example.invalid","commit","-m","Synthetic stopped END fixture"],check=True,stdout=subprocess.DEVNULL)
+            commit=subprocess.check_output(["git","-C",str(repo),"rev-parse","HEAD"],text=True).strip()
+            for item in [inv[f] for f in ("completion","blind_ledger","counted_inventory")]+[entry[f] for entry in inv["phases"] for f in ("launch","supervisor_exit","mhz","census")]:
+                item.update(commit=commit,sha256=sha(bundle/item["path"]))
+            (bundle/"end.json").write_text(json.dumps(inv));manifest["files"]["end.json"]=sha(bundle/"end.json")
+            checked=evidence(bundle,manifest,plan)
+            self.assertEqual(checked["counted_hosts"],["127x01","127x03","127x08"])
+            self.assertEqual(checked["phases"][("127x08","reporting")]["supervisor_exit"],exit_)
+            self.assertEqual(len(host_reporting(checked,dict(manifest["reference_load_profile"],host="127x08"),plan)),4)
+            for case in ("lost-counted","no-ledger","missing-block","wrong-phase","wrong-exit-hash","unknown-field"):
+                counts={f:copy.deepcopy(checked[f]) for f in ("blind_ledger","counted_inventory")}
+                if case=="lost-counted":counts["counted_inventory"]["blocks"][2]["descriptor"]=lost
+                elif case=="no-ledger":counts["blind_ledger"]["events"]=[]
+                elif case=="missing-block":counts["counted_inventory"]["blocks"].pop()
+                elif case=="wrong-phase":counts["counted_inventory"]["blocks"][2]["phase"]="reporting"
+                elif case=="wrong-exit-hash":counts["blind_ledger"]["events"][0]["evidence_sha256"]="0"*64
+                else:counts["counted_inventory"]["blocks"][0]["descriptor"]["outcome"]=0
+                with self.subTest(case=case),self.assertRaises(ValueError):counting(counts,completion,checked["phases"])
+
     def test_committed_bytes_not_only_self_declared_sha_are_checked(self):
         with tempfile.TemporaryDirectory() as tmp:
             bundle,manifest,plan,end=end_fixture(Path(tmp))
@@ -85,21 +144,22 @@ class FleetEndTests(unittest.TestCase):
 
 
 class FleetValidityTests(unittest.TestCase):
-    def test_guard_loads_frozen_t1_op1_code_and_rejects_a_foreign_child_branch(self):
+    def test_guard_loads_frozen_final_t1_code_and_enforces_op4_and_foreign_stops(self):
         with tempfile.TemporaryDirectory() as tmp:
             base=Path(tmp);root=base/"t1-guard";root.mkdir();job=base/"job";job.mkdir()
             repository=Path(__file__).resolve().parents[7]
-            names=("common.py","host_audit.py","idle_services.py","system_bus.py","ssh_transport.py")
+            names=tuple(m+".py" for m in GUARD_MODULES)
             files={};frozen={}
             for name in names:
                 # The shared checkout can contain another worker's unfinished
-                # guard delta. Exercise the reviewed OP-1 commit, not that WIP.
+                # guard delta. Exercise the coordinator-named OP-4 candidate,
+                # not WIP; actual measurement requires its final frozen pins.
                 raw=subprocess.check_output(["git","-C",str(repository),"show",
-                    "95883be0bfd4d0a6e8dade56ca6a6669637c4a49:reports/explore/t1/"+name])
+                    "cb1b9f128d0dc9aeda2f357c425e71ba9c0e7980:reports/explore/t1/"+name])
                 (root/name).write_bytes(raw)
                 files["t1-guard/"+name]=sha(root/name);frozen["reports/explore/t1/"+name]=sha(root/name)
             (base/"freeze.json").write_text(json.dumps(dict(files=frozen)))
-            (base/"plan.json").write_text(json.dumps(dict(compute={})))
+            (base/"plan.json").write_text(json.dumps(dict(compute=dict(perception_io_exception=dict(host="127x03")))))
             command="/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only"
             bus=dict(pid=200,ppid=0,pgid=200,start_ticks=99,cpu_ticks=0,uid=103,tty=0,exe="/usr/bin/dbus-daemon",exe_evidence="argv0 (proc/exe unreadable, unprivileged)",cmdline_sha256="d"*64,cmd=command,affinity=[0])
             admission=dict(identity={k:bus[k] for k in ("pid","start_ticks","exe","cmdline_sha256","uid")})
@@ -109,15 +169,51 @@ class FleetValidityTests(unittest.TestCase):
             own=dict(bus,pid=100,ppid=0,start_ticks=10,uid=1000,exe="/usr/bin/python3",cmd="python measure_tiers.py")
             child=dict(own,pid=101,ppid=100,start_ticks=11)
             foreign=dict(own,pid=300,ppid=0,start_ticks=12,cmd="python foreign.py")
-            modules=("common","host_audit","system_bus","idle_services","ssh_transport")
+            modules=GUARD_MODULES
             with patch.dict(sys.modules),patch.object(sys,"path",list(sys.path)):
                 for name in modules:sys.modules.pop(name,None)
+                for name in ("perception_confirmation.py","owned_supervisor.py","ssh_budget.py"):
+                    raw=(root/name).read_bytes();(root/name).write_bytes(raw+b"\n# unpinned change\n")
+                    with self.subTest(module=name),self.assertRaisesRegex(ValueError,"frozen final T1 source"):
+                        ReportingGuard(base,manifest,[100])
+                    (root/name).write_bytes(raw)
                 guard=ReportingGuard(base,manifest,[100])
                 guard.audit.processes=lambda:[dict(bus),dict(own),dict(child)]
                 guard.audit.console=lambda:dict(positive=False)
                 guard.audit.memory=lambda:30*2**30
                 row={};self.assertIsNone(guard(row));self.assertTrue(row["reporting_guard"]["passes"])
                 self.assertEqual(set(map(int,row["reporting_guard"]["owned_pid_start_ticks"])),{100,101})
+                self.assertFalse(guard.audit.own_process(job,dict(child,start_ticks=999)))
+                # Frozen Families proves the source-bound LAN tree. Its CPU is
+                # measured by the real frozen per-block meters, not exempted.
+                parent=dict(own,pid=20,ppid=1,pgid=20,start_ticks=20,uid=3822945,
+                    cmd="sshd: "+__import__("os").environ.get("USER","sdicks02")+"@notty",cpu_ticks=0)
+                lan=dict(parent,pid=21,ppid=20,start_ticks=21,cmd="python /arbitrary-child.py",
+                    ssh_connection_snapshot="129.65.221.14 30000 129.65.221.13 22",
+                    ssh_family_parent_snapshot=[parent[k] for k in ("pid","start_ticks","uid","cmdline_sha256")])
+                guard.audit.processes=lambda:[dict(bus),dict(own),dict(child),dict(parent),dict(lan)]
+                clock=[100.]
+                with patch("fleet_validity.time.monotonic",lambda:clock[0]):
+                    self.assertIsNone(guard.begin_block("inclusive"))
+                    parent["cpu_ticks"]=5;clock[0]=110.
+                    self.assertIsNone(guard.end_block("inclusive"))
+                    self.assertFalse(guard.latest["completed_block"]["ssh_family"]["interfered"])
+                    self.assertIsNone(guard.begin_block("flagged"))
+                    parent["cpu_ticks"]=11;clock[0]=120.
+                    self.assertEqual(guard.end_block("flagged"),"ssh_family_interference")
+                    self.assertFalse(guard.latest["passes"])
+                    self.assertIsNone(guard.begin_block("average-stop"))
+                    parent["cpu_ticks"]=32;clock[0]=130.
+                    self.assertEqual(guard.end_block("average-stop"),"ssh_family_average_budget")
+                    self.assertIsNone(guard.begin_block("sample-stop"))
+                    guard.sample_previous=guard.previous;guard.sample_last=130.
+                    parent["cpu_ticks"]=58;clock[0]=131.
+                    self.assertEqual(guard({}),"ssh_family_sample_budget")
+                    self.assertEqual(guard.end_block("sample-stop"),"ssh_family_sample_budget")
+                    guard.ssh_sample=dict(cpu_ticks=0,seconds=1.,core_fraction=0.,stop=False)
+                guard.audit.console=lambda:dict(positive=True)
+                self.assertEqual(guard({}),"console_user")
+                guard.audit.console=lambda:dict(positive=False)
                 guard.audit.processes=lambda:[dict(bus),dict(own),dict(child),dict(foreign)]
                 row={};self.assertEqual(guard(row),"foreign_compute")
                 self.assertFalse(row["reporting_guard"]["passes"])
@@ -154,9 +250,33 @@ class FleetValidityTests(unittest.TestCase):
         self.assertEqual(validity_reason([],[],good,0,1,0,24*2**30-1)[0],"memory_floor")
         self.assertEqual(validity_reason([dict(tty=0)],[],good,0,1,0,30*2**30)[0],"foreign_compute")
         self.assertEqual(validity_reason([], [dict(tty=0)],good,0,1,0,30*2**30)[0],"foreign_active")
-        self.assertEqual(validity_reason([dict(tty=1)],[],dict(positive=True),2,1,60,30*2**30)[0],"console_over_one_core_60s")
+        self.assertEqual(validity_reason([],[],dict(positive=True),0,1,0,30*2**30)[0],"console_user")
         self.assertEqual(validity_reason([],[],good,0,1,0,30*2**30,True)[0],"op1_interference")
         with self.assertRaises(FleetTechnicalError):validate_census([dict(reporting_guard=dict(passes=False,reason="foreign_compute"))]*2)
+
+    def test_pool_requires_complete_unflagged_work_block_budgets(self):
+        rows=guard_rows();self.assertEqual(validate_blocks(rows)["blocks"],217)
+        for case in ("flagged","incomplete","missing-speed","missing-warmup","old-census"):
+            with self.subTest(case=case):
+                changed=copy.deepcopy(rows)
+                if case=="flagged":changed[1]["reporting_guard"]["completed_block"]["ssh_family"]["interfered"]=True
+                elif case=="incomplete":changed.pop()
+                elif case=="missing-speed":del changed[2:4]
+                elif case=="missing-warmup":del changed[:2]
+                else:
+                    with self.assertRaisesRegex(FleetTechnicalError,"OP-4"):validate_census([dict(reporting_guard=dict(passes=True))]*2)
+                    continue
+                with self.assertRaises(FleetTechnicalError):validate_blocks(changed)
+
+    def test_pool_refuses_passing_label_with_console_or_budget_stop(self):
+        from fleet_validity import GUARD_RULES
+        for case in ("console","sample","average"):
+            g=dict(passes=True,rules=GUARD_RULES,ssh_family_sample=dict(stop=False))
+            if case=="console":g["console"]=dict(positive=True)
+            elif case=="sample":g["ssh_family_sample"]["stop"]=True
+            else:g["ssh_family_blocks"]={"b":dict(stop=True)}
+            with self.subTest(case=case),self.assertRaisesRegex(FleetTechnicalError,"Contradictory"):
+                validate_census([dict(reporting_guard=g)]*2)
 
     def test_fleet_classifier_requires_evidence_and_never_repeats_exactness(self):
         with tempfile.TemporaryDirectory() as tmp:

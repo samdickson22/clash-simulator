@@ -65,11 +65,30 @@ def prepare(source, expected, output):
             actual_window_assignment_required=True,source_manifest_sha256=expected)
         write("_a6/plan.json",plan)
         completion = copy.deepcopy(end["completion"])
+        blocks=[dict(row,phase="reporting") for row in end["counted_inventory"]["blocks"] if row["host"]=="127x01"]
+        # This derived inventory is solely for an unpoolable smoke. Retain all
+        # original committed ledger/inventory/exit bytes above, without edits.
+        ledger=write("_a6/blind-ledger.json",dict(sealed=True,events=[]))
+        smoke_blocks=[]
+        for row in blocks:
+            d=copy.deepcopy(row["descriptor"])
+            d["id"]=d.get("replaces") or d["id"];d["replaces"]=None
+            smoke_blocks.append(dict(row,descriptor=d))
         completion.update(counted_host_phases={"127x01":["reporting"]},synthetic=True,
+            blind_ledger_sha256=ledger["sha256"],
             purpose="A6 only; production END source retained and SHA-bound")
+        # Host01's logical IDs can be sparse. Smoke-only normalization keeps
+        # coverage mechanical while explicitly disclosing synthetic identities.
+        for pop in ("primary","guard"):
+            rows_pop=[r for r in smoke_blocks if r["descriptor"]["population"]==pop]
+            for i,row in enumerate(rows_pop):row["descriptor"]["id"]=f"{pop}-{i:04d}"
+            completion["counted_"+pop+"_blocks"]=len(rows_pop)
+        counted=write("_a6/counted-inventory.json",dict(schema="clasher.t1.counted-blocks.v1",
+            outcomes_sealed=True,blocks=smoke_blocks))
+        completion["counted_inventory_sha256"]=counted["sha256"]
         complete = write("_a6/completion.json",completion)
         launch = write("_a6/launch.json",dict(host="127x01",phase="reporting",slots=profile["slot_count"],synthetic=True))
-        exit_ = write("_a6/supervisor-exit.json",dict(host="127x01",reason=None,failed=[],unstarted=[],
+        exit_ = write("_a6/supervisor-exit.json",dict(host="127x01",reason=None,completed=[r["descriptor"] for r in smoke_blocks],failed=[],unstarted=[],
             utc=completion["completed_at_utc"],synthetic=True))
         # Baseline numbers are fixed BEFORE measurement from approved reporting.
         # They are never derived from the smoke result to force a passing gate.
@@ -79,7 +98,7 @@ def prepare(source, expected, output):
         census = write("_a6/reporting-census.jsonl",[dict(host="127x01",utc=row["utc"],
             inflight=profile["slot_count"],reason=None,synthetic=True) for row in rows],True)
         inventory = dict(schema="clasher.e4v3.end-evidence.v1",kind="unpoolable-smoke",
-            repository=end["inventory"]["repository"],completion=complete,
+            repository=end["inventory"]["repository"],completion=complete,blind_ledger=ledger,counted_inventory=counted,
             phases=[dict(host="127x01",phase="reporting",launch=launch,supervisor_exit=exit_,mhz=mhz,census=census)],
             source_end_evidence_sha256=end["sha256"],source_manifest_sha256=expected)
         write("_a6/end-evidence.json",inventory)
