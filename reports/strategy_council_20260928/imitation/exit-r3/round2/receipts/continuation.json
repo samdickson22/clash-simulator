@@ -1,12 +1,15 @@
 {
   "scheduledTaskId": "scheduled-task:command:mcp:41973a00-3443-411b-88ab-c1f2788161a1:schedule-task:r3-continuation-20261010-r1",
   "enabled": true,
-  "nextRunAt": "2026-10-10T10:42:58.154Z",
+  "nextRunAt": "2026-10-10T11:13:03.280Z",
   "schedule": {
     "type": "interval",
     "everyMs": 600000
   },
   "prompt_file": "round2/CONTINUATION.md",
-  "latest": "Reviewed poolattempt4 PID3337091 active03 cores56–58/manager58 NICE19/SCHED_OTHER;41 retainedcomplete games, guard-only diagnostic freeze2f69ea84 and27equivalence checks; f5015f12/e6592331 pushedbefore restart. All CDEkills/Stage2zero; final64regret/cost/vacancy/publication pending.",
-  "utc": "2026-10-10 10:43:23 UTC"
+  "latest": "Reviewed poolattempt4 PID3337091 active03 cores56\u201358/manager58 NICE19/SCHED_OTHER;41 retainedcomplete games, guard-only diagnostic freeze2f69ea84 and27equivalence checks; f5015f12/e6592331 pushedbefore restart. All CDEkills/Stage2zero; final64regret/cost/vacancy/publication pending.",
+  "utc": "2026-10-10T11:08:06Z",
+  "current_replay_pid": 3419146,
+  "attempt": 5,
+  "no_further_retry": true
 }

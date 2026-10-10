@@ -134,6 +134,29 @@ print(json.dumps(result))
 
 
 def audit(host, publish=False):
+    if host in ('127x09','127x16','127x13'):
+        # Coordinator ended all leased-host access. Reuse the completed audit,
+        # checked SSH return, and subsequent retained empty-runtime census.
+        import hashlib
+        folder=ROOT/'receipts/vacancy-audits'/host
+        source=sorted(folder.glob('20*.json'))[-1]
+        raw=source.read_bytes();result=json.loads(raw)
+        collection=ROOT/'receipts/evaluation-snapshots'/host/'collection.json'
+        follow=json.loads(collection.read_text())
+        assert result['all_recorded_groups_absent'] and result['fit_and_offline_clean']
+        assert not result['gpu_owned_pids'] and not follow['live'] and follow['utc']>result['utc']
+        result.update(retained_final_host_release=True,lease_returned=True,no_new_host_access=True,
+                      original_audit_sha256=hashlib.sha256(raw).hexdigest(),
+                      subsequent_empty_runtime_census_sha256=hashlib.sha256(collection.read_bytes()).hexdigest(),
+                      subsequent_empty_runtime_census_utc=follow['utc'],observer_command_returned=True,
+                      observer_independently_absent=False,
+                      observer_limitation='Checked SSH audit returned; later empty owned-runtime census retained. No additional observer-specific /proc check after lease return.')
+        if publish:
+            (folder/'EVAL-VACATED.json').write_text(json.dumps(result,indent=2)+'\n')
+            original=json.dumps(result,indent=2)+'\n'
+            wrapped=dict(relative='EVAL-VACATED.json',sha256=hashlib.sha256(original.encode()).hexdigest(),raw=original,value=result)
+            (ROOT/'receipts/evaluation-snapshots'/host/'EVAL-VACATED.json').write_text(json.dumps(wrapped,indent=2)+'\n')
+        return dict(host=host,utc=result['utc'],publish=publish,retained_final_host_release=True,all_recorded_groups_absent=True,active_owned=0)
     if host == '127x01':
         release = ROOT/'receipts/vacancy-audits/127x01/R3-CPU-RELEASE.json'
         if release.exists():

@@ -1,0 +1,10 @@
+{
+  "relative": "regret-pool-attempt5.log.identity.json",
+  "sha256": "7c7ade4cc05c559a5c12900db2ad75b1e0f1c62274c6512421518c37ec20c87e",
+  "raw": "{\"pid\":3419146,\"pgid\":3419146,\"utc\":\"2026-10-10T11:07:26Z\"}\n",
+  "value": {
+    "pid": 3419146,
+    "pgid": 3419146,
+    "utc": "2026-10-10T11:07:26Z"
+  }
+}

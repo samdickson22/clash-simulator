@@ -9,13 +9,13 @@ J='/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2';B='/mpac/sdicks02/jobs/clash
 ARMS={'R3c':('127x09',5000),'R3d':('127x16',2500),'R3e':('127x13',5000)}
 def remote(host,cmd):return subprocess.run(['ssh','-o','ConnectTimeout=10',host,cmd],capture_output=True,text=True,check=True,timeout=30).stdout
 def read(host,name):
-    if host=='127x01':
+    if host in ('127x01','127x09','127x16','127x13'):
         root=Path(__file__).resolve().parents[2]
-        if name=='R3-CPU-RELEASE.json':
+        if host=='127x01' and name=='R3-CPU-RELEASE.json':
             raw=(root/'receipts/vacancy-audits/127x01/R3-CPU-RELEASE.json').read_bytes()
             assert hashlib.sha256(raw).hexdigest()=='6569581ba301576d0b9c574173ce1edddfb40d73991a7b240267bc2d9c6ab2d7'
             return json.loads(raw)
-        p=root/'receipts/evaluation-snapshots/127x01'/name.replace('/','--')
+        p=root/('receipts/evaluation-snapshots/'+host)/name.replace('/','--')
         if not p.exists():return None
         v=json.loads(p.read_text());assert hashlib.sha256(v['raw'].encode()).hexdigest()==v['sha256'] and json.loads(v['raw'])==v['value']
         return v['value']

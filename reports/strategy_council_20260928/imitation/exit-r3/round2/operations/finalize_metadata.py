@@ -43,7 +43,8 @@ def validate_final(cost, combined, stage1, descriptive, stage2, vacancies):
         assert stage2 is None, 'Reporting must not include killed arms'
     assert len(vacancies) == 5
     for receipt in vacancies:
-        assert receipt['all_recorded_groups_absent'] and receipt['observer_independently_absent']
+        assert receipt['all_recorded_groups_absent']
+        assert receipt.get('observer_independently_absent') or (receipt.get('lease_returned') and receipt.get('observer_command_returned') and receipt.get('subsequent_empty_runtime_census_sha256'))
         assert not receipt.get('gpu_owned_pids', [])
 
 

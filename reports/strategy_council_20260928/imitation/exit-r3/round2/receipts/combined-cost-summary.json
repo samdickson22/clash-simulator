@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-10T11:01:24Z",
+  "utc": "2026-10-10T11:09:31Z",
   "final": false,
-  "cpu_seconds": 245370.86315699999,
+  "cpu_seconds": 245371.08079699997,
   "gpu_wall_seconds": 34052.7115964524,
   "meters": [
     {
@@ -607,8 +607,18 @@
       "status": "closed",
       "host": "127x03",
       "experiment": "round2/descriptive"
+    },
+    {
+      "category": "staging/qualification",
+      "sha256": "a5d8880d9c2c7c180c5295235bda401bf8a31107c45a061f7be46dbb11cd02dc",
+      "path": "receipts/evaluation-snapshots/127x03/REGRET-METADATA-RESTART.json",
+      "cpu_seconds": 0.21764,
+      "gpu_wall_seconds": 0,
+      "status": "closed",
+      "host": "127x03",
+      "experiment": "round2/descriptive"
     }
   ],
   "accounting": "Exact original meter SHA globally once, original plus extension; no nested scientific diagnostics; open process costs pending until exits",
-  "unmetered_overhead": "Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted. Failed proposal staging attempt1 preflight stopped before its meter; its CPU cannot be recovered and is disclosed as small unmetered failed-preflight overhead (no fabricated zero). Two predeployment Python3.8 AST comparisons had only a Constant kind=None representation mismatch; unsuccessful small metadata/test CPU unmetered, original failed candidate retained. Guard draft corrected by inspection before any deployment."
+  "unmetered_overhead": "Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted. Failed proposal staging attempt1 preflight stopped before its meter; its CPU cannot be recovered and is disclosed as small unmetered failed-preflight overhead (no fabricated zero). Two predeployment Python3.8 AST comparisons had only a Constant kind=None representation mismatch; unsuccessful small metadata/test CPU unmetered, original failed candidate retained. Guard draft corrected by inspection before any deployment. Metadata snapshot deployment attempt1 failed at read-only path preflight before any mutation; its small preflight CPU is unmetered, with original code/stdout/stderr retained."
 }
