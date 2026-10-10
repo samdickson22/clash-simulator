@@ -1,0 +1,11 @@
+{
+  "scheduledTaskId": "scheduled-task:command:mcp:41973a00-3443-411b-88ab-c1f2788161a1:schedule-task:r3-continuation-20261010-r1",
+  "enabled": true,
+  "nextRunAt": "2026-10-10T06:52:20.493Z",
+  "schedule": {
+    "type": "interval",
+    "everyMs": 600000
+  },
+  "scope": "Original R3a/b complete; extended R3c/d/e and never-adoptable R3a descriptive remain active. Delete only extended completion or expiry/vacancy.",
+  "utc": "2026-10-10T06:44:51Z"
+}
