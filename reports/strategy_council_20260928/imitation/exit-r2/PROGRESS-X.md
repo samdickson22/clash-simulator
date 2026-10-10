@@ -1,5 +1,16 @@
 # X worker progress
 
+2026-10-10T05:12:34Z. Reportingpool2035131 alive/admitted,
+148/600complete/412pending/40active/failures[],available109352132608bytes/
+load47.23; no loss/CI/outcome read. Currentoffline-only2071651 healthy,
+fiveclosed/noactive/failures/stage2{}. X5/X7 originaleightnice10groups
+remain7629→7937/9766 and3634→3954/4883, all guards and14lease/floorsPASS.
+No launch/stop/score/recovery/allocation. Fitmonitor0512 replaces prior
+snapshots with20.124385888GPUh/68.118403753CPUh, closedfivefinal+livetwo;
+reportingCPU retains05:02sample46461.92s until finalwholepoolmeter, never
+add child meters. Originalbanks150/151unconsumed/R2ineligible/01notreleased.
+Persistent10mincontinuationenabled,next05:21:52Z; fits/offline/reduction pending.
+
 2026-10-10T05:02:20Z. Existing reportingpool2035131 alive/admitted,
 86/600complete/474pending/40active/no failures,available109453479936bytes/
 load47.69. All87sampled pool/block/game/helper processes nice10/OTHER;
