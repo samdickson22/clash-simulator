@@ -562,3 +562,22 @@ R2 admission. No conditional code or game executed. Next activation still
 requires a stage2 survivor, audited/frozen/qualified code and sufficient lease.
 Existing10min continuation stays enabled; older queued controller/comparator
 text does not restart superseded controllers or the historical comparator.
+
+2026-10-10T02:43:16Z. Further queued continuation reconciled latest qualified
+S-default sources/freeze/receipts rather than obsolete draft/attempt3 prompt.
+Corrected attempts5/6 already PASS C-v1/plainK1 and S/same-hooksK1 each125/125
+actions/scores plus7clock tests;7block tests pass. Qualifiers all exited; no
+unnecessary rerun. Operational prelaunch0c8c9114 binds current addendumSHA
+7f62b4e4, pushed after science d0264ec9 and before any replacement game.
+Own all-six check02:42:33Z steps3590/3543/3323/2396/3214/2637, eight nice10
+processes each, no stop/exit/guard reason. Leased resource/lease checks pass;
+08 quiet empty, X3checkpoint3250, X6checkpoint2500. Existing08 guard/13
+resume priority unchanged. Controller1746462 healthy nice19/IDL/core63,
+active=null,offline={},stage2={},failures=[],priorityfalse. K1718091 still
+active/noDONE; evaluation and replacement wrapper smokes remain queued.
+No new job/group/migration or game admitted; no151 reporting seed consumed.
+Compact continuation-check0242 replaces live total10.464743377GPU-wallh and
+34.907205556whole-treeCPUh; final exits supersede, no nested/prior snapshots
+added. No scientific gate/kill/survivor/R2 outcome. Current scheduled prompt
+already names1746462/S-default,enabled,next02:51:31.806Z; older queued turns
+do not alter current operational identities or qualified source/science pins.

@@ -1,0 +1,209 @@
+{
+  "schema": "clasher.exit-r2.continuation-check.v1",
+  "utc": "2026-10-10T02:42:33Z",
+  "previous_identity_receipt": "monitor-20261010T0238Z.json",
+  "arms": [
+    {
+      "arm": "X1",
+      "host": "127x09",
+      "step": 3590,
+      "rows": 29409280,
+      "trainer_pid": 1870189,
+      "trainer_pgid": 1870189,
+      "supervisor_pid": 1870123,
+      "supervisor_pgid": 1870123,
+      "process_count": 8,
+      "all_nice10": true,
+      "health": {
+        "utc": "2026-10-10T02:42:26Z",
+        "pid": 1870189,
+        "pss": 16502583296,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 6575.801762926159
+      },
+      "quiet_noncomment_entries": [],
+      "periodic_checkpoint": "step-00003500.pt",
+      "exit": null,
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "provisional_cpu_seconds": 17161.75
+    },
+    {
+      "arm": "X2",
+      "host": "127x16",
+      "step": 3543,
+      "rows": 29024256,
+      "trainer_pid": 871463,
+      "trainer_pgid": 871463,
+      "supervisor_pid": 871318,
+      "supervisor_pgid": 871318,
+      "process_count": 8,
+      "all_nice10": true,
+      "health": {
+        "utc": "2026-10-10T02:42:31Z",
+        "pid": 871463,
+        "pss": 15542562816,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 6580.994631351903
+      },
+      "quiet_noncomment_entries": [],
+      "periodic_checkpoint": "step-00003500.pt",
+      "exit": null,
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "provisional_cpu_seconds": 17777.07
+    },
+    {
+      "arm": "X3",
+      "host": "127x08",
+      "step": 3323,
+      "rows": 27222016,
+      "trainer_pid": 2652063,
+      "trainer_pgid": 2652063,
+      "supervisor_pid": 2651962,
+      "supervisor_pgid": 2651962,
+      "process_count": 8,
+      "all_nice10": true,
+      "health": {
+        "utc": "2026-10-10T02:42:32Z",
+        "pid": 2652063,
+        "pss": 18023262208,
+        "processes": 8,
+        "gpu_free_bytes": 48323624960,
+        "reason": null,
+        "wall_seconds": 6581.0071780290455
+      },
+      "quiet_noncomment_entries": [],
+      "periodic_checkpoint": "step-00003250.pt",
+      "exit": null,
+      "lease": null,
+      "provisional_cpu_seconds": 19474.14
+    },
+    {
+      "arm": "X4",
+      "host": "127x01",
+      "step": 2396,
+      "rows": 19628032,
+      "trainer_pid": 1217609,
+      "trainer_pgid": 1217609,
+      "supervisor_pid": 1217465,
+      "supervisor_pgid": 1217465,
+      "process_count": 8,
+      "all_nice10": true,
+      "health": {
+        "utc": "2026-10-10T02:42:29Z",
+        "pid": 1217609,
+        "pss": 28046635008,
+        "processes": 8,
+        "gpu_free_bytes": 29879173120,
+        "reason": null,
+        "wall_seconds": 6577.832928555086
+      },
+      "quiet_noncomment_entries": [],
+      "periodic_checkpoint": "step-00002250.pt",
+      "exit": null,
+      "lease": null,
+      "provisional_cpu_seconds": 34150.41
+    },
+    {
+      "arm": "X5",
+      "host": "127x04",
+      "step": 3214,
+      "rows": 26329088,
+      "trainer_pid": 3727520,
+      "trainer_pgid": 3727520,
+      "supervisor_pid": 3727388,
+      "supervisor_pgid": 3727388,
+      "process_count": 8,
+      "all_nice10": true,
+      "health": {
+        "utc": "2026-10-10T02:42:23Z",
+        "pid": 3727520,
+        "pss": 18071717888,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 6571.53258933092
+      },
+      "quiet_noncomment_entries": [],
+      "periodic_checkpoint": "step-00003000.pt",
+      "exit": null,
+      "lease": null,
+      "provisional_cpu_seconds": 18639.550000000003
+    },
+    {
+      "arm": "X6",
+      "host": "127x13",
+      "step": 2637,
+      "rows": 21602304,
+      "trainer_pid": 2252096,
+      "trainer_pgid": 2252096,
+      "supervisor_pid": 2251934,
+      "supervisor_pgid": 2251934,
+      "process_count": 8,
+      "all_nice10": true,
+      "health": {
+        "utc": "2026-10-10T02:42:30Z",
+        "pid": 2252096,
+        "pss": 21279977472,
+        "processes": 8,
+        "gpu_free_bytes": 29974593536,
+        "reason": null,
+        "wall_seconds": 4785.907066022977
+      },
+      "quiet_noncomment_entries": [],
+      "periodic_checkpoint": "step-00002500.pt",
+      "exit": null,
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "provisional_cpu_seconds": 18463.02
+    }
+  ],
+  "controller": {
+    "utc": "2026-10-10T02:42:07Z",
+    "stage": "waiting for fits / stage1 / conditional stage2",
+    "offline": {},
+    "stage2": {},
+    "active": null,
+    "failures": [],
+    "x3_priority_requested": false,
+    "wall_seconds": 706.1104632490315
+  },
+  "controller_identity": {
+    "pid": 1746462,
+    "pgid": 1746462,
+    "nice": 19,
+    "scheduler": 5,
+    "affinity": [
+      63
+    ]
+  },
+  "k_pgids": [
+    1718091
+  ],
+  "k_done_markers": [],
+  "provisional_fit_gpu_wall_hours": 10.464743376726691,
+  "provisional_fit_cpu_hours": 34.90720555555556,
+  "qualification_state": "S-default corrected same-hook qualification attempts5/6 PASS.125/125 both arms,7clock and7block tests; original attempt3 diagnostic retained. No active qualifier/no rerun needed. Committed+pushed science d0264ec9, operational0c8c9114, prelaunch exactSHA7f62b4e4. New wrapper mechanics smokes wait K release.",
+  "decision": "All fits deduplicated/healthy. No final EMA, gate metrics or eligibility yet. No reporting/smoke/migration/duplicate fit launched. Current timing gate keeps evaluations queued. Original recipes/source unchanged. R2 remains conditional.",
+  "accounting": "Latest live totals replace previous snapshots; final exits supersede. Never sum child CPU twice."
+}

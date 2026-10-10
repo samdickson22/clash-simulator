@@ -13,12 +13,12 @@ The committed plan/seed audit must precede fitting; use final EMA only.
 
 | Arm | Target / fraction | Fit | Stage1 | Stage2 | Stage3 | Decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| X1 | T=.003 /1.0 | running09, step3495/4883 | pending | conditional | conditional S-default | pending |
-| X2 | T=.0001 /1.0 | running16, step3444/4883 | pending | conditional | conditional S-default | pending |
-| X3 | z-score τ=.5 /1.0 | running08, step3238/4883 | pending | conditional | conditional S-default | pending |
-| X4 | T=.003 /.75 | running01, step2319/4883, micro3584 | pending | conditional | conditional S-default | pending |
-| X5 | X1 double steps /1.0 | running04, step3116/9766 | pending | conditional | conditional S-default | pending |
-| X6 | T=.0001 /.75 | running13, step2536/4883, micro3584 | pending | conditional | conditional S-default | pending |
+| X1 | T=.003 /1.0 | running09, step3590/4883 | pending | conditional | conditional S-default | pending |
+| X2 | T=.0001 /1.0 | running16, step3543/4883 | pending | conditional | conditional S-default | pending |
+| X3 | z-score τ=.5 /1.0 | running08, step3323/4883 | pending | conditional | conditional S-default | pending |
+| X4 | T=.003 /.75 | running01, step2396/4883, micro3584 | pending | conditional | conditional S-default | pending |
+| X5 | X1 double steps /1.0 | running04, step3214/9766 | pending | conditional | conditional S-default | pending |
+| X6 | T=.0001 /.75 | running13, step2637/4883, micro3584 | pending | conditional | conditional S-default | pending |
 
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
 seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
@@ -63,24 +63,24 @@ X6 outcome claimed. Original controller replacement meter is
 1502885 adds11.933346CPU seconds (parent1.784861+metadata children10.148485),
 with no evaluation active on exit. Superseded G-admission controller1596239 adds18.384221CPU seconds once;
 current K-admission controller/gate meter pending.
-Current-attempt snapshot at2026-10-10 02:39:33Z: 10.163438917
-allocated GPU-wall hours and33.918475000 provisional
+Current-attempt snapshot at2026-10-10 02:42:33Z: 10.464743377
+allocated GPU-wall hours and34.907205556 provisional
 whole-tree CPU-hours across six fits. Original five are attempt2; X6 is
 attempt1. These replace prior live totals; final exit meters supersede them.
 Closed failed/preparation/controller/qualification work stays separate.
 
 | Arm | Live fit GPU-wall h | Provisional live fit CPU h |
 | --- | --- | --- |
-| X1 | 1.777611 | 4.636244 |
-| X2 | 1.775702 | 4.802050 |
-| X3 | 1.778261 | 5.262986 |
-| X4 | 1.776451 | 9.237858 |
-| X5 | 1.775803 | 5.042072 |
-| X6 | 1.279610 | 4.937264 |
+| X1 | 1.826612 | 4.767153 |
+| X2 | 1.828054 | 4.938075 |
+| X3 | 1.828058 | 5.409483 |
+| X4 | 1.827176 | 9.486225 |
+| X5 | 1.825426 | 5.177653 |
+| X6 | 1.329419 | 5.128617 |
 
 Own supervisor/trainer/loaders are counted once; segment diagnostics are not
 added again. Full identity receipt: `receipts/monitor-20261010T0238Z.json`;
-latest snapshot: `receipts/continuation-check-20261010T0239Z.json`. All six have eight
+latest snapshot: `receipts/continuation-check-20261010T0242Z.json`. All six have eight
 owned processes, nice10, no stop reason. Leased09/16/13 remain below46GB PSS
 and above8GiB GPU free. 08 quiet entries are empty after stripping comments.
 Capacity released13 at01:03Z; independent GPU-idle check01:12:24Z confirms
