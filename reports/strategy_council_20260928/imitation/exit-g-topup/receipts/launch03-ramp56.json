@@ -1,0 +1,90 @@
+{
+  "utc": "2026-10-10T07:12:48Z",
+  "identity": {
+    "pid": 2669314,
+    "pgid": 2669314,
+    "nice": 19,
+    "scheduler": 5,
+    "cores": [
+      59
+    ]
+  },
+  "children": [
+    {
+      "pid": 2669432,
+      "pgid": 2669314,
+      "core": 0
+    },
+    {
+      "pid": 2669433,
+      "pgid": 2669314,
+      "core": 1
+    },
+    {
+      "pid": 2669434,
+      "pgid": 2669314,
+      "core": 2
+    },
+    {
+      "pid": 2669435,
+      "pgid": 2669314,
+      "core": 3
+    },
+    {
+      "pid": 2671012,
+      "pgid": 2669314,
+      "core": 4
+    },
+    {
+      "pid": 2671013,
+      "pgid": 2669314,
+      "core": 5
+    },
+    {
+      "pid": 2671014,
+      "pgid": 2669314,
+      "core": 6
+    },
+    {
+      "pid": 2671015,
+      "pgid": 2669314,
+      "core": 7
+    },
+    {
+      "pid": 2672706,
+      "pgid": 2669314,
+      "core": 8
+    },
+    {
+      "pid": 2672707,
+      "pgid": 2669314,
+      "core": 9
+    },
+    {
+      "pid": 2672708,
+      "pgid": 2669314,
+      "core": 10
+    },
+    {
+      "pid": 2672709,
+      "pgid": 2669314,
+      "core": 11
+    }
+  ],
+  "base": 4503601607370496,
+  "first_index": 4000000,
+  "workers": 12,
+  "configured_workers": 56,
+  "worker_spawn_limit": "4 per30s",
+  "new_game_ramp": "4 per rolling30s until all56 slots first admitted plus30s",
+  "deadline_utc": "2026-10-11T03:00:00Z",
+  "stop": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/STOP",
+  "emitter_stop_argument": null,
+  "resume_baseline": {
+    "games": 204,
+    "rows": 161631,
+    "root_decisions": 25167,
+    "cpu_seconds": 10089.721002398,
+    "plays": 8629
+  }
+}

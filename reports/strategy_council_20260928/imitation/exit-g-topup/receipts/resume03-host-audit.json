@@ -1,0 +1,196 @@
+{
+  "utc": "2026-10-10T07:12:33Z",
+  "passed": true,
+  "boot_id": "2adb80b1-75ef-4c04-b8d4-36804c8adf4b",
+  "supervisor_pid": 2669314,
+  "pgid": 2669314,
+  "owned": [
+    {
+      "pid": 2669314,
+      "pgid": 2669314,
+      "start": 140606630,
+      "cmd_sha256": "770e87d89bb805ccc9da5de9a60556c4d3a7e0d5ed1d4e33b74a6d57fe336f3a",
+      "threads": [
+        {
+          "tid": 2669314,
+          "cores": [
+            59
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2669431,
+      "pgid": 2669314,
+      "start": 140606886,
+      "cmd_sha256": "5e4a0a3b2d6ea4ff877bb96efd6bbaa70c59cdf7aacd9db093c51ebd2cd45705",
+      "threads": [
+        {
+          "tid": 2669431,
+          "cores": [
+            59
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2669432,
+      "pgid": 2669314,
+      "start": 140606887,
+      "cmd_sha256": "d8f9edf753a494b6359be03b187428c8afd84942a191b5ac6673289d222cff33",
+      "threads": [
+        {
+          "tid": 2669432,
+          "cores": [
+            0
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2669433,
+      "pgid": 2669314,
+      "start": 140606888,
+      "cmd_sha256": "ab71e90bf3f7b5e70ab0de1d60ec4bfa8fd65405872ec33fc3cf93ea0d13494e",
+      "threads": [
+        {
+          "tid": 2669433,
+          "cores": [
+            1
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2669434,
+      "pgid": 2669314,
+      "start": 140606889,
+      "cmd_sha256": "55fdb0985b4c8b4f7e6b581f0ea2a5cedb64c742a0f04175c5b06517eaca5f80",
+      "threads": [
+        {
+          "tid": 2669434,
+          "cores": [
+            2
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2669435,
+      "pgid": 2669314,
+      "start": 140606891,
+      "cmd_sha256": "149dd2243b3429ab2159795e655d3afd3e1684fe324ba93d2c059b8aa3b6be75",
+      "threads": [
+        {
+          "tid": 2669435,
+          "cores": [
+            3
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2671012,
+      "pgid": 2669314,
+      "start": 140609942,
+      "cmd_sha256": "3a53d28135721e29088b5f9d94617faac14fd1babb05d0d23d10ed1004bc424b",
+      "threads": [
+        {
+          "tid": 2671012,
+          "cores": [
+            4
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2671013,
+      "pgid": 2669314,
+      "start": 140609942,
+      "cmd_sha256": "23187bb46cba60b86fc0028a3a4293e6a484fa136658a67fceb90ce8861daa41",
+      "threads": [
+        {
+          "tid": 2671013,
+          "cores": [
+            5
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2671014,
+      "pgid": 2669314,
+      "start": 140609943,
+      "cmd_sha256": "f9f1a1c68837682b2c77d8a726c62bb1322c071a1302568f2921d5dc8be51c2a",
+      "threads": [
+        {
+          "tid": 2671014,
+          "cores": [
+            6
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 2671015,
+      "pgid": 2669314,
+      "start": 140609945,
+      "cmd_sha256": "56d10efa38a108a8c43fabc95b6b552db29949b88545e67be65d5c1e88682c12",
+      "threads": [
+        {
+          "tid": 2671015,
+          "cores": [
+            7
+          ],
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    }
+  ],
+  "configured_workers": 56,
+  "spawned_workers": 8,
+  "ramp": {
+    "phase": "ramp",
+    "first_slots": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "tickets": [
+      1791616325.1348763,
+      1791616325.1606328,
+      1791616325.1799855,
+      1791616325.3438976
+    ],
+    "last_ticket": 1791616325.3438976,
+    "workers": 56
+  },
+  "memory_available": 126754111488,
+  "pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=110981601\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=109281412\n",
+  "protected_cache_unchanged": true,
+  "combined_root_decisions": 212542,
+  "remaining_unpacked_roots": 0,
+  "fleet_manifest_sha256": "216393a9a988a3f452df2ec61f15d60108adf34db1de05f4257f9f8978c9e814",
+  "stop03_cleared_once": true,
+  "pressure_pause": false
+}

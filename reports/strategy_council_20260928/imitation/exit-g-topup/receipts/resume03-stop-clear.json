@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-10T07:11:44Z",
+  "authorization": "Coordinator07:03Z03-only release",
+  "amendment_sha256": "10835bb5448e0686e96932eee65e6b03a5b89f88c9c95fcc1869dfdba672006e",
+  "freeze_commit": "4c9f7680",
+  "cleared_stop03_sha256": "def79c4844ee3aa6b41baa92d56add738775f0ea5aa1f77a402ca158371d6a3c",
+  "cleared_stop03_identity": {
+    "inode": 123901092,
+    "mtime_ns": 1791598155608274744,
+    "ctime_ns": 1791598155608274744
+  },
+  "cleared_pack_stop_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "archived": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/resume-archives/1575208-ramp56-20261010",
+  "other_host_stops_untouched": true,
+  "pressure_latch_cleared": false
+}
