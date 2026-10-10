@@ -1,0 +1,186 @@
+{
+  "schema": "clasher.t1.continuation-health.v1",
+  "utc": "2026-10-10T23:06:34Z",
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "phase": "replacement-r1",
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1",
+  "immutable_manifest_sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+  "counts": {
+    "127x01": {
+      "durable_blocks": 279,
+      "guard_durable_blocks": 57,
+      "original_preserved_blocks": 124,
+      "total_flagged_blocks": 0,
+      "ssh_flagged_blocks": 0,
+      "dbus_flagged_blocks": 0,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 155,
+      "primary_durable_blocks": 222
+    },
+    "127x08": {
+      "verified_offhost_ACKs": 400,
+      "durable_blocks": 400,
+      "guard_durable_blocks": 78,
+      "original_preserved_blocks": 33,
+      "total_flagged_blocks": 400,
+      "ssh_flagged_blocks": 320,
+      "dbus_flagged_blocks": 400,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 367,
+      "primary_durable_blocks": 322
+    }
+  },
+  "total_durable_blocks": 679,
+  "progress": {
+    "127x01": {
+      "utc": "2026-10-10T21:03:51Z",
+      "host": "127x01",
+      "phase": "replacement",
+      "complete_local_blocks": 155,
+      "failed_blocks": 0,
+      "queued": 1291,
+      "inflight": 11,
+      "reason": "foreign_compute",
+      "sealed": true,
+      "age_seconds": 7363.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": true,
+      "supervisor-exit_receipt_present": true
+    },
+    "127x08": {
+      "utc": "2026-10-10T23:06:22Z",
+      "host": "127x08",
+      "phase": "replacement",
+      "complete_local_blocks": 367,
+      "failed_blocks": 0,
+      "queued": 1080,
+      "inflight": 11,
+      "reason": null,
+      "sealed": true,
+      "age_seconds": 12.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": false
+    }
+  },
+  "phase_exits": {
+    "127x01": {
+      "utc": "2026-10-10T21:03:53Z",
+      "host": "127x01",
+      "reason": "foreign_compute",
+      "completed_blocks": 155,
+      "failed_blocks": 11,
+      "unstarted_blocks": 1291,
+      "receipt_sha256": "aea0f4a58b30c273c054f15944d4f57abd990b0f26179793452d243dfa412c26"
+    }
+  },
+  "proof_errors": [],
+  "latest_08_durable_ack_utc": "2026-10-10T23:04:58Z",
+  "corpus_durability": "VERIFIED_READ_ONLY_20261010T202144Z",
+  "END": "WAIT_COORDINATOR_CLEAN_WINDOW",
+  "checkpoint_utc": "2026-10-10T23:07:22Z",
+  "process_audits": [
+    {
+      "utc": "2026-10-10T23:07:05Z",
+      "host": "127x01",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": false,
+          "pid": 433021
+        },
+        {
+          "role": "copier",
+          "alive": true,
+          "identity": {
+            "pid": 432837,
+            "start_ticks": 145042108,
+            "pgid": 432837,
+            "uid": 3822945,
+            "cmdline_sha256": "6ed13ec3885f058ba25509410268b4797f87051911d96229c28122d1691f725e",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 19,
+          "affinity": [
+            62
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": null
+    },
+    {
+      "utc": "2026-10-10T23:07:05Z",
+      "host": "127x08",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": true,
+          "identity": {
+            "pid": 1876811,
+            "start_ticks": 145993083,
+            "pgid": 1876811,
+            "uid": 3822945,
+            "cmdline_sha256": "2e9f8790a927894fca6643e6362b3ae9461925f0d1917d777837a0353748c06c",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 10,
+          "affinity": [
+            61
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08"
+    }
+  ],
+  "current_phase_guard_stop_counts": {
+    "127x01": 1,
+    "127x08": 0
+  },
+  "current_phase_final_failed_blocks": {
+    "127x01": 11,
+    "127x08": 0
+  },
+  "stopped_progress_policy": "01 final exit governs; stale progress failure/inflight counters superseded",
+  "replacement_dispatch_generated": false,
+  "replacements_required": true,
+  "reporting_complete": false,
+  "repair_status": "AWAIT_OP7_MECHANICAL_CONFIRMATION_THEN_C2_C3_OPTION_B",
+  "root_foreign_edits_preserved": true,
+  "op7_candidate": {
+    "utc": "2026-10-10T23:06:29Z",
+    "candidate": "d8cc4ff7595857fda4b563bee503af69b892f547",
+    "base": "b6bec3694073fd15068885fe04cde06259d4ea5d",
+    "authority": "588f9169",
+    "mechanical_delta_sha256": "97edf3bafd7b062799583fab2fe9dd21809bef437beb0a054ceae0e226fe96cc",
+    "full_diff_sha256": "f7f3ffc8dcf4a0d4af01fa5d64c70835fb70aec2711402d487f95b934a82e24a",
+    "manifest_sha256": "c56fdb0343e71fd9b7fd0d0917a7969058550ab15eaec71347a87737409e3868",
+    "tests": 213,
+    "manifest_hashes": 178,
+    "outcomes_sealed": true,
+    "not_admitted": true,
+    "candidate_branch": "worker/t1-op7-apt-20261010",
+    "review_requested_message_id": "message:mcp:1d318750-510c-4298-9fd7-13c1eae507ce:thread-send:t1-op7-r3-mechanical-d8cc4ff7-20261010-r1",
+    "r3_verdict": "APPROVE_WITH_CONDITIONS",
+    "status": "AWAITING_OP7_REVIEW",
+    "live_runtime_changed": false,
+    "pending_conditions": [
+      "coordinator mechanical delta confirmation",
+      "C2 FROZEN rehash and SHA binding",
+      "C3 exact-source two-host qualification/smoke/census timing/real helper four UIDs"
+    ]
+  }
+}
