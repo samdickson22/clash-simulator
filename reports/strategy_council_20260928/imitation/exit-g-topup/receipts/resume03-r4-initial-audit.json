@@ -1,0 +1,55 @@
+{
+  "utc": "2026-10-10T12:25:34Z",
+  "passed": true,
+  "kind": "initial",
+  "pgid": 3671794,
+  "owned": [
+    {
+      "pid": 3671794,
+      "pgid": 3671794,
+      "start": 142488259,
+      "command_sha256": "d78d49b87021d6fc0ceeba574daa18ea6032666ddd6fe76b32156ccc199ea70c",
+      "role": "manager",
+      "core": 58,
+      "threads": [
+        {
+          "tid": 3671794,
+          "core": 58,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3672282,
+      "pgid": 3671794,
+      "start": 142489030,
+      "command_sha256": "6386314d31b7d7d2f67c3b82e8fadf07cd354113bd15f7d64034bc231d64298b",
+      "role": "packer",
+      "core": 59,
+      "threads": [
+        {
+          "tid": 3672282,
+          "core": 59,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    }
+  ],
+  "persistent_processes": 2,
+  "configured_workers": 58,
+  "active_workers": 0,
+  "ramp": {
+    "phase": "ramp",
+    "first_slots": [],
+    "tickets": [],
+    "last_ticket": null,
+    "workers": 58
+  },
+  "memory_available": 130362507264,
+  "pressure": "some avg10=0.16 avg60=0.08 avg300=0.34 total=145875858\nfull avg10=0.16 avg60=0.08 avg300=0.33 total=143824262\n",
+  "protected_cache_unchanged": true,
+  "retained_pack_complete": false,
+  "maximum_persistent_processes": 60
+}

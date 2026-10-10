@@ -1,0 +1,32 @@
+{
+  "utc": "2026-10-10T12:25:21Z",
+  "release_ordinal": 4,
+  "authorization": "Coordinator FOURTH one-time03 release12:23Z; cores0-59; pack retained64819 first with ionice idle; perception lock located04",
+  "one_time_consumed": true,
+  "freeze_commit": "3800e8961ff273978d09484113fed08e4527636f",
+  "amendment_sha256": "5587dc96be4e99ac9de79780ad20be425fc2092422c934d6c1cfce3c2872b6ee",
+  "archived": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/resume-archives/3483893-core59-r4-20261010",
+  "released_markers": {
+    "STOP-03": {
+      "inode": 123901165,
+      "mtime_ns": 1791634367377815259,
+      "ctime_ns": 1791634367377815259,
+      "sha256": "efb32c95a0ea50ce1044e0c08337547f361f31cb04aa622eb02d18b548b97b19"
+    },
+    "PACK.STOP": {
+      "inode": 123901167,
+      "mtime_ns": 1791634440855483454,
+      "ctime_ns": 1791634440855483454,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "pressure_pause_cleared": false,
+  "other_host_stops_untouched": true,
+  "baseline": {
+    "games": 16316,
+    "rows": 12771584,
+    "root_decisions": 1981636
+  },
+  "retained_pending_roots": 64819,
+  "retained_pack_before_admission": true
+}

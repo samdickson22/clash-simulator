@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-10T12:25:58Z",
+  "passed": true,
+  "retained_games": 528,
+  "retained_root_decisions": 64819,
+  "baseline_root_decisions": 1981636,
+  "packed_root_decisions": 1981636,
+  "pgid": 3671794,
+  "packer_pid": 3672282,
+  "source_shas_verified": true,
+  "packed_shas_verified": true
+}
