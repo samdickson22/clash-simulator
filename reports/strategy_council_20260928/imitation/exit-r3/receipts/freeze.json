@@ -1,0 +1,77 @@
+{
+  "schema": "clasher.exit-r3.freeze.v1",
+  "utc": "2026-10-10T04:07:08Z",
+  "arms": {
+    "R3a": {
+      "host": "127x09",
+      "steps": 2500,
+      "advantage_weight": 0
+    },
+    "R3b": {
+      "host": "127x16",
+      "steps": 2500,
+      "advantage_weight": 1
+    }
+  },
+  "files": {
+    "source/exit_r3/__init__.py": "441385ea7a0f4f57764dd579bc19b3b0f59b3806b88cf5cf0e28d7154e288087",
+    "source/exit_r3/network.py": "5f5c7e6c6fd23310bb874cc91fb2cd5fe771e8a40f31a0aea0909f1045df3d1b",
+    "source/exit_r3/rows.py": "835a4104fbd46731998ca033223692813bd4c4fdf015b7a15317a0ffb780ab53",
+    "source/exit_r3/student.py": "dd59fa136230eaf46bee31c53555c6843376032f093d1d633e801f21cf520d67",
+    "source/exit_r3/teacher_batch.py": "6237a96ab5e29df4a3a1cfdc1fbd505d80af84f8faa4b3b3b99dfac1419e6dc4",
+    "source/exit_r3/test_r3.py": "58641244e3c9e53d98809e5a5fd0de3a29e503325b9c89c1a12ada10ae84c96e",
+    "source/exit_r3/train.py": "86654a110099d2fc8539180fd469bc43d5c048a2e44b890cb44104e466b13502",
+    "ops/audit_ranges.py": "03fc9044120ae048ef96d336d703387cb9df7b6d8f827e8dab6c345c53e552d7",
+    "ops/fit_runtime.py": "dc5e5cb89e5cb5dfd135e17f5eb3a952bf3e8d2c9bc80da51c6744026f072da4",
+    "ops/loader_prefetch.py": "7b26fc1de339d72767b0e8c46e219b5b7d2e6eb8d9cef906caa66b33ab8d323a",
+    "ops/run_fit.sh": "e7fb8763af5f790f66de9e10908677e9774c474b1ee2c4c4cda1ff086f8bf521",
+    "ops/stage_g.py": "00f19917d927157695e611a2196eca8e5300ec1f474ee2abbf49db6a3d113908",
+    "ops/supervise.py": "d1064b8b022dece49afee0a12f5f463ca4b528c9528e96161918d04548c215c0",
+    "ops/test_runner.py": "a3f73374e4a799215ab6999ee515294454909dc3415cb7e7137b701a605de887",
+    "ops/verify_g.py": "341046882734a57e1eb9cc6756b7da98f892456701e82807e72ef7557f335c30",
+    "pilot/detach.sh": "74efab89acdbffd547e5eacdc07863d2496277ad43712daea19818bf03294b78",
+    "PLAN.md": "6e9e98bc161b0a8461b3a8d6f1be7f8719f25748a897a0b2ef9cb40c2e8b67f4",
+    "seed-audit.json": "20769cf2f7997541537017b351ae80ae2af966ccb2ebaf0a0dd02684a6b2b7c2",
+    "loader6.json": "d59cbb356b38dcfcf819e4faef7b51c457df5e96a1df8e6012a15bd61914b8a5",
+    "G-verification.json": "289e576f632d8e0683966878b18a16fa57000965f3249acb642659dee49f562c",
+    "tests.json": "48a671ebd6173768b251360604dfe2f7563c4aa7b424720a9c5e6e36ea4c965b",
+    "inputs/main02.pt": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "inputs/assets.npz": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+    "g-corpus/0/manifest.json": "9b5ef9bea86fe8eb7ab53d4dfef500325a7bfae6c1f487b3132298259c652c81",
+    "g-corpus/1/manifest.json": "7e2840b81e5ae0e614874b5f947822ae18069f114c7e81bbe2093e90d93091fe",
+    "g-corpus/2/manifest.json": "e83ea95261be29fdf07235cdc91cb33645af4eef2a21118f27129ac36bdf85bc",
+    "g-corpus/3/manifest.json": "f721bd6bcdfd0440e4d7c779c47cfc9992eb09907f58532e63b8a738f46e030d",
+    "g-corpus/4/manifest.json": "8192b7e7e8e2fa4ce395349896057b4564ab16a27c5b4efa27a50e98b9bc0661"
+  },
+  "seed_audit_passed": true,
+  "committed_before_launch": true,
+  "selection": "final EMA",
+  "width": 192,
+  "seed": 2026101013,
+  "batch_size": 8192,
+  "temperature": 0.003,
+  "play_weight": 1,
+  "value_weight": 0,
+  "huber_delta": 0.01,
+  "r1_roots": 6009681,
+  "g_roots": 212542,
+  "union_roots": 6222223,
+  "corpus_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "heldout_manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+  "sdefault_freeze_commit": "d0264ec9",
+  "stage1": {
+    "play_recall_min": 0.6375,
+    "timing_agreement_above_allwait": 0.1,
+    "mean_positive_wscore_regret_max": 0.01,
+    "calibration_root_play_rate": 0.346
+  },
+  "stage2": {
+    "reporting_base": 4503601907370496,
+    "count": 600,
+    "smoke_base": 4503601917370496,
+    "smoke_count": 8,
+    "kill_upper_paired_ci_ge": 0
+  },
+  "base_runtime": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1",
+  "code_note": "Own exit_r3 model/student/train code overlays read-only qualified R2 source snapshot. No fit before matching pushed prelaunch receipt."
+}

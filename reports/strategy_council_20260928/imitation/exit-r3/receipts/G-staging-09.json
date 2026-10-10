@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "roots": 212542,
+  "shards": 5,
+  "utc": "2026-10-10T04:03:34Z",
+  "wall_seconds": 16.492177901091054,
+  "cpu_seconds": 13.885933000000001,
+  "note": "receiver and child CPU once; read-only remote sender CPU unmetered"
+}

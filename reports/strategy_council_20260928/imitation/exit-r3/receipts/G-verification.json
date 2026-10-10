@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "shards": [
+    {
+      "host": "127x04",
+      "source_host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+      "manifest_sha256": "9b5ef9bea86fe8eb7ab53d4dfef500325a7bfae6c1f487b3132298259c652c81",
+      "games": 1262,
+      "rows": 1010705,
+      "root_decisions": 156869,
+      "candidate_scores": 2958515,
+      "verified_files": 71,
+      "eligible_roots": 156869
+    },
+    {
+      "host": "127x04",
+      "source_host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+      "manifest_sha256": "7e2840b81e5ae0e614874b5f947822ae18069f114c7e81bbe2093e90d93091fe",
+      "games": 77,
+      "rows": 64097,
+      "root_decisions": 10015,
+      "candidate_scores": 195027,
+      "verified_files": 71,
+      "eligible_roots": 10015
+    },
+    {
+      "host": "127x04",
+      "source_host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00002",
+      "manifest_sha256": "e83ea95261be29fdf07235cdc91cb33645af4eef2a21118f27129ac36bdf85bc",
+      "games": 83,
+      "rows": 66427,
+      "root_decisions": 10339,
+      "candidate_scores": 194584,
+      "verified_files": 71,
+      "eligible_roots": 10339
+    },
+    {
+      "host": "127x04",
+      "source_host": "127x01",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed-imported/host01",
+      "manifest_sha256": "f721bd6bcdfd0440e4d7c779c47cfc9992eb09907f58532e63b8a738f46e030d",
+      "games": 81,
+      "rows": 65337,
+      "root_decisions": 10152,
+      "candidate_scores": 192734,
+      "verified_files": 71,
+      "eligible_roots": 10152
+    },
+    {
+      "host": "127x04",
+      "source_host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed-imported/host03",
+      "manifest_sha256": "8192b7e7e8e2fa4ce395349896057b4564ab16a27c5b4efa27a50e98b9bc0661",
+      "games": 204,
+      "rows": 161631,
+      "root_decisions": 25167,
+      "candidate_scores": 471962,
+      "verified_files": 71,
+      "eligible_roots": 25167
+    }
+  ],
+  "eligible_roots": 212542,
+  "pause_manifest_sha256": "4e8faf7edc7164a6676f76e4f7a7d6ea237d4eba88d19252a0921c40cf409ef8",
+  "utc": "2026-10-10T04:01:51Z",
+  "wall_seconds": 5.155732908984646,
+  "cpu_seconds": 5.242464
+}
