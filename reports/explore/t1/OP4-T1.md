@@ -15,7 +15,7 @@ captured parent PID/start/UID/cmd SHA; the collector rechecks child generation,
 parent and UID after reading evidence. Unlike OP-2's reader provenance,
 OP-4's separate parent traversal supports arbitrary descendants (64 ancestors).
 The source cache is scoped to the job and exact authenticated parent identity;
-a changed generation cannot inherit it. Unknown, non-LAN and conflicting sources
+a changed generation cannot inherit it. Conflicting evidence permanently revokes the budget exception for that parent generation. Unknown, non-LAN and conflicting sources
 retain OP-1/2/3 identity rules. A previously captured source remains evidence
 through a childless gap. Approved idle-service identities and descendants also
 participate in the aggregate host budget.
@@ -71,7 +71,7 @@ fails that predicate; proven LAN descendants separately remain budgeted by OP-4.
 
 ## Tests and failed smoke
 
-41/41 guard tests pass: existing OP-1/2/3 26 plus OP-4 15. OP-4 covers below-budget
+42/42 guard tests pass: existing OP-1/2/3 26 plus OP-4 16. OP-4 covers below-budget
 pass, exact thresholds, flag, average/sample stop, LAN descendants and childless
 gap, reused parent, unknown/non-LAN fallback, invalid parent binding, non-SSH
 foreign stop, console admission/run stop, newborn/exited CPU accounting, source

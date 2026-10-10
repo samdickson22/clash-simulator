@@ -116,3 +116,13 @@ def test_source_revocation_on_reused_dictionary_removes_budget_tag(tmp_path):
  p=parent();c=child(p);f=B.Families();f.apply([p,c],tmp_path);assert p.get('ssh_budget')
  c['ssh_connection_snapshot']='192.0.2.1 123 129.65.221.13 22'
  f.apply([p,c],tmp_path);assert not p.get('ssh_budget') and not p.get('allowlist_kind')
+
+
+def test_conflicting_source_cannot_be_restored_with_later_lan_child(tmp_path):
+ f=B.Families();p=parent();f.apply([p,child(p)],tmp_path)
+ bad=child(p,ssh_connection_snapshot='192.0.2.1 123 129.65.221.13 22')
+ f.apply([parent(),bad],tmp_path)
+ fresh=parent();f.apply([fresh,child(fresh)],tmp_path)
+ assert not fresh.get('ssh_budget')
+ newer=dict(parent(),start_ticks=3);f.apply([newer,child(newer)],tmp_path)
+ assert newer.get('ssh_budget')

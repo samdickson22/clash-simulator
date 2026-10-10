@@ -43,7 +43,9 @@ class Families:
    observed.setdefault(key,set()).add(value)
   for key,values in observed.items():
    # Conflicting source evidence fails back to the identity layer.
-   self.sources[str(j),key]=next(iter(values)) if len(values)==1 else None
+   cache_key=(str(j),key);value=next(iter(values)) if len(values)==1 else None
+   if cache_key not in self.sources:self.sources[cache_key]=value
+   elif self.sources[cache_key]!=value:self.sources[cache_key]=None # conflict persists for this parent generation
   for r in rows:
    parent=ancestor(r,rows);source=self.sources.get((str(j),identity(parent))) if parent else None
    idle=idle_member(r,rows,j)
