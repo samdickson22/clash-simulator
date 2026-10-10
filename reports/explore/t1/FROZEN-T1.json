@@ -56,7 +56,7 @@
     "reports/explore/t1/provenance.json": "bffbe861ce33bbac7a49e47eda7e7a121bc36cf4542338ec1764cd64c3c774ef",
     "reports/explore/t1/qualification_binding.py": "1061b706b48add2a0a0721dce3cae9e96d253e8e9193290e5a1bf85c0a8e6818",
     "reports/explore/t1/qualify.py": "ef7162e4e2e503b6eeb9f4627f5f58a882632d48e61b8b6f087a5d812b430377",
-    "reports/explore/t1/qualify.sh": "da7cf24513b746f3a8a28f961bd090f0d251b51b55e5700cde05be4b38736155",
+    "reports/explore/t1/qualify.sh": "315dedbb51d488553be3552b82a26db83275fdeb2b1ea7ddaf7099e15154ce48",
     "reports/explore/t1/qualify_belief.py": "b6d86ed9fa3cd20ed83a86d75314295f055e92110212b904986b193a43451213",
     "reports/explore/t1/receipts/excluded-smoke-attempt.json": "982c65b4e513be5c318cfed0324cc355b73876b9e6d8824e29e90b183c5020fc",
     "reports/explore/t1/receipts/idle-services-admission-127x03.json": "5364ceeb52564fce0e9cd9adbeec2d3ede7df2b5694da9b6b780bc7a4bbd6cd7",
@@ -116,14 +116,21 @@
     "reports/explore/t1/REVIEW-T1-OP4-CONFIRM-20261010T1642Z.md": "2b4e977e66dba80d5d5bfeec2d04bf76c5a31ad5e219978b55d311ed1312fffb",
     "reports/explore/t1/REVIEW-T1-OP4-RECONFIRM-20261010T1653Z.md": "1bc4b248d5ad46b83494a4b8de5421c67528ae8b56d53ffd9c90954bb7eaa362",
     "reports/explore/t1/receipts/op5-parent-source-127x03.json": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838",
-    "reports/explore/t1/parent_source_seed.py": "2c8ba282daad04297060631b616fb0b45356f95840a791b0f1308849a0ab7354",
+    "reports/explore/t1/parent_source_seed.py": "3cf10b3b679408b8f31cff575d11af57d40b7652a046f6bfcaced28f7bc6de1e",
     "reports/explore/t1/test_op5.py": "5dcd9b92f23adfc038254ebcb3338e8a993c0df943cd1e9aed5540025bae2ebf",
     "reports/explore/t1/OP5-T1.md": "6a7b4ca18fb300c40c410f3a492156e0c51fbe39f23f01432fb5fd8698c7ad0c",
     "reports/explore/t1/receipts/op5-unit-tests.json": "fb3d2c71cb1bf1321dd852a325c321b9735c3ccb72ff11d3d36660251496833c",
     "reports/explore/t1/receipts/excluded-smoke-op4-r5.json": "e63699aba4d5db524768564daa3acf2a1448d8e57438de90a7b33a3b9ad6e263",
     "reports/explore/t1/receipts/host-set-0108-20261010.json": "8205da9acc1fedb79688997d971484ed406203a96e24c7d8998c3715447086e3",
     "reports/explore/t1/receipts/reporting-dispatch-0108.json": "a4c16936c333efa4287e0d69d67d5fe10cba88c659849b82c35db802d73bca0f",
-    "reports/explore/t1/REVIEW-T1-OP5-CONFIRM-20261010T1713Z.md": "7509bbbb9a3c78ee68e99e015703a29f088da189bba7c4f5efb73553fbd36897"
+    "reports/explore/t1/REVIEW-T1-OP5-CONFIRM-20261010T1713Z.md": "7509bbbb9a3c78ee68e99e015703a29f088da189bba7c4f5efb73553fbd36897",
+    "reports/explore/t1/receipts/op5-parent-source-127x08.json": "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27",
+    "reports/explore/t1/receipts/op5-parent-generation-127x08.json": "f47a87ab42d6d14e9301c94198629595d277790ada358bc3c62fb88a8abe420f",
+    "reports/explore/t1/receipts/op5-08-cpu-window.json": "9c70cf680ebc6f7d8e4008bda6ce52dda7bc14267ec43256ee593e07695fe6d2",
+    "reports/explore/t1/OP5-08-T1.md": "dbd2e63130f3ee7243fe8464c6e8ba1d35ce2647e25dac78119542c8bebf18f6",
+    "reports/explore/t1/test_op5_08.py": "edceaaabbbcb1a92a65785665700ed149c16d777ac6e676483c7a38eb8a291cb",
+    "reports/explore/t1/receipts/op5-08-unit-tests.json": "6ed0ca3493573e3ff99a9cee96704602608343891737b91c3beea4b33824a2c5",
+    "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -155,7 +162,8 @@
   "reporting_games_started": false,
   "reference_schedule": "END reporting window; separate corpus/E4 approval; pinned reporting load profile",
   "pending": [
-    "final-source fresh qualification on01/08",
+    "OP5-08 fast confirmation",
+    "final-source fresh qualification01/08",
     "fresh01/08 smoke-r6 health",
     "manifest-bound reporting authorization after smoke"
   ],
@@ -214,7 +222,7 @@
     ]
   },
   "launch_namespaces": {
-    "qualification": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op5-0108-r1",
+    "qualification": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op5-08join-r2",
     "smoke": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op5-r6",
     "reporting": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/reporting-frozen-0108-r1",
     "replacement_rule": "fresh replacement-frozen-0108-rN directory for each attempt; preserve prior jobs; require >=2 active hosts"
@@ -248,6 +256,11 @@
       "path": "reports/explore/t1/receipts/op5-parent-source-127x03.json",
       "commit": "b2f9e25e1002d43cc910a4bb476716cc4cd32623",
       "sha256": "167cbe71eeabcd455ab0763dfd5d6061bab4d132a8783622e020d78abbd18838"
+    },
+    {
+      "path": "reports/explore/t1/receipts/op5-parent-source-127x08.json",
+      "commit": "ce042b9775f80cb495c327b14a4712730ae95c85",
+      "sha256": "7081bb443e7b4776679f3c25daa521216f8d3946accb55b3441fac964b1a7c27"
     }
   ],
   "operational_delta_op5": {
@@ -272,5 +285,13 @@
       "127x01",
       "127x08"
     ]
+  },
+  "operational_delta_op5_08": {
+    "verdict": "AWAITING_CONFIRMATION",
+    "authorization": "Coordinator18:03Z exact04-client/08-server join; OP4 budgets unchanged",
+    "guard_tests": 92,
+    "extension_tests": 34,
+    "source_seed_commit": "ce042b9775f80cb495c327b14a4712730ae95c85",
+    "disclosure": "reports/explore/t1/OP5-08-T1.md"
   }
 }

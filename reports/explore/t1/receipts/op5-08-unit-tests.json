@@ -1,0 +1,17 @@
+{
+  "utc": "2026-10-10T17:29:34Z",
+  "guard_tests": 92,
+  "op5_08_tests": 34,
+  "passed": true,
+  "runtime": "/mpac/sdicks02/venvs/t1-verifier",
+  "nice": 19,
+  "physical_cpu": 63,
+  "authoring_host": "127x05",
+  "game_timing_run": false,
+  "outcomes_read": false,
+  "source_shas": {
+    "reports/explore/t1/parent_source_seed.py": "3cf10b3b679408b8f31cff575d11af57d40b7652a046f6bfcaced28f7bc6de1e",
+    "reports/explore/t1/test_op5_08.py": "edceaaabbbcb1a92a65785665700ed149c16d777ac6e676483c7a38eb8a291cb",
+    "reports/explore/t1/qualify.sh": "315dedbb51d488553be3552b82a26db83275fdeb2b1ea7ddaf7099e15154ce48"
+  }
+}
