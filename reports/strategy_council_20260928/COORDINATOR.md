@@ -1748,3 +1748,7 @@ Also on the hub, but with copies elsewhere:
   - **R3 round 2:** R3c (2× steps, 09), R3d (seed replicate, 16), R3e (2× steps, T=0.01, 13). Same gates.
   - Plus a **descriptive never-adoptable S-default run for R3a** on 01 after X's descriptive study.
   - Leased 14/15 remain idle.
+- **06:13 UTC heartbeat:**
+  - All GPUs are momentarily idle: X5 has finished training on 04, and R3 round 2 hadn't started (my queued 05:48 decision was stuck behind continuations, so I nudged it). 14/15 are unassigned.
+  - 01: X descriptive study (40 workers). 03: K2.
+  - Seal ~153/216 at 06:10Z, ETA ~11Z.
