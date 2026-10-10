@@ -1732,3 +1732,9 @@ Also on the hub, but with copies elsewhere:
     - C3: a new deploy directory.
   - Plus the Oct 13 cap constant and the APPROVE_LOCAL_IO_LOCK_SCOPE decision string.
   - **Next:** the author builds the final combined package (A19 r5 E1–E3 + A20 conditions), then a quick final check, then the freeze and approvals before seal exit.
+- **05:11 UTC: K-v2 COMPLETE** (`bf41ebc5`; honest lateness, return-path fix, nice 10, 600 paired seeds each).
+  - **V200 18.2% vs K0 47.7%: −29.5 pp [−33.8, −25.0]** (K4 confirmed with honest lateness).
+  - V160 (0.8×) 26.5%: −21.2 pp. **V120 (0.6×) 82.3%: +34.7 pp, a cliff.**
+  - **Mac requirement: ≥0.80× fleet per-core speed on 4 free cores** (point estimate 0.76×).
+  - Strict return bound NOT qualified (16/15/7 cut returns > D+8 ms, all charged). The uncharged GC poll-delay caveat remains.
+  - 03 released to K2. MAC-E4-V2.md updated.
