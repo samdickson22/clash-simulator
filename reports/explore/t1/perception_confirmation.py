@@ -55,11 +55,12 @@ class Confirmation:
             if proof is None and parent_conn and connection_ok(parent_conn):
                 proof=dict(parent_identity=list(identity(parent)),connection=parent_conn,
                            source_child_identity=None,evidence='parent snapshot')
-            # Learn only from a reader recognized by the unchanged command/path rule.
+            # A captured source may prove the connection before this child execs.
+            # It proves no command: every observed child must still resolve below.
             for child in original:
                 conn=child.get('ssh_connection_snapshot')
-                if (proof is None and connection_ok(conn) and reader(child,rows,source=conn)
-                        and child['perception_io_allowlist']['ssh_ancestor_pid']==parent['pid']):
+                if (proof is None and child['uid']==UID and connection_ok(conn)
+                        and child.get('ssh_parent_snapshot')==list(identity(parent))):
                     proof=dict(parent_identity=list(identity(parent)),connection=conn,
                                source_child_identity=list(identity(child)),evidence='child snapshot')
             if proof is None:continue # ordinary OP-1 denies; absolutely no wait

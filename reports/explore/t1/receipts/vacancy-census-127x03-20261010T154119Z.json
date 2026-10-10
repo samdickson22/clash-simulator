@@ -1,0 +1,39 @@
+{
+  "utc": "2026-10-10T15:41:19Z",
+  "host": "127x03",
+  "purpose": "metadata-only vacancy census; OP-2 candidate diagnosis, not timing admission",
+  "console": {
+    "who": "",
+    "console_count": 0,
+    "positive": false
+  },
+  "foreign_compute_count": 0,
+  "foreign_active_count": 0,
+  "sealed": true,
+  "reporting_games": 0,
+  "samples": 10,
+  "sample_utcs": [
+    "2026-10-10T15:41:06Z",
+    "2026-10-10T15:41:07Z",
+    "2026-10-10T15:41:09Z",
+    "2026-10-10T15:41:10Z",
+    "2026-10-10T15:41:11Z",
+    "2026-10-10T15:41:13Z",
+    "2026-10-10T15:41:14Z",
+    "2026-10-10T15:41:16Z",
+    "2026-10-10T15:41:17Z",
+    "2026-10-10T15:41:19Z"
+  ],
+  "allowlist_occurrences": {
+    "system_dbus": 10,
+    "idle_cache": 30,
+    "approved_sshd_transport": 3,
+    "perception_reader": 3
+  },
+  "full_receipt_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/vacancy-127x03-20261010T154046Z/vacancy-census.json",
+  "full_receipt_sha256": "bc38de879b657ae932c00fa9690d5cba3234d3b7d582bbf2588ca177de720b51",
+  "diagnostic_guard_commit": "78c9bd5bafd1d4d0b4bb8f5570a37da5e4e17c36",
+  "timing_admission": false,
+  "prior_smoke_copier_pid": 293494,
+  "prior_copier_drained": true
+}

@@ -119,3 +119,10 @@ def test_collected_source_requires_matching_parent_identity(tmp_path):
     rows=[parent(),r]
     c.apply(rows,tmp_path,lambda:pytest.fail('unbound source cannot wait'),H.perception_reader)
     assert not accepted(rows)
+
+
+def test_first_fork_source_collected_before_reader_exec_proves_parent(tmp_path):
+    clock=Clock();c=proven(clock);p=parent();rows=[p,child(cmd=p['cmd'],source=SOURCE)]
+    c.apply(rows,tmp_path,lambda:[parent(),child(source=SOURCE)],H.perception_reader)
+    assert accepted(rows) and 0<clock()<=2
+    assert rows[0]['op2_confirmation']['source']['evidence']=='child snapshot'
