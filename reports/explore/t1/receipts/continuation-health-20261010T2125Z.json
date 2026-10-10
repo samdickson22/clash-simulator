@@ -1,0 +1,395 @@
+{
+  "schema": "clasher.t1.continuation-health.v1",
+  "utc": "2026-10-10T21:24:44Z",
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "phase": "replacement-r1",
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1",
+  "immutable_manifest_sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+  "counts": {
+    "127x01": {
+      "durable_blocks": 279,
+      "guard_durable_blocks": 57,
+      "original_preserved_blocks": 124,
+      "total_flagged_blocks": 0,
+      "ssh_flagged_blocks": 0,
+      "dbus_flagged_blocks": 0,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 155,
+      "primary_durable_blocks": 222
+    },
+    "127x08": {
+      "verified_offhost_ACKs": 227,
+      "durable_blocks": 227,
+      "guard_durable_blocks": 44,
+      "original_preserved_blocks": 33,
+      "total_flagged_blocks": 227,
+      "ssh_flagged_blocks": 153,
+      "dbus_flagged_blocks": 227,
+      "idle_flagged_blocks": 0,
+      "new_phase_durable_blocks": 194,
+      "primary_durable_blocks": 183
+    }
+  },
+  "total_durable_blocks": 506,
+  "progress": {
+    "127x01": {
+      "utc": "2026-10-10T21:03:51Z",
+      "host": "127x01",
+      "phase": "replacement",
+      "complete_local_blocks": 155,
+      "failed_blocks": 0,
+      "queued": 1291,
+      "inflight": 11,
+      "reason": "foreign_compute",
+      "sealed": true,
+      "age_seconds": 1253.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": true,
+      "supervisor-exit_receipt_present": true
+    },
+    "127x08": {
+      "utc": "2026-10-10T21:24:39Z",
+      "host": "127x08",
+      "phase": "replacement",
+      "complete_local_blocks": 194,
+      "failed_blocks": 0,
+      "queued": 1253,
+      "inflight": 11,
+      "reason": null,
+      "sealed": true,
+      "age_seconds": 5.0,
+      "console_count": 0,
+      "stop-reason_receipt_present": false,
+      "supervisor-exit_receipt_present": false
+    }
+  },
+  "phase_exits": {
+    "127x01": {
+      "utc": "2026-10-10T21:03:53Z",
+      "host": "127x01",
+      "reason": "foreign_compute",
+      "completed_blocks": 155,
+      "failed_blocks": 11,
+      "unstarted_blocks": 1291,
+      "receipt_sha256": "aea0f4a58b30c273c054f15944d4f57abd990b0f26179793452d243dfa412c26"
+    }
+  },
+  "proof_errors": [],
+  "latest_08_durable_ack_utc": "2026-10-10T21:24:40Z",
+  "corpus_durability": "VERIFIED_READ_ONLY_20261010T202144Z",
+  "END": "WAIT_COORDINATOR_CLEAN_WINDOW",
+  "checkpoint_utc": "2026-10-10T21:25:20Z",
+  "identity_verification": [
+    {
+      "utc": "2026-10-10T21:21:31Z",
+      "host": "127x01",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": false,
+          "pid": 433021
+        },
+        {
+          "role": "copier",
+          "alive": true,
+          "identity": {
+            "pid": 432837,
+            "start_ticks": 145042108,
+            "pgid": 432837,
+            "uid": 3822945,
+            "cmdline_sha256": "6ed13ec3885f058ba25509410268b4797f87051911d96229c28122d1691f725e",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 19,
+          "affinity": [
+            62
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": null
+    },
+    {
+      "utc": "2026-10-10T21:21:32Z",
+      "host": "127x08",
+      "processes": [
+        {
+          "role": "supervisor",
+          "alive": true,
+          "identity": {
+            "pid": 1876811,
+            "start_ticks": 145993083,
+            "pgid": 1876811,
+            "uid": 3822945,
+            "cmdline_sha256": "2e9f8790a927894fca6643e6362b3ae9461925f0d1917d777837a0353748c06c",
+            "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+          },
+          "matches_admission": true,
+          "scheduler": 0,
+          "nice": 10,
+          "affinity": [
+            61
+          ]
+        }
+      ],
+      "who": "",
+      "stop08": false,
+      "job_stop08": false,
+      "own_stop": false,
+      "stop08_link": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/STOP-127x08"
+    }
+  ],
+  "stop_diagnosis": {
+    "stop_projection": {
+      "utc": "2026-10-10T21:22:13Z",
+      "host": "127x01",
+      "stop-reason.json": {
+        "utc": "2026-10-10T21:03:53Z",
+        "reason": "foreign_compute",
+        "sha256": "e2807f01f5a8f273ac379bca7e73d3d9ff06b8fd6c62fbd92cba3db6fcd38f4a",
+        "foreign": [
+          {
+            "pid": 542173,
+            "ppid": 541277,
+            "pgid": 541271,
+            "uid": 0,
+            "start_ticks": 145613425,
+            "cmdline_sha256": "aac8c53b11cc16794efcc14a4183ed1af8c77424b60f44c66db1dd5e64c39677",
+            "cmd": "/usr/bin/python3 /usr/bin/unattended-upgrade --download-only"
+          }
+        ]
+      },
+      "supervisor-exit.json": {
+        "utc": "2026-10-10T21:03:53Z",
+        "reason": "foreign_compute",
+        "sha256": "aea0f4a58b30c273c054f15944d4f57abd990b0f26179793452d243dfa412c26",
+        "completed": 155,
+        "failed": 11,
+        "unstarted": 1291
+      },
+      "live_related": [
+        {
+          "pid": 2378,
+          "ppid": 1,
+          "pgid": 2378,
+          "start_ticks": 1332,
+          "uid": 0,
+          "cmd": "/usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal ",
+          "state": "S"
+        }
+      ],
+      "who": "",
+      "local_completed_proofs": 155,
+      "hub_completed_proofs": 501
+    },
+    "final_durability": {
+      "utc": "2026-10-10T21:23:16Z",
+      "completed": 155,
+      "failed": 11,
+      "unstarted": 1291,
+      "all_155_completed_proofs_present_on_hub": true,
+      "failed_complete_race_duplicates": false,
+      "failed_pid_receipts": [
+        {
+          "id": "primary-0723",
+          "pid_receipt_keys": [
+            "utc",
+            "pid",
+            "pgid",
+            "command",
+            "cores",
+            "descriptor"
+          ],
+          "pid": 538665,
+          "pgid": 538665,
+          "pid_alive": false
+        },
+        {
+          "id": "primary-0726",
+          "pid_receipt_keys": [
+            "utc",
+            "pid",
+            "pgid",
+            "command",
+            "cores",
+            "descriptor"
+          ],
+          "pid": 539399,
+          "pgid": 539399,
+          "pid_alive": false
+        },
+        {
+          "id": "primary-0732",
+          "pid_receipt_keys": [
+            "utc",
+            "pid",
+            "pgid",
+            "command",
+            "cores",
+            "descriptor"
+          ],
+          "pid": 539941,
+          "pgid": 539941,
+          "pid_alive": false
+        },
+        {
+          "id": "guard-0183",
+          "pid_receipt_keys": [
+            "utc",
+            "pid",
+            "pgid",
+            "command",
+            "cores",
+            "descriptor"
+          ],
+          "pid": 540395,
+          "pgid": 540395,
+          "pid_alive": false
+        },
+        {
+          "id": "primary-0739",
+          "pid_receipt_keys": [
+            "utc",
+            "pid",
+            "pgid",
+            "command",
+            "cores",
+            "descriptor"
+          ],
+          "pid": 541247,
+          "pgid": 541247,
+          "pid_alive": false
+        },
+        {
+          "id": "primary-0715",
+          "pid_receipt_keys": [
+            "utc",
+            "pid",
+            "pgid",
+            "command",
+            "cores",
+            "descriptor"
+          ],
+          "pid": 536937,
+          "pgid": 536937,
+          "pid_alive": false
+        },
+        {
+          "id": "primary-0731",
+          "pid_receipt_keys": [
+            "utc",
+            "pid",
+            "pgid",
+            "command",
+            "cores",
+            "descriptor"
+          ],
+          "pid": 539591,
+          "pgid": 539591,
+          "pid_alive": false
+        },
+        {
+          "id": "guard-0179",
+          "pid_receipt_keys": [
+            "utc",
+            "pid",
+            "pgid",
+            "command",
+            "cores",
+            "descriptor"
+          ],
+          "pid": 537947,
+          "pgid": 537947,
+          "pid_alive": false
+        },
+        {
+          "id": "primary-0710",
+          "pid_receipt_keys": [
+            "utc",
+            "pid",
+            "pgid",
+            "command",
+            "cores",
+            "descriptor"
+          ],
+          "pid": 535344,
+          "pgid": 535344,
+          "pid_alive": false
+        },
+        {
+          "id": "primary-0716",
+          "pid_receipt_keys": [
+            "utc",
+            "pid",
+            "pgid",
+            "command",
+            "cores",
+            "descriptor"
+          ],
+          "pid": 537333,
+          "pgid": 537333,
+          "pid_alive": false
+        },
+        {
+          "id": "guard-0180",
+          "pid_receipt_keys": [
+            "utc",
+            "pid",
+            "pgid",
+            "command",
+            "cores",
+            "descriptor"
+          ],
+          "pid": 538884,
+          "pgid": 538884,
+          "pid_alive": false
+        }
+      ]
+    },
+    "vacancy_diagnosis": {
+      "host": "127x01",
+      "purpose": "READ_ONLY diagnosis; not timing qualification or admission",
+      "sample_utc": [
+        "2026-10-10T21:24:07Z",
+        "2026-10-10T21:24:08Z",
+        "2026-10-10T21:24:10Z"
+      ],
+      "foreign_compute_counts": [
+        0,
+        0,
+        0
+      ],
+      "owned_failed_or_supervisor_group_member_counts": [
+        0,
+        0,
+        0
+      ],
+      "who": "",
+      "console_count": 0,
+      "raw_fragments_untouched": true
+    }
+  },
+  "replacements_required": true,
+  "replacement_dispatch_generated": false,
+  "repair_status": "WAIT_COORDINATED_TWO_HOST_RECOVERY_DECISION",
+  "repair_note": "01 requires fresh source qualification and smoke; a balanced remainder dispatch cannot overlap the still-running 08 phase. Originals already inventoried once. Do not replace or replay them again. No one-host dispatch.",
+  "reporting_complete": false,
+  "release_performed": false,
+  "current_phase_guard_stop_counts": {
+    "127x01": 1,
+    "127x08": 0
+  },
+  "current_phase_final_failed_blocks": {
+    "127x01": 11,
+    "127x08": 0
+  },
+  "corpus_durability_receipt": "reports/explore/t1/receipts/corpus-03-durable-copy-r1.json",
+  "continuation_helper_sha256": "56e4f57e18e159907b66e23148c2aa3e16f75c4c4ac8094eb1a33635d6e7d945"
+}
