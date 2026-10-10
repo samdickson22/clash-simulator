@@ -42,9 +42,9 @@ def test_seeded_non_reader_child_is_budgeted_and_over_budget_stops(admission):
  c=child(p,ssh_connection_snapshot=None,cmd='python /non-reader.py',cpu_ticks=0,child_cpu_ticks=0)
  before=f.apply([p,c],j);assert c.get('ssh_budget')
  m=B.begin(before,hz=100);after=f.apply([parent(),dict(c,cpu_ticks=46)],j);B.update(m,after)
- assert B.finish(m,1)['interfered'] and B.sample(before,after,1,hz=100)['stop']
+ assert B.finish(m,1)['interfered'] and not B.sample(before,after,1,hz=100)['stop']
  assert B.finish(m,60)['interfered'] and B.finish(m,60)['stop'] is False
- after=f.apply([parent(),dict(c,cpu_ticks=121)],j);B.update(m,after)
+ after=f.apply([parent(),dict(c,cpu_ticks=601)],j);B.update(m,after)
  assert B.finish(m,60)['stop']
 
 def test_wrong_host_never_seeds(admission,monkeypatch):

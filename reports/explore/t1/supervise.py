@@ -65,6 +65,7 @@ def main():
    row['log'].close();folder=out/row['descriptor']['id'];good=rc==0 and (folder/'local-complete.json').exists()
    elapsed=time.monotonic()-row['started'];interference=idle_finish(row['idle_meter'],elapsed)
    interference['ssh_family']=ssh_budget.finish(row['ssh_meter'],elapsed)
+   interference['ssh_flagged']=interference['ssh_family']['ssh_flagged']
    interference['interfered']|=interference['ssh_family']['interfered']
    interference['system_dbus']=system_bus.finish(row['system_bus_meter'],elapsed)
    interference['interfered']|=interference['system_dbus']['interfered']

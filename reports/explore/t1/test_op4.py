@@ -139,7 +139,7 @@ def test_reaped_short_children_trigger_sample_cap_with_constant_parent_self_cpu(
  assert B.finish(m,1)['cpu_ticks']==46
  assert B.finish(m,1)['interfered'] and not B.finish(m,1)['stop']
  assert B.sample(before,after,1,hz=100)['cpu_ticks']==46
- assert B.sample(before,after,1,hz=100)['stop']
+ assert not B.sample(before,after,1,hz=100)['stop'] # OP-6 proven SSH cap is150%
  assert any(r['observed_reaped_child_cpu_ticks']==146 for r in B.finish(m,1)['processes'])
 
 

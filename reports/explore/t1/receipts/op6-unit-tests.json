@@ -1,0 +1,36 @@
+{
+  "utc": "2026-10-10T18:41:12Z",
+  "schema": "clasher.t1.op6-tests.v1",
+  "outcomes_sealed": true,
+  "source_files": {
+    "reports/explore/t1/ssh_budget.py": "0c2759f5f09728770bf339441151eb55a1f3cd17d5f04b46109f4e68f2cedd1d",
+    "reports/explore/t1/ssh_sensitivity.py": "e643a3420296f76d3dd5800c7afb1531c5993a3e19bb544893e34181e059f384",
+    "reports/explore/t1/supervise.py": "d4028d921f8649dcc15be9cf77c78847e4dfcf69822d60e5735e71c25b56d7d8",
+    "reports/explore/t1/reduce.py": "fdea088c2765e46cdb00b479ba3f89f42e0f05f61cb9cab25f5ebded33f19f0f",
+    "reports/explore/t1/qualify.sh": "dc85465e02a06d6fe59369b5897011d20d18ecac1491d076a4b9722a4f6485de",
+    "reports/explore/t1/test_op4.py": "43d5a163af77175386d7a4710705b2e2043aaf50c6b5fe9672c64cd710c4d4b2",
+    "reports/explore/t1/test_op5.py": "0e2036d268f6081973792c8929e1ffab65569ac22507e1dd9bdf4228df9b6986",
+    "reports/explore/t1/test_op5_08.py": "7020cc45a979af9a58f745b4d7ff0da517eaba73dcfc2bd784f37412a9aec1a4",
+    "reports/explore/t1/test_op6.py": "bafbeb1dc2b981441d9374696850dd80303df1124760f152170ecdf7351c933c",
+    "reports/explore/t1/OP6-T1.md": "c76f9c8c4e7b8cf9f6cf9d45397e8875f83cb38446c700ef29b4524eea4aaa2b"
+  },
+  "tests_passed": 114,
+  "tests_failed": 0,
+  "elapsed_seconds": 6.15,
+  "test_host": "127x05 authoring only; nice19 unit tests, no fleet timing or reporting games",
+  "tests": [
+    "test_op6.py",
+    "test_op4.py",
+    "test_op5.py",
+    "test_op5_08.py",
+    "test_op1.py",
+    "test_op2.py",
+    "test_op3.py",
+    "test_reduce.py",
+    "test_replace.py"
+  ],
+  "basetemp": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/op6-tests-r2",
+  "legacy_linux_clock_ticks_per_second": 100,
+  "prior_launch_commit": "fa8a1e2df423cde7a4ce5e143251d2d0b415a5db",
+  "prior_runtime_manifest_sha256": "a7ebba648c50817aff0174db0d0443dfe70a978c33eb3fe7a8aa8fd09e2f6474"
+}

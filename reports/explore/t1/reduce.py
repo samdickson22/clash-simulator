@@ -92,7 +92,7 @@ def load_blocks(root,ledger):
   index=int(logical.rsplit('-',1)[1]);assert 0<=index<COUNTS[pop] and d['cell']==index%CELLS[pop]
   assert logical not in by_pop[pop],'duplicate logical block'
   assert len(proof['games'])==8
-  row=dict(id=logical,seed=d['seed'],cell=d['cell'],interference=proof.get('interference',{}),source_host=proof['host'],loss={},draw={},win={},timing={});decks=[]
+  row=dict(id=logical,seed=d['seed'],cell=d['cell'],complete_sha256=sha(f),interference=proof.get('interference',{}),source_host=proof['host'],loss={},draw={},win={},timing={});decks=[]
   for name,h in proof['games'].items():
    p=f.parent/'games'/name;assert sha(p)==h;source[str(p)]=h
    r=read(p);m=r['metadata'];a=r['cohort'];assert m['terminal'] and m['seed']==d['seed'] and m['cell']==d['cell'] and m['seat']==d['seat']
@@ -128,5 +128,11 @@ def main():
  result=dict(utc=utc(),sealed=False,release=release,bootstrap=cfg['bootstrap'],populations=stats,selection=selection,replacements=ledger,file_shas=source,plan_sha256=sha(Path(__file__).parent/'plan.json'))
  result['disclosure']=dict(interfered_blocks={p:sum(bool(v['interference'].get('interfered')) for v in r) for p,r in rows.items()},idle_service_rule=cfg['compute']['idle_service_exception'],perception_io_rule=cfg['compute']['perception_io_exception'])
  result['timing']={p:timing_stats(r,rng,cfg['bootstrap']['reps']) for p,r in rows.items() if r}
+ from ssh_sensitivity import health_ledger,analyze
+ sensitivity_ledger=health_ledger(a.root,ledger,sha(a.ledger) if a.ledger else None)
+ ledger_path=a.out.with_name(a.out.name+'.ssh-sensitivity-ledger.json');write(ledger_path,sensitivity_ledger)
+ result['ssh_sensitivity']=analyze(rows,sensitivity_ledger,cfg['bootstrap']['reps'],cfg['bootstrap']['seed'],population_stats,np.random.default_rng)
+ result['ssh_sensitivity']['ledger_sha256']=sha(ledger_path)
+ result['disclosure']['ssh_flagged_blocks']={p:v['excluded'] for p,v in result['ssh_sensitivity']['populations'].items()}
  write(a.out,result);print(json.dumps(dict(utc=result['utc'],completed=True,selection=selection)))
 if __name__=='__main__':main()

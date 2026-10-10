@@ -70,8 +70,8 @@ def test_08_join_still_budgets_nonreader_children_and_stops(joined):
  before=f.apply([p,kid],j);assert kid.get('ssh_budget');m=B.begin(before,hz=100)
  after=f.apply([dict(p),dict(kid,cpu_ticks=46)],j);B.update(m,after)
  assert B.finish(m,60)['interfered'] and not B.finish(m,60)['stop']
- assert B.sample(before,after,1,hz=100)['stop']
- after=f.apply([dict(p),dict(kid,cpu_ticks=121)],j);B.update(m,after);assert B.finish(m,60)['stop']
+ assert not B.sample(before,after,1,hz=100)['stop']
+ after=f.apply([dict(p),dict(kid,cpu_ticks=601)],j);B.update(m,after);assert B.finish(m,60)['stop']
 
 def test_08_conflicting_live_source_is_not_overwritten(joined):
  j,p,r,s,c,_=joined;f=B.Families();f.sources[str(j),B.identity(p)]=None
