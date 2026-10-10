@@ -128,10 +128,18 @@ class TierBackend:
         self.openings = dry_opening_orders(self.rows)
         self.cores = {}
         self.inputs = {}
+        from corpus_contract import validate_row
+        golden_only = set() if self.manifest["profile"] == "linux-dry-run" else set(self.manifest["sets"]["golden"]) - set().union(
+            *[set(v) for v in self.manifest["sets"]["speed"].values()],
+            set(self.manifest["sets"].get("agreement",())),set(self.manifest["sets"].get("packets",())))
         for row in self.rows:
+            if self.manifest["profile"] != "linux-dry-run":
+                if str(row["id"]) in golden_only:
+                    continue  # Native/belief golden fixtures need no policy input.
+                validate_row(row)
             self.inputs[str(row["id"])] = self.policy_input(row)
 
-    def policy_input(self, row):
+    def policy_input(self, row, *, verify=True, tracker_state=None):
         from imitation.evaluation.standalone import StandalonePlayer
         from imitation.evaluation.d1 import model_packet
         from clasher.rl.contract_v5 import ContractV5ActionMaskBuilder
@@ -143,12 +151,13 @@ class TierBackend:
         if "d1_before" in row:
             from imitation.evaluation.d1 import D1Tracker
             tracker = object.__new__(D1Tracker)
-            tracker.__dict__.update(copy.deepcopy(row["d1_before"]))
+            tracker.__dict__.update(copy.deepcopy(row["d1_before"]) if tracker_state is None else tracker_state)
             tracker.builder = self.resources.builder
             d1 = tracker.update(info.tick, row["d1_events"])
-            for key in row["d1"]:
-                if not self.np.array_equal(d1[key], row["d1"][key]):
-                    raise ValueError("Exactness mismatch: D1 public history reconstruction")
+            if verify:
+                self.check_d1(row,d1)
+        elif self.manifest["profile"] != "linux-dry-run":
+            raise ValueError("Production decisions require d1_before and d1_events")
         elif "d1" in row:
             d1 = copy.deepcopy(row["d1"])
         else:
@@ -157,6 +166,11 @@ class TierBackend:
                 info.seat, self.openings[row["seed"]], row["seed"] + 271828 + info.seat)
             d1 = player.d1.update(info.tick, [])
         return model_packet(public_packet, mask), d1
+
+    def check_d1(self,row,d1):
+        if "d1_before" in row and (set(d1) != set(row["d1"]) or any(
+            not self.np.array_equal(d1[key],row["d1"][key]) for key in row["d1"])):
+            raise ValueError("Exactness mismatch: D1 public history reconstruction")
 
     def core(self, tier):
         if tier in self.cores:
@@ -174,12 +188,12 @@ class TierBackend:
         self.cores[tier] = c
         return c
 
-    def configure(self, row, tier):
+    def configure(self, row, tier, admitted=None):
         c = self.core(tier)
         c.rng.bit_generator.state = copy.deepcopy(row["candidate_rng_state"])
-        c.info, c.costs = copy.deepcopy(row["info"]), self.resources.costs
+        c.info, c.costs = (admitted["info"] if admitted is not None else copy.deepcopy(row["info"])), self.resources.costs
         from clasher.analysis.loss_review.delay_fixes import Reservation
-        c.pending = tuple(Reservation(**p) if isinstance(p,dict) else copy.deepcopy(p) for p in row.get("pending",()))
+        c.pending = admitted["pending"] if admitted is not None else tuple(Reservation(**p) if isinstance(p,dict) else copy.deepcopy(p) for p in row.get("pending",()))
         c.opponent_elixir = row.get("opponent_elixir",0.)
         return c
 
@@ -194,20 +208,13 @@ class TierBackend:
             os.sched_setaffinity(0, set(self.search_cpus[:width]))
 
     def history_before(self, row):
+        if "belief_resume" in row:
+            raise ValueError("belief_resume is outside the reviewed public corpus contract")
         if "belief_before" in row:
             if self.history_cache is None or self.history_cache[0] != str(row["id"]) or getattr(self,"history_consumed",False):
                 before = copy.deepcopy(row["belief_before"])
                 if getattr(before,"_pending",None) is not None:
-                    raise ValueError("Live belief generators cannot be sealed; use belief_resume")
-                resume = row.get("belief_resume")
-                if resume:
-                    tx = copy.copy(before)
-                    tx.events = list(before.events)
-                    tx._pending = None
-                    work = tx._update_work(resume["tick"],resume["events"])
-                    for _ in range(resume["steps_completed"]):
-                        next(work)
-                    before._pending = (resume["tick"],tuple(resume["events"]),tx,work)
+                    raise ValueError("Only committed belief copies are admitted; suspended private work is disabled")
                 self.history_cache = str(row["id"]), before
                 self.history_consumed = False
             return self.history_cache[1]
@@ -281,43 +288,62 @@ class TierBackend:
 
     def prepare_work(self, row):
         """Fixture/snapshot admission before arrival; current update stays timed."""
+        setup_start=time.monotonic()
         before = self.history_before(row)
-        belief = copy.deepcopy(before) if getattr(before,"_pending",None) is None else copy.copy(before)
-        if row.get("belief_resume"):
-            self.history_consumed = True
-        self.prepared_work = str(row["id"]), belief
+        belief = copy.deepcopy(before)
+        from clasher.analysis.loss_review.delay_fixes import Reservation
+        admitted=dict(info=copy.deepcopy(row["info"]),
+            pending=tuple(Reservation(**p) if isinstance(p,dict) else copy.deepcopy(p) for p in row.get("pending",())),
+            tracker_state=copy.deepcopy(row.get("d1_before")))
+        self.prepared_work = str(row["id"]), belief, admitted, time.monotonic()-setup_start
 
     def work(self, row, tier, *, deadline=None, backend="cpu", packet_entry=None):
         from gc_window import WINDOW
         if self.prepared_work is None or self.prepared_work[0] != str(row["id"]):
             self.prepare_work(row)
-        belief = self.prepared_work[1]
+        belief,admitted,setup_seconds = self.prepared_work[1:]
         self.prepared_work = None
         # The frozen WINDOW is not reentrant. D7/D8 already owns it so that
         # maintenance GC can be charged against the next scheduled poll.
         if WINDOW.active:
-            return self._work(row,tier,belief,deadline=deadline,backend=backend,packet_entry=packet_entry)
+            return self._work(row,tier,belief,deadline=deadline,backend=backend,packet_entry=packet_entry,admitted=admitted,setup_seconds=setup_seconds)
         with WINDOW:
-            return self._work(row,tier,belief,deadline=deadline,backend=backend,packet_entry=packet_entry)
+            return self._work(row,tier,belief,deadline=deadline,backend=backend,packet_entry=packet_entry,admitted=admitted,setup_seconds=setup_seconds)
 
-    def _work(self, row, tier, belief, *, deadline=None, backend="cpu", packet_entry=None):
+    def _work(self, row, tier, belief, *, deadline=None, backend="cpu", packet_entry=None,admitted=None,setup_seconds=0.):
         from cached_policy import CachedPolicy
         self.activate(tier)
         start = time.monotonic() if packet_entry is None else packet_entry
         cutoff = None if deadline is None else start + deadline - .008
-        c = self.configure(row, tier)
-        packet, d1 = self.policy_input(row)
+        c = self.configure(row, tier,admitted)
+        packet, d1 = self.policy_input(row,verify=False,tracker_state=admitted["tracker_state"] if admitted is not None else None)
         generator = self.torch.Generator(device="cpu").manual_seed(row["seed"] + 271828 + c.info.seat)
         if "policy_rng_state" in row:
             generator.set_state(row["policy_rng_state"])
         fallback = 2304
+        captured=[]
         if tier == "S":
-            policy = self.students[backend]
+            policy = CachedPolicy(self.student,THRESHOLD) if backend == "cpu" else self.students[backend]
         elif tier == "K0c":
             policy = CachedPolicy(self.v1)
         else:
             policy = self.v1
-        fallback = int(policy.sample(packet, d1, generator))
+        if tier == "S" and backend == "cpu":
+            # Preserve the frozen CachedPolicy; capture its already-computed outputs.
+            # Formatting agreement diagnostics happens AFTER the decision timer.
+            import cached_policy
+            original_outputs=cached_policy.outputs
+            def observe_outputs(*args,**kwargs):
+                value=original_outputs(*args,**kwargs)
+                captured.append(value)
+                return value
+            cached_policy.outputs=observe_outputs
+            try:
+                fallback=int(policy.sample(packet,d1,generator))
+            finally:
+                cached_policy.outputs=original_outputs
+        else:
+            fallback = int(policy.sample(packet, d1, generator))
         fallback = fallback if fallback < 2305 else 2304
         # Belief preparation precedes proposals/candidates in the frozen wrapper.
         preparation_hit = False
@@ -327,7 +353,7 @@ class TierBackend:
             preparation_hit = True
         proposals = policy.propose(packet, d1, 8) if not preparation_hit and tier in ("K0c", "S") else ()
         forward = None
-        if tier == "S":
+        if tier == "S" and backend != "cpu":
             forward = copy.deepcopy(policy.last_forward)
         elif tier == "K0c":
             forward = dict(sample=fallback, top8=[p["action"] for p in proposals],
@@ -344,6 +370,7 @@ class TierBackend:
                 if "belief_rng_state" in row:
                     rng.bit_generator.state = copy.deepcopy(row["belief_rng_state"])
                 opponent = belief.sample(rng, deadline=cutoff)
+                sampled_rng_state=rng.bit_generator.state
                 root = self.resources.root(c.info, opponent, rng)
             except TimeoutError:
                 preparation_hit = True
@@ -355,18 +382,24 @@ class TierBackend:
             action = c.score_candidates(root, c.info.seat, candidates, deadline=cutoff, fallback=fallback)
             stats = dict(c.deadline_stats)
         elapsed = time.monotonic() - start
+        self.check_d1(row,d1)
+        if captured:
+            probability,ranks=captured[0]
+            legal=self.np.flatnonzero(packet["action_mask"][:2304]).tolist()
+            forward=dict(gate=float(probability[0]),legal=legal,ranks={str(a):float(ranks[0,a]) for a in legal})
         if deadline is None and "belief_rng_state" in row and root is not None:
             assert_exact(opponent,row["opponent"],"sampled public opponent")
+            assert_exact(sampled_rng_state,row["root_rng_state"],"RNG before public root")
             if root.digest() != row["root_digest"]:
                 raise ValueError("Exactness mismatch: complete decision public root")
         complete_play = any(a < 2304 and s is not None for a, s in zip(c.last["candidates"], c.last["scores"]))
         return dict(action=int(action), candidates=list(c.last["candidates"]), scores=list(c.last["scores"])), dict(
-            wall_seconds=elapsed, cutoff=stats["hit"], fallback=stats["fallback"],
+            wall_seconds=elapsed, replay_setup_seconds=setup_seconds, cutoff=stats["hit"], fallback=stats["fallback"],
             completed=stats["completed"], no_complete_play=not complete_play,
             over_200_ms=elapsed > .2, cut_return_over_208_ms=stats["hit"] and elapsed > .208,
             preparation_hit=preparation_hit, forward=forward,
             belief_had_suspended_transaction=row.get("belief_had_suspended_transaction",False),
-            suspended_progress_replayed=bool(row.get("belief_resume")),
+            suspended_progress_replayed=False,
             root_digest=root.digest() if root is not None else None)
 
     def infer(self, identity, device):

@@ -25,17 +25,23 @@ files, the frozen v1/R3a/calibration artifacts, the native golden125 states,
 belief references, the 2,000-state student set, each tier's own 300-state corpus,
 loaded three-repeat references from each reporting host and deadline references
 at 200/160 ms. [FLEET-INPUT-SCHEMA.md](FLEET-INPUT-SCHEMA.md) gives the row contract
-and fleet-reference CLI. Historical golden125 is permitted only for Linux smoke.
+and fleet-reference CLI. Historical fixtures serve native/belief golden checks; only Linux smoke may use them as timing corpora.
 Mac rows require actual reserved packets, pre-poll D1/public history and belief
-snapshots, captured RNGs, pending reservations and public opponent elixir.
+snapshots, captured RNGs, pending reservations and public opponent elixir. The
+T1 ba3dc8b0 row allowlist is exact: 20 fields, `strata` has exactly three fields,
+and `belief_resume` is rejected. Fleet mode derives every occupied reporting
+slot from the pinned plan and uses no fleet perception worker. Mechanical
+`--pool-fleet-references` pools raw host × repeat walls, applies the ±5% host rule,
+and pools deadline counts. Reporting END placement and suspended-transaction
+replay remain disclosed amendments pending review.
 
 `prepare_bundle.py` copies only explicit approved artifacts, verifies policy/source
 pins, checks TRAIN membership before media access and generates `tiers-pins.json`
 plus its SHA. Mac staging requires a reviewed `registration.json` packet containing
-`sets`, actual `packet_schedule` timestamps/offsets/opportunity flags, and pooled
+`sets`, pinned `corpus_receipt`, actual `packet_schedule` tick/timestamps/offsets/opportunity flags, and pooled
 `fleet_reference` metadata with three repeats at nice10, physical core IDs,
 `reporting_load_profile=true`, reporting `hosts` and per-host receipt comparisons
-within 5% of the pooled reference. Input references are `golden.json`,
+within 5% of the pooled reference and `pooling=raw-host-times-repeat-v1`. Input references are `golden.json`,
 `belief-reference.json`, `student-reference.json`, `speed-reference.json`,
 `deadline-reference.json`. The owner must seal all source reference receipts and
 pooling evidence into the reviewed registration packet. No outcome data belongs

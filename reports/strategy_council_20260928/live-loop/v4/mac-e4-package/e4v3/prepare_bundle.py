@@ -203,6 +203,8 @@ def prepare(args):
         manifest["packet_schedule"] = packet["packet_schedule"]
         manifest["fleet_reference"] = packet["fleet_reference"]
         manifest["deadline_replay_semantics"] = packet["deadline_replay_semantics"]
+        manifest["corpus_receipt"] = packet["corpus_receipt"]
+        copy_file(args.reference_packet/packet["corpus_receipt"],out/packet["corpus_receipt"])
         for name in ("golden.json", "belief-reference.json", "student-reference.json", "speed-reference.json", "deadline-reference.json", "registration.json"):
             copy_file(args.reference_packet / name, out / name)
         for source in sorted(args.reference_packet.rglob("*")):

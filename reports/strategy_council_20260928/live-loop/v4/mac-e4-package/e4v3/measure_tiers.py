@@ -58,10 +58,10 @@ def validate_counts(manifest, limits, dry_run):
         raise ValueError("Packet schedule must match sealed ordered replay packets")
     if not dry_run:
         provenance = manifest["fleet_reference"]
-        if provenance["nice"] != 10 or provenance["repeats"] != 3 or not provenance["reporting_load_profile"]:
+        if provenance["nice"] != 10 or provenance["repeats"] != 3 or provenance.get("pooling") != "raw-host-times-repeat-v1" or not provenance["reporting_load_profile"]:
             raise ValueError("Mac requires three-repeat reporting-load fleet reference")
         hosts = provenance["hosts"]
-        if not hosts or any(h not in ("127x01", "127x03", "127x04", "127x08") for h in hosts):
+        if not hosts or len(set(hosts)) != len(hosts):
             raise ValueError("Wrong registered reporting hosts")
         if set(provenance["host_receipts"]) != set(hosts) or any(
             abs(r["relative_to_pooled_median"]-1) > .05 for r in provenance["host_receipts"].values()):
@@ -445,10 +445,12 @@ class Session:
                 torch_interop_threads=self.backend.torch.get_num_interop_threads(),
                 environment={k:os.environ.get(k) for k in ("OMP_NUM_THREADS","OPENBLAS_NUM_THREADS","MKL_NUM_THREADS")}))
             if not self.args.linux_dry_run:
+                from corpus_contract import validate_capture_receipt
+                self.store.write("corpus-capture.json",validate_capture_receipt(self.args.bundle,self.manifest,self.backend))
                 for identity_ in self.manifest["sets"]["packets"]:
                     row = self.backend.by_id[identity_]
-                    if any(k not in row for k in ("d1", "d1_before", "d1_events", "belief_before", "reserved_packet", "pending", "opponent_elixir", "belief_had_suspended_transaction")):
-                        raise ValueError("Mac packets require the complete sealed physical/reserved/D1/belief contract")
+                    from corpus_contract import validate_row
+                    validate_row(row)
                 from fleet_reference import validate_row
                 for tier in TIERS:
                     for identity_ in self.manifest["sets"]["speed"][tier]:
@@ -456,7 +458,7 @@ class Session:
                 origin = self.manifest["packet_schedule"][0]["timestamp_seconds"]
                 for packet in self.manifest["packet_schedule"]:
                     row = self.backend.by_id[packet["id"]]
-                    if row["replay_timestamp_seconds"] != packet["timestamp_seconds"] or packet["offset_seconds"] != packet["timestamp_seconds"]-origin:
+                    if row["info"].tick != packet["tick"] or packet["offset_seconds"] != packet["timestamp_seconds"]-origin:
                         raise ValueError("Poll schedule does not come from sealed packet timestamps")
             self.exactness()  # Any mismatch terminates the session, before timing.
             agreement_results = self.student_agreement()
@@ -519,7 +521,7 @@ class Session:
                 foreign_over_one_core_over_60_seconds=any(p["foreign_over_one_core_seconds"] > 60 for r in capacities for p in r["processes"]),
                 sampling_gaps=any(r["sample_gap_over_3_seconds"] for r in capacities)),
             deadline_replay_semantics=self.manifest.get("deadline_replay_semantics","legacy smoke without suspended-progress credit"),
-            deadline_replay_amendment_pending_review=any(r.get("belief_had_suspended_transaction",False) and not r.get("belief_resume") for r in self.backend.rows),
+            deadline_replay_amendment_pending_review=any(r.get("belief_had_suspended_transaction",False)  for r in self.backend.rows),
             suspended_transaction_states=sum(r.get("belief_had_suspended_transaction",False) for r in self.backend.rows),
             formal_E4_qualified=False, final=False))
         validate_bundle(self.args.bundle, self.args.runtime_root, dry_run=self.args.linux_dry_run)
@@ -627,9 +629,9 @@ def canonical_result(value):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--bundle", type=Path, required=True)
-    parser.add_argument("--runtime-root", type=Path, required=True)
-    parser.add_argument("--native", type=Path, required=True)
+    parser.add_argument("--bundle", type=Path)
+    parser.add_argument("--runtime-root", type=Path)
+    parser.add_argument("--native", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--sam-authorized-replay", action="store_true")
     parser.add_argument("--linux-dry-run", action="store_true")
@@ -638,19 +640,33 @@ def main(argv=None):
     parser.add_argument("--search-cpus", type=lambda value: [int(i) for i in value.split(",")])
     parser.add_argument("--load-cpu", type=int)
     parser.add_argument("--background-cpus", type=lambda value: [int(i) for i in value.split(",")])
-    parser.add_argument("--manifest-sha256", required=True)
+    parser.add_argument("--manifest-sha256")
+    parser.add_argument("--pool-fleet-references",action="store_true")
+    parser.add_argument("--pool-input",type=Path)
+    parser.add_argument("--pool-input-sha256")
     parser.add_argument("--coordinator-lock", type=Path)
     parser.add_argument("--coordinator-lock-fd", type=int,
         help="Inherited locked descriptor: holds the same lock from pre-staging through measurement")
     args = parser.parse_args(argv)
     # Refusals leave a failure receipt, including authorization/platform/pin gates.
-    store = ReceiptStore(args.output, "FLEET-REFERENCE" if args.fleet_reference else "LINUX-DRY-RUN" if args.linux_dry_run else "MAC-REPLAY")
+    store = ReceiptStore(args.output, "FLEET-POOL" if args.pool_fleet_references else "FLEET-REFERENCE" if args.fleet_reference else "LINUX-DRY-RUN" if args.linux_dry_run else "MAC-REPLAY")
     session = None
     status = "failed"
     lock = None
     try:
         if any(os.environ.get(k) != "1" for k in ("OMP_NUM_THREADS","OPENBLAS_NUM_THREADS","MKL_NUM_THREADS")):
             raise ValueError("Measurement requires OMP/OPENBLAS/MKL thread environment pinned to one")
+        if sum((args.fleet_reference,args.linux_dry_run,args.sam_authorized_replay,args.pool_fleet_references)) > 1:
+            raise ValueError("Measurement modes are mutually exclusive")
+        if args.pool_fleet_references:
+            if args.pool_input is None or args.pool_input_sha256 is None or any((args.bundle,args.runtime_root,args.native,args.manifest_sha256,args.search_cpus,args.background_cpus,args.load_cpu is not None)):
+                raise ValueError("Pooling requires only the approved descriptor SHA and output")
+            from fleet_pool import run
+            run(args,store)
+            status="complete"
+            return 0
+        if any(v is None for v in (args.bundle,args.runtime_root,args.native,args.manifest_sha256)):
+            raise ValueError("Measurement requires bundle/runtime/native/manifest SHA")
         if args.fleet_reference and (args.linux_dry_run or args.sam_authorized_replay):
             raise ValueError("Fleet reference, Linux dry run and authorized Mac modes are exclusive")
         if not args.fleet_reference:

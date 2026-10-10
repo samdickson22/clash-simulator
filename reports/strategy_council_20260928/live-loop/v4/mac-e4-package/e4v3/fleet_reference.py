@@ -10,75 +10,66 @@ import platform
 import time
 
 from receipts import TIERS, assert_exact, decision_rates, quantiles, sha
-from replay_load import LinuxBackground
+from replay_load import FleetBackground
 from telemetry import cpu_counters, monitor_worker, validate_physical_cpus, validate_topology
 from tier_backend import NATIVE_SHA, TierBackend, validate_bundle
+from fleet_profile import pinned_profile, compare_mhz
 
-REQUIRED_ROW = ("id", "tier", "seed", "info", "reserved_packet", "d1", "d1_before", "d1_events",
-                "policy_rng_state", "candidate_rng_state", "belief_before", "belief_rng_state",
-                "opponent", "root_rng_state", "root", "root_digest", "pending", "opponent_elixir",
-                "strata", "belief_had_suspended_transaction")
-
-
-def validate_row(row, tier):
-    missing = [name for name in REQUIRED_ROW if name not in row]
-    if missing or row.get("tier") != tier:
-        raise ValueError("Incomplete/wrong own-tier reference row: " + repr(missing))
-    if "builder" in row["d1_before"]:
-        raise ValueError("d1_before is a tracker state dictionary excluding builder")
-    if getattr(row["belief_before"], "_pending", None) is not None:
-        raise ValueError("Use serializable belief_resume instead of a live generator")
-    if not {"elixir", "legal_play_count"} <= set(row["strata"]):
-        raise ValueError("Missing preregistered strata")
+from corpus_contract import REQUIRED_ROW, validate_row, validate_capture_receipt
 
 
 def run(args, store):
-    if platform.system() != "Linux" or platform.node() not in ("127x01", "127x03", "127x08"):
-        raise ValueError("Fleet references require authorized T1 reporting hosts 01/03/08")
-    if os.getpriority(os.PRIO_PROCESS, 0) != 10:
-        raise ValueError("T1 reporting-load references require nice 10")
     if sha(args.native) != NATIVE_SHA:
         raise ValueError("Wrong qualified fleet native")
-    if not args.search_cpus or len(args.search_cpus) != 5 or not args.background_cpus or len(args.background_cpus) != 5 or args.load_cpu is None:
-        raise ValueError("Fleet reference requires five search CPUs, five background CPUs, separate replay CPU")
-    validate_physical_cpus(args.search_cpus+args.background_cpus+[args.load_cpu])
-    os.sched_setaffinity(0,set(args.search_cpus))
+    if args.background_cpus or args.load_cpu is not None:
+        raise ValueError("Fleet masks come exclusively from the pinned reporting plan; no perception CPU")
     manifest = validate_bundle(args.bundle,args.runtime_root,dry_run=True,require_references=False)
     if manifest["profile"] != "fleet-reference":
         raise ValueError("Fleet reference mode requires reviewed fleet-reference inputs")
     if any(name not in manifest["files"] for name in ("golden.json","belief-reference.json")):
         raise ValueError("Fleet native/belief exactness references must be SHA-pinned")
-    profile = manifest["reference_load_profile"]
-    if not profile.get("reporting_load_profile") or profile.get("background_cpus") != args.background_cpus or profile.get("replay_cpu") != args.load_cpu:
-        raise ValueError("Load profile must bind the reviewed reporting-equivalent background CPU groups")
+    profile,plan,(search,background_masks,census_cpu)=pinned_profile(args.bundle,manifest)
+    if args.search_cpus and args.search_cpus != search:
+        raise ValueError("Reference CPU mask differs from pinned reporting slot")
+    args.search_cpus=search
+    validate_physical_cpus(search+sum(background_masks,[])+[census_cpu])
+    os.sched_setaffinity(0,set(search))
     backend = TierBackend(args.bundle,args.runtime_root,args.native)
     backend.search_cpus = args.search_cpus
     context = mp.get_context("spawn")
     stop, phase = context.Event(), context.Array("c",64)
-    owned = context.Array("i",[os.getpid(),0,0,0,0])
+    owned = context.Array("i",[os.getpid()]+[0]*(len(background_masks)+1))
     clusters = validate_topology(manifest["topology"],cpu_counters(),darwin=False)
-    monitor = context.Process(target=monitor_worker,args=(stop,phase,owned,clusters,store.directory/"capacity.jsonl"))
+    monitor = context.Process(target=reference_monitor,args=(stop,phase,owned,clusters,store.directory/"capacity.jsonl",census_cpu))
     refs = {tier:{} for tier in TIERS}
     deadlines = {tier:{"1.0":[],"0.8":[]} for tier in TIERS}
     try:
         for tier in TIERS:
             ids = manifest["sets"]["speed"][tier]
-            if len(ids) < 300 or len(ids) != len(set(ids)):
+            if len(ids) != 300 or len(ids) != len(set(ids)):
                 raise ValueError("Fleet reference needs >=300 unique states PER tier")
             for identity in ids:
                 validate_row(backend.by_id[identity],tier)
-        store.write("fleet-identity.json",dict(host=platform.node(),nice=10,native_sha256=sha(args.native),
+        capture=validate_capture_receipt(args.bundle,manifest,backend)
+        store.write("corpus-capture.json",capture)
+        store.write("fleet-identity.json",dict(host=platform.node(),nice=plan["compute"]["nice"],native_sha256=sha(args.native),
             manifest_sha256=sha(args.bundle/"tiers-pins.json"),specification=manifest["specification"],
-            load_profile=profile,search_cpus=args.search_cpus,final=False,live_actions=False))
+            load_profile=profile,search_cpus=args.search_cpus,background_masks=background_masks,
+            reporting_plan_sha256=sha(args.bundle/profile["plan"]),
+            reporting_mhz_sha256=sha(args.bundle/profile["reporting_mhz"]),
+            reporting_end_sha256=sha(args.bundle/profile["reporting_end"]),
+            corpus_receipt_sha256=sha(args.bundle/manifest["corpus_receipt"]),
+            input_files=manifest["files"],sets=manifest["sets"],runtime_files=manifest["runtime_files"],
+            measurement_files=manifest["measurement_files"],deadline_replay_semantics=manifest["deadline_replay_semantics"],
+            final=False,live_actions=False))
         from measure_tiers import Session
         from types import SimpleNamespace
         if len(manifest["sets"]["golden"]) != 125:
             raise ValueError("Fleet reference needs qualified golden125 and belief reference inputs")
         Session.exactness(SimpleNamespace(args=args,store=store,manifest=manifest,backend=backend,exactness_class="EXACT"))
         phase.value = b"reference-warmup"
-        monitor.start(); owned[3]=monitor.pid
-        with LinuxBackground(args.bundle,args.runtime_root,args.native,store.directory/"perception-replay.jsonl",
-                             args.load_cpu,args.background_cpus,preparing=True) as background:
+        monitor.start(); owned[-1]=monitor.pid
+        with FleetBackground(args.bundle,args.runtime_root,args.native,background_masks) as background:
             for index,worker in enumerate(background.workers,1): owned[index]=worker.pid
             until=time.monotonic()+profile["warmup_seconds"]
             if profile["warmup_seconds"] < 300:
@@ -112,6 +103,16 @@ def run(args, store):
             for ref in refs[tier].values():ref["wall_seconds"]=quantiles(ref.pop("walls"))["p50"]
         store.write("speed-reference.json",refs)
         store.write("deadline-reference.json",{t:{c:decision_rates(v) for c,v in cells.items()} for t,cells in deadlines.items()})
+        reporting=[json.loads(line) for line in (args.bundle/profile["reporting_mhz"]).read_text().splitlines()]
+        census=[json.loads(line) for line in (store.directory/"capacity.jsonl").read_text().splitlines()]
+        clocks=compare_mhz(reporting,census,search+sum(background_masks,[]),profile["slot_count"])
+        store.write("reporting-mhz-comparison.json",clocks)
+        if not clocks["passes"]:
+            raise ValueError("Reference/reporting MHz differs by >5%; reference fails closed")
+        for key in ("plan","reporting_mhz","reporting_end"):
+            source=args.bundle/profile[key]
+            (store.directory/("source-"+key+source.suffix)).write_bytes(source.read_bytes())
+        validate_bundle(args.bundle,args.runtime_root,dry_run=True,require_references=False)
         store.write("fleet-complete.json",dict(completed=True,final=False,repeats=3,reporting_load_profile=True,
             outcome_access=False,live_actions=False,host=platform.node(),utc=time.time()))
     finally:
@@ -121,3 +122,8 @@ def run(args, store):
             if monitor.is_alive():monitor.terminate();monitor.join(10)
             if monitor.exitcode != 0:raise RuntimeError("Reference telemetry exited with error")
         backend.close()
+
+
+def reference_monitor(stop,phase,owned,clusters,output,cpu):
+    os.sched_setaffinity(0,{cpu})
+    monitor_worker(stop,phase,owned,clusters,output)

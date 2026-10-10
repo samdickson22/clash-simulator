@@ -268,7 +268,7 @@ class TelemetryTests(unittest.TestCase):
 class AdmissionTests(unittest.TestCase):
     def test_fleet_capture_contract_rejects_live_progress_or_missing_reservation(self):
         row = {key:None for key in REQUIRED_ROW}
-        row.update(tier="K2",d1_before={},belief_before=SimpleNamespace(_pending=None),strata=dict(elixir=5.,legal_play_count=3))
+        row.update(id="a",seed=1,tier="K2",d1_before={},belief_before=SimpleNamespace(_pending=None),belief_had_suspended_transaction=False,opponent_elixir=5.,strata=dict(elixir=5.,legal_play_count=3,bins=[1,1]))
         validate_row(row,"K2")
         row.pop("reserved_packet")
         with self.assertRaises(ValueError):validate_row(row,"K2")
@@ -282,12 +282,10 @@ class AdmissionTests(unittest.TestCase):
         self.assertEqual(dry_opening_orders(rows)[1],list("ABCDEFGH"))
         with self.assertRaises(ValueError):
             dry_opening_orders(rows[1:])
-    def test_background_admission_distinguishes_t1_reference_from_dry_run(self):
-        admit_background("Linux","127x05",19,False)
-        admit_background("Linux","127x03",10,True)
-        admit_background("Linux","127x01",10,True)
-        admit_background("Linux","127x08",10,True)
-        for params in (("Linux","127x01",19,False),("Linux","127x04",10,True),("Linux","127x05",10,True)):
+    def test_background_admission_is_only_for_nice19_linux_smoke(self):
+        admit_background("Linux","127x05",19)
+        admit_background("Linux","127x03",19)
+        for params in (("Linux","127x01",19),("Linux","127x04",19),("Linux","127x05",10)):
             with self.assertRaises(ValueError):admit_background(*params)
 
     def test_platform_and_host_guards(self):

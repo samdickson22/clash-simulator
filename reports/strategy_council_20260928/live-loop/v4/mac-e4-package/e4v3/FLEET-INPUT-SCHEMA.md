@@ -1,107 +1,172 @@
-# Reviewed-input contract (implementation draft)
+# Fleet input contract (review draft)
 
-Targets the SHA-bound r3 documents in `spec-pins.json`; independent review is pending.
-No reporting games, client input or outcome reads are implemented here.
+Uses the frozen r3 specification in `spec-pins.json` and the public row names in
+T1 candidate ba3dc8b0 (`reports/explore/t1/receipts/corpus-contract-draft.json`).
+Independent review remains required. This package generates neither matches nor
+outcomes and never controls a client. This worker executes only light Linux05
+smoke runs; T1 separately owns execution on its reporting hosts.
 
-T1 runs this **same file and same TierBackend.work** on its authorized exclusive
-01/03/08 hosts. This worker does not access those hosts. Unlike Linux smoke mode,
-fleet mode requires nice 10, five physical search cores, a separate five-core
-frozen-corpus background slot and a separate TRAIN perception CPU. The load
-profile must first be reviewed as comparable to the reporting-game load; merely
-setting the boolean below is not evidence of that review.
+T1 uses **measure_tiers.py unchanged**, with the same `TierBackend.work` as Mac:
 
-```
+```bash
 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
   nice -n 10 /absolute/pinned/python -B /absolute/e4v3/measure_tiers.py \
   --fleet-reference --bundle /absolute/reviewed-reference-inputs \
   --runtime-root /absolute/fresh-frozen-runtime \
   --native /absolute/qualified-native/clasher_core.abi3.so \
-  --search-cpus 0,1,2,3,4 --background-cpus 5,6,7,8,9 --load-cpu 10 \
   --manifest-sha256 APPROVED_TIERS_PINS_SHA256 \
-  --output /absolute/new-fleet-reference-output
+  --output /absolute/new-host-reference-receipt
 ```
 
-CPU IDs are examples: T1 binds reviewed physical masks on each host, excludes SMT
-siblings and overlaps, and stages fresh output directories. Fleet mode warms
-loaded work for at least 300 seconds, takes **three rotated repeats of 50-state
-blocks** for all four own-tier corpora, and executes 200 and 160 ms deadline loops
-with the same 8 ms reserve. It records full walls, cutoff, fallback, no-complete-play,
-perception and independent 1 Hz CPU/process census. It does not generate matches.
+`nice 10` is the current reporting plan's value. The runner checks host, nice,
+SCHED_OTHER, physical masks and slot count **against the pinned plan**. It derives
+its own five-core mask and **every other occupied reporting slot** from that plan.
+`--search-cpus` is optional and must agree with the derived reference slot;
+`--background-cpus` and `--load-cpu` are rejected in fleet mode.
+
+All other slots run the same complete own-tier corpus loop, rotating K0c/S/K2/K4
+in 50-state blocks with their real 1/1/3/5-core masks. Normal and console profiles
+therefore have 10 and 7 background slots, respectively, under the current T1 plan.
+There is **no fleet perception worker**. Mac and Linux smoke retain replay-driven
+perception. Each reference warms all slots for >=300 seconds, measures exactly
+300 distinct states per tier for three rotated repeats, and measures each state's
+200 and 160 ms deadline loop three times with the frozen 8 ms reserve.
+
+The end-of-reporting reference placement and host-exclusion timeline are a
+coordinator-directed amendment, pending review against PREREG §6.1. References
+require a pinned END marker declaring reporting complete and outcomes sealed.
+The runner reads only timing/census data. A mean physical-core MHz difference
+above 5% fails the reference; this added clock gate remains a review draft.
+Raw independent 1 Hz reporting and reference clocks remain SHA-bound.
 
 `tiers-pins.json` schema is `clasher.e4v3.inputs.v1`:
 
 - `profile`: `fleet-reference`; `final`: false; `threshold`: 0.5005528330802917.
-- `specification`: exact contents of `spec-pins.json`.
-- `files`: relative input paths -> complete SHA256 (including `states.pkl`, R3a,
-  calibration, v1, TRAIN media/timing/registration and load weights).
-- `runtime_files`: qualified frozen runtime relative paths -> SHA256; use
-  `prepare_bundle.runtime_pins(root)` to generate these and verify qualified source.
-- `measurement_files`: this directory's `.py`, `.sh`, and `spec-pins.json` -> SHA256.
-- `sets.golden`: 125 unique IDs; pinned `golden.json` native references and
-  `belief-reference.json` posterior/RNG references are required and checked before
-  reference timing on every host. These golden IDs may be separate legacy rows.
-- `deadline_replay_semantics`: reviewed disclosure of clearing suspended private
-  work in sealed copies; required in the production pooled registration packet.
-- `sets.speed`: `K0c`, `S`, `K2`, `K4` -> ordered lists of **at least 300 distinct
-  string IDs each**, captured from that tier's excluded smoke histories.
-- `topology`: `P`: all Linux logical CPU IDs; `E`: empty; labelled Linux accounting.
-- `reference_load_profile`: `reporting_load_profile`: true, `warmup_seconds`: >=300,
-  `background_cpus`: the exact five IDs, `replay_cpu`: the exact replay ID. Include
-  the reviewed load profile identifier and supporting source receipts in `files`.
-- `load`: `kind`: `v3-body-hud-only` or admitted `v4`, `label`, `target_fps`: 20,
-  `config`: pinned relative `body`, `hud`, `geometry` and `device`: `cpu` for fleet;
-  `split`: pinned TRAIN registration; `matches`: pinned relative match directories.
-  V4 additionally requires its authenticated owner launcher and selection.
+- `specification`: exact `spec-pins.json` contents.
+- `files`: relative input path -> SHA256, including `states.pkl`, frozen
+  v1/R3a/calibration, exactness references and all profile/corpus source receipts.
+- `runtime_files`: qualified frozen runtime relative path -> SHA256; generated
+  with `prepare_bundle.runtime_pins(root)` and its qualified source binding.
+- `measurement_files`: this package's `.py`, `.sh`, `spec-pins.json` -> SHA256.
+- `sets.golden`: 125 unique IDs. Pinned `golden.json` native scores and
+  `belief-reference.json` posterior/ledger/sample/RNG references are checked on
+  **every host before timing**. Separate native/belief-only golden fixtures need
+  no policy inputs. A mismatch beyond the registered r3 tolerance drops ALL tiers.
+- `sets.speed`: ordered own-tier ID lists for `K0c`, `S`, `K2`, `K4`, exactly 300
+  distinct IDs each; rows' tier labels must agree.
+- `corpus_receipt`: relative pinned T1 `corpora.json`. Its `tiers` retain capture
+  health (`eligible_search_opportunities`, `deadline_cut`, `suspended_transaction`),
+  selected-state `{id,sha256}` inventory, selected suspended count and source
+  capture SHAs. Inventory IDs and counts must agree with `sets.speed` and rows;
+  historical per-row pickle SHAs are provenance, not reserialized on another host.
+- `deadline_replay_semantics`: reviewed disclosure of committed posterior copies
+  and disabled resumable private preparation. Both fleet and Mac use this value.
+- `topology`: `P`: all Linux logical IDs; `E`: empty; labelled Linux accounting.
+- `reference_load_profile`, for example:
 
-`states.pkl` is a SHA-approved pickle of public/sampled rows, loaded only after all
-pins match. A union file can contain golden and packet rows as well as speed rows.
-Own-tier speed rows require:
+```json
+{
+  "plan": "reporting-plan.json",
+  "host": "127x01",
+  "console_rule": false,
+  "slot_count": 11,
+  "reference_slot": 0,
+  "warmup_seconds": 300,
+  "perception": "none",
+  "reporting_mhz": "reporting-mhz.jsonl",
+  "reporting_end": "reporting-end.json"
+}
+```
+
+All three source paths above must appear in `files`. The plan is the pinned T1
+plan containing `compute.hosts`, physical CPU lists/census CPU, nice, scheduler,
+slot width/count, console count, SMT policy and forbidden hosts. Reporting MHz
+uses T1's existing rows `{utc, slots, physical_core_mhz:[{cpu,mhz},...]}`. The END
+marker contains `{host, reporting_complete:true, outcomes_sealed:true}`.
+
+`states.pkl` executes only after all pins pass. Each production speed, agreement
+or scheduled decision row has **exactly these 20 top-level fields**:
 
 | Field | Meaning |
 |---|---|
-| `id`, `tier`, `seed` | Unique string ID, K0c/S/K2/K4, excluded game seed |
-| `info` | Physical frozen `fair_player.Information`: seat, tick, physical own state, public events, physical confidence packet. **Do not overwrite info.packet with its reserved version.** |
-| `reserved_packet` | Exact `ch.own_packet(info,R.builder).packet` at current poll |
-| `d1_before` | Dictionary of D1Tracker attributes **excluding builder**, before current poll |
-| `d1_events` | Complete accepted public recorder event list up to this poll, including seats |
-| `d1` | Post-update D1 row, used to verify reconstruction |
-| `policy_rng_state` | CPU Torch generator ByteTensor before fallback sampling, including earlier policy-only polls |
-| `candidate_rng_state` | NumPy candidate RNG state before current candidate call |
-| `belief_before` | Committed `Belief` at packet entry, with `_pending=None` |
-| `belief_had_suspended_transaction` | Boolean recording whether the original live belief had private suspended work; seal `_pending=None` in a COPY only |
-| `belief_resume` | Optional lossless `{tick, events, steps_completed}` if an independently reviewed capture can certify counted yields |
-| `belief_rng_state` | NumPy state before sampled-opponent draw |
-| `opponent` | Actual **sampled public hypothesis**, never the true opponent deck |
-| `root_rng_state` | Same NumPy RNG state immediately before R.root, after belief.sample |
-| `root`, `root_digest` | Frozen hypothetical native root bytes/string and digest |
-| `pending` | Ordered Reservation objects or dictionaries: submitted,due,action,card,cost |
-| `opponent_elixir` | Public D1-derived value used by the frozen planner |
-| `strata` | At least `elixir`, `legal_play_count`; include preregistered bins |
+| `id`, `tier`, `seed` | Unique string ID, own tier, excluded game seed |
+| `info` | Physical `fair_player.Information`; keep **info.packet physical**; tick is `info.tick` |
+| `reserved_packet` | Exact own-channel reserved packet, used by mask/inference/candidates |
+| `pending` | Ordered Reservation objects or dicts: submitted,due,action,card,cost |
+| `opponent_elixir` | Public D1-derived planner value |
+| `d1_before` | Pre-poll D1Tracker attribute dict, excluding builder |
+| `d1_events` | Complete accepted public recorder history including seats |
+| `d1` | Committed post-update D1, checked after the decision timer |
+| `policy_rng_state` | CPU Torch generator state immediately before fallback |
+| `candidate_rng_state` | NumPy state immediately before candidate generation |
+| `belief_before` | Committed public posterior copy with `_pending=None` |
+| `belief_had_suspended_transaction` | Boolean presence of original live private work |
+| `belief_rng_state` | NumPy state immediately before public opponent sampling |
+| `opponent` | Sampled public hypothesis, never the true opponent deck |
+| `root_rng_state` | Same RNG immediately before R.root, after belief.sample |
+| `root`, `root_digest` | Hypothetical native root and digest |
+| `strata` | Exactly `{elixir,legal_play_count,bins}`; bins validated against [3,6]/[1,128] |
 
-Store tick in `info.tick`; also storing `tick` explicitly is useful for audits.
-Eligible speed rows represent actual search opportunities, not blocked policy-only
-polls. Seal prior policy-only history through D1 and policy RNG states.
+Unknown or missing fields fail closed. `belief_resume`, top-level `tick`,
+`elixir`, `legal_play_count`, and `replay_timestamp_seconds` are rejected.
+Mac's pinned `packet_schedule` binds `{id,tick,timestamp_seconds,offset_seconds,
+opportunity}` separately; tick must equal the row's `info.tick`, and offsets must
+agree with sealed timestamps. Production rows require `d1_before`/`d1_events`;
+the direct post-D1 shortcut is confined to legacy Linux smoke.
 
-A suspended belief generator is unpicklable. The coordinator's capture contract
-seals a COPY of the committed posterior with `_pending=None`, records
-`belief_had_suspended_transaction`, and leaves the live collector unchanged.
-No-deadline calls already discard suspended work. For deadline references, both
-fleet and Mac replay the identical full public-history update without partial
-preparation credit. **That is a disclosed deadline-replay amendment, pending
-independent review; it is not established live-loop equivalence.** Raw deadline
-rows and the summary retain the flag/count. Do not silently mark it qualified.
-An optional lossless counted-yield `belief_resume` descriptor is supported, but
-must not be substituted without a reviewed corpus contract change.
+Capture includes **all >1-candidate public search opportunities**, including
+live deadline cuts and decisions before live root construction. T1 reconstructs
+eligibility/posterior/sample/root on independent no-deadline copies after the live
+timer. The live game remains unchanged. Probes 0/1/2 are excluded. Suspended
+private work is cleared in the copy and disclosed per row; no partial preparation
+credit is replayed. **This deadline-replay amendment remains pending review.**
+No-deadline replay checks D1, sampled opponent, pre-root RNG and root digest.
+Deadline replay retains cutoff/fallback/no-complete-play and wall distributions.
 
-No-deadline reference calls reconstruct and check the sampled opponent and root.
-Deadline calls permit a different completed subset/fallback, retain every observed
-wall, and compare population rates rather than asserting action equality.
-The runner includes D1 advance, reserved mask, inference, belief update/sample,
-candidates, root, scoring and reduction; no submissions or late engine actions.
+Replay fixture cloning occurs before packet arrival and is separately recorded as
+`replay_setup_seconds`. Timed work includes D1 update, mask, frozen CPU
+`CachedPolicy` (S with its registered threshold), belief preparation, proposals,
+candidates, sample/root, native scoring and reduction. Checks and agreement
+formatting occur after the timer. MPS uses the explicitly synchronized adapter.
 
-Outputs `speed-reference.json` and `deadline-reference.json` contain a receipt
-`scope` key in addition to their four tier keys; pooling consumes those tier keys.
-Each host's raw receipt has its own SHA manifest. The coordinator pools per-state
-median walls and deadline counts, checks host differences within 5%, and seals the
-combined reference packet. This mode does not itself perform cross-host pooling,
-freeze inputs, or grant reporting authorization.
+Each host produces SHA-sealed `speed-reference-raw.jsonl`,
+`deadline-reference-raw.jsonl`, `capacity.jsonl`, native/belief exactness receipts,
+source plan/MHz/END/corpus receipts and completion receipt. Host summary JSONs have
+a `scope` key in addition to tier keys.
+
+Pool host receipts with the same runner:
+
+```bash
+OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+  /absolute/pinned/python -B /absolute/e4v3/measure_tiers.py \
+  --pool-fleet-references --pool-input /absolute/approved-pool-input.json \
+  --pool-input-sha256 APPROVED_POOL_INPUT_SHA256 \
+  --output /absolute/new-pooled-reference-receipt
+```
+
+```json
+{
+  "schema": "clasher.e4v3.fleet-pool.v1",
+  "hosts": [
+    {"directory": "/absolute/host-reference-receipt", "manifest_sha256": "SHA256"}
+  ]
+}
+```
+
+Pooling verifies every complete host's seal, code/specification/policy pins,
+native125/belief125×ON/OFF qualification, matching corpus/runtime/plan, exactly
+three raw repeats per state and both deadline budgets. **Initial per-state walls
+are medians of all raw hosts × repeats.** Each host's geometric mean speed ratio
+(pooled state wall / host state median) must lie within ±5%; hosts outside are
+explicitly excluded in one pass. Remaining raw observations are pooled again;
+a retained host outside ±5% after pooling fails for review without further
+iteration. Native/action/forward mismatches from even an excluded host fail ALL.
+Deadline rates pool raw counts, retaining per-state distributions and numerators.
+
+Outputs are SHA-sealed `speed-reference.json`, `deadline-reference.json`,
+`pooling.json` (source seals, retained/excluded hosts, both host ratios and rule),
+`fleet_reference.json` (registration metadata), and `pool-complete.json`. T1 merges
+the `fleet_reference.json` tier-independent metadata into its reviewed
+`registration.json`, with original SHA-bound source receipts, the separate
+student/golden/belief refs, corpus receipt and packet schedule. This does not
+freeze the packet or authorize reporting/Mac work.

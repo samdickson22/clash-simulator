@@ -95,8 +95,9 @@ def corpus_load_worker(bundle, root, native, ready, stop, cpus):
     import platform
     from tier_backend import TierBackend
     manifest = validate_bundle(bundle,root,dry_run=True,require_references=False)
-    fleet = manifest["profile"] == "fleet-reference"
-    admit_background(platform.system(),platform.node(),os.getpriority(os.PRIO_PROCESS,0),fleet)
+    if manifest["profile"] != "linux-dry-run":
+        raise ValueError("Fleet references require FleetBackground and every pinned reporting slot")
+    admit_background(platform.system(),platform.node(),os.getpriority(os.PRIO_PROCESS,0))
     os.sched_setaffinity(0, set(cpus))
     backend = TierBackend(bundle, root, native)
     try:
@@ -110,9 +111,8 @@ def corpus_load_worker(bundle, root, native, ready, stop, cpus):
         backend.close()
 
 
-def admit_background(system, host, nice, fleet):
-    hosts, priority = (("127x01","127x03","127x08"),10) if fleet else (("127x03","127x05"),19)
-    if system != "Linux" or host not in hosts or nice != priority:
+def admit_background(system, host, nice):
+    if system != "Linux" or host not in ("127x03","127x05") or nice != 19:
         raise ValueError("Wrong background corpus host/priority for the pinned measurement profile")
 
 
@@ -131,7 +131,7 @@ class LinuxBackground:
     def __enter__(self):
         for worker in self.workers:
             worker.start()
-        deadline = time.monotonic()+120
+        deadline = time.monotonic()+getattr(self,"ready_timeout",120)
         try:
             while not all(ready.is_set() for ready in self.readies):
                 self.check()
@@ -166,3 +166,44 @@ class LinuxBackground:
 
     def __exit__(self, *unused):
         self.close()
+
+
+def fleet_corpus_worker(bundle, root, native, ready, stop, cpus, slot_index):
+    """One complete reporting slot, rotating all four own-tier corpora."""
+    import os
+    from fleet_profile import pinned_profile
+    from receipts import TIERS
+    from tier_backend import TierBackend
+    manifest=validate_bundle(bundle,root,dry_run=True,require_references=False)
+    _,_,(_,background,_) = pinned_profile(bundle,manifest)
+    if list(cpus) not in background:
+        raise ValueError("Background mask absent from pinned reporting slot layout")
+    os.sched_setaffinity(0,set(cpus))
+    backend=TierBackend(bundle,root,native)
+    backend.search_cpus=list(cpus)
+    lap=slot_index
+    try:
+        while not stop.is_set():
+            order=TIERS[lap%4:]+TIERS[:lap%4]
+            for offset in range(0,max(len(manifest["sets"]["speed"][t]) for t in TIERS),50):
+                for tier in order:
+                    for identity in manifest["sets"]["speed"][tier][offset:offset+50]:
+                        if stop.is_set():return
+                        backend.work(backend.by_id[identity],tier)
+                        ready.set()
+            lap+=1
+    finally:
+        backend.close()
+
+
+class FleetBackground(LinuxBackground):
+    """All other reporting slots; deliberately no perception on fleet references."""
+    def __init__(self,bundle,root,native,masks):
+        import multiprocessing as mp
+        context=mp.get_context("spawn")
+        self.stop=context.Event()
+        self.readies=[context.Event() for _ in masks]
+        self.workers=[context.Process(target=fleet_corpus_worker,
+            args=(bundle,root,native,ready,self.stop,mask,index))
+            for index,(mask,ready) in enumerate(zip(masks,self.readies))]
+        self.ready_timeout=600
