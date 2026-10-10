@@ -1,0 +1,487 @@
+{
+  "schema": "clasher.exit-r2.monitor.v1",
+  "utc": "2026-10-10T02:38:13Z",
+  "job_root": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1",
+  "arms": [
+    {
+      "utc": "2026-10-10T02:37:33Z",
+      "arm": "X1",
+      "host": "127x09",
+      "supervisor_pid": 1870123,
+      "supervisor_pgid": 1870123,
+      "trainer_pid": 1870189,
+      "trainer_pgid": 1870189,
+      "own_processes": [
+        {
+          "pid": 1870123,
+          "pgid": 1870123,
+          "nice": 10
+        },
+        {
+          "pid": 1870189,
+          "pgid": 1870189,
+          "nice": 10
+        },
+        {
+          "pid": 1876583,
+          "pgid": 1870189,
+          "nice": 10
+        },
+        {
+          "pid": 1876588,
+          "pgid": 1870189,
+          "nice": 10
+        },
+        {
+          "pid": 1876589,
+          "pgid": 1870189,
+          "nice": 10
+        },
+        {
+          "pid": 1876590,
+          "pgid": 1870189,
+          "nice": 10
+        },
+        {
+          "pid": 1876618,
+          "pgid": 1870189,
+          "nice": 10
+        },
+        {
+          "pid": 1876623,
+          "pgid": 1870189,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T02:37:28Z",
+        "pid": 1870189,
+        "pss": 17079284736,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 6277.953199031996
+      },
+      "step": 3429,
+      "rows": 28090368,
+      "provisional_tree_cpu_seconds": 16376.270000000002,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00003250.pt",
+      "exit": null,
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "loader_workers": 6,
+      "human_micro": 7168
+    },
+    {
+      "utc": "2026-10-10T02:37:33Z",
+      "arm": "X2",
+      "host": "127x16",
+      "supervisor_pid": 871318,
+      "supervisor_pgid": 871318,
+      "trainer_pid": 871463,
+      "trainer_pgid": 871463,
+      "own_processes": [
+        {
+          "pid": 871318,
+          "pgid": 871318,
+          "nice": 10
+        },
+        {
+          "pid": 871463,
+          "pgid": 871463,
+          "nice": 10
+        },
+        {
+          "pid": 878633,
+          "pgid": 871463,
+          "nice": 10
+        },
+        {
+          "pid": 878634,
+          "pgid": 871463,
+          "nice": 10
+        },
+        {
+          "pid": 878639,
+          "pgid": 871463,
+          "nice": 10
+        },
+        {
+          "pid": 878640,
+          "pgid": 871463,
+          "nice": 10
+        },
+        {
+          "pid": 878641,
+          "pgid": 871463,
+          "nice": 10
+        },
+        {
+          "pid": 878673,
+          "pgid": 871463,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T02:37:32Z",
+        "pid": 871463,
+        "pss": 20518804480,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 6281.563427533023
+      },
+      "step": 3378,
+      "rows": 27672576,
+      "provisional_tree_cpu_seconds": 16962.39,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00003250.pt",
+      "exit": null,
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "loader_workers": 6,
+      "human_micro": 7168
+    },
+    {
+      "utc": "2026-10-10T02:37:33Z",
+      "arm": "X3",
+      "host": "127x08",
+      "supervisor_pid": 2651962,
+      "supervisor_pgid": 2651962,
+      "trainer_pid": 2652063,
+      "trainer_pgid": 2652063,
+      "own_processes": [
+        {
+          "pid": 2651962,
+          "pgid": 2651962,
+          "nice": 10
+        },
+        {
+          "pid": 2652063,
+          "pgid": 2652063,
+          "nice": 10
+        },
+        {
+          "pid": 2660780,
+          "pgid": 2652063,
+          "nice": 10
+        },
+        {
+          "pid": 2660782,
+          "pgid": 2652063,
+          "nice": 10
+        },
+        {
+          "pid": 2660809,
+          "pgid": 2652063,
+          "nice": 10
+        },
+        {
+          "pid": 2660811,
+          "pgid": 2652063,
+          "nice": 10
+        },
+        {
+          "pid": 2660816,
+          "pgid": 2652063,
+          "nice": 10
+        },
+        {
+          "pid": 2660817,
+          "pgid": 2652063,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T02:37:32Z",
+        "pid": 2652063,
+        "pss": 13998289920,
+        "processes": 8,
+        "gpu_free_bytes": 48323624960,
+        "reason": null,
+        "wall_seconds": 6281.613348579034
+      },
+      "step": 3182,
+      "rows": 26066944,
+      "provisional_tree_cpu_seconds": 18592.809999999998,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00003000.pt",
+      "exit": null,
+      "lease": null,
+      "loader_workers": 6,
+      "human_micro": 7168
+    },
+    {
+      "utc": "2026-10-10T02:37:33Z",
+      "arm": "X4",
+      "host": "127x01",
+      "supervisor_pid": 1217465,
+      "supervisor_pgid": 1217465,
+      "trainer_pid": 1217609,
+      "trainer_pgid": 1217609,
+      "own_processes": [
+        {
+          "pid": 1217465,
+          "pgid": 1217465,
+          "nice": 10
+        },
+        {
+          "pid": 1217609,
+          "pgid": 1217609,
+          "nice": 10
+        },
+        {
+          "pid": 1225774,
+          "pgid": 1217609,
+          "nice": 10
+        },
+        {
+          "pid": 1225775,
+          "pgid": 1217609,
+          "nice": 10
+        },
+        {
+          "pid": 1225803,
+          "pgid": 1217609,
+          "nice": 10
+        },
+        {
+          "pid": 1225804,
+          "pgid": 1217609,
+          "nice": 10
+        },
+        {
+          "pid": 1225809,
+          "pgid": 1217609,
+          "nice": 10
+        },
+        {
+          "pid": 1225810,
+          "pgid": 1217609,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T02:37:25Z",
+        "pid": 1217609,
+        "pss": 29215961088,
+        "processes": 8,
+        "gpu_free_bytes": 29879173120,
+        "reason": null,
+        "wall_seconds": 6273.5141091072
+      },
+      "step": 2272,
+      "rows": 18612224,
+      "provisional_tree_cpu_seconds": 32617.339999999997,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00002250.pt",
+      "exit": null,
+      "lease": null,
+      "loader_workers": 6,
+      "human_micro": 3584
+    },
+    {
+      "utc": "2026-10-10T02:37:33Z",
+      "arm": "X5",
+      "host": "127x04",
+      "supervisor_pid": 3727388,
+      "supervisor_pgid": 3727388,
+      "trainer_pid": 3727520,
+      "trainer_pgid": 3727520,
+      "own_processes": [
+        {
+          "pid": 3727388,
+          "pgid": 3727388,
+          "nice": 10
+        },
+        {
+          "pid": 3727520,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736754,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736778,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736797,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736810,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736811,
+          "pgid": 3727520,
+          "nice": 10
+        },
+        {
+          "pid": 3736816,
+          "pgid": 3727520,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T02:37:33Z",
+        "pid": 3727520,
+        "pss": 19519450112,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 6281.207092694007
+      },
+      "step": 3050,
+      "rows": 24985600,
+      "provisional_tree_cpu_seconds": 17828.129999999997,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00003000.pt",
+      "exit": null,
+      "lease": null,
+      "loader_workers": 6,
+      "human_micro": 7168
+    },
+    {
+      "utc": "2026-10-10T02:37:33Z",
+      "arm": "X6",
+      "host": "127x13",
+      "supervisor_pid": 2251934,
+      "supervisor_pgid": 2251934,
+      "trainer_pid": 2252096,
+      "trainer_pgid": 2252096,
+      "own_processes": [
+        {
+          "pid": 2251934,
+          "pgid": 2251934,
+          "nice": 10
+        },
+        {
+          "pid": 2252096,
+          "pgid": 2252096,
+          "nice": 10
+        },
+        {
+          "pid": 2259713,
+          "pgid": 2252096,
+          "nice": 10
+        },
+        {
+          "pid": 2259722,
+          "pgid": 2252096,
+          "nice": 10
+        },
+        {
+          "pid": 2259728,
+          "pgid": 2252096,
+          "nice": 10
+        },
+        {
+          "pid": 2259729,
+          "pgid": 2252096,
+          "nice": 10
+        },
+        {
+          "pid": 2259730,
+          "pgid": 2252096,
+          "nice": 10
+        },
+        {
+          "pid": 2259758,
+          "pgid": 2252096,
+          "nice": 10
+        }
+      ],
+      "health": {
+        "utc": "2026-10-10T02:37:31Z",
+        "pid": 2252096,
+        "pss": 26349006848,
+        "processes": 8,
+        "gpu_free_bytes": 29974593536,
+        "reason": null,
+        "wall_seconds": 4486.7773406889755
+      },
+      "step": 2466,
+      "rows": 20201472,
+      "provisional_tree_cpu_seconds": 17309.850000000002,
+      "quiet_noncomment_entries": [],
+      "latest_completed_periodic_checkpoint": "step-00002250.pt",
+      "exit": null,
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "loader_workers": 6,
+      "human_micro": 3584
+    }
+  ],
+  "controller": {
+    "pid": 1746462,
+    "pgid": 1746462,
+    "file": "controller_k_yield.py",
+    "nice": 19,
+    "scheduler": "SCHED_IDLE",
+    "affinity": [
+      63
+    ],
+    "utc": "2026-10-10T02:38:01Z",
+    "stage": "waiting for fits / stage1 / conditional stage2",
+    "offline": {},
+    "stage2": {},
+    "active": null,
+    "failures": [],
+    "x3_priority_requested": false,
+    "wall_seconds": 459.78601074498147,
+    "k_timing_released": false,
+    "k_timing_pgids": [
+      1718091
+    ],
+    "release_markers": [],
+    "prior_controller_exists": {
+      "1403380": false,
+      "1502885": false,
+      "1596239": false
+    },
+    "hashes": {
+      "freeze.json": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+      "stage3-sdefault-addendum.json": "7f62b4e4ac4dccbef4f555f1ca8b10b4a77d0412d02607f26c6a873c1272d1a7",
+      "ops/controller_k_yield.py": "d8f36aa3c368585d2295668f10f177c0a8a532ce492566819e35e495d6bc31e3",
+      "ops/evaluation_k_yield.py": "f26a5b7636f3e97db0f6a082a5cd826a1973481a25dce34c1f883e48606408f7"
+    },
+    "stops": {
+      "CONTROLLER.STOP": false,
+      "FIT.STOP": false,
+      "X3.RESUME.REQUEST": false
+    }
+  },
+  "stage3_case_counts": {
+    "stage3": 0,
+    "stage3-sdefault": 0,
+    "stage3-sdefault-smoke": 0
+  },
+  "provisional_fit_gpu_wall_hours": 9.967396810453954,
+  "provisional_fit_cpu_hours": 33.24633055555556,
+  "accounting": "Six active fit snapshots replace earlier totals; final supervisor exit meters supersede. Closed failed fits/preparation/controllers/qualifications separately retained. Never add child CPU twice.",
+  "decision": "All6 existing fits healthy/deduplicated, original groups unchanged. Stage1/2 queue03 until K-v2 release; home01 requires completed X4. S-default waits same K release plus replacement wrapper qualification. No reporting seeds/duplicate launch/migration/scientific kill. No conditional R2 admission."
+}

@@ -521,3 +521,23 @@ All six original fit groups checked02:32:07Z: steps3258/3195/3023/2131/2874/
 replaces live totals GPUh9.414802861/wholeCPUh
 31.424363889; never add prior snapshots/child CPU.
 No stage metric/kill/survivor selection/R2 admission and no151 seed consumed.
+
+2026-10-10T02:38:13Z. Continuation checked realUTC and all six original groups;
+steps3429/3378/3182/2272/3050/2466, eight nice10 processes each, no exit or
+guard reason. Leased09/16/13 PSS17.08/20.52/26.35GB, GPUfree48.41/48.41/
+29.97GB and Oct11 leases pass.08 quiet noncomment entries empty; X3 durable
+checkpoint3000, guard05:15Z/vacate05:30Z and13/X6 yield priority unchanged.
+No duplicate fit, stop, migration or recipe/source change. Current03controller
+1746462 nice19/SCHED_IDLE/core63, prior three controllers absent, active=null,
+offline={},stage2={},failures=[],X3priorityfalse. Current frozen controller/
+admission source pins and originalfreeze8a1d638a/S-default7f62b4e4 match.
+K-v2 PGID1718091 remains active with no REPORTING*-DONE marker. Evaluation
+queues03;01 remains unavailable until X4 finishes. G STOP-03 retained;
+G01 restriction/slowdown disclosure unchanged. No S-default smoke/reporting
+process or case exists and no151 reporting seed consumed. Qualifying six
+replacement smoke games waits explicit K completion before detaching.
+Monitor0238 replaces prior live costs:9.967396810GPU-wallh and
+33.246330556provisionalwhole-treeCPUh; final exit meters supersede, no prior
+snapshot/child/slowdown costs added. All gates/scientific kills/survivor ranking
+and conditional R2 still pending. Existing10min continuation enabled,next
+02:41:29.927Z; experiment remains active, not complete.
