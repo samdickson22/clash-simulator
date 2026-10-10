@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-10T06:13:33Z",
+  "kind": "Nonadditive final all-seven original fit and once-offline totals",
+  "fit_gpu_wall_hours": 21.609775054376094,
+  "fit_whole_cpu_hours": 72.09740290444445,
+  "offline_gpu_wall_hours": 0.02461393756083756,
+  "offline_whole_cpu_hours": 0.022129878888888888,
+  "controller_offline_record_whole_cpu_seconds": 33.426815,
+  "preparation_x5_pin_verification_cpu_seconds": 2.322794,
+  "accounting": "Fit and offline totals aggregate existing final exit receipts, replacing all provisional snapshots. Do not add this summary to its per-arm receipts. Controller contains only local SSH/metadata children; remote scores counted separately. Failed fits, prior preparation/audits/staging/controller attempts and descriptive study separately retained.",
+  "all_arms_closed": [
+    "X1",
+    "X2",
+    "X3",
+    "X4",
+    "X5",
+    "X6",
+    "X7"
+  ],
+  "original_150_151_unconsumed": true,
+  "R2_eligible": false,
+  "descriptive_study_pending": true
+}

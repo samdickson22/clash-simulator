@@ -1,0 +1,8 @@
+{
+  "utc": "2026-10-10T06:11:52Z",
+  "supervisor_pid": 1291224,
+  "supervisor_pgid": 1291224,
+  "worker_pid": 1291233,
+  "worker_pgid": 1291233,
+  "checkpoint": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/fits/X5/step-00009766.pt"
+}

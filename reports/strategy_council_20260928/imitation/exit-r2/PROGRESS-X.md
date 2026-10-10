@@ -1,5 +1,25 @@
 # X worker progress
 
+2026-10-10T06:13:33Z. ALL7 original fits/frozenoffline64 CLOSED, neverrepeat.
+X5 final9766/EMA fitexit0 06:11:37; singleGPUscore04 1291224/1291233
+closed06:12:05 exit0/no reason. Originalfit3727388/3727520+scoregroups
+ALLABSENT/GPUcomputeempty48666MiB06:12:53; checkpointSHA
+03c22f6adec0544bfe02b0460bc668160b873e36d8205a2d7294141f8fe713fc.
+All originalfreeze/source/input/finalSHA/segment/recipechecksPASS;
+separate lightpinprep2.322794CPU s. X5 root64 recall.278075350/top8.314152966/
+hard.611152324/WAIT.819787728, first3frozenkills/WAITpass. FullCIsstage1-X5.json;
+infeasible gates do NOT establishstudentquality. X5 descriptive exclusion
+693bc3b1 remains unchanged; no reportingoutcomes seen or selectionretuning.
+Controller2071651 endednormallyALL7 at06:12:08, groupabsent06:15:18,
+noactive/failures/stage2{}; wholelocalCPU33.426815s retainedonce, NEVERrestart.
+Final all7 fit21.609775054GPUh/72.097402904CPUh supersedes ALLfitlives;
+offline7 .024613938GPUh/.022129879CPUh separate/nodoublechildren.
+Existing01 reporting2035131 healthy472/600/40active/88pending/no failures
+06:12:10, mem109418553344/load46.72. No reportinglosses read; no newjob,
+pool/recovery/gamebank. Original150/151 UNCONSUMED/R2ineligible.
+Tenminenabled,next2026-10-10T06:22:02.704Z; promptrefreshedALL7closed.
+Pending600study/cleanpoolclosure/frozenreduction/reporting/explicit01release.
+
 2026-10-10T06:02:09Z. Existing01 reporting pool2035131 admitted/alive,
 419/600 complete/40active/141pending/no failures, mem109567774720/load47.01.
 Fresh06:02:52 process contextPASS: manager63/blocks-gamesphysical0-39,

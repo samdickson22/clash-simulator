@@ -1,0 +1,55 @@
+{
+  "utc": "2026-10-10T06:12:08Z",
+  "pid": 2071651,
+  "pgid": 2071651,
+  "alive": false,
+  "all_seven_offline_closed": true,
+  "closed_arms": [
+    "X1",
+    "X2",
+    "X3",
+    "X4",
+    "X5",
+    "X6",
+    "X7"
+  ],
+  "meter": {
+    "parent_cpu_seconds": 4.422669,
+    "children_cpu_seconds": 29.004146,
+    "wall_seconds": 7494.0222197959665,
+    "failures": [],
+    "accounting": "Only local SSH/metadata descendants; remote scores separately whole-metered once."
+  },
+  "whole_cpu_seconds": 33.426815,
+  "state": {
+    "utc": "2026-10-10T06:12:08Z",
+    "stage": "frozen offline scores complete",
+    "stage2": {},
+    "active": null,
+    "offline_active": [],
+    "failures": [],
+    "x3_priority_requested": false,
+    "original_stage3_unconsumed": true,
+    "R2_eligible": false,
+    "interpretation": "Coordinator judged stage1 gates infeasible; frozen kills do not establish student quality.",
+    "postkill_study": "separate fresh-seed exploration; never adoptable",
+    "wall_seconds": 7494.020011202898
+  },
+  "launch": {
+    "pid": 2071651,
+    "pgid": 2071651,
+    "utc": "2026-10-10T04:07:14Z"
+  },
+  "no_restart": true,
+  "closure": {
+    "utc": "2026-10-10T06:15:18Z",
+    "own_controller_groups": [],
+    "controller_final_meter": {
+      "parent_cpu_seconds": 4.422669,
+      "children_cpu_seconds": 29.004146,
+      "wall_seconds": 7494.0222197959665,
+      "failures": [],
+      "accounting": "Only local SSH/metadata descendants; remote scores separately whole-metered once."
+    }
+  }
+}

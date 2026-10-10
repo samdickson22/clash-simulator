@@ -1,0 +1,56 @@
+{
+  "utc": "2026-10-10T06:13:33Z",
+  "arm": "X5",
+  "host": "127x04",
+  "fit_final_step": 9766,
+  "fit_final_ema_sha256": "03c22f6adec0544bfe02b0460bc668160b873e36d8205a2d7294141f8fe713fc",
+  "fit_exit": {
+    "utc": "2026-10-10T06:11:37Z",
+    "exit_code": 0,
+    "reason": null,
+    "supervisor_cpu_seconds": 1918.459271,
+    "trainer_tree_cpu_seconds": 50107.031942,
+    "wall_seconds": 19125.630499945953,
+    "peak_pss_bytes": 32289603584,
+    "max_processes": 8,
+    "min_gpu_free_bytes": 48414851072
+  },
+  "stage1_launch": {
+    "utc": "2026-10-10T06:11:52Z",
+    "supervisor_pid": 1291224,
+    "supervisor_pgid": 1291224,
+    "worker_pid": 1291233,
+    "worker_pgid": 1291233,
+    "checkpoint": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/fits/X5/step-00009766.pt"
+  },
+  "stage1_meter": {
+    "utc": "2026-10-10T06:12:05Z",
+    "arm": "X5",
+    "exit_code": 0,
+    "reason": null,
+    "parent_cpu_seconds": 0.101673,
+    "children_cpu_seconds": 10.927081999999999,
+    "gpu_wall_seconds": 12.245857857982628,
+    "peak_pss_bytes": 3093808128,
+    "min_gpu_free_bytes": 49517953024,
+    "note": "Whole parent+child CPU once; child result CPU is nested, never add separately. Failed/reaped attempts retained."
+  },
+  "stage1_survives": false,
+  "kill_reasons": [
+    "play recall <0.60",
+    "top-8 recall <0.50",
+    "root hard agreement <0.704"
+  ],
+  "stage2": "SKIP: coordinator infeasible-gate ruling; original bank unconsumed",
+  "stage3": "SKIP: coordinator infeasible-gate ruling; originald026 bank unconsumed",
+  "R2": "Ineligible under coordinator03:58 ruling",
+  "interpretation": "Frozen kills retained for record; infeasible gates do not establish student quality.",
+  "closure": {
+    "utc": "2026-10-10T06:12:53Z",
+    "own_fit_and_score_groups": [],
+    "gpu_processes": "",
+    "gpu_free_mib": "48666"
+  },
+  "original_scientific_pins_unchanged": true,
+  "descriptive_study": "Excluded by pre-report selection amendment693bc3b1; original double-step arm finishes offline for record"
+}

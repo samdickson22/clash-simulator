@@ -1,0 +1,51 @@
+{
+  "step": 9766,
+  "stopped": false,
+  "pins": {
+    "init_checkpoint": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "assets": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+    "human_manifest": "0546cfddcf79be12509953358fb499ac3be29493ba4a87893bfbfbbe0f179e68",
+    "teacher_manifests": [
+      "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b"
+    ],
+    "source_files": {
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/__init__.py": "441385ea7a0f4f57764dd579bc19b3b0f59b3806b88cf5cf0e28d7154e288087",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/acceptance.py": "b84fdd102c84b051572d3d56e49667e17e9baaffcb14ccba73e988d45a013161",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/audit_seeds.py": "e31e028a41c4f2961f90980e0d81d47f5d7b57b2731f8afe324b431c5180b4c1",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/capacity.py": "b2992916dabf5b3271a1e9791d64ac3a069cf8f037f103382dfaaaac00625bcc",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/check_store.py": "35ec366d4dba1c734d272c2e3953fd9b2698a90d4377c9f592ba011302124d86",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/checkpoint_assets.py": "efe907b785b244e414711dcbd57f3a847c4457a700952b4880572046b21e6bef",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/emitter.py": "dab616517ea6b33ae1de6a34909526cf5409ec4ad71c180188d95d9716cfecc1",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/fleet.py": "91948a34a4b3ee76a0c04b974d00241b7ee3bca6f684f3d0a2c65da6d88e5764",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/freeze_screen.py": "c2f2ee4660af06fa64cdf5ae34b84ec426ee565a9126276d2d4b67565fe425f8",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/generate.py": "bb7bb1485506c5699f39829f7d57c17e0b23d5c7004caa86fa6d26bce04026c6",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/pack.py": "5442af29f9bcea94f3ddebbd8de7ef18d041b53eb3d1e2456fa36edb75fc5d80",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/rows.py": "835a4104fbd46731998ca033223692813bd4c4fdf015b7a15317a0ffb780ab53",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/screen.py": "17d1b4086585840f5073285c9345355b4187c8342963963360213c3a9cff176e",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/screen_metrics.py": "0bf0369a025fbc358bf25f753c894917fa74db91bb3e3f146aaa6a02b854488b",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/student.py": "923448f153c9b4128b6e3d0076ed8a50d92507ed1d36709103396c0de07d2b95",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/teacher_batch.py": "6237a96ab5e29df4a3a1cfdc1fbd505d80af84f8faa4b3b3b99dfac1419e6dc4",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/test_screen.py": "4620cd34eb024f24f37e3ff127f5cf3c9ba9d6cbaa1000662cbb786c78ee92a5",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/test_student.py": "15fa724114f24acd1b4b63927484b39c120a2f67838f8e4246fd8fc168bbff33",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/test_targets_r2.py": "4af7b276d9a52569e42b414e3346dbb958ad12b134832c5f2ddf692e9551bbc7",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/exit_r1/train.py": "cbe3f77b969d0e5f5994b37286c62a6b580b87d86446c4deb0a184829bd45887",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/__init__.py": "98017d5739a04f658da7e4085068f050eacb78c4a57c8e1e57c1efd8b53a3065",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/assets.py": "738c4cd8928efb6cd4cba424fd223884c5f90fc024623bf02f3bcf5189853341",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/batching.py": "078fd982cb369ffe278424ac355b192131c2d1a045dbfe0d039354119c781658",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/benchmark.py": "628b34503c84848a4c87d688f5029e0ef8ef8e894b5a948ad8121cc3c55bb1e6",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/evaluate.py": "d83b821274d286bc44ba68bc80df842285f03b231a739b8de8d91ee0f14976e3",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/features.py": "4a1d2f79002ba704783d5138321b1c242ac04937b3cbfff3517b2ac541e02d3d",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/inference.py": "d5d05d7c6aa91276d5f31db6e5a7e1c91b4ffca1e263f7e13496a3fd2a11cf52",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/losses.py": "8948f211aa1fdbbf49857407835af59e96336d55c385df2c3baa3cf13cfe4870",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/network.py": "f931960356532af0d5739579ff607b89340ce0a696c6ce1737c8d113993f3ead",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/runner.py": "391f175c88beaf321a44fb597b79e686fd0fd481d5c27b268399cdff73b4e838",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/shakedown.py": "646a4fbc2ed28bb119424781f7266028aa5df6109dd68a05eef996c99f69af5d",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/store.py": "e05634d34e346e400aede7dd0a3e0e6c82071c21fd6c20065897e08c84852dc8",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/synthetic.py": "1600895b23e698ed5bfb5af8eb50ea57713f73e2cf07c963b54a0d12fa4add66",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/synthetic_store.py": "46704c46c7a8880d78f7f6b65a9a588ba9af2e1ef4636c6b41913c485175abf2",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/throughput.py": "6a9916eccf121d34ca33f0bbade9480576a4b4c33a17e0a52213b65086013f9d",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/throughput_runs.py": "eb1be2c92852360272ba65bcb1b7049f8df77b67eaa2c05a2f95caa503e6846d",
+      "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/source/imitation/model/train.py": "9a8465a1926fd9ac8238aa98bd0e95641605081bc3dd3a2f6863a9cd298035a5"
+    }
+  }
+}
