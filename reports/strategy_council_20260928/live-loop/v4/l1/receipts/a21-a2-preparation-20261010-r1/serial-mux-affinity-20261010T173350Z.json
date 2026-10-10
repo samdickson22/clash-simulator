@@ -1,0 +1,274 @@
+{
+  "STOP_written": false,
+  "actual_utc": "2026-10-10T17:33:50.337777+00:00",
+  "authorization": "Coordinator message labelled18:10Z, received at actual2026-10-10T17:33Z: exact2500504/2508732 affinity only toCPU53; skip changedidentity; no serial change",
+  "boot_id": "bd010cb6-41a6-4832-af28-14e902d3cb7c",
+  "forbidden_cpu": 116,
+  "host": "127x04",
+  "new_ssh_to_01_03_08": false,
+  "observation_script": "\nfrom pathlib import Path\nimport os,json,hashlib,datetime,subprocess,stat\nstamp=lambda:datetime.datetime.now(datetime.timezone.utc).isoformat()\nboot=Path('/proc/sys/kernel/random/boot_id').read_text().strip()\nassert boot=='bd010cb6-41a6-4832-af28-14e902d3cb7c'\ndef ident(pid):\n p=Path('/proc')/str(pid);f=(p/'stat').read_text().rsplit(') ',1)[1].split();cmd=(p/'cmdline').read_bytes();status=(p/'status').read_text();aff=sorted(os.sched_getaffinity(pid))\n return {'pid':pid,'starttime':int(f[19]),'ppid':int(f[1]),'uid_fields':[int(x) for x in next(x for x in status.splitlines() if x.startswith('Uid:')).split()[1:]],'cmdline_hex':cmd.hex(),'cmdline_argv':[x.decode() for x in cmd.split(b'\\0') if x],'cmdline_sha256':hashlib.sha256(cmd).hexdigest(),'affinity_list':aff,'affinity_mask_hex':hex(sum(1<<x for x in aff)),'nice':int(f[16]),'exe':os.readlink(p/'exe'),'cpu_ticks':int(f[11])+int(f[12]),'observed_utc':stamp()}\ndef serial():\n x=ident(2537585);assert x['starttime']==99915184 and x['ppid']==2499718 and x['affinity_list']==[52] and x['nice']==19\n assert x['cmdline_sha256']=='463d05cc888fdd05350c42dbd21f96e0ca98af8acb902838545a92cab7c394ba'\n x['schedstat']=list(map(int,Path('/proc/2537585/schedstat').read_text().split()));return x\nbefore_serial=serial();results=[]\nfor pid,start,host,sha in [(2500504,94875269,'127x03','c1c90c90009ea7469037c73be0314df1fb9e108fe5e9da4a896532defa60fd91'),(2508732,94882802,'127x08','c15e293c41e7ed39c580b543db59b7fb44d33de5302e137c6110371a6241b971')]:\n control='/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@'+host+'-22-a1-body-seal-r4'\n row={'expected_pid':pid,'expected_starttime':start,'expected_cmdline_sha256':sha,'expected_control_path':control}\n try:\n  before=ident(pid);row['before']=before\n  assert before['starttime']==start and before['cmdline_sha256']==sha and before['cmdline_argv']==['ssh: '+control+' [mux]']\n  assert before['uid_fields']==[3822945]*4 and before['exe']=='/usr/bin/ssh' and before['affinity_list']==[52] and before['nice']==19\n  st=Path(control).stat();assert stat.S_ISSOCK(st.st_mode) and st.st_uid==3822945\n  inodes=[]\n  for fd in (Path('/proc')/str(pid)/'fd').iterdir():\n   try:target=os.readlink(fd)\n   except FileNotFoundError:continue\n   if target.startswith('socket:['):inodes.append(int(target[8:-1]))\n  unix=[x for x in Path('/proc/net/unix').read_text().splitlines()[1:] if len(x.split())>=8 and int(x.split()[6]) in inodes and (x.split()[7]==control or x.split()[7].startswith(control+'.'))]\n  assert unix\n  row['control_socket_stat']={'uid':st.st_uid,'filesystem_inode':st.st_ino,'mode':st.st_mode};row['owned_unix_socket_rows']=unix\n  immediate=ident(pid);assert all(immediate[k]==before[k] for k in ['starttime','cmdline_sha256','uid_fields','affinity_list'])\n except (OSError,AssertionError) as e:\n  row.update(status='SKIPPED_NO_CHANGE',reason=type(e).__name__+': '+str(e));results.append(row);continue\n command=['taskset','-p','-c','53',str(pid)];row['command']=command;row['change_started_utc']=stamp()\n run=subprocess.run(command,capture_output=True,text=True);row.update(command_returncode=run.returncode,command_stdout=run.stdout,command_stderr=run.stderr)\n try:\n  after=ident(pid);row['after']=after\n  same=all(after[k]==before[k] for k in ['starttime','cmdline_sha256','uid_fields','nice','cmdline_argv'])\n  row['status']='AFFINITY_CHANGED_VERIFIED' if run.returncode==0 and same and after['affinity_list']==[53] else 'POSTCHECK_FAILURE_REQUIRES_REPORT'\n except OSError as e:row.update(status='POSTCHECK_UNAVAILABLE_REQUIRES_REPORT',reason=str(e))\n results.append(row)\nroot=Path('/mpac/sdicks02/jobs/clasher/v4-a1-body-seal-20261009-r4');after_serial=serial();b=(root/'verify.log').read_bytes();rows=[]\nfor line in b.splitlines():\n try:x=json.loads(line)\n except ValueError:continue\n if set(('epoch','body','matches')).issubset(x):rows.append(x)\norder=list(dict.fromkeys((x['epoch'],x['body']) for x in rows))\nbaseline={'utc':stamp(),'latest':rows[-1],'completed_branch_recomputations_lower_bound':len(order)-1,'progress_file_sha256':hashlib.sha256(b).hexdigest(),'serial':after_serial,'io_psi':Path('/proc/pressure/io').read_text(),'clock_ticks_per_second':os.sysconf('SC_CLK_TCK')}\nprint(json.dumps({'schema':'clasher.serial-r4.mux-affinity-change.v1','host':'127x04','boot_id':boot,'actual_utc':stamp(),'authorization':'Coordinator message labelled18:10Z, received at actual2026-10-10T17:33Z: exact2500504/2508732 affinity only toCPU53; skip changedidentity; no serial change','target_cpu':53,'forbidden_cpu':116,'serial_before':before_serial,'serial_after':after_serial,'results':results,'post_change_progress_baseline':baseline,'new_ssh_to_01_03_08':False,'signals_sent':False,'process_restarts':False,'STOP_written':False,'only_runtime_mutations':'taskset -p -c 53 on the two exact authenticated mux PIDs if all identity checks pass'}))\n",
+  "observation_script_sha256": "80de6f026b142bbab2409a1d11ccc0d5ba3e64413bfea047518cfe62fa83f305",
+  "only_runtime_mutations": "taskset -p -c 53 on the two exact authenticated mux PIDs if all identity checks pass",
+  "post_change_progress_baseline": {
+    "clock_ticks_per_second": 100,
+    "completed_branch_recomputations_lower_bound": 122,
+    "io_psi": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1342151508\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1335267153\n",
+    "latest": {
+      "body": 0.6,
+      "epoch": 14,
+      "matches": 33
+    },
+    "progress_file_sha256": "3f6f221e28fb231568a5f3bc1c2c2e446360dbd245fb588470188202615a3a61",
+    "serial": {
+      "affinity_list": [
+        52
+      ],
+      "affinity_mask_hex": "0x10000000000000",
+      "cmdline_argv": [
+        "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+        "-B",
+        "/mpac/sdicks02/jobs/clasher/v4-a1-body-seal-20261009-r4/run_stage.py",
+        "verify"
+      ],
+      "cmdline_hex": "2f6d7061632f736469636b7330322f656e76732f636c61736865722d6770752f62696e2f707974686f6e002d42002f6d7061632f736469636b7330322f6a6f62732f636c61736865722f76342d61312d626f64792d7365616c2d32303236313030392d72342f72756e5f73746167652e70790076657269667900",
+      "cmdline_sha256": "463d05cc888fdd05350c42dbd21f96e0ca98af8acb902838545a92cab7c394ba",
+      "cpu_ticks": 1868875,
+      "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+      "nice": 19,
+      "observed_utc": "2026-10-10T17:33:50.311394+00:00",
+      "pid": 2537585,
+      "ppid": 2499718,
+      "schedstat": [
+        18688760562605,
+        1564584414587,
+        4071261
+      ],
+      "starttime": 99915184,
+      "uid_fields": [
+        3822945,
+        3822945,
+        3822945,
+        3822945
+      ]
+    },
+    "utc": "2026-10-10T17:33:50.337522+00:00"
+  },
+  "process_restarts": false,
+  "results": [
+    {
+      "after": {
+        "affinity_list": [
+          53
+        ],
+        "affinity_mask_hex": "0x20000000000000",
+        "cmdline_argv": [
+          "ssh: /mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x03-22-a1-body-seal-r4 [mux]"
+        ],
+        "cmdline_hex": "7373683a202f6d7061632f736469636b7330322f6a6f62732f636c61736865722f76342d61312d706172616c6c656c2d72322f736f636b6574732f736469636b733032403132377830332d32322d61312d626f64792d7365616c2d7234205b6d75785d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "cmdline_sha256": "c1c90c90009ea7469037c73be0314df1fb9e108fe5e9da4a896532defa60fd91",
+        "cpu_ticks": 380447,
+        "exe": "/usr/bin/ssh",
+        "nice": 19,
+        "observed_utc": "2026-10-10T17:33:50.308184+00:00",
+        "pid": 2500504,
+        "ppid": 1,
+        "starttime": 94875269,
+        "uid_fields": [
+          3822945,
+          3822945,
+          3822945,
+          3822945
+        ]
+      },
+      "before": {
+        "affinity_list": [
+          52
+        ],
+        "affinity_mask_hex": "0x10000000000000",
+        "cmdline_argv": [
+          "ssh: /mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x03-22-a1-body-seal-r4 [mux]"
+        ],
+        "cmdline_hex": "7373683a202f6d7061632f736469636b7330322f6a6f62732f636c61736865722f76342d61312d706172616c6c656c2d72322f736f636b6574732f736469636b733032403132377830332d32322d61312d626f64792d7365616c2d7234205b6d75785d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "cmdline_sha256": "c1c90c90009ea7469037c73be0314df1fb9e108fe5e9da4a896532defa60fd91",
+        "cpu_ticks": 380447,
+        "exe": "/usr/bin/ssh",
+        "nice": 19,
+        "observed_utc": "2026-10-10T17:33:50.304293+00:00",
+        "pid": 2500504,
+        "ppid": 1,
+        "starttime": 94875269,
+        "uid_fields": [
+          3822945,
+          3822945,
+          3822945,
+          3822945
+        ]
+      },
+      "change_started_utc": "2026-10-10T17:33:50.306239+00:00",
+      "command": [
+        "taskset",
+        "-p",
+        "-c",
+        "53",
+        "2500504"
+      ],
+      "command_returncode": 0,
+      "command_stderr": "",
+      "command_stdout": "pid 2500504's current affinity list: 52\npid 2500504's new affinity list: 53\n",
+      "control_socket_stat": {
+        "filesystem_inode": 54932869,
+        "mode": 49536,
+        "uid": 3822945
+      },
+      "expected_cmdline_sha256": "c1c90c90009ea7469037c73be0314df1fb9e108fe5e9da4a896532defa60fd91",
+      "expected_control_path": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x03-22-a1-body-seal-r4",
+      "expected_pid": 2500504,
+      "expected_starttime": 94875269,
+      "owned_unix_socket_rows": [
+        "0000000000000000: 00000002 00000000 00010000 0001 01 69887015 /mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x03-22-a1-body-seal-r4.DjJpoat7w73NaH8k"
+      ],
+      "status": "AFFINITY_CHANGED_VERIFIED"
+    },
+    {
+      "after": {
+        "affinity_list": [
+          53
+        ],
+        "affinity_mask_hex": "0x20000000000000",
+        "cmdline_argv": [
+          "ssh: /mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a1-body-seal-r4 [mux]"
+        ],
+        "cmdline_hex": "7373683a202f6d7061632f736469636b7330322f6a6f62732f636c61736865722f76342d61312d706172616c6c656c2d72322f736f636b6574732f736469636b733032403132377830382d32322d61312d626f64792d7365616c2d7234205b6d75785d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "cmdline_sha256": "c15e293c41e7ed39c580b543db59b7fb44d33de5302e137c6110371a6241b971",
+        "cpu_ticks": 64035,
+        "exe": "/usr/bin/ssh",
+        "nice": 19,
+        "observed_utc": "2026-10-10T17:33:50.311257+00:00",
+        "pid": 2508732,
+        "ppid": 1,
+        "starttime": 94882802,
+        "uid_fields": [
+          3822945,
+          3822945,
+          3822945,
+          3822945
+        ]
+      },
+      "before": {
+        "affinity_list": [
+          52
+        ],
+        "affinity_mask_hex": "0x10000000000000",
+        "cmdline_argv": [
+          "ssh: /mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a1-body-seal-r4 [mux]"
+        ],
+        "cmdline_hex": "7373683a202f6d7061632f736469636b7330322f6a6f62732f636c61736865722f76342d61312d706172616c6c656c2d72322f736f636b6574732f736469636b733032403132377830382d32322d61312d626f64792d7365616c2d7234205b6d75785d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "cmdline_sha256": "c15e293c41e7ed39c580b543db59b7fb44d33de5302e137c6110371a6241b971",
+        "cpu_ticks": 64035,
+        "exe": "/usr/bin/ssh",
+        "nice": 19,
+        "observed_utc": "2026-10-10T17:33:50.308330+00:00",
+        "pid": 2508732,
+        "ppid": 1,
+        "starttime": 94882802,
+        "uid_fields": [
+          3822945,
+          3822945,
+          3822945,
+          3822945
+        ]
+      },
+      "change_started_utc": "2026-10-10T17:33:50.309608+00:00",
+      "command": [
+        "taskset",
+        "-p",
+        "-c",
+        "53",
+        "2508732"
+      ],
+      "command_returncode": 0,
+      "command_stderr": "",
+      "command_stdout": "pid 2508732's current affinity list: 52\npid 2508732's new affinity list: 53\n",
+      "control_socket_stat": {
+        "filesystem_inode": 54932848,
+        "mode": 49536,
+        "uid": 3822945
+      },
+      "expected_cmdline_sha256": "c15e293c41e7ed39c580b543db59b7fb44d33de5302e137c6110371a6241b971",
+      "expected_control_path": "/mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a1-body-seal-r4",
+      "expected_pid": 2508732,
+      "expected_starttime": 94882802,
+      "owned_unix_socket_rows": [
+        "0000000000000000: 00000002 00000000 00010000 0001 01 69931234 /mpac/sdicks02/jobs/clasher/v4-a1-parallel-r2/sockets/sdicks02@127x08-22-a1-body-seal-r4.3eWYO32UF1oOzXpf"
+      ],
+      "status": "AFFINITY_CHANGED_VERIFIED"
+    }
+  ],
+  "schema": "clasher.serial-r4.mux-affinity-change.v1",
+  "serial_after": {
+    "affinity_list": [
+      52
+    ],
+    "affinity_mask_hex": "0x10000000000000",
+    "cmdline_argv": [
+      "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+      "-B",
+      "/mpac/sdicks02/jobs/clasher/v4-a1-body-seal-20261009-r4/run_stage.py",
+      "verify"
+    ],
+    "cmdline_hex": "2f6d7061632f736469636b7330322f656e76732f636c61736865722d6770752f62696e2f707974686f6e002d42002f6d7061632f736469636b7330322f6a6f62732f636c61736865722f76342d61312d626f64792d7365616c2d32303236313030392d72342f72756e5f73746167652e70790076657269667900",
+    "cmdline_sha256": "463d05cc888fdd05350c42dbd21f96e0ca98af8acb902838545a92cab7c394ba",
+    "cpu_ticks": 1868875,
+    "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+    "nice": 19,
+    "observed_utc": "2026-10-10T17:33:50.311394+00:00",
+    "pid": 2537585,
+    "ppid": 2499718,
+    "schedstat": [
+      18688760562605,
+      1564584414587,
+      4071261
+    ],
+    "starttime": 99915184,
+    "uid_fields": [
+      3822945,
+      3822945,
+      3822945,
+      3822945
+    ]
+  },
+  "serial_before": {
+    "affinity_list": [
+      52
+    ],
+    "affinity_mask_hex": "0x10000000000000",
+    "cmdline_argv": [
+      "/mpac/sdicks02/envs/clasher-gpu/bin/python",
+      "-B",
+      "/mpac/sdicks02/jobs/clasher/v4-a1-body-seal-20261009-r4/run_stage.py",
+      "verify"
+    ],
+    "cmdline_hex": "2f6d7061632f736469636b7330322f656e76732f636c61736865722d6770752f62696e2f707974686f6e002d42002f6d7061632f736469636b7330322f6a6f62732f636c61736865722f76342d61312d626f64792d7365616c2d32303236313030392d72342f72756e5f73746167652e70790076657269667900",
+    "cmdline_sha256": "463d05cc888fdd05350c42dbd21f96e0ca98af8acb902838545a92cab7c394ba",
+    "cpu_ticks": 1868874,
+    "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+    "nice": 19,
+    "observed_utc": "2026-10-10T17:33:50.304044+00:00",
+    "pid": 2537585,
+    "ppid": 2499718,
+    "schedstat": [
+      18688752592039,
+      1564584404837,
+      4071260
+    ],
+    "starttime": 99915184,
+    "uid_fields": [
+      3822945,
+      3822945,
+      3822945,
+      3822945
+    ]
+  },
+  "signals_sent": false,
+  "target_cpu": 53
+}
