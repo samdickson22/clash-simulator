@@ -1756,3 +1756,10 @@ Also on the hub, but with copies elsewhere:
   - R3 round 2 is on 09/13/16 (73–81%). K2 is at 1457/1800 on 03 (~07:00Z). X's descriptive study finished on 01; 01 is idle pending X's release, then the R3a descriptive run.
   - **Returned leased 127x14 and 127x15 to roader early**: no clasher GPU work is queued for them.
   - Seal ETA ~11Z; O2 is satisfied, O4 is pending.
+- **06:45 UTC: X descriptive post-kill S-default study** (NEVER ADOPTABLE; 3,000 games, 0 failures).
+  - 1-core losses: X1 99.5%, X2 99.7%, X4 99.3% as the cutoff default, vs C-v1 66.8% and K0 42.8%. Paired S−C ≈ +33 pp.
+  - **Lessons:**
+    1. Under 1-core anytime ordering, even a v1 default (C-v1) is far worse than K0's coarse-first ordering.
+    2. The r2 students are catastrophic as defaults; their low play-recall matches.
+    3. The deployment-relevant 1-core fallback harness is **K0-style** (coarse-first deadline W, with the student replacing v1 as fallback). That is where r1 S-teacher gave −7.5 pp.
+  - → **Switch R3's descriptive run and round-2 stage 2 to the frozen r1 (b) K0-fallback harness** (arm = student fallback, control = v1 fallback), via an addendum before any stage-2 game.
