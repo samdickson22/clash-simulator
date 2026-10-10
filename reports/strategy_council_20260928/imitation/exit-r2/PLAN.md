@@ -118,7 +118,8 @@ Seven injected-clock tests pass. The v1 stand-in changed11/125 actions versus
 empty-hook K1 (8.8% diagnostic, not a qualification failure); initial44/50
 is retained. Fixture-only short HUDs are filled with known distinct tokens
 from the fixed first train-archetype deck. Real games retain exact opening
-orders. Seven admission/ranking/legal-default/stop-reap tests pass. Each raw and translated
+orders. Seven admission/ranking/legal-default/stop-reap tests pass. Each raw
+and translated
 game JSON records threads/coarse_horizon/default_source. After the new
 addendum is committed/pushed and K timing work exits, six disjoint wrapper
 smokes (indices4/5, C-v1/S-standin/K0) must pass actual timer/opponent/polling/
@@ -175,3 +176,8 @@ including failed/replayed attempts. PROGRESS-X.md carries timestamps, exact
 commands, identities and durable checkpoints. Coordinator milestones<150words.
 Only explicit owned paths are staged/committed; run clasher-secret-scan on the
 staged diff and push each milestone.
+
+Operational stage3 amendment: K-v2 may use later repair phase names (r3 etc).
+A successful REPORTING*-DONE marker is required together with zero active
+K-v2 timing processes, checked during blocks. Earlier literal-R2 guard is
+archived in the original d0264ec9 stage3 freeze. Scientific design unchanged.

@@ -432,3 +432,31 @@ stays to prohibit historical comparator. Six fresh wrapper smokes at152+4/5
 await K-v2 release and addendum push; pass before any conditional reporting.
 Reporting still needs all six gates resolved and at most3 ranked survivors.
 Conditional R2 still needs stage2 survivor; no admission/outcome yet.
+
+2026-10-10T02:19:36Z. S-default science addendum d0264ec9 secret-scanned/committed/pushed
+before any replacement game. First prelaunch receipt02:16:53Z records commit
+and exact hash; real03 source/input admission PASS02:16:55Z, K release false.
+K-v2 advanced to smoke-r3 at02:16:56Z, so operational amendment recognizes
+REPORTING*-DONE (still zero active K-v2 run.py processes), preventing an
+indefinite wait on an obsolete literal-R2 marker. No K file/process changes.
+Prior S-default addendum archived byte-exact as stage3-sdefault-freeze-d0264ec9;
+new amendment changes admission only. Default/hook/contrast/seeds/native/K
+source/science unchanged. Seven block tests re-pass withR3 marker. Commit/push
+this amendment before games; then update prelaunch receipt to amendment commit.
+All six original fit groups deduplicated02:17:42Z,steps2778/2714/2570/1754/
+2425/1780; eight nice10 processes each, no stop/exit.08 quiet entriesempty,
+leased09/16/13 resource floors/leases pass. Current03controller1596239 healthy
+(no stage metrics/active gate/failure), priorityfalse. Receiptmonitor0217
+replaces prior live totals: GPU-wall7.978887268h,whole-treeCPU
+26.527244444h, not additive. Durable X3step2500;08 guard
+05:15Z/vacate05:30Z and13 resume priority unchanged. No duplicate job/migration.
+Stage3 replacement remains waiting K-v2 release, disjoint152indices4/5 smokes,
+then all-six gate resolution and max3 ranked survivors. No151 game consumed.
+Use own venv absolutePython path; all caches underjob.
+Smoke command after K release: game_pool_sdefault.py --job $job --smoke
+--cores 0 1; reduce_stage3_sdefault.py --job $job --smoke seals actual-wrapper
+qualification. Reporting command only after gates: same pool without--smoke
+--cores [load-qualified physical0-59]; reduce without--smoke gives each S verdict.
+Before detaching, inspect own launch/progress/PID/group and flock lock; never
+duplicate a pool/block. Whole pool CPU includes all blocks/cases, no child sum.
+Conditional R2 still requires a stage2 survivor; no eligibility or generation yet.

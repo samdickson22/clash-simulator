@@ -52,7 +52,7 @@ def load_receipt():
 
 def timing_released():
     # REPORTING-DONE prevents admission in the gap between K smoke and reporting.
-    if not any((K_ROOT/name).is_file() for name in ('REPORTING-DONE','REPORTING-R2-DONE')):return False
+    if not any(K_ROOT.glob('REPORTING*-DONE')):return False
     output=subprocess.check_output(['ps','-eo','args='],text=True)
     return not any('reports/explore/k-v2/run.py' in line for line in output.splitlines())
 

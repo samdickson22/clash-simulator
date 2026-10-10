@@ -25,7 +25,7 @@ def test_selection_waits_for_every_arm_and_caps_three(tmp_path):
 def test_k_release_marker_does_not_admit_active_timing_processes(tmp_path):
     with patch.object(a,'K_ROOT',tmp_path),patch.object(a.subprocess,'check_output',return_value=''):
         assert not a.timing_released()
-        (tmp_path/'REPORTING-R2-DONE').touch()
+        (tmp_path/'REPORTING-R3-DONE').touch()
         assert a.timing_released()
         with patch.object(a.subprocess,'check_output',return_value='python reports/explore/k-v2/run.py --out reporting'):
             assert not a.timing_released()

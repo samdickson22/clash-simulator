@@ -2,18 +2,18 @@
   "passed": true,
   "tests": 7,
   "exit_code": 0,
-  "utc": "2026-10-10T02:18:27Z",
+  "utc": "2026-10-10T02:16:00Z",
   "no_game_seeds_consumed": true,
   "files": {
-    "stage3_sdefault_admission.py": "a81243640b27671d74c5ad3a6e334d829505d31c47755e3f6270a5a3f6129214",
+    "stage3_sdefault_admission.py": "8b03bca6fac3b0d17db4b84a898ca3a1853e772997a57aa79b17a646ba508928",
     "game_worker_sdefault.py": "454202e2659863645f650844e6a47c6cd77f39ebafc899977af4274528cd3886",
     "stage3_block_worker.py": "5d95f9686672a94b9d30dc4e29443ea6586a00f4532ae9b4be3dba020f551824",
     "game_pool_sdefault.py": "fd76ca6694320f43b2dbcf18598f73a0ce143e8f46f3ba26e791da3912ebde95",
     "reduce_stage3_sdefault.py": "2d997722f4151062fb3f74980bf0814163d286b323d9a588fc48d7a6a088a382",
-    "test_sdefault_blocks.py": "46c650939a6e4ee132cbb1e677a0a0e90ad103184f8288c34de107125ef7a7af",
+    "test_sdefault_blocks.py": "9dfda74aa990d37054215e6d01b398df366807bd816714e0c8dbd65c9940abb4",
     "qualify_sdefault_blocks.py": "2c48eb3cc1bb7365654a83a107804d456ca734253aa440f848e54c5a54af5378"
   },
-  "parent_cpu_seconds": 1.0569169999999999,
-  "children_cpu_seconds": 1.7872029999999999,
-  "wall_seconds": 1.8366726669482887
+  "parent_cpu_seconds": 1.01752,
+  "children_cpu_seconds": 1.6962419999999998,
+  "wall_seconds": 1.7234332298394293
 }

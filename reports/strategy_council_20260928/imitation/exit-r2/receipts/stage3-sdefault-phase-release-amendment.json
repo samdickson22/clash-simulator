@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-10T02:19:36Z",
+  "reason": "K-v2 advanced to smoke-r3 at02:16:56Z; literal -R2 completion check would indefinitely miss its later successful reporting marker.",
+  "prior_commit": "d0264ec9b0e4259c18400a6cc7b15722f0c41a21",
+  "prior_addendum_sha256": "b774e1b52a07db0fdbb83cc01302cc7ff64a30aff2573256758af898d0eecf53",
+  "current_addendum_sha256": "7f62b4e4ac4dccbef4f555f1ca8b10b4a77d0412d02607f26c6a873c1272d1a7",
+  "qualification_sha256": "a4c621cae3a73073c3eba99b76a8778c9502452ece4e4ab50cc03c90e27e6e02",
+  "reporting_consumed": 0,
+  "scientific_design_unchanged": true,
+  "training_freeze_unchanged": true,
+  "rule": "Successful REPORTING*-DONE marker and no active K-v2 run.py timing processes; rechecked during each seed block. No K files or processes altered."
+}

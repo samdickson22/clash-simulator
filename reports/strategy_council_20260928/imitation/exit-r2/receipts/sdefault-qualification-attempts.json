@@ -46,10 +46,10 @@
   ],
   "job": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1",
   "metered_qualification_cpu_seconds": 200.94031299999997,
-  "block_qualification_cpu_seconds": 10.884937,
+  "block_qualification_cpu_seconds": 13.729057000000001,
   "metadata_inventory_cpu_seconds": 0.078768,
   "unmetered": "Failed shell-only attempt4 and first direct four block pytest checks (4.08wall seconds) lack processCPU meter; disclosed preparation overhead. No fit/game work in those attempts.",
   "no_game_seeds_consumed": true,
   "all_qualifiers_exited": true,
-  "block_qualification_attempts": 4
+  "block_qualification_attempts": 5
 }

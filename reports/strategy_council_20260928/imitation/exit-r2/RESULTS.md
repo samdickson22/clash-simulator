@@ -13,12 +13,12 @@ The committed plan/seed audit must precede fitting; use final EMA only.
 
 | Arm | Target / fraction | Fit | Stage1 | Stage2 | Stage3 | Decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| X1 | T=.003 /1.0 | running09, step1804/4883 | pending | conditional | held | pending |
-| X2 | T=.0001 /1.0 | running16, step1753/4883 | pending | conditional | held | pending |
-| X3 | z-score τ=.5 /1.0 | running08, step1682/4883 | pending | conditional | held | pending |
-| X4 | T=.003 /.75 | running01, step946/4883, micro3584 | pending | conditional | held | pending |
-| X5 | X1 double steps /1.0 | running04, step1654/9766 | pending | conditional | held | pending |
-| X6 | T=.0001 /.75 | running13, step780/4883, micro3584 | pending | conditional | held | pending |
+| X1 | T=.003 /1.0 | running09, step2778/4883 | pending | conditional | held | pending |
+| X2 | T=.0001 /1.0 | running16, step2714/4883 | pending | conditional | held | pending |
+| X3 | z-score τ=.5 /1.0 | running08, step2570/4883 | pending | conditional | held | pending |
+| X4 | T=.003 /.75 | running01, step1754/4883, micro3584 | pending | conditional | held | pending |
+| X5 | X1 double steps /1.0 | running04, step2425/9766 | pending | conditional | held | pending |
+| X6 | T=.0001 /.75 | running13, step1780/4883, micro3584 | pending | conditional | held | pending |
 
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
 seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
@@ -62,23 +62,23 @@ X6 outcome claimed. Original controller replacement meter is
 9.379653CPU seconds (parent+children once); superseded six-arm controller
 1502885 adds11.933346CPU seconds (parent1.784861+metadata children10.148485),
 with no evaluation active on exit. Current G-admission controller/gate meter pending.
-Current-attempt snapshots at2026-10-10 01:48:12–21Z:5.046554402 allocated
-GPU-wall hours and16.613594444 provisional whole-tree CPU-hours across six fits.
-Original five are attempt2; X6 is attempt1. These running totals replace earlier
-snapshots and will be replaced by final supervisor exit meters; they exclude
-failed attempts and preparation costs above.
+Current-attempt snapshot at2026-10-10 02:17:42Z: 7.978887268 allocated
+GPU-wall hours and26.527244444 provisional whole-tree CPU-hours
+across six fits. Original five are attempt2; X6 is attempt1. These live totals
+replace prior snapshots and later final exit meters replace them. Closed
+failed/preparation/controller/qualification work stays separate.
 
 | Arm | Live fit GPU-wall h | Provisional live fit CPU h |
 | --- | --- | --- |
-| X1 | 0.924720 | 2.402142 |
-| X2 | 0.925252 | 2.481139 |
-| X3 | 0.924699 | 2.724722 |
-| X4 | 0.922687 | 4.856256 |
-| X5 | 0.924710 | 2.541678 |
-| X6 | 0.424486 | 1.607658 |
+| X1 | 1.412455 | 3.682467 |
+| X2 | 1.414116 | 3.809397 |
+| X3 | 1.414154 | 4.174178 |
+| X4 | 1.411341 | 7.287017 |
+| X5 | 1.413446 | 4.067175 |
+| X6 | 0.913375 | 3.507011 |
 
 Own supervisor/trainer/loaders are counted once; segment diagnostics are not
-added again. Receipt: `receipts/monitor-20261010T0148Z.json`. All six have eight
+added again. Receipt: `receipts/monitor-20261010T0217Z.json`. All six have eight
 owned processes, nice10, no stop reason. Leased09/16/13 remain below46GB PSS
 and above8GiB GPU free. 08 quiet entries are empty after stripping comments.
 Capacity released13 at01:03Z; independent GPU-idle check01:12:24Z confirms
@@ -159,8 +159,15 @@ hook/default effects. No control pre-run; same-seed complete interleaved blocks
 are required and K-v2 timing games must exit first. No replacement game has run.
 All six synthetic qualification attempts are retained, including fixture failures
 and the pre-Python launcher error. Metered synthetic CPU=200.940313s
-(0.055816754h), plus all four block qualification attempts CPU=10.884937s.
+(0.055816754h), plus all five block qualification attempts CPU=13.729057s.
 These costs are separate preparation, never scientific reporting outcomes.
 Small unmetered shell/direct-test preparation overhead is explicitly disclosed
 in sdefault-qualification-attempts.json. Disjoint replacement wrapper smokes
 remain pending K-v2 release; 600-seed reporting remains conditional.
+
+S-default scientific freeze d0264ec9 pushed before any new game. Operational
+phase-release check widened before games because K-v2 advanced to smoke-r3;
+a successful REPORTING*-DONE marker still requires zero active timing processes.
+Original stage3 freeze archived, default/hook/contrast/seed design unchanged.
+All seven block tests re-pass. K timing release remains false02:16:55Z, so no
+wrapper-smoke or replacement reporting process launched.
