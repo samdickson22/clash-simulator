@@ -1848,3 +1848,4 @@ Also on the hub, but with copies elsewhere:
 - **13:35 UTC: G COMPLETE: 6,046,004 teacher roots**, all SHA-verified and packed (49,703 games, 31 shards, concatenable with r1 1c8e1f49; `f0634e7b`). 01/03/08 are now free.
   - **Next use:** the search-tier confirmatory fleet runs (PREREG r3 freeze pending), on exclusive timing hosts 01/03 plus 08 until the B window.
   - Commissioning the confirmatory harness worker now; no games before the freeze.
+- **13:36 UTC: PREREG-SEARCH-TIERS FROZEN** (`PREREG-SEARCH-TIERS-FREEZE-20261010.json`). It binds the PREREG r3 + E4-V3 addendum r3 by SHA, after independent review, r2 conformance, and my check of the E1–E8 diff. Errata noted for stale 'r2' self-labels. **T1 fleet runs may proceed** after T1's own plan/seed-audit freeze; outcomes stay sealed until the Mac summary is committed.

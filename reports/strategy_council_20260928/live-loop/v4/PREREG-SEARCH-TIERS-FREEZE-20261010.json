@@ -1,0 +1,44 @@
+{
+ "decision": "FROZEN",
+ "study": "PREREG-SEARCH-TIERS",
+ "frozen_utc": "2026-10-10T13:36:52+00:00",
+ "issued_by": "coordinator 0523ae6f",
+ "frozen_documents": {
+  "prereg_r3": {
+   "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
+   "sha256": "ef0db97ad509753ccf63c7376f800d6db7f0b82ee07f102476eafb939e2a4c77"
+  },
+  "e4v3_addendum_r3": {
+   "path": "reports/strategy_council_20260928/live-loop/v4/mac-e4-package/E4-V3-ADDENDUM-r3-DRAFT.md",
+   "sha256": "fc54507d5f742f4ef6ecd0b656ee47fdb61d1468a14ff4cb4dd14a94a6311a9b"
+  },
+  "e1_e8_diff": {
+   "path": "reports/strategy_council_20260928/live-loop/v4/E1-E8-DIFF.md",
+   "sha256": "ec755a950d75eaedb6f7f816ea356908b17e2ad76c00619aeeafe04c04eae986"
+  },
+  "review_r1": {
+   "path": "reports/strategy_council_20260928/live-loop/v4/REVIEW-PREREG-SEARCH-TIERS-20261010.md",
+   "sha256": "a3a52da81d97e421386a377dc97407c0c860f2efb894fee2effb5f6173d881e2"
+  },
+  "review_r2_conformance": {
+   "path": "reports/strategy_council_20260928/live-loop/v4/REVIEW-PREREG-SEARCH-TIERS-r2-CONFORMANCE-20261010.md",
+   "sha256": "b68795f8cfd7309b202e189c6fbad6f8d9c0b4d056fa3845572afe8f69c52187"
+  },
+  "c1_c14_response": {
+   "path": "reports/strategy_council_20260928/live-loop/v4/C1-C14-RESPONSE.md",
+   "sha256": "a0da32b025be3e8d6e521998ed8a59732300241a309ed65cabc2c780bc9d4464"
+  },
+  "prereg_r2": {
+   "path": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r2-DRAFT.md",
+   "sha256": "88be64715852fba1df31bbc5a9a3156cc38b5051fd5bf7103b4ef73ec0a4a009"
+  },
+  "decision_memo_r2": {
+   "path": "reports/strategy_council_20260928/DECISION-MAC-TIERS-20261010-r2.md",
+   "sha256": "0f85a887f9a97ebcb0f81568f8c0ad9f0e2bad966bede986d9fdbced84ede6ff"
+  }
+ },
+ "deck_catalogue_sha256_prefix": "80de4afb",
+ "coordinator_verification": "E1-E8-DIFF checked: 15 hunks, each labelled E1..E8(a-g); all eight conformance edits present; no unlabelled changes. E7 whole-sentence replacement accepted (1.17 pp fact retained in s2.1).",
+ "errata": "The r3 files retain stale self-labels \"r2\" in their headers/cross-references (e.g. title line, links to *-r2-DRAFT.md). Binding is by the SHA-256 values above: the frozen PREREG is PREREG-SEARCH-TIERS-r3-DRAFT.md and the frozen addendum is E4-V3-ADDENDUM-r3-DRAFT.md; any reference to r2 drafts within them is to be read as the r3 counterpart. Decision memo unchanged (r2).",
+ "reporting_games_require": "T1 worker frozen plan + seed audit committed before any reporting game; fleet outcomes sealed until Mac summary committed (C-sealing condition)."
+}
