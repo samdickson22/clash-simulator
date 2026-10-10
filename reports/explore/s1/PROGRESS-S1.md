@@ -116,3 +116,13 @@ Resumption: phaseexit must rc0/reasonnull, noownedgroups; then boundedadvance
 for frozenreduction/GC/cost. execution_audit includes attempts/reporting-r1
 18.317127CPU s and originalsmoke provenance. Scientificfreeze dfefec9f,
 no scientificsource changes since qualification. FinalMacnote/result pending.
+
+2026-10-10T10:16:27Z — R2 metadata checkpoint867/3000games,
+168/600blocks. Freshhostaudit10:15:46Z whoempty,
+zero foreigncompute/active,15ownPythonprocesses (supervisor/main/13workers),
+~118GiBfree; nooutcomeinspection. Transferunitreview found originalrsynccap
+20000KiB/s=20.48decimalMB/s,2.4%above strictrequested20MB/s. Originalreceipt
+immutable; additivecapnote records discrepancy (actualpeak unmeasured), both
+fileSHAs verified, copyfinished08:48:50Z/no03detachedprocess. Noextra03access
+orcopy undertaken. All scientificsource/seedplan unchanged. Next monitor
+complete reporting then frozenreduction/GC/cost/source/finalvacancy audit.

@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-10T10:16:27Z",
+  "original_receipt": "corpus-transfer.json",
+  "configured_kib_per_second": 20000,
+  "configured_decimal_MB_per_second": 20.48,
+  "requested_decimal_MB_per_second_max": 20,
+  "strict_decimal_cap_compliant": false,
+  "excess_percent": 2.4,
+  "actual_peak_transfer_rate_measured": false,
+  "transfer_complete_utc": "2026-10-10T08:48:50Z",
+  "original_receipt_preserved": true,
+  "hashes_verified": true,
+  "no_detached_transfer_processes_on03": true,
+  "reason": "rsync default rate units are KiB/s; original interpretation of20MB/s was imprecise",
+  "future_max_kib_per_second": 19531
+}
