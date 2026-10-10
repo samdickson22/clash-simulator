@@ -1624,3 +1624,11 @@ Also on the hub, but with copies elsewhere:
   - **Signal:** S-teacher as the deadline-W fallback gave **−7.5 pp [−12.7, −2.2]** losses, but play recall was 40%, so it's killed. Students are too passive.
   - No adoption and no round 2 under this plan. Cost: 8.6 GPU-h / 122 CPU-h.
   - Commissioning an Opus next-step analysis (play-recall fix vs faster search vs Mac measurement) for the idle GPUs until the lease ends.
+- **00:18 UTC: ADOPT PLAN-NEXT-20261010** (Opus analyst).
+  - E1's deadline-W loss was caused by **ordering**: the coarse scan runs before any complete score, and WAIT is scored last, so 86% of decisions fall back to v1.
+  - ExIt r1 failed on **targets**: the median top-2 gap is 0.003, so at T=0.1 the best action got ≈10% of the target and agreement was below the all-WAIT constant.
+  - Launching:
+    - **K** (anytime W: WAIT first; 1 vs 4 GIL threads; h80 coarse scan; CPU on 03/01);
+    - **X** (ExIt r2: sharpened or argmax targets on corpus 1c8e1f49; X1 09, X2 16, X4 01, X5 04, X3 13 after the quarter check), with staged kills and an optional R2 DAgger round.
+  - Deferred: G teacher top-up (filler on 04 non-seal cores only; not on 08). 08 stays reserved for B.
+  - Stop list per §4. Exploration lane; any live change needs Mac E4, PREREG and an L2 amendment.
