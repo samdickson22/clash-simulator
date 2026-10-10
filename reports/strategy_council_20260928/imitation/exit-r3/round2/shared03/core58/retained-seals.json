@@ -1,0 +1,67 @@
+{
+  "regret/games/0000.json": {
+    "seal_sha256": "4e96d5c1d463b62361ec552c51d00e6c2c79075acd7017e319ed3fe26b101b9d",
+    "jsonl_sha256": "920f072bd4ca80b4694c340f9fde96bbb3e2ce91d8ff0863371b1708117937dd",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0001.json": {
+    "seal_sha256": "e07e0a8100759a6ffd35e0e2f58b1def6cbe6d91b55c974541bb85080725b4c1",
+    "jsonl_sha256": "35afaa2471aff4d22ede8753440771397c44b90fea9085316f1b5d1963672102",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0002.json": {
+    "seal_sha256": "338eaa062f304e3548ab7c9e118829421a4ade89a8ada16ccb4040b46ac56674",
+    "jsonl_sha256": "9ad611323546a170cc65a24b97642192b4ca0b4b858951262cd52644eea61166",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0003.json": {
+    "seal_sha256": "4700ec89fd2cf716bf4acb19005872497bbf48e69e724b94b39ece90015c5dd8",
+    "jsonl_sha256": "63c9a48e7d9c4c0c868867314e8d16c4c4c718d5c6422b7c728c472891a400cb",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0004.json": {
+    "seal_sha256": "647588f264e268bb80b5fa029ff215b4f5dec799ddf80988a2f8596644eeddfe",
+    "jsonl_sha256": "e00db83c30792b874492e804241121f6e5fc57ee65c96fd38ca1377630388eb9",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0005.json": {
+    "seal_sha256": "6acf6d1b4e0e7bd4de13e243eb55d1dc14d1f1877ab4dc712a325d363eb46e9f",
+    "jsonl_sha256": "7c6892d9d28e8a749f3a20c22915826690bc42e77dce63f129b97393a669750e",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0006.json": {
+    "seal_sha256": "c93271de703f5945fd3a2f1c184d5ca0e704c712af3b5d9c92e825b2f38d20a1",
+    "jsonl_sha256": "2a12b76fc7f4e3de535d51f5c9f95a74b4c235eadeff88bef24109d2f7a98577",
+    "evaluation_freeze_sha256": "86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d"
+  },
+  "regret/games/0007.json": {
+    "seal_sha256": "adea64b933f5698f43092d2a94cd213720e6dca6c66a51243ce2848fc3b115c1",
+    "jsonl_sha256": "e9e47fcdba50a361cb974894f862ea07257c923ddcdb31e4b2b6a719885a8bd7",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0008.json": {
+    "seal_sha256": "d8531e525e55839e748172dfdcd0bf95979fb8b03fa6afdd70898c5b2c503429",
+    "jsonl_sha256": "15060a795ef8d0594afe0f2df3414c5db6eca1b356b883b7d448d5a242755d28",
+    "evaluation_freeze_sha256": "4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7"
+  },
+  "regret/games/0009.json": {
+    "seal_sha256": "37267079b7aebd5a565fd422d711cb62ea845cb89fe4b3668da4e6139a25400a",
+    "jsonl_sha256": "60d73d02a5a36e6587d0344220710f18b90663c68b6615d9eacd0085c3e6485d",
+    "evaluation_freeze_sha256": "86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d"
+  },
+  "regret/games/0010.json": {
+    "seal_sha256": "cfad68171a283c411c12e4e67a9b647abf04a3a0eb0f3fafd3b35100fcb7b34e",
+    "jsonl_sha256": "6295aec40b4b4c6df42cc5d3948ddec36934b29dbb252821fffac85d5a7e23f7",
+    "evaluation_freeze_sha256": "86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d"
+  },
+  "regret/games/0011.json": {
+    "seal_sha256": "cf56a260ffc803da90d94cb131c0a464ce21e859fd2faea6da0df2cafd58c221",
+    "jsonl_sha256": "fcfb4a08bd68d6b149c4bd532961ea8f886815b362616840ba4989fdd99fd4dc",
+    "evaluation_freeze_sha256": "86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d"
+  },
+  "regret/games/0012.json": {
+    "seal_sha256": "f3737ad3bf41236419a924e5a32fea470d2bc295614ab1736eaa92fcdf713966",
+    "jsonl_sha256": "5eec31fe2afb1d6fa2fbcdcfbbfc7f883a792d4fc6e258d412b67d21061522f2",
+    "evaluation_freeze_sha256": "86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d"
+  }
+}

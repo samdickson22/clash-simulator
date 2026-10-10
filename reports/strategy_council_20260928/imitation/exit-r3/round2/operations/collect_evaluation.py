@@ -7,7 +7,7 @@ def collect(host):
     code='''import hashlib,json,os,subprocess
 from pathlib import Path
 j=Path(JOB);paths=set(j.glob('*meter*.json'))|set(j.glob('*STAGING*.json'))|set(j.glob('*.log.identity.json'))
-for name in ('EVAL-PGIDS.json','CPU-RELEASE-EVIDENCE.json','CPU-RELEASE-ADMITTED.json','REGRET-CPU-EVIDENCE.json','REGRET-CPU-ADMITTED.json','REGRET-SHARED-AUTHORITY.json','SHARED03-DEPLOYMENT.json','SHARED03-NICE19-DEPLOYMENT.json','REGRET-NICE19-RESTART.json','SHARED03-REPAIR-DEPLOYMENT.json','SHARED03-REPAIR-TESTS.json','SHARED03-TESTS.json','EVALUATION-DEPLOYMENT.json','CODE-QUALIFICATION.json','evaluation-freeze.json','evaluation-prelaunch.json','qualification-descriptive.json','qualification-stage2.json','descriptive-results.json','stage1-results.json','stage2-results.json','EVAL-VACATED.json'):
+for name in ('EVAL-PGIDS.json','CPU-RELEASE-EVIDENCE.json','CPU-RELEASE-ADMITTED.json','REGRET-CPU-EVIDENCE.json','REGRET-CPU-ADMITTED.json','REGRET-SHARED-AUTHORITY.json','SHARED03-DEPLOYMENT.json','SHARED03-CORE58-DEPLOYMENT.json','REGRET-CORE58-RESTART.json','SHARED03-NICE19-DEPLOYMENT.json','REGRET-NICE19-RESTART.json','SHARED03-REPAIR-DEPLOYMENT.json','SHARED03-REPAIR-TESTS.json','SHARED03-TESTS.json','EVALUATION-DEPLOYMENT.json','CODE-QUALIFICATION.json','evaluation-freeze.json','evaluation-prelaunch.json','qualification-descriptive.json','qualification-stage2.json','descriptive-results.json','stage1-results.json','stage2-results.json','EVAL-VACATED.json'):
  paths.add(j/name)
 if HOST=='127x03':
  for pattern in ('*meter*.json','*STAGING*.json','*.log.identity.json'):
@@ -34,7 +34,7 @@ for p in Path('/proc').iterdir():
  except (FileNotFoundError,ProcessLookupError,PermissionError):pass
 print(json.dumps(dict(host=HOST,utc=subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip(),records=records,live=live)))
 '''.replace('JOB',repr(J)).replace('HOST',repr(host))
-    core=39 if host=='127x01' else 59 if host=='127x03' else 126
+    core=39 if host=='127x01' else 58 if host=='127x03' else 126
     interpreter='/usr/bin/python3' if host=='127x03' else B+'/venv/bin/python'
     p=subprocess.run(['ssh','-o','ConnectTimeout=10',host,'nice -n '+('19' if host=='127x03' else '10')+' taskset -c '+str(core)+' '+interpreter+' -B -'],input=code,text=True,capture_output=True,check=True,timeout=45)
     bundle=json.loads(p.stdout);target=ROOT/'receipts/evaluation-snapshots'/host;target.mkdir(parents=True,exist_ok=True);history=target/'history';history.mkdir(exist_ok=True)

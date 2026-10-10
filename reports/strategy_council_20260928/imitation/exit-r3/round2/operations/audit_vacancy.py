@@ -22,7 +22,7 @@ def classify_gpu_pids(raw, owned_pids):
 
 
 def remote(host, code):
-    core = 39 if host == '127x01' else 59 if host == '127x03' else 126
+    core = 39 if host == '127x01' else 58 if host == '127x03' else 126
     interpreter = '/usr/bin/python3' if host == '127x03' else B+'/venv/bin/python'
     result = subprocess.run(
         ['ssh', '-o', 'ConnectTimeout=10', host,
@@ -72,7 +72,7 @@ paths=set(j.glob('*.log.identity.json'))|set(j.glob('R3*-launch.json'))|set(j.gl
 for pattern in ('*STAGING*.json','VOID-ATTEMPT1-VACATED.json','EVAL-PGIDS.json'):
  paths.update(j.glob(pattern))
 if HOST=='127x01':paths.add(j/'CODE-QUALIFICATION.json')
-if HOST=='127x03':paths.update((j/'SHARED03-DEPLOYMENT.json',j/'SHARED03-TESTS.json',j/'SHARED03-NICE19-DEPLOYMENT.json',j/'SHARED03-REPAIR-DEPLOYMENT.json',j/'SHARED03-REPAIR-TESTS.json'))
+if HOST=='127x03':paths.update((j/'SHARED03-DEPLOYMENT.json',j/'SHARED03-TESTS.json',j/'SHARED03-CORE58-DEPLOYMENT.json',j/'SHARED03-NICE19-DEPLOYMENT.json',j/'SHARED03-REPAIR-DEPLOYMENT.json',j/'SHARED03-REPAIR-TESTS.json'))
 folders=('regret',) if HOST=='127x03' else ('k0-descriptive-smoke','k0-descriptive','k0-stage2-smoke','k0-stage2') if HOST=='127x01' else ('offline',)
 if HOST=='127x03':
  for pattern in ('*.log.identity.json','*STAGING*.json','EVAL-PGIDS.json'):
