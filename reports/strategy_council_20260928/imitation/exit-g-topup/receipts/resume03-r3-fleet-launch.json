@@ -4,7 +4,7 @@
   "pid": 1689855,
   "pgid": 1689855,
   "start": 142154442,
-  "command_sha256": "87adf8ac5b9f7562cb4758d73d63d032d98b68d644fa13ad0a1b48432c14fecf",
+  "command_sha256": "9c61080146033b517586c60de008d657abc52cba21df50c273039336050ce548",
   "nice": 19,
   "scheduler": 5,
   "cores": [
@@ -29,5 +29,8 @@
     "04"
   ],
   "polling_seconds": 60,
-  "old_metadata_archive": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/resume-archives/controller656370-r3-20261010"
+  "old_metadata_archive": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/resume-archives/controller656370-r3-20261010",
+  "launch_wrapper_command_sha256": "87adf8ac5b9f7562cb4758d73d63d032d98b68d644fa13ad0a1b48432c14fecf",
+  "stable_command_verified_utc": "2026-10-10T11:33:27Z",
+  "receipt_correction": "Initialreceipt observedtaskset wrapperjustbeforeexec; samePID/start/PGID now stablePythoncommand verified. Nooperationalchange/restart."
 }
