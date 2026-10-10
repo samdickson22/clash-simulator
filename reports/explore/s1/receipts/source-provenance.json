@@ -1,0 +1,25 @@
+{
+  "utc": "2026-10-10T08:34:35Z",
+  "K2_freeze": "3cf8919e",
+  "copied_files": {
+    "belief.py": "5e6f07fc3d7f71cf380d8f68a9c47021355a48b85026df2b1878c236556a0f56",
+    "gc_window.py": "0c743f3d1e9c617a89625c694df216a93c4da15249b9c1398162ac1b73815146",
+    "latency.py": "70b733cb9f16d329f310cfb23dc0dedec961cdd97ee73d598b5b6e779e9f09b2",
+    "test_belief.py": "c0bfdb09be4cbc9e44999317e19d37b37a9332c09644b5c91bb68f94a0e39c6e",
+    "test_gc_window.py": "6a00843c96a02a8dd18c636994ecbf8474ef5e7bbcce9c11201344609b3eac3d",
+    "test_latency.py": "8fb2c1324fa3b2dbfa52d3cc446878925f11962ebedc5fccad09cd06064d4e62",
+    "planner.py": "75a1b7d7fb7f144bfa62cdfcd3ddfdfe7cad7dc31e8e97dc4d4f4c7ede196888",
+    "test_deadline.py": "62e108d31c96fcf6761efea6cbccf1a40cc0302cb5bca1fb0d0e71e67ed27bbf",
+    "qualify_belief.py": "b6d86ed9fa3cd20ed83a86d75314295f055e92110212b904986b193a43451213",
+    "gc_summary.py": "e6063b9e0cfafacd3cc98e85212d5d29c906ac3d879b6353e4cba31be5e4018d"
+  },
+  "R3_reference": {
+    "path": "reports/strategy_council_20260928/imitation/exit-r3/round2/eval-ops/game.py",
+    "file_sha256": "95baa6a72593c4418ea657e8201f8e42fbb1473e41b9af82e79dcdec96e05824",
+    "class_source_sha256": "cec3240e249cb3fa6cc96fa2b89eed61ed238b7cb1eada16bd5ec3db77c39189",
+    "copied_class_lines": [
+      12,
+      28
+    ]
+  }
+}
