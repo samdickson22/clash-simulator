@@ -1680,3 +1680,7 @@ Also on the hub, but with copies elsewhere:
   - All three widths were killed at the quarter mark: gains 288 0.00308, 384 0.00446, 480 0.00479, all < 0.005. **Retain 192.** Cost 17.8 GPU-h actual (19.4 GPU-h conservative).
   - 15 → **X8** (X2 seed replicate).
   - Perception: 67 Clasher processes on 04 (mostly capture-era idle monitors) block the 16-process guard for A19. **Authorized retirement of class-(c) idle monitors** via their own STOPs, with receipts; r4 dependencies are untouched.
+- **03:25 UTC perception:**
+  - **A19 r2** (parallel fresh-process verify for A1 + both A2 verify_body calls, ~38 h serial → ~4.5–9 h) is under independent Opus review (`clasher-a19-review-20261010-1`).
+  - **42 obsolete capture-era floor monitors** (14 groups) retired one at a time by authenticated single SIGTERM; wrapper exit 143 each; seal healthy throughout (117/216). A post-signal /proc race on group 1 was diagnosed and the helper corrected.
+  - **Policy:** the inherited all-Clasher ≤16 cap is replaced, in **A19 r3**, by an A19-owned ≤16 cap plus host guards (MemAvailable ≥28 GiB, PSI, no live fit loader, never CPU 52/116) and conservative inventory (PermissionError fix). Launch only after X5's fit exits.
