@@ -138,13 +138,19 @@
     "reports/explore/t1/receipts/op5-08join-qualification-summary.json": "28ba59cac2523a2c367007df3fdbccde9e36414bdaf21470af757a1d3fa7d7db",
     "reports/explore/t1/receipts/op5-08join-smoke-r6-launch.json": "7ea6f5a556b15c0acfa67918f4fd835c03fb6ba9876534259fbb7f826ba82cfe",
     "reports/explore/t1/receipts/smoke-r6-health-admission.json": "d2a519b64860e2a914d54b70deef1cde26014f2cc865ea3c1d7aaea958596285",
-    "reports/explore/t1/PROGRESS-T1.md": "8a140b0c1593d857aa2954b96347f80ce330a119a1e6667cc8b9217f66e8fc39",
+    "reports/explore/t1/PROGRESS-T1.md": "1bb35e2565cfaadfb2b29c4e223c41d9eac4f180d6d90b7449fbf2ee6d7dfe96",
     "reports/explore/t1/receipts/reporting-launch-receipt-0108.json": "100584090ea8fac3950a2bcd762bfb3c6b8f1c37c0ee02ed23aa33602f065f6a",
     "reports/explore/t1/receipts/reporting-authorization-0108.json": "3eb770c9b900a13beac8ef85453856296e2bb3c47f1b60310f4ab3c15556771a",
     "reports/explore/t1/receipts/reporting-launch-127x01.json": "6259e1edc64f737dd3d8026cfcfcfbe3aea770acb8e1ef3adebdaafcfc303080",
     "reports/explore/t1/receipts/reporting-launch-127x08.json": "847f07fb631df0928df3d7548d7ce280e9636face7316f355d1c35901f4f57c6",
     "reports/explore/t1/receipts/reporting-manifest-0108.json": "a7ebba648c50817aff0174db0d0443dfe70a978c33eb3fe7a8aa8fd09e2f6474",
-    "reports/explore/t1/CORPUS-CONTRACT-AUTHORITY-20261010.md": "1047149255651ac700581b1e55d70e19d84474de3fb1c6449996ae77cbda9465"
+    "reports/explore/t1/CORPUS-CONTRACT-AUTHORITY-20261010.md": "1047149255651ac700581b1e55d70e19d84474de3fb1c6449996ae77cbda9465",
+    "reports/explore/t1/CORPUS-03-DISPATCH-20261010.md": "a180566f40c030acfa045e881670d8160b2264b268b9ec6c361c465fc5b32cb1",
+    "reports/explore/t1/receipts/corpus-03-launch.json": "fb081ce7ed1ab33bd2cff8f3309fb5e77438ee21db5b94cc97f20165099f1f67",
+    "reports/explore/t1/receipts/corpus-03-source.json": "bf8168d2995ad46b382b6e17fb94d22d9bec2663f28262090397bb48ee1c6692",
+    "reports/explore/t1/receipts/corpus-03-validator-staging.json": "59627962264fb4ddb383170b6a937e21d0da259cf6118d44794a51016923c53c",
+    "reports/explore/t1/receipts/corpus-03-operational-worker.py": "5797c240ce484860e04827f1c310b7d0a437e4775083a266ff622c954794e108",
+    "reports/explore/t1/receipts/corpus-03-operational-supervisor.py": "00d19c01a313042b054cbd5357dcaf49afb69b0298a0ffb42f59d73d1752eb15"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -372,5 +378,15 @@
     "running_job_bytes_unchanged": true
   },
   "reporting_launch_utc": "2026-10-10T18:03:20Z",
-  "corpus_contract_authority_note": "reports/explore/t1/CORPUS-CONTRACT-AUTHORITY-20261010.md"
+  "corpus_contract_authority_note": "reports/explore/t1/CORPUS-CONTRACT-AUTHORITY-20261010.md",
+  "corpus_capture_admission": {
+    "source_commit": "a51ea64cb878ca05bf38a8145174e6d2b9f46d7a",
+    "review_commit": "ee9c603b",
+    "review_path": "reports/explore/t1/REVIEW-T1-CORPUS-FIX-20261010T1740Z.md",
+    "scope": "excluded corpus03 nice19 only",
+    "reporting_runtime_unchanged": true,
+    "main_capture_code_not_merged": true,
+    "launch_receipt": "reports/explore/t1/receipts/corpus-03-launch.json",
+    "schedule": "NOW on non-reporting03; coordinatoractual18:15Z"
+  }
 }

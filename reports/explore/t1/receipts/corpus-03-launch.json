@@ -1,0 +1,47 @@
+{
+  "utc": "2026-10-10T18:10:38Z",
+  "host": "127x03",
+  "nice": 19,
+  "scheduler": "SCHED_OTHER",
+  "game_class": "qualification",
+  "capture_source": {
+    "capture_commit": "a51ea64cb878ca05bf38a8145174e6d2b9f46d7a",
+    "capture_review_commit": "ee9c603b",
+    "capture_review_path": "reports/explore/t1/REVIEW-T1-CORPUS-FIX-20261010T1740Z.md",
+    "capture_code_sha256": {
+      "reports/explore/t1/run.py": "286bf4b70bceb4e47fa1716c5140eaea32f411f0651529231e91aff00bd85717",
+      "reports/explore/t1/corpus_capture.py": "0e6249e5e660a95c34cb689de4fabb92ee6f5577831b42a3042e0e525a9fe5f2",
+      "reports/explore/t1/corpus.py": "9c4a65b7fbb333baec40d10abe8b1d2cc451f497e8263d2c497996318a94d722",
+      "reports/explore/t1/cached_policy.py": "559ad75c0d9c971518fbcbab560c9d149f231045e79741da6394d49e403415fe"
+    },
+    "corpus_contract_sha256": "e62b6df5f4ad245a92f39a4546329dc13b183e881c9a58757f6c4a0f9ac6880c",
+    "reporting_hosts": [
+      "127x01",
+      "127x08"
+    ],
+    "capture_host": "127x03",
+    "nice": 19,
+    "game_class": "qualification",
+    "outcomes_sealed": true,
+    "authorization": "coordinator actual18:15Z: captureNOW03; approved conditions C1 isolation C2 code lineage",
+    "not_a_timing_qualification": true
+  },
+  "capture_source_sha256": "bf8168d2995ad46b382b6e17fb94d22d9bec2663f28262090397bb48ee1c6692",
+  "runtime_pin_sha256": "d2e6e953b4adc82505edc2c040090103807dd820f268d3863c0eb45228c9c14c",
+  "supervisor_pid": 46758,
+  "supervisor_pgid": 46758,
+  "worker_sha256": "5797c240ce484860e04827f1c310b7d0a437e4775083a266ff622c954794e108",
+  "supervisor_sha256": "00d19c01a313042b054cbd5357dcaf49afb69b0298a0ffb42f59d73d1752eb15",
+  "initial_indices": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "extension": "one additional seed per insufficient tier up to63, based only on selection sufficiency",
+  "outcomes_sealed": true
+}

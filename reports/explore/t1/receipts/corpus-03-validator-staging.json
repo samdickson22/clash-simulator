@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-10T18:11:28Z",
+  "source_commit": "a51ea64cb878ca05bf38a8145174e6d2b9f46d7a",
+  "files": {
+    "corpus_contract.py": "e62b6df5f4ad245a92f39a4546329dc13b183e881c9a58757f6c4a0f9ac6880c",
+    "receipts.py": "839a43be635ca0de8db5f70f1a13459007a37f338e79ab6fef1fae43816460a6"
+  },
+  "purpose": "reviewed builder validator, unused by live capture games",
+  "staged_after_capture_launch_before_builder": true
+}
