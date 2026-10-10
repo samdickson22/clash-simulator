@@ -708,3 +708,10 @@ including staging/restarts; guard recomputation PASS. Historical192 fit not char
 No T11/source/data/recipe changes. Recommendation: retain192; none qualifies for
 offline promotion under frozen criterion. No new fits or seeds authorized/launched.
 Terminal report/push and specific temporary schedule shutdown follow.
+
+2026-10-10T02:57:13.478232+00:00: Results and terminal evidence secret-scanned and pushed in bb14988d.
+Coordinator terminal report delivered. This specific temporary continuation
+schedule is disabled, enabled=false and nextRunAt=null, confirmed by scheduler
+response and recorded in shutdown-receipt.json. All arms terminal; no further
+training, monitoring schedules or task work remains. Historical failure artifacts
+and checkpoint pointers retained; no weights committed.

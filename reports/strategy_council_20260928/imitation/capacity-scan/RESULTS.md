@@ -136,9 +136,10 @@ No weights are in git. Quarter checkpoints remain under each listed host's
 guard exits and checkpoint pointers. `width384-release.json` and
 `width480-release.json` provide independent release checks; 288's check is
 embedded in its result. `terminal-receipt.json` reconciles all costs/decisions.
-The final report is committed after `clasher-secret-scan` and pushed. The
-specific temporary continuation schedule is disabled after the terminal report;
-its shutdown receipt records the result.
+Results were secret-scanned and pushed in commit `bb14988d`; the coordinator
+received the terminal report. The specific temporary continuation schedule is
+now disabled (`enabled=false`, `nextRunAt=null`); `shutdown-receipt.json` records
+the scheduler response. The scan has no remaining active fits or scheduled work.
 
 ## Recommendation and scope
 

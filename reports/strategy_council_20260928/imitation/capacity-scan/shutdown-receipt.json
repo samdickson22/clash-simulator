@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-10T02:57:13.478232+00:00",
+  "scheduledTaskId": "scheduled-task:command:mcp:6f385241-07a0-4920-b2e5-aaf1dc0a6773:schedule-task:clasher-capacity-scan-continuation-20261009-v1",
+  "enabled": false,
+  "nextRunAt": null,
+  "lastRunStatus": "succeeded",
+  "results_commit": "bb14988d",
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "terminal_report_message_id": "message:mcp:6f385241-07a0-4920-b2e5-aaf1dc0a6773:thread-send:capacity-scan-terminal-bb14988d",
+  "terminal_report_delivery": "started",
+  "reason": "All three wider arms scientifically killed at the frozen quarter point; no survivors or active fits; terminal report pushed and delivered."
+}
