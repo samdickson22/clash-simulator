@@ -1,0 +1,149 @@
+{
+  "schema": "clasher.t1.replacement-launch.v1",
+  "utc": "2026-10-10T19:30:34Z",
+  "reporting_launched": true,
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "health_only": true,
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "authorization_message_id": "message:mcp:53609d4a-a2de-484a-834d-8566c6339c9f:thread-send:coord-t1-op6-confirmed-go-20261010-1",
+  "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1",
+  "fresh_directory_distinct_from_all_original_reporting_smoke_qualification": true,
+  "phase": "replacement-r1",
+  "freeze_commit": "aeeb3003d2a877bd7ff538a1977cbbc37adb404f",
+  "immutable_manifest_path": "reports/explore/t1/receipts/replacement-manifest-op6-0108-r1.json",
+  "manifest_sha256": "24817e16c3da7b5c9b6e48c56e69144e84678b7d143a146fe2884f446d07d7e4",
+  "manifest_status": "FROZEN",
+  "manifest_hashes": 167,
+  "authorization_path": "reports/explore/t1/receipts/replacement-authorization-op6-0108-r1.json",
+  "authorization_sha256": "d31879b8c3aa35991ff5a5f1bb454e612df9f1193e1dc0a34abacf779c0c2d7e",
+  "reviewed_source_commit": "d60586b33d5af83f04678d78f1525e4a74ef70cd",
+  "independent_confirmation_commit": "9118153be59f08965e5e7b2b2363306fefd56f04",
+  "dispatch_path": "reports/explore/t1/receipts/dispatch-option-b-r1.json",
+  "dispatch_sha256": "edd51b5c900a095e962467e8312fcb516e3bae7011534b7728b2fb59673e9ba0",
+  "blind_inventory_path": "reports/explore/t1/receipts/blind-reinventory-option-b-r1.json",
+  "blind_ledger_path": "reports/explore/t1/receipts/blind-ledger-option-b-r1.json",
+  "blind_ledger_sha256": "adc5a9d3fe0fc12c49b8022d934ff4968e0047f53df6fad6ff2cd3c4f530a9a3",
+  "host_set": [
+    "127x01",
+    "127x08"
+  ],
+  "blocks_dispatched": 2915,
+  "games_planned": 23320,
+  "completed_original_blocks_preserved": 157,
+  "original_blocks_deduplicated": true,
+  "host_block_counts": {
+    "127x01": 1457,
+    "127x08": 1458
+  },
+  "hosts": {
+    "127x01": {
+      "launch_path": "reports/explore/t1/receipts/replacement-launch-op6-127x01-r1.json",
+      "launch_sha256": "70c75c7293afdfbf1ce8ce7e31424bf06d386350281bfb963786d55cebe3a704",
+      "launch": {
+        "utc": "2026-10-10T19:28:48Z",
+        "host": "127x01",
+        "phase": "replacement",
+        "slots": 11,
+        "who": "",
+        "runtime_pin_sha256": "2a48b10bf3dc026a21d9cb58575983bf4a8a07b934107589e11900793ef2324c",
+        "dispatch_sha256": "edd51b5c900a095e962467e8312fcb516e3bae7011534b7728b2fb59673e9ba0",
+        "supervisor_pid": 433021,
+        "supervisor_pgid": 433021
+      },
+      "admission_sha256": "017cfd41de80958df2a3d25eb48a138fb5ad30756cb4343b78884b089f73c64e",
+      "admitted": true,
+      "who": "",
+      "console_count": 0,
+      "foreign_compute": [],
+      "foreign_active": [],
+      "initial_health": {
+        "utc": "2026-10-10T19:30:26Z",
+        "host": "127x01",
+        "phase": "replacement",
+        "complete_local_blocks": 0,
+        "failed_blocks": 0,
+        "queued": 1446,
+        "inflight": 11,
+        "reason": null
+      },
+      "runtime_pin_sha256": "2a48b10bf3dc026a21d9cb58575983bf4a8a07b934107589e11900793ef2324c",
+      "observed_from_owned_copier": true
+    },
+    "127x08": {
+      "launch_path": "reports/explore/t1/receipts/replacement-launch-op6-127x08-r1.json",
+      "launch_sha256": "de9df2997f1ad79aaebd7617335ec5d5b16ccdd808a34ab73d48a3060513e458",
+      "launch": {
+        "utc": "2026-10-10T19:28:49Z",
+        "host": "127x08",
+        "phase": "replacement",
+        "slots": 11,
+        "who": "",
+        "runtime_pin_sha256": "c7937c554d69a482b8fda79f2fc78a0ce40b01cf09f282854019c622f9324e18",
+        "dispatch_sha256": "edd51b5c900a095e962467e8312fcb516e3bae7011534b7728b2fb59673e9ba0",
+        "supervisor_pid": 1876811,
+        "supervisor_pgid": 1876811
+      },
+      "admission_sha256": "0cdc306aa9ef7726d5c9e24818da6e742f1e8e758674cdd8f0eeb8f6bc572900",
+      "admitted": true,
+      "who": "",
+      "console_count": 0,
+      "foreign_compute": [],
+      "foreign_active": [],
+      "initial_health": {
+        "utc": "2026-10-10T19:30:25Z",
+        "host": "127x08",
+        "phase": "replacement",
+        "complete_local_blocks": 0,
+        "failed_blocks": 0,
+        "queued": 1447,
+        "inflight": 11,
+        "reason": null
+      },
+      "runtime_pin_sha256": "c7937c554d69a482b8fda79f2fc78a0ce40b01cf09f282854019c622f9324e18",
+      "observed_from_owned_copier": true
+    }
+  },
+  "owned_copier": {
+    "utc": "2026-10-10T19:28:35Z",
+    "host": "127x01",
+    "source_ip": "127.0.1.1",
+    "identity": {
+      "pid": 432837,
+      "pgid": 432837,
+      "start_ticks": 145042108,
+      "cmdline_sha256": "6ed13ec3885f058ba25509410268b4797f87051911d96229c28122d1691f725e",
+      "uid": 3822945,
+      "exe": "/mpac/sdicks02/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+    },
+    "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1",
+    "phase": "replacement-r1",
+    "active": true
+  },
+  "qualified_code_plan_files": 60,
+  "qualified_tests_per_host": 166,
+  "external_untracked_modules_pinned_unchanged": true,
+  "smoke_health": {
+    "receipt": "reports/explore/t1/receipts/smoke-r7-health-admission.json",
+    "sha256": "c68463cddb27f24cc8be506937eb7d416929fb7172e0f1d9a823d5ac960f58e8",
+    "blocks": 8,
+    "games": 64,
+    "errors": 0,
+    "interfered_blocks": 8,
+    "ssh_flagged_blocks": 8,
+    "dbus_flagged_blocks": 8
+  },
+  "mixed_original_OP5_new_OP6_guard_regimes_disclosed": true,
+  "B_stop_127x08_binding": true,
+  "expected_remaining_hours": [
+    15,
+    16
+  ],
+  "estimated_reporting_finish_UTC": "2026-10-11T10:30Z through 11:30Z; before END references and extra replacements",
+  "expected_total_elapsed_hours_from_original_launch": [
+    16.4,
+    17.4
+  ],
+  "reference_schedule": "END; all counted hosts, pinned load profile, all original passing/failed reference attempts retained",
+  "release_conditions": "PC1-PC4; standalone sensitivity-sidecar health check before either release route; no outcomes released"
+}
