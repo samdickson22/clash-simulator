@@ -130,7 +130,9 @@
     "reports/explore/t1/OP5-08-T1.md": "dbd2e63130f3ee7243fe8464c6e8ba1d35ce2647e25dac78119542c8bebf18f6",
     "reports/explore/t1/test_op5_08.py": "edceaaabbbcb1a92a65785665700ed149c16d777ac6e676483c7a38eb8a291cb",
     "reports/explore/t1/receipts/op5-08-unit-tests.json": "6ed0ca3493573e3ff99a9cee96704602608343891737b91c3beea4b33824a2c5",
-    "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961"
+    "reports/strategy_council_20260928/live-loop/v4/l1/receipts/a21-a2-preparation-20261010-r1/08-transport-identity-20261010T172047Z.json": "10735e94cd3888eeafa8e8fb97eab87bddc2ec27c5a5ae3ba5b1f94c50950961",
+    "reports/explore/t1/receipts/external-runtime-provenance-0108.json": "b3b0a89cd9ab0aae31a43c1e51a5999432ee951d50c2ff4a7d77f34a4ba750b7",
+    "reports/explore/t1/REVIEW-T1-OP5-08-CONFIRM-20261010T1734Z.md": "cb4892b2205b48a8ecceeab49b960900db36aabfc1eee71a2b3889f858b84c61"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -162,7 +164,6 @@
   "reporting_games_started": false,
   "reference_schedule": "END reporting window; separate corpus/E4 approval; pinned reporting load profile",
   "pending": [
-    "OP5-08 fast confirmation",
     "final-source fresh qualification01/08",
     "fresh01/08 smoke-r6 health",
     "manifest-bound reporting authorization after smoke"
@@ -287,11 +288,34 @@
     ]
   },
   "operational_delta_op5_08": {
-    "verdict": "AWAITING_CONFIRMATION",
+    "verdict": "CONFIRM",
     "authorization": "Coordinator18:03Z exact04-client/08-server join; OP4 budgets unchanged",
     "guard_tests": 92,
     "extension_tests": 34,
     "source_seed_commit": "ce042b9775f80cb495c327b14a4712730ae95c85",
-    "disclosure": "reports/explore/t1/OP5-08-T1.md"
+    "disclosure": "reports/explore/t1/OP5-08-T1.md",
+    "reviewed_commit": "c32015b16f41b0e8dae7b9502c00c9074b0b3be9",
+    "review_commit": "bcd964d091cbf338e9fb0d6050c0fbc5341bc2d3",
+    "review_path": "reports/explore/t1/REVIEW-T1-OP5-08-CONFIRM-20261010T1734Z.md",
+    "nonblocking_disclosures": [
+      "R1:08 parent/socket association rests on elimination of observer connections, not kernel fd proof; admitted for this pinned snapshot only. Future joins require code-level uniqueness check.",
+      "04 mux PPID1; serial-slot/ControlPath association rather than live ancestry."
+    ]
+  },
+  "external_runtime_provenance": {
+    "receipt": "reports/explore/t1/receipts/external-runtime-provenance-0108.json",
+    "inherited_runtime_pin_sha256": "f81f36558179458ba74edd3a57f44ad3395f4452a93c64d3102c4f4d5048a80d",
+    "files": {
+      "src/clasher/analysis/loss_review/delay_fixes.py": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb",
+      "src/clasher/analysis/loss_review/delay_runtime.py": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0",
+      "src/clasher/analysis/loss_review/delay_simulate.py": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a",
+      "src/clasher/analysis/loss_review/scheduling.py": "1db540482b8a6d98b485edfa8728caac271c9d778522ac709161133f5c9f9c81",
+      "src/clasher/analysis/loss_review/search_ab.py": "2ce4b1d1e77a232ef537f4a3222e498d80340c132ba8a3a494ee72ffa7ca85ae",
+      "src/clasher/analysis/loss_review/tempo.py": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a",
+      "src/clasher/analysis/loss_review/throughput_guard.py": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4"
+    },
+    "already_runtime_sha_pinned": true,
+    "byte_identical_on_01_and_08": true,
+    "source_modules_modified": false
   }
 }

@@ -1,0 +1,168 @@
+{
+  "utc": "2026-10-10T17:38:07Z",
+  "hosts": {
+    "127x01": {
+      "host": "127x01",
+      "utc": "2026-10-10T17:38:07Z",
+      "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op5-0108-r1",
+      "runtime_pin_sha256": "954af0ebecc03e2e04cfde32c895ce064ba3c02484a71456940a3bb53042d603",
+      "inherited_runtime_pin_sha256": "f81f36558179458ba74edd3a57f44ad3395f4452a93c64d3102c4f4d5048a80d",
+      "files": {
+        "src/clasher/analysis/loss_review/__init__.py": {
+          "runtime_pin_sha256": "33f7f253af320aa4b2dee00bee1903d065fbb2c9f2c895eea0f7393fb5b57f15",
+          "actual_sha256": "33f7f253af320aa4b2dee00bee1903d065fbb2c9f2c895eea0f7393fb5b57f15",
+          "inherited_sha256": "33f7f253af320aa4b2dee00bee1903d065fbb2c9f2c895eea0f7393fb5b57f15"
+        },
+        "src/clasher/analysis/loss_review/delay_fixes.py": {
+          "runtime_pin_sha256": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb",
+          "actual_sha256": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb",
+          "inherited_sha256": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb"
+        },
+        "src/clasher/analysis/loss_review/delay_runtime.py": {
+          "runtime_pin_sha256": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0",
+          "actual_sha256": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0",
+          "inherited_sha256": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0"
+        },
+        "src/clasher/analysis/loss_review/delay_simulate.py": {
+          "runtime_pin_sha256": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a",
+          "actual_sha256": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a",
+          "inherited_sha256": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a"
+        },
+        "src/clasher/analysis/loss_review/human.py": {
+          "runtime_pin_sha256": "b8e3120a63441d08ad3c3ec586f4b6899cf369afacfd9d3c4d8a75798428e10f",
+          "actual_sha256": "b8e3120a63441d08ad3c3ec586f4b6899cf369afacfd9d3c4d8a75798428e10f",
+          "inherited_sha256": "b8e3120a63441d08ad3c3ec586f4b6899cf369afacfd9d3c4d8a75798428e10f"
+        },
+        "src/clasher/analysis/loss_review/metrics.py": {
+          "runtime_pin_sha256": "f1a593db9e915289f804c6ebbfd0c49b14bd6a02393cb98b30b3b182c1fbea12",
+          "actual_sha256": "f1a593db9e915289f804c6ebbfd0c49b14bd6a02393cb98b30b3b182c1fbea12",
+          "inherited_sha256": "f1a593db9e915289f804c6ebbfd0c49b14bd6a02393cb98b30b3b182c1fbea12"
+        },
+        "src/clasher/analysis/loss_review/reduce_traces.py": {
+          "runtime_pin_sha256": "e9667a60cddff495a7ca85dc82b26e7c2e291a47d6fda4894a5d15eeddbed8a3",
+          "actual_sha256": "e9667a60cddff495a7ca85dc82b26e7c2e291a47d6fda4894a5d15eeddbed8a3",
+          "inherited_sha256": "e9667a60cddff495a7ca85dc82b26e7c2e291a47d6fda4894a5d15eeddbed8a3"
+        },
+        "src/clasher/analysis/loss_review/scheduling.py": {
+          "runtime_pin_sha256": "1db540482b8a6d98b485edfa8728caac271c9d778522ac709161133f5c9f9c81",
+          "actual_sha256": "1db540482b8a6d98b485edfa8728caac271c9d778522ac709161133f5c9f9c81",
+          "inherited_sha256": "1db540482b8a6d98b485edfa8728caac271c9d778522ac709161133f5c9f9c81"
+        },
+        "src/clasher/analysis/loss_review/search_ab.py": {
+          "runtime_pin_sha256": "2ce4b1d1e77a232ef537f4a3222e498d80340c132ba8a3a494ee72ffa7ca85ae",
+          "actual_sha256": "2ce4b1d1e77a232ef537f4a3222e498d80340c132ba8a3a494ee72ffa7ca85ae",
+          "inherited_sha256": "2ce4b1d1e77a232ef537f4a3222e498d80340c132ba8a3a494ee72ffa7ca85ae"
+        },
+        "src/clasher/analysis/loss_review/simulate.py": {
+          "runtime_pin_sha256": "e106119be8c3b9cac9b74b4848f8fa8a1b67ea7689d59532b122ef933c3c15d1",
+          "actual_sha256": "e106119be8c3b9cac9b74b4848f8fa8a1b67ea7689d59532b122ef933c3c15d1",
+          "inherited_sha256": "e106119be8c3b9cac9b74b4848f8fa8a1b67ea7689d59532b122ef933c3c15d1"
+        },
+        "src/clasher/analysis/loss_review/summarize.py": {
+          "runtime_pin_sha256": "e8a9bed809b24daabff81273decec8252ff36fae719e3b81364722036455d9d6",
+          "actual_sha256": "e8a9bed809b24daabff81273decec8252ff36fae719e3b81364722036455d9d6",
+          "inherited_sha256": "e8a9bed809b24daabff81273decec8252ff36fae719e3b81364722036455d9d6"
+        },
+        "src/clasher/analysis/loss_review/tempo.py": {
+          "runtime_pin_sha256": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a",
+          "actual_sha256": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a",
+          "inherited_sha256": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a"
+        },
+        "src/clasher/analysis/loss_review/throughput_guard.py": {
+          "runtime_pin_sha256": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4",
+          "actual_sha256": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4",
+          "inherited_sha256": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4"
+        }
+      }
+    },
+    "127x08": {
+      "host": "127x08",
+      "utc": "2026-10-10T17:38:07Z",
+      "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op5-0108-r1",
+      "runtime_pin_sha256": "d2d5460e2a12d8d3783382e9b1a18e4222c668e3c77c860c4d057c084510aabc",
+      "inherited_runtime_pin_sha256": "f81f36558179458ba74edd3a57f44ad3395f4452a93c64d3102c4f4d5048a80d",
+      "files": {
+        "src/clasher/analysis/loss_review/__init__.py": {
+          "runtime_pin_sha256": "33f7f253af320aa4b2dee00bee1903d065fbb2c9f2c895eea0f7393fb5b57f15",
+          "actual_sha256": "33f7f253af320aa4b2dee00bee1903d065fbb2c9f2c895eea0f7393fb5b57f15",
+          "inherited_sha256": "33f7f253af320aa4b2dee00bee1903d065fbb2c9f2c895eea0f7393fb5b57f15"
+        },
+        "src/clasher/analysis/loss_review/delay_fixes.py": {
+          "runtime_pin_sha256": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb",
+          "actual_sha256": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb",
+          "inherited_sha256": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb"
+        },
+        "src/clasher/analysis/loss_review/delay_runtime.py": {
+          "runtime_pin_sha256": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0",
+          "actual_sha256": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0",
+          "inherited_sha256": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0"
+        },
+        "src/clasher/analysis/loss_review/delay_simulate.py": {
+          "runtime_pin_sha256": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a",
+          "actual_sha256": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a",
+          "inherited_sha256": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a"
+        },
+        "src/clasher/analysis/loss_review/human.py": {
+          "runtime_pin_sha256": "b8e3120a63441d08ad3c3ec586f4b6899cf369afacfd9d3c4d8a75798428e10f",
+          "actual_sha256": "b8e3120a63441d08ad3c3ec586f4b6899cf369afacfd9d3c4d8a75798428e10f",
+          "inherited_sha256": "b8e3120a63441d08ad3c3ec586f4b6899cf369afacfd9d3c4d8a75798428e10f"
+        },
+        "src/clasher/analysis/loss_review/metrics.py": {
+          "runtime_pin_sha256": "f1a593db9e915289f804c6ebbfd0c49b14bd6a02393cb98b30b3b182c1fbea12",
+          "actual_sha256": "f1a593db9e915289f804c6ebbfd0c49b14bd6a02393cb98b30b3b182c1fbea12",
+          "inherited_sha256": "f1a593db9e915289f804c6ebbfd0c49b14bd6a02393cb98b30b3b182c1fbea12"
+        },
+        "src/clasher/analysis/loss_review/reduce_traces.py": {
+          "runtime_pin_sha256": "e9667a60cddff495a7ca85dc82b26e7c2e291a47d6fda4894a5d15eeddbed8a3",
+          "actual_sha256": "e9667a60cddff495a7ca85dc82b26e7c2e291a47d6fda4894a5d15eeddbed8a3",
+          "inherited_sha256": "e9667a60cddff495a7ca85dc82b26e7c2e291a47d6fda4894a5d15eeddbed8a3"
+        },
+        "src/clasher/analysis/loss_review/scheduling.py": {
+          "runtime_pin_sha256": "1db540482b8a6d98b485edfa8728caac271c9d778522ac709161133f5c9f9c81",
+          "actual_sha256": "1db540482b8a6d98b485edfa8728caac271c9d778522ac709161133f5c9f9c81",
+          "inherited_sha256": "1db540482b8a6d98b485edfa8728caac271c9d778522ac709161133f5c9f9c81"
+        },
+        "src/clasher/analysis/loss_review/search_ab.py": {
+          "runtime_pin_sha256": "2ce4b1d1e77a232ef537f4a3222e498d80340c132ba8a3a494ee72ffa7ca85ae",
+          "actual_sha256": "2ce4b1d1e77a232ef537f4a3222e498d80340c132ba8a3a494ee72ffa7ca85ae",
+          "inherited_sha256": "2ce4b1d1e77a232ef537f4a3222e498d80340c132ba8a3a494ee72ffa7ca85ae"
+        },
+        "src/clasher/analysis/loss_review/simulate.py": {
+          "runtime_pin_sha256": "e106119be8c3b9cac9b74b4848f8fa8a1b67ea7689d59532b122ef933c3c15d1",
+          "actual_sha256": "e106119be8c3b9cac9b74b4848f8fa8a1b67ea7689d59532b122ef933c3c15d1",
+          "inherited_sha256": "e106119be8c3b9cac9b74b4848f8fa8a1b67ea7689d59532b122ef933c3c15d1"
+        },
+        "src/clasher/analysis/loss_review/summarize.py": {
+          "runtime_pin_sha256": "e8a9bed809b24daabff81273decec8252ff36fae719e3b81364722036455d9d6",
+          "actual_sha256": "e8a9bed809b24daabff81273decec8252ff36fae719e3b81364722036455d9d6",
+          "inherited_sha256": "e8a9bed809b24daabff81273decec8252ff36fae719e3b81364722036455d9d6"
+        },
+        "src/clasher/analysis/loss_review/tempo.py": {
+          "runtime_pin_sha256": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a",
+          "actual_sha256": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a",
+          "inherited_sha256": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a"
+        },
+        "src/clasher/analysis/loss_review/throughput_guard.py": {
+          "runtime_pin_sha256": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4",
+          "actual_sha256": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4",
+          "inherited_sha256": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4"
+        }
+      }
+    }
+  },
+  "seven_preexisting_untracked_modules": {
+    "src/clasher/analysis/loss_review/delay_fixes.py": "8b539bfd6226176e9314c32d3c716cb8cc7b709d2863127aa8cd1a6b814cc8cb",
+    "src/clasher/analysis/loss_review/delay_runtime.py": "c39b311923a35de3f2723d1655168a3ca9e441501e19ba547719c02b65466da0",
+    "src/clasher/analysis/loss_review/delay_simulate.py": "b4bdcf07aac52a61a091cf4ccdf24771e7108871589ffc3e89b8b22b54cf681a",
+    "src/clasher/analysis/loss_review/scheduling.py": "1db540482b8a6d98b485edfa8728caac271c9d778522ac709161133f5c9f9c81",
+    "src/clasher/analysis/loss_review/search_ab.py": "2ce4b1d1e77a232ef537f4a3222e498d80340c132ba8a3a494ee72ffa7ca85ae",
+    "src/clasher/analysis/loss_review/tempo.py": "11d42225d0c34052c8de85e16b9cee27172994c500f04fb794603af4eb2fbe2a",
+    "src/clasher/analysis/loss_review/throughput_guard.py": "da4d6b5d538ce3877b2f346ab85de53acf7ffac9145bfb1e239febd73ad73cc4"
+  },
+  "byte_identical_on_both_hosts": true,
+  "reviewer_overlay_bytes_identical": true,
+  "already_enforced_by": "pin.py verifies inherited-runtime-pin files at staging and verify() verifies runtime-pin.json before/after phases and blocks",
+  "source_modules_modified": false,
+  "git_freeze_files_map": "External inherited source dependencies are recorded separately; no untracked source is silently added to git.",
+  "outcomes_read": false
+}
