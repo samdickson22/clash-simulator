@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-10T01:28:14Z",
+  "passed": true,
+  "files": 62489,
+  "inventory_sha256": "6dbe259c1cf3952028f123f2efdb19e6276351caa3c30f17b78d80d513824891",
+  "inventory_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/seed-inventory-01.json",
+  "formula_contexts": 17180,
+  "declarations": 16845,
+  "overlap": [],
+  "errors": [],
+  "full_b2_source_files": 1402,
+  "full_b2_launch_sha256": "68018fc17998753374cbe6d68f9767133a6c0656caea575ee46debc871778ce9",
+  "source_pins_verified": true,
+  "native_pins_verified": true,
+  "checkpoint_pins_verified": true,
+  "cpu_seconds": 45.932683999999995,
+  "wall_seconds": 64.39380240789615
+}
