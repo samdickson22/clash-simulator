@@ -2,7 +2,7 @@
 
 Exploration, outcome-informed extension; no multiplicity adjustment. Original R3a/b remain killed. R3a descriptive is ALWAYS NEVER-ADOPTABLE. No live replacement is authorized.
 
-Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T09:56:17Z.
+Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T10:06:29Z.
 
 | Arm | Host | Final steps | Temperature | Seed | Final EMA sealed |
 |---|---|---:|---:|---:|---|
@@ -10,7 +10,7 @@ Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/dep
 | R3d | 127x16 | 2500 | 0.003 | 2026101014 | yes |
 | R3e | 127x13 | 5000 | 0.01 | 2026101013 | yes |
 
-[Host reallocation](STAGE2-HOST03-ADDENDUM.md):01 released to S1 at08:45:23Z after all611 R3 groups drained. Any complete Stage1 survivors require separately admitted03 cores0–55 after coordinator-arranged G stop/full drain. Regret-only03 cores56–59 are unchanged.
+[Host reallocation](STAGE2-HOST03-ADDENDUM.md):01 released to S1 at08:45:23Z after all611 R3 groups drained. Any complete Stage1 survivors require separately admitted03 cores0–55 after coordinator-arranged G stop/full drain. Regret-only03 now uses cores56–58 with manager58 sharing a worker, nice19 and the PSI guard.
 
 | Arm | Effective training rows | Rows/s, all retained fit attempts | Charged fit GPUh | Fit CPUh |
 |---|---:|---:|---:|---:|
@@ -70,7 +70,7 @@ Full source/input/native/checkpoint/seed SHA bindings: training and evaluation f
 
 [Priority and PSI amendment](shared03/nice19/ADDENDUM.md): nice19/SCHED_OTHER and full memory PSI avg10 >10% stop. The first replay pool was drained after the explicit coordinator priority instruction arrived; eight complete seals and their streams are SHA-pinned for reuse, unsealed games replay fully, and every attempt whole-tree meter is charged. Score arithmetic/seeds/gates stay unchanged.
 
-Current regret operational freeze SHA: 86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d.
+Historical nice19 amendment freeze SHA: 86ed5d060591556469b2bfe29aee046dc48ccacb729b96e675bf5abf75b93b5d.
 | inputs/main02.pt | d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed |
 | inputs/assets.npz | 3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737 |
 | eval-source/imitation/exit_r1/screen.py | 17d1b4086585840f5073285c9345355b4187c8342963963360213c3a9cff176e |
@@ -79,7 +79,7 @@ Current regret operational freeze SHA: 86ed5d060591556469b2bfe29aee046dc48ccacb7
 
 [Admission receipt repair](shared03/repair/ADDENDUM.md) was pushed before the first round2 regret replay: the dynamic admission binds the current freeze/grant/evidence and exact lane. Proposal staging attempt1 failed on a stale static receipt pin before copying/scoring; its preflight CPU was not metered and is disclosed as small unrecoverable overhead. The failed log, original receipt and reviewed version2 retry are retained.
 
-[Shared03 operational amendment](shared03/PLAN.md): manager59 and three workers56–58 coexist with authenticated G on0–55. Regret seals bind the03-only amended evaluation SHA; all GPU offline and paired01 game seals retain the original a0beb995 SHA. The byte-unchanged Stage1 reducer runs in the replay manager after all64 children finish; its CPU is included in the whole replay pool once.
+[Historical shared03 operational amendment](shared03/PLAN.md): the prior manager59 allocation was superseded by the core58 correction below; authenticated G remains untouched. Regret seals bind the03-only amended evaluation SHA; all GPU offline and paired01 game seals retain the original a0beb995 SHA. The byte-unchanged Stage1 reducer runs in the replay manager after all64 children finish; its CPU is included in the whole replay pool once.
 
 [Manager core58 correction](shared03/core58/ADDENDUM.md): all four replay processes are confined to physical56–58; manager58 shares a scoring worker core, nice19/Other and PSI terms unchanged. Thirteen complete pre-stop seals/streams are SHA-pinned, unsealed games replay fully, both interrupted pool trees are charged once. No score arithmetic, gate or seed changes.
 

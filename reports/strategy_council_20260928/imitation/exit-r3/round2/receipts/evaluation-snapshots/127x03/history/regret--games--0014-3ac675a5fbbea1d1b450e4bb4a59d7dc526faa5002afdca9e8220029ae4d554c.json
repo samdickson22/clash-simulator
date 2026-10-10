@@ -1,0 +1,24 @@
+{
+  "relative": "regret/games/0014.json",
+  "sha256": "3ac675a5fbbea1d1b450e4bb4a59d7dc526faa5002afdca9e8220029ae4d554c",
+  "raw": "{\n  \"index\": 14,\n  \"seed\": 4503601207370510,\n  \"roots\": 189,\n  \"complete\": true,\n  \"command_exact\": true,\n  \"jsonl_sha256\": \"3511be5deae24f6808b6b785b0753bbfc86fb0176851f77bbffdc55770f3d198\",\n  \"native_sha256\": \"06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10\",\n  \"evaluation_freeze_sha256\": \"3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207\",\n  \"proposals_sha256\": {\n    \"R3c\": \"5aeea3c29b3b94f8305ff6e30141753c77bf9cf822dd1d0298ef2b882419fa94\",\n    \"R3d\": \"2895707ae76e0e5affc74c4ee334fbc8a41aee702c5a17dec87a203f18872ed3\",\n    \"R3e\": \"343fd6f8c265dd90720f36bc5adfbc3779fae9923e5600664e4057fd275d0721\"\n  },\n  \"cpu_seconds\": 232.972327,\n  \"scoring_replay_cpu_seconds\": 213.52680890599999,\n  \"wall_seconds\": 213.9008083830122,\n  \"utc\": \"2026-10-10T10:04:38Z\"\n}\n",
+  "value": {
+    "index": 14,
+    "seed": 4503601207370510,
+    "roots": 189,
+    "complete": true,
+    "command_exact": true,
+    "jsonl_sha256": "3511be5deae24f6808b6b785b0753bbfc86fb0176851f77bbffdc55770f3d198",
+    "native_sha256": "06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207",
+    "proposals_sha256": {
+      "R3c": "5aeea3c29b3b94f8305ff6e30141753c77bf9cf822dd1d0298ef2b882419fa94",
+      "R3d": "2895707ae76e0e5affc74c4ee334fbc8a41aee702c5a17dec87a203f18872ed3",
+      "R3e": "343fd6f8c265dd90720f36bc5adfbc3779fae9923e5600664e4057fd275d0721"
+    },
+    "cpu_seconds": 232.972327,
+    "scoring_replay_cpu_seconds": 213.52680890599999,
+    "wall_seconds": 213.9008083830122,
+    "utc": "2026-10-10T10:04:38Z"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "relative": "REGRET-CORE58-RESTART.json",
+  "sha256": "b5239afc69b9fbac678811d7e62f027f671fc348c7e76b2ee94875eeb01d9957",
+  "raw": "{\n  \"passed\": true,\n  \"reviewed_manual_restart\": true,\n  \"qualified_receipt_commit\": \"8ae738224559cb3a935317127e8d030c14475abe\",\n  \"nice\": 19,\n  \"physical_cores\": [\n    56,\n    57,\n    58\n  ],\n  \"manager_core\": 58,\n  \"worker_cores\": [\n    56,\n    57,\n    58\n  ],\n  \"retained_sealed_games\": 13,\n  \"previous_pool_pid\": 3154479,\n  \"previous_whole_tree_CPU_seconds\": 1124.726527,\n  \"utc\": \"2026-10-10T10:00:35Z\",\n  \"evaluation_freeze_sha256\": \"3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207\",\n  \"admitted_sha256\": \"607580f67f349890563abc243206d87ac1b2b70c98ab53500eb868ad6fc98050\"\n}\n",
+  "value": {
+    "passed": true,
+    "reviewed_manual_restart": true,
+    "qualified_receipt_commit": "8ae738224559cb3a935317127e8d030c14475abe",
+    "nice": 19,
+    "physical_cores": [
+      56,
+      57,
+      58
+    ],
+    "manager_core": 58,
+    "worker_cores": [
+      56,
+      57,
+      58
+    ],
+    "retained_sealed_games": 13,
+    "previous_pool_pid": 3154479,
+    "previous_whole_tree_CPU_seconds": 1124.726527,
+    "utc": "2026-10-10T10:00:35Z",
+    "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207",
+    "admitted_sha256": "607580f67f349890563abc243206d87ac1b2b70c98ab53500eb868ad6fc98050"
+  }
+}
