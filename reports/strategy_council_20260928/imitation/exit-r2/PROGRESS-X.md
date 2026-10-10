@@ -1,5 +1,18 @@
 # X worker progress
 
+2026-10-10T05:52:26Z. Existing01 reporting pool2035131 alive/admitted,
+366/600 complete/40active/194pending/failures[], mem109643137024/load47.1.
+No reporting losses/CIs/outcomes read; no launch, score repeat or recovery.
+Current03 offline-only2071651 alive/sixclosed/noactive/failures/stage2{}.
+ONLY X5 original04 fit3727388/3727520 active at9188/9766, eightnice10,
+PSS19.884720128GB/GPUfree48.414851072GB/guardPASS/noexit.
+Snapshot0552 closed6 final+liveX5 21.287972018GPUh/71.269680345CPUh
+REPLACES earlier fit live totals. Closedoffline separate; reporting CPU
+retains05:02 provisional sample until finalwholeexit, neveraddchildren.
+Original150/151 unconsumed/R2ineligible;01 not released;14 stays vacated.
+Tenmin schedule enabled,next2026-10-10T06:01:58.045Z; prompt refreshed.
+Pending X5 final9766/onceoffline and600 study/reduction/report/release.
+
 2026-10-10T05:42:38Z. X7 final4883EMA/fitexit0 05:41:45Z; single frozenGPUscore14
 3048428/3048438 closed05:42:06Z. Originalfit2423139/2423269 andscoregroups
 ALLABSENT/GPUempty48666MiB; finalEMAafb6775fe49a8fd5dee7dfcbfc0b7130e48909fa8bd204217007b6250ad98bbd.
@@ -13,7 +26,7 @@ nestedresultCPU neveradded. Current2071651 sixclosed/noactive/failures.
 ONLYX5fit activeoriginal3727388/3727520 at8859/9766/eightnice10/floorsPASS.
 Reporting2035131 healthy307/600/40active/253pending/no failures,mem110226137088/
 load47.52; no reportingloss/CI read. Fitmonitor0542 closed6+liveX5
-21.117274177GPUh/70.803372012CPUh REPLACEprior; offline60.021212310GPUh/0.019066336CPUh separate.
+21.117274177GPUh/70.803372012CPUh REPLACEprior; offline6 0.021212310GPUh/0.019066336CPUh separate.
 Original150/151unconsumed/R2ineligible/01notreleased. No new job/score/recovery.
 PromptupdatedX7closed/ONLYX5active; tenminenabled,next05:51:56Z;
 experiment pendingX5record+600study/reduction/report/release.
