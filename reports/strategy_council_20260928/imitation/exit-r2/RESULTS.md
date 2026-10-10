@@ -12,12 +12,12 @@ The committed plan/seed audit must precede fitting; use final EMA only.
 
 | Arm | Target / fraction | Fit | Stage1 | Stage2 | Stage3 | Decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| X1 | T=.003 /1.0 | running09, step1458/4883 | pending | conditional | conditional | pending |
-| X2 | T=.0001 /1.0 | running16, step1415/4883 | pending | conditional | conditional | pending |
-| X3 | z-score τ=.5 /1.0 | running08, step1361/4883 | pending | conditional | conditional | pending |
-| X4 | T=.003 /.75 | running01, step845/4883, micro3584 | pending | conditional | conditional | pending |
-| X5 | X1 double steps /1.0 | running04, step1357/9766 | pending | conditional | conditional | pending |
-| X6 | T=.0001 /.75 | running13, step431/4883, micro3584 | pending | conditional | conditional | pending |
+| X1 | T=.003 /1.0 | running09, step1804/4883 | pending | conditional | held | pending |
+| X2 | T=.0001 /1.0 | running16, step1753/4883 | pending | conditional | held | pending |
+| X3 | z-score τ=.5 /1.0 | running08, step1682/4883 | pending | conditional | held | pending |
+| X4 | T=.003 /.75 | running01, step946/4883, micro3584 | pending | conditional | held | pending |
+| X5 | X1 double steps /1.0 | running04, step1654/9766 | pending | conditional | held | pending |
+| X6 | T=.0001 /.75 | running13, step780/4883, micro3584 | pending | conditional | held | pending |
 
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
 seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
@@ -60,23 +60,23 @@ X6 outcome claimed. Original controller replacement meter is
 9.379653CPU seconds (parent+children once); superseded six-arm controller
 1502885 adds11.933346CPU seconds (parent1.784861+metadata children10.148485),
 with no evaluation active on exit. Current G-admission controller/gate meter pending.
-Current-attempt snapshots at2026-10-10 01:37:55–01:38:06Z:4.017382650 allocated
-GPU-wall hours and12.920397222 provisional whole-tree CPU-hours across six fits.
+Current-attempt snapshots at2026-10-10 01:48:12–21Z:5.046554402 allocated
+GPU-wall hours and16.613594444 provisional whole-tree CPU-hours across six fits.
 Original five are attempt2; X6 is attempt1. These running totals replace earlier
 snapshots and will be replaced by final supervisor exit meters; they exclude
 failed attempts and preparation costs above.
 
 | Arm | Live fit GPU-wall h | Provisional live fit CPU h |
 | --- | --- | --- |
-| X1 | 0.752765 | 1.953789 |
-| X2 | 0.752052 | 2.017639 |
-| X3 | 0.754292 | 2.217167 |
-| X4 | 0.751165 | 3.727661 |
-| X5 | 0.752233 | 2.070997 |
-| X6 | 0.254877 | 0.933144 |
+| X1 | 0.924720 | 2.402142 |
+| X2 | 0.925252 | 2.481139 |
+| X3 | 0.924699 | 2.724722 |
+| X4 | 0.922687 | 4.856256 |
+| X5 | 0.924710 | 2.541678 |
+| X6 | 0.424486 | 1.607658 |
 
 Own supervisor/trainer/loaders are counted once; segment diagnostics are not
-added again. Receipt: `receipts/monitor-20261010T0138Z.json`. All six have eight
+added again. Receipt: `receipts/monitor-20261010T0148Z.json`. All six have eight
 owned processes, nice10, no stop reason. Leased09/16/13 remain below46GB PSS
 and above8GiB GPU free. 08 quiet entries are empty after stripping comments.
 Capacity released13 at01:03Z; independent GPU-idle check01:12:24Z confirms
@@ -124,3 +124,10 @@ Manual01 evaluations must use STOP-01 and the same drain check. No real G
 stop requested by X admission yet because all fits still pending; qualification
 used fake files/metadata with no games. Science/frozen source bytes unchanged;
 stage3 remainsHOLD and conditional R2 depends on a stage2 survivor.
+
+2026-10-10 01:48Z continuation: current controller1596239 healthy, no scientific
+stage outcomes or G admission request. All six fit groups unchanged and
+resource checks pass;08 quiet entries empty. X6 checkpoint750 verifiedSHA
+b3e907d7045fc0fe5368696c45223efd5b885516cc9eb26c8a571642860dccaa; only final
+EMA remains eligible for reporting. X4 steps954–958 optimizer1.92–2.35s and G01
+supervisor1356583 is now absent. Stage3 remains held; no reporting seeds.

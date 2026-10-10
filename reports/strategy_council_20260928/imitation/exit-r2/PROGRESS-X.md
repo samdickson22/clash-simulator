@@ -366,3 +366,24 @@ unchanged. New runtime files versioned; originalcontroller_x6/addendum SHAs
 remain intact. Stage3HOLD marker stays; no stage3 seeds. Continuation prompt
 updated to CURRENTcontroller1596239 and mandatory G handoff on01/03; next
 01:51:23.475Z at10min cadence. Startup receipt g-admission-startup.json.
+
+2026-10-10T01:48:47Z. Continuation honors later coordinatorGhandoff/stage3HOLD
+and latest records over stale queued prompt1502885. Current03controller
+1596239 alive/PGID1596239/core63/SCHED_IDLE,offline={},stage2={},active=null,
+failures=[],priorityfalse,no G admission request yet. Superseded1502885 stays
+exited; do not relaunch. Scheduler's persisted prompt verified includes both
+currentcontroller and stage3HOLD; enabled/10min,next01:51:23.475Z.
+Six original fit groups deduplicated,steps1804/1753/1682/946/1654/780;
+eight own nice10 processes each, no guard/exit/stop reason. Leased09/16/13
+PSS15.57/16.72/27.10GB andGPUfree48.41/48.41/29.97GB pass, leases valid.
+13 has only ownGPUtrainer2252096; effectivehumanmicro3584 retained. X6
+checkpoint750SHA verified01:48:47Z:
+b3e907d7045fc0fe5368696c45223efd5b885516cc9eb26c8a571642860dccaa.
+X1/X2 durable1750;X3/X5 durable1500;X4 durable750. 08 quiet entriesempty,
+no X3 stop;05:15Zguard/vacate05:30Z remains, X3 priority on13 unchanged.
+X4 latest954–958 optimizer1.92–2.35s;G01supervisor1356583 absent, pressure
+falling versus slow interval. No X source/process/recipe changes.
+Compactmonitor0148Z replaces live fit snapshots:GPUh
+5.046554402,whole-treeCPUh16.613594444; closed failed/preparation/
+controllers/smokes remain separate. No gate or scientifickill/R2 admission,
+no stage3 seedconsumption, no duplicate launch or migration.
