@@ -1,0 +1,26 @@
+{
+  "schema": "clasher.exit-r2.g-admission-amendment.v1",
+  "utc": "2026-10-10T01:45:19Z",
+  "authority": "Coordinator explicitly authorizes STOP-03/STOP-01 and requires G exit before timed/evaluation work; received2026-10-10 01:44Z",
+  "operational_only": true,
+  "base_freeze_sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+  "original_controller_file_unchanged": "ops/controller_x6.py",
+  "original_controller_pid": 1502885,
+  "new_controller_file": "ops/controller_g_yield.py",
+  "files": {
+    "controller_g_yield.py": "d8494cb720e1ed0b71090f89e07c7b7fcd1f164af5dfda0c9732fe4cfd6a1b92",
+    "evaluation_g_yield.py": "86b4a4be30c440853b391520535017836f9e1c1336372dc327d066e49a00858e"
+  },
+  "qualification": "g-admission-qualification.json",
+  "prelaunch_commit_push_required": true,
+  "policy": "Request host-specific G STOP only when evaluation ready, scan all G ops processes on host, wait at least two empty samples, require24GiB home floor; no G process signal/kill or STOP removal. Keep X3 priority checks running during wait.",
+  "hosts": {
+    "127x03": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/STOP-03",
+    "127x01": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/STOP-01"
+  },
+  "current_automatic_evaluation_host": "127x03",
+  "manual_home01_evaluation": "Invoke the same admission helper or request STOP-01 manually and verify G process exit before any eval; no home01 eval auto launch.",
+  "stage3": "Still HOLD; no reporting seeds or new comparator.",
+  "restart": "Old controller must have no active child, exit via owned CONTROLLER.STOP, collect meter separately once, then clear only own CONTROLLER.STOP and launch new controller with own setsid wrapper after committed/pushed amendment.",
+  "scientific_sources": "All trainer/freeze/addendum/qualified adapter/native bytes and seed/scoring rules unchanged."
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "clasher.exit-r2.g-admission-qualification.v1",
+  "utc": "2026-10-10T01:45:19Z",
+  "passed": true,
+  "host": "127x03",
+  "checks": [
+    "active G blocks evaluation after STOP creation",
+    "first empty scan cannot admit",
+    "second empty scan plus memory floor admits",
+    "owned controller STOP vetoes admission"
+  ],
+  "real_G_STOP_touched": false,
+  "simulation_games": 0,
+  "files": {
+    "controller_g_yield.py": "d8494cb720e1ed0b71090f89e07c7b7fcd1f164af5dfda0c9732fe4cfd6a1b92",
+    "evaluation_g_yield.py": "86b4a4be30c440853b391520535017836f9e1c1336372dc327d066e49a00858e"
+  }
+}

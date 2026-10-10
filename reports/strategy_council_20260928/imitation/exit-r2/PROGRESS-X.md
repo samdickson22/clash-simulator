@@ -336,3 +336,17 @@ Fits/stages1/2 continueunchanged; conditionalR2 tied to stage2 survivor remains.
 Receipt stage3-hold-20261010T0142Z.json; resume only explicit coordinator
 comparator amendment plus freeze/commit/push and qualification. Scheduler
 still10min, next01:51:23.475Z; no duplicate job or timer launched.
+
+2026-10-10T01:45:19Z. Coordinator authorizes G03cores0–59/01cores0–39 filler
+until X evaluation needs them, with host STOP-03/STOP-01 and full drain before
+eval. Current controller1502885 auto-starts gates, so new versioned
+controller_g_yield.py imports evaluation_g_yield.py to enforce admission; old
+controller/source/freeze/addendum pins untouched. Helper touches only the
+authorized host-specific G STOP when a gate is ready, waits at least two
+empty G process samples/24GiB home floor, and preserves current X3 priority
+loop while waiting. No G process signal or stop removal. Four qualification
+checks PASS home03core63/nice19/SCHED_IDLE with fake G files/process list;
+no real G STOP touched, no games. New-source SHAs sealed in own operational
+amendment. Commit/push before replacing controller; ensure old active=null/
+clean exit and retain its whole-tree CPU meter once. All6 fits and scientific
+stage1/2 recipes unchanged; stage3 stillHOLD.

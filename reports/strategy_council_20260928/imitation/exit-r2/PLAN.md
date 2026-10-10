@@ -110,6 +110,16 @@ wrapper qualification. K's harness at `reports/explore/k-anytime/` is the primar
 if it is unready at2026-10-10 06:00Z, freeze the already-declared fallback to
 r1(b) E1 deadline W-screen8. Record that decision before affected games.
 
+Coordinator G handoff amendment2026-10-10 01:45Z: G filler may occupy03
+physical0–59 and01 physical0–39 until an X gate is ready. Before evaluation,
+create the host-specific G STOP-03/STOP-01 and wait for every G ops process
+on that host to exit. Do not signal/kill G or clear its stop. Current automatic
+03 gates use controller_g_yield.py plus evaluation_g_yield.py: STOP precedes
+process scan, at least two empty samples and24GiB home floor precede child
+launch. Original controller_x6.py/addendum bytes remain sealed. Manual01
+work must use the same handoff. Qualified on03 with fake G metadata and no
+games; receipts g-admission-amendment.json/g-admission-qualification.json.
+
 All simulations/diagnostics run on home01 leftovers/03, nice≥10/SCHED_IDLE,
 physical cores without SMT duplication, memory floor24GiB. Load/affinity checks
 and coordination with K precede claims. No CPU-heavy sims on leased hosts.
