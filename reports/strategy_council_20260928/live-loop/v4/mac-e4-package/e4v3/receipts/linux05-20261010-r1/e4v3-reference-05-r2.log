@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/prepare_bundle.py", line 234, in <module>
+    main()
+  File "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/prepare_bundle.py", line 230, in main
+    prepare(parser.parse_args())
+  File "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/prepare_bundle.py", line 119, in prepare
+    backend = TierBackend(out, root, args.native)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tier_backend.py", line 121, in __init__
+    self.rows = pickle.loads((self.bundle / "states.pkl").read_bytes())
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'numpy._core.numeric'
