@@ -1,0 +1,25 @@
+{
+  "relative": "REGRET-PROPOSALS-STAGING.json",
+  "sha256": "7bacf27938aa56fbc2baca1c675de02d0db8ccfd9ea725ea77a7bd7407ac2e84",
+  "raw": "{\n  \"passed\": true,\n  \"pid\": 3109717,\n  \"pgid\": 3109717,\n  \"files\": {\n    \"R3c.json\": \"46589d9e55bb9c9b0d1cf5e2ddf985a1a8298729d55b093c68096e5fea172855\",\n    \"R3c-calibration.json\": \"b6d2b25d0286b0c1a5a7432401dcdb9215ccf372d54f2bf3eb07491325d9d880\",\n    \"R3c-proposals.npz\": \"5aeea3c29b3b94f8305ff6e30141753c77bf9cf822dd1d0298ef2b882419fa94\",\n    \"R3d.json\": \"e8bc416a06246f46057e32dc03e50e79c6fb3a673cb6767b0640fc1e64854a99\",\n    \"R3d-calibration.json\": \"f9b9c7574773c363c920c73db032a056665334fa4194e3c0d6ff674609c3c4ff\",\n    \"R3d-proposals.npz\": \"2895707ae76e0e5affc74c4ee334fbc8a41aee702c5a17dec87a203f18872ed3\",\n    \"R3e.json\": \"ae7940217321bcfc033117503277dc8668c625f625750221f6274768bd0d45a3\",\n    \"R3e-calibration.json\": \"51abc4b3ccb0d52acb057352a7c5850a6820187fcce21b2cab4fdd503b59b998\",\n    \"R3e-proposals.npz\": \"343fd6f8c265dd90720f36bc5adfbc3779fae9923e5600664e4057fd275d0721\"\n  },\n  \"parent_cpu_seconds\": 1.545338,\n  \"children_cpu_seconds\": 0.23654199999999997,\n  \"wall_seconds\": 3.236238050973043,\n  \"accounting\": \"Whole proposal receiver tree once; remote sender CPU unmetered/disclosed\"\n}\n",
+  "value": {
+    "passed": true,
+    "pid": 3109717,
+    "pgid": 3109717,
+    "files": {
+      "R3c.json": "46589d9e55bb9c9b0d1cf5e2ddf985a1a8298729d55b093c68096e5fea172855",
+      "R3c-calibration.json": "b6d2b25d0286b0c1a5a7432401dcdb9215ccf372d54f2bf3eb07491325d9d880",
+      "R3c-proposals.npz": "5aeea3c29b3b94f8305ff6e30141753c77bf9cf822dd1d0298ef2b882419fa94",
+      "R3d.json": "e8bc416a06246f46057e32dc03e50e79c6fb3a673cb6767b0640fc1e64854a99",
+      "R3d-calibration.json": "f9b9c7574773c363c920c73db032a056665334fa4194e3c0d6ff674609c3c4ff",
+      "R3d-proposals.npz": "2895707ae76e0e5affc74c4ee334fbc8a41aee702c5a17dec87a203f18872ed3",
+      "R3e.json": "ae7940217321bcfc033117503277dc8668c625f625750221f6274768bd0d45a3",
+      "R3e-calibration.json": "51abc4b3ccb0d52acb057352a7c5850a6820187fcce21b2cab4fdd503b59b998",
+      "R3e-proposals.npz": "343fd6f8c265dd90720f36bc5adfbc3779fae9923e5600664e4057fd275d0721"
+    },
+    "parent_cpu_seconds": 1.545338,
+    "children_cpu_seconds": 0.23654199999999997,
+    "wall_seconds": 3.236238050973043,
+    "accounting": "Whole proposal receiver tree once; remote sender CPU unmetered/disclosed"
+  }
+}

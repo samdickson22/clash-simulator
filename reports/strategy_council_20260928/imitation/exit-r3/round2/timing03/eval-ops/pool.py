@@ -7,6 +7,7 @@ from journal import record
 from imitation.exit_r1.rows import write_json
 def main():
     p=argparse.ArgumentParser();p.add_argument('--job',required=True);p.add_argument('--lane',choices=tuple(BASES),required=True);p.add_argument('--smoke',action='store_true');p.add_argument('--cores',type=int,nargs='+',required=True);a=p.parse_args();j=Path(a.job)
+    assert a.lane=='stage2','Timing03 is survivor-only'
     assert allowed(j) and os.sched_getaffinity(0)=={55};frozen(j)
     assert len(a.cores)==len(set(a.cores)) and set(a.cores)<=set(range(55))
     topology={int(l.split(',')[0]):tuple(l.split(',')[1:]) for l in subprocess.check_output(['lscpu','-p=CPU,CORE,SOCKET'],text=True).splitlines() if not l.startswith('#')}

@@ -74,6 +74,15 @@ class MetadataBarriers(unittest.TestCase):
             result=audit_vacancy.audit('127x01',publish=True)
             self.assertTrue(result['retained_final_host_release'])
             remote.assert_not_called()
+
+    def test_all_killed_never_constructs_timing_freeze(self):
+        path=Path(__file__).resolve().parents[1]/'timing03/operations/prepare_freeze.py'
+        spec=importlib.util.spec_from_file_location('timing_freeze',path)
+        prepare=importlib.util.module_from_spec(spec);spec.loader.exec_module(prepare)
+        stage1={a:dict(stage1_complete=True,survives=False) for a in ('R3c','R3d','R3e')}
+        with patch.object(prepare,'verified',return_value=(stage1,'synthetic')),patch.object(Path,'write_text') as write:
+            with self.assertRaisesRegex(AssertionError,'All killed'):prepare.main()
+            write.assert_not_called()
         v = self.fixture(); v[5][0]['observer_independently_absent'] = False
         with self.assertRaises(AssertionError): validate_final(*v)
 

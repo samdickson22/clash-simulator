@@ -1,0 +1,13 @@
+{
+  "relative": "EVAL-PGIDS.json",
+  "sha256": "f784457c5eb53436ad1069d69e2ab3b9ee87f88aaf290cb3883ae996ca588b21",
+  "raw": "[\n  {\n    \"pid\": 3109717,\n    \"pgid\": 3109717,\n    \"role\": \"stage_proposals\",\n    \"utc\": \"2026-10-10T09:32:21Z\"\n  }\n]\n",
+  "value": [
+    {
+      "pid": 3109717,
+      "pgid": 3109717,
+      "role": "stage_proposals",
+      "utc": "2026-10-10T09:32:21Z"
+    }
+  ]
+}

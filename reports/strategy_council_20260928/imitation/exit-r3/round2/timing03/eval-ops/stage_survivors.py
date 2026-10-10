@@ -5,7 +5,7 @@ from admission import allowed,frozen,sha
 from journal import record
 from imitation.exit_r1.rows import write_json
 def main(j):
-    assert allowed(j) and os.sched_getaffinity(0)=={55};f=frozen(j);record(j,'stage_survivors');r=dict(passed=False,pid=os.getpid(),pgid=os.getpgrp());t=time.monotonic()
+    assert allowed(j) and os.sched_getaffinity(0)=={55};f=frozen(j,artifacts=False);record(j,'stage_survivors');r=dict(passed=False,pid=os.getpid(),pgid=os.getpgrp());t=time.monotonic()
     def copy(host,path,target):
         assert allowed(j);Path(target).parent.mkdir(parents=True,exist_ok=True);core=59 if host=='127x03' else 126
         subprocess.run(['rsync','-a','--rsync-path=nice -n 10 taskset -c '+str(core)+' rsync',host+':'+str(path),str(target)],check=True)
@@ -26,6 +26,7 @@ def main(j):
         (j/'stage1-results.json').write_bytes(raw_stage1)
         stage1=json.loads(raw_stage1)
         assert all(v['stage1_complete'] and v==json.loads((j/'offline'/f'{a}.json').read_text()) for a,v in stage1.items())
+        frozen(j)
         r.update(passed=True,stage1_results_sha256=sha(j/'stage1-results.json'),survivors=[a for a,v in stage1.items() if v['survives']],regret_proofs_and_whole_pool_meters_retained_on_parent03=True)
     finally:
         u=resource.getrusage(resource.RUSAGE_SELF);v=resource.getrusage(resource.RUSAGE_CHILDREN);r.update(parent_cpu_seconds=u.ru_utime+u.ru_stime,children_cpu_seconds=v.ru_utime+v.ru_stime,wall_seconds=time.monotonic()-t,accounting='Whole survivor receiver tree once; remote sender CPU unmetered/disclosed');write_json(j/'STAGE2-ARMS-STAGING.json',r)

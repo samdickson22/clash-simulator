@@ -1,8 +1,8 @@
 {
-  "utc": "2026-10-10T09:01:46Z",
+  "utc": "2026-10-10T09:35:55Z",
   "final": false,
-  "cpu_seconds": 169287.597247,
-  "gpu_wall_seconds": 13332.72988456674,
+  "cpu_seconds": 199669.244385,
+  "gpu_wall_seconds": 23366.550588296494,
   "meters": [
     {
       "category": "staging",
@@ -239,11 +239,47 @@
       "gpu_wall_seconds": 17.097760914824903,
       "status": "complete",
       "host": "127x09"
+    },
+    {
+      "category": "fit",
+      "sha256": "3b7b3e9d3f17c57978af83fd096bd5ffc02f83e1d35c20b84f0b29dab1158f5a",
+      "path": "receipts/process-snapshots/127x13/R3e-exit.json",
+      "cpu_seconds": 30360.020322999997,
+      "gpu_wall_seconds": 10016.536365371896,
+      "status": "complete",
+      "host": "127x13"
+    },
+    {
+      "category": "staging/qualification",
+      "sha256": "7bacf27938aa56fbc2baca1c675de02d0db8ccfd9ea725ea77a7bd7407ac2e84",
+      "path": "receipts/evaluation-snapshots/127x03/REGRET-PROPOSALS-STAGING.json",
+      "cpu_seconds": 1.7818800000000001,
+      "gpu_wall_seconds": 0,
+      "status": "closed",
+      "host": "127x03"
+    },
+    {
+      "category": "shared03 operational pin verification",
+      "sha256": "5a32c5dd1f3ae8cc8da329167b6ea995c866e508c96af83d3367e57e9671412b",
+      "path": "receipts/evaluation-snapshots/127x03/SHARED03-REPAIR-DEPLOYMENT.json",
+      "cpu_seconds": 0.4574069999999999,
+      "gpu_wall_seconds": 0,
+      "status": "closed",
+      "host": "127x03"
+    },
+    {
+      "category": "offline",
+      "sha256": "eea4e92b4b0e22cc03d3f440ef885728e1e7ff9f65f0f9ea28102ae605918d63",
+      "path": "receipts/evaluation-snapshots/127x13/history/offline--R3e-attempt-meter-4098140-eea4e92b4b0e22cc03d3f440ef885728e1e7ff9f65f0f9ea28102ae605918d63.json",
+      "cpu_seconds": 19.387528,
+      "gpu_wall_seconds": 17.28433835785836,
+      "status": "complete",
+      "host": "127x13"
     }
   ],
-  "active_fit_costs_pending": true,
+  "active_fit_costs_pending": false,
   "accounting": "Original R3a/b cost ledger separate. Each whole process/tree once; prep and void startup meters retained. Initial synthetic test and small metadata/copy overhead unmetered.",
-  "unmetered_overhead": "Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted.",
+  "unmetered_overhead": "Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted. Failed proposal staging attempt1 preflight stopped before its meter; its CPU cannot be recovered and is disclosed as small unmetered failed-preflight overhead (no fabricated zero).",
   "scientific_complete": false,
   "vacancy_complete": false
 }

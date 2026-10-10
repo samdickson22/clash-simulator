@@ -82,6 +82,6 @@ Coordinator-authorized round2 and never-adoptable R3a study are pending under [t
 
 <!-- R3-EXTENSION-STATUS -->
 
-Original R3a/b results above are final. The outcome-informed C/D/E extension continues; [extended results](round2/RESULTS.md) and [combined cost ledger](round2/receipts/combined-cost-summary.json) await all remaining decisions, meters and vacancy audits.
+Original R3a/b results above are final. All C/D/E final fits and GPU offline are complete; all three fail both binary gates. Stage2 is skipped with zero games and no adoption. The required64 common-root W regret replay is active on03 cores56–59; final regret/cost/vacancy publication remains pending in [extended results](round2/RESULTS.md).
 
-The R3a NEVER-ADOPTABLE r1(b) descriptive run is complete over 600 fresh paired seeds. Its loss was 24.167%, compared with 52.833% for K0; the paired change was −28.667 pp [−33.667, −23.333]95CI. Its original Stage1 kill and adoption ineligibility stand. Proposal latency differs between arms; full deadline/search diagnostics and costs are in the extended results. The later 06:50 fallback amendment supersedes the queued 05:48 S-default request.
+R3a NEVER-ADOPTABLE r1(b) descriptive is complete over600 fresh paired seeds: loss24.167% versus K0 52.833%, paired change−28.667pp [−33.667,−23.333]95CI. Its original Stage1 kill and adoption ineligibility stand. The result combines learned policy, calibrated gate, inference caching and search-budget effects; both arms facev1+W and late wall returns are logged rather than charged to game ticks. See the extended report and independent audit for limits.

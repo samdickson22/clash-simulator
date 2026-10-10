@@ -55,10 +55,12 @@ def allowed(job):
     return not _conflicts and available>=24*2**30
 
 
-def frozen(j):
+def frozen(j,artifacts=True):
     f=json.loads((j/'evaluation-freeze.json').read_text());p=json.loads((j/'evaluation-prelaunch.json').read_text())
     assert p['pushed'] and p['evaluation_freeze_sha256']==sha(j/'evaluation-freeze.json')
     assert f['protocol']=='r1(b)-coarse-first-W-200ms' and f['timing_host']=='127x03'
     assert f['physical_cores']==list(range(56))
-    for name,want in f['files'].items():assert sha(j/name)==want,name
+    for name,want in f['files'].items():
+        if not artifacts and (name.split('/')[0] in ('fits','offline') or name=='stage1-results.json'):continue
+        assert sha(j/name)==want,name
     return f

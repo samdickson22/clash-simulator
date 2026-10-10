@@ -18,5 +18,12 @@
     "scientific_imports": false,
     "no01_survivor_launch": true,
     "retained01_release_no_successor_audit": true
+  },
+  "timing03_freeze_barrier": {
+    "utc": "2026-10-10T09:08:06Z",
+    "tests": 9,
+    "passed": true,
+    "metadata_only": true,
+    "all_killed_no_freeze_write": true
   }
 }

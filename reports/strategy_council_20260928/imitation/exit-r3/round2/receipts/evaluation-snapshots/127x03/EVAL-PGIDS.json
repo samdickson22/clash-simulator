@@ -1,0 +1,61 @@
+{
+  "relative": "EVAL-PGIDS.json",
+  "sha256": "3376d6536974e229d37334f2a2ba237d13b2328ffbdc0fa76fec8a052d73b488",
+  "raw": "[\n  {\n    \"pid\": 3109717,\n    \"pgid\": 3109717,\n    \"role\": \"stage_proposals\",\n    \"utc\": \"2026-10-10T09:32:21Z\"\n  },\n  {\n    \"pid\": 3111108,\n    \"pgid\": 3111108,\n    \"role\": \"regret_pool\",\n    \"utc\": \"2026-10-10T09:32:40Z\"\n  },\n  {\n    \"pid\": 3111211,\n    \"pgid\": 3111211,\n    \"role\": \"regret_game\",\n    \"utc\": \"2026-10-10T09:32:40Z\",\n    \"index\": 0\n  },\n  {\n    \"pid\": 3111212,\n    \"pgid\": 3111212,\n    \"role\": \"regret_game\",\n    \"utc\": \"2026-10-10T09:32:40Z\",\n    \"index\": 1\n  },\n  {\n    \"pid\": 3111213,\n    \"pgid\": 3111213,\n    \"role\": \"regret_game\",\n    \"utc\": \"2026-10-10T09:32:40Z\",\n    \"index\": 2\n  },\n  {\n    \"pid\": 3117515,\n    \"pgid\": 3117515,\n    \"role\": \"regret_game\",\n    \"utc\": \"2026-10-10T09:34:35Z\",\n    \"index\": 3\n  },\n  {\n    \"pid\": 3118004,\n    \"pgid\": 3118004,\n    \"role\": \"regret_game\",\n    \"utc\": \"2026-10-10T09:34:44Z\",\n    \"index\": 4\n  },\n  {\n    \"pid\": 3118161,\n    \"pgid\": 3118161,\n    \"role\": \"regret_game\",\n    \"utc\": \"2026-10-10T09:34:47Z\",\n    \"index\": 5\n  }\n]\n",
+  "value": [
+    {
+      "pid": 3109717,
+      "pgid": 3109717,
+      "role": "stage_proposals",
+      "utc": "2026-10-10T09:32:21Z"
+    },
+    {
+      "pid": 3111108,
+      "pgid": 3111108,
+      "role": "regret_pool",
+      "utc": "2026-10-10T09:32:40Z"
+    },
+    {
+      "pid": 3111211,
+      "pgid": 3111211,
+      "role": "regret_game",
+      "utc": "2026-10-10T09:32:40Z",
+      "index": 0
+    },
+    {
+      "pid": 3111212,
+      "pgid": 3111212,
+      "role": "regret_game",
+      "utc": "2026-10-10T09:32:40Z",
+      "index": 1
+    },
+    {
+      "pid": 3111213,
+      "pgid": 3111213,
+      "role": "regret_game",
+      "utc": "2026-10-10T09:32:40Z",
+      "index": 2
+    },
+    {
+      "pid": 3117515,
+      "pgid": 3117515,
+      "role": "regret_game",
+      "utc": "2026-10-10T09:34:35Z",
+      "index": 3
+    },
+    {
+      "pid": 3118004,
+      "pgid": 3118004,
+      "role": "regret_game",
+      "utc": "2026-10-10T09:34:44Z",
+      "index": 4
+    },
+    {
+      "pid": 3118161,
+      "pgid": 3118161,
+      "role": "regret_game",
+      "utc": "2026-10-10T09:34:47Z",
+      "index": 5
+    }
+  ]
+}

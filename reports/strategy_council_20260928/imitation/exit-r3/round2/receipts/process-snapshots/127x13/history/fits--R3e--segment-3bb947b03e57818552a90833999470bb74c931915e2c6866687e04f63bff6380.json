@@ -1,0 +1,38 @@
+{
+  "relative": "fits/R3e/segment.json",
+  "sha256": "3bb947b03e57818552a90833999470bb74c931915e2c6866687e04f63bff6380",
+  "raw": "{\n  \"host\": \"127x13\",\n  \"pid\": 3431416,\n  \"started_at\": \"2026-10-10T06:31:44.053804+00:00\",\n  \"numpy\": \"1.26.4\",\n  \"torch\": \"2.7.1+cu118\",\n  \"python\": \"3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]\",\n  \"cuda_allocator_config\": null,\n  \"effective_human_microbatch\": 3584,\n  \"nice\": 10,\n  \"affinity\": [\n    118,\n    119,\n    126\n  ],\n  \"instrumentation\": \"T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing\",\n  \"actual_loader_workers\": 6,\n  \"scientific_loader_workers\": 1,\n  \"prefetch_factor\": 4,\n  \"mmap_random_advice\": false,\n  \"operational_amendment_sha256\": \"e52de74886795bad062017aee011d86db2d143a15be3a682c017e10a82e302b4\",\n  \"status\": \"returned\",\n  \"ended_at\": \"2026-10-10T09:18:11.735370+00:00\",\n  \"wall_seconds\": 9987.681633993983,\n  \"cpu_seconds\": 29230.718767000002,\n  \"parent_cpu_seconds\": 17466.668444000003,\n  \"loader_cpu_seconds\": 11764.050323,\n  \"optimizer_steps\": 5000,\n  \"cursor_start\": 0,\n  \"peak_loader_tree_pss_bytes\": 36625099776,\n  \"min_loader_mem_available_bytes\": 100094984192,\n  \"resource_stop\": null\n}\n",
+  "value": {
+    "host": "127x13",
+    "pid": 3431416,
+    "started_at": "2026-10-10T06:31:44.053804+00:00",
+    "numpy": "1.26.4",
+    "torch": "2.7.1+cu118",
+    "python": "3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]",
+    "cuda_allocator_config": null,
+    "effective_human_microbatch": 3584,
+    "nice": 10,
+    "affinity": [
+      118,
+      119,
+      126
+    ],
+    "instrumentation": "T5 read-only mmap MADV_DONTNEED after copied batches; synchronized step timing",
+    "actual_loader_workers": 6,
+    "scientific_loader_workers": 1,
+    "prefetch_factor": 4,
+    "mmap_random_advice": false,
+    "operational_amendment_sha256": "e52de74886795bad062017aee011d86db2d143a15be3a682c017e10a82e302b4",
+    "status": "returned",
+    "ended_at": "2026-10-10T09:18:11.735370+00:00",
+    "wall_seconds": 9987.681633993983,
+    "cpu_seconds": 29230.718767000002,
+    "parent_cpu_seconds": 17466.668444000003,
+    "loader_cpu_seconds": 11764.050323,
+    "optimizer_steps": 5000,
+    "cursor_start": 0,
+    "peak_loader_tree_pss_bytes": 36625099776,
+    "min_loader_mem_available_bytes": 100094984192,
+    "resource_stop": null
+  }
+}

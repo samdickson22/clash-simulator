@@ -1,0 +1,17 @@
+{
+  "relative": "offline/R3c-calibration.json",
+  "sha256": "b6d2b25d0286b0c1a5a7432401dcdb9215ccf372d54f2bf3eb07491325d9d880",
+  "raw": "{\n  \"arm\": \"R3c\",\n  \"threshold\": 0.5484088957309723,\n  \"target_play_rate\": 0.346,\n  \"actual_play_rate\": 0.345944609297725,\n  \"checkpoint_sha256\": \"9d21e505e247889d1f337d00bb2d8840d2377a0db11fc691f9ebd5675cd0deb7\",\n  \"heldout_manifest_sha256\": \"0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f\",\n  \"rows\": 8088,\n  \"teacher_play_count\": 2798,\n  \"labels_not_used_for_threshold\": true,\n  \"exploratory_calibration_reuse\": true\n}\n",
+  "value": {
+    "arm": "R3c",
+    "threshold": 0.5484088957309723,
+    "target_play_rate": 0.346,
+    "actual_play_rate": 0.345944609297725,
+    "checkpoint_sha256": "9d21e505e247889d1f337d00bb2d8840d2377a0db11fc691f9ebd5675cd0deb7",
+    "heldout_manifest_sha256": "0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f",
+    "rows": 8088,
+    "teacher_play_count": 2798,
+    "labels_not_used_for_threshold": true,
+    "exploratory_calibration_reuse": true
+  }
+}

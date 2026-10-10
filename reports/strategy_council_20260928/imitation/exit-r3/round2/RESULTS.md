@@ -2,17 +2,31 @@
 
 Exploration, outcome-informed extension; no multiplicity adjustment. Original R3a/b remain killed. R3a descriptive is ALWAYS NEVER-ADOPTABLE. No live replacement is authorized.
 
-Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T09:01:46Z.
+Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T09:35:55Z.
 
 | Arm | Host | Final steps | Temperature | Seed | Final EMA sealed |
 |---|---|---:|---:|---:|---|
 | R3c | 127x09 | 5000 | 0.003 | 2026101013 | yes |
 | R3d | 127x16 | 2500 | 0.003 | 2026101014 | yes |
-| R3e | 127x13 | 5000 | 0.01 | 2026101013 | pending |
+| R3e | 127x13 | 5000 | 0.01 | 2026101013 | yes |
 
 [Host reallocation](STAGE2-HOST03-ADDENDUM.md):01 released to S1 at08:45:23Z after all611 R3 groups drained. Any complete Stage1 survivors require separately admitted03 cores0–55 after coordinator-arranged G stop/full drain. Regret-only03 cores56–59 are unchanged.
 
-Stage1 final-EMA calibration and64 common frozen-W replay gates pending. No intermediate checkpoint selection.
+| Arm | Effective training rows | Rows/s, all retained fit attempts | Charged fit GPUh | Fit CPUh |
+|---|---:|---:|---:|---:|
+| R3c | 40,960,000 | 4670.65 | 2.436018 | 6.484337 |
+| R3d | 20,480,000 | 4561.50 | 1.247154 | 3.445003 |
+| R3e | 40,960,000 | 4072.78 | 2.793615 | 8.441899 |
+
+Final-EMA GPU offline is complete for all arms. The required64 common frozen-W replay is pending; no intermediate checkpoint selection.
+
+All three arms fail both binary gates permanently. Stage2 is skipped with zero smoke/control/reporting games; no G stop or timing admission is requested. Regret still must be completed and reported.
+
+| Arm | Play recall %, game95CI | Binary agreement %, game95CI | Teacher-play top8 exact action recall %, game95CI |
+|---|---|---|---|
+| R3c | 63.438 [60.882, 66.033] | 74.703 [73.385, 76.132] | 31.701 [30.040, 33.483] |
+| R3d | 62.938 [60.479, 65.333] | 74.357 [72.872, 75.902] | 30.558 [28.867, 32.382] |
+| R3e | 62.437 [59.688, 65.023] | 74.011 [72.654, 75.479] | 31.165 [29.397, 33.073] |
 
 R3a descriptive — NEVER ADOPTABLE.
 
@@ -35,13 +49,13 @@ The frozen diagnostic field `completed_roots` counts fully scored candidates, no
 [Independent descriptive audit](../AUDIT-R3A-DESCRIPTIVE-20261010.md) confirms the paired result with caveats: it combines learned policy, calibrated gate and inference caching effects; strict return timing and generalization beyond the five archetypes remain unqualified.
 
 Round2 Stage2 survivors.
-Pending complete600 paired terminal blocks; no partial reporting reduction.
+Skipped: all round2 arms binary-killed; zero qualification/control/reporting games.
 
-Known round2/descriptive metered costs: **47.024333 CPUh**, **3.703536 GPU reservation-wallh**. Open process costs pending; these are lower bounds.
+Known round2/descriptive metered costs: **55.463679 CPUh**, **6.490708 GPU reservation-wallh**. Open process costs pending; these are lower bounds.
 
 [Once-only cost ledger](receipts/cost-summary.json) deduplicates exact original meter SHAs across histories and03→01 copies. Whole fit/pool trees include failed/void/replayed work; nested game/case/block/segment diagnostics are never added again. Original R3a/b10.735822CPUh/2.968378GPUh are reported separately until the final combined audit.
 
-Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted.
+Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted. Failed proposal staging attempt1 preflight stopped before its meter; its CPU cannot be recovered and is disclosed as small unmetered failed-preflight overhead (no fabricated zero).
 
 Full source/input/native/checkpoint/seed SHA bindings: training and evaluation freezes, retained exact JSON process snapshots, final decisions and command/game/block proofs. Final experiment completion additionally requires independent all-owned-PGID absence, CPU/GPU vacancy, coordinator notification and continuation deletion.
 
@@ -51,6 +65,7 @@ Full source/input/native/checkpoint/seed SHA bindings: training and evaluation f
 | Evaluation freeze | f7e1439c5e81f648e005a66bf5f27cbe2de3e537a7f86940b0eaf2ee71126409 |
 | R1 corpus manifest | 1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b |
 | Heldout manifest | 0ecce0f0f410ff7f1093994cdb62b44c4c141c3a4bddb237cf1427b0a512818f |
+| Shared03 admission-repair freeze | 4fbbe3d5f46a7db78ddedd7bd2d67e5e5116c4e1480117bca3a7b84d635dd0f7 |
 | Shared03 regret-only operational freeze | b6acb31432eeea1f5a410bb63e5c7dbafd2ec9d445ce296b512395d9cb0f597b |
 | inputs/main02.pt | d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed |
 | inputs/assets.npz | 3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737 |
@@ -58,8 +73,10 @@ Full source/input/native/checkpoint/seed SHA bindings: training and evaluation f
 | reporting-native/clasher_core.abi3.so | f387b2d288ed280de9eeae3164d38f465045685ee53819e279930c2ee10699a8 |
 | scorer-native/clasher_core.abi3.so | 06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10 |
 
+[Admission receipt repair](shared03/repair/ADDENDUM.md) was pushed before the first round2 regret replay: the dynamic admission binds the current freeze/grant/evidence and exact lane. Proposal staging attempt1 failed on a stale static receipt pin before copying/scoring; its preflight CPU was not metered and is disclosed as small unrecoverable overhead. The failed log, original receipt and reviewed version2 retry are retained.
+
 [Shared03 operational amendment](shared03/PLAN.md): manager59 and three workers56–58 coexist with authenticated G on0–55. Regret seals bind the03-only amended evaluation SHA; all GPU offline and paired01 game seals retain the original a0beb995 SHA. The byte-unchanged Stage1 reducer runs in the replay manager after all64 children finish; its CPU is included in the whole replay pool once.
 
-Combined original + extension known costs: **57.760154 CPUh / 6.671914 GPU reservation-wallh**. Lower bounds while fits/pools or audits remain pending.
+Combined original + extension known costs: **66.199501 CPUh / 9.459087 GPU reservation-wallh**. Lower bounds while fits/pools or audits remain pending.
 
 [Combined globally deduplicated ledger](receipts/combined-cost-summary.json).

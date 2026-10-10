@@ -10,6 +10,7 @@ def bootstrap(v):
     v=np.asarray(v,float);rng=np.random.default_rng(80991013);ix=rng.integers(len(v),size=(5000,len(v)));samples=v[ix].mean(1)
     return dict(value=float(v.mean()),ci95=list(map(float,np.quantile(samples,[.025,.975]))))
 def run(j,lane,smoke):
+    assert lane=='stage2','Timing03 is survivor-only'
     assert allowed(j) and os.sched_getaffinity(0)=={55};f=frozen(j);record(j,'reducer',lane=lane,smoke=smoke)
     folder=j/stage(lane,smoke);done=json.loads((folder/'POOL-DONE.json').read_text());assert done['status']=='complete'
     arms=arm_list(lane,json.loads((j/'stage1-results.json').read_text()) if lane=='stage2' else None);assert done['arms']==arms

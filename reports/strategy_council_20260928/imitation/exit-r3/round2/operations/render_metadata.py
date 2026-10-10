@@ -37,6 +37,8 @@ def main():
             if category:
                 cpu=whole_cpu(v)
                 meters[key]=dict(category=category,sha256=key,path=str(path.relative_to(ROOT)),cpu_seconds=cpu,gpu_wall_seconds=gpu,status=v.get('status','complete' if v.get('exit_code')==0 else 'closed'),host=host)
+    offline={a:states.get((h,'offline/'+a+'.json')) for a,h in [('R3c','127x09'),('R3d','127x16'),('R3e','127x13')]}
+    binary_killed=all(v and not v['timing_pass'] for v in offline.values())
     stage1=states.get(('127x03','stage1-results.json'));stage2=states.get(('127x03','timing03/stage2-results.json'));desc=states.get(('127x01','descriptive-results.json'))
     fitting={a:states.get((h,f'fits/{a}/complete.json')) for a,h in [('R3c','127x09'),('R3d','127x16'),('R3e','127x13')]}
     hosts={'R3c':'127x09','R3d':'127x16','R3e':'127x13'}
@@ -66,11 +68,16 @@ def main():
             cal=v['calibration'];p=v['metrics']['student_play_rate'];signed=v['regret']['mean_signed'];play=v['regret']['mean_positive_on_teacher_plays']
             lines.append(f"| {a} | {cal['threshold']:.12g} | {p['numerator']:.0f} / {p['denominator']:.0f} | {pct(v['metrics']['top8_exact_action_recall'])} | {signed['value']:.6f} [{signed['ci95'][0]:.6f}, {signed['ci95'][1]:.6f}] | {play['value']:.6f} [{play['ci95'][0]:.6f}, {play['ci95'][1]:.6f}] |")
         for a,v in stage1.items():lines+=['',f"{a} positive regret median/p90/p95/p99/max: "+', '.join(f"{v['regret']['percentiles'][key]:.6f}" for key in ('0.5','0.9','0.95','0.99','1.0'))+'.']
-    else:lines+=['','Stage1 final-EMA calibration and64 common frozen-W replay gates pending. No intermediate checkpoint selection.']
+    else:
+        lines+=['','Final-EMA GPU offline is complete for all arms. The required64 common frozen-W replay is pending; no intermediate checkpoint selection.']
+        if binary_killed:
+            lines+=['','All three arms fail both binary gates permanently. Stage2 is skipped with zero smoke/control/reporting games; no G stop or timing admission is requested. Regret still must be completed and reported.','','| Arm | Play recall %, game95CI | Binary agreement %, game95CI | Teacher-play top8 exact action recall %, game95CI |','|---|---|---|---|']
+            for a,v in offline.items():lines.append(f"| {a} | {pct(v['metrics']['play_recall'])} | {pct(v['metrics']['timing_agreement'])} | {pct(v['metrics']['top8_exact_action_recall'])} |")
+
     for label,data in [('R3a descriptive — NEVER ADOPTABLE',desc),('Round2 Stage2 survivors',stage2)]:
         lines+=['',label+'.']
         if not data:
-            lines+=['Skipped: all round2 arms killed at complete Stage1.' if label.startswith('Round2') and stage1 and not any(v['survives'] for v in stage1.values()) else 'Pending complete600 paired terminal blocks; no partial reporting reduction.'];continue
+            lines+=['Skipped: all round2 arms binary-killed; zero qualification/control/reporting games.' if label.startswith('Round2') and (binary_killed or stage1 and not any(v['survives'] for v in stage1.values())) else 'Pending complete600 paired terminal blocks; no partial reporting reduction.'];continue
         lines+=['','| Arm | Loss %, seed95CI | Student−K0 loss pp, paired95CI | Result |','|---|---|---|---|']
         for a,v in data['arms'].items():
             paired=v.get('paired_loss_change_vs_K0');result='control' if a=='K0' else 'NEVER-ADOPTABLE' if data['never_adoptable'] else 'PASS exploration screen' if v['survives'] else 'KILLED'
@@ -85,6 +92,8 @@ def main():
     freeze=read(receipt/'freeze.json');evaluation=read(receipt/'evaluation-freeze.json');pins={**evaluation['files'],**evaluation['home_files'],**evaluation['regret_files']}
     lines+=['','| Provenance | SHA256 |','|---|---|',f"| Training freeze | {hashlib.sha256((receipt/'freeze.json').read_bytes()).hexdigest()} |",f"| Evaluation freeze | {hashlib.sha256((receipt/'evaluation-freeze.json').read_bytes()).hexdigest()} |",f"| R1 corpus manifest | {freeze['corpus_manifest_sha256']} |",f"| Heldout manifest | {freeze['heldout_manifest_sha256']} |"]
     shared=ROOT/'shared03/receipts/evaluation-freeze.json'
+    repair=ROOT/'shared03/repair/evaluation-freeze.json'
+    if repair.exists():lines.append(f"| Shared03 admission-repair freeze | {hashlib.sha256(repair.read_bytes()).hexdigest()} |")
     if shared.exists():lines.append(f"| Shared03 regret-only operational freeze | {hashlib.sha256(shared.read_bytes()).hexdigest()} |")
     for name in ('inputs/main02.pt','inputs/assets.npz'):
         lines.append(f"| {name} | {freeze['files'][name]} |")
@@ -92,6 +101,7 @@ def main():
         lines.append(f"| {name} | {pins[name]} |")
     if stage1:
         for a,v in stage1.items():lines.append(f"| {a} final EMA | {v['checkpoint_sha256']} |")
+    if repair.exists():lines+=['','[Admission receipt repair](shared03/repair/ADDENDUM.md) was pushed before the first round2 regret replay: the dynamic admission binds the current freeze/grant/evidence and exact lane. Proposal staging attempt1 failed on a stale static receipt pin before copying/scoring; its preflight CPU was not metered and is disclosed as small unrecoverable overhead. The failed log, original receipt and reviewed version2 retry are retained.']
     if shared.exists():lines+=['','[Shared03 operational amendment](shared03/PLAN.md): manager59 and three workers56–58 coexist with authenticated G on0–55. Regret seals bind the03-only amended evaluation SHA; all GPU offline and paired01 game seals retain the original a0beb995 SHA. The byte-unchanged Stage1 reducer runs in the replay manager after all64 children finish; its CPU is included in the whole replay pool once.']
     # The original ledger's listed preparation receipts are separate from its
     # process/tree meters. Globally deduplicate all of them by actual meter SHA.

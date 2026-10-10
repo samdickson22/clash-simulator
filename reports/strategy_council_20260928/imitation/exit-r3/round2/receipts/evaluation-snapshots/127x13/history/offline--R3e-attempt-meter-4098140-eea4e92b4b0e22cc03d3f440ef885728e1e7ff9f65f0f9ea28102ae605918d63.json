@@ -1,0 +1,13 @@
+{
+  "relative": "offline/R3e-attempt-meter-4098140.json",
+  "sha256": "eea4e92b4b0e22cc03d3f440ef885728e1e7ff9f65f0f9ea28102ae605918d63",
+  "raw": "{\n  \"status\": \"complete\",\n  \"pid\": 4098140,\n  \"wall_seconds\": 17.28433835785836,\n  \"cpu_seconds\": 19.387528,\n  \"utc\": \"2026-10-10T09:19:48Z\",\n  \"accounting\": \"Whole inference process once; result CPU/wall nested and not added again.\"\n}\n",
+  "value": {
+    "status": "complete",
+    "pid": 4098140,
+    "wall_seconds": 17.28433835785836,
+    "cpu_seconds": 19.387528,
+    "utc": "2026-10-10T09:19:48Z",
+    "accounting": "Whole inference process once; result CPU/wall nested and not added again."
+  }
+}
