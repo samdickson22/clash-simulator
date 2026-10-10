@@ -717,3 +717,15 @@ arms remain; X7 and1940296 controller unchanged. No15 allocation pending
 explicit coordinator noise-ceiling decision;04:45ETA does not authorize work.
 Coordinator notified under150words. No schedule/pipeline stop; four fits
 and conditional gates continue.
+
+2026-10-10T03:42:28Z. Historical six-arm readiness prompt deduplicated
+against current GPUcontroller1940296 and seven-arm receipts. X4/X5/X6/X7
+steps3882/5098/4664/1078; original PGID pairs unchanged, eight nice10
+processes each, no guard/exit,13/14 lease/PSS/GPU floors PASS. Controller
+1940296 nice19/SCHED_IDLE/63, offlineX1–3 killed, stage2{},active=null,
+offline_active[]/failures[]/priorityfalse. No new score/game/fit/controller
+or resource action. X8 cancelled/15unused, X7 continues. New compactsnapshot
+continuation-check0342 replaces fit totals16.210856963GPUh/54.640782201CPUh;
+finalclosed meters and separately metered score/preparation costs retained.
+Schedule enabled next2026-10-10T03:51:40.053Z. Four fits and gates pending;
+no stage2survivor or R2eligibility. Experiment remains active.
