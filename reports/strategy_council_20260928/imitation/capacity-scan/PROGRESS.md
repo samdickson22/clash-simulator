@@ -525,3 +525,19 @@ Evidence: `monitor-20261010T0102Z.json`. Frozen recipe and reporting data unchan
 480 micro1024/effective8192/cap0.78 stays fixed; failure artifacts retained.
 Continue 384/480 to their frozen decisions; wider use offline-only.
 Continuation remains enabled; GPUs13 and16 released.
+
+2026-10-10 01:13Z: Remaining fits, guards and the sole controller are healthy.
+Width 288 terminal receipts unchanged: scientifically killed at95,144,680rows,
+NLL0.27418144592079313, gain0.0030829170208171996<0.005; GPU13 released.
+Its two-point curve, actual4.734969255GPUh and checkpoint SHA remain archived.
+Width 384: step 9488, 77,720,296 rows, 4397 loader-inclusive rows/s; quarter pending.
+Width 480: step 8775, 71,879,400 rows, 4382 loader-inclusive rows/s; quarter pending.
+Six processes per active arm; peak PSS 43.34 GB; sampled GPU free memory
+≥28.5 GiB. No new OOM, stop, restart or scientific change.
+384/480 quarter NLLs and decisions remain pending at95,144,680rows against
+192 NLL0.27726436294161033. All three epoch-one points retained.
+Conservative cumulative pipeline cost 16.398 GPU-hours includes
+staging and every 480 segment; remaining actual final costs await completion.
+Evidence: `monitor-20261010T0112Z.json`. No source, config or data edits.
+480 micro1024/effective8192/cap0.78 stays fixed; all failure artifacts retained.
+Continuation remains enabled; GPUs13 and16 remain released.
