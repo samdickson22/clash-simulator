@@ -1676,3 +1676,7 @@ Also on the hub, but with copies elsewhere:
   - **Asked for a consolidated A19 r2** covering all verify_body calls (A1+A2), plus launcher, handoff and adversarial tests, ready by ~07Z for one independent review. Potential saving is ~30 h on the perception path.
   - R2 implementation notes recorded by X (70b31da9).
   - Spurious STOP denial on pending_request_list ignored.
+- **02:57 UTC: Capacity scan COMPLETE** (`bb14988d`).
+  - All three widths were killed at the quarter mark: gains 288 0.00308, 384 0.00446, 480 0.00479, all < 0.005. **Retain 192.** Cost 17.8 GPU-h actual (19.4 GPU-h conservative).
+  - 15 → **X8** (X2 seed replicate).
+  - Perception: 67 Clasher processes on 04 (mostly capture-era idle monitors) block the 16-process guard for A19. **Authorized retirement of class-(c) idle monitors** via their own STOPs, with receipts; r4 dependencies are untouched.
