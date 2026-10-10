@@ -377,3 +377,9 @@ Later C/D/E reporting uses24/241/242banks and samefrozengates; HOME regret needs
 explicitCPUauthority/release; returned04grant cannotbeextendedimplicitly.
 Keep continuationenabled until entire extendedexperiment final or leaseexpiry;
 GPUguards stopOct11 05:15/vacate05:30. Allinvalid/failed/replayedcostsretained.
+
+2026-10-10T06:47:36Z — Metadata snapshot06:45:20Z: validC435/D429/E365 active on09/16/13.
+No source/recipe/gate changes or new evaluation outcomes. Snapshot histories
+retain all current/void JSON meters. Extension continuation updated10min,
+next06:52:20.493Z; identity inround2/receipts/continuation.json. Original04
+remains returned, originalarms final.01descriptive still waits Xexplicitrelease.

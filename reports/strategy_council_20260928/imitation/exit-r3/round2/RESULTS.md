@@ -6,11 +6,11 @@ Freeze7e939c06 was pushed and exact committed bytes verified before valid attemp
 
 | Arm | Host | Steps planned | Temperature | Training seed | Latest step |
 |---|---|---:|---:|---:|---:|
-| R3c | 127x09 | 5000 | 0.003 | 2026101013 | 108 |
-| R3d | 127x16 | 2500 | 0.003 | 2026101014 | 107 |
-| R3e | 127x13 | 5000 | 0.01 | 2026101013 | 71 |
+| R3c | 127x09 | 5000 | 0.003 | 2026101013 | 435 |
+| R3d | 127x16 | 2500 | 0.003 | 2026101014 | 429 |
+| R3e | 127x13 | 5000 | 0.01 | 2026101013 | 365 |
 
-Snapshot real UTC 2026-10-10T06:35:59Z. All final-EMA offline/regret/adoption gates remain pending. No intermediate checkpoint selection. R3a descriptive01 remains queued until explicit X release and qualified frozen descriptive execution.
+Snapshot real UTC 2026-10-10T06:45:20Z. All final-EMA offline/regret/adoption gates remain pending. No intermediate checkpoint selection. R3a descriptive01 remains queued until explicit X release and qualified frozen descriptive execution.
 
 Known preparation/void startup cost: 0.035223 CPU hours, 0.033694 GPU reservation wall hours. Active valid fit costs accrue until exit; no final throughput yet. [Whole-tree receipts](receipts/cost-summary.json).
 
