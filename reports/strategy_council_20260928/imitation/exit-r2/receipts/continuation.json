@@ -6,9 +6,9 @@
     "type": "interval",
     "everyMs": 600000
   },
-  "nextRunAt": "2026-10-10T03:41:38.044Z",
+  "nextRunAt": "2026-10-10T03:51:40.053Z",
   "stop_rule": "Disable after completed experiment or final deadline cleanup 2026-10-11T05:30Z",
-  "last_prompt_revision_utc": "2026-10-10T03:35:22Z",
+  "last_prompt_revision_utc": "2026-10-10T03:41:40Z",
   "current_controller_pid": 1940296,
   "stage3_protocol": "S-default-K1; new owned entrypoints, all same-seed arms interleaved; K-v2 successful reporting completion and no timing processes before games",
   "prelaunch_commit": "0c8c91148b194827feb76c6e1a6cb4028b0e3cf4",
@@ -32,5 +32,7 @@
     "X2",
     "X3"
   ],
-  "x3_host08_vacated": true
+  "x3_host08_vacated": true,
+  "x8_cancelled_before_launch": true,
+  "host15_unused": true
 }
