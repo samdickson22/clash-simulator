@@ -1,0 +1,32 @@
+{
+  "relative": "SHARED03-METADATA-DEPLOYMENT.json",
+  "sha256": "3209a6c759b52a5761f0c30366879562d8c060d9413588498550fc31e51fef6a",
+  "raw": "{\n  \"passed\": true,\n  \"pid\": 3398321,\n  \"pgid\": 3398321,\n  \"utc\": \"2026-10-10T11:00:00Z\",\n  \"commit\": \"d4d922b322b509613c468d5e97b3452258aef808\",\n  \"evaluation_freeze_sha256\": \"993dfb1133346e1bcb8ba14edb5f3c00e5d514601cdca1e2db89b9fb18a48809\",\n  \"authority_sha256\": \"ecb46839eb1c36c8fa679e1d23650ac56f1d3e6767f1aa7c1a4325ecb27ccfbb\",\n  \"admitted_sha256\": \"b9d27ab2b8aac5ce7986885b2c7c4be538327d6948dcf3de2f18d7476ddcc67e\",\n  \"pins\": 1541,\n  \"checks\": 34,\n  \"old_groups_absent\": true,\n  \"scientific_data_read\": false,\n  \"retained_complete_seals\": 46,\n  \"physical_cores\": [\n    56,\n    57,\n    58\n  ],\n  \"manager_core\": 58,\n  \"nice\": 19,\n  \"scheduler\": \"SCHED_OTHER\",\n  \"PSI_full_avg10\": 0.0,\n  \"G_untouched\": true,\n  \"cpu_seconds\": 0.427029,\n  \"wall_seconds\": 0.41599161992780864\n}\n",
+  "value": {
+    "passed": true,
+    "pid": 3398321,
+    "pgid": 3398321,
+    "utc": "2026-10-10T11:00:00Z",
+    "commit": "d4d922b322b509613c468d5e97b3452258aef808",
+    "evaluation_freeze_sha256": "993dfb1133346e1bcb8ba14edb5f3c00e5d514601cdca1e2db89b9fb18a48809",
+    "authority_sha256": "ecb46839eb1c36c8fa679e1d23650ac56f1d3e6767f1aa7c1a4325ecb27ccfbb",
+    "admitted_sha256": "b9d27ab2b8aac5ce7986885b2c7c4be538327d6948dcf3de2f18d7476ddcc67e",
+    "pins": 1541,
+    "checks": 34,
+    "old_groups_absent": true,
+    "scientific_data_read": false,
+    "retained_complete_seals": 46,
+    "physical_cores": [
+      56,
+      57,
+      58
+    ],
+    "manager_core": 58,
+    "nice": 19,
+    "scheduler": "SCHED_OTHER",
+    "PSI_full_avg10": 0.0,
+    "G_untouched": true,
+    "cpu_seconds": 0.427029,
+    "wall_seconds": 0.41599161992780864
+  }
+}

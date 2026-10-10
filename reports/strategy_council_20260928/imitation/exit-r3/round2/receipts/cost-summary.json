@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-10T10:56:36Z",
+  "utc": "2026-10-10T11:01:24Z",
   "final": false,
-  "cpu_seconds": 206721.47740999996,
+  "cpu_seconds": 206721.90443899998,
   "gpu_wall_seconds": 23366.550588296494,
   "meters": [
     {
@@ -373,6 +373,15 @@
       "cpu_seconds": 772.742551,
       "gpu_wall_seconds": 0,
       "status": "stopped_or_failed",
+      "host": "127x03"
+    },
+    {
+      "category": "shared03 operational pin verification",
+      "sha256": "3209a6c759b52a5761f0c30366879562d8c060d9413588498550fc31e51fef6a",
+      "path": "receipts/evaluation-snapshots/127x03/SHARED03-METADATA-DEPLOYMENT.json",
+      "cpu_seconds": 0.427029,
+      "gpu_wall_seconds": 0,
+      "status": "closed",
       "host": "127x03"
     }
   ],

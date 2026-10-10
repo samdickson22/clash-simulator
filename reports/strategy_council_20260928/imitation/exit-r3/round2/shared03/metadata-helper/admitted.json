@@ -1,0 +1,38 @@
+{
+  "explicit_release": true,
+  "host": "127x03",
+  "regret_only": true,
+  "physical_cores": [
+    56,
+    57,
+    58
+  ],
+  "nice": 19,
+  "scheduler": "SCHED_OTHER",
+  "manager_core": 58,
+  "vacated_pgids": [
+    2047870,
+    2056439,
+    2289281,
+    2291277,
+    2291285,
+    2300919,
+    2300943
+  ],
+  "evidence_sha256": "e16eb7dbba655492ba87d5f4e1ecdf231993628adcc61226254e00c361d9632e",
+  "utc": "2026-10-10T11:00:00Z",
+  "worker_cores": [
+    56,
+    57,
+    58
+  ],
+  "shared_authority_sha256": "ecb46839eb1c36c8fa679e1d23650ac56f1d3e6767f1aa7c1a4325ecb27ccfbb",
+  "evaluation_freeze_sha256": "993dfb1133346e1bcb8ba14edb5f3c00e5d514601cdca1e2db89b9fb18a48809",
+  "maximum_persistent_scientific_processes": 4,
+  "reviewed_attempt1_pid_absent": 3074715,
+  "PSI_full_avg10_stop_percent": 10,
+  "prior_pool_reviewed": 3337091,
+  "retained_complete_games": 46,
+  "manager_shares_worker_core": true,
+  "guard_diagnostic_amendment": true
+}
