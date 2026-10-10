@@ -403,3 +403,32 @@ fit_runtime.py/loader_prefetch.py/basefreeze SHAs reverified exactly unchanged.
 Full timing and authority record x4-operational-disclosure.json; cost is
 nested within final attempt2 GPU/CPU totals, never added again. Scientific
 recipe/seed/RNG lineage/finalEMA selection unchanged, stage3HOLD unchanged.
+
+2026-10-10T02:13:42Z. Coordinator S-default replacement01:50, interleaving01:56, and
+default-layer equivalence ruling incorporated. All six fits remain original
+identities;02:05:30Z steps2376/2314/2197/1410/2054/1367, eight own processes
+each, no stop/exit. Leased09/16/13 resource floors and leases pass;08quiet empty.
+Current03controller1596239 healthy,offline={},stage2={},active=null,failures[].
+Qualification attempts1/2 fixture failures,3 obsolete empty-hook comparison
+(C125/S114,7testsPASS),4 missing SSH PATH python (no Python entry),5/6PASS.
+PID=PGID:1637184,1641920,1645633,1659030,1660711,1674517 respectively, all exited.
+Logs $job/sdefault-qualification-attemptN.log; all Python CPU meters retained.
+Final attempt6 binds current adapter source: C-v1 vs empty K1 and S-standin vs
+same-hooks/same-list K1 each125/125 actions AND scores,7clocktestsPASS.
+Empty-hook changes11/125=8.8% diagnostic;44/50 retained. Fixture-only known
+distinct-token HUD fill from fixed first train-archetype deck approved. Seven
+admission/ranking/argmax/stop-reap tests PASS02:11:32Z; final source/qualification hashes
+sealed in stage3-sdefault-addendum.json. Full package contrast cannot separate
+hooks/default effects. Fresh03 inspection02:11:59Z: zero old/new reporting
+cases/processes; seed audit extends prior pins with disjoint K-v2/G ranges.
+No151 reporting seeds or152indices4/5 consumed. Freeze/commit/push before games.
+New game_pool_sdefault/stage3_block_worker/game_worker_sdefault plus adapter
+k_stage3_sdefault/reduce_stage3_sdefault only. Every seed C-v1/S survivors/K0
+runs back-to-back same03/core/nice19/SCHED_IDLE/Torch1; rotate arm order.
+No pre-run controls. Whole failed blocks/raw/cases archived and fully replayed;
+whole pool tree CPU includes children once. K-v2 REPORTING(-R2)-DONE plus no
+active timing processes, G full drain and24GiB floor required. Old STAGE3.HOLD
+stays to prohibit historical comparator. Six fresh wrapper smokes at152+4/5
+await K-v2 release and addendum push; pass before any conditional reporting.
+Reporting still needs all six gates resolved and at most3 ranked survivors.
+Conditional R2 still needs stage2 survivor; no admission/outcome yet.

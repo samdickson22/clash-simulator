@@ -5,8 +5,9 @@ Original X1–X5 first fit attempts failed during input construction before any 
 The omitted r1 assets sidecar is restored; correction35cacd00 was pushed
 before attempt2 launched00:52:49-51Z. All six fits now passed input admission
 and have optimizer updates; X6 attempt1 began01:22:43Z after its own freeze.
-Scientific stage metrics remain pending. Stage3 reporting is ON HOLD by
-coordinator decision labeled01:35Z, received01:42Z; no stage3 seeds consumed.
+Scientific stage metrics remain pending. Coordinator replaced stage3 with
+S-default K1; replacement reporting waits gates, freeze/push, K-v2 release and
+wrapper smokes. The old comparator remains suspended; no stage3 seeds consumed.
 No reporting game played. This is a status record, not a verdict.
 The committed plan/seed audit must precede fitting; use final EMA only.
 
@@ -33,7 +34,8 @@ top8 recall on teacher plays, hard agreement and expected WAIT. Kill boundaries:
 recall<.60, top8<.50, hard agreement<.704, or WAIT>1.5×teacher.
 Stage2 survivor h2h256 seeds4503601507370496+, kill upper loss CI≥.50.
 Stage3 up to3 survivors,600 paired seeds4503601517370496+, kill upper loss-change
-CI≥0. Arm and empty-hook K1 control both face v1 on identical seeds/decks/seat.
+CI≥0 for S-n−C-v1; K0 is descriptive. All arms face v1 on identical
+seeds/decks/seat, interleaved back-to-back on the same host/core/class.
 K1 qualified before06Z; its primary harness is pinned, fallback unused.
 The initial own wrapper used a K1 opponent in two mechanics-only smokes.
 That design was corrected before any reporting game; v2 qualification gates
@@ -146,3 +148,19 @@ change or intermediate selection. Five source/freeze SHAs reverified01:50Z.
 The entire slow interval remains included in attempt2 metering, never added
 again as a separate cost. Full timing rows/authority/restriction retained in
 receipts/x4-operational-disclosure.json; no scientific kill or outcome claim.
+
+S-default replacement qualification: C-v1 versus empty-hook K1 and S-v1-standin
+versus same-hooks/same-candidates K1 each reproduce125/125 actions and scores.
+Seven injected-clock tests pass; seven block admission/ranking/legal argmax/stop-reap tests
+pass. Empty-hook action differences11/125=8.8% are descriptive hook effects;
+partial44/50 retained. Fixture-only short HUD fill is approved and disclosed.
+The reporting contrast compares the full student package and does not separate
+hook/default effects. No control pre-run; same-seed complete interleaved blocks
+are required and K-v2 timing games must exit first. No replacement game has run.
+All six synthetic qualification attempts are retained, including fixture failures
+and the pre-Python launcher error. Metered synthetic CPU=200.940313s
+(0.055816754h), plus all four block qualification attempts CPU=10.884937s.
+These costs are separate preparation, never scientific reporting outcomes.
+Small unmetered shell/direct-test preparation overhead is explicitly disclosed
+in sdefault-qualification-attempts.json. Disjoint replacement wrapper smokes
+remain pending K-v2 release; 600-seed reporting remains conditional.

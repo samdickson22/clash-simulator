@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "tests": 6,
+  "utc": "2026-10-10T02:11:32Z",
+  "parent_cpu_seconds": 1.02406,
+  "children_cpu_seconds": 1.724757,
+  "wall_seconds": 1.7844853838905692,
+  "no_game_seeds_consumed": true,
+  "provenance": "Initial metered block qualification tool output retained; later versions rechecked after cleanup/source changes."
+}

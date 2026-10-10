@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-10T02:11:59Z",
+  "host": "127x03",
+  "reporting_cases": {
+    "stage3": 0,
+    "stage3-sdefault": 0
+  },
+  "reporting_processes": [],
+  "passed": true,
+  "parent_cpu_seconds": 0.035067999999999995,
+  "children_cpu_seconds": 0.0437
+}

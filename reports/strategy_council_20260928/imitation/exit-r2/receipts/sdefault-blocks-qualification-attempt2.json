@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "tests": 6,
+  "exit_code": 0,
+  "utc": "2026-10-10T02:14:33Z",
+  "no_game_seeds_consumed": true,
+  "files": {
+    "stage3_sdefault_admission.py": "c19be1c239514801a3a1a012a9f248586834476466ca2bd8474157ca89d39f10",
+    "game_worker_sdefault.py": "454202e2659863645f650844e6a47c6cd77f39ebafc899977af4274528cd3886",
+    "stage3_block_worker.py": "5d95f9686672a94b9d30dc4e29443ea6586a00f4532ae9b4be3dba020f551824",
+    "game_pool_sdefault.py": "fd76ca6694320f43b2dbcf18598f73a0ce143e8f46f3ba26e791da3912ebde95",
+    "reduce_stage3_sdefault.py": "2d997722f4151062fb3f74980bf0814163d286b323d9a588fc48d7a6a088a382",
+    "test_sdefault_blocks.py": "804060e6a622b46668656dd0e124da15c4a97c88d422cd0a4f642b83475bc9d4",
+    "qualify_sdefault_blocks.py": "1ba0325a4944f6e06bf74e0f4cf0f1c98bcc851589cfe3fcdb1dc41b3fc80f04"
+  },
+  "parent_cpu_seconds": 1.01105,
+  "children_cpu_seconds": 1.7014120000000001,
+  "wall_seconds": 1.7363546979613602
+}

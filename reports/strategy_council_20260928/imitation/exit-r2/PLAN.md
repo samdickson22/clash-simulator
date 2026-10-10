@@ -83,32 +83,50 @@ deck=i%5, opponent=floor(i/5)%5, seat=i%2, symmetric d27/capacity1, abilities
 disabled, stochastic gate(c) T1 each5ticks. Whole-game bootstrap as above.
 **Kill if loss upper95% CI≥.50.** Missing/nonterminal cases cannot pass.
 
-**Coordinator hold received2026-10-10 01:42Z, decision labeled01:35Z:**
-Stage3 reporting is ON HOLD pending an explicit revised comparator after the
-independent K review (ETA02:30Z; ETA does not lift the hold). Consume no stage3
-seeds, including controls or eventual R2 stage3 re-screen. Fits and stages1/2
-continue unchanged. The stage3 specification below is retained as the prior
-frozen design, suspended for reporting. Resume only after a coordinator-issued
-comparator amendment is frozen/committed/pushed and appropriately qualified.
-RuntimeSTAGE3.HOLD markers on01/03 and the continuation prompt record the hold;
-receipt stage3-hold-20261010T0142Z.json. Current controller launches only1/2.
+Stage3 was replaced by coordinator decisions01:50/01:56 and the default-layer
+equivalence ruling. The old degenerate K1-vs-v1 comparator remains historically
+sealed and suspended by STAGE3.HOLD. Only the new S-default addendum and
+versioned entrypoints admit replacement reporting after qualification/push.
 
-Stage3: at most3 stage2 survivors, selected by lowest stage2 point loss;
-ties: highest stage1 hard agreement, then X1→X6 order. The cap remains three
-survivors total across all six arms. Each orders K1's anytime
-coarse scan and adds top8 legal proposals, playing against the unchanged v1
-policy. Control is plain K1 with empty hooks against that same v1 policy;
-arm/control share seed, decks and seat. Both actors retain K's v1 fallback
-polling; only own search hooks use the student. Use own600 control games,
-because K's original reporting seeds differ. With200ms wall deadline
-and8ms reserve, on600 paired seeds4503601517370496+[0,600). Common init reference,
-same deck/seat schedule, whole paired bootstrap. **Kill if loss-change upper
-CI≥0.** Explicit contrast is loss(arm)−loss(control); opponent is v1 in both.
-Coordinator clarified this before any reporting games; use the qualified v2 K
-adapter with the X6 addendum's v3 six-arm admission wrappers and passed v2
-wrapper qualification. K's harness at `reports/explore/k-anytime/` is the primary harness;
-if it is unready at2026-10-10 06:00Z, freeze the already-declared fallback to
-r1(b) E1 deadline W-screen8. Record that decision before affected games.
+Stage3: at most3 survivors across all six arms, ranked by lowest stage2 loss,
+then highest stage1 hard agreement, then X1→X6. On600 paired seeds
+4503601517370496+[0,600), every arm faces released v1 with one physical core,
+threads1/coarse_horizon160/200ms deadline/8ms reserve. C-v1 has empty K1 hooks,
+and uses v1's polled action on cutoff without a completed refined play. S-n
+runs the final-EMA student's joint legal argmax (WAIT allowed) first inside the
+timer, orders all coarse plays and adds top8 legal candidate/refinement
+proposals; its no-complete-play cutoff uses the student's default. With any
+complete refined play, retain the frozen best-complete-score rule. K0 is a
+paired descriptive frozen baseline-search anchor. **Kill if upper paired95% CI
+of loss(S-n)−loss(C-v1)≥0**; report S-n−K0 descriptively. This full student
+package contrast does not separate the hook effect from the default effect.
+Use5000 shared paired bootstrap resamples, existing X seed80991010.
+
+No controls are pre-run. For each seed, C-v1, every selected S-n and K0 run
+back-to-back on the SAME home03 host/core and nice19/SCHED_IDLE/Torch1 class.
+Rotate fixed [C-v1, ranked survivors, K0] order by index modulo arm count.
+An incomplete block is archived and entirely replayed, with every attempt
+charged; never combine cases recorded under different load intervals.
+K-v2 must finish reporting and have zero active timing game processes before
+any replacement game. G STOP/full drain,24GiB floor and physical-affinity
+checks precede work. Qualification on core60 is allowed; reporting cores0–59
+are used only after timing release, with60–63 reserved for gates.
+
+Qualification: C-v1 reproduces empty-hook K1 actions/scores125/125; S-n
+reproduces K1 with identical student hooks and candidate list125/125.
+Seven injected-clock tests pass. The v1 stand-in changed11/125 actions versus
+empty-hook K1 (8.8% diagnostic, not a qualification failure); initial44/50
+is retained. Fixture-only short HUDs are filled with known distinct tokens
+from the fixed first train-archetype deck. Real games retain exact opening
+orders. Seven admission/ranking/legal-default/stop-reap tests pass. Each raw and translated
+game JSON records threads/coarse_horizon/default_source. After the new
+addendum is committed/pushed and K timing work exits, six disjoint wrapper
+smokes (indices4/5, C-v1/S-standin/K0) must pass actual timer/opponent/polling/
+legality/terminal checks before reporting. Smoke losses are excluded.
+Entry points: game_pool_sdefault.py, stage3_block_worker.py,
+game_worker_sdefault.py, k_stage3_sdefault.py, reduce_stage3_sdefault.py.
+The new receipts stage3-sdefault-addendum.json and seed audit preserve every
+original scientific hash and require a pushed prelaunch receipt.
 
 Coordinator G01 restriction labeled01:43Z, received01:50Z: coordinator wrote
 G STOP on01 at01:37:55Z. G stays off01 throughout the rest of X4 fitting and

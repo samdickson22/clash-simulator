@@ -1,0 +1,112 @@
+{
+  "schema": "clasher.exit-r2.sdefault-seed-audit.v1",
+  "utc": "2026-10-10T02:13:42Z",
+  "passed": true,
+  "base_seed_audit_sha256": "50ca2e54a19f44b7c17150a0cd07f663c9c87c811fb3959128278fdaafa5c209",
+  "x6_seed_audit_sha256": "cee346cb8cbee6efbacfaac06dababa1cc7c13dae06bac48cd283fa9fe93c534",
+  "fresh_inventory_sha256": "dc6fea242d71af8897c5c3c1706b71b3e269824e678a3117b9615aae2ba816c1",
+  "reporting_base": 4503601517370496,
+  "reporting_count": 600,
+  "smoke_base": 4503601527370496,
+  "smoke_indices": [
+    4,
+    5
+  ],
+  "known_smoke_indices": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "reporting_consumed": 0,
+  "references": {
+    "reports/explore/k-v2/seed-audit.json": "e405a90adafdf45c1a86b511c4371bf4d179dfacacd5024b8a6d4debef4ba29a",
+    "reports/explore/k-v2/plan.json": "1efc563b8b07852c57dfbd4aed28a971e94ef49749bdfd79f5ef09bc57134d95",
+    "reports/strategy_council_20260928/imitation/exit-g-topup/FREEZE.json": "37ddbe1db4abe13f08a941c2037eb037e2d9f4193808af41d612c4c8dfd2dc85",
+    "reports/strategy_council_20260928/imitation/exit-g-topup/HOST01-AMENDMENT.json": "4cd94ea5673f9baf255d381db97cba25bbae6aff041bf585094e799f5b2cd226",
+    "reports/strategy_council_20260928/imitation/exit-g-topup/HOST03-AMENDMENT.json": "78770f0755f83ce55b3ae91f4e441fbc06cda5c35a8a3295dae023cd7718b081"
+  },
+  "new_declared_ranges": [
+    {
+      "name": "K-v2",
+      "base": 4503601807370496,
+      "count": 600,
+      "expanded_offsets": [
+        0,
+        13,
+        100000,
+        100001,
+        100002,
+        100003,
+        271828,
+        271829
+      ],
+      "overlap": false
+    },
+    {
+      "name": "K-v2 smoke",
+      "base": 4503601817370496,
+      "count": 8,
+      "expanded_offsets": [
+        0,
+        13,
+        100000,
+        100001,
+        100002,
+        100003,
+        271828,
+        271829
+      ],
+      "overlap": false
+    },
+    {
+      "name": "G04",
+      "base": 4503601607370496,
+      "count": 1000000,
+      "expanded_offsets": [
+        0,
+        13,
+        100000,
+        100001,
+        100002,
+        100003,
+        271828,
+        271829
+      ],
+      "overlap": false
+    },
+    {
+      "name": "G01",
+      "base": 4503601609370496,
+      "count": 1000000,
+      "expanded_offsets": [
+        0,
+        13,
+        100000,
+        100001,
+        100002,
+        100003,
+        271828,
+        271829
+      ],
+      "overlap": false
+    },
+    {
+      "name": "G03",
+      "base": 4503601611370496,
+      "count": 1000000,
+      "expanded_offsets": [
+        0,
+        13,
+        100000,
+        100001,
+        100002,
+        100003,
+        271828,
+        271829
+      ],
+      "overlap": false
+    }
+  ],
+  "interpretation": "Inherited complete eight-host original and fresh X6 audits remain sealed. Reuses previously unconsumed X151 reporting bank intentionally across student/control/K0 arms. Fresh own03 inspection has zero stage3 cases/processes. K-v2 and G later declared ranges are disjoint including helper offsets. Synthetic125-root qualification consumes no game seeds. Block rotation uses no additional RNG."
+}

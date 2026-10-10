@@ -1,0 +1,55 @@
+{
+  "utc": "2026-10-10T02:13:42Z",
+  "attempts": [
+    {
+      "number": 1,
+      "pid": 1637184,
+      "pgid": 1637184,
+      "status": "failed fixture short HUD",
+      "log": "sdefault-qualification-attempt1.log"
+    },
+    {
+      "number": 2,
+      "pid": 1641920,
+      "pgid": 1641920,
+      "status": "failed fixture known distinct tokens",
+      "log": "sdefault-qualification-attempt2.log"
+    },
+    {
+      "number": 3,
+      "pid": 1645633,
+      "pgid": 1645633,
+      "status": "failed obsolete empty-hook comparison;114/125 diagnostic,7clock testsPASS",
+      "log": "sdefault-qualification-attempt3.log"
+    },
+    {
+      "number": 4,
+      "pid": 1659030,
+      "pgid": 1659030,
+      "status": "launcher failed before Python entry: python absent from SSH PATH; corrected to own venv absolute path",
+      "log": "sdefault-qualification-attempt4.log"
+    },
+    {
+      "number": 5,
+      "pid": 1660711,
+      "pgid": 1660711,
+      "status": "PASS same-hooks125 actions+scores; repeated after adapter metadata-only correction to bind final source",
+      "log": "sdefault-qualification-attempt5.log"
+    },
+    {
+      "number": 6,
+      "pid": 1674517,
+      "pgid": 1674517,
+      "status": "PASS final-source125 actions+scores;7clocktests",
+      "log": "sdefault-qualification-attempt6.log"
+    }
+  ],
+  "job": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1",
+  "metered_qualification_cpu_seconds": 200.94031299999997,
+  "block_qualification_cpu_seconds": 10.884937,
+  "metadata_inventory_cpu_seconds": 0.078768,
+  "unmetered": "Failed shell-only attempt4 and first direct four block pytest checks (4.08wall seconds) lack processCPU meter; disclosed preparation overhead. No fit/game work in those attempts.",
+  "no_game_seeds_consumed": true,
+  "all_qualifiers_exited": true,
+  "block_qualification_attempts": 4
+}
