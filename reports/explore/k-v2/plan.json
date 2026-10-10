@@ -1,0 +1,182 @@
+{
+  "purpose": "K-v2 honest-latency anytime W and core-speed sweep; frozen before reporting; exploration only",
+  "paired_seeds": 600,
+  "arms": {
+    "V200": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 4,
+      "coarse_horizon": 160
+    },
+    "V160": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.16,
+      "threads": 4,
+      "coarse_horizon": 160
+    },
+    "V120": {
+      "own": "W-screen8",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.12,
+      "threads": 4,
+      "coarse_horizon": 160
+    },
+    "K0-200": {
+      "own": "baseline",
+      "opponent": "v1-policy",
+      "deadline_seconds": 0.2,
+      "threads": 1,
+      "coarse_horizon": 160
+    }
+  },
+  "max_ticks": 6001,
+  "own_delay": 27,
+  "opponent_delay": 27,
+  "command_capacity_both_sides": 1,
+  "search_decision_interval": 10,
+  "policy_decision_interval": 5,
+  "start_tick": 90,
+  "horizon": 160,
+  "rollout_styles": [
+    "balanced",
+    "pressure",
+    "defense"
+  ],
+  "samples": 16,
+  "script_top": 4,
+  "wait_candidates": {
+    "2400": 10,
+    "2401": 20,
+    "2402": 40
+  },
+  "wait_prior": 0.01,
+  "screen_plays": 8,
+  "return_reserve_seconds": 0.008,
+  "seed_ranges": {
+    "reporting": {
+      "base": 4503601807370496,
+      "count": 600
+    },
+    "smoke": {
+      "base": 4503601817370496,
+      "count": 8
+    }
+  },
+  "bootstrap": {
+    "reps": 5000,
+    "seed": 2026101002,
+    "unit": "paired seed",
+    "confidence": 0.95
+  },
+  "policy": {
+    "snapshot": "/mpac/sdicks02/repos/clasher-eval-snapshots/016b42fac2c40614",
+    "checkpoint": "/mpac/sdicks02/repos/clasher-eval-snapshots/inputs-bc-v1/main02.pt",
+    "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+    "temperature": 1,
+    "seed_offset": 271828
+  },
+  "compute": {
+    "hosts": {
+      "127x03": {
+        "physical_cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44
+        ],
+        "supervisor_cpu": 45
+      }
+    },
+    "nice": 0,
+    "scheduler": "SCHED_OTHER",
+    "min_memavailable_GiB": 24,
+    "cache_root": "/mpac/sdicks02/jobs/clasher/k-v2-20261010-r1/cache",
+    "threaded_game_physical_cores": 5,
+    "smt": false,
+    "workers": 9,
+    "avoid_cache_affinity": "48-63 and 112-127; no changes to caches or X"
+  },
+  "frozen_at_utc": "2026-10-10T01:45:25Z",
+  "decision_rules": {
+    "advance_upper_loss_change_ci_pp": -10,
+    "ci": "pointwise paired percentile 95%, 5000 shared seed resamples; no adjustment",
+    "slope": "piecewise differences in loss pp per 40ms reduction; paired CI plus least-squares slope on 120/160/200",
+    "minimum_speed": "smallest measured deadline/200 passing upper paired CI <= -10pp; linear interpolated point crossing reported separately, never extrapolate; effective scoring ratio (D-8)/192 disclosed"
+  },
+  "qualification": {
+    "K1_K4_frozen_screen8_exact": 125,
+    "one_four_thread_scores_identical": true,
+    "injected_clock_tests": true
+  },
+  "ordering": {
+    "phase_order": [
+      "complete WAIT, alias WAIT10",
+      "complete WAIT20 and WAIT40",
+      "balanced coarse scan all plays",
+      "refine top8"
+    ],
+    "reduction_order": "original candidate order; improve only >1e-9",
+    "complete_score": "3 styles at horizon160; no partial or late root eligible",
+    "K4h": "h80 used only for ranking; all 3 styles recomputed at160 for refinement",
+    "deadline": "full pipeline starts before observation; scoring cutoff = start + deadline - 8ms; no drain, 8ms reserve; OS scheduling residuals measured honestly",
+    "threading": "four persistent private-root GIL-release workers; timed collector returns at cutoff without draining; native per-rollout shared remaining budget hard-stops each next tick; cancelled event blocks further style/task starts"
+  },
+  "source_reference": {
+    "K_freeze": "0f2a9ec8",
+    "K_implementation": "8237f993",
+    "K_review": "c296d98f",
+    "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2"
+  },
+  "lateness": {
+    "ticks_per_second": 20,
+    "rounding": "ceil positive overrun / 50ms",
+    "play": "reserve at decision tick, command due=decision tick+27+overrun_ticks",
+    "wait": "wait interval starts at decision tick+overrun_ticks; own poll channel unavailable until then",
+    "all_overruns_recorded": true,
+    "opponent": "v1 has no search deadline; unchanged cadence",
+    "emulation": "deadline sweep preserves 8ms reserve and real-time delay ticks; budget equivalence only, not hardware underclocking"
+  }
+}
