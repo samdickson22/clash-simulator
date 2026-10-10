@@ -1,0 +1,27 @@
+{
+  "report_commit": "f8413b1a",
+  "notifications": [
+    {
+      "target": "0523ae6f-baa3-4d4e-b233-b392671670db",
+      "status": "fulfilled",
+      "result": {
+        "threadId": "0523ae6f-baa3-4d4e-b233-b392671670db",
+        "messageId": "message:mcp:e0b484c9-d30d-4449-a5a7-43fc22095bd9:thread-send:k2-final-release-f8413b1a-0",
+        "runId": "run:thread:0523ae6f-baa3-4d4e-b233-b392671670db:ordinal:715",
+        "status": "starting",
+        "delivery": "started"
+      }
+    },
+    {
+      "target": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-exit-r3-20261010-1",
+      "status": "fulfilled",
+      "result": {
+        "threadId": "thread:delegated-task:command%3Amcp%3A53609d4a-a2de-484a-834d-8566c6339c9f%3Adelegate-task%3Aclasher-exit-r3-20261010-1",
+        "messageId": "message:mcp:e0b484c9-d30d-4449-a5a7-43fc22095bd9:thread-send:k2-final-release-f8413b1a-1",
+        "runId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A53609d4a-a2de-484a-834d-8566c6339c9f%253Adelegate-task%253Aclasher-exit-r3-20261010-1:ordinal:10",
+        "status": "running",
+        "delivery": "steered"
+      }
+    }
+  ]
+}
