@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "utc": "2026-10-10T04:44:56Z",
+  "completed_blocks": 0,
+  "pending": 560,
+  "active_blocks": 40,
+  "failures": [],
+  "admitted": true,
+  "load": {
+    "utc": "2026-10-10T04:44:54Z",
+    "mem_available_bytes": 109575536640,
+    "load1": 40.29,
+    "lane": "exploration; never adoptable",
+    "never_adoptable": true,
+    "adoption_eligible": false
+  },
+  "first_case_metadata_checks": [
+    {
+      "arm": "C-v1",
+      "index": 0,
+      "case_sha256": "5874f48397f8d1797f9a550aa927fe669003eebd90b8cc6fcb24696b0ea71d89",
+      "selection_amendment_sha256": "490bd8e19a8e393d8faa25961d8ec81717c71b2d2e97fc860b926abc7574c2d3"
+    },
+    {
+      "arm": "X1",
+      "index": 1,
+      "case_sha256": "9864a00bd1bec3c39b85f5d4f92c7e31bf51048364b79778b4af3df88cdfc8d9",
+      "selection_amendment_sha256": "490bd8e19a8e393d8faa25961d8ec81717c71b2d2e97fc860b926abc7574c2d3"
+    },
+    {
+      "arm": "X2",
+      "index": 2,
+      "case_sha256": "8476bfd225b66a343973e7ff437b3faa540f41e362587ac58667df25128b47c0",
+      "selection_amendment_sha256": "490bd8e19a8e393d8faa25961d8ec81717c71b2d2e97fc860b926abc7574c2d3"
+    },
+    {
+      "arm": "X4",
+      "index": 3,
+      "case_sha256": "37b07ad5e76e828989400d9778caa7f571782431fdb388e74e83871b6e9f66c5",
+      "selection_amendment_sha256": "490bd8e19a8e393d8faa25961d8ec81717c71b2d2e97fc860b926abc7574c2d3"
+    },
+    {
+      "arm": "K0",
+      "index": 4,
+      "case_sha256": "6120a4a8dce8b2660b698bf8cdddd79cafef9d3074de7ceb641308bedd795bef",
+      "selection_amendment_sha256": "490bd8e19a8e393d8faa25961d8ec81717c71b2d2e97fc860b926abc7574c2d3"
+    }
+  ],
+  "reporting_outcomes_inspected": false,
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "selection_amendment_sha256": "490bd8e19a8e393d8faa25961d8ec81717c71b2d2e97fc860b926abc7574c2d3"
+}

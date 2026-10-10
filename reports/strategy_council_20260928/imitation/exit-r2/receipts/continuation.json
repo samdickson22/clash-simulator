@@ -6,9 +6,9 @@
     "type": "interval",
     "everyMs": 600000
   },
-  "nextRunAt": "2026-10-10T04:41:46.286Z",
+  "nextRunAt": "2026-10-10T04:51:48.334Z",
   "stop_rule": "Disable after completed experiment or final deadline cleanup 2026-10-11T05:30Z",
-  "last_prompt_revision_utc": "2026-10-10T04:41:49Z",
+  "last_prompt_revision_utc": "2026-10-10T04:46:15Z",
   "current_controller_pid": 2071651,
   "stage3_protocol": "Separate never-adoptable descriptive postkill study01/nice10/SCHED_OTHER;report200/qual201 banks; originald026unconsumed",
   "prelaunch_commit": "0c8c91148b194827feb76c6e1a6cb4028b0e3cf4",
@@ -17,7 +17,7 @@
   "latest_operational_amendment_commit": "9a2797bb",
   "stage1_2_admission": "Offline fit-hostGPU record ONLY; original stage2/stage3 prohibited by infeasible-gate ruling; R2 cannot trigger.",
   "fit_collection_prelaunch_commit": "77cbea40b36b59192a5ae4e51d906f0c2c0486f9",
-  "last_verified_utc": "2026-10-10T04:41:49Z",
+  "last_verified_utc": "2026-10-10T04:46:15Z",
   "current_controller": "controller_offline_record.py",
   "x7_supervisor_pid": 2423139,
   "x7_trainer_pid": 2423269,
@@ -51,6 +51,11 @@
     "X4"
   ],
   "postkill_reporting_entrypoint": "game_pool_postkill_selected.py",
-  "postkill_reporting_pending": true,
-  "postkill_selection_wait_all7": false
+  "postkill_reporting_pending": false,
+  "postkill_selection_wait_all7": false,
+  "postkill_reporting_pid": 2035131,
+  "postkill_reporting_pgid": 2035131,
+  "postkill_reporting_host": "127x01",
+  "postkill_reporting_log": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-reporting-attempt1.log",
+  "postkill_reporting_qualified_startup": "2026-10-10T04:43:46Z"
 }

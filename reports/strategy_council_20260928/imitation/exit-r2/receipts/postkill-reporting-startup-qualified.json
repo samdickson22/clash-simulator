@@ -1,0 +1,1180 @@
+{
+  "passed": true,
+  "utc": "2026-10-10T04:43:46Z",
+  "identity": {
+    "pid": 2035131,
+    "pgid": 2035131,
+    "utc": "2026-10-10T04:42:48Z",
+    "lane": "exploration; never adoptable",
+    "never_adoptable": true,
+    "adoption_eligible": false,
+    "selection_amendment_sha256": "490bd8e19a8e393d8faa25961d8ec81717c71b2d2e97fc860b926abc7574c2d3"
+  },
+  "processes": [
+    {
+      "pid": 2035131,
+      "ppid": 1,
+      "pgid": 2035131,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        63
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_pool_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --cores 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39"
+    },
+    {
+      "pid": 2035263,
+      "ppid": 2035131,
+      "pgid": 2035263,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        0
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 0 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035264,
+      "ppid": 2035131,
+      "pgid": 2035264,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        1
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 1 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035265,
+      "ppid": 2035131,
+      "pgid": 2035265,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        2
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 2 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035266,
+      "ppid": 2035131,
+      "pgid": 2035266,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        3
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 3 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035267,
+      "ppid": 2035131,
+      "pgid": 2035267,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        4
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 4 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035268,
+      "ppid": 2035131,
+      "pgid": 2035268,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        5
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 5 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035269,
+      "ppid": 2035131,
+      "pgid": 2035269,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        6
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 6 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035270,
+      "ppid": 2035131,
+      "pgid": 2035270,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        7
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 7 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035271,
+      "ppid": 2035131,
+      "pgid": 2035271,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        8
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 8 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035273,
+      "ppid": 2035131,
+      "pgid": 2035273,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        9
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 9 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035275,
+      "ppid": 2035131,
+      "pgid": 2035275,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        10
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 10 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035276,
+      "ppid": 2035131,
+      "pgid": 2035276,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        11
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 11 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035277,
+      "ppid": 2035131,
+      "pgid": 2035277,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        12
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 12 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035278,
+      "ppid": 2035131,
+      "pgid": 2035278,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        13
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 13 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035279,
+      "ppid": 2035131,
+      "pgid": 2035279,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        14
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 14 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035281,
+      "ppid": 2035131,
+      "pgid": 2035281,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        15
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 15 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035282,
+      "ppid": 2035131,
+      "pgid": 2035282,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        16
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 16 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035284,
+      "ppid": 2035131,
+      "pgid": 2035284,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        17
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 17 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035285,
+      "ppid": 2035131,
+      "pgid": 2035285,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        18
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 18 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035286,
+      "ppid": 2035131,
+      "pgid": 2035286,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        19
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 19 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035287,
+      "ppid": 2035131,
+      "pgid": 2035287,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        20
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 20 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035288,
+      "ppid": 2035131,
+      "pgid": 2035288,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        21
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 21 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035289,
+      "ppid": 2035131,
+      "pgid": 2035289,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        22
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 22 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035290,
+      "ppid": 2035131,
+      "pgid": 2035290,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        23
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 23 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035291,
+      "ppid": 2035131,
+      "pgid": 2035291,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        24
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 24 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035292,
+      "ppid": 2035131,
+      "pgid": 2035292,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        25
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 25 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035293,
+      "ppid": 2035131,
+      "pgid": 2035293,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        26
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 26 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035294,
+      "ppid": 2035131,
+      "pgid": 2035294,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        27
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 27 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035295,
+      "ppid": 2035131,
+      "pgid": 2035295,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        28
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 28 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035296,
+      "ppid": 2035131,
+      "pgid": 2035296,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        29
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 29 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035297,
+      "ppid": 2035131,
+      "pgid": 2035297,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        30
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 30 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035298,
+      "ppid": 2035131,
+      "pgid": 2035298,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        31
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 31 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035299,
+      "ppid": 2035131,
+      "pgid": 2035299,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        32
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 32 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035300,
+      "ppid": 2035131,
+      "pgid": 2035300,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        33
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 33 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035301,
+      "ppid": 2035131,
+      "pgid": 2035301,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        34
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 34 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035302,
+      "ppid": 2035131,
+      "pgid": 2035302,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        35
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 35 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035303,
+      "ppid": 2035131,
+      "pgid": 2035303,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        36
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 36 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035304,
+      "ppid": 2035131,
+      "pgid": 2035304,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        37
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 37 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035305,
+      "ppid": 2035131,
+      "pgid": 2035305,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        38
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 38 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035306,
+      "ppid": 2035131,
+      "pgid": 2035306,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        39
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/postkill_block_worker_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --index 39 --arms C-v1 X1 X2 X4 K0"
+    },
+    {
+      "pid": 2035434,
+      "ppid": 2035268,
+      "pgid": 2035268,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        5
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm C-v1 --index 5 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0005-attempt-2035268.json"
+    },
+    {
+      "pid": 2035435,
+      "ppid": 2035269,
+      "pgid": 2035269,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        6
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X1 --index 6 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0006-attempt-2035269.json"
+    },
+    {
+      "pid": 2035548,
+      "ppid": 2035264,
+      "pgid": 2035264,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        1
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X1 --index 1 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0001-attempt-2035264.json"
+    },
+    {
+      "pid": 2035549,
+      "ppid": 2035263,
+      "pgid": 2035263,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        0
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm C-v1 --index 0 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0000-attempt-2035263.json"
+    },
+    {
+      "pid": 2035550,
+      "ppid": 2035265,
+      "pgid": 2035265,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        2
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X2 --index 2 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0002-attempt-2035265.json"
+    },
+    {
+      "pid": 2035551,
+      "ppid": 2035266,
+      "pgid": 2035266,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        3
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X4 --index 3 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0003-attempt-2035266.json"
+    },
+    {
+      "pid": 2035558,
+      "ppid": 2035284,
+      "pgid": 2035284,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        17
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X2 --index 17 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0017-attempt-2035284.json"
+    },
+    {
+      "pid": 2035564,
+      "ppid": 2035270,
+      "pgid": 2035270,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        7
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X2 --index 7 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0007-attempt-2035270.json"
+    },
+    {
+      "pid": 2035565,
+      "ppid": 2035267,
+      "pgid": 2035267,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        4
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm K0 --index 4 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0004-attempt-2035267.json"
+    },
+    {
+      "pid": 2035576,
+      "ppid": 2035281,
+      "pgid": 2035281,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        15
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm C-v1 --index 15 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0015-attempt-2035281.json"
+    },
+    {
+      "pid": 2035578,
+      "ppid": 2035277,
+      "pgid": 2035277,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        12
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X2 --index 12 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0012-attempt-2035277.json"
+    },
+    {
+      "pid": 2035579,
+      "ppid": 2035278,
+      "pgid": 2035278,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        13
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X4 --index 13 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0013-attempt-2035278.json"
+    },
+    {
+      "pid": 2035592,
+      "ppid": 2035288,
+      "pgid": 2035288,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        21
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X1 --index 21 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0021-attempt-2035288.json"
+    },
+    {
+      "pid": 2035593,
+      "ppid": 2035289,
+      "pgid": 2035289,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        22
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X2 --index 22 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0022-attempt-2035289.json"
+    },
+    {
+      "pid": 2035594,
+      "ppid": 2035287,
+      "pgid": 2035287,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        20
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm C-v1 --index 20 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0020-attempt-2035287.json"
+    },
+    {
+      "pid": 2035595,
+      "ppid": 2035290,
+      "pgid": 2035290,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        23
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X4 --index 23 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0023-attempt-2035290.json"
+    },
+    {
+      "pid": 2035610,
+      "ppid": 2035292,
+      "pgid": 2035292,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        25
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm C-v1 --index 25 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0025-attempt-2035292.json"
+    },
+    {
+      "pid": 2035612,
+      "ppid": 2035294,
+      "pgid": 2035294,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        27
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X2 --index 27 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0027-attempt-2035294.json"
+    },
+    {
+      "pid": 2035615,
+      "ppid": 2035291,
+      "pgid": 2035291,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        24
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm K0 --index 24 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0024-attempt-2035291.json"
+    },
+    {
+      "pid": 2035618,
+      "ppid": 2035293,
+      "pgid": 2035293,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        26
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X1 --index 26 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0026-attempt-2035293.json"
+    },
+    {
+      "pid": 2035620,
+      "ppid": 2035295,
+      "pgid": 2035295,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        28
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X4 --index 28 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0028-attempt-2035295.json"
+    },
+    {
+      "pid": 2035621,
+      "ppid": 2035297,
+      "pgid": 2035297,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        30
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm C-v1 --index 30 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0030-attempt-2035297.json"
+    },
+    {
+      "pid": 2035622,
+      "ppid": 2035296,
+      "pgid": 2035296,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        29
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm K0 --index 29 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0029-attempt-2035296.json"
+    },
+    {
+      "pid": 2035623,
+      "ppid": 2035298,
+      "pgid": 2035298,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        31
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X1 --index 31 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0031-attempt-2035298.json"
+    },
+    {
+      "pid": 2035653,
+      "ppid": 2035302,
+      "pgid": 2035302,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        35
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm C-v1 --index 35 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0035-attempt-2035302.json"
+    },
+    {
+      "pid": 2035654,
+      "ppid": 2035301,
+      "pgid": 2035301,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        34
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm K0 --index 34 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0034-attempt-2035301.json"
+    },
+    {
+      "pid": 2035655,
+      "ppid": 2035299,
+      "pgid": 2035299,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        32
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X2 --index 32 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0032-attempt-2035299.json"
+    },
+    {
+      "pid": 2035656,
+      "ppid": 2035300,
+      "pgid": 2035300,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        33
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X4 --index 33 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0033-attempt-2035300.json"
+    },
+    {
+      "pid": 2035664,
+      "ppid": 2035276,
+      "pgid": 2035276,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        11
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X1 --index 11 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0011-attempt-2035276.json"
+    },
+    {
+      "pid": 2035666,
+      "ppid": 2035271,
+      "pgid": 2035271,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        8
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X4 --index 8 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0008-attempt-2035271.json"
+    },
+    {
+      "pid": 2035667,
+      "ppid": 2035273,
+      "pgid": 2035273,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        9
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm K0 --index 9 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0009-attempt-2035273.json"
+    },
+    {
+      "pid": 2035668,
+      "ppid": 2035275,
+      "pgid": 2035275,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        10
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm C-v1 --index 10 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0010-attempt-2035275.json"
+    },
+    {
+      "pid": 2035669,
+      "ppid": 2035306,
+      "pgid": 2035306,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        39
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm K0 --index 39 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0039-attempt-2035306.json"
+    },
+    {
+      "pid": 2035670,
+      "ppid": 2035304,
+      "pgid": 2035304,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        37
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X2 --index 37 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0037-attempt-2035304.json"
+    },
+    {
+      "pid": 2035671,
+      "ppid": 2035305,
+      "pgid": 2035305,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        38
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X4 --index 38 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0038-attempt-2035305.json"
+    },
+    {
+      "pid": 2035675,
+      "ppid": 2035286,
+      "pgid": 2035286,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        19
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm K0 --index 19 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0019-attempt-2035286.json"
+    },
+    {
+      "pid": 2035676,
+      "ppid": 2035285,
+      "pgid": 2035285,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        18
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X4 --index 18 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0018-attempt-2035285.json"
+    },
+    {
+      "pid": 2035686,
+      "ppid": 2035282,
+      "pgid": 2035282,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        16
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X1 --index 16 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0016-attempt-2035282.json"
+    },
+    {
+      "pid": 2040123,
+      "ppid": 2035279,
+      "pgid": 2035279,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        14
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm C-v1 --index 14 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0014-attempt-2035279.json"
+    },
+    {
+      "pid": 2042478,
+      "ppid": 2035303,
+      "pgid": 2035303,
+      "nice": 10,
+      "scheduler": "SCHED_OTHER",
+      "affinity": [
+        36
+      ],
+      "threads": 1,
+      "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/game_worker_postkill_selected.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1 --arm X2 --index 36 --block /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/postkill-sdefault/blocks/0036-attempt-2035303.json"
+    }
+  ],
+  "progress": {
+    "completed": 0,
+    "pending": 560,
+    "active_blocks": {
+      "0": {
+        "pid": 2035263,
+        "index": 0
+      },
+      "1": {
+        "pid": 2035264,
+        "index": 1
+      },
+      "2": {
+        "pid": 2035265,
+        "index": 2
+      },
+      "3": {
+        "pid": 2035266,
+        "index": 3
+      },
+      "4": {
+        "pid": 2035267,
+        "index": 4
+      },
+      "5": {
+        "pid": 2035268,
+        "index": 5
+      },
+      "6": {
+        "pid": 2035269,
+        "index": 6
+      },
+      "7": {
+        "pid": 2035270,
+        "index": 7
+      },
+      "8": {
+        "pid": 2035271,
+        "index": 8
+      },
+      "9": {
+        "pid": 2035273,
+        "index": 9
+      },
+      "10": {
+        "pid": 2035275,
+        "index": 10
+      },
+      "11": {
+        "pid": 2035276,
+        "index": 11
+      },
+      "12": {
+        "pid": 2035277,
+        "index": 12
+      },
+      "13": {
+        "pid": 2035278,
+        "index": 13
+      },
+      "14": {
+        "pid": 2035279,
+        "index": 14
+      },
+      "15": {
+        "pid": 2035281,
+        "index": 15
+      },
+      "16": {
+        "pid": 2035282,
+        "index": 16
+      },
+      "17": {
+        "pid": 2035284,
+        "index": 17
+      },
+      "18": {
+        "pid": 2035285,
+        "index": 18
+      },
+      "19": {
+        "pid": 2035286,
+        "index": 19
+      },
+      "20": {
+        "pid": 2035287,
+        "index": 20
+      },
+      "21": {
+        "pid": 2035288,
+        "index": 21
+      },
+      "22": {
+        "pid": 2035289,
+        "index": 22
+      },
+      "23": {
+        "pid": 2035290,
+        "index": 23
+      },
+      "24": {
+        "pid": 2035291,
+        "index": 24
+      },
+      "25": {
+        "pid": 2035292,
+        "index": 25
+      },
+      "26": {
+        "pid": 2035293,
+        "index": 26
+      },
+      "27": {
+        "pid": 2035294,
+        "index": 27
+      },
+      "28": {
+        "pid": 2035295,
+        "index": 28
+      },
+      "29": {
+        "pid": 2035296,
+        "index": 29
+      },
+      "30": {
+        "pid": 2035297,
+        "index": 30
+      },
+      "31": {
+        "pid": 2035298,
+        "index": 31
+      },
+      "32": {
+        "pid": 2035299,
+        "index": 32
+      },
+      "33": {
+        "pid": 2035300,
+        "index": 33
+      },
+      "34": {
+        "pid": 2035301,
+        "index": 34
+      },
+      "35": {
+        "pid": 2035302,
+        "index": 35
+      },
+      "36": {
+        "pid": 2035303,
+        "index": 36
+      },
+      "37": {
+        "pid": 2035304,
+        "index": 37
+      },
+      "38": {
+        "pid": 2035305,
+        "index": 38
+      },
+      "39": {
+        "pid": 2035306,
+        "index": 39
+      }
+    },
+    "admitted": true,
+    "failures": []
+  },
+  "load": {
+    "utc": "2026-10-10T04:43:46Z",
+    "mem_available_bytes": 108982849536,
+    "load1": 26.96,
+    "lane": "exploration; never adoptable",
+    "never_adoptable": true,
+    "adoption_eligible": false
+  },
+  "selected": [
+    "X1",
+    "X2",
+    "X4"
+  ],
+  "base_freeze": "e8c82b10",
+  "selection_freeze": "693bc3b1",
+  "harness_sha256": "ee43172dfb50dbf288b50c314f1abfddbc942fd90d192846ec6e8aaca6a51865",
+  "reporting_base": 4503602007370496,
+  "reporting_count": 600,
+  "game_outcomes_inspected": false,
+  "provisional_pool_tree_cpu_seconds": 2193.4599999999996,
+  "accounting": "Live tree includes parent+descendants and reaped child CPU once; final whole pool meter supersedes. Never add nested block/case meters.",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "selection_amendment_sha256": "490bd8e19a8e393d8faa25961d8ec81717c71b2d2e97fc860b926abc7574c2d3"
+}
