@@ -8,6 +8,13 @@
   "combined_cost_sha256": "226c050f466860a776be5e2012b27a2c502955ad28ac6084be1ed1c527ae78b4",
   "cpu_seconds": 247371.81021299996,
   "gpu_wall_seconds": 34052.7115964524,
-  "coordinator_notification_pending": true,
-  "continuation_deletion_pending": true
+  "coordinator_notification_pending": false,
+  "continuation_deletion_pending": false,
+  "publication_commit": "d97e443b8459be44162cc7b9c148f44062ac825f",
+  "publication_push_verified": true,
+  "coordinator_notification_receipt": "final-coordinator-notification.json",
+  "continuation_deleted": true,
+  "continuation_identity": "scheduled-task:command:mcp:41973a00-3443-411b-88ab-c1f2788161a1:schedule-task:r3-continuation-20261010-r1",
+  "continuation_deletion_receipt": "continuation-deletion.json",
+  "final_closed_utc": "2026-10-10T11:21:46Z"
 }

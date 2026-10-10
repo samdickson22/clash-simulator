@@ -1,7 +1,7 @@
 {
   "scheduledTaskId": "scheduled-task:command:mcp:41973a00-3443-411b-88ab-c1f2788161a1:schedule-task:r3-continuation-20261010-r1",
-  "enabled": true,
-  "nextRunAt": "2026-10-10T11:13:03.280Z",
+  "enabled": false,
+  "nextRunAt": null,
   "schedule": {
     "type": "interval",
     "everyMs": 600000
@@ -11,5 +11,8 @@
   "utc": "2026-10-10T11:08:06Z",
   "current_replay_pid": 3419146,
   "attempt": 5,
-  "no_further_retry": true
+  "no_further_retry": true,
+  "deleted": true,
+  "deleted_utc": "2026-10-10T11:21:46Z",
+  "whole_extension_complete": true
 }
