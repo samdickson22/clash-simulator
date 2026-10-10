@@ -1,0 +1,10 @@
+{
+  "ramp_phase": "steady",
+  "utc": "2026-10-10T02:03:38Z",
+  "reason": "sustained_memory_full_psi",
+  "full_avg10": 85.77,
+  "threshold_percent": 20,
+  "continuous_seconds": 60,
+  "action": "Admission paused; in-flight games finish. Await coordinator release before clearing pause.",
+  "reported": false
+}

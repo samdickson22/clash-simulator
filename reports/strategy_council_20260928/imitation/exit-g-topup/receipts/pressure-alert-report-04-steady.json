@@ -1,0 +1,13 @@
+{
+  "ramp_phase": "steady",
+  "utc": "2026-10-10T02:03:38Z",
+  "reason": "sustained_memory_full_psi",
+  "full_avg10": 85.77,
+  "threshold_percent": 20,
+  "continuous_seconds": 60,
+  "action": "Admission paused; in-flight games finish. Await coordinator release before clearing pause.",
+  "reported": true,
+  "reported_utc": "2026-10-10T02:04:41Z",
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "message_key": "g-steady-psi-trip-20261010T020338Z"
+}

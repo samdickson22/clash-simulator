@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-10T01:57:08Z",
+  "freeze_commit": "4db5b0d9",
+  "old_pgid": 4086402,
+  "whole_pgid_vacated": true,
+  "archived_workers": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/generation/archived-workers-4086402",
+  "cleared_only_operational_internal_stop": true,
+  "coordinator_release": "01:52Z04only40workers/stagger"
+}

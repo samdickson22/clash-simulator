@@ -1,0 +1,27 @@
+{
+  "schema": "clasher.exit-g.pack-only-amendment.v1",
+  "utc": "2026-10-10T02:12:51Z",
+  "authorization": "Coordinator02:05Z: keepgenerationpausedallhosts;letcurrentgamesfinish;packandverifyallsealed04/01/03andcombinedmanifest;30mincontinuation.",
+  "no_new_admission": true,
+  "pressure_latch_retained": true,
+  "operations_sha256": "557455b94e34342c12a22bdaafac53999b207db9c3d53bae97dd8d86e4cb871d",
+  "script_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/ops/pack_saved.py",
+  "frozen_packer_sha256": "5442af29f9bcea94f3ddebbd8de7ef18d041b53eb3d1e2456fa36edb75fc5d80",
+  "scientific_change": "None; pack stored rows/root_scores/root_valid only; source/emitter/native/checkpoint unchanged.",
+  "host": "127x04",
+  "core": 39,
+  "nice": 19,
+  "scheduler": "SCHED_IDLE",
+  "memory_floor_bytes": 25769803776,
+  "steps": [
+    "WaitwholegenerationPGID4150219gone/allgameworkers exit0",
+    "Retireownmetadatafleet4151857afterfullgendrain",
+    "Read-only directLAN01/03copies toown04importedprefix; source rsync nice19/Idlecore39or59,MemAvailable24GiB before/after",
+    "ValidateeverysealedgamefileSHAandseedinterval and source01/03counts",
+    "RetainSHAverified04batch0/1;packnew04remainderintonextstandardbatch and01/03intoseparateimportedshards",
+    "RecheckeverypackedfileSHA,exactperhostseedidentitycoverage/counters;publishhostmanifestsandcombinedpauseconcat"
+  ],
+  "resume": "Ownexclusivepacklock;reuseverifiedsealedoutput;quarantineonlyownunsealedoutput. STOP04interruptsfrozenpacker atgame-copyboundary. Neverclearpressurelatch/stop toregenerate.",
+  "publication": "Complete means ALLCURRENTSEALEDROOTSPACKED,not6Mtarget. generation_target_complete=false;remaining_unpacked_roots=0 onlyafterexactcoverage. Future01/03completehostmanifestreplacesitsimportedshardlistwholesale;neverincludebothsamebaselinegames.",
+  "expected_interruption": "OldidlepackerSIGTERM143 intentionallyinterruptedduringcoordinatorpause;sourcegamesandverifiedpacksretained. Parentexitmayrecordpacking_failure;notascientificdatafailure."
+}

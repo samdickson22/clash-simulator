@@ -1,0 +1,101 @@
+{
+  "utc": "2026-10-10T02:07:42Z",
+  "authorization": "Coordinator02:05Z: no admission anywhere; current games finish then pack/verify all04/01/03;30-minutecontinuation",
+  "reason": "coordinator_pause_pack_only",
+  "generation_pgid": 4150219,
+  "packer_pid": 4150616,
+  "packer_idle_under_pressure_latch": true,
+  "signal": "SIGTERM only owned idle packer. Existing sealed packs retained. Expected143 is operational interruption; later separate pack-only process.",
+  "prior_progress": {
+    "utc": "2026-10-10T02:07:29Z",
+    "identity": {
+      "pid": 4150219,
+      "pgid": 4150219,
+      "nice": 19,
+      "scheduler": 5,
+      "cores": [
+        39
+      ]
+    },
+    "totals": {
+      "games": 1422,
+      "rows": 1141229,
+      "root_decisions": 177223,
+      "cpu_seconds": 71467.34956735402,
+      "plays": 61057
+    },
+    "active": 40,
+    "paused": [],
+    "memory_available": 96121737216,
+    "pressure_guard": {
+      "full_avg10": 0.41,
+      "above_seconds": 0,
+      "admission_paused": true
+    },
+    "ramp": {
+      "phase": "steady",
+      "first_slots": [
+        1,
+        3,
+        0,
+        2,
+        7,
+        4,
+        5,
+        6,
+        10,
+        9,
+        11,
+        8,
+        13,
+        15,
+        12,
+        14,
+        18,
+        19,
+        17,
+        16,
+        22,
+        21,
+        20,
+        23,
+        26,
+        27,
+        25,
+        24,
+        29,
+        31,
+        30,
+        28,
+        32,
+        33,
+        35,
+        34,
+        36,
+        38,
+        37,
+        39
+      ],
+      "tickets": [
+        1791597720.9208336,
+        1791597721.9480927,
+        1791597721.991035,
+        1791597723.1778054
+      ],
+      "last_ticket": 1791597723.1778054,
+      "workers": 40,
+      "steady_utc": "2026-10-10T02:02:33Z"
+    },
+    "configured_workers": 40,
+    "resume_baseline": {
+      "games": 1339,
+      "rows": 1074802,
+      "root_decisions": 166884,
+      "cpu_seconds": 67838.80389748998,
+      "plays": 57514
+    },
+    "reason": null,
+    "elapsed_seconds": 618.345870665973,
+    "supervisor_cpu_seconds": 4.455672
+  }
+}
