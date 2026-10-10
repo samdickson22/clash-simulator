@@ -1,0 +1,1128 @@
+{
+  "utc": "2026-10-10T19:21:23Z",
+  "sealed": true,
+  "events": [
+    {
+      "utc": "2026-10-10T19:20:29Z",
+      "lost": {
+        "id": "primary-0196",
+        "population": "primary",
+        "index": 196,
+        "seed": 4503603107370692,
+        "cell": 46,
+        "seat": 0,
+        "own_index": 1,
+        "opponent_index": 4,
+        "order": [
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160"
+        ],
+        "replaces": null,
+        "dispatch": 245,
+        "host": "127x01"
+      },
+      "replacement": {
+        "id": "primary-2446",
+        "population": "primary",
+        "index": 2446,
+        "seed": 4503603107372942,
+        "cell": 46,
+        "seat": 0,
+        "own_index": 1,
+        "opponent_index": 4,
+        "order": [
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160"
+        ],
+        "replaces": "primary-0196",
+        "dispatch": 2893,
+        "host": "127x01"
+      },
+      "reason": "owned_STOP",
+      "evidence_sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee"
+    },
+    {
+      "utc": "2026-10-10T19:20:29Z",
+      "lost": {
+        "id": "primary-0200",
+        "population": "primary",
+        "index": 200,
+        "seed": 4503603107370696,
+        "cell": 0,
+        "seat": 0,
+        "own_index": 0,
+        "opponent_index": 0,
+        "order": [
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160"
+        ],
+        "replaces": null,
+        "dispatch": 250,
+        "host": "127x01"
+      },
+      "replacement": {
+        "id": "primary-2400",
+        "population": "primary",
+        "index": 2400,
+        "seed": 4503603107372896,
+        "cell": 0,
+        "seat": 0,
+        "own_index": 0,
+        "opponent_index": 0,
+        "order": [
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160"
+        ],
+        "replaces": "primary-0200",
+        "dispatch": 2894,
+        "host": "127x08"
+      },
+      "reason": "owned_STOP",
+      "evidence_sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee"
+    },
+    {
+      "utc": "2026-10-10T19:20:29Z",
+      "lost": {
+        "id": "primary-0203",
+        "population": "primary",
+        "index": 203,
+        "seed": 4503603107370699,
+        "cell": 3,
+        "seat": 1,
+        "own_index": 3,
+        "opponent_index": 0,
+        "order": [
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200"
+        ],
+        "replaces": null,
+        "dispatch": 253,
+        "host": "127x01"
+      },
+      "replacement": {
+        "id": "primary-2403",
+        "population": "primary",
+        "index": 2403,
+        "seed": 4503603107372899,
+        "cell": 3,
+        "seat": 1,
+        "own_index": 3,
+        "opponent_index": 0,
+        "order": [
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200"
+        ],
+        "replaces": "primary-0203",
+        "dispatch": 2895,
+        "host": "127x08"
+      },
+      "reason": "owned_STOP",
+      "evidence_sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee"
+    },
+    {
+      "utc": "2026-10-10T19:20:29Z",
+      "lost": {
+        "id": "primary-0204",
+        "population": "primary",
+        "index": 204,
+        "seed": 4503603107370700,
+        "cell": 4,
+        "seat": 0,
+        "own_index": 4,
+        "opponent_index": 0,
+        "order": [
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160"
+        ],
+        "replaces": null,
+        "dispatch": 255,
+        "host": "127x01"
+      },
+      "replacement": {
+        "id": "primary-2404",
+        "population": "primary",
+        "index": 2404,
+        "seed": 4503603107372900,
+        "cell": 4,
+        "seat": 0,
+        "own_index": 4,
+        "opponent_index": 0,
+        "order": [
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160"
+        ],
+        "replaces": "primary-0204",
+        "dispatch": 2896,
+        "host": "127x01"
+      },
+      "reason": "owned_STOP",
+      "evidence_sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee"
+    },
+    {
+      "utc": "2026-10-10T19:20:29Z",
+      "lost": {
+        "id": "primary-0205",
+        "population": "primary",
+        "index": 205,
+        "seed": 4503603107370701,
+        "cell": 5,
+        "seat": 1,
+        "own_index": 0,
+        "opponent_index": 1,
+        "order": [
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200"
+        ],
+        "replaces": null,
+        "dispatch": 256,
+        "host": "127x01"
+      },
+      "replacement": {
+        "id": "primary-2405",
+        "population": "primary",
+        "index": 2405,
+        "seed": 4503603107372901,
+        "cell": 5,
+        "seat": 1,
+        "own_index": 0,
+        "opponent_index": 1,
+        "order": [
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200"
+        ],
+        "replaces": "primary-0205",
+        "dispatch": 2897,
+        "host": "127x08"
+      },
+      "reason": "owned_STOP",
+      "evidence_sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee"
+    },
+    {
+      "utc": "2026-10-10T19:20:29Z",
+      "lost": {
+        "id": "guard-0051",
+        "population": "guard",
+        "index": 51,
+        "seed": 4503603207370547,
+        "cell": 15,
+        "seat": 1,
+        "own_index": 1,
+        "opponent_index": 2,
+        "order": [
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200"
+        ],
+        "replaces": null,
+        "dispatch": 259,
+        "host": "127x01"
+      },
+      "replacement": {
+        "id": "guard-0615",
+        "population": "guard",
+        "index": 615,
+        "seed": 4503603207371111,
+        "cell": 15,
+        "seat": 1,
+        "own_index": 1,
+        "opponent_index": 2,
+        "order": [
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200"
+        ],
+        "replaces": "guard-0051",
+        "dispatch": 2898,
+        "host": "127x08"
+      },
+      "reason": "owned_STOP",
+      "evidence_sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee"
+    },
+    {
+      "utc": "2026-10-10T19:20:29Z",
+      "lost": {
+        "id": "primary-0208",
+        "population": "primary",
+        "index": 208,
+        "seed": 4503603107370704,
+        "cell": 8,
+        "seat": 0,
+        "own_index": 3,
+        "opponent_index": 1,
+        "order": [
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160"
+        ],
+        "replaces": null,
+        "dispatch": 260,
+        "host": "127x01"
+      },
+      "replacement": {
+        "id": "primary-2408",
+        "population": "primary",
+        "index": 2408,
+        "seed": 4503603107372904,
+        "cell": 8,
+        "seat": 0,
+        "own_index": 3,
+        "opponent_index": 1,
+        "order": [
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160"
+        ],
+        "replaces": "primary-0208",
+        "dispatch": 2899,
+        "host": "127x01"
+      },
+      "reason": "owned_STOP",
+      "evidence_sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee"
+    },
+    {
+      "utc": "2026-10-10T19:20:29Z",
+      "lost": {
+        "id": "primary-0211",
+        "population": "primary",
+        "index": 211,
+        "seed": 4503603107370707,
+        "cell": 11,
+        "seat": 1,
+        "own_index": 1,
+        "opponent_index": 2,
+        "order": [
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200"
+        ],
+        "replaces": null,
+        "dispatch": 263,
+        "host": "127x01"
+      },
+      "replacement": {
+        "id": "primary-2411",
+        "population": "primary",
+        "index": 2411,
+        "seed": 4503603107372907,
+        "cell": 11,
+        "seat": 1,
+        "own_index": 1,
+        "opponent_index": 2,
+        "order": [
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200"
+        ],
+        "replaces": "primary-0211",
+        "dispatch": 2900,
+        "host": "127x01"
+      },
+      "reason": "owned_STOP",
+      "evidence_sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee"
+    },
+    {
+      "utc": "2026-10-10T19:20:29Z",
+      "lost": {
+        "id": "guard-0052",
+        "population": "guard",
+        "index": 52,
+        "seed": 4503603207370548,
+        "cell": 16,
+        "seat": 0,
+        "own_index": 2,
+        "opponent_index": 2,
+        "order": [
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160"
+        ],
+        "replaces": null,
+        "dispatch": 264,
+        "host": "127x01"
+      },
+      "replacement": {
+        "id": "guard-0616",
+        "population": "guard",
+        "index": 616,
+        "seed": 4503603207371112,
+        "cell": 16,
+        "seat": 0,
+        "own_index": 2,
+        "opponent_index": 2,
+        "order": [
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160"
+        ],
+        "replaces": "guard-0052",
+        "dispatch": 2901,
+        "host": "127x08"
+      },
+      "reason": "owned_STOP",
+      "evidence_sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee"
+    },
+    {
+      "utc": "2026-10-10T19:20:29Z",
+      "lost": {
+        "id": "primary-0213",
+        "population": "primary",
+        "index": 213,
+        "seed": 4503603107370709,
+        "cell": 13,
+        "seat": 1,
+        "own_index": 3,
+        "opponent_index": 2,
+        "order": [
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200"
+        ],
+        "replaces": null,
+        "dispatch": 266,
+        "host": "127x01"
+      },
+      "replacement": {
+        "id": "primary-2413",
+        "population": "primary",
+        "index": 2413,
+        "seed": 4503603107372909,
+        "cell": 13,
+        "seat": 1,
+        "own_index": 3,
+        "opponent_index": 2,
+        "order": [
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200"
+        ],
+        "replaces": "primary-0213",
+        "dispatch": 2902,
+        "host": "127x01"
+      },
+      "reason": "owned_STOP",
+      "evidence_sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee"
+    },
+    {
+      "utc": "2026-10-10T19:20:29Z",
+      "lost": {
+        "id": "primary-0214",
+        "population": "primary",
+        "index": 214,
+        "seed": 4503603107370710,
+        "cell": 14,
+        "seat": 0,
+        "own_index": 4,
+        "opponent_index": 2,
+        "order": [
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160"
+        ],
+        "replaces": null,
+        "dispatch": 267,
+        "host": "127x01"
+      },
+      "replacement": {
+        "id": "primary-2414",
+        "population": "primary",
+        "index": 2414,
+        "seed": 4503603107372910,
+        "cell": 14,
+        "seat": 0,
+        "own_index": 4,
+        "opponent_index": 2,
+        "order": [
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160"
+        ],
+        "replaces": "primary-0214",
+        "dispatch": 2903,
+        "host": "127x08"
+      },
+      "reason": "owned_STOP",
+      "evidence_sha256": "b432e9f2cbc819e0960e824ad651cbdde78576a7ab36b698597b857cbae2fdee"
+    },
+    {
+      "utc": "2026-10-10T18:25:33Z",
+      "lost": {
+        "id": "primary-0055",
+        "population": "primary",
+        "index": 55,
+        "seed": 4503603107370551,
+        "cell": 5,
+        "seat": 1,
+        "own_index": 0,
+        "opponent_index": 1,
+        "order": [
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200"
+        ],
+        "replaces": null,
+        "dispatch": 68,
+        "host": "127x08"
+      },
+      "replacement": {
+        "id": "primary-2455",
+        "population": "primary",
+        "index": 2455,
+        "seed": 4503603107372951,
+        "cell": 5,
+        "seat": 1,
+        "own_index": 0,
+        "opponent_index": 1,
+        "order": [
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200"
+        ],
+        "replaces": "primary-0055",
+        "dispatch": 2904,
+        "host": "127x01"
+      },
+      "reason": "ssh_family_average_budget",
+      "evidence_sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c"
+    },
+    {
+      "utc": "2026-10-10T18:25:33Z",
+      "lost": {
+        "id": "guard-0013",
+        "population": "guard",
+        "index": 13,
+        "seed": 4503603207370509,
+        "cell": 13,
+        "seat": 1,
+        "own_index": 0,
+        "opponent_index": 2,
+        "order": [
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200"
+        ],
+        "replaces": null,
+        "dispatch": 69,
+        "host": "127x08"
+      },
+      "replacement": {
+        "id": "guard-0613",
+        "population": "guard",
+        "index": 613,
+        "seed": 4503603207371109,
+        "cell": 13,
+        "seat": 1,
+        "own_index": 0,
+        "opponent_index": 2,
+        "order": [
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200"
+        ],
+        "replaces": "guard-0013",
+        "dispatch": 2905,
+        "host": "127x08"
+      },
+      "reason": "ssh_family_average_budget",
+      "evidence_sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c"
+    },
+    {
+      "utc": "2026-10-10T18:25:33Z",
+      "lost": {
+        "id": "primary-0056",
+        "population": "primary",
+        "index": 56,
+        "seed": 4503603107370552,
+        "cell": 6,
+        "seat": 0,
+        "own_index": 1,
+        "opponent_index": 1,
+        "order": [
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160"
+        ],
+        "replaces": null,
+        "dispatch": 70,
+        "host": "127x08"
+      },
+      "replacement": {
+        "id": "primary-2406",
+        "population": "primary",
+        "index": 2406,
+        "seed": 4503603107372902,
+        "cell": 6,
+        "seat": 0,
+        "own_index": 1,
+        "opponent_index": 1,
+        "order": [
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160"
+        ],
+        "replaces": "primary-0056",
+        "dispatch": 2906,
+        "host": "127x01"
+      },
+      "reason": "ssh_family_average_budget",
+      "evidence_sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c"
+    },
+    {
+      "utc": "2026-10-10T18:25:33Z",
+      "lost": {
+        "id": "primary-0058",
+        "population": "primary",
+        "index": 58,
+        "seed": 4503603107370554,
+        "cell": 8,
+        "seat": 0,
+        "own_index": 3,
+        "opponent_index": 1,
+        "order": [
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160"
+        ],
+        "replaces": null,
+        "dispatch": 72,
+        "host": "127x08"
+      },
+      "replacement": {
+        "id": "primary-2458",
+        "population": "primary",
+        "index": 2458,
+        "seed": 4503603107372954,
+        "cell": 8,
+        "seat": 0,
+        "own_index": 3,
+        "opponent_index": 1,
+        "order": [
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160"
+        ],
+        "replaces": "primary-0058",
+        "dispatch": 2907,
+        "host": "127x08"
+      },
+      "reason": "ssh_family_average_budget",
+      "evidence_sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c"
+    },
+    {
+      "utc": "2026-10-10T18:25:33Z",
+      "lost": {
+        "id": "guard-0014",
+        "population": "guard",
+        "index": 14,
+        "seed": 4503603207370510,
+        "cell": 14,
+        "seat": 0,
+        "own_index": 1,
+        "opponent_index": 2,
+        "order": [
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160"
+        ],
+        "replaces": null,
+        "dispatch": 74,
+        "host": "127x08"
+      },
+      "replacement": {
+        "id": "guard-0614",
+        "population": "guard",
+        "index": 614,
+        "seed": 4503603207371110,
+        "cell": 14,
+        "seat": 0,
+        "own_index": 1,
+        "opponent_index": 2,
+        "order": [
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160"
+        ],
+        "replaces": "guard-0014",
+        "dispatch": 2908,
+        "host": "127x01"
+      },
+      "reason": "ssh_family_average_budget",
+      "evidence_sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c"
+    },
+    {
+      "utc": "2026-10-10T18:25:33Z",
+      "lost": {
+        "id": "primary-0061",
+        "population": "primary",
+        "index": 61,
+        "seed": 4503603107370557,
+        "cell": 11,
+        "seat": 1,
+        "own_index": 1,
+        "opponent_index": 2,
+        "order": [
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200"
+        ],
+        "replaces": null,
+        "dispatch": 76,
+        "host": "127x08"
+      },
+      "replacement": {
+        "id": "primary-2461",
+        "population": "primary",
+        "index": 2461,
+        "seed": 4503603107372957,
+        "cell": 11,
+        "seat": 1,
+        "own_index": 1,
+        "opponent_index": 2,
+        "order": [
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200"
+        ],
+        "replaces": "primary-0061",
+        "dispatch": 2909,
+        "host": "127x08"
+      },
+      "reason": "ssh_family_average_budget",
+      "evidence_sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c"
+    },
+    {
+      "utc": "2026-10-10T18:25:33Z",
+      "lost": {
+        "id": "primary-0062",
+        "population": "primary",
+        "index": 62,
+        "seed": 4503603107370558,
+        "cell": 12,
+        "seat": 0,
+        "own_index": 2,
+        "opponent_index": 2,
+        "order": [
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160"
+        ],
+        "replaces": null,
+        "dispatch": 77,
+        "host": "127x08"
+      },
+      "replacement": {
+        "id": "primary-2412",
+        "population": "primary",
+        "index": 2412,
+        "seed": 4503603107372908,
+        "cell": 12,
+        "seat": 0,
+        "own_index": 2,
+        "opponent_index": 2,
+        "order": [
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160"
+        ],
+        "replaces": "primary-0062",
+        "dispatch": 2910,
+        "host": "127x08"
+      },
+      "reason": "ssh_family_average_budget",
+      "evidence_sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c"
+    },
+    {
+      "utc": "2026-10-10T18:25:33Z",
+      "lost": {
+        "id": "primary-0063",
+        "population": "primary",
+        "index": 63,
+        "seed": 4503603107370559,
+        "cell": 13,
+        "seat": 1,
+        "own_index": 3,
+        "opponent_index": 2,
+        "order": [
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200"
+        ],
+        "replaces": null,
+        "dispatch": 78,
+        "host": "127x08"
+      },
+      "replacement": {
+        "id": "primary-2463",
+        "population": "primary",
+        "index": 2463,
+        "seed": 4503603107372959,
+        "cell": 13,
+        "seat": 1,
+        "own_index": 3,
+        "opponent_index": 2,
+        "order": [
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200"
+        ],
+        "replaces": "primary-0063",
+        "dispatch": 2911,
+        "host": "127x08"
+      },
+      "reason": "ssh_family_average_budget",
+      "evidence_sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c"
+    },
+    {
+      "utc": "2026-10-10T18:25:33Z",
+      "lost": {
+        "id": "primary-0066",
+        "population": "primary",
+        "index": 66,
+        "seed": 4503603107370562,
+        "cell": 16,
+        "seat": 0,
+        "own_index": 1,
+        "opponent_index": 3,
+        "order": [
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160"
+        ],
+        "replaces": null,
+        "dispatch": 82,
+        "host": "127x08"
+      },
+      "replacement": {
+        "id": "primary-2416",
+        "population": "primary",
+        "index": 2416,
+        "seed": 4503603107372912,
+        "cell": 16,
+        "seat": 0,
+        "own_index": 1,
+        "opponent_index": 3,
+        "order": [
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160"
+        ],
+        "replaces": "primary-0066",
+        "dispatch": 2912,
+        "host": "127x08"
+      },
+      "reason": "ssh_family_average_budget",
+      "evidence_sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c"
+    },
+    {
+      "utc": "2026-10-10T18:25:33Z",
+      "lost": {
+        "id": "primary-0069",
+        "population": "primary",
+        "index": 69,
+        "seed": 4503603107370565,
+        "cell": 19,
+        "seat": 1,
+        "own_index": 4,
+        "opponent_index": 3,
+        "order": [
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200"
+        ],
+        "replaces": null,
+        "dispatch": 86,
+        "host": "127x08"
+      },
+      "replacement": {
+        "id": "primary-2419",
+        "population": "primary",
+        "index": 2419,
+        "seed": 4503603107372915,
+        "cell": 19,
+        "seat": 1,
+        "own_index": 4,
+        "opponent_index": 3,
+        "order": [
+          "K2-160",
+          "K4-200",
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200"
+        ],
+        "replaces": "primary-0069",
+        "dispatch": 2913,
+        "host": "127x08"
+      },
+      "reason": "ssh_family_average_budget",
+      "evidence_sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c"
+    },
+    {
+      "utc": "2026-10-10T18:25:33Z",
+      "lost": {
+        "id": "primary-0071",
+        "population": "primary",
+        "index": 71,
+        "seed": 4503603107370567,
+        "cell": 21,
+        "seat": 1,
+        "own_index": 1,
+        "opponent_index": 4,
+        "order": [
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200"
+        ],
+        "replaces": null,
+        "dispatch": 88,
+        "host": "127x08"
+      },
+      "replacement": {
+        "id": "primary-2421",
+        "population": "primary",
+        "index": 2421,
+        "seed": 4503603107372917,
+        "cell": 21,
+        "seat": 1,
+        "own_index": 1,
+        "opponent_index": 4,
+        "order": [
+          "K4-160",
+          "K0c-200",
+          "K0c-160",
+          "S-200",
+          "S-160",
+          "K2-200",
+          "K2-160",
+          "K4-200"
+        ],
+        "replaces": "primary-0071",
+        "dispatch": 2914,
+        "host": "127x01"
+      },
+      "reason": "ssh_family_average_budget",
+      "evidence_sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c"
+    }
+  ]
+}

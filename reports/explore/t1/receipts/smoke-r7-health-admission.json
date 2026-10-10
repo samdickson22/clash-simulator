@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-10T19:19:59Z",
+  "sealed": true,
+  "qualification_class": true,
+  "outcomes_read": false,
+  "passed": true,
+  "complete_blocks": 8,
+  "games": 64,
+  "verified_copy_acknowledgments": 8,
+  "health_errors": 0,
+  "interfered_blocks": 8,
+  "proofs": {
+    "smoke-0000": {
+      "complete_sha256": "1c18724ff8d2362ba9ae781703fabba0c70a0c7f1ea1fd4a56efacee30fff819",
+      "ack_sha256": "acde7cada48078839f9c54cd953f6547e894df2dbb6301ef605a22e458df5a2f"
+    },
+    "smoke-0001": {
+      "complete_sha256": "9007fa1d5fa251a04b5b036d80dcbc60ef9130011ef4952c8a86eb98ab400808",
+      "ack_sha256": "de125b358faf138700d1e561b644b650450469d7d74b551176cb0f432fa370c3"
+    },
+    "smoke-0002": {
+      "complete_sha256": "0cdf11b591762c3c133d3c9f5bb0050d02311ca9d5328cbb1a00b5e8991d96e8",
+      "ack_sha256": "d5e31740cf405fef23a8488c21b6650f2f6686ecd15d269ffd0850751694082a"
+    },
+    "smoke-0003": {
+      "complete_sha256": "829ab71d0fd75e6ab31d8ff66d24fddb6ae61afaf90632cdd77570b6761d9280",
+      "ack_sha256": "ee263b03075066a5b630d28e2ee0b31e7188b3f2dc51b4c61e91629d1ed4fe3b"
+    },
+    "smoke-0004": {
+      "complete_sha256": "1e80b87bb2b2a4308d20a3fcd65832fb2d03bfdc07863139d3c8dfad41f5d114",
+      "ack_sha256": "ec921e5a09f7f6f4a0567e8033e6b1fb806af5d1e926ded12c3caee17cc489cc"
+    },
+    "smoke-0005": {
+      "complete_sha256": "273ed70689d9ee0241f72569f67095ef5b622b4c82ee0fe75fca71733a546de9",
+      "ack_sha256": "0a159a1f0d02fe1e3de80cbcfa7af7372d4fcc6d99f175fb9bd91d6a94469eec"
+    },
+    "smoke-0006": {
+      "complete_sha256": "71791b7e8afbccec3834aa9fd8fe90ab64bbe9eee34a71db965f871affbc0b00",
+      "ack_sha256": "a81dac8fb7a043da827fa755a6f2976c37703ecd3cc460eb5b6f97b34d0bee7d"
+    },
+    "smoke-0007": {
+      "complete_sha256": "f0b1de30a4f9f7e59783b4bb5a00fc50d55105082a99a6af6b4f942a16f9cec6",
+      "ack_sha256": "31ec66d3cf079d805d9c7b4a9d2708d2364c4255a4be5c8e6e44f8521b4b3e8a"
+    }
+  },
+  "health_sha256": "8586724237d53419875658221c084e4a94c8320a01114277577406212693d29d",
+  "source_module_sha256": "da4e1d6ec0d4bcef556171c636b13f5cc3c62d253bfe4b7625a6365060b0d651"
+}
