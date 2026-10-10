@@ -1771,3 +1771,8 @@ Also on the hub, but with copies elsewhere:
   - R3 round 2 on 09/13/16; R3a descriptive (K0-fallback) on 01; G steady on 03 (54 workers).
   - **Released G onto 04 cores 12–46 until a 10:15Z HARD stop** (pre-A19 headroom ≥90 GiB) **and 08 cores 0–55 until a 15:00Z HARD stop** (before any B window); each a one-time release.
   - Seal ~168/216 at 07:30Z, ETA ~11Z.
+- **08:24 UTC: R3a descriptive (NEVER-ADOPTABLE; r1 (b) K0-fallback harness, 1 core, 600 paired):**
+  - **Loss 24.2% vs K0 52.8%: −28.7 pp [−33.7, −23.3].** That's comparable to K2 (2 threads, 25%).
+  - **Suspicious:** proposer latency is 0.08 ms for the student vs 9.45 ms for v1, at the same width.
+  - **Commissioned an independent Opus audit** (`clasher-audit-r3a-desc-20261010-1`): inference charging and caching, arm symmetry, K0's 52.8% vs ~46% elsewhere, mechanism, fairness.
+  - If confirmed, the stage-1 gates are miscalibrated (they killed R3a), and a 1-core student proposer is a viable Mac tier. That leads to a confirmatory pre-registered study.
