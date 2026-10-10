@@ -159,7 +159,7 @@ root03 `$job/stage3-wrapper-qualification-v2.json` now admits corrected
 reporting after stage2 survival. No reporting game or stagekill consumed yet.
 Metered corrected smokeCPU 0.06910225444444446h, sealCPU0.039148s;
 old mechanicsCPU0.04743842555555556h remains charged separately.
-Stage3 invocation after gates: game_pool_v2.py --job "$job" --stage3
---arm Xn (and init control) --cores60 61 62 63; use literal `--stage 3`
-with a space. Reduce only600 complete genuinepairs via reduce_stage3_v2.py.
+Stage3 invocation after gates: `game_pool_v2.py --job "$job" --stage 3
+--arm Xn --cores 60 61 62 63`; run the same command with `--arm init` for
+control. Reduce only600 complete genuinepairs via reduce_stage3_v2.py.
 K originals untouched, fit-host original freezes/source snapshots intact.
