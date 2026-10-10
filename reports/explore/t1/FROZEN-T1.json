@@ -5,6 +5,7 @@
   "files": {
     "reports/explore/t1/FREEZE-T1.md": "1995a0ccf0616188f84fe5c3c574a8b28b10feeccdea5921abc93a626e7c9061",
     "reports/explore/t1/PLAN.md": "10ad08ba3eb0e09b2c05244b0f85786933b0380ceed241d9038918581d7b9750",
+    "reports/explore/t1/REVIEW-T1-FREEZE-CONFIRM-20261010T1500Z.md": "70b0e831ac0e7e5c1e50164e79552a0b910f5acb3fe7f0fee3fcb7e73e42c7fe",
     "reports/explore/t1/REVIEW-T1-ROUND3-20261010T1425Z.md": "88637c359428d92826e8ea7f57c8abdbe36059b8268feb75f681b73bbb449c69",
     "reports/explore/t1/anchor.py": "75a1b7d7fb7f144bfa62cdfcd3ddfdfe7cad7dc31e8e97dc4d4f4c7ede196888",
     "reports/explore/t1/audit_seeds.py": "495787892cdf4c00dc01ac2a6042baf14b5b3db2998a7f4cdfae9d2538128dce",
@@ -108,16 +109,12 @@
   "independent_reducer_review": true,
   "reporting_delta_review": {
     "round": 3,
-    "verdict": "PENDING_FAST_CONFIRMATION",
-    "path": "reports/explore/t1/REVIEW-T1-ROUND3-20261010T1425Z.md",
-    "base_verdict": "APPROVE_WITH_CONDITIONS",
-    "reviewed_commit": "afa3f10e394d14cb3870e56842a3971ca839b328",
-    "conditions_implemented": [
-      "C1",
-      "C2",
-      "OP-1"
-    ],
-    "note": "Coordinator routes frozen full-diff confirmation; actual APPROVE must be recorded before reporting."
+    "verdict": "APPROVE",
+    "source_verdict": "CONFIRM",
+    "path": "reports/explore/t1/REVIEW-T1-FREEZE-CONFIRM-20261010T1500Z.md",
+    "review_commit": "9a7126f6",
+    "reviewed_commit": "95883be0bfd4d0a6e8dade56ca6a6669637c4a49",
+    "coordinator_confirmation": "Coordinator 15:08Z: freeze CONFIRMED; reporting only after smoke and explicit host set."
   },
   "verifier_author": "independent coordinator-appointed T1 verifier/reviewer",
   "reducer_author": "T1 confirmatory fleet worker",
@@ -132,8 +129,8 @@
   "reporting_games_started": false,
   "reference_schedule": "END reporting window; separate corpus/E4 approval; pinned reporting load profile",
   "pending": [
-    "coordinator fast full-diff APPROVE",
     "post-freeze excluded smoke health admission",
+    "explicit coordinator host set before reporting launch",
     "explicit manifest-SHA/commit-bound reporting authorization"
   ],
   "qualification_summary": "reports/explore/t1/receipts/qualification-freeze-summary.json",
