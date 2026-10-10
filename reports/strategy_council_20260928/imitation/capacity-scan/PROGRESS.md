@@ -693,3 +693,18 @@ GPUs13/14/16 remain released; no relaunch. Control NLL 0.27726436294161033.
 Evidence: `monitor-20261010T0242Z.json`. Scientific recipe/source/data unchanged; 480 retains
 pre-dev authorized micro1024/effective8192/cap0.78 amendment; failed artifacts retained.
 Continuation remains enabled pending 480 scoring and any survivor curve.
+
+2026-10-10 02:54Z: Terminal scientific results complete. Width480 quarter NLL
+0.2724708288578426 at95,144,680rows /step11615, gain0.004793534083767759<0.005;
+frozen kill fired. Width288 and384 kills remain0.0030829170208171996 and
+0.004456449396346762. No survivors, censored or final infeasible arms.
+Width480 guard exited0 at02:49:29Z; all seven owned PIDs gone and GPU15 empty
+at02:53:45Z. GPUs13/14/15/16 released; controller ended normally02:49:44Z.
+Archived full measured curves, all failed480 artifacts, quarter checkpoint SHAs,
+source/data pins and pre-dev micro1024 amendment in RESULTS.md and own receipts.
+Recorded fitting/scoring total 17.795722024 GPUh;
+conservative cumulative total 19.358035878 GPUh,
+including staging/restarts; guard recomputation PASS. Historical192 fit not charged.
+No T11/source/data/recipe changes. Recommendation: retain192; none qualifies for
+offline promotion under frozen criterion. No new fits or seeds authorized/launched.
+Terminal report/push and specific temporary schedule shutdown follow.
