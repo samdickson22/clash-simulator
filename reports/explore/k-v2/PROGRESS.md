@@ -29,3 +29,5 @@ After reporting finishes, copy local gc_summary.py to NEW $job/gc_summary.py (do
 2026-10-10T02:54:40Z — Completion check:473/2400 terminal; nine workers,118.90GiB available, no pause. Recorded supervisor1718083 and pool1718091 remain live in their original PGIDs, nice10/TS (SCHED_OTHER). No final receipt/exit yet; no outcomes inspected or runtime/source changes. Retained job continues; no duplicate launch.
 
 2026-10-10T03:04:43Z — Quarter-completion milestone:619/2400 terminal; nine workers,118.99GiB available, no pause. Original supervisor/pool PID=PGID1718083/1718091 remain live, nice10/SCHED_OTHER. No final receipt/exit; no outcomes inspected, source changes or duplicate launch. Next same-thread completion check03:14:34.304Z. Final GC deployment supplement and overlap limitation remain required.
+
+2026-10-10T03:14:46Z — Completion check:764/2400 terminal; nine workers,118.87GiB available, no pause. Original supervisor/pool1718083/1718091 remain live in their recorded PGIDs at nice10/SCHED_OTHER. No final receipt/exit; outcomes unopened and scientific runtime unchanged. Next check03:24:35.619Z; no duplicate launch.
