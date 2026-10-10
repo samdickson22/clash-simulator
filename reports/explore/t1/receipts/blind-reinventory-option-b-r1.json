@@ -3658,5 +3658,38 @@
     "guard_losses": 4
   },
   "mechanical_rule": "Reviewed replace.py inventory called once for both dead source phases; original full dispatch supplied once. Never-started seeds/cells/seats/rotations retained; started losses replaced within original cells. Completed durable blocks deduplicated and omitted.",
-  "reviewed_replace_sha256": "223232bb2181b7bada964b17fc65f6a82f14264c59bf94d8c0c12e6393735864"
+  "reviewed_replace_sha256": "223232bb2181b7bada964b17fc65f6a82f14264c59bf94d8c0c12e6393735864",
+  "cell_host_coverage_complete": true,
+  "seat_host_counts": {
+    "primary": {
+      "127x01": {
+        "0": 568,
+        "1": 568
+      },
+      "127x08": {
+        "0": 570,
+        "1": 568
+      }
+    },
+    "guard": {
+      "127x01": {
+        "0": 143,
+        "1": 142
+      },
+      "127x08": {
+        "0": 141,
+        "1": 143
+      }
+    },
+    "descriptive": {
+      "127x01": {
+        "0": 18,
+        "1": 18
+      },
+      "127x08": {
+        "0": 18,
+        "1": 18
+      }
+    }
+  }
 }

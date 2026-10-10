@@ -1,0 +1,32 @@
+{
+  "utc": "2026-10-10T19:27:55Z",
+  "reviewed_commit": "d60586b33d5af83f04678d78f1525e4a74ef70cd",
+  "review_commit": "9118153be59f08965e5e7b2b2363306fefd56f04",
+  "hosts": {
+    "127x01": {
+      "binding_path": "reports/explore/t1/receipts/op6-qualification-source-binding-127x01.json",
+      "binding_sha256": "d514cd46825400bec2b741bea29cb27972ac1fd7998f3d5ea6c5a7550e5fe3fe",
+      "completed_at_utc": "2026-10-10T19:27:18Z",
+      "source_files": 60,
+      "source_stable": true,
+      "tests": 166,
+      "frozen_exactness_states": 125,
+      "belief_histories": 125,
+      "belief_variants": 250
+    },
+    "127x08": {
+      "binding_path": "reports/explore/t1/receipts/op6-qualification-source-binding-127x08.json",
+      "binding_sha256": "298943f911e210e00227b37f91125076e5d68ba439f65d65697e3b62da17c54e",
+      "completed_at_utc": "2026-10-10T19:03:48Z",
+      "source_files": 60,
+      "source_stable": true,
+      "tests": 166,
+      "frozen_exactness_states": 125,
+      "belief_histories": 125,
+      "belief_variants": 250
+    }
+  },
+  "source_inputs_identical_across_hosts": true,
+  "external_seven_modules_sha_pinned": true,
+  "outcomes_read": false
+}

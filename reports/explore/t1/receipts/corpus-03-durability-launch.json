@@ -1,0 +1,21 @@
+{
+  "launched_at_utc": "2026-10-10T19:23:13Z",
+  "pid": 39246,
+  "pgid": 39246,
+  "schema": "clasher.t1.corpus-durability-launch.v1",
+  "source_host": "127x05",
+  "source_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/corpus-publication-staging-r1",
+  "target_host": "127x03",
+  "target_path": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/corpus-publication-durable-r1",
+  "nice": 19,
+  "scheduler": "SCHED_OTHER",
+  "physical_cpu": 63,
+  "bandwidth_KiB_s": 8192,
+  "script_sha256": "6bf453780f3ec9bd3dea4667d8deea6d39bf07d3b6de63c8dd480e4fe2bcdf44",
+  "verification": "all five state-file SHA values after copy, then read-only files and root",
+  "outcomes_read": false,
+  "no_bundle_bytes_in_git": true,
+  "public_inventory_commit": "81f2483e",
+  "stopped_archive_publisher_pid": 2136422,
+  "no_chunked_archive_staged": true
+}

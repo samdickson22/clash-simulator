@@ -43,3 +43,13 @@ escape census accounting; pre-block CPU charged on later reaping and possible
 ancestor/live-child double-count conservatively inflate exposure. Fresh reviewed
 qualification and all-host smoke are required. Reporting uses a distinct unused
 reporting-frozen-op4-r1 directory;08 B STOP remains linked to the original file.
+
+## Confirmed OP-6 Option B admission
+
+The coordinator confirmed d60586b3 in independent review9118153b. New phases use the unchanged reviewed OP-6 code and the two-host set01/08. Status FROZEN is mandatory. Original OP-5 phases are stopped and retained; their157 durable completions are deduplicated. The reviewed replace.py yields22 cell-preserving replacement seeds and2893 never-started rows with unchanged seeds/cells/seats/rotations. The balanced2915-block dispatch has1457 blocks on01 and1458 on08; every cell reaches both hosts and each seat occurs on each host. New job replacement-frozen-op6-0108-r1 is distinct from all reporting, qualification and smoke directories; phase replacement-r1. Original08 B STOP remains linked.
+
+Fresh08 qualification passes166 tests,125 exactness states and125 belief histories/250 variants. The excluded08 smoke r7 passes8blocks/64games with8 durable acknowledgments and0 health errors. All8 blocks carry both SSH and system-DBus interference flags; they are disclosed and retained. Fresh01 qualification is also required before this manifest is committed. Source/input inventories must match between both hosts, including the seven inherited untracked SHA-pinned modules. No corpus or unreviewed release code enters this reporting runtime.
+
+OP-6 flag residuals and legacy replay remain disclosed in OP6-T1.md. The primary result includes flagged blocks. Its separate descriptive sensitivity excludes SSH-flagged blocks and never replaces the primary result or tier choice. Before any release, PC1-PC3 and PC4 in RELEASE-PRODUCTION-CHECKS-20261010.md apply: run the standalone health-only sensitivity-sidecar check against the final counted inventory and blind ledger, commit its checked receipt, and bind the semantic result in the release packet. No outcomes are read for this admission. Fleet references remain at END, using all counted hosts and all retained attempts.
+
+The public repository contains corpus SHA inventories and small receipts only. Corpus state bytes stay on05 and a SHA-validated, read-only nice19 bandwidth-limited durability copy on03; no01/08 corpus capture or copy overlaps reporting. Corpus source a51ea64c remains isolated.
