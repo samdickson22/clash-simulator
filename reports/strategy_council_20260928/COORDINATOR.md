@@ -1825,3 +1825,8 @@ Also on the hub, but with copies elsewhere:
   - **Realistic speedup is only ~2.2× serial:** a fresh A1 parallel run takes ~4–7 h, because the serial's full-scope 03 holds cap it.
   - **Decision: NO fresh A1 parallel attempt.** The serial alone (~25 branches/h, ETA ~19–20Z) is as fast or faster, and a contending attempt would slow it.
   - **A21 is reserved for the A2 stages:** genuine serial A1 is an accepted prerequisite; no serial competitor in A2. A21 freeze/approval to be issued (C1 key sets, C2 fresh deploy, O7 03/08 sizes, O10 ControlPath exit) together with APPROVE_A2 after A1 completes.
+- **13:05 UTC: Drafts ready** (Opus):
+  - PREREG-SEARCH-TIERS-DRAFT: K0c/S/K2/K4 × 200/160 ms, 2,400 fresh paired seeds plus 600 on L2 decks; power 0.93; tier = the cheapest one within 5 pp of the best that qualifies at the measured Mac speed; R3a re-frozen as a new artifact; single belief root, which needs an L2-v4 amendment.
+  - E4-V3 addendum: one replay-only sub-session of ~1.5–2 h.
+  - DECISION-MAC-TIERS memo for Sam.
+  - **Next:** independent PREREG review, and the measure_tiers.py implementation plus review.
