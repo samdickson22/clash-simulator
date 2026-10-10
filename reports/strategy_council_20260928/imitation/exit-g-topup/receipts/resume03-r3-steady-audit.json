@@ -1,0 +1,1046 @@
+{
+  "utc": "2026-10-10T11:39:08Z",
+  "passed": true,
+  "kind": "steady",
+  "pgid": 3483893,
+  "owned": [
+    {
+      "pid": 3483893,
+      "pgid": 3483893,
+      "start": 142152238,
+      "command_sha256": "6b9abf14ed3ff85c53607b9c74d8fe739131f06bd51ec25142c5b05f4b79f0e2",
+      "role": "manager",
+      "core": 58,
+      "threads": [
+        {
+          "tid": 3483893,
+          "core": 58,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3484242,
+      "pgid": 3483893,
+      "start": 142152901,
+      "command_sha256": "a97c1cf03fb051c6cd3eaacebeb3ecfde357e7371fa6a842ab534acb37464ee0",
+      "role": "packer",
+      "core": 59,
+      "threads": [
+        {
+          "tid": 3484242,
+          "core": 59,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3486748,
+      "pgid": 3483893,
+      "start": 142157363,
+      "command_sha256": "cb94031c0f033d28271b056e887438bc3e881e0fb7189e0f7f546112af542586",
+      "role": "game",
+      "core": 0,
+      "threads": [
+        {
+          "tid": 3486748,
+          "core": 0,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3486749,
+      "pgid": 3483893,
+      "start": 142157364,
+      "command_sha256": "f403cc5dda58ee4cf96e80aca2707360430675fd6cc7e4f45581e700c849afdb",
+      "role": "game",
+      "core": 1,
+      "threads": [
+        {
+          "tid": 3486749,
+          "core": 1,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3486750,
+      "pgid": 3483893,
+      "start": 142157364,
+      "command_sha256": "5d76e99db6ae65e14662794338fd1203d054a252036ee70b46303ff9caf69cc5",
+      "role": "game",
+      "core": 2,
+      "threads": [
+        {
+          "tid": 3486750,
+          "core": 2,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3486751,
+      "pgid": 3483893,
+      "start": 142157366,
+      "command_sha256": "11491a29346db5c887cf81bfbd489fbcb6150a8cdd51d8c9884a490a7f90cb61",
+      "role": "game",
+      "core": 3,
+      "threads": [
+        {
+          "tid": 3486751,
+          "core": 3,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3488531,
+      "pgid": 3483893,
+      "start": 142160408,
+      "command_sha256": "4bfba081603609b9c4e5dfdebf8d96c149e1a1b870eb4c496ae5f65caaf9115b",
+      "role": "game",
+      "core": 4,
+      "threads": [
+        {
+          "tid": 3488531,
+          "core": 4,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3488538,
+      "pgid": 3483893,
+      "start": 142160408,
+      "command_sha256": "3bde0580b8df535e1bf18bd8060b530e702a80bdb63ae85db719cac7b4abcda1",
+      "role": "game",
+      "core": 5,
+      "threads": [
+        {
+          "tid": 3488538,
+          "core": 5,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3488541,
+      "pgid": 3483893,
+      "start": 142160410,
+      "command_sha256": "f51c109564fbb4bd7fe711320cdeef6a211eb744313b07e361e040c325b06c6d",
+      "role": "game",
+      "core": 6,
+      "threads": [
+        {
+          "tid": 3488541,
+          "core": 6,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3488546,
+      "pgid": 3483893,
+      "start": 142160411,
+      "command_sha256": "da2d778bad8d633221c765cbe8cb7df6af14a737576f15122815a9ca5ed270d2",
+      "role": "game",
+      "core": 7,
+      "threads": [
+        {
+          "tid": 3488546,
+          "core": 7,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3490218,
+      "pgid": 3483893,
+      "start": 142163455,
+      "command_sha256": "222679374865c311bf28ae5dcab2f1b66141831c22b763d54ce1840ec618b1d4",
+      "role": "game",
+      "core": 8,
+      "threads": [
+        {
+          "tid": 3490218,
+          "core": 8,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3490219,
+      "pgid": 3483893,
+      "start": 142163456,
+      "command_sha256": "790afd59f81bf580aac9f59f8d9f05474bc93e9fa62f47eceb7856b450ef7d50",
+      "role": "game",
+      "core": 9,
+      "threads": [
+        {
+          "tid": 3490219,
+          "core": 9,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3490220,
+      "pgid": 3483893,
+      "start": 142163456,
+      "command_sha256": "f8594d75d5dd0332d764f2730488d388b320759a659a7179a8ebd4a9ac9b761d",
+      "role": "game",
+      "core": 10,
+      "threads": [
+        {
+          "tid": 3490220,
+          "core": 10,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3490221,
+      "pgid": 3483893,
+      "start": 142163458,
+      "command_sha256": "9c00e2d48dde752b3e1c02b823dbcc555303f9420d8bd1f464056fd0e90be46e",
+      "role": "game",
+      "core": 11,
+      "threads": [
+        {
+          "tid": 3490221,
+          "core": 11,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3491796,
+      "pgid": 3483893,
+      "start": 142166504,
+      "command_sha256": "f078b7e7ad17976392aace035be8498920763ff5fe19de26600a2bc43dd81a4f",
+      "role": "game",
+      "core": 12,
+      "threads": [
+        {
+          "tid": 3491796,
+          "core": 12,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3491797,
+      "pgid": 3483893,
+      "start": 142166504,
+      "command_sha256": "0adbef8de950c63f6f4920ae5936921d853ee0d2bbaf5bd71246da29ce4ba8d6",
+      "role": "game",
+      "core": 13,
+      "threads": [
+        {
+          "tid": 3491797,
+          "core": 13,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3491798,
+      "pgid": 3483893,
+      "start": 142166505,
+      "command_sha256": "29f0a896cd4ba8996a5ada78e005c0fab68fb61968a803a0442ab094dee68836",
+      "role": "game",
+      "core": 14,
+      "threads": [
+        {
+          "tid": 3491798,
+          "core": 14,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3491799,
+      "pgid": 3483893,
+      "start": 142166507,
+      "command_sha256": "deeca05a83c305f244bd5ebf5c08addff607be756c30558c2b7824c4650a4f55",
+      "role": "game",
+      "core": 15,
+      "threads": [
+        {
+          "tid": 3491799,
+          "core": 15,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3493315,
+      "pgid": 3483893,
+      "start": 142169554,
+      "command_sha256": "26443ff15f3c5d117996955d7bcf35fc27ad9de1e98cb5cea346ae1919affc28",
+      "role": "game",
+      "core": 16,
+      "threads": [
+        {
+          "tid": 3493315,
+          "core": 16,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3493316,
+      "pgid": 3483893,
+      "start": 142169554,
+      "command_sha256": "9265fa8ff3f0c389d0fffa0abc3157b2d4816d8830ea53a1e1c1eb3453b6b135",
+      "role": "game",
+      "core": 17,
+      "threads": [
+        {
+          "tid": 3493316,
+          "core": 17,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3493321,
+      "pgid": 3483893,
+      "start": 142169556,
+      "command_sha256": "f9156d1f89bcf00f27055490cca8c6acc6f5ff92d30889f72a90e61a788bb57a",
+      "role": "game",
+      "core": 18,
+      "threads": [
+        {
+          "tid": 3493321,
+          "core": 18,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3493326,
+      "pgid": 3483893,
+      "start": 142169557,
+      "command_sha256": "9c63e0e2a44ae114fb1f0729e58dd3a51644398cb28a7ac061154d4aa8bbc58b",
+      "role": "game",
+      "core": 19,
+      "threads": [
+        {
+          "tid": 3493326,
+          "core": 19,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3494888,
+      "pgid": 3483893,
+      "start": 142172605,
+      "command_sha256": "50779d170da6607ccaafca39b305dd280f80b6bbb53c9bfb4f44ffd33bd20801",
+      "role": "game",
+      "core": 20,
+      "threads": [
+        {
+          "tid": 3494888,
+          "core": 20,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3494889,
+      "pgid": 3483893,
+      "start": 142172606,
+      "command_sha256": "9102be81b2db241b1f0a3c4a7a2b589bc57ae3cb941e6bad41ae813c8ba5be3e",
+      "role": "game",
+      "core": 21,
+      "threads": [
+        {
+          "tid": 3494889,
+          "core": 21,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3494890,
+      "pgid": 3483893,
+      "start": 142172607,
+      "command_sha256": "cd8e33ad6d7a93a39444d9b55515dd2d305a6ed56b2d59e56a8d9e34c5e5b0de",
+      "role": "game",
+      "core": 22,
+      "threads": [
+        {
+          "tid": 3494890,
+          "core": 22,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3494891,
+      "pgid": 3483893,
+      "start": 142172608,
+      "command_sha256": "a7d78a6af7a072c1ba60f4563c0047536895875fc3964df68c43b61a11a24c0f",
+      "role": "game",
+      "core": 23,
+      "threads": [
+        {
+          "tid": 3494891,
+          "core": 23,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3496419,
+      "pgid": 3483893,
+      "start": 142175658,
+      "command_sha256": "541cebd919a7194155be2a5c6daa2696b236f87e85a8f50ff1839daba7e2b854",
+      "role": "game",
+      "core": 24,
+      "threads": [
+        {
+          "tid": 3496419,
+          "core": 24,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3496420,
+      "pgid": 3483893,
+      "start": 142175658,
+      "command_sha256": "d28c90ac39852abc79a8f6d192519161f01189e436597f1bfeced55d211b91f0",
+      "role": "game",
+      "core": 25,
+      "threads": [
+        {
+          "tid": 3496420,
+          "core": 25,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3496421,
+      "pgid": 3483893,
+      "start": 142175660,
+      "command_sha256": "75cf17a0dddfcc00849b53be7efe11cb5cee895227b8ce6656eab4a9aff3e3ad",
+      "role": "game",
+      "core": 26,
+      "threads": [
+        {
+          "tid": 3496421,
+          "core": 26,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3496422,
+      "pgid": 3483893,
+      "start": 142175661,
+      "command_sha256": "6954a16c4037d3374fe7ffc50e07a10109eb2516cc612392ca1b671a961435d5",
+      "role": "game",
+      "core": 27,
+      "threads": [
+        {
+          "tid": 3496422,
+          "core": 27,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3498130,
+      "pgid": 3483893,
+      "start": 142178713,
+      "command_sha256": "26135a0d6f73010c6d4d459c63fcb63c8e0e1acf6d4661850035bedc23b0505e",
+      "role": "game",
+      "core": 28,
+      "threads": [
+        {
+          "tid": 3498130,
+          "core": 28,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3498131,
+      "pgid": 3483893,
+      "start": 142178714,
+      "command_sha256": "e6fbcbd38c9ff11e3579ccbe3f94fd337f1248b2a2dacf8ad4ef520abf28258f",
+      "role": "game",
+      "core": 29,
+      "threads": [
+        {
+          "tid": 3498131,
+          "core": 29,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3498132,
+      "pgid": 3483893,
+      "start": 142178715,
+      "command_sha256": "adc1524ef3c9abd1a367d5255caa80d9b3ca0bdf39036dc7c1951a1d8d190502",
+      "role": "game",
+      "core": 30,
+      "threads": [
+        {
+          "tid": 3498132,
+          "core": 30,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3498133,
+      "pgid": 3483893,
+      "start": 142178716,
+      "command_sha256": "89ff203862b96387e2b7e600add601717345dfb59b19b28de7a8810122dc9f61",
+      "role": "game",
+      "core": 31,
+      "threads": [
+        {
+          "tid": 3498133,
+          "core": 31,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3499673,
+      "pgid": 3483893,
+      "start": 142181768,
+      "command_sha256": "398beeac898e9a6fe6f02831fc96dc8472dead43de7350b88bebf561000e4869",
+      "role": "game",
+      "core": 32,
+      "threads": [
+        {
+          "tid": 3499673,
+          "core": 32,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3499674,
+      "pgid": 3483893,
+      "start": 142181768,
+      "command_sha256": "a7299a60e5b9eff32af3321f97763cc569d190de5680f41d6d527a6c4b85c230",
+      "role": "game",
+      "core": 33,
+      "threads": [
+        {
+          "tid": 3499674,
+          "core": 33,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3499679,
+      "pgid": 3483893,
+      "start": 142181770,
+      "command_sha256": "b91fa4601f3cf0848c4da7c85b428439d7804ec502e325e0983ec2d8b8b09071",
+      "role": "game",
+      "core": 34,
+      "threads": [
+        {
+          "tid": 3499679,
+          "core": 34,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3499684,
+      "pgid": 3483893,
+      "start": 142181771,
+      "command_sha256": "cdbcd6e0ca3aa653d4754d7c6f37783bba9aa25397671a05d10ec8683a0f226f",
+      "role": "game",
+      "core": 35,
+      "threads": [
+        {
+          "tid": 3499684,
+          "core": 35,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3501304,
+      "pgid": 3483893,
+      "start": 142184825,
+      "command_sha256": "36cf7f005ddbdbca1ef81c3b798fa08f1bc4b9dfb1a05c49715fa83b2498e062",
+      "role": "game",
+      "core": 36,
+      "threads": [
+        {
+          "tid": 3501304,
+          "core": 36,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3501305,
+      "pgid": 3483893,
+      "start": 142184825,
+      "command_sha256": "cb55f9cb4a2fda6c35b78abc2168abaf9a26bddacb65eadfe1a72e15675fb0c2",
+      "role": "game",
+      "core": 37,
+      "threads": [
+        {
+          "tid": 3501305,
+          "core": 37,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3501306,
+      "pgid": 3483893,
+      "start": 142184826,
+      "command_sha256": "1931a027940a7901ea5159c1702bfa1031cc73a3c23941927a0e6d0df1864055",
+      "role": "game",
+      "core": 38,
+      "threads": [
+        {
+          "tid": 3501306,
+          "core": 38,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3501307,
+      "pgid": 3483893,
+      "start": 142184828,
+      "command_sha256": "df3b01961df4a2a09c3af45a473ba44095356e843845dcd199c97e9f35c72fbc",
+      "role": "game",
+      "core": 39,
+      "threads": [
+        {
+          "tid": 3501307,
+          "core": 39,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3502816,
+      "pgid": 3483893,
+      "start": 142187880,
+      "command_sha256": "b66ff1de0ef3734df09d086da4341b7702cb7ea32b4c17a4b346707e6cf24b76",
+      "role": "game",
+      "core": 40,
+      "threads": [
+        {
+          "tid": 3502816,
+          "core": 40,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3502817,
+      "pgid": 3483893,
+      "start": 142187880,
+      "command_sha256": "7c270f97f4b63c6bb482174d04beebae2418c29ccda8950956583e7ba3b5bf65",
+      "role": "game",
+      "core": 41,
+      "threads": [
+        {
+          "tid": 3502817,
+          "core": 41,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3502818,
+      "pgid": 3483893,
+      "start": 142187882,
+      "command_sha256": "a534fe566e066b39287947e191b12e5e3442d13a33a3d4b7738d9d24ceaabc75",
+      "role": "game",
+      "core": 42,
+      "threads": [
+        {
+          "tid": 3502818,
+          "core": 42,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3502819,
+      "pgid": 3483893,
+      "start": 142187883,
+      "command_sha256": "98959cd4a42fbb5d94c59106d6a9ed8307180080fd686489cff04c9b732db7ca",
+      "role": "game",
+      "core": 43,
+      "threads": [
+        {
+          "tid": 3502819,
+          "core": 43,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3504393,
+      "pgid": 3483893,
+      "start": 142190937,
+      "command_sha256": "047f1af66559ed754c6cd37de61d5931f8e7fe8e52c88a20d2ad3fd11d97711a",
+      "role": "game",
+      "core": 44,
+      "threads": [
+        {
+          "tid": 3504393,
+          "core": 44,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3504394,
+      "pgid": 3483893,
+      "start": 142190937,
+      "command_sha256": "452f0ece1c85d2a3a52af9e3f15051eeed53b9d40c80844fe06c49f3ac64bff0",
+      "role": "game",
+      "core": 45,
+      "threads": [
+        {
+          "tid": 3504394,
+          "core": 45,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3504395,
+      "pgid": 3483893,
+      "start": 142190937,
+      "command_sha256": "8348fb62517ae547d16846c629ee19738089f6296684ae0a2de20718c9484928",
+      "role": "game",
+      "core": 46,
+      "threads": [
+        {
+          "tid": 3504395,
+          "core": 46,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3504396,
+      "pgid": 3483893,
+      "start": 142190940,
+      "command_sha256": "a262bee30e93d79956198716a8fc23b642bd621da3feee930ad003b5160c642c",
+      "role": "game",
+      "core": 47,
+      "threads": [
+        {
+          "tid": 3504396,
+          "core": 47,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3505903,
+      "pgid": 3483893,
+      "start": 142193996,
+      "command_sha256": "6a6d5fae0d658434e3416e0692b2d1671e0f85294e00c01db36fd72d38d4d97f",
+      "role": "game",
+      "core": 48,
+      "threads": [
+        {
+          "tid": 3505903,
+          "core": 48,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3505904,
+      "pgid": 3483893,
+      "start": 142193996,
+      "command_sha256": "1739d2bf4fbba904f9f1c50a92e2fc15af8fc27627f4cb371301ff71cbbac30f",
+      "role": "game",
+      "core": 49,
+      "threads": [
+        {
+          "tid": 3505904,
+          "core": 49,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3505906,
+      "pgid": 3483893,
+      "start": 142193998,
+      "command_sha256": "0694462a05411884a6bf21898232e85b73e3ac43e556810d0ef7298343e7f576",
+      "role": "game",
+      "core": 50,
+      "threads": [
+        {
+          "tid": 3505906,
+          "core": 50,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3505909,
+      "pgid": 3483893,
+      "start": 142193999,
+      "command_sha256": "d6587420aa068eb59ffc643148e002d5573489ea460fc7aa8443d05a35e6fc1d",
+      "role": "game",
+      "core": 51,
+      "threads": [
+        {
+          "tid": 3505909,
+          "core": 51,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3507464,
+      "pgid": 3483893,
+      "start": 142197057,
+      "command_sha256": "a5d0320adfc4839ff7adc5556b392298e31e7c13a3b5aff4eb3bbf57d0f1acc0",
+      "role": "game",
+      "core": 52,
+      "threads": [
+        {
+          "tid": 3507464,
+          "core": 52,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3507467,
+      "pgid": 3483893,
+      "start": 142197057,
+      "command_sha256": "8c70592fae4ffa1d2ce440bb7486fb8169080cd262ba98729be121e0b21c04e3",
+      "role": "game",
+      "core": 53,
+      "threads": [
+        {
+          "tid": 3507467,
+          "core": 53,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3507472,
+      "pgid": 3483893,
+      "start": 142197058,
+      "command_sha256": "f5a9e073fa624b5d7114f97a4c6a13c0d4453f9d3ade1fbf5fcfddd3d351b6cc",
+      "role": "game",
+      "core": 54,
+      "threads": [
+        {
+          "tid": 3507472,
+          "core": 54,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3507475,
+      "pgid": 3483893,
+      "start": 142197060,
+      "command_sha256": "d175b398ba41ad48621253bea8d84d178fd7f1c95bdc01fa5f54fbdbd9d247e2",
+      "role": "game",
+      "core": 55,
+      "threads": [
+        {
+          "tid": 3507475,
+          "core": 55,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3508966,
+      "pgid": 3483893,
+      "start": 142200119,
+      "command_sha256": "f183c1249b9e48d0f4a9f327d446d2c1f7f80bb6d65c5ecaca62912b2a03c52a",
+      "role": "game",
+      "core": 56,
+      "threads": [
+        {
+          "tid": 3508966,
+          "core": 56,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    },
+    {
+      "pid": 3508967,
+      "pgid": 3483893,
+      "start": 142200119,
+      "command_sha256": "7d87542b495f3171c12b71268a50ac4040f1a74835c32463d7e77d2671f987a9",
+      "role": "game",
+      "core": 57,
+      "threads": [
+        {
+          "tid": 3508967,
+          "core": 57,
+          "nice": 19,
+          "scheduler": 5
+        }
+      ]
+    }
+  ],
+  "persistent_processes": 60,
+  "configured_workers": 58,
+  "active_workers": 58,
+  "ramp": {
+    "phase": "steady",
+    "first_slots": [
+      0,
+      2,
+      3,
+      1,
+      6,
+      5,
+      7,
+      4,
+      10,
+      11,
+      8,
+      9,
+      14,
+      13,
+      12,
+      15,
+      19,
+      17,
+      18,
+      16,
+      20,
+      22,
+      21,
+      23,
+      26,
+      24,
+      25,
+      27,
+      28,
+      30,
+      29,
+      31,
+      32,
+      35,
+      33,
+      34,
+      39,
+      37,
+      36,
+      38,
+      40,
+      43,
+      41,
+      42,
+      44,
+      46,
+      45,
+      47,
+      49,
+      50,
+      48,
+      51,
+      53,
+      55,
+      52,
+      54,
+      56,
+      57
+    ],
+    "tickets": [
+      1791632257.1719933,
+      1791632257.217863
+    ],
+    "last_ticket": 1791632257.217863,
+    "workers": 58,
+    "steady_utc": "2026-10-10T11:38:07Z"
+  },
+  "memory_available": 102650417152,
+  "pressure": "some avg10=0.04 avg60=1.35 avg300=1.14 total=141815523\nfull avg10=0.04 avg60=1.31 avg300=1.12 total=139788914\n",
+  "protected_cache_unchanged": true,
+  "retained_pack_complete": true,
+  "maximum_persistent_processes": 60
+}
