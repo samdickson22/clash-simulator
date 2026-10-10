@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/stage_proposals.py", line 21, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--job',required=True);a=p.parse_args();main(Path(a.job))
+                                                                                       ^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/stage_proposals.py", line 9, in main
+    assert allowed(j) and os.sched_getaffinity(0)=={59};f=frozen(j);record(j,'stage_proposals');r=dict(passed=False,pid=os.getpid(),pgid=os.getpgrp());t=time.monotonic()
+                                                          ^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/eval-ops/regret_admission.py", line 56, in frozen
+    for name,want in files.items():assert sha(j/name)==want,name
+                                          ^^^^^^^^^^^^^^^^^
+AssertionError: REGRET-CPU-ADMITTED.json

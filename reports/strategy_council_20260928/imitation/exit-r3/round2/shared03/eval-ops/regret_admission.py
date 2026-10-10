@@ -54,4 +54,11 @@ def frozen(j):
     f=json.loads((j/'evaluation-freeze.json').read_text());p=json.loads((j/'evaluation-prelaunch.json').read_text());assert p['pushed'] and p['secret_scan_passed'] and p['evaluation_freeze_sha256']==sha(j/'evaluation-freeze.json')
     files=dict(f['files']);files.update(f['regret_files'])
     for name,want in files.items():assert sha(j/name)==want,name
+    r=json.loads((j/'REGRET-CPU-ADMITTED.json').read_text())
+    assert r['evaluation_freeze_sha256']==sha(j/'evaluation-freeze.json')
+    assert r['shared_authority_sha256']==sha(j/'REGRET-SHARED-AUTHORITY.json')
+    assert r['evidence_sha256']==sha(j/'REGRET-CPU-EVIDENCE.json')
+    assert r['host']=='127x03' and r['physical_cores']==[56,57,58,59]
+    assert r['nice']==10 and r['scheduler']=='SCHED_OTHER' and r['maximum_persistent_scientific_processes']==4
+    assert r['manager_core']==59 and r['worker_cores']==[56,57,58] and r['explicit_release']
     return f

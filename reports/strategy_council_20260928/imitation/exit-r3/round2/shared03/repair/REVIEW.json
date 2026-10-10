@@ -1,0 +1,17 @@
+{
+  "utc": "2026-10-10T09:29:55Z",
+  "status": "reviewed_before_manual_versioned_retry",
+  "attempt": "regret-proposals-staging-attempt1",
+  "pid": 3074715,
+  "pgid": 3074715,
+  "stale_static_admission_sha256": "4d326e01660a6787d427ea77df62b84b3998a3a059113748806e5397c281b737",
+  "actual_admitted_sha256": "7fc96f4e12329c6929f32f6983955692d7b24047cff91f8f6d0bbc8520573553",
+  "reason": "Shared freeze retained pre-shared admission bytes; refreshed receipt necessarily differs and binds the shared freeze",
+  "proposals_copied": false,
+  "scoring_started": false,
+  "scientific_outcomes_observed": false,
+  "cpu_meter": null,
+  "accounting": "Initial preflight failed before its try/finally meter; CPU unrecoverable and disclosed as small unmetered failed-preflight overhead. No fabricated zero or estimate.",
+  "retry": "regret-proposals-staging-attempt2",
+  "scorer_gates_seeds_source_unchanged": true
+}

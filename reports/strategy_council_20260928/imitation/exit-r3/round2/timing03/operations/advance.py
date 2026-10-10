@@ -61,7 +61,7 @@ def advance(descriptive=False,round2=False):
         stage1=read('127x03','stage1-results.json')
         if not stage1:
             if not read('127x03','REGRET-PROPOSALS-STAGING.json'):
-                launch(state,'127x03','regret-proposals-staging-attempt1',env('127x03',True)+J+'/eval-ops/stage_proposals.py --job '+J);return state
+                launch(state,'127x03','regret-proposals-staging-attempt2',env('127x03',True)+J+'/eval-ops/stage_proposals.py --job '+J);return state
             if not read('127x03','regret/POOL-DONE.json'):
                 launch(state,'127x03','regret-pool-attempt1',env('127x03',True)+J+'/eval-ops/pool_regret.py --job '+J);return state
             state['round2_waiting']='Shared03 replay manager must seal Stage1 in-process; closed attempts require review';state['needs_review']=phase('127x03','regret-pool-attempt1')=='closed';return state

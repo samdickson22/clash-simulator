@@ -30,6 +30,27 @@ def run(root):
     affinities[2]={55};assert not e['thread_ok'](1,set(range(56,60)),10,0);count+=1
     affinities[2]={56,120};assert not e['thread_ok'](1,set(range(56,60)),10,0);count+=1
     os_stub.sched_getscheduler=lambda pid:5;affinities[2]={58};assert not e['thread_ok'](1,set(range(56,60)),10,0);count+=1
+    # Dynamic admission is a receipt of the freeze; pinning its old bytes in
+    # that same freeze causes a circular/stale pin. Bind it semantically instead.
+    import tempfile,hashlib,copy
+    node=next(n for n in guard.body if isinstance(n,ast.FunctionDef) and n.name=='frozen')
+    with tempfile.TemporaryDirectory() as folder:
+        job=Path(folder)
+        digest=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+        def put(name,value):(job/name).write_text(json.dumps(value))
+        put('REGRET-SHARED-AUTHORITY.json',{'grant':'unchanged'})
+        put('REGRET-CPU-EVIDENCE.json',{'drain':'unchanged'})
+        put('payload.json',{'pinned':True})
+        put('evaluation-freeze.json',{'files':{'payload.json':digest(job/'payload.json')},'regret_files':{}})
+        put('evaluation-prelaunch.json',{'pushed':True,'secret_scan_passed':True,'evaluation_freeze_sha256':digest(job/'evaluation-freeze.json')})
+        receipt=dict(evaluation_freeze_sha256=digest(job/'evaluation-freeze.json'),shared_authority_sha256=digest(job/'REGRET-SHARED-AUTHORITY.json'),evidence_sha256=digest(job/'REGRET-CPU-EVIDENCE.json'),host='127x03',physical_cores=[56,57,58,59],nice=10,scheduler='SCHED_OTHER',maximum_persistent_scientific_processes=4,manager_core=59,worker_cores=[56,57,58],explicit_release=True)
+        e=dict(json=json,sha=digest);exec(compile(ast.Module(body=[node],type_ignores=[]),'freeze admission binding','exec'),e)
+        put('REGRET-CPU-ADMITTED.json',receipt);e['frozen'](job);count+=1
+        for key,bad in [('evaluation_freeze_sha256','stale'),('shared_authority_sha256','wrong'),('evidence_sha256','wrong'),('physical_cores',[0,1]),('nice',19),('maximum_persistent_scientific_processes',8),('worker_cores',[12,13,14]),('explicit_release',False)]:
+            v=copy.deepcopy(receipt);v[key]=bad;put('REGRET-CPU-ADMITTED.json',v)
+            try:e['frozen'](job)
+            except AssertionError:count+=1
+            else:raise AssertionError('Forged/stale admission accepted: '+key)
     return count
 
 if __name__=='__main__':
