@@ -1,0 +1,218 @@
+{
+  "utc": "2026-10-10T07:23:19Z",
+  "passed": true,
+  "old_pgid": 2669314,
+  "pgid_members": [],
+  "exit": {
+    "utc": "2026-10-10T07:15:13Z",
+    "identity": {
+      "pid": 2669314,
+      "pgid": 2669314,
+      "nice": 19,
+      "scheduler": 5,
+      "cores": [
+        59
+      ]
+    },
+    "reason": "priority_preemption",
+    "totals": {
+      "games": 220,
+      "rows": 174196,
+      "root_decisions": 27079,
+      "cpu_seconds": 10731.351943527998,
+      "plays": 9303
+    },
+    "fully_vacated": true,
+    "children": [
+      {
+        "pid": 2669432,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2669433,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2669434,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2669435,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2671012,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2671013,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2671014,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2671015,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2672706,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2672707,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2672708,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2672709,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2674451,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2674452,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2674453,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2674454,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2675963,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2675964,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2675965,
+        "pgid": 2669314,
+        "returncode": 0
+      },
+      {
+        "pid": 2675966,
+        "pgid": 2669314,
+        "returncode": 0
+      }
+    ],
+    "child_cpu_seconds": 1020.9962330000001,
+    "elapsed_seconds": 206.28184071090072
+  },
+  "exit_sha256": "3f3ff72a0d0f1b4b73bed6633c856a7f673011932839704948833d0223b550dc",
+  "combined": {
+    "schema": "clasher.exit-g.fleet-concat.v1",
+    "utc": "2026-10-10T07:15:13Z",
+    "identity": {
+      "pid": 2669314,
+      "pgid": 2669314,
+      "nice": 19,
+      "scheduler": 5,
+      "cores": [
+        59
+      ]
+    },
+    "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+    "shards": [
+      {
+        "host": "127x04",
+        "source_host": "127x04",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+        "manifest_sha256": "9b5ef9bea86fe8eb7ab53d4dfef500325a7bfae6c1f487b3132298259c652c81",
+        "games": 1262,
+        "rows": 1010705,
+        "root_decisions": 156869,
+        "candidate_scores": 2958515
+      },
+      {
+        "host": "127x04",
+        "source_host": "127x04",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+        "manifest_sha256": "7e2840b81e5ae0e614874b5f947822ae18069f114c7e81bbe2093e90d93091fe",
+        "games": 77,
+        "rows": 64097,
+        "root_decisions": 10015,
+        "candidate_scores": 195027
+      },
+      {
+        "host": "127x04",
+        "source_host": "127x04",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00002",
+        "manifest_sha256": "e83ea95261be29fdf07235cdc91cb33645af4eef2a21118f27129ac36bdf85bc",
+        "games": 83,
+        "rows": 66427,
+        "root_decisions": 10339,
+        "candidate_scores": 194584
+      },
+      {
+        "host": "127x04",
+        "source_host": "127x01",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed-imported/host01",
+        "manifest_sha256": "f721bd6bcdfd0440e4d7c779c47cfc9992eb09907f58532e63b8a738f46e030d",
+        "games": 81,
+        "rows": 65337,
+        "root_decisions": 10152,
+        "candidate_scores": 192734
+      },
+      {
+        "host": "127x04",
+        "source_host": "127x03",
+        "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed-imported/host03",
+        "manifest_sha256": "8192b7e7e8e2fa4ce395349896057b4564ab16a27c5b4efa27a50e98b9bc0661",
+        "games": 204,
+        "rows": 161631,
+        "root_decisions": 25167,
+        "candidate_scores": 471962
+      }
+    ],
+    "root_decisions": 214454,
+    "packed_root_decisions": 212542,
+    "remaining_unpacked_roots": 1912,
+    "games": 1723,
+    "rows": 1380762,
+    "candidate_scores": 4012822,
+    "complete": false,
+    "generation_target_complete": false,
+    "admission_paused": false,
+    "host03_full_corpus_replaces_imported_baseline": false,
+    "host03_manifest_path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/concat-manifest.json",
+    "host03_manifest_sha256": "734557b84235699891d0deda75d7d238187c5f9e9c90fb25fcd3ac9e01e07ffa",
+    "frozen_other_hosts_manifest_sha256": "4e8faf7edc7164a6676f76e4f7a7d6ea237d4eba88d19252a0921c40cf409ef8",
+    "reason": "host03_resume",
+    "smoke_excluded": true,
+    "loader": "Concatenate TeacherStore over r1 plus these SHA-pinned shards with existing combined_batch cumulative row ends; stored root_scores/root_valid retained. Offsets remain local to each shard."
+  },
+  "coordinator_stop_ownership": "Coordinator07:18Z: NOT coordinator-created; G priority guard reacted to R3",
+  "new_raw_roots": 1912,
+  "original_pause_packed_roots": 212542,
+  "second_release": "User07:18Z permits one clearance after refinement freeze+push"
+}

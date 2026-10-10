@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "real_games": 0,
+  "tests": [
+    "strict >20 threshold",
+    "continuous60s reset by20-or-less",
+    "pause at60s",
+    "latched until coordinatorrelease",
+    "actualworker admission blocked",
+    "PSIreadfailure failclosed"
+  ]
+}

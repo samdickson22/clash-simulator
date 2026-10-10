@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "real_games": 0,
+  "tests": [
+    "SHA-pinned pushed R3 regret on56-59 allowed",
+    "overlap55 yields",
+    "SMT120 yields",
+    "script SHA mutation yields",
+    "unpushed freeze yields",
+    "R3 game/pool/block and unknown yield",
+    "K2/other timing yield",
+    "shell source-text inspection does not impersonate executable"
+  ],
+  "allowed_programs": [
+    "eval-ops/pool_regret.py",
+    "eval-ops/regret_game.py",
+    "eval-ops/stage_proposals.py",
+    "metadata/admit03.py",
+    "metadata/stage_regret_home.py"
+  ],
+  "allowed_cores": [
+    56,
+    57,
+    58,
+    59
+  ]
+}

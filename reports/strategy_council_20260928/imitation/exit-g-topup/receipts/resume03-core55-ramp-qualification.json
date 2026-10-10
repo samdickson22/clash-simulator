@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "real_games": 0,
+  "tests": [
+    "four per rolling30s; boundary29.999/30",
+    "each54slot firstgame before steady; 30sfinalcooldown",
+    "eight concurrent claimers limited tofour",
+    "actualworker skipsealed4000000 and emit4000054 under54stripes",
+    "newcounter excludes sealed baseline"
+  ],
+  "ramp_seconds_minimum": 420,
+  "workers_cap": 54
+}

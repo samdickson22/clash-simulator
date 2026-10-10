@@ -1,0 +1,57 @@
+{
+  "utc": "2026-10-10T07:24:04Z",
+  "passed": true,
+  "k2_release_sha256": "5eaf18f351a2a15edaf8c8cf9babacd666f78c19315b9164a67659419af1a3c7",
+  "priority_processes": [],
+  "vacated_pgids": [
+    2047870,
+    2056439,
+    2289281,
+    2291277,
+    2291285,
+    2300919,
+    2300943,
+    1718083,
+    1718091,
+    1575208,
+    2669314
+  ],
+  "protected_cache": [
+    {
+      "pid": 2180934,
+      "pgid": 2180934,
+      "start": 139691382,
+      "cmd_sha256": "2567eec7291519e4db1ac669fe9d37da527fe77d8566afae8c731d2f4e5be57b"
+    },
+    {
+      "pid": 2180946,
+      "pgid": 2180934,
+      "start": 139691385,
+      "cmd_sha256": "5425a1004c7b049af4ef218f02efed5fb8701a3f4dc974eff29e642bcf7d843b"
+    },
+    {
+      "pid": 2180947,
+      "pgid": 2180934,
+      "start": 139691386,
+      "cmd_sha256": "16152ceb7942621141a2d8d91189affdeacde28ad1a9059ffbadde5e9bde799a"
+    }
+  ],
+  "source_files_verified": 1402,
+  "native_files_verified": 1,
+  "checkpoint_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "baseline": {
+    "games": 220,
+    "rows": 174196,
+    "root_decisions": 27079
+  },
+  "memory_available": 130761584640,
+  "pressure": "some avg10=0.00 avg60=0.01 avg300=0.00 total=111948572\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=110225237\n",
+  "stop03_identity": {
+    "inode": 123901113,
+    "mtime_ns": 1791616441800100350,
+    "ctime_ns": 1791616441800100350
+  },
+  "stop03_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pack_stop_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pause_manifest_sha256": "4e8faf7edc7164a6676f76e4f7a7d6ea237d4eba88d19252a0921c40cf409ef8"
+}

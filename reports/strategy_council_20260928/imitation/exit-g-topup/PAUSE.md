@@ -1,6 +1,6 @@
 # G sealed pause corpus and current status
 
-Updated 2026-10-10T07:13:12Z. Coordinator released **03 only** at07:03Z. It resumed at07:11:44Z withPID/PGID2669314,56-worker staggered ramp oncores0–55 andmanager/packer59. 01/04/08 remain stopped. The sealed pause corpus below remains immutable and fully verified; new03 roots are tracked separately by the active03 combined manifest. See [resume amendment](RESUME03-RAMP56-AMENDMENT.json) and [progress](PROGRESS-G.md). The6Mtarget remains unfinished.
+Updated 2026-10-10T07:24:46Z. 03oldPGID2669314 fullyvacated after guard-ownedprioritySTOP. Coordinator07:18Z grants SECOND one-time03release after newcore/priorityfreeze is pushed:54games0–53+manager54+packer55; R3light56–59 allowedonlywithauthentication. Launchpending. Current214454roots include1912newunpackedroots; originalpausecorpus212542roots below remainsfullyverified. 01/04/08 staystopped;6Munfinished. See [refinement](RESUME03-CORE55-R2-AMENDMENT.json) and [progress](PROGRESS-G.md).
 
 Every game sealed at the original02:13:34Z pause is packed and verified. All raw and packed file SHAs passed, along with exact seed/identity coverage. The producer, fleet and pack-only PGIDs 4150219, 4151857 and 65468 have no members. The admission PSI latch and stop markers remain retained. [Pause verification](receipts/pause-receipt.json).
 
