@@ -1,0 +1,21 @@
+{
+  "utc": "2026-10-10T19:36:41Z",
+  "schema": "clasher.t1.corpus-main-admission-tests.v1",
+  "reviewed_capture_commit": "a51ea64cb878ca05bf38a8145174e6d2b9f46d7a",
+  "review_commit": "ee9c603b",
+  "post_dispatch_commit": "7e0a172c",
+  "tests_passed": 6,
+  "tests_failed": 0,
+  "test_host": "127x05 authoring only",
+  "nice": 19,
+  "physical_cpu": 63,
+  "game_timing": false,
+  "reporting_games_read": 0,
+  "running_runtime_unchanged": true,
+  "capture_code_sha256": {
+    "run.py": "286bf4b70bceb4e47fa1716c5140eaea32f411f0651529231e91aff00bd85717",
+    "corpus.py": "9c4a65b7fbb333baec40d10abe8b1d2cc451f497e8263d2c497996318a94d722",
+    "corpus_capture.py": "0e6249e5e660a95c34cb689de4fabb92ee6f5577831b42a3042e0e525a9fe5f2",
+    "test_corpus.py": "0dc2af82ad5e09df033b0f685b2c3b105825f9c83d85f58a7edc7c85097e930a"
+  }
+}
