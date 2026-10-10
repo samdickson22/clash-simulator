@@ -1,0 +1,21 @@
+{
+  "utc": "2026-10-10T03:10:47Z",
+  "K_markers": [],
+  "K_live_pids": [],
+  "controller": {
+    "utc": "2026-10-10T03:10:46Z",
+    "stage": "waiting for fits / stage1 / conditional stage2",
+    "offline": {},
+    "stage2": {},
+    "active": null,
+    "failures": [],
+    "x3_priority_requested": false,
+    "wall_seconds": 183.2551035969518
+  },
+  "old_controller_absent": true,
+  "smoke_cases": 0,
+  "reporting_cases": 0,
+  "K1718091_proc_exists": true,
+  "release_authorized": false,
+  "K_live_probe_scope": "Argument-suffix scan only; missing REPORTING*-DONE independently prevents admission. No quiet-gap authorization."
+}

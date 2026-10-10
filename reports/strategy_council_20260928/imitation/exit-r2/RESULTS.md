@@ -215,3 +215,7 @@ X7 seed replicate approved; training/gates pending. Different trainseed202610100
 2026-10-10T03:04:27Z X7 staging completed:71/71 corpus SHAs and input/human/sidecar pins pass; staging2379849 exited,427.168715s wall,420.142932s local whole CPU. Readonly sender CPU unmetered/disclosed. Staging receipt retained; still no X7 fit before prelaunch commit/push.
 
 2026-10-10T03:07:15Z. X7 launcher2417277=PGID2417277 exited before supervisor/trainer because own venv symlink target absent. No optimizer/fit GPU cost; setup shell CPU unmetered disclosed. Existing lease-local clasher-gpu environment verified and own symlink corrected; original scientific hashes unchanged. Attempt1 log/identity retained; retry attempt2 only after correction commit/push. Old03 controller1808181 exited clean with no active task, wholeCPU8.155191s retained once.
+
+X7 attempt2/new seven-arm controller active03:07:42Z after prelaunch freezes; no scientific outcome at launch. Old ready controller closedCPU8.155191s charged once. New controller startupPASS03:08:41Z, no active gates. X7 initial loading pending; original six resource guards remain passing.
+
+X7 startup qualified03:10:10Z,step30/245760rows: exact replicate recipe exceptseed2026101007,loader6/prefetch4/affinities/nice10/floorsPASS. All7 scientific outcomes pending. Latestlive snapshot13.034709717GPU-wallh/43.602094444provisionalCPUh replaces prior snapshots; final exits supersede. No stage3 reporting seed or R2 root consumed.

@@ -655,3 +655,19 @@ veto/checkpoint; X3 has priority13/14. Staging/qualifier are preparation only.
 2026-10-10T03:04:27Z X7 staging completed:71/71 corpus SHAs and input/human/sidecar pins pass; staging2379849 exited,427.168715s wall,420.142932s local whole CPU. Readonly sender CPU unmetered/disclosed. Staging receipt retained; still no X7 fit before prelaunch commit/push.
 
 2026-10-10T03:07:15Z. X7 launcher2417277=PGID2417277 exited before supervisor/trainer because own venv symlink target absent. No optimizer/fit GPU cost; setup shell CPU unmetered disclosed. Existing lease-local clasher-gpu environment verified and own symlink corrected; original scientific hashes unchanged. Attempt1 log/identity retained; retry attempt2 only after correction commit/push. Old03 controller1808181 exited clean with no active task, wholeCPU8.155191s retained once.
+
+2026-10-10T03:08:41Z. X7 attempt2 after environment-correctiona459ce71 pushed
+started03:07:42Z on14 supervisorPID=PGID2423139/trainerPID=PGID2423269.
+Log$job/fit-X7-attempt2.log,ownstopX7.STOP; priorityX3.RESUME.REQUEST on14.
+Originalprelaunch1d898084/addendum7682a644/audit8912c9ae unchanged.
+Initial runtime/input loading pending; guardhealthPASS; neverduplicatefit.
+Old03controller1808181 cleanexit before newseven-armcontroller03:07:42Z
+PID=PGID1870636,log$job/controller-x7.log,nice19/IDL/core63,STOPCONTROLLER.STOP.
+Startup03:08:41Z verifies7recipes/sourcepins/oldabsent/nice/IDL/core63PASS;
+active=null/offline={}/stage2={}/failures=[],priorityfalse. Original6fits
+03:08:01Z healthy/8nice10processes/floorsPASS,08quietempty;gatesstillpending.
+Seven-armselection implements familyrule; no scientificgame/reportingseed
+consumed. Tenmincontinuationpromptupdated to newPID/X7versions/familyrule,
+next03:11:33.949Z, remainsenabled. WrappermechanicssmokewaitsKrelease.
+
+2026-10-10T03:11:19Z. X7 startup fullyPASS03:10:10Z step30/245760rows; inputs exactseed1007/T.003/ratio1/micro7168/4883/batch8192/width192/play1/value0,loader6/prefetch4,parent118/119/126,workers120-125,8nice10ownprocesses,guardfloorsPASS. Identity2423139/2423269 unchanged. Current03controller1870636 healthy03:10:46 active=null/failures[]/allgatespending. K has no successful reporting release marker; admissionclosed regardless quietgap. Zero replacement smoke/reportingcases. Latest seven-fit live snapshotmonitor0309 13.034709717GPUh/43.602094444whole-treeCPUh REPLACESearlier,finalexitmeterssupersede; closed/preparationcosts separate. Tenmincontinuation enabled,next2026-10-10T03:11:33.949Z; experiment remains active.

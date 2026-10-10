@@ -1,0 +1,32 @@
+{
+  "utc": "2026-10-10T03:08:41Z",
+  "pid": 1870636,
+  "pgid": 1870636,
+  "nice": 19,
+  "scheduler": 5,
+  "affinity": [
+    63
+  ],
+  "arms": [
+    "X1",
+    "X2",
+    "X3",
+    "X4",
+    "X5",
+    "X6",
+    "X7"
+  ],
+  "controller": {
+    "utc": "2026-10-10T03:08:22Z",
+    "stage": "waiting for fits / stage1 / conditional stage2",
+    "offline": {},
+    "stage2": {},
+    "active": null,
+    "failures": [],
+    "x3_priority_requested": false,
+    "wall_seconds": 39.009189194999635
+  },
+  "old_absent": true,
+  "base_sources_pass": true,
+  "passed": true
+}
