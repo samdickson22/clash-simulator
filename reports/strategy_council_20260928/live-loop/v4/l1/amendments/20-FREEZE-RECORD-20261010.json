@@ -1,0 +1,10 @@
+{
+ "adapter_sha256": "da583414af5554417cd58b2f199f6466fa54cd731163ec62540afc1ec12bc7f0",
+ "amendment_sha256": "6b027d792f5a3baa2524725db34a05f3a23798c88fef363e39737064da36fc15",
+ "base_a19_plan_sha256": "7d2a92bc06315c7a1fcabc2636c9818cec1784446ee35fd6b9b5399c28f4fc12",
+ "decision": "FROZEN",
+ "execution_plan_sha256": "0fe6fe3a1a864811e33e4b8358feea9157b4578771f2ff92237700b366ccfe72",
+ "a20_review_sha256": "c1e50fa4096697c1616f3d44dab23cf82378b8cc11bc076b4e0d4dcd92c4cd7f",
+ "r1_erratum": "04 lock coordinates readers and occasional cooperating operations; serial seal/verify and queue verifier readers use it. Retention03 takes leased-source locks, not04. Capture-host recovery/quiet/archive operations historically use host locks; none may begin on04 during this attempt. Expected SHAs and owned-copy receipts authenticate bytes. A20 consumes the same private object hashed under lock; no writer lock is removed. Invalid compressed data with a wrong pin can fail SHA before gzip in A20, whereas frozen scope may report gzip first; both fail closed without evidence admission.",
+ "source_pins_sha256": "d37002f25f41f57dcb208d0b0a31492b8f4193ba6ec8d72a273b9dcaf180654a"
+}

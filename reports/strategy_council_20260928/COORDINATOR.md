@@ -1738,3 +1738,9 @@ Also on the hub, but with copies elsewhere:
   - **Mac requirement: ≥0.80× fleet per-core speed on 4 free cores** (point estimate 0.76×).
   - Strict return bound NOT qualified (16/15/7 cut returns > D+8 ms, all charged). The uncharged GC poll-delay caveat remains.
   - 03 released to K2. MAC-E4-V2.md updated.
+- **05:12 UTC: A19+A20 FINAL VERIFY = APPROVE** (27f12fd8). **Issued:**
+  - A20 freeze `20-FREEZE-RECORD-20261010.json` (d77b3de5);
+  - combined A19 freeze `19-FREEZE-RECORD-20261010.json` (61940388; binds the r4 draft, review response, operator supplement 765369f4, field spec d7280e00 and the final verify);
+  - revised `coordinator-approval-A1-r3.json` (ae9208de; identical to r2 except plan 0fe6fe3a);
+  - `coordinator-approval-A20-local-io-lock-scope-20261010.json` (6bddf770).
+  - **NOT yet issued:** APPROVE_PARALLEL_BODY_VERIFICATION and the 04 execution allocation. These are launch-time items: O2 X5 exit, O4 seal exit, O7 sizes, ≥80 GiB, allow_serial_verify_handoff=true (S1).
