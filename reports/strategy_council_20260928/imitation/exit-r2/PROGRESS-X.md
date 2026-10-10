@@ -460,3 +460,20 @@ qualification. Reporting command only after gates: same pool without--smoke
 Before detaching, inspect own launch/progress/PID/group and flock lock; never
 duplicate a pool/block. Whole pool CPU includes all blocks/cases, no child sum.
 Conditional R2 still requires a stage2 survivor; no eligibility or generation yet.
+
+2026-10-10T02:24:01Z. S-default operational amendment0c8c9114 secret-scanned/committed/
+pushed; current prelaunch receipt02:20:40Z binds exact addendumSHA
+7f62b4e4ac4dccbef4f555f1ca8b10b4a77d0412d02607f26c6a873c1272d1a7.
+Original d0264ec9 prelaunch/addendum retained byte-exact in separate receipts.
+Real03 final frozen source/input/qualification admissionPASS02:20:42Z; K timing
+releaseFALSE. No pool/block/smoke/reporting process launched. Old STAGE3.HOLD
+continues only historical-comparator prohibition; new S-default admission is
+explicit and independently gated. Currentcontroller remains stages1/2 only.
+Persistent same-thread10min prompt fully rewritten to current six-arm/PID/
+G01restriction/S-default rules, superseding obsolete v3-only/comparator text;
+enabled,next2026-10-10T02:31:28.524Z. ID incontinuation receipt. Disable only
+finished experiment or finalOct11deadline cleanup, not pending fits.
+Coordinator milestones sent for125/125 equivalence, scientific freeze d0264ec9
+and operational amendment/currenthealthy six-fit snapshot. Full package effect
+and diagnostic11/125 hook-induced changes disclosed; fixture-only repair
+recorded. Every scientific metric/kill/selection/R2 still pending gate outcomes.

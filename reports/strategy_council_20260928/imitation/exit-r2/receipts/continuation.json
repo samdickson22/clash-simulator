@@ -6,6 +6,10 @@
     "type": "interval",
     "everyMs": 600000
   },
-  "nextRunAt": "2026-10-10T01:01:15.355Z",
-  "stop_rule": "Disable after completed experiment or final deadline cleanup 2026-10-11T05:30Z"
+  "nextRunAt": "2026-10-10T02:31:28.524Z",
+  "stop_rule": "Disable after completed experiment or final deadline cleanup 2026-10-11T05:30Z",
+  "last_prompt_revision_utc": "2026-10-10T02:24:01Z",
+  "current_controller_pid": 1596239,
+  "stage3_protocol": "S-default-K1; new owned entrypoints, all same-seed arms interleaved; K-v2 successful reporting completion and no timing processes before games",
+  "prelaunch_commit": "0c8c91148b194827feb76c6e1a6cb4028b0e3cf4"
 }

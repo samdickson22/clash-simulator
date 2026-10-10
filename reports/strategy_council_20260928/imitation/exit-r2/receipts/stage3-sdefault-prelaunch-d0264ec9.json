@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-10T02:16:53Z",
+  "commit": "d0264ec9b0e4259c18400a6cc7b15722f0c41a21",
+  "pushed": true,
+  "addendum_sha256": "b774e1b52a07db0fdbb83cc01302cc7ff64a30aff2573256758af898d0eecf53",
+  "committed_before_any_replacement_game": true,
+  "reporting_games": 0,
+  "wrapper_smokes": 0,
+  "qualification": "C/S125 actions+scores;7clock+7blocktests PASS",
+  "pending": "K-v2 timing release, six wrapper-smoke games on indices4/5, all-six gates and max3 survival selection"
+}
