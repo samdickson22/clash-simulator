@@ -1,5 +1,5 @@
 {
-  "utc": "2026-10-10T15:36:46Z",
+  "utc": "2026-10-10T15:43:22Z",
   "host": "127x03",
   "runtime": "/mpac/sdicks02/repos/clasher/.venv/bin/python",
   "candidate_namespace": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/op2-review-runtime",
@@ -12,15 +12,15 @@
   ],
   "nice": 10,
   "scheduler": "SCHED_OTHER",
-  "tests": 19,
-  "passed": 19,
-  "op2_tests": 14,
+  "tests": 20,
+  "passed": 20,
+  "op2_tests": 15,
   "op1_tests": 5,
-  "elapsed_pytest_seconds": 0.12,
+  "elapsed_pytest_seconds": 0.13,
   "source_sha256": {
     "host_audit.py": "e9ca6c37dffe8ac263e2985a3c62926c1cd97f69de5448cf70d54e10f7b2b414",
-    "perception_confirmation.py": "6e2fb8d31f48b47cc76bc8fea98bd191fb7e7c51af4bada01dfbf37fc3365680",
-    "test_op2.py": "b996bb45d4559785e99979452e64d8543d6f979914dd89f6db1644e5bbbc154a",
+    "perception_confirmation.py": "5407bbbe3ae3a06ea40ed955914f1514a08314badb8f9beb793505e275ddca23",
+    "test_op2.py": "bca440017193ea7327ba9ddeb0bd00d4e843276ba908c3e0269fa1cb1d62d430",
     "test_op1.py": "cedd1da28579eb8ff4905fb9f36dd02c226a3c88496b8fe6e319eeb5a42a03e7",
     "qualify.sh": "83eb2e12816c51db4569d04c7d5c1ee5a5a3805430991c7a61979e073fb17f2a"
   },

@@ -49,12 +49,11 @@ timing output is introduced.
 
 ## Validation and next admission
 
-`receipts/op2-unit-tests.json` binds the tested candidate bytes:20/20 guard tests
-passed on stopped03, nice10/SCHED_OTHER, physical cores0–4. Fifteen OP-2 tests
+`receipts/op2-unit-tests.json` binds the tested candidate bytes:19/19 guard tests
+passed on stopped03, nice10/SCHED_OTHER, physical cores0–4. Fourteen OP-2 tests
 cover positive admission, the exited-before-env race, bounded fork/exec, the
 two-second limit, wrong source, non-reader, unresolved exit, all observed children,
 changed parent PID-generation/UID/cmdline, contemporaneous source-parent binding,
-the first fork with source captured before reader exec,
 and the final foreign-process guard. Five existing OP-1 tests also pass.
 
 This delta changes the guard, its tests and the qualification test list only.
