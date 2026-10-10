@@ -3,10 +3,10 @@
   "scheduledTaskId": "scheduled-task:command:mcp:f5f23f78-993a-4502-b375-2958f9dfba3f:schedule-task:g-topup-continuation-20261010-1",
   "enabled": true,
   "interval_ms": 300000,
-  "nextRunAt": "2026-10-10T07:16:09.999Z",
+  "nextRunAt": "2026-10-10T07:31:12.294Z",
   "bindToCurrentThread": true,
   "disable": "update_scheduled_task({scheduledTaskId: recorded ID, enabled:false}) after actual final completion/deadline cleanup or explicit full task cancellation.",
-  "updated_utc": "2026-10-10T07:13:12Z",
+  "updated_utc": "2026-10-10T07:28:17Z",
   "hosts": [
     "127x04",
     "127x01",
@@ -15,7 +15,7 @@
   "fleet_controller_pid": null,
   "fleet_controller_pgid": null,
   "host01_preemption": "X evaluation -> owned STOP -> current game drain/full PGID vacate; final01 metadata is cached, then no more remote01 calls.",
-  "host03_preemption": "Coordinatorreleased07:03Z;STOP-03clearedonce;futureSTOP-03prioritypreemption,currentgamesfinish,wholePGIDvacate. Anypressuretriplatched/noautoretry.",
+  "host03_preemption": "Second07:18Zrelease consumed; exactguard-ownedSTOParchivedonce. AuthenticatedSHA-pinnedR3lightregretwithallthreads56-59 allowed; games/timing/unknown/overlap preempt. AnynewSTOP/PSIlatch stayspausedwithoutNEWrelease.",
   "host04_pressure": "Steady-state trip; coordinator02:05Zkeepspaused. FullPGID4150219andfleet4151857gone;pack65468complete. Latch remains; noretry.",
   "host04_generation_pid": null,
   "host04_generation_pgid": null,
@@ -63,13 +63,13 @@
   ],
   "host04_manager_core": 39,
   "all_hosts_paused": false,
-  "no_new_admission_until_explicit_release": "03releasedonce07:03Z;01/04/08remainstopped",
+  "no_new_admission_until_explicit_release": "03runningunderSECOND07:18Zone-time release;01/04/08remainstopped; noautomaticrestart",
   "completed_pause_manifest_sha256": "4e8faf7edc7164a6676f76e4f7a7d6ea237d4eba88d19252a0921c40cf409ef8",
   "completed_pause_roots": 212542,
-  "remaining_unpacked_roots": 0,
+  "remaining_unpacked_roots": 1912,
   "generation_target_complete": false,
-  "host03_generation_pid": 2669314,
-  "host03_generation_pgid": 2669314,
+  "host03_generation_pid": 2711936,
+  "host03_generation_pgid": 2711936,
   "host03_worker_cores": [
     0,
     1,
@@ -124,9 +124,9 @@
     50,
     51,
     52,
-    53,
-    54,
-    55
+    53
   ],
-  "host03_manager_core": 59
+  "host03_manager_core": 54,
+  "host03_packer_core": 55,
+  "host03_maximum_persistent_processes": 56
 }

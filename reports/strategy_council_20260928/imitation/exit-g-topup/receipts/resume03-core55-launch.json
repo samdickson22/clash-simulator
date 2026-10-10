@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-10T07:25:55Z",
+  "authorization": "Coordinator07:18Z SECOND one-time03-only release, user message: guard-owned STOP; clear once AFTER freeze+push;54games+manager+packer=56processes0-55; authenticatedR3light56-59 allowed; games/timing preempt",
+  "amendment_sha256": "c2a2d7573e49fe253cd2a5be8ab1e836de280f0a628be6b068a8b69746c19124",
+  "freeze_commit": "32878161cecf0d6c55f730cbdc5d9af6abb4d4ab",
+  "cleared_stop03_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "cleared_stop03_identity": {
+    "inode": 123901113,
+    "mtime_ns": 1791616441800100350,
+    "ctime_ns": 1791616441800100350
+  },
+  "cleared_pack_stop_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "archived": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/resume-archives/2669314-core55-20261010",
+  "other_host_stops_untouched": true,
+  "pressure_latch_cleared": false,
+  "pid": 2711936,
+  "pgid": 2711936,
+  "launch_name": "generation-r3-core55"
+}
