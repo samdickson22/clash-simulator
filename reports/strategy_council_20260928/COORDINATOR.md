@@ -1859,3 +1859,6 @@ Also on the hub, but with copies elsewhere:
   - **After a T1 freeze commit differing only by C1/C2, reporting may start** (sealed); I'll confirm from the diff.
   - E4 Linux smoke: native exact 125/125 for all tiers; belief/RNG exact; ratios ≈1.0. E4 is fixing the fleet-mode F2–F4 issues for later review.
 - **14:46 UTC: E4-v3 fleet mode review r2 = APPROVE_WITH_CONDITIONS** (efa54f44). **Signed PREREG-SEARCH-TIERS Amendment 1** (operational): END placement with a fail-closed pool and no outcome release before the pooled reference; the MHz gate; committed-posterior replay; plus the pre-reference preconditions.
+- **15:02 UTC: T1 freeze CONFIRMED** (9a7126f6). Host set **01/03/08**: the perception serial is CPU-bound (94–97% of a core, no lock waits) and recovered to ~24 branches/h with T1 on 03, so the half-rate interval was branch-cost variation.
+  - The post-freeze smoke was stopped by a foreign ssh on 01 at 14:59:50Z (likely the perception compact mirror); the owner is told no ssh to 01/03/08 except the 04→03 readers.
+  - Reporting launches sealed after a healthy smoke.
