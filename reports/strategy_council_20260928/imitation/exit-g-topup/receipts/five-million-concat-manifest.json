@@ -1,0 +1,256 @@
+{
+  "utc": "2026-10-10T12:38:44Z",
+  "root_decisions": 5026617,
+  "packed_root_decisions": 4749908,
+  "remaining_unpacked_roots": 276709,
+  "shards": [
+    {
+      "host": "127x04",
+      "source_host": "127x01",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed-imported/host01",
+      "manifest_sha256": "f721bd6bcdfd0440e4d7c779c47cfc9992eb09907f58532e63b8a738f46e030d",
+      "games": 81,
+      "rows": 65337,
+      "root_decisions": 10152,
+      "candidate_scores": 192734
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+      "manifest_sha256": "d1cfb556363bb58fd9e4764b3961027594b31e728af6633cb5601acac0676119",
+      "games": 2048,
+      "rows": 1601501,
+      "root_decisions": 248421,
+      "candidate_scores": 4625837,
+      "source_host": "127x03"
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+      "manifest_sha256": "507a9f9831c2a2cb081d083dff2d7513476c6061bd54865bdf1694b905d6b2c2",
+      "games": 2048,
+      "rows": 1606855,
+      "root_decisions": 249343,
+      "candidate_scores": 4647819,
+      "source_host": "127x03"
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00002",
+      "manifest_sha256": "7e886977f1a3fb1694a2758d2484fdd7c177ae19aee3f604d4f330384a71c764",
+      "games": 2048,
+      "rows": 1599363,
+      "root_decisions": 247934,
+      "candidate_scores": 4613709,
+      "source_host": "127x03"
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00003",
+      "manifest_sha256": "3f166e8529c374924f908cddba3f104916b63bcc593ab10719b2aef3d3bf8bea",
+      "games": 2048,
+      "rows": 1599163,
+      "root_decisions": 248303,
+      "candidate_scores": 4621922,
+      "source_host": "127x03"
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00004",
+      "manifest_sha256": "218dfb29b236f06b088774e25987336908d7548e348eaa79d5cfb302028f33ee",
+      "games": 2048,
+      "rows": 1605663,
+      "root_decisions": 249434,
+      "candidate_scores": 4649139,
+      "source_host": "127x03"
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00005",
+      "manifest_sha256": "e4c16bc34f6d2da1b4ed5f2cb502e1448ef6c8c406d5feadf242564fae8478c2",
+      "games": 2048,
+      "rows": 1604198,
+      "root_decisions": 248882,
+      "candidate_scores": 4637333,
+      "source_host": "127x03"
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00006",
+      "manifest_sha256": "8561d0ab9bfc5a006e99105ff1b779fe0e99ed780722a1a5f18ac977c30a9cf9",
+      "games": 1452,
+      "rows": 1141652,
+      "root_decisions": 177196,
+      "candidate_scores": 3308075,
+      "source_host": "127x03"
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00007",
+      "manifest_sha256": "bc4cd9ef6c4a290f473e57a9e146ee12bd104542bb4ff0f1294bf247650d11f8",
+      "games": 2048,
+      "rows": 1595862,
+      "root_decisions": 247304,
+      "candidate_scores": 4604337,
+      "source_host": "127x03"
+    },
+    {
+      "host": "127x03",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00008",
+      "manifest_sha256": "1f48392f6e23555323e0317610a9cdf3be18c31c65ee57d2f6171fab8e9943d4",
+      "games": 528,
+      "rows": 417327,
+      "root_decisions": 64819,
+      "candidate_scores": 1205938,
+      "source_host": "127x03"
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+      "manifest_sha256": "9b5ef9bea86fe8eb7ab53d4dfef500325a7bfae6c1f487b3132298259c652c81",
+      "games": 1262,
+      "rows": 1010705,
+      "root_decisions": 156869,
+      "candidate_scores": 2958515,
+      "source_host": "127x04"
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+      "manifest_sha256": "7e2840b81e5ae0e614874b5f947822ae18069f114c7e81bbe2093e90d93091fe",
+      "games": 77,
+      "rows": 64097,
+      "root_decisions": 10015,
+      "candidate_scores": 195027,
+      "source_host": "127x04"
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00002",
+      "manifest_sha256": "e83ea95261be29fdf07235cdc91cb33645af4eef2a21118f27129ac36bdf85bc",
+      "games": 83,
+      "rows": 66427,
+      "root_decisions": 10339,
+      "candidate_scores": 194584,
+      "source_host": "127x04"
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00003",
+      "manifest_sha256": "84bed1b1d59bee9a26f6f3aefbe1017b6221728fd87b0d1b6c50fdc4e4bda9c0",
+      "games": 2048,
+      "rows": 1640157,
+      "root_decisions": 254883,
+      "candidate_scores": 4813326,
+      "source_host": "127x04"
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00004",
+      "manifest_sha256": "0843aa5000866c9e3b0da431e47b1144216241fa11d700ab024bdad5c937d3b7",
+      "games": 2048,
+      "rows": 1637607,
+      "root_decisions": 254349,
+      "candidate_scores": 4792087,
+      "source_host": "127x04"
+    },
+    {
+      "host": "127x04",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00005",
+      "manifest_sha256": "ad6bfa0a94f654c353ed6576ee958953dfad1ac0ec235e21772f6c08a88f5fd6",
+      "games": 692,
+      "rows": 552680,
+      "root_decisions": 85948,
+      "candidate_scores": 1623063,
+      "source_host": "127x04"
+    },
+    {
+      "host": "127x08",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00000",
+      "manifest_sha256": "bde4d9df909df845c88ff1a428fbc424e8ad9ad9af88e194e47624734438a60a",
+      "games": 2048,
+      "rows": 1600488,
+      "root_decisions": 248152,
+      "candidate_scores": 4619642,
+      "source_host": "127x08"
+    },
+    {
+      "host": "127x08",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00001",
+      "manifest_sha256": "7d751a602adb3622fb12a4837ededdef155531e811087bb8a265be4fbf660d10",
+      "games": 2048,
+      "rows": 1592841,
+      "root_decisions": 247022,
+      "candidate_scores": 4588222,
+      "source_host": "127x08"
+    },
+    {
+      "host": "127x08",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00002",
+      "manifest_sha256": "871413a6f44c917516493226690343ed0a55b1f28a65b0bb5a61452fe9d9ce20",
+      "games": 2048,
+      "rows": 1604907,
+      "root_decisions": 249019,
+      "candidate_scores": 4644841,
+      "source_host": "127x08"
+    },
+    {
+      "host": "127x08",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00003",
+      "manifest_sha256": "2cbc63e490307c81e9c5ddbf31b808649fb00616394a6a679a22e5ca058fe29a",
+      "games": 2048,
+      "rows": 1608156,
+      "root_decisions": 249668,
+      "candidate_scores": 4653234,
+      "source_host": "127x08"
+    },
+    {
+      "host": "127x08",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00004",
+      "manifest_sha256": "a5b95fbd5ff557915b0ccb063d02d8e49c9466b7766d50a63ad777b7b3b90784",
+      "games": 2048,
+      "rows": 1599338,
+      "root_decisions": 248074,
+      "candidate_scores": 4624245,
+      "source_host": "127x08"
+    },
+    {
+      "host": "127x08",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00005",
+      "manifest_sha256": "54a6b08dac189610f0d7a6fb0f4b9f07bc973b147446d49cc3b3ee2091c3262b",
+      "games": 2048,
+      "rows": 1598474,
+      "root_decisions": 248059,
+      "candidate_scores": 4618143,
+      "source_host": "127x08"
+    },
+    {
+      "host": "127x08",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00006",
+      "manifest_sha256": "2e1b2fefaef6e96d1b3ef408b3a3b3e5b89593d612c00d8080fbda0022194b00",
+      "games": 2048,
+      "rows": 1600034,
+      "root_decisions": 248123,
+      "candidate_scores": 4605911,
+      "source_host": "127x08"
+    },
+    {
+      "host": "127x08",
+      "path": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/packed/batch-00007",
+      "manifest_sha256": "cb6f28110fb5e62ba1620359f1d8bc0e83031414386f4f76d5c9e6614283c1bc",
+      "games": 2048,
+      "rows": 1596892,
+      "root_decisions": 247600,
+      "candidate_scores": 4612822,
+      "source_host": "127x08"
+    }
+  ],
+  "host_manifest_shas": {
+    "03": "e14bb29e5adfd5516666cde9cf496177f8c8e644d1b627e84bd60dc3d1f9145c",
+    "04": "afd387104d804047fc07df1110b81aeabe010c4ac06774fb8a6bfb558e998447",
+    "08": "33e218b4161dcba45cc2cccb4cfb449703161ea7c11f83512b251f5a71cdd76f"
+  },
+  "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "complete": false,
+  "errors": {}
+}

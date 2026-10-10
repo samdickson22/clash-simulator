@@ -1,0 +1,25 @@
+{
+  "schema": "clasher.exit-g.milestone.v1",
+  "utc": "2026-10-10T12:39:15Z",
+  "milestone_root_decisions": 5000000,
+  "snapshot_utc": "2026-10-10T12:38:44Z",
+  "root_decisions": 5026617,
+  "packed_root_decisions": 4749908,
+  "remaining_unpacked_roots": 276709,
+  "packed_candidate_scores": 88650505,
+  "candidate_scores_scope": "Only verified packed shards; candidates distinct from root decisions.",
+  "combined_manifest_sha256": "03a0206357b2d822f4c4132e54080e009be26deffd23ed77ce59138fa1ef3e0f",
+  "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "active_pgids": {
+    "03": 3671794,
+    "08": 16288
+  },
+  "vacated_pgids": {
+    "04": 1712867
+  },
+  "fourth03_retained_roots_fully_packed": 64819,
+  "fourth03_steady_audit_utc": "2026-10-10T12:37:45Z",
+  "new_alerts": [],
+  "complete": false,
+  "target_root_decisions": 6000000
+}
