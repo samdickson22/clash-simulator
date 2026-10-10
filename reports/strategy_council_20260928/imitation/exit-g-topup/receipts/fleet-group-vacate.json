@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-10T01:32:03Z",
+  "passed": true,
+  "reason": "A game-exit receipt precedes packer/supervisor exit. Cache and terminal publication must wait for the entire owned generation PGID to vacate, ensuring the host manifest SHA is final.",
+  "real_live_probe": {
+    "host": "127x01",
+    "active_workers": 39,
+    "group_members": 41,
+    "generation_group": 1356583
+  },
+  "scientific_sources_unchanged": true,
+  "sources": {
+    "fleet.py": "9a9393ea43f811587b7b553c1dbeb560b19271593d89bac988b377204b4a386c",
+    "fleet_remote.py": "255dc65528be8a0c7a06e5df64324987f297726b54648a33e21a7b15d8e02b2d"
+  }
+}
