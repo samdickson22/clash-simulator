@@ -210,3 +210,8 @@ No file/source changes on fit hosts. Ten fake-metadata tests pass core63,
 and real X1 readiness correctly refuses unfinished artifacts. Freeze/commit/
 push before idle controller1746462 clean stop/meter/new setsid-f launch.
 Original recipes/source/science/seeds/finalEMA and K/G/S-default pins remain.
+
+X7 addendum: Exact X1 recipe except train seed2026101007: original corpus/init/source/optimizer/scheduler, width192,8192batch,play1/value0,4883steps,finalEMA,loader6/prefetch4,parent118/119/126,workers120-125,nice>=10. Original global seed and original six hashes unchanged.
+At most one of X1/X7 enters stage3, chosen by frozen ranking within family; that family member competes equally with other eligible arms for3 total slots. It need not rank first overall.
+Report X7-X1 metric gaps at stages1/2 when both measured. Stage3 within-family gap not estimable because only one member admitted; do not run duplicate family reporting. Reused gates are adaptive exploration.
+New seven-arm admissions retain all original gates and frozen S-default design. X3 resume priority on13/14 vetoes/checkpoints X6/X7; these yields are operational. New X7 entrypoints and pins are in receipts/x7-addendum.json; prelaunch commit/push required.

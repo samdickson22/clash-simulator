@@ -635,3 +635,21 @@ bytes unchanged. continuation-check0252 replaces live11.443398520GPUh and
 38.210255556whole-treeCPUh, not additive; finalexitmeters supersede.
 No scientificmetric/kill/survivor/R2admission. Existing10minscheduleenabled,
 currentprompt1808181 confirmed,next03:01:32.619Z. Experiment stays active.
+
+2026-10-10T03:06Z. X7 approved02:37Z: exact X1 replicate on released14,
+trainseed2026101007 only recipe change. X1/X7 one recipe family; at most
+one enters stage3, selected by stage2loss/offlineagreement/numeric tie, then
+competes equally for3total slots. Gap descriptive at stages1/2; stage3 family
+gap unidentifiable under one-member admission. Original6/science immutable.
+Fresh14 audit2379951 exited02:58:19Z:47232files/6146formula contexts, no
+overlap/errors,CPU41.298611s. Own rawinventory j/x7-inventory.json pinned.
+Detached staging14 PID=PGID2379849 started02:57:20Z,logx7-staging-attempt1.log;
+readonly corpus from own16/rate153600KiB/s, requires71SHA plus inputs. No fit
+launched before addendum/audit/source prelaunchcommit/push+staging pass.
+Qualifier03 PID=PGID1847147 exited03:00:36Z:10metadata/stub-shell testsPASS,
+CPU2.933585s; no games/policyload/fit. Newsource pins in x7-addendum.json.
+New controller_x7.py waits old1808181 idle cleanstop/exit/meter before launch;
+K/G/cleancollection admissions unchanged. X7.STOP and X3.RESUME.REQUEST on14
+veto/checkpoint; X3 has priority13/14. Staging/qualifier are preparation only.
+
+2026-10-10T03:04:27Z X7 staging completed:71/71 corpus SHAs and input/human/sidecar pins pass; staging2379849 exited,427.168715s wall,420.142932s local whole CPU. Readonly sender CPU unmetered/disclosed. Staging receipt retained; still no X7 fit before prelaunch commit/push.

@@ -1,0 +1,30 @@
+{
+  "utc": "2026-10-10T03:00:36Z",
+  "passed": true,
+  "tests": 10,
+  "exit_code": 0,
+  "files": {
+    "experiment_x7.py": "d0fbf7369399a80039eb3752c9941a564d0b6a4bfb7c63039ceba051d0f7b46d",
+    "stage_x7.py": "3fd0eddbbc8c96b8224fcf349736b01b0da9f65dd46c4f013423e603b3fd7a85",
+    "supervise_x7.py": "b27c331867f65f93b2daa6d9a48d12b9fca79215286ee5e278649b44de728f8c",
+    "offline_x7.py": "676080c958223a74d7f85d7b31e994123d93354b5af2372f22dc59b4edfe1ba0",
+    "game_worker_x7.py": "047e37ea2e80bde92d0ea1961a274e8c72ef97b09378491bf69e23c963807796",
+    "game_pool_x7.py": "628259240630dd8ef1a7d3fe24f3ac1d6a4dc0c408f2213d889855d2a40c7f77",
+    "controller_x7.py": "84e408812bb34553d5bf41c9309dfe810d94814222016b1d821d3256c8d8f6b9",
+    "fit_collection_ready_x7.py": "fbc68a8285e982b7fd9a6664d769e8f30b19b6f502874e05eb606c1194cb10d3",
+    "stage3_sdefault_admission_x7.py": "4990f092fbe23150b6b34065cfe418de056efbe58a94fec0f7f5eb3a66c1f049",
+    "game_pool_sdefault_x7.py": "e3139a263103575f2476034dd719f762d31d707a0fda851c5b3ab35d65fcbac6",
+    "stage3_block_worker_x7.py": "1872c4a21176433e781d7d30c0a75a0bc121740fdef511deb6f080460fecfd17",
+    "game_worker_sdefault_x7.py": "dfd58831099708e650a107093415852279cffb6c4b68c99e009047704bd7a961",
+    "reduce_stage3_sdefault_x7.py": "06c81b1783cca6ed6de137a6a5e62e17c834b9f3e324f479058bad5060826230",
+    "test_x7_admission.py": "70424906aadbefecc31d026dc3c4994dbba3e70f2a1dc764d99ca886f12b9341",
+    "qualify_x7.py": "205519c7e1e83db671bf25d38affb3c782a26e5b3ffbe56741c2e6b699376cb2",
+    "run_fit_x7.sh": "098853bc391ac2f3f184e9cc4faa67ac0d417d8e0e68990e7736e2befa366225"
+  },
+  "parent_cpu_seconds": 1.063335,
+  "children_cpu_seconds": 1.87025,
+  "wall_seconds": 1.8719334958586842,
+  "no_games": true,
+  "no_real_policy_or_checkpoint_load": true,
+  "scope": "Core63 fake metadata and Python-stub shell invocation; preserves original default-layer/block qualifications"
+}

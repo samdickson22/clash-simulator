@@ -1,0 +1,90 @@
+{
+  "schema": "clasher.exit-r2.x7-addendum.v1",
+  "utc": "2026-10-10T03:05:16Z",
+  "authority": "Coordinator02:37Z utilization decision; explicit X1/X7 recipe-family ruling",
+  "committed_before_launch": true,
+  "admission": "Commit/secret-scan/push addendum, seed audit and source before fit; require X7-staging passed, fresh lease/floors/GPU idle and no active own fit or X3 request.",
+  "base_freeze_sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+  "base_freeze_commit": "10831e2b76e832bc2031fef46c01b5995047c905",
+  "x6_addendum_sha256": "ce59c1f1789fd82c957261d43e88e859315d0a7e268936db426ecfc4d70b8e78",
+  "sdefault_addendum_sha256": "7f62b4e4ac4dccbef4f555f1ca8b10b4a77d0412d02607f26c6a873c1272d1a7",
+  "seed_audit_sha256": "8912c9aec80ab5751f63ed486bc294b7b486620139f669091c475bd412a5630e",
+  "qualification_sha256": "189e5af866000b0cfba4289ecb715833213db39428c78de1a53d0557adde498c",
+  "arm": {
+    "host": "127x14",
+    "temperature": 0.003,
+    "teacher_fraction": 1.0,
+    "steps": 4883,
+    "microbatch": 7168,
+    "score_zscore": false,
+    "train_seed": 2026101007
+  },
+  "files": {
+    "ops/experiment_x7.py": "d0fbf7369399a80039eb3752c9941a564d0b6a4bfb7c63039ceba051d0f7b46d",
+    "ops/stage_x7.py": "3fd0eddbbc8c96b8224fcf349736b01b0da9f65dd46c4f013423e603b3fd7a85",
+    "ops/supervise_x7.py": "b27c331867f65f93b2daa6d9a48d12b9fca79215286ee5e278649b44de728f8c",
+    "ops/offline_x7.py": "676080c958223a74d7f85d7b31e994123d93354b5af2372f22dc59b4edfe1ba0",
+    "ops/game_worker_x7.py": "047e37ea2e80bde92d0ea1961a274e8c72ef97b09378491bf69e23c963807796",
+    "ops/game_pool_x7.py": "628259240630dd8ef1a7d3fe24f3ac1d6a4dc0c408f2213d889855d2a40c7f77",
+    "ops/controller_x7.py": "84e408812bb34553d5bf41c9309dfe810d94814222016b1d821d3256c8d8f6b9",
+    "ops/fit_collection_ready_x7.py": "fbc68a8285e982b7fd9a6664d769e8f30b19b6f502874e05eb606c1194cb10d3",
+    "ops/stage3_sdefault_admission_x7.py": "4990f092fbe23150b6b34065cfe418de056efbe58a94fec0f7f5eb3a66c1f049",
+    "ops/game_pool_sdefault_x7.py": "e3139a263103575f2476034dd719f762d31d707a0fda851c5b3ab35d65fcbac6",
+    "ops/stage3_block_worker_x7.py": "1872c4a21176433e781d7d30c0a75a0bc121740fdef511deb6f080460fecfd17",
+    "ops/game_worker_sdefault_x7.py": "dfd58831099708e650a107093415852279cffb6c4b68c99e009047704bd7a961",
+    "ops/reduce_stage3_sdefault_x7.py": "06c81b1783cca6ed6de137a6a5e62e17c834b9f3e324f479058bad5060826230",
+    "ops/test_x7_admission.py": "70424906aadbefecc31d026dc3c4994dbba3e70f2a1dc764d99ca886f12b9341",
+    "ops/qualify_x7.py": "205519c7e1e83db671bf25d38affb3c782a26e5b3ffbe56741c2e6b699376cb2",
+    "ops/run_fit_x7.sh": "098853bc391ac2f3f184e9cc4faa67ac0d417d8e0e68990e7736e2befa366225"
+  },
+  "common_recipe": "Exact X1 recipe except train seed2026101007: original corpus/init/source/optimizer/scheduler, width192,8192batch,play1/value0,4883steps,finalEMA,loader6/prefetch4,parent118/119/126,workers120-125,nice>=10. Original global seed and original six hashes unchanged.",
+  "capacity_release": {
+    "utc": "2026-10-10T02:34:40.379602Z",
+    "evidence": "capacity-scan width384-release.json and PROGRESS: scientific kill, all owned groups exited, GPU empty/free48666MiB. Independent14 check02:54:19Z confirms idle GPU and lease. Recheck before launch."
+  },
+  "priority": {
+    "stop_file": "X7.STOP",
+    "x3_request": "X3.RESUME.REQUEST",
+    "rule": "Request vetoes launch and checkpoints X7. X3 exact resume priority13/14; seven-arm controller relays stopped08 health to both. Resource yield is operational pause, not scientific kill. Preserve source/checkpoint/optimizer/scheduler/RNG for eventual exact resume."
+  },
+  "resource_limits": {
+    "nice_min": 10,
+    "processes_max": 16,
+    "pss_guard_bytes": 46000000000,
+    "pss_limit_bytes": 48000000000,
+    "gpu_free_min_bytes": 8589934592
+  },
+  "reporting": {
+    "arms": [
+      "X1",
+      "X2",
+      "X3",
+      "X4",
+      "X5",
+      "X6",
+      "X7"
+    ],
+    "stage1": "Unchanged r1 heldout64 exact gates",
+    "stage2": "Unchanged256 vs releasedv1, kill loss upperCI>=.50",
+    "stage3_max_survivors": 3,
+    "rank": "Stage2 loss ascending, offline hard agreement descending, numeric X1-X7 tie order",
+    "recipe_family": [
+      "X1",
+      "X7"
+    ],
+    "family_rule": "At most one of X1/X7 enters stage3, chosen by frozen ranking within family; that family member competes equally with other eligible arms for3 total slots. It need not rank first overall.",
+    "descriptive_gap": "Report X7-X1 metric gaps at stages1/2 when both measured. Stage3 within-family gap not estimable because only one member admitted; do not run duplicate family reporting. Reused gates are adaptive exploration.",
+    "stage3": "Unchanged frozen S-default full hooks+default vs C-v1, K0 descriptive; same-seed samehost/core/load interleaved blocks, no pre-run controls, K/G admission unchanged",
+    "entrypoints": [
+      "game_pool_sdefault_x7.py",
+      "stage3_block_worker_x7.py",
+      "game_worker_sdefault_x7.py",
+      "k_stage3_sdefault.py",
+      "reduce_stage3_sdefault_x7.py"
+    ],
+    "qualification": "Retains original125/125 default-layer and block qualification. New10 metadata/stub-shell tests pass; actual disjoint mechanics wrapper smoke still required after K release before reporting.",
+    "base_freeze_hash_in_cases": "Original immutable freeze retained; X7 composition separately pinned."
+  },
+  "controller": "controller_x7.py only after current1808181 clean exit with no active gate; meter old whole CPU once. Uses unchanged K/G admission and clean collection guard, now all7 arms.",
+  "R2": "Conditional on stage2 survivor across all7; best frozen-ranked survivor behavior, independent unlimitedW labels, unchanged sealed union/refit/screens recipe."
+}

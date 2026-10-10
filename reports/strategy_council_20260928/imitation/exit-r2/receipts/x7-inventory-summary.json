@@ -1,0 +1,74 @@
+{
+  "utc": "2026-10-10T02:58:19Z",
+  "host": "127x14",
+  "roots": [
+    "/mpac/sdicks02/jobs/clasher/exit-r1-seed-audit-20261009-r1",
+    "/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/source/imitation/gate-a-v2",
+    "/mpac/sdicks02/repos/clasher-lease/config",
+    "/mpac/sdicks02/repos/clasher-lease/delay-fixes-runtime",
+    "/mpac/sdicks02/repos/clasher-lease/eval-snapshots/506eb289379861ce/imitation/gate-b",
+    "/mpac/sdicks02/repos/clasher-lease/eval-snapshots/506eb289379861ce/imitation/gate-c",
+    "/mpac/sdicks02/repos/clasher-lease/eval-snapshots/e3c60ef30743427a/imitation/gate-b",
+    "/mpac/sdicks02/repos/clasher-lease/eval-snapshots/e3c60ef30743427a/imitation/gate-c",
+    "/mpac/sdicks02/repos/clasher-lease/eval-snapshots/ed42c7c4414f4ff7/imitation/gate-b",
+    "/mpac/sdicks02/repos/clasher-lease/eval-snapshots/ed42c7c4414f4ff7/imitation/gate-c",
+    "/mpac/sdicks02/repos/clasher-lease/eval-snapshots/runtime-bc-v1/reports/strategy_council_20260928/c56",
+    "/mpac/sdicks02/repos/clasher-lease/eval-snapshots/runtime-bc-v1/reports/strategy_council_20260928/imitation",
+    "/mpac/sdicks02/repos/clasher-lease/eval-snapshots/runtime-bc-v1/reports/strategy_council_20260928/pilot",
+    "/mpac/sdicks02/repos/clasher-lease/jobs",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/c56",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/exit",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/imitation",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/pilot",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/search-noise",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/search-noise-v2",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/search-tuning",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/srp-dagger",
+    "/mpac/sdicks02/repos/clasher-lease/repo/reports/strategy_council_20260928/srp-public",
+    "/mpac/sdicks02/repos/clasher-lease/search-ab-runtime",
+    "/mpac/sdicks02/repos/clasher-lease/t11-ddp-v1/source/imitation/gate-a-v2",
+    "/mpac/sdicks02/repos/clasher-lease/t5-20261008-r2/source/reports/strategy_council_20260928/imitation",
+    "/mpac/sdicks02/repos/clasher-lease/t5-20261008-v1/source/reports/strategy_council_20260928/imitation",
+    "/mpac/sdicks02/repos/clasher-lease/tempo-runtime"
+  ],
+  "excluded": [
+    "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1"
+  ],
+  "ranges": {
+    "h2h": [
+      4503601507370496,
+      256
+    ],
+    "paired": [
+      4503601517370496,
+      600
+    ],
+    "smoke": [
+      4503601527370496,
+      32
+    ],
+    "dagger": [
+      4503601707370496,
+      32768
+    ]
+  },
+  "helper_offsets": [
+    0,
+    13,
+    100000,
+    100001,
+    100002,
+    100003,
+    271828,
+    271829
+  ],
+  "overlap": [],
+  "errors": [],
+  "exact_scan_passed": true,
+  "cpu_seconds": 41.298611,
+  "wall_seconds": 58.904032783117145,
+  "inventory_sha256": "3a1c01f3b951968804dc69e7b6872487284b578df237a5e256980f2edf2df7aa",
+  "file_count": 47232,
+  "maximum_literal": 4503601307642356,
+  "formula_count": 6146
+}
