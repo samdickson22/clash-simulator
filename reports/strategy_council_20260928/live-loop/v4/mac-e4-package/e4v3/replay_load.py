@@ -168,21 +168,22 @@ class LinuxBackground:
         self.close()
 
 
-def fleet_corpus_worker(bundle, root, native, ready, stop, cpus, slot_index):
+def fleet_corpus_worker(bundle, root, native, ready, stop, cpus, slot_index, errors=None):
     """One complete reporting slot, rotating all four own-tier corpora."""
     import os
     from fleet_profile import pinned_profile
     from receipts import TIERS
     from tier_backend import TierBackend
-    manifest=validate_bundle(bundle,root,dry_run=True,require_references=False)
-    _,_,(_,background,_) = pinned_profile(bundle,manifest)
-    if list(cpus) not in background:
-        raise ValueError("Background mask absent from pinned reporting slot layout")
-    os.sched_setaffinity(0,set(cpus))
-    backend=TierBackend(bundle,root,native)
-    backend.search_cpus=list(cpus)
-    lap=slot_index
+    backend=None
     try:
+        manifest=validate_bundle(bundle,root,dry_run=True,require_references=False)
+        _,_,(_,background,_) = pinned_profile(bundle,manifest)
+        if list(cpus) not in background:
+            raise ValueError("Background mask absent from pinned reporting slot layout")
+        os.sched_setaffinity(0,set(cpus))
+        backend=TierBackend(bundle,root,native)
+        backend.search_cpus=list(cpus)
+        lap=slot_index
         while not stop.is_set():
             order=TIERS[lap%4:]+TIERS[:lap%4]
             for offset in range(0,max(len(manifest["sets"]["speed"][t]) for t in TIERS),50):
@@ -192,8 +193,13 @@ def fleet_corpus_worker(bundle, root, native, ready, stop, cpus, slot_index):
                         backend.work(backend.by_id[identity],tier)
                         ready.set()
             lap+=1
+    except BaseException:
+        if errors is not None:
+            import traceback
+            errors.put(dict(slot=slot_index,error=traceback.format_exc()))
+        raise
     finally:
-        backend.close()
+        if backend is not None:backend.close()
 
 
 class FleetBackground(LinuxBackground):
@@ -202,8 +208,52 @@ class FleetBackground(LinuxBackground):
         import multiprocessing as mp
         context=mp.get_context("spawn")
         self.stop=context.Event()
+        self.errors=context.Queue()
         self.readies=[context.Event() for _ in masks]
         self.workers=[context.Process(target=fleet_corpus_worker,
-            args=(bundle,root,native,ready,self.stop,mask,index))
+            args=(bundle,root,native,ready,self.stop,mask,index,self.errors))
             for index,(mask,ready) in enumerate(zip(masks,self.readies))]
         self.ready_timeout=600
+
+    def close(self):
+        import sys
+        preserving=sys.exc_info()[0] is not None
+        try:super().close()
+        except RuntimeError:
+            if not preserving:raise
+
+    def check(self):
+        import queue
+        if getattr(self,"check_external",None) is not None:
+            self.check_external()
+        try:
+            error=self.errors.get_nowait()
+        except queue.Empty:
+            error=None
+        if error is not None:
+            # Keep the full child error; in particular exactness cannot become
+            # a generic, repeatable worker crash during cleanup.
+            raise RuntimeError("Fleet background failure: "+error["error"])
+        if self.stop.is_set() or any(not worker.is_alive() for worker in self.workers):
+            # A queue feeder may lag process exit; give the saved error a bounded
+            # chance to arrive before declaring a typed process crash.
+            try:
+                error=self.errors.get(timeout=1.)
+            except queue.Empty:
+                error=None
+            if error is not None:
+                raise RuntimeError("Fleet background failure: "+error["error"])
+            from fleet_validity import FleetTechnicalError
+            raise FleetTechnicalError("crash","Reference/background corpus process died without an exactness error")
+
+    def __exit__(self,kind,error,traceback_):
+        if kind is None:
+            try:self.check()
+            except BaseException:
+                try:self.close()
+                except RuntimeError:pass
+                raise
+            self.close()
+        else:
+            try:self.close()
+            except RuntimeError:pass

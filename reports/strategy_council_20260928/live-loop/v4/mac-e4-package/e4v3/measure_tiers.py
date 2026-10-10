@@ -66,6 +66,10 @@ def validate_counts(manifest, limits, dry_run):
         if set(provenance["host_receipts"]) != set(hosts) or any(
             abs(r["relative_to_pooled_median"]-1) > .05 for r in provenance["host_receipts"].values()):
             raise ValueError("Unqualified reporting-host speed")
+        if provenance.get("amendment_1") is not True or provenance.get("excluded_hosts") or any(
+            not math.isfinite(r["reference_to_reporting_mean"]) or abs(r["reference_to_reporting_mean"]-1) > .05
+            for r in provenance["host_receipts"].values()):
+            raise ValueError("Mac requires all counted END hosts and signed full-occupancy MHz ratios")
         if not provenance.get("physical_cores") or manifest["load"]["config"]["device"] != "mps":
             raise ValueError("Missing registered fleet core or MPS perception configuration")
 
@@ -180,6 +184,8 @@ class Session:
             differences = {}
             for tier in ("K0c", "K1", "K2", "K4"):
                 actual = self.backend.golden(row, tier)
+                if getattr(self.args,"fleet_reference",False) or getattr(self.args,"linux_dry_run",False):
+                    assert_exact(actual,refs[identity_],identity_+"/fleet bit-exact/"+tier)
                 difference = score_exactness(actual, refs[identity_], identity_ + "/" + tier)
                 if difference:
                     self.exactness_class = "ARM64-NEAR-EXACT"
@@ -200,6 +206,8 @@ class Session:
             for deadline_on in (False, True):
                 actual = self.backend.belief_result(self.backend.by_id[identity_], deadline_on)
                 difference = belief_exactness(actual, refs[identity_], "belief/posterior/ledger/sampling/RNG/" + identity_)
+                if getattr(self.args,"fleet_reference",False) or getattr(self.args,"linux_dry_run",False):
+                    assert_exact(actual,refs[identity_],"fleet bit-exact belief/"+identity_)
                 if difference:
                     self.exactness_class = "ARM64-NEAR-EXACT"
                 belief_records.append(dict(id=identity_, deadline_on=deadline_on, exact=difference == 0,
@@ -508,6 +516,7 @@ class Session:
         free = {c: quantiles([r["free_"+c] for r in capacities if r["phase"] == "D4-capacity"])
                 for c in ("P", "E")}
         self.store.write("tiers-summary.json", dict(dry_run=self.args.linux_dry_run,
+            fleet_signed_reference_to_reporting_mean={h:r["reference_to_reporting_mean"] for h,r in self.manifest.get("fleet_reference",{}).get("host_receipts",{}).items() if "reference_to_reporting_mean" in r},
             mac_qualified=False, speed=speeds, exactness_class=self.exactness_class,
             forward_exemptions={t:dict(n=len(ids), fraction=len(ids)/len(self.manifest["sets"]["speed"][t])) for t,ids in self.forward_exemptions.items()},
             r_S=speeds["S"], r_K0c=speeds["K0c"], r_K2=speeds["K2"], r_K4=speeds["K4"], r_1=speeds["S"], r_3=speeds["K2"], r_5=speeds["K4"],
@@ -521,7 +530,7 @@ class Session:
                 foreign_over_one_core_over_60_seconds=any(p["foreign_over_one_core_seconds"] > 60 for r in capacities for p in r["processes"]),
                 sampling_gaps=any(r["sample_gap_over_3_seconds"] for r in capacities)),
             deadline_replay_semantics=self.manifest.get("deadline_replay_semantics","legacy smoke without suspended-progress credit"),
-            deadline_replay_amendment_pending_review=any(r.get("belief_had_suspended_transaction",False)  for r in self.backend.rows),
+            deadline_replay_amendment_1=not self.args.linux_dry_run,
             suspended_transaction_states=sum(r.get("belief_had_suspended_transaction",False) for r in self.backend.rows),
             formal_E4_qualified=False, final=False))
         validate_bundle(self.args.bundle, self.args.runtime_root, dry_run=self.args.linux_dry_run)
@@ -706,8 +715,9 @@ def main(argv=None):
         store.scope += ":"+session.manifest["load"]["label"]
         session.run()
         status = "complete"
-    except BaseException:
+    except BaseException as error:
         store.write("failure.json", dict(error=traceback.format_exc(), utc=time.time(),
+            fleet_technical_cause=getattr(error,"cause",None) if args.fleet_reference else None,
             fail_closed=True, final=False, live_actions=False))
         raise
     finally:

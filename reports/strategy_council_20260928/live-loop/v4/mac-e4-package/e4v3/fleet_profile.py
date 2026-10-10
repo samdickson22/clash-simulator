@@ -31,7 +31,7 @@ def slot_layout(profile, plan, host, nice):
 
 def pinned_profile(bundle, manifest):
     profile=manifest["reference_load_profile"]
-    for key in ("plan","reporting_mhz","reporting_end"):
+    for key in ("plan","end_evidence"):
         if profile[key] not in manifest["files"]:
             raise ValueError("Reporting profile source must be SHA-pinned: "+key)
     plan=json.loads((Path(bundle)/profile["plan"]).read_text())
@@ -39,9 +39,9 @@ def pinned_profile(bundle, manifest):
     if platform.system() != "Linux" or os.sched_getscheduler(0) != os.SCHED_OTHER:
         raise ValueError("Fleet requires the pinned Linux SCHED_OTHER reporting profile")
     layout=slot_layout(profile,plan,host,os.getpriority(os.PRIO_PROCESS,0))
-    end=json.loads((Path(bundle)/profile["reporting_end"]).read_text())
-    if end.get("host") != host or end.get("reporting_complete") is not True or end.get("outcomes_sealed") is not True:
-        raise ValueError("Fleet references run at reporting END with outcomes sealed")
+    from fleet_end import evidence,host_reporting
+    end=evidence(bundle,manifest,plan)
+    host_reporting(end,profile,plan)
     return profile,plan,layout
 
 
@@ -50,17 +50,19 @@ def compare_mhz(reporting, reference, cpus, slots):
     from receipts import quantiles
     report=[]
     for row in reporting:
-        if row["slots"] != slots:
-            continue
+        if row["slots"] != slots or row.get("inflight") != slots:
+            raise ValueError("Only mechanically joined full-occupancy reporting MHz is admissible")
         clocks={v["cpu"]:v["mhz"] for v in row["physical_core_mhz"]}
         if not set(cpus) <= set(clocks):
             raise ValueError("Reporting MHz is missing occupied physical cores")
         report.append(sum(clocks[c] for c in cpus)/len(cpus))
-    measured=[sum(row["cpu_clock_mhz"][c] for c in cpus)/len(cpus) for row in reference
+    measured=[sum(row["cpu_clock_mhz_by_processor"][str(c)] for c in cpus)/len(cpus) for row in reference
         if row["phase"] in ("reference-speed","reference-deadlines")]
     if len(report) < 2 or len(measured) < 2 or any(not math.isfinite(v) or v <= 0 for v in report+measured):
         raise ValueError("Missing/invalid independent reporting or reference MHz census")
     ratio=sum(measured)/len(measured)/(sum(report)/len(report))
     return dict(reporting=quantiles(report),reference=quantiles(measured),reference_to_reporting_mean=ratio,
         absolute_relative_difference=abs(ratio-1),passes=abs(ratio-1) <= .05,
-        rule="draft <=5% mean physical-core MHz difference; independent review required")
+        rule="Amendment 1 <=5% mean physical-core MHz difference; full-occupancy reporting",
+        reference_busy_cores=quantiles([sum(1-r["per_cpu_idle"][str(c)] for c in cpus) for r in reference
+            if r["phase"] in ("reference-speed","reference-deadlines") and "per_cpu_idle" in r]))

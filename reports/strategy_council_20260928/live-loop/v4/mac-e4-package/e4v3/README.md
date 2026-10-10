@@ -4,9 +4,10 @@ Implements the SHA-frozen r3 addendum (PREREG freeze `cc6410b2`), listed in
 `spec-pins.json`. Independent implementation review is pending. No Mac work has
 been performed. This package measures fixed public fixtures and admitted TRAIN
 replay pixels; it has no client input, actuator, login, ladder or game launcher.
-Any score mismatch outside the registered 1e-12 relative tolerance fails closed
+On Mac, any score mismatch outside the registered 1e-12 relative tolerance fails closed
 for **all** tiers. Discrete native actions/candidates/root, belief ledger,
-samples and RNG must match exactly. Near-exact arithmetic is disclosed.
+samples and RNG must match exactly. Near-exact arithmetic is disclosed. Linux
+fleet references require EXACT with zero native or posterior discrepancy.
 
 `measure_tiers.py` performs D0–D9, including full decisions under perception load,
 conservative fleet-relative ratios and p10/p25/full state distribution, direct
@@ -25,15 +26,21 @@ files, the frozen v1/R3a/calibration artifacts, the native golden125 states,
 belief references, the 2,000-state student set, each tier's own 300-state corpus,
 loaded three-repeat references from each reporting host and deadline references
 at 200/160 ms. [FLEET-INPUT-SCHEMA.md](FLEET-INPUT-SCHEMA.md) gives the row contract
-and fleet-reference CLI. Historical fixtures serve native/belief golden checks; only Linux smoke may use them as timing corpora.
+and fleet-reference CLI; [FLEET-END-CONTRACT.md](FLEET-END-CONTRACT.md) specifies
+Amendment 1's committed evidence and ordered-attempt descriptor. Historical
+fixtures serve native/belief golden checks; only Linux smoke may use them as timing corpora.
 Mac rows require actual reserved packets, pre-poll D1/public history and belief
 snapshots, captured RNGs, pending reservations and public opponent elixir. The
 T1 ba3dc8b0 row allowlist is exact: 20 fields, `strata` has exactly three fields,
 and `belief_resume` is rejected. Fleet mode derives every occupied reporting
 slot from the pinned plan and uses no fleet perception worker. Mechanical
 `--pool-fleet-references` pools raw host × repeat walls, applies the ±5% host rule,
-and pools deadline counts. Reporting END placement and suspended-transaction
-replay remain disclosed amendments pending review.
+and pools deadline counts. Amendment 1 binds END placement and conservative
+committed-posterior replay. The END pool requires every counted reporting host
+and fails on an outlier rather than dropping counted hosts. The same frozen T1
+guard applies during references, including OP-1, console and memory rules.
+A6's real fleet-mode smoke awaits T1's reviewed 300-state bundle; END references
+remain unconfirmed. Fleet mode never uses the nice19 Linux dry-run load path.
 
 `prepare_bundle.py` copies only explicit approved artifacts, verifies policy/source
 pins, checks TRAIN membership before media access and generates `tiers-pins.json`
@@ -46,6 +53,8 @@ within 5% of the pooled reference and `pooling=raw-host-times-repeat-v1`. Input 
 `deadline-reference.json`. The owner must seal all source reference receipts and
 pooling evidence into the reviewed registration packet. No outcome data belongs
 in that packet.
+The registration and `tiers-summary.json` retain each host's signed
+`reference_to_reporting_mean`, with `amendment_1=true` and no excluded hosts.
 
 The JSON load configuration uses `kind=v3-body-hud-only`, `target_fps=20`,
 `config={body:ABS_PATH,hud:ABS_PATH,geometry:ABS_PATH,device:mps}`, `split:ABS_PATH`
@@ -163,7 +172,7 @@ never authorizes a repeat. Retain failed runs; use fresh directories for repeats
 Snapshot cloning/admission occurs before recorded packet entry; the current D1
 advance, posterior update/sample and complete search remain inside the timer.
 The committed-belief-copy capture contract records suspended-transaction flags
-and requires independent review of its deadline replay semantics. K0c top-8
+and Amendment 1 ratifies its conservative deadline replay. K0c top-8
 exceptions use Linux log probabilities. A fallback sample discrepancy is
 fail-closed unless the reference supplies an independently certified near-tie
 `sample_margin`; the frozen text does not specify how to certify that margin, so
@@ -175,8 +184,9 @@ this remains an explicit review point.
 [SHA inventory](receipts/linux05-20261010-r2/handoff-manifest.json) seal the full
 measurement and separately measured loaded three-repeat calibration. The
 pipeline source is `aefc607a`; subsequent fleet-only admission, GC/census and
-pooling changes leave `tier_backend.py` and the Mac/Linux measurement pipeline
-unchanged. The receipt retains precise source hashes. No fleet-reference host
+pooling changes leave the timed `tier_backend.py` decision work unchanged;
+summary metadata and fleet exactness admission have since changed. The receipt
+retains precise source hashes. No fleet-reference host
 or Mac was run by this worker; 03 remains vacated.
 
 At nice19 on physical CPUs50/51/52, native golden125×four configurations and
@@ -191,7 +201,9 @@ not reporting-corpus or Mac feasibility evidence. The earlier
 [receipt](receipts/linux05-20261010-r1/handoff.json) identifies its older source.
 
 `python3 -B -m unittest discover -s reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests -q`
-passes 44 tests, including sealed CLI pooling, ±5% host exclusion, strict row
+passes 57 tests, including committed END evidence, full-occupancy clocks,
+ordered technical attempts, END outlier refusal, sealed CLI pooling, strict row
 admission and global native-score failure even with an allowed policy exception.
-[Review response](REVIEW-RESPONSE.md) maps the T1 findings and remaining scientific
-amendments. Independent review and separate Mac authorization remain outstanding.
+[Review response](REVIEW-RESPONSE.md) maps the T1 findings. Amendment 1 code and
+A6 pending evidence are tracked in [REVIEW-A1-A6-RESPONSE.md](REVIEW-A1-A6-RESPONSE.md).
+Independent review and separate Mac authorization remain outstanding.

@@ -1,7 +1,8 @@
 # Fleet input contract (review draft)
 
 Uses the frozen r3 specification in `spec-pins.json` and the public row names in
-T1 candidate ba3dc8b0 (`reports/explore/t1/receipts/corpus-contract-draft.json`).
+T1 candidate ba3dc8b0, unchanged in freeze95883be0
+(`reports/explore/t1/receipts/corpus-contract-draft.json`).
 Independent review remains required. This package generates neither matches nor
 outcomes and never controls a client. This worker executes only light Linux05
 smoke runs; T1 separately owns execution on its reporting hosts.
@@ -32,12 +33,14 @@ perception. Each reference warms all slots for >=300 seconds, measures exactly
 300 distinct states per tier for three rotated repeats, and measures each state's
 200 and 160 ms deadline loop three times with the frozen 8 ms reserve.
 
-The end-of-reporting reference placement and host-exclusion timeline are a
-coordinator-directed amendment, pending review against PREREG §6.1. References
-require a pinned END marker declaring reporting complete and outcomes sealed.
-The runner reads only timing/census data. A mean physical-core MHz difference
-above 5% fails the reference; this added clock gate remains a review draft.
-Raw independent 1 Hz reporting and reference clocks remain SHA-bound.
+Signed Amendment 1 governs END placement. The additional committed completion,
+phase, OP-1 guard and ordered-attempt inputs are defined in
+[FLEET-END-CONTRACT.md](FLEET-END-CONTRACT.md). References require committed T1
+completion and every counted reporting/replacement phase. Only full-occupancy
+reporting census/MHz joins enter the <=5% signed mean-clock gate. All counted
+hosts must remain in the END pool; an outlier fails the pool for an outcome-blind
+amendment. The runner reads only timing/census data. Raw independent 1Hz reporting
+and reference clocks remain SHA-bound. A6 real fleet smoke is still pending.
 
 `tiers-pins.json` schema is `clasher.e4v3.inputs.v1`:
 
@@ -51,7 +54,8 @@ Raw independent 1 Hz reporting and reference clocks remain SHA-bound.
 - `sets.golden`: 125 unique IDs. Pinned `golden.json` native scores and
   `belief-reference.json` posterior/ledger/sample/RNG references are checked on
   **every host before timing**. Separate native/belief-only golden fixtures need
-  no policy inputs. A mismatch beyond the registered r3 tolerance drops ALL tiers.
+  no policy inputs. Linux fleet requires EXACT, zero error; any mismatch drops
+  ALL tiers. The registered r3 near-exact tolerance applies only to Mac.
 - `sets.speed`: ordered own-tier ID lists for `K0c`, `S`, `K2`, `K4`, exactly 300
   distinct IDs each; rows' tier labels must agree.
 - `corpus_receipt`: relative pinned T1 `corpora.json`. Its `tiers` retain capture
@@ -73,16 +77,23 @@ Raw independent 1 Hz reporting and reference clocks remain SHA-bound.
   "reference_slot": 0,
   "warmup_seconds": 300,
   "perception": "none",
-  "reporting_mhz": "reporting-mhz.jsonl",
-  "reporting_end": "reporting-end.json"
+  "end_evidence": "end-evidence.json",
+  "amendment": "amendment-1.md",
+  "guard": {
+    "root": "t1-guard",
+    "job": "/absolute/approved-t1-job",
+    "freeze": "t1-freeze.json",
+    "admissions": {"system-bus-admission.json": "guard-admissions/system-bus-admission.json"}
+  }
 }
 ```
 
-All three source paths above must appear in `files`. The plan is the pinned T1
+All referenced source files above must appear in `files`. The plan is the pinned T1
 plan containing `compute.hosts`, physical CPU lists/census CPU, nice, scheduler,
 slot width/count, console count, SMT policy and forbidden hosts. Reporting MHz
-uses T1's existing rows `{utc, slots, physical_core_mhz:[{cpu,mhz},...]}`. The END
-marker contains `{host, reporting_complete:true, outcomes_sealed:true}`.
+uses T1's existing rows `{utc, slots, physical_core_mhz:[{cpu,mhz},...]}` and joins
+each phase's census on UTC; `inflight == slots` is required. A three-Boolean END
+marker is rejected: the completion and phase files must match committed Git bytes.
 
 `states.pkl` executes only after all pins pass. Each production speed, agreement
 or scheduled decision row has **exactly these 20 top-level fields**:
@@ -119,7 +130,7 @@ live deadline cuts and decisions before live root construction. T1 reconstructs
 eligibility/posterior/sample/root on independent no-deadline copies after the live
 timer. The live game remains unchanged. Probes 0/1/2 are excluded. Suspended
 private work is cleared in the copy and disclosed per row; no partial preparation
-credit is replayed. **This deadline-replay amendment remains pending review.**
+credit is replayed. Amendment 1 ratifies this conservative replay on both platforms.
 No-deadline replay checks D1, sampled opponent, pre-root RNG and root digest.
 Deadline replay retains cutoff/fallback/no-complete-play and wall distributions.
 
@@ -147,9 +158,12 @@ OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
 
 ```json
 {
-  "schema": "clasher.e4v3.fleet-pool.v1",
+  "schema": "clasher.e4v3.fleet-pool.v2",
+  "context": {"bundle": "/absolute/approved-bundle", "manifest_sha256": "SHA256"},
   "hosts": [
-    {"directory": "/absolute/host-reference-receipt", "manifest_sha256": "SHA256"}
+    {"host": "127x01", "attempts": [
+      {"directory": "/absolute/host-reference-receipt", "manifest_sha256": "SHA256"}
+    ]}
   ]
 }
 ```
@@ -158,10 +172,11 @@ Pooling verifies every complete host's seal, code/specification/policy pins,
 native125/belief125×ON/OFF qualification, matching corpus/runtime/plan, exactly
 three raw repeats per state and both deadline budgets. **Initial per-state walls
 are medians of all raw hosts × repeats.** Each host's geometric mean speed ratio
-(pooled state wall / host state median) must lie within ±5%; hosts outside are
-explicitly excluded in one pass. Remaining raw observations are pooled again;
-a retained host outside ±5% after pooling fails for review without further
-iteration. Native score mismatches from even an excluded host fail ALL. Cross-host S
+(pooled state wall / host state median) must lie within ±5%; a counted host
+outside the band fails the entire END pool. No counted host is excluded.
+Every listed failed attempt is classified mechanically; at most one technical
+repeat is permitted and the first passing attempt is used. Native score
+mismatches from any attempted host fail ALL. Cross-host S
 joint gate/ordered-top8 and K0c sample/top8 use the registered local near-tie/gate
 exceptions, with >=99.5% joint agreement and zero unexplained differences per
 host/tier. Logits/probabilities may vary while discrete outputs agree. Conditional
@@ -176,4 +191,5 @@ Outputs are SHA-sealed `speed-reference.json`, `deadline-reference.json`,
 the `fleet_reference.json` tier-independent metadata into its reviewed
 `registration.json`, with original SHA-bound source receipts, the separate
 student/golden/belief refs, corpus receipt and packet schedule. This does not
-freeze the packet or authorize reporting/Mac work.
+freeze the packet or authorize reporting/Mac work. The A6 smoke-labelled plan
+produces receipts that this production pool explicitly rejects.

@@ -162,7 +162,7 @@ class Census:
         return result
 
 
-def monitor_worker(stop, phase, owned_pids, clusters, output):
+def monitor_worker(stop, phase, owned_pids, clusters, output, observer=None):
     """Independent 1 Hz sampling continues while Python decision glue is busy."""
     from pathlib import Path
     from receipts import canonical
@@ -187,9 +187,19 @@ def monitor_worker(stop, phase, owned_pids, clusters, output):
                     row["boottime"] = command(["sysctl", "-n", "kern.boottime"])
                 else:
                     with open("/proc/cpuinfo") as cpuinfo:
-                        row["cpu_clock_mhz"] = [float(line.split(":")[1]) for line in cpuinfo if line.startswith("cpu MHz")]
+                        clocks = {}; processor = None
+                        for line in cpuinfo:
+                            if line.startswith("processor"):
+                                processor = int(line.split(":", 1)[1])
+                            elif line.startswith("cpu MHz"):
+                                clocks[str(processor)] = float(line.split(":", 1)[1])
+                        row["cpu_clock_mhz_by_processor"] = clocks
+                        row["cpu_clock_mhz"] = [clocks[str(c)] for c in sorted(map(int, clocks))]
+                reason = observer(row) if observer is not None else None
                 stream.write(canonical(row) + "\n")
                 stream.flush()
+                if reason is not None:
+                    raise RuntimeError("Reference reporting validity census: "+reason)
                 before, previous = after, now
                 index += 1
     except BaseException:

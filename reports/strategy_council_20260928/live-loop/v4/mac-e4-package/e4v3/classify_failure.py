@@ -7,10 +7,15 @@ import re
 from receipts import ReceiptStore, sha, verify_files
 
 
-def classify(directory):
+def classify(directory, fleet_reference=False):
     directory = Path(directory)
     manifest = json.loads((directory / "receipt-manifest.json").read_text())
     verify_files(directory, manifest["files"])
+    if fleet_reference:
+        from fleet_validity import classify_attempt
+        return dict(**classify_attempt(directory,manifest),
+            authority="classification only; at most one separately authorized technical repeat",
+            source_manifest_sha256=sha(directory/"receipt-manifest.json"))
     failure = json.loads((directory / "failure.json").read_text()) if (directory / "failure.json").exists() else {}
     error = failure.get("error", "")
     reasons = []
@@ -43,9 +48,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--receipts", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--fleet-reference",action="store_true")
     args = parser.parse_args()
     store = ReceiptStore(args.output, "MECHANICAL-FAILURE-CLASSIFICATION")
-    store.write("classification.json", classify(args.receipts))
+    store.write("classification.json", classify(args.receipts,args.fleet_reference))
     store.seal("complete")
 
 
