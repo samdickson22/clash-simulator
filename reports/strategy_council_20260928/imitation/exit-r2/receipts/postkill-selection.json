@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-10T04:35:57Z",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "selected": [
+    "X1",
+    "X2",
+    "X4"
+  ],
+  "eligible_records": [
+    "X1",
+    "X2",
+    "X3",
+    "X4",
+    "X6"
+  ],
+  "excluded": [
+    "X5",
+    "X7"
+  ],
+  "rule": "highest final stage1 probability play recall of X3/X4/X6; numeric tie order",
+  "play_recall": {
+    "X1": 0.2590188694895818,
+    "X2": 0.23521461615212771,
+    "X3": 0.25215106265931614,
+    "X4": 0.2557513421154072,
+    "X6": 0.22625719916938888
+  },
+  "harness_sha256": "ee43172dfb50dbf288b50c314f1abfddbc942fd90d192846ec6e8aaca6a51865",
+  "selection_amendment_sha256": "490bd8e19a8e393d8faa25961d8ec81717c71b2d2e97fc860b926abc7574c2d3",
+  "offline_sha256": {
+    "X1": "9d5da3a9e82617cb6d4a43e25b16784cf750f3376c56835ce1337dcbffe9013a",
+    "X2": "8fc82d2318d135030c4974dc10ea5a0822cb0c7f939089fcc9952c0d16bc639a",
+    "X3": "d93bed544c537fe7cac03802358803cca1e1e15176b0d09544ab089e4a980a7d",
+    "X4": "a699572fe38717c7d077a5128a9ed0d65dbc912b70ca01575d82d22e4fd99923",
+    "X6": "27aeae3edd60c19c50b605de578caadb7730c5e82caa6b4d9b4dca1839335c12"
+  },
+  "checkpoint_sha256": {
+    "X1": "b42b64cacfc43baa284fd1ba7b5f95f9c9daa3f6d29e722224a03666260b5526",
+    "X2": "6aeeb06fb74712e2b8e9f12a10003c94d9d26651cbabf7ec81fb35d65fb83ce3",
+    "X3": "8f5fd8570bc105095a36cacf6aa86f8715e94a3946f4dab70d3f9b896ee9f617",
+    "X4": "a1b4aaae2173b17a68256796585ab18fb737204307a3dbde3b8d1ad48223c5b9",
+    "X6": "6f8cd058db209ca4e53df42740434f9242b489c064dbae1be10970558c42cbe8"
+  },
+  "reporting_games_before_selection": 0,
+  "game_outcomes_seen": false
+}

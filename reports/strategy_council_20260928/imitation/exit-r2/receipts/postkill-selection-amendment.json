@@ -1,0 +1,56 @@
+{
+  "schema": "clasher.exit-r2.postkill-selection.v1",
+  "kind": "postkill selection amendment; exploration; never adoptable",
+  "utc": "2026-10-10T04:35:57Z",
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "authority": "Coordinator04:35 utilization decision; before any reporting game",
+  "base_commit": "e8c82b10",
+  "base_addendum_sha256": "ee43172dfb50dbf288b50c314f1abfddbc942fd90d192846ec6e8aaca6a51865",
+  "plan_sha256": "a2e05dfdcd238b6519da81aaa2761009c76babc78130c460180a2f3ce2d83361",
+  "reporting_games_before_amendment": 0,
+  "game_outcomes_seen": false,
+  "eligible_records": [
+    "X1",
+    "X2",
+    "X3",
+    "X4",
+    "X6"
+  ],
+  "candidate_students": [
+    "X3",
+    "X4",
+    "X6"
+  ],
+  "excluded": [
+    "X5",
+    "X7"
+  ],
+  "selected": [
+    "X1",
+    "X2",
+    "X4"
+  ],
+  "selection": "highest final stage1 probability play recall of X3/X4/X6; numeric tie order",
+  "excluded_reason": "X1-family variants; X1 already included",
+  "continue_excluded_fit_and_offline": true,
+  "reporting_base": 4503602007370496,
+  "reporting_count": 600,
+  "qualification_base": 4503602017370496,
+  "seed_audit_sha256": "7cd6ae2de03751e259110917f92331ec49ebb8d9ad460f855edc9cad489e0823",
+  "files": {
+    "ops/postkill_selected.py": "2ea004003ec05ad6999fae71bfbf8601e9b8d5b33ed1b91a31e011109db8c8bf",
+    "ops/k_postkill_selected.py": "770e895fa625ca686d9afdb3fda283f957bb7d7b3f990520916975bf782801d7",
+    "ops/game_worker_postkill_selected.py": "dcb592c34d994d0125781a91559196837fc1b0892ca85b0c683cceb332ced934",
+    "ops/postkill_block_worker_selected.py": "07d39b10314b0a3c7a122cd04cb802ef44a579230956db0c9a537a7ee3345792",
+    "ops/game_pool_postkill_selected.py": "b4993852eb646f2091bc12dbab00553d45064cdb217f848fa2eca863a284f066",
+    "ops/reduce_postkill_selected.py": "1604ffed3de77f7b3ea3f9c193460316fcf52b918b89c6a86a7c08d06f620aaa",
+    "ops/test_postkill_selected.py": "44c0f5b4ee9dec819099fca95b0685da061a9525337d5ac67e85d400d07faa76",
+    "ops/qualify_postkill_selected.py": "2065cb5965bb214e607263b555f28f497bf83274634df44c7b8e5790f848c115"
+  },
+  "code_qualification_sha256": "6721f8fa93f55c0a4b8867fce966ef5d0e5f899e4156f8a8b6277f6ee27d4725",
+  "wrapper_qualification": "Original fresh201 smoke indices4/5 must pass; unchanged search adapter and base source",
+  "search_timer_hooks_default_seed_interleaving_unchanged": true,
+  "old_scientific_hashes_preserved": true
+}

@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "tests": 6,
+  "exit_code": 0,
+  "files": {
+    "postkill_selected.py": "2ea004003ec05ad6999fae71bfbf8601e9b8d5b33ed1b91a31e011109db8c8bf",
+    "k_postkill_selected.py": "770e895fa625ca686d9afdb3fda283f957bb7d7b3f990520916975bf782801d7",
+    "game_worker_postkill_selected.py": "dcb592c34d994d0125781a91559196837fc1b0892ca85b0c683cceb332ced934",
+    "postkill_block_worker_selected.py": "07d39b10314b0a3c7a122cd04cb802ef44a579230956db0c9a537a7ee3345792",
+    "game_pool_postkill_selected.py": "b4993852eb646f2091bc12dbab00553d45064cdb217f848fa2eca863a284f066",
+    "reduce_postkill_selected.py": "1604ffed3de77f7b3ea3f9c193460316fcf52b918b89c6a86a7c08d06f620aaa",
+    "test_postkill_selected.py": "44c0f5b4ee9dec819099fca95b0685da061a9525337d5ac67e85d400d07faa76",
+    "qualify_postkill_selected.py": "2065cb5965bb214e607263b555f28f497bf83274634df44c7b8e5790f848c115"
+  },
+  "utc": "2026-10-10T04:35:08Z",
+  "parent_cpu_seconds": 1.055767,
+  "children_cpu_seconds": 1.813486,
+  "wall_seconds": 1.8005648460239172,
+  "no_games": true,
+  "no_policy_inference": true,
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false
+}
