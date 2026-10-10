@@ -95,6 +95,10 @@ this worker accesses the host. Use the assigned host's pinned plan nice level
 launching SSH closes before admission; observe only through its approved
 health-only copier. No ordinary SSH inspection during timing. The earlier
 Linux05 dry-run receipt does not satisfy this real T1-host fleet-mode smoke.
+Coordinator 15:35Z assigns A6 to **127x01 at T1 END**, projected Oct11 02–06Z,
+before any production reference run. Actual opening and all inputs come from
+T1; no timing-host access until then. [A6-END-RUNBOOK.md](A6-END-RUNBOOK.md)
+contains the staging/measurement commands and result-review handoff.
 
 T1 separately owns enforcing Amendment 1 in every outcome-release route:
 committed pool-complete and registration commit/SHA are prerequisites, including

@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+import subprocess
 from types import SimpleNamespace
 import unittest
 from unittest.mock import MagicMock,patch
@@ -88,11 +89,14 @@ class FleetValidityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             base=Path(tmp);root=base/"t1-guard";root.mkdir();job=base/"job";job.mkdir()
             repository=Path(__file__).resolve().parents[7]
-            t1=repository/"reports/explore/t1"
             names=("common.py","host_audit.py","idle_services.py","system_bus.py","ssh_transport.py")
             files={};frozen={}
             for name in names:
-                (root/name).write_bytes((t1/name).read_bytes())
+                # The shared checkout can contain another worker's unfinished
+                # guard delta. Exercise the reviewed OP-1 commit, not that WIP.
+                raw=subprocess.check_output(["git","-C",str(repository),"show",
+                    "95883be0bfd4d0a6e8dade56ca6a6669637c4a49:reports/explore/t1/"+name])
+                (root/name).write_bytes(raw)
                 files["t1-guard/"+name]=sha(root/name);frozen["reports/explore/t1/"+name]=sha(root/name)
             (base/"freeze.json").write_text(json.dumps(dict(files=frozen)))
             (base/"plan.json").write_text(json.dumps(dict(compute={})))
