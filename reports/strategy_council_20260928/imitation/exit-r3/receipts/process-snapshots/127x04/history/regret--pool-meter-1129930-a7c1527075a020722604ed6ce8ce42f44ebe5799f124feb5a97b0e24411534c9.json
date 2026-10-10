@@ -1,0 +1,20 @@
+{
+  "relative": "regret/pool-meter-1129930.json",
+  "sha256": "a7c1527075a020722604ed6ce8ce42f44ebe5799f124feb5a97b0e24411534c9",
+  "value": {
+    "mode": "regret04",
+    "status": "complete",
+    "host": "127x04",
+    "pool_pid": 1129930,
+    "pool_pgid": 1129930,
+    "completed": 64,
+    "reason": null,
+    "failures": [],
+    "parent_cpu_seconds": 49.946129,
+    "children_cpu_seconds": 7405.489307,
+    "wall_seconds": 2525.00392599497,
+    "peak_full_avg10": 0.0,
+    "utc": "2026-10-10T06:21:29Z",
+    "accounting": "Whole pool tree once; all scoring/helper/failed/replayed CPU included. Nested worker meters never added."
+  }
+}

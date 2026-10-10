@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "host": "127x09",
+  "pid": 3122636,
+  "pgid": 3122636,
+  "g_shards": 5,
+  "g_files": 355,
+  "r1_roots": 6009681,
+  "g_roots": 212542,
+  "corpus_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "init_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+  "assets_sha256": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+  "utc": "2026-10-10T06:20:23Z",
+  "cpu_seconds": 10.85271,
+  "wall_seconds": 15.072777421912178,
+  "accounting": "whole receiver process/child tree once; remote read-only sender CPU unmetered"
+}

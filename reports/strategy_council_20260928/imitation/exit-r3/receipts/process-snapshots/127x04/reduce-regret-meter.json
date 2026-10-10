@@ -1,0 +1,9 @@
+{
+  "relative": "reduce-regret-meter.json",
+  "sha256": "7cd8469b8aa8e3105ba4cad50e283c6f8962ca3c0cb06fde881751ed12a6e5a2",
+  "value": {
+    "cpu_seconds": 1.1779410000000001,
+    "wall_seconds": 0.22228322795126587,
+    "utc": "2026-10-10T06:22:48Z"
+  }
+}

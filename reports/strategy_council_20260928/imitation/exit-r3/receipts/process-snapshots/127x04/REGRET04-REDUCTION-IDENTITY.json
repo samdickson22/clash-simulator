@@ -1,0 +1,35 @@
+{
+  "relative": "REGRET04-REDUCTION-IDENTITY.json",
+  "sha256": "ef900725e1347aa91ef94ca254ec77b91d0eca8f2e3f526b9130ede68a9cacf9",
+  "value": {
+    "host": "127x04",
+    "observer": {
+      "pid": 1335890,
+      "pgid": 1335888,
+      "nice": 19,
+      "affinity": [
+        19
+      ],
+      "scheduler": 0
+    },
+    "reducers": [
+      {
+        "pid": 1336531,
+        "pgid": 1336531,
+        "start_ticks": 98051347,
+        "command": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r1/eval-ops/reduce.py --job /mpac/sdicks02/jobs/clasher/exit-r3-20261010-r1 --mode regret ",
+        "nice": 19,
+        "affinity": [
+          19
+        ],
+        "scheduler": 0
+      }
+    ],
+    "reducer_sha256": "086f06b2de788c933c2149197c971ceefb530c48a428d1e3c3069c93849ce6b2",
+    "evaluation_freeze_sha256": "ecac92a3fce879c965bf465ab31d05cffffe9662d5b21bb22482035a1a4e1b77",
+    "cpu_seconds": 3.282016,
+    "wall_seconds": 6.200614067027345,
+    "utc": "2026-10-10T06:22:48Z",
+    "audit_source_sha256": "46b4f05c4f099b1345d5442a6d2dc0c468938b4a58a6d0ead1620caf15176f82"
+  }
+}

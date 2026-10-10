@@ -1,0 +1,21 @@
+{
+  "relative": "regret04-staging-meter-1126275.json",
+  "sha256": "eb4900c9d4d03db673ecb1f43e0f42720c6d51de260f73d82fb6b507aa368929",
+  "value": {
+    "passed": true,
+    "base_passed": true,
+    "a19_observed_progress_sha256": {
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/l1/RUNBOOK.md": "b4175c2fdaa754c329487b5aecc4029bb47c6ce32ee045f3446d8e643140c6cd",
+      "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/PROGRESS-T6T7.md": "82d7b7ee8666475e2c3cad82dca26221fc9e0364e76f075ed58280243bbb8684"
+    },
+    "utc": "2026-10-10T05:38:55Z",
+    "wall_seconds": 7.898924043984152,
+    "cpu_seconds": 2.096929,
+    "host": "127x04",
+    "nice": 19,
+    "affinity": [
+      19
+    ],
+    "note": "Whole local staging process tree once; remote sender CPU unmetered"
+  }
+}

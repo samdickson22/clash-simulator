@@ -1,0 +1,17 @@
+{
+  "relative": "regret/games/0034.json",
+  "sha256": "09b3c6c84c6d4a0cda38f2ff64e023175159ecc893d82ae1f2fca7ef9e44ba0c",
+  "value": {
+    "index": 34,
+    "seed": 4503601207370530,
+    "roots": 113,
+    "complete": true,
+    "command_exact": true,
+    "jsonl_sha256": "07b181160f36bca4f3f50ab4f74eac62eb984cd94f272b4fe1c9a0f9d3c17293",
+    "native_sha256": "06d8e5397908b2addc5e0a8b2db0d837da79d56b8dd56aaa3491307da5fc0e10",
+    "cpu_seconds": 96.112629,
+    "scoring_replay_cpu_seconds": 80.960331598,
+    "wall_seconds": 81.33273396093864,
+    "utc": "2026-10-10T06:02:23Z"
+  }
+}

@@ -1,11 +1,26 @@
 {
-  "utc": "2026-10-10T06:01:04Z",
-  "final": false,
+  "utc": "2026-10-10T06:23:00Z",
+  "final": true,
   "totals": {
-    "CPU staging": {
-      "cpu_seconds": 16.468018999999998,
+    "final metadata audits": {
+      "cpu_seconds": 3.393206,
+      "gpu_wall_seconds": 0.0,
+      "meters": 2
+    },
+    "reduction": {
+      "cpu_seconds": 1.1779410000000001,
       "gpu_wall_seconds": 0.0,
       "meters": 1
+    },
+    "CPU replay/games": {
+      "cpu_seconds": 7455.435436,
+      "gpu_wall_seconds": 0.0,
+      "meters": 1
+    },
+    "CPU staging": {
+      "cpu_seconds": 18.564947999999998,
+      "gpu_wall_seconds": 0.0,
+      "meters": 2
     },
     "fits": {
       "cpu_seconds": 31096.826596,
@@ -24,6 +39,51 @@
     }
   },
   "charged_process_meters": [
+    {
+      "category": "final metadata audits",
+      "sha256": "4246ed0bd8a1a4b12440dcf30a93e93ca60180e5e091bb2faa6e1926aa615123",
+      "path": "receipts/process-snapshots/127x04/history/REGRET04-INDEPENDENT-VACATED-4246ed0bd8a1a4b12440dcf30a93e93ca60180e5e091bb2faa6e1926aa615123.json",
+      "cpu_seconds": 0.11119,
+      "gpu_wall_seconds": 0.0,
+      "status": null,
+      "reason": null
+    },
+    {
+      "category": "final metadata audits",
+      "sha256": "ef900725e1347aa91ef94ca254ec77b91d0eca8f2e3f526b9130ede68a9cacf9",
+      "path": "receipts/process-snapshots/127x04/history/REGRET04-REDUCTION-IDENTITY-ef900725e1347aa91ef94ca254ec77b91d0eca8f2e3f526b9130ede68a9cacf9.json",
+      "cpu_seconds": 3.282016,
+      "gpu_wall_seconds": 0.0,
+      "status": null,
+      "reason": null
+    },
+    {
+      "category": "reduction",
+      "sha256": "7cd8469b8aa8e3105ba4cad50e283c6f8962ca3c0cb06fde881751ed12a6e5a2",
+      "path": "receipts/process-snapshots/127x04/history/reduce-regret-meter-7cd8469b8aa8e3105ba4cad50e283c6f8962ca3c0cb06fde881751ed12a6e5a2.json",
+      "cpu_seconds": 1.1779410000000001,
+      "gpu_wall_seconds": 0.0,
+      "status": null,
+      "reason": null
+    },
+    {
+      "category": "CPU replay/games",
+      "sha256": "a7c1527075a020722604ed6ce8ce42f44ebe5799f124feb5a97b0e24411534c9",
+      "path": "receipts/process-snapshots/127x04/history/regret--pool-meter-1129930-a7c1527075a020722604ed6ce8ce42f44ebe5799f124feb5a97b0e24411534c9.json",
+      "cpu_seconds": 7455.435436,
+      "gpu_wall_seconds": 0.0,
+      "status": "complete",
+      "reason": null
+    },
+    {
+      "category": "CPU staging",
+      "sha256": "eb4900c9d4d03db673ecb1f43e0f42720c6d51de260f73d82fb6b507aa368929",
+      "path": "receipts/process-snapshots/127x04/history/regret04-staging-meter-1126275-eb4900c9d4d03db673ecb1f43e0f42720c6d51de260f73d82fb6b507aa368929.json",
+      "cpu_seconds": 2.096929,
+      "gpu_wall_seconds": 0.0,
+      "status": null,
+      "reason": null
+    },
     {
       "category": "CPU staging",
       "sha256": "5fbc4a6ca0cd2eba8de559361efb10b11bd2a165faa65917ffc4ef83639d497d",

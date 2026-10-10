@@ -1,0 +1,590 @@
+{
+  "relative": "REGRET04-PGIDS.json",
+  "sha256": "a717a8f5bdd52cc3819f0f8a9d42b659ecb2a1b850e3506839b90d2c4d0b0523",
+  "value": [
+    {
+      "role": "pool",
+      "pid": 1129930,
+      "pgid": 1129930,
+      "core": 19,
+      "nice": 19,
+      "started_epoch": 1791610764.53745
+    },
+    {
+      "role": "scoring_game",
+      "index": 0,
+      "pid": 1130056,
+      "pgid": 1130056,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791610764.9342008
+    },
+    {
+      "role": "scoring_game",
+      "index": 1,
+      "pid": 1130057,
+      "pgid": 1130057,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791610764.936097
+    },
+    {
+      "role": "scoring_game",
+      "index": 2,
+      "pid": 1130058,
+      "pgid": 1130058,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791610764.9379878
+    },
+    {
+      "role": "scoring_game",
+      "index": 3,
+      "pid": 1137439,
+      "pgid": 1137439,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791610858.5855544
+    },
+    {
+      "role": "scoring_game",
+      "index": 4,
+      "pid": 1138135,
+      "pgid": 1138135,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791610866.9697533
+    },
+    {
+      "role": "scoring_game",
+      "index": 5,
+      "pid": 1138343,
+      "pgid": 1138343,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791610869.7543428
+    },
+    {
+      "role": "scoring_game",
+      "index": 6,
+      "pid": 1146462,
+      "pgid": 1146462,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791610963.4465537
+    },
+    {
+      "role": "scoring_game",
+      "index": 7,
+      "pid": 1146543,
+      "pgid": 1146543,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791610964.8424115
+    },
+    {
+      "role": "scoring_game",
+      "index": 8,
+      "pid": 1147478,
+      "pgid": 1147478,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791610976.0336974
+    },
+    {
+      "role": "scoring_game",
+      "index": 9,
+      "pid": 1153031,
+      "pgid": 1153031,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791611047.6189506
+    },
+    {
+      "role": "scoring_game",
+      "index": 10,
+      "pid": 1156018,
+      "pgid": 1156018,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791611085.349494
+    },
+    {
+      "role": "scoring_game",
+      "index": 11,
+      "pid": 1162269,
+      "pgid": 1162269,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791611158.2431207
+    },
+    {
+      "role": "scoring_game",
+      "index": 12,
+      "pid": 1162270,
+      "pgid": 1162270,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791611158.2450447
+    },
+    {
+      "role": "scoring_game",
+      "index": 13,
+      "pid": 1163788,
+      "pgid": 1163788,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791611176.414349
+    },
+    {
+      "role": "scoring_game",
+      "index": 14,
+      "pid": 1170550,
+      "pgid": 1170550,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791611256.2344017
+    },
+    {
+      "role": "scoring_game",
+      "index": 15,
+      "pid": 1175974,
+      "pgid": 1175974,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791611323.670465
+    },
+    {
+      "role": "scoring_game",
+      "index": 16,
+      "pid": 1176569,
+      "pgid": 1176569,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791611332.0663478
+    },
+    {
+      "role": "scoring_game",
+      "index": 17,
+      "pid": 1183178,
+      "pgid": 1183178,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791611410.414265
+    },
+    {
+      "role": "scoring_game",
+      "index": 18,
+      "pid": 1187295,
+      "pgid": 1187295,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791611456.4741747
+    },
+    {
+      "role": "scoring_game",
+      "index": 19,
+      "pid": 1188634,
+      "pgid": 1188634,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791611473.2693944
+    },
+    {
+      "role": "scoring_game",
+      "index": 20,
+      "pid": 1191045,
+      "pgid": 1191045,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791611503.978922
+    },
+    {
+      "role": "scoring_game",
+      "index": 21,
+      "pid": 1194940,
+      "pgid": 1194940,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791611547.4661317
+    },
+    {
+      "role": "scoring_game",
+      "index": 22,
+      "pid": 1197038,
+      "pgid": 1197038,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791611573.9823031
+    },
+    {
+      "role": "scoring_game",
+      "index": 23,
+      "pid": 1200826,
+      "pgid": 1200826,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791611616.1579413
+    },
+    {
+      "role": "scoring_game",
+      "index": 24,
+      "pid": 1205111,
+      "pgid": 1205111,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791611669.3024914
+    },
+    {
+      "role": "scoring_game",
+      "index": 25,
+      "pid": 1205309,
+      "pgid": 1205309,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791611670.702347
+    },
+    {
+      "role": "scoring_game",
+      "index": 26,
+      "pid": 1208756,
+      "pgid": 1208756,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791611707.0867903
+    },
+    {
+      "role": "scoring_game",
+      "index": 27,
+      "pid": 1214445,
+      "pgid": 1214445,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791611774.0871449
+    },
+    {
+      "role": "scoring_game",
+      "index": 28,
+      "pid": 1218461,
+      "pgid": 1218461,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791611824.442301
+    },
+    {
+      "role": "scoring_game",
+      "index": 29,
+      "pid": 1219092,
+      "pgid": 1219092,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791611831.5418317
+    },
+    {
+      "role": "scoring_game",
+      "index": 30,
+      "pid": 1223984,
+      "pgid": 1223984,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791611893.290439
+    },
+    {
+      "role": "scoring_game",
+      "index": 31,
+      "pid": 1228216,
+      "pgid": 1228216,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791611947.870409
+    },
+    {
+      "role": "scoring_game",
+      "index": 32,
+      "pid": 1234219,
+      "pgid": 1234219,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791612022.1421914
+    },
+    {
+      "role": "scoring_game",
+      "index": 33,
+      "pid": 1234222,
+      "pgid": 1234222,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791612022.1443408
+    },
+    {
+      "role": "scoring_game",
+      "index": 34,
+      "pid": 1236177,
+      "pgid": 1236177,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791612047.310193
+    },
+    {
+      "role": "scoring_game",
+      "index": 35,
+      "pid": 1242355,
+      "pgid": 1242355,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791612119.9222736
+    },
+    {
+      "role": "scoring_game",
+      "index": 36,
+      "pid": 1242907,
+      "pgid": 1242907,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791612126.9137344
+    },
+    {
+      "role": "scoring_game",
+      "index": 37,
+      "pid": 1244509,
+      "pgid": 1244509,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791612145.230567
+    },
+    {
+      "role": "scoring_game",
+      "index": 38,
+      "pid": 1250564,
+      "pgid": 1250564,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791612221.0226874
+    },
+    {
+      "role": "scoring_game",
+      "index": 39,
+      "pid": 1251874,
+      "pgid": 1251874,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791612237.7584445
+    },
+    {
+      "role": "scoring_game",
+      "index": 40,
+      "pid": 1255089,
+      "pgid": 1255089,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791612276.8597145
+    },
+    {
+      "role": "scoring_game",
+      "index": 41,
+      "pid": 1257726,
+      "pgid": 1257726,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791612309.1623561
+    },
+    {
+      "role": "scoring_game",
+      "index": 42,
+      "pid": 1259410,
+      "pgid": 1259410,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791612330.137423
+    },
+    {
+      "role": "scoring_game",
+      "index": 43,
+      "pid": 1264302,
+      "pgid": 1264302,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791612381.8910208
+    },
+    {
+      "role": "scoring_game",
+      "index": 44,
+      "pid": 1267403,
+      "pgid": 1267403,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791612419.646411
+    },
+    {
+      "role": "scoring_game",
+      "index": 45,
+      "pid": 1268270,
+      "pgid": 1268270,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791612429.6104085
+    },
+    {
+      "role": "scoring_game",
+      "index": 46,
+      "pid": 1271737,
+      "pgid": 1271737,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791612472.9226058
+    },
+    {
+      "role": "scoring_game",
+      "index": 47,
+      "pid": 1276312,
+      "pgid": 1276312,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791612527.715676
+    },
+    {
+      "role": "scoring_game",
+      "index": 48,
+      "pid": 1277201,
+      "pgid": 1277201,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791612538.8742104
+    },
+    {
+      "role": "scoring_game",
+      "index": 49,
+      "pid": 1283490,
+      "pgid": 1283490,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791612617.2534628
+    },
+    {
+      "role": "scoring_game",
+      "index": 50,
+      "pid": 1287526,
+      "pgid": 1287526,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791612666.1621966
+    },
+    {
+      "role": "scoring_game",
+      "index": 51,
+      "pid": 1291399,
+      "pgid": 1291399,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791612714.998634
+    },
+    {
+      "role": "scoring_game",
+      "index": 52,
+      "pid": 1291971,
+      "pgid": 1291971,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791612723.378572
+    },
+    {
+      "role": "scoring_game",
+      "index": 53,
+      "pid": 1294706,
+      "pgid": 1294706,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791612758.4182312
+    },
+    {
+      "role": "scoring_game",
+      "index": 54,
+      "pid": 1298838,
+      "pgid": 1298838,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791612817.1861317
+    },
+    {
+      "role": "scoring_game",
+      "index": 55,
+      "pid": 1299134,
+      "pgid": 1299134,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791612821.3707614
+    },
+    {
+      "role": "scoring_game",
+      "index": 56,
+      "pid": 1302248,
+      "pgid": 1302248,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791612867.341612
+    },
+    {
+      "role": "scoring_game",
+      "index": 57,
+      "pid": 1305315,
+      "pgid": 1305315,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791612912.1114142
+    },
+    {
+      "role": "scoring_game",
+      "index": 58,
+      "pid": 1311139,
+      "pgid": 1311139,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791612997.2856119
+    },
+    {
+      "role": "scoring_game",
+      "index": 59,
+      "pid": 1312085,
+      "pgid": 1312085,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791613011.2631338
+    },
+    {
+      "role": "scoring_game",
+      "index": 60,
+      "pid": 1315278,
+      "pgid": 1315278,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791613057.4785876
+    },
+    {
+      "role": "scoring_game",
+      "index": 61,
+      "pid": 1317669,
+      "pgid": 1317669,
+      "core": 13,
+      "nice": 19,
+      "started_epoch": 1791613092.4905176
+    },
+    {
+      "role": "scoring_game",
+      "index": 62,
+      "pid": 1318764,
+      "pgid": 1318764,
+      "core": 14,
+      "nice": 19,
+      "started_epoch": 1791613109.4543638
+    },
+    {
+      "role": "scoring_game",
+      "index": 63,
+      "pid": 1321392,
+      "pgid": 1321392,
+      "core": 12,
+      "nice": 19,
+      "started_epoch": 1791613147.106459
+    }
+  ]
+}

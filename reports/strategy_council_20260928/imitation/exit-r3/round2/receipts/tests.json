@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "tests": 6,
+  "unittest_seconds": 2.956,
+  "cpu_seconds": null,
+  "utc": "2026-10-10T06:22:13Z",
+  "command": "127x09 nice10/core126: python -B -m unittest exit_r3.test_round2",
+  "accounting": "first synthetic test pass CPU unmetered; elapsed from unittest, not process wall"
+}

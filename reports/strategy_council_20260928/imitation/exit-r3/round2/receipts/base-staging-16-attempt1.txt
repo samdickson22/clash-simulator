@@ -1,0 +1,12 @@
+rsync: change_dir "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r1/provenance" failed: No such file or directory (2)
+rsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1205) [sender=3.1.3]
+{"passed": false, "host": "127x16", "pid": 2000236, "pgid": 2000236, "utc": "2026-10-10T06:20:21Z", "cpu_seconds": 9.129108, "wall_seconds": 13.55934453685768, "accounting": "whole receiver process/child tree once; remote read-only sender CPU unmetered"}
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/stage_base.py", line 34, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/stage_base.py", line 20, in main
+    subprocess.run(['rsync','-a','--bwlimit=153600','--rsync-path=nice -n 10 taskset -c 126 rsync',source,str(target)+'/'],check=True)
+  File "/mpac/sdicks02/repos/clasher-lease/tools/uv-python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['rsync', '-a', '--bwlimit=153600', '--rsync-path=nice -n 10 taskset -c 126 rsync', '/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r1/provenance/', '/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/provenance/']' returned non-zero exit status 23.

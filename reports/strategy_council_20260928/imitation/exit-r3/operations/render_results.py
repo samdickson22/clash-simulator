@@ -122,7 +122,7 @@ def main():
         ex=result(host,arm+'-exit.json')
         if ex:lines += ['',f"{arm} resource receipt: exit{ex['exit_code']}, reason {ex['reason']}; peak PSS{ex['peak_pss_bytes']/1e9:.3f}GB, max processes{ex['max_processes']}, minimum GPU free{ex['min_gpu_free_bytes']/2**30:.3f}GiB. All retained attempt statuses/reasons remain in [cost receipts](receipts/cost-summary.json)."]
     lines += ['', 'No production adoption is authorized. '+conclusion]
-    Path(a.output).write_text('\n'.join(lines)+'\n')
+    Path(a.output).write_text('\n'.join(line.rstrip() for line in lines)+'\n')
     (REPO/'receipts/cost-summary.json').write_text(json.dumps(dict(utc=now,final=complete,totals={k:dict(cpu_seconds=v[0],gpu_wall_seconds=v[1],meters=v[2]) for k,v in totals.items()},charged_process_meters=meters,preparation_receipts=preparation_names),indent=2)+'\n')
     print(json.dumps(dict(final=complete,stage1=bool(stage1),stage2=bool(stage2),output=a.output,meter_count=len(meters))))
 

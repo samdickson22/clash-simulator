@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "utc": "2026-10-10T06:23:18Z",
+  "audit_receipt": "REGRET04-INDEPENDENT-VACATED.json",
+  "audit_sha256": "4246ed0bd8a1a4b12440dcf30a93e93ca60180e5e091bb2faa6e1926aa615123",
+  "auditor_pid": 1337463,
+  "auditor_pgid": 1337463,
+  "auditor_independently_absent": true,
+  "slot_return_notified": true
+}

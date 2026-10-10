@@ -1,0 +1,23 @@
+{
+  "R3c": {
+    "host": "127x09",
+    "steps": 5000,
+    "seed": 2026101013,
+    "temperature": 0.003,
+    "advantage_weight": 0
+  },
+  "R3d": {
+    "host": "127x16",
+    "steps": 2500,
+    "seed": 2026101014,
+    "temperature": 0.003,
+    "advantage_weight": 0
+  },
+  "R3e": {
+    "host": "127x13",
+    "steps": 5000,
+    "seed": 2026101013,
+    "temperature": 0.01,
+    "advantage_weight": 0
+  }
+}

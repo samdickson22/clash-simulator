@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-10T06:28:40Z",
+  "pid": 2026455,
+  "pss": 19469312,
+  "processes": 1,
+  "gpu_free_bytes": 50105155584,
+  "reason": "owned FIT.STOP",
+  "wall_seconds": 30.41299729188904
+}

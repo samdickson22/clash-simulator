@@ -1,6 +1,6 @@
-# R3 results — evaluation pending
+# R3 results — complete
 
-Updated real UTC 2026-10-10T06:01:04Z. Exploration lane; no multiplicity adjustment and no production adoption.
+Updated real UTC 2026-10-10T06:23:00Z. Exploration lane; no multiplicity adjustment and no production adoption.
 
 R3a uses teacher roots only; R3b adds a shared-encoder advantage head with Huber regression to score−WAIT. Both initialize releasedv1 step22552 at width192 and use2500×8192 root rows, T=.003, playweight1, final EMA only. R1 has6,009,681 eligible roots; all five verifiedG shards add212,542, total6,222,223. Continuation kinds1/2, pending3, unsupervised and unscored rows are excluded.
 
@@ -35,20 +35,29 @@ Eligibility uses the predeclared point estimates; descriptive intervals do not o
 
 | Arm | Threshold / play rate | Play recall | Play/WAIT agreement | All-WAIT agreement | Mean positive W regret | Stage1 |
 |---|---|---|---|---|---|---|
-| R3a | 0.5005528 / 0.3459 | 0.6297 [0.6043, 0.6543] | 0.7438 [0.7289, 0.7595] | 0.6541 [0.6403, 0.6685] | pending | KILL; regret pending |
-| R3b | 0.5006071 / 0.3459 | 0.6297 [0.6041, 0.6542] | 0.7438 [0.7293, 0.7592] | 0.6541 [0.6403, 0.6685] | pending | KILL; regret pending |
+| R3a | 0.5005528 / 0.3459 | 0.6297 [0.6043, 0.6543] | 0.7438 [0.7289, 0.7595] | 0.6541 [0.6403, 0.6685] | 0.0088 [0.0069, 0.0109] | KILL |
+| R3b | 0.5006071 / 0.3459 | 0.6297 [0.6041, 0.6542] | 0.7438 [0.7293, 0.7592] | 0.6541 [0.6403, 0.6685] | 0.0132 [0.0106, 0.0161] | KILL |
+
+W regret fully scores the recorded W candidate set and both students’ legal top8 plus WAIT/WAIT10 on each same fresh reconstructed frozen-W root. Comparator is the best completed recorded-candidate score; proposal best includes always-available WAIT fallbacks. All64 command streams replay to terminal, with8088 unique roots and per-game SHA proofs.
+
+R3a: signed regret 0.0050 [0.0026, 0.0075]; positive regret on teacher-play roots 0.0108 [0.0066, 0.0160]; exact top8 action recall 0.3074 [0.2901, 0.3258]. Positive-regret percentiles: {"0.5": 0.003740210356340058, "0.9": 0.011000297051891842, "0.95": 0.01645092845396294, "0.99": 0.03427056112581771, "1.0": 4.0}. Kill reasons: calibrated play recall <.6375, binary play/WAIT agreement <allWAIT+.10.
+
+R3b: signed regret 0.0127 [0.0102, 0.0157]; positive regret on teacher-play roots 0.0219 [0.0158, 0.0291]; exact top8 action recall 0.0182 [0.0137, 0.0232]. Positive-regret percentiles: {"0.5": 0.005495650622563117, "0.9": 0.01702016805630865, "0.95": 0.024710001533727568, "0.99": 0.050600041548419857, "1.0": 4.0}. Kill reasons: calibrated play recall <.6375, binary play/WAIT agreement <allWAIT+.10, mean positive W-score regret >.010.
 
 Stage2 uses frozen X S-default behavior: full student inference inside200ms/8ms reserve, one physical core, paired fresh seeds4503601907370496+[0,600), releasedv1 opponent, C-v1 control and K0 descriptive anchor. Rotated complete same-seed blocks run back-to-back on one host/core at nice10/SCHED_OTHER. Smoke191+0/1 is excluded. Kill upper paired95%CI(lossR3−lossC-v1)≥0; shared5000 bootstrap resamples80991013.
 
-Both arms failed the frozen binary gates, so Stage2 will be skipped; zero smoke/reporting games. W-regret diagnostics remain pending.
+Both arms failed Stage1. Stage2 was skipped; zero smoke/reporting games.
 
 | Meter category | CPU hours | Charged GPU wall hours | Completed/stopped meter receipts |
 |---|---:|---:|---:|
-| CPU staging | 0.004574 | 0.000000 | 1 |
+| final metadata audits | 0.000943 | 0.000000 | 2 |
+| reduction | 0.000327 | 0.000000 | 1 |
+| CPU replay/games | 2.070954 | 0.000000 | 1 |
+| CPU staging | 0.005157 | 0.000000 | 2 |
 | fits | 8.638007 | 2.959405 | 2 |
 | GPU offline | 0.009509 | 0.008973 | 2 |
 | preparation/qualification | 0.010924 | 0.000000 | 10 |
-| Total | 8.663015 | 2.968378 | 15 |
+| Total | 10.735822 | 2.968378 | 20 |
 
 | Arm | Completed effective rows | Charged fit wall seconds | Effective rows / second |
 |---|---:|---:|---:|
@@ -59,8 +68,14 @@ Throughput divides final effective rows by the summed wall time of every retaine
 
 Whole supervisor/pool/process trees are charged once, including failed/replayed attempts and helpers. Segment/game/block diagnostics are nested and never added again. Fit wall includes supervisor launch and initialization; GPU-offline wall starts after module imports and includes CUDA initialization and evaluation. Offline CPU includes import startup. Preparation read-only remote sender CPU, initial unmetered test passes, missing-dependency qualification attempts and small command-center metadata/source-copy overhead are disclosed as unmetered. Active fit/pool costs remain accruing until exit meters arrive.
 
+Compute vacated: GPU hosts09/16 at 2026-10-10T05:42:38Z; regret host04 at 2026-10-10T06:23:00Z, all71 recorded process groups independently absent. [GPU vacancy](receipts/gpu-vacated.json) and [04 vacancy](receipts/process-snapshots/127x04/REGRET04-INDEPENDENT-VACATED.json) retain the audits.
+
+No Stage2 CPU host was admitted.
+
 R3a resource receipt: exit0, reason None; peak PSS32.869GB, max processes10, minimum GPU free45.090GiB. All retained attempt statuses/reasons remain in [cost receipts](receipts/cost-summary.json).
 
 R3b resource receipt: exit0, reason None; peak PSS30.090GB, max processes9, minimum GPU free44.982GiB. All retained attempt statuses/reasons remain in [cost receipts](receipts/cost-summary.json).
 
-No production adoption is authorized. Both arms failed the binary gates; final W-regret diagnostics remain pending.
+No production adoption is authorized. Both arms killed at Stage1.
+
+Coordinator-authorized round2 and never-adoptable R3a study are pending under [the new addendum](round2/PLAN.md). The completed metrics and costs above cover original R3a/b only.

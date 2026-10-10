@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-10T06:28:10Z",
+  "host": "127x16",
+  "supervisor_pid": 2026437,
+  "supervisor_pgid": 2026437,
+  "trainer_pid": 2026455,
+  "trainer_pgid": 2026455,
+  "command": [
+    "taskset",
+    "-c",
+    "118,119,126",
+    "bash",
+    "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/ops/run_fit.sh",
+    "R3d"
+  ],
+  "stop_file": "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/FIT.STOP",
+  "checkpoint_stop_deadline": "2026-10-11T05:15:00Z"
+}

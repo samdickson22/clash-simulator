@@ -299,3 +299,48 @@ from whole-process CPU. Two tiny command-center invocation/formatting failures
 retry and are within disclosed unmetered metadata overhead. Continue all64,
 observe pinned reducer while advancing once, independently vacate04, collect/
 render final results, push, notify coordinator and delete continuation.
+
+2026-10-10T06:27:43Z — ORIGINAL R3a/b FINAL:64 command-exact W games/8088unique roots
+sealed06:21:29Z, pool1129930 complete/no failure/PSIpeak0.0. Whole replaytree
+CPU7455.435436s. Pinned reducer once PID/PGID1336531 core19/nice19; observer
+1335890/PGID1335888. Positive Wregret R3a.0088 passes.010, R3b.0132 fails;
+both still binarykills, originalStage2zero/noadoption. Independent04 vacancy
+06:23:00Z all71recordedgroups absent, journal/vacancySHA bound; auditor1337463
+independently absent06:23:18Z, coordinator notified slotreturn. RESULTS/cost
+summary originalfinal=true:10.735822CPUh/2.968378GPU-wallh. Original GPU
+vacancy retained; these hosts are now authorized again for round2 fits.
+
+Coordinator06:13 nudge/323786ab authorizes ROUND2: freshv1/head-off C5000/.003/
+seed2026101013 on09, D2500/.003/newseed2026101014 on16, E5000/.01/seed2026101013
+on13; samegates. Also NEVER-ADOPTABLE R3a descriptive01 after X explicitrelease.
+Plan round2/PLAN.md and new24/241/242 +25/251 banks audited06:22:22Z withzero
+intersections; exactsamehelperoffsets. Six tests pass T=.01 and head-off R2
+loss/gradient/effect. FirsttestCPU unmetered, disclosed. GPU prep09/13 passed;
+16 firststaging failed missinglocalprovenance, CPU9.129108s preserved/log/source
+retained, PID2000236absent; manualreview/fallback09/versionedattempt2 PID2004310
+passed CPU1.432400s and absent. No fit launched before this freeze/push.
+
+Current round2 freezeSHA488d89763e1600c9d26823af70201f8ca55bf91e2a57f680ab232f
+3482318755; all1437source/inputpins independently pass09/16/13 at06:26:48Z.
+Twenty-six unrelated historical E1/Kinventory entries absent from original GPU
+fit snapshot explicitly omitted; actual trainer/runtime dependencies retained.
+OwnnewJ=/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2; read-only B unchanged.
+Next afterpush: deploy prelaunch receipt bindingcommit/freezeSHA, launch own
+setsid-f/nice10/core126 supervisors C09/D16/E13 once, confirm trainlog/health.
+Round2 finalEMA-only offline/evaluation executors still require separate pushed
+implementationpins before outcomes; noautomatic offline with old2500-only
+R3a/b scripts. Later C/D/E regret needs admittedHOME CPU (04grant returned).
+01descriptive waits explicitXfullrelease/drain and separate frozen never-adopt
+runner; preserve originalkills. Continuation remainsenabled for the newly
+extended experiment; do notdelete on originalcompletion.
+
+2026-10-10T06:30:50Z — Publication incident corrected before valid fits: gitdiffcheck
+found renderer trailing spaces; an outer tool sequence wrongly continued and
+wrote unrelated ce89541f as prelaunch, then startedC/D/E06:28:10. OwnedFIT.STOP
+issued06:28:35; all three exited-15 at06:28:50, no trainlog/checkpoint. These
+startups are VOID; retain original failedprelaunch/launch/exit/health receipts
+under round2/receipts/*invalid-prelaunch-attempt1*. CPU/wall remain charged.
+Manual review allows only FRESH releasedv1 starts after corrected plan/source/
+seed-audit are actually pushed and exact gitblobfreeze is verified remotely.
+No automatic retry or resume, no scientific outcome selection. Renderer
+whitespace fixed. Finaloriginalresults/04vacancy remain valid and unaffected.
