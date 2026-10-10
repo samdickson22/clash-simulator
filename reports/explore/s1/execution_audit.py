@@ -13,9 +13,16 @@ def main():
         groups.update((launch['supervisor_pgid'],launch['child_pgid']))
         costs[phase]=exit['whole_tree_cpu_seconds']
         phase_shas[phase]=hashlib.sha256((j/phase/'supervisor-exit.json').read_bytes()).hexdigest()
-        assert launch['freeze_commit']==pin['freeze_commit'] and launch['plan_sha256']==pin['plan_sha256']
+        expected=pin.get('parent_freeze') if phase=='smoke' and pin.get('parent_freeze') else pin
+        assert launch['freeze_commit']==expected['freeze_commit'] and launch['plan_sha256']==expected['plan_sha256']
     assert not [r for r in processes() if r['pgid'] in groups]
     auxiliary={}
+    for f in sorted((j/'attempts').glob('*/supervisor-exit.json')):
+        r=json.loads(f.read_text());launch=json.loads((f.parent/'launch.json').read_text())
+        excluded=json.loads((f.parent/'exclusion-inventory.json').read_text())
+        assert r['returncode']!=0 and excluded['outcomes_opened'] is False
+        assert not [p for p in processes() if p['pgid'] in (launch['supervisor_pgid'],launch['child_pgid'])]
+        auxiliary[str(f.relative_to(j))]=dict(cpu_seconds=r['whole_tree_cpu_seconds'],returncode=r['returncode'],excluded=True,sha256=hashlib.sha256(f.read_bytes()).hexdigest())
     for f in (j/'meters').glob('*.json'):
         r=json.loads(f.read_text())
         assert not [p for p in processes() if p['pgid']==r['pgid']]

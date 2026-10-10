@@ -24,6 +24,9 @@ def main():
     paths+=sorted((ROOT/'reports/explore').glob('**/plan.json'))
     ranges=[('K reporting',4503601407370496,600),('K smoke',4503601417370496,8),('X h2h',4503601507370496,256),('X paired',4503601517370496,600),('X smoke',4503601527370496,32),('G 04 entire reservation',4503601607370496,1000000),('G 01 entire reservation',4503601609370496,1000000),('G 03 entire reservation',4503601611370496,1000000),('X dagger conservative full block',4503601707370496,10000000),('K-v2 reporting',4503601807370496,600),('K-v2 smoke',4503601817370496,8),('R3 reporting reserved by worker',4503601907370496,600),('R3 smoke reserved by worker',4503601917370496,8),('R3 regret replay reserved by worker',4503601927370496,65536),('noise-ceiling entire replay reservation',4503609917370496,2**18)]
     cfg=json.loads((DEST/'plan.json').read_text())
+    if (DEST/'history/r1/plan.json').exists():
+        previous=json.loads((DEST/'history/r1/plan.json').read_text())
+        ranges.append(('S1 invalid original reporting reservation',previous['seed_ranges']['reporting']['base'],600))
     own_intervals={(v['base']+off,v['count']) for v in cfg['seed_ranges'].values() for off in OFFSETS}
     sources=[]; echoes=[]
     def walk(x,label):
@@ -55,7 +58,7 @@ def main():
                     a=base+oldoff;b=a+count
                     assert hi<=a or b<=lo,(name,label,off,oldoff)
             checks.append(dict(range=name,offset=off,start=lo,stop_exclusive=hi))
-    a,b=cfg['seed_ranges'].values();assert a['base']+a['count']+max(OFFSETS)<b['base']
+    a,b=sorted(cfg['seed_ranges'].values(),key=lambda x:x['base']);assert a['base']+a['count']+max(OFFSETS)<b['base']
     audit=dict(utc=subprocess.check_output(['date','-u','+%Y-%m-%dT%H:%M:%SZ'],text=True).strip(),sources=sources,prior_ranges=[dict(name=n,base=b,count=c) for n,b,c in ranges],proposed_ranges=cfg['seed_ranges'],helper_offsets=OFFSETS,checks=checks,intersections=[],own_reservation_echoes=echoes,open_ended_dagger='4503601707370496 <= seed < 4503601807370496 reserved; helpers included; future allocation beyond that requires a new audit')
     unique={}
     for entry in audit['prior_ranges']:unique.setdefault((entry['base'],entry['count']),set()).add(entry['name'])

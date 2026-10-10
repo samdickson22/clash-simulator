@@ -82,3 +82,14 @@ Scientificfreeze stays5ae7d16e. Do not reduce outcomes before all600complete
 blocks and clean source/exit audit. Reporting progress is ownprogress.json;
 STOP preserves all work, no autoretry/partialreuse. Next monitor metadata only,
 then frozenreduction/GC/execution/finalvacancy, RESULTS/Macnote and push.
+
+2026-10-10T09:14:31Z — Reporting attempt1 INVALID/EXCLUDED after09:07:53Z
+foreign-compute guard: t11 checkpoint/hash-scan Python PID/PGID3395457, full
+host affinity; no other-owner signals. Own3392665/3392678 drained; one terminal
+file, zero complete blocks, no outcome opened/reduced. Full attempt/inventory,
+stop/exit/vacancy receipts retained;18.317127CPU s included in future cost audit.
+Fresh09:13:42Z vacancy passed, whoempty/121.6GiB/no usercompute. Coordinator
+notified to stop checkpoint scans during exclusive S1 timing. No automatic
+retry. Prepare versioned seed-only amendment and new disjoint600seed bank;
+qualified scientificsource/arms/threshold/statistics unchanged, originalfreeze
+immutable. Commit/scan/push amendment before any new reporting game.

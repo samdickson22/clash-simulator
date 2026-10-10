@@ -56,7 +56,7 @@ paired schedule, honestlateness, scheduler/cores, no GC inside decisions,
 forward==fallback counts and checkpoint/native/source pin checks.
 Timing tails are disclosed without outcome-driven changes.
 
-Reporting amendment-R2 base4503602707370496+[0,600); excluded smoke4503602617370496+[0,8).
+Reporting base4503602607370496+[0,600); excluded smoke4503602617370496+[0,8).
 Audit all frozen ranges and helperoffsets0/13/100000..100003/271828..271829.
 Freeze source, plan, seed audit, qualification, immutable base snapshot/native,
 policy/checkpoint/calibration before any reporting game. Commit only owned
@@ -78,16 +78,3 @@ optionalstopping, early outcomereduction or multiplicity adjustment.
 Update S1-owned Mac-tier note with the result and limits. Fleet one-root
 strength does not establish loadedMac fullpipeline/four-belief-root timing;
 GC maintenance lacks timestamp/opportunity tracing inherited from K2.
-
-Restart amendment R2: the09:07:02Z reporting attempt was stopped09:07:53Z
-for a foreign t11 checkpoint/hash scan on01. One terminal file, zero complete
-blocks; no outcome was opened/reduced. The entire attempt is invalid/excluded,
-including its unused reserved seeds. Preserve its raw directory, hashes,
-launch/stop/vacancy and18.317127CPU-second cost. Fresh reporting bank above is
-required; never reuse an interrupted game/block. Original FROZEN.json and
-history/r1 plan/audit remain immutable. FROZEN-R2.json must be committed,
-secret-scanned and pushed before any restarted game. Qualified scientific
-source, models, inference, timer, arms, ordering, reduction and viability rule
-are unchanged; inherit the full completed excluded smoke. Operational pin
-selection and final cost audit admit the versioned manifest and retain original
-smoke provenance. Re-admit01 after coordinator ends checkpoint scans.

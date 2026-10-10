@@ -1,0 +1,42 @@
+{
+  "utc": "2026-10-10T09:14:31Z",
+  "reason": "exclusive-host violation; entire interrupted attempt excluded",
+  "terminal_files": 1,
+  "complete_blocks": 0,
+  "outcomes_opened": false,
+  "active_owned_pgids": [],
+  "files": {
+    "worker.log": {
+      "bytes": 125,
+      "sha256": "870086eebf7b2073ffd343bfd4fc2cc7897ae20e7c8402bec7b10cf9b690a243"
+    },
+    "stop-reason.json": {
+      "bytes": 3550,
+      "sha256": "4988bd16c5a5c02d6e7646d31f04d68e96f7df91d4171abb98fd8202b1510755"
+    },
+    "launch.json": {
+      "bytes": 38056,
+      "sha256": "718213166eac7e16c5f3e08ab8e16af44f8372c929aaa6051f31f940544f3a3e"
+    },
+    "post-stop-vacancy.json": {
+      "bytes": 593351,
+      "sha256": "bb8f2823a591bd8a7e32a53588806256e36bbcbaac864d03c33fa9511e63ec62"
+    },
+    "schedule.json": {
+      "bytes": 689121,
+      "sha256": "b57c21fdd817a2fafde98ba66aad87d838d980dcc908965a0051b3f1e6dbeac7"
+    },
+    "census.jsonl": {
+      "bytes": 1099,
+      "sha256": "89b8e7568d057b102fa9c49f12d19fa9e665e0c4ede7e63497ae876ae4069d62"
+    },
+    "supervisor-exit.json": {
+      "bytes": 358,
+      "sha256": "73f0736386c75e516921338b61ddfc308be1cdea244a7cc16225ffbfacf74a20"
+    },
+    "games/sim-0011-d27-S-200.json": {
+      "bytes": 55127,
+      "sha256": "41aba6291455ea087f09b586782cce16604b315044781bd0e9171f0c44e7736e"
+    }
+  }
+}

@@ -9,7 +9,7 @@ def main():
     for name,h in inherited['files'].items():
         assert sha(repo/name)==h,('inherited source mismatch',name)
     for name,h in inherited['native_source'].items():assert sha(j/'native-source'/name)==h,name
-    dest=repo/'reports/explore/s1';cfg=json.loads((dest/'plan.json').read_text());f=json.loads((dest/'FROZEN.json').read_text())
+    dest=repo/'reports/explore/s1';cfg=json.loads((dest/'plan.json').read_text());manifest=dest/cfg.get('freeze_manifest','FROZEN.json');f=json.loads(manifest.read_text())
     for name,h in f['files'].items():assert sha(repo/name)==h,name
     assert sha(j/'native/clasher_core.abi3.so')==cfg['source_reference']['native_sha256']==inherited['native_sha256']
     for tag in ('policy','student'):assert sha(Path(cfg[tag]['checkpoint']))==cfg[tag]['checkpoint_sha256']
@@ -20,7 +20,8 @@ def main():
     files.update({str(p.relative_to(repo)):sha(p) for p in sorted(dest.glob('*.py'))})
     files.update({str(p.relative_to(repo)):sha(p) for p in sorted(dest.glob('*.sh'))})
     files.update({str(p.relative_to(repo)):sha(p) for p in (dest/'plan.json',dest/'FROZEN.json')})
+    files[str(manifest.relative_to(repo))]=sha(manifest)
     for p in (repo/'student-source').rglob('*.py'):files[str(p.relative_to(repo))]=sha(p)
-    result=dict(utc=subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip(),freeze_commit=json.loads((j/'freeze.json').read_text())['commit'],files=files,native_sha256=sha(j/'native/clasher_core.abi3.so'),native_source=inherited['native_source'],plan_sha256=sha(dest/'plan.json'),FROZEN_sha256=sha(dest/'FROZEN.json'),checkpoint_sha256=cfg['student']['checkpoint_sha256'],policy_sha256=cfg['policy']['checkpoint_sha256'],calibration_sha256=cfg['student']['calibration_sha256'])
+    result=dict(utc=subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip(),freeze_commit=json.loads((j/'freeze.json').read_text())['commit'],files=files,native_sha256=sha(j/'native/clasher_core.abi3.so'),native_source=inherited['native_source'],plan_sha256=sha(dest/'plan.json'),FROZEN_sha256=sha(manifest),parent_freeze=cfg.get('parent_freeze'),checkpoint_sha256=cfg['student']['checkpoint_sha256'],policy_sha256=cfg['policy']['checkpoint_sha256'],calibration_sha256=cfg['student']['calibration_sha256'])
     (j/'runtime-pin.json').write_text(json.dumps(result,indent=2)+'\n')
 if __name__=='__main__':main()

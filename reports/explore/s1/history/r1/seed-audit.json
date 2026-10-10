@@ -1,5 +1,5 @@
 {
-  "utc": "2026-10-10T09:16:08Z",
+  "utc": "2026-10-10T08:58:01Z",
   "sources": [
     {
       "path": "imitation/gate-a-v2/denominator-diagnostics-freeze.json",
@@ -15340,13 +15340,6 @@
       ]
     },
     {
-      "base": 4503602607370496,
-      "count": 600,
-      "source_names": [
-        "S1 invalid original reporting reservation"
-      ]
-    },
-    {
       "base": 4503609917370496,
       "count": 262144,
       "source_names": [
@@ -15371,7 +15364,7 @@
   ],
   "proposed_ranges": {
     "reporting": {
-      "base": 4503602707370496,
+      "base": 4503602607370496,
       "count": 600
     },
     "smoke": {
@@ -15393,50 +15386,50 @@
     {
       "range": "reporting",
       "offset": 0,
-      "start": 4503602707370496,
-      "stop_exclusive": 4503602707371096
+      "start": 4503602607370496,
+      "stop_exclusive": 4503602607371096
     },
     {
       "range": "reporting",
       "offset": 13,
-      "start": 4503602707370509,
-      "stop_exclusive": 4503602707371109
+      "start": 4503602607370509,
+      "stop_exclusive": 4503602607371109
     },
     {
       "range": "reporting",
       "offset": 100000,
-      "start": 4503602707470496,
-      "stop_exclusive": 4503602707471096
+      "start": 4503602607470496,
+      "stop_exclusive": 4503602607471096
     },
     {
       "range": "reporting",
       "offset": 100001,
-      "start": 4503602707470497,
-      "stop_exclusive": 4503602707471097
+      "start": 4503602607470497,
+      "stop_exclusive": 4503602607471097
     },
     {
       "range": "reporting",
       "offset": 100002,
-      "start": 4503602707470498,
-      "stop_exclusive": 4503602707471098
+      "start": 4503602607470498,
+      "stop_exclusive": 4503602607471098
     },
     {
       "range": "reporting",
       "offset": 100003,
-      "start": 4503602707470499,
-      "stop_exclusive": 4503602707471099
+      "start": 4503602607470499,
+      "stop_exclusive": 4503602607471099
     },
     {
       "range": "reporting",
       "offset": 271828,
-      "start": 4503602707642324,
-      "stop_exclusive": 4503602707642924
+      "start": 4503602607642324,
+      "stop_exclusive": 4503602607642924
     },
     {
       "range": "reporting",
       "offset": 271829,
-      "start": 4503602707642325,
-      "stop_exclusive": 4503602707642925
+      "start": 4503602607642325,
+      "stop_exclusive": 4503602607642925
     },
     {
       "range": "smoke",
