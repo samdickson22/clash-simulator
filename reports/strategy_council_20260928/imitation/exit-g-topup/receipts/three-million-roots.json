@@ -1,0 +1,31 @@
+{
+  "schema": "clasher.exit-g.milestone.v1",
+  "utc": "2026-10-10T10:07:45Z",
+  "milestone_root_decisions": 3000000,
+  "snapshot_utc": "2026-10-10T10:07:39Z",
+  "root_decisions": 3060346,
+  "packed_root_decisions": 2770183,
+  "remaining_unpacked_roots": 290163,
+  "packed_candidate_scores": 51780467,
+  "candidate_scores_scope": "Only verified packed shards; candidate scores are not root decisions.",
+  "combined_manifest_sha256": "be5064f6d16d93c8139971b19ce2ceac480310e862aa203d641d5687ba3a4308",
+  "parent_r1_manifest_sha256": "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+  "active_pgids": {
+    "03": 2711936,
+    "08": 16288
+  },
+  "vacated_hosts": {
+    "04": {
+      "pgid": 1712867,
+      "root_decisions": 772403,
+      "pending_roots": 0,
+      "receipt": "utilization04-vacate.json"
+    }
+  },
+  "new_alerts": [],
+  "complete": false,
+  "target_root_decisions": 6000000,
+  "operational_changes": "None. No stop clear, restart, repeated steady audit or new timer. No remote CPU calls01/04.",
+  "host08_pre_drain": "2026-10-10T14:40:00Z",
+  "host08_hard_stop": "2026-10-10T15:00:00Z"
+}
