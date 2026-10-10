@@ -1,0 +1,250 @@
+{
+  "utc": "2026-10-10T11:46:11Z",
+  "host": "127x01",
+  "command": "nice -n10 taskset -c39 lscpu -p=CPU,CORE,SOCKET,ONLINE",
+  "allowed_cpus": [
+    {
+      "cpu": 0,
+      "core": 0,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 1,
+      "core": 1,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 2,
+      "core": 2,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 3,
+      "core": 3,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 4,
+      "core": 4,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 5,
+      "core": 5,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 6,
+      "core": 6,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 7,
+      "core": 7,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 8,
+      "core": 8,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 9,
+      "core": 9,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 10,
+      "core": 10,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 11,
+      "core": 11,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 12,
+      "core": 12,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 13,
+      "core": 13,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 14,
+      "core": 14,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 15,
+      "core": 15,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 16,
+      "core": 16,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 17,
+      "core": 17,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 18,
+      "core": 18,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 19,
+      "core": 19,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 20,
+      "core": 20,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 21,
+      "core": 21,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 22,
+      "core": 22,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 23,
+      "core": 23,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 24,
+      "core": 24,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 25,
+      "core": 25,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 26,
+      "core": 26,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 27,
+      "core": 27,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 28,
+      "core": 28,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 29,
+      "core": 29,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 30,
+      "core": 30,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 31,
+      "core": 31,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 32,
+      "core": 32,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 33,
+      "core": 33,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 34,
+      "core": 34,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 35,
+      "core": 35,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 36,
+      "core": 36,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 37,
+      "core": 37,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 38,
+      "core": 38,
+      "socket": 0,
+      "online": "Y"
+    },
+    {
+      "cpu": 39,
+      "core": 39,
+      "socket": 0,
+      "online": "Y"
+    }
+  ],
+  "unique_physical_cores": 40,
+  "smt_siblings_in_allowed_mask": false,
+  "raw_sha256": "4d24d3bfcfa8da550008fa74099f90a8422568734821321a5f4c93e3ffd80225"
+}

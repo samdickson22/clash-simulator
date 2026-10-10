@@ -151,3 +151,14 @@ seed audit remains immutable; additive post-launch coverage receipt records
 source hashes and zero overlaps. No outcomes opened, no source/seed/arm/stats
 changes. Earlier review printed excessive old hashed-stream seed metadata;
 compact receipt retains only counts/extrema/source SHAs, not that output.
+
+2026-10-10T11:45:28Z — R2 healthy: 2200/3,000 games and
+434/600 complete paired blocks. Fresh host audit passed:
+who empty, no foreign compute/active process, 15 owned Python processes,
+~118 GiB available. lscpu confirms CPU IDs 0–39 are 40 distinct online
+physical cores with no selected SMT siblings; topology receipt saved.
+Read-only verify_statistics.py authored before opening reporting outcomes:
+independently recomputes loss counts and paired CIs using integer bootstrap
+counts and the same frozen seed/resamples/percentiles; retains frozen results,
+flags any exact inclusive-threshold disagreement for investigation. Execute
+only after all blocks pass. No timing source/arm/seed/reducer changes.

@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-10T11:45:28Z",
+  "host": "127x01",
+  "who": "",
+  "foreign_compute": [],
+  "foreign_active": [],
+  "own_compute_count": 15,
+  "memavailable_GiB": 118.07462692260742,
+  "raw_source": "/mpac/sdicks02/jobs/clasher/s1-20261010-r1/reporting/host-audit-1145.json",
+  "raw_sha256": "c2a49e1198916c956e33f20f1c8f7d6581e8e795408b7f2b0c21372b62fde640",
+  "release_evidence_sha256": "6569581ba301576d0b9c574173ce1edddfb40d73991a7b240267bc2d9c6ab2d7"
+}
