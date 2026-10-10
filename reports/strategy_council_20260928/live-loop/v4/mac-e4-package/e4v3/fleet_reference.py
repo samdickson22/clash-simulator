@@ -46,6 +46,8 @@ def run(args, store):
     manifest = validate_bundle(args.bundle,args.runtime_root,dry_run=True,require_references=False)
     if manifest["profile"] != "fleet-reference":
         raise ValueError("Fleet reference mode requires reviewed fleet-reference inputs")
+    if any(name not in manifest["files"] for name in ("golden.json","belief-reference.json")):
+        raise ValueError("Fleet native/belief exactness references must be SHA-pinned")
     profile = manifest["reference_load_profile"]
     if not profile.get("reporting_load_profile") or profile.get("background_cpus") != args.background_cpus or profile.get("replay_cpu") != args.load_cpu:
         raise ValueError("Load profile must bind the reviewed reporting-equivalent background CPU groups")
