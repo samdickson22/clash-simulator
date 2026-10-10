@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/prepare_bundle.py", line 234, in <module>
+    main()
+  File "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/prepare_bundle.py", line 230, in main
+    prepare(parser.parse_args())
+  File "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/prepare_bundle.py", line 119, in prepare
+    backend = TierBackend(out, root, args.native)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tier_backend.py", line 116, in __init__
+    self.inputs[str(row["id"])] = self.policy_input(row)
+                                  ^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tier_backend.py", line 130, in policy_input
+    player = StandalonePlayer(self.v1, self.resources.builder, self.resources.costs,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/imitation/evaluation/standalone.py", line 13, in __init__
+    self.d1 = D1Tracker(builder, costs, seat, own_order)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/imitation/evaluation/d1.py", line 17, in __init__
+    self.own = OwnCycle(own_order)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/reports/strategy_council_20260928/imitation/own_cycle.py", line 8, in __init__
+    raise ValueError('eight distinct own cards required')
+ValueError: eight distinct own cards required

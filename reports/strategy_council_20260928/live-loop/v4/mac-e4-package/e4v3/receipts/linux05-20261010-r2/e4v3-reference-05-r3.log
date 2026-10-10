@@ -1,0 +1,89 @@
+Linux belief reference: 25/125
+Linux belief reference: 50/125
+Linux belief reference: 75/125
+Linux belief reference: 100/125
+Linux belief reference: 125/125
+/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/ultralytics/nn/tasks.py:714: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  ckpt = torch.load(file, map_location="cpu")
+WARNING ⚠️ /mpac/sdicks02/jobs/clasher/e4v3-bundle-05-r3/load/body.pt appears to require 'dill', which is not in ultralytics requirements.
+AutoInstall will run now for 'dill' but this feature will be removed in the future.
+Recommend fixes are to train a new model using the latest 'ultralytics' package or to run a command with an official YOLOv8 model, i.e. 'yolo predict model=yolov8n.pt'
+/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/ultralytics/nn/tasks.py:734: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  ckpt = torch.load(file, map_location="cpu")
+Process SpawnProcess-1:
+Traceback (most recent call last):
+  File "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/ultralytics/nn/tasks.py", line 714, in torch_safe_load
+    ckpt = torch.load(file, map_location="cpu")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/torch/serialization.py", line 1549, in load
+    return _load(
+           ^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/torch/serialization.py", line 2143, in _load
+    result = unpickler.load()
+             ^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/torch/serialization.py", line 2132, in find_class
+    return super().find_class(mod_name, name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'dill'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/replay_load.py", line 43, in load_worker
+    sensor = V3Fallback(config)
+             ^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/src/clasher/live/perception.py", line 121, in __init__
+    self.body = Perception(config['body'], config['hud'], Path(config['geometry']),
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/src/clasher/vision/l1_perception.py", line 161, in __init__
+    self.model = YOLO(str(model_path))
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/ultralytics/models/yolo/model.py", line 23, in __init__
+    super().__init__(model=model, task=task, verbose=verbose)
+  File "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/ultralytics/engine/model.py", line 142, in __init__
+    self._load(model, task=task)
+  File "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/ultralytics/engine/model.py", line 229, in _load
+    self.model, self.ckpt = attempt_load_one_weight(weights)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/ultralytics/nn/tasks.py", line 788, in attempt_load_one_weight
+    ckpt, weight = torch_safe_load(weight)  # load ckpt
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/ultralytics/nn/tasks.py", line 734, in torch_safe_load
+    ckpt = torch.load(file, map_location="cpu")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/torch/serialization.py", line 1549, in load
+    return _load(
+           ^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/torch/serialization.py", line 2143, in _load
+    result = unpickler.load()
+             ^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/torch/serialization.py", line 2132, in find_class
+    return super().find_class(mod_name, name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'dill'
+Traceback (most recent call last):
+  File "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/replay_load.py", line 132, in __enter__
+    self.check()
+  File "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/replay_load.py", line 144, in check
+    raise RuntimeError("Reference/background corpus load died")
+RuntimeError: Reference/background corpus load died
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/prepare_bundle.py", line 246, in <module>
+    main()
+  File "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/prepare_bundle.py", line 234, in main
+    prepare(args)
+  File "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/prepare_bundle.py", line 152, in prepare
+    with LinuxBackground(out, root, args.native, out / "reference-perception.jsonl",
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/replay_load.py", line 139, in __enter__
+    self.close()
+  File "/mpac/sdicks02/repos/clasher/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/replay_load.py", line 155, in close
+    raise RuntimeError("Background corpus exited with error")
+RuntimeError: Background corpus exited with error

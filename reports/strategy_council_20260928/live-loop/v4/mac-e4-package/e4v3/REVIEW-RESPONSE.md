@@ -16,7 +16,10 @@ This response requests independent review and does not freeze or qualify inputs.
 Every fleet host must pass native golden125 and belief/posterior/ledger/sample/RNG
 125×ON/OFF before timing. Pooling rechecks those receipts, code/policy/native/spec
 pins, corpus identity and complete raw cohorts; mismatches from an excluded host
-also drop ALL tiers. The fleet census stops before parsing/sealing, and parent-slot
+also drop ALL tiers. Pooling records C6 local gate/near-tie exceptions with
+>=99.5% joint agreement; logits alone need not be bit-identical. A sealed CLI
+integration check proves conditional policy exceptions cannot hide common native
+score drift. The fleet census stops before parsing/sealing, and parent-slot
 GC events carry actual packet-entry deadlines. Capture-health counts and selected-state SHA inventory are
 required pinned inputs, retained in host/Mac receipts.
 
@@ -27,3 +30,12 @@ comparison gate. Linux smoke uses the historical golden batch and reduced counts
 it establishes implementation behavior, not fleet reporting or Mac feasibility.
 The first receipt covers `deef4076`; the revised receipt identifies its own source
 pins. No Mac or reporting host was accessed by this worker; 03 is vacated.
+
+Revised Linux05 receipt: `receipts/linux05-20261010-r2/`; handoff SHA
+`4e3db13a47a3d6a918662f75dc75af4d5c6cb6746f580592879d2f5ebecf372d`.
+The full pipeline adapter from `aefc607a` was separately recalibrated under the
+same 3-core light load and ran all measurement phases. EXACT native125 and
+belief125×ON/OFF, CPU agreement32/32, ~20 FPS TRAIN perception and all four
+smoke deadline/GC gates passed. Source hashes and conservative distributions
+remain explicit; later fleet-only changes are unit/integration tested, not
+executed on reporting hosts. 44 tests pass. Nothing is frozen by this receipt.

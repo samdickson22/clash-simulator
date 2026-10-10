@@ -1,0 +1,13 @@
+{"argv": ["/mpac/sdicks02/jobs/clasher/e4v3-venv/bin/python", "-B", "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/measure_tiers.py", "--linux-dry-run", "--bundle", "/mpac/sdicks02/jobs/clasher/e4v3-bundle-05-r6", "--runtime-root", "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1", "--native", "/mpac/sdicks02/jobs/clasher/e4v3-20261010-r1/native-r6/clasher_core.abi3.so", "--search-cpus", "50", "--load-cpu", "51", "--background-cpus", "52", "--manifest-sha256", "becf432476c605cb1d8961afd452af3f575be1156aa889d1097d8057b8e2cc9f", "--output", "/mpac/sdicks02/jobs/clasher/e4v3-dry05-r2"], "manifest_sha256": "becf432476c605cb1d8961afd452af3f575be1156aa889d1097d8057b8e2cc9f"}
+D1 exactness: 25/125
+D1 exactness: 50/125
+D1 exactness: 75/125
+D1 exactness: 100/125
+D1 exactness: 125/125
+D1 belief/RNG exactness: 25/125
+D1 belief/RNG exactness: 50/125
+D1 belief/RNG exactness: 75/125
+D1 belief/RNG exactness: 100/125
+D1 belief/RNG exactness: 125/125
+/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/ultralytics/nn/tasks.py:714: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  ckpt = torch.load(file, map_location="cpu")

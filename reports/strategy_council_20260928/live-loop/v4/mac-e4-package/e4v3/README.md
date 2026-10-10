@@ -168,3 +168,30 @@ exceptions use Linux log probabilities. A fallback sample discrepancy is
 fail-closed unless the reference supplies an independently certified near-tie
 `sample_margin`; the frozen text does not specify how to certify that margin, so
 this remains an explicit review point.
+
+## Draft Linux evidence
+
+[Revised Linux05 handoff](receipts/linux05-20261010-r2/handoff.json) and its
+[SHA inventory](receipts/linux05-20261010-r2/handoff-manifest.json) seal the full
+measurement and separately measured loaded three-repeat calibration. The
+pipeline source is `aefc607a`; subsequent fleet-only admission, GC/census and
+pooling changes leave `tier_backend.py` and the Mac/Linux measurement pipeline
+unchanged. The receipt retains precise source hashes. No fleet-reference host
+or Mac was run by this worker; 03 remains vacated.
+
+At nice19 on physical CPUs50/51/52, native golden125×four configurations and
+belief/posterior/ledger/sample/RNG125×ON/OFF passed EXACT; R3a CPU agreement was
+32/32. TRAIN perception measured 19.91–20.50 FPS across loaded tier windows.
+All four tiers passed the **Linux smoke** deadline/GC gates at the conservative
+0.8 cell. Median ratios were K0c0.9826/S0.9829/K2 0.9800/K4 0.9836;
+conservative ratios were 0.9506/0.8577/0.9400/0.9272. Full distributions, p10/p25,
+raw deadline/census/GC rows and retained default/frozen GC runs are archived.
+MPS is unavailable on Linux; this is reduced-count historical-fixture smoke,
+not reporting-corpus or Mac feasibility evidence. The earlier
+[receipt](receipts/linux05-20261010-r1/handoff.json) identifies its older source.
+
+`python3 -B -m unittest discover -s reports/strategy_council_20260928/live-loop/v4/mac-e4-package/e4v3/tests -q`
+passes 44 tests, including sealed CLI pooling, ±5% host exclusion, strict row
+admission and global native-score failure even with an allowed policy exception.
+[Review response](REVIEW-RESPONSE.md) maps the T1 findings and remaining scientific
+amendments. Independent review and separate Mac authorization remain outstanding.

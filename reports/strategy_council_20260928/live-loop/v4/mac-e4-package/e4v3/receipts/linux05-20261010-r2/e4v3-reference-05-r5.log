@@ -1,0 +1,14 @@
+Linux belief reference: 25/125
+Linux belief reference: 50/125
+Linux belief reference: 75/125
+Linux belief reference: 100/125
+Linux belief reference: 125/125
+/mpac/sdicks02/jobs/clasher/e4v3-venv/lib/python3.12/site-packages/ultralytics/nn/tasks.py:714: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  ckpt = torch.load(file, map_location="cpu")
+Loaded fleet reference repeat 1/3
+Loaded fleet reference repeat 2/3
+Loaded fleet reference repeat 3/3
+Loaded fleet deadline repeat 1/3
+Loaded fleet deadline repeat 2/3
+Loaded fleet deadline repeat 3/3
+{"files":21,"final":false,"manifest_sha256":"84626785fe87885764a973882f2922dc6fe5475929aa97b15a8e0857a025b2cc","output":"/mpac/sdicks02/jobs/clasher/e4v3-bundle-05-r5"}
