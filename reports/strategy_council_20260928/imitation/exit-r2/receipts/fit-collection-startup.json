@@ -1,0 +1,46 @@
+{
+  "utc": "2026-10-10T02:49:28Z",
+  "passed": true,
+  "pid": 1808181,
+  "pgid": 1808181,
+  "nice": 19,
+  "scheduler": "SCHED_IDLE",
+  "affinity": [
+    63
+  ],
+  "controller": {
+    "utc": "2026-10-10T02:48:59Z",
+    "stage": "waiting for fits / stage1 / conditional stage2",
+    "offline": {},
+    "stage2": {},
+    "active": null,
+    "failures": [],
+    "x3_priority_requested": false,
+    "wall_seconds": 2.613738917047158
+  },
+  "source_pins": {
+    "fit_collection_ready.py": "84b4a8d8925aa53a953ed706c0ede98090194e051113641f0dd1b5b83dd8874e",
+    "controller_ready_yield.py": "67f0012498f684aea5c3c2d806acd2028ac793926cf275e8799aec90b6885550",
+    "test_fit_collection_ready.py": "f38dc3daddaea5318eaea20f7ae788049a40bc1516d8c8e604c225206af39058",
+    "qualify_fit_collection_ready.py": "869880b2c6b449f31a940ee1718b208e732117ce9db59f8ada93767035c1c1ac"
+  },
+  "prelaunch_commit": "77cbea40b36b59192a5ae4e51d906f0c2c0486f9",
+  "old_controller_absent": true,
+  "old_controller_pid": 1746462,
+  "old_meter": {
+    "parent_cpu_seconds": 1.525436,
+    "child_cpu_seconds": 6.863242,
+    "wall_seconds": 1090.6171196561772,
+    "failures": []
+  },
+  "deduplicated_own_controllers": [
+    "1808181 1808181 /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/venv/bin/python -B /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/ops/controller_ready_yield.py --job /mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1"
+  ],
+  "k_live_pgids": [
+    1718091
+  ],
+  "k_done_markers": [],
+  "base_freeze_sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+  "sdefault_sha256": "7f62b4e4ac4dccbef4f555f1ca8b10b4a77d0412d02607f26c6a873c1272d1a7",
+  "log": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/controller-ready-yield.log"
+}

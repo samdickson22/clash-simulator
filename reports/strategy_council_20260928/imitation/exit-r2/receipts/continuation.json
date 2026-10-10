@@ -8,12 +8,13 @@
   },
   "nextRunAt": "2026-10-10T02:41:29.927Z",
   "stop_rule": "Disable after completed experiment or final deadline cleanup 2026-10-11T05:30Z",
-  "last_prompt_revision_utc": "2026-10-10T02:33:18Z",
-  "current_controller_pid": 1746462,
+  "last_prompt_revision_utc": "2026-10-10T02:50:01Z",
+  "current_controller_pid": 1808181,
   "stage3_protocol": "S-default-K1; new owned entrypoints, all same-seed arms interleaved; K-v2 successful reporting completion and no timing processes before games",
   "prelaunch_commit": "0c8c91148b194827feb76c6e1a6cb4028b0e3cf4",
-  "current_controller_pgid": 1746462,
-  "current_controller_module": "controller_k_yield.py",
-  "latest_operational_amendment_commit": "e782cc77aea594c152ac7c8abcd6d4f4c86ec1e5",
-  "stage1_2_admission": "03 blocked until K-v2 reporting release and zero timing PGIDs, then G full drain;01 only after X4 completes"
+  "current_controller_pgid": 1808181,
+  "current_controller_module": "controller_ready_yield.py",
+  "latest_operational_amendment_commit": "77cbea40b36b59192a5ae4e51d906f0c2c0486f9",
+  "stage1_2_admission": "Clean final fit artifacts/metadata/exit and absent owned groups before collection;03 blocked until K-v2 reporting release and zero timing PGIDs, then G full drain;01 only after X4 completes",
+  "fit_collection_prelaunch_commit": "77cbea40b36b59192a5ae4e51d906f0c2c0486f9"
 }

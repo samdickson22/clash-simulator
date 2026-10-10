@@ -13,12 +13,12 @@ The committed plan/seed audit must precede fitting; use final EMA only.
 
 | Arm | Target / fraction | Fit | Stage1 | Stage2 | Stage3 | Decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| X1 | T=.003 /1.0 | running09, step3590/4883 | pending | conditional | conditional S-default | pending |
-| X2 | T=.0001 /1.0 | running16, step3543/4883 | pending | conditional | conditional S-default | pending |
-| X3 | z-score τ=.5 /1.0 | running08, step3323/4883 | pending | conditional | conditional S-default | pending |
-| X4 | T=.003 /.75 | running01, step2396/4883, micro3584 | pending | conditional | conditional S-default | pending |
-| X5 | X1 double steps /1.0 | running04, step3214/9766 | pending | conditional | conditional S-default | pending |
-| X6 | T=.0001 /.75 | running13, step2637/4883, micro3584 | pending | conditional | conditional S-default | pending |
+| X1 | T=.003 /1.0 | running09, step3814/4883 | pending | conditional | conditional S-default | pending |
+| X2 | T=.0001 /1.0 | running16, step3769/4883 | pending | conditional | conditional S-default | pending |
+| X3 | z-score τ=.5 /1.0 | running08, step3541/4883 | pending | conditional | conditional S-default | pending |
+| X4 | T=.003 /.75 | running01, step2579/4883, micro3584 | pending | conditional | conditional S-default | pending |
+| X5 | X1 double steps /1.0 | running04, step3426/9766 | pending | conditional | conditional S-default | pending |
+| X6 | T=.0001 /.75 | running13, step2875/4883, micro3584 | pending | conditional | conditional S-default | pending |
 
 Common width192, v1 main-2026100802 step22552 EMA, corpus1c8e1f49,
 seed2026101001, batch8192, play weight1, final EMA. X1–4:4883steps;
@@ -62,25 +62,26 @@ X6 outcome claimed. Original controller replacement meter is
 9.379653CPU seconds (parent+children once); superseded six-arm controller
 1502885 adds11.933346CPU seconds (parent1.784861+metadata children10.148485),
 with no evaluation active on exit. Superseded G-admission controller1596239 adds18.384221CPU seconds once;
-current K-admission controller/gate meter pending.
-Current-attempt snapshot at2026-10-10 02:42:33Z: 10.464743377
-allocated GPU-wall hours and34.907205556 provisional
+superseded K-admission controller1746462 adds8.388678CPU seconds once;
+current readiness/K-admission controller1808181/gate meter pending.
+Current-attempt snapshot at2026-10-10 02:49:28Z: 11.156720785
+allocated GPU-wall hours and37.250933333 provisional
 whole-tree CPU-hours across six fits. Original five are attempt2; X6 is
 attempt1. These replace prior live totals; final exit meters supersede them.
 Closed failed/preparation/controller/qualification work stays separate.
 
 | Arm | Live fit GPU-wall h | Provisional live fit CPU h |
 | --- | --- | --- |
-| X1 | 1.826612 | 4.767153 |
-| X2 | 1.828054 | 4.938075 |
-| X3 | 1.828058 | 5.409483 |
-| X4 | 1.827176 | 9.486225 |
-| X5 | 1.825426 | 5.177653 |
-| X6 | 1.329419 | 5.128617 |
+| X1 | 1.942968 | 5.069003 |
+| X2 | 1.942324 | 5.251586 |
+| X3 | 1.943654 | 5.770422 |
+| X4 | 1.942316 | 10.101686 |
+| X5 | 1.943081 | 5.482394 |
+| X6 | 1.442378 | 5.575842 |
 
 Own supervisor/trainer/loaders are counted once; segment diagnostics are not
 added again. Full identity receipt: `receipts/monitor-20261010T0238Z.json`;
-latest snapshot: `receipts/continuation-check-20261010T0242Z.json`. All six have eight
+latest snapshot: `receipts/monitor-20261010T0249Z.json`. All six have eight
 owned processes, nice10, no stop reason. Leased09/16/13 remain below46GB PSS
 and above8GiB GPU free. 08 quiet entries are empty after stripping comments.
 Capacity released13 at01:03Z; independent GPU-idle check01:12:24Z confirms
@@ -200,3 +201,11 @@ before loader cleanup/segment file, so collection now additionally waits final
 artifacts, coherent metadata and clean owned fit exit. No training changes,
 game outcomes or source/recipe/seed/gate changes. Costs are separate preparation.
 Replacement controller must be frozen/committed/pushed before launch.
+
+02:49:28Z collection startup PASS:77cbea40 amendment secret-scanned/pushed
+before02:48:55Z launch, controller_ready_yield.py PID=PGID1808181 nice19/
+SCHED_IDLE/core63. Old1746462 absent/clean, no active gates; its parent1.525436+
+children6.863242=8.388678CPU seconds retained once. New source pins and
+originalfreeze/S-default SHAs match. K1718091 active/noDONE, no evaluation
+or replacement smoke/reporting admitted. Original six fits remain healthy;
+operational handoff does not change training, scientific metrics or decisions.

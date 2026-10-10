@@ -598,3 +598,25 @@ fits originalgroups healthy02:44:24Z,08 quietempty,leasedguardsPASS. New
 operationalamendment/sourcequalification must commit/push before ownSTOP,
 old clean exit/meter once and replacementsetsid-f. No controller replacement
 yet in this record; no stageoutcome/survivor/R2 admission/reportingseeds.
+
+2026-10-10T02:50:01Z. Prelaunch collection amendment77cbea40 secret-scanned/
+committed/pushed before own controller stop02:48:24Z. Old1746462 cleanly
+exited with active=null/no failures; absent02:48:41Z, wholeCPU8.388678s
+(parent1.525436+children6.863242) retained controller-k-yield-meter.json.
+Only X CONTROLLER.STOP cleared after deduplication and complete old exit;
+G stops unchanged. New controller_ready_yield.py setsid-f02:48:55Z,
+PID=PGID1808181,log$job/controller-ready-yield.log,ownstopCONTROLLER.STOP.
+StartupPASS02:49:28Z all newsourcepins,nice19/IDL/core63,old1746462 and
+qualifier1799994 absent,oneowncontroller,active=null/offline={}/stage2={}/
+failures=[],priorityfalse. Basefreeze8a1d638a/S-default7f62b4e4 unchanged.
+K1718091 stillactive/noDONE, so original03 evaluation gate remains closed.
+Original K/G admission helpers/controllers/X6/S-default bytes untouched.
+Allsix originalfits checked02:49:28Z steps3814/3769/3541/2579/3426/2875,
+eightnice10processeseach/noexit/guardreason. Leased09/16/13 PSS22.00/20.06/
+22.93GB,GPUfree48.41/48.41/29.97GB,leasesPASS;08quietempty,X3checkpoint3500,
+X6checkpoint2750. No fit relaunch/migration/stop,08guard and13priority intact.
+Monitor0249 replaceslive11.156720785GPUh/37.250933333whole-treeCPUh;
+final exits supersede,closedcontrollers/preparation separate,nestedchildren
+never added twice. No stageoutcome/kill/survivor/R2/reportingseed consumed.
+Continuation prompt1808181/cleancollection/S-default persisted,enabled,next
+02:51:31.806Z. Neverrestart1746462/1596239/1502885 fromolderqueuedprompts.
