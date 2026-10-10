@@ -1698,3 +1698,7 @@ Also on the hub, but with copies elsewhere:
     - C4: co-tenancy and headroom (no launch while X5 is alive; G never on 04 cores 0–11/47 while A19 is pending or running);
     - C5: exact bindings per §9.
   - The monitor retirement doesn't affect the evidence chain. Next: r3 delta review, then the A19 freeze plus a revised A1 approval.
+- **03:43 UTC heartbeat:**
+  - GPUs busy: X4 on 01, X5 on 04, X6 on 13, X7 on 14. **Idle: 08, 09, 15, 16**, held deliberately pending the noise-ceiling analysis (ETA ~04:45Z); X8 cancelled.
+  - A19 r3 arrived without C2/C3 (handoff and A2 binding identical to r2). **Asked for r4 = r3 + C2 + C3**, with softer PSI semantics (pause admission at full ≥10%; hard stop only at ≥30% for 120 s); a single delta review after that.
+  - Spurious STOP denial ignored.
