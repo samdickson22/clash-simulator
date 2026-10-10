@@ -6,12 +6,16 @@ def utc():return subprocess.check_output(['date','-u','+%Y-%m-%dT%H:%M:%SZ'],tex
 def memory():return int(next(x.split()[1] for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')))*1024
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--job',type=Path,required=True);ap.add_argument('--phase',choices=['smoke','reporting'],required=True);a=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--job',type=Path,required=True);ap.add_argument('--phase',choices=['smoke','reporting','smoke-r2','reporting-r2'],required=True);a=ap.parse_args()
     assert socket.gethostname()=='127x03'
     assert os.getpriority(os.PRIO_PROCESS,0)==10 and os.sched_getscheduler(0)==os.SCHED_OTHER
     assert os.sched_getaffinity(0)=={45} and memory()>28*2**30
     assert (a.job/'QUALIFIED').exists()
-    if a.phase=='reporting':assert (a.job/'SMOKE-PASS').exists()
+    kind=a.phase.split('-')[0]
+    if a.phase.endswith('-r2'):
+        assert (a.job/'BELIEF-QUALIFIED').exists()
+    if kind=='reporting':
+        assert (a.job/('SMOKE-R2-PASS' if a.phase.endswith('-r2') else 'SMOKE-PASS')).exists()
     console=subprocess.check_output(['who'],text=True)
     workers=6 if console.strip() else 9;cpus=workers*5
     g=Path('/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010')
@@ -25,12 +29,12 @@ def main():
             fields=(d/'stat').read_text().rsplit(')',1)[1].split()
             assert int(fields[2])!=gpgid,('G process still alive',d.name)
         except FileNotFoundError:pass
-    pairs=8 if a.phase=='smoke' else 600
+    pairs=8 if kind=='smoke' else 600
     repo=a.job/'repo';runtime=repo/'reports/explore/k-v2/runtime.sh';cfg=repo/'reports/explore/k-v2/plan.json'
     out=a.job/a.phase;out.mkdir(exist_ok=True)
     assert not (out/'receipt.json').exists(),'completed phase; do not duplicate'
     cmd=['taskset','-c',f'0-{cpus-1}','bash',str(runtime),'reports/explore/k-v2/run.py','--config',str(cfg),'--out',str(out),'--workers',str(workers),'--pairs',str(pairs),'--arms','V200','V160','V120','K0-200']
-    if a.phase=='smoke':cmd+=['--smoke']
+    if kind=='smoke':cmd+=['--smoke']
     with (out/'worker.log').open('a') as log:
         child=subprocess.Popen(cmd,stdout=log,stderr=log,start_new_session=True)
         launch=dict(at_utc=utc(),supervisor_pid=os.getpid(),supervisor_pgid=os.getpgrp(),child_pid=child.pid,child_pgid=child.pid,host=socket.gethostname(),command=cmd,who=console,workers=workers,physical_cpus=list(range(cpus)),nice=10,scheduler='SCHED_OTHER',G_exit=exited['utc'])

@@ -11,6 +11,14 @@ import random
 import socket
 import sys
 import time
+import gc
+GC_TOTAL=0.
+GC_START=None
+def gc_trace(phase,info):
+    global GC_TOTAL,GC_START
+    if phase=='start':GC_START=time.monotonic()
+    elif GC_START is not None:GC_TOTAL+=time.monotonic()-GC_START
+gc.callbacks.append(gc_trace)
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -135,9 +143,12 @@ def run_game(case):
             for actor in (0, 1):
                 ch = channels[actor]
                 wall0, cpu0 = time.monotonic(), time.process_time()
+                stages={};stage0=wall0;gc0=GC_TOTAL
                 info = observe(b, R.builder, actor, public_events[actor])
+                stages["observe"]=time.monotonic()-stage0;stage0=time.monotonic()
                 reserved = ch.own_packet(info, R.builder)
                 fallback = int(policies[actor].poll(b.tick,reserved.packet,recorder.public_events))
+                stages["policy_and_reserve"]=time.monotonic()-stage0;stage0=time.monotonic()
                 if not ch.available or b.tick < waits[actor] or b.tick < available_at[actor]:
                     if actor not in players or b.tick % 10 == 0: ch.blocked += 1
                     continue
@@ -156,6 +167,7 @@ def run_game(case):
                     preparation_hit = True
                 else:
                     preparation_hit = False
+                stages["belief"]=time.monotonic()-stage0;stage0=time.monotonic()
                 if preparation_hit:
                     action = fallback if fallback < 2305 else 2304
                     p.core.selected_wait_ticks = 0
@@ -166,6 +178,7 @@ def run_game(case):
                     p.core.opponent_elixir = policies[actor].opponent_elixir
                     candidates, mask = p.core.candidates(reserved.packet)
                     candidates = [a for a in candidates if a != 2305]
+                    stages["candidates"]=time.monotonic()-stage0;stage0=time.monotonic()
                     action = 2304
                     if len(candidates) > 1:
                         if cutoff is not None and time.monotonic() >= cutoff:
@@ -181,8 +194,10 @@ def run_game(case):
                                 p.core.deadline_stats = dict(hit=True,fallback=True,completed=0,candidates=len(candidates),preparation_cutoff='sample')
                             else:
                                 root = R.root(info, opponent, p.rng)
+                                stages["root"]=time.monotonic()-stage0;stage0=time.monotonic()
                                 action = p.core.score_candidates(root, actor, candidates, deadline=cutoff,
                                     fallback=fallback if fallback < 2305 else 2304)
+                        stages["scoring"]=time.monotonic()-stage0;stage0=time.monotonic()
                         if p.core.selected_wait_ticks:
                             waits[actor] = b.tick + p.core.selected_wait_ticks
                         for name in p.core.attrition:
@@ -198,6 +213,7 @@ def run_game(case):
                 cpu_latencies[actor].append(time.process_time()-cpu0)
                 if deadline_seconds is not None:
                     stats=dict(p.core.deadline_stats)
+                    stats["stages"]=stages;stats["gc_seconds"]=GC_TOTAL-gc0
                     overrun, delayed_ticks = apply_lateness(ch, waits, available_at, actor, b.tick, elapsed, deadline_seconds)
                     stats.update(wall_overrun=overrun > 0, overrun_seconds=overrun, delayed_ticks=delayed_ticks, decision_tick=b.tick, action=int(action), wall_seconds=elapsed)
                     deadline_stats[actor].append(stats)
