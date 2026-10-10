@@ -757,3 +757,10 @@ processes/floors PASS,14leasevalid. Monitor0350 closed4+live3 totals
 16.733385911GPUh/56.693974591CPUh replace earlier snapshots.
 X8 cancelled/15unused; X7gap remains pending. No manual duplicate job,
 game/reportingseed/R2root consumed. Experiment active pending3fits/gates.
+
+2026-10-10T03:53:00Z. X6 scientific kill/fullCI/closedcost receipts committed/pushed
+83b267a2 and coordinator notified under150words. Continuation persistent
+prompt refreshed to authoritative4closedkills/current1940296/3activefits,
+X8cancelled/15unused;enabled,next2026-10-10T04:01:40.851Z. No replacement
+fit/controller/score/pool launch. Three remaining fits/gates keep experiment
+active; no completion claimed.
