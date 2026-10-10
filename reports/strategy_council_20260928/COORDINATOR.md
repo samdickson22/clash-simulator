@@ -1858,3 +1858,4 @@ Also on the hub, but with copies elsewhere:
   - C1: seal the per-game wall/CPU print. C2: regenerate guard-decks with the frozen selector.
   - **After a T1 freeze commit differing only by C1/C2, reporting may start** (sealed); I'll confirm from the diff.
   - E4 Linux smoke: native exact 125/125 for all tiers; belief/RNG exact; ratios ≈1.0. E4 is fixing the fleet-mode F2–F4 issues for later review.
+- **14:46 UTC: E4-v3 fleet mode review r2 = APPROVE_WITH_CONDITIONS** (efa54f44). **Signed PREREG-SEARCH-TIERS Amendment 1** (operational): END placement with a fail-closed pool and no outcome release before the pooled reference; the MHz gate; committed-posterior replay; plus the pre-reference preconditions.
