@@ -540,6 +540,16 @@ def select(cells, gates):
 
 T1_LEVEL_KEYS = {'ci95_pp': 'g', 'ci975_pp': 'ni', 'ci9833_pp': 'v_rounded_0.9833',
                  'ci95_pct': 'g', 'ci9833_pct': 'v_rounded_0.9833'}
+# Round-3 reduce.py (ba3dc8b0+) computes 'ci9833' at exactly 59/60 and adds record['exact'][key] = [[num, den], ...].
+T1_LEVEL_KEYS_R3 = {'ci95_pp': 'g', 'ci975_pp': 'ni', 'ci9833_pp': 'v', 'ci95_pct': 'g', 'ci9833_pct': 'v'}
+
+
+def t1_is_r3(t1):
+    return any('exact' in a for ps in t1['populations'].values() for a in ps['arms'].values())
+
+
+def t1_exact(record, key):
+    return [Fraction(int(num), int(den)) for num, den in record['exact'][key]]
 GATE_SPEC = {  # gate -> (population, T1 interval key, exact PREREG level key, threshold, strict)
     'V1': ('primary', 'ci9833_pp', 'v', Fraction(-10), False),
     'V2': ('primary', 'ci9833_pct', 'v', Fraction(40), False),
@@ -552,15 +562,20 @@ GATE_SPEC = {  # gate -> (population, T1 interval key, exact PREREG level key, t
 def from_t1_reduce(t1):
     """Convert T1 reduce.py output ({'populations': {pop: {n, arms, contrasts}}}) to the generic schema."""
     arms, contrasts = [], []
+    keys = T1_LEVEL_KEYS_R3 if t1_is_r3(t1) else T1_LEVEL_KEYS
     for pop, ps in t1['populations'].items():
         for arm, a in ps['arms'].items():
             arms.append(dict(population=pop, arm=arm, n=ps['n'], wins=a['wins'], losses=a['losses'],
-                             draws=a['draws'], intervals={T1_LEVEL_KEYS[k]: v for k, v in a.items()
-                                                          if k in T1_LEVEL_KEYS}))
+                             draws=a['draws'], intervals={keys[k]: v for k, v in a.items() if k in keys},
+                             exact={keys[k]: t1_exact(a, k) for k in a.get('exact', {}) if k in keys}))
         for key, c in ps['contrasts'].items():
             left, right = key.split(' minus ')
             contrasts.append(dict(population=pop, left=left, right=right, point_pp=c['mean_pp'],
-                                  intervals={T1_LEVEL_KEYS[k]: v for k, v in c.items() if k in T1_LEVEL_KEYS}))
+                                  point_count_diff=c.get('point_count_diff', None),
+                                  intervals={keys[k]: v for k, v in c.items() if k in keys},
+                                  exact={keys[k]: t1_exact(c, k) for k in c.get('exact', {}) if k in keys}))
+            if contrasts[-1]['point_count_diff'] is None:
+                del contrasts[-1]['point_count_diff']
     out = dict(arms=arms, contrasts=contrasts, raw=t1)
     sel = t1.get('selection', {})
     if 'selected' in sel:
@@ -580,11 +595,14 @@ def t1_gate_decisions(t1raw, mine, rep):
         ps = t1raw['populations'].get(pop)
         if ps is None:
             continue
-        if name == 'V2':
-            ub = ps['arms'][g['arm']][t1key][1]
+        rec = ps['arms'][g['arm']] if name == 'V2' else ps['contrasts'][f"{g['left']} minus {g['right']}"]
+        if 'exact' in rec:  # r3: the rational bound governs (plan.bootstrap.threshold_arithmetic)
+            ub = t1_exact(rec, t1key)[1]
+            t1_pass = ub < thr if strict else ub <= thr
+            ub = str(ub)
         else:
-            ub = ps['contrasts'][f"{g['left']} minus {g['right']}"][t1key][1]
-        t1_pass = ub < float(thr) if strict else ub <= float(thr)
+            ub = rec[t1key][1]
+            t1_pass = ub < float(thr) if strict else ub <= float(thr)
         checked += 1
         if t1_pass != g['passed']:
             rep.error('T1_GATE_DECISION_DIFFERS', gate=key, t1_upper=ub, t1_pass=t1_pass,
@@ -612,10 +630,17 @@ def compare_t1(mine, t1, rep, tol):
             if mv is not None and max(abs(float(x) - y) for x, y in zip(bounds, mv['pp'])) > tol:
                 rep.error('MISMATCH_ARM_INTERVAL', population=a['population'], arm=a['arm'], level=lvl,
                           t1=bounds, verifier=mv['pp'])
+        for lvl, bounds in a.get('exact', {}).items():
+            mv = m.get('intervals', {}).get(lvl)
+            if mv is not None and bounds != [Fraction(x) for x in mv['exact']]:
+                rep.error('MISMATCH_ARM_EXACT', population=a['population'], arm=a['arm'], level=lvl,
+                          t1=[str(x) for x in bounds], verifier=mv['exact'])
     seen = 0
     max_diff = 0.
     for c in t1.get('contrasts', []):
         key = f"{c['left']} minus {c['right']}"
+        if c['population'] not in GATED:
+            continue  # descriptive contrasts are reported by T1 but never enter a gate
         m = mine['contrasts'].get(c['population'], {}).get(key)
         if m is None:
             rep.error('T1_UNKNOWN_CONTRAST', population=c['population'], contrast=key)
@@ -638,6 +663,11 @@ def compare_t1(mine, t1, rep, tol):
             if d > tol:
                 rep.error('MISMATCH_INTERVAL', population=c['population'], contrast=key, level=lvl,
                           t1=bounds, verifier=mv['pp'], diff_pp=d)
+        for lvl, bounds in c.get('exact', {}).items():
+            mv = m['intervals'].get(lvl)
+            if mv is not None and bounds != [Fraction(x) for x in mv['exact']]:
+                rep.error('MISMATCH_EXACT', population=c['population'], contrast=key, level=lvl,
+                          t1=[str(x) for x in bounds], verifier=mv['exact'])
     rep.note('T1_COMPARISON', contrasts_compared=seen, max_interval_diff_pp=max_diff, tolerance_pp=tol)
     if 'selection' in t1 and 'selection' in mine and t1['selection'] != mine['selection']['selection']:
         rep.error('MISMATCH_SELECTION', t1=t1['selection'], verifier=mine['selection']['selection'])
@@ -655,7 +685,10 @@ def cross_check_plan(plan, rep):
     b = plan['bootstrap']
     if (b['reps'], b['seed']) != (REPS, BOOT_SEED):
         rep.error('PLAN_BOOTSTRAP', reps=b['reps'], seed=b['seed'])
-    for c in b.get('confidences', []):
+    if 'exact_confidences' in b:
+        if sorted(Fraction(x) for x in b['exact_confidences']) != sorted(LEVELS.values()):
+            rep.error('PLAN_EXACT_LEVELS', exact_confidences=b['exact_confidences'])
+    for c in b.get('confidences', []) if 'exact_confidences' not in b else []:
         if Fraction(str(c)) not in LEVELS.values():
             rep.edge('PLAN_LEVEL_NOT_EXACT', level=c, exact_levels=[str(x) for x in LEVELS.values()])
     for t in TIERS:

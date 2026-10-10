@@ -416,9 +416,152 @@ def test_cross_check_against_t1_reduce_on_synthetic(full):
     t1 = dict(populations={p: T1.population_stats(r, rng, V.REPS) for p, r in rows.items()})
     rep = V.Report()
     V.compare_t1(out, t1, rep, 1e-9)
-    codes = {e['code'] for e in rep.errors}
-    # Counts, points and every interval agree to 1e-9: identical draws (same logical ordering).
-    assert not codes - {'T1_GATE_DECISION_DIFFERS'}, rep.errors[:5]
-    # Any gate-decision difference must be explained by the 0.9833 level (V1/V2) or a float boundary.
-    for e in rep.errors:
-        assert e['gate'].split('|')[0] in ('V1', 'V2', 'NI', 'G1', 'G2')
+    if not V.t1_is_r3(t1):
+        codes = {e['code'] for e in rep.errors}
+        # Pre-r3 T1: counts, points and intervals agree; gate differences only from the 0.9833 level or floats.
+        assert not codes - {'T1_GATE_DECISION_DIFFERS'}, rep.errors[:5]
+        return
+    # r3 (ba3dc8b0+): every rational bound at 59/60, 39/40, 19/20 equals the verifier's exactly, and every gate
+    # decision re-derived from T1's exact fields equals the exact PREREG decision. No tolerance, no exceptions.
+    assert not rep.errors, rep.errors[:5]
+    note = next(n for n in rep.notes if n['code'] == 'T1_GATE_DECISIONS_CHECKED')
+    assert note['count'] == len([g for g in out['gates'] if g.split('|')[0] in V.GATE_SPEC])
+    adapted = V.from_t1_reduce(t1)
+    assert all(set(c['exact']) == {'g', 'ni', 'v'} for c in adapted['contrasts'])
+    assert all(set(a['exact']) == {'g', 'v'} for a in adapted['arms'])
+
+
+# ------------------------------------------------------------ r3: T1's own exact arithmetic and select() at edges
+
+def _t1():
+    t1dir = Path(__file__).resolve().parents[1]
+    if not (t1dir / 'reduce.py').exists():
+        pytest.skip('T1 reducer not present')
+    sys.dont_write_bytecode = True
+    sys.path.insert(0, str(t1dir))
+    try:
+        import reduce as T1
+    finally:
+        sys.path.remove(str(t1dir))
+    return T1
+
+
+def test_t1_exact_interval_equals_verifier_and_numpy():
+    T1 = _t1()
+    rng = np.random.default_rng(3)
+    for _ in range(40):
+        n = int(rng.choice([600, 2400]))
+        x = rng.integers(-n // 3, n // 3, size=V.REPS)
+        for level in V.LEVELS.values():
+            mine, flt = V.interval(x, n, level)
+            theirs = T1.exact_interval(x, level, n)
+            assert theirs == mine
+            assert max(abs(float(a) - b) for a, b in zip(theirs, flt)) < 1e-9
+
+
+def _record(T1, count, n, key):
+    level = {'ci9833_pp': T1.BONFERRONI, 'ci9833_pct': T1.BONFERRONI, 'ci975_pp': Fraction(39, 40),
+             'ci95_pp': Fraction(19, 20)}[key]
+    b = T1.exact_interval(np.full(V.REPS, count, dtype=np.int64), level, n)
+    return {key: [float(v) for v in b], 'exact': {key: T1.pack_exact(b)}}
+
+
+def _stats(T1, primary=None, guard=None, k0c_losses=1080):
+    # Default: everything passes by a wide margin; overrides set exact count bounds for one record.
+    P, G = 2400, 600
+    s = dict(primary=dict(n=P, arms={}, contrasts={}), guard=dict(n=G, arms={}, contrasts={}))
+    for a in V.ARMS:
+        s['primary']['arms'][a] = dict(losses=k0c_losses if a == 'K0c-200' else 600, **_record(T1, 600, P, 'ci9833_pct'))
+    for l in V.ARMS:
+        for r in V.ARMS:
+            if l != r:
+                rec = _record(T1, -720, P, 'ci9833_pp')
+                for k in ('ci975_pp', 'ci95_pp'):
+                    sub = _record(T1, -720, P, k); rec[k] = sub[k]; rec['exact'][k] = sub['exact'][k]
+                s['primary']['contrasts'][f'{l} minus {r}'] = rec
+                s['guard']['contrasts'][f'{l} minus {r}'] = _record(T1, -60, G, 'ci95_pp')
+    for (pop, key, label, field), count in list((primary or {}).items()) + list((guard or {}).items()):
+        n = P if pop == 'primary' else G
+        rec = s[pop]['arms'][label] if key == 'ci9833_pct' else s[pop]['contrasts'][label]
+        sub = _record(T1, count, n, key); rec[key] = sub[key]; rec['exact'][key] = sub['exact'][key]
+    return s
+
+
+def _mac(cells):
+    feas = {t: dict(feasible=cells[t] is not None, cell=None if cells[t] is None else (1. if cells[t] == 200 else .8),
+                    gates={'1_speed': True, '2_perception': True, '3_exactness': True}) for t in V.TIERS}
+    return dict(feasibility=feas, speed={t: dict(r=1.1) for t in V.TIERS},
+                deadline_equivalence={t: dict(cell=feas[t]['cell']) for t in V.TIERS})
+
+
+CELLS = dict(K0c=200, S=200, K2=200, K4=200)
+
+
+@pytest.mark.parametrize('gate,pop,key,label,at,one_off,strict', [
+    ('V1', 'primary', 'ci9833_pp', 'S-200 minus K0c-200', -240, -239, False),
+    ('V2', 'primary', 'ci9833_pct', 'S-200', 960, 961, False),
+    ('G1', 'guard', 'ci95_pp', 'S-200 minus K0c-200', 0, -1, True),
+])
+def test_t1_select_viability_gates_at_exact_boundary_and_one_count(gate, pop, key, label, at, one_off, strict):
+    T1 = _t1()
+    n = 2400 if pop == 'primary' else 600
+    for count in (at, one_off):
+        stats = _stats(T1, **{pop: {(pop, key, label, None): count}})
+        res = T1.select(stats, _mac(CELLS))
+        bound = Fraction(100 * count, n)
+        thr = {'V1': Fraction(-10), 'V2': Fraction(40), 'G1': Fraction(0)}[gate]
+        want = bound < thr if strict else bound <= thr
+        assert res['gates']['S'][gate] is want, (gate, count, res['gates']['S'])
+        rep = V.Report()
+        e, f = V.interval(np.full(V.REPS, count, dtype=np.int64), n, V.LEVELS['g' if gate == 'G1' else 'v'])
+        assert V.gate(gate, e[1], f[1], thr, strict, n, rep, {})['passed'] is want
+    # Inclusive gates pass exactly at the threshold and fail one count beyond; strict G1 the reverse.
+    assert T1.select(_stats(T1, **{pop: {(pop, key, label, None): at}}), _mac(CELLS))['gates']['S'][gate] is (not strict)
+
+
+@pytest.mark.parametrize('gate,pop,key,at,above', [
+    ('NI', 'primary', 'ci975_pp', 120, 121),
+    ('G2', 'guard', 'ci95_pp', 60, 61),
+])
+def test_t1_select_candidate_checks_at_exact_boundary_and_one_count(gate, pop, key, at, above):
+    T1 = _t1()
+    for count, want in ((at, 'S'), (above, 'K2')):
+        over = {(pop, key, f'S-200 minus {u}', None): count for u in ('K2-200', 'K4-200')}
+        res = T1.select(_stats(T1, **{pop: over}), _mac(CELLS))
+        assert res['admissible'] == ['S', 'K2', 'K4']
+        assert res['selected'] == want, (gate, count, res['candidate_checks'])
+
+
+def test_t1_select_validity_window_integer_edges():
+    T1 = _t1()
+    for losses, ok in ((863, False), (864, True), (1296, True), (1297, False)):
+        res = T1.select(_stats(T1, k0c_losses=losses), _mac(CELLS))
+        assert (res['status'] != 'SUSPENDED') is ok, (losses, res)
+
+
+def test_t1_select_exact_governs_float_display():
+    # Decimal display one ulp above +40 must not flip an exact inclusive pass.
+    T1 = _t1()
+    s = _stats(T1, primary={('primary', 'ci9833_pct', 'S-200', None): 960})
+    s['primary']['arms']['S-200']['ci9833_pct'][1] = float(np.nextafter(40., 50.))
+    assert T1.select(s, _mac(CELLS))['gates']['S']['V2'] is True
+
+
+def test_t1_select_k0c_gates_1_to_3_force_full_speed_control():
+    T1 = _t1()
+    cells = dict(K0c=160, S=200, K2=200, K4=200)
+    mac = _mac(cells)
+    assert T1.select(_stats(T1), mac)['control'] == 'K0c-160'
+    for g in ('1_speed', '2_perception', '3_exactness'):
+        mac = _mac(cells)
+        mac['feasibility']['K0c']['gates'][g] = False
+        res = T1.select(_stats(T1), mac)
+        assert res['control'] == 'K0c-200' and res['control_full_speed_fallback'] is True
+
+
+def test_t1_plan_levels_exact():
+    plan = json.loads((Path(__file__).resolve().parents[1] / 'plan.json').read_text())
+    rep = V.Report()
+    V.cross_check_plan(plan, rep)
+    assert not [e for e in rep.errors if e['code'].startswith('PLAN_EXACT')]
+    assert not [e for e in rep.edges if e['code'] == 'PLAN_LEVEL_NOT_EXACT']
