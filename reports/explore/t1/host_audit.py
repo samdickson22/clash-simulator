@@ -34,6 +34,8 @@ def ssh_family_source_parent(ppid,uid):
         except OSError:return None
     return None
 def processes():
+    from apt_budget import capture_cgroup,capture_uids,apt_uid,helper_exe
+    helper_uid=apt_uid()
     rows=[]
     for d in Path('/proc').iterdir():
         if not d.name.isdigit():continue
@@ -41,8 +43,8 @@ def processes():
             uid=d.stat().st_uid
             stat=(d/'stat').read_text().rsplit(')',1)[1].split()
             raw_cmd=(d/'cmdline').read_bytes()
-            from apt_budget import capture_cgroup
             apt_cgroup=capture_cgroup(d)
+            apt_uids=capture_uids(d)
             cmd=raw_cmd.replace(b'\0',b' ').decode(errors='replace').strip()
             # OP-2: retain connection evidence while this child still exists.
             # Only SSH_CONNECTION is retained, never the remaining environment.
@@ -54,19 +56,25 @@ def processes():
             family_parent=ssh_family_source_parent(int(stat[1]),uid) if connection else None
             copier={k:next((v[len(k)+1:].decode() for v in env if v.startswith((k+"=").encode())),None) for k in ("T1_COPIER_PID","T1_COPIER_PGID")}
             captured=time.monotonic()
-            try:
-                check=(d/'stat').read_text().rsplit(')',1)[1].split()
-                if check[19]!=stat[19] or check[1]!=stat[1] or d.stat().st_uid!=uid:continue
-            except FileNotFoundError:pass # retain the captured identity of an exited child
-            try:affinity=sorted(os.sched_getaffinity(int(d.name)))
-            except (ProcessLookupError,PermissionError):affinity=[]
+            exe_errno=None
             try:exe=(d/'exe').resolve(strict=True).as_posix()
-            except OSError:exe=None
+            except OSError as error:exe=None;exe_errno=error.errno
             exe_evidence='proc/exe' if exe else 'unavailable'
             if uid==103 and cmd.split()[:1]==['/usr/bin/dbus-daemon'] and exe is None:
                 exe=Path(cmd.split()[0]).resolve().as_posix();exe_evidence='argv0 (proc/exe unreadable, unprivileged)'
+            argv0=raw_cmd.split(b'\0',1)[0].decode(errors='replace')
+            apt_helper_exe=helper_exe(exe,exe_errno,argv0) if helper_uid is not None and apt_uids==(helper_uid,helper_uid) else None
+            try:
+                check=(d/'stat').read_text().rsplit(')',1)[1].split()
+                if check[19]!=stat[19] or check[1]!=stat[1] or d.stat().st_uid!=uid or capture_uids(d)!=apt_uids:continue
+            except FileNotFoundError:pass # retain the captured identity of an exited child
+            try:affinity=sorted(os.sched_getaffinity(int(d.name)))
+            except (ProcessLookupError,PermissionError):affinity=[]
             rows.append(dict(ssh_family_parent_snapshot=family_parent,copier_identity_snapshot=copier,ssh_parent_snapshot=parent_identity,snapshot_monotonic=captured,ssh_connection_snapshot=connection,exe=exe,exe_evidence=exe_evidence,cmdline_sha256=hashlib.sha256(raw_cmd).hexdigest(),pid=int(d.name),ppid=int(stat[1]),pgid=int(stat[2]),start_ticks=int(stat[19]),cpu_ticks=int(stat[11])+int(stat[12]),child_cpu_ticks=int(stat[13])+int(stat[14]),tty=int(stat[4]),uid=uid,cmd=cmd,affinity=affinity))
             rows[-1]['apt_cgroup_snapshot']=apt_cgroup
+            rows[-1]['apt_uid_snapshot']=apt_uids
+            rows[-1]['apt_helper_uid_snapshot']=helper_uid
+            rows[-1]['apt_helper_exe_snapshot']=apt_helper_exe
         except (FileNotFoundError,ProcessLookupError,PermissionError):pass
     return rows
 

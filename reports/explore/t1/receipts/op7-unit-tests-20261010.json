@@ -38,5 +38,12 @@
     "reports/explore/t1/RELEASE-PRODUCTION-CHECKS-20261010.md": "709728fcccc98ef43df00426732c085a7c03a98e21673ac211817439911677b6"
   },
   "test_data": "synthetic outcome rows only; no reporting game files opened",
-  "prior_fixture_failure_preserved": true
+  "prior_fixture_failure_preserved": true,
+  "interpreter_environment_context": {
+    "PYTHONPATH": [
+      "reports/explore/t1",
+      "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/review/reviewer-cfix/pylib"
+    ],
+    "explanation": "r1 used the E4 venv interpreter with pytest supplied by this overlay; bare venv does not contain pytest. Independent reviewer separately reproduced159 tests in t1-verifier."
+  }
 }

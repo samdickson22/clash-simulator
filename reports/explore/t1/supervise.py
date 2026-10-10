@@ -5,6 +5,7 @@ from collections import Counter
 import system_bus
 import ssh_budget
 import apt_budget
+from cpu_accounting import Accounting
 from common import utc,read,write,sha,plan
 from host_audit import admission,processes,census,console,memory
 from pin import verify
@@ -18,6 +19,12 @@ def stop_children(active):
   if child.poll() is None:
    try:os.killpg(child.pid,signal.SIGTERM)
    except ProcessLookupError:pass
+
+def guard_reason(c,foreign,active,ssh_sample,ssh_blocks,apt_sample,apt_blocks):
+ return ssh_budget.stop_reason(c,foreign,active,ssh_sample,ssh_blocks) or apt_budget.stop_reason(apt_sample,apt_blocks)
+
+def stop_receipt(reason,foreign,active,c,ssh_sample,apt_sample):
+ return dict(utc=utc(),reason=reason,foreign=foreign,foreign_active=active,console=c,ssh_family_sample=ssh_sample,ubuntu_apt_sample=apt_sample)
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('--job',type=Path,required=True);p.add_argument('--dispatch',type=Path,required=True);p.add_argument('--attempt');p.add_argument('--phase',choices=['smoke','reporting','replacement','corpus'],required=True);a=p.parse_args();j=a.job;cfg=plan();host=socket.gethostname();hc=cfg['compute']['hosts'][host]
@@ -39,6 +46,8 @@ def main():
   assert re.fullmatch(r'r[0-9]+',a.attempt)
  out=j/(a.phase+'-'+a.attempt if a.attempt else a.phase);out.mkdir(exist_ok=True);claim=out/'launch-claim';claim.mkdir() # No automatic re-launch, even after a crash.
  slots=cfg['compute']['console_slots'] if r['console']['positive'] else cfg['compute']['slots'];active={};done=[];failures=[];idx=0;reason=None;interrupted=False;overload=0.;before=processes();last=time.monotonic();t=last
+ sample_born=int(time.clock_gettime(time.CLOCK_BOOTTIME)*os.sysconf('SC_CLK_TCK'))
+ ssh_accounting=Accounting(before,sample_born,'ssh_budget');apt_accounting=Accounting(before,sample_born,'apt_budget')
  def caught(sig,frame):
   nonlocal interrupted
   interrupted=True;stop_children(active)
@@ -46,7 +55,7 @@ def main():
  launch=dict(utc=utc(),host=host,phase=a.phase,slots=slots,who=r['console']['who'],runtime_pin_sha256=sha(j/'runtime-pin.json'),dispatch_sha256=sha(a.dispatch),supervisor_pid=os.getpid(),supervisor_pgid=os.getpgrp())
  write(out/'launch.json',launch)
  while idx<len(rows) or active:
-  now=time.monotonic();after,foreign,foreign_active,foreign_cpu=census(j,before,block_ids=[r['descriptor']['id'] for r in active.values()]);sample_now=time.monotonic();dt=max(sample_now-last,.001);last=sample_now;ssh_sample=ssh_budget.sample(before,after,dt);apt_sample=apt_budget.sample(before,after,dt);before=after
+  now=time.monotonic();after,foreign,foreign_active,foreign_cpu=census(j,before,block_ids=[r['descriptor']['id'] for r in active.values()]);sample_now=time.monotonic();dt=max(sample_now-last,.001);last=sample_now;ssh_sample=ssh_budget.sample(before,after,dt,accounting=ssh_accounting);apt_sample=apt_budget.sample(before,after,dt,accounting=apt_accounting);before=after
   for live in active.values():
    idle_update(live['idle_meter'],after);system_bus.update(live['system_bus_meter'],after)
    ssh_budget.update(live['ssh_meter'],after)
@@ -56,12 +65,11 @@ def main():
   # Console activity below the registered one-core threshold is recorded. Other jobs are disallowed immediately.
   foreign_jobs=[x for x in foreign if not (c['positive'] and x.get('tty',0))]
   foreign_jobs_active=[x for x in foreign_active if not (c['positive'] and x.get('tty',0))]
-  budget_reason=ssh_budget.stop_reason(c,foreign_jobs,foreign_jobs_active,ssh_sample,[ssh_budget.finish(r['ssh_meter'],time.monotonic()-r['started']) for r in active.values()])
-  budget_reason=budget_reason or apt_budget.stop_reason(apt_sample,[apt_budget.finish(r['apt_meter'],time.monotonic()-r['started']) for r in active.values()])
+  budget_reason=guard_reason(c,foreign_jobs,foreign_jobs_active,ssh_sample,[ssh_budget.finish(r['ssh_meter'],time.monotonic()-r['started']) for r in active.values()],apt_sample,[apt_budget.finish(r['apt_meter'],time.monotonic()-r['started']) for r in active.values()])
   reason=('signal' if interrupted else 'owned_STOP' if (j/'STOP').exists() or (j/f'STOP-{host}').exists() else 'memory_floor' if memory()<24*2**30 else budget_reason)
   unacked=[x for pattern in ('reporting/*/complete.json','replacement-r*/*/complete.json') for x in j.glob(pattern) if host!='127x01' and not (x.parent/'hub-ack.json').exists() and time.time()-x.stat().st_mtime>1800]
   if unacked:reason='offhost_copy_over_30min'
-  if reason:write(out/'stop-reason.json',dict(utc=utc(),reason=reason,foreign=foreign,foreign_active=foreign_active,console=c,ssh_family_sample=ssh_sample,ubuntu_apt_sample=apt_sample));stop_children(active)
+  if reason:write(out/'stop-reason.json',stop_receipt(reason,foreign,foreign_active,c,ssh_sample,apt_sample));stop_children(active)
   for slot,row in list(active.items()):
    child=row['process'];rc=child.poll()
    if rc is None:continue

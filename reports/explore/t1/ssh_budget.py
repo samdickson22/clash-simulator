@@ -2,6 +2,7 @@
 import ipaddress,json,os,time,math
 from fractions import Fraction
 from common import utc
+from cpu_accounting import Accounting
 from ssh_transport import authenticated
 from idle_services import member as idle_member
 UID=3822945
@@ -61,35 +62,28 @@ def total_ticks(r):return r['cpu_ticks']+r.get('child_cpu_ticks',0)
 
 def proven(r):return lan_connection(r.get('ssh_budget',{}).get('source'))
 
-def partition_ticks(rows,previous,born):
- out=dict(source_proven_cpu_ticks=0,idle_cpu_ticks=0)
- for r in rows:
-  if r.get('ssh_budget'):
-   out['source_proven_cpu_ticks' if proven(r) else 'idle_cpu_ticks']+=increment(r,previous,born)
- return out
-
-def increment(r,previous,born_since_ticks):
- old=previous.get(generation(r));total=total_ticks(r)
- if old is not None:return max(0,total-old)
- return total if r['start_ticks']>=born_since_ticks else 0
-
-def sample(before,after,elapsed,hz=None):
- hz=hz or os.sysconf('SC_CLK_TCK');old={generation(r):total_ticks(r) for r in before}
+def sample(before,after,elapsed,hz=None,accounting=None):
+ hz=hz or os.sysconf('SC_CLK_TCK')
  now=time.clock_gettime(time.CLOCK_BOOTTIME)
  born=math.floor((now-elapsed)*hz)
- split=partition_ticks(after,old,born);ticks=sum(split.values());denom=hz*Fraction(str(max(elapsed,.001)))
+ accounting=accounting or Accounting(before,born,'ssh_budget',sample_baseline=True)
+ deltas=accounting.update(after);split=dict(source_proven_cpu_ticks=0,idle_cpu_ticks=0)
+ for r in after:
+  if r.get('ssh_budget'):split['source_proven_cpu_ticks' if proven(r) else 'idle_cpu_ticks']+=deltas[generation(r)]
+ ticks=sum(split.values());denom=hz*Fraction(str(max(elapsed,.001)))
  return dict(cpu_ticks=ticks,seconds=elapsed,core_fraction=ticks/hz/max(elapsed,.001),**split,stop=Fraction(split['source_proven_cpu_ticks'])*2>denom*3 or Fraction(split['idle_cpu_ticks'])*4>denom)
 
 def begin(rows,clock=time.monotonic,hz=None):
- hz=hz or os.sysconf('SC_CLK_TCK')
- return dict(started=clock(),hz=hz,born_since_ticks=math.floor(time.clock_gettime(time.CLOCK_BOOTTIME)*hz),last={generation(r):total_ticks(r) for r in rows},cpu_ticks=0,source_proven_cpu_ticks=0,idle_cpu_ticks=0,processes={})
+ hz=hz or os.sysconf('SC_CLK_TCK');born=math.floor(time.clock_gettime(time.CLOCK_BOOTTIME)*hz)
+ return dict(started=clock(),hz=hz,born_since_ticks=born,last={generation(r):total_ticks(r) for r in rows},accounting=Accounting(rows,born,'ssh_budget'),cpu_ticks=0,source_proven_cpu_ticks=0,idle_cpu_ticks=0,processes={})
 
 def update(meter,rows):
+ deltas=meter['accounting'].update(rows)
  children={}
  for r in rows:children.setdefault(r['ppid'],[]).append(r)
  for r in rows:
   if not r.get('ssh_budget'):continue
-  delta=increment(r,meter['last'],meter['born_since_ticks']);meter['cpu_ticks']+=delta
+  delta=deltas[generation(r)];meter['cpu_ticks']+=delta
   meter['source_proven_cpu_ticks' if proven(r) else 'idle_cpu_ticks']+=delta
   key=identity(r);record=meter['processes'].setdefault(key,dict(pid=r['pid'],start_ticks=r['start_ticks'],uid=r['uid'],cmdline_sha256=r['cmdline_sha256'],cmd=r['cmd'],cpu_ticks=0,source=r['ssh_budget'],child_commands=[]))
   record['cpu_ticks']+=delta
@@ -106,7 +100,7 @@ def finish(meter,elapsed):
  # Older serialized meters have no split: retain their original tighter caps.
  proven_ticks=meter.get('source_proven_cpu_ticks',0);idle_ticks=meter.get('idle_cpu_ticks',ticks)
  assert proven_ticks+idle_ticks==ticks
- return dict(cpu_ticks=ticks,cpu_seconds=ticks/hz,clock_ticks_per_second=hz,block_seconds=elapsed,core_fraction=ticks/hz/max(elapsed,.001),source_proven_cpu_ticks=proven_ticks,idle_cpu_ticks=idle_ticks,ssh_flagged=Fraction(proven_ticks)*200>denom,interfered=Fraction(ticks)*200>denom,stop=elapsed>=AVERAGE_STOP_MIN_SECONDS and (Fraction(proven_ticks)*10>denom or Fraction(idle_ticks)*50>denom),average_stop_min_seconds=AVERAGE_STOP_MIN_SECONDS,operational_rule='OP-6',processes=records)
+ return dict(cpu_ticks=ticks,cpu_seconds=ticks/hz,clock_ticks_per_second=hz,block_seconds=elapsed,core_fraction=ticks/hz/max(elapsed,.001),source_proven_cpu_ticks=proven_ticks,idle_cpu_ticks=idle_ticks,ssh_flagged=Fraction(proven_ticks)*200>denom,interfered=Fraction(ticks)*200>denom,stop=elapsed>=AVERAGE_STOP_MIN_SECONDS and (Fraction(proven_ticks)*10>denom or Fraction(idle_ticks)*50>denom),average_stop_min_seconds=AVERAGE_STOP_MIN_SECONDS,operational_rule='OP-6',cpu_accounting_rule='OP-7-observed-child-credit-v1',processes=records)
 
 def stop_reason(console,foreign,foreign_active,sample_result,block_results):
  if console['positive']:return 'console_user'

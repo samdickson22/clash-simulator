@@ -1,0 +1,61 @@
+{
+  "utc": "2026-10-10T22:11:21Z",
+  "health_only": true,
+  "outcomes_read": false,
+  "outcomes_sealed": true,
+  "purpose": "synthetic-only OP-7 r2 guard/reducer tests; NOT runtime admission",
+  "base_commit": "aeeb3003d2a877bd7ff538a1977cbbc37adb404f",
+  "r1_candidate": "7925fbf1507b7221a813edda5ff221aff3f43115",
+  "r1_review_sha256": "1f073ab8a4fa23003c25901972d6f4e9803823a911fc2ae5d115d7e581526a80",
+  "authority_commits": [
+    "33d0fc06",
+    "a3b7d82b",
+    "c1c9a38d",
+    "7c581dc5"
+  ],
+  "host": "127x05",
+  "nice": 19,
+  "scheduler": 0,
+  "physical_cores": [
+    63
+  ],
+  "python": "/mpac/sdicks02/venvs/t1-verifier/bin/python",
+  "python_resolved": "/home/sdicks02/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/bin/python3.12",
+  "python_version": "3.12.12",
+  "python_executable_sha256": "cc8522e13ca1c114e1fd116948b2e6b43b031f85ca42f1b25dee62807e553ee1",
+  "pytest_module": "/mpac/sdicks02/venvs/t1-verifier/lib/python3.12/site-packages/pytest/__init__.py",
+  "pytest_version": "9.1.1",
+  "passed": 183,
+  "failed": 0,
+  "modules": [
+    "test_op7.py",
+    "test_op6.py",
+    "test_op4.py",
+    "test_op1.py",
+    "test_op2.py",
+    "test_op3.py",
+    "test_op5.py",
+    "test_op5_08.py",
+    "test_reduce.py",
+    "test_replace.py"
+  ],
+  "basetemp": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/cache/op7-r2-pytest-final",
+  "pycache_prefix": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/cache/op7-r2-unit",
+  "file_sha256": {
+    "reports/explore/t1/apt_budget.py": "caab2faf9eed26e2eefdd34e0fd3158d34c252a8cf7d589b0fd60265e37e5664",
+    "reports/explore/t1/cpu_accounting.py": "4d84b9f6f524a96d265fbf06eb0b31168d0a061181b8dffb97db1caeae627662",
+    "reports/explore/t1/host_audit.py": "e63c05bb4ecc400565b041c3c4e0db7e350e9b3c2642605b80a7a8cb8a0d4f6e",
+    "reports/explore/t1/supervise.py": "89e9447f7eda8a844de0c614a13caec62429b725aa8032b8259938daf212d9ee",
+    "reports/explore/t1/qualify.sh": "090611376b73cba3ca0c5bf7ae4d41b42330f8f562d1c9a43d13bdd643b3ead2",
+    "reports/explore/t1/ssh_budget.py": "c5fd7dda5eca2bf741976235abf2233b44bde3c450087ba684009921f6bba3ba",
+    "reports/explore/t1/ssh_sensitivity.py": "46d6e2439737bf3a6397121144d31f7619827c65402d93cecd2ba745f387c2d3",
+    "reports/explore/t1/reduce.py": "aebb2017d1ee646df72c22d0357c09856753e8fadcb63e6a361505b3543efe79",
+    "reports/explore/t1/test_op7.py": "01d50e2456865da55b0096feb530d8d130fe2a9bb13a50d79e1833dfb98ad2a4",
+    "reports/explore/t1/OP7-T1.md": "f91efe17acaaa2fc8abcb062255149c694ecbcc71a460bf75cb2cf151147dfc2",
+    "reports/explore/t1/OP7-R2-RESPONSE-20261010.md": "cf4f20b5f48353ac17106c9b0b7906c5952ae73c7417cf9137cb9d76fd868b29",
+    "reports/explore/t1/PLAN.md": "443c5ca24a88969f59c7e18a1ad83e4c36de88ce49860eaf346802a557696277",
+    "reports/explore/t1/RELEASE-PRODUCTION-CHECKS-20261010.md": "a9fcc4ffea1761b259a271a51e53c9e405ab41053ad3155b3e2022317e0a7d72"
+  },
+  "test_data": "synthetic outcome rows only; no reporting game files opened",
+  "earlier_r2_fixture_failure": "Missing Path import:1 failed/179 passed; fixed and full183 test suite passed"
+}
