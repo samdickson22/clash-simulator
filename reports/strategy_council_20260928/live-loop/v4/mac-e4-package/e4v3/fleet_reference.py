@@ -43,6 +43,7 @@ def run(args, store):
     monitor = context.Process(target=reference_monitor,args=(stop,phase,owned,clusters,store.directory/"capacity.jsonl",census_cpu))
     refs = {tier:{} for tier in TIERS}
     deadlines = {tier:{"1.0":[],"0.8":[]} for tier in TIERS}
+    trace=None
     try:
         for tier in TIERS:
             ids = manifest["sets"]["speed"][tier]
@@ -67,6 +68,9 @@ def run(args, store):
         if len(manifest["sets"]["golden"]) != 125:
             raise ValueError("Fleet reference needs qualified golden125 and belief reference inputs")
         Session.exactness(SimpleNamespace(args=args,store=store,manifest=manifest,backend=backend,exactness_class="EXACT"))
+        from measure_tiers import GCTrace
+        trace=GCTrace();trace.__enter__()
+        trace.context.update(variant="fleet-reference")
         phase.value = b"reference-warmup"
         monitor.start(); owned[-1]=monitor.pid
         with FleetBackground(args.bundle,args.runtime_root,args.native,background_masks) as background:
@@ -84,6 +88,7 @@ def run(args, store):
                         for identity in manifest["sets"]["speed"][tier][offset:offset+50]:
                             background.check()
                             if not monitor.is_alive():raise RuntimeError("Reference telemetry failed")
+                            trace.context.update(tier=tier,id=identity,opportunity=True,decision_deadline=None)
                             result,timing=backend.work(backend.by_id[identity],tier)
                             ref=refs[tier].setdefault(identity,dict(result=result,forward=timing["forward"],walls=[]))
                             assert_exact(result,ref["result"],"fleet repeated full decision")
@@ -93,12 +98,19 @@ def run(args, store):
                 for tier in order:
                     for cell,budget in (("1.0",.2),("0.8",.16)):
                         for identity in manifest["sets"]["speed"][tier]:
+                            trace.context.update(tier=tier,id=identity,opportunity=False,decision_deadline=None)
                             background.check();backend.activate(tier);backend.prepare_work(backend.by_id[identity])
                             entered=time.monotonic()
+                            trace.context.update(opportunity=True,decision_deadline=entered+budget)
                             _,timing=backend.work(backend.by_id[identity],tier,deadline=budget,packet_entry=entered)
                             row=dict(repeat=repeat,tier=tier,id=identity,cell=cell,deadline_seconds=budget,**{k:v for k,v in timing.items() if k != "forward"})
                             deadlines[tier][cell].append(row);store.append("deadline-reference-raw.jsonl",row)
                 print("Fleet full-pipeline loaded repeat "+str(repeat+1)+"/3",flush=True)
+        stop.set();monitor.join(10)
+        if monitor.is_alive():
+            raise RuntimeError("Reference census did not stop before sealing")
+        if monitor.exitcode != 0:
+            raise RuntimeError("Reference census exited with error")
         for tier in TIERS:
             for ref in refs[tier].values():ref["wall_seconds"]=quantiles(ref.pop("walls"))["p50"]
         store.write("speed-reference.json",refs)
@@ -117,11 +129,19 @@ def run(args, store):
             outcome_access=False,live_actions=False,host=platform.node(),utc=time.time()))
     finally:
         stop.set()
-        if monitor.pid:
-            monitor.join(10)
-            if monitor.is_alive():monitor.terminate();monitor.join(10)
-            if monitor.exitcode != 0:raise RuntimeError("Reference telemetry exited with error")
-        backend.close()
+        try:
+            if monitor.pid:
+                monitor.join(10)
+                if monitor.is_alive():monitor.terminate();monitor.join(10)
+                if monitor.exitcode != 0:raise RuntimeError("Reference telemetry exited with error")
+        finally:
+            try:
+                if trace is not None:
+                    trace.__exit__()
+                    store.write("gc-events.json",dict(events=trace.events,
+                        deadline_basis="actual packet entry plus 200/160ms; no synthetic poll cadence"))
+            finally:
+                backend.close()
 
 
 def reference_monitor(stop,phase,owned,clusters,output,cpu):

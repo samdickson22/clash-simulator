@@ -12,6 +12,8 @@ def slot_layout(profile, plan, host, nice):
         raise ValueError("Host absent/forbidden in pinned reporting plan")
     if profile["host"] != host or nice != compute["nice"] or compute["scheduler"] != "SCHED_OTHER":
         raise ValueError("Reference must inherit the pinned reporting host/priority/scheduler")
+    if type(profile["console_rule"]) is not bool:
+        raise ValueError("Console rule must be an explicit Boolean")
     count=compute["console_slots"] if profile["console_rule"] else compute["slots"]
     if profile["slot_count"] != count or compute["slot_width"] != 5 or compute["smt"]:
         raise ValueError("Reference must occupy every pinned five-physical-core reporting slot")
@@ -22,7 +24,7 @@ def slot_layout(profile, plan, host, nice):
     index=profile["reference_slot"]
     if type(index) is not int or not 0 <= index < count or count < 2:
         raise ValueError("Invalid reference slot")
-    if profile["warmup_seconds"] < 300 or profile["perception"] != "none":
+    if not math.isfinite(profile["warmup_seconds"]) or profile["warmup_seconds"] < 300 or profile["perception"] != "none":
         raise ValueError("Fleet uses >=300s all-slot corpus warmup without perception")
     return slots[index],[slot for i,slot in enumerate(slots) if i != index],compute["hosts"][host]["census_cpu"]
 

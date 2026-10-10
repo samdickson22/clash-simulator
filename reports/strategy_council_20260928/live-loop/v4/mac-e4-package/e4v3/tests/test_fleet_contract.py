@@ -96,7 +96,7 @@ class FleetProfileTests(unittest.TestCase):
         self.assertEqual(len(slot_layout(self.profile,self.plan,"test-host",12)[1]),7)
 
     def test_profile_rejects_priority_partial_slots_and_perception(self):
-        for change in (dict(slot_count=2),dict(reference_slot=11),dict(warmup_seconds=299),dict(perception="v3")):
+        for change in (dict(slot_count=2),dict(reference_slot=11),dict(warmup_seconds=299),dict(warmup_seconds=float("nan")),dict(console_rule="false"),dict(perception="v3")):
             with self.subTest(change=change),self.assertRaises(ValueError):slot_layout(dict(self.profile,**change),self.plan,"test-host",12)
         with self.assertRaises(ValueError):slot_layout(self.profile,self.plan,"test-host",10)
         with self.assertRaises(ValueError):slot_layout(self.profile,self.plan,"other-host",12)

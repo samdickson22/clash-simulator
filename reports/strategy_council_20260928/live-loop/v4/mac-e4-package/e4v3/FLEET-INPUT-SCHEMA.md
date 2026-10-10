@@ -130,7 +130,8 @@ candidates, sample/root, native scoring and reduction. Checks and agreement
 formatting occur after the timer. MPS uses the explicitly synchronized adapter.
 
 Each host produces SHA-sealed `speed-reference-raw.jsonl`,
-`deadline-reference-raw.jsonl`, `capacity.jsonl`, native/belief exactness receipts,
+`deadline-reference-raw.jsonl`, `capacity.jsonl`, timestamped `gc-events.json`
+with actual 200/160ms decision deadlines, native/belief exactness receipts,
 source plan/MHz/END/corpus receipts and completion receipt. Host summary JSONs have
 a `scope` key in addition to tier keys.
 
