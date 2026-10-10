@@ -1,0 +1,29 @@
+{
+  "pid": 2071651,
+  "pgid": 2071651,
+  "nice": 19,
+  "scheduler": 5,
+  "affinity": [
+    63
+  ],
+  "old_absent": true,
+  "state": {
+    "utc": "2026-10-10T04:07:52Z",
+    "stage": "frozen offline record only",
+    "stage2": {},
+    "active": null,
+    "offline_active": [],
+    "failures": [],
+    "R2_eligible": false
+  },
+  "closed_offline": [
+    "X1",
+    "X2",
+    "X3",
+    "X6"
+  ],
+  "utc": "2026-10-10T04:07:59Z",
+  "passed": true,
+  "prelaunch_commit": "9a2797bb",
+  "log": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/controller-offline-record.log"
+}

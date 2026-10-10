@@ -1,0 +1,7 @@
+{
+  "parent_cpu_seconds": 2.476543,
+  "child_cpu_seconds": 17.268429,
+  "wall_seconds": 2323.7333131900523,
+  "failures": [],
+  "note": "Controller SSH/local metadata children only. Remote stage1 supervisors and stage2 pools are separately whole-metered; no nested child CPU added twice."
+}

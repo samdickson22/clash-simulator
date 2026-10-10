@@ -1,0 +1,142 @@
+{
+  "lane": "exploration; never adoptable",
+  "never_adoptable": true,
+  "adoption_eligible": false,
+  "authority": "Coordinator04:05 plus R3 thread04:05; fresh current source pins supplemented inventory03",
+  "reserved": [
+    {
+      "name": "historical-root",
+      "base": 4503600127370496,
+      "count": 1
+    },
+    {
+      "name": "D1-h2h",
+      "base": 4503601007370496,
+      "count": 256
+    },
+    {
+      "name": "D1-paired",
+      "base": 4503601107370496,
+      "count": 600
+    },
+    {
+      "name": "heldout64",
+      "base": 4503601207370496,
+      "count": 64
+    },
+    {
+      "name": "r1-generation",
+      "base": 4503601307370496,
+      "count": 32768
+    },
+    {
+      "name": "K1-report",
+      "base": 4503601407370496,
+      "count": 600
+    },
+    {
+      "name": "K1-smoke",
+      "base": 4503601417370496,
+      "count": 8
+    },
+    {
+      "name": "X-stage2",
+      "base": 4503601507370496,
+      "count": 256
+    },
+    {
+      "name": "X-original-stage3",
+      "base": 4503601517370496,
+      "count": 600
+    },
+    {
+      "name": "X-original-smoke",
+      "base": 4503601527370496,
+      "count": 32
+    },
+    {
+      "name": "G-all-hosts-conservative",
+      "base": 4503601607370496,
+      "count": 5000000
+    },
+    {
+      "name": "R2-generation",
+      "base": 4503601707370496,
+      "count": 32768
+    },
+    {
+      "name": "K-v2-report",
+      "base": 4503601807370496,
+      "count": 2400
+    },
+    {
+      "name": "K-v2-smoke-conservative",
+      "base": 4503601817370496,
+      "count": 65536
+    },
+    {
+      "name": "R3-report",
+      "base": 4503601907370496,
+      "count": 600
+    },
+    {
+      "name": "R3-smoke",
+      "base": 4503601917370496,
+      "count": 8
+    },
+    {
+      "name": "R3-regret",
+      "base": 4503601927370496,
+      "count": 65536
+    },
+    {
+      "name": "K2-report",
+      "base": 4503602307370496,
+      "count": 600
+    },
+    {
+      "name": "K2-smoke-conservative",
+      "base": 4503602317370496,
+      "count": 32
+    },
+    {
+      "name": "teacher-noise",
+      "base": 4503609917370496,
+      "count": 262144
+    }
+  ],
+  "sources": [
+    {
+      "path": "reports/explore/k-v2/plan.json",
+      "sha256": "1efc563b8b07852c57dfbd4aed28a971e94ef49749bdfd79f5ef09bc57134d95"
+    },
+    {
+      "path": "reports/explore/k2/plan.json",
+      "sha256": "3dd5c04b74cca4f8f8b2a58746229ba55f3c6b05f123ceae8d4c838d8da705c2"
+    },
+    {
+      "path": "reports/strategy_council_20260928/imitation/exit-r3/PLAN.md",
+      "sha256": "6e9e98bc161b0a8461b3a8d6f1be7f8719f25748a897a0b2ef9cb40c2e8b67f4"
+    },
+    {
+      "path": "reports/strategy_council_20260928/imitation/exit-r2/receipts/freeze.json",
+      "sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24"
+    },
+    {
+      "path": "reports/strategy_council_20260928/imitation/exit-r2/receipts/x7-addendum.json",
+      "sha256": "7682a6442d31df6b84f7936faf8413389e288d6ac2a2acb487a920d2c33c71d4"
+    },
+    {
+      "path": "reports/strategy_council_20260928/imitation/exit-g-topup/HOST03-AMENDMENT.json",
+      "sha256": "78770f0755f83ce55b3ae91f4e441fbc06cda5c35a8a3295dae023cd7718b081"
+    },
+    {
+      "path": "reports/strategy_council_20260928/imitation/exit-g-topup/HOST01-AMENDMENT.json",
+      "sha256": "4cd94ea5673f9baf255d381db97cba25bbae6aff041bf585094e799f5b2cd226"
+    },
+    {
+      "path": "reports/strategy_council_20260928/imitation/exit-r2/ANALYSIS-NOISE-CEILING-20261010.md",
+      "sha256": "3843b5caf525446483ea6b533c4e2d608421bfd235447a95e747e4f8d085aefa"
+    }
+  ]
+}
