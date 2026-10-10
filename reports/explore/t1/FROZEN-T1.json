@@ -1,5 +1,5 @@
 {
-  "status": "AWAITING_OP6_CONFIRMATION",
+  "status": "FROZEN",
   "utc": "2026-10-10T14:54:58Z",
   "code_candidate_commit": "afa3f10e394d14cb3870e56842a3971ca839b328",
   "files": {
@@ -138,7 +138,7 @@
     "reports/explore/t1/receipts/op5-08join-qualification-summary.json": "28ba59cac2523a2c367007df3fdbccde9e36414bdaf21470af757a1d3fa7d7db",
     "reports/explore/t1/receipts/op5-08join-smoke-r6-launch.json": "7ea6f5a556b15c0acfa67918f4fd835c03fb6ba9876534259fbb7f826ba82cfe",
     "reports/explore/t1/receipts/smoke-r6-health-admission.json": "d2a519b64860e2a914d54b70deef1cde26014f2cc865ea3c1d7aaea958596285",
-    "reports/explore/t1/PROGRESS-T1.md": "04393ba1de3716e83c0259b5689add2aac8e8f41edd39b4d011eb99206afbc73",
+    "reports/explore/t1/PROGRESS-T1.md": "000a0b3c5fa30b30eaa28bb341555f6cc319cea50149aca237115fd1a46b15ce",
     "reports/explore/t1/receipts/reporting-launch-receipt-0108.json": "100584090ea8fac3950a2bcd762bfb3c6b8f1c37c0ee02ed23aa33602f065f6a",
     "reports/explore/t1/receipts/reporting-authorization-0108.json": "3eb770c9b900a13beac8ef85453856296e2bb3c47f1b60310f4ab3c15556771a",
     "reports/explore/t1/receipts/reporting-launch-127x01.json": "6259e1edc64f737dd3d8026cfcfcfbe3aea770acb8e1ef3adebdaafcfc303080",
@@ -157,7 +157,11 @@
     "reports/explore/t1/ssh_sensitivity.py": "e643a3420296f76d3dd5800c7afb1531c5993a3e19bb544893e34181e059f384",
     "reports/explore/t1/test_op6.py": "bafbeb1dc2b981441d9374696850dd80303df1124760f152170ecdf7351c933c",
     "reports/explore/t1/OP6-T1.md": "c76f9c8c4e7b8cf9f6cf9d45397e8875f83cb38446c700ef29b4524eea4aaa2b",
-    "reports/explore/t1/receipts/op6-unit-tests.json": "dced530ff6626592345802de691d6ea613cc4a808f7b7763e5f19ad3607fd9fc"
+    "reports/explore/t1/receipts/op6-unit-tests.json": "dced530ff6626592345802de691d6ea613cc4a808f7b7763e5f19ad3607fd9fc",
+    "reports/explore/t1/RELEASE-PRODUCTION-CHECKS-20261010.md": "ff0b7afe3e223792694b018f17b90615aebcc96167f202e7aef50c7567abbd85",
+    "reports/explore/t1/REVIEW-T1-OP6-CONFIRM-20261010T1852Z.md": "eeb58cd1158bbedcf560d317068034a4b93e1772c346aced70e9fdcc367757dc",
+    "reports/explore/t1/receipts/op6-confirmation-admission.json": "fc906fc7248d3be0574e60027871b86d1d4c342766fe1dca89a9a91c5e20fe5d",
+    "reports/explore/t1/receipts/reference-attempt-roots-0108.json": "405f35dc9ecd9ff8e16bc18ea3f2d459465383a940ebcae1cfe8db5e52191f09"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -410,7 +414,7 @@
     "outcomes_read": false
   },
   "operational_delta_op6": {
-    "verdict": "AWAITING_FAST_CONFIRMATION",
+    "verdict": "CONFIRM",
     "authorization": "Coordinator actual18:35Z source-proven LAN SSH only",
     "source_proven_sample_stop_core_fraction": 1.5,
     "source_proven_average_stop_core_fraction": 0.1,
@@ -426,6 +430,12 @@
     "original08_failed_blocks": 11,
     "original08_unstarted_blocks": 1493,
     "original08_supervisor_exit_sha256": "dc41f74602f4225ca6e6d785257d962f42d5c28a10726bab576fe3e8e8bf6a3c",
-    "original_reporting_sources_untouched": true
+    "original_reporting_sources_untouched": true,
+    "reviewed_commit": "d60586b33d5af83f04678d78f1525e4a74ef70cd",
+    "review_commit": "9118153be59f08965e5e7b2b2363306fefd56f04",
+    "review_path": "reports/explore/t1/REVIEW-T1-OP6-CONFIRM-20261010T1852Z.md",
+    "coordinator_authorization_message_id": "message:mcp:53609d4a-a2de-484a-834d-8566c6339c9f:thread-send:coord-t1-op6-confirmed-go-20261010-1",
+    "production_release_conditions": "PC1-PC4 in RELEASE-PRODUCTION-CHECKS-20261010.md",
+    "mixed_guard_regimes_disclosed": true
   }
 }

@@ -1,0 +1,20 @@
+{
+  "utc": "2026-10-10T18:57:48Z",
+  "coordinator_thread": "0523ae6f-baa3-4d4e-b233-b392671670db",
+  "authorization_message_id": "message:mcp:53609d4a-a2de-484a-834d-8566c6339c9f:thread-send:coord-t1-op6-confirmed-go-20261010-1",
+  "reviewed_commit": "d60586b33d5af83f04678d78f1525e4a74ef70cd",
+  "review_commit": "9118153be59f08965e5e7b2b2363306fefd56f04",
+  "review_path": "reports/explore/t1/REVIEW-T1-OP6-CONFIRM-20261010T1852Z.md",
+  "verdict": "CONFIRM",
+  "Option_B_authorized": true,
+  "hosts": [
+    "127x01",
+    "127x08"
+  ],
+  "outcomes_sealed": true,
+  "source_regimes_disclosed": [
+    "original phases OP5",
+    "new phases OP6"
+  ],
+  "release_sidecar_check_required": true
+}
