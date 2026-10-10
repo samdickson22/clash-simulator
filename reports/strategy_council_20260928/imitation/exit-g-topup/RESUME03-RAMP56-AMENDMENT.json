@@ -100,7 +100,7 @@
   "operations_sha256": {
     "admission.py": "3617aee2699aefe24cbaf49f70c208b1dc1b6b06f6a8cf57e47ba9d3ce2bb266",
     "detach.sh": "5137b391ad63ddea2dc5d26ff488cbc8813f3cbbf54af71a0f13f84d0778f60f",
-    "driver.py": "484e5cfdb93927871ab42fd89e295af1644438afacc7ad9b4f55fe2dd4d376ea",
+    "driver.py": "bf4732771256edc6b3215076bcd28a21e47b903dfd4d7a5e31661bb2f4792370",
     "env.sh": "7b770de1ea1d9ec1b37c3391989ed69be5ee822736cdd903f211a1e885b1bd3d",
     "finalize.py": "752e4e7e2a4377a33851ec03711e12bb677589b698f30e92d93f3aa803a8ebc9",
     "launch_guard.py": "4027eb49bdc8ed5509ad2e1f7810ab1e58b82662c8ab1f9d062a3214deb7dd20",
@@ -109,11 +109,13 @@
     "prerequisite.py": "8dc95f0c89c67af1333da1e2bd82ffb49c12e7980ccdf416799a6072366fb1ea",
     "pressure_guard.py": "4aaa2309b41fe0c56a845250e1eba9a7f0d827a190063cf6525f87e52a692d99",
     "qualify_combined.py": "7774b9ad51e9209d08240da64f7c6c7435e7c0328ac5525c53f9811a2bf1de2f",
+    "qualify_deadline.py": "5957fc4e493589354bc00b7c5ff849d91a670fb0bb710e1bacc6238231fa99f2",
     "qualify_pressure.py": "9871a88f26bf4f78016699240ae2ad9fe62fc4a250aac7fe185e82f011738011",
     "qualify_ramp.py": "bdd3aef0a74e6c0ae477e2cbf1de42380b656b5b3c072c41348d57bf61df8baf"
   },
   "receipts": {
     "resume03-combined-qualification.json": "a983817ca2243ea0b6af47932e21ef9bef9ae8e3db91f980067e271ffd6e7d76",
+    "resume03-deadline-qualification.json": "53847827a68fe480423b648024b877bb3417567bcc6432ac48936602a67067ed",
     "resume03-prerequisite.json": "09f7f6e2d63b72a64aeaa4712b26977cf06c27987cbb806de78d39c58294283f",
     "resume03-pressure-qualification.json": "c8e937fc0c6fcce0fd82a91b84e0a74b45556a4f6e71cc5e0c3c33645f57b361",
     "resume03-ramp-qualification.json": "dc3b0a6a2633f615cdcb3365be8da1d35cff675de78bf73aed9aa242aab7f862",
@@ -126,5 +128,6 @@
     "mtime_ns": 1791598155608274744,
     "ctime_ns": 1791598155608274744
   },
-  "released_stop03_sha256": "def79c4844ee3aa6b41baa92d56add738775f0ea5aa1f77a402ca158371d6a3c"
+  "released_stop03_sha256": "def79c4844ee3aa6b41baa92d56add738775f0ea5aa1f77a402ca158371d6a3c",
+  "hard_deadline_bound": "Owned Popen children receive TERM at02:59:55Z, paused children are continued first; survivors receiveKILL at03:00Z. Memory-floor SIGSTOP is disabled during harddrain; exitedchildren untouched. Six injected checksPASS. Parent/packer bothapplysamebound."
 }

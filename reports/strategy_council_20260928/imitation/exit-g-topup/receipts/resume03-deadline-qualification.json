@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "real_games": 0,
+  "tests": [
+    "owned children only",
+    "paused owned child continued before TERM",
+    "TERM five seconds before deadline",
+    "KILL at deadline for survivors",
+    "exited child never signaled",
+    "memory-floor pause disabled during hard drain"
+  ]
+}
