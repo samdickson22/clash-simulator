@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-10T04:02:30Z",
+  "passed": true,
+  "tests": 6,
+  "files": {
+    "controller_offline_record.py": "da03aa99c65aa4464c8216bec5a79c9fd01852a6fa1443fc43e76826d838dd71",
+    "test_offline_record.py": "5cb9b3764a0b34d05183549e6e28715ba308c7ccc478ccdb80d7fb9e95ce0491",
+    "qualify_offline_record.py": "447c8af25180f779cde35a552efecf58dc5ac2569125d143cad485ea625be8dd"
+  },
+  "exit_code": 0,
+  "parent_cpu_seconds": 1.047377,
+  "children_cpu_seconds": 0.288263,
+  "wall_seconds": 0.2513024150393903,
+  "no_games": true,
+  "no_policy_or_checkpoint_load": true
+}

@@ -1,0 +1,136 @@
+{
+  "utc": "2026-10-10T04:06:34Z",
+  "kind": "offline-record-only; separate never-adoptable study",
+  "authority": {
+    "coordinator": "0523ae6f-baa3-4d4e-b233-b392671670db",
+    "decisions_labeled_utc": [
+      "2026-10-10T03:58Z",
+      "2026-10-10T04:05Z"
+    ],
+    "analysis_commit": "136a1285"
+  },
+  "original_freeze_sha256": "8a1d638ac6de53239503ad5dfb4447c6dd07ea5d1d055e5216aa3cb4059ace24",
+  "files": {
+    "ops/controller_offline_record.py": "da03aa99c65aa4464c8216bec5a79c9fd01852a6fa1443fc43e76826d838dd71",
+    "ops/test_offline_record.py": "5cb9b3764a0b34d05183549e6e28715ba308c7ccc478ccdb80d7fb9e95ce0491",
+    "ops/qualify_offline_record.py": "447c8af25180f779cde35a552efecf58dc5ac2569125d143cad485ea625be8dd"
+  },
+  "qualification_sha256": "be6c2361542219a9251783f03f7642a27a78e8b58f6adebd42d6e8be9a87cfd1",
+  "qualification": {
+    "pid": 2054293,
+    "pgid": 2054293,
+    "host": "127x03",
+    "passed": true,
+    "whole_cpu_seconds": 1.33564,
+    "no_games": true
+  },
+  "frozen_gate_interpretation": "Infeasible teacher self-agreement top8 gate. Retain frozen point gates and metrics; kills do not establish student quality.",
+  "fit_action": "X4/X5/X7 finish unchanged; all seven receive sealed fit-host GPU offline scoring exactly once.",
+  "original_game_action": "Do not launch original stage2 or d0264ec9 stage3 reporting; R2 cannot trigger. Original seed banks remain unconsumed.",
+  "descriptive_study": {
+    "lane": "exploration; never adoptable",
+    "students": [
+      "X1",
+      "X2",
+      "best final stage1 play recall of X3..X7 after all fits/scores finish; tie numeric arm order"
+    ],
+    "host": "127x01",
+    "cores": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39
+    ],
+    "nice": 10,
+    "scheduler": "SCHED_OTHER",
+    "reporting": [
+      4503602007370496,
+      600
+    ],
+    "qualification": [
+      4503602017370496,
+      32
+    ],
+    "offsets": [
+      0,
+      13,
+      100000,
+      100001,
+      100002,
+      100003,
+      271828,
+      271829
+    ],
+    "interleaving": "All five C-v1/X1/X2/best/K0 cases of each seed back-to-back same host/one physical core; rotate declared order by index; no control pre-run.",
+    "optional_h2h": "omitted",
+    "freeze_rule": "Separate audit/qualification/addendum commit and push before any game; reporting additionally waits all scores, sealed selection and new wrapper qualification."
+  },
+  "withdrawn_provisional_bank": {
+    "base": 4503601807370496,
+    "count": 600,
+    "reason": "collided with K-v2 frozen range",
+    "audited": false,
+    "staged": false,
+    "games": 0
+  },
+  "R3_reserved": {
+    "reporting": [
+      4503601907370496,
+      600
+    ],
+    "smoke": [
+      4503601917370496,
+      8
+    ],
+    "regret_helper": [
+      4503601927370496,
+      65536
+    ],
+    "offsets": [
+      0,
+      13,
+      100000,
+      100001,
+      100002,
+      100003,
+      271828,
+      271829
+    ]
+  }
+}
