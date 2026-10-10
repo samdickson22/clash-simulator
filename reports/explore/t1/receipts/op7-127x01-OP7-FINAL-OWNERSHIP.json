@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-10T23:28:36Z",
+  "host": "127x01",
+  "supervisor_dead": true,
+  "old_owned_groups_alive": [],
+  "complete": 155,
+  "failed": 11,
+  "unstarted": 1291,
+  "failed_fragments_retained": true,
+  "stop08": false,
+  "who": "",
+  "outcomes_sealed": true
+}

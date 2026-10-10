@@ -1,6 +1,6 @@
 {
   "status": "FROZEN",
-  "utc": "2026-10-10T23:22:59Z",
+  "utc": "2026-10-10T23:40:21Z",
   "code_candidate_commit": "afa3f10e394d14cb3870e56842a3971ca839b328",
   "files": {
     "reports/explore/t1/FREEZE-T1.md": "661c2c3ca30a8e286b0a0a2b9bb934f434829d5845bac45eddb3cfeb0a01331a",
@@ -184,7 +184,21 @@
     "reports/explore/t1/REVIEW-T1-OP7-r1-20261010.md": "1f073ab8a4fa23003c25901972d6f4e9803823a911fc2ae5d115d7e581526a80",
     "reports/explore/t1/REVIEW-T1-OP7-r2-20261010.md": "c6cbfb1b27d58248f925337109fefd3f2faf5cfde1d385583312becd0c19861a",
     "reports/explore/t1/REVIEW-T1-OP7-r3-20261010.md": "f7826322caf3c6b7d1c1e0b62b7a409224492de0e21e925be8138e380019fefd",
-    "reports/explore/t1/receipts/op7-confirmation-1947830b-20261010.json": "0c99826bd992f687566a6a465556918eb9c9280516269cbdf125fe07c9200fc3"
+    "reports/explore/t1/receipts/op7-confirmation-1947830b-20261010.json": "0c99826bd992f687566a6a465556918eb9c9280516269cbdf125fe07c9200fc3",
+    "reports/explore/t1/receipts/op7-127x08-C3-STATIC-METHODS.json": "8268901beba5ea1e51242cf10604b62d82dc76c8ea7e2b72caf3d5b99939ff41",
+    "reports/explore/t1/receipts/op7-127x08-qualification-source-binding.json": "6d57ace41a87095f32537edc9f685027b5d3da7a77a49234719cf95440af2f33",
+    "reports/explore/t1/receipts/op7-127x01-OP7-FINAL-OWNERSHIP.json": "f57160f847692a012b92c6d854bc8953e2f5c585a4b08d10613ae28cb609fc3a",
+    "reports/explore/t1/receipts/op7-127x01-C3-CENSUS-EVIDENCE.json": "0d8733986475309fa6842c772c10ce6b0a8d9b688608e28829ba97c6062b6366",
+    "reports/explore/t1/receipts/op7-127x01-qualification-source-binding.json": "f19ad723542da97904606b212c85e3985d9b54f77084048ac29df190d9b0e4bc",
+    "reports/explore/t1/receipts/op7-127x08-C3-CENSUS-EVIDENCE.json": "12185108bfd5cbaecce60c639a6f45e9fda2ca1f53073df3e74359eead0e0e43",
+    "reports/explore/t1/receipts/op7-127x01-C3-STATIC-METHODS.json": "5c158653f9af42ef71ad3fae2b21580ac5b37cb0c96dd9d686be99fea7e93e70",
+    "reports/explore/t1/receipts/op7-127x08-OP7-FINAL-OWNERSHIP.json": "8895a6d3f1a55fd6d3e90592a455381300604f2d198272ba4e1ced7f770f5f65",
+    "reports/explore/t1/receipts/op7-C3-qualification-20261010.json": "1e55e52e268458d243954c2450b2807bdcdd2c1f2c48713f2ee3a6f71585c018",
+    "reports/explore/t1/OP7-ADMISSION-C3-20261010.md": "9f1583c83c933b55fcb387aca6d2ae2b5aba0cbe6c4d781ad91947bea545383f",
+    "reports/explore/t1/receipts/smoke-op7-r8-health-admission.json": "73a77c5c8ffd8cdb9637a8843ad598acfb62bc484383c5df3d933cf17958c996",
+    "reports/explore/t1/receipts/dispatch-option-b-op7-r2.json": "30487ebf5b9b3da07a1dcce78b0f6d7dccd842158edb5ead52ec99eb79dc3e39",
+    "reports/explore/t1/receipts/blind-ledger-option-b-op7-r2.json": "1271d99fbef0ce92d486ab202a19793814666570899062d690f53d45afe0c57b",
+    "reports/explore/t1/receipts/blind-reinventory-option-b-op7-r2.json": "830c1612db242d68fbb829ca7a4be0e0b04b67ba80a6bbf654973a56d88e0b40"
   },
   "prereg": "reports/strategy_council_20260928/live-loop/v4/PREREG-SEARCH-TIERS-r3-DRAFT.md",
   "plan": "reports/explore/t1/plan.json",
@@ -479,7 +493,7 @@
   "prior_reporting_launch_utc": "2026-10-10T18:03:20Z",
   "prior_reporting_launch_receipt": "reports/explore/t1/receipts/reporting-launch-receipt-0108.json",
   "operational_delta_op7": {
-    "status": "CONFIRMED_PENDING_C3",
+    "status": "FROZEN_ADMITTED_C3_PASS",
     "base_reporting_freeze": "aeeb3003d2a877bd7ff538a1977cbbc37adb404f",
     "authority_commit": "33d0fc06bd8f42dd2e34db4b99b57027b3c551b9",
     "source": "reports/explore/t1/apt_budget.py",
@@ -493,7 +507,7 @@
     "sensitivity": "separate apt and SSH OR apt DESCRIPTIVE_ONLY exclusions; fresh RNG2026101040; primary/SSH RNG unchanged",
     "release_condition": "PC4 strict flags, both/union counts, stop=True completion proofs and mixed meter regimes before both routes",
     "reporting_runtime_changed": false,
-    "awaiting": "C3 exact-source two-host qualification/smoke/cadence/real helper UID evidence; reviewed Option B",
+    "awaiting": "fresh two-host reporting launch in committed balanced replacement-r2 namespace",
     "round": 3,
     "r1_candidate": "7925fbf1507b7221a813edda5ff221aff3f43115",
     "r1_review_sha256": "1f073ab8a4fa23003c25901972d6f4e9803823a911fc2ae5d115d7e581526a80",
@@ -538,6 +552,30 @@
       "reports/explore/t1/REVIEW-T1-OP7-r2-20261010.md": "c6cbfb1b27d58248f925337109fefd3f2faf5cfde1d385583312becd0c19861a",
       "reports/explore/t1/REVIEW-T1-OP7-r3-20261010.md": "f7826322caf3c6b7d1c1e0b62b7a409224492de0e21e925be8138e380019fefd"
     },
-    "source_candidate": "d8cc4ff7595857fda4b563bee503af69b892f547"
+    "source_candidate": "d8cc4ff7595857fda4b563bee503af69b892f547",
+    "C3": "reports/explore/t1/receipts/op7-C3-qualification-20261010.json",
+    "C3_sha256": "1e55e52e268458d243954c2450b2807bdcdd2c1f2c48713f2ee3a6f71585c018",
+    "C3_static_authority_commit": "df4ad132c215dd36ac6a2c9598494caa4dff7379",
+    "live_method_substitute": "coordinator-authorized root ownership/permission and passwd UID static evidence; first real helper four UIDs must be retained",
+    "smoke_receipt": "reports/explore/t1/receipts/smoke-op7-r8-health-admission.json",
+    "smoke_sha256": "73a77c5c8ffd8cdb9637a8843ad598acfb62bc484383c5df3d933cf17958c996"
+  },
+  "operational_replacement_r2": {
+    "source_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op6-0108-r1",
+    "reporting_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/replacement-frozen-op7-0108-r2",
+    "phase": "replacement-r2",
+    "inventory": "reports/explore/t1/receipts/blind-reinventory-option-b-op7-r2.json",
+    "dispatch": "reports/explore/t1/receipts/dispatch-option-b-op7-r2.json",
+    "dispatch_sha256": "30487ebf5b9b3da07a1dcce78b0f6d7dccd842158edb5ead52ec99eb79dc3e39",
+    "ledger": "reports/explore/t1/receipts/blind-ledger-option-b-op7-r2.json",
+    "ledger_sha256": "1271d99fbef0ce92d486ab202a19793814666570899062d690f53d45afe0c57b",
+    "preserved": 711,
+    "rows": 2361,
+    "host_counts": {
+      "127x01": 1181,
+      "127x08": 1180
+    },
+    "new_losses": 22,
+    "outcomes_sealed": true
   }
 }

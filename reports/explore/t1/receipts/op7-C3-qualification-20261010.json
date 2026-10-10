@@ -1,0 +1,63 @@
+{
+  "utc": "2026-10-10T23:32:59Z",
+  "health_only": true,
+  "outcomes_sealed": true,
+  "outcomes_read": false,
+  "reviewed_source_commit": "d8cc4ff7595857fda4b563bee503af69b892f547",
+  "C2_freeze_commit": "04633bdb",
+  "C2_manifest_sha256": "1ea7fa18d240d466ba01dd336518c1ad69b8a2772f77334f8e3ba9140113030c",
+  "qualification_passed": true,
+  "host_sources_byte_identical": true,
+  "hosts": {
+    "127x01": {
+      "qualification_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op7-0108-r2",
+      "tests": 265,
+      "exact_states": 125,
+      "belief_histories": 125,
+      "belief_variants": 250,
+      "source_files": 63,
+      "source_binding": "reports/explore/t1/receipts/op7-127x01-qualification-source-binding.json",
+      "source_binding_sha256": "f19ad723542da97904606b212c85e3985d9b54f77084048ac29df190d9b0e4bc",
+      "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+      "student_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+      "calibration_sha256": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+      "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+      "census_receipt": "reports/explore/t1/receipts/op7-127x01-C3-CENSUS-EVIDENCE.json",
+      "static_receipt": "reports/explore/t1/receipts/op7-127x01-C3-STATIC-METHODS.json",
+      "source_stable": true
+    },
+    "127x08": {
+      "qualification_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op7-0108-r2",
+      "tests": 265,
+      "exact_states": 125,
+      "belief_histories": 125,
+      "belief_variants": 250,
+      "source_files": 63,
+      "source_binding": "reports/explore/t1/receipts/op7-127x08-qualification-source-binding.json",
+      "source_binding_sha256": "6d57ace41a87095f32537edc9f685027b5d3da7a77a49234719cf95440af2f33",
+      "native_sha256": "44874fd6047aa53f8f5c46fd3a77e4e2c8672f98dbcf6d758fbf90ee043a5be2",
+      "student_sha256": "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85",
+      "calibration_sha256": "e300353346983e888d896b20412d4075496a6f14ef3625cefc7eeadacec5e414",
+      "v1_sha256": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+      "census_receipt": "reports/explore/t1/receipts/op7-127x08-C3-CENSUS-EVIDENCE.json",
+      "static_receipt": "reports/explore/t1/receipts/op7-127x08-C3-STATIC-METHODS.json",
+      "source_stable": true
+    }
+  },
+  "static_substitution_authority_commit": "df4ad132c215dd36ac6a2c9598494caa4dff7379",
+  "no_system_services_triggered": true,
+  "first_real_helper_four_uids_ledger_required": true,
+  "symlink_permission_semantics": "root-owned symlink and resolved target checked; symlink mode0777 has no access-control meaning; resolved files and all ancestors enforce mode mask",
+  "excluded_attempts": [
+    {
+      "job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/qualified-op7-0108-r1",
+      "reason": "launcher inherited nice19; stopped exact owned groups; retained excluded receipts"
+    }
+  ],
+  "smoke_job": "/mpac/sdicks02/jobs/clasher/t1-20261010-r1/smoke-after-op7-0108-r8",
+  "smoke_pending": false,
+  "reporting_admission_pending_smoke": false,
+  "smoke_passed": true,
+  "smoke_receipt": "reports/explore/t1/receipts/smoke-op7-r8-health-admission.json",
+  "smoke_receipt_sha256": "73a77c5c8ffd8cdb9637a8843ad598acfb62bc484383c5df3d933cf17958c996"
+}
