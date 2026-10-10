@@ -1,6 +1,6 @@
 {
   "schema": "clasher.exit-r3.evaluation-freeze.v1",
-  "utc": "2026-10-10T05:20:24Z",
+  "utc": "2026-10-10T05:16:40Z",
   "scientific_freeze_commit": "bc542da83e4e6fea16ee53e9ff4b8d10eb14efed",
   "scientific_freeze_sha256": "2802b0290e96a2249e3212bfe994639271a4cca72aa79d27759cdaf042f0f49f",
   "scientific_plan_unchanged": true,
@@ -28,23 +28,21 @@
     "stage3-sdefault-addendum.json": "7f62b4e4ac4dccbef4f555f1ca8b10b4a77d0412d02607f26c6a873c1272d1a7",
     "source-manifests.json": "b058317f1eff8ec2930b21ba2de5d262af23f665218fe9d87b4507ff2baf1c2e",
     "eval-ops/advance_regret04.py": "e57db51d76f1a1dbb57ad15c93e08119bc290ba783e21ba9b97a00119bd59df8",
-    "eval-ops/guard_regret04.py": "7233437e83358cae68adfe975a5f3211ccbaeafddc89b6ee67b696b8171b890c",
+    "eval-ops/guard_regret04.py": "fa31d5c1c79a332391c3aaa316f1bf878f2d1035167eece84f1145d607d180d2",
     "eval-ops/pool_regret04.py": "6951890a68f8ac6b44e4fba6516e935ab3c37fe236ea76a91f2bead60b9d0cb6",
     "eval-ops/stage_regret04.py": "6abd2e7265beaed6d53104931ce7aad14de4c05ac0f9b1a8438ae91548cf2dbb",
-    "eval-ops/test_guard_regret04.py": "0e1606f8092f8c10fa6f6adfe42e6aa0f96e9ffe9b9035d06482192806952c05"
+    "eval-ops/test_guard_regret04.py": "303b79262469fcd7289638e82d8594c9b61a098251545635366900cf13dae7b5"
   },
   "release_contract_commit": "7404506e",
   "cpu_owner_release_required": true,
   "stage1_regret_threshold": 0.01,
   "stage2_upper_ci_must_be_below": 0,
-  "implementation_supplement_sha256": "3156339b82367c281f3f341ec1ceffba0636e81b391d6f8ff06491c80dd26a4b",
-  "prior_evaluation_freeze_commit": "2023ebff4a977194c676583ba8db5b04b5e0fa23",
-  "prior_evaluation_freeze_sha256": "0c4a4a82629248def3a7f61c3f53b59b7d698ca479d2bf82a9ddf132d7608afd",
+  "implementation_supplement_sha256": "91305d8c8f122aec983266c68f591506edeb47ee5f7abccca5cf9fb5fe58d1d8",
+  "prior_evaluation_freeze_commit": "732a938270c681211a1ecf188e6658044eeec582",
+  "prior_evaluation_freeze_sha256": "d977caa6bde916845543a445fa38cc8bc9efa7570bf512253186b04ba4f0ad62",
   "regret04_only_operational_amendment": true,
   "regret04_tests_sha256": "2dea339b10df2b2ff7534590dc5d8a531a4ff512823f87ad154399ebe6e8b591",
   "regret04_authority_sha256": "e40ee8ad567f79525cae2a5e67efeb9135fee6ab871c6115fa36853c9c26e442",
-  "operational_revision": "Clarified07:30Z hard vacancy with ten-second stop/reap lead; bookkeeping progress SHA changes allowed; actual launch/STOP/PSI guards retained; before final offline/replay",
-  "regret04_clarification_tests_sha256": "25d841ab41ece85026988b014c6e2c7acae597da774e584d502eb7a5faa36b22",
-  "regret04_vacancy_lead_tests_sha256": "53b5d3aaeae1332816746ea1cc2e18677ba242a24c2a5f1ecbb4082fbca05e7d",
-  "regret04_stop_lead_seconds": 10
+  "operational_revision": "Coordinator clarification: hard07:30Z vacancy; review/approval progress-SHA bookkeeping does not revoke grant; actual launch/STOP/PSI guards retained; before final offline/replay",
+  "regret04_clarification_tests_sha256": "25d841ab41ece85026988b014c6e2c7acae597da774e584d502eb7a5faa36b22"
 }

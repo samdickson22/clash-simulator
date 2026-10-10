@@ -2,6 +2,7 @@
 import hashlib,json,os,socket,time
 from pathlib import Path
 DEADLINE=1791617400 # 2026-10-10T07:30:00Z; coordinator clarification
+STOP_LEAD_SECONDS=10 # Allow SSH polling and owned child reaping before vacancy.
 
 def full_pressure():
     line=next(l for l in Path('/proc/pressure/memory').read_text().splitlines() if l.startswith('full '))
@@ -23,7 +24,7 @@ def allowed(job,manager=False):
     j=Path(job)
     if socket.gethostname().split('.')[0]!='127x04' or os.getpriority(os.PRIO_PROCESS,0)!=19 or os.sched_getscheduler(0)!=os.SCHED_OTHER:return False
     if not set(os.sched_getaffinity(0))<=set(range(12,20)):return False
-    if time.time()>=DEADLINE or (j/'REGRET04.STOP').exists() or (j/'REGRET.STOP').exists() or full_pressure()>10:return False
+    if time.time()>=DEADLINE-STOP_LEAD_SECONDS or (j/'REGRET04.STOP').exists() or (j/'REGRET.STOP').exists() or full_pressure()>10:return False
     receipt=j/'REGRET04-ADMITTED.json';authority=j/'REGRET04-AUTHORITY.json'
     if not receipt.exists() or not authority.exists():return False
     r=json.loads(receipt.read_text())

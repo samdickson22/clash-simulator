@@ -1,5 +1,5 @@
 {
-  "utc": "2026-10-10T05:16:40Z",
+  "utc": "2026-10-10T05:20:24Z",
   "final": false,
   "totals": {
     "CPU staging": {
@@ -8,9 +8,9 @@
       "meters": 1
     },
     "preparation/qualification": {
-      "cpu_seconds": 39.232809,
+      "cpu_seconds": 39.328191000000004,
       "gpu_wall_seconds": 0.0,
-      "meters": 9
+      "meters": 10
     }
   },
   "charged_process_meters": [
@@ -33,6 +33,7 @@
     "evaluation-tests-first.json",
     "evaluation-tests.json",
     "regret04-tests.json",
-    "regret04-tests-clarification.json"
+    "regret04-tests-clarification.json",
+    "regret04-tests-vacancy-lead.json"
   ]
 }

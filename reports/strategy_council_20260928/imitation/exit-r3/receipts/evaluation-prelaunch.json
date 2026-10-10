@@ -1,10 +1,11 @@
 {
   "pushed": true,
-  "commit": "732a938270c681211a1ecf188e6658044eeec582",
+  "commit": "2023ebff4a977194c676583ba8db5b04b5e0fa23",
   "verified_remote": "refs/heads/main",
-  "evaluation_freeze_sha256": "d977caa6bde916845543a445fa38cc8bc9efa7570bf512253186b04ba4f0ad62",
-  "utc": "2026-10-10T04:44:24Z",
+  "evaluation_freeze_sha256": "0c4a4a82629248def3a7f61c3f53b59b7d698ca479d2bf82a9ddf132d7608afd",
+  "utc": "2026-10-10T05:17:48Z",
   "secret_scan_passed": true,
   "no_evaluation_started_before_push": true,
-  "regret04_operational_revision": true
+  "regret04_operational_revision": true,
+  "clarification": "07:30Z hard vacancy; bookkeeping progress SHA changes allowed, actual launch/PSI/STOP guards retained"
 }

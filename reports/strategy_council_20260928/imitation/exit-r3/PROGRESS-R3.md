@@ -216,3 +216,18 @@ K2 notification: owns03 reporting since05:14:51Z after explicit K-v2 release,
 timingPGIDs2300919/2300943, cores0–54/manager59/nice10/SCHED_OTHER;24 smoke
 games qualified. No final K2-CPU-RELEASE.json yet.03 remains unclaimed byR3
 until K2's atomic release, explicit notification/PROGRESS, and full drain.
+
+2026-10-10T05:18:55Z — Clarification freeze2023ebff pushed and deployed09/16/04.
+All25 mapped SHAs/AST, original scientific freeze SHA, new pushed prelaunch
+and grant SHA independently verified05:17:49/51/52Z. Both old authority and
+evaluation-freeze/prelaunch receipts retained. GuardtestPGID1023059 and old
+stagingPGID865011 independently absent04. No offline/replay yet.04 remains
+idle until both final proposals and new admitted receipt bound to the grant.
+Timer prompt updated to clarified07:30 deadline/bookkeeping rule and K2
+active03 ownership; current file hashes take precedence over literal oldpins.
+
+2026-10-10T05:20:24Z — Added10-second stop/reap lead: refuse04 work07:29:50Z,
+reap all owned children before HARD07:30Z. Guard boundary/pressure/cores/nice/
+heartbeat/A19/STOP test passes04core19/nice19 at05:20:02Z, PID/PGID1040730,
+CPU0.095382s. Prior2023ebff no-lead freeze retained; new pins push/deploy before
+any offline/replay. No scientific change and no workload retry occurred.

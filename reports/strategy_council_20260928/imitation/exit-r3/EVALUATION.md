@@ -96,3 +96,5 @@ on unavailable progress checks. Actual A19 process detection, owned STOP,
 PSI fullavg10>10, nice19/cores12–19 and at most8 processes remain enforced.
 Manager19 and scoring workers12–14 are unchanged. No scientific gate, seed,
 scorer, training recipe, or Stage2 CPU contract changes.
+The guard begins vacancy at07:29:50Z, leaving ten seconds for bounded SSH
+polling and three-second owned child reaping before the07:30Z hard deadline.

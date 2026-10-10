@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "tests": 1,
+  "checks": [
+    "hard07:30Z exact UTC epoch",
+    "07:29:49 admitted",
+    "07:29:50 refuse for reaping lead",
+    "07:30 hard vacancy",
+    "PSI",
+    "forbidden CPUs",
+    "nice",
+    "heartbeat",
+    "actual A19 process",
+    "owned STOP"
+  ],
+  "cpu_seconds": 0.095382,
+  "wall_seconds": 0.06317254900932312,
+  "utc": "2026-10-10T05:20:02Z",
+  "pid": 1040730,
+  "pgid": 1040730,
+  "host": "127x04",
+  "nice": 19,
+  "cores": [
+    19
+  ],
+  "stdout": "",
+  "stderr": ".\n----------------------------------------------------------------------\nRan 1 test in 0.003s\n\nOK\n"
+}
