@@ -1,0 +1,1392 @@
+{
+  "utc": "2026-10-10T08:08:38Z",
+  "passed": true,
+  "phase": "steady",
+  "host": "127x08",
+  "pid": 16288,
+  "pgid": 16288,
+  "persistent_processes": [
+    {
+      "pid": 16288,
+      "pgid": 16288,
+      "start": 141862949,
+      "cmd_sha256": "33dbc614f37984673cea6257884a874cba442652781ad8dfd981f7214d0c845a",
+      "core": 54,
+      "threads": [
+        {
+          "tid": 16288,
+          "cores": [
+            54
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 16553,
+      "pgid": 16288,
+      "start": 141863368,
+      "cmd_sha256": "4708c5870fb95535da9602d5428942633a8e823c5f4d332a8863892441064c6a",
+      "core": 55,
+      "threads": [
+        {
+          "tid": 16553,
+          "cores": [
+            55
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 16556,
+      "pgid": 16288,
+      "start": 141863368,
+      "cmd_sha256": "206471752a5d52ce2c14f09bbf9f601818c724de78190d11818c44fa49c7d55a",
+      "core": 0,
+      "threads": [
+        {
+          "tid": 16556,
+          "cores": [
+            0
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 16564,
+      "pgid": 16288,
+      "start": 141863370,
+      "cmd_sha256": "4cef9511fceccf71fda941bc2df4fd64d3e77ed9fc6f1c7d0c95820d861b97f5",
+      "core": 1,
+      "threads": [
+        {
+          "tid": 16564,
+          "cores": [
+            1
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 16571,
+      "pgid": 16288,
+      "start": 141863371,
+      "cmd_sha256": "4c1b6800437dc4c79ad981b3f6090a3dea445891e539558cb58e4332b7439181",
+      "core": 2,
+      "threads": [
+        {
+          "tid": 16571,
+          "cores": [
+            2
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 16573,
+      "pgid": 16288,
+      "start": 141863372,
+      "cmd_sha256": "0e9b2a260c3738b3c33eb07d1da744692ca6a69c1f0fc04deb17248f50fb8066",
+      "core": 3,
+      "threads": [
+        {
+          "tid": 16573,
+          "cores": [
+            3
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 18448,
+      "pgid": 16288,
+      "start": 141866508,
+      "cmd_sha256": "a678636771f6bd4396dc48ef7a6ad1e6ec3d1ffcb686536ec9b1bff61ff9d82d",
+      "core": 4,
+      "threads": [
+        {
+          "tid": 18448,
+          "cores": [
+            4
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 18449,
+      "pgid": 16288,
+      "start": 141866508,
+      "cmd_sha256": "e4c8217f0408a3158b24bcf5962690c036faa1a762461f1a05a3e99b072da077",
+      "core": 5,
+      "threads": [
+        {
+          "tid": 18449,
+          "cores": [
+            5
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 18450,
+      "pgid": 16288,
+      "start": 141866508,
+      "cmd_sha256": "03ffd9d9ffc3e7f273e5f4c19f03d024b9af54e215392543fea8b65f192b6702",
+      "core": 6,
+      "threads": [
+        {
+          "tid": 18450,
+          "cores": [
+            6
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 18451,
+      "pgid": 16288,
+      "start": 141866510,
+      "cmd_sha256": "718370747245840d5d957fe59335a4aa8401d037b032241f67bb4bcbaba84306",
+      "core": 7,
+      "threads": [
+        {
+          "tid": 18451,
+          "cores": [
+            7
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 20254,
+      "pgid": 16288,
+      "start": 141869593,
+      "cmd_sha256": "e70f41ecef88953fe90e864935daef8a87b50d30d8d6cafadac6dcac86c2ea72",
+      "core": 8,
+      "threads": [
+        {
+          "tid": 20254,
+          "cores": [
+            8
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 20257,
+      "pgid": 16288,
+      "start": 141869594,
+      "cmd_sha256": "1536ef6ec01a5a9eba58f1c549c83c1a6bca1c21df322d4c3f4734b16ffa0ed3",
+      "core": 9,
+      "threads": [
+        {
+          "tid": 20257,
+          "cores": [
+            9
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 20262,
+      "pgid": 16288,
+      "start": 141869595,
+      "cmd_sha256": "d7e5fc03153e2b2fa0cc6bf83bce35547a7605d351b45b10571adaab118134fe",
+      "core": 10,
+      "threads": [
+        {
+          "tid": 20262,
+          "cores": [
+            10
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 20265,
+      "pgid": 16288,
+      "start": 141869596,
+      "cmd_sha256": "4d643360c1f34d37f54d6f324879bf3cb55299f3474fb90cfb1b29657fa0a91b",
+      "core": 11,
+      "threads": [
+        {
+          "tid": 20265,
+          "cores": [
+            11
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 22183,
+      "pgid": 16288,
+      "start": 141872684,
+      "cmd_sha256": "39b5a2b9665960261ed736036b9ad9909935724db5d37c722d333672e3db0335",
+      "core": 12,
+      "threads": [
+        {
+          "tid": 22183,
+          "cores": [
+            12
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 22184,
+      "pgid": 16288,
+      "start": 141872684,
+      "cmd_sha256": "5981f58bbed76e6946a0d92624dbb64d076cac6242a3545250b97f044c46ce12",
+      "core": 13,
+      "threads": [
+        {
+          "tid": 22184,
+          "cores": [
+            13
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 22185,
+      "pgid": 16288,
+      "start": 141872686,
+      "cmd_sha256": "efc6a70878d6ece2fc881c5f548e154c0acaccabaa21e9ad9d85fbafd25e72f1",
+      "core": 14,
+      "threads": [
+        {
+          "tid": 22185,
+          "cores": [
+            14
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 22186,
+      "pgid": 16288,
+      "start": 141872687,
+      "cmd_sha256": "984f7a8ea90a0ca9085bbad7a4554acecfc3a93e5d90f87c8058c14f1588b641",
+      "core": 15,
+      "threads": [
+        {
+          "tid": 22186,
+          "cores": [
+            15
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 24029,
+      "pgid": 16288,
+      "start": 141875772,
+      "cmd_sha256": "236a18167ed108da9672ffbc6ef0fb105ef864666293ade5c1d9bc4c7c22c266",
+      "core": 16,
+      "threads": [
+        {
+          "tid": 24029,
+          "cores": [
+            16
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 24030,
+      "pgid": 16288,
+      "start": 141875773,
+      "cmd_sha256": "329f949cda3addad56300d5fa551f6bdb163563b2c3b21426dd060c0ad4d8c1a",
+      "core": 17,
+      "threads": [
+        {
+          "tid": 24030,
+          "cores": [
+            17
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 24031,
+      "pgid": 16288,
+      "start": 141875774,
+      "cmd_sha256": "f3152a5566e33a801139d1e2ccc29ba44bfd78f3a86a1cf1995ba5f6e45e1986",
+      "core": 18,
+      "threads": [
+        {
+          "tid": 24031,
+          "cores": [
+            18
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 24032,
+      "pgid": 16288,
+      "start": 141875775,
+      "cmd_sha256": "9223cc17e189247d0f778f8c36eac9394b15f157ab024525362d481812b042df",
+      "core": 19,
+      "threads": [
+        {
+          "tid": 24032,
+          "cores": [
+            19
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 25940,
+      "pgid": 16288,
+      "start": 141878864,
+      "cmd_sha256": "4842312e04f6b51c5b2e23950a3a5d0f53ee31d67577229d1c399a86b927936c",
+      "core": 20,
+      "threads": [
+        {
+          "tid": 25940,
+          "cores": [
+            20
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 25941,
+      "pgid": 16288,
+      "start": 141878864,
+      "cmd_sha256": "435c15590420065441f7e5dbad5ee4ccef41268d4e39a60048c065dcfa927967",
+      "core": 21,
+      "threads": [
+        {
+          "tid": 25941,
+          "cores": [
+            21
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 25943,
+      "pgid": 16288,
+      "start": 141878866,
+      "cmd_sha256": "75b5e440ba5538b3f4a8f108d75b776b3be64d5338825dc933a2c666d7f91aba",
+      "core": 22,
+      "threads": [
+        {
+          "tid": 25943,
+          "cores": [
+            22
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 25954,
+      "pgid": 16288,
+      "start": 141878867,
+      "cmd_sha256": "58a09247e7c84dec940783a11e2d194270b7d0d6d8c4ef352a14b30604561da4",
+      "core": 23,
+      "threads": [
+        {
+          "tid": 25954,
+          "cores": [
+            23
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 27819,
+      "pgid": 16288,
+      "start": 141881966,
+      "cmd_sha256": "8948bf3e2b8717c6cbe9c4213c9733d99538e7c15033bd65c33222953bf33184",
+      "core": 24,
+      "threads": [
+        {
+          "tid": 27819,
+          "cores": [
+            24
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 27820,
+      "pgid": 16288,
+      "start": 141881966,
+      "cmd_sha256": "b502bbc73186a67c987ba685d6b6eecc082b0a0ae3c82e2c07c25020efb6bcd5",
+      "core": 25,
+      "threads": [
+        {
+          "tid": 27820,
+          "cores": [
+            25
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 27821,
+      "pgid": 16288,
+      "start": 141881967,
+      "cmd_sha256": "0a1db54261e518cafbfa36043e8ae4354fe15c6703a35d0d8e903d37bc96bf3f",
+      "core": 26,
+      "threads": [
+        {
+          "tid": 27821,
+          "cores": [
+            26
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 27822,
+      "pgid": 16288,
+      "start": 141881968,
+      "cmd_sha256": "b0eb5e980851dcef3ad0f3f3618a11d271976bdc44933e35e727f06340b646b5",
+      "core": 27,
+      "threads": [
+        {
+          "tid": 27822,
+          "cores": [
+            27
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 29605,
+      "pgid": 16288,
+      "start": 141885058,
+      "cmd_sha256": "e0da038ee95c507891dac621f976d3a6561671b38ccccaf93bc20043f4c422bb",
+      "core": 28,
+      "threads": [
+        {
+          "tid": 29605,
+          "cores": [
+            28
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 29606,
+      "pgid": 16288,
+      "start": 141885059,
+      "cmd_sha256": "aa4e01deac48b2443643bef0345ce0202a666b5b8f4a1a91d81a2923ecfcbe8e",
+      "core": 29,
+      "threads": [
+        {
+          "tid": 29606,
+          "cores": [
+            29
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 29607,
+      "pgid": 16288,
+      "start": 141885060,
+      "cmd_sha256": "a4825b50559511e46c580eef5ac3dfff81893e7f36f0ee4df1c3bb3acf7852d4",
+      "core": 30,
+      "threads": [
+        {
+          "tid": 29607,
+          "cores": [
+            30
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 29608,
+      "pgid": 16288,
+      "start": 141885061,
+      "cmd_sha256": "598f6a8360ddf0bdba671c2a371a5987df3999428aa20525b463bf288d84f123",
+      "core": 31,
+      "threads": [
+        {
+          "tid": 29608,
+          "cores": [
+            31
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 31507,
+      "pgid": 16288,
+      "start": 141888149,
+      "cmd_sha256": "e1dc44d394eaefab14a7cb021edc1203bcbf54088e9a6fa30502c4c4d22d7294",
+      "core": 32,
+      "threads": [
+        {
+          "tid": 31507,
+          "cores": [
+            32
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 31508,
+      "pgid": 16288,
+      "start": 141888149,
+      "cmd_sha256": "b0f2f6da0f3264f60868832d26340988b95eb139bd29f8cdb3f13e0f8cb0240f",
+      "core": 33,
+      "threads": [
+        {
+          "tid": 31508,
+          "cores": [
+            33
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 31511,
+      "pgid": 16288,
+      "start": 141888150,
+      "cmd_sha256": "03a3729dc9063a72959a50b828357afdca11d0b472cbf2380a8cf40a9b0877c1",
+      "core": 34,
+      "threads": [
+        {
+          "tid": 31511,
+          "cores": [
+            34
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 31514,
+      "pgid": 16288,
+      "start": 141888152,
+      "cmd_sha256": "b036e3b6974ddd78b02045d9ca2706a86277a5f8e0dd31c4edb95e652f22bc79",
+      "core": 35,
+      "threads": [
+        {
+          "tid": 31514,
+          "cores": [
+            35
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 33293,
+      "pgid": 16288,
+      "start": 141891243,
+      "cmd_sha256": "bd197164edc74380ab1fc5122cabe844223217919cbe447b0331c558d51cbd64",
+      "core": 36,
+      "threads": [
+        {
+          "tid": 33293,
+          "cores": [
+            36
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 33294,
+      "pgid": 16288,
+      "start": 141891244,
+      "cmd_sha256": "d168fad1b0b07b4739ff556092782bc1ccf042e08e1cdc201590f553697b32d8",
+      "core": 37,
+      "threads": [
+        {
+          "tid": 33294,
+          "cores": [
+            37
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 33295,
+      "pgid": 16288,
+      "start": 141891245,
+      "cmd_sha256": "45ce4f422f519e185519925c687cdb372311d10858fc5962b9042131c1bff0d1",
+      "core": 38,
+      "threads": [
+        {
+          "tid": 33295,
+          "cores": [
+            38
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 33296,
+      "pgid": 16288,
+      "start": 141891246,
+      "cmd_sha256": "44d3bd5cc9482312dc740569dcaf9e5f36b064ea167555f3778bfa1e6722bad0",
+      "core": 39,
+      "threads": [
+        {
+          "tid": 33296,
+          "cores": [
+            39
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 35156,
+      "pgid": 16288,
+      "start": 141894342,
+      "cmd_sha256": "6e08152d04adecce6df4e2b563b4b22282fb6e4769450bab6a1323a74d8143ff",
+      "core": 40,
+      "threads": [
+        {
+          "tid": 35156,
+          "cores": [
+            40
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 35159,
+      "pgid": 16288,
+      "start": 141894342,
+      "cmd_sha256": "d918f92d86a812dc8be12b7934ed9ab74c52ef488b9339d6ae16d001c4452d65",
+      "core": 41,
+      "threads": [
+        {
+          "tid": 35159,
+          "cores": [
+            41
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 35162,
+      "pgid": 16288,
+      "start": 141894344,
+      "cmd_sha256": "42bb2974282da52dc691c2b8e3fe1c1ecb1423c6fd1597dbd9ba22c7b0fb0ef6",
+      "core": 42,
+      "threads": [
+        {
+          "tid": 35162,
+          "cores": [
+            42
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 35163,
+      "pgid": 16288,
+      "start": 141894345,
+      "cmd_sha256": "93d3645c64ea80ff33bec1420c5ad3907754484219e85e2a4fd13132b610e6a2",
+      "core": 43,
+      "threads": [
+        {
+          "tid": 35163,
+          "cores": [
+            43
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 36951,
+      "pgid": 16288,
+      "start": 141897437,
+      "cmd_sha256": "b67914e2ef0f642f341a42b31be32fcaace764f4581ef6a08085424ca26a076a",
+      "core": 44,
+      "threads": [
+        {
+          "tid": 36951,
+          "cores": [
+            44
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 36952,
+      "pgid": 16288,
+      "start": 141897437,
+      "cmd_sha256": "bbce9e888cbb5618013e4adc0691b93fa9b4f4a8a835d27fcb06a0726330dba4",
+      "core": 45,
+      "threads": [
+        {
+          "tid": 36952,
+          "cores": [
+            45
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 36953,
+      "pgid": 16288,
+      "start": 141897438,
+      "cmd_sha256": "4bb9e4f664cf9cb8ceff4cdd6346c1f70e9b2a62ab8355b0f17fbad97905fe91",
+      "core": 46,
+      "threads": [
+        {
+          "tid": 36953,
+          "cores": [
+            46
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 36954,
+      "pgid": 16288,
+      "start": 141897440,
+      "cmd_sha256": "8d4820ed1f630d8bb257e4dd10570d8168099406951ce0bac845d9e5280d8325",
+      "core": 47,
+      "threads": [
+        {
+          "tid": 36954,
+          "cores": [
+            47
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 38794,
+      "pgid": 16288,
+      "start": 141900530,
+      "cmd_sha256": "a1e4cba005783a66af62b5e9bbcd24fa7d7913b70601f5f802673d3e3946f69e",
+      "core": 48,
+      "threads": [
+        {
+          "tid": 38794,
+          "cores": [
+            48
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 38795,
+      "pgid": 16288,
+      "start": 141900530,
+      "cmd_sha256": "9c5feda520ad217b01b6b73ec5a86d1aa8e16ee0761702c108c76082851a3a38",
+      "core": 49,
+      "threads": [
+        {
+          "tid": 38795,
+          "cores": [
+            49
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 38796,
+      "pgid": 16288,
+      "start": 141900532,
+      "cmd_sha256": "ee4309672ac3fa6dece9409023998ff37cda85a611ae291b6d43bff5f8bfd20d",
+      "core": 50,
+      "threads": [
+        {
+          "tid": 38796,
+          "cores": [
+            50
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 38797,
+      "pgid": 16288,
+      "start": 141900533,
+      "cmd_sha256": "4a11b31376a4298aa2f3df9262023e372e541976397f0c0021a957f54c179ade",
+      "core": 51,
+      "threads": [
+        {
+          "tid": 38797,
+          "cores": [
+            51
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 40663,
+      "pgid": 16288,
+      "start": 141903621,
+      "cmd_sha256": "a19efa43ad204c8fe0c842bd9ae729856b1c9d6092b408078cafabe1f7d743a3",
+      "core": 52,
+      "threads": [
+        {
+          "tid": 40663,
+          "cores": [
+            52
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    },
+    {
+      "pid": 40664,
+      "pgid": 16288,
+      "start": 141903621,
+      "cmd_sha256": "46f38545613db435d2c44592f349dfc12a7787426848332875baf741889f78b6",
+      "core": 53,
+      "threads": [
+        {
+          "tid": 40664,
+          "cores": [
+            53
+          ],
+          "scheduler": 5,
+          "nice": 19
+        }
+      ]
+    }
+  ],
+  "spawned_game_workers": 54,
+  "configured_game_workers": 54,
+  "memory_available": 104930631680,
+  "pressure": "some avg10=0.61 avg60=2.19 avg300=0.97 total=1677682581\nfull avg10=0.59 avg60=2.13 avg300=0.96 total=1644201668\n",
+  "protected_unchanged": [
+    {
+      "pid": 3550672,
+      "pgid": 3550672,
+      "start": 140655826,
+      "cmd_sha256": "855c8118682292c86a2f56cc863ebaef84af665a42fd74336bfe4fffa90b31ff"
+    },
+    {
+      "pid": 3550684,
+      "pgid": 3550672,
+      "start": 140655829,
+      "cmd_sha256": "9d97843d7222655326b417af251567ef2144fa3237b5d2ffccf7ad4ea36001ee"
+    },
+    {
+      "pid": 3550685,
+      "pgid": 3550672,
+      "start": 140655829,
+      "cmd_sha256": "eb8586651db403e9bdf35f3e52a359b3504faf89d9eb987baad3347e1fff1e4a"
+    }
+  ],
+  "progress": {
+    "utc": "2026-10-10T08:08:27Z",
+    "identity": {
+      "pid": 16288,
+      "pgid": 16288,
+      "nice": 19,
+      "scheduler": 5,
+      "cores": [
+        54
+      ]
+    },
+    "totals": {
+      "games": 61,
+      "rows": 48446,
+      "root_decisions": 7481,
+      "cpu_seconds": 2392.4246843400006,
+      "plays": 2569
+    },
+    "active": 54,
+    "paused": [],
+    "memory_available": 105090195456,
+    "pressure_guard": {
+      "full_avg10": 1.62,
+      "above_seconds": 0,
+      "admission_paused": false
+    },
+    "ramp": {
+      "phase": "steady",
+      "first_slots": [
+        1,
+        3,
+        2,
+        0,
+        7,
+        6,
+        4,
+        5,
+        9,
+        10,
+        8,
+        11,
+        12,
+        13,
+        14,
+        15,
+        17,
+        16,
+        18,
+        19,
+        21,
+        20,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        31,
+        29,
+        28,
+        30,
+        33,
+        32,
+        34,
+        35,
+        37,
+        39,
+        36,
+        38,
+        41,
+        40,
+        42,
+        43,
+        47,
+        45,
+        44,
+        46,
+        49,
+        51,
+        50,
+        48,
+        53,
+        52
+      ],
+      "tickets": [
+        1791619648.1235492,
+        1791619648.1560977
+      ],
+      "last_ticket": 1791619648.1560977,
+      "workers": 54,
+      "steady_utc": "2026-10-10T08:07:58Z"
+    },
+    "configured_workers": 54,
+    "resume_baseline": {
+      "games": 0,
+      "rows": 0,
+      "root_decisions": 0,
+      "cpu_seconds": 0.0,
+      "plays": 0
+    },
+    "reason": null,
+    "elapsed_seconds": 479.64072545594536,
+    "supervisor_cpu_seconds": 4.946381
+  },
+  "launch": {
+    "utc": "2026-10-10T08:07:10Z",
+    "identity": {
+      "pid": 16288,
+      "pgid": 16288,
+      "nice": 19,
+      "scheduler": 5,
+      "cores": [
+        54
+      ]
+    },
+    "children": [
+      {
+        "pid": 16556,
+        "pgid": 16288,
+        "core": 0
+      },
+      {
+        "pid": 16564,
+        "pgid": 16288,
+        "core": 1
+      },
+      {
+        "pid": 16571,
+        "pgid": 16288,
+        "core": 2
+      },
+      {
+        "pid": 16573,
+        "pgid": 16288,
+        "core": 3
+      },
+      {
+        "pid": 18448,
+        "pgid": 16288,
+        "core": 4
+      },
+      {
+        "pid": 18449,
+        "pgid": 16288,
+        "core": 5
+      },
+      {
+        "pid": 18450,
+        "pgid": 16288,
+        "core": 6
+      },
+      {
+        "pid": 18451,
+        "pgid": 16288,
+        "core": 7
+      },
+      {
+        "pid": 20254,
+        "pgid": 16288,
+        "core": 8
+      },
+      {
+        "pid": 20257,
+        "pgid": 16288,
+        "core": 9
+      },
+      {
+        "pid": 20262,
+        "pgid": 16288,
+        "core": 10
+      },
+      {
+        "pid": 20265,
+        "pgid": 16288,
+        "core": 11
+      },
+      {
+        "pid": 22183,
+        "pgid": 16288,
+        "core": 12
+      },
+      {
+        "pid": 22184,
+        "pgid": 16288,
+        "core": 13
+      },
+      {
+        "pid": 22185,
+        "pgid": 16288,
+        "core": 14
+      },
+      {
+        "pid": 22186,
+        "pgid": 16288,
+        "core": 15
+      },
+      {
+        "pid": 24029,
+        "pgid": 16288,
+        "core": 16
+      },
+      {
+        "pid": 24030,
+        "pgid": 16288,
+        "core": 17
+      },
+      {
+        "pid": 24031,
+        "pgid": 16288,
+        "core": 18
+      },
+      {
+        "pid": 24032,
+        "pgid": 16288,
+        "core": 19
+      },
+      {
+        "pid": 25940,
+        "pgid": 16288,
+        "core": 20
+      },
+      {
+        "pid": 25941,
+        "pgid": 16288,
+        "core": 21
+      },
+      {
+        "pid": 25943,
+        "pgid": 16288,
+        "core": 22
+      },
+      {
+        "pid": 25954,
+        "pgid": 16288,
+        "core": 23
+      },
+      {
+        "pid": 27819,
+        "pgid": 16288,
+        "core": 24
+      },
+      {
+        "pid": 27820,
+        "pgid": 16288,
+        "core": 25
+      },
+      {
+        "pid": 27821,
+        "pgid": 16288,
+        "core": 26
+      },
+      {
+        "pid": 27822,
+        "pgid": 16288,
+        "core": 27
+      },
+      {
+        "pid": 29605,
+        "pgid": 16288,
+        "core": 28
+      },
+      {
+        "pid": 29606,
+        "pgid": 16288,
+        "core": 29
+      },
+      {
+        "pid": 29607,
+        "pgid": 16288,
+        "core": 30
+      },
+      {
+        "pid": 29608,
+        "pgid": 16288,
+        "core": 31
+      },
+      {
+        "pid": 31507,
+        "pgid": 16288,
+        "core": 32
+      },
+      {
+        "pid": 31508,
+        "pgid": 16288,
+        "core": 33
+      },
+      {
+        "pid": 31511,
+        "pgid": 16288,
+        "core": 34
+      },
+      {
+        "pid": 31514,
+        "pgid": 16288,
+        "core": 35
+      },
+      {
+        "pid": 33293,
+        "pgid": 16288,
+        "core": 36
+      },
+      {
+        "pid": 33294,
+        "pgid": 16288,
+        "core": 37
+      },
+      {
+        "pid": 33295,
+        "pgid": 16288,
+        "core": 38
+      },
+      {
+        "pid": 33296,
+        "pgid": 16288,
+        "core": 39
+      },
+      {
+        "pid": 35156,
+        "pgid": 16288,
+        "core": 40
+      },
+      {
+        "pid": 35159,
+        "pgid": 16288,
+        "core": 41
+      },
+      {
+        "pid": 35162,
+        "pgid": 16288,
+        "core": 42
+      },
+      {
+        "pid": 35163,
+        "pgid": 16288,
+        "core": 43
+      },
+      {
+        "pid": 36951,
+        "pgid": 16288,
+        "core": 44
+      },
+      {
+        "pid": 36952,
+        "pgid": 16288,
+        "core": 45
+      },
+      {
+        "pid": 36953,
+        "pgid": 16288,
+        "core": 46
+      },
+      {
+        "pid": 36954,
+        "pgid": 16288,
+        "core": 47
+      },
+      {
+        "pid": 38794,
+        "pgid": 16288,
+        "core": 48
+      },
+      {
+        "pid": 38795,
+        "pgid": 16288,
+        "core": 49
+      },
+      {
+        "pid": 38796,
+        "pgid": 16288,
+        "core": 50
+      },
+      {
+        "pid": 38797,
+        "pgid": 16288,
+        "core": 51
+      },
+      {
+        "pid": 40663,
+        "pgid": 16288,
+        "core": 52
+      },
+      {
+        "pid": 40664,
+        "pgid": 16288,
+        "core": 53
+      }
+    ],
+    "base": 4503601607370496,
+    "first_index": 6000000,
+    "workers": 54,
+    "configured_workers": 54,
+    "worker_spawn_limit": "4 per30s",
+    "new_game_ramp": "4 per rolling30s until all54 slots first admitted plus30s",
+    "deadline_utc": "2026-10-10T15:00:00Z",
+    "admission_drain_utc": "2026-10-10T14:40:00Z",
+    "stop": "/mpac/sdicks02/jobs/clasher/exit-g-topup-20261010/STOP",
+    "emitter_stop_argument": null,
+    "resume_baseline": {
+      "games": 0,
+      "rows": 0,
+      "root_decisions": 0,
+      "cpu_seconds": 0.0,
+      "plays": 0
+    }
+  },
+  "freeze_commit": "d45882c68bc26af828fad28579f9122d5e1fc2ef"
+}
