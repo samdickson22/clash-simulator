@@ -1,0 +1,28 @@
+{
+  "schema": "clasher.capacity-scan.epoch-point.v1",
+  "observed_at": "2026-10-10T00:43:04.744247+00:00",
+  "width": 480,
+  "rows": 63441640,
+  "step": 7745,
+  "ema_joint_nll": 0.27781619329307483,
+  "matched_control": {
+    "width": 192,
+    "rows": 63441640,
+    "step": 7745,
+    "ema_joint_nll": 0.28317389229603407
+  },
+  "gain": 0.0053576990029592375,
+  "source": "127x15:/mpac/sdicks02/repos/clasher-lease/capacity-scan-20261009-v1/runs/width480/train.jsonl",
+  "bounded_tail_bytes": 262144,
+  "source_event": {
+    "event": "dev",
+    "step": 7745,
+    "ema_joint_nll": 0.27781619329307483
+  },
+  "microbatch": 1024,
+  "effective_batch": 8192,
+  "microbatch_amendment_commit": "f8dd81a6",
+  "bit_identical_to_micro2048": false,
+  "kill_rule_evaluated": false,
+  "reason": "Epoch-one curve point; frozen decision only at 95,144,680 rows."
+}
