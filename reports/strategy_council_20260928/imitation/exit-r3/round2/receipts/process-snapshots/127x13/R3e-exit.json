@@ -1,0 +1,15 @@
+{
+  "relative": "R3e-exit.json",
+  "sha256": "d68616319c42a3c252603e11a5e800fd899d47d8cd3b321da3f2f722d2ee9a05",
+  "value": {
+    "utc": "2026-10-10T06:28:50Z",
+    "exit_code": -15,
+    "reason": "owned FIT.STOP",
+    "supervisor_cpu_seconds": 0.528736,
+    "trainer_tree_cpu_seconds": 30.288437,
+    "wall_seconds": 40.47618981311098,
+    "peak_pss_bytes": 7410121728,
+    "max_processes": 2,
+    "min_gpu_free_bytes": 50105155584
+  }
+}

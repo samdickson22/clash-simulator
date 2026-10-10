@@ -1,0 +1,15 @@
+{
+  "relative": "R3d-exit.json",
+  "sha256": "d4c7e5da5ce33e6210e4491dba5202c4edd94360f217b38ee628bf535b64c74a",
+  "value": {
+    "utc": "2026-10-10T06:28:50Z",
+    "exit_code": -15,
+    "reason": "owned FIT.STOP",
+    "supervisor_cpu_seconds": 0.5234719999999999,
+    "trainer_tree_cpu_seconds": 29.491619,
+    "wall_seconds": 40.414993988815695,
+    "peak_pss_bytes": 6564743168,
+    "max_processes": 2,
+    "min_gpu_free_bytes": 50105155584
+  }
+}

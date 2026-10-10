@@ -344,3 +344,36 @@ Manual review allows only FRESH releasedv1 starts after corrected plan/source/
 seed-audit are actually pushed and exact gitblobfreeze is verified remotely.
 No automatic retry or resume, no scientific outcome selection. Renderer
 whitespace fixed. Finaloriginalresults/04vacancy remain valid and unaffected.
+
+2026-10-10T06:40:01Z — VALID round2 attempt2 launched06:31:41Z after corrected scientific
+freeze7e939c06 pushed/exact gitblobSHA verified; newfreezeSHA7c91632956601f3ff6
+23d2a7c2baed8bcaadea51f8bc3cd389eaf36ae7b4ef54, prelaunch bindsactualcommit.
+Independent allsix voidstartup PGIDs absent/GPUidle; no trainlogs/checkpoints,
+empty/partial outputdirs archived under attempts/void-prepublication-attempt1;
+ownedFIT.STOP archived only after vacancy. Freshstarts, not resumedvoidoutputs.
+Supervisors C3169080/D2038249/E3431371; trainers3169090/2038284/3431416.
+Latest06:35:59Z steps108/107/71, eightprocesses each; PSS18.57/13.98/14.16GB,
+GPUfree48.41485GB, reasonsnull. inputs.json recipes5000/2500/5000, seeds13/14/13,
+T.003/.003/.01, aux0 allverify. Source/fitops now IMMUTABLE.
+
+Resumable metadata command from05:
+python3 reports/strategy_council_20260928/imitation/exit-r3/round2/operations/check_fits.py
+ --output /mpac/sdicks02/jobs/clasher/exit-r3-round2-fit-state.json
+Snapshots preserve originalJSON/SHA/history before any manualreviewedrestart.
+Canonical arm-exit currently contains VOID startup exit until validexit arrives;
+compare latest launchUTC and active supervisor, require final expectedstep+
+cleanexit+segmentreturned before any offline. Do not misread staleexit as newfit
+failure. No automaticretry. OriginalR1 complete/vacated04 never relaunched.
+Newknown prep/void cost126.803009CPUs and121.296787GPU reservationwalls;
+activefitcosts pending. round2/RESULTS.md/cost-summary retain separateledger.
+
+Next work now: implement/push/pin newC/D/E finalEMA offline+regret/homeStage2
+and separate R3a NEVER-ADOPTABLE descriptive runtime before any new scientific
+outcomes/games. Original2500-only R3a/b stage.py cannot drive these variants.
+01 remains queued until X explicitrelease+fullindependentdrain; then own
+CPU-release/admission/staging, excluded251+0/1 qualify,600fresh250+same-seed
+rotated C-v1/R3a/K0 blocks, neveroverwriteoriginalkills or adopt.
+Later C/D/E reporting uses24/241/242banks and samefrozengates; HOME regret needs
+explicitCPUauthority/release; returned04grant cannotbeextendedimplicitly.
+Keep continuationenabled until entire extendedexperiment final or leaseexpiry;
+GPUguards stopOct11 05:15/vacate05:30. Allinvalid/failed/replayedcostsretained.

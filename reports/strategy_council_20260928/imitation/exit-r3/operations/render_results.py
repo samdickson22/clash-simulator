@@ -21,7 +21,7 @@ def main():
     complete=bool(stage1) and all(v and v['step']==2500 and not v['stopped'] for v in fits.values()) and all(v['stage1_complete'] for v in stage1.values()) and (not any(v['survives'] for v in stage1.values()) or bool(stage2))
     now=subprocess.check_output(['date','-u','+%FT%TZ'],text=True).strip()
     freeze=load(REPO/'receipts/freeze.json')
-    lines=['# R3 results — '+('complete' if complete else 'evaluation pending'),'','Updated real UTC '+now+'. Exploration lane; no multiplicity adjustment and no production adoption.','',
+    lines=['# R3 original arms — '+('complete' if complete else 'evaluation pending'),'','Updated real UTC '+now+'. Exploration lane; no multiplicity adjustment and no production adoption.','',
         'R3a uses teacher roots only; R3b adds a shared-encoder advantage head with Huber regression to score−WAIT. Both initialize releasedv1 step22552 at width192 and use2500×8192 root rows, T=.003, playweight1, final EMA only. R1 has6,009,681 eligible roots; all five verifiedG shards add212,542, total6,222,223. Continuation kinds1/2, pending3, unsupervised and unscored rows are excluded.', '',
         'Scientific plan/seed audit were pushed in bc542da8 before either fit. Evaluation/source/native pins and coordinator04 addendum are retained in [evaluation freeze](receipts/evaluation-freeze.json). Five trainer/head tests verify exact R2 equivalence with the head off, root filtering, regression baselines and batch denominators. Five proposal/admission tests and seven unchanged X timer tests pass; the04 guard mutation test also passes.', '',
         '| Arm | Final EMA step | Final checkpoint SHA |', '|---|---:|---|']

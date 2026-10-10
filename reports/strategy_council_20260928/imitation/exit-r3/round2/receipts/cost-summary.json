@@ -1,0 +1,73 @@
+{
+  "utc": "2026-10-10T06:35:58Z",
+  "final": false,
+  "cpu_seconds": 126.803009,
+  "gpu_wall_seconds": 121.29678681003861,
+  "meters": [
+    {
+      "category": "staging",
+      "sha256": "5c4264772e791351cc87a643990073ecb502c3f60aca2d469a9b0233bd777054",
+      "path": "receipts/base-staging-09.json",
+      "cpu_seconds": 10.85271,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
+    },
+    {
+      "category": "staging",
+      "sha256": "6e6b7a487917bbbacd1ee284dd5056210f106460e7b799c22c2292cd4aa2a13f",
+      "path": "receipts/base-staging-13.json",
+      "cpu_seconds": 15.024329,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
+    },
+    {
+      "category": "staging",
+      "sha256": "073f8e4685205fcc02e8294e281dfa3a1fae1ab85518865f0049f6fbecfeb434",
+      "path": "receipts/base-staging-16-attempt1.json",
+      "cpu_seconds": 9.129108,
+      "gpu_wall_seconds": 0,
+      "status": "failed"
+    },
+    {
+      "category": "staging",
+      "sha256": "ab102b5e144fb90643c181396d3015e549584810152ae076131e5aaf946efe47",
+      "path": "receipts/base-staging-16.json",
+      "cpu_seconds": 1.4324,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
+    },
+    {
+      "category": "seed audit",
+      "path": "receipts/seed-audit.json",
+      "cpu_seconds": 0.186902,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
+    },
+    {
+      "category": "void prepublication startup",
+      "path": "receipts/R3c-invalid-prelaunch-attempt1-exit.json",
+      "cpu_seconds": 29.345296,
+      "gpu_wall_seconds": 40.40560300811194,
+      "status": "void",
+      "reason": "owned FIT.STOP"
+    },
+    {
+      "category": "void prepublication startup",
+      "path": "receipts/R3d-invalid-prelaunch-attempt1-exit.json",
+      "cpu_seconds": 30.015090999999998,
+      "gpu_wall_seconds": 40.414993988815695,
+      "status": "void",
+      "reason": "owned FIT.STOP"
+    },
+    {
+      "category": "void prepublication startup",
+      "path": "receipts/R3e-invalid-prelaunch-attempt1-exit.json",
+      "cpu_seconds": 30.817172999999997,
+      "gpu_wall_seconds": 40.47618981311098,
+      "status": "void",
+      "reason": "owned FIT.STOP"
+    }
+  ],
+  "active_fit_costs_pending": true,
+  "accounting": "Original R3a/b cost ledger separate. Each whole process/tree once; prep and void startup meters retained. Initial synthetic test and small metadata/copy overhead unmetered."
+}

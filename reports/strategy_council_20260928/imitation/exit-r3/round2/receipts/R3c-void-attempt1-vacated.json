@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "arm": "R3c",
+  "recorded_pgids": [
+    3155156,
+    3155199
+  ],
+  "all_absent": true,
+  "gpu_idle": true,
+  "had_output_directory": true,
+  "valid_freeze_sha256": "7c91632956601f3ff623d2a7c2baed8bcaadea51f8bc3cd389eaf36ae7b4ef54",
+  "utc": "2026-10-10T06:31:41Z"
+}

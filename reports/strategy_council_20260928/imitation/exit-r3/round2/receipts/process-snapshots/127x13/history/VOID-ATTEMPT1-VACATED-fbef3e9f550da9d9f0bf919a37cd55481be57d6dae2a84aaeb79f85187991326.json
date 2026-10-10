@@ -1,0 +1,17 @@
+{
+  "relative": "VOID-ATTEMPT1-VACATED.json",
+  "sha256": "fbef3e9f550da9d9f0bf919a37cd55481be57d6dae2a84aaeb79f85187991326",
+  "value": {
+    "passed": true,
+    "arm": "R3e",
+    "recorded_pgids": [
+      3417624,
+      3417634
+    ],
+    "all_absent": true,
+    "gpu_idle": true,
+    "had_output_directory": true,
+    "valid_freeze_sha256": "7c91632956601f3ff623d2a7c2baed8bcaadea51f8bc3cd389eaf36ae7b4ef54",
+    "utc": "2026-10-10T06:31:41Z"
+  }
+}

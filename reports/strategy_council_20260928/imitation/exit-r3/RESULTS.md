@@ -1,4 +1,4 @@
-# R3 results — complete
+# R3 original arms — complete
 
 Updated real UTC 2026-10-10T06:23:00Z. Exploration lane; no multiplicity adjustment and no production adoption.
 

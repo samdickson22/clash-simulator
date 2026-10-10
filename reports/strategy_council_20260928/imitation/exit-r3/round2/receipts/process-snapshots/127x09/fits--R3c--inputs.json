@@ -1,0 +1,86 @@
+{
+  "relative": "fits/R3c/inputs.json",
+  "sha256": "24a8e1caf25e0034253fdc54e003f76d4f2f5d64de65d11677a572dc41b0fd39",
+  "value": {
+    "pins": {
+      "init_checkpoint": "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed",
+      "assets": "3954af44678a5f397c22d1eaa4c6be9b3c7517b3c5fe0d0e3151f4ab9937c737",
+      "human_manifest": "0546cfddcf79be12509953358fb499ac3be29493ba4a87893bfbfbbe0f179e68",
+      "teacher_manifests": [
+        "1c8e1f4969bab3d2416fb5b19d50b105ed5f35bb05df7b33caaa4c9edf5c737b",
+        "9b5ef9bea86fe8eb7ab53d4dfef500325a7bfae6c1f487b3132298259c652c81",
+        "7e2840b81e5ae0e614874b5f947822ae18069f114c7e81bbe2093e90d93091fe",
+        "e83ea95261be29fdf07235cdc91cb33645af4eef2a21118f27129ac36bdf85bc",
+        "f721bd6bcdfd0440e4d7c779c47cfc9992eb09907f58532e63b8a738f46e030d",
+        "8192b7e7e8e2fa4ce395349896057b4564ab16a27c5b4efa27a50e98b9bc0661"
+      ],
+      "source_files": {
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/exit_r3/__init__.py": "441385ea7a0f4f57764dd579bc19b3b0f59b3806b88cf5cf0e28d7154e288087",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/exit_r3/network.py": "5f5c7e6c6fd23310bb874cc91fb2cd5fe771e8a40f31a0aea0909f1045df3d1b",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/exit_r3/rows.py": "835a4104fbd46731998ca033223692813bd4c4fdf015b7a15317a0ffb780ab53",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/exit_r3/student.py": "dd59fa136230eaf46bee31c53555c6843376032f093d1d633e801f21cf520d67",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/exit_r3/teacher_batch.py": "6237a96ab5e29df4a3a1cfdc1fbd505d80af84f8faa4b3b3b99dfac1419e6dc4",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/exit_r3/test_r3.py": "58641244e3c9e53d98809e5a5fd0de3a29e503325b9c89c1a12ada10ae84c96e",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/exit_r3/test_round2.py": "fc7c5785e643da9718a7e7cfdbda5db12e146c04e214141924cb5a63ca93b106",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/exit_r3/train.py": "947f8147e44c4c4a3d039cd054a22932b163486fcbcbeb3ec9d03b7ad54a6ee8",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/__init__.py": "98017d5739a04f658da7e4085068f050eacb78c4a57c8e1e57c1efd8b53a3065",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/assets.py": "738c4cd8928efb6cd4cba424fd223884c5f90fc024623bf02f3bcf5189853341",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/batching.py": "078fd982cb369ffe278424ac355b192131c2d1a045dbfe0d039354119c781658",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/benchmark.py": "628b34503c84848a4c87d688f5029e0ef8ef8e894b5a948ad8121cc3c55bb1e6",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/evaluate.py": "d83b821274d286bc44ba68bc80df842285f03b231a739b8de8d91ee0f14976e3",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/features.py": "4a1d2f79002ba704783d5138321b1c242ac04937b3cbfff3517b2ac541e02d3d",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/inference.py": "d5d05d7c6aa91276d5f31db6e5a7e1c91b4ffca1e263f7e13496a3fd2a11cf52",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/losses.py": "8948f211aa1fdbbf49857407835af59e96336d55c385df2c3baa3cf13cfe4870",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/network.py": "f931960356532af0d5739579ff607b89340ce0a696c6ce1737c8d113993f3ead",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/runner.py": "391f175c88beaf321a44fb597b79e686fd0fd481d5c27b268399cdff73b4e838",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/shakedown.py": "646a4fbc2ed28bb119424781f7266028aa5df6109dd68a05eef996c99f69af5d",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/store.py": "e05634d34e346e400aede7dd0a3e0e6c82071c21fd6c20065897e08c84852dc8",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/synthetic.py": "1600895b23e698ed5bfb5af8eb50ea57713f73e2cf07c963b54a0d12fa4add66",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/synthetic_store.py": "46704c46c7a8880d78f7f6b65a9a588ba9af2e1ef4636c6b41913c485175abf2",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/throughput.py": "6a9916eccf121d34ca33f0bbade9480576a4b4c33a17e0a52213b65086013f9d",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/throughput_runs.py": "eb1be2c92852360272ba65bcb1b7049f8df77b67eaa2c05a2f95caa503e6846d",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/source/imitation/model/train.py": "9a8465a1926fd9ac8238aa98bd0e95641605081bc3dd3a2f6863a9cd298035a5"
+      }
+    },
+    "config": {
+      "vocab": 360,
+      "descriptors": 57,
+      "width": 192,
+      "heads": 6,
+      "layers": 4,
+      "ffn": 768,
+      "tile_width": 64,
+      "dropout": 0.1,
+      "numeric": 24,
+      "types": 24
+    },
+    "recipe": {
+      "init_checkpoint": "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/main02.pt",
+      "human_store": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/human/train",
+      "assets": "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/inputs/assets.npz",
+      "teacher_root": "/mpac/sdicks02/jobs/clasher/exit-r2-20261010-r1/corpus",
+      "teacher_ratio": 1.0,
+      "value_weight": 0.0,
+      "advantage_weight": 0.0,
+      "extra_teacher_root": [
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/g-corpus/0",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/g-corpus/1",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/g-corpus/2",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/g-corpus/3",
+        "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/g-corpus/4"
+      ],
+      "temperature": 0.003,
+      "play_weight": 1.0,
+      "score_zscore": false,
+      "steps": 5000,
+      "batch_size": 8192,
+      "warmup": 2000,
+      "microbatch": 3584,
+      "seed": 2026101013,
+      "device": "cuda",
+      "output": "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/fits/R3c",
+      "checkpoint_every": 250,
+      "stop": "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/FIT.STOP"
+    }
+  }
+}
