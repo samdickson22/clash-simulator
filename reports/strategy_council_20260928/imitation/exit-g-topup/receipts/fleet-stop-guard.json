@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-10T01:29:58Z",
+  "before_launch": true,
+  "scientific_sources_unchanged": true,
+  "reason": "Fleet controller must vacate on04 STOP and avoid remote01 CPU after X preemption completes.",
+  "behavior": [
+    "04 STOP closes both generation hosts and retires controller after vacate; pending packing is retained.",
+    "01 STOP drains and yields01; controller caches final01 metadata, makes no further01 remote calls, and lets04 continue to combined target.",
+    "Later01 resume requires reviewing stop reason and restarting the sole locked fleet controller to discard the old cache."
+  ],
+  "sources": {
+    "fleet.py": "5d9547c495a3e75bd93d0f68c469da466766d2607a599a15cdd6cf965c346088",
+    "fleet_remote.py": "aee4d1edc8377e9770b42cb85e57abd7949bf2b550a2a6a02f07d53a809006b4"
+  }
+}
