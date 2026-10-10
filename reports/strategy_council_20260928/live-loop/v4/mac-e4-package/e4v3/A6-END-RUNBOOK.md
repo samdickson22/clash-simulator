@@ -1,10 +1,14 @@
 # A6 END-phase handoff (review draft; no host access yet)
 
-Coordinator assignment, 2026-10-10 15:35Z: **127x01**, in the T1-owned window
-after reporting completes, projected **2026-10-11 02–06Z**. T1 will provide the
-actual opening, reviewed own-tier300 bundle path/`tiers-pins.json` SHA, pinned
+Coordinator assignment: **127x01** at T1 END before production references.
+The actual19:45Z ruling supersedes the earlier 02–06Z projection: expect Oct11,
+after perception serial and A2 finish, around B. The coordinator will explicitly
+declare the clean window. The 04→03/08 transports must be gone and08's HTTP cache
+service retired. Reference validity stays STRICT: SSH or dbus flags do not
+qualify merely because OP-6 allows reporting to continue. T1 will provide the
+reviewed own-tier300 bundle path/`tiers-pins.json` SHA, pinned
 launcher, Python/runtime/native locations and final frozen guard/admission artifacts. The
-projection is not permission to connect before T1 opens the window. Nothing in
+projection is not permission to connect before the coordinator opens the window. Nothing in
 this package polls, accesses, launches or reserves a timing host meanwhile.
 
 Order: A6 staging and real smoke → sealed result committed → independent A1–A6
@@ -28,7 +32,7 @@ reporting clock numbers**, with source UTC/phase labels retained. This baseline
 is fixed before measurement; a >5% failure is retained rather than rewritten
 using smoke clocks. The production pool refuses this bundle and receipt.
 
-After T1 supplies actual paths and opens its window, run staging through its
+After T1 supplies actual paths and the coordinator declares the clean window, run staging through T1's
 approved mechanism; these variables must contain T1's supplied values:
 
 ```bash
@@ -79,10 +83,14 @@ SHA-sealed result with explicit paths, scan before push, and return its commit
 and manifest SHA for independent review. A6 does not qualify the production
 clock profile, fleet ratios, Mac or outcomes by itself.
 
-Current evidence: 64 local unit/integration tests; no A6 measurement exists.
+Current evidence: 69 local unit/integration tests; no A6 measurement exists.
 The END source now also requires SHA-bound committed blind ledger and counted
-inventory, accepting stopped phases verbatim. Stage all eight final frozen guard
-modules, including OP-2/OP-3/OP-4 dependencies; an OP-1-only freeze is refused.
+inventory, accepting stopped phases verbatim. Stage all nine final frozen guard
+modules, including OP-5 seed/08 join and OP-6 dependencies; older guard regimes
+are refused. Pin `guard.seed_inputs` for both source receipts and the 08
+server/client join, and keep `guard.job/FROZEN-T1.json` identical to the staged
+freeze. The frozen seed method executes once before first census; its raw
+admission receipt is retained. Do not refresh parent generations or source proof.
 The smoke preserves original production sources and discloses its separate
 synthetic, unpoolable host01 counting inventory. Inspect sample and work-block
 SSH budgets and any console stops with the A6 result before reference approval.

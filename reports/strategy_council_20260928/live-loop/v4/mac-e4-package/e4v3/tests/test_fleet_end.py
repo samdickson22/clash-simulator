@@ -15,6 +15,7 @@ from fleet_profile import compare_mhz
 from receipts import ReceiptStore,sha,verify_files
 from measure_tiers import Session
 from test_fleet_contract import end_fixture,guard_rows
+from test_guard_seeds import stage_guard
 
 
 class FleetEndTests(unittest.TestCase):
@@ -144,35 +145,16 @@ class FleetEndTests(unittest.TestCase):
 
 
 class FleetValidityTests(unittest.TestCase):
-    def test_guard_loads_frozen_final_t1_code_and_enforces_op4_and_foreign_stops(self):
+    def test_guard_loads_frozen_final_t1_code_and_enforces_op6_strictness_and_foreign_stops(self):
         with tempfile.TemporaryDirectory() as tmp:
-            base=Path(tmp);root=base/"t1-guard";root.mkdir();job=base/"job";job.mkdir()
-            repository=Path(__file__).resolve().parents[7]
-            names=tuple(m+".py" for m in GUARD_MODULES)
-            files={};frozen={}
-            for name in names:
-                # The shared checkout can contain another worker's unfinished
-                # guard delta. Exercise the coordinator-named OP-4 candidate,
-                # not WIP; actual measurement requires its final frozen pins.
-                raw=subprocess.check_output(["git","-C",str(repository),"show",
-                    "cb1b9f128d0dc9aeda2f357c425e71ba9c0e7980:reports/explore/t1/"+name])
-                (root/name).write_bytes(raw)
-                files["t1-guard/"+name]=sha(root/name);frozen["reports/explore/t1/"+name]=sha(root/name)
-            (base/"freeze.json").write_text(json.dumps(dict(files=frozen)))
-            (base/"plan.json").write_text(json.dumps(dict(compute=dict(perception_io_exception=dict(host="127x03")))))
-            command="/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only"
-            bus=dict(pid=200,ppid=0,pgid=200,start_ticks=99,cpu_ticks=0,uid=103,tty=0,exe="/usr/bin/dbus-daemon",exe_evidence="argv0 (proc/exe unreadable, unprivileged)",cmdline_sha256="d"*64,cmd=command,affinity=[0])
-            admission=dict(identity={k:bus[k] for k in ("pid","start_ticks","exe","cmdline_sha256","uid")})
-            for path in (job/"system-bus-admission.json",base/"bus.json"):path.write_text(json.dumps(admission))
-            for name in ("freeze.json","plan.json","bus.json"):files[name]=sha(base/name)
-            manifest=dict(files=files,reference_load_profile=dict(plan="plan.json",guard=dict(root="t1-guard",job=str(job),freeze="freeze.json",admissions={"system-bus-admission.json":"bus.json"})))
+            base=Path(tmp);manifest,bus,job,_=stage_guard(base);root=base/"t1-guard"
             own=dict(bus,pid=100,ppid=0,start_ticks=10,uid=1000,exe="/usr/bin/python3",cmd="python measure_tiers.py")
             child=dict(own,pid=101,ppid=100,start_ticks=11)
             foreign=dict(own,pid=300,ppid=0,start_ticks=12,cmd="python foreign.py")
             modules=GUARD_MODULES
             with patch.dict(sys.modules),patch.object(sys,"path",list(sys.path)):
                 for name in modules:sys.modules.pop(name,None)
-                for name in ("perception_confirmation.py","owned_supervisor.py","ssh_budget.py"):
+                for name in ("perception_confirmation.py","owned_supervisor.py","ssh_budget.py","parent_source_seed.py"):
                     raw=(root/name).read_bytes();(root/name).write_bytes(raw+b"\n# unpinned change\n")
                     with self.subTest(module=name),self.assertRaisesRegex(ValueError,"frozen final T1 source"):
                         ReportingGuard(base,manifest,[100])
@@ -202,12 +184,17 @@ class FleetValidityTests(unittest.TestCase):
                     parent["cpu_ticks"]=11;clock[0]=120.
                     self.assertEqual(guard.end_block("flagged"),"ssh_family_interference")
                     self.assertFalse(guard.latest["passes"])
-                    self.assertIsNone(guard.begin_block("average-stop"))
+                    self.assertIsNone(guard.begin_block("short-op6-exposure"))
                     parent["cpu_ticks"]=32;clock[0]=130.
+                    self.assertEqual(guard.end_block("short-op6-exposure"),"ssh_family_interference")
+                    self.assertFalse(guard.latest["completed_block"]["ssh_family"]["stop"])
+                    self.assertEqual(guard.latest["completed_block"]["ssh_family"]["operational_rule"],"OP-6")
+                    self.assertIsNone(guard.begin_block("average-stop"))
+                    parent["cpu_ticks"]=633;clock[0]=190.
                     self.assertEqual(guard.end_block("average-stop"),"ssh_family_average_budget")
                     self.assertIsNone(guard.begin_block("sample-stop"))
-                    guard.sample_previous=guard.previous;guard.sample_last=130.
-                    parent["cpu_ticks"]=58;clock[0]=131.
+                    guard.sample_previous=guard.previous;guard.sample_last=190.
+                    parent["cpu_ticks"]=784;clock[0]=191.
                     self.assertEqual(guard({}),"ssh_family_sample_budget")
                     self.assertEqual(guard.end_block("sample-stop"),"ssh_family_sample_budget")
                     guard.ssh_sample=dict(cpu_ticks=0,seconds=1.,core_fraction=0.,stop=False)
@@ -264,7 +251,7 @@ class FleetValidityTests(unittest.TestCase):
                 elif case=="missing-speed":del changed[2:4]
                 elif case=="missing-warmup":del changed[:2]
                 else:
-                    with self.assertRaisesRegex(FleetTechnicalError,"OP-4"):validate_census([dict(reporting_guard=dict(passes=True))]*2)
+                    with self.assertRaisesRegex(FleetTechnicalError,"OP-6"):validate_census([dict(reporting_guard=dict(passes=True))]*2)
                     continue
                 with self.assertRaises(FleetTechnicalError):validate_blocks(changed)
 

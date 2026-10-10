@@ -61,7 +61,8 @@ def prepare(source, expected, output):
         plan = copy.deepcopy(plan)
         plan["profile"] = "e4v3-unpoolable-smoke"
         plan["a6_schedule"] = dict(host="127x01",phase="T1-END-before-production-references",
-            window_owner="T1",projected_window_utc="2026-10-11T02:00Z/2026-10-11T06:00Z",
+            window_owner="coordinator/T1",expected_window="Oct11 after serial/A2, around B; coordinator declares exact window",
+            clean_window_conditions="04-to-03/08 transports gone;08 HTTP cache retired;strict SSH/dbus validity",
             actual_window_assignment_required=True,source_manifest_sha256=expected)
         write("_a6/plan.json",plan)
         completion = copy.deepcopy(end["completion"])

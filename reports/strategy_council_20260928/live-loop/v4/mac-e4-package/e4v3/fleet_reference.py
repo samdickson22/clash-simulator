@@ -216,7 +216,7 @@ def run(args, store):
                 # failed receipts. A fresh approved namespace prevents mixing.
                 job=Path(profile["guard"]["job"])
                 primary=__import__("sys").exc_info()[0] is not None
-                for name in ("allowlist-occurrences.jsonl","op2-confirmations.jsonl","ssh-family-occurrences.jsonl"):
+                for name in ("allowlist-occurrences.jsonl","op2-confirmations.jsonl","ssh-family-occurrences.jsonl","parent-source-seed-admission.json"):
                     source=job/name
                     try:
                         if source.exists():

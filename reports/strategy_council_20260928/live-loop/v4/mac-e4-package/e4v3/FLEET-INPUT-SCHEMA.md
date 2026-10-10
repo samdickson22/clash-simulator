@@ -34,7 +34,7 @@ perception. Each reference warms all slots for >=300 seconds, measures exactly
 200 and 160 ms deadline loop three times with the frozen 8 ms reserve.
 
 Signed Amendment 1 governs END placement. The additional committed completion,
-phase, blind ledger/counted inventory, final OP-1 through OP-4 guard and ordered-attempt inputs are defined in
+phase, blind ledger/counted inventory, final OP-1 through OP-6 guard and ordered-attempt inputs are defined in
 [FLEET-END-CONTRACT.md](FLEET-END-CONTRACT.md). References require committed T1
 completion and every counted reporting/replacement phase. Stopped phases retain
 verbatim exits and valid counted blocks; failed/unstarted work does not reject
@@ -45,10 +45,15 @@ hosts must remain in the END pool, whose host list equals the pinned reporting
 host set; an outlier fails the pool for an outcome-blind
 amendment. The runner reads only timing/census data. Raw independent 1Hz reporting
 and reference clocks remain SHA-bound. A6 real fleet smoke is still pending.
-All eight final frozen guard modules are required, including perception
-confirmation, owned-supervisor identities and SSH-family budgets. Any console
+All nine final frozen guard modules are required, including perception
+confirmation, owned-supervisor identities, parent-source seed/08 join and OP-6
+SSH-family budgets. Invoke T1's frozen seed admission once before census; pin
+the exact live job freeze and every staged/live seed/join dependency as specified
+in the END contract. Any console
 user stops the reference. Independent 1 Hz sample budgets and fixed 50-state
-work-block budgets are retained; a >0.5% SSH-family block flag cannot qualify.
+work-block budgets are retained; SSH/idle or dbus flagged references cannot
+qualify. The coordinator must explicitly open the clean window after serial/A2
+transports are gone and08's HTTP cache is retired; no reference runs meanwhile.
 
 `tiers-pins.json` schema is `clasher.e4v3.inputs.v1`:
 
@@ -91,7 +96,8 @@ work-block budgets are retained; a >0.5% SSH-family block flag cannot qualify.
     "root": "t1-guard",
     "job": "/absolute/approved-t1-job",
     "freeze": "t1-freeze.json",
-    "admissions": {"system-bus-admission.json": "guard-admissions/system-bus-admission.json"}
+    "admissions": {"system-bus-admission.json": "guard-admissions/system-bus-admission.json"},
+    "seed_inputs": {"REPOSITORY_SEED_OR_JOIN_PATH": "BUNDLE_COPY_PATH"}
   }
 }
 ```

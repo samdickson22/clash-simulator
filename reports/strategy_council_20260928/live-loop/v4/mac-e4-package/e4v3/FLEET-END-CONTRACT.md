@@ -15,7 +15,8 @@ The SHA-pinned profile additionally names `end_evidence` and `guard`:
     "root": "t1-guard",
     "job": "/absolute/approved-t1-job",
     "freeze": "t1-freeze.json",
-    "admissions": {"system-bus-admission.json": "guard-admissions/system-bus-admission.json"}
+    "admissions": {"system-bus-admission.json": "guard-admissions/system-bus-admission.json"},
+    "seed_inputs": {"reports/explore/t1/receipts/op5-parent-source-127x08.json": "seed-inputs/reports/explore/t1/receipts/op5-parent-source-127x08.json"}
   }
 }
 ```
@@ -87,7 +88,8 @@ to reporting mean ratio is retained in host, pooling and registration receipts.
 
 The guard source tree contains frozen T1 `common.py`, `host_audit.py`,
 `idle_services.py`, `system_bus.py`, `ssh_transport.py`,
-`perception_confirmation.py`, `owned_supervisor.py`, and `ssh_budget.py`, pinned
+`perception_confirmation.py`, `owned_supervisor.py`, `ssh_budget.py`, and
+`parent_source_seed.py` (including its reviewed 08 join), pinned
 against `guard.freeze.files`. The guard uses existing approved job admissions;
 their staged copies are pinned and compared against live job bytes. No admission
 identity is silently refreshed. Every existing owned-supervisor, copier or idle
@@ -95,32 +97,57 @@ admission is also pinned. Use an approved distinct reference job namespace; keep
 its admission bytes immutable. E4 extends own-process accounting to its explicit
 PID/start descendant tree using the frozen OP-3 full identity fields; a stale T1
 job/argv predicate never grants E4 ownership. The frozen census invokes OP-2
-confirmation and OP-4 source-bound SSH-family classification. All eight modules
+confirmation and OP-6 source-bound SSH-family classification. All nine modules
 must match the **final reviewed frozen** source inventory; an older OP-1-only
-freeze is insufficient. OP-4 candidate cb1b9f12 is exercised in local tests;
-its final source confirmation is a T1 input dependency.
+freeze is insufficient. Frozen `operational_delta_op5`, `operational_delta_op5_08`
+and `operational_delta_op6` must each say `CONFIRM`. Local wiring tests use
+admitted freeze aeeb3003 / OP-6 d60586b3, never the mutable shared checkout.
+
+Before the first census, call **the frozen**
+`parent_source_seed.admit(job, current_rows, ssh_budget.FAMILIES)` exactly once.
+This is the same Families instance used by the frozen census. The reviewed
+module verifies committed seed bytes, exact parent generation/source fields,
+and the 08 server/04 client socket join. E4 does not recreate the join logic.
+New generations, conflicting evidence and unknown sources receive no seed;
+later revocation is not undone by reseeding. The accepted rows and raw
+`parent-source-seed-admission.json` are SHA-sealed with the reference.
+
+The live `guard.job/FROZEN-T1.json` must exactly match the staged `guard.freeze`
+SHA. `guard.seed_inputs` is an exact map from every frozen seed/dependency's
+repository path to its relative bundle copy (the JSON example above is
+abbreviated). Include **both** frozen parent-source receipts and the 08 seed's
+`source_join.server` and `source_join.client` receipts. They must appear in
+`tiers-pins.json.files` with the frozen binding hashes and exist byte-identically
+under `guard.job/repo/<repository path>`. Seed/join validation is delegated to
+T1's frozen method, including its full commit/SHA/Git-byte checks. Neither the
+job freeze nor staged/live seed dependencies may change during the reference.
 
 Reference admission precedes loaded workers and measurement, then independent 1 Hz observations use T1's
 frozen `ssh_budget.sample` and `stop_reason`, measuring elapsed time **after**
 confirmation. Foreign compute/activity, **any positive console user**, owned
-STOP, MemAvailable <24 GiB, SSH-family >25% in a sample or >2% in an active work
-block stop the attempt. Equality at these boundaries passes. OP-1 identity and
+STOP or MemAvailable <24 GiB stops the attempt. The frozen OP-6 methods govern
+operational SSH limits: source-proven LAN families stop above 150% of one core
+in a sample or above 10% average after >=60 seconds; pure-idle service caps stay
+at 25% per sample and 2% average after >=60 seconds. Equality passes. Unknown or
+non-LAN source evidence stays under T1's identity fallback. OP-1 identity and
 CPU meters remain active. Every foreground 50-state warmup/speed/deadline work
 block additionally uses frozen `begin/update/finish` SSH meters. Each meter sums
 host-wide eligible SSH-family exposure, including approved idle families, while
 all other reporting slots remain loaded. Checkpoint IPC and census run outside
 individual decision timers; block boundaries are fixed before results. A block
 checkpoint preserves the previous independent 1 Hz sample; it does not create
-an artificially short >25% burst window. A block
-above 0.5% is flagged by T1's rule; that reference attempt cannot qualify, even
-when below the 2% immediate-stop limit. No flagged block is silently removed.
+an artificially short burst window. **Reference validity remains STRICT:** any
+SSH/idle or dbus block flagged above 0.5% cannot qualify even if OP-6 allows its
+reporting completion or has not reached its operational-stop duration. Retain
+every failed attempt; do not remove flagged blocks or relax their thresholds.
+`GUARD_RULES` is `frozen-t1-op1-op2-op3-op4-op5-op6-v1`.
 
 SHA-sealed `guard-admission.json` retains the pre-load admission, and
 `guard-blocks.jsonl` retains begin/end identities, full per-block CPU
 meters, source/child commands and flags. Pooling requires all 72 speed and 144
 deadline blocks plus warmup, and refuses incomplete/flagged meters or missing
-OP-4 sample evidence. `capacity.jsonl` retains every 1 Hz guard result. Raw
-allowlist/confirmation/SSH-family occurrence files are copied to `guard-sources/`
+OP-6 sample evidence. `capacity.jsonl` retains every 1 Hz guard result. Raw
+allowlist/confirmation/SSH-family/parent-seed admission files are copied to `guard-sources/`
 on success or failure. END receipts also copy verbatim completion, ledger,
 counted inventory and all phase sources under `end-sources/`.
 
@@ -166,9 +193,13 @@ this worker accesses the host. Use the assigned host's pinned plan nice level
 launching SSH closes before admission; observe only through its approved
 health-only copier. No ordinary SSH inspection during timing. The earlier
 Linux05 dry-run receipt does not satisfy this real T1-host fleet-mode smoke.
-Coordinator 15:35Z assigns A6 to **127x01 at T1 END**, projected Oct11 02–06Z,
-before any production reference run. Actual opening and all inputs come from
-T1; no timing-host access until then. [A6-END-RUNBOOK.md](A6-END-RUNBOOK.md)
+Coordinator 19:45Z supersedes the earlier time projection: the clean END
+window is expected **Oct11, after perception serial and A2 finish, around B**.
+The 04→03/08 transports must be gone and 08's HTTP cache service retired.
+The coordinator will declare the actual window explicitly. No reference or
+timing-host access is attempted before that declaration; a projection is not
+authorization. A6 remains assigned to127x01 before production references, with
+review of its result and this code still required. [A6-END-RUNBOOK.md](A6-END-RUNBOOK.md)
 contains the staging/measurement commands and result-review handoff.
 
 T1 separately owns enforcing Amendment 1 in every outcome-release route:

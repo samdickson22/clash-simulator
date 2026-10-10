@@ -1,4 +1,4 @@
-"""Use T1's SHA-pinned OP-1 through OP-4 guard without SSH or controls."""
+"""Use T1's SHA-pinned OP-1 through OP-6 guard without SSH or controls."""
 import importlib
 import json
 import os
@@ -8,8 +8,8 @@ from pathlib import Path
 from receipts import sha
 
 GUARD_MODULES = ("common", "host_audit", "idle_services", "system_bus", "ssh_transport",
-                 "perception_confirmation", "owned_supervisor", "ssh_budget")
-GUARD_RULES = "frozen-t1-op1-op2-op3-op4-v1"
+                 "perception_confirmation", "owned_supervisor", "ssh_budget", "parent_source_seed")
+GUARD_RULES = "frozen-t1-op1-op2-op3-op4-op5-op6-v1"
 
 
 class FleetTechnicalError(RuntimeError):
@@ -56,6 +56,9 @@ class ReportingGuard:
         freeze = json.loads((bundle/cfg["freeze"]).read_text())
         if manifest["files"].get(cfg["freeze"]) != sha(bundle/cfg["freeze"]):
             raise ValueError("Guard freeze must be SHA-pinned")
+        for delta in ("operational_delta_op5","operational_delta_op5_08","operational_delta_op6"):
+            if freeze.get(delta,{}).get("verdict") != "CONFIRM":
+                raise ValueError("Final guard requires frozen reviewed OP-5 seed/join and OP-6: "+delta)
         root = bundle/cfg["root"]
         for module in GUARD_MODULES:
             name = module+".py"
@@ -73,12 +76,35 @@ class ReportingGuard:
         self.confirmation = importlib.import_module("perception_confirmation")
         self.supervisor = importlib.import_module("owned_supervisor")
         self.ssh = importlib.import_module("ssh_budget")
+        self.seed = importlib.import_module("parent_source_seed")
         plan = json.loads((bundle/profile["plan"]).read_text())
         # Point all guard imports at the single pinned reporting/smoke plan.
         for module in (importlib.import_module("common"), self.audit, self.idle, self.confirmation):
             module.plan = lambda: plan
         self.job = Path(cfg["job"])
         self.admissions = {name: (bundle/source, manifest["files"][source]) for name, source in cfg["admissions"].items()}
+        self.admissions["FROZEN-T1.json"] = (bundle/cfg["freeze"], manifest["files"][cfg["freeze"]])
+        # T1's frozen admit() reads the exact job freeze and job/repo receipts.
+        # Pin their bundle copies too; provenance/join validation remains wholly
+        # inside that reviewed method, including its committed Git-byte checks.
+        inputs = cfg.get("seed_inputs",{})
+        dependencies = {}
+        def pin_seed(binding):
+            name = binding["path"]; source = inputs.get(name)
+            path = Path(name)
+            if path.is_absolute() or ".." in path.parts or freeze["files"].get(name) != binding["sha256"]:
+                raise ValueError("Unpinned/unsafe OP-5 seed dependency")
+            if source is None or manifest["files"].get(source) != binding["sha256"] or sha(bundle/source) != binding["sha256"]:
+                raise ValueError("Missing pinned OP-5 seed/join input: "+name)
+            dependencies[name] = (bundle/source,binding["sha256"])
+            return json.loads((bundle/source).read_text())
+        for binding in freeze.get("parent_source_seeds",[]):
+            receipt = pin_seed(binding)
+            if receipt.get("host") == "127x08":
+                for side in ("server","client"):pin_seed(receipt["source_join"][side])
+        if set(inputs) != set(dependencies):
+            raise ValueError("OP-5 seed input map differs from frozen seed/join dependencies")
+        self.seed_dependencies = dependencies
         if "system-bus-admission.json" not in self.admissions:
             raise ValueError("Existing exact system-bus admission required; no refresh")
         for name in ("idle-services.json", "owned-copier-admission.json", "owned-supervisor-admission.json"):
@@ -93,16 +119,25 @@ class ReportingGuard:
         self.blocks = {}; self.latest = None
         self.sample_previous = None; self.sample_last = self.last
         self.ssh_sample = dict(cpu_ticks=0,seconds=0.,core_fraction=0.,stop=False)
+        self.seed_admitted = False; self.seed_accepted = []
         self.check_admissions()
 
     def check_admissions(self):
         for name, (source, expected) in self.admissions.items():
             if sha(source) != expected or sha(self.job/name) != expected:
                 raise ValueError("Reporting guard admission identity changed: "+name)
+        for name,(source,expected) in self.seed_dependencies.items():
+            if sha(source) != expected or sha(self.job/"repo"/name) != expected:
+                raise ValueError("Reporting guard OP-5 seed/join input changed: "+name)
 
     def __call__(self, row, budget_sample=True):
         self.check_admissions()
         current = self.audit.processes()
+        if not self.seed_admitted:
+            # Same hook and same Families instance as T1 host admission. Never
+            # reseed a revoked/conflicting cache or refresh a parent generation.
+            self.seed_accepted = self.seed.admit(self.job,current,self.ssh.FAMILIES)
+            self.seed_admitted = True
         if self.sample_previous is None:
             self.sample_previous = current; self.sample_last = time.monotonic()
         roots = {p for p in self.owned if p > 0} | {os.getpid()}
@@ -151,6 +186,7 @@ class ReportingGuard:
             foreign_compute=foreign, foreign_active=active, system_bus=bus, idle_services=idle,
             ssh_family_sample=ssh_sample, ssh_family_blocks=block_results,
             ssh_sample_scope="independent-1Hz" if budget_sample else "block-checkpoint-last-1Hz",
+            parent_source_seed_admission=self.seed_accepted,
             owned_pid_start_ticks={str(pid): self.known[pid] for pid in sorted(self.current_owned)})
         self.latest = row["reporting_guard"]
         return reason
@@ -188,11 +224,13 @@ def validate_census(rows):
         raise FleetTechnicalError("validity_census", "Reference reporting guard failed: "+str(failures[0]["reason"]))
     if any(row["reporting_guard"].get("rules") != GUARD_RULES or
            "ssh_family_sample" not in row["reporting_guard"] for row in rows):
-        raise FleetTechnicalError("validity_census", "Missing frozen OP-4 budget evidence")
+        raise FleetTechnicalError("validity_census", "Missing frozen OP-6 budget evidence")
     for row in rows:
         g=row["reporting_guard"]
         if g["ssh_family_sample"]["stop"] or any(b["stop"] for b in g.get("ssh_family_blocks",{}).values()) or g.get("console",{}).get("positive"):
             raise FleetTechnicalError("validity_census", "Contradictory passing reference guard")
+        if any(g.get(name,{}).get("interfered") or g.get(name,{}).get("retired") for name in ("system_bus","idle_services")):
+            raise FleetTechnicalError("validity_census", "Flagged dbus/idle reference cannot qualify")
     return dict(passes=True, observations=len(rows), rules=GUARD_RULES, final=False)
 
 
@@ -219,6 +257,8 @@ def validate_blocks(rows, require_measurement=True):
             result = guard["completed_block"]
             if result["id"] != identity or result["seconds"] <= 0 or result["ssh_family"]["interfered"] or result["ssh_family"]["stop"]:
                 raise FleetTechnicalError("validity_census", "Flagged SSH work block cannot qualify")
+            if any(result.get(name,{}).get("interfered") or result.get(name,{}).get("retired") for name in ("system_bus","idle_services")):
+                raise FleetTechnicalError("validity_census", "Flagged dbus/idle work block cannot qualify")
             active.remove(identity);completed.add(identity)
         else:raise ValueError("Unknown guard block event")
     if active or not completed:raise FleetTechnicalError("validity_census", "Missing completed reference guard blocks")
