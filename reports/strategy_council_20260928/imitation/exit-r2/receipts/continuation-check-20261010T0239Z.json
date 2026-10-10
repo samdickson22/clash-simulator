@@ -1,0 +1,203 @@
+{
+  "schema": "clasher.exit-r2.continuation-check.v1",
+  "utc": "2026-10-10T02:39:47Z",
+  "previous_full_monitor": "monitor-20261010T0238Z.json",
+  "arms": [
+    {
+      "arm": "X1",
+      "host": "127x09",
+      "step": 3495,
+      "rows": 28631040,
+      "supervisor_pid": 1870123,
+      "supervisor_pgid": 1870123,
+      "trainer_pid": 1870189,
+      "trainer_pgid": 1870189,
+      "owned_process_count": 8,
+      "all_nice10": true,
+      "health": {
+        "utc": "2026-10-10T02:39:29Z",
+        "pid": 1870189,
+        "pss": 13893997568,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 6399.401053425157
+      },
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "quiet_noncomment_entries": [],
+      "periodic_checkpoint": "step-00003250.pt",
+      "exit": null,
+      "provisional_cpu_seconds": 16690.48
+    },
+    {
+      "arm": "X2",
+      "host": "127x16",
+      "step": 3444,
+      "rows": 28213248,
+      "supervisor_pid": 871318,
+      "supervisor_pgid": 871318,
+      "trainer_pid": 871463,
+      "trainer_pgid": 871463,
+      "owned_process_count": 8,
+      "all_nice10": true,
+      "health": {
+        "utc": "2026-10-10T02:39:23Z",
+        "pid": 871463,
+        "pss": 13683779584,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 6392.528262302047
+      },
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "quiet_noncomment_entries": [],
+      "periodic_checkpoint": "step-00003250.pt",
+      "exit": null,
+      "provisional_cpu_seconds": 17287.38
+    },
+    {
+      "arm": "X3",
+      "host": "127x08",
+      "step": 3238,
+      "rows": 26525696,
+      "supervisor_pid": 2651962,
+      "supervisor_pgid": 2651962,
+      "trainer_pid": 2652063,
+      "trainer_pgid": 2652063,
+      "owned_process_count": 8,
+      "all_nice10": true,
+      "health": {
+        "utc": "2026-10-10T02:39:32Z",
+        "pid": 2652063,
+        "pss": 13552324608,
+        "processes": 8,
+        "gpu_free_bytes": 48323624960,
+        "reason": null,
+        "wall_seconds": 6401.739698448917
+      },
+      "lease": null,
+      "quiet_noncomment_entries": [],
+      "periodic_checkpoint": "step-00003000.pt",
+      "exit": null,
+      "provisional_cpu_seconds": 18946.749999999996
+    },
+    {
+      "arm": "X4",
+      "host": "127x01",
+      "step": 2319,
+      "rows": 18997248,
+      "supervisor_pid": 1217465,
+      "supervisor_pgid": 1217465,
+      "trainer_pid": 1217609,
+      "trainer_pgid": 1217609,
+      "owned_process_count": 8,
+      "all_nice10": true,
+      "health": {
+        "utc": "2026-10-10T02:39:27Z",
+        "pid": 1217609,
+        "pss": 27348341760,
+        "processes": 8,
+        "gpu_free_bytes": 29879173120,
+        "reason": null,
+        "wall_seconds": 6395.224503267091
+      },
+      "lease": null,
+      "quiet_noncomment_entries": [],
+      "periodic_checkpoint": "step-00002250.pt",
+      "exit": null,
+      "provisional_cpu_seconds": 33256.29
+    },
+    {
+      "arm": "X5",
+      "host": "127x04",
+      "step": 3116,
+      "rows": 25526272,
+      "supervisor_pid": 3727388,
+      "supervisor_pgid": 3727388,
+      "trainer_pid": 3727520,
+      "trainer_pgid": 3727520,
+      "owned_process_count": 8,
+      "all_nice10": true,
+      "health": {
+        "utc": "2026-10-10T02:39:25Z",
+        "pid": 3727520,
+        "pss": 19154433024,
+        "processes": 8,
+        "gpu_free_bytes": 48414851072,
+        "reason": null,
+        "wall_seconds": 6392.8919852849795
+      },
+      "lease": null,
+      "quiet_noncomment_entries": [],
+      "periodic_checkpoint": "step-00003000.pt",
+      "exit": null,
+      "provisional_cpu_seconds": 18151.46
+    },
+    {
+      "arm": "X6",
+      "host": "127x13",
+      "step": 2536,
+      "rows": 20774912,
+      "supervisor_pid": 2251934,
+      "supervisor_pgid": 2251934,
+      "trainer_pid": 2252096,
+      "trainer_pgid": 2252096,
+      "owned_process_count": 8,
+      "all_nice10": true,
+      "health": {
+        "utc": "2026-10-10T02:39:30Z",
+        "pid": 2252096,
+        "pss": 15853318144,
+        "processes": 8,
+        "gpu_free_bytes": 29974593536,
+        "reason": null,
+        "wall_seconds": 4606.594598028809
+      },
+      "lease": {
+        "end": "2026-10-11T05:30Z",
+        "project": "clasher",
+        "gpu": true,
+        "reclaim": null,
+        "refused": null
+      },
+      "quiet_noncomment_entries": [],
+      "periodic_checkpoint": "step-00002500.pt",
+      "exit": null,
+      "provisional_cpu_seconds": 17774.149999999998
+    }
+  ],
+  "controller": {
+    "pid": 1746462,
+    "pgid": 1746462,
+    "nice": 19,
+    "scheduler": "SCHED_IDLE",
+    "affinity": [
+      63
+    ],
+    "active": null,
+    "offline": {},
+    "stage2": {},
+    "failures": [],
+    "x3_priority_requested": false
+  },
+  "k_timing_pgids": [
+    1718091
+  ],
+  "k_release_markers": [],
+  "provisional_fit_gpu_wall_hours": 10.163438916876945,
+  "provisional_fit_cpu_hours": 33.918475,
+  "accounting": "This current live snapshot replaces earlier fit totals; never add previous snapshots or nested child meters. Final exits supersede.",
+  "actions": "Read-only check and R2 implementation-readiness review; no new fit/evaluation/smoke/control/game or migration. No stage3 reporting seeds consumed. Existing continuation enabled."
+}

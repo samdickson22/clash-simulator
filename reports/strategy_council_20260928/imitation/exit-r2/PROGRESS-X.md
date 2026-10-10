@@ -541,3 +541,24 @@ Monitor0238 replaces prior live costs:9.967396810GPU-wallh and
 snapshot/child/slowdown costs added. All gates/scientific kills/survivor ranking
 and conditional R2 still pending. Existing10min continuation enabled,next
 02:41:29.927Z; experiment remains active, not complete.
+
+2026-10-10T02:41:24Z. Queued continuation rechecked realUTC/own identities at
+02:39:33Z: steps3495/3444/3238/2319/3116/2536, original six groups unchanged,
+eight nice10 processes each, no exits/guard reasons.08 quiet empty and X3
+checkpoint3000; X6 checkpoint2500. Leased resource/lease guards pass. Current
+controller1746462 checked02:39:47Z nice19/IDL/core63, active=null/offline={}/
+stage2={}/failures=[],X3priorityfalse. K PGID1718091 still timing/noDONE, so
+no evaluation or S-default smoke/reporting admitted. No job launched/stopped.
+Compact continuation-check0239 retains fresh identity/health/meter evidence;
+latest live totals10.163438917GPUh/33.918475000whole-treeCPUh replace prior
+snapshots, final exits supersede. No scientific gate/kill/survivor/R2 outcome.
+Read-only conditional R2 source review recorded R2-IMPLEMENTATION-NOTES.md:
+existing W-driven emitter cannot be reused unchanged for survivor behavior;
+behavior submissions/RNG/waits/replay must stay independent of W label choices.
+Trainer can compose two sealed packed stores through a qualified union adapter;
+initialization from survivorEMA is a new fit rather than optimizer resume with
+changed data. These are implementation notes, not a source/science freeze or
+R2 admission. No conditional code or game executed. Next activation still
+requires a stage2 survivor, audited/frozen/qualified code and sufficient lease.
+Existing10min continuation stays enabled; older queued controller/comparator
+text does not restart superseded controllers or the historical comparator.
