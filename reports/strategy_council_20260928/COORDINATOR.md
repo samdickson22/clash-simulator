@@ -1849,3 +1849,8 @@ Also on the hub, but with copies elsewhere:
   - **Next use:** the search-tier confirmatory fleet runs (PREREG r3 freeze pending), on exclusive timing hosts 01/03 plus 08 until the B window.
   - Commissioning the confirmatory harness worker now; no games before the freeze.
 - **13:36 UTC: PREREG-SEARCH-TIERS FROZEN** (`PREREG-SEARCH-TIERS-FREEZE-20261010.json`). It binds the PREREG r3 + E4-V3 addendum r3 by SHA, after independent review, r2 conformance, and my check of the E1–E8 diff. Errata noted for stale 'r2' self-labels. **T1 fleet runs may proceed** after T1's own plan/seed-audit freeze; outcomes stay sealed until the Mac summary is committed.
+- **14:04 UTC: T1 independent review round 2: REJECT for freeze** (3f2f6a85).
+  - Reducer: approve with conditions (exact 59/60 level, integer-exact inclusive thresholds, mac-summary bound to the release receipt, B6).
+  - Corpus builder REJECT: missing d1/strata; root-reached filter drops slow-tail states.
+  - E4 fleet mode REJECT: host/nice hardcoded; load is not the full slot layout; no ±5% pooling; no row allowlist.
+  - **Decoupled:** T1 reporting is gated only on the runner+reducer fixes plus a round-3 delta check. Corpus and fleet reference are fixed in parallel; the fleet reference runs at the END of T1's window.
