@@ -1,0 +1,285 @@
+{
+ "K0/student_seat": {
+  "polls": 478844,
+  "sampled_plays": 10998,
+  "sampled_waits": 467846,
+  "submitted_plays": 22865,
+  "accepted_plays": 22470,
+  "pending_polls": 113193,
+  "timed_wait_polls": 141769,
+  "search_calls": 134238,
+  "hits": 109966,
+  "fallbacks": 73846,
+  "completed": 336718,
+  "overruns": 573,
+  "cand_all_med_p95": [
+   12.0,
+   32.0
+  ],
+  "cand_fallback_med_p95": [
+   32.0,
+   32.0
+  ],
+  "cand_nohit_med_p95": [
+   4.0,
+   12.0
+  ],
+  "mean_candidates_unpruned_fallback": 28.05668553476153,
+  "wall_med_p95_p99": [
+   0.19205,
+   0.19219,
+   0.19395
+  ],
+  "wall_nohit_med": [
+   0.06843,
+   0.18641
+  ],
+  "completed_per_call": 2.5083657384645184,
+  "hit_rate": 0.8191868174436449,
+  "fallback_rate": 0.5501124867772166,
+  "proposer_med_p95_ms": [
+   9.45,
+   10.319999999999999
+  ],
+  "overrun_gt_250ms": 280
+ },
+ "K0/opp_seat": {
+  "polls": 478844,
+  "sampled_plays": 10599,
+  "sampled_waits": 468245,
+  "submitted_plays": 22837,
+  "accepted_plays": 22450,
+  "pending_polls": 113099,
+  "timed_wait_polls": 142728,
+  "search_calls": 133878,
+  "hits": 109348,
+  "fallbacks": 73626,
+  "completed": 334930,
+  "overruns": 575,
+  "cand_all_med_p95": [
+   12.0,
+   32.0
+  ],
+  "cand_fallback_med_p95": [
+   32.0,
+   32.0
+  ],
+  "cand_nohit_med_p95": [
+   4.0,
+   12.0
+  ],
+  "mean_candidates_unpruned_fallback": 28.06757123842121,
+  "wall_med_p95_p99": [
+   0.19205,
+   0.19219,
+   0.19402
+  ],
+  "wall_nohit_med": [
+   0.0686,
+   0.1861
+  ],
+  "completed_per_call": 2.501755329479078,
+  "hit_rate": 0.8167734803328404,
+  "fallback_rate": 0.5499484605386994,
+  "proposer_med_p95_ms": [
+   9.45,
+   10.31
+  ],
+  "overrun_gt_250ms": 269
+ },
+ "K0/game": {
+  "loss": 0.5283333333333333,
+  "ticks_med": [
+   3601.0,
+   5634.4
+  ],
+  "cpu_med": [
+   90.6326,
+   160.20584
+  ],
+  "wall_med": [
+   91.39028,
+   161.54183
+  ],
+  "max_ticks_games": 15,
+  "draws": 0,
+  "seat0_loss": 0.51,
+  "seat1_loss": 0.5466666666666666,
+  "cores": 39,
+  "checkpoint": [
+   "d77005d59d6ed40ce7f9bfcfde569b54958bebf056e00653b10dcee3957272ed"
+  ],
+  "native": [
+   "f387b2d288ed280de9eeae3164d38f465045685ee53819e279930c2ee10699a8"
+  ],
+  "runner": [
+   "17d1b4086585840f5073285c9345355b4187c8342963963360213c3a9cff176e"
+  ],
+  "min_timer_offset_ms": 1.6018471214920282
+ },
+ "R3a/student_seat": {
+  "polls": 465804,
+  "sampled_plays": 47790,
+  "sampled_waits": 418014,
+  "submitted_plays": 26667,
+  "accepted_plays": 26436,
+  "pending_polls": 132654,
+  "timed_wait_polls": 214805,
+  "search_calls": 89094,
+  "hits": 49612,
+  "fallbacks": 13576,
+  "completed": 460337,
+  "overruns": 539,
+  "cand_all_med_p95": [
+   12.0,
+   28.0
+  ],
+  "cand_fallback_med_p95": [
+   28.0,
+   31.0
+  ],
+  "cand_nohit_med_p95": [
+   4.0,
+   12.0
+  ],
+  "mean_candidates_unpruned_fallback": 23.433780200353564,
+  "wall_med_p95_p99": [
+   0.19204,
+   0.19214,
+   0.19389
+  ],
+  "wall_nohit_med": [
+   0.0739,
+   0.18516
+  ],
+  "completed_per_call": 5.166868700473657,
+  "hit_rate": 0.5568500684670123,
+  "fallback_rate": 0.1523783868722922,
+  "proposer_med_p95_ms": [
+   0.08,
+   0.1
+  ],
+  "overrun_gt_250ms": 203
+ },
+ "R3a/opp_seat": {
+  "polls": 465804,
+  "sampled_plays": 10634,
+  "sampled_waits": 455170,
+  "submitted_plays": 23252,
+  "accepted_plays": 22868,
+  "pending_polls": 115143,
+  "timed_wait_polls": 151152,
+  "search_calls": 122987,
+  "hits": 96964,
+  "fallbacks": 61346,
+  "completed": 349205,
+  "overruns": 592,
+  "cand_all_med_p95": [
+   12.0,
+   32.0
+  ],
+  "cand_fallback_med_p95": [
+   32.0,
+   32.0
+  ],
+  "cand_nohit_med_p95": [
+   4.0,
+   12.0
+  ],
+  "mean_candidates_unpruned_fallback": 28.03441137156457,
+  "wall_med_p95_p99": [
+   0.19205,
+   0.19217,
+   0.19398
+  ],
+  "wall_nohit_med": [
+   0.06805,
+   0.18627
+  ],
+  "completed_per_call": 2.8393651361526016,
+  "hit_rate": 0.7884085309829494,
+  "fallback_rate": 0.4988006862513924,
+  "proposer_med_p95_ms": [
+   9.530000000000001,
+   10.52
+  ],
+  "overrun_gt_250ms": 211
+ },
+ "R3a/game": {
+  "loss": 0.24166666666666667,
+  "ticks_med": [
+   3601.0,
+   5415.7
+  ],
+  "cpu_med": [
+   73.11431,
+   122.94179
+  ],
+  "wall_med": [
+   73.72451,
+   123.95846
+  ],
+  "max_ticks_games": 10,
+  "draws": 0,
+  "seat0_loss": 0.22333333333333333,
+  "seat1_loss": 0.26,
+  "cores": 39,
+  "checkpoint": [
+   "37509a4331bd02ae110b76e1825a2adb23fa78e0e70188e199b6ef90d19ade85"
+  ],
+  "native": [
+   "f387b2d288ed280de9eeae3164d38f465045685ee53819e279930c2ee10699a8"
+  ],
+  "runner": [
+   "17d1b4086585840f5073285c9345355b4187c8342963963360213c3a9cff176e"
+  ],
+  "min_timer_offset_ms": 1.4774550218135118
+ },
+ "pairing": {
+  "same_core_pairs": 600,
+  "table": {
+   "K0=0,R3a=0": 225,
+   "K0=0,R3a=1": 58,
+   "K0=1,R3a=0": 230,
+   "K0=1,R3a=1": 87
+  },
+  "paired_mean": -0.2866666666666667,
+  "ci_rerun": [
+   -0.33666666666666667,
+   -0.23333333333333334
+  ],
+  "mcnemar_p": 2.1140508985434416e-25,
+  "per_own_deck": {
+   "own0": {
+    "K0": 0.575,
+    "R3a": 0.21666666666666667
+   },
+   "own1": {
+    "K0": 0.5083333333333333,
+    "R3a": 0.25
+   },
+   "own2": {
+    "K0": 0.3333333333333333,
+    "R3a": 0.11666666666666667
+   },
+   "own3": {
+    "K0": 0.48333333333333334,
+    "R3a": 0.08333333333333333
+   },
+   "own4": {
+    "K0": 0.7416666666666667,
+    "R3a": 0.5416666666666666
+   }
+  },
+  "order_effect": {
+   "K0_first": -0.2866666666666667,
+   "R3a_first": -0.2866666666666667
+  }
+ },
+ "nonsearch_cost_fit_ms": {
+  "v1_poll": -4.772380347761365,
+  "student_poll": -1.8307949082075015,
+  "per_tick": 6.822008144469137,
+  "r2": 0.8968209772167111
+ }
+}

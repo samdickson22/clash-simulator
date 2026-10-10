@@ -1776,3 +1776,10 @@ Also on the hub, but with copies elsewhere:
   - **Suspicious:** proposer latency is 0.08 ms for the student vs 9.45 ms for v1, at the same width.
   - **Commissioned an independent Opus audit** (`clasher-audit-r3a-desc-20261010-1`): inference charging and caching, arm symmetry, K0's 52.8% vs ~46% elsewhere, mechanism, fairness.
   - If confirmed, the stage-1 gates are miscalibrated (they killed R3a), and a 1-core student proposer is a viable Mac tier. That leads to a confirmatory pre-registered study.
+- **08:32 UTC: R3a audit = CONFIRMED_WITH_CAVEATS** (Opus, AUDIT-R3A-DESCRIPTIVE-20261010.md).
+  - The −28.7 pp is real **within the r1 (b) harness**, and everything is on the clock.
+  - **Caveats:**
+    - the latency gap is a labelling artifact: the student runs a single cached inference, while v1 runs two, costing K0 ~7 ms/search;
+    - K0 here is a v1-mirror K0 (52.8% ≈ 50%) and **not on K2/K4's scale**; lateness isn't charged;
+    - the mechanism is that K0 is starved (fallback on 64% of decisions, ~98% WAIT), while the student cuts fallbacks to 23%. The gain is hardware- and budget-dependent.
+  - **→ Commissioning the confirmatory study S1** in the K-v2/K2 honest-lateness harness: cached single-inference K0c vs S(R3a), at 200/160 ms, with a K2-200 anchor; 1 core; on 01.

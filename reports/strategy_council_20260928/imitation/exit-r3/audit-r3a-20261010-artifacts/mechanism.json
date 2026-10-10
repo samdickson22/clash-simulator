@@ -1,0 +1,63 @@
+{
+ "K0": {
+  "calls": 134238,
+  "trivial_no_play_calls": 18298,
+  "trivial_share": 0.1363101357290782,
+  "trivial_completed": 73192,
+  "nontrivial_calls": 115940,
+  "nontrivial_completed": 263526,
+  "nontrivial_completed_per_call": 2.2729515266517164,
+  "nontrivial_fallback_rate": 0.6369328963256857,
+  "full_search_calls": 24272,
+  "coarse_done_but_cut": 36120,
+  "fallback_calls": 73846,
+  "precutoff_fallbacks": 0,
+  "fallback_cand_hist": {
+   "4": 28,
+   "12": 13235,
+   "25": 1,
+   "26": 2,
+   "27": 33,
+   "28": 241,
+   "29": 1059,
+   "30": 3541,
+   "31": 14307,
+   "32": 41399
+  },
+  "nohit_cand_hist": {
+   "4": 18298,
+   "12": 5974
+  }
+ },
+ "R3a": {
+  "calls": 89094,
+  "trivial_no_play_calls": 29105,
+  "trivial_share": 0.3266774418030395,
+  "trivial_completed": 116420,
+  "nontrivial_calls": 59989,
+  "nontrivial_completed": 343917,
+  "nontrivial_completed_per_call": 5.733001050192535,
+  "nontrivial_fallback_rate": 0.2263081564953575,
+  "full_search_calls": 39482,
+  "coarse_done_but_cut": 36036,
+  "fallback_calls": 13576,
+  "precutoff_fallbacks": 0,
+  "fallback_cand_hist": {
+   "4": 51,
+   "12": 4162,
+   "24": 1,
+   "25": 17,
+   "26": 195,
+   "27": 1285,
+   "28": 4425,
+   "29": 1041,
+   "30": 1122,
+   "31": 838,
+   "32": 439
+  },
+  "nohit_cand_hist": {
+   "4": 29105,
+   "12": 10377
+  }
+ }
+}
