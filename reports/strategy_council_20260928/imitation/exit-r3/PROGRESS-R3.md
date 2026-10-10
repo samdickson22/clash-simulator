@@ -411,3 +411,13 @@ Future boundedadvance command round2/operations/advance.py --output ownstate
  --descriptive --round2 launches finalEMA offline only after current cleanexit/
 expectedsteps, then excluded smoke/report, later64regret and survivor-onlyStage2.
 Every phase uses an attempt1 identity and refuses automatic closed-attempt retry.
+
+2026-10-10T07:15:04Z — New evaluation addendum/freeze a0beb995 pushed before all new games/offline.
+EvaluationSHAf7e1439c5e81f648e005a66bf5f27cbe2de3e537a7f86940b0eaf2ee71126409.
+Actual committed bytes verified; deployed SHA/AST/prelaunch allpass01/03/09/16/13
+07:13:56..07:14:14. First metadata verifier used barePython3.8 against historical
+source with modern syntax and stopped before any game; reviewed runtime-venv
+verifier passed. No scientific code/data change or retry. Prelaunch/deployment
+receipts bind actualfreezecommit. Next own boundedadvance --descriptive --round2
+starts excluded R3a/K0 indices251+0/1 on01cores0/1 manager39, originalkills remain.
+03scorer idle until ALL final C/D/E proposals exist; source/fitops never altered.

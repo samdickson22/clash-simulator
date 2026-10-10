@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-10T06:35:58Z",
+  "utc": "2026-10-10T07:15:04Z",
   "final": false,
-  "cpu_seconds": 126.803009,
+  "cpu_seconds": 151.20425500000002,
   "gpu_wall_seconds": 121.29678681003861,
   "meters": [
     {
@@ -41,7 +41,8 @@
       "path": "receipts/seed-audit.json",
       "cpu_seconds": 0.186902,
       "gpu_wall_seconds": 0,
-      "status": "complete"
+      "status": "complete",
+      "sha256": "190883b029bcf052ede9e53526b47ca6f2915477910d1f182d606d4905696c75"
     },
     {
       "category": "void prepublication startup",
@@ -49,7 +50,8 @@
       "cpu_seconds": 29.345296,
       "gpu_wall_seconds": 40.40560300811194,
       "status": "void",
-      "reason": "owned FIT.STOP"
+      "reason": "owned FIT.STOP",
+      "sha256": "8a813836e35f6dcd8a442c7ffd00099b10c0f468ba5d5d1a817484b8c241008d"
     },
     {
       "category": "void prepublication startup",
@@ -57,7 +59,8 @@
       "cpu_seconds": 30.015090999999998,
       "gpu_wall_seconds": 40.414993988815695,
       "status": "void",
-      "reason": "owned FIT.STOP"
+      "reason": "owned FIT.STOP",
+      "sha256": "d4c7e5da5ce33e6210e4491dba5202c4edd94360f217b38ee628bf535b64c74a"
     },
     {
       "category": "void prepublication startup",
@@ -65,9 +68,91 @@
       "cpu_seconds": 30.817172999999997,
       "gpu_wall_seconds": 40.47618981311098,
       "status": "void",
-      "reason": "owned FIT.STOP"
+      "reason": "owned FIT.STOP",
+      "sha256": "d68616319c42a3c252603e11a5e800fd899d47d8cd3b321da3f2f722d2ee9a05"
+    },
+    {
+      "category": "home staging failed1",
+      "sha256": "379cae09cd0eb68f82f015ad5ecae6221b43b373d897082eaa41642604c87534",
+      "path": "receipts/HOME-STAGING-attempt1.json",
+      "cpu_seconds": 0.11757,
+      "gpu_wall_seconds": 0,
+      "status": "failed"
+    },
+    {
+      "category": "home staging incomplete2",
+      "sha256": "6baad0178db595ffd5508f0513ed2e610f172a56dbc95b493297d1fa55ff7537",
+      "path": "receipts/HOME-STAGING-attempt2.json",
+      "cpu_seconds": 1.3680179999999997,
+      "gpu_wall_seconds": 0,
+      "status": "failed"
+    },
+    {
+      "category": "home staging final3",
+      "sha256": "d5ae569dd8e628be058e84012cca21ff22e6af2f9c43608ac091acf7c44434db",
+      "path": "receipts/HOME-STAGING.json",
+      "cpu_seconds": 0.299573,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
+    },
+    {
+      "category": "evaluation code qualification",
+      "sha256": "bddff9b5e426fe2f32974ac2ddefcb968724a2d61a672b726ed99cc76885c89f",
+      "path": "receipts/CODE-QUALIFICATION.json",
+      "cpu_seconds": 16.445698,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
+    },
+    {
+      "category": "regret base staging",
+      "sha256": "d9ba11169c0cb6891edbaf71aca7b1e7e42abb27f039183fcfe5b9839275d21c",
+      "path": "receipts/REGRET-BASE-STAGING.json",
+      "cpu_seconds": 2.6684339999999995,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
+    },
+    {
+      "category": "evaluation pin verification",
+      "sha256": "f51403f2e8a5ab0dcd8f6ae643943d1c38e8c4ad5be648cfe04307b85cfa662b",
+      "path": "receipts/evaluation-deployment-127x01.json",
+      "cpu_seconds": 1.260443,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
+    },
+    {
+      "category": "evaluation pin verification",
+      "sha256": "49cdf57c17ae330d011a77b016693c2500b85200255466584c354d02d7b6fe05",
+      "path": "receipts/evaluation-deployment-127x03.json",
+      "cpu_seconds": 2.078966,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
+    },
+    {
+      "category": "evaluation pin verification",
+      "sha256": "b6494b4cf2367d2d71e146af361117f1d2bffd4685c7562710d08d97a8959063",
+      "path": "receipts/evaluation-deployment-127x09.json",
+      "cpu_seconds": 0.052412,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
+    },
+    {
+      "category": "evaluation pin verification",
+      "sha256": "c3effd36827f5e366c742233c8d48f5f693f36d4f7d0c49c8e6070155a1f18c3",
+      "path": "receipts/evaluation-deployment-127x16.json",
+      "cpu_seconds": 0.048635,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
+    },
+    {
+      "category": "evaluation pin verification",
+      "sha256": "3c5972870268f07f59849fe005b795ac8ca8d0e0a1f9cf4c904b72e0706f5878",
+      "path": "receipts/evaluation-deployment-127x13.json",
+      "cpu_seconds": 0.061496999999999996,
+      "gpu_wall_seconds": 0,
+      "status": "complete"
     }
   ],
   "active_fit_costs_pending": true,
-  "accounting": "Original R3a/b cost ledger separate. Each whole process/tree once; prep and void startup meters retained. Initial synthetic test and small metadata/copy overhead unmetered."
+  "accounting": "Original R3a/b cost ledger separate. Each whole process/tree once; prep and void startup meters retained. Initial synthetic test and small metadata/copy overhead unmetered.",
+  "unmetered_overhead": "Initial synthetic test, small command-center/admission metadata and remote read-only copy sender CPU; failed bare-Python3.8 AST verifier and scanner/report overhead. No scientific replay omitted."
 }
