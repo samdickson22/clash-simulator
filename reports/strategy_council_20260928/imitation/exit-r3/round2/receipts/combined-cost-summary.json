@@ -1,7 +1,7 @@
 {
-  "utc": "2026-10-10T09:49:52Z",
+  "utc": "2026-10-10T09:56:17Z",
   "final": false,
-  "cpu_seconds": 239519.544222,
+  "cpu_seconds": 240644.71402299998,
   "gpu_wall_seconds": 34052.7115964524,
   "meters": [
     {
@@ -503,6 +503,26 @@
       "sha256": "5080b301e6413d5d6d80e16df7b6736b22399b38d746df98a206603d893891ec",
       "path": "receipts/evaluation-snapshots/127x03/history/regret--pool-meter-3111108-5080b301e6413d5d6d80e16df7b6736b22399b38d746df98a206603d893891ec.json",
       "cpu_seconds": 1200.908737,
+      "gpu_wall_seconds": 0,
+      "status": "stopped_or_failed",
+      "host": "127x03",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "shared03 operational pin verification",
+      "sha256": "81d61fb090a28909a32c4582e13aeac332be6910cb5e6fa884ec9ee4564b7a6b",
+      "path": "receipts/evaluation-snapshots/127x03/SHARED03-CORE58-DEPLOYMENT.json",
+      "cpu_seconds": 0.44327399999999995,
+      "gpu_wall_seconds": 0,
+      "status": "closed",
+      "host": "127x03",
+      "experiment": "round2/descriptive"
+    },
+    {
+      "category": "whole CPU pool",
+      "sha256": "5faf62e844622c6c45e0be03c5c3d0777ab5b93cc9cae528b57bda1b6857654a",
+      "path": "receipts/evaluation-snapshots/127x03/history/regret--pool-meter-3154479-5faf62e844622c6c45e0be03c5c3d0777ab5b93cc9cae528b57bda1b6857654a.json",
+      "cpu_seconds": 1124.726527,
       "gpu_wall_seconds": 0,
       "status": "stopped_or_failed",
       "host": "127x03",

@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "pid": 3187870,
+  "pgid": 3187870,
+  "utc": "2026-10-10T09:55:38Z",
+  "evaluation_freeze_sha256": "3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207",
+  "authority_sha256": "a15da61aacbb1d2cd5e564a0e58af8c2f764988fb6121df56f3aa44e3a4a1521",
+  "admitted_sha256": "607580f67f349890563abc243206d87ac1b2b70c98ab53500eb868ad6fc98050",
+  "pins": 1471,
+  "checks": 24,
+  "scientific_data_read": false,
+  "old_groups_absent": true,
+  "retained_complete_seals": 13,
+  "physical_cores": [
+    56,
+    57,
+    58
+  ],
+  "manager_core": 58,
+  "nice": 19,
+  "scheduler": "SCHED_OTHER",
+  "PSI_full_avg10": 0.0,
+  "PSI_stop_percent": 10,
+  "cpu_seconds": 0.44327399999999995,
+  "wall_seconds": 0.43888440798036754,
+  "owned_STOP_archived": "/mpac/sdicks02/jobs/clasher/exit-r3-20261010-r2/metadata/shared03-prior-core58/REGRET.STOP",
+  "G_untouched": true
+}

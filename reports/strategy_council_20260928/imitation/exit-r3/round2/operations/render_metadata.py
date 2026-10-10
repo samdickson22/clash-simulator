@@ -33,7 +33,7 @@ def main():
             elif re.fullmatch(r'(k0-[^/]+|regret)/pool-meter-\d+\.json',metered_name):category='whole CPU pool'
             elif re.fullmatch(r'(reduce-.*-meter-\d+|stage1-reduction-meter-\d+)\.json',metered_name):category='reduction'
             elif metered_name in ('REGRET-PROPOSALS-STAGING.json','STAGE2-ARMS-STAGING.json','TIMING03-STAGING.json','CODE-QUALIFICATION.json'):category='staging/qualification'
-            elif name in ('SHARED03-DEPLOYMENT.json','SHARED03-REPAIR-DEPLOYMENT.json','SHARED03-NICE19-DEPLOYMENT.json'):category='shared03 operational pin verification'
+            elif name in ('SHARED03-DEPLOYMENT.json','SHARED03-REPAIR-DEPLOYMENT.json','SHARED03-NICE19-DEPLOYMENT.json','SHARED03-CORE58-DEPLOYMENT.json'):category='shared03 operational pin verification'
             if category:
                 cpu=whole_cpu(v)
                 meters[key]=dict(category=category,sha256=key,path=str(path.relative_to(ROOT)),cpu_seconds=cpu,gpu_wall_seconds=gpu,status=v.get('status','complete' if v.get('exit_code')==0 else 'closed'),host=host)
@@ -105,6 +105,8 @@ def main():
         for a,v in stage1.items():lines.append(f"| {a} final EMA | {v['checkpoint_sha256']} |")
     if repair.exists():lines+=['','[Admission receipt repair](shared03/repair/ADDENDUM.md) was pushed before the first round2 regret replay: the dynamic admission binds the current freeze/grant/evidence and exact lane. Proposal staging attempt1 failed on a stale static receipt pin before copying/scoring; its preflight CPU was not metered and is disclosed as small unrecoverable overhead. The failed log, original receipt and reviewed version2 retry are retained.']
     if shared.exists():lines+=['','[Shared03 operational amendment](shared03/PLAN.md): manager59 and three workers56–58 coexist with authenticated G on0–55. Regret seals bind the03-only amended evaluation SHA; all GPU offline and paired01 game seals retain the original a0beb995 SHA. The byte-unchanged Stage1 reducer runs in the replay manager after all64 children finish; its CPU is included in the whole replay pool once.']
+    core58=ROOT/'shared03/core58/evaluation-freeze.json'
+    if core58.exists():lines+=['', '[Manager core58 correction](shared03/core58/ADDENDUM.md): all four replay processes are confined to physical56–58; manager58 shares a scoring worker core, nice19/Other and PSI terms unchanged. Thirteen complete pre-stop seals/streams are SHA-pinned, unsealed games replay fully, both interrupted pool trees are charged once. No score arithmetic, gate or seed changes.',f"\nCurrent core58 regret freeze SHA: {hashlib.sha256(core58.read_bytes()).hexdigest()}."]
     # The original ledger's listed preparation receipts are separate from its
     # process/tree meters. Globally deduplicate all of them by actual meter SHA.
     original=read(ROOT.parent/'receipts/cost-summary.json');combined={}

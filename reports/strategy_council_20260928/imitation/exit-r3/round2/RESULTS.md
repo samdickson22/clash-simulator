@@ -2,7 +2,7 @@
 
 Exploration, outcome-informed extension; no multiplicity adjustment. Original R3a/b remain killed. R3a descriptive is ALWAYS NEVER-ADOPTABLE. No live replacement is authorized.
 
-Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T09:49:52Z.
+Training freeze7e939c06; r1(b) fallback evaluation freezea0beb995, prelaunch/deployment f07acdb3. [Evaluation amendment](K0-FALLBACK-ADDENDUM.md). Snapshot 2026-10-10T09:56:17Z.
 
 | Arm | Host | Final steps | Temperature | Seed | Final EMA sealed |
 |---|---|---:|---:|---:|---|
@@ -51,7 +51,7 @@ The frozen diagnostic field `completed_roots` counts fully scored candidates, no
 Round2 Stage2 survivors.
 Skipped: all round2 arms binary-killed; zero qualification/control/reporting games.
 
-Known round2/descriptive metered costs: **55.797385 CPUh**, **6.490708 GPU reservation-wallh**. Open process costs pending; these are lower bounds.
+Known round2/descriptive metered costs: **56.109932 CPUh**, **6.490708 GPU reservation-wallh**. Open process costs pending; these are lower bounds.
 
 [Once-only cost ledger](receipts/cost-summary.json) deduplicates exact original meter SHAs across histories and03→01 copies. Whole fit/pool trees include failed/void/replayed work; nested game/case/block/segment diagnostics are never added again. Original R3a/b10.735822CPUh/2.968378GPUh are reported separately until the final combined audit.
 
@@ -81,6 +81,10 @@ Current regret operational freeze SHA: 86ed5d060591556469b2bfe29aee046dc48ccacb7
 
 [Shared03 operational amendment](shared03/PLAN.md): manager59 and three workers56–58 coexist with authenticated G on0–55. Regret seals bind the03-only amended evaluation SHA; all GPU offline and paired01 game seals retain the original a0beb995 SHA. The byte-unchanged Stage1 reducer runs in the replay manager after all64 children finish; its CPU is included in the whole replay pool once.
 
-Combined original + extension known costs: **66.533207 CPUh / 9.459087 GPU reservation-wallh**. Lower bounds while fits/pools or audits remain pending.
+[Manager core58 correction](shared03/core58/ADDENDUM.md): all four replay processes are confined to physical56–58; manager58 shares a scoring worker core, nice19/Other and PSI terms unchanged. Thirteen complete pre-stop seals/streams are SHA-pinned, unsealed games replay fully, both interrupted pool trees are charged once. No score arithmetic, gate or seed changes.
+
+Current core58 regret freeze SHA: 3b945bd6a6a7e8c9b6fde8b628c308c97e68ecc75260ae7a0a02bf43023f0207.
+
+Combined original + extension known costs: **66.845754 CPUh / 9.459087 GPU reservation-wallh**. Lower bounds while fits/pools or audits remain pending.
 
 [Combined globally deduplicated ledger](receipts/combined-cost-summary.json).
